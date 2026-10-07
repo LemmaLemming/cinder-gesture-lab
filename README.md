@@ -2,6 +2,8 @@
 
 A bare-bones Godot mechanics test for the red/black 2.5D game. The character is a pixel sprite that can dash in any direction across the floor. Every voluntary move comes from a swipe. A close, fixed-angle camera follows the player in a portrait view. There is one test arena, three enemy variants, a sword, a short-range shotgun, and square debris with gravity, collision, bounce, and cleanup.
 
+The [game concept and campaign plan](docs/GAME_CONCEPT.md#planned-campaign) records the planned acts, including **Tormance — The False World**, inspired by David Lindsay's *A Voyage to Arcturus*. Campaign bosses, chapter palettes, weapon replacement, and powerups are currently planning concepts.
+
 ## Play
 
 Open `project.godot` with Godot 4.7.2, then click Play in the editor. On this Mac the engine is at `.tools/Godot.app`; `Play.command` and `Edit.command` launch it from Finder. The launchers also find a Godot app in Applications or `godot` on PATH. Play opens a dedicated full-screen macOS Space.
@@ -35,7 +37,7 @@ Run `godot --headless --path . --editor --quit` to import/check the project, the
 - `scenes/` — entry scene.
 - `scripts/` — gestures, player, enemies, pixel sprites, physics effects, and HUD.
 - `tests/` — bounded integration checks.
-- `docs/` — [confirmed design](docs/GAME_CONCEPT.md).
+- `docs/` — [game concept and campaign plan](docs/GAME_CONCEPT.md).
 - `skills/` — reusable game design guidance and video source notes.
 - `.tools/` — local engine download, excluded from Git.
 - `.godot/`, `captures/`, and `exports/` — generated local files, excluded from Git.
