@@ -175,17 +175,6 @@ func _face_attack(direction: Vector3) -> void:
 	var horizontal := Vector3(direction.x, 0, direction.z)
 	if horizontal.length_squared() > 0.001:
 		facing = horizontal.normalized()
-	# Light assistance keeps taps practical on a small screen.
-	var nearest: float = 3.2
-	for target in get_tree().get_nodes_in_group("enemies"):
-		if target.hp <= 0.0:
-			continue
-		var offset: Vector3 = target.global_position - global_position
-		offset.y = 0.0
-		var distance: float = offset.length()
-		if distance > 0.05 and distance < nearest and offset.normalized().dot(facing) > 0.6:
-			nearest = distance
-			facing = offset.normalized()
 	_sprite.face(facing)
 
 func _hit_targets(reach: float, cone: float, damage: float, impulse: Vector3) -> int:

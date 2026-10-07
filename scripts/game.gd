@@ -17,6 +17,9 @@ var _pickups: Array[Node3D] = []
 var _pointers: Dictionary = {}
 var _last_tap_time: int = -1000
 var _last_tap_position := Vector2.ZERO
+# Store the completed swipe endpoint in viewport fractions so resizing stays consistent.
+var _swipe_end_normalized := Vector2(0.5, 0.5)
+const CAMERA_OFFSET: Vector3 = Vector3(0, 18, 13)
 
 func _ready() -> void:
 	_build_view()
@@ -39,7 +42,7 @@ func _build_view() -> void:
 	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(container)
 	var viewport := SubViewport.new()
-	viewport.size = Vector2i(426, 240)
+	viewport.size = Vector2i(180, 390)
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	viewport.own_world_3d = true
 	viewport.handle_input_locally = false
@@ -63,7 +66,8 @@ func _build_view() -> void:
 	world.add_child(light)
 	camera = Camera3D.new()
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
-	camera.size = 17.0
+	camera.keep_aspect = Camera3D.KEEP_WIDTH
+	camera.size = 7.2
 	camera.position = Vector3(0, 18, 13)
 	world.add_child(camera)
 	camera.look_at(Vector3.ZERO)
@@ -100,6 +104,7 @@ func reset_lab() -> void:
 	_pickups.clear()
 	_pointers.clear()
 	_last_tap_time = -1000
+	_swipe_end_normalized = Vector2(0.5, 0.5)
 	cores = 0
 	kills = 0
 	player = PlayerScript.new()
@@ -107,6 +112,7 @@ func reset_lab() -> void:
 	player.fx = fx
 	world.add_child(player)
 	player.global_position = Vector3(-6, 0.1, 3.5)
+	_update_camera()
 	player.fired.connect(_on_fired)
 	player.died.connect(func() -> void: hud.show_end(false, cores))
 	_spawn_enemy(Vector3(-3.0, 0.1, -4.0), 0)
@@ -135,7 +141,7 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(player):
 		return
 	_shake = maxf(_shake - delta, 0.0)
-	camera.position = Vector3(0, 18, 13)
+	_update_camera()
 	if _shake > 0.0:
 		camera.position.x += randf_range(-0.035, 0.035)
 		camera.position.z += randf_range(-0.035, 0.035)
@@ -193,11 +199,13 @@ func _end_pointer(id: int, pos: Vector2) -> void:
 		return
 	var pointer: Dictionary = _pointers[id]
 	var start: Vector2 = pointer["start"]
-	if not pointer["dashed"]:
-		if start.distance_to(pos) >= _swipe_threshold():
+	var is_swipe: bool = pointer["dashed"] or start.distance_to(pos) >= _swipe_threshold()
+	if is_swipe:
+		if not pointer["dashed"]:
 			player.request_dash(screen_to_direction(pos - start))
-		else:
-			handle_tap(pos)
+		_record_swipe_end(pos)
+	else:
+		handle_tap(pos)
 	_pointers.erase(id)
 
 func _swipe_threshold() -> float:
@@ -210,16 +218,27 @@ func screen_to_direction(delta: Vector2) -> Vector3:
 	down.y = 0.0
 	return (right.normalized() * delta.x + down.normalized() * delta.y).normalized()
 
+func _record_swipe_end(screen_pos: Vector2) -> void:
+	var size: Vector2 = get_viewport().get_visible_rect().size
+	_swipe_end_normalized = screen_pos / size
+	_last_tap_time = -1000
+
+func get_aim_anchor() -> Vector2:
+	return _swipe_end_normalized * get_viewport().get_visible_rect().size
+
+func aim_direction(tap_screen: Vector2) -> Vector3:
+	return screen_to_direction(tap_screen - get_aim_anchor())
+
+func _update_camera() -> void:
+	if not is_instance_valid(player):
+		return
+	var focus: Vector3 = player.global_position + Vector3.UP * 0.75
+	camera.position = focus + CAMERA_OFFSET
+	camera.look_at(focus)
+
 func handle_tap(screen_pos: Vector2) -> void:
-	# Convert native UI coordinates into the pixel-rendered camera viewport.
-	var view_size: Vector2 = Vector2(camera.get_viewport().size)
-	var screen_size: Vector2 = get_viewport().get_visible_rect().size
-	var scaled: Vector2 = screen_pos * view_size / screen_size
-	var origin: Vector3 = camera.project_ray_origin(scaled)
-	var ray: Vector3 = camera.project_ray_normal(scaled)
-	var point: Vector3 = origin + ray * (-origin.y / ray.y)
-	var direction: Vector3 = point - player.global_position
-	direction.y = 0.0
+	# Aim is relative to the final finger position of the last completed swipe.
+	var direction: Vector3 = aim_direction(screen_pos)
 	var now: int = Time.get_ticks_msec()
 	if now - _last_tap_time <= 280 and screen_pos.distance_to(_last_tap_position) < 90:
 		player.blast(direction)
@@ -264,7 +283,7 @@ func _capture_preview() -> void:
 	await get_tree().create_timer(0.5).timeout
 	player.request_dash(Vector3(1, 0, -0.5))
 	await get_tree().create_timer(0.1).timeout
-	fx.burst(Vector3(0.5, 0.8, 1), Color(0.98, 0.04, 0.10), 30, 6.0)
+	fx.burst(player.global_position + Vector3(1.2, 0.8, -0.5), Color(0.98, 0.04, 0.10), 30, 6.0)
 	await get_tree().create_timer(0.12).timeout
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://captures"))

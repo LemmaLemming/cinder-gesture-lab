@@ -12,7 +12,7 @@ const RED: Color = Color(0.90, 0.13, 0.17)
 const RED_DARK: Color = Color(0.43, 0.10, 0.13)
 const PALE: Color = Color(0.92, 0.90, 0.85)
 const MUTED: Color = Color(0.61, 0.59, 0.59)
-const GESTURE_HINT: String = "SWIPE: DASH   ·   TAP: SLASH   ·   DOUBLE TAP: BLAST"
+const GESTURE_HINT: String = "SWIPE  ·  DASH     TAP  ·  SLASH\nDOUBLE TAP  ·  BLAST"
 
 var _built: bool = false
 var _mode: int = MODE_PLAY
@@ -82,8 +82,8 @@ func show_title() -> void:
 	_shade.visible = true
 	_reset_button.visible = false
 	_card_kicker.text = "GESTURE COMBAT TEST"
-	_card_title.text = "CINDER //\nMECHANICS LAB"
-	_card_body.text = "Swipe to dash across the arena. Tap to slash. Double tap to fire a point-blank blast."
+	_card_title.text = "CINDER //\nGESTURE LAB"
+	_card_body.text = "Swipe to move in any direction. Tap to slash; double tap to follow the slash with a point-blank blast."
 	_card_button.text = "TAP TO START  >"
 	_layout()
 
@@ -117,7 +117,7 @@ func flash_message(message: String) -> void:
 
 func _build_status() -> void:
 	_status_panel = _panel(_root)
-	_name_label = _label(_status_panel, "CINDER // MECHANICS LAB", RED, 14)
+	_name_label = _label(_status_panel, "CINDER // GESTURE LAB", RED, 14)
 	_hp_label = _label(_status_panel, "HP  100 / 100", PALE, 19)
 	_shell_label = _label(_status_panel, "SHELLS  6 / 6", PALE, 19)
 
@@ -132,6 +132,7 @@ func _build_status() -> void:
 
 	_objective_label = _label(_root, _objective_text, MUTED, 14)
 	_objective_label.clip_text = true
+	_objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_reset_button = Button.new()
 	_reset_button.text = "RESET"
 	_reset_button.focus_mode = Control.FOCUS_NONE
@@ -142,6 +143,7 @@ func _build_status() -> void:
 	_hint_panel = _panel(_root)
 	_hint_label = _label(_hint_panel, GESTURE_HINT, PALE, 16)
 	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hint_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_mouse_hint_label = _label(_hint_panel, "DESKTOP: DRAG WITH MOUSE TO SWIPE", MUTED, 12)
 	_mouse_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_mouse_hint_label.visible = not OS.has_feature("mobile")
@@ -218,63 +220,65 @@ func _layout() -> void:
 	var screen: Vector2 = get_viewport().get_visible_rect().size
 	if screen.x <= 0.0 or screen.y <= 0.0:
 		return
-	var factor: float = clampf(screen.y / 720.0, 0.6, 2.0)
-	var edge: float = 20.0 * factor
-	var status_width: float = 340.0 * factor
-	_status_panel.position = Vector2(edge, edge)
-	_status_panel.size = Vector2(status_width, 124.0 * factor)
-	_name_label.position = Vector2(16.0, 10.0) * factor
-	_name_label.size = Vector2(status_width - 32.0 * factor, 22.0 * factor)
-	_hp_label.position = Vector2(16.0, 40.0) * factor
-	_hp_label.size = Vector2(155.0, 28.0) * factor
-	_shell_label.position = Vector2(178.0, 40.0) * factor
-	_shell_label.size = Vector2(145.0, 28.0) * factor
-	_hp_track.position = Vector2(16.0, 91.0) * factor
-	_hp_track.size = Vector2(status_width - 32.0 * factor, 10.0 * factor)
+	var factor: float = clampf(screen.x / 540.0, 0.6, 2.0)
+	var edge: float = 22.0 * factor
+	var top: float = (86.0 if OS.has_feature("mobile") else 18.0) * factor
+	var status_width: float = minf(300.0 * factor, screen.x - 2.0 * edge - 100.0 * factor)
+	_status_panel.position = Vector2(edge, top)
+	_status_panel.size = Vector2(status_width, 116.0 * factor)
+	_name_label.position = Vector2(13.0, 9.0) * factor
+	_name_label.size = Vector2(status_width - 26.0 * factor, 22.0 * factor)
+	_hp_label.position = Vector2(13.0, 39.0) * factor
+	_hp_label.size = Vector2(125.0, 28.0) * factor
+	_shell_label.position = Vector2(144.0, 39.0) * factor
+	_shell_label.size = Vector2(status_width - 157.0 * factor, 28.0 * factor)
+	_hp_track.position = Vector2(13.0, 89.0) * factor
+	_hp_track.size = Vector2(status_width - 26.0 * factor, 9.0 * factor)
 	_hp_fill.position = _hp_track.position
 	_hp_fill.size = Vector2(_hp_track.size.x * _hp_fraction, _hp_track.size.y)
-	_objective_label.position = Vector2(edge, edge + 134.0 * factor)
-	_objective_label.size = Vector2(minf(screen.x - 2.0 * edge, 600.0 * factor), 27.0 * factor)
-	_reset_button.position = Vector2(screen.x - edge - 126.0 * factor, edge)
-	_reset_button.size = Vector2(126.0, 46.0) * factor
+	_objective_label.position = Vector2(edge, top + 125.0 * factor)
+	_objective_label.size = Vector2(screen.x - 2.0 * edge, 45.0 * factor)
+	_reset_button.position = Vector2(screen.x - edge - 88.0 * factor, top)
+	_reset_button.size = Vector2(88.0, 42.0) * factor
 
-	var hint_width: float = minf(screen.x - 2.0 * edge, 720.0 * factor)
-	_hint_panel.position = Vector2((screen.x - hint_width) * 0.5, screen.y - edge - 70.0 * factor)
-	_hint_panel.size = Vector2(hint_width, 70.0 * factor)
-	_hint_label.position = Vector2(10.0, 11.0) * factor
-	_hint_label.size = Vector2(hint_width - 20.0 * factor, 27.0 * factor)
-	_mouse_hint_label.position = Vector2(10.0, 40.0) * factor
-	_mouse_hint_label.size = Vector2(hint_width - 20.0 * factor, 20.0 * factor)
+	var hint_width: float = minf(screen.x - 2.0 * edge, 496.0 * factor)
+	var bottom: float = (70.0 if OS.has_feature("mobile") else 20.0) * factor
+	_hint_panel.position = Vector2((screen.x - hint_width) * 0.5, screen.y - bottom - 94.0 * factor)
+	_hint_panel.size = Vector2(hint_width, 94.0 * factor)
+	_hint_label.position = Vector2(10.0, 10.0) * factor
+	_hint_label.size = Vector2(hint_width - 20.0 * factor, 57.0 * factor)
+	_mouse_hint_label.position = Vector2(10.0, 70.0) * factor
+	_mouse_hint_label.size = Vector2(hint_width - 20.0 * factor, 18.0 * factor)
 	if OS.has_feature("mobile"):
-		_hint_label.position.y = 21.0 * factor
+		_hint_label.position.y = 18.0 * factor
 
-	var card_width: float = minf(screen.x - 24.0 * factor, 660.0 * factor)
-	var card_height: float = minf(screen.y - 24.0 * factor, 395.0 * factor)
+	var card_width: float = minf(screen.x - 32.0 * factor, 466.0 * factor)
+	var card_height: float = minf(screen.y - 32.0 * factor, 430.0 * factor)
 	_card.position = (screen - Vector2(card_width, card_height)) * 0.5
 	_card.size = Vector2(card_width, card_height)
 	_card_rail.position = Vector2.ZERO
 	_card_rail.size = Vector2(6.0 * factor, card_height)
-	var inset: float = 36.0 * factor
+	var inset: float = 27.0 * factor
 	var content_width: float = card_width - 2.0 * inset
-	_card_kicker.position = Vector2(inset, 27.0 * factor)
+	_card_kicker.position = Vector2(inset, 29.0 * factor)
 	_card_kicker.size = Vector2(content_width, 25.0 * factor)
-	_card_title.position = Vector2(inset, 64.0 * factor)
-	_card_title.size = Vector2(content_width, 112.0 * factor)
-	_card_body.position = Vector2(inset, 191.0 * factor)
-	_card_body.size = Vector2(content_width, 80.0 * factor)
-	_card_button.position = Vector2(inset, card_height - 90.0 * factor)
-	_card_button.size = Vector2(content_width, 56.0 * factor)
+	_card_title.position = Vector2(inset, 68.0 * factor)
+	_card_title.size = Vector2(content_width, 116.0 * factor)
+	_card_body.position = Vector2(inset, 208.0 * factor)
+	_card_body.size = Vector2(content_width, 105.0 * factor)
+	_card_button.position = Vector2(inset, card_height - 92.0 * factor)
+	_card_button.size = Vector2(content_width, 58.0 * factor)
 
-	_name_label.add_theme_font_size_override("font_size", _font(14, factor))
-	_hp_label.add_theme_font_size_override("font_size", _font(19, factor))
-	_shell_label.add_theme_font_size_override("font_size", _font(19, factor))
-	_objective_label.add_theme_font_size_override("font_size", _font(14, factor))
-	_reset_button.add_theme_font_size_override("font_size", _font(16, factor))
-	_hint_label.add_theme_font_size_override("font_size", _font(16, factor))
+	_name_label.add_theme_font_size_override("font_size", _font(13, factor))
+	_hp_label.add_theme_font_size_override("font_size", _font(17, factor))
+	_shell_label.add_theme_font_size_override("font_size", _font(17, factor))
+	_objective_label.add_theme_font_size_override("font_size", _font(13, factor))
+	_reset_button.add_theme_font_size_override("font_size", _font(14, factor))
+	_hint_label.add_theme_font_size_override("font_size", _font(17, factor))
 	_mouse_hint_label.add_theme_font_size_override("font_size", _font(12, factor))
 	_card_kicker.add_theme_font_size_override("font_size", _font(14, factor))
-	_card_title.add_theme_font_size_override("font_size", _font(42, factor))
-	_card_body.add_theme_font_size_override("font_size", _font(19, factor))
+	_card_title.add_theme_font_size_override("font_size", _font(40, factor))
+	_card_body.add_theme_font_size_override("font_size", _font(18, factor))
 	_card_button.add_theme_font_size_override("font_size", _font(20, factor))
 
 

@@ -24,6 +24,23 @@ func _run() -> void:
 	_expect(game.get("fx") is PixelEffects, "main scene creates its effects")
 	_expect(game.has_method("handle_tap"), "main scene routes tap gestures")
 	_expect(game.has_method("screen_to_direction"), "main scene converts screen swipes into arena directions")
+	_expect(game.has_method("get_aim_anchor") and game.has_method("aim_direction"), "main scene exposes swipe-anchored aim")
+	_expect(game.has_method("_record_swipe_end") and game.has_method("_update_camera"), "main scene updates the final swipe anchor and locked camera")
+	var view_size: Vector2 = game.get_viewport().get_visible_rect().size
+	var view_center: Vector2 = view_size * 0.5
+	var swipe_span: float = minf(view_size.x, view_size.y) * 0.18
+	_expect(view_size.y > view_size.x and int(ProjectSettings.get_setting("display/window/size/viewport_width")) == 540 and int(ProjectSettings.get_setting("display/window/size/viewport_height")) == 1170, "project uses a portrait 540 x 1170 viewport")
+	_expect(int(ProjectSettings.get_setting("display/window/handheld/orientation")) == 1, "handheld orientation is portrait")
+	var gesture_player: CinderPlayer = game.get("player") as CinderPlayer
+	var camera: Camera3D = game.get("camera") as Camera3D
+	var locked_basis: Basis = camera.global_basis
+	_expect(camera.projection == Camera3D.PROJECTION_ORTHOGONAL and camera.keep_aspect == Camera3D.KEEP_WIDTH and absf(camera.size - 7.2) < 0.01, "portrait camera is orthographic with locked width and close framing")
+	_expect(_camera_centers_on(camera, gesture_player), "camera centers the player at launch")
+	var initial_anchor: Vector2 = game.call("get_aim_anchor")
+	_expect(initial_anchor.distance_to(view_center) < 1.0, "aim anchor defaults to screen center before a swipe")
+	gesture_player.facing = Vector3.BACK
+	game.call("handle_tap", view_center)
+	_expect(gesture_player.facing.dot(Vector3.BACK) > 0.99, "tapping the exact center before a swipe uses last facing")
 	if game.has_method("screen_to_direction"):
 		var right: Vector3 = game.call("screen_to_direction", Vector2.RIGHT * 100.0)
 		var left: Vector3 = game.call("screen_to_direction", Vector2.LEFT * 100.0)
@@ -33,26 +50,56 @@ func _run() -> void:
 		_expect(absf(right.length() - 1.0) < 0.01 and absf(up.length() - 1.0) < 0.01, "cardinal swipes produce normalized directions")
 		_expect(right.dot(left) < -0.99 and up.dot(down) < -0.99, "opposite swipes produce opposite arena directions")
 		_expect(absf(diagonal.y) < 0.001 and absf(diagonal.length() - 1.0) < 0.01, "diagonal swipes remain on X/Z with unit length")
-	var gesture_player: CinderPlayer = game.get("player") as CinderPlayer
 	var gesture_events: Array[String] = []
 	gesture_player.fired.connect(func(kind: String) -> void: gesture_events.append(kind))
 	await create_timer(0.15).timeout
 	var gesture_start: Vector3 = gesture_player.global_position
-	var swipe_start: Vector2 = Vector2(620.0, 400.0)
-	await _mouse_swipe(swipe_start, swipe_start + Vector2(120.0, 0.0))
+	var swipe_start: Vector2 = view_center + Vector2(-swipe_span * 0.5, 0.0)
+	await _mouse_swipe(swipe_start, swipe_start + Vector2(swipe_span, 0.0))
 	await create_timer(0.75).timeout
 	_expect(gesture_events == ["dash"] and _planar(gesture_player.global_position - gesture_start).length() > 2.4, "mouse press/drag/release dispatches through the scene and produces one dash without an attack")
+	_expect(_camera_centers_on(camera, gesture_player) and _basis_matches(camera.global_basis, locked_basis), "camera follows a dash without changing its viewing angle")
 	var touch_start: Vector3 = gesture_player.global_position
-	await _touch_swipe(Vector2(640.0, 360.0), Vector2(640.0, 470.0))
+	await _touch_swipe(view_center + Vector2(0.0, -swipe_span * 0.5), view_center + Vector2(0.0, swipe_span * 0.5))
 	await create_timer(0.75).timeout
 	_expect(gesture_events == ["dash", "dash"] and _planar(gesture_player.global_position - touch_start).length() > 2.4, "screen touch/drag/release dispatches through the scene and produces one dash without an attack")
-	var tap_at: Vector2 = Vector2(400.0, 350.0)
+	var tap_at: Vector2 = view_center
 	game.call("_begin_pointer", 100, tap_at)
 	game.call("_end_pointer", 100, tap_at)
 	_expect(gesture_events == ["dash", "dash", "slash"] and gesture_player.shells == 2, "a single tap slashes without using a shell")
 	game.call("_begin_pointer", 101, tap_at)
 	game.call("_end_pointer", 101, tap_at)
 	_expect(gesture_events == ["dash", "dash", "slash", "blast"] and gesture_player.shells == 1, "a second quick tap fires a shotgun shell")
+	var long_swipe_start: Vector2 = view_size * Vector2(0.75, 0.40)
+	var threshold_crossing: Vector2 = view_size * Vector2(0.55, 0.38)
+	var upper_left_end: Vector2 = view_size * Vector2(0.38, 0.36)
+	game.call("_begin_pointer", 202, long_swipe_start)
+	game.call("_drag_pointer", 202, threshold_crossing)
+	game.call("_end_pointer", 202, upper_left_end)
+	await create_timer(0.75).timeout
+	_expect(gesture_events == ["dash", "dash", "slash", "blast", "dash"], "a longer drag still triggers exactly one dash")
+	var release_anchor: Vector2 = game.call("get_aim_anchor")
+	_expect(release_anchor.distance_to(upper_left_end) < 1.0, "the aim anchor is the final swipe release, not the first threshold crossing")
+	var bottom_right_aim: Vector3 = game.call("aim_direction", view_center)
+	_expect(bottom_right_aim.x > 0.05 and bottom_right_aim.z > 0.05, "upper-left swipe release then center tap aims down-right in world X/Z")
+	var opposite_tap: Vector2 = upper_left_end * 2.0 - view_center
+	var upper_left_aim: Vector3 = game.call("aim_direction", opposite_tap)
+	_expect(_planar(bottom_right_aim).normalized().dot(_planar(upper_left_aim).normalized()) < -0.99, "taps on opposite sides of one anchor produce opposite attack directions")
+	gesture_player.facing = Vector3.LEFT
+	game.call("handle_tap", upper_left_end)
+	_expect(gesture_player.facing.dot(Vector3.LEFT) > 0.99, "a tap exactly on the last swipe end keeps last facing")
+	gesture_player.global_position += Vector3(1.4, 0.0, -1.2)
+	game.call("_update_camera")
+	await process_frame
+	var moved_aim: Vector3 = game.call("aim_direction", view_center)
+	_expect(_planar(moved_aim).normalized().dot(_planar(bottom_right_aim).normalized()) > 0.999, "tap aim is unchanged when the player moves and camera follows")
+	_expect(_camera_centers_on(camera, gesture_player) and _basis_matches(camera.global_basis, locked_basis), "camera stays centered and keeps its angle after teleport")
+	game.call("reset_lab")
+	await process_frame
+	var reset_player: CinderPlayer = game.get("player") as CinderPlayer
+	var reset_anchor: Vector2 = game.call("get_aim_anchor")
+	_expect(reset_anchor.distance_to(view_center) < 1.0, "reset restores the aim anchor to screen center")
+	_expect(_camera_centers_on(camera, reset_player) and _basis_matches(camera.global_basis, locked_basis), "reset recenters the portrait camera without rotating it")
 	game.queue_free()
 	await process_frame
 
@@ -117,6 +164,15 @@ func _run() -> void:
 	var queue_stopped_at: Vector3 = player.global_position
 	await create_timer(0.4).timeout
 	_expect(_planar(player.global_position - queue_stopped_at).length() < 0.02, "queued gestures finish and do not cause indefinite movement")
+	player.queue_free()
+	await process_frame
+
+	player = _player(arena, fx)
+	await create_timer(0.12).timeout
+	var off_axis_target: AshEnemy = _enemy(arena, player, fx, Vector3(1.0, 0.0, 0.65))
+	player.call("slash", Vector3.RIGHT)
+	_expect(player.facing.dot(Vector3.RIGHT) > 0.999, "a nearby off-axis target does not redirect the intended attack")
+	off_axis_target.queue_free()
 	player.queue_free()
 	await process_frame
 
@@ -217,6 +273,16 @@ func _touch_swipe(start: Vector2, finish: Vector2) -> void:
 	release.position = finish
 	Input.parse_input_event(release)
 	await process_frame
+
+
+func _camera_centers_on(camera: Camera3D, player: CinderPlayer) -> bool:
+	var world_target: Vector3 = player.global_position + Vector3.UP * 0.75
+	var viewport_center: Vector2 = Vector2(camera.get_viewport().size) * 0.5
+	return camera.unproject_position(world_target).distance_to(viewport_center) < 2.0
+
+
+func _basis_matches(current: Basis, original: Basis) -> bool:
+	return current.x.dot(original.x) > 0.9999 and current.y.dot(original.y) > 0.9999 and current.z.dot(original.z) > 0.9999
 
 
 func _debris_trajectory(fx: PixelEffects) -> void:
