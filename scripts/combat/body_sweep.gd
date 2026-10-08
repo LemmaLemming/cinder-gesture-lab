@@ -64,14 +64,17 @@ static func sweep(body: CharacterBody3D, from: Transform3D, motion: Vector3, flo
 	if context.has("error"):
 		return context
 	var start: Vector3 = from.origin
-	var remaining: float = motion.length()
-	var direction: Vector3 = motion.normalized()
+	var distance: float = motion.length()
 	var records: Array[Dictionary] = []
-	if remaining <= EPSILON:
+	if distance <= EPSILON:
 		return _step(body, from, motion, context)
-	while remaining > EPSILON:
-		var length: float = minf(SWEEP_STEP, remaining)
-		var result: Dictionary = _step(body, from, direction * length, context)
+	# Anchor every requested point to the original line. Repeatedly adding a
+	# .05m Vector3 at z31 accumulates native float32 origin rounding into a
+	# fictitious bend/shortening even when every real body query is clear.
+	var count: int = maxi(1, ceili((distance - EPSILON) / SWEEP_STEP))
+	for index: int in range(count):
+		var target: Vector3 = anchored_position(start, motion, float(index + 1) / float(count))
+		var result: Dictionary = _step(body, from, target - from.origin, context)
 		if result.has("error"):
 			result["step_index"] = records.size()
 			return result
@@ -79,8 +82,29 @@ static func sweep(body: CharacterBody3D, from: Transform3D, motion: Vector3, flo
 		from.origin = result.end
 		if result.collided:
 			return {"travel": from.origin - start, "end": from.origin, "collided": true, "collider_rid": result.collider_rid, "normal": result.normal, "steps": records, "api_revision": API_REVISION}
-		remaining -= length
 	return {"travel": from.origin - start, "end": from.origin, "collided": false, "collider_rid": RID(), "normal": Vector3.ZERO, "steps": records, "api_revision": API_REVISION}
+
+
+static func anchored_position(origin: Vector3, displacement: Vector3, scale: float) -> Vector3:
+	## GDScript scalars are binary64; construct the native Vector3 only once.
+	## Callers still validate finite/bounded inputs and query the actual collider.
+	return Vector3(float(origin.x) + float(displacement.x) * scale, float(origin.y) + float(displacement.y) * scale, float(origin.z) + float(displacement.z) * scale)
+
+
+static func position_rounding_bound(start: Vector3, finish: Vector3) -> float:
+	## Only represented world-position/route arithmetic, never copied identities,
+	## clocks, body dimensions, floor penetration or physical contact allowance.
+	## Two endpoints plus local vector arithmetic: <2sqrt(3) world float32 ULPs
+	## and the existing local epsilon. At the supported512m limit this is <.000222m,
+	## smaller than the actual .001m query margin and .005m endpoint guard.
+	if not _bounded(start) or not _bounded(finish):
+		return EPSILON # Invalid coordinates must never grant an infinite margin.
+	var magnitude: float = maxf(absf(start.x), maxf(absf(start.y), absf(start.z)))
+	magnitude = maxf(magnitude, maxf(absf(finish.x), maxf(absf(finish.y), absf(finish.z))))
+	if magnitude == 0.0:
+		return EPSILON
+	var exponent: float = floor(log(magnitude) / log(2.0))
+	return EPSILON + 2.0 * sqrt(3.0) * pow(2.0, exponent - 23.0)
 
 
 static func _context(body: CharacterBody3D, from: Transform3D, floor_regions: Array) -> Dictionary:
