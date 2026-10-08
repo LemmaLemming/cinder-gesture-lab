@@ -506,10 +506,13 @@ func _fresh_partial_retry(pair: Dictionary) -> String:
 	return ""
 
 
-## Standard full-route coverage intentionally retains the first crossing lease.
-## A profile-specific consumer can require preparing-budget evidence instead.
+## The default starter route is dedicated mandatory two-lease coverage.
+## Carried-kit routes verify actual primary viability under their real geometry:
+## forcing a hold at an edge can correctly prevent the other source's admission.
+## Every genuine held union still receives the same immutable/path checks.
+## A profile-specific production consumer retains its own coverage requirement.
 func _requires_crossing_union() -> bool:
-	return true
+	return _kit_selector.is_empty()
 
 
 func _clear_pocket(index: int) -> String:
