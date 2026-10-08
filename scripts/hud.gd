@@ -79,8 +79,11 @@ func update_status(hp: float, max_hp: float, shells: int, max_shells: int, cores
 	_objective_text = objective.to_upper()
 	if cores > 0:
 		_objective_text += "   //   CORES %d" % cores
+	var objective_changed: bool = _objective_label.text != _objective_text
 	_objective_label.text = _objective_text
 	_hp_fill.size.x = _hp_track.size.x * _hp_fraction
+	if objective_changed:
+		_layout()
 
 
 func show_title() -> void:
@@ -147,6 +150,7 @@ func flash_message(message: String) -> void:
 	setup()
 	_flash_token += 1
 	_objective_label.text = message.to_upper()
+	_layout()
 	if is_inside_tree():
 		get_tree().create_timer(1.8, false).timeout.connect(_restore_objective.bind(_flash_token))
 
@@ -188,7 +192,9 @@ func _build_status() -> void:
 	objective_backplate.content_margin_bottom = 4
 	_objective_label.add_theme_stylebox_override("normal", objective_backplate)
 	_objective_label.add_theme_color_override("font_color", PALE)
-	_objective_label.clip_text = true
+	# Keep the shaped text's full minimum height, including paragraph spacing
+	# and the protected backplate margins, rather than a clipped one-line min.
+	_objective_label.clip_text = false
 	_objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_reset_button = Button.new()
 	_reset_button.name = "ResetButton"
@@ -204,6 +210,7 @@ func _build_status() -> void:
 	_root.add_child(_bench_button)
 	_style_button(_bench_button, false)
 	_telemetry_label = _label(_root, "", MUTED, 13)
+	_telemetry_label.name = "TelemetryLabel"
 	_anchor_label = _label(_root, "+", MUTED, 18)
 	_anchor_label.size = Vector2(20, 20)
 	_anchor_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -307,13 +314,17 @@ func _layout() -> void:
 	_hp_fill.position = _hp_track.position
 	_hp_fill.size = Vector2(_hp_track.size.x * _hp_fraction, _hp_track.size.y)
 	_objective_label.position = Vector2(edge, top + 125.0 * factor)
+	_objective_label.add_theme_font_size_override("font_size", _font(13, factor))
 	_objective_label.size = Vector2(screen.x - 2.0 * edge, 45.0 * factor)
+	# Shape against the final font/width before fitting height. The stylebox
+	# belongs to the Label, so its backplate expands with these same bounds.
+	_objective_label.size.y = maxf(45.0 * factor, ceilf(_objective_label.get_minimum_size().y))
 	_reset_button.position = Vector2(screen.x - edge - 88.0 * factor, top)
 	_reset_button.size = Vector2(88.0, 42.0) * factor
 	_bench_button.position = Vector2(_reset_button.position.x, top + 54.0 * factor)
 	_bench_button.size = Vector2(88.0, 42.0) * factor
 	_bench_button.add_theme_font_size_override("font_size", _font(13, factor))
-	_telemetry_label.position = Vector2(edge, top + 170.0 * factor)
+	_telemetry_label.position = Vector2(edge, _objective_label.position.y + _objective_label.size.y)
 	_telemetry_label.size = Vector2(screen.x - edge * 2.0, 76.0 * factor)
 	_telemetry_label.add_theme_font_size_override("font_size", _font(12, factor))
 
@@ -348,7 +359,6 @@ func _layout() -> void:
 	_name_label.add_theme_font_size_override("font_size", _font(13, factor))
 	_hp_label.add_theme_font_size_override("font_size", _font(17, factor))
 	_shell_label.add_theme_font_size_override("font_size", _font(17, factor))
-	_objective_label.add_theme_font_size_override("font_size", _font(13, factor))
 	_reset_button.add_theme_font_size_override("font_size", _font(14, factor))
 	_hint_label.add_theme_font_size_override("font_size", _font(17, factor))
 	_mouse_hint_label.add_theme_font_size_override("font_size", _font(12, factor))
@@ -372,3 +382,4 @@ func _on_card_pressed() -> void:
 func _restore_objective(token: int) -> void:
 	if token == _flash_token and is_instance_valid(_objective_label):
 		_objective_label.text = _objective_text
+		_layout()

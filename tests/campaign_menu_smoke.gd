@@ -13,6 +13,7 @@ var _probe: InputProbe
 var _continue_count: int = 0
 var _optional_ids: Array[String] = []
 var _replay_requests: Array[Dictionary] = []
+var _restart_requests: Array[Dictionary] = []
 var _settings_requests: Array[Dictionary] = []
 var _difficulty_requests: Array[String] = []
 var _begin_count: int = 0
@@ -47,6 +48,7 @@ func _run() -> void:
 	_menu.leave_side_requested.connect(func() -> void: _leave_count += 1)
 	_menu.optional_requested.connect(func(id: String) -> void: _optional_ids.append(id))
 	_menu.replay_requested.connect(func(id: String, gear: Dictionary) -> void: _replay_requests.append({"id": id, "gear": gear}))
+	_menu.restart_replay_requested.connect(func(id: String, gear: Dictionary) -> void: _restart_requests.append({"id": id, "gear": gear}))
 	_menu.settings_changed_request.connect(func(changes: Dictionary) -> void: _settings_requests.append(changes.duplicate(true)))
 	_menu.difficulty_preference_requested.connect(func(id: String) -> void: _difficulty_requests.append(id))
 	root.add_child(_menu)
@@ -169,6 +171,11 @@ func _run() -> void:
 	await _click(_find("RetryButton") as Control)
 	await _click(_find("LeaveSideButton") as Control)
 	_expect(_resume_count == 1 and _retry_count == 1 and _leave_count == 1 and attempts.state() == active_before and paused, "pause actions only signal the shell; retry and leaving cannot refresh resources inside the menu")
+	await _click(_find("RestartReplayButton") as Control)
+	_expect(_menu.page_name() == "replay" and not (_find("StartReplayButton") as Button).disabled and (_find("StartReplayButton") as Button).text == "Restart Replay", "active replay exposes its fresh-equipment chooser without first abandoning protected state")
+	_choose("WeaponSelector", "WEAPON-01")
+	await _click(_find("StartReplayButton") as Control)
+	_expect(_restart_requests.size() == 1 and _restart_requests[0]["id"] == "A1-L1" and _restart_requests[0]["gear"]["weapon"] == "WEAPON-01" and attempts.state() == active_before and paused, "replay restart GUI requests a validated fresh isolated transaction without mutating old encounter/resources")
 	_menu.show_journey()
 	await _settle()
 	_menu.select_level("A1-O1")

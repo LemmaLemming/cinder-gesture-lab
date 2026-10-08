@@ -1,6 +1,6 @@
 # Cinder — title, journey menu and replay equipment
 
-**Saved: 8 October 2026.** This records the UI direction agreed in the design conversation. The title, journey menu and separate story/replay saves are planned features; they are not implemented in Godot or validated on a phone. The existing [Character Lab](CHARACTER_LAB.md) implements static equipment and paused comparisons, which can support later implementation.
+**Saved: 8 October 2026.** This records the UI direction agreed in the design conversation. The shared desktop Title/Journey/replay/settings consumers and coherent story/side saves are now implemented and tested over explicitly isolated live fixtures. All 24 real campaign scenes still await individual acceptance; scenic title/route art and authored encounter validation remain in progress. The existing [Character Lab](CHARACTER_LAB.md) remains the default prototype entry. Phone validation is unperformed; [shared progress](development/SHARED_PROGRESS.md) records exact consumer evidence.
 
 ## Requirements and design authority
 
@@ -33,7 +33,7 @@ Each act forms a different region. Start with the current campaign plan's five m
 | Node state | Appearance | Selection and action |
 | --- | --- | --- |
 | Completed main level | Filled medallion, level number and checkmark | Show the level card with **Replay · Choose Equipment**. |
-| Current story level | Strong outline, current marker and the traveller in the selected act presentation beside it | Show the saved checkpoint and **Continue Story**. |
+| Current story level, not completed | Strong outline, current marker and the traveller in the selected act presentation beside it | Show the saved checkpoint and **Continue Story**. |
 | Locked main level | Muted medallion and lock label | Explain which previous level must be cleared; hide unreached boss art and reveal-sensitive names. |
 | Available optional level, not yet completed | Smaller branch node, Optional label and available state | Show **Play Optional Level**; do not call its first attempt a replay. |
 | Completed optional level | Smaller branch node with a checkmark | Show **Replay · Choose Equipment**. |
@@ -41,7 +41,7 @@ Each act forms a different region. Start with the current campaign plan's five m
 
 Keep optional branches short and visibly separate from the main route. Completing a parent level immediately unlocks its optional level. Side-level completion never blocks the main route. Main and optional completion use separate counters.
 
-Tapping an available node opens a small level card or bottom sheet with its name, completion/checkpoint state and one main action. Selection must not start combat immediately. A completed level proceeds to replay equipment; the current level continues its saved story attempt.
+Tapping an available node opens a small level card or bottom sheet with its name, completion/checkpoint state and one main action. Selection must not start combat immediately. A completed level, including the saved current/final main level, proceeds to replay equipment. An incomplete current node continues its saved story attempt. Title keeps Continue Story for the saved exit/coda flow.
 
 Use landmarks, sparse terrain silhouettes and quiet scenery between nodes. Keep labels and paths legible. Decorations are not additional levels, rewards or gameplay interactions.
 
@@ -120,7 +120,7 @@ These files preserve the conversation's earlier layout reference with a schemati
 
 ## Implementation and verification plan
 
-Build in bounded stages: journey navigation and level-card states → shared equipment comparison → independent story/replay save handling → completion, exit, retry and relaunch flows → final act-specific artwork. Reuse the existing lab's static equipment resolver, comparison and tap-consuming UI where appropriate; campaign persistence must be implemented separately.
+Build in bounded stages: journey navigation and level-card states → shared equipment comparison → independent story/replay save handling → completion, exit, retry and relaunch flows → final act-specific artwork. Reuse the existing lab's static equipment resolver, comparison and tap-consuming UI where appropriate; the shared live shell now composes tested persistence separately from lab RESET. Authored local snapshots and real scenes require their own acceptance.
 
 Before calling the feature implemented, verify:
 
