@@ -6,7 +6,7 @@ Updated 8 October 2026. Current baseline: `campaign-shared-13`, publication `fef
 
 | Level | State | Next requirement |
 | --- | --- | --- |
-| A2-L1 Horsell Common | Authored/tested candidate; scoped final native art review passed; canonical acceptance pending | Stamp owned commit and exact HANDOFF |
+| A2-L1 Horsell Common | Authored/tested candidate; scoped final native art review passed; canonical acceptance pending | Autonomous integration review and registry acceptance |
 | A2-L2 Weybridge and Shepperton | Production unstarted; incomplete | L1 handoff, then source/equipment/ability gate |
 | A2-L3 Black Smoke and the Ruined House | Production unstarted; incomplete | L2 handoff |
 | A2-L4 Red Weed and the London Approaches | Production unstarted; incomplete | L3 handoff |
@@ -15,7 +15,7 @@ Updated 8 October 2026. Current baseline: `campaign-shared-13`, publication `fef
 | A2-O2 Clear Air Circuit | Production unstarted; incomplete | O1 handoff; reuse L3 kit |
 | A2-O3 Bleached Canal | Production unstarted; incomplete | O2 handoff; reuse L4 kit |
 
-No Act2 level has canonical acceptance or a completed HANDOFF. L1 is ready as an authored/tested candidate, without an exact final tested owned commit yet. Shared13 stationary285/0, Scout40/0, native Heavy-left304/0, default WEAPON-01-left269/0 and Challenge slow-Padded-Reach-left269/0 all pass. Owner and independent seven-frame review agree no material captured-state defect; older results retain their precise scopes. The optional shared camera hook is empty in L1, preserving ordinary follow; L1 is stationary and does not consume lunge/staged-collider, spores or replay.
+No Act2 level has canonical acceptance or a completed HANDOFF. L1 is ready as an authored/tested candidate, at tested owned runtime commit `16f2532518edd8d76aa41ec40f1d10edad607559`. Shared13 stationary285/0, Scout40/0, native Heavy-left304/0, default WEAPON-01-left269/0 and Challenge slow-Padded-Reach-left269/0 all pass. Owner and independent seven-frame review agree no material captured-state defect; older results retain their precise scopes. The optional shared camera hook is empty in L1, preserving ordinary follow; L1 is stationary and does not consume lunge/staged-collider, spores or replay.
 
 ## Recorded evidence
 
@@ -49,3 +49,5 @@ Per-bank and per-Scout-part cutaways preserve physical geometry, housing hit poi
 [Seven promoted native frames and metadata](../../../docs/acts/act2/evidence/A2-L1/live-evidence.json) record warning, lock, active, recovery, first pair, pair committed and clear. The pair-committed state is A warning/B recovery, not two armed locks.
 
 The shared13 Challenge slow-Padded-Reach-left269/0 result is recorded above. Next: stamp the exact owned L1 commit and tested provenance → exact L1 HANDOFF for canonical acceptance → L2 source/equipment/ability gate after successful handoff. Do not rerun unrelated acts or all shared suites without a concrete dependency reason. Human balance/native-focus play and mobile performance remain unperformed limitations, not approval gates on the authorized desktop scope.
+
+Tested owned runtime anchor: `16f2532518edd8d76aa41ec40f1d10edad607559`. All42scene/script/test SHA256 values match that commit; evidence-stamp changes only records/manifests. Scope is the whole assigned Act2 path diff from exact shared13 publication, including earlier owned foundation history. Canonical acceptance/registry work remains integration-owned.
