@@ -12,11 +12,13 @@ gesture, scheduler, collision solver or campaign registration is introduced.
 
 `CinderLaneMechanism` remains the existing class and script at
 `res://scripts/combat/lane_mechanism.gd`. Its `lane-mechanism-1` API revision and
-schema-1 snapshot envelope are unchanged. Existing two-argument lane callers
-remain supported. Legacy decimal snapshots are valid only when parsing preserves
+ordinary schema-1 snapshot envelope remain supported. Existing two-argument lane callers
+remain supported. A callback-paused unprocessed path uses conditional schema2,
+as described below; older consumers must adopt this implementation before loading
+that envelope. Legacy decimal snapshots are valid only when parsing preserves
 their copied floating identities exactly; use ExactJson for general exact saves.
-No saved opening is rewritten or migrated, and no additional local snapshot field
-is required.
+No saved opening is rewritten or migrated. Circles and per-cycle opening overrides
+require no additional field; only an unresolved callback-paused path does.
 
 ```gdscript
 configure(mechanism_id: String, geometry: Dictionary,
@@ -90,10 +92,35 @@ Both shapes use the existing warning → lock → active → recovery deadlines 
 the required shared `CinderThreatCue`. Physics priority 100 samples actual hero
 positions after scheduler/player physics and clips each actual segment to the
 active interval through `Geometry.timed_path_hits`. Shared capsule radius pads
-the shape. One hit opportunity per stable live hero per accepted cycle is
+the shape. An exact nonempty interval intersection is required before that spatial
+test; geometric epsilon cannot cause damage in a clock just before activation.
+One hit opportunity per stable live hero per accepted cycle is
 consumed before synchronous damage/hit callbacks. Dash/hurt invulnerability can
 reject HP damage while that opportunity remains consumed. Damage uses the
 resolved raw role through actual player armor with `Vector3.ZERO` impulse.
+
+Act 2 request `dcc047b7-8dac-40a1-8869-ad7690889601` identified a synchronous
+active-publication boundary: an observer could pause or hide the cue after phase
+publication but before actual damage. The consumer now stages every actual hero
+endpoint and its piecewise path **before** publishing phase/cue observers. It
+rechecks the live lease, source/bindings, tree pause, authoritative cue state and
+visible native required marker/outline/fill after publication, before each hero,
+after actual Player hurt callbacks, and after `hit_resolved` callbacks. Hidden,
+cleared or removed required cue parts cancel the remaining cycle immediately and
+retain the original source cooldown. The Player's damage method is unchanged.
+
+Pause retains unresolved paths without consuming their opportunities or dealing
+HP damage. On resume, the actual next actor/scheduler tick is sampled and appended
+to those paths before observers run. Every segment stays exact; turns are never
+collapsed into a guessed straight route. The consumer clips that retained path
+to the original active interval and uses the actor's actual live defenses when
+resolving it. It creates no new active interval or refreshed deadline. A hero path
+and its opportunity are committed before entering damage callbacks; reporting the
+already completed result may finish while paused, but no remaining hero receives
+damage until a supported unpaused tick. Further callback pauses remain coherently
+capturable. Paths are bounded to 256 segments per hero; exhaustion visibly cancels
+with `pending_path_budget_exceeded` and retains cooldown, rather than dropping an
+unresolved path or manufacturing a hit.
 
 Default provisional raw role remains damage 4, warning 1.1 + lock 1.1 seconds,
 active 0.2, recovery 1.6 and interval 1.8 from activation. Raw move speed 0 is a
@@ -115,6 +142,37 @@ use exact numeric equality. Legacy integral JSON number representation remains
 accepted; copied floating identities must survive exactly. Full-precision decimal
 parsing alone is insufficient in general; use ExactJson. Geometry/physical
 placement tolerances remain separate from copied transport identity.
+
+Ordinary snapshots continue to write schema1, with exactly the previous keys.
+Only a nonempty unresolved path writes schema2 with `pending_segments`:
+
+```gdscript
+{
+    "hero-stable-id": [
+        {"from": [x, y, z], "to": [x, y, z],
+         "start_s": exact_scheduler_clock, "end_s": exact_scheduler_clock}
+    ]
+}
+```
+
+The new reader accepts strict schema1 without that field and strict schema2 with
+a nonempty bounded running path. Entries name unconsumed bound heroes. Each piece
+has finite endpoints, a nonnegative interval of at most one physics tick, exact
+position/clock joins and the unchanged exchange. The last endpoint and clock must
+exactly match the same independently paired hero sample, actual/staged actor and
+scheduler clock. Remaining heroes share the latest sampled batch. Copied clock,
+endpoint, join, hit prefix or schema mutations reject atomically. The small
+one-tick duration allowance covers derived subtraction only; copied identities
+and clocks still use exact equality. Clearing/canceling discards pending danger;
+after draining, the writer returns to schema1.
+
+Schema2 cannot be faithfully downgraded by removing the path. An older consumer
+must reject it and adopt the shared update; no deadline/clock migration is used.
+The parent saves and validates the whole trusted actor/scheduler/mechanism
+aggregate through ExactJson/SaveStore. Current endpoint pairing cannot independently
+authenticate an arbitrarily rewritten complete historical path or save. The
+consumer validates the closed path's continuity, bounds and current custody; it
+does not claim cryptographic authority over prior history.
 
 Validate the entire player/rusher/scheduler/mechanism aggregate before mutation.
 Optional native `hero_positions` and existing scheduler owner staging support
@@ -173,3 +231,41 @@ footprint, safe landing and target readability.
 
 
 Independent published-dependency verification also passed152 checks, zero failures, exit0 in `.cinder/circle-against-published15.log`. This run loaded the exact shared15 Scheduler from88529f0f75d109be3fc9f7837dc093c55a5c31e7, SHA256 `808d56b68107ae540ddd6ae4ca11965f5e7a8fd8cfb0fb599cb75e2a59ec3921`, with the same published14 Motion/BodySweep and frozen consumer/test above. Its owner preserved and restored the preview candidate byte-identically in a finally block; no checkout/reset or lost work occurred. This establishes independent compatibility without waiting for the separate preview publication.
+
+## Callback-boundary regression evidence
+
+The expanded named `lane_mechanism` suite adds actual required-cue and mechanism
+active observers that pause/hide/clear; native required mesh hiding; lost-lease
+cancellation; a real mid-dash Player crossing; two distinct live shared Players
+pausing/hiding/clearing through hurt and hit callbacks; repeated pause on the first
+resumed tick; strict malformed pending transport; and exact SaveStore disk reopen
+plus fresh actor → scheduler → mechanism restore.
+The final authorized command was:
+
+```sh
+python3 scripts/dev/dev.py test lane_mechanism
+```
+
+The completed second run passed **243 checks, 0 failures**, exit 0 on Godot
+4.7.2 `ed1daf0bf`, at `.cinder/lane-mechanism-callback-second.log`, with no script,
+parse or runtime errors. All 152 prior checks remain. The first log is preserved
+at `.cinder/lane-mechanism-callback-first.log`: prior checks passed, then the new
+pause fixture exposed geometric epsilon consuming a hit before the active
+deadline. That run stopped on a cascading test access to the absent pending field.
+The lane-only exact interval gate and diagnostic guard were repaired before the
+successful repeat. No broader suite was run.
+
+The actual source-cue pause produced schema2, kept HP/opportunity unchanged,
+survived exact SaveStore disk reopen into newly created actual actor/world objects,
+and resumed once after the original short active interval. Its drained writer
+returned to schema1. A separate real mid-dash crossing kept the unfinished actual
+dash and consumed its opportunity once with live dash invulnerability. Native
+source/outline/fill hiding and synchronous clear/lost lease canceled before HP
+damage with original cooldown. Two-Hero hurt/hit pauses preserved the consumed
+prefix and remaining path; a second pause during the first resumed tick retained
+both contiguous segments at the exact new actor/scheduler endpoint and quietly
+restored them. Copied one-bit clocks/endpoints/joins and malformed pending schemas
+rejected without mutation.
+
+These shared scripted checks do not accept authored A2-L2 placement or establish
+portrait/human input evidence.
