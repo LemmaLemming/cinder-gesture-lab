@@ -2,7 +2,7 @@
 
 Updated 9 October 2026. **L1/L2 are accepted. L3 five selected Standard routes pass, first-checkpoint fatal lifecycle375/0 and genuinely earned boss lifecycle252/0 pass. Current SmokeVisual5 road88/staged onset55 and native Cargo570/23 portraits establish their scoped current presentation evidence. Heavy Assisted/Challenge both pass495/0; shared27 adoption/affected lifecycle and HUD number correction remain pending. Five later productions are unstarted.** [Progress](PROGRESS.md), [L3 design](levels/A2-L3.md) and [evidence](../../../docs/acts/act2/evidence/A2-L3/index.json) preserve exact results and first failures. Six Act2 levels remain; no human/mobile decision gate.
 
-Current consumed baseline `campaign-shared-26`, publicationc0816fb9ed60caaac36e5e1320ab95d42589e0b8, preserving71b1945da655cb637f27794eaf52fcfd196afccc from owned7d78c77351a1223d4f5097e92038d5ac6d8d1df8. All574 tracked owned hashes remained identical; ACK93cd2f4e. Source/evidence milestone373a35f40884c4259b9af36606829d959d7eec42 preserves the completed scopes. Published shared27 adoption and affected lifecycle check follow the in-flight frozen routes; no L3 HANDOFF yet.
+Current consumed `campaign-shared-27`, publication2ffae5a048e8b415bcc495632439fa7a5570886d, preserving mergea2d5bdc9120f381f11833af4e1f2fb86a0658125 from owned4eff1191cec6c9067ec0e789e997d82b825e5695; all852 tracked owned SHA256 identical and both ancestries verified. ACK7d293d50-e660-4d72-9ff9-7b59d0b7bcf6 sent. The directly affected first-checkpoint/fatal lifecycle is running with76 frozen sources; original full-route/native/B02 evidence remains attributed to shared25/26. Shared HUD correction remains root-owned. No L3 HANDOFF yet.
 
 ## Ownership and consumed baseline
 
@@ -162,3 +162,15 @@ Published shared27 2ffae5a048e8b415bcc495632439fa7a5570886d adds the seven-line 
 Heavy Assisted and Challenge both complete the actual full L3 route with **495 checks, zero failures, zero script errors and exit0**. The serial wrapper53670 has completed all six queued selected runs. Together with original Heavy503 and native586, all five selected Standard loadouts and both other profiles are closed at their exact original source baseline. Current Cargo native570/23 is separately reviewed. No production controls, HP, timing, optional-source rule, equipment data or pickups changed. All original failures remain frozen.
 
 Next preserve-adopt published shared27, verify all owned tracked hashes and actual ancestry/ACK, then run only the directly affected existing first-checkpoint/fatal lifecycle. B02 original-artifact252 remains shared26 evidence; its current-byte Shell provenance guard will correctly refuse changed Shell bytes, so no blind rerun or original artifact rewrite. The common commit-barrier behavior is the new lifecycle scope. HUD request has been acknowledged by integration RESPONSE599def9b-ea18-459e-9237-567705247d7e; root owns narrow display fix/test. No further human or mobile decision applies.
+
+
+## Shared27 preserving adoption — actual
+
+Exact published2ffae5a adopted preservinga2d5bdc from owned4eff119. All852 tracked owned SHA256 stayed identical; both publication and owned ancestry verified. ACK7d293d50 sent, receipt shared27-adoption.json. Only relevant seven-line shared Shell quiet pause continuation changes common commit-barrier ordering; unchanged Player/Game/Scheduler/SmokeBank/Lane/cue/gear and schemas preserve the original scoped combat/art/stat evidence. Existing unchanged first-checkpoint/fatal lifecycle is running with76 frozen source copies. No new L3 production code, B02 artifact rewrite, other-act/accepted-level/art/shared broad suite, human or mobile gate.
+
+
+## Shared27 affected lifecycle closed
+
+The unchanged first-checkpoint/fatal/GUI Continue/Retry fixture passes **375 checks, zero failures, zero script errors, dev.py engine exit0** at preservinga2d5bdc/shared27, with76 original frozen sources. It establishes the changed common pause commit barrier without repeating combat/art/accepted levels or the original B02 artifact. A collector-only regex expected the wrong final summary label and reported null counts; its first result and diagnosis are preserved. Corrected metadata reads the exact original375/0 log, with no fixture change or engine rerun.
+
+Scoped review confirms the optional side Tender is not a completion prerequisite; an alive source is hidden/cancelled at clear and completion waits quiet banks. The existing selected full routes clear all7 for coverage, so a distinct required-path fixture is being added to execute the six-required-defeat branch while retaining Tender30HP. This addresses that concrete untested player decision, not a repeat matrix or broadened audit. Shared HUD correction remains root-owned per599def9b. Final handoff follows this branch and dependency closure.

@@ -1,0 +1,10 @@
+{
+  "classification": "Evidence collector label mismatch; no gameplay/script/resource failure.",
+  "original_regex": "Ruined House .*smoke: (\\d+) checks, (\\d+) failures",
+  "actual_final_line": "L3 first-checkpoint lifecycle smoke: 375 checks, 0 failures;",
+  "corrected_regex": "L3 first-checkpoint lifecycle smoke: (\\d+) checks, (\\d+) failures;",
+  "original_engine_exit_code": 0,
+  "original_collector_wrapper_exit_code": 1,
+  "correction": "Reparse the original exact raw log, preserving first collector result unchanged; no engine repetition or fixture change.",
+  "scope": "Original source receipt, all76 frozen bytes and raw/wrapper logs remain unchanged."
+}
