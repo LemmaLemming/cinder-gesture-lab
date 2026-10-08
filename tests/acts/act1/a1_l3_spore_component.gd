@@ -203,6 +203,23 @@ func _spore_framing(label: String) -> bool:
 	return _framing(label)
 
 
+func _capture(stage: String) -> bool:
+	if not portrait: return not aborted and not finishing
+	# Presentation-only evidence: keep the actual simulation barrier, HUD status
+	# and camera intact while removing the modal that otherwise hides the poses.
+	var unit: Dictionary = level.call("component_unit_state")
+	var hud: GameHUD = game.get("hud") as GameHUD
+	if not _require(paused and not unit.is_empty() and is_instance_valid(hud) and _resume_button(hud) != null, stage + " actual public Pause is ready before unobstructed paused capture"): return false
+	var wire: String = Exact.stringify(unit)
+	var count: int = pair_events
+	hud.hide_overlay()
+	var accepted: bool = await super._capture(stage)
+	hud.show_pause()
+	if not accepted: return false
+	shots.back()["capture_overlay"] = "public HUD overlay hidden only for paused renderer; restored before GUI Resume"
+	return _require(paused and Exact.stringify(level.call("component_unit_state")) == wire and pair_events == count and _resume_button(hud) != null, stage + " renderer changes no complete native unit/clock/event and restores the public Pause menu")
+
+
 func _finish() -> void:
 	if finishing: return
 	finishing = true
