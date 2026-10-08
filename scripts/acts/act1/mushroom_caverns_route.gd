@@ -500,9 +500,21 @@ func _bounded_union(points: Array) -> Array:
 	if points.is_empty(): return []
 	for point: Variant in points:
 		if not point is Vector3 or not point.is_finite(): return [Vector3.INF]
-	var bounds := AABB(points[0], Vector3.ZERO)
-	for point: Vector3 in points: bounds = bounds.expand(point)
-	return _box_points(bounds, Transform3D.IDENTITY)
+	# A world-axis box mixes unrelated maximum height/depth corners and can
+	# inflate the fixed camera's projected bounds. Enclose every original corner
+	# in the ACTUAL camera basis instead; the camera and world remain untouched.
+	var raw: Variant = shared_shell.get("camera") if is_instance_valid(shared_shell) else null
+	if not is_instance_valid(raw) or not raw is Camera3D: return [Vector3.INF]
+	var actual_camera: Camera3D = raw
+	var basis: Basis = actual_camera.global_basis
+	if not basis.is_finite() or absf(basis.determinant() - 1.0) > 0.00001: return [Vector3.INF]
+	var inverse: Basis = basis.inverse()
+	var bounds := AABB(inverse * points[0], Vector3.ZERO)
+	for point: Vector3 in points: bounds = bounds.expand(inverse * point)
+	# Outward presentation reserve covers float32 roundtrip; it never relaxes
+	# protected containment or supplies a body/landing/Route permission.
+	bounds = bounds.grow(0.0001)
+	return _box_points(bounds, Transform3D(basis, Vector3.ZERO))
 
 
 func _room_genuinely_clear() -> bool:
