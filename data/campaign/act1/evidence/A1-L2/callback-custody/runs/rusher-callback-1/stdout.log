@@ -1,0 +1,42 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+CALLBACK NATIVE INTERVAL pause [{ "from": (0.699893, 0.000156, 0.0455), "to": (0.699893, 0.000156, -0.0245), "start_s": 1.85, "end_s": 1.86666666666666 }] active=1.855..2.255
+ERROR: deferred held pause causes no HP damage, hit callback or consumed hero opportunity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act1/a1_l2_rusher_callback.gd:283)
+       [1] _test_pause_restore (res://tests/acts/act1/a1_l2_rusher_callback.gd:147)
+ERROR: fresh exact paired restore retains undamaged resources and the original pending opportunity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act1/a1_l2_rusher_callback.gd:283)
+       [1] _test_pause_restore (res://tests/acts/act1/a1_l2_rusher_callback.gd:169)
+ERROR: public resume delivers the saved swept opportunity once although the actual source has moved past the Hero
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act1/a1_l2_rusher_callback.gd:283)
+       [1] _test_pause_restore (res://tests/acts/act1/a1_l2_rusher_callback.gd:173)
+       [2] _ticks (res://tests/acts/act1/a1_l2_rusher_callback.gd:270)
+ERROR: remaining real activation/recovery cannot duplicate the restored hit
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act1/a1_l2_rusher_callback.gd:283)
+       [1] _test_pause_restore (res://tests/acts/act1/a1_l2_rusher_callback.gd:177)
+       [2] _ticks (res://tests/acts/act1/a1_l2_rusher_callback.gd:270)
+CALLBACK NATIVE INTERVAL cue-hide [{ "from": (0.699893, 0.000156, 0.0455), "to": (0.699893, 0.000156, -0.0245), "start_s": 1.85, "end_s": 1.86666666666666 }] active=1.855..2.255
+ERROR: cue-hide active observer prevents same-tick HP damage and consumed opportunity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act1/a1_l2_rusher_callback.gd:283)
+       [1] _test_unavailable (res://tests/acts/act1/a1_l2_rusher_callback.gd:188)
+       [2] _ticks (res://tests/acts/act1/a1_l2_rusher_callback.gd:270)
+CALLBACK NATIVE INTERVAL cue-clear [{ "from": (0.699893, 0.000156, 0.0455), "to": (0.699893, 0.000156, -0.0245), "start_s": 1.85, "end_s": 1.86666666666666 }] active=1.855..2.255
+ERROR: cue-clear active observer prevents same-tick HP damage and consumed opportunity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act1/a1_l2_rusher_callback.gd:283)
+       [1] _test_unavailable (res://tests/acts/act1/a1_l2_rusher_callback.gd:188)
+       [2] _ticks (res://tests/acts/act1/a1_l2_rusher_callback.gd:270)
+Act1 L2 C30 callback fixture: 51 checks, 6 failures
+WARNING: 2 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)

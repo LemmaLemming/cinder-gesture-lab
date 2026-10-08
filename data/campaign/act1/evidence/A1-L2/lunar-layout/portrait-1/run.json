@@ -1,0 +1,65 @@
+{
+  "argv": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--path",
+    ".",
+    "--resolution",
+    "540x1170",
+    "--script",
+    "tests/acts/act1/a1_l2_layout_greybox.gd",
+    "--log-file",
+    "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l2-lunar-layout-engine-portrait-1.log",
+    "--",
+    "--portrait"
+  ],
+  "head": "28a8f160b7401336756371eba5848bab5df1ea38",
+  "api_revision": "campaign-shared-20",
+  "scope": "Six actual lunar scenery portraits and both physical routes via32 actual recognizer swipes, neutral kit; no combat/full-L2/save/progression acceptance.",
+  "started_at": "2026-10-08T15:16:38.813798+00:00",
+  "sources": {
+    "scripts/acts/act1/crater_gardens_layout.gd": {
+      "sha256": "a5b45c77bf3fbfa825d9422aa4387ac277028044c911634ddaed82f279b13b5a",
+      "copy": ".cinder/a1-l2-lunar-layout-portrait-1-source/scripts__acts__act1__crater_gardens_layout.gd.txt"
+    },
+    "scripts/acts/act1/lunar_scenery.gd": {
+      "sha256": "f6d77df7344749adf5a665c81d9cb566f34007603adbd4d726eee44f06d26e07",
+      "copy": ".cinder/a1-l2-lunar-layout-portrait-1-source/scripts__acts__act1__lunar_scenery.gd.txt"
+    },
+    "scenes/acts/act1/a1_l2_layout_greybox.tscn": {
+      "sha256": "6851c3be96df8efb019698656fe1b3b05cb2932424bc43e4ee0c331e4c694531",
+      "copy": ".cinder/a1-l2-lunar-layout-portrait-1-source/scenes__acts__act1__a1_l2_layout_greybox.tscn.txt"
+    },
+    "tests/acts/act1/a1_l2_layout_greybox.gd": {
+      "sha256": "19a63346980d4233eded333c35c638e3b8e5a8c9cd893a00219a2b59a897b9e4",
+      "copy": ".cinder/a1-l2-lunar-layout-portrait-1-source/tests__acts__act1__a1_l2_layout_greybox.gd.txt"
+    },
+    "assets/acts/act1/lunar/environment/environment_manifest.json": {
+      "sha256": "c6887a4316e01e6a9f97393996d3432e9721505413e49b773f4ea1335fea8c42",
+      "copy": ".cinder/a1-l2-lunar-layout-portrait-1-source/assets__acts__act1__lunar__environment__environment_manifest.json.txt"
+    }
+  },
+  "exit_code": 0,
+  "finished_at": "2026-10-08T15:16:51.499677+00:00",
+  "portrait_review": {
+    "owner_reviewed_originals": [
+      "landing",
+      "split",
+      "rock-approach",
+      "open-approach",
+      "camp",
+      "grotto"
+    ],
+    "functional_checks": 47,
+    "failures": 0,
+    "native_focus": false,
+    "actual_capture_dir": ".cinder/captures/l2-lunar-layout-565810",
+    "issues": [
+      "Most landed capsule silhouette lies outside left portrait edge.",
+      "Camp crescent performer lies outside right view; post-swipe follow lag also affects static portrait composition.",
+      "Continuous low divider colliders render as bare dark rectangular slabs; painting needs authored theatrical surface."
+    ],
+    "fix_scope": "Cosmetic placement/scale and static test-camera settling only, then native painted scenery; no collision, motion, input, profile, timers or progression changes."
+  }
+}

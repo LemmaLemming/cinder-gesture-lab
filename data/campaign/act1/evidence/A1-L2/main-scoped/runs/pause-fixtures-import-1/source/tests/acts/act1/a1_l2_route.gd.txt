@@ -1,0 +1,581 @@
+extends SceneTree
+## Lean actual Main route: NO TELEPORTS, direct actor actions, phase/HP writes,
+## forced progress or private clock/controller calls. All travel/combat uses the
+## production touch recognizer. Setup equips existing gear at the paused entry.
+## Ordinary Game preview has no difficulty preference API: standard only until
+## a real campaign preference fixture supplies that public fresh-boundary seam.
+
+const MainScene = preload("res://scenes/main.tscn")
+const Layout = preload("res://scripts/acts/act1/crater_gardens_layout.gd")
+const Sweep = preload("res://scripts/combat/body_sweep.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Motion = preload("res://scripts/combat/lunge_motion.gd")
+const LevelPath: String = "res://scenes/acts/act1/a1_l2.tscn"
+const PortraitSize: Vector2i = Vector2i(540, 1170)
+const Kits: Dictionary = {
+	"neutral": ["CLOTH-J0", "CLOTH-P0", "CLOTH-S0", "WEAPON-01"],
+	"slowest-longest-shortest": ["CLOTH-J1", "CLOTH-P2", "CLOTH-S2", "WEAPON-03"],
+	"slowest-primary": ["CLOTH-J1", "CLOTH-P1", "CLOTH-S2", "WEAPON-03"],
+	"fastest-short-dash": ["CLOTH-J0", "CLOTH-P0", "CLOTH-S1", "WEAPON-02"],
+}
+const Progress: Array[String] = ["landing-clearing", "first-selenite", "approaches-rejoined", "celestial-camp", "crater-gardens-clear", "open-grotto"]
+const PositionTolerance: float = 0.035
+var game: Node
+var level: CinderLevel
+var hero: CinderPlayer
+var camera: Camera3D
+var checks: int = 0
+var failures: int = 0
+var finished: bool = false
+var aborted: bool = false
+var route: String = "open"
+var kit: String = "neutral"
+var profile: String = "standard"
+var graphical: bool = false
+var scripted_portrait: bool = false
+var compound_pause: bool = false
+var dash_length: float = 0.0
+var initial_hp: float = 0.0
+var swipes: int = 0
+var primaries: int = 0
+var last_primary_ms: int = -1000
+var events: Array[String] = []
+var observations: Array[Dictionary] = []
+var world_records: Array[Dictionary] = []
+var phases: Dictionary = {}
+var native_phase_observations: Dictionary = {}
+var hits: Array[Dictionary] = []
+var shots: Array[Dictionary] = []
+var pause_evidence: Dictionary = {}
+var capture_dir: String = ""
+var native_admissions: Dictionary = {}
+var admission_cycles: Dictionary = {}
+var used_proofs: Array[Dictionary] = []
+
+
+func _initialize() -> void:
+	process_frame.connect(_observe_admissions)
+	create_timer(90.0, true).timeout.connect(func() -> void:
+		if not finished:
+			_require(false, "whole actual route finishes within90 seconds"))
+	_run.call_deferred()
+
+
+func _run() -> void:
+	if not _arguments(): return
+	root.size = PortraitSize
+	if not await _start_game(): return
+	level = game.get("active_level") as CinderLevel
+	hero = game.get("player") as CinderPlayer
+	camera = game.get("camera") as Camera3D
+	if not _require(level != null and hero != null and camera != null and level.scene_file_path == LevelPath and level.hero == hero and level.contract_error().is_empty(), "actual shared Game enters Main L2 with its single Player/camera"): return
+	if not _require(hero.global_position == level.spawn_position() and _beat() == 0, "route begins at the genuine authored spawn with no staged position/progress"): return
+	level.checkpoint_requested.connect(func(_id: String, id: String, _kind: String) -> void: events.append(id))
+	level.completion_requested.connect(func(_id: String, id: String) -> void: events.append(id))
+	level.contact_exit_requested.connect(func(_id: String, id: String) -> void: events.append(id))
+	level.connect("native_admission_published", _notice_native_admission)
+	game.connect("input_observed", func(record: Dictionary) -> void: observations.append(record.duplicate(true)))
+	hero.world_action_executed.connect(func(record: Dictionary) -> void: world_records.append(record.duplicate(true)))
+	for id: String in (level.get("sources") as Dictionary):
+		var observed_id: String = id
+		var source: Act1RushSelenite = (level.get("sources") as Dictionary)[id]
+		source.state_changed.connect(func(state: Dictionary) -> void: _notice_phase(observed_id, state))
+		source.hit_resolved.connect(func(actor_id: String, cycle: int, result: Dictionary) -> void: hits.append({"source": observed_id, "actor": actor_id, "cycle": cycle, "result": result.duplicate(true)}))
+	for id: String in (level.get("circles") as Dictionary):
+		var observed_id: String = id
+		var impact: CinderLaneMechanism = (level.get("circles") as Dictionary)[id]
+		impact.state_changed.connect(func(state: Dictionary) -> void: _notice_phase(observed_id, state))
+		impact.hit_resolved.connect(func(actor_id: String, cycle: int, result: Dictionary) -> void: hits.append({"source": observed_id, "actor": actor_id, "cycle": cycle, "result": result.duplicate(true)}))
+	paused = true
+	for id: String in Kits[kit]:
+		if not _require(hero.equip_item(id), "existing kit equips through the public paused safe boundary: " + id): return
+	if not _require(hero.equipment.acceptance_errors().is_empty() and get_nodes_in_group("enemies").is_empty(), "initial kit has valid canonical stats and every future C30 remains dormant"): return
+	dash_length = float(hero.equipment.resolved_stats().dash_distance)
+	initial_hp = hero.hp
+	if not _require(dash_length > 0.0 and (level.get("scheduler") as CinderThreatScheduler).encounter_profile().id == profile, "real initial encounter uses the selected supported profile and full resolved dash"): return
+	if graphical:
+		capture_dir = "res://captures/act1/l2-full-route/%s-%d-%d-%s-%s" % ["scripted" if scripted_portrait else "focused", int(Time.get_unix_time_from_system()), Time.get_ticks_usec(), route, kit]
+		if not _require(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(capture_dir)) == OK, "actual portrait creates a fresh evidence directory"): return
+		if not _require(scripted_portrait or _native_focus(), "graphical mode observes actual native focus; explicit scripted mode permits observed unfocused input"): return
+	if not await _capture("spawn"): return
+	# The single initial public resume leaves normal focus-out notifications intact.
+	game.call("resume_lab")
+	var landing: CinderLaneMechanism = (level.get("circles") as Dictionary)["landing-impact"]
+	if not await _wait(func() -> bool: return landing.state().status == "running", "actual native landing warning", 500): return
+	var landing_answer: Dictionary = level.get("last_circle_admission")
+	if not _require(landing_answer.get("accepted", false) and not landing_answer.proof.uses_blast and not landing_answer.proof.uses_invulnerability, "landing supplies a real ordinary-response proof"): return
+	if not await _capture("landing-warning"): return
+	if not await _swipe(landing_answer.proof.landing - hero.global_position, "landing native escape"): return
+	if not await _capture("landing-safe-side"): return
+	if not await _wait(func() -> bool: return _beat() == 1, "actual landing dangerous interval resolves", 500): return
+	if not await _move_to(Vector3(0, 0, 11.5), "solo broad approach"): return
+	if not await _fight("solo", 2, false): return
+	var side: float = -1.0 if route == "rock" else 1.0
+	if not await _move_to(Vector3(side * 2.8, 0, 6), "fork above physical divider"): return
+	if not await _move_to(Vector3(side * 2.8, 0, 2.6), "chosen branch broad approach"): return
+	if not _require(level.get("chosen_route") == route, "actual swipes select exactly the requested branch"): return
+	var unchosen: Act1RushSelenite = (level.get("sources") as Dictionary)["open" if route == "rock" else "rock"]
+	if not _require(unchosen.dormant and not unchosen.visible and not unchosen.is_in_group("enemies"), "unchosen retained actor never becomes a target or hidden hazard"): return
+	if not await _fight(route, 3, compound_pause): return
+	if not await _move_to(Vector3(side * 2.8, 0, -5.8), "chosen approach rejoins below divider"): return
+	if not await _move_to(Layout.CAMP_CENTRE, "quiet celestial camp"): return
+	if not await _wait(func() -> bool: return _beat() == 4, "physical quiet camp emits its real checkpoint", 100): return
+	if not await _capture("celestial-camp"): return
+	if not compound_pause and not await _public_pause("celestial-camp"): return
+	if not await _move_to(Vector3(0, 0, -12.8), "grotto finale broad approach"): return
+	if not await _fight("finale", 5, false): return
+	if not _require(level.is_completed() and (level.get("completed_beats") as Array).size() == 5, "three actual retained C30 defeats complete all five beats"): return
+	if not await _capture("grotto-open"): return
+	if _route_has_contact():
+		if not await _move_to(Layout.GROTTO_CONTACT, "actual open grotto contact"): return
+		if not await _wait(func() -> bool: return events.has("open-grotto"), "physical grotto contact emits the distinct exit", 100): return
+		if not _require((level.get("grotto") as Area3D).overlaps_body(hero), "final real swipe route physically overlaps the authored contact area"): return
+		if not await _capture("grotto-contact"): return
+	if not await _extra_completion_checks(): return
+	paused = true
+	await process_frame
+	var final: Dictionary = level.snapshot_state()
+	var expected_contact: String = "open-grotto" if _route_has_contact() else ""
+	var expected_progress: Array = Progress if _route_has_contact() else Progress.slice(0, 5)
+	_require(not final.is_empty() and final.progress.contact_exit_id == expected_contact and events == expected_progress, "actual aggregate records the requested checkpoint/completion/contact scope: " + level.last_snapshot_error)
+	_require(hero.hp == initial_hp and hits.is_empty(), "executed native-proof route preserves its actual initial HP with no source hit events")
+	var records: Array[Dictionary] = world_records
+	var recorded_dash: int = 0
+	var recorded_primary: int = 0
+	for record: Dictionary in records:
+		if record.kind == "dash": recorded_dash += 1
+		elif record.kind == "primary": recorded_primary += 1
+		else: _require(false, "route records no blast or alternate player action")
+	_require(recorded_dash == swipes and recorded_primary == primaries and observations.size() == swipes + primaries, "every dispatched gesture maps to its actual executed world record and public observation")
+	_finish()
+
+
+func _start_game() -> bool:
+	game = MainScene.instantiate()
+	game.set("level_scene_path", LevelPath)
+	root.add_child(game)
+	return true
+
+
+func _profile_supported() -> bool:
+	return profile == "standard"
+
+
+func _route_has_contact() -> bool:
+	return true
+
+
+func _extra_completion_checks() -> bool:
+	return true
+
+
+func _resume_surface() -> Node:
+	return game.get("hud") as Node
+
+
+func _pause_game() -> void:
+	game.call("open_bench")
+
+
+func _cleanup_fixture() -> void:
+	pass
+
+
+func _fight(id: String, next_beat: int, pause_warning: bool) -> bool:
+	var actor: Act1RushSelenite = (level.get("sources") as Dictionary)[id]
+	if not await _wait(func() -> bool: return actor.state().status == "running" and actor.state().phase == "warning", id + " actual supported warning", 500): return false
+	var answer: Dictionary = (level.get("last_admission") as Dictionary).duplicate(true)
+	if not _require(answer.get("accepted", false) and answer.reservation.source_instance_id == actor.get_instance_id() and not answer.proof.uses_blast and not answer.proof.uses_invulnerability, id + " actual physical source owns its ordinary-primary native proof"): return false
+	var response: Dictionary = answer.proof.duplicate(true)
+	if id != "solo":
+		var first: CinderLaneMechanism = (level.get("circles") as Dictionary)[id + "-impact" if id != "finale" else "finale-impact-a"]
+		if not await _wait(func() -> bool: return first.state().status == "running" and native_admissions.has(first.state().reservation_id), id + " real companion circle and its published native proof", 200): return false
+		if not _require(first.state().opening_position == actor.state().opening_position, id + " companion uses the actual committed stopped target"): return false
+		var companion: Dictionary = native_admissions[first.state().reservation_id]
+		if not _require(companion.reservation.source_instance_id == first.get_instance_id() and not companion.proof.uses_blast and not companion.proof.uses_invulnerability and float(companion.proof.primary_time_s) >= float(answer.reservation.active_until_s) and float(companion.proof.response_complete_s) < float(answer.reservation.recovery_until_s), id + " actual compound proof retains the living stopped-target recovery"): return false
+		response = companion.proof.duplicate(true)
+	_record_proof(id, response, String(answer.reservation_id))
+	if not await _capture(id + "-warning"): return false
+	if pause_warning and not await _public_pause("branch-warning"): return false
+	if not await _swipe(response.landing - hero.global_position, id + " native safe landing"): return false
+	if not await _capture(id + "-safe-side"): return false
+	# Voluntary fixture observation from the real safe landing, never a gameplay
+	# gate or phase/clock write. Capture the actual committed source motion.
+	# Assisted's native one-threat budget admits a companion after its host's
+	# active interval. Keep the actual accepted cycle's earlier signal evidence;
+	# waiting for another cycle would discard this living supported response.
+	for required_phase: String in ["lock", "active", "recovery"]:
+		if not await _native_phase(actor, id, String(answer.reservation_id), int(admission_cycles[answer.reservation_id]), required_phase): return false
+		if actor.state().phase == required_phase:
+			if not await _capture(id + "-" + required_phase): return false
+	var primary_deadline: float = float(response.primary_time_s)
+	if id != "solo":
+		var circle_ids: Array = [id + "-impact"] if id != "finale" else ["finale-impact-a", "finale-impact-b"]
+		var resolved: Callable = func() -> bool:
+			for circle_id: String in circle_ids:
+				var current: Dictionary = ((level.get("circles") as Dictionary)[circle_id] as CinderLaneMechanism).state()
+				if int(current.cycle) == 0 or current.status not in ["running", "complete"] or current.phase not in ["recovery", "clear"]: return false
+			return actor.state().status == "running" and actor.state().phase == "recovery"
+		if not await _wait(resolved, id + " every actual companion dangerous interval resolves with its host alive", 500): return false
+		for circle_id: String in circle_ids:
+			var current: Dictionary = ((level.get("circles") as Dictionary)[circle_id] as CinderLaneMechanism).state()
+			var published: Dictionary = _admission_for_source((level.get("circles") as Dictionary)[circle_id] as CinderLaneMechanism, int(current.cycle))
+			var live_host: Dictionary = actor.state()
+			var accepted_opening: bool = not published.is_empty() and published.reservation.opening_position == current.opening_position and (current.opening_position == live_host.adapter.planned_endpoint or current.opening_position == live_host.opening_position)
+			var physical_opening: bool = live_host.adapter.finished and live_host.opening_position == actor.global_position and actor.global_position.distance_to(live_host.adapter.planned_endpoint) <= Motion.ENDPOINT_TOLERANCE
+			var actual_reach: bool = not published.is_empty() and (published.proof.attack_position as Vector3).distance_to(actor.global_position) <= float(hero.equipment.resolved_stats().primary_range)
+			if not accepted_opening or not physical_opening or not actual_reach or float(published.proof.response_complete_s) >= float(answer.reservation.recovery_until_s):
+				var diagnostic: Dictionary = {"source": id, "circle_id": circle_id, "circle_cycle": current.cycle, "circle_status": current.status, "circle_phase": current.phase, "published_found": not published.is_empty(), "current_host_opening": Codec.vector3(actor.state().opening_position), "original_host_opening": Codec.vector3(answer.reservation.opening_position), "current_circle_opening": Codec.vector3(current.opening_position), "original_host_recovery_until_s": answer.reservation.recovery_until_s, "actual_clock_s": (level.get("scheduler") as CinderThreatScheduler).get_clock()}
+				if not published.is_empty():
+					diagnostic["published_circle_opening"] = Codec.vector3(published.reservation.opening_position)
+					diagnostic["published_response_complete_s"] = published.proof.response_complete_s
+					diagnostic["published_attack_position"] = Codec.vector3(published.proof.attack_position)
+					diagnostic["actual_target_distance"] = (published.proof.attack_position as Vector3).distance_to(actor.global_position)
+					diagnostic["ordinary_primary_range"] = hero.equipment.resolved_stats().primary_range
+				print("ROUTE COMPANION CUSTODY DIAGNOSTIC ", Exact.stringify(diagnostic))
+			# A circle retains its exact accepted opening; the native scheduler
+			# exposes the later actual stopped endpoint within its existing bound.
+			# Neither copied identity nor time gets a numerical tolerance.
+			if not _require(accepted_opening and physical_opening and actual_reach and live_host.reservation_id == answer.reservation_id and live_host.recovery_until_s == answer.reservation.recovery_until_s and float(published.proof.response_complete_s) < float(answer.reservation.recovery_until_s), id + " completed companion retains exact accepted custody and reaches the actual living stopped body"): return false
+			primary_deadline = maxf(primary_deadline, float(published.proof.primary_time_s))
+		if not await _capture(id + "-compound-safe-opening"): return false
+	if not await _wait(func() -> bool: return (level.get("scheduler") as CinderThreatScheduler).get_clock() >= primary_deadline, id + " native ordinary-primary proof deadline", 300): return false
+	var returning: Vector3 = response.attack_position - hero.global_position
+	returning.y = 0.0
+	if returning.length() > PositionTolerance:
+		if not _require(absf(returning.length() - dash_length) <= PositionTolerance, id + " native return remains one full ordinary dash"): return false
+		if not await _swipe(returning, id + " native stopped-body return"): return false
+	if not await _capture(id + "-primary-opening"): return false
+	for attack: int in range(3):
+		if actor.dead: break
+		if not await _primary(actor, id): return false
+	if not await _wait(func() -> bool: return actor.dead and _beat() == next_beat, id + " actual primary defeat advances its authored beat", 100): return false
+	if not _require(actor.hp == 0.0 and not actor.is_in_group("enemies"), id + " dead retained body leaves the shared enemy target group"): return false
+	if id != "solo":
+		for circle_id: String in ([id + "-impact"] if id != "finale" else ["finale-impact-a", "finale-impact-b"]):
+			if not _require(((level.get("circles") as Dictionary)[circle_id] as CinderLaneMechanism).state().status != "running", id + " ordinary hit cancels every associated impact"): return false
+	return await _capture(id + "-clear")
+
+
+func _move_to(goal: Vector3, label: String) -> bool:
+	for step: int in range(8):
+		if aborted or finished: return false
+		var start: Vector3 = hero.global_position
+		var offset: Vector3 = goal - start
+		offset.y = 0.0
+		var distance: float = offset.length()
+		if distance <= PositionTolerance: return true
+		if distance > dash_length * 2.0 - 0.001 or absf(distance - dash_length) <= PositionTolerance:
+			if not _require(_segment_safe(start, start + offset.normalized() * dash_length), label + " direct full step clears actual static scenery"): return false
+			if not await _swipe(offset, label + " step%d" % step): return false
+			continue
+		# Two equal native full-dash edges reach a quiet waypoint. Real public body
+		# sweep only chooses a clear plan; executed world records prove the travel.
+		var direction: Vector3 = offset.normalized()
+		var perpendicular := Vector3(-direction.z, 0, direction.x)
+		var height: float = sqrt(maxf(0.0, dash_length * dash_length - distance * distance * 0.25))
+		var midpoint: Vector3 = Vector3.INF
+		for candidate: Vector3 in [start + offset * 0.5 + perpendicular * height, start + offset * 0.5 - perpendicular * height]:
+			if _segment_safe(start, candidate) and _segment_safe(candidate, Vector3(goal.x, start.y, goal.z)):
+				if not midpoint.is_finite() or absf(candidate.x) < absf(midpoint.x): midpoint = candidate
+		if not _require(midpoint.is_finite(), label + " has an actual collision-clear two-dash plan"): return false
+		if not await _swipe(midpoint - hero.global_position, label + " outward"): return false
+		if not _require(absf(_planar_distance(hero.global_position, goal) - dash_length) <= PositionTolerance, label + " measured first landing leaves one native full dash"): return false
+		if not await _swipe(goal - hero.global_position, label + " arrival"): return false
+		return _require(_planar_distance(hero.global_position, goal) <= PositionTolerance, label + " reaches its waypoint through actual swipes")
+	return _require(false, label + " exceeds eight finite waypoint swipes")
+
+
+func _segment_safe(start: Vector3, finish: Vector3) -> bool:
+	var inset: Rect2 = Layout.FLOOR_RECT.grow(-0.34)
+	if not inset.has_point(Vector2(start.x, start.z)) or not inset.has_point(Vector2(finish.x, finish.z)): return false
+	var floor: Dictionary = (level.call("scheduler_bindings") as Dictionary).floors["crater-floor"]
+	var measured: Dictionary = Sweep.sweep(hero, Transform3D(Basis.IDENTITY, start), finish - start, [floor])
+	return not measured.has("error") and not measured.get("collided", true) and (measured.end as Vector3).distance_to(finish) <= PositionTolerance
+
+
+func _swipe(direction: Vector3, label: String) -> bool:
+	if not await _ready_for_input(label): return false
+	if not _require(swipes < 60, "whole route stays below60 finite real swipes"): return false
+	var horizontal := Vector3(direction.x, 0, direction.z).normalized()
+	var delta: Vector2 = _screen_delta(horizontal) * 180.0
+	var finish := Vector2(270, 650)
+	if not _require(_input_safe(finish - delta) and _input_safe(finish) and (game.call("screen_to_direction", delta) as Vector3).dot(horizontal) > 0.9999, label + " uses the real camera basis and safe touch coordinates"): return false
+	var sequence: int = _last_sequence()
+	var before: Dictionary = game.call("get_input_observation_state")
+	var origin: Vector3 = hero.global_position
+	var press := InputEventScreenTouch.new()
+	press.index = 7; press.pressed = true; press.position = finish - delta
+	Input.parse_input_event(press)
+	await process_frame
+	if not _guard_input(): return false
+	var drag := InputEventScreenDrag.new()
+	drag.index = 7; drag.position = finish; drag.relative = delta
+	Input.parse_input_event(drag)
+	await process_frame
+	if not _guard_input(): return false
+	var release := InputEventScreenTouch.new()
+	release.index = 7; release.position = finish
+	Input.parse_input_event(release)
+	await process_frame
+	if not _guard_input(): return false
+	swipes += 1
+	if not await _ready_for_input(label + " native stop"): return false
+	var records: Array[Dictionary] = hero.get_world_action_records(sequence)
+	var observed: Dictionary = game.call("get_input_observation_state")
+	var normalized: Vector2 = finish / Vector2(PortraitSize)
+	return _require(records.size() == 1 and records[0].kind == "dash" and not records[0].collision_shortened and absf(float(records[0].distance) - dash_length) <= PositionTolerance and (records[0].direction as Vector3).dot(horizontal) > 0.9999 and _planar_distance(origin, hero.global_position) > dash_length - PositionTolerance and (records[0].landing as Vector3).distance_to(hero.global_position) <= PositionTolerance and (records[0].path as Array).size() >= 2 and observed.sequence == before.sequence + 1 and observed.last_observation.kind == "swipe_release" and observed.anchor_normalized == normalized and (game.call("get_aim_anchor_normalized") as Vector2) == normalized, label + " executes one full recorded dash and preserves the literal normalized release anchor")
+
+
+func _primary(actor: Act1RushSelenite, label: String) -> bool:
+	if not await _ready_for_input(label + " primary readiness"): return false
+	while Time.get_ticks_msec() - last_primary_ms <= 300:
+		if not _guard_input(): return false
+		await create_timer(0.01, true).timeout
+	var offset: Vector3 = actor.global_position - hero.global_position
+	offset.y = 0.0
+	var direction: Vector3 = offset.normalized()
+	var anchor: Vector2 = game.call("get_aim_anchor")
+	var tap: Vector2 = anchor + _screen_delta(direction) * 160.0
+	if not _require(actor.is_in_group("enemies") and offset.length() <= float(hero.equipment.resolved_stats().primary_range) and _input_safe(tap) and (game.call("aim_direction", tap) as Vector3).dot(direction) > 0.9999, label + " primary aims exactly from the last swipe release at the actual reachable stopped body"): return false
+	var hp_before: float = actor.hp
+	var sequence: int = _last_sequence()
+	var press := InputEventScreenTouch.new()
+	press.index = 7; press.pressed = true; press.position = tap
+	Input.parse_input_event(press)
+	await process_frame
+	if not _guard_input(): return false
+	var release := InputEventScreenTouch.new()
+	release.index = 7; release.position = tap
+	# Only ammo is staged immediately before the real ordinary primary, as in L1.
+	# Passive reload, actor clocks, HP, position and every control remain untouched.
+	hero.shells = 0
+	Input.parse_input_event(release)
+	await process_frame
+	if not _guard_input(): return false
+	last_primary_ms = Time.get_ticks_msec()
+	primaries += 1
+	var records: Array[Dictionary] = hero.get_world_action_records(sequence)
+	var observed: Dictionary = game.call("get_input_observation_state")
+	return _require(records.size() == 1 and records[0].kind == "primary" and int(records[0].hits) == 1 and actor.hp < hp_before and (records[0].direction as Vector3).dot(direction) > 0.9999 and observed.last_observation.kind == "primary_tap" and observed.last_observation.accepted and observed.last_observation.world_action_sequence == records[0].sequence and (game.call("get_aim_anchor") as Vector2).is_equal_approx(anchor), label + " immediate first tap genuinely hits with zero starting ammo and preserves aim")
+
+
+func _public_pause(scope: String) -> bool:
+	_pause_game()
+	await process_frame
+	if not _require(paused, "public pause reaches the complete native " + scope + " barrier"): return false
+	var pair: Dictionary = {"player": hero.snapshot_state(), "level": level.snapshot_state()}
+	if not _require(not pair.player.is_empty() and not pair.level.is_empty() and level.snapshot_error_with_player(pair.level, pair.player).is_empty(), scope + " prevalidates its complete paired actor/scheduler/consumers"): return false
+	var wire: String = Exact.stringify(pair)
+	var input_before: Dictionary = game.call("get_input_observation_state")
+	var actions_before: Array[Dictionary] = hero.get_world_action_records()
+	await create_timer(0.12, true).timeout
+	if not _require(Exact.stringify({"player": hero.snapshot_state(), "level": level.snapshot_state()}) == wire, "public pause freezes the exact whole " + scope + " without synthetic samples"): return false
+	if not await _capture(scope + "-paused"): return false
+	var button: Button = _resume_button(_resume_surface())
+	if not _require(button != null, "actual shared pause GUI has a visible Resume button"): return false
+	var point: Vector2 = button.get_global_rect().get_center()
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT; press.pressed = true; press.position = point; press.global_position = point
+	Input.parse_input_event(press)
+	await process_frame
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT; release.position = point; release.global_position = point
+	Input.parse_input_event(release)
+	await process_frame
+	if not _require(not paused and game.call("get_input_observation_state") == input_before and Codec.same_values(hero.get_world_action_records(), actions_before), "real GUI Resume is consumed without combat, movement or aim changes"): return false
+	pause_evidence = {"scope": scope, "paired_exact_json": wire, "hold_s": 0.12, "frozen": true, "gui_resume_consumed": true, "native_focus": _native_focus()}
+	return true
+
+
+func _capture(stage: String) -> bool:
+	if not graphical: return not aborted and not finished
+	if not _require(scripted_portrait or _native_focus(), "capture observes the requested real focus policy"): return false
+	await RenderingServer.frame_post_draw
+	if aborted or finished: return false
+	var image: Image = root.get_texture().get_image()
+	var path: String = capture_dir.path_join("%02d-%s.png" % [shots.size() + 1, stage])
+	if not _require(image.get_size() == PortraitSize and image.save_png(path) == OK, "actual540x1170 native renderer saves " + stage): return false
+	shots.append({"stage": stage, "path": ProjectSettings.globalize_path(path), "beat": _beat(), "hero_position": Codec.vector3(hero.global_position), "hp": hero.hp, "paused": paused, "native_focus": _native_focus(), "encounter_state": str(level.call("encounter_state")), "camera_state": str(game.call("get_camera_framing_state"))})
+	return true
+
+
+func _arguments() -> bool:
+	graphical = DisplayServer.get_name() != "headless"
+	for argument: String in OS.get_cmdline_user_args():
+		if argument == "--scripted-portrait": scripted_portrait = true
+		elif argument == "--compound-pause": compound_pause = true
+		elif argument.begins_with("--route="): route = argument.trim_prefix("--route=")
+		elif argument.begins_with("--kit="): kit = argument.trim_prefix("--kit=")
+		elif argument.begins_with("--profile="): profile = argument.trim_prefix("--profile=")
+		elif argument in ["--route", "--kit", "--profile"]: return _require(false, "route options require --name=value")
+		elif argument.begins_with("--capture"): return _require(false, "whole route excludes static capture/automatic resume flags")
+	if not _require(route in ["rock", "open"] and Kits.has(kit) and _profile_supported(), "supported route/kit and public profile boundary are explicit"): return false
+	if not _require(not scripted_portrait or graphical, "scripted portrait requires a real graphical renderer"): return false
+	print("A1-L2 ACTUAL ROUTE: ", route, "; ", kit, "; ", profile, "; native_focus_observed=", _native_focus(), "; no teleports/direct actor commands or focus overrides")
+	return true
+
+
+func _ready_for_input(label: String) -> bool:
+	var ready: Callable = func() -> bool:
+		var state: Dictionary = hero.get_threat_response_state()
+		return state.stable and float(state.dash_cooldown_left_s) == 0.0 and float(state.primary_cooldown_left_s) == 0.0 and float(state.commitment_remaining_s) == 0.0
+	return await _wait(ready, label, 200)
+
+
+func _wait(predicate: Callable, label: String, polls: int) -> bool:
+	for poll: int in range(polls):
+		if not _guard_input(): return false
+		if predicate.call() == true: return true
+		await create_timer(0.01, true).timeout
+	print("ROUTE WAIT DIAGNOSTIC: ", label, "; ", level.call("encounter_state"), "; hero=", hero.global_position, "; response=", hero.get_threat_response_state(), "; camera=", game.call("get_camera_framing_state"))
+	return _require(false, label + " exceeds its finite native observation window")
+
+
+func _guard_input() -> bool:
+	if aborted or finished: return false
+	if not paused and is_instance_valid(hero) and not hero.dead and (not graphical or scripted_portrait or _native_focus()): return true
+	return _require(false, "normal gameplay input requires a live unpaused actor and observed focus policy")
+
+
+func _screen_delta(direction: Vector3) -> Vector2:
+	var right: Vector3 = camera.global_basis.x; right.y = 0.0; right = right.normalized()
+	var down: Vector3 = camera.global_basis.z; down.y = 0.0; down = down.normalized()
+	var determinant: float = right.x * down.z - right.z * down.x
+	if absf(determinant) < 0.001 or not direction.is_finite(): return Vector2.INF
+	return Vector2((direction.x * down.z - direction.z * down.x) / determinant, (right.x * direction.z - right.z * direction.x) / determinant).normalized()
+
+
+func _notice_phase(id: String, state: Dictionary) -> void:
+	var seen: Array = phases.get(id, [])
+	if not seen.has(state.phase): seen.append(state.phase)
+	phases[id] = seen
+	var reservation_id: String = String(state.get("reservation_id", ""))
+	if not reservation_id.is_empty() and state.get("status") == "running":
+		var key: String = "%s/%d/%s/%s" % [id, int(state.cycle), reservation_id, String(state.phase)]
+		if not native_phase_observations.has(key):
+			native_phase_observations[key] = {"source": id, "cycle": int(state.cycle), "reservation_id": reservation_id, "phase": String(state.phase), "clock_s": (level.get("scheduler") as CinderThreatScheduler).get_clock(), "source_position": Codec.vector3(state.source_position)}
+
+
+func _native_phase(actor: Act1RushSelenite, id: String, reservation_id: String, cycle: int, phase: String) -> bool:
+	var key: String = "%s/%d/%s/%s" % [id, cycle, reservation_id, phase]
+	if not native_phase_observations.has(key):
+		if not await _wait(func() -> bool: return actor.state().status == "running" and actor.state().reservation_id == reservation_id and int(actor.state().cycle) == cycle and actor.state().phase == phase, id + " accepted-cycle native " + phase, 500): return false
+	var actual: Dictionary = actor.state()
+	return _require(native_phase_observations.has(key) and actual.status == "running" and actual.reservation_id == reservation_id and int(actual.cycle) == cycle, id + " actual signal observed " + phase + " in this same living accepted cycle")
+
+
+func _observe_admissions() -> void:
+	# Main publishes a companion answer after its synchronous native phase signal.
+	# Observe the completed frame so a later rejected budget attempt cannot erase
+	# that actual successful proof from the fixture's evidence.
+	if finished or not is_instance_valid(level): return
+	for property: String in ["last_admission", "last_circle_admission"]:
+		var answer: Dictionary = level.get(property)
+		if answer.get("accepted", false) and answer.has("reservation_id"):
+			for members: String in ["sources", "circles"]:
+				for source: Node3D in (level.get(members) as Dictionary).values():
+					var state: Dictionary = source.call("state")
+					if source.get_instance_id() == answer.reservation.source_instance_id and state.reservation_id == answer.reservation_id:
+						native_admissions[String(answer.reservation_id)] = answer.duplicate(true)
+						admission_cycles[String(answer.reservation_id)] = int(state.cycle)
+
+
+func _notice_native_admission(id: String, answer: Dictionary) -> void:
+	var retained: Node3D = (level.get("sources") as Dictionary).get(id, (level.get("circles") as Dictionary).get(id)) as Node3D
+	if not is_instance_valid(retained) or not answer.get("accepted", false): return
+	var current: Dictionary = retained.call("state")
+	if answer.reservation.source_instance_id != retained.get_instance_id() or current.reservation_id != answer.reservation_id: return
+	native_admissions[String(answer.reservation_id)] = answer.duplicate(true)
+	admission_cycles[String(answer.reservation_id)] = int(current.cycle)
+
+
+func _admission_for_source(source: CinderLaneMechanism, cycle: int) -> Dictionary:
+	for reservation_id: String in native_admissions:
+		var value: Dictionary = native_admissions[reservation_id]
+		if value.reservation.source_instance_id == source.get_instance_id() and int(admission_cycles.get(reservation_id, -1)) == cycle:
+			return value
+	return {}
+
+
+func _record_proof(id: String, proof: Dictionary, host_reservation_id: String) -> void:
+	var path: Array[Dictionary] = []
+	for segment: Dictionary in proof.path:
+		path.append({"from": Codec.vector3(segment.from), "to": Codec.vector3(segment.to), "start_s": segment.start_s, "end_s": segment.end_s, "kind": segment.kind})
+	used_proofs.append({"source": id, "host_reservation_id": host_reservation_id, "landing": Codec.vector3(proof.landing), "attack_position": Codec.vector3(proof.attack_position), "primary_time_s": proof.primary_time_s, "response_complete_s": proof.response_complete_s, "uses_blast": proof.uses_blast, "uses_invulnerability": proof.uses_invulnerability, "path": path})
+
+
+func _resume_button(node: Node) -> Button:
+	if node is Button and (node as Button).is_visible_in_tree() and (node as Button).text.begins_with("RESUME"): return node as Button
+	for child: Node in node.get_children():
+		var button: Button = _resume_button(child)
+		if button != null: return button
+	return null
+
+
+func _native_focus() -> bool:
+	return graphical and root.has_focus() and DisplayServer.window_is_focused(root.get_window_id())
+
+
+func _input_safe(point: Vector2) -> bool:
+	return point.is_finite() and Rect2(20, 300, 500, 670).has_point(point)
+
+
+func _planar_distance(a: Vector3, b: Vector3) -> float:
+	return Vector2(a.x - b.x, a.z - b.z).length()
+
+
+func _beat() -> int:
+	return int(level.get("beat_index"))
+
+
+func _last_sequence() -> int:
+	var records: Array[Dictionary] = hero.get_world_action_records()
+	return 0 if records.is_empty() else int(records.back().sequence)
+
+
+func _require(ok: bool, message: String) -> bool:
+	checks += 1
+	if not ok:
+		failures += 1
+		push_error(message)
+		if not aborted:
+			aborted = true
+			_finish.call_deferred()
+	return ok
+
+
+func _finish() -> void:
+	if finished: return
+	finished = true
+	paused = true
+	var encoded: Array[Dictionary] = []
+	var encodings_valid: bool = true
+	if is_instance_valid(hero):
+		for record: Dictionary in world_records:
+			var accepted: Dictionary = CinderPlayer.encode_world_action_record(record, hero.get_world_action_clock())
+			encodings_valid = encodings_valid and not accepted.is_empty()
+			encoded.append(accepted)
+	_require(encodings_valid, "all subscribed actual world records preserve their public exact transport")
+	var scheduler: CinderThreatScheduler = level.get("scheduler") as CinderThreatScheduler if is_instance_valid(level) else null
+	if is_instance_valid(level): level.exit_level()
+	if is_instance_valid(scheduler):
+		_require(not scheduler.is_physics_processing() and scheduler.reservations().is_empty() and get_nodes_in_group("enemies").is_empty(), "exit cleanup removes native leases, live target groups and physics ownership")
+	if is_instance_valid(game):
+		var effects: PixelEffects = game.get("fx") as PixelEffects
+		if is_instance_valid(effects): effects.clear()
+	if graphical and not capture_dir.is_empty():
+		var file := FileAccess.open(capture_dir.path_join("evidence.json"), FileAccess.WRITE)
+		if not _require(file != null, "graphical evidence file opens after the final cleanup assertion"):
+			push_error("Graphical evidence could not be written")
+		else:
+			file.store_string(JSON.stringify({"scope": "actual authored Main recognizer route; no teleports/phase forcing/human/native-focus override; no campaign persistence or full-conditional acceptance", "route": route, "kit": kit, "profile": profile, "compound_pause_requested": compound_pause, "checks": checks, "failures": failures, "actual_swipes": swipes, "actual_primaries": primaries, "initial_hp": initial_hp, "final_hp": hero.hp, "progress": events, "phases": phases, "native_phase_observations": native_phase_observations, "hit_events": hits, "world_actions": encoded, "world_actions_exact_json": Exact.stringify(encoded), "native_response_proofs": used_proofs, "public_admissions": str(native_admissions), "public_observations": str(observations), "captures": shots, "public_pause": pause_evidence}, "\t"))
+			file.close()
+	await create_timer(0.5, true).timeout
+	if is_instance_valid(game): game.free()
+	paused = false
+	await process_frame
+	_cleanup_fixture()
+	print("A1-L2 ACTUAL TOUCH ROUTE: %d checks, %d failures; %d swipes, %d primaries; route=%s kit=%s profile=%s; NO TELEPORTS" % [checks, failures, swipes, primaries, route, kit, profile])
+	quit(1 if failures else 0)

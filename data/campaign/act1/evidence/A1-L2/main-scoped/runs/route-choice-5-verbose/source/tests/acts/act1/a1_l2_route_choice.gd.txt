@@ -1,0 +1,253 @@
+extends SceneTree
+## Narrow route-choice transport regression. Floor approaches are explicitly
+## staged; native landing resolution, activation and ordinary primary are real.
+## Two actual recognizer swipes also exercise the standalone landing guard at
+## native phase publication. No full route, compound or portrait acceptance.
+
+const MainScene = preload("res://scenes/main.tscn")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Layout = preload("res://scripts/acts/act1/crater_gardens_layout.gd")
+const LEVEL_PATH: String = "res://scenes/acts/act1/a1_l2.tscn"
+var game: Node
+var level: CinderLevel
+var hero: CinderPlayer
+var checks: int = 0
+var failures: int = 0
+var events: int = 0
+var finishing: bool = false
+var landing_swipe_in_phase: bool = false
+var landing_guard_in_phase: bool = false
+
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+
+func _run() -> void:
+	create_timer(35.0, true).timeout.connect(func() -> void:
+		if not finishing:
+			_expect(false, "bounded route-choice fixture completes within35 seconds")
+			_finish())
+	root.size = Vector2i(540, 1170)
+	game = MainScene.instantiate()
+	game.set("level_scene_path", LEVEL_PATH)
+	root.add_child(game)
+	level = game.get("active_level") as CinderLevel
+	hero = game.get("player") as CinderPlayer
+	if not _expect(level != null and hero != null and level.contract_error().is_empty(), "actual main scene and shared Player are ready"):
+		_finish(); return
+	paused = true
+	await process_frame
+	var pristine: Dictionary = _pair()
+	if not _expect(not pristine.level.is_empty() and not pristine.player.is_empty(), "initial native pair is available for the bounded landing regression"):
+		_finish(); return
+	if not await _exercise_landing_guard():
+		_finish(); return
+	paused = true
+	await process_frame
+	if not _expect(_restore_pair(pristine), "reset the exact pristine pair after the isolated landing-swipe regression"):
+		_finish(); return
+	if not await _exercise_puff_binding():
+		_finish(); return
+	paused = true
+	await process_frame
+	if not _expect(_restore_pair(pristine), "reset exact pristine pair after the isolated active-puff binding regression"):
+		_finish(); return
+	game.call("resume_lab")
+	if not _expect(await _wait_for(func() -> bool: return level.get("beat_index") == 1, 800), "native landing danger genuinely resolves before the solo boundary"):
+		_finish(); return
+	var sources: Dictionary = level.get("sources")
+	var solo: Act1RushSelenite = sources["solo"]
+	# Functional staging on the real uninterrupted floor, not traversal evidence.
+	_stage_approach(Vector3(0, 0.005, 9.5))
+	paused = false
+	if not _expect(await _wait_for(func() -> bool: return not solo.dormant, 200), "real solo source activates at its fresh authored boundary"):
+		_finish(); return
+	hero.slash(Vector3.FORWARD)
+	if not _expect(await _wait_for(func() -> bool: return solo.dead and level.get("beat_index") == 2, 200), "one actual neutral ordinary primary clears the solo and reaches the fork beat"):
+		_finish(); return
+	paused = true
+	await process_frame
+	var approach: Dictionary = _pair()
+	if not _expect(not approach.player.is_empty() and not approach.level.is_empty(), "pre-choice main aggregate is valid: " + level.last_snapshot_error):
+		_finish(); return
+	_expect(approach.level.local.chosen_route.is_empty() and not approach.level.local.encounter_started and approach.level.local.scheduler.encounter_id == "a1_l2_solo", "fresh fork approach retains the cleared solo encounter/profile")
+	for actor: Act1RushSelenite in sources.values():
+		actor.state_changed.connect(func(_state: Dictionary) -> void: events += 1)
+	for impact: CinderLaneMechanism in (level.get("circles") as Dictionary).values():
+		impact.state_changed.connect(func(_state: Dictionary) -> void: events += 1)
+	for route: String in ["rock", "open"]:
+		if finishing: return
+		if not _expect(_restore_pair(approach), "restore exact cleared-solo approach before testing " + route):
+			_finish(); return
+		var side: float = -1.0 if route == "rock" else 1.0
+		# An interior native float32 pose exercises selection while still distant.
+		# Literal1.4 rounds below the float64 inclusive threshold on this engine.
+		_stage_approach(Vector3(side * 1.5, 0.005, 3.7))
+		paused = false
+		if not _expect(await _wait_for(func() -> bool: return level.get("chosen_route") == route, 100), "broad fork records the actual staged " + route + " choice"):
+			_finish(); return
+		paused = true
+		await process_frame
+		var selected: Act1RushSelenite = sources[route]
+		var other: Act1RushSelenite = sources["open" if route == "rock" else "rock"]
+		_expect(not level.get("encounter_started") and selected.dormant and other.dormant and selected.hp == 20.0 and other.hp == 20.0, "selected-but-distant route keeps both actual sources pristine and dormant")
+		var saved: Dictionary = _pair()
+		if not _expect(not saved.player.is_empty() and not saved.level.is_empty(), "selected-but-dormant approach captures its complete aggregate: " + level.last_snapshot_error):
+			_finish(); return
+		_expect(saved.level.local.scheduler.encounter_id == "a1_l2_solo" and level.snapshot_error_with_player(saved.level, saved.player).is_empty(), "early choice retains the previous real epoch until activation")
+		var wire: String = Exact.stringify(saved)
+		var decoded: Dictionary = Exact.parse(wire)
+		if not _expect(not wire.is_empty() and decoded.get("accepted", false), "early choice transports through exact JSON"):
+			_finish(); return
+		var before: int = events
+		_expect(_restore_pair(decoded.value) and Exact.stringify(_pair()) == wire and events == before, "early-choice restore is exact, quiet and preserves dormant HP/positions")
+		var malformed: Dictionary = saved.level.duplicate(true)
+		malformed.local.encounter_started = true
+		_expect(not level.snapshot_error_with_player(malformed, saved.player).is_empty(), "early choice cannot forge an already-started encounter")
+		malformed = saved.level.duplicate(true)
+		malformed.local.sources[route].dormant = false
+		_expect(not level.snapshot_error_with_player(malformed, saved.player).is_empty(), "choice alone cannot authorize a saved live actor")
+		malformed = saved.level.duplicate(true)
+		malformed.local.scheduler.encounter_id = "a1_l2_" + route
+		_expect(not level.snapshot_error_with_player(malformed, saved.player).is_empty(), "choice alone cannot replace the real encounter/profile epoch")
+		malformed = saved.level.duplicate(true)
+		var source_position: Vector3 = Layout.ROCK_SOURCE if route == "rock" else Layout.OPEN_SOURCE
+		malformed.local.sources[route].motion.position = Codec.vector3(source_position + Vector3(0.1, 0, 0))
+		_expect(not level.snapshot_error_with_player(malformed, saved.player).is_empty(), "selected dormant actor must retain its exact authored source transform")
+		_expect(Exact.stringify(_pair()) == wire and events == before, "all malformed choices are pure rejections without actor/resource mutation")
+		_stage_approach(Vector3(side * 2.8, 0.005, 2.6))
+		paused = false
+		if not _expect(await _wait_for(func() -> bool: return not selected.dormant and level.get("encounter_started"), 200), "approaching the chosen source establishes a genuine fresh activation"):
+			_finish(); return
+		_expect(other.dormant and not other.is_in_group("enemies") and selected.hp == 20.0 and selected.is_in_group("enemies"), "fresh activation reveals only the chosen source without healing or waking the alternative")
+		paused = true
+		await process_frame
+	_finish()
+
+
+func _exercise_landing_guard() -> bool:
+	game.call("resume_lab")
+	var impact: CinderLaneMechanism = (level.get("circles") as Dictionary)["landing-impact"]
+	if not _expect(await _wait_for(func() -> bool: return impact.state().status == "running" and impact.state().phase == "warning", 200), "actual landing warning begins before the real-swipe regression"): return false
+	var records: Array[Dictionary] = hero.get_world_action_records()
+	var sequence: int = 0 if records.is_empty() else int(records.back().sequence)
+	var hp_before: float = hero.hp
+	_send_right_swipe()
+	if not _expect(await _wait_for(_dash_ready, 100), "first real recognizer swipe reaches its deliberate native stop"): return false
+	if not _expect(impact.state().status == "running" and hero.get_world_action_records(sequence).size() == 1, "one real side swipe preserves the currently containable landing warning"): return false
+	# Deliberately inject the second REAL touch/drag/release from the actual active
+	# cue callback. No phase/clock/camera mutation: the parent phase publication
+	# must reject the newly unfit nominal dash union before native hit delivery.
+	impact.get_cue().state_changed.connect(func(state: Dictionary) -> void:
+		if state.phase == "active" and not landing_swipe_in_phase:
+			landing_swipe_in_phase = true
+			_send_right_swipe())
+	impact.state_changed.connect(func(state: Dictionary) -> void:
+		if state.status == "running" and state.phase == "active" and landing_swipe_in_phase and not landing_guard_in_phase:
+			var actual: Dictionary = impact.state()
+			landing_guard_in_phase = actual.status == "cancelled" and actual.last_cancel_reason == "landing_presentation_unavailable" and actual.reservation_id.is_empty() and actual.hit_ids.is_empty() and hero.hp == hp_before)
+	if not _expect(await _wait_for(func() -> bool: return landing_swipe_in_phase, 400), "second recognizer swipe is triggered by the real native active publication"): return false
+	if not _expect(landing_guard_in_phase, "parent cancels the original landing lease at phase publication before any hit opportunity"): return false
+	if not _expect(await _wait_for(_dash_ready, 100), "second actual swipe finishes under unchanged native movement"): return false
+	var executed: Array[Dictionary] = hero.get_world_action_records(sequence)
+	_expect(executed.size() == 2 and executed[0].kind == "dash" and executed[1].kind == "dash" and (executed[0].direction as Vector3).dot(Vector3.RIGHT) > 0.9999 and (executed[1].direction as Vector3).dot(Vector3.RIGHT) > 0.9999, "both gestures produce genuine native world dash records without actor commands or teleports")
+	_expect(hero.hp == hp_before and impact.state().status == "cancelled" and impact.state().hit_ids.is_empty(), "cancelled landing delivers no later native damage")
+	return failures == 0
+
+
+func _send_right_swipe() -> void:
+	# Fixed native camera right is confirmed through the public projection API.
+	var delta := Vector2(180, 0)
+	if not _expect((game.call("screen_to_direction", delta) as Vector3).dot(Vector3.RIGHT) > 0.9999, "actual shared camera maps the gesture to world right"): return
+	var finish := Vector2(360, 650)
+	var press := InputEventScreenTouch.new()
+	press.index = 7
+	press.pressed = true
+	press.position = finish - delta
+	Input.parse_input_event(press)
+	Input.flush_buffered_events()
+	var drag := InputEventScreenDrag.new()
+	drag.index = 7
+	drag.position = finish
+	drag.relative = delta
+	Input.parse_input_event(drag)
+	Input.flush_buffered_events()
+	var release := InputEventScreenTouch.new()
+	release.index = 7
+	release.position = finish
+	Input.parse_input_event(release)
+	Input.flush_buffered_events()
+	_expect((game.call("get_aim_anchor") as Vector2).is_equal_approx(finish), "real recognizer retains the literal swipe release point")
+
+
+func _exercise_puff_binding() -> bool:
+	game.call("resume_lab")
+	var impact: CinderLaneMechanism = (level.get("circles") as Dictionary)["landing-impact"]
+	if not _expect(await _wait_for(func() -> bool: return impact.state().status == "running" and impact.state().phase == "active", 400), "native landing reaches a real active puff for the binding regression"): return false
+	paused = true
+	await process_frame
+	var saved: Dictionary = _pair()
+	if not _expect(not saved.level.is_empty() and not saved.player.is_empty(), "paused real active-puff pair has a valid exact native pose: " + level.last_snapshot_error): return false
+	var puff := impact.get_node("SquareImpactFragments") as MeshInstance3D
+	var original: Basis = puff.basis
+	var player_wire: String = Exact.stringify(saved.player)
+	puff.rotate_y(PI * 0.25)
+	_expect(not level.snapshot_error_with_player(saved.level, saved.player).is_empty(), "actual45-degree puff rotation rejects the aggregate before a mismatched maximum art bound can be accepted")
+	_expect(not _restore_pair(saved) and Exact.stringify(hero.snapshot_state()) == player_wire, "rotated-puff restore is rejected before mutating the actual shared Player")
+	puff.basis = original
+	_expect(level.snapshot_error_with_player(saved.level, saved.player).is_empty() and Exact.stringify(_pair()) == Exact.stringify(saved), "restoring the original native phase-derived puff basis recovers the unchanged exact pair")
+	return failures == 0
+
+
+func _dash_ready() -> bool:
+	var response: Dictionary = hero.get_threat_response_state()
+	return not paused and response.stable and float(response.dash_cooldown_left_s) == 0.0 and float(response.commitment_remaining_s) == 0.0
+
+
+func _stage_approach(position: Vector3) -> void:
+	paused = true
+	hero.global_position = position
+	hero.velocity = Vector3.ZERO
+
+
+func _wait_for(predicate: Callable, attempts: int) -> bool:
+	for attempt: int in range(attempts):
+		if finishing: return false
+		if predicate.call() == true: return true
+		await create_timer(0.01, true).timeout
+	return false
+
+
+func _pair() -> Dictionary:
+	return {"player": hero.snapshot_state(), "level": level.snapshot_state()}
+
+
+func _restore_pair(saved: Dictionary) -> bool:
+	if not hero.snapshot_error(saved.player).is_empty() or not level.snapshot_error_with_player(saved.level, saved.player).is_empty(): return false
+	if not hero.restore_state(saved.player): return false
+	return level.restore_state(saved.level)
+
+
+func _expect(ok: bool, message: String) -> bool:
+	checks += 1
+	if not ok:
+		failures += 1
+		push_error(message)
+	return ok
+
+
+func _finish() -> void:
+	if finishing: return
+	finishing = true
+	paused = true
+	if is_instance_valid(level): level.exit_level()
+	await create_timer(0.5, true).timeout
+	if is_instance_valid(game): game.free()
+	# Dispose the entire world before resuming one shutdown frame, as the
+	# accepted L1 fixture does; no paused world can execute a stray action.
+	paused = false
+	await process_frame
+	print("A1-L2 ROUTE CHOICE: %d checks, %d failures" % [checks, failures])
+	quit(1 if failures else 0)

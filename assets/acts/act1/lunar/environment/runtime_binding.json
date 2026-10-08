@@ -1,0 +1,233 @@
+{
+  "level": "A1-L2",
+  "readiness": "authored scenery with quiet-layout and affected full-combat portrait views verified; L2 integration acceptance and human balance remain pending",
+  "runtime_family": "act1_lunar_theatre_clearings",
+  "implementation": [
+    "scripts/acts/act1/lunar_scenery.gd",
+    "scripts/acts/act1/crater_gardens_layout.gd"
+  ],
+  "source_sha256": {
+    "scripts/acts/act1/lunar_scenery.gd": "680bbb3292ea12225e3388d47c7202bb6fed24c9ec0d407b71b83ea72a066340",
+    "scripts/acts/act1/crater_gardens_layout.gd": "a5a23a76a8b24ab92be10aa484a49aca36940e3441d50415c84e0e2be7c0f0d3"
+  },
+  "producer_manifests": [
+    "assets/acts/act1/lunar/environment/environment_manifest.json",
+    "assets/acts/act1/lunar/accents/lunar_accents_manifest.json"
+  ],
+  "native_assets_sha256": {
+    "assets/acts/act1/lunar/environment/rock_flat_low_a.png": "57935ff87becdcb8c706ea30f0e9ef76a920f7dd0ae17d35a5bce43a7dfc79a3",
+    "assets/acts/act1/lunar/environment/rock_flat_low_b.png": "9a022b4def380f71559175c3959af51884f9d1d461711aebc22d8ca37fc15ddf",
+    "assets/acts/act1/lunar/environment/floor_silver_tile.png": "927971422809f26e5492ec6701a69d7b1ced7d1e6498c7d4736542e5b8831c64",
+    "assets/acts/act1/lunar/environment/grotto_threshold_open.png": "fb17438bfe84ca14fb08baab36aa522b31190f8dd3ee1bd81174131f263c6d09",
+    "assets/acts/act1/lunar/environment/crescent_performer.png": "381e3f96628091fbeb11710b557c212dd0c398cd83f0d91f902a85fbf8506822",
+    "assets/acts/act1/lunar/environment/capsule_landed_closed.png": "9f552e88efaafcd445507428956458a99b3dec7ad52fbaf6ca2f2e0e3924dab9",
+    "assets/acts/act1/lunar/environment/camp_sleeping_tableau.png": "59a2a31e60f8169bdfa00c5f8b4271f3c1d03645a1c78afb273cbab50b54b69e",
+    "assets/acts/act1/lunar/environment/environment_contact_sheet.png": "18ed226de70a5b451e2563e23ed5d93c73d0d53d40854b774e5bc401411d98be",
+    "assets/acts/act1/lunar/accents/lunar_accents_contact_sheet.png": "bfc49d510faaa258184a6909974e286bec6541c567209d0bc83900353c2575ff",
+    "assets/acts/act1/lunar/accents/painted_rock_surface.png": "6cc1e5b66e2c2ca94c9897cb774da37e5a85a874319214e65bda44bd3fb0ffa4",
+    "assets/acts/act1/lunar/accents/human_star_performer.png": "ce3f5e1205bce88304fba1b3c7f4c883a267e523ec7268c682d3d83a09a613c9",
+    "assets/acts/act1/lunar/accents/earth_globe.png": "3a378e3ff823c960f2d9a88877158ad606a924bee59444dd994b47ae4202aeee",
+    "assets/acts/act1/lunar/accents/saturn_performer.png": "2d51d851bc301d4e1dff9dbd6918c9d3a00cdf8e2437e62db60cdcdec15addb8"
+  },
+  "upright_cutouts": 19,
+  "landmarks": 7,
+  "native_rendering": "Full standalone Sprite3D, nearest/unshaded/full Z billboard, hard alpha scissor.5, ordinary depth/layers1; no atlas/crop/new animator clock. Twelve sparse rock flats; seven landmarks.",
+  "bindings": {
+    "capsule": {
+      "origin": [
+        -1.95,
+        0.005,
+        16.7
+      ],
+      "pixel_size": 0.024,
+      "pivot": [
+        64,
+        88
+      ],
+      "offset": [
+        0,
+        44
+      ]
+    },
+    "camp": {
+      "origin": [
+        -1.65,
+        0.005,
+        -9.5
+      ],
+      "pixel_size": 0.026,
+      "pivot": [
+        64,
+        80
+      ],
+      "offset": [
+        0,
+        40
+      ]
+    },
+    "crescent": {
+      "origin": [
+        2.1,
+        1.8,
+        -6.5
+      ],
+      "pixel_size": 0.026,
+      "pivot": [
+        32,
+        112
+      ],
+      "offset": [
+        0,
+        56
+      ]
+    },
+    "earth": {
+      "origin": [
+        -2.2,
+        2.65,
+        -7
+      ],
+      "pixel_size": 0.024,
+      "pivot": [
+        32,
+        32
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "star": {
+      "origin": [
+        -2.1,
+        3.1,
+        -9.8
+      ],
+      "pixel_size": 0.02,
+      "pivot": [
+        32,
+        32
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "saturn": {
+      "origin": [
+        0.55,
+        2,
+        -4.8
+      ],
+      "pixel_size": 0.024,
+      "pivot": [
+        40,
+        96
+      ],
+      "offset": [
+        0,
+        48
+      ]
+    },
+    "grotto": {
+      "origin": [
+        0,
+        0.005,
+        -23
+      ],
+      "pixel_size": 0.04,
+      "pivot": [
+        72,
+        96
+      ],
+      "offset": [
+        0,
+        48
+      ]
+    }
+  },
+  "floor": {
+    "size": [
+      14,
+      44
+    ],
+    "origin": [
+      0,
+      0.002,
+      -2
+    ],
+    "tile_world_size": 1.536,
+    "base_value": 0.45098039215686275,
+    "collision": "existing full continuous floor unchanged"
+  },
+  "painted_rock": {
+    "native_size": [
+      64,
+      64
+    ],
+    "alpha": "255 at every texel and edge",
+    "material": "existing two full native BoxMesh dividers, nearest/repeat uv1_scale(1,3,1), opaque",
+    "collision": "unchanged six owned native static box paths/size/origins; cutout flats are nonphysical"
+  },
+  "states": "Static scenery only; land capsule closed, sleepers quiet, grotto visual open. Native contact eligibility/cue and danger belong to Main/native shared machinery, not scenery.",
+  "physics_and_clocks": "No new scenery collision, damage, HP, AI/group, supply, controller, camera, equipment/ability or animation clock.",
+  "reuse": [
+    "A1-L2",
+    "A1-L5 existing rock/capsule family",
+    "A1-O1 parent kit; not placed yet"
+  ],
+  "actual_evidence": "data/campaign/act1/evidence/A1-L2/lunar-layout/index.json",
+  "limitations": [
+    "Affected corrected full-combat rock/fastest portrait reviewed; open and remaining kit/profile combinations retain separate scopes",
+    "Both runs neutral kit/standard preview only; no all-kit/profile/human/performance claim",
+    "First failures retained, revised47 is functional/art-layout scope only"
+  ],
+  "checked_at": "2026-10-08T16:57:44.153730+00:00",
+  "full_combat_review": {
+    "run": ".cinder/a1-l2-actual-route-portrait-1.json",
+    "functional_checks": 205,
+    "functional_failures": 0,
+    "captures": 30,
+    "native_focus": false,
+    "visual_result": "failed finale occlusion in21\u201329: Saturn masked source/lane and crescent masked Hero body/feet",
+    "correction": "only static crescent/Saturn origins shifted behind camp; same native assets/scales/pivots/depth, no collider/camera/timing or controls change",
+    "recheck": {
+      "run": ".cinder/a1-l2-rock-fastest-portrait-1.json",
+      "checks": 211,
+      "failures": 0,
+      "branch": "rock",
+      "kit": "fastest-short-dash",
+      "primaries": 6,
+      "swipes": 23,
+      "hp": [
+        100,
+        100
+      ],
+      "main_sha256": "a7c6fee88bf8f9ea0130e9f27f8420c680da9dca4f404ab8487730ad1a3d2311",
+      "scenery_sha256": "680bbb3292ea12225e3388d47c7202bb6fed24c9ec0d407b71b83ea72a066340",
+      "native_focus": false,
+      "visual_review": "Owner inspected affected rock11\u201318 and camp/finale/contact19\u201330; full source/lane/circles/puffs and Hero body/feet remain clear of shifted static celestial billboards",
+      "scope": "scripted actual540x1170 renderer; not human balance/performance or all-kit/all-profile acceptance"
+    },
+    "reviewed23_long_kit": {
+      "run": ".cinder/a1-l2-rock-slow-long-portrait-2.json",
+      "portable_index": "data/campaign/act1/evidence/A1-L2/full-route/index.json",
+      "checks": 217,
+      "failures": 0,
+      "branch": "rock",
+      "kit": "slowest-longest-shortest",
+      "primaries": 3,
+      "swipes": 24,
+      "hp": [
+        100,
+        100
+      ],
+      "captures": 30,
+      "main_sha256": "3b27319ea7e316990147e3b051a7868771a2f7ae5f3043b8c9bd53960d8fa688",
+      "scenery_sha256": "680bbb3292ea12225e3388d47c7202bb6fed24c9ec0d407b71b83ea72a066340",
+      "native_focus": false,
+      "visual_review": "Owner inspected all30 actual540x1170 captures: landing/solo/rock/finale source and full lanes/circles/puffs, reachable safe Hero body/feet and ordinary-primary openings, friendly camp, public pause and distinct physical grotto contact remain readable. No shifted celestial art masks the finale.",
+      "scope": "current23 scripted native renderer, this route/kit; no human balance/performance or every-profile portrait claim"
+    }
+  }
+}
