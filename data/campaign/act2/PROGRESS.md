@@ -245,3 +245,8 @@ Root messages ba6562b6-ed68-488a-ad9b-a6ba36ac0544 and52db09ba-3a93-4e80-82c6-3c
 ## Current L4 spatial test correction
 
 Frozen priority-spatial-first exits241/306 repetitions of one TEST typed-array assignment error,0nativeERROR/0FAIL; only verified own child stopped,280sources/logs/interruption preserved. Direct typed initialization+six-item assign preserves original four/six path grammar; corrected helperSHAaad7c51cafbb9e6530269a8ba5b3ba56c6187c45c7882fd406573b1525a49d02 unexecuted. No spatial/route pass. Own engine closed; preserve-adopt exactShared32including31/fullownedretention, explicit source compatibility, then same genuine6HP check. No human decision/fullL4 completion.
+
+
+## Shared32 preserving adoption
+
+Exact publication9caeddf0540cb9c37479a470ad0fdf86425594cc (includes31) is now adopted by merge645c360eaa0933621aed18f384cea5b9aa8a32d5 from0f403ff05ad419ded3a82fcd296c812c78078952; all3485 owned tracked hashes and both ancestries retained. Five generated shared-test UIDs match published original bytes; Git collision resolved by preserving originals in temporary custody, no remint/delete. Scoped independent review: additive camera APIs unused, projectedCue/AuthoredProgram/spore branches unused; ordinary Scheduler/Geometry/SmokeBank/Player/Shell/snapshots/equipment/profile/settings unchanged. Original113 initial/fresh transport remains attributed to30; native current32 fullroute/GUI/lifecycle/portrait stillrequired. Explicit pinned old/new source compatibility precedes continuing immutable genuine6HP artifact. No human decision.
