@@ -220,3 +220,8 @@ All owned L3 content/validation scopes are closed. Final source/hash/inventory/l
 ## L4 current native diagnosis
 
 Initial aggregate113/0 remains applicable. FirstHeavy route controlled incomplete after10min/fiveactualkills/noScriptErrors; original279sources/logs/CPU/interruption/genuineearnedstage4format2 preserved. Strict fixture tail/full-blocker helpers and native-clock progress bound being prepared; smallest affected courtyard reproduction loads originalearnedcheckpoint, no invented live state. No own engine remains; other queued worker released normally. Fullroute/portraits/lifecycle/otherkits/profiles pending, no human decision gate.
+
+
+## L4 focused current boundary
+
+Real original-checkpoint fresh GUI Continue/first courtyard earns exact stage5 with five actual defeats and strict full native blocker bypass. Focused726/2 fails only TEST diagnostic encoding; full native aggregate/attempts archived unchanged, no second-courtyard/full-route claim. Repair diagnostic and resume this genuinely earned current unit through public save transport; all280 frozen sources/failure/result remain in priority-repro-first. Production remains unchanged, initial113 applies, no human decision or new shared request.

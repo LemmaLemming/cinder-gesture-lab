@@ -1,7 +1,7 @@
 {
   "level": "A2-L4",
-  "status": "initial113 native aggregate passed; firstHeavy route controlled incomplete after five kills; affected original earned courtyard reproduction preparation",
-  "at": "2026-10-08T22:16:55.714682+00:00",
+  "status": "initial113 passed; focused courtyard726/2 diagnostic serialization failure preserves genuinely earned stage5; no full L4 acceptance",
+  "at": "2026-10-08T22:33:08.821002+00:00",
   "shared_api": "campaign-shared-30",
   "shared_publication": "64f34c8776aa81d7eb8f88b71b8b8d64192f35f0",
   "preserving_merge": "d37fa0d45b208bba445d8f1c9a97742b53d84a40",
@@ -75,6 +75,31 @@
         "profiler_limit": "3-second macOS sample confirms busy main thread, stripped release symbols cannot identify GDScript function."
       },
       "result_sha256": "99c3c6e97421ad0b8e149ab8a00ac264ba6c16ed0e269497eb4f4643cc92fbd9"
+    },
+    "priority-repro-first": {
+      "path": "docs/acts/act2/evidence/A2-L4/priority-repro-first",
+      "result": {
+        "exit_code": 1,
+        "script_errors": 0,
+        "native_errors": 2,
+        "fail_markers": 0,
+        "result_lines": [
+          "ERROR: scoped exact transport is serializable: actual-stage5.diagnostic.exact.json",
+          "ERROR: scoped exact transport is serializable: incomplete-actual.diagnostic.exact.json",
+          "L4 courtyard reproduction: 726 checks, 2 failures; capture_root=/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-a2-l4-priority-repro/captures/1115006/; completed_scoped_courtyards=false; HP_progress_timeout=false; no full-level/transition acceptance"
+        ],
+        "source_count": 280,
+        "source_sha256": "a76927a963d537f3cd36b017bf40a63b4dfbe294ff3c48495c3b4875210ca4c1",
+        "wrapper_sha256": "876d493b5d4bed2cccfa0e34ee97016b0edf443981c1a8418b4c45ab674e0090",
+        "raw_sha256": "4da07499b00739b57aaaa193081431e0673cb4751487f44063c275b17d87ef21"
+      },
+      "result_sha256": "1ad8d7bb7ab13e6bc6ae4d659847677092e3b28503e221de1ec2c28c9880f9bf",
+      "classification": "test diagnostic serialization failure after real stage5 aggregate/attempts transport success; no full route or second-courtyard claim",
+      "earned_native_state": {
+        "path": "docs/acts/act2/evidence/A2-L4/priority-repro-first/earned-stage5",
+        "aggregate_sha256": "efb6bdfeaf1063c6440a6c91663806fb917d978f1feeaa0fe391884a88092561",
+        "attempts_sha256": "3cd126f7e4564299206ad26f12c7c1b2115c6a20b2bd47222edb203103c6bf6a"
+      }
     }
   },
   "limits": [
