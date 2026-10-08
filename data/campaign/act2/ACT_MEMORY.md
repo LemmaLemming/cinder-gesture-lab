@@ -206,3 +206,8 @@ Real original-checkpoint fresh GUI Continue/first courtyard earns exact stage5 w
 ## L4 latest native boundary
 
 Genuine stage5 freshGUI continuation1285/1 reduces Tender30→6, then exposes TEST fallback approach deadzone at edge distance2.764<fixed3.45 while bank lacks supported current proof. Coherent full paused HeroHP90/Tender6/Handler30/nativeclock110.61666666666167, protected original checkpoint, all280 frozen sources and exactaggregate/model/diagnostic preserved in priority-stage5-first/earned-stalled. Next minimal TEST positioning repair and genuine stalled-state continuation; no runtime impossibility or new shared request. Tiny actual native ShapeID diagnostic coverage and separate exact lifecycle correction are current affected tests; fullroute/kits/profiles/art/lifecycle acceptance still pending.
+
+
+## L4 current bounded selector task
+
+Actual quiet inward swipe restores both admissions, but Tender6HP continuation exits2 incomplete after100native seconds,1609/0/noerrors. Valid full native Hero90/current leases/checkpoint envelope preserved e5753b6d53705c16a79238e404aa321d2da47b410572a23110944a527057bfd1 under priority-stalled-first/earned-timeout. Strict comparison converter refused native diagnostic variants (diagnosticfalse), complete oldproofpath absent. Next narrow TEST-only temporal/spatial replacement review with public timed_path_hits, failclosedcompletepath/nativecapsule validation and exact actual decision logging; diagnostic-only conversion hook separatefrom strict/save authority. Resume genuine earlier6HP model; no runtime change/shared request/human decision. Own engine closed. Lifecyclewatchdog0187 remainsuntested. Fullroute/matrix/lifecycle/portraits stillpending.

@@ -39,7 +39,7 @@ func _run() -> void:
 	_cleanup()
 	print("L4 first-checkpoint lifecycle: Standard/%s; normal initial HP/zero initial ammo, real garden clear/contact, running flood-bank GUI Continue, genuine tracking-ray fatal damage/dead Continue/dead Resume/GUI Retry; TEST ONLY prior prefix throughL3/unlocks/L5 destination; no full-clear/native-art claim" % _loadout_name)
 	var failures_before: int = _failures
-	if not await _run_route() and _failures == failures_before: _expect(false, "actual L4 lifecycle aborted: " + _diagnostic())
+	if not await _run_route() and not _hp_watch_timeout and _failures == failures_before: _expect(false, "actual L4 lifecycle aborted: " + _diagnostic())
 	await process_frame
 	_lc_watching_restore = false
 	if is_instance_valid(_game): _release_fixture_shell(_game)
@@ -50,6 +50,10 @@ func _run() -> void:
 	for path: String in _lc_preserved_sources:
 		_expect(FileAccess.get_file_as_string(path) == _lc_preserved_sources[path], "lifecycle preserves existing helper/destination and frozen new base bytes: " + path)
 	_cleanup()
+	if _hp_watch_timeout:
+		print("L4 lifecycle TEST progress-timeout: %d checks, %d failures; incomplete checkpoint scope after100 native seconds without preferred-target HP progress; actual paused evidence=%s; no encounter-impossibility/fatal/GUI acceptance" % [_checks, _failures, _hp_watch_dump_path])
+		quit(2 if _failures == 0 else 1)
+		return
 	print("L4 first-checkpoint lifecycle smoke: %d checks, %d failures; scoped actual checkpoint/GUI/fatal transport only" % [_checks, _failures])
 	quit(0 if _failures == 0 else 1)
 
@@ -321,6 +325,9 @@ func _lc_settle() -> void:
 	for frame: int in range(8): await process_frame
 
 func _step() -> void:
+	if _hp_watch_timeout: return
 	await _native_probe.tick_finished
 	if _lc_auto_resume and is_instance_valid(_game) and paused and _game.campaign_error.is_empty() and _game.menu.page_name() == "resume" and not _game.player.dead: _game.resume_campaign()
 	_observe_runtime()
+	await _observe_hp_watchdog()
+	if _hp_watch_timeout: return
