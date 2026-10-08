@@ -1,5 +1,7 @@
 # C30 Rush Selenite pixel kit
 
+Current actor custody: corrected callback fixture **114/0 headless**, clean exit, on API22/merge6f5ee645 with actor5a46be35. Ordinary snapshots remain2; conditional nonempty pending paths use3. Actual sampled relative paths precede cue/state observers; held pause retains delivery, source/cue/native-part loss cancels before damage without resetting the original cooldown. Fifteen malformed pending variants, exact native-vector preservation and zero-time jump rejection are checked. Affected ordinary46/0 and dormant71/0 retain API21 attribution. The53/0 costume portraits below remain historical API20; current whole Main compound pause still fails17/2 (later circle sample and parent puff pose), REQUEST66ead603. Full L2/graphical compound acceptance is pending.
+
 Current bounded follow-up: the schema2 actor passed71/0 dormant/preview headless checks and53/0 default-live graphical checks on campaign-shared-20. The owner reviewed six actual front-facing captures; see [schema2 C30 evidence](../../../../data/campaign/act1/evidence/A1-L2/schema2-rusher/index.json). These results supersede the actor code validation boundary below, while original pixels/provenance and historical API18 46/53 remain preserved. Main L2 and dynamic side/back presentation remain untested.
 
 Produced original pixels on 2026-10-08. **Bound to the retained C30 actor and

@@ -1,0 +1,148 @@
+class_name Act1LunarScenery
+extends Node3D
+## Static E06/E07/E08 lunar theatre dressing. Sources/pivots/provisional scales
+## live in the frozen environment manifest. The level retains all physical
+## floor, obstacle, camera, cue, actor, progress and contact authority.
+
+const ASSET_ROOT: String = "res://assets/acts/act1/lunar/environment/"
+const FLOOR_SIZE: Vector2 = Vector2(14, 44)
+const FLOOR_ORIGIN: Vector3 = Vector3(0, 0.002, -2)
+const FLOOR_TILE_WORLD_SIZE: float = 64.0 * 0.024
+const TEXTURES: Dictionary = {
+	"rock_a": preload("res://assets/acts/act1/lunar/environment/rock_flat_low_a.png"),
+	"rock_b": preload("res://assets/acts/act1/lunar/environment/rock_flat_low_b.png"),
+	"floor": preload("res://assets/acts/act1/lunar/environment/floor_silver_tile.png"),
+	"capsule": preload("res://assets/acts/act1/lunar/environment/capsule_landed_closed.png"),
+	"camp": preload("res://assets/acts/act1/lunar/environment/camp_sleeping_tableau.png"),
+	"crescent": preload("res://assets/acts/act1/lunar/environment/crescent_performer.png"),
+	"grotto": preload("res://assets/acts/act1/lunar/environment/grotto_threshold_open.png"),
+	"earth": preload("res://assets/acts/act1/lunar/accents/earth_globe.png"),
+	"star": preload("res://assets/acts/act1/lunar/accents/human_star_performer.png"),
+	"saturn": preload("res://assets/acts/act1/lunar/accents/saturn_performer.png"),
+}
+
+var _built: bool = false
+var _sprites: Array[Sprite3D] = []
+var _landmarks: Dictionary = {}
+var _floor_overlay: MeshInstance3D
+
+
+func _init() -> void:
+	process_mode = Node.PROCESS_MODE_DISABLED
+
+
+func build(level: Node3D) -> void:
+	if _built or not is_instance_valid(level) or level.is_queued_for_deletion():
+		return
+	if get_parent() != null and get_parent() != level:
+		return
+	# Appends this owned leaf only; existing layout/collision nodes are untouched.
+	name = "Scenery"
+	if get_parent() == null:
+		level.add_child(self)
+	_built = true
+	_build_floor_overlay()
+	_build_low_flats()
+	_landmarks["capsule"] = _cutout("LandedClosedCapsule", "capsule", Vector3(-1.95, 0.005, 16.7), 0.024)
+	# The quiet camp zone remains centred at z=-9.5. Its foreground cloth sits
+	# left of the central travel line; C16 is an elevated scenic performer only.
+	_landmarks["camp"] = _cutout("SleepingExpeditionCamp", "camp", Vector3(-1.65, 0.005, -9.5), 0.026)
+	_landmarks["crescent"] = _cutout("SeatedCelestialPerformer", "crescent", Vector3(2.1, 1.8, -10.0), 0.026)
+	_landmarks["earth"] = _cutout("EarthGlobeScenicComponent", "earth", Vector3(-2.2, 2.65, -7.0), 0.024)
+	(_landmarks["earth"] as Sprite3D).offset = Vector2.ZERO
+	_landmarks["star"] = _cutout("HumanFacedStarPerformer", "star", Vector3(-2.1, 3.1, -9.8), 0.020)
+	(_landmarks["star"] as Sprite3D).offset = Vector2.ZERO
+	_landmarks["saturn"] = _cutout("SeatedSaturnPerformer", "saturn", Vector3(0.55, 2.0, -11.8), 0.024)
+	_landmarks["grotto"] = _cutout("OpenGrottoThreshold", "grotto", Vector3(0, 0.005, -23), 0.04)
+
+
+func sprites() -> Array[Sprite3D]:
+	# The owner can obtain actual billboard corners through the shared shell's
+	# camera_billboard_points. A flat texture AABB is not a camera witness.
+	return _sprites.duplicate()
+
+
+func landmarks() -> Dictionary:
+	return _landmarks.duplicate()
+
+
+func floor_overlay() -> MeshInstance3D:
+	return _floor_overlay
+
+
+func _build_floor_overlay() -> void:
+	_floor_overlay = MeshInstance3D.new()
+	_floor_overlay.name = "QuietSilverFloorOverlay"
+	_floor_overlay.position = FLOOR_ORIGIN
+	var plane := PlaneMesh.new()
+	plane.size = FLOOR_SIZE
+	_floor_overlay.mesh = plane
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.albedo_color = Color.WHITE
+	material.albedo_texture = TEXTURES.floor
+	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	material.texture_repeat = true
+	material.uv1_scale = Vector3(FLOOR_SIZE.x / FLOOR_TILE_WORLD_SIZE, FLOOR_SIZE.y / FLOOR_TILE_WORLD_SIZE, 1)
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	material.alpha_scissor_threshold = 0.5
+	material.no_depth_test = false
+	material.render_priority = 0
+	_floor_overlay.material_override = material
+	_floor_overlay.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Transparent texture margins reveal the existing continuous base. Keep its
+	# scenic gray near 115/255 so repetition does not create an outlined slab grid.
+	add_child(_floor_overlay)
+
+
+func _build_low_flats() -> void:
+	# Sparse outer-edge flats frame the floor without supplying a collision wall.
+	for side: float in [-1.0, 1.0]:
+		for index: int in range(4):
+			var z: float = [16.0, 4.0, -10.2, -19.3][index]
+			var texture_key: String = "rock_a" if index % 2 == 0 else "rock_b"
+			var flat := _cutout("EdgeFlat_%s_%d" % ["West" if side < 0 else "East", index], texture_key, Vector3(side * 7.2, 0.005, z), 0.024)
+			flat.flip_h = side > 0
+	# End landmarks for the actual central x[-.8,.8],z[-5,2] low divider.
+	# Its existing full low body stays visible; no sprite becomes physical cover.
+	_cutout("DividerNorthPaintedFlat", "rock_b", Vector3(0, 0.005, -4.25), 0.024)
+	_cutout("DividerSouthPaintedFlat", "rock_a", Vector3(0, 0.005, 1.25), 0.024)
+	# Align the right opaque edge near x=-5, leaving the rock-route source and
+	# its inner landing/primary corridor clear of the taller painted silhouette.
+	_cutout("RockRouteOuterNorth", "rock_a", Vector3(-6.15, 0.005, -3.3), 0.024)
+	_cutout("RockRouteOuterSouth", "rock_b", Vector3(-6.15, 0.005, 0.25), 0.024)
+
+
+func _cutout(node_name: String, texture_key: String, origin: Vector3, pixel_size: float) -> Sprite3D:
+	var sprite := Sprite3D.new()
+	sprite.name = node_name
+	sprite.texture = TEXTURES[texture_key]
+	sprite.position = origin
+	sprite.centered = true
+	sprite.pixel_size = pixel_size
+	# All upright kit files have a native bottom-centre scenic anchor. Their
+	# whole standalone textures stay intact; no source atlas/crop is involved.
+	sprite.offset = Vector2(0, sprite.texture.get_height() * 0.5)
+	sprite.axis = Vector3.AXIS_Z
+	sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	sprite.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	sprite.shaded = false
+	sprite.double_sided = true
+	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+	sprite.alpha_scissor_threshold = 0.5
+	sprite.no_depth_test = false
+	sprite.fixed_size = false
+	sprite.render_priority = 0
+	sprite.sorting_offset = 0.0
+	sprite.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	sprite.modulate = Color.WHITE
+	sprite.transparency = 0.0
+	sprite.layers = 1
+	sprite.region_enabled = false
+	sprite.hframes = 1
+	sprite.vframes = 1
+	sprite.frame = 0
+	sprite.flip_v = false
+	add_child(sprite)
+	_sprites.append(sprite)
+	return sprite

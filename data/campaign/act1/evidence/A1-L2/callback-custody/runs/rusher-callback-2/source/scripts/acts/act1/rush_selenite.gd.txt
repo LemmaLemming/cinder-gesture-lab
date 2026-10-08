@@ -786,11 +786,6 @@ func _actor_error(saved: Dictionary, paired: Dictionary, saved_player: Dictionar
 	for segment: Variant in saved.get("pending_segments", []):
 		if not segment is Dictionary or not Codec.keys_error(segment, ["from", "to", "start_s", "end_s"]).is_empty() or not Codec.is_vector3(segment.from) or not Codec.is_vector3(segment.to) or not segment.start_s is float or not segment.end_s is float or not Codec.in_range(segment.start_s, start_s, float(paired.clock_s)) or not Codec.in_range(segment.end_s, float(segment.start_s), float(paired.clock_s)) or float(segment.end_s) - float(segment.start_s) > 1.0 / float(Engine.physics_ticks_per_second) + Geometry.EPSILON:
 			return "Pending C30 path requires finite actual single-physics-tick relative samples"
-		for key: String in ["from", "to"]:
-			if not _same(Codec.vector3(Codec.read_vector3(segment[key])), segment[key]):
-				return "Pending C30 path must retain exact native relative vectors without restore rounding"
-		if segment.start_s == segment.end_s and not _same(segment.from, segment.to):
-			return "A zero-time native sample cannot contain a swept relative jump"
 		if not previous.is_empty() and (segment.start_s != previous.end_s or not _same(segment.from, previous.to)):
 			return "Pending C30 path must preserve exact contiguous relative samples"
 		previous = segment
