@@ -1,0 +1,696 @@
+{
+  "schema_version": 1,
+  "publication_status": "accepted_native_registration",
+  "level_id": "A1-L2",
+  "created_at": "2026-10-08T18:18:33.851734+00:00",
+  "authored_commit": "dcd109857b966ea77b231944d0e41e3d88cc27bc",
+  "documentation_supplement": "d139581e35e5b93a6c8df03d136a6e066a9a3f1c",
+  "integrated_content_commits": [
+    "39f32de57e9ac635303cd1f303bce6361a39488f",
+    "27c39eb89f0c68b1735dbda4477952903e292e16"
+  ],
+  "shared_baseline": "5d7a394c67c6095bd96136e0f07976984075ed0f",
+  "tested_engine": "4.7.2.stable.official.ed1daf0bf",
+  "scope": {
+    "production_registry": true,
+    "source_subset_count": 24,
+    "same_source_identities_across_native_runs": true,
+    "test_only_predecessor_prefix": [
+      "A1-L1"
+    ],
+    "test_only_initial_resources": [
+      {
+        "hp": 37.0,
+        "shells": 0
+      },
+      {
+        "hp": 0.1,
+        "shells": 0
+      }
+    ],
+    "no_predecessor_gameplay_claim": true,
+    "no_full_route_rerun": true,
+    "no_native_human_claim": true,
+    "no_focus_override": true
+  },
+  "source_groups": [
+    {
+      "id": "headless",
+      "manifest": "sources/headless/manifest.json",
+      "scope": "Original explicit24-file prejob subset; not complete import graph"
+    },
+    {
+      "id": "portrait",
+      "manifest": "sources/portrait/manifest.json",
+      "scope": "Original explicit24-file prejob graphical subset; same24 source identities"
+    },
+    {
+      "id": "owned_import",
+      "manifest": "sources/owned-import.json",
+      "scope": "Original931 import receipts:924 candidate plus7 Markdown supplement; no runtime recopy by packaging"
+    }
+  ],
+  "runs": [
+    {
+      "id": "owned-import",
+      "session": 65436,
+      "log": "logs/A1-L2-owned-import-engine.log",
+      "checks_reported": null,
+      "failures_reported": null,
+      "exit_code": 0,
+      "exit_provenance": "Canonical session closure/exit observed by integration owner and relayed directly to packaging helper; raw log independently inspected",
+      "status": "passed",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--editor",
+        "--import",
+        "--quit",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-owned-import-engine.log"
+      ],
+      "command_provenance": "Exact canonical wrapper argument order relayed by integration owner after closed session65436",
+      "permission_scope": "Root-owned canonical engine queue; owned-resource import/editor exit only",
+      "meaning": "Native owned-resource import/editor check; not gameplay acceptance",
+      "diagnostics": {
+        "script_error": false,
+        "error": false,
+        "warning": false,
+        "objectdb_leak": false
+      }
+    },
+    {
+      "id": "headless-registration",
+      "session": 33539,
+      "log": "logs/A1-L2-registration-first.log",
+      "checks_reported": 297,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "exit_provenance": "Canonical session closure/exit observed by integration owner and relayed directly to packaging helper; raw log independently inspected",
+      "status": "passed",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--verbose",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/act1_l2_registration_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first.log",
+        "--",
+        "--expected-commit=dcd109857b966ea77b231944d0e41e3d88cc27bc"
+      ],
+      "command_provenance": "Exact wrapper argument order relayed by integration owner",
+      "permission_scope": "Root-owned canonical queue, actual native isolated PID user saves/captures for registration; no production saves",
+      "meaning": "Production registration functional lifecycle, real dash/aim, fatal and exact quiet restore/cleanup",
+      "diagnostics": {
+        "script_error": false,
+        "error": false,
+        "warning": false,
+        "objectdb_leak": false
+      }
+    },
+    {
+      "id": "graphical-registration",
+      "session": 22712,
+      "log": "logs/A1-L2-registration-portrait.log",
+      "checks_reported": 305,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "exit_provenance": "Canonical session closure/exit observed by integration owner and relayed directly to packaging helper; raw log independently inspected",
+      "status": "passed",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/act1_l2_registration_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait.log",
+        "--",
+        "--portrait",
+        "--expected-commit=dcd109857b966ea77b231944d0e41e3d88cc27bc"
+      ],
+      "command_provenance": "Exact wrapper argument order relayed by integration owner",
+      "permission_scope": "Root-owned canonical queue, actual native isolated PID user saves/captures for registration; no production saves",
+      "meaning": "Same297 functional checks plus eight capture checks/four original540x1170 PNGs",
+      "diagnostics": {
+        "script_error": false,
+        "error": false,
+        "warning": false,
+        "objectdb_leak": false
+      }
+    }
+  ],
+  "portrait_reviews": [
+    {
+      "path": "portraits/title-locked.png",
+      "reviewer": "independent helper",
+      "status": "viewed",
+      "finding": "Selected Act1 headwear/title character and page controls readable; no material truncation/overlap"
+    },
+    {
+      "path": "portraits/journey-locked.png",
+      "reviewer": "independent helper",
+      "status": "viewed",
+      "finding": "Actual A1-L2 locked ID/card readable; A1-L1 prerequisite visible; later entries remain locked"
+    },
+    {
+      "path": "portraits/journey-seeded.png",
+      "reviewer": "integration owner",
+      "status": "viewed",
+      "finding": "Integration owner independently viewed actual current A1-L2 marker below button clear of optional border/connectors; Continue Story card readable"
+    },
+    {
+      "path": "portraits/arrival.png",
+      "reviewer": "integration owner",
+      "status": "viewed",
+      "finding": "Integration owner independently viewed full Hero/feet, landed capsule and HUD gap; initial arrival before teaching cycle, not combat-warning/full-route evidence"
+    }
+  ],
+  "fatal_observation": {
+    "clock_printed": "2.31666666666666",
+    "shells_at_death": 2,
+    "raw_damage": 4.0,
+    "hp_damage": 0.1,
+    "consumed_cycle": 1,
+    "clock_identity": "Exact saved Scheduler and Player clocks asserted by fixture; printed decimal is diagnostic, not transport precision",
+    "gui_retry_initial_hp": 0.1,
+    "gui_retry_initial_shells": 0
+  },
+  "prior_authored_review": {
+    "independent_native_frames_viewed": 30,
+    "root_selected_frames_viewed": 3,
+    "scope": "Existing API23 rock/slow/long authored full-route frames; separate from this production registration target",
+    "historical_full_route_main_sha_prefix": "3b27319e",
+    "final_guard_main_sha256": "7e19a94cf95500932698c7502680b92eb9a1d500258cbd261f524e189bb770d9",
+    "guard_target_checks": 15
+  },
+  "files": [
+    {
+      "path": ".gdignore",
+      "sha256": "86855a63fb97787f9a4080e8fad273d6cb87de8e77781e79b99f499a8b3ee559",
+      "bytes": 77,
+      "category": "archive_metadata",
+      "origin": null,
+      "provenance": "New archive metadata written by independent packaging helper; no engine execution"
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "310aea55e6acec8695d7e3676bd2d64d81c6378b428fdb79117e54ef17a9bd55",
+      "bytes": 92,
+      "category": "archive_metadata",
+      "origin": null,
+      "provenance": "New archive metadata written by independent packaging helper; no engine execution"
+    },
+    {
+      "path": "README.md",
+      "sha256": "f4343d44a29fceedd7829438b74f02eec26fb67864f15d3ff7c0fe2922c04749",
+      "bytes": 5366,
+      "category": "archive_metadata",
+      "origin": null,
+      "provenance": "New archive metadata written by independent packaging helper; no engine execution"
+    },
+    {
+      "path": "logs/A1-L2-owned-import-engine.log",
+      "sha256": "3a2a2d008fd38d5024ac656193d27d69ee252cb559372cdd7344b6a8c47ff0f3",
+      "bytes": 29292,
+      "category": "raw_log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-owned-import-engine.log",
+      "provenance": "Completed canonical root engine session; raw log copied byte-for-byte after reported closure"
+    },
+    {
+      "path": "logs/A1-L2-registration-first.log",
+      "sha256": "3eeb52985873e70fd16c87a6900f84bbfd214db952b5432f0d679342295b76a4",
+      "bytes": 97476,
+      "category": "raw_log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first.log",
+      "provenance": "Completed canonical root engine session; raw log copied byte-for-byte after reported closure"
+    },
+    {
+      "path": "logs/A1-L2-registration-portrait.log",
+      "sha256": "c38cf192bc0d477ef35b523710a5a138a6b3f3b9f15181f736909d015db1e7cc",
+      "bytes": 21157,
+      "category": "raw_log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait.log",
+      "provenance": "Completed canonical root engine session; raw log copied byte-for-byte after reported closure"
+    },
+    {
+      "path": "portraits/arrival.png",
+      "sha256": "93fe6f278085f0cd1fb60ac8265177b87773901f339c79c0ca551233f9d13db3",
+      "bytes": 40716,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-act1-l2-registration-captures-67349-805827/arrival.png",
+      "provenance": "Original unmodified native540x1170 graphical capture; no synthetic/composite/focus override"
+    },
+    {
+      "path": "portraits/journey-locked.png",
+      "sha256": "fe836a026810fd8dff4e4b3032da130570c010addeeadd41120005d12e5db113",
+      "bytes": 50634,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-act1-l2-registration-captures-67349-805827/journey-locked.png",
+      "provenance": "Original unmodified native540x1170 graphical capture; no synthetic/composite/focus override"
+    },
+    {
+      "path": "portraits/journey-seeded.png",
+      "sha256": "29cf1218524d5fa890022c2615286117468801289cba7139f7826c8f6c15860d",
+      "bytes": 56524,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-act1-l2-registration-captures-67349-805827/journey-seeded.png",
+      "provenance": "Original unmodified native540x1170 graphical capture; no synthetic/composite/focus override"
+    },
+    {
+      "path": "portraits/title-locked.png",
+      "sha256": "842d4821326f0fa8fa8a461d8efe25e639a36f690f97e9a141342932a3d2b7ae",
+      "bytes": 31793,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-act1-l2-registration-captures-67349-805827/title-locked.png",
+      "provenance": "Original unmodified native540x1170 graphical capture; no synthetic/composite/focus override"
+    },
+    {
+      "path": "sources/headless/data/campaign/registry.json",
+      "sha256": "3f91bf5823798757acac5f429cf59dccd0b7352449329a9c9723bda0fce1a535",
+      "bytes": 10720,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/data/campaign/registry.json",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/manifest.json",
+      "sha256": "0b6b4c2aa80fea494d374127c22899041e2dc26d5d4fe895fe60f61fa9e6634e",
+      "bytes": 4123,
+      "category": "original_manifest",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/manifest.json",
+      "provenance": "Original prejob manifest copied unchanged; explicit24-file subset, not complete import graph"
+    },
+    {
+      "path": "sources/headless/scenes/acts/act1/a1_l2.tscn",
+      "sha256": "68730ecc5ec4262a09a74c0189d3230e4e43127b1efbdf0f78b861ae7d6edb85",
+      "bytes": 460,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scenes/acts/act1/a1_l2.tscn",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scenes/main.tscn",
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+      "bytes": 171,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scenes/main.tscn",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/acts/act1/crater_gardens.gd",
+      "sha256": "7e19a94cf95500932698c7502680b92eb9a1d500258cbd261f524e189bb770d9",
+      "bytes": 68876,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/acts/act1/crater_gardens.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/acts/act1/crater_gardens_layout.gd",
+      "sha256": "a5a23a76a8b24ab92be10aa484a49aca36940e3441d50415c84e0e2be7c0f0d3",
+      "bytes": 3364,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/acts/act1/crater_gardens_layout.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/acts/act1/lunar_scenery.gd",
+      "sha256": "680bbb3292ea12225e3388d47c7202bb6fed24c9ec0d407b71b83ea72a066340",
+      "bytes": 6751,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/acts/act1/lunar_scenery.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/acts/act1/rush_selenite.gd",
+      "sha256": "5a46be35dd1dce4958bf235ced2c4e63cd442a412d340b0744c3922f479d4c92",
+      "bytes": 50071,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/acts/act1/rush_selenite.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/acts/act1/rush_selenite_art.gd",
+      "sha256": "195c9de893c985a94a326ca7e3847f3de3a06185263a76588d9db37909c0d7c9",
+      "bytes": 7843,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/acts/act1/rush_selenite_art.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/campaign/attempts.gd",
+      "sha256": "41d5abbe22d19e389e89ab9ef196496672ee3c4bfa25c596ba3ca695f6ec44c0",
+      "bytes": 17310,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/campaign/attempts.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/campaign/exact_json.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/campaign/registry.gd",
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/campaign/registry.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/campaign/save_store.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/campaign/shell.gd",
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+      "bytes": 29685,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/campaign/shell.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/campaign/snapshot_codec.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/combat/lane_mechanism.gd",
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+      "bytes": 40592,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/combat/lane_mechanism.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/combat/threat_geometry.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/combat/threat_scheduler.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/cues/cue_mesh.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/cues/threat_cue.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/game.gd",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/game.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/player.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/scripts/ui/campaign_menu.gd",
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28",
+      "bytes": 35356,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/scripts/ui/campaign_menu.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/tests/act1_l2_registration_smoke.gd",
+      "sha256": "8bf0c9ba3ce4c23340e0e08cb9ed7e018a5f76955d42d3d58a7ca4e5b2a5033d",
+      "bytes": 39402,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/tests/act1_l2_registration_smoke.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/headless/tests/act1_l2_registration_smoke.gd.uid",
+      "sha256": "f4f248fd64a139d31ba2cfda71c20919b266635ac58fe60fbf7849de86a78bb5",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-first-source/tests/act1_l2_registration_smoke.gd.uid",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/owned-import.json",
+      "sha256": "ed5cc1f360373fe655ecd0af0a6f3267d143c273796789fe54c8ae26802b4c06",
+      "bytes": 290574,
+      "category": "owned_import_receipt",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-owned-import.json",
+      "provenance": "Original exact931 receipt manifest: candidate924 plus7 Markdown supplement receipts; no shared/settings/ledger imports"
+    },
+    {
+      "path": "sources/portrait/data/campaign/registry.json",
+      "sha256": "3f91bf5823798757acac5f429cf59dccd0b7352449329a9c9723bda0fce1a535",
+      "bytes": 10720,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/data/campaign/registry.json",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/manifest.json",
+      "sha256": "4b224da93e210857642ed5f35a0c0e65d8af773d78b42ad63374f3f4145fe731",
+      "bytes": 4103,
+      "category": "original_manifest",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/manifest.json",
+      "provenance": "Original prejob manifest copied unchanged; explicit24-file subset, not complete import graph"
+    },
+    {
+      "path": "sources/portrait/scenes/acts/act1/a1_l2.tscn",
+      "sha256": "68730ecc5ec4262a09a74c0189d3230e4e43127b1efbdf0f78b861ae7d6edb85",
+      "bytes": 460,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scenes/acts/act1/a1_l2.tscn",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scenes/main.tscn",
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+      "bytes": 171,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scenes/main.tscn",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/acts/act1/crater_gardens.gd",
+      "sha256": "7e19a94cf95500932698c7502680b92eb9a1d500258cbd261f524e189bb770d9",
+      "bytes": 68876,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/acts/act1/crater_gardens.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/acts/act1/crater_gardens_layout.gd",
+      "sha256": "a5a23a76a8b24ab92be10aa484a49aca36940e3441d50415c84e0e2be7c0f0d3",
+      "bytes": 3364,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/acts/act1/crater_gardens_layout.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/acts/act1/lunar_scenery.gd",
+      "sha256": "680bbb3292ea12225e3388d47c7202bb6fed24c9ec0d407b71b83ea72a066340",
+      "bytes": 6751,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/acts/act1/lunar_scenery.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/acts/act1/rush_selenite.gd",
+      "sha256": "5a46be35dd1dce4958bf235ced2c4e63cd442a412d340b0744c3922f479d4c92",
+      "bytes": 50071,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/acts/act1/rush_selenite.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/acts/act1/rush_selenite_art.gd",
+      "sha256": "195c9de893c985a94a326ca7e3847f3de3a06185263a76588d9db37909c0d7c9",
+      "bytes": 7843,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/acts/act1/rush_selenite_art.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/campaign/attempts.gd",
+      "sha256": "41d5abbe22d19e389e89ab9ef196496672ee3c4bfa25c596ba3ca695f6ec44c0",
+      "bytes": 17310,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/campaign/attempts.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/campaign/exact_json.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/campaign/registry.gd",
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/campaign/registry.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/campaign/save_store.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/campaign/shell.gd",
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+      "bytes": 29685,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/campaign/shell.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/campaign/snapshot_codec.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/combat/lane_mechanism.gd",
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+      "bytes": 40592,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/combat/lane_mechanism.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/combat/threat_geometry.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/combat/threat_scheduler.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/cues/cue_mesh.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/cues/threat_cue.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/game.gd",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/game.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/player.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/scripts/ui/campaign_menu.gd",
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28",
+      "bytes": 35356,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/scripts/ui/campaign_menu.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/tests/act1_l2_registration_smoke.gd",
+      "sha256": "8bf0c9ba3ce4c23340e0e08cb9ed7e018a5f76955d42d3d58a7ca4e5b2a5033d",
+      "bytes": 39402,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/tests/act1_l2_registration_smoke.gd",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    },
+    {
+      "path": "sources/portrait/tests/act1_l2_registration_smoke.gd.uid",
+      "sha256": "f4f248fd64a139d31ba2cfda71c20919b266635ac58fe60fbf7849de86a78bb5",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/A1-L2-registration-portrait-source/tests/act1_l2_registration_smoke.gd.uid",
+      "provenance": "Original declared prejob source; archived below .gdignore, never imported as runtime"
+    }
+  ],
+  "verification": {
+    "sha256_and_size": "Every archived file checked independently against exact copied origin; prejob manifest entries checked before copy",
+    "artifacts_count": 61,
+    "index_self_hash": "Reported on release separately; index excludes its own recursive hash",
+    "native_portraits": "Four original PNG IHDR dimensions verified540x1170; all four viewed across independent helper and integration owner",
+    "completed_native_runs": 3,
+    "root_review": "Recomputed all61 archive SHA/byte sizes and available originals; actual24 source subsets unchanged afterbothclosedjobs. RootviewedseededJourney+arrival, helperTitle+lockedJourney, all4clear withinitial-arrivallimit."
+  }
+}
