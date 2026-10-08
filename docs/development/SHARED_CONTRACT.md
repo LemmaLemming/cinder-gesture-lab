@@ -1,6 +1,12 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-11** (8 October 2026), publishing exact-clock replay cursor, whole-sequence escape witness, exclusive scheduler admission and actual-player playback to shared-10 spores and shared-9 exact transport. `campaign-level-1` and `world-actions-1` remain compatible. Physical replay leaves are tested; parent capture retirement, authored Crystalman/Echo encounters and their portrait evidence remain separate dependencies. Integration owns shared runtime. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
+Revision: **campaign-shared-12** (8 October 2026), adding opt-in fixed-width HUD-safe camera translation to shared-11 replay, shared-10 spores and shared-9 exact transport. `campaign-level-1` and `world-actions-1` remain compatible. Physical replay leaves are tested; parent capture retirement, authored Crystalman/Echo encounters and their portrait evidence remain separate dependencies. Integration owns shared runtime. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
+
+## Required portrait camera framing
+
+`camera-framing-1` provides a pure finite fixed-width orthographic planner and current-view containment guard. Compatible optional level hook `_camera_framing_points() -> Array` supplies actual source/art/whole committed footprint/landing/opening corners before admission and through recovery; empty retains ordinary .16s close follow. The shared shell adds actual player capsule/full billboard/foot-shadow bounds and uses the actual same-frame wrapped HUD safe rectangle. It translates focusX/Z only, preserving size, basis, focusY and the held final swipe-release aim anchor. Invalid/infeasible data reports a rejected diagnostic, without changing controls, actor motion, clocks, leases or damage.
+
+`Game.camera_framing_plan`, `camera_framing_error`, `get_camera_framing_state`, `camera_billboard_points` and `player_camera_framing_points` are documented in [camera framing](CAMERA_FRAMING.md). A future plan is not actual current visibility or an escape/LOS/fairness proof. Owners must guard actual presentation before lock/damage and supply complete committed render/cue bounds; unsupported atlas/custom shader/native projection modes reject. Shared native planner68, actual shell67headless/75graphical checks pass with normal focus guards retained. Act3's actual far-side authored Sun1 recapture remains required after adoption. A1-L1 has an empty hook and preserves its tested close follow.
 
 ## Captured-action physical replay
 

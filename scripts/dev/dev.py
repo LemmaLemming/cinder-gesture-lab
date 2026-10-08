@@ -46,6 +46,8 @@ SUITES = {
     "threat_snapshot": "tests/threat_snapshot_smoke.gd",
     "campaign_shell": "tests/campaign_shell_smoke.gd",
     "campaign_registration": "tests/campaign_registration_smoke.gd",
+    "camera_framing": "tests/camera_framing_smoke.gd",
+    "camera_framing_shell": "tests/camera_framing_shell_smoke.gd",
     "player_presentation": "tests/player_presentation_smoke.gd",
     "cues": "tests/cue_smoke.gd",
     "lane_mechanism": "tests/lane_mechanism_smoke.gd",
