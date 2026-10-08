@@ -151,7 +151,9 @@ func _mixed_route() -> bool:
 		seen[hit.source_id] = true
 		var role: Dictionary = _expected_roles.ray if hit.source_id == "shelter_scout" else _expected_roles.tool
 		_expect(hit.source_id in ["shelter_scout", MIXED_TOOL_ID] and float(hit.result.raw_damage) == float(role.damage) and float(hit.result.hp_damage) > 0.0 and hit.result.impulse == Vector3.ZERO, "actual accepted final source hit uses fixed Standard damage and no invented impulse")
-	if not _expect(seen.has("shelter_scout") and seen.has(MIXED_TOOL_ID) and death_observation.has("at_lethal_hit") and _mixed_sources_running(death_observation.at_lethal_hit.state, false) and hits.back().lethal, "both real final sources damage the normal hero and remain admitted at the actual lethal hurt publication"): return false
+	var observed_mix: bool = seen.has("shelter_scout") and seen.has(MIXED_TOOL_ID) and death_observation.has("at_lethal_hit") and _mixed_lethal_sources_valid(death_observation.at_lethal_hit.state) and hits.back().lethal
+	if not observed_mix: print("Actual mixed lethal witness: seen=", seen, " hits=", hits, " observation=", death_observation)
+	if not _expect(observed_mix, "both real final sources damage the normal hero; lethal publication retains actual running danger and any completed or already cancelled other response"): return false
 	var dead: Dictionary = _game.capture_campaign_snapshot()
 	if not _expect(not dead.is_empty(), "complete mixed death aggregate captures at deferred barrier: " + _game.campaign_error): return false
 	if not _mixed_dead_state(dead, before_wait, death_observation): return false
@@ -168,6 +170,30 @@ func _mixed_sources_running(state: Dictionary, require_armed: bool) -> bool:
 		if require_armed and not _reservation(String(current.reservation_id)).get("armed", false): return false
 	return true
 
+func _mixed_lethal_sources_valid(state: Dictionary) -> bool:
+	# Both real sources were armed together and inflicted accepted damage.
+	# A later Scout cycle may refuse lock proof before the actual lethal tool
+	# hit. Preserve that observed cancellation/complete receipt, never invent
+	# a second running lease or bypass the scheduler's proof.
+	if state.get("beat") != "shelter_pair" or state.get("active_ids") != MIXED_IDS: return false
+	var running: int = 0
+	for id: String in MIXED_IDS:
+		var current: Dictionary = state.exchanges[id]
+		if current.status == "running": running += 1
+		elif current.status not in ["complete", "cancelled"] or current.phase != "clear": return false
+		elif current.status == "cancelled" and String(current.last_cancel_reason).is_empty(): return false
+	return running > 0
+
+func _mixed_encode_native_exchange(exchange: Dictionary) -> Dictionary:
+	# Public diagnostic state uses native vectors; snapshot uses JSON arrays.
+	# Encode only that declared representation seam, retaining exact scalars.
+	var result: Dictionary = exchange.duplicate(true)
+	for key: String in ["source_position", "opening_position"]:
+		result[key] = Codec.vector3(exchange[key])
+	for key: String in ["from", "to"]:
+		result.geometry[key] = Codec.vector3(exchange.geometry[key])
+	return result
+
 func _mixed_tick() -> Dictionary:
 	var state: Dictionary = _state()
 	var reservations: Dictionary = {}
@@ -180,7 +206,14 @@ func _mixed_dead_state(dead: Dictionary, before_wait: Dictionary, observation: D
 	var scout: Dictionary = local.rays.records.shelter_scout
 	var tool: Dictionary = local.mechanisms[MIXED_TOOL_ID]
 	if not _expect(dead.player.resources.hp == observation.hp and dead.player.resources.shells == observation.shells and Codec.read_vector3(dead.player.motion.position) == observation.position and dead.equipment_ids == _loadout and dead.player.equipment == _loadout, "deferred death capture retains exact actual lethal resources/position/equipment"): return false
-	if not _expect(local.scheduler.reservations.is_empty() and local.views.is_empty() and scout.status == "cancelled" and scout.phase == "clear" and scout.last_cancel_reason == "hero_defeated" and tool.status == "cancelled" and tool.phase == "clear" and tool.last_cancel_reason == "hero_defeated", "supported death barrier cancels running real sources and clears dangerous view custody"): return false
+	if not _expect(local.scheduler.reservations.is_empty() and local.views.is_empty(), "supported death barrier clears dangerous reservations/view custody"): return false
+	for id: String in MIXED_IDS:
+		var previous: Dictionary = observation.at_lethal_hit.state.exchanges[id]
+		var retained: Dictionary = scout if id == "shelter_scout" else tool
+		if previous.status == "running":
+			if not _expect(retained.status == "cancelled" and retained.phase == "clear" and retained.last_cancel_reason == "hero_defeated", "supported death barrier cancels the actual running source: " + id): return false
+		else:
+			if not _expect(retained.status == previous.status and retained.phase == "clear" and retained.last_cancel_reason == previous.last_cancel_reason and retained.cycle == previous.cycle, "death preserves the other source's completed or already cancelled real response: " + id): return false
 	_expect(local.rays.actors.shelter_scout.hp == 30.0 and local.handlers.shelter_handler.hp == 30.0 and local.rays.actors.shelter_scout.phase == "idle" and local.handlers.shelter_handler.phase == "idle" and local.handlers.shelter_handler.phase_progress == 0.0, "living final sources retain HP and commit the real cleared cosmetic state")
 	_expect(local.sequence == before_wait.level.local.sequence and dead.level.progress == before_wait.level.progress and local.profile_id == "standard" and not local.completion_pending and not local.exit_requested and not dead.level.progress.completed, "death preserves earned sequence/checkpoint/profile without final progression")
 	for id: String in MIXED_FEET:
@@ -193,9 +226,13 @@ func _mixed_dead_state(dead: Dictionary, before_wait: Dictionary, observation: D
 		var previous: Dictionary = observation.at_lethal_hit.state.exchanges[id]
 		var reservation: Dictionary = observation.at_lethal_hit.reservations[id]
 		var retained: Dictionary = scout if id == "shelter_scout" else tool
-		_expect(int(retained.cycle) == int(previous.cycle) and retained.exchange.id == reservation.id, "death preserves the actual final source cycle/reservation identity: " + id)
-		for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
-			_expect(retained.exchange[key] == reservation[key], "death retains copied original source deadline: " + id + "/" + key)
+		_expect(int(retained.cycle) == int(previous.cycle), "death preserves the actual final source cycle: " + id)
+		if previous.status == "running":
+			_expect(not reservation.is_empty() and retained.exchange.id == reservation.id, "death preserves the actual running reservation identity: " + id)
+			for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
+				_expect(retained.exchange[key] == reservation[key], "death retains copied original source deadline: " + id + "/" + key)
+		elif id == "shelter_scout":
+			_expect(ExactJson.stringify(retained.exchange) == ExactJson.stringify(_mixed_encode_native_exchange(previous.exchange)), "death preserves the actual closed Scout exchange exactly")
 		if float(retained.exchange.cooldown_until_s) > float(local.scheduler.clock_s):
 			var cooldown: Dictionary = {}
 			var owner_id: String = id if id == "shelter_scout" else MIXED_TOOL_ID

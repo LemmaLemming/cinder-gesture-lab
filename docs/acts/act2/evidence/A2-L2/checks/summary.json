@@ -1,0 +1,774 @@
+{
+  "schema_version": 1,
+  "level_id": "A2-L2",
+  "status": "IN_PROGRESS",
+  "date": "2026-10-08",
+  "canonical_acceptance": "PENDING; no final L2 HANDOFF or integrated canonical acceptance inferred",
+  "owner_runtime_milestone": "7f4b296",
+  "shared_baseline": {
+    "revision": "campaign-shared-19",
+    "publication": "868b2bff523e538ee093ff6ec58c09c5f2099072",
+    "preserving_merge": "3fe640ee62b35b6e0fb53c011386b3ad82983a1b",
+    "provenance": "owner current level record; no new shared defect recorded"
+  },
+  "collection_policy": "Original logs/PNGs/metadata copied unchanged. Root appended completed mixed-source failed and corrected260/0 results. Still IN_PROGRESS pending callback closure and remaining route cells.",
+  "command_policy": "Recorded commands quote existing owner records. Null recorded_command means exact flags were not retained; separately derived reproduction_command is explicitly unverified as a historical invocation and uses the currently available fixture interface. Current source may differ from historical failed bytes. Raw logs and diagnostic dictionaries remain authoritative.",
+  "runtime_hashes": "../runtime-sha256.json",
+  "separate_frozen_l1_hashes": "../reused-l1-sha256.json",
+  "checks": [
+    {
+      "log": "checks/a2-l2-shared16-entry-first.log",
+      "source_log": ".cinder/a2-l2-shared16-entry-first.log",
+      "raw_sha256": "8b08e7b6c40d39a3a931dcc41217b171bc354d1ba6f6db89eb3af5d0297ade19",
+      "shared_revision": "campaign-shared-16",
+      "checks": 15,
+      "failures": 0,
+      "result_line_verbatim": "Weybridge entry smoke: 15 checks, 0 failures; entry/state only, no route/art acceptance",
+      "disposition": "ACCEPTED_SCOPED",
+      "exit_code": 0,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "Entry/state only; 15 checks. No full route or art acceptance.",
+      "script": "tests/acts/act2/a2_l2_entry_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared16-entry-first.log --script tests/acts/act2/a2_l2_entry_smoke.gd",
+      "recorded_command_provenance": "data/campaign/act2/levels/A2-L2_HISTORY.md (owner record)",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared16-entry-first.log --script tests/acts/act2/a2_l2_entry_smoke.gd",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared16-handler-first.log",
+      "source_log": ".cinder/a2-l2-shared16-handler-first.log",
+      "raw_sha256": "469adb5a1d3a0ab2b256047a0486a0d72f39ea2d2b8a39048a49701b0bbc9a92",
+      "shared_revision": "campaign-shared-16",
+      "checks": 104,
+      "failures": 2,
+      "result_line_verbatim": "A2-L2 isolated Handler/foot smoke: 104 checks, 2 failures; no authored route/native portrait claim",
+      "disposition": "FAILED",
+      "exit_code": 1,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "104 checks/2 failures. Unnamed TEST ONLY support invalidated the exact paired snapshot/preflight; unaffected isolated geometry/material/foot checks retain only their own scope.",
+      "script": "tests/acts/act2/a2_l2_handler_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared16-handler-first.log --script tests/acts/act2/a2_l2_handler_smoke.gd",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 2,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: whole exact paused pair prevalidates before mutation",
+          "ERROR: actual hero then actor then scheduler then mechanism restore quietly"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared16-handler-pair-audio-retirement.log",
+      "source_log": ".cinder/a2-l2-shared16-handler-pair-audio-retirement.log",
+      "raw_sha256": "a07b4fe2f39b1787874d8c4cb4b341cc5884b7ca0252ab36beb3fd5f362282f1",
+      "shared_revision": "campaign-shared-16",
+      "checks": 26,
+      "failures": 0,
+      "result_line_verbatim": "A2-L2 isolated Handler/foot smoke: 26 checks, 0 failures; no authored route/native portrait claim",
+      "disposition": "ACCEPTED_SCOPED",
+      "exit_code": 0,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "26 checks. Narrow canonical primary/gate/once-defeat/quiet exact paused pair and repaired audio retirement. Original Handler art; no route/native claim.",
+      "script": "tests/acts/act2/a2_l2_handler_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared16-handler-pair-audio-retirement.log --script tests/acts/act2/a2_l2_handler_smoke.gd -- --pair-only",
+      "recorded_command_provenance": "data/campaign/act2/levels/A2-L2_HISTORY.md (owner record)",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared16-handler-pair-audio-retirement.log --script tests/acts/act2/a2_l2_handler_smoke.gd -- --pair-only",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared16-handler-pair-cleanup.log",
+      "source_log": ".cinder/a2-l2-shared16-handler-pair-cleanup.log",
+      "raw_sha256": "a07b4fe2f39b1787874d8c4cb4b341cc5884b7ca0252ab36beb3fd5f362282f1",
+      "shared_revision": "campaign-shared-16",
+      "checks": 26,
+      "failures": 0,
+      "result_line_verbatim": "A2-L2 isolated Handler/foot smoke: 26 checks, 0 failures; no authored route/native portrait claim",
+      "disposition": "FAILED_RESOURCE_RETIREMENT",
+      "exit_code": null,
+      "exit_code_provenance": "not independently retained; do not infer from assertion count",
+      "scope": "26 behavior checks/0 assertion failures; owner reported native audio retirement warnings in PTY. Raw engine log does not retain those warnings. Not a clean overall acceptance.",
+      "script": "tests/acts/act2/a2_l2_handler_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared16-handler-pair-cleanup.log --script tests/acts/act2/a2_l2_handler_smoke.gd -- --pair-only",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      },
+      "owner_reported_pty_diagnostics": "AudioStreamWAV/AudioStreamPlaybackWAV retirement warnings reported separately. They are not present in this raw engine log, so no missing stdout is reconstructed."
+    },
+    {
+      "log": "checks/a2-l2-shared16-handler-pair-diagnostic.log",
+      "source_log": ".cinder/a2-l2-shared16-handler-pair-diagnostic.log",
+      "raw_sha256": "891c21b22b14dea2e788a2ab51a422077ea6b4acf8d6c84fc99c62418d8efe4f",
+      "shared_revision": "campaign-shared-16",
+      "checks": 26,
+      "failures": 2,
+      "result_line_verbatim": "A2-L2 isolated Handler/foot smoke: 26 checks, 2 failures; no authored route/native portrait claim",
+      "disposition": "FAILED",
+      "exit_code": 1,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "26 checks/2 failures. Diagnostic of unnamed TEST ONLY support snapshot binding; no route/native claim.",
+      "script": "tests/acts/act2/a2_l2_handler_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared16-handler-pair-diagnostic.log --script tests/acts/act2/a2_l2_handler_smoke.gd -- --pair-only",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 2,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: whole exact paused pair prevalidates before mutation",
+          "ERROR: actual hero then actor then scheduler then mechanism restore quietly"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared16-handler-pair-leak-diagnostic.log",
+      "source_log": ".cinder/a2-l2-shared16-handler-pair-leak-diagnostic.log",
+      "raw_sha256": "716bbd29aaef76f202fbde1f4e1151e3f72a29e4dbd54e92fd997c69467f5cf5",
+      "shared_revision": "campaign-shared-16",
+      "checks": 26,
+      "failures": 0,
+      "result_line_verbatim": "A2-L2 isolated Handler/foot smoke: 26 checks, 0 failures; no authored route/native portrait claim",
+      "disposition": "DIAGNOSTIC_RESOURCE_RETIREMENT",
+      "exit_code": null,
+      "exit_code_provenance": "not independently retained; do not infer from assertion count",
+      "scope": "26 behavior checks/0 assertion failures. Native retirement diagnostic; owner attributed PTY warnings to audio resources rather than gameplay nodes. Not a clean overall acceptance.",
+      "script": "tests/acts/act2/a2_l2_handler_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared16-handler-pair-leak-diagnostic.log --script tests/acts/act2/a2_l2_handler_smoke.gd -- --pair-only",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      },
+      "owner_reported_pty_diagnostics": "AudioStreamWAV/AudioStreamPlaybackWAV retirement warnings reported separately. They are not present in this raw engine log, so no missing stdout is reconstructed."
+    },
+    {
+      "log": "checks/a2-l2-shared16-handler-pair-named-support.log",
+      "source_log": ".cinder/a2-l2-shared16-handler-pair-named-support.log",
+      "raw_sha256": "a07b4fe2f39b1787874d8c4cb4b341cc5884b7ca0252ab36beb3fd5f362282f1",
+      "shared_revision": "campaign-shared-16",
+      "checks": 26,
+      "failures": 0,
+      "result_line_verbatim": "A2-L2 isolated Handler/foot smoke: 26 checks, 0 failures; no authored route/native portrait claim",
+      "disposition": "FAILED_RESOURCE_RETIREMENT",
+      "exit_code": 0,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "26 behavior checks/0 assertion failures. Named DrySupport repairs paired snapshot binding; owner still reported PTY audio retirement warnings. Superseded for clean cleanup by audio-retirement log.",
+      "script": "tests/acts/act2/a2_l2_handler_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared16-handler-pair-named-support.log --script tests/acts/act2/a2_l2_handler_smoke.gd -- --pair-only",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      },
+      "owner_reported_pty_diagnostics": "AudioStreamWAV/AudioStreamPlaybackWAV retirement warnings reported separately. They are not present in this raw engine log, so no missing stdout is reconstructed."
+    },
+    {
+      "log": "checks/a2-l2-shared18-entry-preflight.log",
+      "source_log": ".cinder/a2-l2-shared18-entry-preflight.log",
+      "raw_sha256": "02eef9f9abdb2b2b9d18aea36fea71a662ba2e9c62c909c6bc809f0d6e46478e",
+      "shared_revision": "campaign-shared-18",
+      "checks": 22,
+      "failures": 0,
+      "result_line_verbatim": "Weybridge entry smoke: 22 checks, 0 failures; entry/state only, no route/art acceptance",
+      "disposition": "ACCEPTED_SCOPED",
+      "exit_code": 0,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "22 checks. Nested malformed/idle pose atomic refusals and imported entry. No full route/art claim.",
+      "script": "tests/acts/act2/a2_l2_entry_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared18-entry-preflight.log --script tests/acts/act2/a2_l2_entry_smoke.gd",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared18-live-heavy-first.log",
+      "source_log": ".cinder/a2-l2-shared18-live-heavy-first.log",
+      "raw_sha256": "cba44335b0535801e7a1b20c93f88d2947bf57f3c82136f333fcad38e78242b5",
+      "shared_revision": "campaign-shared-18",
+      "checks": 62,
+      "failures": 1,
+      "result_line_verbatim": "Weybridge live level smoke: 62 checks, 1 failures; loadout=heavy profile=standard; actual authored L2 actions, synthetic prior prefix and TEST ONLY L3 destination",
+      "disposition": "FAILED",
+      "exit_code": 1,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "62 checks/1 failure. Bot approached the foot while the paired Handler remained 5.3m away and idle; no actual completed apron foot opportunity.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared18-live-heavy-first.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 1,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: bounded bot found no actual completed foot opportunity foot_apron:  hero=(1.545606, -0.004844, -10.11794) state={ \"beat\": \"apron_pair\", \"active_ids\": [\"apron_handler\"], \"foot_id\": \"foot_apron\", \"clock_s\": 57.3666666666647, \"exchanges"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-authored-retry-cleanup.log",
+      "source_log": ".cinder/a2-l2-shared19-authored-retry-cleanup.log",
+      "raw_sha256": "f65562b576006d64b2abe2cd4405c9cfa6aff79620928b209f6fbcfe8cbeb366",
+      "shared_revision": "campaign-shared-19",
+      "checks": 221,
+      "failures": 0,
+      "result_line_verbatim": "Weybridge authored retry smoke: 221 checks, 0 failures; real earned yard checkpoint and source damage, no forced state/final clear/native art or future-level acceptance",
+      "disposition": "ACCEPTED_SCOPED",
+      "exit_code": 0,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "221 checks. Actual first two ordinary-primary defeats, earned yard checkpoint/demo, living apron Handler+foot warning/lock pause, exact full transport/pure fresh preflight/quiet restore/eight atomic refusals, genuine source death from normal 100HP and public retry with saved resources/gear/anchor/profile/input and old cleanup. No final clear/native art claim.",
+      "script": "tests/acts/act2/a2_l2_retry_level_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-authored-retry-cleanup.log --script tests/acts/act2/a2_l2_retry_level_smoke.gd -- --loadout=heavy --profile=standard",
+      "recorded_command_provenance": "data/campaign/act2/levels/A2-L2_HISTORY.md (owner record)",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-authored-retry-cleanup.log --script tests/acts/act2/a2_l2_retry_level_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-authored-retry-first.log",
+      "source_log": ".cinder/a2-l2-shared19-authored-retry-first.log",
+      "raw_sha256": "9157834feada36cab3f53b8cfd69adc9f1503d1e262a9f2f5d3236eea9b8c1b7",
+      "shared_revision": "campaign-shared-19",
+      "checks": 221,
+      "failures": 0,
+      "result_line_verbatim": "Weybridge authored retry smoke: 221 checks, 0 failures; real earned yard checkpoint and source damage, no forced state/final clear/native art or future-level acceptance",
+      "disposition": "FAILED_RESOURCE_TEARDOWN",
+      "exit_code": null,
+      "exit_code_provenance": "not independently retained; do not infer from assertion count",
+      "scope": "221 behavior checks/0 assertion failures, but fresh test-receiver teardown emitted native !is_inside_tree() transform errors. The clean retry log supersedes only that resource symptom.",
+      "script": "tests/acts/act2/a2_l2_retry_level_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-authored-retry-first.log --script tests/acts/act2/a2_l2_retry_level_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 2,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: Condition \"!is_inside_tree()\" is true. Returning: Transform3D()",
+          "ERROR: Condition \"!is_inside_tree()\" is true. Returning: Transform3D()"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-first-pair-timing-diagnostic.log",
+      "source_log": ".cinder/a2-l2-shared19-first-pair-timing-diagnostic.log",
+      "raw_sha256": "bdaaaf7fd5cfa23be07641089cda8a5baea1f8c366c90f6747780007d87873c2",
+      "shared_revision": "campaign-shared-19",
+      "checks": 107,
+      "failures": 1,
+      "result_line_verbatim": "Weybridge live level smoke: 107 checks, 1 failures; loadout=heavy profile=standard; actual authored L2 actions, synthetic prior prefix and TEST ONLY L3 destination",
+      "disposition": "INTENTIONAL_FAILED_DIAGNOSTIC",
+      "exit_code": 1,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "107 checks/1 failure. TEST ONLY intentional stop at the first actual paired recovery refusal; no acceptance claim.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-first-pair-timing-diagnostic.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=standard --diagnose-pair",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 1,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: TEST ONLY diagnostic stops at first actual paired recovery refusal; no acceptance claim"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-handler-front-native-first.log",
+      "source_log": ".cinder/a2-l2-shared19-handler-front-native-first.log",
+      "raw_sha256": "303418dd7bf4ec31bec6da1c625a706b55ecdef1042bd0efaa03d8a78577de21",
+      "shared_revision": "campaign-shared-19",
+      "checks": 127,
+      "failures": 0,
+      "result_line_verbatim": "Weybridge actual Handler portrait smoke: 127 checks, 0 failures; current native states only, no full clear/balance/device claim",
+      "disposition": "ACCEPTED_SCOPED",
+      "exit_code": 0,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "127 checks and eleven actual native 540x1170 revision2 front-operator frames. Real prefix: three primary defeats, yard contact and two completed foot opportunities. Independent review of all eleven found no material source/readability defect in those views. No full-route or all-pose claim.",
+      "script": "tests/acts/act2/a2_l2_handler_portrait_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l2-shared19-handler-front-native-first.log --script tests/acts/act2/a2_l2_handler_portrait_smoke.gd -- --loadout=heavy --profile=standard --capture-live",
+      "recorded_command_provenance": "root exact executed command",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --path . --log-file .cinder/a2-l2-shared19-handler-front-native-first.log --script tests/acts/act2/a2_l2_handler_portrait_smoke.gd -- --loadout=heavy --profile=standard --capture-live",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-handler-front-pose-bounds.log",
+      "source_log": ".cinder/a2-l2-shared19-handler-front-pose-bounds.log",
+      "raw_sha256": "224dbba912a9f9aa1a18bf3c87f5beacf14d6a70c6d2cd3602b31078b481bbd5",
+      "shared_revision": "campaign-shared-19",
+      "checks": 65,
+      "failures": 0,
+      "result_line_verbatim": "A2-L2 isolated Handler/foot smoke: 65 checks, 0 failures; no authored route/native portrait claim",
+      "disposition": "ACCEPTED_SCOPED",
+      "exit_code": 0,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "65 --pose-only checks. Actual front-operator vertices at/above ground and within unchanged body top 1.1025m/grounded radius .944141m; all six phases, quiet fresh restore and material isolation. No controller/clock/collision change or native/full-route claim.",
+      "script": "tests/acts/act2/a2_l2_handler_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-handler-front-pose-bounds.log --script tests/acts/act2/a2_l2_handler_smoke.gd -- --pose-only",
+      "recorded_command_provenance": "root exact executed command",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-handler-front-pose-bounds.log --script tests/acts/act2/a2_l2_handler_smoke.gd -- --pose-only",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-live-assisted-heavy-first.log",
+      "source_log": ".cinder/a2-l2-shared19-live-assisted-heavy-first.log",
+      "raw_sha256": "d76ca50fe6d525da1acf8b318c00254b679da3ffa904840bab079f0ec3f6833f",
+      "shared_revision": "campaign-shared-19",
+      "checks": 291,
+      "failures": 1,
+      "result_line_verbatim": "Weybridge live level smoke: 291 checks, 1 failures; loadout=heavy profile=assisted; actual authored L2 actions, synthetic prior prefix and TEST ONLY L3 destination",
+      "disposition": "FAILED_FIXTURE",
+      "exit_code": 1,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "291 checks/1 failure. Actual Assisted serialization occurred, then fixture attempted a duplicate clear of already-defeated crossing_scout. Corrected branch rerun remains pending.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-live-assisted-heavy-first.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=assisted",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 1,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: actual target entered a running exchange: crossing_scout"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-live-challenge-padded-first.log",
+      "source_log": ".cinder/a2-l2-shared19-live-challenge-padded-first.log",
+      "raw_sha256": "2fe116d190277fc5c90fbac6c5a6d687b1b8a1fa0c3bee252bc021b5bc868c11",
+      "shared_revision": "campaign-shared-19",
+      "checks": 320,
+      "failures": 0,
+      "result_line_verbatim": "Weybridge live level smoke: 320 checks, 0 failures; loadout=slow_padded_reach profile=challenge; actual authored L2 actions, synthetic prior prefix and TEST ONLY L3 destination",
+      "disposition": "ACCEPTED_SCOPED",
+      "exit_code": 0,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "320 checks. Actual Challenge/slow_padded_reach full route: canonical slower full primary cadence, six real ordinary-primary defeats, four completed true-circle/no-primary foot opportunities, four contacts, once-clear, separate shelter transition and cleanup. Original art; revised anatomy not inferred.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-live-challenge-padded-first.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=slow_padded_reach --profile=challenge",
+      "recorded_command_provenance": "data/campaign/act2/levels/A2-L2_HISTORY.md (owner record)",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-live-challenge-padded-first.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=slow_padded_reach --profile=challenge",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-live-heavy-closed-response.log",
+      "source_log": ".cinder/a2-l2-shared19-live-heavy-closed-response.log",
+      "raw_sha256": "63d8aa645a6ed2a608d2b839c933cd335d30c21bc015d0b4737f5ce0ef5d8a9e",
+      "shared_revision": "campaign-shared-19",
+      "checks": 314,
+      "failures": 0,
+      "result_line_verbatim": "Weybridge live level smoke: 314 checks, 0 failures; loadout=heavy profile=standard; actual authored L2 actions, synthetic prior prefix and TEST ONLY L3 destination",
+      "disposition": "ACCEPTED_SCOPED",
+      "exit_code": 0,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "314 checks. Actual Standard/Heavy full route: six ordinary-primary defeats, four completed true-circle/no-primary/no-swept-hit foot opportunities, four actual stable completed-dash contacts, full 1.10 locks/canonical stats, once-clear, separate shelter transition and cleanup. Original art; revised anatomy not inferred.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-live-heavy-closed-response.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=standard",
+      "recorded_command_provenance": "data/campaign/act2/levels/A2-L2_HISTORY.md (owner record)",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-live-heavy-closed-response.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-live-heavy-crossing-cadence.log",
+      "source_log": ".cinder/a2-l2-shared19-live-heavy-crossing-cadence.log",
+      "raw_sha256": "04fa8cb79958717dd9397c146ff54b4f4e07d148b18cacf943dc96038f0c841d",
+      "shared_revision": "campaign-shared-19",
+      "checks": 107,
+      "failures": 1,
+      "result_line_verbatim": "Weybridge live level smoke: 107 checks, 1 failures; loadout=heavy profile=standard; actual authored L2 actions, synthetic prior prefix and TEST ONLY L3 destination",
+      "disposition": "FAILED",
+      "exit_code": 1,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "107 checks/1 failure. Actual crossing pairing still refused despite authored 1.75 foot windup, then hero died. Diagnostic history preceding candidate ordering and retained actual completed-response custody guard.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-live-heavy-crossing-cadence.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 1,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: foot opportunity stopped:  hero=(-1.503952, -0.004844, -24.186) state={ \"beat\": \"crossing_left\", \"active_ids\": [\"crossing_scout\"], \"foot_id\": \"foot_left\", \"clock_s\": 64.8166666666643, \"exchanges\": { \"village_scout\": { \"api_revision\":"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-live-heavy-native-first.log",
+      "source_log": ".cinder/a2-l2-shared19-live-heavy-native-first.log",
+      "raw_sha256": "ef597cdeadd4b3fa70b8aa9561b831200df8215f09eaf47298b60c124ab6d468",
+      "shared_revision": "campaign-shared-19",
+      "checks": 362,
+      "failures": 0,
+      "result_line_verbatim": "Weybridge live level smoke: 362 checks, 0 failures; loadout=heavy profile=standard; actual authored L2 actions, synthetic prior prefix and TEST ONLY L3 destination",
+      "disposition": "ACCEPTED_MECHANICS_ORIGINAL_ART_FAILED",
+      "exit_code": 0,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "362 checks and sixteen actual native 540x1170 original-art frames. Full Standard/Heavy gameplay/cue/dry-floor route passed. Subsequent source review FAILED original Handler anatomy because the opaque hood hid its rounded operator/head/eyes/tentacle bunches. Never final art acceptance.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --path . --log-file .cinder/a2-l2-shared19-live-heavy-native-first.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=standard --capture-live",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-live-heavy-paired-approach.log",
+      "source_log": ".cinder/a2-l2-shared19-live-heavy-paired-approach.log",
+      "raw_sha256": "aa4dba3bf04873ff4757caf479073613d927421d9e863640300a7b1250aeb30c",
+      "shared_revision": "campaign-shared-19",
+      "checks": 102,
+      "failures": 1,
+      "result_line_verbatim": "Weybridge live level smoke: 102 checks, 1 failures; loadout=heavy profile=standard; actual authored L2 actions, synthetic prior prefix and TEST ONLY L3 destination",
+      "disposition": "FAILED",
+      "exit_code": 1,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "102 checks/1 failure. Apron approach corrected; crossing paired recovery refused and hero died. No full-route acceptance.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-live-heavy-paired-approach.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 1,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: foot opportunity stopped:  hero=(0.405237, -0.004844, -22.2768) state={ \"beat\": \"crossing_left\", \"active_ids\": [\"crossing_scout\"], \"foot_id\": \"foot_left\", \"clock_s\": 61.6166666666645, \"exchanges\": { \"village_scout\": { \"api_revision\":"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-mixed-death-first.log",
+      "source_log": ".cinder/a2-l2-shared19-mixed-death-first.log",
+      "raw_sha256": "f5b344f68c35c57c5d31fb4984d12643d37717fe9b5d51acc6ccb2b9471e8721",
+      "shared_revision": "campaign-shared-19",
+      "checks": 282,
+      "failures": 1,
+      "result_line_verbatim": "Weybridge mixed death smoke: 282 checks, 1 failures; actual simultaneous sources with individually observed phases, no claimed two locks/two accepted hits at one instant/final clear/native art",
+      "disposition": "FAILED",
+      "exit_code": 1,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "282 checks/1 failure. Extra early routed swipe changed approach and caused the earlier foot_apron no-swept-hit assertion. Later real final Scout/Handler accepted lethal damage, synchronous pause/cancellation, original deadlines/cooldowns, retained feet, exact dead transport and fresh MainScene/fullShell assertions passed. Whole variant remains failed.",
+      "script": "tests/acts/act2/a2_l2_mixed_death_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-mixed-death-first.log --script tests/acts/act2/a2_l2_mixed_death_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 1,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: actual foot uses its authored circular source and proved movement avoids a swept hit: foot_apron"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-mixed-death-scoped-prefix.log",
+      "source_log": ".cinder/a2-l2-shared19-mixed-death-scoped-prefix.log",
+      "raw_sha256": "3eb2efc2c8fe6638abf2382edbf47417fc5635fac653223db03b16b75e916432",
+      "shared_revision": "campaign-shared-19",
+      "checks": 220,
+      "failures": 1,
+      "result_line_verbatim": "Weybridge mixed death smoke: 220 checks, 1 failures; actual simultaneous sources with individually observed phases, no claimed two locks/two accepted hits at one instant/final clear/native art",
+      "disposition": "FAILED",
+      "exit_code": 1,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "Completed 220 checks/1 failure. Corrected route-prefix variant failed the assertion requiring both final real sources to damage the normal hero and remain admitted at lethal hurt publication. No entire mixed-death acceptance; diagnosis/affected rerun pending.",
+      "script": "tests/acts/act2/a2_l2_mixed_death_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-mixed-death-scoped-prefix.log --script tests/acts/act2/a2_l2_mixed_death_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 1,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: both real final sources damage the normal hero and remain admitted at the actual lethal hurt publication"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-pending-parent-cosmetic-barrier.log",
+      "source_log": ".cinder/a2-l2-shared19-pending-parent-cosmetic-barrier.log",
+      "raw_sha256": "d5a2d73987de3d7ea0cde17a4a631627f2cbd5b63d5e3a2c0564c9a68af54494",
+      "shared_revision": "campaign-shared-19",
+      "checks": 102,
+      "failures": 1,
+      "result_line_verbatim": "Weybridge authored pending-path smoke: 102 checks, 1 failures; genuine active publication/public pause and exact nested migration only; no full clear/native art/future-level acceptance",
+      "disposition": "FAILED",
+      "exit_code": 1,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "102 checks/1 failure. Resumed hit-publication public pause rejected a prior-tick Handler cosmetic progress against actual saved tool clock.",
+      "script": "tests/acts/act2/a2_l2_pending_path_smoke.gd",
+      "recorded_command": null,
+      "recorded_command_provenance": "exact invocation flags absent from retained raw log/level record",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-pending-parent-cosmetic-barrier.log --script tests/acts/act2/a2_l2_pending_path_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 1,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: post-resolution public pause durably captures the complete current tuple: L2 Handler progress differs from its actual saved tool clock"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-pending-parent-first.log",
+      "source_log": ".cinder/a2-l2-shared19-pending-parent-first.log",
+      "raw_sha256": "f26737200760bcb805b38ced614019a2735d10c5210254af833d35b3eacce64a",
+      "shared_revision": "campaign-shared-19",
+      "checks": 72,
+      "failures": 1,
+      "result_line_verbatim": "Weybridge authored pending-path smoke: 72 checks, 1 failures; genuine active publication/public pause and exact nested migration only; no full clear/native art/future-level acceptance",
+      "disposition": "FAILED",
+      "exit_code": 1,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "72 checks/1 failure. Genuine active-publication public pause retained unresolved nested schema2 but rejected prior-tick Handler cosmetic progress; failed fixture teardown also emitted !is_inside_tree() errors.",
+      "script": "tests/acts/act2/a2_l2_pending_path_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-pending-parent-first.log --script tests/acts/act2/a2_l2_pending_path_smoke.gd -- --loadout=heavy --profile=standard",
+      "recorded_command_provenance": "data/campaign/act2/levels/A2-L2_HISTORY.md (owner record)",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-pending-parent-first.log --script tests/acts/act2/a2_l2_pending_path_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 3,
+        "warning_line_count": 0,
+        "error_prefixes": [
+          "ERROR: public deferred pause captures the whole authoritative tuple: L2 Handler progress differs from its actual saved tool clock",
+          "ERROR: Condition \"!is_inside_tree()\" is true. Returning: Transform3D()",
+          "ERROR: Condition \"!is_inside_tree()\" is true. Returning: Transform3D()"
+        ],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-pending-parent-hit-barrier.log",
+      "source_log": ".cinder/a2-l2-shared19-pending-parent-hit-barrier.log",
+      "raw_sha256": "e106da277901d1727ad807cbb80d7327eb662b4659ea874d958d6d1a2d1cc6d6",
+      "shared_revision": "campaign-shared-19",
+      "checks": 111,
+      "failures": 0,
+      "result_line_verbatim": "Weybridge authored pending-path smoke: 111 checks, 0 failures; genuine active publication/public pause and exact nested migration only; no full clear/native art/future-level acceptance",
+      "disposition": "ACCEPTED_SCOPED",
+      "exit_code": 0,
+      "exit_code_provenance": "owner report; engine log does not encode process exit",
+      "scope": "111 checks. Genuine schema2 whole aggregate/ExactJson/fresh saved-player preflight/quiet exact restore/six atomic refusals, once-only resumed resolution, schema1 drain, no refired hit/cooldown refresh. Retained sampled path is stationary after actual arrival dash; no nonzero moving dash intersection is demonstrated.",
+      "script": "tests/acts/act2/a2_l2_pending_path_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-pending-parent-hit-barrier.log --script tests/acts/act2/a2_l2_pending_path_smoke.gd -- --loadout=heavy --profile=standard",
+      "recorded_command_provenance": "root exact executed command",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-pending-parent-hit-barrier.log --script tests/acts/act2/a2_l2_pending_path_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "derived from script interface/result scope; not an original stdout or verified exact historical invocation",
+      "raw_engine_diagnostics": {
+        "error_line_count": 0,
+        "warning_line_count": 0,
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared19-mixed-death-retained-response.log",
+      "source_log": ".cinder/a2-l2-shared19-mixed-death-retained-response.log",
+      "raw_sha256": "88da41c1d1f31124e880dff6a9cbb285d06874bdce4f614469567a51cfb2ad81",
+      "shared_revision": "campaign-shared-19",
+      "checks": 220,
+      "failures": 1,
+      "result_line_verbatim": "Weybridge mixed death smoke: 220 checks, 1 failures; actual simultaneous sources with individually observed phases, no claimed two locks/two accepted hits at one instant/final clear/native art",
+      "disposition": "FAILED",
+      "exit_code": 1,
+      "exit_code_provenance": "root observed exec completion",
+      "scope": "Failed overly restrictive final-source status predicate. Diagnostic proves both real sources dealt accepted10HP damage, but the Scout later cancelled tracking_lock_unproved before fatal Handler. Test expectation was corrected to preserve actual previously cancelled receipts; no runtime timing/HP/lease was fabricated. PTY reported2 ObjectDB instances at failed quit.",
+      "script": "tests/acts/act2/a2_l2_mixed_death_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-mixed-death-retained-response.log --script tests/acts/act2/a2_l2_mixed_death_smoke.gd -- --loadout=heavy --profile=standard",
+      "recorded_command_provenance": "root exact executed command",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared19-mixed-death-retained-response.log --script tests/acts/act2/a2_l2_mixed_death_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "same exact recorded invocation; source may change after this result",
+      "raw_engine_diagnostics": {
+        "error_prefixes": [
+          "ERROR: both real final sources damage the normal hero; lethal publication retains running danger or an actually completed other response"
+        ],
+        "warning_prefixes": []
+      },
+      "owner_reported_pty_diagnostics": "2 ObjectDB instances at exit; not clean overall acceptance."
+    },
+    {
+      "log": "checks/a2-l2-shared21-mixed-death-closed-receipts.log",
+      "source_log": ".cinder/a2-l2-shared21-mixed-death-closed-receipts.log",
+      "raw_sha256": "a5238caa4bed0fc34edf1079b4ae734dd1ec4ea8a8accc6fafd1567bbb386d47",
+      "shared_revision": "campaign-shared-21",
+      "checks": 260,
+      "failures": 0,
+      "result_line_verbatim": "Weybridge mixed death smoke: 260 checks, 0 failures; actual simultaneous sources with individually observed phases, no claimed two locks/two accepted hits at one instant/final clear/native art",
+      "disposition": "ACCEPTED_SCOPED",
+      "exit_code": 0,
+      "exit_code_provenance": "root observed exec completion",
+      "scope": "Actual safe four-defeat/four-foot/four-contact prefix, both sources armed and accepted10HP damage earlier, actual lethal active Handler with already-cancelled tracking_lock_unproved Scout; preserve terminal receipt, running lease deadlines/cooldown, finished foot history, exact complete dead transport/fresh MainScene/actual fresh Shell/quiet paused restore. Not two running sources at the lethal instant.",
+      "script": "tests/acts/act2/a2_l2_mixed_death_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared21-mixed-death-closed-receipts.log --script tests/acts/act2/a2_l2_mixed_death_smoke.gd -- --loadout=heavy --profile=standard",
+      "recorded_command_provenance": "root exact executed command",
+      "reproduction_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared21-mixed-death-closed-receipts.log --script tests/acts/act2/a2_l2_mixed_death_smoke.gd -- --loadout=heavy --profile=standard",
+      "reproduction_command_provenance": "same exact recorded invocation; source may change after this result",
+      "raw_engine_diagnostics": {
+        "error_prefixes": [],
+        "warning_prefixes": []
+      },
+      "tested_runtime_anchor": "7f4b296c1535df33f0ed7178522e9eb5e097a2be on shared21 preserving merge5a3c4b7e80b90e340266ceac021d91432962fd7e; only fixture expectations changed"
+    }
+  ],
+  "captures": [
+    {
+      "directory": "original-native",
+      "frame_count": 16,
+      "raw_metadata": "original-native/a2-l2-standard-heavy-evidence.json",
+      "portable_index": "original-native/image-index.json",
+      "resolution": [
+        540,
+        1170
+      ]
+    },
+    {
+      "directory": "handler-front-native",
+      "frame_count": 11,
+      "raw_metadata": "handler-front-native/a2-l2-standard-heavy-evidence.json",
+      "portable_index": "handler-front-native/image-index.json",
+      "resolution": [
+        540,
+        1170
+      ]
+    }
+  ],
+  "source_review": {
+    "boards": [
+      "docs/concept-art/act2/environments/weybridge-shepperton.png",
+      "docs/concept-art/act2/props/victorian-survival-props.png",
+      "docs/concept-art/act2/props/martian-technology.png",
+      "docs/concept-art/act2/bosses/fighting-tripod-boss.png",
+      "docs/concept-art/act2/bosses/handling-machine-boss-v2.png",
+      "docs/concept-art/act2/characters/refugees-and-defenders.png"
+    ],
+    "ids": [
+      "G06",
+      "G17",
+      "G16",
+      "G11",
+      "G10-v2",
+      "G03",
+      "E12",
+      "E13",
+      "E14",
+      "T03",
+      "T08",
+      "T11",
+      "T24",
+      "T26",
+      "T29",
+      "C57",
+      "C62"
+    ],
+    "review_provenance": "Existing root/helper source and native reviews reported by owner; no new research or source reconstruction by evidence collection.",
+    "original_native": "Independent source reviewer inspected all sixteen; root inspected eight selected original frames. Hero/cue/dry landing had no material obstruction, with readable tight foot-right overlap. Original Handler anatomy FAILED source fidelity because opaque hood hid rounded head/body/eyes/tentacle bunches.",
+    "handler_front_native": "Independent source reviewer inspected all eleven current front-operator frames; root inspected four selected current frames. No material source/readability defect in captured views: rounded head/eyes/two tentacle bunches are visible. Minor strand/beak pixel merge, rear fifth support not independently visible every image and next spent Handler partly under bottom HUD remain limitations.",
+    "environment_limits": "Compact broad dry paving/quay/water/cottages/witness adaptation is visible. Dense ruin/rubble/timber/artillery composition is not fully demonstrated; harmless distant tripod partially behind top HUD in original clear/collapse. No whole-board reconstruction claim."
+  },
+  "reuse_basis": {
+    "frozen_l1": "Scout actor/visual/exchange, Horsell terrain/readability helpers and Heath primitive/material/cottage/six-witness families, with all original forty-two runtime hashes verified unchanged separately.",
+    "new_owned_l2": "Continuous dry paving/quay rails/brick/scenic water, carts/fieldgun/landmark/collapse, compact five-support Handler/tool mount and one local articulated foot.",
+    "shared": "Single existing player/controller/gesture/HUD/camera/equipment resolver/Scheduler/mechanism consumers; no fork or shared numerical retune.",
+    "test_seed": "Synthetic prior Act1+Horsell completion prefix/catalogue unlock metadata/profile and injected TEST ONLY L3 destination support isolated real L2 actions. They do not establish gameplay or acceptance of earlier/future levels."
+  },
+  "current_remaining_work": [
+    "Correct and complete failed final mixed Scout+Handler accepted-hit observation variant; 282/1 and 220/1 remain failed whole variants.",
+    "Corrected Assisted branch and remaining Standard weapon/Quick/slow Cargo-Longstep route cells are pending.",
+    "Finalize directly affected current-art full-route/native evidence and exact runtime candidate after remaining scoped checks.",
+    "Owner updates manifests/progress/evidence and seeks canonical L2 integration acceptance before L3 production."
+  ],
+  "limitations": [
+    "No canonical L2 acceptance; scaffold remains in progress.",
+    "Original mechanical passes do not establish revision2 source anatomy or every pose.",
+    "Pending-path111 retained a stationary sample after actual arrival dash; no nonzero moving circle intersection is demonstrated.",
+    "No human recognition/balance/intended clear time/native-focused play/device/draw-cost/mobile/export/release/all-poses or remaining Act2-level completion claim.",
+    "Some earlier resource warnings were in PTY only; raw engine logs do not contain them and missing stdout is not fabricated."
+  ]
+}

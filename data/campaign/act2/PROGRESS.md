@@ -1,57 +1,52 @@
 # Act 2 progress
 
-Updated 8 October 2026. Authored L1 evidence baseline: `campaign-shared-13`; current checkout adopted shared19 via3fe640ee, preserving registrationd629/shared18. Tested L1 publication: `campaign-shared-13`, publication `fef1b1a79d83401d5b67118f6f69dcf2abea017c`, preserving merge `24de1aa84960477a6c93993827040e586a01ead1`. See [memory](ACT_MEMORY.md), [current L1](levels/A2-L1.md) and [preserved progress history](PROGRESS_HISTORY.md). Historical failures and earlier pending statements remain in the archive, not in current status.
+Updated 8 October 2026. **One of eight Act2 levels is canonically accepted. L2 is implemented in validation; no L2 acceptance or HANDOFF yet.** [Memory](ACT_MEMORY.md), [current L2 design](levels/A2-L2.md), [portable L2 evidence](../../../docs/acts/act2/evidence/A2-L2/README.md) and [preserved progress history](PROGRESS_HISTORY.md) separate current status from earlier failures/pending statements.
 
-## Current state
+Consumed `campaign-shared-21`: publication `811f69fe542f85bc58a26fded567b89e584b51e8`, preserving merge `5a3c4b7e80b90e340266ceac021d91432962fd7e`, owned WIP preserved, ACK `d07d7584-baa0-4d6c-8a4c-775b4971969c`. Earlier L2 passes retain shared19 publication `868b2bff523e538ee093ff6ec58c09c5f2099072`/merge `3fe640ee62b35b6e0fb53c011386b3ad82983a1b`/ACK `c6999a14`. REQUEST `dcc047b7-8dac-40a1-8869-ad7690889601` is resolved; Scout inquiry `ad2a03eb` awaits scoped reproduction, with no verified runtime defect/change yet.
 
-| Level | State | Next requirement |
+| Level | Current state | Next requirement |
 | --- | --- | --- |
-| A2-L1 Horsell Common | Authored/tested and canonically accepted | Production registrationd629 adopted; runtime remains frozen |
-| A2-L2 Weybridge and Shepperton | Heavy/Standard actual full314/0; native362/0/16frames; full acceptance pending | Actual paired/death/retry, remaining gear/profile, all-frame source review |
-| A2-L3 Black Smoke and the Ruined House | Production unstarted; incomplete | L2 handoff |
-| A2-L4 Red Weed and the London Approaches | Production unstarted; incomplete | L3 handoff |
-| A2-L5 Dead London and Regent's Park | Production unstarted; incomplete | L4 handoff |
-| A2-O1 Cylinder Perimeter | Production unstarted; incomplete | All main levels, then reuse L1 kit |
-| A2-O2 Clear Air Circuit | Production unstarted; incomplete | O1 handoff; reuse L3 kit |
-| A2-O3 Bleached Canal | Production unstarted; incomplete | O2 handoff; reuse L4 kit |
+| A2-L1 Horsell Common | Canonically accepted; original forty-two hashes matched at last check | Reverify any upcoming common Scout correction |
+| A2-L2 Weybridge and Shepperton | Actual route/state/mixed-death and scoped revised-art passes; final acceptance pending | Callback reproduction/remaining cells → freeze/HANDOFF |
+| A2-L3 Black Smoke and the Ruined House | Production unstarted | L2 handoff/acceptance |
+| A2-L4 Red Weed and the London Approaches | Production unstarted | L3 handoff |
+| A2-L5 Dead London and Regent's Park | Production unstarted | L4 handoff |
+| A2-O1 Cylinder Perimeter | Production unstarted | Main levels complete; reuse L1 kit |
+| A2-O2 Clear Air Circuit | Production unstarted | O1 handoff; reuse L3 kit |
+| A2-O3 Bleached Canal | Production unstarted | O2 handoff; reuse L4 kit |
 
-L1 has a completed exact HANDOFF and canonical acceptance below. Its authored runtime remains at tested owned runtime commit `16f2532518edd8d76aa41ec40f1d10edad607559`. Shared13 stationary285/0, Scout40/0, native Heavy-left304/0, default WEAPON-01-left269/0 and Challenge slow-Padded-Reach-left269/0 all pass. Owner and independent seven-frame review agree no material captured-state defect; older results retain their precise scopes. The optional shared camera hook is empty in L1, preserving ordinary follow; L1 is stationary and does not consume lunge/staged-collider, spores or replay.
+## Frozen accepted L1
 
-## Recorded evidence
+ACCEPTED response `73244c16-dcb2-4351-a354-b13bf11a81c0` covers candidate `a96edfaddd22e206438e616a8b4080e5c5cdce7a`, runtime `16f2532518edd8d76aa41ec40f1d10edad607559`, registration `d629072f2ca2086878981ef3e19543d9a68ece41`. Original forty-two hashes matched at the last verification; any forthcoming common Scout change needs fresh preservation checks. [L1 evidence](../../../docs/acts/act2/evidence/A2-L1/README.md) preserves authored shared13 stationary285/material40/native304/default269/Challenge269 and earlier scoped passes; integration132/0 headless/142/0 native is separate. Real A1-L5 prerequisite remains; synthetic prefixes do not complete Act1.
 
-Original logs are ignored local files in the assigned checkout; root preserved the scoped logs in [check evidence](../../../docs/acts/act2/evidence/A2-L1/checks/). All passes below reported engine exit0 without script/resource failures. Fixture prerequisites are explicit TEST ONLY registry acceptance, prior Act1 unlock/prefix and destination/profile seeds; they never register campaign acceptance or prove Act1/L2 gameplay.
+## Current L2 scoped evidence
 
-| Revision / check | Result | What it establishes | Local log |
-| --- | --- | --- | --- |
-| Shared13 isolated stationary Ray exchange | 285/0 | Real warning/lock/hit/recovery, callback invalidation/pause, deferred measured sweep, queued-weapon cancellation, five adjacent-lower-binary64 atomic clock/deadline/adapter/cooldown refusals | `.cinder/a2-l1-shared13-tracking-consumer.log` |
-| Shared13 native Standard-profile/Heavy left route | 304/0 | Six actual primary defeats/full route and seven final540×1170 frames; owner and independent helper accepted the captured-state source/player/cue readability | `.cinder/a2-l1-shared13-live-portrait-final.log` |
-| Shared13 final Scout readability | 40/0 | Measured cosmetic reconstruction, palette/textures, instance isolation, flash/clear/weak context and fresh restore;29 eligible meshes/32 material copies | `.cinder/a2-l1-shared13-scout-readability-final.log` |
-| Shared13 default WEAPON-01, Standard profile, left | 269/0 | Six real ordinary-primary kills, initial zero ammo/no pickups, four checkpoints, once-clear, separate contact transition and cleanup | `.cinder/a2-l1-shared13-live-standard-left.log` |
-| Shared13 Slow Padded + Reach, Challenge profile, left | 269/0 | Complete actual six-kill/four-boundary/contact/cleanup route with the fixed Challenge role | `.cinder/a2-l1-shared13-live-challenge-padded-left.log` |
-| Shared10 strict authored pair/death/retry | 203/0 | Real release, first four clears, stable departure checkpoint, paired warning/lock pause, exact typed transport, actual ray death and public protected retry; exact saved resources/input/profile and old-instance cleanup | `.cinder/a2-l1-shared10-authored-pair-retry-exact-final.log` |
-| Shared10 routed graphical left/right | 41/0 each | Actual swipe/aim anchor, immediate primary, empty nearby second tap, consumed pause/resume input and clear witness/player feet | `.cinder/a2-l1-shared10-routed-left-cutaway.log`; `.cinder/a2-l1-shared10-routed-right-cutaway.log` |
-| Shared10 bank readability | 39/0 | Derived foreground alpha/reconstruction and exact unchanged collision/floor/player/cue state; synthetic visual probes, not a full route | `.cinder/a2-l1-shared10-bank-readability-first.log` |
-| Shared8 Heavy both routes | 541/0 | Both real common approaches, final pair, six required ordinary-primary defeats from initial zero ammo/no pickups, four authored checkpoints, once-clear and separate Woking contact | `.cinder/a2-l1-shared8-live-routes-settle-diagnostic.log` |
-| Shared8 Slow Cargo + Longstep, right | 248/0 | Full actual route with existing slow/long-step loadout | `.cinder/a2-l1-shared8-live-slow-cargo-right.log` |
-| Shared8 Slow Padded + Reach, left | 269/0 | Full actual route with existing slow/reach/recovery variant | `.cinder/a2-l1-shared8-live-slow-padded-left.log` |
-| Shared8 Quick, right | 264/0 | Full actual route with canonical Quick weapon | `.cinder/a2-l1-shared8-live-quick-right.log` |
-| Shared8 Assisted, left | 264/0 | Actual one-preparing-slot profile retains both final logical targets and full resolved1.10 lock | `.cinder/a2-l1-shared8-live-assisted-left.log` |
-| Shared8 saved-player aggregate | 34/0 | Moving snapshot/fresh receiver, cross-pair rejection, atomic actual commit, quiet ordered restore and preference-independent retry | `.cinder/a2-l1-shared8-aggregate-context-repaired.log` |
+These owner-run accepted logs reported clean exit0 without script/resource/exit failures. Original-art route passes retain gameplay/cue/dry-floor scope, not revised anatomy acceptance. TEST ONLY preceding prefix/unlock/profile and injected L3 destination seeds support actual shared L2 actions; no earlier/future-level gameplay or canonical acceptance is inferred. [Full inventory, exact recorded commands and historical failures](../../../docs/acts/act2/evidence/A2-L2/checks/summary.json).
 
-Earlier shared11 driver285/0/native304/0/Scout33/0 remain evidence for their prior cutaway. Pure sequence194/0, floor/tableau259/0, actor196/0 and seeded shell31/0 establish their isolated ordering, physical floor/snapshot, actor and cosmetic reconstruction scopes. Their commands/logs and the initial invisible scenery, generated puff IDs, seam-proof, TEST ONLY seed/navigation, decimal transport and art-classification failures are preserved in [history](PROGRESS_HISTORY.md). Older branch/loadout/retry/input evidence is reused for unchanged floor/collision, role/profile, controls, checkpoint/state authority and cue semantics: the latest correction derives only per-instance visual opacity, and unused shared13 additions do not retime stationary L1. Current shared13 Scout/native/default/Challenge runs cover the changed views and new route cells; this does not claim every earlier variant was rerun on13. Later full routes supersede earlier incomplete-route status.
+| Shared19 check | Result | Established scope |
+| --- | --- | --- |
+| Standard/Heavy full route | 314/0 | Six ordinary-primary defeats, four HP-free true-circle/no-primary foot opportunities, four stable contacts, full locks, once-clear, separate shelter exit/cleanup |
+| Standard/Heavy original native full route | 362/0;16 frames | Actual 540×1170 gameplay/cue/dry-floor views; original Handler anatomy subsequently FAILED source fidelity |
+| Challenge/slow Padded+Reach full route | 320/0 | Canonical slower full primary cadence; six defeats/four feet/four contacts/clear/exit/cleanup; original art |
+| Actual apron pair/death/public retry | 221/0 | Warning/lock pause, full ExactJson saved-player preflight/quiet restore, eight atomic refusals, real source death and saved resources/gear/input/profile retry/cleanup |
+| Genuine pending-path aggregate | 111/0 | Schema2 whole transport/fresh preflight/quiet restore, six atomic refusals, resume once/schema1 drain, no refired hit/cooldown refresh |
+| Revised Handler native prefix | 127/0;11 frames | Three real defeats, yard contact, two completed feet; all eleven current source/readability views reviewed |
+| Revised Handler pose-only | 65/0 | Actual operator vertices≥ground, unchanged 1.1025m top/.944141m radius; six phases, quiet fresh restore/material isolation |
 
-Canonical ability/equipment validators last passed with zero uses/claims. Numerical validation covered 12clothing/4weapons/6powerups/14perks,10fixtures,256loadouts,500conditionals and7500combined states. This is catalogue/arithmetic consistency evidence, not an exhaustive runtime fairness or human balance test. L1 adds no allocation or reward.
+Shared21 corrected mixed death passes 260/0, clean exit0. Both actual sources armed/dealt accepted 10HP damage earlier; lethal Handler is active while Scout already cancelled `tracking_lock_unproved`. Exact cancelled Scout cycle/exchange/vector receipts, original running Handler deadlines/cooldown, all four completed feet and full ExactJson/fresh MainScene/fullShell quiet dead restore pass. This does not claim two running sources at lethal publication. Root will add `.cinder/a2-l2-shared21-mixed-death-closed-receipts.log` to portable evidence before final freeze. Exact owner command:
 
-## Scoped visual acceptance and next action
+```sh
+python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared21-mixed-death-closed-receipts.log --script tests/acts/act2/a2_l2_mixed_death_smoke.gd -- --loadout=heavy --profile=standard
+```
 
-Per-bank and per-Scout-part cutaways preserve physical geometry, housing hit point, shared cue, gameplay clocks and opacity-independent snapshots. Final Scout40/0 and actual native Heavy-left304/0 cover the29 eligible meshes/32 per-instance material copies. At the same real close counter X0.3976889/Z-25.587755, A is unarmed warning and B recovery, with22 B paths faded. Owner and independent helper inspected all seven final540×1170 images and found no material captured-state defect. Preserved thin source outlines still overlap locally as a minor limitation; earlier9/15-panel residual frames and opaque diagnostic33/0 remain history. This is scoped source/player/cue visual acceptance, not a claim about every possible pose or human understanding.
+The 111-check retained circle sample is stationary after an actual arrival dash; it does not establish a nonzero moving intersection. Earlier entry22/0 and narrow Handler pair/clean audio retirement26/0 retain their isolated scopes in the inventory. Initial retry 221/0 behavior counts with native fresh-fixture teardown errors remain failed history; the clean retry supersedes only that resource symptom. Prior pending72/1 and102/1 cosmetic-barrier failures are preserved, not erased by111/0.
 
-[Seven promoted native frames and metadata](../../../docs/acts/act2/evidence/A2-L1/live-evidence.json) record warning, lock, active, recovery, first pair, pair committed and clear. The pair-committed state is A warning/B recovery, not two armed locks.
+Independent review of all sixteen original frames found no material hero/cue/dry-landing obstruction, with tight right-foot overlap readable. Original Handler hood concealed its rounded head/body/eyes/tentacle bunches, so original anatomy source fidelity failed. Revised front-operator head/eyes/two bunches are visible; independent review of all eleven current frames found no material captured-state source/readability defect. Minor strand/beak pixel merge, rear fifth support not independently visible each image and next spent Handler partly under bottom HUD remain limitations. Dense ruin/rubble/timber/artillery composition is not fully demonstrated; original harmless distant collapse is partly behind the top HUD. Prefix 127 does not establish a revised-art full clear or all poses.
 
-Shared13 Challenge slow-Padded-Reach-left269/0 remains recorded. Next: L2 paired/death/retry and gear/profile/source completion → exact L2 HANDOFF before L3. No unchanged successful suites or unrelated act audits need repetition. Human balance/native-focus play and mobile performance remain unperformed limitations.
+## Failed variants and exact next work
 
-Tested owned runtime anchor: `16f2532518edd8d76aa41ec40f1d10edad607559`. All42scene/script/test SHA256 values match that commit; evidence-stamp changes only records/manifests. Scope is the whole assigned Act2 path diff from exact shared13 publication, including earlier owned foundation history. Canonical acceptance/registry work remains integration-owned.
+Mixed-death282/1 failed an earlier apron swept-hit assertion; scoped-prefix220/1 and retained-response220/1 failed final accepted-hit/admission observation. These original variants remain failed history. Corrected 260/0 retains actual complete/prior-cancel receipts and exact vectors rather than assuming a live Scout lease. Assisted291/1 failed a duplicate clear of an already-dead crossing Scout; corrected Assisted remains pending. Raw logs/[level history](levels/A2-L2_HISTORY.md) preserve failures; root will append the latest logs to portable evidence before final freeze.
 
-HANDOFF `b56eaa6b-d647-40ed-a210-0eaa378a4cf6` sent exact candidatea96/runtime16f/shared13 and was received c0678903; L1 is canonically ACCEPTED: message `73244c16-dcb2-4351-a354-b13bf11a81c0`, exact candidate `a96edfaddd22e206438e616a8b4080e5c5cdce7a`, runtime `16f2532518edd8d76aa41ec40f1d10edad607559`, content `993096ca2ea908605cad1400a8c6bf4f45665779`, registration `d629072f2ca2086878981ef3e19543d9a68ece41`. Integration production lifecycle132headless/142native portrait passed with0failures. Isolated priorAct1 completion prefix/initialHP37/0ammo are test fixtures; the actual A1-L5 prerequisite remains. Authored evidence stays attributed to exact shared13. Registration/shared17 adoption is pending preserving owned work; current checkout has shared16 through e4bb01fe.
+Mixed 260/0 is complete. Next: scoped callback reproduction and remaining Standard weapon/Quick/slow Cargo+Longstep/Assisted cells → affected current-art/exact runtime freeze → required canonical validation → L2 HANDOFF. Reverify any changed frozen reuse. Milestone `7f4b296` is provisional; refresh hashes after remaining changes. L3-L5/O1-O3 remain unstarted.
 
-L2 production: [Weybridge](levels/A2-L2.md) source/art/equipment gate complete; new owned scene/root/sequence/kit/Handler/foot imported. Actual entry/whole-paused-state/atomic-rejection/cleanup15/0 passed at shared16; full-route and native acceptance pending. Shared callback lifecycle REQUESTdcc047b7 remains integration-owned. No new gear/ability claim/use; L3-L5/O1-O3 production unstarted.
+L1/L2 introduce no equipment type, perk, temporary powerup, reward or permanent growth. Earlier catalogue validators retain their original scope, without a new validation claim. No human recognition/balance/native-focused play/every possible pose/device performance/mobile export/release or all-eight-level acceptance is claimed. Those limitations add no human decision or mobile gate to the authorized desktop work.

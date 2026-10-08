@@ -5,7 +5,8 @@ extends SceneTree
 ## The bot observes actual proofs and requests real dashes/ordinary primaries.
 ## No live HP/ammo/transform/phase assignment or manufactured progression.
 ## --loadout=standard/heavy/slow_cargo_longstep/slow_padded_reach/quick
-## --profile=standard/assisted/challenge; --capture-live requires native graphics.
+## --profile=standard/assisted/challenge; native captures require graphics.
+## --capture-final writes a new final-native directory, preserving prior frames.
 
 const MainScene: PackedScene = preload("res://scenes/main.tscn")
 const ProfileSeedGame: Script = preload("res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd")
@@ -412,6 +413,9 @@ func _read_options() -> bool:
 		if argument.begins_with("--loadout="): _loadout_name = argument.trim_prefix("--loadout=")
 		elif argument.begins_with("--profile="): _profile_id = argument.trim_prefix("--profile=")
 		elif argument == "--capture-live": _capture_live = true
+		elif argument == "--capture-final":
+			_capture_live = true
+			_capture_root = "res://captures/act2/final-native/"
 	if not _expect(LOADOUTS.has(_loadout_name) and _profile_id in ["standard", "assisted", "challenge"], "supported existing loadout/profile selectors"): return false
 	_loadout = LOADOUTS[_loadout_name].duplicate(true)
 	var resolver: CinderEquipment = Equipment.new() as CinderEquipment
