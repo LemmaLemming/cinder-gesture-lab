@@ -176,6 +176,7 @@ func _exercise(canonical: Dictionary) -> void:
 	if not await _wait_clock(_game.player, 0.12, false):
 		return
 	_expect(_game.player.hp == CheckpointHP and _game.player.hp < _game.player.max_hp and _game.player.shells == 0, "legitimate resumed clocks preserve depleted HP and zero ammo without healing/refill")
+	_expect(float(_game.active_level.get("sun_elapsed_s")) > float(checkpoint.level.local.scenery.sun_elapsed_s), "legitimate resume advances the restored public sun clock")
 	var after: Array[Dictionary] = _game.player.get_world_action_records(int(checkpoint.player.world_actions.sequence))
 	var pending: Dictionary = checkpoint.player.world_actions.pending_dash
 	_expect(after.size() == 1 and not pending.is_empty() and after[0].kind == "dash" and float(after[0].started_at_s) == float(pending.started_at_s), "resume finishes only the saved in-flight dash, not a menu-induced extra dash/primary/blast")
@@ -222,7 +223,7 @@ func _assert_checkpoint(checkpoint: Dictionary) -> bool:
 		return false
 	for id: String in SourceIDs:
 		var source: Dictionary = local.sources[id]
-		if not _expect(source.stable_id == id and not source.dead and source.hp == source.max_hp and source.phase == "idle" and source.reservation_id == "" and int(source.cycle) == 0 and float(source.clock_s) == float(local.scheduler.clock_s), "checkpoint binds living source before its first enabled warning: " + id):
+		if not _expect(source.api_revision == "act3-stalker-snapshot-3" and source.schema_version == 3 and source.stable_id == id and not source.dead and source.hp == source.max_hp and source.phase == "idle" and source.reservation_id == "" and int(source.cycle) == 0 and float(source.clock_s) == float(local.scheduler.clock_s), "checkpoint binds source3 living actor before its first enabled warning: " + id):
 			return false
 	var observed: Dictionary = checkpoint.shell.last_input_observation
 	if not _expect(not observed.is_empty() and observed.kind == "swipe_release" and _same_exact(observed.anchor_normalized, checkpoint.shell.anchor_normalized) and float(checkpoint.player.world_actions.clock_s) == float(_checkpoint_events[0].hero_clock_s) and _same_exact(checkpoint.player.motion.position, Codec.vector3(_checkpoint_events[0].hero_position)), "one entry barrier captures actual dash pose/clock and final routed release anchor together"):

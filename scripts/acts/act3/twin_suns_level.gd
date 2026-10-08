@@ -271,6 +271,8 @@ func combat_response(source_id: String) -> Dictionary:
 	for x: float in [-1.0, 1.0]:
 		for z: float in [-1.0, 1.0]:
 			directions.append(Vector3(x, 0.0, z).normalized())
+	# The real shared player is a sibling of this level under the common World.
+	response["world_root"] = get_parent() as Node3D
 	response["world_revision"] = WORLD_REVISION
 	response["recognition_s"] = 0.25
 	response["attack_input_margin_s"] = 0.06
@@ -280,10 +282,20 @@ func combat_response(source_id: String) -> Dictionary:
 	return response
 
 
+func _camera_framing_points() -> Array:
+	if not _active:
+		return []
+	var result: Dictionary = camera_framing_union()
+	if not String(result.get("error", "")).is_empty():
+		last_camera_framing_error = String(result.error)
+		return []
+	return (result.points as Array).duplicate()
+
+
 ## Pure union preparation. Replace only one unleased prospective source while
 ## retaining every other held source's actual/committed render bounds.
-## This helper alone neither enables the shared camera hook nor admits attacks.
-func camera_framing_union(candidate_id: String = "", candidate_points: Array = []) -> Dictionary:
+## This geometry helper never admits attacks or replaces mechanical proof.
+func camera_framing_union(candidate_id: String = "", candidate_points: Array = [], current_view: bool = false) -> Dictionary:
 	if not is_instance_valid(shared_shell) or not _configuration_error.is_empty():
 		return {"error": "Configured authored level and actual shared shell required", "points": []}
 	if not candidate_id.is_empty():
@@ -301,16 +313,61 @@ func camera_framing_union(candidate_id: String = "", candidate_points: Array = [
 		var source: CinderAct3SunboundStalker = sources.get(source_id) as CinderAct3SunboundStalker
 		if not is_instance_valid(source):
 			return {"error": "Retained authored source unavailable for camera union: " + source_id, "points": []}
-		var source_bounds: Dictionary = source.camera_framing_points(shared_shell)
+		var source_bounds: Dictionary = source.camera_framing_points(shared_shell, {}, {}, current_view)
 		if not String(source_bounds.get("error", "")).is_empty():
 			return {"error": source_id + ": " + String(source_bounds.error), "points": []}
 		points.append_array(source_bounds.points)
+	var contact_bounds: Dictionary = _contact_camera_framing_points()
+	if not String(contact_bounds.get("error", "")).is_empty():
+		return contact_bounds
+	points.append_array(contact_bounds.points)
 	if points.size() > 224:
 		return {"error": "Actual source camera union exceeds the shared corner bound", "points": []}
 	for point: Variant in points:
 		if not point is Vector3 or not point.is_finite() or maxf(absf(point.x), maxf(absf(point.y), absf(point.z))) > 1024.0:
 			return {"error": "Actual source camera union requires bounded finite native corners", "points": []}
 	return {"error": "", "points": points.duplicate()}
+
+
+## Completion leaves a required contact cue after the last threat releases.
+## This fixed native mesh can use its transformed AABB; no billboard proxy or
+## interaction authority is inferred from these presentation-only corners.
+func _contact_camera_framing_points() -> Dictionary:
+	if not is_completed():
+		return {"error": "", "points": []} if _exit_state == "clear" else {"error": "Contact framing requires actual level completion", "points": []}
+	if _exit_state not in ["available", "active", "spent"] or not is_instance_valid(exit_cue) or exit_cue.is_queued_for_deletion() or not exit_cue.is_inside_tree():
+		return {"error": "Completed route requires its live contact cue state", "points": []}
+	var cue_state: Dictionary = exit_cue.state()
+	if not Codec.keys_error(cue_state, ["api_revision", "state", "trigger", "required", "visible"]).is_empty() or cue_state.get("api_revision") != "interaction-cue-1" or cue_state.get("state") != _exit_state or cue_state.get("trigger") != "contact" or cue_state.get("required") != true or cue_state.get("visible") != true:
+		return {"error": "Completed route requires its visible actual contact presentation", "points": []}
+	var marker: MeshInstance3D = exit_cue.get_node_or_null("RequiredInteractionMarker") as MeshInstance3D
+	if not is_instance_valid(marker) or marker.is_queued_for_deletion() or not marker.is_visible_in_tree() or not marker.mesh is ArrayMesh or not marker.material_override is StandardMaterial3D or marker.material_overlay != null:
+		return {"error": "Native fixed contact marker mesh/material required for camera bounds", "points": []}
+	var material: StandardMaterial3D = marker.material_override as StandardMaterial3D
+	if material.shading_mode != BaseMaterial3D.SHADING_MODE_UNSHADED or material.billboard_mode != BaseMaterial3D.BILLBOARD_DISABLED or material.get_flag(BaseMaterial3D.FLAG_FIXED_SIZE) or material.grow:
+		return {"error": "Camera-dependent or displaced contact marker geometry is unsupported", "points": []}
+	var bounds: AABB = marker.mesh.get_aabb()
+	var transform: Transform3D = marker.global_transform
+	if not bounds.position.is_finite() or not bounds.size.is_finite() or bounds.size.x <= 0.0 or bounds.size.y < 0.0 or bounds.size.z <= 0.0 or not transform.origin.is_finite() or not transform.basis.is_finite() or transform.basis.determinant() == 0.0 or not _exit_rect.position.is_finite() or not _exit_rect.size.is_finite() or _exit_rect.size.x <= 0.0 or _exit_rect.size.y <= 0.0:
+		return {"error": "Finite native contact mesh and authored approach rectangle required", "points": []}
+	# The immutable contact region is on permanent floor. Include its complete
+	# approachable rectangle as well as every actual rendered marker corner.
+	var low: Vector3 = Vector3(_exit_rect.position.x, 0.0, _exit_rect.position.y)
+	var high: Vector3 = Vector3(_exit_rect.end.x, 0.05, _exit_rect.end.y)
+	for x: float in [bounds.position.x, bounds.end.x]:
+		for y: float in [bounds.position.y, bounds.end.y]:
+			for z: float in [bounds.position.z, bounds.end.z]:
+				var world_corner: Vector3 = transform * Vector3(x, y, z)
+				if not world_corner.is_finite():
+					return {"error": "Finite actual contact marker world corners required", "points": []}
+				low = low.min(world_corner)
+				high = high.max(world_corner)
+	var points: Array = []
+	for x: float in [low.x, high.x]:
+		for y: float in [low.y, high.y]:
+			for z: float in [low.z, high.z]:
+				points.append(Vector3(x, y, z))
+	return {"error": "", "points": points}
 
 
 func scheduler_bindings() -> Dictionary:
@@ -375,6 +432,14 @@ func _update_guidance() -> void:
 			objective_text = "SINGLE CREST: ITS RIGHT FLANK\nDASH CLEAR; TAP THE LOW RECOVERY" if int(first.effective_sun) == 0 else "FORKED CREST: ITS LEFT FLANK\nDASH CLEAR; TAP THE LOW RECOVERY"
 	else:
 		objective_text = BEAT_LABELS[_entries.size()].to_upper() + "\nREAD THE CREST; DASH CLEAR, TAP LOW"
+	if _configuration_error.is_empty() and _exit_state == "clear":
+		for source_id: String in SOURCE_IDS:
+			var source: CinderAct3SunboundStalker = sources.get(source_id) as CinderAct3SunboundStalker
+			if is_instance_valid(source):
+				var source_state: Dictionary = source.state()
+				if not source_state.dead and not String(source_state.get("framing_error", "")).is_empty():
+					objective_text = "THREAT REARMS\nKEEP THE BODY AND LANE IN VIEW"
+					break
 
 
 func _capture_local_state() -> Dictionary:

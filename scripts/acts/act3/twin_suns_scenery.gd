@@ -57,7 +57,9 @@ func build(room: bool, clear_pockets: bool = false) -> void:
 		_low_tree(Vector3(3.0, 0, 26.0), "FlankTree", false)
 		_low_tree(Vector3(0, 0, 8.0), "TwoApproachesTree", true)
 		_low_tree(Vector3(0, 0, -13.0), "CrossingTree", true)
-		_low_tree(Vector3(-3.1, 0, -30.0), "DepartureTree", false)
+		# The actual late recovery portrait exposed crown/body overlap. Keep
+		# this noncolliding tree's complete billboard outside the safe shelf.
+		_low_tree(Vector3(-8.5, 0, -30.0), "DepartureTree", false)
 		_pillars(Vector3(-9.8, 0, 40.0), 4)
 		_pillars(Vector3(8.0, 0, -39.0), 5)
 		_clear_water_alcove(Vector3(-4.7, 0, 32.0))

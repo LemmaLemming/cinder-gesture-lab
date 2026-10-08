@@ -44,6 +44,7 @@ var _reservation_id: String = ""
 var _record: Dictionary = {}
 var _proof: Dictionary = {}
 var _framing: Dictionary = {}
+var _framing_error: String = ""
 var _exchange: Dictionary = {}
 var _commit: Dictionary = {}
 var _cycle: int = 0
@@ -136,6 +137,15 @@ func _physics_process(delta: float) -> void:
 			_record = record
 			_phase = String(record.state)
 			_cooldown_until_s = float(record.cooldown_until_s)
+			# A possible future camera fit does not license a currently clipped
+			# lock, moving contact or recovery. Guard the complete real union.
+			if _phase in ["lock", "active", "recovery"]:
+				_framing_error = _current_framing_error()
+				if not _framing_error.is_empty():
+					_cancel("required_view_unsafe: " + _framing_error)
+					_sample(now)
+					_transaction_depth -= 1
+					return
 			# No approach, gravity, move_and_slide or forced motion while leased.
 			_resolve_contact(now, record)
 			if not dead and not _reservation_id.is_empty():
@@ -252,7 +262,18 @@ func _try_lunge(now: float) -> void:
 		_last_rejection = "Response provider must retain the actual public hero actor"
 		return
 	var threat: Dictionary = {"role": _role.duplicate(true), "source_stationary": false, "opening_stationary": true, "cooldown_remaining_s": 0.0, "lunge": {"direction": _facing, "speed": TUNING.lunge_speed, "distance": TUNING.lunge_distance, "damage_radius": TUNING.damage_radius, "body_collision_path": "BodyCollision"}}
-	var result: Dictionary = _scheduler.request_lunge(self, threat, response_value as Dictionary)
+	# The preview is native, ephemeral and pure. Its unchanged fourth argument
+	# still requires fresh exact physical/union reproof before real admission.
+	var response: Dictionary = response_value as Dictionary
+	var preview: Dictionary = _scheduler.preview_lunge(self, threat, response)
+	if not preview.get("accepted", false):
+		_last_rejection = String(preview.get("reason", "Lunge preview rejected"))
+		return
+	_framing_error = _prospective_framing_error(preview)
+	if not _framing_error.is_empty():
+		_last_rejection = "Required view unavailable: " + _framing_error
+		return
+	var result: Dictionary = _scheduler.request_lunge(self, threat, response, preview)
 	if not result.get("accepted", false):
 		_last_rejection = String(result.get("reason", "Lunge rejected"))
 		return
@@ -466,7 +487,11 @@ func _present(silent: bool) -> bool:
 ## Pure complete source/art/cue forecast. The level unions these corners with
 ## other held exchanges; the shell separately includes the actual live hero.
 ## A supplied prospective motion/proof is visibility input only, never a lease.
-func camera_framing_points(shell: Node, motion: Dictionary = {}, chosen: Dictionary = {}) -> Dictionary:
+## current_view omits only a newly chosen future hero landing: the shell adds
+## the actual hero, while complete current/committed source art and cues remain.
+## The caller separately requires the COMPLETE forecast to be future-feasible.
+func camera_framing_points(shell: Node, motion: Dictionary = {}, chosen: Dictionary = {}, current_view: bool = false) -> Dictionary:
+	var held: bool = motion.is_empty()
 	if dead:
 		return {"error": "", "points": []}
 	if not _configured or not _bindings_valid() or not is_instance_valid(shell) or not shell.has_method("player_camera_framing_points"):
@@ -514,14 +539,118 @@ func camera_framing_points(shell: Node, motion: Dictionary = {}, chosen: Diction
 	var hero_points: Array = shell.call("player_camera_framing_points")
 	if hero_points.is_empty():
 		return {"error": "Actual shared player render bounds unavailable", "points": []}
-	for key: String in ["landing", "attack_position"]:
-		if not chosen[key] is Vector3 or not chosen[key].is_finite():
-			return {"error": "Finite selected native response render position required", "points": []}
+	var response_points: Dictionary = _response_render_positions(motion, chosen, held, current_view)
+	if not String(response_points.get("error", "")).is_empty():
+		return response_points
+	for position: Vector3 in response_points.positions:
 		var shifted: Array = []
 		for corner: Vector3 in hero_points:
-			shifted.append(corner + (chosen[key] as Vector3) - _hero.global_position)
+			shifted.append(corner + position - _hero.global_position)
 		points.append_array(_framing_enclosing_box(shifted))
 	return {"error": "", "points": points}
+
+
+## Selected proof points are historical. Once a real alternative starts,
+## frame its native committed remaining span/current landing instead of both
+## remote choices. This never rewrites the original proof, commit or framing.
+func _response_render_positions(motion: Dictionary, chosen: Dictionary, held: bool, current_view: bool) -> Dictionary:
+	for key: String in ["landing", "attack_position"]:
+		if not chosen.get(key) is Vector3 or not (chosen[key] as Vector3).is_finite():
+			return {"error": "Finite selected native response render position required", "points": []}
+	if not held:
+		return {"error": "", "positions": [chosen.landing, chosen.attack_position]}
+	var dash: Dictionary = _hero.get_committed_dash_state()
+	if not Codec.keys_error(dash, ["api_revision", "active", "origin", "direction", "speed", "duration_s", "distance", "remaining_s"]).is_empty() or dash.get("api_revision") != "player-dash-framing-1" or not dash.get("active") is bool:
+		return {"error": "Actual defensive committed Player dash query required", "points": []}
+	# Admission requires an idle hero, so an active dash began after this
+	# exchange. Completed public history keeps the render choice departed
+	# even when a real return reaches the original commit position again.
+	# This selects view bounds only; the saved mechanical proof is unchanged.
+	var responded: bool = dash.active
+	for record: Dictionary in _hero.get_world_action_records():
+		if record.get("kind") == "dash" and Codec.is_number(record.get("started_at_s")) and float(record.started_at_s) >= float(_exchange.start_s):
+			responded = true
+			break
+	if _commit.is_empty() or (not responded and _hero.global_position.distance_to(_commit.hero_position) <= 0.05):
+		return {"error": "", "positions": [chosen.attack_position] if current_view else [chosen.landing, chosen.attack_position]}
+	var response: Variant = _response_provider.call()
+	if not response is Dictionary or not response.get("floor_regions") is Array:
+		return {"error": "Actual immutable floors required for alternative render bounds", "points": []}
+	var landing: Vector3 = _hero.global_position
+	if dash.active and not current_view:
+		if not dash.origin is Vector3 or not dash.direction is Vector3 or not (dash.origin as Vector3).is_finite() or not (dash.direction as Vector3).is_finite() or not Codec.is_number(dash.speed) or not Codec.is_number(dash.remaining_s) or float(dash.speed) <= 0.0 or float(dash.remaining_s) <= 0.0:
+			return {"error": "Finite actual committed dash cache required", "points": []}
+		var displacement: Vector3 = dash.direction * float(dash.speed) * float(dash.remaining_s)
+		var clear: Dictionary = CinderBodySweep.sweep(_hero, _hero.global_transform, displacement, response.floor_regions)
+		if clear.has("error") or clear.get("collided", true):
+			return {"error": "Alternative dash has no unobstructed represented remaining span; sliding endpoint is unsupported", "points": []}
+		# Nominal full distance is not a collision endpoint. Only an actual
+		# clear query supports these conservative intended remaining bounds.
+		landing = CinderBodySweep.anchored_position(_hero.global_position, dash.direction, float(dash.speed) * float(dash.remaining_s))
+	if landing.distance_to(chosen.landing) <= 0.05 or landing.distance_to(chosen.attack_position) <= 0.05:
+		return {"error": "", "positions": [chosen.attack_position] if current_view else [landing, chosen.attack_position]}
+	# View-only ordinary-body envelope on the actual approached side of the
+	# stationary endpoint. This is no new timed witness or action authority.
+	var endpoint: Vector3 = motion.planned_endpoint
+	var bearing: Vector3 = landing - endpoint
+	bearing.y = 0.0
+	if bearing.length_squared() <= 0.000001:
+		bearing = -motion.direction
+	bearing = bearing.normalized()
+	var description: Dictionary = CinderBodySweep.source_description(_hero)
+	if description.has("error"):
+		return {"error": "Actual shared capsule bounds unavailable for primary-body view", "points": []}
+	var radius: float = maxf(float(description.footprint_half.x), float(description.footprint_half.y)) + float((_body.shape as CapsuleShape3D).radius) + CinderThreatScheduler.SKIN
+	var stats: Dictionary = _hero.equipment.resolved_stats()
+	if not Codec.is_number(stats.get("primary_range")) or float(stats.primary_range) <= radius:
+		return {"error": "Actual ordinary primary range cannot contain the body-side render envelope", "points": []}
+	var opening: Vector3 = endpoint + bearing * radius
+	opening.y = landing.y
+	var pose: Transform3D = _hero.global_transform
+	pose.origin = opening
+	var opening_clear: Dictionary = CinderBodySweep.step(_hero, pose, Vector3.ZERO, response.floor_regions)
+	if opening_clear.has("error") or opening_clear.get("collided", true):
+		return {"error": "Actual primary-body render envelope lacks static capsule/floor clearance", "points": []}
+	var ray := PhysicsRayQueryParameters3D.create(opening + Vector3.UP * 0.7, endpoint + Vector3.UP * 0.7, 1)
+	ray.exclude = [_hero.get_rid()]
+	if not get_world_3d().direct_space_state.intersect_ray(ray).is_empty():
+		return {"error": "Actual primary-body render envelope is scenery-occluded", "points": []}
+	return {"error": "", "positions": [opening] if current_view else [landing, opening]}
+
+
+func _prospective_framing_error(preview: Dictionary) -> String:
+	var level: CinderLevel = get_parent() as CinderLevel
+	if not is_instance_valid(level) or not level.has_method("camera_framing_union") or not is_instance_valid(level.shared_shell) or not level.shared_shell.has_method("camera_framing_plan") or not preview.get("plan") is Dictionary or not preview.get("proof") is Dictionary:
+		return "Owned union and actual shared camera preview services required"
+	var proof: Dictionary = preview.proof
+	var bounds: Dictionary = camera_framing_points(level.shared_shell, preview.plan, {"landing": proof.get("landing"), "attack_position": proof.get("attack_position")})
+	if not String(bounds.get("error", "")).is_empty():
+		return String(bounds.error)
+	var union: Dictionary = level.call("camera_framing_union", _stable_id, bounds.points)
+	if not String(union.get("error", "")).is_empty():
+		return String(union.error)
+	var plan: Dictionary = level.shared_shell.call("camera_framing_plan", union.points, _hero.global_position + Vector3.UP * 0.75)
+	return "" if plan.get("accepted", false) else String(plan.get("reason", "Required complete portrait forecast does not fit"))
+
+
+func _current_framing_error() -> String:
+	var level: CinderLevel = get_parent() as CinderLevel
+	if not is_instance_valid(level) or not level.has_method("camera_framing_union") or not is_instance_valid(level.shared_shell) or not level.shared_shell.has_method("camera_framing_error"):
+		return "Owned union and actual shared current-view guard required"
+	# A just-started alternative may precede the next normal idle camera fit.
+	# Its COMPLETE future span must remain feasible; actual containment still
+	# protects real hero + all current/committed source art/body/fixed cues and
+	# the ordinary-body opening, without grace for actual clipping.
+	var forecast: Dictionary = level.call("camera_framing_union")
+	if not String(forecast.get("error", "")).is_empty():
+		return String(forecast.error)
+	var future: Dictionary = level.shared_shell.call("camera_framing_plan", forecast.points, _hero.global_position + Vector3.UP * 0.75)
+	if not future.get("accepted", false):
+		return "Required future view is infeasible: " + String(future.get("reason", "Unknown future framing rejection"))
+	var current: Dictionary = level.call("camera_framing_union", "", [], true)
+	if not String(current.get("error", "")).is_empty():
+		return String(current.error)
+	return String(level.shared_shell.call("camera_framing_error", current.points))
 
 
 func _framing_enclosing_box(points: Array) -> Array:
@@ -581,7 +710,7 @@ func refresh_presentation() -> bool:
 
 
 func state() -> Dictionary:
-	return {"stable_id": _stable_id, "hp": hp, "max_hp": max_hp, "dead": dead, "phase": _phase, "reservation_id": _reservation_id, "cycle": _cycle, "position": global_position, "velocity": velocity, "facing": _facing, "clock_s": _clock(), "cooldown_until_s": _cooldown_until_s, "retry_at_s": _retry_at_s, "hit_consumed": _hit_consumed, "raw_role": _raw_role.duplicate(true), "resolved_role": _role.duplicate(true), "proof": _proof.duplicate(true), "sun_visual": _sun_visual, "effective_sun": _effective_sun(), "commit": _commit.duplicate(true), "framing": _framing.duplicate(true), "last_rejection": _last_rejection, "last_cancel_reason": _last_cancel_reason}
+	return {"stable_id": _stable_id, "hp": hp, "max_hp": max_hp, "dead": dead, "phase": _phase, "reservation_id": _reservation_id, "cycle": _cycle, "position": global_position, "velocity": velocity, "facing": _facing, "clock_s": _clock(), "cooldown_until_s": _cooldown_until_s, "retry_at_s": _retry_at_s, "hit_consumed": _hit_consumed, "raw_role": _raw_role.duplicate(true), "resolved_role": _role.duplicate(true), "proof": _proof.duplicate(true), "sun_visual": _sun_visual, "effective_sun": _effective_sun(), "commit": _commit.duplicate(true), "framing": _framing.duplicate(true), "framing_error": _framing_error, "last_rejection": _last_rejection, "last_cancel_reason": _last_cancel_reason}
 
 
 func snapshot_state() -> Dictionary:
@@ -856,6 +985,7 @@ func apply_validated_state(snapshot: Dictionary) -> bool:
 	if not _commit.is_empty():
 		for key: String in COMMIT_VECTOR_KEYS:
 			_commit[key] = Codec.read_vector3(snapshot.commit[key])
+	_framing_error = ""
 	_framing = (snapshot.framing as Dictionary).duplicate(true)
 	for key: String in _framing:
 		_framing[key] = Codec.read_vector3(snapshot.framing[key])

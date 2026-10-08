@@ -6,6 +6,8 @@ const MainScene: PackedScene = preload("res://scenes/main.tscn")
 const ROOM: String = "res://scenes/acts/act3/a3_l1_stalker_room.tscn"
 const OUTPUT: String = "res://captures/act3/stalker-room"
 var _failed: bool = false
+var _far_right_escape: bool = false
+var _last_release: Vector2 = Vector2.ZERO
 
 
 func _initialize() -> void:
@@ -13,6 +15,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	_far_right_escape = OS.get_cmdline_user_args().has("--far-right-escape")
 	for sun: int in [0, 1]:
 		if OS.get_cmdline_user_args().has("--sun-one-only") and sun == 0:
 			continue
@@ -87,20 +90,29 @@ func _case(sun: int) -> void:
 		await process_frame
 		return
 	print("GPU CASE sun%d: actual traveller=%s source=%s reservation=%s proof=%s" % [sun, hero.presentation_id, source.global_position, record, state.get("proof", {})])
-	var escape_side: float = 1.0 if sun == 0 else -1.0
+	var escape_side: float = 1.0 if sun == 0 or _far_right_escape else -1.0
+	_assert_view(game, level, source, id, "warning")
 	await _save("sun%d-warning.png" % sun)
 	while scheduler.get_clock() < float(record["lock_from_s"]) + 0.025:
 		await _ticks(game, 1)
+	_assert_view(game, level, source, id, "lock")
 	await _save("sun%d-lock.png" % sun)
 	await _swipe(game, escape_side)
 	while scheduler.get_clock() < float(record["active_from_s"]) + 0.12:
 		await _ticks(game, 1)
+	_assert_view(game, level, source, id, "active")
+	if source.global_position.distance_to(record.adapter.start) <= 0.1:
+		_fail("The active portrait must show genuine native source travel")
+	if game.call("get_aim_anchor") != _last_release:
+		_fail("Camera translation changed the held final swipe-release aim anchor")
 	await _save("sun%d-moving-active.png" % sun)
 	while scheduler.get_clock() <= float(record["active_until_s"]) + 0.025:
 		await _ticks(game, 1)
+	_assert_view(game, level, source, id, "recovery")
 	await _save("sun%d-recovery-side.png" % sun)
 	await _swipe(game, -escape_side)
 	await _ticks(game, 14)
+	_assert_view(game, level, source, id, "recovery")
 	await _save("sun%d-recovery-return.png" % sun)
 	var before: float = float(source.call("state")["hp"])
 	var toward: Vector3 = source.global_position - hero.global_position
@@ -117,6 +129,8 @@ func _case(sun: int) -> void:
 	await _ticks(game, 2)
 	if float(source.call("state")["hp"]) >= before:
 		_fail("Routed ordinary primary failed to hit the actual recovery body in sun%d" % sun)
+	if hero.hp != hero.max_hp:
+		_fail("The routed escape must retain full actual hero HP")
 	await _save("sun%d-primary-hit.png" % sun)
 	print("GPU CASE sun%d: HP %s->%s; heroHP=%s shells=%s; real executed records=%s" % [sun, before, source.call("state")["hp"], hero.hp, hero.shells, hero.get_world_action_records()])
 	game.queue_free()
@@ -153,6 +167,7 @@ func _swipe(game: Node, side: float) -> void:
 	touch.position = finish
 	touch.pressed = false
 	root.push_input(touch, true)
+	_last_release = finish
 	await _ticks(game, 1)
 
 
@@ -171,13 +186,34 @@ func _tap(game: Node, point: Vector2) -> void:
 
 
 func _save(name: String) -> void:
+	var previously_paused: bool = paused
+	paused = true
 	await RenderingServer.frame_post_draw
-	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUTPUT))
+	var destination: String = OUTPUT.path_join("shared18-far-right") if _far_right_escape else OUTPUT
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(destination))
 	var rendered: Image = root.get_texture().get_image()
-	if rendered == null or rendered.is_empty() or rendered.save_png(OUTPUT.path_join(name)) != OK:
+	if rendered == null or rendered.is_empty() or rendered.save_png(destination.path_join(name)) != OK:
 		_fail("Could not save actual GPU view: " + name)
 	else:
-		print("STALKER GPU CAPTURE: ", ProjectSettings.globalize_path(OUTPUT.path_join(name)))
+		print("STALKER GPU CAPTURE: ", ProjectSettings.globalize_path(destination.path_join(name)))
+	paused = previously_paused
+
+
+func _assert_view(game: Node, level: CinderLevel, source: CharacterBody3D, reservation_id: String, phase: String) -> void:
+	if not _far_right_escape:
+		return
+	var state: Dictionary = source.call("state")
+	if String(state.get("reservation_id", "")) != reservation_id or String(state.get("phase", "")) != phase:
+		_fail("Actual far-side %s lost its original lease/phase: %s" % [phase, state.get("last_cancel_reason", "")])
+		return
+	var points: Array = level.camera_framing_points()
+	if points.is_empty() or not level.last_camera_framing_error.is_empty():
+		_fail("Actual far-side %s has no complete valid level framing: %s" % [phase, level.last_camera_framing_error])
+		return
+	var current_error: String = game.call("camera_framing_error", points)
+	if not current_error.is_empty():
+		_fail("Actual far-side %s current protected view failed: %s" % [phase, current_error])
+	print("FAR-SIDE VIEW %s: corners=%d current_error=%s source=%s hero=%s width=%s" % [phase, points.size(), current_error, source.global_position, (game.get("player") as CinderPlayer).global_position, (game.get("camera") as Camera3D).size])
 
 
 func _fail(message: String) -> void:

@@ -94,6 +94,8 @@ func combat_response() -> Dictionary:
 	for x: float in [-1.0, 1.0]:
 		for z: float in [-1.0, 1.0]:
 			directions.append(Vector3(x, 0.0, z).normalized())
+	# The real shared player is a sibling of this level under the common World.
+	response["world_root"] = get_parent() as Node3D
 	response["world_revision"] = 1
 	response["recognition_s"] = 0.25
 	response["attack_input_margin_s"] = 0.06
@@ -103,10 +105,20 @@ func combat_response() -> Dictionary:
 	return response
 
 
+func _camera_framing_points() -> Array:
+	if not _active:
+		return []
+	var result: Dictionary = camera_framing_union()
+	if not String(result.get("error", "")).is_empty():
+		last_camera_framing_error = String(result.error)
+		return []
+	return (result.points as Array).duplicate()
+
+
 ## Pure union preparation. The candidate replaces only its unleased source;
 ## ordinary scheduler proof still owns every mechanical response/lease.
-## This helper alone neither enables the shared camera hook nor admits attacks.
-func camera_framing_union(candidate_id: String = "", candidate_points: Array = []) -> Dictionary:
+## This geometry helper never admits attacks or replaces mechanical proof.
+func camera_framing_union(candidate_id: String = "", candidate_points: Array = [], current_view: bool = false) -> Dictionary:
 	if not is_instance_valid(shared_shell) or not is_instance_valid(stalker):
 		return {"error": "Actual shared shell and retained rule source required", "points": []}
 	if not candidate_id.is_empty():
@@ -116,7 +128,7 @@ func camera_framing_union(candidate_id: String = "", candidate_points: Array = [
 		return {"error": "Prospective camera corners require their actual source identity", "points": []}
 	var points: Array = candidate_points.duplicate()
 	if candidate_id.is_empty():
-		var source_bounds: Dictionary = stalker.call("camera_framing_points", shared_shell)
+		var source_bounds: Dictionary = stalker.call("camera_framing_points", shared_shell, {}, {}, current_view)
 		if not String(source_bounds.get("error", "")).is_empty():
 			return source_bounds
 		points.append_array(source_bounds.points)
@@ -146,7 +158,9 @@ func _update_guidance() -> void:
 	var state: Dictionary = stalker.call("state")
 	var phase: String = state.get("phase", "approach")
 	var text: String = "SINGLE CREST: ITS RIGHT FLANK\nDASH CLEAR OF THE LOCKED LANE" if int(state.get("effective_sun", sun_state)) == 0 else "FORKED CREST: ITS LEFT FLANK\nDASH CLEAR OF THE LOCKED LANE"
-	if phase == "recovery":
+	if not String(state.get("framing_error", "")).is_empty() and not state.get("dead", false):
+		text = "THREAT REARMS\nKEEP THE BODY AND LANE IN VIEW"
+	elif phase == "recovery":
 		text = "LOW BODY OPEN\nTAP FROM NEAR SIDE OR RETURN"
 	elif state.get("dead", false):
 		text = "RULE ROOM CLEAR\nBOTH SUNS KEEP THE SAME SAFE FLOOR"

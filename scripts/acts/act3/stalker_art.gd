@@ -134,7 +134,10 @@ func state() -> Dictionary:
 func camera_framing_points(shell: Node, source_positions: Array, facing: Vector3, sun: int) -> Dictionary:
 	if not is_inside_tree() or not is_node_ready() or not is_instance_valid(shell) or not shell.has_method("camera_billboard_points") or not is_instance_valid(_sprite) or not is_instance_valid(_shadow) or _shadow.mesh == null or not facing.is_finite() or sun not in [0, 1] or source_positions.is_empty() or source_positions.size() > 3 or not get_parent() is Node3D:
 		return {"error": "Ready actual Stalker art and bounded native forecast required", "points": []}
-	if _sprite.pixel_size != PIXEL_SIZE or _sprite.position != Vector3(0, 0.025, 0):
+	# SpriteBase3D stores its pixel_size as native real_t. Compare the actual
+	# configured native value, rather than the higher precision authored ratio.
+	var native_pixel_size: float = PackedFloat32Array([PIXEL_SIZE])[0]
+	if _sprite.pixel_size != native_pixel_size or _sprite.position != Vector3(0, 0.025, 0):
 		return {"error": "Actual Stalker still changed its native scale or feet offset", "points": []}
 	var current: Array = shell.call("camera_billboard_points", _sprite)
 	if current.is_empty():
@@ -155,7 +158,7 @@ func camera_framing_points(shell: Node, source_positions: Array, facing: Vector3
 			var expected_offset: Vector2 = SOURCES[key].offset
 			if mirrored:
 				expected_offset.x = -expected_offset.x
-			if not is_instance_valid(native) or native.texture != SOURCES[key].texture or native.offset != expected_offset or native.flip_h != mirrored or native.pixel_size != PIXEL_SIZE or native.position != _sprite.position:
+			if not is_instance_valid(native) or native.texture != SOURCES[key].texture or native.offset != expected_offset or native.flip_h != mirrored or native.pixel_size != native_pixel_size or native.position != _sprite.position:
 				return {"error": "Native Stalker forecast still differs from its actual family metadata", "points": []}
 			var quad: Array = shell.call("camera_billboard_points", native)
 			if quad.is_empty():
