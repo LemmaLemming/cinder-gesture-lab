@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act3/root_latcher_room.gd" id="1"]
+
+[node name="RootCrescentObliqueFixture" type="Node3D"]
+script = ExtResource("1")
+level_id = "A3-L2"
+local_snapshot_version = 1
+objective_text = "Bait the fixed root; circle its committed crescent"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+; Keep a distinct Hero-selected bearing while the two late-lock dash ticks
+; still intersect the native padded active arc for consumed-contact restore.
+position = Vector3(0.5, 0.1, 1.5)

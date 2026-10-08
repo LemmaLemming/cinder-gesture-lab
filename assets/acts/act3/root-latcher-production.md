@@ -6,7 +6,7 @@ Generated 9 October 2026 with the built-in `image_gen` tool, `transparent_backgr
 - Original output: `/Users/howardchen/.codex/generated_images/01a11ae1-e453-7f40-bb05-cd7373153a0f/exec-e2bd1381-f160-487d-a138-1cccd79c80c7.png`.
 - SHA-256: `05bac37c0e5d03a0238651179e32106bd562ff5999bde36dcb83d3207a0bf810`.
 - Alpha range 0–255: 1,096,387 fully transparent, 410 fully opaque, 475,719 partial pixels. Most visible content is partial alpha; native bytes are preserved. Faint nonzero pixels reach some cell edges, while **alpha >=128** silhouettes stay inside all cells. The consumer uses alpha scissor0.5 and nearest filtering.
-- Readiness: **native-inspected original still candidate; no import/engine or actual portrait verification by this asset helper**. Parent owns subsequent native-projection, collision/contact and portrait checks.
+- Readiness: **original four-still native candidate with parent atlas132/0 and actual source/room crescent26/0, seven-phase forest49/0 evidence**. Seven339×736 Branchspell-room images are Root-viewed; full-court/both-sun/facing/animation production review remains unfinished. The original asset helper ran no engine; subsequent evidence belongs to the parent.
 
 ## Native regions, pivots and common scale
 
@@ -33,7 +33,7 @@ The source is generated rather than pixel-perfect hand-authored. Core silhouette
 - `warning`/`lock`/`active`: same raised/tightened **STILL**. No motion frames or strike timing are inferred.
 - `recovery`: retracted ends and exposed low knot.
 - Explicit `defeated`/`spent`: severed/spent still retained. Art does not infer death or remove an actor.
-- The actor/shared consumer supply all phase transitions and cue geometry. Crescent versus strip remains an explicit parent design decision; this PNG decides neither.
+- The actor/shared consumer supply all phase transitions and cue geometry. The current parent chooses the canonical native hollow crescent; the PNG decides no geometry or timing.
 
 Reuse family: owned Act3 rooted bulbs/organic segments. First consumer is A3-L2; later Quiet Root Circuit can reuse this family after parent acceptance. It is not a new equipment/ability or a new tree-monster roster.
 
@@ -75,3 +75,7 @@ Composition: orthographic fixed downward approximately 45-degree portrait-game v
 Style: crisp stepped nearest-pixel 2.5D game sprites, deliberate broad dark/light clusters with sparse ribbing, apparent coarse source-grid detail approximately 64 pixels per organism, enlarged cleanly. Match the supplied Stalker’s crisp cluster language while being simpler, lower, matte and unmistakably botanical. Nearly black olive core, muted forest green/violet planes, restrained desaturated olive rib highlights. No neon, glass, photorealistic lighting, smooth gradients or tiny noisy bark.
 Constraints: truly transparent RGBA canvas including gutters; no crescent, strip, lane, floor/contact shadow, attack arc, warning outline, arrow, target ring, UI, text or watermark baked into the PNG. Exactly four complete poses of the same rooted two-ended source; no other figures or props.
 ```
+
+## Current parent mechanic and render evidence
+
+[Portable native crescent pack](evidence/A3-L2-crescent-rule/index.json) binds Root API2/schema2 and historical source bytes to room26/0, fresh consumed-hit43/0, interrupted child45/0, supported deferred complete-tick46/0 and forest graphical49/0. The actual stationary low capsule has radius.32/totalheight.64;20HP knot accepts ordinary primary only during recovery. Real weak kit35/0 takes two native resolved hits within one opening; all snapshots preserve actual source geometry/cue/history. This verifies a compact original still consumer, not fullanimation, arbitrarycue-mesh drift, human recognition, nativeOSgesture or full-court artwork. Actual fullroute baseline18/0 ordinary-primary completion establishes mechanical paths; visual grounding/opaque occlusion is a separate pending check.

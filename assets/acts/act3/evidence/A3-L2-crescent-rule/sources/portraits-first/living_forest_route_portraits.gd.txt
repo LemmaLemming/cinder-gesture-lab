@@ -1,0 +1,175 @@
+extends "res://tests/acts/act3/living_forest_route_smoke.gd"
+## Actual native portraits of the unchanged public full-route driver. These
+## hooks only observe inherited fixture state and freeze the SceneTree at its
+## completed post-actor boundary; they never write Hero/source poses, clocks,
+## stats, controller, camera, projection, window size or overlay visibility.
+## Underscore members are inherited GDScript fields, not private native APIs.
+## Native PNGs still require parent review: passing containment is not proof
+## against opaque scenery occlusion, art fidelity or human readability.
+
+const PortraitRoot: String = "res://.cinder/living-forest-full-route-portraits-shared23"
+const NativeSize: Vector2i = Vector2i(339, 736)
+const MaxPortraits: int = 50
+const CapturePhases: Array[String] = ["warning", "lock", "active", "recovery"]
+const ScenicEntries: Array[int] = [2, 4, 5]
+
+var _portrait_keys: Dictionary = {}
+var _portrait_count: int = 0
+var _portrait_directory: String = ""
+var _portrait_error: String = ""
+var _portrait_suns: Dictionary = {}
+var _portrait_sun_stages: Dictionary = {}
+var _portrait_mixed: bool = false
+var _portrait_exit_states: Dictionary = {}
+var _capture_busy: bool = false
+
+
+func _options() -> String:
+	var error: String = super._options()
+	if not error.is_empty(): return error
+	if DisplayServer.get_name() == "headless": return "native portrait fixture requires the queued graphical renderer"
+	var kit_folder: String = "baseline" if _kit_selector.is_empty() else _kit_selector.trim_prefix("--")
+	var scope: String = "first-pocket" if _first_only else "full-route"
+	_portrait_directory = ProjectSettings.globalize_path(PortraitRoot.path_join(kit_folder).path_join(scope))
+	if DirAccess.make_dir_recursive_absolute(_portrait_directory) != OK: return "cannot create owned native portrait output directory"
+	return ""
+
+
+func _tick_safe() -> String:
+	var error: String = await super._tick_safe()
+	if not error.is_empty(): return error
+	return await _capture_due()
+
+
+func _checkpoint_pair(index: int, after_clear: bool) -> String:
+	var error: String = await super._checkpoint_pair(index, after_clear)
+	if not error.is_empty(): return error
+	if not after_clear and ScenicEntries.has(index):
+		return await _capture_native("entry-" + EntryIds[index], {"entry_index": index, "checkpoint": CheckpointIds[index]})
+	return ""
+
+
+func _primary(segment: Dictionary, proof: Dictionary) -> String:
+	# Reach the actual deadline through the inherited safe finite waiter before
+	# observing the ordinary-primary position. super rechecks the same current
+	# lease, ready Hero and genuine opening, then executes its unchanged slash.
+	var error: String = await super._at_time(float(proof.primary_time_s))
+	if not error.is_empty(): return error
+	if _is_root(_source_id) or _source_id == SourceIds[0]:
+		var actual: Dictionary = _sources[_source_id].call("state")
+		var record: Dictionary = _scheduler.reservation_state(String(_current.get("id", "")))
+		if record.is_empty() or record.state != "recovery" or actual.phase != "recovery" or _reservation_id(actual, _source_id) != record.id or actual.dead or _hero.global_position.distance_to(proof.attack_position) > PointTolerance:
+			return "native primary portrait lacks the actual live advertised recovery position"
+		error = await _capture_native(_source_id + "-ordinary-primary-position", {"source_id": _source_id, "phase": "recovery", "reservation_id": record.id, "primary_time_s": proof.primary_time_s, "attack_position": proof.attack_position})
+		if not error.is_empty(): return error
+	return await super._primary(segment, proof)
+
+
+func _capture_due() -> String:
+	if _capture_busy or not is_instance_valid(_hero) or not is_instance_valid(_level): return ""
+	var route: Dictionary = _level.call("state")
+	var error: String = ""
+	if route.entered.is_empty():
+		error = await _capture_native("quiet-arrival", {})
+		if not error.is_empty(): return error
+	# All nine sources get one real warning/lock/active/recovery portrait. A
+	# first Stalker active sample is withheld until actual physical travel is
+	# positive. Fixed Root active poses are their genuine stationary phase.
+	for id: String in SourceIds:
+		var state: Dictionary = _sources[id].call("state")
+		if state.dead or state.phase not in CapturePhases: continue
+		var reservation_id: String = _reservation_id(state, id)
+		var record: Dictionary = _scheduler.reservation_state(reservation_id)
+		if record.is_empty() or record.state != state.phase: return "native phase portrait lacks its actual typed live record: " + id
+		if state.phase == "active" and not _is_root(id) and float(_active_travel.get(record.id, 0.0)) <= 0.1: continue
+		error = await _capture_native(id + "-" + String(state.phase), {"source_id": id, "phase": state.phase, "reservation_id": reservation_id, "source_position": (_sources[id] as Node3D).global_position, "geometry": record.geometry})
+		if not error.is_empty(): return error
+	# Two genuine clock-driven scenic states, with no authored clock selection.
+	# Other captures record the actual sun state too, so both suns and a mixed
+	# union can be evidenced without multiplying the source-pose atlas.
+	if route.sun_stage in ["preview", "lock"]:
+		error = await _capture_native("real-sun-" + String(route.sun_stage), {"sun_state": route.sun_state, "sun_elapsed_s": route.sun_elapsed_s})
+		if not error.is_empty(): return error
+	# The available cue only reads as a useful forest departure once the real
+	# Hero is near the quiet observer. The spent view uses the actual contact.
+	if route.exit_state in ["available", "spent"] and _hero.global_position.z <= -41.0:
+		error = await _capture_native("quiet-observer-exit-" + String(route.exit_state), {"exit_state": route.exit_state, "contact": route.contact.duplicate(true)})
+		if not error.is_empty(): return error
+	return ""
+
+
+func _capture_native(key: String, observation: Dictionary) -> String:
+	if _portrait_keys.has(key): return ""
+	if _capture_busy: return "recursive native portrait capture unsupported"
+	if _portrait_count >= MaxPortraits: return "native portrait plan exceeded its fifty-view finite bound"
+	_capture_busy = true
+	var was_paused: bool = paused
+	paused = true # TEST ONLY simultaneous complete-boundary freeze; no overlay.
+	var before: Dictionary = _frozen_unit()
+	var error: String = ""
+	if before.get("hero", {}).is_empty() or before.get("level", {}).is_empty():
+		error = "native complete-boundary Hero/full-level capture rejected: " + _hero.last_snapshot_error + "; " + _level.last_snapshot_error
+	# Render the ordinary native scene while all actual simulation consumers
+	# stay frozen. No shell/private presentation call or viewport adjustment.
+	if error.is_empty():
+		await process_frame
+		await RenderingServer.frame_post_draw
+		var required: Array = _level.camera_framing_points()
+		var framing_error: String = _level.last_camera_framing_error
+		if framing_error.is_empty(): framing_error = String(_game.call("camera_framing_error", required))
+		if not framing_error.is_empty(): error = "same rendered-frame required native union/Hero containment failed: " + framing_error
+		if error.is_empty() and not _exact(before, _frozen_unit()): error = "native render freeze changed exact Hero/full typed local unit, poses, clock, events or camera"
+		var actual: Image = root.get_texture().get_image() if error.is_empty() else null
+		if error.is_empty() and (actual == null or actual.is_empty() or actual.get_size() != NativeSize):
+			error = "actual viewport is not339x736: " + str(actual.get_size() if actual != null else Vector2i.ZERO)
+		if error.is_empty():
+			var file: String = _portrait_directory.path_join("%02d-%s.png" % [_portrait_count + 1, key])
+			if actual.save_png(file) != OK:
+				error = "cannot save unchanged native portrait: " + file
+			else:
+				_portrait_count += 1
+				_portrait_keys[key] = true
+				var route: Dictionary = _level.call("state")
+				_portrait_suns[int(route.sun_state)] = true
+				_portrait_sun_stages[String(route.sun_stage)] = true
+				var held: Array[Dictionary] = _scheduler.reservations()
+				var owners: Array[String] = []
+				for record: Dictionary in held: owners.append(_source_for_record(record))
+				if owners.size() >= 2: _portrait_mixed = true
+				if key.begins_with("quiet-observer-exit-"): _portrait_exit_states[route.exit_state] = true
+				print("ACTUAL FOREST PORTRAIT: ", file, " native_size=", actual.get_size(), " clock_s=", _scheduler.get_clock(), " hero=", _hero.global_position, " sun=", route.sun_state, ":", route.sun_stage, " held=", owners, " required_points=", required.size(), " observed=", observation)
+				_expect(true, "native339x736 " + key + " retains exact complete unit and same-frame containment")
+	paused = was_paused
+	_capture_busy = false
+	if not error.is_empty(): _portrait_error = error
+	return error
+
+
+func _frozen_unit() -> Dictionary:
+	# Exact public aggregate includes every native source/Scheduler/Mech/sun/
+	# route clock and resource. Extra actual transforms/events ensure capture
+	# has not silently moved framing or emitted actions outside that unit.
+	var source_positions: Dictionary = {}
+	for id: String in SourceIds: source_positions[id] = (_sources[id] as Node3D).global_transform
+	var camera: Camera3D = root.get_camera_3d()
+	return {"hero": _hero.snapshot_state(), "level": _level.snapshot_state(), "hero_transform": _hero.global_transform, "hero_velocity": _hero.velocity, "source_transforms": source_positions, "records": _scheduler.reservations(), "events": _events.duplicate(true), "actions": _actions.duplicate(true), "camera_transform": camera.global_transform if camera != null else Transform3D.IDENTITY, "viewport_size": root.size}
+
+
+func _final_error(count: int) -> String:
+	var error: String = super._final_error(count)
+	if not error.is_empty(): return error
+	if not _portrait_error.is_empty(): return _portrait_error
+	if _portrait_count > MaxPortraits: return "native portrait count exceeded planned finite cap"
+	for index: int in range(1 if _first_only else SourceIds.size()):
+		var id: String = SourceIds[index]
+		for phase: String in CapturePhases:
+			if not _portrait_keys.has(id + "-" + phase): return "actual selected source portrait phase missing: " + id + "/" + phase
+	if _first_only:
+		return "" if _portrait_keys.has(SourceIds[0] + "-ordinary-primary-position") else "actual first-pocket primary position missing"
+	if _portrait_count < 35 or not _portrait_suns.has(0) or not _portrait_suns.has(1) or not _portrait_sun_stages.has("preview") or not _portrait_sun_stages.has("lock") or not _portrait_mixed or not _portrait_exit_states.has("available") or not _portrait_exit_states.has("spent"): return "actual full portraits lack bounded35-50 set, both native suns/real preview+lock/mixed union/quiet contact views"
+	return ""
+
+
+func _finish() -> void:
+	print("Living Forest native portrait extension: count=", _portrait_count, " cap=", MaxPortraits, " actual_suns=", _portrait_suns.keys(), " actual_stages=", _portrait_sun_stages.keys(), " mixed_view=", _portrait_mixed, " output=", _portrait_directory)
+	super._finish()
