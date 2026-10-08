@@ -1,0 +1,29 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 339x736 --script tests/acts/act3/mirror_shore_art_portraits.gd",
+  "checks": 13,
+  "failures": 0,
+  "exit_code": 0,
+  "native_errors": false,
+  "captures": 4,
+  "native_size": [
+    339,
+    736
+  ],
+  "baseline": "ec070f6254082c2cd32a87a707a16c1b9fb61a72",
+  "owned_head": "7360084a4b7449b18eac2cd18a38c912e5c64ba4",
+  "scope": "quiet actual MainScene traveller/cast/scenery; both native sun presentations/centre plus one actual routed RIGHT dash/lateral/camera/anchor; exact complete render freeze/cleanup",
+  "viewers": [
+    "Root all4",
+    "reference reviewer all4+G07/G14/G02",
+    "cast reviewer all4+sourcePNG/G02/G07"
+  ],
+  "readiness": "static quiet cast/scenery candidate at this fixed crop/scale/tested placements",
+  "limits": [
+    "eyes/net details too small to verify individually",
+    "lateral Polecrab narrow left margin",
+    "rectangular water band/blocky island/dash-like reflected marks need full-shore refinement",
+    "no Echo/combat-footprint coexistence",
+    "no all-position containment",
+    "no full L3/production save/human/native OS/performance claim"
+  ]
+}

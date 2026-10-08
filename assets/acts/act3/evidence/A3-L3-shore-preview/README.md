@@ -7,3 +7,6 @@ These original failed and passing scopes test the independent familiar-source sc
 - `03-native-pass`: corrected fixture28/0/exit0 clean, six original339×736 captures. Actual paused reconstruction and two live ordinary-primary source defeats pass. Quiet-arrival retains the real pause overlay; the other five views expose actual combat/clear scenery. Root inspected all six; this is finite readability evidence, not full art or level acceptance.
 
 Source JSONs retain exact run baselines and unchanged dependency hashes; new source subsets are copied here. Original unused witness bitmap is separately recorded in its asset manifest. Shared28 adoption does not retrospectively rename these shared27 executions. Index lists byte hashes of every portable artifact.
+
+- `04-quiet-first-native`: actual quietfixture6/1/exit1 beforecaptures; owned pixel-size guard incorrectly compared binary64 nominal to native real_t. Original sources/log/import preserved.
+- `05-quiet-native-pass`: retain the original assigned native pixel size exactly;13/0 clean/four original339×736 centred/lateral/both-sun PNGs. Root+two reviewers inspected all4. Static quiet cast/scenery only; narrow lateral margin/coarse face/net/rectangular backdrop are disclosed.

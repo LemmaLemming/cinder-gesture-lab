@@ -1,7 +1,7 @@
 {
   "asset_id": "A3-MIRROR-SHORE-WITNESSES-01",
   "family": "Tormance nonhostile shore cast",
-  "status": "native_cutout_and_unconsumed_builder_not_yet_runtime_reviewed",
+  "status": "runtime_reviewed_static_quiet_candidate",
   "source_boards": [
     "G02",
     "G07",
@@ -93,12 +93,12 @@
     "static standing Gleameil"
   ],
   "readiness_limits": [
-    "actual requested1024 square returned1254; preserved byte-exact, no raster edit",
-    "large-cluster appearance inspected in generation result; final apparent pixel scale not yet validated",
-    "runtime pivot/floor contact and source/footprint/Hero separation pending",
-    "not a sprite sheet or gameplay capture; no optional/completion reward"
+    "One nonhostile still per figure, no animation or interaction",
+    "Three eyes explicit in native source but not individually countable at portrait scale; net reads coarse hand-work",
+    "Complete silhouettes/grounding/HUD separation reviewed only in four captured arrangements; lateral left margin narrow",
+    "Combat/echo/footprint coexistence and other approaches remain untested"
   ],
-  "runtime_builder": "scripts/acts/act3/mirror_shore_witnesses.gd",
+  "runtime_builder": "res://scripts/acts/act3/mirror_shore_witnesses.gd",
   "inspected_research": [
     {
       "url": "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0014",
@@ -115,5 +115,24 @@
       "sections": "AtlasTexture region/filter_clip, inspected by research agent",
       "application": "preserve unchanged alpha/raster while grounding separate source feet"
     }
-  ]
+  ],
+  "native_property_custody": "Retain exact assigned SpriteBase3D real_t pixel_size once; nominal1/600 double is not the native stored scalar. Original pixels/crops/pivots unchanged.",
+  "runtime_review": {
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 339x736 --script tests/acts/act3/mirror_shore_art_portraits.gd",
+    "checks": 13,
+    "failures": 0,
+    "exit_code": 0,
+    "portraits": 4,
+    "size": [
+      339,
+      736
+    ],
+    "reviewed_by": [
+      "Root",
+      "cast reviewer",
+      "reference reviewer"
+    ],
+    "scope": "static centred and actual right-dash lateral; both actual sun states; no combat",
+    "evidence": "assets/acts/act3/evidence/A3-L3-shore-preview/05-quiet-native-pass/receipt.json"
+  }
 }
