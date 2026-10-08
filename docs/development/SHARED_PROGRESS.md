@@ -1,6 +1,6 @@
 # Cinder shared progress
 
-Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current published API: campaign-shared-22 [SHARED_CONTRACT](SHARED_CONTRACT.md), with verified held replay callback custody runtime `6e632db0555712240d8a84c6b8b8bcbf01453a45` and preserved production Shell HUD ordering. Campaign: **3/24 accepted** (A1-L1, A2-L1, A3-L1); remaining21 in development.
+Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current published API: campaign-shared-23 [SHARED_CONTRACT](SHARED_CONTRACT.md), with tested native-tick pause, stationary preview and per-cycle crescent support; shared22 held replay custody and production Shell HUD ordering remain preserved. Campaign: **3/24 accepted** (A1-L1, A2-L1, A3-L1); remaining21 in development.
 
 ## Inventory and ownership
 
@@ -23,10 +23,10 @@ Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 
 | Level and executed-world-action interfaces | Verified | campaign-level-1 and world-actions-1; 92 level and 119 action checks, compatible with prior preview API |
 | Shared foundations | Verified modules | Exact player/save/settings, ordinary and replay scheduler, actual-body motion, spore and portrait framing evidence below; authored consumers remain independent acceptance obligations |
 | Campaign/save/scheduler/UI/settings consumers | Verified shared interfaces; authored integration continues | Production Title/Journey/Continue/Retry passed for A1-L1 and A2-L1; prospective lunge, circle callback safety and parent capture retirement are published; actual Shell HUD ordering correction passes24/0 |
-| Act level acceptance | 2 / 24 | A1-L1 source06628abb/registrationc19832f9 and A2-L1 sourcea96edf/registrationd629072f accepted; A1-L2, A2-L2 and A3-L1 active |
-| Integrated desktop campaign | Active | Remaining22 levels and their shared-system flows must be accessible/tested; stop before mobile/release |
+| Act level acceptance | 3 / 24 | A1-L1 source06628abb/registrationc19832f9, A2-L1 sourcea96edf/registrationd629072f and A3-L1 sourcefb9da07f/registration59d9097c accepted; each L2 active |
+| Integrated desktop campaign | Active | Remaining21 levels and their shared-system flows must be accessible/tested; stop before mobile/release |
 
-Two levels are accepted; the endpoint remains all24. The original `campaign-shared-1` passed queued verification and was published at baseline `ff34f58e1c29f44b17958f59107e19c99cc91d86`. READY is a setup milestone, not campaign completion. Publication sections below preserve their chronological evidence and acceptance counts at each original boundary.
+Three levels are accepted; the endpoint remains all24. The original `campaign-shared-1` passed queued verification and was published at baseline `ff34f58e1c29f44b17958f59107e19c99cc91d86`. READY is a setup milestone, not campaign completion. Publication sections below preserve their chronological evidence and acceptance counts at each original boundary.
 
 ## READY checkout assignments
 
@@ -402,3 +402,22 @@ A1-L1, A2-L1 and A3-L1 are now independently registered/accepted; other21 remain
 
 
 Exact A3-L1 production registration/evidence commit: `59d9097cdc1b24936c22004e60ea44fa1297b03e`. This also records the compatible shared22 contract/progress, while its replay runtime/evidence is `6e632db0555712240d8a84c6b8b8bcbf01453a45`. The following documentation-only adoption baseline contains those exact tested bytes; canonical run and immutable worker messages name its full commit. A3 acceptance253/261 and callback475 are independent scopes.
+
+## Act2 narrow Scout framing-query supplement
+
+Exact authored `6c91833fa7f0762467348bb85c4eaae2bd0384fa` is adopted as `8c37b1e0a514fe63fc2525c648e658d5c67334ac`: seven owned paths, with the required portrait approval checked after the callback-producing reservation query and before final native/exact lease checks. Independent review verified all committed paths and six indexed logs. Supplemental original186/7, corrected186/0 and directly affected tracking285/0 remain distinct from the first155-check evidence. Forty of42 acceptedL1 original runtime files still match; only the already superseded Scout sources differ. Heavy371/native16views and Standard338 remain attributed to their earlier execution before this supplement. No new fullL1/L2 acceptance or unchanged/broad suite rerun is claimed.
+
+
+## Shared23 native pause and stationary crescent support (8 October 2026)
+
+Integration resolves Act1 REQUEST66ead603 and Act3 DEPENDENCY01850690/followup2f278a66 through supported shared seams. `Game.request_pause_deferred` consumes recognizer input immediately and freezes after the current complete native main-thread physics tick. Shell operations queued from physics freeze at their existing deferred drain; external UI requests remain immediate. Actual same-tick checkpoint then death preserves the last living Retry checkpoint while saving the final fatal active unit. No healing, actor clock/sample synthesis, deadline change or snapshot-format migration is introduced. Actual authored parents must still settle required fatal presentation; the unfinished A1-L2 parent is not certified by the shared fixture.
+
+Canonical bounded `Geometry.crescent` supplies analytic hollow annular-sector capsule/path contact and matching inner/outer/end outline/fill. Scheduler adds pure `preview_stationary` and optional exact corresponding admission; LaneMechanism adds `preview_start` and optional selected per-cycle crescent bearing/preview. The actual selected shape freezes across cue/contact/quiet paired restore, while configured source/radii/sector remain immutable. Least-containing native world derivation includes actual sibling floors and rejects empty/>32 bindings before traversal. Existing lane/circle calls and snapshot envelopes remain compatible; adopt new readers before loading the new crescent kind. Actor HP/target, portrait camera composition and authored full-route fairness remain owned level obligations.
+
+Final new checks: pause **116/0**, crescent geometry **124/0**, stationary preview **146/0**, crescent consumer **145/0**, all exit0. Directly affected Shell after the fatal-checkpoint fix **52/0**. Earlier frozen directly affected input19/0, lunge-preview70/0, lane243/0 and threat-snapshot35/0 retain their original source scopes; only the later preview-root/bound helper and fatal-checkpoint branch changed, covered by their new targeted runs. No broad or unchanged L1 suite ran. Stationary/consumer logs retain the native macOS certificate startup diagnostic without script/runtime failures; final pause/Shell logs are clean.
+
+The [portable evidence](evidence/shared23-native-dependencies/index.json) retains original pause fixture setup16/8,16/8,2/1, corrected99/0 and100/0, the subsequently added actual fatal-checkpoint16/2 regression and corrected116/0, crescent115/1→115/0→124/0, and initial/final consumer129/0→145/0 independently. Partial historical command/source attribution is explicit. New tests use actual production Shell/shared Player/native consumers/physics and exact isolated saves, but no authored portrait or GUI Retry initiation is claimed. Future replay-footprint clipping remains a separate draft/new-leaf validation and is excluded from this publication.
+
+Final frozen runtime: Game76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc; Shell9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c; Lane52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064; Scheduler5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f; Geometryc82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09; CueMeshd63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d. Shared Player remains unchanged. Exact shared runtime/fixtures commit: `2934382d2cad5c9c7550bf7f24d17d175896c929`. The following scoped documentation/evidence baseline retains those tested bytes; canonical run and worker publication messages name its full commit. Individual adoption acknowledgements remain required.
+
+All three existing workers remain active, with integration as their help contact. API22 adoption verified: A1 merge6f5ee645/ACK832e3703, A2 merge0076fe0775/ACK5fee52c3, A3 merge5c43da099/ACK77cb8594. Branch/checkouts/owned paths were retained. A1 reports owned full open-route142/0 pending remaining branch/kit/profile/portrait work; A2 reports owned route/crossing restoration work pending exact handoff; A3 continues forest/scaffold/art while this native crescent dependency is published. These are progress reports, not new acceptance. Campaign remains **3/24** accepted; A1/A2/A3-L2 and all optional entries remain unfinished.

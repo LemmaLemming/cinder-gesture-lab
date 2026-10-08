@@ -1,4 +1,4 @@
-# Stationary lane and circle mechanisms
+# Stationary lane, circle and crescent mechanisms
 
 This compatible extension resolves the shared consumer part of Act 1 A1-L2
 request `d02f12e5-797d-463f-84f5-7caafd3d26d5` from worker
@@ -27,15 +27,26 @@ configure(mechanism_id: String, geometry: Dictionary,
           timing_floors: Dictionary = DEFAULT_TIMING_FLOORS) -> bool
 bind(scheduler: CinderThreatScheduler, heroes: Dictionary) -> bool
 start(hero_id: String, response_context: Dictionary,
-      opening_position: Variant = null) -> Dictionary
+      opening_position: Variant = null, bearing: Variant = null,
+      preview: Dictionary = {}) -> Dictionary
+preview_start(hero_id: String, response_context: Dictionary,
+              opening_position: Variant = null, bearing: Variant = null) -> Dictionary
 ```
 
 `configure` accepts authoritative `Geometry.lane(from, to, radius)` or
-`Geometry.circle(origin, radius)` with positive finite radius. Other geometry
-kinds reject. Configuration copies the canonical shape and immutable raw role
+`Geometry.circle(origin, radius)` with positive finite radius, or the closed bounded
+`Geometry.crescent(origin, direction, inner_radius, outer_radius, min_dot)`.
+Other geometry kinds reject. Configuration copies the canonical shape and immutable raw role
 before binding. The actual stationary mechanism occupies `lane.from` or
 `circle.origin`, respectively. A circle is serialized as exactly `kind`, `origin`
-and `radius`; it never becomes a zero-length lane.
+and `radius`; it never becomes a zero-length lane. A crescent uses its actual origin
+and the six canonical fields documented in [crescent geometry](CRESCENT_GEOMETRY.md).
+Its optional per-cycle bearing changes only the selected normalized direction;
+the configured source, radii and sector remain immutable. Lane/circle reject an
+explicit bearing. [Crescent mechanism](CRESCENT_MECHANISM.md) describes exact
+preview-to-admission correspondence and selected-geometry paired restore.
+Updated Scheduler and mechanism readers are required before loading this new
+geometry kind; envelope schemas and legacy two/three-argument calls remain compatible.
 
 `bind`, `cancel(reason)`, `clear(reason)`, `get_cue()`, `state()`, `state_changed`
 and `hit_resolved(hero_id, cycle, result)` retain their existing contracts.
@@ -88,7 +99,7 @@ use private damage clocks to bypass that admission.
 
 ## Damage, timing and quiet paired restore
 
-Both shapes use the existing warning → lock → active → recovery deadlines and
+All supported shapes use the existing warning → lock → active → recovery deadlines and
 the required shared `CinderThreatCue`. Physics priority 100 samples actual hero
 positions after scheduler/player physics and clips each actual segment to the
 active interval through `Geometry.timed_path_hits`. Shared capsule radius pads

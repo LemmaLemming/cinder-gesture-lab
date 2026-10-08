@@ -1,0 +1,1248 @@
+{
+  "schema_version": 1,
+  "publication_status": "reviewed/native-targets-complete",
+  "api_revision": "campaign-shared-23",
+  "tested_engine": "4.7.2.stable.official.ed1daf0bf",
+  "scope": "Only named directly affected native shared-system fixtures. No authored placement, portrait, human input/balance, broad baseline or level acceptance claim.",
+  "files": [
+    {
+      "stage": "pause-fixture-setup-first",
+      "path": "logs/pause-barrier-first.log",
+      "sha256": "95c0399e162a2879aa0e6e5643fb81a16a37392085f39f489a0b3f1c130f74fe",
+      "bytes": 3319,
+      "kind": "log",
+      "source_path": ".cinder/pause-barrier-first.log",
+      "meaning": "Fixture stable-String owner validation failure before native callback logic; not a runtime pause pass.",
+      "checks": 16,
+      "failures": 8,
+      "preserved_source_folder": ".cinder/pause-barrier-first-source",
+      "canonical_reproduction": "python3 scripts/dev/dev.py test pause_barrier",
+      "invocation_provenance": "Exact historical wrapper flags were not independently retained. Named canonical reproduction does not establish the original invocation."
+    },
+    {
+      "stage": "pause-fixture-setup-second",
+      "path": "logs/pause-barrier-second.log",
+      "sha256": "4354d3b795f2a33eec6209d4086203f5b30e2b58f8b2303c4aa29ed5ab8b1e34",
+      "bytes": 3519,
+      "kind": "log",
+      "source_path": ".cinder/pause-barrier-second.log",
+      "meaning": "Second fixture setup failure; no relabelling as a gameplay failure/pass.",
+      "checks": 16,
+      "failures": 8,
+      "canonical_reproduction": "python3 scripts/dev/dev.py test pause_barrier",
+      "invocation_provenance": "Exact historical wrapper flags were not independently retained. Named canonical reproduction does not establish the original invocation."
+    },
+    {
+      "stage": "pause-fixture-binding-diagnostic",
+      "path": "logs/pause-barrier-diagnostic.log",
+      "sha256": "6d4e68617b85213aedb85b3d1736309236d47921fb5d39d5f01c4b1a4efe5a1e",
+      "bytes": 690,
+      "kind": "log",
+      "source_path": ".cinder/pause-barrier-diagnostic.log",
+      "meaning": "Single-selector fixture diagnosis of StringName owner insertion; exact historical wrapper flags unavailable.",
+      "checks": 2,
+      "failures": 1,
+      "command": null,
+      "invocation_provenance": "Integration reports this selector; exact historical wrapper/argument syntax is unavailable and is not reconstructed.",
+      "reported_selector": "--one"
+    },
+    {
+      "stage": "pause-corrected-third",
+      "path": "logs/pause-barrier-third.log",
+      "sha256": "48d706517ad0335a8d8fda04f72158311ff824ff26a89a195dfedcdf0acae7d0",
+      "bytes": 237,
+      "kind": "log",
+      "source_path": ".cinder/pause-barrier-third.log",
+      "meaning": "Corrected actual native two-consumer callback pause cases; fatal checkpoint combination not included.",
+      "checks": 99,
+      "failures": 0,
+      "preserved_source_folder": ".cinder/pause-barrier-third-source",
+      "canonical_reproduction": "python3 scripts/dev/dev.py test pause_barrier",
+      "invocation_provenance": "Exact historical wrapper flags were not independently retained. Named canonical reproduction does not establish the original invocation."
+    },
+    {
+      "stage": "pause-consumed-resume-100",
+      "path": "logs/shared23-pause_barrier.log",
+      "sha256": "a51728200bf87a5172f7750f78c1091d664a74f2608c647384ff46bf6bade293",
+      "bytes": 287,
+      "kind": "log",
+      "source_path": ".cinder/shared23-pause_barrier.log",
+      "meaning": "Expanded actual consumed-Resume continuation; source still predates fatal-checkpoint repair.",
+      "checks": 100,
+      "failures": 0,
+      "preserved_source_folder": ".cinder/pause-barrier-100-source",
+      "canonical_reproduction": "python3 scripts/dev/dev.py test pause_barrier",
+      "invocation_provenance": "Exact historical wrapper flags were not independently retained. Named canonical reproduction does not establish the original invocation.",
+      "runtime_sha256": {
+        "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+        "scripts/campaign/shell.gd": "9fb023aab26d340b5868c3ff2d31c9d2c39f1cf48ec74487d67e42aa9dea4e3a",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/lane_mechanism.gd": "bddbf081af0ddc179d5a1e1815fa64d9a646e7a73bb639bb20d5825044153b02",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+      }
+    },
+    {
+      "stage": "pause-real-fatal-checkpoint-original",
+      "path": "logs/pause-barrier-fatal-checkpoint-original.log",
+      "sha256": "fd7b9951555fb1f7e879f451cf3d6140e6cb11ae717462d51a0bc456756cc1a9",
+      "bytes": 779,
+      "kind": "log",
+      "source_path": ".cinder/pause-barrier-fatal-checkpoint-original.log",
+      "meaning": "Real active-observer checkpoint then same-source fatal hit exposes replacement of the living Retry unit; exact historical wrapper flags unavailable.",
+      "checks": 16,
+      "failures": 2,
+      "preserved_source_folder": ".cinder/pause-barrier-fatal-checkpoint-original-source",
+      "command": null,
+      "invocation_provenance": "Integration reports this selector; exact historical wrapper/argument syntax is unavailable and is not reconstructed.",
+      "reported_selector": "--fatal-checkpoint-only"
+    },
+    {
+      "stage": "crescent-geometry-first",
+      "path": "logs/crescent-geometry-first.log",
+      "sha256": "67530b21c6dfc7c5aa9575ac000a873465fc61388fb656e9497a0cb712d5d5b2",
+      "bytes": 969,
+      "kind": "log",
+      "source_path": ".cinder/crescent-geometry-first.log",
+      "meaning": "Required thin/narrow warning outline disappeared under old short-edge cull; analytic contact and actual capsule/path checks passed.",
+      "checks": 115,
+      "failures": 1,
+      "command": "python3 scripts/dev/dev.py test crescent_geometry",
+      "exact_shell_invocation": "python3 scripts/dev/dev.py test crescent_geometry > .cinder/crescent-geometry-first.log 2>&1",
+      "permission_scope": "default workspace sandbox; startup user log/CA diagnostics preserved",
+      "exit": 1
+    },
+    {
+      "stage": "crescent-geometry-outline-corrected",
+      "path": "logs/crescent-geometry-second.log",
+      "sha256": "774d3856fecded92dcee7dff94713540c098fd046dd25b3072b4f7f3c0884bf7",
+      "bytes": 295,
+      "kind": "log",
+      "source_path": ".cinder/crescent-geometry-second.log",
+      "meaning": "Crescent-only finite nonzero outline correction; before minimum-radius support bound.",
+      "checks": 115,
+      "failures": 0,
+      "command": "python3 scripts/dev/dev.py test crescent_geometry",
+      "exact_shell_invocation": "python3 scripts/dev/dev.py test crescent_geometry > .cinder/crescent-geometry-second.log 2>&1",
+      "permission_scope": "scoped sandbox escalation for native Godot user log directory; no real save or act change",
+      "exit": 0
+    },
+    {
+      "stage": "crescent-geometry-minimum-final",
+      "path": "logs/crescent-geometry-min-radius.log",
+      "sha256": "076d3f975df1d0aaf7989506a8eee3bb9cc7230b5456c9a03d6b42b2f072c71d",
+      "bytes": 246,
+      "kind": "log",
+      "source_path": ".cinder/crescent-geometry-min-radius.log",
+      "meaning": "Actual native min-scale hollow outline/fill, positive thin band and tiny/subnormal rejection; no authored encounter claim.",
+      "checks": 124,
+      "failures": 0,
+      "command": "python3 scripts/dev/dev.py test crescent_geometry",
+      "exact_shell_invocation": "python3 scripts/dev/dev.py test crescent_geometry > .cinder/crescent-geometry-min-radius.log 2>&1",
+      "permission_scope": "scoped sandbox escalation for native Godot user log directory; no real save or act change",
+      "runtime_sha256": {
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+        "tests/crescent_geometry_smoke.gd": "d65a19271925608745a34fe381592971f40de62fcb011908f6559f2dbc9868f2",
+        "tests/crescent_geometry_smoke.gd.uid": "070092e8dacb72c22c0451d1abed768f8636d50912a4dc183b6227f396b30cae"
+      },
+      "exit": 0
+    },
+    {
+      "stage": "stationary-preview-first",
+      "path": "logs/stationary-preview-first.log",
+      "sha256": "0f854dc8a8c68a47d7b4ff23fced12918df159662cee33030a46b733dfa9c10b",
+      "bytes": 245,
+      "kind": "log",
+      "source_path": ".cinder/stationary-preview-first.log",
+      "meaning": "Pure actual source/response/world/retained-union guard fixture, frozen Scheduler and fixture identity.",
+      "checks": 146,
+      "failures": 0,
+      "canonical_reproduction": "python3 scripts/dev/dev.py test stationary_preview",
+      "invocation_provenance": "Exact command confirmed in released owner document and parent handoff.",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/stationary-preview-first.log' --script tests/stationary_preview_smoke.gd",
+      "permission_scope": "Default sandbox with explicit project log path.",
+      "runtime_sha256": {
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "tests/stationary_preview_smoke.gd": "9134cd4ec8cda560ed580c0072f381cade127141919e936d6a3f0ff0b2f634de"
+      },
+      "exit": 0,
+      "diagnostics": "Native macOS CA startup diagnostic; no script/runtime errors."
+    },
+    {
+      "stage": "crescent-consumer-first",
+      "path": "logs/crescent-mechanism-first.log",
+      "sha256": "4190240fee5df3d32c57e7454fe71a6a894b36169b4b769af7631d46e524dd3c",
+      "bytes": 637,
+      "kind": "log",
+      "source_path": ".cinder/crescent-mechanism-first.log",
+      "meaning": "Initial consumer/bearing fixture expected conservative sibling-floor rejection under old ancestor derivation; not the repaired145/0 scope.",
+      "checks": 129,
+      "failures": 0,
+      "preserved_source_folder": ".cinder/crescent-mechanism-first-source",
+      "canonical_reproduction": "python3 scripts/dev/dev.py test crescent_mechanism",
+      "invocation_provenance": "Exact named command confirmed in released owner document.",
+      "command": "python3 scripts/dev/dev.py test crescent_mechanism",
+      "permission_scope": "Default sandbox; denied user log rotation/write and native CA diagnostics retained.",
+      "runtime_sha256": {
+        "scripts/combat/lane_mechanism.gd": "bddbf081af0ddc179d5a1e1815fa64d9a646e7a73bb639bb20d5825044153b02",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+        "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+        "tests/crescent_mechanism_smoke.gd": "fdfc915f4d9a36d2f0e7d06b5688875350e39fe13f8bca5d16157f2df19625f9",
+        "tests/crescent_mechanism_smoke.gd.uid": "cae8df50db793f93962a9aec467c68e510b931aec2e25c811577fc83a510c470"
+      },
+      "exit": 0
+    },
+    {
+      "stage": "pause-fixture-first",
+      "path": "sources/pause-fixture-first/game.gd.txt",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-first-source/game.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-fixture-first",
+      "path": "sources/pause-fixture-first/level.gd.txt",
+      "sha256": "b2eef87abb18bbe4778ad3a41fb43bb8e69f2e6a98d169c57589283073ed9ca8",
+      "bytes": 3405,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-first-source/level.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-fixture-first",
+      "path": "sources/pause-fixture-first/level.tscn.txt",
+      "sha256": "6fa63823bea272a6b9fbc3ccc1d497954a1051e9a959f09d970ad682f2014711",
+      "bytes": 665,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-first-source/level.tscn.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-fixture-first",
+      "path": "sources/pause-fixture-first/shell.gd.txt",
+      "sha256": "9fb023aab26d340b5868c3ff2d31c9d2c39f1cf48ec74487d67e42aa9dea4e3a",
+      "bytes": 29534,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-first-source/shell.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-fixture-first",
+      "path": "sources/pause-fixture-first/test.gd.txt",
+      "sha256": "3c47adad19d645770894731e9c444d4d0f1b2be080d11eb0e58e84adfbfde41c",
+      "bytes": 8094,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-first-source/test.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-corrected-third",
+      "path": "sources/pause-corrected-third/game.gd.txt",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-third-source/game.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-corrected-third",
+      "path": "sources/pause-corrected-third/level.gd.txt",
+      "sha256": "2d1d680d048b7cb1a87c8c0bbd2500e8754ea4e5253fbf73d9d5eee3702a30d2",
+      "bytes": 4146,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-third-source/level.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-corrected-third",
+      "path": "sources/pause-corrected-third/level.tscn.txt",
+      "sha256": "6fa63823bea272a6b9fbc3ccc1d497954a1051e9a959f09d970ad682f2014711",
+      "bytes": 665,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-third-source/level.tscn.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-corrected-third",
+      "path": "sources/pause-corrected-third/shell.gd.txt",
+      "sha256": "9fb023aab26d340b5868c3ff2d31c9d2c39f1cf48ec74487d67e42aa9dea4e3a",
+      "bytes": 29534,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-third-source/shell.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-corrected-third",
+      "path": "sources/pause-corrected-third/test.gd.txt",
+      "sha256": "2e5e5a52b568635b774a28db6b2e74007cd2dc7f893c2a0630e3e94dadd6778b",
+      "bytes": 8200,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-third-source/test.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-consumed-resume-100",
+      "path": "sources/pause-consumed-resume-100/shell.gd.txt",
+      "sha256": "9fb023aab26d340b5868c3ff2d31c9d2c39f1cf48ec74487d67e42aa9dea4e3a",
+      "bytes": 29534,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-100-source/shell.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-consumed-resume-100",
+      "path": "sources/pause-consumed-resume-100/test.gd.txt",
+      "sha256": "24533f676b8ef42197446bd9ab1dbf851bd09de7747fae88a7da2e0c160a1d54",
+      "bytes": 8574,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-100-source/test.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-real-fatal-checkpoint-original",
+      "path": "sources/pause-real-fatal-checkpoint-original/shell.gd.txt",
+      "sha256": "9fb023aab26d340b5868c3ff2d31c9d2c39f1cf48ec74487d67e42aa9dea4e3a",
+      "bytes": 29534,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-fatal-checkpoint-original-source/shell.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "pause-real-fatal-checkpoint-original",
+      "path": "sources/pause-real-fatal-checkpoint-original/test.gd.txt",
+      "sha256": "e53970713dbbc126b2c401776e7a2082713ae67d68e599b5cd3d2f237a5bd128",
+      "bytes": 9935,
+      "kind": "archival_source",
+      "source_path": ".cinder/pause-barrier-fatal-checkpoint-original-source/test.gd.txt",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "crescent-consumer-first",
+      "path": "sources/crescent-consumer-first/scripts/combat/lane_mechanism.gd.txt",
+      "sha256": "bddbf081af0ddc179d5a1e1815fa64d9a646e7a73bb639bb20d5825044153b02",
+      "bytes": 39989,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-first-source/scripts/combat/lane_mechanism.gd",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "crescent-consumer-first",
+      "path": "sources/crescent-consumer-first/scripts/combat/threat_geometry.gd.txt",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-first-source/scripts/combat/threat_geometry.gd",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "crescent-consumer-first",
+      "path": "sources/crescent-consumer-first/scripts/combat/threat_scheduler.gd.txt",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-first-source/scripts/combat/threat_scheduler.gd",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "crescent-consumer-first",
+      "path": "sources/crescent-consumer-first/scripts/cues/cue_mesh.gd.txt",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-first-source/scripts/cues/cue_mesh.gd",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "crescent-consumer-first",
+      "path": "sources/crescent-consumer-first/scripts/player.gd.txt",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-first-source/scripts/player.gd",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "crescent-consumer-first",
+      "path": "sources/crescent-consumer-first/sha256.json",
+      "sha256": "1407e3ef1b88693983febb7e9151364ce766a545a119fb815257c59821cc7531",
+      "bytes": 731,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-first-source/sha256.json",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "crescent-consumer-first",
+      "path": "sources/crescent-consumer-first/tests/crescent_mechanism_smoke.gd.txt",
+      "sha256": "fdfc915f4d9a36d2f0e7d06b5688875350e39fe13f8bca5d16157f2df19625f9",
+      "bytes": 23913,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-first-source/tests/crescent_mechanism_smoke.gd",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "crescent-consumer-first",
+      "path": "sources/crescent-consumer-first/tests/crescent_mechanism_smoke.gd.uid.txt",
+      "sha256": "cae8df50db793f93962a9aec467c68e510b931aec2e25c811577fc83a510c470",
+      "bytes": 20,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-first-source/tests/crescent_mechanism_smoke.gd.uid",
+      "meaning": "Exact preserved owner source/metadata. Archive completeness is limited to the files supplied; absent stage bytes are unknown."
+    },
+    {
+      "stage": "crescent-geometry-first",
+      "path": "sources/crescent-geometry-first/crescent-threat-geometry.gd.txt",
+      "sha256": "35f6ec4811872d58591639d7d14606172fdc49cb4003e79c72c500247593ff13",
+      "bytes": 14227,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-threat-geometry-first.gd.txt",
+      "meaning": "Exact before-change source bytes corresponding to this geometry leaf."
+    },
+    {
+      "stage": "crescent-geometry-first",
+      "path": "sources/crescent-geometry-first/crescent-cue-mesh.gd.txt",
+      "sha256": "d1ba7562868a32024b1a381a19ce4a33a08f9feeaf280529e7b98cc710303f7b",
+      "bytes": 8875,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-cue-mesh-first.gd.txt",
+      "meaning": "Exact before-change source bytes corresponding to this geometry leaf."
+    },
+    {
+      "stage": "crescent-geometry-first",
+      "path": "sources/crescent-geometry-first/crescent-geometry-smoke.gd.txt",
+      "sha256": "48ceb265560c7d10628e5170ffc935b956c6b0eb0e53d8f796dde9512ac0e91c",
+      "bytes": 17794,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-geometry-smoke-first.gd.txt",
+      "meaning": "Exact before-change source bytes corresponding to this geometry leaf."
+    },
+    {
+      "stage": "crescent-geometry-outline-corrected",
+      "path": "sources/crescent-geometry-outline-corrected/crescent-threat-geometry.gd.txt",
+      "sha256": "35f6ec4811872d58591639d7d14606172fdc49cb4003e79c72c500247593ff13",
+      "bytes": 14227,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-threat-geometry-second.gd.txt",
+      "meaning": "Exact before-change source bytes corresponding to this geometry leaf."
+    },
+    {
+      "stage": "crescent-geometry-outline-corrected",
+      "path": "sources/crescent-geometry-outline-corrected/crescent-cue-mesh.gd.txt",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-cue-mesh-second.gd.txt",
+      "meaning": "Exact before-change source bytes corresponding to this geometry leaf."
+    },
+    {
+      "stage": "crescent-geometry-outline-corrected",
+      "path": "sources/crescent-geometry-outline-corrected/crescent-geometry-smoke.gd.txt",
+      "sha256": "48ceb265560c7d10628e5170ffc935b956c6b0eb0e53d8f796dde9512ac0e91c",
+      "bytes": 17794,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-geometry-smoke-second.gd.txt",
+      "meaning": "Exact before-change source bytes corresponding to this geometry leaf."
+    },
+    {
+      "stage": "crescent-geometry-outline-corrected",
+      "path": "sources/crescent-geometry-outline-corrected/CRESCENT_GEOMETRY.md.txt",
+      "sha256": "fdcad9dee5ea7e78dd3064fee227023231eb28ac1dffeb657f647d66ae71cdc6",
+      "bytes": 7036,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-geometry-second.md.txt",
+      "meaning": "Focused doc after115/0, before minimum-radius support bound."
+    },
+    {
+      "stage": "pause-fatal-checkpoint-repaired",
+      "path": "sources/pause-fatal-checkpoint-repaired/scripts/game.gd.txt",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "kind": "archival_source",
+      "source_path": "scripts/game.gd",
+      "meaning": "Exact owner-released source loaded in the116/0 full pause run; public Shell Retry initiation."
+    },
+    {
+      "stage": "pause-fatal-checkpoint-repaired",
+      "path": "sources/pause-fatal-checkpoint-repaired/scripts/campaign/shell.gd.txt",
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+      "bytes": 29685,
+      "kind": "archival_source",
+      "source_path": "scripts/campaign/shell.gd",
+      "meaning": "Exact owner-released source loaded in the116/0 full pause run; public Shell Retry initiation."
+    },
+    {
+      "stage": "pause-fatal-checkpoint-repaired",
+      "path": "sources/pause-fatal-checkpoint-repaired/tests/pause_barrier_smoke.gd.txt",
+      "sha256": "e53970713dbbc126b2c401776e7a2082713ae67d68e599b5cd3d2f237a5bd128",
+      "bytes": 9935,
+      "kind": "archival_source",
+      "source_path": "tests/pause_barrier_smoke.gd",
+      "meaning": "Exact owner-released source loaded in the116/0 full pause run; public Shell Retry initiation."
+    },
+    {
+      "stage": "pause-fatal-checkpoint-repaired",
+      "path": "sources/pause-fatal-checkpoint-repaired/tests/fixtures/campaign/pause_barrier_level.gd.txt",
+      "sha256": "2d1d680d048b7cb1a87c8c0bbd2500e8754ea4e5253fbf73d9d5eee3702a30d2",
+      "bytes": 4146,
+      "kind": "archival_source",
+      "source_path": "tests/fixtures/campaign/pause_barrier_level.gd",
+      "meaning": "Exact owner-released source loaded in the116/0 full pause run; public Shell Retry initiation."
+    },
+    {
+      "stage": "pause-fatal-checkpoint-repaired",
+      "path": "sources/pause-fatal-checkpoint-repaired/tests/fixtures/campaign/pause_barrier_level.tscn.txt",
+      "sha256": "6fa63823bea272a6b9fbc3ccc1d497954a1051e9a959f09d970ad682f2014711",
+      "bytes": 665,
+      "kind": "archival_source",
+      "source_path": "tests/fixtures/campaign/pause_barrier_level.tscn",
+      "meaning": "Exact owner-released source loaded in the116/0 full pause run; public Shell Retry initiation."
+    },
+    {
+      "stage": "pause-fatal-checkpoint-repaired",
+      "path": "sources/pause-fatal-checkpoint-repaired/scripts/combat/lane_mechanism.gd.txt",
+      "sha256": "364e621de947d7f626c9d46a1b514d7d84114fab5f76dffbe3b2f7a4d595e1aa",
+      "bytes": 40503,
+      "kind": "archival_source",
+      "source_path": ".cinder/lane-with-floor-root.pending.gd.txt",
+      "meaning": "Lane dependency at116/0; predates later bounded-preview-only52aab candidate."
+    },
+    {
+      "stage": "pause-fatal-checkpoint-repaired",
+      "path": "logs/shared23-pause-barrier-checkpoint-fixed.log",
+      "sha256": "c9d6e28176467c0db50c8de9b29d1a054157416060c1e53581b0ff66a7e12d31",
+      "bytes": 287,
+      "kind": "log",
+      "source_path": ".cinder/shared23-pause-barrier-checkpoint-fixed.log",
+      "meaning": "Final full pause repair includes actual same-source fatal contact, retained exact living checkpoint and public fresh Shell Retry.",
+      "checks": 116,
+      "failures": 0,
+      "exit": 0,
+      "command": "python3 scripts/dev/dev.py test pause_barrier",
+      "runtime_sha256": {
+        "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+        "scripts/campaign/shell.gd": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+        "tests/pause_barrier_smoke.gd": "e53970713dbbc126b2c401776e7a2082713ae67d68e599b5cd3d2f237a5bd128",
+        "tests/fixtures/campaign/pause_barrier_level.gd": "2d1d680d048b7cb1a87c8c0bbd2500e8754ea4e5253fbf73d9d5eee3702a30d2",
+        "tests/fixtures/campaign/pause_barrier_level.tscn": "6fa63823bea272a6b9fbc3ccc1d497954a1051e9a959f09d970ad682f2014711",
+        "scripts/combat/lane_mechanism.gd": "364e621de947d7f626c9d46a1b514d7d84114fab5f76dffbe3b2f7a4d595e1aa"
+      },
+      "lane_dependency_sha256": "364e621de947d7f626c9d46a1b514d7d84114fab5f76dffbe3b2f7a4d595e1aa",
+      "permission_scope": "Owner confirmed scoped native PID-isolated user saves; no real story save.",
+      "retry_initiation": "public game.request_retry(); not GUI/human initiation",
+      "diagnostics": "none reported and none present"
+    },
+    {
+      "stage": "older-directly-affected",
+      "path": "sources/older-directly-affected-results.json",
+      "sha256": "c5a547869ce13c7743bacfd25361d2be76e5cdfa2d2cf5d931fa43d889fe9bc7",
+      "bytes": 2248,
+      "kind": "metadata",
+      "source_path": ".cinder/shared23-targeted-results.json",
+      "meaning": "Exact owner receipt for OLD Shell9fb/Lanebdd source scope, never promoted to repaired current scope."
+    },
+    {
+      "stage": "older-directly-affected-campaign_shell",
+      "path": "logs/shared23-campaign_shell.log",
+      "sha256": "1b3dffe2079477cd20edcb6c67e5c4ee6607a02270ae9f1805d6edc542d04faa",
+      "bytes": 265,
+      "kind": "log",
+      "source_path": ".cinder/shared23-campaign_shell.log",
+      "meaning": "Prior directly affected target against exact frozen receipt; does not establish later Shell/Lane repairs.",
+      "exit": 0,
+      "summary": [
+        "Campaign shell smoke: 52 checks, 0 failures (TEST ONLY live fixtures)"
+      ],
+      "runtime_sha256": {
+        "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+        "scripts/campaign/shell.gd": "9fb023aab26d340b5868c3ff2d31c9d2c39f1cf48ec74487d67e42aa9dea4e3a",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/lane_mechanism.gd": "bddbf081af0ddc179d5a1e1815fa64d9a646e7a73bb639bb20d5825044153b02",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+      },
+      "sources_unchanged": true,
+      "canonical_reproduction": "python3 scripts/dev/dev.py test campaign_shell",
+      "invocation_provenance": "Named canonical reproduction; exact original wrapper flags not independently retained. Exact frozen runtime map supplied by owner receipt.",
+      "scope_note": "OlderShell9fb/Lanebdd scope; later repair coverage is recorded separately."
+    },
+    {
+      "stage": "older-directly-affected-input_response",
+      "path": "logs/shared23-input_response.log",
+      "sha256": "8d0b06f2fff8a798837dc36a9ba4f99642350a5d9fc4c5e0215c1b6d2dae27cf",
+      "bytes": 288,
+      "kind": "log",
+      "source_path": ".cinder/shared23-input_response.log",
+      "meaning": "Prior directly affected target against exact frozen receipt; does not establish later Shell/Lane repairs.",
+      "exit": 0,
+      "summary": [
+        "Input/response smoke: 19 checks, 0 failures"
+      ],
+      "runtime_sha256": {
+        "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+        "scripts/campaign/shell.gd": "9fb023aab26d340b5868c3ff2d31c9d2c39f1cf48ec74487d67e42aa9dea4e3a",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/lane_mechanism.gd": "bddbf081af0ddc179d5a1e1815fa64d9a646e7a73bb639bb20d5825044153b02",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+      },
+      "sources_unchanged": true,
+      "canonical_reproduction": "python3 scripts/dev/dev.py test input_response",
+      "invocation_provenance": "Named canonical reproduction; exact original wrapper flags not independently retained. Exact frozen runtime map supplied by owner receipt.",
+      "scope_note": "OlderShell9fb/Lanebdd scope; later repair coverage is recorded separately."
+    },
+    {
+      "stage": "older-directly-affected-lunge_preview",
+      "path": "logs/shared23-lunge_preview.log",
+      "sha256": "9693c264f0cc72dc3984fe08b0914ce30d81c6dba0e96c6b3a9e7640f217a1ee",
+      "bytes": 286,
+      "kind": "log",
+      "source_path": ".cinder/shared23-lunge_preview.log",
+      "meaning": "Prior directly affected target against exact frozen receipt; does not establish later Shell/Lane repairs.",
+      "exit": 0,
+      "summary": [
+        "Lunge preview smoke: 70 checks, 0 failures"
+      ],
+      "runtime_sha256": {
+        "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+        "scripts/campaign/shell.gd": "9fb023aab26d340b5868c3ff2d31c9d2c39f1cf48ec74487d67e42aa9dea4e3a",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/lane_mechanism.gd": "bddbf081af0ddc179d5a1e1815fa64d9a646e7a73bb639bb20d5825044153b02",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+      },
+      "sources_unchanged": true,
+      "canonical_reproduction": "python3 scripts/dev/dev.py test lunge_preview",
+      "invocation_provenance": "Named canonical reproduction; exact original wrapper flags not independently retained. Exact frozen runtime map supplied by owner receipt.",
+      "scope_note": "OlderShell9fb/Lanebdd scope; later repair coverage is recorded separately."
+    },
+    {
+      "stage": "older-directly-affected-lane_mechanism",
+      "path": "logs/shared23-lane_mechanism.log",
+      "sha256": "480b02344b385ef96a13f4e994f8c6e3c40b52c8d3a6920db4433d31b2ccdb08",
+      "bytes": 20621,
+      "kind": "log",
+      "source_path": ".cinder/shared23-lane_mechanism.log",
+      "meaning": "Prior directly affected target against exact frozen receipt; does not establish later Shell/Lane repairs.",
+      "exit": 0,
+      "summary": [
+        "Lane mechanism smoke: 243 checks, 0 failures"
+      ],
+      "runtime_sha256": {
+        "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+        "scripts/campaign/shell.gd": "9fb023aab26d340b5868c3ff2d31c9d2c39f1cf48ec74487d67e42aa9dea4e3a",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/lane_mechanism.gd": "bddbf081af0ddc179d5a1e1815fa64d9a646e7a73bb639bb20d5825044153b02",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+      },
+      "sources_unchanged": true,
+      "canonical_reproduction": "python3 scripts/dev/dev.py test lane_mechanism",
+      "invocation_provenance": "Named canonical reproduction; exact original wrapper flags not independently retained. Exact frozen runtime map supplied by owner receipt.",
+      "scope_note": "OlderShell9fb/Lanebdd scope; later repair coverage is recorded separately."
+    },
+    {
+      "stage": "older-directly-affected-threat_snapshot",
+      "path": "logs/shared23-threat_snapshot.log",
+      "sha256": "ec58f6dff7ab4bb546f6a8f6838c0714d6d4a2c80765a3658ec2d172057fe828",
+      "bytes": 2963,
+      "kind": "log",
+      "source_path": ".cinder/shared23-threat_snapshot.log",
+      "meaning": "Prior directly affected target against exact frozen receipt; does not establish later Shell/Lane repairs.",
+      "exit": 0,
+      "summary": [
+        "Threat snapshot smoke: 35 checks, 0 failures"
+      ],
+      "runtime_sha256": {
+        "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+        "scripts/campaign/shell.gd": "9fb023aab26d340b5868c3ff2d31c9d2c39f1cf48ec74487d67e42aa9dea4e3a",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/lane_mechanism.gd": "bddbf081af0ddc179d5a1e1815fa64d9a646e7a73bb639bb20d5825044153b02",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+      },
+      "sources_unchanged": true,
+      "canonical_reproduction": "python3 scripts/dev/dev.py test threat_snapshot",
+      "invocation_provenance": "Named canonical reproduction; exact original wrapper flags not independently retained. Exact frozen runtime map supplied by owner receipt.",
+      "scope_note": "OlderShell9fb/Lanebdd scope; later repair coverage is recorded separately."
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "path": "sources/crescent-consumer-final/scripts/combat/lane_mechanism.gd.txt",
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+      "bytes": 40592,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-final-source/scripts/combat/lane_mechanism.gd",
+      "meaning": "Exact owner-released seven-file source archive used by the final145/0 consumer target."
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "path": "sources/crescent-consumer-final/scripts/combat/threat_scheduler.gd.txt",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-final-source/scripts/combat/threat_scheduler.gd",
+      "meaning": "Exact owner-released seven-file source archive used by the final145/0 consumer target."
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "path": "sources/crescent-consumer-final/scripts/combat/threat_geometry.gd.txt",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-final-source/scripts/combat/threat_geometry.gd",
+      "meaning": "Exact owner-released seven-file source archive used by the final145/0 consumer target."
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "path": "sources/crescent-consumer-final/scripts/cues/cue_mesh.gd.txt",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-final-source/scripts/cues/cue_mesh.gd",
+      "meaning": "Exact owner-released seven-file source archive used by the final145/0 consumer target."
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "path": "sources/crescent-consumer-final/scripts/player.gd.txt",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-final-source/scripts/player.gd",
+      "meaning": "Exact owner-released seven-file source archive used by the final145/0 consumer target."
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "path": "sources/crescent-consumer-final/tests/crescent_mechanism_smoke.gd.txt",
+      "sha256": "b7b005bb8c7ae023d28012d82431fa3e080ea4662822a053f052d096fd34fd24",
+      "bytes": 25929,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-final-source/tests/crescent_mechanism_smoke.gd",
+      "meaning": "Exact owner-released seven-file source archive used by the final145/0 consumer target."
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "path": "sources/crescent-consumer-final/tests/crescent_mechanism_smoke.gd.uid.txt",
+      "sha256": "cae8df50db793f93962a9aec467c68e510b931aec2e25c811577fc83a510c470",
+      "bytes": 20,
+      "kind": "archival_source",
+      "source_path": ".cinder/crescent-mechanism-final-source/tests/crescent_mechanism_smoke.gd.uid",
+      "meaning": "Exact owner-released seven-file source archive used by the final145/0 consumer target."
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "path": "sources/crescent-consumer-final/sha256.json",
+      "sha256": "d22e4f2dd6175456e8585517d77a6ec525e2154610763b252d4a8c32c9624fdb",
+      "bytes": 731,
+      "kind": "metadata",
+      "source_path": ".cinder/crescent-mechanism-final-source/sha256.json",
+      "meaning": "Exact owner source identity receipt for the final145/0 consumer target."
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "path": "sources/crescent-consumer-final/CRESCENT_MECHANISM.md.txt",
+      "sha256": "642192872c45f8ca6619d19ae657a9a2b8d9ef99c1d5e586efbe58e597ff7b11",
+      "bytes": 8665,
+      "kind": "archival_source",
+      "source_path": "docs/development/CRESCENT_MECHANISM.md",
+      "meaning": "Final released owner API and native command/scope record."
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "path": "logs/crescent-mechanism-final.log",
+      "sha256": "0f2da70d81e219cd2358354c1fe293872d124b49b8b7a065b3becd78e95150a9",
+      "bytes": 245,
+      "kind": "log",
+      "source_path": ".cinder/crescent-mechanism-final.log",
+      "meaning": "Actual sibling-floor admission, bounded native floor/root rejection, selected bearing and exact quiet paired restore; no authored placement claim.",
+      "checks": 145,
+      "failures": 0,
+      "exit": 0,
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/crescent-mechanism-final.log' --script tests/crescent_mechanism_smoke.gd",
+      "runtime_sha256": {
+        "scripts/combat/lane_mechanism.gd": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+        "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+        "tests/crescent_mechanism_smoke.gd": "b7b005bb8c7ae023d28012d82431fa3e080ea4662822a053f052d096fd34fd24",
+        "tests/crescent_mechanism_smoke.gd.uid": "cae8df50db793f93962a9aec467c68e510b931aec2e25c811577fc83a510c470"
+      },
+      "permission_scope": "Default sandbox with explicit project log path; no save-permission escalation reported.",
+      "diagnostics": "Native macOS CA startup diagnostic; no script/runtime failures."
+    },
+    {
+      "stage": "stationary-preview-first",
+      "path": "sources/stationary-preview-first/scripts/combat/threat_scheduler.gd.txt",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "archival_source",
+      "source_path": "scripts/combat/threat_scheduler.gd",
+      "meaning": "Exact frozen Scheduler/fixture identity released for the146/0 native preview target."
+    },
+    {
+      "stage": "stationary-preview-first",
+      "path": "sources/stationary-preview-first/tests/stationary_preview_smoke.gd.txt",
+      "sha256": "9134cd4ec8cda560ed580c0072f381cade127141919e936d6a3f0ff0b2f634de",
+      "bytes": 25635,
+      "kind": "archival_source",
+      "source_path": "tests/stationary_preview_smoke.gd",
+      "meaning": "Exact frozen Scheduler/fixture identity released for the146/0 native preview target."
+    },
+    {
+      "stage": "stationary-preview-first",
+      "path": "sources/stationary-preview-first/STATIONARY_PREVIEW.md.txt",
+      "sha256": "d2d80a8a1001f08bd7f064f1ba01d59531d9482adf7c801107b3f871b0f6f349",
+      "bytes": 7917,
+      "kind": "archival_source",
+      "source_path": "docs/development/STATIONARY_PREVIEW.md",
+      "meaning": "Released owner API and exact native command/scope record."
+    },
+    {
+      "stage": "crescent-geometry-minimum-final",
+      "path": "sources/crescent-geometry-minimum-final/scripts/combat/threat_geometry.gd.txt",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "archival_source",
+      "source_path": "scripts/combat/threat_geometry.gd",
+      "meaning": "Final frozen geometry/CueMesh and targeted fixture used by124/0 minimum-radius target."
+    },
+    {
+      "stage": "crescent-geometry-minimum-final",
+      "path": "sources/crescent-geometry-minimum-final/scripts/cues/cue_mesh.gd.txt",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "archival_source",
+      "source_path": "scripts/cues/cue_mesh.gd",
+      "meaning": "Final frozen geometry/CueMesh and targeted fixture used by124/0 minimum-radius target."
+    },
+    {
+      "stage": "crescent-geometry-minimum-final",
+      "path": "sources/crescent-geometry-minimum-final/tests/crescent_geometry_smoke.gd.txt",
+      "sha256": "d65a19271925608745a34fe381592971f40de62fcb011908f6559f2dbc9868f2",
+      "bytes": 18600,
+      "kind": "archival_source",
+      "source_path": "tests/crescent_geometry_smoke.gd",
+      "meaning": "Final frozen geometry/CueMesh and targeted fixture used by124/0 minimum-radius target."
+    },
+    {
+      "stage": "crescent-geometry-minimum-final",
+      "path": "sources/crescent-geometry-minimum-final/tests/crescent_geometry_smoke.gd.uid.txt",
+      "sha256": "070092e8dacb72c22c0451d1abed768f8636d50912a4dc183b6227f396b30cae",
+      "bytes": 21,
+      "kind": "archival_source",
+      "source_path": "tests/crescent_geometry_smoke.gd.uid",
+      "meaning": "Final frozen geometry/CueMesh and targeted fixture used by124/0 minimum-radius target."
+    },
+    {
+      "stage": "final-core",
+      "path": "sources/final-core/scripts/combat/lane_mechanism.gd.txt",
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+      "bytes": 40592,
+      "kind": "archival_source",
+      "source_path": "scripts/combat/lane_mechanism.gd",
+      "meaning": "Final owner-confirmed current core identity; not relabelled as every earlier run dependency."
+    },
+    {
+      "stage": "final-core",
+      "path": "sources/final-core/scripts/combat/threat_scheduler.gd.txt",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "archival_source",
+      "source_path": "scripts/combat/threat_scheduler.gd",
+      "meaning": "Final owner-confirmed current core identity; not relabelled as every earlier run dependency."
+    },
+    {
+      "stage": "final-core",
+      "path": "sources/final-core/scripts/combat/threat_geometry.gd.txt",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "archival_source",
+      "source_path": "scripts/combat/threat_geometry.gd",
+      "meaning": "Final owner-confirmed current core identity; not relabelled as every earlier run dependency."
+    },
+    {
+      "stage": "final-core",
+      "path": "sources/final-core/scripts/cues/cue_mesh.gd.txt",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "archival_source",
+      "source_path": "scripts/cues/cue_mesh.gd",
+      "meaning": "Final owner-confirmed current core identity; not relabelled as every earlier run dependency."
+    },
+    {
+      "stage": "final-core",
+      "path": "sources/final-core/scripts/player.gd.txt",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "kind": "archival_source",
+      "source_path": "scripts/player.gd",
+      "meaning": "Final owner-confirmed current core identity; not relabelled as every earlier run dependency."
+    },
+    {
+      "stage": "final-core",
+      "path": "sources/final-core/scripts/game.gd.txt",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "kind": "archival_source",
+      "source_path": "scripts/game.gd",
+      "meaning": "Final owner-confirmed current core identity; not relabelled as every earlier run dependency."
+    },
+    {
+      "stage": "final-core",
+      "path": "sources/final-core/scripts/campaign/shell.gd.txt",
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+      "bytes": 29685,
+      "kind": "archival_source",
+      "source_path": "scripts/campaign/shell.gd",
+      "meaning": "Final owner-confirmed current core identity; not relabelled as every earlier run dependency."
+    },
+    {
+      "stage": "campaign-shell-checkpoint-repaired",
+      "path": "logs/shared23-campaign-shell-checkpoint-fixed.log",
+      "sha256": "6f8d6df908ad2d87add6a3c6bbec184522f42a5a6b9526ec63e03a32f257605f",
+      "bytes": 314,
+      "kind": "log",
+      "source_path": ".cinder/shared23-campaign-shell-checkpoint-fixed.log",
+      "meaning": "Directly affected Shell suite after the fatal checkpoint repair, separate from oldShell9fb52/0.",
+      "checks": 52,
+      "failures": 0,
+      "exit": 0,
+      "command": "python3 scripts/dev/dev.py test campaign_shell",
+      "runtime_sha256": {
+        "scripts/combat/lane_mechanism.gd": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+        "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+        "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+        "scripts/campaign/shell.gd": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c"
+      },
+      "permission_scope": "Owner-confirmed scoped native PID-isolated user saves; no real story save.",
+      "diagnostics": "none reported and none present"
+    }
+  ],
+  "known_stages": [
+    {
+      "stage": "pause-fixture-setup-first",
+      "source_path": ".cinder/pause-barrier-first.log",
+      "planned_path": "logs/pause-barrier-first.log",
+      "sha256": "95c0399e162a2879aa0e6e5643fb81a16a37392085f39f489a0b3f1c130f74fe",
+      "bytes": 3319,
+      "checks": 16,
+      "failures": 8,
+      "meaning": "Fixture stable-String owner validation failure before native callback logic; not a runtime pause pass.",
+      "archive_state": "byte_preserved",
+      "preserved_source_folder": ".cinder/pause-barrier-first-source",
+      "canonical_reproduction": "python3 scripts/dev/dev.py test pause_barrier",
+      "invocation_provenance": "Exact historical wrapper flags were not independently retained. Named canonical reproduction does not establish the original invocation."
+    },
+    {
+      "stage": "pause-fixture-setup-second",
+      "source_path": ".cinder/pause-barrier-second.log",
+      "planned_path": "logs/pause-barrier-second.log",
+      "sha256": "4354d3b795f2a33eec6209d4086203f5b30e2b58f8b2303c4aa29ed5ab8b1e34",
+      "bytes": 3519,
+      "checks": 16,
+      "failures": 8,
+      "meaning": "Second fixture setup failure; no relabelling as a gameplay failure/pass.",
+      "archive_state": "byte_preserved",
+      "canonical_reproduction": "python3 scripts/dev/dev.py test pause_barrier",
+      "invocation_provenance": "Exact historical wrapper flags were not independently retained. Named canonical reproduction does not establish the original invocation."
+    },
+    {
+      "stage": "pause-fixture-binding-diagnostic",
+      "source_path": ".cinder/pause-barrier-diagnostic.log",
+      "planned_path": "logs/pause-barrier-diagnostic.log",
+      "sha256": "6d4e68617b85213aedb85b3d1736309236d47921fb5d39d5f01c4b1a4efe5a1e",
+      "bytes": 690,
+      "checks": 2,
+      "failures": 1,
+      "meaning": "Single-selector fixture diagnosis of StringName owner insertion; exact historical wrapper flags unavailable.",
+      "archive_state": "byte_preserved",
+      "command": null,
+      "reported_selector": "--one",
+      "invocation_provenance": "Integration reports this selector; exact historical wrapper/argument syntax is unavailable and is not reconstructed."
+    },
+    {
+      "stage": "pause-corrected-third",
+      "source_path": ".cinder/pause-barrier-third.log",
+      "planned_path": "logs/pause-barrier-third.log",
+      "sha256": "48d706517ad0335a8d8fda04f72158311ff824ff26a89a195dfedcdf0acae7d0",
+      "bytes": 237,
+      "checks": 99,
+      "failures": 0,
+      "meaning": "Corrected actual native two-consumer callback pause cases; fatal checkpoint combination not included.",
+      "archive_state": "byte_preserved",
+      "preserved_source_folder": ".cinder/pause-barrier-third-source",
+      "canonical_reproduction": "python3 scripts/dev/dev.py test pause_barrier",
+      "invocation_provenance": "Exact historical wrapper flags were not independently retained. Named canonical reproduction does not establish the original invocation.",
+      "source_scope_note": "Predates fatal checkpoint repair; preserved files identify oldShell9fb. Not promoted to repairedShell9c."
+    },
+    {
+      "stage": "pause-consumed-resume-100",
+      "source_path": ".cinder/shared23-pause_barrier.log",
+      "planned_path": "logs/shared23-pause_barrier.log",
+      "sha256": "a51728200bf87a5172f7750f78c1091d664a74f2608c647384ff46bf6bade293",
+      "bytes": 287,
+      "checks": 100,
+      "failures": 0,
+      "meaning": "Expanded actual consumed-Resume continuation; source still predates fatal-checkpoint repair.",
+      "archive_state": "byte_preserved",
+      "preserved_source_folder": ".cinder/pause-barrier-100-source",
+      "canonical_reproduction": "python3 scripts/dev/dev.py test pause_barrier",
+      "invocation_provenance": "Exact historical wrapper flags were not independently retained. Named canonical reproduction does not establish the original invocation.",
+      "source_scope_note": "Predates fatal checkpoint repair; preserved files identify oldShell9fb. Not promoted to repairedShell9c.",
+      "runtime_sha256": {
+        "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+        "scripts/campaign/shell.gd": "9fb023aab26d340b5868c3ff2d31c9d2c39f1cf48ec74487d67e42aa9dea4e3a",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/lane_mechanism.gd": "bddbf081af0ddc179d5a1e1815fa64d9a646e7a73bb639bb20d5825044153b02",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+      }
+    },
+    {
+      "stage": "pause-real-fatal-checkpoint-original",
+      "source_path": ".cinder/pause-barrier-fatal-checkpoint-original.log",
+      "planned_path": "logs/pause-barrier-fatal-checkpoint-original.log",
+      "sha256": "fd7b9951555fb1f7e879f451cf3d6140e6cb11ae717462d51a0bc456756cc1a9",
+      "bytes": 779,
+      "checks": 16,
+      "failures": 2,
+      "meaning": "Real active-observer checkpoint then same-source fatal hit exposes replacement of the living Retry unit; exact historical wrapper flags unavailable.",
+      "archive_state": "byte_preserved",
+      "preserved_source_folder": ".cinder/pause-barrier-fatal-checkpoint-original-source",
+      "command": null,
+      "reported_selector": "--fatal-checkpoint-only",
+      "invocation_provenance": "Integration reports this selector; exact historical wrapper/argument syntax is unavailable and is not reconstructed."
+    },
+    {
+      "stage": "crescent-geometry-first",
+      "source_path": ".cinder/crescent-geometry-first.log",
+      "planned_path": "logs/crescent-geometry-first.log",
+      "sha256": "67530b21c6dfc7c5aa9575ac000a873465fc61388fb656e9497a0cb712d5d5b2",
+      "bytes": 969,
+      "checks": 115,
+      "failures": 1,
+      "meaning": "Required thin/narrow warning outline disappeared under old short-edge cull; analytic contact and actual capsule/path checks passed.",
+      "archive_state": "byte_preserved",
+      "command": "python3 scripts/dev/dev.py test crescent_geometry",
+      "exact_shell_invocation": "python3 scripts/dev/dev.py test crescent_geometry > .cinder/crescent-geometry-first.log 2>&1",
+      "permission_scope": "default workspace sandbox; startup user log/CA diagnostics preserved",
+      "exit": 1
+    },
+    {
+      "stage": "crescent-geometry-outline-corrected",
+      "source_path": ".cinder/crescent-geometry-second.log",
+      "planned_path": "logs/crescent-geometry-second.log",
+      "sha256": "774d3856fecded92dcee7dff94713540c098fd046dd25b3072b4f7f3c0884bf7",
+      "bytes": 295,
+      "checks": 115,
+      "failures": 0,
+      "meaning": "Crescent-only finite nonzero outline correction; before minimum-radius support bound.",
+      "archive_state": "byte_preserved",
+      "command": "python3 scripts/dev/dev.py test crescent_geometry",
+      "exact_shell_invocation": "python3 scripts/dev/dev.py test crescent_geometry > .cinder/crescent-geometry-second.log 2>&1",
+      "permission_scope": "scoped sandbox escalation for native Godot user log directory; no real save or act change",
+      "exit": 0
+    },
+    {
+      "stage": "crescent-geometry-minimum-final",
+      "source_path": ".cinder/crescent-geometry-min-radius.log",
+      "planned_path": "logs/crescent-geometry-min-radius.log",
+      "sha256": "076d3f975df1d0aaf7989506a8eee3bb9cc7230b5456c9a03d6b42b2f072c71d",
+      "bytes": 246,
+      "checks": 124,
+      "failures": 0,
+      "meaning": "Actual native min-scale hollow outline/fill, positive thin band and tiny/subnormal rejection; no authored encounter claim.",
+      "archive_state": "byte_preserved",
+      "command": "python3 scripts/dev/dev.py test crescent_geometry",
+      "exact_shell_invocation": "python3 scripts/dev/dev.py test crescent_geometry > .cinder/crescent-geometry-min-radius.log 2>&1",
+      "permission_scope": "scoped sandbox escalation for native Godot user log directory; no real save or act change",
+      "exit": 0,
+      "runtime_sha256": {
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+        "tests/crescent_geometry_smoke.gd": "d65a19271925608745a34fe381592971f40de62fcb011908f6559f2dbc9868f2",
+        "tests/crescent_geometry_smoke.gd.uid": "070092e8dacb72c22c0451d1abed768f8636d50912a4dc183b6227f396b30cae"
+      }
+    },
+    {
+      "stage": "stationary-preview-first",
+      "source_path": ".cinder/stationary-preview-first.log",
+      "planned_path": "logs/stationary-preview-first.log",
+      "sha256": "0f854dc8a8c68a47d7b4ff23fced12918df159662cee33030a46b733dfa9c10b",
+      "bytes": 245,
+      "checks": 146,
+      "failures": 0,
+      "meaning": "Pure actual source/response/world/retained-union guard fixture, frozen Scheduler and fixture identity.",
+      "archive_state": "byte_preserved",
+      "canonical_reproduction": "python3 scripts/dev/dev.py test stationary_preview",
+      "invocation_provenance": "Exact command confirmed in released owner document and parent handoff.",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/stationary-preview-first.log' --script tests/stationary_preview_smoke.gd",
+      "runtime_sha256": {
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "tests/stationary_preview_smoke.gd": "9134cd4ec8cda560ed580c0072f381cade127141919e936d6a3f0ff0b2f634de"
+      },
+      "exit": 0,
+      "permission_scope": "Default sandbox with explicit project log path.",
+      "diagnostics": "Native macOS CA startup diagnostic; no script/runtime errors."
+    },
+    {
+      "stage": "crescent-consumer-first",
+      "source_path": ".cinder/crescent-mechanism-first.log",
+      "planned_path": "logs/crescent-mechanism-first.log",
+      "sha256": "4190240fee5df3d32c57e7454fe71a6a894b36169b4b769af7631d46e524dd3c",
+      "bytes": 637,
+      "checks": 129,
+      "failures": 0,
+      "meaning": "Initial consumer/bearing fixture expected conservative sibling-floor rejection under old ancestor derivation; not the repaired145/0 scope.",
+      "archive_state": "byte_preserved",
+      "preserved_source_folder": ".cinder/crescent-mechanism-first-source",
+      "canonical_reproduction": "python3 scripts/dev/dev.py test crescent_mechanism",
+      "invocation_provenance": "Exact named command confirmed in released owner document.",
+      "command": "python3 scripts/dev/dev.py test crescent_mechanism",
+      "exit": 0,
+      "permission_scope": "Default sandbox; denied user log rotation/write and native CA diagnostics retained.",
+      "runtime_sha256": {
+        "scripts/combat/lane_mechanism.gd": "bddbf081af0ddc179d5a1e1815fa64d9a646e7a73bb639bb20d5825044153b02",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+        "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+        "tests/crescent_mechanism_smoke.gd": "fdfc915f4d9a36d2f0e7d06b5688875350e39fe13f8bca5d16157f2df19625f9",
+        "tests/crescent_mechanism_smoke.gd.uid": "cae8df50db793f93962a9aec467c68e510b931aec2e25c811577fc83a510c470"
+      }
+    },
+    {
+      "stage": "pause-fatal-checkpoint-repaired",
+      "path": "logs/shared23-pause-barrier-checkpoint-fixed.log",
+      "sha256": "c9d6e28176467c0db50c8de9b29d1a054157416060c1e53581b0ff66a7e12d31",
+      "bytes": 287,
+      "source_path": ".cinder/shared23-pause-barrier-checkpoint-fixed.log",
+      "meaning": "Final full pause repair includes actual same-source fatal contact, retained exact living checkpoint and public fresh Shell Retry.",
+      "checks": 116,
+      "failures": 0,
+      "exit": 0,
+      "command": "python3 scripts/dev/dev.py test pause_barrier",
+      "runtime_sha256": {
+        "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+        "scripts/campaign/shell.gd": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+        "tests/pause_barrier_smoke.gd": "e53970713dbbc126b2c401776e7a2082713ae67d68e599b5cd3d2f237a5bd128",
+        "tests/fixtures/campaign/pause_barrier_level.gd": "2d1d680d048b7cb1a87c8c0bbd2500e8754ea4e5253fbf73d9d5eee3702a30d2",
+        "tests/fixtures/campaign/pause_barrier_level.tscn": "6fa63823bea272a6b9fbc3ccc1d497954a1051e9a959f09d970ad682f2014711",
+        "scripts/combat/lane_mechanism.gd": "364e621de947d7f626c9d46a1b514d7d84114fab5f76dffbe3b2f7a4d595e1aa"
+      },
+      "lane_dependency_sha256": "364e621de947d7f626c9d46a1b514d7d84114fab5f76dffbe3b2f7a4d595e1aa",
+      "permission_scope": "Owner confirmed scoped native PID-isolated user saves; no real story save.",
+      "retry_initiation": "public game.request_retry(); not GUI/human initiation",
+      "diagnostics": "none reported and none present",
+      "planned_path": "logs/shared23-pause-barrier-checkpoint-fixed.log",
+      "archive_state": "byte_preserved",
+      "invocation_provenance": "Exact command and source identities confirmed by integration/reference owner handoff.",
+      "source_scope_note": "Lane364e was loaded in116/0; finalLane52aab later adds only the bounded preview-root input guard. No retroactive source association."
+    },
+    {
+      "stage": "campaign-shell-checkpoint-repaired",
+      "path": "logs/shared23-campaign-shell-checkpoint-fixed.log",
+      "sha256": "6f8d6df908ad2d87add6a3c6bbec184522f42a5a6b9526ec63e03a32f257605f",
+      "bytes": 314,
+      "source_path": ".cinder/shared23-campaign-shell-checkpoint-fixed.log",
+      "meaning": "Directly affected Shell suite after the fatal checkpoint repair, separate from oldShell9fb52/0.",
+      "checks": 52,
+      "failures": 0,
+      "exit": 0,
+      "command": "python3 scripts/dev/dev.py test campaign_shell",
+      "runtime_sha256": {
+        "scripts/combat/lane_mechanism.gd": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+        "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+        "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+        "scripts/campaign/shell.gd": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c"
+      },
+      "permission_scope": "Owner-confirmed scoped native PID-isolated user saves; no real story save.",
+      "diagnostics": "none reported and none present",
+      "planned_path": "logs/shared23-campaign-shell-checkpoint-fixed.log",
+      "archive_state": "byte_preserved",
+      "invocation_provenance": "Exact command and source identities confirmed by integration/reference owner handoff."
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "path": "logs/crescent-mechanism-final.log",
+      "sha256": "0f2da70d81e219cd2358354c1fe293872d124b49b8b7a065b3becd78e95150a9",
+      "bytes": 245,
+      "source_path": ".cinder/crescent-mechanism-final.log",
+      "meaning": "Actual sibling-floor admission, bounded native floor/root rejection, selected bearing and exact quiet paired restore; no authored placement claim.",
+      "checks": 145,
+      "failures": 0,
+      "exit": 0,
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/crescent-mechanism-final.log' --script tests/crescent_mechanism_smoke.gd",
+      "runtime_sha256": {
+        "scripts/combat/lane_mechanism.gd": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+        "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+        "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+        "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+        "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+        "tests/crescent_mechanism_smoke.gd": "b7b005bb8c7ae023d28012d82431fa3e080ea4662822a053f052d096fd34fd24",
+        "tests/crescent_mechanism_smoke.gd.uid": "cae8df50db793f93962a9aec467c68e510b931aec2e25c811577fc83a510c470"
+      },
+      "permission_scope": "Default sandbox with explicit project log path; no save-permission escalation reported.",
+      "diagnostics": "Native macOS CA startup diagnostic; no script/runtime failures.",
+      "planned_path": "logs/crescent-mechanism-final.log",
+      "archive_state": "byte_preserved",
+      "invocation_provenance": "Exact command and source identities confirmed by integration/reference owner handoff."
+    }
+  ],
+  "pending_final_owner_results": [],
+  "copy_policy": "No running log or mutable source copied; only frozen owner-confirmed logs/source snapshots after final handoff.",
+  "permission_scope": "Canonical shared dev.py queue only. Later scoped sandbox escalation for authorized native user logs and isolated PID test saves; raw earlier diagnostics retained.",
+  "prepared_at_utc": "2026-10-08T16:59:01.997133+00:00",
+  "source_provenance": "Frozen byte copies establish the listed subset of each run. Historic folders are partial, not a reconstructed complete import graph. Unknown original wrapper flags/selectors are explicitly unavailable, not an outstanding acceptance gate.",
+  "final_core_sha256": {
+    "scripts/combat/lane_mechanism.gd": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+    "scripts/combat/threat_scheduler.gd": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+    "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+    "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+    "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+    "scripts/game.gd": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+    "scripts/campaign/shell.gd": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c"
+  },
+  "final_results": [
+    {
+      "stage": "crescent-geometry-minimum-final",
+      "checks": 124,
+      "failures": 0,
+      "log": "logs/crescent-geometry-min-radius.log"
+    },
+    {
+      "stage": "stationary-preview-first",
+      "checks": 146,
+      "failures": 0,
+      "log": "logs/stationary-preview-first.log"
+    },
+    {
+      "stage": "pause-fatal-checkpoint-repaired",
+      "checks": 116,
+      "failures": 0,
+      "log": "logs/shared23-pause-barrier-checkpoint-fixed.log"
+    },
+    {
+      "stage": "campaign-shell-checkpoint-repaired",
+      "checks": 52,
+      "failures": 0,
+      "log": "logs/shared23-campaign-shell-checkpoint-fixed.log"
+    },
+    {
+      "stage": "crescent-consumer-final",
+      "checks": 145,
+      "failures": 0,
+      "log": "logs/crescent-mechanism-final.log"
+    }
+  ]
+}
