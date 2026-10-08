@@ -11,7 +11,6 @@ const CAMP_CENTRE: Vector3 = Vector3(0, 0, -9.5)
 const FINAL_SOURCE: Vector3 = Vector3(0, 0.005, -16.5)
 const GROTTO_CONTACT: Vector3 = Vector3(0, 0.8, -21.8)
 const SceneryScript = preload("res://scripts/acts/act1/lunar_scenery.gd")
-const PaintedRock = preload("res://assets/acts/act1/lunar/accents/painted_rock_surface.png")
 
 
 func _ready() -> void:
@@ -61,14 +60,6 @@ static func build_geometry(level: Node3D) -> void:
 		var material := StandardMaterial3D.new()
 		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		material.albedo_color = Color(0.18, 0.18, 0.18)
-		if spec[0] in ["ApproachRock", "RockRouteOuterFlat"]:
-			# The full existing low body remains visible and exactly physical.
-			# This opaque paint has no cutout holes or separate gameplay surface.
-			material.albedo_color = Color.WHITE
-			material.albedo_texture = PaintedRock
-			material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-			material.texture_repeat = true
-			material.uv1_scale = Vector3(1.0, 3.0, 1.0)
 		mesh.material_override = material
 		body.add_child(mesh)
 		level.add_child(body)

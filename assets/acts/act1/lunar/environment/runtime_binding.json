@@ -1,0 +1,186 @@
+{
+  "level": "A1-L2",
+  "readiness": "authored quiet-layout prototype verified in actual portrait; full combat/campaign readiness pending",
+  "runtime_family": "act1_lunar_theatre_clearings",
+  "implementation": [
+    "scripts/acts/act1/lunar_scenery.gd",
+    "scripts/acts/act1/crater_gardens_layout.gd"
+  ],
+  "source_sha256": {
+    "scripts/acts/act1/lunar_scenery.gd": "4d0e38d867ea3e5c5e68ff29179c664d0c7fbda0bfd6b571cfdc745cc3def8ed",
+    "scripts/acts/act1/crater_gardens_layout.gd": "a5a23a76a8b24ab92be10aa484a49aca36940e3441d50415c84e0e2be7c0f0d3"
+  },
+  "producer_manifests": [
+    "assets/acts/act1/lunar/environment/environment_manifest.json",
+    "assets/acts/act1/lunar/accents/lunar_accents_manifest.json"
+  ],
+  "native_assets_sha256": {
+    "assets/acts/act1/lunar/environment/rock_flat_low_a.png": "57935ff87becdcb8c706ea30f0e9ef76a920f7dd0ae17d35a5bce43a7dfc79a3",
+    "assets/acts/act1/lunar/environment/rock_flat_low_b.png": "9a022b4def380f71559175c3959af51884f9d1d461711aebc22d8ca37fc15ddf",
+    "assets/acts/act1/lunar/environment/floor_silver_tile.png": "927971422809f26e5492ec6701a69d7b1ced7d1e6498c7d4736542e5b8831c64",
+    "assets/acts/act1/lunar/environment/grotto_threshold_open.png": "fb17438bfe84ca14fb08baab36aa522b31190f8dd3ee1bd81174131f263c6d09",
+    "assets/acts/act1/lunar/environment/crescent_performer.png": "381e3f96628091fbeb11710b557c212dd0c398cd83f0d91f902a85fbf8506822",
+    "assets/acts/act1/lunar/environment/capsule_landed_closed.png": "9f552e88efaafcd445507428956458a99b3dec7ad52fbaf6ca2f2e0e3924dab9",
+    "assets/acts/act1/lunar/environment/camp_sleeping_tableau.png": "59a2a31e60f8169bdfa00c5f8b4271f3c1d03645a1c78afb273cbab50b54b69e",
+    "assets/acts/act1/lunar/environment/environment_contact_sheet.png": "18ed226de70a5b451e2563e23ed5d93c73d0d53d40854b774e5bc401411d98be",
+    "assets/acts/act1/lunar/accents/lunar_accents_contact_sheet.png": "bfc49d510faaa258184a6909974e286bec6541c567209d0bc83900353c2575ff",
+    "assets/acts/act1/lunar/accents/painted_rock_surface.png": "6cc1e5b66e2c2ca94c9897cb774da37e5a85a874319214e65bda44bd3fb0ffa4",
+    "assets/acts/act1/lunar/accents/human_star_performer.png": "ce3f5e1205bce88304fba1b3c7f4c883a267e523ec7268c682d3d83a09a613c9",
+    "assets/acts/act1/lunar/accents/earth_globe.png": "3a378e3ff823c960f2d9a88877158ad606a924bee59444dd994b47ae4202aeee",
+    "assets/acts/act1/lunar/accents/saturn_performer.png": "2d51d851bc301d4e1dff9dbd6918c9d3a00cdf8e2437e62db60cdcdec15addb8"
+  },
+  "upright_cutouts": 19,
+  "landmarks": 7,
+  "native_rendering": "Full standalone Sprite3D, nearest/unshaded/full Z billboard, hard alpha scissor.5, ordinary depth/layers1; no atlas/crop/new animator clock. Twelve sparse rock flats; seven landmarks.",
+  "bindings": {
+    "capsule": {
+      "origin": [
+        -1.95,
+        0.005,
+        16.7
+      ],
+      "pixel_size": 0.024,
+      "pivot": [
+        64,
+        88
+      ],
+      "offset": [
+        0,
+        44
+      ]
+    },
+    "camp": {
+      "origin": [
+        -1.65,
+        0.005,
+        -9.5
+      ],
+      "pixel_size": 0.026,
+      "pivot": [
+        64,
+        80
+      ],
+      "offset": [
+        0,
+        40
+      ]
+    },
+    "crescent": {
+      "origin": [
+        2.1,
+        1.8,
+        -10
+      ],
+      "pixel_size": 0.026,
+      "pivot": [
+        32,
+        112
+      ],
+      "offset": [
+        0,
+        56
+      ]
+    },
+    "earth": {
+      "origin": [
+        -2.2,
+        2.65,
+        -7
+      ],
+      "pixel_size": 0.024,
+      "pivot": [
+        32,
+        32
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "star": {
+      "origin": [
+        -2.1,
+        3.1,
+        -9.8
+      ],
+      "pixel_size": 0.02,
+      "pivot": [
+        32,
+        32
+      ],
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "saturn": {
+      "origin": [
+        0.55,
+        2,
+        -11.8
+      ],
+      "pixel_size": 0.024,
+      "pivot": [
+        40,
+        96
+      ],
+      "offset": [
+        0,
+        48
+      ]
+    },
+    "grotto": {
+      "origin": [
+        0,
+        0.005,
+        -23
+      ],
+      "pixel_size": 0.04,
+      "pivot": [
+        72,
+        96
+      ],
+      "offset": [
+        0,
+        48
+      ]
+    }
+  },
+  "floor": {
+    "size": [
+      14,
+      44
+    ],
+    "origin": [
+      0,
+      0.002,
+      -2
+    ],
+    "tile_world_size": 1.536,
+    "base_value": 0.45098039215686275,
+    "collision": "existing full continuous floor unchanged"
+  },
+  "painted_rock": {
+    "native_size": [
+      64,
+      64
+    ],
+    "alpha": "255 at every texel and edge",
+    "material": "existing two full native BoxMesh dividers, nearest/repeat uv1_scale(1,3,1), opaque",
+    "collision": "unchanged six owned native static box paths/size/origins; cutout flats are nonphysical"
+  },
+  "states": "Static scenery only; land capsule closed, sleepers quiet, grotto visual open. Native contact eligibility/cue and danger belong to Main/native shared machinery, not scenery.",
+  "physics_and_clocks": "No new scenery collision, damage, HP, AI/group, supply, controller, camera, equipment/ability or animation clock.",
+  "reuse": [
+    "A1-L2",
+    "A1-L5 existing rock/capsule family",
+    "A1-O1 parent kit; not placed yet"
+  ],
+  "actual_evidence": "data/campaign/act1/evidence/A1-L2/lunar-layout/index.json",
+  "limitations": [
+    "Full Main sources/footprints/safe-landings/contact readability untested",
+    "Both runs neutral kit/standard preview only; no all-kit/profile/human/performance claim",
+    "First failures retained, revised47 is functional/art-layout scope only"
+  ],
+  "checked_at": "2026-10-08T15:47:42.720988+00:00"
+}
