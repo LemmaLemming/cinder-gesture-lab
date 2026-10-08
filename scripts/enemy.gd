@@ -57,6 +57,15 @@ var _drop_spawned: bool = false
 var _snapshot_busy: bool = false
 var _actor_transaction_depth: int = 0
 var _restored_floor_contact: int = -1
+## Optional environmental owner; unbound actors retain the original arena loop
+## and legacy snapshot shape. Spore reaction never uses take_damage/stagger.
+var _spore_consumer: WeakRef
+var _spore_source_id: String = ""
+var _spore_consumer_id: String = ""
+var _spore_episode_id: String = ""
+var _spore_phase: String = "none"
+var _spore_direction: Vector3 = Vector3.FORWARD
+var _spore_progress: float = 0.0
 
 
 func _ready() -> void:
@@ -68,6 +77,9 @@ func _ready() -> void:
 
 
 func configure(hero: Node3D, fx: Node, kind: int = 0) -> void:
+	if not _spore_source_id.is_empty():
+		# Bound retry uses paired snapshots; configure would refill resources.
+		return
 	_actor_transaction_depth += 1
 	_hero = hero
 	_fx = fx
@@ -113,6 +125,13 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 	velocity += adjusted_impulse
 	velocity.y = maxf(velocity.y, adjusted_impulse.y)
 	_stagger_left = maxf(_stagger_left, 0.14 + minf(adjusted_impulse.length() * 0.035, 0.27))
+	var spore_owner: Node = _spore_owner()
+	if not _spore_episode_id.is_empty():
+		_spore_phase = "interrupted"
+		_spore_progress = 0.0
+		_sprite.rotation.z = 0.0
+		if spore_owner != null:
+			spore_owner.call("source_interrupted", self, "actual_damage")
 	_actor_transaction_depth -= 1
 	return result
 
@@ -120,6 +139,24 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 func _physics_process(delta: float) -> void:
 	if hp <= 0.0 or dead:
 		return
+	var spore_owner: Node = _spore_owner()
+	if not _spore_source_id.is_empty():
+		# Environmental preflight/cancellation occurs before the old controller
+		# can strike or move. It owns its own transaction/callback guard.
+		var held: bool = _spore_phase != "interrupted" if spore_owner == null else bool(spore_owner.call("step_source", self, delta))
+		if held:
+			_actor_transaction_depth += 1
+			_cooldown_left = maxf(0.0, _cooldown_left - delta)
+			_hop_left = maxf(0.0, _hop_left - delta)
+			_hit_flash_left = maxf(0.0, _hit_flash_left - delta)
+			_stagger_left = maxf(0.0, _stagger_left - delta)
+			if spore_owner == null:
+				velocity = Vector3.ZERO
+			_update_attack_feedback()
+			if _sprite != null:
+				_sprite.animate(_spore_phase == "retreat" and Vector2(velocity.x, velocity.z).length() > 0.25, delta)
+			_actor_transaction_depth -= 1
+			return
 	_actor_transaction_depth += 1
 	if not _snapshot_grounded():
 		velocity.y -= GRAVITY * delta
@@ -151,6 +188,9 @@ func _physics_process(delta: float) -> void:
 		velocity.z = 0.0
 	else:
 		_follow_or_attack(delta)
+	if spore_owner != null and not bool(spore_owner.call("allows_source_step", self, global_position, velocity * delta)):
+		velocity.x = 0.0
+		velocity.z = 0.0
 	move_and_slide()
 	_restored_floor_contact = -1
 	_update_attack_feedback()
@@ -160,6 +200,12 @@ func _physics_process(delta: float) -> void:
 
 
 func _follow_or_attack(delta: float) -> void:
+	# Actual damage remains free to resolve hurt/gravity/knockback. Once its
+	# stagger ends, stop approach without arming another attack while the same
+	# spore episode waits for grounded, stationary continuation preflight.
+	if not _spore_episode_id.is_empty():
+		_slow_planar(9.0 * delta)
+		return
 	if not _hero_is_alive():
 		_slow_planar(9.0 * delta)
 		return
@@ -249,6 +295,8 @@ func _strike() -> void:
 func get_attack_state() -> String:
 	if hp <= 0.0 or dead:
 		return "defeated"
+	if not _spore_episode_id.is_empty() and _spore_phase != "interrupted":
+		return "spore_" + _spore_phase
 	if _stagger_left > 0.0:
 		return "stagger"
 	if _windup_left > 0.0:
@@ -258,6 +306,110 @@ func get_attack_state() -> String:
 	if _recovery_left > 0.0:
 		return "recovery"
 	return "approach"
+
+
+## Additive opt-in adapter. A coordinator binds actual stable sources before
+## enabling its callbacks. It cannot replace a live binding or acquire inside
+## an existing actor/snapshot transaction.
+func bind_spore_repulsion(consumer: Node, source_id: String) -> bool:
+	if not is_inside_tree() or not is_node_ready() or _snapshot_busy or _actor_transaction_depth > 0 or not is_instance_valid(consumer) or not consumer.is_inside_tree() or not consumer.has_method("consumer_id") or not consumer.has_method("source_binding_matches") or not consumer.has_method("step_source") or not consumer.has_method("allows_source_step") or not consumer.has_method("source_interrupted") or not consumer.has_method("snapshot_boundary_available") or not bool(consumer.call("source_binding_matches", self, source_id)):
+		return false
+	var consumer_id: String = String(consumer.call("consumer_id"))
+	if not _spore_source_id.is_empty():
+		return _spore_owner() == consumer and _spore_source_id == source_id and _spore_consumer_id == consumer_id
+	_spore_consumer = weakref(consumer)
+	_spore_source_id = source_id
+	_spore_consumer_id = consumer_id
+	return true
+
+
+## Read-only live response for the owning environmental coordinator. Exposes
+## required controller clocks without private-field inspection by that owner.
+func get_spore_response_state() -> Dictionary:
+	var collision: CollisionShape3D = get_node_or_null("BodyCollision") as CollisionShape3D
+	var support_radius: float = -1.0
+	var height: float = -1.0
+	if collision != null and collision.shape is BoxShape3D:
+		var size: Vector3 = (collision.shape as BoxShape3D).size
+		support_radius = Vector2(size.x, size.z).length() * 0.5 + 0.01
+		height = size.y
+	return {"api_revision": "ash-spore-adapter-1", "source_id": _spore_source_id, "consumer_id": _spore_consumer_id, "alive": hp > 0.0 and not dead and not is_queued_for_deletion(), "grounded": _snapshot_grounded(), "position": global_position, "velocity": velocity, "facing": _facing, "cooldown_remaining_s": _cooldown_left, "hurt_remaining_s": maxf(_stagger_left, _hit_flash_left), "body_collision_path": "BodyCollision", "support_radius": support_radius, "height": height, "episode_id": _spore_episode_id, "phase": _spore_phase, "direction": _spore_direction, "progress": _spore_progress, "outside_transaction": not _snapshot_busy and _actor_transaction_depth == 0}
+
+
+## Called only after pure full-route/union proof. Cancel actual attack state;
+## retain HP, every cooldown, hurt/flash/hop clocks, collision and velocity.
+## The separate measured route acquires/stops velocity after this barrier.
+func cancel_attack_for_spores(consumer: Node, episode_id: String, direction: Vector3) -> bool:
+	if _spore_owner() != consumer or _snapshot_busy or _actor_transaction_depth > 0 or not _spore_episode_id.is_empty() or hp <= 0.0 or dead or is_queued_for_deletion() or not direction.is_finite() or absf(direction.y) > 0.00001 or absf(direction.length() - 1.0) > 0.00001 or not _spore_identifier(episode_id):
+		return false
+	_actor_transaction_depth += 1
+	_windup_left = 0.0
+	_active_left = 0.0
+	_recovery_left = 0.0
+	_attack_origin = Vector3.INF
+	_spore_episode_id = episode_id
+	_spore_phase = "recoil"
+	_spore_direction = direction
+	_spore_progress = 0.0
+	_update_attack_feedback()
+	_actor_transaction_depth -= 1
+	return true
+
+
+## Recoil/turn feedback uses only the sprite and logical facing. The actual
+## collider/global basis never tilt, move or acquire an impulse/stagger here.
+func present_spore_phase(consumer: Node, episode_id: String, phase: String, progress: float) -> bool:
+	if _spore_owner() != consumer or _snapshot_busy or _actor_transaction_depth > 0 or episode_id != _spore_episode_id or not ["recoil", "turn", "retreat", "hold", "regroup", "failed"].has(phase) or not is_finite(progress) or progress < 0.0 or progress > 1.0:
+		return false
+	_actor_transaction_depth += 1
+	_spore_phase = phase
+	_spore_progress = progress
+	if phase != "recoil":
+		_facing = _spore_direction
+		_sprite.face(_facing)
+	_sprite.rotation.z = sin(PI * progress) * 0.08 if phase == "recoil" else 0.0
+	_update_attack_feedback()
+	_actor_transaction_depth -= 1
+	return true
+
+
+func resume_spore_retreat(consumer: Node, episode_id: String, direction: Vector3) -> bool:
+	if _spore_owner() != consumer or _snapshot_busy or _actor_transaction_depth > 0 or episode_id != _spore_episode_id or _spore_phase != "interrupted" or hp <= 0.0 or dead or _stagger_left > 0.0 or _hit_flash_left > 0.0 or not _snapshot_grounded() or velocity.length() > 0.00001 or not direction.is_finite() or absf(direction.y) > 0.00001 or absf(direction.length() - 1.0) > 0.00001:
+		return false
+	_actor_transaction_depth += 1
+	_spore_direction = direction
+	_spore_phase = "retreat"
+	_spore_progress = 0.0
+	_facing = direction
+	_sprite.face(_facing)
+	_actor_transaction_depth -= 1
+	return true
+
+
+func finish_spore_episode(consumer: Node, episode_id: String) -> bool:
+	if _spore_owner() != consumer or _snapshot_busy or _actor_transaction_depth > 0 or episode_id.is_empty() or episode_id != _spore_episode_id:
+		return false
+	_actor_transaction_depth += 1
+	_spore_episode_id = ""
+	_spore_phase = "none"
+	_spore_progress = 0.0
+	_sprite.rotation.z = 0.0
+	_actor_transaction_depth -= 1
+	return true
+
+
+func _spore_owner() -> Node:
+	var owner: Node = _spore_consumer.get_ref() as Node if _spore_consumer != null else null
+	return owner if is_instance_valid(owner) and owner.is_inside_tree() and not owner.is_queued_for_deletion() else null
+
+
+static func _spore_identifier(value: String) -> bool:
+	if value.is_empty() or value.length() > 128:
+		return false
+	var pattern := RegEx.new()
+	pattern.compile("^[A-Za-z0-9][A-Za-z0-9_./:-]*$")
+	var found: RegExMatch = pattern.search(value)
+	return found != null and found.get_string() == value
 
 
 func _can_prepare_attack() -> bool:
@@ -296,6 +448,13 @@ func _die(impulse: Vector3) -> void:
 	_actor_transaction_depth += 1
 	dead = true
 	_death_emitted = true
+	var spore_owner: Node = _spore_owner()
+	if not _spore_episode_id.is_empty():
+		_spore_phase = "interrupted"
+		_spore_progress = 0.0
+		_sprite.rotation.z = 0.0
+		if spore_owner != null:
+			spore_owner.call("source_interrupted", self, "actual_death")
 	if _fx != null and is_instance_valid(_fx) and _fx.has_method("tiny_bleed"):
 		_fx.call("tiny_bleed", global_position + Vector3(0.0, 0.8, 0.0), 5, impulse)
 	died.emit(global_position)
@@ -446,6 +605,8 @@ func snapshot_state() -> Dictionary:
 			"animation_time_s": _sprite.get("_animation_time"), "modulate": [tint.r, tint.g, tint.b, tint.a],
 		},
 	}
+	if not _spore_source_id.is_empty():
+		snapshot["repulsion"] = {"api_revision": "ash-spore-adapter-1", "consumer_id": _spore_consumer_id, "source_id": _spore_source_id, "episode_id": _spore_episode_id, "phase": _spore_phase, "direction": SnapshotCodec.vector3(_spore_direction), "progress": _spore_progress}
 	last_snapshot_error = _validate_snapshot(snapshot)
 	_snapshot_busy = false
 	return snapshot.duplicate(true) if last_snapshot_error.is_empty() else {}
@@ -453,6 +614,21 @@ func snapshot_state() -> Dictionary:
 
 func snapshot_error(snapshot: Dictionary) -> String:
 	var error: String = _snapshot_boundary_error(true)
+	if not error.is_empty():
+		return error
+	_snapshot_busy = true
+	error = _validate_snapshot(snapshot)
+	_snapshot_busy = false
+	return error
+
+
+## Environmental capture-context validation also accepts the just-defeated
+## queued source before end-of-frame removal. It does not authorize restoring
+## that queued node; ordinary restore_state still requires a ready replacement.
+func spore_snapshot_error(snapshot: Dictionary) -> String:
+	if _spore_source_id.is_empty():
+		return "Spore validation requires the immutable opt-in binding"
+	var error: String = _snapshot_boundary_error(false)
 	if not error.is_empty():
 		return error
 	_snapshot_busy = true
@@ -519,6 +695,12 @@ func restore_state(snapshot: Dictionary) -> bool:
 	_sprite.call("_show_frame")
 	var tint: Array = accepted.presentation.modulate
 	_sprite.modulate = Color(float(tint[0]), float(tint[1]), float(tint[2]), float(tint[3]))
+	if accepted.has("repulsion"):
+		_spore_episode_id = accepted.repulsion.episode_id
+		_spore_phase = accepted.repulsion.phase
+		_spore_direction = SnapshotCodec.read_vector3(accepted.repulsion.direction)
+		_spore_progress = float(accepted.repulsion.progress)
+		_sprite.rotation.z = sin(PI * _spore_progress) * 0.08 if _spore_phase == "recoil" else 0.0
 	_sprite.visible = not dead
 	if dead:
 		remove_from_group("enemies")
@@ -546,6 +728,8 @@ func _snapshot_boundary_error(for_restore: bool) -> String:
 		return "Enemy snapshots require the paused deferred shell boundary"
 	if _snapshot_busy or _actor_transaction_depth > 0:
 		return "Enemy snapshots cannot run inside actor transactions or callbacks"
+	if not _spore_source_id.is_empty() and (_spore_owner() == null or not bool(_spore_owner().call("snapshot_boundary_available"))):
+		return "Bound spore actor requires its live coordinator outside callbacks"
 	if for_restore and is_queued_for_deletion():
 		return "Cannot restore an enemy already queued for deletion; create a ready replacement"
 	if not get_platform_velocity().is_zero_approx() or not get_platform_angular_velocity().is_zero_approx():
@@ -567,11 +751,27 @@ func _role_stats() -> Dictionary:
 	}
 
 
+## Pure full external-record validation for a removed defeated opt-in actor.
+## Level-owned tombstones contain its actual captured defeat, not fresh HP or
+## invented drop state. This validates JSON, never constructs a replacement.
+static func spore_record_error(snapshot: Dictionary, consumer_id: String, source_id: String) -> String:
+	if not _spore_identifier(consumer_id) or not _spore_identifier(source_id):
+		return "Immutable spore consumer/source identities required"
+	return _record_error(snapshot, source_id, consumer_id)
+
+
 func _validate_snapshot(snapshot: Dictionary) -> String:
+	return _record_error(snapshot, _spore_source_id, _spore_consumer_id)
+
+
+static func _record_error(snapshot: Dictionary, bound_source_id: String, bound_consumer_id: String) -> String:
 	var error: String = SnapshotCodec.value_error(snapshot)
 	if not error.is_empty():
 		return error
-	error = SnapshotCodec.keys_error(snapshot, ["api_revision", "schema_version", "actor_type", "kind", "resources", "lifecycle", "role", "motion", "clocks", "attack_geometry", "presentation"])
+	var required: Array = ["api_revision", "schema_version", "actor_type", "kind", "resources", "lifecycle", "role", "motion", "clocks", "attack_geometry", "presentation"]
+	if not bound_source_id.is_empty():
+		required.append("repulsion")
+	error = SnapshotCodec.keys_error(snapshot, required)
 	if not error.is_empty():
 		return error
 	if snapshot.api_revision != SNAPSHOT_API_REVISION or not SnapshotCodec.is_integer(snapshot.schema_version, SNAPSHOT_SCHEMA_VERSION, SNAPSHOT_SCHEMA_VERSION) or snapshot.actor_type != "AshEnemy" or not SnapshotCodec.is_integer(snapshot.kind, 0, 2):
@@ -637,6 +837,17 @@ func _validate_snapshot(snapshot: Dictionary) -> String:
 	var phases: int = int(float(clocks.windup_left_s) > 0.0) + int(float(clocks.active_left_s) > 0.0) + int(float(clocks.recovery_left_s) > 0.0)
 	if phases > 1 or (float(clocks.stagger_left_s) > 0.0 and phases > 0):
 		return "Enemy attack/stagger clocks cannot overlap"
+	if snapshot.has("repulsion"):
+		var stamp: Variant = snapshot.repulsion
+		if not stamp is Dictionary or not SnapshotCodec.keys_error(stamp, ["api_revision", "consumer_id", "source_id", "episode_id", "phase", "direction", "progress"]).is_empty():
+			return "Invalid opt-in spore adapter envelope"
+		if stamp.api_revision != "ash-spore-adapter-1" or stamp.consumer_id != bound_consumer_id or stamp.source_id != bound_source_id or not stamp.episode_id is String or not stamp.phase is String or not _snapshot_direction_valid(stamp.direction) or not SnapshotCodec.in_range(stamp.progress, 0.0, 1.0):
+			return "Spore adapter identity/pose must match its immutable binding"
+		if stamp.phase == "none":
+			if stamp.episode_id != "" or float(stamp.progress) != 0.0:
+				return "Inactive spore adapter cannot carry an episode/progress"
+		elif not _spore_identifier(stamp.episode_id) or not ["recoil", "turn", "retreat", "hold", "regroup", "failed", "interrupted"].has(stamp.phase) or phases > 0:
+			return "Spore episode must suppress actual attack phases"
 	var geometry: Dictionary = snapshot.attack_geometry
 	var expected_geometry: Dictionary = {
 		"world_origin": geometry.get("world_origin"), "shape": "radial_cone", "reach": role.attack_reach,
@@ -666,14 +877,14 @@ func _validate_snapshot(snapshot: Dictionary) -> String:
 	return ""
 
 
-func _snapshot_direction_valid(value: Variant) -> bool:
+static func _snapshot_direction_valid(value: Variant) -> bool:
 	if not SnapshotCodec.is_vector3(value):
 		return false
 	var direction: Vector3 = SnapshotCodec.read_vector3(value)
 	return absf(direction.y) < 0.000001 and is_equal_approx(direction.length_squared(), 1.0)
 
 
-func _sprite_kind(kind: int) -> String:
+static func _sprite_kind(kind: int) -> String:
 	return "armored" if kind == 1 else ("hopper" if kind == 2 else "grunt")
 
 

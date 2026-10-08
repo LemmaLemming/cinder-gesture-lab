@@ -29,6 +29,9 @@ var _busy: bool = false
 var _last_phase: String = ""
 var _boundary: MeshInstance3D
 var _spores: Array[MeshInstance3D] = []
+var _boundary_mesh: ArrayMesh
+var _boundary_vertices: PackedVector3Array
+var _spore_meshes: Array[BoxMesh] = []
 
 
 ## Authored offsets are world-axis offsets at immutable bind position.
@@ -94,7 +97,7 @@ func activate_cluster(cluster_id: String) -> bool:
 
 
 func _physics_process(delta: float) -> void:
-	if not _bound or _busy or get_tree().paused or not is_finite(delta) or delta <= 0.0:
+	if not _bound or _busy or get_tree().paused or not is_finite(delta) or delta <= 0.0 or not _binding_error().is_empty():
 		return
 	_busy = true
 	_clock_s = minf(MAX_CLOCK_S, _clock_s + delta)
@@ -193,16 +196,32 @@ func _snapshot_boundary_error() -> String:
 	return _binding_error()
 
 
+## Pure live diagnostic, including inside normal activation callbacks after
+## the committed state is visible. It never advances clocks/spends supply,
+## reads snapshot state, emits feedback, or writes either last-error property.
+func binding_error() -> String:
+	if not _bound or not is_inside_tree() or not is_node_ready() or is_queued_for_deletion():
+		return "Spore field requires its live ready immutable binding"
+	return _binding_error()
+
+
 func _binding_error() -> String:
-	if global_position != _origin or global_basis != Basis.IDENTITY or not is_instance_valid(_boundary) or _boundary.is_queued_for_deletion() or _clusters.size() != 2 or _spores.size() != 4:
+	if global_position != _origin or global_basis != Basis.IDENTITY or not is_instance_valid(_boundary) or _boundary.is_queued_for_deletion() or _clusters.size() != 2 or _spores.size() != 4 or _spore_meshes.size() != 4:
 		return "Immutable spore world origin/geometry/cue bindings changed"
+	if _boundary.get_parent() != self or _boundary.position != Vector3(0, 0.025, 0) or _boundary.basis != Basis.IDENTITY or _boundary.mesh != _boundary_mesh or not is_instance_valid(_boundary_mesh) or _boundary_mesh.get_surface_count() != 1 or _boundary_mesh.surface_get_primitive_type(0) != Mesh.PRIMITIVE_TRIANGLES or _boundary_mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX] != _boundary_vertices or not _boundary.material_override is StandardMaterial3D:
+		return "Required broken boundary parent/pose/actual mesh binding changed"
 	for spec: Dictionary in _definition.clusters:
-		var cluster: Node3D = _clusters.get(spec.id) as Node3D
-		if not is_instance_valid(cluster) or cluster.is_queued_for_deletion() or cluster.global_position != _origin + Codec.read_vector3(spec.offset) or not cluster.is_in_group("environment_attack_targets") or not cluster.binding_error().is_empty():
+		if not is_instance_valid(_clusters.get(spec.id)):
+			return "Stable reachable cluster binding disappeared"
+		var cluster: Node3D = _clusters[spec.id]
+		if cluster.is_queued_for_deletion() or cluster.get_parent() != self or cluster.global_position != _origin + Codec.read_vector3(spec.offset) or not cluster.is_in_group("environment_attack_targets") or not cluster.binding_error().is_empty():
 			return "Stable reachable cluster bindings changed"
-	for square: MeshInstance3D in _spores:
-		if not is_instance_valid(square) or square.is_queued_for_deletion():
-			return "Required release feedback binding changed"
+	for index: int in range(_spores.size()):
+		if not is_instance_valid(_spores[index]):
+			return "Required release feedback binding disappeared"
+		var square: MeshInstance3D = _spores[index]
+		if square.is_queued_for_deletion() or square.get_parent() != self or not square.position.is_finite() or Vector2(square.position.x, square.position.z) != Vector2(-0.22 + 0.15 * index, 0.12) or square.basis != Basis.IDENTITY or square.mesh != _spore_meshes[index] or not square.mesh is BoxMesh or (square.mesh as BoxMesh).size != Vector3(0.045, 0.045, 0.045) or not square.material_override is StandardMaterial3D:
+			return "Required release feedback parent/XZ/basis/mesh-size binding changed"
 	return ""
 
 
@@ -235,7 +254,9 @@ func _build_field_cue() -> void:
 		var start: float = TAU * float(index) / 32.0
 		var end: float = start + TAU / 32.0 * 0.55
 		Footprint.append_edge(vertices, Footprint.radial_point(start, float(_definition.parameters.radius)), Footprint.radial_point(end, float(_definition.parameters.radius)))
-	_boundary.mesh = Footprint.mesh_from_vertices(vertices)
+	_boundary_mesh = Footprint.mesh_from_vertices(vertices)
+	_boundary.mesh = _boundary_mesh
+	_boundary_vertices = (_boundary_mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX] as PackedVector3Array).duplicate()
 	_boundary.position.y = 0.025
 	_boundary.material_override = _material(Color(0.81, 0.87, 0.75, 0.9))
 	_boundary.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -251,6 +272,7 @@ func _build_field_cue() -> void:
 		square.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(square)
 		_spores.append(square)
+		_spore_meshes.append(mesh)
 
 
 func _material(tint: Color) -> StandardMaterial3D:

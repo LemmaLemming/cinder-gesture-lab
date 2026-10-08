@@ -24,6 +24,7 @@ func _run() -> void:
 	await _actual_attack_checks()
 	await _geometry_checks()
 	await _snapshot_checks()
+	await _binding_diagnostic_checks()
 	paused = false
 	print("Spore field smoke: %d checks, %d failures" % [_checks, _failures])
 	quit(0 if _failures == 0 else 1)
@@ -189,6 +190,95 @@ func _snapshot_checks() -> void:
 	_expect(field.snapshot_state().is_empty() and not field.restore_state(spent), "changed actual world anchor rejects immutable field snapshot and restore")
 	field.position = original_position
 	_expect(field.restore_state(releasing) and field.state().remaining_clusters == 1, "explicit coherent checkpoint restoration can restore earlier recorded supply without another activation")
+	await _dispose(arena)
+
+
+func _binding_diagnostic_checks() -> void:
+	var unborn = Field.new()
+	_expect(not unborn.binding_error().is_empty(), "pure diagnostic rejects an unbound non-live field")
+	unborn.free()
+	var arena: Dictionary = await _arena()
+	var field = _field(arena.world, "diagnostic", Vector3(0, 0, -0.7))
+	field.last_error = "preserved-author-error"
+	field.last_snapshot_error = "preserved-snapshot-error"
+	var stable: Dictionary = field.state()
+	var cluster: Node3D = field.get_node("one")
+	var boundary: MeshInstance3D = field.get_node("RequiredBrokenSporeBoundary")
+	var square: MeshInstance3D = field.get_node("RequiredReleaseSquare0")
+	_expect(field.binding_error().is_empty(), "inactive ready required bindings initially validate")
+	var cluster_position: Vector3 = cluster.position
+	cluster.position.x += 0.02
+	_expect(not field.binding_error().is_empty() and field.last_error == "preserved-author-error", "inactive moved cluster rejects pure diagnostic without error mutation")
+	_expect(not field.activate_cluster("one") and Codec.same_values(stable, field.state()), "invalid reachable binding rejects activation without spending")
+	field.last_error = "preserved-author-error"
+	cluster.position = cluster_position
+	field.remove_child(cluster)
+	_expect(not field.binding_error().is_empty(), "inactive missing reachable cluster rejects")
+	field.add_child(cluster)
+	_expect(field.binding_error().is_empty(), "restoring the original cluster binding clears pure diagnostic")
+	var boundary_position: Vector3 = boundary.position
+	boundary.position.x += 0.02
+	_expect(not field.binding_error().is_empty(), "inactive moved required broken boundary rejects")
+	boundary.position = boundary_position
+	field.remove_child(boundary)
+	_expect(not field.binding_error().is_empty(), "inactive missing boundary parent rejects")
+	field.add_child(boundary)
+	boundary.rotation.y = 0.1
+	_expect(not field.binding_error().is_empty(), "required boundary rotation rejects")
+	boundary.rotation = Vector3.ZERO
+	var old_mesh: Mesh = boundary.mesh
+	boundary.mesh = BoxMesh.new()
+	_expect(not field.binding_error().is_empty(), "replacement boundary mesh cannot impersonate the required full broken footprint")
+	boundary.mesh = old_mesh
+	var actual: ArrayMesh = old_mesh as ArrayMesh
+	var arrays: Array = actual.surface_get_arrays(0)
+	var changed: Array = arrays.duplicate(true)
+	var vertices: PackedVector3Array = changed[Mesh.ARRAY_VERTEX]
+	vertices[0].x += 0.02
+	changed[Mesh.ARRAY_VERTEX] = vertices
+	actual.clear_surfaces()
+	actual.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, changed)
+	_expect(not field.binding_error().is_empty(), "same required boundary mesh resource cannot hide a changed footprint")
+	actual.clear_surfaces()
+	actual.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	_expect(field.binding_error().is_empty(), "restoring original actual boundary vertices restores valid binding")
+	var old_y: float = square.position.y
+	square.position.y = 0.72
+	(square.material_override as StandardMaterial3D).albedo_color.a = 0.25
+	_expect(field.binding_error().is_empty(), "authored release-square animated Y and fade remain allowed")
+	var square_position: Vector3 = square.position
+	square.rotation.z = 0.1
+	_expect(not field.binding_error().is_empty(), "required release-square fixed basis rejects rotation")
+	square.rotation = Vector3.ZERO
+	square.position.x += 0.02
+	_expect(not field.binding_error().is_empty(), "required release-square fixed XZ drift rejects")
+	square.position = square_position
+	square.position.y = old_y
+	var size: Vector3 = (square.mesh as BoxMesh).size
+	(square.mesh as BoxMesh).size.x += 0.01
+	_expect(not field.binding_error().is_empty(), "required release-square actual mesh size drift rejects")
+	(square.mesh as BoxMesh).size = size
+	field.remove_child(square)
+	_expect(not field.binding_error().is_empty(), "missing release-square parent rejects")
+	field.add_child(square)
+	_expect(field.binding_error().is_empty() and Codec.same_values(stable, field.state()) and field.last_error == "preserved-author-error" and field.last_snapshot_error == "preserved-snapshot-error", "every live diagnostic is pure for clocks/supply/resources/errors and original binding can recover")
+	var during_callback: Array = []
+	field.activated.connect(func(_value: Dictionary) -> void: during_callback.append(field.binding_error()))
+	_expect(field.activate_cluster("one") and during_callback == [""], "committed activation callback validates required geometry independently of busy snapshot boundary")
+	var active: Dictionary = field.state()
+	for _index: int in range(3):
+		_expect(field.binding_error().is_empty() and Codec.same_values(active, field.state()), "active repeated diagnostic does not mutate clocks/generation or refresh lifetime")
+	var state_events: Array = []
+	field.state_changed.connect(func(value: Dictionary) -> void: state_events.append(value))
+	field.remove_child(boundary)
+	var missing: Dictionary = field.state()
+	await _ticks(2)
+	_expect(not field.binding_error().is_empty() and Codec.same_values(missing, field.state()) and state_events.is_empty(), "actual missing required cue fails closed without unsafe refresh or clock/supply/event mutation")
+	field.add_child(boundary)
+	await _ticks(1)
+	_expect(field.binding_error().is_empty() and is_equal_approx(field.state().clock_s, float(missing.clock_s) + 1.0 / 60.0) and field.state().generation == missing.generation and field.state().spent_ids == missing.spent_ids and state_events.size() == 1 and state_events[0].phase == "active", "restoring original cue resumes clock exactly once with only its real release-to-active phase event")
+	await _ticks(1)
+	_expect(is_equal_approx(field.state().clock_s, float(missing.clock_s) + 2.0 / 60.0) and state_events.size() == 1, "continued valid refresh advances ordinary clock without duplicate state_changed")
 	await _dispose(arena)
 
 
