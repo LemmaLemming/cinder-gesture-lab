@@ -1,6 +1,6 @@
 # Cinder shared progress
 
-Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current API: [SHARED_CONTRACT](SHARED_CONTRACT.md).
+Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current API: campaign-shared-2 [SHARED_CONTRACT](SHARED_CONTRACT.md).
 
 ## Inventory and ownership
 
@@ -21,7 +21,8 @@ Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 
 | Durable records and role mailbox | Complete | Three shared records; run `cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2`; no act writes before READY |
 | Reviewed parallel baseline and READY | Complete | Baseline ff34f58; three clean linked act checkouts, canonical roots/common queue/distinct ports verified; READY published in coordination status |
 | Level and executed-world-action interfaces | Verified | campaign-level-1 and world-actions-1; 92 level and 119 action checks, compatible with prior preview API |
-| Campaign/save/scheduler/UI/settings | Pending | Local hooks and action data do not implement those flows |
+| Shared foundations | Verified modules | Player snapshots72, save/progression45, settings182, bounded scheduler65; live-shell/enemy/UI/act adapters remain pending |
+| Campaign/save/scheduler/UI/settings consumers | In progress | Helpers own scoped enemy snapshot/UI work; integration owns live composition and act-specific shared dependencies |
 | Act level acceptance | None | All 15 main/9 optional remain authored proposals; no campaign scenes accepted |
 | Integrated desktop campaign | Pending | All 24 levels and required shared-system flows must be accessible/tested |
 
@@ -35,7 +36,7 @@ No level commits are accepted yet. `campaign-shared-1` passed queued verificatio
 | Act2 | `/Users/howardchen/.codex/worktrees/campaign-act2/video game idea` | `codex/campaign-act2` | 6025/6026/6027 |
 | Act3 | `/Users/howardchen/.codex/worktrees/campaign-act3/video game idea` | `codex/campaign-act3` | 6035/6036/6037 |
 
-All were verified clean at the exact reviewed baseline. Generated local configuration resolves the canonical root and inherited lock identically, with distinct debugger ports. No act worker has been launched by integration; user launch follows READY. Identity confirmation/registration is still required before act edits to prevent duplicate owners. First import in each new checkout uses the shared queue; imported caches are local and ignored. READY is recorded atomically in the ignored integration status and an immutable recipient-tagged message. Canonical source for live assignments/worker confirmations: `.cinder/agent-chat/cinder-campaign/run.json`.
+All were verified clean at the exact reviewed baseline. Generated local configuration resolves the canonical root and inherited lock identically, with distinct debugger ports. The user launched all three act chats; integration verified their matching requests, clean assigned branches and exact baseline, and registered sole owners: Act1 `01a11adf-2ec8-7702-96c6-0fa1e240c332`, Act2 `01a11adf-a56f-77d2-a7bc-45fd94702ab1`, Act3 `01a11ae0-0acf-7d00-a987-321a98de5b66`. Immutable RESPONSE acknowledgements remove their registration gate. First import in each new checkout uses the shared queue; imported caches are local and ignored. READY is recorded atomically in the ignored integration status and an immutable recipient-tagged message. Canonical source for live assignments/worker confirmations: `.cinder/agent-chat/cinder-campaign/run.json`.
 
 ## Tests and known limits
 
@@ -45,18 +46,40 @@ Actual queued graphical fixture capture at 540×1170: ignored `captures/campaign
 
 **Latest user test policy:** rerun the changed level's targeted suite plus directly affected shared checks. The initial full baseline verification is complete; repeat a broad suite only for a newly identified cross-system concern. Use `dev.py engine --headless --path . --script <owned-level-test.gd>` for act suites and named `dev.py test` shared suites. `dev.py doctor` verifies paths/slots/version, not gameplay readiness.
 
-The current game is one Character Lab. No campaign runtime scenes, persistence, Journey, difficulty profiles, full threat scheduler, perks/powerups or selected act presentation variants exist. Preview reset refreshes resources/supplies and must not be described as checkpoint retry. Existing warning meshes do not validate safe paths. The new world-action API provides executed movement and parametric attack records; it does not implement captured-sequence validation or persistence for Act 2/3.
+The current playable game remains one Character Lab. No campaign scenes are accepted; live campaign persistence/transitions/Journey/settings consumers, tracking/moving threat adapters, perks/powerups and selected act presentation variants remain unfinished. Verified data/model modules and bounded stationary scheduler exist; their existence is not a completed campaign flow. Preview reset refreshes resources/supplies and must not be described as checkpoint retry. Existing warning meshes do not validate safe paths. The new world-action API provides executed movement and parametric attack records; it does not implement captured-sequence validation or persistence for Act 2/3.
 
 Selected references opened in initial audits include each act's game view, character and environment art. These support distinct act scenery and headwear; they do not establish production readiness. Existing effects and helmeted lab captures remain preserved. No human campaign playtest or mobile/device performance claim is made.
 
 Research inspected official Godot 4.7 APIs and tagged 4.7.2 source, a maintainer forum/PR and a developer 2.5D postmortem. [Research record](../research/SHARED_SYSTEMS_RESEARCH.md) distinguishes observations, proposed adaptations, required validation and the YouTube candidate whose footage was unavailable.
 
+## Shared foundations publication 2
+
+`campaign-shared-2` adds available player-snapshot-1, save/progression/registry models, settings model and threat-scheduler-1/provisional difficulty. All are additive to the act starting baseline. Exact publication commit is announced in the canonical run/mailbox after scoped commit; do not copy canonical uncommitted working files into acts.
+
+| Targeted suite | Result | Ignored evidence |
+| --- | --- | --- |
+| campaign_persistence | 45, zero failures | `.cinder/campaign-persistence-test.log` |
+| settings | 182, zero failures | `.cinder/settings-test.log` |
+| player_snapshot | 72, zero failures | `.cinder/player-snapshot-test.log` |
+| world_actions (directly affected) | 119, zero failures | `.cinder/world-actions-after-snapshot.log` |
+| threat_scheduler | 65, zero failures | `.cinder/threat-scheduler-test.log` |
+
+The save suite uses explicitly marked test-only accepted fixtures and transport placeholders; it proves model/storage isolation and recovery, not live enemy/shell restoration. Actor suite compares actual paused JSON mid-dash/wall/buffered continuation and attack/reload/knockback/death clocks without replaying damage. Settings tests prove atomic failure handling and protected policy, not an integrated menu or measured performance. Scheduler tests include combined preparing/active footprints, capsule sweeps, analytic floor continuity/holes/steps, slow implemented kit and ordinary-primary opening; finite authored candidates/static stationary sources are a bounded supported witness, not campaign fairness or exhaustive equipment playtesting. One test incorrectly expected source cooldown to expire with recovery; it now independently verifies both deadlines. Full baseline suites were not repeated.
+
+### Read and triaged L1 dependencies
+
+- Act1 requests `d23bcc5f-905f-4c6f-8d21-de22f59dafbe` and `630692a0-3b6e-4dad-b13c-698103b0aceb`: sole owner registered; friendly loading-arm finite lane/cue/damage lifecycle, public release-anchor teaching observations, PracticeTarget public state/art hook, roof coherent checkpoint/hatch transition and G07 brimmed-hat expedition presentation pending. No enemies/perks/required blast/pickup introduced for L1.
+- Act2 requests `217cf59b-e691-492f-9c0f-ec7137f33dba`, `c281471f-e539-44d5-8e9e-685088f364dd`, `4c41a8d4-7336-4bfa-8648-bd9bed1622d7`: sole owner registered; tracking-warning then immutable locked lane, preparing-slot/reproof semantics, public live response state, shared cues/coherent checkpoints and G18/S01 bare dark hair/period coat/sash presentation pending. Stationary committed prototype does not supply tracking warning.
+- Act3 requests `c0b90d7e-0fe7-4389-b4d4-f32ba1a31b1b`, `f5138515-7845-4636-9511-9ce5a4887c40`, `f0f92ef4-2785-49d6-a899-ce07afe45129`: sole owner registered; physical committed Stalker lunge/shortened endpoint adapter, public live response, common cue/coherent reservations and G18 ivory-coat bare dark short-hair presentation pending. A disconnected stationary proxy must not evade source-motion validation.
+
+All owners may progress same-level owned art/layout/notes while these dependencies are implemented. Registration was delayed while integration verified modules; matching launch requests and clean branches were then checked and acknowledged. No duplicate owners/checkouts were created.
+
 ## Open shared requests and implementation order
 
-1. Receive/register the three user-launched act identities; reviewed parallel setup is READY.
+1. Receive A1-L1/A2-L1/A3-L1 owned-path work and precise dependencies; all three user-launched sole owners are registered.
 2. Publish verified campaign-level-1 completion/contact-exit, encounter/boss-phase checkpoint and local snapshot lifecycle.
-3. Implement coherent actor/local snapshots and isolated story/optional/replay saves; define checkpoint healing explicitly.
-4. Build on verified world-actions-1 completed dash/accepted attack capture; add authoritative preparing/active geometry, reachable paths and scheduler.
+3. Compose verified actor/local/attempt/store APIs into paused live save/load/retry/transition/side-return flows; enemy/scheduler snapshots and protected feedback remain in progress.
+4. Integrate the verified bounded stationary scheduler and add tracking-warning/moving-source lunge adapters plus coherent reservation snapshots, actual shared cues and public live response state.
 5. Apply provisional difficulty profiles at fresh boundaries without compounding values.
 6. Build Title/Journey, progression/replay equipment/Continue routes over readiness-gated registry data.
 7. Coordinate act presentations, common cues and campaign-selected equipment implementations through canonical claims/reservations.

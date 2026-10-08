@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-1** (8 October 2026), composed of `campaign-level-1` and `world-actions-1`. Integration owns this document and shared runtime. Engine verification is recorded in shared progress; planned APIs below remain unavailable until a tested revision publishes them. See [campaign memory](CAMPAIGN_MEMORY.md) and [progress](SHARED_PROGRESS.md).
+Revision: **campaign-shared-2** (8 October 2026), adding verified actor snapshot, save/progression model, settings and bounded scheduler modules to `campaign-level-1` and `world-actions-1`. Integration owns this document and shared runtime. Engine verification is recorded in shared progress; planned APIs below remain unavailable until a tested revision publishes them. See [campaign memory](CAMPAIGN_MEMORY.md) and [progress](SHARED_PROGRESS.md).
 
 ## Ownership and baseline
 
@@ -73,16 +73,52 @@ Limits: path samples are not an analytic swept capsule; geometry carries a param
 
 [registry.json](../../data/campaign/registry.json) records all 15 main and 9 optional IDs, sequential main links and optional parent clears, derived from the three canonical research files. Its initial entries have `scene_path = null` and `readiness = unimplemented`. Integration alone registers a scene after accepting its exact level commit/API revision; this data is not evidence that campaign content exists. Optional completion stamps have stable once-only reward IDs and no stat growth. A future menu must gate playable routes on accepted, validated scenes.
 
+## player-snapshot-1
+
+`CinderPlayer.snapshot_state() -> Dictionary`, `snapshot_error(snapshot: Dictionary) -> String`, `restore_state(snapshot: Dictionary) -> bool` and `last_snapshot_error` are available only on a ready actor in a paused tree, outside action/physics callbacks. Capture the entire level/actor/shell aggregate at a deferred barrier after the initiating event returns. Restoration validates before mutation and emits no action/equipment/death events or new damage.
+
+The JSON envelope carries `api_revision = player-snapshot-1`, schema 1, actor type, four-slot equipment, resources, transform/velocity/facing/grounded state, active and buffered dash parameters, cooldown/reload/invulnerability/knockback clocks, logical/visual phases, pending weapon, prior summaries, world-action clock/sequence/history/pending path, and sprite idle clock/frame. Vectors use explicit numeric triples through `CinderSnapshotCodec`. Canonical gear/stat drift rejects pending a migration. The shell binds attempt/level identity and resets subscriber cursors when restoring an older action sequence; final screen aim remains separate.
+
+Revision 1 supports static floors/walls and explicitly rejects moving-platform contact velocity. Engine contact caches are not serialized; resumed gravity uses the stored first grounded decision, verified against actual uninterrupted static-floor/wall paths. Existing cosmetic dash smoke is discarded on restore; logical travel/action capture continues. Connected restored plume reconstruction and whole-world effects remain open integration work.
+
+## Save/progression model 1
+
+`CinderCampaignRegistry` loads all 24 canonical IDs/links/parents and exposes `entry`, `main_route`, `ids`, `scene_error`, `is_playable`, `is_unlocked`, `next_main` and `node_state`. Accepted entries require matching scene root, canonical identity, spawn, API and exact commit provenance. Optional stamp IDs remain `<optional-ID>-completion-stamp`. Registry proposals remain unplayable.
+
+`CinderSaveStore.new(user_path = user://campaign.json)` provides `write_payload`, `read_payload`, `last_error`, `loaded_backup` and `generation`. It validates finite bounded JSON, writes full-precision payload text/checksum to a unique sibling temporary file, verifies it, preserves a valid prior generation and publishes through rename. `payload_validator: Callable` lets semantic validation govern primary/backup selection and backup preservation. Integers outside the exact JSON range must be strings, including large RNG state. Process-level corruption/failure is tested; power-loss durability is untested.
+
+`CinderCampaignAttempts.new(registry, store = null)` provides defensive `state`, `story_snapshot`, `active_snapshot` and `active_kind`; transactions `begin_story`, `record_snapshot(snapshot, checkpoint = false)`, `retry_snapshot`, `begin_side(kind, id, fresh_snapshot)`, `complete_active`, `leave_side`, `advance_story`, `grant_equipment`; and `next_story_id`, `state_error`, `restore_session`, `load_saved`. These are data/model APIs, not live scene restoration. Attach `snapshot_validator: Callable` for actor/local/shell semantic validation in a prepared candidate before production use.
+
+The outer snapshot requires schema 1, canonical level ID/accepted scene path, `paused = true`, `equipment_ids`, `player`, `level` and `shell`. Level component identity matches the aggregate. Exactly weapon/jacket/pants/shoes are allowed. Player/local component schemas and effect/scheduler coherence belong to the shell validator, rather than this model's transport-only fixture tests.
+
+Optional and replay snapshots/checkpoints are separate from a protected story. Retry copies the same coherent checkpoint without healing or resetting supplies. Fresh story/side/next-level snapshots are explicit inputs; the model grants no implicit full resources. Main completion is a sequential prefix; optional clears never gate the route. Completion stamps deduplicate without stat growth. Finishing/leaving a side attempt returns the entire protected story automatically. Interrupted attempts remain paused; invalid side data/remembered replay preferences may be discarded only after protected story/progress validate independently. Invalid protected primary data falls back to a semantically valid backup. Initial unlocked equipment is the starter four; `grant_equipment` requires an explicit authored accepted reward and does not allocate abilities.
+
+## Settings model 1
+
+`CinderGameSettings.new(user_path = user://cinder/settings.json)` offers defensive `snapshot`, `validation_error`, `update(changes, persist = true)`, `replace(candidate, persist = true)`, `load_settings`, `save_settings`, `apply_runtime`, `cosmetic_policy`, `credits` and `settings_changed`. Updates persist successfully before memory/signals change. Loading/updating does not apply runtime changes until the shell calls `apply_runtime`.
+
+Schema 1 stores quality `Low`/`Standard`/`High` (Standard initially), `target_fps` 30/60 (60 initially), linear `audio.master/music/effects` in [0,1], and boolean `reduced_motion`. Runtime applies only FPS/audio buses; the shell routes combat voices to Effects and applies optional cosmetic policies. Warnings/source/targets/safe landings/interaction states and dash/slash/blast feedback retain full fidelity. Reduced motion suppresses optional shake/decoration/menu motion. Credits distinguish runtime originals, supplied/generated references and source inspirations. No music track, settings UI or desktop performance measurement follows from this module alone.
+
+## threat-scheduler-1 and provisional difficulty
+
+`CinderDifficulty.resolve_role(raw_role, profile_id, timing_floors) -> Dictionary` derives Assisted/Standard/Challenge once from immutable raw role data; already-resolved input rejects. Values retain `provisional_unplaytested` status. Fresh `begin_encounter` fixes its profile until `end_encounter`; preference changes do not retune a live exchange.
+
+`CinderThreatScheduler` owns a pausable physics clock. Methods: `begin_encounter(profile_id, encounter_id = encounter, world_revision = 1)`, `request_attack(owner, threat, response)`, `cancel`, `cancel_owner`, `invalidate_world`, `end_encounter`, `reservations`, `get_clock`, `encounter_profile`. Owner adapters must cancel actual attacks on `reservation_invalidated`. Normal recovery expiry releases geometry; cooldown can persist longer. Collision-world changes require increasing revision and invalidation before mutation.
+
+Requests provide a resolved role, fixed authoritative circle/cone/swept-lane geometry, stationary source/recovery target and live source cooldown. Responses provide the shared capsule/actor, exact resolved dash/primary stats, current stationary commitment/cooldowns, positive recognition time/input margin, finite authored normalized escape/return directions and actual same-height unrotated static box floors with supported rectangles. No missing-data or decorative-footprint fallback exists.
+
+The witness checks continuous timed paths against the preparing/active union, an unobstructed capsule sweep, analytic floor continuity, safe wait/landing, and an ordinary-primary range/LOS opening through full selected recovery. It credits no blast or immunity. Supported bodies retain the shared radius0.32/height1.45/centreY0.73. Limited candidate enumeration and conservative cone/floor padding can reject a feasible route. Moving sources/tracking, dynamic floors/slopes, collision-shortened/sliding predictions and moving recovery targets need explicit later adapters. This bounded witness is not proof of campaign fairness; actual encounter/portrait/loadout testing remains required. Enemy/shell consumption and coherent reservation snapshots are pending integration.
+
 ## Required next API revisions
 
 These interfaces remain open implementation requests. Act workers can prepare owned art/layout/notes and must request dependencies before claiming dependent gameplay complete.
 
 - Campaign registry and shell consumers for completion/contact-exit/checkpoint requests; coherent transition lifecycle (local hooks are now available).
-- Coherent shared player/resources/timers/gear and relevant enemy/supply/effect snapshots; protected story/optional/replay attempts; persistent completion and deduplicated optional rewards; interrupted sessions resume paused.
+- Live-shell composition of verified player/attempt/store models with relevant enemy/supply/effect/scheduler snapshots; persistence and transition/retry/side-return consumers, interrupted sessions paused.
 - Serialize executed-world-action capture where needed; implement finite captured-sequence composition/preview and whole-route validation. Keep final screen-space aim-anchor state separate.
-- Authoritative preparing **and active** threat reservations, collision/floor-safe reachable paths, geometry and timing checks, cancellation/cleanup; non-compounding difficulty profiles fixed at fresh encounter boundaries.
+- Integrate the bounded scheduler/difficulty modules into actual enemies/encounters, add coherent reservation snapshots and required adapters; validate campaign combinations and permitted extremes.
 - Concept-derived presentation selection with compatible carried gear; shared available/active/spent and warning/lock/active/recovery cues; campaign-selected claimed/reserved equipment abilities.
-- Title/Journey/replay equipment/settings with cosmetic Low/Standard/High, 30/60 FPS (60 initial), audio, reduced motion and credits.
+- Title/Journey/replay equipment/settings UI and effects policy consumers over the verified models; desktop performance measurements.
 
 Breaking changes require a published API revision, exact compatible baseline, migration message and affected reruns. Compatible additions also require documented signatures and test evidence before use. After initial baseline verification, follow the latest user test policy: targeted changed-level suites and directly affected shared checks; broaden only when a new cross-system concern warrants it.
 

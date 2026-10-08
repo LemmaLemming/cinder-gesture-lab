@@ -11,6 +11,9 @@ signal world_action_executed(record: Dictionary)
 
 const SpriteScript = preload("res://scripts/pixel_sprite.gd")
 const EquipmentScript = preload("res://scripts/equipment.gd")
+const SnapshotCodec = preload("res://scripts/campaign/snapshot_codec.gd")
+const SNAPSHOT_API_REVISION: String = "player-snapshot-1"
+const SNAPSHOT_SCHEMA_VERSION: int = 1
 const DASH_SPEED: float = 15.0
 const DASH_DURATION: float = 0.18
 const DASH_COOLDOWN: float = 0.34
@@ -66,6 +69,12 @@ var _world_action_clock: float = 0.0
 var _world_action_sequence: int = 0
 var _world_action_records: Array[Dictionary] = []
 var _world_dash_record: Dictionary = {}
+var last_snapshot_error: String = ""
+var _snapshot_busy: bool = false
+var _actor_transaction_depth: int = 0
+# CharacterBody3D's cached contacts are not writable. Preserve the first
+# restored gravity decision without advancing a hidden simulation tick.
+var _restored_floor_contact: int = -1
 
 ## Simulation seconds since this player instance entered active physics.
 ## Pausing the shared scene tree stops this clock and dash sampling together.
@@ -140,6 +149,7 @@ func request_dash(direction: Vector3) -> bool:
 	return true
 
 func _start_dash(direction: Vector3) -> void:
+	_actor_transaction_depth += 1
 	var snapshot: Dictionary = equipment.resolved_stats()
 	_world_dash_record = {
 		"kind": "dash", "started_at_s": _world_action_clock,
@@ -166,11 +176,13 @@ func _start_dash(direction: Vector3) -> void:
 		if is_instance_valid(_dash_plume):
 			_dash_plume.track_emitter(self, _dash_total, true)
 	fired.emit("dash")
+	_actor_transaction_depth -= 1
 
 func _physics_process(delta: float) -> void:
 	if dead:
 		cancel_world_action_capture()
 		return
+	_actor_transaction_depth += 1
 	_dash_cooldown = maxf(_dash_cooldown - delta, 0.0)
 	_slash_cd = maxf(_slash_cd - delta, 0.0)
 	_blast_cd = maxf(_blast_cd - delta, 0.0)
@@ -193,11 +205,12 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = 0.0
 		velocity.z = 0.0
-	if not is_on_floor():
+	if not _snapshot_grounded():
 		velocity.y -= GRAVITY * delta
 	elif velocity.y < 0.0:
 		velocity.y = 0.0
 	move_and_slide()
+	_restored_floor_contact = -1
 	_world_action_clock += delta
 	if not _world_dash_record.is_empty():
 		(_world_dash_record.path as Array).append({"position": global_position, "time_s": _world_action_clock})
@@ -236,10 +249,12 @@ func _physics_process(delta: float) -> void:
 			_reload = 0.0
 	else:
 		_reload = 0.0
+	_actor_transaction_depth -= 1
 
 func slash(direction: Vector3 = Vector3.ZERO) -> int:
 	if _slash_cd > 0.0 or dead:
 		return 0
+	_actor_transaction_depth += 1
 	_face_attack(direction)
 	var snapshot: Dictionary = equipment.resolved_stats()
 	var world_record: Dictionary = _world_attack_record("primary", snapshot)
@@ -259,11 +274,13 @@ func slash(direction: Vector3 = Vector3.ZERO) -> int:
 	_publish_world_action(world_record)
 	_record_action("slash", hits, snapshot.primary_damage, snapshot.primary_range)
 	fired.emit("slash")
+	_actor_transaction_depth -= 1
 	return hits
 
 func blast(direction: Vector3 = Vector3.ZERO) -> int:
 	if _blast_cd > 0.0 or dead or shells <= 0:
 		return 0
+	_actor_transaction_depth += 1
 	_face_attack(direction)
 	shells -= 1
 	_reload = 0.0
@@ -281,11 +298,13 @@ func blast(direction: Vector3 = Vector3.ZERO) -> int:
 	_publish_world_action(world_record)
 	_record_action("blast", hits, snapshot.followup_damage, snapshot.followup_range)
 	fired.emit("blast")
+	_actor_transaction_depth -= 1
 	return hits
 
 func take_damage(amount: float, impulse: Vector3) -> void:
 	if _invulnerable > 0.0 or dead:
 		return
+	_actor_transaction_depth += 1
 	hp = maxf(hp - equipment.damage_received(amount), 0.0)
 	velocity += impulse
 	_knockback_left = 0.16
@@ -299,6 +318,7 @@ func take_damage(amount: float, impulse: Vector3) -> void:
 		dead = true
 		cancel_world_action_capture()
 		died.emit()
+	_actor_transaction_depth -= 1
 
 func _face_attack(direction: Vector3) -> void:
 	var horizontal := Vector3(direction.x, 0, direction.z)
@@ -349,8 +369,10 @@ func equip_item(item_id: String) -> bool:
 func _equip_now(item_id: String) -> bool:
 	if not equipment.equip(item_id):
 		return false
+	_actor_transaction_depth += 1
 	_refresh_equipment()
 	equipment_changed.emit(item_id)
+	_actor_transaction_depth -= 1
 	return true
 
 func _refresh_equipment() -> void:
@@ -417,3 +439,449 @@ func _publish_world_action(record: Dictionary) -> void:
 	if _world_action_records.size() > MAX_WORLD_ACTION_RECORDS:
 		_world_action_records.pop_front()
 	world_action_executed.emit(record.duplicate(true))
+
+
+## Capture at the shell's paused, deferred barrier after originating callbacks.
+## This envelope owns no level/attempt identity or screen-space aim anchor.
+func snapshot_state() -> Dictionary:
+	last_snapshot_error = _snapshot_boundary_error()
+	if not last_snapshot_error.is_empty():
+		return {}
+	_snapshot_busy = true
+	var history: Array = []
+	for record: Dictionary in _world_action_records:
+		history.append(_encode_world_record(record))
+	var snapshot: Dictionary = {
+		"api_revision": SNAPSHOT_API_REVISION,
+		"schema_version": SNAPSHOT_SCHEMA_VERSION,
+		"actor_type": "CinderPlayer",
+		"equipment": equipment.snapshot(),
+		"resources": {"hp": hp, "max_hp": max_hp, "shells": shells, "max_shells": max_shells, "dead": dead},
+		"motion": {
+			"position": SnapshotCodec.vector3(global_position),
+			"basis": [SnapshotCodec.vector3(global_basis.x), SnapshotCodec.vector3(global_basis.y), SnapshotCodec.vector3(global_basis.z)],
+			"velocity": SnapshotCodec.vector3(velocity), "facing": SnapshotCodec.vector3(facing),
+			"grounded": _snapshot_grounded(),
+			"dash_direction": SnapshotCodec.vector3(_dash_direction), "queued_dash": SnapshotCodec.vector3(_queued_dash),
+			"dash_origin": null if _dash_origin == Vector3.INF else SnapshotCodec.vector3(_dash_origin),
+			"dash_speed": _dash_speed, "dash_total_s": _dash_total,
+		},
+		"clocks": {
+			"dash_left_s": _dash_left, "dash_cooldown_s": _dash_cooldown,
+			"primary_cooldown_s": _slash_cd, "blast_cooldown_s": _blast_cd,
+			"reload_s": _reload, "invulnerability_s": _invulnerable, "knockback_left_s": _knockback_left,
+		},
+		"phases": {
+			"logical": _phase, "logical_left_s": _phase_left, "logical_total_s": _phase_total,
+			"visual": _visual_phase, "visual_left_s": _visual_phase_left, "visual_total_s": _visual_phase_total,
+			"landing_left_s": _landing_left,
+		},
+		"pending_weapon": _pending_weapon,
+		"last_action": last_action.duplicate(true), "last_dash_distance": last_dash_distance,
+		"world_actions": {
+			"schema_version": WORLD_ACTION_SCHEMA_VERSION, "clock_s": _world_action_clock,
+			"sequence": _world_action_sequence, "history": history,
+			"pending_dash": _encode_world_record(_world_dash_record),
+		},
+		"presentation": {
+			"action": _sprite.get("_action"), "frame": _sprite.get("_action_frame"),
+			"idle_time_s": _sprite.get("_animation_time"),
+		},
+	}
+	last_snapshot_error = _validate_snapshot(snapshot)
+	_snapshot_busy = false
+	return snapshot.duplicate(true) if last_snapshot_error.is_empty() else {}
+
+
+## Pure validation; the receiving actor must already be ready and paused.
+func snapshot_error(snapshot: Dictionary) -> String:
+	var error: String = _snapshot_boundary_error()
+	if not error.is_empty():
+		return error
+	_snapshot_busy = true
+	error = _validate_snapshot(snapshot)
+	_snapshot_busy = false
+	return error
+
+
+## Apply only fully validated data. No damage/action/equipment/death signals,
+## resource reset, hidden physics tick, or new accepted-action publication.
+func restore_state(snapshot: Dictionary) -> bool:
+	last_snapshot_error = _snapshot_boundary_error()
+	if not last_snapshot_error.is_empty():
+		return false
+	_snapshot_busy = true
+	last_snapshot_error = _validate_snapshot(snapshot)
+	if not last_snapshot_error.is_empty():
+		_snapshot_busy = false
+		return false
+	var accepted: Dictionary = snapshot.duplicate(true)
+	var resources: Dictionary = accepted.resources
+	var motion: Dictionary = accepted.motion
+	var clocks: Dictionary = accepted.clocks
+	var phases: Dictionary = accepted.phases
+	var capture: Dictionary = accepted.world_actions
+	# Re-resolve once from canonical IDs; never apply multipliers to old stats.
+	equipment.restore(accepted.equipment)
+	_refresh_equipment()
+	hp = float(resources.hp)
+	max_shells = int(resources.max_shells)
+	shells = int(resources.shells)
+	dead = resources.dead
+	var basis_columns: Array = motion.basis
+	global_transform = Transform3D(Basis(SnapshotCodec.read_vector3(basis_columns[0]), SnapshotCodec.read_vector3(basis_columns[1]), SnapshotCodec.read_vector3(basis_columns[2])), SnapshotCodec.read_vector3(motion.position))
+	if motion.grounded:
+		# Refresh a recreated body's static-floor contact without running physics
+		# or adopting snap's positional correction as extra recorded movement.
+		var exact_transform: Transform3D = global_transform
+		apply_floor_snap()
+		global_transform = exact_transform
+	velocity = SnapshotCodec.read_vector3(motion.velocity)
+	facing = SnapshotCodec.read_vector3(motion.facing)
+	_restored_floor_contact = 1 if motion.grounded else 0
+	_dash_direction = SnapshotCodec.read_vector3(motion.dash_direction)
+	_queued_dash = SnapshotCodec.read_vector3(motion.queued_dash)
+	_dash_origin = Vector3.INF if motion.dash_origin == null else SnapshotCodec.read_vector3(motion.dash_origin)
+	_dash_speed = float(motion.dash_speed)
+	_dash_total = float(motion.dash_total_s)
+	_dash_left = float(clocks.dash_left_s)
+	_dash_cooldown = float(clocks.dash_cooldown_s)
+	_slash_cd = float(clocks.primary_cooldown_s)
+	_blast_cd = float(clocks.blast_cooldown_s)
+	_reload = float(clocks.reload_s)
+	_invulnerable = float(clocks.invulnerability_s)
+	_knockback_left = float(clocks.knockback_left_s)
+	_phase = phases.logical
+	_phase_left = float(phases.logical_left_s)
+	_phase_total = float(phases.logical_total_s)
+	_visual_phase = phases.visual
+	_visual_phase_left = float(phases.visual_left_s)
+	_visual_phase_total = float(phases.visual_total_s)
+	_landing_left = float(phases.landing_left_s)
+	_pending_weapon = accepted.pending_weapon
+	last_action = (accepted.last_action as Dictionary).duplicate(true)
+	if not last_action.is_empty():
+		last_action["hits"] = int(last_action.hits)
+	last_dash_distance = float(accepted.last_dash_distance)
+	_accepted_enemy_hits = 0
+	_world_action_clock = float(capture.clock_s)
+	_world_action_sequence = int(capture.sequence)
+	_world_action_records.clear()
+	for record: Dictionary in capture.history:
+		_world_action_records.append(_decode_world_record(record))
+	_world_dash_record = _decode_world_record(capture.pending_dash)
+	# The current smoke node belongs to the old live presentation, not the save.
+	# Discard it explicitly; reconstructed logical movement retains its route.
+	# Restoring the full connected cosmetic plume is a later effects API.
+	if is_instance_valid(_dash_plume):
+		_dash_plume.hide()
+		_dash_plume.queue_free()
+	_dash_plume = null
+	_sprite.face(facing)
+	var presentation: Dictionary = accepted.presentation
+	var frame_count: int = SpriteScript.PLAYER_FRAME_COUNTS[presentation.action]
+	_sprite.set_action(presentation.action, (float(presentation.frame) + 0.25) / frame_count)
+	_sprite.set("_animation_time", float(presentation.idle_time_s))
+	if presentation.action == "idle":
+		_sprite.animate(false, 0.0)
+	_sprite.modulate = RED if _invulnerable > 0.12 and int(_invulnerable * 25.0) % 2 == 0 else Color.WHITE
+	_snapshot_busy = false
+	last_snapshot_error = ""
+	return true
+
+
+func _snapshot_boundary_error() -> String:
+	if not is_inside_tree() or not is_node_ready() or not is_instance_valid(_sprite):
+		return "Player snapshots require a ready actor in the shared scene tree"
+	if not get_tree().paused:
+		return "Player snapshots require the paused deferred shell boundary"
+	if _snapshot_busy or _actor_transaction_depth > 0:
+		return "Player snapshots cannot run inside actor transactions or callbacks"
+	if not get_platform_velocity().is_zero_approx() or not get_platform_angular_velocity().is_zero_approx():
+		return "Player snapshot revision 1 requires static floor; moving-platform contact state is unsupported"
+	return ""
+
+
+func _snapshot_grounded() -> bool:
+	return _restored_floor_contact == 1 if _restored_floor_contact >= 0 else is_on_floor()
+
+
+func _validate_snapshot(snapshot: Dictionary) -> String:
+	var error: String = SnapshotCodec.value_error(snapshot)
+	if not error.is_empty():
+		return error
+	error = SnapshotCodec.keys_error(snapshot, ["api_revision", "schema_version", "actor_type", "equipment", "resources", "motion", "clocks", "phases", "pending_weapon", "last_action", "last_dash_distance", "world_actions", "presentation"])
+	if not error.is_empty():
+		return error
+	if snapshot.api_revision != SNAPSHOT_API_REVISION or not SnapshotCodec.is_integer(snapshot.schema_version, SNAPSHOT_SCHEMA_VERSION, SNAPSHOT_SCHEMA_VERSION) or snapshot.actor_type != "CinderPlayer":
+		return "Unsupported player snapshot identity/API/schema"
+	for key: String in ["equipment", "resources", "motion", "clocks", "phases", "last_action", "world_actions", "presentation"]:
+		if not snapshot[key] is Dictionary:
+			return "Player snapshot requires a dictionary: " + key
+	error = _loadout_error(snapshot.equipment)
+	if not error.is_empty():
+		return error
+	var restored_gear = EquipmentScript.new()
+	restored_gear.restore(snapshot.equipment)
+	var resolved: Dictionary = restored_gear.resolved_stats()
+	var resources: Dictionary = snapshot.resources
+	error = SnapshotCodec.keys_error(resources, ["hp", "max_hp", "shells", "max_shells", "dead"])
+	if not error.is_empty():
+		return error
+	if not SnapshotCodec.is_number(resources.max_hp) or not is_equal_approx(float(resources.max_hp), float(resolved.max_health)) or not SnapshotCodec.in_range(resources.hp, 0.0, float(resolved.max_health)):
+		return "Player HP must fit the canonical equipped maximum"
+	if not SnapshotCodec.is_integer(resources.max_shells, int(resolved.shell_capacity), int(resolved.shell_capacity)) or not SnapshotCodec.is_integer(resources.shells, 0, int(resolved.shell_capacity)):
+		return "Player shells must fit the canonical capacity"
+	if not resources.dead is bool or resources.dead != (float(resources.hp) == 0.0):
+		return "Dead state must match zero HP"
+	var motion: Dictionary = snapshot.motion
+	error = SnapshotCodec.keys_error(motion, ["position", "basis", "velocity", "facing", "grounded", "dash_direction", "queued_dash", "dash_origin", "dash_speed", "dash_total_s"])
+	if not error.is_empty():
+		return error
+	for key: String in ["position", "velocity"]:
+		if not SnapshotCodec.is_vector3(motion[key]):
+			return "Invalid motion vector: " + key
+	if not motion.basis is Array or motion.basis.size() != 3:
+		return "Player basis must contain three vectors"
+	for column: Variant in motion.basis:
+		if not SnapshotCodec.is_vector3(column):
+			return "Invalid player basis vector"
+	var basis_columns: Array = motion.basis
+	var restored_basis := Basis(SnapshotCodec.read_vector3(basis_columns[0]), SnapshotCodec.read_vector3(basis_columns[1]), SnapshotCodec.read_vector3(basis_columns[2]))
+	if not is_finite(restored_basis.determinant()) or absf(restored_basis.determinant()) < 0.000001:
+		return "Player basis must be finite and invertible"
+	if not motion.grounded is bool or not _direction_valid(motion.facing, false) or not _direction_valid(motion.dash_direction, true) or not _direction_valid(motion.queued_dash, true):
+		return "Player facing/dash directions must be planar unit vectors"
+	if not SnapshotCodec.in_range(motion.dash_speed, 0.001, 1000.0) or not SnapshotCodec.in_range(motion.dash_total_s, 0.001, 10.0):
+		return "Invalid snapshotted dash speed/duration"
+	if motion.dash_origin != null and not SnapshotCodec.is_vector3(motion.dash_origin):
+		return "Dash origin must be a finite vector or null"
+	var clocks: Dictionary = snapshot.clocks
+	error = SnapshotCodec.keys_error(clocks, ["dash_left_s", "dash_cooldown_s", "primary_cooldown_s", "blast_cooldown_s", "reload_s", "invulnerability_s", "knockback_left_s"])
+	if not error.is_empty():
+		return error
+	for key: String in ["dash_left_s", "dash_cooldown_s", "primary_cooldown_s", "blast_cooldown_s", "invulnerability_s"]:
+		if not SnapshotCodec.in_range(clocks[key], 0.0, 10.0):
+			return "Invalid remaining player clock: " + key
+	# The existing knockback subtraction can finish slightly below zero.
+	if not SnapshotCodec.in_range(clocks.knockback_left_s, -1.0, 0.160001) or not SnapshotCodec.in_range(clocks.reload_s, 0.0, float(resolved.shell_reload)):
+		return "Invalid knockback/reload clock"
+	if float(clocks.dash_left_s) > float(motion.dash_total_s) or (float(clocks.dash_left_s) > 0.0) != (motion.dash_origin != null):
+		return "Active dash requires its original origin and bounded remaining time"
+	if float(clocks.dash_left_s) > 0.0 and not _direction_valid(motion.dash_direction, false):
+		return "Active dash requires an exact direction"
+	if int(resources.shells) == int(resources.max_shells) and float(clocks.reload_s) != 0.0:
+		return "Full shells cannot retain a partial reload"
+	var phases: Dictionary = snapshot.phases
+	error = SnapshotCodec.keys_error(phases, ["logical", "logical_left_s", "logical_total_s", "visual", "visual_left_s", "visual_total_s", "landing_left_s"])
+	if not error.is_empty():
+		return error
+	for prefix: String in ["logical", "visual"]:
+		if not phases[prefix] is String or not ["idle", "primary", "blast", "hurt"].has(phases[prefix]) or not SnapshotCodec.in_range(phases[prefix + "_total_s"], 0.0, 10.0) or not SnapshotCodec.in_range(phases[prefix + "_left_s"], 0.0, float(phases[prefix + "_total_s"])):
+			return "Invalid player action phase: " + prefix
+		if phases[prefix] == "idle" and (float(phases[prefix + "_left_s"]) != 0.0 or float(phases[prefix + "_total_s"]) != 0.0):
+			return "Idle phase cannot contain an action deadline"
+	if not SnapshotCodec.in_range(phases.landing_left_s, 0.0, LANDING_VISUAL_DURATION):
+		return "Invalid landing presentation clock"
+	if not snapshot.pending_weapon is String:
+		return "Pending weapon must be a canonical ID or empty string"
+	if not snapshot.pending_weapon.is_empty():
+		var pending: Dictionary = restored_gear.item(snapshot.pending_weapon)
+		if pending.is_empty() or not restored_gear.owns(snapshot.pending_weapon) or pending.slot != "weapon":
+			return "Unsupported pending weapon"
+		if float(clocks.dash_left_s) <= 0.0 and float(phases.logical_left_s) <= 0.0:
+			return "Pending weapon requires an unfinished accepted action"
+	if not SnapshotCodec.in_range(snapshot.last_dash_distance, 0.0, 1000000.0):
+		return "Invalid last dash distance"
+	error = _last_action_error(snapshot.last_action)
+	if not error.is_empty():
+		return error
+	error = _capture_error(snapshot.world_actions, motion, clocks, resources.dead)
+	if not error.is_empty():
+		return error
+	var presentation: Dictionary = snapshot.presentation
+	error = SnapshotCodec.keys_error(presentation, ["action", "frame", "idle_time_s"])
+	if not error.is_empty():
+		return error
+	if not presentation.action is String or not SpriteScript.PLAYER_STATES.has(presentation.action):
+		return "Invalid player presentation action"
+	if not SnapshotCodec.is_integer(presentation.frame, 0, int(SpriteScript.PLAYER_FRAME_COUNTS[presentation.action]) - 1) or not SnapshotCodec.in_range(presentation.idle_time_s, 0.0, SpriteScript.IDLE_LOOP_S):
+		return "Invalid player presentation frame/clock"
+	if presentation.action == "idle" and int(presentation.frame) != int(float(presentation.idle_time_s) / SpriteScript.IDLE_LOOP_S * int(SpriteScript.PLAYER_FRAME_COUNTS.idle)):
+		return "Idle frame must match its simulation clock"
+	return ""
+
+
+func _loadout_error(loadout: Dictionary) -> String:
+	var error: String = SnapshotCodec.keys_error(loadout, EquipmentScript.SLOTS)
+	if not error.is_empty():
+		return error
+	for slot: String in EquipmentScript.SLOTS:
+		if not loadout[slot] is String:
+			return "Equipment ID must be a string: " + slot
+	var candidate = EquipmentScript.new()
+	return "" if candidate.restore(loadout) else "Snapshot has an unsupported equipment ID/slot"
+
+
+func _last_action_error(action: Dictionary) -> String:
+	if action.is_empty():
+		return ""
+	var error: String = SnapshotCodec.keys_error(action, ["kind", "hits", "damage", "reach"])
+	if not error.is_empty():
+		return error
+	if not ["slash", "blast"].has(action.kind) or not SnapshotCodec.is_integer(action.hits) or not SnapshotCodec.in_range(action.damage, 0.0, 1000000.0) or not SnapshotCodec.in_range(action.reach, 0.001, 1000.0):
+		return "Invalid legacy action summary"
+	return ""
+
+
+func _direction_valid(value: Variant, allow_zero: bool) -> bool:
+	if not SnapshotCodec.is_vector3(value):
+		return false
+	var direction: Vector3 = SnapshotCodec.read_vector3(value)
+	return absf(direction.y) < 0.000001 and ((allow_zero and direction.is_zero_approx()) or is_equal_approx(direction.length_squared(), 1.0))
+
+
+func _capture_error(capture: Dictionary, motion: Dictionary, clocks: Dictionary, is_dead: bool) -> String:
+	var error: String = SnapshotCodec.keys_error(capture, ["schema_version", "clock_s", "sequence", "history", "pending_dash"])
+	if not error.is_empty():
+		return error
+	if not SnapshotCodec.is_integer(capture.schema_version, WORLD_ACTION_SCHEMA_VERSION, WORLD_ACTION_SCHEMA_VERSION) or not SnapshotCodec.in_range(capture.clock_s, 0.0, 1000000000000.0) or not SnapshotCodec.is_integer(capture.sequence) or not capture.history is Array or not capture.pending_dash is Dictionary:
+		return "Invalid world-action capture header"
+	var history: Array = capture.history
+	if history.size() != mini(int(capture.sequence), MAX_WORLD_ACTION_RECORDS):
+		return "World-action history must retain its bounded latest sequence"
+	var previous_time: float = 0.0
+	for index: int in range(history.size()):
+		if not history[index] is Dictionary:
+			return "World-action history requires records"
+		var record: Dictionary = history[index]
+		error = _world_record_error(record, float(capture.clock_s), false)
+		if not error.is_empty():
+			return error
+		if int(record.sequence) != int(capture.sequence) - history.size() + index + 1 or float(record.completed_at_s) < previous_time:
+			return "World-action history order is invalid"
+		previous_time = float(record.completed_at_s)
+	var pending: Dictionary = capture.pending_dash
+	if pending.is_empty():
+		# An explicitly cancelled capture may still have a real active dash.
+		return ""
+	if is_dead or float(clocks.dash_left_s) <= 0.0:
+		return "Pending dash capture requires a living active dash"
+	error = _world_record_error(pending, float(capture.clock_s), true)
+	if not error.is_empty():
+		return error
+	if not SnapshotCodec.same_values(pending.world_origin, motion.dash_origin) or not SnapshotCodec.same_values(pending.direction, motion.dash_direction) or not SnapshotCodec.same_values(pending.path[-1].position, motion.position) or not is_equal_approx(float(pending.path[-1].time_s), float(capture.clock_s)):
+		return "Pending dash capture must match actual motion and clock"
+	if not is_equal_approx(float(pending.resolved_stats.dash_speed), float(motion.dash_speed)) or not is_equal_approx(float(pending.resolved_stats.dash_duration), float(motion.dash_total_s)) or not is_equal_approx(float(capture.clock_s) - float(pending.started_at_s), float(motion.dash_total_s) - float(clocks.dash_left_s)):
+		return "Pending dash capture must retain its accepted movement timing"
+	return ""
+
+
+func _world_record_error(record: Dictionary, clock: float, pending: bool) -> String:
+	var common: Array = ["kind", "started_at_s", "origin", "world_origin", "direction", "equipment_ids", "resolved_stats"]
+	if not pending:
+		common.append_array(["schema_version", "sequence", "completed_at_s"])
+	var is_dash: bool = record.get("kind") == "dash"
+	if is_dash:
+		common.append_array(["blocked", "path"])
+		if not pending:
+			common.append_array(["landing", "distance", "collision_shortened", "movement_damage"])
+	else:
+		if pending or not ["primary", "blast"].has(record.get("kind")):
+			return "Invalid world-action kind"
+		common.append_array(["damage_timing", "commitment_duration_s", "cooldown_s", "damage", "geometry", "hits"])
+	var error: String = SnapshotCodec.keys_error(record, common)
+	if not error.is_empty():
+		return error
+	if record.origin != "player_direct" or not SnapshotCodec.in_range(record.started_at_s, 0.0, clock) or not SnapshotCodec.is_vector3(record.world_origin) or not _direction_valid(record.direction, false) or not record.equipment_ids is Dictionary or not record.resolved_stats is Dictionary:
+		return "Invalid direct-player world-action source"
+	if not pending and (not SnapshotCodec.is_integer(record.schema_version, WORLD_ACTION_SCHEMA_VERSION, WORLD_ACTION_SCHEMA_VERSION) or not SnapshotCodec.is_integer(record.sequence, 1) or not SnapshotCodec.in_range(record.completed_at_s, float(record.started_at_s), clock)):
+		return "Invalid completed world-action identity/clock"
+	error = _loadout_error(record.equipment_ids)
+	if not error.is_empty():
+		return error
+	var original_gear = EquipmentScript.new()
+	original_gear.restore(record.equipment_ids)
+	var original_stats: Dictionary = original_gear.resolved_stats()
+	if not SnapshotCodec.same_values(record.resolved_stats, original_stats):
+		return "World-action resolved stats no longer match canonical equipment"
+	if is_dash:
+		if not record.blocked is bool:
+			return "Dash collision contact must be boolean"
+		var landing: Variant = null if pending else record.landing
+		var end_time: float = clock if pending else float(record.completed_at_s)
+		error = _path_error(record.path, record.world_origin, float(record.started_at_s), landing, end_time)
+		if not error.is_empty():
+			return error
+		if not pending:
+			if not SnapshotCodec.is_vector3(record.landing) or not SnapshotCodec.in_range(record.distance, 0.0, 1000000.0) or not record.collision_shortened is bool or not record.movement_damage is bool or record.movement_damage:
+				return "Invalid completed dash landing"
+			var offset: Vector3 = SnapshotCodec.read_vector3(record.landing) - SnapshotCodec.read_vector3(record.world_origin)
+			if not is_equal_approx(float(record.distance), Vector2(offset.x, offset.z).length()) or record.collision_shortened != (float(record.distance) + 0.001 < float(original_stats.dash_distance)):
+				return "Dash distance must match its real landing"
+		return ""
+	var primary: bool = record.kind == "primary"
+	var expected_cooldown: float = original_stats.primary_cooldown if primary else original_stats.followup_cooldown
+	var expected_geometry: Dictionary = {
+		"shape": "radial_cone", "reach": original_stats.primary_range if primary else original_stats.followup_range,
+		"cone_min_dot": original_stats.primary_cone_min_dot if primary else original_stats.followup_cone_min_dot,
+		"origin_disk_radius": ATTACK_ORIGIN_DISK_RADIUS, "max_vertical_distance": ATTACK_MAX_VERTICAL_DISTANCE,
+		"los": {"policy": "scenery_ray_from_source_to_target", "collision_mask": ATTACK_SCENERY_MASK, "height": ATTACK_LOS_HEIGHT},
+	}
+	var expected_damage: float = original_stats.primary_damage if primary else original_stats.followup_damage
+	if record.damage_timing != "instant_at_execution" or not SnapshotCodec.is_number(record.completed_at_s) or record.completed_at_s != record.started_at_s or not SnapshotCodec.same_values(record.geometry, expected_geometry) or not SnapshotCodec.same_values(record.damage, expected_damage) or not SnapshotCodec.same_values(record.cooldown_s, expected_cooldown) or not SnapshotCodec.same_values(record.commitment_duration_s, expected_cooldown * (0.13 / 0.30 if primary else 0.10 / 0.45)) or not SnapshotCodec.is_integer(record.hits):
+		return "Attack record must retain its executed canonical geometry/timing"
+	return ""
+
+
+func _path_error(path: Variant, origin: Array, start: float, landing: Variant, end: float) -> String:
+	if not path is Array or path.is_empty() or path.size() > 4096:
+		return "Dash path must contain a bounded sampled route"
+	var previous: float = start
+	for index: int in range(path.size()):
+		if not path[index] is Dictionary:
+			return "Dash path requires sample dictionaries"
+		var sample: Dictionary = path[index]
+		var error: String = SnapshotCodec.keys_error(sample, ["position", "time_s"])
+		if not error.is_empty():
+			return error
+		if not SnapshotCodec.is_vector3(sample.position) or not SnapshotCodec.in_range(sample.time_s, start, end) or (index > 0 and float(sample.time_s) <= previous):
+			return "Dash samples require finite positions and increasing clocks"
+		previous = float(sample.time_s)
+	if not SnapshotCodec.same_values(path[0].position, origin) or not is_equal_approx(float(path[0].time_s), start) or not is_equal_approx(float(path[-1].time_s), end):
+		return "Dash sample times/endpoints must match its execution"
+	if landing != null and (path.size() < 2 or not SnapshotCodec.same_values(path[-1].position, landing)):
+		return "Completed dash path must end at its real landing"
+	return ""
+
+
+func _encode_world_record(record: Dictionary) -> Dictionary:
+	if record.is_empty():
+		return {}
+	var encoded: Dictionary = record.duplicate(true)
+	for key: String in ["world_origin", "direction", "landing"]:
+		if encoded.has(key):
+			encoded[key] = SnapshotCodec.vector3(encoded[key])
+	if encoded.has("path"):
+		for sample: Dictionary in encoded.path:
+			sample["position"] = SnapshotCodec.vector3(sample.position)
+	return encoded
+
+
+func _decode_world_record(record: Dictionary) -> Dictionary:
+	if record.is_empty():
+		return {}
+	var decoded: Dictionary = record.duplicate(true)
+	for key: String in ["world_origin", "direction", "landing"]:
+		if decoded.has(key):
+			decoded[key] = SnapshotCodec.read_vector3(decoded[key])
+	if decoded.has("path"):
+		for sample: Dictionary in decoded.path:
+			sample["position"] = SnapshotCodec.read_vector3(sample.position)
+	if decoded.has("sequence"):
+		decoded["sequence"] = int(decoded.sequence)
+		decoded["schema_version"] = int(decoded.schema_version)
+	if decoded.has("hits"):
+		decoded["hits"] = int(decoded.hits)
+		decoded.geometry.los["collision_mask"] = int(decoded.geometry.los.collision_mask)
+	return decoded

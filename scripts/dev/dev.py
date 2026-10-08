@@ -33,6 +33,10 @@ SUITES = {
     "visual_effects": "tests/visual_effects_smoke.gd",
     "level_contract": "tests/level_contract_smoke.gd",
     "world_actions": "tests/world_action_smoke.gd",
+    "player_snapshot": "tests/player_snapshot_smoke.gd",
+    "campaign_persistence": "tests/campaign_persistence_smoke.gd",
+    "settings": "tests/settings_smoke.gd",
+    "threat_scheduler": "tests/threat_scheduler_smoke.gd",
 }
 SLOT_PORTS = {
     "integration": (6005, 6006, 6007),

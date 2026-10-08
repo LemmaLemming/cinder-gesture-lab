@@ -37,3 +37,9 @@ Developer Tom Coxon's [Technical Look: The Park](https://www.cassettebeasts.com/
 ## YouTube review candidate — footage not inspected
 
 [KiriSoft Games: Make Stunning 2D Characters in a 3D World](https://www.youtube.com/watch?v=s5pvDsDDxAY), published 24 October 2025. Only creator description/chapter metadata were accessible: importing 00:51, sharp Sprite3D 01:30, shadows 02:00, billboarding 02:46 and final setup 03:00. Opening the video failed; no footage or transcript was viewed. Those chapters are follow-up candidates and provide **no technical validation evidence** in this run.
+
+## Bounded scheduler physics applicability (8 October 2026)
+
+Inspected official [PhysicsDirectSpaceState3D](https://docs.godotengine.org/en/stable/classes/class_physicsdirectspacestate3d.html): `cast_motion` returns safe/unsafe travel fractions and ignores already-overlapping shapes; `intersect_shape` does not use query motion. Adaptation: explicit start/end intersections plus actual capsule motion cast, combined with analytic support coverage rather than sparse floor probes. Targeted Godot4.7.2 scheduler suite validates wall/hole/step/union cases; numerical physics tolerances and finite candidate false rejection remain limits.
+
+Inspected official [PhysicsBody3D](https://docs.godotengine.org/en/stable/classes/class_physicsbody3d.html) scale guidance and [pausing](https://docs.godotengine.org/en/stable/tutorials/scripting/pausing_games.html): supported proof requires unscaled fixed capsules/unrotated floor boxes; simulation uses PAUSABLE processing and explicit request guards because signals may still run while paused. Actor snapshot suite validates callback guards/static-floor continuation. These readings and automated checks do not establish human recognition time or campaign balance.
