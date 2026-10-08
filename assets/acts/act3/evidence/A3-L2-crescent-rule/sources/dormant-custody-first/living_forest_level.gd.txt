@@ -1,0 +1,811 @@
+extends "res://scripts/acts/act3/living_forest.gd"
+## Authored Living Forest candidate: six spatial entries, five canonical beats.
+## One shared scheduler, four real Stalkers and five fixed crescent Root sources.
+## No doors, healing, pickups, equipment grants or alternate player/controller.
+## Native route, mixed proof, exact retry and portraits remain to be tested.
+
+const StalkerScript = preload("res://scripts/acts/act3/sunbound_stalker.gd")
+const RootScript = preload("res://scripts/acts/act3/root_latcher.gd")
+const SchedulerScript = preload("res://scripts/combat/threat_scheduler.gd")
+const InteractionCue = preload("res://scripts/cues/interaction_cue.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const ENCOUNTER_DATA: String = "res://data/campaign/act3/a3_l2_encounters.json"
+const ENCOUNTER_ID: String = "A3-L2/full-route"
+const ROUTE_API: String = "act3-living-forest-level-1"
+const LOCAL_VERSION: int = 1
+const WORLD_REVISION: int = 1
+const COMPLETION_ID: String = "living-forest-clear"
+const EXIT_ID: String = "wombflash-dry-threshold"
+const ENTRY_IDS: Array[String] = ["vast-trunks", "root-promise", "trunk-court", "priority-court", "watched-clearing", "canopy-slit"]
+const CHECKPOINT_IDS: Array[String] = ["forest-threshold-entry", "root-promise-entry", "trunk-court-entry", "priority-court-entry", "watched-clearing-entry", "canopy-slit-entry"]
+const ENTRY_Z: Array[float] = [38.0, 26.0, 14.0, 1.0, -15.0, -31.0]
+const ENTRY_BEATS: Array[int] = [1, 2, 3, 3, 4, 5]
+const SOURCE_IDS: Array[String] = ["l2-threshold-stalker", "l2-promise-root", "l2-trunk-root", "l2-priority-root", "l2-priority-stalker", "l2-watched-root", "l2-watched-stalker", "l2-slit-root", "l2-slit-stalker"]
+const SOURCE_KINDS: Dictionary = {"l2-threshold-stalker": "stalker", "l2-promise-root": "root", "l2-trunk-root": "root", "l2-priority-root": "root", "l2-priority-stalker": "stalker", "l2-watched-root": "root", "l2-watched-stalker": "stalker", "l2-slit-root": "root", "l2-slit-stalker": "stalker"}
+const SOURCE_ENTRIES: Dictionary = {"l2-threshold-stalker": 0, "l2-promise-root": 1, "l2-trunk-root": 2, "l2-priority-root": 3, "l2-priority-stalker": 3, "l2-watched-root": 4, "l2-watched-stalker": 4, "l2-slit-root": 5, "l2-slit-stalker": 5}
+const SOURCE_POSITIONS: Dictionary = {"l2-threshold-stalker": Vector3(1.2, 0.1, 34), "l2-promise-root": Vector3(0, 0, 22), "l2-trunk-root": Vector3(1.1, 0, 8), "l2-priority-root": Vector3(1.2, 0, -4.5), "l2-priority-stalker": Vector3(-1.3, 0.1, -4), "l2-watched-root": Vector3(-1.2, 0, -20), "l2-watched-stalker": Vector3(1.3, 0.1, -19.5), "l2-slit-root": Vector3(1.2, 0, -36.5), "l2-slit-stalker": Vector3(-1.3, 0.1, -36)}
+
+## Public stable live nodes remain owned after death; Root keeps spent art.
+var sources: Dictionary = {}
+var threat_scheduler: CinderThreatScheduler
+var exit_cue: CinderInteractionCue
+var _floor_region: Dictionary = {}
+var _authoring: Dictionary = {}
+var _configuration_error: String = ""
+var _entries: Array[Dictionary] = []
+var _deaths: Dictionary = {}
+var _watched_preview: Dictionary = {}
+var _exit_rect: Rect2
+var _exit_state: String = "clear"
+var _contact: Dictionary = {}
+var _death_callbacks: Dictionary = {}
+var _exit_dispatch_queued: bool = false
+var _exit_dispatch_generation: int = 0
+
+
+func _ready() -> void:
+	local_snapshot_version = LOCAL_VERSION
+	super._ready()
+	# Shared Hero/Scheduler, Stalker20, Root90 and mechanism100 finish first.
+	process_physics_priority = 130
+	threat_scheduler = SchedulerScript.new()
+	threat_scheduler.name = "LivingForestThreatScheduler"
+	add_child(threat_scheduler)
+	var floor_body: StaticBody3D = scenery.get("floor_body") as StaticBody3D
+	var collision: CollisionShape3D = floor_body.get_node_or_null("Solid") as CollisionShape3D if is_instance_valid(floor_body) else null
+	if not is_instance_valid(collision) or not collision.shape is BoxShape3D:
+		_configuration_error = "Living Forest requires its actual continuous box floor"
+		return
+	var size: Vector3 = (collision.shape as BoxShape3D).size
+	_floor_region = {"collision": collision, "safe_rect": Rect2(collision.global_position.x - size.x * 0.5, collision.global_position.z - size.z * 0.5, size.x, size.z)}
+	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(ENCOUNTER_DATA))
+	if not data is Dictionary:
+		_configuration_error = "Living Forest requires its authored arrangement data"
+		return
+	_authoring = data.duplicate(true)
+	_configuration_error = _authoring_error(size)
+	if not _configuration_error.is_empty():
+		return
+	for source_id: String in SOURCE_IDS:
+		var marker: Marker3D = get_node_or_null(_source_marker_path(source_id)) as Marker3D
+		if not is_instance_valid(marker) or marker.position != SOURCE_POSITIONS[source_id]:
+			_configuration_error = "Living Forest source marker differs: " + source_id
+			return
+		var source: Node3D = StalkerScript.new() if SOURCE_KINDS[source_id] == "stalker" else RootScript.new()
+		source.name = source_id.replace("-", "_")
+		add_child(source)
+		source.global_position = marker.global_position
+		source.set_physics_process(false)
+		sources[source_id] = source
+	var threshold: Marker3D = get_node_or_null("DryThreshold") as Marker3D
+	if not is_instance_valid(threshold) or threshold.position != Vector3(0, 0.1, -47):
+		_configuration_error = "Living Forest requires its actual dry contact threshold"
+		return
+	_exit_rect = Rect2(threshold.global_position.x - 1.2, threshold.global_position.z - 0.65, 2.4, 1.3)
+	exit_cue = InteractionCue.new()
+	exit_cue.name = "LivingForestContactCue"
+	add_child(exit_cue)
+	exit_cue.global_position = Vector3(threshold.global_position.x, 0, threshold.global_position.z)
+
+
+func _source_marker_path(source_id: String) -> NodePath:
+	return NodePath("EncounterSources/" + source_id.replace("-", "_"))
+
+
+func _authoring_error(size: Vector3) -> String:
+	if _authoring.get("level_id") != "A3-L2" or not _authoring.get("floor") is Dictionary or not _authoring.get("arrangements") is Array or not _authoring.get("stalker_raw_role") is Dictionary or not _authoring.get("minimum_timing_floors") is Dictionary or not _authoring.get("root_raw_role") is Dictionary or not _authoring.get("root_timing_floors") is Dictionary or not _authoring.get("root_crescent_proposal") is Dictionary:
+		return "Living Forest requires its complete authored roster/floor/roles"
+	if not Codec.is_vector3(_authoring.floor.get("size")) or Codec.read_vector3(_authoring.floor.size) != size or _authoring.floor.get("top_y") != 0.0 or _authoring.floor.get("dynamic_collision") != false or _authoring.floor.get("interior_x") != [-7.0, 7.0] or not Codec.is_vector3(_authoring.floor.get("fixed_base_size")) or Codec.read_vector3(_authoring.floor.fixed_base_size) != Vector3(1, 1.4, 1):
+		return "Living Forest authoring differs from its fixed actual floor/bases"
+	if _authoring.floor.get("fixed_bases") != [[0.0, 0.7, 8.0], [0.0, 0.7, -13.0]] or not Codec.is_vector3(_authoring.get("spawn")) or Codec.read_vector3(_authoring.spawn) != spawn_position():
+		return "Living Forest immutable base/spawn positions differ"
+	for key: String in ["raw_damage", "max_hp", "windup_s", "lock_s", "active_s", "recovery_s", "attack_interval_s", "move_speed"]:
+		if not Codec.is_number(_authoring.stalker_raw_role.get(key)) or float(_authoring.stalker_raw_role[key]) != float(StalkerScript.DEFAULT_ROLE[key]) or not Codec.is_number(_authoring.root_raw_role.get(key)) or float(_authoring.root_raw_role[key]) != float(RootScript.RAW_ROLE[key]):
+			return "Living Forest authoring/runtime role differs: " + key
+	for key: String in ["windup_s", "lock_s", "recovery_s"]:
+		if not Codec.is_number(_authoring.minimum_timing_floors.get(key)) or float(_authoring.minimum_timing_floors[key]) != float(StalkerScript.DEFAULT_FLOORS[key]) or not Codec.is_number(_authoring.root_timing_floors.get(key)) or float(_authoring.root_timing_floors[key]) != float(RootScript.TIMING_FLOORS[key]):
+			return "Living Forest authoring/runtime timing floor differs: " + key
+	var proposal: Dictionary = _authoring.root_crescent_proposal
+	if proposal.get("inner_radius_world") != 0.55 or proposal.get("outer_radius_world") != 2.0 or proposal.get("min_dot") != 0.5:
+		return "Living Forest requires the authored bounded crescent"
+	var arrangements: Array = _authoring.arrangements
+	if arrangements.size() != ENTRY_IDS.size():
+		return "Living Forest requires six arrangements across five beats"
+	var seen: Array[String] = []
+	for index: int in range(ENTRY_IDS.size()):
+		var entry: Variant = arrangements[index]
+		if not entry is Dictionary or entry.get("id") != ENTRY_IDS[index] or entry.get("beat") != ENTRY_BEATS[index] or entry.get("entry_z") != ENTRY_Z[index] or entry.get("checkpoint_id") != CHECKPOINT_IDS[index] or not entry.get("sources") is Array:
+			return "Living Forest entry/beat/checkpoint authoring differs"
+		for definition: Variant in entry.sources:
+			if not definition is Dictionary or not SOURCE_IDS.has(definition.get("id")) or seen.has(definition.id) or definition.get("kind") != SOURCE_KINDS[definition.id] or int(SOURCE_ENTRIES[definition.id]) != index or not Codec.is_vector3(definition.get("position")) or Codec.read_vector3(definition.position) != SOURCE_POSITIONS[definition.id]:
+				return "Living Forest requires its nine unique typed native source positions"
+			seen.append(definition.id)
+	if seen != SOURCE_IDS or not _authoring.get("contact_exit") is Dictionary or _authoring.contact_exit.get("id") != EXIT_ID or _authoring.contact_exit.get("completion_id") != COMPLETION_ID or not Codec.is_vector3(_authoring.contact_exit.get("position")) or Codec.read_vector3(_authoring.contact_exit.position) != Vector3(0, 0.1, -47) or _authoring.get("ability_use_ids") != [] or _authoring.get("claim_ids") != []:
+		return "Living Forest requires its original roster/contact and no new allocations"
+	return ""
+
+
+func contract_error() -> String:
+	var error: String = super.contract_error()
+	return _configuration_error if error.is_empty() else error
+
+
+func _on_enter_level() -> void:
+	super._on_enter_level()
+	if not _configuration_error.is_empty():
+		_update_presentation()
+		return
+	var profile: String = "standard"
+	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
+		profile = String(shared_shell.call("get_difficulty_preference"))
+	if not threat_scheduler.begin_encounter(profile, ENCOUNTER_ID, WORLD_REVISION):
+		_configuration_error = threat_scheduler.last_error
+		_update_presentation()
+		return
+	for source_id: String in SOURCE_IDS:
+		var source: Node3D = sources[source_id]
+		var configured: bool
+		if SOURCE_KINDS[source_id] == "stalker":
+			configured = source.call("configure", source_id, hero, effects, threat_scheduler, combat_response.bind(source_id), _authoring.stalker_raw_role, _authoring.minimum_timing_floors)
+		else:
+			configured = source.call("configure", source_id, hero, effects, threat_scheduler, combat_response.bind(source_id), root_framing_guard.bind(source_id))
+		if not configured:
+			_configuration_error = "Living Forest source configuration failed: " + source_id + ": " + String(source.get("last_error"))
+			_update_presentation()
+			return
+		var callback: Callable = _on_source_died.bind(source_id)
+		_death_callbacks[source_id] = callback
+		source.connect("died", callback)
+	_update_presentation()
+
+
+func _on_exit_level() -> void:
+	for source_id: String in _death_callbacks:
+		var source: Node3D = sources.get(source_id) as Node3D
+		if is_instance_valid(source):
+			if source.is_connected("died", _death_callbacks[source_id]):
+				source.disconnect("died", _death_callbacks[source_id])
+			source.set_physics_process(false)
+	_death_callbacks.clear()
+	_exit_dispatch_generation += 1
+	_exit_dispatch_queued = false
+	if is_instance_valid(exit_cue):
+		exit_cue.clear()
+	if is_instance_valid(threat_scheduler):
+		threat_scheduler.end_encounter("living_forest_level_exit")
+	super._on_exit_level()
+
+
+func _physics_process(delta: float) -> void:
+	if not _active or not is_instance_valid(hero):
+		return
+	# Finish this actual fixed tick's sun and required presentation even fatal.
+	# Shared23 freezes callback requests only after all native consumers settle.
+	sun_elapsed_s += delta
+	while sun_elapsed_s >= SUN_PERIOD_S:
+		sun_elapsed_s -= SUN_PERIOD_S
+		sun_state = 1 - sun_state
+	sun_stage = "stable" if sun_elapsed_s < SUN_STABLE_S else ("preview" if sun_elapsed_s < SUN_STABLE_S + SUN_PREVIEW_S else "lock")
+	_update_presentation()
+	if not _configuration_error.is_empty() or hero.dead:
+		return
+	if _advance_entry():
+		return
+	if _all_cleared() and not is_completed():
+		_exit_state = "available"
+		request_completion(COMPLETION_ID)
+		_update_presentation()
+		return
+	if not is_completed() or _exit_state == "spent":
+		return
+	if _exit_state == "available" and _at_exit(hero.global_position):
+		_contact = {"clock_s": threat_scheduler.get_clock(), "hero_position": Codec.vector3(hero.global_position)}
+		_exit_state = "active"
+		_update_presentation()
+	if _exit_state == "active" and not _exit_dispatch_queued:
+		_exit_dispatch_queued = true
+		_dispatch_contact_exit.bind(_exit_dispatch_generation).call_deferred()
+
+
+func _advance_entry() -> bool:
+	if _entries.size() >= ENTRY_IDS.size() or hero.global_position.z > ENTRY_Z[_entries.size()]:
+		return false
+	var index: int = _entries.size()
+	_entries.append({"id": ENTRY_IDS[index], "clock_s": threat_scheduler.get_clock(), "hero_position": Codec.vector3(hero.global_position)})
+	beat_index = ENTRY_BEATS[index] - 1
+	if index == 4:
+		_watched_preview = {"clock_s": threat_scheduler.get_clock(), "sun_state": sun_state}
+		sun_elapsed_s = SUN_STABLE_S
+		sun_stage = "preview"
+		_last_sun_view = ""
+	for source_id: String in SOURCE_IDS:
+		if int(SOURCE_ENTRIES[source_id]) == index:
+			sources[source_id].set_physics_process(not bool(sources[source_id].get("dead")))
+	# Already sampled consumers finish before the shell's deferred checkpoint.
+	# New visible configured sources cannot warn until the next actual tick.
+	if not request_checkpoint(CHECKPOINT_IDS[index], "encounter"):
+		_configuration_error = "Living Forest spatial checkpoint request rejected"
+	_update_presentation()
+	return true
+
+
+func _on_source_died(_where: Vector3, source_id: String) -> void:
+	if not _active or not _configuration_error.is_empty() or _deaths.has(source_id) or not is_instance_valid(sources.get(source_id)):
+		return
+	var source: Node3D = sources[source_id]
+	var actual: Dictionary = source.call("state")
+	if not actual.get("dead", false) or float(actual.get("hp", 1.0)) > 0.0 or actual.get("stable_id") != source_id:
+		return
+	_deaths[source_id] = {"clock_s": threat_scheduler.get_clock(), "source_position": Codec.vector3(source.global_position)}
+	source.set_physics_process(false)
+	if _all_cleared() and not is_completed():
+		_exit_state = "available"
+		request_completion(COMPLETION_ID)
+	_update_presentation()
+
+
+func _all_cleared() -> bool:
+	return _entries.size() == ENTRY_IDS.size() and _deaths.size() == SOURCE_IDS.size()
+
+
+func _at_exit(position: Vector3) -> bool:
+	return position.is_finite() and absf(position.y) <= 0.2 and _exit_rect.has_point(Vector2(position.x, position.z))
+
+
+func _dispatch_contact_exit(generation: int) -> void:
+	if generation != _exit_dispatch_generation:
+		return
+	_exit_dispatch_queued = false
+	if not _active or not is_instance_valid(hero) or hero.dead or not is_completed() or _exit_state != "active":
+		return
+	_exit_state = "spent"
+	if not request_contact_exit(EXIT_ID, hero):
+		_exit_state = "available"
+		_contact.clear()
+	_update_presentation()
+
+
+## Real shared response plus bounded native source-local ordinary candidates.
+## Scheduler alone selects and proves a safe landing and ordinary knot return.
+func combat_response(source_id: String) -> Dictionary:
+	if not is_instance_valid(hero) or not is_instance_valid(sources.get(source_id)) or _floor_region.is_empty():
+		return {}
+	var source: Node3D = sources[source_id]
+	var response: Dictionary = hero.get_threat_response_state()
+	var directions: Array[Vector3] = []
+	var toward: Vector3 = hero.global_position - source.global_position
+	toward.y = 0.0
+	if toward.length_squared() > 0.0001:
+		var side: Vector3 = Vector3.UP.cross(toward.normalized())
+		if SOURCE_KINDS[source_id] == "stalker" and int(source.call("state").get("sun_visual", sun_state)) == 1:
+			side = -side
+		directions.append(side)
+		directions.append(-side)
+	for candidate: Vector3 in [Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK, Vector3(-1, 0, -1).normalized(), Vector3(-1, 0, 1).normalized(), Vector3(1, 0, -1).normalized(), Vector3(1, 0, 1).normalized()]:
+		if not directions.has(candidate):
+			directions.append(candidate)
+	var returns: Array[Vector3] = directions.duplicate()
+	if SOURCE_KINDS[source_id] == "root":
+		# Preserve one native radial knot approach for every escape candidate,
+		# then fill the remaining public16 slots with shared ground directions.
+		returns.clear()
+		for escape: Vector3 in directions:
+			var landing: Vector3 = hero.global_position + escape * float(response.stats.dash_distance)
+			var back: Vector3 = source.global_position - landing
+			back.y = 0.0
+			if back.length_squared() > 0.0001 and not returns.has(back.normalized()):
+				returns.append(back.normalized())
+		for candidate: Vector3 in directions:
+			if returns.size() == 16:
+				break
+			if not returns.has(candidate):
+				returns.append(candidate)
+	response["world_root"] = get_parent() as Node3D
+	response["world_revision"] = WORLD_REVISION
+	response["encounter_id"] = ENCOUNTER_ID
+	response["recognition_s"] = 0.25
+	response["attack_input_margin_s"] = 0.06
+	response["escape_directions"] = directions
+	response["return_directions"] = returns
+	response["floor_regions"] = [_floor_region]
+	return response
+
+
+func _camera_framing_points() -> Array:
+	if not _active:
+		return []
+	var union: Dictionary = camera_framing_union()
+	if not String(union.error).is_empty():
+		last_camera_framing_error = String(union.error)
+		return []
+	# Root admission requires its first warning to fit the CURRENT camera too.
+	# While clear, the shared camera may fit one fresh pure native preview along
+	# with the held union. Never retain or allocate this ephemeral camera input.
+	if not get_tree().paused and is_instance_valid(hero) and not hero.dead:
+		for source_id: String in SOURCE_IDS:
+			if SOURCE_KINDS[source_id] != "root" or int(SOURCE_ENTRIES[source_id]) >= _entries.size() or _source_running(source_id) or bool(sources[source_id].get("dead")):
+				continue
+			var preview: Dictionary = _root_preview(source_id)
+			if not preview.get("accepted", false):
+				continue
+			var candidate: Dictionary = _root_bounds(source_id, preview)
+			if not String(candidate.error).is_empty():
+				last_camera_framing_error = String(candidate.error)
+				return []
+			var prospective: Dictionary = camera_framing_union(source_id, candidate.points)
+			if not String(prospective.error).is_empty():
+				last_camera_framing_error = String(prospective.error)
+				return []
+			return prospective.points.duplicate()
+	return union.points.duplicate()
+
+
+func _root_preview(source_id: String) -> Dictionary:
+	var source: CinderAct3RootLatcher = sources[source_id] as CinderAct3RootLatcher
+	var mechanism: CinderLaneMechanism = source.get_mechanism()
+	var supplied: Dictionary = combat_response(source_id)
+	var context: Dictionary = {}
+	for key: String in CinderLaneMechanism.RESPONSE_KEYS:
+		if not supplied.has(key):
+			return {"accepted": false, "reason": "Actual Root response context unavailable"}
+		context[key] = supplied[key]
+	var bearing: Vector3 = hero.global_position - source.global_position
+	bearing.y = 0.0
+	if not is_instance_valid(mechanism) or not bearing.is_finite() or bearing.length_squared() == 0.0:
+		return {"accepted": false, "reason": "Actual stationary source/bearing unavailable"}
+	return mechanism.preview_start("hero", context, null, bearing.normalized())
+
+
+## Replace one unleased prospective source while retaining every held exchange.
+## Native Root body/art/entire footprint/witness groups become conservative
+## eight-corner boxes, derived from ALL actual points, not a physical proxy.
+func camera_framing_union(candidate_id: String = "", candidate_points: Array = [], current_view: bool = false) -> Dictionary:
+	if not _configuration_error.is_empty() or not is_instance_valid(shared_shell):
+		return _bounds_error("Configured authored level and actual shared shell required")
+	if not candidate_id.is_empty():
+		if not sources.has(candidate_id) or candidate_points.is_empty() or not is_instance_valid(sources[candidate_id]):
+			return _bounds_error("Prospective framing requires its actual owned source")
+		if _source_running(candidate_id):
+			return _bounds_error("Prospective framing cannot replace a held exchange")
+	elif not candidate_points.is_empty():
+		return _bounds_error("Prospective corners require a stable actual source ID")
+	var points: Array = candidate_points.duplicate()
+	for source_id: String in SOURCE_IDS:
+		if source_id == candidate_id:
+			continue
+		if not is_instance_valid(sources.get(source_id)):
+			return _bounds_error("Retained authored source unavailable: " + source_id)
+		if not _source_running(source_id):
+			continue
+		var bounds: Dictionary
+		if SOURCE_KINDS[source_id] == "stalker":
+			bounds = sources[source_id].call("camera_framing_points", shared_shell, {}, {}, current_view)
+		else:
+			bounds = _root_bounds(source_id)
+		if not String(bounds.get("error", "Unsupported native source bounds")).is_empty():
+			return _bounds_error(source_id + ": " + String(bounds.error))
+		points.append_array(bounds.points)
+	var contact: Dictionary = _contact_bounds()
+	if not String(contact.error).is_empty():
+		return contact
+	points.append_array(contact.points)
+	if points.size() > 224:
+		return _bounds_error("Complete held union exceeds shared native point bound")
+	for point: Variant in points:
+		if not point is Vector3 or not point.is_finite() or maxf(absf(point.x), maxf(absf(point.y), absf(point.z))) > 1024.0:
+			return _bounds_error("Native union requires finite bounded world corners")
+	return {"error": "", "points": points.duplicate()}
+
+
+func _source_running(source_id: String) -> bool:
+	var state: Dictionary = sources[source_id].call("state")
+	if state.get("dead", false):
+		return false
+	return not String(state.get("reservation_id", "")).is_empty() if SOURCE_KINDS[source_id] == "stalker" else state.get("mechanism", {}).get("status") == "running"
+
+
+func _root_bounds(source_id: String, prospective: Dictionary = {}) -> Dictionary:
+	var source: Node3D = sources[source_id]
+	var geometry: Dictionary = {}
+	var response: Dictionary
+	if not prospective.is_empty():
+		if not prospective.get("accepted", false) or not prospective.get("candidate") is Dictionary or not prospective.candidate.get("geometry") is Dictionary or not prospective.get("proof") is Dictionary:
+			return _bounds_error("Exact native stationary preview and selected witness required")
+		geometry = prospective.candidate.geometry
+		response = prospective.proof
+	else:
+		response = source.call("get_selected_response")
+	var actual: Dictionary = source.call("framing_points", shared_shell, geometry)
+	if not String(actual.get("error", "Unsupported Root native bounds")).is_empty():
+		return actual
+	var points: Array = actual.points.duplicate()
+	var native_hero: Array = shared_shell.call("player_camera_framing_points")
+	if native_hero.is_empty():
+		return _bounds_error("Actual shared Hero render corners unavailable")
+	for key: String in ["landing", "attack_position"]:
+		if not response.get(key) is Vector3 or not (response[key] as Vector3).is_finite():
+			return _bounds_error("Actual selected Root witness unavailable: " + key)
+		for corner: Vector3 in native_hero:
+			points.append(corner + response[key] - hero.global_position)
+	return _enclosing_box(points)
+
+
+func root_framing_guard(current_view: bool, prospective: Dictionary, source_id: String) -> String:
+	if not sources.has(source_id) or SOURCE_KINDS[source_id] != "root" or not is_instance_valid(shared_shell):
+		return "Actual authored Root and shared shell required"
+	var forecast: Dictionary
+	if prospective.is_empty():
+		forecast = camera_framing_union()
+	else:
+		var candidate: Dictionary = _root_bounds(source_id, prospective)
+		if not String(candidate.error).is_empty():
+			return String(candidate.error)
+		forecast = camera_framing_union(source_id, candidate.points, current_view)
+	if not String(forecast.error).is_empty():
+		return String(forecast.error)
+	var plan: Dictionary = shared_shell.call("camera_framing_plan", forecast.points, hero.global_position + Vector3.UP * 0.75)
+	if not plan.get("accepted", false):
+		return "Required complete Root union is infeasible: " + String(plan.get("reason", "Unknown framing rejection"))
+	if not current_view:
+		return ""
+	var current: Dictionary = forecast if not prospective.is_empty() else camera_framing_union("", [], true)
+	return String(current.error) if not String(current.error).is_empty() else String(shared_shell.call("camera_framing_error", current.points))
+
+
+func _contact_bounds() -> Dictionary:
+	if _exit_state == "clear":
+		return {"error": "", "points": []}
+	if not is_instance_valid(exit_cue) or exit_cue.is_queued_for_deletion() or exit_cue.state().get("state") != _exit_state:
+		return _bounds_error("Actual completed route contact presentation required")
+	var mesh: MeshInstance3D = exit_cue.get_node_or_null("RequiredInteractionMarker") as MeshInstance3D
+	if not is_instance_valid(mesh) or not mesh.is_visible_in_tree() or not mesh.mesh is ArrayMesh or not mesh.material_override is StandardMaterial3D or mesh.material_overlay != null:
+		return _bounds_error("Actual visible native contact marker required")
+	var material: StandardMaterial3D = mesh.material_override as StandardMaterial3D
+	if material.billboard_mode != BaseMaterial3D.BILLBOARD_DISABLED or material.grow or material.get_flag(BaseMaterial3D.FLAG_FIXED_SIZE):
+		return _bounds_error("Camera-dependent contact mesh is unsupported")
+	var points: Array = []
+	var bounds: AABB = mesh.mesh.get_aabb()
+	for index: int in range(8):
+		points.append(mesh.global_transform * bounds.get_endpoint(index))
+	for x: float in [_exit_rect.position.x, _exit_rect.end.x]:
+		for z: float in [_exit_rect.position.y, _exit_rect.end.y]:
+			points.append(Vector3(x, 0, z))
+	return _enclosing_box(points)
+
+
+func _enclosing_box(points: Array) -> Dictionary:
+	if points.is_empty() or not points[0] is Vector3:
+		return _bounds_error("Complete native render points required")
+	var low: Vector3 = points[0]
+	var high: Vector3 = points[0]
+	for value: Variant in points:
+		if not value is Vector3 or not value.is_finite():
+			return _bounds_error("Finite native render points required")
+		low = low.min(value)
+		high = high.max(value)
+	var corners: Array = []
+	for x: float in [low.x, high.x]:
+		for y: float in [low.y, high.y]:
+			for z: float in [low.z, high.z]:
+				corners.append(Vector3(x, y, z))
+	return {"error": "", "points": corners}
+
+
+func _bounds_error(reason: String) -> Dictionary:
+	return {"error": reason, "points": []}
+
+
+func scheduler_bindings() -> Dictionary:
+	var owners: Dictionary = {}
+	for source_id: String in SOURCE_IDS:
+		if not is_instance_valid(sources.get(source_id)):
+			continue
+		if SOURCE_KINDS[source_id] == "stalker":
+			owners[source_id] = sources[source_id]
+		else:
+			owners.merge(sources[source_id].call("scheduler_owners"))
+	return {"world_root": get_parent() as Node3D, "owners": owners, "floors": {"forest-floor": _floor_region}, "actors": {"hero": hero}}
+
+
+func state() -> Dictionary:
+	var entered: Array[String] = []
+	for entry: Dictionary in _entries:
+		entered.append(entry.id)
+	var cleared: Array[String] = []
+	var actual: Dictionary = {}
+	for source_id: String in SOURCE_IDS:
+		if _deaths.has(source_id):
+			cleared.append(source_id)
+		if is_instance_valid(sources.get(source_id)):
+			actual[source_id] = sources[source_id].call("state")
+	var prefix: int = 0
+	for index: int in range(_entries.size()):
+		var complete: bool = true
+		for source_id: String in SOURCE_IDS:
+			if int(SOURCE_ENTRIES[source_id]) == index and not _deaths.has(source_id):
+				complete = false
+		if not complete:
+			break
+		prefix += 1
+	return {"api_revision": ROUTE_API, "configuration_error": _configuration_error, "entered": entered, "cleared": cleared, "cleared_prefix": prefix, "entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "watched_preview": _watched_preview.duplicate(true), "beat": beat_index + 1, "sun_state": sun_state, "sun_elapsed_s": sun_elapsed_s, "sun_stage": sun_stage, "exit_state": _exit_state, "contact": _contact.duplicate(true), "completed": is_completed(), "checkpoint": current_checkpoint(), "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else 0.0, "source_states": actual}
+
+
+func _update_presentation(silent: bool = false) -> void:
+	_update_sun_scenery()
+	if is_instance_valid(hero):
+		scenery.call("follow_landmarks", hero.global_position)
+	if is_instance_valid(quiet_observer):
+		quiet_observer.call("refresh_visibility")
+	for source_id: String in sources:
+		if SOURCE_KINDS[source_id] == "stalker" and is_instance_valid(sources[source_id]):
+			sources[source_id].call("set_sun_visual", sun_state)
+	if is_instance_valid(exit_cue):
+		var blocked: bool = exit_cue.is_blocking_signals()
+		if silent:
+			exit_cue.set_block_signals(true)
+		if _exit_state == "clear":
+			exit_cue.clear()
+		else:
+			exit_cue.present(_exit_state, "contact")
+		if silent:
+			exit_cue.set_block_signals(blocked)
+	_update_guidance()
+
+
+func _update_guidance() -> void:
+	if not _configuration_error.is_empty():
+		objective_text = "LIVING FOREST UNAVAILABLE\n" + _configuration_error
+	elif _exit_state != "clear":
+		objective_text = "THE CANOPY OPENS\nCONTACT THE DRY THRESHOLD"
+	elif _entries.is_empty():
+		objective_text = "VAST RED TRUNKS\nFOLLOW THE OPEN LEAF COURT"
+	elif _entries.size() == 1:
+		var first: Dictionary = sources["l2-threshold-stalker"].call("state")
+		objective_text = "VAST TRUNKS\nFOLLOW THE NEXT OPEN COURT" if first.dead else ("SINGLE CREST: ITS RIGHT FLANK\nDASH CLEAR; TAP LOW RECOVERY" if int(first.effective_sun) == 0 else "FORKED CREST: ITS LEFT FLANK\nDASH CLEAR; TAP LOW RECOVERY")
+	elif _entries.size() in [2, 3]:
+		objective_text = BEAT_LABELS[beat_index].to_upper() + "\nDASH OUTSIDE THE ROOTS; RETURN TO LOW KNOT"
+	else:
+		objective_text = BEAT_LABELS[beat_index].to_upper() + "\nREAD CREST AND ROOTS; TAP LOW RECOVERY"
+
+
+func _runtime_error() -> String:
+	if not _configuration_error.is_empty():
+		return _configuration_error
+	if not is_instance_valid(scenery) or scenery.is_queued_for_deletion() or not is_instance_valid(quiet_observer) or quiet_observer.is_queued_for_deletion():
+		return "Living Forest requires its actual scenery and quiet observer"
+	var error: String = String(scenery.call("runtime_error"))
+	if not error.is_empty():
+		return error
+	if not is_instance_valid(threat_scheduler) or not is_instance_valid(exit_cue) or threat_scheduler.is_queued_for_deletion() or exit_cue.is_queued_for_deletion() or not is_ancestor_of(threat_scheduler) or not is_ancestor_of(exit_cue) or not Codec.keys_error(sources, SOURCE_IDS).is_empty():
+		return "Living Forest requires its shared scheduler, cue and nine retained sources"
+	var floor_collision: Variant = _floor_region.get("collision")
+	if not is_instance_valid(floor_collision) or floor_collision.get_parent() != scenery.get("floor_body") or floor_collision != scenery.get("floor_body").get_node_or_null("Solid"):
+		return "Living Forest requires its original actual floor binding"
+	for source_id: String in SOURCE_IDS:
+		# Reject freed references before any typed conversion.
+		if not is_instance_valid(sources[source_id]):
+			return "Living Forest retained source was removed: " + source_id
+		var source: Node3D = sources[source_id] as Node3D
+		var marker: Marker3D = get_node_or_null(_source_marker_path(source_id)) as Marker3D
+		if not is_instance_valid(source) or source.is_queued_for_deletion() or not source.is_inside_tree() or not is_ancestor_of(source) or not is_instance_valid(marker) or marker.is_queued_for_deletion() or marker.position != SOURCE_POSITIONS[source_id]:
+			return "Living Forest requires each stable source/marker: " + source_id
+		if (SOURCE_KINDS[source_id] == "stalker" and not source is CinderAct3SunboundStalker) or (SOURCE_KINDS[source_id] == "root" and not source is CinderAct3RootLatcher):
+			return "Living Forest source type differs: " + source_id
+		if SOURCE_KINDS[source_id] == "root":
+			var mechanism: CinderLaneMechanism = source.call("get_mechanism")
+			var art: Node3D = source.call("get_art")
+			if not is_instance_valid(mechanism) or mechanism.is_queued_for_deletion() or not mechanism.is_inside_tree() or not source.is_ancestor_of(mechanism) or not is_instance_valid(art) or art.is_queued_for_deletion() or not art.is_inside_tree() or not source.is_ancestor_of(art) or not art.has_method("framing_points"):
+				return "Living Forest requires the real retained Root mechanism/art"
+			var bounds: Dictionary = art.call("framing_points", shared_shell)
+			if not String(bounds.get("error", "Missing native Root art bounds")).is_empty():
+				return source_id + ": " + String(bounds.error)
+	var marker: MeshInstance3D = exit_cue.get_node_or_null("RequiredInteractionMarker") as MeshInstance3D
+	return "" if is_instance_valid(marker) and marker.is_inside_tree() and not marker.is_queued_for_deletion() and marker.material_override is StandardMaterial3D else "Living Forest requires its actual contact marker/material"
+
+
+func _capture_local_state() -> Dictionary:
+	if not _runtime_error().is_empty():
+		return {}
+	var bindings: Dictionary = scheduler_bindings()
+	var actors: Dictionary = {}
+	for source_id: String in SOURCE_IDS:
+		var saved: Dictionary = sources[source_id].call("snapshot_state") if SOURCE_KINDS[source_id] == "stalker" else sources[source_id].call("snapshot_state", bindings)
+		actors[source_id] = {"kind": SOURCE_KINDS[source_id], "actor": saved}
+	return {"api_revision": ROUTE_API, "schema_version": 1, "scenery": super._capture_local_state(), "scheduler": threat_scheduler.snapshot_state(bindings), "sources": actors, "route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "watched_preview": _watched_preview.duplicate(true), "exit_state": _exit_state, "contact": _contact.duplicate(true)}}
+
+
+func _local_snapshot_error(local: Dictionary) -> String:
+	if not is_instance_valid(hero):
+		return "Living Forest requires its paired actual Hero"
+	return _paired_local_error(local, hero.global_position, hero.dead)
+
+
+func _local_snapshot_error_with_player(local: Dictionary, player: Dictionary) -> String:
+	if not player.get("motion") is Dictionary or not Codec.is_vector3(player.motion.get("position")) or not player.get("resources") is Dictionary or not player.resources.get("dead") is bool:
+		return "Living Forest requires independently validated saved Hero motion/lifecycle"
+	return _paired_local_error(local, Codec.read_vector3(player.motion.position), player.resources.dead)
+
+
+func _paired_local_error(local: Dictionary, expected_hero: Vector3, expected_dead: bool) -> String:
+	var error: String = _runtime_error()
+	if not error.is_empty():
+		return error
+	if not Codec.keys_error(local, ["api_revision", "schema_version", "scenery", "scheduler", "sources", "route"]).is_empty() or local.get("api_revision") != ROUTE_API or not Codec.is_integer(local.get("schema_version"), 1, 1) or not local.get("scenery") is Dictionary or not local.get("scheduler") is Dictionary or not local.get("sources") is Dictionary or not local.get("route") is Dictionary:
+		return "Living Forest requires its complete versioned typed route unit"
+	error = super._local_snapshot_error(local.scenery)
+	if not error.is_empty():
+		return error
+	if not Codec.keys_error(local.sources, SOURCE_IDS).is_empty():
+		return "Living Forest snapshot requires all nine stable typed sources"
+	var bindings: Dictionary = scheduler_bindings()
+	bindings["hero_positions"] = {"hero": expected_hero}
+	bindings["owner_positions"] = {}
+	bindings["owner_velocities"] = {}
+	bindings["owner_collision_states"] = {}
+	for source_id: String in SOURCE_IDS:
+		var typed: Variant = local.sources[source_id]
+		if not typed is Dictionary or not Codec.keys_error(typed, ["kind", "actor"]).is_empty() or typed.get("kind") != SOURCE_KINDS[source_id] or not typed.get("actor") is Dictionary or not Codec.is_vector3(typed.actor.get("position")):
+			return "Living Forest source kind/actor envelope differs: " + source_id
+		var saved: Dictionary = typed.actor
+		if SOURCE_KINDS[source_id] == "stalker":
+			error = sources[source_id].call("snapshot_error", saved, local.scheduler)
+			if not error.is_empty():
+				return source_id + ": " + error
+			bindings.owner_positions[source_id] = Codec.read_vector3(saved.position)
+			bindings.owner_velocities[source_id] = Codec.read_vector3(saved.velocity)
+			if not saved.dead and not String(saved.reservation_id).is_empty():
+				bindings.owner_collision_states[source_id] = {"collision_path": "BodyCollision", "enabled": true, "layer": 2, "mask": 1}
+		else:
+			bindings.owner_positions[source_id + "/attack"] = Codec.read_vector3(saved.position)
+	error = threat_scheduler.snapshot_error(local.scheduler, bindings)
+	if not error.is_empty():
+		return error
+	if local.scheduler.get("encounter_id") != ENCOUNTER_ID or local.scheduler.get("world_revision") != WORLD_REVISION:
+		return "Living Forest requires its original continuous encounter epoch"
+	for source_id: String in SOURCE_IDS:
+		var saved: Dictionary = local.sources[source_id].actor
+		if SOURCE_KINDS[source_id] == "root":
+			error = sources[source_id].call("snapshot_error", saved, bindings, local.scheduler)
+			if not error.is_empty():
+				return source_id + ": " + error
+		if float(saved.clock_s) != float(local.scheduler.clock_s):
+			return "Living Forest typed source clocks differ from shared scheduler"
+		if SOURCE_KINDS[source_id] == "stalker" and float(saved.previous.clock_s) == float(local.scheduler.clock_s) and Codec.read_vector3(saved.previous.hero_position) != expected_hero:
+			return "Living Forest current Stalker sample differs from paired Hero"
+	return _route_local_error(local, expected_hero, expected_dead)
+
+
+func _route_local_error(local: Dictionary, expected_hero: Vector3, expected_dead: bool) -> String:
+	var route: Dictionary = local.route
+	if not Codec.keys_error(route, ["entries", "deaths", "watched_preview", "exit_state", "contact"]).is_empty() or not route.get("entries") is Array or route.entries.size() > ENTRY_IDS.size() or not route.get("deaths") is Dictionary or not route.get("watched_preview") is Dictionary or not route.get("exit_state") is String or not route.get("contact") is Dictionary:
+		return "Living Forest requires bounded entry/death/preview/contact history"
+	if not expected_dead and route.entries.size() < ENTRY_IDS.size() and expected_hero.z <= ENTRY_Z[route.entries.size()]:
+		return "Living Forest paired living Hero has skipped a spatial entry"
+	var last_clock: float = -1.0
+	for index: int in range(route.entries.size()):
+		var entry: Variant = route.entries[index]
+		if not entry is Dictionary or not Codec.keys_error(entry, ["id", "clock_s", "hero_position"]).is_empty() or entry.get("id") != ENTRY_IDS[index] or not Codec.in_range(entry.get("clock_s"), maxf(0, last_clock), float(local.scheduler.clock_s)) or not Codec.is_vector3(entry.get("hero_position")):
+			return "Living Forest entries must be the ordered canonical spatial prefix"
+		var at: Vector3 = Codec.read_vector3(entry.hero_position)
+		if at.z > ENTRY_Z[index] or not (_floor_region.safe_rect as Rect2).has_point(Vector2(at.x, at.z)) or (float(entry.clock_s) == float(local.scheduler.clock_s) and at != expected_hero):
+			return "Living Forest entry must retain its actual paired floor crossing"
+		last_clock = float(entry.clock_s)
+	var expected_beat: int = ENTRY_BEATS[route.entries.size() - 1] - 1 if not route.entries.is_empty() else 0
+	if int(local.scenery.beat_index) != expected_beat:
+		return "Living Forest five-beat presentation differs from six-entry history"
+	if route.entries.size() < 5:
+		if not route.watched_preview.is_empty():
+			return "Unentered watched clearing cannot contain a preview trigger"
+	elif not Codec.keys_error(route.watched_preview, ["clock_s", "sun_state"]).is_empty() or not Codec.is_number(route.watched_preview.get("clock_s")) or float(route.watched_preview.clock_s) != float(route.entries[4].clock_s) or not Codec.is_integer(route.watched_preview.get("sun_state"), 0, 1):
+		return "Watched clearing preview must bind its actual spatial entry"
+	elif float(route.watched_preview.clock_s) == float(local.scheduler.clock_s) and (float(local.scenery.sun_elapsed_s) != SUN_STABLE_S or int(local.scenery.sun_state) != int(route.watched_preview.sun_state)):
+		return "Current watched entry must start the genuine three-second preview"
+	for source_id: Variant in route.deaths:
+		if not SOURCE_IDS.has(source_id):
+			return "Living Forest death history contains an unknown source"
+	for source_id: String in SOURCE_IDS:
+		var saved: Dictionary = local.sources[source_id].actor
+		if bool(saved.dead) != route.deaths.has(source_id):
+			return "Living Forest death history must match actual typed tombstones"
+		if route.deaths.has(source_id):
+			var death: Variant = route.deaths[source_id]
+			if not death is Dictionary or not Codec.keys_error(death, ["clock_s", "source_position"]).is_empty() or not Codec.in_range(death.get("clock_s"), 0, float(local.scheduler.clock_s)) or not Codec.is_vector3(death.get("source_position")) or Codec.read_vector3(death.source_position) != Codec.read_vector3(saved.position):
+				return "Living Forest death record must retain the real dead source pose"
+		if int(SOURCE_ENTRIES[source_id]) >= route.entries.size():
+			var cycle: int = int(saved.cycle) if SOURCE_KINDS[source_id] == "stalker" else int(saved.mechanism.cycle)
+			var leased: bool = not String(saved.reservation_id).is_empty() if SOURCE_KINDS[source_id] == "stalker" else saved.mechanism.status == "running"
+			if cycle != 0 or leased or Codec.read_vector3(saved.position) != (get_node(_source_marker_path(source_id)) as Marker3D).global_position:
+				return "Living Forest unentered source cannot move or retain a lease"
+	var cleared: bool = route.entries.size() == ENTRY_IDS.size() and route.deaths.size() == SOURCE_IDS.size()
+	if not cleared and (route.exit_state != "clear" or not route.contact.is_empty()):
+		return "Living Forest exit remains clear until all nine actual deaths"
+	if cleared and route.exit_state not in ["available", "active", "spent"]:
+		return "Living Forest cleared route requires its contact-only exit state"
+	if route.exit_state in ["active", "spent"]:
+		if not Codec.keys_error(route.contact, ["clock_s", "hero_position"]).is_empty() or not Codec.in_range(route.contact.get("clock_s"), 0, float(local.scheduler.clock_s)) or not Codec.is_vector3(route.contact.get("hero_position")) or not _at_exit(Codec.read_vector3(route.contact.hero_position)):
+			return "Living Forest active/spent exit requires actual capsule contact"
+		if float(route.contact.clock_s) == float(local.scheduler.clock_s) and Codec.read_vector3(route.contact.hero_position) != expected_hero:
+			return "Living Forest current contact differs from paired Hero"
+	elif not route.contact.is_empty():
+		return "Unused Living Forest exit cannot retain contact"
+	return ""
+
+
+func snapshot_state() -> Dictionary:
+	var saved: Dictionary = super.snapshot_state()
+	if not saved.is_empty():
+		last_snapshot_error = _route_progress_error(saved)
+	return saved if last_snapshot_error.is_empty() else {}
+
+
+func snapshot_error(saved: Dictionary) -> String:
+	var error: String = super.snapshot_error(saved)
+	return _route_progress_error(saved) if error.is_empty() else error
+
+
+func snapshot_error_with_player(saved: Dictionary, player: Dictionary) -> String:
+	var error: String = super.snapshot_error_with_player(saved, player)
+	return _route_progress_error(saved) if error.is_empty() else error
+
+
+func restore_state(saved: Dictionary) -> bool:
+	last_snapshot_error = snapshot_error(saved)
+	if not last_snapshot_error.is_empty():
+		return false
+	var restored: bool = super.restore_state(saved)
+	if restored:
+		_update_presentation(true)
+	return restored
+
+
+func _route_progress_error(saved: Dictionary) -> String:
+	var route: Dictionary = saved.local.route
+	var progress: Dictionary = saved.progress
+	var complete: bool = route.entries.size() == ENTRY_IDS.size() and route.deaths.size() == SOURCE_IDS.size()
+	if progress.completed != complete or progress.completion_id != (COMPLETION_ID if complete else ""):
+		return "Living Forest completion must match all nine real defeats and entries"
+	var checkpoints: Array[String] = []
+	for index: int in range(route.entries.size()):
+		checkpoints.append(CHECKPOINT_IDS[index])
+	if not Codec.keys_error(progress.checkpoint_ids, checkpoints).is_empty():
+		return "Living Forest checkpoint history must exactly match entered arrangements"
+	for checkpoint: String in checkpoints:
+		if progress.checkpoint_ids[checkpoint] != "encounter":
+			return "Living Forest entry checkpoints require encounter boundaries"
+	var latest: String = checkpoints[-1] if not checkpoints.is_empty() else ""
+	if progress.checkpoint_id != latest or progress.checkpoint_kind != ("encounter" if not latest.is_empty() else "") or progress.contact_exit_id != (EXIT_ID if route.exit_state == "spent" else ""):
+		return "Living Forest current checkpoint/contact progress differs from actual history"
+	return ""
+
+
+func _restore_local_state(local: Dictionary) -> void:
+	# Complete saved Hero is committed by the shell first. All typed actors,
+	# scheduler, mechanisms and route/progress prevalidate before this mutation.
+	for source_id: String in SOURCE_IDS:
+		var applied: bool = sources[source_id].call("apply_validated_state", local.sources[source_id].actor)
+		assert(applied, "Prevalidated Living Forest actor commit failed: " + source_id)
+	var bindings: Dictionary = scheduler_bindings()
+	var restored: bool = threat_scheduler.restore_state(local.scheduler, bindings)
+	assert(restored, "Prevalidated Living Forest scheduler commit failed")
+	for source_id: String in SOURCE_IDS:
+		if SOURCE_KINDS[source_id] == "root":
+			var rebuilt: bool = sources[source_id].call("restore_mechanism_state", local.sources[source_id].actor, bindings)
+			assert(rebuilt, "Prevalidated Root mechanism commit failed: " + source_id)
+	super._restore_local_state(local.scenery)
+	_entries.clear()
+	for entry: Dictionary in local.route.entries:
+		_entries.append(entry.duplicate(true))
+	_deaths = local.route.deaths.duplicate(true)
+	_watched_preview = local.route.watched_preview.duplicate(true)
+	_exit_state = local.route.exit_state
+	_contact = local.route.contact.duplicate(true)
+	_exit_dispatch_generation += 1
+	_exit_dispatch_queued = false
+	for source_id: String in SOURCE_IDS:
+		var source: Node3D = sources[source_id]
+		if SOURCE_KINDS[source_id] == "stalker":
+			source.call("set_sun_visual", sun_state)
+			var refreshed: bool = source.call("refresh_presentation")
+			assert(refreshed, "Prevalidated Stalker presentation commit failed: " + source_id)
+		source.set_physics_process(int(SOURCE_ENTRIES[source_id]) < _entries.size() and not bool(source.get("dead")))
+	_update_presentation(true)

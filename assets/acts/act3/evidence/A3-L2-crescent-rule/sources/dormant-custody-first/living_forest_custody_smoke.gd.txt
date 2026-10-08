@@ -1,0 +1,106 @@
+extends "res://tests/acts/act3/living_forest_route_smoke.gd"
+## Narrow negative custody regressions on actual paused authored Forest units.
+## Only copied snapshot dictionaries are forged. No forged unit is restored,
+## and no Hero/source pose, HP, phase, clock, physics or runtime flag is written.
+## --dormant-only (default): fresh arrival, future Stalker death/partial HP.
+## --chronology-route: inherited genuine full route and its real history units.
+
+const DormantId: String = "l2-priority-stalker"
+
+var _custody_selector: String = "--dormant-only"
+
+
+func _options() -> String:
+	var selected: bool = false
+	for argument: String in OS.get_cmdline_user_args():
+		if argument not in ["--dormant-only", "--chronology-route"] or selected:
+			return "unsupported or repeated custody selector: " + argument
+		_custody_selector = argument
+		selected = true
+	return ""
+
+
+func _run() -> void:
+	var error: String = _options()
+	if error.is_empty() and _custody_selector == "--chronology-route":
+		await super._run()
+		return
+	if error.is_empty(): error = _select_kit()
+	if error.is_empty(): error = await _prepare()
+	if _expect(error.is_empty(), "actual fresh paused nine-source arrival exists before any entry", error):
+		error = _dormant_cases()
+	if not error.is_empty():
+		if _failures == 0: _expect(false, "custody fixture stops at its first meaningful setup failure", error)
+		print("FIRST MEANINGFUL CUSTODY FAILURE: ", error)
+	await _dispose()
+	_finish()
+
+
+func _dormant_cases() -> String:
+	var original: Dictionary = _custody_unit()
+	var error: String = _original_pair_error(original)
+	if not _expect(error.is_empty(), "original actual arrival pair validates without mutation", error): return error
+	var actor: Dictionary = original.level.local.sources[DormantId].actor
+	var route: Dictionary = original.level.local.route
+	if not paused or float(original.level.local.scheduler.clock_s) != 0.0 or not route.entries.is_empty() or not route.deaths.is_empty() or actor.dead or actor.phase != "idle" or int(actor.cycle) != 0 or not String(actor.reservation_id).is_empty() or float(actor.hp) != float(actor.max_hp):
+		return "future actual Stalker is not the untouched full-HP dormant arrival source"
+
+	# Match the typed tombstone and route record completely; rejection must be
+	# the missing entry custody, rather than an intentionally inconsistent flag.
+	var forged: Dictionary = original.level.duplicate(true)
+	var tombstone: Dictionary = forged.local.sources[DormantId].actor
+	tombstone.hp = 0.0
+	tombstone.dead = true
+	tombstone.death_emitted = true
+	tombstone.phase = "defeated"
+	tombstone.velocity = Codec.vector3(Vector3.ZERO)
+	tombstone.cooldown_until_s = 0.0
+	tombstone.stagger_until_s = 0.0
+	forged.local.route.deaths[DormantId] = {"clock_s": forged.local.scheduler.clock_s, "source_position": tombstone.position.duplicate()}
+	var first_error: String = _require_rejection("unentered future Stalker matching cycle-zero tombstone/death record", original, forged)
+
+	# A separate pristine copy retains all living flags and no death record.
+	# Even one HP of damage cannot predate the future court's actual entry.
+	forged = original.level.duplicate(true)
+	forged.local.sources[DormantId].actor.hp = float(actor.max_hp) - 1.0
+	error = _require_rejection("unentered future Stalker partial HP with otherwise untouched live state", original, forged)
+	return first_error if not first_error.is_empty() else error
+
+
+func _require_rejection(label: String, original: Dictionary, forged_level: Dictionary) -> String:
+	var supplied: Dictionary = forged_level.duplicate(true)
+	var paired_error: String = _level.snapshot_error_with_player(forged_level, original.hero)
+	var live_error: String = _level.snapshot_error(forged_level)
+	var after: Dictionary = _custody_unit()
+	var original_error: String = _original_pair_error(after)
+	var unchanged: bool = _exact(original, after) and _exact(supplied, forged_level)
+	var diagnostic: String = "paired=" + paired_error + "; live=" + live_error + "; unchanged=" + str(unchanged) + "; original=" + original_error
+	_expect(unchanged and original_error.is_empty(), label + " pure validation preserves original whole unit and copied input", diagnostic)
+	if not unchanged or not original_error.is_empty(): return label + ": pure validation changed or invalidated the original: " + diagnostic
+	var rejected: bool = not paired_error.is_empty() and not live_error.is_empty()
+	_expect(rejected, label + " is rejected by saved-Hero and actual-Hero pure validation", diagnostic)
+	return "" if rejected else label + ": invalid custody was accepted; " + diagnostic
+
+
+func _original_pair_error(unit: Dictionary) -> String:
+	if not unit.get("hero") is Dictionary or not unit.get("level") is Dictionary or unit.hero.is_empty() or unit.level.is_empty():
+		return "actual paused unit capture rejected: " + _hero.last_snapshot_error + "; " + _level.last_snapshot_error
+	var error: String = _hero.snapshot_error(unit.hero)
+	if error.is_empty(): error = _level.snapshot_error_with_player(unit.level, unit.hero)
+	if error.is_empty(): error = _level.snapshot_error(unit.level)
+	return error
+
+
+func _custody_unit() -> Dictionary:
+	var native: Dictionary = {}
+	for id: String in SourceIds:
+		var source: Node3D = _sources[id] as Node3D
+		var body: CollisionShape3D = source.get_node("BodyCollision") as CollisionShape3D
+		native[id] = {"transform": source.global_transform, "physics_enabled": source.is_physics_processing(), "visible": source.visible, "enemy_group": source.is_in_group("enemies"), "body_disabled": body.disabled, "layer": source.get("collision_layer"), "mask": source.get("collision_mask"), "cue": _cue(id).state()}
+	var camera: Camera3D = _game.get("camera") as Camera3D
+	return {"hero": _hero.snapshot_state(), "level": _level.snapshot_state(), "hero_transform": _hero.global_transform, "hero_velocity": _hero.velocity, "native_sources": native, "scheduler": _scheduler.snapshot_state(_level.call("scheduler_bindings")), "route_state": _level.call("state"), "events": _events.duplicate(true), "death_events": _death_events.duplicate(true), "actions": _actions.duplicate(true), "checkpoints": _checkpoints.duplicate(), "exit_cue": _exit_cue.state(), "camera_transform": camera.global_transform if camera != null else Transform3D.IDENTITY, "viewport_size": root.size}
+
+
+func _finish() -> void:
+	print("Living Forest custody: selector=", _custody_selector, " checks=", _checks, " failures=", _failures, "; copied snapshots only; no forged restore")
+	super._finish()
