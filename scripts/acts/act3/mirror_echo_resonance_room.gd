@@ -118,7 +118,7 @@ func _build_reflection() -> void:
 func _on_enter_level() -> void:
 	if not last_configuration_error.is_empty():
 		return
-	var profile: String = shared_shell.call("get_difficulty_preference")
+	var profile: String = String(shared_shell.call("get_difficulty_preference")) if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference") else "standard"
 	if not threat_scheduler.begin_encounter(profile, ENCOUNTER_ID, 1) or not mechanism.configure(PULSE_ID, Shape.circle(PULSE_ORIGIN, PULSE_RADIUS), FIRST_OPENING) or not mechanism.bind(threat_scheduler, {"hero": hero}):
 		last_configuration_error = threat_scheduler.last_error + "; " + mechanism.last_error
 		return

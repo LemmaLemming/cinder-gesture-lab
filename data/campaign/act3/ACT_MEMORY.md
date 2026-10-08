@@ -1,5 +1,17 @@
 # Act 3 memory — Tormance, The False World
 
+## Mixed entry correction and published lifecycle
+
+The alias-corrected actual32 first-pulse check closes **5/1, exit1**. RealMain/room/Hero/actorpriority setup and publicexit/nativecleanup pass, but entry calls a campaign-only difficulty method absent fromLabGame. [Exact original](../../../assets/acts/act3/evidence/A3-L3-echo-resonance-room/03-lab-profile-entry-failure/receipt.json) retains120sources/full log; no pulse/admission/action/portrait result. Existing tested public capability/fallback pattern now selects realProductionShell preference when present, otherwise standard inLabMain; newruntime e6e6b1a. No mechanics/assertion/margin change or repeatedimport.
+
+Published33 `1de4fbfebfaaa517c9dacaa2e10ff9aa40ab9cff` supplies opt-in authoredPlayback2/conditionalScheduler3, true same-owner cooldown-earned cycles, ready/late-terminal and recipe-first quiet restore. Published34 `c51efcac811af4b45310d058f19bf2189548a86e` includes33 and additive post-quiet actual candidate presentation gate. Guides read; exactchangedcode is under scoped read-only review. Preserve-adopt latest34 after allactualownedjobsclosed, retainincomingexactUIDcustody and ownedtree, then ACK. Availability is not currentadoption/ownedAPI2 use: currentcheckout still32 c035031 and ownedSource1dd/codec4a4 remainstrictfinitelegacy. Fullparent nativeports are read-only planning untiladoption; no privateclone/journal/fakepose. Allcompletedownedjobsareclosed. Act3 remains2/8accepted/L3solefrontier; no human decision.
+
+## Shared32 adopted; affected first-pulse check
+
+Exact shared32 `9caeddf0540cb9c37479a470ad0fdf86425594cc` is adopted at preserving merge `c03503107a0ff5d3229a4008f53baccc237b87fc`, pre8f7b247, ACK `b1806c48-7a9a-4842-97d4-efb52899c263`. All1436owned path/blob/mode/physicalhashes retained; original five UIDbytes preserved in authorized ignored custody85e8cf7c and incomingpublishedpaths exact. SixthcameraUID untouched/untracked; no manualdelete/remint/shared staging. Exactchangedsharedbytes/ancestry/no conflicts/trackedclean verified.
+
+Original31 firstpulse parserfailure retains120frozenresources/full log; alias-onlyd938fix is committed. Same smallest first-pulse-only native target now queues on actual32, frozen120sources atc035031. No finalresult yet. It stops before Echo/cycle2 and neverclaims aggregatepersistence. No import/broad/unchanged-level repeat. Quietmodulehelper/consumer/scene/fixture are newlyfrozenunconsumed resources; qualifiedimport/threeactualportraitviews follow currentjobclosure. Proposed fullfivebeat/sixcourt layout is in8f7b247 but creates no recipients/history/checkpoint/native fit. Shared33 lifecycle packaging remains integration-owned/unpublished. Act3 remains2/8accepted/L3solefrontier; no human decision.
+
 ## Mixed first-pulse parser diagnosis
 
 The actual shared31 first-pulse-only command at ef51390 closed **exit2 before gameplay**. First meaningful error is the owned builtin `Projection` alias conflict (line11); all missing methods/level-root/Nil reports follow it. No final check-summary or images were emitted; one FAIL/zero PASS lines. [Original failed run](../../../assets/acts/act3/evidence/A3-L3-echo-resonance-room/02-first-pulse-alias-parse-failure/receipt.json) retains120 exact frozen resources and the whole log. Only the alias and two calls now use `ReplayFloor` (newruntime SHA d938670c); assertions, mechanics, visibility margins and native APIs are unchanged. Rerun this same target, no unchanged import/broad/accepted-level checks.
