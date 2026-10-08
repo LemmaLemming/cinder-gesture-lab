@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act3/twin_suns.gd" id="1"]
+
+[node name="TwinSuns" type="Node3D"]
+script = ExtResource("1")
+level_id = "A3-L1"
+objective_text = "Reach the far Poolingdred shelf"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 43)
+
+[node name="EncounterSources" type="Node3D" parent="."]
+
+[node name="UsefulFlank" type="Marker3D" parent="EncounterSources"]
+position = Vector3(1.6, 0.1, 25)
+
+[node name="TwoApproaches" type="Marker3D" parent="EncounterSources"]
+position = Vector3(-1.8, 0.1, 3)
+
+[node name="CrossingWest" type="Marker3D" parent="EncounterSources"]
+position = Vector3(-2.2, 0.1, -14)
+
+[node name="CrossingEast" type="Marker3D" parent="EncounterSources"]
+position = Vector3(2.2, 0.1, -17)
+
+[node name="Departure" type="Marker3D" parent="EncounterSources"]
+position = Vector3(1.2, 0.1, -35)
+
+[node name="PoolingdredThreshold" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, -44)

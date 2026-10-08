@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "level_id": "A3-L1",
+  "status": "authored_tuning_proposal_not_runtime_connected",
+  "source": "docs/ACT3_CONCEPT.md#A3-L1; G05/G12/G17/G18",
+  "floor": {
+    "continuous_box_size": [14.0, 1.0, 108.0],
+    "top_y": 0.0,
+    "safe_west_east_extent": [-7.0, 7.0],
+    "low_trunk_centers": [[0.0, 8.0], [0.0, -13.0]],
+    "low_trunk_size": [1.0, 0.75, 1.0],
+    "sun_changes_collision": false
+  },
+  "stalker_raw_role": {
+    "id": "A3-E1",
+    "raw_damage": 12.0,
+    "max_hp": 36.0,
+    "windup_s": 1.35,
+    "lock_s": 0.45,
+    "active_s": 0.26,
+    "recovery_s": 2.0,
+    "attack_interval_s": 3.7,
+    "move_speed": 2.8,
+    "provisional_unplaytested": true
+  },
+  "stalker_lunge": {
+    "max_distance_world": 3.0,
+    "lane_radius_world": 0.42,
+    "source_capsule_radius_world": 0.32,
+    "warning_turn_radians_per_s": 1.2,
+    "approach_acceleration_world_per_s2": 8.0,
+    "recovery_deceleration_world_per_s2": 0.0,
+    "recovery_stationary": true,
+    "collision_shortening_policy": "shared_adapter_required; shortened_endpoint_and_opening_reproved_before_commit",
+    "damage_once_per_committed_lunge": true,
+    "laser": false,
+    "warning_tracking_policy": "shared_supported_preparing_adapter_required; immutable_after_lock"
+  },
+  "minimum_timing_floors": {
+    "windup_s": 1.35,
+    "lock_s": 0.45,
+    "recovery_s": 2.0,
+    "reason": "provisional_floor_until_supported_union_escape_and_primary_return_proof_plus_actual_loadout_tests"
+  },
+  "encounters": [
+    {
+      "id": "foreign-noon",
+      "beat": 0,
+      "target_budget_s": 60,
+      "entry_z": 43.0,
+      "sources": [],
+      "decision": "Move freely during one harmless scenic sun preview; retain stable floor",
+      "mandatory_timer_wait": false
+    },
+    {
+      "id": "useful-flank",
+      "beat": 1,
+      "target_budget_s": 120,
+      "entry_z": 30.0,
+      "sources": [{"id": "l1-flank-stalker", "marker": "EncounterSources/UsefulFlank"}],
+      "decision": "Bait one physical lane away from a chosen return pocket, then punish its low flank",
+      "checkpoint": "useful-flank-entry"
+    },
+    {
+      "id": "two-approaches",
+      "beat": 2,
+      "target_budget_s": 120,
+      "entry_z": 15.0,
+      "sources": [{"id": "l1-approach-stalker", "marker": "EncounterSources/TwoApproaches"}],
+      "decision": "Choose either broad stable side of the low tree; both rejoin, with retreat floor retained",
+      "checkpoint": "two-approaches-entry"
+    },
+    {
+      "id": "crossing-shadow",
+      "beat": 3,
+      "target_budget_s": 120,
+      "entry_z": -6.0,
+      "sources": [
+        {"id": "l1-crossing-west", "marker": "EncounterSources/CrossingWest"},
+        {"id": "l1-crossing-east", "marker": "EncounterSources/CrossingEast"}
+      ],
+      "decision": "Choose a priority Stalker and preserve a retreat pocket through staggered commitments and one scenic sun preview",
+      "checkpoint": "crossing-shadow-entry",
+      "simultaneous_budget_policy": "common_scheduler_preparing_and_active_union; second_commit_only_after_live_reproof",
+      "respawn_removed_source": false
+    },
+    {
+      "id": "pillars-recede",
+      "beat": 4,
+      "target_budget_s": 60,
+      "entry_z": -29.0,
+      "sources": [{"id": "l1-departure-stalker", "marker": "EncounterSources/Departure"}],
+      "decision": "Resolve one brief familiar exchange, then contact the threshold; distant mirage stays scenery",
+      "checkpoint": "departure-entry",
+      "contact_exit_marker": "PoolingdredThreshold"
+    }
+  ],
+  "equipment": {
+    "baseline_ids": ["CLOTH-J0", "CLOTH-P0", "CLOTH-S0", "WEAPON-01"],
+    "carried_legal_static_alternatives": true,
+    "required_pickups": [],
+    "required_blast_ammo": 0,
+    "creation_claims": [],
+    "ability_introductions": [],
+    "equipment_extreme_tests_pending": true
+  },
+  "implementation_dependencies": [
+    "supported_moving_source_lunge_with_fixed_swept_geometry_and_primary_recovery_opening",
+    "public_live_player_response_commitment_and_cooldowns",
+    "shared_source_footprint_landing_and_interaction_cues",
+    "coherent_actor_level_reservation_checkpoint_retry_and_contact_transition_shell",
+    "selected_Act3_shared_presentation_with_carried_gear"
+  ]
+}
