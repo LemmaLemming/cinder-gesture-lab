@@ -18,7 +18,7 @@ L2 has a continuous broad dry route, six ordinary-primary HP targets, four HP-fr
 
 At b3fb/shared21, current full native Heavy 371/0 with 16 frames and Standard 338/0 pass cleanly. Independent all-sixteen/root seven-frame review found no material combat/player/cue/dry-floor or current Handler defect. Strand/beak pixels merge, rear support is often hidden and distant tripod is heavily top-HUD/canvas cropped; complete three-leg collapse/artillery-cause composition remains undemonstrated. Earlier shared19 Heavy 314/original native 362/Challenge Padded 320/retry 221/pending aggregate 111/prefix 127/pose 65 retain their own scopes. Original Handler anatomy failed; eleven revised prefix frames remain separate history. The 111 circle sample is stationary after a real arrival dash, not a nonzero moving intersection.
 
-Mixed 282/1 and both 220/1 variants remain failed history. Corrected mixed 260/0 retains pre-b3fb/shared21 scope: earlier accepted damage from both sources, lethal active Handler while Scout had already cancelled `tracking_lock_unproved`, exact terminal/vector receipts, original running deadlines/cooldown, four completed feet and quiet full dead restore. It is not two running sources at lethal publication. Current Cargo/Longstep287/0 and corrected Assisted298/0 pass cleanly at WeybridgeSHA17168048; no final candidate/hash claim yet.
+Mixed 282/1 and both 220/1 variants remain failed history. Corrected mixed 260/0 retains pre-b3fb/shared21 scope: earlier accepted damage from both sources, lethal active Handler while Scout had already cancelled `tracking_lock_unproved`, exact terminal/vector receipts, original running deadlines/cooldown, four completed feet and quiet full dead restore. It is not two running sources at lethal publication. Current Cargo/Longstep287/0 and corrected Assisted298/0 pass cleanly at WeybridgeSHA17168048; final current runtime/bundle hashes are frozen, canonical acceptance remains separate.
 
 ## Durable design and source boundaries
 
@@ -30,7 +30,7 @@ Follow [Act2 concept](../../../docs/ACT2_CONCEPT.md), [canonical levels](../../.
 
 Consult [equipment specification](../../../docs/PLAYER_EQUIPMENT_GUIDELINES.md), [grid](../../../docs/EQUIPMENT_DESIGN_GRID.md) and [ability workflow](../../../docs/ABILITY_USAGE_WORKFLOW.md); query canonical catalogue/claims/availability and reserve introductions before placement. L1/L2 allocate no new type/perk/powerup/reward. Earlier zero-claim/use validators retain historical catalogue scope, not new validation or balance. Never merge private ledgers.
 
-Quick subsequently passed 301/0 cleanly at 6c91833f/shared21. Root will consolidate that cell with the remaining route results before final promotion.
+Quick subsequently passed 301/0 cleanly at 6c91833f/shared21. Its earlier scope is consolidated with current Cargo/Assisted/restore/native results in the final inventory.
 
 ## Exact next work
 
