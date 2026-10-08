@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
   "date": "2026-10-08",
-  "art_revision": "a2-horsell-heath-2",
+  "art_revision": "a2-horsell-heath-4",
   "level_id": "A2-L1",
   "authoring_source": "scripts/acts/act2/heath_kit.gd",
-  "readiness": "original_runtime_prototype_imported_scoped_portrait_reviewed_full_encounter_art_pending",
+  "readiness": "original_runtime_prototype_imported_scoped_tableau_reviewed_full_art_motion_fight_acceptance_pending",
   "provenance": "Original procedural mesh assemblies and deterministic pixel clusters authored from the selected Act2 shape/material references. No stock pixels, concept-board crops, board atlas cells, captions or source quotations are imported.",
   "api": {
     "build": "static build(parent: Node3D) -> Dictionary: creates own HorsellHeathKit root and returns root, witnesses:Array[Node3D], eruption:Node3D",
-    "set_tableau": "static set_tableau(kit: Dictionary, state: String, progress: float = 0.0) -> void: arrival/retreat/empty witness pose only",
+    "set_tableau": "static set_tableau(kit: Dictionary, state: String, progress: float = 0.0) -> void: existing witness roots/retreat translation with derived watch, turn, two retreat-step textures and empty visibility",
     "set_eruption": "static set_eruption(kit: Dictionary, visible: bool, normalized_progress: float = 0.0) -> void: independent rise/expansion/fade pose",
     "ownership": "Root level owns state clocks, snapshot fields, transitions, terrain collision and cleanup. queue_free of root releases nodes/local material clones; immutable cached resources remain reusable."
   },
   "resource_policy": {
     "deterministic_generation": "Integer cluster/hash formulas and fixed hand-authored pixel strokes; no randomize, RNG stream, wall clock or frame-rate-dependent generation",
-    "caching": "Static mesh, texture and material dictionaries reuse immutable resources. Surface UV variants cached by kind/size. Only six eruption-owned material clones change alpha.",
+    "caching": "Static mesh/texture/material dictionaries reuse immutable resources; witness48x64 textures cached by costume variant + pose (four per costume maximum). Surface UV variants cached by kind/size. Only six eruption-owned material clones change alpha.",
     "generated_geometry_families": [
       "plane by size",
       "box by size for architectural parts only",
@@ -190,7 +190,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "readiness": "runtime_prototype_imported_scoped_source_visibility_reviewed_full_family_art_pending",
       "native_pixels": [
         64,
         64
@@ -215,11 +215,70 @@
           -3.8196,
           -0.39891
         ],
-        "dark_mouth_recess_world": 0.12
+        "dark_mouth_recess_world": 0.12,
+        "lid_root_world": [
+          -4.9,
+          1.15,
+          2.0
+        ],
+        "lid_diameter_world": 2.7,
+        "lid_world_tilt_z_radians": 0.12,
+        "lid_closest_world_x": -3.5489,
+        "thread_material_sequence": [
+          "fastener",
+          "cavity",
+          "rim",
+          "cavity",
+          "rim"
+        ],
+        "excavation_heap_positions_world": [
+          [
+            -4.8,
+            0.7,
+            0.9
+          ],
+          [
+            -4.55,
+            0.65,
+            2.45
+          ],
+          [
+            -4.35,
+            0.55,
+            -2.0
+          ],
+          [
+            -5.5,
+            0.12,
+            -1.0
+          ]
+        ],
+        "excavation_heap_scales": [
+          [
+            2.4,
+            1.4,
+            1.8
+          ],
+          [
+            1.8,
+            1.3,
+            0.9
+          ],
+          [
+            1.3,
+            1.1,
+            1.0
+          ],
+          [
+            1.6,
+            0.24,
+            1.1
+          ]
+        ]
       },
-      "pivot": "Ground anchor near mouth; separate shell axis, recessed mouth and lid ground-contact roots",
+      "pivot": "Cylinder ground anchor remains unchanged; detached full-size lid has earthwork contact root at(-4.90,1.15,2.0). All four pale heaps have bottoms at groundY0 and rise around the outer bank.",
       "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
-      "occlusion": "Ordinary depth; body remains beyond bank while upper mouth/rim may crop over the left edge. No collision; actual landing/source occlusion requires new portrait review.",
+      "occlusion": "Unchanged shell/mouth perimeter; revised lid and heap bounds stay beyondX-3.5489 / X-3.60. Ordinary world depth, no fade. Native camera and edge player silhouettes require new capture review.",
       "states": [
         "open_shell",
         "recessed_dark_mouth",
@@ -234,10 +293,10 @@
         "potential A2-O1 cylinder perimeter assets only"
       ],
       "limitations": [
-        "Root initial capture showed original cylinder entirely offscreen. Revised anchor/yaw/recess need new portrait inspection for readable mouth and clear legal landing at heroX-3.08.",
-        "Metal texture follows primitive UVs and is not a calibrated cylinder atlas.",
-        "Five separated collar rings approximate visible screw threads; not a mechanical cutaway or archaeological reconstruction.",
-        "No pit hole, descent, rocket fins or damage geometry."
+        "Owner revision3 native review confirmed cropped lid/earthworks and contrasting ring fasteners; shared4 layout259/0 imports current kit. Full authored source-family review remains pending; revision2 captures are historical.",
+        "Metal texture follows primitive UVs; original material, no calibrated cylinder atlas.",
+        "Five separated collar rings approximate screw threads; no mechanical cutaway or archaeological reconstruction.",
+        "No pit hole, descent, rocket fins, damage geometry or cue material."
       ]
     },
     {
@@ -256,7 +315,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "readiness": "runtime_prototype_imported_scoped_source_visibility_reviewed_full_family_art_pending",
       "native_pixels": [
         64,
         64
@@ -276,11 +335,34 @@
         ],
         "radial_segments": 7,
         "outboard_crown_offset_world": 0.58,
-        "largest_crown_radius_world": 0.86
+        "largest_crown_radius_world": 0.86,
+        "featured_bank_roots_world": [
+          [
+            -3.75,
+            0.975,
+            -1.5
+          ],
+          [
+            3.75,
+            0.975,
+            -10.6
+          ],
+          [
+            -3.75,
+            0.975,
+            -15.5
+          ],
+          [
+            3.75,
+            0.975,
+            -24.4
+          ]
+        ],
+        "nearest_featured_crown_abs_x": 3.47
       },
-      "pivot": "Trunk ground base; crown and branch attachments are local to each pine",
+      "pivot": "Trunk foot rests on bank top for four repositioned trees; other trees keep ground roots. Existing outboard crowns/branch attachments remain local.",
       "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
-      "occlusion": "Outboard crowns keep their lateral silhouettes beyond the combat corridor; ordinary depth and no cast shadows",
+      "occlusion": "Featured crown silhouettes remain beyond absoluteX3.47; trunk feet atX3.75 contact the bank top betweenX3.4 andX3.9. No geometry added to combat floor, cast shadow or automatic fade.",
       "states": [
         "tapered_bark_trunk",
         "three_tier_outboard_crown",
@@ -292,8 +374,9 @@
         "potential A2-O1 pine family"
       ],
       "limitations": [
-        "No automatic occluder fade; authored placement avoids the floor, then actual portrait review must confirm it.",
-        "Root level owns the separate low loop trunk; this kit adds no trunk collider."
+        "Four existing pines repositioned; owner native arrival review confirms a recognizable cropped pine. Full source-family/encounter camera review pending.",
+        "No automatic occluder fade; review actual camera at legal edge positions.",
+        "Root level owns the separate low loop trunk; kit adds no trunk collider."
       ]
     },
     {
@@ -307,7 +390,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "readiness": "runtime_prototype_imported_scoped_source_visibility_reviewed_full_family_art_pending",
       "native_pixels": [
         64,
         64
@@ -319,15 +402,36 @@
         ],
         "log_length_world": 1.5,
         "log_radius_world": 0.13,
-        "radial_segments": 6
+        "radial_segments": 6,
+        "featured_bank_roots_world": [
+          [
+            -3.75,
+            0.975,
+            -5.6
+          ],
+          [
+            3.75,
+            0.975,
+            -14.7
+          ],
+          [
+            -3.75,
+            0.975,
+            -25.6
+          ]
+        ],
+        "featured_fork_height_world": 0.94,
+        "nearest_featured_log_abs_x": 3.5302
       },
-      "pivot": "Grounded log root with two small broken-limb attachment points",
+      "pivot": "Three existing logs rest on the bank top, with outward charred fork attachments; remaining logs keep ground roots.",
       "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
-      "occlusion": "Ordinary depth; all grounded dressing remains outside absolute X3.8",
+      "occlusion": "Featured trunk nearest absoluteX3.5302; all fork branches point outboard. Ordinary depth, no floor obstruction, collider, damaging scorch or cast shadow.",
       "states": [
         "charred_trunk",
         "broken_limb",
-        "burned_twig"
+        "burned_twig",
+        "bare_standing_fork",
+        "broken_black_tip"
       ],
       "clock": "Static; no particle emission or damaging scorch",
       "reuse": [
@@ -335,7 +439,8 @@
         "potential A2-O1 boundary dressing"
       ],
       "limitations": [
-        "Actual camera silhouette and boundary readability are untested."
+        "Three existing logs moved; owner common native review confirms the charred branch silhouette. Full source-family/encounter camera review pending.",
+        "Raised forks are scenery only and must not be mistaken for the caller-owned collidable loop stump."
       ]
     },
     {
@@ -397,7 +502,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "readiness": "runtime_prototype_imported_scoped_source_visibility_reviewed_full_family_art_pending",
       "native_pixels": [
         64,
         64
@@ -418,17 +523,28 @@
           1.5
         ],
         "approx_total_height_world": 2.35,
-        "roof_mesh": "original six-triangle pitched-gable ArrayMesh"
+        "roof_mesh": "original six-triangle pitched-gable ArrayMesh",
+        "roadside_cottage_root_world": [
+          4.55,
+          0,
+          -16.7
+        ],
+        "roadside_roof_closest_world_x": 3.5419,
+        "roadside_chimney_local_x": -0.46,
+        "roadside_pot_count": 2,
+        "roadside_total_height_world": 2.515
       },
       "pivot": "Foundation at floor; window, sash, door, chimney and roof attachment points",
       "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
-      "occlusion": "Ordinary world depth; distant scenery outside floor, contrasting pitched roofs and sash recesses instead of lab obstacle boxes",
+      "occlusion": "One existing common-edge cottage moved inward; yawed roof nearestX3.5419 remains beyond wide bankX3.4. Inboard chimney/pots face the native view. Ground foundation/lower facade may be hidden by bank; ordinary depth, no cast shadow.",
       "states": [
         "brick_facade",
         "pitched_slate_roof",
         "chimney_stack_and_lip",
         "dark_timber_door",
-        "recessed_sash_windows_and_sills"
+        "recessed_sash_windows_and_sills",
+        "two_terracotta_chimney_pots",
+        "slate_ridge_cap"
       ],
       "clock": "Static",
       "reuse": [
@@ -436,9 +552,9 @@
         "potential A2-O1 distant backdrop"
       ],
       "limitations": [
-        "Compressed period-world silhouettes rather than a surveyed station map.",
-        "Only the near facade has authored door/window detail; additional facings and ruin states are deferred.",
-        "Actual portrait backdrop visibility and roof winding are not engine-verified."
+        "Compressed period-world silhouettes, not a surveyed settlement or accessible house.",
+        "Only near facade has authored door/window detail; additional facings and ruin states deferred.",
+        "Owner common native review confirms roof/chimney grouping at fixed camera. Lower facade remains behind bank; full source-family/encounter camera review pending."
       ]
     },
     {
@@ -457,7 +573,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "readiness": "runtime_prototype_imported_retry_state_verified_full_family_portrait_review_pending",
       "native_pixels": [
         64,
         64
@@ -733,7 +849,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "readiness": "original_pixel_pose_prototype_imported_native_tableau_and_retry_reviewed_full_motion_pending",
       "native_pixels": [
         48,
         64
@@ -756,7 +872,14 @@
           0,
           0,
           1
-        ]
+        ],
+        "native_pose_cells_per_costume": 4,
+        "texture_cache_key": "witness:<variant>:<pose>",
+        "step_profile_opaque_x_bounds_px": [
+          13,
+          34
+        ],
+        "feet_bottom_y_px": 63
       },
       "pivot": {
         "source_pixels": [
@@ -774,20 +897,22 @@
       "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
       "states": [
         "arrival_watching",
-        "retreat_translation",
+        "held_quarter_turn",
+        "retreat_step_a",
+        "retreat_step_b",
         "empty_after_retreat"
       ],
-      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "clock": "No clock: set_tableau receives normalized level-owned progress. Arrival holds watch below0.75, turn at/above0.75; retreat holds turn below0.15 then alternates A/B using floor((progress-0.15)*8)%2. Existing translation/visibility unchanged; derived witness_pose metadata is never independently serialized.",
       "reuse": [
         "A2-L1",
         "potential A2-O1 parent witness art only; no optional scene work"
       ],
       "limitations": [
-        "Appearances are costume interpretations, not proven faces or source quotations.",
-        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
-        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
-        "Actual portrait feet contact and costume distinction require review.",
-        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+        "Original costume interpretations, not proven faces or source quotations.",
+        "Four original native48x64 held pixel poses; no full motion sheet or independent movement logic.",
+        "Owner native review confirms stable boot pivots, readable quarter turn and alternating steps; exact pixel textures/transforms reconstruct across retry. Full authored motion/fight/human acceptance pending.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, cue or protagonist replacement.",
+        "Existing bank paths/feet/source scale/body quad retained. Some witnesses deliberately clip the fixed camera banks; no collision or required-floor occupation."
       ]
     },
     {
@@ -816,7 +941,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "readiness": "original_pixel_pose_prototype_imported_native_tableau_and_retry_reviewed_full_motion_pending",
       "native_pixels": [
         48,
         64
@@ -839,7 +964,14 @@
           0,
           0,
           1
-        ]
+        ],
+        "native_pose_cells_per_costume": 4,
+        "texture_cache_key": "witness:<variant>:<pose>",
+        "step_profile_opaque_x_bounds_px": [
+          13,
+          34
+        ],
+        "feet_bottom_y_px": 63
       },
       "pivot": {
         "source_pixels": [
@@ -857,20 +989,22 @@
       "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
       "states": [
         "arrival_watching",
-        "retreat_translation",
+        "held_quarter_turn",
+        "retreat_step_a",
+        "retreat_step_b",
         "empty_after_retreat"
       ],
-      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "clock": "No clock: set_tableau receives normalized level-owned progress. Arrival holds watch below0.75, turn at/above0.75; retreat holds turn below0.15 then alternates A/B using floor((progress-0.15)*8)%2. Existing translation/visibility unchanged; derived witness_pose metadata is never independently serialized.",
       "reuse": [
         "A2-L1",
         "potential A2-O1 parent witness art only; no optional scene work"
       ],
       "limitations": [
-        "Appearances are costume interpretations, not proven faces or source quotations.",
-        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
-        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
-        "Actual portrait feet contact and costume distinction require review.",
-        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+        "Original costume interpretations, not proven faces or source quotations.",
+        "Four original native48x64 held pixel poses; no full motion sheet or independent movement logic.",
+        "Owner native review confirms stable boot pivots, readable quarter turn and alternating steps; exact pixel textures/transforms reconstruct across retry. Full authored motion/fight/human acceptance pending.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, cue or protagonist replacement.",
+        "Existing bank paths/feet/source scale/body quad retained. Some witnesses deliberately clip the fixed camera banks; no collision or required-floor occupation."
       ]
     },
     {
@@ -899,7 +1033,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "readiness": "original_pixel_pose_prototype_imported_native_tableau_and_retry_reviewed_full_motion_pending",
       "native_pixels": [
         48,
         64
@@ -922,7 +1056,14 @@
           -1,
           0,
           0
-        ]
+        ],
+        "native_pose_cells_per_costume": 4,
+        "texture_cache_key": "witness:<variant>:<pose>",
+        "step_profile_opaque_x_bounds_px": [
+          13,
+          34
+        ],
+        "feet_bottom_y_px": 63
       },
       "pivot": {
         "source_pixels": [
@@ -940,20 +1081,22 @@
       "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
       "states": [
         "arrival_watching",
-        "retreat_translation",
+        "held_quarter_turn",
+        "retreat_step_a",
+        "retreat_step_b",
         "empty_after_retreat"
       ],
-      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "clock": "No clock: set_tableau receives normalized level-owned progress. Arrival holds watch below0.75, turn at/above0.75; retreat holds turn below0.15 then alternates A/B using floor((progress-0.15)*8)%2. Existing translation/visibility unchanged; derived witness_pose metadata is never independently serialized.",
       "reuse": [
         "A2-L1",
         "potential A2-O1 parent witness art only; no optional scene work"
       ],
       "limitations": [
-        "Appearances are costume interpretations, not proven faces or source quotations.",
-        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
-        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
-        "Actual portrait feet contact and costume distinction require review.",
-        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+        "Original costume interpretations, not proven faces or source quotations.",
+        "Four original native48x64 held pixel poses; no full motion sheet or independent movement logic.",
+        "Owner native review confirms stable boot pivots, readable quarter turn and alternating steps; exact pixel textures/transforms reconstruct across retry. Full authored motion/fight/human acceptance pending.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, cue or protagonist replacement.",
+        "Existing bank paths/feet/source scale/body quad retained. Some witnesses deliberately clip the fixed camera banks; no collision or required-floor occupation."
       ]
     },
     {
@@ -982,7 +1125,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "readiness": "original_pixel_pose_prototype_imported_native_tableau_and_retry_reviewed_full_motion_pending",
       "native_pixels": [
         48,
         64
@@ -1005,7 +1148,14 @@
           -1,
           0,
           0
-        ]
+        ],
+        "native_pose_cells_per_costume": 4,
+        "texture_cache_key": "witness:<variant>:<pose>",
+        "step_profile_opaque_x_bounds_px": [
+          13,
+          34
+        ],
+        "feet_bottom_y_px": 63
       },
       "pivot": {
         "source_pixels": [
@@ -1023,20 +1173,22 @@
       "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
       "states": [
         "arrival_watching",
-        "retreat_translation",
+        "held_quarter_turn",
+        "retreat_step_a",
+        "retreat_step_b",
         "empty_after_retreat"
       ],
-      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "clock": "No clock: set_tableau receives normalized level-owned progress. Arrival holds watch below0.75, turn at/above0.75; retreat holds turn below0.15 then alternates A/B using floor((progress-0.15)*8)%2. Existing translation/visibility unchanged; derived witness_pose metadata is never independently serialized.",
       "reuse": [
         "A2-L1",
         "potential A2-O1 parent witness art only; no optional scene work"
       ],
       "limitations": [
-        "Appearances are costume interpretations, not proven faces or source quotations.",
-        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
-        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
-        "Actual portrait feet contact and costume distinction require review.",
-        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+        "Original costume interpretations, not proven faces or source quotations.",
+        "Four original native48x64 held pixel poses; no full motion sheet or independent movement logic.",
+        "Owner native review confirms stable boot pivots, readable quarter turn and alternating steps; exact pixel textures/transforms reconstruct across retry. Full authored motion/fight/human acceptance pending.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, cue or protagonist replacement.",
+        "Existing bank paths/feet/source scale/body quad retained. Some witnesses deliberately clip the fixed camera banks; no collision or required-floor occupation."
       ]
     },
     {
@@ -1065,7 +1217,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "readiness": "original_pixel_pose_prototype_imported_native_tableau_and_retry_reviewed_full_motion_pending",
       "native_pixels": [
         48,
         64
@@ -1088,7 +1240,14 @@
           1,
           0,
           0
-        ]
+        ],
+        "native_pose_cells_per_costume": 4,
+        "texture_cache_key": "witness:<variant>:<pose>",
+        "step_profile_opaque_x_bounds_px": [
+          13,
+          34
+        ],
+        "feet_bottom_y_px": 63
       },
       "pivot": {
         "source_pixels": [
@@ -1106,20 +1265,22 @@
       "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
       "states": [
         "arrival_watching",
-        "retreat_translation",
+        "held_quarter_turn",
+        "retreat_step_a",
+        "retreat_step_b",
         "empty_after_retreat"
       ],
-      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "clock": "No clock: set_tableau receives normalized level-owned progress. Arrival holds watch below0.75, turn at/above0.75; retreat holds turn below0.15 then alternates A/B using floor((progress-0.15)*8)%2. Existing translation/visibility unchanged; derived witness_pose metadata is never independently serialized.",
       "reuse": [
         "A2-L1",
         "potential A2-O1 parent witness art only; no optional scene work"
       ],
       "limitations": [
-        "Appearances are costume interpretations, not proven faces or source quotations.",
-        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
-        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
-        "Actual portrait feet contact and costume distinction require review.",
-        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+        "Original costume interpretations, not proven faces or source quotations.",
+        "Four original native48x64 held pixel poses; no full motion sheet or independent movement logic.",
+        "Owner native review confirms stable boot pivots, readable quarter turn and alternating steps; exact pixel textures/transforms reconstruct across retry. Full authored motion/fight/human acceptance pending.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, cue or protagonist replacement.",
+        "Existing bank paths/feet/source scale/body quad retained. Some witnesses deliberately clip the fixed camera banks; no collision or required-floor occupation."
       ]
     },
     {
@@ -1148,7 +1309,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "readiness": "original_pixel_pose_prototype_imported_native_tableau_and_retry_reviewed_full_motion_pending",
       "native_pixels": [
         48,
         64
@@ -1171,7 +1332,14 @@
           1,
           0,
           0
-        ]
+        ],
+        "native_pose_cells_per_costume": 4,
+        "texture_cache_key": "witness:<variant>:<pose>",
+        "step_profile_opaque_x_bounds_px": [
+          13,
+          34
+        ],
+        "feet_bottom_y_px": 63
       },
       "pivot": {
         "source_pixels": [
@@ -1189,20 +1357,22 @@
       "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
       "states": [
         "arrival_watching",
-        "retreat_translation",
+        "held_quarter_turn",
+        "retreat_step_a",
+        "retreat_step_b",
         "empty_after_retreat"
       ],
-      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "clock": "No clock: set_tableau receives normalized level-owned progress. Arrival holds watch below0.75, turn at/above0.75; retreat holds turn below0.15 then alternates A/B using floor((progress-0.15)*8)%2. Existing translation/visibility unchanged; derived witness_pose metadata is never independently serialized.",
       "reuse": [
         "A2-L1",
         "potential A2-O1 parent witness art only; no optional scene work"
       ],
       "limitations": [
-        "Appearances are costume interpretations, not proven faces or source quotations.",
-        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
-        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
-        "Actual portrait feet contact and costume distinction require review.",
-        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+        "Original costume interpretations, not proven faces or source quotations.",
+        "Four original native48x64 held pixel poses; no full motion sheet or independent movement logic.",
+        "Owner native review confirms stable boot pivots, readable quarter turn and alternating steps; exact pixel textures/transforms reconstruct across retry. Full authored motion/fight/human acceptance pending.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, cue or protagonist replacement.",
+        "Existing bank paths/feet/source scale/body quad retained. Some witnesses deliberately clip the fixed camera banks; no collision or required-floor occupation."
       ]
     }
   ],
@@ -1218,7 +1388,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1258,7 +1428,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1298,7 +1468,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1338,7 +1508,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1378,7 +1548,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1423,7 +1593,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1465,7 +1635,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1507,7 +1677,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1529,8 +1699,9 @@
         "potential A2-O1 parent resource reuse"
       ],
       "limitations": [
-        "Palette and texture density need portrait review.",
-        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+        "Owner native dressing review confirms readable contrasting worn fasteners; full palette/density/source-family review pending.",
+        "Non-emissive opaque material with no actionable or hazard cue.",
+        "Cached resources remain immutable."
       ]
     },
     {
@@ -1549,7 +1720,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1586,7 +1757,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1623,7 +1794,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1660,7 +1831,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1697,7 +1868,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1734,7 +1905,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1771,7 +1942,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1808,7 +1979,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1845,7 +2016,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1882,7 +2053,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1924,7 +2095,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1961,7 +2132,7 @@
           "use": "shape/material/composition reference; no pixels extracted"
         }
       ],
-      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
       "native_pixels": [
         64,
         64
@@ -1985,6 +2156,44 @@
       "limitations": [
         "Palette and texture density need portrait review.",
         "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-EXCAVATION",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_scoped_native_preview_full_palette_review_pending",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native heap primitive UVs; 64x64 original four-color sparse texture"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Original pale excavation material remains restricted to the four existing heaps. Owner scoped dressing review passed; full palette/density/source-family review pending.",
+        "No board extraction or animated/hazard outlines.",
+        "Cached resources remain immutable."
       ]
     }
   ],
@@ -2018,15 +2227,15 @@
     }
   ],
   "validation": {
-    "engine": "Owned scene instantiated and class-cache imports passed; latest actual-floor/lifecycle243 checks/0 failures. No collision changes from kit revisions.",
-    "portrait": "Root inspected six revised native portraits and selected left entry; see portrait_evidence for exact scope. Individual offscreen cottage/pine/lid families still require full encounter art review.",
-    "gameplay": "Kit has no gameplay systems; tracking fights/campaign acceptance pending.",
-    "static": "Owned JSON/relative resource links/UIDs and API/no clock/collision scope passed."
+    "engine": "Act2 owner on adopted campaign-shared-4: .cinder/a2-l1-shared4-tableau-layout.log259 checks/0 failures; .cinder/a2-l1-shared4-witness-shell.log31/0 verifies exact witness pixel textures plus transforms across retry; .cinder/a2-l1-shared4-witness-portrait.log exits0 after eight native arrival captures and original24-pose gallery. Scoped worker read logs/verified artifacts; ran no engine. Shared5 published but not adopted at this checkpoint.",
+    "portrait": "Owner inspected 540x1170 arrival turn/step-a/step-b/retreat and336x288 original24-pose gallery: boot pivots stable, quarter turn/alternating steps readable; some witnesses deliberately clip camera banks. Previous dressing review confirms cropped pine/lid/fasteners and common roof/chimney/charred branch with clear floor. Prototype source visibility/tableau only, no full art/motion/fight/human acceptance.",
+    "gameplay": "Scenery kit has no gameplay systems. Layout/tableau and TEST ONLY seeded story/art-preview retry reconstruction passed; full tracking combat, authored motion/art, complete encounter camera/landing checks and human/campaign acceptance remain pending.",
+    "static": "Revision4 static preservation passed: unique asset IDs/source paths, original watch strokes, four cached48x64 poses per six costumes, fixed feet/node paths, unchanged retreat transform/visibility and protected scenery/eruption hashes including stable puff names. Subsequent owner31-check shell verifies exact pixel/transform retry. This manifest-only evidence update changes no runtime/test source."
   },
   "known_limits": [
-    "Revised native portrait scoped review passed; full encounter/source-art fidelity and offscreen family review remain pending.",
-    "No automatic foreground fade exists; authored outboard placement must be checked at actual camera.",
-    "NPCs have held cutouts and retreat translation, no full motion sheet.",
+    "Current shared4 kit imported and scoped native source-visibility/tableau/retry checks passed. Full authored art, motion, tracking fights, encounter/camera acceptance and human/campaign acceptance remain pending.",
+    "No automatic foreground fade exists. Some witnesses deliberately clip the fixed camera banks; full encounter/legal-edge camera and landing review remains pending.",
+    "Four cached held pixel poses and existing retreat translation reviewed in native tableau; exact pixels/transforms reconstruct after retry. No full motion sheet or independently driven human actor exists.",
     "Owned kit nodes freed by tested reset; desktop draw cost, material-cache memory and dynamic transparency sorting remain unmeasured.",
     "Optional reuse labels allocate no ability/equipment claim and implement no optional content."
   ],
@@ -2077,12 +2286,166 @@
       "log": ".cinder/a2-l1-selected-entry-portrait.log"
     },
     "observations": "Prepared mirror/pale facets now readable; low housing has visible open state; cylinder/witnesses visible at selected left entry with player foot separation; end scenery removes black void. Side-facing mirror is partly occluded by its case and needs shared phase/cue view in full exchange. Scenery remains original prototype, not complete source-art fidelity.",
-    "limits": "Fixture repositioning/phase posing only: no ray warning/lock/hit timing, camera-lag acceptance, humanbalance, campaignretry or final presentation claim."
+    "limits": "Fixture repositioning/phase posing only: no ray warning/lock/hit timing, camera-lag acceptance, humanbalance, campaignretry or final presentation claim.",
+    "art_revision": "a2-horsell-heath-2",
+    "applies_to": "Historical revision2 only; revision3 changed families require new native capture review."
   },
   "prior_worker_validation": {
     "engine": "Root reports initial import/layout242 passed for prior placement; this scoped worker ran no engine. New placement/extents await root affected checks.",
     "portrait": "This worker inspected actual initial arrival/common captures and confirmed invisible cylinder/witnesses plus foreground black void. Revised placement has not been captured.",
     "gameplay": "No gameplay systems or route collision changed; gameplay remains untested by this worker.",
     "static": "Revised JSON, source references, fixed floor/exterior extents, API presence and absence of collision/clock systems checked."
+  },
+  "fidelity_revision": {
+    "art_revision": "a2-horsell-heath-3",
+    "shared_baseline": "dcc7a3a735b2ef00f7b5e9fd5b74320d8db69b32",
+    "starting_owned_head": "36760edac58e3bf9f92f484c57fda34fde47c811",
+    "reason": "Read-only comparison of actual revision2 selected arrival/six phases with G05/G16/sampleS01 found lid, natural silhouettes and cottage identity mostly cropped or offscreen.",
+    "changes": [
+      "Reposition existing full-size detached lid onto a cluster of four ground-based excavation heaps outside the arrival bank, with dedicated original pale material.",
+      "Alternate mouth thread ridge/groove contrast and brighter non-emissive worn rivet heads without changing shell dimensions.",
+      "Move four existing pines and three existing logs onto bank tops; only featured logs gain outward bare fork geometry.",
+      "Move one existing common-edge cottage inward, shift chimney inboard and add two terracotta pots/slate ridge cap."
+    ],
+    "changed_asset_ids": [
+      "A2-HEATH-CYLINDER",
+      "A2-HEATH-PINES",
+      "A2-HEATH-LOGS",
+      "A2-HEATH-COTTAGES",
+      "A2-HEATH-MATERIAL-FASTENER",
+      "A2-HEATH-MATERIAL-EXCAVATION"
+    ],
+    "geometry_constraints": "New/repositioned dressing stays beyond wide bank innerX3.4 (and narrowX2.9); dry floor overlays, cylinder shell bounds and collision unchanged. No additional trees/logs/cottages or second lid.",
+    "clock_and_api": "build/set_tableau/set_eruption unchanged; static dressing, no callbacks/timers/shaderTIME. Witness multi-pose work deferred.",
+    "validation": "Owner native source-visibility review passed arrival pine/lid/contrasting ring fasteners and common roof/chimney/charred branch, floor clear. Current shared4 layout259/0 imports kit; full source-family/encounter art acceptance pending.",
+    "prior_worker_validation": "Static checks passed; no engine run or Git commit by scoped worker. Owner will import/capture/review."
+  },
+  "witness_pose_revision": {
+    "art_revision": "a2-horsell-heath-4",
+    "changed_asset_ids": [
+      "A2-HEATH-WITNESS-0",
+      "A2-HEATH-WITNESS-1",
+      "A2-HEATH-WITNESS-2",
+      "A2-HEATH-WITNESS-3",
+      "A2-HEATH-WITNESS-4",
+      "A2-HEATH-WITNESS-5"
+    ],
+    "source": "Original hand-authored pixel strokes following existing G01/G03 costume identities; no board pixels or atlas extraction.",
+    "native_pixels": [
+      48,
+      64
+    ],
+    "poses": [
+      "watch",
+      "turn",
+      "retreat_a",
+      "retreat_b"
+    ],
+    "cache": "variant+pose;24 maximum witness textures, no per-frame regeneration after first pose creation",
+    "selection": "arrival progress<0.75 watch, otherwise turn; retreat progress<0.15 turn, otherwise alternating A/B at8 normalized half-step intervals; other states derive watch texture while remaining hidden by existing visibility rule",
+    "preserved": "Existing build/set_tableau/set_eruption signatures, six witness/root/Sprite3D paths, feet pivots/scales, home positions, bank retreat transforms, empty visibility and stable indexed eruption puff names/pose logic",
+    "metadata": "costume_variant is immutable construction metadata; witness_pose derives from set_tableau state/progress and is not a new local save field",
+    "readiness": "imported_native_tableau_and_exact_retry_hash_reviewed_prototype_full_motion_pending",
+    "validation": "Owner shared4 layout259/0, witness shell31/0 and native eight-arrival-plus24-pose-gallery capture exit0. Native review confirms boot pivots, quarter turn and alternating steps; exact pixel textures/transforms restored across retry. Scoped worker verified logs/artifact sizes and inspected gallery; no engine/Git work.",
+    "prior_worker_validation": "Static preservation checks passed; no engine run or Git commit by scoped worker. Owner will capture affected tableau frames and verify texture hashes across retry."
+  },
+  "dressing_revision3_owner_report": {
+    "observed_by": "Act2 owner/root, reported directly to scoped worker",
+    "scope": "Native source-visibility review, not full combat/art acceptance",
+    "observations": "Arrival cropped pine/lid/contrasting fasteners, common roof/chimney and charred branch readable; floor remains clear.",
+    "eruption_name_fix": "Owner assigned stable AshVapourPuff_<index> names; revision4 preserves those six names unchanged."
+  },
+  "prior_witness_worker_validation": {
+    "engine": "Historical owner evidence: revision2 import/layout243 and revision3 native captures completed without errors. Revision4 witness poses unexecuted by this worker; owner affected import/tableau/shell checks pending.",
+    "portrait": "Owner reports revision3 arrival pine/lid/fasteners plus common roof/chimney/charred branches readable and floor clear. Revision4 witness watch/turn/two-step poses need affected arrival idle/retreat/empty native review.",
+    "gameplay": "Kit has no gameplay systems; tracking fights/campaign acceptance pending.",
+    "static": "Revision4 static checks passed: unique asset IDs/source paths; original watch strokes unchanged; four cached48x64 poses per six costumes; fixed feet/node paths and exact retreat transform/visibility statements preserved; protected scenery/eruption function hashes unchanged, including stable puff names. No collision/autonomous clock/signals. Native texture-hash/retry checks pending owner engine."
+  },
+  "current_tableau_evidence": {
+    "art_revision": "a2-horsell-heath-4",
+    "shared_api_revision": "campaign-shared-4",
+    "shared_baseline": "1ebd6b59265897d6ef49a29461473c52426b8fe6",
+    "owned_head": "140c2b23d9b445fbacee941f87dd5ede4a425ed3",
+    "shared5_state": "Published; not adopted by Act2 at this evidence checkpoint.",
+    "observed_by": {
+      "engine_and_native_portraits": "Act2 owner/root; scoped worker read exact log results and verified artifact dimensions.",
+      "gallery": "Owner/root and scoped worker inspected original24-pose native texture gallery."
+    },
+    "checks": [
+      {
+        "log": ".cinder/a2-l1-shared4-tableau-layout.log",
+        "checks": 259,
+        "failures": 0,
+        "scope": "Owned layout/tableau prototype, not full gameplay"
+      },
+      {
+        "log": ".cinder/a2-l1-shared4-witness-shell.log",
+        "checks": 31,
+        "failures": 0,
+        "scope": "TEST ONLY seeded story/art preview; exact witness pixels/transforms restored across retry"
+      },
+      {
+        "log": ".cinder/a2-l1-shared4-witness-portrait.log",
+        "exit_code": 0,
+        "scope": "Eight native arrival fixtures and original24-pose gallery"
+      }
+    ],
+    "native_capture_size": [
+      540,
+      1170
+    ],
+    "render_size": [
+      270,
+      585
+    ],
+    "captures": [
+      "captures/act2/a2-l1-arrival-idle.png",
+      "captures/act2/a2-l1-arrival-left-vignette.png",
+      "captures/act2/a2-l1-arrival-turn.png",
+      "captures/act2/a2-l1-arrival-step-a.png",
+      "captures/act2/a2-l1-arrival-step-b.png",
+      "captures/act2/a2-l1-arrival-retreat.png",
+      "captures/act2/a2-l1-arrival-empty.png",
+      "captures/act2/a2-l1-arrival-warning.png"
+    ],
+    "gallery": {
+      "path": "captures/act2/a2-l1-witness-pose-gallery.png",
+      "native_size": [
+        336,
+        288
+      ],
+      "cells": 24,
+      "cell_native_size": [
+        48,
+        64
+      ],
+      "columns": "costume variants0..5",
+      "rows": [
+        "watch",
+        "turn",
+        "retreat_a",
+        "retreat_b"
+      ]
+    },
+    "observations": "Stable boot pivots; readable quarter turn and alternating steps; six costume identities retained. Some witness clipping at fixed camera banks is deliberate. No growth into required escape floor.",
+    "historical_issue": {
+      "symptom": "Earlier shell visual-state comparison failed because duplicate AshVapourPuff names acquired different generated @ suffixes after retry.",
+      "resolution": "Owner indexed the six puff names AshVapourPuff_<index>, with no mesh/material/pose change; current shared4 shell31/0 passes.",
+      "history_policy": "Earlier initial invisible-cylinder/witness and foreground-void observations, revision2 portrait evidence and prior worker validations remain preserved below."
+    },
+    "acceptance_limits": [
+      "Scoped prototype tableau/source visibility only.",
+      "No full art or authored motion acceptance.",
+      "No full tracking fight, live cue/hit timing, equipment/humanbalance or human/campaign acceptance.",
+      "No performance/mobile/export/release claim."
+    ]
+  },
+  "shared5_adoption": {
+    "commit": "767b09e7987637d6a5f7495b84ad130e54ff80da",
+    "owned_merge_head": "15b901eddddd5505ba1ca6d94198a028380b474d",
+    "affected_layout_checks": 259,
+    "affected_shell_checks": 31,
+    "failures": 0,
+    "scope": "Actual tableau movement/pause and witness pixels/transforms across retry remain verified; no full fight/art acceptance."
   }
 }

@@ -31,8 +31,8 @@
     ]
   },
   "pivot": "Level root world origin; shared player feet Marker3D. Floor bodies centered y=-.25 with .5 thickness.",
-  "collision": "Layer1 static same-height unrotated BoxShape3D floors; visible soil banks; one stationary common grounded trunk. Scenic kit/Scout previews have no collision.",
-  "occlusion": "Ordinary depth-tested bank/trunk surfaces. Actual portrait edge/overlap review pending.",
+  "collision": "Layer1 static same-height unrotated box floors, ten visible soil banks and one grounded trunk, with all body/CollisionShape3D paths explicitly named. Six stable live floor bindings expose the actual collision and a conservatively inset safe_rect (2mm float32 containment guard); playable floor geometry is unchanged. Scenic kit/Scout previews have no collision.",
+  "occlusion": "Native540x1170 arrival and room prototype captures reviewed; complete moving combat occlusion remains pending.",
   "states": [
     "art_preview_only",
     "shared_entered",
@@ -44,12 +44,12 @@
     "future A2-O1 layout rearrangement"
   ],
   "limitations": [
-    "No tracking attacks/shared cues yet",
-    "No coherent checkpoint retry or campaign transition consumer",
-    "Current shared helmeted protagonist awaiting Act2 presentation",
-    "Native selected-entry and six pose frames inspected; full gameplay and camera-lag/source-art acceptance pending"
+    "Tested shared5 tracking adapter is available for adoption; no real Ray encounter exists in this prototype",
+    "Shared3 live checkpoint/retry/transition services published; full local combat state and authored contacts not yet integrated",
+    "Shared act2_survivor published; affected native owned-scene portrait review pending",
+    "Historical shared2 selected-entry and six art poses inspected; full gameplay/camera-lag/source-art acceptance pending"
   ],
-  "evidence": {
+  "prior_shared2_evidence": {
     "shared_baseline": "15589bfd956e74a659a63e843b1e1430d28227b8",
     "owned_layout_checks": 243,
     "failures": 0,
@@ -57,5 +57,27 @@
     "log": ".cinder/a2-l1-selected-spawn-layout.log",
     "reused_after_cosmetic_changes": "Floor/bank/trunk shapes, collision masks, dimensions and lifecycle/snapshot fields unchanged; changed kit placements and preview-only visibility do not change checked travel/state behavior.",
     "spawn_revision": "Selected X=-1 native portrait inspected; actual ordinary dash traversal flanks trunk and reaches Woking,243 checks/0 failures."
+  },
+  "evidence": {
+    "shared_baseline": "dcc7a3a735b2ef00f7b5e9fd5b74320d8db69b32",
+    "merge_commit": "36760edac58e3bf9f92f484c57fda34fde47c811",
+    "owned_floor_snapshot_checks": 257,
+    "failures": 0,
+    "log": ".cinder/a2-l1-shared3-floor-snapshot-passed.log",
+    "scope": "Actual dry travel, local scenic lifecycle and empty-encounter shared scheduler stable collision JSON/cross-instance restoration; no attack admission or combat. New advancing tableau checks pending after this result."
+  },
+  "diagnosis": {
+    "first_result": ".cinder/a2-l1-shared3-floor-snapshot.log:257checks/4failures",
+    "minimal_reproduction": ".cinder/a2-l1-floor-binding-diagnostic.log",
+    "cause": "Departure box float32 global-position/half-size reconstruction does not exactly enclose its independently authored full rectangle (one rounding unit); the displayed coordinates round to the same numbers.",
+    "fix": "Inset only all authored proof rectangles by 0.002 world units. Keep actual collision geometry and exact shared validation. No assertion tolerance or scheduler modification."
+  },
+  "current_validation": {
+    "shared_publication": "767b09e7987637d6a5f7495b84ad130e54ff80da / campaign-shared-5",
+    "checks": 259,
+    "failures": 0,
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_layout_smoke.gd",
+    "log": ".cinder/a2-l1-shared5-foundation-layout.log",
+    "scope": "Actual floor/dash/flank/corner continuity, stable named collision fingerprint and empty scheduler transport, local JSON rejection, advancing retreat transforms, pause and reset. No live attack or full level acceptance."
   }
 }

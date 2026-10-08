@@ -12,6 +12,9 @@ const FLOOR_SPECS: Array[Dictionary] = [
 	{"id": "departure", "rect": Rect2(-3.4, -27.6, 6.8, 8.4)},
 	{"id": "woking_road", "rect": Rect2(-2.9, -30.2, 5.8, 3.0)},
 ]
+## Two millimetres conservatively guard float32 collision transform roundoff.
+## This changes proof rectangles only, never playable floor or dash collision.
+const FLOOR_PROOF_INSET: float = 0.002
 const SCOUT_POSITIONS: Dictionary = {
 	"arrival": Vector3(0, 0, -0.4),
 	"road_east": Vector3(1, 0, -5.4),
@@ -47,6 +50,7 @@ func _physics_process(delta: float) -> void:
 	if not _entered or get_tree().paused or not is_instance_valid(hero) or hero.dead:
 		return
 	_scenic_clock += delta
+	_apply_tableau()
 	# Scenic time is simulation-owned. No timed wait, new attack, or completion
 	# is inferred from the source tableau. Encounter transitions will own it.
 
@@ -55,7 +59,15 @@ func floor_regions() -> Array[Dictionary]:
 	# Public authored geometry for the shared scheduler's real-floor witness.
 	var result: Array[Dictionary] = []
 	for floor: Dictionary in _floors:
-		result.append({"id": floor["id"], "body": floor["body"], "rect": floor["rect"]})
+		result.append({"id": floor["id"], "body": floor["body"], "rect": floor["rect"], "collision": floor["collision"], "safe_rect": floor["safe_rect"]})
+	return result
+
+
+func floor_bindings() -> Dictionary:
+	# Stable authored save bindings; objects are live guards, never JSON payload.
+	var result: Dictionary = {}
+	for floor: Dictionary in _floors:
+		result[floor["id"]] = {"collision": floor["collision"], "safe_rect": floor["safe_rect"]}
 	return result
 
 
@@ -74,20 +86,21 @@ func _build_ground() -> void:
 		var shape := BoxShape3D.new()
 		shape.size = Vector3(rect.size.x, 0.5, rect.size.y)
 		var collision := CollisionShape3D.new()
+		collision.name = "DrySupport"
 		collision.shape = shape
 		body.add_child(collision)
-		_floors.append({"id": specification["id"], "rect": rect, "body": body})
+		_floors.append({"id": specification["id"], "rect": rect, "body": body, "collision": collision, "safe_rect": rect.grow(-FLOOR_PROOF_INSET)})
 		# Kit supplies the authored ground texture above this hidden collision.
-	_build_bank(Vector3(0, 0.45, 3.9), Vector3(7.8, 1.0, 0.6), floor_root)
-	_build_bank(Vector3(0, 0.45, -30.5), Vector3(6.8, 1.0, 0.6), floor_root)
+	_build_bank("ArrivalEndBank", Vector3(0, 0.45, 3.9), Vector3(7.8, 1.0, 0.6), floor_root)
+	_build_bank("WokingEndBank", Vector3(0, 0.45, -30.5), Vector3(6.8, 1.0, 0.6), floor_root)
 	for edge: Dictionary in [
-		{"half_width": 3.4, "near": 3.6, "far": -17.6},
-		{"half_width": 2.9, "near": -17.6, "far": -19.2},
-		{"half_width": 3.4, "near": -19.2, "far": -27.6},
-		{"half_width": 2.9, "near": -27.6, "far": -30.2},
+		{"id": "Heath", "half_width": 3.4, "near": 3.6, "far": -17.6},
+		{"id": "Reunion", "half_width": 2.9, "near": -17.6, "far": -19.2},
+		{"id": "Departure", "half_width": 3.4, "near": -19.2, "far": -27.6},
+		{"id": "Woking", "half_width": 2.9, "near": -27.6, "far": -30.2},
 	]:
 		for side: float in [-1.0, 1.0]:
-			_build_bank(Vector3(side * (edge["half_width"] + 0.25), 0.45, (edge["near"] + edge["far"]) * 0.5), Vector3(0.5, 1.0, edge["near"] - edge["far"]), floor_root)
+			_build_bank(edge["id"] + ("WestBank" if side < 0.0 else "EastBank"), Vector3(side * (edge["half_width"] + 0.25), 0.45, (edge["near"] + edge["far"]) * 0.5), Vector3(0.5, 1.0, edge["near"] - edge["far"]), floor_root)
 	# One grounded trunk creates the short inside flank on the common. It is
 	# stationary layer-1 scenery, and does not impersonate an interaction cue.
 	var trunk := StaticBody3D.new()
@@ -100,6 +113,7 @@ func _build_ground() -> void:
 	trunk_shape.radius = 0.35
 	trunk_shape.height = 1.2
 	var trunk_collision := CollisionShape3D.new()
+	trunk_collision.name = "GroundedSolid"
 	trunk_collision.shape = trunk_shape
 	trunk.add_child(trunk_collision)
 	var trunk_mesh := CylinderMesh.new()
@@ -116,8 +130,9 @@ func _build_ground() -> void:
 	trunk.add_child(trunk_visual)
 
 
-func _build_bank(position_value: Vector3, dimensions: Vector3, parent: Node3D) -> void:
+func _build_bank(stable_name: String, position_value: Vector3, dimensions: Vector3, parent: Node3D) -> void:
 	var body := StaticBody3D.new()
+	body.name = stable_name
 	body.position = position_value
 	body.collision_layer = 1
 	body.collision_mask = 0
@@ -125,6 +140,7 @@ func _build_bank(position_value: Vector3, dimensions: Vector3, parent: Node3D) -
 	var shape := BoxShape3D.new()
 	shape.size = dimensions
 	var collision := CollisionShape3D.new()
+	collision.name = "BankSolid"
 	collision.shape = shape
 	body.add_child(collision)
 	var mesh := BoxMesh.new()
@@ -161,6 +177,9 @@ func _local_snapshot_error(state: Dictionary) -> String:
 		var body: Variant = floor["body"]
 		if not is_instance_valid(body) or body.is_queued_for_deletion() or not is_ancestor_of(body):
 			return "Missing owned Horsell floor"
+		var support: Variant = floor.get("collision")
+		if not is_instance_valid(support) or support.is_queued_for_deletion() or support.get_parent() != body or not support is CollisionShape3D or support.disabled or not support.shape is BoxShape3D:
+			return "Missing owned Horsell support collision"
 	for visual: Variant in _scouts.values():
 		if not is_instance_valid(visual) or visual.is_queued_for_deletion() or not is_ancestor_of(visual):
 			return "Missing owned Horsell Scout visual"

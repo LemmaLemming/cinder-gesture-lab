@@ -6,7 +6,7 @@
   "runtime_script": "res://scripts/acts/act2/ray_scout_visual.gd",
   "readiness": "original_runtime_prototype_imported_scoped_portrait_reviewed_full_encounter_art_pending",
   "verification": {
-    "engine": "Current revised rig instantiated in native capture; target adapter passes33 manual-opening checks/0failures; import2 no script errors.",
+    "engine": "Prior revised rig instantiated in native capture. Parent shared4 isolated target suite passed195 checks/0failures, exit0 and no errors, including schema2 fresh-rig/yaw restoration; see cosmetic_snapshot_revision. The new normal first-pose preservation assertion remains pending parent rerun. Historical actor snapshot1 passed130 checks/0failures, following the earlier33 manual-opening checks.",
     "portrait": "Root inspected warning/lock/active/recovery/defeated physical poses and selected entry; see portrait_evidence. Parent-owned true ray cues/paired geometry/camera lag still pending.",
     "static": "3 supports, no autonomous clock/collider/target groups in visual rig; sampled bound<1.9world units remains recorded."
   },
@@ -137,8 +137,11 @@
     "pose": "pose(phase: String, progress: float, direction: Vector3, hit_flash: bool = false) -> void",
     "progress": "Normalized parent phase clock, clamped to [0,1]; nonfinite progress becomes zero",
     "direction": "World planar direction. Invalid or zero inputs retain the last valid direction. Mirror yaw follows every supplied valid direction; parent supplies immutable direction during lock/active",
-    "pre_ready_calls": "Requested pose is retained and applied after _ready",
-    "snapshot": "Parent restores its authoritative phase, progress, direction and flash then calls pose. Latched support yaw is cosmetic and can be reconstructed at restored phase entry"
+    "pre_ready_calls": "Requested live pose or explicit saved pose/body yaw is retained and applied after _ready; invalid explicit restore leaves the pending tuple untouched. Normal first pose initializes chassis heading from its supplied direction even when directly entering lock/active/recovery; explicit restoration applies the saved latch instead.",
+    "snapshot": "Actor schema2 saves get_body_yaw() separately from phase/progress/world direction; its validator calls restore_pose_error before mutation and restore_pose applies the exact saved latch. Next held warning/lock/active/recovery/defeated samples preserve that plant. Idle/approach and a later new warning entry retain existing live-facing behavior. Parent supplies any separate hit-flash clock; actor restore draws no flash.",
+    "get_body_yaw": "get_body_yaw() -> float; returns the local planted cosmetic chassis yaw, distinct from the current world mirror direction",
+    "restore_pose_error": "restore_pose_error(phase: String, progress: float, direction: Vector3, body_yaw: float) -> String; pure preflight for supported phase, finite normalized progress/direction and finite canonical yaw in [-PI, PI] with a 0.000001-radian JSON boundary tolerance",
+    "restore_pose": "restore_pose(phase: String, progress: float, direction: Vector3, body_yaw: float, hit_flash: bool = false) -> bool; validates then silently restores the saved tuple and warning-entry plant, without deriving a new chassis yaw from the mirror direction"
   },
   "states": [
     {
@@ -194,7 +197,7 @@
     "Occluded initial mirror corrected and inspected; true shared source/capsule cue/readable paired encounters still require full gameplay portrait acceptance.",
     "Mirror materials suggest polished segments without rendering real scene reflection",
     "Root XZ, collider, hit point and deadlines stay fixed even when cosmetic joints collapse or fold",
-    "Body support heading is a cosmetic phase-entry latch, not a saved gameplay reservation or authoritative tracking clock",
+    "Body support heading is an explicitly saved cosmetic warning-entry latch, not a gameplay reservation or authoritative tracking clock. Actor schema2 body_yaw and fresh-instance restoration passed parent shared4 isolated195 checks; normal first-pose preservation assertion awaits rerun.",
     "Camera-case detail density, contact contrast and higher mesh-node count require actual pixel-scale and desktop performance review",
     "Shared available/active/spent interaction markers, grounded contact presentation and floor capsule warning renderer are not implemented here"
   ],
@@ -242,5 +245,26 @@
       "captures/act2/a2-l1-road-lock.png",
       "captures/act2/a2-l1-common-recovery.png"
     ]
+  },
+  "cosmetic_snapshot_revision": {
+    "actor_api_revision": "act2-ray-scout-snapshot-2",
+    "actor_schema_version": 2,
+    "change": "Explicit getter/preflight/restore pose preserves the warning-entry chassis and low-housing orientation when the mirror tracked a different direction before lock. No mesh geometry, colliders, controls or clocks changed.",
+    "prior_engine_evidence": "Initial actor snapshot1 suite: parent-reported130 checks,0failures; historical evidence only",
+    "new_runtime_status": "196checks_0failures_shared5_parent_queued_target_smoke",
+    "test_scope": "Actual fresh chassis rotation plus case, mirror swivel/hinge, low housing and both door transforms; JSON transport; silent events; held-phase plant; malformed/nonfinite yaw atomic rejection; retained pre-ready restore. Exact negative and positive PI JSON boundary round trips restore finite physical chassis orientation. Normal direct pre-ready first lock pose preserves its original chassis-facing initialization with an aligned mirror.",
+    "engine_evidence": {
+      "checks": 195,
+      "failures": 0,
+      "exit_code": 0,
+      "errors": 0,
+      "report_source": "Parent integration owner queued shared4 target suite",
+      "log": ".cinder/a2-l1-shared4-scout-yaw-snapshot.log",
+      "scope": "Historical schema2 yaw/fresh-instance result before the normal first-pose branch preservation correction; no complete Ray fight claim."
+    },
+    "normal_pose_preservation": "Original empty-first-pose/warning body latch retained under normal posing; one pre-ready direct-lock actual-transform regression assertion passed.",
+    "log": ".cinder/a2-l1-shared5-foundation-scout.log",
+    "checks": 196,
+    "failures": 0
   }
 }

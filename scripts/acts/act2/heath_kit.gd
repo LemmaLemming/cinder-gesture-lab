@@ -2,7 +2,7 @@ extends RefCounted
 ## Original Horsell Common scenery. No actor, collider, hazard, or autonomous clock.
 ## The caller supplies tableau state/progress from its paused simulation clock.
 
-const ART_REVISION := "a2-horsell-heath-2"
+const ART_REVISION := "a2-horsell-heath-4"
 const ACTOR_PIXEL_SIZE := 0.0225
 const TILE_WORLD_SIZE := 1.44
 const CYLINDER_ANCHOR := Vector3(-4.8, 0.0, -1.0)
@@ -27,14 +27,39 @@ static func build(parent: Node3D) -> Dictionary:
 	for side: int in [-1, 1]:
 		for index: int in range(5):
 			var z: float = -2.8 - float(index) * 5.4
-			_pine(root, Vector3(float(side) * 4.8, 0.0, z), side, index)
-			_log(root, Vector3(float(side) * 4.65, 0.0, z + 1.4), side, index)
+			var pine_position := Vector3(float(side) * 4.8, 0.0, z)
+			# Reposition four existing trees onto the bank; crowns stay outboard.
+			if side == -1 and index == 0:
+				pine_position = Vector3(-3.75, 0.975, -1.5)
+			elif side == 1 and index == 1:
+				pine_position = Vector3(3.75, 0.975, -10.6)
+			elif side == -1 and index == 2:
+				pine_position = Vector3(-3.75, 0.975, -15.5)
+			elif side == 1 and index == 4:
+				pine_position = Vector3(3.75, 0.975, -24.4)
+			_pine(root, pine_position, side, index)
+			var log_position := Vector3(float(side) * 4.65, 0.0, z + 1.4)
+			var featured_log: bool = false
+			if side == -1 and index == 0:
+				log_position = Vector3(-3.75, 0.975, -5.6)
+				featured_log = true
+			elif side == 1 and index == 2:
+				log_position = Vector3(3.75, 0.975, -14.7)
+				featured_log = true
+			elif side == -1 and index == 4:
+				log_position = Vector3(-3.75, 0.975, -25.6)
+				featured_log = true
+			_log(root, log_position, side, index, featured_log)
 		for index: int in range(14):
 			var z: float = 2.4 - float(index) * 2.2
 			var x: float = float(side) * (4.3 + float(index % 3) * 0.24)
 			_heather(root, Vector3(x, 0.025, z), index % 3)
 		for index: int in range(3):
-			_cottage(root, Vector3(float(side) * (6.3 + float(index % 2) * 0.7), 0.0, -6.5 - float(index) * 10.2), side, index)
+			var cottage_position := Vector3(float(side) * (6.3 + float(index % 2) * 0.7), 0.0, -6.5 - float(index) * 10.2)
+			if side == 1 and index == 1:
+				# Same cottage, brought to the common's road edge: roof minX > 3.54.
+				cottage_position = Vector3(4.55, 0.0, -16.7)
+			_cottage(root, cottage_position, side, index)
 	# Cropped bank-top heather is visible without occupying landing floor.
 	for side: int in [-1, 1]:
 		for z: float in [-1.5, -5.6, -11.0, -15.7, -22.0, -26.0]:
@@ -71,6 +96,17 @@ static func set_tableau(kit: Dictionary, state: String, progress: float = 0.0) -
 		var direction: Vector3 = witness.get_meta("retreat_direction", Vector3.ZERO)
 		witness.position = home + direction * (phase * 1.2 if state == "retreat" else 0.0)
 		witness.visible = state == "arrival" or (state == "retreat" and phase < 1.0)
+		var pose: String = "watch"
+		if state == "arrival" and phase >= 0.75:
+			pose = "turn"
+		elif state == "retreat":
+			pose = "turn" if phase < 0.15 else ("retreat_a" if int(floor((phase - 0.15) * 8.0)) % 2 == 0 else "retreat_b")
+		var sprite := witness.get_node_or_null("FeetAnchoredCostume") as Sprite3D
+		if sprite != null and witness.get_meta("witness_pose", "") != pose:
+			var variant: int = int(witness.get_meta("costume_variant", 0))
+			sprite.texture = _witness_texture(variant, pose)
+		# Derived from state/progress on every application; never serialized separately.
+		witness.set_meta("witness_pose", pose)
 	var root := kit.get("root") as Node3D
 	if is_instance_valid(root):
 		root.set_meta("tableau_state", state)
@@ -146,7 +182,7 @@ static func _pine(root: Node3D, position: Vector3, side: int, variant: int) -> v
 		crown.rotation.y = float(variant + index) * 0.31
 	_branch(pine, Vector3(0.0, 1.7, 0.0), Vector3(float(side) * 0.62, 2.1, -0.35), 0.065, _material("bark"), "OutboardBranch")
 
-static func _log(root: Node3D, position: Vector3, side: int, variant: int) -> void:
+static func _log(root: Node3D, position: Vector3, side: int, variant: int, featured: bool = false) -> void:
 	var log_root := Node3D.new()
 	log_root.name = "CharredLog_%s_%s" % [side, variant]
 	log_root.position = position
@@ -155,6 +191,11 @@ static func _log(root: Node3D, position: Vector3, side: int, variant: int) -> vo
 	_branch(log_root, Vector3(0.0, 0.13, -0.75), Vector3(0.0, 0.13, 0.75), 0.13, _material("char"), "BurnedTrunk")
 	_branch(log_root, Vector3(0.0, 0.16, -0.25), Vector3(float(side) * 0.26, 0.29, -0.55), 0.045, _material("char"), "BrokenLimb")
 	_branch(log_root, Vector3(0.0, 0.14, 0.4), Vector3(float(side) * 0.24, 0.24, 0.65), 0.035, _material("char"), "BurnedTwig")
+	if featured:
+		# A recognizable fork rises above the bank; all limbs point outboard.
+		_branch(log_root, Vector3(0.0, 0.15, 0.10), Vector3(float(side) * 0.14, 0.78, 0.26), 0.065, _material("char"), "ScorchedStandingFork")
+		_branch(log_root, Vector3(float(side) * 0.08, 0.50, 0.19), Vector3(float(side) * 0.42, 0.64, -0.13), 0.042, _material("char"), "BareForkBranch")
+		_branch(log_root, Vector3(float(side) * 0.14, 0.71, 0.24), Vector3(float(side) * 0.24, 0.94, 0.38), 0.035, _material("char"), "BrokenBlackTip")
 
 static func _heather(root: Node3D, position: Vector3, variant: int) -> void:
 	var sprite := Sprite3D.new()
@@ -184,7 +225,9 @@ static func _cylinder_landmark(root: Node3D) -> void:
 	var cavity := _cylinder(landmark, "RecessedDarkMouth", Vector3(mouth_x - 0.12, axis_height, 0.0), 1.235, 1.235, 0.035, _material("cavity"), 24)
 	cavity.rotation.z = -PI * 0.5
 	for index: int in range(5):
-		var collar := _torus(landmark, "ThreadedMouthCollar", Vector3(mouth_x - float(index) * 0.09, axis_height, 0.0), 1.24, 1.35, _material("rim"))
+		# Alternating dark grooves / worn ridges read at the native render scale.
+		var collar_material := _material("fastener" if index == 0 else ("cavity" if index % 2 == 1 else "rim"))
+		var collar := _torus(landmark, "ThreadedMouthCollar", Vector3(mouth_x - float(index) * 0.09, axis_height, 0.0), 1.24, 1.35, collar_material)
 		collar.rotation.z = -PI * 0.5
 	for offset: float in [0.9, 2.8, 5.45]:
 		var band := _torus(landmark, "ShellRivetBand", Vector3(mouth_x - offset, axis_height, 0.0), 1.315, 1.395, _material("rim"))
@@ -197,13 +240,19 @@ static func _cylinder_landmark(root: Node3D) -> void:
 				continue
 			var rivet := _cylinder(landmark, "RaisedRivet", position, 0.057, 0.057, 0.075, _material("fastener"), 6)
 			rivet.rotation.z = -PI * 0.5
-	for index: int in range(4):
-		var mound := _sphere(landmark, "ExcavatedSandHeap", Vector3(mouth_x - 0.25 - float(index) * 1.6, 0.08, 1.05 if index % 2 == 0 else -1.05), _material("sand"))
-		mound.scale = Vector3(0.65, 0.28, 0.65)
+	# Reuse four ground-based heaps rising around the mouth/lid and outer bank.
+	# Closest lateral edge remains X-3.60; every heap bottom stays at groundY0.
+	var heap_positions: Array[Vector3] = [Vector3(-4.80, 0.70, 0.9), Vector3(-4.55, 0.65, 2.45), Vector3(-4.35, 0.55, -2.0), Vector3(-5.50, 0.12, -1.0)]
+	var heap_scales: Array[Vector3] = [Vector3(2.40, 1.40, 1.80), Vector3(1.80, 1.30, 0.90), Vector3(1.30, 1.10, 1.00), Vector3(1.60, 0.24, 1.10)]
+	for index: int in range(heap_positions.size()):
+		var mound := _sphere(landmark, "ExcavatedSandHeap", (heap_positions[index] - CYLINDER_ANCHOR).rotated(Vector3.UP, -CYLINDER_YAW), _material("excavation"))
+		mound.rotation.y = -CYLINDER_YAW
+		mound.scale = heap_scales[index]
 	var lid_root := Node3D.new()
 	lid_root.name = "DetachedThreadedLid"
-	lid_root.position = Vector3(-0.1, 0.16, 3.0)
-	lid_root.rotation.z = -0.10
+	# Move the existing full-size lid to the bank earthworks, preserving diameter.
+	lid_root.position = (Vector3(-4.90, 1.15, 2.0) - CYLINDER_ANCHOR).rotated(Vector3.UP, -CYLINDER_YAW)
+	lid_root.rotation = Vector3(0.0, -CYLINDER_YAW, 0.12)
 	landmark.add_child(lid_root)
 	_cylinder(lid_root, "LidPlate", Vector3.ZERO, 1.35, 1.35, 0.18, _material("metal"), 24)
 	_torus(lid_root, "LidRaisedRim", Vector3(0.0, 0.13, 0.0), 1.21, 1.35, _material("rim"))
@@ -221,8 +270,14 @@ static func _cottage(root: Node3D, position: Vector3, side: int, variant: int) -
 	_box(cottage, "MasonryFacade", Vector3(0.0, 0.75, 0.0), Vector3(1.6, 1.5, 1.25), _material("brick"))
 	var roof := _mesh(cottage, "PitchedSlateRoof", Vector3(0.0, 1.5, 0.0), _roof_mesh(), _material("slate"))
 	roof.scale = Vector3(1.85, 0.6, 1.50)
-	_box(cottage, "ChimneyStack", Vector3(0.46, 2.0, -0.18), Vector3(0.23, 0.58, 0.24), _material("brick"))
-	_box(cottage, "ChimneyLip", Vector3(0.46, 2.3, -0.18), Vector3(0.29, 0.10, 0.30), _material("stone"))
+	var roadside: bool = side == 1 and variant == 1
+	var chimney_x: float = -0.46 if roadside else 0.46
+	_box(cottage, "ChimneyStack", Vector3(chimney_x, 2.0, -0.18), Vector3(0.23, 0.58, 0.24), _material("brick"))
+	_box(cottage, "ChimneyLip", Vector3(chimney_x, 2.3, -0.18), Vector3(0.29, 0.10, 0.30), _material("stone"))
+	if roadside:
+		for offset: float in [-0.075, 0.075]:
+			_cylinder(cottage, "TerracottaChimneyPot", Vector3(chimney_x + offset, 2.43, -0.18), 0.055, 0.045, 0.17, _material("brick"), 6)
+		_branch(cottage, Vector3(0.0, 2.11, -0.74), Vector3(0.0, 2.11, 0.74), 0.035, _material("slate"), "SlateRidgeCap")
 	_box(cottage, "DarkTimberDoor", Vector3(0.0, 0.38, 0.635), Vector3(0.29, 0.76, 0.045), _material("wood"))
 	for x: float in [-0.5, 0.5]:
 		_box(cottage, "SashRecess", Vector3(x, 0.85, 0.648), Vector3(0.31, 0.43, 0.03), _material("window"))
@@ -236,6 +291,7 @@ static func _witness(root: Node3D, position: Vector3, variant: int, side: int) -
 	witness.position = position
 	witness.set_meta("home_position", position)
 	witness.set_meta("retreat_direction", Vector3(float(side), 0.0, 0.0))
+	witness.set_meta("costume_variant", variant)
 	root.add_child(witness)
 	var sprite := Sprite3D.new()
 	sprite.name = "FeetAnchoredCostume"
@@ -261,7 +317,7 @@ static func _eruption(root: Node3D) -> Node3D:
 		# Only these per-instance materials change opacity; cached materials stay immutable.
 		var material := _material("vapour").duplicate() as StandardMaterial3D
 		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		var puff := _sphere(eruption, "AshVapourPuff", position, material)
+		var puff := _sphere(eruption, "AshVapourPuff_%s" % index, position, material)
 		puff.set_meta("home_position", position)
 		puff.set_meta("puff_index", index)
 	return eruption
@@ -378,12 +434,13 @@ static func _material(kind: String) -> StandardMaterial3D:
 	match kind:
 		"sand": palette = [Color("b5a58c"), Color("b0a087"), Color("bcad94"), Color("978b79")]
 		"sand_clear": palette = [Color("bdaf97"), Color("b9ab94"), Color("c0b29d"), Color("a49884")]
+		"excavation": palette = [Color("cdbb9f"), Color("b6a487"), Color("ddcbae"), Color("9e8d72")]
 		"road": palette = [Color("a89881"), Color("a29179"), Color("b09f88"), Color("928674")]
 		"heath": palette = [Color("706354"), Color("635c50"), Color("7c6853"), Color("675448")]
 		"scorch": palette = [Color("554a40"), Color("50483f"), Color("645346"), Color("49433c")]
 		"metal": palette = [Color("4c514f"), Color("353b3b"), Color("75523d"), Color("918878")]
 		"rim": palette = [Color("5f625a"), Color("404741"), Color("815d44"), Color("a79b81")]
-		"fastener": palette = [Color("837e6a"), Color("555e55"), Color("9c9177"), Color("695845")]
+		"fastener": palette = [Color("b5a68b"), Color("6f7164"), Color("cdc0a4"), Color("8d7353")]
 		"cavity": palette = [Color("181d1b"), Color("151a18"), Color("222722"), Color("1a211d")]
 		"bark": palette = [Color("433c30"), Color("2f3029"), Color("645440"), Color("4b4535")]
 		"pine": palette = [Color("333b30"), Color("293329"), Color("444c36"), Color("303629")]
@@ -405,7 +462,12 @@ static func _material(kind: String) -> StandardMaterial3D:
 			var cluster: int = posmod((x >> 2) * 17 + (y >> 2) * 31 + kind.length() * 7, 29)
 			var detail: int = posmod(x * 37 + y * 73 + x * y * 13, 997)
 			var index: int = 0
-			if kind in ["metal", "rim", "fastener"]:
+			if kind == "fastener":
+				# Broad worn heads, restrained oxidation, no emissive prop cue.
+				index = 1 if cluster > 25 else (2 if cluster < 3 else 0)
+				if detail < 18:
+					index = 3
+			elif kind in ["metal", "rim"]:
 				index = 2 if cluster < 6 else (1 if cluster > 24 else 0)
 				if y % 24 == 0 and detail < 350:
 					index = 3
@@ -449,8 +511,9 @@ static func _heather_texture(variant: int) -> Texture2D:
 	_texture_cache[key] = texture
 	return texture
 
-static func _witness_texture(variant: int) -> Texture2D:
-	var key: String = "witness:%s" % variant
+static func _witness_texture(variant: int, pose: String = "watch") -> Texture2D:
+	var pose_key: String = pose if pose in ["watch", "turn", "retreat_a", "retreat_b"] else "watch"
+	var key: String = "witness:%s:%s" % [variant, pose_key]
 	var cached := _texture_cache.get(key) as Texture2D
 	if cached != null:
 		return cached
@@ -463,48 +526,138 @@ static func _witness_texture(variant: int) -> Texture2D:
 	var hair := Color("40382d")
 	var light := Color("c0b299")
 	var boots := Color("393831")
-	# Distinct coats, work shirt, cloak/dress, cap and hat; original pixel cutouts.
-	var dress: bool = variant == 3 or variant == 5
-	_rect(image, 20, 8, 9, 11, skin)
-	_rect(image, 19, 7, 10, 4, hair)
-	_rect(image, 19, 10, 3, 7, hair)
-	_rect(image, 23, 18, 4, 4, skin)
-	for y: int in range(21, 55 if dress else 50):
-		var flare: int = int(float(y - 21) * (0.17 if dress else 0.07))
-		_rect(image, 17 - flare, y, 14 + flare * 2, 1, cloth)
-		_rect(image, 17 - flare, y, 3, 1, shadow)
-	_rect(image, 13, 23, 5, 20, cloth)
-	_rect(image, 31, 23, 5, 20, shadow)
-	_rect(image, 13, 43, 4, 4, skin)
-	_rect(image, 32, 42, 4, 4, skin)
-	if not dress:
-		_rect(image, 19, 48, 6, 12, shadow)
-		_rect(image, 26, 48, 5, 12, shadow)
+	if pose_key != "watch":
+		_witness_motion(image, variant, pose_key, cloth)
 	else:
-		_rect(image, 19, 53, 5, 7, shadow)
-		_rect(image, 26, 53, 5, 7, shadow)
-	_rect(image, 17, 60, 8, 4, boots)
-	_rect(image, 26, 60, 8, 4, boots)
-	_line(image, Vector2i(20, 21), Vector2i(24, 31), light)
-	_line(image, Vector2i(29, 21), Vector2i(25, 31), shadow)
-	_line(image, Vector2i(24, 32), Vector2i(24, 47), shadow)
-	if variant in [1, 4]:
-		_rect(image, 17, 7, 16, 3, hair)
-		_rect(image, 20, 1 if variant == 4 else 3, 10, 6 if variant == 4 else 4, shadow)
-	elif variant == 2:
-		_rect(image, 18, 6, 13, 3, shadow)
-		_rect(image, 13, 24, 5, 8, light)
-		_rect(image, 31, 24, 5, 8, light)
-	elif dress:
-		_line(image, Vector2i(18, 21), Vector2i(30, 34), light if variant == 5 else shadow)
-		_rect(image, 31, 38, 6, 10, Color("705d45"))
-	else:
-		_rect(image, 14, 38, 9, 7, Color("a59a80"))
-		_rect(image, 15, 39, 7, 1, Color("665e50"))
-	_rect(image, 26, 12, 2, 1, shadow)
+		# Distinct coats, work shirt, cloak/dress, cap and hat; original pixel cutouts.
+		var dress: bool = variant == 3 or variant == 5
+		_rect(image, 20, 8, 9, 11, skin)
+		_rect(image, 19, 7, 10, 4, hair)
+		_rect(image, 19, 10, 3, 7, hair)
+		_rect(image, 23, 18, 4, 4, skin)
+		for y: int in range(21, 55 if dress else 50):
+			var flare: int = int(float(y - 21) * (0.17 if dress else 0.07))
+			_rect(image, 17 - flare, y, 14 + flare * 2, 1, cloth)
+			_rect(image, 17 - flare, y, 3, 1, shadow)
+		_rect(image, 13, 23, 5, 20, cloth)
+		_rect(image, 31, 23, 5, 20, shadow)
+		_rect(image, 13, 43, 4, 4, skin)
+		_rect(image, 32, 42, 4, 4, skin)
+		if not dress:
+			_rect(image, 19, 48, 6, 12, shadow)
+			_rect(image, 26, 48, 5, 12, shadow)
+		else:
+			_rect(image, 19, 53, 5, 7, shadow)
+			_rect(image, 26, 53, 5, 7, shadow)
+		_rect(image, 17, 60, 8, 4, boots)
+		_rect(image, 26, 60, 8, 4, boots)
+		_line(image, Vector2i(20, 21), Vector2i(24, 31), light)
+		_line(image, Vector2i(29, 21), Vector2i(25, 31), shadow)
+		_line(image, Vector2i(24, 32), Vector2i(24, 47), shadow)
+		if variant in [1, 4]:
+			_rect(image, 17, 7, 16, 3, hair)
+			_rect(image, 20, 1 if variant == 4 else 3, 10, 6 if variant == 4 else 4, shadow)
+		elif variant == 2:
+			_rect(image, 18, 6, 13, 3, shadow)
+			_rect(image, 13, 24, 5, 8, light)
+			_rect(image, 31, 24, 5, 8, light)
+		elif dress:
+			_line(image, Vector2i(18, 21), Vector2i(30, 34), light if variant == 5 else shadow)
+			_rect(image, 31, 38, 6, 10, Color("705d45"))
+		else:
+			_rect(image, 14, 38, 9, 7, Color("a59a80"))
+			_rect(image, 15, 39, 7, 1, Color("665e50"))
+		_rect(image, 26, 12, 2, 1, shadow)
 	var texture := ImageTexture.create_from_image(image)
 	_texture_cache[key] = texture
 	return texture
+
+static func _witness_motion(image: Image, variant: int, pose: String, cloth: Color) -> void:
+	# Same 48x64 cell and feetY63; narrow profile motion stays inside watch bounds.
+	var shadow: Color = cloth.darkened(0.22)
+	var skin := Color("bba186")
+	var hair := Color("40382d")
+	var light := Color("c0b299")
+	var boots := Color("393831")
+	var dress: bool = variant == 3 or variant == 5
+	var lean: int = 0 if pose == "turn" else 1
+	_rect(image, 22 + lean, 8, 8, 11, skin)
+	_rect(image, 21 + lean, 7, 9, 4, hair)
+	_rect(image, 21 + lean, 10, 3, 7, hair)
+	_rect(image, 30 + lean, 13, 2, 3, skin)
+	_rect(image, 28 + lean, 12, 1, 1, shadow)
+	_rect(image, 24 + lean, 18, 4, 4, skin)
+	for y: int in range(21, 55 if dress else 50):
+		var flare: int = int(float(y - 21) * (0.10 if dress else 0.03))
+		_rect(image, 18 - flare, y, 12 + flare * 2, 1, cloth)
+		_rect(image, 18 - flare, y, 3, 1, shadow)
+	_line(image, Vector2i(26, 21), Vector2i(28, 32), light)
+	_line(image, Vector2i(28, 33), Vector2i(28, 47), shadow)
+	if pose == "turn":
+		_stroke(image, Vector2i(17, 25), Vector2i(16, 35), 4, shadow)
+		_stroke(image, Vector2i(16, 35), Vector2i(18, 43), 4, shadow)
+		_stroke(image, Vector2i(28, 25), Vector2i(31, 33), 4, cloth)
+		_stroke(image, Vector2i(31, 33), Vector2i(30, 43), 4, cloth)
+		_rect(image, 18, 43, 3, 4, skin)
+		_rect(image, 30, 43, 4, 4, skin)
+	elif pose == "retreat_a":
+		_stroke(image, Vector2i(17, 25), Vector2i(14, 32), 4, shadow)
+		_stroke(image, Vector2i(14, 32), Vector2i(16, 41), 4, shadow)
+		_stroke(image, Vector2i(28, 25), Vector2i(31, 31), 4, cloth)
+		_stroke(image, Vector2i(31, 31), Vector2i(30, 37), 4, cloth)
+		_rect(image, 16, 41, 3, 4, skin)
+		_rect(image, 30, 37, 4, 4, skin)
+	else:
+		_stroke(image, Vector2i(17, 25), Vector2i(21, 31), 4, shadow)
+		_stroke(image, Vector2i(21, 31), Vector2i(25, 35), 4, shadow)
+		_stroke(image, Vector2i(28, 25), Vector2i(29, 34), 4, cloth)
+		_stroke(image, Vector2i(29, 34), Vector2i(27, 43), 4, cloth)
+		_rect(image, 25, 35, 3, 4, skin)
+		_rect(image, 27, 43, 4, 4, skin)
+	var hip_y: int = 52 if dress else 48
+	if pose == "retreat_a":
+		_stroke(image, Vector2i(20, hip_y), Vector2i(17, 56), 4, shadow)
+		_stroke(image, Vector2i(17, 56), Vector2i(16, 60), 4, shadow)
+		_stroke(image, Vector2i(27, hip_y), Vector2i(28, 55), 4, shadow)
+		_stroke(image, Vector2i(28, 55), Vector2i(30, 60), 4, shadow)
+		_rect(image, 14, 60, 8, 4, boots)
+		_rect(image, 27, 60, 8, 4, boots)
+	elif pose == "retreat_b":
+		_stroke(image, Vector2i(20, hip_y), Vector2i(24, 55), 4, shadow)
+		_stroke(image, Vector2i(24, 55), Vector2i(26, 60), 4, shadow)
+		_stroke(image, Vector2i(27, hip_y), Vector2i(22, 56), 4, shadow)
+		_stroke(image, Vector2i(22, 56), Vector2i(16, 60), 4, shadow)
+		_rect(image, 24, 60, 8, 4, boots)
+		_rect(image, 14, 60, 8, 4, boots)
+	else:
+		_stroke(image, Vector2i(20, hip_y), Vector2i(21, 60), 4, shadow)
+		_stroke(image, Vector2i(27, hip_y), Vector2i(27, 60), 4, shadow)
+		_rect(image, 20, 60, 7, 4, boots)
+		_rect(image, 27, 60, 7, 4, boots)
+	# Carry over each costume's identifying headwear, sleeves or personal bundle.
+	if variant in [1, 4]:
+		_rect(image, 18 + lean, 7, 14, 3, hair)
+		_rect(image, 22 + lean, 1 if variant == 4 else 3, 8, 6 if variant == 4 else 4, shadow)
+	elif variant == 2:
+		_rect(image, 20 + lean, 6, 11, 3, shadow)
+		_rect(image, 17, 25, 4, 5, light)
+		_rect(image, 28, 25, 4, 5, light)
+	if variant == 0:
+		_rect(image, 17, 35, 7, 8, Color("a59a80"))
+		_rect(image, 18, 36, 5, 1, Color("665e50"))
+	elif variant == 1:
+		_line(image, Vector2i(20, 23), Vector2i(30, 41), light)
+		_rect(image, 27, 40, 7, 8, Color("705d45"))
+	elif dress:
+		_line(image, Vector2i(19, 21), Vector2i(30, 34), light if variant == 5 else shadow)
+		_rect(image, 29, 37, 6, 10, Color("705d45"))
+	if variant in [0, 2, 3]:
+		# End-bank figures face their outward retreat; side pair uses a quarter turn.
+		image.flip_x()
+
+static func _stroke(image: Image, start: Vector2i, end: Vector2i, width: int, colour: Color) -> void:
+	for offset: int in range(width):
+		_line(image, start + Vector2i(offset, 0), end + Vector2i(offset, 0), colour)
 
 static func _rect(image: Image, x: int, y: int, width: int, height: int, colour: Color) -> void:
 	for py: int in range(maxi(y, 0), mini(y + height, image.get_height())):

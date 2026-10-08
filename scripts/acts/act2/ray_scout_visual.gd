@@ -9,6 +9,8 @@ const HIP_HEIGHT: float = 0.74
 const MIRROR_RADIUS: float = 0.285
 const MIRROR_SECTORS: int = 16
 const MIRROR_HINGE_HALF_SPAN: float = 0.31
+const POSE_PHASES: Array[String] = ["idle", "approach", "warning", "lock", "active", "recovery", "defeated"]
+const BODY_YAW_TOLERANCE: float = 0.000001
 
 var _built: bool = false
 var _last_phase: String = ""
@@ -17,6 +19,8 @@ var _direction: Vector3 = Vector3.BACK
 var _requested_phase: String = "idle"
 var _requested_progress: float = 0.0
 var _requested_flash: bool = false
+var _requested_has_body_yaw: bool = false
+var _requested_body_yaw: float = 0.0
 var _chassis: Node3D
 var _case: Node3D
 var _mirror_swivel: Node3D
@@ -41,13 +45,44 @@ var _actuator_ribs: Array[MeshInstance3D] = []
 func _ready() -> void:
 	if not _built:
 		_build()
-	pose(_requested_phase, _requested_progress, _direction, _requested_flash)
+	_apply_pose(_requested_phase, _requested_progress, _direction, _requested_flash, _requested_has_body_yaw, _requested_body_yaw)
 
 
 func pose(phase: String, progress: float, direction: Vector3, hit_flash: bool = false) -> void:
+	_apply_pose(phase, progress, direction, hit_flash, false, 0.0)
+
+
+func get_body_yaw() -> float:
+	return _body_yaw
+
+
+func restore_pose_error(phase: String, progress: float, direction: Vector3, body_yaw: float) -> String:
+	if not POSE_PHASES.has(phase) or not is_finite(progress) or progress < 0.0 or progress > 1.0:
+		return "Invalid restored Scout visual phase/progress"
+	if not direction.is_finite() or direction.y != 0.0 or absf(direction.length_squared() - 1.0) > 0.00001:
+		return "Restored Scout visual direction must be normalized and planar"
+	# atan2 produces [-PI, PI]; permit only a tiny JSON parser boundary error.
+	# Retain the saved value rather than wrapping it into a different latch.
+	if not is_finite(body_yaw) or absf(body_yaw) > PI + BODY_YAW_TOLERANCE:
+		return "Restored Scout visual body yaw must be finite in [-PI, PI] within transport tolerance"
+	return ""
+
+
+func restore_pose(phase: String, progress: float, direction: Vector3, body_yaw: float, hit_flash: bool = false) -> bool:
+	if not restore_pose_error(phase, progress, direction, body_yaw).is_empty():
+		return false
+	_apply_pose(phase, progress, direction, hit_flash, true, body_yaw)
+	return true
+
+
+func _apply_pose(phase: String, progress: float, direction: Vector3, hit_flash: bool, restore_heading: bool, saved_body_yaw: float) -> void:
 	_requested_phase = phase
 	_requested_progress = clampf(progress, 0.0, 1.0) if is_finite(progress) else 0.0
 	_requested_flash = hit_flash
+	_requested_has_body_yaw = restore_heading
+	_requested_body_yaw = saved_body_yaw
+	if restore_heading:
+		_body_yaw = saved_body_yaw
 	var flat: Vector3 = Vector3(direction.x, 0.0, direction.z)
 	if flat.is_finite() and flat.length_squared() > 0.000001:
 		_direction = flat.normalized()
@@ -59,10 +94,14 @@ func pose(phase: String, progress: float, direction: Vector3, hit_flash: bool = 
 	var target_yaw: float = atan2(local_direction.x, local_direction.z)
 	# Plant the support orientation at warning entry. The mirror alone follows
 	# subsequent warning calls; the parent's locked direction holds it still.
-	if phase != _last_phase and (phase == "warning" or _last_phase.is_empty()):
-		_body_yaw = target_yaw
-	if phase == "idle" or phase == "approach":
-		_body_yaw = target_yaw
+	# Explicit restoration preserves the warning-entry plant even on a fresh
+	# rig. Normal first-pose facing retains its original initialization rule;
+	# restored and subsequent locked/active/recovery poses retain their plant.
+	if not restore_heading:
+		if phase != _last_phase and (phase == "warning" or _last_phase.is_empty()):
+			_body_yaw = target_yaw
+		if phase == "idle" or phase == "approach":
+			_body_yaw = target_yaw
 	_last_phase = phase
 	_chassis.rotation.y = _body_yaw
 	_mirror_swivel.rotation.y = wrapf(target_yaw - _body_yaw, -PI, PI)

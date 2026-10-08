@@ -4,6 +4,8 @@ extends SceneTree
 
 const MainScene: PackedScene = preload("res://scenes/main.tscn")
 const LevelPath: String = "res://scenes/acts/act2/a2_l1.tscn"
+const Scheduler: Script = preload("res://scripts/combat/threat_scheduler.gd")
+const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
 var _checks: int = 0
 var _failures: int = 0
 
@@ -23,10 +25,13 @@ func _run() -> void:
 	_expect(hero.global_position.y >= -0.05 and hero.global_position.y < 0.2 and absf(hero.global_position.z - 2.6) < 0.02 and absf(hero.global_position.x + 1.0) < 0.02, "spawn settles on reachable dry floor without lateral correction")
 	var floors: Array = level.call("floor_regions")
 	_expect(floors.size() == 6, "six authored actual static floor rectangles are exposed")
+	var floor_bindings: Dictionary = level.call("floor_bindings")
+	_expect(floor_bindings.size() == floors.size(), "scheduler floor bindings retain all stable authored IDs")
 	var bodies: Array = []
 	for floor: Dictionary in floors:
 		var body: StaticBody3D = floor["body"] as StaticBody3D
 		bodies.append(body)
+		_expect(floor["collision"] is CollisionShape3D and floor["collision"].get_parent() == body and floor["safe_rect"] == (floor["rect"] as Rect2).grow(-0.002) and floor_bindings[floor["id"]] == {"collision": floor["collision"], "safe_rect": floor["safe_rect"]}, "live request and save bindings use the same collision and authored rectangle")
 		_expect(body != null and body.collision_layer == 1 and body.rotation.is_zero_approx(), "floor witness refers to live same-height unrotated scenery collision")
 	var space: PhysicsDirectSpaceState3D = (game.get("world") as Node3D).get_world_3d().direct_space_state
 	# Downward probes establish dry support; actual capsule travel is tested below.
@@ -42,6 +47,34 @@ func _run() -> void:
 	_expect(not initial.is_empty() and level.snapshot_error(initial).is_empty(), "entered scene captures validated local scenic state")
 	paused = true
 	var frozen: Dictionary = level.snapshot_state()
+	var scheduler: Node3D = Scheduler.new() as Node3D
+	scheduler.name = "OwnedSnapshotProbe"
+	level.add_child(scheduler)
+	_expect(scheduler.call("begin_encounter", "standard", "A2-L1-floor-foundation"), "owned floor transport starts a shared scheduler fixture without any attack")
+	await process_frame
+	var bindings: Dictionary = {"world_root": level, "owners": {}, "floors": floor_bindings}
+	var fingerprint: Dictionary = scheduler.call("collision_fingerprint", level)
+	_expect(not fingerprint.is_empty() and fingerprint["colliders"].size() == 17 and Codec.value_error(fingerprint).is_empty(), "all six floors, ten banks and grounded trunk have finite stable collision fingerprints")
+	var scheduler_saved: Dictionary = scheduler.call("snapshot_state", bindings)
+	_expect(not scheduler_saved.is_empty() and scheduler_saved["reservations"].is_empty(), "published scheduler captures actual owned floor guards at a paused barrier: " + String(scheduler.get("last_snapshot_error")))
+	if OS.get_cmdline_user_args().has("--floor-binding-diagnostic"):
+		for floor: Dictionary in floors:
+			var support: CollisionShape3D = floor["collision"]
+			var box: BoxShape3D = support.shape
+			var actual := Rect2(Vector2(support.global_position.x, support.global_position.z) - Vector2(box.size.x, box.size.z) * 0.5, Vector2(box.size.x, box.size.z))
+			print("Floor binding diagnostic ", floor["id"], " encloses=", actual.encloses(floor["safe_rect"]), " actual=", actual, " authored=", floor["safe_rect"])
+		game.free()
+		paused = false
+		quit(1 if _failures else 0)
+		return
+	var transported_scheduler: Dictionary = JSON.parse_string(JSON.stringify(scheduler_saved, "", true, true))
+	_expect(scheduler.call("restore_state", transported_scheduler, bindings), "owned floor scheduler state survives JSON transport without an attack or clock restart")
+	var bank: StaticBody3D = level.get_node("DryGround/ArrivalEndBank") as StaticBody3D
+	bank.position.x += 0.25
+	var before_bad_geometry: Dictionary = scheduler.call("snapshot_state", bindings)
+	_expect(not scheduler.call("snapshot_error", transported_scheduler, bindings).is_empty() and not scheduler.call("restore_state", transported_scheduler, bindings) and scheduler.call("snapshot_state", bindings) == before_bad_geometry, "changed owned bank geometry rejects scheduler restore without mutation")
+	bank.position.x -= 0.25
+	_expect(scheduler.call("restore_state", transported_scheduler, bindings), "restoring the authored bank geometry admits the original exact floor transport")
 	await create_timer(0.12, true).timeout
 	_expect(level.snapshot_state() == frozen, "pause freezes the owned scenic clock")
 	var roundtrip: Dictionary = JSON.parse_string(JSON.stringify(frozen, "", true, true))
@@ -53,6 +86,14 @@ func _run() -> void:
 	_expect(level.restore_state(posed), "valid independent retreat and eruption state restores")
 	var kit: Dictionary = level.get("_kit")
 	_expect((kit["eruption"] as Node3D).visible and (kit["witnesses"][0] as Node3D).visible, "witness posing does not overwrite independently visible harmless eruption")
+	var retreat_position: Vector3 = (kit["witnesses"][0] as Node3D).position
+	paused = false
+	await _physics_steps(5)
+	paused = true
+	_expect((kit["witnesses"][0] as Node3D).position != retreat_position and float(level.snapshot_state()["local"]["scenic_clock"]) > 0.8, "retreat transforms follow the advancing owned simulation clock in the actual scene")
+	var frozen_retreat: Vector3 = (kit["witnesses"][0] as Node3D).position
+	await create_timer(0.05, true).timeout
+	_expect((kit["witnesses"][0] as Node3D).position == frozen_retreat, "paused retreat keeps its exact authored transform")
 	_expect(level.restore_state(roundtrip) and not (kit["eruption"] as Node3D).visible, "earlier scene snapshot returns eruption to hidden without resources/events")
 	# Atomic rejection compares the exact accepted runtime state immediately
 	# before the rejected input, independent of JSON parser rounding.
@@ -106,6 +147,13 @@ func _run() -> void:
 	_expect(not old_level.request_completion() and old_level.snapshot_state().is_empty(), "exited scene cannot dispatch or capture stale state")
 	await process_frame
 	_expect(not is_instance_valid(old_level) and not is_instance_valid(old_kit) and not is_instance_valid(old_floor), "reset frees prior floor/scenery ownership without surviving nodes")
+	paused = true
+	var fresh_scheduler: Node3D = Scheduler.new() as Node3D
+	fresh_scheduler.name = "OwnedSnapshotProbe"
+	level.add_child(fresh_scheduler)
+	await process_frame
+	var fresh_bindings: Dictionary = {"world_root": level, "owners": {}, "floors": level.call("floor_bindings")}
+	_expect(fresh_scheduler.call("restore_state", transported_scheduler, fresh_bindings) and Codec.same_values(fresh_scheduler.call("snapshot_state", fresh_bindings), transported_scheduler), "new Horsell node instances restore stable scheduler floor state after reset")
 	var candidate: Dictionary = level.snapshot_state()
 	var lost_floor: StaticBody3D = (level.call("floor_regions") as Array)[0]["body"]
 	lost_floor.queue_free()

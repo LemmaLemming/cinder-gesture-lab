@@ -3,7 +3,7 @@
   "asset_id": "A2-RAY-SCOUT-ACTOR-01",
   "type_match": "A2-E1 Ray Scout; existing L1-authored enemy, not equipment/perk/powerup introduction",
   "family": "act2-ray-scout",
-  "readiness": "runtime_target_adapter_isolated_manual_opening_verified_fight_pending",
+  "readiness": "runtime_target_and_snapshot2_prototype_verified_full_ray_fight_pending",
   "authoring_source": "scripts/acts/act2/ray_scout_actor.gd",
   "visual_resource": "scripts/acts/act2/ray_scout_visual.gd",
   "visual_manifest": "assets/acts/act2/ray_scout_manifest.json",
@@ -25,7 +25,7 @@
     "defeated",
     "disarmed"
   ],
-  "simulation_ownership": "Future level/scheduler adapter supplies phase and normalizedprogress/exactworld direction. Actor has no autonomous processing, clocks, damage-to-player, cue or scheduler substitute.",
+  "simulation_ownership": "Level/published scheduler adapter supplies phase and normalized progress/exact world direction. Actor has no autonomous processing, phase clocks, player damage, cue or scheduler substitute. Snapshot transport does not claim a complete saved encounter.",
   "health": {
     "max_hp": 30,
     "status": "provisional_unplaytested",
@@ -43,10 +43,10 @@
     "future A2-O1 parent enemy rearrangement"
   ],
   "limitations": [
-    "Not integrated into the live scene yet",
-    "Manual target-opening fixture is not fight completion",
-    "Future level must compose actor HP/phases with threat deadlines and disarm on exit",
-    "Tracking rays/capsule cues/live shell/presentation pending"
+    "Not integrated into the live encounter yet",
+    "Manual target-opening and actor snapshot fixtures are not fight completion",
+    "Parent must compose actor state with authoritative phase deadlines, locked ray geometry and shared scheduler snapshots; live damage-window expiry is not implemented by actor snapshots",
+    "Shared5 tracking preparing-to-immutable-lock adapter is adopted; its real level consumer and full encounter acceptance are pending"
   ],
   "evidence": {
     "shared_baseline": "15589bfd956e74a659a63e843b1e1430d28227b8",
@@ -54,6 +54,64 @@
     "failures": 0,
     "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_scout_target_smoke.gd",
     "log": ".cinder/a2-l1-scout-target.log",
-    "scope": "Manual recovery only; Heavy ordinary primary at1.8unit reach,0shells, finite/phase/paused/dead/reentry/cleanup guards. No whole exchange claim."
+    "scope": "Prior manual recovery only; Heavy ordinary primary at1.8unit reach,0shells, finite/phase/paused/dead/reentry/cleanup guards. This33-check result predates actor snapshots; no whole exchange claim."
+  },
+  "snapshot": {
+    "api_revision": "act2-ray-scout-snapshot-2",
+    "schema_version": 2,
+    "methods": [
+      "snapshot_state() -> Dictionary",
+      "snapshot_error(snapshot: Dictionary) -> String",
+      "restore_state(snapshot: Dictionary) -> bool"
+    ],
+    "diagnostic": "last_snapshot_error",
+    "fields": [
+      "api_revision",
+      "schema_version",
+      "actor_id",
+      "max_hp",
+      "hp",
+      "phase",
+      "phase_progress",
+      "direction",
+      "root_position",
+      "body_yaw"
+    ],
+    "barrier": "Configured ready same-world actor, paused tree, outside actor damage/snapshot transactions; parent owns the deferred aggregate barrier",
+    "identity": "Stable actor ID and world housing root latch once at configure; snapshot cannot move to a different authored root",
+    "transport": "Finite JSON fields; normalized planar direction triples; finite cosmetic body_yaw in [-PI, PI] with a 0.000001-radian JSON boundary tolerance; HP/defeated phase consistency; exact ten-field schema. The public visual restore validator runs before actor mutation; accepted/returned nested data is defensive.",
+    "restoration": "Restores HP/maxHP/phase/progress/direction, the fixed housing root and the distinct warning-entry cosmetic body-yaw latch through silent visual restore_pose. Fresh lock/active/recovery/defeated rigs do not relatch chassis heading from the later mirror direction. No configuration, attacks, reward, defeat, drop or progression signals. Explicit earlier alive snapshots rewind the actor timeline; defeated snapshots remain silent enemies tombstones until owner tree exit.",
+    "dead_hero": "Valid paused bound shared hero may be dead for aggregate capture/restore. Damage and live phase presentation still reject a dead hero",
+    "retirement": "Disarmed/queued/unbound instances reject capture/validation/restore and cannot reconfigure",
+    "parent_state": "Route/phase deadlines/tracking/locked geometry/reservation identity/active-hit latch/flash clock/defeat progression remain in the validated level aggregate",
+    "max_hp_policy": "Actor validates finite positive maxHP and bounded HP; parent must cross-validate maxHP against the saved resolved role and encounter profile",
+    "status": "Schema2 isolated target and fresh-instance cosmetic latch verified196checks/0failures on shared5; full live exchange aggregate remains pending.",
+    "visual_methods": [
+      "get_body_yaw() -> float",
+      "restore_pose_error(phase: String, progress: float, direction: Vector3, body_yaw: float) -> String",
+      "restore_pose(phase: String, progress: float, direction: Vector3, body_yaw: float, hit_flash: bool = false) -> bool"
+    ],
+    "version_policy": "Unshipped actor schema/API advanced to version2; schema1 or a missing body_yaw rejects atomically. No migration or private shared-schema substitute.",
+    "body_yaw": "Local warning-entry planted chassis heading, separately saved from mirror direction; retained exactly through silent restoration. Canonical [-PI, PI] accepts only a 0.000001-radian serialization boundary tolerance; no wrapping or inferred relatch."
+  },
+  "snapshot_revision_evidence": {
+    "shared_publication": "767b09e7987637d6a5f7495b84ad130e54ff80da / campaign-shared-5",
+    "implementation": "Owned visual/actor/target test and their manifests only; no shared or level-root edits",
+    "static_checks": "JSON/schema/public API/ownership inspection; no engine job run by author",
+    "targeted_command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_scout_target_smoke.gd",
+    "result": "196checks_0failures_exit0_no_script_or_resource_errors",
+    "checks_added": "Fresh instances after warning tracking changes direction restore warning/lock/active/recovery/defeated actual chassis, mirror hinge/swivel, housing and door transforms; subsequent held poses preserve the plant. Malformed/nonfinite/out-of-range yaw rejects without actor or rig mutation. Pre-ready explicit pose restoration retains the latch. Exact negative and positive PI body-yaw JSON boundary round trips restore finite actual chassis orientation.",
+    "checks": 196,
+    "failures": 0,
+    "log": ".cinder/a2-l1-shared5-foundation-scout.log"
+  },
+  "prior_snapshot1_evidence": {
+    "api_revision": "act2-ray-scout-snapshot-1",
+    "schema_version": 1,
+    "checks": 130,
+    "failures": 0,
+    "report_source": "Parent integration owner verified the initial actor snapshot suite before this cosmetic latch revision",
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_scout_target_smoke.gd",
+    "scope": "Historical isolated actual-primary and actor snapshot1 coverage. The source and fresh-restored rigs were not compared after warning mirror tracking changed direction; this result does not validate schema2."
   }
 }
