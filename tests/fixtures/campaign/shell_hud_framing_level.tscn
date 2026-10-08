@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/campaign/shell_hud_framing_level.gd" id="1"]
+
+[node name="TestOnlyShellHUDFraming" type="Node3D"]
+script = ExtResource("1")
+level_id = "A1-L1"
+objective_text = "SHORT"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(2.7, 0.1, 1.6)

@@ -603,6 +603,8 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(player):
 		return
 	_shake = maxf(_shake - delta, 0.0)
+	# Frame against the HUD this frame renders, including newly wrapped text.
+	_update_status()
 	_update_camera(delta)
 	var shake_scale: float = 1.0
 	if fx.has_method("camera_shake_scale"):
@@ -610,7 +612,6 @@ func _process(delta: float) -> void:
 	if _shake > 0.0 and shake_scale > 0.0:
 		camera.position.x += randf_range(-0.035, 0.035) * shake_scale
 		camera.position.z += randf_range(-0.035, 0.035) * shake_scale
-	_update_status()
 
 func _update_status() -> void:
 	if is_instance_valid(player) and is_instance_valid(active_level):

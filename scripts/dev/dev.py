@@ -51,6 +51,7 @@ SUITES = {
     "lunge_preview": "tests/lunge_preview_smoke.gd",
     "camera_framing": "tests/camera_framing_smoke.gd",
     "camera_framing_shell": "tests/camera_framing_shell_smoke.gd",
+    "campaign_shell_hud_framing": "tests/campaign_shell_hud_framing_smoke.gd",
     "player_presentation": "tests/player_presentation_smoke.gd",
     "cues": "tests/cue_smoke.gd",
     "lane_mechanism": "tests/lane_mechanism_smoke.gd",
