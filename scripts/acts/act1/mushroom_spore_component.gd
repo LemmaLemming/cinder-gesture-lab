@@ -82,7 +82,10 @@ func _bind_component_spores() -> void:
 		recipients[id] = sources[id]
 	var field := SporeField.new()
 	field.name = "ComponentMushroom"
-	field.position = Vector3(-1.6, 0, 11) if initial_greybox_room == 0 else Vector3(1.5, 0, -29.5)
+	# Keep the guard's complete possible retreat costume and genuine native
+	# escape/return proof within the fixed portrait. The right low anchor remains
+	# ordinary-primary reachable outside that source's attack cone.
+	field.position = Vector3(-1.6, 0, 11) if initial_greybox_room == 0 else Vector3(0.9, 0, -29.5)
 	if not field.configure(FIELD_ID, [{"id": "cluster-left", "offset": Layout.CLUSTER_OFFSETS[0]}, {"id": "cluster-right", "offset": Layout.CLUSTER_OFFSETS[1]}], {"radius": Layout.FIELD_RADIUS, "duration_s": 3.0, "thinning_s": 0.5}):
 		_component_failed("Component mushroom definition: " + field.last_error)
 		field.free()
