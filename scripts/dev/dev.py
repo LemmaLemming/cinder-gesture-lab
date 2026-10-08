@@ -35,6 +35,7 @@ SUITES = {
     "world_actions": "tests/world_action_smoke.gd",
     "player_snapshot": "tests/player_snapshot_smoke.gd",
     "campaign_persistence": "tests/campaign_persistence_smoke.gd",
+    "exact_json": "tests/exact_json_smoke.gd",
     "settings": "tests/settings_smoke.gd",
     "threat_scheduler": "tests/threat_scheduler_smoke.gd",
     "enemy_snapshot": "tests/enemy_snapshot_smoke.gd",
