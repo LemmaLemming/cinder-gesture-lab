@@ -1,6 +1,6 @@
 class_name CinderLaneMechanism
 extends Node3D
-## Nonenemy stationary loading-arm consumer of the shared finite-lane contract.
+## Nonenemy stationary consumer of shared finite-lane/circle geometry.
 ## Art belongs to the level and may attach here/read state_changed/get_cue().
 ## No hit group, HP, ammo requirement, living-enemy credit or autonomous cycles.
 
@@ -50,17 +50,17 @@ func _ready() -> void:
 	add_child(_cue)
 
 
-func configure(mechanism_id: String, lane: Dictionary, opening_position: Vector3, raw_role: Dictionary = DEFAULT_RAW_ROLE, timing_floors: Dictionary = DEFAULT_TIMING_FLOORS) -> bool:
+func configure(mechanism_id: String, geometry: Dictionary, opening_position: Vector3, raw_role: Dictionary = DEFAULT_RAW_ROLE, timing_floors: Dictionary = DEFAULT_TIMING_FLOORS) -> bool:
 	if _transaction_depth > 0 or _snapshot_busy or is_instance_valid(_scheduler):
 		return _reject("Configure immutable mechanism data before binding")
-	if not _stable_id(mechanism_id) or not Geometry.error(lane).is_empty() or lane.get("kind") != "lane" or not Geometry.finite_vector(opening_position):
-		return _reject("Stable mechanism ID, finite authoritative lane and actual opening position required")
+	if not _stable_id(mechanism_id) or not Geometry.error(geometry).is_empty() or geometry.get("kind") not in ["lane", "circle"] or not Geometry.finite_vector(opening_position):
+		return _reject("Stable mechanism ID, finite authoritative lane/circle and actual opening position required")
 	if not Codec.keys_error(raw_role, DEFAULT_RAW_ROLE.keys()).is_empty() or not Codec.value_error(raw_role).is_empty() or not Codec.keys_error(timing_floors, DEFAULT_TIMING_FLOORS.keys()).is_empty():
 		return _reject("Unsupported raw role or timing-floor schema")
 	var difficulty = Difficulty.new()
 	if difficulty.resolve_role(raw_role, "standard", timing_floors).is_empty():
 		return _reject(difficulty.last_error)
-	var next: Dictionary = {"mechanism_id": mechanism_id, "geometry": Geometry.lane(lane["from"], lane["to"], float(lane["radius"])), "opening_position": opening_position, "raw_role": raw_role.duplicate(true), "timing_floors": timing_floors.duplicate(true)}
+	var next: Dictionary = {"mechanism_id": mechanism_id, "geometry": _copy_geometry(geometry), "opening_position": opening_position, "raw_role": raw_role.duplicate(true), "timing_floors": timing_floors.duplicate(true)}
 	if _configured and next != _configuration:
 		return _reject("Configured raw mechanism data is immutable")
 	_configuration = next
@@ -92,14 +92,19 @@ func bind(scheduler: CinderThreatScheduler, heroes: Dictionary) -> bool:
 	return true
 
 
-func start(hero_id: String, response_context: Dictionary) -> Dictionary:
+func start(hero_id: String, response_context: Dictionary, opening_position: Variant = null) -> Dictionary:
 	last_error = ""
 	if _transaction_depth > 0 or _snapshot_busy or _cancelling or not _live_bindings() or _status == "running" or get_tree().paused or not is_visible_in_tree() or not _cue.is_visible_in_tree() or _cycle >= Codec.MAX_SAFE_INTEGER:
 		return _denied("Start requires an idle live unpaused mechanism outside callbacks")
 	if not _heroes.has(hero_id) or not Codec.keys_error(response_context, RESPONSE_KEYS).is_empty() or not _stable_id(response_context.get("encounter_id")):
 		return _denied("Authored encounter epoch, floor and finite response candidates required")
-	if not global_position.is_equal_approx(_configuration.geometry["from"]):
-		return _denied("The actual mechanism source must remain at its committed lane start")
+	if not global_position.is_equal_approx(_geometry_source(_configuration.geometry)):
+		return _denied("The actual mechanism source must remain at its committed lane start/circle origin")
+	if opening_position != null and not Geometry.finite_vector(opening_position):
+		return _denied("Per-cycle opening position must be an actual finite world Vector3")
+	# A level may supply another actor's committed stopped endpoint. This is a
+	# reachable-position seam; that actor's HP/recovery/custody is level-owned.
+	var cycle_opening: Vector3 = _configuration.opening_position if opening_position == null else opening_position
 	var difficulty = Difficulty.new()
 	var profile: Dictionary = _scheduler.encounter_profile()
 	var resolved: Dictionary = difficulty.resolve_role(_configuration.raw_role, String(profile.get("id", "")), _configuration.timing_floors)
@@ -110,7 +115,7 @@ func start(hero_id: String, response_context: Dictionary) -> Dictionary:
 	for key: String in RESPONSE_KEYS:
 		if key != "encounter_id":
 			response[key] = response_context[key]
-	var threat: Dictionary = {"role": resolved, "geometry": _configuration.geometry.duplicate(true), "source_stationary": true, "opening_stationary": true, "opening_position": _configuration.opening_position, "cooldown_remaining_s": 0.0}
+	var threat: Dictionary = {"role": resolved, "geometry": _configuration.geometry.duplicate(true), "source_stationary": true, "opening_stationary": true, "opening_position": cycle_opening, "cooldown_remaining_s": 0.0}
 	_transaction_depth += 1
 	var answer: Dictionary = _scheduler.request_attack(self, threat, response)
 	if answer.get("accepted", false):
@@ -167,7 +172,7 @@ func state() -> Dictionary:
 			remaining = maxf(float(_exchange[key]) - _scheduler.get_clock(), 0.0)
 	var hits: Array = _hit_ids.keys()
 	hits.sort()
-	return {"api_revision": API_REVISION, "mechanism_id": _configuration.get("mechanism_id", ""), "status": _status, "phase": _phase, "remaining_s": remaining, "cycle": _cycle, "reservation_id": _exchange.get("id", "") if _status == "running" else "", "geometry": _configuration.get("geometry", {}).duplicate(true), "source_position": global_position, "opening_position": _configuration.get("opening_position"), "resolved_role": _resolved_role.duplicate(true), "hit_ids": hits, "last_cancel_reason": _last_cancel_reason}
+	return {"api_revision": API_REVISION, "mechanism_id": _configuration.get("mechanism_id", ""), "status": _status, "phase": _phase, "remaining_s": remaining, "cycle": _cycle, "reservation_id": _exchange.get("id", "") if _status == "running" else "", "geometry": _configuration.get("geometry", {}).duplicate(true), "source_position": global_position, "opening_position": _exchange.get("opening_position", _configuration.get("opening_position")), "resolved_role": _resolved_role.duplicate(true), "hit_ids": hits, "last_cancel_reason": _last_cancel_reason}
 
 
 func _physics_process(_delta: float) -> void:
@@ -337,7 +342,7 @@ func restore_state(snapshot: Dictionary, scheduler_bindings: Dictionary) -> bool
 	_snapshot_busy = true
 	var paired: Dictionary = _scheduler.snapshot_state(scheduler_bindings)
 	last_snapshot_error = _scheduler.last_snapshot_error if paired.is_empty() else _snapshot_plan_error(snapshot, scheduler_bindings, paired, true)
-	if last_snapshot_error.is_empty() and not global_position.is_equal_approx(_configuration.geometry["from"]):
+	if last_snapshot_error.is_empty() and not global_position.is_equal_approx(_geometry_source(_configuration.geometry)):
 		last_snapshot_error = "Apply validated actual mechanism position before scheduler/mechanism commit"
 	if not last_snapshot_error.is_empty():
 		_snapshot_busy = false
@@ -378,7 +383,17 @@ func _encode_configuration() -> Dictionary:
 
 
 func _encode_geometry(shape: Dictionary) -> Dictionary:
+	if shape["kind"] == "circle":
+		return {"kind": "circle", "origin": Codec.vector3(shape["origin"]), "radius": shape.radius}
 	return {"kind": "lane", "from": Codec.vector3(shape["from"]), "to": Codec.vector3(shape["to"]), "radius": shape.radius}
+
+
+func _copy_geometry(shape: Dictionary) -> Dictionary:
+	return Geometry.circle(shape["origin"], float(shape["radius"])) if shape["kind"] == "circle" else Geometry.lane(shape["from"], shape["to"], float(shape["radius"]))
+
+
+func _geometry_source(shape: Dictionary) -> Vector3:
+	return shape["origin"] if shape["kind"] == "circle" else shape["from"]
 
 
 func _encode_exchange(exchange: Dictionary) -> Dictionary:
@@ -395,7 +410,7 @@ func _decode_exchange(exchange: Dictionary) -> Dictionary:
 	if exchange.is_empty():
 		return {}
 	var result: Dictionary = exchange.duplicate(true)
-	result.geometry = Geometry.lane(Codec.read_vector3(exchange.geometry["from"]), Codec.read_vector3(exchange.geometry["to"]), float(exchange.geometry.radius))
+	result.geometry = Geometry.circle(Codec.read_vector3(exchange.geometry["origin"]), float(exchange.geometry.radius)) if exchange.geometry["kind"] == "circle" else Geometry.lane(Codec.read_vector3(exchange.geometry["from"]), Codec.read_vector3(exchange.geometry["to"]), float(exchange.geometry.radius))
 	result.source_position = Codec.read_vector3(exchange.source_position)
 	result.opening_position = Codec.read_vector3(exchange.opening_position)
 	return result
@@ -407,9 +422,9 @@ func _snapshot_plan_error(snapshot: Dictionary, bindings: Dictionary, paired: Di
 		error = Codec.keys_error(snapshot, ["api_revision", "schema_version", "mechanism_id", "configuration", "status", "phase", "cycle", "clock_s", "resolved_role", "exchange_encounter_id", "exchange", "hero_samples", "hit_ids", "last_cancel_reason"])
 	if not error.is_empty():
 		return error
-	if snapshot.api_revision != API_REVISION or not Codec.is_integer(snapshot.schema_version, 1, 1) or snapshot.mechanism_id != _configuration.mechanism_id or not snapshot.configuration is Dictionary or not Codec.same_values(snapshot.configuration, _encode_configuration()) or not Codec.is_integer(snapshot.cycle) or snapshot.status not in ["idle", "running", "cancelled", "complete"] or not snapshot.phase is String or not snapshot.resolved_role is Dictionary or not snapshot.exchange is Dictionary or not snapshot.hero_samples is Dictionary or not snapshot.hit_ids is Array or not snapshot.last_cancel_reason is String or not snapshot.exchange_encounter_id is String:
+	if snapshot.api_revision != API_REVISION or not Codec.is_integer(snapshot.schema_version, 1, 1) or snapshot.mechanism_id != _configuration.mechanism_id or not snapshot.configuration is Dictionary or not _same_exact(snapshot.configuration, _encode_configuration()) or not Codec.is_integer(snapshot.cycle) or snapshot.status not in ["idle", "running", "cancelled", "complete"] or not snapshot.phase is String or not snapshot.resolved_role is Dictionary or not snapshot.exchange is Dictionary or not snapshot.hero_samples is Dictionary or not snapshot.hit_ids is Array or not snapshot.last_cancel_reason is String or not snapshot.exchange_encounter_id is String:
 		return "Invalid immutable mechanism identity/configuration/schema"
-	if not Codec.is_number(snapshot.clock_s) or not is_equal_approx(float(snapshot.clock_s), float(paired.clock_s)) or not bindings.get("owners") is Dictionary or bindings.owners.get(_configuration.mechanism_id) != self:
+	if not Codec.is_number(snapshot.clock_s) or float(snapshot.clock_s) != float(paired.clock_s) or not bindings.get("owners") is Dictionary or bindings.owners.get(_configuration.mechanism_id) != self:
 		return "Mechanism must share the actual/staged scheduler clock and stable source binding"
 	if bindings.has("hero_positions") and not bindings.hero_positions is Dictionary:
 		return "Staged hero_positions must name finite actual actor positions"
@@ -428,13 +443,13 @@ func _snapshot_plan_error(snapshot: Dictionary, bindings: Dictionary, paired: Di
 	if not Codec.is_integer(snapshot.cycle, 1) or not _stable_id(snapshot.exchange_encounter_id) or not Codec.keys_error(snapshot.exchange, EXCHANGE_KEYS).is_empty():
 		return "Executed mechanism requires its finite cycle and exact committed exchange"
 	var exchange: Dictionary = snapshot.exchange
-	if not exchange.id is String or not exchange.id.begins_with("threat-") or not Codec.is_vector3(exchange.source_position) or not Codec.is_vector3(exchange.opening_position) or not exchange.geometry is Dictionary or not Codec.same_values(exchange.geometry, _encode_geometry(_configuration.geometry)) or not Codec.same_values(exchange.source_position, Codec.vector3(_configuration.geometry["from"])) or not Codec.same_values(exchange.opening_position, Codec.vector3(_configuration.opening_position)) or not exchange.profile_id is String or not Codec.is_integer(exchange.world_revision, 1):
-		return "Committed source/lane/opening no longer matches actual mechanism configuration"
+	if not exchange.id is String or not exchange.id.begins_with("threat-") or not Codec.is_vector3(exchange.source_position) or not Codec.is_vector3(exchange.opening_position) or not exchange.geometry is Dictionary or not _same_exact(exchange.geometry, _encode_geometry(_configuration.geometry)) or not Codec.read_vector3(exchange.source_position).is_equal_approx(_geometry_source(_configuration.geometry)) or not exchange.profile_id is String or not Codec.is_integer(exchange.world_revision, 1):
+		return "Committed source/geometry/opening no longer matches actual mechanism configuration"
 	if not exchange.id.substr(7).is_valid_int() or not Codec.is_integer(int(exchange.id.substr(7)), 1) or exchange.id != "threat-%d" % int(exchange.id.substr(7)):
 		return "Committed reservation ID must preserve its exact finite scheduler serial"
 	var difficulty = Difficulty.new()
 	var resolved: Dictionary = difficulty.resolve_role(_configuration.raw_role, exchange.profile_id, _configuration.timing_floors)
-	if resolved.is_empty() or not Codec.same_values(snapshot.resolved_role, resolved):
+	if resolved.is_empty() or not _same_exact(snapshot.resolved_role, resolved):
 		return "Saved role must resolve once from immutable raw data and its catalogue profile"
 	for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
 		if not Codec.in_range(exchange[key], 0.0, 1000000000.0):
@@ -442,13 +457,13 @@ func _snapshot_plan_error(snapshot: Dictionary, bindings: Dictionary, paired: Di
 	var active_from: float = float(exchange.start_s) + float(resolved.windup_s)
 	var expected: Dictionary = {"lock_from_s": active_from - float(resolved.lock_s), "active_from_s": active_from, "active_until_s": active_from + float(resolved.active_s), "recovery_until_s": active_from + float(resolved.active_s) + float(resolved.recovery_s), "cooldown_until_s": active_from + float(resolved.attack_interval_s)}
 	for key: String in expected:
-		if not is_equal_approx(float(exchange[key]), float(expected[key])):
+		if float(exchange[key]) != float(expected[key]):
 			return "Saved deadlines disagree with the original resolved cycle"
 	if snapshot.status == "running":
 		if owned.is_empty() or snapshot.exchange_encounter_id != paired.encounter_id or snapshot.phase != _phase_at(float(snapshot.clock_s), _decode_exchange(exchange)) or not snapshot.last_cancel_reason.is_empty():
 			return "Running phase requires the same actually/staged reserved encounter"
 		for key: String in EXCHANGE_KEYS:
-			if not Codec.same_values(exchange[key], owned[key]):
+			if not _same_exact(exchange[key], owned[key]):
 				return "Running mechanism and scheduler reservation disagree"
 	else:
 		if snapshot.phase != "clear" or not owned.is_empty():
@@ -460,7 +475,7 @@ func _snapshot_plan_error(snapshot: Dictionary, bindings: Dictionary, paired: Di
 	if snapshot.exchange_encounter_id == paired.encounter_id and float(exchange.cooldown_until_s) > float(snapshot.clock_s):
 		var has_cooldown: bool = false
 		for cooldown: Dictionary in paired.cooldowns:
-			if cooldown.source_id == _configuration.mechanism_id and is_equal_approx(float(cooldown.ready_s), float(exchange.cooldown_until_s)):
+			if cooldown.source_id == _configuration.mechanism_id and float(cooldown.ready_s) == float(exchange.cooldown_until_s):
 				has_cooldown = true
 		if not has_cooldown:
 			return "Cancelled/live cycle cannot refresh its original source cooldown"
@@ -473,7 +488,7 @@ func _snapshot_plan_error(snapshot: Dictionary, bindings: Dictionary, paired: Di
 		if snapshot.status == "running":
 			var hero: CinderPlayer = _heroes[id]
 			var position: Vector3 = hero.global_position if actual_heroes else bindings.get("hero_positions", {}).get(id, hero.global_position)
-			if not is_equal_approx(float(sample.clock_s), float(snapshot.clock_s)) or not Codec.read_vector3(sample.position).is_equal_approx(position):
+			if float(sample.clock_s) != float(snapshot.clock_s) or Codec.read_vector3(sample.position) != position:
 				return "Running hero path sample must match the same actual/staged actor tick"
 	var seen: Dictionary = {}
 	for id: Variant in snapshot.hit_ids:
@@ -483,3 +498,25 @@ func _snapshot_plan_error(snapshot: Dictionary, bindings: Dictionary, paired: Di
 		if float(snapshot.hero_samples[id].clock_s) < float(exchange.active_from_s):
 			return "A hero opportunity cannot be consumed before the active interval"
 	return ""
+
+
+func _same_exact(left: Variant, right: Variant) -> bool:
+	# Legacy full-precision JSON may change int representation, never a copied
+	# clock, immutable field or reservation identity. No epsilon for transport.
+	if Codec.is_number(left) and Codec.is_number(right):
+		return float(left) == float(right)
+	if left is Dictionary and right is Dictionary:
+		if left.size() != right.size():
+			return false
+		for key: String in left:
+			if not right.has(key) or not _same_exact(left[key], right[key]):
+				return false
+		return true
+	if left is Array and right is Array:
+		if left.size() != right.size():
+			return false
+		for index: int in range(left.size()):
+			if not _same_exact(left[index], right[index]):
+				return false
+		return true
+	return typeof(left) == typeof(right) and left == right

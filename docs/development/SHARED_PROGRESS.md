@@ -1,6 +1,6 @@
 # Cinder shared progress
 
-Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current published API: campaign-shared-15 [SHARED_CONTRACT](SHARED_CONTRACT.md).
+Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current published API: campaign-shared-16 [SHARED_CONTRACT](SHARED_CONTRACT.md).
 
 ## Inventory and ownership
 
@@ -273,3 +273,14 @@ New replay-capture-gate-1 binds one exact shared Player and encounter epoch, dra
 Independent review found and repaired a material post-callback gap: genuine damage, gear changes and started/buffered movement do not necessarily publish a completed action. The gate now verifies the exact full live paused player after callbacks while retaining its transaction guard; violations retain retirement and visibly fault the consumer. Failure-handler reentry also rejects. Final leaf112/0, exit0, .cinder/replay-capture-gate-boundary-second.log and absolute engine log; no Script/Parse/runtime errors, existing host CA startup diagnostic retained. Prior69/0 covered only publication callbacks; initial extended112/7 corrected native-history encoding and actual combo-window fixture setup, no production clocks/guards relaxed. Frozen modules/UIDs and local documentation links reviewed.
 
 This additive parent gate changes no existing capture/sequence/cursor/witness/playback/Player or Scheduler behavior; no unused baseline suites repeated. Named dev target maps to the exact tested new fixture. It does not prove/reserve/bind physical playback itself, implement a Crystalman/Echo encounter, certify a portrait/full route, or register a level. Those remain the actual owner's consumer integration obligations. Circle consumer and pure lunge preview candidates are excluded from this publication. One of24 accepted; goal ACTIVE.
+
+Exact shared15 `88529f0f75d109be3fc9f7837dc093c55a5c31e7` atomically published to canonical run/status and three recipient responses. All three workers active at publication check; A2 default route passed and final Challenge timing check precedes HANDOFF; A3 affected first-pocket retry queued.
+
+
+## Shared16 circular stationary mechanism
+
+Act1-L2 REQUESTd02f12e5 is resolved by a compatible extension of the existing HP-free CinderLaneMechanism: canonical circles alongside existing lanes, optional finite per-cycle opening_position derived by the parent from the actual committed rusher, and exact accepted exchange serialization/restoration with no schema addition. Existing default lane callers remain unchanged. Scheduler clocks/union/budget/stagger stay authoritative; actual hero segments consume a single latched damage opportunity. The actual rusher actor/HP/recovery/binding obligation remains level-owned. No new gear/ability/ledger allocation.
+
+Frozen mechanism target152/0 against unpublished preview Scheduler7684 first; independent same target152/0 against exact published15 Scheduler808d56b also passed. Systems preserved candidate bytes in /tmp and restored them byte-identically in a finally block, no checkout/reset/staging. All previous79 lane cases retained. Actual circle crossing/invulnerable opportunity, exact paused continuation/forgeries, two-circle stagger/budget, and actual wall-shortened real rusher recovery plus zero-ammo ordinary primary are tested. First typed-class fixture parse error remains diagnostic; existing native host CA startup noise is disclosed. Independent review found no material implementation flaw; qualified legacy decimal compatibility to require exact preserved floating identities.
+
+Act2 HANDOFFb56eaa6b for candidatea96edfaddd22e206438e616a8b4080e5c5cdce7a/shared13 was received during publication work. Its whole six-prefix branch content (not just last records commit) is under scoped source/evidence/actual-portrait review. No acceptance yet; A1-L1 remains1/24. Pure lunge preview candidate excluded from this circle publication.

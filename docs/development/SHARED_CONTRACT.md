@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-15** (8 October 2026), adding the parent capture retirement gate to shared-14 translated motion, shared-13 staged collision, shared-12 camera and shared-11 physical replay. `campaign-level-1` and `world-actions-1` remain compatible. Authored Crystalman/Echo encounters and their portrait evidence remain separate dependencies. Integration owns shared runtime. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
+Revision: **campaign-shared-16** (8 October 2026), adding circular stationary consumers and per-cycle opening positions to shared-15 capture retirement, shared-14 translated motion and shared-12 portrait framing. `campaign-level-1` and `world-actions-1` remain compatible. Authored Crystalman/Echo encounters and their portrait evidence remain separate dependencies. Integration owns shared runtime. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
 
 ## Staged collision for an earlier live lunge source
 
@@ -374,3 +374,10 @@ Named queue command: `python3 scripts/dev/dev.py test body_sweep`. The separate 
 Existing `body-sweep-1`, real-body lunge and scheduler snapshot schemas remain compatible. Sweep and actual lunge paths derive substeps from the original committed line to avoid cumulative float32 world-position additions. Pure preflight still queries the actual retained body and runtime still uses actual native collision motion. Only represented position/route arithmetic uses a bounded coordinate ULP allowance; copied clocks, deadlines, identities, body dimensions and vertical/contact checks stay strict. Native saved positions must remain finite within ±512m. Read [body sweep](BODY_SWEEP.md) for the reproduced authored diagnostic, numerical bound and focused evidence.
 
 New named target `translated_lunge` passed294 checks; directly affected body62/motion19/adapter35/snapshot35/staged62/repulsion95/witness60 passed with no failures. Actual Act3 first-pocket and multi-fatal continuation remain the worker's required adoption checks. This compatible correction does not add a preview API or claim camera admission; the new pure preview and circular environmental consumer requests remain separate dependencies owned by integration.
+
+
+## Shared16 circular environmental consumer
+
+Existing CinderLaneMechanism and lane-mechanism-1/schema1 now accept canonical lane or circle geometry; legacy lane calls remain compatible. Optional `start(hero_id, response_context, opening_position = null)` supplies a finite explicit ordinary-primary opening for that cycle; omitted uses the immutable configured default. The accepted exact opening already lives in the scheduler/consumer exchange and survives quiet paired restore, without a new snapshot field. Actual rusher custody, HP, recovery and its endpoint remain the authored parent's independently validated aggregate obligation. The vector seam alone does not establish that an enemy can be hit.
+
+Read [stationary mechanism](LANE_MECHANISM.md). Shared scheduler owns clocks, union budget/stagger and response proof; the consumer keeps native circle cues and sampled actual-player segments with one latched hit opportunity per cycle. No HP/attackable group, timer fork, auto-cycle, new player ability or equipment allocation is added. Exact copied deadlines/samples/identity validate through ExactJson; older decimal data is accepted only when those values survive exactly. Targeted152/0 passed independently against the exact published15 Scheduler. Actual authored L2/full-route/portrait integration remains required.
