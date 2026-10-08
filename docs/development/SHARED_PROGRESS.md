@@ -1,6 +1,6 @@
 # Cinder shared progress
 
-Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current API: campaign-shared-3 [SHARED_CONTRACT](SHARED_CONTRACT.md).
+Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current API: campaign-shared-4 [SHARED_CONTRACT](SHARED_CONTRACT.md).
 
 ## Inventory and ownership
 
@@ -101,3 +101,17 @@ The live shell tests actually restore low HP/zero ammo, enemy phase/clocks/HP, s
 Corrections found by targeted checks: enemy test JSON had used shortened float transport near a phase boundary (now matches production full precision); effect test compared a float32 engine property to a double exactly (now approximate comparison); initial shell reparent correctly invoked level exit (now reveal same staged world); typed/unchanged invalid-state test fixtures corrected. Earlier failed checks are retained in the factual work history; current logs reflect repaired targeted runs.
 
 Shared3 portrait evidence: eight actual 540×1170 UI/HUD/fixture renders, including readiness-gated Title, all 24 Journey nodes, settings/credits, actual four-slot replay preview and the three selected concept silhouettes. Root reviewed native gallery and captures. Optional/main buttons now preserve at least eight pixels of separation; completed current nodes (including final main) expose replay, while Title keeps Continue Story. Campaign HUD says RETRY. Act1 request a99371e3's shared preview contrast issue is addressed by a dark objective backplate and dark normal text on the pale primary button. These are shared fixtures, not accepted act art or human campaign playtests.
+
+Exact shared3 publication: `dcc7a3a735b2ef00f7b5e9fd5b74320d8db69b32`. Canonical run and immutable responses announce availability; worker baselines change only on their own adoption acknowledgments.
+
+## Shared stationary consumer publication4
+
+All three workers explicitly acknowledged shared3 adoption: Act1 9a4ef563, Act2 faaface0 and Act3 11e1478f; actual assigned checkout ancestry was independently verified. Resulting owned heads are recorded in canonical run, preserving Act2/3 owned commits.
+
+Loading-arm lane-mechanism-1 passed79 targeted checks, including actual dash crossings, armor/empty-ammo baseline response, one opportunity per cycle, required cue geometry drift cancellation, full-precision paused warning/active/recovery/cancellation pairs and exact restored mid-dash path/landing/time. Act1's original request630692a0 is resolved at the shared consumer level; its authored arm art/beat/checkpoint composition remains its responsibility.
+
+Act2 faaface0 clarifies Scout timing: tracking0.45, full locked lead1.10, active0.16 and recovery1.60. The previous0.80 lock was rejected by its conservative response arithmetic. The actual stationary source uses move_speed0; resolver support now retains true zero in every profile and rejects negative speed. Affected scheduler/profile69checks passed; no fakepositive speed is needed. Tracking adapter still must be separately tested/published, and its returned quantized deadlines remain authoritative.
+
+The independent physical lunge helper initially passed planning but failed two actual wall-landings: a coarse full sweep and small physics steps found different numeric contact fractions. The repaired helper keeps the0.005m tolerance and uses bounded matching0.05m virtual/actual sweeps. It also guards real capsule/axis locks/source pose/velocity. Targeted result is13checks/0failures, not yet scheduler integration/act fairness acceptance.
+
+Root remains the point of contact, with mailbox checks and quiet monitoring. Full goal remains active and all24 real levels await individual acceptance. No full-suite rerun after baseline.

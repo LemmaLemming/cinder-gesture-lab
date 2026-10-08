@@ -37,10 +37,13 @@ func resolve_role(raw_role: Dictionary, profile_id: String, timing_floors: Dicti
 	if raw_role.has("difficulty_schema") or raw_role.has("difficulty_profile"):
 		last_error = "Resolve from raw role values, not an already resolved profile"
 		return {}
-	for key: String in ["raw_damage", "windup_s", "lock_s", "active_s", "recovery_s", "attack_interval_s", "max_hp", "move_speed"]:
+	for key: String in ["raw_damage", "windup_s", "lock_s", "active_s", "recovery_s", "attack_interval_s", "max_hp"]:
 		if not _number(raw_role.get(key)) or float(raw_role[key]) <= 0.0:
 			last_error = "Missing positive raw role value: " + key
 			return {}
+	if not _number(raw_role.get("move_speed")) or float(raw_role["move_speed"]) < 0.0:
+		last_error = "Finite nonnegative raw move_speed required; zero is a stationary role"
+		return {}
 	for key: String in ["windup_s", "lock_s", "recovery_s"]:
 		if not _number(timing_floors.get(key)) or float(timing_floors[key]) <= 0.0:
 			last_error = "Explicit positive timing floor required: " + key
