@@ -45,6 +45,13 @@ func _test_profiles() -> void:
 	var copied: Dictionary = difficulty.profile("assisted")
 	copied["raw_damage_multiplier"] = 99
 	_expect(_near(difficulty.profile("assisted")["raw_damage_multiplier"], 0.7), "returned profile cannot mutate canonical resolver state")
+	var stationary: Dictionary = raw.duplicate(true)
+	stationary["move_speed"] = 0.0
+	for profile_id: String in ["assisted", "standard", "challenge"]:
+		var resolved: Dictionary = difficulty.resolve_role(stationary, profile_id, floors)
+		_expect(not resolved.is_empty() and resolved["move_speed"] == 0.0 and resolved["raw_role"]["move_speed"] == 0.0, "stationary source retains genuine zero speed across " + profile_id)
+	stationary["move_speed"] = -0.1
+	_expect(difficulty.resolve_role(stationary, "standard", floors).is_empty(), "negative approach speed cannot masquerade as a stationary role")
 
 
 func _test_geometry() -> void:

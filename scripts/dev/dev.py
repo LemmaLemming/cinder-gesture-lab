@@ -46,6 +46,7 @@ SUITES = {
     "campaign_shell": "tests/campaign_shell_smoke.gd",
     "player_presentation": "tests/player_presentation_smoke.gd",
     "cues": "tests/cue_smoke.gd",
+    "lane_mechanism": "tests/lane_mechanism_smoke.gd",
 }
 SLOT_PORTS = {
     "integration": (6005, 6006, 6007),
