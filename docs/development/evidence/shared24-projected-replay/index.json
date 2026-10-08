@@ -1,0 +1,2192 @@
+{
+  "schema_version": 1,
+  "publication_status": "reviewed/native-targets-complete",
+  "api_revision": "campaign-shared-24 (proposed; archive does not establish publication)",
+  "tested_engine": "4.7.2.stable.official.ed1daf0bf",
+  "scope": "Named shared Footprint/Cue/projected Playback plus directly affected ordinary Cue/Playback native fixtures only. No full import graph, authored boss/level clear, portrait, human input/balance, production save, mobile or performance acceptance.",
+  "source_groups": {
+    "replay-original": {
+      "receipt": "sources/replay-original/manifest.json",
+      "files": {
+        "scripts/combat/replay_playback.gd": "sources/replay-original/scripts/combat/replay_playback.gd",
+        "scripts/cues/threat_cue.gd": "sources/replay-original/scripts/cues/threat_cue.gd",
+        "scripts/combat/threat_scheduler.gd": "sources/replay-original/scripts/combat/threat_scheduler.gd",
+        "scripts/combat/threat_geometry.gd": "sources/replay-original/scripts/combat/threat_geometry.gd",
+        "scripts/cues/cue_mesh.gd": "sources/replay-original/scripts/cues/cue_mesh.gd",
+        "scripts/player.gd": "sources/replay-original/scripts/player.gd",
+        "scripts/combat/action_capture.gd": "sources/replay-original/scripts/combat/action_capture.gd",
+        "scripts/combat/replay_sequence.gd": "sources/replay-original/scripts/combat/replay_sequence.gd",
+        "scripts/combat/replay_cursor.gd": "sources/replay-original/scripts/combat/replay_cursor.gd",
+        "scripts/combat/replay_witness.gd": "sources/replay-original/scripts/combat/replay_witness.gd",
+        "scripts/campaign/exact_json.gd": "sources/replay-original/scripts/campaign/exact_json.gd",
+        "scripts/campaign/snapshot_codec.gd": "sources/replay-original/scripts/campaign/snapshot_codec.gd",
+        "scripts/combat/replay_footprint.gd": "sources/replay-original/scripts/combat/replay_footprint.gd",
+        "tests/projected_replay_smoke.gd": "sources/replay-original/tests/projected_replay_smoke.gd",
+        "tests/projected_replay_smoke.gd.uid": "sources/replay-original/tests/projected_replay_smoke.gd.uid"
+      },
+      "source_count": 15,
+      "completeness": "Explicit snapshot subset only; no full import-graph or project-cache/settings claim"
+    },
+    "replay-first": {
+      "receipt": "sources/replay-first/manifest.json",
+      "files": {
+        "scripts/combat/replay_playback.gd": "sources/replay-first/scripts/combat/replay_playback.gd",
+        "scripts/cues/threat_cue.gd": "sources/replay-first/scripts/cues/threat_cue.gd",
+        "scripts/combat/threat_scheduler.gd": "sources/replay-first/scripts/combat/threat_scheduler.gd",
+        "scripts/combat/threat_geometry.gd": "sources/replay-first/scripts/combat/threat_geometry.gd",
+        "scripts/cues/cue_mesh.gd": "sources/replay-first/scripts/cues/cue_mesh.gd",
+        "scripts/player.gd": "sources/replay-first/scripts/player.gd",
+        "scripts/combat/action_capture.gd": "sources/replay-first/scripts/combat/action_capture.gd",
+        "scripts/combat/replay_sequence.gd": "sources/replay-first/scripts/combat/replay_sequence.gd",
+        "scripts/combat/replay_cursor.gd": "sources/replay-first/scripts/combat/replay_cursor.gd",
+        "scripts/combat/replay_witness.gd": "sources/replay-first/scripts/combat/replay_witness.gd",
+        "scripts/campaign/exact_json.gd": "sources/replay-first/scripts/campaign/exact_json.gd",
+        "scripts/campaign/snapshot_codec.gd": "sources/replay-first/scripts/campaign/snapshot_codec.gd",
+        "scripts/combat/replay_footprint.gd": "sources/replay-first/scripts/combat/replay_footprint.gd",
+        "tests/projected_replay_smoke.gd": "sources/replay-first/tests/projected_replay_smoke.gd",
+        "tests/projected_replay_smoke.gd.uid": "sources/replay-first/tests/projected_replay_smoke.gd.uid"
+      },
+      "source_count": 15,
+      "completeness": "Explicit snapshot subset only; no full import-graph or project-cache/settings claim"
+    },
+    "replay-second": {
+      "receipt": "sources/replay-second/manifest.json",
+      "files": {
+        "scripts/combat/replay_playback.gd": "sources/replay-second/scripts/combat/replay_playback.gd",
+        "scripts/cues/threat_cue.gd": "sources/replay-second/scripts/cues/threat_cue.gd",
+        "scripts/combat/threat_scheduler.gd": "sources/replay-second/scripts/combat/threat_scheduler.gd",
+        "scripts/combat/threat_geometry.gd": "sources/replay-second/scripts/combat/threat_geometry.gd",
+        "scripts/cues/cue_mesh.gd": "sources/replay-second/scripts/cues/cue_mesh.gd",
+        "scripts/player.gd": "sources/replay-second/scripts/player.gd",
+        "scripts/combat/action_capture.gd": "sources/replay-second/scripts/combat/action_capture.gd",
+        "scripts/combat/replay_sequence.gd": "sources/replay-second/scripts/combat/replay_sequence.gd",
+        "scripts/combat/replay_cursor.gd": "sources/replay-second/scripts/combat/replay_cursor.gd",
+        "scripts/combat/replay_witness.gd": "sources/replay-second/scripts/combat/replay_witness.gd",
+        "scripts/campaign/exact_json.gd": "sources/replay-second/scripts/campaign/exact_json.gd",
+        "scripts/campaign/snapshot_codec.gd": "sources/replay-second/scripts/campaign/snapshot_codec.gd",
+        "scripts/combat/replay_footprint.gd": "sources/replay-second/scripts/combat/replay_footprint.gd",
+        "tests/projected_replay_smoke.gd": "sources/replay-second/tests/projected_replay_smoke.gd",
+        "tests/projected_replay_smoke.gd.uid": "sources/replay-second/tests/projected_replay_smoke.gd.uid"
+      },
+      "source_count": 15,
+      "completeness": "Explicit snapshot subset only; no full import-graph or project-cache/settings claim"
+    },
+    "replay-third": {
+      "receipt": "sources/replay-third/manifest.json",
+      "files": {
+        "scripts/combat/replay_playback.gd": "sources/replay-third/scripts/combat/replay_playback.gd",
+        "scripts/cues/threat_cue.gd": "sources/replay-third/scripts/cues/threat_cue.gd",
+        "scripts/combat/threat_scheduler.gd": "sources/replay-third/scripts/combat/threat_scheduler.gd",
+        "scripts/combat/threat_geometry.gd": "sources/replay-third/scripts/combat/threat_geometry.gd",
+        "scripts/cues/cue_mesh.gd": "sources/replay-third/scripts/cues/cue_mesh.gd",
+        "scripts/player.gd": "sources/replay-third/scripts/player.gd",
+        "scripts/combat/action_capture.gd": "sources/replay-third/scripts/combat/action_capture.gd",
+        "scripts/combat/replay_sequence.gd": "sources/replay-third/scripts/combat/replay_sequence.gd",
+        "scripts/combat/replay_cursor.gd": "sources/replay-third/scripts/combat/replay_cursor.gd",
+        "scripts/combat/replay_witness.gd": "sources/replay-third/scripts/combat/replay_witness.gd",
+        "scripts/campaign/exact_json.gd": "sources/replay-third/scripts/campaign/exact_json.gd",
+        "scripts/campaign/snapshot_codec.gd": "sources/replay-third/scripts/campaign/snapshot_codec.gd",
+        "scripts/combat/replay_footprint.gd": "sources/replay-third/scripts/combat/replay_footprint.gd",
+        "tests/projected_replay_smoke.gd": "sources/replay-third/tests/projected_replay_smoke.gd",
+        "tests/projected_replay_smoke.gd.uid": "sources/replay-third/tests/projected_replay_smoke.gd.uid"
+      },
+      "source_count": 15,
+      "completeness": "Explicit snapshot subset only; no full import-graph or project-cache/settings claim"
+    },
+    "replay-fourth": {
+      "receipt": "sources/replay-fourth/manifest.json",
+      "files": {
+        "scripts/combat/replay_playback.gd": "sources/replay-fourth/scripts/combat/replay_playback.gd",
+        "scripts/cues/threat_cue.gd": "sources/replay-fourth/scripts/cues/threat_cue.gd",
+        "scripts/combat/threat_scheduler.gd": "sources/replay-fourth/scripts/combat/threat_scheduler.gd",
+        "scripts/combat/threat_geometry.gd": "sources/replay-fourth/scripts/combat/threat_geometry.gd",
+        "scripts/cues/cue_mesh.gd": "sources/replay-fourth/scripts/cues/cue_mesh.gd",
+        "scripts/player.gd": "sources/replay-fourth/scripts/player.gd",
+        "scripts/combat/action_capture.gd": "sources/replay-fourth/scripts/combat/action_capture.gd",
+        "scripts/combat/replay_sequence.gd": "sources/replay-fourth/scripts/combat/replay_sequence.gd",
+        "scripts/combat/replay_cursor.gd": "sources/replay-fourth/scripts/combat/replay_cursor.gd",
+        "scripts/combat/replay_witness.gd": "sources/replay-fourth/scripts/combat/replay_witness.gd",
+        "scripts/campaign/exact_json.gd": "sources/replay-fourth/scripts/campaign/exact_json.gd",
+        "scripts/campaign/snapshot_codec.gd": "sources/replay-fourth/scripts/campaign/snapshot_codec.gd",
+        "scripts/combat/replay_footprint.gd": "sources/replay-fourth/scripts/combat/replay_footprint.gd",
+        "tests/projected_replay_smoke.gd": "sources/replay-fourth/tests/projected_replay_smoke.gd",
+        "tests/projected_replay_smoke.gd.uid": "sources/replay-fourth/tests/projected_replay_smoke.gd.uid"
+      },
+      "source_count": 15,
+      "completeness": "Explicit snapshot subset only; no full import-graph or project-cache/settings claim"
+    },
+    "cue-first": {
+      "receipt": "sources/cue-first/index.json",
+      "files": {
+        "scripts/cues/threat_cue.gd": "sources/cue-first/scripts/cues/threat_cue.gd",
+        "scripts/combat/replay_playback.gd": "sources/cue-first/scripts/combat/replay_playback.gd",
+        "scripts/combat/replay_footprint.gd": "sources/cue-first/scripts/combat/replay_footprint.gd",
+        "tests/projected_cue_smoke.gd": "sources/cue-first/tests/projected_cue_smoke.gd",
+        "tests/projected_cue_smoke.gd.uid": "sources/cue-first/tests/projected_cue_smoke.gd.uid"
+      },
+      "source_count": 5,
+      "completeness": "Explicit snapshot subset only; no full import-graph or project-cache/settings claim"
+    },
+    "cue-second": {
+      "receipt": "sources/cue-second/index.json",
+      "files": {
+        "scripts/cues/threat_cue.gd": "sources/cue-second/scripts/cues/threat_cue.gd",
+        "scripts/combat/replay_playback.gd": "sources/cue-second/scripts/combat/replay_playback.gd",
+        "scripts/combat/replay_footprint.gd": "sources/cue-second/scripts/combat/replay_footprint.gd",
+        "tests/projected_cue_smoke.gd": "sources/cue-second/tests/projected_cue_smoke.gd",
+        "tests/projected_cue_smoke.gd.uid": "sources/cue-second/tests/projected_cue_smoke.gd.uid"
+      },
+      "source_count": 5,
+      "completeness": "Explicit snapshot subset only; no full import-graph or project-cache/settings claim"
+    },
+    "cue-third": {
+      "receipt": "sources/cue-third/index.json",
+      "files": {
+        "scripts/cues/threat_cue.gd": "sources/cue-third/scripts/cues/threat_cue.gd",
+        "scripts/combat/replay_playback.gd": "sources/cue-third/scripts/combat/replay_playback.gd",
+        "scripts/combat/replay_footprint.gd": "sources/cue-third/scripts/combat/replay_footprint.gd",
+        "tests/projected_cue_smoke.gd": "sources/cue-third/tests/projected_cue_smoke.gd",
+        "tests/projected_cue_smoke.gd.uid": "sources/cue-third/tests/projected_cue_smoke.gd.uid"
+      },
+      "source_count": 5,
+      "completeness": "Explicit snapshot subset only; no full import-graph or project-cache/settings claim"
+    },
+    "cue-final": {
+      "receipt": "sources/cue-final/index.json",
+      "files": {
+        "scripts/cues/threat_cue.gd": "sources/cue-final/scripts/cues/threat_cue.gd",
+        "scripts/combat/replay_playback.gd": "sources/cue-final/scripts/combat/replay_playback.gd",
+        "scripts/combat/replay_footprint.gd": "sources/cue-final/scripts/combat/replay_footprint.gd",
+        "tests/projected_cue_smoke.gd": "sources/cue-final/tests/projected_cue_smoke.gd",
+        "tests/projected_cue_smoke.gd.uid": "sources/cue-final/tests/projected_cue_smoke.gd.uid"
+      },
+      "source_count": 5,
+      "completeness": "Explicit snapshot subset only; no full import-graph or project-cache/settings claim"
+    },
+    "legacy": {
+      "receipt": "sources/legacy/manifest.json",
+      "files": {
+        "scripts/combat/replay_playback.gd": "sources/legacy/scripts/combat/replay_playback.gd",
+        "scripts/cues/threat_cue.gd": "sources/legacy/scripts/cues/threat_cue.gd",
+        "scripts/combat/threat_scheduler.gd": "sources/legacy/scripts/combat/threat_scheduler.gd",
+        "scripts/combat/threat_geometry.gd": "sources/legacy/scripts/combat/threat_geometry.gd",
+        "scripts/cues/cue_mesh.gd": "sources/legacy/scripts/cues/cue_mesh.gd",
+        "scripts/player.gd": "sources/legacy/scripts/player.gd",
+        "scripts/combat/action_capture.gd": "sources/legacy/scripts/combat/action_capture.gd",
+        "scripts/combat/replay_sequence.gd": "sources/legacy/scripts/combat/replay_sequence.gd",
+        "scripts/combat/replay_cursor.gd": "sources/legacy/scripts/combat/replay_cursor.gd",
+        "scripts/combat/replay_witness.gd": "sources/legacy/scripts/combat/replay_witness.gd",
+        "scripts/campaign/exact_json.gd": "sources/legacy/scripts/campaign/exact_json.gd",
+        "scripts/campaign/snapshot_codec.gd": "sources/legacy/scripts/campaign/snapshot_codec.gd",
+        "scripts/combat/replay_footprint.gd": "sources/legacy/scripts/combat/replay_footprint.gd",
+        "tests/projected_replay_smoke.gd": "sources/legacy/tests/projected_replay_smoke.gd",
+        "tests/projected_replay_smoke.gd.uid": "sources/legacy/tests/projected_replay_smoke.gd.uid",
+        "tests/cue_smoke.gd": "sources/legacy/tests/cue_smoke.gd",
+        "tests/cue_smoke.gd.uid": "sources/legacy/tests/cue_smoke.gd.uid",
+        "tests/replay_playback_smoke.gd": "sources/legacy/tests/replay_playback_smoke.gd",
+        "tests/replay_playback_smoke.gd.uid": "sources/legacy/tests/replay_playback_smoke.gd.uid"
+      },
+      "source_count": 19,
+      "completeness": "Explicit snapshot subset only; no full import-graph or project-cache/settings claim"
+    },
+    "footprint-first": {
+      "receipt": "sources/footprint-first/manifest.json",
+      "files": {
+        "scripts/combat/replay_footprint.gd": "sources/footprint-first/scripts/combat/replay_footprint.gd",
+        "scripts/combat/replay_footprint.gd.uid": "sources/footprint-first/scripts/combat/replay_footprint.gd.uid",
+        "tests/replay_footprint_smoke.gd": "sources/footprint-first/tests/replay_footprint_smoke.gd",
+        "tests/replay_footprint_smoke.gd.uid": "sources/footprint-first/tests/replay_footprint_smoke.gd.uid",
+        "docs/development/REPLAY_FOOTPRINT.md": "sources/footprint-first/docs/development/REPLAY_FOOTPRINT.md"
+      },
+      "recovered_matching_dependencies": {
+        "scripts/combat/threat_scheduler.gd": "sources/footprint-first-recovered-dependencies/scripts/combat/threat_scheduler.gd",
+        "scripts/combat/threat_geometry.gd": "sources/footprint-first-recovered-dependencies/scripts/combat/threat_geometry.gd",
+        "scripts/cues/cue_mesh.gd": "sources/footprint-first-recovered-dependencies/scripts/cues/cue_mesh.gd",
+        "scripts/combat/replay_sequence.gd": "sources/footprint-first-recovered-dependencies/scripts/combat/replay_sequence.gd",
+        "scripts/combat/action_capture.gd": "sources/footprint-first-recovered-dependencies/scripts/combat/action_capture.gd",
+        "scripts/player.gd": "sources/footprint-first-recovered-dependencies/scripts/player.gd",
+        "scripts/campaign/exact_json.gd": "sources/footprint-first-recovered-dependencies/scripts/campaign/exact_json.gd"
+      },
+      "original_draft_count": 5,
+      "receipt_hash_count": 12,
+      "completeness": "Five original draft files plus seven dependencies recovered by recorded hash; not full import graph"
+    },
+    "footprint-second": {
+      "receipt": "sources/footprint-second/manifest.json",
+      "files": {
+        "scripts/combat/replay_footprint.gd": "sources/footprint-second/scripts/combat/replay_footprint.gd",
+        "tests/replay_footprint_smoke.gd": "sources/footprint-second/tests/replay_footprint_smoke.gd",
+        "scripts/combat/threat_scheduler.gd": "sources/footprint-second/scripts/combat/threat_scheduler.gd",
+        "scripts/combat/threat_geometry.gd": "sources/footprint-second/scripts/combat/threat_geometry.gd",
+        "scripts/cues/cue_mesh.gd": "sources/footprint-second/scripts/cues/cue_mesh.gd",
+        "scripts/player.gd": "sources/footprint-second/scripts/player.gd"
+      },
+      "source_count": 6,
+      "completeness": "Six recorded hashes with exact matching bytes recovered later; not an originally copied second-run folder or full import graph"
+    }
+  },
+  "runs": [
+    {
+      "id": "footprint-first",
+      "log": "logs/replay-footprint-first.log",
+      "checks_reported": 162,
+      "failures_reported": 7,
+      "exit_code": 1,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "failed_fixture_setup",
+      "accepted_as_target_pass": false,
+      "meaning": "Six clothing equips before actual stable paused bench and consequent range expectation failure; clipping/purity checks are not retagged as a full target pass",
+      "sources": "footprint-first",
+      "command": null,
+      "command_provenance": "Exact historical wrapper flags were not retained here; canonical reproduction is separate and is not proof of original invocation",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/replay_footprint_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": true,
+        "null_material": false,
+        "unsupported_formatter": false
+      }
+    },
+    {
+      "id": "footprint-second",
+      "log": "logs/replay-footprint-second.log",
+      "checks_reported": 164,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "passed",
+      "accepted_as_target_pass": true,
+      "meaning": "Fixture-only actual grounded paused clothing bench correction; byte-identical Footprint production leaf",
+      "sources": "footprint-second",
+      "command": null,
+      "command_provenance": "Exact historical wrapper flags were not retained here; canonical reproduction is separate and is not proof of original invocation",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/replay_footprint_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": true,
+        "null_material": false,
+        "unsupported_formatter": false
+      }
+    },
+    {
+      "id": "replay-original",
+      "log": "logs/projected-replay-original.log",
+      "checks_reported": 22,
+      "failures_reported": 5,
+      "exit_code": 1,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "expected_regression_failure",
+      "accepted_as_target_pass": false,
+      "meaning": "Actual published23 Cue/Playback after successful capture, retirement, admission and lock: visible outline LOS blockage plus native hole/shadow active fill; 66 outline vertices blocked. Footprint leaf was new frozen164 source, so this is not the full published import graph",
+      "sources": "replay-original",
+      "command": "python3 scripts/dev/dev.py engine --headless --path '/Users/howardchen/Documents/ChatGPT/video game idea' --script res://tests/projected_replay_smoke.gd --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-replay-original.log' -- --original-warning",
+      "command_provenance": "Retained exact invocation provided by Systems owner, session34210, plus original manifest result",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/projected_replay_smoke.gd -- --original-warning",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": true,
+        "null_material": false,
+        "unsupported_formatter": false
+      }
+    },
+    {
+      "id": "replay-first",
+      "log": "logs/projected-replay-first.log",
+      "checks_reported": 146,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "invalid_script_failure",
+      "accepted_as_target_pass": false,
+      "meaning": "EXCLUDED: root const Projection collided with builtin type, preventing dependency compile/consumer construction; exit0/146-overall summary is not acceptance",
+      "sources": "replay-first",
+      "command": "python3 scripts/dev/dev.py engine --headless --path '/Users/howardchen/Documents/ChatGPT/video game idea' --script res://tests/projected_replay_smoke.gd --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-replay-first.log'",
+      "command_provenance": "Exact wrapper argument sequence reported by integration owner; displayed shell quoting normalized from those arguments",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/projected_replay_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": true,
+        "macos_ca_startup": true,
+        "null_material": false,
+        "unsupported_formatter": false
+      },
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/projected_replay_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-replay-first.log"
+      ],
+      "execution_permission": "workspace sandbox"
+    },
+    {
+      "id": "replay-second",
+      "log": "logs/projected-replay-second.log",
+      "checks_reported": 315,
+      "failures_reported": 7,
+      "exit_code": 1,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "failed_fixture_setup",
+      "accepted_as_target_pass": false,
+      "meaning": "Six blast full-union setups offered only LEFT escape into recorded left blast; one fall assertion ignored actual natural ammo reload. Root repaired fixture candidates/native resource assertion, without weakening production proof",
+      "sources": "replay-second",
+      "command": "python3 scripts/dev/dev.py engine --headless --path '/Users/howardchen/Documents/ChatGPT/video game idea' --script res://tests/projected_replay_smoke.gd --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-replay-second.log'",
+      "command_provenance": "Exact wrapper argument sequence reported by integration owner; displayed shell quoting normalized from those arguments",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/projected_replay_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": true,
+        "null_material": false,
+        "unsupported_formatter": false
+      },
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/projected_replay_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-replay-second.log"
+      ],
+      "execution_permission": "workspace sandbox"
+    },
+    {
+      "id": "replay-third",
+      "log": "logs/projected-replay-third.log",
+      "checks_reported": 467,
+      "failures_reported": 1,
+      "exit_code": 1,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "failed_fixture_assertion",
+      "accepted_as_target_pass": false,
+      "meaning": "Physical floor hole intersected cone boundary, forming outer indentation instead of expected closed hole contour; fixture also used unsupported %.17g formatter. Both are preserved, not hidden by later pass",
+      "sources": "replay-third",
+      "command": "python3 scripts/dev/dev.py engine --headless --path '/Users/howardchen/Documents/ChatGPT/video game idea' --script res://tests/projected_replay_smoke.gd --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-replay-third.log'",
+      "command_provenance": "Exact wrapper argument sequence reported by integration owner; displayed shell quoting normalized from those arguments",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/projected_replay_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": true,
+        "null_material": false,
+        "unsupported_formatter": true
+      },
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/projected_replay_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-replay-third.log"
+      ],
+      "execution_permission": "workspace sandbox"
+    },
+    {
+      "id": "replay-fourth",
+      "log": "logs/projected-replay-fourth.log",
+      "checks_reported": 467,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "passed",
+      "accepted_as_target_pass": true,
+      "meaning": "Corrected physical-hole classification and diagnostic formatting only; root Playback1c90/Cue2996/Footprintabc unchanged from second/third; actual projected presentation/contacts/quiet paired transport/callback loss guards",
+      "sources": "replay-fourth",
+      "command": "python3 scripts/dev/dev.py engine --headless --path '/Users/howardchen/Documents/ChatGPT/video game idea' --script res://tests/projected_replay_smoke.gd --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-replay-fourth.log'",
+      "command_provenance": "Exact wrapper argument sequence reported by integration owner; displayed shell quoting normalized from those arguments",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/projected_replay_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": true,
+        "null_material": false,
+        "unsupported_formatter": false
+      },
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/projected_replay_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-replay-fourth.log"
+      ],
+      "execution_permission": "workspace sandbox"
+    },
+    {
+      "id": "cue-first",
+      "log": "logs/projected-cue-first.log",
+      "checks_reported": 270,
+      "failures_reported": 3,
+      "exit_code": 1,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "failed_fixture_mutation",
+      "accepted_as_target_pass": false,
+      "meaning": "Nonindexed base fill ignored supplied LOD request; unchanged native receipt correctly remained intact, so three corruption expectations failed",
+      "sources": "cue-first",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-cue-first.log' --script tests/projected_cue_smoke.gd",
+      "command_provenance": "Retained exact tool invocation by Cue owner through canonical shared wrapper",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/projected_cue_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": true,
+        "null_material": true,
+        "unsupported_formatter": false
+      }
+    },
+    {
+      "id": "cue-second",
+      "log": "logs/projected-cue-second.log",
+      "checks_reported": 270,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "invalid_script_failure",
+      "accepted_as_target_pass": false,
+      "meaning": "EXCLUDED: fixture called unbound ArrayMesh.surface_get_lods; helper aborted despite report270/0/exit0",
+      "sources": "cue-second",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-cue-second.log' --script tests/projected_cue_smoke.gd",
+      "command_provenance": "Retained exact tool invocation by Cue owner through canonical shared wrapper",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/projected_cue_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": true,
+        "macos_ca_startup": true,
+        "null_material": true,
+        "unsupported_formatter": false
+      }
+    },
+    {
+      "id": "cue-third",
+      "log": "logs/projected-cue-third.log",
+      "checks_reported": 271,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "passed_with_deliberate_cleanup_diagnostic",
+      "accepted_as_target_pass": false,
+      "meaning": "Valid base indices/smaller LOD retained in actual _surfaces and guards passed; deliberate surface-override deferred deletion produced dummy null-material cleanup diagnostic",
+      "sources": "cue-third",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-cue-third.log' --script tests/projected_cue_smoke.gd",
+      "command_provenance": "Retained exact tool invocation by Cue owner through canonical shared wrapper",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/projected_cue_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": true,
+        "null_material": true,
+        "unsupported_formatter": false
+      },
+      "acceptance_note": "Native assertions passed; final clean teardown target supersedes this run for publication acceptance"
+    },
+    {
+      "id": "cue-final",
+      "log": "logs/projected-cue-final.log",
+      "checks_reported": 271,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "passed",
+      "accepted_as_target_pass": true,
+      "meaning": "Same runtime/assertions as third; fixture-only removes injected override after completed fault/latch assertions while node lives, then flushes native paused frame before deletion",
+      "sources": "cue-final",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-cue-final.log' --script tests/projected_cue_smoke.gd",
+      "command_provenance": "Retained exact tool invocation by Cue owner through canonical shared wrapper",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/projected_cue_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": true,
+        "null_material": false,
+        "unsupported_formatter": false
+      }
+    },
+    {
+      "id": "legacy-cue",
+      "log": "logs/projected-legacy-cue.log",
+      "checks_reported": 82,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "passed",
+      "accepted_as_target_pass": true,
+      "meaning": "Directly affected ordinary required/interaction cue regression, unchanged legacy fixture against final new Cue2996; no broader suite",
+      "sources": "legacy",
+      "command": "python3 scripts/dev/dev.py engine --headless --path '/Users/howardchen/Documents/ChatGPT/video game idea' --script res://tests/cue_smoke.gd --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-legacy-cue.log'",
+      "command_provenance": "Exact wrapper argument sequence reported by integration owner; displayed shell quoting normalized from those arguments",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/cue_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": true,
+        "null_material": false,
+        "unsupported_formatter": false
+      },
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/cue_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-legacy-cue.log"
+      ],
+      "execution_permission": "workspace sandbox"
+    },
+    {
+      "id": "legacy-playback-sandbox",
+      "log": "logs/projected-legacy-playback.log",
+      "checks_reported": 406,
+      "failures_reported": 11,
+      "exit_code": 1,
+      "exit_provenance": "Completed canonical queue session reported by its owner; raw Godot log summary alone does not establish process exit",
+      "status": "failed_save_write",
+      "accepted_as_target_pass": false,
+      "meaning": "Ten failed isolated user:// temporary-save/readback assertions under sandbox plus expired-drain follow-up; none were waived. Identical-source native authorized rerun completes475/0, resolving this run as environment/setup failure while preserving all original failures.",
+      "sources": "legacy",
+      "command": "python3 scripts/dev/dev.py engine --headless --path '/Users/howardchen/Documents/ChatGPT/video game idea' --script res://tests/replay_playback_smoke.gd --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-legacy-playback.log'",
+      "command_provenance": "Exact wrapper argument sequence reported by integration owner; displayed shell quoting normalized from those arguments",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/replay_playback_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": true,
+        "null_material": false,
+        "unsupported_formatter": false
+      },
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/replay_playback_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-legacy-playback.log"
+      ],
+      "execution_permission": "workspace sandbox"
+    },
+    {
+      "id": "legacy-playback-native",
+      "log": "logs/projected-legacy-playback-native.log",
+      "checks_reported": 475,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "exit_provenance": "Integration owner reported completed canonical session68064 exit0; full native raw diagnostics independently inspected",
+      "status": "passed",
+      "accepted_as_target_pass": true,
+      "meaning": "Exact same 19 frozen source bytes and named ordinary Playback target rerun with authorized isolated native user:// save writes; all475 checks pass, including all fresh disk restores and previously unresolved expired-drain follow-up. No fixture/core edits.",
+      "sources": "legacy",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--verbose",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/replay_playback_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-legacy-playback-native.log"
+      ],
+      "command": "python3 scripts/dev/dev.py engine --headless --verbose --path '/Users/howardchen/Documents/ChatGPT/video game idea' --script res://tests/replay_playback_smoke.gd --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/projected-legacy-playback-native.log'",
+      "command_provenance": "Exact wrapper argument sequence reported by integration owner; displayed shell quoting normalized from those arguments",
+      "execution_permission": "require_escalated: authorized isolated native test user-data writes; no production save writes",
+      "canonical_reproduction": "python3 scripts/dev/dev.py engine --headless --path . --script tests/replay_playback_smoke.gd",
+      "diagnostics": {
+        "script_or_parse_error": false,
+        "macos_ca_startup": false,
+        "null_material": false,
+        "unsupported_formatter": false
+      }
+    }
+  ],
+  "pending": [],
+  "files": [
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/replay-footprint-original/replay_footprint.gd",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Preserved original five-file draft; first fixture uses unsupported unpaused bench setup"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first/scripts/combat/replay_footprint.gd.uid",
+      "sha256": "1ae28025dae1fcc6a4c10c0c4731171be5418eb6413f31383ce4aa14f2024855",
+      "bytes": 19,
+      "kind": "source",
+      "source_path": ".cinder/replay-footprint-original/replay_footprint.gd.uid",
+      "semantic_path": "scripts/combat/replay_footprint.gd.uid",
+      "provenance": "Preserved original five-file draft; first fixture uses unsupported unpaused bench setup"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first/tests/replay_footprint_smoke.gd",
+      "sha256": "3f04e645a0da79b87e524a2cbbeb5ec8ddf1e8cedc7bb4ce51bb7e2d582ccf69",
+      "bytes": 26063,
+      "kind": "source",
+      "source_path": ".cinder/replay-footprint-original/replay_footprint_smoke.gd",
+      "semantic_path": "tests/replay_footprint_smoke.gd",
+      "provenance": "Preserved original five-file draft; first fixture uses unsupported unpaused bench setup"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first/tests/replay_footprint_smoke.gd.uid",
+      "sha256": "ab3e53a3b454d0513c4cf5b60d999be1dbf648d8da19ada8fd49c73f85cf3f86",
+      "bytes": 19,
+      "kind": "source",
+      "source_path": ".cinder/replay-footprint-original/replay_footprint_smoke.gd.uid",
+      "semantic_path": "tests/replay_footprint_smoke.gd.uid",
+      "provenance": "Preserved original five-file draft; first fixture uses unsupported unpaused bench setup"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first/docs/development/REPLAY_FOOTPRINT.md",
+      "sha256": "83a67068e24740f1c08326a88de360e1ccc65c65a6d4398c071dcd46a55455e1",
+      "bytes": 9908,
+      "kind": "source",
+      "source_path": ".cinder/replay-footprint-original/REPLAY_FOOTPRINT.md",
+      "semantic_path": "docs/development/REPLAY_FOOTPRINT.md",
+      "provenance": "Preserved original five-file draft; first fixture uses unsupported unpaused bench setup"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first/manifest.json",
+      "sha256": "1b25bc24bb9019b852f951531dc00d82b712991c4b2efb84f0ae3d3183d86173",
+      "bytes": 1268,
+      "kind": "source_receipt",
+      "source_path": ".cinder/replay-footprint-original/manifest.json",
+      "provenance": "Original 12-entry hashes; only the preserved five-file draft was copied at this Footprint stage"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first-recovered-dependencies/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/threat_scheduler.gd.txt",
+      "semantic_path": "scripts/combat/threat_scheduler.gd",
+      "provenance": "Recovered by exact original manifest hash from later frozen published23/original-Replay subset; not a first-run source copy"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first-recovered-dependencies/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/threat_geometry.gd.txt",
+      "semantic_path": "scripts/combat/threat_geometry.gd",
+      "provenance": "Recovered by exact original manifest hash from later frozen published23/original-Replay subset; not a first-run source copy"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first-recovered-dependencies/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/cues/cue_mesh.gd.txt",
+      "semantic_path": "scripts/cues/cue_mesh.gd",
+      "provenance": "Recovered by exact original manifest hash from later frozen published23/original-Replay subset; not a first-run source copy"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first-recovered-dependencies/scripts/combat/replay_sequence.gd",
+      "sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+      "bytes": 10638,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/replay_sequence.gd.txt",
+      "semantic_path": "scripts/combat/replay_sequence.gd",
+      "provenance": "Recovered by exact original manifest hash from later frozen published23/original-Replay subset; not a first-run source copy"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first-recovered-dependencies/scripts/combat/action_capture.gd",
+      "sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f",
+      "bytes": 19785,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/action_capture.gd.txt",
+      "semantic_path": "scripts/combat/action_capture.gd",
+      "provenance": "Recovered by exact original manifest hash from later frozen published23/original-Replay subset; not a first-run source copy"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first-recovered-dependencies/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/player.gd.txt",
+      "semantic_path": "scripts/player.gd",
+      "provenance": "Recovered by exact original manifest hash from later frozen published23/original-Replay subset; not a first-run source copy"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "sources/footprint-first-recovered-dependencies/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/campaign/exact_json.gd.txt",
+      "semantic_path": "scripts/campaign/exact_json.gd",
+      "provenance": "Recovered by exact original manifest hash from later frozen published23/original-Replay subset; not a first-run source copy"
+    },
+    {
+      "stage": "footprint-second",
+      "path": "sources/footprint-second/manifest.json",
+      "sha256": "c962e53ac05f7174f143c71fbb97d44240d714b1a30303f491459637307915e7",
+      "bytes": 620,
+      "kind": "source_receipt",
+      "source_path": ".cinder/replay-footprint-second-manifest.json",
+      "provenance": "Original six-entry hash receipt; no separate original copied second-run folder was retained"
+    },
+    {
+      "stage": "footprint-second",
+      "path": "sources/footprint-second/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/replay_footprint.gd.txt",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Recovered by exact recorded second-run hash from frozen original-Replay source subset"
+    },
+    {
+      "stage": "footprint-second",
+      "path": "sources/footprint-second/tests/replay_footprint_smoke.gd",
+      "sha256": "7b77622c6b28f7dae361239821ebd890f260e60724c2976301c449630957c3e5",
+      "bytes": 26254,
+      "kind": "source",
+      "source_path": "tests/replay_footprint_smoke.gd",
+      "semantic_path": "tests/replay_footprint_smoke.gd",
+      "provenance": "Recovered from current source matching the original second-run manifest exactly"
+    },
+    {
+      "stage": "footprint-second",
+      "path": "sources/footprint-second/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/threat_scheduler.gd.txt",
+      "semantic_path": "scripts/combat/threat_scheduler.gd",
+      "provenance": "Recovered by exact recorded second-run hash from frozen original-Replay source subset"
+    },
+    {
+      "stage": "footprint-second",
+      "path": "sources/footprint-second/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/threat_geometry.gd.txt",
+      "semantic_path": "scripts/combat/threat_geometry.gd",
+      "provenance": "Recovered by exact recorded second-run hash from frozen original-Replay source subset"
+    },
+    {
+      "stage": "footprint-second",
+      "path": "sources/footprint-second/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/cues/cue_mesh.gd.txt",
+      "semantic_path": "scripts/cues/cue_mesh.gd",
+      "provenance": "Recovered by exact recorded second-run hash from frozen original-Replay source subset"
+    },
+    {
+      "stage": "footprint-second",
+      "path": "sources/footprint-second/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/player.gd.txt",
+      "semantic_path": "scripts/player.gd",
+      "provenance": "Recovered by exact recorded second-run hash from frozen original-Replay source subset"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/manifest.json",
+      "sha256": "ec38533e91a7b3cd6d4da86add92982335faff6a20753d6f3a48f4470acf43ff",
+      "bytes": 3688,
+      "kind": "source_receipt",
+      "source_path": ".cinder/projected-replay-original/manifest.json",
+      "provenance": "Byte-exact preserved receipt; explicit subset, not complete imported dependencies"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/combat/replay_playback.gd",
+      "sha256": "f404bf2e51cb94a371eecb51ea216437a746c433d7ad1266f5e2c70747e32b56",
+      "bytes": 54650,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/replay_playback.gd.txt",
+      "semantic_path": "scripts/combat/replay_playback.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/cues/threat_cue.gd",
+      "sha256": "f8d6bebb6c66ae1cf3fe6d90482b9dbb2bf6ce3274b01b6e2b6a6848fbcb7a48",
+      "bytes": 5178,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/cues/threat_cue.gd.txt",
+      "semantic_path": "scripts/cues/threat_cue.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/threat_scheduler.gd.txt",
+      "semantic_path": "scripts/combat/threat_scheduler.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/threat_geometry.gd.txt",
+      "semantic_path": "scripts/combat/threat_geometry.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/cues/cue_mesh.gd.txt",
+      "semantic_path": "scripts/cues/cue_mesh.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/player.gd.txt",
+      "semantic_path": "scripts/player.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/combat/action_capture.gd",
+      "sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f",
+      "bytes": 19785,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/action_capture.gd.txt",
+      "semantic_path": "scripts/combat/action_capture.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/combat/replay_sequence.gd",
+      "sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+      "bytes": 10638,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/replay_sequence.gd.txt",
+      "semantic_path": "scripts/combat/replay_sequence.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/combat/replay_cursor.gd",
+      "sha256": "87198fb296a56993273d18e832f35f73ec8d4436ee412e10132a78953ba618bb",
+      "bytes": 14772,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/replay_cursor.gd.txt",
+      "semantic_path": "scripts/combat/replay_cursor.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/combat/replay_witness.gd",
+      "sha256": "b30825d92fb9ab589065d90b33c898f4651bbe75e3f420257206d839eeb4e02e",
+      "bytes": 19157,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/replay_witness.gd.txt",
+      "semantic_path": "scripts/combat/replay_witness.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/campaign/exact_json.gd.txt",
+      "semantic_path": "scripts/campaign/exact_json.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/campaign/snapshot_codec.gd.txt",
+      "semantic_path": "scripts/campaign/snapshot_codec.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/scripts/combat/replay_footprint.gd.txt",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/tests/projected_replay_smoke.gd",
+      "sha256": "6d8346bed904091a92a45a15c8e0746e503fe79e5618023a7643868ca2837cdc",
+      "bytes": 13602,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/tests/projected_replay_smoke.gd.txt",
+      "semantic_path": "tests/projected_replay_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-original",
+      "path": "sources/replay-original/tests/projected_replay_smoke.gd.uid",
+      "sha256": "8e2034a7224644bd1566696c9c22aef8061a40e1bde1341cdb5d9a2222b7ad3b",
+      "bytes": 20,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-original/tests/projected_replay_smoke.gd.uid.txt",
+      "semantic_path": "tests/projected_replay_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/manifest.json",
+      "sha256": "9c3da6aacf70ebaa2066255f99483266ef3aa36d941462a49c8b7a4bf6fd1905",
+      "bytes": 2957,
+      "kind": "source_receipt",
+      "source_path": ".cinder/projected-replay-first-source/manifest.json",
+      "provenance": "Byte-exact preserved receipt; explicit subset, not complete imported dependencies"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/combat/replay_playback.gd",
+      "sha256": "a0913c5a245e377b426c844203447aeb6dbaa974b0edf1a36540cb254ec75e29",
+      "bytes": 60694,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/combat/replay_playback.gd",
+      "semantic_path": "scripts/combat/replay_playback.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/cues/threat_cue.gd",
+      "semantic_path": "scripts/cues/threat_cue.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/combat/threat_scheduler.gd",
+      "semantic_path": "scripts/combat/threat_scheduler.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/combat/threat_geometry.gd",
+      "semantic_path": "scripts/combat/threat_geometry.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/cues/cue_mesh.gd",
+      "semantic_path": "scripts/cues/cue_mesh.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/player.gd",
+      "semantic_path": "scripts/player.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/combat/action_capture.gd",
+      "sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f",
+      "bytes": 19785,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/combat/action_capture.gd",
+      "semantic_path": "scripts/combat/action_capture.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/combat/replay_sequence.gd",
+      "sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+      "bytes": 10638,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/combat/replay_sequence.gd",
+      "semantic_path": "scripts/combat/replay_sequence.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/combat/replay_cursor.gd",
+      "sha256": "87198fb296a56993273d18e832f35f73ec8d4436ee412e10132a78953ba618bb",
+      "bytes": 14772,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/combat/replay_cursor.gd",
+      "semantic_path": "scripts/combat/replay_cursor.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/combat/replay_witness.gd",
+      "sha256": "b30825d92fb9ab589065d90b33c898f4651bbe75e3f420257206d839eeb4e02e",
+      "bytes": 19157,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/combat/replay_witness.gd",
+      "semantic_path": "scripts/combat/replay_witness.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/campaign/exact_json.gd",
+      "semantic_path": "scripts/campaign/exact_json.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/campaign/snapshot_codec.gd",
+      "semantic_path": "scripts/campaign/snapshot_codec.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/scripts/combat/replay_footprint.gd",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/tests/projected_replay_smoke.gd",
+      "sha256": "e8a158c29cf03f4b1867300a2fc76960fce0b3cee93e7948c9a42abe56f3deef",
+      "bytes": 47056,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/tests/projected_replay_smoke.gd",
+      "semantic_path": "tests/projected_replay_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-first",
+      "path": "sources/replay-first/tests/projected_replay_smoke.gd.uid",
+      "sha256": "8e2034a7224644bd1566696c9c22aef8061a40e1bde1341cdb5d9a2222b7ad3b",
+      "bytes": 20,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-first-source/tests/projected_replay_smoke.gd.uid",
+      "semantic_path": "tests/projected_replay_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/manifest.json",
+      "sha256": "343976882c28ba45fb414fcb8961984d6a82a375f61bdba5f51dc8dbd4b8f283",
+      "bytes": 3014,
+      "kind": "source_receipt",
+      "source_path": ".cinder/projected-replay-second-source/manifest.json",
+      "provenance": "Byte-exact preserved receipt; explicit subset, not complete imported dependencies"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/combat/replay_playback.gd",
+      "sha256": "1c90ae6c034176e785286a7b0c66a36e5f5547bdb04691588389d4ff04a1fb54",
+      "bytes": 60714,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/combat/replay_playback.gd",
+      "semantic_path": "scripts/combat/replay_playback.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/cues/threat_cue.gd",
+      "semantic_path": "scripts/cues/threat_cue.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/combat/threat_scheduler.gd",
+      "semantic_path": "scripts/combat/threat_scheduler.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/combat/threat_geometry.gd",
+      "semantic_path": "scripts/combat/threat_geometry.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/cues/cue_mesh.gd",
+      "semantic_path": "scripts/cues/cue_mesh.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/player.gd",
+      "semantic_path": "scripts/player.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/combat/action_capture.gd",
+      "sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f",
+      "bytes": 19785,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/combat/action_capture.gd",
+      "semantic_path": "scripts/combat/action_capture.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/combat/replay_sequence.gd",
+      "sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+      "bytes": 10638,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/combat/replay_sequence.gd",
+      "semantic_path": "scripts/combat/replay_sequence.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/combat/replay_cursor.gd",
+      "sha256": "87198fb296a56993273d18e832f35f73ec8d4436ee412e10132a78953ba618bb",
+      "bytes": 14772,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/combat/replay_cursor.gd",
+      "semantic_path": "scripts/combat/replay_cursor.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/combat/replay_witness.gd",
+      "sha256": "b30825d92fb9ab589065d90b33c898f4651bbe75e3f420257206d839eeb4e02e",
+      "bytes": 19157,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/combat/replay_witness.gd",
+      "semantic_path": "scripts/combat/replay_witness.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/campaign/exact_json.gd",
+      "semantic_path": "scripts/campaign/exact_json.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/campaign/snapshot_codec.gd",
+      "semantic_path": "scripts/campaign/snapshot_codec.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/scripts/combat/replay_footprint.gd",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/tests/projected_replay_smoke.gd",
+      "sha256": "e8a158c29cf03f4b1867300a2fc76960fce0b3cee93e7948c9a42abe56f3deef",
+      "bytes": 47056,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/tests/projected_replay_smoke.gd",
+      "semantic_path": "tests/projected_replay_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-second",
+      "path": "sources/replay-second/tests/projected_replay_smoke.gd.uid",
+      "sha256": "8e2034a7224644bd1566696c9c22aef8061a40e1bde1341cdb5d9a2222b7ad3b",
+      "bytes": 20,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-second-source/tests/projected_replay_smoke.gd.uid",
+      "semantic_path": "tests/projected_replay_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/manifest.json",
+      "sha256": "b5d054b6d0b3a1faa1261ff84a4f1f42fbcd811f070a3125832bff02abccb8e2",
+      "bytes": 2964,
+      "kind": "source_receipt",
+      "source_path": ".cinder/projected-replay-third-source/manifest.json",
+      "provenance": "Byte-exact preserved receipt; explicit subset, not complete imported dependencies"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/combat/replay_playback.gd",
+      "sha256": "1c90ae6c034176e785286a7b0c66a36e5f5547bdb04691588389d4ff04a1fb54",
+      "bytes": 60714,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/combat/replay_playback.gd",
+      "semantic_path": "scripts/combat/replay_playback.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/cues/threat_cue.gd",
+      "semantic_path": "scripts/cues/threat_cue.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/combat/threat_scheduler.gd",
+      "semantic_path": "scripts/combat/threat_scheduler.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/combat/threat_geometry.gd",
+      "semantic_path": "scripts/combat/threat_geometry.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/cues/cue_mesh.gd",
+      "semantic_path": "scripts/cues/cue_mesh.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/player.gd",
+      "semantic_path": "scripts/player.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/combat/action_capture.gd",
+      "sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f",
+      "bytes": 19785,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/combat/action_capture.gd",
+      "semantic_path": "scripts/combat/action_capture.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/combat/replay_sequence.gd",
+      "sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+      "bytes": 10638,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/combat/replay_sequence.gd",
+      "semantic_path": "scripts/combat/replay_sequence.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/combat/replay_cursor.gd",
+      "sha256": "87198fb296a56993273d18e832f35f73ec8d4436ee412e10132a78953ba618bb",
+      "bytes": 14772,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/combat/replay_cursor.gd",
+      "semantic_path": "scripts/combat/replay_cursor.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/combat/replay_witness.gd",
+      "sha256": "b30825d92fb9ab589065d90b33c898f4651bbe75e3f420257206d839eeb4e02e",
+      "bytes": 19157,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/combat/replay_witness.gd",
+      "semantic_path": "scripts/combat/replay_witness.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/campaign/exact_json.gd",
+      "semantic_path": "scripts/campaign/exact_json.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/campaign/snapshot_codec.gd",
+      "semantic_path": "scripts/campaign/snapshot_codec.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/scripts/combat/replay_footprint.gd",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/tests/projected_replay_smoke.gd",
+      "sha256": "4b6a18321b2997acc4b26c710fe33c0eab4903d2b15a3ea3e42ba13b91d99481",
+      "bytes": 47509,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/tests/projected_replay_smoke.gd",
+      "semantic_path": "tests/projected_replay_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-third",
+      "path": "sources/replay-third/tests/projected_replay_smoke.gd.uid",
+      "sha256": "8e2034a7224644bd1566696c9c22aef8061a40e1bde1341cdb5d9a2222b7ad3b",
+      "bytes": 20,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-third-source/tests/projected_replay_smoke.gd.uid",
+      "semantic_path": "tests/projected_replay_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/manifest.json",
+      "sha256": "b1f968f3ddb9afcd1da3a2ae2a8052343e9c12fad3bfaaedc187464565b3b842",
+      "bytes": 2501,
+      "kind": "source_receipt",
+      "source_path": ".cinder/projected-replay-fourth-source/manifest.json",
+      "provenance": "Byte-exact preserved receipt; explicit subset, not complete imported dependencies"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/combat/replay_playback.gd",
+      "sha256": "1c90ae6c034176e785286a7b0c66a36e5f5547bdb04691588389d4ff04a1fb54",
+      "bytes": 60714,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/combat/replay_playback.gd",
+      "semantic_path": "scripts/combat/replay_playback.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/cues/threat_cue.gd",
+      "semantic_path": "scripts/cues/threat_cue.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/combat/threat_scheduler.gd",
+      "semantic_path": "scripts/combat/threat_scheduler.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/combat/threat_geometry.gd",
+      "semantic_path": "scripts/combat/threat_geometry.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/cues/cue_mesh.gd",
+      "semantic_path": "scripts/cues/cue_mesh.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/player.gd",
+      "semantic_path": "scripts/player.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/combat/action_capture.gd",
+      "sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f",
+      "bytes": 19785,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/combat/action_capture.gd",
+      "semantic_path": "scripts/combat/action_capture.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/combat/replay_sequence.gd",
+      "sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+      "bytes": 10638,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/combat/replay_sequence.gd",
+      "semantic_path": "scripts/combat/replay_sequence.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/combat/replay_cursor.gd",
+      "sha256": "87198fb296a56993273d18e832f35f73ec8d4436ee412e10132a78953ba618bb",
+      "bytes": 14772,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/combat/replay_cursor.gd",
+      "semantic_path": "scripts/combat/replay_cursor.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/combat/replay_witness.gd",
+      "sha256": "b30825d92fb9ab589065d90b33c898f4651bbe75e3f420257206d839eeb4e02e",
+      "bytes": 19157,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/combat/replay_witness.gd",
+      "semantic_path": "scripts/combat/replay_witness.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/campaign/exact_json.gd",
+      "semantic_path": "scripts/campaign/exact_json.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/campaign/snapshot_codec.gd",
+      "semantic_path": "scripts/campaign/snapshot_codec.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/scripts/combat/replay_footprint.gd",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/tests/projected_replay_smoke.gd",
+      "sha256": "c7ebd9d162d87d3681959f6adb11c72d9af260c3aacd65f30d046588aa88ffcf",
+      "bytes": 48750,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/tests/projected_replay_smoke.gd",
+      "semantic_path": "tests/projected_replay_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "sources/replay-fourth/tests/projected_replay_smoke.gd.uid",
+      "sha256": "8e2034a7224644bd1566696c9c22aef8061a40e1bde1341cdb5d9a2222b7ad3b",
+      "bytes": 20,
+      "kind": "source",
+      "source_path": ".cinder/projected-replay-fourth-source/tests/projected_replay_smoke.gd.uid",
+      "semantic_path": "tests/projected_replay_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-first",
+      "path": "sources/cue-first/index.json",
+      "sha256": "c068b4142150388162867e80def4f2456ecc7d9e6c6a3f478460c9a58a074751",
+      "bytes": 526,
+      "kind": "source_receipt",
+      "source_path": ".cinder/projected-cue-first-sources/index.json",
+      "provenance": "Byte-exact preserved receipt; explicit subset, not complete imported dependencies"
+    },
+    {
+      "stage": "cue-first",
+      "path": "sources/cue-first/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-first-sources/scripts/cues/threat_cue.gd",
+      "semantic_path": "scripts/cues/threat_cue.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-first",
+      "path": "sources/cue-first/scripts/combat/replay_playback.gd",
+      "sha256": "a0913c5a245e377b426c844203447aeb6dbaa974b0edf1a36540cb254ec75e29",
+      "bytes": 60694,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-first-sources/scripts/combat/replay_playback.gd",
+      "semantic_path": "scripts/combat/replay_playback.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-first",
+      "path": "sources/cue-first/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-first-sources/scripts/combat/replay_footprint.gd",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-first",
+      "path": "sources/cue-first/tests/projected_cue_smoke.gd",
+      "sha256": "0b615dfd853a554690ec8629c16cee594e64df917e85f64b1c6ccf9bad0a406f",
+      "bytes": 25054,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-first-sources/tests/projected_cue_smoke.gd",
+      "semantic_path": "tests/projected_cue_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-first",
+      "path": "sources/cue-first/tests/projected_cue_smoke.gd.uid",
+      "sha256": "498222fdbc81465dc280dc9dcf24db699f528000f352c99f0149d4b36e9f31fa",
+      "bytes": 20,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-first-sources/tests/projected_cue_smoke.gd.uid",
+      "semantic_path": "tests/projected_cue_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-second",
+      "path": "sources/cue-second/index.json",
+      "sha256": "0c7fa7122cce42d4f81d6ff286864a93dd596af51e002f031f7c32edfa560a1e",
+      "bytes": 526,
+      "kind": "source_receipt",
+      "source_path": ".cinder/projected-cue-second-sources/index.json",
+      "provenance": "Byte-exact preserved receipt; explicit subset, not complete imported dependencies"
+    },
+    {
+      "stage": "cue-second",
+      "path": "sources/cue-second/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-second-sources/scripts/cues/threat_cue.gd",
+      "semantic_path": "scripts/cues/threat_cue.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-second",
+      "path": "sources/cue-second/scripts/combat/replay_playback.gd",
+      "sha256": "1c90ae6c034176e785286a7b0c66a36e5f5547bdb04691588389d4ff04a1fb54",
+      "bytes": 60714,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-second-sources/scripts/combat/replay_playback.gd",
+      "semantic_path": "scripts/combat/replay_playback.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-second",
+      "path": "sources/cue-second/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-second-sources/scripts/combat/replay_footprint.gd",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-second",
+      "path": "sources/cue-second/tests/projected_cue_smoke.gd",
+      "sha256": "0b49e53ae3bb21f6610ced2afd640953025db1be1f12f6ba54021d0188f0ba53",
+      "bytes": 25757,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-second-sources/tests/projected_cue_smoke.gd",
+      "semantic_path": "tests/projected_cue_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-second",
+      "path": "sources/cue-second/tests/projected_cue_smoke.gd.uid",
+      "sha256": "498222fdbc81465dc280dc9dcf24db699f528000f352c99f0149d4b36e9f31fa",
+      "bytes": 20,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-second-sources/tests/projected_cue_smoke.gd.uid",
+      "semantic_path": "tests/projected_cue_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-third",
+      "path": "sources/cue-third/index.json",
+      "sha256": "525c3333e37fa6778347a0d83ec07cf900288b2edf87ca0b6d11fce521b552aa",
+      "bytes": 526,
+      "kind": "source_receipt",
+      "source_path": ".cinder/projected-cue-third-sources/index.json",
+      "provenance": "Byte-exact preserved receipt; explicit subset, not complete imported dependencies"
+    },
+    {
+      "stage": "cue-third",
+      "path": "sources/cue-third/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-third-sources/scripts/cues/threat_cue.gd",
+      "semantic_path": "scripts/cues/threat_cue.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-third",
+      "path": "sources/cue-third/scripts/combat/replay_playback.gd",
+      "sha256": "1c90ae6c034176e785286a7b0c66a36e5f5547bdb04691588389d4ff04a1fb54",
+      "bytes": 60714,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-third-sources/scripts/combat/replay_playback.gd",
+      "semantic_path": "scripts/combat/replay_playback.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-third",
+      "path": "sources/cue-third/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-third-sources/scripts/combat/replay_footprint.gd",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-third",
+      "path": "sources/cue-third/tests/projected_cue_smoke.gd",
+      "sha256": "fef76de6f480664421b2e58aa398ef4dff43ccbc69a7c24c3c88fd02b330eedc",
+      "bytes": 25866,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-third-sources/tests/projected_cue_smoke.gd",
+      "semantic_path": "tests/projected_cue_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-third",
+      "path": "sources/cue-third/tests/projected_cue_smoke.gd.uid",
+      "sha256": "498222fdbc81465dc280dc9dcf24db699f528000f352c99f0149d4b36e9f31fa",
+      "bytes": 20,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-third-sources/tests/projected_cue_smoke.gd.uid",
+      "semantic_path": "tests/projected_cue_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-final",
+      "path": "sources/cue-final/index.json",
+      "sha256": "b71da0bd57790402a2512ecc39df1ca4f7be48afd06ff3d32da28e6f8b2fd6f6",
+      "bytes": 526,
+      "kind": "source_receipt",
+      "source_path": ".cinder/projected-cue-final-sources/index.json",
+      "provenance": "Byte-exact preserved receipt; explicit subset, not complete imported dependencies"
+    },
+    {
+      "stage": "cue-final",
+      "path": "sources/cue-final/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-final-sources/scripts/cues/threat_cue.gd",
+      "semantic_path": "scripts/cues/threat_cue.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-final",
+      "path": "sources/cue-final/scripts/combat/replay_playback.gd",
+      "sha256": "1c90ae6c034176e785286a7b0c66a36e5f5547bdb04691588389d4ff04a1fb54",
+      "bytes": 60714,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-final-sources/scripts/combat/replay_playback.gd",
+      "semantic_path": "scripts/combat/replay_playback.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-final",
+      "path": "sources/cue-final/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-final-sources/scripts/combat/replay_footprint.gd",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-final",
+      "path": "sources/cue-final/tests/projected_cue_smoke.gd",
+      "sha256": "9cf8817021744b741c1e56363c2f9452243bce03c9de4e4f89ba0c627b039f81",
+      "bytes": 26174,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-final-sources/tests/projected_cue_smoke.gd",
+      "semantic_path": "tests/projected_cue_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "cue-final",
+      "path": "sources/cue-final/tests/projected_cue_smoke.gd.uid",
+      "sha256": "498222fdbc81465dc280dc9dcf24db699f528000f352c99f0149d4b36e9f31fa",
+      "bytes": 20,
+      "kind": "source",
+      "source_path": ".cinder/projected-cue-final-sources/tests/projected_cue_smoke.gd.uid",
+      "semantic_path": "tests/projected_cue_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/manifest.json",
+      "sha256": "b9705c11a89781283b78ba2ca1108a51b36fda046abad03a1058dd790d1edf18",
+      "bytes": 3085,
+      "kind": "source_receipt",
+      "source_path": ".cinder/projected-legacy-source/manifest.json",
+      "provenance": "Byte-exact preserved receipt; explicit subset, not complete imported dependencies"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/combat/replay_playback.gd",
+      "sha256": "1c90ae6c034176e785286a7b0c66a36e5f5547bdb04691588389d4ff04a1fb54",
+      "bytes": 60714,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/combat/replay_playback.gd",
+      "semantic_path": "scripts/combat/replay_playback.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/cues/threat_cue.gd",
+      "semantic_path": "scripts/cues/threat_cue.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/combat/threat_scheduler.gd",
+      "semantic_path": "scripts/combat/threat_scheduler.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/combat/threat_geometry.gd",
+      "semantic_path": "scripts/combat/threat_geometry.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/cues/cue_mesh.gd",
+      "semantic_path": "scripts/cues/cue_mesh.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/player.gd",
+      "semantic_path": "scripts/player.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/combat/action_capture.gd",
+      "sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f",
+      "bytes": 19785,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/combat/action_capture.gd",
+      "semantic_path": "scripts/combat/action_capture.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/combat/replay_sequence.gd",
+      "sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+      "bytes": 10638,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/combat/replay_sequence.gd",
+      "semantic_path": "scripts/combat/replay_sequence.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/combat/replay_cursor.gd",
+      "sha256": "87198fb296a56993273d18e832f35f73ec8d4436ee412e10132a78953ba618bb",
+      "bytes": 14772,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/combat/replay_cursor.gd",
+      "semantic_path": "scripts/combat/replay_cursor.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/combat/replay_witness.gd",
+      "sha256": "b30825d92fb9ab589065d90b33c898f4651bbe75e3f420257206d839eeb4e02e",
+      "bytes": 19157,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/combat/replay_witness.gd",
+      "semantic_path": "scripts/combat/replay_witness.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/campaign/exact_json.gd",
+      "semantic_path": "scripts/campaign/exact_json.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/campaign/snapshot_codec.gd",
+      "semantic_path": "scripts/campaign/snapshot_codec.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/scripts/combat/replay_footprint.gd",
+      "sha256": "abc07a5ba2159a46c5726d4a7e762d2b6d425bf934efd8a29878883b4c438346",
+      "bytes": 28742,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/scripts/combat/replay_footprint.gd",
+      "semantic_path": "scripts/combat/replay_footprint.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/tests/projected_replay_smoke.gd",
+      "sha256": "c7ebd9d162d87d3681959f6adb11c72d9af260c3aacd65f30d046588aa88ffcf",
+      "bytes": 48750,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/tests/projected_replay_smoke.gd",
+      "semantic_path": "tests/projected_replay_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/tests/projected_replay_smoke.gd.uid",
+      "sha256": "8e2034a7224644bd1566696c9c22aef8061a40e1bde1341cdb5d9a2222b7ad3b",
+      "bytes": 20,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/tests/projected_replay_smoke.gd.uid",
+      "semantic_path": "tests/projected_replay_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/tests/cue_smoke.gd",
+      "sha256": "49ccc7ff4824a3e569ee619400a833223d0749c4d3dffa86bcaba377da8c58a5",
+      "bytes": 17434,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/tests/cue_smoke.gd",
+      "semantic_path": "tests/cue_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/tests/cue_smoke.gd.uid",
+      "sha256": "284dfa7e911c3be7b8585fd5b48e770a63c0ae295a3e65c304bc667901f6cb79",
+      "bytes": 20,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/tests/cue_smoke.gd.uid",
+      "semantic_path": "tests/cue_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/tests/replay_playback_smoke.gd",
+      "sha256": "576ac5738bae1f868575bcdcff280eeb707df184049fc0f23800803482c13c83",
+      "bytes": 66974,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/tests/replay_playback_smoke.gd",
+      "semantic_path": "tests/replay_playback_smoke.gd",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "legacy",
+      "path": "sources/legacy/tests/replay_playback_smoke.gd.uid",
+      "sha256": "574f43c0dddecd80261cfcaaf738e09ef4390c854877b59404f702cc30add1c7",
+      "bytes": 19,
+      "kind": "source",
+      "source_path": ".cinder/projected-legacy-source/tests/replay_playback_smoke.gd.uid",
+      "semantic_path": "tests/replay_playback_smoke.gd.uid",
+      "provenance": "Original frozen subset snapshot"
+    },
+    {
+      "stage": "footprint-first",
+      "path": "logs/replay-footprint-first.log",
+      "sha256": "74ddac1a38c7d7d538dd31d86890249d2669f8e2f2095fd1ff08ddeb87f84f1f",
+      "bytes": 13854,
+      "kind": "log",
+      "source_path": ".cinder/replay-footprint-first.log"
+    },
+    {
+      "stage": "footprint-second",
+      "path": "logs/replay-footprint-second.log",
+      "sha256": "6c86e8d5e6daf6465a24c995936364ab82fb29e27dc2e9ca47bf26ba1f32adc7",
+      "bytes": 11369,
+      "kind": "log",
+      "source_path": ".cinder/replay-footprint-second.log"
+    },
+    {
+      "stage": "replay-original",
+      "path": "logs/projected-replay-original.log",
+      "sha256": "173006182c1d402feb84eedc1f03d95a8d882a4b83c4fbcf82e5c0a0530a2aa8",
+      "bytes": 4500,
+      "kind": "log",
+      "source_path": ".cinder/projected-replay-original.log"
+    },
+    {
+      "stage": "replay-first",
+      "path": "logs/projected-replay-first.log",
+      "sha256": "0f5ebcba2c5c9df8e66aece182db6f5c9e89f2148040a719172f33d511bc3e57",
+      "bytes": 18660,
+      "kind": "log",
+      "source_path": ".cinder/projected-replay-first.log"
+    },
+    {
+      "stage": "replay-second",
+      "path": "logs/projected-replay-second.log",
+      "sha256": "a1fae52bb21af2500456539e7adc697b13060a6d732f2261f880cc30b0a3ca37",
+      "bytes": 25920,
+      "kind": "log",
+      "source_path": ".cinder/projected-replay-second.log"
+    },
+    {
+      "stage": "replay-third",
+      "path": "logs/projected-replay-third.log",
+      "sha256": "6e2cddbc7023f585d9d8ff7132b28b88a0d77f0c21d0b169a2b159603871de88",
+      "bytes": 37158,
+      "kind": "log",
+      "source_path": ".cinder/projected-replay-third.log"
+    },
+    {
+      "stage": "replay-fourth",
+      "path": "logs/projected-replay-fourth.log",
+      "sha256": "6fcc21620e1b10a73694edd191fb62bbe73f6a67cf951ed6946588f73480b4c6",
+      "bytes": 36780,
+      "kind": "log",
+      "source_path": ".cinder/projected-replay-fourth.log"
+    },
+    {
+      "stage": "cue-first",
+      "path": "logs/projected-cue-first.log",
+      "sha256": "4b2322c30c4e968be383d0abaf3f3b892ba6df88b1dde1d496ebb59b1f52e387",
+      "bytes": 21472,
+      "kind": "log",
+      "source_path": ".cinder/projected-cue-first.log"
+    },
+    {
+      "stage": "cue-second",
+      "path": "logs/projected-cue-second.log",
+      "sha256": "ff99c87b845dfec6b7b76b22d6246b031ff5b86809c4d69079ecf5ff4228a7fe",
+      "bytes": 20952,
+      "kind": "log",
+      "source_path": ".cinder/projected-cue-second.log"
+    },
+    {
+      "stage": "cue-third",
+      "path": "logs/projected-cue-third.log",
+      "sha256": "8313f808efed81ef8c9102b28e074692d9f78e3bdb2ee39ba8636be81290f4c2",
+      "bytes": 21717,
+      "kind": "log",
+      "source_path": ".cinder/projected-cue-third.log"
+    },
+    {
+      "stage": "cue-final",
+      "path": "logs/projected-cue-final.log",
+      "sha256": "5b22f65a187f1cd57344eeb655a5218cf5c17d6145def30dbd25d01c055391dd",
+      "bytes": 20511,
+      "kind": "log",
+      "source_path": ".cinder/projected-cue-final.log"
+    },
+    {
+      "stage": "legacy-cue",
+      "path": "logs/projected-legacy-cue.log",
+      "sha256": "3e7f4db7a41329cb024c95aaf70f22be607ff9c21ab48035aa884079c2e4571b",
+      "bytes": 6357,
+      "kind": "log",
+      "source_path": ".cinder/projected-legacy-cue.log"
+    },
+    {
+      "stage": "legacy-playback-sandbox",
+      "path": "logs/projected-legacy-playback.log",
+      "sha256": "601827ca2e09a21f333a5e570d5179c90d214ae3faecb7dc72aaa2538954270b",
+      "bytes": 35004,
+      "kind": "log",
+      "source_path": ".cinder/projected-legacy-playback.log"
+    },
+    {
+      "stage": "archive-controls",
+      "path": ".gdignore",
+      "sha256": "3c7269a9af034c7f16c5d757a6fe3901ac692962cabbe7b976d5335755955310",
+      "bytes": 60,
+      "kind": "archive_control",
+      "source_path": null
+    },
+    {
+      "stage": "archive-controls",
+      "path": ".gitattributes",
+      "sha256": "a980eaa823d64992cc6c7a014ac6ae4e5ef952db58f8c6e42863bfbd492e1a40",
+      "bytes": 58,
+      "kind": "archive_control",
+      "source_path": null
+    },
+    {
+      "stage": "legacy-playback-native",
+      "path": "logs/projected-legacy-playback-native.log",
+      "sha256": "5756a9e30dc6b0b445e0eb91a657c1f05624f4240bf150cd1c500e69028c147c",
+      "bytes": 37885,
+      "kind": "log",
+      "source_path": ".cinder/projected-legacy-playback-native.log"
+    },
+    {
+      "stage": "archive-documentation",
+      "path": "README.md",
+      "sha256": "dc9e4271eef038cf4420a8b43b64261ab2f6271558235f3f0b86475cb13b673c",
+      "bytes": 7654,
+      "kind": "readme",
+      "source_path": null
+    }
+  ],
+  "verification": {
+    "archive_bytes_and_receipts": "Independently recomputed all archived SHA256/byte sizes against raw source/log origins and preserved receipt declarations",
+    "native_legacy_diagnostics": "Full raw log inspected:475/0 and no ERROR/WARNING/SCRIPT/parse diagnostic prefixes; Loaded system CA certificates",
+    "current_legacy_source_subset": "All19 current listed source hashes/byte sizes equal frozen receipt after native closure",
+    "scope_limit": "Only explicit source subsets; these checks do not establish every transitive import/cache/settings/environment input",
+    "links": "Active README links and all index/receipt references resolve. Four historical source-Markdown project-relative links are outside this subset, preserved and explicitly qualified in README.",
+    "independent_review": "Integration owner independently verified all161 artifact entries/14 runs against extant origins and hashes/byte sizes, receipt/source paths, active README links and final replay-fourth actual current15-file subset. Archive does not itself publish API."
+  }
+}
