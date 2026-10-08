@@ -4,6 +4,8 @@ Integration registered future Mirror Echo request `8b06b4ea-d6f6-41f3-8931-79e6b
 
 ## Current shared26 adoption and submitted L2 review
 
+Integration RESPONSE `8c8578fa-5e6c-4db5-ad55-cd2e5a4d64e6` identified dormant Stalker sampling after Shell persisted the fatal paused unit; this is shared Shell ordering, with no owned actor rewrite. RESPONSE `6dda35f2-b5bc-4e36-828f-c787771dc4e8` reports the root fix's focused fatal179/0, graphical registration367/0 and fatal portrait188/0. Integration's current progress confirms all eight original production portrait captures inspected. The independent scoped compatibility review finds only seven added Shell lines against shared26: keep the drain/input latch, let queued quiet settlement finish, then run the unchanged capture/persistence operations. Game/pause interfaces, save schemas and owned source/art remain unchanged. Minimal affected Shell verification, exact publication and ACCEPTED are still integration-owned; this provisional root evidence is not adoption, a new owned execution or acceptance. Act3 remains1/8 and L3 unbegun.
+
 Integration RESPONSE `6264d4e6-c77a-4b12-93e4-7f84954116c9` confirms receipt of HANDOFF4ca3/sourcebd6/index57f3 and verified assigned-branch/shared26 ancestry. Canonical worker baseline was updated atomically. Independent source/evidence/actual portrait and production registration/Continue/fatal Retry review is now integration-owned. This receipt is **not ACCEPTED**;1/8 remains accepted, L3 remains unbegun. The root-owned authored Echo API27 work is separate and unpublished for this worker. No repeated human/mobile gate or duplicate implementation is needed.
 
 
