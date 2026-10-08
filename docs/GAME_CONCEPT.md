@@ -50,27 +50,136 @@ The selected reference is Georges Méliès's [A Trip to the Moon (1902)](https:/
 - Palette: moon-white, dusty silver, and black.
 - Art direction: handmade lunar theatre, using painted-looking rock flats, broad white streaks and black creases, human figures in stars and planetary discs, oversized fungi, and celestial court ornament. Keep the moon-white, dusty-silver and black palette as our game interpretation; surviving handcoloured film prints are separately documented.
 - Character and prop vocabulary: Victorian expedition coats, hats, beards and umbrellas; embroidered ceremonial astronomer robes; a squat, finless bullet capsule; upright masked Selenites with rib bands, projecting headpieces and spears. The court uses curling panels, crescents, radial roundels and drapery.
-- Proposed movement identity: choosing where to land among circular hazards and scattered safe ground.
-- Earlier boss candidate: the Selenite King.
+- Proposed movement identity: choose a useful dash landing, preserve a retreat, then punish a visibly committed attack. Each level adds a different spatial problem using the same gestures.
+- Proposed earlier boss: the Selenite King in level 4.
 - **Act 1 final boss: the Man in the Moon.** He closes this act; the campaign has a separate final encounter in Act 3.
 
-**Working regular-level sequence**
+**Revised regular-level sequence — working design**
 
-1. Observatory and Launch — telescope workshops, rooftops, and a giant cannon; introduce dash direction and tap aiming in generous spaces.
-2. Crater Gardens — broad playable clearings framed by jagged painted-looking lunar scenery and celestial tableaux. Crater hazards and impact warnings are game additions that teach safe landing choices.
-3. Mushroom Caverns — an irregular scenic grotto with shallow mushroom caps, tall stalks, porous foreground fungi, rock shelves and a trunk-like crossing. Broad floors combine enemy spacing with proposed, visibly telegraphed spore hazards.
-4. Selenite Court — an open royal tableau with curling scenic panels, crescent columns, radial ornaments and drapery; coordinated biped guards lead to the proposed Selenite King encounter.
-5. The Living Moon — craters become pores and ridges become wrinkles; the face forms the landscape around the Man in the Moon encounter.
+Build a journey through five theatrical places, each with a different decision. The catalogue supplies visual references and concept studies; gameplay props, animations, collisions and encounters still need production. All hazards and boss rules below are proposed game adaptations, not claims about the film.
 
-The proposed act length is approximately 40–45 minutes. Broad floors, generous passages, encounter checkpoints, and locally visible attack warnings support dash-only movement and the close portrait camera. Introduce each hazard safely before combining it with enemies.
+| Level | Spatial structure | Decision that makes it different | First-clear target |
+| --- | --- | --- | --- |
+| 1. Observatory and Launch — The Launch Rehearsal | A procession through hall, workshop and broad loading roof | Where should I land so my next attack has a clear direction? | 6 minutes |
+| 2. Crater Gardens — The Celestial Camp | Connected lunar clearings with two approaches that rejoin at camp | Can I make danger commit to one place and land somewhere useful? | 8 minutes |
+| 3. Mushroom Caverns — The Breathing Grotto | Broad fungal chambers with routes around large stalks | Can I reach an opening while keeping a retreat clear? | 9 minutes |
+| 4. Selenite Court — The King's Formation | Linked open courts ending at a side-mounted throne | Which formation gap gives me the best target? | 10 minutes |
+| 5. The Living Moon — Departure Refused | A short return to the capsule, then a compact face-side arena | Can I evade the Moon's committed attack and return to its eye in time? | 10 minutes |
+
+These provisional targets total **43 minutes**, within the proposed 40–45-minute act. They are pacing targets, not timers or a reason to add repeated waves. Optional levels sit outside that total. Shorten the opening if players learn its gestures quickly.
+
+#### 1. Observatory and Launch — The Launch Rehearsal
+
+**Look and layout:** a lively Earth-side stage set. The blackboard, astronomical instrument and robed professors frame an open lecture floor; the capsule workshop leads onto a broad loading roof with painted chimneys, telescope and giant cannon. Roof edges and stairs are scenery around continuous navigable ground.
+
+**Encounter sequence:**
+
+1. **Demonstration hall:** introduce any-angle dashes around widely separated furniture. One clearly marked practice target teaches slash aiming after a swipe. Its demonstration uses the actual rule: release upper-left, tap nearer the centre, strike down-right. The target and teaching animation are new game additions.
+2. **Capsule workshop:** benches and an anvil create two generous approaches to the same practice target. Try landing on a different side and aiming diagonally. Introduce the quick second tap as one blast following the first slash. The target remains beatable with slashes; the blast's immediate feedback shows its optional follow-up role.
+3. **Loading roof:** a proposed slow loading arm marks a short floor lane before swinging across it. First observe it in an empty space; then use a safe side approach to reach a target. The arm does not knock the player onto a lethal rooftop edge.
+4. **All aboard:** combine a practice target and the familiar loading-arm warning beside the cannon. Clearing the rehearsal opens a broad capsule approach; reaching the open hatch by contact starts the launch. Workers, professors and attendants remain friendly scenery rather than an invented Earth enemy faction.
+
+**Film kit:** O01–O08 observatory scenery and dress; O09–O20 capsule/workshop/expedition props; O21–O31 roof, cannon and crew. Keep the capsule to one side of the combat floor so it does not hide targets.
+
+**New production additions:** one reusable practice target, one loading-arm mechanism and its windup, active and recovery states. This is a tutorial finale, not a compulsory new boss.
+
+**Break points:** save at the hall exit, after the workshop and before the final rehearsal. Repeat play can omit teaching pauses; completing exercises automatically advances them.
+
+#### 2. Crater Gardens — The Celestial Camp
+
+**Look and layout:** the tilted capsule opens onto painted lunar clearings. Jagged side flats frame two broad routes that rejoin at the sleeping expedition. The Earth globe, crescent woman, human-faced stars and Saturn figure form the camp's celestial tableau. They are landmarks and scenery, not five additional bosses.
+
+**Encounter sequence:**
+
+1. **Landing clearing:** one impact warning appears on the floor before a bright square puff strikes it. A neighbouring safe landing is visible at the same time. Ordinary painted crater rings remain harmless; active warnings have an unmistakable animated outline and fill.
+2. **First Selenite:** an upright creature visibly aims a short rush at the player's current position. Its floor line stops tracking before it moves. Dash aside after that commitment, then strike during recovery. Reuse the researched biped costume and headpiece.
+3. **Two approaches:** the left route offers more rock cover and the right more open landing space. Both teach the same required lesson with one impact warning and one familiar Selenite. Choose either route; they rejoin without a long return through cleared rooms.
+4. **Celestial camp:** the sleeping travellers mark a checkpoint. A final clearing uses two staggered impacts with safe space between them. The player chooses a useful landing that also leaves room to face a recovering Selenite. Defeat that final Selenite to stop the impacts and open the grotto passage; crossing the passage by contact ends the level.
+
+**Film kit:** O34–O36 lunar rocks, crater-pattern scenery and landed capsule; O37–O42 dream tableau; O49–O50 Selenite body/headpiece; O58 white-puff reference.
+
+**New production additions:** the animated impact warning and a Selenite rush/recovery sequence. An enemy's landing warning reads a world-space location; it is separate from the screen-space swipe endpoint used to aim the player's taps.
+
+**Break points:** save after the first Selenite, at the route reunion and at camp. The camp is quiet until the player crosses the next broad encounter threshold.
+
+#### 3. Mushroom Caverns — The Breathing Grotto
+
+**Look and layout:** oversized shallow-capped mushrooms, porous fungi, rock shelves and a fallen trunk create irregular scenic chambers. Large stalks split the floor into two useful approaches. The trunk sits beside a generous ground-level passage; shelving suggests depth without mandatory climbing or precision crossings.
+
+**Encounter sequence:**
+
+1. **Umbrella grove:** introduce a spear-bearing variant of the same Selenite. It faces a short lane, winds up, thrusts and pauses. Dash around a solid mushroom stalk, then attack the exposed recovery. Only clearly grounded stalks block movement and attacks; decorative caps and ceiling scenery do not.
+2. **Breathing chamber:** demonstrate one proposed spore vent in a quiet room. It visibly swells, marks its floor patch, releases square spores and clears. The vent leaves a broad neighbouring safe area throughout its cycle. Staying still in a safe pocket is a valid decision.
+3. **Crossed grotto:** combine the familiar spear guard with alternating spore patches. Choose a route around the stalk: a quick exposed approach or a covered approach with a later opening. Look for both an attack position and a safe retreat instead of dashing blindly into the nearest enemy.
+4. **Court approach:** two familiar guards stand on opposite sides of a central mushroom and commit at different times. Punish one recovery while keeping the other guard visible. Defeat both to open the curtained passage that previews the court's ornament; crossing it by contact ends the level.
+
+**Film kit:** O43–O48 mushroom caps, clusters, porous forms, trunk and rock shelves; O49–O51 Selenite and spear; O56 curtain arch at the exit.
+
+**New production additions:** one vent with readable state changes and the spear windup/recovery poses. Keep foreground fungi outside the combat sightline or fade them when they would obscure the player or a warning.
+
+**Break points:** save after the first spear guard, after the vent demonstration and before the final clearing. Cleared rooms remain safe; no unannounced respawns behind the player.
+
+#### 4. Selenite Court — The King's Formation
+
+**Look and layout:** three broad linked courts, with curling scenic panels, crescent columns, radial roundels and drapery around the edges. The throne sits to one side of the final chamber. The player enters through a curtain and sees an open performance space rather than a long narrow aisle.
+
+**Encounter sequence:**
+
+1. **Curtain entrance:** one familiar spear guard refreshes the grotto lesson on an open floor. Its silhouette and windup remain readable without a mushroom for cover.
+2. **Formation court:** two guards wind up in parallel lanes, leaving a generous gap. Choose a landing beside the guard with the earlier recovery. A second arrangement turns the same pair inward; change the approach instead of learning a new enemy faction.
+3. **Royal approach:** a low radial roundel briefly brightens before producing the familiar circular impact warning from Crater Gardens. Show one quiet cycle at the entrance, then combine it with a guard pair. The player can attack a guard first to simplify the space or preserve a direct route toward the next opening. Keep the roundel, participating enemies and safe alternatives in the local camera view. This animated roundel is a game use of the film ornament, not an observed film effect.
+4. **The Selenite King:** first he steps away from the throne, marks a short lunge, commits and recovers. Dash aside and approach him at ordinary slash range. In the next pattern he calls one guard pair into a visible formation, lets their thrusts commit, then telegraphs his own lunge into the remaining space. Every attack has its own readable commitment; their timing leaves a reachable safe landing. Attack a guard to open more space or punish the King's recovery.
+
+The King alternates his two learned patterns. One guard pair enters visibly at the pattern transition; defeated guards stay defeated for the remainder of that boss attempt. Clearing them makes subsequent exchanges simpler: the King proceeds directly to his already introduced lunge instead of summoning replacements. Choose whether to spend an opening removing a guard or damaging the King. A slash makes meaningful progress in each opening; a second-tap blast can exploit it further without being required. Difficulty comes from arrangement and timing, rather than padding the fight with additional health or repeating an unlimited guard wave.
+
+**Film kit:** O49–O57 Selenites, spears, royal figure, seat and celestial court decoration; O58 puff effect vocabulary. The King is an adaptation of the seated royal figure, not a new historical creature claim.
+
+**New production additions:** the King's lunge/recovery poses, coordinated guard formation animations and a brief brightening state for the roundel. Floor lane warnings and the roundel's impact reuse the existing systems.
+
+**Break points:** save before the royal approach, at the boss entrance and after its major pattern transition. Defeating the King opens the curtain back onto the lunar exterior.
+
+#### 5. The Living Moon — Departure Refused
+
+**Look and layout:** return to the capsule through familiar rock flats and crater ground, now composed to suggest facial creases. The final combat floor is a broad clearing along the Moon's lower face. A local eye, cheek and nose suggest the enormous human face; the full face can extend beyond the view, but no attack needs the player to see the entire boss. The escape ledge is a scenic boundary around a safe capsule approach.
+
+**Encounter sequence:**
+
+1. **Wrinkled return route:** one isolated impact rehearses safe landing. A short encounter adds a familiar Selenite rush. This is a compact return with new staging, not a long walk through the previous levels.
+2. **Capsule checkpoint:** the hatch is visibly blocked by the Moon's presence. Preview the nearby eye and the floor beneath it before combat begins. Keep the established camera angle, zoom and player follow.
+3. **The Man in the Moon:** teach two attacks separately. **Blink** marks a circular patch at the player's current world position, stops tracking, then strikes it. **Sneeze** raises the nearby nose and marks a short cone; its direction locks before release. Dash toward a visible safe area before either warning activates. During recovery, the injured eye leans down into the clearing and exposes its outlined rim at ordinary slash distance. Land usefully, approach the rim, aim a tap, then decide whether to add the blast.
+4. **Final expression:** alternate the learned attacks, then combine one impact patch with the familiar cone. Offset their commitments so a safe normal-dash landing always remains visible. After the exchange the same eye rim becomes reachable; finish the fight with the established close-range actions.
+
+Keep a single compact battlefield throughout the fight. Do not send the player across an enormous face between hits, turn an eye into a ranged target, hide a danger source off-screen or require dashing through an already active damaging zone. The next strike and the safe landing matter more than the overall scale of the face. The prototype's brief dash invulnerability is not required to solve these layouts.
+
+**Film kit:** O32–O35 Moon face, cloud border and lunar scenery; O09/O10/O36 capsule and hatch; O37/O39–O41 celestial backdrop; O59–O61 escape ledge, cord and capsule-clinging Selenite pose.
+
+**New production additions:** a few Moon expressions, eye-rim contact/recovery poses, blocked/open hatch states and the two boss windups. Face motion, hostility and weak-point rules are game inventions. The Moon's final flinch opens the hatch; reaching it by contact triggers a short escape tableau using the same capsule, cord and Selenite assets. This closes Act 1 and unlocks Act 2, not the campaign ending.
+
+**Break points:** save at the return clearing, before the boss and after each completed boss phase. The final phase combines known rules; it does not add another surprise attack.
+
+**Shared layout and mobile-session rules**
+
+- Let **D** mean the ordinary unobstructed dash distance; the current prototype has D = 2.7 world units. Start greyboxing with combat clearings roughly two dash lengths across and required openings about one dash length wide. These are provisional starting dimensions, not strict measurements for every room; verify ground projection and sprite scale in the actual portrait camera.
+- Use continuous broad floors, tolerant encounter thresholds and generous landing pockets. Required paths work with normal dashes and baseline attacks. Reaching the capsule, collecting a part or crossing a cleared exit triggers the relevant action by contact; all combat taps retain their slash/blast meaning.
+- A warning, its attack origin and at least one reachable safe landing must be visible together. Its delay must allow reaction, any remaining dash cooldown and a normal escape dash. Distinguish warning, active and recovery states by shape and animation as well as brightness; never rely on sound or colour alone.
+- Place attacking bodies and weak points within local close-range reach. Preserve the exact swipe-end-relative aim rule. An anchor at a screen boundary cannot aim outward; the player's remedy is another ordinary positioning swipe ending at a useful point on the display. Provide safe space for that dash and recovery windows long enough to reposition and slash. Test releases near every screen edge; do not rely on an impossible off-screen tap, an aim-only movement gesture, auto-aim or a silent change of aiming origin.
+- Save after completed encounters and before difficult finales; boss phase checkpoints prevent replaying the whole ten-minute level. Proposed resume behaviour freezes enemies, warnings and pickup timers when backgrounded, then waits for a tap to resume before combat inputs are accepted. A resume tap is consumed as a menu action, not an accidental slash.
+- Fixed stats are sufficient throughout. Replay improvements should come from recognising a tell, choosing a safer landing or exploiting an earlier opening. Level access, checkpoint access and optional challenges supply persistent progression; no mandatory farming or permanent damage rewards.
+- Temporary dash-speed, dash-length and 360-swing pickups are optional experiments. Offer length boosts in broad crater spaces and 360 swings in crowd encounters; never place a required route behind either pickup. Initial powerup tests can use one encounter of duration. Duration, stacking and the exact weapon-replacement variants remain unconfirmed tuning choices.
+
+**First design tests, before full level production**
+
+Test the hall's direction exercise, one Selenite rush, one mushroom/vent encounter, the King's formation/lunge and the Moon's warning/eye opening as short greyboxes. With fixed stats and the normal dash, a new player should identify the safe landing after one demonstration and recognize where a slash can punish recovery. Observe aiming mistakes separately from missed warning timing. Try slash-only completion, screen-edge swipe releases and a pause/resume during a warning. If safe landings or the boss opening require a wider camera, revise the encounter layout. These are proposed tests; campaign content has not been implemented or playtested.
 
 **Optional-level examples — proposals**
 
 | Regular level | Optional level | Reused assets | Small additions and play difference |
 | --- | --- | --- | --- |
-| Crater Gardens | Salvage Circuit | Broad lunar floors, jagged scenic rock pieces, capsule debris, and lunar enemies | Recoverable capsule parts and a damaged escape hatch, derived from the same finless-shell model. A compact loop lets the player choose the order of salvage encounters; contact collects the parts. |
-| Mushroom Caverns | Spore Bloom | Cave floors and walls, roots, mushrooms, and existing enemies | Animated spore vents and clear floor warnings. Alternating safe spaces emphasize dash timing and landing. |
-| Selenite Court | Royal Rehearsal | Court floors, curling wall panels, celestial columns, biped guards, and ceremonial props | Formation markers and a practice bell. Familiar guards adopt different formations across short encounters. |
+| Crater Gardens | Salvage Circuit | Lunar clearings, jagged scenic rocks, capsule/hatch model, impact warnings and the rush Selenite | Add recoverable capsule parts and a damaged hatch state. Collect three parts by contact in any order around a compact loop, then reach the repaired hatch to finish. Each clearing rearranges familiar threats. A dash-length pickup can ease the broad approaches but is unnecessary. |
+| Mushroom Caverns | Spore Bloom | Stalks, caps, porous fungi, ground passages, shelves, spear guards and the regular level's spore vent | Rearrange the same kit into alternating safe pockets. Add a distinct bloom-state animation to the existing vent; an optional 360-swing pickup can ease the final crowd. Defeat the final guard pair to quiet the vents and open the contact exit. Keep baseline completion viable. |
+| Selenite Court | Royal Rehearsal | Court floors, curling panels, crescent columns, curtains, guards and their formation animations | Add only a practice bell and formation markers. Contact with the bell starts a short arrangement; clearing it opens the next. Clear three arrangements to finish. No flawless speed run is required. |
+
+These are separately selected side levels unlocked after clearing their parent level. They need approximately 3–5 minutes each as a provisional first pass, with one checkpoint before the final exercise. Their rewards can be a film-themed cosmetic or challenge-completion stamp; none grants permanent damage. Shared main-level mechanics such as the spore vent are already in the parent kit, so do not count them as an entirely new optional-area environment.
 
 The [film reference library](reference-library/act1/README.md) contains the researched scenery and object catalogue, an offline searchable gallery, and six revised concept studies. Its [style guide](reference-library/act1/STYLE_GUIDE.md) connects the visual rules to film frames and museum records. The [earlier concept art](concept-art/act1/README.md) remains as a superseded exploratory pass. New art and all encounter rules are game proposals, not original film material or implemented levels.
 
