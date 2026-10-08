@@ -1,0 +1,16 @@
+{
+  "head": "87162dd310c9677084a466ffcc8a306ddb2b5de8",
+  "shared_api": "campaign-shared-25",
+  "sources": [
+    {
+      "path": "scripts/acts/act2/ruined_house.gd",
+      "sha256": "577ab97da1414481bbcab322d23749a597c69d02e83a5ac1bff82d5e4798c790"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_live_level_smoke.gd",
+      "sha256": "0d3feb4641b0493528e0813cb7d57911cdf9b460dc54edf57d6e76c775a5dadd"
+    }
+  ],
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-road-heavy-native-cleanup.log --script tests/acts/act2/a2_l3_live_level_smoke.gd -- --loadout=heavy --profile=standard --road-only",
+  "scope": "same affected actual first road encounter + corrected safe fixture teardown"
+}

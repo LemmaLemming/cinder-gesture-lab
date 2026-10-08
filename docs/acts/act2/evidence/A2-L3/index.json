@@ -1,0 +1,829 @@
+{
+  "schema_version": 1,
+  "level_id": "A2-L3",
+  "status": "Complete owned desktop L3 candidate ready for exact HANDOFF; integration registration/acceptance remains separate. No L4 implementation yet.",
+  "tested_source_commit": "31475ff2757f833fbc7479e528ae9c1d59bfa88b",
+  "shared_api": "campaign-shared-23",
+  "shared_publication": "2304d25e51d269edd3d6fc90b142f87b2ad35a6d",
+  "sources_sha256": {
+    "scripts/acts/act2/canister_tender_actor.gd": "c18a4b09ed55761de6f10cfa803d288718db480891ac1da97c9b5a5711e25c29",
+    "scripts/acts/act2/canister_tender_actor.gd.uid": "e50fb36075bcc9792822853c3a491158799b99f909d0bbb4502ffb793138d9fe",
+    "scripts/acts/act2/canister_tender_visual.gd": "d3b8dd7f41eb87808274e067a516efd98acddda838358a9e444dd65a53fb3633",
+    "scripts/acts/act2/canister_tender_visual.gd.uid": "81591eeddc37433f047200257ca15b0a48a72dbf6a0fac58257d4dffd298ed2b",
+    "scripts/acts/act2/handling_machine_boss_visual.gd": "ac74c4a1c82b6faf8526a52c8f69f6586c171fddc6211039d60d5ba404852582",
+    "scripts/acts/act2/handling_machine_boss_actor.gd.uid": "36d4c1aaec4e44b10f7a350d48cdeb654063b920fa989fce733ea5618dcb8087",
+    "scripts/acts/act2/handling_machine_boss_visual.gd.uid": "6b32830c1a3f026f0b6a65a5f56a3f9f16b2dc738d956de8a2e4dae307abdf07",
+    "scripts/acts/act2/handling_machine_boss_actor.gd": "685308db29c7df0b117e6b4755406a42916c31f22cbd707f6b0c3f9afadc8964",
+    "scripts/acts/act2/ruined_house_floor.gd": "a5da64bd225526174845cfbf0b2d33b21ccad40915544ec5b1359dc3a3ca2626",
+    "scripts/acts/act2/ruined_house_kit.gd": "19c694d6257856605f3b175a288ce611a3da2a9d916a1151ce4600512a7f3505",
+    "scripts/acts/act2/ruined_house_sequence.gd": "f73c1d5ec34f6829100b2cec2c3a84cf1e1a2cc4501a892fef56f9fa001f5975",
+    "scripts/acts/act2/ruined_house_sequence.gd.uid": "4fa2aa87083c6c8f45704cf17a6e5bcda9a291a246bf9dbc0793d9cbe8c495da",
+    "scripts/acts/act2/ruined_house_floor.gd.uid": "f146f5816772a888143a25d92c7e157fa1a358ba387a5ccb0eb8ee1b94e8e339",
+    "scripts/acts/act2/ruined_house_kit.gd.uid": "cb5bc95e9659d9566daa53edb7d5cbab44fb65afa0fa3d0387b65220466c43b0",
+    "tests/acts/act2/a2_l3_actor_smoke.gd": "6918dd80560aac519d45f9848f4fc04c800fa9494aa43101da3d557e98fd52cf",
+    "tests/acts/act2/a2_l3_actor_smoke.gd.uid": "e5702c31b709dfd25359477a6df4fa1a34db264b280539f959bf48d6546da086",
+    "tests/acts/act2/a2_l3_asset_capture.gd": "05a16799264b4f31bd4dc4f2089c87baeb070f7d76c9100b1619ca3204bbfc02",
+    "tests/acts/act2/a2_l3_asset_capture.gd.uid": "0bd99107571c3054e06add4d5dee220d5c45a83af3d9c0452cf05de1c93abd68",
+    "tests/acts/act2/fixtures/a2_l3_asset_preview.tscn": "af0d16fe77eeef0c8d6f6f32049afad1e16bfb40dcc4202e91297ac135260454",
+    "tests/acts/act2/fixtures/a2_l3_asset_preview.gd": "3fcb9e5a686a65c1d190a891516c49dfa61f2230f59e45a8a0aafb9d63a0a6b3",
+    "tests/acts/act2/fixtures/a2_l3_asset_preview.gd.uid": "e31c7bcf559cb2d0c2bb609baf0c7e6b4e413a92e7a2299f9bad1c356a5e8a74"
+  },
+  "import": {
+    "command": "python3 scripts/dev/dev.py import",
+    "exit_code": 0,
+    "session_id": 39693,
+    "provenance": "Observed tool startup and complete clean editor stdout; no raw engine log was configured for this successful import",
+    "reason": "Ten new scripts/UIDs and new TEST ONLY preview scene, plus new copied prior native PNG artifacts. No source failure or second import requested."
+  },
+  "actor_component": {
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-actor-phase-first.log --script tests/acts/act2/a2_l3_actor_smoke.gd",
+    "raw_log": "a2-l3-actor-phase-first.log",
+    "sha256": "1f06cf54a9a556c85857fe806f2a8fd7d10f91c50158a5ef8c0d34af7fc0950f",
+    "exit_code": 0,
+    "checks": 41,
+    "failures": 0,
+    "scope": "Actual shared Heavy ordinary-primary/zero initial ammo and real stationary Reach/Circle recovery gates. Exact closed phase1 threshold, callback reentry/action refusal, authored BACK rejection, exact paused fresh pending actor, phase2 Place fresh actor and malformed action/HP refill refusal, second actual primary/local disable, Tender rig/native actor transport and cleanup. Isolated actual actors; no full L3/smoke/portrait/full aggregate/canonical claim."
+  },
+  "asset_first_failure": {
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-asset-capture-first.log --script tests/acts/act2/a2_l3_asset_capture.gd",
+    "raw_log": "a2-l3-asset-capture-first.log",
+    "sha256": "4736ccd35e9249c9d0140627280bc9ff7acd7dc444859ed9e29fa191665222b0",
+    "classification": "fixture script/API teardown error",
+    "first_meaningful_error": "Invalid call. Nonexistent function request_pause (via call) in base Node (game.gd), a2_l3_asset_capture.gd62",
+    "exit_code": 130,
+    "exit_provenance": "After first error the yielded native job did not complete; owner interrupted only session11310, preserving original source/rawlog and all10 saved images/metadata first",
+    "fixture_result": "NO result line/completed check count; do not label pass.10 saved native540x1170 cosmetic frames had no reported camera bound failure before teardown; art/readability review pending.",
+    "artifact_sha256": {
+      "asset-first-failed/tender-warning.png": "1330442081b2165a62c8530a112c25fc8bcb9693b14d46f9bb8c0e6c59163dfa",
+      "asset-first-failed/boss-idle.png": "677cb99bed07a7a2e1ea6fb96c3900534809906836b4ed798de0e421de0a0709",
+      "asset-first-failed/metadata.json": "6a049455e24b3a4de6878b01792374190fccaeddae26f26ccf7fd1568e01ca94",
+      "asset-first-failed/boss-reach-recovery.png": "3c0cbbcfb6d067bbbef421cdc1fa98bfdd4d711ed5c6444c7cc452b7a6d78bd0",
+      "asset-first-failed/tender-reload.png": "81727a5fc90aa9e710687bf59fb9a21d92acabaf5d16ad306ece7e59b6436510",
+      "asset-first-failed/boss-place-active.png": "9a7bf8d827040fd104cbf033a199ffbc1117c59489ec2963a120ee9963b3cd62",
+      "asset-first-failed/boss-reach-active.png": "0f8e613035e8d1c2dce9ae532251d58d3ef8e8c5fae9f1e6759c6f6e53c5d2cc",
+      "asset-first-failed/boss-place-recovery.png": "72eaf3030fefd3f76388a3e3c503d36a097fcd5a2b4e9e077ac3186b969a6049",
+      "asset-first-failed/exposed-house.png": "e818034c12ce9c50ca852ed162860a24fef91c530ceac706879be8f8711aaf1b",
+      "asset-first-failed/boss-reach-lock.png": "b328d7d964694ff61d50ec3f507826f2269e2ff260a18d875ab53cb42b7bb597",
+      "asset-first-failed/boss-local-arm-disengaged.png": "9b716254007cbf4ff9ba78cf4251f01a898be590a9eeb2a541d4e1f6246f983b"
+    },
+    "minimal_fix": "Use actual Game.request_pause_deferred and await complete supported deferred barrier before exit/free; CampaignShell.request_pause is unavailable on standalone Game. No resource/production art/controller/damage/camera correction indicated."
+  },
+  "asset_corrected": {
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-asset-capture-corrected.log --script tests/acts/act2/a2_l3_asset_capture.gd",
+    "raw_log": "a2-l3-asset-capture-corrected.log",
+    "sha256": "5b04d9d585a41da51cc3cb5f8d80eb8ea9427075a99faf62fa2be727f69d466d",
+    "exit_code": 0,
+    "checks": 48,
+    "failures": 0,
+    "source_changes": "Only fixture teardown: supported standalone Game.request_pause_deferred and three deferred frames/barrier assertion; native art/actor sources unchanged from31475ff. No import or41-check repetition.",
+    "corrected_fixture_sha256": "4a9e8c98d34e3e4fe41bd619f0caa4a8cf5c2fe36f747bafd280340556029856",
+    "scope": "Ten actual native540x1170 cosmetic asset previews in actual shared Game/camera/Act2 player presentation and production floor/kit resources, TEST ONLY stage placed Hero/cosmetic phase. Shared rig cutaway derives actual Hero sprite triangles; scenery candidate cutaways are not applied by this preview. No accepted Scheduler attack/cue/cloud, authored route/input/save/phase checkpoint/full aggregate/balance/canonical acceptance.",
+    "artifact_sha256": {
+      "asset-corrected/tender-warning.png": "e381a75c4368196429e62794677890b3d10b80381c209d45bfcbb5c5ed5f35d0",
+      "asset-corrected/boss-idle.png": "0f02c0fc699f1ef54b16e842db16c95ff4795058596f2b6884ce89f551aedf34",
+      "asset-corrected/metadata.json": "f29ac589506677bce819fea1078b9f1ad0b1129a1b4cd72e0f4361a1875aca3b",
+      "asset-corrected/boss-reach-recovery.png": "01cde90e0eb92f8503e807d8f4900dcc65c42883174602c7026fa1e8cf65a154",
+      "asset-corrected/tender-reload.png": "9c24200bbf8907d3177a15e6b1e1319fa07b342ded6ce3a2c7cf09bcec7bacb9",
+      "asset-corrected/boss-place-active.png": "9d3f9b48c4b2b9066ff5a965ef390862de5b3d8d4fc0739183aaa58f1cd6bc7f",
+      "asset-corrected/boss-reach-active.png": "ea74c209cb89a46c13fac03a67ee46f6935cde53b8bbbf9be86c352ffff30b02",
+      "asset-corrected/boss-place-recovery.png": "57990dbe1a5e1df75048c3644ab128f40c767ade0d8b035635f98317a19af38a",
+      "asset-corrected/exposed-house.png": "5420328fb90d12acacf68b0c02de4724fbbe7509bc8cb03520be3e0ac0392318",
+      "asset-corrected/boss-reach-lock.png": "8c2cac5a0b12c4d7ef5f2803bc42280c2ae6583836b76cf0ea07aea7931cbe15",
+      "asset-corrected/boss-local-arm-disengaged.png": "0248f2b730d0b4f464c18c60d7c7b9033c69274a6d852f1e04959971e10f7ed1"
+    },
+    "reviews": {
+      "root": {
+        "frames": [
+          "boss-idle",
+          "boss-reach-active",
+          "boss-place-recovery",
+          "tender-reload",
+          "exposed-house"
+        ],
+        "finding": "Hero readability maintained; low boss joint/Place footprint hidden under opaque mass. No full art acceptance."
+      },
+      "boss_peer": {
+        "frames": 7,
+        "finding": "Material defect: recovery coupler hidden in both actions, Place plate/arm concealed, Reach lock claw nearly idle beneath canopy, local disengagement barely differentiated. Hero torso/facing/feet clear in all7; low five-support machine/rounded paired-eye tentacled anatomy visible, fifth rear support not established. Focused cosmetic correction only; source/HP origin and gameplay unchanged."
+      },
+      "source_scenery_peer": {
+        "frames": [
+          "tender-warning",
+          "tender-reload",
+          "exposed-house",
+          "boss-idle"
+        ],
+        "finding": "Selected Tender tube/bore/canisters/two skids and worn exposed house/left approach readable without material Hero/floor clutter defect. Tiny coupler/shutters/rivets merge. Right scullery/sink/arch/right approach and distant excavation are outside these views; actual derived scenery cutaway and smoke/cue occlusion remain untested."
+      }
+    }
+  },
+  "boss_art_revision_2": {
+    "source_checkpoint": "9e860383ac2d43f01caee8615f6f9a2f45d2f2ec",
+    "tested_checkout_head": "e66461929b98dae9241207f1f47461509a2001ad",
+    "visual_sha256": "0b41831e83ccd09ae8623dfb7a8388e91b1626ae2fb9216e56fb791188ae40d2",
+    "fixture_sha256": "1daa5f2555a809d6484f44ecd7969099b766eed2d62154a035d55abfb6f1e6eb",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-boss-art-corrected.log --script tests/acts/act2/a2_l3_asset_capture.gd -- --boss-only",
+    "checks": 50,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-boss-art-corrected.log",
+    "log_sha256": "c200ded4735dd8783822a678f6877e486ba651db60948351c087ea4c9926d2c3",
+    "scope": "Seven affected native540x1170 cosmetic poses, same Game/camera/floor/kit/stage Hero. Actual new mesh vertices remain grounded/<=1.35 and quiet boss action/phase pose restores; no admitted cue/attack/cloud/route/aggregate/phase checkpoint claim. Original failed material review and48/10 kept unchanged. All7peer/root2reviewpassedfourmaterialdefects; remainingfineoverlaplimits recorded.",
+    "artifact_sha256": {
+      "boss-art-corrected/boss-idle.png": "26f8ed7280cf90fcda05e4647bb72ae25efa8393e559820932a9a611e58a54b6",
+      "boss-art-corrected/metadata.json": "140c2e7bad58cf1346f1d0e90797ea1f77d47b5b1cb3891a3fd3ff7e655447c8",
+      "boss-art-corrected/boss-reach-recovery.png": "0b818caea244e41d3975964c5b8e45fade2af293fad07c76256289772fca05d3",
+      "boss-art-corrected/boss-place-active.png": "1d3153a41fe19ddc994cf37183d2398ded5f2dbcea07ec6beaa3466f6406bf48",
+      "boss-art-corrected/boss-reach-active.png": "80fe1646bd6b0823d82a30a83efeaaf740739ed98d847e65fda09850e727ee23",
+      "boss-art-corrected/boss-place-recovery.png": "0e7c8817fc9574a73b7b6cc1c67d8c1e4b87940b2bee0cdb553f7bbec3120162",
+      "boss-art-corrected/boss-reach-lock.png": "467650b43abb85730a5f5c945f430d6fb42f8f99ff0eb256c5b6fbdff92e85a0",
+      "boss-art-corrected/boss-local-arm-disengaged.png": "e4efa583798c1a7608951e7660a9b910381f7793f504b6ba5ee8eef37446f55c"
+    },
+    "reviews": {
+      "peer": "All seven original540x1170 corrected frames inspected. Four prior material defects pass: central coupler visible in both recoveries; Place square trimmed ground plate; outboard Reach lock claw; empty socket/lowered detached arm with standing operator/supports. Hero face/torso/feet clear. Fine limits: rear fifth support/individual strands merge, rear Place edge under mount, detached lever partly shares right-support cluster. Staged cosmetic source/readability pass only.",
+      "root": "Viewed corrected Place recovery and Reach lock; central mount and distinct ground plate are visible, held tool is outboard; no material Hero/floor defect in these two frames. Remaining five covered independently."
+    }
+  },
+  "new_resources_import": {
+    "command": "python3 scripts/dev/dev.py import",
+    "exit_code": 0,
+    "scope": "New smoke shader and focused scripts/UID sidecars; ordinary importer also processed new saved capture PNGs. Session64252 stdout terminal receipt was truncated; not a complete portable raw log or shader pixel acceptance. Native118 and raw engine log separately cover actual affected shader execution."
+  },
+  "smoke_art_first": {
+    "tested_checkout_head": "e66461929b98dae9241207f1f47461509a2001ad",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-smoke-art-first.log --script tests/acts/act2/a2_l3_smoke_asset_capture.gd",
+    "checks": 73,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-smoke-art-first.log",
+    "log_sha256": "a7037deadf1ccb1e33fa0a3547675de4c618e4f3e029f9ea554777cf8f2d79db",
+    "sources_sha256": {
+      "scripts/acts/act2/smoke_bank_visual.gd": "48dd2d2538230376d3ed0425eb07c93db849d491a3e8b859365ec187b611822e",
+      "tests/acts/act2/a2_l3_smoke_asset_capture.gd": "7af1021db8a80d2566f4c4cc1e39d4c92ad6e057d03ac6063451723b28441946",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.gd": "8f18063b1ff719a04ae5088c0fcd8d7114f956efa7b8d0cd97c34bd02443d611",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.tscn": "3d589c566826e178024365596fc4557b4e56245c1fcc3ea94adee42ea2d3c605"
+    },
+    "scope": "Five actual native540x1170 cosmetic shared circle cue/vapour/Tender/Hero/production floor+kit views, stage placed Hero; fixed1.05circle and native bounded vertices/height/material isolation, exact quiet pose, actual capsule static occupancy/floor, shared warning/lock/active/recovery cue states, deferred pause/cleanup. No sharedSmoke consumer, Scheduler admission/contact grace/ticks/damage, route/input/save/fairness/performance or canonical claim. Actual art review pending.",
+    "artifact_sha256": {
+      "smoke-art-first/smoke-active.png": "7131fa4ea0c3ab5d4a8d707dff472d405ddda3899115fe18d649dfe7154ab108",
+      "smoke-art-first/smoke-recovery.png": "5f9ab1491006158ff72626a3e2105c192d164966ccfd662a8e39636bcc62731f",
+      "smoke-art-first/metadata.json": "408709af4c57ecb454d4e7e029a21b1acc233c096251e125b45250b1320d482b",
+      "smoke-art-first/smoke-lock.png": "acf83f20dd9b5d8ce19cfb904e79ea3a99e70e9b6fd2166b4afced8539a92389",
+      "smoke-art-first/smoke-warning.png": "bd59664ff9f988cd11bbb51c4488d38b28404fe5285b5a740aa84134706cd74a",
+      "smoke-art-first/smoke-active-hero-overlap.png": "54cac5f872d2fa8d91e77654af74a1c6c390d4e1051e3be01ed67a901b897a6b"
+    },
+    "reviews": {
+      "peer": "All five original540x1170 frames: cue/Hero/dry-side READABILITY PASS, warning/lock/source distinct, active rim/fill readable, overlap torso/facing/boots visible with source cross over boot/shadow, recovery visibly thinner. SOURCE FIDELITY FAIL: brown-grey regular rosette/flattened lobes and pale recovery stain under-realize G07 black pooling vapour. Cosmetic revision required; fixed low bounded adaptation remains valid. Tender covers short lower-right rim segment; next-tell coexistence not established.",
+      "root": "Viewed active+Hero overlap; agreed current brown regular lobes materially miss Black Smoke identity. Hero/most cue/dry side readable. Independent review covers all5."
+    }
+  },
+  "entry_floor_first": {
+    "tested_checkout_head": "e66461929b98dae9241207f1f47461509a2001ad",
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-entry-floor-first.log --script tests/acts/act2/a2_l3_entry_smoke.gd",
+    "checks": 43,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-entry-floor-first.log",
+    "log_sha256": "d3e15f7b3c85602593c24b5d7613f5e84e25833e05bb12acf451ac6bb1a406c9",
+    "sources_sha256": {
+      "scripts/acts/act2/ruined_house.gd": "bf4230a195d409412634685d4634247b5eb790892676f420d87a00febbfd8dea",
+      "scenes/acts/act2/a2_l3.tscn": "d4dbb7a42a75d6b017d46e406ae4c3a0a1063bc2abb3dffa25d7d0cceea5f32b",
+      "tests/acts/act2/a2_l3_entry_smoke.gd": "6d6829b36ad6952e8155b70094b0770b28dbcc55ffa92b79bf480c0d0932ef11"
+    },
+    "scope": "Actual authored L3 scene/native shared Hero, seven anchored HP30 actors/four tools, Act2 skin/four dry floors. Actual public dashes low-wall collision shortening, broad left and right approach, stable floor contact, actual deferred pause/cleanup. No synthetic defeat/checkpoint/HP transform/route progress; Smoke/whole aggregate explicitly unimplemented and rejected. No full route/gameplay art/save acceptance."
+  },
+  "smoke_art_revision_2": {
+    "tested_checkout_head": "e66461929b98dae9241207f1f47461509a2001ad",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-smoke-art-corrected.log --script tests/acts/act2/a2_l3_smoke_asset_capture.gd -- --corrected",
+    "checks": 73,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-smoke-art-corrected.log",
+    "log_sha256": "a7037deadf1ccb1e33fa0a3547675de4c618e4f3e029f9ea554777cf8f2d79db",
+    "sources_sha256": {
+      "scripts/acts/act2/smoke_bank_visual.gd": "a8251b789f490195a374a03f6145486c7bbc939ea2a15dbc89baa6a83ec7c7e5",
+      "tests/acts/act2/a2_l3_smoke_asset_capture.gd": "ddf28b27c27cccaff707aa5a4d08db1d2d5afdca94ff2e7a2643c7e08ffa1c02"
+    },
+    "fixture_change": "Use declared SmokeVisual.ACTIVE_ALPHA with actual Color float32 representation; separate --corrected output. No geometry/clock/source/cue/HP/camera/assertion weakening.",
+    "artifact_sha256": {
+      "smoke-art-revision2/smoke-active.png": "94e27532016c67a6c74385e3c7bab691e526348bba6c82de1007419a8eb891db",
+      "smoke-art-revision2/smoke-recovery.png": "3921ec07310b45a602218dc5e2db4fd8b2c646b5c6d88a4dd99da481b70dceb9",
+      "smoke-art-revision2/metadata.json": "13fcc11a8633a41849a42ac934da9f4cbd1aa782958e37a334f5e65e98918b28",
+      "smoke-art-revision2/smoke-lock.png": "ceddf99647409fa72ac9491587526d168ac337fc80be38859d3663de97f96556",
+      "smoke-art-revision2/smoke-warning.png": "2ee394be80b5bfdaecc9b6bfd819f08ac25d2339de5c5b1017fe49b11b66ded2",
+      "smoke-art-revision2/smoke-active-hero-overlap.png": "f60433f8022e38c00e0d63810f406d4c4d2e06d25a79b117393def0975e3edf9"
+    },
+    "scope": "Same five TEST ONLY actual native cosmetic cue/Hero/floor views and bounded native geometry/materials/quiet pose/static capsule overlap/cleanup. No bank consumer/admission/grace/ticks/damage/full route/transport claim.",
+    "reviews": {
+      "root": "Viewed active/recovery/active Hero overlap at original540x1170. Irregular silhouette improved, but active remains brown lobes under shared orange fill, recovery grey stain. Material black pooling identity still insufficient; source fidelity FAIL. Cue/mostrim/Hero/dry side readable in selected3. Independent all5 pending.",
+      "peer": "All five original540x1170 inspected: material sourcefidelityFAIL, active brown polygonlobes beneath orangefill/recoverythin graystain. Hero face/torso/dryfloor readable. Tender covers shortlower-right rimsegment, sourcecross overlapsboots/shadow. No actualbank/gameplay/transport claim."
+    }
+  },
+  "smoke_art_revision_3": {
+    "tested_checkout_head": "604b8047e55a578b0cbaea447ba2ff0a6aea39b2",
+    "shared_api": "campaign-shared-24",
+    "shared_publication": "5d7a394c67c6095bd96136e0f07976984075ed0f",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-smoke-art-revision3.log --script tests/acts/act2/a2_l3_smoke_asset_capture.gd -- --revision3",
+    "checks": 73,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-smoke-art-revision3.log",
+    "log_sha256": "a7037deadf1ccb1e33fa0a3547675de4c618e4f3e029f9ea554777cf8f2d79db",
+    "sources_sha256": {
+      "scripts/acts/act2/smoke_bank_visual.gd": "57be793c86671a9676bf7d476cb614bfe9dcf23176dcc4f3369dcbf678da878f",
+      "scripts/cues/threat_cue.gd": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "tests/acts/act2/a2_l3_smoke_asset_capture.gd": "ff1fe604c31b56dc9cfc5c23cf5a64062134293bcce1365b5f1c465873cdf847"
+    },
+    "change": "Same actual geometry/materialdepth/source/requiredordinarycue. Core alpha.64, fringeweighted.48..62; recovery sqrtfade reaches exactzero onlyoriginal supplieddeadline. Separate--revision3 captures; declarednativeColorceilingunchangedassertionlogic.",
+    "scope": "Same5TESTONLYcosmetic bank/cue/Hero/floor nativeviews, no consumer/grace/tick/damage/route/save/escapeclaim; exercises affected actualordinaryCue under shared24.",
+    "artifact_sha256": {
+      "smoke-art-revision3/smoke-active.png": "303f7f003eb4d4a459a111780941a10608aa738899ebf41b1efca1ebdad06202",
+      "smoke-art-revision3/smoke-recovery.png": "ec899b60184dfa948afc8a04ad87aa0787df29543d098596540eb5223c8055c0",
+      "smoke-art-revision3/metadata.json": "6a9288323786015ed7b91b4e0ab9491555c5ffbffa178fef7de77719a9e2eb42",
+      "smoke-art-revision3/smoke-lock.png": "717d68688ab221294442cf15a6adc1caf244c2f769894b5e7717eeeb16c8139f",
+      "smoke-art-revision3/smoke-warning.png": "efc70d3966f42fce9f5c1328a1ab024619f6bb04498bd4d527dc8e42880fc1a7",
+      "smoke-art-revision3/smoke-active-hero-overlap.png": "ab1033745028ba9779f8d78a5b8f020c4d851ff063a4ef29eb474b7634c87f39"
+    },
+    "reviews": {
+      "root": "Viewed active/recovery/overlap atoriginal540x1170. Denser darkercore, neutralcharcoal recovery/thinfringe. Active retainswarmorangefilltint; materialpeerreviewpending. Hero torso/facing/boots/mostrim anddryfloor remainreadable; knowncenterSourcecross/bootsshadow, lower-rightTender/rimsegmentoverlap andnexTelluntested limits remain.",
+      "peer": "All5original540x1170 plusG07 reviewed. MaterialactiveFAIL: brownfaceted patches, despite densercore. Recoveryimproved charcoalcore/thinfringe, flat. Hero/dryfloor readable; Tender coverslower-right rimsegment, centerSource touchesboots. Need neutralafterfillwispswithactual source/rim/Hero protection; no sharedpriorityslotbetweenfill/glyph. No actualbank/damage/transport claim."
+    }
+  },
+  "floor_native_first": {
+    "tested_checkout_head": "604b8047e55a578b0cbaea447ba2ff0a6aea39b2",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-authored-floor-native.log --script tests/acts/act2/a2_l3_entry_smoke.gd -- --capture",
+    "exit_code": 0,
+    "fixture_result": "INCOMPLETE; no result line/check count or requested three frames. Do not label pass.",
+    "classification": "fixture flag collision with shared Game automatic preview",
+    "first_meaningful_error": "--capture is already supported by Game._ready; _capture_preview quits native tree after0.5s before owned authored capture finishes. No script/resource error, explicit owned fixture never completed.",
+    "artifact_sha256": {
+      "floor-native-first/native-first.log": "cf320b46ff3e85e5864fc38577e3097f7bbd17f00b6aca572323590cc635e92d",
+      "floor-native-first/automatic-level-preview.png": "18d6b48979dcd3c888909fdf265abbaadbe2b8819287ff95e3d30a9600f0da0e",
+      "floor-native-first/fixture.gd.txt": "2ff227ce994952f520957124f67c642cef7b3ee2a9c602a2a1c432da8fb8a165"
+    },
+    "minimal_fix": "Rename owned flag --floor-portraits and explicitly assert settled native response after normal bounded camera wait; rerun only this affected native fixture. Shared Game unchanged; first43 headless result retains original scope."
+  },
+  "floor_native_corrected": {
+    "tested_checkout_head": "604b8047e55a578b0cbaea447ba2ff0a6aea39b2",
+    "shared_api": "campaign-shared-24",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-authored-floor-corrected.log --script tests/acts/act2/a2_l3_entry_smoke.gd -- --floor-portraits",
+    "checks": 56,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-authored-floor-corrected.log",
+    "log_sha256": "543451dd93e1bae57f604ac0b0650139e5470a05501d2b701539b242a0bba550",
+    "sources_sha256": {
+      "tests/acts/act2/a2_l3_entry_smoke.gd": "c5fd0fbf7f0c87abd4a565ab49e4bc45d2618acff35dccb25fb3ecb945801e27",
+      "scripts/acts/act2/ruined_house.gd": "bf4230a195d409412634685d4634247b5eb790892676f420d87a00febbfd8dea",
+      "scripts/acts/act2/ruined_house_kit.gd": "19c694d6257856605f3b175a288ce611a3da2a9d916a1151ce4600512a7f3505"
+    },
+    "change": "Owned flag renamed--floor-portraits to avoid shared Game--capture autoexit; waitactualnormal45physicsframes andassertnative response.stable/zero commitment before eachframe. Actualdashpaths/landing andcurrentactualcutaway/camerastate savedinformationally; no input/camera/transformforce.",
+    "scope": "Actual authored arrival andleft/rightlow-wallapproach throughpublicrealworlddashes, currentHero/camera/scenerycutawaylogic, no targetdefeats/encounterprogress/HPseed/cloud/grace/tick/fullroute/saveclaim.",
+    "artifact_sha256": {
+      "authored-floor-native/metadata.json": "ec155b8c5ecf6aaea6dcd10d1f9ddadd75112f0fcdcae6d3906c11226f3afe80",
+      "authored-floor-native/authored-arrival.png": "cfa140b8492a3cc1f0fcf8793bf59671dd5a14fe685e26c192ab120618c4951c",
+      "authored-floor-native/authored-house-left-approach.png": "d1daca4310dc42b7cbb467299980b6b1d84c5be1a9c0617d4f45bb853305209f",
+      "authored-floor-native/authored-house-right-approach.png": "d7a474546cbad31d14d69ef930d13379e25300a08fb6351ddd6b72422552de51"
+    },
+    "reviews": {
+      "root": "All3original540x1170 viewed: arrivedTender/clearHero/dryfloor; left wornwall/planks/utensils; rightHero face/torso/feet clear with actualsink/openbrickarch/dryapproach. No blockedHero/floordefect. Metadataactualoptionalcutawaylistsempty inall3, so thissampleexecutesrootquerybutdoesnotestablish a triggeredfade. Futurecastinactive/currentbeatsmoke_edge throughout; no combat/sourceopening/wholehouse/nexTellclaim.",
+      "peer": "All three original 540x1170 frames independently reviewed: scoped Hero/dry-floor/house source readability pass. Right cream sink rim and broken brick arch distinct; left worn wall/planks/utensils readable. No triggered scenery fade, combat or full route established."
+    }
+  },
+  "known_transport_first": {
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-known-transport-first.log --script tests/acts/act2/a2_l3_known_transport_smoke.gd",
+    "checks": 42,
+    "failures": 0,
+    "exit_code": 0,
+    "tested_checkout_head": "6e68309a031336e5e8d7b07fef1420dfdebd10f8",
+    "shared_api": "campaign-shared-24",
+    "scope": "Actual initial native component unit only: complete shared actor/public Scheduler/one Ray/six targets/four tools, exact JSON,14 malformed atomic refusals. Full CinderLevel snapshot still rejects. No bank/phase-boundary/full route/save claim.",
+    "source_caveat": "Root added a separate response-point low-wall method after queued launch and before completion was collected; actual parse timing is unknown. Both before/after candidate root sources are preserved. Empty-view initial fixture never invokes that method, so first42 do not establish wall behavior. Frozen affected46 rerun will identify exact source and test actual wall assertions.",
+    "artifact_sha256": {
+      "known-transport-first/root-before-wall.gd.txt": "ea2d6d2203e17f8d000b4e7adff553a89596b5407bfa2fd23ff8e384258b6ac9",
+      "known-transport-first/first.log": "64c4b45be3f055e7349343761db3c8ca049ec5d9ef7fa64527b0ec345bab4058",
+      "known-transport-first/fixture.gd.txt": "825d43cbc05cd3ff61dd261611a6b54a0ba23d582349010c6e5ffc4f6f04b0ae",
+      "known-transport-first/root-after-wall.gd.txt": "4f583973ff13da4bf1e193ce9dc62c892f15fbba12093e7805c504ae6e3c4cda",
+      "known-transport-first/rules.gd.txt": "a60586abbb5745aaa317842b862f5eb17d2b930437ea903a5eebd8ba5895cdfd"
+    }
+  },
+  "known_transport_wall_first": {
+    "tested_checkout_head": "6e68309a031336e5e8d7b07fef1420dfdebd10f8",
+    "shared_api": "campaign-shared-24",
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-known-transport-wall.log --script tests/acts/act2/a2_l3_known_transport_smoke.gd",
+    "checks": 46,
+    "failures": 0,
+    "exit_code": 0,
+    "scope": "Initial actual seventeen-field known component unit, exact JSON, fourteen malformed atomic refusals, four actual low-wall point assertions. No bank, running tool, B02 boundary, full route or whole checkpoint restoration.",
+    "review_finding": "Independent static review found square-expanded wall corners can falsely reject a capsule-clear point. The four original wall assertions did not cover corners; preserve this successful limited result before the minimal rounded-corner correction.",
+    "artifact_sha256": {
+      "known-transport-wall-first/fixture.gd.txt": "ad6e320e9129c5d26afcd14fbcc0c47132be4f973f3af1327b6803047f146b34",
+      "known-transport-wall-first/native.log": "6ab9a2c20eaa14659280f443e3e79092b265f0ea124fc1267dd98024668c9707",
+      "known-transport-wall-first/root.gd.txt": "4f583973ff13da4bf1e193ce9dc62c892f15fbba12093e7805c504ae6e3c4cda",
+      "known-transport-wall-first/rules.gd.txt": "a60586abbb5745aaa317842b862f5eb17d2b930437ea903a5eebd8ba5895cdfd"
+    }
+  },
+  "known_transport_rounded_wall": {
+    "tested_checkout_head": "6e68309a031336e5e8d7b07fef1420dfdebd10f8",
+    "shared_api": "campaign-shared-24",
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-known-transport-rounded-wall.log --script tests/acts/act2/a2_l3_known_transport_smoke.gd",
+    "checks": 50,
+    "failures": 0,
+    "exit_code": 0,
+    "scope": "Initial actual seventeen-field known component unit, exact JSON, fourteen malformed atomic refusals, original four wall assertions plus actual rounded-corner/near-side assertions. No running tool, bank, B02 boundary, full route or whole checkpoint restoration.",
+    "change": "Actual unchanged native Box identity/shape retained; closest planar Box distance instead of square-expanded exclusion. Capsule-clear diagonal corners pass; near-corner and near-side overlaps still reject.",
+    "peer_review": "Independent read-only root/rules review found this wall correction; nested public preflight, exact cadence/clock, schema2 retention and phase arithmetic agree. HP15 phase1 pending remains legal.",
+    "artifact_sha256": {
+      "known-transport-rounded-wall/fixture.gd.txt": "3822b058e03a6b7ba2c4027f8a2be07b9470a071e7f8c05685a2751cf36cf168",
+      "known-transport-rounded-wall/native.log": "ac582bd5d073144cc0d60ee0b6e3bc2fa1d91c08ac28eab355681586a8e48925",
+      "known-transport-rounded-wall/root.gd.txt": "5af3b22a3dd39693fa3d5465a703f7b43a0086dc70e926b8ef2687c7eb9b3fb6",
+      "known-transport-rounded-wall/rules.gd.txt": "a60586abbb5745aaa317842b862f5eb17d2b930437ea903a5eebd8ba5895cdfd"
+    }
+  },
+  "smoke_art_revision_4": {
+    "tested_checkout_head": "66ddad26f3e48c0f2e35e4b6b3cd136d818d1c6b",
+    "shared_api": "campaign-shared-24",
+    "shared_publication": "5d7a394c67c6095bd96136e0f07976984075ed0f",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-smoke-art-revision4.log --script tests/acts/act2/a2_l3_smoke_asset_capture.gd -- --revision4",
+    "checks": 108,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-smoke-art-revision4.log",
+    "log_sha256": "67cffd683690d38c9f254ea6eab9a61065a32ac96aacfd41117e2abd31e5fdf5",
+    "sources_sha256": {
+      "scripts/acts/act2/smoke_bank_visual.gd": "d3ec0a90bc650947fefc516dd451c75cf02a6a41bfc8cbe44692e9f33c338642",
+      "assets/acts/act2/shaders/smoke_wisp.gdshader": "032e80de1c09dfde8604faa39d9ef1619d30c6287c7e8c6be7f7a66d6b242d95",
+      "tests/acts/act2/a2_l3_smoke_asset_capture.gd": "a583825bf185512bd2990aecd0ff57a4d2490a110cce80287eb8bf3bef947f61",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.gd": "8f18063b1ff719a04ae5088c0fcd8d7114f956efa7b8d0cd97c34bd02443d611",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.tscn": "3d589c566826e178024365596fc4557b4e56245c1fcc3ea94adee42ea2d3c605",
+      "scripts/cues/threat_cue.gd": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+    },
+    "scope": "Same five TEST ONLY native540x1170 stage-placed cosmetic shared circle cue/Tender/Hero/production floor+kit views. Nine original base checks preserved; four ShaderMaterials/13parts/702native vertices, actual Hero/source/rim projections, exact quiet pose+fresh mask reconstruction, invalid missing/crossed-mask suppression and cleanup. No SmokeBank consumer, Scheduler admission/grace/ticks/damage, route, whole checkpoint, next-tell coexistence, human balance or performance claim. Initial after-draw overlap camera mask was stale; no all-five current rendered-wisp acceptance.",
+    "change": "Nine original base masses unchanged; four neutral charcoal after-fill wisps use depth-tested alpha with native Hero/source/rim masks and current orthographic camera guards. Fresh camera/pose masks required; malformed/stale masks fail to base only. Shader executed on actual Apple M3 Compatibility renderer without script/resource/shader diagnostics.",
+    "artifact_sha256": {
+      "smoke-art-revision4/a2_l3_smoke_asset_capture.gd.txt": "a583825bf185512bd2990aecd0ff57a4d2490a110cce80287eb8bf3bef947f61",
+      "smoke-art-revision4/metadata.json": "b51952dce21147968dfc1aaf67f62b51e6f43533a6cf8c5f85a04675b9e9c6e0",
+      "smoke-art-revision4/smoke-active-hero-overlap.png": "57eb619c96c2cf500a6b66d04aed817c5c1823fe5567363e38d160b35b15af27",
+      "smoke-art-revision4/smoke-active.png": "24836832b03030616eb42cc4d75bb78fc97cc1f5fffd4c6d16128e66014cef40",
+      "smoke-art-revision4/smoke-lock.png": "b31b3f3ffbcde61b4f3de718e81a2895842fd831095b9b75878d9cb30907cf08",
+      "smoke-art-revision4/smoke-recovery.png": "3e1d2ab0e03b97bcfbff8f79f8dbfc27bc74027f5c5cbffa9a095be7a86895f3",
+      "smoke-art-revision4/smoke-warning.png": "c4a291b11c75310f6b542e6098f73b985d8999980be094a28d6ff89b16a0324a",
+      "smoke-art-revision4/smoke_bank_visual.gd.txt": "d3ec0a90bc650947fefc516dd451c75cf02a6a41bfc8cbe44692e9f33c338642",
+      "smoke-art-revision4/smoke_wisp.gdshader.txt": "032e80de1c09dfde8604faa39d9ef1619d30c6287c7e8c6be7f7a66d6b242d95"
+    },
+    "reviews": {
+      "root": "Viewed actual active/recovery/active-overlap at original540x1170. Unobstructed active now has neutral black wisp mass; recovery dark charcoal pooling/thinner fringe. Required source/most rim/Hero torso/facing/feet/dry ground readable. Hero-overlap mask intentionally suppresses much of upper wisp mass, retaining cue-tinted brown base around boots. Short lower-right Tender/rim and center marker/boot-shadow overlaps remain. Independent all-five source/readability verdict pending.",
+      "peer": "All five originals independently viewed: outside-Hero active/recovery now black charcoal low pooling vapour; warning/lock/source/Hero/dry floor readable. Overall five-view material acceptance withheld because post-draw overlap mask is stale and shader correctly suppresses wisps. Actual frame_pre_draw refresh is the minimal correction; no geometry/mask tolerance change. Tender/rim and source/boot contacts persist; fine billowing detail reduced. Cosmetic scope only."
+    },
+    "render_timing_finding": "After the native frame_post_draw, active Hero overlap metadata reports readability.camera_current=false despite prior before-draw checks. Actual Game camera updates later in process; shader correctly rejects its stale mask. Initial108 pass covers before-draw native configuration, not current masks at every captured frame. Preserve all five original images/metadata/source/log. Small fixture-only frame_pre_draw refresh and directly affected same-five rerun required; no camera/hero force or runtime clock change."
+  },
+  "smoke_art_revision_4_current_frame": {
+    "tested_checkout_head": "66ddad26f3e48c0f2e35e4b6b3cd136d818d1c6b",
+    "shared_api": "campaign-shared-24",
+    "shared_publication": "5d7a394c67c6095bd96136e0f07976984075ed0f",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-smoke-art-revision4-current.log --script tests/acts/act2/a2_l3_smoke_asset_capture.gd -- --revision4-current",
+    "checks": 118,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-smoke-art-revision4-current.log",
+    "log_sha256": "a3f19891e1f6577563d03c797cdfdb3a6b391d3fbdd8fb6523a4be221fd0bc6a",
+    "sources_sha256": {
+      "scripts/acts/act2/smoke_bank_visual.gd": "d3ec0a90bc650947fefc516dd451c75cf02a6a41bfc8cbe44692e9f33c338642",
+      "assets/acts/act2/shaders/smoke_wisp.gdshader": "032e80de1c09dfde8604faa39d9ef1619d30c6287c7e8c6be7f7a66d6b242d95",
+      "tests/acts/act2/a2_l3_smoke_asset_capture.gd": "6dcd9280dcf9e972299134f83fda66a46078ef8081f180b605b6d16cc3fc17a2",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.gd": "8f18063b1ff719a04ae5088c0fcd8d7114f956efa7b8d0cd97c34bd02443d611",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.tscn": "3d589c566826e178024365596fc4557b4e56245c1fcc3ea94adee42ea2d3c605",
+      "scripts/cues/threat_cue.gd": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+    },
+    "scope": "Same five TEST ONLY native540x1170 stage-placed cosmetic shared circle cue/Tender/Hero/production floor+kit views. Original108 checks plus actual final native frame_pre_draw readability refresh and exact after-draw camera signature/current masks for each captured image. No shared bank consumer, Scheduler admission/grace/ticks/damage, route, whole checkpoint, next-tell coexistence, human balance or performance claim.",
+    "minimal_fix": "Fixture refreshes actual Hero/source/rim masks only after normal shared Game camera update and before native viewport draw. Exact native camera transform/projection/clip/viewport unchanged across captured draw, and current masks asserted after it. Runtime/shader/camera/hero/cue/clocks unchanged. Separate output retains initial108 stale-overlap evidence.",
+    "artifact_sha256": {
+      "smoke-art-revision4-current/a2_l3_smoke_asset_capture.gd.txt": "6dcd9280dcf9e972299134f83fda66a46078ef8081f180b605b6d16cc3fc17a2",
+      "smoke-art-revision4-current/metadata.json": "7ecfbf111fd884c8ebdda5eba691c9db8f9229ba3be851a7e6de9fcf983744f0",
+      "smoke-art-revision4-current/smoke-active-hero-overlap.png": "3e966c0ca0532c73f9aa559d35fe328c9cecf0a55ad4acf63ea40fe17fd2a855",
+      "smoke-art-revision4-current/smoke-active.png": "784b7876b2d32cd74c7350b01339c6deee9dc9dd84f47103ee03a180a2936f89",
+      "smoke-art-revision4-current/smoke-lock.png": "717d68688ab221294442cf15a6adc1caf244c2f769894b5e7717eeeb16c8139f",
+      "smoke-art-revision4-current/smoke-recovery.png": "cc44dd8e6200b7f2c4516736b739c0fb393e5efbe97ebb5403aaeb83947cd122",
+      "smoke-art-revision4-current/smoke-warning.png": "55097d9c0ae917fec5586495adb099f6b16a760d0f772e1cd1b9be552309eb04",
+      "smoke-art-revision4-current/smoke_bank_visual.gd.txt": "d3ec0a90bc650947fefc516dd451c75cf02a6a41bfc8cbe44692e9f33c338642",
+      "smoke-art-revision4-current/smoke_wisp.gdshader.txt": "032e80de1c09dfde8604faa39d9ef1619d30c6287c7e8c6be7f7a66d6b242d95"
+    },
+    "reviews": {
+      "root": "Viewed actual corrected overlap at original540x1170: black pooling wisps now rendered visibly around Hero, with bright source glyph/Hero torso/facing/legs/boots and most rim/dry floor readable. Upper mask leaves a deliberate clear Hero rectangle and cue-tinted base fringe. Lower-right Tender/rim and center marker/boot contact remain. Independent all-five verdict pending.",
+      "peer": "All five corrected original540x1170 frames plus metadata independently reviewed: scoped low Black Smoke material/readability PASS. Active/recovery neutral charcoal pool; overlap retains black vapour left/below protected Hero/source/boots. Shared tell/source/most rim/dry floor readable. All after-draw cameras and masks current with zero native delta. Faceted/stippled details, warm fringe/fill gaps, Tender covering lower-right rim and source cross touching boot edges remain disclosed. No entirely unobstructed full rim, every boot pixel, consumer/damage/grace/next-tell/route/aggregate/fairness claim."
+    }
+  },
+  "known_transport_fresh": {
+    "tested_checkout_head": "1b2a28e304abed7e57ef90fcd44c44f37b0cce66",
+    "shared_api": "campaign-shared-24",
+    "compatible_registration": "c6a9596034edab5159f45f3cae090a380b916b45",
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-known-transport-fresh.log --script tests/acts/act2/a2_l3_known_transport_smoke.gd",
+    "checks": 99,
+    "failures": 0,
+    "exit_code": 0,
+    "scope": "Original50 initial component checks plus distinct fresh actual Game/L3/Hero/seven targets/four tools/cues/scenery, exact full original Hero public quiet restore, exact real known seventeen-field reconstruction, two repeated quiet commits, no gameplay/cue/checkpoint/resource events and fourteen malformed atomic restore refusals. Original and fresh native subtrees released. Initial actual unit only: no running-Ray/tool/B02 threshold/bank/full route/whole checkpoint restoration claim.",
+    "review_fixes": "All seven actual targets restored before Scheduler/Ray/tool drivers; Ray restore requires its actor already equal. Known pure preflight always supplies actual bound Hero feet, with external prevalidated saved-player staging override, so running-sample checks do not first appear during commit. Independent static review found no remaining scoped quiet/order defect. Genuine running-Ray receiver mismatch and B02 boundary restoration remain later actual route obligations.",
+    "artifact_sha256": {
+      "known-transport-fresh/fixture.gd.txt": "21dc398365b4471707499dfcda48c5f6cbf2c96f03764d369c8febe3cfe24a80",
+      "known-transport-fresh/native.log": "2619fb4962e3a74ad99d96d85eb4a4884cd2591360e8e081137c2138793b78ce",
+      "known-transport-fresh/root.gd.txt": "7ad39a00dd7a45e4225302e5b1c997f9d2c0a699482200eb40fbe3c6a32f6e0a",
+      "known-transport-fresh/rules.gd.txt": "a60586abbb5745aaa317842b862f5eb17d2b930437ea903a5eebd8ba5895cdfd"
+    }
+  },
+  "current_shared_api": "campaign-shared-28",
+  "current_preserving_head": "d869b9a9707c89de2a20f0181d5f775d5343021a",
+  "shared25_adoption": {
+    "path": "shared25-adoption.json",
+    "sha256": "40cd7cab0e13923221e95e7c37295bd7cefbb9ea7d7db8c7d1bf7af40d5f86b3"
+  },
+  "full_initial_first": {
+    "directory": "full-initial-transport-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "536c3d0dff6d83bccef9c422423dc6b4cb79043dbe875abee7be7e434a019ec9",
+    "result_sha256": "ca8b391aa886a53b7df7baf296273d337737144cd336a16c6fae1f175a59ee61"
+  },
+  "full_initial_corrected": {
+    "directory": "full-initial-transport-corrected",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "52d704807b6a5d36aaa248735bec4bfd7353890b72fd77ffcf456b5d57f9c234",
+    "result_sha256": "e8464d2e07284dc7d715989146828d771d46a42fe514c9204f559b0545dd8e06"
+  },
+  "live_heavy_first": {
+    "directory": "live-heavy-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "81c1cec296e310b98b8c4a8acbb1add9cdcb705ccc8a2f1af8ccca70843ba1bf",
+    "result_sha256": "e8c03360646fff020e972da5a373bce0ca2ad2940159967952953851f7137851"
+  },
+  "live_heavy_floor_bindings": {
+    "directory": "live-heavy-floor-bindings",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "794a889edec1bc8af4c7df2aab964a038703d16e7f96e77dff0bcab3299be31d",
+    "result_sha256": "f30249c73947221f36b750bee06edae2b64f6d714dc05b49a84fa6a9697ed81a"
+  },
+  "road_heavy_diagnostic": {
+    "directory": "road-heavy-diagnostic",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "0ae81390149a3bd04828aa964d05a1bf60d1bc2ebc1e4eefe994a3e8241cc096",
+    "result_sha256": "0416b78dfc5a3f6c748b09f08c712e3f9ed891c6f7d001179151bb11221440f5"
+  },
+  "running_bank_transport": {
+    "directory": "bank-transport-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "4fbf2055db18d1a8ab1a1f5d43bbebb4becd9610ffe894ae06aa056b572c7819",
+    "result_sha256": "b11f043f0175287d1c7a4b7c157a40a848bfb858d40cf68a1940879a1b8b5952"
+  },
+  "road_native_first": {
+    "directory": "road-heavy-native-ticks",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "ec597232a8b46ee4b5d3e84a5be3722981e492ac0dcb2ee705f76e8ea0069bb0",
+    "result_sha256": "18ac6d85daee52415476aebf3f93dbe200f0359c61a087fb9179f143364495b3"
+  },
+  "road_native_corrected": {
+    "directory": "road-heavy-native-cleanup",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "e4add5129032b7fe81479b8969e92f1ae368bc4cb9d27d62c0774e379b0769ff",
+    "result_sha256": "7f07c8cdc6868ff79284d0f58bb28a926a28849fe32683776c3c2e49f31d1c8d"
+  },
+  "full_initial_common_world": {
+    "directory": "full-initial-common-world",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "768e843dbf64cd32b14d66fd276c708354b42cf509c44a386876d2b3858a2486",
+    "result_sha256": "cd0760058644c008ef3e840c97812a71949b11320f66a74c61a903c4242fd456"
+  },
+  "smoke_custody_first": {
+    "directory": "smoke-custody-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "34ac555b9125b0fbcdb76e22bea0ae8e9ecc5bf98291d0086907b0fe6677d2ec",
+    "result_sha256": "4d122379710b7ba788a1ce6cc190ef96e1d26b205b4631f5fc3f51d847caf78e"
+  },
+  "smoke_custody_frame_corrected": {
+    "directory": "smoke-custody-frame-corrected",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "372bd17581c1534628cfb6150483ebac2b7f39413d6d357b119a5527d661a855",
+    "result_sha256": "46f5754c64f5049cb13b9fef422863fcbc8575af08d027d2e07b216a18dbec6e"
+  },
+  "current_custody_scope": "Original123/6 aggregate remains FAIL: all6assertions were ineffective frame-loss intervention; unchanged five othercases pass in that record. Corrected actual native projection case30/0 clean; no rerun of five unchanged cases or manufactured123/0.",
+  "live_heavy_native_ticks": {
+    "directory": "live-heavy-native-ticks",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "e423859c4a12030514d5d9e184ed2c96019f0dc8950bcf05521084f6605965b7",
+    "result_sha256": "f3ef29b17ca337e9efb51e5982d4337dbbfbbd593105588d07154b579ba88e4e",
+    "raw_log_sha256": "c0b79892deaf764c78e10d2d7aea889fd4bf653063a6c4e71ec5a745c3e5f928"
+  },
+  "first_checkpoint_lifecycle_first": {
+    "directory": "first-checkpoint-lifecycle-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "52b4a68fb448258383016d10b48c32372ac60fefa19353f1c81abff3a89cddae",
+    "result_sha256": "7a93c1b67bdba182304feeac0741cc0c19440cbbac32345377c70d2520c0e889",
+    "raw_log_sha256": "53002ca62e8ab18773d1dc6eb45399fe3ca364a51f4e68da05d383f6d9b08c17"
+  },
+  "binding_refusals_first": {
+    "directory": "binding-refusals-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "6e9c303435b89991cf4f51c935c41a2e7253bd8ff3334bea70221985bbbc2dfc",
+    "result_sha256": "024b95651623cd6b48084b3a2357cabb4cde75611bd11a4a191a967c85530685",
+    "raw_log_sha256": "cca5357544e01181f0ec2ca7e8fc53e714f896c7a58133f7dcbcdfbadf3b9ec0"
+  },
+  "current_route_scope": "All selected full routes pass at their original shared26 source: Heavy503,Standard473,Quick477,Cargo/Longstep479,Padded/Reach477 at Standard; Heavy Assisted495 and Challenge495. All clean, zero failures/script errors/exit0. Native Heavy586 and current SmokeVisual5 Cargo570 retain separate portrait scopes. No new gameplay change.",
+  "current_lifecycle_scope": "Original first-checkpoint/fatal375 at shared25 plus affected shared27 unchanged-fixture375/0 clean. B02 genuinely earned immutable artifact252 retains original shared26 Shell-source provenance. No production save/phase/HP/clock edits.",
+  "first_checkpoint_lifecycle_live_sequence": {
+    "directory": "first-checkpoint-lifecycle-live-sequence",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "396f7216925a8a727e75bc87cc7f9fb03fedbef43f03fff931e04b116c767270",
+    "result_sha256": "aca85ecd86146ca2b16f667d6cf5864686fd67dafd5044149fc348e2f1645e56",
+    "raw_log_sha256": "ff210ec608690f9cf5665302d44f4573dbde55649a77dabd078d40c524b8ee72"
+  },
+  "binding_refusals_after_import": {
+    "directory": "binding-refusals-after-import",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "cc6078f179301eee48430e89494391e1a2aee22b23e613bde1246c359119ea6f",
+    "result_sha256": "d4273ef38c267d990b721ece91368a6bc3098d25489e8994f5557a6f3c600100",
+    "raw_log_sha256": "cca5357544e01181f0ec2ca7e8fc53e714f896c7a58133f7dcbcdfbadf3b9ec0"
+  },
+  "current_binding_scope": "Direct-entry exact native setup/original scenario assertions now95/0 clean. Initial future cursor/displaced tool atomic refusals and real pre100 queued source cancellation validated; all prior class-resolution failures preserved.",
+  "binding_refusals_direct_entry": {
+    "directory": "binding-refusals-direct-entry",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "79cf5757b9d8b735778d68bcfef1d8a100a4de648b46e49e3b70adda587d0246",
+    "result_sha256": "877008dd8e0987a87e68efabb0fe198981b70d1958f384e98ff70923b805c75d",
+    "raw_log_sha256": "0916eb465fca26705dfc73c95256503e6c63032780ec711e162cc5aa01bda4d9"
+  },
+  "shared26_adoption": {
+    "path": "shared26-adoption.json",
+    "sha256": "8257d8ed39502182a0ada3da7965ae7259f8cb2994cc0928aa7d01ed1a983fb3"
+  },
+  "owned_smoke_checkpoint": "7d78c77351a1223d4f5097e92038d5ac6d8d1df8",
+  "live_heavy_side_source_first": {
+    "directory": "live-heavy-side-source-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "5e309ae023f1cce2d53dfe7dd59b7f4d9ba7977f9dd752c192ccfae85f6bf7e6",
+    "result_sha256": "2872a55ae6796ae0843977e9cb90887e92046d2e656d09d0c33b885ff59c03a4",
+    "raw_log_sha256": "97b57a4abe7a4bc4f631be9196177e10f73397085e352016ffc4b5bbb6c70299",
+    "earned_boss_checkpoint": "earned-boss-checkpoint.json",
+    "earned_boss_checkpoint_sha256": "d03d0c4408056811fa951691e511c39ab0cc6fb0119da63cbf4f8761524da5a0"
+  },
+  "required_design_validators": {
+    "path": "required-design-validators.json",
+    "sha256": "ab104cbf794b9374244b405dac63941782994b41002b0ae13044f6e4810a49e7"
+  },
+  "live_heavy_native_production_first": {
+    "directory": "live-heavy-native-production-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "550d918df612c0f2dbd593985a23875dc47c2fed93a70fc718749792f56a28b6",
+    "result_sha256": "84590d989ba47b42e53afd27f34eda1fb7a51e30dab76f0e5819469b8a797da3",
+    "raw_log_sha256": "11c5cdf47988d1ed7b2c08585c670d58783afdd3951a7d2d450a87474394f925",
+    "visual_review": {
+      "path": "visual-review.json",
+      "sha256": "dff65222daac6663837ec11bf513cc019ab07ff6a82a838dac964d49812012dc"
+    }
+  },
+  "earned_boss_checkpoint_first": {
+    "directory": "earned-boss-checkpoint-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "cfb940fbd5b6df3f2217d789484b94520464e6dff77606345191395170ba6b02",
+    "result_sha256": "503ac711afc90404654b967cf3a3afa6350ada28817b13d5259c011fd8c75790",
+    "raw_log_sha256": "3f9c8e601abca33f2d4c9b7428868a61e12e15ea3450073cc1d079ec0287c126"
+  },
+  "smoke_native_opening_diagnostic": {
+    "directory": "smoke-native-opening-diagnostic",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "98777330a7e3bfaa4f33d98a5f0f37ee18a7a25b8effc680c9d7184083c71433",
+    "result_sha256": "e55e605919ad4f6f9d29bd63a0febb03c339851fcd0a169bd4f1f1d3422018fb",
+    "raw_log_sha256": "f9a5823ddebb2b2f59a721fd55073bbf0d3c8c7c2707836cb78529867086823e"
+  },
+  "current_portrait_scope": "Original Heavy23 preserves early-onset cosmetic failure; SmokeVisual5 actual road7, staged onset2 and Cargo23 pass sampled source/footprint/Hero/dry-floor readability with documented limits. Original Cargo100/111 numericalFAIL pixels remain26; corrected shared28 HUD matches root native49/0 viewed label and unchanged actor/bar/layout.",
+  "earned_boss_checkpoint_diagnostic": {
+    "directory": "earned-boss-checkpoint-diagnostic",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "cf9330e256e03ac33cd01bde076f8810f7e8d83513a24a70a7a992de099182ef",
+    "result_sha256": "a9ec4411edebeb9597cbc30c1ccbc27c8e698ff1187c766b07919fecabca3a76",
+    "raw_log_sha256": "937b818012447cf5e57541b840c332406921c193c56190b30f36fef6fdbc9217"
+  },
+  "smoke_native_opening_corrected": {
+    "directory": "smoke-native-opening-corrected",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "61a6469a727c084ec0f96126a7cc322771c466cbb0d61e69eefb4facae735f78",
+    "result_sha256": "3be4755052b99a85d943a4d2c75f03902e6ee2bf84131d8c4abc68407e07c49b",
+    "raw_log_sha256": "aa0343394bfff392123c55f66ad0474b684b2d1b042fa438eb44a52df734e228"
+  },
+  "smoke_onset_quiet_overlap": {
+    "directory": "smoke-onset-quiet-overlap",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "c561ec5f742af76f87bee2bed98fde2eca7406228209846be286bbb6c25937dd",
+    "result_sha256": "a4c483499a8dcca7d4f0a03b8ce8e4e838ae3f250e144819532d514924615aba",
+    "raw_log_sha256": "94379228a726dc7db52a1f84e8fc8c2a50e41d1d54636087a6025bde1d335a46"
+  },
+  "live_standard_standard_first": {
+    "directory": "live-standard-standard-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "32d77d0d8d944cf54da42233439a50585b5304db5205763388902747da1cafa3",
+    "result_sha256": "093747569a1d486bb84981379ede3b1f14aecba150665f0e87577a41a62d1c07",
+    "raw_log_sha256": "877f4bbcf2ed0d756b9f0ff928cb666a8d4f1cc1849ab89a7f11b817fb67646e"
+  },
+  "live_quick_standard_first": {
+    "directory": "live-quick-standard-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "50483d48bfcb2ed67968535853959fcd464fb4728558c20d3df11b21e2b7a007",
+    "result_sha256": "7be8c4e88dffb8c586ea37637bb2750a46b16cfe14e030e5e0423d51bb87e6f6",
+    "raw_log_sha256": "dc2ad98b497f67468ab0ea85b4a4369e85fc5bfd6d3bca82c05ab6548cf0a527"
+  },
+  "earned_boss_checkpoint_retirement_corrected": {
+    "directory": "earned-boss-checkpoint-retirement-corrected",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "acb32539f2b5205f03db7d293afb90884f8c0d02b76a42170196248258933a3f",
+    "result_sha256": "8f04581f8c407ad6a31ba9626e6b79417bcf579a826c963a9eb5aa8a11137dc3",
+    "raw_log_sha256": "9e7cf8f0fe33d4f43b054b627db80418daebf98cef93d572d2ee6efa06493673"
+  },
+  "live_slow_cargo_longstep_standard_first": {
+    "directory": "live-slow_cargo_longstep-standard-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "38d48ca56a7bcb88a3dd24a81498c15daa0996701cdd93f7083750884e21b64d",
+    "result_sha256": "27a92fa5c19f882b76803c41d387213673e1229a5770ef22a0691e1fd473eddc",
+    "raw_log_sha256": "b3d671426d3c47b10ace189cee64d0b1b37507c59a2cba55f9c310c1ad81f37c"
+  },
+  "live_slow_padded_reach_standard_first": {
+    "directory": "live-slow_padded_reach-standard-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "b84595f6881ed9758819fab00d7b3b1773029a135ffa7ee7ccbc71782e1b4033",
+    "result_sha256": "55e33cdc8c0dba0f515b03c91f0a8ffe8e4c27030e3d64b70e4f0425a8204a6f",
+    "raw_log_sha256": "ccb90626a2a65a8b8c340252d1e7d748afa871369c88115a1c30ba28e6504c85"
+  },
+  "live_cargo_native_production_first": {
+    "directory": "live-cargo-native-production-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "f27d885e87055613cc71173dd62b60660ee8197658e1b0fb1d65a0d30e9194e7",
+    "result_sha256": "9487800b4d81dbbaa9c05a72b50f9f5e0f13bce77ed1e140e780407cd3f795ac",
+    "raw_log_sha256": "13884eb95a85ea7ec717c707a40676f11b5dd6212306c32c6c71c14b4cfe5a72",
+    "run_provenance": {
+      "path": "run-provenance.json",
+      "sha256": "cb6e7685c40ce45c267fd9c654d13510d54561a5efb08206205dc759a389c194"
+    },
+    "visual_review": {
+      "path": "visual-review.json",
+      "sha256": "e4a7e5828a9651e26a5ae76f74caf964c378483fdc9837a382376f6ced41f90d"
+    },
+    "artifact_sha256": {
+      "portraits/a2-l3-standard-slow_cargo_longstep-boss-phase-two-actual-pair.png": "7c54e418d7957e2da58b56ad441324db19feebc645d8c1a402ff1168bdb34194",
+      "portraits/a2-l3-standard-slow_cargo_longstep-boss-place-active.png": "c88028d788152c59a0e76d93944c48bb33a4191adcaf88966885e878aaf5cf17",
+      "portraits/a2-l3-standard-slow_cargo_longstep-boss-place-lock.png": "e5d62aeae248bb1233b4a00c0c04ca1cd296cd1d3c33f530e9f0846a427a9038",
+      "portraits/a2-l3-standard-slow_cargo_longstep-boss-place-recovery.png": "f4aa95d3f497242be7c7a4a04a83780334af308afed3f558a2a44b03d09fdc1b",
+      "portraits/a2-l3-standard-slow_cargo_longstep-boss-place-warning.png": "fc5ffa2894518473adf6122ec76be70a5a8cb59f477f631ddfad55f999c86d15",
+      "portraits/a2-l3-standard-slow_cargo_longstep-boss-reach-active.png": "df654da371ade7ce6c90d34992bf9dffd53f6e381674122bdff5a108cae7207f",
+      "portraits/a2-l3-standard-slow_cargo_longstep-boss-reach-lock.png": "b3b28b6ff5c8ea52c0f8f7550fa8ea359d8c51d6d7b02a127ad043320631d84d",
+      "portraits/a2-l3-standard-slow_cargo_longstep-boss-reach-recovery.png": "bfd448c3a94882653c9747ece1425dc5108b8122265b9c8701eddc58d47a8ad6",
+      "portraits/a2-l3-standard-slow_cargo_longstep-boss-reach-warning.png": "e5f896634784d7cc580b0d2bac1e2f27f4952da420bbba84ac9aee6fac32fc54",
+      "portraits/a2-l3-standard-slow_cargo_longstep-clear.png": "2aa909cdaf5854ba8ada0d2d03afe965c43924f9907d85d5897ae94cc7e756e0",
+      "portraits/a2-l3-standard-slow_cargo_longstep-ray-active.png": "48b4ece0f7651eed96a6f9c1e3b200047aba4b1330a525724c5e1740222796fe",
+      "portraits/a2-l3-standard-slow_cargo_longstep-ray-lock.png": "6f3d4c0d9c605a7d7c186ba5d5d4b125989759105a8932ecbc76453c2b81f29b",
+      "portraits/a2-l3-standard-slow_cargo_longstep-ray-recovery.png": "3b04d642be6a6584be5b29ab634868b63439ee0619d318757b7c1689a23e84cf",
+      "portraits/a2-l3-standard-slow_cargo_longstep-ray-warning.png": "0438e004ff462bee6a0cf18ae9ce23952a9fcd3e6b45edb6b8b4fc57d1cf65a9",
+      "portraits/a2-l3-standard-slow_cargo_longstep-smoke-active.png": "d9b46e748818c46f7d04755bed8e02011930ad240c47b90090101c6b140f173b",
+      "portraits/a2-l3-standard-slow_cargo_longstep-smoke-lock.png": "e04342e0a3a7d431ebf0b0bf5f15650b8a3367170240e77a24f51a48c2aa73e5",
+      "portraits/a2-l3-standard-slow_cargo_longstep-smoke-recovery.png": "0c8792a327f4712e930217038f47213ed0ebceeb4809809ea596ca89e6c54770",
+      "portraits/a2-l3-standard-slow_cargo_longstep-smoke-warning.png": "cbb8d260e092419423f1ee709b1ddd07e100b8012161a0dfca5ab788931f6b78",
+      "portraits/a2-l3-standard-slow_cargo_longstep-tool-active.png": "9e83e7446fec87d57b41212cb3e9d5823c2722d9ad5f12dd12a4b69bdd1ec6de",
+      "portraits/a2-l3-standard-slow_cargo_longstep-tool-lock.png": "aa29d51ed0a17d91cf0342749b83a0909f53ae83dfbee88e82adb9a92855889c",
+      "portraits/a2-l3-standard-slow_cargo_longstep-tool-recovery.png": "0e0e08b85d94d3218a7884839e4aa3e61f981c698b7d5bda79d4346010f0685d",
+      "portraits/a2-l3-standard-slow_cargo_longstep-tool-warning.png": "9ce59c7e420b866053fc3bd82d26b4da3c2b2f8f906c795a9e9f0c628f859dce",
+      "portraits/a2-l3-standard-slow_cargo_longstep-work-apron-actual-pair.png": "c26ad315e52af8f52f0dc53fde6f037d6cf0cffc30039ca02fc6bdc7b961b5c1",
+      "portraits/metadata.json": "ffdf09061924af5a5fc585ac022845671eab5117be619df1957efa3d4ea4c69c"
+    }
+  },
+  "hud_max_rounding": {
+    "directory": "hud-max-rounding",
+    "inspection": "inspection.json",
+    "inspection_sha256": "a142c3159e07c7cc4c1d3d2b5fbff20dfafbd0d7ffd91af1dd65e69ac4decb43",
+    "request_id": "c12ca5ac-ebed-4885-87bf-23b6c6b0e89d",
+    "status": "RESOLVED: integration shared28 nativeHUD49/0 exact publication adopted preservingd869b9a; original100/111 pixels unchanged and remain failed historical numerical evidence.",
+    "response_id": "7a1dd415-e762-4058-bc55-7ea9eab17616",
+    "root_evidence": "docs/development/evidence/hud-health-rounding/index.json",
+    "root_evidence_sha256": "0dcf275d4306db9035029ed088501a748935ee1dc296d6cb346715eaee524781",
+    "root_native_result": "49/0 clean; actual540x1170 portrait viewed by integration, actual Cargo100/110 and full110/110, fractional/zero/tiny controls; original49/1 preserved."
+  },
+  "live_heavy_assisted_first": {
+    "directory": "live-heavy-assisted-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "82b23350b5e5750ce644e8fa204f20c43a6d438facf2b69cbdd8e9dc47fc8fa1",
+    "result_sha256": "a3b0ac730542a287e7ecae0ac19c94f6cfb17ffe93b0ed659ebed8299dc7a9b7",
+    "raw_log_sha256": "6e4bcb26d5ccb5334aa817af612bc573647dee0224b6ff2dd35de40b6d67015b"
+  },
+  "current_closure_reviews": {
+    "selected_standard_routes": "Read-only independent review: completed Heavy503/Standard473/Quick477/Cargo479/Padded477 total2409 assertions, zero failures/script errors/exit0; all56 frozen sources match declared and current hashes.",
+    "native_cargo": "Read-only independent closure: twelve frozen/current source copies, raw570/0, all23 native PNGs and metadata/index/review SHA256 match; exactly23 labels (root5/boss9/tool9), original100/111 separate failed HUD mark and provenance retained.",
+    "shared27_static": "Only relevant Shell seven-line commit-barrier change; input/simulation remain latched and operation loop unchanged. Directly affected first-checkpoint lifecycle selected once. Original B02 immutable artifact guards original shared26 Shell hash and remains unchanged scoped evidence.",
+    "shared27_actual_and_required_branch": "Independent read-only closure:76 frozen lifecycle sources/raw/result/collector diagnosis and77 required-only sources/import/source review match, no ScriptErrors. Lifecycle375/0 reparses the unchanged original log after collector-only regex diagnosis; required-only2631/0 proves real boss15HP checkpoint/quiet completion/exit while optional Tender remains30HP/unhit. No new B02/native portrait claim; both retain27 provenance."
+  },
+  "live_heavy_challenge_first": {
+    "directory": "live-heavy-challenge-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "596fc7d83c2c6d43e1b7e14dad4aa9b92942586742b08d459543bd5993184e8c",
+    "result_sha256": "aee72c8334a6d1712685de229dfa567874a365c3d2bde6534893e1b1ad15c1bb",
+    "raw_log_sha256": "e33c7711517d0245cb18cb34012f2595022666e61146239d6899251638d07a42"
+  },
+  "shared27_adoption": {
+    "path": "shared27-adoption.json",
+    "sha256": "424a4620e3f505513864d3069fbe5c0a258b739f9c84f94c92c83566da8d63de",
+    "ack": "7d293d50-e660-4d72-9ff9-7b59d0b7bcf6",
+    "owned_files_identical": 852
+  },
+  "shared27_first_checkpoint_lifecycle": {
+    "directory": "shared27-first-checkpoint-lifecycle",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "6360beb54c97588d596d1f691cc1c553e7de331729c18a1a7b0429c0bd5cbe35",
+    "result_sha256": "a10ca1deef48f313ea8b4d8c3404eeeff6536a06d3884aced9b30e9504da3058",
+    "raw_log_sha256": "ff210ec608690f9cf5665302d44f4573dbde55649a77dabd078d40c524b8ee72",
+    "collector_diagnosis": {
+      "path": "collector-diagnosis.json",
+      "sha256": "b1963c11537eddd532962c11f803e06dd9c4c69bf5be57f3ff27d629472ac7c3"
+    },
+    "first_collector_result": {
+      "path": "result-collector-first.json",
+      "sha256": "4b6a8dcc8e2df5e2f6647807ea25892ec5af87a6ba9a4f361aa115715d22969d"
+    }
+  },
+  "required_path_living_tender_first": {
+    "directory": "required-path-living-tender-first",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "089ba1053d9ffd7a68c62abf8918cba76e4850a08756b0f11afb4460ef44c9a4",
+    "result_sha256": "d91ee9cb0067b0731d0f9ae377a2697590de223477591aad2b3e770b618c31ef",
+    "raw_log_sha256": "683bb3f6d5726d6bb829b77d7c447007cfe51693a418c04bf00d5fc7f108c5b4",
+    "source_review": {
+      "path": "source-review.json",
+      "sha256": "b0395457fe017bbfb8173cb4699e39bdf3f777bb692300ba6f26eea51eba5f9d"
+    },
+    "new_fixture_import": {
+      "path": "new-fixture-import-result.json",
+      "sha256": "9da88b70decf044a442a2c461dbc5cee12521047ae8195432ceec6930580b9d9"
+    }
+  },
+  "shared28_running_bank_transport": {
+    "directory": "shared28-running-bank-transport",
+    "source": "source.json",
+    "result": "result.json",
+    "source_sha256": "bbe24c07775c66dc198b96bc35d22982bf62af206c86861c5961827850646d5a",
+    "result_sha256": "afde87bad218054466684aa73bd1a96e2c293d9fe607e4d897ecc71fb28fca31",
+    "raw_log_sha256": "a7d07315504ab0b533a55daa567ec62d652aef442f84a1b9ece1b9f6b4058416",
+    "resource_import": {
+      "path": "new-shared-resource-import-result.json",
+      "sha256": "46731040020aba251092cba086290666cacb483afc90aa585f90b1156fec678e"
+    }
+  },
+  "shared28_adoption": {
+    "path": "shared28-adoption.json",
+    "sha256": "24894cbf1f31246397b7d18fbea819e415ff7ea14bd9d7157d7b2d8dc8866593",
+    "ack": "26195001-f1d5-4add-ab63-2f37d0848f2f",
+    "all_owned_files_identical": 1024
+  },
+  "current_shared28_applicability": "Focused independent direct diff: L3 uses no Echo/Replay/projected calls; Scheduler schema1 preserved without authored lease/tombstone; ordinary Cue shape paths unchanged, other direct gameplay units unchanged. New28 ordinary running-bank73 verifies consumed admission/grace/contact/full19 native schema1/quiet fresh restore/ordinary cue and preload compatibility. Original routes/art/lifecycle remain exact original25/26/27 scopes; no repeat matrix.",
+  "handoff_packaging": {
+    "owned_delta": "candidate-owned-delta.json",
+    "evidence_hashes": "files-sha256.json",
+    "inventory_metadata_exclusions": [
+      "candidate-owned-delta.json",
+      "files-sha256.json"
+    ],
+    "scope": "Exact owned delta against published shared28; import complete six-prefix candidate content, not only final records commit. All27 production additions are L3 and no accepted L1/L2 production file changes. Inventory metadata hashes and final candidate HEAD are recorded externally in canonical HANDOFF to avoid self-reference."
+  },
+  "runtime_inventory_correction": {
+    "path": "inventory-correction.json",
+    "sha256": "82c5390fcea1c6b5790cd98ccbf7d812ced9fe4ebdbd870e931b8ac9404baa6c",
+    "first_candidate": "14ed597879c6c4c6fa3cb1d673eeaa5ab24c054c",
+    "owned_runtime_count": 53
+  }
+}

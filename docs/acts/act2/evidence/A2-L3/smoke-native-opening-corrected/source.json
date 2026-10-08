@@ -1,0 +1,28 @@
+{
+  "head": "71b1945da655cb637f27794eaf52fcfd196afccc",
+  "shared_api": "campaign-shared-26",
+  "sources": [
+    {
+      "path": "scripts/acts/act2/ruined_house.gd",
+      "sha256": "728358c5e5864066bcc5eb4821f4e55a39561f9763962478e7338a5dea69baef"
+    },
+    {
+      "path": "scripts/acts/act2/smoke_bank_visual.gd",
+      "sha256": "90d6fb068104381cce36790f9d6ab1c8ad36a63e22cc9c6f02f1c28d45d6f7f1"
+    },
+    {
+      "path": "assets/acts/act2/shaders/smoke_wisp.gdshader",
+      "sha256": "032e80de1c09dfde8604faa39d9ef1619d30c6287c7e8c6be7f7a66d6b242d95"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_smoke_live_diagnostic.gd",
+      "sha256": "25d5da8366979da60240dda4fcde1481971aa84f86960719f5269eaafbf762ed"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_live_level_smoke.gd",
+      "sha256": "0d3feb4641b0493528e0813cb7d57911cdf9b460dc54edf57d6e76c775a5dadd"
+    }
+  ],
+  "command": "python3 scripts/dev/dev.py engine --path . --log-file .cinder/a2-l3-smoke-native-opening-corrected.log --script tests/acts/act2/a2_l3_smoke_live_diagnostic.gd -- --loadout=heavy --profile=standard --road-only --capture-live",
+  "scope": "actualroad early/mid/late active with corrected cosmetic onset only; corrected diagnostic publicmethod; runtimegeometry/cadence/masks/shaderunchanged"
+}

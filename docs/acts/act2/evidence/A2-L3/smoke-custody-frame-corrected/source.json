@@ -1,0 +1,16 @@
+{
+  "head": "87162dd310c9677084a466ffcc8a306ddb2b5de8",
+  "shared_api": "campaign-shared-25",
+  "sources": [
+    {
+      "path": "scripts/acts/act2/ruined_house.gd",
+      "sha256": "577ab97da1414481bbcab322d23749a597c69d02e83a5ac1bff82d5e4798c790"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_smoke_custody.gd",
+      "sha256": "e5d83da9ed591109c4f135a28baa35d28ed8f40244cf76d8fa1a6d17909b6d15"
+    }
+  ],
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-smoke-custody-frame-corrected.log --script tests/acts/act2/a2_l3_smoke_custody.gd -- --case=frame_loss",
+  "scope": "only previously ineffective actual presentation-loss case; five unchanged cases reuse original case results, no aggregate six-case pass implied"
+}

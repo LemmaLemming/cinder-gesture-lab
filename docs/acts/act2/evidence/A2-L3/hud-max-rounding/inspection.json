@@ -1,0 +1,30 @@
+{
+  "head": "373a35f40884c4259b9af36606829d959d7eec42",
+  "shared_api": "campaign-shared-26",
+  "scope": "actual native Cargo/Longstep portrait HUD observation and direct unchanged shared code/data review; no new engine run or gameplay failure",
+  "image": "original-cargo-warning.png",
+  "image_sha256": "cbb8d260e092419423f1ee709b1ddd07e100b8012161a0dfca5ab788931f6b78",
+  "sources": [
+    {
+      "path": "scripts/hud.gd",
+      "sha256": "ab91224f5bd16ad9b44ba61cde2eb6b98b2254e87f479fed5c20d04089cb7613"
+    },
+    {
+      "path": "scripts/equipment.gd",
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    {
+      "path": "data/design/player_equipment.json",
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    {
+      "path": "scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    }
+  ],
+  "observed_text": "HP 100 / 111",
+  "expected_nominal_max": 110,
+  "float_formula": "baseline100 * (1 + canonical CargoPants0.1) = 110.00000000000001; shared HUD ceil(max_hp) turns tiny representation excess into111",
+  "classification": "shared HUD numeric presentation defect; gameplay/canonicalHP/gear/timing unchanged",
+  "status": "REQUEST_TO_INTEGRATION; no local shared file edits"
+}

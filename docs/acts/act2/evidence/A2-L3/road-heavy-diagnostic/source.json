@@ -1,0 +1,16 @@
+{
+  "head": "87162dd310c9677084a466ffcc8a306ddb2b5de8",
+  "shared_api": "campaign-shared-25",
+  "sources": [
+    {
+      "path": "scripts/acts/act2/ruined_house.gd",
+      "sha256": "577ab97da1414481bbcab322d23749a597c69d02e83a5ac1bff82d5e4798c790"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_live_level_smoke.gd",
+      "sha256": "a69518baa6ef154169efae9b75135373edc47ba8ce4dfe18d17d7cd8569f4c1b"
+    }
+  ],
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-road-heavy-diagnostic.log --script tests/acts/act2/a2_l3_live_level_smoke.gd -- --loadout=heavy --profile=standard --road-only",
+  "scope": "focused first road encounter with at most three complete native cycles; no timing or gameplay change"
+}
