@@ -570,6 +570,9 @@ func _on_exit_level() -> void:
 	_activation_entitlement = ""
 	if is_instance_valid(hero) and hero.died.is_connected(_on_hero_died): hero.died.disconnect(_on_hero_died)
 	for id: String in SOURCE_IDS:
+		# A genuinely defeated source can be removed after retained tombstone
+		# validation. Check its actual handle before attempting a typed cast.
+		if not is_instance_valid(sources.get(id)): continue
 		var actor := sources.get(id) as Act1MushroomSelenite
 		if not is_instance_valid(actor): continue
 		if actor.state_changed.is_connected(_source_callbacks.get(id, Callable())): actor.state_changed.disconnect(_source_callbacks[id])
