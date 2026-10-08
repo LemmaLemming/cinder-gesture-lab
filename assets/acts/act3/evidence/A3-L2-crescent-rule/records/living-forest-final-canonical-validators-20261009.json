@@ -1,0 +1,35 @@
+{
+  "checked_at_utc": "2026-10-08T19:28:40.564404+00:00",
+  "checkout_head": "8f50c2b818d1b0809e96d913c5edd6b9be0e4cae",
+  "scope": "Required canonical design validation for carried equipment; no introduction or creation allocations",
+  "commands": [
+    {
+      "command": "python3 scripts/dev/dev.py ability validate",
+      "exit_code": 0,
+      "revision": 0,
+      "registered_count": 20,
+      "use_count": 0,
+      "active_use_count": 0,
+      "unregistered_ids": []
+    },
+    {
+      "command": "python3 scripts/dev/dev.py equipment validate",
+      "exit_code": 0,
+      "revision": 0,
+      "item_count": 36,
+      "claim_count": 0,
+      "active_claim_count": 0,
+      "catalogue_duplicate_types": []
+    },
+    {
+      "command": "python3 scripts/design/validate_equipment.py",
+      "exit_code": 0,
+      "numeric_fixtures": 10,
+      "gear_loadouts": 256,
+      "conditional_subsets": 500,
+      "combined_states": 7500,
+      "legal_powerup_combinations": 15
+    }
+  ],
+  "limits": "Structural/numerical screening, not all kit clears or human balance."
+}
