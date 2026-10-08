@@ -59,12 +59,6 @@ var presentation_guard: Callable
 ## from retained actual bindings and cached state, without pruning Scheduler calls.
 ## No environmental/source-control protocol is implied by this ordinary guard.
 var approach_guard: Callable
-## Optional for ordinary consumers; the parent opts in before environmental bind.
-## Receives one closed native-boundary proposal and returns a literal String.
-## A required callable and its identity are retained at bind, never transported
-## as actor state. It grants no Route, motion, clock, HP or camera authority.
-var spore_route_guard: Callable
-var spore_route_guard_required: bool = false
 var last_error: String = ""
 var last_snapshot_error: String = ""
 var _configuration: Dictionary = {}
@@ -107,8 +101,6 @@ var _spore_direction: Vector3 = Vector3.FORWARD
 var _spore_progress: float = 0.0
 var _spore_cancel_delivering: bool = false
 var _spore_nested_damage_used: bool = false
-var _bound_spore_route_guard: Callable
-var _bound_spore_route_guard_required: bool = false
 
 
 func configure(role_id: String, source_id: String, initially_dormant: bool = true, approach_enabled: bool = false) -> bool:
@@ -442,9 +434,6 @@ func spore_bind_error(consumer: Node, source_id: String) -> String:
 		return "Actual same-world consumer must already stage this permanent source"
 	var error: String = _retained_body_error()
 	if error.is_empty(): error = _lifecycle_error()
-	if error.is_empty() and spore_route_guard_required and not spore_route_guard.is_valid():
-		error = "Required owned spore route guard is unavailable"
-	if error.is_empty() and not _spore_consumer_id.is_empty(): error = _spore_binding_error()
 	if not error.is_empty(): return error
 	var control: Dictionary = _scheduler.source_control_state(self)
 	if control.is_empty() or not control.get("outside_transaction", false):
@@ -461,8 +450,6 @@ func bind_spore_repulsion(consumer: Node, source_id: String) -> bool:
 	var error: String = spore_bind_error(consumer, source_id)
 	if not error.is_empty(): return _reject(error)
 	if not _spore_consumer_id.is_empty(): return true
-	_bound_spore_route_guard = spore_route_guard
-	_bound_spore_route_guard_required = spore_route_guard_required
 	_spore_consumer_ref = weakref(consumer)
 	_spore_consumer_id = (consumer as CinderSporeRepulsion).consumer_id()
 	_spore_direction = _facing
@@ -477,8 +464,6 @@ func cancel_attack_for_spores(consumer: Node, episode_id: String, direction: Vec
 	var control: Dictionary = _scheduler.source_control_state(self)
 	if record.get("episode_id") != episode_id or record.get("phase") != "recoil" or not record.get("direction") is Vector3 or not _same(Codec.vector3(record.direction), Codec.vector3(direction)) or record.get("progress") != 0.0 or control.is_empty() or not control.get("outside_transaction", false):
 		return _reject("Actual consumer must publish its exact prepared recoil before native cancellation")
-	error = _spore_route_guard_error(consumer, episode_id, direction, "cancel", record, control)
-	if not error.is_empty(): return _reject(error)
 	# Stamp and suppression precede every synchronous native cancellation/cue
 	# observer. Leave original approach velocity until real Route.acquire; only
 	# the Scheduler may stop an owned lunge while cancelling its exact lease.
@@ -522,8 +507,6 @@ func resume_spore_retreat(consumer: Node, episode_id: String, direction: Vector3
 	var record: Dictionary = (consumer as CinderSporeRepulsion).source_state(String(_configuration.source_id))
 	var control: Dictionary = _scheduler.source_control_state(self)
 	if record.get("episode_id") != episode_id or record.get("phase") != "interrupted" or control.is_empty() or not control.get("outside_transaction", false) or not control.reservations.is_empty(): return false
-	error = _spore_route_guard_error(consumer, episode_id, direction, "continue", record, control)
-	if not error.is_empty(): return _reject(error)
 	# Shared consumer assigns the continued direction AFTER actual acquisition.
 	# Do not compare this new prepared direction with its previous record value.
 	_spore_direction = direction
@@ -922,8 +905,6 @@ func _spore_consumer() -> CinderSporeRepulsion:
 
 func _spore_binding_error() -> String:
 	if _spore_consumer_id.is_empty(): return ""
-	if spore_route_guard_required != _bound_spore_route_guard_required or spore_route_guard != _bound_spore_route_guard or (_bound_spore_route_guard_required and not _bound_spore_route_guard.is_valid()):
-		return "Retain the configured owned spore route guard and requirement"
 	var consumer: CinderSporeRepulsion = _spore_consumer()
 	if consumer == null or consumer.consumer_id() != _spore_consumer_id or not consumer.source_binding_matches(self, String(_configuration.source_id)):
 		return "Retain the actual immutable environmental consumer/source binding"
@@ -947,28 +928,6 @@ func _spore_hook_error(consumer: Node, episode_id: String) -> String:
 	if _spore_consumer_id.is_empty() or _spore_consumer() != consumer or not _stable_id(episode_id) or not episode_id.begins_with(_spore_consumer_id + "/episode-"):
 		return "Environmental hook must name the retained consumer's genuine episode"
 	return ""
-
-
-func _spore_route_guard_error(consumer: Node, episode_id: String, direction: Vector3, boundary: String, record: Dictionary, control: Dictionary) -> String:
-	# Coordinator is deliberately busy here. Do not demand its snapshot barrier,
-	# call a paused writer, choose a second endpoint, or acquire a private Route.
-	if not _bound_spore_route_guard.is_valid():
-		return "Required owned spore route guard is unavailable" if _bound_spore_route_guard_required else ""
-	var response: Dictionary = get_spore_response_state()
-	var player_response: Dictionary = _hero.get_threat_response_state()
-	var original_hp: float = hp
-	var original_player_hp: float = _hero.hp
-	var original_player_shells: int = _hero.shells
-	var original_driving: bool = _approach_driving
-	if response.is_empty() or not response.outside_transaction: return "Actual native source response required before route guard"
-	var proposal: Dictionary = {"source_id": String(_configuration.source_id), "consumer": consumer, "episode_id": episode_id, "boundary": boundary, "direction": direction}
-	var result: Variant = _bound_spore_route_guard.call(proposal)
-	var error: String = _spore_hook_error(consumer, episode_id)
-	if not error.is_empty(): return error
-	if get_tree().paused or hp != original_hp or _hero.hp != original_player_hp or _hero.shells != original_player_shells or _approach_driving != original_driving or get_spore_response_state() != response or _hero.get_threat_response_state() != player_response or _scheduler.source_control_state(self) != control or (consumer as CinderSporeRepulsion).source_state(String(_configuration.source_id)) != record:
-		return "Owned spore route guard must preserve actual source/Player/controller/episode custody"
-	if not body_binding_error().is_empty() or not art_binding_error().is_empty(): return "Owned spore route guard changed actual body/presentation custody"
-	return result if result is String else "Owned spore route guard must return a literal String"
 
 
 func _unit_direction(value: Vector3) -> bool:

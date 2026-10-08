@@ -6,27 +6,17 @@ extends "res://scripts/acts/act1/mushroom_caverns.gd"
 const NativeProtocol = preload("res://scripts/environment/scheduler_spore_source_protocol.gd")
 const SporeField = preload("res://scripts/environment/spore_field.gd")
 const Repulsion = preload("res://scripts/environment/spore_repulsion.gd")
-const SporeRoute = preload("res://scripts/combat/repulsion_route.gd")
 const Exact = preload("res://scripts/campaign/exact_json.gd")
 const COMPONENT_API: String = "act1-mushroom-spore-component-1"
 const CONTROLLER_ID: String = "mushroom-scheduler"
 const FIELD_ID: String = "component-mushroom"
 const CONSUMER_ID: String = "component-native-spores"
-const SPORE_CAMERA_PAD: float = 0.05 # Presentation headroom only; no motion tuning.
 
 var spore_field: CinderSporeField
 var spore_consumer: CinderSporeRepulsion
 var source_protocols: Dictionary = {}
 var spores_ready: bool = false
 var last_component_error: String = ""
-var _spore_player: CinderPlayer
-var _spore_player_parent: Node
-var _spore_player_collision: CollisionShape3D
-var _spore_player_capsule: CapsuleShape3D
-var _spore_player_collision_transform: Transform3D
-var _spore_player_radius: float = 0.0
-var _spore_player_height: float = 0.0
-var _spore_route_callbacks: Dictionary = {}
 
 
 func current_source_ids() -> Array[String]:
@@ -49,27 +39,6 @@ func _bind_component_spores() -> void:
 	for id: String in current_source_ids():
 		var response: Dictionary = (sources[id] as Act1MushroomSelenite).get_spore_response_state()
 		if response.is_empty() or not response.grounded or not response.outside_transaction: return
-	if _spore_player == null:
-		var player_body: Dictionary = BodySweep.source_description(hero)
-		if player_body.has("error") or not player_body.get("collision") is CollisionShape3D or not player_body.collision.shape is CapsuleShape3D:
-			_component_failed("Retained actual shared Player capsule is required for spore spacing")
-			return
-		_spore_player = hero
-		_spore_player_parent = hero.get_parent()
-		_spore_player_collision = player_body.collision
-		_spore_player_capsule = _spore_player_collision.shape
-		_spore_player_collision_transform = _spore_player_collision.transform
-		_spore_player_radius = _spore_player_capsule.radius
-		_spore_player_height = _spore_player_capsule.height
-		for id: String in current_source_ids():
-			var callback: Callable = Callable(self, "_source_spore_route_error").bind(id)
-			_spore_route_callbacks[id] = callback
-			(sources[id] as Act1MushroomSelenite).spore_route_guard = callback
-			(sources[id] as Act1MushroomSelenite).spore_route_guard_required = true
-	var guard_error: String = _component_route_bindings_error()
-	if not guard_error.is_empty():
-		_component_failed(guard_error)
-		return
 	var native: Dictionary = scheduler_bindings()
 	var environment: Dictionary = {"world_root": native.world_root, "floors": native.floors}
 	var recipients: Dictionary = {}
@@ -124,112 +93,16 @@ func _camera_framing_points() -> Array:
 		var centre: Vector3 = origin + offset
 		points.append_array(_box_points(AABB(Vector3(-0.2, -0.05, -0.2), Vector3(0.4, 0.5, 0.4)), Transform3D(Basis.IDENTITY, centre)))
 	for id: String in current_source_ids():
-		var actor: Act1MushroomSelenite = sources[id]
-		if not actor.dead:
-			# Announce the entire possible outside-field silhouette BEFORE a hit.
-			# A reaction callback may pause before Game's next camera update. Keep
-			# all native quad/body extrema, compressed only by convex AABB bounds.
-			var response: Dictionary = actor.get_spore_response_state()
-			if response.is_empty(): return [Vector3.INF]
-			var exit_radius: float = radius + float(response.support_radius) + float(Repulsion.DEFAULTS.exit_clearance) + SPORE_CAMERA_PAD
-			var actual: Array = _actor_points(id, actor.global_position)
-			var extrema: Array = []
-			for x: float in [-exit_radius, exit_radius]:
-				for z: float in [-exit_radius, exit_radius]:
-					var endpoint := Vector3(origin.x + x, actor.global_position.y, origin.z + z)
-					for point: Vector3 in actual: extrema.append(point + endpoint - actor.global_position)
-			if extrema.is_empty(): return [Vector3.INF]
-			var bounds := AABB(extrema[0], Vector3.ZERO)
-			for point: Vector3 in extrema: bounds = bounds.expand(point)
-			points.append_array(_box_points(bounds, Transform3D.IDENTITY))
 		var record: Dictionary = spore_consumer.source_state(id)
 		if record.get("route", {}).get("planned_endpoint") is Vector3:
 			points.append_array(_actor_points(id, record.route.planned_endpoint))
 	return _unique_points(points)
 
 
-func _component_route_bindings_error() -> String:
-	# Actual resources are bindings, not serialized motion copies. This witness
-	# certifies one living recipient; the remaining retained actors stay dormant.
-	if not is_inside_tree() or is_queued_for_deletion() or not _running or _changing or not is_instance_valid(shared_shell): return "Running actual spore component bindings required"
-	if not is_instance_valid(hero) or hero != _spore_player or not hero.is_inside_tree() or hero.is_queued_for_deletion() or hero.get_parent() != _spore_player_parent or hero.get_world_3d() != get_world_3d(): return "Retain the actual shared Player and containing world"
-	var player_body: Dictionary = BodySweep.source_description(hero)
-	if player_body.has("error") or player_body.get("collision") != _spore_player_collision or not is_instance_valid(_spore_player_collision) or not is_instance_valid(_spore_player_capsule) or _spore_player_collision.shape != _spore_player_capsule or _spore_player_collision.transform != _spore_player_collision_transform or _spore_player_capsule.radius != _spore_player_radius or _spore_player_capsule.height != _spore_player_height: return "Retain the actual shared Player capsule dimensions/pivot/resource"
-	var error: String = _floor_error()
-	if error.is_empty(): error = _scenery_error()
-	if not error.is_empty(): return error
-	if current_source_ids().size() != 1: return "Spore route spacing currently certifies one actual living recipient"
-	for id: String in SOURCE_IDS:
-		var actor := sources.get(id) as Act1MushroomSelenite
-		if not is_instance_valid(actor) or actor != _retained_sources.get(id) or not actor.is_inside_tree() or actor.is_queued_for_deletion() or actor.get_parent() != self or actor.get_world_3d() != get_world_3d(): return "Retain every actual component source/neighbor"
-		error = actor.body_binding_error()
-		if not error.is_empty(): return error
-		if id not in current_source_ids():
-			if not actor.dead and not actor.dormant: return "Additional living neighbors require a separate tested compound route guard"
-			continue
-		if actor.spore_route_guard_required != true or actor.spore_route_guard != _spore_route_callbacks.get(id) or not actor.spore_route_guard.is_valid(): return "Retain the mandatory one-role source route guard"
-		if not actor.dead:
-			error = actor.art_binding_error()
-			if not error.is_empty(): return error
-	return ""
-
-
-func _source_spore_route_error(proposal: Dictionary, id: String) -> String:
-	var error: String = _component_route_bindings_error()
-	if not error.is_empty(): return error
-	if not Codec.keys_error(proposal, ["source_id", "consumer", "episode_id", "boundary", "direction"]).is_empty() or proposal.source_id != id or proposal.consumer != spore_consumer or not proposal.episode_id is String or proposal.boundary not in ["cancel", "continue"] or not proposal.direction is Vector3: return "Closed actual source route boundary proposal required"
-	if get_tree().paused or not spores_ready or hero.dead or not is_instance_valid(spore_consumer) or not spore_consumer.source_binding_matches(sources[id], id) or not is_instance_valid(spore_field): return "Actual live environmental source/Player/field bindings required"
-	error = spore_field.binding_error()
-	if not error.is_empty(): return error
-	var actor: Act1MushroomSelenite = sources[id]
-	var response: Dictionary = actor.get_spore_response_state()
-	var record: Dictionary = spore_consumer.source_state(id)
-	var required_phase: String = "recoil" if proposal.boundary == "cancel" else "interrupted"
-	if response.is_empty() or not response.alive or not response.grounded or not response.outside_transaction or record.get("episode_id") != proposal.episode_id or record.get("phase") != required_phase or not record.get("original_endpoint") is Vector3: return "Actual prepared same-episode endpoint required before owned hook commit"
-	var start: Vector3 = actor.global_position
-	var original_endpoint: Vector3 = record.original_endpoint
-	if not original_endpoint.is_finite() or absf(original_endpoint.y - start.y) > SporeRoute.ENDPOINT_TOLERANCE: return "Native original endpoint must retain the actual supported feet plane"
-	# The native continuation preserves XZ and current feet Y. This is a pure
-	# horizontal query, never a physical pose or endpoint rewrite.
-	var finish := Vector3(original_endpoint.x, start.y, original_endpoint.z)
-	var displacement: Vector3 = finish - start
-	if not displacement.is_finite() or displacement.length() <= Repulsion.EPSILON or displacement.length() > BodySweep.MAX_DISTANCE or not proposal.direction.is_finite(): return "Bounded actual prepared retreat displacement required"
-	if proposal.boundary == "continue" and (proposal.direction as Vector3) != displacement.normalized(): return "Actual continuation must point toward the immutable original endpoint"
-	var native: Dictionary = scheduler_bindings()
-	var sweep: Dictionary = BodySweep.sweep(actor, Transform3D(Basis.IDENTITY, start), displacement, native.floors.values())
-	if sweep.has("error") or sweep.get("collided", true) or not sweep.get("end") is Vector3 or sweep.end.distance_to(finish) > BodySweep.position_rounding_bound(start, finish): return "Actual complete retreat body path must remain supported and clear: " + String(sweep.get("error", "blocked endpoint"))
-	# All other recipients were proven dormant/defeated above, so this call does
-	# not fabricate a neighbor timing horizon. Its real capsule semantics remain
-	# reusable when a separate compound policy supplies complete native paths.
-	error = _source_path_gap_error(id, start, finish, 0.0)
-	if not error.is_empty(): return error
-	var player_response: Dictionary = hero.get_threat_response_state()
-	var motion: Dictionary = player_response.get("motion", {})
-	var dash: Dictionary = hero.get_committed_dash_state()
-	if motion.is_empty() or not motion.get("grounded", false) or dash.is_empty(): return "Grounded actual Player motion/commitment required for route spacing"
-	var player_endpoint: Vector3 = hero.global_position
-	if dash.get("active", false):
-		player_endpoint = dash.origin + dash.direction * float(dash.distance)
-	elif motion.get("velocity") != Vector3.ZERO or motion.get("queued_dash") != Vector3.ZERO:
-		return "One-role route guard does not certify uncommitted Player hurt/queued motion"
-	var capsule := _retained_capsules[id] as CapsuleShape3D
-	if not is_instance_valid(capsule) or _planar_segment_distance(start, finish, hero.global_position, player_endpoint) < capsule.radius + _spore_player_radius + 0.12: return "Actual retreat path/landing needs a clear Player capsule and committed dash gap"
-	# Only after real world/capsule proof: source, field, old native cue/opening,
-	# complete prospective sprite/body and Player/dash union in the current view.
-	# No camera fit request, private camera override or mechanical permission.
-	var points: Array = _camera_framing_points()
-	points.append_array(_actor_points(id, finish))
-	var player_points: Array = shared_shell.call("player_camera_framing_points")
-	if player_points.is_empty(): return "Actual full Player presentation required"
-	points.append_array(player_points)
-	for point: Vector3 in player_points: points.append(point + player_endpoint - hero.global_position)
-	return _containment_error(_unique_points(points))
-
-
 func _component_boundary_error() -> String:
 	if not spores_ready or not _running or _changing or _callback_depth > 0 or not get_tree().paused or not spore_consumer.snapshot_boundary_available():
 		return "Component units require the complete paused native barrier outside callbacks"
-	return _component_route_bindings_error()
+	return ""
 
 
 func component_unit_state() -> Dictionary:
