@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "asset_id": "act2_salvage_handler_visual",
+  "family": "act2_compact_five_leg_salvage_handler",
+  "role": "New A2-E3 presentation and inherited anchored HP target for the L2 fixed reaching arm",
+  "runtime_script": "res://scripts/acts/act2/salvage_handler_visual.gd",
+  "actor_script": "res://scripts/acts/act2/salvage_handler_actor.gd",
+  "readiness": "original_runtime_imported_isolated_primary_pose_cutaway_verified_native_authored_route_pending",
+  "validation": {
+    "engine": "Root shared16 import succeeded; first isolated104/2 had102 passes including geometry/gate/primary, two TEST ONLY unnamed-floor snapshot failures repaired by stable support name. Affected paired/primary/cleanup narrow26/0 final exit0 without script/resource/leak warnings. No shared implementation changes.",
+    "portrait": "Selected G10 v2 board visually inspected; no native Handler capture yet.",
+    "gameplay": "No authored L2 encounter, primary/no-ammo route or paired retry claim. Shared16 adoption and lifecycle REQUEST dcc047b7 belong to root.",
+    "static": "Manifest parsed and all source/runtime links exist; five explicit support chains, no Scout mirror build or second rig; new script UIDs unique. Grounded support corner bound analytically1.88828m for every yaw. GDScript parsing remains queued engine work."
+  },
+  "sources": [
+    {
+      "id": "G10",
+      "path": "docs/concept-art/act2/bosses/handling-machine-boss-v2.png",
+      "manifest": "docs/concept-art/act2/generated-manifest.json",
+      "native_dimensions_px": [
+        1536,
+        1024
+      ],
+      "sha256": "1696af701d1694d21f442dd6354f880e98733edf5f7ec582bb7bd5705bfe737b",
+      "readiness": "selected_generated_concept_reference",
+      "research_ids": [
+        "T08",
+        "T11",
+        "C98",
+        "T15"
+      ],
+      "adaptation": "Compact A2-E3 low five-legged regular work-machine, articulated telescoping claw, rounded tentacled operator and low ordinary-primary mount; not the L3 B02 boss.",
+      "selected_revision": "v2"
+    }
+  ],
+  "authorship": {
+    "method": "Original faceted procedural meshes; inherited deterministic pixel-material generation and derived cutaway helper. No source image crops, sampling, board atlas or extraction.",
+    "boundaries": "Three-legged fighting machines remain separate. Compact regular Handler, exposed mount and combat poses are gameplay adaptations. Superseded humanoid pilot v1 unused; no new boss, grab input, lunge or player equipment."
+  },
+  "native_pixels": {
+    "plate_and_rust": [
+      32,
+      32
+    ],
+    "rubber_disc_muscle": [
+      16,
+      16
+    ],
+    "texture_filter": "nearest",
+    "mipmaps": false,
+    "geometry": "Six-to-twelve-sided cylinders and ten-sided six-ring rounded joints/operator; no image atlas",
+    "material_structure": "Inherited four-pixel oxidation clusters; dark seams/rib rows; brass fasteners; subdued coupler, no prop glow"
+  },
+  "world_scale": {
+    "units": "Shared world metres; root scale1",
+    "body_height_analytical": 1.1025,
+    "grounded_support_width": 1.66,
+    "grounded_support_depth": 1.38,
+    "grounded_support_all_yaw_diameter_bound": 1.89,
+    "active_local_z_claw_tip": 3.8,
+    "measurement_status": "Analytical construction dimensions; actual mesh/phase/yaw bounds and native readability pending root validation. Moving arm is cosmetic; parent lane3.8/radius.31 is authority."
+  },
+  "pivots": {
+    "actor_and_visual_root": [
+      0,
+      0,
+      0
+    ],
+    "meaning": "Grounded logical tool mount/source, immutable actor target point; inherited ordinary-primary/reload interface",
+    "body_case": [
+      0,
+      0.69,
+      -0.21
+    ],
+    "tool_shoulder": [
+      0,
+      0.6,
+      0.16
+    ],
+    "active_wrist": [
+      0,
+      0.16,
+      3.52
+    ],
+    "mount": [
+      0,
+      0.3,
+      0
+    ]
+  },
+  "actor_reuse": {
+    "base": "res://scripts/acts/act2/ray_scout_actor.gd",
+    "rig_child": "HandlerRig",
+    "hp": 30,
+    "snapshot_api": "act2-ray-scout-snapshot-2",
+    "schema_version": 2,
+    "preserved": "Existing accepted-result target_id/HP/once-only defeat/reload compatibility, anchored root, recovery-only damage gate retained closed after cleanup, silent paused actor restore, no autonomous processing",
+    "target_group": "Actor only enters shared enemies group; visual and any shared LaneMechanism do not",
+    "clock": "Parent shared LaneMechanism owns fixed lane and deadlines; actor stores only supplied phase/progress/heading"
+  },
+  "pose_interfaces": [
+    "pose",
+    "get_body_yaw",
+    "restore_pose_error",
+    "restore_pose",
+    "apply_readability",
+    "clear_readability",
+    "readability_state"
+  ],
+  "animation": {
+    "states": [
+      "idle",
+      "approach",
+      "warning",
+      "lock",
+      "active",
+      "recovery",
+      "defeated"
+    ],
+    "idle": "Compact resting claw and closed mount guards",
+    "warning": "Five planted supports; claw draws back and lifts; chassis heading planted on entry, no independent tracking arm",
+    "lock": "Held drawn-back claw; no progress-driven retargeting",
+    "active": "Claw reaches full3.8m endpoint on first active pose; no animation delay before logical active geometry",
+    "recovery": "Mount guards immediately open; arm retracts over normalized first.42 of recovery while logical mount stays at root",
+    "defeated": "Case settles.28m, knees collapse locally and arm rests; five ground anchors retained",
+    "timing": "Parent normalized progress only; no timer, wall clock, shader TIME or damage callback"
+  },
+  "readability": {
+    "base": "Act2RayScoutVisual per-instance material and actual triangle-depth cutaway; native evidence for that Scout does not validate this Handler",
+    "dynamic_cache": "Changed CylinderMesh heights refresh cached vertices/indices before inherited recompute; material clones are retained",
+    "priority": "Source silhouette, hero, required footprint and supported landing must read together; root must validate full active arm under fixed portrait camera"
+  },
+  "assets": [
+    {
+      "asset_id": "A2-HANDLER-BODY",
+      "role": "Low hood, oval work belly, rivets and exactly five separate planted support chains",
+      "source": "G10",
+      "readiness": "original_runtime_source_statically_reviewed_import_and_native_portrait_pending",
+      "native_scale": {
+        "height_m": 1.1025,
+        "support_width_m": 1.66
+      },
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "collision": "none; parent owns actual collision/floors; cosmetic mesh is not an attack body",
+      "occlusion": "Broad body/leg/arm/mount surfaces use inherited per-instance actual mesh triangle cutaway; thin rivets, eyes and tentacles preserve local source outlines",
+      "states": [
+        "idle",
+        "warning",
+        "lock",
+        "active",
+        "recovery",
+        "defeated"
+      ],
+      "clock": "No autonomous clock; phase/progress/hit_flash supplied by parent from actual shared mechanism state; pause inherited",
+      "reuse": "A2-E3 regular Handler family for L2 and subsequent documented regular-role encounters; L3 boss requires separate production/validation",
+      "limitations": "Five-leg distinction and folded silhouette need native view; no claimed final engineering or L3 boss readiness."
+    },
+    {
+      "asset_id": "A2-HANDLER-ARM",
+      "role": "Sliding lever, elastic sleeve, rod, round elbow and inturned grapple claw",
+      "source": "G10",
+      "readiness": "original_runtime_source_statically_reviewed_import_and_native_portrait_pending",
+      "native_scale": {
+        "active_claw_tip_local_z_m": 3.8
+      },
+      "pivot": [
+        0,
+        0.6,
+        0.16
+      ],
+      "collision": "none; parent owns actual collision/floors; cosmetic mesh is not an attack body",
+      "occlusion": "Broad body/leg/arm/mount surfaces use inherited per-instance actual mesh triangle cutaway; thin rivets, eyes and tentacles preserve local source outlines",
+      "states": [
+        "idle",
+        "warning",
+        "lock",
+        "active",
+        "recovery",
+        "defeated"
+      ],
+      "clock": "No autonomous clock; phase/progress/hit_flash supplied by parent from actual shared mechanism state; pause inherited",
+      "reuse": "A2-E3 regular Handler family for L2 and subsequent documented regular-role encounters; L3 boss requires separate production/validation",
+      "limitations": "Full active arm extends beyond compact body; source/cue/landing framing required, no physical arm collider or separate moving hit point."
+    },
+    {
+      "asset_id": "A2-HANDLER-MOUNT",
+      "role": "Grounded lower coupler with disc ribs and hinged guards",
+      "source": "G10",
+      "readiness": "original_runtime_source_statically_reviewed_import_and_native_portrait_pending",
+      "native_scale": {
+        "width_m": 0.59,
+        "top_y_m": 0.474
+      },
+      "pivot": [
+        0,
+        0.3,
+        0
+      ],
+      "collision": "none; parent owns actual collision/floors; cosmetic mesh is not an attack body",
+      "occlusion": "Broad body/leg/arm/mount surfaces use inherited per-instance actual mesh triangle cutaway; thin rivets, eyes and tentacles preserve local source outlines",
+      "states": [
+        "closed",
+        "recovery_open",
+        "spent_open"
+      ],
+      "clock": "No autonomous clock; phase/progress/hit_flash supplied by parent from actual shared mechanism state; pause inherited",
+      "reuse": "A2-E3 regular Handler family for L2 and subsequent documented regular-role encounters; L3 boss requires separate production/validation",
+      "limitations": "Visual exposure is not damage authority; inherited gate checks actual shared recovery. Root contact point remains unchanged."
+    },
+    {
+      "asset_id": "A2-HANDLER-OPERATOR",
+      "role": "Rounded grey-brown head-body, two dark eyes, small beak and sixteen short tentacles in two bunches of eight",
+      "source": "G10",
+      "readiness": "original_runtime_source_statically_reviewed_import_and_native_portrait_pending",
+      "native_scale": {
+        "head_diameter_m": 0.29
+      },
+      "pivot": [
+        0,
+        0.81,
+        -0.185
+      ],
+      "collision": "none; parent owns actual collision/floors; cosmetic mesh is not an attack body",
+      "occlusion": "Broad body/leg/arm/mount surfaces use inherited per-instance actual mesh triangle cutaway; thin rivets, eyes and tentacles preserve local source outlines",
+      "states": [
+        "idle",
+        "warning",
+        "lock",
+        "active",
+        "recovery",
+        "defeated"
+      ],
+      "clock": "No autonomous clock; phase/progress/hit_flash supplied by parent from actual shared mechanism state; pause inherited",
+      "reuse": "A2-E3 regular Handler family for L2 and subsequent documented regular-role encounters; L3 boss requires separate production/validation",
+      "limitations": "Tiny detail may simplify at native scale; no torso, shoulders, humanoid arms or independent operator target."
+    }
+  ],
+  "reuse_limits": [
+    "Do not instantiate inherited Scout build; overridden Handler _build and actor _ready create only one five-legged rig.",
+    "No Ray Scout mirror/aperture geometry, cue, clock, collider or private scheduler is introduced.",
+    "L2 floor/source/cue, shared lifecycle gap, difficulty, all-loadout/no-pickup combat and exact full aggregate remain root work."
+  ]
+}

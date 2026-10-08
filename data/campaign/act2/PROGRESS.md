@@ -1,13 +1,13 @@
 # Act 2 progress
 
-Updated 8 October 2026. Current baseline: `campaign-shared-13`, publication `fef1b1a79d83401d5b67118f6f69dcf2abea017c`, preserving merge `24de1aa84960477a6c93993827040e586a01ead1`. See [memory](ACT_MEMORY.md), [current L1](levels/A2-L1.md) and [preserved progress history](PROGRESS_HISTORY.md). Historical failures and earlier pending statements remain in the archive, not in current status.
+Updated 8 October 2026. Authored L1 evidence baseline: `campaign-shared-13`; current checkout adopted shared16. Tested L1 publication: `campaign-shared-13`, publication `fef1b1a79d83401d5b67118f6f69dcf2abea017c`, preserving merge `24de1aa84960477a6c93993827040e586a01ead1`. See [memory](ACT_MEMORY.md), [current L1](levels/A2-L1.md) and [preserved progress history](PROGRESS_HISTORY.md). Historical failures and earlier pending statements remain in the archive, not in current status.
 
 ## Current state
 
 | Level | State | Next requirement |
 | --- | --- | --- |
-| A2-L1 Horsell Common | Authored/tested candidate; scoped final native art review passed; canonical acceptance pending | Autonomous integration review and registry acceptance |
-| A2-L2 Weybridge and Shepperton | Production unstarted; incomplete | L1 handoff, then source/equipment/ability gate |
+| A2-L1 Horsell Common | Authored/tested and canonically accepted | Production registrationd629; preserving adoption pending |
+| A2-L2 Weybridge and Shepperton | Source/gate complete; kit/Handler/root imported; entry15/0; full acceptance pending | Actual full route/circle/paired state/retry/native portraits |
 | A2-L3 Black Smoke and the Ruined House | Production unstarted; incomplete | L2 handoff |
 | A2-L4 Red Weed and the London Approaches | Production unstarted; incomplete | L3 handoff |
 | A2-L5 Dead London and Regent's Park | Production unstarted; incomplete | L4 handoff |
@@ -15,7 +15,7 @@ Updated 8 October 2026. Current baseline: `campaign-shared-13`, publication `fef
 | A2-O2 Clear Air Circuit | Production unstarted; incomplete | O1 handoff; reuse L3 kit |
 | A2-O3 Bleached Canal | Production unstarted; incomplete | O2 handoff; reuse L4 kit |
 
-No Act2 level has canonical acceptance or a completed HANDOFF. L1 is ready as an authored/tested candidate, at tested owned runtime commit `16f2532518edd8d76aa41ec40f1d10edad607559`. Shared13 stationary285/0, Scout40/0, native Heavy-left304/0, default WEAPON-01-left269/0 and Challenge slow-Padded-Reach-left269/0 all pass. Owner and independent seven-frame review agree no material captured-state defect; older results retain their precise scopes. The optional shared camera hook is empty in L1, preserving ordinary follow; L1 is stationary and does not consume lunge/staged-collider, spores or replay.
+L1 has a completed exact HANDOFF and canonical acceptance below. Its authored runtime remains at tested owned runtime commit `16f2532518edd8d76aa41ec40f1d10edad607559`. Shared13 stationary285/0, Scout40/0, native Heavy-left304/0, default WEAPON-01-left269/0 and Challenge slow-Padded-Reach-left269/0 all pass. Owner and independent seven-frame review agree no material captured-state defect; older results retain their precise scopes. The optional shared camera hook is empty in L1, preserving ordinary follow; L1 is stationary and does not consume lunge/staged-collider, spores or replay.
 
 ## Recorded evidence
 
@@ -48,8 +48,10 @@ Per-bank and per-Scout-part cutaways preserve physical geometry, housing hit poi
 
 [Seven promoted native frames and metadata](../../../docs/acts/act2/evidence/A2-L1/live-evidence.json) record warning, lock, active, recovery, first pair, pair committed and clear. The pair-committed state is A warning/B recovery, not two armed locks.
 
-The shared13 Challenge slow-Padded-Reach-left269/0 result is recorded above. Next: stamp the exact owned L1 commit and tested provenance → exact L1 HANDOFF for canonical acceptance → L2 source/equipment/ability gate after successful handoff. Do not rerun unrelated acts or all shared suites without a concrete dependency reason. Human balance/native-focus play and mobile performance remain unperformed limitations, not approval gates on the authorized desktop scope.
+Shared13 Challenge slow-Padded-Reach-left269/0 remains recorded. Next: preserving registration adoption → L2 actual acceptance → exact L2 HANDOFF before L3. No unchanged successful suites or unrelated act audits need repetition. Human balance/native-focus play and mobile performance remain unperformed limitations.
 
 Tested owned runtime anchor: `16f2532518edd8d76aa41ec40f1d10edad607559`. All42scene/script/test SHA256 values match that commit; evidence-stamp changes only records/manifests. Scope is the whole assigned Act2 path diff from exact shared13 publication, including earlier owned foundation history. Canonical acceptance/registry work remains integration-owned.
 
-HANDOFF sent: `b56eaa6b-d647-40ed-a210-0eaa378a4cf6`, exact candidate `a96edfaddd22e206438e616a8b4080e5c5cdce7a`, tested runtime `16f2532518edd8d76aa41ec40f1d10edad607559`, shared13 exact publication. Autonomous canonical review/registration is pending. Preserve the submitted L1 candidate; read-only L2 source/art/equipment preparation may proceed while integration reviews. No later-level production has started.
+HANDOFF `b56eaa6b-d647-40ed-a210-0eaa378a4cf6` sent exact candidatea96/runtime16f/shared13 and was received c0678903; L1 is canonically ACCEPTED: message `73244c16-dcb2-4351-a354-b13bf11a81c0`, exact candidate `a96edfaddd22e206438e616a8b4080e5c5cdce7a`, runtime `16f2532518edd8d76aa41ec40f1d10edad607559`, content `993096ca2ea908605cad1400a8c6bf4f45665779`, registration `d629072f2ca2086878981ef3e19543d9a68ece41`. Integration production lifecycle132headless/142native portrait passed with0failures. Isolated priorAct1 completion prefix/initialHP37/0ammo are test fixtures; the actual A1-L5 prerequisite remains. Authored evidence stays attributed to exact shared13. Registration/shared17 adoption is pending preserving owned work; current checkout has shared16 through e4bb01fe.
+
+L2 production: [Weybridge](levels/A2-L2.md) source/art/equipment gate complete; new owned scene/root/sequence/kit/Handler/foot imported. Actual entry/whole-paused-state/atomic-rejection/cleanup15/0 passed at shared16; full-route and native acceptance pending. Shared callback lifecycle REQUESTdcc047b7 remains integration-owned. No new gear/ability claim/use; L3-L5/O1-O3 production unstarted.

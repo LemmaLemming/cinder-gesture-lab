@@ -1,0 +1,502 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-08",
+  "art_revision": "a2-weybridge-kit-1",
+  "level_id": "A2-L2",
+  "authoring_source": "scripts/acts/act2/weybridge_kit.gd",
+  "readiness": "authored_runtime_prototype_UNTESTED_L2_engine_portrait_and_play_review_pending",
+  "provenance": "Original procedural mesh assemblies and deterministic pixel clusters, with explicit reuse of the authored Heath cottage, witness and primitive/material families. Generated Act2 boards supply shape, costume, period-material and composition references only; no concept-board crop, atlas cell, caption or stock pixels are imported.",
+  "requirements": {
+    "level_source": "docs/ACT2_CONCEPT.md: Level 2, Weybridge and Shepperton",
+    "adaptation_boundary": "docs/concept-art/act2/README.md",
+    "research_records": "docs/reference-library/act2/research/entities.json",
+    "source_event": "E12 river-street evacuation, E13 lock/confluence and E14 human artillery bringing down a fighting machine; compact dry-ground game adaptation rather than a literal geographic survey",
+    "exclusions": "No swimming, planks, boat control, falling death, blocking crowds, escort HP, extra boss, intact church spire, coastal Thunder Child sequence or microbial-ending cause. Scenery adds no attack cue or actionable prop cue."
+  },
+  "api": {
+    "build": "static build(parent: Node3D) -> Dictionary: creates WeybridgeSceneryKit and returns root:Node3D, witnesses:Array[Node3D], collapse:Node3D; derives initial arrival/0 and hidden collapse/0",
+    "set_tableau": "static set_tableau(kit: Dictionary, state: String, progress: float = 0.0) -> void: clamps finite supplied progress, delegates unchanged Heath.set_tableau, preserves six existing costumes and feet pivots",
+    "set_collapse": "static set_collapse(kit: Dictionary, visible: bool, progress: float = 0.0) -> void: clamps finite supplied progress and reconstructs tripod pose, fragment translation/rotation, steam pose/alpha and linked gun recoil/flash, including reverse progress and fresh restore",
+    "ownership": "Level owns the simulation clock, scenic start fields, snapshots, visibility decisions, terrain collision, encounters, giant-foot mechanism/visual, Salvage Handler, progression, trigger and cleanup. Kit contains no process callback, timer, collider, physics body, Area3D, actor group, AI, scheduler, equipment, ability or gameplay damage."
+  },
+  "resource_policy": {
+    "generation": "Fixed hand-authored assembly dimensions and deterministic integer pixel-cluster formulas; no RNG stream, wall clock, shader TIME or delta integration",
+    "heath_reuse": "scripts/acts/act2/heath_kit.gd: _cottage, _witness, set_tableau, _plane, _box, _cylinder, _torus, _sphere, _branch and _material; shared primitive meshes, costume textures and static materials are immutable",
+    "surface_cache": "Three immutable original 64x64 nearest-filtered texture/material families, paving/water/earth; every plane receives its own duplicate with size-derived UV scale at 1.44 world units per repeat",
+    "animated_materials": "Seven owned alpha-material duplicates: one field-gun flash and six steam puffs. Animation changes only these owned materials, never the Heath cache. Four fragments reuse static metal materials.",
+    "optional_cutaway": "Sixteen LowQuayCurb meshes, two FarCourtyardPier bodies and two CourtyardPierCoping meshes register root-relative paths in optional_cutaway_paths and weybridge_cutaway_candidate metadata (20 total). The kit does not fade them. Any level-owned derived fade must first duplicate the effective material; cached Heath materials remain immutable.",
+    "native_scale": "Procedural mesh dimensions are world units, with mesh vertices/UVs authored independently of concept-board resolution. Surface native textures are 64x64/1.44-world-unit repeat. Witness native textures remain 48x64 at .0225 world units per pixel."
+  },
+  "assets": [
+    {
+      "id": "A2-WEYBRIDGE-DRY-PAVING",
+      "family": "weybridge_floor_surfaces",
+      "source": [
+        {
+          "id": "G06",
+          "path": "docs/concept-art/act2/environments/weybridge-shepperton.png",
+          "entities": [
+            "E12",
+            "E13"
+          ],
+          "use": "broad riverside street, brick quay and continuous dry approach; reference only"
+        }
+      ],
+      "reuse": "Heath plane primitive; original Weybridge muted cobble texture and static earth palette",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "tile_world_units": 1.44,
+      "pivot": "Plane center; ContinuousDryPaving local center [0,.005,-17.7]",
+      "placement": {
+        "dry_route_x": [
+          -3.4,
+          3.4
+        ],
+        "dry_route_z": [
+          -39.0,
+          3.6
+        ],
+        "dry_plane_size": [
+          6.8,
+          42.6
+        ],
+        "underlying_earth_center": [
+          0,
+          -0.2,
+          -22
+        ],
+        "underlying_earth_size": [
+          26,
+          68
+        ]
+      },
+      "outboard_paving": "Village side planes centered at X +/-5.1,Z -2.2, size3.4x11.6; quay planes X +/-4.1,Z -19,size1.4x22; courtyard planes X +/-5.1,Z -34.5,size3.4x9",
+      "collision": "Decorative overlay only. Parent supplies the four continuous collision floors and legal movement surface.",
+      "occlusion": "Near-flat muted floor; no raised gameplay join, moving tile or floor cue",
+      "animation_states": [
+        "static"
+      ],
+      "readiness": "authored_UNTESTED_L2"
+    },
+    {
+      "id": "A2-WEYBRIDGE-STATIC-WATER",
+      "family": "weybridge_confluence_border",
+      "source": [
+        {
+          "id": "G06",
+          "path": "docs/concept-art/act2/environments/weybridge-shepperton.png",
+          "entities": [
+            "E13",
+            "E14"
+          ],
+          "use": "confluence border and distant water; excludes separate T23/E35 coastal vignette"
+        }
+      ],
+      "reuse": "Heath plane primitive; original non-emissive muted water texture",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "tile_world_units": 1.44,
+      "pivot": "Plane centers at [+/−8.9,-.12,-19] and [0,-.12,-46]",
+      "placement": {
+        "side_water_min_abs_x": 4.8,
+        "side_water_z": [
+          -30,
+          -8
+        ],
+        "side_water_size": [
+          8.2,
+          22
+        ],
+        "far_water_z": [
+          -52.4,
+          -39.6
+        ],
+        "far_water_size": [
+          20,
+          12.8
+        ]
+      },
+      "collision": "None; water is scenic border, not swimming, damage, a crossing gap or a playable surface",
+      "occlusion": "Flat static plane outside and below the dry route",
+      "animation_states": [
+        "static"
+      ],
+      "readiness": "authored_UNTESTED_L2"
+    },
+    {
+      "id": "A2-WEYBRIDGE-QUAY-AND-ABUTMENTS",
+      "family": "weybridge_riverside_architecture",
+      "source": [
+        {
+          "id": "G06",
+          "path": "docs/concept-art/act2/environments/weybridge-shepperton.png",
+          "entities": [
+            "E12",
+            "E13"
+          ],
+          "use": "period quay rails, brick abutments and outboard lock furniture"
+        }
+      ],
+      "reuse": "Immutable Heath box/tapered-cylinder/branch families and metal, rim, brick, stone, wood materials",
+      "native_scale": "World-unit mesh assemblies; no atlas",
+      "pivot": "Primitive centers and endpoint-oriented branch centers",
+      "placement": {
+        "rail_post_abs_x": 4.1,
+        "post_count_each_side": 12,
+        "post_z_first": -8.6,
+        "post_z_step": -1.8,
+        "rail_heights": [
+          0.34,
+          0.68
+        ],
+        "abutment_abs_x": 4.25,
+        "abutment_count_each_side": 4,
+        "abutment_z_first": -19.1,
+        "abutment_z_step": -3.15,
+        "lock_furniture_abs_x": 5.35,
+        "lock_furniture_z": -14.0,
+        "curb_count": 16,
+        "curb_center_abs_x": 3.6,
+        "curb_min_abs_x": 3.44,
+        "lock_base_abs_x": [
+          4.65,
+          6.05
+        ]
+      },
+      "collision": "None; rails, curbs, abutments and lock furniture remain outside X +/-3.4 dry-floor width",
+      "occlusion": "Sixteen low curb meshes are optional derived cutaway candidates. Rails/lock furniture are scenery, with no available/active/spent interaction cue. Lock furniture has an owned static stone base above the outboard water plane.",
+      "animation_states": [
+        "static",
+        "optional_level_derived_cutaway"
+      ],
+      "readiness": "authored_UNTESTED_L2"
+    },
+    {
+      "id": "A2-WEYBRIDGE-COTTAGES",
+      "family": "victorian_cottage_reuse",
+      "source": [
+        {
+          "id": "G06",
+          "path": "docs/concept-art/act2/environments/weybridge-shepperton.png",
+          "entities": [
+            "E12",
+            "E13"
+          ],
+          "use": "period river-street/courtyard framing"
+        }
+      ],
+      "reuse": "Existing A2-HEATH-COTTAGES via Heath._cottage, retaining masonry facade, pitched slate roof, chimney, timber door, sash windows and authored variant detail",
+      "native_scale": "Facade1.6x1.5x1.25 world units; roof mesh scale1.85x.6x1.5; existing +/- .12-radian yaw",
+      "pivot": "Cottage ground origin, not sprite or board pivot",
+      "placement": {
+        "count": 8,
+        "origin_abs_x": 4.95,
+        "z_each_side": [
+          -4.5,
+          -7.0,
+          -33.7,
+          -37.0
+        ],
+        "conservative_roof_min_abs_x": 3.94
+      },
+      "collision": "None; complete cottage assemblies remain outside the dry-floor width",
+      "occlusion": "Side-bank framing; current L2 portrait/source visibility remains untested",
+      "animation_states": [
+        "static"
+      ],
+      "readiness": "reused_authored_Heath_family_UNTESTED_L2_placement"
+    },
+    {
+      "id": "A2-WEYBRIDGE-WITNESSES",
+      "family": "nonhostile_victorian_witness_reuse",
+      "source": [
+        {
+          "id": "G03",
+          "path": "docs/concept-art/act2/characters/refugees-and-defenders.png",
+          "entities": [
+            "C62",
+            "C57"
+          ],
+          "use": "friendly riverside refugees/defenders and period costume vocabulary; six existing authored costumes reused without new enemy role"
+        },
+        {
+          "id": "G06",
+          "path": "docs/concept-art/act2/environments/weybridge-shepperton.png",
+          "entities": [
+            "E12"
+          ],
+          "use": "evacuation context, compressed into outboard scenic retreat"
+        }
+      ],
+      "reuse": "A2-HEATH-WITNESS-0 through A2-HEATH-WITNESS-5, original four cached watch/turn/retreat textures per costume; unchanged Heath._witness and Heath.set_tableau",
+      "native_pixels": [
+        48,
+        64
+      ],
+      "world_units_per_pixel": 0.0225,
+      "pivot": "Feet at native [24,64], existing Sprite3D offset[0,32]; root Y .025; full billboard, nearest filter, hard alpha scissor .5, no shadow casting",
+      "instances": [
+        {
+          "id": "A2-WEYBRIDGE-WITNESS-0",
+          "reuse_id": "A2-HEATH-WITNESS-0",
+          "home_feet": [
+            -4.0,
+            0.025,
+            1.0
+          ],
+          "retreat_direction": [
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "A2-WEYBRIDGE-WITNESS-2",
+          "reuse_id": "A2-HEATH-WITNESS-2",
+          "home_feet": [
+            -4.0,
+            0.025,
+            -0.5
+          ],
+          "retreat_direction": [
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "A2-WEYBRIDGE-WITNESS-3",
+          "reuse_id": "A2-HEATH-WITNESS-3",
+          "home_feet": [
+            -4.0,
+            0.025,
+            -2.0
+          ],
+          "retreat_direction": [
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "A2-WEYBRIDGE-WITNESS-1",
+          "reuse_id": "A2-HEATH-WITNESS-1",
+          "home_feet": [
+            4.0,
+            0.025,
+            1.0
+          ],
+          "retreat_direction": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "A2-WEYBRIDGE-WITNESS-4",
+          "reuse_id": "A2-HEATH-WITNESS-4",
+          "home_feet": [
+            4.0,
+            0.025,
+            -0.5
+          ],
+          "retreat_direction": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "A2-WEYBRIDGE-WITNESS-5",
+          "reuse_id": "A2-HEATH-WITNESS-5",
+          "home_feet": [
+            4.0,
+            0.025,
+            -2.0
+          ],
+          "retreat_direction": [
+            1,
+            0,
+            0
+          ]
+        }
+      ],
+      "collision": "None; no crowd blocker, escort target, HP, body or enemy group. Full billboard half-width .54 leaves home extent absX>=3.46 outside the dry route.",
+      "occlusion": "Six costumes are outboard; inherited contact shadow is decorative. New L2 arrival/retreat portrait separation remains untested.",
+      "animation_states": [
+        "arrival_watch",
+        "arrival_turn",
+        "retreat_turn",
+        "retreat_step_a",
+        "retreat_step_b",
+        "empty_hidden"
+      ],
+      "animation_rule": "Arrival turns at supplied progress .75; retreat turns below .15 then alternates existing A/B poses at eight normalized intervals; feet translate outward by1.2m to absX5.2; retreat progress1 hides. Metadata home_position/retreat_direction/costume_variant is construction data; witness_pose/tableau state/progress are reconstructed presentation.",
+      "readiness": "existing_authored_costumes_and_motion_reused_UNTESTED_L2_placement"
+    },
+    {
+      "id": "A2-WEYBRIDGE-ABANDONED-CART",
+      "family": "victorian_survival_props",
+      "source": [
+        {
+          "id": "G17",
+          "path": "docs/concept-art/act2/props/victorian-survival-props.png",
+          "entities": [
+            "T26",
+            "T29"
+          ],
+          "use": "wooden dog-cart, spoked wheels, luggage and bundle"
+        },
+        {
+          "id": "G06",
+          "path": "docs/concept-art/act2/environments/weybridge-shepperton.png",
+          "entities": [
+            "E12"
+          ],
+          "use": "abandoned river-street baggage context"
+        }
+      ],
+      "reuse": "Heath immutable wood/metal/rim/ash_wood materials and box/branch/torus/cylinder primitives; original cart assembly",
+      "native_scale": "Cart bed1.08x.20x1.18; wheel radius .46; shafts terminate localZ2.30; dimensions are world units",
+      "pivot": "Cart ground origin [-4.85,0,-5.2]; wheels have authored axle pivots",
+      "collision": "None; complete cart/luggage remains west of the dry route, with no vehicle control, pickup or attackable cluster",
+      "occlusion": "Outboard static silhouette; L2 portrait visibility untested",
+      "animation_states": [
+        "static_abandoned"
+      ],
+      "readiness": "authored_UNTESTED_L2"
+    },
+    {
+      "id": "A2-WEYBRIDGE-FIELD-GUN",
+      "family": "victorian_artillery_scenery",
+      "source": [
+        {
+          "id": "G17",
+          "path": "docs/concept-art/act2/props/victorian-survival-props.png",
+          "entities": [
+            "T24"
+          ],
+          "use": "period field gun and carriage vocabulary"
+        },
+        {
+          "id": "G06",
+          "path": "docs/concept-art/act2/environments/weybridge-shepperton.png",
+          "entities": [
+            "E14"
+          ],
+          "use": "human artillery cause of distant fighting-machine collapse"
+        }
+      ],
+      "reuse": "Heath wheel primitives and static wood/metal/rim/cavity materials; original carriage/barrel assembly, one owned fastener-derived alpha flash material",
+      "native_scale": "Wheel radius .54; barrel length1.55/radii.18,.14; world-unit meshes",
+      "pivot": "Ground origin [4.95,0,-31.5]; barrel center[0,1.18,-.22] and flash center[0,1.18,-1.12] relative to gun",
+      "collision": "None; no player-fired weapon, pickup, target, trigger or source of gameplay damage",
+      "occlusion": "Gun stays east of dry route; muzzle flash is contextual artillery scenery, not a shared warning/lock/active cue",
+      "animation_states": [
+        "static",
+        "supplied_collapse_muzzle_flash_and_recoil"
+      ],
+      "animation_rule": "Linked by WeakRef in collapse metadata. Flash appears only when collapse is visible and supplied progress is between .03 and .15; bounded sine recoil/alpha reconstructed from progress, never a local timer.",
+      "readiness": "authored_UNTESTED_L2"
+    },
+    {
+      "id": "A2-WEYBRIDGE-RUINED-TOWER-AND-FAR-PIERS",
+      "family": "weybridge_ruin_modules",
+      "source": [
+        {
+          "id": "G06",
+          "path": "docs/concept-art/act2/environments/weybridge-shepperton.png",
+          "entities": [
+            "E14"
+          ],
+          "use": "ruined church remnant; no intact spire"
+        }
+      ],
+      "reuse": "Heath static brick/stone/cavity box families; original broken-tower and separated far-pier assemblies",
+      "native_scale": "Tower base1.4x2.1x1.4; two asymmetrical upper masonry fragments and two coping fragments; far pier .55x2.24x.55 with .66-wide coping",
+      "pivot": "Tower ground origin[-5.4,0,-37.8]; far piers centered X +/-3.95,Y1.12,Z-39.8",
+      "collision": "None; tower and piers are outside the route. No entrance lintel, gate collider or intact spire is created.",
+      "occlusion": "Two FarCourtyardPier bodies and their two coping meshes register optional cutaway paths. Parent must verify protected hero/source/landing view near the final courtyard.",
+      "animation_states": [
+        "static_ruin",
+        "optional_level_derived_pier_cutaway"
+      ],
+      "readiness": "authored_UNTESTED_L2"
+    },
+    {
+      "id": "A2-WEYBRIDGE-DISTANT-ARTILLERY-COLLAPSE",
+      "family": "fighting_tripod_distant_scenery",
+      "source": [
+        {
+          "id": "G06",
+          "path": "docs/concept-art/act2/environments/weybridge-shepperton.png",
+          "entities": [
+            "E14",
+            "T03"
+          ],
+          "use": "artillery-destroyed fighting machine and harmless river steam"
+        },
+        {
+          "id": "G11",
+          "path": "docs/concept-art/act2/bosses/fighting-tripod-boss.png",
+          "entities": [
+            "T03",
+            "T04"
+          ],
+          "use": "three articulated supports, brazen moving hood and camera-like ray apparatus; excludes B01/B05 boss rules and T21 microbial-ending cause"
+        },
+        {
+          "id": "G16",
+          "path": "docs/concept-art/act2/props/martian-technology.png",
+          "entities": [
+            "T04",
+            "T11"
+          ],
+          "use": "riveted apparatus and elastic/sliding-joint vocabulary; no gameplay ray or new mechanic"
+        }
+      ],
+      "reuse": "Heath immutable primitive/metal/rim/cavity/fastener families; original distant tripod assembly; six owned vapour-material duplicates reuse the Heath harmless-puff family",
+      "native_scale": "World-unit meshes; hood radii1.10/.68,height.70; rim outer radius1.10; three paired upper/lower supports with fixed authored knee/foot coordinates; four fragments and six steam puffs",
+      "pivot": "Collapse root [0,-.12,-41.6]; TripodFall origin at root. Fall rotates around this ground-relative origin toward +X without a Z rotation-plane displacement.",
+      "placement": {
+        "anchor": [
+          0,
+          -0.12,
+          -41.6
+        ],
+        "standing_hood_center_y_local": 4.02,
+        "conservative_max_part_z": -40.5,
+        "dry_route_end_z": -39.0,
+        "fall_direction": [
+          1,
+          0,
+          0
+        ]
+      },
+      "collision": "None; no falling body, surprise damage, boss, hitbox, footfall, attack cue or debris trigger. Actual local giant-foot gameplay is a separate level-owned system.",
+      "occlusion": "Standing/falling assembly remains beyond the dry-route end by at least1.50m in world Z; depth separation alone is not portrait occlusion acceptance. Parent must review final source/player/landing projection and endcap captures.",
+      "animation_states": [
+        "hidden",
+        "standing",
+        "artillery_flash",
+        "hood_fall",
+        "harmless_fragments",
+        "harmless_steam",
+        "spent_scenery"
+      ],
+      "animation_rule": "Normalized progress supplied by level. Hood fall smoothstep .15–.85, rotating Z from0 to-1.43 and translating X up to.28/Y down.10. Fragments appear from.20 with bounded +X flight. Steam begins after.40, expands/rises and fades to0 at1. No local clock, delta accumulation, collider or signal-driven phase progression.",
+      "readiness": "authored_UNTESTED_L2"
+    }
+  ],
+  "validation": {
+    "static": "Scoped worker inspected exact staged Weybridge kit, existing Heath helper signatures and generated-manifest source records. JSON syntax, unique asset/instance IDs and reference paths checked. Optional cutaway candidates are metadata only; production fade remains parent-owned.",
+    "engine": "Not run for this new L2 kit by scoped worker; resource import, parser/runtime checks and exact fresh reconstruction pending owner.",
+    "portrait": "New L2 placement, water/ground seams, witness feet/retreat, architectural occlusion and distant-collapse visibility have not been captured or reviewed in native portrait.",
+    "gameplay": "Scenery owns no gameplay. Actual L2 floor continuity, collision, source/lane/landing protection, encounters, pause/retry, earned contacts and completion are parent-owned and untested by this kit manifest.",
+    "acceptance": "Authored prototype only. Generated source boards and reused L1 families do not establish L2 art readiness, playable readiness, human balance, campaign acceptance, mobile/export or release readiness."
+  }
+}

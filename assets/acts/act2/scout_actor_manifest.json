@@ -3,7 +3,7 @@
   "asset_id": "A2-RAY-SCOUT-ACTOR-01",
   "type_match": "A2-E1 Ray Scout; existing L1-authored enemy, not equipment/perk/powerup introduction",
   "family": "act2-ray-scout",
-  "readiness": "original_runtime_L1_scripted_route_and_native_portrait_verified_integration_review_pending",
+  "readiness": "original_runtime_L1_scripted_route_native_portrait_and_canonical_registration_accepted",
   "authoring_source": "scripts/acts/act2/ray_scout_actor.gd",
   "visual_resource": "scripts/acts/act2/ray_scout_visual.gd",
   "visual_manifest": "assets/acts/act2/ray_scout_manifest.json",
@@ -177,5 +177,18 @@
       "scope": "Actual full ordinaryprimary/initialzeroammo/no pickup route with slowest primary recovery;4boundaries/contact/cleanup."
     },
     "tested_owned_runtime_commit": "16f2532518edd8d76aa41ec40f1d10edad607559"
+  },
+  "canonical_acceptance": {
+    "message_id": "73244c16-dcb2-4351-a354-b13bf11a81c0",
+    "candidate": "a96edfaddd22e206438e616a8b4080e5c5cdce7a",
+    "runtime": "16f2532518edd8d76aa41ec40f1d10edad607559",
+    "integrated_content": "993096ca2ea908605cad1400a8c6bf4f45665779",
+    "registration": "d629072f2ca2086878981ef3e19543d9a68ece41",
+    "authored_baseline": "fef1b1a79d83401d5b67118f6f69dcf2abea017c",
+    "authored_api": "campaign-shared-13",
+    "production_headless_checks": 132,
+    "production_native_checks": 142,
+    "failures": 0,
+    "scope": "Individual L1 production registration/lifecycle acceptance; TEST ONLY priorAct1 prefix and initialHP37/0ammo. Actual A1-L5 prerequisite remains. No preceding-level gameplay, human balance or mobile performance claim."
   }
 }
