@@ -5,6 +5,51 @@ extends "res://tests/acts/act1/a1_l3_crowd.gd"
 ## Expected promoted scene: a1_l3_route_greybox.tscn. Root owns promotion/jobs.
 
 const NormalOpeningPath: String = "res://scenes/acts/act1/a1_l3_route_greybox.tscn"
+
+var opening_readiness: Array[Dictionary] = []
+var opening_query_costs: Array[Dictionary] = []
+
+
+func _ready_input(label: String) -> bool:
+	# Cooldowns run on the actual Player simulation clock. The original 4s
+	# wall deadline could expire after only .30s of simulation once native spore
+	# bindings exist. Keep a 4s native window and the inherited 70s wall watchdog.
+	var first: Dictionary = hero.get_threat_response_state()
+	var start_clock: float = float(first.action_clock_s)
+	var start_wall: int = Time.get_ticks_usec()
+	var deadline: float = start_clock + 4.0
+	while not aborted and not finishing:
+		if not _guard_input(): return false
+		var state: Dictionary = hero.get_threat_response_state()
+		if state.stable and float(state.dash_cooldown_left_s) == 0.0 and float(state.primary_cooldown_left_s) == 0.0 and float(state.commitment_remaining_s) == 0.0:
+			opening_readiness.append({"label": label, "start_clock_s": start_clock, "ready_clock_s": state.action_clock_s, "wall_elapsed_us": Time.get_ticks_usec() - start_wall, "actual_response": state.duplicate(true)})
+			_measure_breathing_queries()
+			return _require(true, label + " reaches actual native input readiness")
+		if float(state.action_clock_s) >= deadline:
+			_opening_diagnostic(label + " native readiness window expired")
+			return _require(false, label + " reaches actual native readiness within four simulation seconds")
+		_sample_preparing()
+		await process_frame
+	return false
+
+
+func _measure_breathing_queries() -> void:
+	if not opening_query_costs.is_empty() or not is_instance_valid(level) or level.call("route_state").get("beat_index") != 1: return
+	# Pure actual public readers only. These timings identify repeated validation
+	# work; they grant no field, actor, camera or clock authority.
+	for child: Node in level.get_children():
+		if child is CinderSporeRepulsion:
+			var begin: int = Time.get_ticks_usec()
+			var accepted: bool = child.placement_accepted()
+			opening_query_costs.append({"query": "actual consumer placement_accepted", "elapsed_us": Time.get_ticks_usec() - begin, "accepted": accepted})
+		elif child is CinderSporeField:
+			var begin: int = Time.get_ticks_usec()
+			var error: String = child.binding_error()
+			opening_query_costs.append({"query": "actual field binding_error", "elapsed_us": Time.get_ticks_usec() - begin, "error": error})
+	if not opening_query_costs.is_empty():
+		var begin: int = Time.get_ticks_usec()
+		var points: Array = level.camera_framing_points()
+		opening_query_costs.append({"query": "actual complete level camera corners", "elapsed_us": Time.get_ticks_usec() - begin, "point_count": points.size(), "error": level.last_camera_framing_error})
 const NormalIds: Array[String] = ["umbrella-1", "umbrella-2", "umbrella-3", "breathing-1", "breathing-2", "breathing-3", "crossed-1", "crossed-2", "crossed-3", "crossed-4", "crossed-5", "crossed-6", "crossed-7", "crossed-8", "lone-guard", "court-1", "court-2", "court-3", "court-guard"]
 const BreathingIds: Array[String] = ["breathing-1", "breathing-2", "breathing-3"]
 var opening_references: Dictionary = {}
@@ -314,6 +359,8 @@ func _opening_diagnostic(label: String) -> void:
 	actual["tree_paused"] = paused
 	actual["input"] = game.call("get_input_observation_state") if is_instance_valid(game) else {}
 	actual["world_actions"] = hero.get_world_action_records() if is_instance_valid(hero) else []
+	actual["readiness"] = opening_readiness.duplicate(true)
+	actual["pure_query_costs"] = opening_query_costs.duplicate(true)
 	opening_diagnostics.append(_portable(actual))
 	print("NORMAL L3 OPENING DIAGNOSTIC ", label, " ", _portable(actual))
 
