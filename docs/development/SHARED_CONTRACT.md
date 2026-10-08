@@ -1,6 +1,14 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-23** (8 October 2026). Shared23 adds a native-tick pause barrier, stationary admission preview and fixed per-cycle crescent geometry/consumer. Shared22 retains held replay callback custody. Existing level/action APIs remain compatible; conditional mechanism/replay snapshot2 and the new crescent kind require their updated readers. Authored encounters and their portrait evidence remain separate dependencies. Integration owns shared runtime. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
+Revision: **campaign-shared-24** (8 October 2026). Shared24 adds opt-in floor/LOS-clipped replay presentation, physical-floor contact membership and projected snapshot3. Ordinary cue and replay schemas1/2 retain their existing behavior. Shared23's native-tick pause, stationary preview and crescent consumer remain available. Updated readers are required for projected schema3, pending schema2 and crescent geometry. Authored encounters and their portrait evidence remain separate dependencies. Integration owns shared runtime. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
+
+## Opt-in projected replay
+
+`replay-footprint-1` authenticates immutable original Sequence/world/floor/context data and computes conservative floor-union/Box-shadow-clipped native fill and closed boundary contours. Playback `bind_projected` stages every exact event cue without callbacks, retains the unchanged full-cone Scheduler witness, and adds authenticated physical-floor membership to the existing original contact predicates. Projection meshes never authorize capture retirement, admission, escape, damage or camera visibility. Ordinary `bind` remains unchanged.
+
+Projected Cue guards actual native child/resource/material/vertex/index/LOD custody, includes inward clipped boundary ribbons and fails closed before damage on lost or altered presentation. Conditional Playback snapshot3 preserves the exact projection and optional held delivery suffix. Trusted parent actor→Scheduler→Playback restoration is quiet and validates the original external floor/context bindings. An existing projected owner cannot restore an ordinary snapshot to discard its mode. A canceled projection requires its original world/domain restored before validation; changed-world cancellation transport is unsupported.
+
+Read [Footprint](REPLAY_FOOTPRINT.md), [projected Cue](PROJECTED_CUE.md) and [projected Playback](PROJECTED_REPLAY.md) for the bounded axis-aligned coplanar Box domain, original capture guards and migration. Native targets pass164/271/467 checks; directly affected ordinary cue/playback pass82/475, all zero failures. Failed and invalid runs remain attributed in the [portable evidence](evidence/shared24-projected-replay/index.json). No authored replay boss, portrait or production level/save acceptance follows from these shared fixtures.
 
 ## Native pause and stationary crescent admission
 
