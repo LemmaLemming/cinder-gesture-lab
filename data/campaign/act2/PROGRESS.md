@@ -25,3 +25,5 @@ Evidence in assigned checkout:
 - Owned links/JSON/resource references and whitespace checked. Shared verified foundation evidence reused; no broad suite rerun.
 
 Exact next task: read current mailbox/publication; adopt only the tested next compatible commit, add published tracking preparing/lock proof, live response and capsule cue to the Scout loop; compose owned actor/encounter snapshots with shared shell checkpoint/retry/transition. Complete functional full L1, then finish scenery/animations and actual encounter portrait/primary-only/loadout/paired-threat/pause/retry/reset/exit acceptance. Do not advance to L2 or hand off the preview as complete.
+
+Saved tested foundation commit: `c52efe8d3eeaf329f1f71e4e525f50a59de239f5` on `codex/campaign-act2`, based on shared15589bf / campaign-shared-2. This is a development checkpoint, not a completed-level HANDOFF. Source layout243/target33 checks and selected native portrait apply to this exact implementation. Subsequent evidence-only note does not change runtime resources.
