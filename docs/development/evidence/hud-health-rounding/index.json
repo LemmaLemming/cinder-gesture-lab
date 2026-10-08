@@ -1,0 +1,540 @@
+{
+  "schema_version": 1,
+  "publication_status": "reviewed_native_targets_complete",
+  "root_publication": "pending",
+  "prepared_at": "2026-10-08T21:19:09.209684+00:00",
+  "tested_engine": "Godot 4.7.2.stable.official.ed1daf0bf",
+  "renderer": "Native Apple M3 OpenGL API 4.1 Metal compatibility",
+  "scope": "Display-only actual shared HUD plus canonical paused Cargo Player; TEST ONLY full-HP initial public seed; no campaign/controller/gesture/OS-input/mobile acceptance claim",
+  "source_subset_scope": "18 exact declared pre-queue referenced source/tool/configuration files per job, not complete engine import/resource graph",
+  "source_groups": [
+    {
+      "id": "portrait1",
+      "manifest": "sources/portrait1/manifest.json",
+      "file_count": 18,
+      "original_captured_at": "2026-10-08T21:05:39.909972+00:00",
+      "scope": "Exact original pre-queue bounded literal referenced sources and supplied seed docs/tool/configuration, not complete engine import/resource graph. All originals retained independently per submitted job; no native or pass claim is implied.",
+      "hud_sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+      "fixture_sha256": "5c60303c043f0bfde5c8dd2cc85374e30713c623116a21799ba9b5b1f9ae4e88"
+    },
+    {
+      "id": "portrait2",
+      "manifest": "sources/portrait2/manifest.json",
+      "file_count": 18,
+      "original_captured_at": "2026-10-08T21:11:06.779815+00:00",
+      "scope": "Exact original pre-queue bounded literal referenced sources and supplied seed docs/tool/configuration, not complete engine import/resource graph. All originals retained independently per submitted job; no native or pass claim is implied.",
+      "hud_sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+      "fixture_sha256": "3748f19cd4a252a49769c2abdb82c7cb561b42417a6c7f4ebf57405a223ec6d1"
+    }
+  ],
+  "runs": [
+    {
+      "id": "portrait1",
+      "session": 5555,
+      "exit_code": 1,
+      "closure_provenance": "Root observed canonical tool closure; packer independently verified raw/wrapper summaries and bytes",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--verbose",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/hud_health_rounding_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1.log",
+        "--",
+        "--portrait"
+      ],
+      "command": "python3 scripts/dev/dev.py engine --verbose --path '/Users/howardchen/Documents/ChatGPT/video game idea' --script res://tests/hud_health_rounding_smoke.gd --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1.log' -- --portrait > .cinder/hud-health-portrait1-wrapper.log 2>&1",
+      "command_provenance": "Exact argv and wrapper redirection relayed by root after both closures",
+      "working_directory": "/Users/howardchen/Documents/ChatGPT/video game idea",
+      "permission_scope": "Default canonical wrapper; no additional relevant permission flag",
+      "queue": "Shared dev.py Godot queue; no helper engine execution",
+      "checks": 49,
+      "failures": 1,
+      "native_log": "logs/hud-health-portrait1.log",
+      "wrapper_log": "logs/hud-health-portrait1-wrapper.log",
+      "source_group": "portrait1",
+      "png": "portraits/hud-health-rounding-35862-833474.png",
+      "native_size": [
+        540,
+        1170
+      ],
+      "raw_error_markers": 1,
+      "raw_warning_markers": 0,
+      "script_parse_errors": 0,
+      "result": "Fixture native float32 width assertion mismatch; label/snapshot/layout checks and capture completed",
+      "visual_review": {
+        "reviewer": "Root integration owner",
+        "method": "Actual view_image of both original PNGs",
+        "finding": "Full Cargo HP 110 / 110 clear in standalone grey native GUI host",
+        "scope": "Final full-HP label only; HP 100 / 110 separately asserted in native logs"
+      }
+    },
+    {
+      "id": "portrait2",
+      "session": 80798,
+      "exit_code": 0,
+      "closure_provenance": "Root observed canonical tool closure; packer independently verified raw/wrapper summaries and bytes",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--verbose",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/hud_health_rounding_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2.log",
+        "--",
+        "--portrait"
+      ],
+      "command": "python3 scripts/dev/dev.py engine --verbose --path '/Users/howardchen/Documents/ChatGPT/video game idea' --script res://tests/hud_health_rounding_smoke.gd --log-file '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2.log' -- --portrait > .cinder/hud-health-portrait2-wrapper.log 2>&1",
+      "command_provenance": "Exact argv and wrapper redirection relayed by root after both closures",
+      "working_directory": "/Users/howardchen/Documents/ChatGPT/video game idea",
+      "permission_scope": "Default canonical wrapper; no additional relevant permission flag",
+      "queue": "Shared dev.py Godot queue; no helper engine execution",
+      "checks": 49,
+      "failures": 0,
+      "native_log": "logs/hud-health-portrait2.log",
+      "wrapper_log": "logs/hud-health-portrait2-wrapper.log",
+      "source_group": "portrait2",
+      "png": "portraits/hud-health-rounding-85498-824151.png",
+      "native_size": [
+        540,
+        1170
+      ],
+      "raw_error_markers": 0,
+      "raw_warning_markers": 0,
+      "script_parse_errors": 0,
+      "result": "49/0 clean; exact scalar fraction plus bounded derived native width",
+      "visual_review": {
+        "reviewer": "Root integration owner",
+        "method": "Actual view_image of both original PNGs",
+        "finding": "Full Cargo HP 110 / 110 clear in standalone grey native GUI host",
+        "scope": "Final full-HP label only; HP 100 / 110 separately asserted in native logs"
+      }
+    }
+  ],
+  "png_identity": "Separate original run PNGs are byte-identical, 540x1170; final full-HP GUI host capture only",
+  "verification": "Packer independently verified every original declared source byte/hash/size, all copied artifacts, native and wrapper summaries, PNG dimensions, and portable links; root independently observed closures and viewed both original PNGs",
+  "artifact_count": 47,
+  "artifacts": [
+    {
+      "path": "sources/portrait1/manifest.json",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/manifest.json",
+      "bytes": 4512,
+      "sha256": "14c62a6bad9ad4664482a846674c5fdd6915e218748e431c49536aaf9d483f64",
+      "category": "original_pre_job_manifest",
+      "run": "portrait1"
+    },
+    {
+      "path": "sources/portrait1/files/data/design/player_equipment.json",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/data/design/player_equipment.json",
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "data/design/player_equipment.json"
+    },
+    {
+      "path": "sources/portrait1/files/project.godot",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/project.godot",
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "project.godot"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/campaign/exact_json.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/campaign/exact_json.gd",
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/campaign/exact_json.gd"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/campaign/exact_json.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/campaign/exact_json.gd.uid",
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/campaign/exact_json.gd.uid"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/campaign/snapshot_codec.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/campaign/snapshot_codec.gd",
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/campaign/snapshot_codec.gd"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/campaign/snapshot_codec.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/campaign/snapshot_codec.gd.uid",
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/campaign/snapshot_codec.gd.uid"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/character/player_presentations.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/character/player_presentations.gd",
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/character/player_presentations.gd"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/character/player_presentations.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/character/player_presentations.gd.uid",
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/character/player_presentations.gd.uid"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/dev/dev.py",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/dev/dev.py",
+      "bytes": 26970,
+      "sha256": "c82e0afce0f06837e47f4299b2035245d6e9a822dab9826020a502627f7634b6",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/dev/dev.py"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/equipment.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/equipment.gd",
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/equipment.gd"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/equipment.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/equipment.gd.uid",
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/equipment.gd.uid"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/hud.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/hud.gd",
+      "bytes": 16609,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/hud.gd"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/hud.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/hud.gd.uid",
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/hud.gd.uid"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/pixel_sprite.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/pixel_sprite.gd",
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/pixel_sprite.gd"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/pixel_sprite.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/pixel_sprite.gd.uid",
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/pixel_sprite.gd.uid"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/player.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/player.gd"
+    },
+    {
+      "path": "sources/portrait1/files/scripts/player.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/scripts/player.gd.uid",
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "scripts/player.gd.uid"
+    },
+    {
+      "path": "sources/portrait1/files/tests/hud_health_rounding_smoke.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-source/files/tests/hud_health_rounding_smoke.gd",
+      "bytes": 6883,
+      "sha256": "5c60303c043f0bfde5c8dd2cc85374e30713c623116a21799ba9b5b1f9ae4e88",
+      "category": "original_pre_job_source",
+      "run": "portrait1",
+      "project_path": "tests/hud_health_rounding_smoke.gd"
+    },
+    {
+      "path": "logs/hud-health-portrait1.log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1.log",
+      "bytes": 7375,
+      "sha256": "e09e884e61a0df2885c5f8fa47d78130510efaaf01de2ddff923dac419896397",
+      "category": "native_raw_log",
+      "run": "portrait1"
+    },
+    {
+      "path": "logs/hud-health-portrait1-wrapper.log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait1-wrapper.log",
+      "bytes": 7616,
+      "sha256": "94280d7d279cfc9a9869bc38dd0c1fbd05c23be54bd9006b2a21edce88bbfea5",
+      "category": "complete_wrapper_stdout_stderr",
+      "run": "portrait1"
+    },
+    {
+      "path": "portraits/hud-health-rounding-35862-833474.png",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-rounding-35862-833474.png",
+      "bytes": 25649,
+      "sha256": "238f288e21c8d5ec8134233f3cb8def3528416e0423aba77d0905e9faa7d3608",
+      "category": "original_native_png",
+      "run": "portrait1",
+      "native_width": 540,
+      "native_height": 1170
+    },
+    {
+      "path": "sources/portrait2/manifest.json",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/manifest.json",
+      "bytes": 4512,
+      "sha256": "1208a3fa6935067e882c36c9e6fbb7df069da68d806b55768f61f9e411cdcf63",
+      "category": "original_pre_job_manifest",
+      "run": "portrait2"
+    },
+    {
+      "path": "sources/portrait2/files/data/design/player_equipment.json",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/data/design/player_equipment.json",
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "data/design/player_equipment.json"
+    },
+    {
+      "path": "sources/portrait2/files/project.godot",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/project.godot",
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "project.godot"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/campaign/exact_json.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/campaign/exact_json.gd",
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/campaign/exact_json.gd"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/campaign/exact_json.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/campaign/exact_json.gd.uid",
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/campaign/exact_json.gd.uid"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/campaign/snapshot_codec.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/campaign/snapshot_codec.gd",
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/campaign/snapshot_codec.gd"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/campaign/snapshot_codec.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/campaign/snapshot_codec.gd.uid",
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/campaign/snapshot_codec.gd.uid"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/character/player_presentations.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/character/player_presentations.gd",
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/character/player_presentations.gd"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/character/player_presentations.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/character/player_presentations.gd.uid",
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/character/player_presentations.gd.uid"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/dev/dev.py",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/dev/dev.py",
+      "bytes": 26970,
+      "sha256": "c82e0afce0f06837e47f4299b2035245d6e9a822dab9826020a502627f7634b6",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/dev/dev.py"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/equipment.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/equipment.gd",
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/equipment.gd"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/equipment.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/equipment.gd.uid",
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/equipment.gd.uid"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/hud.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/hud.gd",
+      "bytes": 16609,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/hud.gd"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/hud.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/hud.gd.uid",
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/hud.gd.uid"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/pixel_sprite.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/pixel_sprite.gd",
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/pixel_sprite.gd"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/pixel_sprite.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/pixel_sprite.gd.uid",
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/pixel_sprite.gd.uid"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/player.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/player.gd"
+    },
+    {
+      "path": "sources/portrait2/files/scripts/player.gd.uid",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/scripts/player.gd.uid",
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "scripts/player.gd.uid"
+    },
+    {
+      "path": "sources/portrait2/files/tests/hud_health_rounding_smoke.gd",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-source/files/tests/hud_health_rounding_smoke.gd",
+      "bytes": 7282,
+      "sha256": "3748f19cd4a252a49769c2abdb82c7cb561b42417a6c7f4ebf57405a223ec6d1",
+      "category": "original_pre_job_source",
+      "run": "portrait2",
+      "project_path": "tests/hud_health_rounding_smoke.gd"
+    },
+    {
+      "path": "logs/hud-health-portrait2.log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2.log",
+      "bytes": 7464,
+      "sha256": "bc95dc080aeb7d1cbe4196e52e8449ade4e6768daca9f5630dd71bd9ec87d897",
+      "category": "native_raw_log",
+      "run": "portrait2"
+    },
+    {
+      "path": "logs/hud-health-portrait2-wrapper.log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-portrait2-wrapper.log",
+      "bytes": 7705,
+      "sha256": "fe996e161fd90026130d4557aacacc9e410084aea5a57aad389b4e009bbc788d",
+      "category": "complete_wrapper_stdout_stderr",
+      "run": "portrait2"
+    },
+    {
+      "path": "portraits/hud-health-rounding-85498-824151.png",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/hud-health-rounding-85498-824151.png",
+      "bytes": 25649,
+      "sha256": "238f288e21c8d5ec8134233f3cb8def3528416e0423aba77d0905e9faa7d3608",
+      "category": "original_native_png",
+      "run": "portrait2",
+      "native_width": 540,
+      "native_height": 1170
+    },
+    {
+      "path": "README.md",
+      "origin": "New packaging metadata; not pre-job source",
+      "bytes": 3266,
+      "sha256": "a8c6590079917cc529abceb702bdd733ff0b04e894d46093b17660c8bc61e92f",
+      "category": "pack_readme"
+    },
+    {
+      "path": ".gdignore",
+      "origin": "New packaging metadata; not pre-job source",
+      "bytes": 69,
+      "sha256": "1d9234291f2eb6004e7b35be36454528d1efcff9390a929408f10de1533ee037",
+      "category": "godot_import_exclusion"
+    },
+    {
+      "path": ".gitattributes",
+      "origin": "New packaging metadata; not pre-job source",
+      "bytes": 92,
+      "sha256": "310aea55e6acec8695d7e3676bd2d64d81c6378b428fdb79117e54ef17a9bd55",
+      "category": "byte_preservation_rules"
+    }
+  ]
+}
