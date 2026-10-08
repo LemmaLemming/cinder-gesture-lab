@@ -555,12 +555,8 @@ func _saved_response_point_supported(point: Vector3) -> bool:
 		return false
 	var size: Vector3 = (wall.shape as BoxShape3D).size
 	var at: Vector3 = wall.global_position
-	var feet := Vector2(point.x, point.z)
-	var nearest := Vector2(clampf(point.x, at.x - size.x * 0.5, at.x + size.x * 0.5), clampf(point.z, at.z - size.z * 0.5, at.z + size.z * 0.5))
-	var radius: float = CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN
-	# The rounded capsule clears a Box corner by Euclidean distance. A
-	# square-expanded rectangle would reject genuine supported corner feet.
-	return feet.distance_squared_to(nearest) > radius * radius
+	var blocked := Rect2(Vector2(at.x - size.x * 0.5, at.z - size.z * 0.5), Vector2(size.x, size.z)).grow(CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN)
+	return point.x < blocked.position.x or point.x > blocked.end.x or point.z < blocked.position.y or point.z > blocked.end.y
 
 func _capture_local_state() -> Dictionary:
 	return {"error": "L3 whole aggregate/Smoke API hookup is unimplemented; no checkpoint/pass claimed"}

@@ -545,23 +545,6 @@ func _known_snapshot_error(state: Dictionary, saved_player: Dictionary = {}) -> 
 			return "Known L3 ordinary primary must reach its retained low opening"
 	return ""
 
-func _saved_response_point_supported(point: Vector3) -> bool:
-	if not super._saved_response_point_supported(point): return false
-	# L2's broad rectangles have no interior wall. L3 adds one actual native
-	# Box, so a retained feet/attack point must also clear its measured volume.
-	# This is authored static occupancy, not a copied dash solver or movement.
-	var wall := get_node_or_null("RuinedHouseDryGround/RuinedHouseLowWall/GroundedWall") as CollisionShape3D
-	if not is_instance_valid(wall) or wall.disabled or not wall.shape is BoxShape3D or wall.global_basis != Basis.IDENTITY or wall.global_position != HouseFloor.WALL_AT or (wall.shape as BoxShape3D).size != HouseFloor.WALL_SIZE:
-		return false
-	var size: Vector3 = (wall.shape as BoxShape3D).size
-	var at: Vector3 = wall.global_position
-	var feet := Vector2(point.x, point.z)
-	var nearest := Vector2(clampf(point.x, at.x - size.x * 0.5, at.x + size.x * 0.5), clampf(point.z, at.z - size.z * 0.5, at.z + size.z * 0.5))
-	var radius: float = CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN
-	# The rounded capsule clears a Box corner by Euclidean distance. A
-	# square-expanded rectangle would reject genuine supported corner feet.
-	return feet.distance_squared_to(nearest) > radius * radius
-
 func _capture_local_state() -> Dictionary:
 	return {"error": "L3 whole aggregate/Smoke API hookup is unimplemented; no checkpoint/pass claimed"}
 
