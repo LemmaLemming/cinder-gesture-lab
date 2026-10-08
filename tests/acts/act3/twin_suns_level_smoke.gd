@@ -12,7 +12,8 @@ const Codec: GDScript = preload("res://scripts/campaign/snapshot_codec.gd")
 const Geometry: GDScript = preload("res://scripts/combat/threat_geometry.gd")
 const FullPath: String = "res://scenes/acts/act3/a3_l1.tscn"
 const RuntimePath: String = "res://scripts/acts/act3/twin_suns_level.gd"
-const CapturePath: String = "res://captures/act3/twin-suns-authored"
+# Preserve the earlier unframed first-pocket PNGs in their original folder.
+const CapturePath: String = "res://captures/act3/twin-suns-authored/shared18-contact-and-body"
 const Slots: Array[String] = ["jacket", "pants", "shoes", "weapon"]
 const SourceIds: Array[String] = ["l1-flank-stalker", "l1-approach-stalker", "l1-crossing-west", "l1-crossing-east", "l1-departure-stalker"]
 const PocketIds: Array[String] = ["useful-flank", "two-approaches", "crossing-shadow", "pillars-recede"]
@@ -463,6 +464,12 @@ func _fresh_partial_retry(pair: Dictionary) -> String:
 	return ""
 
 
+## Standard full-route coverage intentionally retains the first crossing lease.
+## A profile-specific consumer can require preparing-budget evidence instead.
+func _requires_crossing_union() -> bool:
+	return true
+
+
 func _clear_pocket(index: int) -> String:
 	_group_ids.clear()
 	if index < 2:
@@ -497,7 +504,7 @@ func _clear_pocket(index: int) -> String:
 				if error.is_empty():
 					error = await _dash(segment)
 			elif segment.kind == "ordinary_primary":
-				if index == 2 and not _union_seen and not _crossing_primary_deferred:
+				if _requires_crossing_union() and index == 2 and not _union_seen and not _crossing_primary_deferred:
 					error = await _defer_crossing_primary(segment, warning.proof)
 				else:
 					error = await _primary(segment, warning.proof)
@@ -960,7 +967,7 @@ func _final_error(pockets: int) -> String:
 	if _hero.hp != _hp_before or _hero.dead or int(_events.get("contact", 0)) != 0 or int(_events.get("fired_blast", 0)) != 0 or int(_game.get("cores")) != 0 or int(_game.get("kills")) != 0 or not get_nodes_in_group("lab_weapons").is_empty() or not get_nodes_in_group("practice_targets").is_empty():
 		return "route took damage/healed/used blast/pickup or granted unrelated rewards"
 	if pockets == 4:
-		if not _union_seen:
+		if _requires_crossing_union() and not _union_seen:
 			return "full route missing actual two-source union evidence: union_seen=false; crossing_primary_deferred=" + str(_crossing_primary_deferred)
 		if not _level.is_completed() or int(_events.get("completion", 0)) != 1 or int(_events.get("exit", 0)) != 1:
 			return "full route contact progression differs: completed=%s completion_count=%d exit_count=%d" % [_level.is_completed(), int(_events.get("completion", 0)), int(_events.get("exit", 0))]
@@ -1060,6 +1067,14 @@ func _capture(label: String) -> String:
 	var previous_pause: bool = paused
 	paused = true
 	await RenderingServer.frame_post_draw
+	if label in ["final-available-contact-cue", "final-spent-contact-exit"]:
+		var contact_points: Array = _level.camera_framing_points()
+		var contact_view_error: String = _level.last_camera_framing_error
+		if contact_view_error.is_empty():
+			contact_view_error = String(_game.call("camera_framing_error", contact_points))
+		if not _expect(contact_points.size() == 8 and contact_view_error.is_empty(), "actual " + label + " contains the whole native contact marker, approach region and hero", contact_view_error):
+			paused = previous_pause
+			return "completed contact presentation is not wholly inside the actual protected view"
 	var actual: Image = root.get_texture().get_image()
 	var file: String = directory.path_join(label + ".png")
 	var saved: bool = actual != null and not actual.is_empty() and actual.save_png(file) == OK
