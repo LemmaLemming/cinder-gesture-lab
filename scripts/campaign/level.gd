@@ -26,6 +26,8 @@ var effects: PixelEffects
 ## Optional shared shell exposes documented public input/campaign services.
 ## Standalone contract fixtures may omit it. Levels never read private timers.
 var shared_shell: Node
+## Optional pure actual-world corner provider; shared shell owns the camera.
+var last_camera_framing_error: String = ""
 var last_snapshot_error: String = ""
 var _entered: bool = false
 var _lifecycle_busy: bool = false
@@ -42,6 +44,26 @@ var _contact_exit_id: String = ""
 var _checkpoint_id: String = ""
 var _checkpoint_kind: String = ""
 var _checkpoint_ids: Dictionary = {}
+
+
+## Supply forecast source/art/whole-footprint/landing/opening corners before
+## admission and retain them through recovery. Empty preserves normal follow.
+## The shell adds actual player bounds; fit alone does not authorize damage.
+func camera_framing_points() -> Array:
+	last_camera_framing_error = ""
+	var points: Variant = _camera_framing_points()
+	if not points is Array or points.size() > 224:
+		last_camera_framing_error = "Camera framing requires at most 224 actual world corners"
+		return []
+	for point: Variant in points:
+		if not point is Vector3 or not point.is_finite() or maxf(absf(point.x), maxf(absf(point.y), absf(point.z))) > 1024.0:
+			last_camera_framing_error = "Camera framing corners must be finite bounded world positions"
+			return []
+	return points.duplicate()
+
+
+func _camera_framing_points() -> Array:
+	return []
 
 
 func contract_error() -> String:
