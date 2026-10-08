@@ -13,6 +13,7 @@ const LondonSequence: Script = preload("res://scripts/acts/act2/london_approache
 const LondonRoot: Script = preload("res://scripts/acts/act2/london_approaches.gd")
 const LondonFloor: Script = preload("res://scripts/acts/act2/london_approaches_floor.gd")
 const SmokeBank: Script = preload("res://scripts/combat/smoke_bank.gd")
+const TailExact: Script = preload("res://scripts/campaign/exact_json.gd")
 const LONDON_SCENE: String = "res://scenes/acts/act2/a2_l4.tscn"
 const LONDON_DESTINATION: String = "res://tests/acts/act2/fixtures/a2_l4_transition_destination.tscn"
 const LONDON_TEST_ROOT: String = "user://test-a2-l4-live-level/"
@@ -29,6 +30,14 @@ var _framed_phases: Dictionary = {}
 var _tail_pending: Dictionary = {}
 var _tail_completed: Dictionary = {}
 var _blocker_bypass_seen: Dictionary = {}
+var _blocker_strip_entries: Dictionary = {}
+var _hp_watch_targets: Array[String] = []
+var _hp_watch_values: Dictionary = {}
+var _hp_watch_clock: float = 0.0
+var _hp_watch_reported: bool = false
+var _hp_watch_progress_clock: float = 0.0
+var _hp_watch_timeout: bool = false
+var _hp_watch_dump_path: String = ""
 # TEST ONLY observer after authoritative Hero/Scheduler/consumer/level physics.
 # It observes each native tick; it never steps clocks or moves production nodes.
 class NativeTickProbe:
@@ -55,7 +64,7 @@ func _run() -> void:
 	for path: String in FROZEN_INPUTS: _frozen_input_bytes[path] = FileAccess.get_file_as_string(path)
 	_cleanup()
 	var failures_before: int = _failures
-	if not await _run_route() and _failures == failures_before: _expect(false, "actual L4 route aborted: " + _diagnostic())
+	if not await _run_route() and not _hp_watch_timeout and _failures == failures_before: _expect(false, "actual L4 route aborted: " + _diagnostic())
 	await process_frame
 	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == _canonical, "test injection preserves canonical registry bytes")
 	for path: String in FROZEN_INPUTS: _expect(FileAccess.get_file_as_string(path) == _frozen_input_bytes[path], "test preserves frozen native helper/destination bytes: " + path)
@@ -64,8 +73,12 @@ func _run() -> void:
 	if is_instance_valid(_native_probe): _native_probe.free()
 	paused = false
 	_cleanup()
-	print("London Approaches live level smoke: %d checks, %d failures; loadout=%s profile=%s; actual authored L4 actions, synthetic preceding prefix and TEST ONLY L5 destination" % [_checks, _failures, _loadout_name, _profile_id])
-	quit(0 if _failures == 0 else 1)
+	if _hp_watch_timeout:
+		print("London Approaches TEST progress-timeout: %d checks, %d failures; incomplete route loadout=%s profile=%s;100 native seconds without preferred-target HP progress; actual paused evidence=%s; no encounter-impossibility conclusion" % [_checks, _failures, _loadout_name, _profile_id, _hp_watch_dump_path])
+		quit(2)
+	else:
+		print("London Approaches live level smoke: %d checks, %d failures; loadout=%s profile=%s; actual authored L4 actions, synthetic preceding prefix and TEST ONLY L5 destination" % [_checks, _failures, _loadout_name, _profile_id])
+		quit(0 if _failures == 0 else 1)
 
 func _run_route() -> bool:
 	var raw: Dictionary = JSON.parse_string(_canonical)
@@ -189,12 +202,19 @@ func _run_route() -> bool:
 	return _failures == 0
 
 func _clear(ids: Array[String]) -> bool:
+	_hp_watch_targets.assign(ids)
+	_hp_watch_values.clear()
+	_hp_watch_clock = float(_state().clock_s)
+	_hp_watch_reported = false
+	_hp_watch_progress_clock = _hp_watch_clock
 	for frame: int in range(2400):
+		if _hp_watch_timeout: return false
 		if not _live(): return _expect(false, "encounter stopped before %s: %s" % [ids, _diagnostic()])
 		var living: Array[String] = []
 		for id: String in ids:
 			if float(_actors[id].get("hp")) > 0.0: living.append(id)
 		if living.is_empty():
+			_hp_watch_targets.clear()
 			for id: String in ids: _expect(_source_seen(id), "real target entered native warning/lock/active/recovery before its defeat: " + id)
 			for settle_frame: int in range(4): await _step()
 			print("London Approaches actual primary targets cleared: ", ids)
@@ -217,11 +237,10 @@ func _clear(ids: Array[String]) -> bool:
 	return _expect(false, "bounded ordinary-primary bot could not clear %s: %s" % [ids, _diagnostic()])
 
 func _broadside_blocker(id: String) -> bool:
-	var blocker: Dictionary = {}
-	for item: Dictionary in LondonFloor.BLOCKERS:
-		if item.id == id: blocker = item
-	if not _expect(not blocker.is_empty(), "actual floor names the authored broadside blocker: " + id): return false
-	if _blocker_bypass_seen.has(id): return _expect(true, "earlier real proof dash already passed capsule-clear around " + id)
+	var native: Dictionary = _native_blocker(id)
+	if not _expect(not native.has("error"), "actual authored native Box/path/Basis/size remain intact: " + String(native.get("error", id))): return false
+	var blocker: Dictionary = native.specification
+	if _blocker_bypass_seen.has(id): return _expect(true, "earlier real completed dash traversed the full native capsule-expanded strip around " + id)
 	var side: float = -1.0 if _game.player.global_position.x < 0.0 else 1.0
 	var clearance: float = float(blocker.size.x) * 0.5 + CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN
 	var front: float = float(blocker.at.z) + float(blocker.size.z) * 0.5 + 0.55
@@ -229,6 +248,7 @@ func _broadside_blocker(id: String) -> bool:
 	for attempt: int in range(18):
 		if not _live(): return false
 		var at: Vector3 = _game.player.global_position
+		if _blocker_strip_entries.has(id): break
 		if absf(at.x) >= clearance + 0.15 and at.z > front: break
 		if not await _navigate_dash(Vector3(side * 2.2, 0.0, maxf(at.z, front + 0.15))): return false
 	for attempt: int in range(18):
@@ -241,17 +261,195 @@ func _broadside_blocker(id: String) -> bool:
 			await _step()
 	return _expect(false, "bounded real side swipes could not pass authored blocker: " + id + ": " + _diagnostic())
 
+func _native_blocker(id: String) -> Dictionary:
+	var specification: Dictionary = {}
+	for item: Dictionary in LondonFloor.BLOCKERS:
+		if item.id == id: specification = item
+	if specification.is_empty() or not _live(): return {"error": "Missing actual authored blocker " + id}
+	var level: CinderLevel = _game.active_level
+	var ground: Node = level.get_node_or_null("LondonApproachesDryGround")
+	var body: Node = level.get_node_or_null("LondonApproachesDryGround/" + id)
+	var collision: Node = level.get_node_or_null("LondonApproachesDryGround/" + id + "/GroundedBlocker")
+	if not is_instance_valid(ground) or not ground is Node3D or ground.get_parent() != level or (ground as Node3D).global_transform != Transform3D.IDENTITY or not is_instance_valid(body) or not body is StaticBody3D or body.get_parent() != ground or String(body.name) != id or not is_instance_valid(collision) or not collision is CollisionShape3D or collision.get_parent() != body or String(collision.name) != "GroundedBlocker":
+		return {"error": "Missing/displaced named native Box ancestry: " + id}
+	var solid: StaticBody3D = body as StaticBody3D
+	var shape: CollisionShape3D = collision as CollisionShape3D
+	if solid.collision_layer != 1 or solid.collision_mask != 0 or solid.global_basis != Basis.IDENTITY or solid.global_position != specification.at or shape.disabled or shape.global_basis != Basis.IDENTITY or shape.global_position != specification.at or shape.position != Vector3.ZERO or not shape.shape is BoxShape3D or (shape.shape as BoxShape3D).size != specification.size:
+		return {"error": "Native blocker Box/layer/position/Basis/dimensions changed: " + id}
+	return {"specification": specification, "body_id": solid.get_instance_id(), "collision_id": shape.get_instance_id(), "shape_id": shape.shape.get_instance_id()}
+
 func _observe_blocker_path(record: Dictionary) -> void:
-	if record.get("kind") != "dash": return
-	for blocker: Dictionary in LondonFloor.BLOCKERS:
-		var wall_z: float = blocker.at.z
-		var clearance: float = float(blocker.size.x) * 0.5 + CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN
+	# Only actual completed public world-actions supply evidence. A partial
+	# entry survives stationary actions/cooldown and multiple fixed-length
+	# dashes, but never an unmeasured displacement, missing action or reversal.
+	for specification: Dictionary in LondonFloor.BLOCKERS:
+		var id: String = specification.id
+		var native: Dictionary = _native_blocker(id)
+		if native.has("error"):
+			_expect(false, "blocker traversal requires actual immutable native Box: " + String(native.error))
+			_blocker_strip_entries.erase(id)
+			continue
+		if _blocker_bypass_seen.has(id): continue
+		var witness: Dictionary = _blocker_strip_entries.get(id, {})
+		if not witness.is_empty() and (witness.body_id != native.body_id or witness.collision_id != native.collision_id or witness.shape_id != native.shape_id or not record.get("world_origin") is Vector3 or record.world_origin != witness.last_position or not record.get("sequence") is int or record.sequence != int(witness.last_action_sequence) + 1 or not Codec.is_number(record.get("started_at_s")) or float(record.started_at_s) < float(witness.last_completed_at_s)):
+			_blocker_strip_entries.erase(id)
+			witness = {}
+		if record.get("kind") != "dash":
+			if not witness.is_empty():
+				witness.last_action_sequence = record.sequence
+				witness.last_completed_at_s = record.completed_at_s
+				witness.actions.append(record.duplicate(true))
+			continue
+		if not _completed_dash_witness_valid(record):
+			_blocker_strip_entries.erase(id)
+			continue
+		var radius: float = CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN
+		var front: float = float(specification.at.z) + float(specification.size.z) * 0.5 + radius
+		var back: float = float(specification.at.z) - float(specification.size.z) * 0.5 - radius
+		var clearance: float = float(specification.size.x) * 0.5 + radius
 		for index: int in range(1, record.path.size()):
 			var start: Vector3 = record.path[index - 1].position
 			var finish: Vector3 = record.path[index].position
-			if is_equal_approx(start.z, finish.z) or (start.z - wall_z) * (finish.z - wall_z) > 0.0: continue
-			var crossing: Vector3 = start.lerp(finish, (wall_z - start.z) / (finish.z - start.z))
-			if absf(crossing.x) >= clearance and absf(crossing.y) < 0.05: _blocker_bypass_seen[blocker.id] = record.sequence
+			if minf(start.z, finish.z) > front or maxf(start.z, finish.z) < back: continue
+			var planar_length: float = Vector2(finish.x - start.x, finish.z - start.z).length()
+			# A genuine forward crossing has at least20% forward travel; reverse
+			# and almost horizontal strip contacts supply no bypass credit.
+			if float(start.z) - float(finish.z) <= 0.000001 or float(start.z) - float(finish.z) < planar_length * 0.20:
+				_blocker_strip_entries.erase(id)
+				witness = {}
+				continue
+			var high: float = minf(float(start.z), front)
+			var low: float = maxf(float(finish.z), back)
+			var entry: Vector3 = start.lerp(finish, (high - float(start.z)) / (float(finish.z) - float(start.z)))
+			var exit: Vector3 = start.lerp(finish, (low - float(start.z)) / (float(finish.z) - float(start.z)))
+			if witness.is_empty():
+				if float(start.z) < front or float(finish.z) > front: continue
+				witness = {"body_id": native.body_id, "collision_id": native.collision_id, "shape_id": native.shape_id, "side": -1.0 if entry.x < 0.0 else 1.0, "entry_position": entry, "front_z": front, "back_z": back, "progress_z": front, "actions": [], "last_position": record.world_origin, "last_action_sequence": record.sequence, "last_completed_at_s": record.completed_at_s}
+				_blocker_strip_entries[id] = witness
+			if high != float(witness.progress_z) or float(witness.side) * float(entry.x) < clearance or float(witness.side) * float(exit.x) < clearance or absf(entry.y) >= 0.05 or absf(exit.y) >= 0.05:
+				_blocker_strip_entries.erase(id)
+				witness = {}
+				continue
+			witness.progress_z = low
+			witness.exit_position = exit
+		if witness.is_empty(): continue
+		witness.last_position = record.landing
+		witness.last_action_sequence = record.sequence
+		witness.last_completed_at_s = record.completed_at_s
+		witness.actions.append(record.duplicate(true))
+		if float(witness.progress_z) == back and float(record.landing.z) <= back:
+			if _expect(_blocker_actions_match(witness.actions), "complete forward native Box-strip traversal matches actual public completed action(s): " + id):
+				_blocker_bypass_seen[id] = witness.duplicate(true)
+			_blocker_strip_entries.erase(id)
+
+func _completed_dash_witness_valid(record: Dictionary) -> bool:
+	if not record.get("sequence") is int or record.sequence < 1 or not record.get("world_origin") is Vector3 or not record.world_origin.is_finite() or not record.get("landing") is Vector3 or not record.landing.is_finite() or not Codec.is_number(record.get("started_at_s")) or not Codec.is_number(record.get("completed_at_s")) or float(record.completed_at_s) <= float(record.started_at_s) or not record.get("path") is Array or record.path.size() < 2: return false
+	var previous: float = -1.0
+	for sample: Variant in record.path:
+		if not sample is Dictionary or not sample.get("position") is Vector3 or not sample.position.is_finite() or not Codec.is_number(sample.get("time_s")) or float(sample.time_s) <= previous: return false
+		previous = float(sample.time_s)
+	return record.path[0].position == record.world_origin and record.path[-1].position == record.landing and float(record.path[0].time_s) == float(record.started_at_s) and float(record.path[-1].time_s) == float(record.completed_at_s)
+
+func _blocker_actions_match(actions: Array) -> bool:
+	var actual: Array[Dictionary] = _game.player.get_world_action_records()
+	for saved: Dictionary in actions:
+		var found: bool = false
+		for current: Dictionary in actual:
+			if current.sequence == saved.sequence:
+				found = _exact_public_equal(current, saved)
+				break
+		if not found: return false
+	return not actions.is_empty()
+
+func _closed_public_value(value: Variant) -> Dictionary:
+	# TEST ONLY exact comparison encoding. Native vectors become finite JSON
+	# triples/pairs and camera Basis/Rect2 have finite tagged fields. Native
+	# objects are rejected, never an empty==empty comparison.
+	if value is Vector3: return {"accepted": value.is_finite(), "value": Codec.vector3(value)}
+	if value is Vector2: return {"accepted": value.is_finite(), "value": [value.x, value.y]}
+	if value is Basis: return {"accepted": value.is_finite(), "value": {"native_type": "Basis", "x": Codec.vector3(value.x), "y": Codec.vector3(value.y), "z": Codec.vector3(value.z)}}
+	if value is Rect2: return {"accepted": value.position.is_finite() and value.size.is_finite(), "value": {"native_type": "Rect2", "position": [value.position.x, value.position.y], "size": [value.size.x, value.size.y]}}
+	if value is Array:
+		var array: Array = []
+		for child: Variant in value:
+			var encoded: Dictionary = _closed_public_value(child)
+			if not encoded.accepted: return {"accepted": false}
+			array.append(encoded.value)
+		return {"accepted": true, "value": array}
+	if value is Dictionary:
+		var dictionary: Dictionary = {}
+		for key: Variant in value:
+			if not key is String: return {"accepted": false}
+			var encoded: Dictionary = _closed_public_value(value[key])
+			if not encoded.accepted: return {"accepted": false}
+			dictionary[key] = encoded.value
+		return {"accepted": true, "value": dictionary}
+	return {"accepted": not TailExact.stringify(value).is_empty(), "value": value}
+
+func _exact_public_equal(left: Variant, right: Variant) -> bool:
+	var encoded_left: Dictionary = _closed_public_value(left)
+	var encoded_right: Dictionary = _closed_public_value(right)
+	if not encoded_left.accepted or not encoded_right.accepted: return false
+	var text_left: String = TailExact.stringify(encoded_left.value)
+	var text_right: String = TailExact.stringify(encoded_right.value)
+	return not text_left.is_empty() and not text_right.is_empty() and text_left == text_right
+
+func _progress_diagnostic_root() -> String:
+	# A derived TEST fixture may override this with its own isolated save root.
+	return LONDON_TEST_ROOT
+
+func _observe_hp_watchdog() -> void:
+	# TEST ONLY after native tick120, including waits inside proof coroutines.
+	# Observe compact progress each10 native seconds. After ample100 Scheduler
+	# seconds without preferred-target HP change, preserve the genuine public
+	# Shell pause/capture and stop this TEST route with exit2. This neither
+	# changes proof selection/input deadlines nor declares combat impossible.
+	if _hp_watch_targets.is_empty() or not _live(): return
+	var values: Dictionary = {}
+	for id: String in _hp_watch_targets: values[id] = float(_actors[id].get("hp"))
+	var state: Dictionary = _state()
+	if values != _hp_watch_values:
+		_hp_watch_values = values
+		_hp_watch_clock = float(state.clock_s)
+		_hp_watch_reported = false
+	if float(state.clock_s) - _hp_watch_progress_clock >= 10.0:
+		_hp_watch_progress_clock = float(state.clock_s)
+		var compact: Dictionary = {}
+		for id: String in state.active_ids:
+			var current: Dictionary = state.exchanges[id]
+			compact[id] = {"hp": _actors[id].get("hp"), "actor_phase": _actors[id].get("phase"), "status": current.get("status", ""), "phase": current.get("phase", ""), "cycle": current.get("cycle", 0), "source_id": current.get("bank_id", current.get("mechanism_id", id)), "reservation_id": current.get("reservation_id", ""), "preferred": _hp_watch_targets.has(id)}
+		print("L4 TEST progress observation: ", TailExact.stringify({"preferred_ids": _hp_watch_targets.duplicate(), "preferred_hp": values, "beat": state.beat, "clock_s": state.clock_s, "no_hp_progress_since_s": _hp_watch_clock, "sources": compact, "admission_errors": state.admission_errors}))
+	if _hp_watch_reported or float(state.clock_s) - _hp_watch_clock < 100.0: return
+	_hp_watch_reported = true
+	var sources: Dictionary = {}
+	for id: String in state.active_ids:
+		var current: Dictionary = state.exchanges[id]
+		var proof: Dictionary = current.get("proof", {})
+		if current.has("mechanism_id"): proof = _game.active_level.call("mechanism_proof", current.mechanism_id)
+		sources[id] = {"hp": _actors[id].get("hp"), "actor_phase": _actors[id].get("phase"), "current": current, "lease": _reservation(String(current.get("reservation_id", ""))), "proof": proof, "preferred": _hp_watch_targets.has(id)}
+	var hero_response: Dictionary = _game.player.get_threat_response_state()
+	hero_response.erase("actor") # Ephemeral native identity is not JSON evidence.
+	var camera: Camera3D = _game.camera
+	var safe: Rect2 = _game.hud.call("combat_safe_rect")
+	var camera_state: Dictionary = {"position": camera.global_position, "basis_x": camera.global_basis.x, "basis_y": camera.global_basis.y, "basis_z": camera.global_basis.z, "width": camera.size, "near": camera.near, "far": camera.far, "viewport_size": camera.get_viewport().get_visible_rect().size, "hud_safe_position": safe.position, "hud_safe_size": safe.size, "framing_state": _game.call("get_camera_framing_state")}
+	var diagnostic: Dictionary = _closed_public_value({"preferred_ids": _hp_watch_targets.duplicate(), "hp": values, "since_clock_s": _hp_watch_clock, "now_clock_s": state.clock_s, "hero": hero_response, "sources": sources, "state": state, "used_proof_keys": _used_proofs.keys(), "camera": camera_state, "last_action": _actions.back() if not _actions.is_empty() else {}})
+	_hp_watch_timeout = true # Stop fixture input while the public pause settles.
+	_game.request_pause()
+	await _settle()
+	var snapshot: Dictionary = _game.capture_campaign_snapshot() if paused else {}
+	var payload: Dictionary = _game.attempts.state()
+	var envelope: Dictionary = {"api_revision": "a2-l4-test-progress-timeout-1", "scope": "Incomplete TEST bot route after100 native seconds without preferred-target HP change. Actual public paused tuple and accepted campaign payload; no encounter-impossibility/native-art claim.", "loadout": _loadout_name, "profile": _profile_id, "diagnostic_encoding_accepted": diagnostic.accepted, "diagnostic": diagnostic.get("value", {}), "paused": paused, "snapshot": snapshot, "campaign_payload": payload, "campaign_error": _game.campaign_error, "player_snapshot_error": _game.player.last_snapshot_error, "level_snapshot_error": _game.active_level.last_snapshot_error}
+	var text: String = TailExact.stringify(envelope)
+	var directory: String = _progress_diagnostic_root()
+	var output: String = directory.path_join("progress-timeout-" + _profile_id + "-" + _loadout_name + ".exact.json")
+	var created: bool = DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory)) == OK
+	var file: FileAccess = FileAccess.open(output, FileAccess.WRITE) if created and not text.is_empty() else null
+	if file != null:
+		file.store_string(text)
+		file.flush()
+		_hp_watch_dump_path = ProjectSettings.globalize_path(output)
+	print("L4 TEST progress-timeout full finite diagnostic: ", TailExact.stringify(diagnostic.get("value", {})))
+	print("L4 TEST progress-timeout preservation: paused=%s snapshot_nonempty=%s exact_nonempty=%s diagnostic_accepted=%s file=%s campaign_error=%s" % [paused, not snapshot.is_empty(), not text.is_empty(), diagnostic.accepted, _hp_watch_dump_path, _game.campaign_error])
 
 func _finish_bank_tail(id: String) -> bool:
 	for frame: int in range(360):
@@ -391,10 +589,10 @@ func _observe_runtime() -> void:
 		var current: Dictionary = _banks[bank_id].call("state")
 		if current.status == "running":
 			if not before.get("tail_checked", false):
-				_expect(current.cycle == before.cycle and Codec.same_values(current.exchange, before.exchange) and Codec.same_values(current.receipts, before.receipts) and current.last_cancel_reason.is_empty() and float(state.clock_s) <= float(before.exchange.recovery_until_s), "defeated source preserves exact bank cycle/lease/deadlines/receipts while original tail runs: " + bank_id)
+				_expect(current.cycle == before.cycle and _exact_public_equal(current.exchange, before.exchange) and _exact_public_equal(current.receipts, before.receipts) and current.last_cancel_reason.is_empty() and float(state.clock_s) <= float(before.exchange.recovery_until_s), "defeated source preserves exact bank cycle/lease/deadlines/receipts while original tail runs: " + bank_id)
 				before["tail_checked"] = true
 		elif current.status == "complete":
-			_expect(current.cycle == before.cycle and Codec.same_values(current.exchange, before.exchange) and Codec.same_values(current.receipts, before.receipts) and current.phase == "clear" and float(state.clock_s) > float(before.exchange.recovery_until_s), "independent bank completes only after its original recovery deadline without re-emission: " + bank_id)
+			_expect(current.cycle == before.cycle and _exact_public_equal(current.exchange, before.exchange) and _exact_public_equal(current.receipts, before.receipts) and current.phase == "clear" and float(state.clock_s) > float(before.exchange.recovery_until_s), "independent bank completes only after its original recovery deadline without re-emission: " + bank_id)
 			_tail_completed[bank_id] = current.duplicate(true)
 			_tail_pending.erase(bank_id)
 		else:
@@ -497,6 +695,7 @@ func _dash(direction: Vector3, allow_exit_transition: bool = false, proof_plan: 
 	var before: int = _actions.size()
 	if not _routed_swipe(direction): return false
 	for frame: int in range(180):
+		if _hp_watch_timeout: return false
 		for action: Dictionary in _actions.slice(before):
 			if action.kind == "dash": return _expect(action.landing.is_finite() and action.landing.y > -0.05 and action.path.size() >= 2, "actual completed dash has supported sampled world landing")
 		if not is_instance_valid(hero):
@@ -621,14 +820,17 @@ func _state() -> Dictionary:
 	return _game.active_level.call("encounter_state") if is_instance_valid(_game) and is_instance_valid(_game.active_level) and _game.active_level.level_id == "A2-L4" else {}
 
 func _live() -> bool:
-	return is_instance_valid(_game) and _game.campaign_error.is_empty() and is_instance_valid(_game.player) and not _game.player.dead and is_instance_valid(_game.active_level) and _game.active_level.level_id == "A2-L4" and String(_state().get("runtime_error", "")).is_empty()
+	return not _hp_watch_timeout and is_instance_valid(_game) and _game.campaign_error.is_empty() and is_instance_valid(_game.player) and not _game.player.dead and is_instance_valid(_game.active_level) and _game.active_level.level_id == "A2-L4" and String(_state().get("runtime_error", "")).is_empty()
 
 func _step() -> void:
+	if _hp_watch_timeout: return
 	# Render-frame waits may span several catch-up physics ticks. Keep native
 	# planned dash sampling within the original strict one-tick limit instead.
 	await _native_probe.tick_finished
 	if is_instance_valid(_game) and paused and _game.campaign_error.is_empty() and _game.active_level.level_id == "A2-L4" and _game.menu.page_name() == "resume" and not _game.player.dead: _game.resume_campaign()
 	_observe_runtime()
+	await _observe_hp_watchdog()
+	if _hp_watch_timeout: return
 	if _capture_live and not _capture_pending:
 		_capture_pending = true
 		_capture_after_tick()
