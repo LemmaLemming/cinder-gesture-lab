@@ -50,3 +50,7 @@ Composition/framing: exactly one whole isolated creature centered in a square ca
 Pose: ONE quiet braced idle/preparation illustration. No actual movement, no implied projectile or active attack. Angular living creature, familiar threat outline against scarlet/violet floor, distinct from trees, rock spines, roots and harmless reflections.
 Constraints: transparent background, one object and one pose only. No text, labels, board layout, grid, frame, watermark, weapon, clothing, equipment cue, pickup, health bar, target marker, ground lane, laser, ray, warning shape, arrows, motion trail, contact glow or extra variants. No new mechanics or attack timing are encoded by this image.
 ```
+
+### Current L1 consumer readiness
+
+Earlier generation/study readiness and native drift above retain their historical scopes. The [current L1 art and exact selected results](../../../data/campaign/act3/levels/A3-L1.md#current-shared-21-carried-route-and-production-checks), [scenery consumer record](scenery-production.md) and [portable evidence index](evidence/A3-L1/index.json) supersede unqualified pending consumer labels for this asset. Current reviewed L1 poses/scenery are suitable in the actual portrait scope; this is a tested candidate READY for autonomous HANDOFF, not integration acceptance, every-facing animation or human pacing/balance evidence. Native bytes, pivots, render-only/collision roles and anatomy/crest limits are unchanged.

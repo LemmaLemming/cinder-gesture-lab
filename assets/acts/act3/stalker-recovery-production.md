@@ -51,3 +51,7 @@ Style refinement within the same identity: simplify the original sparkly microgl
 Scene/backdrop: genuinely transparent alpha background, preserve transparency. No floor, ground plane, contact shadow, scenery or backdrop.
 Constraints: exactly one whole creature and one recovery pose; no atlas, duplicate, multiple facings, extra limbs, added horn/crest design, equipment, weapon, laser, projectile, attack, warning lane, arc, trail, arrows, labels, text, border, watermark, target gem or pickup. No active motion or action effects. The image adds no mechanics, vulnerability timing, hitbox, enemy identity or ability variant. Preserve the edit target's character identity and canvas placement while changing only recovery pose and simplifying its surface highlights.
 ```
+
+### Current L1 consumer readiness
+
+Earlier generation/study readiness and native drift above retain their historical scopes. The [current L1 art and exact selected results](../../../data/campaign/act3/levels/A3-L1.md#current-shared-21-carried-route-and-production-checks), [scenery consumer record](scenery-production.md) and [portable evidence index](evidence/A3-L1/index.json) supersede unqualified pending consumer labels for this asset. Current reviewed L1 poses/scenery are suitable in the actual portrait scope; this is a tested candidate READY for autonomous HANDOFF, not integration acceptance, every-facing animation or human pacing/balance evidence. Native bytes, pivots, render-only/collision roles and anatomy/crest limits are unchanged.

@@ -46,3 +46,7 @@ Composition/framing: isolated entire tree centered in a square canvas, generous 
 Readability: intended projected tree height about 60 pixels in a low-resolution game view. Trunk opening and three fruits remain readable at that scale through silhouette and value. Avoid fine branches, hairlike roots or tiny leaf texture. Preserve a clear distinction from the game's angular lunging enemies.
 Constraints: ONE object only, transparent cutout, full roots uncut, no text, labels, diagrams, frame, board layout, ruler, watermark, characters, weapons, pickups, attack footprints, arrows, glint, halo or actionable/contact cues. No animations or multiple variants; static idle scenery asset.
 ```
+
+### Current L1 consumer readiness
+
+Earlier generation/study readiness and native drift above retain their historical scopes. The [current L1 art and exact selected results](../../../data/campaign/act3/levels/A3-L1.md#current-shared-21-carried-route-and-production-checks), [scenery consumer record](scenery-production.md) and [portable evidence index](evidence/A3-L1/index.json) supersede unqualified pending consumer labels for this asset. Current reviewed L1 poses/scenery are suitable in the actual portrait scope; this is a tested candidate READY for autonomous HANDOFF, not integration acceptance, every-facing animation or human pacing/balance evidence. Native bytes, pivots, render-only/collision roles and anatomy/crest limits are unchanged.
