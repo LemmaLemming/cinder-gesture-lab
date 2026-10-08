@@ -175,6 +175,25 @@ func snapshot_error(snapshot: Dictionary) -> String:
 	return error
 
 
+## Pure aggregate prevalidation after the caller validates the saved shared
+## actor. Authored validators may prove local samples against its saved motion
+## instead of the fresh/live hero. This does not restore or duplicate actor
+## state. Capture and restore still validate against the actual current hero.
+func snapshot_error_with_player(snapshot: Dictionary, saved_player: Dictionary) -> String:
+	if not _can_access_state():
+		return "Aggregate validation requires an entered level outside lifecycle/state hooks"
+	_validating = true
+	var error: String = _snapshot_envelope_error(snapshot)
+	if error.is_empty():
+		error = _value_error(saved_player)
+	if error.is_empty():
+		# Select one local hook only: the legacy live-player hook can correctly
+		# reject a fresh candidate before staged-player geometry is considered.
+		error = _local_snapshot_error_with_player((snapshot["local"] as Dictionary).duplicate(true), saved_player.duplicate(true))
+	_validating = false
+	return error
+
+
 func restore_state(snapshot: Dictionary) -> bool:
 	last_snapshot_error = ""
 	if not _can_access_state() or _dispatching:
@@ -204,6 +223,13 @@ func restore_state(snapshot: Dictionary) -> bool:
 
 
 func _snapshot_error(snapshot: Dictionary) -> String:
+	var error: String = _snapshot_envelope_error(snapshot)
+	if not error.is_empty():
+		return error
+	return _local_snapshot_error((snapshot["local"] as Dictionary).duplicate(true))
+
+
+func _snapshot_envelope_error(snapshot: Dictionary) -> String:
 	# The envelope is a transport wrapper, not an extra local nesting level.
 	# Its payload roots use depth 0, matching capture's local-state validation.
 	var error: String = _value_error(snapshot, -1)
@@ -241,7 +267,7 @@ func _snapshot_error(snapshot: Dictionary) -> String:
 			return "Empty current checkpoint requires empty history"
 	elif not checkpoint_ids.has(progress["checkpoint_id"]) or checkpoint_ids[progress["checkpoint_id"]] != progress["checkpoint_kind"]:
 		return "Current checkpoint must match its recorded boundary"
-	return _local_snapshot_error((snapshot["local"] as Dictionary).duplicate(true))
+	return ""
 
 
 func _can_access_state() -> bool:
@@ -307,6 +333,14 @@ func _local_snapshot_error(_state: Dictionary) -> String:
 	# Override alongside capture/restore. Validate the entire local payload and
 	# required nodes without mutating live state; rejection must be atomic.
 	return "" if _state.is_empty() else "This level has no declared local snapshot fields"
+
+
+func _local_snapshot_error_with_player(state: Dictionary, _saved_player: Dictionary) -> String:
+	# Backward compatible default for actor-independent local state. Override
+	# only when local state must match the already validated saved actor. Both
+	# arguments are defensive JSON copies; validate the whole local payload
+	# without live mutation, callbacks or retaining a second actor snapshot.
+	return _local_snapshot_error(state)
 
 
 func _restore_local_state(_state: Dictionary) -> void:

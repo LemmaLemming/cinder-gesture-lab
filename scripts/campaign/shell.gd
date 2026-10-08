@@ -477,7 +477,9 @@ func _snapshot_problem(snapshot: Dictionary) -> String:
 		_validation_candidates[id] = candidate
 	error = candidate.player.snapshot_error(snapshot.player)
 	if error.is_empty():
-		error = candidate.level.snapshot_error(snapshot.level)
+		# Cross-component local proof uses this validated saved actor, not a
+		# fresh candidate's spawn pose. Commit still restores actor before level.
+		error = candidate.level.snapshot_error_with_player(snapshot.level, snapshot.player)
 	if error.is_empty():
 		error = _shell_state_error(snapshot.shell, snapshot.player)
 	return error
