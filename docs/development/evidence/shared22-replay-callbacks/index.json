@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "prepared_at": "2026-10-08T16:01:35.242092+00:00",
+  "api_revision": "campaign-shared-22",
+  "tested_engine": "4.7.2.stable.official.ed1daf0bf",
+  "scope": "Directly affected ReplayPlayback target only; no authored placement, graphical portrait, native human input, human balance or broad suite claim.",
+  "published_parent": "811f69fe542f85bc58a26fded567b89e584b51e8",
+  "permission_scope": "Later format2 temporary-save cases used narrowly approved PID-isolated desktop user paths; original sandbox diagnostic preserved.",
+  "migration": "Strict ordinary schema1 retained; updated reader accepts conditional pending_delivery schema2. Parent must preserve trusted coherent actor/scheduler/capture retirement/playback aggregate.",
+  "current_source_sha256": {
+    "scripts/combat/replay_playback.gd": "f404bf2e51cb94a371eecb51ea216437a746c433d7ad1266f5e2c70747e32b56",
+    "tests/replay_playback_smoke.gd": "576ac5738bae1f868575bcdcff280eeb707df184049fc0f23800803482c13c83",
+    "docs/development/REPLAY_PLAYBACK.md": "797166fbdca653e1fb0da2fb217165938a47df3b87cae5859a4207ec34171f36",
+    "scripts/combat/replay_playback.gd.uid": "9772d96bd490fa16ae9e7438910e915e090c6485dfc1252574cae1bf7a977c5a",
+    "tests/replay_playback_smoke.gd.uid": "574f43c0dddecd80261cfcaaf738e09ef4390c854877b59404f702cc30add1c7"
+  },
+  "files": [
+    {
+      "stage": "historical-original-coverage",
+      "path": "logs/replay-playback-exact-cursor.log",
+      "sha256": "c813748235609fff095fe01976e8a7a699ad8bd9a73d6cb86f4f2774e619dc3a",
+      "bytes": 13327,
+      "checks": 168,
+      "failures": 0,
+      "exit": 0,
+      "meaning": "Original published leaf coverage before held-callback expansion; no new execution or baseline relabeling."
+    },
+    {
+      "stage": "first",
+      "path": "logs/replay-playback-callback-first.log",
+      "sha256": "df0136a69e954949835e55bac2f3d56cae4ae929dbb1425e2bee6496e3323431",
+      "bytes": 21920,
+      "command": "python3 scripts/dev/dev.py test replay_playback",
+      "checks": 237,
+      "failures": 9,
+      "exit": 1,
+      "runtime_sha256": "6193d827dafa170364107547139fa025f8a346b78a188a67dde7d6c1ef866526",
+      "fixture_sha256": "d14c25174f1a2492bd6bca397ed967bbc063f00a4d0c474d9316178988b585de",
+      "meaning": "Original published callback bug reproduction; old coverage preserved; clean script/parse scope."
+    },
+    {
+      "stage": "second",
+      "path": "logs/replay-playback-callback-second.log",
+      "sha256": "b4f9d19f95db4606fa4c8b729eab68f68f0bebcfc8f008b7af1bf5c8c61d39a8",
+      "bytes": 19226,
+      "command": "python3 scripts/dev/dev.py test replay_playback",
+      "checks": 240,
+      "failures": 0,
+      "exit": 0,
+      "runtime_sha256": "47695aed2e7de5d7301b316f9cd078ab904f044042b30fb1e3b170e1bc755901",
+      "fixture_sha256": "d14c25174f1a2492bd6bca397ed967bbc063f00a4d0c474d9316178988b585de",
+      "meaning": "Intermediate targeted repair; later fresh warning/expiry/native-pose cases were not yet covered."
+    },
+    {
+      "stage": "expanded",
+      "path": "logs/replay-playback-callback-expanded.log",
+      "sha256": "cc26834985731bcd20dd23e0d5557372fadc78adda8fcaf85dab644ce0c6ccb3",
+      "bytes": 23565,
+      "command": "python3 scripts/dev/dev.py test replay_playback",
+      "exit": 1,
+      "runtime_sha256": "95e2dd00353708f6fb5e6b15688b16863cbf75df7cf240aa6bd2f87a646f1af0",
+      "fixture_sha256": "c895a0f228926d44b49e99188ab441150229a96ee7c3d48e19bb6d72e32ec373",
+      "meaning": "Sandbox test-save access failed then missing-payload fixture Script Error; no passing gameplay result."
+    },
+    {
+      "stage": "expanded-save",
+      "path": "logs/replay-playback-callback-expanded-save.log",
+      "sha256": "2efee9a1c1348fea93a2bd51fd259f175c14d4e6d275988fbefe509d0b2bd592",
+      "bytes": 32182,
+      "command": "python3 scripts/dev/dev.py test replay_playback",
+      "checks": 395,
+      "failures": 4,
+      "exit": 1,
+      "runtime_sha256": "95e2dd00353708f6fb5e6b15688b16863cbf75df7cf240aa6bd2f87a646f1af0",
+      "fixture_sha256": "a790cfab7019ae0f19da1b971c29cbc0d4ca9175c90134e52b0caa355101bf6d",
+      "meaning": "Approved isolated saves succeed; deferred driver delivery allowed multiple catch-up ticks, causing four continuation failures; no script/parse errors."
+    },
+    {
+      "stage": "native-final",
+      "path": "logs/replay-playback-callback-native-final.log",
+      "sha256": "b1189ba530998fcd8a0f61255a7af614d724e76e809092af8e0e006218dc47cd",
+      "bytes": 33410,
+      "command": "python3 scripts/dev/dev.py test replay_playback",
+      "checks": 424,
+      "failures": 0,
+      "exit": 0,
+      "meaning": "Test-only later-priority node observes exactly one actual resumed physics tick; fresh native pose, pending dash, near admission grace and actually freed renderer checks pass.",
+      "runtime_sha256": "2ba9a7d71503a276ca298bbfe2c78b6d1cfb1ee22a8576ee8fb419e0e3230743",
+      "fixture_sha256": "2ddacbc4d2b3e0d3ea1231acf87ed077c9f869929b89bb4cd4d47028ee32087f"
+    },
+    {
+      "stage": "authority-final",
+      "path": "logs/replay-playback-callback-authority-final.log",
+      "sha256": "ce839e03ee9c6d0c9db2b2f3bb19acd82c66dc955708e3ad65a6df74cf04c8e1",
+      "bytes": 37480,
+      "command": "python3 scripts/dev/dev.py test replay_playback",
+      "checks": 475,
+      "failures": 0,
+      "exit": 0,
+      "runtime_sha256": "f404bf2e51cb94a371eecb51ea216437a746c433d7ad1266f5e2c70747e32b56",
+      "fixture_sha256": "576ac5738bae1f868575bcdcff280eeb707df184049fc0f23800803482c13c83",
+      "meaning": "Final pure live writer/reader cue authority and canceled-transient transport extension; all preceding affected cases; no script/parse/runtime errors or warnings.",
+      "exact_shell_invocation": "python3 scripts/dev/dev.py test replay_playback > .cinder/replay-playback-callback-authority-final.log 2>&1"
+    },
+    {
+      "path": "original/replay_playback-original.txt",
+      "sha256": "6193d827dafa170364107547139fa025f8a346b78a188a67dde7d6c1ef866526",
+      "bytes": 39876,
+      "meaning": "Exact original published runtime / first failure fixture; archival text, not an imported runtime."
+    },
+    {
+      "path": "original/replay_playback_smoke-original-reproducer.txt",
+      "sha256": "d14c25174f1a2492bd6bca397ed967bbc063f00a4d0c474d9316178988b585de",
+      "bytes": 39683,
+      "meaning": "Exact original published runtime / first failure fixture; archival text, not an imported runtime."
+    }
+  ]
+}

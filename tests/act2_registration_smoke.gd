@@ -53,7 +53,7 @@ func _run() -> void:
 	for id: String in registry.ids():
 		if registry.is_playable(id):
 			playable.append(id)
-	_expect(playable == ["A1-L1", "A2-L1"] and not registry.is_playable("A2-L2"), "only the two independent accepted entries are playable; A2-L2 stays unavailable")
+	_expect(playable == ["A1-L1", "A2-L1", "A3-L1"] and not registry.is_playable("A2-L2"), "only the three independent accepted entries are playable; A2-L2 stays unavailable")
 	game = _new_shell()
 	await _settle()
 	if not _expect(game.campaign_error.is_empty() and paused and game.active_level == null and game.menu.page_name() == "title", "production Title loads without an actor or invented prior progress: " + game.campaign_error):

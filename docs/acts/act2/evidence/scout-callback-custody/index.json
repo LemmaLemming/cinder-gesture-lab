@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "status": "TESTED_SCOPED_PATCH_READY",
+  "scope": "Two owned common Act2 Scout runtime files; narrow callback correction, no original L1 evidence relabel or L2 final acceptance.",
+  "original_L1_runtime": "16f2532518edd8d76aa41ec40f1d10edad607559",
+  "original_L1_candidate": "a96edfaddd22e206438e616a8b4080e5c5cdce7a",
+  "source_parent": "b1ad51e138ee0b21567a88376a21e66977c05cf9",
+  "shared_baseline": "811f69fe542f85bc58a26fded567b89e584b51e8",
+  "shared_revision": "campaign-shared-21",
+  "request_message": "ad2a03eb-0652-4a72-9f00-92bccc21a622",
+  "original_file_count": 42,
+  "unchanged_original_files": 40,
+  "changed_runtime": [
+    {
+      "path": "scripts/acts/act2/ray_scout_actor.gd",
+      "accepted_runtime_sha256": "1ffb51c7197f33d483538997543cee3fd629965f0f9625f38b762f8408be4e30",
+      "callback_patch_sha256": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7"
+    },
+    {
+      "path": "scripts/acts/act2/ray_scout_exchange.gd",
+      "accepted_runtime_sha256": "5a9abf5ae3b1875ba9eacbce9036c5eb82de67d058be1d208b24e222c7a70642",
+      "callback_patch_sha256": "1d2883d1cf42812f051422b9be12e5ecb8550649664e07bf1be3b7abc7e96188"
+    }
+  ],
+  "checks": [
+    {
+      "file": "act2-scout-callback-custody-original.log",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/act2-scout-callback-custody-original.log --script tests/acts/act2/a2_scout_callback_custody_smoke.gd",
+      "checks": 155,
+      "failures": 16,
+      "exit_code": 1,
+      "scope": "Hidden/cleared source+heldpause original failure/correctedcancel; exact full fresh canceled transport/resume; actual independent reservation cleanup incoming hide/clear/lethal Hero; true gate pause/disarm/dead and valid purepause/true controls.",
+      "sha256": "7b67df4de784143ef4260ee1bd979e37131e0fb4a3c909c30823e46daf5e784b"
+    },
+    {
+      "file": "act2-scout-callback-custody-corrected.log",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/act2-scout-callback-custody-corrected.log --script tests/acts/act2/a2_scout_callback_custody_smoke.gd",
+      "checks": 155,
+      "failures": 0,
+      "exit_code": 0,
+      "scope": "Hidden/cleared source+heldpause original failure/correctedcancel; exact full fresh canceled transport/resume; actual independent reservation cleanup incoming hide/clear/lethal Hero; true gate pause/disarm/dead and valid purepause/true controls.",
+      "sha256": "f2b9c3ce4de19fab7cf2a0b612f227fd96c6deded2e42d7c002daab6e4ad47c8"
+    },
+    {
+      "file": "act2-scout-tracking-after-custody.log",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/act2-scout-tracking-after-custody.log --script tests/acts/act2/a2_l1_ray_exchange_smoke.gd",
+      "checks": 285,
+      "failures": 0,
+      "exit_code": 0,
+      "scope": "Directly affected actual tracking/current-response proof, failed/missed lock, hit/sweep, presentation callbacks/guard, pure held-pause exact transport/resume-once, pending weapon and copied scalar atomic refusals plus four-phase JSON. No full level/art claim.",
+      "sha256": "58f3a8dc657ddd65c6dca20b6c7804bd9d2ac57bed0d32be8faecd998db1ca47"
+    }
+  ],
+  "fixture_sha256": "b0e12d5d0df02ec799af660eaff2204aad2cc938158827683f69aa54c769586e"
+}
