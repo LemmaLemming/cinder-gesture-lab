@@ -6,6 +6,18 @@ extends "res://tests/acts/act1/a1_l3_spore_guard.gd"
 var finite_activations: Array[Dictionary] = []
 var finite_reactions: Array[Dictionary] = []
 var finite_observations: Array[Dictionary] = []
+var finite_observed_phase: Dictionary = {}
+var finite_next_phase: String = ""
+var finite_phase_pause_requested: bool = false
+
+
+func _watchdog() -> void:
+	# This distinct two-release trace adds two input approaches and six native
+	# capture/transport barriers to the original one-release fixture. Keep every
+	# native wait/timing assertion; bound this longer graphical work separately.
+	if not finishing and Time.get_ticks_msec() - started_ms > 180000:
+		_require_unexpected(false, "finite two-release fixture completes within180 seconds")
+		_finish.call_deferred()
 
 
 func _run() -> void:
@@ -89,9 +101,9 @@ func _run() -> void:
 		_guard_diagnostic("recoil callback"); await _finish(); return
 	if not _require(guard_source.hp == 24.0 and hero.hp == initial_hp and hit_events.is_empty() and field.state().generation == 1 and field.state().spent_ids == ["cluster-right"] and field.state().remaining_clusters == 1 and consumer.placement_accepted(), "real zero-shell cluster primary preserves all living HP and spends exactly one finite supply without enemy hit/kill credit"):
 		_guard_diagnostic("harmless release"); await _finish(); return
-	if not await _guard_phase_capture("recoil", "recoil", false, true):
+	if not await _guard_phase_capture("recoil", "recoil", false, false) or not await _finite_resume_until_phase("turn"):
 		await _finish(); return
-	if not await _guard_phase_capture("turn", "recoil"):
+	if not await _guard_phase_capture("turn", "recoil", false, false) or not await _guard_resume_into_short_retreat():
 		await _finish(); return
 	if not await _guard_phase_capture("retreat", "retreat", true):
 		await _finish(); return
@@ -101,7 +113,7 @@ func _run() -> void:
 		_guard_diagnostic("held endpoint"); await _finish(); return
 	if not await _refuse_active_anchor(field):
 		_guard_diagnostic("active supply refusal"); await _finish(); return
-	if not await _guard_phase_capture("regroup", "regroup"):
+	if not await _guard_phase_capture("regroup", "regroup", false, false) or not await _finite_resume_until_phase("none"):
 		await _finish(); return
 	if not await _guard_phase_capture("none", "", false, false):
 		await _finish(); return
@@ -116,7 +128,7 @@ func _run() -> void:
 
 
 func _refuse_active_anchor(field: CinderSporeField) -> bool:
-	if not await _pause_pair("actual held field before extra ordinary hit"): return false
+	if not paused and not await _pause_pair("actual held field before extra ordinary hit"): return false
 	var before: Dictionary = field.state()
 	var left := field.get_node("cluster-left") as Node3D
 	var aim: Vector3 = _safe_cluster_aim(left)
@@ -130,7 +142,48 @@ func _refuse_active_anchor(field: CinderSporeField) -> bool:
 	if not _require(after.generation == before.generation and after.spent_ids == before.spent_ids and after.activation_s == before.activation_s and after.deadline_s == before.deadline_s and float(after.clock_s) >= float(before.clock_s) and after.phase in ["active", "thinning"] and finite_activations.size() == 1 and finite_reactions.size() == reactions_before and left.call("get_cue_state").state == "active" and hero.hp == initial_hp and guard_source.hp == 24.0 and hit_events.is_empty(), "the real active-anchor primary refuses supply/deadline refresh and creates no new episode, damage or activation"): return false
 	finite_observations.append({"kind": "active_refusal", "before": before, "after": after, "aim": aim})
 	if not _guard_quiet_component("after active-anchor refusal") or not _guard_framing("after active-anchor refusal") or not await _capture("active-refused"): return false
-	return await _gui_resume_pair()
+	return await _finite_resume_until_phase("regroup")
+
+
+func _finite_resume_until_phase(phase: String) -> bool:
+	# Render polling can miss a short phase. Observe the real native state at
+	# physics_frame and request the existing whole-tick barrier; never run a tick.
+	finite_next_phase = phase
+	finite_observed_phase.clear()
+	finite_phase_pause_requested = false
+	physics_frame.connect(_finite_observe_phase)
+	var button: Button = _resume_button(game.get("hud") as Node)
+	if not _require(button != null and paused, "finite phase observer uses the actual shared Resume button"):
+		physics_frame.disconnect(_finite_observe_phase)
+		return false
+	var input_before: Dictionary = game.call("get_input_observation_state")
+	var records_before: Array[Dictionary] = hero.get_world_action_records()
+	var point: Vector2 = button.get_global_rect().get_center()
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT; press.pressed = true; press.position = point; press.global_position = point
+	Input.parse_input_event(press)
+	await process_frame
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT; release.position = point; release.global_position = point
+	Input.parse_input_event(release)
+	await process_frame
+	var reached: bool = await _wait(func() -> bool: return paused, "finite actual " + phase + " reaches its observer-requested deferred barrier", 5.0, true)
+	if physics_frame.is_connected(_finite_observe_phase): physics_frame.disconnect(_finite_observe_phase)
+	if not reached: return false
+	finite_observations.append({"kind": "physics_phase_barrier", "pre_tick": finite_observed_phase.duplicate(true), "actual_paused": guard_source.get_spore_response_state()})
+	return _require(finite_phase_pause_requested and finite_observed_phase.get("phase") == phase and guard_source.get_spore_response_state().phase == phase and game.call("get_input_observation_state") == input_before and hero.get_world_action_records() == records_before, "finite native " + phase + " observer and GUI Resume preserve actual phase/input/action custody")
+
+
+func _finite_observe_phase() -> void:
+	if finishing or aborted or not is_instance_valid(guard_source) or not is_instance_valid(game):
+		if physics_frame.is_connected(_finite_observe_phase): physics_frame.disconnect(_finite_observe_phase)
+		return
+	if paused: return
+	var response: Dictionary = guard_source.get_spore_response_state()
+	if response.get("phase") != finite_next_phase: return
+	finite_observed_phase = response.duplicate(true)
+	physics_frame.disconnect(_finite_observe_phase)
+	finite_phase_pause_requested = game.call("request_pause_deferred")
 
 
 func _second_supply(field: CinderSporeField) -> bool:

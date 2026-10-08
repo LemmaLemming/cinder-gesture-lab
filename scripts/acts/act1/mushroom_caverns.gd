@@ -47,12 +47,8 @@ var last_approach_error: String = ""
 func _ready() -> void:
 	process_physics_priority = 200
 	_approach_enabled = enable_swarm_approach
-	if initial_greybox_room not in [0, 3]:
-		_construction_error = "Only the first grove and isolated guard component previews exist"
-		return
-	if _approach_enabled and initial_greybox_room != 0:
-		_construction_error = "Only the three-swarmer grove opts into authored approach"
-		return
+	_construction_error = _component_configuration_error()
+	if not _construction_error.is_empty(): return
 	Layout.build_geometry(self)
 	_scenery_art = GrottoArt.build_geometry_art(self)
 	if not is_instance_valid(_scenery_art):
@@ -64,12 +60,12 @@ func _ready() -> void:
 	scheduler = CinderThreatScheduler.new()
 	scheduler.name = "MushroomThreatScheduler"
 	add_child(scheduler)
-	for index: int in SOURCE_IDS.size():
-		var id: String = SOURCE_IDS[index]
+	for id: String in _all_source_ids():
+		var spec: Dictionary = _source_spec(id)
 		var actor: Act1MushroomSelenite = ActorScript.new()
 		actor.name = id.replace("-", "_")
-		actor.position = Layout.SOURCE_POINTS["umbrella"][index] if index < 3 else Layout.SOURCE_POINTS["lone-guard"][0]
-		if not actor.configure("C31" if index < 3 else "C32", id, true, _approach_enabled and index < 3):
+		actor.position = spec.position
+		if not actor.configure(spec.role_id, id, true, spec.approach):
 			_construction_error = actor.last_error
 			actor.free()
 			return
@@ -83,7 +79,28 @@ func _ready() -> void:
 		_retained_collisions[id] = collision
 		_retained_capsules[id] = collision.shape
 		_retained_cues[id] = actor.get_cue()
-	objective_text = "GREYBOX · THREE SWARMERS\nONE PREPARED STRIKE · ORDINARY PRIMARY" if initial_greybox_room == 0 else "GREYBOX · LONE SPEAR GUARD\nREAD ITS LANE · FLANK WITH AN ORDINARY PRIMARY"
+	objective_text = _initial_objective_text()
+
+
+## Defaults deliberately retain the four-source isolated component contract.
+## A normal-route subclass supplies authored membership, never another runtime.
+func _all_source_ids() -> Array[String]:
+	return SOURCE_IDS.duplicate()
+
+
+func _source_spec(id: String) -> Dictionary:
+	var index: int = SOURCE_IDS.find(id)
+	return {"role_id": "C31" if index < 3 else "C32", "position": Layout.SOURCE_POINTS["umbrella"][index] if index < 3 else Layout.SOURCE_POINTS["lone-guard"][0], "approach": _approach_enabled and index < 3}
+
+
+func _component_configuration_error() -> String:
+	if initial_greybox_room not in [0, 3]: return "Only the first grove and isolated guard component previews exist"
+	if _approach_enabled and initial_greybox_room != 0: return "Only the three-swarmer grove opts into authored approach"
+	return ""
+
+
+func _initial_objective_text() -> String:
+	return "GREYBOX · THREE SWARMERS\nONE PREPARED STRIKE · ORDINARY PRIMARY" if initial_greybox_room == 0 else "GREYBOX · LONE SPEAR GUARD\nREAD ITS LANE · FLANK WITH AN ORDINARY PRIMARY"
 
 
 func contract_error() -> String:
@@ -92,7 +109,7 @@ func contract_error() -> String:
 
 func _on_enter_level() -> void:
 	_running = true
-	for id: String in SOURCE_IDS:
+	for id: String in _all_source_ids():
 		var actor: Act1MushroomSelenite = sources[id]
 		if not actor.bind(scheduler, hero):
 			_entry_failed(actor.last_error)
@@ -103,6 +120,10 @@ func _on_enter_level() -> void:
 	hero.died.connect(_on_hero_died)
 	_refresh_render_state()
 	if not _running: return
+	_start_initial_encounter()
+
+
+func _start_initial_encounter() -> void:
 	var profile: String = String(shared_shell.call("get_difficulty_preference")) if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference") else "standard"
 	_changing = true
 	if not scheduler.begin_encounter(profile, _encounter_id(), WORLD_REVISION):
@@ -254,7 +275,7 @@ func scheduler_bindings() -> Dictionary:
 
 
 func _refresh_render_state() -> void:
-	for id: String in SOURCE_IDS:
+	for id: String in _all_source_ids():
 		var actor := sources.get(id) as Act1MushroomSelenite
 		if not is_instance_valid(actor) or actor != _retained_sources.get(id) or not actor.is_inside_tree() or actor.is_queued_for_deletion() or actor.get_parent() != self:
 			_render_sources[id] = {}
@@ -547,7 +568,7 @@ func _unique_points(points: Array) -> Array:
 
 
 func _on_hero_died() -> void:
-	for id: String in SOURCE_IDS: (sources[id] as Act1MushroomSelenite).cancel("actual_player_death")
+	for id: String in _all_source_ids(): (sources[id] as Act1MushroomSelenite).cancel("actual_player_death")
 	_framing.clear()
 	_forecast_points.clear()
 	_approach_forecasts.clear()
@@ -569,7 +590,7 @@ func _on_exit_level() -> void:
 	_running = false
 	_activation_entitlement = ""
 	if is_instance_valid(hero) and hero.died.is_connected(_on_hero_died): hero.died.disconnect(_on_hero_died)
-	for id: String in SOURCE_IDS:
+	for id: String in _all_source_ids():
 		# A genuinely defeated source can be removed after retained tombstone
 		# validation. Check its actual handle before attempting a typed cast.
 		if not is_instance_valid(sources.get(id)): continue
