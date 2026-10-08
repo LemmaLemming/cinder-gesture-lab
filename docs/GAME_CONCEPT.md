@@ -37,6 +37,12 @@ This is concept documentation, not implemented campaign content. The player shou
 
 Each act draws on late-19th- or early-20th-century science fiction and has a distinct palette, setting, movement problem, and climax. The red-and-black prototype palette is not a requirement for every act.
 
+**Optional-level asset rule**
+
+Optional levels share most of their assets with the corresponding regular level, with a small set of additions. Reuse its terrain pieces, scenery, enemy sprites and animations, palette, and effects. Distinguish an optional level through a different arrangement, encounter pattern, or objective, plus a few new props or hazards. A complete new environment kit or enemy cast is not the default scope.
+
+Optional levels are separately entered side levels; optional routes inside regular levels can use the same rule. Their challenges retain taps and swipes, one carried weapon, and fixed baseline damage. Required traversal works with the normal dash; situational powerups offer additional opportunities.
+
 ### Act 1 — The Moon
 
 The selected reference is Georges Méliès's [A Trip to the Moon (1902)](https://en.wikipedia.org/wiki/Le_Voyage_dans_la_Lune).
@@ -46,6 +52,26 @@ The selected reference is Georges Méliès's [A Trip to the Moon (1902)](https:/
 - Proposed movement identity: choosing where to land among circular hazards and scattered safe ground.
 - Earlier boss candidate: the Selenite King.
 - **Act 1 final boss: the Man in the Moon.** He closes this act; the campaign has a separate final encounter in Act 3.
+
+**Working regular-level sequence**
+
+1. Observatory and Launch — telescope workshops, rooftops, and a giant cannon; introduce dash direction and tap aiming in generous spaces.
+2. Crater Gardens — connected crater clearings and visible impact warnings; teach safe landing choices.
+3. Mushroom Caverns — broad fungal chambers and winding passages; combine enemy spacing with visibly telegraphed spore hazards.
+4. Selenite Court — ceremonial halls and columns; coordinated guards lead to the proposed Selenite King encounter.
+5. The Living Moon — craters become pores and ridges become wrinkles; the face forms the landscape around the Man in the Moon encounter.
+
+The proposed act length is approximately 40–45 minutes. Broad floors, generous passages, encounter checkpoints, and locally visible attack warnings support dash-only movement and the close portrait camera. Introduce each hazard safely before combining it with enemies.
+
+**Optional-level examples — proposals**
+
+| Regular level | Optional level | Reused assets | Small additions and play difference |
+| --- | --- | --- | --- |
+| Crater Gardens | Salvage Circuit | Crater floors, rim pieces, rocks, rocket debris, and lunar enemies | Recoverable rocket capsules and a damaged escape hatch. A compact loop lets the player choose the order of salvage encounters; contact collects the capsules. |
+| Mushroom Caverns | Spore Bloom | Cave floors and walls, roots, mushrooms, and existing enemies | Animated spore vents and clear floor warnings. Alternating safe spaces emphasize dash timing and landing. |
+| Selenite Court | Royal Rehearsal | Palace tiles, columns, guards, and ceremonial props | Formation markers and a practice bell. Familiar guards adopt different formations across short encounters. |
+
+[Concept art and generation prompts](concept-art/act1/README.md) for these three environments explore the shared scenery kits and small optional-area additions. The art is a visual proposal, not implemented level content.
 
 ### Act 2 — The Invasion
 
