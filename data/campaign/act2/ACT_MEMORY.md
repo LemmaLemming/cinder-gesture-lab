@@ -201,3 +201,8 @@ Initial aggregate113/0 remains applicable. FirstHeavy route controlled incomplet
 ## L4 focused current boundary
 
 Real original-checkpoint fresh GUI Continue/first courtyard earns exact stage5 with five actual defeats and strict full native blocker bypass. Focused726/2 fails only TEST diagnostic encoding; full native aggregate/attempts archived unchanged, no second-courtyard/full-route claim. Repair diagnostic and resume this genuinely earned current unit through public save transport; all280 frozen sources/failure/result remain in priority-repro-first. Production remains unchanged, initial113 applies, no human decision or new shared request.
+
+
+## L4 latest native boundary
+
+Genuine stage5 freshGUI continuation1285/1 reduces Tender30→6, then exposes TEST fallback approach deadzone at edge distance2.764<fixed3.45 while bank lacks supported current proof. Coherent full paused HeroHP90/Tender6/Handler30/nativeclock110.61666666666167, protected original checkpoint, all280 frozen sources and exactaggregate/model/diagnostic preserved in priority-stage5-first/earned-stalled. Next minimal TEST positioning repair and genuine stalled-state continuation; no runtime impossibility or new shared request. Tiny actual native ShapeID diagnostic coverage and separate exact lifecycle correction are current affected tests; fullroute/kits/profiles/art/lifecycle acceptance still pending.

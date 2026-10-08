@@ -89,14 +89,9 @@ func _run_route() -> bool:
 	_game.menu.difficulty_preference_requested.emit("challenge")
 	_expect(_game.get_difficulty_preference() == "challenge" and _state().exchanges.flood_tender.resolved_role.difficulty_profile == "standard", "new public preference preserves the admitted saved Standard bank epoch")
 	if not await _lc_click("ResumeButton") or not await _clear(["flood_tender"]): return false
-	for frame: int in range(1200):
-		if not _live(): return _expect(false, "actual flood tail wait ended before the source-only lifecycle probe: " + _diagnostic())
-		if _state().banks.flood_bank.status != "running": break
-		var escape: Dictionary = _latest_actor_plan([LIFECYCLE_RAY])
-		if not escape.is_empty():
-			if not await _follow_proof(escape, false): return false
-		else:
-			await _step()
+	# Use the exact native-tail helper: consume a genuine escape proof once
+	# and always await a tick, even if its original dash deadline is past.
+	if not await _finish_bank_tail("flood_bank"): return false
 	if not _expect(_state().banks.flood_bank.status == "complete" and float(_actors.flood_scout.get("hp")) > 0.0, "independent original flood tail finishes while the required Scout remains genuinely alive"): return false
 	if not await _lc_approach_scout(): return false
 	if not _expect(_lc_defeats == ["garden_handler", "flood_tender"] and _lc_checkpoints == [LIFECYCLE_CHECKPOINT] and _blocker_bypass_seen.has("GardenStemBlocker"), "real Tender clear and legitimate dry dashes reach the living Scout without another checkpoint"): return false
