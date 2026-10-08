@@ -31,8 +31,9 @@ const PROVISIONAL_TUNING: Dictionary = {
 	"turn_rate": 3.0,
 	"braking": 5.0,
 	"stop_distance": 3.0,
+	"settle_distance": 0.001,
 }
-const TUNING_KEYS: Array[String] = ["enabled", "speed", "acceleration", "turn_rate", "braking", "stop_distance"]
+const TUNING_KEYS: Array[String] = ["enabled", "speed", "acceleration", "turn_rate", "braking", "stop_distance", "settle_distance"]
 const MIN_DELTA_S: float = 0.000001
 const MAX_DELTA_S: float = 0.25
 const MAX_POSITION_COMPONENT: float = 10000.0
@@ -43,7 +44,7 @@ const MISALIGNMENT_RADIANS: float = PI / 6.0
 
 func configuration_error(tuning: Dictionary) -> String:
 	if tuning.size() != TUNING_KEYS.size():
-		return "Complete six-key provisional C31 approach configuration required"
+		return "Complete seven-key provisional C31 approach configuration required"
 	for key: Variant in tuning.keys():
 		if typeof(key) != TYPE_STRING or String(key) not in TUNING_KEYS:
 			return "Approach configuration requires exact String keys without additions"
@@ -80,7 +81,12 @@ func plan(position: Vector3, velocity: Vector3, facing: Vector3, target: Vector3
 		var offset := Vector3(target.x - position.x, 0.0, target.z - position.z)
 		var distance: float = offset.length()
 		var remaining: float = maxf(0.0, distance - float(tuning["stop_distance"]))
-		reason = "inside_stop_distance"
+		# Release pursuit intent within an explicit millimetre settling band.
+		# Repeated sub-resolution native motions otherwise retain positive
+		# velocity forever. Existing velocity still brakes at the authored rate;
+		# no position snap or approximate-stopped attack admission is introduced.
+		var needs_approach: bool = remaining > float(tuning["settle_distance"])
+		reason = "settling_distance" if remaining > 0.0 else "inside_stop_distance"
 		if distance > 0.0:
 			var direction: Vector3 = offset / distance
 			var current_facing: Vector3 = facing.normalized()
@@ -91,7 +97,7 @@ func plan(position: Vector3, velocity: Vector3, facing: Vector3, target: Vector3
 			var turn: float = clampf(angle, -float(tuning["turn_rate"]) * delta, float(tuning["turn_rate"]) * delta)
 			proposed_facing = current_facing.rotated(Vector3.UP, turn).normalized()
 			var remaining_angle: float = maxf(0.0, absf(angle) - absf(turn))
-			if remaining > 0.0 and remaining_angle <= MISALIGNMENT_RADIANS:
+			if needs_approach and remaining_angle <= MISALIGNMENT_RADIANS:
 				# Desired speed leaves room for one discrete step plus a finite
 				# braking path. Existing speed is NEVER snapped down to this cap:
 				# a changed nearby target may require several braking steps.
@@ -100,7 +106,7 @@ func plan(position: Vector3, velocity: Vector3, facing: Vector3, target: Vector3
 				desired_speed = minf(float(tuning["speed"]), stopping_cap)
 				advancing = desired_speed > 0.0
 				reason = "approaching" if stopping_cap >= float(tuning["speed"]) else "stopping_distance_limited"
-			elif remaining > 0.0:
+			elif needs_approach:
 				reason = "turning_braking"
 
 	if advancing:

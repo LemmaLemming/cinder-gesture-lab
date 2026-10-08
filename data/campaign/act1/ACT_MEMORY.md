@@ -1,5 +1,7 @@
 # Act 1 — durable memory
 
+First genuine API2 crowd portrait failed130/1 (5swipes/2primaries): third source stalled with nonzero sub-resolution approach velocity; separate exited-parent camera lookup errored. Exact failed source/log/9 views are retained. Current correction adds explicit immutable0.001m settle_distance to approach data (seven keys), releasing pursuit intent and retaining finite5m/s² braking to exactZERO; native stopped admission is unchanged. Exited parent now returns no camera requirements before the shared shell is released. Corrected crowd rerun pending; fullL3 unaccepted.
+
 Exact reviewed **campaign-shared-26** `c0816fb9ed60caaac36e5e1320ab95d42589e0b8` is adopted through preserving merge **9eb1e9e7b3f051349849b0cc4c253a60986552f6**, canonical ACK **96be6904-928f-4e3b-83b3-5b74b3485b5e**. Publication ancestry and all **1931 tracked / 2095 physical owned hashes** are verified unchanged. Current owned pursuit checkpoint61a1731 is untested behavior despite clean import; native spore hook/codec/parent composition remains unimplemented. Earlier adoption/pending paragraphs are historical. Current import archive records57 exact copies, indexSHA3040ba18055f472d1fcb06c71ae71317433524e7308ba8fe353590901781c391.
 
 

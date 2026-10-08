@@ -437,6 +437,9 @@ func _framing_ready(points: Array) -> bool:
 
 
 func _camera_framing_points() -> Array:
+	# exit_level releases the actual shell before the queued world is freed.
+	# A stopped component has no remaining authored camera requirements.
+	if not _running: return []
 	if not _floor_error().is_empty() or not _scenery_error().is_empty(): return [Vector3.INF]
 	var points: Array = _forecast_points.duplicate()
 	for forecast: Array in _approach_forecasts.values(): points.append_array(forecast)

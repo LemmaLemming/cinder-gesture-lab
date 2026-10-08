@@ -1,6 +1,7 @@
 extends "res://tests/acts/act1/a1_l3_actor_pair.gd"
-## PRIVATE DRAFT: API2/opt-in scene exist; parent movement/framing guards are
-## being revised. This fixture has not been parsed or run.
+## Genuine API2/opt-in scene fixture. Its first executed run exposes a native
+## sub-resolution stopping stall and an exited-parent camera lookup; preserve
+## that failed source/log separately from the corrected run.
 ## Actual neutral/Standard spawn -> three genuine ordinary-primary defeats.
 ## No teleport, source motion/phase/HP writes, fabricated lease, spore aggregate,
 ## whole-level completion/save, eight-body crowd or legal-profile/kit claim.
