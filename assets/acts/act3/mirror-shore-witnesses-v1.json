@@ -1,0 +1,119 @@
+{
+  "asset_id": "A3-MIRROR-SHORE-WITNESSES-01",
+  "family": "Tormance nonhostile shore cast",
+  "status": "native_cutout_and_unconsumed_builder_not_yet_runtime_reviewed",
+  "source_boards": [
+    "G02",
+    "G07",
+    "G14",
+    "G17"
+  ],
+  "source_entities": [
+    "C27",
+    "C28"
+  ],
+  "source_records": "docs/reference-library/act3/research/entities.json",
+  "generation_method": "built-in image_gen",
+  "generation_kind": "new image",
+  "original_generation_path": "/Users/howardchen/.codex/generated_images/01a11ae0-0acf-7d00-a987-321a98de5b66/exec-87c2cd56-888b-4867-b0df-33f502812786.png",
+  "workspace_path": "assets/acts/act3/mirror-shore-witnesses-v1.png",
+  "native_size_px": [
+    1254,
+    1254
+  ],
+  "native_mode": "RGBA",
+  "alpha_range": [
+    0,
+    255
+  ],
+  "alpha_ge_half_bounds_exclusive": [
+    125,
+    10,
+    1104,
+    1240
+  ],
+  "source_sha256": "eecd39d9efe3c7039023887813be460fe3f7ab07caccc69627c96f431f4743f5",
+  "prompt_path": "assets/acts/act3/mirror-shore-witnesses-v1.prompt.txt",
+  "prompt_sha256": "d09f1c919df37c40ba579d66616da2c1b714f35c913b381f7c5d81ca1b6e4636",
+  "presentation": "one static nonhostile billboard tableau; Polecrab seated net-mending; Gleameil upright yellow hair; distinct three eyes",
+  "runtime_scale": {
+    "pixel_size_world_units": 0.0016666666666666668,
+    "Gleameil_visible_height_world_units": 2.05,
+    "Polecrab_seated_visible_height_world_units": 1.4133333333333333,
+    "pivot_spacing_world_units": 0.9283333333333333
+  },
+  "pivot": {
+    "Polecrab": {
+      "atlas_region": [
+        117,
+        347,
+        652,
+        864
+      ],
+      "native_foremost_sole_pivot": [
+        465,
+        1203
+      ],
+      "crop_pivot": [
+        348,
+        856
+      ],
+      "sprite_offset": [
+        -22,
+        424
+      ]
+    },
+    "Gleameil": {
+      "atlas_region": [
+        773,
+        0,
+        339,
+        1248
+      ],
+      "native_foremost_sole_pivot": [
+        1022,
+        1240
+      ],
+      "crop_pivot": [
+        249,
+        1240
+      ],
+      "sprite_offset": [
+        -79.5,
+        616
+      ]
+    },
+    "method": "independent original-pixel atlas crops; no raster edit; foremost sole lower row, secondary supports keep authored perspective"
+  },
+  "collision_role": "none",
+  "target_or_pickup_role": "none",
+  "occlusion": "ordinary depth, nearest, full billboard, discard0.5/filter_clip, shadow off; actual portrait placement remains untested",
+  "animation_states": [
+    "static seated Polecrab",
+    "static standing Gleameil"
+  ],
+  "readiness_limits": [
+    "actual requested1024 square returned1254; preserved byte-exact, no raster edit",
+    "large-cluster appearance inspected in generation result; final apparent pixel scale not yet validated",
+    "runtime pivot/floor contact and source/footprint/Hero separation pending",
+    "not a sprite sheet or gameplay capture; no optional/completion reward"
+  ],
+  "runtime_builder": "scripts/acts/act3/mirror_shore_witnesses.gd",
+  "inspected_research": [
+    {
+      "url": "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0014",
+      "sections": "Chapter14 Polecrab physical description and raft; Gleameil introduction; inspected web text L2965–2967/L3144",
+      "application": "distinct cast stills/corded prop vocabulary; clothing poses/net-mending and dry firm game route are original adaptations"
+    },
+    {
+      "url": "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0015",
+      "sections": "Chapter15 Irontick approach, inspected L3378–3386",
+      "application": "distant scenic lake/reflected sky; no swimming or additional boss"
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_atlastexture.html",
+      "sections": "AtlasTexture region/filter_clip, inspected by research agent",
+      "application": "preserve unchanged alpha/raster while grounding separate source feet"
+    }
+  ]
+}

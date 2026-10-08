@@ -1,8 +1,22 @@
 # Act 3 progress
 
+## Mirror Shore first native milestone
+
+Independent A3-L3 shore preview passes28/0 clean at exact shared27/5ad638d, with six original339×736 portraits, exact paused/fresh reconstruction, five atomic invalid-unit rejections and two live ordinary-primary hits/cleanup. Root inspected all six; arrival pause panel limits quiet art evidence. [Portable original failure/pass records](../../../assets/acts/act3/evidence/A3-L3-shore-preview/index.json) retain first17/1 and second17/1 fixture failures. Full Echo/Mirror Sea, full kits and production persistence remain unfinished; Act3 stays2/8 accepted. Shared28 ec070f6 is now independently published and is next for preserving adoption/ACK; lifecycle29 remains root-owned. No human decision is pending.
+
+## Current acceptance and next level — shared27
+
+Act3 has **2/8 levels accepted,6 unfinished**. Living Forest is **ACCEPTED** in canonical message `1a8dfdbe-9087-4898-a4c0-00e7407d5892`; exact submitted source `bd6b3cde9321213a2717e998c5ce2dff58ca2dd3` and owned evidence index `57f3f88175b8aeba226f200789fde7b86db230a6e35d9e913cfb5d48314375fc` are retained. Shared27 `2ffae5a048e8b415bcc495632439fa7a5570886d` is adopted through preserving merge `5ad638db7f0414c363f3d50145e79509997a3930`, ACK `4dbda51b-d65b-4ae6-b005-893a946cef11`. Integration verified that adoption and updated the canonical worker baseline at21:02:27UTC. All651 previously tracked owned files were unchanged through the merge; only three durable documentation conflicts required preserving the later owned histories. Registration retains the real A3-L1 prerequisite and next A3-L3. No accepted L1/L2 runtime or asset is changed by these new notes.
+
+The shared seven-line Shell correction pauses/latches input, allows queued native quiet settlement, then captures/persists. Root's clean scoped receipts are fatal179/0, graphical registration367/0, fatal portrait188/0, pause-barrier116/0 and campaign-shell52/0; all eight original540×1170 portraits were inspected. Root evidence index SHA256 is `407e47d068e0cb50b9c50ad14c50533d72a358eea7b7be2ee106140ace8cd7fb`. Those runs used their disclosed unpublished additive Echo kernel; they are not retrospectively relabeled as published27 kernel executions. The tested repaired Shell bytes match publication exactly. No repeated broad, accepted-level or unused-Echo check is required.
+
+[A3-L3 Mirror Sea](levels/A3-L3.md) now begins with independent owned shore layout/art and existing supported Stalker APIs. Shared27 contains no authored-Echo API. First-cycle request `8b06b4ea-d6f6-41f3-8931-79e6b41ec704` and lifecycle supplement `a40888b2-58d1-4574-a38a-1b9b824cbe67` remain integration-owned candidates28/29; no invented Player capture or private implementation substitutes for them. Complete all eight levels sequentially on desktop. No human decision is pending.
+
+## Earlier pending-review records
+
 Integration registered future Mirror Echo request `8b06b4ea-d6f6-41f3-8931-79e6b41ec704` in RESPONSE `261e15a5-435d-4663-9c94-62c24c2395dc`: a distinct typed authored-enemy replay seam remains shared-owner work. Stationary physical ownership, serial commitment, genuine grounded endpoint and complete quiet pairing remain explicit; no invented player capture, moving body or concurrent mixed replay is supported. A3-L3 remains unbegun until L2 acceptance. Shared25 `05869a593ea523e079a3e6d1e6e750f4219e813c` is now published additive SmokeBank support and includes registrationc6; preserving adoption follows the current owned freeze, with no unused Smoke suite or unchanged L1 rerun. No human decision is pending.
 
-## Current shared26 adoption and submitted L2 review
+## Earlier shared26 adoption and submitted L2 review
 
 
 Integration RESPONSE `27b4d553-11ca-4fe0-ac97-b27810a7cbd9` agrees to sequencing REQUEST `e74026d2-7b32-4053-860c-50e1a9ab0ebf`: completed L2 registration and the consumed seven-line Shell settlement fix will publish independently as shared27; future first-cycle Echo becomes candidate28, with supplemental lifecycle support candidate29. Exact publication/ACCEPTED are still pending. Original root runs retain their actual unpublished additive Echo candidate source/kernel receipts, rather than a retrospective published26 identity claim. No owned content change is requested. Preserve-adopt the exact publication and ACK before shared consumption; begin L3 only after ACCEPTED. The registered future dependency remains root-owned, without a human decision.

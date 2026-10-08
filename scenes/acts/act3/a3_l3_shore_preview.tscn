@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act3/mirror_shore_preview.gd" id="1"]
+
+[node name="MirrorShorePreview" type="Node3D"]
+script = ExtResource("1")
+level_id = "A3-L3"
+local_snapshot_version = 1
+objective_text = "FIRM SHORE; STILL WATER"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 3)
+
+[node name="StalkerSource" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, -0.3)
