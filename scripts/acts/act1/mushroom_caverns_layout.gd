@@ -76,7 +76,7 @@ const PROPOSED_EXPANDED_RADIUS: float = FIELD_RADIUS + PROPOSED_CAPSULE_SUPPORT 
 # Caps are offset shallow scenic boxes and have NO collision or attack role.
 const STALK_SIZE: Vector3 = Vector3(1.1, 2.2, 1.1)
 const STALK_SPECS: Array = [
-	{"id": "UmbrellaStalk", "origin": Vector3(-4.8, 0, 10), "cap_offset": Vector3(0.4, 2.4, 0), "cap_size": Vector3(3.2, 0.16, 1.6)},
+	{"id": "UmbrellaStalk", "origin": Vector3(-5.1, 0, 8.4), "cap_offset": Vector3(0.4, 2.4, 0), "cap_size": Vector3(3.2, 0.16, 1.6)},
 	{"id": "BreathingStalk", "origin": Vector3(-4.6, 0, -2), "cap_offset": Vector3(1.2, 2.4, 0), "cap_size": Vector3(4.8, 0.16, 1.6)},
 	{"id": "CrossedLeftStalk", "origin": Vector3(-5.6, 0, -15.2), "cap_offset": Vector3(1.2, 2.4, 0), "cap_size": Vector3(4.8, 0.16, 1.6)},
 	{"id": "CrossedRightStalk", "origin": Vector3(5.6, 0, -18), "cap_offset": Vector3(-1.2, 2.4, 0), "cap_size": Vector3(4.8, 0.16, 1.6)},

@@ -8,6 +8,8 @@ const SporeField = preload("res://scripts/environment/spore_field.gd")
 const Repulsion = preload("res://scripts/environment/spore_repulsion.gd")
 const SporeRoute = preload("res://scripts/combat/repulsion_route.gd")
 const Exact = preload("res://scripts/campaign/exact_json.gd")
+const LowClusterArt = preload("res://scripts/acts/act1/mushroom_cluster_art.gd")
+const CLUSTER_IDS: Array[String] = ["cluster-left", "cluster-right"]
 const COMPONENT_API: String = "act1-mushroom-spore-component-1"
 const CONTROLLER_ID: String = "mushroom-scheduler"
 const FIELD_ID: String = "component-mushroom"
@@ -27,6 +29,7 @@ var _spore_player_collision_transform: Transform3D
 var _spore_player_radius: float = 0.0
 var _spore_player_height: float = 0.0
 var _spore_route_callbacks: Dictionary = {}
+var _cluster_art: Dictionary = {}
 
 
 func current_source_ids() -> Array[String]:
@@ -40,6 +43,10 @@ func _physics_process(delta: float) -> void:
 	if not spores_ready:
 		_bind_component_spores()
 		return
+	var art_error: String = _refresh_cluster_art()
+	if not art_error.is_empty():
+		last_component_error = art_error
+		return # Existing native presentation/route guards see invalid art bounds.
 	super._physics_process(delta)
 
 
@@ -84,8 +91,9 @@ func _bind_component_spores() -> void:
 	field.name = "ComponentMushroom"
 	# Keep the guard's complete possible retreat costume and genuine native
 	# escape/return proof within the fixed portrait. The right low anchor remains
-	# ordinary-primary reachable outside that source's attack cone.
-	field.position = Vector3(-1.6, 0, 11) if initial_greybox_room == 0 else Vector3(0.9, 0, -29.5)
+	# ordinary-primary reachable behind the neutral forward-dash landing, so
+	# aiming at it excludes the living guard from the real broad primary cone.
+	field.position = Vector3(-1.6, 0, 11) if initial_greybox_room == 0 else Vector3(0.9, 0, -28.8)
 	if not field.configure(FIELD_ID, [{"id": "cluster-left", "offset": Layout.CLUSTER_OFFSETS[0]}, {"id": "cluster-right", "offset": Layout.CLUSTER_OFFSETS[1]}], {"radius": Layout.FIELD_RADIUS, "duration_s": 3.0, "thinning_s": 0.5}):
 		_component_failed("Component mushroom definition: " + field.last_error)
 		field.free()
@@ -106,8 +114,56 @@ func _bind_component_spores() -> void:
 	if not consumer.bind_environment({"world_root": native.world_root, "floors": native.floors, "fields": {FIELD_ID: field}, "sources": recipients, "source_protocols": source_protocols}):
 		_component_failed("Actual native spore binding: " + consumer.last_error)
 		return
+	if not _bind_cluster_art():
+		_component_failed("Native low-cluster art binding: " + last_component_error)
+		return
+	spore_field.state_changed.connect(_on_cluster_field_state)
 	spores_ready = true
 	objective_text = "SPORE COMPONENT · HIT THE LOW CLUSTER\nLIVING ENEMIES RETREAT WITHOUT DAMAGE"
+
+
+func _bind_cluster_art() -> bool:
+	for id: String in CLUSTER_IDS:
+		var cluster := spore_field.get_node_or_null(id) as Node3D
+		var visual = LowClusterArt.new()
+		visual.name = "AuthoredLowCluster"
+		if not visual.configure(cluster, spore_field):
+			last_component_error = visual.last_error
+			visual.free()
+			return false
+		cluster.add_child(visual)
+		_cluster_art[id] = visual
+		last_component_error = String(visual.binding_error())
+		if not last_component_error.is_empty(): return false
+	return true
+
+
+func _cluster_art_error() -> String:
+	if not Codec.keys_error(_cluster_art, CLUSTER_IDS).is_empty(): return "Both actual low-cluster art leaves are required"
+	for id: String in CLUSTER_IDS:
+		var visual := _cluster_art.get(id) as Node3D
+		if not is_instance_valid(visual) or visual.is_queued_for_deletion() or not visual.is_inside_tree() or visual.get_script() != LowClusterArt or visual.get_parent() != spore_field.get_node_or_null(id): return "Retained native cluster art identity changed"
+		var error: String = String(visual.call("binding_error"))
+		if not error.is_empty(): return id + ": " + error
+	return ""
+
+
+func _refresh_cluster_art() -> String:
+	if not Codec.keys_error(_cluster_art, CLUSTER_IDS).is_empty(): return "Both native cluster art leaves must already exist"
+	for id: String in CLUSTER_IDS:
+		var visual := _cluster_art.get(id) as Node3D
+		if not is_instance_valid(visual) or visual.is_queued_for_deletion() or not visual.is_inside_tree() or visual.get_script() != LowClusterArt or visual.get_parent() != spore_field.get_node_or_null(id): return "Retain actual cluster art before presentation"
+		var error: String = String(visual.call("sync_from_native"))
+		if not error.is_empty(): return id + ": " + error
+	return ""
+
+
+func _on_cluster_field_state(_native_state: Dictionary) -> void:
+	# Field emits after every native cluster has selected its honest new state.
+	# Quiet restore suppresses this signal and calls the same sync explicitly.
+	if not _running or not spores_ready: return
+	var error: String = _refresh_cluster_art()
+	if not error.is_empty(): last_component_error = error
 
 
 func _component_failed(reason: String) -> void:
@@ -118,7 +174,7 @@ func _component_failed(reason: String) -> void:
 func _camera_framing_points() -> Array:
 	var points: Array = super._camera_framing_points()
 	if not _running or not spores_ready: return points
-	if not is_instance_valid(spore_field) or not spore_field.binding_error().is_empty(): return [Vector3.INF]
+	if not is_instance_valid(spore_field) or not spore_field.binding_error().is_empty() or not _cluster_art_error().is_empty(): return [Vector3.INF]
 	var origin: Vector3 = spore_field.global_position
 	var radius: float = Layout.FIELD_RADIUS
 	for x: float in [-radius, radius]:
@@ -126,6 +182,10 @@ func _camera_framing_points() -> Array:
 	for offset: Vector3 in Layout.CLUSTER_OFFSETS:
 		var centre: Vector3 = origin + offset
 		points.append_array(_box_points(AABB(Vector3(-0.2, -0.05, -0.2), Vector3(0.4, 0.5, 0.4)), Transform3D(Basis.IDENTITY, centre)))
+	for cluster_id: String in CLUSTER_IDS:
+		var art_points: Array = _cluster_art[cluster_id].call("framing_points", shared_shell)
+		if art_points.is_empty(): return [Vector3.INF]
+		points.append_array(art_points)
 	for id: String in current_source_ids():
 		var actor: Act1MushroomSelenite = sources[id]
 		if not actor.dead:
@@ -161,6 +221,9 @@ func _component_route_bindings_error() -> String:
 	var error: String = _floor_error()
 	if error.is_empty(): error = _scenery_error()
 	if not error.is_empty(): return error
+	if spores_ready:
+		error = _cluster_art_error()
+		if not error.is_empty(): return error
 	if current_source_ids().size() != 1: return "Spore route spacing currently certifies one actual living recipient"
 	for id: String in SOURCE_IDS:
 		var actor := sources.get(id) as Act1MushroomSelenite
@@ -317,6 +380,8 @@ func restore_component_unit(unit: Dictionary) -> bool:
 	for id: String in SOURCE_IDS:
 		if not (sources[id] as Act1MushroomSelenite).restore_exchange_state(unit.actors[id]): return false
 	if not spore_consumer.restore_state(unit.coordinator, _component_context(unit)): return false
+	last_component_error = _refresh_cluster_art() # Native Field restore was quiet.
+	if not last_component_error.is_empty(): return false
 	for id: String in SOURCE_IDS:
 		_render_sources[id] = (sources[id] as Act1MushroomSelenite).pure_presentation_state()
 	_framing.clear()
@@ -328,6 +393,8 @@ func restore_component_unit(unit: Dictionary) -> bool:
 
 
 func _on_exit_level() -> void:
+	if is_instance_valid(spore_field) and spore_field.state_changed.is_connected(_on_cluster_field_state):
+		spore_field.state_changed.disconnect(_on_cluster_field_state)
 	# Retire actual environmental Route custody before native actor/scheduler
 	# shutdown; source_interrupted preserves genuine motion and does not fake HP.
 	if is_instance_valid(spore_consumer):
