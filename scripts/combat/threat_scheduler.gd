@@ -22,6 +22,7 @@ const DifficultyScript = preload("res://scripts/combat/difficulty.gd")
 const Geometry = preload("res://scripts/combat/threat_geometry.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const Motion = preload("res://scripts/combat/lunge_motion.gd")
+const BodySweep = preload("res://scripts/combat/body_sweep.gd")
 const ReplaySequence = preload("res://scripts/combat/replay_sequence.gd")
 const ReplayWitness = preload("res://scripts/combat/replay_witness.gd")
 const ReplayPlayer = preload("res://scripts/player.gd")
@@ -1483,6 +1484,10 @@ func _decode_adapter(value: Dictionary, record: Dictionary, owner: Node3D, regio
 		if not Codec.is_vector3(value[key]):
 			return {"error": "Lunge adapter needs finite serialized motion vectors"}
 		adapter[key] = Codec.read_vector3(value[key])
+	for key: String in ["start", "planned_endpoint", "current_position"]:
+		var point: Vector3 = adapter[key]
+		if not point.is_finite() or maxf(absf(point.x), maxf(absf(point.y), absf(point.z))) > BodySweep.MAX_COORDINATE:
+			return {"error": "Saved lunge positions exceed supported actual body-query bounds"}
 	for key: String in ["speed", "distance", "duration_s", "damage_radius"]:
 		if not Codec.is_number(value[key]) or float(value[key]) <= 0.0:
 			return {"error": "Lunge adapter needs finite positive motion data"}
@@ -1501,9 +1506,10 @@ func _decode_adapter(value: Dictionary, record: Dictionary, owner: Node3D, regio
 	var travelled: Vector3 = adapter["current_position"] - adapter["start"]
 	var length: float = route.dot(direction)
 	var progress: float = travelled.dot(direction)
-	if absf(direction.y) > EPSILON or absf(direction.length() - 1.0) > EPSILON or absf(route.y) > EPSILON or (route - direction * length).length() > EPSILON or length < -EPSILON or length > float(value["distance"]) + EPSILON or absf(travelled.y) > EPSILON or (travelled - direction * progress).length() > EPSILON or progress < -EPSILON or progress > length + Motion.ENDPOINT_TOLERANCE or float(value["distance"]) <= EPSILON or float(value["distance"]) > Motion.MAX_DISTANCE or not (direction * float(value["speed"])).is_finite():
+	var route_precision: float = BodySweep.position_rounding_bound(adapter["start"], adapter["planned_endpoint"])
+	if absf(direction.y) > EPSILON or absf(direction.length() - 1.0) > EPSILON or absf(route.y) > EPSILON or (route - direction * length).length() > route_precision or length < -route_precision or length > float(value["distance"]) + route_precision or absf(travelled.y) > EPSILON or (travelled - direction * progress).length() > route_precision or progress < -route_precision or progress > length + Motion.ENDPOINT_TOLERANCE or float(value["distance"]) <= EPSILON or float(value["distance"]) > Motion.MAX_DISTANCE or not (direction * float(value["speed"])).is_finite():
 		return {"error": "Saved lunge must stay on its bounded straight physical route"}
-	if not is_equal_approx(float(value["duration_s"]), float(value["distance"]) / float(value["speed"])) or float(record["active_until_s"]) - float(record["active_from_s"]) < float(value["duration_s"]) - EPSILON or float(value["damage_radius"]) < float(description["radius"]) + Motion.ENDPOINT_TOLERANCE or value["collision_shortened"] != (length < float(value["distance"]) - EPSILON):
+	if not is_equal_approx(float(value["duration_s"]), float(value["distance"]) / float(value["speed"])) or float(record["active_until_s"]) - float(record["active_from_s"]) < float(value["duration_s"]) - EPSILON or float(value["damage_radius"]) < float(description["radius"]) + Motion.ENDPOINT_TOLERANCE or value["collision_shortened"] != (length < float(value["distance"]) - route_precision):
 		return {"error": "Saved lunge timing/footprint/shortening is incoherent"}
 	var geometry: Dictionary = record["geometry"]
 	if geometry["kind"] != "lane" or (geometry["from"] as Vector3).distance_to(adapter["start"]) > EPSILON or (geometry["to"] as Vector3).distance_to(adapter["planned_endpoint"]) > EPSILON or not is_equal_approx(geometry["radius"], value["damage_radius"]) or (adapter["current_position"] as Vector3).distance_to(record["source_position"]) > EPSILON or (adapter["current_velocity"] as Vector3).distance_to(staged_velocity) > EPSILON:
