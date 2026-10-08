@@ -1,0 +1,59 @@
+# Irontick and Earthrid — original static native v1
+
+Updated 9 October 2026. **Static quiet candidate reviewed in four actual portraits; finished art and full A3-L3 remain pending.** The original [builder](../../../scripts/acts/act3/mirror_irontick_scenery.gd) adds a quiet lake and Earthrid to a14×22 north-bank room. The [actual shared quiet consumer](../../../scripts/acts/act3/mirror_irontick_art_preview.gd), [scene](../../../scenes/acts/act3/a3_l3_irontick_art_preview.tscn) and [native fixture](../../../tests/acts/act3/mirror_irontick_art_portraits.gd) now pass13/0 clean on published30/ownedHEADf1c8975. Root and an independent reviewer opened all four original339×736 portraits from source9bb9cf9. A separate Earthrid pose/detail candidate3f5dc2 is now authored but unexecuted. The original builder authoring had no engine run; qualified import and these later consumer results have separate retained evidence. [Original failure and corrected pass](../../../assets/acts/act3/evidence/A3-L3-irontick-preview/index.json) preserve commands, frozen sources, logs and only genuinely printed captures.
+
+## Current Earthrid pose candidate — unexecuted
+
+The [current builder](../../../scripts/acts/act3/mirror_irontick_scenery.gd), SHA256 `3f5dc269f0cf2614f9c7b6767957958a020d89dc8a21a7f8a1ca2645f59023a0`, changes only initial Earthrid part poses, head/fold geometry and muted body/detail colours. The lake, rim, sole pivot, contact shadow, all24body labels/31mesh recipe, helpers, public interface and custody checks remain unchanged. The original9bb9cf9 source is [archived with its actual13/0 result](../../../assets/acts/act3/evidence/A3-L3-irontick-preview/02-inward-left-native-pass/source/scripts/acts/act3/mirror_irontick_scenery.gd).
+
+The former forearm axes nearly aligned with the fixed camera sightline, hiding reaching articulation. New upper-arm/forearm X rotations1.05/1.12rad expose more projected length, with connected offsets, forward knees, rear soles, stronger torso lean and a more camera-facing head/forehead fold. All192 conservative mathematical corners of the24parts retain world bounds(-1.805,.02,-10.965)..(-1.295,1.1390886155,-10.33), giving width.51/height1.1190886155/depth.635WU within the existing hard envelope. These are static calculations. The same affected four quiet native portraits must establish actual pose/face reading; the earlier originals do not accept this candidate. Existing-script edits introduce no resource requiring another import.
+
+## Canon and selected references
+
+The [L3 resonant apron](../../ACT3_CONCEPT.md#a3-l3-mirror-sea--refuse-the-reflection) uses Irontick as scenery beside one independently previewed floor ring. Earthrid and the lake are nonhostile; the existing Mirror Echo retains its own real grounded endpoint and harmless reflection. The [entity database](../../reference-library/act3/research/entities.json) records C29 Earthrid, E19 Irontick and P16 lake instrument: the musician disturbs the lake itself, with a pale weak vacant face, sparse black head/chin hair and a convoluted ear-like forehead organ. The compact kneeling pose and 1.6WU lake radius are original game adaptations, not the novel's half-mile scale or a new B04 boss.
+
+Previously inspected [G07 shore](../../concept-art/act3/environments/03-mirror-sea.png), [G14 listening mood](../../concept-art/act3/mood/02-dominion-and-false-beauty.png), [G17 modules](../../concept-art/act3/props/02-journey-and-modules.png), [G19 dry-route composition](../../concept-art/act3/gameplay/02-mirror-sea-gameplay.png) and [G12 unselected candidate imagery](../../concept-art/act3/bosses/03-candidates-and-threats.png) informed the quiet mineral palette and water/body relationship. Their diagrams are references, not runtime sheets or warning geometry. The local research identifies [Chapter 15](https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0015); this task does not claim a new online novel inspection or watched footage. [Adaptation boundaries](../../concept-art/act3/ADAPTATION_NOTES.md), [style](../../GAME_STYLE_GUIDELINES.md#pixel-scale-camera-and-scenery) and [reuse](../../ASSET_REUSE_GUIDE.md#act-3--author-one-false-world-kit) govern the result.
+
+## Last executed original geometry and pivots
+
+The [machine-readable record](../../../assets/acts/act3/mirror-irontick-native-v1.json) contains the source hashes, coordinates, palette, public interface and readiness list. The source recipe expects **31 direct MeshInstance3D children**: three water meshes, three rim wedges, 24 Earthrid body/detail meshes and one irregular contact shadow. The actual quiet fixture observes and validates this31mesh count, resources and immutable placements.
+
+| Part | Authored room placement and bounds |
+| --- | --- |
+| Irontick | Filled 24-sided disc, radius1.6WU, origin `(-1.55,-.035,-12.75)`. Z extent−14.35..−11.15 leaves .15WU beyond the consumer's north floor edgeZ−11. It supplies no walkable floor. |
+| Quiet water | Two broken narrow strips, radii.62 /1.10WU, width.05WU at Y−.031. Two omitted segments interrupt each short arc. These are static muted water details entirely beyond the floor, with no full combat ring or pulse clock. |
+| Black rim | Three low filled wedges with tops.12 /.17 /.16WU. All stay beyondZ−11 and below.18WU. |
+| Earthrid | Sole pivot `(-1.55,.02,-10.55)`, unity world scale. Authored body height1.12WU and footprint.51 × .635WU fit the requested1.10–1.15WU /≤.55 × .65WU envelope. The runtime validator uses actual transformed native bounds. |
+| Head and hands | Head pivot `(-1.55,.99,-10.65)`, turned2.50rad aroundY toward the traveller; torso and two arms reach north toward water. The filled forehead fold remains part of the pale face. Hands gesture toward the lake rather than claiming actual water contact. |
+| Dry contact | Filled irregular shadow atY.006, .53 × .32WU, beneath the knees/soles. It has no collider, ring edge or actionable state. |
+
+Opaque unshaded nearest-filtered materials retain ordinary depth. Water is muted `28323e`, broken strips `35404b`, cloth `594955`, face `a49ca0`, sparse hair `211b26` and rim `211e2b`; shadow casting is off. Broad filled volumes carry the silhouette. Face, hair and folded-organ details may become only a few pixels at the close portrait scale and require actual inspection. This is one static listening pose, with no limb animation, glow, billboard, music resource or scenic pulse.
+
+No native PNG dimensions, atlas or pixel pivot apply. Native source geometry uses existing game world units; apparent pixels come from the shared nearest portrait renderer. The actual figure envelope remains on firm dry bank; all four images show its base meeting the floor. Individual knee/sole/contact-shadow detail is too small to judge precisely.
+
+## Reuse and pure public interface
+
+The builder extends the unchanged [Twin Suns scenery](../../../scripts/acts/act3/twin_suns_scenery.gd) solely for `_box`, `_floor_polygon`, `_triangle` and material helpers; it never calls the parent's build. It adds no floor/boundary, collider, HP owner, target group, interaction, timer, damage, cue, pickup or reward. Its `show_sun` and `follow_landmarks` overrides are no-ops so the inherited sun/follow behavior has no authority here. The existing [shore scenery](../../../scripts/acts/act3/mirror_sea_scenery.gd) and its [production record](mirror-sea-production.md) remain unchanged.
+
+`build(room=true, clear_pockets=false)` is idempotent and supports only this room's coordinates. Add the root to its live world at identity transform before building. `runtime_error()` checks original parent/world/script, exact visible mesh ancestry/count, native resource identities/stamps, actual transforms, opaque ordinary-depth materials, off-floor water/rim bounds and the low Earthrid envelope. Receipts retain the engine's assigned native values; they do not compare widened native values against nominal binary64 literals. It returns a diagnostic String without modifying the scene.
+
+`framing_points()` returns `{error, points}` with eight transformed actual mesh-AABB corners per mesh, conservatively including the whole lake. The actual fixture observes all248 original corners, then conservatively encloses them in eight world-AABB corners for the shared224-point budget without trimming any native geometry. `camera_framing_points()` exposes the points as an Array, and `native_geometry_state()` exposes pure value diagnostics and stamps without resource/node handles. These methods do not mutate or replace the common camera, Scheduler, cue or snapshot authority. The consumer owns its actual floor and any decision to include scenic points in quiet framing.
+
+| Source | SHA256 |
+| --- | --- |
+| New builder | `9bb9cf962776d7863ab2508debc4df92f1a64e100c15740d72390b57784eac80` |
+| Unchanged parent helpers | `de25f3f9b7127360fe84a3f0e7ff08bc35dc642bc739da1e579d2a4015c089c4` |
+
+## Actual quiet results and remaining art
+
+Qualified new-resource import exits0clean. The first graphical fixture has11checks/1failure, exit1: native31mesh/custody/figure dry-bank and exact centred sun0/1 views pass, but a genuine outwardRIGHT dash leaves the complete lake/currentHero union outside the protected screen rectangle. Both original centred images, source and full log remain in [first evidence](../../../assets/acts/act3/evidence/A3-L3-irontick-preview/01-lateral-right-view-failure/receipt.json). It does not establish a lateral capture.
+
+The smallest fixture change selects a genuine ordinary inwardLEFT swipe, preserving2.7m dash distance, floor, source, native bounds, fixed camera and protected margins. The [affected native run](../../../assets/acts/act3/evidence/A3-L3-irontick-preview/02-inward-left-native-pass/receipt.json) passes13/0 clean, four original339×736 centred/left and explicitly selected stable sun0/1 images. Full actual Hero/local/camera/input/resources/UI state freezes exactly across each TESTONLYdraw boundary; the release anchor is(.28,.60), history records the actual complete dash, and cleanup frees the world without target remnants. This is no native OS gesture or real sun-clock transition test.
+
+Root and independent reviewer open all four original images and compare G07/G14/G17/G19. The whole lake/rim, small pale figure and actual Hero remain below HUD and free of distant-band masking. Hero feet/shadow and dry shore remain separate; Earthrid's head overlaps a small near-edge piece of the lake. Two faint broken arcs remain muted, with no bright countdown/action cue. Earthrid reads as a squat block figure: kneeling arms reaching water, the forehead organ, expression and sparse chin hair need clearer native-scale articulation. Flat water, block rims, coarse island and a conspicuous horizontal black backdrop strip remain prototype limits. These views establish bounded visibility, not finished art.
+
+## Quiet consumer and later composition
+
+The shared traveller spawns at `(0,.1,-9.8)` without changing the backdrop or camera. Full248 original native mesh-AABB corners are enclosed by eight conservative world-AABB corners; no lake/figure bound is removed. The four tested quiet views retain complete current Hero/level/resource/input/camera/UI state. The generated owned UID is preserved. No raster/shader/audio export or additional clock is introduced.
+
+Improve figure pose/detail before finished-art acceptance, then run only the affected native portraits. The later resonant apron needs an independently authored real floor footprint/source, wholeHero landing and ordinary return composition, with Echo between pulses. Reposition or omit dressing if it obstructs those required shapes. A3-L3 and parent-derivedA3-O3 need their own authored placements; these room coordinates do not implement either full level. No fulllevel, human balance, grayscale, mobile or performance claim follows.

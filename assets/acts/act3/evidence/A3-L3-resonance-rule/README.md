@@ -1,0 +1,8 @@
+# Resonance rule-room evidence
+
+Original frozen sources and full native logs preserve their exact bytes. The room uses the actual Main/Player, shared Scheduler/LaneMechanism/Cue and stable14×22 shore floor. It has one honest filled-circle environmental pulse, no enemy HP, Echo, reward or campaign progress.
+
+- [01 focused native pass](01-focused-native-pass/receipt.json):57checks/0failures, cleanexit0. Meaningful native observation equality controls, cleared-context rejection, exact warning/unfinished-dash quiet fresh pairing, six invalid-unit controls at both boundaries, actual escape/return/ordinary tap and cleanup.
+- [02 graphical pass](02-graphical-phase-pass/receipt.json):64/0 clean, six original339×736 images. Same finite behavior plus exact draw freezes/containment. Root opened all6; other phases show circle/marker and escapedHero, but warningHUD is stale and centredHero masks source. Original images are retained as limits, not warning-view readiness.
+
+[03 separated warning pass](03-warning-separated-native-pass/receipt.json) is65/0 clean, six original339×736 images allRoot+independentrevieweropened. ActualspawnX=.7 and genuine normalwarningdraw preserve source/pulse/floor/controller/camera/margins. Current warning source/HUD are clear; outlinepasses locally beneath Hero. Later completecircle/escapedHero/landing/return are clear. Tinycube/genericfloor/decorativeblueSunedgeclip remain limits. A future annulus is not a confirmed requirement; filled danger must stay honestly marked. Echo between pulses, fulllevel placement, production Shell persistence, equipment extremes, art and native OS controls remain unproven.

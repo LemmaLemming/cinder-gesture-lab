@@ -1,5 +1,27 @@
 # Act 3 progress
 
+## Current prototype milestone — 9 October 2026
+
+Act 3 has **2/8 accepted levels**. A3-L3 is the sole frontier. Shared30 `64f34c8776aa81d7eb8f88b71b8b8d64192f35f0` is adopted at `f1c897590ceee2b41379dcac8854c9589df16b19`, ACK13a3ca09. Accepted L1/L2 remain unchanged.
+
+The ninth finite Echo run passes70/0 clean with two kits and ten339×736 images reviewed by Root and an independent reviewer. Its fixed-depth scenery anchor clears the complete body, reflection, route, knot, slash, Hero and rear landing in those poses. Thin route, small knot and primitive upright body remain limits. That result retains source2f5e and its original shared30 context.
+
+The affected familiar shore passes28/0 clean with six images reviewed by Root. The original quiet cast scope remains13/0/four images. The quiet Irontick inward-left fixture passes13/0 clean with four Root/independent-reviewed views after the retained outward-right11/1 refusal. The lake and figure are visible; kneeling/arms/face still need better articulation.
+
+The independent circular resonance scaffold passes57/0 headless,64/0 original graphical and65/0 corrected graphical, all clean. The corrected six images were opened by Root and an independent reviewer: warning cube and current0/2 HUD are separate; lock/active circle and escapedHero are clear; recovery/return/completion remain readable. Native equality negative controls, epoch rejection, exact warning/unfinished-dash fresh pairing, actual dash/ordinary tap and cleanup pass. The circle has honest filled danger; no confirmed annulus/safe-interior requirement exists. Tiny source, generic floor and clipped decorative blueSun remain art limits.
+
+Current pose candidates are separately **unexecuted**: arched sixteen-box Echo `1dd540c`, Earthrid pose/fold/detail `3f5dc2`. Static bounds fit existing envelopes; authority, timings, floor and camera remain unchanged. Their affected native portraits are next. No repeat import is needed for these existing-script edits.
+
+Shared31 `4d4564d35c677859e15dfd5da7901f344b594bbc` publishes only pure candidate-Player camera views. Contract/diff reviewed; preserving adoption follows this milestone. It supplies no repeating/late-dead Echo lifecycle or measured-cost fix. Those remain integration-owned and unpublished. The four-file mechanical pulse1→Echo→pulse2 prototype is being authored independently; it will explicitly refuse unsupported whole-unit saves. No cloned source, private clock/reset/cache or Player capture is used.
+
+All completed owned engine jobs are closed. Full L3 authored route, production persistence, all relevant kits, full art, exit and autonomous acceptance remain unfinished. No L4 begins before L3 acceptance. Public web research remains authorized; the actual YouTube retry retains the stored browser denial and no unwatched-footage claim. No human decision is pending.
+
+Earlier entries preserve their dated implementation states. Their original pending-job wording does not describe today's results.
+
+## Published shared30 adopted — 9 October 2026
+
+Owned milestone `34f117b82424469895b84011aa59bd8124529d29` is preserved in merge `f1c897590ceee2b41379dcac8854c9589df16b19`, publication `64f34c8776aa81d7eb8f88b71b8b8d64192f35f0`, ACK `13a3ca09-c786-4031-b85c-e9a846d50b82`. All904tracked owned files plus frozen untracked Irontick builder retain exact hashes; no conflicts/publication ancestry/tracked clean. Generated sharedUID sidecars remain untouched/untracked with integration. Seven earlier Echo runs remain shared28 executions, not relabeled30. Rear-pocket direction preference is the smallest correction for the latest slow view refusal; eighth affected two-kit native graphical run is in progress, no final result. Irontick quiet native fixture and independent shared-circle resonance prototype are new unrun work. Same-owner/late-dead lifecycle31 and measured runtime-cost resolution remain integration-owned unpublished work. No human decision pending; Act3 remains2/8 accepted.
+
 ## Latest finite-room result — seventh native attempt
 
 The typed-array repair is verified, but seventh **47checks/1failure, exit1** still refuses the slow/long-step view before lease allocation. Default completes the real route, exact warning reconstruction/six invalid units, ordinary-primary clear and cleanup. [Seventh receipt](../../../assets/acts/act3/evidence/A3-L3-echo-rule/07-centreward-default-pass-slow-view-failure/receipt.json) retains its five original339×736 images only. Root and reviewer opened all five: current HUD/source/Hero/knot separate; thin stem/small knot/primitive silhouette/lateral scenic crop remain. No slow image/clear or final art claim. Read-only witness/view diagnosis is in progress; no safety guard or tolerance is loosened. Sixth4/1 typed-array original is separately preserved. Act3 remains2/8 accepted, L3 current. Published30 adoption follows this frozen28 scope; shared lifecycle31 remains integration-owned/unpublished. No human decision pending.

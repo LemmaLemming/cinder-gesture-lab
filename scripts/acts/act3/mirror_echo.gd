@@ -25,24 +25,24 @@ class PorcelainRenderer extends Node3D:
 		# Its harmless outlined reflection belongs to the level's scenery.
 		var porcelain := Color(0.86, 0.86, 0.91, 1.0)
 		var shade := Color(0.68, 0.67, 0.77, 1.0)
-		_box("LeftFoot", Vector3(0.16, 0.12, 0.26), Vector3(-0.25, 0.06, 0.01), shade)
-		_box("RightFoot", Vector3(0.16, 0.12, 0.26), Vector3(0.25, 0.06, 0.01), shade)
-		_box("LeftFrame", Vector3(0.09, 0.98, 0.13), Vector3(-0.28, 0.65, 0), porcelain)
-		_box("RightFrame", Vector3(0.09, 0.98, 0.13), Vector3(0.28, 0.65, 0), porcelain)
-		_box("LowFrame", Vector3(0.60, 0.075, 0.13), Vector3(0, 0.30, 0), shade)
-		_box("ShoulderFrame", Vector3(0.82, 0.09, 0.15), Vector3(0, 1.09, 0), porcelain)
-		_box("LeftHeadFrame", Vector3(0.075, 0.22, 0.14), Vector3(-0.185, 1.295, 0), porcelain)
-		_box("RightHeadFrame", Vector3(0.075, 0.22, 0.14), Vector3(0.185, 1.295, 0), porcelain)
-		_box("HeadCrown", Vector3(0.445, 0.06, 0.14), Vector3(0, 1.405, 0), porcelain)
-		_box("HeadSill", Vector3(0.445, 0.055, 0.14), Vector3(0, 1.19, 0), shade)
-		_box("LeftCuff", Vector3(0.085, 0.30, 0.14), Vector3(-0.43, 0.83, 0), porcelain)
-		_box("RightCuff", Vector3(0.085, 0.30, 0.14), Vector3(0.43, 0.83, 0), porcelain)
-		_box("LeftHand", Vector3(0.13, 0.15, 0.14), Vector3(-0.46, 0.615, 0.015), shade)
-		_box("RightHand", Vector3(0.13, 0.15, 0.14), Vector3(0.46, 0.615, 0.015), shade)
-		_box("FilledTorso", Vector3(0.46, 0.70, 0.12), Vector3(0, 0.72, 0), porcelain)
-		_box("FilledHead", Vector3(0.30, 0.20, 0.12), Vector3(0, 1.295, 0), porcelain)
+		_box("LeftFoot", Vector3(0.16, 0.10, 0.24), Vector3(-0.25, 0.05, -0.19), shade)
+		_box("RightFoot", Vector3(0.16, 0.10, 0.24), Vector3(0.25, 0.05, -0.19), shade)
+		_box("LeftFrame", Vector3(0.11, 0.47, 0.14), Vector3(-0.23, 0.295, -0.16), porcelain, 20.0)
+		_box("RightFrame", Vector3(0.11, 0.47, 0.14), Vector3(0.23, 0.295, -0.16), porcelain, 20.0)
+		_box("LowFrame", Vector3(0.48, 0.16, 0.20), Vector3(0, 0.47, -0.10), shade)
+		_box("ShoulderFrame", Vector3(0.60, 0.13, 0.21), Vector3(0, 0.80, 0.15), porcelain, 15.0)
+		_box("LeftHeadFrame", Vector3(0.065, 0.22, 0.23), Vector3(-0.17, 0.98, 0.235), porcelain, 12.0)
+		_box("RightHeadFrame", Vector3(0.065, 0.22, 0.23), Vector3(0.17, 0.98, 0.235), porcelain, 12.0)
+		_box("HeadCrown", Vector3(0.34, 0.075, 0.23), Vector3(0, 1.09, 0.235), porcelain, 12.0)
+		_box("HeadSill", Vector3(0.34, 0.075, 0.23), Vector3(0, 0.875, 0.27), shade, 12.0)
+		_box("LeftCuff", Vector3(0.11, 0.72, 0.16), Vector3(-0.34, 0.42, 0.245), porcelain, -15.0)
+		_box("RightCuff", Vector3(0.11, 0.72, 0.16), Vector3(0.34, 0.42, 0.245), porcelain, -15.0)
+		_box("LeftHand", Vector3(0.13, 0.13, 0.18), Vector3(-0.34, 0.065, 0.36), shade)
+		_box("RightHand", Vector3(0.13, 0.13, 0.18), Vector3(0.34, 0.065, 0.36), shade)
+		_box("FilledTorso", Vector3(0.34, 0.46, 0.22), Vector3(0, 0.64, 0.015), porcelain, 25.0)
+		_box("FilledHead", Vector3(0.30, 0.22, 0.22), Vector3(0, 0.98, 0.235), porcelain, 12.0)
 
-	func _box(label: String, size: Vector3, offset: Vector3, color: Color) -> void:
+	func _box(label: String, size: Vector3, offset: Vector3, color: Color, pitch_degrees: float = 0.0) -> void:
 		var visual := MeshInstance3D.new()
 		visual.name = label
 		var primitive := BoxMesh.new()
@@ -55,6 +55,7 @@ class PorcelainRenderer extends Node3D:
 		material.albedo_color = color
 		visual.material_override = material
 		visual.position = offset
+		visual.rotation.x = deg_to_rad(pitch_degrees)
 		add_child(visual)
 		required_visuals.append(visual)
 
