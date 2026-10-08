@@ -48,7 +48,8 @@ Optional levels are separately entered side levels; optional routes inside regul
 The selected reference is Georges Méliès's [A Trip to the Moon (1902)](https://en.wikipedia.org/wiki/Le_Voyage_dans_la_Lune).
 
 - Palette: moon-white, dusty silver, and black.
-- Proposed scenery: painted stars, crater gardens, giant mushrooms, and theatrical lunar sets.
+- Art direction: handmade lunar theatre, using painted-looking rock flats, broad white streaks and black creases, human figures in stars and planetary discs, oversized fungi, and celestial court ornament. Keep the moon-white, dusty-silver and black palette as our game interpretation; surviving handcoloured film prints are separately documented.
+- Character and prop vocabulary: Victorian expedition coats, hats, beards and umbrellas; embroidered ceremonial astronomer robes; a squat, finless bullet capsule; upright masked Selenites with rib bands, projecting headpieces and spears. The court uses curling panels, crescents, radial roundels and drapery.
 - Proposed movement identity: choosing where to land among circular hazards and scattered safe ground.
 - Earlier boss candidate: the Selenite King.
 - **Act 1 final boss: the Man in the Moon.** He closes this act; the campaign has a separate final encounter in Act 3.
@@ -56,9 +57,9 @@ The selected reference is Georges Méliès's [A Trip to the Moon (1902)](https:/
 **Working regular-level sequence**
 
 1. Observatory and Launch — telescope workshops, rooftops, and a giant cannon; introduce dash direction and tap aiming in generous spaces.
-2. Crater Gardens — connected crater clearings and visible impact warnings; teach safe landing choices.
-3. Mushroom Caverns — broad fungal chambers and winding passages; combine enemy spacing with visibly telegraphed spore hazards.
-4. Selenite Court — ceremonial halls and columns; coordinated guards lead to the proposed Selenite King encounter.
+2. Crater Gardens — broad playable clearings framed by jagged painted-looking lunar scenery and celestial tableaux. Crater hazards and impact warnings are game additions that teach safe landing choices.
+3. Mushroom Caverns — an irregular scenic grotto with shallow mushroom caps, tall stalks, porous foreground fungi, rock shelves and a trunk-like crossing. Broad floors combine enemy spacing with proposed, visibly telegraphed spore hazards.
+4. Selenite Court — an open royal tableau with curling scenic panels, crescent columns, radial ornaments and drapery; coordinated biped guards lead to the proposed Selenite King encounter.
 5. The Living Moon — craters become pores and ridges become wrinkles; the face forms the landscape around the Man in the Moon encounter.
 
 The proposed act length is approximately 40–45 minutes. Broad floors, generous passages, encounter checkpoints, and locally visible attack warnings support dash-only movement and the close portrait camera. Introduce each hazard safely before combining it with enemies.
@@ -67,11 +68,11 @@ The proposed act length is approximately 40–45 minutes. Broad floors, generous
 
 | Regular level | Optional level | Reused assets | Small additions and play difference |
 | --- | --- | --- | --- |
-| Crater Gardens | Salvage Circuit | Crater floors, rim pieces, rocks, rocket debris, and lunar enemies | Recoverable rocket capsules and a damaged escape hatch. A compact loop lets the player choose the order of salvage encounters; contact collects the capsules. |
+| Crater Gardens | Salvage Circuit | Broad lunar floors, jagged scenic rock pieces, capsule debris, and lunar enemies | Recoverable capsule parts and a damaged escape hatch, derived from the same finless-shell model. A compact loop lets the player choose the order of salvage encounters; contact collects the parts. |
 | Mushroom Caverns | Spore Bloom | Cave floors and walls, roots, mushrooms, and existing enemies | Animated spore vents and clear floor warnings. Alternating safe spaces emphasize dash timing and landing. |
-| Selenite Court | Royal Rehearsal | Palace tiles, columns, guards, and ceremonial props | Formation markers and a practice bell. Familiar guards adopt different formations across short encounters. |
+| Selenite Court | Royal Rehearsal | Court floors, curling wall panels, celestial columns, biped guards, and ceremonial props | Formation markers and a practice bell. Familiar guards adopt different formations across short encounters. |
 
-[Concept art and generation prompts](concept-art/act1/README.md) for these three environments explore the shared scenery kits and small optional-area additions. The art is a visual proposal, not implemented level content.
+The [film reference library](reference-library/act1/README.md) contains the researched scenery and object catalogue, an offline searchable gallery, and six revised concept studies. Its [style guide](reference-library/act1/STYLE_GUIDE.md) connects the visual rules to film frames and museum records. The [earlier concept art](concept-art/act1/README.md) remains as a superseded exploratory pass. New art and all encounter rules are game proposals, not original film material or implemented levels.
 
 ### Act 2 — The Invasion
 

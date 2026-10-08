@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Act I · A Trip to the Moon reference library</title>
+  <style>
+    :root { color-scheme: dark; --ink: #eeeae2; --soft: #b4b3af; --dim: #858783; --line: #343733; --ground: #111310; --panel: #1b1e19; --focus: #e4d8ab; }
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 24px; }
+    body { margin: 0; background: var(--ground); color: var(--ink); font: 16px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, input, select { font: inherit; }
+    button, select { cursor: pointer; }
+    a { color: var(--ink); text-underline-offset: 4px; overflow-wrap: anywhere; }
+    button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+    .shell { max-width: 1540px; margin: auto; padding: 48px 36px 60px; }
+    .masthead { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 32px; align-items: end; padding-bottom: 30px; border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 12px; color: var(--soft); font-size: 12px; font-weight: 650; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(36px, 5vw, 64px); font-weight: 400; line-height: 1.08; letter-spacing: -.03em; }
+    .subtitle { margin: 14px 0 0; color: var(--soft); max-width: 660px; }
+    .counts { display: flex; gap: 28px; padding-bottom: 3px; }
+    .count { display: flex; flex-direction: column; align-items: start; min-width: 66px; }
+    .count strong { font-size: 30px; font-weight: 450; line-height: 1.2; }
+    .count span { margin-top: 4px; color: var(--soft); font-size: 12px; }
+    .provenance { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 20px; margin: 22px 0 26px; color: var(--soft); font-size: 14px; }
+    .provenance p { margin: 0; max-width: 940px; }
+    .rules { margin-top: 12px; max-width: 940px; }
+    .rules summary { color: var(--ink); cursor: pointer; width: fit-content; }
+    .rules ul { margin: 14px 0 0; padding-left: 21px; }
+    .rules li + li { margin-top: 8px; }
+    .local-label { white-space: nowrap; color: var(--dim); }
+    .filters { display: grid; grid-template-columns: minmax(200px, 1fr) minmax(180px, 240px) minmax(160px, 220px); gap: 16px; align-items: end; }
+    .field { min-width: 0; }
+    .field label { display: block; margin-bottom: 7px; color: var(--soft); font-size: 13px; }
+    input, select { width: 100%; min-height: 46px; padding: 10px 12px; color: var(--ink); background: var(--panel); border: 1px solid #50534b; border-radius: 4px; }
+    input::placeholder { color: #92978d; }
+    .results-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 20px 0 18px; }
+    .results-bar p { margin: 0; color: var(--soft); font-size: 14px; }
+    .clear { padding: 7px 11px; border: 1px solid var(--line); border-radius: 4px; background: transparent; color: var(--ink); }
+    .clear[hidden] { display: none; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; }
+    .card { display: block; width: 100%; padding: 0; text-align: left; color: inherit; background: transparent; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; transition: border-color .15s ease, background .15s ease; }
+    .card:hover { border-color: #8b8d82; background: #171a15; }
+    .thumb { display: flex; aspect-ratio: 4 / 3; align-items: center; justify-content: center; background: #060806; border-bottom: 1px solid var(--line); overflow: hidden; }
+    .card.concept .thumb { aspect-ratio: 3 / 4; }
+    .thumb img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .no-image { padding: 24px; width: 100%; color: var(--soft); }
+    .no-image span { display: block; }
+    .no-image .placeholder-title { color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 25px; line-height: 1.3; margin-bottom: 12px; }
+    .no-image .placeholder-note { font-size: 13px; }
+    .card-body { display: block; padding: 17px 18px 18px; }
+    .card-kind { display: block; font-size: 11px; color: var(--soft); font-weight: 650; letter-spacing: .06em; text-transform: uppercase; }
+    .card-title { display: block; margin: 7px 0 9px; font-size: 20px; font-weight: 520; line-height: 1.3; }
+    .card-description { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; color: var(--soft); font-size: 14px; line-height: 1.5; }
+    .card-meta { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 15px; color: var(--dim); font-size: 12px; }
+    .card-meta span + span::before { content: "·"; margin-right: 9px; }
+    .empty { margin: 0; padding: 48px 18px; border: 1px dashed var(--line); color: var(--soft); text-align: center; }
+    .foot { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--dim); font-size: 13px; }
+    dialog { width: min(1180px, calc(100% - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 0; color: var(--ink); background: var(--ground); border: 1px solid #6e7167; border-radius: 6px; overflow: auto; }
+    dialog::backdrop { background: rgb(0 0 0 / .85); }
+    .dialog-head { display: flex; justify-content: space-between; gap: 20px; align-items: start; padding: 22px 24px; border-bottom: 1px solid var(--line); }
+    .dialog-head h2 { margin: 5px 0 0; font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: 30px; line-height: 1.25; }
+    .close { flex: 0 0 auto; width: 44px; height: 44px; border: 1px solid #65685e; border-radius: 4px; background: var(--panel); color: var(--ink); font-size: 26px; line-height: 1; }
+    .dialog-content { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(300px, 1fr); }
+    .preview { display: flex; align-items: flex-start; justify-content: center; min-width: 0; padding: 16px; background: #060806; }
+    .preview img { display: block; width: 100%; height: auto; max-height: 76dvh; object-fit: contain; }
+    .preview[hidden] { display: none; }
+    .dialog-content.text-only { grid-template-columns: 1fr; }
+    .detail { min-width: 0; padding: 24px; }
+    .detail h3 { margin: 0 0 7px; color: var(--ink); font-size: 14px; font-weight: 650; }
+    .detail p { margin: 0; color: var(--soft); }
+    .detail-section + .detail-section { margin-top: 24px; }
+    .detail dl { margin: 0; display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 8px 12px; font-size: 13px; }
+    .detail dt { color: var(--dim); }
+    .detail dd { margin: 0; color: var(--soft); overflow-wrap: anywhere; }
+    .detail ul { padding-left: 19px; margin: 0; color: var(--soft); }
+    .detail li + li { margin-top: 9px; }
+    .reference-button { padding: 0; border: 0; background: transparent; color: var(--ink); text-align: left; text-decoration: underline; text-underline-offset: 4px; }
+    .detail .notes { font-size: 13px; }
+    .preview-caption { color: var(--dim); font-size: 12px; margin: 10px 0 0; }
+    @media (min-width: 1320px) { .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    @media (max-width: 980px) { .masthead { grid-template-columns: 1fr; gap: 24px; } .counts { gap: 34px; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dialog-content { grid-template-columns: 1fr; } .preview img { max-height: 60dvh; } }
+    @media (max-width: 620px) { .shell { padding: 28px 16px 40px; } .masthead { padding-bottom: 24px; } .subtitle { font-size: 14px; } .provenance { grid-template-columns: 1fr; gap: 9px; } .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } .field:first-child { grid-column: 1 / -1; } .grid { grid-template-columns: 1fr; gap: 20px; } .counts { gap: 28px; } .count strong { font-size: 27px; } dialog { width: calc(100% - 16px); max-height: calc(100dvh - 16px); } .dialog-head, .detail { padding: 18px; } .dialog-head h2 { font-size: 25px; } .preview { padding: 8px; } .preview img { max-height: 65dvh; } }
+    @media (prefers-reduced-motion: reduce) { .card { transition: none; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">Act I / Visual research archive</p>
+        <h1>A handmade Moon</h1>
+        <p class="subtitle"><em>Le Voyage dans la Lune</em> · Georges Méliès, 1902. Film scenery, objects, historical art, and game concept studies.</p>
+      </div>
+      <div class="counts" aria-label="Library totals">
+        <div class="count"><strong id="count-total">0</strong><span>records</span></div>
+        <div class="count"><strong id="count-images">0</strong><span>local images</span></div>
+        <div class="count"><strong id="count-objects">0</strong><span>film objects</span></div>
+      </div>
+    </header>
+
+    <div class="provenance">
+      <div>
+        <p>Film stills document the source. Retrospective drawings and museum reconstructions have their own dates. Generated concept art and game adaptations are proposals, not material from the film.</p>
+        <details class="rules" id="style-rules" hidden>
+          <summary>Design rules drawn from the references</summary>
+          <ul id="rules-list"></ul>
+        </details>
+      </div>
+      <span class="local-label">Offline library · sources open online</span>
+    </div>
+
+    <form class="filters" id="filters" role="search">
+      <div class="field">
+        <label for="search">Search the library</label>
+        <input id="search" type="search" placeholder="Mushrooms, painted rocks, capsule…" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="kind">Reference type</label>
+        <select id="kind"><option value="">All types</option></select>
+      </div>
+      <div class="field">
+        <label for="sequence">Film sequence</label>
+        <select id="sequence"><option value="">All sequences</option></select>
+      </div>
+    </form>
+    <div class="results-bar">
+      <p id="result-count" role="status" aria-live="polite" aria-atomic="true">Loading library…</p>
+      <button class="clear" id="clear-filters" type="button" hidden>Clear filters</button>
+    </div>
+    <div class="grid" id="library-grid" aria-label="Reference records"></div>
+    <p class="empty" id="empty" hidden>No matching references. Try another term or clear the filters.</p>
+    <footer class="foot">Each record keeps its source, date, provenance, and adaptation notes. Open a card to inspect the full image and related references. <a href="catalog.json">JSON</a> · <a href="catalog.csv">CSV</a> · <a href="library.sqlite">SQLite</a> · <a href="CREDITS.md">Credits</a> · <a href="generated-manifest.json">Generation prompts</a></footer>
+  </main>
+
+  <dialog id="record-dialog" aria-labelledby="detail-title">
+    <header class="dialog-head">
+      <div><span class="card-kind" id="detail-kind"></span><h2 id="detail-title"></h2></div>
+      <button class="close" id="close-dialog" type="button" aria-label="Close reference">×</button>
+    </header>
+    <div class="dialog-content" id="dialog-content">
+      <div class="preview" id="detail-preview"></div>
+      <div class="detail" id="detail-body"></div>
+    </div>
+  </dialog>
+
+  <script src="./catalog-data.js"></script>
+  <script>
+    (() => {
+      'use strict';
+      const data = window.MOON_LIBRARY || { records: [], style_rules: [] };
+      const records = Array.isArray(data.records) ? data.records : [];
+      const byId = new Map(records.map(record => [String(record.id), record]));
+      const labels = {
+        'film-still': 'Film still', 'production-still': 'Production still',
+        'retrospective-art': 'Retrospective drawing', 'historical-drawing': 'Historical drawing · date unresolved', 'museum-object': 'Museum object',
+        'museum-reconstruction': 'Museum reconstruction', 'historical-poster': 'Historical poster',
+        'film-object': 'Film object', 'generated-concept': 'Generated game concept',
+        'generated-object-sheet': 'Generated object study', 'user-reference': 'User reference'
+      };
+      const search = document.getElementById('search');
+      const kind = document.getElementById('kind');
+      const sequence = document.getElementById('sequence');
+      const grid = document.getElementById('library-grid');
+      const dialog = document.getElementById('record-dialog');
+      const clear = document.getElementById('clear-filters');
+      const empty = document.getElementById('empty');
+      const generated = record => ['generated-concept', 'generated-object-sheet'].includes(record.kind);
+      const list = value => Array.isArray(value) ? value : [];
+      const str = value => value == null ? '' : String(value);
+      const typeLabel = value => labels[value] || str(value).replace(/-/g, ' ');
+      const make = (tag, className, value) => {
+        const element = document.createElement(tag);
+        if (className) element.className = className;
+        if (value != null) element.textContent = str(value);
+        return element;
+      };
+      const safeImagePath = value => {
+        const path = str(value).trim();
+        return path && !/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(path) ? path : null;
+      };
+      const imageReference = (record, visited = new Set()) => {
+        if (!record || visited.has(str(record.id))) return null;
+        visited.add(str(record.id));
+        const path = safeImagePath(record.local_path);
+        if (path) return { record, path };
+        for (const id of list(record.reference_ids)) {
+          const found = imageReference(byId.get(str(id)), visited);
+          if (found) return found;
+        }
+        return null;
+      };
+      const fallback = record => {
+        const content = make('span', 'no-image');
+        content.append(make('span', 'placeholder-title', record.category || typeLabel(record.kind)));
+        content.append(make('span', 'placeholder-note', record.kind === 'film-object' ? 'Object record · open for observations and source references' : 'Linked archive record · open for provenance and source'));
+        return content;
+      };
+      const readableSource = url => {
+        try { return new URL(url).hostname.replace(/^www\./, ''); }
+        catch { return 'Source record'; }
+      };
+      const sourceAnchor = (url, label) => {
+        try {
+          const parsed = new URL(url);
+          if (!['https:', 'http:'].includes(parsed.protocol)) return null;
+          const link = make('a', '', label || readableSource(url));
+          link.href = parsed.href; link.target = '_blank'; link.rel = 'noopener noreferrer';
+          return link;
+        } catch { return null; }
+      };
+
+      document.getElementById('count-total').textContent = records.length;
+      document.getElementById('count-images').textContent = records.filter(record => safeImagePath(record.local_path)).length;
+      document.getElementById('count-objects').textContent = records.filter(record => record.kind === 'film-object').length;
+      const kinds = [...new Set(records.map(record => str(record.kind)).filter(Boolean))].sort((a, b) => typeLabel(a).localeCompare(typeLabel(b)));
+      for (const value of kinds) { const option = make('option', '', typeLabel(value)); option.value = value; kind.append(option); }
+      const sequences = [...new Set(records.map(record => str(record.sequence)).filter(Boolean))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+      for (const value of sequences) { const option = make('option', '', value); option.value = value; sequence.append(option); }
+      const rulesList = document.getElementById('rules-list');
+      for (const rule of list(data.style_rules)) {
+        const text = typeof rule === 'string' ? rule : str(rule.rule || rule.description || rule.title);
+        if (text) rulesList.append(make('li', '', text));
+      }
+      document.getElementById('style-rules').hidden = !rulesList.children.length;
+
+      const ordered = records.map((record, index) => ({ record, index })).sort((a, b) => {
+        const priority = record => generated(record) ? 0 : record.kind === 'film-object' ? 3 : safeImagePath(record.local_path) ? 1 : 2;
+        return priority(a.record) - priority(b.record) || a.index - b.index;
+      }).map(item => item.record);
+      const searchText = new Map(records.map(record => [str(record.id), [record.id, record.title, record.description, record.adaptation, record.sequence, record.category, record.kit, ...list(record.tags)].map(str).join(' ').toLocaleLowerCase()]));
+
+      function render() {
+        const terms = search.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+        const matches = ordered.filter(record => (!kind.value || record.kind === kind.value) && (!sequence.value || str(record.sequence) === sequence.value) && terms.every(term => searchText.get(str(record.id)).includes(term)));
+        const fragment = document.createDocumentFragment();
+        for (const record of matches) {
+          const card = make('button', 'card' + (record.kind === 'generated-concept' ? ' concept' : ''));
+          card.type = 'button'; card.setAttribute('aria-label', 'Open ' + str(record.title));
+          const thumb = make('span', 'thumb');
+          const reference = imageReference(record);
+          if (reference) {
+            const img = make('img'); img.src = reference.path; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+            img.addEventListener('error', () => thumb.replaceChildren(fallback(record)), { once: true });
+            thumb.append(img);
+          } else thumb.append(fallback(record));
+          const body = make('span', 'card-body');
+          body.append(make('span', 'card-kind', typeLabel(record.kind)));
+          body.append(make('span', 'card-title', record.title));
+          if (record.description) body.append(make('span', 'card-description', record.description));
+          const meta = make('span', 'card-meta');
+          meta.append(make('span', '', record.id));
+          if (record.sequence) meta.append(make('span', '', record.sequence));
+          if (record.date) meta.append(make('span', '', record.date));
+          if (meta.children.length) body.append(meta);
+          card.append(thumb, body); card.addEventListener('click', () => openRecord(record)); fragment.append(card);
+        }
+        grid.replaceChildren(fragment);
+        const filtered = Boolean(terms.length || kind.value || sequence.value);
+        clear.hidden = !filtered; empty.hidden = matches.length > 0;
+        document.getElementById('result-count').textContent = matches.length + ' of ' + records.length + ' records' + (filtered ? '' : ' · concept studies first');
+        if (!records.length) empty.textContent = 'The catalogue data is unavailable. Keep catalog-data.js beside this page, then reopen it.';
+      }
+
+      function detailSection(title, value, className = '') {
+        const section = make('section', 'detail-section');
+        section.append(make('h3', '', title), make('p', className, value));
+        return section;
+      }
+
+      function openRecord(record) {
+        document.getElementById('detail-title').textContent = str(record.title);
+        document.getElementById('detail-kind').textContent = typeLabel(record.kind) + (record.sequence ? ' · ' + str(record.sequence) : '');
+        const preview = document.getElementById('detail-preview'); preview.replaceChildren();
+        const reference = imageReference(record);
+        preview.hidden = !reference;
+        document.getElementById('dialog-content').classList.toggle('text-only', !reference);
+        if (reference) {
+          const img = make('img'); img.src = reference.path;
+          img.alt = str(reference.record.title) + (reference.record.description ? '. ' + str(reference.record.description) : '');
+          img.addEventListener('error', () => { preview.replaceChildren(fallback(record)); }, { once: true }); preview.append(img);
+        }
+        const detail = document.getElementById('detail-body'); detail.replaceChildren();
+        if (reference && reference.record.id !== record.id) detail.append(detailSection('Image reference', reference.record.title, 'notes'));
+        if (record.description) detail.append(detailSection(generated(record) ? 'Concept study' : 'Observation', record.description));
+        if (record.adaptation) detail.append(detailSection('Game adaptation · proposal', record.adaptation));
+        const metadata = make('section', 'detail-section'); metadata.append(make('h3', '', 'Provenance'));
+        const dl = make('dl');
+        for (const [label, value] of [['Creator', record.creator], ['Date', record.date], ['Type', typeLabel(record.kind)], ['Category', record.category], ['Kit', record.kit], ['Source credit', record.source_credit_metadata], ['Credit', record.credit], ['Attribution', record.attribution], ['License', record.license], ['Record', record.id]]) {
+          if (value) dl.append(make('dt', '', label), make('dd', '', value));
+        }
+        metadata.append(dl); detail.append(metadata);
+        const licenseLink = sourceAnchor(str(record.license_url), 'Licence terms');
+        if (licenseLink) { const licence = make('section', 'detail-section'); licence.append(licenseLink); detail.append(licence); }
+        if (record.notes) detail.append(detailSection('Source notes', record.notes, 'notes'));
+        const sources = make('section', 'detail-section'); const sourceList = make('ul');
+        list(record.source_urls).forEach((url, index) => {
+          const link = sourceAnchor(str(url), readableSource(str(url)) + (list(record.source_urls).length > 1 ? ' · source ' + (index + 1) : ' · source record'));
+          if (link) { const li = make('li'); li.append(link); sourceList.append(li); }
+        });
+        if (sourceList.children.length) { sources.append(make('h3', '', 'Online sources'), sourceList); detail.append(sources); }
+        const related = make('section', 'detail-section'); const references = make('ul');
+        for (const id of list(record.reference_ids)) {
+          const linked = byId.get(str(id)); if (!linked || linked.id === record.id) continue;
+          const li = make('li'); const button = make('button', 'reference-button', linked.title);
+          button.type = 'button'; button.addEventListener('click', () => { openRecord(linked); document.getElementById('close-dialog').focus(); }); li.append(button); references.append(li);
+        }
+        if (references.children.length) { related.append(make('h3', '', 'Related references'), references); detail.append(related); }
+        if (list(record.tags).length) detail.append(detailSection('Tags', list(record.tags).join(' · '), 'notes'));
+        if (!dialog.open) dialog.showModal();
+        dialog.scrollTop = 0;
+      }
+      document.getElementById('filters').addEventListener('submit', event => event.preventDefault());
+      search.addEventListener('input', render); kind.addEventListener('change', render); sequence.addEventListener('change', render);
+      clear.addEventListener('click', () => { search.value = ''; kind.value = ''; sequence.value = ''; render(); search.focus(); });
+      document.getElementById('close-dialog').addEventListener('click', () => dialog.close());
+      dialog.addEventListener('click', event => { if (event.target === dialog) { const rect = dialog.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close(); } });
+      render();
+    })();
+  </script>
+</body>
+</html>

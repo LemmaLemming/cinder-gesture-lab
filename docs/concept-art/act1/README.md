@@ -1,5 +1,7 @@
 # Act 1 environment concepts
 
+**Superseded exploratory pass.** The [researched film library and revised concept studies](../../reference-library/act1/README.md) establish the current Act 1 direction. These earlier images and prompts are retained for design history; their modern spacesuit, finned rocket, crawling creatures and Gothic court details do not define the revised film-based kit.
+
 These are planning illustrations for the portrait 2.5D game, generated with the built-in image generation tool. They are visual proposals, not implemented gameplay or production-ready environment assets.
 
 Each image shows a regular environment and a small optional area that continues its existing scenery kit. Optional levels can reuse those same pieces in a different layout with a few added assets.
@@ -59,4 +61,3 @@ Scene: SELENITE COURT, a lunar palace combat room built from repeating moon-whit
 Optional-level asset reuse: an adjoining royal practice alcove uses the exact same palace tiles, columns, guards, masks and lighting. Its only unique additions are simple silver formation-marker discs embedded in the floor and one ornate practice bell at the alcove edge. Give the optional space a changed guard arrangement rather than new enemy species or a new environment kit.
 Composition: one local palace arena with the small practice space readable beyond an arch, ample traversable floor, no stairs required for movement. Crisp black silhouettes, moon-white theatrical architecture, dusty-silver floor values, dignified but alien early-cinema stagecraft.
 ```
-

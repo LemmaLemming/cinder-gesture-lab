@@ -4,6 +4,8 @@ A bare-bones Godot mechanics test for the red/black 2.5D game. The character is 
 
 The [game concept and campaign plan](docs/GAME_CONCEPT.md#planned-campaign) records the planned acts, including **Tormance — The False World**, inspired by David Lindsay's *A Voyage to Arcturus*. Campaign bosses, chapter palettes, weapon replacement, and powerups are currently planning concepts.
 
+Act 1's [film reference library](docs/reference-library/act1/README.md) collects 70 scenery, costume, character, prop and effect records, 40 archival or historical references, and six new game concept studies. Open its offline `index.html` gallery to search by object, reference type or film sequence. JSON, CSV, SQLite, source credits and generation prompts are included.
+
 ## Play
 
 Open `project.godot` with Godot 4.7.2, then click Play in the editor. On this Mac the engine is at `.tools/Godot.app`; `Play.command` and `Edit.command` launch it from Finder. The launchers also find a Godot app in Applications or `godot` on PATH. Play opens a dedicated full-screen macOS Space.
