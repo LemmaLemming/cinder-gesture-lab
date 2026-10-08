@@ -7,6 +7,7 @@ signal begin_story_requested
 signal continue_story_requested
 signal optional_requested(level_id: String)
 signal replay_requested(level_id: String, loadout: Dictionary)
+signal restart_replay_requested(level_id: String, loadout: Dictionary)
 signal resume_requested
 signal retry_requested
 signal leave_side_requested
@@ -60,6 +61,7 @@ var _card_action: Button
 var _journey_offset: int = 0
 var _replay_id: String = ""
 var _replay_gear: Dictionary = {}
+var _restarting_replay: bool = false
 var _selectors: Dictionary = {}
 var _comparison: Label
 var _item_description: Label
@@ -105,6 +107,11 @@ func show_commit_error(message: String) -> void:
 	show_error(message)
 	_button(_host, "Retry Pending Save / Transition", "RetryPendingOperationButton").pressed.connect(func() -> void: retry_failed_operation_requested.emit())
 
+func show_notice(message: String) -> void:
+	_ensure_ui()
+	_status.text = message
+	_status.modulate = Color.WHITE
+
 func show_title() -> void:
 	_open_page("title", "CINDER", false)
 	var box: VBoxContainer = _scroll_box()
@@ -119,7 +126,7 @@ func show_title() -> void:
 		begin.pressed.connect(func() -> void: begin_story_requested.emit())
 		if begin.disabled:
 			_label(box, "The opening level is awaiting integration.", 19, MUTED)
-	elif state.get("completed_main", []).size() < 15:
+	elif state.get("completed_main", []).size() < 15 or String(state.get("story", {}).get("snapshot", {}).get("level", {}).get("progress", {}).get("contact_exit_id", "")).is_empty():
 		var continue_button: Button = _button(box, "Continue Story · " + story, "ContinueStoryButton")
 		continue_button.disabled = not _playable(story)
 		continue_button.pressed.connect(func() -> void: continue_story_requested.emit())
@@ -251,6 +258,8 @@ func show_pause() -> void:
 	_button(box, "Retry Checkpoint", "RetryButton").pressed.connect(func() -> void: retry_requested.emit())
 	if _state().get("side_attempt") != null:
 		_button(box, "Leave Side Attempt · Continue Story", "LeaveSideButton").pressed.connect(func() -> void: leave_side_requested.emit())
+		if _state()["side_attempt"]["kind"] == "replay":
+			_button(box, "Restart Replay with New Equipment", "RestartReplayButton").pressed.connect(func() -> void: show_replay_setup(_state()["side_attempt"]["level_id"], true))
 	_button(box, "Journey", "JourneyButton").pressed.connect(_open_journey)
 	_button(box, "Settings & Credits", "SettingsButton").pressed.connect(show_settings)
 
@@ -262,15 +271,18 @@ func show_resume(kind: String = "story") -> void:
 	_button(box, "Resume", "ResumeButton").pressed.connect(func() -> void: resume_requested.emit())
 	_button(box, "Journey", "JourneyButton").pressed.connect(_open_journey)
 
-func show_replay_setup(id: String) -> void:
+func show_replay_setup(id: String, restart: bool = false) -> void:
 	_replay_id = id
 	var state: Dictionary = _state()
+	_restarting_replay = restart and state.get("side_attempt") != null and state["side_attempt"]["kind"] == "replay" and state["side_attempt"]["level_id"] == id
 	if _registry == null or not _playable(id) or not (state.get("completed_main", []).has(id) or state.get("completed_optional", []).has(id)):
 		show_journey()
 		show_error("Replay requires a completed, integrated level.")
 		return
 	_open_page("replay", "Replay · " + id, true)
 	_replay_gear = _valid_loadout(state.get("last_replay_equipment", {}))
+	if _restarting_replay:
+		_replay_gear = _valid_loadout(state["side_attempt"]["snapshot"]["equipment_ids"])
 	if _replay_gear.is_empty():
 		_replay_gear = _story_gear()
 	var box: VBoxContainer = _scroll_box()
@@ -303,14 +315,21 @@ func show_replay_setup(id: String) -> void:
 	expand.toggled.connect(func(value: bool) -> void:
 		_comparison.visible = value
 		expand.text = "Hide Equipment Comparison" if value else "Show Equipment Comparison")
-	_replay_action = _button(box, "Start Replay", "StartReplayButton")
+	_replay_action = _button(box, "Restart Replay" if _restarting_replay else "Start Replay", "StartReplayButton")
 	_replay_action.pressed.connect(func() -> void:
-		if not _valid_loadout(_replay_gear).is_empty() and _playable(_replay_id) and _state().get("side_attempt") == null:
-			replay_requested.emit(_replay_id, _replay_gear.duplicate(true)))
+		if not _valid_loadout(_replay_gear).is_empty() and _playable(_replay_id):
+			if _restarting_replay and _can_restart_replay():
+				restart_replay_requested.emit(_replay_id, _replay_gear.duplicate(true))
+			elif _state().get("side_attempt") == null:
+				replay_requested.emit(_replay_id, _replay_gear.duplicate(true)))
 	_refresh_comparison("weapon")
 
 func replay_loadout() -> Dictionary:
 	return _replay_gear.duplicate(true)
+
+func _can_restart_replay() -> bool:
+	var side: Variant = _state().get("side_attempt")
+	return side is Dictionary and side["kind"] == "replay" and side["level_id"] == _replay_id
 
 func show_settings() -> void:
 	if _page != "settings":
@@ -576,7 +595,7 @@ func _refresh_comparison(slot: String) -> void:
 		+ "Shell capacity: %d → %d\nShell reload (s): %.2f → %.2f\n" % [before["shell_capacity"], after["shell_capacity"], before["shell_reload"], after["shell_reload"]] \
 		+ "Perk: None (implemented static equipment)\nCapped bonuses: " + (", ".join(after["capped_stats"]) if not after["capped_stats"].is_empty() else "None") \
 		+ "\nSwap rule comparison: %.1f HP retained, %.1f discarded; larger max HP does not heal. Replay starting resources follow the level's fresh-start policy." % [retained_hp, maxf(hp - retained_hp, 0.0)]
-	_replay_action.disabled = _valid_loadout(_replay_gear).is_empty() or _state().get("side_attempt") != null
+	_replay_action.disabled = _valid_loadout(_replay_gear).is_empty() or (_state().get("side_attempt") != null and not (_restarting_replay and _can_restart_replay()))
 
 func _sync_settings_controls() -> void:
 	if _page != "settings" or _settings == null:

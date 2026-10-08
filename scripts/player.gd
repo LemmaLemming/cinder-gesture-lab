@@ -106,6 +106,35 @@ func get_world_action_records(after_sequence: int = 0) -> Array[Dictionary]:
 func cancel_world_action_capture() -> void:
 	_world_dash_record.clear()
 
+
+## Canonical JSON transport for direct executed records. This pure interface
+## shares the actor snapshot validator; it creates no actor or action.
+static func world_action_record_error(record: Dictionary, clock_s: float) -> String:
+	var error: String = SnapshotCodec.value_error(record)
+	if not error.is_empty():
+		return error
+	if not SnapshotCodec.in_range(clock_s, 0.0, 1000000000000.0):
+		return "Finite world-action clock required"
+	return _world_record_error(record, clock_s, false)
+
+
+static func encode_world_action_record(record: Dictionary, clock_s: float) -> Dictionary:
+	for key: String in ["world_origin", "direction"]:
+		if not record.get(key) is Vector3 or not (record[key] as Vector3).is_finite():
+			return {}
+	if record.get("kind") == "dash":
+		if not record.get("landing") is Vector3 or not (record["landing"] as Vector3).is_finite() or not record.get("path") is Array:
+			return {}
+		for sample: Variant in record["path"]:
+			if not sample is Dictionary or not sample.get("position") is Vector3 or not (sample["position"] as Vector3).is_finite():
+				return {}
+	var encoded: Dictionary = _encode_world_record(record)
+	return encoded if world_action_record_error(encoded, clock_s).is_empty() else {}
+
+
+static func decode_world_action_record(record: Dictionary, clock_s: float) -> Dictionary:
+	return _decode_world_record(record) if world_action_record_error(record, clock_s).is_empty() else {}
+
 ## Live authoritative response data. The level adds its actual floor regions,
 ## world revision, recognition budget and finite authored swipe candidates.
 ## No blast ammo or invulnerability is credited by the scheduler. A moving,
@@ -754,7 +783,7 @@ func _validate_snapshot(snapshot: Dictionary) -> String:
 	return ""
 
 
-func _loadout_error(loadout: Dictionary) -> String:
+static func _loadout_error(loadout: Dictionary) -> String:
 	var error: String = SnapshotCodec.keys_error(loadout, EquipmentScript.SLOTS)
 	if not error.is_empty():
 		return error
@@ -776,7 +805,7 @@ func _last_action_error(action: Dictionary) -> String:
 	return ""
 
 
-func _direction_valid(value: Variant, allow_zero: bool) -> bool:
+static func _direction_valid(value: Variant, allow_zero: bool) -> bool:
 	if not SnapshotCodec.is_vector3(value):
 		return false
 	var direction: Vector3 = SnapshotCodec.read_vector3(value)
@@ -819,7 +848,7 @@ func _capture_error(capture: Dictionary, motion: Dictionary, clocks: Dictionary,
 	return ""
 
 
-func _world_record_error(record: Dictionary, clock: float, pending: bool) -> String:
+static func _world_record_error(record: Dictionary, clock: float, pending: bool) -> String:
 	var common: Array = ["kind", "started_at_s", "origin", "world_origin", "direction", "equipment_ids", "resolved_stats"]
 	if not pending:
 		common.append_array(["schema_version", "sequence", "completed_at_s"])
@@ -876,7 +905,7 @@ func _world_record_error(record: Dictionary, clock: float, pending: bool) -> Str
 	return ""
 
 
-func _path_error(path: Variant, origin: Array, start: float, landing: Variant, end: float) -> String:
+static func _path_error(path: Variant, origin: Array, start: float, landing: Variant, end: float) -> String:
 	if not path is Array or path.is_empty() or path.size() > 4096:
 		return "Dash path must contain a bounded sampled route"
 	var previous: float = start
@@ -897,7 +926,7 @@ func _path_error(path: Variant, origin: Array, start: float, landing: Variant, e
 	return ""
 
 
-func _encode_world_record(record: Dictionary) -> Dictionary:
+static func _encode_world_record(record: Dictionary) -> Dictionary:
 	if record.is_empty():
 		return {}
 	var encoded: Dictionary = record.duplicate(true)
@@ -910,7 +939,7 @@ func _encode_world_record(record: Dictionary) -> Dictionary:
 	return encoded
 
 
-func _decode_world_record(record: Dictionary) -> Dictionary:
+static func _decode_world_record(record: Dictionary) -> Dictionary:
 	if record.is_empty():
 		return {}
 	var decoded: Dictionary = record.duplicate(true)

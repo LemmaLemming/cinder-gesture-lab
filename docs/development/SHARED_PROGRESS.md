@@ -115,3 +115,19 @@ Act2 faaface0 clarifies Scout timing: tracking0.45, full locked lead1.10, active
 The independent physical lunge helper initially passed planning but failed two actual wall-landings: a coarse full sweep and small physics steps found different numeric contact fractions. The repaired helper keeps the0.005m tolerance and uses bounded matching0.05m virtual/actual sweeps. It also guards real capsule/axis locks/source pose/velocity. Targeted result is13checks/0failures, not yet scheduler integration/act fairness acceptance.
 
 Root remains the point of contact, with mailbox checks and quiet monitoring. Full goal remains active and all24 real levels await individual acceptance. No full-suite rerun after baseline.
+
+Exact shared4 publication: `1ebd6b59265897d6ef49a29461473c52426b8fe6`; immutable canonical responses announce availability. Worker adoption is acknowledged individually.
+
+## Shared consumer publication5
+
+All three workers acknowledged exactshared4: Act1 537484c6, Act2 133f79a1 and Act3 47ef41bc; assigned checkout ancestry was independently verified, preserving all owned work. Root remains their explicit point of contact and checks recipient-tagged mailboxes plus compact thread snapshots regularly. All three active and on L1; no duplicate act owner or premature later-level work.
+
+Tested threat-scheduler-3 tracking preparing/immutable full-lock reproof and actual physical-lunge/body lease additions are ready for adoption. Adapter35/lunge14/snapshot35/scheduler69 checks, zero failures. Lunge source prediction/execution now rejects depenetration/axis locks before real movement and uses matching bounded .05m sweeps; full swept warning/proof corridor remains distinct from actual moving-body damage. Scout consumes actual commit clock+full1.10lock; Stalker proposed3/12=.25 travel fits its .30active window. Act owners still compose actors, local hit dedupe, full encounters and portrait/loadout evidence.
+
+Save/replay corrections passed shell52/menu54/persistence45. Failed completion/transition survives navigation; optional local completion cannot precede its reward stamp; relaunch of a latched side exit restores protected story; restart replay stages fresh selected equipment before atomic commit; Title Continue persists through final authored contact exit/coda. Failed restart preserves old world/HP/ammo/gear. Root inspected three actual540x1170 restart portraits. Public pure world-action codec passed directly affected world119/player72; actor behavior/clock/aim unchanged.
+
+Act1 HUD requestae541bfa resolved by dynamic fitted objective/backplate height, text-change/flash/restore relayout and telemetry below. Actual graphical42checks/0; root reviewed two/three-line/wrapped portraits at540x1170. Text guidance is now fully visible. The separate running-arm aggregate-validation request13ff6828 is acknowledged; helper owns backward-compatible pure saved-player context validation for a separate tested publication. It does not delay these tested adapters/HUD.
+
+Actual graphical desktop benchmark completed19.25s, six valid active scripted cells, Godot4.7.2/M3/OpenGLCompatibility/VSync60Hz. MeanFPS26.81–27.19 at30cap and50.69–51.43 at60cap, large stalls; every window unfocused. Per-cell timings and scope in DESKTOP_PERFORMANCE.md, ignored rawJSON/log retained. No foreground/campaign/thermal/mobile conclusion. Pythondevtools20+6subtests passed. No broad baseline repeated.
+
+Unpublished bounded capture initially failed64/9, then76/4; repair remains targeted and no worker may adopt untested workspace files. Final physical captured replay/whole-sequence fairness remains future campaign-selected work. All24 real levels remain unaccepted. Default launch stays Character Lab; full desktop goal active. Exact shared5 commit is announced through canonical run/immutable responses after scoped publication.

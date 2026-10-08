@@ -85,6 +85,7 @@ func _ready() -> void:
 	menu.continue_story_requested.connect(func() -> void: _enqueue("continue"))
 	menu.optional_requested.connect(func(id: String) -> void: _enqueue("side", {"kind": "optional", "level_id": id}))
 	menu.replay_requested.connect(func(id: String, loadout: Dictionary) -> void: _enqueue("side", {"kind": "replay", "level_id": id, "loadout": loadout.duplicate(true)}))
+	menu.restart_replay_requested.connect(func(id: String, loadout: Dictionary) -> void: _enqueue("restart_replay", {"level_id": id, "loadout": loadout.duplicate(true)}))
 	menu.resume_requested.connect(resume_campaign)
 	menu.retry_requested.connect(request_retry)
 	menu.leave_side_requested.connect(func() -> void: _enqueue("leave_side"))
@@ -157,6 +158,19 @@ func _enqueue(kind: String, data: Dictionary = {}) -> void:
 		return
 	if kind == "retry" or kind == "leave_side":
 		_failed_operations.clear()
+	elif not _failed_operations.is_empty():
+		# Navigation/focus events cannot replace a failed completion or transition.
+		# An explicit checkpoint retry/side abandonment is the supported discard.
+		get_tree().paused = true
+		_clear_gesture_chain()
+		if kind == "quit":
+			if not _failed_operations.any(func(value: Dictionary) -> bool: return value.operation == "quit"):
+				_failed_operations.append({"operation": "quit", "resume_after": false})
+			retry_pending_operations.call_deferred()
+		else:
+			menu.show_pause() if is_instance_valid(active_level) else menu.show_title()
+			menu.show_commit_error(campaign_error)
+		return
 	data = data.duplicate(true)
 	data["operation"] = kind
 	data["resume_after"] = not get_tree().paused and ["checkpoint", "complete"].has(kind)
@@ -281,6 +295,16 @@ func _perform(operation: Dictionary) -> bool:
 			menu.show_resume(operation.kind)
 		"leave_side":
 			return _leave_side()
+		"restart_replay":
+			var candidate: Dictionary = _prepare(operation.level_id, operation.loadout)
+			if candidate.is_empty():
+				return false
+			var snapshot: Dictionary = _capture(candidate.player, candidate.level, _fresh_shell_state())
+			if snapshot.is_empty() or not attempts.restart_replay(snapshot):
+				_dispose(candidate)
+				return _fail(attempts.last_error)
+			_install(candidate, snapshot.shell)
+			menu.show_resume("replay")
 		"quit":
 			if is_instance_valid(active_level) and not _record_live(false):
 				return false
@@ -298,9 +322,11 @@ func _load_active() -> bool:
 	# A latched authored exit may have awaited an unavailable accepted scene or
 	# a disk retry. Continue is the explicit consumer; never require a duplicate
 	# contact event that the restored level correctly suppresses.
-	if attempts.state().side_attempt == null and not String(snapshot.level.progress.get("contact_exit_id", "")).is_empty() and attempts.state().completed_main.has(snapshot.level_id):
+	if not String(snapshot.level.progress.get("contact_exit_id", "")).is_empty():
+		if attempts.state().side_attempt != null:
+			return _leave_side()
 		var next_id: String = registry.next_main(snapshot.level_id)
-		if not next_id.is_empty() and registry.is_playable(next_id):
+		if next_id.is_empty() or registry.is_playable(next_id):
 			return _perform({"operation": "exit", "level_id": snapshot.level_id})
 	menu.show_resume(attempts.active_kind())
 	return true
@@ -314,8 +340,16 @@ func _leave_side() -> bool:
 		_dispose(candidate)
 		return _fail(attempts.last_error)
 	_install(candidate, preserved.shell)
-	menu.show_resume("story")
+	if _story_exit_complete():
+		menu.show_journey()
+	else:
+		menu.show_resume("story")
+	menu.show_notice("Story equipment restored.")
 	return true
+
+func _story_exit_complete() -> bool:
+	var saved: Dictionary = attempts.story_snapshot()
+	return attempts.state().completed_main.size() == registry.main_route().size() and not String(saved.get("level", {}).get("progress", {}).get("contact_exit_id", "")).is_empty()
 
 func _record_live(checkpoint: bool) -> bool:
 	var snapshot: Dictionary = capture_campaign_snapshot()
