@@ -1,0 +1,562 @@
+extends SceneTree
+## Production Registry/Title/Journey/format2 lifecycle for exact accepted A2-L2.
+## Requires the exact installed HANDOFF; --expected-commit may assert it. No metadata is
+## injected. The six-predecessor prefix and fresh low HP/empty ammo are TEST ONLY
+## isolated public seed data, not evidence of predecessor gameplay or a clear.
+## Later movement and first-Scout contact/death are actual routed input/physics.
+## This is an entry/save/Retry registration leaf, not another authored full route.
+## Installation and execution provenance are recorded by integration.
+
+const MainScene: PackedScene = preload("res://scenes/main.tscn")
+const Game = preload("res://scripts/game.gd")
+const Shell = preload("res://scripts/campaign/shell.gd")
+const Registry = preload("res://scripts/campaign/registry.gd")
+const Attempts = preload("res://scripts/campaign/attempts.gd")
+const Store = preload("res://scripts/campaign/save_store.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const ACCEPTED_COMMIT: String = "fd5fd3d95a8b8b9ea7ce546c1db6c732a2cc60f6"
+const LEVEL_PATH: String = "res://scenes/acts/act2/a2_l2.tscn"
+const RUNTIME_PATH: String = "res://scripts/acts/act2/weybridge.gd"
+const ACTOR_IDS: Array[String] = ["village_scout", "yard_handler", "apron_handler", "crossing_scout", "shelter_scout", "shelter_handler"]
+const FIRST_SOURCE_ID: String = "village_scout"
+const FIXTURE_PREFIX: Array[String] = ["A1-L1", "A1-L2", "A1-L3", "A1-L4", "A1-L5", "A2-L1"]
+const FATAL_WAIT_S: float = 12.0
+
+var checks: int = 0
+var failures: int = 0
+var game: CinderCampaignShell
+var graphical: bool = false
+var _finished: bool = false
+var _expected_commit: String = ACCEPTED_COMMIT
+var _test_root: String = ""
+var _capture_root: String = ""
+var _registry_text: String = ""
+var _watching_restore: bool = false
+var _restore_events: Array[String] = []
+var _contacts: Array[Dictionary] = []
+var _armed_active_seen: bool = false
+var _deaths: int = 0
+
+
+func _initialize() -> void:
+	var identity: String = "%d-%d" % [OS.get_process_id(), Time.get_ticks_usec()]
+	_test_root = "user://test-act2-l2-registration-%s/" % identity
+	_capture_root = "user://test-act2-l2-registration-captures-%s/" % identity
+	for argument: String in OS.get_cmdline_user_args():
+		if argument == "--portrait":
+			graphical = true
+		elif argument.begins_with("--expected-commit="):
+			_expected_commit = argument.trim_prefix("--expected-commit=")
+	node_added.connect(_observe_restore_node)
+	create_timer(90.0, true).timeout.connect(func() -> void:
+		if not _finished:
+			_expect(false, "production A2-L2 registration completes within its watchdog")
+			_finish())
+	_run.call_deferred()
+
+
+func _run() -> void:
+	root.size = Vector2i(540, 1170)
+	root.content_scale_size = Vector2i(540, 1170)
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	if not _expect(_expected_commit.length() == 40 and _expected_commit.is_valid_hex_number(false), "fixture asserts exact accepted HANDOFF provenance (optional --expected-commit=<40hex>)"):
+		_finish()
+		return
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--level-scene") or argument in ["--capture", "--capture-polish"]:
+			_expect(false, "registration fixture does not select the historical preview shell")
+			_finish()
+			return
+	_registry_text = FileAccess.get_file_as_string(Registry.DATA_PATH)
+	var registry := Registry.new()
+	var accepted: Dictionary = registry.entry("A2-L2")
+	if not _expect(registry.last_error.is_empty() and registry.ids().size() == 24 and accepted.get("readiness") == "accepted" and accepted.get("accepted_commit") == _expected_commit and accepted.get("scene_path") == LEVEL_PATH and accepted.get("api_revision") == "campaign-level-1" and registry.scene_error("A2-L2").is_empty(), "actual production registry validates the exact accepted authored A2-L2 scene: " + registry.last_error):
+		_finish()
+		return
+	if "--fatal-only" in OS.get_cmdline_user_args():
+		await _fatal_case(registry)
+		_finish()
+		return
+	game = _new_shell()
+	await _settle()
+	if not _title_valid("isolated first launch"):
+		_finish()
+		return
+	_expect(game.attempts.state().completed_main.is_empty(), "first launch invents no prior story progress")
+	await _capture("title-locked")
+	await _click(_find("JourneyButton") as Control)
+	await _click(_find("Act2Shortcut") as Control)
+	await _click(_find("Node_A2_L2") as Control)
+	var action: Button = _find("LevelCardAction") as Button
+	var node: Button = _find("Node_A2_L2") as Button
+	if not _expect(game.menu.page_name() == "journey" and node != null and node.get_meta("campaign_state") == "locked" and action != null and action.disabled and (_find("LevelCardBody") as Label).text.contains("A2-L1"), "real Journey keeps accepted A2-L2 locked behind its actual A2-L1 prerequisite"):
+		_finish()
+		return
+	await _capture("journey-locked")
+	var empty_model: String = Exact.stringify(game.attempts.state())
+	await _click(action)
+	_expect(game.active_level == null and Exact.stringify(game.attempts.state()) == empty_model, "disabled locked card neither loads A2-L2 nor fabricates progression")
+	_close_shell()
+	if not await _seed_actual_story(registry, 37.0):
+		_finish()
+		return
+	game = _new_shell()
+	await _settle()
+	if not _title_valid("TEST ONLY six-predecessor story seed"):
+		_finish()
+		return
+	_expect(_no_progress() and not (_find("ContinueStoryButton") as Button).disabled, "TEST ONLY six-predecessor prefix offers protected uncompleted A2-L2 story Continue")
+	await _click(_find("JourneyButton") as Control)
+	await _click(_find("Act2Shortcut") as Control)
+	await _click(_find("Node_A2_L2") as Control)
+	action = _find("LevelCardAction") as Button
+	node = _find("Node_A2_L2") as Button
+	if not _expect(node != null and node.get_meta("campaign_state") == "current" and action != null and not action.disabled and action.text == "Continue Story" and (_find("Node_A2_L3") as Button).get_meta("campaign_state") == "locked", "real seeded Journey offers current A2-L2 Continue while A2-L3 stays locked"):
+		_finish()
+		return
+	await _capture("journey-seeded")
+	await _click(action)
+	if not _actual_entry():
+		_finish()
+		return
+	var entry: Dictionary = game.capture_campaign_snapshot()
+	if not _expect(not entry.is_empty() and entry.level.local_snapshot_version == 1 and _valid_pair(entry), "actual accepted full localversion1 entry is a coherent actor/three-Ray/three-Handler/mechanism/scheduler/shell unit"):
+		_finish()
+		return
+	_expect(game.player.hp == 37.0 and game.player.shells == 0 and entry.player.world_actions.clock_s == 0.0 and entry.player.world_actions.sequence == 0 and entry.shell.input_sequence == 0, "fresh TEST ONLY initial resources retain no executed action/input/tick")
+	_expect(_disk_state_matches(), "entry reopens actual checked format2 SaveStore data")
+	var entry_encoded: String = Exact.stringify(entry)
+	if not _resume_consumed("initial living entry"):
+		_finish()
+		return
+	await _capture("arrival")
+	if not await _ready_dash() or not await _swipe(Vector2(0.36, 0.72), Vector2(0.55, 0.72)) or not await _wait_finished_dash(1):
+		_finish()
+		return
+	game.request_pause()
+	await _settle()
+	var saved: Dictionary = game.capture_campaign_snapshot()
+	if not _expect(game.campaign_error.is_empty() and paused and game.menu.page_name() == "pause" and not saved.is_empty() and _valid_pair(saved), "public deferred pause captures the actual routed movement and complete authored world: " + game.campaign_error):
+		_finish()
+		return
+	var saved_encoded: String = Exact.stringify(saved)
+	var dash: Dictionary = game.player.get_world_action_records()[0]
+	var size: Vector2 = root.get_visible_rect().size
+	var actual_release_anchor: Vector2 = (Vector2(0.55, 0.72) * size) / size
+	_expect(dash.kind == "dash" and dash.path.size() >= 2 and dash.completed_at_s > dash.started_at_s and saved.player.world_actions.sequence == 1 and game.get_aim_anchor_normalized() == actual_release_anchor, "real routed release retains physical dash path and separate exact screen release anchor")
+	_expect(saved_encoded != entry_encoded and saved.player.world_actions.clock_s > 0.0 and saved.level.local.scheduler.clock_s > 0.0 and saved.shell.camera_focus != entry.shell.camera_focus, "live dash changes actual path/clocks/camera before the save")
+	_expect(saved.player.resources.hp == 37.0 and saved.player.resources.shells == 0 and saved.equipment_ids == entry.equipment_ids and saved.shell.input_sequence == 1, "short actual movement preserves low HP/empty ammo/gear and one routed input")
+	_expect(Exact.stringify(game.attempts.active_snapshot()) == saved_encoded and Exact.stringify(game.attempts.state().story.checkpoint) == entry_encoded and _no_progress(), "coherent movement save protects its initial checkpoint and awards no A2-L2 completion/reward")
+	_expect(_disk_state_matches(), "actual pause publishes an exact checked format2 generation")
+	await _settle()
+	_expect(Exact.stringify(game.capture_campaign_snapshot()) == saved_encoded, "paused frames freeze complete actor/local/input/camera state exactly")
+	var retired: Array[Dictionary] = _old_refs()
+	_close_shell()
+	_expect_refs_freed(retired, "first shell closure")
+	if not await _fresh_continue(saved_encoded, "living saved movement"):
+		_finish()
+		return
+	_expect(game.player.hp == saved.player.resources.hp and game.player.shells == saved.player.resources.shells and game.player.get_world_action_records().size() == 1, "fresh Continue preserves actual resources and does not republish the past dash")
+	retired = _old_refs()
+	if not await _quiet_retry(entry_encoded, "initial living checkpoint"):
+		_finish()
+		return
+	_expect_refs_freed(retired, "living GUI Retry")
+	_expect(game.player.hp == 37.0 and game.player.shells == 0 and game.player.get_world_action_records().is_empty() and _no_progress() and _disk_state_matches(), "Retry uses exact checkpoint resources/history without healing or invented progress")
+	retired = _old_refs()
+	_close_shell()
+	_expect_refs_freed(retired, "living retry closure")
+	_cleanup_saves()
+	if not await _fatal_case(registry):
+		_finish()
+		return
+	_expect(get_nodes_in_group("required_cues").is_empty() and get_nodes_in_group("enemies").is_empty(), "disposed production worlds retain no required cue or actor group member")
+	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == _registry_text, "registration fixture leaves production registry bytes unchanged")
+	_finish()
+
+
+func _fatal_case(registry: CinderCampaignRegistry) -> bool:
+	# Only this separate actual initial paused actor receives a TEST ONLY seed.
+	# Remain at the authored spawn; the level admits/tracks/locks the first Ray.
+	# No live position, HP, phase, damage, death or progression is assigned.
+	if not await _seed_actual_story(registry, 0.1):
+		return false
+	game = _new_shell()
+	await _settle()
+	if not _title_valid("fatal branch TEST ONLY initial HP0.1/zeroammo"):
+		return false
+	await _click(_find("ContinueStoryButton") as Control)
+	if not _actual_entry():
+		return false
+	var checkpoint: Dictionary = game.capture_campaign_snapshot()
+	if not _expect(not checkpoint.is_empty() and _valid_pair(checkpoint) and checkpoint.player.resources.hp == 0.1 and checkpoint.player.resources.shells == 0 and not checkpoint.player.resources.dead and checkpoint.player.world_actions.clock_s == 0.0 and checkpoint.player.world_actions.sequence == 0 and Exact.stringify(game.attempts.state().story.checkpoint) == Exact.stringify(checkpoint), "fatal branch protects the exact actual living initial checkpoint through public seed/Continue"):
+		return false
+	_contacts.clear()
+	_deaths = 0
+	_armed_active_seen = false
+	game.player.died.connect(func() -> void: _deaths += 1)
+	var driver: Node = game.active_level.get_node("ReusedRayExchanges")
+	driver.connect("hit_resolved", _on_contact)
+	driver.connect("state_changed", func(id: String, state: Dictionary) -> void:
+		if id == FIRST_SOURCE_ID and state.get("status") == "running" and state.get("phase") == "active" and state.get("armed") == true:
+			_armed_active_seen = true)
+	if not _resume_consumed("fatal branch initial living entry"):
+		return false
+	var scheduler: Node = game.active_level.get_node("WeybridgeThreatScheduler")
+	var deadline: float = float(scheduler.call("get_clock")) + FATAL_WAIT_S
+	for tick: int in range(int(ceilf(FATAL_WAIT_S * Engine.physics_ticks_per_second)) + 120):
+		if game.player.dead:
+			break
+		if paused or not game.campaign_error.is_empty() or float(scheduler.call("get_clock")) >= deadline:
+			break
+		await physics_frame
+		await process_frame
+	var accepted_contacts: Array[Dictionary] = []
+	for contact: Dictionary in _contacts:
+		if contact.result.get("accepted") == true and float(contact.result.get("hp_damage", 0.0)) > 0.0:
+			accepted_contacts.append(contact)
+	if not _expect(game.player.dead and _deaths == 1 and _armed_active_seen and accepted_contacts.size() == 1 and accepted_contacts[0].source_id == FIRST_SOURCE_ID and accepted_contacts[0].result.get("opportunity_consumed") == true and accepted_contacts[0].result.get("impulse") == Vector3.ZERO, "bounded stationary wait receives one real admitted first-Scout active contact/death, without forced live state: " + str(_contacts)):
+		return false
+	await _settle()
+	var fatal: Dictionary = game.capture_campaign_snapshot()
+	print("FATAL CAPTURE OPERANDS: ", {"paused": paused, "page": game.menu.page_name(), "campaign_error": game.campaign_error, "empty": fatal.is_empty(), "player_error": game.player.snapshot_error(fatal.get("player", {})), "local_with_player_error": game.active_level.snapshot_error_with_player(fatal.get("level", {}), fatal.get("player", {})), "player_resources": fatal.get("player", {}).get("resources", {}), "level_writer_error": game.active_level.last_snapshot_error})
+	if not _expect(paused and game.menu.page_name() == "pause" and game.campaign_error.is_empty() and not fatal.is_empty() and fatal.player.resources.dead and fatal.player.resources.hp == 0.0 and fatal.player.resources.shells == 0 and _valid_pair(fatal), "real fatal callback settles a coherent paused actor/Ray/local aggregate: " + game.campaign_error):
+		return false
+	var fatal_encoded: String = Exact.stringify(fatal)
+	_expect(game.player.get_world_action_records().is_empty() and fatal.player.world_actions.sequence == 0 and fatal.shell.input_sequence == 0 and fatal.level.local.rays.records[FIRST_SOURCE_ID].hit_consumed and fatal.level.local.rays.records[FIRST_SOURCE_ID].last_cancel_reason == "hero_defeated", "death consumes the real Scout opportunity and retains its terminal receipt without any player attack/dash or input")
+	_expect(fatal.level.local.scheduler.reservations.is_empty() and fatal.level.local.sequence.stage_index == 0 and fatal.level.local.sequence.defeated_ids.is_empty() and fatal.level.local.sequence.completed_feet.is_empty() and fatal.level.local.sequence.crossed_contacts.is_empty(), "fatal source cleanup creates no defeated target/foot/contact/completion or live damage lease")
+	_expect(Exact.stringify(game.attempts.active_snapshot()) == fatal_encoded and Exact.stringify(game.attempts.state().story.checkpoint) == Exact.stringify(checkpoint) and _disk_state_matches() and _no_progress(), "actual fatal format2 save retains its precise earlier living entry checkpoint and no unearned progress")
+	var retired: Array[Dictionary] = _old_refs()
+	_close_shell()
+	_expect_refs_freed(retired, "fatal shell closure")
+	if not await _fresh_continue(fatal_encoded, "actual fatal saved unit"):
+		return false
+	var dead_before: String = Exact.stringify(game.capture_campaign_snapshot())
+	var disk_before: String = FileAccess.get_file_as_string(_test_root + "campaign.json")
+	_restore_events.clear()
+	_watching_restore = true
+	_click_immediate(_find("ResumeButton") as Control)
+	await _settle()
+	_watching_restore = false
+	var notice: Label = _find("MenuStatus") as Label
+	_expect(paused and game.player.dead and game.menu.page_name() == "pause" and notice != null and notice.text == "Retry your saved checkpoint." and Exact.stringify(game.capture_campaign_snapshot()) == dead_before and FileAccess.get_file_as_string(_test_root + "campaign.json") == disk_before and _restore_events.is_empty(), "dead GUI Resume preserves exact paused fatal resources/clocks/history/input/camera/disk and offers Retry without gameplay callbacks")
+	retired = _old_refs()
+	if not await _quiet_retry(Exact.stringify(checkpoint), "fatal world's actual living entry checkpoint"):
+		return false
+	_expect_refs_freed(retired, "fatal GUI Retry")
+	_expect(not game.player.dead and game.player.hp == 0.1 and game.player.shells == 0 and game.player.get_world_action_records().is_empty() and _no_progress() and _disk_state_matches(), "fatal GUI Retry restores exact living lowHP/emptyammo entry without healing or redelivering the Scout hit")
+	await _settle()
+	_expect(Exact.stringify(game.capture_campaign_snapshot()) == Exact.stringify(checkpoint), "retried actor/source/input/camera clocks remain exactly paused before any continuation tick")
+	retired = _old_refs()
+	_close_shell()
+	_expect_refs_freed(retired, "fatal retry closure")
+	return true
+
+
+func _seed_actual_story(registry: CinderCampaignRegistry, initial_hp: float) -> bool:
+	paused = true
+	var preview: Node = MainScene.instantiate()
+	preview.set("level_scene_path", LEVEL_PATH)
+	root.add_child(preview)
+	paused = true
+	await _settle()
+	var actor: CinderPlayer = preview.get("player") as CinderPlayer
+	var level: CinderLevel = preview.get("active_level") as CinderLevel
+	var camera: Camera3D = preview.get("camera") as Camera3D
+	if not _expect(is_instance_valid(actor) and is_instance_valid(level) and level.get_script().resource_path == RUNTIME_PATH, "TEST ONLY seed captures actual authored full runtime, not Horsell L1 or an art preview"):
+		preview.free()
+		return false
+	var initial: Dictionary = actor.snapshot_state()
+	if initial.is_empty():
+		_expect(false, "actual quiet initial actor snapshot is available: " + actor.last_snapshot_error)
+		level.exit_level()
+		preview.free()
+		return false
+	initial.resources.hp = initial_hp
+	initial.resources.shells = 0
+	var accepted: bool = actor.restore_state(initial)
+	_expect(accepted, "TEST ONLY initial HP/zeroammo seed uses validated quiet public actor restore")
+	var player_state: Dictionary = actor.snapshot_state()
+	var local: Dictionary = level.snapshot_state()
+	var anchor: Vector2 = preview.call("get_aim_anchor_normalized")
+	var shell_state: Dictionary = {"api_revision": Shell.SHELL_API, "anchor_normalized": [anchor.x, anchor.y], "input_sequence": 0, "last_input_observation": {}, "camera_focus": Codec.vector3(camera.global_position - Game.CAMERA_OFFSET), "shake_left_s": 0.0, "difficulty_at_entry": "standard"}
+	var aggregate: Dictionary = {"schema_version": 1, "level_id": "A2-L2", "scene_path": LEVEL_PATH, "paused": true, "equipment_ids": actor.equipment.snapshot(), "player": player_state, "level": local, "shell": shell_state}
+	var store: CinderSaveStore = Store.new(_test_root + "campaign.json")
+	var model: CinderCampaignAttempts = Attempts.new(registry, store)
+	var seed: Dictionary = model.state()
+	seed["completed_main"] = FIXTURE_PREFIX.duplicate()
+	seed["story"] = {"kind": "story", "level_id": "A2-L2", "snapshot": aggregate.duplicate(true), "checkpoint": aggregate.duplicate(true)}
+	var error: String = level.snapshot_error_with_player(local, player_state) if not local.is_empty() and not player_state.is_empty() else "Actual paused scene capture failed"
+	accepted = accepted and error.is_empty() and model.state_error(seed).is_empty() and model.restore_session(seed) and store.write_payload(model.state())
+	_expect(accepted, "TEST ONLY six-predecessor prefix/actual initial A2-L2 unit writes through public attempts/store: " + error + " " + model.last_error + " " + store.last_error)
+	_expect(actor.presentation_id == "act2_survivor" and actor.get_world_action_records().is_empty() and not local.is_empty() and local.local_snapshot_version == 1 and local.local.scheduler.clock_s == 0.0 and local.local.sequence.stage_index == 0 and local.local.sequence.defeated_ids.is_empty() and local.local.sequence.completed_feet.is_empty() and local.local.sequence.crossed_contacts.is_empty(), "seed retains unchanged initial full Weybridge world/presentation with no admitted source or executed action")
+	var actor_ref: WeakRef = weakref(actor)
+	var level_ref: WeakRef = weakref(level)
+	level.exit_level()
+	preview.free()
+	_expect(actor_ref.get_ref() == null and level_ref.get_ref() == null, "seed preview actor/level retire before production installation")
+	print("TEST ONLY prefix/resource seed: ", FIXTURE_PREFIX, "; HP=", initial_hp, "; initial shells=0; not predecessor gameplay or A2-L2 clear evidence")
+	return accepted
+
+
+func _fresh_continue(expected: String, label: String) -> bool:
+	_restore_events.clear()
+	_watching_restore = true
+	game = _new_shell()
+	await _settle()
+	if not _title_valid(label):
+		_watching_restore = false
+		return false
+	await _click(_find("ContinueStoryButton") as Control)
+	_watching_restore = false
+	return _actual_entry() and _expect(Exact.stringify(game.capture_campaign_snapshot()) == expected and _restore_events.is_empty(), "fresh actual GUI Continue restores exact " + label + " without gameplay callbacks: " + str(_restore_events))
+
+
+func _quiet_retry(expected: String, label: String) -> bool:
+	if game.menu.page_name() == "resume":
+		game.request_pause()
+		await _settle()
+	_restore_events.clear()
+	_watching_restore = true
+	await _click(_find("RetryButton") as Control)
+	_watching_restore = false
+	return _actual_entry() and _expect(Exact.stringify(game.capture_campaign_snapshot()) == expected and _restore_events.is_empty(), "actual GUI Retry restores exact " + label + " without gameplay callbacks: " + str(_restore_events))
+
+
+func _new_shell() -> CinderCampaignShell:
+	var result: CinderCampaignShell = Shell.new()
+	_expect(result.configure_runtime({}, _test_root + "campaign.json", _test_root + "settings.json", _test_root + "preferences.json"), "production registry configures only isolated PID user paths")
+	root.add_child(result)
+	return result
+
+
+func _title_valid(label: String) -> bool:
+	return _expect(game.campaign_error.is_empty() and paused and game.active_level == null and game.menu.page_name() == "title", "real production Title has no duplicate live world for " + label + ": " + game.campaign_error)
+
+
+func _actual_entry() -> bool:
+	if not _expect(game.campaign_error.is_empty() and is_instance_valid(game.active_level) and paused and game.menu.page_name() == "resume", "actual production A2-L2 installation waits paused at Resume: " + game.campaign_error):
+		return false
+	var level: CinderLevel = game.active_level
+	var state: Dictionary = level.call("encounter_state")
+	if not _expect(level.level_id == "A2-L2" and level.scene_file_path == LEVEL_PATH and level.get_script().resource_path == RUNTIME_PATH and level.hero == game.player and level.effects == game.fx and game.player.presentation_id == "act2_survivor" and state.get("runtime_error", "missing") == "" and state.get("exchanges", {}).size() == 6 and state.get("mechanisms", {}).size() == 7, "exact production Weybridge scene owns the shared actor/effects, six real targets and seven HP-free consumers"):
+		return false
+	for id: String in ACTOR_IDS:
+		var actor: Node3D = level.get_node_or_null(("Handler_" if id.ends_with("handler") else "Scout_") + id) as Node3D
+		if not _expect(is_instance_valid(actor) and actor.get("actor_id") == id and actor.is_in_group("enemies") and level.is_ancestor_of(actor), "actual retained target has canonical actor binding: " + id):
+			return false
+	var scheduler: Node = level.get_node_or_null("WeybridgeThreatScheduler")
+	var driver: Node = level.get_node_or_null("ReusedRayExchanges")
+	var spawn: Marker3D = level.get_node("PlayerSpawn") as Marker3D
+	return _expect(scheduler is CinderThreatScheduler and level.is_ancestor_of(scheduler) and is_instance_valid(driver) and driver.has_signal("hit_resolved") and spawn.position == Vector3(-1, 0.1, 2.6), "actual authored spawn and shared Scheduler/Ray driver remain intact")
+
+
+func _valid_pair(unit: Dictionary) -> bool:
+	return game.player.snapshot_error(unit.player).is_empty() and game.active_level.snapshot_error_with_player(unit.level, unit.player).is_empty()
+
+
+func _no_progress() -> bool:
+	var state: Dictionary = game.attempts.state()
+	return state.completed_main == FIXTURE_PREFIX and state.completed_optional.is_empty() and state.reward_ids.is_empty() and state.side_attempt == null and (not is_instance_valid(game.active_level) or not game.active_level.is_completed())
+
+
+func _disk_state_matches() -> bool:
+	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(_test_root + "campaign.json"))
+	if not raw is Dictionary or raw.get("format_version") != 2 or not raw.get("payload_json") is String or not (raw.get("generation") is float or raw.get("generation") is int) or float(raw.generation) < 1.0:
+		return false
+	var disk: CinderSaveStore = Store.new(_test_root + "campaign.json")
+	disk.payload_validator = game.attempts.saved_payload_error
+	var payload: Dictionary = disk.read_payload()
+	return disk.last_error.is_empty() and not disk.loaded_backup and Exact.stringify(payload) == Exact.stringify(game.attempts.state()) and raw.payload_json == Exact.stringify(payload) and raw.get("sha256") == String(raw.payload_json).sha256_text()
+
+
+func _resume_consumed(label: String) -> bool:
+	if not _expect(paused and game.menu.page_name() in ["resume", "pause"] and is_instance_valid(_find("ResumeButton")), label + " exposes actual paused GUI Resume"):
+		return false
+	var clock_before: float = game.player.get_world_action_clock()
+	var hp_before: float = game.player.hp
+	var shells_before: int = game.player.shells
+	var pose_before: Vector3 = game.player.global_position
+	var anchor_before: Vector2 = game.get_aim_anchor_normalized()
+	var input_before: Dictionary = game.get_input_observation_state()
+	var history_before: Array[Dictionary] = game.player.get_world_action_records()
+	_click_immediate(_find("ResumeButton") as Control)
+	# No await: a legitimate pending dash may complete on the next physics tick.
+	return _expect(not paused and not game.menu.is_open() and root.is_input_handled() and game.get_input_observation_state() == input_before and game.player.get_world_action_records() == history_before and game.player.get_world_action_clock() == clock_before and game.player.hp == hp_before and game.player.shells == shells_before and game.player.global_position == pose_before and game.get_aim_anchor_normalized() == anchor_before, label + " GUI press/release is consumed before input/action/resource/pose/clock/anchor changes")
+
+
+func _ready_dash() -> bool:
+	for tick: int in range(120):
+		if _finished or not is_instance_valid(game) or game.player.dead or paused or not game.campaign_error.is_empty():
+			return _expect(false, "ready routed dash requires live focused unpaused actor: " + game.campaign_error)
+		var response: Dictionary = game.player.get_threat_response_state()
+		if response.get("stable") == true and response.get("motion", {}).get("grounded") == true and float(response.get("dash_cooldown_left_s", 1.0)) == 0.0:
+			return true
+		await physics_frame
+		await process_frame
+	return _expect(false, "actual grounded dash becomes ready within bounded physics wait")
+
+
+func _wait_finished_dash(expected_sequence: int) -> bool:
+	for tick: int in range(90):
+		if _finished or not is_instance_valid(game) or paused or game.player.dead or not game.campaign_error.is_empty():
+			return _expect(false, "short routed dash remains a live focused encounter")
+		var records: Array[Dictionary] = game.player.get_world_action_records()
+		if not records.is_empty() and int(records.back().sequence) == expected_sequence and game.player.get_committed_dash_state().get("active") == false:
+			return true
+		await physics_frame
+		await process_frame
+	return _expect(false, "actual routed dash completes within its finite bound")
+
+
+func _swipe(start: Vector2, release: Vector2) -> bool:
+	var sequence: int = int(game.get_input_observation_state().sequence)
+	var size: Vector2 = root.get_visible_rect().size
+	var finish: Vector2 = release * size
+	var expected_anchor: Vector2 = finish / size
+	var press := InputEventScreenTouch.new()
+	press.index = 3
+	press.position = start * size
+	press.pressed = true
+	root.push_input(press, true)
+	var drag := InputEventScreenDrag.new()
+	drag.index = 3
+	drag.position = finish
+	drag.relative = (release - start) * size
+	root.push_input(drag, true)
+	var end := InputEventScreenTouch.new()
+	end.index = 3
+	end.position = finish
+	root.push_input(end, true)
+	# Real recognizer runs synchronously; release precedes the physics checkpoint.
+	return _expect(int(game.get_input_observation_state().sequence) == sequence + 1 and game.get_input_observation_state().last_observation.get("kind") == "swipe_release" and game.get_aim_anchor_normalized() == expected_anchor and game.player.get_committed_dash_state().get("active") == true, "actual viewport touch/drag/release starts one public physical dash and records exact release anchor")
+
+
+func _on_contact(source_id: String, result: Dictionary) -> void:
+	_contacts.append({"source_id": source_id, "result": result.duplicate(true), "paused": paused})
+
+
+func _observe_restore_node(node: Node) -> void:
+	if not _watching_restore:
+		return
+	if node is CinderPlayer:
+		var actor: CinderPlayer = node as CinderPlayer
+		actor.fired.connect(func(_kind: String) -> void: _restore_events.append("player.fired"))
+		actor.died.connect(func() -> void: _restore_events.append("player.died"))
+		actor.equipment_changed.connect(func(_id: String) -> void: _restore_events.append("player.equipment_changed"))
+		actor.world_action_executed.connect(func(_record: Dictionary) -> void: _restore_events.append("player.world_action_executed"))
+	elif node is CinderLevel:
+		var level: CinderLevel = node as CinderLevel
+		level.checkpoint_requested.connect(func(_id: String, _checkpoint: String, _boundary: String) -> void: _restore_events.append("level.checkpoint"))
+		level.completion_requested.connect(func(_id: String, _completion: String) -> void: _restore_events.append("level.completion"))
+		level.contact_exit_requested.connect(func(_id: String, _exit: String) -> void: _restore_events.append("level.contact_exit"))
+	elif node.get_script() != null and node.get_script().resource_path == "res://scripts/acts/act2/ray_scout_exchange.gd":
+		node.connect("hit_resolved", func(_id: String, _result: Dictionary) -> void: _restore_events.append("ray.hit_resolved"))
+		node.connect("scout_defeated", func(_id: String) -> void: _restore_events.append("ray.scout_defeated"))
+	elif node is CinderLaneMechanism:
+		node.connect("hit_resolved", func(_id: String, _cycle: int, _result: Dictionary) -> void: _restore_events.append("mechanism.hit_resolved"))
+	elif node.has_signal("defeated"):
+		node.connect("defeated", func(_id: String) -> void: _restore_events.append("actor.defeated"))
+
+
+func _find(node_name: String) -> Node:
+	return game.menu.find_child(node_name, true, false)
+
+
+func _click(control: Control) -> void:
+	await _settle()
+	_click_immediate(control)
+	await _settle()
+
+
+func _click_immediate(control: Control) -> void:
+	if not is_instance_valid(control) or not control.is_visible_in_tree():
+		_expect(false, "required actual GUI control exists and is visible")
+		return
+	var at: Vector2 = control.get_global_rect().get_center()
+	var motion := InputEventMouseMotion.new()
+	motion.position = at
+	motion.global_position = at
+	root.push_input(motion, true)
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.position = at
+	press.global_position = at
+	press.pressed = true
+	root.push_input(press, true)
+	var release := press.duplicate() as InputEventMouseButton
+	release.pressed = false
+	root.push_input(release, true)
+
+
+func _old_refs() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for node: Node in [game.world, game.active_level, game.player, game.fx]:
+		result.append({"label": String(node.name), "ref": weakref(node)})
+	_collect_refs(game.active_level, result)
+	return result
+
+
+func _collect_refs(parent: Node, result: Array[Dictionary]) -> void:
+	for child: Node in parent.get_children():
+		if child is CharacterBody3D or child is StaticBody3D or child is CinderThreatScheduler or child.is_in_group("required_cues") or child.is_in_group("enemies"):
+			result.append({"label": String(child.name), "ref": weakref(child)})
+		_collect_refs(child, result)
+
+
+func _expect_refs_freed(refs: Array[Dictionary], label: String) -> void:
+	for entry: Dictionary in refs:
+		_expect((entry.ref as WeakRef).get_ref() == null, label + " frees actual " + String(entry.label))
+
+
+func _close_shell() -> void:
+	if is_instance_valid(game):
+		game.free()
+	game = null
+	paused = true
+
+
+func _capture(label: String) -> void:
+	if not graphical:
+		return
+	if not _expect(DisplayServer.get_name() != "headless", "optional portrait capture uses actual graphical renderer"):
+		return
+	await RenderingServer.frame_post_draw
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_capture_root))
+	var picture: Image = root.get_texture().get_image()
+	_expect(picture.get_size() == Vector2i(540, 1170) and picture.save_png(_capture_root + label + ".png") == OK, "actual540x1170 production portrait captured: " + ProjectSettings.globalize_path(_capture_root + label + ".png"))
+
+
+func _settle() -> void:
+	for frame: int in range(8):
+		await process_frame
+
+
+func _cleanup_saves() -> void:
+	for filename: String in ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(_test_root + filename))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(_test_root))
+
+
+func _finish() -> void:
+	if _finished:
+		return
+	_finished = true
+	_close_shell()
+	paused = false
+	_cleanup_saves()
+	print("Production Act2 L2 registration: %d checks, %d failures; expected_commit=%s; TEST ONLY six-predecessor/initial-resource seeds; actual production GUI/format2/routed dash/fatal Continue/Retry; no route-clear or native-human claim" % [checks, failures, _expected_commit])
+	quit(0 if failures == 0 else 1)
+
+
+func _expect(condition: bool, message: String) -> bool:
+	checks += 1
+	if not condition:
+		failures += 1
+		push_error("FAIL: " + message)
+		if failures == 1 and is_instance_valid(game):
+			print("FIRST FAILURE PUBLIC CONTEXT: ", {"paused": paused, "campaign_error": game.campaign_error, "level": game.active_level.call("encounter_state") if is_instance_valid(game.active_level) and game.active_level.has_method("encounter_state") else {}, "contacts": _contacts, "armed_active_seen": _armed_active_seen})
+	else:
+		print("PASS: " + message)
+	return condition

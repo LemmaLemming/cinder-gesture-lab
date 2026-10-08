@@ -53,7 +53,7 @@ func _run() -> void:
 	for id: String in registry.ids():
 		if registry.is_playable(id):
 			playable.append(id)
-	_expect(playable == ["A1-L1", "A2-L1", "A3-L1"] and not registry.is_playable("A2-L2"), "only the three independent accepted entries are playable; A2-L2 stays unavailable")
+	_expect(playable == ["A1-L1", "A2-L1", "A2-L2", "A3-L1"], "only independently accepted scenes are playable, including the separately registered A2-L2")
 	game = _new_shell()
 	await _settle()
 	if not _expect(game.campaign_error.is_empty() and paused and game.active_level == null and game.menu.page_name() == "title", "production Title loads without an actor or invented prior progress: " + game.campaign_error):
@@ -94,7 +94,7 @@ func _run() -> void:
 	if not _expect(game.menu.page_name() == "journey" and node != null and node.get_meta("campaign_state") == "current" and action != null and not action.disabled and action.text == "Continue Story", "real seeded Journey selects enabled A2 current-story Continue action"):
 		_finish()
 		return
-	_expect((_find("Node_A2_L2") as Button).get_meta("campaign_state") == "locked", "A2-L2 remains progression-locked and unimplemented after this entry-only seed")
+	_expect((_find("Node_A2_L2") as Button).get_meta("campaign_state") == "locked", "A2-L2 remains progression-locked until this actual A2-L1 story completes")
 	await _capture("journey-seeded")
 	await _click(action)
 	if not _actual_entry():
