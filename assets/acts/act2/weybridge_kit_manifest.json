@@ -4,7 +4,7 @@
   "art_revision": "a2-weybridge-kit-1",
   "level_id": "A2-L2",
   "authoring_source": "scripts/acts/act2/weybridge_kit.gd",
-  "readiness": "authored_runtime_prototype_UNTESTED_L2_engine_portrait_and_play_review_pending",
+  "readiness": "runtime_imported_actual_L2_routes_and_native_portrait_reviewed_final_acceptance_pending",
   "provenance": "Original procedural mesh assemblies and deterministic pixel clusters, with explicit reuse of the authored Heath cottage, witness and primitive/material families. Generated Act2 boards supply shape, costume, period-material and composition references only; no concept-board crop, atlas cell, caption or stock pixels are imported.",
   "requirements": {
     "level_source": "docs/ACT2_CONCEPT.md: Level 2, Weybridge and Shepperton",
@@ -78,7 +78,7 @@
       "animation_states": [
         "static"
       ],
-      "readiness": "authored_UNTESTED_L2"
+      "readiness": "runtime_imported_actual_native_dry_route_and_outboard_placement_reviewed"
     },
     {
       "id": "A2-WEYBRIDGE-STATIC-WATER",
@@ -125,7 +125,7 @@
       "animation_states": [
         "static"
       ],
-      "readiness": "authored_UNTESTED_L2"
+      "readiness": "runtime_imported_actual_native_dry_route_and_outboard_placement_reviewed"
     },
     {
       "id": "A2-WEYBRIDGE-QUAY-AND-ABUTMENTS",
@@ -173,7 +173,7 @@
         "static",
         "optional_level_derived_cutaway"
       ],
-      "readiness": "authored_UNTESTED_L2"
+      "readiness": "runtime_imported_actual_native_dry_route_and_outboard_placement_reviewed"
     },
     {
       "id": "A2-WEYBRIDGE-COTTAGES",
@@ -204,11 +204,11 @@
         "conservative_roof_min_abs_x": 3.94
       },
       "collision": "None; complete cottage assemblies remain outside the dry-floor width",
-      "occlusion": "Side-bank framing; current L2 portrait/source visibility remains untested",
+      "occlusion": "Side-bank framing. Owner and source reviewer found no material hero/source/cue/dry-landing obstruction across sixteen actual L2 native frames. Compact period cottages are adapted; the board dense ruin/street composition is not fully demonstrated.",
       "animation_states": [
         "static"
       ],
-      "readiness": "reused_authored_Heath_family_UNTESTED_L2_placement"
+      "readiness": "reused_Heath_family_imported_actual_L2_native_placement_reviewed"
     },
     {
       "id": "A2-WEYBRIDGE-WITNESSES",
@@ -326,7 +326,7 @@
         }
       ],
       "collision": "None; no crowd blocker, escort target, HP, body or enemy group. Full billboard half-width .54 leaves home extent absX>=3.46 outside the dry route.",
-      "occlusion": "Six costumes are outboard; inherited contact shadow is decorative. New L2 arrival/retreat portrait separation remains untested.",
+      "occlusion": "Six costumes remain outboard; inherited contact shadow is decorative. Arrival/retreat placement was present in the actual native route reviewed by owner and source reviewer, with no material hero/cue/dry-landing obstruction in the sixteen captured states. This does not establish every pose or a human crowd-behavior test.",
       "animation_states": [
         "arrival_watch",
         "arrival_turn",
@@ -336,7 +336,7 @@
         "empty_hidden"
       ],
       "animation_rule": "Arrival turns at supplied progress .75; retreat turns below .15 then alternates existing A/B poses at eight normalized intervals; feet translate outward by1.2m to absX5.2; retreat progress1 hides. Metadata home_position/retreat_direction/costume_variant is construction data; witness_pose/tableau state/progress are reconstructed presentation.",
-      "readiness": "existing_authored_costumes_and_motion_reused_UNTESTED_L2_placement"
+      "readiness": "existing_costumes_and_motion_reused_imported_actual_L2_native_placement_reviewed"
     },
     {
       "id": "A2-WEYBRIDGE-ABANDONED-CART",
@@ -364,11 +364,11 @@
       "native_scale": "Cart bed1.08x.20x1.18; wheel radius .46; shafts terminate localZ2.30; dimensions are world units",
       "pivot": "Cart ground origin [-4.85,0,-5.2]; wheels have authored axle pivots",
       "collision": "None; complete cart/luggage remains west of the dry route, with no vehicle control, pickup or attackable cluster",
-      "occlusion": "Outboard static silhouette; L2 portrait visibility untested",
+      "occlusion": "Outboard static silhouette; no material hero/cue/dry-landing obstruction was found in the reviewed sixteen native states. Cart/luggage detail and dense ruin/rubble/timber composition are authored adaptations whose full source composition is not demonstrated by these captures.",
       "animation_states": [
         "static_abandoned"
       ],
-      "readiness": "authored_UNTESTED_L2"
+      "readiness": "runtime_imported_outboard_prop_authored_native_dense_composition_demonstration_partial"
     },
     {
       "id": "A2-WEYBRIDGE-FIELD-GUN",
@@ -395,13 +395,13 @@
       "native_scale": "Wheel radius .54; barrel length1.55/radii.18,.14; world-unit meshes",
       "pivot": "Ground origin [4.95,0,-31.5]; barrel center[0,1.18,-.22] and flash center[0,1.18,-1.12] relative to gun",
       "collision": "None; no player-fired weapon, pickup, target, trigger or source of gameplay damage",
-      "occlusion": "Gun stays east of dry route; muzzle flash is contextual artillery scenery, not a shared warning/lock/active cue",
+      "occlusion": "Gun stays east of dry route; muzzle flash is contextual artillery scenery, not a shared warning/lock/active cue. Reviewed native route shows no material gameplay obstruction; the dense artillery/ruin source composition and complete visual cause of distant collapse are not fully demonstrated.",
       "animation_states": [
         "static",
         "supplied_collapse_muzzle_flash_and_recoil"
       ],
       "animation_rule": "Linked by WeakRef in collapse metadata. Flash appears only when collapse is visible and supplied progress is between .03 and .15; bounded sine recoil/alpha reconstructed from progress, never a local timer.",
-      "readiness": "authored_UNTESTED_L2"
+      "readiness": "runtime_imported_artillery_scenery_native_cause_composition_demonstration_partial"
     },
     {
       "id": "A2-WEYBRIDGE-RUINED-TOWER-AND-FAR-PIERS",
@@ -420,12 +420,12 @@
       "native_scale": "Tower base1.4x2.1x1.4; two asymmetrical upper masonry fragments and two coping fragments; far pier .55x2.24x.55 with .66-wide coping",
       "pivot": "Tower ground origin[-5.4,0,-37.8]; far piers centered X +/-3.95,Y1.12,Z-39.8",
       "collision": "None; tower and piers are outside the route. No entrance lintel, gate collider or intact spire is created.",
-      "occlusion": "Two FarCourtyardPier bodies and their two coping meshes register optional cutaway paths. Parent must verify protected hero/source/landing view near the final courtyard.",
+      "occlusion": "Two FarCourtyardPier bodies and their coping meshes retain optional cutaway metadata. Owner and source reviewer found no material hero/source/cue/dry-landing obstruction in the actual final-courtyard native states. The dense ruined landmark/rubble/timber source composition is not fully demonstrated.",
       "animation_states": [
         "static_ruin",
         "optional_level_derived_pier_cutaway"
       ],
-      "readiness": "authored_UNTESTED_L2"
+      "readiness": "runtime_imported_ruin_modules_actual_route_reviewed_dense_source_composition_demonstration_partial"
     },
     {
       "id": "A2-WEYBRIDGE-DISTANT-ARTILLERY-COLLAPSE",
@@ -478,7 +478,7 @@
         ]
       },
       "collision": "None; no falling body, surprise damage, boss, hitbox, footfall, attack cue or debris trigger. Actual local giant-foot gameplay is a separate level-owned system.",
-      "occlusion": "Standing/falling assembly remains beyond the dry-route end by at least1.50m in world Z; depth separation alone is not portrait occlusion acceptance. Parent must review final source/player/landing projection and endcap captures.",
+      "occlusion": "Standing/falling assembly stays beyond the dry-route end by at least1.50m in world Z. Actual native clear/collapse frames show the harmless tripod partly behind the top HUD; this cropping limits complete composition visibility. Owner and source reviewer found no material hero/cue/dry-landing obstruction in the sixteen reviewed states. Depth separation alone is not universal portrait acceptance.",
       "animation_states": [
         "hidden",
         "standing",
@@ -489,14 +489,72 @@
         "spent_scenery"
       ],
       "animation_rule": "Normalized progress supplied by level. Hood fall smoothstep .15–.85, rotating Z from0 to-1.43 and translating X up to.28/Y down.10. Fragments appear from.20 with bounded +X flight. Steam begins after.40, expands/rises and fades to0 at1. No local clock, delta accumulation, collider or signal-driven phase progression.",
-      "readiness": "authored_UNTESTED_L2"
+      "readiness": "runtime_imported_actual_clear_and_collapse_captured_top_HUD_crop_limitation"
     }
   ],
   "validation": {
-    "static": "Scoped worker inspected exact staged Weybridge kit, existing Heath helper signatures and generated-manifest source records. JSON syntax, unique asset/instance IDs and reference paths checked. Optional cutaway candidates are metadata only; production fade remains parent-owned.",
-    "engine": "Not run for this new L2 kit by scoped worker; resource import, parser/runtime checks and exact fresh reconstruction pending owner.",
-    "portrait": "New L2 placement, water/ground seams, witness feet/retreat, architectural occlusion and distant-collapse visibility have not been captured or reviewed in native portrait.",
-    "gameplay": "Scenery owns no gameplay. Actual L2 floor continuity, collision, source/lane/landing protection, encounters, pause/retry, earned contacts and completion are parent-owned and untested by this kit manifest.",
-    "acceptance": "Authored prototype only. Generated source boards and reused L1 families do not establish L2 art readiness, playable readiness, human balance, campaign acceptance, mobile/export or release readiness."
+    "static": "Scoped JSON/unique asset and instance IDs/source/runtime/evidence paths checked. Original source/pivot/scale/collision/state/reuse semantics retained. Optional cutaway candidates remain metadata; production fade remains level-owned.",
+    "engine": "Owner imported the L2 runtime. Shared19 Standard/Heavy actual route314/0 headless and362/0 native, Challenge/slow Padded+Reach320/0, repaired authored apron pair/death/public retry221/0 all exited cleanly. These are owner-run checks; this manifest edit ran no engine.",
+    "portrait": "Owner and source reviewer inspected all sixteen actual540x1170 Standard/Heavy frames plus selected source boards. Broad dry paving/quay/water/cottages/witnesses read as a compact adaptation with no material hero/cue/dry-landing obstruction. Tight foot-right local overlap remains readable. Dense ruin/rubble/timber/artillery composition is not fully demonstrated; harmless distant tripod is partially behind the top HUD in clear/collapse frames.",
+    "gameplay": "Scenery still owns no gameplay. Actual route evidence covers six ordinary-primary HP defeats from initial zero ammo/no pickups, four true-circle no-primary foot opportunities, four actual contact checkpoints, once-clear, separate shelter transition and cleanup. Corrected221/0 retry covers actual paired pauses, exact validation/restoration, source death and public protected checkpoint retry. Synthetic prior catalogue unlocks/completions and destination remain TEST ONLY.",
+    "acceptance": "Captured-state source/placement review and tested route cells only; paired/loadout/Assisted/final acceptance is still pending. Handler operator hidden appearance is separately diagnosed and under correction; these records do not claim that issue fixed. No all-possible-pose, human/native-focused balance, mobile/export/release, future-level or canonical L2 acceptance claim."
+  },
+  "evidence": {
+    "shared_revision": "campaign-shared-19",
+    "scope": "Owner-run actual L2 fixtures. Prior completion/unlock/profile seeds and injected L3 destination are explicitly TEST ONLY, not other-level gameplay or canonical acceptance.",
+    "native_capture_metadata": "captures/act2/live/a2-l2-standard-heavy-evidence.json",
+    "native_resolution": [
+      540,
+      1170
+    ],
+    "native_frame_count": 16,
+    "checks": [
+      {
+        "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+        "log": ".cinder/a2-l2-shared19-live-heavy-closed-response.log",
+        "loadout": "heavy",
+        "profile": "standard",
+        "checks": 314,
+        "failures": 0,
+        "exit_code": 0,
+        "diagnostics": "Clean script/resource/exit result."
+      },
+      {
+        "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+        "log": ".cinder/a2-l2-shared19-live-heavy-native-first.log",
+        "loadout": "heavy",
+        "profile": "standard",
+        "checks": 362,
+        "failures": 0,
+        "exit_code": 0,
+        "diagnostics": "Clean script/resource/exit result; sixteen actual native frames."
+      },
+      {
+        "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+        "log": ".cinder/a2-l2-shared19-live-challenge-padded-first.log",
+        "loadout": "slow_padded_reach",
+        "profile": "challenge",
+        "checks": 320,
+        "failures": 0,
+        "exit_code": 0,
+        "diagnostics": "Clean script/resource/exit result."
+      },
+      {
+        "script": "tests/acts/act2/a2_l2_retry_level_smoke.gd",
+        "log": ".cinder/a2-l2-shared19-authored-retry-cleanup.log",
+        "loadout": "heavy",
+        "profile": "standard",
+        "checks": 221,
+        "failures": 0,
+        "exit_code": 0,
+        "diagnostics": "Clean repaired fixture teardown. Real apron Handler/foot paired pause, exact saved-player transport/preflight/quiet restore, atomic malformed refusals, natural source death and public checkpoint retry."
+      }
+    ],
+    "retained_failure_history": {
+      "log": ".cinder/a2-l2-shared19-authored-retry-first.log",
+      "status": "221 behavior checks passed, but fresh test receiver teardown emitted native !is_inside_tree() resource errors. The attached explicit level-exit correction and clean second log supersede only that teardown failure."
+    },
+    "reuse_preservation": "Owner confirmed all forty-two original L1 runtime hashes unchanged. These L2 evidence updates do not change those resources.",
+    "acceptance": "Current tested route/view cells only. Remaining paired/loadout/Assisted/final acceptance is pending. No all-poses, human balance, mobile/export/release or canonical L2 acceptance claim."
   }
 }

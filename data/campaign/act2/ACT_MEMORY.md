@@ -8,9 +8,9 @@ Sole owner: chat `01a11adf-a56f-77d2-a7bc-45fd94702ab1`, registered in run `cind
 
 L1 evidence used `campaign-shared-13`, exact publication `fef1b1a79d83401d5b67118f6f69dcf2abea017c`, through preserving merge `24de1aa84960477a6c93993827040e586a01ead1`. The completed L1 HANDOFF and canonical acceptance are recorded below; tested owned runtime commit is `16f2532518edd8d76aa41ec40f1d10edad607559`; canonical L1 acceptance is recorded below. Shared13 stationary285/0, Scout40/0, native Heavy-left304/0, default WEAPON-01-left269/0 and Challenge slow-Padded-Reach-left269/0 pass. Earlier retry/input/bank/loadout evidence retains its shared10/shared8 scope; source and current captured-state visual review passed. Reread canonical run, campaign memory, shared contract/progress and recipient mailbox after context recovery and at each new level.
 
-Current checkout adopted shared16 `ef7b37655e3a2299b717cc3f0693e86e5912f17e` through preserving merge `e4bb01fe539787b3617f4dac00e18f0a44e9756b`; shared18 and canonical L1 registration are published and await preserving adoption.
+Current checkout adopted shared19 `868b2bff523e538ee093ff6ec58c09c5f2099072` through preserving merge `3fe640ee62b35b6e0fb53c011386b3ad82983a1b`, ACKc6999a14; shared18/17 and canonical L1 registrationd629 are preserved ancestors. Shared20 is a manual performance evidence utility with no runtime adoption gate.
 
-**L1 is authored, tested and canonically accepted.** It has the complete live route, mechanically tested checkpoints/retry and scoped native art acceptance. L2 is in production; the remaining six productions have not started. The eight-level act remains unfinished.
+**L1 is authored, tested and canonically accepted.** It has the complete live route, mechanically tested checkpoints/retry and scoped native art acceptance. L2 is in production: actual Heavy/Standard full route314/0 and native540×1170 route362/0 with16frames pass at shared19, including six actual ordinary-primary defeats, four HP-free foot opportunities, four checkpoints, clear/contact/cleanup. Actual paired/death/retry, remaining gear/profile checks and full captured-state source review are pending; the remaining six productions have not started. The eight-level act remains unfinished.
 
 ## Scope, order and continuity
 

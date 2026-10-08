@@ -5,6 +5,7 @@ extends "res://scripts/acts/act2/ray_scout_visual.gd"
 ## Shared lane, actor gate and parent clock remain the only combat authority.
 
 const HANDLER_CASE_CENTER: Vector3 = Vector3(0.0, 0.69, -0.21)
+const HANDLER_OPERATOR_CENTER: Vector3 = Vector3(0.0, 0.135, 0.83)
 const HANDLER_SHOULDER: Vector3 = Vector3(0.0, 0.60, 0.16)
 const HANDLER_ACTIVE_WRIST: Vector3 = Vector3(0.0, 0.16, 3.52)
 
@@ -80,26 +81,28 @@ func _build() -> void:
 
 
 func _build_handler_operator() -> void:
-	# A rounded head-body with two bunches of eight tentacles, no human torso.
-	var skin: StandardMaterial3D = _material(Color(0.30, 0.27, 0.22))
-	var flesh: StandardMaterial3D = _material(Color(0.35, 0.26, 0.20))
-	var head: MeshInstance3D = _handler_sphere(_case, "RoundedMartianHeadBody", 0.145, Vector3(0.0, 0.12, 0.025), skin)
+	# G10 v2 rounded head-body and two bunches of eight tentacles, no torso.
+	# Expose the face beyond the hood lip in the fixed portrait view. This rigid
+	# group follows the existing case/collapse pose; it has no separate clock.
+	var operator: Node3D = _pivot(_case, "FrontOperatorAnatomy", HANDLER_OPERATOR_CENTER)
+	var skin: StandardMaterial3D = _material(Color(0.45, 0.38, 0.29))
+	var flesh: StandardMaterial3D = _material(Color(0.44, 0.29, 0.19))
+	var head: MeshInstance3D = _handler_sphere(operator, "RoundedMartianHeadBody", 0.215, Vector3.ZERO, skin)
 	head.scale.y = 0.82
 	_readability_panel(head)
 	for side: float in [-1.0, 1.0]:
-		_handler_sphere(_case, "LeftDarkEye" if side < 0.0 else "RightDarkEye", 0.027, Vector3(side * 0.061, 0.141, 0.146), _black)
+		_handler_sphere(operator, "LeftDarkEye" if side < 0.0 else "RightDarkEye", 0.035, Vector3(side * 0.085, 0.030, 0.190), _black)
 		for index: int in range(8):
-			var root_point: Vector3 = Vector3(side * 0.09, 0.058, 0.064 + index * 0.006)
-			var bend: Vector3 = Vector3(side * (0.16 + index * 0.008), -0.040 + index * 0.012, 0.19)
-			var finish: Vector3 = Vector3(side * (0.23 + index * 0.009), -0.11 + index * 0.010, 0.12)
-			var strand: MeshInstance3D = _cylinder(_case, "Tentacle_%s_%02d_A" % ["L" if side < 0.0 else "R", index], 0.012, 0.2, flesh, 0.010, 6)
+			var root_point: Vector3 = Vector3(side * 0.13, -0.095, 0.09 + index * 0.006)
+			var bend: Vector3 = Vector3(side * (0.21 + index * 0.013), -0.22 + index * 0.015, 0.25 - index * 0.016)
+			var finish: Vector3 = Vector3(side * (0.28 + index * 0.014), -0.36 + index * 0.018, 0.13 - index * 0.014)
+			var strand: MeshInstance3D = _cylinder(operator, "Tentacle_%s_%02d_A" % ["L" if side < 0.0 else "R", index], 0.018, 0.2, flesh, 0.014, 6)
 			_fit_segment(strand, root_point, bend)
-			var end: MeshInstance3D = _cylinder(_case, "Tentacle_%s_%02d_B" % ["L" if side < 0.0 else "R", index], 0.010, 0.2, flesh, 0.006, 6)
+			var end: MeshInstance3D = _cylinder(operator, "Tentacle_%s_%02d_B" % ["L" if side < 0.0 else "R", index], 0.014, 0.2, flesh, 0.008, 6)
 			_fit_segment(end, bend, finish)
-	var beak: MeshInstance3D = _cylinder(_case, "SmallFleshyBeak", 0.027, 0.045, flesh, 0.005, 6)
-	beak.position = Vector3(0.0, 0.087, 0.163)
+	var beak: MeshInstance3D = _cylinder(operator, "SmallFleshyBeak", 0.032, 0.055, flesh, 0.005, 6)
+	beak.position = Vector3(0.0, -0.060, 0.215)
 	beak.rotation.x = PI * 0.5
-
 
 func _build_handler_mount() -> void:
 	var mount: Node3D = _pivot(_chassis, "GroundedToolMount", Vector3(0.0, 0.30, 0.0))

@@ -3,6 +3,7 @@ extends "res://scripts/acts/act2/horsell_common.gd"
 ## All L2 authored order, ground, actor mixture and local aggregate live here.
 ## One shared player/scheduler/camera/HUD/cue/input/persistence; no gear rewards.
 const WeybridgeKit: Script = preload("res://scripts/acts/act2/weybridge_kit.gd")
+const WeybridgeScoutActor: Script = preload("res://scripts/acts/act2/weybridge_scout_actor.gd")
 const HandlerActor: Script = preload("res://scripts/acts/act2/salvage_handler_actor.gd")
 const CrossingSequence: Script = preload("res://scripts/acts/act2/weybridge_sequence.gd")
 const Mechanism: Script = preload("res://scripts/combat/lane_mechanism.gd")
@@ -19,6 +20,10 @@ const CROSSING_FLOORS: Array[Dictionary] = [
 ]
 const TOOL_ROLE: Dictionary = {"raw_damage": 10.0, "windup_s": 2.2, "lock_s": 1.1, "active_s": 0.2, "recovery_s": 1.9, "attack_interval_s": 1.9, "max_hp": 30.0, "move_speed": 0.0}
 const TOOL_FLOORS: Dictionary = {"windup_s": 2.2, "lock_s": 1.1, "recovery_s": 1.9}
+## Crossing circles follow the actual already-locked Scout; retain its full
+## primary response window without altering Scout HP/control or the1.10 lock.
+const CROSSING_FOOT_ROLE: Dictionary = {"raw_damage": 4.0, "windup_s": 1.75, "lock_s": 1.1, "active_s": 0.2, "recovery_s": 1.6, "attack_interval_s": 1.8, "max_hp": 1.0, "move_speed": 0.0}
+const CROSSING_FOOT_FLOORS: Dictionary = {"windup_s": 1.75, "lock_s": 1.1, "recovery_s": 1.6}
 const CROSSING_LOCAL_KEYS: Array[String] = ["sequence", "scheduler", "rays", "handlers", "mechanisms", "views", "profile_id", "scenic_clock", "witness_started_s", "collapse_started_s", "last_action_sequence", "contact_seen", "pending_checkpoints", "completion_pending", "exit_requested"]
 var _crossing: RefCounted = CrossingSequence.new()
 var _ray_actors: Dictionary = {}
@@ -54,7 +59,7 @@ func _on_enter_level() -> void:
 		return
 	for id: String in CrossingSequence.ACTORS:
 		var is_handler: bool = CrossingSequence.HANDLERS.has(id)
-		var actor: Node3D = (HandlerActor.new() if is_handler else ScoutActor.new()) as Node3D
+		var actor: Node3D = (HandlerActor.new() if is_handler else WeybridgeScoutActor.new()) as Node3D
 		actor.name = ("Handler_" if is_handler else "Scout_") + id
 		actor.position = CrossingSequence.ACTORS[id]
 		add_child(actor)
@@ -88,7 +93,9 @@ func _on_enter_level() -> void:
 	_exchange.connect("state_changed", _on_ray_state)
 	for id: String in CrossingSequence.FEET:
 		var at: Vector3 = CrossingSequence.FEET[id]
-		if _new_mechanism(id, at, Geometry.circle(at, 1.10), at + Vector3(1.55 if at.x <= 0.0 else -1.55, 0, 0)) == null:
+		var role: Dictionary = CROSSING_FOOT_ROLE if id in ["foot_left", "foot_right"] else Mechanism.DEFAULT_RAW_ROLE
+		var floors: Dictionary = CROSSING_FOOT_FLOORS if id in ["foot_left", "foot_right"] else Mechanism.DEFAULT_TIMING_FLOORS
+		if _new_mechanism(id, at, Geometry.circle(at, 1.10), at + Vector3(1.55 if at.x <= 0.0 else -1.55, 0, 0), role, floors) == null:
 			return
 	_exit_cue = InteractionCue.new() as Node3D
 	_exit_cue.name = "ShelterContactExit"
@@ -96,6 +103,7 @@ func _on_enter_level() -> void:
 	add_child(_exit_cue)
 	_exit_cue.call("clear")
 	hero.world_action_executed.connect(_on_world_action)
+	hero.died.connect(_on_hero_died)
 	_update_actor_visibility()
 	_update_objective()
 	_apply_tableau()
@@ -110,11 +118,17 @@ func _new_mechanism(id: String, at: Vector3, shape: Dictionary, opening: Vector3
 		runtime_error = "Cannot bind L2 mechanism %s: %s" % [id, node.get("last_error")]
 		return null
 	node.connect("state_changed", Callable(self, "_on_mechanism_state").bind(id))
+	node.connect("hit_resolved", Callable(self, "_on_mechanism_hit").bind(id))
 	_mechanisms[id] = node
 	return node
 
 func _physics_process(delta: float) -> void:
-	if not _entered or get_tree().paused or not is_instance_valid(hero) or hero.dead or not runtime_error.is_empty():
+	if not _entered or get_tree().paused or not is_instance_valid(hero) or not runtime_error.is_empty():
+		return
+	if hero.dead:
+		# Finish this same real scheduler tick's cosmetic phase only.
+		# No dead-hero progression, scenery clock or new attack is advanced.
+		_update_mechanism_poses()
 		return
 	_scenic_clock += delta
 	_flush_progress_requests()
@@ -148,6 +162,10 @@ func _physics_process(delta: float) -> void:
 		var actor: Node3D = _actors[id]
 		if _ray_actors.has(id):
 			var state: Dictionary = _exchange.call("state", id)
+			var current_foot: String = _crossing.call("current_foot_id")
+			# An already finished response leaves only the foot's harmless
+			# withdrawal. Keep its real retired target receipt until it finishes.
+			if state.get("status") == "complete" and _views.has(current_foot) and _views[current_foot].target_id == id and _mechanisms[current_foot].call("state").status == "running": continue
 			if state.get("status") == "running":
 				if not _exchange_framed(actor, state): _exchange.call("cancel", id, "l2_required_presentation_unavailable")
 				continue
@@ -191,6 +209,8 @@ func _activate_mechanism(id: String, target_id: String) -> void:
 		counterpart = "apron_handler"
 	elif id in ["foot_left", "foot_right"] and float(_actors.crossing_scout.get("hp")) > 0.0:
 		counterpart = "crossing_scout"
+	# Single-budget Assisted explicitly completes the real target first.
+	if _profile_id == "assisted" and not counterpart.is_empty(): return
 	var other_reservation: Dictionary = {}
 	if not counterpart.is_empty():
 		var other: Dictionary = _actor_exchange(counterpart)
@@ -237,7 +257,12 @@ func _paired_view_valid(id: String) -> bool:
 	var target: String = _views[id].target_id
 	var paired: Dictionary = _actor_exchange(target)
 	var retained: Dictionary = _scheduler.call("reservation_state", paired.get("reservation_id", ""))
-	return float(_actors[target].get("hp")) > 0.0 and paired.get("status") == "running" and not retained.is_empty() and retained.get("armed", false) and retained.opening_position == _actors[target].global_position and float(_views[id].primary_time_s) > float(retained.active_until_s) and float(_views[id].response_complete_s) <= float(retained.recovery_until_s)
+	if float(_actors[target].get("hp")) <= 0.0: return false
+	if paired.get("status") == "complete" and _ray_actors.has(target):
+		var own: Dictionary = _mechanisms[id].call("state")
+		var receipt: Dictionary = paired.get("exchange", {})
+		return own.status == "running" and own.phase == "recovery" and _scheduler.call("get_clock") >= float(_views[id].response_complete_s) and not receipt.is_empty() and receipt.opening_position == _actors[target].global_position and float(_views[id].primary_time_s) > float(receipt.active_until_s) and float(_views[id].response_complete_s) <= float(receipt.recovery_until_s)
+	return paired.get("status") == "running" and not retained.is_empty() and retained.get("armed", false) and retained.opening_position == _actors[target].global_position and float(_views[id].primary_time_s) > float(retained.active_until_s) and float(_views[id].response_complete_s) <= float(retained.recovery_until_s)
 
 func _on_ray_state(actor_id: String, _state: Dictionary) -> void:
 	if not _entered or _restoring or _validating or _snapshotting: return
@@ -251,6 +276,10 @@ func _cancel_invalid_coupled(target_id: String) -> void:
 func _on_mechanism_state(state: Dictionary, id: String) -> void:
 	if not _entered or _restoring or _validating or _snapshotting: return
 	_pose_mechanism(id, state)
+	# A foot cue can synchronously pause after all tool consumers have sampled
+	# this tick but before our priority110 continuous presentation pass. Finish
+	# their actual committed cosmetics before the deferred aggregate capture.
+	if CrossingSequence.FEET.has(id): _update_mechanism_poses()
 	if id.begins_with("tool_"): _cancel_invalid_coupled(id.substr(5))
 	if state.status != "running":
 		_views.erase(id)
@@ -259,6 +288,13 @@ func _on_mechanism_state(state: Dictionary, id: String) -> void:
 		_mechanisms[id].call("cancel", "paired_real_opening_lost")
 	elif not _mechanism_framed(id, state):
 		_mechanisms[id].call("cancel", "l2_same_callback_presentation_unavailable")
+
+func _on_mechanism_hit(_hero_id: String, _cycle: int, _result: Dictionary, id: String) -> void:
+	if not _entered or _restoring or _validating or _snapshotting: return
+	# Resumed pending damage may publish a hit without changing phase. The
+	# foot is processed after tools; commit their cosmetic clock before an
+	# external hit observer pauses this same actual scheduler tick.
+	if CrossingSequence.FEET.has(id): _update_mechanism_poses()
 
 func _phase_progress(state: Dictionary) -> float:
 	var key: String = {"warning": "windup_s", "lock": "lock_s", "active": "active_s", "recovery": "recovery_s"}.get(state.phase, "")
@@ -330,6 +366,21 @@ func _flush_progress_requests() -> void:
 	if _completion_pending:
 		_completion_pending = false
 		if not request_completion("weybridge-crossing-clear"): runtime_error = "Cannot complete earned L2 crossing"
+
+func _on_hero_died() -> void:
+	# Shell pauses synchronously on this signal, before later consumers may
+	# sample this scheduler tick. Retire their real danger through public
+	# cancellation, preserving cooldown/history and completed foot receipts.
+	if not _entered or _restoring or not is_instance_valid(_scheduler): return
+	for id: String in _mechanisms:
+		if _mechanisms[id].call("state").status == "running":
+			_mechanisms[id].call("cancel", "hero_defeated")
+	for id: String in _ray_actors:
+		if _exchange.call("state", id).status == "running":
+			_exchange.call("cancel", id, "hero_defeated")
+	_views.clear()
+	_mechanism_proofs.clear()
+	_update_mechanism_poses()
 
 func _on_world_action(record: Dictionary) -> void:
 	if not _entered or _restoring or _validating or _snapshotting or int(record.get("sequence", 0)) <= _last_action_sequence: return
@@ -478,6 +529,10 @@ func _response_context_for(id: String, shape: Dictionary, opening: Vector3) -> D
 					points.append_array(_landing_points(at))
 					if not _points_framed(camera, points) or not _points_framed(camera, points, _settled_follow_delta(camera, at)): framed = false
 				if reaches and framed: returns.append(returning)
+	if id in ["foot_left", "foot_right"]:
+		# Prefer a direct ordinary-primary landing. The shared solver still
+		# proves support/collision/union and may choose any remaining candidate.
+		escapes.sort_custom(func(a: Vector3, b: Vector3) -> bool: return (hero.global_position + a * float(hero.stats.dash_distance)).distance_squared_to(opening) < (hero.global_position + b * float(hero.stats.dash_distance)).distance_squared_to(opening))
 	return {"encounter_id": CROSSING_EPOCH, "world_revision": WORLD_REVISION, "recognition_s": 0.30, "attack_input_margin_s": 0.10, "escape_directions": escapes, "return_directions": returns, "floor_regions": floor_regions()}
 
 func _mechanism_framed(id: String, state: Dictionary) -> bool:
@@ -580,6 +635,8 @@ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary)
 	for id: String in _mechanisms:
 		var saved: Dictionary = state.mechanisms[id]
 		if CrossingSequence.FEET.has(id):
+			var assisted_counterpart: String = "apron_handler" if id == "foot_apron" else ("crossing_scout" if id in ["foot_left", "foot_right"] else "")
+			if state.profile_id == "assisted" and int(saved.cycle) > 0 and not assisted_counterpart.is_empty() and not state.sequence.defeated_ids.has(assisted_counterpart): return "Assisted foot must follow its actual counterpart defeat"
 			if state.sequence.completed_feet.has(id):
 				var retained_completion: bool = saved.status == "complete" or (beat == "clear" and saved.status == "cancelled" and saved.last_cancel_reason == "weybridge_clear")
 				if not retained_completion or int(saved.cycle) < 1 or saved.exchange_encounter_id != CROSSING_EPOCH or float(saved.clock_s) <= float(saved.exchange.recovery_until_s): return "Earned L2 foot requires its actual finished cycle receipt"
@@ -606,6 +663,7 @@ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary)
 		if Vector2(attack_position.x, attack_position.z).distance_to(Vector2(own_opening.x, own_opening.z)) > float(admission_stats.primary_range) - CinderThreatScheduler.SKIN: return "L2 admitted ordinary primary must reach the saved opening"
 		var counterpart: String = "apron_handler" if id == "foot_apron" else ("crossing_scout" if id in ["foot_left", "foot_right"] else "")
 		if not counterpart.is_empty() and state.sequence.defeated_ids.has(counterpart): counterpart = ""
+		if state.profile_id == "assisted" and not view.target_id.is_empty(): return "Assisted cannot restore simultaneous foot/counterpart custody"
 		if view.target_id != counterpart: return "Foot view must retain its authored living counterpart custody"
 		var foot_exchange: Dictionary = state.mechanisms[id].exchange
 		if float(view.primary_time_s) <= float(foot_exchange.active_until_s) or float(view.response_complete_s) > float(foot_exchange.recovery_until_s): return "L2 accepted view response must fit its actual consumer recovery"
@@ -613,10 +671,12 @@ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary)
 			if not state.sequence.active_ids.has(counterpart): return "Paired L2 real target must remain alive/current"
 			var target: Dictionary = state.handlers[counterpart] if CrossingSequence.HANDLERS.has(counterpart) else state.rays.actors[counterpart]
 			var target_consumer: Dictionary = state.mechanisms["tool_" + counterpart] if CrossingSequence.HANDLERS.has(counterpart) else state.rays.records[counterpart]
-			if float(target.hp) <= 0.0 or target_consumer.status != "running" or (not CrossingSequence.HANDLERS.has(counterpart) and not target_consumer.exchange.adapter.locked): return "Paired foot requires a living armed real target"
-			var owned: Dictionary = {}
-			for reservation: Dictionary in state.scheduler.reservations:
-				if reservation.id == target_consumer.exchange.id: owned = reservation
+			var retired_response: bool = not CrossingSequence.HANDLERS.has(counterpart) and target_consumer.status == "complete" and state.mechanisms[id].phase == "recovery" and float(state.scheduler.clock_s) >= float(view.response_complete_s)
+			if float(target.hp) <= 0.0 or (target_consumer.status != "running" and not retired_response) or (not CrossingSequence.HANDLERS.has(counterpart) and not target_consumer.exchange.adapter.locked): return "Paired foot requires a living armed real target or its completed response receipt"
+			var owned: Dictionary = target_consumer.exchange if retired_response else {}
+			if not retired_response:
+				for reservation: Dictionary in state.scheduler.reservations:
+					if reservation.id == target_consumer.exchange.id: owned = reservation
 			if owned.is_empty() or foot_exchange.opening_position != target.root_position or owned.opening_position != target.root_position or float(view.primary_time_s) <= float(owned.active_until_s) or float(view.response_complete_s) > float(owned.recovery_until_s): return "Foot response must fit the actual paired target position and recovery"
 	return ""
 
@@ -630,7 +690,7 @@ func _saved_response_point_supported(point: Vector3) -> bool:
 	if point.y < -0.05 or point.y > 0.2: return false
 	for floor: Dictionary in _floors:
 		var safe: Rect2 = floor.safe_rect.grow(-(CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN))
-		if point.x >= safe.position.x and point.x <= safe.end.x and point.z >= safe.position.y and point.z <= safe.end.y: return true
+		if point.x >= safe.position.x - CinderThreatScheduler.EPSILON and point.x <= safe.end.x + CinderThreatScheduler.EPSILON and point.z >= safe.position.y - CinderThreatScheduler.EPSILON and point.z <= safe.end.y + CinderThreatScheduler.EPSILON: return true
 	return false
 
 func _progress_snapshot_error(state: Dictionary) -> String:
@@ -691,6 +751,7 @@ func _restore_local_state(state: Dictionary) -> void:
 func _on_exit_level() -> void:
 	set_physics_process(false)
 	if is_instance_valid(hero) and hero.world_action_executed.is_connected(_on_world_action): hero.world_action_executed.disconnect(_on_world_action)
+	if is_instance_valid(hero) and hero.died.is_connected(_on_hero_died): hero.died.disconnect(_on_hero_died)
 	for mechanism: Node3D in _mechanisms.values():
 		if is_instance_valid(mechanism): mechanism.call("clear", "l2_exit")
 	if is_instance_valid(_exchange): _exchange.call("cleanup")

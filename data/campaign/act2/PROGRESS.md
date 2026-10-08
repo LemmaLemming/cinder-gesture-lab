@@ -1,13 +1,13 @@
 # Act 2 progress
 
-Updated 8 October 2026. Authored L1 evidence baseline: `campaign-shared-13`; current checkout adopted shared16. Tested L1 publication: `campaign-shared-13`, publication `fef1b1a79d83401d5b67118f6f69dcf2abea017c`, preserving merge `24de1aa84960477a6c93993827040e586a01ead1`. See [memory](ACT_MEMORY.md), [current L1](levels/A2-L1.md) and [preserved progress history](PROGRESS_HISTORY.md). Historical failures and earlier pending statements remain in the archive, not in current status.
+Updated 8 October 2026. Authored L1 evidence baseline: `campaign-shared-13`; current checkout adopted shared19 via3fe640ee, preserving registrationd629/shared18. Tested L1 publication: `campaign-shared-13`, publication `fef1b1a79d83401d5b67118f6f69dcf2abea017c`, preserving merge `24de1aa84960477a6c93993827040e586a01ead1`. See [memory](ACT_MEMORY.md), [current L1](levels/A2-L1.md) and [preserved progress history](PROGRESS_HISTORY.md). Historical failures and earlier pending statements remain in the archive, not in current status.
 
 ## Current state
 
 | Level | State | Next requirement |
 | --- | --- | --- |
-| A2-L1 Horsell Common | Authored/tested and canonically accepted | Production registrationd629; preserving adoption pending |
-| A2-L2 Weybridge and Shepperton | Source/gate complete; kit/Handler/root imported; entry15/0; full acceptance pending | Actual full route/circle/paired state/retry/native portraits |
+| A2-L1 Horsell Common | Authored/tested and canonically accepted | Production registrationd629 adopted; runtime remains frozen |
+| A2-L2 Weybridge and Shepperton | Heavy/Standard actual full314/0; native362/0/16frames; full acceptance pending | Actual paired/death/retry, remaining gear/profile, all-frame source review |
 | A2-L3 Black Smoke and the Ruined House | Production unstarted; incomplete | L2 handoff |
 | A2-L4 Red Weed and the London Approaches | Production unstarted; incomplete | L3 handoff |
 | A2-L5 Dead London and Regent's Park | Production unstarted; incomplete | L4 handoff |
@@ -48,7 +48,7 @@ Per-bank and per-Scout-part cutaways preserve physical geometry, housing hit poi
 
 [Seven promoted native frames and metadata](../../../docs/acts/act2/evidence/A2-L1/live-evidence.json) record warning, lock, active, recovery, first pair, pair committed and clear. The pair-committed state is A warning/B recovery, not two armed locks.
 
-Shared13 Challenge slow-Padded-Reach-left269/0 remains recorded. Next: preserving registration adoption → L2 actual acceptance → exact L2 HANDOFF before L3. No unchanged successful suites or unrelated act audits need repetition. Human balance/native-focus play and mobile performance remain unperformed limitations.
+Shared13 Challenge slow-Padded-Reach-left269/0 remains recorded. Next: L2 paired/death/retry and gear/profile/source completion → exact L2 HANDOFF before L3. No unchanged successful suites or unrelated act audits need repetition. Human balance/native-focus play and mobile performance remain unperformed limitations.
 
 Tested owned runtime anchor: `16f2532518edd8d76aa41ec40f1d10edad607559`. All42scene/script/test SHA256 values match that commit; evidence-stamp changes only records/manifests. Scope is the whole assigned Act2 path diff from exact shared13 publication, including earlier owned foundation history. Canonical acceptance/registry work remains integration-owned.
 

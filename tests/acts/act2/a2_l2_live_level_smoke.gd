@@ -47,6 +47,7 @@ var _expected_stats: Dictionary = {}
 var _profile_id: String = "standard"
 var _expected_roles: Dictionary = {}
 var _capture_live: bool = false
+var _capture_root: String = CAPTURE_ROOT
 var _captured: Dictionary = {}
 var _foot_completed: Array[String] = []
 var _foot_phases: Dictionary = {}
@@ -62,7 +63,7 @@ func _run() -> void:
 		quit(1)
 		return
 	root.size = Vector2i(540, 1170)
-	if _capture_live and not _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(CAPTURE_ROOT)) == OK, "create ignored native portrait directory"):
+	if _capture_live and not _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_capture_root)) == OK, "create ignored native portrait directory"):
 		quit(1)
 		return
 	print("Weybridge actual route scope: loadout=%s profile=%s IDs=%s; initial zero ammo, ordinary primary, four HP-free foot cycles; TEST ONLY prefix/unlocks/profile/destination" % [_loadout_name, _profile_id, _loadout])
@@ -73,12 +74,18 @@ func _run() -> void:
 	if not await _run_route() and _failures == failures_before:
 		_expect(false, "actual L2 route aborted: " + _diagnostic())
 	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == _canonical and FileAccess.get_file_as_string("res://tests/acts/act2/fixtures/a2_l1_transition_destination.tscn") == _l1_fixture_bytes, "test injection preserves canonical registry and existing L1 fixture bytes")
-	if is_instance_valid(_game): _game.free()
+	if is_instance_valid(_game): _release_fixture_shell(_game)
 	_game = null
 	paused = false
 	_cleanup()
 	print("Weybridge live level smoke: %d checks, %d failures; loadout=%s profile=%s; actual authored L2 actions, synthetic prior prefix and TEST ONLY L3 destination" % [_checks, _failures, _loadout_name, _profile_id])
 	quit(0 if _failures == 0 else 1)
+
+func _release_fixture_shell(shell: CinderCampaignShell) -> void:
+	# Native child transform queries require the same explicit attached level
+	# exit used by production transitions, including an aborted fixture.
+	if is_instance_valid(shell.active_level): shell.active_level.exit_level()
+	shell.free()
 
 func _run_route() -> bool:
 	var raw: Dictionary = JSON.parse_string(_canonical)
@@ -130,11 +137,15 @@ func _run_route() -> bool:
 	if not await _contact("yard_exit", checkpoints): return false
 	if not await _complete_foot("foot_demo"): return false
 	_expect(_state().beat == "apron_pair" and defeats.size() == 2, "isolated foot completes without an attack/HP defeat")
-	if not await _complete_foot("foot_apron") or not await _clear(["apron_handler"]): return false
-	_expect(_paired_seen.has("foot_apron") and _state().beat == "before_crossing", "actual apron Handler and foot are admitted together before the next boundary")
+	if _profile_id == "assisted":
+		if not await _clear(["apron_handler"]) or not await _complete_foot("foot_apron"): return false
+	elif not await _complete_foot("foot_apron") or not await _clear(["apron_handler"]): return false
+	_expect((_paired_seen.has("foot_apron") if _profile_id != "assisted" else not _paired_seen.has("foot_apron")) and _state().beat == "before_crossing", "actual apron ordering preserves selected concurrent/Assisted serialized profile")
 	if not await _contact("before_crossing", checkpoints): return false
-	if not await _complete_foot("foot_left") or not await _complete_foot("foot_right") or not await _clear(["crossing_scout"]): return false
-	_expect(_paired_seen.has("foot_left") and _paired_seen.has("foot_right") and _state().beat == "far_apron", "two actual alternating foot patches coexist with the short crossing Scout encounter")
+	if _profile_id == "assisted" and not await _clear(["crossing_scout"]): return false
+	if not await _complete_foot("foot_left") or not await _complete_foot("foot_right"): return false
+	if _profile_id != "assisted" and not await _clear(["crossing_scout"]): return false
+	_expect(((_paired_seen.has("foot_left") and _paired_seen.has("foot_right")) if _profile_id != "assisted" else (not _paired_seen.has("foot_left") and not _paired_seen.has("foot_right"))) and _state().beat == "far_apron", "two actual alternating foot patches preserve paired/Assisted serialized crossing")
 	if not await _contact("far_apron", checkpoints) or not await _contact("before_shelter", checkpoints): return false
 	if not await _clear(["shelter_scout", "shelter_handler"]): return false
 	await _settle()
@@ -214,10 +225,17 @@ func _complete_foot(id: String) -> bool:
 			_foot_primaries[id] = _primary_count() - before_primary
 			_expect(_primary_count() == before_primary, "actual foot opportunity needs no primary/HP attack: " + id)
 			_expect(phases.has("lock") and phases.has("active") and phases.has("recovery"), "actual visible foot traverses lock/active/recovery: " + id)
+			if not actual.hit_ids.is_empty(): print("Foot route failed witness: id=", id, " consumer=", actual, " actual_actions=", _actions.slice(maxi(_actions.size() - 8, 0)), " current=", state)
 			_expect(actual.geometry.get("kind") == "circle" and actual.source_position == Sequence.FEET[id] and actual.hit_ids.is_empty(), "actual foot uses its authored circular source and proved movement avoids a swept hit: " + id)
 			print("Weybridge actual HP-free foot completed: ", id)
 			return true
 		if state.foot_id != id: return _expect(false, "unexpected authored foot order for " + id + ": " + _diagnostic())
+		if OS.get_cmdline_user_args().has("--diagnose-pair") and actual.get("last_cancel_reason") == "paired_real_target_recovery_does_not_cover_response":
+			_game.request_pause()
+			await _settle()
+			var saved: Dictionary = _game.active_level.snapshot_state()
+			print("Actual first rejected pair timing: foot=", saved.get("local", {}).get("mechanisms", {}).get(id, {}), " target=", state.exchanges.get("crossing_scout", {}), " hero_response=", _game.player.get_threat_response_state(), " capture_error=", _game.active_level.last_snapshot_error)
+			return _expect(false, "TEST ONLY diagnostic stops at first actual paired recovery refusal; no acceptance claim")
 		if actual.status == "running":
 			phases[actual.phase] = true
 			var target_id: String = "apron_handler" if id == "foot_apron" else ("crossing_scout" if id in ["foot_left", "foot_right"] else "")
@@ -226,18 +244,31 @@ func _complete_foot(id: String) -> bool:
 		if not plan.is_empty() and not _used_proofs.has(plan.key):
 			_used_proofs[plan.key] = true
 			if not await _follow_proof(plan, false): return false
-		elif frame % 90 == 0 and actual.status != "running":
-			var at: Vector3 = Sequence.FEET[id]
+		elif actual.status != "running":
+			# Defend the living counterpart while no foot has been admitted. Its
+			# actual union-proved movement needs no HP attack or private teleport.
 			var counterpart: String = "apron_handler" if id == "foot_apron" else ("crossing_scout" if id in ["foot_left", "foot_right"] else "")
-			if not counterpart.is_empty() and float(_actors[counterpart].get("hp")) > 0.0 and _game.player.global_position.distance_to(_actors[counterpart].global_position) > 3.45:
-				# The pair's real target must also be close enough for admission.
-				# A foot-only approach can stop while the Handler/Scout stays idle.
-				at = _actors[counterpart].global_position
-			var offset: Vector3 = _game.player.global_position - at
-			offset.y = 0.0
-			if offset.length() > 3.45 and not await _navigate_dash(at + offset.normalized() * 3.0): return false
+			var defensive_plan: Dictionary = _latest_actor_plan([counterpart]) if not counterpart.is_empty() else {}
+			if not defensive_plan.is_empty():
+				_used_proofs[defensive_plan.key] = true
+				if not await _follow_proof(defensive_plan, false): return false
+			elif frame % 90 == 0:
+				if not await _approach_foot_pair(id): return false
 		await _step()
 	return _expect(false, "bounded bot found no actual completed foot opportunity %s: %s" % [id, _diagnostic()])
+
+func _approach_foot_pair(id: String) -> bool:
+
+	var at: Vector3 = Sequence.FEET[id]
+	var counterpart: String = "apron_handler" if id == "foot_apron" else ("crossing_scout" if id in ["foot_left", "foot_right"] else "")
+	if not counterpart.is_empty() and float(_actors[counterpart].get("hp")) > 0.0 and _game.player.global_position.distance_to(_actors[counterpart].global_position) > 3.45:
+		# The pair's real target must also be close enough for admission.
+		# A foot-only approach can stop while the Handler/Scout stays idle.
+		at = _actors[counterpart].global_position
+	var offset: Vector3 = _game.player.global_position - at
+	offset.y = 0.0
+	if offset.length() > 3.45 and not await _navigate_dash(at + offset.normalized() * 3.0): return false
+	return true
 
 func _observe_runtime() -> void:
 	if not _live(): return
@@ -272,7 +303,7 @@ func _make_plan(id: String, actor_id: String, current: Dictionary, proof: Dictio
 func _follow_proof(plan: Dictionary, attack: bool) -> bool:
 	var reservation: Dictionary = plan.reservation
 	var source: String = plan.source_id
-	var role_key: String = "foot" if Sequence.FEET.has(source) else ("tool" if source.begins_with("tool_") else "ray")
+	var role_key: String = ("crossing_foot" if source in ["foot_left", "foot_right"] else "foot") if Sequence.FEET.has(source) else ("tool" if source.begins_with("tool_") else "ray")
 	if not _expect(Codec.same_values(plan.resolved_role, _expected_roles[role_key]) and is_equal_approx(float(reservation.active_from_s) - float(reservation.lock_from_s), float(_expected_roles[role_key].lock_s)) and float(reservation.active_from_s) - float(reservation.lock_from_s) >= 1.1 - 0.00001, "actual %s witness retains selected shared role and full1.10 lock" % source): return false
 	for segment: Dictionary in plan.proof.path:
 		if segment.kind not in ["escape_dash", "positioning_dash", "ordinary_primary"]: continue
@@ -387,7 +418,7 @@ func _read_options() -> bool:
 	if not _expect(resolver.restore(_loadout), "selected equipment IDs are implemented canonical records"): return false
 	_expected_stats = resolver.resolved_stats()
 	var difficulty: RefCounted = Difficulty.new()
-	_expected_roles = {"ray": difficulty.call("resolve_role", RayExchange.RAW_ROLE, _profile_id, RayExchange.TIMING_FLOORS), "tool": difficulty.call("resolve_role", Weybridge.TOOL_ROLE, _profile_id, Weybridge.TOOL_FLOORS), "foot": difficulty.call("resolve_role", Mechanism.DEFAULT_RAW_ROLE, _profile_id, Mechanism.DEFAULT_TIMING_FLOORS)}
+	_expected_roles = {"ray": difficulty.call("resolve_role", RayExchange.RAW_ROLE, _profile_id, RayExchange.TIMING_FLOORS), "tool": difficulty.call("resolve_role", Weybridge.TOOL_ROLE, _profile_id, Weybridge.TOOL_FLOORS), "foot": difficulty.call("resolve_role", Mechanism.DEFAULT_RAW_ROLE, _profile_id, Mechanism.DEFAULT_TIMING_FLOORS), "crossing_foot": difficulty.call("resolve_role", Weybridge.CROSSING_FOOT_ROLE, _profile_id, Weybridge.CROSSING_FOOT_FLOORS)}
 	for role: Dictionary in _expected_roles.values():
 		if not _expect(not role.is_empty(), "shared resolver accepts fixed profile without retuning role"): return false
 	return _expect(not _capture_live or DisplayServer.get_name() != "headless", "native capture requires graphical engine session")
@@ -417,13 +448,13 @@ func _capture_state() -> void:
 		foot_observation = {"id": state.foot_id, "phase": foot_state.phase, "status": foot_state.status, "cycle": foot_state.cycle, "armed": reservation.get("armed", false), "geometry": _geometry_json(foot_state.geometry), "opening_position": Codec.vector3(foot_state.opening_position), "landing": Codec.vector3(proof.landing) if proof.has("landing") else [], "attack_position": Codec.vector3(proof.attack_position) if proof.has("attack_position") else []}
 	for label: String in labels:
 		if _captured.has(label) or not current_labels.has(label): continue
-		var path: String = CAPTURE_ROOT + "a2-l2-" + _profile_id + "-" + _loadout_name + "-" + label + ".png"
+		var path: String = _capture_root + "a2-l2-" + _profile_id + "-" + _loadout_name + "-" + label + ".png"
 		if not _expect(image.save_png(path) == OK, "save actual native L2 state " + label): return
 		var kit: Node = _game.active_level.get_node("WeybridgeSceneryKit")
 		var collapse: Node3D = kit.get_node("DistantArtilleryTripodCollapse") as Node3D
 		_captured[label] = {"image": path, "level_id": "A2-L2", "loadout": _loadout_name, "profile": _profile_id, "beat": state.beat, "clock_s": state.clock_s, "hero_position": Codec.vector3(_game.player.global_position), "hero_hp": _game.player.hp, "shells": _game.player.shells, "world_action_count": _actions.size(), "actors": actor_observations.duplicate(true), "foot": foot_observation.duplicate(true), "tableau_state": kit.get_meta("tableau_state", ""), "tableau_progress": kit.get_meta("tableau_progress", 0.0), "collapse_visible": collapse.is_visible_in_tree(), "collapse_progress": collapse.get_meta("collapse_progress", 0.0)}
 		print("Actual Weybridge portrait: ", path)
-	var file: FileAccess = FileAccess.open(CAPTURE_ROOT + "a2-l2-" + _profile_id + "-" + _loadout_name + "-evidence.json", FileAccess.WRITE)
+	var file: FileAccess = FileAccess.open(_capture_root + "a2-l2-" + _profile_id + "-" + _loadout_name + "-evidence.json", FileAccess.WRITE)
 	if _expect(file != null, "open ignored actual L2 capture metadata"):
 		file.store_string(JSON.stringify({"scope": "actual authored L2 dash/primary bot; synthetic preceding prefix/unlocks/profile and TEST ONLY L3 destination; mixed states report each actual armed flag, never imply two armed locks; no human balance or future-level acceptance", "frames": _captured}, "\t", true, true))
 
@@ -496,6 +527,7 @@ func _seed(registry: CinderCampaignRegistry) -> bool:
 	if not saved:
 		print("Weybridge seed rejection: actor_error=%s level_error=%s runtime_error=%s model_error=%s store_error=%s actor_keys=%s level_keys=%s" % [hero.last_snapshot_error, level.last_snapshot_error, level.get("runtime_error"), seed_error, store.last_error, actor_state.keys(), local_state.keys()])
 	_expect(saved, "TEST ONLY Act1/Horsell prefix seeds real captured Weybridge/player state: " + store.last_error)
+	level.exit_level()
 	preview.free()
 	_expect(not is_instance_valid(hero) and not is_instance_valid(level), "seed MainScene and actor are freed before actual shell installation")
 	return saved

@@ -25,10 +25,13 @@ func _initialize() -> void:
 
 
 func _run() -> void:
-	await _test_real_primary_gate_and_reload()
-	if not OS.get_cmdline_user_args().has("--pair-only"):
+	if OS.get_cmdline_user_args().has("--pose-only"):
 		await _test_exact_actor_pose_and_cutaway()
-		await _test_foot_dynamic_geometry()
+	else:
+		await _test_real_primary_gate_and_reload()
+		if not OS.get_cmdline_user_args().has("--pair-only"):
+			await _test_exact_actor_pose_and_cutaway()
+			await _test_foot_dynamic_geometry()
 	print("A2-L2 isolated Handler/foot smoke: %d checks, %d failures; no authored route/native portrait claim" % [_checks, _failures])
 	quit(0 if _failures == 0 else 1)
 
@@ -213,6 +216,16 @@ func _test_exact_actor_pose_and_cutaway() -> void:
 		var encoded: String = ExactJson.stringify(saved)
 		var parsed: Dictionary = ExactJson.parse(encoded)
 		_expect(parsed.get("accepted", false) and bool(actor.call("restore_state", parsed.value)) and ExactJson.stringify(actor.call("snapshot_state")) == encoded, "exact paused Handler tuple restores " + phase)
+		var operator: Node3D = rig.get_node("FiveLegChassis/LowHandlerCase/FrontOperatorAnatomy") as Node3D
+		var operator_bounds: AABB = _world_mesh_bounds(operator)
+		var operator_radial: float = 0.0
+		for part: MeshInstance3D in _meshes(operator):
+			for surface: int in range(part.mesh.get_surface_count()):
+				var vertices: PackedVector3Array = part.mesh.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX]
+				for vertex: Vector3 in vertices:
+					var at: Vector3 = part.global_transform * vertex - actor.global_position
+					operator_radial = maxf(operator_radial, Vector2(at.x, at.z).length())
+		_expect(operator_bounds.position.y >= -0.000001 and operator_bounds.end.y <= 1.102501 and operator_radial <= 0.944141, "actual revised operator vertices remain above dry ground and inside unchanged body height/yaw framing: " + phase)
 		var expected_meshes: Dictionary = _mesh_transforms(rig)
 		var fresh: Node3D = ActorScript.new() as Node3D
 		arena.world.add_child(fresh)

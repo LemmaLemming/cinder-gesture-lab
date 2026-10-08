@@ -1,5 +1,5 @@
 class_name Act2SalvageHandlerActor
-extends "res://scripts/acts/act2/ray_scout_actor.gd"
+extends "res://scripts/acts/act2/weybridge_scout_actor.gd"
 ## Compact five-legged A2-E3 presentation over the existing anchored target.
 ## Inherit HP30, accepted-hit/reload contract, immutable root, recovery gate and
 ## paused actor transport. The level and shared lane mechanism own all clocks.
