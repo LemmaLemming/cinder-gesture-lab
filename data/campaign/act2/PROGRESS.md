@@ -1,8 +1,8 @@
 # Act 2 progress
 
-Updated 9 October 2026. **Two of eight Act2 levels are canonically accepted. L3 authored floor56/0, corrected B02 art50/0 and Smoke4 current-frame118/0 have scoped native presentation approval; known initial fresh-component transport99/0 passes. Full Smoke gameplay/route/checkpoint remains incomplete. Five later productions are unstarted.** [Memory](ACT_MEMORY.md), [current L2 design](levels/A2-L2.md), [portable L2 evidence](../../../docs/acts/act2/evidence/A2-L2/README.md) and [preserved progress history](PROGRESS_HISTORY.md) separate current status from earlier failures/pending statements.
+Updated 9 October 2026. **Two of eight Act2 levels are canonically accepted. L3 all five selected Standard loadouts and both checkpoint lifecycle scopes pass; actual Cargo/Longstep native route570/0 has23 reviewed portraits. Heavy Assisted/Challenge remain in the shared queue. Shared HUD maxHP number correction is requested. Five later productions are unstarted.** [Memory](ACT_MEMORY.md), [current L3 design](levels/A2-L3.md) and [portable L3 evidence](../../../docs/acts/act2/evidence/A2-L3/index.json) preserve exact source/results and all original failures. No L3 HANDOFF yet.
 
-Consumed `campaign-shared-24`, publication5d7a394c67c6095bd96136e0f07976984075ed0f; compatible A1-L2 registrationc6a9596034edab5159f45f3cae090a380b916b45 adopted by preserving merge1b2a28e304abed7e57ef90fcd44c44f37b0cce66 from frozen Smoke4 checkpoint56d4e123cea6d18169be5cbde108b51ac585b5f7. All418 tracked owned hashes stayed identical. Shared combat/controller/camera/cue/settings are unchanged; no unrelated check/import rerun.
+Current consumed `campaign-shared-26`, publicationc0816fb9ed60caaac36e5e1320ab95d42589e0b8, preserving71b1945da655cb637f27794eaf52fcfd196afccc from owned7d78c77351a1223d4f5097e92038d5ac6d8d1df8; all574 tracked owned hashes remained identical, ACK93cd2f4e. Current source/evidence milestone373a35f40884c4259b9af36606829d959d7eec42 is not a HANDOFF. Published shared27 Shell settlement will be preserved-adopted after frozen in-flight routes complete, followed by directly affected lifecycle checks.
 
 Earlier shared23 adoption: publication `2304d25e51d269edd3d6fc90b142f87b2ad35a6d`, preserving merge `74de3ea5f5d06ba5eca8b6ea74b8aceed2fbe28f`, ACK `3144d408-e50c-413e-ac8b-deec18f732dd`. All271 tracked owned files were preserved from exact L2 HANDOFF candidatefd5fd3d. Directly affected actual crossing/fresh-camera/full-route check passes **371/0 clean**, [separate adoption evidence](../../../docs/acts/act2/evidence/A2-L2-shared23-adoption/README.md). Original shared22 bundle/hashes/results remain frozen; no unchanged L1/art/unused crescent/replay/broad suite.
 
@@ -12,7 +12,7 @@ Earlier consumed baseline: Consumed `campaign-shared-22`: publication `4de8b6008
 | --- | --- | --- |
 | A2-L1 Horsell Common | Original candidate/both common Scout patches adopted; current40/42 original files match | Supplemental 186/0 + affected 285/0 clean, adopted8c37b1e0/RESPONSEd810feca |
 | A2-L2 Weybridge and Shepperton | Canonical registry accepted exactfd5fd3d; registration4b0e08d | Integration330/0+338/0+Journey22/0 separate; owner shared23 crossing371/0 retained |
-| A2-L3 Black Smoke and the Ruined House | Known initial fresh transport99/0; floor56/0, B02 art50/0 and Smoke4 current-frame118/0 scoped native presentation pass | Published Smoke hookup; actual phase/whole checkpoint/full route checks and HANDOFF |
+| A2-L3 Black Smoke and the Ruined House | Five Standard loadout routes and native Cargo570; real fatal375 and B02 lifecycle252 pass | Remaining Assisted/Challenge; shared27 adoption/affected lifecycle; HUD request; final closure and HANDOFF |
 | A2-L4 Red Weed and the London Approaches | Production unstarted | L3 handoff |
 | A2-L5 Dead London and Regent's Park | Production unstarted | L4 handoff |
 | A2-O1 Cylinder Perimeter | Production unstarted | Main levels complete; reuse L1 kit |
@@ -170,3 +170,12 @@ Cargo/Longstep completed the full actual route with **479/0**, including two rea
 
 
 All five selected loadouts now complete the actual L3 route at Standard difficulty: Heavy503/0 (native586 separate), Standard473/0, Quick477/0, Cargo/Longstep479/0 and Padded/Reach477/0. Every result is clean with original zero-ammo/no-pickup/ordinary-primary scope, real contact/phase checkpoints, source tails and actual transition cleanup. Heavy Assisted/Challenge and native Cargo portraits remain pending. B02 original-artifact lifecycle252, first-checkpoint fatal375 and binding95 retain their separate scopes. This source/evidence checkpoint is not a L3 HANDOFF or acceptance.
+
+
+## Native Cargo closure and current shared publication
+
+Actual Cargo/Longstep Standard native route passes **570 checks, zero failures, clean exit** at shared26/current SmokeVisual5. All23 original540×1170 PNGs and exact metadata SHA ffdf09061924af5a5fc585ac022845671eab5117be619df1957efa3d4ea4c69c are portable in live-cargo-native-production-first. Root reviewed five smoke/clear views; independent reviewers cover nine boss and nine tool/Ray views. Source/footprint/full Hero/mixed outfit/dry landing/HUD exclusion pass at these sampled views. Actual dash2.97m and ordinary Heavy reach1.8m are retained. Fine tentacle/rear support/plate overlap, hit-flash detail loss, warm smoke fringe and cutaway limits remain documented.
+
+Every Cargo frame displays100/111 despite canonical nominal110 maximum: shared HUD uses ceil of a tiny IEEE representation excess. Actual HP100, stats, physical bar fraction and gameplay are unchanged. Integration REQUEST c12ca5ac-ebed-4885-87bf-23b6c6b0e89d includes original PNG and frozen shared source. Numeric accuracy remains failed/pending separately; Act2 has edited no shared HUD/stat/controller file. No further human decision is needed.
+
+Published shared27 2ffae5a048e8b415bcc495632439fa7a5570886d adds the seven-line Shell quiet pause settlement and accepted A3-L2 registration, with compatible schemas. Root will preserve-adopt only after the frozen Assisted/Challenge wrapper finishes, then run directly affected L3 lifecycle scope, preserving all original shared25/26 evidence. No unchanged art/accepted-level/full-campaign suite follows. Next complete these remaining scopes and final owned hash/link inventory, then send exact L3 HANDOFF. No L4 implementation has started.

@@ -1,0 +1,9 @@
+{
+  "actual_start_head": "373a35f40884c4259b9af36606829d959d7eec42",
+  "frozen_receipt_head": "71b1945da655cb637f27794eaf52fcfd196afccc",
+  "explanation": "Original receipt reused the earlier Cargo headless source declaration while freezing all twelve current source copies before this native command. Every declared byte remains identical at actual start HEAD; the original receipt is retained unchanged.",
+  "command": "python3 scripts/dev/dev.py engine --path . --log-file .cinder/a2-l3-live-cargo-native-production-first.log --script tests/acts/act2/a2_l3_side_source_level_smoke.gd -- --loadout=slow_cargo_longstep --profile=standard --capture-live",
+  "shared_api": "campaign-shared-26",
+  "source_verification": "Twelve frozen/current copies verified SHA256 identical. Source receipt is immutable, not retrospectively relabelled.",
+  "exit_evidence": "dev.py wrapper session 43293 completed exit0; explicit final raw result 570/0 with zero script errors."
+}

@@ -1,8 +1,8 @@
 # Act 2 durable memory
 
-Updated 9 October 2026. **L1/L2 are accepted. L3 Shared25 full19 initial transport124/0 and real running-bank transport73/0 pass within their stated scopes; Heavy route diagnosis is correcting native test sampling. Full route, production portraits and campaign retry remain incomplete. Five later productions are unstarted.** [Progress](PROGRESS.md), [L3 design](levels/A2-L3.md) and [evidence](../../../docs/acts/act2/evidence/A2-L3/index.json) preserve exact results and first failures. Six Act2 levels remain; no human/mobile decision gate.
+Updated 9 October 2026. **L1/L2 are accepted. L3 five selected Standard routes pass, first-checkpoint fatal lifecycle375/0 and genuinely earned boss lifecycle252/0 pass. Current SmokeVisual5 road88/staged onset55 and native Cargo570/23 portraits establish their scoped current presentation evidence. Heavy Assisted/Challenge and shared HUD number correction remain pending. Five later productions are unstarted.** [Progress](PROGRESS.md), [L3 design](levels/A2-L3.md) and [evidence](../../../docs/acts/act2/evidence/A2-L3/index.json) preserve exact results and first failures. Six Act2 levels remain; no human/mobile decision gate.
 
-Current consumed baseline `campaign-shared-25`, publication05869a593ea523e079a3e6d1e6e750f4219e813c, preserving merge87162dd310c9677084a466ffcc8a306ddb2b5de8 from owneddd4e001. All423 tracked owned hashes stayed identical; ACKce6a0411. Current L3 production edits are uncommitted and still need full acceptance.
+Current consumed baseline `campaign-shared-26`, publicationc0816fb9ed60caaac36e5e1320ab95d42589e0b8, preserving71b1945da655cb637f27794eaf52fcfd196afccc from owned7d78c77351a1223d4f5097e92038d5ac6d8d1df8. All574 tracked owned hashes remained identical; ACK93cd2f4e. Source/evidence milestone373a35f40884c4259b9af36606829d959d7eec42 preserves the completed scopes. Published shared27 adoption and affected lifecycle check follow the in-flight frozen routes; no L3 HANDOFF yet.
 
 ## Ownership and consumed baseline
 
@@ -146,3 +146,12 @@ Cargo/Longstep completed the full actual route with **479/0**, including two rea
 
 
 All five selected loadouts now complete the actual L3 route at Standard difficulty: Heavy503/0 (native586 separate), Standard473/0, Quick477/0, Cargo/Longstep479/0 and Padded/Reach477/0. Every result is clean with original zero-ammo/no-pickup/ordinary-primary scope, real contact/phase checkpoints, source tails and actual transition cleanup. Heavy Assisted/Challenge and native Cargo portraits remain pending. B02 original-artifact lifecycle252, first-checkpoint fatal375 and binding95 retain their separate scopes. This source/evidence checkpoint is not a L3 HANDOFF or acceptance.
+
+
+## Native Cargo closure and current shared publication
+
+Actual Cargo/Longstep Standard native route passes **570 checks, zero failures, clean exit** at shared26/current SmokeVisual5. All23 original540×1170 PNGs and exact metadata SHA ffdf09061924af5a5fc585ac022845671eab5117be619df1957efa3d4ea4c69c are portable in live-cargo-native-production-first. Root reviewed five smoke/clear views; independent reviewers cover nine boss and nine tool/Ray views. Source/footprint/full Hero/mixed outfit/dry landing/HUD exclusion pass at these sampled views. Actual dash2.97m and ordinary Heavy reach1.8m are retained. Fine tentacle/rear support/plate overlap, hit-flash detail loss, warm smoke fringe and cutaway limits remain documented.
+
+Every Cargo frame displays100/111 despite canonical nominal110 maximum: shared HUD uses ceil of a tiny IEEE representation excess. Actual HP100, stats, physical bar fraction and gameplay are unchanged. Integration REQUEST c12ca5ac-ebed-4885-87bf-23b6c6b0e89d includes original PNG and frozen shared source. Numeric accuracy remains failed/pending separately; Act2 has edited no shared HUD/stat/controller file. No further human decision is needed.
+
+Published shared27 2ffae5a048e8b415bcc495632439fa7a5570886d adds the seven-line Shell quiet pause settlement and accepted A3-L2 registration, with compatible schemas. Root will preserve-adopt only after the frozen Assisted/Challenge wrapper finishes, then run directly affected L3 lifecycle scope, preserving all original shared25/26 evidence. No unchanged art/accepted-level/full-campaign suite follows. Next complete these remaining scopes and final owned hash/link inventory, then send exact L3 HANDOFF. No L4 implementation has started.
