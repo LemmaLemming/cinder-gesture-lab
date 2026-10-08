@@ -1,0 +1,2268 @@
+{
+  "schema_version": 1,
+  "publication_status": "reviewed_native_targets_complete",
+  "api_revision": "smoke-bank-1",
+  "created_at": "2026-10-08T18:30:53.662086+00:00",
+  "tested_engine": "4.7.2.stable.official.ed1daf0bf",
+  "scope": {
+    "new_opt_in_shared_consumer": true,
+    "no_authored_placement_acceptance": true,
+    "no_fairness_or_portrait_claim": true,
+    "test_only_shell_fixture": true,
+    "isolated_user_paths": "user://test-smoke-bank-*",
+    "no_production_save_changes": true,
+    "not_full_import_graph": true,
+    "declared_source_subset_counts": {
+      "first_runtime": 23,
+      "second_runtime": 23,
+      "shell_cleanup": 23,
+      "first_portrait": 31,
+      "marker_corrected_portrait": 31,
+      "final_full": 31,
+      "final_portrait": 31
+    }
+  },
+  "source_groups": [
+    {
+      "id": "first",
+      "manifest": "sources/first/manifest.json",
+      "provenance": "12 prejob originals plus11 recoveries from unchanged frozen shared sources after job start; original manifest retained byte-for-byte",
+      "declared_file_count": 23
+    },
+    {
+      "id": "second",
+      "manifest": "sources/second/manifest.json",
+      "provenance": "23 original prejob frozen source copies; original manifest retained byte-for-byte",
+      "declared_file_count": 23
+    },
+    {
+      "id": "shell-cleanup",
+      "manifest": "sources/shell-cleanup/manifest.json",
+      "provenance": "23 original prejob sources, same aee runtime; d71 cleanup fixture and unchanged shared core",
+      "declared_file_count": 23
+    },
+    {
+      "id": "portrait-first",
+      "manifest": "sources/portrait-first/manifest.json",
+      "provenance": "31 original prejob frozen graphical sources; test538827 and unchanged aee runtime, before marker-only correction",
+      "declared_file_count": 31
+    },
+    {
+      "id": "portrait-marker-corrected",
+      "manifest": "sources/portrait-marker-corrected/manifest.json",
+      "declared_file_count": 31,
+      "provenance": "31 original prejob source bytes: runtimeaee/test538 unchanged, fixturefb4 marker correction only"
+    },
+    {
+      "id": "final-full",
+      "manifest": "sources/final-full/manifest.json",
+      "declared_file_count": 31,
+      "provenance": "Original31-file prejob final full target source set, reverified after closure; metadata text may be historical pending at capture"
+    },
+    {
+      "id": "final-portrait",
+      "manifest": "sources/final-portrait/manifest.json",
+      "declared_file_count": 31,
+      "provenance": "31 original prejob final graphical sources, same tested runtime/test/fixture identities as final359; historical059 doc untouched"
+    }
+  ],
+  "runs": [
+    {
+      "id": "first-full-native",
+      "session": 76932,
+      "log": "logs/smoke-bank-first.log",
+      "checks_reported": 306,
+      "failures_reported": 1,
+      "exit_code": 1,
+      "status": "failed",
+      "runtime_sha256": "71d437545e17e972dd3d9d8821841476f21ccd347188ab52de18d0dca9aaa872",
+      "test_sha256": "feb3602df9cd89ced8589b51324ca60d2dcad67ed7aca8b67179d27cb016345a",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--verbose",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/smoke_bank_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first.log"
+      ],
+      "command_provenance": "Exact canonical wrapper argument order relayed by integration owner after closure",
+      "exit_provenance": "Integration owner reported observed closed native session76932",
+      "diagnostics": {
+        "script_errors_in_raw_log": 2,
+        "assertion_error_in_raw_log": 1,
+        "failure": "Freed cached bar typed cast before validity check; missing native-bar assertion failed"
+      },
+      "permission_scope": "require_escalated: user-authorized isolated native Godot user:// test data; no production save writes"
+    },
+    {
+      "id": "second-full-native",
+      "session": 6617,
+      "log": "logs/smoke-bank-second.log",
+      "checks_reported": 353,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "status": "runtime_checks_passed_with_shutdown_diagnostics",
+      "runtime_sha256": "aee34e8db765585252fcbbb6b1f0e2a5334b4118c11497c12e6c9de8a6318ffc",
+      "test_sha256": "ac402615b89dc61ad575af0c4e71a12674312b147978adae76b597dee6f89179",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--verbose",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/smoke_bank_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second.log"
+      ],
+      "command_provenance": "Exact canonical wrapper argument order relayed by integration owner after closure",
+      "exit_provenance": "Integration owner observed native canonical session6617 closure exit0; full wrapper shutdown retained leaks separately from raw log",
+      "diagnostics": {
+        "script_errors_in_raw_log": 0,
+        "parse_errors_in_raw_log": 0,
+        "raw_log_contains_shutdown_stderr": false,
+        "wrapper_reported_audio_stream_leaks": 2,
+        "wrapper_reported_objects": [
+          "AudioStreamWAV",
+          "AudioStreamPlaybackWAV"
+        ],
+        "wrapper_reported_stringname": "Effects",
+        "provenance": "Observed completed native wrapper output relayed by owners; not present in retained raw log",
+        "clean_shutdown_claim": false
+      },
+      "permission_scope": "require_escalated: user-authorized isolated native Godot user:// test data; no production save writes"
+    },
+    {
+      "id": "four-shell-cleanup-subset",
+      "session": 80240,
+      "log": "logs/smoke-bank-shell-cleanup.log",
+      "checks_reported": 50,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "status": "passed",
+      "meaning": "All4 public Shell cases plus actual6-voice post-assertion teardown; not another353 full-leaf run",
+      "runtime_sha256": "aee34e8db765585252fcbbb6b1f0e2a5334b4118c11497c12e6c9de8a6318ffc",
+      "test_sha256": "d71f48b4861242cef1330e07664dd92047707d27b257668f5c65b99949e3e14a",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--verbose",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/smoke_bank_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup.log",
+        "--",
+        "--shell-only"
+      ],
+      "command_provenance": "Exact canonical wrapper arguments relayed by integration owner",
+      "exit_provenance": "Integration owner observed session80240 exit0; raw independently inspected and wrapper tail reported clean",
+      "permission_scope": "require_escalated: authorized isolated native test user data",
+      "diagnostics": {
+        "script_error": false,
+        "error": false,
+        "warning": false,
+        "objectdb_leak": false,
+        "wrapper_tail": "Integration owner reports clean; no omitted failure suppression"
+      }
+    },
+    {
+      "id": "portrait-first",
+      "session": 46383,
+      "log": "logs/smoke-bank-portrait-first.log",
+      "checks_reported": 48,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "status": "functional_checks_passed_visual_review_failed",
+      "meaning": "Four fresh actual public Shell/native phases;48 functional/capture checks passed; TEST ONLY default Box marker occludes Hero in active/recovery",
+      "runtime_sha256": "aee34e8db765585252fcbbb6b1f0e2a5334b4118c11497c12e6c9de8a6318ffc",
+      "test_sha256": "5388271a03f55b3a515b1a92849694c4d2ac9fc97dbb2fefb61d0e8b541dc6e8",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--verbose",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/smoke_bank_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait.log",
+        "--",
+        "--portrait"
+      ],
+      "command_provenance": "Exact canonical graphical argv confirmed by integration owner for all3 jobs; --verbose present, no --headless; stdout/stderr redirected to corresponding-wrapper.log",
+      "exit_provenance": "Integration owner observed closed session46383 exit0 and independently reviewed all4 images",
+      "permission_scope": "require_escalated: authorized actual native graphical window and isolated PID user data; canonical shared queue",
+      "diagnostics": {
+        "script_error": false,
+        "error": false,
+        "warning": false,
+        "objectdb_leak": false
+      },
+      "metadata": "portraits/first/index.json",
+      "metadata_checks": 46,
+      "metadata_count_scope": "Recorded before final file-open/four-capture assertions; final raw target48 is authoritative",
+      "visual_review": {
+        "reviewer": "integration owner",
+        "viewed": [
+          "warning",
+          "lock",
+          "active",
+          "recovery"
+        ],
+        "result": "failed",
+        "reason": "TEST ONLY RequiredLaterPresentation default Box scales with phase and obscures Hero head in active and entire Hero/source in recovery",
+        "native_ring_and_grace": "Integration owner reports native ring/grace clear",
+        "focus": "Actual native focusfalse recorded; no focus change/bypass",
+        "independent_helper_viewed": [
+          "active",
+          "recovery"
+        ],
+        "independent_helper_finding": "Native first active image gray marker obscures Hero head, recovery marker obscures Hero; ring and earned-grace bar remain readable. Original visual failure corroborated."
+      }
+    },
+    {
+      "id": "portrait-marker-corrected",
+      "session": 67680,
+      "log": "logs/smoke-bank-portrait-marker-corrected.log",
+      "checks_reported": 48,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "status": "functional_checks_passed_marker_review_passed_grace_bar_review_failed",
+      "runtime_sha256": "aee34e8db765585252fcbbb6b1f0e2a5334b4118c11497c12e6c9de8a6318ffc",
+      "test_sha256": "5388271a03f55b3a515b1a92849694c4d2ac9fc97dbb2fefb61d0e8b541dc6e8",
+      "fixture_sha256": "fb4c04fbedb83002eb425ff8a63e7c000485979c106080c0ecf686fe86a10d67",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--verbose",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/smoke_bank_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected.log",
+        "--",
+        "--portrait"
+      ],
+      "command_provenance": "Exact canonical graphical argv confirmed by integration owner for all3 jobs; --verbose present, no --headless; stdout/stderr redirected to corresponding-wrapper.log",
+      "exit_provenance": "Integration owner observed closed67680 exit0 and reviewed all4 actual images",
+      "diagnostics": {
+        "script_error": false,
+        "error": false,
+        "warning": false,
+        "objectdb_leak": false
+      },
+      "metadata": "portraits/marker-corrected/index.json",
+      "metadata_checks": 46,
+      "metadata_count_scope": "Before2 final assertions; raw48 authoritative",
+      "visual_review": {
+        "reviewer": "integration owner",
+        "viewed": [
+          "warning",
+          "lock",
+          "active",
+          "recovery"
+        ],
+        "marker_result": "passed",
+        "grace_bar_result": "failed",
+        "reason": "Native BAR_HEIGHT1.65 active bar projects over Hero neck and resembles yellow collar, not clearly separated required progress",
+        "native_focus_policy": "Unchanged",
+        "independent_helper_viewed": [
+          "active"
+        ],
+        "independent_helper_finding": "Actual marker no longer obscures the Hero/source, but amber progress lies directly at the Hero neck and reads as a collar; confirms visual placement failure"
+      },
+      "meaning": "Second marker-only fixture correction verified actual Hero/source visible; overall visual pass withheld until bar placement fixed",
+      "permission_scope": "require_escalated: authorized actual native graphical window and isolated PID user data; canonical shared queue"
+    },
+    {
+      "id": "final-full",
+      "session": 66191,
+      "log": "logs/smoke-bank-final.log",
+      "wrapper": "logs/smoke-bank-final-wrapper.log",
+      "checks_reported": 359,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "status": "passed_clean",
+      "meaning": "Complete directly affected Smoke leaf on final BAR_HEIGHT2.75 runtime, original353 gameplay scopes plus6 post-assertion actual Shell voice cleanup checks; no authored-level acceptance",
+      "runtime_sha256": "453e480267b1ff003e6b5ef628406a58ed8db5588cbcecfd3f1bc5b9b6c4f225",
+      "test_sha256": "5388271a03f55b3a515b1a92849694c4d2ac9fc97dbb2fefb61d0e8b541dc6e8",
+      "fixture_sha256": "fb4c04fbedb83002eb425ff8a63e7c000485979c106080c0ecf686fe86a10d67",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--verbose",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/smoke_bank_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final.log"
+      ],
+      "command_provenance": "Exact canonical wrapper arguments relayed by root; complete wrapper file retained independently",
+      "exit_provenance": "Integration owner observed session66191 exit0; raw and complete wrapper copied/scanned independently",
+      "permission_scope": "require_escalated: authorized isolated native Godot userdata; no production saves",
+      "diagnostics": {
+        "script_error": false,
+        "parse_error": false,
+        "error": false,
+        "warning": false,
+        "objectdb_leak": false,
+        "orphan_stringname": false
+      }
+    },
+    {
+      "id": "final-portrait",
+      "session": 83127,
+      "log": "logs/smoke-bank-final-portrait.log",
+      "wrapper": "logs/smoke-bank-final-portrait-wrapper.log",
+      "checks_reported": 48,
+      "failures_reported": 0,
+      "exit_code": 0,
+      "status": "functional_checks_passed_visual_review_passed",
+      "meaning": "ONLY4 actual fresh public Shell phases, final453e source, native540x1170 portrait; not authored A2-L3 encounter/full campaign or full359 rerun",
+      "runtime_sha256": "453e480267b1ff003e6b5ef628406a58ed8db5588cbcecfd3f1bc5b9b6c4f225",
+      "test_sha256": "5388271a03f55b3a515b1a92849694c4d2ac9fc97dbb2fefb61d0e8b541dc6e8",
+      "fixture_sha256": "fb4c04fbedb83002eb425ff8a63e7c000485979c106080c0ecf686fe86a10d67",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--verbose",
+        "--path",
+        "/Users/howardchen/Documents/ChatGPT/video game idea",
+        "--script",
+        "res://tests/smoke_bank_smoke.gd",
+        "--log-file",
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait.log",
+        "--",
+        "--portrait"
+      ],
+      "command_provenance": "Exact canonical graphical argv confirmed by integration owner for all3 jobs; --verbose present, no --headless; stdout/stderr redirected to corresponding-wrapper.log",
+      "exit_provenance": "Integration owner observed closed83127 exit0 and independently viewed all4 original images; raw/fullwrapper copied and verified",
+      "permission_scope": "require_escalated: authorized actual native graphical window and isolated PID user data; canonical shared queue",
+      "metadata": "portraits/final/index.json",
+      "metadata_checks": 46,
+      "metadata_count_scope": "Two final file-open/four-captures assertions follow metadata write; final log48 authoritative",
+      "diagnostics": {
+        "script_error": false,
+        "parse_error": false,
+        "error": false,
+        "warning": false,
+        "objectdb_leak": false,
+        "orphan_stringname": false
+      },
+      "visual_review": {
+        "root_viewed": [
+          "warning",
+          "lock",
+          "active",
+          "recovery"
+        ],
+        "root_result": "passed",
+        "root_finding": "Actual full Hero/head/source/footprint clear, native active bar visibly above hat separated from neck; small side marker unobscuring",
+        "independent_helper_review": "passed",
+        "independent_helper_viewed": [
+          "active",
+          "recovery"
+        ],
+        "independent_helper_finding": "Actual native amber progress sits visibly above hat separated from neck; full Hero/head, active source/footprint, recovery Hero/cyan source readable; small side marker harmless"
+      }
+    }
+  ],
+  "pending": [],
+  "files": [
+    {
+      "path": ".gdignore",
+      "sha256": "5f03a764eb3aa354888ae9d0bcfb0019b1630015723ce82d406003d4f0fde6e0",
+      "bytes": 83,
+      "category": "archive_metadata",
+      "origin": null,
+      "provenance": "New packaging metadata; no engine or source edit"
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "00ee826f114bc143cb867be96a826eb8b37cf87342bbff4dca5469a12708722f",
+      "bytes": 126,
+      "category": "archive_metadata",
+      "origin": null,
+      "provenance": "New packaging metadata; no engine or source edit"
+    },
+    {
+      "path": "README.md",
+      "sha256": "6a8cb32116062fac394a90bf1095ccb260eae16c756501298a66e3b496c6acfb",
+      "bytes": 8189,
+      "category": "archive_metadata",
+      "origin": null,
+      "provenance": "New packaging metadata; no engine or source edit"
+    },
+    {
+      "path": "logs/smoke-bank-final-portrait-wrapper.log",
+      "sha256": "3a49dbf91a7c87effc5636500964d0c13e1ffe82160ca2a0deaa8a37ba141abd",
+      "bytes": 25291,
+      "category": "raw_wrapper",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-wrapper.log",
+      "provenance": "Complete final graphical wrapper, clean, byteidentical firstwrapper legitimately; distinct actual native83127 provenance"
+    },
+    {
+      "path": "logs/smoke-bank-final-portrait.log",
+      "sha256": "ab5443df72a701460fd8fac2c69f54ec1e35f18d7ddd944e962fc3f3546e1b2a",
+      "bytes": 25099,
+      "category": "raw_log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait.log",
+      "provenance": "Final graphical native83127 raw48/0; legitimately identical raw bytes to earlier visualfail stages but distinct job/source provenance"
+    },
+    {
+      "path": "logs/smoke-bank-final-wrapper.log",
+      "sha256": "432aa6ac81e152e64968f1e7c2cc17ea9f715ec1da58555209e2a6045cbcb55a",
+      "bytes": 36028,
+      "category": "raw_wrapper",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-wrapper.log",
+      "provenance": "Complete final target native wrapper including shutdown; clean with no omitted stderr"
+    },
+    {
+      "path": "logs/smoke-bank-final.log",
+      "sha256": "f2cc76d0a60a4d96a04fc448f13175d39cb2c4929601053a7689e996d8731678",
+      "bytes": 35879,
+      "category": "raw_log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final.log",
+      "provenance": "Final directly affected complete Smoke target66191,359/0 exit0; raw independent scan clean"
+    },
+    {
+      "path": "logs/smoke-bank-first.log",
+      "sha256": "2efc4115bdc6000474d433f3f3188ab2e9abf511a73409ff51fd8cabc33362cb",
+      "bytes": 29551,
+      "category": "raw_log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first.log",
+      "provenance": "Completed canonical native session; raw log copied after observed closure, does not include all wrapper stderr"
+    },
+    {
+      "path": "logs/smoke-bank-portrait-first-wrapper.log",
+      "sha256": "3a49dbf91a7c87effc5636500964d0c13e1ffe82160ca2a0deaa8a37ba141abd",
+      "bytes": 25291,
+      "category": "raw_wrapper",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-wrapper.log",
+      "provenance": "Exact complete first graphical wrapper output, separately retained from raw Godot log"
+    },
+    {
+      "path": "logs/smoke-bank-portrait-first.log",
+      "sha256": "ab5443df72a701460fd8fac2c69f54ec1e35f18d7ddd944e962fc3f3546e1b2a",
+      "bytes": 25099,
+      "category": "raw_log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait.log",
+      "provenance": "Completed first graphical session46383 raw log48/0; failed visual review preserved separately"
+    },
+    {
+      "path": "logs/smoke-bank-portrait-marker-corrected-wrapper.log",
+      "sha256": "180e0c289df62af56c31ad30e0dc543be91112e2e21ecb9174a681ac0c882e1c",
+      "bytes": 25340,
+      "category": "raw_wrapper",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-wrapper.log",
+      "provenance": "Exact complete second graphical wrapper output, separate from raw Godot log"
+    },
+    {
+      "path": "logs/smoke-bank-portrait-marker-corrected.log",
+      "sha256": "ab5443df72a701460fd8fac2c69f54ec1e35f18d7ddd944e962fc3f3546e1b2a",
+      "bytes": 25099,
+      "category": "raw_log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected.log",
+      "provenance": "Copied exact actual second graphical raw log; byteidentical first is legitimate, job/source attribution remains separate"
+    },
+    {
+      "path": "logs/smoke-bank-second.log",
+      "sha256": "ade8571d522e5aad563ce8e626a0acd016036d200145e130b8a4b3486cb201f0",
+      "bytes": 35879,
+      "category": "raw_log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second.log",
+      "provenance": "Completed canonical native session; raw log copied after observed closure, does not include all wrapper stderr"
+    },
+    {
+      "path": "logs/smoke-bank-shell-cleanup.log",
+      "sha256": "a203bf2cd2dd921ccb2a10f169dbbf03c1f7021d718fd7aec6afb2dc5942f1b9",
+      "bytes": 35898,
+      "category": "raw_log",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup.log",
+      "provenance": "Completed root canonical native session80240, isolated userdata; raw log unchanged"
+    },
+    {
+      "path": "portraits/final/active.png",
+      "sha256": "e58a7271987f398852a5776482519fbc791aa77509d5e40ee93e5c8bd8282cc2",
+      "bytes": 26665,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/active.png",
+      "provenance": "Final actual native graphical48/0 target83127, root visualpass; exact original bytes"
+    },
+    {
+      "path": "portraits/final/index.json",
+      "sha256": "0a7ba22620b9b45e58dddaf5fcd9f189ef6153e890f99defcb9cf75129f50b38",
+      "bytes": 209190,
+      "category": "original_portrait_metadata",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/index.json",
+      "provenance": "Final actual native graphical48/0 target83127, root visualpass; exact original bytes"
+    },
+    {
+      "path": "portraits/final/lock.png",
+      "sha256": "a6fa6d8f7f1f1eb920eeb2d38c0cf642810855c72887c9b4acff64d1a46eb6ba",
+      "bytes": 26576,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/lock.png",
+      "provenance": "Final actual native graphical48/0 target83127, root visualpass; exact original bytes"
+    },
+    {
+      "path": "portraits/final/recovery.png",
+      "sha256": "9d5bbf685f4a8ae679af3a008959d6d7c85b02992092c486294788af5a1c9e6c",
+      "bytes": 26265,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/recovery.png",
+      "provenance": "Final actual native graphical48/0 target83127, root visualpass; exact original bytes"
+    },
+    {
+      "path": "portraits/final/warning.png",
+      "sha256": "72d98a33629d8afaade3ece4ec6172c23e8263d15d7595fd97694dff76503e5f",
+      "bytes": 26530,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/warning.png",
+      "provenance": "Final actual native graphical48/0 target83127, root visualpass; exact original bytes"
+    },
+    {
+      "path": "portraits/first/active.png",
+      "sha256": "415ae77069c962675f1396927effd5f320eafc3c3ae5075dc671185f10aadb3d",
+      "bytes": 26252,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/active.png",
+      "provenance": "First actual native graphical48/0 target; failed independent visual review from TEST ONLY marker occlusion. Original bytes before correction",
+      "mutable_original_expected_to_change": true,
+      "origin_verification": "Source bytes verified identical at original copy before fixture correction; archived hash is authoritative after original .cinder path is overwritten"
+    },
+    {
+      "path": "portraits/first/index.json",
+      "sha256": "98923a7b785832d97d7ff4cd45519faa4802121b977968cf6daad42fbcfd4b59",
+      "bytes": 209190,
+      "category": "original_portrait_metadata",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/index.json",
+      "provenance": "First actual native graphical48/0 target; failed independent visual review from TEST ONLY marker occlusion. Original bytes before correction",
+      "mutable_original_expected_to_change": true,
+      "origin_verification": "Source bytes verified identical at original copy before fixture correction; archived hash is authoritative after original .cinder path is overwritten"
+    },
+    {
+      "path": "portraits/first/lock.png",
+      "sha256": "081d7bfb84862c68d260437cc1d098a6842ee22277008b6f2f4d2f2548d2f41c",
+      "bytes": 26495,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/lock.png",
+      "provenance": "First actual native graphical48/0 target; failed independent visual review from TEST ONLY marker occlusion. Original bytes before correction",
+      "mutable_original_expected_to_change": true,
+      "origin_verification": "Source bytes verified identical at original copy before fixture correction; archived hash is authoritative after original .cinder path is overwritten"
+    },
+    {
+      "path": "portraits/first/recovery.png",
+      "sha256": "b4e045078ca58232d339ef2d1300a2f6e4995cd52f5be96c75f681346bb8b5f2",
+      "bytes": 25468,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/recovery.png",
+      "provenance": "First actual native graphical48/0 target; failed independent visual review from TEST ONLY marker occlusion. Original bytes before correction",
+      "mutable_original_expected_to_change": true,
+      "origin_verification": "Source bytes verified identical at original copy before fixture correction; archived hash is authoritative after original .cinder path is overwritten"
+    },
+    {
+      "path": "portraits/first/warning.png",
+      "sha256": "31d4df75d2dfad7189e0d5e118563a78efe389009901e301bdb99d1e536eaecf",
+      "bytes": 26543,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/warning.png",
+      "provenance": "First actual native graphical48/0 target; failed independent visual review from TEST ONLY marker occlusion. Original bytes before correction",
+      "mutable_original_expected_to_change": true,
+      "origin_verification": "Source bytes verified identical at original copy before fixture correction; archived hash is authoritative after original .cinder path is overwritten"
+    },
+    {
+      "path": "portraits/marker-corrected/active.png",
+      "sha256": "6542d9f704cd8f1a0794475c238b1005723fc387697f402ec750c843dc4d1b3f",
+      "bytes": 26624,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/active.png",
+      "provenance": "Second native48/0 graphical stage: marker correction visually passes, grace-bar placement fails. Exact original bytes before BAR_HEIGHT repair",
+      "mutable_original_expected_to_change": true,
+      "origin_verification": "Verified identical at copy before next graphic overwrites original .cinder paths; archived hash remains authoritative"
+    },
+    {
+      "path": "portraits/marker-corrected/index.json",
+      "sha256": "b9b4af3fcf4eefb79b762b57c44537f0fb21d814a5a6df67acdeb0c37099058c",
+      "bytes": 210580,
+      "category": "original_portrait_metadata",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/index.json",
+      "provenance": "Second native48/0 graphical stage: marker correction visually passes, grace-bar placement fails. Exact original bytes before BAR_HEIGHT repair",
+      "mutable_original_expected_to_change": true,
+      "origin_verification": "Verified identical at copy before next graphic overwrites original .cinder paths; archived hash remains authoritative"
+    },
+    {
+      "path": "portraits/marker-corrected/lock.png",
+      "sha256": "a6fa6d8f7f1f1eb920eeb2d38c0cf642810855c72887c9b4acff64d1a46eb6ba",
+      "bytes": 26576,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/lock.png",
+      "provenance": "Second native48/0 graphical stage: marker correction visually passes, grace-bar placement fails. Exact original bytes before BAR_HEIGHT repair",
+      "mutable_original_expected_to_change": true,
+      "origin_verification": "Verified identical at copy before next graphic overwrites original .cinder paths; archived hash remains authoritative"
+    },
+    {
+      "path": "portraits/marker-corrected/recovery.png",
+      "sha256": "9d5bbf685f4a8ae679af3a008959d6d7c85b02992092c486294788af5a1c9e6c",
+      "bytes": 26265,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/recovery.png",
+      "provenance": "Second native48/0 graphical stage: marker correction visually passes, grace-bar placement fails. Exact original bytes before BAR_HEIGHT repair",
+      "mutable_original_expected_to_change": true,
+      "origin_verification": "Verified identical at copy before next graphic overwrites original .cinder paths; archived hash remains authoritative"
+    },
+    {
+      "path": "portraits/marker-corrected/warning.png",
+      "sha256": "72d98a33629d8afaade3ece4ec6172c23e8263d15d7595fd97694dff76503e5f",
+      "bytes": 26530,
+      "category": "native_portrait",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait/warning.png",
+      "provenance": "Second native48/0 graphical stage: marker correction visually passes, grace-bar placement fails. Exact original bytes before BAR_HEIGHT repair",
+      "mutable_original_expected_to_change": true,
+      "origin_verification": "Verified identical at copy before next graphic overwrites original .cinder paths; archived hash remains authoritative"
+    },
+    {
+      "path": "publication-doc/SMOKE_BANK.md.txt",
+      "sha256": "9fe642358f6685b27837245c9fcbe392d4b5d0677c05391623dd49d3af7ec165",
+      "bytes": 14899,
+      "category": "publication_documentation",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/docs/development/SMOKE_BANK.md",
+      "provenance": "Root-owned final publication documentation after native359/48 and actual image review; NOT prejob059 source. Original relative links retain original docs/development context",
+      "origin_verification": "Verified identical at copy after target closure; later publication footer edits may change source origin"
+    },
+    {
+      "path": "sources/final-full/data/campaign/registry.json",
+      "sha256": "3f91bf5823798757acac5f429cf59dccd0b7352449329a9c9723bda0fce1a535",
+      "bytes": 10720,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/data/campaign/registry.json",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/docs/development/SMOKE_BANK.md",
+      "sha256": "059c8af006b01dd93f0955cbaf54a9a949fe78ff6a79bfab5a21c8b2ea878839",
+      "bytes": 14854,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/docs/development/SMOKE_BANK.md",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/manifest.json",
+      "sha256": "9523b10001a98b313a44bc5a8ee2f316737ad1c8e1dd5893c7e928dafaebb22e",
+      "bytes": 6219,
+      "category": "original_manifest",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/manifest.json",
+      "provenance": "Exact31-file prejob final full leaf source receipt, independently reverified after closure"
+    },
+    {
+      "path": "sources/final-full/project.godot",
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+      "bytes": 841,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/project.godot",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scenes/main.tscn",
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+      "bytes": 171,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scenes/main.tscn",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/campaign/exact_json.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/campaign/level.gd",
+      "sha256": "935dece66f5e0ec38c07e34bb185cbf53aacf044d6539e17e7dce73a14c0c56e",
+      "bytes": 15364,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/campaign/level.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/campaign/registry.gd",
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/campaign/registry.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/campaign/save_store.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/campaign/shell.gd",
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+      "bytes": 29685,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/campaign/shell.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/campaign/snapshot_codec.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/combat/lane_mechanism.gd",
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+      "bytes": 40592,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/combat/lane_mechanism.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/combat/smoke_bank.gd",
+      "sha256": "453e480267b1ff003e6b5ef628406a58ed8db5588cbcecfd3f1bc5b9b6c4f225",
+      "bytes": 71227,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/combat/smoke_bank.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/combat/smoke_bank.gd.uid",
+      "sha256": "e2afd59dbaf14194d58466285488dcb87c3b204b47860ce252af3ddb81559b59",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/combat/smoke_bank.gd.uid",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/combat/threat_geometry.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/combat/threat_scheduler.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/cues/cue_mesh.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/cues/threat_cue.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/dev/dev.py",
+      "sha256": "e53628138345eae6e392ad8fc24aee710fa4d692cfb814052348c53d6e09ce47",
+      "bytes": 26613,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/dev/dev.py",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/effects.gd",
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7",
+      "bytes": 21962,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/effects.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/equipment.gd",
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "bytes": 9130,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/equipment.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/game.gd",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/game.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/hud.gd",
+      "sha256": "ab91224f5bd16ad9b44ba61cde2eb6b98b2254e87f479fed5c20d04089cb7613",
+      "bytes": 16193,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/hud.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/player.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/presentation/camera_framing.gd",
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+      "bytes": 10132,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/presentation/camera_framing.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/settings/game_settings.gd",
+      "sha256": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2",
+      "bytes": 13346,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/settings/game_settings.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/scripts/ui/campaign_menu.gd",
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28",
+      "bytes": 35356,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/scripts/ui/campaign_menu.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/tests/fixtures/smoke_bank_level.gd",
+      "sha256": "fb4c04fbedb83002eb425ff8a63e7c000485979c106080c0ecf686fe86a10d67",
+      "bytes": 4291,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/tests/fixtures/smoke_bank_level.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/tests/fixtures/smoke_bank_level.gd.uid",
+      "sha256": "21fe000fcc23824f92d2ec96e23f93294f38bb6328f838dce419389a3f5dd2e6",
+      "bytes": 19,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/tests/fixtures/smoke_bank_level.gd.uid",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/tests/fixtures/smoke_bank_level.tscn",
+      "sha256": "7f469a8ee7ded9bfd7905858310fd906cd99486425ef79cd2c1d9374a24df5f9",
+      "bytes": 627,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/tests/fixtures/smoke_bank_level.tscn",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/tests/smoke_bank_smoke.gd",
+      "sha256": "5388271a03f55b3a515b1a92849694c4d2ac9fc97dbb2fefb61d0e8b541dc6e8",
+      "bytes": 52224,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/tests/smoke_bank_smoke.gd",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-full/tests/smoke_bank_smoke.gd.uid",
+      "sha256": "c86cc373f00a736469581d0d8f998b29878c3b97843db2b62fe20b0232f7e3ed",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-source/tests/smoke_bank_smoke.gd.uid",
+      "provenance": "Actual final full359 native target source:453e runtime,538 portrait/cleanup-capable test,fb4 marker fixture;31 declared subset, not complete graph"
+    },
+    {
+      "path": "sources/final-portrait/data/campaign/registry.json",
+      "sha256": "3f91bf5823798757acac5f429cf59dccd0b7352449329a9c9723bda0fce1a535",
+      "bytes": 10720,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/data/campaign/registry.json",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/docs/development/SMOKE_BANK.md",
+      "sha256": "059c8af006b01dd93f0955cbaf54a9a949fe78ff6a79bfab5a21c8b2ea878839",
+      "bytes": 14854,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/docs/development/SMOKE_BANK.md",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/manifest.json",
+      "sha256": "e2a44fd9c583b4228a27ea61b2d7e744cb3f7158e0b0fad8a0e566e710306a9b",
+      "bytes": 6229,
+      "category": "original_manifest",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/manifest.json",
+      "provenance": "Original31-file prejob final graphical target source, identical tested source identities to final full359"
+    },
+    {
+      "path": "sources/final-portrait/project.godot",
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+      "bytes": 841,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/project.godot",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scenes/main.tscn",
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+      "bytes": 171,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scenes/main.tscn",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/campaign/exact_json.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/campaign/level.gd",
+      "sha256": "935dece66f5e0ec38c07e34bb185cbf53aacf044d6539e17e7dce73a14c0c56e",
+      "bytes": 15364,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/campaign/level.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/campaign/registry.gd",
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/campaign/registry.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/campaign/save_store.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/campaign/shell.gd",
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+      "bytes": 29685,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/campaign/shell.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/campaign/snapshot_codec.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/combat/lane_mechanism.gd",
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+      "bytes": 40592,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/combat/lane_mechanism.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/combat/smoke_bank.gd",
+      "sha256": "453e480267b1ff003e6b5ef628406a58ed8db5588cbcecfd3f1bc5b9b6c4f225",
+      "bytes": 71227,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/combat/smoke_bank.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/combat/smoke_bank.gd.uid",
+      "sha256": "e2afd59dbaf14194d58466285488dcb87c3b204b47860ce252af3ddb81559b59",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/combat/smoke_bank.gd.uid",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/combat/threat_geometry.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/combat/threat_scheduler.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/cues/cue_mesh.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/cues/threat_cue.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/dev/dev.py",
+      "sha256": "e53628138345eae6e392ad8fc24aee710fa4d692cfb814052348c53d6e09ce47",
+      "bytes": 26613,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/dev/dev.py",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/effects.gd",
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7",
+      "bytes": 21962,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/effects.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/equipment.gd",
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "bytes": 9130,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/equipment.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/game.gd",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/game.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/hud.gd",
+      "sha256": "ab91224f5bd16ad9b44ba61cde2eb6b98b2254e87f479fed5c20d04089cb7613",
+      "bytes": 16193,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/hud.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/player.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/presentation/camera_framing.gd",
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+      "bytes": 10132,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/presentation/camera_framing.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/settings/game_settings.gd",
+      "sha256": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2",
+      "bytes": 13346,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/settings/game_settings.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/scripts/ui/campaign_menu.gd",
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28",
+      "bytes": 35356,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/scripts/ui/campaign_menu.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/tests/fixtures/smoke_bank_level.gd",
+      "sha256": "fb4c04fbedb83002eb425ff8a63e7c000485979c106080c0ecf686fe86a10d67",
+      "bytes": 4291,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/tests/fixtures/smoke_bank_level.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/tests/fixtures/smoke_bank_level.gd.uid",
+      "sha256": "21fe000fcc23824f92d2ec96e23f93294f38bb6328f838dce419389a3f5dd2e6",
+      "bytes": 19,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/tests/fixtures/smoke_bank_level.gd.uid",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/tests/fixtures/smoke_bank_level.tscn",
+      "sha256": "7f469a8ee7ded9bfd7905858310fd906cd99486425ef79cd2c1d9374a24df5f9",
+      "bytes": 627,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/tests/fixtures/smoke_bank_level.tscn",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/tests/smoke_bank_smoke.gd",
+      "sha256": "5388271a03f55b3a515b1a92849694c4d2ac9fc97dbb2fefb61d0e8b541dc6e8",
+      "bytes": 52224,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/tests/smoke_bank_smoke.gd",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/final-portrait/tests/smoke_bank_smoke.gd.uid",
+      "sha256": "c86cc373f00a736469581d0d8f998b29878c3b97843db2b62fe20b0232f7e3ed",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-final-portrait-source/tests/smoke_bank_smoke.gd.uid",
+      "provenance": "Exact final native48 target original prejob source;453e runtime,538 test,fb4 marker fixture, historical059 doc"
+    },
+    {
+      "path": "sources/first/data/campaign/registry.json",
+      "sha256": "3f91bf5823798757acac5f429cf59dccd0b7352449329a9c9723bda0fce1a535",
+      "bytes": 10720,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/data/campaign/registry.json",
+      "provenance": "Recovered while native first job running from frozen unchanged current shared sources; not represented as pre-job original copy"
+    },
+    {
+      "path": "sources/first/docs/development/SMOKE_BANK.md",
+      "sha256": "b8d016db3b3d9c6d703fea10b40ee661ea3cf7699e436c4e03072d09871a9db2",
+      "bytes": 11848,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/docs/development/SMOKE_BANK.md",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/first/manifest.json",
+      "sha256": "8fdce34ce05ea16ad40193d2d6c3a36478cebbee2a77ed340f5e548029f1c6cb",
+      "bytes": 7417,
+      "category": "original_manifest",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/manifest.json",
+      "provenance": "Exact original declared23-file subset manifest retained unchanged; not a complete dependency archive"
+    },
+    {
+      "path": "sources/first/scenes/main.tscn",
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+      "bytes": 171,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scenes/main.tscn",
+      "provenance": "Recovered while native first job running from frozen unchanged current shared sources; not represented as pre-job original copy"
+    },
+    {
+      "path": "sources/first/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/campaign/exact_json.gd",
+      "provenance": "Recovered while native first job running from frozen unchanged current shared sources; not represented as pre-job original copy"
+    },
+    {
+      "path": "sources/first/scripts/campaign/registry.gd",
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/campaign/registry.gd",
+      "provenance": "Recovered while native first job running from frozen unchanged current shared sources; not represented as pre-job original copy"
+    },
+    {
+      "path": "sources/first/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/campaign/save_store.gd",
+      "provenance": "Recovered while native first job running from frozen unchanged current shared sources; not represented as pre-job original copy"
+    },
+    {
+      "path": "sources/first/scripts/campaign/shell.gd",
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+      "bytes": 29685,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/campaign/shell.gd",
+      "provenance": "Recovered while native first job running from frozen unchanged current shared sources; not represented as pre-job original copy"
+    },
+    {
+      "path": "sources/first/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/campaign/snapshot_codec.gd",
+      "provenance": "Recovered while native first job running from frozen unchanged current shared sources; not represented as pre-job original copy"
+    },
+    {
+      "path": "sources/first/scripts/combat/lane_mechanism.gd",
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+      "bytes": 40592,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/combat/lane_mechanism.gd",
+      "provenance": "Recovered while native first job running from frozen unchanged current shared sources; not represented as pre-job original copy"
+    },
+    {
+      "path": "sources/first/scripts/combat/smoke_bank.gd",
+      "sha256": "71d437545e17e972dd3d9d8821841476f21ccd347188ab52de18d0dca9aaa872",
+      "bytes": 68425,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/combat/smoke_bank.gd",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/first/scripts/combat/smoke_bank.gd.uid",
+      "sha256": "e2afd59dbaf14194d58466285488dcb87c3b204b47860ce252af3ddb81559b59",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/combat/smoke_bank.gd.uid",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/first/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/combat/threat_geometry.gd",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/first/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/combat/threat_scheduler.gd",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/first/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/cues/cue_mesh.gd",
+      "provenance": "Recovered while native first job running from frozen unchanged current shared sources; not represented as pre-job original copy"
+    },
+    {
+      "path": "sources/first/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/cues/threat_cue.gd",
+      "provenance": "Recovered while native first job running from frozen unchanged current shared sources; not represented as pre-job original copy"
+    },
+    {
+      "path": "sources/first/scripts/game.gd",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/game.gd",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/first/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/player.gd",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/first/scripts/ui/campaign_menu.gd",
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28",
+      "bytes": 35356,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/scripts/ui/campaign_menu.gd",
+      "provenance": "Recovered while native first job running from frozen unchanged current shared sources; not represented as pre-job original copy"
+    },
+    {
+      "path": "sources/first/tests/fixtures/smoke_bank_level.gd",
+      "sha256": "aa04dc1f6f6ce6a7e92872f2a38f273850038741d27166e843961b4c85da723d",
+      "bytes": 4232,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/tests/fixtures/smoke_bank_level.gd",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/first/tests/fixtures/smoke_bank_level.gd.uid",
+      "sha256": "21fe000fcc23824f92d2ec96e23f93294f38bb6328f838dce419389a3f5dd2e6",
+      "bytes": 19,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/tests/fixtures/smoke_bank_level.gd.uid",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/first/tests/fixtures/smoke_bank_level.tscn",
+      "sha256": "7f469a8ee7ded9bfd7905858310fd906cd99486425ef79cd2c1d9374a24df5f9",
+      "bytes": 627,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/tests/fixtures/smoke_bank_level.tscn",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/first/tests/smoke_bank_smoke.gd",
+      "sha256": "feb3602df9cd89ced8589b51324ca60d2dcad67ed7aca8b67179d27cb016345a",
+      "bytes": 39738,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/tests/smoke_bank_smoke.gd",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/first/tests/smoke_bank_smoke.gd.uid",
+      "sha256": "c86cc373f00a736469581d0d8f998b29878c3b97843db2b62fe20b0232f7e3ed",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-first-source/tests/smoke_bank_smoke.gd.uid",
+      "provenance": "Copied before native job; initial copy stopped at nonexistent circle_mechanism path before manifest publication"
+    },
+    {
+      "path": "sources/portrait-first/data/campaign/registry.json",
+      "sha256": "3f91bf5823798757acac5f429cf59dccd0b7352449329a9c9723bda0fce1a535",
+      "bytes": 10720,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/data/campaign/registry.json",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/docs/development/SMOKE_BANK.md",
+      "sha256": "f09bc9abcdedfb9a2937f985dc547d3c74a0248f502f1929cf06679b290dff8f",
+      "bytes": 14122,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/docs/development/SMOKE_BANK.md",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/manifest.json",
+      "sha256": "006cd07b770c2c5c82bf0cb324d9c04f78508aac154b2ece6f5d2c2c0cd113c0",
+      "bytes": 6194,
+      "category": "original_manifest",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/manifest.json",
+      "provenance": "Original31-file prejob graphical subset; explicit subset, not complete import graph"
+    },
+    {
+      "path": "sources/portrait-first/project.godot",
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+      "bytes": 841,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/project.godot",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scenes/main.tscn",
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+      "bytes": 171,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scenes/main.tscn",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/campaign/exact_json.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/campaign/level.gd",
+      "sha256": "935dece66f5e0ec38c07e34bb185cbf53aacf044d6539e17e7dce73a14c0c56e",
+      "bytes": 15364,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/campaign/level.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/campaign/registry.gd",
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/campaign/registry.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/campaign/save_store.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/campaign/shell.gd",
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+      "bytes": 29685,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/campaign/shell.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/campaign/snapshot_codec.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/combat/lane_mechanism.gd",
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+      "bytes": 40592,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/combat/lane_mechanism.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/combat/smoke_bank.gd",
+      "sha256": "aee34e8db765585252fcbbb6b1f0e2a5334b4118c11497c12e6c9de8a6318ffc",
+      "bytes": 71227,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/combat/smoke_bank.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/combat/smoke_bank.gd.uid",
+      "sha256": "e2afd59dbaf14194d58466285488dcb87c3b204b47860ce252af3ddb81559b59",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/combat/smoke_bank.gd.uid",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/combat/threat_geometry.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/combat/threat_scheduler.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/cues/cue_mesh.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/cues/threat_cue.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/dev/dev.py",
+      "sha256": "e53628138345eae6e392ad8fc24aee710fa4d692cfb814052348c53d6e09ce47",
+      "bytes": 26613,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/dev/dev.py",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/effects.gd",
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7",
+      "bytes": 21962,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/effects.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/equipment.gd",
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "bytes": 9130,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/equipment.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/game.gd",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/game.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/hud.gd",
+      "sha256": "ab91224f5bd16ad9b44ba61cde2eb6b98b2254e87f479fed5c20d04089cb7613",
+      "bytes": 16193,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/hud.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/player.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/presentation/camera_framing.gd",
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+      "bytes": 10132,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/presentation/camera_framing.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/settings/game_settings.gd",
+      "sha256": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2",
+      "bytes": 13346,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/settings/game_settings.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/scripts/ui/campaign_menu.gd",
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28",
+      "bytes": 35356,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/scripts/ui/campaign_menu.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/tests/fixtures/smoke_bank_level.gd",
+      "sha256": "aa04dc1f6f6ce6a7e92872f2a38f273850038741d27166e843961b4c85da723d",
+      "bytes": 4232,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/tests/fixtures/smoke_bank_level.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/tests/fixtures/smoke_bank_level.gd.uid",
+      "sha256": "21fe000fcc23824f92d2ec96e23f93294f38bb6328f838dce419389a3f5dd2e6",
+      "bytes": 19,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/tests/fixtures/smoke_bank_level.gd.uid",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/tests/fixtures/smoke_bank_level.tscn",
+      "sha256": "7f469a8ee7ded9bfd7905858310fd906cd99486425ef79cd2c1d9374a24df5f9",
+      "bytes": 627,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/tests/fixtures/smoke_bank_level.tscn",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/tests/smoke_bank_smoke.gd",
+      "sha256": "5388271a03f55b3a515b1a92849694c4d2ac9fc97dbb2fefb61d0e8b541dc6e8",
+      "bytes": 52224,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/tests/smoke_bank_smoke.gd",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-first/tests/smoke_bank_smoke.gd.uid",
+      "sha256": "c86cc373f00a736469581d0d8f998b29878c3b97843db2b62fe20b0232f7e3ed",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-source/tests/smoke_bank_smoke.gd.uid",
+      "provenance": "Exact original first graphical prejob bytes before late-marker fixture correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/data/campaign/registry.json",
+      "sha256": "3f91bf5823798757acac5f429cf59dccd0b7352449329a9c9723bda0fce1a535",
+      "bytes": 10720,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/data/campaign/registry.json",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/docs/development/SMOKE_BANK.md",
+      "sha256": "f09bc9abcdedfb9a2937f985dc547d3c74a0248f502f1929cf06679b290dff8f",
+      "bytes": 14122,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/docs/development/SMOKE_BANK.md",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/manifest.json",
+      "sha256": "881bca04762b6b8520821f5dc72f2bff67fbfc9dc536a9836b5522d05c497578",
+      "bytes": 6289,
+      "category": "original_manifest",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/manifest.json",
+      "provenance": "Exact31-file prejob second graphical subset before BAR_HEIGHT production change"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/project.godot",
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+      "bytes": 841,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/project.godot",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scenes/main.tscn",
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+      "bytes": 171,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scenes/main.tscn",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/campaign/exact_json.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/campaign/level.gd",
+      "sha256": "935dece66f5e0ec38c07e34bb185cbf53aacf044d6539e17e7dce73a14c0c56e",
+      "bytes": 15364,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/campaign/level.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/campaign/registry.gd",
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/campaign/registry.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/campaign/save_store.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/campaign/shell.gd",
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+      "bytes": 29685,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/campaign/shell.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/campaign/snapshot_codec.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/combat/lane_mechanism.gd",
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+      "bytes": 40592,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/combat/lane_mechanism.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/combat/smoke_bank.gd",
+      "sha256": "aee34e8db765585252fcbbb6b1f0e2a5334b4118c11497c12e6c9de8a6318ffc",
+      "bytes": 71227,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/combat/smoke_bank.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/combat/smoke_bank.gd.uid",
+      "sha256": "e2afd59dbaf14194d58466285488dcb87c3b204b47860ce252af3ddb81559b59",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/combat/smoke_bank.gd.uid",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/combat/threat_geometry.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/combat/threat_scheduler.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/cues/cue_mesh.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/cues/threat_cue.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/dev/dev.py",
+      "sha256": "e53628138345eae6e392ad8fc24aee710fa4d692cfb814052348c53d6e09ce47",
+      "bytes": 26613,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/dev/dev.py",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/effects.gd",
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7",
+      "bytes": 21962,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/effects.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/equipment.gd",
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "bytes": 9130,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/equipment.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/game.gd",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/game.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/hud.gd",
+      "sha256": "ab91224f5bd16ad9b44ba61cde2eb6b98b2254e87f479fed5c20d04089cb7613",
+      "bytes": 16193,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/hud.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/player.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/presentation/camera_framing.gd",
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+      "bytes": 10132,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/presentation/camera_framing.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/settings/game_settings.gd",
+      "sha256": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2",
+      "bytes": 13346,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/settings/game_settings.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/scripts/ui/campaign_menu.gd",
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28",
+      "bytes": 35356,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/scripts/ui/campaign_menu.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/tests/fixtures/smoke_bank_level.gd",
+      "sha256": "fb4c04fbedb83002eb425ff8a63e7c000485979c106080c0ecf686fe86a10d67",
+      "bytes": 4291,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/tests/fixtures/smoke_bank_level.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/tests/fixtures/smoke_bank_level.gd.uid",
+      "sha256": "21fe000fcc23824f92d2ec96e23f93294f38bb6328f838dce419389a3f5dd2e6",
+      "bytes": 19,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/tests/fixtures/smoke_bank_level.gd.uid",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/tests/fixtures/smoke_bank_level.tscn",
+      "sha256": "7f469a8ee7ded9bfd7905858310fd906cd99486425ef79cd2c1d9374a24df5f9",
+      "bytes": 627,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/tests/fixtures/smoke_bank_level.tscn",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/tests/smoke_bank_smoke.gd",
+      "sha256": "5388271a03f55b3a515b1a92849694c4d2ac9fc97dbb2fefb61d0e8b541dc6e8",
+      "bytes": 52224,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/tests/smoke_bank_smoke.gd",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/portrait-marker-corrected/tests/smoke_bank_smoke.gd.uid",
+      "sha256": "c86cc373f00a736469581d0d8f998b29878c3b97843db2b62fe20b0232f7e3ed",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-portrait-corrected-source/tests/smoke_bank_smoke.gd.uid",
+      "provenance": "Second graphical original prejob source; runtimeaee unchanged, test538 unchanged, fixturefb4 marker-only correction"
+    },
+    {
+      "path": "sources/second/data/campaign/registry.json",
+      "sha256": "3f91bf5823798757acac5f429cf59dccd0b7352449329a9c9723bda0fce1a535",
+      "bytes": 10720,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/data/campaign/registry.json",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/docs/development/SMOKE_BANK.md",
+      "sha256": "1606af81e5f1a395b53f5e09f25fe64d2e97b9a4d9dfdea55da9294409f8ac33",
+      "bytes": 12767,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/docs/development/SMOKE_BANK.md",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/manifest.json",
+      "sha256": "13cc88f8d244e614d041a74879eeaba21fdac6ede41fc889aead10316f8fc7ff",
+      "bytes": 4682,
+      "category": "original_manifest",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/manifest.json",
+      "provenance": "Exact original declared23-file subset manifest retained unchanged; not a complete dependency archive"
+    },
+    {
+      "path": "sources/second/scenes/main.tscn",
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+      "bytes": 171,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scenes/main.tscn",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/campaign/exact_json.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/campaign/registry.gd",
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/campaign/registry.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/campaign/save_store.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/campaign/shell.gd",
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+      "bytes": 29685,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/campaign/shell.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/campaign/snapshot_codec.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/combat/lane_mechanism.gd",
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+      "bytes": 40592,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/combat/lane_mechanism.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/combat/smoke_bank.gd",
+      "sha256": "aee34e8db765585252fcbbb6b1f0e2a5334b4118c11497c12e6c9de8a6318ffc",
+      "bytes": 71227,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/combat/smoke_bank.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/combat/smoke_bank.gd.uid",
+      "sha256": "e2afd59dbaf14194d58466285488dcb87c3b204b47860ce252af3ddb81559b59",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/combat/smoke_bank.gd.uid",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/combat/threat_geometry.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/combat/threat_scheduler.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/cues/cue_mesh.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/cues/threat_cue.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/game.gd",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/game.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/player.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/scripts/ui/campaign_menu.gd",
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28",
+      "bytes": 35356,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/scripts/ui/campaign_menu.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/tests/fixtures/smoke_bank_level.gd",
+      "sha256": "aa04dc1f6f6ce6a7e92872f2a38f273850038741d27166e843961b4c85da723d",
+      "bytes": 4232,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/tests/fixtures/smoke_bank_level.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/tests/fixtures/smoke_bank_level.gd.uid",
+      "sha256": "21fe000fcc23824f92d2ec96e23f93294f38bb6328f838dce419389a3f5dd2e6",
+      "bytes": 19,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/tests/fixtures/smoke_bank_level.gd.uid",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/tests/fixtures/smoke_bank_level.tscn",
+      "sha256": "7f469a8ee7ded9bfd7905858310fd906cd99486425ef79cd2c1d9374a24df5f9",
+      "bytes": 627,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/tests/fixtures/smoke_bank_level.tscn",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/tests/smoke_bank_smoke.gd",
+      "sha256": "ac402615b89dc61ad575af0c4e71a12674312b147978adae76b597dee6f89179",
+      "bytes": 44062,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/tests/smoke_bank_smoke.gd",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/second/tests/smoke_bank_smoke.gd.uid",
+      "sha256": "c86cc373f00a736469581d0d8f998b29878c3b97843db2b62fe20b0232f7e3ed",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-second-source/tests/smoke_bank_smoke.gd.uid",
+      "provenance": "Original pre-job copy"
+    },
+    {
+      "path": "sources/shell-cleanup/data/campaign/registry.json",
+      "sha256": "3f91bf5823798757acac5f429cf59dccd0b7352449329a9c9723bda0fce1a535",
+      "bytes": 10720,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/data/campaign/registry.json",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/docs/development/SMOKE_BANK.md",
+      "sha256": "170b47851dce4a8b669c48664b9956d728f1a1b3d6b88d878771c9bcd0056123",
+      "bytes": 13558,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/docs/development/SMOKE_BANK.md",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/manifest.json",
+      "sha256": "f5c3baddbca3f5c2f90faa7e1efd0a696f498e9d9fa2b5e68d804808aa5ed892",
+      "bytes": 4710,
+      "category": "original_manifest",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/manifest.json",
+      "provenance": "Exact23-file prejob Shell cleanup subset manifest; unchanged aee runtime, d71 cleanup-only test"
+    },
+    {
+      "path": "sources/shell-cleanup/scenes/main.tscn",
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+      "bytes": 171,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scenes/main.tscn",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/campaign/exact_json.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/campaign/registry.gd",
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/campaign/registry.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/campaign/save_store.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/campaign/shell.gd",
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c",
+      "bytes": 29685,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/campaign/shell.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/campaign/snapshot_codec.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/combat/lane_mechanism.gd",
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+      "bytes": 40592,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/combat/lane_mechanism.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/combat/smoke_bank.gd",
+      "sha256": "aee34e8db765585252fcbbb6b1f0e2a5334b4118c11497c12e6c9de8a6318ffc",
+      "bytes": 71227,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/combat/smoke_bank.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/combat/smoke_bank.gd.uid",
+      "sha256": "e2afd59dbaf14194d58466285488dcb87c3b204b47860ce252af3ddb81559b59",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/combat/smoke_bank.gd.uid",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/combat/threat_geometry.gd",
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/combat/threat_geometry.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/combat/threat_scheduler.gd",
+      "sha256": "5e7ae27fc3f274fe8c49d266fd6611aca0300e5b975b4d1591c6839f45d83d7f",
+      "bytes": 122583,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/combat/threat_scheduler.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/cues/cue_mesh.gd",
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/cues/cue_mesh.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/cues/threat_cue.gd",
+      "sha256": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "bytes": 29838,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/cues/threat_cue.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/game.gd",
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "bytes": 28846,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/game.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/player.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/scripts/ui/campaign_menu.gd",
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28",
+      "bytes": 35356,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/scripts/ui/campaign_menu.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/tests/fixtures/smoke_bank_level.gd",
+      "sha256": "aa04dc1f6f6ce6a7e92872f2a38f273850038741d27166e843961b4c85da723d",
+      "bytes": 4232,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/tests/fixtures/smoke_bank_level.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/tests/fixtures/smoke_bank_level.gd.uid",
+      "sha256": "21fe000fcc23824f92d2ec96e23f93294f38bb6328f838dce419389a3f5dd2e6",
+      "bytes": 19,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/tests/fixtures/smoke_bank_level.gd.uid",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/tests/fixtures/smoke_bank_level.tscn",
+      "sha256": "7f469a8ee7ded9bfd7905858310fd906cd99486425ef79cd2c1d9374a24df5f9",
+      "bytes": 627,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/tests/fixtures/smoke_bank_level.tscn",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/tests/smoke_bank_smoke.gd",
+      "sha256": "d71f48b4861242cef1330e07664dd92047707d27b257668f5c65b99949e3e14a",
+      "bytes": 45130,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/tests/smoke_bank_smoke.gd",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    },
+    {
+      "path": "sources/shell-cleanup/tests/smoke_bank_smoke.gd.uid",
+      "sha256": "c86cc373f00a736469581d0d8f998b29878c3b97843db2b62fe20b0232f7e3ed",
+      "bytes": 20,
+      "category": "frozen_source",
+      "origin": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/smoke-bank-shell-cleanup-source/tests/smoke_bank_smoke.gd.uid",
+      "provenance": "Original declared prejob cleanup source copied unchanged; not complete import graph"
+    }
+  ],
+  "verification": {
+    "artifact_count": 230,
+    "copy_sha_and_size": "Every copy independently checked against declared original manifest and origin bytes",
+    "index_self_hash": "Excluded recursively and reported separately on release",
+    "archived_sha_and_size_rechecked": true,
+    "declared_source_entries": 193,
+    "closed_runs": 7,
+    "native_pngs": 12,
+    "native_dimensions": "All12 original PNGs are540x1170; no image edits/composites",
+    "final_visual_review": "Root viewed all4 final images; independent helper viewed final active/recovery",
+    "source_counts": "3 original23-file runtime/cleanup subsets and4 original31-file graphical/final-full subsets; none claim full import graph"
+  },
+  "review_completed_at": "2026-10-08T18:54:45.050483+00:00",
+  "final_runtime_sha256": "453e480267b1ff003e6b5ef628406a58ed8db5588cbcecfd3f1bc5b9b6c4f225",
+  "final_test_sha256": "5388271a03f55b3a515b1a92849694c4d2ac9fc97dbb2fefb61d0e8b541dc6e8",
+  "final_fixture_sha256": "fb4c04fbedb83002eb425ff8a63e7c000485979c106080c0ecf686fe86a10d67"
+}
