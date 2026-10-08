@@ -46,8 +46,6 @@ var _apparition: LabSprite
 var _route_mesh: MeshInstance3D
 var _failure_marker: MeshInstance3D
 var _cues: Array[Node3D] = []
-var _cue_phases: Array[String] = []
-var _pending_delivery: Dictionary = {}
 
 
 func _ready() -> void:
@@ -109,11 +107,11 @@ func bind(scheduler: Node3D, reservation_id: String, heroes: Dictionary) -> bool
 	_status = "running"
 	_scheduler.reservation_invalidated.connect(_on_invalidated)
 	_transaction_depth += 1
-	_pending_delivery = _new_pending()
-	_drain_pending()
+	_refresh_visuals()
+	state_changed.emit(state())
 	_transaction_depth -= 1
-	last_error = "" if _status == "running" else _reason
-	return _status == "running"
+	last_error = ""
+	return true
 
 
 func advance() -> Dictionary:
@@ -133,7 +131,7 @@ func advance() -> Dictionary:
 	if not is_instance_valid(_world_root) or not _world_root.is_inside_tree() or not _same_transport(_scheduler.collision_fingerprint(_world_root), _exchange.adapter.capture_collision_fingerprint):
 		return _fail("replay_collision_world_changed")
 	# Normal expiry is harmless only after every required event was consumed.
-	if clock_s >= float(_exchange.recovery_until_s) and int(previous.next_event_index) == _events().size() and _pending_delivery.is_empty():
+	if clock_s >= float(_exchange.recovery_until_s) and int(previous.next_event_index) == _events().size():
 		if not is_instance_valid(_world_root) or not _world_root.is_inside_tree() or global_position.distance_to(_exchange.source_position) > _scheduler.EPSILON or not _same_transport(_scheduler.collision_fingerprint(_world_root), _exchange.adapter.capture_collision_fingerprint):
 			return _fail("completed_replay_world_or_source_changed")
 		_cursor.advance(clock_s)
@@ -150,15 +148,6 @@ func advance() -> Dictionary:
 	var error: String = _lease_error(lease, _hero, _scheduler)
 	if not error.is_empty():
 		return _fail(error)
-	# An accepted contact survives a real resume tick even near admission grace.
-	# Its callback drain is bounded separately from ORIGINAL dispatch, with no
-	# new contact sample or extension of original scheduled admission.
-	for entry: Dictionary in _pending_delivery.get("events", []):
-		if clock_s - float(_opportunities[int(entry.event_index)].dispatch_clock_s) > MAX_DISPATCH_DELAY_S + TIME_EPSILON_S:
-			return _fail("missed_pending_dispatch_grace")
-	# Never re-present a missing/hidden required cue to regain damage authority.
-	if not _delivery_guard():
-		return {"accepted": false, "reason": _reason, "events": []}
 	var candidate = Cursor.new()
 	if not candidate.restore_state(previous, _configuration.sequence, _configuration.source_epoch, int(_configuration.generation), float(previous.last_advanced_clock_s)):
 		return _fail("invalid_internal_cursor")
@@ -182,141 +171,38 @@ func advance() -> Dictionary:
 	var due_opportunities: Array[Dictionary] = []
 	for event: Dictionary in staged.events:
 		var contact: bool = not _hero.dead and _hero.hp > 0.0 and _contact(event.record, _hero)
-		due_opportunities.append({"event_id": event.event_id, "hero_id": _hero_id, "scheduled_at_s": event.scheduled_at_s, "dispatch_clock_s": clock_s, "contact": contact, "damage_attempted": false})
-	# Commit the complete canonical receipt prefix before ALL callbacks. A held
-	# callback preserves its suffix; contact/time are never sampled again.
+		due_opportunities.append({"event_id": event.event_id, "hero_id": _hero_id, "scheduled_at_s": event.scheduled_at_s, "dispatch_clock_s": clock_s, "contact": contact, "damage_attempted": contact})
+	# Quiet data commit precedes ALL cue/state/damage callbacks. No player attack,
+	# equipment, capture, resource or proc function is called by this consumer.
 	_cursor = candidate
 	_exchange = _exchange_data(lease)
-	if _pending_delivery.is_empty():
-		_pending_delivery = _new_pending()
-	for opportunity: Dictionary in due_opportunities:
-		_pending_delivery.events.append({"event_index": _opportunities.size(), "stage": "present"})
-		_opportunities.append(opportunity)
-	if not due_opportunities.is_empty():
-		_pending_delivery.visual_next_cue = 0
-	_pending_delivery.visuals_pending = true
-	_pending_delivery.state_pending = true
+	_opportunities.append_array(due_opportunities)
 	_transaction_depth += 1
-	_drain_pending()
+	for index: int in range(staged.events.size()):
+		var event: Dictionary = staged.events[index]
+		var opportunity: Dictionary = due_opportunities[index]
+		# The complete prefix/opportunity batch is already spent. A callback may
+		# cancel/change scenery, but cannot permit a later event to redeliver.
+		if _status != "running":
+			break
+		var current_guard: String = _scheduler.replay_reservation_error(_reservation_id)
+		if not current_guard.is_empty():
+			_fail("lease_changed_during_delivery: " + current_guard)
+			break
+		_present_event(event)
+		if _status != "running" or not _scheduler.replay_reservation_error(_reservation_id).is_empty():
+			_fail("lease_changed_during_presentation")
+			break
+		if opportunity.damage_attempted and is_instance_valid(_hero) and not _hero.is_queued_for_deletion():
+			_hero.take_damage(float(event.record.damage), Vector3.ZERO)
+		event_dispatched.emit(event.duplicate(true), opportunity.duplicate(true))
+	_refresh_visuals()
+	state_changed.emit(state())
 	_transaction_depth -= 1
 	if _status == "cancelled":
-		_refresh_visuals(true)
 		return {"accepted": false, "reason": _reason, "events": staged.events.duplicate(true), "phase": "cancelled", "prefix_consumed": true}
 	last_error = ""
-	var answer: Dictionary = {"accepted": true, "events": staged.events.duplicate(true), "phase": staged.phase}
-	if not _pending_delivery.is_empty():
-		answer["delivery_pending"] = true
-	return answer
-
-
-func _new_pending() -> Dictionary:
-	return {"events": [], "visual_next_cue": 0, "visuals_pending": true, "state_pending": true, "cue_phases": _cue_phases.duplicate()}
-
-
-func _drain_pending() -> void:
-	while not _pending_delivery.is_empty() and not _pending_delivery.events.is_empty() and _status == "running":
-		if not _delivery_guard() or get_tree().paused:
-			return
-		var entry: Dictionary = _pending_delivery.events[0]
-		var index: int = int(entry.event_index)
-		var event: Dictionary = _delivery_event(index)
-		if entry.stage == "present":
-			entry.stage = "damage" # Commit BEFORE active cue observers.
-			_present_event(event)
-			if not _delivery_guard() or get_tree().paused:
-				return
-		if entry.stage == "damage":
-			entry.stage = "notify" # Actual attempt is committed BEFORE hurt/death.
-			if _opportunities[index].contact:
-				_opportunities[index].damage_attempted = true
-				_hero.take_damage(float(event.record.damage), Vector3.ZERO)
-			if not _delivery_guard() or get_tree().paused:
-				return
-		if entry.stage == "notify":
-			_pending_delivery.events.pop_front() # Emit exactly once, including pause.
-			event_dispatched.emit(event.duplicate(true), _opportunities[index].duplicate(true))
-			if not _delivery_guard() or get_tree().paused:
-				return
-	if _status != "running" or _pending_delivery.is_empty():
-		return
-	if _pending_delivery.visuals_pending and not _refresh_visuals():
-		return
-	if _pending_delivery.state_pending:
-		_pending_delivery.state_pending = false
-		_pending_delivery = {} # All callbacks/presentation now have been spent.
-		state_changed.emit(state())
-		_delivery_guard()
-
-
-func _delivery_event(index: int) -> Dictionary:
-	var event: Dictionary = _events()[index].duplicate(true)
-	for slot: Dictionary in _plan.timeline.slots:
-		for candidate: Dictionary in slot.events:
-			if candidate.event_id == event.event_id:
-				event["slot_id"] = slot.slot_id
-				event["generation"] = slot.generation
-	var receipt: Dictionary = _opportunities[index]
-	event["scheduled_at_s"] = receipt.scheduled_at_s
-	event["dispatch_clock_s"] = receipt.dispatch_clock_s
-	event["commitment_until_s"] = float(_exchange.adapter.timeline_origin_s) + float(event.commitment_until_s)
-	event["ready_s"] = float(_exchange.adapter.timeline_origin_s) + float(event.ready_s)
-	return event
-
-
-func _delivery_guard() -> bool:
-	if _status != "running":
-		return false
-	if not _ready_boundary() or not is_instance_valid(_scheduler) or _scheduler.is_queued_for_deletion():
-		_fail("replay_owner_or_scheduler_lost")
-		return false
-	var error: String = _scheduler.replay_reservation_error(_reservation_id)
-	if error.is_empty() and (not is_instance_valid(_hero) or _hero.is_queued_for_deletion() or not _hero.is_inside_tree() or _hero.get_world_3d() != get_world_3d() or _scheduler.replay_target(_reservation_id) != _hero):
-		error = "proved_player_binding_changed"
-	if error.is_empty() and (_hero.dead or _hero.hp <= 0.0):
-		error = "proved_player_dead"
-	if error.is_empty():
-		error = _required_cue_error()
-	if not error.is_empty():
-		_fail(error)
-		return false
-	return true
-
-
-func _required_cue_error() -> String:
-	if _cues.size() != _events().size() or _cue_phases.size() != _cues.size():
-		return "required_replay_cue_count_changed"
-	for index: int in range(_cues.size()):
-		var cue: Node3D = _cues[index]
-		if not is_instance_valid(cue) or cue.is_queued_for_deletion() or not cue.is_inside_tree() or cue.get_world_3d() != get_world_3d() or not is_ancestor_of(cue):
-			return "required_replay_cue_lost"
-		var phase: String = _cue_phases[index]
-		var observed: Dictionary = cue.state()
-		if observed.phase != phase:
-			return "required_replay_cue_cleared_or_changed"
-		if not cue.is_visible_in_tree():
-			return "required_replay_cue_hidden"
-		if not _cue_children_error(cue).is_empty():
-			return "required_replay_source_or_footprint_lost"
-		if phase == "clear":
-			continue
-		var record: Dictionary = _events()[index].record
-		var geometry: Dictionary = Geometry.cone(record.world_origin, record.direction, float(record.geometry.reach), float(record.geometry.cone_min_dot), float(record.geometry.origin_disk_radius))
-		if observed.geometry != CueMesh.canonical_geometry(geometry) or observed.source_position != record.world_origin or not cue.is_visible_in_tree():
-			return "required_replay_cue_geometry_or_visibility_changed"
-		for name: String in ["RequiredSourceMarker", "RequiredFootprintOutline", "RequiredFootprintFill"]:
-			var mesh: MeshInstance3D = cue.get_node_or_null(name) as MeshInstance3D
-			var required: bool = name == "RequiredSourceMarker" or (name == "RequiredFootprintOutline" and phase != "recovery") or (name == "RequiredFootprintFill" and phase == "active")
-			if not is_instance_valid(mesh) or mesh.is_queued_for_deletion() or (required and (not mesh.is_visible_in_tree() or mesh.mesh == null)):
-				return "required_replay_source_or_footprint_lost"
-	return ""
-
-
-func _cue_children_error(cue: Node3D) -> String:
-	for name: String in ["RequiredSourceMarker", "RequiredFootprintOutline", "RequiredFootprintFill"]:
-		var mesh: MeshInstance3D = cue.get_node_or_null(name) as MeshInstance3D
-		if not is_instance_valid(mesh) or mesh.is_queued_for_deletion():
-			return "required_replay_renderer_child_lost"
-	return ""
+	return {"accepted": true, "events": staged.events.duplicate(true), "phase": staged.phase}
 
 
 func cancel(reason: String = "owner_cancelled") -> bool:
@@ -329,10 +215,7 @@ func cancel(reason: String = "owner_cancelled") -> bool:
 func state() -> Dictionary:
 	if _configuration.is_empty():
 		return {}
-	var result: Dictionary = {"api_revision": API_REVISION, "playback_id": _configuration.playback_id, "source_epoch": _configuration.source_epoch, "generation": _configuration.generation, "presentation_id": _configuration.presentation_id, "status": _status, "reason": _reason, "reservation_id": _reservation_id, "cursor": _cursor.state(), "visual_pose": _presentation_pose(), "opportunities": _opportunities.duplicate(true), "movement_damage": false, "blocking": false}
-	if not _pending_delivery.is_empty():
-		result["pending_delivery"] = _pending_delivery.duplicate(true)
-	return result
+	return {"api_revision": API_REVISION, "playback_id": _configuration.playback_id, "source_epoch": _configuration.source_epoch, "generation": _configuration.generation, "presentation_id": _configuration.presentation_id, "status": _status, "reason": _reason, "reservation_id": _reservation_id, "cursor": _cursor.state(), "visual_pose": _visual_pose(), "opportunities": _opportunities.duplicate(true), "movement_damage": false, "blocking": false}
 
 
 func preview_state() -> Dictionary:
@@ -362,9 +245,6 @@ func snapshot_state(scheduler_snapshot: Dictionary, bindings: Dictionary) -> Dic
 	if _status == "cancelled" and _scheduler.has_method("replay_cancellation_state"):
 		tombstone = _scheduler.replay_cancellation_state(_reservation_id, bindings)
 	var candidate: Dictionary = {"api_revision": API_REVISION, "schema_version": 1, "playback_id": _configuration.playback_id, "presentation_id": _configuration.presentation_id, "sequence": _configuration.sequence.duplicate(true), "source_epoch": _configuration.source_epoch, "generation": _configuration.generation, "source_id": source_id, "hero_id": _hero_id, "reservation_id": _reservation_id, "exchange": _encode_exchange(_exchange), "status": _status, "reason": _reason, "cancelled_at_s": _cancelled_at, "cancellation": tombstone, "clock_s": _scheduler.get_clock(), "cursor": _cursor.snapshot_state(), "opportunities": _opportunities.duplicate(true)}
-	if not _pending_delivery.is_empty():
-		candidate["schema_version"] = 2
-		candidate["pending_delivery"] = _pending_delivery.duplicate(true)
 	last_snapshot_error = snapshot_error(candidate, _scheduler, scheduler_snapshot, bindings, {_hero_id: _hero})
 	return candidate.duplicate(true) if last_snapshot_error.is_empty() else {}
 
@@ -375,22 +255,13 @@ func snapshot_error(snapshot: Dictionary, scheduler: Node3D, scheduler_snapshot:
 		return error
 	error = Codec.value_error(snapshot)
 	if error.is_empty():
-		var keys: Array[String] = SNAPSHOT_KEYS.duplicate()
-		if snapshot.get("schema_version") == 2:
-			keys.append("pending_delivery")
-		error = Codec.keys_error(snapshot, keys)
+		error = Codec.keys_error(snapshot, SNAPSHOT_KEYS)
 	if not error.is_empty():
 		return error
 	error = _bindings_error(scheduler, heroes)
 	if not error.is_empty():
 		return error
-	if snapshot.get("status") == "running":
-		for cue: Node3D in _cues:
-			if not is_instance_valid(cue) or cue.is_queued_for_deletion() or not _cue_children_error(cue).is_empty():
-				return "Running restore requires intact required cue renderer nodes"
-		if _status == "running" and not _required_cue_error().is_empty():
-			return "Running capture/restore cannot repair externally lost damaging cue authority"
-	if snapshot.api_revision != API_REVISION or not Codec.is_integer(snapshot.schema_version, 1, 2) or snapshot.playback_id != _configuration.playback_id or snapshot.presentation_id != _configuration.presentation_id or snapshot.source_epoch != _configuration.source_epoch or not Codec.is_integer(snapshot.generation, int(_configuration.generation), int(_configuration.generation)) or not _same_transport(snapshot.sequence, _configuration.sequence) or not _stable_id(snapshot.source_id) or snapshot.source_id != _source_id(bindings) or snapshot.hero_id != heroes.keys()[0] or not _stable_id(snapshot.reservation_id) or not snapshot.exchange is Dictionary or not snapshot.cursor is Dictionary or not snapshot.opportunities is Array or snapshot.status not in ["running", "cancelled", "complete"] or not snapshot.reason is String or not snapshot.cancellation is Dictionary:
+	if snapshot.api_revision != API_REVISION or not Codec.is_integer(snapshot.schema_version, 1, 1) or snapshot.playback_id != _configuration.playback_id or snapshot.presentation_id != _configuration.presentation_id or snapshot.source_epoch != _configuration.source_epoch or not Codec.is_integer(snapshot.generation, int(_configuration.generation), int(_configuration.generation)) or not _same_transport(snapshot.sequence, _configuration.sequence) or not _stable_id(snapshot.source_id) or snapshot.source_id != _source_id(bindings) or snapshot.hero_id != heroes.keys()[0] or not _stable_id(snapshot.reservation_id) or not snapshot.exchange is Dictionary or not snapshot.cursor is Dictionary or not snapshot.opportunities is Array or snapshot.status not in ["running", "cancelled", "complete"] or not snapshot.reason is String or not snapshot.cancellation is Dictionary:
 		return "Playback identity/configuration/one-player custody schema differs"
 	error = scheduler.snapshot_error(scheduler_snapshot, bindings)
 	if not error.is_empty():
@@ -442,16 +313,13 @@ func snapshot_error(snapshot: Dictionary, scheduler: Node3D, scheduler_snapshot:
 	for index: int in range(snapshot.opportunities.size()):
 		var value: Variant = snapshot.opportunities[index]
 		var prefix: Dictionary = snapshot.cursor.executed_events[index]
-		if not value is Dictionary or not Codec.keys_error(value, OPPORTUNITY_KEYS).is_empty() or value.event_id != prefix.event_id or value.hero_id != snapshot.hero_id or not Codec.is_number(value.scheduled_at_s) or not Codec.is_number(value.dispatch_clock_s) or not _same_transport(value.scheduled_at_s, prefix.scheduled_at_s) or not _same_transport(value.dispatch_clock_s, prefix.dispatch_clock_s) or float(value.dispatch_clock_s) - float(value.scheduled_at_s) > MAX_DISPATCH_DELAY_S + TIME_EPSILON_S or not value.contact is bool or not value.damage_attempted is bool or (value.damage_attempted and not value.contact):
+		if not value is Dictionary or not Codec.keys_error(value, OPPORTUNITY_KEYS).is_empty() or value.event_id != prefix.event_id or value.hero_id != snapshot.hero_id or not Codec.is_number(value.scheduled_at_s) or not Codec.is_number(value.dispatch_clock_s) or not _near(float(value.scheduled_at_s), float(prefix.scheduled_at_s)) or not _near(float(value.dispatch_clock_s), float(prefix.dispatch_clock_s)) or float(value.dispatch_clock_s) - float(value.scheduled_at_s) > MAX_DISPATCH_DELAY_S + TIME_EPSILON_S or not value.contact is bool or not value.damage_attempted is bool or value.damage_attempted != value.contact:
 			return "Opportunity prefix must match every canonical consumed event, target and bounded dispatch"
-	error = _pending_error(snapshot)
-	if not error.is_empty():
-		return error
 	if _status != "idle":
 		if _reservation_id != snapshot.reservation_id or _hero_id != snapshot.hero_id or _scheduler != scheduler or _hero != heroes.values()[0] or snapshot.opportunities.size() < _opportunities.size() or (_status in ["cancelled", "complete"] and snapshot.status != _status):
 			return "Existing owner cannot rebind or revive once-only state"
 		for index: int in range(_opportunities.size()):
-			if not _same_transport(snapshot.opportunities[index], _opportunities[index]) and not (_opportunities[index].contact and not _opportunities[index].damage_attempted and snapshot.opportunities[index].damage_attempted and _same_transport(_receipt_without_attempt(snapshot.opportunities[index]), _receipt_without_attempt(_opportunities[index]))):
+			if not _same_transport(snapshot.opportunities[index], _opportunities[index]):
 				return "Past target opportunity cannot be rewritten"
 		var existing_reader = Cursor.new()
 		var current: Dictionary = _cursor.snapshot_state()
@@ -490,7 +358,6 @@ func restore_state(snapshot: Dictionary, scheduler: Node3D, scheduler_snapshot: 
 	_opportunities.clear()
 	for value: Dictionary in snapshot.opportunities:
 		_opportunities.append(value.duplicate(true))
-	_pending_delivery = snapshot.get("pending_delivery", {}).duplicate(true)
 	_status = snapshot.status
 	_reason = snapshot.reason
 	_cancelled_at = snapshot.cancelled_at_s
@@ -512,7 +379,7 @@ func _cancellation_error(snapshot: Dictionary, scheduler_snapshot: Dictionary) -
 		return "Canceled restore requires its exact retained replay cancellation identity; expired/missing provenance is unsupported"
 	var tombstone: Dictionary = snapshot.cancellation
 	var exchange: Dictionary = snapshot.exchange
-	if tombstone.get("id") != snapshot.reservation_id or tombstone.get("source_id") != snapshot.source_id or tombstone.get("response_actor_id") != snapshot.hero_id or tombstone.get("source_epoch") != snapshot.source_epoch or tombstone.get("generation") != snapshot.generation or tombstone.get("sequence_id") != _plan.sequence_id or not _same_transport(tombstone.get("sequence"), snapshot.sequence) or not _same_transport(tombstone.get("capture_collision_fingerprint"), exchange.adapter.capture_collision_fingerprint) or tombstone.get("locked") != exchange.adapter.locked or tombstone.get("max_dispatch_delay_s") != MAX_DISPATCH_DELAY_S or tombstone.get("reason") != snapshot.reason or not Codec.is_number(tombstone.get("cancelled_at_s")) or not _same_transport(tombstone.cancelled_at_s, snapshot.cancelled_at_s) or not Codec.is_number(tombstone.get("timeline_origin_s")) or not _same_transport(tombstone.timeline_origin_s, exchange.adapter.timeline_origin_s):
+	if tombstone.get("id") != snapshot.reservation_id or tombstone.get("source_id") != snapshot.source_id or tombstone.get("response_actor_id") != snapshot.hero_id or tombstone.get("source_epoch") != snapshot.source_epoch or tombstone.get("generation") != snapshot.generation or tombstone.get("sequence_id") != _plan.sequence_id or not _same_transport(tombstone.get("sequence"), snapshot.sequence) or not _same_transport(tombstone.get("capture_collision_fingerprint"), exchange.adapter.capture_collision_fingerprint) or tombstone.get("locked") != exchange.adapter.locked or tombstone.get("max_dispatch_delay_s") != MAX_DISPATCH_DELAY_S or tombstone.get("reason") != snapshot.reason or not Codec.is_number(tombstone.get("cancelled_at_s")) or not _near(float(tombstone.cancelled_at_s), float(snapshot.cancelled_at_s)) or not Codec.is_number(tombstone.get("timeline_origin_s")) or not _near(float(tombstone.timeline_origin_s), float(exchange.adapter.timeline_origin_s)):
 		return "Cancellation must retain this exact exchange, proved player, reason and actual clock"
 	for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "profile_id", "world_revision"]:
 		if not _same_transport(tombstone.get(key), exchange.get(key)):
@@ -525,81 +392,6 @@ func _snapshot_boundary_error() -> String:
 		return "Playback snapshots require a configured ready paused aggregate boundary"
 	if _transaction_depth > 0 or _snapshot_busy:
 		return "Playback snapshots require the deferred barrier outside damage/cue/state callbacks"
-	return ""
-
-
-func _receipt_without_attempt(value: Dictionary) -> Dictionary:
-	var receipt: Dictionary = value.duplicate(true)
-	receipt.erase("damage_attempted")
-	return receipt
-
-
-func _pending_error(snapshot: Dictionary) -> String:
-	var pending: Dictionary = {}
-	if int(snapshot.schema_version) == 2:
-		if not snapshot.pending_delivery is Dictionary:
-			return "Pending delivery requires a closed object"
-		pending = snapshot.pending_delivery
-		if not Codec.keys_error(pending, ["events", "visual_next_cue", "visuals_pending", "state_pending", "cue_phases"]).is_empty() or not pending.events is Array or not pending.cue_phases is Array or not pending.visuals_pending is bool or not pending.state_pending is bool or not Codec.is_integer(pending.visual_next_cue, 0, _cues.size()):
-			return "Malformed bounded pending delivery/cue phase state"
-		if pending.events.size() > snapshot.opportunities.size() or pending.cue_phases.size() != _cues.size() or (pending.events.is_empty() and not pending.visuals_pending and not pending.state_pending):
-			return "Schema2 must retain a genuine finite delivery remainder"
-		if not pending.visuals_pending and int(pending.visual_next_cue) != 0:
-			return "A finished presentation cannot retain a cue cursor"
-		if snapshot.status == "complete" or (snapshot.status == "cancelled" and (pending.visuals_pending or pending.state_pending)):
-			return "Terminal state cannot license pending observers/presentation"
-		if snapshot.status == "running" and (not pending.visuals_pending or not pending.state_pending or (not pending.events.is_empty() and int(pending.visual_next_cue) != 0)):
-			return "Running remainder must retain its final presentation/state callback"
-	var entries: Array = pending.get("events", [])
-	var first: int = snapshot.opportunities.size() - entries.size()
-	for index: int in range(entries.size()):
-		var entry: Variant = entries[index]
-		if not entry is Dictionary or not Codec.keys_error(entry, ["event_index", "stage"]).is_empty() or not Codec.is_integer(entry.event_index, first + index, first + index) or entry.stage not in ["present", "damage", "notify"] or (index > 0 and entry.stage != "present"):
-			return "Pending entries must be the exact canonical contiguous suffix"
-	if snapshot.status == "running" and not entries.is_empty() and first == 0 and entries[0].stage == "present":
-		return "First attack cannot retain an unpresented receipt at a supported callback boundary"
-	for index: int in range(snapshot.opportunities.size()):
-		var receipt: Dictionary = snapshot.opportunities[index]
-		var before_damage: bool = index >= first and entries[index - first].stage in ["present", "damage"]
-		if receipt.damage_attempted != (receipt.contact and not before_damage):
-			return "Pending stage must truthfully match consumed damage attempt"
-	if not pending.is_empty():
-		for index: int in range(pending.cue_phases.size()):
-			var phase: Variant = pending.cue_phases[index]
-			if not phase is String or phase not in ["clear", "warning", "lock", "active", "recovery"]:
-				return "Pending cue phases must use the closed shared grammar"
-			if snapshot.status == "cancelled":
-				if phase != "clear":
-					return "Canceled remainder must discard all damaging presentation"
-				continue
-			if not snapshot.cursor.armed:
-				# A held bind observer may interrupt the first warning refresh.
-				# Only the exact unpresented suffix can still be clear.
-				var expected: String = "warning" if index < int(pending.visual_next_cue) else "clear"
-				if not entries.is_empty() or not snapshot.opportunities.is_empty() or phase != expected:
-					return "Unarmed pending cues must retain their exact warning/clear presentation prefix"
-				continue
-			if index >= first and index < snapshot.opportunities.size():
-				var stage: String = entries[index - first].stage
-				if phase != ("lock" if stage == "present" else "active"):
-					return "Pending attack phase must match its once-only delivery stage"
-			elif index < snapshot.opportunities.size():
-				if phase not in ["active", "recovery"] or (entries.is_empty() and index < int(pending.visual_next_cue) and phase != "recovery"):
-					return "Delivered cue phase lost active/recovery presentation order"
-			elif snapshot.opportunities.is_empty():
-				var expected: String = "lock" if index < int(pending.visual_next_cue) else "warning"
-				if phase != expected:
-					return "First armed refresh must retain its exact lock/warning presentation prefix"
-			elif phase != "lock":
-				return "Future pending cue cannot skip its lock grammar"
-	if _status != "idle":
-		var current_first: int = _opportunities.size() - _pending_delivery.get("events", []).size()
-		if first < current_first:
-			return "Existing owner cannot re-notify a delivered event prefix"
-		if not entries.is_empty() and not _pending_delivery.get("events", []).is_empty() and first == current_first:
-			var stages: Array[String] = ["present", "damage", "notify"]
-			if stages.find(entries[0].stage) < stages.find(_pending_delivery.events[0].stage):
-				return "Existing owner cannot rewind an interrupted delivery stage"
 	return ""
 
 
@@ -738,95 +530,40 @@ func _build_preview() -> void:
 		cue.name = "ExactAttackCue%d" % _cues.size()
 		add_child(cue)
 		_cues.append(cue)
-		_cue_phases.append("clear")
 	_refresh_visuals()
 
 
-func _refresh_visuals(quiet: bool = false) -> bool:
+func _refresh_visuals(quiet: bool = false) -> void:
 	var cursor_state: Dictionary = _cursor.state()
-	var pose: Dictionary = _presentation_pose() if quiet else _visual_pose()
-	_apparition.visible = _status == "running" and not pose.is_empty()
+	var pose: Dictionary = _visual_pose()
+	_apparition.visible = not pose.is_empty()
 	_apparition_root.visible = _apparition.visible
 	if _apparition.visible:
 		_apparition_root.global_position = pose.position
 		_apparition.face(pose.direction)
 		_apparition.set_loadout_visual(pose.equipment_ids.weapon, pose.equipment_ids.jacket, pose.equipment_ids.pants, pose.equipment_ids.shoes)
 		_apparition.set_action(pose.action, float(pose.progress))
-	_route_mesh.visible = _status == "running" # Optional harmless route ornament.
+	_route_mesh.visible = _status == "running"
 	_failure_marker.visible = _status == "cancelled"
 	if _failure_marker.visible:
 		_failure_marker.global_position = global_position + Vector3.UP * 0.04
 		_failure_marker.mesh = CueMesh.source_mesh("active")
 	var events: Array[Dictionary] = _events()
-	var start: int = 0 if quiet or _pending_delivery.is_empty() else int(_pending_delivery.visual_next_cue)
-	for index: int in range(start, _cues.size()):
-		var cue: Node3D = _cues[index]
-		if not is_instance_valid(cue) or cue.is_queued_for_deletion():
-			if not quiet and _status == "running":
-				_fail("required_replay_cue_lost")
-			return false
-		if not _cue_children_error(cue).is_empty():
-			if quiet:
-				# Broken renderer children cannot be dereferenced by Cue.clear().
-				# Hide the container; cancellation receipt and failure marker remain.
-				cue.hide()
-				continue
-			_fail("required_replay_renderer_child_lost")
-			return false
-		var was_blocked: bool = cue.is_blocking_signals()
+	for index: int in range(_cues.size()):
+		var was_blocked: bool = _cues[index].is_blocking_signals()
 		if quiet:
-			cue.set_block_signals(true)
-		var phase: String = "clear"
-		if _status == "running":
-			phase = "warning" if not cursor_state.get("armed", false) else "lock"
-			if index < _opportunities.size():
-				phase = "recovery"
-			if quiet and not _pending_delivery.is_empty():
-				phase = _pending_delivery.cue_phases[index]
-		_cue_phases[index] = phase
-		if not quiet and not _pending_delivery.is_empty():
-			_pending_delivery.visual_next_cue = index + 1
-			_pending_delivery.cue_phases = _cue_phases.duplicate()
-		var presented: bool
-		if phase == "clear":
-			presented = cue.clear()
-			if _status == "cancelled":
-				cue.hide() # A current notifying cue may reject clear; fail closed now.
-		else:
-			var record: Dictionary = events[index].record
-			var geometry: Dictionary = Geometry.cone(record.world_origin, record.direction, float(record.geometry.reach), float(record.geometry.cone_min_dot), float(record.geometry.origin_disk_radius))
-			presented = cue.present(geometry, phase)
-		cue.set_block_signals(was_blocked)
-		if not quiet and _status == "running":
-			if not presented:
-				_fail("required_replay_cue_presentation_failed")
-				return false
-			if not _delivery_guard() or get_tree().paused:
-				return false
-	if not quiet and not _pending_delivery.is_empty():
-		_pending_delivery.visuals_pending = false
-		_pending_delivery.visual_next_cue = 0
-	return true
-
-
-func _presentation_pose() -> Dictionary:
-	if _status != "running":
-		return {}
-	var presented: int = -1
-	if not _pending_delivery.is_empty():
-		if not _pending_delivery.events.is_empty():
-			var first: Dictionary = _pending_delivery.events[0]
-			# Cursor consumption precedes callbacks; it is not presentation order.
-			# Remaining present means its preceding event is still shown.
-			presented = int(first.event_index) - (1 if first.stage == "present" else 0)
-		elif _pending_delivery.visuals_pending and int(_pending_delivery.visual_next_cue) == 0:
-			# A final event observer can pause after popping its entry but before
-			# the later cursor-based visual refresh starts.
-			presented = _opportunities.size() - 1
-	if presented >= 0:
-		var event: Dictionary = _delivery_event(presented)
-		return {"position": event.record.world_origin, "direction": event.record.direction, "equipment_ids": event.record.equipment_ids.duplicate(true), "action": event.kind, "progress": 0.0}
-	return _visual_pose()
+			_cues[index].set_block_signals(true)
+		if _status in ["idle", "cancelled", "complete"]:
+			_cues[index].clear()
+			_cues[index].set_block_signals(was_blocked)
+			continue
+		var record: Dictionary = events[index].record
+		var geometry: Dictionary = Geometry.cone(record.world_origin, record.direction, float(record.geometry.reach), float(record.geometry.cone_min_dot), float(record.geometry.origin_disk_radius))
+		var phase: String = "warning" if not cursor_state.get("armed", false) else "lock"
+		if index < _opportunities.size():
+			phase = "recovery"
+		_cues[index].present(geometry, phase)
+		_cues[index].set_block_signals(was_blocked)
 
 
 func _visual_pose() -> Dictionary:
@@ -872,10 +609,7 @@ func _present_event(event: Dictionary) -> void:
 	for index: int in range(events.size()):
 		if events[index].event_id == event.event_id:
 			var geometry: Dictionary = Geometry.cone(record.world_origin, record.direction, float(record.geometry.reach), float(record.geometry.cone_min_dot), float(record.geometry.origin_disk_radius))
-			_cue_phases[index] = "active"
-			_pending_delivery.cue_phases = _cue_phases.duplicate()
-			if not _cues[index].present(geometry, "active"):
-				_fail("required_replay_cue_presentation_failed")
+			_cues[index].present(geometry, "active")
 
 
 func _on_invalidated(id: String, reason: String) -> void:
@@ -894,16 +628,7 @@ func _fail(reason: String) -> Dictionary:
 	if is_instance_valid(_scheduler):
 		_scheduler.cancel(_reservation_id, _reason)
 		_sync_cancelled_exchange()
-	if not _pending_delivery.is_empty():
-		_pending_delivery.visuals_pending = false
-		_pending_delivery.visual_next_cue = 0
-		_pending_delivery.state_pending = false
-		_pending_delivery.cue_phases = []
-		for _cue: Node3D in _cues:
-			_pending_delivery.cue_phases.append("clear")
-		if _pending_delivery.events.is_empty():
-			_pending_delivery = {}
-	_refresh_visuals(true)
+	_refresh_visuals()
 	playback_failed.emit(_reason)
 	state_changed.emit(state())
 	_transaction_depth -= 1
