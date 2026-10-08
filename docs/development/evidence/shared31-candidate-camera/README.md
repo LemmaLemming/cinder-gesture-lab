@@ -1,0 +1,7 @@
+# Shared31 actual candidate-camera evidence
+
+One canonical targeted native run:61 checks, zero failures, exit0, no script/native errors. The actual Shell constructs/captures/quietly restores a hidden recipient with its real independent SubViewport/World3D/Player/current Camera. Default physical saved pose is unedited. Fresh Title has no installed Player; a different-room donor is moved through public dashes and deferred Pause. Native corners/projection, actual viewport/HUD controls, invalid bindings, query purity and live equivalence are exercised. The aspect variation is labelled and temporarily disables only the hidden candidate container's stretch before exact restoration.
+
+No full authored level, production Continue/Retry route, portrait, native OS gesture or human acceptance is inferred. Existing live Game bodies remain byte-identical; no unchanged broad camera/campaign suites were rerun. Original84-file bounded literal referenced subset and seed tooling/data/doc are preserved separately from final named-target/docs updates. It is not a complete engine/resource/import graph. Source closure verified all84 original and live bytes before further edits.
+
+`index.json` indexes every artifact with exact SHA256 and byte length. Its own hash is externally recorded in the canonical publication. Archived source uses `.gdignore`; original draft docs truthfully retain prequeue PENDING and do not inherit later results.
