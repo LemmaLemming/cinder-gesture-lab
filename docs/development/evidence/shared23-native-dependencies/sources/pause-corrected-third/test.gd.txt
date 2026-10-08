@@ -1,0 +1,150 @@
+extends SceneTree
+## TEST ONLY production Shell/two native consumers/late presentation.
+const Shell = preload("res://scripts/campaign/shell.gd")
+const Registry = preload("res://scripts/campaign/registry.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+class FailStore extends CinderSaveStore:
+	func write_payload(_payload: Dictionary) -> bool:
+		last_error = "TEST ONLY rejected observer checkpoint write"
+		return false
+var checks: int = 0
+var failures: int = 0
+var game: CinderCampaignShell
+var paths: Array[String] = []
+var caught: bool = false
+var inside: Dictionary = {}
+var target_phase: String = "lock"
+var mode: String = "deferred"
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+func _run() -> void:
+	var selectors: Array[String] = ["direct", "lock", "active", "recovery", "fatal", "shell", "checkpoint", "failed"]
+	if "--one" in OS.get_cmdline_user_args(): selectors = ["lock"]
+	for selector: String in selectors:
+		await _case(selector)
+	for path: String in paths:
+		for suffix: String in ["", ".bak"]:
+			if FileAccess.file_exists(path + suffix): DirAccess.remove_absolute(ProjectSettings.globalize_path(path + suffix))
+	print("Pause barrier smoke: %d checks, %d failures" % [checks, failures])
+	quit(0 if failures == 0 else 1)
+
+func _case(selector: String) -> void:
+	paused = true
+	var raw: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Registry.DATA_PATH))
+	for info: Dictionary in raw.levels:
+		if info.id == "A1-L1":
+			info.scene_path = "res://tests/fixtures/campaign/pause_barrier_level.tscn"
+			info.readiness = "accepted"
+			info.accepted_commit = "b".repeat(40)
+			info.api_revision = Registry.API_REVISION
+	game = Shell.new()
+	var prefix: String = "user://test-pause-barrier-%d-%s-" % [OS.get_process_id(), selector]
+	var save: String = prefix + "campaign.json"
+	paths.append_array([save, prefix + "settings.json", prefix + "preferences.json"])
+	_expect(game.configure_runtime(raw, save, prefix + "settings.json", prefix + "preferences.json"), selector + " configures isolated actual Shell")
+	root.add_child(game)
+	await _settle()
+	game.menu.begin_story_requested.emit()
+	await _settle()
+	_expect(game.active_level != null and game.campaign_error.is_empty(), selector + " creates coherent paused test-only candidate: " + game.campaign_error)
+	if game.active_level == null:
+		game.free()
+		return
+	game.player.hp = 0.1 if selector == "fatal" else 37.0
+	game.player.shells = 0
+	game.resume_campaign()
+	await _ticks(6)
+	_expect(game.active_level.start_arm().get("accepted", false), selector + " admits actual first stationary source")
+	await _ticks(23)
+	_expect(game.active_level.start_circle().get("accepted", false), selector + " admits real later circle through staggered union")
+	caught = false
+	inside = {}
+	target_phase = selector if selector in ["lock", "active", "recovery"] else ("active" if selector == "fatal" else "lock")
+	mode = selector if selector in ["direct", "shell", "checkpoint", "failed"] else "deferred"
+	if selector == "failed": game.attempts._store = FailStore.new(save)
+	game.active_level.arm.state_changed.connect(_from_source)
+	for tick: int in range(400):
+		if caught: break
+		await _ticks(1)
+	await _settle()
+	_expect(caught, selector + " observes native source phase callback")
+	if not caught:
+		game.free()
+		await _settle()
+		return
+	if selector == "direct":
+		_expect(game.capture_campaign_snapshot().is_empty(), "direct midtick freeze remains rejected rather than silently repairing samples")
+		_expect(game.active_level.circle.snapshot_state(game.active_level.bindings()).is_empty(), "direct freeze exposes later circle stale sample")
+	else:
+		_expect(inside.in_physics and not inside.paused and inside.input_unchanged, selector + " finishes current native tick while immediately consuming input")
+		if mode == "deferred": _expect(inside.first and not inside.second and inside.still_pending, selector + " coalesces pause and ignores early Resume")
+		var saved: Dictionary = game.attempts.active_snapshot() if selector == "checkpoint" else game.capture_campaign_snapshot()
+		_expect(not saved.is_empty() and (game.campaign_error.is_empty() or selector == "failed"), selector + " persists/captures whole native tick: " + game.campaign_error)
+		if selector == "failed":
+			_expect(paused and not game._failed_operations.is_empty() and not game.campaign_error.is_empty(), "rejected callback checkpoint write remains paused and explicitly pending")
+		if not saved.is_empty():
+			var local: Dictionary = saved.level.local
+			_expect(local.arm.clock_s == local.circle.clock_s and local.presentation_clock == local.scheduler.clock_s, selector + " retains exact shared clock across both native consumers and parent")
+			_expect(local.presentation_phase == local.arm.phase and local.puff_scale == Codec.vector3(Vector3.ONE * game.active_level._phase_scale(local.arm.phase)), selector + " captures actual completed phase-derived puff pose")
+			_expect(Codec.same_values(local.arm.hero_samples.hero.position, saved.player.motion.position) and Codec.same_values(local.circle.hero_samples.hero.position, saved.player.motion.position), selector + " pairs both paths with same actual Hero feet")
+			if selector == "checkpoint":
+				_expect(not paused and saved.level.progress.checkpoint_id == "observer", "native callback checkpoint resumes only after coherent durable capture")
+			else:
+				_expect(paused and not game.is_pause_requested(), selector + " freezes once after full native tick")
+				var clock: float = game.active_level.scheduler.get_clock()
+				var hp: float = game.player.hp
+				await create_timer(0.08, true).timeout
+				_expect(game.active_level.scheduler.get_clock() == clock and game.player.hp == hp and Codec.same_values(game.capture_campaign_snapshot(), saved), selector + " held pause does not drift, damage or heal")
+				if selector == "lock":
+					var copied: Dictionary = _exact_json(saved)
+					var candidate: Dictionary = game._prepare_snapshot(copied)
+					_expect(not candidate.is_empty() and game.campaign_error.is_empty(), "exact JSON capture quietly restores fresh real Player/two consumers/parent")
+					if not candidate.is_empty():
+						_expect(Codec.same_values(game._capture(candidate.player, candidate.level, copied.shell), copied), "fresh native aggregate equals exact held barrier envelope")
+						game._dispose(candidate)
+				if selector == "fatal":
+					_expect(game.player.dead and hp == 0.0 and local.arm.hit_ids == ["hero"], "fatal deferred tick uses actual one source hit and retains death")
+					game.resume_campaign()
+					_expect(paused and game.player.dead and Codec.same_values(game.capture_campaign_snapshot(), saved), "dead Resume cannot revive or change retained fatal aggregate")
+	paused = true
+	game.free()
+	await _settle()
+
+func _from_source(state: Dictionary) -> void:
+	if caught or state.phase != target_phase or game.active_level.circle.state().status != "running": return
+	caught = true
+	inside = {"in_physics": Engine.is_in_physics_frame()}
+	if mode == "direct":
+		paused = true
+		return
+	if mode == "shell": game.request_pause()
+	elif mode in ["checkpoint", "failed"]: game.active_level.request_checkpoint("observer", "encounter")
+	else:
+		inside.first = game.request_pause_deferred()
+		inside.second = game.request_pause_deferred()
+		game.resume_campaign()
+		inside.still_pending = game.is_pause_requested()
+	inside.paused = paused
+	var observation: Dictionary = game.get_input_observation_state()
+	var records: Array = game.player.get_world_action_records()
+	game.handle_tap(root.get_visible_rect().size * 0.5)
+	inside.input_unchanged = Codec.same_values(game.get_input_observation_state(), observation) and game.player.get_world_action_records() == records
+
+func _exact_json(value: Dictionary) -> Dictionary:
+	return preload("res://scripts/campaign/exact_json.gd").parse(preload("res://scripts/campaign/exact_json.gd").stringify(value)).value
+
+func _ticks(count: int) -> void:
+	for tick: int in range(count):
+		await physics_frame
+		await process_frame
+
+func _settle() -> void:
+	for count: int in range(4): await process_frame
+
+func _expect(condition: bool, message: String) -> void:
+	checks += 1
+	if not condition:
+		failures += 1
+		push_error(message)

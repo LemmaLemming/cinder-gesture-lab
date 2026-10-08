@@ -1,0 +1,65 @@
+extends "res://tests/fixtures/campaign/paired_arm_level.gd"
+## TEST ONLY two real consumers and a required later native presentation.
+var circle: CinderLaneMechanism
+var puff: MeshInstance3D
+var presentation_clock: float = 0.0
+var presentation_phase: String = "clear"
+
+func _on_enter_level() -> void:
+	super._on_enter_level()
+	process_physics_priority = 200
+	circle = Arm.new()
+	circle.name = "Circle"
+	circle.position = Vector3(2.8, 0, -0.2)
+	circle.configure("circle", Geometry.circle(circle.position, 0.8), Vector3.ZERO)
+	add_child(circle)
+	circle.bind(scheduler, {"hero": hero})
+	puff = MeshInstance3D.new()
+	puff.name = "RequiredPhasePuff"
+	puff.mesh = BoxMesh.new()
+	add_child(puff)
+	_update_presentation()
+
+func bindings() -> Dictionary:
+	var result: Dictionary = super.bindings()
+	result.owners.circle = circle
+	return result
+
+func start_circle() -> Dictionary:
+	return circle.start("hero", {"encounter_id": "paired-arm", "world_revision": 1, "recognition_s": 0.12, "attack_input_margin_s": 0.02, "escape_directions": [Vector3.BACK, Vector3.FORWARD], "return_directions": [Vector3.BACK, Vector3.FORWARD], "floor_regions": bindings().floors.values()})
+
+func _physics_process(_delta: float) -> void:
+	_update_presentation()
+
+func _update_presentation() -> void:
+	presentation_phase = arm.state().phase
+	presentation_clock = scheduler.get_clock()
+	puff.scale = Vector3.ONE * _phase_scale(presentation_phase)
+	puff.visible = presentation_phase != "clear"
+
+func _phase_scale(phase: String) -> float:
+	return float({"clear": 1, "warning": 2, "lock": 3, "active": 4, "recovery": 5}.get(phase, 0))
+
+func _capture_local_state() -> Dictionary:
+	return {"scheduler": scheduler.snapshot_state(bindings()), "arm": arm.snapshot_state(bindings()), "circle": circle.snapshot_state(bindings()), "presentation_clock": presentation_clock, "presentation_phase": presentation_phase, "puff_scale": Codec.vector3(puff.scale), "puff_visible": puff.visible}
+
+func _paired_error(state: Dictionary, staged: Dictionary) -> String:
+	var error: String = Codec.keys_error(state, ["scheduler", "arm", "circle", "presentation_clock", "presentation_phase", "puff_scale", "puff_visible"])
+	if not error.is_empty() or not state.scheduler is Dictionary or not state.arm is Dictionary or not state.circle is Dictionary:
+		return "Both actual consumers and later required presentation must be retained"
+	error = scheduler.snapshot_error(state.scheduler, staged)
+	if error.is_empty(): error = arm.snapshot_error(state.arm, staged, state.scheduler)
+	if error.is_empty(): error = circle.snapshot_error(state.circle, staged, state.scheduler)
+	if error.is_empty() and (state.presentation_clock != state.scheduler.clock_s or state.presentation_phase != state.arm.phase or not Codec.is_vector3(state.puff_scale) or Codec.read_vector3(state.puff_scale) != Vector3.ONE * _phase_scale(state.arm.phase) or state.puff_visible != (state.arm.phase != "clear")):
+		error = "Required later presentation must match both actual tick and source phase"
+	return error
+
+func _restore_local_state(state: Dictionary) -> void:
+	super._restore_local_state(state)
+	if restore_error.is_empty() and not circle.restore_state(state.circle, bindings()):
+		restore_error = circle.last_snapshot_error
+	_update_presentation()
+
+func _on_exit_level() -> void:
+	if is_instance_valid(circle) and circle.is_inside_tree(): circle.cancel("fixture_exit")
+	super._on_exit_level()
