@@ -1,0 +1,1343 @@
+{
+  "schema_version": 1,
+  "archive_id": "act1-L3-crowd-current",
+  "status": "frozen_passed_bounded_three_source_crowd_with_distinct_actor_pair_and_codec_regressions",
+  "created_date": "2026-10-09",
+  "path_base": "this_directory",
+  "head": "e6fe8a0ceb91cb4e22f7b55b9a56b41beadf4516",
+  "api_revision": "campaign-shared-26",
+  "origin_map": {
+    "path": "origin-map.json",
+    "sha256": "0eaa8eb51e2ea97f7c6b69c3134f8bc481a65ae7a57733fbfe423218a746b1c0"
+  },
+  "run": {
+    "id": "a1-l3-crowd-portrait-2",
+    "metadata": "run/job.json",
+    "stdout": "run/stdout.log",
+    "argv": [
+      "python3",
+      "scripts/dev/dev.py",
+      "engine",
+      "--path",
+      ".",
+      "--resolution",
+      "540x1170",
+      "--script",
+      "tests/acts/act1/a1_l3_crowd.gd",
+      "--",
+      "--portrait"
+    ],
+    "cwd": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+    "head": "e6fe8a0ceb91cb4e22f7b55b9a56b41beadf4516",
+    "api_revision": "campaign-shared-26",
+    "started_at": "2026-10-08T20:00:39.425441+00:00",
+    "finished_at": "2026-10-08T20:01:07.443327+00:00",
+    "scope": "Affected first actual three-C31 crowd reproduction after explicit0.001m finite-braking settle intent and exited-parent camera retirement. Same genuine inputs/neutral Standard/API2 whole actor pair/native540x1170 checks; no assertion/tolerance or native stopped admission relaxation.",
+    "checks": 193,
+    "failures": 0,
+    "exit_code": 0,
+    "status": "passed_clean_bounded_component",
+    "actual_swipes": 7,
+    "actual_primaries": 3,
+    "post_execution_source_hash_mismatch": [],
+    "diagnostics": "Original stdout has no SCRIPT ERROR/ERROR/WARNING lines; clean exit 0 reported by original closed job."
+  },
+  "executed_source": {
+    "original_source_root": ".cinder/a1-l3-crowd-portrait-2-source",
+    "declared_source_count": 54,
+    "files": [
+      {
+        "repository_path": "assets/acts/act1/grotto/environment_manifest.json",
+        "archive_path": "executed-source/assets/acts/act1/grotto/environment_manifest.json",
+        "bytes": 19339,
+        "sha256": "8492ebdaec6c6024f0e248f23ea45aa607fa11d64ba2baffce02947fb0d28afe"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenite_manifest.json",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenite_manifest.json",
+        "bytes": 52713,
+        "sha256": "7bdb6be1ec4eac9bf90004caaad913028d5fa1ceed0cfdef981914355ae98634"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_back_active.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_back_active.png",
+        "bytes": 1411,
+        "sha256": "08176f54a5e6b5db22ec928f117087f38ff81839cc24cad41236d1380f35c6c3"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_back_lock.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_back_lock.png",
+        "bytes": 1539,
+        "sha256": "86f9dcee3ac187f794cb63dcf0b947a294ff21fc4e62956120d954ab0fe08e58"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_back_recovery.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_back_recovery.png",
+        "bytes": 1584,
+        "sha256": "2d5d88042fabbd7ade40d183bc77aa4032e4f7081e99efaab20e46490b9491e5"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_back_standing.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_back_standing.png",
+        "bytes": 1702,
+        "sha256": "b16644cd56edeaf185bf230283da840c44d155b282488469bf7e61c58c226ea8"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_back_warning.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_back_warning.png",
+        "bytes": 1652,
+        "sha256": "80baf49b4aa5cab7166a75ac0ce6cf3e96cb8c6a39d3b65cec1e3956a579f192"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_front_active.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_front_active.png",
+        "bytes": 1392,
+        "sha256": "7d35455f9b279c881b4e46adba551537b2ec94cea77a9f7be4c4999fab39b701"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_front_lock.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_front_lock.png",
+        "bytes": 1513,
+        "sha256": "1226c25a5ebe36936e5553af44735d33952dda4587282e5739c43d067d18f04b"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_front_recovery.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_front_recovery.png",
+        "bytes": 1558,
+        "sha256": "cc59da062a061dac2667f1f667e3c934696c4cdb51cbe2a369ff12004e127f53"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_front_standing.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_front_standing.png",
+        "bytes": 1691,
+        "sha256": "6be52e6b40d440dff1e6839b31fe85298167acfea5247e52b545c3504bfbb694"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_front_warning.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_front_warning.png",
+        "bytes": 1651,
+        "sha256": "83b6404e89f96b84d712fda73ff5b9bd92bf650250ac31ed1e726ac2eacc301d"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_side_active.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_side_active.png",
+        "bytes": 1323,
+        "sha256": "a940ee6e288ad31c84ee8e1ddd465f33f2cc3ecdc119223c13b336fa2dbea9d8"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_side_lock.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_side_lock.png",
+        "bytes": 1441,
+        "sha256": "932e5ddff4dadc85ad3be987b16e0ec96bd24938a8df8e07c552d71a2dd4e4bc"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_side_recovery.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_side_recovery.png",
+        "bytes": 1449,
+        "sha256": "dad482d41eedbade0003dc5d32b8392c77cf75702cb267d152461ae48e421f67"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_side_standing.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_side_standing.png",
+        "bytes": 1615,
+        "sha256": "bfd3015368eddb454c6a8ce52000a301e3c244690d24e3121a4c4f145f7612fa"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/guard_side_warning.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/guard_side_warning.png",
+        "bytes": 1604,
+        "sha256": "fc52145e55bb21dc7dfdeeb15e07e59855e4a0256d9c34027f4696c0d337178f"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/selenite_contact_sheet.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/selenite_contact_sheet.png",
+        "bytes": 51113,
+        "sha256": "41d6740f51cc03becdcea4f7df5a125bd5e1bf2233122826811500c33eaaf972"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_active.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_back_active.png",
+        "bytes": 1147,
+        "sha256": "c3df8f50820a4f1612908e3a53812f48c93d46a332526475ab85ce9960227776"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_lock.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_back_lock.png",
+        "bytes": 1139,
+        "sha256": "94e1fb81669cc33a6e54536cf5085d6d49ed589f78f8f4fd018ee0283cce4756"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_recovery.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_back_recovery.png",
+        "bytes": 1147,
+        "sha256": "45905a7ca25d53219d90343430fc30a0c14e75a376ddb74ef63df95cc5b8349e"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_standing.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_back_standing.png",
+        "bytes": 1126,
+        "sha256": "77d1087eaed5b6d94906dba564208d0b022fffbadaf080109a272fc43f50c9ee"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_warning.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_back_warning.png",
+        "bytes": 1182,
+        "sha256": "f16e166fca42fd1a84a5ecf947f8e3695fa6b53f93ee05b96c3c3d649d3e9e08"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_active.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_front_active.png",
+        "bytes": 1146,
+        "sha256": "3ca550e3b6343b6a53a0fddcbb24a8ce85a33b199cb6c5ce27eb2863bbf7a673"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_lock.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_front_lock.png",
+        "bytes": 1125,
+        "sha256": "fd50585aa7f9d479c94d3e770035554df37b19b58996428ca8d3512a0ee2d9f1"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_recovery.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_front_recovery.png",
+        "bytes": 1153,
+        "sha256": "df5e8ac52e7d78722e2dc8a2d59d8b58dc9bab62725b1a9233c51211ebda6d26"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_standing.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_front_standing.png",
+        "bytes": 1144,
+        "sha256": "4bbb57517b914afebb60034145bad263749c20c31a345948cf51a593876cdba2"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_warning.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_front_warning.png",
+        "bytes": 1133,
+        "sha256": "216357453a5aaa7dc5059120a2dd6df8732ad9052ba9a89df223459a92fb2bcb"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_active.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_side_active.png",
+        "bytes": 1163,
+        "sha256": "53ee6746510d5a70f7ad4f7f7eeca8f02437ba6b72a5b477eaefa709bb8ff8b2"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_lock.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_side_lock.png",
+        "bytes": 1163,
+        "sha256": "4f48f673dd808fee18d2ee67f1dc88c70614a71476fb46937c2a69e874b4f90b"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_recovery.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_side_recovery.png",
+        "bytes": 1139,
+        "sha256": "e7f43acf31f68175e9c6c5c6bedb598456c473869bf1843bae48c4144b9b788a"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_standing.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_side_standing.png",
+        "bytes": 1153,
+        "sha256": "4c44ba7b9fb634d0a15d07f4b4ae0d9f3b67fb7f3e03c50a48c34d2b57b62e94"
+      },
+      {
+        "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_warning.png",
+        "archive_path": "executed-source/assets/acts/act1/grotto/selenites/swarm_side_warning.png",
+        "bytes": 1165,
+        "sha256": "674cddd662e29678856341c095058b2e56372b48ca5b16f481f3943949fc7050"
+      },
+      {
+        "repository_path": "scenes/acts/act1/a1_l3_crowd_greybox.tscn",
+        "archive_path": "executed-source/scenes/acts/act1/a1_l3_crowd_greybox.tscn.txt",
+        "bytes": 474,
+        "sha256": "d344afe705ada3414265e24843c27c47ac29f6251a545b9d2a093f5f6d0c967f"
+      },
+      {
+        "repository_path": "scenes/acts/act1/a1_l3_greybox.tscn",
+        "archive_path": "executed-source/scenes/acts/act1/a1_l3_greybox.tscn.txt",
+        "bytes": 428,
+        "sha256": "93a7455a1ae6f3034f6926c27048c325a682fd81dae5b3bece97c86d7f773828"
+      },
+      {
+        "repository_path": "scenes/acts/act1/a1_l3_guard_greybox.tscn",
+        "archive_path": "executed-source/scenes/acts/act1/a1_l3_guard_greybox.tscn.txt",
+        "bytes": 462,
+        "sha256": "d616dfbe47f966fb389efc4f7ad4fab9355c70ea3a7e73f061eb8a92ef1bf628"
+      },
+      {
+        "repository_path": "scripts/acts/act1/mushroom_caverns.gd",
+        "archive_path": "executed-source/scripts/acts/act1/mushroom_caverns.gd.txt",
+        "bytes": 31596,
+        "sha256": "29a7be50cb526cebaabdd2d669aeb6957afbd99d13c526d7a795531171cb002f"
+      },
+      {
+        "repository_path": "scripts/acts/act1/mushroom_caverns_layout.gd",
+        "archive_path": "executed-source/scripts/acts/act1/mushroom_caverns_layout.gd.txt",
+        "bytes": 7781,
+        "sha256": "41b6c69afa8d262715f8a544d00e8d4532fb62008e7c7855aecb3f8864640c85"
+      },
+      {
+        "repository_path": "scripts/acts/act1/mushroom_grotto_art.gd",
+        "archive_path": "executed-source/scripts/acts/act1/mushroom_grotto_art.gd.txt",
+        "bytes": 28402,
+        "sha256": "8e32a13825e9aa4a0172fd5328f196930685fe7233dfc0fa36abfaf779d1d770"
+      },
+      {
+        "repository_path": "scripts/acts/act1/mushroom_selenite.gd",
+        "archive_path": "executed-source/scripts/acts/act1/mushroom_selenite.gd.txt",
+        "bytes": 51300,
+        "sha256": "d355a029f19b1e655004f0274b6ab737f599391ed1352d21b8e3d20c2bd57056"
+      },
+      {
+        "repository_path": "scripts/acts/act1/mushroom_selenite_approach.gd",
+        "archive_path": "executed-source/scripts/acts/act1/mushroom_selenite_approach.gd.txt",
+        "bytes": 8142,
+        "sha256": "e5b3b63d7dcafbcf2c0d69d94763bec72e3feda91aacb6d3e02fd5333d438939"
+      },
+      {
+        "repository_path": "scripts/acts/act1/mushroom_selenite_art.gd",
+        "archive_path": "executed-source/scripts/acts/act1/mushroom_selenite_art.gd.txt",
+        "bytes": 11167,
+        "sha256": "14223ac05f4e8039f1d2426bbc6b5fa00805653551d0fd4f83ea00e2972ccb74"
+      },
+      {
+        "repository_path": "scripts/acts/act1/mushroom_selenite_codec.gd",
+        "archive_path": "executed-source/scripts/acts/act1/mushroom_selenite_codec.gd.txt",
+        "bytes": 23146,
+        "sha256": "3eb1eb07443c1d33ccf1e8d7a1ff7d48c09e4af6805c60fffb808b7a420776d3"
+      },
+      {
+        "repository_path": "scripts/acts/act1/rush_selenite_art.gd",
+        "archive_path": "executed-source/scripts/acts/act1/rush_selenite_art.gd.txt",
+        "bytes": 7843,
+        "sha256": "195c9de893c985a94a326ca7e3847f3de3a06185263a76588d9db37909c0d7c9"
+      },
+      {
+        "repository_path": "scripts/campaign/level.gd",
+        "archive_path": "executed-source/scripts/campaign/level.gd.txt",
+        "bytes": 15364,
+        "sha256": "935dece66f5e0ec38c07e34bb185cbf53aacf044d6539e17e7dce73a14c0c56e"
+      },
+      {
+        "repository_path": "scripts/combat/body_sweep.gd",
+        "archive_path": "executed-source/scripts/combat/body_sweep.gd.txt",
+        "bytes": 17456,
+        "sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9"
+      },
+      {
+        "repository_path": "scripts/combat/lunge_motion.gd",
+        "archive_path": "executed-source/scripts/combat/lunge_motion.gd.txt",
+        "bytes": 15016,
+        "sha256": "52b048392c7ea5d5728b500d1cc68fa478947f59f5b321bd81f377c265be9a66"
+      },
+      {
+        "repository_path": "scripts/combat/threat_geometry.gd",
+        "archive_path": "executed-source/scripts/combat/threat_geometry.gd.txt",
+        "bytes": 14303,
+        "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+      },
+      {
+        "repository_path": "scripts/combat/threat_scheduler.gd",
+        "archive_path": "executed-source/scripts/combat/threat_scheduler.gd.txt",
+        "bytes": 123947,
+        "sha256": "07ed10a995d3709f6492e35dba1b1d579d7b2eb22ff9e8af7f88be9abee758e6"
+      },
+      {
+        "repository_path": "scripts/game.gd",
+        "archive_path": "executed-source/scripts/game.gd.txt",
+        "bytes": 28846,
+        "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc"
+      },
+      {
+        "repository_path": "scripts/player.gd",
+        "archive_path": "executed-source/scripts/player.gd.txt",
+        "bytes": 48906,
+        "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+      },
+      {
+        "repository_path": "tests/acts/act1/a1_l3_actor_pair.gd",
+        "archive_path": "executed-source/tests/acts/act1/a1_l3_actor_pair.gd.txt",
+        "bytes": 20658,
+        "sha256": "8a66ac90a8fe4b968a2066cc6614a262c1dfc2711ef5f3c1a727b91c08feb9a9"
+      },
+      {
+        "repository_path": "tests/acts/act1/a1_l3_crowd.gd",
+        "archive_path": "executed-source/tests/acts/act1/a1_l3_crowd.gd.txt",
+        "bytes": 22322,
+        "sha256": "d3e15e72118ac27f3725f7513090d44647792b643ac04dae46c8f223146e2c80"
+      },
+      {
+        "repository_path": "tests/acts/act1/a1_l3_greybox.gd",
+        "archive_path": "executed-source/tests/acts/act1/a1_l3_greybox.gd.txt",
+        "bytes": 31370,
+        "sha256": "e98a81e75a775c07faf34b7c6b1beb691fd0f154e25eb84132e32de5176feefb"
+      }
+    ]
+  },
+  "portraits": {
+    "original_capture_root": ".cinder/captures/l3-crowd-970316",
+    "evidence": {
+      "path": "captures/evidence.json",
+      "bytes": 448912,
+      "sha256": "9e8ebee652623a952901f037d23f4d32e9b9c3fe34981cd8074aa1d485424c58"
+    },
+    "capture_count": 13,
+    "captures": [
+      {
+        "path": "captures/01-three-real-crowd-driven-approach.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/01-three-real-crowd-driven-approach.png",
+        "bytes": 34390,
+        "sha256": "dfcf61e85b685d2db11f29c985e85d8c8fa41dcc11960aba66a98fdc634af10d",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "driven-approach"
+      },
+      {
+        "path": "captures/02-three-real-crowd-driven-paired-pause.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/02-three-real-crowd-driven-paired-pause.png",
+        "bytes": 37024,
+        "sha256": "ccac588b3e610bb8079274cb06d5ba9ce36cb705fede23716be356ad735089b3",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "driven-paired-pause"
+      },
+      {
+        "path": "captures/03-three-real-crowd-umbrella-1-leased-paired-pause.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/03-three-real-crowd-umbrella-1-leased-paired-pause.png",
+        "bytes": 37367,
+        "sha256": "e4e465d96314b2741a0869929e8fa12c48d2af7e497f27f2177c4c3ea26e6d29",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "umbrella-1-leased-paired-pause"
+      },
+      {
+        "path": "captures/04-three-real-crowd-umbrella-1-warning.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/04-three-real-crowd-umbrella-1-warning.png",
+        "bytes": 35151,
+        "sha256": "d849c3002dd0f206e5e4dc675aa873efbeef6674dbcd78f5a5d63d43e71b54a5",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "umbrella-1-warning"
+      },
+      {
+        "path": "captures/05-three-real-crowd-umbrella-1-active.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/05-three-real-crowd-umbrella-1-active.png",
+        "bytes": 34672,
+        "sha256": "39af17e7ba05b35b1a85047914f3c0829d446cb6e4468ebfdf2f99b743974165",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "umbrella-1-active"
+      },
+      {
+        "path": "captures/06-three-real-crowd-umbrella-1-primary-opening.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/06-three-real-crowd-umbrella-1-primary-opening.png",
+        "bytes": 35620,
+        "sha256": "a447797fe2c892ae4571ae679a9c55eb280ae0abed3646e3bd1e4a371985307e",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "umbrella-1-primary-opening"
+      },
+      {
+        "path": "captures/07-three-real-crowd-umbrella-2-warning.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/07-three-real-crowd-umbrella-2-warning.png",
+        "bytes": 34343,
+        "sha256": "f4273d0eccfe669dadb476791d81fa5805de3749cd70cc02909864917068a293",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "umbrella-2-warning"
+      },
+      {
+        "path": "captures/08-three-real-crowd-umbrella-2-active.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/08-three-real-crowd-umbrella-2-active.png",
+        "bytes": 33667,
+        "sha256": "64e565067ac953cc27ec81e029a97b64db15bf2473b9a954fe4c6f3968f4dc6d",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "umbrella-2-active"
+      },
+      {
+        "path": "captures/09-three-real-crowd-umbrella-2-primary-opening.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/09-three-real-crowd-umbrella-2-primary-opening.png",
+        "bytes": 34341,
+        "sha256": "bb370aa69e73a0a700e689ffda9df6df93dfe5c483c61aedd3f3f2cce7387c6f",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "umbrella-2-primary-opening"
+      },
+      {
+        "path": "captures/10-three-real-crowd-umbrella-3-warning.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/10-three-real-crowd-umbrella-3-warning.png",
+        "bytes": 33285,
+        "sha256": "f3ff09b53096ba456484ae3ae62509c1fcd050d28961fcf029d60657ebc04cd1",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "umbrella-3-warning"
+      },
+      {
+        "path": "captures/11-three-real-crowd-umbrella-3-active.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/11-three-real-crowd-umbrella-3-active.png",
+        "bytes": 32456,
+        "sha256": "71112e5dc1e55d8682fb70dd353b382a224ef5012ce069235a6e779bb71a6990",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "umbrella-3-active"
+      },
+      {
+        "path": "captures/12-three-real-crowd-umbrella-3-primary-opening.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/12-three-real-crowd-umbrella-3-primary-opening.png",
+        "bytes": 32146,
+        "sha256": "1bd5c41e60ef83eb4ad0035b83ea6b28ce81028e18e5f12fdab2abe1aec225b2",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "umbrella-3-primary-opening"
+      },
+      {
+        "path": "captures/13-three-real-crowd-three-real-defeats.png",
+        "original_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l3-crowd-970316/13-three-real-crowd-three-real-defeats.png",
+        "bytes": 32599,
+        "sha256": "c9ed7dcfe068718c9b366e7598600bbed2620598de78ec22f05a7321d374f9ee",
+        "size_px": [
+          540,
+          1170
+        ],
+        "native_focus": false,
+        "scope": "three-real-crowd",
+        "stage": "three-real-defeats"
+      }
+    ],
+    "scripted_native_focus_observed": false,
+    "normal_focus_out_preserved": true,
+    "renderer": "Original stdout reports Godot 4.7.2 / OpenGL 4.1 Metal compatibility on Apple M3.",
+    "owner_visual_review": {
+      "reviewer": "Act1 owner/root",
+      "inspection": "Root individually viewed all 13 original native 540x1170 captures and reported the following bounded findings before this archive froze.",
+      "result": "Readable in this three-source grove scope; no new occlusion failure reported.",
+      "findings": [
+        "All three living source heads/feet remain below the HUD.",
+        "Current warning/active source, full native footprint, Hero and safe landing remain visible.",
+        "All three ordinary primary recovery openings are readable.",
+        "Image 09 second recovery: an arm edge touches Hero silhouette, while heads/feet remain separate.",
+        "Image 12 third recovery: source and Hero are well separated.",
+        "Final 13 shows actual three-source component clear and 0 shells; pause overlays are appropriate."
+      ],
+      "limits": [
+        "No occlusion proof outside the grove/static stalk edge, no full fungal room/final art acceptance, no human balance or performance inference."
+      ]
+    },
+    "scope": "Only the actual neutral Standard three-C31 approach/native attack/ordinary-primary component. No whole level route, spores or full parent transport."
+  },
+  "directly_affected_regressions": [
+    {
+      "run": {
+        "id": "a1-l3-api2-actor-pair-1",
+        "metadata": "regressions/actor-pair/run/job.json",
+        "stdout": "regressions/actor-pair/run/stdout.log",
+        "argv": [
+          "python3",
+          "scripts/dev/dev.py",
+          "engine",
+          "--headless",
+          "--path",
+          ".",
+          "--script",
+          "tests/acts/act1/a1_l3_actor_pair.gd"
+        ],
+        "cwd": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+        "head": "e6fe8a0ceb91cb4e22f7b55b9a56b41beadf4516",
+        "api_revision": "campaign-shared-26",
+        "started_at": "2026-10-08T20:01:24.252335+00:00",
+        "finished_at": "2026-10-08T20:01:34.245982+00:00",
+        "scope": "Directly affected current API2/seven-key configuration regression: existing genuine warning/unfinished active actor-only Player/all4sources/native Scheduler pair, quiet exact transport/atomic custody negatives/defaultfalse components. Not fullparent/spores/campaign.",
+        "checks": 189,
+        "failures": 0,
+        "exit_code": 0,
+        "status": "passed_clean_bounded_component",
+        "actual_swipes": 3,
+        "actual_primaries": 0,
+        "post_execution_source_hash_mismatch": [],
+        "diagnostics": "Original stdout has no SCRIPT ERROR/ERROR/WARNING lines; clean exit 0 reported by original closed job."
+      },
+      "executed_source": {
+        "original_source_root": ".cinder/a1-l3-api2-actor-pair-1-source",
+        "declared_source_count": 53,
+        "files": [
+          {
+            "repository_path": "assets/acts/act1/grotto/environment_manifest.json",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/environment_manifest.json",
+            "bytes": 19339,
+            "sha256": "8492ebdaec6c6024f0e248f23ea45aa607fa11d64ba2baffce02947fb0d28afe"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenite_manifest.json",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenite_manifest.json",
+            "bytes": 52713,
+            "sha256": "7bdb6be1ec4eac9bf90004caaad913028d5fa1ceed0cfdef981914355ae98634"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_back_active.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_back_active.png",
+            "bytes": 1411,
+            "sha256": "08176f54a5e6b5db22ec928f117087f38ff81839cc24cad41236d1380f35c6c3"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_back_lock.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_back_lock.png",
+            "bytes": 1539,
+            "sha256": "86f9dcee3ac187f794cb63dcf0b947a294ff21fc4e62956120d954ab0fe08e58"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_back_recovery.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_back_recovery.png",
+            "bytes": 1584,
+            "sha256": "2d5d88042fabbd7ade40d183bc77aa4032e4f7081e99efaab20e46490b9491e5"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_back_standing.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_back_standing.png",
+            "bytes": 1702,
+            "sha256": "b16644cd56edeaf185bf230283da840c44d155b282488469bf7e61c58c226ea8"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_back_warning.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_back_warning.png",
+            "bytes": 1652,
+            "sha256": "80baf49b4aa5cab7166a75ac0ce6cf3e96cb8c6a39d3b65cec1e3956a579f192"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_front_active.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_front_active.png",
+            "bytes": 1392,
+            "sha256": "7d35455f9b279c881b4e46adba551537b2ec94cea77a9f7be4c4999fab39b701"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_front_lock.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_front_lock.png",
+            "bytes": 1513,
+            "sha256": "1226c25a5ebe36936e5553af44735d33952dda4587282e5739c43d067d18f04b"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_front_recovery.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_front_recovery.png",
+            "bytes": 1558,
+            "sha256": "cc59da062a061dac2667f1f667e3c934696c4cdb51cbe2a369ff12004e127f53"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_front_standing.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_front_standing.png",
+            "bytes": 1691,
+            "sha256": "6be52e6b40d440dff1e6839b31fe85298167acfea5247e52b545c3504bfbb694"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_front_warning.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_front_warning.png",
+            "bytes": 1651,
+            "sha256": "83b6404e89f96b84d712fda73ff5b9bd92bf650250ac31ed1e726ac2eacc301d"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_side_active.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_side_active.png",
+            "bytes": 1323,
+            "sha256": "a940ee6e288ad31c84ee8e1ddd465f33f2cc3ecdc119223c13b336fa2dbea9d8"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_side_lock.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_side_lock.png",
+            "bytes": 1441,
+            "sha256": "932e5ddff4dadc85ad3be987b16e0ec96bd24938a8df8e07c552d71a2dd4e4bc"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_side_recovery.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_side_recovery.png",
+            "bytes": 1449,
+            "sha256": "dad482d41eedbade0003dc5d32b8392c77cf75702cb267d152461ae48e421f67"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_side_standing.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_side_standing.png",
+            "bytes": 1615,
+            "sha256": "bfd3015368eddb454c6a8ce52000a301e3c244690d24e3121a4c4f145f7612fa"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_side_warning.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/guard_side_warning.png",
+            "bytes": 1604,
+            "sha256": "fc52145e55bb21dc7dfdeeb15e07e59855e4a0256d9c34027f4696c0d337178f"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/selenite_contact_sheet.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/selenite_contact_sheet.png",
+            "bytes": 51113,
+            "sha256": "41d6740f51cc03becdcea4f7df5a125bd5e1bf2233122826811500c33eaaf972"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_active.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_back_active.png",
+            "bytes": 1147,
+            "sha256": "c3df8f50820a4f1612908e3a53812f48c93d46a332526475ab85ce9960227776"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_lock.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_back_lock.png",
+            "bytes": 1139,
+            "sha256": "94e1fb81669cc33a6e54536cf5085d6d49ed589f78f8f4fd018ee0283cce4756"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_recovery.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_back_recovery.png",
+            "bytes": 1147,
+            "sha256": "45905a7ca25d53219d90343430fc30a0c14e75a376ddb74ef63df95cc5b8349e"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_standing.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_back_standing.png",
+            "bytes": 1126,
+            "sha256": "77d1087eaed5b6d94906dba564208d0b022fffbadaf080109a272fc43f50c9ee"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_warning.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_back_warning.png",
+            "bytes": 1182,
+            "sha256": "f16e166fca42fd1a84a5ecf947f8e3695fa6b53f93ee05b96c3c3d649d3e9e08"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_active.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_front_active.png",
+            "bytes": 1146,
+            "sha256": "3ca550e3b6343b6a53a0fddcbb24a8ce85a33b199cb6c5ce27eb2863bbf7a673"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_lock.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_front_lock.png",
+            "bytes": 1125,
+            "sha256": "fd50585aa7f9d479c94d3e770035554df37b19b58996428ca8d3512a0ee2d9f1"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_recovery.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_front_recovery.png",
+            "bytes": 1153,
+            "sha256": "df5e8ac52e7d78722e2dc8a2d59d8b58dc9bab62725b1a9233c51211ebda6d26"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_standing.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_front_standing.png",
+            "bytes": 1144,
+            "sha256": "4bbb57517b914afebb60034145bad263749c20c31a345948cf51a593876cdba2"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_warning.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_front_warning.png",
+            "bytes": 1133,
+            "sha256": "216357453a5aaa7dc5059120a2dd6df8732ad9052ba9a89df223459a92fb2bcb"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_active.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_side_active.png",
+            "bytes": 1163,
+            "sha256": "53ee6746510d5a70f7ad4f7f7eeca8f02437ba6b72a5b477eaefa709bb8ff8b2"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_lock.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_side_lock.png",
+            "bytes": 1163,
+            "sha256": "4f48f673dd808fee18d2ee67f1dc88c70614a71476fb46937c2a69e874b4f90b"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_recovery.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_side_recovery.png",
+            "bytes": 1139,
+            "sha256": "e7f43acf31f68175e9c6c5c6bedb598456c473869bf1843bae48c4144b9b788a"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_standing.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_side_standing.png",
+            "bytes": 1153,
+            "sha256": "4c44ba7b9fb634d0a15d07f4b4ae0d9f3b67fb7f3e03c50a48c34d2b57b62e94"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_warning.png",
+            "archive_path": "regressions/actor-pair/executed-source/assets/acts/act1/grotto/selenites/swarm_side_warning.png",
+            "bytes": 1165,
+            "sha256": "674cddd662e29678856341c095058b2e56372b48ca5b16f481f3943949fc7050"
+          },
+          {
+            "repository_path": "scenes/acts/act1/a1_l3_crowd_greybox.tscn",
+            "archive_path": "regressions/actor-pair/executed-source/scenes/acts/act1/a1_l3_crowd_greybox.tscn.txt",
+            "bytes": 474,
+            "sha256": "d344afe705ada3414265e24843c27c47ac29f6251a545b9d2a093f5f6d0c967f"
+          },
+          {
+            "repository_path": "scenes/acts/act1/a1_l3_greybox.tscn",
+            "archive_path": "regressions/actor-pair/executed-source/scenes/acts/act1/a1_l3_greybox.tscn.txt",
+            "bytes": 428,
+            "sha256": "93a7455a1ae6f3034f6926c27048c325a682fd81dae5b3bece97c86d7f773828"
+          },
+          {
+            "repository_path": "scenes/acts/act1/a1_l3_guard_greybox.tscn",
+            "archive_path": "regressions/actor-pair/executed-source/scenes/acts/act1/a1_l3_guard_greybox.tscn.txt",
+            "bytes": 462,
+            "sha256": "d616dfbe47f966fb389efc4f7ad4fab9355c70ea3a7e73f061eb8a92ef1bf628"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_caverns.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/acts/act1/mushroom_caverns.gd.txt",
+            "bytes": 31596,
+            "sha256": "29a7be50cb526cebaabdd2d669aeb6957afbd99d13c526d7a795531171cb002f"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_caverns_layout.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/acts/act1/mushroom_caverns_layout.gd.txt",
+            "bytes": 7781,
+            "sha256": "41b6c69afa8d262715f8a544d00e8d4532fb62008e7c7855aecb3f8864640c85"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_grotto_art.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/acts/act1/mushroom_grotto_art.gd.txt",
+            "bytes": 28402,
+            "sha256": "8e32a13825e9aa4a0172fd5328f196930685fe7233dfc0fa36abfaf779d1d770"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_selenite.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/acts/act1/mushroom_selenite.gd.txt",
+            "bytes": 51300,
+            "sha256": "d355a029f19b1e655004f0274b6ab737f599391ed1352d21b8e3d20c2bd57056"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_selenite_approach.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/acts/act1/mushroom_selenite_approach.gd.txt",
+            "bytes": 8142,
+            "sha256": "e5b3b63d7dcafbcf2c0d69d94763bec72e3feda91aacb6d3e02fd5333d438939"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_selenite_art.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/acts/act1/mushroom_selenite_art.gd.txt",
+            "bytes": 11167,
+            "sha256": "14223ac05f4e8039f1d2426bbc6b5fa00805653551d0fd4f83ea00e2972ccb74"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_selenite_codec.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/acts/act1/mushroom_selenite_codec.gd.txt",
+            "bytes": 23146,
+            "sha256": "3eb1eb07443c1d33ccf1e8d7a1ff7d48c09e4af6805c60fffb808b7a420776d3"
+          },
+          {
+            "repository_path": "scripts/acts/act1/rush_selenite_art.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/acts/act1/rush_selenite_art.gd.txt",
+            "bytes": 7843,
+            "sha256": "195c9de893c985a94a326ca7e3847f3de3a06185263a76588d9db37909c0d7c9"
+          },
+          {
+            "repository_path": "scripts/campaign/level.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/campaign/level.gd.txt",
+            "bytes": 15364,
+            "sha256": "935dece66f5e0ec38c07e34bb185cbf53aacf044d6539e17e7dce73a14c0c56e"
+          },
+          {
+            "repository_path": "scripts/combat/body_sweep.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/combat/body_sweep.gd.txt",
+            "bytes": 17456,
+            "sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9"
+          },
+          {
+            "repository_path": "scripts/combat/lunge_motion.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/combat/lunge_motion.gd.txt",
+            "bytes": 15016,
+            "sha256": "52b048392c7ea5d5728b500d1cc68fa478947f59f5b321bd81f377c265be9a66"
+          },
+          {
+            "repository_path": "scripts/combat/threat_geometry.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/combat/threat_geometry.gd.txt",
+            "bytes": 14303,
+            "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+          },
+          {
+            "repository_path": "scripts/combat/threat_scheduler.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/combat/threat_scheduler.gd.txt",
+            "bytes": 123947,
+            "sha256": "07ed10a995d3709f6492e35dba1b1d579d7b2eb22ff9e8af7f88be9abee758e6"
+          },
+          {
+            "repository_path": "scripts/game.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/game.gd.txt",
+            "bytes": 28846,
+            "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc"
+          },
+          {
+            "repository_path": "scripts/player.gd",
+            "archive_path": "regressions/actor-pair/executed-source/scripts/player.gd.txt",
+            "bytes": 48906,
+            "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+          },
+          {
+            "repository_path": "tests/acts/act1/a1_l3_actor_pair.gd",
+            "archive_path": "regressions/actor-pair/executed-source/tests/acts/act1/a1_l3_actor_pair.gd.txt",
+            "bytes": 20658,
+            "sha256": "8a66ac90a8fe4b968a2066cc6614a262c1dfc2711ef5f3c1a727b91c08feb9a9"
+          },
+          {
+            "repository_path": "tests/acts/act1/a1_l3_greybox.gd",
+            "archive_path": "regressions/actor-pair/executed-source/tests/acts/act1/a1_l3_greybox.gd.txt",
+            "bytes": 31370,
+            "sha256": "e98a81e75a775c07faf34b7c6b1beb691fd0f154e25eb84132e32de5176feefb"
+          }
+        ]
+      },
+      "scope_note": "Distinct headless actual actor-only Player/all four-source/native Scheduler pair regression: declared paused Player HP22/shell0 fixture setup, actual warning/unfinished active and current seven-key configuration, strict same-actor quiet transport and custody negatives. Not a full parent/campaign/spore aggregate; no portraits in this regression."
+    },
+    {
+      "run": {
+        "id": "a1-l3-api2-codec-1",
+        "metadata": "regressions/codec/run/job.json",
+        "stdout": "regressions/codec/run/stdout.log",
+        "argv": [
+          "python3",
+          "scripts/dev/dev.py",
+          "engine",
+          "--headless",
+          "--path",
+          ".",
+          "--script",
+          "tests/acts/act1/a1_l3_codec.gd"
+        ],
+        "cwd": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+        "head": "e6fe8a0ceb91cb4e22f7b55b9a56b41beadf4516",
+        "api_revision": "campaign-shared-26",
+        "started_at": "2026-10-08T20:02:19.750870+00:00",
+        "finished_at": "2026-10-08T20:04:50.366847+00:00",
+        "scope": "Directly affected API2/seven-key native codec and real ordinary-primary defeated-source tombstone regression, unchanged publicFXclear/pausedAudioServer drain; wholeparent/spores excluded.",
+        "checks": 80,
+        "failures": 0,
+        "exit_code": 0,
+        "status": "passed_clean_native_codec_regression",
+        "post_execution_source_hash_mismatch": [],
+        "diagnostics": "Complete original raw stdout has no SCRIPT ERROR/ERROR/WARNING lines; clean exit 0 reported by original closed job.",
+        "scope_note": "Genuine ordinary-primary defeat, actual source removal and native whole-codec tombstone. No environmental protocol/full parent/campaign acceptance.",
+        "audio_cleanup_observation": {
+          "actual_voice_before_clear": "CombatVoice0 playing=false stream_paused=true playback=true, as printed in original raw stdout.",
+          "existing_cleanup": "Original public FX clear and paused native AudioServer drain retained unchanged; clean current regression is not a general audio-leak cure claim."
+        }
+      },
+      "executed_source": {
+        "original_source_root": ".cinder/a1-l3-api2-codec-1-source",
+        "declared_source_count": 54,
+        "files": [
+          {
+            "repository_path": "assets/acts/act1/grotto/environment_manifest.json",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/environment_manifest.json",
+            "bytes": 19339,
+            "sha256": "8492ebdaec6c6024f0e248f23ea45aa607fa11d64ba2baffce02947fb0d28afe"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenite_manifest.json",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenite_manifest.json",
+            "bytes": 52713,
+            "sha256": "7bdb6be1ec4eac9bf90004caaad913028d5fa1ceed0cfdef981914355ae98634"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_back_active.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_back_active.png",
+            "bytes": 1411,
+            "sha256": "08176f54a5e6b5db22ec928f117087f38ff81839cc24cad41236d1380f35c6c3"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_back_lock.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_back_lock.png",
+            "bytes": 1539,
+            "sha256": "86f9dcee3ac187f794cb63dcf0b947a294ff21fc4e62956120d954ab0fe08e58"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_back_recovery.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_back_recovery.png",
+            "bytes": 1584,
+            "sha256": "2d5d88042fabbd7ade40d183bc77aa4032e4f7081e99efaab20e46490b9491e5"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_back_standing.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_back_standing.png",
+            "bytes": 1702,
+            "sha256": "b16644cd56edeaf185bf230283da840c44d155b282488469bf7e61c58c226ea8"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_back_warning.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_back_warning.png",
+            "bytes": 1652,
+            "sha256": "80baf49b4aa5cab7166a75ac0ce6cf3e96cb8c6a39d3b65cec1e3956a579f192"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_front_active.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_front_active.png",
+            "bytes": 1392,
+            "sha256": "7d35455f9b279c881b4e46adba551537b2ec94cea77a9f7be4c4999fab39b701"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_front_lock.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_front_lock.png",
+            "bytes": 1513,
+            "sha256": "1226c25a5ebe36936e5553af44735d33952dda4587282e5739c43d067d18f04b"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_front_recovery.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_front_recovery.png",
+            "bytes": 1558,
+            "sha256": "cc59da062a061dac2667f1f667e3c934696c4cdb51cbe2a369ff12004e127f53"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_front_standing.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_front_standing.png",
+            "bytes": 1691,
+            "sha256": "6be52e6b40d440dff1e6839b31fe85298167acfea5247e52b545c3504bfbb694"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_front_warning.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_front_warning.png",
+            "bytes": 1651,
+            "sha256": "83b6404e89f96b84d712fda73ff5b9bd92bf650250ac31ed1e726ac2eacc301d"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_side_active.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_side_active.png",
+            "bytes": 1323,
+            "sha256": "a940ee6e288ad31c84ee8e1ddd465f33f2cc3ecdc119223c13b336fa2dbea9d8"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_side_lock.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_side_lock.png",
+            "bytes": 1441,
+            "sha256": "932e5ddff4dadc85ad3be987b16e0ec96bd24938a8df8e07c552d71a2dd4e4bc"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_side_recovery.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_side_recovery.png",
+            "bytes": 1449,
+            "sha256": "dad482d41eedbade0003dc5d32b8392c77cf75702cb267d152461ae48e421f67"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_side_standing.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_side_standing.png",
+            "bytes": 1615,
+            "sha256": "bfd3015368eddb454c6a8ce52000a301e3c244690d24e3121a4c4f145f7612fa"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/guard_side_warning.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/guard_side_warning.png",
+            "bytes": 1604,
+            "sha256": "fc52145e55bb21dc7dfdeeb15e07e59855e4a0256d9c34027f4696c0d337178f"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/selenite_contact_sheet.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/selenite_contact_sheet.png",
+            "bytes": 51113,
+            "sha256": "41d6740f51cc03becdcea4f7df5a125bd5e1bf2233122826811500c33eaaf972"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_active.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_back_active.png",
+            "bytes": 1147,
+            "sha256": "c3df8f50820a4f1612908e3a53812f48c93d46a332526475ab85ce9960227776"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_lock.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_back_lock.png",
+            "bytes": 1139,
+            "sha256": "94e1fb81669cc33a6e54536cf5085d6d49ed589f78f8f4fd018ee0283cce4756"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_recovery.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_back_recovery.png",
+            "bytes": 1147,
+            "sha256": "45905a7ca25d53219d90343430fc30a0c14e75a376ddb74ef63df95cc5b8349e"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_standing.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_back_standing.png",
+            "bytes": 1126,
+            "sha256": "77d1087eaed5b6d94906dba564208d0b022fffbadaf080109a272fc43f50c9ee"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_back_warning.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_back_warning.png",
+            "bytes": 1182,
+            "sha256": "f16e166fca42fd1a84a5ecf947f8e3695fa6b53f93ee05b96c3c3d649d3e9e08"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_active.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_front_active.png",
+            "bytes": 1146,
+            "sha256": "3ca550e3b6343b6a53a0fddcbb24a8ce85a33b199cb6c5ce27eb2863bbf7a673"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_lock.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_front_lock.png",
+            "bytes": 1125,
+            "sha256": "fd50585aa7f9d479c94d3e770035554df37b19b58996428ca8d3512a0ee2d9f1"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_recovery.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_front_recovery.png",
+            "bytes": 1153,
+            "sha256": "df5e8ac52e7d78722e2dc8a2d59d8b58dc9bab62725b1a9233c51211ebda6d26"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_standing.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_front_standing.png",
+            "bytes": 1144,
+            "sha256": "4bbb57517b914afebb60034145bad263749c20c31a345948cf51a593876cdba2"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_front_warning.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_front_warning.png",
+            "bytes": 1133,
+            "sha256": "216357453a5aaa7dc5059120a2dd6df8732ad9052ba9a89df223459a92fb2bcb"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_active.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_side_active.png",
+            "bytes": 1163,
+            "sha256": "53ee6746510d5a70f7ad4f7f7eeca8f02437ba6b72a5b477eaefa709bb8ff8b2"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_lock.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_side_lock.png",
+            "bytes": 1163,
+            "sha256": "4f48f673dd808fee18d2ee67f1dc88c70614a71476fb46937c2a69e874b4f90b"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_recovery.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_side_recovery.png",
+            "bytes": 1139,
+            "sha256": "e7f43acf31f68175e9c6c5c6bedb598456c473869bf1843bae48c4144b9b788a"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_standing.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_side_standing.png",
+            "bytes": 1153,
+            "sha256": "4c44ba7b9fb634d0a15d07f4b4ae0d9f3b67fb7f3e03c50a48c34d2b57b62e94"
+          },
+          {
+            "repository_path": "assets/acts/act1/grotto/selenites/swarm_side_warning.png",
+            "archive_path": "regressions/codec/executed-source/assets/acts/act1/grotto/selenites/swarm_side_warning.png",
+            "bytes": 1165,
+            "sha256": "674cddd662e29678856341c095058b2e56372b48ca5b16f481f3943949fc7050"
+          },
+          {
+            "repository_path": "scenes/acts/act1/a1_l3_crowd_greybox.tscn",
+            "archive_path": "regressions/codec/executed-source/scenes/acts/act1/a1_l3_crowd_greybox.tscn.txt",
+            "bytes": 474,
+            "sha256": "d344afe705ada3414265e24843c27c47ac29f6251a545b9d2a093f5f6d0c967f"
+          },
+          {
+            "repository_path": "scenes/acts/act1/a1_l3_greybox.tscn",
+            "archive_path": "regressions/codec/executed-source/scenes/acts/act1/a1_l3_greybox.tscn.txt",
+            "bytes": 428,
+            "sha256": "93a7455a1ae6f3034f6926c27048c325a682fd81dae5b3bece97c86d7f773828"
+          },
+          {
+            "repository_path": "scenes/acts/act1/a1_l3_guard_greybox.tscn",
+            "archive_path": "regressions/codec/executed-source/scenes/acts/act1/a1_l3_guard_greybox.tscn.txt",
+            "bytes": 462,
+            "sha256": "d616dfbe47f966fb389efc4f7ad4fab9355c70ea3a7e73f061eb8a92ef1bf628"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_caverns.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/acts/act1/mushroom_caverns.gd.txt",
+            "bytes": 31596,
+            "sha256": "29a7be50cb526cebaabdd2d669aeb6957afbd99d13c526d7a795531171cb002f"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_caverns_layout.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/acts/act1/mushroom_caverns_layout.gd.txt",
+            "bytes": 7781,
+            "sha256": "41b6c69afa8d262715f8a544d00e8d4532fb62008e7c7855aecb3f8864640c85"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_grotto_art.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/acts/act1/mushroom_grotto_art.gd.txt",
+            "bytes": 28402,
+            "sha256": "8e32a13825e9aa4a0172fd5328f196930685fe7233dfc0fa36abfaf779d1d770"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_selenite.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/acts/act1/mushroom_selenite.gd.txt",
+            "bytes": 51300,
+            "sha256": "d355a029f19b1e655004f0274b6ab737f599391ed1352d21b8e3d20c2bd57056"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_selenite_approach.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/acts/act1/mushroom_selenite_approach.gd.txt",
+            "bytes": 8142,
+            "sha256": "e5b3b63d7dcafbcf2c0d69d94763bec72e3feda91aacb6d3e02fd5333d438939"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_selenite_art.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/acts/act1/mushroom_selenite_art.gd.txt",
+            "bytes": 11167,
+            "sha256": "14223ac05f4e8039f1d2426bbc6b5fa00805653551d0fd4f83ea00e2972ccb74"
+          },
+          {
+            "repository_path": "scripts/acts/act1/mushroom_selenite_codec.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/acts/act1/mushroom_selenite_codec.gd.txt",
+            "bytes": 23146,
+            "sha256": "3eb1eb07443c1d33ccf1e8d7a1ff7d48c09e4af6805c60fffb808b7a420776d3"
+          },
+          {
+            "repository_path": "scripts/acts/act1/rush_selenite_art.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/acts/act1/rush_selenite_art.gd.txt",
+            "bytes": 7843,
+            "sha256": "195c9de893c985a94a326ca7e3847f3de3a06185263a76588d9db37909c0d7c9"
+          },
+          {
+            "repository_path": "scripts/campaign/level.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/campaign/level.gd.txt",
+            "bytes": 15364,
+            "sha256": "935dece66f5e0ec38c07e34bb185cbf53aacf044d6539e17e7dce73a14c0c56e"
+          },
+          {
+            "repository_path": "scripts/combat/body_sweep.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/combat/body_sweep.gd.txt",
+            "bytes": 17456,
+            "sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9"
+          },
+          {
+            "repository_path": "scripts/combat/lunge_motion.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/combat/lunge_motion.gd.txt",
+            "bytes": 15016,
+            "sha256": "52b048392c7ea5d5728b500d1cc68fa478947f59f5b321bd81f377c265be9a66"
+          },
+          {
+            "repository_path": "scripts/combat/threat_geometry.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/combat/threat_geometry.gd.txt",
+            "bytes": 14303,
+            "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+          },
+          {
+            "repository_path": "scripts/combat/threat_scheduler.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/combat/threat_scheduler.gd.txt",
+            "bytes": 123947,
+            "sha256": "07ed10a995d3709f6492e35dba1b1d579d7b2eb22ff9e8af7f88be9abee758e6"
+          },
+          {
+            "repository_path": "scripts/game.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/game.gd.txt",
+            "bytes": 28846,
+            "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc"
+          },
+          {
+            "repository_path": "scripts/player.gd",
+            "archive_path": "regressions/codec/executed-source/scripts/player.gd.txt",
+            "bytes": 48906,
+            "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+          },
+          {
+            "repository_path": "tests/acts/act1/a1_l3_actor_pair.gd",
+            "archive_path": "regressions/codec/executed-source/tests/acts/act1/a1_l3_actor_pair.gd.txt",
+            "bytes": 20658,
+            "sha256": "8a66ac90a8fe4b968a2066cc6614a262c1dfc2711ef5f3c1a727b91c08feb9a9"
+          },
+          {
+            "repository_path": "tests/acts/act1/a1_l3_codec.gd",
+            "archive_path": "regressions/codec/executed-source/tests/acts/act1/a1_l3_codec.gd.txt",
+            "bytes": 9712,
+            "sha256": "976ee6e4a32defb2af9208da93a5df559743527083967fba0bdb916295b27395"
+          },
+          {
+            "repository_path": "tests/acts/act1/a1_l3_greybox.gd",
+            "archive_path": "regressions/codec/executed-source/tests/acts/act1/a1_l3_greybox.gd.txt",
+            "bytes": 31370,
+            "sha256": "e98a81e75a775c07faf34b7c6b1beb691fd0f154e25eb84132e32de5176feefb"
+          }
+        ]
+      },
+      "scope_note": "Distinct current API2/seven-key genuine native codec/whole defeat tombstone regression; actual ordinary-primary defeat/source removal, pure owned codec transport/guards and existing public FX clear/paused audio drain. Headless, no portraits/full parent/spores."
+    }
+  ],
+  "changed_behavior": {
+    "source_attribution": "Both runs retain their own exact pre-job source subset. The primary run records these actual changes relative to the preserved first failure.",
+    "approach_settle": "Explicit settle_distance 0.001m stops pursuit intent within the authored settling band while existing velocity still brakes at 5m/s\u00b2 to exact zero. No position snap, approximate-stopped admission or assertion/tolerance weakening.",
+    "parent_exit_camera": "Exited parent returns no authored camera requirements after releasing its actual shell; current raw stdout has no prior null _actor_points teardown Script Error.",
+    "actor_schema": "Current immutable API2 approach configuration includes seven exact tuning keys; actor/native stopped admission remains exact.",
+    "historical_failure": {
+      "index": "../L3-crowd-first-failure/index.json",
+      "index_sha256_at_archive": "135a4c945526abb12d41faafa95a78556b320351d7d0474791179930b3651853",
+      "result": "Original 130/1 exit1, nine portraits and separate null-call teardown Script Error remain immutable. Root later viewed all nine originals; that failed run never establishes third-source clear."
+    }
+  },
+  "limitations": [
+    "Primary 193/0 pass is the bounded actual three-C31 neutral Standard approach/crowd component and actor-only driven pair. It is not full L3 acceptance.",
+    "Distinct 189/0 actor-pair regression retains its exact native warning/unfinished-active scope and 53-file source group; do not sum checks or relabel its paused HP22/shell0 setup as route-earned state.",
+    "Distinct 80/0 current codec regression retains its own exact 54-file source group and native ordinary-primary defeat/source-removal tombstone scope. Do not combine these checks with 193/0 crowd or 189/0 pair as a full parent/spore acceptance.",
+    "All three included jobs were explicitly closed before their original files were archived. No pending or unexecuted run is inferred.",
+    "No full route, spores, complete parent aggregate, campaign Save/Continue/Retry, eight-body crowd, all kits/profiles, human balance or performance acceptance.",
+    "Native focus was false for the scripted portrait fixture; one initial public resume and normal FOCUS_OUT remain unchanged.",
+    "Sources are exact bounded frozen pre-job subsets: 54 for crowd, 53 for pair; not the complete native import graph. Copied source JSON/text retains repository references, with portable file mappings here.",
+    "Earlier import, passing art/component/custody/codec and first failed crowd records remain independently attributed and unchanged.",
+    "Archiver wrote only this new inert evidence directory; no runtime/tests/manifests/memory/progress/level-note edits, engines/imports, merges or commits."
+  ],
+  "packaging": {
+    "scripts": "Original GD/scene bytes stored with .txt appended; .gdignore excludes native import and no executable artifact classes are present.",
+    "assets": "Exact source PNG/JSON bytes per independent run; 13 original native portraits/evidence JSON unchanged.",
+    "logs": "Exact original job JSON/stdout per run, including commands, start/end clocks, HEAD/API and source hashes."
+  },
+  "verification": {
+    "byte_identical_origin_copies": 181,
+    "declared_source_hash_matches": 161,
+    "source_groups": {
+      "crowd": 54,
+      "actor_pair": 53,
+      "codec": 54
+    },
+    "source_png_copies": 93,
+    "source_json_copies": 6,
+    "inert_script_scene_copies": 62,
+    "actual_portrait_copies": 13,
+    "pre_post_source_hash_mismatches": 0,
+    "archiver_engine_jobs": 0,
+    "archiver_imports": 0,
+    "archiver_merges": 0,
+    "archiver_commits": 0
+  }
+}

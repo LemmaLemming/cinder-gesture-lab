@@ -1,5 +1,11 @@
 # Act 1 — current progress
 
+Current portable crowd archive is frozen:181 exact originals (161 sources across the distinct193/189/80 scopes plus raw commands/logs and13 captures), indexSHAf55db31135b183e0b7becf8e16ddafe057d9a95598c648158ff6ae68fdb562bb. First failed66-copy archive remains distinct, indexSHA135a4c945526abb12d41faafa95a78556b320351d7d0474791179930b3651853. All byte/hash/origin checks pass; prior evidence remains unchanged.
+
+
+Current corrected API2 pursuit/crowd passes193/0 clean actual portrait (7swipes/3 ordinary primaries/all3 genuine C31 defeats; all13 owner-viewed), directly affected whole actor-only warning/active pair189/0 clean and actual primary defeat/native codec tombstone80/0 clean, exact e6fe8a0/API26/zero sourcehashmismatch. Failed130/1 plus teardown error retained separately. All owned engine jobs closed. Next: actual reviewed26 native spore hooks/conditional API3 codec and owned field/whole-parent composition; fullL3 unaccepted, Act1 remains2/8.
+
+
 Current crowd reproduction:130/1/exit1,5swipes/2primaries; thirdsource sub-resolution stop stall plus exited camera ScriptError. Corrected seven-key approach config adds explicit0.001m settling band with finite braking; actual stopped gate unchanged. Exit camera guard corrected. Same actual crowd portrait rerun pending; no broad/unchanged-level checks.
 
 Exact reviewed **campaign-shared-26** `c0816fb9ed60caaac36e5e1320ab95d42589e0b8` is adopted through preserving merge **9eb1e9e7b3f051349849b0cc4c253a60986552f6**, canonical ACK **96be6904-928f-4e3b-83b3-5b74b3485b5e**. Publication ancestry and all **1931 tracked / 2095 physical owned hashes** are verified unchanged. Current owned pursuit checkpoint61a1731 is untested behavior despite clean import; native spore hook/codec/parent composition remains unimplemented. Earlier adoption/pending paragraphs are historical. Current import archive records57 exact copies, indexSHA3040ba18055f472d1fcb06c71ae71317433524e7308ba8fe353590901781c391.
