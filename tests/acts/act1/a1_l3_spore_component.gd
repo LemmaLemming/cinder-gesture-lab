@@ -53,9 +53,15 @@ func _run() -> void:
 		await _finish(); return
 	if not _quiet_component("native recoil") or not _spore_framing("native recoil field/source/retreat") or not await _capture("recoil") or not await _gui_resume_pair():
 		await _finish(); return
-	if not await _wait(func() -> bool: return actor.get_spore_response_state().phase == "retreat", "actual shared Route advances a living C31 away from the field"):
+	# Coordinator publishes turn -> retreat after that tick's Route advance;
+	# the first retreat stamp can truthfully still have zero velocity. Observe
+	# actual moving retreat before applying the unchanged motion assertions.
+	if not await _wait(func() -> bool:
+		var response: Dictionary = actor.get_spore_response_state()
+		return response.phase == "retreat" and response.velocity != Vector3.ZERO, "actual shared Route advances a living C31 away from the field"):
 		await _finish(); return
 	var retreat: Dictionary = actor.get_spore_response_state()
+	print("L3 SPORE MOVING RETREAT DIAGNOSTIC response=", retreat, " native=", actor.pure_presentation_state(), " route=", consumer.source_state("umbrella-1"))
 	if not _require(retreat.velocity != Vector3.ZERO and not actor.state().approach_driving and actor.state().reservation_id.is_empty() and actor.hp == hp_before["umbrella-1"], "actual Route owns retreat velocity while native approach/attack remain suppressed and HP unchanged"):
 		await _finish(); return
 	if not await _pause_pair("native moving retreat") or not _quiet_component("native moving retreat") or not await _capture("retreat") or not await _gui_resume_pair():
