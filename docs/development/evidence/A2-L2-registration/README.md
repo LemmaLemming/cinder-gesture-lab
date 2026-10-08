@@ -1,0 +1,32 @@
+# A2-L2 production registration evidence
+
+Status: **accepted production registration**. The registration commit and canonical ACCEPTED receipt record publication. The [index](index.json) records all eight closed native runs, exact source subsets and image hashes. Integration owns acceptance and publication.
+
+The exact authored handoff is `fd5fd3d95a8b8b9ea7ce546c1db6c732a2cc60f6`, with owned runtime freeze `6651219faefcbcb1514052e48f33e5d0a70d4446`, authored on shared API22 / baseline `4de8b6008741bc9f155c83cbccb60629fac154a2`. Integration content commit `b164dc104ace6cd10870d0f286893ed7e5b134d8` copies166 added/modified files within the six Act2 ownership prefixes, byte for byte. No shared runtime, settings, equipment catalogue or ledger was copied from the worker.
+
+Independent scoped review verified all32 runtime hashes and all118 portable artifact hashes. It viewed all16 current Cargo portraits and the exact post-right-dash prefix frame. Root additionally viewed the Cargo apron combination, active right foot and shelter mixture. Sources, cues, player and dry floor remain identifiable together. Fine Handler anatomy, local overlaps and distant-tripod HUD cropping remain the owner's disclosed limits. The144-check post-dash case is a prefix, not a full route or fresh restoration.
+
+The [original owner pack](../../../acts/act2/evidence/A2-L2/README.md) remains frozen. Its inherited README count39 is stale; the verified pack has42 logs. An inherited summary says independent review pending; this root review is a separate, later scope and does not rewrite that original receipt. The authored32 runtime hashes and118 portable artifact hashes remain separate from this registration archive.
+
+Production registration uses the actual Registry, Title, Journey, CampaignShell, native Player/actors, exact format2 saves and GUI menu routing on shared API23. The six-predecessor prefix and initial37HP/0.1HP with empty ammo are explicitly TEST ONLY public seeds. They do not establish predecessor gameplay or an A2-L2 clear. A real rightward viewport swipe completes a native dash inside the authored floor. Paused saves and fresh Continue/GUI Retry preserve exact actor/local/gear/resource/clock/input/camera state. A stationary first-Scout admission produces actual contact and death, followed by fatal disk save, fresh fatal Continue, guarded dead Resume and GUI Retry to the earlier living checkpoint. No live HP, position, phase or death is forced.
+
+| Run | Checks/failures | Exit | Preserved scope |
+| --- | --- | --- | --- |
+| [Original](logs/a2-l2-registration-first.log) | 191/1 | 1 | Fixture expected fatal ammo0; actual native reload already produced1. |
+| [Fatal diagnostic](logs/a2-l2-registration-fatal-diagnostic.log) | 23/1 | 1 | Narrow `--fatal-only` diagnosis of the same expectation. |
+| [Corrected headless](logs/a2-l2-registration-corrected.log) | 330/0 | 0 | Full functional lifecycle, verbose clean shutdown. |
+| [Original graphical](logs/a2-l2-registration-graphical.log) | 338/0 | 0 | Full330 plus four portrait image checks; historical Menu. |
+| [No-wrap/top Menu](logs/a2-l2-registration-menu-graphical.log) | 338/0 | 0 | Full330 plus four images; stale marker height and adjacent-border intrusion remained. |
+| [Journey rectangle diagnostic](logs/a2-l2-registration-menu-diagnostic.log) | 22/0 | 0 | Journey only; marker allocated247px despite22px minimum. |
+| [Pre-tree/size-reset Menu](logs/a2-l2-registration-menu-final.log) | 338/0 | 0 | Full330 plus four images; height22 fixed before final badge position change. |
+| [Final below-node badge](logs/a2-l2-registration-badge.log) | 22/0 | 0 | Journey only; marker132×22, four-pixel gap below actual85px button. |
+
+The first two failures changed fixture expectations only. Their fatal snapshots already passed paired actor/local validation with HP0, dead=true and one shell. Native automatic reload changes initial ammo0 to1 before the Scout hit; fatal Continue retains1, while Retry restores the exact living checkpoint ammo0/HP0.1. Two ObjectDB instances were observed on failed early-exit stderr, outside the preserved raw log. No complete stderr capture is fabricated. The corrected full verbose run and later complete graphical runs were clean. Journey-only22 logs retain a legacy full-fixture summary sentence; their selector and narrow scope in the index take precedence.
+
+All eighteen PNGs are native540×1170 captures, copied unchanged. Root viewed all four original portraits, all four no-wrap/top portraits and all four size-reset portraits. Root viewed the seeded rectangle diagnostic; its other two frames are preserved without an independent-view claim. Root viewed the final below-node seeded Journey; the independent helper viewed its Title and locked Journey, completing review of the final three frames. The final marker no longer intrudes into the adjacent optional border. The earlier description of ID coverage was corrected: the supplied no-wrap/top frame shows adjacent optional-border intrusion. These page views do not establish full combat or route acceptance.
+
+Seven original prejob manifests remain byte-for-byte unchanged: three17-file sets and four18-file sets. They are declared subsets, not complete transitive dependency archives. The historical Menu omitted from the17-file sets is preserved separately as [Git-recovered b164 source](historical/git-recovered-b164/campaign_menu.gd), explicitly recovered after execution from the content commit rather than presented as a prejob capture. The original [pending metadata](pending-index.json) is also retained unchanged as history; its pending/cleanup wording is superseded here. The final18-file badge set preserves the actual current Menu and fixture.
+
+The index includes reported historical canonical command arguments, observed exit codes, permission scope and separately labelled supported reproduction commands. Exact first-run flags were not fully retained and are qualified. Packaging performed no engine job or save operation. No unchanged L1 or broad campaign suite was repeated; human gestures/balance, focus/OS lock, device/mobile and performance remain outside this evidence.
+
+The separate [shared23 adoption supplement](../../../acts/act2/evidence/A2-L2-shared23-adoption/README.md) preserves the directly affected371/0 crossing/fresh-camera/full-route check at owner merge74de3ea5. Its exact32 runtime hashes remain unchanged; the original authored32/118 pack is not rewritten.
