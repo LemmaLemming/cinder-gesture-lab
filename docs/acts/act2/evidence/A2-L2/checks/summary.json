@@ -2,19 +2,19 @@
   "schema_version": 1,
   "level_id": "A2-L2",
   "status": "IN_PROGRESS",
-  "date": "2026-10-08",
+  "date": "2026-10-09",
   "canonical_acceptance": "PENDING; no final L2 HANDOFF or integrated canonical acceptance inferred",
-  "owner_runtime_milestone": "7f4b296",
+  "owner_runtime_milestone": "7f4b296c1535df33f0ed7178522e9eb5e097a2be",
   "shared_baseline": {
-    "revision": "campaign-shared-19",
-    "publication": "868b2bff523e538ee093ff6ec58c09c5f2099072",
-    "preserving_merge": "3fe640ee62b35b6e0fb53c011386b3ad82983a1b",
-    "provenance": "owner current level record; no new shared defect recorded"
+    "revision": "campaign-shared-21",
+    "publication": "811f69fe542f85bc58a26fded567b89e584b51e8",
+    "preserving_merge": "5a3c4b7e80b90e340266ceac021d91432962fd7e",
+    "provenance": "Current cells21; earlier entries retain their explicit16/18/19 baselines;22 replay-only adoption pending."
   },
-  "collection_policy": "Original logs/PNGs/metadata copied unchanged. Root appended completed mixed-source failed and corrected260/0 results. Still IN_PROGRESS pending callback closure and remaining route cells.",
+  "collection_policy": "All original logs/PNGs/raw metadata copied unchanged; derived indices/commands/scopes separate. Failed variants preserved. Current firstpatch371/native and338/Standard preceded supplemental6c, whose186/0+285/0 and Quick301/0 validate corrected dependency.",
   "command_policy": "Recorded commands quote existing owner records. Null recorded_command means exact flags were not retained; separately derived reproduction_command is explicitly unverified as a historical invocation and uses the currently available fixture interface. Current source may differ from historical failed bytes. Raw logs and diagnostic dictionaries remain authoritative.",
   "runtime_hashes": "../runtime-sha256.json",
-  "separate_frozen_l1_hashes": "../reused-l1-sha256.json",
+  "separate_frozen_l1_hashes": "../reused-l1-sha256.json (historic pre-patch42/42 observation only); current40/42 plus original/first/supplemental common Scout hashes at ../../scout-callback-custody/index.json",
   "checks": [
     {
       "log": "checks/a2-l2-shared16-entry-first.log",
@@ -695,6 +695,192 @@
         "warning_prefixes": []
       },
       "tested_runtime_anchor": "7f4b296c1535df33f0ed7178522e9eb5e097a2be on shared21 preserving merge5a3c4b7e80b90e340266ceac021d91432962fd7e; only fixture expectations changed"
+    },
+    {
+      "log": "checks/a2-l2-shared21-final-native-heavy.log",
+      "source_log": ".cinder/a2-l2-shared21-final-native-heavy.log",
+      "raw_sha256": "2fe1a714fcc4a275f316acd1ccc2f2a62cff3d9c7fcbec1211819218792902cb",
+      "shared_revision": "campaign-shared-21",
+      "runtime_anchor": "b3fb6854b1d24aa989dbab7b17e5bab22bc70514",
+      "checks": 371,
+      "failures": 0,
+      "exit_code": 0,
+      "exit_code_provenance": "root observed exec completion",
+      "disposition": "ACCEPTED_SCOPED",
+      "scope": "Six real ordinary-primary defeats, four HP-free feet, four contacts, once-clear/contact transition, actual current art native16frames,371/0 clean. TEST ONLY prior prefix/unlocks/profile/L3destination. New post-query required-guard callback gap remains separately under reproduction; this full route does not exercise that injected observer.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l2-shared21-final-native-heavy.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=standard --capture-final",
+      "recorded_command_provenance": "root exact executed command",
+      "raw_engine_diagnostics": {
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared21-live-standard.log",
+      "source_log": ".cinder/a2-l2-shared21-live-standard.log",
+      "raw_sha256": "441d9a29fc7b22de896693309e2537706f3db5d13ca3f6926afa32c7422b2224",
+      "shared_revision": "campaign-shared-21",
+      "runtime_anchor": "b3fb6854b1d24aa989dbab7b17e5bab22bc70514",
+      "checks": 338,
+      "failures": 0,
+      "exit_code": 0,
+      "exit_code_provenance": "root observed exec completion",
+      "disposition": "ACCEPTED_SCOPED",
+      "scope": "Actual canonical WEAPON-01 full6primarydefeats/4feet/4contacts/onceclear/separatecontact/cleanup, initial0ammo/no pickups/blasts. TEST ONLY priorprefix/unlocks/profile/L3destination; before supplemental required-guard ordering patch, no injected lostguard callback.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared21-live-standard.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=standard --profile=standard",
+      "recorded_command_provenance": "root exact executed command",
+      "raw_engine_diagnostics": {
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared21-live-quick.log",
+      "source_log": ".cinder/a2-l2-shared21-live-quick.log",
+      "raw_sha256": "6ccbffff1126eb8bd0b7b6ed4d027e7f19915b9c626d52702a45d17d0d3803c8",
+      "shared_revision": "campaign-shared-21",
+      "runtime_anchor": "6c91833fa7f0762467348bb85c4eaae2bd0384fa",
+      "checks": 301,
+      "failures": 0,
+      "exit_code": 0,
+      "exit_code_provenance": "root observed exec completion",
+      "disposition": "ACCEPTED_SCOPED",
+      "scope": "Canonical WEAPON-02 actual full6primarydefeats/4feet/4contacts/onceclear/separatecontact/cleanup, initial0ammo/no pickups/blasts; corrected supplemental common Scout dependency. TEST ONLY priorprefix/unlocks/profile/L3destination.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared21-live-quick.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=quick --profile=standard",
+      "recorded_command_provenance": "root exact executed command",
+      "raw_engine_diagnostics": {
+        "error_prefixes": [],
+        "warning_prefixes": []
+      }
+    },
+    {
+      "log": "checks/a2-l2-shared21-live-cargo-longstep.log",
+      "source_log": ".cinder/a2-l2-shared21-live-cargo-longstep.log",
+      "raw_sha256": "5aa3f0d1a31cdda05011c250f585dddd4e8f55225df017ac28b35466250a042b",
+      "shared_revision": "campaign-shared-21",
+      "runtime_anchor": "6c91833fa7f0762467348bb85c4eaae2bd0384fa",
+      "checks": 274,
+      "failures": 1,
+      "exit_code": 1,
+      "disposition": "FAILED",
+      "scope": "Cargo/Longstep actual bounded right-foot completion failed after priorthreefootopportunities/threeHPdefeats; no completed Cargo route claim. Final actual rightfootrunningrecoverycycle21 and Scoutcompletecycle24, no foot hit; exact first-cancel diagnostic selected before any fix/rerun.",
+      "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared21-live-cargo-longstep.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=slow_cargo_longstep --profile=standard",
+      "recorded_command_provenance": "root exact executed command",
+      "first_meaningful_error": "bounded bot found no actual completed foot opportunity foot_right",
+      "classification": "assertion/gameplay or fixture proof scheduling; diagnosis pending, no script/import/environment fault"
+    },
+    {
+      "log": "checks/a2-l2-cargo-right-foot-first-cancel.log",
+      "source_log": ".cinder/a2-l2-cargo-right-foot-first-cancel.log",
+      "raw_sha256": "4af8cdf4d7df8e39a8661ac26c055264139e053285e2e6344e119999040c3d87",
+      "shared_revision": "campaign-shared-21",
+      "checks": 132,
+      "failures": 1,
+      "exit_code": 1,
+      "disposition": "INTENTIONAL_DIAGNOSTIC_STOP",
+      "scope": "First actual rightfootcancelcycle1 at34.78333 is downstream of Scout required_scout_presentation_unavailable. Actualfootescape matchesaccepted landing(-.697378,-25.2837), response36.787667 fitsScout36.976667; originalScout promisedlandingedge x2.8593 shifts beyond protected x258. No timing/HP/proof weakening.",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-cargo-right-foot-first-cancel.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=slow_cargo_longstep --profile=standard --diagnose-pair-cancellation",
+      "recorded_command_provenance": "root exact executed command",
+      "classification": "authored admission framing omitted other consumers promised landing/mount bounds; return candidate also omitted union",
+      "first_meaningful_error": "TEST ONLY diagnostic stopped at first actual right-foot cancellation; no route acceptance claim"
+    },
+    {
+      "log": "checks/a2-l2-cargo-framing-union-corrected.log",
+      "source_log": ".cinder/a2-l2-cargo-framing-union-corrected.log",
+      "raw_sha256": "8b7d461f416a5e6f8f536a667c136fbdd8a3c307ed94d1a05141069e1069cf3f",
+      "shared_revision": "campaign-shared-21",
+      "weybridge_sha256": "34c752819ed3090bfe90d00ecaa530640a00482dc9501bbbda645235ef61ea7f",
+      "checks": 258,
+      "failures": 1,
+      "exit_code": 1,
+      "disposition": "FAILED",
+      "scope": "First attempted union filter failed at actual apron_pair: repeated admission/recovery refusals followed real source death at180.23333. Rightfootnotreached. Exit also reports2ObjectDB leaks; no clean/current Cargo route claim.",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-cargo-framing-union-corrected.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=slow_cargo_longstep --profile=standard",
+      "recorded_command_provenance": "root exact executed command",
+      "first_meaningful_error": "foot opportunity stopped at apron_pair; foot lastcancel paired_real_target_recovery_does_not_cover_response",
+      "classification": "gameplay assertion after broader conservative return filtering; scoped exact first-pair timing diagnostic next",
+      "raw_engine_diagnostics": {
+        "warning_prefixes": [
+          "WARNING: 2 ObjectDB instances were leaked at exit (run with `--verbose` for details)."
+        ]
+      }
+    },
+    {
+      "log": "checks/a2-l2-cargo-union-apron-first-response.log",
+      "source_log": ".cinder/a2-l2-cargo-union-apron-first-response.log",
+      "raw_sha256": "5a58828e77b1f8f39ffe0aa2d92920d1d83b6a35dca0bf12213b13f5442535dc",
+      "shared_revision": "campaign-shared-21",
+      "checks": 85,
+      "failures": 1,
+      "exit_code": 1,
+      "disposition": "INTENTIONAL_DIAGNOSTIC_STOP",
+      "scope": "Actualfirstapronrecoveryrefusal at28.38333 after unionattempt: cancelledfootcycle2/start27.86667/recovery31.86667, actualHero(.16281,-16.86409). Historical diagnostic mistakenly labeled target by always reading idlecrossingScout; that target dictionary is not apron counterpart evidence. Actualfootreceipt/firstrefusal remain authoritative; fixture diagnostic target selection corrected without changing assertion.",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-cargo-union-apron-first-response.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=slow_cargo_longstep --profile=standard --diagnose-pair",
+      "recorded_command_provenance": "root exact executed command"
+    },
+    {
+      "log": "checks/a2-l2-cargo-combined-framing-corrected.log",
+      "source_log": ".cinder/a2-l2-cargo-combined-framing-corrected.log",
+      "raw_sha256": "94d452c1e2781dc11af6b955d9101f2f182acb22a53245e22be16c8d4ef70417",
+      "shared_revision": "campaign-shared-21",
+      "weybridge_sha256": "175aac890fdd3fc5a7d411271ecb79107a5d0ac84c05f502ed1a2c8f6d26e387",
+      "checks": 216,
+      "failures": 1,
+      "exit_code": 1,
+      "disposition": "FAILED",
+      "scope": "Combined-response framing passes all4HPfreefeet/4contacts/crossingScout and actualShelterScoutdefeat; fullroute fails bounded finalHandler approach. Hero(-1.86316,-34.072), Handler(.65,-35.2), distance2.75<bot3.45trigger but wide Handler requiredbounds offprotectedrightedge; no livingproof/attacking source. Wrongfixture distance-only approach heuristic diagnosed; no fullCargo acceptance.",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-cargo-combined-framing-corrected.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=slow_cargo_longstep --profile=standard",
+      "recorded_command_provenance": "root exact executed command",
+      "first_meaningful_error": "bounded ordinary-primary bot could not clear shelter_scout/shelter_handler; onlyHandlerliving, actual toolcancelled l2_required_presentation_unavailable cycle3",
+      "classification": "fixture approach heuristic misses readable wide-source positioning; crossing runtimefix has scoped pass only"
+    },
+    {
+      "log": "checks/a2-l2-cargo-readable-approach-corrected.log",
+      "source_log": ".cinder/a2-l2-cargo-readable-approach-corrected.log",
+      "raw_sha256": "410295ae4dafa402bb336b175e16f92af6740e8d8508a71133a6e140c7ad49e5",
+      "shared_revision": "campaign-shared-21",
+      "weybridge_sha256": "f313579c71aeb00df3d5198e623d935b3fd0753feda710cff8e9831c4dd46656",
+      "checks": null,
+      "failures": null,
+      "exit_code": 130,
+      "disposition": "ABORTED_SCRIPT_ERROR",
+      "scope": "Source/helper review and actual runtime identify Node-only lifetime methods called on RefCounted WeybridgeSequence in new nativecontext helper. Owner interrupted own job on first meaningful repeated script error, preserving raw log; no complete Cargo/pass count.",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-cargo-readable-approach-corrected.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=slow_cargo_longstep --profile=standard",
+      "recorded_command_provenance": "root exact executed command",
+      "first_meaningful_error": "Invalid call. Nonexistent function 'is_inside_tree' in base 'RefCounted (weybridge_sequence.gd)' at _combined_context_live line579",
+      "classification": "script runtime type error; removed two Node-only sequence calls while retaining valid RefCounted identity and native Node checks; affected Cargo rerun selected"
+    },
+    {
+      "log": "checks/a2-l2-cargo-sequence-context-corrected.log",
+      "source_log": ".cinder/a2-l2-cargo-sequence-context-corrected.log",
+      "raw_sha256": "8bf8e01fa2fd4300f5ce3040083a277e1ac99cb4da8edb11a2232ce806388cb1",
+      "shared_revision": "campaign-shared-21",
+      "weybridge_sha256": "171680483795c75272d0d7e8b64a85c348d2b4b552acb92a2d3638febe694a2b",
+      "checks": 287,
+      "failures": 0,
+      "exit_code": 0,
+      "disposition": "PASSED",
+      "scope": "Actual Cargo/Longstep Standard route: six HP defeats/four HP-free foot responses/four contacts/full clear/separate exit/cleanup, zero initial ammo/no pickups/ordinary primary; narrow derived combined crossing presentation and real-dash readable final Handler approach. TEST ONLY predecessor prefix/unlocks/destination.",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-cargo-sequence-context-corrected.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=slow_cargo_longstep --profile=standard",
+      "recorded_command_provenance": "root exact executed command"
+    },
+    {
+      "log": "checks/a2-l2-assisted-final.log",
+      "source_log": ".cinder/a2-l2-assisted-final.log",
+      "raw_sha256": "10052a5e9ddfdeaa96eecc253c5be36a3f8eba0266f952712ea303e0f676a5c3",
+      "shared_revision": "campaign-shared-21",
+      "weybridge_sha256": "171680483795c75272d0d7e8b64a85c348d2b4b552acb92a2d3638febe694a2b",
+      "checks": 298,
+      "failures": 0,
+      "exit_code": 0,
+      "disposition": "PASSED",
+      "scope": "Actual Assisted Heavy full route, budget1 defeats actual counterpart before foot; six HP defeats/four HP-free feet/four contacts/clear/separate exit/cleanup. Corrected duplicate-clear fixture expectation only, unchanged route assertions and live-state authority. TEST ONLY prior prefix/unlocks/destination.",
+      "recorded_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-assisted-final.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=assisted",
+      "recorded_command_provenance": "root exact executed command"
     }
   ],
   "captures": [
@@ -717,6 +903,18 @@
         540,
         1170
       ]
+    },
+    {
+      "directory": "final-native",
+      "frame_count": 16,
+      "raw_metadata": "final-native/a2-l2-standard-heavy-evidence.json",
+      "portable_index": "final-native/image-index.json",
+      "resolution": [
+        540,
+        1170
+      ],
+      "runtime_anchor": "b3fb6854b1d24aa989dbab7b17e5bab22bc70514",
+      "shared_revision": "campaign-shared-21"
     }
   ],
   "source_review": {
@@ -750,19 +948,20 @@
     "review_provenance": "Existing root/helper source and native reviews reported by owner; no new research or source reconstruction by evidence collection.",
     "original_native": "Independent source reviewer inspected all sixteen; root inspected eight selected original frames. Hero/cue/dry landing had no material obstruction, with readable tight foot-right overlap. Original Handler anatomy FAILED source fidelity because opaque hood hid rounded head/body/eyes/tentacle bunches.",
     "handler_front_native": "Independent source reviewer inspected all eleven current front-operator frames; root inspected four selected current frames. No material source/readability defect in captured views: rounded head/eyes/two tentacle bunches are visible. Minor strand/beak pixel merge, rear fifth support not independently visible every image and next spent Handler partly under bottom HUD remain limitations.",
-    "environment_limits": "Compact broad dry paving/quay/water/cottages/witness adaptation is visible. Dense ruin/rubble/timber/artillery composition is not fully demonstrated; harmless distant tripod partially behind top HUD in original clear/collapse. No whole-board reconstruction claim."
+    "environment_limits": "Compact broad dry paving/quay/water/cottages/witness adaptation is visible. Dense ruin/rubble/timber/artillery composition is not fully demonstrated; harmless distant tripod partially behind top HUD in original clear/collapse. No whole-board reconstruction claim.",
+    "final_native": "Current full route371/0 atb3fb/shared21: independent peer inspected all16 revised-art frames and root7. Rounded head/eyes/two bunches read in tool phases/apron/final shelter; no material captured-state source/hero/cue/dry-floor defect. Shelter metadata has Scoutlock+Handlerwarning, two armed sources rather than two locks; clear/collapseHero30 and zero combat records. Individual strands/beak merge, rear fifth support often hidden; harmless distant tripod heavily cropped topHUD/canvas edge, no complete three-leg collapse/artillery cause depiction claim."
   },
   "reuse_basis": {
-    "frozen_l1": "Scout actor/visual/exchange, Horsell terrain/readability helpers and Heath primitive/material/cottage/six-witness families, with all original forty-two runtime hashes verified unchanged separately.",
+    "frozen_l1": "Horsell terrain/readability, Heath primitive/material/cottage/witness families and Scout visual remain original accepted bytes. Original42/42 observation is historical; current40/42 match, common Scout actor/driver explicitly superseded by b3fb/6c scoped callback patches in separate packet.",
     "new_owned_l2": "Continuous dry paving/quay rails/brick/scenic water, carts/fieldgun/landmark/collapse, compact five-support Handler/tool mount and one local articulated foot.",
     "shared": "Single existing player/controller/gesture/HUD/camera/equipment resolver/Scheduler/mechanism consumers; no fork or shared numerical retune.",
-    "test_seed": "Synthetic prior Act1+Horsell completion prefix/catalogue unlock metadata/profile and injected TEST ONLY L3 destination support isolated real L2 actions. They do not establish gameplay or acceptance of earlier/future levels."
+    "test_seed": "Synthetic prior Act1+Horsell completion prefix/catalogue unlock metadata/profile and injected TEST ONLY L3 destination support isolated real L2 actions. They do not establish gameplay or acceptance of earlier/future levels.",
+    "revalidation": "L2 core geometry/timing/control/encounters/dead-state/conditional mechanism2 and revisedart unchanged after7f. Common callbacks have direct186/285 correction checks; original371/338/320/221/111/260 retain their stated source scopes, not relabeled as final source reruns. Supplement only moves required guard approval after actual query, no source/foot timings/art/resource/controller change; authored callback setup lacks injected independent-owner guard revocation. Current remaining route cells exercise common supplement."
   },
   "current_remaining_work": [
-    "Correct and complete failed final mixed Scout+Handler accepted-hit observation variant; 282/1 and 220/1 remain failed whole variants.",
-    "Corrected Assisted branch and remaining Standard weapon/Quick/slow Cargo-Longstep route cells are pending.",
-    "Finalize directly affected current-art full-route/native evidence and exact runtime candidate after remaining scoped checks.",
-    "Owner updates manifests/progress/evidence and seeks canonical L2 integration acceptance before L3 production."
+    "New actual crossing pause/ExactJson/fresh-camera restoration check",
+    "Affected current crossing portrait recording",
+    "Preserving shared22 adoption, final hashes/records and exact L2 HANDOFF"
   ],
   "limitations": [
     "No canonical L2 acceptance; scaffold remains in progress.",
@@ -770,5 +969,6 @@
     "Pending-path111 retained a stationary sample after actual arrival dash; no nonzero moving circle intersection is demonstrated.",
     "No human recognition/balance/intended clear time/native-focused play/device/draw-cost/mobile/export/release/all-poses or remaining Act2-level completion claim.",
     "Some earlier resource warnings were in PTY only; raw engine logs do not contain them and missing stdout is not fabricated."
-  ]
+  ],
+  "common_scout_supplement": "6c91833fa7f0762467348bb85c4eaae2bd0384fa"
 }

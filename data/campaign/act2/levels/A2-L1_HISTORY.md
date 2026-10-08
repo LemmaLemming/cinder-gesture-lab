@@ -222,3 +222,13 @@ Exact next: record the completed fixed-Challenge269/0 result and current scoped 
 Tested owned runtime anchor: `16f2532518edd8d76aa41ec40f1d10edad607559`. All42scene/script/test SHA256 values match that commit; evidence-stamp changes only records/manifests. Scope is the whole assigned Act2 path diff from exact shared13 publication, including earlier owned foundation history. Canonical acceptance/registry work remains integration-owned.
 
 HANDOFF sent: `b56eaa6b-d647-40ed-a210-0eaa378a4cf6`, exact candidate `a96edfaddd22e206438e616a8b4080e5c5cdce7a`, tested runtime `16f2532518edd8d76aa41ec40f1d10edad607559`, shared13 exact publication. Autonomous canonical review/registration is pending. Preserve the submitted L1 candidate; read-only L2 source/art/equipment preparation may proceed while integration reviews. No later-level production has started.
+
+
+## Common Scout callback patch — 9 October 2026
+
+Owned patch `b3fb6854b1d24aa989dbab7b17e5bab22bc70514` supersedes only common Scout actor/exchange: current40/42 original L1 runtime hashes match; original accepted a96/runtime16f/shared13 evidence remains attributed to its original bytes. Original focused155/16 failed; corrected155/0 and affected tracking285/0 pass cleanly. Separate integration RESPONSE `49d0006b-dd2c-4a7e-b0c1-2c0ca8236bf4` sent the patch; canonical adoption is pending. [Exact commands, failures and old/new hashes](../../../../docs/acts/act2/evidence/scout-callback-custody/index.json). Prior reproduction-pending/current42-unchanged wording is superseded, not a new full L1/art pass. Mixed260/0 retains its pre-patch L2 scope; current native Heavy and remaining cells/final HANDOFF are pending. No duplicate full-record archive was added.
+
+
+## Scout adoption and supplemental guard status — 9 October 2026
+
+First b3fb callback patch is canonically adopted7c2fac/RESPONSE9bd47362; original155/16, corrected155/0 and affected285/0 retain narrow scope. Supplemental guard original186/7 → corrected186/0 + affected285/0 clean, commit `6c91833fa7f0762467348bb85c4eaae2bd0384fa`, RESPONSEc1157256 sent/adoption pending. L2 native371/16frames and Standard338 completed at b3fb/shared21; mixed260 retains pre-b3fb scope. Current40/42 original L1 matches, no final all42/hash/candidate claim. Shared22 replay-only assessment found unchanged L2 dependencies/no new rerun; preserving consumption awaits freeze. Quick/Cargo/Assisted/final freeze/HANDOFF remain pending, no L2 acceptance. [Evidence](../../../../docs/acts/act2/evidence/scout-callback-custody/README.md). Older archive bytes/statuses remain preserved.

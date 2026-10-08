@@ -535,6 +535,50 @@ func _response_context_for(id: String, shape: Dictionary, opening: Vector3) -> D
 		escapes.sort_custom(func(a: Vector3, b: Vector3) -> bool: return (hero.global_position + a * float(hero.stats.dash_distance)).distance_squared_to(opening) < (hero.global_position + b * float(hero.stats.dash_distance)).distance_squared_to(opening))
 	return {"encounter_id": CROSSING_EPOCH, "world_revision": WORLD_REVISION, "recognition_s": 0.30, "attack_input_margin_s": 0.10, "escape_directions": escapes, "return_directions": returns, "floor_regions": floor_regions()}
 
+func _exchange_framed(actor: Node3D, state: Dictionary) -> bool:
+	# The currently accepted foot response is proved against the real Scout
+	# too. Frame that one combined response, without rewriting either proof.
+	if not is_instance_valid(actor) or String(actor.get("actor_id")) != "crossing_scout" or state.get("status") != "running" or not state.get("armed", false): return super._exchange_framed(actor, state)
+	var foot: String = _crossing.call("current_foot_id")
+	if foot not in ["foot_left", "foot_right"] or not _views.has(foot) or not _mechanisms.has(foot): return super._exchange_framed(actor, state)
+	var node: Node3D = _mechanisms[foot]
+	var bound_hero: CinderPlayer = hero
+	var bound_scheduler: Node = _scheduler
+	if not _combined_context_live(foot, actor, node, bound_hero, bound_scheduler): return false
+	var view: Dictionary = _views[foot].duplicate(true)
+	var own: Dictionary = node.call("state")
+	if own.status != "running" or view.target_id != "crossing_scout" or own.reservation_id != view.reservation_id or view.equipment_ids != hero.equipment.snapshot(): return super._exchange_framed(actor, state)
+	var foot_lease: Dictionary = bound_scheduler.call("reservation_state", String(own.reservation_id))
+	if not _combined_context_live(foot, actor, node, bound_hero, bound_scheduler): return false
+	var source_lease: Dictionary = bound_scheduler.call("reservation_state", String(state.get("reservation_id", "")))
+	if not _combined_context_live(foot, actor, node, bound_hero, bound_scheduler): return false
+	# Both queries can publish cleanup callbacks. Recheck current native custody.
+	if not is_instance_valid(actor) or not is_instance_valid(node) or not _views.has(foot) or _views[foot] != view or not actor.is_visible_in_tree() or not node.is_visible_in_tree() or float(actor.get("hp")) <= 0.0: return super._exchange_framed(actor, state)
+	own = node.call("state")
+	if own.status != "running" or own.reservation_id != view.reservation_id or view.equipment_ids != hero.equipment.snapshot() or foot_lease.is_empty() or source_lease.is_empty(): return super._exchange_framed(actor, state)
+	if not foot_lease.get("armed", false) or not source_lease.get("armed", false) or int(foot_lease.source_instance_id) != node.get_instance_id() or int(source_lease.source_instance_id) != actor.get_instance_id() or foot_lease.geometry != own.geometry or foot_lease.opening_position != own.opening_position or source_lease.geometry != _state_geometry(state) or source_lease.opening_position != actor.global_position: return super._exchange_framed(actor, state)
+	if float(view.primary_time_s) <= maxf(float(foot_lease.active_until_s), float(source_lease.active_until_s)) or float(view.response_complete_s) > minf(float(foot_lease.recovery_until_s), float(source_lease.recovery_until_s)): return super._exchange_framed(actor, state)
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	if not is_instance_valid(camera): return false
+	var points: Array[Vector3] = _required_source_points(actor)
+	if points.is_empty(): return false
+	if state.get("phase") != "recovery": points.append_array(_lane_points(_state_geometry(state)))
+	var foot_points: Array[Vector3] = _source_points(foot)
+	if foot_points.is_empty(): return false
+	points.append_array(foot_points)
+	if own.phase != "recovery": points.append_array(_lane_points(own.geometry))
+	for key: String in ["landing", "attack_position"]: points.append_array(_landing_points(Codec.read_vector3(view[key])))
+	var failure: Dictionary = _framing_failure(camera, points)
+	if not failure.is_empty():
+		_admission_errors["crossing_scout"] = failure
+		return false
+	return true
+
+func _combined_context_live(foot: String, actor: Node3D, node: Node3D, player: CinderPlayer, scheduler: Node) -> bool:
+	if not _entered or not is_inside_tree() or is_queued_for_deletion() or not is_instance_valid(player) or not is_instance_valid(scheduler) or not is_instance_valid(actor) or not is_instance_valid(node) or not is_instance_valid(_crossing): return false
+	if hero != player or _scheduler != scheduler or player.dead or not player.is_inside_tree() or player.is_queued_for_deletion() or not scheduler.is_inside_tree() or scheduler.is_queued_for_deletion() or not actor.is_inside_tree() or actor.is_queued_for_deletion() or not node.is_inside_tree() or node.is_queued_for_deletion(): return false
+	return _crossing.call("current_foot_id") == foot and _mechanisms.get(foot) == node and _actors.get("crossing_scout") == actor and player.get_world_3d() == get_world_3d() and actor.get_world_3d() == get_world_3d() and node.get_world_3d() == get_world_3d() and scheduler.get_viewport() == get_viewport()
+
 func _mechanism_framed(id: String, state: Dictionary) -> bool:
 	var camera: Camera3D = get_viewport().get_camera_3d()
 	if not is_instance_valid(camera) or not _mechanisms[id].is_visible_in_tree(): return false

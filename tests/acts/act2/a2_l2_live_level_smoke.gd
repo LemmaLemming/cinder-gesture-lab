@@ -6,7 +6,8 @@ extends SceneTree
 ## No live HP/ammo/transform/phase assignment or manufactured progression.
 ## --loadout=standard/heavy/slow_cargo_longstep/slow_padded_reach/quick
 ## --profile=standard/assisted/challenge; native captures require graphics.
-## --capture-final writes a new final-native directory, preserving prior frames.
+## --capture-final preserves prior frames in final-native.
+## --capture-combined records the revised crossing guard in combined-native.
 
 const MainScene: PackedScene = preload("res://scenes/main.tscn")
 const ProfileSeedGame: Script = preload("res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd")
@@ -55,6 +56,8 @@ var _foot_phases: Dictionary = {}
 var _foot_primaries: Dictionary = {}
 var _paired_seen: Dictionary = {}
 var _proof_dash_abandoned: bool = false
+var _pair_diagnostic_stop: bool = false
+var _pair_last_observed: Dictionary = {}
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -113,6 +116,9 @@ func _run_route() -> bool:
 	if not _expect(hero.presentation_id == "act2_survivor" and hero.equipment.snapshot() == _loadout and Codec.same_values(hero.stats, _expected_stats) and hero.shells == 0, "real L2 entry retains Act2 presentation, canonical selected gear/stats and initial zero ammo"): return false
 	if _loadout_name == "heavy": _expect(is_equal_approx(float(hero.stats.primary_range), 1.8), "Heavy uses actual shortest shared primary reach")
 	_actors = level.get("_actors").duplicate()
+	if OS.get_cmdline_user_args().has("--diagnose-pair-cancellation"):
+		for id: String in Sequence.FEET:
+			(level.get("_mechanisms")[id] as Node).connect("state_changed", Callable(self, "_diagnose_pair_cancel").bind(id))
 	if not _expect(_actors.size() == 6 and _state().mechanisms.size() == 7 and not _contains_pickup(level), "six authored HP targets and three tool/four foot mechanisms; no victory pickups"): return false
 	var defeats: Array[String] = []
 	for actor: Node in _actors.values(): actor.connect("defeated", func(id: String) -> void: defeats.append(id))
@@ -208,15 +214,26 @@ func _clear(ids: Array[String]) -> bool:
 			var target: Node3D = _actors[living[0]] as Node3D
 			var offset: Vector3 = _game.player.global_position - target.global_position
 			offset.y = 0.0
-			if offset.length() > 3.45 and not await _navigate_dash(target.global_position + offset.normalized() * 3.0): return false
+			if offset.length() > 3.45:
+				if not await _navigate_dash(target.global_position + offset.normalized() * 3.0): return false
+			elif _state().exchanges[living[0]].get("status") != "running":
+				# Distance alone misses a wide source clipped by the protected
+				# portrait edge. Observe the actual guard, then use a real dash.
+				var visible: bool = level_actor_framed(living[0])
+				if not visible and not await _navigate_dash(target.global_position): return false
 		await _step()
 	return _expect(false, "bounded ordinary-primary bot could not clear %s: %s" % [ids, _diagnostic()])
+
+func level_actor_framed(id: String) -> bool:
+	var current: Dictionary = _state().exchanges[id]
+	return bool(_game.active_level.call("_mechanism_framed", "tool_" + id, current)) if Sequence.HANDLERS.has(id) else bool(_game.active_level.call("_exchange_framed", _actors[id], current))
 
 func _complete_foot(id: String) -> bool:
 	var before_primary: int = _primary_count()
 	var phases: Dictionary = _foot_phases.get(id, {})
 	_foot_phases[id] = phases
 	for frame: int in range(2400):
+		if _pair_diagnostic_stop: return false
 		if not _live(): return _expect(false, "foot opportunity stopped: " + _diagnostic())
 		var state: Dictionary = _state()
 		var actual: Dictionary = state.mechanisms[id]
@@ -235,7 +252,7 @@ func _complete_foot(id: String) -> bool:
 			_game.request_pause()
 			await _settle()
 			var saved: Dictionary = _game.active_level.snapshot_state()
-			print("Actual first rejected pair timing: foot=", saved.get("local", {}).get("mechanisms", {}).get(id, {}), " target=", state.exchanges.get("crossing_scout", {}), " hero_response=", _game.player.get_threat_response_state(), " capture_error=", _game.active_level.last_snapshot_error)
+			print("Actual first rejected pair timing: foot=", saved.get("local", {}).get("mechanisms", {}).get(id, {}), " target=", state.exchanges.get("apron_handler" if id == "foot_apron" else "crossing_scout", {}), " hero_response=", _game.player.get_threat_response_state(), " capture_error=", _game.active_level.last_snapshot_error)
 			return _expect(false, "TEST ONLY diagnostic stops at first actual paired recovery refusal; no acceptance claim")
 		if actual.status == "running":
 			phases[actual.phase] = true
@@ -276,10 +293,19 @@ func _observe_runtime() -> void:
 	var state: Dictionary = _state()
 	var foot: String = state.foot_id
 	if not foot.is_empty() and state.mechanisms[foot].status == "running":
+		if OS.get_cmdline_user_args().has("--diagnose-pair-cancellation"):
+			_pair_last_observed[foot] = {"view": _game.active_level.get("_views").get(foot, {}).duplicate(true), "consumer": state.mechanisms[foot].duplicate(true), "source": state.exchanges.get("crossing_scout", {}).duplicate(true), "clock_s": state.clock_s}
 		if not _foot_phases.has(foot): _foot_phases[foot] = {}
 		_foot_phases[foot][state.mechanisms[foot].phase] = true
 		var target: String = "apron_handler" if foot == "foot_apron" else ("crossing_scout" if foot in ["foot_left", "foot_right"] else "")
 		if not target.is_empty() and state.exchanges[target].status == "running" and _reservation(String(state.exchanges[target].reservation_id)).get("armed", false): _paired_seen[foot] = true
+
+func _diagnose_pair_cancel(actual: Dictionary, id: String) -> void:
+	if id != "foot_right" or _pair_diagnostic_stop or actual.status != "cancelled": return
+	_pair_diagnostic_stop = true
+	print("TEST ONLY first actual right-foot cancellation: actual=", actual, " prior_observed=", _pair_last_observed.get(id, {}), " current_source=", _game.active_level.call("actor_state", "crossing_scout") if _game.active_level.has_method("actor_state") else (_game.active_level.get("_exchange") as Node).call("state", "crossing_scout"), " actual_clock=", (_game.active_level.get("_scheduler") as Node).call("get_clock"), " actual_response=", _game.player.get_threat_response_state())
+	_expect(false, "TEST ONLY diagnostic stopped at first actual right-foot cancellation; no route acceptance claim")
+
 
 func _latest_actor_plan(ids: Array[String]) -> Dictionary:
 	var latest: Dictionary = {}
@@ -416,6 +442,9 @@ func _read_options() -> bool:
 		elif argument == "--capture-final":
 			_capture_live = true
 			_capture_root = "res://captures/act2/final-native/"
+		elif argument == "--capture-combined":
+			_capture_live = true
+			_capture_root = "res://captures/act2/combined-native/"
 	if not _expect(LOADOUTS.has(_loadout_name) and _profile_id in ["standard", "assisted", "challenge"], "supported existing loadout/profile selectors"): return false
 	_loadout = LOADOUTS[_loadout_name].duplicate(true)
 	var resolver: CinderEquipment = Equipment.new() as CinderEquipment
