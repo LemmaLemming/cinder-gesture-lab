@@ -1,0 +1,89 @@
+extends SceneTree
+## Supported actual L3 component transport only. No bank schema, full level
+## checkpoint, target defeat, earlier progress seed or route is established.
+const Main: PackedScene = preload("res://scenes/main.tscn")
+const Rules: Script = preload("res://scripts/acts/act2/ruined_house_snapshot_rules.gd")
+const Exact: Script = preload("res://scripts/campaign/exact_json.gd")
+var _checks: int = 0
+var _failures: int = 0
+var _game: Node
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+func _run() -> void:
+	_game = Main.instantiate()
+	_game.set("level_scene_path", "res://scenes/acts/act2/a2_l3.tscn")
+	root.add_child(_game)
+	_game.call("resume_lab")
+	await _settle(15)
+	var level := _game.get("active_level") as CinderLevel
+	var hero := _game.get("player") as CinderPlayer
+	if not _expect(is_instance_valid(level) and is_instance_valid(hero) and level.level_id == "A2-L3" and String(level.get("runtime_error")).is_empty(), "actual authored L3 component unit enters through shared Game"):
+		await _release(); quit(1); return
+	_expect(level.call("_capture_known_state").has("error"), "component capture refuses an unpaused native unit")
+	_expect(_game.call("request_pause_deferred"), "supported deferred full native pause requested")
+	for ignored: int in range(3): await process_frame
+	_expect(paused and not _game.call("is_pause_requested"), "complete native paused commit barrier settles")
+	var player: Dictionary = hero.snapshot_state()
+	_expect(not player.is_empty() and hero.snapshot_error(player).is_empty(), "same shared actor supplies its complete real paused snapshot")
+	var known: Dictionary = level.call("_capture_known_state")
+	var baseline: String = Exact.stringify(known)
+	_expect(known.size() == 17 and not known.has("banks") and not baseline.is_empty(), "closed actual seventeen-field known component pack excludes unknown banks")
+	_expect(known.targets.size() == 6 and known.rays.actors.size() == 1 and known.mechanisms.size() == 4, "actual six non-Ray targets/one Ray/four tools retain separate complete snapshots")
+	var verdict: String = level.call("_known_snapshot_error", known, player)
+	_expect(verdict.is_empty(), "actual supported public nested snapshots and known coherence preflight: " + verdict)
+	_expect(Rules.known_state_error(known).is_empty(), "pure known rules accept their actual prevalidated initial unit")
+	var roundtrip: Dictionary = Exact.parse(baseline)
+	_expect(roundtrip.accepted and Exact.stringify(roundtrip.value) == baseline, "exact JSON retains every actual component scalar bit/type")
+	_expect(level.call("_known_snapshot_error", roundtrip.value, player).is_empty(), "exact decoded actual component unit preflights without clock tolerance")
+	_expect(not level.call("_saved_response_point_supported", Vector3(0.0, 0.1, -13.4)), "retained feet/attack point cannot occupy the actual low-wall Box")
+	_expect(level.call("_saved_response_point_supported", Vector3(-2.0, 0.1, -13.4)), "actual broad left wall approach remains supported")
+	_expect(level.call("_saved_response_point_supported", Vector3(2.0, 0.1, -13.4)), "actual broad right wall approach remains supported")
+	_expect(not level.call("_saved_response_point_supported", Vector3(0.0, 0.45, -13.4)), "wall top is not a new raised traversal floor")
+	var variants: Array[Dictionary] = []
+	var changed: Dictionary = known.duplicate(true); changed["banks"] = {}; variants.append({"label": "unknown bank field in known subset", "state": changed})
+	changed = known.duplicate(true); changed.world_revision = 2; variants.append({"label": "foreign authored world revision", "state": changed})
+	changed = known.duplicate(true); changed.boss_ready_s = 0.1; variants.append({"label": "unearned boss cooldown", "state": changed})
+	changed = known.duplicate(true); changed.boss_phase_pending = true; variants.append({"label": "unearned root phase intent", "state": changed})
+	changed = known.duplicate(true); changed.targets.handling_machine.boss_phase = 2; variants.append({"label": "phase two health refill", "state": changed})
+	changed = known.duplicate(true); changed.targets.house_tender.hp = 25.0; variants.append({"label": "damaged future Tender", "state": changed})
+	changed = known.duplicate(true); changed.targets.erase("side_tender"); variants.append({"label": "missing optional real source", "state": changed})
+	changed = known.duplicate(true); changed.mechanisms.erase("boss_place"); variants.append({"label": "missing alternate tool receipt", "state": changed})
+	changed = known.duplicate(true); changed.targets.house_handler.root_position[0] += 1.0; variants.append({"label": "moved fixed housing", "state": changed})
+	changed = known.duplicate(true); changed.completion_pending = true; variants.append({"label": "premature completion intent", "state": changed})
+	changed = known.duplicate(true); changed.exit_requested = true; variants.append({"label": "premature contact exit", "state": changed})
+	changed = known.duplicate(true); changed.pending_checkpoints.append("handling-machine-phase-two"); variants.append({"label": "unearned phase checkpoint", "state": changed})
+	changed = known.duplicate(true); changed.views["boss_reach"] = {}; variants.append({"label": "view without running lease", "state": changed})
+	changed = known.duplicate(true); changed.rays.clock_s = float(changed.rays.clock_s) + 0.000000001; variants.append({"label": "copied Ray clock drift", "state": changed})
+	for variant: Dictionary in variants:
+		var error: String = level.call("_known_snapshot_error", variant.state, player)
+		_expect(not error.is_empty(), "strict refusal of " + variant.label)
+		_expect(Exact.stringify(level.call("_capture_known_state")) == baseline and hero.snapshot_state() == player, "pure refusal leaves the actual native unit unchanged: " + variant.label)
+	_expect(level.snapshot_state().is_empty() and level.last_snapshot_error.contains("unimplemented"), "partial component evidence cannot masquerade as a whole level checkpoint")
+	_expect(hero.hp == 100.0 and hero.get_world_action_records().is_empty() and not level.is_completed() and level.current_checkpoint().id.is_empty(), "component preflight grants no input/damage/defeat/checkpoint/completion")
+	await _release()
+	_expect(get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "actual component/native cue subtree releases cleanly")
+	print("A2-L3 known component transport: %d checks, %d failures; initial actual unit only, full bank/route/aggregate unimplemented" % [_checks, _failures])
+	quit(0 if _failures == 0 else 1)
+
+func _release() -> void:
+	if not is_instance_valid(_game): return
+	var level := _game.get("active_level") as CinderLevel
+	if is_instance_valid(level): level.exit_level()
+	_game.get("fx").clear()
+	paused = false
+	await create_timer(0.15).timeout
+	_game.queue_free()
+	await _settle(3)
+
+func _settle(count: int) -> void:
+	for ignored: int in range(count): await physics_frame
+	await process_frame
+
+func _expect(ok: bool, label: String) -> bool:
+	_checks += 1
+	if not ok:
+		_failures += 1
+		push_error("FAIL: " + label)
+	return ok

@@ -1,0 +1,40 @@
+{
+  "head": "71b1945da655cb637f27794eaf52fcfd196afccc",
+  "shared_api": "campaign-shared-26",
+  "scope": "Canonical revision0 equipment/ability structural and numeric validation; no grants/claims/uses introduced, no runtime/human-balance claim",
+  "results": [
+    {
+      "command": "python3 scripts/dev/dev.py ability validate",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "98df46",
+        "wall_time_seconds": 1.155484375,
+        "exit_code": 0,
+        "original_token_count": 43,
+        "output": "{\"ok\": true, \"command\": \"validate\", \"revision\": 0, \"registered_count\": 20, \"use_count\": 0, \"active_use_count\": 0, \"unregistered_ids\": [], \"semantic_review_required\": true}\n"
+      }
+    },
+    {
+      "command": "python3 scripts/dev/dev.py equipment validate",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "d9df55",
+        "wall_time_seconds": 1.152551167,
+        "exit_code": 0,
+        "original_token_count": 52,
+        "output": "{\"ok\": true, \"command\": \"validate\", \"revision\": 0, \"ability_usage_revision\": 0, \"semantic_review_required\": true, \"item_count\": 36, \"catalogue_duplicate_types\": [], \"claim_count\": 0, \"active_claim_count\": 0}\n"
+      }
+    },
+    {
+      "command": "python3 scripts/design/validate_equipment.py",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "2bfab6",
+        "wall_time_seconds": 1.063087459,
+        "exit_code": 0,
+        "original_token_count": 193,
+        "output": "PASS: 12 clothing, 4 weapons, 6 powerups, 14 perk definitions; 10 numeric fixtures.\nScreened 256 gear loadouts, 500 conditional subsets, 7500 combined states across 15 legal powerup combinations.\nRanges: dps_proxy=0.600000..1.690000; ehp_ratio=0.840000..1.485000; dash_duration_s=0.141732..0.250000; primary_range=1.800000..2.300000; followup_range=2.790000..3.565000; followup_damage_ratio=0.750000..1.550000; followup_cooldown_s=0.346154..0.642857\nNumeric peak models cover PERK-01/02/03; other unassigned perk definitions receive structural checks only.\nLimitations: unassigned perk effects, event/cooldown/gesture timing, ammo uptime, area-hit opportunities and human balance are not simulated; DPS proxies and budgets are screening guardrails, not proof of balance.\n"
+      }
+    }
+  ]
+}

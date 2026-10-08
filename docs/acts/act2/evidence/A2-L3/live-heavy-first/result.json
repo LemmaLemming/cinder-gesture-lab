@@ -1,0 +1,9 @@
+{
+  "exit_code": 1,
+  "checks": 32,
+  "failures": 1,
+  "status": "ACTUAL_ROUTE_ASSERTION_FAILURE",
+  "first_error": "Road Tender could not clear; bank preview reason Smoke requires actual floor collision and fixed safe_rect only",
+  "classification": "parent authored binding shape: inherited floor_regions supplies extra id/body/rect keys disallowed by shared closed bank floor entries",
+  "fix": "Only Smoke admission context now supplies floor_bindings().values(), retaining same actual native collision/safe_rect objects. Original terrain helper and other consumers unchanged. Rerun same full L3 Heavy route; no unrelatedtests/import."
+}

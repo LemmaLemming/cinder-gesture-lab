@@ -1,0 +1,29 @@
+{
+  "head": "71b1945da655cb637f27794eaf52fcfd196afccc",
+  "shared_api": "campaign-shared-26",
+  "sources": [
+    {
+      "path": "scripts/acts/act2/smoke_bank_visual.gd",
+      "sha256": "90d6fb068104381cce36790f9d6ab1c8ad36a63e22cc9c6f02f1c28d45d6f7f1"
+    },
+    {
+      "path": "assets/acts/act2/shaders/smoke_wisp.gdshader",
+      "sha256": "032e80de1c09dfde8604faa39d9ef1619d30c6287c7e8c6be7f7a66d6b242d95"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_smoke_asset_capture.gd",
+      "sha256": "8cb44ee959b70f05c452e8f3a3c8b50eb95f9faf72bf0d116b76ac14984a2732"
+    },
+    {
+      "path": "tests/acts/act2/fixtures/a2_l3_smoke_preview.gd",
+      "sha256": "8f18063b1ff719a04ae5088c0fcd8d7114f956efa7b8d0cd97c34bd02443d611"
+    },
+    {
+      "path": "tests/acts/act2/fixtures/a2_l3_smoke_preview.tscn",
+      "sha256": "3d589c566826e178024365596fc4557b4e56245c1fcc3ea94adee42ea2d3c605"
+    }
+  ],
+  "command": "python3 scripts/dev/dev.py engine --path . --log-file .cinder/a2-l3-smoke-onset-quiet-overlap.log --script tests/acts/act2/a2_l3_smoke_asset_capture.gd -- --onset-only",
+  "scope": "only two stagedTESTactivep0 outside/overlap views; nativebounds/quietpose/material/masks/currentcamera; no realcontact/grace/damage/fullrouteclaim",
+  "freeze_note": "corrected fixturepath before queuedenginebegins; currentdeclaredbytes unchanged"
+}

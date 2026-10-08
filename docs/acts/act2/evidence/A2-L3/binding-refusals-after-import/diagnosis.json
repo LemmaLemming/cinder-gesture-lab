@@ -1,0 +1,35 @@
+{
+  "unchanged_parent_check": {
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-custody-parent-check.log --check-only --script tests/acts/act2/a2_l3_smoke_custody.gd",
+    "exit_code": 0,
+    "errors": 0
+  },
+  "new_child_check": {
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-binding-child-check.log --check-only --script tests/acts/act2/a2_l3_binding_refusal_smoke.gd",
+    "exit_code": 0,
+    "script_errors": 1
+  },
+  "metadata_refresh": {
+    "command": "python3 scripts/dev/dev.py import",
+    "exit_code": 0,
+    "errors": 0,
+    "result": "new resources indexed; unchanged child still fails; refresh is not a correction"
+  },
+  "minimal_child_check": {
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-binding-minimal-check.log --check-only --script /private/tmp/a2-l3-binding-minimal.gd",
+    "exit_code": 0,
+    "script_errors": 1,
+    "result": "even an otherwise empty child cannot resolve scenario parent"
+  },
+  "next": "derive binding test from the known entry base and copy only exact tested native custody setup/input/barrier helpers; all actual assertion bodies remain unchanged",
+  "external_research": [
+    {
+      "url": "https://github.com/godotengine/godot-proposals/issues/13826",
+      "inspected": "primary Godot proposal documents class-resolution diagnostics can hide the originating script error; no identified local cause or confirmed engine bug follows"
+    },
+    {
+      "url": "https://github.com/godotengine/godot/blob/master/modules/gdscript/gdscript_analyzer.cpp",
+      "inspected": "primary analyzer source resolves external inheritance and reports dependency failures; master is not the installed4.7.2 source, so not a local fix authority"
+    }
+  ]
+}

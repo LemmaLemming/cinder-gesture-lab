@@ -1,0 +1,136 @@
+WorkerThreadPool: 8 threads, 2 max low-priority.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+SDL: Init OK!
+Using "default" pen tablet driver...
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+CORE API HASH: 2004498165
+EDITOR API HASH: 1696660745
+Loading resource: res://tests/level_contract_smoke.gd remapped: res://tests/level_contract_smoke.gd
+Loading resource: res://scenes/main.tscn remapped: res://scenes/main.tscn
+Loading resource: res://scripts/game.gd remapped: res://scripts/game.gd
+Loading resource: res://scenes/player.tscn remapped: res://scenes/player.tscn
+Loading resource: res://scripts/player.gd remapped: res://scripts/player.gd
+Completed load for: 'res://scripts/player.gd' remapped 'res://scripts/player.gd' at thread -1
+Completed load for: 'res://scenes/player.tscn' remapped 'res://scenes/player.tscn' at thread -1
+Loading resource: res://scenes/practice_target.tscn remapped: res://scenes/practice_target.tscn
+Loading resource: res://scripts/practice_target.gd remapped: res://scripts/practice_target.gd
+Completed load for: 'res://scripts/practice_target.gd' remapped 'res://scripts/practice_target.gd' at thread -1
+Completed load for: 'res://scenes/practice_target.tscn' remapped 'res://scenes/practice_target.tscn' at thread -1
+Loading resource: res://scenes/lab_arena.tscn remapped: res://scenes/lab_arena.tscn
+Completed load for: 'res://scenes/lab_arena.tscn' remapped 'res://scenes/lab_arena.tscn' at thread -1
+Completed load for: 'res://scripts/game.gd' remapped 'res://scripts/game.gd' at thread -1
+Completed load for: 'res://scenes/main.tscn' remapped 'res://scenes/main.tscn' at thread -1
+Completed load for: 'res://tests/level_contract_smoke.gd' remapped 'res://tests/level_contract_smoke.gd' at thread -1
+SceneTreeFTI: traversal method DEFAULT
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+Loaded builtin CA certificates
+PASS: default launch selects the existing character lab
+PASS: default lab retains its exact authored spawn
+PASS: default lab retains three targets and three weapon candidates
+PASS: default lab still switches to its one-enemy exercise
+Loading resource: res://tests/fixtures/levels/contract_level.tscn remapped: res://tests/fixtures/levels/contract_level.tscn
+Loading resource: res://tests/fixtures/levels/contract_level.gd remapped: res://tests/fixtures/levels/contract_level.gd
+Completed load for: 'res://tests/fixtures/levels/contract_level.gd' remapped 'res://tests/fixtures/levels/contract_level.gd' at thread -1
+Completed load for: 'res://tests/fixtures/levels/contract_level.tscn' remapped 'res://tests/fixtures/levels/contract_level.tscn' at thread -1
+PASS: custom level passes the scene contract
+PASS: custom scene replaces only the level selection
+PASS: spawn uses the marker's world position, including the level transform
+PASS: entry receives the one shared player and effects exactly once
+PASS: duplicate lifecycle entry does not duplicate content or callbacks
+PASS: custom preview omits all lab targets and weapon stands
+PASS: level-owned enemy is configured against shared systems
+PASS: lab exercise requests cannot replace a custom level
+PASS: additive campaign revision retains anonymous preview identity
+PASS: entry guards recursive lifecycle calls and progression requests
+PASS: canonical optional ID is accepted without registering fixture campaign content
+PASS: out-of-campaign level IDs fail the scene contract
+PASS: canonical scene identity rejects a trailing newline instead of accepting a partial regex match
+PASS: nonpositive local snapshot version fails the scene contract
+PASS: unentered levels cannot allocate events or capture state
+PASS: entered fixture captures a valid versioned local snapshot
+PASS: snapshot preserves authored scene and anonymous identity separately
+PASS: maximum-depth local capture remains valid inside its snapshot envelope
+PASS: 32-level local payload round-trips without counting the transport envelope
+PASS: capture rejects local data one level beyond the permitted nesting boundary
+PASS: over-depth restoration rejects before mutating the accepted boundary state
+PASS: nesting-boundary checks restore the fixture's original local supplies and fields
+PASS: snapshot edits cannot spend live supplies or alter collected IDs
+PASS: active level identity cannot silently change after entry
+PASS: active local schema cannot silently change after entry
+PASS: checkpoint requests reject unstable IDs and non-authored boundary kinds
+PASS: newline-suffixed progression IDs allocate no checkpoint or completion state
+PASS: encounter boundary emits a checkpoint request
+PASS: checkpoint event preserves identity and rejects callback reentrancy
+PASS: checkpoint state is committed before its consumer captures a coherent snapshot
+PASS: checkpoint ID is idempotent across repeated or relabeled boundary requests
+PASS: boss-phase boundary becomes the current checkpoint
+PASS: checkpoint view is independent of the live request history
+PASS: checkpoint requests change no local supply or clock state and imply no healing
+PASS: contact exit remains blocked until the authored completion condition is requested
+PASS: completion emits one request after marking the level completed
+PASS: completion consumers observe committed state and cannot recursively complete again
+PASS: completion suppresses duplicate completion and later checkpoint allocations
+PASS: another actor or scenic body cannot cross the shared-player contact exit
+PASS: newline-suffixed contact exit cannot consume the available transition
+PASS: a dead shared player cannot allocate a contact transition
+PASS: live shared-player contact emits one guarded exit request
+PASS: a completed attempt cannot allocate more than one contact exit
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: invalid identity/version/progress/local data rejects before any mutation
+PASS: restoring an earlier coherent local checkpoint reopens completion and contact exit
+PASS: restore hook blocks recursive capture/restore/lifecycle/progression and retains shared references
+PASS: restoration does not re-emit checkpoint, completion or contact-exit requests
+PASS: caller edits after restoration cannot mutate retained local state
+PASS: restored checkpoint history retains event deduplication
+PASS: retry may request completion/contact again after restoring a prior boundary
+PASS: JSON round-trip preserves local state and accepts integral version numbers
+PASS: validated JSON supply counts commit as canonical integers without permitting fractional charges
+PASS: restoring the initial state coherently removes later request history
+PASS: campaign contract tests leave the preview at its original local state
+PASS: custom preview preserves immediate slash, one second-tap blast and release-point aim
+PASS: reset creates fresh level and player instances
+PASS: reset exits once and releases shared references
+PASS: exited level callbacks and later calls cannot allocate progression or capture stale state
+PASS: exit disconnects the level's shared-player callback
+PASS: reset restores HP/ammo and preserves carried static weapon
+PASS: reset restores the selected spawn and center aim anchor
+PASS: reset snaps the shared camera without changing its angle
+PASS: reset clears old effects and replaces level-owned enemies
+PASS: old level, runtime children and player are freed after reset
+PASS: invalid scene is rejected explicitly without silently selecting the lab: res://tests/fixtures/levels/absent.tscn
+Loading resource: res://tests/fixtures/levels/wrong_root.tscn remapped: res://tests/fixtures/levels/wrong_root.tscn
+Completed load for: 'res://tests/fixtures/levels/wrong_root.tscn' remapped 'res://tests/fixtures/levels/wrong_root.tscn' at thread -1
+PASS: invalid scene is rejected explicitly without silently selecting the lab: res://tests/fixtures/levels/wrong_root.tscn
+Loading resource: res://tests/fixtures/levels/missing_spawn.tscn remapped: res://tests/fixtures/levels/missing_spawn.tscn
+Completed load for: 'res://tests/fixtures/levels/missing_spawn.tscn' remapped 'res://tests/fixtures/levels/missing_spawn.tscn' at thread -1
+PASS: invalid scene is rejected explicitly without silently selecting the lab: res://tests/fixtures/levels/missing_spawn.tscn
+PASS: invalid scene is rejected explicitly without silently selecting the lab: user://outside.tscn
+PASS: custom pause offers resume without lab loadout/exercise controls
+PASS: custom resume tap is consumed before combat input
+PASS: preview HUD uses the level objective and suppresses lab telemetry
+PASS: explicit empty selection returns to the default lab
+PASS: returning to lab restores its fixtures without retaining custom enemies
+Loading resource: res://tests/fixtures/levels/contract_level.tscn remapped: res://tests/fixtures/levels/contract_level.tscn
+Completed load for: 'res://tests/fixtures/levels/contract_level.tscn' remapped 'res://tests/fixtures/levels/contract_level.tscn' at thread -1
+PASS: startup scene injection bypasses lab fixtures
+Level contract smoke: 92 checks, 0 failures
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"

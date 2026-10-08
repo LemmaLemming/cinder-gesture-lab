@@ -1,0 +1,41 @@
+{
+  "head": "87162dd310c9677084a466ffcc8a306ddb2b5de8",
+  "shared_api": "campaign-shared-25",
+  "sources": [
+    {
+      "path": "scripts/acts/act2/ruined_house.gd",
+      "sha256": "728358c5e5864066bcc5eb4821f4e55a39561f9763962478e7338a5dea69baef"
+    },
+    {
+      "path": "scripts/acts/act2/ruined_house_smoke_rules.gd",
+      "sha256": "39009e7ee45ff0c849ed6e810c61034b352c509d7a51551fe36f320b3daa83db"
+    },
+    {
+      "path": "scripts/acts/act2/ruined_house_bank_guard.gd",
+      "sha256": "758ead75f9b98ce5afd0ae90077113f40d410f172a2d1b4c3375c249076a3e83"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_binding_refusal_smoke.gd",
+      "sha256": "8bb63be8ead92498d822dc844894b9bd00058a951a458fbdc82f0542e0fac619"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_smoke_custody.gd",
+      "sha256": "e5d83da9ed591109c4f135a28baa35d28ed8f40244cf76d8fa1a6d17909b6d15"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_bank_transport_smoke.gd",
+      "sha256": "6bb7de8b8ef6f4de78328eab2797d2cb88f48bb23e189cb1d5269b6f01812c9a"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_full_transport_smoke.gd",
+      "sha256": "ffe9fbd9a9faee06150fcd56edd36b1756b8ebdddf5f32953a3b5006bf9dc0bb"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_entry_smoke.gd",
+      "sha256": "c5fd0fbf7f0c87abd4a565ab49e4bc45d2618acff35dccb25fb3ecb945801e27"
+    }
+  ],
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-binding-refusals-direct-entry.log --script tests/acts/act2/a2_l3_binding_refusal_smoke.gd",
+  "scope": "initial full19 future cursor and actual moved idle tool atomic refusals; real queued Tender before native bank contact",
+  "correction": "test-only direct known entry inheritance; exact original definitions/probe/five native custody helpers copied; six original scenario method bodies unchanged"
+}

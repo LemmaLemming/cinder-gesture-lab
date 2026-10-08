@@ -1,0 +1,139 @@
+extends SceneTree
+## Actual authored L3 scene entry and dry-floor traversal only. Required smoke
+## and full aggregate are pending; no target defeat/route/checkpoint credited.
+const Main: PackedScene = preload("res://scenes/main.tscn")
+var _checks: int = 0
+var _failures: int = 0
+var _game: Node
+var _hero: CinderPlayer
+var _actions: Array[Dictionary] = []
+var _capture: bool = false
+var _frames: Array[Dictionary] = []
+const CAPTURE_ROOT: String = "res://captures/act2/a2-l3-authored-floor/"
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+func _run() -> void:
+	_capture = "--capture" in OS.get_cmdline_user_args()
+	root.size = Vector2i(540, 1170)
+	if _capture:
+		if not _expect(DisplayServer.get_name() != "headless", "authored scenery captures require native graphics"):
+			quit(1); return
+		_expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(CAPTURE_ROOT)) == OK, "separate actual authored-floor capture directory")
+	_game = Main.instantiate()
+	_game.set("level_scene_path", "res://scenes/acts/act2/a2_l3.tscn")
+	root.add_child(_game)
+	_game.call("resume_lab")
+	await _settle(12)
+	var level: CinderLevel = _game.get("active_level") as CinderLevel
+	_hero = _game.get("player") as CinderPlayer
+	if not _expect(is_instance_valid(level) and is_instance_valid(_hero) and level.level_id == "A2-L3" and level.contract_error().is_empty(), "actual shared Game installs the authored L3 scene/identity/spawn"):
+		await _release(); quit(1); return
+	_expect(String(level.get("runtime_error")).is_empty(), "actual actor/tool/scenery assembly has no runtime fault: " + String(level.get("runtime_error")))
+	_expect(_hero.presentation_id == "act2_survivor" and _hero.is_on_floor(), "same shared Act2 Hero settles on native dry support")
+	var actors: Dictionary = level.get("_actors")
+	_expect(actors.size() == 7 and level.get("_mechanisms").size() == 4 and get_nodes_in_group("enemies").size() == 7, "actual finite seven-source roster and four true stationary tools")
+	var identities: Dictionary = {}
+	for id: String in actors:
+		var actor: Node3D = actors[id]
+		identities[actor.get_instance_id()] = true
+		_expect(actor.call("is_armed") and actor.get("actor_id") == id and actor.get("hp") == 30.0 and actor.get_world_3d() == _hero.get_world_3d(), "actual anchored HP30 target binds the shared native world " + id)
+	_expect(identities.size() == 7 and (actors.handling_machine as Node3D).get_node_or_null("BossRig") != null and (actors.road_tender as Node3D).get_node_or_null("TenderRig") != null, "distinct B02/Tender native rigs, no duplicate target proxy")
+	_hero.world_action_executed.connect(func(record: Dictionary) -> void: _actions.append(record))
+	await _capture_view(level, "authored-arrival")
+	var shortened: bool = false
+	for ignored: int in range(7):
+		if not await _dash(Vector3.FORWARD): break
+		var record: Dictionary = _actions.back()
+		if float(record.distance) < float(_hero.stats.dash_distance) - 0.05:
+			shortened = true
+			break
+	_expect(shortened and absf(_hero.global_position.x) < 0.05 and _hero.global_position.z > -13.4 and _hero.global_position.z < -12.4, "actual completed central dash stops against the authored low wall without jump/climb")
+	if shortened:
+		await _dash(Vector3.LEFT)
+		await _dash(Vector3.FORWARD)
+		await _capture_view(level, "authored-house-left-approach")
+		_expect(_hero.global_position.x < -1.6 and _hero.global_position.z < -13.4 and _hero.is_on_floor(), "actual left side dash reaches continuous ground beyond the wall")
+		await _dash(Vector3.RIGHT)
+		await _dash(Vector3.RIGHT)
+		await _dash(Vector3.BACK)
+		await _capture_view(level, "authored-house-right-approach")
+		_expect(_hero.global_position.x > 1.6 and _hero.global_position.z > -13.4 and _hero.is_on_floor(), "actual right side also passes the low wall on continuous dry ground")
+	var state: Dictionary = level.call("encounter_state")
+	_expect(state.beat == "smoke_edge" and level.current_checkpoint().id.is_empty() and not level.is_completed(), "floor-only future travel earns no fabricated encounter defeat/checkpoint/clear")
+	_expect(_hero.hp == 100.0 and not state.smoke_api_ready, "required unpublished bank emits no assumed/private damage authority")
+	var before: int = _actions.size()
+	_expect(_game.call("request_pause_deferred"), "supported full native pause before unfinished aggregate check")
+	for ignored: int in range(3): await process_frame
+	_expect(paused and level.snapshot_state().is_empty() and level.last_snapshot_error.contains("unimplemented"), "incomplete whole aggregate visibly rejects instead of pretending checkpoint/save readiness")
+	_expect(_actions.size() == before, "pause publishes no extra completed floor dash")
+	await _release()
+	_expect(get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "actual authored target/cue subtree is completely released")
+	if _capture:
+		_expect(_frames.size() == 3, "exact three actual arrival/left/right native scenery records")
+		var file := FileAccess.open(CAPTURE_ROOT + "metadata.json", FileAccess.WRITE)
+		_expect(file != null, "authored floor native metadata opened")
+		if file != null:
+			file.store_string(JSON.stringify({"scope": "Actual authored root/Hero/world dashes/current cutaway and scenery, TEST ONLY public dash route travels future floor without earned targets/progression. No combat/smoke/grace/tick/save/full route claim", "checks": _checks, "failures": _failures, "frames": _frames}, "  ") + "\n")
+			file.close()
+	print("A2-L3 actual entry/floor smoke: %d checks, %d failures; real dry-floor dashes only, smoke/aggregate/route unimplemented" % [_checks, _failures])
+	quit(0 if _failures == 0 else 1)
+
+
+func _capture_view(level: CinderLevel, label: String) -> void:
+	if not _capture: return
+	await _settle(45)
+	var camera := _game.get("camera") as Camera3D
+	var hero_points: Array = _game.call("player_camera_framing_points")
+	var framing: String = _game.call("camera_framing_error", hero_points)
+	_expect(framing.is_empty() and _hero.is_on_floor(), "actual native Hero/floor in authored scenery view " + label + ": " + framing)
+	await RenderingServer.frame_post_draw
+	var picture: Image = root.get_texture().get_image()
+	var image_path: String = CAPTURE_ROOT + label + ".png"
+	_expect(picture != null and picture.get_size() == Vector2i(540, 1170) and picture.save_png(image_path) == OK, "actual540x1170 authored floor image saved " + label)
+	var cutaways: Array = []
+	for mesh: MeshInstance3D in level.get("_bank_visuals"):
+		var material := mesh.material_override as StandardMaterial3D
+		if material != null and material.albedo_color.a < 1.0:
+			cutaways.append({"path": str(level.get_path_to(mesh)), "alpha": material.albedo_color.a})
+	_frames.append({"label": label, "hero_position": [_hero.global_position.x, _hero.global_position.y, _hero.global_position.z], "hero_hp": _hero.hp, "hero_on_floor": _hero.is_on_floor(), "completed_real_world_dash_count": _actions.size(), "earned_beat": level.call("encounter_state").beat, "checkpoint_id": level.current_checkpoint().id, "completed": level.is_completed(), "current_actual_scenery_cutaways": cutaways, "camera_position": [camera.global_position.x, camera.global_position.y, camera.global_position.z], "camera_framing_error": framing, "image": image_path, "image_sha256": FileAccess.get_sha256(image_path)})
+	print("L3 authored floor native capture: " + label)
+
+func _dash(direction: Vector3) -> bool:
+	var ready: bool = false
+	for ignored: int in range(180):
+		var response: Dictionary = _hero.get_threat_response_state()
+		if response.stable and float(response.dash_cooldown_left_s) <= 0.00001:
+			ready = true
+			break
+		await physics_frame
+	if not _expect(ready and _hero.request_dash(direction), "real shared ground dash accepts after actual cooldown"): return false
+	var before: int = _actions.size()
+	for ignored: int in range(180):
+		await physics_frame
+		if _actions.size() > before:
+			var record: Dictionary = _actions.back()
+			return _expect(record.kind == "dash" and record.landing is Vector3 and record.path.size() >= 2 and record.landing.y > -0.05, "actual completed world dash publishes its supported path and landing")
+	return _expect(false, "actual accepted ground dash did not finish")
+
+func _release() -> void:
+	if not is_instance_valid(_game): return
+	var level: CinderLevel = _game.get("active_level") as CinderLevel
+	if is_instance_valid(level): level.exit_level()
+	_game.get("fx").clear()
+	paused = false
+	await create_timer(0.15).timeout
+	_game.queue_free()
+	await _settle(3)
+
+func _settle(count: int) -> void:
+	for ignored: int in range(count): await physics_frame
+	await process_frame
+
+func _expect(ok: bool, label: String) -> bool:
+	_checks += 1
+	if not ok:
+		_failures += 1
+		push_error("FAIL: " + label)
+	return ok

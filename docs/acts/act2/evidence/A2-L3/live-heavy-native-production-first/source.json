@@ -1,0 +1,40 @@
+{
+  "head": "71b1945da655cb637f27794eaf52fcfd196afccc",
+  "shared_api": "campaign-shared-26",
+  "sources": [
+    {
+      "path": "scripts/acts/act2/ruined_house.gd",
+      "sha256": "728358c5e5864066bcc5eb4821f4e55a39561f9763962478e7338a5dea69baef"
+    },
+    {
+      "path": "scripts/acts/act2/ruined_house_smoke_rules.gd",
+      "sha256": "39009e7ee45ff0c849ed6e810c61034b352c509d7a51551fe36f320b3daa83db"
+    },
+    {
+      "path": "scripts/acts/act2/ruined_house_bank_guard.gd",
+      "sha256": "758ead75f9b98ce5afd0ae90077113f40d410f172a2d1b4c3375c249076a3e83"
+    },
+    {
+      "path": "scripts/acts/act2/handling_machine_boss_actor.gd",
+      "sha256": "685308db29c7df0b117e6b4755406a42916c31f22cbd707f6b0c3f9afadc8964"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_live_level_smoke.gd",
+      "sha256": "0d3feb4641b0493528e0813cb7d57911cdf9b460dc54edf57d6e76c775a5dadd"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_side_source_level_smoke.gd",
+      "sha256": "25d974083ccdafcc273e657fb22aa1c0683df835fd258afd6a752b37cd0d6a4e"
+    },
+    {
+      "path": "tests/acts/act2/a2_l3_route_planner.gd",
+      "sha256": "ceb89a977bc76f8ce0cda8fcb8ebd66b5c27aa99b6c91df55c920505dd5e9e14"
+    },
+    {
+      "path": "tests/acts/act2/fixtures/a2_l3_transition_destination.tscn",
+      "sha256": "9693d72247c2b9536944856e59c2f38bec52d9d9bbb6edeb7f5149339b2c7507"
+    }
+  ],
+  "command": "python3 scripts/dev/dev.py engine --path . --log-file .cinder/a2-l3-live-heavy-native-production-first.log --script tests/acts/act2/a2_l3_side_source_level_smoke.gd -- --loadout=heavy --profile=standard --capture-live",
+  "scope": "actual complete Heavy/Standard route with actual native540x1170 postdraw source/phase/camera/smoke-mask/art portraits; no staged state or forced focus"
+}

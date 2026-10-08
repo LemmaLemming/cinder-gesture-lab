@@ -1,0 +1,336 @@
+extends SceneTree
+## TEST ONLY five native smoke/cue poses. Direct Hero stage placement credits
+## no input, route, Scheduler admission, exposure, damage, save or fairness.
+const Main: PackedScene = preload("res://scenes/main.tscn")
+const Geometry: Script = preload("res://scripts/combat/threat_geometry.gd")
+const SmokeVisual: Script = preload("res://scripts/acts/act2/smoke_bank_visual.gd")
+const CueMesh: Script = preload("res://scripts/cues/cue_mesh.gd")
+const ThreatCue: Script = preload("res://scripts/cues/threat_cue.gd")
+const MASK_PARAMETERS: Array[String] = ["masks_ready", "wisp_alpha", "viewport_size_pixels", "hero_rect_pixels", "source_rect_pixels", "rim_points_pixels", "rim_padding_pixels", "mask_camera_origin", "mask_camera_right", "mask_camera_up", "mask_camera_back", "mask_projection_scale", "mask_projection_offset", "mask_clip_planes"]
+const PreviewPath: String = "res://tests/acts/act2/fixtures/a2_l3_smoke_preview.tscn"
+var _capture_root: String = "res://captures/act2/a2-l3-smoke-assets/"
+const VIEWS: Array[Dictionary] = [
+	{"label": "smoke-warning", "phase": "warning", "p": 0.65, "hero": Vector3(1.2, 0.1, -3.5), "overlap": false},
+	{"label": "smoke-lock", "phase": "lock", "p": 0.5, "hero": Vector3(1.2, 0.1, -3.5), "overlap": false},
+	{"label": "smoke-active", "phase": "active", "p": 0.65, "hero": Vector3(1.2, 0.1, -3.5), "overlap": false},
+	{"label": "smoke-recovery", "phase": "recovery", "p": 0.55, "hero": Vector3(1.2, 0.1, -3.5), "overlap": false},
+	{"label": "smoke-active-hero-overlap", "phase": "active", "p": 0.65, "hero": Vector3(-0.9, 0.1, -3.5), "overlap": true},
+]
+var _checks: int = 0
+var _failures: int = 0
+var _game: Node
+
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+
+func _run() -> void:
+	if "--revision4-current" in OS.get_cmdline_user_args():
+		_capture_root = "res://captures/act2/a2-l3-smoke-revision4-current/"
+	elif "--revision4" in OS.get_cmdline_user_args():
+		_capture_root = "res://captures/act2/a2-l3-smoke-revision4/"
+	elif "--revision3" in OS.get_cmdline_user_args():
+		_capture_root = "res://captures/act2/a2-l3-smoke-revision3/"
+	elif "--corrected" in OS.get_cmdline_user_args():
+		_capture_root = "res://captures/act2/a2-l3-smoke-corrected/"
+	root.size = Vector2i(540, 1170)
+	_expect(DisplayServer.get_name() != "headless", "smoke portrait fixture requires a native graphical surface")
+	if DisplayServer.get_name() == "headless":
+		quit(1)
+		return
+	_expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_capture_root)) == OK, "dedicated five-frame smoke art directory")
+	_game = Main.instantiate()
+	_game.set("level_scene_path", PreviewPath)
+	root.add_child(_game)
+	await _settle(12)
+	var level := _game.get("active_level") as CinderLevel
+	var hero := _game.get("player") as CinderPlayer
+	var ready: bool = is_instance_valid(level) and is_instance_valid(hero) and level.scene_file_path == PreviewPath and level.hero == hero
+	_expect(ready, "actual shared Game installs TEST ONLY smoke preview and actual Hero")
+	if not ready:
+		_game.queue_free()
+		await process_frame
+		quit(1)
+		return
+	var smoke := level.get("smoke") as Node3D
+	var tender := level.get("tender") as Node3D
+	var source := level.get("bank_source") as Node3D
+	var cue := level.get("cue") as Node3D
+	var kit: Dictionary = level.get("kit")
+	var kit_root := kit.get("root") as Node3D
+	_expect(level.get("assembly_error").is_empty() and level.get("floors").size() == 4 and hero.presentation_id == "act2_survivor", "production four-floor/kit/smoke assembly and shared Act2 skin")
+	_expect(get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("practice_targets").is_empty() and get_nodes_in_group("required_cues").size() == 1, "one actual shared cue without targets, Scheduler or damage authority")
+	var body := hero.get_node("BodyCollision") as CollisionShape3D
+	_expect(body.shape is CapsuleShape3D, "stage occupancy uses the actual shared Hero capsule radius")
+	var actor_radius: float = (body.shape as CapsuleShape3D).radius
+	var source_home: Transform3D = source.global_transform
+	var tender_home: Transform3D = tender.global_transform
+	var hp_before: float = hero.hp
+	# Compare the renderer's actual Color encoding, not a double against its
+	# float32 material representation; this changes no clock or authority.
+	var native_max_alpha: float = Color(1.0, 1.0, 1.0, SmokeVisual.ACTIVE_ALPHA).a
+	var records: Array[Dictionary] = []
+	for view: Dictionary in VIEWS:
+		# Authorized TEST ONLY pose placement, not a completed dash or landing.
+		hero.global_position = view["hero"]
+		hero.velocity = Vector3.ZERO
+		_expect(level.call("select_view", view["phase"], view["p"]), "supported actual shared cue and quiet vapour pose: " + view["label"])
+		await _settle(40)
+		var camera := _game.get("camera") as Camera3D
+		var hero_bounds: Array[Vector3] = []
+		hero_bounds.assign(_game.call("camera_billboard_points", hero.get_node("ActorSprite")))
+		_expect(hero_bounds.size() >= 3 and tender.call("apply_readability", camera, hero_bounds), "actual shared billboard points drive Tender-only material cutaway: " + view["label"])
+		var hero_framing: Array[Vector3] = []
+		hero_framing.assign(_game.call("player_camera_framing_points"))
+		var source_points: Array[Vector3] = _source_vertices(cue)
+		var boundary_points: Array[Vector3] = _circle_boundary(cue)
+		_expect(hero_framing.size() >= hero_bounds.size() and source_points.size() >= 3 and boundary_points.size() == 64, "actual full Hero/source-glyph vertices and ordered native outline plane: " + view["label"])
+		_expect(smoke.call("apply_readability", camera, hero_framing, source_points, boundary_points) and _native_masks_valid(smoke, camera, hero_framing, source_points, boundary_points), "fresh actual native Hero/source/rim masks are valid after settled camera and pose: " + view["label"])
+		var stats: Dictionary = smoke.call("geometry_stats")
+		_expect(stats.get("constructed", false) and stats.get("part_count", 0) == 13 and stats.get("base_part_count", 0) == 9 and stats.get("wisp_part_count", 0) == 4 and stats.get("distinct_materials", 0) == 13 and stats.get("native_vertex_count", 0) == 702 and stats.base_geometry.vertices == 486 and stats.wisp_geometry.vertices == 216, "native thirteen-part isolated geometry: nine base486/four wisp216/total702 vertices: " + view["label"])
+		_expect(float(stats["max_planar_radius_m"]) <= 1.05 and float(stats["max_planar_radius_m"]) <= float(stats["authored_radius_ceiling_m"]) and float(stats["min_height_m"]) >= 0.0 and float(stats["max_height_m"]) <= 0.20, "actual smoke vertices remain inside the fixed circle and low height: " + view["label"])
+		var geometry: Dictionary = level.call("bank_geometry")
+		var intersects: bool = Geometry.segment_hits(geometry, hero.global_position, hero.global_position, actor_radius)
+		_expect(intersects == view["overlap"] and hero.is_on_floor(), "actual supported stage position has the declared static circle occupancy: " + view["label"])
+		var state: Dictionary = cue.call("state")
+		_expect(state["phase"] == view["phase"] and state["geometry"]["kind"] == "circle" and float(state["geometry"]["radius"]) == 1.05 and state["source_position"] == source.global_position and state["source_visible"] and state["footprint_visible"] == (view["phase"] != "recovery") and state["active_fill_visible"] == (view["phase"] == "active"), "shared cue owns its unchanged circle/source/phase glyphs: " + view["label"])
+		_expect(source.global_transform == source_home and tender.global_transform == tender_home and not smoke.is_processing() and not smoke.is_physics_processing(), "cosmetic poses keep native origins fixed and have no autonomous processing: " + view["label"])
+		var before: Array[Dictionary] = _parcel_pose(smoke)
+		var mask_before: Dictionary = smoke.call("readability_state")
+		var base_before: Array[Dictionary] = _base_parcel_pose(smoke)
+		_expect(smoke.call("pose", view["phase"], view["p"]) and _visible_wisps(smoke) == 0 and not smoke.call("readability_state").masks_ready, "every quiet pose invalidates all four previous wisp masks: " + view["label"])
+		_expect(smoke.call("apply_readability", camera, hero_framing, source_points, boundary_points) and _parcel_pose(smoke) == before and smoke.call("readability_state") == mask_before, "quiet same-pose plus fresh masks retains exact transforms/alpha/materials/mask geometry: " + view["label"])
+		var missing_points: Array[Vector3] = []
+		_expect(not smoke.call("apply_readability", camera, hero_framing, missing_points, boundary_points) and _visible_wisps(smoke) == 0 and not smoke.call("readability_state").masks_ready and _base_parcel_pose(smoke) == base_before, "missing actual source mask suppresses only all four upper wisps: " + view["label"])
+		var malformed_boundary: Array[Vector3] = boundary_points.duplicate()
+		if malformed_boundary.size() == 64:
+			var first_point: Vector3 = malformed_boundary[0]
+			malformed_boundary[0] = malformed_boundary[1]
+			malformed_boundary[1] = first_point
+		_expect(not smoke.call("apply_readability", camera, hero_framing, source_points, malformed_boundary) and _visible_wisps(smoke) == 0 and not smoke.call("readability_state").masks_ready and _base_parcel_pose(smoke) == base_before, "crossed actual64-point rim mask suppresses only all four upper wisps: " + view["label"])
+		_expect(smoke.call("apply_readability", camera, hero_framing, source_points, boundary_points) and _parcel_pose(smoke) == before and smoke.call("readability_state") == mask_before and _native_masks_valid(smoke, camera, hero_framing, source_points, boundary_points), "valid native masks restore exact derived wisp state without a clock or cue mutation: " + view["label"])
+		var policies: Array[Dictionary] = _material_policy(smoke)
+		var policies_ok: bool = policies.size() == 9
+		for policy: Dictionary in policies:
+			policies_ok = policies_ok and policy["alpha"] <= native_max_alpha and policy["priority"] < 0 and not policy["no_depth_test"] and policy["depth_draw_mode"] == BaseMaterial3D.DEPTH_DRAW_DISABLED and policy["transparency"] == BaseMaterial3D.TRANSPARENCY_ALPHA
+		_expect(policies_ok, "native smoke alpha stays isolated below cues with depth tests and no depth writes: " + view["label"])
+		var wisp_policies: Array[Dictionary] = _wisp_material_policy(smoke)
+		var wisp_policies_ok: bool = wisp_policies.size() == 4
+		var wisp_material_ids: Dictionary = {}
+		for policy: Dictionary in wisp_policies:
+			wisp_material_ids[policy.material_instance_id] = true
+			wisp_policies_ok = wisp_policies_ok and policy.shader_matches and policy.priority == 1 and policy.masks_ready and policy.alpha >= 0.0 and policy.alpha <= SmokeVisual.WISP_ALPHA and policy.depth_tested and policy.no_depth_writes and policy.unshaded_mix_back_culled
+		var expected_wisps: int = 4 if view["phase"] in ["active", "recovery"] else 0
+		_expect(wisp_policies_ok and wisp_material_ids.size() == 4 and _visible_wisps(smoke) == expected_wisps, "four distinct native masked ShaderMaterials retain bounded alpha/depth policy and phase visibility: " + view["label"])
+		_expect(hero.hp == hp_before and hero.get_world_action_records().is_empty() and not level.is_completed() and level.current_checkpoint()["id"].is_empty(), "cosmetic view credits no action, damage or progression: " + view["label"])
+		var framing: String = _game.call("camera_framing_error", level.camera_framing_points())
+		_expect(framing.is_empty(), "actual camera contains full circle, source, Tender and Hero bounds: " + view["label"] + ": " + framing)
+		# SceneTree.process_frame precedes Game._process, which follows the Hero
+		# with its actual camera. Refresh only derived presentation after that
+		# normal update and immediately before native viewport rendering.
+		await RenderingServer.frame_pre_draw
+		camera = _game.get("camera") as Camera3D
+		hero_bounds.assign(_game.call("camera_billboard_points", hero.get_node("ActorSprite")))
+		hero_framing.assign(_game.call("player_camera_framing_points"))
+		source_points = _source_vertices(cue)
+		boundary_points = _circle_boundary(cue)
+		_expect(tender.call("apply_readability", camera, hero_bounds) and smoke.call("apply_readability", camera, hero_framing, source_points, boundary_points) and _native_masks_valid(smoke, camera, hero_framing, source_points, boundary_points), "actual final current camera derives masks before viewport draw: " + view["label"])
+		var draw_camera: Dictionary = _camera_signature(camera)
+		stats = smoke.call("geometry_stats")
+		policies = _material_policy(smoke)
+		wisp_policies = _wisp_material_policy(smoke)
+		framing = _game.call("camera_framing_error", level.camera_framing_points())
+		await RenderingServer.frame_post_draw
+		var draw_masks_valid: bool = _camera_signature(camera) == draw_camera and _native_masks_valid(smoke, camera, hero_framing, source_points, boundary_points)
+		_expect(draw_masks_valid, "same captured native frame retains exact current camera and masks: " + view["label"])
+		var picture: Image = root.get_texture().get_image()
+		var image_path: String = _capture_root + view["label"] + ".png"
+		_expect(picture != null and picture.get_size() == Vector2i(540, 1170) and picture.save_png(image_path) == OK, "native540x1170 smoke frame saved: " + view["label"])
+		var world_quad: Array = []
+		var screen_quad: Array = []
+		for point: Vector3 in hero_bounds:
+			world_quad.append(_vector(point))
+			var screen: Vector2 = camera.unproject_position(point)
+			screen_quad.append([screen.x, screen.y])
+		records.append({"label": view["label"], "phase": view["phase"], "normalized_progress": view["p"], "hero_fixture_position": _vector(hero.global_position), "hero_hp": hero.hp, "hero_on_floor": hero.is_on_floor(), "hero_capsule_radius": actor_radius, "static_circle_occupancy": intersects, "requested_overlap_fixture": view["overlap"], "bank_origin": _vector(source.global_position), "tender_origin": _vector(tender.global_position), "native_geometry_stats": _native_json(stats), "materials": policies, "wisp_materials": _native_json(wisp_policies), "native_material_alpha_ceiling": native_max_alpha, "wisp_alpha_ceiling": SmokeVisual.WISP_ALPHA, "art_revision": SmokeVisual.ART_REVISION, "smoke_mask_state": _native_json(smoke.call("readability_state")), "mask_source_vertices_world": _native_json(source_points), "mask_boundary_world": _native_json(boundary_points), "mask_full_hero_world": _native_json(hero_framing), "shared_cue": _cue_json(state), "hero_billboard_world": world_quad, "hero_billboard_viewport_pixels": screen_quad, "tender_readability": tender.call("readability_state"), "scenery_cutaway_applied": false, "scenery_cutaway_available_paths": kit_root.get_meta("optional_cutaway_paths", []).size(), "smoke_readability_fade_applied": false, "smoke_native_masks_applied": draw_masks_valid, "mask_camera_unchanged_during_draw": _camera_signature(camera) == draw_camera, "camera_position": _vector(camera.global_position), "camera_width": camera.size, "camera_viewport_size": [camera.get_viewport().size.x, camera.get_viewport().size.y], "camera_framing_error": framing, "image": image_path, "image_sha256": FileAccess.get_sha256(image_path), "scope": "TEST ONLY stage placed Hero and cosmetic fixed-circle shared cue; no Scheduler admission/damage/grace/ticks/route/input/save/fairness claim"})
+		print("L3 smoke cosmetic capture: " + view["label"])
+	_expect(records.size() == 5, "exact five requested cosmetic image records")
+	var last_camera := _game.get("camera") as Camera3D
+	var last_hero_points: Array[Vector3] = []
+	last_hero_points.assign(_game.call("player_camera_framing_points"))
+	_expect(smoke.call("pose", "recovery", 1.0) and smoke.call("apply_readability", last_camera, last_hero_points, _source_vertices(cue), _circle_boundary(cue)) and _visible_parcels(smoke) == 0, "supplied recovery completion plus fresh current masks hides the finite vapour without any timer")
+	_expect(cue.call("clear") and smoke.call("pose", "spent", 1.0) and _visible_parcels(smoke) == 0, "shared clear and cosmetic spent are quiet and collisionless")
+	var old_nodes: Array[WeakRef] = [weakref(level), weakref(source), weakref(smoke), weakref(tender), weakref(cue), weakref(kit_root)]
+	_expect(_game.call("request_pause_deferred"), "actual supported deferred pause request before subtree cleanup")
+	for ignored: int in range(3):
+		await process_frame
+	_expect(paused and not _game.call("is_pause_requested"), "full native deferred pause barrier settles before level exit")
+	level.exit_level()
+	_game.get("fx").clear()
+	paused = false
+	await create_timer(0.15).timeout
+	_game.queue_free()
+	await _settle(3)
+	var freed: bool = true
+	for reference: WeakRef in old_nodes:
+		freed = freed and reference.get_ref() == null
+	_expect(freed and get_nodes_in_group("required_cues").is_empty() and get_nodes_in_group("enemies").is_empty(), "actual Hero/cue/scenery source subtree releases with no dangling required cue")
+	var file := FileAccess.open(_capture_root + "metadata.json", FileAccess.WRITE)
+	_expect(file != null, "five-frame metadata and final check counts opened")
+	if file != null:
+		file.store_string(JSON.stringify({"scope": "TEST ONLY cosmetic smoke/cue previews with actual shared Game/Hero/camera/Act2 skin and production floor/kit; no actual bank consumer/reservation/damage/route/transport acceptance", "fixture": PreviewPath, "frame_count": records.size(), "checks": _checks, "failures": _failures, "frames": records}, "  ") + "\n")
+		file.close()
+	print("A2-L3 native smoke asset capture: %d checks, %d failures;5 cosmetic frames, no consumer/gameplay/fairness claim" % [_checks, _failures])
+	quit(0 if _failures == 0 else 1)
+
+
+func _vector(value: Vector3) -> Array:
+	return [value.x, value.y, value.z]
+
+
+func _cue_json(state: Dictionary) -> Dictionary:
+	var shape: Dictionary = state["geometry"]
+	return {"api_revision": state["api_revision"], "phase": state["phase"], "geometry": {"kind": shape["kind"], "origin": _vector(shape["origin"]), "radius": shape["radius"]}, "source_position": _vector(state["source_position"]), "required": state["required"], "source_visible": state["source_visible"], "footprint_visible": state["footprint_visible"], "active_fill_visible": state["active_fill_visible"], "no_reservation_or_damage_authority": true}
+
+
+func _source_vertices(cue: Node3D) -> Array[Vector3]:
+	var result: Array[Vector3] = []
+	var marker := cue.get_node_or_null("RequiredSourceMarker") as MeshInstance3D
+	if marker == null or marker.mesh == null or not marker.is_visible_in_tree(): return result
+	for surface: int in range(marker.mesh.get_surface_count()):
+		var arrays: Array = marker.mesh.surface_get_arrays(surface)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		for vertex: Vector3 in vertices: result.append(marker.global_transform * vertex)
+	return result
+
+
+func _circle_boundary(cue: Node3D) -> Array[Vector3]:
+	var result: Array[Vector3] = []
+	var state: Dictionary = cue.call("state")
+	var outline := cue.get_node_or_null("RequiredFootprintOutline") as MeshInstance3D
+	if outline == null or state.get("geometry", {}).get("kind") != "circle" or outline.transform != Transform3D(Basis.IDENTITY, Vector3.UP * ThreatCue.FLOOR_OFFSET): return result
+	# The shared boundary is ordered local centerline geometry, not native
+	# outline triangle vertices. Use the actual cue transform and outline Y.
+	for point: Vector3 in CueMesh.boundary(state.geometry):
+		result.append(cue.global_transform * (point + Vector3.UP * ThreatCue.FLOOR_OFFSET))
+	return result
+
+
+func _native_masks_valid(smoke: Node3D, camera: Camera3D, hero_points: Array[Vector3], source_points: Array[Vector3], boundary_points: Array[Vector3]) -> bool:
+	var state: Dictionary = smoke.call("readability_state")
+	if not state.masks_ready or not state.camera_current: return false
+	var geometry: Dictionary = state.geometry
+	if not geometry.has_all(["hero_rect_pixels", "source_rect_pixels", "boundary_pixels", "rim_padding_pixels", "boundary_count"]) or not geometry.hero_rect_pixels is Rect2 or not geometry.source_rect_pixels is Rect2 or not geometry.boundary_pixels is PackedVector2Array or geometry.boundary_count != 64 or geometry.boundary_pixels.size() != 64 or float(geometry.rim_padding_pixels) < SmokeVisual.MASK_PIXEL_MARGIN: return false
+	if not geometry.hero_rect_pixels.has_area() or not geometry.source_rect_pixels.has_area(): return false
+	for point: Vector3 in hero_points:
+		if not geometry.hero_rect_pixels.has_point(camera.unproject_position(point)): return false
+	for point: Vector3 in source_points:
+		if not geometry.source_rect_pixels.has_point(camera.unproject_position(point)): return false
+	for index: int in range(64):
+		if geometry.boundary_pixels[index] != camera.unproject_position(boundary_points[index]): return false
+	return true
+
+
+func _shader_parameters(material: ShaderMaterial) -> Dictionary:
+	var result: Dictionary = {}
+	for key: String in MASK_PARAMETERS: result[key] = material.get_shader_parameter(key)
+	return result
+
+
+func _parcel_pose(smoke: Node3D) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for child: Node in smoke.get_children():
+		var part := child as MeshInstance3D
+		if part == null: continue
+		var material: Material = part.material_override
+		var parcel: Dictionary = {"name": str(part.name), "transform": part.transform, "visible": part.visible, "mesh_instance_id": part.mesh.get_instance_id(), "material_instance_id": material.get_instance_id()}
+		if material is StandardMaterial3D:
+			parcel["kind"] = "base"
+			parcel["tint"] = (material as StandardMaterial3D).albedo_color
+		elif material is ShaderMaterial:
+			parcel["kind"] = "wisp"
+			var shader_material := material as ShaderMaterial
+			parcel["shader_instance_id"] = shader_material.shader.get_instance_id()
+			parcel["parameters"] = _shader_parameters(shader_material)
+		result.append(parcel)
+	return result
+
+
+func _base_parcel_pose(smoke: Node3D) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for parcel: Dictionary in _parcel_pose(smoke):
+		if parcel.kind == "base": result.append(parcel)
+	return result
+
+
+func _material_policy(smoke: Node3D) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for child: Node in smoke.get_children():
+		var part := child as MeshInstance3D
+		if part == null or not part.material_override is StandardMaterial3D: continue
+		var material := part.material_override as StandardMaterial3D
+		result.append({"parcel": str(part.name), "alpha": material.albedo_color.a, "priority": material.render_priority, "no_depth_test": material.no_depth_test, "depth_draw_mode": material.depth_draw_mode, "transparency": material.transparency})
+	return result
+
+
+func _wisp_material_policy(smoke: Node3D) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for child: Node in smoke.get_children():
+		var part := child as MeshInstance3D
+		if part == null or not part.material_override is ShaderMaterial: continue
+		var material := part.material_override as ShaderMaterial
+		var code: String = material.shader.code
+		result.append({"parcel": str(part.name), "visible": part.visible, "material_instance_id": material.get_instance_id(), "shader": material.shader.resource_path, "shader_matches": material.shader == SmokeVisual.WispShader, "alpha": float(material.get_shader_parameter("wisp_alpha")), "priority": material.render_priority, "masks_ready": material.get_shader_parameter("masks_ready") == true, "depth_tested": not code.contains("depth_test_disabled"), "no_depth_writes": code.contains("depth_draw_never"), "unshaded_mix_back_culled": code.contains("render_mode unshaded, blend_mix, depth_draw_never, cull_back;"), "mask_parameters": _shader_parameters(material)})
+	return result
+
+
+func _visible_wisps(smoke: Node3D) -> int:
+	var result: int = 0
+	for child: Node in smoke.get_children():
+		if child is MeshInstance3D and child.material_override is ShaderMaterial and child.visible: result += 1
+	return result
+
+
+func _camera_signature(camera: Camera3D) -> Dictionary:
+	var projection: Projection = camera.get_camera_projection()
+	return {"transform": camera.get_camera_transform(), "projection": [projection.x, projection.y, projection.z, projection.w], "near": camera.near, "far": camera.far, "viewport": camera.get_viewport().get_visible_rect().size}
+
+
+func _native_json(value: Variant) -> Variant:
+	# Metadata is informational; native mask equality above remains typed and
+	# exact. Encode native pixel/world values as numeric arrays, not strings.
+	if value is Vector2: return [value.x, value.y]
+	if value is Vector3: return _vector(value)
+	if value is Vector4: return [value.x, value.y, value.z, value.w]
+	if value is Rect2: return {"position": [value.position.x, value.position.y], "size": [value.size.x, value.size.y]}
+	if value is PackedVector2Array or value is Array:
+		var result: Array = []
+		for item: Variant in value: result.append(_native_json(item))
+		return result
+	if value is Dictionary:
+		var result: Dictionary = {}
+		for key: Variant in value: result[key] = _native_json(value[key])
+		return result
+	return value
+
+
+func _visible_parcels(smoke: Node3D) -> int:
+	var result: int = 0
+	for child: Node in smoke.get_children():
+		if child is MeshInstance3D and child.visible:
+			result += 1
+	return result
+
+
+func _settle(count: int) -> void:
+	for ignored: int in range(count):
+		await physics_frame
+	await process_frame
+
+
+func _expect(ok: bool, label: String) -> void:
+	_checks += 1
+	if not ok:
+		_failures += 1
+		push_error("FAIL: " + label)
