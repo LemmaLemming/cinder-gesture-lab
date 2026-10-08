@@ -19,13 +19,23 @@ Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 
 | Ownership handoff | Complete | Direct user ownership confirmation and character owner acknowledgement; older external preview release tracked separately |
 | Latest decision reconciliation | Complete | Scope existing docs/manifests to concept-derived campaign presentation; retain historical helmet provenance |
 | Durable records and role mailbox | Complete | Three shared records; run `cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2`; no act writes before READY |
-| Reviewed parallel baseline and READY | Checkouts pending | Shared checks and portrait fixture passed; scoped commit and actual linked checkout/root/port/lock verification remain |
+| Reviewed parallel baseline and READY | Complete | Baseline ff34f58; three clean linked act checkouts, canonical roots/common queue/distinct ports verified; READY published in coordination status |
 | Level and executed-world-action interfaces | Verified | campaign-level-1 and world-actions-1; 92 level and 119 action checks, compatible with prior preview API |
 | Campaign/save/scheduler/UI/settings | Pending | Local hooks and action data do not implement those flows |
 | Act level acceptance | None | All 15 main/9 optional remain authored proposals; no campaign scenes accepted |
 | Integrated desktop campaign | Pending | All 24 levels and required shared-system flows must be accessible/tested |
 
-No level commits are accepted yet. `campaign-shared-1` passed queued verification and awaits scoped baseline publication. READY is a setup milestone, not campaign completion.
+No level commits are accepted yet. `campaign-shared-1` passed queued verification and is published at baseline `ff34f58e1c29f44b17958f59107e19c99cc91d86`. READY is a setup milestone, not campaign completion.
+
+## READY checkout assignments
+
+| Role | Checkout | Branch | Ports |
+| --- | --- | --- | --- |
+| Act1 | `/Users/howardchen/.codex/worktrees/campaign-act1/video game idea` | `codex/campaign-act1` | 6015/6016/6017 |
+| Act2 | `/Users/howardchen/.codex/worktrees/campaign-act2/video game idea` | `codex/campaign-act2` | 6025/6026/6027 |
+| Act3 | `/Users/howardchen/.codex/worktrees/campaign-act3/video game idea` | `codex/campaign-act3` | 6035/6036/6037 |
+
+All were verified clean at the exact reviewed baseline. Generated local configuration resolves the canonical root and inherited lock identically, with distinct debugger ports. No act worker has been launched by integration; user launch follows READY. Identity confirmation/registration is still required before act edits to prevent duplicate owners. First import in each new checkout uses the shared queue; imported caches are local and ignored. READY is recorded atomically in the ignored integration status and an immutable recipient-tagged message. Canonical source for live assignments/worker confirmations: `.cinder/agent-chat/cinder-campaign/run.json`.
 
 ## Tests and known limits
 
@@ -43,7 +53,7 @@ Research inspected official Godot 4.7 APIs and tagged 4.7.2 source, a maintainer
 
 ## Open shared requests and implementation order
 
-1. Publish reviewed ownership, references and parallel setup; start workers only after READY.
+1. Receive/register the three user-launched act identities; reviewed parallel setup is READY.
 2. Publish verified campaign-level-1 completion/contact-exit, encounter/boss-phase checkpoint and local snapshot lifecycle.
 3. Implement coherent actor/local snapshots and isolated story/optional/replay saves; define checkpoint healing explicitly.
 4. Build on verified world-actions-1 completed dash/accepted attack capture; add authoritative preparing/active geometry, reachable paths and scheduler.
