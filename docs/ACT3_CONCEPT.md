@@ -27,7 +27,7 @@ Act 1 supplies level count, approximate duration, separately entered side levels
 | Interruption | Freeze simulation and resume with a consumed overlay tap | Same; the sun clock, attack previews and echo replays freeze too |
 | Persistent progress | Access, completion and optional cosmetics | Same; **fixed baseline damage**, no required grind |
 
-The three proposed main acts total **133 minutes**: 43 + 45 + 45. Completing all three acts' three 3–5-minute optional levels would bring the target to **160–178 minutes**, before retries, deliberate replays or database reading. This fits the campaign's rough 2–3-hour first-completion ambition. All optional-level counts remain proposals; the existing Act 1 document supplies examples, not a measured production schedule. [Campaign baseline](GAME_CONCEPT.md), [Act 2 proposal](ACT2_CONCEPT.md).
+The three proposed main acts total **133 minutes**: 43 + 45 + 45. Completing all three acts' three 3–5-minute optional levels would bring the target to **160–178 minutes**, before retries, deliberate replays or database reading. This fits the campaign's rough 2–3-hour first-completion ambition. The authorized desktop scope includes all nine documented optional levels, three per act. Their pacing and encounter tuning remain unplaytested proposals; the existing Act 1 document is a design baseline, not a measured production schedule. [Campaign baseline](GAME_CONCEPT.md), [Act 2 proposal](ACT2_CONCEPT.md).
 
 ## What the experienced player learns
 

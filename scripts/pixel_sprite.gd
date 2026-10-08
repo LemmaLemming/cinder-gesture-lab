@@ -1,7 +1,7 @@
 @tool
 class_name LabSprite
 extends Sprite3D
-## Shared pixel actor. Helmeted player poses are cosmetic simulation snapshots.
+## Shared pixel actor. Current lab helmet poses are cosmetic simulation snapshots.
 
 const WIDTH: int = 24
 const HEIGHT: int = 32
@@ -309,7 +309,8 @@ func _draw_player_image(direction: int, state: String, frame: int) -> Image:
 	_draw_arm(image, Vector2i(16 + lean, torso_y + 4), left_hand, jacket, trim)
 	_draw_arm(image, Vector2i(33 + lean, torso_y + 4), right_hand, jacket, trim)
 
-	# The neck seal connects every compatible jacket to the permanent shell.
+	# This lab presentation uses a neck seal and helmet; campaign headwear is
+	# selected from act art and does not alter shared collision or action clocks.
 	_rounded_rect(image, 17 + lean, torso_y - 4, 15, 6, 2, COAL)
 	_rect(image, 19 + lean, torso_y - 3, 11, 2, SUIT_WHITE)
 	_rect(image, 20 + lean, torso_y - 1, 9, 1, SUIT_SHADE)

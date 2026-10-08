@@ -14,7 +14,7 @@ The layout and behaviours below are implementation defaults for that direction. 
 
 Use a quiet portrait tableau, with the CINDER logo above a recognisable traveller and one landmark from the current act. Leave generous clear space around the menu. Keep future locations and boss reveals out of the opening art.
 
-The traveller always wears the permanent round astronaut-like helmet. Clothing in the title and equipment preview follows the same compatible equipment family used in gameplay, including pieces mixed across acts. The helmet is part of the character, not another equipment slot.
+The traveller's headwear follows the selected concept art for the displayed act. Title, journey markers and equipment previews must agree with the chosen gameplay presentation. Clothing uses the shared equipment family, including pieces mixed across acts. Headwear is presentation only, with no equipment slot or bonuses; the shared collision, feet pivot and action/facing language remain consistent. The existing schematic helmeted reference preserves an earlier appearance and does not prescribe campaign headwear.
 
 Place the main actions in the lower, comfortable reach area:
 
@@ -33,7 +33,7 @@ Each act forms a different region. Start with the current campaign plan's five m
 | Node state | Appearance | Selection and action |
 | --- | --- | --- |
 | Completed main level | Filled medallion, level number and checkmark | Show the level card with **Replay · Choose Equipment**. |
-| Current story level | Strong outline, current marker and the helmeted traveller beside it | Show the saved checkpoint and **Continue Story**. |
+| Current story level | Strong outline, current marker and the traveller in the selected act presentation beside it | Show the saved checkpoint and **Continue Story**. |
 | Locked main level | Muted medallion and lock label | Explain which previous level must be cleared; hide unreached boss art and reveal-sensitive names. |
 | Available optional level, not yet completed | Smaller branch node, Optional label and available state | Show **Play Optional Level**; do not call its first attempt a replay. |
 | Completed optional level | Smaller branch node with a checkmark | Show **Replay · Choose Equipment**. |
@@ -71,7 +71,7 @@ The visual reference starts with three main levels completed, the story at Selen
 
 ## Replay equipment
 
-After selecting a completed node, show the level name, a helmeted outfit preview and exactly four choices: **weapon profile, jacket, pants and shoes**. One weapon profile supplies both the primary attack and blast follow-up. Reuse the shared catalogue, comparison rules and stat resolver; the menu does not create another combat controller or weapon hotbar.
+After selecting a completed node, show the level name, an outfit preview using the selected act presentation and exactly four choices: **weapon profile, jacket, pants and shoes**. One weapon profile supplies both the primary attack and blast follow-up. Reuse the shared catalogue, comparison rules and stat resolver; the menu does not create another combat controller or weapon hotbar.
 
 Default the first replay setup to the story loadout. Remember the last chosen replay setup separately for subsequent replays, and offer **Use Story Equipment** and a neutral standard preset. Choose from equipment already unlocked in the persistent catalogue. Later unlocked equipment can be used in earlier completed levels within the same equipment budgets; replay does not grant access to locked items.
 
@@ -116,7 +116,7 @@ Consume menu taps, journey scrolls, equipment selection and resume gestures befo
 - [Interactive journey reference](ui/cinder-journey.html): a standalone browser preview of title, winding journey, level selection, equipment choice and returning to story gear.
 - [Editable reference source](ui/cinder-journey.fragment.html): the original fragment used to produce that standalone preview.
 
-These files preserve the conversation's layout reference with a schematic helmeted traveller. They contain an illustrative save and a small static equipment sample. Their CSS dimensions, simplified silhouettes and comparison values are reference material, not production sprite scale, engine assets or a second source of equipment balance data. They do not load real saves, render actual combat, prove checkpoint restoration or establish mobile layout quality. The standalone preview may use browser-local storage for its illustrative selections; it must never be connected to the player's real save files.
+These files preserve the conversation's earlier layout reference with a schematic helmeted traveller; its headwear is historical and superseded by the selected act-presentation rule. They contain an illustrative save and a small static equipment sample. Their CSS dimensions, simplified silhouettes and comparison values are reference material, not production sprite scale, engine assets or a second source of equipment balance data. They do not load real saves, render actual combat, prove checkpoint restoration or establish mobile layout quality. The standalone preview may use browser-local storage for its illustrative selections; it must never be connected to the player's real save files.
 
 ## Implementation and verification plan
 
@@ -130,6 +130,6 @@ Before calling the feature implemented, verify:
 4. Replay retries retain the correct replay checkpoint/loadout. Restarting with new gear creates a fresh replay, without duplicated drops or refreshed resources mixed into old encounters.
 5. Backgrounding, terminating during a replay, relaunching and an interrupted/corrupt replay save do not overwrite or invalidate the story save. Resume and menu gestures never trigger combat.
 6. Main/optional completion, catalogue access and optional cosmetic records follow their declared persistence rules; repeated replays never grant permanent stat growth.
-7. Labels, node targets, focus, safe areas, scenery contrast and reduced-motion behaviour work on real portrait phones. Until then, the UI remains untested on-device.
+7. Labels, node targets, focus, safe areas, scenery contrast and reduced-motion behaviour work in the desktop portrait view. Physical portrait-phone validation remains a later release check; the UI remains untested on-device until that work is performed.
 
 Documentation-only acceptance is narrower: verify local links, match the current campaign/equipment rules, and run the ability/equipment validators. Do not describe those checks or the browser reference as gameplay testing.

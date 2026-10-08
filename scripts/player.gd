@@ -5,6 +5,9 @@ signal fired(kind: String)
 signal died
 signal action_resolved(kind: String, hits: int, damage: float)
 signal equipment_changed(item_id: String)
+## Published after an attack executes or an accepted voluntary dash completes.
+## The payload and accessor results are copies, never the retained records.
+signal world_action_executed(record: Dictionary)
 
 const SpriteScript = preload("res://scripts/pixel_sprite.gd")
 const EquipmentScript = preload("res://scripts/equipment.gd")
@@ -16,6 +19,12 @@ const IVORY: Color = Color(0.94, 0.86, 0.82)
 const RED: Color = Color(0.94, 0.045, 0.09)
 const DUST: Color = Color(0.66, 0.70, 0.74)
 const LANDING_VISUAL_DURATION: float = 0.22
+const WORLD_ACTION_SCHEMA_VERSION: int = 1
+const MAX_WORLD_ACTION_RECORDS: int = 64
+const ATTACK_ORIGIN_DISK_RADIUS: float = 0.1
+const ATTACK_MAX_VERTICAL_DISTANCE: float = 1.4
+const ATTACK_LOS_HEIGHT: float = 0.7
+const ATTACK_SCENERY_MASK: int = 1
 
 var hp: float = 100.0
 var max_hp: float = 100.0
@@ -53,6 +62,29 @@ var _visual_phase_total: float = 0.0
 var _landing_left: float = 0.0
 var _pending_weapon: String = ""
 var _accepted_enemy_hits: int = 0
+var _world_action_clock: float = 0.0
+var _world_action_sequence: int = 0
+var _world_action_records: Array[Dictionary] = []
+var _world_dash_record: Dictionary = {}
+
+## Simulation seconds since this player instance entered active physics.
+## Pausing the shared scene tree stops this clock and dash sampling together.
+func get_world_action_clock() -> float:
+	return _world_action_clock
+
+## Ordered by publication sequence, retaining only the newest bounded history.
+## A caller needing every event must consume the signal before history rolls off.
+func get_world_action_records(after_sequence: int = 0) -> Array[Dictionary]:
+	var records: Array[Dictionary] = []
+	for record: Dictionary in _world_action_records:
+		if int(record.sequence) > after_sequence:
+			records.append(record.duplicate(true))
+	return records
+
+## Discard capture of an unfinished dash without changing its movement/timing.
+## Transitions/cancellation must not turn a partial path into a completed dash.
+func cancel_world_action_capture() -> void:
+	_world_dash_record.clear()
 
 func _ready() -> void:
 	collision_layer = 4
@@ -109,6 +141,13 @@ func request_dash(direction: Vector3) -> bool:
 
 func _start_dash(direction: Vector3) -> void:
 	var snapshot: Dictionary = equipment.resolved_stats()
+	_world_dash_record = {
+		"kind": "dash", "started_at_s": _world_action_clock,
+		"origin": "player_direct", "world_origin": global_position, "direction": direction,
+		"blocked": false,
+		"equipment_ids": equipment.snapshot(), "resolved_stats": snapshot.duplicate(true),
+		"path": [{"position": global_position, "time_s": _world_action_clock}]
+	}
 	_dash_speed = snapshot.dash_speed
 	_dash_total = snapshot.dash_duration
 	_dash_origin = global_position
@@ -130,6 +169,7 @@ func _start_dash(direction: Vector3) -> void:
 
 func _physics_process(delta: float) -> void:
 	if dead:
+		cancel_world_action_capture()
 		return
 	_dash_cooldown = maxf(_dash_cooldown - delta, 0.0)
 	_slash_cd = maxf(_slash_cd - delta, 0.0)
@@ -158,6 +198,13 @@ func _physics_process(delta: float) -> void:
 	elif velocity.y < 0.0:
 		velocity.y = 0.0
 	move_and_slide()
+	_world_action_clock += delta
+	if not _world_dash_record.is_empty():
+		(_world_dash_record.path as Array).append({"position": global_position, "time_s": _world_action_clock})
+		for index: int in range(get_slide_collision_count()):
+			var normal: Vector3 = get_slide_collision(index).get_normal()
+			if Vector2(normal.x, normal.z).length_squared() > 0.001:
+				_world_dash_record["blocked"] = true
 	if _dash_origin != Vector3.INF and is_instance_valid(_dash_plume):
 		_dash_plume.sample_emitter()
 	if _dash_left == 0.0 and _dash_origin != Vector3.INF:
@@ -165,6 +212,7 @@ func _physics_process(delta: float) -> void:
 			_dash_plume.finish_tracking()
 		_dash_plume = null
 		last_dash_distance = Vector2(global_position.x - _dash_origin.x, global_position.z - _dash_origin.z).length()
+		_complete_world_dash()
 		_dash_origin = Vector3.INF
 		_landing_left = LANDING_VISUAL_DURATION
 	if _dash_left > 0.0:
@@ -194,6 +242,7 @@ func slash(direction: Vector3 = Vector3.ZERO) -> int:
 		return 0
 	_face_attack(direction)
 	var snapshot: Dictionary = equipment.resolved_stats()
+	var world_record: Dictionary = _world_attack_record("primary", snapshot)
 	_slash_cd = snapshot.primary_cooldown
 	_begin_phase("primary", snapshot.primary_cooldown * (0.13 / 0.30), snapshot.primary_cooldown * (0.28 / 0.30))
 	if fx:
@@ -206,6 +255,8 @@ func slash(direction: Vector3 = Vector3.ZERO) -> int:
 		if _reload >= stats.shell_reload:
 			shells += 1
 			_reload = 0.0
+	world_record["hits"] = hits
+	_publish_world_action(world_record)
 	_record_action("slash", hits, snapshot.primary_damage, snapshot.primary_range)
 	fired.emit("slash")
 	return hits
@@ -217,6 +268,7 @@ func blast(direction: Vector3 = Vector3.ZERO) -> int:
 	shells -= 1
 	_reload = 0.0
 	var snapshot: Dictionary = equipment.resolved_stats()
+	var world_record: Dictionary = _world_attack_record("blast", snapshot)
 	_blast_cd = snapshot.followup_cooldown
 	_begin_phase("blast", snapshot.followup_cooldown * (0.10 / 0.45), snapshot.followup_cooldown * (0.24 / 0.45))
 	if fx:
@@ -225,6 +277,8 @@ func blast(direction: Vector3 = Vector3.ZERO) -> int:
 		fx.attack_footprint(global_position, facing, snapshot.followup_range, snapshot.followup_cone_min_dot, Color(0.76, 0.80, 0.83), _phase_total)
 		fx.sound("blast")
 	var hits: int = _hit_targets(snapshot.followup_range, snapshot.followup_cone_min_dot, snapshot.followup_damage, facing * 10.0 + Vector3.UP * 4.0)
+	world_record["hits"] = hits
+	_publish_world_action(world_record)
 	_record_action("blast", hits, snapshot.followup_damage, snapshot.followup_range)
 	fired.emit("blast")
 	return hits
@@ -243,6 +297,7 @@ func take_damage(amount: float, impulse: Vector3) -> void:
 	fired.emit("hurt")
 	if hp <= 0.0:
 		dead = true
+		cancel_world_action_capture()
 		died.emit()
 
 func _face_attack(direction: Vector3) -> void:
@@ -260,11 +315,11 @@ func _hit_targets(reach: float, cone: float, damage: float, impulse: Vector3) ->
 		var offset: Vector3 = target.global_position - global_position
 		var vertical: float = absf(offset.y)
 		offset.y = 0.0
-		if target.hp <= 0.0 or offset.length() > reach or vertical > 1.4:
+		if target.hp <= 0.0 or offset.length() > reach or vertical > ATTACK_MAX_VERTICAL_DISTANCE:
 			continue
-		if offset.length() > 0.1 and offset.normalized().dot(facing) < cone:
+		if offset.length() > ATTACK_ORIGIN_DISK_RADIUS and offset.normalized().dot(facing) < cone:
 			continue
-		var query := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.7, target.global_position + Vector3.UP * 0.7, 1)
+		var query := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * ATTACK_LOS_HEIGHT, target.global_position + Vector3.UP * ATTACK_LOS_HEIGHT, ATTACK_SCENERY_MASK)
 		if not get_world_3d().direct_space_state.intersect_ray(query).is_empty():
 			continue
 		var result: Dictionary = target.take_damage(damage, impulse)
@@ -320,3 +375,45 @@ func _begin_phase(kind: String, duration: float, visual_duration: float = -1.0) 
 func _record_action(kind: String, hits: int, damage: float, reach: float) -> void:
 	last_action = {"kind": kind, "hits": hits, "damage": damage, "reach": reach}
 	action_resolved.emit(kind, hits, damage)
+
+func _world_attack_record(kind: String, snapshot: Dictionary) -> Dictionary:
+	var primary: bool = kind == "primary"
+	var cooldown: float = snapshot.primary_cooldown if primary else snapshot.followup_cooldown
+	return {
+		"kind": kind, "started_at_s": _world_action_clock,
+		"completed_at_s": _world_action_clock,
+		"damage_timing": "instant_at_execution",
+		"commitment_duration_s": cooldown * (0.13 / 0.30 if primary else 0.10 / 0.45),
+		"cooldown_s": cooldown, "origin": "player_direct", "world_origin": global_position, "direction": facing,
+		"damage": snapshot.primary_damage if primary else snapshot.followup_damage,
+		"geometry": {
+			"shape": "radial_cone",
+			"reach": snapshot.primary_range if primary else snapshot.followup_range,
+			"cone_min_dot": snapshot.primary_cone_min_dot if primary else snapshot.followup_cone_min_dot,
+			"origin_disk_radius": ATTACK_ORIGIN_DISK_RADIUS,
+			"max_vertical_distance": ATTACK_MAX_VERTICAL_DISTANCE,
+			"los": {"policy": "scenery_ray_from_source_to_target", "collision_mask": ATTACK_SCENERY_MASK, "height": ATTACK_LOS_HEIGHT}
+		},
+		"equipment_ids": equipment.snapshot(), "resolved_stats": snapshot.duplicate(true)
+	}
+
+func _complete_world_dash() -> void:
+	if _world_dash_record.is_empty():
+		return
+	var record: Dictionary = _world_dash_record
+	_world_dash_record = {}
+	record["landing"] = global_position
+	record["completed_at_s"] = _world_action_clock
+	record["distance"] = last_dash_distance
+	record["collision_shortened"] = last_dash_distance + 0.001 < float(record.resolved_stats.dash_distance)
+	record["movement_damage"] = false
+	_publish_world_action(record)
+
+func _publish_world_action(record: Dictionary) -> void:
+	_world_action_sequence += 1
+	record["schema_version"] = WORLD_ACTION_SCHEMA_VERSION
+	record["sequence"] = _world_action_sequence
+	_world_action_records.append(record.duplicate(true))
+	if _world_action_records.size() > MAX_WORLD_ACTION_RECORDS:
+		_world_action_records.pop_front()
+	world_action_executed.emit(record.duplicate(true))

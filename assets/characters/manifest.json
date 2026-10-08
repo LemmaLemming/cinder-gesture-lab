@@ -4,9 +4,9 @@
   "family": "shared_astronomer_player",
   "readiness": "implemented_mechanics_lab_pixel_asset_not_final_campaign_art",
   "authoring_source": "scripts/pixel_sprite.gd",
-  "export_command": ".tools/Godot.app/Contents/MacOS/Godot --headless --path . --script scripts/art/build_character_assets.gd",
+  "export_command": "python3 scripts/dev/dev.py engine --headless --path . --script scripts/art/build_character_assets.gd",
   "visual_reference": "assets/references/astronaut-turnaround-v1.png",
-  "provenance": "Original deterministic pixel clusters authored for Cinder from the user-directed permanent astronaut-like helmet and original generated turnaround reference. No stock-image pixels, concept crops, glow backgrounds or irregular generated cells are imported into runtime art.",
+  "provenance": "Original deterministic pixel clusters authored for Cinder from the then user-directed astronaut-like helmet and original generated turnaround reference. This records the earlier helmeted lab pass; the latest campaign direction derives headwear from selected act concept art. No stock-image pixels, concept crops, glow backgrounds or irregular generated cells are imported into runtime art.",
   "native_cell_pixels": [
     48,
     64
@@ -79,7 +79,7 @@
     "centre_height_world_units": 0.73,
     "equipment_changes_collision": false
   },
-  "palette_role": "Ivory protective panels, cool silver seams, dark navy visor and subdued red trim are original game art direction; helmet and equipment keep one compatible expedition outfit.",
+  "palette_role": "Ivory protective panels, cool silver seams, dark navy visor and subdued red trim are original game art direction for this helmeted lab family; helmet and equipment keep one compatible expedition outfit in these sheets.",
   "role": "Player actor and cosmetic equipment appearance; attack footprint is resolved by the shared player controller.",
   "occlusion": "Billboard quad uses normal world depth; contact shadow is a separate floor mesh. No foreground fade is part of this asset.",
   "animation_clock": "Action frames follow controller-owned visual progress from simulation time. Only idle breathing owns a local 1.2-second simulation loop. Cosmetics never resolve or delay damage, movement, cooldowns or queued weapon replacement.",
@@ -156,13 +156,15 @@
     "hurt": 0.16
   },
   "helmet": {
-    "permanent": true,
+    "fixed_in_this_prototype_asset": true,
+    "campaign_requirement": false,
     "extra_equipment_slot": false,
     "stat_bonus": false,
-    "states": "every facing, action and equipment combination",
+    "states": "every facing, action and implemented equipment combination in this lab family",
     "source_native_shell": "rounded stepped silhouette, dark visor/rim, neck seal and rear catches"
   },
   "review": {
+    "scope": "Historical helmeted lab-family review; not validation of act presentation variants.",
     "helmet_compatibility": "passed source sheets and actual portrait inspection; permanent shell stays visible",
     "mixed_outfit_compatibility": "passed all 13 implemented static item appearances plus one mixed kit across every state and facing",
     "facing_readability": "front/side dark visor and rim versus rear pale shell/seam; inspected at 270x585 gameplay raster and540x1170 portrait output",
@@ -196,5 +198,18 @@
     ],
     "physical_device": "not_tested"
   },
-  "identifier_note": "Existing PLAYER-ASTRONOMER-W01..W04 IDs and astronomer-weapon PNG names are retained for stable references; their artwork is now permanently helmeted."
+  "campaign_presentation": {
+    "headwear_source": "Selected concept art for each act, coordinated with its owner.",
+    "readiness": "Act presentation variants are not implemented by this manifest revision.",
+    "extra_equipment_slot": false,
+    "stat_bonus": false,
+    "shared_invariants": [
+      "one actor/controller/stat/equipment system",
+      "collision body",
+      "feet pivot",
+      "readable action/facing language",
+      "simulation-driven action timing"
+    ]
+  },
+  "identifier_note": "Existing PLAYER-ASTRONOMER-W01..W04 IDs and astronomer-weapon PNG names are retained for stable references; their current lab artwork has a fixed helmet. Existing reference prompts, source sheets and review evidence retain their provenance."
 }

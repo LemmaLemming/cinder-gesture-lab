@@ -8,7 +8,7 @@ Setup date: 8 October 2026. This record describes the prepared development envir
 - Existing engine: **Godot 4.7.2 stable official**, `4.7.2.stable.official.ed1daf0bf`, in the integration checkout's ignored `.tools/Godot.app/Contents/MacOS/Godot`. No engine replacement or Node installation was needed.
 - Configured Godot 4.7 editor preferences to use VSCode's application CLI, pass `{project} --goto {file}:{line}:{col}`, reload scripts after external changes and import resources while unfocused. Saved the previous settings in ignored `.cinder/backups/`. Already-open editors may retain previous in-memory preferences; save work and reopen them through the queued command.
 - Added portable `.vscode/` extension recommendations, tasks, GDScript indentation and generated-file exclusions. Generated integration machine settings and `.cinder/cinder.code-workspace`; these absolute paths remain ignored. Act worktrees generate their own local settings with the same canonical root and different ports.
-- Added queued Godot/dev commands, a VSCode engine wrapper, the shared custom-level preview interface and per-act content directories. The Character Lab stays the default entry point.
+- Added queued Godot/dev commands, a VSCode engine wrapper, the shared custom-level preview interface and per-act content directories. The campaign integration update also routes Finder Play/Edit launchers through that queue. The Character Lab stays the default entry point.
 - Linked this workflow from AGENTS.md and README. Equipment-grid review is required at level-playstyle decisions; equipment creation and ability introductions use separate canonical records.
 
 ## Verification
@@ -20,7 +20,7 @@ Setup date: 8 October 2026. This record describes the prepared development envir
 - Rendered and inspected the custom level fixture through the shared shell at **340 × 736 portrait** on the Apple M3 Compatibility renderer. It showed the shared helmeted player/HUD and a plain test floor without lab stands. Lifecycle/reset/resume behavior passed the 31 contract checks. This fixture is a development smoke scene, not a finished campaign level.
 - Invalid custom scene selection returned status 2. VSCode/local workspace JSON parsed, setup-document links resolved and `git diff --check` passed.
 
-This verification does not establish campaign completeness, mobile builds, save behavior, gameplay balance or three simultaneous engine sessions. The resource queue is deliberately configured for one active Godot job. Each act still needs actual portrait encounter testing and shared mobile device validation.
+This verification does not establish campaign completeness, mobile builds, save behavior, gameplay balance or three simultaneous engine sessions. The resource queue is deliberately configured for one active Godot job. Each act still needs actual desktop portrait encounter testing. Shared mobile device validation remains later release work, outside the authorized desktop endpoint.
 
 ## Baseline publication
 
@@ -28,14 +28,14 @@ On 8 October 2026 the user authorized committing the current repository to its e
 
 ## Conditions before dispatching the three act workers
 
-- Finish the user's RAM/disk cleanup and inspect current pressure/free space. The observed machine is an **M3 MacBook Air, 8 CPU cores, 16 GB memory**. At the earlier assessment it had about 17 GB of swap in use; disk availability fluctuated around 12–18 GiB during setup, with `doctor` reporting 12.0 GiB at the final check. These are snapshots, not a capacity benchmark. Keep heavy jobs serialized initially.
+- Inspect current pressure/free space and serialize heavy jobs. The user waived the earlier cleanup interruption; it is no longer a prerequisite to authorized desktop campaign work. The observed machine is an **M3 MacBook Air, 8 CPU cores, 16 GB memory**. At the earlier assessment it had about 17 GB of swap in use; disk availability fluctuated around 12–18 GiB during setup, with `doctor` reporting 12.0 GiB at the final check. These are snapshots, not a capacity benchmark. Keep heavy jobs serialized initially.
 - Start all three act worktrees from the same reviewed published baseline containing the prototype/design/assets and this setup. Any later uncommitted edits must be reviewed and integrated before workers depend on them.
 - Assign integration ownership and act-owned paths. Generate local settings in each worker checkout and verify that all workers resolve the same canonical ledgers and common Git lock.
 - Run the shared checks and inspect one greybox level per act in the actual portrait view before expanding the scope.
 
 ## Conditions before mobile release work
 
-Xcode is installed and selected at `/Applications/Xcode.app/Contents/Developer`. Matching Godot export templates were not present in the inspected template directory. `adb` was not on PATH, and an installed Android SDK/JDK/export configuration was not verified. No iOS/Android packages, signing credentials, store uploads or physical-device performance tests were created by this setup. Arrange a shared mobile export/device slice before committing all three acts to production scope.
+Xcode is installed and selected at `/Applications/Xcode.app/Contents/Developer`. Matching Godot export templates were not present in the inspected template directory. `adb` was not on PATH, and an installed Android SDK/JDK/export configuration was not verified. No iOS/Android packages, signing credentials, store uploads or physical-device performance tests were created by this setup. The authorized scope is to finish and test all fifteen main and nine optional levels on desktop, then stop before mobile export. A shared mobile export/device slice remains a later release task rather than a prerequisite to completing the acts.
 
 ## Maintenance
 

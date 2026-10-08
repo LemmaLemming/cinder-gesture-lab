@@ -329,7 +329,7 @@ raise SystemExit(17 if failure and any(failure in arg for arg in sys.argv[1:]) e
         result = self.invoke("check")
         self.assertEqual(result.returncode, 0, result.stderr)
         starts = [event["args"] for event in self.events() if event["kind"] == "start"]
-        self.assertEqual(len(starts), 6)
+        self.assertEqual(len(starts), 1 + len(dev.SUITES))
         self.assertEqual(starts[0][-2:], ["--headless", "--import"])
         self.assertEqual([arguments[-1] for arguments in starts[1:]], ["res://" + relative for relative in dev.SUITES.values()])
         self.log.unlink()

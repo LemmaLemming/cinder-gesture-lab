@@ -6,7 +6,7 @@ A pixelated 2.5D action game for iOS and Android, displayed vertically in portra
 
 Combat happens at close range. Swords and shotguns operate in a comparable danger zone. Explosions scatter square particles with convincing gravity, collisions, bounce, and weight.
 
-The main character always wears a round astronaut-like helmet in every act, outfit and animation state. All equipment worn by the character, especially replaceable jackets, pants and shoes, must visually suit that helmet and remain compatible when mixed across acts. This is the confirmed protagonist appearance, superseding older hat references. The [equipment appearance rules](PLAYER_EQUIPMENT_GUIDELINES.md#permanent-helmet-and-compatible-equipment-appearance) define how to author it; the Character Lab now implements the shared helmet and compatible clothing in a 48 × 64 pixel family.
+Protagonist headwear follows the selected concept art for each act. The latest user decision removes the permanent astronaut-helmet requirement. Headwear is presentation only, with no equipment slot or bonuses. Retain one shared player/controller/stat/equipment system, collision body, feet pivot and readable action/facing language. All legal worn equipment must suit the selected act presentation, including pieces mixed across acts. The [equipment appearance rules](PLAYER_EQUIPMENT_GUIDELINES.md#act-presentation-and-compatible-equipment-appearance) define the review contract. The existing 48 × 64 helmeted Character Lab family remains implemented prototype artwork with its historical provenance; the act presentations still need production and validation.
 
 The campaign has one carried weapon and no weapon-switching hotbar. Picking up another weapon replaces the current one. The same character mechanics and underlying statistics apply in all three acts. Replaceable jackets, pants, shoes and weapon profiles can modify effective damage, attack speed/reach, dash speed/distance, health, armour and bounded conditional abilities. Equipped clothing and weapon carry between acts; later equipment offers tradeoffs within the same power budget. Baseline damage does not grow through act progression or repeated farming. New bosses, encounter rules, and player mastery provide progress.
 
@@ -33,13 +33,13 @@ The user confirmed this attack mapping, swipe-only movement, the all-gesture con
 
 ## Planned campaign
 
-This is concept documentation, not implemented campaign content. The player should be able to play on a bus or while waiting for friends, replay earlier levels, and see clear progress toward finishing the game.
+The authorized implementation scope is an integrated, playable and tested desktop campaign containing the existing fifteen main levels and nine documented optional levels. Act owners complete and hand off one level at a time. Stop before mobile export and subsequent release work. The designs below remain unimplemented campaign content until their actual integration and validation are recorded. The eventual mobile game should support play on a bus or while waiting for friends, replays of earlier levels and clear progress toward finishing the game.
 
 The [UI design plan](UI_DESIGN_PLAN.md) records the agreed title and Duolingo-inspired journey layout: levels scattered along a winding portrait path, with optional side branches. Completed levels open a customizable replay loadout; finishing or leaving restores the main story equipment and coherent saved checkpoint. The document and interactive reference are plans, not implemented campaign UI or save handling.
 
 - Target level length: around 10 minutes, with shorter levels where appropriate.
 - Target first campaign completion: roughly 2–3 hours.
-- Working structure: three acts of approximately five levels each. Actual level count and clear times need playtesting.
+- Current scope: three acts of five main levels and three documented optional levels each. Clear-time estimates need playtesting; the canonical level IDs and optional parents are recorded in each act's research level data.
 - Proposed interruption handling: immediate pause when the app backgrounds, frequent encounter/boss-phase checkpoints, and a paused resume that the player continues with a tap.
 - Proposed replay rewards: optional challenges and cosmetics. Replays do not grant permanent damage increases.
 
@@ -59,7 +59,7 @@ The selected reference is Georges Méliès's [A Trip to the Moon (1902)](https:/
 
 - Palette: moon-white, dusty silver, and black.
 - Art direction: handmade lunar theatre, using painted-looking rock flats, broad white streaks and black creases, human figures in stars and planetary discs, oversized fungi, and celestial court ornament. Keep the moon-white, dusty-silver and black palette as our game interpretation; surviving handcoloured film prints are separately documented.
-- Character and prop vocabulary: Victorian expedition coats, hats, beards and umbrellas for the film-derived cast; the playable protagonist adapts the expedition clothing around the permanent round helmet. Other references include embroidered ceremonial astronomer robes; a squat, finless bullet capsule; upright masked Selenites with rib bands, projecting headpieces and spears. The court uses curling panels, crescents, radial roundels and drapery.
+- Character and prop vocabulary: Victorian expedition coats, hats, beards and umbrellas for the film-derived cast; the playable protagonist follows the selected expedition concept art while retaining the shared equipment and actor contract. Other references include embroidered ceremonial astronomer robes; a squat, finless bullet capsule; upright masked Selenites with rib bands, projecting headpieces and spears. The court uses curling panels, crescents, radial roundels and drapery.
 - Proposed movement identity: choose a useful dash landing, preserve a retreat, then punish a visibly committed attack. Each level adds a different spatial problem using the same gestures.
 - Proposed earlier boss: the Selenite King in level 4.
 - **Act 1 final boss: the Man in the Moon.** He closes this act; the campaign has a separate final encounter in Act 3.

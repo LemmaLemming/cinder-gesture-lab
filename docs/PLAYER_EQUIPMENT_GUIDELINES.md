@@ -1,6 +1,6 @@
 # Main character and equipment design guidelines
 
-The same protagonist uses the same core mechanics in all three acts and always wears a round astronaut-like helmet. All worn equipment must visually belong with that helmet. Jackets, pants, shoes, one carried weapon and temporary powerups change the effectiveness or conditions of existing actions. They create different tactical choices within a shared power budget. Acts change the enemies, situations and item presentation; act number never increases the character's base statistics.
+The same protagonist uses the same core mechanics in all three acts. Headwear follows each act's selected concept art as presentation, without an equipment slot or bonuses. All worn equipment must visually suit the selected act presentation while retaining one actor/controller/stat/equipment system, collision body, feet pivot and readable action/facing language. Jackets, pants, shoes, one carried weapon and temporary powerups change the effectiveness or conditions of existing actions. They create different tactical choices within a shared power budget. Acts change the enemies, situations and item presentation; act number never increases the character's base statistics.
 
 **Status:** design specification with a bounded [Character Lab implementation](CHARACTER_LAB.md), 2026-10-08. The lab implements nine static clothing presets, four weapon profiles, armour, comparisons and queued weapon replacement. Perk-bearing clothing, conditional abilities, temporary powerups and campaign persistence remain proposed and unimplemented. The baseline table records the neutral playable kit. Every cap, budget, duration and bonus remains provisional tuning, not an established balanced value.
 
@@ -13,7 +13,7 @@ The same protagonist uses the same core mechanics in all three acts and always w
 - If these files disagree, an AI MUST report and resolve the disagreement before implementation. It MUST NOT silently invent a missing mechanic, change confirmed gestures or treat a proposal as implemented gameplay.
 - IDs MUST remain stable when names or art change. A new mechanical variant receives a new ID. Formula strings in JSON are documentation, never code to execute with `eval`.
 - Earlier statements about fixed baseline damage mean unchanged underlying statistics and no farmed permanent stat growth. Equipment modifiers are permitted by the user's newer requirement. This specification resolves earlier unspecified pickup duration and stacking questions.
-- The permanent helmet and compatible clothing are confirmed appearance requirements. Older protagonist hat references are superseded. The Character Lab now implements the shared round helmet and compatible layered clothing; [the character asset record](CHARACTER_ASSETS.md) distinguishes its authored runtime cells from concept references and records remaining review limits.
+- The latest user decision removes the permanent astronaut-helmet requirement. Protagonist headwear follows selected act concept art; compatible carried clothing and weapon layers remain required. The Character Lab implements an earlier helmeted prototype family. [The character asset record](CHARACTER_ASSETS.md) preserves its provenance and review limits without claiming implemented act variants.
 - [Ability usage workflow](ABILITY_USAGE_WORKFLOW.md) governs campaign introductions, reservations and meaningful variants. Check and reserve an unused mechanical identity before placing an ability. Numeric tuning, names and art do not create novelty. Carried equipment and shared core actions remain available without another introduction.
 
 The user confirmed that `3x combo` means three landed primary actions with a modest finisher, and that equipped clothing and weapon carry between acts within the same power budget. Triple total damage is a different, substantially stronger mechanic and is outside this specification.
@@ -29,8 +29,8 @@ The user confirmed that `3x combo` means three landed primary actions with a mod
 | REQ-05 | Keep one carried weapon profile. Picking up another replaces it; there is no weapon-switching hotbar. |
 | REQ-06 | Write new items with explicit triggers, units, scope, caps, durations, costs, stacking and reset rules. |
 | REQ-07 | Carry equipped clothing and weapon across acts. Three-hit combo means three landed primary actions with a modest third-hit reward. |
-| REQ-08 | The protagonist MUST wear a round astronaut-like helmet at all times, across all three acts, equipment combinations, facing directions, animation states and depictions in menus or cutscenes. Clothing and effects MUST NOT replace it with a hat, expose an unhelmeted head or transform it into different headgear. |
-| REQ-09 | All equipment worn by the protagonist MUST visually suit the helmet. Jacket, pants and shoes MUST read as parts of one compatible expedition outfit, including when pieces from different acts are mixed. |
+| REQ-08 | Protagonist headwear MUST follow the selected concept art for each act in gameplay, supported action/facing states and menu or cutscene depictions. It is presentation only, with no equipment slot or bonuses. Retain one shared actor/controller/stat/equipment system, collision body, feet pivot and readable action/facing language. |
+| REQ-09 | All worn equipment MUST visually suit each selected act presentation. Jacket, pants, shoes and the carried weapon MUST remain compatible, including when pieces from different acts are mixed or carried into another act. Artwork MUST NOT alter collision, action timing or equipment identity. |
 | ACT-01 | Required traversal and encounters MUST work with the standard loadout, no powerup and ordinary primary attacks. |
 | ACT-02 | Every allowed equipment combination MUST retain a viable escape and attack opportunity. Test minimum legal speed and reach, slower recovery, and empty follow-up ammunition. |
 | ACT-03 | Increase difficulty through readable combinations, positioning and enemy decisions. Equipment farming MUST NOT be required to advance. |
@@ -162,23 +162,23 @@ Example: `+0.20 armour / -0.05 attack speed` costs `3.0 - 0.75 = 2.25` points. `
 
 Each slot also has a neutral standard item, `CLOTH-J0`, `CLOTH-P0` or `CLOTH-S0`. These examples are numerical templates; final act-specific art and names may differ while meeting the appearance rules below.
 
-### Permanent helmet and compatible equipment appearance
+### Act presentation and compatible equipment appearance
 
-`LOOK-01`: the round helmet is a permanent part of the shared character appearance, outside the three replaceable clothing slots. It is not a helmet pickup, additional equipment slot or independent source of armour/stat bonuses. Its presence does not introduce oxygen, pressure, helmet damage or removal mechanics.
+`LOOK-01`: headwear follows the selected concept art for each act, outside the three replaceable clothing slots. It is presentation only, not a pickup, additional equipment slot or independent source of armour/stat bonuses. A change of headwear does not introduce a new equipment type or ability. Record the selected source and presentation variant with the act owner before producing runtime art.
 
-`LOOK-02`: preserve a recognisable round shell and readable front/back/side cues at actual portrait gameplay scale. Default: use a visor opening, rim and small highlight to communicate facing. Jackets, hoods, shoulder padding and weapon poses MUST preserve the helmet silhouette and facing cues. Dash, attack, hurt and any future defeat poses keep it on.
+`LOOK-02`: preserve readable front/back/side cues and the shared action/facing language at actual portrait gameplay scale. Use the selected headwear or hair silhouette, face values and pose to communicate facing. Jackets, collars, shoulder padding, weapons and effects MUST preserve those cues throughout dash, attack, hurt and any future defeat states. All variants retain the same collision body and feet pivot; cosmetics never change logical action timing or dash travel.
 
-`LOOK-03`: every standard, alternative and perk-bearing clothing asset MUST satisfy `REQ-09`. Default: combine the game's period expedition tailoring with simple protective panels, reinforced seams and restrained metal fittings that suit the astronaut-like helmet. The clothing need not become a modern uniform spacesuit. Use a shared collar/neck connection, material treatment and seam/trim vocabulary so any legal combination reads as one outfit.
+`LOOK-03`: every standard, alternative and perk-bearing clothing asset MUST satisfy `REQ-09`. Derive materials, tailoring and silhouette from the selected act art while preserving shared clothing attachment points, proportions and leg/foot separation. Compatible collar, waist and boot connections must let any legal carried or mixed-act combination read coherently. Protective panels or fittings are optional visual treatments where supported by the chosen art, not a required spacesuit vocabulary.
 
-| Clothing slot | Default visual treatment around the helmet | Preserve when replacing the item |
+| Clothing slot | Visual treatment from selected act art | Preserve when replacing the item |
 | --- | --- | --- |
-| Jacket | A collar or compact neck ring beneath the shell; coat or padded panels with compatible cuffs and fittings | Clear helmet outline, readable facing and the shared neck connection; no hat or hood covering the helmet |
-| Pants | Expedition trousers with reinforced knees, panel seams or restrained utility pockets matching the jacket/helmet fittings | Compatible waist and boot connections; visible leg separation in dash/landing poses |
+| Jacket | Period or act-derived coat/tailoring with compatible collar, cuffs and fittings | Selected headwear/head silhouette, readable facing and shared clothing attachment points |
+| Pants | Act-derived trousers, seams or restrained details matching the carried outfit | Compatible waist and boot connections; visible leg separation in dash/landing poses |
 | Shoes | Compact expedition boots or reinforced shoes with soles, ankle cuffs and trim matching the outfit | Clear feet and floor contact; the shared foot pivot and collision body |
 
-`LOOK-04`: act palettes, wear, fabric, trim and item-specific details MAY vary within this shared appearance. Stat tradeoffs MAY be suggested through padding, panel weight or boot shape, but their numerical effects remain owned by the equipment data. More elaborate art does not grant a larger budget. Worn weapons MUST remain readable alongside the helmet without covering its facing cues.
+`LOOK-04`: act palettes, wear, fabric, trim and item-specific details MAY vary within this shared appearance contract. Stat tradeoffs MAY be suggested through padding, panel weight or boot shape, but their numerical effects remain owned by the equipment data. More elaborate art does not grant a larger budget. Worn weapons MUST remain readable alongside each selected presentation without covering its facing cues.
 
-`LOOK-05`: before accepting an equipment asset, inspect it on the helmeted shared body in every supported facing and action pose, at gameplay scale, with standard items and mixed-act items in the other slots. Record `helmet_compatibility`, `mixed_outfit_compatibility`, `facing_readability` and `state_coverage` in its asset review. Reject an asset that removes/covers the helmet, breaks the shared outfit connections, hides facing or changes the collision body through artwork.
+`LOOK-05`: before accepting an equipment asset, inspect it on every selected act presentation in each supported facing and action pose, at gameplay scale, with standard items and mixed-act items in the other slots. Record `presentation_compatibility`, `mixed_outfit_compatibility`, `facing_readability` and `state_coverage` in its asset review, naming the variants actually checked. Reject an asset that breaks shared outfit connections, hides facing, changes collision/feet pivot or alters logical action timing through artwork. Existing `helmet_compatibility` records describe historical reviews of the helmeted lab family; preserve them without treating them as proof of new act-presentation compatibility.
 
 ## Weapon pickup rules
 
@@ -339,7 +339,7 @@ Run `python3 scripts/design/validate_equipment.py` from the repository root. It 
 | Acceptance ID | Required observable result |
 | --- | --- |
 | TEST-01 | Identical input trace and loadout produce identical action meanings/stats in all three acts. |
-| TEST-02 | At each speed tier, the first tap is immediate, the second nearby tap remains a blast, and rejected actions do not create combos or spend charges. Measure primary cadence on real mobile hardware. |
+| TEST-02 | At each speed tier, the first tap is immediate, the second nearby tap remains a blast, and rejected actions do not create combos or spend charges. Measure desktop primary cadence for the current campaign endpoint; physical mobile cadence remains a later release check. |
 | TEST-03 | Increasing dash speed alone keeps destination distance fixed; increasing distance alone changes duration. Collisions and pause do not duplicate dashes. |
 | TEST-04 | Raw damage 20 against armour 1.25 removes exactly 16 HP. Swapping from 70 HP to max HP 120 retains 70 HP. |
 | TEST-05 | An eight-target primary grants one combo advance and one base reload credit. The third finisher resets; a miss/hurt breaks it. |
@@ -349,7 +349,7 @@ Run `python3 scripts/design/validate_equipment.py` from the repository root. It 
 | TEST-09 | Low-health/armour/speed combinations do not remove threat, and bosses retain meaningful readable patterns. |
 | TEST-10 | Orbit Cut and equipment-modified Crystalman replays keep attack origin, footprint and reachable escape visible in portrait view. |
 
-Implement in bounded stages: shared stat resolver → armour and clothing comparisons → safe weapon replacement → the three assigned perks → two powerup groups → remaining perks only when their decisions test well. The Character Lab implements the first three stages for the static subset, with safe targets and existing arena enemies. The assigned perks, swarm/boss-like campaign tests and powerup stages remain future work; validate before expanding all campaign levels.
+Implement in bounded stages: shared stat resolver → armour and clothing comparisons → safe weapon replacement → campaign-selected perks and temporary powerups. Implement abilities used by authored campaign levels after canonical claims and introduction reservations; unused catalogue proposals are not required scope. The Character Lab implements the first three stages for the static subset, with safe targets and existing arena enemies. Campaign perk/powerup stages and swarm/boss tests remain future work; validate each dependent level before accepting it toward the authorized desktop campaign.
 
 ## Research principles adopted
 

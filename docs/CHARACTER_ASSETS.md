@@ -1,6 +1,8 @@
-# Shared helmeted character assets
+# Shared character assets: helmeted lab prototype
 
-**8 October 2026 — implemented Character Lab artwork.** The shared player now wears a permanent round astronaut helmet with a dark visor, stepped pale rim, neck seal and glint. The 48 × 64 body adds padded panels, chest controls, reinforced gloves, knees and boots. It replaces the earlier hat/beard artwork under the user's direction and [equipment appearance rules](PLAYER_EQUIPMENT_GUIDELINES.md#permanent-helmet-and-compatible-equipment-appearance).
+**8 October 2026 — implemented Character Lab artwork.** This prototype asset family has a fixed round astronaut helmet with a dark visor, stepped pale rim, neck seal and glint. The 48 × 64 body adds padded panels, chest controls, reinforced gloves, knees and boots. This pass replaced the earlier hat/beard artwork under the user's then-current direction.
+
+The latest campaign decision removes the permanent helmet requirement. Protagonist headwear follows each act's selected concept art under the [equipment appearance rules](PLAYER_EQUIPMENT_GUIDELINES.md#act-presentation-and-compatible-equipment-appearance), with no equipment slot or bonuses. One actor/controller/stat/equipment system, collision, feet pivot and readable action/facing language remain shared. The records below describe existing helmeted lab assets; act variants still need production and validation.
 
 The original [generated astronaut turnaround](../assets/references/astronaut-turnaround-v1.png) is a visual model, created with the built-in image generation tool using the supplied astronaut as a silhouette/detail reference. Its [reference manifest](../assets/references/manifest.json) saves the exact final prompt and provenance. The 1536 × 1024 RGBA concept has soft alpha and unaligned pixels; it is not a runtime atlas. Aligned pixel clusters and poses are separately authored in [pixel_sprite.gd](../scripts/pixel_sprite.gd). Neither reference image is cropped into runtime textures.
 
@@ -43,14 +45,14 @@ One carried weapon profile governs blade and compact short-barrel blast. Stable 
 | PLAYER-ASTRONOMER-W03 / WEAPON-03 | [Heavy Edge](../assets/characters/astronomer-weapon-03.png) | Broader compact blade |
 | PLAYER-ASTRONOMER-W04 / WEAPON-04 | [Long Edge](../assets/characters/astronomer-weapon-04.png) | Longer narrow blade |
 
-Runtime `set_loadout_visual(weapon, jacket, pants, shoes)` builds clothing on this shared helmeted body. Jackets vary panel value/trim, pants vary seams/pockets, shoes vary cuffs/sole. Helmet, neck, separated legs, feet and collider remain shared. No helmet slot or new gameplay ability was introduced.
+Runtime `set_loadout_visual(weapon, jacket, pants, shoes)` builds clothing on this shared helmeted body. Jackets vary panel value/trim, pants vary seams/pockets, shoes vary cuffs/sole. In this lab artwork, the helmet, neck, separated legs, feet and collider remain shared. Campaign headwear variants must retain the same collision, feet pivot and readable action/facing language. No helmet slot or new gameplay ability was introduced.
 
 `get_muzzle_pixel_position()` uses the same hand position and barrel angle as the current blast pose. `get_muzzle_world_position(camera)` maps that texel centre through the billboard's camera basis and foot pivot. The [shotgun flare](../scripts/shotgun_flare.gd) therefore releases at the visible barrel tip for all facings and profiles, while its outward fan follows the exact accepted aim. Its initial recoil attachment never changes the immediate hit origin or range.
 
 Regenerate native PNGs with:
 
 ```sh
-.tools/Godot.app/Contents/MacOS/Godot --headless --path . --log-file /private/tmp/cinder-character-export.log --script scripts/art/build_character_assets.gd
+python3 scripts/dev/dev.py engine --headless --path . --log-file /private/tmp/cinder-character-export.log --script scripts/art/build_character_assets.gd
 ```
 
 The [nearest-filtered atlas preview](character-atlas-preview.png) is for review. The exporter covers all 168 supported state/facing/frame combinations per profile. Representative outfit/facing reviews and compatibility fields are recorded in the runtime manifest. See [Character Lab validation](CHARACTER_LAB.md#validation-and-limits) for integrated gameplay and portrait motion checks; these records do not establish mobile performance or campaign readiness.

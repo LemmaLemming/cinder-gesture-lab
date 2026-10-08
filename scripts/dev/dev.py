@@ -32,6 +32,7 @@ SUITES = {
     "character_lab": "tests/character_lab_smoke.gd",
     "visual_effects": "tests/visual_effects_smoke.gd",
     "level_contract": "tests/level_contract_smoke.gd",
+    "world_actions": "tests/world_action_smoke.gd",
 }
 SLOT_PORTS = {
     "integration": (6005, 6006, 6007),

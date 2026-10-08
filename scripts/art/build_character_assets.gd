@@ -1,5 +1,7 @@
 extends SceneTree
-## Regenerate native transparent actor sheets from the canonical pixel authoring code.
+## Regenerate the existing helmeted lab sheets, not future act presentations.
+## Helmet assertions below verify this asset's provenance; they are not a
+## campaign-wide headwear requirement. Shared dimensions/feet remain invariant.
 
 const SpriteScript = preload("res://scripts/pixel_sprite.gd")
 
@@ -83,8 +85,8 @@ func _export_equipment_review(sprite: LabSprite) -> void:
 							if pixel.to_html(false) == LabSprite.VISOR.to_html(false):
 								visor_pixels += 1
 					assert(foot_pixels >= 8, "Every pose retains floor contact at the shared pivot")
-					assert(shell_pixels > 30, "Every pose retains its permanent helmet shell")
-					assert(direction == 1 or visor_pixels > 25, "Front and side visor facing stays visible")
+					assert(shell_pixels > 30, "This lab export retains its authored helmet shell")
+					assert(direction == 1 or visor_pixels > 25, "This lab export retains its authored visor facing")
 					total_poses += 1
 					var shown_frame: int = 2 if state == "primary" or state == "dash" else 0
 					if frame == shown_frame:

@@ -1,8 +1,8 @@
 # Parallel act development with Godot and VSCode
 
-Cinder uses Godot 4.7.2 and GDScript. Three act workers can author independent content while an integration owner maintains the shared game. Start with one greybox level per act, integrate those, then expand the campaign. The current playable content is the Character Lab; this setup supplies development infrastructure, not completed acts, production art, campaign menus or saves.
+Cinder uses Godot 4.7.2 and GDScript. Three act workers can author independent content while an integration owner maintains the shared game. Start with one greybox level per act, integrate those, then complete each act one level at a time toward the authorized desktop campaign of fifteen main and nine optional levels. The current playable content is the Character Lab; this setup supplies development infrastructure, not completed acts, production art, campaign menus or saves.
 
-Read [AGENTS.md](../../AGENTS.md) and the [setup record](SETUP_RECORD.md). The existing campaign, style, reuse and act-specific reading requirements still apply before changing game content. The protagonist retains the shared round helmet and controller. Portrait gesture meanings and warning → lock → active → recovery remain consistent.
+Read [AGENTS.md](../../AGENTS.md) and the [setup record](SETUP_RECORD.md). The existing campaign, style, reuse and act-specific reading requirements still apply before changing game content. Protagonist headwear follows selected act concept art as presentation without a slot or bonuses. Retain one shared player/controller/stat/equipment system, collision, feet pivot and readable action/facing language. Portrait gesture meanings and warning → lock → active → recovery remain consistent.
 
 ## Ownership
 
@@ -82,24 +82,24 @@ Godot jobs started by this tool or the VSCode engine wrapper share an advisory l
 
 An editor holds the slot for its lifetime. Close that queued editor before using the VSCode Godot Tools F5 launch profile; otherwise F5 correctly waits for the slot. While the queued editor is open, Godot's own Play control can run the game under that editor's session. Close a preview when done so another worker can import/test. Use the generated workspace's slot-specific debug profile; the tracked integration profile uses port 6007.
 
-Initially serialize imports, smoke tests, previews and mobile exports. Parallel work should be file authoring, design and lightweight Python checks. Keep one engine session active at a time until a measured trial on this Mac supports a higher limit. Validation permits 300 seconds for import/design commands and 600 seconds per smoke suite; it stops only its own validation subprocess on timeout or a script/resource failure. Interactive sessions and other applications are never automatically terminated. No cache deletion or memory cleanup is part of this setup.
+Initially serialize imports, smoke tests, previews and asset-export scripts. Mobile exports are outside the current desktop campaign scope. Parallel work should be file authoring, design and lightweight Python checks. Keep one engine session active at a time until a measured trial on this Mac supports a higher limit. Validation permits 300 seconds for import/design commands and 600 seconds per smoke suite; it stops only its own validation subprocess on timeout or a script/resource failure. Interactive sessions and other applications are never automatically terminated. No cache deletion or memory cleanup is part of this setup.
 
 ## Acceptance and integration
 
 For each first greybox, the worker supplies its scene path, stable research level ID, playable objective, implementation status, equipment decision record, asset readiness notes, tests and remaining limitations. Use the existing act design instead of inventing extra bosses/mechanics from an illustration.
 
-1. Run the level's relevant checks and `dev.py check` against its checkout.
+1. Run the changed level's targeted suite through `dev.py engine --headless --path . --script <owned-level-test.gd>` and directly affected named shared suites through `dev.py test`. The reviewed full baseline is already verified; a broad rerun requires a newly identified cross-system concern.
 2. Inspect the actual portrait preview. Check spawn/floor contact, exact controls, warnings/source/safe landing, occlusion, ordinary-kit viability, pause/resume and reset cleanup.
 3. Review changed files against ownership. Integrate one act change at a time without replacing canonical live ledgers with branch copies.
 4. Rerun affected checks and portrait inspection after integration. Publish the updated shared baseline before workers depend on new shared APIs.
 
 For equipment/ability changes, also run the numerical equipment validator, canonical ledger validation and relevant gameplay/identity tests. Automated structural matches and budget checks do not establish semantic novelty, balance, readable animation or phone performance.
 
-The iOS/Android stores remain the release priority. A shared mobile vertical slice must be exported and exercised on real devices before expanding all three acts to final scope. Matching export templates, SDKs, signing, background/resume behavior, touch cadence, thermal/frame behavior and installable builds are release work; desktop smoke checks do not complete those gates.
+The current authorized endpoint is an integrated, playable and tested desktop campaign with fifteen main levels and nine documented optional levels. Mobile export and subsequent release work follow that endpoint and do not gate campaign completion. Matching export templates, SDKs, signing, physical-device background/resume behavior, touch cadence, thermal/frame behavior and installable builds remain future iOS/Android release work; desktop smoke checks do not establish those results.
 
 ## Future worker prompt template
 
-> Work in ASSIGNED_CHECKOUT on the assigned act branch. Read AGENTS.md and the parallel workflow, then the campaign/style/reuse/act references required for game content. Own only this act's assigned paths. Build one playable greybox for LEVEL_ID using CinderLevel and the shared shell; preserve the shared helmet, controls, camera and cue meanings. When deciding the level's playstyle, consult the canonical equipment grid, record existing type matches and reserve any creation work before building it. Reserve perk/powerup introductions separately through the canonical ability CLI. Use dev.py for queued Godot jobs. Report portrait validation, tests, asset readiness and unimplemented dependencies. Request shared API/catalogue changes from the integration owner rather than forking shared systems.
+> Work in ASSIGNED_CHECKOUT on the assigned act branch. Read AGENTS.md and the parallel workflow, then the campaign/style/reuse/act references required for game content. Own only this act's assigned paths. Build one playable greybox for LEVEL_ID using CinderLevel and the shared shell; derive protagonist headwear from the selected act concept art while preserving the shared actor/equipment system, collision, feet pivot, action/facing language, controls, camera and cue meanings. Headwear has no slot or bonuses. When deciding the level's playstyle, consult the canonical equipment grid, record existing type matches and reserve any creation work before building it. Reserve perk/powerup introductions separately through the canonical ability CLI. Use dev.py for queued Godot jobs. Report portrait validation, tests, asset readiness and unimplemented dependencies. Request shared API/catalogue changes from the integration owner rather than forking shared systems.
 
 ## Official references
 

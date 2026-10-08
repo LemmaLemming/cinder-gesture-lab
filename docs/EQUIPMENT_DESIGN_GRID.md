@@ -18,7 +18,7 @@ Use the actual research level ID. Save the relevant decision in that level's not
 
 The current catalogue already has neutral, defensive, damage-risk, reach, health-capacity, dash-speed, dash-distance, cadence and armour-conversion clothing, plus balanced, quick, heavy and long weapon profiles. It also contains conditional perks and temporary powerups, many still proposed and unimplemented. Inspect the live records and their status before deciding that a mechanic is missing.
 
-Reuse a matching type under its existing ID. An act-specific name, material, palette or numerical retune is not a different equipment type. Reuse and carried equipped items do not allocate a new creation task or a new introduction. Preserve helmet compatibility and the common power budget.
+Reuse a matching type under its existing ID. An act-specific name, material, palette or numerical retune is not a different equipment type. Reuse and carried equipped items do not allocate a new creation task or a new introduction. Preserve compatibility with the selected act presentation, shared collision/feet pivot/facing and the common power budget. Headwear is presentation only and creates no equipment type, slot or bonus.
 
 If shared implementation of an existing type is needed, claim that item once before building it. If a genuinely new type is needed, describe the changed player decision and submit a full candidate definition to the shared owner. Check the proposal against existing definitions and active claims before reserving its creation. A structural fingerprint is a collision screen, not semantic proof that two proposals are different.
 

@@ -19,7 +19,7 @@
 ## Consistency reminders
 
 - Keep portrait pixelated 2.5D, a close fixed-angle following camera, and one shared player controller/stat definition across all three acts. Act palettes and scenery may change; gesture meanings and cue meanings stay consistent.
-- The protagonist always wears a round astronaut-like helmet. All worn jackets, pants, shoes and weapons must visually suit it, including mixed-act loadouts. Follow `REQ-08`, `REQ-09` and `LOOK-01`–`LOOK-05` in the equipment guidelines; older protagonist hats are superseded. The Character Lab implements the shared helmeted player; its asset manifest records production and device-review limits.
+- Protagonist headwear follows the selected concept art for each act. Headwear is presentation only, with no equipment slot or bonuses. Retain one shared player/controller/stat/equipment system, collision body, feet pivot and readable action/facing language. All legal jackets, pants, shoes and weapons must suit the selected presentation, including mixed-act loadouts. Follow `REQ-08`, `REQ-09` and `LOOK-01`–`LOOK-05` in the equipment guidelines. The existing helmeted Character Lab artwork and its historical provenance remain valid prototype records; act presentations still need production and review.
 - Preserve swipe-only ground movement, exact aiming from the last swipe's final screen-space release point, an immediate first-tap primary attack and one blast on a nearby second tap within the existing timing window. No joystick, jump, auto-aim or weapon hotbar.
 - Preserve the current dash's deliberate start and stop. Treat acceleration, knockback, enemy turning, commitment and recovery as explicit tuning data; cosmetic animation must not silently change travel distance, hit timing or momentum.
 - Use the shared warning → lock → active → recovery grammar. An attack source, its footprint and a reachable safe landing must read together. Pixel style does not justify delaying input or shortening reaction time through faster animation.
@@ -29,6 +29,7 @@
 - Keep equipment within the shared specification. Required encounters work without pickups or blast ammo; permitted loadouts retain an escape and attack opportunity. No permanent stat growth through act progression or farming.
 - When introducing an asset, record its source, readiness, native scale, pivot, collision/occlusion role, animation states and reuse family. Existing boards need production work; do not claim they are ready to drop into Godot.
 - Validate the changed behaviour in the actual portrait view. Report what is still proposed, unimplemented or untested. For documentation-only changes, verify links and consistency without implying gameplay was tested.
+- The authorized campaign endpoint is an integrated, playable and tested desktop campaign with fifteen main levels and nine existing optional levels, completed one level at a time by the act owners. Stop before mobile export and release work; device/export prerequisites do not gate this desktop scope.
 
 ## Local Node.js policy
 
