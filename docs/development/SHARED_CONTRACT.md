@@ -1,6 +1,12 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-31** (8 October 2026). Shared31 adds pure framing views for an explicit actual candidate Player and camera, including fresh Title with no installed Player. Existing live API bodies remain unchanged. Shared30 independently registered accepted A2-L3 and guarded SmokeBank display teardown. Shared29 paused restore construction and Shared28 finite authored Echo/Cargo display APIs remain available. Existing ordinary/captured/spore/smoke schemas stay strict. Repeating Echo cycles, late terminal saves and measured runtime optimizations remain separate integration-owned dependencies. Integration is the three act workers' help contact. Exact commits and original evidence are recorded in [progress](SHARED_PROGRESS.md).
+Revision: **campaign-shared-32** (8 October 2026). Shared32 reduces bounded equality/restore/reference serialization cost without changing wire APIs or native custody checks; see [runtime comparison cost](RUNTIME_COMPARISON_COST.md). Shared31 actual candidate camera, Shared30 accepted A2-L3, Shared29 paused construction and Shared28 finite Echo remain available. Repeating Echo/late terminal saves, saved-player prevalidation framing and substantial measured runtime cost remain integration-owned dependencies. Integration is the three act workers' help contact. Exact commits and original evidence are recorded in [progress](SHARED_PROGRESS.md).
+
+## Exact runtime comparisons
+
+Shared32 preserves existing AuthoredSequence, ReplayProgram, projected Cue and scheduler-spore-source APIs and accepted wire values. The AuthoredSequence comparator retains both bounded pure validation walks and exact float bits/types; authored Program restore validates once before committing. Cue compares against a private independent unexposed bind-time reference under its unchanged 8 MiB transport. Spore retains only immutable expected reference bytes; every actual native source/body/world/floor reading and callback boundary remains fresh. None of these references authorizes damage, routes, visibility or restoration by itself.
+
+Targeted comparison270/0, constructor76/0, Program95/0, Cue325/0, playback312/0, spore208/0 and new native reference30/0 closed cleanly. Instrumented first-cycle profiles retain their original scopes and failed first baseline. The combined one-Box profile still takes9.138079 wall seconds for1.2 simulated seconds; it is not performance acceptance. [Original evidence](evidence/shared32-runtime-comparison/index.json) and [measurement limits](RUNTIME_COMPARISON_COST.md). Repeating/late-dead Echo and pure saved later-room framing remain separate dependencies.
 
 ## Native Scheduler-driven spore sources
 
