@@ -1,0 +1,5 @@
+# Replay callback repair evidence
+
+All seven original/queued target logs and two original source snapshots are byte-preserved. The [index](index.json) records exact hashes and separate execution scopes. Final coverage is **475 checks, zero failures**, exit0 on Godot4.7.2. Historical168/0, original237/9, intermediate240/0, sandbox missing-save Script Error, resumed-tick395/4 and native424/0 retain their actual meaning. No failed or intermediate run is relabeled as final.
+
+The repair retains accepted instantaneous contact and original dispatch time across a held callback pause, drains each stage once, restores the last actually presented native pose, and rejects lost live cue authority. Admission grace is unchanged; callback drain remains bounded separately from original dispatch. Fully drained schema1 stays strict; only real interrupted delivery uses schema2. Updated readers and a coherent trusted parent aggregate are required. No actor, scheduler, timing, collision, equipment, authored placement or current level acceptance change follows. See [API and limitations](../../REPLAY_PLAYBACK.md).

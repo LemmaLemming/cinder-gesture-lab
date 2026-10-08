@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "level_id": "A3-L1",
+  "authored_commit": "fb9da07faa58e1b8e9517c8241007b4eaf2cc221",
+  "authored_runtime": "5f0ad8345dd60deabfe4da21c501c32accfb931b",
+  "authored_baseline": "811f69fe542f85bc58a26fded567b89e584b51e8",
+  "authored_api_revision": "campaign-shared-21",
+  "integrated_content_commit": "a35cd4c503b550982287a8e89c2296213eddeb47",
+  "headless_execution_checkout_head": "a35cd4c503b550982287a8e89c2296213eddeb47",
+  "graphical_queue_checkout_head": "a35cd4c503b550982287a8e89c2296213eddeb47",
+  "graphical_note": "Queued before replay publication6e632; all actually affected runtime/test/registry bytes remained frozen through execution. Shared replay leaf unused by this scene.",
+  "local_snapshot_version": 5,
+  "source_snapshot_version": 3,
+  "prepared_at": "2026-10-08T16:03:54.539822+00:00",
+  "runs": [
+    {
+      "command": "python3 scripts/dev/dev.py import",
+      "exit_code": 0,
+      "scope": "New Act3 runtime resources/classes through shared queue; no smoke suite."
+    },
+    {
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --script res://tests/act3_registration_smoke.gd -- --expected-commit=fb9da07faa58e1b8e9517c8241007b4eaf2cc221",
+      "checks": 253,
+      "failures": 0,
+      "exit_code": 0
+    },
+    {
+      "command": "python3 scripts/dev/dev.py engine --path . --script res://tests/act3_registration_smoke.gd -- --expected-commit=fb9da07faa58e1b8e9517c8241007b4eaf2cc221 --portrait",
+      "checks": 261,
+      "failures": 0,
+      "exit_code": 0,
+      "portraits": 4,
+      "dimensions": [
+        540,
+        1170
+      ]
+    }
+  ],
+  "working_source_sha256": {
+    "tests/act3_registration_smoke.gd": "91a47a605f50a5c104a9a7248c170c0baf3aa42003b626333adb7557d9be815f",
+    "scripts/campaign/shell.gd": "8b8cade988169319181187dff81c1ea80832bcf182e6de28115dd658df37c4bc",
+    "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+    "scripts/combat/threat_scheduler.gd": "5e4cf02158fee0d723d0ab564bd12961234bd38576c13b21643f979ed070310d",
+    "data/campaign/registry.json": "e0a86d42102ad80177441c4b5b8044c4df2e29896de0fb43be29b379c1466516",
+    "scripts/acts/act3/twin_suns_level.gd": "17ae090ea809c3170aef76e8393b0b2edde9f85b719dff2b7e55edfca9499247"
+  },
+  "scope": "Actual production Registry/Title/Journey/format2 save, consumed GUI Resume, one real LEFT dash, fresh exact Continue/Retry, real first-source lethal contact from isolated lowHP start, fatal fresh Continue\u2192dead Resume notice/guard\u2192earlier living unfinished-dash Retry, exact actor/five-source/scheduler/input/camera state and cleanup.",
+  "test_only_seed": "Ten preceding main IDs and initial37HP or0.1HP/zero ammo seeded from actual paused authored scene via validated public model. No predecessor gameplay, healing, combat forcing or route-clear claim.",
+  "limitations": [
+    "No broad/unchanged level suite repeated.",
+    "Four actual graphical portraits independently viewed by root; no attack or full-route image in this registration suite. Earlier owner19logs32portraits retain exact source/baseline scopes.",
+    "Focus state/OS lock not measured. Normal focus guards retained. No native human gestures, human balance, device/mobile or performance acceptance.",
+    "Actual A2-L5 prerequisite remains; preceding eight unimplemented main levels prevent natural end-to-end access until completed."
+  ],
+  "files": [
+    {
+      "path": "act3-registration-import.log",
+      "sha256": "a99687491119faa6611c8be06c6d81ee40bbbac02983c326cca1370d5d2a9fa9",
+      "bytes": 7337,
+      "original_absolute_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/act3-registration-import.log",
+      "kind": "queued_native_log",
+      "byte_copy": true
+    },
+    {
+      "path": "act3-registration-first.log",
+      "sha256": "dbf2097e766d4cdf854de6bf6ccd98dc45820111cf9d7e1af86a7ff845bdf829",
+      "bytes": 18287,
+      "original_absolute_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/act3-registration-first.log",
+      "kind": "queued_native_log",
+      "byte_copy": true
+    },
+    {
+      "path": "act3-registration-portrait.log",
+      "sha256": "220a54cb1527b092bbc72908228218d7c6169e5c1baa59536049d275062936b7",
+      "bytes": 19408,
+      "original_absolute_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/act3-registration-portrait.log",
+      "kind": "queued_native_log",
+      "byte_copy": true
+    },
+    {
+      "path": "portraits/title-locked.png",
+      "sha256": "842d4821326f0fa8fa8a461d8efe25e639a36f690f97e9a141342932a3d2b7ae",
+      "bytes": 31793,
+      "width": 540,
+      "height": 1170,
+      "original_absolute_path": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-act3-registration-captures-48067-1499527/title-locked.png",
+      "kind": "actual_graphical_portrait",
+      "byte_copy": true,
+      "root_review": "Viewed original full image; readable native player/feet/ground/HUD or actual Title/Journey state. Arrival only, no attack/full-route capture claim."
+    },
+    {
+      "path": "portraits/journey-locked.png",
+      "sha256": "0ef5f7d79e1d998ba2f30338718aee0d4ce8bb10af2148575d8352545380c479",
+      "bytes": 56398,
+      "width": 540,
+      "height": 1170,
+      "original_absolute_path": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-act3-registration-captures-48067-1499527/journey-locked.png",
+      "kind": "actual_graphical_portrait",
+      "byte_copy": true,
+      "root_review": "Viewed original full image; readable native player/feet/ground/HUD or actual Title/Journey state. Arrival only, no attack/full-route capture claim."
+    },
+    {
+      "path": "portraits/journey-seeded.png",
+      "sha256": "34fd96d76b8644e12a8b4f5026949f0ad778f417f0b1e750b7dcf7cd656b10ef",
+      "bytes": 60954,
+      "width": 540,
+      "height": 1170,
+      "original_absolute_path": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-act3-registration-captures-48067-1499527/journey-seeded.png",
+      "kind": "actual_graphical_portrait",
+      "byte_copy": true,
+      "root_review": "Viewed original full image; readable native player/feet/ground/HUD or actual Title/Journey state. Arrival only, no attack/full-route capture claim."
+    },
+    {
+      "path": "portraits/arrival.png",
+      "sha256": "eaa6704a5426a04c4bb26a4799d7f0790fbb4b54dcf69e9d92d15ee48b3876f8",
+      "bytes": 80314,
+      "width": 540,
+      "height": 1170,
+      "original_absolute_path": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-act3-registration-captures-48067-1499527/arrival.png",
+      "kind": "actual_graphical_portrait",
+      "byte_copy": true,
+      "root_review": "Viewed original full image; readable native player/feet/ground/HUD or actual Title/Journey state. Arrival only, no attack/full-route capture claim."
+    }
+  ]
+}

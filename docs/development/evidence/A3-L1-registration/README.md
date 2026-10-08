@@ -1,0 +1,7 @@
+# Twin Suns production registration evidence
+
+Exact authored handoff `fb9da07faa58e1b8e9517c8241007b4eaf2cc221`, shared21; complete146-file content integrated as `a35cd4c503b550982287a8e89c2296213eddeb47`. [Index](index.json) preserves byte hashes, source identities, commands and limits. Import closed cleanly; production registration passed **253/0 headless and261/0 graphical**, exit0, no script/parse/runtime errors or warnings.
+
+The actual Registry and Title/Journey retain the real A2-L5 gate. Isolated TEST ONLY ten-predecessor/resource seeds exercise public format2 APIs without completing previous levels. Actual movement, first spatial checkpoint and lethal Stalker contact lead to exact fresh Continue, guarded dead Resume with Retry notice, and the earlier living unfinished-dash checkpoint. Whole actor/five-source/scheduler/input/camera state, resources/gear/history and cleanup remain coherent. This registration target does not clear the route. Owner complete-route/gear/profile/both-approach evidence remains separately attributed in the [original pack](../../../../assets/acts/act3/evidence/A3-L1/index.json).
+
+Root viewed all four original540×1170 images: Title, locked Journey, seeded current Journey, arrival. Required HUD and actual traveller feet/ground remain readable; no full combat-view claim follows. Native human input, human pacing/balance, focus/OS lock, performance and mobile are unmeasured. No unrelated suite repeated.

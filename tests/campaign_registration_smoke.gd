@@ -29,7 +29,7 @@ func _run() -> void:
 	for id: String in registry.ids():
 		if registry.is_playable(id):
 			available.append(id)
-	_expect(available == ["A1-L1", "A2-L1"], "only independently accepted scenes are playable; all remaining scenes stay unavailable")
+	_expect(available == ["A1-L1", "A2-L1", "A3-L1"], "only independently accepted scenes are playable; all remaining scenes stay unavailable")
 	game = _new_shell()
 	await _settle()
 	_expect(paused and game.menu.page_name() == "title" and game.active_level == null, "actual campaign begins at paused Title without inventing a live actor")
