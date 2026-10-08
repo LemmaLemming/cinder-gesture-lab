@@ -10,14 +10,18 @@ extends "res://tests/acts/act2/a2_l1_ray_exchange_smoke.gd"
 ## SceneTree pause and initial manual target identity/root/recovery below are
 ## explicit TEST ONLY fixture controls, not a CampaignShell/level proof.
 ## No private scheduler, source clocks, hit latches, hero HP or dead assignment.
+## Guard-only extension before-fix source witnesses:
+## actor SHA256 dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7
+## driver SHA256 1d2883d1cf42812f051422b9be12e5ecb8550649664e07bf1be3b7abc7e96188
 
 const MANUAL_ID: String = "TEST-ONLY:callback-custody-manual"
 
 func _run() -> void:
-	print("Scout callback custody: isolated TEST ONLY source/cue-plus-pause, actual recovery/query cleanup callbacks, manual true-gate defensive context; prior actor1ffb51c/driver5a9abf5 source witness; no full route/native claim")
+	print("Scout callback custody: isolated TEST ONLY source/cue-plus-pause, actual recovery/query cleanup and post-query portrait guard callbacks, manual true-gate defensive context; prior actor1ffb51c/driver5a9abf5 source witness; no full route/native claim")
 	for intervention: String in ["hide_source", "clear_cue", "pure_pause"]:
 		await _custody_outgoing_pause(intervention)
-	for intervention: String in ["hide_source", "clear_cue", "kill_hero"]:
+	await _custody_outgoing_guard_query()
+	for intervention: String in ["hide_source", "clear_cue", "kill_hero", "guard_rejected"]:
 		await _custody_recovery_query(intervention)
 	for intervention: String in ["pure_true", "pause", "disarm", "kill_hero"]:
 		await _custody_manual_gate(intervention)
@@ -74,6 +78,86 @@ func _custody_outgoing_pause(intervention: String) -> void:
 		var cooldown: Dictionary = _custody_cooldown(saved.scheduler, SCOUT_ID)
 		_expect(not cooldown.is_empty() and cooldown.ready_s == record.exchange.cooldown_until_s, intervention + " preserves the exact consumed source cooldown without refresh")
 		await _custody_fresh_transport(arena, saved, expected_cancel, intervention)
+	await _dispose(arena)
+
+func _custody_outgoing_guard_query() -> void:
+	var arena: Dictionary = _create()
+	await _ticks(6)
+	var driver: Node3D = arena.driver
+	var scheduler: CinderThreatScheduler = arena.scheduler
+	var hero: CinderPlayer = arena.hero
+	var actor: Node3D = arena.actor
+	var allowed: Array[bool] = [true]
+	var guard_calls: Array[Dictionary] = []
+	var guard: Callable = func(_id: String, value: Dictionary) -> bool:
+		guard_calls.append({"allowed": allowed[0], "phase": value.phase, "clock_s": scheduler.get_clock()})
+		return allowed[0]
+	_expect(bool(driver.call("set_presentation_guard", guard)), "outgoing guard fixture installs the actual required public presentation guard before admission")
+	var observed: Array[Dictionary] = []
+	var admissions: Array[Dictionary] = []
+	var callbacks: Array[Dictionary] = []
+	var hits: Array[Dictionary] = []
+	var queued: Array[bool] = [false]
+	driver.connect("hit_resolved", func(_id: String, value: Dictionary) -> void: hits.append(value.duplicate(true)))
+	scheduler.reservation_invalidated.connect(func(id: String, reason: String) -> void:
+		if admissions.is_empty() or id != String(admissions[0].get("reservation_id", "")): return
+		callbacks.append({"id": id, "reason": reason, "clock_s": scheduler.get_clock(), "phase": driver.call("state", SCOUT_ID).phase, "guard_before": allowed[0], "source_visible": actor.is_visible_in_tree(), "cue_phase": driver.call("get_cue", SCOUT_ID).state().phase})
+		allowed[0] = false
+	)
+	driver.connect("state_changed", func(id: String, value: Dictionary) -> void:
+		if id != SCOUT_ID or value.phase != "active" or not observed.is_empty(): return
+		observed.append(value.duplicate(true))
+		# The scheduler's earlier transaction has ended. Admit a genuine second
+		# owner here, then leave its cleanup to the outgoing readiness query.
+		var secondary := Node3D.new()
+		secondary.name = "IndependentActiveGuardSource"
+		secondary.position = Vector3(1.0, 0.0, 0.0)
+		(arena.root as Node3D).add_child(secondary)
+		var shape: Dictionary = Geometry.lane(secondary.global_position, secondary.global_position + Vector3.BACK * 3.8, 0.31)
+		var threat: Dictionary = {"role": value.resolved_role.duplicate(true), "geometry": shape, "source_stationary": true, "opening_stationary": true, "opening_position": secondary.global_position, "cooldown_remaining_s": 0.0}
+		var response: Dictionary = hero.get_threat_response_state()
+		for key: String in arena.context:
+			if key != "encounter_id": response[key] = arena.context[key]
+		var answer: Dictionary = scheduler.request_tracking(secondary, threat, response)
+		admissions.append(answer.duplicate(true))
+		if answer.get("accepted", false):
+			queued[0] = true
+			secondary.queue_free()
+	)
+	var hp_before: float = hero.hp
+	var admitted: Dictionary = driver.call("activate", SCOUT_ID)
+	_expect(admitted.get("accepted", false), "outgoing guard fixture starts an actual shared tracking warning")
+	if not admitted.get("accepted", false):
+		await _dispose(arena)
+		return
+	_expect(await _until_phase(arena, "lock"), "outgoing guard fixture reaches actual committed full lock before publication")
+	# A repaired same-tick cancellation becomes clear; observe the actual active
+	# callback rather than demanding that its phase remain active afterward.
+	for frame: int in range(180):
+		if not observed.is_empty(): break
+		await _ticks(1)
+	_expect(observed.size() == 1 and observed[0].phase == "active" and observed[0].armed, "outgoing guard case witnesses the first actual armed active publication")
+	if observed.is_empty():
+		await _dispose(arena)
+		return
+	paused = true
+	_expect(admissions.size() == 1 and admissions[0].get("accepted", false) and not admissions[0].get("armed", true) and queued[0], "outgoing active observer really admits and queues an independent public tracking owner")
+	_expect(callbacks.size() == 1 and callbacks[0].id == admissions[0].get("reservation_id") and callbacks[0].reason == "source_removed" and callbacks[0].phase == "active" and callbacks[0].guard_before and callbacks[0].source_visible and callbacks[0].cue_phase == "active" and not allowed[0], "outgoing reservation query really flips only the required guard while actual source and active cue remain intact")
+	var guard_after_query: bool = false
+	for call: Dictionary in guard_calls:
+		if not call.allowed and call.phase == "active": guard_after_query = true
+	_expect(guard_after_query, "outgoing readiness re-evaluates the required portrait guard AFTER its callback-producing reservation query")
+	var current: Dictionary = driver.call("state", SCOUT_ID)
+	_expect(current.status == "cancelled" and current.phase == "clear" and not current.armed and not current.last_cancel_reason.is_empty() and not current.hit_consumed and current.presentation_witness.is_empty(), "outgoing post-query guard rejection visibly cancels before any retained path or damage authority")
+	_expect(hero.hp == hp_before and hits.is_empty(), "outgoing post-query guard rejection applies no same-tick HP damage or hit event")
+	_expect(scheduler.reservations().is_empty() and driver.call("get_cue", SCOUT_ID).state().phase == "clear" and driver.call("get_opening_cue", SCOUT_ID).state().state == "clear", "outgoing guard rejection releases actual danger lease and required threat/opening cues")
+	await process_frame
+	var saved: Dictionary = _custody_capture(arena)
+	if not saved.is_empty():
+		var record: Dictionary = saved.driver.records[SCOUT_ID]
+		_expect(record.deferred_paths.is_empty() and not record.hit_consumed and record.cycle == observed[0].cycle and record.exchange.id == observed[0].exchange.id, "outgoing guard cancellation transport has no deferred damage and retains the original cycle/reservation history")
+		var cooldown: Dictionary = _custody_cooldown(saved.scheduler, SCOUT_ID)
+		_expect(not cooldown.is_empty() and cooldown.ready_s == record.exchange.cooldown_until_s and record.exchange.cooldown_until_s == observed[0].exchange.cooldown_until_s, "outgoing guard cancellation preserves the original source cooldown without refresh")
 	await _dispose(arena)
 
 func _custody_capture(arena: Dictionary) -> Dictionary:
@@ -147,6 +231,13 @@ func _custody_recovery_query(intervention: String) -> void:
 	var scheduler: CinderThreatScheduler = arena.scheduler
 	var hero: CinderPlayer = arena.hero
 	var actor: Node3D = arena.actor
+	var allowed: Array[bool] = [true]
+	var guard_calls: Array[bool] = []
+	if intervention == "guard_rejected":
+		var guard: Callable = func(_id: String, _value: Dictionary) -> bool:
+			guard_calls.append(allowed[0])
+			return allowed[0]
+		_expect(bool(driver.call("set_presentation_guard", guard)), "incoming query fixture installs the actual required public presentation guard")
 	var admitted: Dictionary = driver.call("activate", SCOUT_ID)
 	_expect(admitted.get("accepted", false), intervention + " incoming fixture admits real tracking")
 	if not admitted.get("accepted", false):
@@ -180,6 +271,7 @@ func _custody_recovery_query(intervention: String) -> void:
 		callbacks.append({"id": id, "reason": reason, "clock_s": scheduler.get_clock()})
 		if intervention == "hide_source": actor.hide()
 		elif intervention == "clear_cue": driver.call("get_cue", SCOUT_ID).clear()
+		elif intervention == "guard_rejected": allowed[0] = false
 		else: hero.take_damage(hero.hp * float(hero.stats.armour) + 1.0, Vector3.ZERO)
 	)
 	var hp: float = float(actor.get("hp"))
@@ -192,6 +284,8 @@ func _custody_recovery_query(intervention: String) -> void:
 	_expect(not damage.accepted and damage.hp_damage == 0.0 and float(actor.get("hp")) == hp, intervention + " incoming target damage rechecks required source/cue/live Hero AFTER callback-producing reservation query")
 	var own_after: Dictionary = scheduler.reservation_state(own_id)
 	_expect(not own_before.is_empty() and not own_after.is_empty() and own_before == own_after and driver.call("state", SCOUT_ID).cycle == original.cycle, intervention + " query regression changes no first-source lease/deadlines/cycle to manufacture rejection")
+	if intervention == "guard_rejected":
+		_expect(not allowed[0] and guard_calls.has(false) and actor.is_visible_in_tree() and driver.call("get_cue", SCOUT_ID).state().phase == "recovery" and not hero.dead, "incoming damage gate re-evaluates the required guard AFTER cleanup while native source/cue/Hero and original lease remain valid")
 	if intervention == "kill_hero": _expect(hero.dead and hero.hp == 0.0, "query observer uses actual public Player damage/death, not an assigned dead flag")
 	await _dispose(arena)
 

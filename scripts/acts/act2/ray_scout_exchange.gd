@@ -314,17 +314,20 @@ func _physics_process(_delta: float) -> void:
 
 
 func damage_window_open(actor_id: String) -> bool:
-	# Optional actor gate: actual deadline checks close a stale cosmetic phase
-	# even before this later-priority consumer has redrawn the next frame.
+	# Actual deadlines close stale cosmetics before this later-priority redraw.
 	if not _live_bindings() or get_tree().paused or _hero.dead or not _records.has(actor_id):
 		return false
 	var record: Dictionary = _records[actor_id]
-	if record.status != "running" or record.phase != "recovery" or record.exchange.is_empty() or not record.exchange.adapter.locked or not _required_presentation_valid(actor_id) or not _presentation_allowed(actor_id) or get_tree().paused or not _required_presentation_valid(actor_id):
+	if record.status != "running" or record.phase != "recovery" or record.exchange.is_empty() or not record.exchange.adapter.locked or not _required_presentation_valid(actor_id):
 		return false
 	var live: Dictionary = _scheduler.reservation_state(String(record.exchange.id))
-	# Querying another source can synchronously invalidate its owner and run
-	# observers. Recheck this source/Hero after the query before incoming HP.
-	return not get_tree().paused and record.status == "running" and _required_presentation_valid(actor_id) and not live.is_empty() and int(live.source_instance_id) == (_actors[actor_id] as Node3D).get_instance_id() and live.armed and live.state == "recovery" and _scheduler.get_clock() > float(live.active_until_s) and _scheduler.get_clock() <= float(live.recovery_until_s) and _exchange_data(live) == record.exchange
+	# Cleanup observers may invalidate native custody or the required portrait
+	# guard. Evaluate that guard after the query, once, then recheck native state.
+	if get_tree().paused or record.status != "running" or not _required_presentation_valid(actor_id) or live.is_empty():
+		return false
+	if not _presentation_allowed(actor_id):
+		return false
+	return not get_tree().paused and record.status == "running" and _required_presentation_valid(actor_id) and int(live.source_instance_id) == (_actors[actor_id] as Node3D).get_instance_id() and live.armed and live.state == "recovery" and _scheduler.get_clock() > float(live.active_until_s) and _scheduler.get_clock() <= float(live.recovery_until_s) and _exchange_data(live) == record.exchange
 
 
 func cancel(actor_id: String, reason: String = "scout_cancelled") -> bool:
@@ -584,11 +587,15 @@ func _required_presentation_valid(id: String) -> bool:
 
 
 func _ready_to_resolve(id: String) -> bool:
-	if get_tree().paused or not _required_presentation_valid(id) or not _presentation_allowed(id) or get_tree().paused or not _required_presentation_valid(id):
+	if get_tree().paused or not _required_presentation_valid(id):
 		return false
 	var record: Dictionary = _records[id]
 	var live: Dictionary = _scheduler.reservation_state(String(record.exchange.id))
-	return not get_tree().paused and record.status == "running" and _required_presentation_valid(id) and not live.is_empty() and int(live.source_instance_id) == (_actors[id] as Node3D).get_instance_id() and _exchange_data(live) == record.exchange
+	if get_tree().paused or record.status != "running" or not _required_presentation_valid(id) or live.is_empty():
+		return false
+	if not _presentation_allowed(id):
+		return false
+	return not get_tree().paused and record.status == "running" and _required_presentation_valid(id) and int(live.source_instance_id) == (_actors[id] as Node3D).get_instance_id() and _exchange_data(live) == record.exchange
 
 
 func _aim(id: String, fallback: Vector3) -> Vector3:
