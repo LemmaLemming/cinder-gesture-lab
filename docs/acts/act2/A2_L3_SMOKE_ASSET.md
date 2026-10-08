@@ -1,4 +1,4 @@
-# A2-L3 Black Smoke bank visual — masked wisp revision4
+# A2-L3 Black Smoke bank visual — masked wisp revision5
 
 Original low pooling vapour for a **parent-owned finite fixed-circle bank**. This asset supplies quiet cosmetics only: no exposure/contact grace, tick, lease, hit, lifetime, source binding, Tender-death rule, controller or cue authority.
 
@@ -24,7 +24,7 @@ Base analytical maximum is parcel06: `sqrt(0.05²+0.52²)+0.40=0.922398315464359
 
 ## Exact parent interface and mask ownership
 
-Script: [smoke_bank_visual.gd](../../../scripts/acts/act2/smoke_bank_visual.gd), class `Act2SmokeBankVisual`, extends Node3D, metadata revision `a2-smoke-bank-visual-4`.
+Script: [smoke_bank_visual.gd](../../../scripts/acts/act2/smoke_bank_visual.gd), class `Act2SmokeBankVisual`, extends Node3D, metadata revision `a2-smoke-bank-visual-5`.
 
 - `configure_radius(radius: float) -> bool` accepts finite0<R≤1.05 before construction; rejects later without mutation. It matches the parent's fixed circle and creates no authority.
 - `pose(phase: String, normalized_progress: float) -> bool` supports `idle`, `warning`, `lock`, `active`, `recovery`, `clear`, `spent`; malformed/nonfinite input rejects before pose mutation. Finite progress clamps0…1. Every successful pose reconstructs all13 cached transforms/material alphas and invalidates previous wisp masks, including the same phase/progress. The parent must then apply fresh masks.
@@ -57,3 +57,8 @@ Initial same-five native shader/mask fixture passed108 before-draw checks, clean
 
 
 Current-frame Smoke4 native verification passed118/0, clean exit0: same five cosmetic views, unchanged runtime/shader, actual pre-draw Hero/source/rim masks and exact after-draw camera signature/current masks. All five originals independently passed scoped selected low Black Smoke material/readability review; overlap now retains black vapour around the protected Hero. Initial108 before-draw result and stale-overlap material failure remain separate and unchanged. Fine faceting/stipple, warm fringe/fill gaps, Tender/lower-right rim overlap and source-cross/boot contact remain. This is staged cosmetic evidence, not bank/contact/grace/tick/damage/next-tell/route/checkpoint acceptance. Parent production wiring must refresh derived smoke masks after normal actual Game camera update, before rendering, and disconnect its owned rendering callback during level exit. No shared camera/controller/cue change is required. Exact receipts: docs/acts/act2/evidence/A2-L3/index.json.
+
+
+Revision5 changes only active cosmetic growth onset from .32 to .70. The actual original firstactive p~.039 portrait hid allcharcoal behind the protected source rectangle; laternative .5/1.5/2.5 views isolated this growth/mask interaction. Original source, Shader, source/Hero/rim protection, maxR/height, transparent depth policy and fixedcircle/timing/damage remain unchanged. Actual road-only native88/0 clean captures7current-camera/mask views, with independent/root onset BlackSmoke/readability PASS. The original diagnostic88printed/0 with7TESTmethod ScriptErrors remains unaccepted, preserved with originals. Onset-only p0 quiet/native overlap verification passes55/0 clean; both original staged views independently/root pass with reduced visible vapour beneath protected Hero/source masks and a center glyph meeting the boot area. The original exact bounded native/mask/material/cleanup checks are retained.
+
+Sources, native scale, pivot, collision/occlusion and reusefamily retain the same table above. Original118 stagedrevision4 remains historicalmidactive/mask evidence; it does not cover the corrected onset source. Exact frozen source/nativepixels/diagnostics and review: [opening correction](evidence/A2-L3/smoke-native-opening-corrected/result.json). Warm glyph fringe/gap and short Tender-overlapped rim remain visible limitations.
