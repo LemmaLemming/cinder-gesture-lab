@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "level_id": "A2-L3",
-  "status": "BOSS_AFFECTED_ART_PASSED_SMOKE_NATIVE_READABILITY_PASSED_FIDELITY_FAILED_REVISION_UNDERWAY_FULL_LEVEL_INCOMPLETE",
+  "status": "BOSS_ART_AND_AUTHORED_FLOOR_PASSED_SMOKE_THREE_FIDELITY_FAILURES_CORRECTION4_UNDERWAY_FULL_LEVEL_INCOMPLETE",
   "tested_source_commit": "31475ff2757f833fbc7479e528ae9c1d59bfa88b",
   "shared_api": "campaign-shared-23",
   "shared_publication": "2304d25e51d269edd3d6fc90b142f87b2ad35a6d",
@@ -128,7 +128,7 @@
     "exit_code": 0,
     "raw_log": "a2-l3-boss-art-corrected.log",
     "log_sha256": "c200ded4735dd8783822a678f6877e486ba651db60948351c087ea4c9926d2c3",
-    "scope": "Seven affected native540x1170 cosmetic poses, same Game/camera/floor/kit/stage Hero. Actual new mesh vertices remain grounded/<=1.35 and quiet boss action/phase pose restores; no admitted cue/attack/cloud/route/aggregate/phase checkpoint claim. Original failed material review and48/10 kept unchanged. Current art review pending.",
+    "scope": "Seven affected native540x1170 cosmetic poses, same Game/camera/floor/kit/stage Hero. Actual new mesh vertices remain grounded/<=1.35 and quiet boss action/phase pose restores; no admitted cue/attack/cloud/route/aggregate/phase checkpoint claim. Original failed material review and48/10 kept unchanged. All7peer/root2reviewpassedfourmaterialdefects; remainingfineoverlaplimits recorded.",
     "artifact_sha256": {
       "boss-art-corrected/boss-idle.png": "26f8ed7280cf90fcda05e4647bb72ae25efa8393e559820932a9a611e58a54b6",
       "boss-art-corrected/metadata.json": "140c2e7bad58cf1346f1d0e90797ea1f77d47b5b1cb3891a3fd3ff7e655447c8",
@@ -218,7 +218,79 @@
     },
     "scope": "Same five TEST ONLY actual native cosmetic cue/Hero/floor views and bounded native geometry/materials/quiet pose/static capsule overlap/cleanup. No bank consumer/admission/grace/ticks/damage/full route/transport claim.",
     "reviews": {
-      "root": "Viewed active/recovery/active Hero overlap at original540x1170. Irregular silhouette improved, but active remains brown lobes under shared orange fill, recovery grey stain. Material black pooling identity still insufficient; source fidelity FAIL. Cue/mostrim/Hero/dry side readable in selected3. Independent all5 pending."
+      "root": "Viewed active/recovery/active Hero overlap at original540x1170. Irregular silhouette improved, but active remains brown lobes under shared orange fill, recovery grey stain. Material black pooling identity still insufficient; source fidelity FAIL. Cue/mostrim/Hero/dry side readable in selected3. Independent all5 pending.",
+      "peer": "All five original540x1170 inspected: material sourcefidelityFAIL, active brown polygonlobes beneath orangefill/recoverythin graystain. Hero face/torso/dryfloor readable. Tender covers shortlower-right rimsegment, sourcecross overlapsboots/shadow. No actualbank/gameplay/transport claim."
+    }
+  },
+  "smoke_art_revision_3": {
+    "tested_checkout_head": "604b8047e55a578b0cbaea447ba2ff0a6aea39b2",
+    "shared_api": "campaign-shared-24",
+    "shared_publication": "5d7a394c67c6095bd96136e0f07976984075ed0f",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-smoke-art-revision3.log --script tests/acts/act2/a2_l3_smoke_asset_capture.gd -- --revision3",
+    "checks": 73,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-smoke-art-revision3.log",
+    "log_sha256": "a7037deadf1ccb1e33fa0a3547675de4c618e4f3e029f9ea554777cf8f2d79db",
+    "sources_sha256": {
+      "scripts/acts/act2/smoke_bank_visual.gd": "57be793c86671a9676bf7d476cb614bfe9dcf23176dcc4f3369dcbf678da878f",
+      "scripts/cues/threat_cue.gd": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "tests/acts/act2/a2_l3_smoke_asset_capture.gd": "ff1fe604c31b56dc9cfc5c23cf5a64062134293bcce1365b5f1c465873cdf847"
+    },
+    "change": "Same actual geometry/materialdepth/source/requiredordinarycue. Core alpha.64, fringeweighted.48..62; recovery sqrtfade reaches exactzero onlyoriginal supplieddeadline. Separate--revision3 captures; declarednativeColorceilingunchangedassertionlogic.",
+    "scope": "Same5TESTONLYcosmetic bank/cue/Hero/floor nativeviews, no consumer/grace/tick/damage/route/save/escapeclaim; exercises affected actualordinaryCue under shared24.",
+    "artifact_sha256": {
+      "smoke-art-revision3/smoke-active.png": "303f7f003eb4d4a459a111780941a10608aa738899ebf41b1efca1ebdad06202",
+      "smoke-art-revision3/smoke-recovery.png": "ec899b60184dfa948afc8a04ad87aa0787df29543d098596540eb5223c8055c0",
+      "smoke-art-revision3/metadata.json": "6a9288323786015ed7b91b4e0ab9491555c5ffbffa178fef7de77719a9e2eb42",
+      "smoke-art-revision3/smoke-lock.png": "717d68688ab221294442cf15a6adc1caf244c2f769894b5e7717eeeb16c8139f",
+      "smoke-art-revision3/smoke-warning.png": "efc70d3966f42fce9f5c1328a1ab024619f6bb04498bd4d527dc8e42880fc1a7",
+      "smoke-art-revision3/smoke-active-hero-overlap.png": "ab1033745028ba9779f8d78a5b8f020c4d851ff063a4ef29eb474b7634c87f39"
+    },
+    "reviews": {
+      "root": "Viewed active/recovery/overlap atoriginal540x1170. Denser darkercore, neutralcharcoal recovery/thinfringe. Active retainswarmorangefilltint; materialpeerreviewpending. Hero torso/facing/boots/mostrim anddryfloor remainreadable; knowncenterSourcecross/bootsshadow, lower-rightTender/rimsegmentoverlap andnexTelluntested limits remain.",
+      "peer": "All5original540x1170 plusG07 reviewed. MaterialactiveFAIL: brownfaceted patches, despite densercore. Recoveryimproved charcoalcore/thinfringe, flat. Hero/dryfloor readable; Tender coverslower-right rimsegment, centerSource touchesboots. Need neutralafterfillwispswithactual source/rim/Hero protection; no sharedpriorityslotbetweenfill/glyph. No actualbank/damage/transport claim."
+    }
+  },
+  "floor_native_first": {
+    "tested_checkout_head": "604b8047e55a578b0cbaea447ba2ff0a6aea39b2",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-authored-floor-native.log --script tests/acts/act2/a2_l3_entry_smoke.gd -- --capture",
+    "exit_code": 0,
+    "fixture_result": "INCOMPLETE; no result line/check count or requested three frames. Do not label pass.",
+    "classification": "fixture flag collision with shared Game automatic preview",
+    "first_meaningful_error": "--capture is already supported by Game._ready; _capture_preview quits native tree after0.5s before owned authored capture finishes. No script/resource error, explicit owned fixture never completed.",
+    "artifact_sha256": {
+      "floor-native-first/native-first.log": "cf320b46ff3e85e5864fc38577e3097f7bbd17f00b6aca572323590cc635e92d",
+      "floor-native-first/automatic-level-preview.png": "18d6b48979dcd3c888909fdf265abbaadbe2b8819287ff95e3d30a9600f0da0e",
+      "floor-native-first/fixture.gd.txt": "2ff227ce994952f520957124f67c642cef7b3ee2a9c602a2a1c432da8fb8a165"
+    },
+    "minimal_fix": "Rename owned flag --floor-portraits and explicitly assert settled native response after normal bounded camera wait; rerun only this affected native fixture. Shared Game unchanged; first43 headless result retains original scope."
+  },
+  "floor_native_corrected": {
+    "tested_checkout_head": "604b8047e55a578b0cbaea447ba2ff0a6aea39b2",
+    "shared_api": "campaign-shared-24",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-authored-floor-corrected.log --script tests/acts/act2/a2_l3_entry_smoke.gd -- --floor-portraits",
+    "checks": 56,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-authored-floor-corrected.log",
+    "log_sha256": "543451dd93e1bae57f604ac0b0650139e5470a05501d2b701539b242a0bba550",
+    "sources_sha256": {
+      "tests/acts/act2/a2_l3_entry_smoke.gd": "c5fd0fbf7f0c87abd4a565ab49e4bc45d2618acff35dccb25fb3ecb945801e27",
+      "scripts/acts/act2/ruined_house.gd": "bf4230a195d409412634685d4634247b5eb790892676f420d87a00febbfd8dea",
+      "scripts/acts/act2/ruined_house_kit.gd": "19c694d6257856605f3b175a288ce611a3da2a9d916a1151ce4600512a7f3505"
+    },
+    "change": "Owned flag renamed--floor-portraits to avoid shared Game--capture autoexit; waitactualnormal45physicsframes andassertnative response.stable/zero commitment before eachframe. Actualdashpaths/landing andcurrentactualcutaway/camerastate savedinformationally; no input/camera/transformforce.",
+    "scope": "Actual authored arrival andleft/rightlow-wallapproach throughpublicrealworlddashes, currentHero/camera/scenerycutawaylogic, no targetdefeats/encounterprogress/HPseed/cloud/grace/tick/fullroute/saveclaim.",
+    "artifact_sha256": {
+      "authored-floor-native/metadata.json": "ec155b8c5ecf6aaea6dcd10d1f9ddadd75112f0fcdcae6d3906c11226f3afe80",
+      "authored-floor-native/authored-arrival.png": "cfa140b8492a3cc1f0fcf8793bf59671dd5a14fe685e26c192ab120618c4951c",
+      "authored-floor-native/authored-house-left-approach.png": "d1daca4310dc42b7cbb467299980b6b1d84c5be1a9c0617d4f45bb853305209f",
+      "authored-floor-native/authored-house-right-approach.png": "d7a474546cbad31d14d69ef930d13379e25300a08fb6351ddd6b72422552de51"
+    },
+    "reviews": {
+      "root": "All3original540x1170 viewed: arrivedTender/clearHero/dryfloor; left wornwall/planks/utensils; rightHero face/torso/feet clear with actualsink/openbrickarch/dryapproach. No blockedHero/floordefect. Metadataactualoptionalcutawaylistsempty inall3, so thissampleexecutesrootquerybutdoesnotestablish a triggeredfade. Futurecastinactive/currentbeatsmoke_edge throughout; no combat/sourceopening/wholehouse/nexTellclaim.",
+      "peer": "Pending independentall3."
     }
   }
 }

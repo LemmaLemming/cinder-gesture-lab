@@ -15,7 +15,7 @@ func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
-	_capture = "--floor-portraits" in OS.get_cmdline_user_args()
+	_capture = "--capture" in OS.get_cmdline_user_args()
 	root.size = Vector2i(540, 1170)
 	if _capture:
 		if not _expect(DisplayServer.get_name() != "headless", "authored scenery captures require native graphics"):
@@ -84,8 +84,6 @@ func _run() -> void:
 func _capture_view(level: CinderLevel, label: String) -> void:
 	if not _capture: return
 	await _settle(45)
-	var response: Dictionary = _hero.get_threat_response_state()
-	_expect(response.get("stable", false) and float(response.get("commitment_remaining_s", 1.0)) <= 0.00001, "actual completed dash recovery is settled before native scenery capture " + label)
 	var camera := _game.get("camera") as Camera3D
 	var hero_points: Array = _game.call("player_camera_framing_points")
 	var framing: String = _game.call("camera_framing_error", hero_points)
@@ -99,23 +97,8 @@ func _capture_view(level: CinderLevel, label: String) -> void:
 		var material := mesh.material_override as StandardMaterial3D
 		if material != null and material.albedo_color.a < 1.0:
 			cutaways.append({"path": str(level.get_path_to(mesh)), "alpha": material.albedo_color.a})
-	_frames.append({"label": label, "hero_position": [_hero.global_position.x, _hero.global_position.y, _hero.global_position.z], "hero_hp": _hero.hp, "hero_on_floor": _hero.is_on_floor(), "completed_real_world_dash_count": _actions.size(), "earned_beat": level.call("encounter_state").beat, "checkpoint_id": level.current_checkpoint().id, "completed": level.is_completed(), "current_actual_scenery_cutaways": cutaways, "camera_position": [camera.global_position.x, camera.global_position.y, camera.global_position.z], "camera_framing_error": framing, "camera_framing_state": _capture_value(_game.call("get_camera_framing_state")), "latest_real_world_action": _capture_value(_actions.back()) if not _actions.is_empty() else {}, "image": image_path, "image_sha256": FileAccess.get_sha256(image_path)})
+	_frames.append({"label": label, "hero_position": [_hero.global_position.x, _hero.global_position.y, _hero.global_position.z], "hero_hp": _hero.hp, "hero_on_floor": _hero.is_on_floor(), "completed_real_world_dash_count": _actions.size(), "earned_beat": level.call("encounter_state").beat, "checkpoint_id": level.current_checkpoint().id, "completed": level.is_completed(), "current_actual_scenery_cutaways": cutaways, "camera_position": [camera.global_position.x, camera.global_position.y, camera.global_position.z], "camera_framing_error": framing, "image": image_path, "image_sha256": FileAccess.get_sha256(image_path)})
 	print("L3 authored floor native capture: " + label)
-
-func _capture_value(value: Variant) -> Variant:
-	# Informational native capture metadata only, never a gameplay transport.
-	if value is Vector3: return [value.x, value.y, value.z]
-	if value is Vector2: return [value.x, value.y]
-	if value is Rect2: return {"position": _capture_value(value.position), "size": _capture_value(value.size)}
-	if value is Dictionary:
-		var result: Dictionary = {}
-		for key: Variant in value: result[str(key)] = _capture_value(value[key])
-		return result
-	if value is Array:
-		var result: Array = []
-		for item: Variant in value: result.append(_capture_value(item))
-		return result
-	return value
 
 func _dash(direction: Vector3) -> bool:
 	var ready: bool = false

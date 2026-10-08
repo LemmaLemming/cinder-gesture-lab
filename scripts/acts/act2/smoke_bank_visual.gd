@@ -4,12 +4,12 @@ extends Node3D
 ## Never changes this source-relative root transform or decides a bank lifetime.
 
 const Heath: Script = preload("res://scripts/acts/act2/heath_kit.gd")
-const ART_REVISION: String = "a2-smoke-bank-visual-2"
+const ART_REVISION: String = "a2-smoke-bank-visual-3"
 const DEFAULT_RADIUS: float = 1.05
 const MAX_AUTHORED_RADIUS_FRACTION: float = 0.94
 const MAX_HEIGHT: float = 0.20
 const FLOOR_CLEARANCE: float = 0.010
-const ACTIVE_ALPHA: float = 0.27
+const ACTIVE_ALPHA: float = 0.64
 const INACTIVE_ALPHA: float = 0.018
 const PHASES: Array[String] = ["idle", "warning", "lock", "active", "recovery", "clear", "spent"]
 # Offsets and horizontal semiaxes are fractions of the parent's fixed radius.
@@ -17,15 +17,15 @@ const PHASES: Array[String] = ["idle", "warning", "lock", "active", "recovery", 
 const PARTS: Array[Dictionary] = [
 	# Unequal offsets, elongated overlaps and different heights form one soot
 	# bank. No ring of equally spaced lobes or repeated radial petal silhouette.
-	{"center": Vector2(-0.12, 0.04), "radii": Vector2(0.68, 0.60), "height": 0.080, "yaw": 0.16, "weight": 0.96},
-	{"center": Vector2(0.31, -0.17), "radii": Vector2(0.49, 0.42), "height": 0.095, "yaw": -0.47, "weight": 1.00},
-	{"center": Vector2(-0.37, -0.24), "radii": Vector2(0.40, 0.48), "height": 0.075, "yaw": 0.72, "weight": 0.86},
-	{"center": Vector2(0.13, 0.37), "radii": Vector2(0.51, 0.40), "height": 0.060, "yaw": -0.29, "weight": 0.91},
-	{"center": Vector2(-0.47, 0.29), "radii": Vector2(0.34, 0.35), "height": 0.092, "yaw": 0.48, "weight": 0.87},
-	{"center": Vector2(0.51, 0.20), "radii": Vector2(0.32, 0.37), "height": 0.110, "yaw": -0.62, "weight": 0.95},
-	{"center": Vector2(-0.05, -0.52), "radii": Vector2(0.40, 0.36), "height": 0.067, "yaw": 0.14, "weight": 0.78},
-	{"center": Vector2(0.39, -0.39), "radii": Vector2(0.30, 0.33), "height": 0.052, "yaw": 0.58, "weight": 0.82},
-	{"center": Vector2(-0.58, -0.02), "radii": Vector2(0.27, 0.32), "height": 0.085, "yaw": -0.38, "weight": 0.89},
+	{"center": Vector2(-0.12, 0.04), "radii": Vector2(0.68, 0.60), "height": 0.080, "yaw": 0.16, "weight": 1.00},
+	{"center": Vector2(0.31, -0.17), "radii": Vector2(0.49, 0.42), "height": 0.095, "yaw": -0.47, "weight": 0.91},
+	{"center": Vector2(-0.37, -0.24), "radii": Vector2(0.40, 0.48), "height": 0.075, "yaw": 0.72, "weight": 0.82},
+	{"center": Vector2(0.13, 0.37), "radii": Vector2(0.51, 0.40), "height": 0.060, "yaw": -0.29, "weight": 0.76},
+	{"center": Vector2(-0.47, 0.29), "radii": Vector2(0.34, 0.35), "height": 0.092, "yaw": 0.48, "weight": 0.58},
+	{"center": Vector2(0.51, 0.20), "radii": Vector2(0.32, 0.37), "height": 0.110, "yaw": -0.62, "weight": 0.62},
+	{"center": Vector2(-0.05, -0.52), "radii": Vector2(0.40, 0.36), "height": 0.067, "yaw": 0.14, "weight": 0.55},
+	{"center": Vector2(0.39, -0.39), "radii": Vector2(0.30, 0.33), "height": 0.052, "yaw": 0.58, "weight": 0.48},
+	{"center": Vector2(-0.58, -0.02), "radii": Vector2(0.27, 0.32), "height": 0.085, "yaw": -0.38, "weight": 0.52},
 ]
 var _radius: float = DEFAULT_RADIUS
 var _phase: String = "clear"
@@ -105,7 +105,9 @@ func _apply_pose() -> void:
 		"recovery":
 			growth = lerpf(1.0, 0.70, smoothstep(0.0, 1.0, _progress))
 			vertical = lerpf(1.0, 0.40, smoothstep(0.0, 1.0, _progress))
-			alpha = ACTIVE_ALPHA * (1.0 - smoothstep(0.0, 1.0, _progress))
+			# Retain a charcoal core while the existing geometry thins; reach
+			# exact zero at the parent's original recovery deadline.
+			alpha = ACTIVE_ALPHA * sqrt(1.0 - smoothstep(0.0, 1.0, _progress))
 			curl = sin(_progress * PI) * 0.04
 		"clear", "idle", "spent":
 			alpha = 0.0

@@ -23,7 +23,9 @@ func _initialize() -> void:
 
 
 func _run() -> void:
-	if "--corrected" in OS.get_cmdline_user_args():
+	if "--revision3" in OS.get_cmdline_user_args():
+		_capture_root = "res://captures/act2/a2-l3-smoke-revision3/"
+	elif "--corrected" in OS.get_cmdline_user_args():
 		_capture_root = "res://captures/act2/a2-l3-smoke-corrected/"
 	root.size = Vector2i(540, 1170)
 	_expect(DisplayServer.get_name() != "headless", "smoke portrait fixture requires a native graphical surface")
