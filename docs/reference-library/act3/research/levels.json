@@ -1,0 +1,847 @@
+{
+  "schema_version": 1,
+  "act": 3,
+  "title": "Tormance: The False World",
+  "status": "design_proposal_unimplemented_unplaytested",
+  "researched_date": "2026-10-08",
+  "source_novel": "A Voyage to Arcturus (David Lindsay, 1920)",
+  "audience": "Player experienced with Acts 1 and 2; no control recap",
+  "main_level_count": 5,
+  "main_first_clear_target_minutes": 45,
+  "optional_level_count": 3,
+  "optional_first_clear_range_minutes": [
+    9,
+    15
+  ],
+  "optional_initial_budget_minutes": 12,
+  "all_content_first_clear_range_minutes": [
+    54,
+    60
+  ],
+  "campaign_main_first_clear_target_minutes": 133,
+  "campaign_all_proposed_content_first_clear_range_minutes": [
+    160,
+    178
+  ],
+  "pacing_baseline": {
+    "document": "../../../GAME_CONCEPT.md",
+    "act1_main_level_count": 5,
+    "act1_target_minutes": [
+      6,
+      8,
+      9,
+      10,
+      10
+    ],
+    "act1_total_minutes": 43,
+    "act3_target_minutes": [
+      8,
+      9,
+      9,
+      9,
+      10
+    ],
+    "inherited_rules": [
+      "five main levels",
+      "shorter opening",
+      "roughly ten-minute ceiling",
+      "separately entered 3–5 minute optional levels",
+      "parent-kit reuse with few additions",
+      "encounter and boss-phase checkpoints",
+      "frozen-state pause/resume"
+    ],
+    "art_style_inherited": false
+  },
+  "campaign_constraints": {
+    "orientation": "portrait",
+    "presentation": "pixelated 2.5D; fixed-angle overhead player-following camera",
+    "voluntary_movement": "directional swipes cause ground-plane X/Z dashes only",
+    "attack": "tap slash; second quick tap chains one blast; current confirmed screen-relative aim rule unchanged",
+    "weapon": "one carried weapon; no hotbar",
+    "damage": "fixed baseline damage; no persistent damage growth",
+    "compulsory_new_controls": false,
+    "forbidden_required_traversal": [
+      "swimming",
+      "boat steering",
+      "climbing",
+      "jumping",
+      "flying",
+      "powerup-gated dash gaps"
+    ],
+    "ordinary_dash_and_slash_completion_required": true,
+    "boss_slash_only_completion_required": true
+  },
+  "checkpoints": {
+    "target_minutes_between_saved_completions": [
+      1,
+      3
+    ],
+    "save_before_boss": true,
+    "save_after_boss_phase": true,
+    "retry": "restore coherent section/phase start, intended supplies and entry sun state; no active hazard; clear all replay data",
+    "backgrounding": "freeze entire simulation including sun clock, cooldowns, previews, effects, capture and replay",
+    "resume": "consume overlay tap; continue exact frozen state"
+  },
+  "sun_state_rule": {
+    "canonical_status": "game_proposal",
+    "states": [
+      "Branchspell",
+      "Alppain"
+    ],
+    "input_remapping": false,
+    "dynamic_required_floor_removal": false,
+    "prototype_dynamic_collision_changes": false,
+    "state_effect": "appearance, easier enemy flank and independently previewed local hazard state over fixed continuous floor",
+    "preview": "outlined next footprint; silhouette icon and countdown ticks; full shape locks before activation",
+    "reaction_budget": "recognition plus remaining dash cooldown plus one normal escape dash",
+    "occupied_patch_rule": "preserve current safe pocket; delay outlined patch activation until player clears it; never create cage",
+    "transition_damage": false,
+    "ordinary_slash_opening_in_both_states": true,
+    "colour_only_warnings": false,
+    "warning_layers_above_scenic_mist_and_reflections": true
+  },
+  "crystalman_capture_replay_rule": {
+    "player_aim_anchor": "unchanged screen-space final finger-release endpoint of latest swipe",
+    "capture_state": "clearly indicated bounded recording slot",
+    "dash_sample": "actual completed world X/Z start, collision-shortened final landing and resolved route; reject zero/rejected motion",
+    "attack_sample": "next actually executed baseline slash before another completed dash supersedes it; record actual world origin, direction and footprint",
+    "optional_blast": "record only if actually executed as second-tap follow-up; slash-only combination remains valid",
+    "capture_lock": "after actual combo window resolves; one slot consumed once",
+    "never_sample_as_completed_world_motion": [
+      "finger screen endpoint",
+      "camera motion",
+      "queued or buffered dash not completed",
+      "rejected dash",
+      "checkpoint history"
+    ],
+    "preview": "whole finite sequence: origin, route, endpoint, slash arc and actual optional blast footprint; numbered order and countdown ticks",
+    "replay_origin": "recorded world origin; no translation toward current player",
+    "replay_targeting": "fixed recorded directions and footprints; no chasing, retargeting or screen mirroring",
+    "movement_damage": false,
+    "collision": "stable floor/colliders through capture and replay; follow collision-shortened route; clip attacks to valid floor and blocking scenery",
+    "visibility": "route, attacks, escape pocket and local tether must be readable within existing portrait camera; reject invalid capture visibly and safely",
+    "buffer_slots_by_phase": [
+      1,
+      2
+    ],
+    "replay_order": "sequential; each once then discarded",
+    "recursive_capture": false,
+    "tether": "nearby firm-floor low target at ordinary slash range",
+    "tether_reaction_budget": "remaining dash cooldown plus one normal approach dash plus one baseline slash",
+    "initial_tether_hit_proposal": "one successful normal slash per exposed tether; meaningful exchange count tuned from play",
+    "scenery_stripping": "decorative only; void outside/below retained safe floor",
+    "retry": "discard replay buffer/ghosts/transients; restore safe phase position and entry sun state; rearm capture",
+    "idle_recording_state": "readable and safe; no hidden health drain or concealed impatience attack",
+    "ghost_body_collision": false,
+    "ghost_contact_damage": false,
+    "escape_invariant": "before playback locks, actual player position and remaining cooldown admit an ordinary dash with clear swept floor path and landing through all active recorded attack footprints; two combinations require a cooldown-aware route through the entire sequence",
+    "overlapping_attack_validation": "count recorded slash and optional blast together if active times overlap; do not validate each shape in isolation",
+    "inter_echo_gap": "recognition plus remaining dash cooldown plus one ordinary clear escape dash",
+    "other_attacks_during_replay": false,
+    "sun_changes_during_replay": "decorative only; no active solar lane, root patch or regular-enemy attack",
+    "invalid_escape_sequence": "visibly reject recording before playback, re-arm safely, never silently alter captured geometry",
+    "capture_pocket_validity": "each permitted pocket must offer at least one valid normal-dash/slash recording; rejection must not strand progress",
+    "playback_timetable": "short displayed timetable using normal resolved action durations and recorded execution order; do not copy arbitrary idle wait between dash and attack"
+  },
+  "regular_enemies": [
+    {
+      "id": "C50",
+      "gameplay_id": "A3-E1",
+      "name": "Sunbound Stalker",
+      "canonical_status": "game_proposal",
+      "first_level": "A3-L1",
+      "role": "locked short lunge lane; sun crest identifies easier flank; low slash recovery in either state"
+    },
+    {
+      "id": "C51",
+      "gameplay_id": "A3-E2",
+      "name": "Root Latcher",
+      "canonical_status": "game_proposal",
+      "first_level": "A3-L2",
+      "role": "rooted bulb previews a fixed crescent/strip then exposes low knot; area-denial priority choice"
+    },
+    {
+      "id": "C52",
+      "gameplay_id": "A3-E3",
+      "name": "Mirror Echo",
+      "canonical_status": "game_proposal",
+      "first_level": "A3-L3",
+      "role": "real rooted body previews its own single dash/slash replay; harmless outline reflection; grounded endpoint knot"
+    }
+  ],
+  "enemy_pressure_rule": {
+    "initial_max_simultaneous_preparing_enemies": 2,
+    "stagger_commitments": true,
+    "repeated_contact_damage": false,
+    "unavoidable_body_cage_allowed": false,
+    "difficulty_from": "priority, landing composition and known rules in new arrangements; not health bloat"
+  },
+  "levels": [
+    {
+      "id": "A3-L1",
+      "name": "Twin Suns",
+      "subtitle": "A Useful Shadow",
+      "kind": "main",
+      "target_minutes": 8,
+      "objective": "Reach the Poolingdred exit across stable sunlit shelves",
+      "skill": "Plan a useful landing before a previewed sun-state change",
+      "mood": "alien wonder; bodily unease; learnable order",
+      "source_urls": [
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0006",
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0020"
+      ],
+      "entity_ids": [
+        "E06",
+        "E07",
+        "C50"
+      ],
+      "enemy_ids": [
+        "C50"
+      ],
+      "boss_ids": [],
+      "beats": [
+        {
+          "name": "A foreign noon",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 60,
+          "purpose": "Brief arrival, freely movable safe demonstration of one next-state outline; no control recap"
+        },
+        {
+          "name": "The useful flank",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 180,
+          "purpose": "One Stalker lane, lock, recovery and changed crest; slashable in both states"
+        },
+        {
+          "name": "Two approaches",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 300,
+          "purpose": "Choose one of two broad stable shelf approaches, then rejoin"
+        },
+        {
+          "name": "Crossing the white shadow",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 420,
+          "purpose": "Two staggered Stalkers and one prepared state change; retain retreat"
+        },
+        {
+          "name": "The pillars recede",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 480,
+          "purpose": "Brief familiar exchange, contact exit and distant pillar mirage"
+        }
+      ],
+      "kit": [
+        "fixed sand/shelf floor",
+        "low purple trees",
+        "distant mirage pillars",
+        "two-sun sky motifs",
+        "white-shadow overlay",
+        "Sunbound Stalker and two crest states",
+        "common preview/lock/active/recovery shapes"
+      ],
+      "artwork_ids": [
+        "G05",
+        "G13",
+        "G16",
+        "G18"
+      ]
+    },
+    {
+      "id": "A3-L2",
+      "name": "Living Forest",
+      "subtitle": "The Floor Remembers",
+      "kind": "main",
+      "target_minutes": 9,
+      "objective": "Cross the Wombflash-inspired grove and open its dry exit",
+      "skill": "Choose a rooted source to commit before the approach tightens",
+      "mood": "vast damp silence; watched life; purposeful pressure",
+      "source_urls": [
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0013",
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0016"
+      ],
+      "entity_ids": [
+        "E15",
+        "E20",
+        "C50",
+        "C51"
+      ],
+      "enemy_ids": [
+        "C50",
+        "C51"
+      ],
+      "boss_ids": [],
+      "beats": [
+        {
+          "name": "Vast trunks",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 60,
+          "purpose": "Scale reveal and a familiar Stalker in generous space"
+        },
+        {
+          "name": "A root's promise",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 180,
+          "purpose": "Single Latcher crescent, lock and low recovery knot"
+        },
+        {
+          "name": "Two living courts",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 300,
+          "purpose": "Latcher around a fixed trunk, then Stalker/Latcher priority choice"
+        },
+        {
+          "name": "The watched clearing",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 420,
+          "purpose": "Known root windup plus sun preview; preserve a broad pocket"
+        },
+        {
+          "name": "Canopy slit",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 540,
+          "purpose": "Deliberate mixed arrangement, contact exit and quiet final grove"
+        }
+      ],
+      "kit": [
+        "immense trunks with visible fixed bases",
+        "wet leaf-ground tiles",
+        "low roots",
+        "high organic canopy panels",
+        "restrained mist",
+        "Root Latcher and knot states",
+        "existing Stalker/sun system"
+      ],
+      "artwork_ids": [
+        "G06",
+        "G14",
+        "G16"
+      ]
+    },
+    {
+      "id": "A3-L3",
+      "name": "Mirror Sea",
+      "subtitle": "Refuse the Reflection",
+      "kind": "main",
+      "target_minutes": 9,
+      "objective": "Traverse the dry sea margin and leave the resonant island apron",
+      "skill": "Read the real local source and reach its committed replay endpoint",
+      "mood": "entrancing surface; uncertainty; sudden silence",
+      "source_urls": [
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0014",
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0015",
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0021"
+      ],
+      "entity_ids": [
+        "E19",
+        "C50",
+        "C52"
+      ],
+      "enemy_ids": [
+        "C50",
+        "C52"
+      ],
+      "boss_ids": [],
+      "set_piece": "Irontick-inspired scenic pulse and independently previewed bounded floor ring; no extra compulsory boss",
+      "adaptation_warning": "Mirror Sea name, dry route and reflection/replay mechanics are invented; no required swimming or boat control",
+      "beats": [
+        {
+          "name": "Shore and doubled sky",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 90,
+          "purpose": "Quiet approach and familiar threat; playable firm floor is distinct from water"
+        },
+        {
+          "name": "One real body",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 210,
+          "purpose": "Single Echo previews its own dash/slash; hollow reflection remains harmless"
+        },
+        {
+          "name": "A useful ending",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 330,
+          "purpose": "Two short Echo arrangements around shore stones; attack the endpoint"
+        },
+        {
+          "name": "Resonant apron",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 450,
+          "purpose": "One bounded previewed floor ring; Echo acts between scenic pulses"
+        },
+        {
+          "name": "The shore falls silent",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 540,
+          "purpose": "Stalker/Echo priority choice and quiet contact departure"
+        }
+      ],
+      "kit": [
+        "dry dark shore",
+        "firm shelves",
+        "fixed shore stones",
+        "reflective ground overlay",
+        "distant island silhouette",
+        "scenic Irontick ring",
+        "bounded resonance warning effect",
+        "Mirror Echo and harmless outline reflection",
+        "existing Stalker/sun system"
+      ],
+      "artwork_ids": [
+        "G07",
+        "G14",
+        "G17",
+        "G19"
+      ]
+    },
+    {
+      "id": "A3-L4",
+      "name": "False Paradise",
+      "subtitle": "The Cost of Staying",
+      "kind": "main",
+      "target_minutes": 9,
+      "objective": "Disengage the garden manifestation and reach the Adage threshold",
+      "skill": "Prioritise a false-world source and preserve a useful opening under familiar combined rules",
+      "mood": "welcoming beauty; attachment; exposure; sober release",
+      "source_urls": [
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0018",
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0019"
+      ],
+      "entity_ids": [
+        "E23",
+        "E26",
+        "C34",
+        "C50",
+        "C51",
+        "C52",
+        "B05"
+      ],
+      "enemy_ids": [
+        "C50",
+        "C51",
+        "C52"
+      ],
+      "boss_ids": [
+        "B05"
+      ],
+      "beats": [
+        {
+          "name": "An offered rest",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 90,
+          "purpose": "Quiet garden, one Stalker and a distant non-damageable human likeness"
+        },
+        {
+          "name": "Beauty has a source",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 180,
+          "purpose": "Latcher shows the low root knots; attack physical source, not projection"
+        },
+        {
+          "name": "Choose the plain path",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 300,
+          "purpose": "Echo/Latcher mix with honestly marked routes; save at boss court"
+        },
+        {
+          "name": "Garden, phase 1",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 420,
+          "purpose": "Separate root lane and broken petal-ring commitments expose one low tether"
+        },
+        {
+          "name": "Garden, phase 2 and departure",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 540,
+          "purpose": "Known attacks plus sun preview and one removable Latcher; plain contact exit"
+        }
+      ],
+      "boss": {
+        "id": "B05",
+        "name": "Sullenbode's Garden",
+        "canonical_reference_id": "C34",
+        "canonical_status": "game_proposal",
+        "source_warning": "Entirely fabricated false-world attachment manifestation; canonical Sullenbode guides and sacrifices, not a hostile garden keeper",
+        "projection_damageable": false,
+        "invented_weak_point": "external low root tether at ordinary slash range",
+        "phases": 2,
+        "phase_target_minutes": [
+          2,
+          2
+        ],
+        "phase_checkpoint_elapsed_seconds": [
+          420,
+          540
+        ],
+        "attacks": [
+          "Draw: locked short root lane",
+          "Enclose: locked broken ring segment, never unavoidable full enclosure"
+        ],
+        "phase2_removable_helper_id": "C51",
+        "helpers_respawn": false,
+        "slash_only_completion_required": true,
+        "outcome": "false-world root network disengaged; projected likeness fades without death animation; plain threshold opened"
+      },
+      "kit": [
+        "fixed garden floor",
+        "intact/stripped flower layers",
+        "one clothed projected human silhouette",
+        "external low root tethers",
+        "root-lane and broken-ring effects",
+        "existing Latcher/Echo/Stalker",
+        "sun-state system",
+        "plain threshold"
+      ],
+      "artwork_ids": [
+        "G03",
+        "G08",
+        "G10",
+        "G14"
+      ]
+    },
+    {
+      "id": "A3-L5",
+      "name": "Crystalman",
+      "subtitle": "Compose an Escape",
+      "kind": "main",
+      "target_minutes": 10,
+      "objective": "Sever local landscape tethers and leave the false-world arena",
+      "skill": "Compose a completed world-space dash-and-attack route that can be safely evaded when echoed",
+      "mood": "beautiful totality; repetition; exposed void; unfinished liberation",
+      "source_urls": [
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0020",
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0021"
+      ],
+      "entity_ids": [
+        "C04",
+        "E31",
+        "E32",
+        "C50",
+        "C52",
+        "B06"
+      ],
+      "enemy_ids": [
+        "C50",
+        "C52"
+      ],
+      "boss_ids": [
+        "B06"
+      ],
+      "beats": [
+        {
+          "name": "The offered world",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 90,
+          "purpose": "Quiet glassy-sea approach and one familiar Echo on firm ground"
+        },
+        {
+          "name": "A plain threshold",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 180,
+          "purpose": "Compact familiar priority arrangement; clear regular threats and save before capture arena"
+        },
+        {
+          "name": "Crystalman, phase 1",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 300,
+          "purpose": "One completed combination captured, exactly previewed and played once; local slash tether"
+        },
+        {
+          "name": "Crystalman, phase 2",
+          "seconds": 180,
+          "checkpoint_elapsed_seconds": 480,
+          "purpose": "At most two combinations, visibly ordered and sequential; final local tether opens escape"
+        },
+        {
+          "name": "Beyond the image",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 600,
+          "purpose": "Scenic layers strip around retained firm floor; contact exit and brief tower/sea coda"
+        }
+      ],
+      "boss": {
+        "id": "B06",
+        "name": "Crystalman",
+        "canonical_reference_id": "C04",
+        "canonical_status": "game_proposal",
+        "source_warning": "Landscape-body, player replay and tether duel are invented; success does not claim a definitive canonical defeat of Crystalman",
+        "invented_weak_point": "nearby external landscape tether on firm floor",
+        "phases": 2,
+        "phase_target_minutes": [
+          2,
+          3
+        ],
+        "phase_checkpoint_elapsed_seconds": [
+          300,
+          480
+        ],
+        "capture_slots_by_phase": [
+          1,
+          2
+        ],
+        "replay_order": "sequential; visible numbered order; each captured combination once then discarded",
+        "replay_recursion": false,
+        "required_baseline_attack": "ordinary close-range slash",
+        "slash_only_completion_required": true,
+        "outcome": "local false-world arena escape opens; tower coda suggests further struggle"
+      },
+      "kit": [
+        "compact landscape arena",
+        "act-wide stone/root/reflective/garden layers",
+        "luminous presence",
+        "capture frame",
+        "route/arc/optional blast preview states",
+        "one reusable apparition",
+        "tether closed/exposed/severed/spent states",
+        "restrained scenery stripping",
+        "firm escape platform",
+        "distant tower"
+      ],
+      "artwork_ids": [
+        "G09",
+        "G11",
+        "G15",
+        "G20"
+      ]
+    }
+  ],
+  "optional_levels": [
+    {
+      "id": "A3-O1",
+      "name": "Pillars Before Their Time",
+      "kind": "optional",
+      "parent_level_id": "A3-L1",
+      "target_range_minutes": [
+        3,
+        5
+      ],
+      "duration_min": 3,
+      "duration_max": 5,
+      "initial_budget_minutes": 3,
+      "unlock": "clear parent level",
+      "reward": "completion stamp or cosmetic; no stat increase",
+      "entity_ids": [
+        "E06",
+        "E07",
+        "C50"
+      ],
+      "enemy_ids": [
+        "C50"
+      ],
+      "boss_ids": [],
+      "source_urls": [
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0006"
+      ],
+      "objective": "Contact three temporal-mirage markers in any order, then reach the exit",
+      "skill": "Choose collection order so the next sun state leaves a useful flank",
+      "reused_assets": [
+        "sand shelves",
+        "pillars",
+        "low trees",
+        "Stalker",
+        "sun previews",
+        "white shadows"
+      ],
+      "small_additions": [
+        "three marker props with empty/collected states",
+        "exit seal"
+      ],
+      "checkpoint_elapsed_seconds": [
+        60,
+        120,
+        180
+      ],
+      "beats": [
+        {
+          "name": "First marker",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 60,
+          "purpose": "Open collection-order choice; one familiar Stalker"
+        },
+        {
+          "name": "Second marker",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 120,
+          "purpose": "Use known sun preview and preserve return pocket"
+        },
+        {
+          "name": "Third marker and exit",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 180,
+          "purpose": "Final brief arrangement, last contact marker and contact exit"
+        }
+      ],
+      "artwork_ids": [
+        "G05",
+        "G18"
+      ]
+    },
+    {
+      "id": "A3-O2",
+      "name": "The Quiet Root Circuit",
+      "kind": "optional",
+      "parent_level_id": "A3-L2",
+      "target_range_minutes": [
+        3,
+        5
+      ],
+      "duration_min": 3,
+      "duration_max": 5,
+      "initial_budget_minutes": 4,
+      "unlock": "clear parent level",
+      "reward": "completion stamp or cosmetic; no stat increase",
+      "entity_ids": [
+        "E15",
+        "C50",
+        "C51"
+      ],
+      "enemy_ids": [
+        "C50",
+        "C51"
+      ],
+      "boss_ids": [],
+      "source_urls": [
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0013"
+      ],
+      "objective": "Clear three existing root courts and reach the opened exit",
+      "skill": "Choose which rooted source to remove first without losing a return pocket",
+      "reused_assets": [
+        "trunks",
+        "leaf floor",
+        "roots",
+        "Latcher",
+        "Stalker",
+        "sun states",
+        "knots"
+      ],
+      "small_additions": [
+        "route glyphs",
+        "spent-knot completion marker"
+      ],
+      "checkpoint_elapsed_seconds": [
+        60,
+        120,
+        240
+      ],
+      "beats": [
+        {
+          "name": "First root court",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 60,
+          "purpose": "Single familiar Latcher and fixed trunk"
+        },
+        {
+          "name": "Second root court",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 120,
+          "purpose": "Rearranged root lane with retained return pocket"
+        },
+        {
+          "name": "Final source choice",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 240,
+          "purpose": "Short mixed arrangement; remove priority source and contact exit"
+        }
+      ],
+      "artwork_ids": [
+        "G06",
+        "G16"
+      ]
+    },
+    {
+      "id": "A3-O3",
+      "name": "Irontick's Last Reflection",
+      "kind": "optional",
+      "parent_level_id": "A3-L3",
+      "target_range_minutes": [
+        3,
+        5
+      ],
+      "duration_min": 3,
+      "duration_max": 5,
+      "initial_budget_minutes": 5,
+      "unlock": "clear parent level",
+      "reward": "completion stamp or cosmetic; no stat increase",
+      "entity_ids": [
+        "E19",
+        "C50",
+        "C52"
+      ],
+      "enemy_ids": [
+        "C50",
+        "C52"
+      ],
+      "boss_ids": [],
+      "source_urls": [
+        "https://www.gutenberg.org/cache/epub/1329/pg1329-images.html#link2HCH0015"
+      ],
+      "objective": "Complete three short replay arrangements around the dry resonant apron and contact the exit",
+      "skill": "Reach a replay endpoint rather than chase a harmless reflection",
+      "reused_assets": [
+        "dry shore",
+        "firm shelves",
+        "stones",
+        "scenic lake-ring",
+        "Echo and reflection",
+        "resonance",
+        "Stalker"
+      ],
+      "small_additions": [
+        "three stage pips",
+        "small shell-like scenic collectible"
+      ],
+      "checkpoint_elapsed_seconds": [
+        90,
+        180,
+        300
+      ],
+      "beats": [
+        {
+          "name": "First reflection",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 90,
+          "purpose": "Single Echo and one independently previewed scenic pulse"
+        },
+        {
+          "name": "Second reflection",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 180,
+          "purpose": "Rearranged endpoint around fixed stones"
+        },
+        {
+          "name": "Final apron",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 300,
+          "purpose": "Short familiar mix, third stage and contact exit"
+        }
+      ],
+      "artwork_ids": [
+        "G07",
+        "G19"
+      ]
+    }
+  ],
+  "alternative_boss_ids": [
+    "B01",
+    "B02",
+    "B03",
+    "B04"
+  ],
+  "alternative_bosses_are_required": false,
+  "required_design_tests": [
+    "experienced-player sun-state anticipation after one exchange",
+    "occupied patch, dash cooldown and safe-pocket preservation at sun changes",
+    "Latcher/Stalker priority with no unavoidable cage",
+    "real Echo source vs harmless reflection in grayscale/muted portrait view",
+    "source/warning/landing/recovery legibility in all environment kits",
+    "Sullenbode projected likeness separated from damageable false-world roots",
+    "actual world route vs screen endpoint, moved camera, collision shortening, queued/rejected dash and zero aim delta",
+    "finite single-slot then two-slot sequential replay with optional blast, no recursion and exact footprint",
+    "worst-case recorded slash/blast footprints, corner landings and opposed two-slot routes: clear swept normal-dash path/landing with cooldown through whole replay or safe visible rejection; valid baseline recording from every capture pocket",
+    "slash-only local tether reach without pickups using ordinary dash",
+    "background/resume capture, preview, replay, sun change and phase transition; safe phase retry",
+    "measure complete-level duration including transitions; shorten idle wait before adding encounters"
+  ],
+  "implementation_files_modified": false,
+  "concept_document": "../../../ACT3_CONCEPT.md"
+}

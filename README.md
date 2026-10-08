@@ -6,6 +6,10 @@ The [game concept and campaign plan](docs/GAME_CONCEPT.md#planned-campaign) reco
 
 Act 1's [film reference library](docs/reference-library/act1/README.md) collects 70 scenery, costume, character, prop and effect records, 40 archival or historical references, and six new game concept studies. Open its offline `index.html` gallery to search by object, reference type or film sequence. JSON, CSV, SQLite, source credits and generation prompts are included.
 
+Act 2's [design document](docs/ACT2_CONCEPT.md) proposes five levels over 45 minutes for experienced players, drawing on *The War of the Worlds*. Its [novel database and offline gallery](docs/reference-library/act2/README.md) and [concept-art folders](docs/concept-art/act2/README.md) cover the cast, settings, machines, bosses, story mood and three illustrative game views. These are research and design artifacts; the playable prototype remains the mechanics arena.
+
+Act 3's [novel research and concept gallery](docs/reference-library/act3/index.html) covers *A Voyage to Arcturus* with JSON/CSV/SQLite exports and [20 concept images](docs/concept-art/act3/README.md). The [Act 3 proposal](docs/ACT3_CONCEPT.md) targets five main levels in 45 minutes for an experienced player.
+
 ## Play
 
 Open `project.godot` with Godot 4.7.2, then click Play in the editor. On this Mac the engine is at `.tools/Godot.app`; `Play.command` and `Edit.command` launch it from Finder. The launchers also find a Godot app in Applications or `godot` on PATH. Play opens a dedicated full-screen macOS Space.

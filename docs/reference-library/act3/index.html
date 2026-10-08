@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Act III — A Voyage to Arcturus | Research, Art & Levels</title>
+  <style>
+    :root{--bg:#14121b;--panel:#211e29;--deep:#100d16;--line:#443b51;--ink:#f4eee1;--soft:#c6bbc9;--dim:#9c8fa9;--accent:#ead598;--purple:#b99ed3;--serif:Georgia,"Times New Roman",serif}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button,a,input,select{touch-action:manipulation}button{cursor:pointer}a{color:var(--accent);text-underline-offset:4px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px}[hidden]{display:none!important}.shell{max-width:1580px;margin:auto;padding:43px 40px 50px}.masthead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end;padding-bottom:29px;border-bottom:1px solid var(--line)}.eyebrow{margin:0 0 15px;color:var(--accent);font-size:11px;font-weight:650;letter-spacing:.14em;text-transform:uppercase}h1{margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(38px,4.3vw,67px);line-height:1.05;letter-spacing:-.035em}.subtitle{margin:16px 0 0;color:var(--soft);max-width:820px;font-size:14px}.suns{display:flex;align-items:center;justify-content:flex-end;gap:13px;margin-bottom:17px}.sun{width:24px;height:24px;border-radius:50%;background:var(--accent);box-shadow:0 0 40px #dace742b}.sun.blue{width:16px;height:16px;background:var(--purple);box-shadow:0 0 34px #bd9bea44}.totals{display:flex;gap:26px}.total strong{display:block;font:34px/1.15 var(--serif)}.total span{font-size:10px;color:var(--dim);letter-spacing:.04em}.intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;margin:22px 0 29px}.intro p{margin:0;color:var(--soft);font-size:13px;max-width:960px}.intro-links{font-size:12px;align-self:start;white-space:nowrap}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:25px}.tab{border:1px solid var(--line);background:transparent;color:var(--soft);padding:9px 18px;border-radius:3px;font-size:13px}.tab[aria-pressed=true]{border-color:var(--accent);background:var(--accent);color:#211a15}.filters{display:grid;grid-template-columns:minmax(240px,2.3fr) minmax(155px,1fr) minmax(155px,1fr) minmax(155px,1fr);gap:16px}.field label{display:block;font-size:10px;color:var(--dim);margin-bottom:6px;letter-spacing:.08em}.field input,.field select{width:100%;height:45px;color:var(--ink);background:var(--panel);border:1px solid #655570;border-radius:3px;padding:9px 11px}.field input::placeholder{color:var(--dim)}.result-bar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:22px 0 18px}.result-bar p{margin:0;color:var(--soft);font-size:12px}.clear{background:transparent;color:var(--ink);border:0;text-decoration:underline;text-underline-offset:4px;font-size:12px;padding:6px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:19px;align-items:start}.card{display:flex;flex-direction:column;width:100%;height:100%;text-align:left;background:var(--panel);color:inherit;border:1px solid var(--line);border-radius:4px;overflow:hidden;padding:0;transition:border-color .16s,transform .16s}.card:hover{border-color:var(--purple);transform:translateY(-2px)}.thumb{display:flex;aspect-ratio:4/3;align-items:center;justify-content:center;background:var(--deep);border-bottom:1px solid var(--line);overflow:hidden;width:100%;position:relative}.thumb img{width:100%;height:100%;display:block;object-fit:contain}.card.gameplay .thumb{aspect-ratio:9/15}.card.entity .thumb{aspect-ratio:16/8}.card.entity .thumb img{object-fit:cover;opacity:.7}.placeholder{width:100%;padding:24px;color:var(--purple);font-family:var(--serif);font-size:24px;line-height:1.3}.placeholder small{display:block;margin-top:12px;color:var(--dim);font:11px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.card-body{display:flex;flex-direction:column;padding:17px 18px 19px;flex:1}.card-kicker{font-size:9px;text-transform:uppercase;letter-spacing:.09em;color:var(--accent)}.card-title{display:block;margin:8px 0 9px;font:23px/1.2 var(--serif);color:var(--ink)}.card-description{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;line-height:1.6;color:var(--soft)}.card-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px;font-size:10px;color:var(--dim)}.tag{padding:2px 6px;border:1px solid #51455d;border-radius:2px}.tag.fact{color:#c5dcbc}.tag.proposal{color:var(--accent)}.tag.interpretation{color:#c4b4df}.empty{padding:58px 20px;text-align:center;border:1px dashed var(--line);color:var(--soft)}.foot{margin-top:38px;padding-top:19px;border-top:1px solid var(--line);color:var(--dim);font-size:12px}.foot p{margin:0 0 8px}.foot a{display:inline-block;margin-right:14px;margin-bottom:5px}.legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:26px;color:var(--dim);font-size:11px}.legend strong{font-weight:600;color:var(--soft)}.load-error{padding:25px;border:1px solid #907946;color:var(--soft);margin-bottom:20px}dialog{padding:0;border:1px solid #7e6989;border-radius:5px;max-width:1380px;width:calc(100% - 38px);max-height:calc(100dvh - 38px);background:var(--bg);color:var(--ink);overflow:auto}dialog::backdrop{background:rgb(8 5 13 / .9)}.dialog-head{display:flex;justify-content:space-between;gap:25px;padding:22px 26px;border-bottom:1px solid var(--line);align-items:start}.dialog-head h2{margin:8px 0 0;font:34px/1.2 var(--serif)}.close{flex-shrink:0;width:42px;height:42px;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:3px;font-size:24px}.dialog-main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(330px,1fr)}.dialog-main.text-only{grid-template-columns:1fr}.preview{background:var(--deep);padding:14px;min-width:0}.preview img{width:100%;height:auto;max-height:76dvh;object-fit:contain;display:block}.preview-caption{font-size:11px;color:var(--dim);margin:12px 4px 4px}.detail{min-width:0;padding:26px}.detail-section+.detail-section{margin-top:24px}.detail h3{margin:0 0 8px;font-size:12px;letter-spacing:.02em}.detail p{margin:0;color:var(--soft);font-size:13px;white-space:pre-line}.detail ul{padding-left:18px;color:var(--soft);font-size:12px;margin:0}.detail li+li{margin-top:7px}.detail dl{display:grid;grid-template-columns:100px minmax(0,1fr);gap:7px 14px;margin:0;font-size:11px}.detail dt{color:var(--dim)}.detail dd{margin:0;color:var(--soft);overflow-wrap:anywhere}.source-name{color:var(--soft)}.source-info{color:var(--dim);font-size:11px;display:block}.related{display:flex;flex-wrap:wrap;gap:8px}.related-button{padding:6px 9px;color:var(--ink);border:1px solid var(--line);background:var(--panel);border-radius:3px;font-size:11px;text-align:left}.related-art{width:124px;padding:0;border:1px solid var(--line);background:var(--panel);color:var(--soft);font-size:10px;text-align:left;overflow:hidden;border-radius:2px}.related-art img{width:100%;height:85px;object-fit:contain;display:block;background:var(--deep)}.related-art span{display:block;padding:7px;line-height:1.4}.prompt{color:var(--dim);font-size:11px;margin-top:20px}.prompt summary{cursor:pointer}.prompt p{margin-top:9px;font-size:11px;color:var(--dim)}.notes{color:var(--dim)!important;font-size:12px!important}.source-flag{display:inline-block;font-size:11px;padding:4px 7px;border:1px solid var(--line);margin-bottom:13px}.section-link{font-size:11px}.level-overview{margin-bottom:24px;padding:23px 25px;border:1px solid #665276;background:linear-gradient(110deg,#2b2336,#211e29)}.level-overview h2{font:29px/1.2 var(--serif);margin:0 0 12px}.level-overview p{color:var(--soft);font-size:13px;margin:0;max-width:1040px}.level-overview p+p{margin-top:10px}.grid.level-grid{grid-template-columns:1fr;gap:13px}.card.level{display:grid;grid-template-columns:110px 1fr;min-height:142px}.card.level .thumb{height:100%;aspect-ratio:auto;border-bottom:0;border-right:1px solid var(--line)}.level-number{font:42px/1 var(--serif);color:var(--purple);padding:22px}.level-number small{display:block;font:11px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--accent);margin-top:12px;white-space:nowrap}.card.level .card-title{font-size:28px}.card.level .card-meta{margin-top:12px}.timeline{display:grid;gap:9px;list-style:none!important;padding:0!important}.beat{padding:12px 14px;border-left:3px solid var(--purple);background:var(--panel)}.beat strong{font-weight:600;color:var(--ink)}.beat small{display:block;color:var(--dim);margin-top:4px}.beat p{font-size:12px;margin-top:5px}.timeline-strip{display:flex;gap:3px;height:9px;margin:15px 0 0}.timeline-strip span{display:block;min-width:2px;background:var(--purple)}.timeline-strip span:nth-child(2n){background:var(--accent)}.small-value{font-size:11px;color:var(--dim)}
+    @media(min-width:1700px){.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}@media(max-width:1120px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.filters{grid-template-columns:repeat(3,minmax(0,1fr))}.field:first-child{grid-column:1/-1}.masthead{grid-template-columns:1fr}.suns{justify-content:flex-start;margin-top:0;margin-bottom:14px}.totals{gap:35px}.dialog-main{grid-template-columns:1fr}.preview img{max-height:60dvh}.intro{grid-template-columns:1fr;gap:12px}}@media(max-width:750px){.shell{padding:30px 20px 40px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field:last-child{grid-column:1/-1}.dialog-head h2{font-size:28px}.card.level{grid-template-columns:85px 1fr}.level-number{font-size:32px;padding:14px}}@media(max-width:480px){.shell{padding:25px 15px 36px}.grid{grid-template-columns:1fr}.card.entity .thumb{aspect-ratio:16/6}.totals{gap:25px;flex-wrap:wrap}.total strong{font-size:29px}.tab{padding:8px 12px;font-size:12px}.dialog-head,.detail{padding:18px}.preview{padding:7px}dialog{width:calc(100% - 14px);max-height:calc(100dvh - 14px)}.intro-links{white-space:normal}.legend{gap:10px}.level-overview{padding:20px}}@media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">Cinder / Act III / Research & concept library</p>
+        <h1>A Voyage to Arcturus</h1>
+        <p class="subtitle">David Lindsay, 1920. A journey through strange bodies, conflicting senses, seductive worlds, and the cost of seeing beyond appearances.</p>
+      </div>
+      <div>
+        <div class="suns" aria-hidden="true"><span class="sun"></span><span class="sun blue"></span></div>
+        <div class="totals" aria-label="Library totals">
+          <div class="total"><strong id="count-entities">—</strong><span>story records</span></div>
+          <div class="total"><strong id="count-art">—</strong><span>concept images</span></div>
+          <div class="total"><strong id="count-levels">—</strong><span>main levels</span></div>
+        </div>
+      </div>
+    </header>
+    <div class="intro">
+      <p>The text supplies the characters and observations; adaptation notes turn them into proposals for an experienced player. Read the facts beside their chapter references, explore the art by category, and inspect the same five-level pacing scale used for Act I.</p>
+      <div class="intro-links"><a href="../../ACT3_CONCEPT.md">Act III concept</a> · <a href="../../concept-art/act3/README.md">Art folder</a></div>
+    </div>
+    <div class="load-error" id="load-error" hidden>The catalogue data could not be loaded. Keep this file beside catalog-data.js, or rebuild with scripts/research/build_arcturus_library.py.</div>
+    <noscript><p class="load-error">This gallery needs JavaScript. You can still read the <a href="catalog.json">JSON database</a>, <a href="research/RESEARCH.md">research notes</a> or <a href="../../concept-art/act3/README.md">art index</a>.</p></noscript>
+    <nav class="tabs" aria-label="Browse library collections">
+      <button class="tab" data-view="art" aria-pressed="true" type="button">Concept art</button>
+      <button class="tab" data-view="entities" aria-pressed="false" type="button">Story database</button>
+      <button class="tab" data-view="gameplay" aria-pressed="false" type="button">3 game views</button>
+      <button class="tab" data-view="levels" aria-pressed="false" type="button">Levels & pacing</button>
+      <button class="tab" data-view="all" aria-pressed="false" type="button">Everything</button>
+    </nav>
+    <section class="level-overview" id="level-overview" aria-labelledby="pacing-title" hidden>
+      <h2 id="pacing-title">Five levels for a player who knows the gestures</h2>
+      <p id="pacing-summary"></p><p id="pacing-detail"></p>
+    </section>
+    <form class="filters" id="filters" role="search">
+      <div class="field"><label for="search">SEARCH</label><input id="search" type="search" placeholder="Maskull, Crystalman, Muspel, living forest…" autocomplete="off"></div>
+      <div class="field"><label for="category">CATEGORY</label><select id="category"><option value="">All categories</option></select></div>
+      <div class="field"><label for="canon">PROVENANCE</label><select id="canon"><option value="">All provenance</option><option value="novel_fact">Novel fact</option><option value="interpretation">Interpretation</option><option value="game_proposal">Game proposal</option></select></div>
+      <div class="field"><label for="type">RECORD TYPE</label><select id="type"><option value="">All types</option></select></div>
+    </form>
+    <div class="result-bar"><p id="result-count" role="status" aria-live="polite" aria-atomic="true">Loading library…</p><button id="clear" class="clear" type="button" hidden>Clear filters</button></div>
+    <div class="grid" id="grid" aria-label="Library records"></div>
+    <p class="empty" id="empty" hidden>No matching records. Try another term or clear the filters.</p>
+    <div class="legend"><span><strong>Novel fact</strong> — supported by the source text</span><span><strong>Interpretation</strong> — a reading of mood or meaning</span><span><strong>Game proposal</strong> — invented design, level or generated art</span></div>
+    <footer class="foot">
+      <p>Concept images and game views are proposals. Act III is not implemented. Availability reflects local files, and generation status follows the manifest. Source publications open online.</p>
+      <a href="catalog.json">JSON</a><a href="catalog.csv">CSV</a><a href="library.sqlite">SQLite</a><a href="research/SOURCES.md">Sources</a><a href="research/RESEARCH.md">Research & scope</a><a href="../../concept-art/act3/generated-manifest.json">Art prompts</a><a href="README.md">Readme & SQL examples</a>
+    </footer>
+  </main>
+  <dialog id="dialog" aria-labelledby="detail-title">
+    <header class="dialog-head"><div><span class="card-kicker" id="detail-kicker"></span><h2 id="detail-title"></h2></div><button class="close" id="close" type="button" aria-label="Close record">×</button></header>
+    <div class="dialog-main" id="dialog-main"><div class="preview" id="preview"></div><div class="detail" id="detail"></div></div>
+  </dialog>
+  <script src="./catalog-data.js"></script>
+  <script>
+    (() => {
+      'use strict';
+      const data=window.ARCTURUS_LIBRARY;
+      if(!data){document.getElementById('load-error').hidden=false;document.getElementById('result-count').textContent='Library unavailable';return;}
+      const list=v=>Array.isArray(v)?v:[],str=v=>v==null?'':String(v);
+      const categoryLabels={characters:'Characters',environments:'Environments',bosses:'Boss candidates',mood:'Mood & themes',props:'Props & senses',gameplay:'Gameplay',levels:'Level plan'};
+      const statusLabels={novel_fact:'Novel fact',interpretation:'Interpretation',game_proposal:'Game proposal'};
+      const kindLabels={'concept-sheet':'Concept board','gameplay-mockup':'Game view','generated-concept':'Concept study','level-plan':'Level plan'};
+      const pretty=v=>str(v).replace(/[_-]+/g,' ').replace(/^./,c=>c.toUpperCase());
+      const categoryLabel=v=>categoryLabels[v]||pretty(v),statusLabel=v=>statusLabels[v]||pretty(v);
+      const entities=list(data.entities).map(r=>({...r,record_type:'entity'}));
+      const art=list(data.artworks).map(r=>({...r,record_type:'artwork'}));
+      const levels=list(data.levels).map(r=>({...r,record_type:'level'}));
+      const records=[...art,...entities,...levels],byId=new Map(records.map(r=>[r.id,r]));
+      const sources=new Map(list(data.sources).map(source=>[source.id,source]));
+      const search=document.getElementById('search'),category=document.getElementById('category'),canon=document.getElementById('canon'),type=document.getElementById('type');
+      const grid=document.getElementById('grid'),dialog=document.getElementById('dialog'),clear=document.getElementById('clear');
+      let view='art',lastFocused=null;
+      const make=(tag,className,value)=>{const el=document.createElement(tag);if(className)el.className=className;if(value!=null)el.textContent=str(value);return el;};
+      const textValues=value=>value==null?'':Array.isArray(value)?value.map(textValues).join(' '):typeof value==='object'?Object.values(value).map(textValues).join(' '):str(value);
+      const typeKey=r=>r.record_type==='artwork'?r.kind:r.record_type==='level'?r.kind+'-level':r.subcategory||'story-record';
+      const typeLabel=v=>kindLabels[v]||pretty(v);
+      const safeImagePath=value=>{const path=str(value);return /^\.\.\/\.\.\/concept-art\/act3\/(?!.*(?:^|\/)\.\.(?:\/|$))[^:]+$/i.test(path)?path:null;};
+      const sourceLink=(url,label)=>{try{const parsed=new URL(url);if(!['https:','http:'].includes(parsed.protocol))return null;const link=make('a','',label);link.href=parsed.href;link.target='_blank';link.rel='noopener noreferrer';return link;}catch{return null;}};
+      const presentArt=r=>r&&r.record_type==='artwork'&&r.file_exists&&safeImagePath(r.local_path);
+      const linkedArt=r=>r.record_type==='artwork'?(presentArt(r)?r:null):list(r.artwork_ids).map(id=>byId.get(id)).find(presentArt);
+      const searchText=new Map(records.map(r=>[r.id,[textValues({...r,prompt:undefined,sha256:undefined,local_path:undefined,repo_path:undefined}),categoryLabel(r.category),statusLabel(r.canon_status),typeLabel(typeKey(r)),...list(r.source_ids).map(id=>sources.get(id)?.title||''),...list(r.entity_ids).map(id=>byId.get(id)?.title||'')].join(' ').toLocaleLowerCase()]));
+      const categoryOrder=['characters','environments','bosses','mood','props','gameplay','levels'];
+      const categories=[...new Set(records.map(r=>r.category))].sort((a,b)=>(categoryOrder.indexOf(a)<0?99:categoryOrder.indexOf(a))-(categoryOrder.indexOf(b)<0?99:categoryOrder.indexOf(b)));
+      for(const value of categories){const option=make('option','',categoryLabel(value));option.value=value;category.append(option);}
+      for(const value of [...new Set(records.map(typeKey))].sort((a,b)=>typeLabel(a).localeCompare(typeLabel(b)))){const option=make('option','',typeLabel(value));option.value=value;type.append(option);}
+      document.getElementById('count-entities').textContent=entities.length;
+      document.getElementById('count-art').textContent=art.filter(presentArt).length;
+      const mainLevels=levels.filter(r=>r.kind!=='optional'),optionalLevels=levels.filter(r=>r.kind==='optional');
+      document.getElementById('count-levels').textContent=mainLevels.length;
+      const totalMinutes=mainLevels.reduce((sum,r)=>sum+(Number(r.target_minutes)||0),0);
+      document.getElementById('pacing-title').textContent=mainLevels.length+' main levels for a player who knows the gestures';
+      document.getElementById('pacing-summary').textContent=mainLevels.map(r=>r.title+' · '+str(r.target_minutes)+' min').join(' → ')+'. '+totalMinutes+' minutes of target active play, before retries and exploration. '+optionalLevels.length+' optional levels add 3–5 minutes each.';
+      const pacing=data.level_metadata||{};
+      document.getElementById('pacing-detail').textContent=textValues(pacing.experienced_player_principles||pacing.design_principles||pacing.principles)||'Reuse the established gestures and compact level scale. Each level asks for familiar actions under a new pressure; the beat timeline shows where encounters, recovery and checkpoints fit.';
+      const placeholder=r=>{const node=make('span','placeholder',categoryLabel(r.category));node.append(make('small','',r.record_type==='entity'?'Read the source observation, chapter references and game adaptation.':'Planned image · unavailable in this build.'));return node;};
+      function render(){
+        const terms=search.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+        const matches=records.filter(r=>(view==='all'||view==='entities'&&r.record_type==='entity'||view==='art'&&r.record_type==='artwork'&&r.category!=='gameplay'||view==='gameplay'&&r.record_type==='artwork'&&r.category==='gameplay'||view==='levels'&&r.record_type==='level')&&(!category.value||r.category===category.value)&&(!canon.value||r.canon_status===canon.value)&&(!type.value||typeKey(r)===type.value)&&terms.every(term=>searchText.get(r.id).includes(term)));
+        const fragment=document.createDocumentFragment();
+        grid.classList.toggle('level-grid',view==='levels');document.getElementById('level-overview').hidden=view!=='levels';
+        for(const r of matches){
+          const card=make('button','card '+r.record_type+(r.category==='gameplay'?' gameplay':''));card.type='button';card.setAttribute('aria-label','Open '+r.title);
+          const thumb=make('span','thumb'),image=linkedArt(r);
+          if(r.record_type==='level'){const number=make('span','level-number',r.kind==='optional'?'+'+String(optionalLevels.findIndex(l=>l.id===r.id)+1):String(r.order).padStart(2,'0'));number.append(make('small','',r.kind==='optional'&&r.duration_min&&r.duration_max?r.duration_min+'–'+r.duration_max+' min':r.target_minutes+' min'));thumb.append(number);}
+          else if(image){const img=make('img');img.src=safeImagePath(image.local_path);img.alt='';img.loading='lazy';img.decoding='async';img.addEventListener('error',()=>thumb.replaceChildren(placeholder(r)),{once:true});thumb.append(img);}else thumb.append(placeholder(r));
+          const body=make('span','card-body');body.append(make('span','card-kicker',r.id+' / '+categoryLabel(r.category)),make('span','card-title',r.title));
+          if(r.description)body.append(make('span','card-description',r.description));
+          const meta=make('span','card-meta');meta.append(make('span','tag '+(r.canon_status==='novel_fact'?'fact':r.canon_status==='game_proposal'?'proposal':'interpretation'),statusLabel(r.canon_status)));
+          meta.append(make('span','tag',typeLabel(typeKey(r))));
+          if(r.record_type==='entity'&&list(r.chapter_refs).length)meta.append(make('span','tag',r.chapter_refs.length+' chapter ref'+(r.chapter_refs.length===1?'':'s')));
+          if(r.record_type==='artwork')meta.append(make('span','tag',r.file_exists?(r.status==='generated'?'Generated':'Local file · unconfirmed'):'Unavailable'));
+          if(r.record_type==='level')meta.append(make('span','tag',list(r.beats).length+' beats'));
+          body.append(meta);
+          if(r.record_type==='level'&&list(r.beats).length){const strip=make('span','timeline-strip');strip.setAttribute('aria-hidden','true');for(const beat of r.beats){const seg=make('span');seg.style.flexGrow=String(beat.seconds||1);strip.append(seg);}body.append(strip);}
+          card.append(thumb,body);card.addEventListener('click',()=>openRecord(r));fragment.append(card);
+        }
+        grid.replaceChildren(fragment);
+        const filtered=Boolean(terms.length||category.value||canon.value||type.value);
+        document.getElementById('result-count').textContent=matches.length+' '+({entities:'story records',gameplay:'game views',art:'concept boards',levels:'level plans',all:'records'}[view])+(filtered?' match your filters':'')+' · Open a card for details, sources and related records';
+        document.getElementById('empty').hidden=matches.length>0;clear.hidden=!filtered;
+      }
+      const section=(container,title,text,className)=>{if(!text)return;const block=make('section','detail-section');block.append(make('h3','',title),make('p',className||'',typeof text==='string'?text:textValues(text)));container.append(block);};
+      function relatedSection(container,title,ids,thumbnails=false){
+        const related=list(ids).map(id=>byId.get(id)).filter(Boolean);if(!related.length)return;
+        const block=make('section','detail-section');block.append(make('h3','',title));const links=make('div','related');
+        for(const record of related){const button=make('button',thumbnails?'related-art':'related-button');button.type='button';if(thumbnails&&presentArt(record)){const img=make('img');img.src=safeImagePath(record.local_path);img.alt='';img.loading='lazy';button.append(img);}button.append(make('span','',record.id+' — '+record.title));button.addEventListener('click',()=>openRecord(record));links.append(button);}block.append(links);container.append(block);
+      }
+      function sourceSection(container,r){
+        const refs=list(r.source_ids).map(id=>sources.get(id)).filter(Boolean);if(!refs.length&&!list(r.source_urls).length)return;
+        const block=make('section','detail-section');block.append(make('h3','','Sources'));const ul=make('ul');
+        for(const source of refs){const li=make('li'),link=sourceLink(source.url,source.title);li.append(link||make('span','source-name',source.title));li.append(make('span','source-info',source.id+' · '+pretty(source.kind)+' · accessed '+str(source.accessed_date)));ul.append(li);}
+        const known=new Set(refs.map(source=>source.url));for(const url of list(r.source_urls)){if(known.has(url))continue;const link=sourceLink(url,'Source publication');if(link){const li=make('li');li.append(link);ul.append(li);}}
+        block.append(ul);container.append(block);
+      }
+      function openRecord(r,updateHash=true){
+        if(!dialog.open)lastFocused=document.activeElement;
+        document.getElementById('detail-kicker').textContent=r.id+' / '+categoryLabel(r.category)+' / '+typeLabel(typeKey(r));document.getElementById('detail-title').textContent=r.title;
+        const preview=document.getElementById('preview'),detail=document.getElementById('detail');preview.replaceChildren();detail.replaceChildren();
+        const image=linkedArt(r);preview.hidden=!image;document.getElementById('dialog-main').classList.toggle('text-only',!image);
+        if(image){const img=make('img');img.src=safeImagePath(image.local_path);img.alt=image.title;img.addEventListener('error',()=>preview.replaceChildren(make('p','preview-caption','This image could not be loaded. Check the manifest and rebuild.')),{once:true});preview.append(img);const caption=make('p','preview-caption',image.id+' — '+image.title+'. '+(image.status==='generated'?'Generated game concept.':'Local visual proposal; generation unconfirmed.'));const link=make('a','section-link','Open original image');link.href=safeImagePath(image.local_path);link.target='_blank';link.rel='noopener';caption.append(document.createTextNode(' '),link);preview.append(caption);}
+        detail.append(make('span','source-flag',statusLabel(r.canon_status)+(r.record_type==='artwork'?' · visual proposal':r.record_type==='level'?' · proposed campaign pacing':'')));
+        section(detail,r.record_type==='artwork'?'Concept intention':r.record_type==='level'?'Level objective':r.canon_status==='novel_fact'?'Observation from the novel':r.canon_status==='interpretation'?'Interpretation':'Design proposal',r.description);
+        section(detail,'Game adaptation',r.game_adaptation);
+        section(detail,'Visual details supported by the text',r.visual_facts);section(detail,'Names & aliases',list(r.aliases).join(' · '),'notes');
+        if(r.record_type==='level'){
+          section(detail,'Target active play',r.target_minutes+' minutes'+(r.duration_min&&r.duration_max?' · working range '+r.duration_min+'–'+r.duration_max+' minutes':''));
+          section(detail,'Experienced-player challenge',r.skill);section(detail,'Mood',r.mood);section(detail,'Existing gesture kit',r.kit);
+          if(r.parent_level_id)relatedSection(detail,'Optional level after',[r.parent_level_id]);
+          section(detail,'Optional reward',r.reward);section(detail,'Reused assets',r.reused_assets);section(detail,'Small additions',r.small_additions);
+          if(r.boss){section(detail,'Boss encounter',r.boss.name);section(detail,'Boundary with the novel',r.boss.source_warning,'notes');section(detail,'Reachable target',r.boss.invented_weak_point);section(detail,'Proposed phases',str(r.boss.phases)+' phases · '+list(r.boss.phase_target_minutes).map(m=>m+' min').join(' / '));section(detail,'Attack patterns',r.boss.attacks);section(detail,'Replay order',r.boss.replay_order);section(detail,'Outcome',r.boss.outcome);}
+          if(list(r.beats).length){const block=make('section','detail-section');block.append(make('h3','','Encounter & checkpoint timeline'));const timeline=make('ol','timeline');let elapsed=0;for(const beat of r.beats){const item=make('li','beat');item.append(make('strong','',beat.name));const start=elapsed;elapsed+=Number(beat.seconds)||0;item.append(make('small','',(start/60).toFixed(1)+'–'+(elapsed/60).toFixed(1)+' min · '+str(beat.seconds)+' sec'+(beat.checkpoint_elapsed_seconds!=null?' · checkpoint at '+(beat.checkpoint_elapsed_seconds/60).toFixed(1)+' min':'')));if(beat.purpose)item.append(make('p','',beat.purpose));timeline.append(item);}block.append(timeline);detail.append(block);}
+        }
+        if(list(r.chapter_refs).length){const block=make('section','detail-section');block.append(make('h3','','Chapter references'));const ul=make('ul');for(const ref of r.chapter_refs){const label=ref.label||[ref.book,ref.chapter,ref.title].filter(Boolean).join(' · '),li=make('li');li.append(sourceLink(ref.url,label)||make('span','',label));if(ref.note)li.append(make('span','source-info',textValues(ref.note)));ul.append(li);}block.append(ul);detail.append(block);}
+        section(detail,'Notes',r.notes,'notes');relatedSection(detail,'Related story / design records',[...list(r.entity_ids),...list(r.related_entity_ids)]);relatedSection(detail,'Related concept art',r.artwork_ids,true);relatedSection(detail,'Related levels',r.level_ids);sourceSection(detail,r);
+        if(r.record_type==='artwork'){
+          const block=make('section','detail-section');block.append(make('h3','','File & generation record'));const dl=make('dl');
+          for(const [label,value]of [['Status',r.status==='generated'&&r.file_exists?'Generated · local file verified':r.file_exists?'Local file · generation unconfirmed':pretty(r.status)+' · image unavailable'],['Dimensions',r.width&&r.height?r.width+' × '+r.height:'Unrecorded'],['Size',r.file_bytes?new Intl.NumberFormat().format(r.file_bytes)+' bytes':'Unavailable'],['Path',r.repo_path],['SHA-256',r.sha256]]){if(!value)continue;dl.append(make('dt','',label),make('dd','',value));}block.append(dl);detail.append(block);
+          if(r.prompt){const disclosure=make('details','prompt');disclosure.append(make('summary','','Generation prompt'),make('p','',r.prompt));detail.append(disclosure);}
+        }
+        if(list(r.tags).length)section(detail,'Tags',r.tags.join(' · '),'notes');
+        if(!dialog.open)dialog.showModal();dialog.scrollTop=0;
+        if(updateHash)try{history.replaceState(null,'','#record='+encodeURIComponent(r.id));}catch{}
+      }
+      document.getElementById('close').addEventListener('click',()=>dialog.close());
+      dialog.addEventListener('click',event=>{if(event.target===dialog){const box=dialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)dialog.close();}});
+      dialog.addEventListener('close',()=>{if(lastFocused&&lastFocused.isConnected)lastFocused.focus();try{history.replaceState(null,'',location.pathname+location.search);}catch{}});
+      document.getElementById('filters').addEventListener('submit',event=>event.preventDefault());search.addEventListener('input',render);for(const control of[category,canon,type])control.addEventListener('change',render);
+      clear.addEventListener('click',()=>{search.value='';category.value='';canon.value='';type.value='';render();search.focus();});
+      for(const button of document.querySelectorAll('[data-view]'))button.addEventListener('click',()=>{view=button.dataset.view;category.value='';type.value='';canon.value='';for(const tab of document.querySelectorAll('[data-view]'))tab.setAttribute('aria-pressed',str(tab===button));render();});
+      render();
+      const initialId=new URLSearchParams(location.hash.slice(1)).get('record');if(initialId&&byId.has(initialId))openRecord(byId.get(initialId),false);
+    })();
+  </script>
+</body>
+</html>

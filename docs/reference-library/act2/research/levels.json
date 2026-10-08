@@ -1,0 +1,519 @@
+{
+  "schema_version": 1,
+  "act": 2,
+  "title": "The Invasion",
+  "status": "design_proposal_unimplemented_unplaytested",
+  "researched_date": "2026-10-08",
+  "source_novel": "The War of the Worlds (H. G. Wells, 1898)",
+  "audience": "Player experienced with Act 1's confirmed controls and baseline combat",
+  "main_level_count": 5,
+  "main_first_clear_target_minutes": 45,
+  "optional_level_count": 3,
+  "optional_first_clear_range_minutes": [
+    9,
+    15
+  ],
+  "all_content_first_clear_range_minutes": [
+    54,
+    60
+  ],
+  "pacing_baseline": {
+    "document": "../../../GAME_CONCEPT.md",
+    "act1_main_level_count": 5,
+    "act1_target_minutes": [
+      6,
+      8,
+      9,
+      10,
+      10
+    ],
+    "act1_total_minutes": 43,
+    "inherited_rules": [
+      "five main levels",
+      "shorter opening",
+      "roughly ten-minute ceiling",
+      "separately entered 3–5 minute optional levels",
+      "parent-kit reuse for optional levels",
+      "encounter and boss-phase checkpoints",
+      "frozen-state pause/resume"
+    ],
+    "art_style_inherited": false
+  },
+  "campaign_constraints": {
+    "orientation": "portrait",
+    "presentation": "pixelated 2.5D; fixed-angle overhead player-following camera",
+    "voluntary_movement": "directional swipes cause ground-plane X/Z dashes only",
+    "attack": "tap slash; second quick tap chains one blast; current confirmed screen-relative aim rule unchanged",
+    "weapon": "one carried weapon; no hotbar",
+    "damage": "fixed baseline damage; no persistent damage growth",
+    "compulsory_new_controls": false,
+    "forbidden_required_traversal": [
+      "swimming",
+      "underwater movement",
+      "driving",
+      "climbing",
+      "jumping",
+      "powerup-gated dash gaps"
+    ],
+    "optional_baseline_completion": true,
+    "boss_slash_only_completion_required": true
+  },
+  "checkpoints": {
+    "target_minutes_between_saved_completions": [
+      1,
+      3
+    ],
+    "save_before_boss": true,
+    "save_after_boss_phase": true,
+    "retry": "restore a coherent section start; no active hazard at load; ordinary supplies restored",
+    "backgrounding": "freeze all simulation including cooldowns, warnings and temporary effects",
+    "resume": "consume overlay tap; continue the frozen state"
+  },
+  "boss_bait_coordinate_rule": {
+    "player_aim_anchor": "screen-space final finger-release endpoint of the latest swipe",
+    "boss_bait": "actual world X/Z landing after most recent completed dash; use collision-shortened result",
+    "checkpoint_initialisation": "player's actual starting world floor position",
+    "sampling": "sample once at ray-windup start; show world marker and complete short ray lane; never retarget that attack",
+    "not_a_bait_update": [
+      "finger screen release endpoint",
+      "camera movement",
+      "buffered movement not completed",
+      "rejected movement"
+    ],
+    "reaction_budget": "warning must allow recognition plus remaining dash cooldown plus one normal escape dash"
+  },
+  "regular_enemies": [
+    {
+      "id": "A2-E1",
+      "name": "Ray Scout",
+      "canonical_status": "fictional compact fighting-machine adaptation",
+      "first_level": "A2-L1",
+      "role": "committed short ray lane; exposed folded mirror housing in recovery"
+    },
+    {
+      "id": "A2-E2",
+      "name": "Canister Tender",
+      "canonical_status": "fictional smoke-logistics unit",
+      "first_level": "A2-L3",
+      "role": "bounded previewed smoke patch; vulnerable low tube mount while reloading"
+    },
+    {
+      "id": "A2-E3",
+      "name": "Salvage Handler",
+      "canonical_status": "fictional compact handling-machine adaptation",
+      "first_level": "A2-L2",
+      "role": "five-legged tool-arm grab/shove; exposed tool mount after commitment"
+    }
+  ],
+  "levels": [
+    {
+      "id": "A2-L1",
+      "name": "Horsell Common",
+      "subtitle": "Curiosity Burns",
+      "kind": "main",
+      "target_minutes": 8,
+      "objective": "Leave the cylinder perimeter through the Woking road approach",
+      "skill": "Turn a tracking ray into a useful escape and attack landing",
+      "mood": "curiosity; rupture; sudden isolation",
+      "source_urls": [
+        "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2462/book-onethe-coming-of-the-martians-chapter-5-the-heat-ray/",
+        "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2463/book-onethe-coming-of-the-martians-chapter-6-the-heat-ray-in-the-chobham-road/"
+      ],
+      "enemy_ids": [
+        "A2-E1"
+      ],
+      "boss_ids": [],
+      "beats": [
+        {
+          "name": "Arrival and first ray",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 120,
+          "purpose": "Short arrival tableau, one scout demonstration and recovery punish"
+        },
+        {
+          "name": "Scorched road",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 240,
+          "purpose": "One scout at a time from different sides"
+        },
+        {
+          "name": "Common loop",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 360,
+          "purpose": "Choose one of two short approaches that rejoin"
+        },
+        {
+          "name": "Departure clearing",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 480,
+          "purpose": "Two staggered scouts then contact exit and brief distant eruption"
+        }
+      ],
+      "kit": [
+        "heath floor",
+        "pine trunks",
+        "scorched hedges",
+        "low sand heaps",
+        "cylinder pit landmark",
+        "road edging",
+        "Ray Scout",
+        "ray warning/active/recovery states"
+      ]
+    },
+    {
+      "id": "A2-L2",
+      "name": "Weybridge and Shepperton",
+      "subtitle": "The Broken Crossing",
+      "kind": "main",
+      "target_minutes": 9,
+      "objective": "Cross the grounded lock approach and reach shelter",
+      "skill": "Preserve a landing through tool-arm and giant-foot commitments",
+      "mood": "collective retreat; short-lived resistance; overwhelming scale",
+      "source_urls": [
+        "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2469/book-onethe-coming-of-the-martians-chapter-12-what-i-saw-of-the-destruction-of-weybridge-and-shepperton/"
+      ],
+      "enemy_ids": [
+        "A2-E1",
+        "A2-E3"
+      ],
+      "boss_ids": [],
+      "set_piece": "One locally visible giant foot; distant artillery collapse; no full boss",
+      "beats": [
+        {
+          "name": "Village retreat",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 120,
+          "purpose": "Familiar scout, then one handler alone"
+        },
+        {
+          "name": "Lock apron",
+          "seconds": 150,
+          "checkpoint_elapsed_seconds": 270,
+          "purpose": "Isolated footfall demonstration, then handler combination"
+        },
+        {
+          "name": "Broken crossing",
+          "seconds": 150,
+          "checkpoint_elapsed_seconds": 420,
+          "purpose": "Alternating broad footfall pockets and one short scout lane"
+        },
+        {
+          "name": "Shelter approach",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 540,
+          "purpose": "Brief mixed fight, distant collapse and contact shelter"
+        }
+      ],
+      "kit": [
+        "lockside ground",
+        "bridge abutments",
+        "village facades",
+        "carts",
+        "artillery scenery",
+        "water edge",
+        "handler",
+        "giant foot states",
+        "distant collapse tableau"
+      ]
+    },
+    {
+      "id": "A2-L3",
+      "name": "Black Smoke and the Ruined House",
+      "subtitle": "Under the Machines",
+      "kind": "main",
+      "target_minutes": 9,
+      "objective": "Find clear ground through the occupied excavation and break out",
+      "skill": "Prioritise an area-denial source or a reachable machine recovery",
+      "mood": "confinement; industrial occupation; methodical menace",
+      "source_urls": [
+        "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2472/book-onethe-coming-of-the-martians-chapter-15-what-had-happened-in-surrey/",
+        "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2476/book-twothe-earth-under-the-martians-chapter-2-what-we-saw-from-the-ruined-house/"
+      ],
+      "enemy_ids": [
+        "A2-E1",
+        "A2-E2",
+        "A2-E3"
+      ],
+      "boss_ids": [
+        "B02"
+      ],
+      "beats": [
+        {
+          "name": "Smoke edge",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 120,
+          "purpose": "Tender alone; bounded preview, active bank and dissipation"
+        },
+        {
+          "name": "Ruined house",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 240,
+          "purpose": "Tender plus handler with two viable ground approaches"
+        },
+        {
+          "name": "Work apron",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 360,
+          "purpose": "Short industrial tableau and familiar mixed fight"
+        },
+        {
+          "name": "Handling-Machine phase 1",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 450,
+          "purpose": "Separate reach lane and plate-placement patch; low tool-joint opening"
+        },
+        {
+          "name": "Handling-Machine phase 2",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 540,
+          "purpose": "Known arm pattern plus one removable tender; disable arm and contact exit"
+        }
+      ],
+      "boss": {
+        "id": "B02",
+        "name": "Handling-Machine",
+        "canonical_machine": "five agile legs and dexterous manipulating arms; distinct from a fighting tripod",
+        "invented_weak_point": "low planted tool joint",
+        "phases": 2,
+        "repeat_helpers": false,
+        "outcome": "local arm disengaged; ruined-house exit opened"
+      },
+      "kit": [
+        "suburban walls",
+        "kitchen/scullery remnants",
+        "foundation floor",
+        "sand piles",
+        "cylinder panels",
+        "rods/plates",
+        "smoke/steam states",
+        "canister tubes",
+        "regular handler",
+        "boss handler"
+      ]
+    },
+    {
+      "id": "A2-L4",
+      "name": "Red Weed and the London Approaches",
+      "subtitle": "Another Earth",
+      "kind": "main",
+      "target_minutes": 9,
+      "objective": "Reach Putney and the road into London",
+      "skill": "Keep a useful escape while fixed vegetation alters approach choices",
+      "mood": "displacement; strange ecology; growing solitude",
+      "source_urls": [
+        "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2480/book-twothe-earth-under-the-martians-chapter-6-the-work-of-fifteen-days/"
+      ],
+      "enemy_ids": [
+        "A2-E1",
+        "A2-E2",
+        "A2-E3"
+      ],
+      "boss_ids": [],
+      "beats": [
+        {
+          "name": "Changed garden",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 120,
+          "purpose": "Brief reveal then familiar handler in a new fixed route shape"
+        },
+        {
+          "name": "Flood margin",
+          "seconds": 150,
+          "checkpoint_elapsed_seconds": 270,
+          "purpose": "Scout plus bounded smoke while all required ground stays dry"
+        },
+        {
+          "name": "Villa sequence",
+          "seconds": 150,
+          "checkpoint_elapsed_seconds": 420,
+          "purpose": "Two compact mixed arrangements with different target priorities"
+        },
+        {
+          "name": "Putney approach",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 540,
+          "purpose": "Final broad-floor mix and safe artilleryman vignette"
+        }
+      ],
+      "kit": [
+        "sparse/dense/bleached red weed",
+        "dry road",
+        "flood margin",
+        "villa walls",
+        "lamp posts",
+        "bridge framing",
+        "existing enemies and effects"
+      ]
+    },
+    {
+      "id": "A2-L5",
+      "name": "Dead London and Regent's Park",
+      "subtitle": "The Cry Stops",
+      "kind": "main",
+      "target_minutes": 10,
+      "objective": "Pass the final sentry, reach the redoubt and discover the invasion's collapse",
+      "skill": "Bait a world-space last-dash ray while retaining escape and slash-range retaliation",
+      "mood": "lonely suspense; the cry stops; uncertain relief",
+      "source_urls": [
+        "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2482/book-twothe-earth-under-the-martians-chapter-8-dead-london/",
+        "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2463/book-onethe-coming-of-the-martians-chapter-6-the-heat-ray-in-the-chobham-road/"
+      ],
+      "enemy_ids": [
+        "A2-E1"
+      ],
+      "boss_ids": [
+        "B05"
+      ],
+      "beats": [
+        {
+          "name": "Empty squares",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 120,
+          "purpose": "Mostly quiet streets and one brief familiar encounter"
+        },
+        {
+          "name": "Regent's approach",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 240,
+          "purpose": "Footfall rehearsal, scout and wrecked-handler landmark"
+        },
+        {
+          "name": "Sentry phase 1",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 360,
+          "purpose": "Last-world-dash ray and near-foot patch introduced separately"
+        },
+        {
+          "name": "Sentry phase 2",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 480,
+          "purpose": "Staggered known threats; damage a local brace to open the route"
+        },
+        {
+          "name": "The cry stops",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 600,
+          "purpose": "Quiet redoubt discovery, dead/inert machines, microbial coda and dawn"
+        }
+      ],
+      "boss": {
+        "id": "B05",
+        "name": "Dying Fighting-Machine Sentry",
+        "machine_vocabulary_reference": "B01",
+        "invented_weak_point": "slash-range near leg joint and local brace",
+        "phases": 2,
+        "outcome": "local passage opened by player; microbial death ends the wider invasion",
+        "source_warning": "the novel does not stage this close-range boss duel"
+      },
+      "kit": [
+        "London facades/squares",
+        "overturned omnibus",
+        "park gates and paths",
+        "bleached weed",
+        "black dust",
+        "wrecked handler",
+        "fighting-machine local hood/mirror/leg states",
+        "redoubt piles",
+        "inert machinery",
+        "dawn"
+      ]
+    }
+  ],
+  "optional_levels": [
+    {
+      "id": "A2-O1",
+      "name": "Cylinder Perimeter",
+      "kind": "optional",
+      "parent_level_id": "A2-L1",
+      "target_range_minutes": [
+        3,
+        5
+      ],
+      "initial_budget_minutes": 3,
+      "unlock": "clear parent level",
+      "checkpoint": "before final exchange",
+      "reward": "cosmetic or completion stamp; no stat increase",
+      "objective": "Collect three journal fragments by contact around a compact loop, then reach the opened exit",
+      "reused_assets": [
+        "heath clearings",
+        "cylinder/pit edge",
+        "trunks",
+        "Ray Scouts",
+        "lane warnings"
+      ],
+      "small_additions": [
+        "three journal fragment props",
+        "exit marker"
+      ],
+      "skill": "Choose collection order and bait a ray away from the useful return route"
+    },
+    {
+      "id": "A2-O2",
+      "name": "Clear Air Circuit",
+      "kind": "optional",
+      "parent_level_id": "A2-L3",
+      "target_range_minutes": [
+        3,
+        5
+      ],
+      "initial_budget_minutes": 4,
+      "unlock": "clear parent level",
+      "checkpoint": "before final handler",
+      "reward": "cosmetic or completion stamp; no stat increase",
+      "objective": "Clear two tender positions in either order, then defeat a final handler and reach the exit",
+      "reused_assets": [
+        "work apron",
+        "ruined-house walls",
+        "canister tubes",
+        "tenders",
+        "handler",
+        "smoke states"
+      ],
+      "small_additions": [
+        "empty/full supply-crate states",
+        "circuit marker"
+      ],
+      "skill": "Prioritise area-denial sources before the largest body"
+    },
+    {
+      "id": "A2-O3",
+      "name": "Bleached Canal",
+      "kind": "optional",
+      "parent_level_id": "A2-L4",
+      "target_range_minutes": [
+        3,
+        5
+      ],
+      "initial_budget_minutes": 5,
+      "unlock": "clear parent level",
+      "checkpoint": "before third arrangement",
+      "reward": "cosmetic or completion stamp; no stat increase",
+      "objective": "Complete three familiar threat arrangements across broad dry pockets and reach the exit",
+      "reused_assets": [
+        "weed/bleached weed",
+        "dry road",
+        "flood margin",
+        "villa walls",
+        "scouts",
+        "handlers"
+      ],
+      "small_additions": [
+        "route signs",
+        "small canal-side scenic prop"
+      ],
+      "skill": "Read existing tells from new approaches while retaining a return landing"
+    }
+  ],
+  "required_design_tests": [
+    "experienced player scout commitment after one exchange",
+    "tender plus handler without all escape pockets blocked",
+    "boss world landing vs screen anchor; camera movement, collision-shortened landing, buffered dash and checkpoint initialisation",
+    "slash-only boss completion with normal dash and no pickups",
+    "local attack source, warning, safe landing and weak point within existing portrait camera",
+    "screen-edge swipe releases; muted audio",
+    "background and resume during warning, active smoke and phase transition",
+    "measure complete-level time with transitions; revise estimates from play"
+  ],
+  "implementation_files_modified": false,
+  "concept_document": "../../../ACT2_CONCEPT.md"
+}

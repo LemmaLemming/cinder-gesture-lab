@@ -220,14 +220,21 @@ The [film reference library](reference-library/act1/README.md) contains the rese
 
 ### Act 2 — The Invasion
 
-The working reference is H. G. Wells's [The War of the Worlds (1898)](https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2462/book-onethe-coming-of-the-martians-chapter-5-the-heat-ray/). This act remains a proposal.
+The reference is H. G. Wells's [The War of the Worlds (1898)](https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/). The researched [Act 2 design document](ACT2_CONCEPT.md) develops this proposal for a player who has completed Act 1; all new campaign content remains unimplemented.
 
 - Palette: rust-red and black, with pale attack warnings.
 - Proposed scenery: ruined streets, towering tripods, invasive red weed, and encroaching smoke.
 - Proposed movement identity: crossing dangerous space between sweeping beams and approaching footsteps.
-- Boss candidate: a Martian Tripod that locks its ray onto the player's last dash endpoint. Bait its aim, evade after it commits, then strike an exposed leg joint at close range.
+- Proposed five-level sequence: Horsell Common (8 minutes), Weybridge and Shepperton (9), Black Smoke and the Ruined House (9), Red Weed and the London Approaches (9), Dead London and Regent's Park (10). Total: **45 minutes**, using Act 1's level-count, checkpoint and optional-level framework without borrowing its art direction.
+- Proposed bosses: the five-legged Handling-Machine in level 3 and a three-legged Fighting-Machine sentry in level 5. The sentry samples the player's last completed **world-space dash landing**, locks its ray lane, and exposes a reachable leg joint after commitment. This is separate from the screen-space finger-release anchor used for tap aiming.
+- Three separately entered optional levels target 3–5 minutes each and reuse their parent kits. Progress comes from mastered decisions, with the existing gestures, one carried weapon and fixed baseline damage.
+- The player's local escape fight does not end the invasion: the coda preserves the novel's collapse through terrestrial microbes.
+
+The [Act 2 reference library](reference-library/act2/README.md) contains the chapter-linked novel database and offline searchable gallery. The [concept-art collection](concept-art/act2/README.md) groups character, environment, boss, mood and prop studies, plus three illustrative game-view mockups. Novel facts, mood interpretations and proposed game rules are labelled separately.
 
 ### Act 3 — Tormance: The False World
+
+The [researched Act 3 concept](ACT3_CONCEPT.md) develops five main levels over 45 minutes, with three 3–5-minute optional levels, two bosses and expert mastery encounters. Browse the [novel database and art gallery](reference-library/act3/index.html) or the [20-image concept collection](concept-art/act3/README.md). These are unimplemented design proposals.
 
 The selected reference is David Lindsay's **A Voyage to Arcturus (1920)**. The [Science Fiction Encyclopedia entry](https://sf-encyclopedia.com/entry/lindsay_david) describes its voyage to Tormance, changing beings, and unsettling relationship between the physical world and its underlying reality. The [original novel](https://www.gutenberg.org/cache/epub/1329/pg1329-images.html) supplies two suns, Branchspell and Alppain, the unfamiliar colours ulfire and jale, and white daylight shadows cast by Alppain.
 
