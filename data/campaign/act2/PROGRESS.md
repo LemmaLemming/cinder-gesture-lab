@@ -1,14 +1,16 @@
 # Act 2 progress
 
-Updated 9 October 2026. **One of eight Act2 levels is canonically accepted. L2 owner implementation/selected desktop checks complete, ready for HANDOFF; canonical acceptance pending.** [Memory](ACT_MEMORY.md), [current L2 design](levels/A2-L2.md), [portable L2 evidence](../../../docs/acts/act2/evidence/A2-L2/README.md) and [preserved progress history](PROGRESS_HISTORY.md) separate current status from earlier failures/pending statements.
+Updated 9 October 2026. **One of eight Act2 levels is canonically accepted. L2 owner implementation/selected desktop checks complete and exact HANDOFF sent; canonical acceptance pending. L3 preparation/original asset production is underway.** [Memory](ACT_MEMORY.md), [current L2 design](levels/A2-L2.md), [portable L2 evidence](../../../docs/acts/act2/evidence/A2-L2/README.md) and [preserved progress history](PROGRESS_HISTORY.md) separate current status from earlier failures/pending statements.
 
-Consumed `campaign-shared-22`: publication `4de8b6008741bc9f155c83cbccb60629fac154a2`, preserving merge `0076fe0775c42ed54d5a714d7044ee606579c195`, ACK `5fee52c3-d03a-434b-b506-ba3f9153b204`. Owned checkpoint `0251f7df60c29721288119271223e38ec5ed69cb` was preserved byte for byte across243 tracked files. Earlier shared21/19 checks retain exact recorded scopes. L2 uses no replay playback; shared22 leaves its actual controller/camera/Scheduler/Lane/save dependencies unchanged. No unrelated test/import gate.
+Consumed `campaign-shared-23`: publication `2304d25e51d269edd3d6fc90b142f87b2ad35a6d`, preserving merge `74de3ea5f5d06ba5eca8b6ea74b8aceed2fbe28f`, ACK `3144d408-e50c-413e-ac8b-deec18f732dd`. All271 tracked owned files were preserved from exact L2 HANDOFF candidatefd5fd3d. Directly affected actual crossing/fresh-camera/full-route check passes **371/0 clean**, [separate adoption evidence](../../../docs/acts/act2/evidence/A2-L2-shared23-adoption/README.md). Original shared22 bundle/hashes/results remain frozen; no unchanged L1/art/unused crescent/replay/broad suite.
+
+Earlier consumed baseline: Consumed `campaign-shared-22`: publication `4de8b6008741bc9f155c83cbccb60629fac154a2`, preserving merge `0076fe0775c42ed54d5a714d7044ee606579c195`, ACK `5fee52c3-d03a-434b-b506-ba3f9153b204`. Owned checkpoint `0251f7df60c29721288119271223e38ec5ed69cb` was preserved byte for byte across243 tracked files. Earlier shared21/19 checks retain exact recorded scopes. L2 uses no replay playback; shared22 leaves its actual controller/camera/Scheduler/Lane/save dependencies unchanged. No unrelated test/import gate.
 
 | Level | Current state | Next requirement |
 | --- | --- | --- |
 | A2-L1 Horsell Common | Original candidate/both common Scout patches adopted; current40/42 original files match | Supplemental 186/0 + affected 285/0 clean, adopted8c37b1e0/RESPONSEd810feca |
-| A2-L2 Weybridge and Shepperton | Cargo287/Assisted298 current guard; native371/Standard338 earlier scopes | Owner selected checks complete → exact HANDOFF |
-| A2-L3 Black Smoke and the Ruined House | Production unstarted | L2 handoff |
+| A2-L2 Weybridge and Shepperton | Exactfd5fd3d HANDOFF sent2b8d1121/received6254ea25; selected owner checks complete | Independent canonical review/registration pending; affected shared23 check371/0 separate |
+| A2-L3 Black Smoke and the Ruined House | Source/equipment/API preparation; original Tender/B02 art underway; gameplay unimplemented | Finite root/kit plus shared smoke REQUEST6e86453f, targeted checks then HANDOFF |
 | A2-L4 Red Weed and the London Approaches | Production unstarted | L3 handoff |
 | A2-L5 Dead London and Regent's Park | Production unstarted | L4 handoff |
 | A2-O1 Cylinder Perimeter | Production unstarted | Main levels complete; reuse L1 kit |
@@ -58,8 +60,13 @@ Quick passed301/0 at6c/shared21; current Cargo287/0 and Assisted298/0 passcleanl
 
 Mixed-death282/1 failed an earlier apron swept-hit assertion; scoped-prefix220/1 and retained-response220/1 failed final accepted-hit/admission observation. These original variants remain failed history. Corrected 260/0 retains actual complete/prior-cancel receipts and exact vectors rather than assuming a live Scout lease. Assisted291/1 failed a duplicate clear of an already-dead crossing Scout; corrected Assisted298/0 is complete. Raw logs/[level history](levels/A2-L2_HISTORY.md) preserve failures; all selected logs are preserved in the final portable evidence.
 
-Next: exact L2 HANDOFF, then sequential L3 production. Consumedshared22 unchangedL2dependencies; supplemental6c adopted8c37b1e0/RESPONSEd810feca. No unchangedL1/shared broad rerun or unusedreplay gate. Canonical L2 acceptance and six later productions remain unfinished.
+Next: sequential L3 production after exact L2 HANDOFFfd5fd3d/2b8d1121, received6254ea25; independent canonical review pending. Consumedshared22 unchangedL2dependencies; supplemental6c adopted8c37b1e0/RESPONSEd810feca. No unchangedL1/shared broad rerun or unusedreplay gate. Canonical L2 acceptance and six later productions remain unfinished.
 
 L1/L2 introduce no equipment type, perk, temporary powerup, reward or permanent growth. Required canonical validators passed unchangedrevision0/no allocations. Human recognition/balance/native-focused play/everypose/device/mobile/export/release remain untested limits; no new human decision gate.
 
 Final owner closure: tested runtime freeze `6651219faefcbcb1514052e48f33e5d0a70d4446`; current Cargo287/0, Assisted298/0, full-route rightfoot/fresh-camera371/0, nativeCargo394/0 (16frames) and exactpostdash144/0 (1prefix-only frame) pass cleanly. Scoped portrait peer/root6 plus exactoneframe review pass with disclosed overlap/HUD/artlimits. Earlier Heavy371/Standard338/Quick301/Challenge320/retry221/pending111/mixed260/pose65 retain exact applicable scopes. Canonical validators pass revision0/zero allocations. Portable42logs/60 scoped nativePNGs plus failedfocusedPNG remain separate; final inventories freeze current bytes. No canonical L2 acceptance or later-level production claim.
+
+
+## L3 start and exact next work
+
+[Current L3 decision/source/API record](levels/A2-L3.md) distinguishes confirmed beats from provisional layout/tuning. Canonical equipment gate queried revision0/36types/zero claims and20 available abilities/zero uses; no new type/perk/powerup/reward allocated. Selected new player decision is source priority under one bounded smoke bank with two dry approaches, known Handler opening and B02 Reach/Place. Smoke retains visible contact grace/bounded ticks; shared consumer REQUEST6e86453f is pending, so no private damage/Scheduler fork. Original Tender/B02 visuals are delegated only to new owned paths; root owns all gameplay/save/phase. Build L3 in the same checkout while integration reviews frozen L2. No L3 gameplay result, new canonical acceptance or future-level production claim. No additional human decision is needed.
