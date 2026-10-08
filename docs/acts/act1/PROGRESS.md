@@ -2,8 +2,6 @@
 
 Canonical owned record: [data/campaign/act1/PROGRESS.md](../../../data/campaign/act1/PROGRESS.md).
 
-L1 is accepted and L2 remains current. The canonical record supplies exact shared18 adoption, guarded C30 costume46/53 headless/scripted-portrait evidence, preserved38/45 API14 capsule and42/49 API16 first-costume history, current/next levels and full-level limits. Circle foundations and new preview/dash queries are adopted but unconsumed; lunar scenery/composition/checkpoints remain pending. It links the actual Assisted timing conflict and unimplemented recovery-floor proposals. Act 1 remains 1/8 accepted, with no L2 handoff.
+L1 is accepted, L2 current, Act 1 still 1/8. Current API20 results are dormant 71/0 headless and actual default-live schema2 C30 portrait 53/0, with six owner-reviewed front 540×1170 views; original 45/1/native-key correction and immutable API14/16/18 evidence are preserved. Pure preview is exercised by the narrow fixture; default-live retains legacy. No new default-live 46 execution or main/GUI/fresh Continue/Retry/all-kit-profile acceptance is claimed.
 
-Use the canonical integration evidence-scope clarification; this mirror adds no independent human/native-focus gate.
-
-The separate physical-layout fixture now passes40/0 headless with 32 actual recognizer swipes across rock/open routes, rejoining and reaching the grotto site. This is floor/clearance/traversal evidence only, with no graphical/art/encounter/progression pass; the canonical record links six archival copies and separate layout commit 933d683.
+First lunar 47/0 has functional routes but crop/off-screen/bare-divider composition defects. Revised art/supplemental kit and new main files are drafting/untested. Shared19 dependency is resolved/adopted; authored circles and complete conditional schema2 progression still require validation. Canonical links own exact archival/source/count scope; this mirror adds no gate.

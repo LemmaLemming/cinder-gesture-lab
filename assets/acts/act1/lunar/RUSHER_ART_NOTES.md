@@ -1,5 +1,7 @@
 # C30 Rush Selenite pixel kit
 
+Current bounded follow-up: the schema2 actor passed71/0 dormant/preview headless checks and53/0 default-live graphical checks on campaign-shared-20. The owner reviewed six actual front-facing captures; see [schema2 C30 evidence](../../../../data/campaign/act1/evidence/A1-L2/schema2-rusher/index.json). These results supersede the actor code validation boundary below, while original pixels/provenance and historical API18 46/53 remain preserved. Main L2 and dynamic side/back presentation remain untested.
+
 Produced original pixels on 2026-10-08. **Bound to the retained C30 actor and
 validated in the small prototype's front-facing portrait sequence:** 46 headless
 and 53 scripted graphical checks, zero failures, on campaign-shared-18. See

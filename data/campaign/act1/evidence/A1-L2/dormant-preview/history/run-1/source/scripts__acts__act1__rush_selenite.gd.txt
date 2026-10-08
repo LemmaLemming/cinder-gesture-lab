@@ -242,9 +242,7 @@ func _prepare_start(response_context: Dictionary, direction: Vector3, world_root
 	if role.is_empty():
 		return {"accepted": false, "reason": difficulty.last_error}
 	var lunge: Dictionary = _configuration.lunge.duplicate(true)
-	# The native preview codec requires String keys; dictionary dot insertion
-	# creates a StringName for this new field on Godot 4.7.
-	lunge["direction"] = direction
+	lunge.direction = direction
 	var threat: Dictionary = {"role": role, "source_stationary": false, "opening_stationary": true, "cooldown_remaining_s": 0.0, "lunge": lunge}
 	return {"accepted": true, "threat": threat, "response": response, "role": role, "profile_id": profile_id}
 
