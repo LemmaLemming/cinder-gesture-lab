@@ -2,7 +2,13 @@
 
 Integration registered future Mirror Echo request `8b06b4ea-d6f6-41f3-8931-79e6b41ec704` in RESPONSE `261e15a5-435d-4663-9c94-62c24c2395dc`: a distinct typed authored-enemy replay seam remains shared-owner work. Stationary physical ownership, serial commitment, genuine grounded endpoint and complete quiet pairing remain explicit; no invented player capture, moving body or concurrent mixed replay is supported. A3-L3 remains unbegun until L2 acceptance. Shared25 `05869a593ea523e079a3e6d1e6e750f4219e813c` is now published additive SmokeBank support and includes registrationc6; preserving adoption follows the current owned freeze, with no unused Smoke suite or unchanged L1 rerun. No human decision is pending.
 
-## Current preservation and handoff baseline
+## Current shared26 adoption and submitted L2 review
+
+L2 canonical HANDOFF `4ca3dfe4-74c6-4f0d-afb9-499735f47518` was dispatched at exact clean `bd6b3cde9321213a2717e998c5ce2dff58ca2dd3`. Its owned content005e132 and frozen evidence57f3f881 remain unchanged. Integration acceptance is pending; Act3 remains1/8accepted7unfinished, L3 unbegun. No human decision is required.
+
+Subsequent exact shared26 `c0816fb9ed60caaac36e5e1320ab95d42589e0b8` is adopted by preserving merge `3b79c57a2d31327db7142a16a2f7266cbfffb862`, ACK `f1d50bff-77ff-46bd-ba70-da01b219ef33`. Independent scoped audit finds only an additive pure22-line Scheduler source_control_state query plus unused spore composition/coordinator2/test support. Removing that method exactly reproduces earlier Scheduler bytes; L2 neither invokes it nor binds spores. All other consumed Player/Game/ordinary mechanism/Geometry/BodySweep/lunge/Difficulty/Cue/camera/SaveStore/ExactJson/equipment/project code is unchanged. No L2 schema migration, changed owned source/asset/index, new native result or unused/broad/L1/L2 rerun follows. Earlier execution contexts retain their shared23/24 attribution. These durable adoption notes are a documentation-only descendant of the submitted candidate, not a replacement handoff or level acceptance.
+
+## Earlier shared25 preservation and handoff baseline
 
 Owned final candidate `005e132d39334b6941a0d5e5097198b0e4e8853f` is committed (232 assigned files, no outside ownership edits). Exact shared25 `05869a593ea523e079a3e6d1e6e750f4219e813c`, including accepted A1-L2 registrationc6a959, is adopted through preserving merge `e16976662651f5026c7c84ca420673feafdab64b`; canonical ACK `9fb7c361-150b-472a-baf2-3282d884b395`. All final owned source/asset hashes and portable index `57f3f88175b8aeba226f200789fde7b86db230a6e35d9e913cfb5d48314375fc` remain exact. Pack:389 artifacts,44 native logs,233 original portraits,27 source sets/80 frozen source files,9 exact live resource references and one curated validator summary. Older failed/partial/source records are retained; final team50 and Root13 views are separate scopes.
 
