@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act3/twin_suns.gd" id="1"]
+
+[node name="TwinSunsRuleRoom" type="Node3D"]
+script = ExtResource("1")
+level_id = "A3-L1"
+objective_text = "Choose a landing as the light changes"
+prototype_room = true
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 4.5)
+
+[node name="StalkerRuleSource" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, -0.5)
