@@ -404,6 +404,9 @@ func show_settings() -> void:
 		_label(credits, String(credit["credit"]) + "\n" + String(credit["role"]), 18, MUTED)
 		if credit.has("source"):
 			_label(credits, String(credit["source"]), 16, MUTED)
+		for source: String in credit.get("sources", []):
+			if source != String(credit.get("source", "")):
+				_label(credits, source, 16, MUTED)
 	credits_toggle.toggled.connect(func(value: bool) -> void: credits.visible = value)
 
 func acknowledge_settings(success: bool, message: String = "") -> void:
