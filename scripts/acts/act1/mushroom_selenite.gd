@@ -390,6 +390,17 @@ func cancel(reason: String = "mushroom_selenite_cancelled") -> bool:
 
 func state() -> Dictionary:
 	var record: Dictionary = _scheduler.reservation_state(_reservation_id) if is_instance_valid(_scheduler) and not _reservation_id.is_empty() else {}
+	return _presentation_state(record)
+
+
+## Quiet parent cache refresh: raw source control never prunes or emits.
+func pure_presentation_state() -> Dictionary:
+	var control: Dictionary = _scheduler.source_control_state(self) if is_instance_valid(_scheduler) else {}
+	var records: Array = control.get("reservations", [])
+	return _presentation_state(records[0] if records.size() == 1 else {})
+
+
+func _presentation_state(record: Dictionary) -> Dictionary:
 	var phase: String = String(record.get("state", "clear"))
 	var status: String = "dormant" if dormant else ("defeated" if dead else ("running" if not record.is_empty() else ("hurt" if _hurt_left_s > 0.0 else "idle")))
 	var result: Dictionary = {"api_revision": API_REVISION, "role_id": _configuration.get("role_id", ""), "entity_id": _configuration.get("entity_id", ""), "spore_support": not _spore_consumer_id.is_empty(), "presentation_status": "authored_C31_C32_pose_pixels", "source_id": _configuration.get("source_id", ""), "hp": hp, "dead": dead, "dormant": dormant, "status": status, "phase": phase, "reservation_id": _reservation_id, "cycle": _cycle, "source_position": global_position, "opening_position": record.get("opening_position", global_position), "geometry": record.get("geometry", {}).duplicate(true), "resolved_role": _resolved_role.duplicate(true), "hit_ids": _hit_ids.duplicate(), "hurt_left_s": _hurt_left_s, "approach_enabled": _configuration.get("approach", {}).get("enabled", false), "approach_driving": _approach_driving, "velocity": velocity, "facing": _facing, "last_cancel_reason": _last_cancel_reason}

@@ -19,6 +19,12 @@ var spores_ready: bool = false
 var last_component_error: String = ""
 
 
+func current_source_ids() -> Array[String]:
+	# Isolated real role witness. The separate crowd scene/test still activates
+	# all three sources; dormant recipients remain in the complete native pair.
+	return ["umbrella-1"] if initial_greybox_room == 0 else ["lone-guard"]
+
+
 func _physics_process(delta: float) -> void:
 	if not _running or _changing or not is_instance_valid(hero): return
 	if not spores_ready:
@@ -181,7 +187,8 @@ func restore_component_unit(unit: Dictionary) -> bool:
 	for id: String in SOURCE_IDS:
 		if not (sources[id] as Act1MushroomSelenite).restore_exchange_state(unit.actors[id]): return false
 	if not spore_consumer.restore_state(unit.coordinator, _component_context(unit)): return false
-	_refresh_render_state()
+	for id: String in SOURCE_IDS:
+		_render_sources[id] = (sources[id] as Act1MushroomSelenite).pure_presentation_state()
 	_framing.clear()
 	_forecast_points.clear()
 	_approach_forecasts.clear()

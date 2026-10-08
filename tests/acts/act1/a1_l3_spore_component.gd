@@ -6,6 +6,8 @@ const SporeGrovePath: String = "res://scenes/acts/act1/a1_l3_spore_grove_compone
 const SporeGuardPath: String = "res://scenes/acts/act1/a1_l3_spore_guard_component.tscn"
 var component_units: Array[Dictionary] = []
 var observed_spore_phases: Dictionary = {}
+var recoil_pause_requested: bool = false
+var callback_capture_rejected: bool = false
 
 
 func _run() -> void:
@@ -17,15 +19,18 @@ func _run() -> void:
 		capture_dir = "res://.cinder/captures/l3-spores-%d" % Time.get_ticks_usec()
 		if not _require(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(capture_dir)) == OK, "native spore capture directory is writable"):
 			await _finish(); return
-	if not await _open_world(SporeGrovePath, "grove", Vector3(0, 0.1, 15)):
+	if not await _open_spore_world(SporeGrovePath, "grove", Vector3(0, 0.1, 15)):
 		await _finish(); return
 	_watch_pair_events()
-	if not await _wait(func() -> bool: return level.get("spores_ready"), "actual three living grounded C31s bind the published native protocol before a hittable mushroom exists"):
+	if not await _wait(func() -> bool: return level.get("spores_ready"), "actual living grounded C31 binds the published native protocol before a hittable mushroom exists"):
 		await _finish(); return
 	var field: CinderSporeField = level.get("spore_field")
 	var consumer: CinderSporeRepulsion = level.get("spore_consumer")
 	var actor: Act1MushroomSelenite = sources["umbrella-1"]
-	consumer.reaction_started.connect(func(id: String, _episode: String) -> void: observed_spore_phases[id + "/recoil"] = true)
+	consumer.reaction_started.connect(func(id: String, _episode: String) -> void:
+		observed_spore_phases[id + "/recoil"] = true
+		callback_capture_rejected = (level.call("component_unit_state") as Dictionary).is_empty()
+		recoil_pause_requested = game.call("request_pause_deferred"))
 	if not await _swipe(Vector3.FORWARD, "native spore cluster approach"):
 		await _finish(); return
 	var actual_before: Dictionary = actor.get_spore_response_state()
@@ -35,13 +40,13 @@ func _run() -> void:
 		await _finish(); return
 	var hp_before: Dictionary = {}
 	for id: String in level.call("current_source_ids"): hp_before[id] = sources[id].hp
-	if not await _cluster_primary(field.get_node("cluster-right") as Node3D, "first finite spore release"):
+	if not await _cluster_primary(field.get_node("cluster-right") as Node3D, "first finite spore release", true):
 		await _finish(); return
 	if not _require(field.state().generation == 1 and field.state().spent_ids == ["cluster-right"] and consumer.placement_accepted(), "real ordinary primary spends one actual cluster and preserves accepted native custody"):
 		await _finish(); return
-	if not await _wait(func() -> bool: return actor.get_spore_response_state().phase == "recoil", "actual living C31 enters genuine recoil"):
+	if not _require(paused and recoil_pause_requested and callback_capture_rejected and observed_spore_phases.has("umbrella-1/recoil") and actor.get_spore_response_state().phase == "recoil", "actual reaction callback rejects capture and public deferred pause preserves genuine living recoil"):
 		await _finish(); return
-	if not await _pause_pair("native recoil") or not _quiet_component("native recoil") or not await _capture("recoil") or not await _gui_resume_pair():
+	if not _quiet_component("native recoil") or not _framing("native recoil field/source/retreat") or not await _capture("recoil") or not await _gui_resume_pair():
 		await _finish(); return
 	if not await _wait(func() -> bool: return actor.get_spore_response_state().phase == "retreat", "actual shared Route advances a living C31 away from the field"):
 		await _finish(); return
@@ -70,7 +75,37 @@ func _run() -> void:
 	await _finish()
 
 
-func _cluster_primary(cluster: Node3D, label: String) -> bool:
+func _open_spore_world(path: String, scope: String, spawn: Vector3) -> bool:
+	await process_frame
+	current_scope = scope
+	sources.clear(); admissions.clear(); phase_observations.clear()
+	world_records.clear(); input_observations.clear(); hit_events.clear()
+	events = 0; max_preparing = 0; preparing_violation = false
+	game = MainScene.instantiate()
+	game.set("level_scene_path", path)
+	root.add_child(game)
+	level = game.get("active_level") as CinderLevel
+	hero = game.get("player") as CinderPlayer
+	scheduler = level.get("scheduler") as CinderThreatScheduler if level != null else null
+	if not _require(level != null and hero != null and scheduler != null and level.contract_error().is_empty() and level.hero == hero and hero.global_position == spawn, scope + " isolated actual role enters through one shared Hero at its authored spawn"): return false
+	sources = (level.get("sources") as Dictionary).duplicate()
+	initial_hp = hero.hp
+	var current_ids: Array = level.call("current_source_ids")
+	if not _require(sources.size() == 4 and current_ids == (["umbrella-1"] if scope == "grove" else ["lone-guard"]), scope + " isolated spore witness retains all four sources but activates exactly its one actual role"): return false
+	for id: String in sources:
+		var actor: CharacterBody3D = sources[id]
+		var state: Dictionary = actor.call("state")
+		if not _require(state.source_id == id and state.dormant == (id not in current_ids) and not state.dead and state.hp == (24.0 if id == "lone-guard" else 16.0), id + " retains genuine role HP and actual isolated dormancy"): return false
+		actor.connect("state_changed", Callable(self, "_notice_phase").bind(id))
+		actor.connect("hit_resolved", Callable(self, "_notice_hit").bind(id))
+	level.connect("native_admission_published", _notice_admission)
+	hero.world_action_executed.connect(func(record: Dictionary) -> void: world_records.append(record.duplicate(true)); events += 1)
+	game.connect("input_observed", func(observation: Dictionary) -> void: input_observations.append(observation.duplicate(true)))
+	game.call("resume_lab")
+	return _require(not paused, "isolated spore component uses one initial public resume and unchanged focus handling")
+
+
+func _cluster_primary(cluster: Node3D, label: String, expect_pause: bool = false) -> bool:
 	if not await _ready_input(label): return false
 	while Time.get_ticks_msec() - last_primary_ms <= 300:
 		if not _guard_input(): return false
@@ -93,7 +128,9 @@ func _cluster_primary(cluster: Node3D, label: String) -> bool:
 	hero.shells = 0 # Release-only no-blast setup; normal passive reload remains.
 	Input.parse_input_event(release)
 	await process_frame
-	if not _guard_input(): return false
+	if expect_pause:
+		if not await _wait(func() -> bool: return paused, label + " reaches the requested public cancellation/reaction pause", 2.0, true): return false
+	elif not _guard_input(): return false
 	last_primary_ms = Time.get_ticks_msec()
 	primaries += 1
 	var records: Array[Dictionary] = hero.get_world_action_records(sequence)
