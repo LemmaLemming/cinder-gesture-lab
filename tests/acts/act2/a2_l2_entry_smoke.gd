@@ -37,6 +37,16 @@ func _run() -> void:
 		forged = parsed.value.duplicate(true)
 		forged.local.sequence.completed_feet = ["foot_demo"]
 		_expect(not level.restore_state(forged) and Exact.stringify(level.snapshot_state()) == before, "unearned foot progression rejects before mutation")
+		for value: Variant in [[], {}, {"status": "running"}]:
+			forged = parsed.value.duplicate(true)
+			forged.local.handlers.yard_handler = value
+			_expect(not level.restore_state(forged) and Exact.stringify(level.snapshot_state()) == before, "malformed nested Handler rejects atomically before field access")
+			forged = parsed.value.duplicate(true)
+			forged.local.mechanisms.tool_yard_handler = value
+			_expect(not level.restore_state(forged) and Exact.stringify(level.snapshot_state()) == before, "malformed nested tool rejects atomically before crosscheck")
+		forged = parsed.value.duplicate(true)
+		forged.local.handlers.yard_handler.phase_progress = 0.5
+		_expect(not level.restore_state(forged) and Exact.stringify(level.snapshot_state()) == before, "idle Handler pose cannot disagree with its actual tool clock")
 		for frame: int in range(4): await process_frame
 		_expect(Exact.stringify(level.snapshot_state()) == before, "paused actor/scenery/consumer clocks and full state freeze")
 	var retained: Array[Node] = [hero, level, game.get("fx"), level.get_node("DryGround"), level.get_node("OneVisibleGiantFoot")]

@@ -228,6 +228,11 @@ func _complete_foot(id: String) -> bool:
 			if not await _follow_proof(plan, false): return false
 		elif frame % 90 == 0 and actual.status != "running":
 			var at: Vector3 = Sequence.FEET[id]
+			var counterpart: String = "apron_handler" if id == "foot_apron" else ("crossing_scout" if id in ["foot_left", "foot_right"] else "")
+			if not counterpart.is_empty() and float(_actors[counterpart].get("hp")) > 0.0 and _game.player.global_position.distance_to(_actors[counterpart].global_position) > 3.45:
+				# The pair's real target must also be close enough for admission.
+				# A foot-only approach can stop while the Handler/Scout stays idle.
+				at = _actors[counterpart].global_position
 			var offset: Vector3 = _game.player.global_position - at
 			offset.y = 0.0
 			if offset.length() > 3.45 and not await _navigate_dash(at + offset.normalized() * 3.0): return false

@@ -8,6 +8,7 @@ const CrossingSequence: Script = preload("res://scripts/acts/act2/weybridge_sequ
 const Mechanism: Script = preload("res://scripts/combat/lane_mechanism.gd")
 const FootVisual: Script = preload("res://scripts/acts/act2/giant_foot_visual.gd")
 const ExactJson: Script = preload("res://scripts/campaign/exact_json.gd")
+const AdmissionEquipment: Script = preload("res://scripts/equipment.gd")
 const CROSSING_EPOCH: String = "A2-L2-weybridge"
 const SHELTER_EXIT: Rect2 = Rect2(-2.7, -38.8, 5.4, 1.3)
 const CROSSING_FLOORS: Array[Dictionary] = [
@@ -209,7 +210,7 @@ func _activate_mechanism(id: String, target_id: String) -> void:
 		_admission_errors[id] = {"reason": "paired_real_target_recovery_does_not_cover_response"}
 		return
 	_mechanism_proofs[id] = answer.proof.duplicate(true)
-	_views[id] = {"reservation_id": answer.reservation_id, "landing": Codec.vector3(answer.proof.landing), "attack_position": Codec.vector3(answer.proof.attack_position), "target_id": counterpart, "primary_time_s": answer.proof.primary_time_s, "response_complete_s": answer.proof.response_complete_s}
+	_views[id] = {"reservation_id": answer.reservation_id, "landing": Codec.vector3(answer.proof.landing), "attack_position": Codec.vector3(answer.proof.attack_position), "target_id": counterpart, "primary_time_s": answer.proof.primary_time_s, "response_complete_s": answer.proof.response_complete_s, "equipment_ids": hero.equipment.snapshot()}
 
 func _actor_exchange(id: String) -> Dictionary:
 	if _ray_actors.has(id): return _exchange.call("state", id)
@@ -555,6 +556,13 @@ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary)
 	error = _exchange.call("snapshot_error", state.rays, bindings, state.scheduler)
 	if not error.is_empty(): return error
 	if not Codec.keys_error(state.handlers, CrossingSequence.HANDLERS).is_empty() or not Codec.keys_error(state.mechanisms, _mechanisms.keys()).is_empty(): return "L2 requires every actual Handler/mechanism"
+	# Validate nested consumer schemas before cross-component field access.
+	for id: String in _mechanisms:
+		if not state.mechanisms[id] is Dictionary: return "L2 requires each actual mechanism dictionary"
+		error = _mechanisms[id].call("snapshot_error", state.mechanisms[id], bindings, state.scheduler)
+		if not error.is_empty(): return error
+	for id: String in CrossingSequence.HANDLERS:
+		if not state.handlers[id] is Dictionary: return "L2 requires each actual Handler dictionary"
 	for id: String in _actors:
 		var actor: Dictionary = state.handlers[id] if CrossingSequence.HANDLERS.has(id) else state.rays.actors[id]
 		error = _actors[id].call("snapshot_error", actor)
@@ -565,12 +573,18 @@ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary)
 			if tool.is_empty(): return "L2 Handler requires its complete actual tool consumer"
 			var expected_phase: String = "defeated" if float(actor.hp) <= 0.0 else (String(tool.phase) if tool.status == "running" else "idle")
 			if actor.phase != expected_phase: return "L2 Handler pose differs from actual tool phase"
+			var expected_progress: float = 1.0 if float(actor.hp) <= 0.0 else _saved_mechanism_progress(tool)
+			if float(actor.phase_progress) != expected_progress: return "L2 Handler progress differs from its actual saved tool clock"
 		if (float(actor.hp) <= 0.0) != state.sequence.defeated_ids.has(id): return "L2 HP differs from earned defeat prefix"
 		if not state.sequence.active_ids.has(id) and not state.sequence.defeated_ids.has(id) and actor.phase != "idle": return "Dormant L2 target must stay idle"
 	for id: String in _mechanisms:
-		error = _mechanisms[id].call("snapshot_error", state.mechanisms[id], bindings, state.scheduler)
-		if not error.is_empty(): return error
 		var saved: Dictionary = state.mechanisms[id]
+		if CrossingSequence.FEET.has(id):
+			if state.sequence.completed_feet.has(id):
+				var retained_completion: bool = saved.status == "complete" or (beat == "clear" and saved.status == "cancelled" and saved.last_cancel_reason == "weybridge_clear")
+				if not retained_completion or int(saved.cycle) < 1 or saved.exchange_encounter_id != CROSSING_EPOCH or float(saved.clock_s) <= float(saved.exchange.recovery_until_s): return "Earned L2 foot requires its actual finished cycle receipt"
+			elif state.sequence.foot_id != id and (saved.status != "idle" or int(saved.cycle) != 0): return "Future L2 foot must retain its unstarted consumer"
+		if id.begins_with("tool_") and not state.sequence.active_ids.has(id.substr(5)) and not state.sequence.defeated_ids.has(id.substr(5)) and (saved.status != "idle" or int(saved.cycle) != 0): return "Future L2 Handler tool must stay unstarted"
 		if saved.status == "running":
 			if id.begins_with("tool_") and not state.sequence.active_ids.has(id.substr(5)): return "Inactive Handler cannot retain an attack"
 			if not id.begins_with("tool_") and state.sequence.foot_id != id: return "Only the current single visible foot may run"
@@ -578,7 +592,18 @@ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary)
 	for id: Variant in state.views:
 		if not id is String or not state.mechanisms.has(id) or state.mechanisms[id].status != "running" or not state.views[id] is Dictionary: return "Invalid L2 view witness owner"
 		var view: Dictionary = state.views[id]
-		if not Codec.keys_error(view, ["reservation_id", "landing", "attack_position", "target_id", "primary_time_s", "response_complete_s"]).is_empty() or view.reservation_id != state.mechanisms[id].exchange.id or not Codec.is_vector3(view.landing) or not Codec.is_vector3(view.attack_position) or not view.target_id is String or not Codec.in_range(view.primary_time_s, 0, 1000000000.0) or not Codec.in_range(view.response_complete_s, float(view.primary_time_s), 1000000000.0): return "Invalid finite L2 framing witness"
+		if not Codec.keys_error(view, ["reservation_id", "landing", "attack_position", "target_id", "primary_time_s", "response_complete_s", "equipment_ids"]).is_empty() or view.reservation_id != state.mechanisms[id].exchange.id or not Codec.is_vector3(view.landing) or not Codec.is_vector3(view.attack_position) or not view.target_id is String or not Codec.in_range(view.primary_time_s, 0, 1000000000.0) or not Codec.in_range(view.response_complete_s, float(view.primary_time_s), 1000000000.0): return "Invalid finite L2 framing witness"
+		# Retain the admission gear rather than consulting a fresh receiver's gear.
+		if not view.equipment_ids is Dictionary: return "L2 framing witness requires admission equipment"
+		var admission = AdmissionEquipment.new()
+		if not admission.restore(view.equipment_ids): return "L2 framing witness requires canonical admission equipment"
+		var admission_stats: Dictionary = admission.resolved_stats()
+		if float(view.response_complete_s) != float(view.primary_time_s) + float(admission_stats.primary_cooldown): return "L2 response must retain full admitted ordinary-primary cadence"
+		var landing: Vector3 = Codec.read_vector3(view.landing)
+		var attack_position: Vector3 = Codec.read_vector3(view.attack_position)
+		if not _saved_response_point_supported(landing) or not _saved_response_point_supported(attack_position): return "L2 view witness requires supported authored landing and attack points"
+		var own_opening: Vector3 = Codec.read_vector3(state.mechanisms[id].exchange.opening_position)
+		if Vector2(attack_position.x, attack_position.z).distance_to(Vector2(own_opening.x, own_opening.z)) > float(admission_stats.primary_range) - CinderThreatScheduler.SKIN: return "L2 admitted ordinary primary must reach the saved opening"
 		var counterpart: String = "apron_handler" if id == "foot_apron" else ("crossing_scout" if id in ["foot_left", "foot_right"] else "")
 		if not counterpart.is_empty() and state.sequence.defeated_ids.has(counterpart): counterpart = ""
 		if view.target_id != counterpart: return "Foot view must retain its authored living counterpart custody"
@@ -594,6 +619,19 @@ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary)
 				if reservation.id == target_consumer.exchange.id: owned = reservation
 			if owned.is_empty() or foot_exchange.opening_position != target.root_position or owned.opening_position != target.root_position or float(view.primary_time_s) <= float(owned.active_until_s) or float(view.response_complete_s) > float(owned.recovery_until_s): return "Foot response must fit the actual paired target position and recovery"
 	return ""
+
+func _saved_mechanism_progress(saved: Dictionary) -> float:
+	if saved.status != "running": return 0.0
+	var key: String = {"warning": "lock_from_s", "lock": "active_from_s", "active": "active_until_s", "recovery": "recovery_until_s"}.get(saved.phase, "")
+	var remaining: float = maxf(float(saved.exchange[key]) - float(saved.clock_s), 0.0)
+	return _phase_progress({"phase": saved.phase, "resolved_role": saved.resolved_role, "remaining_s": remaining})
+
+func _saved_response_point_supported(point: Vector3) -> bool:
+	if point.y < -0.05 or point.y > 0.2: return false
+	for floor: Dictionary in _floors:
+		var safe: Rect2 = floor.safe_rect.grow(-(CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN))
+		if point.x >= safe.position.x and point.x <= safe.end.x and point.z >= safe.position.y and point.z <= safe.end.y: return true
+	return false
 
 func _progress_snapshot_error(state: Dictionary) -> String:
 	var local: Dictionary = state.local
