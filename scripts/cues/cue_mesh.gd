@@ -6,6 +6,8 @@ extends RefCounted
 const Geometry: GDScript = preload("res://scripts/combat/threat_geometry.gd")
 const Footprint: GDScript = preload("res://scripts/attack_footprint.gd")
 const SEGMENTS: int = 64
+const CRESCENT_MAX_SEGMENTS: int = 4096
+const CRESCENT_FILL_INSET: float = 0.00000025
 
 
 static func canonical_geometry(shape: Dictionary) -> Dictionary:
@@ -15,6 +17,8 @@ static func canonical_geometry(shape: Dictionary) -> Dictionary:
 			return Geometry.circle(shape["origin"], float(shape["radius"]))
 		"cone":
 			return Geometry.cone(shape["origin"], shape["direction"], float(shape["reach"]), float(shape["min_dot"]), float(shape["origin_radius"]))
+		"crescent":
+			return Geometry.crescent(shape["origin"], shape["direction"], float(shape["inner_radius"]), float(shape["outer_radius"]), float(shape["min_dot"]))
 		"lane":
 			return Geometry.lane(shape["from"], shape["to"], float(shape["radius"]))
 	return {}
@@ -40,6 +44,13 @@ static func boundary(shape: Dictionary) -> Array[Vector3]:
 				_arc(points, Vector3.ZERO, float(shape["origin_radius"]), angle + half_angle, angle + TAU - half_angle, SEGMENTS, true)
 			else:
 				points.append(Vector3.ZERO)
+		"crescent":
+			var forward: Vector3 = shape["direction"]
+			var angle: float = atan2(forward.x, forward.z)
+			var half_angle: float = acos(float(shape["min_dot"]))
+			var segments: int = _crescent_segments(shape)
+			_arc(points, Vector3.ZERO, float(shape["outer_radius"]), angle - half_angle, angle + half_angle, segments, true)
+			_arc(points, Vector3.ZERO, float(shape["inner_radius"]), angle + half_angle, angle - half_angle, segments, true)
 		"lane":
 			var offset: Vector3 = shape["to"] - shape["from"]
 			offset.y = 0.0
@@ -55,6 +66,8 @@ static func boundary(shape: Dictionary) -> Array[Vector3]:
 
 
 static func geometry_mesh(shape: Dictionary, filled: bool) -> ArrayMesh:
+	if shape.get("kind") == "crescent" and filled:
+		return _crescent_fill(shape)
 	var points: Array[Vector3] = boundary(shape)
 	var vertices: Array[Vector3] = []
 	for index: int in range(points.size()):
@@ -64,6 +77,8 @@ static func geometry_mesh(shape: Dictionary, filled: bool) -> ArrayMesh:
 			# Each supported boundary is star-shaped around its source.
 			if start.cross(finish).length_squared() > 0.0000000001:
 				vertices.append_array([Vector3.ZERO, start, finish])
+		elif shape.get("kind") == "crescent":
+			_crescent_edge(vertices, start, finish)
 		else:
 			Footprint.append_edge(vertices, start, finish)
 	return Footprint.mesh_from_vertices(vertices)
@@ -142,3 +157,44 @@ static func _ticks(vertices: Array[Vector3], inner: float, outer: float) -> void
 	for index: int in range(4):
 		var angle: float = PI * 0.5 * index
 		Footprint.append_edge(vertices, Footprint.radial_point(angle, inner), Footprint.radial_point(angle, outer))
+
+
+static func _crescent_segments(shape: Dictionary) -> int:
+	# Twice the minimum chord count leaves room for a float32 visual inset.
+	var half_angle: float = acos(float(shape.min_dot))
+	var chord_angle: float = acos(float(shape.inner_radius) / float(shape.outer_radius))
+	return clampi(ceili(2.0 * half_angle / chord_angle), SEGMENTS, CRESCENT_MAX_SEGMENTS)
+
+
+static func _crescent_edge(vertices: Array[Vector3], start: Vector3, finish: Vector3) -> void:
+	# Fine annular tessellation still needs a complete required outline.
+	# Footprint's existing short-edge cull remains unchanged for other kits.
+	var x: float = float(finish.x) - float(start.x)
+	var z: float = float(finish.z) - float(start.z)
+	var length: float = sqrt(x * x + z * z)
+	if length == 0.0 or not is_finite(length):
+		return
+	var side: Vector3 = Vector3(-z / length, 0, x / length) * Footprint.EDGE_WIDTH * 0.5
+	vertices.append_array([start + side, finish + side, finish - side, start + side, finish - side, start - side])
+
+
+static func _crescent_fill(shape: Dictionary) -> ArrayMesh:
+	var forward: Vector3 = shape.direction
+	var angle: float = atan2(forward.x, forward.z)
+	var half_angle: float = acos(float(shape.min_dot))
+	var segments: int = _crescent_segments(shape)
+	# Circumscribed inner chords never fan triangles through the safe disk.
+	# Conservative presentation insets cover native float32 vertex rounding;
+	# they have no role in authoritative contact or path tests.
+	var inner: float = float(shape.inner_radius) * (1.0 + CRESCENT_FILL_INSET) / cos(half_angle / segments)
+	var outer: float = float(shape.outer_radius) * (1.0 - CRESCENT_FILL_INSET)
+	var vertices: Array[Vector3] = []
+	for index: int in range(segments):
+		var begin: float = angle + lerpf(-half_angle, half_angle, float(index) / segments)
+		var finish: float = angle + lerpf(-half_angle, half_angle, float(index + 1) / segments)
+		var a: Vector3 = Footprint.radial_point(begin, outer)
+		var b: Vector3 = Footprint.radial_point(finish, outer)
+		var c: Vector3 = Footprint.radial_point(finish, inner)
+		var d: Vector3 = Footprint.radial_point(begin, inner)
+		vertices.append_array([a, b, c, a, c, d])
+	return Footprint.mesh_from_vertices(vertices)

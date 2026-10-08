@@ -115,6 +115,9 @@ func request_pause() -> void:
 	else:
 		_enqueue("pause")
 
+func _pause_at_barrier() -> void:
+	request_pause()
+
 func request_retry() -> void:
 	if _preview_mode:
 		super.reset_lab()
@@ -137,7 +140,7 @@ func resume_campaign() -> void:
 	if _preview_mode:
 		super.resume_lab()
 		return
-	if _draining or _drain_queued or not _failed_operations.is_empty():
+	if _pause_request_pending or _draining or _drain_queued or not _failed_operations.is_empty():
 		return
 	if not is_instance_valid(active_level):
 		_enqueue("load_active")
@@ -175,7 +178,8 @@ func _enqueue(kind: String, data: Dictionary = {}) -> void:
 	data["operation"] = kind
 	data["resume_after"] = not get_tree().paused and ["checkpoint", "complete"].has(kind)
 	_operations.append(data)
-	get_tree().paused = true
+	if not Engine.is_in_physics_frame():
+		get_tree().paused = true
 	_clear_gesture_chain()
 	if not _drain_queued and not _draining:
 		_drain_queued = true
@@ -186,6 +190,8 @@ func _drain() -> void:
 	if _draining or not is_instance_valid(menu):
 		return
 	_draining = true
+	get_tree().paused = true
+	_clear_gesture_chain()
 	campaign_error = ""
 	while not _operations.is_empty():
 		var operation: Dictionary = _operations.pop_front()
@@ -235,11 +241,16 @@ func _perform(operation: Dictionary) -> bool:
 				return false
 			menu.show_journey() if operation.operation == "journey" else menu.show_pause()
 		"checkpoint":
-			if operation.level_id != active_level.level_id or not _record_live(true):
+			# A request can precede actual death later in the same native tick.
+			# Persist that fatal active unit, retaining the last living Retry unit.
+			var living: bool = is_instance_valid(player) and not player.dead
+			if operation.level_id != active_level.level_id or not _record_live(living):
 				return false
-			# A checkpoint freezes one coherent state without healing; the overlay
-			# consumes the initiating gesture before another exchange begins.
-			menu.show_resume(attempts.active_kind())
+			if living:
+				menu.show_resume(attempts.active_kind())
+			else:
+				_resume_after_drain = false
+				menu.show_pause()
 		"complete":
 			var snapshot: Dictionary = capture_campaign_snapshot()
 			if operation.level_id != active_level.level_id or snapshot.is_empty() or not attempts.complete_active(snapshot):
@@ -618,8 +629,13 @@ func _update_status() -> void:
 		hud.update_status(player.hp, player.max_hp, player.shells, player.max_shells, 0, active_level.objective_text)
 		hud.update_lab(player, get_aim_anchor(), false)
 
+func handle_tap(screen_pos: Vector2) -> void:
+	if not _preview_mode and (_draining or _drain_queued or menu == null or menu.is_open()):
+		return
+	super.handle_tap(screen_pos)
+
 func _unhandled_input(event: InputEvent) -> void:
-	if not _preview_mode and (menu == null or menu.is_open() or _draining):
+	if not _preview_mode and (menu == null or menu.is_open() or _draining or _drain_queued):
 		return
 	super._unhandled_input(event)
 

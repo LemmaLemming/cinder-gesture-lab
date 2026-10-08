@@ -29,6 +29,7 @@ const ReplayPlayer = preload("res://scripts/player.gd")
 const PreviewExact = preload("res://scripts/campaign/exact_json.gd")
 const API_REVISION: String = "threat-scheduler-4"
 const LUNGE_PREVIEW_API_REVISION: String = "lunge-preview-1"
+const STATIONARY_PREVIEW_API_REVISION: String = "stationary-preview-1"
 const SNAPSHOT_API_REVISION: String = "scheduler-snapshot-1"
 const SNAPSHOT_SCHEMA_VERSION: int = 1
 const CAPSULE_RADIUS: float = 0.32
@@ -103,10 +104,32 @@ func get_clock() -> float:
 	return _clock
 
 
-func request_attack(owner: Node3D, threat: Dictionary, response: Dictionary) -> Dictionary:
+func request_attack(owner: Node3D, threat: Dictionary, response: Dictionary, preview: Dictionary = {}) -> Dictionary:
 	if _snapshot_busy or _request_busy or _boundary_busy or _transaction_depth > 0:
 		last_error = "Scheduler transaction is already in progress"
 		return {"accepted": false, "reason": last_error}
+	if not preview.is_empty():
+		# A framing preview grants no lease. Compare/reprove before cleanup so
+		# stale copied data cannot cancel another source to manufacture admission.
+		var current: Dictionary = _preview_stationary_current(owner, threat, response)
+		if not current.get("accepted", false):
+			return _rejected(current["reason"])
+		if not _same_lunge_preview(preview, current):
+			return _rejected("Stationary preview no longer matches exact current source/response/world/union")
+		_request_busy = true
+		_transaction_depth += 1
+		_prune()
+		current = _preview_stationary_current(owner, threat, response)
+		var paired_result: Dictionary
+		if not current.get("accepted", false):
+			paired_result = _rejected(current["reason"])
+		elif not _same_lunge_preview(preview, current):
+			paired_result = _rejected("Stationary preview changed during ordinary reservation cleanup")
+		else:
+			paired_result = _commit_ordinary_attack(owner, current["candidate"], current["proof"], response)
+		_transaction_depth -= 1
+		_request_busy = false
+		return paired_result
 	_request_busy = true
 	_transaction_depth += 1
 	var result: Dictionary = _request_attack(owner, threat, response)
@@ -620,16 +643,85 @@ func _preview_lunge_current(owner: CharacterBody3D, threat: Dictionary, response
 	var prepared: Dictionary = _prepare_ordinary_attack(owner, lunge["threat"], response, lunge["adapter"])
 	if not prepared.get("accepted", false):
 		return prepared
+	var guarded: Dictionary = _preview_guard(owner, threat, response, lunge["plan"]["body_collision_path"])
+	if guarded.has("error"):
+		return {"accepted": false, "reason": guarded["error"]}
+	var result := {"accepted": true, "reason": "", "api_revision": LUNGE_PREVIEW_API_REVISION, "plan": lunge["plan"].duplicate(true), "candidate": prepared["candidate"].duplicate(true), "proof": prepared["proof"].duplicate(true), "guard": guarded["guard"]}
+	if _lunge_preview_wire(result).is_empty():
+		return {"accepted": false, "reason": "Preview exceeds bounded supported native data"}
+	return result
+
+
+func preview_stationary(owner: Node3D, threat: Dictionary, response: Dictionary) -> Dictionary:
+	## Pure ephemeral actual stationary-source proof/framing data. No cleanup,
+	## clocks, flags, diagnostics, callbacks, motion, serial or lease allocation.
+	if _snapshot_busy or _request_busy or _boundary_busy or _transaction_depth > 0:
+		return {"accepted": false, "reason": "Scheduler transaction is already in progress"}
+	return _preview_stationary_current(owner, threat, response).duplicate(true)
+
+
+func _preview_stationary_current(owner: Node3D, threat: Dictionary, response: Dictionary) -> Dictionary:
+	var error: String = _preview_retained_error()
+	if error.is_empty():
+		error = _preview_response_error(owner, response)
+	if not error.is_empty():
+		return {"accepted": false, "reason": error}
+	var authored_response: Dictionary = response.duplicate()
+	for key: String in ["actor", "world_root", "floor_regions"]:
+		authored_response.erase(key)
+	# Bound native caller values before geometry/candidate copies, including
+	# cyclic/object input that cannot enter an exact ephemeral identity.
+	if _lunge_preview_wire(threat).is_empty() or _lunge_preview_wire(authored_response).is_empty():
+		return {"accepted": false, "reason": "Finite bounded native threat/response values required"}
+	error = _stationary_preview_source_error(owner, threat)
+	if not error.is_empty():
+		return {"accepted": false, "reason": error}
+	var prepared: Dictionary = _prepare_ordinary_attack(owner, threat, response)
+	if not prepared.get("accepted", false):
+		return prepared
+	var guarded: Dictionary = _preview_guard(owner, threat, response)
+	if guarded.has("error"):
+		return {"accepted": false, "reason": guarded["error"]}
+	var result := {"accepted": true, "reason": "", "api_revision": STATIONARY_PREVIEW_API_REVISION, "candidate": prepared["candidate"].duplicate(true), "proof": prepared["proof"].duplicate(true), "guard": guarded["guard"]}
+	if _lunge_preview_wire(result).is_empty():
+		return {"accepted": false, "reason": "Preview exceeds bounded supported native data"}
+	return result
+
+
+func _stationary_preview_source_error(owner: Node3D, threat: Dictionary) -> String:
+	if threat.get("source_stationary") != true or threat.get("opening_stationary") != true:
+		return "Preview requires an actual stationary source and recovery opening"
+	if not threat.get("geometry") is Dictionary or not Geometry.error(threat["geometry"]).is_empty():
+		return "Authoritative supported stationary threat geometry required"
+	var geometry: Dictionary = threat["geometry"]
+	var origin: Vector3 = geometry["from"] if geometry["kind"] == "lane" else geometry["origin"]
+	if origin.distance_to(owner.global_position) > EPSILON:
+		return "Stationary geometry origin/from must use the actual source position"
+	if owner is CharacterBody3D:
+		if (owner as CharacterBody3D).velocity != Vector3.ZERO:
+			return "Moving native source cannot obtain a stationary preview"
+	elif owner is PhysicsBody3D:
+		if not owner is StaticBody3D or owner is AnimatableBody3D or (owner as StaticBody3D).constant_linear_velocity != Vector3.ZERO or (owner as StaticBody3D).constant_angular_velocity != Vector3.ZERO:
+			return "Unsupported moving physics source cannot obtain a stationary preview"
+	return ""
+
+
+func _preview_guard(owner: Node3D, threat: Dictionary, response: Dictionary, source_collision_path: String = "") -> Dictionary:
+	## Common exact native custody/world/retained-union framing guard. Callers
+	## have already bounded threat/authored-response before any deep copy.
 	var world_root: Node3D = response["world_root"]
 	var collision: Dictionary = _collision_signature(world_root)
 	if collision.has("error"):
-		return {"accepted": false, "reason": collision["error"]}
+		return {"error": collision["error"]}
+	var authored_response: Dictionary = response.duplicate()
+	for key: String in ["actor", "world_root", "floor_regions"]:
+		authored_response.erase(key)
 	authored_response = authored_response.duplicate(true)
 	var floors: Array[Dictionary] = []
 	for region: Dictionary in response["floor_regions"]:
 		var floor_collision: CollisionShape3D = region["collision"]
 		if not _under_root(floor_collision, world_root):
-			return {"accepted": false, "reason": "Every authored preview floor must belong to world_root"}
+			return {"error": "Every authored preview floor must belong to world_root"}
 		floors.append({"node_instance_id": str(floor_collision.get_instance_id()), "shape_instance_id": str(floor_collision.shape.get_instance_id()), "body_instance_id": str(floor_collision.get_parent().get_instance_id()), "signature": _floor_signature(region, world_root)})
 	var retained: Array[Dictionary] = []
 	var source_paths: Dictionary = {}
@@ -642,7 +734,7 @@ func _preview_lunge_current(owner: CharacterBody3D, threat: Dictionary, response
 		source_paths[source.get_instance_id()] = collision_path
 		var retained_source: Dictionary = _preview_body_state(source, collision_path)
 		if retained_source.has("error"):
-			return {"accepted": false, "reason": retained_source["error"]}
+			return {"error": retained_source["error"]}
 		retained.append({"record": _public_record(record), "actual_source": retained_source})
 	var cooldowns: Array[Dictionary] = []
 	ids = _cooldowns.keys()
@@ -651,21 +743,18 @@ func _preview_lunge_current(owner: CharacterBody3D, threat: Dictionary, response
 		var entry: Dictionary = _cooldowns[instance_id]
 		var cooldown_source: Dictionary = _preview_body_state((entry["owner"] as WeakRef).get_ref() as Node3D, String(source_paths.get(instance_id, "")))
 		if cooldown_source.has("error"):
-			return {"accepted": false, "reason": cooldown_source["error"]}
+			return {"error": cooldown_source["error"]}
 		cooldowns.append({"instance_id": instance_id, "ready_s": entry["ready_s"], "actual_source": cooldown_source})
 	var actor: CinderPlayer = response["actor"]
-	var actual_source: Dictionary = _preview_body_state(owner, lunge["plan"]["body_collision_path"])
+	var actual_source: Dictionary = _preview_body_state(owner, source_collision_path)
 	var actual_actor: Dictionary = _preview_body_state(actor, "BodyCollision")
 	if actual_source.has("error") or actual_actor.has("error"):
-		return {"accepted": false, "reason": actual_source.get("error", actual_actor.get("error", "Unsupported actual preview body"))}
+		return {"error": actual_source.get("error", actual_actor.get("error", "Unsupported actual preview body"))}
 	var guard := {"scheduler_instance_id": get_instance_id(), "owner_instance_id": owner.get_instance_id(), "actor_instance_id": actor.get_instance_id(), "world_root_instance_id": world_root.get_instance_id(), "clock_s": _clock, "serial": _serial, "encounter_id": _encounter_id, "profile": _profile.duplicate(true), "world_revision": _world_revision, "source": actual_source, "actor": actual_actor, "threat": threat.duplicate(true), "response": authored_response, "floor_bindings": floors, "collision_fingerprint": collision["signature"], "retained_union": retained, "cooldowns": cooldowns}
-	var result := {"accepted": true, "reason": "", "api_revision": LUNGE_PREVIEW_API_REVISION, "plan": lunge["plan"].duplicate(true), "candidate": prepared["candidate"].duplicate(true), "proof": prepared["proof"].duplicate(true), "guard": guard}
-	if _lunge_preview_wire(result).is_empty():
-		return {"accepted": false, "reason": "Preview exceeds bounded supported native data"}
-	return result
+	return {"guard": guard}
 
 
-func _preview_response_error(owner: CharacterBody3D, response: Dictionary) -> String:
+func _preview_response_error(owner: Node3D, response: Dictionary) -> String:
 	var error: String = response_error(response)
 	if not error.is_empty():
 		return error
@@ -1301,6 +1390,13 @@ func collision_fingerprint(world_root: Node3D) -> Dictionary:
 	return (result.get("signature", {}) as Dictionary).duplicate(true)
 
 
+func pure_collision_fingerprint(world_root: Node3D) -> Dictionary:
+	## Read-only native collision signature. Unsupported roots return empty;
+	## no diagnostics, clocks, pruning, callbacks or scheduler fields change.
+	var result: Dictionary = _collision_signature(world_root)
+	return (result.get("signature", {}) as Dictionary).duplicate(true)
+
+
 func _snapshot_access_error() -> String:
 	if not is_inside_tree() or not get_tree().paused:
 		return "Scheduler snapshots require a paused live tree"
@@ -1781,6 +1877,9 @@ func _decode_geometry(value: Dictionary) -> Dictionary:
 			points = ["origin"]
 		"cone":
 			keys = ["kind", "origin", "direction", "reach", "min_dot", "origin_radius"]
+			points = ["origin", "direction"]
+		"crescent":
+			keys = ["kind", "origin", "direction", "inner_radius", "outer_radius", "min_dot"]
 			points = ["origin", "direction"]
 		"lane":
 			keys = ["kind", "from", "to", "radius"]

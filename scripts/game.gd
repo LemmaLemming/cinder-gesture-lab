@@ -37,6 +37,7 @@ var kills: int = 0
 var _shake: float = 0.0
 var _pickups: Array[Node3D] = []
 var _pointers: Dictionary = {}
+var _pause_request_pending: bool = false
 var _last_tap_time: int = -1000
 var _last_tap_position := Vector2.ZERO
 # Store the completed swipe endpoint in viewport fractions so resizing stays consistent.
@@ -267,6 +268,35 @@ func _build_weapon_candidates() -> void:
 		pickup.add_to_group("lab_weapons")
 		pickup.global_position = weapon_candidate_positions[index] if index < weapon_candidate_positions.size() else Vector3(-2.7 + float(index) * 2.7, 0, 5.2)
 
+func request_pause_deferred() -> bool:
+	## A callback may request a coherent pause, but must not stop later native
+	## physics consumers/presentation in the same tick. Deferred flush freezes
+	## after that tick; recognizer input is consumed immediately.
+	if not is_inside_tree() or not is_instance_valid(player) or _pause_request_pending:
+		return false
+	_pause_request_pending = true
+	_clear_gesture_chain()
+	_finish_pause_request.call_deferred()
+	return true
+
+func is_pause_requested() -> bool:
+	return _pause_request_pending
+
+func _finish_pause_request() -> void:
+	if not _pause_request_pending:
+		return
+	_pause_request_pending = false
+	if is_inside_tree() and is_instance_valid(player):
+		_pause_at_barrier()
+
+func _pause_at_barrier() -> void:
+	if player.dead:
+		# The completed fatal tick remains dead; never replace its end UI or heal.
+		get_tree().paused = true
+		_clear_gesture_chain()
+	else:
+		open_bench()
+
 func open_bench() -> void:
 	if player.dead:
 		return
@@ -278,6 +308,8 @@ func open_bench() -> void:
 		hud.show_pause()
 
 func resume_lab() -> void:
+	if _pause_request_pending:
+		return
 	_clear_gesture_chain()
 	bench.visible = false
 	hud.hide_overlay()
@@ -350,7 +382,7 @@ func _process(delta: float) -> void:
 		camera.position.z += randf_range(-0.035, 0.035)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not is_instance_valid(player) or player.dead or get_tree().paused:
+	if not is_instance_valid(player) or player.dead or get_tree().paused or _pause_request_pending:
 		return
 	if event is InputEventScreenTouch:
 		if event.pressed:
@@ -550,7 +582,7 @@ func _camera_box_points(bounds: AABB, transform: Transform3D) -> Array:
 	return result
 
 func handle_tap(screen_pos: Vector2) -> void:
-	if get_tree().paused or not is_instance_valid(player) or player.dead:
+	if get_tree().paused or _pause_request_pending or not is_instance_valid(player) or player.dead:
 		return
 	# Aim is relative to the final finger position of the last completed swipe.
 	var direction: Vector3 = aim_direction(screen_pos)

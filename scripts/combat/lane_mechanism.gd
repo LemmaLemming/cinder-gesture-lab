@@ -1,6 +1,6 @@
 class_name CinderLaneMechanism
 extends Node3D
-## Nonenemy stationary consumer of shared finite-lane/circle geometry.
+## Nonenemy stationary consumer of shared finite-lane/circle/crescent geometry.
 ## Art belongs to the level and may attach here/read state_changed/get_cue().
 ## No hit group, HP, ammo requirement, living-enemy credit or autonomous cycles.
 
@@ -55,8 +55,8 @@ func _ready() -> void:
 func configure(mechanism_id: String, geometry: Dictionary, opening_position: Vector3, raw_role: Dictionary = DEFAULT_RAW_ROLE, timing_floors: Dictionary = DEFAULT_TIMING_FLOORS) -> bool:
 	if _transaction_depth > 0 or _snapshot_busy or is_instance_valid(_scheduler):
 		return _reject("Configure immutable mechanism data before binding")
-	if not _stable_id(mechanism_id) or not Geometry.error(geometry).is_empty() or geometry.get("kind") not in ["lane", "circle"] or not Geometry.finite_vector(opening_position):
-		return _reject("Stable mechanism ID, finite authoritative lane/circle and actual opening position required")
+	if not _stable_id(mechanism_id) or not Geometry.error(geometry).is_empty() or geometry.get("kind") not in ["lane", "circle", "crescent"] or not Geometry.finite_vector(opening_position):
+		return _reject("Stable mechanism ID, finite authoritative lane/circle/crescent and actual opening position required")
 	if not Codec.keys_error(raw_role, DEFAULT_RAW_ROLE.keys()).is_empty() or not Codec.value_error(raw_role).is_empty() or not Codec.keys_error(timing_floors, DEFAULT_TIMING_FLOORS.keys()).is_empty():
 		return _reject("Unsupported raw role or timing-floor schema")
 	var difficulty = Difficulty.new()
@@ -94,14 +94,14 @@ func bind(scheduler: CinderThreatScheduler, heroes: Dictionary) -> bool:
 	return true
 
 
-func start(hero_id: String, response_context: Dictionary, opening_position: Variant = null) -> Dictionary:
+func start(hero_id: String, response_context: Dictionary, opening_position: Variant = null, bearing: Variant = null, preview: Dictionary = {}) -> Dictionary:
 	last_error = ""
 	if _transaction_depth > 0 or _snapshot_busy or _cancelling or not _live_bindings() or _status == "running" or get_tree().paused or not is_visible_in_tree() or not _cue.is_visible_in_tree() or _cycle >= Codec.MAX_SAFE_INTEGER:
 		return _denied("Start requires an idle live unpaused mechanism outside callbacks")
 	if not _heroes.has(hero_id) or not Codec.keys_error(response_context, RESPONSE_KEYS).is_empty() or not _stable_id(response_context.get("encounter_id")):
 		return _denied("Authored encounter epoch, floor and finite response candidates required")
 	if not global_position.is_equal_approx(_geometry_source(_configuration.geometry)):
-		return _denied("The actual mechanism source must remain at its committed lane start/circle origin")
+		return _denied("The actual mechanism source must remain at its committed lane start or circle/crescent origin")
 	if opening_position != null and not Geometry.finite_vector(opening_position):
 		return _denied("Per-cycle opening position must be an actual finite world Vector3")
 	# A level may supply another actor's committed stopped endpoint. This is a
@@ -117,9 +117,17 @@ func start(hero_id: String, response_context: Dictionary, opening_position: Vari
 	for key: String in RESPONSE_KEYS:
 		if key != "encounter_id":
 			response[key] = response_context[key]
-	var threat: Dictionary = {"role": resolved, "geometry": _configuration.geometry.duplicate(true), "source_stationary": true, "opening_stationary": true, "opening_position": cycle_opening, "cooldown_remaining_s": 0.0}
+	var cycle_geometry: Dictionary = _selected_geometry(bearing)
+	if cycle_geometry.is_empty():
+		return _denied("Only a crescent may select a finite normalized planar bearing per cycle")
+	var threat: Dictionary = {"role": resolved, "geometry": cycle_geometry, "source_stationary": true, "opening_stationary": true, "opening_position": cycle_opening, "cooldown_remaining_s": 0.0}
+	if not preview.is_empty():
+		var prospective: Dictionary = preview_start(hero_id, response_context, opening_position, bearing)
+		if not prospective.get("accepted", false): return _denied(String(prospective.get("reason", "Preview rejected")))
+		# The same native common-root derivation must reach Scheduler admission.
+		response["world_root"] = _preview_world_root(hero, response_context)
 	_transaction_depth += 1
-	var answer: Dictionary = _scheduler.request_attack(self, threat, response)
+	var answer: Dictionary = _scheduler.request_attack(self, threat, response, preview)
 	if answer.get("accepted", false):
 		var reservation: Dictionary = _live_reservation(String(answer.reservation_id))
 		if reservation.is_empty():
@@ -141,6 +149,86 @@ func start(hero_id: String, response_context: Dictionary, opening_position: Vari
 		last_error = String(answer.get("reason", "Reservation rejected"))
 	_transaction_depth -= 1
 	return answer.duplicate(true)
+
+
+func preview_start(hero_id: String, response_context: Dictionary, opening_position: Variant = null, bearing: Variant = null) -> Dictionary:
+	## Exact pure camera preflight; no child cue, phase, cycle or diagnostic
+	## changes and no lease allocation. Pass this result to start's fifth arg.
+	if _transaction_depth > 0 or _snapshot_busy or _cancelling or not _live_bindings() or _status == "running" or get_tree().paused or not is_visible_in_tree() or not _cue.is_visible_in_tree() or _cycle >= Codec.MAX_SAFE_INTEGER:
+		return {"accepted": false, "reason": "Preview requires idle live unpaused mechanism outside callbacks"}
+	if not _heroes.has(hero_id) or not Codec.keys_error(response_context, RESPONSE_KEYS).is_empty() or not _stable_id(response_context.get("encounter_id")):
+		return {"accepted": false, "reason": "Authored encounter epoch, floor and finite response candidates required"}
+	if not global_position.is_equal_approx(_geometry_source(_configuration.geometry)) or (opening_position != null and not Geometry.finite_vector(opening_position)):
+		return {"accepted": false, "reason": "Actual stationary source and finite per-cycle opening required"}
+	var shape: Dictionary = _selected_geometry(bearing)
+	if shape.is_empty():
+		return {"accepted": false, "reason": "Only a crescent may select a finite normalized planar bearing per cycle"}
+	var difficulty = Difficulty.new()
+	var resolved: Dictionary = difficulty.resolve_role(_configuration.raw_role, String(_scheduler.encounter_profile().get("id", "")), _configuration.timing_floors)
+	if resolved.is_empty():
+		return {"accepted": false, "reason": difficulty.last_error}
+	var response: Dictionary = (_heroes[hero_id] as CinderPlayer).get_threat_response_state()
+	for key: String in RESPONSE_KEYS:
+		if key != "encounter_id": response[key] = response_context[key]
+	var root: Node3D = _preview_world_root(_heroes[hero_id] as CinderPlayer, response_context)
+	if not is_instance_valid(root):
+		return {"accepted": false, "reason": "Actual mechanism/Scheduler/Hero/floors must share a same-world Node3D root"}
+	response["world_root"] = root
+	var opening: Vector3 = _configuration.opening_position if opening_position == null else opening_position
+	var threat := {"role": resolved, "geometry": shape, "source_stationary": true, "opening_stationary": true, "opening_position": opening, "cooldown_remaining_s": 0.0}
+	return _scheduler.preview_stationary(self, threat, response)
+
+
+func _preview_world_root(hero: CinderPlayer, context: Dictionary) -> Node3D:
+	## Derive custody from actual bound native nodes, including sibling floors.
+	## No arbitrary caller root or copied instance ID supplies authority.
+	if not context.get("floor_regions") is Array:
+		return null
+	if context.floor_regions.is_empty() or context.floor_regions.size() > 32:
+		return null
+	var nodes: Array[Node] = [_scheduler, hero]
+	for region: Variant in context.floor_regions:
+		if not region is Dictionary:
+			return null
+		var collision: CollisionShape3D = region.get("collision") as CollisionShape3D
+		if not is_instance_valid(collision) or not collision.is_inside_tree() or collision.is_queued_for_deletion() or collision.get_world_3d() != get_world_3d():
+			return null
+		nodes.append(collision)
+	var common: Node = self
+	while is_instance_valid(common):
+		if common is Node3D and (common as Node3D).get_world_3d() == get_world_3d():
+			var contains: bool = true
+			for node: Node in nodes:
+				if common != node and not common.is_ancestor_of(node):
+					contains = false
+					break
+			if contains:
+				return common as Node3D
+		common = common.get_parent()
+	return null
+
+
+func _selected_geometry(bearing: Variant) -> Dictionary:
+	var shape: Dictionary = _copy_geometry(_configuration.geometry)
+	if bearing == null:
+		return shape
+	if shape.kind != "crescent" or not Geometry.finite_vector(bearing):
+		return {}
+	shape.direction = bearing
+	return shape if Geometry.error(shape).is_empty() else {}
+
+
+func _cycle_geometry() -> Dictionary:
+	return _exchange.get("geometry", _configuration.get("geometry", {}))
+
+
+func _committed_geometry_matches(encoded: Dictionary) -> bool:
+	if _configuration.geometry.kind != "crescent":
+		return _same_exact(encoded, _encode_geometry(_configuration.geometry))
+	if not Codec.keys_error(encoded, ["kind", "origin", "direction", "inner_radius", "outer_radius", "min_dot"]).is_empty() or not Codec.is_vector3(encoded.get("direction")):
+		return false
+	var shape: Dictionary = _selected_geometry(Codec.read_vector3(encoded.direction))
+	return not shape.is_empty() and _same_exact(encoded, _encode_geometry(shape))
 
 
 func cancel(reason: String = "mechanism_cancelled") -> bool:
@@ -176,7 +264,7 @@ func state() -> Dictionary:
 			remaining = maxf(float(_exchange[key]) - _scheduler.get_clock(), 0.0)
 	var hits: Array = _hit_ids.keys()
 	hits.sort()
-	return {"api_revision": API_REVISION, "mechanism_id": _configuration.get("mechanism_id", ""), "status": _status, "phase": _phase, "remaining_s": remaining, "cycle": _cycle, "reservation_id": _exchange.get("id", "") if _status == "running" else "", "geometry": _configuration.get("geometry", {}).duplicate(true), "source_position": global_position, "opening_position": _exchange.get("opening_position", _configuration.get("opening_position")), "resolved_role": _resolved_role.duplicate(true), "hit_ids": hits, "last_cancel_reason": _last_cancel_reason}
+	return {"api_revision": API_REVISION, "mechanism_id": _configuration.get("mechanism_id", ""), "status": _status, "phase": _phase, "remaining_s": remaining, "cycle": _cycle, "reservation_id": _exchange.get("id", "") if _status == "running" else "", "geometry": _cycle_geometry().duplicate(true), "source_position": global_position, "opening_position": _exchange.get("opening_position", _configuration.get("opening_position")), "resolved_role": _resolved_role.duplicate(true), "hit_ids": hits, "last_cancel_reason": _last_cancel_reason}
 
 
 func _physics_process(_delta: float) -> void:
@@ -242,7 +330,7 @@ func _active_path_hits(path: Array[Dictionary]) -> bool:
 		# lock tick when binary64 clock accumulation falls just below active_from.
 		if maxf(float(segment.start_s), float(_exchange.active_from_s)) > minf(float(segment.end_s), float(_exchange.active_until_s)):
 			continue
-		if Geometry.timed_path_hits(_configuration.geometry, [segment], float(_exchange.active_from_s), float(_exchange.active_until_s), CinderThreatScheduler.CAPSULE_RADIUS):
+		if Geometry.timed_path_hits(_cycle_geometry(), [segment], float(_exchange.active_from_s), float(_exchange.active_until_s), CinderThreatScheduler.CAPSULE_RADIUS):
 			return true
 	return false
 
@@ -280,7 +368,7 @@ func _required_cue_available() -> bool:
 	if not is_instance_valid(_cue) or not _cue.is_visible_in_tree():
 		return false
 	var current: Dictionary = _cue.state()
-	if current.phase != _phase or current.geometry != _configuration.geometry or current.source_position != _geometry_source(_configuration.geometry):
+	if current.phase != _phase or current.geometry != _cycle_geometry() or current.source_position != _geometry_source(_configuration.geometry):
 		return false
 	var required: Array[String] = ["RequiredSourceMarker"]
 	if _phase != "recovery": required.append("RequiredFootprintOutline")
@@ -304,7 +392,7 @@ func _set_phase(phase: String, notify: bool = true) -> void:
 		if phase == "clear":
 			_cue.clear()
 		else:
-			_cue.present(_configuration.geometry, phase)
+			_cue.present(_cycle_geometry(), phase)
 		# A cue callback may synchronously cancel this mechanism. Its cue
 		# rejected nested clear, so clear again after that callback returns.
 		if _phase == "clear":
@@ -471,15 +559,21 @@ func _encode_configuration() -> Dictionary:
 func _encode_geometry(shape: Dictionary) -> Dictionary:
 	if shape["kind"] == "circle":
 		return {"kind": "circle", "origin": Codec.vector3(shape["origin"]), "radius": shape.radius}
+	if shape["kind"] == "crescent":
+		return {"kind": "crescent", "origin": Codec.vector3(shape["origin"]), "direction": Codec.vector3(shape["direction"]), "inner_radius": shape.inner_radius, "outer_radius": shape.outer_radius, "min_dot": shape.min_dot}
 	return {"kind": "lane", "from": Codec.vector3(shape["from"]), "to": Codec.vector3(shape["to"]), "radius": shape.radius}
 
 
 func _copy_geometry(shape: Dictionary) -> Dictionary:
-	return Geometry.circle(shape["origin"], float(shape["radius"])) if shape["kind"] == "circle" else Geometry.lane(shape["from"], shape["to"], float(shape["radius"]))
+	if shape["kind"] == "circle":
+		return Geometry.circle(shape["origin"], float(shape["radius"]))
+	if shape["kind"] == "crescent":
+		return Geometry.crescent(shape["origin"], shape["direction"], float(shape["inner_radius"]), float(shape["outer_radius"]), float(shape["min_dot"]))
+	return Geometry.lane(shape["from"], shape["to"], float(shape["radius"]))
 
 
 func _geometry_source(shape: Dictionary) -> Vector3:
-	return shape["origin"] if shape["kind"] == "circle" else shape["from"]
+	return shape["from"] if shape["kind"] == "lane" else shape["origin"]
 
 
 func _encode_exchange(exchange: Dictionary) -> Dictionary:
@@ -496,7 +590,13 @@ func _decode_exchange(exchange: Dictionary) -> Dictionary:
 	if exchange.is_empty():
 		return {}
 	var result: Dictionary = exchange.duplicate(true)
-	result.geometry = Geometry.circle(Codec.read_vector3(exchange.geometry["origin"]), float(exchange.geometry.radius)) if exchange.geometry["kind"] == "circle" else Geometry.lane(Codec.read_vector3(exchange.geometry["from"]), Codec.read_vector3(exchange.geometry["to"]), float(exchange.geometry.radius))
+	var shape: Dictionary = exchange.geometry
+	if shape["kind"] == "circle":
+		result.geometry = Geometry.circle(Codec.read_vector3(shape["origin"]), float(shape.radius))
+	elif shape["kind"] == "crescent":
+		result.geometry = Geometry.crescent(Codec.read_vector3(shape["origin"]), Codec.read_vector3(shape["direction"]), float(shape.inner_radius), float(shape.outer_radius), float(shape.min_dot))
+	else:
+		result.geometry = Geometry.lane(Codec.read_vector3(shape["from"]), Codec.read_vector3(shape["to"]), float(shape.radius))
 	result.source_position = Codec.read_vector3(exchange.source_position)
 	result.opening_position = Codec.read_vector3(exchange.opening_position)
 	return result
@@ -534,7 +634,7 @@ func _snapshot_plan_error(snapshot: Dictionary, bindings: Dictionary, paired: Di
 	if not Codec.is_integer(snapshot.cycle, 1) or not _stable_id(snapshot.exchange_encounter_id) or not Codec.keys_error(snapshot.exchange, EXCHANGE_KEYS).is_empty():
 		return "Executed mechanism requires its finite cycle and exact committed exchange"
 	var exchange: Dictionary = snapshot.exchange
-	if not exchange.id is String or not exchange.id.begins_with("threat-") or not Codec.is_vector3(exchange.source_position) or not Codec.is_vector3(exchange.opening_position) or not exchange.geometry is Dictionary or not _same_exact(exchange.geometry, _encode_geometry(_configuration.geometry)) or not Codec.read_vector3(exchange.source_position).is_equal_approx(_geometry_source(_configuration.geometry)) or not exchange.profile_id is String or not Codec.is_integer(exchange.world_revision, 1):
+	if not exchange.id is String or not exchange.id.begins_with("threat-") or not Codec.is_vector3(exchange.source_position) or not Codec.is_vector3(exchange.opening_position) or not exchange.geometry is Dictionary or not _committed_geometry_matches(exchange.geometry) or not Codec.read_vector3(exchange.source_position).is_equal_approx(_geometry_source(_configuration.geometry)) or not exchange.profile_id is String or not Codec.is_integer(exchange.world_revision, 1):
 		return "Committed source/geometry/opening no longer matches actual mechanism configuration"
 	if not exchange.id.substr(7).is_valid_int() or not Codec.is_integer(int(exchange.id.substr(7)), 1) or exchange.id != "threat-%d" % int(exchange.id.substr(7)):
 		return "Committed reservation ID must preserve its exact finite scheduler serial"
