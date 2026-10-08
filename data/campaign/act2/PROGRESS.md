@@ -1,6 +1,6 @@
 # Act 2 progress
 
-Updated 9 October 2026. **Two of eight Act2 levels are canonically accepted. L3 component production and affected art correction are underway. Five later productions are unstarted.** [Memory](ACT_MEMORY.md), [current L2 design](levels/A2-L2.md), [portable L2 evidence](../../../docs/acts/act2/evidence/A2-L2/README.md) and [preserved progress history](PROGRESS_HISTORY.md) separate current status from earlier failures/pending statements.
+Updated 9 October 2026. **Two of eight Act2 levels are canonically accepted. L3 authored floor entry43/0 and corrected B02 art50/0 are verified; Smoke source fidelity is still under correction. Five later productions are unstarted.** [Memory](ACT_MEMORY.md), [current L2 design](levels/A2-L2.md), [portable L2 evidence](../../../docs/acts/act2/evidence/A2-L2/README.md) and [preserved progress history](PROGRESS_HISTORY.md) separate current status from earlier failures/pending statements.
 
 Consumed `campaign-shared-23`: publication `2304d25e51d269edd3d6fc90b142f87b2ad35a6d`, preserving merge `74de3ea5f5d06ba5eca8b6ea74b8aceed2fbe28f`, ACK `3144d408-e50c-413e-ac8b-deec18f732dd`. All271 tracked owned files were preserved from exact L2 HANDOFF candidatefd5fd3d. Directly affected actual crossing/fresh-camera/full-route check passes **371/0 clean**, [separate adoption evidence](../../../docs/acts/act2/evidence/A2-L2-shared23-adoption/README.md). Original shared22 bundle/hashes/results remain frozen; no unchanged L1/art/unused crescent/replay/broad suite.
 
@@ -10,7 +10,7 @@ Earlier consumed baseline: Consumed `campaign-shared-22`: publication `4de8b6008
 | --- | --- | --- |
 | A2-L1 Horsell Common | Original candidate/both common Scout patches adopted; current40/42 original files match | Supplemental 186/0 + affected 285/0 clean, adopted8c37b1e0/RESPONSEd810feca |
 | A2-L2 Weybridge and Shepperton | Canonical registry accepted exactfd5fd3d; registration4b0e08d | Integration330/0+338/0+Journey22/0 separate; owner shared23 crossing371/0 retained |
-| A2-L3 Black Smoke and the Ruined House | Actor41/0, cosmetic capture48/0; B02 visibility defect under correction; full route unimplemented | Affected boss art, finite root/phase/save and shared smoke REQUEST6e86453f, then full checks/HANDOFF |
+| A2-L3 Black Smoke and the Ruined House | Actor41/0, authored floor43/0, corrected boss art50/0; Smoke73/0 readability but fidelity failed | Stronger Smoke art, published bank hookup, strict phase/save/full route checks/HANDOFF |
 | A2-L4 Red Weed and the London Approaches | Production unstarted | L3 handoff |
 | A2-L5 Dead London and Regent's Park | Production unstarted | L4 handoff |
 | A2-O1 Cylinder Perimeter | Production unstarted | Main levels complete; reuse L1 kit |
@@ -79,3 +79,10 @@ Canonical registry/shared progress now records **A2-L2 accepted**, exactcandidat
 L3 initialsource31475ff/shared23 has an isolated actual actor41/0 and corrected native cosmetic capture48/0 (ten frames); [scoped evidence](../../../docs/acts/act2/evidence/A2-L3/index.json). The original native teardown script failure/exit130 and ten original images remain preserved. Completed peer/root art review finds a material B02 visibility defect: the central recovery mount and Place plate are hidden, Reach lock resembles idle, local arm disengagement is weak. Cosmetic correction and an affected boss-only native check are underway; no L3 art/route/smoke/full aggregate/checkpoint acceptance follows. Sourcejoint0, Reach3.8/Placecircle1.1, HP30/two15HP pools and clocks remain authoritative. Tender/selected house views have no material Hero/floor defect, with fine detail/right-approach/remote-scenery limits recorded. Shared finite grace/ticked smoke API remains owned by integration and unpublished; original low vapour cosmetics proceed independently.
 
 Exact next task: correct affected B02 portrait poses, connect the same-level finite root/actual dry floor/Reach+Place and coherent phase checkpoint, then consume published smoke API and complete required full L3 checks. No L4 or human/mobile decision gate.
+
+
+## Current scoped L3 production after native views
+
+At preserving checkout e66461929b98dae9241207f1f47461509a2001ad/shared23, actual authored entry/floor **43/0 clean** checks seven real HP30 actors/four tools, shared Act2 Hero and actual collision-shortened dash at the low wall plus both broad side approaches. No synthetic progress/defeat/checkpoint; whole aggregate and Smoke hookup explicitly reject. Corrected B02 cosmetic **50/0/seven native frames** and peer all7/root2 review resolve the four material visibility defects; fine rear-support/strand/edge/lever overlaps remain.
+
+Both Smoke revisions1 and2 pass the same **73/0/five native cosmetic views** for fixed circle/native bounds/quiet material poses/shared cues/Hero/dry-floor/cleanup. Both **fail Black Smoke source fidelity**: revision2 has a less regular footprint but still brown lobes beneath shared orange fill. Focused stronger charcoal presentation is next; do not change cue fill/footprint/source/clock or infer gameplay/grace/ticks/aggregate acceptance. Exact logs/source hashes/frames and first failures remain in [L3 component index](../../../docs/acts/act2/evidence/A2-L3/index.json). Shared consumer REQUEST6e86453f remains integration-owned and unpublished. Shared24 projected-replay publication5d7a394c is available for preserving adoption after this source checkpoint; L3 does not use replay. Two accepted Act2 levels; six remain. No human/mobile decision gate.

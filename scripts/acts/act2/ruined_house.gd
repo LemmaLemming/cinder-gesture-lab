@@ -159,6 +159,9 @@ func _physics_process(delta: float) -> void:
 
 func _activate_mechanism(id: String, target_id: String) -> void:
 	var node: Node3D = _mechanisms[id]
+	var bound_player: CinderPlayer = hero
+	var bound_scheduler: Node = _scheduler
+	var bound_actor: Node3D = _actors.get(target_id)
 	var state: Dictionary = node.call("state")
 	if state.status == "running":
 		if not _mechanism_framed(id, state): node.call("cancel", "l3_required_presentation_unavailable")
@@ -184,9 +187,24 @@ func _activate_mechanism(id: String, target_id: String) -> void:
 	# The actual Game's camera settles this forecast; recalculate preview every
 	# real tick rather than retaining a stale clock/source/union guard.
 	var answer: Dictionary = node.call("start", "hero", context, null, null, preview)
+	# Warning publication can synchronously cancel, pause or remove this unit.
+	# Never repopulate a cleared view from a stale accepted return dictionary.
+	if not is_instance_valid(self) or not is_inside_tree() or is_queued_for_deletion() or not _entered: return
+	for item: Node in [node, bound_actor, bound_player, bound_scheduler]:
+		if not is_instance_valid(item) or not item.is_inside_tree() or item.is_queued_for_deletion(): return
+	if _mechanisms.get(id) != node or _actors.get(target_id) != bound_actor or hero != bound_player or _scheduler != bound_scheduler: return
 	_admission_errors[id] = {} if answer.get("accepted", false) else {"reason": answer.get("reason", "rejected")}
 	if not answer.get("accepted", false): return
-	if id.begins_with("boss_"): _boss_ready_s = float(answer.reservation.cooldown_until_s)
+	var current: Dictionary = node.call("state")
+	if int(current.cycle) != int(state.cycle) + 1: return
+	# Even a same-callback cancellation consumes its actual original cooldown.
+	# Retain that admitted deadline across the distinct Reach/Place owners.
+	if id.begins_with("boss_"): _boss_ready_s = maxf(_boss_ready_s, float(answer.reservation.cooldown_until_s))
+	if current.status != "running" or current.reservation_id != answer.reservation_id or current.geometry != answer.reservation.geometry or current.opening_position != bound_actor.global_position or bound_player.dead or not bound_actor.is_visible_in_tree():
+		_views.erase(id)
+		_mechanism_proofs.erase(id)
+		_forecast_points.erase(id)
+		return
 	_mechanism_proofs[id] = answer.proof.duplicate(true)
 	_views[id] = {"reservation_id": answer.reservation_id, "landing": Codec.vector3(answer.proof.landing), "attack_position": Codec.vector3(answer.proof.attack_position), "target_id": target_id, "primary_time_s": answer.proof.primary_time_s, "response_complete_s": answer.proof.response_complete_s, "equipment_ids": hero.equipment.snapshot()}
 	_forecast_points.erase(id)
@@ -206,14 +224,34 @@ func _actor_exchange(id: String) -> Dictionary:
 		return _mechanisms["boss_" + _boss_next_action].call("state")
 	return _mechanisms["tool_" + id].call("state")
 
+func _tool_context_live(id: String, tool_id: String, actor: Node3D, tool: Node3D, player: CinderPlayer, scheduler: Node, marker: Node3D) -> bool:
+	if not is_instance_valid(self) or not is_inside_tree() or is_queued_for_deletion(): return false
+	if not _entered or _restoring or _validating or _snapshotting or get_tree().paused: return false
+	for node: Node in [actor, tool, player, scheduler, marker]:
+		if not is_instance_valid(node) or not node.is_inside_tree() or node.is_queued_for_deletion(): return false
+	if hero != player or _scheduler != scheduler or _actors.get(id) != actor or _mechanisms.get(tool_id) != tool or _opening_cues.get(id) != marker or player.dead: return false
+	return _crossing.call("current_active_ids").has(id) and actor.is_visible_in_tree() and tool.is_visible_in_tree() and marker.is_visible_in_tree() and float(actor.get("hp")) > 0.0 and actor.get_world_3d() == player.get_world_3d() and tool.get_world_3d() == player.get_world_3d() and scheduler.get_world_3d() == player.get_world_3d()
+
 func _handler_window(id: String) -> bool:
-	if not _entered or get_tree().paused or hero.dead or not _crossing.call("current_active_ids").has(id) or not _actors[id].is_visible_in_tree(): return false
-	var state: Dictionary = _actor_exchange(id)
-	if state.get("status") != "running" or state.get("phase") != "recovery": return false
-	var lease: Dictionary = _scheduler.call("reservation_state", state.reservation_id)
-	if get_tree().paused or hero.dead or lease.is_empty() or lease.state != "recovery" or _scheduler.call("get_clock") <= float(lease.active_until_s) or _scheduler.call("get_clock") > float(lease.recovery_until_s): return false
-	var tool_id: String = "boss_" + String(_actors[id].get("tool_action")) if id == "handling_machine" else "tool_" + id
-	return _mechanisms.has(tool_id) and _mechanism_framed(tool_id, state) and _opening_cues[id].is_visible_in_tree() and _opening_cues[id].call("state").state == "available"
+	var player: CinderPlayer = hero
+	var scheduler: Node = _scheduler
+	var actor: Node3D = _actors.get(id)
+	var marker: Node3D = _opening_cues.get(id)
+	if not is_instance_valid(actor): return false
+	var tool_id: String = "boss_" + String(actor.get("tool_action")) if id == "handling_machine" else "tool_" + id
+	var tool: Node3D = _mechanisms.get(tool_id)
+	if not _tool_context_live(id, tool_id, actor, tool, player, scheduler, marker): return false
+	var before: Dictionary = tool.call("state")
+	if before.get("status") != "running" or before.get("phase") != "recovery": return false
+	var lease: Dictionary = scheduler.call("reservation_state", before.reservation_id)
+	# Cleanup may publish observer callbacks. Recheck the entire native parent
+	# and sample this actual consumer/cue again before dereferencing the Hero.
+	if not is_instance_valid(self) or not _tool_context_live(id, tool_id, actor, tool, player, scheduler, marker): return false
+	var current: Dictionary = tool.call("state")
+	if current.status != "running" or current.phase != "recovery" or current.reservation_id != before.reservation_id or current.cycle != before.cycle: return false
+	if lease.is_empty() or lease.state != "recovery" or lease.source_instance_id != tool.get_instance_id() or lease.geometry != current.geometry or lease.opening_position != actor.global_position: return false
+	var clock: float = scheduler.call("get_clock")
+	return clock > float(lease.active_until_s) and clock <= float(lease.recovery_until_s) and _mechanism_framed(tool_id, current) and marker.call("state").state == "available"
 
 func _on_mechanism_state(state: Dictionary, id: String) -> void:
 	if not _entered or _restoring or _validating or _snapshotting: return
@@ -357,10 +395,24 @@ func _exchange_framed(actor: Node3D, state: Dictionary) -> bool:
 	if not is_instance_valid(actor) or not actor.is_visible_in_tree() or not is_instance_valid(camera): return false
 	var points: Array[Vector3] = _required_source_points(actor)
 	if state.get("phase") != "recovery": points.append_array(_lane_points(_state_geometry(state)))
-	var proof: Dictionary = state.get("proof", state.get("presentation_witness", {}))
+	var proof: Dictionary = state.get("proof", {})
+	if not proof.get("landing") is Vector3: proof = state.get("presentation_witness", {})
 	if state.get("phase") != "recovery":
 		for key: String in ["landing", "attack_position"]:
 			if proof.get(key) is Vector3: points.append_array(_landing_points(proof[key]))
+	return _points_framed(camera, points)
+
+func _mechanism_framed(id: String, state: Dictionary) -> bool:
+	var target: String = _tool_target(id)
+	var actor: Node3D = _actors.get(target)
+	var tool: Node3D = _mechanisms.get(id)
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	if not is_instance_valid(actor) or not is_instance_valid(tool) or not is_instance_valid(camera) or not actor.is_inside_tree() or actor.is_queued_for_deletion() or not actor.is_visible_in_tree() or not tool.is_inside_tree() or tool.is_queued_for_deletion() or not tool.is_visible_in_tree(): return false
+	var points: Array[Vector3] = _source_points(id)
+	if points.is_empty(): return false
+	if state.get("phase") != "recovery": points.append_array(_lane_points(state.geometry))
+	if state.get("status") == "running" and _views.has(id):
+		for key: String in ["landing", "attack_position"]: points.append_array(_landing_points(Codec.read_vector3(_views[id][key])))
 	return _points_framed(camera, points)
 
 func _apply_readability(_guard_actor_id: String = "", _guard_state: Dictionary = {}) -> void:
@@ -403,7 +455,12 @@ func _camera_framing_points() -> Array:
 		var scout: Dictionary = _exchange.call("state", "apron_scout")
 		if scout.get("status") == "running":
 			points.append_array(_source_points("apron_scout"))
-			if scout.phase != "recovery": points.append_array(_lane_points(_state_geometry(scout)))
+			if scout.phase != "recovery":
+				points.append_array(_lane_points(_state_geometry(scout)))
+				var proof: Dictionary = scout.get("proof", {})
+				if not proof.get("landing") is Vector3: proof = scout.get("presentation_witness", {})
+				for key: String in ["landing", "attack_position"]:
+					if proof.get(key) is Vector3: points.append_array(_landing_points(proof[key]))
 	return points
 
 func _scheduler_bindings() -> Dictionary:

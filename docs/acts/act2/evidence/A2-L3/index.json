@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "level_id": "A2-L3",
-  "status": "ACTOR_COMPONENT_PASSED_NATIVE_B02_MATERIAL_VISIBILITY_DEFECT_CORRECTION_UNDERWAY",
+  "status": "BOSS_AFFECTED_ART_PASSED_SMOKE_NATIVE_READABILITY_PASSED_FIDELITY_FAILED_REVISION_UNDERWAY_FULL_LEVEL_INCOMPLETE",
   "tested_source_commit": "31475ff2757f833fbc7479e528ae9c1d59bfa88b",
   "shared_api": "campaign-shared-23",
   "shared_publication": "2304d25e51d269edd3d6fc90b142f87b2ad35a6d",
@@ -115,6 +115,110 @@
         ],
         "finding": "Selected Tender tube/bore/canisters/two skids and worn exposed house/left approach readable without material Hero/floor clutter defect. Tiny coupler/shutters/rivets merge. Right scullery/sink/arch/right approach and distant excavation are outside these views; actual derived scenery cutaway and smoke/cue occlusion remain untested."
       }
+    }
+  },
+  "boss_art_revision_2": {
+    "source_checkpoint": "9e860383ac2d43f01caee8615f6f9a2f45d2f2ec",
+    "tested_checkout_head": "e66461929b98dae9241207f1f47461509a2001ad",
+    "visual_sha256": "0b41831e83ccd09ae8623dfb7a8388e91b1626ae2fb9216e56fb791188ae40d2",
+    "fixture_sha256": "1daa5f2555a809d6484f44ecd7969099b766eed2d62154a035d55abfb6f1e6eb",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-boss-art-corrected.log --script tests/acts/act2/a2_l3_asset_capture.gd -- --boss-only",
+    "checks": 50,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-boss-art-corrected.log",
+    "log_sha256": "c200ded4735dd8783822a678f6877e486ba651db60948351c087ea4c9926d2c3",
+    "scope": "Seven affected native540x1170 cosmetic poses, same Game/camera/floor/kit/stage Hero. Actual new mesh vertices remain grounded/<=1.35 and quiet boss action/phase pose restores; no admitted cue/attack/cloud/route/aggregate/phase checkpoint claim. Original failed material review and48/10 kept unchanged. Current art review pending.",
+    "artifact_sha256": {
+      "boss-art-corrected/boss-idle.png": "26f8ed7280cf90fcda05e4647bb72ae25efa8393e559820932a9a611e58a54b6",
+      "boss-art-corrected/metadata.json": "140c2e7bad58cf1346f1d0e90797ea1f77d47b5b1cb3891a3fd3ff7e655447c8",
+      "boss-art-corrected/boss-reach-recovery.png": "0b818caea244e41d3975964c5b8e45fade2af293fad07c76256289772fca05d3",
+      "boss-art-corrected/boss-place-active.png": "1d3153a41fe19ddc994cf37183d2398ded5f2dbcea07ec6beaa3466f6406bf48",
+      "boss-art-corrected/boss-reach-active.png": "80fe1646bd6b0823d82a30a83efeaaf740739ed98d847e65fda09850e727ee23",
+      "boss-art-corrected/boss-place-recovery.png": "0e7c8817fc9574a73b7b6cc1c67d8c1e4b87940b2bee0cdb553f7bbec3120162",
+      "boss-art-corrected/boss-reach-lock.png": "467650b43abb85730a5f5c945f430d6fb42f8f99ff0eb256c5b6fbdff92e85a0",
+      "boss-art-corrected/boss-local-arm-disengaged.png": "e4efa583798c1a7608951e7660a9b910381f7793f504b6ba5ee8eef37446f55c"
+    },
+    "reviews": {
+      "peer": "All seven original540x1170 corrected frames inspected. Four prior material defects pass: central coupler visible in both recoveries; Place square trimmed ground plate; outboard Reach lock claw; empty socket/lowered detached arm with standing operator/supports. Hero face/torso/feet clear. Fine limits: rear fifth support/individual strands merge, rear Place edge under mount, detached lever partly shares right-support cluster. Staged cosmetic source/readability pass only.",
+      "root": "Viewed corrected Place recovery and Reach lock; central mount and distinct ground plate are visible, held tool is outboard; no material Hero/floor defect in these two frames. Remaining five covered independently."
+    }
+  },
+  "new_resources_import": {
+    "command": "python3 scripts/dev/dev.py import > .cinder/a2-l3-new-resources-import.stdout 2>&1",
+    "exit_code": 0,
+    "session_id": 66844,
+    "stdout": "a2-l3-new-resources-import.stdout",
+    "sha256": "a5ba97c2320b3f61ff8a58cc90504f7577dd3c172c54fcda79820273b8ba6dc2",
+    "reason": "New L3 root/scene/smoke visual/five-view fixture resources and copied original ten native images. No SCRIPT ERROR/Parse Error/ERROR reported; this does not execute the root/route or validate its declared pending consumer/aggregate."
+  },
+  "smoke_art_first": {
+    "tested_checkout_head": "e66461929b98dae9241207f1f47461509a2001ad",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-smoke-art-first.log --script tests/acts/act2/a2_l3_smoke_asset_capture.gd",
+    "checks": 73,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-smoke-art-first.log",
+    "log_sha256": "a7037deadf1ccb1e33fa0a3547675de4c618e4f3e029f9ea554777cf8f2d79db",
+    "sources_sha256": {
+      "scripts/acts/act2/smoke_bank_visual.gd": "48dd2d2538230376d3ed0425eb07c93db849d491a3e8b859365ec187b611822e",
+      "tests/acts/act2/a2_l3_smoke_asset_capture.gd": "7af1021db8a80d2566f4c4cc1e39d4c92ad6e057d03ac6063451723b28441946",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.gd": "8f18063b1ff719a04ae5088c0fcd8d7114f956efa7b8d0cd97c34bd02443d611",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.tscn": "3d589c566826e178024365596fc4557b4e56245c1fcc3ea94adee42ea2d3c605"
+    },
+    "scope": "Five actual native540x1170 cosmetic shared circle cue/vapour/Tender/Hero/production floor+kit views, stage placed Hero; fixed1.05circle and native bounded vertices/height/material isolation, exact quiet pose, actual capsule static occupancy/floor, shared warning/lock/active/recovery cue states, deferred pause/cleanup. No sharedSmoke consumer, Scheduler admission/contact grace/ticks/damage, route/input/save/fairness/performance or canonical claim. Actual art review pending.",
+    "artifact_sha256": {
+      "smoke-art-first/smoke-active.png": "7131fa4ea0c3ab5d4a8d707dff472d405ddda3899115fe18d649dfe7154ab108",
+      "smoke-art-first/smoke-recovery.png": "5f9ab1491006158ff72626a3e2105c192d164966ccfd662a8e39636bcc62731f",
+      "smoke-art-first/metadata.json": "408709af4c57ecb454d4e7e029a21b1acc233c096251e125b45250b1320d482b",
+      "smoke-art-first/smoke-lock.png": "acf83f20dd9b5d8ce19cfb904e79ea3a99e70e9b6fd2166b4afced8539a92389",
+      "smoke-art-first/smoke-warning.png": "bd59664ff9f988cd11bbb51c4488d38b28404fe5285b5a740aa84134706cd74a",
+      "smoke-art-first/smoke-active-hero-overlap.png": "54cac5f872d2fa8d91e77654af74a1c6c390d4e1051e3be01ed67a901b897a6b"
+    },
+    "reviews": {
+      "peer": "All five original540x1170 frames: cue/Hero/dry-side READABILITY PASS, warning/lock/source distinct, active rim/fill readable, overlap torso/facing/boots visible with source cross over boot/shadow, recovery visibly thinner. SOURCE FIDELITY FAIL: brown-grey regular rosette/flattened lobes and pale recovery stain under-realize G07 black pooling vapour. Cosmetic revision required; fixed low bounded adaptation remains valid. Tender covers short lower-right rim segment; next-tell coexistence not established.",
+      "root": "Viewed active+Hero overlap; agreed current brown regular lobes materially miss Black Smoke identity. Hero/most cue/dry side readable. Independent review covers all5."
+    }
+  },
+  "entry_floor_first": {
+    "tested_checkout_head": "e66461929b98dae9241207f1f47461509a2001ad",
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-entry-floor-first.log --script tests/acts/act2/a2_l3_entry_smoke.gd",
+    "checks": 43,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-entry-floor-first.log",
+    "log_sha256": "d3e15f7b3c85602593c24b5d7613f5e84e25833e05bb12acf451ac6bb1a406c9",
+    "sources_sha256": {
+      "scripts/acts/act2/ruined_house.gd": "bf4230a195d409412634685d4634247b5eb790892676f420d87a00febbfd8dea",
+      "scenes/acts/act2/a2_l3.tscn": "d4dbb7a42a75d6b017d46e406ae4c3a0a1063bc2abb3dffa25d7d0cceea5f32b",
+      "tests/acts/act2/a2_l3_entry_smoke.gd": "6d6829b36ad6952e8155b70094b0770b28dbcc55ffa92b79bf480c0d0932ef11"
+    },
+    "scope": "Actual authored L3 scene/native shared Hero, seven anchored HP30 actors/four tools, Act2 skin/four dry floors. Actual public dashes low-wall collision shortening, broad left and right approach, stable floor contact, actual deferred pause/cleanup. No synthetic defeat/checkpoint/HP transform/route progress; Smoke/whole aggregate explicitly unimplemented and rejected. No full route/gameplay art/save acceptance."
+  },
+  "smoke_art_revision_2": {
+    "tested_checkout_head": "e66461929b98dae9241207f1f47461509a2001ad",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-smoke-art-corrected.log --script tests/acts/act2/a2_l3_smoke_asset_capture.gd -- --corrected",
+    "checks": 73,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-smoke-art-corrected.log",
+    "log_sha256": "a7037deadf1ccb1e33fa0a3547675de4c618e4f3e029f9ea554777cf8f2d79db",
+    "sources_sha256": {
+      "scripts/acts/act2/smoke_bank_visual.gd": "a8251b789f490195a374a03f6145486c7bbc939ea2a15dbc89baa6a83ec7c7e5",
+      "tests/acts/act2/a2_l3_smoke_asset_capture.gd": "ddf28b27c27cccaff707aa5a4d08db1d2d5afdca94ff2e7a2643c7e08ffa1c02"
+    },
+    "fixture_change": "Use declared SmokeVisual.ACTIVE_ALPHA with actual Color float32 representation; separate --corrected output. No geometry/clock/source/cue/HP/camera/assertion weakening.",
+    "artifact_sha256": {
+      "smoke-art-revision2/smoke-active.png": "94e27532016c67a6c74385e3c7bab691e526348bba6c82de1007419a8eb891db",
+      "smoke-art-revision2/smoke-recovery.png": "3921ec07310b45a602218dc5e2db4fd8b2c646b5c6d88a4dd99da481b70dceb9",
+      "smoke-art-revision2/metadata.json": "13fcc11a8633a41849a42ac934da9f4cbd1aa782958e37a334f5e65e98918b28",
+      "smoke-art-revision2/smoke-lock.png": "ceddf99647409fa72ac9491587526d168ac337fc80be38859d3663de97f96556",
+      "smoke-art-revision2/smoke-warning.png": "2ee394be80b5bfdaecc9b6bfd819f08ac25d2339de5c5b1017fe49b11b66ded2",
+      "smoke-art-revision2/smoke-active-hero-overlap.png": "f60433f8022e38c00e0d63810f406d4c4d2e06d25a79b117393def0975e3edf9"
+    },
+    "scope": "Same five TEST ONLY actual native cosmetic cue/Hero/floor views and bounded native geometry/materials/quiet pose/static capsule overlap/cleanup. No bank consumer/admission/grace/ticks/damage/full route/transport claim.",
+    "reviews": {
+      "root": "Viewed active/recovery/active Hero overlap at original540x1170. Irregular silhouette improved, but active remains brown lobes under shared orange fill, recovery grey stain. Material black pooling identity still insufficient; source fidelity FAIL. Cue/mostrim/Hero/dry side readable in selected3. Independent all5 pending."
     }
   }
 }

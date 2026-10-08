@@ -170,3 +170,8 @@ phase transition, whole-level transport and full route remain parent runtime
 work. No human balance, all-pose, mobile, export or release claim is made.
 The original seven-frame review is retained as a presentation failure baseline;
 the prior 41/48 successful component checks do not override it.
+
+
+## Corrected native result and scoped review
+
+At preserved registration-adoptione664619, affected `a2_l3_asset_capture.gd --boss-only` passes **50/0 clean exit0**, seven actual540×1170 frames with actual source-local mesh vertices grounded/≤1.35m and quiet boss action/phase pose reconstruction. [Separate corrected record](evidence/A2-L3/index.json) preserves first48/10 material failure and the original teardown failure. Peer reviewed all seven, root Place-recovery/Reach-lock: the four obscuration/disengagement defects now pass in these staged poses, Hero face/torso/feet remain clear. Rear fifth support/fine strands merge; Place rear edge under mount and detached lever/right-support overlap remain fine limits. No actual cue/admitted attack/phase checkpoint/route/full aggregate or all-camera art claim. Existing actor41/0 retains originalsource31475/visualac74 provenance; gameplay gates/setter/restore contracts are unchanged, but that old result is not relabelled as a new visual test.

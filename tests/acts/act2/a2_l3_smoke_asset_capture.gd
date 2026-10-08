@@ -3,8 +3,9 @@ extends SceneTree
 ## no input, route, Scheduler admission, exposure, damage, save or fairness.
 const Main: PackedScene = preload("res://scenes/main.tscn")
 const Geometry: Script = preload("res://scripts/combat/threat_geometry.gd")
+const SmokeVisual: Script = preload("res://scripts/acts/act2/smoke_bank_visual.gd")
 const PreviewPath: String = "res://tests/acts/act2/fixtures/a2_l3_smoke_preview.tscn"
-const CAPTURE_ROOT: String = "res://captures/act2/a2-l3-smoke-assets/"
+var _capture_root: String = "res://captures/act2/a2-l3-smoke-assets/"
 const VIEWS: Array[Dictionary] = [
 	{"label": "smoke-warning", "phase": "warning", "p": 0.65, "hero": Vector3(1.2, 0.1, -3.5), "overlap": false},
 	{"label": "smoke-lock", "phase": "lock", "p": 0.5, "hero": Vector3(1.2, 0.1, -3.5), "overlap": false},
@@ -22,12 +23,14 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	if "--corrected" in OS.get_cmdline_user_args():
+		_capture_root = "res://captures/act2/a2-l3-smoke-corrected/"
 	root.size = Vector2i(540, 1170)
 	_expect(DisplayServer.get_name() != "headless", "smoke portrait fixture requires a native graphical surface")
 	if DisplayServer.get_name() == "headless":
 		quit(1)
 		return
-	_expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(CAPTURE_ROOT)) == OK, "dedicated five-frame smoke art directory")
+	_expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_capture_root)) == OK, "dedicated five-frame smoke art directory")
 	_game = Main.instantiate()
 	_game.set("level_scene_path", PreviewPath)
 	root.add_child(_game)
@@ -57,7 +60,7 @@ func _run() -> void:
 	var hp_before: float = hero.hp
 	# Compare the renderer's actual Color encoding, not a double against its
 	# float32 material representation; this changes no clock or authority.
-	var native_max_alpha: float = Color(1.0, 1.0, 1.0, 0.17).a
+	var native_max_alpha: float = Color(1.0, 1.0, 1.0, SmokeVisual.ACTIVE_ALPHA).a
 	var records: Array[Dictionary] = []
 	for view: Dictionary in VIEWS:
 		# Authorized TEST ONLY pose placement, not a completed dash or landing.
@@ -90,7 +93,7 @@ func _run() -> void:
 		_expect(framing.is_empty(), "actual camera contains full circle, source, Tender and Hero bounds: " + view["label"] + ": " + framing)
 		await RenderingServer.frame_post_draw
 		var picture: Image = root.get_texture().get_image()
-		var image_path: String = CAPTURE_ROOT + view["label"] + ".png"
+		var image_path: String = _capture_root + view["label"] + ".png"
 		_expect(picture != null and picture.get_size() == Vector2i(540, 1170) and picture.save_png(image_path) == OK, "native540x1170 smoke frame saved: " + view["label"])
 		var world_quad: Array = []
 		var screen_quad: Array = []
@@ -118,7 +121,7 @@ func _run() -> void:
 	for reference: WeakRef in old_nodes:
 		freed = freed and reference.get_ref() == null
 	_expect(freed and get_nodes_in_group("required_cues").is_empty() and get_nodes_in_group("enemies").is_empty(), "actual Hero/cue/scenery source subtree releases with no dangling required cue")
-	var file := FileAccess.open(CAPTURE_ROOT + "metadata.json", FileAccess.WRITE)
+	var file := FileAccess.open(_capture_root + "metadata.json", FileAccess.WRITE)
 	_expect(file != null, "five-frame metadata and final check counts opened")
 	if file != null:
 		file.store_string(JSON.stringify({"scope": "TEST ONLY cosmetic smoke/cue previews with actual shared Game/Hero/camera/Act2 skin and production floor/kit; no actual bank consumer/reservation/damage/route/transport acceptance", "fixture": PreviewPath, "frame_count": records.size(), "checks": _checks, "failures": _failures, "frames": records}, "  ") + "\n")
