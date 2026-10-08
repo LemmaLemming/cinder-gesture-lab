@@ -1,0 +1,31 @@
+{
+  "status": "registration_checks_in_progress",
+  "authored_candidate": "fd5fd3d95a8b8b9ea7ce546c1db6c732a2cc60f6",
+  "content_integration_commit": "b164dc104ace6cd10870d0f286893ed7e5b134d8",
+  "shared_baseline": "2304d25e51d269edd3d6fc90b142f87b2ad35a6d",
+  "api_revision": "campaign-shared-23",
+  "original_failures": [
+    {
+      "log": "a2-l2-registration-first.log",
+      "sha256": "8b95fee8dff02842813e78863673a3815bb2b2bec32cfd1cc7b743c0f5c02fae",
+      "bytes": 21935,
+      "source_subset": "a2-l2-registration-first-source/manifest.json",
+      "checks": 191,
+      "failures": 1,
+      "exit_code": 1,
+      "cause": "Fixture expected fatal ammo to stay at initial0; actual native autoreload yields1 before first Scout hit. Fatal capture/paired validation already coherent. No runtime correction.",
+      "additional_diagnostic": "2 ObjectDB instances leaked at failed early exit; corrected full verbose cleanup not yet observed."
+    },
+    {
+      "log": "a2-l2-registration-fatal-diagnostic.log",
+      "sha256": "ca04505c6a2f90155c8c1547a09dcbd1f9247e7724fe50358b9028b0b887a987",
+      "bytes": 11381,
+      "source_subset": "a2-l2-registration-fatal-diagnostic-source/manifest.json",
+      "checks": 23,
+      "failures": 1,
+      "exit_code": 1,
+      "cause": "Fixture expected fatal ammo to stay at initial0; actual native autoreload yields1 before first Scout hit. Fatal capture/paired validation already coherent. No runtime correction.",
+      "additional_diagnostic": "2 ObjectDB instances leaked at failed early exit; corrected full verbose cleanup not yet observed."
+    }
+  ]
+}
