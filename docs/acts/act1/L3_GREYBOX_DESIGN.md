@@ -1,5 +1,9 @@
 # A1-L3 greybox design — full level, unvalidated
 
+Native metadata import `a1-l3-shared25-script-import-1` completed **exit0 clean**, at exact e5eda951/API25, with zero pre/post source hash mismatches. [Portable import evidence](evidence/L3-shared25-import/index.json) preserves 53 exact copies (51 declared frozen sources plus original metadata/log); native codec/test UIDs are retained. This is resource/class metadata evidence only, not gameplay or full L3 acceptance.
+
+Owned component checkpoint **0ad6c934048b13ec0f166fdfb2437f3059a50974** is frozen. Compatible exact shared25 **05869a593ea523e079a3e6d1e6e750f4219e813c** is adopted through **e5eda95172382a234d257c37b1e588675c8200be**, ACK62a7f7db, preserving all1,804 tracked/1,968 physical owned hashes. Used gameplay core is unchanged; evidence below retains original24/frozen-source attribution. Spore composition remains an unpublished separate dependency. No L3 handoff or acceptance.
+
 ## Current authored component checkpoint — 9 October 2026 (Hong Kong)
 
 Current authored C31/C32 role pixels and static fungal scenery are wired to the actual retained actors/layout. New guarded-art/pure-native-codec pair passes **189/0** clean; codec genuine ordinary-primary defeat/removed-source tombstone passes **80/0** clean after original79/0 WAV/playback shutdown warnings and verbose diagnostic. Pure codec retains actual complete actor/Player/Scheduler values and exact copied clocks; live physical/resource/world checks stay native. Owned draft binding/view is explicitly separate from the unpublished spore contract, with no fabricated HP or environmental episode. [Custody/codec evidence](evidence/L3-custody-codec/index.json) preserves exact sources/commands/warnings/clean scopes.
