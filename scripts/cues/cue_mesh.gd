@@ -1,0 +1,144 @@
+class_name CinderCueMesh
+extends RefCounted
+## Presentation tessellation only. CinderThreatGeometry remains authoritative
+## for danger/escape tests; these meshes neither resolve hits nor clip to LOS.
+
+const Geometry: GDScript = preload("res://scripts/combat/threat_geometry.gd")
+const Footprint: GDScript = preload("res://scripts/attack_footprint.gd")
+const SEGMENTS: int = 64
+
+
+static func canonical_geometry(shape: Dictionary) -> Dictionary:
+	# Retain only validated logical parameters, never caller-owned metadata.
+	match shape["kind"]:
+		"circle":
+			return Geometry.circle(shape["origin"], float(shape["radius"]))
+		"cone":
+			return Geometry.cone(shape["origin"], shape["direction"], float(shape["reach"]), float(shape["min_dot"]), float(shape["origin_radius"]))
+		"lane":
+			return Geometry.lane(shape["from"], shape["to"], float(shape["radius"]))
+	return {}
+
+
+static func anchor(shape: Dictionary) -> Vector3:
+	return shape["from"] if shape["kind"] == "lane" else shape["origin"]
+
+
+static func boundary(shape: Dictionary) -> Array[Vector3]:
+	var points: Array[Vector3] = []
+	match shape["kind"]:
+		"circle":
+			_arc(points, Vector3.ZERO, float(shape["radius"]), 0.0, TAU, SEGMENTS, false)
+		"cone":
+			var forward: Vector3 = shape["direction"]
+			var angle: float = atan2(forward.x, forward.z)
+			var half_angle: float = acos(float(shape["min_dot"]))
+			_arc(points, Vector3.ZERO, float(shape["reach"]), angle - half_angle, angle + half_angle, SEGMENTS, true)
+			# The logical cone includes its supplied origin disk, not a fixed
+			# cosmetic radius. Both radial edges meet the rear disk arc.
+			if float(shape["origin_radius"]) > 0.0:
+				_arc(points, Vector3.ZERO, float(shape["origin_radius"]), angle + half_angle, angle + TAU - half_angle, SEGMENTS, true)
+			else:
+				points.append(Vector3.ZERO)
+		"lane":
+			var offset: Vector3 = shape["to"] - shape["from"]
+			offset.y = 0.0
+			if offset.length_squared() <= Geometry.EPSILON * Geometry.EPSILON:
+				_arc(points, Vector3.ZERO, float(shape["radius"]), 0.0, TAU, SEGMENTS, false)
+			else:
+				var angle: float = atan2(offset.x, offset.z)
+				# A swept lane is a capsule. Keep both semicircular endcaps;
+				# its footprint extends one radius beyond each endpoint.
+				_arc(points, offset, float(shape["radius"]), angle - PI * 0.5, angle + PI * 0.5, int(SEGMENTS * 0.5), true)
+				_arc(points, Vector3.ZERO, float(shape["radius"]), angle + PI * 0.5, angle + PI * 1.5, int(SEGMENTS * 0.5), true)
+	return points
+
+
+static func geometry_mesh(shape: Dictionary, filled: bool) -> ArrayMesh:
+	var points: Array[Vector3] = boundary(shape)
+	var vertices: Array[Vector3] = []
+	for index: int in range(points.size()):
+		var start: Vector3 = points[index]
+		var finish: Vector3 = points[(index + 1) % points.size()]
+		if filled:
+			# Each supported boundary is star-shaped around its source.
+			if start.cross(finish).length_squared() > 0.0000000001:
+				vertices.append_array([Vector3.ZERO, start, finish])
+		else:
+			Footprint.append_edge(vertices, start, finish)
+	return Footprint.mesh_from_vertices(vertices)
+
+
+static func source_mesh(phase: String) -> ArrayMesh:
+	var vertices: Array[Vector3] = []
+	match phase:
+		"warning":
+			_square(vertices, 0.11, false)
+		"lock":
+			_square(vertices, 0.11, true)
+			_ticks(vertices, 0.16, 0.23)
+		"active":
+			_square(vertices, 0.13, true)
+			_ticks(vertices, 0.18, 0.31)
+		"recovery":
+			# A quiet broken ring marks settling/opening at the supplied
+			# actual source, distinct from an active danger fill.
+			for quadrant: int in range(4):
+				var points: Array[Vector3] = []
+				_arc(points, Vector3.ZERO, 0.18, PI * 0.5 * quadrant + 0.16, PI * 0.5 * (quadrant + 1) - 0.16, 8, true)
+				for index: int in range(points.size() - 1):
+					Footprint.append_edge(vertices, points[index], points[index + 1])
+	return Footprint.mesh_from_vertices(vertices)
+
+
+static func interaction_mesh(visual_state: String, trigger: String) -> ArrayMesh:
+	var vertices: Array[Vector3] = []
+	if trigger == "attack":
+		var corners: Array[Vector3] = [Vector3(0, 0, 0.22), Vector3(0.22, 0, 0), Vector3(0, 0, -0.22), Vector3(-0.22, 0, 0)]
+		for index: int in range(4):
+			var start: Vector3 = corners[index]
+			var finish: Vector3 = corners[(index + 1) % 4]
+			if visual_state == "spent":
+				Footprint.append_edge(vertices, start.lerp(finish, 0.25), start.lerp(finish, 0.65))
+			else:
+				Footprint.append_edge(vertices, start, finish)
+				if visual_state == "active":
+					vertices.append_array([Vector3.ZERO, start * 0.6, finish * 0.6])
+		if visual_state != "spent":
+			_ticks(vertices, 0.28, 0.34)
+	else:
+		# Contact approach is a broad open threshold and forward chevron;
+		# never the closed, local diamond used for a hittable part.
+		var span: float = 0.38
+		if visual_state == "spent":
+			Footprint.append_edge(vertices, Vector3(-span, 0, -0.10), Vector3(-span, 0, 0.03))
+			Footprint.append_edge(vertices, Vector3(span, 0, -0.10), Vector3(span, 0, 0.03))
+		else:
+			Footprint.append_edge(vertices, Vector3(-span, 0, -0.18), Vector3(-span, 0, 0.18))
+			Footprint.append_edge(vertices, Vector3(span, 0, -0.18), Vector3(span, 0, 0.18))
+			Footprint.append_edge(vertices, Vector3(-0.16, 0, 0.0), Vector3(0, 0, -0.16))
+			Footprint.append_edge(vertices, Vector3(0, 0, -0.16), Vector3(0.16, 0, 0.0))
+			if visual_state == "active":
+				Footprint.append_edge(vertices, Vector3(-0.16, 0, 0.18), Vector3(0, 0, 0.02))
+				Footprint.append_edge(vertices, Vector3(0, 0, 0.02), Vector3(0.16, 0, 0.18))
+	return Footprint.mesh_from_vertices(vertices)
+
+
+static func _arc(points: Array[Vector3], center: Vector3, radius: float, start: float, finish: float, segments: int, include_finish: bool) -> void:
+	for index: int in range(segments + (1 if include_finish else 0)):
+		points.append(center + Footprint.radial_point(lerpf(start, finish, float(index) / segments), radius))
+
+
+static func _square(vertices: Array[Vector3], radius: float, filled: bool) -> void:
+	var corners: Array[Vector3] = [Vector3(-radius, 0, -radius), Vector3(radius, 0, -radius), Vector3(radius, 0, radius), Vector3(-radius, 0, radius)]
+	for index: int in range(4):
+		if filled:
+			vertices.append_array([Vector3.ZERO, corners[index], corners[(index + 1) % 4]])
+		else:
+			Footprint.append_edge(vertices, corners[index], corners[(index + 1) % 4])
+
+
+static func _ticks(vertices: Array[Vector3], inner: float, outer: float) -> void:
+	for index: int in range(4):
+		var angle: float = PI * 0.5 * index
+		Footprint.append_edge(vertices, Footprint.radial_point(angle, inner), Footprint.radial_point(angle, outer))

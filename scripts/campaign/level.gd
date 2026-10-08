@@ -23,6 +23,9 @@ const CHECKPOINT_KINDS: Array[String] = ["encounter", "boss_phase"]
 
 var hero: CinderPlayer
 var effects: PixelEffects
+## Optional shared shell exposes documented public input/campaign services.
+## Standalone contract fixtures may omit it. Levels never read private timers.
+var shared_shell: Node
 var last_snapshot_error: String = ""
 var _entered: bool = false
 var _lifecycle_busy: bool = false
@@ -59,7 +62,7 @@ func spawn_position() -> Vector3:
 	return (get_node(spawn_path) as Marker3D).global_position
 
 
-func enter_level(player: CinderPlayer, shared_effects: PixelEffects) -> void:
+func enter_level(player: CinderPlayer, shared_effects: PixelEffects, shell: Node = null) -> void:
 	if _entered or _lifecycle_busy or _state_hook_busy() or not is_instance_valid(player) or not is_instance_valid(shared_effects):
 		return
 	if not contract_error().is_empty():
@@ -67,6 +70,7 @@ func enter_level(player: CinderPlayer, shared_effects: PixelEffects) -> void:
 	_lifecycle_busy = true
 	hero = player
 	effects = shared_effects
+	shared_shell = shell
 	_active_level_id = level_id
 	_active_scene_path = scene_file_path
 	_active_local_version = local_snapshot_version
@@ -84,6 +88,7 @@ func exit_level() -> void:
 	_on_exit_level()
 	hero = null
 	effects = null
+	shared_shell = null
 	_lifecycle_busy = false
 
 

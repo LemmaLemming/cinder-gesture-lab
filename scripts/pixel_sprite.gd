@@ -1,7 +1,11 @@
 @tool
 class_name LabSprite
 extends Sprite3D
-## Shared pixel actor. Current lab helmet poses are cosmetic simulation snapshots.
+## Shared pixel actor. Presentation changes artwork only; all action poses follow
+## the same controller-owned progress and retain their equipment attachments.
+
+const Presentations = preload("res://scripts/character/player_presentations.gd")
+const PRESENTATION_IDS: Array[String] = Presentations.IDS
 
 const WIDTH: int = 24
 const HEIGHT: int = 32
@@ -43,6 +47,41 @@ var _player_textures: Dictionary = {}
 var _action: String = "idle"
 var _action_frame: int = 0
 var _explicit_action: bool = false
+var _presentation_id: String = "helmeted_lab"
+var presentation_id: String:
+	get:
+		return _presentation_id
+
+## One native idle pose for menus, using the same draw path and carried gear.
+## No scene actor, collider, animation clock or full atlas is created.
+static func preview_texture(id: String, loadout: Dictionary) -> Texture2D:
+	if not PRESENTATION_IDS.has(id):
+		return null
+	var equipment = preload("res://scripts/equipment.gd").new()
+	if not equipment.restore(loadout):
+		return null
+	var renderer := LabSprite.new()
+	renderer._presentation_id = id
+	renderer.weapon_visual_id = loadout.weapon
+	renderer.jacket_visual_id = loadout.jacket
+	renderer.pants_visual_id = loadout.pants
+	renderer.shoes_visual_id = loadout.shoes
+	var result: Texture2D = ImageTexture.create_from_image(renderer._draw_player_image(0, "idle", 0))
+	renderer.free()
+	return result
+
+func set_presentation(id: String) -> bool:
+	if not PRESENTATION_IDS.has(id) or _kind != "player":
+		return false
+	if id == _presentation_id:
+		return true
+	_presentation_id = id
+	_rebuild_player_textures()
+	_show_frame()
+	return true
+
+static func presentation_for_act(act: int) -> String:
+	return Presentations.for_act(act)
 
 
 func _ready() -> void:
@@ -204,6 +243,12 @@ func _draw_player_image(direction: int, state: String, frame: int) -> Image:
 	elif direction == 0 or direction == 1:
 		lean = 0
 	var torso_y: int = 25 + crouch - breath
+	if _presentation_id != "helmeted_lab":
+		var pose: Dictionary = _weapon_pose(direction, state, frame, lean, torso_y)
+		Presentations.draw_body(image, _presentation_id, direction, state, frame, lean, crouch, breath, torso_y, pose, {"jacket": jacket_visual_id, "pants": pants_visual_id, "shoes": shoes_visual_id})
+		_draw_weapon(image, direction, state, frame, pose)
+		Presentations.finish_palette(image, _presentation_id)
+		return image
 	var jacket: Color = SUIT_WHITE
 	var pants: Color = SUIT_LIGHT
 	var trim: Color = SUIT_TRIM

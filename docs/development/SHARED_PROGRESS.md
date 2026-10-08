@@ -1,6 +1,6 @@
 # Cinder shared progress
 
-Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current API: campaign-shared-2 [SHARED_CONTRACT](SHARED_CONTRACT.md).
+Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current API: campaign-shared-3 [SHARED_CONTRACT](SHARED_CONTRACT.md).
 
 ## Inventory and ownership
 
@@ -21,8 +21,8 @@ Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 
 | Durable records and role mailbox | Complete | Three shared records; run `cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2`; no act writes before READY |
 | Reviewed parallel baseline and READY | Complete | Baseline ff34f58; three clean linked act checkouts, canonical roots/common queue/distinct ports verified; READY published in coordination status |
 | Level and executed-world-action interfaces | Verified | campaign-level-1 and world-actions-1; 92 level and 119 action checks, compatible with prior preview API |
-| Shared foundations | Verified modules | Player snapshots72, save/progression45, settings182, bounded scheduler65; live-shell/enemy/UI/act adapters remain pending |
-| Campaign/save/scheduler/UI/settings consumers | In progress | Helpers own scoped enemy snapshot/UI work; integration owns live composition and act-specific shared dependencies |
+| Shared foundations | Verified modules | Player snapshots72, save/progression45, settings182, bounded scheduler65; consumer evidence below; tracking/lunge and act acceptance remain pending |
+| Campaign/save/scheduler/UI/settings consumers | In progress | Tested live shell/menu/cues/presentation/enemy/input consumers publish as shared3; tracking/lunge/loading-arm adapters remain in progress |
 | Act level acceptance | None | All 15 main/9 optional remain authored proposals; no campaign scenes accepted |
 | Integrated desktop campaign | Pending | All 24 levels and required shared-system flows must be accessible/tested |
 
@@ -46,7 +46,7 @@ Actual queued graphical fixture capture at 540×1170: ignored `captures/campaign
 
 **Latest user test policy:** rerun the changed level's targeted suite plus directly affected shared checks. The initial full baseline verification is complete; repeat a broad suite only for a newly identified cross-system concern. Use `dev.py engine --headless --path . --script <owned-level-test.gd>` for act suites and named `dev.py test` shared suites. `dev.py doctor` verifies paths/slots/version, not gameplay readiness.
 
-The current playable game remains one Character Lab. No campaign scenes are accepted; live campaign persistence/transitions/Journey/settings consumers, tracking/moving threat adapters, perks/powerups and selected act presentation variants remain unfinished. Verified data/model modules and bounded stationary scheduler exist; their existence is not a completed campaign flow. Preview reset refreshes resources/supplies and must not be described as checkpoint retry. Existing warning meshes do not validate safe paths. The new world-action API provides executed movement and parametric attack records; it does not implement captured-sequence validation or persistence for Act 2/3.
+The default launch remains the playable Character Lab until the opening authored level is accepted. A separate tested desktop shell provides readiness-gated Title/Journey/settings/replay and coherent fixture persistence/transitions. No real campaign scenes are accepted; tracking/moving threat adapters, campaign-selected abilities and complete authored campaign content remain unfinished. Preview reset refreshes resources/supplies and must not be described as checkpoint retry. Existing warning meshes do not validate safe paths. The new world-action API provides executed movement and parametric attack records; it does not implement captured-sequence validation or persistence for Act 2/3.
 
 Selected references opened in initial audits include each act's game view, character and environment art. These support distinct act scenery and headwear; they do not establish production readiness. Existing effects and helmeted lab captures remain preserved. No human campaign playtest or mobile/device performance claim is made.
 
@@ -87,3 +87,17 @@ All owners may progress same-level owned art/layout/notes while these dependenci
 9. Accept/integrate one level at a time with exact commit/baseline/API and evidence; revalidate affected shared behavior.
 
 Act workers maintain their own memory/progress/level records. After context recovery, read those plus the three shared records and current mailbox before review. Do not merge private ledger copies or machine settings. Internal acceptance is autonomous; mobile export/release is outside the authorized endpoint.
+
+## Worker contact and shared consumer publication 3
+
+The user confirms integration is the point of contact for all three workers' help/blockers. Registration requests and exact existing identities/assignments were verified; worker_id/confirmation were atomically published, separate from unfinished shared APIs. Each worker has a canonical RESPONSE and explicitly acknowledged shared2 adoption, preserved owned work, and is progressing only its first level. A quiet ten-minute heartbeat plus active-work mailbox checks resolve actionable shared blockers; unchanged state emits no routine alert. No worker status file is overwritten.
+
+Act1 follow-up461764f9 reports stale default target label after direct HP restore. The tested public silent target configure/state/art hook resolves this shared dependency; it is published with an exact commit, rather than copied from uncommitted files. Public hero response and release/tap observer resolve related read-only access requests. Scheduler snapshot, common cues and concept presentations are tested; tracking/moving-source adapters, loading-arm consumer and full authored act composition still require work.
+
+Shared consumer evidence: enemy snapshot81 / PracticeTarget32 / input-response14 / scheduler snapshot35 / menu52 / live shell40 / effects settings60 / cues82 / presentation73 (5,544 poses/11 legal kits), all zero failures. Directly affected mechanics78, level92, scheduler65, effects102, player snapshot72 and persistence45 passed. Logs are ignored .cinder/<suite>-test.log or named after their affected rerun; no broad baseline repeated. Fixtures are explicitly TEST ONLY and not accepted campaign scenes. No human/device playtest, art acceptance or performance measurement follows.
+
+The live shell tests actually restore low HP/zero ammo, enemy phase/clocks/HP, spent supplies/collected IDs, full-precision large RNG strings and separate exact aim/camera; replay/optional attempts protect story and deduplicate stamps. Failed writes preserve the live world and retain pending operations. Completion/local aggregate now commits atomically; a saved latched exit retries after next-scene integration. Staging/revealing the original candidate World3D fixes reparent-induced level exit cleanup. Settings/audio/policy and interrupted paused-session flows are exercised. Full campaign remains incomplete: zero real level acceptances.
+
+Corrections found by targeted checks: enemy test JSON had used shortened float transport near a phase boundary (now matches production full precision); effect test compared a float32 engine property to a double exactly (now approximate comparison); initial shell reparent correctly invoked level exit (now reveal same staged world); typed/unchanged invalid-state test fixtures corrected. Earlier failed checks are retained in the factual work history; current logs reflect repaired targeted runs.
+
+Shared3 portrait evidence: eight actual 540×1170 UI/HUD/fixture renders, including readiness-gated Title, all 24 Journey nodes, settings/credits, actual four-slot replay preview and the three selected concept silhouettes. Root reviewed native gallery and captures. Optional/main buttons now preserve at least eight pixels of separation; completed current nodes (including final main) expose replay, while Title keeps Continue Story. Campaign HUD says RETRY. Act1 request a99371e3's shared preview contrast issue is addressed by a dark objective backplate and dark normal text on the pale primary button. These are shared fixtures, not accepted act art or human campaign playtests.

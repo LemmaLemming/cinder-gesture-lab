@@ -37,6 +37,15 @@ SUITES = {
     "campaign_persistence": "tests/campaign_persistence_smoke.gd",
     "settings": "tests/settings_smoke.gd",
     "threat_scheduler": "tests/threat_scheduler_smoke.gd",
+    "enemy_snapshot": "tests/enemy_snapshot_smoke.gd",
+    "campaign_menu": "tests/campaign_menu_smoke.gd",
+    "input_response": "tests/input_response_smoke.gd",
+    "effects_settings": "tests/effects_settings_smoke.gd",
+    "practice_target": "tests/practice_target_smoke.gd",
+    "threat_snapshot": "tests/threat_snapshot_smoke.gd",
+    "campaign_shell": "tests/campaign_shell_smoke.gd",
+    "player_presentation": "tests/player_presentation_smoke.gd",
+    "cues": "tests/cue_smoke.gd",
 }
 SLOT_PORTS = {
     "integration": (6005, 6006, 6007),
