@@ -13,9 +13,15 @@ func _initialize() -> void:
 
 func _run() -> void:
 	_cleanup()
-	var registry := Registry.new()
+	var unavailable: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Registry.DATA_PATH))
+	for entry: Dictionary in unavailable.levels:
+		entry.scene_path = null
+		entry.readiness = "unimplemented"
+		entry.accepted_commit = null
+		entry.api_revision = null
+	var registry := Registry.new(unavailable)
 	_expect(registry.last_error.is_empty() and registry.ids().size() == 24 and registry.main_route().size() == 15, "authored registry has 15 main and nine optional canonical levels")
-	_expect(not registry.is_playable("A1-L1") and registry.node_state("A1-L1", [], [], "") == "unimplemented", "authored route does not expose unfinished scenes as playable")
+	_expect(not registry.is_playable("A1-L1") and registry.node_state("A1-L1", [], [], "") == "unimplemented", "unavailable fixture route does not expose unfinished scenes as playable")
 	_expect(registry.is_unlocked("A1-L1", []) and not registry.is_unlocked("A1-L2", []) and not registry.is_unlocked("A1-O1", ["A1-L1"]), "main sequence and optional parent clear are independent gates")
 	_expect(registry.is_unlocked("A1-O1", ["A1-L1", "A1-L2"]) and registry.next_main("A1-L5") == "A2-L1", "optional unlock and inter-act link use canonical IDs")
 	var raw: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Registry.DATA_PATH))

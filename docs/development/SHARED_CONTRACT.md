@@ -91,7 +91,7 @@ Limits: path samples are not an analytic swept capsule; geometry carries a param
 
 ## Canonical campaign registry
 
-[registry.json](../../data/campaign/registry.json) records all 15 main and 9 optional IDs, sequential main links and optional parent clears, derived from the three canonical research files. Its initial entries have `scene_path = null` and `readiness = unimplemented`. Integration alone registers a scene after accepting its exact level commit/API revision; this data is not evidence that campaign content exists. Optional completion stamps have stable once-only reward IDs and no stat growth. The live menu gates playable routes on accepted, validated scenes.
+[registry.json](../../data/campaign/registry.json) records all 15 main and 9 optional IDs, sequential main links and optional parent clears, derived from the three canonical research files. Its initial entries used `scene_path = null` and `readiness = unimplemented`. A1-L1 is now individually registered with exact authored commit06628abb and its shared level API; the remaining23 entries stay unimplemented. Integration alone registers a scene after accepting its exact level commit/API revision; this data is not evidence that campaign content exists. Optional completion stamps have stable once-only reward IDs and no stat growth. The live menu gates playable routes on accepted, validated scenes.
 
 ## player-snapshot-1
 
