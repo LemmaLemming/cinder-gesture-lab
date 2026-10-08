@@ -11,6 +11,9 @@ const MIRROR_SECTORS: int = 16
 const MIRROR_HINGE_HALF_SPAN: float = 0.31
 const POSE_PHASES: Array[String] = ["idle", "approach", "warning", "lock", "active", "recovery", "defeated"]
 const BODY_YAW_TOLERANCE: float = 0.000001
+const READABILITY_ALPHA: float = 0.14
+const READABILITY_EPSILON: float = 0.00001
+const MAX_HERO_BOUND_POINTS: int = 16
 
 var _built: bool = false
 var _last_phase: String = ""
@@ -40,6 +43,10 @@ var _rubber: StandardMaterial3D
 var _pale: StandardMaterial3D
 var _actuator: MeshInstance3D
 var _actuator_ribs: Array[MeshInstance3D] = []
+var last_readability_error: String = ""
+var _readability_panels: Array[Dictionary] = []
+var _readability_camera: WeakRef
+var _readability_hero_bounds: Array[Vector3] = []
 
 
 func _ready() -> void:
@@ -50,6 +57,206 @@ func _ready() -> void:
 
 func pose(phase: String, progress: float, direction: Vector3, hit_flash: bool = false) -> void:
 	_apply_pose(phase, progress, direction, hit_flash, false, 0.0)
+
+
+func apply_readability(camera: Camera3D, hero_bounds: Array[Vector3]) -> bool:
+	## Derived cosmetics only. Camera-facing world quad points give the exact
+	## shared billboard depth; volumetric bounds use their farthest depth.
+	## The caller refreshes actual bounds after movement/camera updates. Retained
+	## points also reapply after pose/restore; the camera reference is weak.
+	last_readability_error = _readability_error(camera, hero_bounds)
+	if not last_readability_error.is_empty():
+		return false
+	_readability_camera = weakref(camera)
+	_readability_hero_bounds = hero_bounds.duplicate()
+	_recompute_readability()
+	return true
+
+
+func clear_readability() -> void:
+	_readability_camera = null
+	_readability_hero_bounds.clear()
+	for panel: Dictionary in _readability_panels:
+		_set_panel_readability(panel, false)
+	last_readability_error = ""
+
+
+func readability_state() -> Dictionary:
+	var faded: Array[String] = []
+	for panel: Dictionary in _readability_panels:
+		var part: MeshInstance3D = panel["part"] as MeshInstance3D
+		if not is_instance_valid(part):
+			continue
+		for entry: Dictionary in panel["materials"]:
+			var material: StandardMaterial3D = entry["material"] as StandardMaterial3D
+			if material.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA and material.albedo_color.a < 1.0:
+				faded.append(String(get_path_to(part)))
+				break
+	return {"panel_count": _readability_panels.size(), "faded_panels": faded, "alpha": READABILITY_ALPHA, "context_available": _readability_camera != null and is_instance_valid(_readability_camera.get_ref()) and not _readability_hero_bounds.is_empty()}
+
+
+func _exit_tree() -> void:
+	clear_readability()
+
+
+func _readability_error(camera: Camera3D, hero_bounds: Array[Vector3]) -> String:
+	if not _built or not is_inside_tree() or not is_instance_valid(camera) or not camera.is_inside_tree() or camera.get_world_3d() != get_world_3d():
+		return "Readability requires a built rig and live same-world camera"
+	if camera.projection != Camera3D.PROJECTION_ORTHOGONAL or not camera.global_position.is_finite() or not camera.global_basis.x.is_finite() or not camera.global_basis.y.is_finite() or not camera.global_basis.z.is_finite():
+		return "Readability requires the finite shared orthographic camera"
+	if hero_bounds.size() < 3 or hero_bounds.size() > MAX_HERO_BOUND_POINTS:
+		return "Readability requires bounded world silhouette points"
+	for point: Vector3 in hero_bounds:
+		if not point.is_finite() or camera.is_position_behind(point):
+			return "Readability world silhouette points must be finite and in front of the camera"
+	if _projected_hull(camera, hero_bounds).is_empty():
+		return "Readability world silhouette must have positive projected area"
+	return ""
+
+
+func _recompute_readability() -> void:
+	if _readability_camera == null:
+		return
+	var camera: Camera3D = _readability_camera.get_ref() as Camera3D
+	if not _readability_error(camera, _readability_hero_bounds).is_empty():
+		clear_readability()
+		return
+	var hero_hull: PackedVector2Array = _projected_hull(camera, _readability_hero_bounds)
+	var hero_depth: float = -INF
+	for point: Vector3 in _readability_hero_bounds:
+		hero_depth = maxf(hero_depth, -camera.to_local(point).z)
+	for panel: Dictionary in _readability_panels:
+		# Existing segment posing changes only this eligible cylinder's height.
+		# Refresh its derived triangles without reallocating any material.
+		if panel["part"] == _actuator:
+			panel.merge(_readability_geometry(_actuator), true)
+		_set_panel_readability(panel, _panel_occludes(camera, panel, hero_hull, hero_depth))
+
+
+func _projected_hull(camera: Camera3D, world_points: Array[Vector3]) -> PackedVector2Array:
+	var screen_points := PackedVector2Array()
+	for point: Vector3 in world_points:
+		if not point.is_finite() or camera.is_position_behind(point):
+			return PackedVector2Array()
+		var screen: Vector2 = camera.unproject_position(point)
+		if not screen.is_finite():
+			return PackedVector2Array()
+		screen_points.append(screen)
+	var hull: PackedVector2Array = Geometry2D.convex_hull(screen_points)
+	if hull.size() > 1 and hull[0].is_equal_approx(hull[hull.size() - 1]):
+		hull.remove_at(hull.size() - 1)
+	return hull if hull.size() >= 3 and _polygon_area(hull) > READABILITY_EPSILON else PackedVector2Array()
+
+
+func _polygon_area(polygon: PackedVector2Array) -> float:
+	var area: float = 0.0
+	for index: int in range(polygon.size()):
+		area += polygon[index].cross(polygon[(index + 1) % polygon.size()])
+	return absf(area) * 0.5
+
+
+func _panel_occludes(camera: Camera3D, panel: Dictionary, hero_hull: PackedVector2Array, hero_depth: float) -> bool:
+	var part: MeshInstance3D = panel["part"] as MeshInstance3D
+	if not is_instance_valid(part) or not part.is_visible_in_tree():
+		return false
+	var world_points: Array[Vector3] = []
+	for vertex: Vector3 in panel["vertices"]:
+		world_points.append(part.global_transform * vertex)
+	var panel_hull: PackedVector2Array = _projected_hull(camera, world_points)
+	if panel_hull.is_empty():
+		return false
+	var overlaps: Array[PackedVector2Array] = Geometry2D.intersect_polygons(hero_hull, panel_hull)
+	for polygon: PackedVector2Array in overlaps:
+		if polygon.size() < 3 or _polygon_area(polygon) <= READABILITY_EPSILON:
+			continue
+		var center := Vector2.ZERO
+		for point: Vector2 in polygon:
+			center += point
+		center /= float(polygon.size())
+		if _panel_before_hero(camera, panel, center, hero_depth):
+			return true
+		# Interior samples avoid edge-only contacts and find tilted panels whose
+		# nearer portion differs from the overlap centroid. Actual mesh triangles
+		# establish foreground depth, rather than an unrelated AABB corner.
+		for point: Vector2 in polygon:
+			if _panel_before_hero(camera, panel, center.lerp(point, 0.75), hero_depth):
+				return true
+	return false
+
+
+func _panel_before_hero(camera: Camera3D, panel: Dictionary, screen: Vector2, hero_depth: float) -> bool:
+	var part: MeshInstance3D = panel["part"] as MeshInstance3D
+	var inverse: Transform3D = part.global_transform.affine_inverse()
+	var origin: Vector3 = inverse * camera.project_ray_origin(screen)
+	var direction: Vector3 = inverse.basis * camera.project_ray_normal(screen)
+	var vertices: PackedVector3Array = panel["vertices"]
+	var indices: PackedInt32Array = panel["indices"]
+	for index: int in range(0, indices.size(), 3):
+		var hit: Variant = Geometry3D.ray_intersects_triangle(origin, direction, vertices[indices[index]], vertices[indices[index + 1]], vertices[indices[index + 2]])
+		if hit is Vector3:
+			var depth: float = -camera.to_local(part.global_transform * hit).z
+			if depth > 0.0 and depth < hero_depth - READABILITY_EPSILON:
+				return true
+	return false
+
+
+func _set_panel_readability(panel: Dictionary, faded: bool) -> void:
+	for entry: Dictionary in panel["materials"]:
+		var material: StandardMaterial3D = entry["material"] as StandardMaterial3D
+		var color: Color = entry["base_color"]
+		color.a = minf(color.a, READABILITY_ALPHA) if faded else color.a
+		material.albedo_color = color
+		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA if faded else int(entry["base_transparency"])
+
+
+func _readability_panel(part: MeshInstance3D) -> MeshInstance3D:
+	# Once per mesh: isolate each effective material while keeping its palette
+	# and immutable textures. Surface overrides preserve the mirror's four-color
+	# mesh resource; material ALPHA remains supported by Compatibility.
+	var materials: Array[Dictionary] = []
+	var override_source: StandardMaterial3D = part.material_override as StandardMaterial3D
+	if override_source != null:
+		var override_entry: Dictionary = _readability_material(override_source)
+		part.material_override = override_entry["material"] as StandardMaterial3D
+		materials.append(override_entry)
+	for surface: int in range(part.mesh.get_surface_count()):
+		if override_source == null:
+			var surface_source: StandardMaterial3D = part.get_surface_override_material(surface) as StandardMaterial3D
+			if surface_source == null:
+				surface_source = part.mesh.surface_get_material(surface) as StandardMaterial3D
+			var surface_entry: Dictionary = _readability_material(surface_source)
+			part.set_surface_override_material(surface, surface_entry["material"] as StandardMaterial3D)
+			materials.append(surface_entry)
+	var panel: Dictionary = {"part": part, "materials": materials}
+	panel.merge(_readability_geometry(part))
+	_readability_panels.append(panel)
+	return part
+
+
+func _readability_geometry(part: MeshInstance3D) -> Dictionary:
+	var vertices := PackedVector3Array()
+	var indices := PackedInt32Array()
+	for surface: int in range(part.mesh.get_surface_count()):
+		var arrays: Array = part.mesh.surface_get_arrays(surface)
+		var surface_vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var surface_indices := PackedInt32Array()
+		if arrays[Mesh.ARRAY_INDEX] is PackedInt32Array:
+			surface_indices = arrays[Mesh.ARRAY_INDEX]
+		# The authored mirror palette surfaces are unindexed triangles.
+		if surface_indices.is_empty():
+			for index: int in range(surface_vertices.size()):
+				surface_indices.append(index)
+		var vertex_offset: int = vertices.size()
+		vertices.append_array(surface_vertices)
+		for index: int in surface_indices:
+			indices.append(vertex_offset + index)
+	return {"vertices": vertices, "indices": indices}
+
+
+func _readability_material(source: StandardMaterial3D) -> Dictionary:
+	var material: StandardMaterial3D = source.duplicate() as StandardMaterial3D
+	_materials.append(material) # Retain the existing parent-supplied hit flash.
+	return {"material": material, "base_color": source.albedo_color, "base_transparency": source.transparency}
 
 
 func get_body_yaw() -> float:
@@ -160,6 +367,7 @@ func _apply_pose(phase: String, progress: float, direction: Vector3, hit_flash: 
 	for material: StandardMaterial3D in _materials:
 		material.emission_enabled = hit_flash
 		material.emission = Color(0.62, 0.52, 0.39) if hit_flash else Color.BLACK
+	_recompute_readability()
 
 
 func _build() -> void:
@@ -171,11 +379,11 @@ func _build() -> void:
 	_pale = _material(Color(0.66, 0.63, 0.53))
 	_chassis = _pivot(self, "ThreeLegChassis", Vector3.ZERO)
 	_case = _pivot(_chassis, "RivetedCameraCase", BODY_CENTER)
-	_box(_case, "CameraCase", Vector3(1.01, 0.45, 0.59), Vector3.ZERO, _plate)
-	_box(_case, "Undercase", Vector3(0.77, 0.13, 0.48), Vector3(0.0, -0.26, -0.015), _black)
-	_box(_case, "FrontBracket", Vector3(0.82, 0.035, 0.06), Vector3(0.0, -0.20, 0.33), _brass)
+	_readability_panel(_box(_case, "CameraCase", Vector3(1.01, 0.45, 0.59), Vector3.ZERO, _plate))
+	_readability_panel(_box(_case, "Undercase", Vector3(0.77, 0.13, 0.48), Vector3(0.0, -0.26, -0.015), _black))
+	_readability_panel(_box(_case, "FrontBracket", Vector3(0.82, 0.035, 0.06), Vector3(0.0, -0.20, 0.33), _brass))
 	for sign_value: float in [-1.0, 1.0]:
-		_box(_case, "SideArmour", Vector3(0.04, 0.32, 0.42), Vector3(sign_value * 0.525, 0.0, -0.025), _rust)
+		_readability_panel(_box(_case, "SideArmour", Vector3(0.04, 0.32, 0.42), Vector3(sign_value * 0.525, 0.0, -0.025), _rust))
 		_box(_case, "CornerBracket", Vector3(0.055, 0.44, 0.065), Vector3(sign_value * 0.455, 0.0, 0.31), _black)
 		for row: int in range(3):
 			_box(_case, "CornerRivet", Vector3(0.043, 0.043, 0.030), Vector3(sign_value * 0.455, -0.145 + row * 0.145, 0.348), _brass)
@@ -183,37 +391,41 @@ func _build() -> void:
 		cap.position = Vector3(sign_value * 0.57, -0.035, -0.005)
 		cap.rotation.z = PI * 0.5
 	var roof: MeshInstance3D = _cylinder(_case, "FacetedSurveyHood", 0.39, 0.12, _plate, 0.205, 12)
+	_readability_panel(roof)
 	roof.position.y = 0.275
 	var roof_cap: MeshInstance3D = _cylinder(_case, "HoodRim", 0.22, 0.035, _black, 0.22, 12)
+	_readability_panel(roof_cap)
 	roof_cap.position.y = 0.352
 	var mast: MeshInstance3D = _cylinder(_case, "ShortSurveyMast", 0.026, 0.18, _black, 0.020, 6)
 	mast.position.y = 0.47
 	_box(_case, "MastCap", Vector3(0.05, 0.035, 0.05), Vector3(0.0, 0.575, 0.0), _brass)
 	for index: int in range(5):
-		_box(_case, "RearCoolingRib", Vector3(0.045, 0.26, 0.08), Vector3(-0.24 + index * 0.12, -0.015, -0.33), _black)
+		_readability_panel(_box(_case, "RearCoolingRib", Vector3(0.045, 0.26, 0.08), Vector3(-0.24 + index * 0.12, -0.015, -0.33), _black))
 	_build_housing()
 	_build_mirror()
 	_legs.append(_build_leg("LeftSupport", -1.0, false))
 	_legs.append(_build_leg("RightSupport", 1.0, false))
 	_legs.append(_build_leg("RearSupport", 0.0, true))
 	_actuator = _cylinder(_chassis, "FlexibleHousingActuator", 0.067, 0.30, _rubber, 0.067, 8)
+	_readability_panel(_actuator)
 	for index: int in range(6):
 		var rib: MeshInstance3D = _cylinder(_chassis, "ActuatorRib", 0.086, 0.025, _black, 0.086, 8)
+		_readability_panel(rib)
 		_actuator_ribs.append(rib)
 	_built = true
 
 
 func _build_housing() -> void:
 	var housing: Node3D = _pivot(_chassis, "FixedLowMirrorHousing", Vector3(0.0, 0.30, 0.0))
-	_box(housing, "HousingBlock", Vector3(0.66, 0.32, 0.42), Vector3.ZERO, _black)
-	_box(housing, "HousingTopPlate", Vector3(0.70, 0.045, 0.43), Vector3(0.0, 0.18, 0.0), _rust)
-	_box(housing, "LowCouplerInterior", Vector3(0.42, 0.18, 0.035), Vector3(0.0, 0.0, 0.226), _pale)
+	_readability_panel(_box(housing, "HousingBlock", Vector3(0.66, 0.32, 0.42), Vector3.ZERO, _black))
+	_readability_panel(_box(housing, "HousingTopPlate", Vector3(0.70, 0.045, 0.43), Vector3(0.0, 0.18, 0.0), _rust))
+	_readability_panel(_box(housing, "LowCouplerInterior", Vector3(0.42, 0.18, 0.035), Vector3(0.0, 0.0, 0.226), _pale))
 	for index: int in range(4):
-		_box(housing, "CouplerInteriorRib", Vector3(0.037, 0.15, 0.055), Vector3(-0.135 + index * 0.09, 0.0, 0.255), _black)
+		_readability_panel(_box(housing, "CouplerInteriorRib", Vector3(0.037, 0.15, 0.055), Vector3(-0.135 + index * 0.09, 0.0, 0.255), _black))
 	_left_door = _pivot(housing, "LeftHousingDoor", Vector3(-0.30, 0.0, 0.21))
 	_right_door = _pivot(housing, "RightHousingDoor", Vector3(0.30, 0.0, 0.21))
-	_box(_left_door, "LeftDoorPlate", Vector3(0.30, 0.25, 0.040), Vector3(0.15, 0.0, 0.015), _rust)
-	_box(_right_door, "RightDoorPlate", Vector3(0.30, 0.25, 0.040), Vector3(-0.15, 0.0, 0.015), _rust)
+	_readability_panel(_box(_left_door, "LeftDoorPlate", Vector3(0.30, 0.25, 0.040), Vector3(0.15, 0.0, 0.015), _rust))
+	_readability_panel(_box(_right_door, "RightDoorPlate", Vector3(0.30, 0.25, 0.040), Vector3(-0.15, 0.0, 0.015), _rust))
 	_box(_left_door, "LeftDoorRivet", Vector3(0.045, 0.045, 0.035), Vector3(0.06, 0.075, 0.045), _brass)
 	_box(_right_door, "RightDoorRivet", Vector3(0.045, 0.045, 0.035), Vector3(-0.06, 0.075, 0.045), _brass)
 
@@ -258,7 +470,7 @@ func _build_mirror() -> void:
 		arrays[Mesh.ARRAY_NORMAL] = normals
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		mesh.surface_set_material(mesh.get_surface_count() - 1, palette[shade])
-	_part(dish, "PolishedMirrorFacets", mesh, null, Vector3.ZERO)
+	_readability_panel(_part(dish, "PolishedMirrorFacets", mesh, null, Vector3.ZERO))
 	for sector: int in range(MIRROR_SECTORS):
 		var a: float = TAU * float(sector) / MIRROR_SECTORS
 		var b: float = TAU * float(sector + 1) / MIRROR_SECTORS

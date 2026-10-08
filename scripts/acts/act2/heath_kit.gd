@@ -2,15 +2,17 @@ extends RefCounted
 ## Original Horsell Common scenery. No actor, collider, hazard, or autonomous clock.
 ## The caller supplies tableau state/progress from its paused simulation clock.
 
-const ART_REVISION := "a2-horsell-heath-4"
+const ART_REVISION := "a2-horsell-heath-5"
 const ACTOR_PIXEL_SIZE := 0.0225
 const TILE_WORLD_SIZE := 1.44
 const CYLINDER_ANCHOR := Vector3(-4.8, 0.0, -1.0)
 const CYLINDER_YAW := -0.55
+## Bank-top witnesses stay outboard of all playable landings. Their former
+## foreground row hid the actual hero/feet at a legal rightward arrival dash.
 const WITNESS_POSITIONS: Array[Vector3] = [
-	Vector3(-3.45, 0.975, 0.8), Vector3(3.45, 0.975, 0.8),
-	Vector3(-2.5, 0.975, 3.85), Vector3(-1.8, 0.975, 3.85),
-	Vector3(1.8, 0.975, 3.85), Vector3(2.5, 0.975, 3.85),
+	Vector3(-3.75, 0.975, 2.3), Vector3(3.75, 0.975, 2.3),
+	Vector3(-3.75, 0.975, 0.8), Vector3(-3.75, 0.975, -1.0),
+	Vector3(3.75, 0.975, 0.8), Vector3(3.75, 0.975, -1.0),
 ]
 static var _material_cache: Dictionary = {}
 static var _texture_cache: Dictionary = {}
@@ -30,7 +32,7 @@ static func build(parent: Node3D) -> Dictionary:
 			var pine_position := Vector3(float(side) * 4.8, 0.0, z)
 			# Reposition four existing trees onto the bank; crowns stay outboard.
 			if side == -1 and index == 0:
-				pine_position = Vector3(-3.75, 0.975, -1.5)
+				pine_position = Vector3(-3.75, 0.975, -3.1)
 			elif side == 1 and index == 1:
 				pine_position = Vector3(3.75, 0.975, -10.6)
 			elif side == -1 and index == 2:
@@ -74,9 +76,9 @@ static func build(parent: Node3D) -> Dictionary:
 		var position: Vector3 = WITNESS_POSITIONS[index]
 		var side: int = -1 if position.x < 0.0 else 1
 		var witness := _witness(root, position, index, side)
-		if index < 2:
-			# These two retreat along the side-bank top instead of floating off it.
-			witness.set_meta("retreat_direction", Vector3.BACK)
+		# All six retreat along existing side-bank tops; max homeZ2.3+1.2
+		# stays below their existing near edgeZ3.6.
+		witness.set_meta("retreat_direction", Vector3.BACK)
 		witnesses.append(witness)
 	var eruption := _eruption(root)
 	var kit: Dictionary = {"root": root, "witnesses": witnesses, "eruption": eruption}
@@ -652,7 +654,7 @@ static func _witness_motion(image: Image, variant: int, pose: String, cloth: Col
 		_line(image, Vector2i(19, 21), Vector2i(30, 34), light if variant == 5 else shadow)
 		_rect(image, 29, 37, 6, 10, Color("705d45"))
 	if variant in [0, 2, 3]:
-		# End-bank figures face their outward retreat; side pair uses a quarter turn.
+		# Mirror the original held costume poses for witnesses on the west bank.
 		image.flip_x()
 
 static func _stroke(image: Image, start: Vector2i, end: Vector2i, width: int, colour: Color) -> void:

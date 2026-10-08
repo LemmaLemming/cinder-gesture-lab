@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "level_id": "A2-L1",
+  "authored_candidate": "complete tested owned content; exactcommit/HANDOFF and canonicalintegration acceptance pending",
+  "shared_publication": "fef1b1a79d83401d5b67118f6f69dcf2abea017c",
+  "api_revision": "campaign-shared-13",
+  "preserving_merge": "24de1aa84960477a6c93993827040e586a01ead1",
+  "tests": [
+    {
+      "name": "stationary Ray consumer",
+      "checks": 285,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared13",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared13-tracking-consumer.log --script tests/acts/act2/a2_l1_ray_exchange_smoke.gd",
+      "log": "checks/a2-l1-shared13-tracking-consumer.log",
+      "scope": "Real phase/hit/deferred path/cancellation/pause and strict adjacent-bit copied identity refusals; isolated fixture."
+    },
+    {
+      "name": "Scout derived material cutaway",
+      "checks": 40,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared13",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared13-scout-readability-final.log --script tests/acts/act2/a2_l1_scout_readability_smoke.gd",
+      "log": "checks/a2-l1-shared13-scout-readability-final.log",
+      "scope": "29mesh/32copy palette/material isolation/restore/pose at measured position with quarter-recovery TESTONLY reconstruction; separate actual view."
+    },
+    {
+      "name": "actual native Heavy LEFT",
+      "checks": 304,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared13",
+      "command": "python3 scripts/dev/dev.py engine --path . --log-file .cinder/a2-l1-shared13-live-portrait-final.log --script tests/acts/act2/a2_l1_live_level_smoke.gd -- --route=left --loadout=heavy --profile=standard --capture-live",
+      "log": "checks/a2-l1-shared13-live-portrait-final.log",
+      "scope": "Actual authored six primary defeats, four checkpoints, contact transition/cleanup; seven native540x1170 frames inspected by root/independent reviewer."
+    },
+    {
+      "name": "actual default LEFT",
+      "checks": 269,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared13",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared13-live-standard-left.log --script tests/acts/act2/a2_l1_live_level_smoke.gd -- --route=left --loadout=standard --profile=standard",
+      "log": "checks/a2-l1-shared13-live-standard-left.log",
+      "scope": "WEAPON01/CLOTHJ0/P0/S0 actual six primary kills/emptyinitialammo/no pickups/fourboundaries/contact/cleanup."
+    },
+    {
+      "name": "actual Challenge slowPadded LEFT",
+      "checks": 269,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared13",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared13-live-challenge-padded-left.log --script tests/acts/act2/a2_l1_live_level_smoke.gd -- --route=left --loadout=slow_padded_reach --profile=challenge",
+      "log": "checks/a2-l1-shared13-live-challenge-padded-left.log",
+      "scope": "Actual fixed Challenge profile with slowest primary recovery variant, six primary kills/initialzeroammo/no pickups/fulllevel boundaries/contact/cleanup."
+    },
+    {
+      "name": "strict authored pair death retry",
+      "checks": 203,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared10",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared10-authored-pair-retry-exact-final.log --script tests/acts/act2/a2_l1_retry_level_smoke.gd",
+      "log": "checks/a2-l1-shared10-authored-pair-retry-exact-final.log",
+      "scope": "Actual firstfour clears/stable predeparture checkpoint, pair warning/lock pause/exactwholetypedaggregate, raydeath/publicretry; noassignedliveHP/pose/phase or finalclear."
+    },
+    {
+      "name": "actual routed left",
+      "checks": 41,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared10",
+      "command": "python3 scripts/dev/dev.py engine --path . --log-file .cinder/a2-l1-shared10-routed-left-cutaway.log --script tests/acts/act2/a2_l1_routed_input_smoke.gd -- --capture-routed --swipe-side=left",
+      "log": "checks/a2-l1-shared10-routed-left-cutaway.log",
+      "scope": "Actual portrait pointer recognizer finalanchor/immediateprimary/emptysecondtap/menuconsumption; syntheticpriorprefix/unlocks, nofulllivelevelclear."
+    },
+    {
+      "name": "actual routed right",
+      "checks": 41,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared10",
+      "command": "python3 scripts/dev/dev.py engine --path . --log-file .cinder/a2-l1-shared10-routed-right-cutaway.log --script tests/acts/act2/a2_l1_routed_input_smoke.gd -- --capture-routed --swipe-side=right",
+      "log": "checks/a2-l1-shared10-routed-right-cutaway.log",
+      "scope": "Actual portrait pointer recognizer finalanchor/immediateprimary/emptysecondtap/menuconsumption; syntheticpriorprefix/unlocks, nofulllivelevelclear."
+    },
+    {
+      "name": "bank derived material cutaway",
+      "checks": 39,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared10",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared10-bank-readability-first.log --script tests/acts/act2/a2_l1_bank_readability_smoke.gd -- --a2-art-preview",
+      "log": "checks/a2-l1-shared10-bank-readability-first.log",
+      "scope": "Actualpreview bank materials/depth/isolation/restoration/collisionfingerprints/sharedcue; TESTONLYvisualprobe."
+    },
+    {
+      "name": "actual Heavy both",
+      "checks": 541,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared8",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared8-live-routes-settle-diagnostic.log --script tests/acts/act2/a2_l1_live_level_smoke.gd -- --route=both --loadout=heavy --profile=standard",
+      "log": "checks/a2-l1-shared8-live-routes-settle-diagnostic.log",
+      "scope": "Actual authored route via shared controller, initialzeroammo/ordinaryprimary/no pickups/fourcheckpoint/contact/cleanup; TESTONLY prefix/destination/profileprovider."
+    },
+    {
+      "name": "actual Cargo right",
+      "checks": 248,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared8",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared8-live-slow-cargo-right.log --script tests/acts/act2/a2_l1_live_level_smoke.gd -- --route=right --loadout=slow_cargo_longstep --profile=standard",
+      "log": "checks/a2-l1-shared8-live-slow-cargo-right.log",
+      "scope": "Actual authored route via shared controller, initialzeroammo/ordinaryprimary/no pickups/fourcheckpoint/contact/cleanup; TESTONLY prefix/destination/profileprovider."
+    },
+    {
+      "name": "actual Padded left",
+      "checks": 269,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared8",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared8-live-slow-padded-left.log --script tests/acts/act2/a2_l1_live_level_smoke.gd -- --route=left --loadout=slow_padded_reach --profile=standard",
+      "log": "checks/a2-l1-shared8-live-slow-padded-left.log",
+      "scope": "Actual authored route via shared controller, initialzeroammo/ordinaryprimary/no pickups/fourcheckpoint/contact/cleanup; TESTONLY prefix/destination/profileprovider."
+    },
+    {
+      "name": "actual Quick right",
+      "checks": 264,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared8",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared8-live-quick-right.log --script tests/acts/act2/a2_l1_live_level_smoke.gd -- --route=right --loadout=quick --profile=standard",
+      "log": "checks/a2-l1-shared8-live-quick-right.log",
+      "scope": "Actual authored route via shared controller, initialzeroammo/ordinaryprimary/no pickups/fourcheckpoint/contact/cleanup; TESTONLY prefix/destination/profileprovider."
+    },
+    {
+      "name": "actual Assisted left",
+      "checks": 264,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared8",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared8-live-assisted-left.log --script tests/acts/act2/a2_l1_live_level_smoke.gd -- --route=left --loadout=heavy --profile=assisted",
+      "log": "checks/a2-l1-shared8-live-assisted-left.log",
+      "scope": "Actual authored route via shared controller, initialzeroammo/ordinaryprimary/no pickups/fourcheckpoint/contact/cleanup; TESTONLY prefix/destination/profileprovider."
+    },
+    {
+      "name": "savedplayer aggregate",
+      "checks": 34,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared8",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared8-aggregate-context-repaired.log --script tests/acts/act2/a2_l1_aggregate_context_smoke.gd",
+      "log": "checks/a2-l1-shared8-aggregate-context-repaired.log",
+      "scope": "Actual moving saves/freshreceiver/crossforged/atomiccommit/preflight/publicretry, TESTONLY coherentcheckpoint seed."
+    },
+    {
+      "name": "layout/tableau",
+      "checks": 259,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared8",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared8-floor-overlap-layout.log --script tests/acts/act2/a2_l1_layout_smoke.gd -- --a2-art-preview",
+      "log": "checks/a2-l1-shared8-floor-overlap-layout.log",
+      "scope": "Geometry/dash/floor/collision/tableau/pause/restoration; explicitartpreview notlivefight."
+    },
+    {
+      "name": "Scout actor",
+      "checks": 196,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "shared8",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-shared8-bound-gate-actor.log --script tests/acts/act2/a2_l1_scout_target_smoke.gd -- --a2-art-preview",
+      "log": "checks/a2-l1-shared8-bound-gate-actor.log",
+      "scope": "Actualisolatedprimary/HP/deadlinegate/bodyyaw schema2/restore; nofullroute."
+    },
+    {
+      "name": "pure sequence",
+      "checks": 194,
+      "failures": 0,
+      "exit_code": 0,
+      "baseline": "prior compatible own sequence",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l1-sequence.log --script tests/acts/act2/a2_l1_sequence_smoke.gd",
+      "log": "checks/a2-l1-sequence.log",
+      "scope": "Pure authored order/fork/checkpoint/exit intents; code unchanged afterpass."
+    }
+  ],
+  "canonical_design_validation": {
+    "ability": "revision0/20registered/0uses pass",
+    "equipment": "revision0/36items/0claims pass",
+    "numerical": "12clothes/4weapons/6powerups/14perks/10fixtures/256loadouts/500conditionals/7500combined pass; arithmetic nothumanbalance"
+  },
+  "reuse_basis": "Shared9 exact numeric/save change covered by strict203 actualauthoredretry. Current13 driver285 coversordinaryscheduler/direct13 dependency; current13 default269/Challenge269/native304 coversfull ordinarysharedshell/defaultfollow/HUD. Replay/spore/stagedlunge unusedL1; camera optionalhook empty and sameordinaryfollow. Newmaterial29 changesnocollider/HP/phase/deadline/input/equipment/snapshot authority. Priorrouted41+variants cover unchangedcontrols/witnessplacement/gear/floor/progression semantics; bank39 unchanged. Unused standard selector entry added after Heavy capture leaves executed Heavy branch byteidentical and is exercised by new269. Reuse scopes do notclaim oldvisuals are finalcurrentart.",
+  "limits": [
+    "Unfocused scripted/routed scope; no human/nativefocused balance or phoneperformance test.",
+    "Thin retained sourceoutlines locally overlap counter sprite; coretorso/facing/feet readable in actual reviewedframe.",
+    "Pairframe Aunarmedwarning/Brecovery, nottwolocks.",
+    "TESTONLY precedingprefix/unlocks/profile/destination data; canonical acceptance/registration separate; no laterlevel gameplay."
+  ]
+}

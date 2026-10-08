@@ -3,7 +3,7 @@
   "asset_id": "A2-RAY-SCOUT-ACTOR-01",
   "type_match": "A2-E1 Ray Scout; existing L1-authored enemy, not equipment/perk/powerup introduction",
   "family": "act2-ray-scout",
-  "readiness": "runtime_target_and_snapshot2_prototype_verified_full_ray_fight_pending",
+  "readiness": "original_runtime_L1_scripted_route_and_native_portrait_verified_integration_review_pending",
   "authoring_source": "scripts/acts/act2/ray_scout_actor.gd",
   "visual_resource": "scripts/acts/act2/ray_scout_visual.gd",
   "visual_manifest": "assets/acts/act2/ray_scout_manifest.json",
@@ -29,7 +29,7 @@
   "health": {
     "max_hp": 30,
     "status": "provisional_unplaytested",
-    "damage_window": "only configured/live/unpaused recovery; hp0 commits before one guarded defeat signal"
+    "damage_window": "Configured/live/unpaused recovery plus ephemeral owner gate checks the actual scheduler recovery deadline and required exposed housing cue; HP0 commits before one guarded defeat signal."
   },
   "motion_tuning": {
     "anchored": true,
@@ -43,10 +43,9 @@
     "future A2-O1 parent enemy rearrangement"
   ],
   "limitations": [
-    "Not integrated into the live encounter yet",
-    "Manual target-opening and actor snapshot fixtures are not fight completion",
-    "Parent must compose actor state with authoritative phase deadlines, locked ray geometry and shared scheduler snapshots; live damage-window expiry is not implemented by actor snapshots",
-    "Shared5 tracking preparing-to-immutable-lock adapter is adopted; its real level consumer and full encounter acceptance are pending"
+    "Actual complete scripted default/Heavy routes and equipment extremes pass; human/nativefocusbalance/mobileperformance untested.",
+    "Current40 materials +native304 allseven capturedstatesreadable; thin preservedoutlineoverlap remainsat closecounter.",
+    "Actor196 shared8 boundgate remainsapplicable to unchangedstate/hit/timing; materialrevision hasno gameplayauthority."
   ],
   "evidence": {
     "shared_baseline": "15589bfd956e74a659a63e843b1e1430d28227b8",
@@ -113,5 +112,69 @@
     "report_source": "Parent integration owner verified the initial actor snapshot suite before this cosmetic latch revision",
     "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_scout_target_smoke.gd",
     "scope": "Historical isolated actual-primary and actor snapshot1 coverage. The source and fresh-restored rigs were not compared after warning mirror tracking changed direction; this result does not validate schema2."
+  },
+  "exchange_consumer": {
+    "source": "scripts/acts/act2/ray_scout_exchange.gd",
+    "api_revision": "act2-ray-exchange-1",
+    "verified_checks": 285,
+    "failures": 0,
+    "log": ".cinder/a2-l1-shared10-copied-clock-exchange.log",
+    "shared_publication": "564559094bc98229c8140cf092771329b333cea0 / campaign-shared-10",
+    "ownership": "One shared scheduler/hero/effects; parent begins/ends epoch, chooses active source IDs and supplies current portrait/floor context. No new controls, body collider, gear or ability.",
+    "deadlines": "Raw10 damage, windup1.55/full lock1.10/active.16/recovery1.60, source interval1.60, maxHP30/move_speed0; fresh role resolved once against fixed saved profile.",
+    "pause_transport": "Copied outer/sample/reservation clocks/deadlines/adapter scalars/cooldown and adjacent deferred boundaries require exact scalar equality; five adjacent-lower-binary64 mutations reject atomically using exact-json-1 full-unit before/after encoding. Derived durations/progress and vector reconstruction keep existing policy. Source HP/plant, immutable paired scheduler, current hero sample, bounded deferred paths and presentation-only landing/opening witnesses restore silently.",
+    "cleanup": "Cancel owner before progression; bound actor gate closes permanently on release; source/cue/portrait invalidation closes ray before outgoing damage."
+  },
+  "current_runtime_evidence": {
+    "adopted_baseline": "fef1b1a79d83401d5b67118f6f69dcf2abea017c",
+    "api_revision": "campaign-shared-13",
+    "preserving_merge": "24de1aa84960477a6c93993827040e586a01ead1",
+    "tracking_consumer": {
+      "checks": 285,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-tracking-consumer.log"
+    },
+    "scout_materials": {
+      "checks": 40,
+      "failures": 0,
+      "eligible_meshes": 29,
+      "owned_material_copies": 32,
+      "log": ".cinder/a2-l1-shared13-scout-readability-final.log",
+      "scope": "Measured-position quarter-recovery cosmetic reconstruction, palette/texture preservation, isolation,flash,clear,weakcontext and fresh restore; no fabricated fullfight."
+    },
+    "actual_native_route": {
+      "checks": 304,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-live-portrait-final.log",
+      "evidence": "docs/acts/act2/evidence/A2-L1/live-evidence.json",
+      "scope": "Actual Standard/Heavy left clear with allseven native540x1170 frames and unchanged27.05s closecounter hero(.397689,-25.587755); no material captured-state defect."
+    },
+    "actual_default_route": {
+      "checks": 269,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-live-standard-left.log",
+      "loadout": "WEAPON-01/CLOTH-J0/P0/S0",
+      "scope": "Actual six required primary defeats, initialzeroammo/no pickups, four checkpoints/onceclear/contacttransition/cleanup."
+    },
+    "exact_authored_retry": {
+      "checks": 203,
+      "failures": 0,
+      "baseline": "campaign-shared-10",
+      "log": ".cinder/a2-l1-shared10-authored-pair-retry-exact-final.log",
+      "scope": "Real firstfour clears/contact checkpoint, pair warning/lock pause/exact wholeaggregate transport, actualraydeath and fresh protectedretry."
+    },
+    "limits": [
+      "Thin preserved outlines locally overlap closecounter sprite; core torso/facing/feet readable.",
+      "Scripted unfocused scope, humanbalance/nativefocus/mobile/performance untested.",
+      "Integration canonical acceptance/registration remains separate; laterlevels unimplemented."
+    ],
+    "actual_challenge_route": {
+      "checks": 269,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-live-challenge-padded-left.log",
+      "loadout": "WEAPON-03/CLOTH-J1/P1/S0",
+      "profile": "challenge",
+      "scope": "Actual full ordinaryprimary/initialzeroammo/no pickup route with slowest primary recovery;4boundaries/contact/cleanup."
+    }
   }
 }

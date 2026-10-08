@@ -36,6 +36,8 @@ var _defeat_emitted: bool = false
 var _snapshot_busy: bool = false
 var _authored_actor_id: String = ""
 var _authored_root_position: Vector3 = Vector3.ZERO
+var _damage_window_required: bool = false
+var _damage_window_gate: Callable = Callable()
 
 
 func _ready() -> void:
@@ -96,6 +98,11 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 	if not is_finite(amount) or amount <= 0.0 or not impulse.is_finite():
 		return result
 	_damage_busy = true
+	# Manual fixtures have no gate. A bound encounter never falls back to that
+	# default if its owner disappears or its real recovery deadline has expired.
+	if _damage_window_required and (not _damage_window_gate.is_valid() or not bool(_damage_window_gate.call())):
+		_damage_busy = false
+		return result
 	var loss: float = minf(hp, amount)
 	hp -= loss
 	result["accepted"] = loss > 0.0
@@ -208,11 +215,37 @@ func is_armed() -> bool:
 	return _configured and not _retired
 
 
+func damage_window_gate_error(gate: Callable) -> String:
+	if not _bound_context_valid() or not is_node_ready() or _damage_busy or _snapshot_busy or not gate.is_valid():
+		return "Bind a valid damage-window owner outside actor transactions"
+	if _damage_window_required and _damage_window_gate != gate:
+		return "The actor's encounter damage-window owner is immutable"
+	return ""
+
+
+func bind_damage_window(gate: Callable) -> bool:
+	if not damage_window_gate_error(gate).is_empty():
+		return false
+	_damage_window_required = true
+	_damage_window_gate = gate
+	return true
+
+
+func release_damage_window(gate: Callable) -> bool:
+	if _damage_busy or _snapshot_busy or not _damage_window_required or _damage_window_gate != gate:
+		return false
+	# Release the external owner while retaining a closed gate. This instance
+	# cannot silently become an ungated manual target after encounter cleanup.
+	_damage_window_gate = Callable()
+	return true
+
+
 func disarm() -> void:
 	_configured = false
 	_retired = true
 	_hero = null
 	_effects = null
+	_damage_window_gate = Callable()
 	# Keep the single group until tree exit so a lethal accepted result can still
 	# receive the shared player's once-per-action credit after its callback.
 	# The owner frees this subtree; there are no external signal connections.
