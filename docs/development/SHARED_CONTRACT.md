@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-26** (8 October 2026). Shared26 adds opt-in native capsule/Scheduler spore composition and a pure source-control accessor. Shared25 finite SmokeBank, Shared24 projected replay and Shared23 native pause/stationary/crescent APIs remain available. Authored encounters and their portrait/save evidence remain separate acceptance obligations. Integration owns shared runtime and is the three act workers’ help contact. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
+Revision: **campaign-shared-27** (8 October 2026). Shared27 orders Shell persistence after quiet native pause settlement and registers accepted A3-L2. Existing shared26 spore, shared25 smoke and shared24 projected replay APIs remain available. This publication contains no authored Echo API; that candidate and its lifecycle supplement remain separate integration work. Integration owns shared runtime and is the three act workers’ help contact. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
 
 ## Native Scheduler-driven spore sources
 
@@ -451,3 +451,10 @@ Manual graphical `scripts/dev/campaign_desktop_profile.gd` uses unchanged actual
 ## Shared21 current production HUD constraints
 
 `CinderCampaignShell._process` now shapes current status/objective text before camera framing, matching base Game's ordering. Camera APIs, snapshot schemas, shake bounds, gesture mapping and simulation remain unchanged. The new named target `campaign_shell_hud_framing` exercises actual public Shell preparation/save/install with TEST ONLY metadata and isolated files. Original order20/2 and corrected native24/0 establish same-call expansion/contraction behavior; exact actor/story, aim and native projection controls pass. [Evidence and limits](CAMPAIGN_SHELL_HUD_FRAMING.md) distinguish synchronous assertions from post-draw portraits. No unchanged authored or broad shared suite is required for this narrow correction.
+
+
+## Shared27 Shell pause settlement and A3-L2 registration
+
+The Shell latches input and pauses simulation in its deferred drain, then commits operations in a second deferred callback after native pause notifications have settled the same final tick. Existing player, level, scheduler, save and gesture schemas remain unchanged. The continuation emits no gameplay, adds no physics tick and retains ordinary deferred Resume/Retry handling. Read [pause settlement](CAMPAIGN_PAUSE_SETTLEMENT.md) and its [original root evidence](evidence/act3-l2-root-registration/index.json).
+
+A3-L2 Living Forest is registered behind A3-L1 using `campaign-level-1`, local schema1, source commit `bd6b3cde9321213a2717e998c5ce2dff58ca2dd3`. A3-L3 remains unimplemented in the registry. Named target: `python3 scripts/dev/dev.py test act3_l2_registration`. Root production tests cover real Title/Journey, paused disk Continue, checkpoint Retry, pending input/motion, native fatal contact and dead Resume refusal. Disclosed predecessor/HP/ammo seeds isolate those flows; they do not claim preceding campaign clears. Future Echo APIs are not required to adopt this publication.
