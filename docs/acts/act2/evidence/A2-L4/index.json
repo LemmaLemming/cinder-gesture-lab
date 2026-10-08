@@ -1,7 +1,7 @@
 {
   "level": "A2-L4",
-  "status": "initial native aggregate validated; actual full route/lifecycle/portrait pending",
-  "at": "2026-10-08T22:03:05.056997+00:00",
+  "status": "initial113 native aggregate passed; firstHeavy route controlled incomplete after five kills; affected original earned courtyard reproduction preparation",
+  "at": "2026-10-08T22:16:55.714682+00:00",
   "shared_api": "campaign-shared-30",
   "shared_publication": "64f34c8776aa81d7eb8f88b71b8b8d64192f35f0",
   "preserving_merge": "d37fa0d45b208bba445d8f1c9a97742b53d84a40",
@@ -42,6 +42,39 @@
         "raw_sha256": "a11b4b13e6457d29a8e2dc3031f614f6796006b21323d399eb30058ed3b4baf8"
       },
       "result_sha256": "26a9d4ece958117478cc89a01e731e97a2f6568805c6b0dd2d002984c9349a51"
+    },
+    "live-heavy-first": {
+      "path": "docs/acts/act2/evidence/A2-L4/live-heavy-first",
+      "result": {
+        "exit_code": 241,
+        "script_errors": 0,
+        "native_errors": 0,
+        "fail_markers": 0,
+        "result_lines": [],
+        "source_count": 279,
+        "source_sha256": "df99b684fd2aa85f790b8f4675cfb9f47ccaa1238010f06b99932af3854dd321",
+        "wrapper_sha256": "fabeada74c690c1af2db6f8d42323bde5d0d690847c1dd0eb25f9bbc2e7f6481",
+        "raw_sha256": "fabeada74c690c1af2db6f8d42323bde5d0d690847c1dd0eb25f9bbc2e7f6481"
+      },
+      "controlled_incomplete": true,
+      "interruption": {
+        "at": "2026-10-08T22:14:17.165827+00:00",
+        "classification": "incomplete controlled run; progress stalled after five kills, no native/script/assertion error observed",
+        "reason": "Ten minutes of own headless run, sustained100%CPU, no new completion after villa_ray_handler; outer2400-iteration bound includes long nested physics waits and gives inadequate progress diagnostic. Need bounded native-clock/HP watchdog before affected reproduction. Not full route acceptance.",
+        "pid": 81494,
+        "verified_argv": "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot --path . --log-file /Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-l4-live-heavy-first.log --headless --script tests/acts/act2/a2_l4_live_level_smoke.gd -- --loadout=heavy --profile=standard",
+        "signal": "SIGTERM only verified own noninteractive child; no other worker/session/lock touched",
+        "last_clear_ids": [
+          "garden_handler",
+          "flood_scout",
+          "flood_tender",
+          "villa_scout",
+          "villa_ray_handler"
+        ],
+        "gameplay_conclusion": "unknown; later HP/phase/admission/proof state not instrumented in original run",
+        "profiler_limit": "3-second macOS sample confirms busy main thread, stripped release symbols cannot identify GDScript function."
+      },
+      "result_sha256": "99c3c6e97421ad0b8e149ab8a00ac264ba6c16ed0e269497eb4f4643cc92fbd9"
     }
   },
   "limits": [
