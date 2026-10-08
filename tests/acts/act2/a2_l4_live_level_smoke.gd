@@ -178,6 +178,7 @@ func _run_route() -> bool:
 		for family: String in ["smoke", "tool", "ray"]:
 			for phase: String in ["warning", "lock", "active", "recovery"]: _expect(_captured.has(family + "-" + phase), "actual native source/phase portrait exists: " + family + "-" + phase)
 		for beat: String in ["flood_margin", "villa_scout_priority", "villa_tender_priority", "putney_mix"]: _expect(_captured.has(beat.replace("_", "-") + "-actual-pair"), "actual mixed source portrait reports real armed flags: " + beat)
+		for bank_id: String in _banks: _expect(_captured.has(bank_id.replace("_", "-") + "-defeated-source-tail"), "actual HP0 intact source and original running bank tail portrait exists: " + bank_id)
 		for label: String in QUIET_LABELS.values() + STAGE_LABELS.values() + ["clear"]: _expect(_captured.has(label), "actual native scenic/stage/quiet-clear portrait exists: " + label)
 	_game.request_pause()
 	await _settle()
@@ -725,7 +726,14 @@ func _required_points(id: String, current: Dictionary) -> Array[Vector3]:
 	var witness: Dictionary = current.get("proof", {})
 	if current.has("mechanism_id"): witness = _game.active_level.call("mechanism_proof", current.mechanism_id)
 	if not witness.get("landing") is Vector3: witness = current.get("presentation_witness", {})
-	if current.phase != "recovery":
+	if current.has("mechanism_id") and current.get("status") == "running":
+		# Match production _mechanism_framed, including retained recovery openings.
+		# This is the actual root-owned serialized view, separate from fresh proof.
+		var mechanism_views: Dictionary = _game.active_level.get("_views")
+		var retained: Dictionary = mechanism_views.get(current.mechanism_id, {})
+		for key: String in ["landing", "attack_position"]:
+			if retained.has(key): points.append_array(_game.active_level.call("_landing_points", Codec.read_vector3(retained[key])))
+	elif current.phase != "recovery":
 		for key: String in ["landing", "attack_position"]:
 			if witness.get(key) is Vector3: points.append_array(_game.active_level.call("_landing_points", witness[key]))
 	return points
@@ -977,6 +985,10 @@ func _capture_labels(state: Dictionary) -> Array[String]:
 		if running == 2 and not _captured.has(pair_label): labels.append(pair_label)
 		if running > 0 and not _captured.has(STAGE_LABELS[state.beat]): labels.append(STAGE_LABELS[state.beat])
 	if QUIET_LABELS.has(state.beat) and _tail_pending.is_empty() and not _captured.has(QUIET_LABELS[state.beat]): labels.append(QUIET_LABELS[state.beat])
+	for bank_id: String in _banks:
+		var bank_state: Dictionary = _banks[bank_id].call("state")
+		var label: String = bank_id.replace("_", "-") + "-defeated-source-tail"
+		if bank_state.status == "running" and float(_actors[LondonRoot.BANK_TO_TENDER[bank_id]].get("hp")) == 0.0 and not _captured.has(label): labels.append(label)
 	if state.beat == "clear" and not _captured.has("clear"): labels.append("clear")
 	return labels
 
@@ -1019,6 +1031,9 @@ func _capture_state() -> void:
 		# Retained view data remains explicitly separate from fresh accepted proof.
 		var view: Dictionary = current.get("presentation_witness", {})
 		var retained_view: Dictionary = {"landing": Codec.vector3(view.landing) if ReplacementGeometry.finite_vector(view.get("landing")) else null, "attack_position": Codec.vector3(view.attack_position) if ReplacementGeometry.finite_vector(view.get("attack_position")) else null}
+		if current.has("mechanism_id"):
+			var mechanism_views: Dictionary = _game.active_level.get("_views")
+			retained_view = mechanism_views.get(current.mechanism_id, {}).duplicate(true)
 		post_draw_containment.actors[id] = {"required": not required.is_empty(), "error": required_error}
 		actor_observations[id] = {"phase": current.get("phase", "idle"), "status": current.get("status", "idle"), "cycle": current.get("cycle", 0), "armed": reservation.get("armed", false), "source_position": Codec.vector3(actor.global_position), "hp": actor.get("hp"), "reservation_id": current.get("reservation_id", ""), "geometry": _geometry_json(current.get("geometry", {})), "accepted_response": accepted_response, "retained_presentation_witness": retained_view, "native_required_points": native_required, "post_draw_camera_error": required_error, "readability": rig.call("readability_state") if is_instance_valid(rig) and rig.has_method("readability_state") else {}}
 	var bank_observations: Dictionary = {}

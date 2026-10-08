@@ -1,6 +1,6 @@
 # A2-L4 static red weed and red creeper
 
-Current readiness: **authored original mesh prototype; static source/type/geometry review only**. No Godot import, engine execution, native portrait, gameplay or art acceptance has occurred for this asset. The level owner must check actual planted instances with the shared following camera, Hero, sources, warnings and dry landings before upgrading readiness. This note records the original authored revision `a2-red-weed-1`.
+Current readiness: **original runtime mesh prototype, imported and executed in L4 Heavy/Standard942/0 at Shared32; source-readability review is incomplete**. The original24 native540x1170 frames exposed mostly cropped dense/bleached forms. The mesh revision `a2-red-weed-1` is unchanged; kit revision2 adjusts selected native instance transforms and will be reviewed in the required Cargo route. Full all-form/art fidelity, equipment/profile and level acceptance remain separate.
 
 The only production file is [red_weed_visual.gd](../../../scripts/acts/act2/red_weed_visual.gd). It supplies static scenery, with no collider, damage, target/cue group, contact, pulse, growth, process/physics function, clock, random generator, shader or project-setting change. Dense vegetation cannot change during an exchange. Parent-authored floor and fixed blockers remain the sole collision/support authority.
 
@@ -59,3 +59,7 @@ Metadata is local native geometry, not a promise of world collision, camera incl
 Family: original Act2 ecological branches, compatible with existing Heath/Weybridge/RuinedHouse material/feet/cutaway conventions. Proposed reuse is L4's transformed garden/flood/villa margins, later L5's dying/whitening surroundings and documented A2-O3 Bleached Canal parent reuse. This file does not implement either later level, its rewards, route signs or any gameplay.
 
 Native source-readability review remains pending for all four variants: inspect branch volume/ground contact, maroon versus danger outlines, warm pale decay versus warning glyphs, overlapping canopy/Hero/source/landing readability, fine creeper loss, current/settled following-camera framing, per-instance cutaway isolation and complete local-root cleanup. Thick dense banks should frame the floor while the continuous navigable dry route stays visually clear. No screen-space dimensions, whole-board reproduction, seamless atlas extraction, human recognition/balance, mobile/performance or all-pose acceptance is claimed.
+
+## L4 kit revision2 instance transforms
+
+The mesh helper and its local native bounds stay unchanged. The L4 kit records separate placement metadata for selected seed6 dense forms at unit scale, bleached3/4 at(.8,1,.8), and sparse1 at(.9,1,.9), with mirrored left yawπ. These selected forms were reviewed analytically for the inward edge; Cargo actual portrait/source/cue/landing and cutaway review is pending. All-form envelope numbers above are not a world-space guarantee for a transformed instance.

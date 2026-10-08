@@ -6,16 +6,17 @@ const Weybridge = preload("res://scripts/acts/act2/weybridge_kit.gd")
 const House = preload("res://scripts/acts/act2/ruined_house_kit.gd")
 const Weed = preload("res://scripts/acts/act2/red_weed_visual.gd")
 const Floor = preload("res://scripts/acts/act2/london_approaches_floor.gd")
-const ART_REVISION := "a2-london-approaches-1"
+const ART_REVISION := "a2-london-approaches-2"
 const TILE_WORLD_SIZE := 1.44
 const ACTOR_PIXEL_SIZE := 0.0225
-const ARTILLERYMAN_HOME := Vector3(4.15, 0.025, -47.0)
+const ARTILLERYMAN_HOME := Vector3(4.00, 0.025, -45.8)
 ## Cosmetic room cuts meet exactly; native support rectangles overlap separately.
 const VISUAL_ROOM_RECTS: Array[Rect2] = [
 	Rect2(-3.4, -8.3, 6.8, 11.9), Rect2(-3.4, -18.5, 6.8, 10.2),
 	Rect2(-3.4, -27.5, 6.8, 9.0), Rect2(-3.4, -38.0, 6.8, 10.5),
 	Rect2(-3.4, -50.0, 6.8, 12.0),
 ]
+const ROOM_SURFACE_KINDS: Array[String] = ["earth", "road", "paving", "earth", "paving"]
 static var _artilleryman_textures: Dictionary = {}
 
 static func build(parent: Node3D) -> Dictionary:
@@ -82,7 +83,7 @@ static func _ground(root: Node3D) -> void:
 	_surface(root, "ContinuousDryRoad", Vector3(0.0, 0.005, -23.2), Vector2(6.8, 53.6), "road")
 	for index: int in range(VISUAL_ROOM_RECTS.size()):
 		var rect: Rect2 = VISUAL_ROOM_RECTS[index]
-		var kind: String = "earth" if index == 0 else "paving"
+		var kind: String = ROOM_SURFACE_KINDS[index]
 		_surface(root, "%sQuietFloor" % Floor.SPECS[index].id, Vector3(rect.get_center().x, 0.008, rect.get_center().y), rect.size, kind)
 	for side: int in [-1, 1]:
 		var x: float = float(side) * 3.60
@@ -97,9 +98,13 @@ static func _garden(root: Node3D) -> void:
 	for side: int in [-1, 1]:
 		var sign_side: float = float(side)
 		_box(root, garden, "GardenBrickBoundary_%s" % side, Vector3(sign_side * 4.1, 0.30, -3.8), Vector3(0.55, 0.60, 5.0), "brick")
-		_villa(root, Vector3(sign_side * 5.45, 0.0, 0.0), side, false, "GardenHouse_%s" % side)
+		_villa(root, Vector3(sign_side * 4.50, 0.0, 0.0), side, false, "GardenHouse_%s" % side)
 		for index: int in range(3):
-			_weed(root, garden, "GardenFronds_%s_%s" % [side, index], Vector3(sign_side * 4.70, 0.0, -2.1 - float(index) * 2.5), "dense", index + (4 if side < 0 else 0))
+			if index == 0:
+				var frond: Node3D = _weed(root, garden, "GardenFronds_%s_%s" % [side, index], Vector3(sign_side * 4.10, 0.0, -2.1), "dense", 6)
+				_portrait_weed_transform(frond, side)
+			else:
+				_weed(root, garden, "GardenFronds_%s_%s" % [side, index], Vector3(sign_side * 4.70, 0.0, -2.1 - float(index) * 2.5), "dense", index + (4 if side < 0 else 0))
 	# Sparse, native-size branching on the fixed stem base is visual only;
 	# the base above remains the complete collision shape, never moving weed.
 	_weed(root, garden, "FixedGardenStemCrown", Vector3(0.0, 0.80, -4.6), "sparse", 2)
@@ -114,7 +119,11 @@ static func _flood_margin(root: Node3D) -> void:
 		_box(root, flood, "BrickCulvertAbutment_%s" % side, Vector3(sign_side * 4.30, 0.43, -16.8), Vector3(1.0, 0.86, 2.2), "brick")
 		_box(root, flood, "CulvertStoneCap_%s" % side, Vector3(sign_side * 4.30, 0.91, -16.8), Vector3(1.14, 0.10, 2.3), "stone")
 		for index: int in range(3):
-			_weed(root, flood, "WaterFronds_%s_%s" % [side, index], Vector3(sign_side * 4.85, 0.0, -10.4 - float(index) * 2.75), "dense", index + 1)
+			if index == 1:
+				var frond: Node3D = _weed(root, flood, "WaterFronds_%s_%s" % [side, index], Vector3(sign_side * 4.10, 0.0, -13.15), "dense", 6)
+				_portrait_weed_transform(frond, side)
+			else:
+				_weed(root, flood, "WaterFronds_%s_%s" % [side, index], Vector3(sign_side * 4.85, 0.0, -10.4 - float(index) * 2.75), "dense", index + 1)
 		_lamp(root, Vector3(sign_side * 3.95, 0.0, -18.1), "FloodLamp_%s" % side)
 		_iron_fence(root, flood, Vector3(sign_side * 3.95, 0.0, -13.4), 3.0, "FloodRail_%s" % side)
 
@@ -126,13 +135,15 @@ static func _villas(root: Node3D) -> void:
 	_box(root, villas, "VillaLowWallCoping", Vector3(0.0, 0.415, -22.6), Vector3(1.5, 0.07, 0.45), "stone")
 	for side: int in [-1, 1]:
 		var sign_side: float = float(side)
-		_villa(root, Vector3(sign_side * 4.95, 0.0, -22.0), side, false, "ShutteredVilla_%s" % side)
-		_villa(root, Vector3(sign_side * 4.95, 0.0, -31.5), side, side > 0, "RuinVilla_%s" % side)
+		_villa(root, Vector3(sign_side * 4.50, 0.0, -22.0), side, false, "ShutteredVilla_%s" % side)
+		_villa(root, Vector3(sign_side * 4.50, 0.0, -31.5), side, side > 0, "RuinVilla_%s" % side)
 		for index: int in range(2):
-			var at := Vector3(sign_side * 4.85, 0.0, -27.3 - float(index) * 1.0)
-			_weed(root, villas, "BleachedQuietView_%s_%s" % [side, index], at, "bleached", index + 3)
+			var at := Vector3(sign_side * (4.05 if index == 0 else 4.25), 0.0, -27.3 - float(index) * 1.0)
+			var pale: Node3D = _weed(root, villas, "BleachedQuietView_%s_%s" % [side, index], at, "bleached", index + 3)
+			_portrait_weed_transform(pale, side, Vector3(0.8, 1.0, 0.8))
 		_lamp(root, Vector3(sign_side * 3.98, 0.0, -35.5), "VillaLamp_%s" % side)
-		_weed(root, villas, "SecondVillaFronds_%s" % side, Vector3(sign_side * 4.80, 0.0, -34.8), "dense", 6)
+		var frond: Node3D = _weed(root, villas, "SecondVillaFronds_%s" % side, Vector3(sign_side * 4.10, 0.0, -34.8), "dense", 6)
+		_portrait_weed_transform(frond, side)
 	var debris := _node(villas, "OutboardRuinFurniture", Vector3(4.72, 0.0, -34.6))
 	_box(root, debris, "BrokenTableTop", Vector3(0.0, 0.32, 0.0), Vector3(0.95, 0.11, 0.62), "wood")
 	for x: float in [-0.33, 0.33]:
@@ -145,22 +156,27 @@ static func _putney(root: Node3D) -> void:
 	var putney := _node(root, "BroadPutneyApproach", Vector3.ZERO)
 	for side: int in [-1, 1]:
 		var sign_side: float = float(side)
-		_villa(root, Vector3(sign_side * 5.15, 0.0, -41.5), side, true, "PutneyTerrace_%s" % side)
+		_villa(root, Vector3(sign_side * 4.50, 0.0, -41.5), side, true, "PutneyTerrace_%s" % side)
 		_box(root, putney, "BridgeOutboardPier_%s" % side, Vector3(sign_side * 4.4, 0.65, -46.0), Vector3(1.0, 1.30, 1.8), "brick")
 		_box(root, putney, "BridgePierCap_%s" % side, Vector3(sign_side * 4.4, 1.34, -46.0), Vector3(1.12, 0.08, 1.9), "stone")
 		_iron_fence(root, putney, Vector3(sign_side * 4.0, 0.0, -46.0), 3.0, "PutneyBridgeRail_%s" % side)
-		_weed(root, putney, "SparsePutneyWeed_%s" % side, Vector3(sign_side * 4.95, 0.0, -39.6), "sparse", 1)
+		var weed: Node3D = _weed(root, putney, "SparsePutneyWeed_%s" % side, Vector3(sign_side * 4.10, 0.0, -37.6), "sparse", 1)
+		_portrait_weed_transform(weed, side, Vector3(0.9, 1.0, 0.9))
 		_lamp(root, Vector3(sign_side * 4.0, 0.0, -48.0), "PutneyLamp_%s" % side)
-	var gun: Node3D = Weybridge._field_gun(putney, Vector3(-5.05, 0.0, -47.4))
+	var gun: Node3D = Weybridge._field_gun(putney, Vector3(-4.30, 0.0, -45.8))
 	gun.name = "QuietAbandonedFieldGun"
 	gun.set_meta("scenery_only", true)
 	_collect_cutaway(root, gun)
 
 static func _villa(root: Node3D, at: Vector3, side: int, ruined: bool, label: String) -> void:
 	var villa := _node(root, label, at)
-	# Local +Z is the facade. Turning it towards the road leaves its nearest
-	# trim beyond X=4.15, with no roof suspended above playable ground.
-	villa.rotation.y = -float(side) * PI * 0.5
+	# Present the existing sash/door face to both the road and fixed camera.
+	# Compact X/Z only; door and wall height remain native. At |X|4.50 the
+	# widest intact eave stays beyond |X|3.45, outside the dry-floor edge.
+	villa.rotation.y = -float(side) * PI / 6.0
+	villa.scale = Vector3(0.65, 1.0, 0.65)
+	villa.set_meta("kit_placement_revision", ART_REVISION)
+	villa.set_meta("kit_placement_scale", villa.scale)
 	var height: float = 1.55 if ruined else 2.15
 	_box(root, villa, "BrickFacade", Vector3(0.0, height * 0.5, 0.0), Vector3(2.65, height, 0.65), "brick")
 	_box(root, villa, "Foundation", Vector3(0.0, 0.14, 0.0), Vector3(2.85, 0.28, 1.10), "stone")
@@ -212,6 +228,14 @@ static func _weed(root: Node3D, parent: Node3D, label: String, at: Vector3, vari
 		if is_instance_valid(mesh):
 			_mark_cutaway(root, mesh, false)
 	return weed
+
+static func _portrait_weed_transform(weed: Node3D, side: int, native_scale: Vector3 = Vector3.ONE) -> void:
+	# Curated existing seed forms expose an inward crown without moving roots
+	# into the route. Parent transform is separate from immutable native stats.
+	weed.rotation.y = PI if side < 0 else 0.0
+	weed.scale = native_scale
+	weed.set_meta("kit_placement_revision", ART_REVISION)
+	weed.set_meta("kit_placement_scale", native_scale)
 
 static func _node(parent: Node3D, label: String, at: Vector3) -> Node3D:
 	var node := Node3D.new()
