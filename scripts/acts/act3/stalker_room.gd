@@ -1,6 +1,7 @@
 extends "res://scripts/acts/act3/twin_suns.gd"
-## A3-L1's isolated physical-lunge consumer. Full-route encounters stay separate
-## until this rule is accepted. This room grants no campaign clear or pickups.
+## A3-L1's isolated physical-lunge fixture, separate from its authored full route.
+## Scoped rule/portrait evidence is recorded in stalker_room_validation.md.
+## This room grants no campaign clear or pickups.
 
 const StalkerScript = preload("res://scripts/acts/act3/sunbound_stalker.gd")
 const SchedulerScript = preload("res://scripts/combat/threat_scheduler.gd")

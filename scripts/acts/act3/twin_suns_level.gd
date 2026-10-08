@@ -2,7 +2,8 @@ extends "res://scripts/acts/act3/twin_suns.gd"
 ## Authored A3-L1 runtime candidate. One scheduler owns all five real Stalkers.
 ## Spatial entries activate pockets without doors or previous-clear gating.
 ## Only real source deaths clear pockets. No supplies, healing or gear grants.
-## Current stills/tuning and the complete route require queued runtime review.
+## Queued full-route and portrait evidence is recorded in levels/A3-L1.md.
+## Tuning remains provisional; production registration belongs to integration.
 
 const StalkerScript = preload("res://scripts/acts/act3/sunbound_stalker.gd")
 const SchedulerScript = preload("res://scripts/combat/threat_scheduler.gd")

@@ -1,10 +1,11 @@
 class_name CinderAct3StalkerArt
 extends Node3D
 ## Owned noncombat still-art component. Caller supplies world facing and phase.
-## Generated stills are candidates, not accepted animation or crest tells.
+## Generated facing/phase stills have scoped A3-L1 portrait review; they are not
+## frame-animation sheets. See levels/A3-L1.md for production evidence and limits.
 ## No timers, movement, collision, damage, death inference or shared actor access.
-## Rear facing/crest and the roughly five-pixel recovery lowering remain ambiguous;
-## pivots and source/footprint/landing readability need actual encounter review.
+## Rear crest/anatomy and modest recovery lowering retain documented limits.
+## Shared phase cues and ordinary whole-body vulnerability remain authoritative.
 
 const PIXEL_SIZE: float = 1.35 / 807.0
 const PHASES: Array[String] = ["idle", "approach", "warning", "lock", "active", "recovery", "defeated"]
