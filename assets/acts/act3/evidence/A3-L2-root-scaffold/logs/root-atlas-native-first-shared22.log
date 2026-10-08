@@ -1,0 +1,181 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: native atlas bytes match the frozen original; art source hash is recorded
+WARNING: Loaded resource as image file, this will not work on export: 'res://assets/acts/act3/root-latcher-atlas.png'. Instead, import the image file as an Image resource and load it normally as a resource.
+     at: load_from_file (core/io/image.cpp:2780)
+     GDScript backtrace (most recent call first):
+         [0] _run (res://tests/acts/act3/root_latcher_art_smoke.gd:55)
+PASS: native PNG remains an untouched 1254-square two-by-two atlas
+PASS: closed: native alpha-scissor silhouette bounds match source inspection
+PASS: raised: native alpha-scissor silhouette bounds match source inspection
+PASS: exposed: native alpha-scissor silhouette bounds match source inspection
+PASS: spent: native alpha-scissor silhouette bounds match source inspection
+PASS: detached art rejects without substitute bounds
+PASS: owned art leaf adds no physical body, target group or extra consumer
+PASS: actual art creates exactly four Sprite3D stills and its native contact shadow
+PASS: ready portrait native Camera3D retains the shared orthographic width/offset/angle configuration
+PASS: all poses use the exact native getter value of the one proposed 1.35/807 scale
+PASS: actual art accepts its explicit phase: clear
+PASS: clear: pure repeated native adapter returns 16 still corners plus 8 shadow corners without mutation
+PASS: clear: warning/lock/active share only the raised still; recovery and explicit defeat retain their own pose
+PASS: clear: all four zero-margin cells keep exact regions, one scale and the common planted pivot
+ERROR: FAIL: clear: adapter corners match independently derived native item quads and actual shadow bounds
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/root_latcher_art_smoke.gd:396)
+       [1] _test_phase (res://tests/acts/act3/root_latcher_art_smoke.gd:172)
+       [2] _run (res://tests/acts/act3/root_latcher_art_smoke.gd:75)
+       [3] _prepare (res://tests/acts/act3/root_latcher_art_smoke.gd:121)
+PASS: clear: native projection/unprojection and screen reprojection agree for all 24 complete corners
+PASS: clear: returned points retain no mutable art state
+PASS: actual art accepts its explicit phase: idle
+PASS: idle: pure repeated native adapter returns 16 still corners plus 8 shadow corners without mutation
+PASS: idle: warning/lock/active share only the raised still; recovery and explicit defeat retain their own pose
+PASS: idle: all four zero-margin cells keep exact regions, one scale and the common planted pivot
+ERROR: FAIL: idle: adapter corners match independently derived native item quads and actual shadow bounds
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/root_latcher_art_smoke.gd:396)
+       [1] _test_phase (res://tests/acts/act3/root_latcher_art_smoke.gd:172)
+       [2] _run (res://tests/acts/act3/root_latcher_art_smoke.gd:75)
+       [3] _prepare (res://tests/acts/act3/root_latcher_art_smoke.gd:121)
+PASS: idle: native projection/unprojection and screen reprojection agree for all 24 complete corners
+PASS: idle: returned points retain no mutable art state
+PASS: actual art accepts its explicit phase: warning
+PASS: warning: pure repeated native adapter returns 16 still corners plus 8 shadow corners without mutation
+PASS: warning: warning/lock/active share only the raised still; recovery and explicit defeat retain their own pose
+PASS: warning: all four zero-margin cells keep exact regions, one scale and the common planted pivot
+ERROR: FAIL: warning: adapter corners match independently derived native item quads and actual shadow bounds
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/root_latcher_art_smoke.gd:396)
+       [1] _test_phase (res://tests/acts/act3/root_latcher_art_smoke.gd:172)
+       [2] _run (res://tests/acts/act3/root_latcher_art_smoke.gd:75)
+       [3] _prepare (res://tests/acts/act3/root_latcher_art_smoke.gd:121)
+PASS: warning: native projection/unprojection and screen reprojection agree for all 24 complete corners
+PASS: warning: returned points retain no mutable art state
+PASS: actual art accepts its explicit phase: lock
+PASS: lock: pure repeated native adapter returns 16 still corners plus 8 shadow corners without mutation
+PASS: lock: warning/lock/active share only the raised still; recovery and explicit defeat retain their own pose
+PASS: lock: all four zero-margin cells keep exact regions, one scale and the common planted pivot
+ERROR: FAIL: lock: adapter corners match independently derived native item quads and actual shadow bounds
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/root_latcher_art_smoke.gd:396)
+       [1] _test_phase (res://tests/acts/act3/root_latcher_art_smoke.gd:172)
+       [2] _run (res://tests/acts/act3/root_latcher_art_smoke.gd:75)
+       [3] _prepare (res://tests/acts/act3/root_latcher_art_smoke.gd:121)
+PASS: lock: native projection/unprojection and screen reprojection agree for all 24 complete corners
+PASS: lock: returned points retain no mutable art state
+PASS: actual art accepts its explicit phase: active
+PASS: active: pure repeated native adapter returns 16 still corners plus 8 shadow corners without mutation
+PASS: active: warning/lock/active share only the raised still; recovery and explicit defeat retain their own pose
+PASS: active: all four zero-margin cells keep exact regions, one scale and the common planted pivot
+ERROR: FAIL: active: adapter corners match independently derived native item quads and actual shadow bounds
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/root_latcher_art_smoke.gd:396)
+       [1] _test_phase (res://tests/acts/act3/root_latcher_art_smoke.gd:172)
+       [2] _run (res://tests/acts/act3/root_latcher_art_smoke.gd:75)
+       [3] _prepare (res://tests/acts/act3/root_latcher_art_smoke.gd:121)
+PASS: active: native projection/unprojection and screen reprojection agree for all 24 complete corners
+PASS: active: returned points retain no mutable art state
+PASS: actual art accepts its explicit phase: recovery
+PASS: recovery: pure repeated native adapter returns 16 still corners plus 8 shadow corners without mutation
+PASS: recovery: warning/lock/active share only the raised still; recovery and explicit defeat retain their own pose
+PASS: recovery: all four zero-margin cells keep exact regions, one scale and the common planted pivot
+ERROR: FAIL: recovery: adapter corners match independently derived native item quads and actual shadow bounds
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/root_latcher_art_smoke.gd:396)
+       [1] _test_phase (res://tests/acts/act3/root_latcher_art_smoke.gd:172)
+       [2] _run (res://tests/acts/act3/root_latcher_art_smoke.gd:75)
+       [3] _prepare (res://tests/acts/act3/root_latcher_art_smoke.gd:121)
+PASS: recovery: native projection/unprojection and screen reprojection agree for all 24 complete corners
+PASS: recovery: returned points retain no mutable art state
+PASS: actual art accepts its explicit phase: defeated
+PASS: defeated: pure repeated native adapter returns 16 still corners plus 8 shadow corners without mutation
+PASS: defeated: warning/lock/active share only the raised still; recovery and explicit defeat retain their own pose
+PASS: defeated: all four zero-margin cells keep exact regions, one scale and the common planted pivot
+ERROR: FAIL: defeated: adapter corners match independently derived native item quads and actual shadow bounds
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/root_latcher_art_smoke.gd:396)
+       [1] _test_phase (res://tests/acts/act3/root_latcher_art_smoke.gd:172)
+       [2] _run (res://tests/acts/act3/root_latcher_art_smoke.gd:75)
+       [3] _prepare (res://tests/acts/act3/root_latcher_art_smoke.gd:121)
+PASS: defeated: native projection/unprojection and screen reprojection agree for all 24 complete corners
+PASS: defeated: returned points retain no mutable art state
+PASS: actual art accepts its explicit phase: spent
+PASS: spent: pure repeated native adapter returns 16 still corners plus 8 shadow corners without mutation
+PASS: spent: warning/lock/active share only the raised still; recovery and explicit defeat retain their own pose
+PASS: spent: all four zero-margin cells keep exact regions, one scale and the common planted pivot
+ERROR: FAIL: spent: adapter corners match independently derived native item quads and actual shadow bounds
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/root_latcher_art_smoke.gd:396)
+       [1] _test_phase (res://tests/acts/act3/root_latcher_art_smoke.gd:172)
+       [2] _run (res://tests/acts/act3/root_latcher_art_smoke.gd:75)
+       [3] _prepare (res://tests/acts/act3/root_latcher_art_smoke.gd:121)
+PASS: spent: native projection/unprojection and screen reprojection agree for all 24 complete corners
+PASS: spent: returned points retain no mutable art state
+PASS: unsupported presentation keeps the actual selected still
+PASS: explicit valid presentation clears the error and restores exact state
+PASS: absent camera adapter rejects without points
+PASS: rejects atlas region with no points/mutation; exact native setting restored: Root Latcher native AtlasTexture binding changed
+PASS: rejects atlas margin with no points/mutation; exact native setting restored: Root Latcher native AtlasTexture binding changed
+PASS: rejects atlas identity with no points/mutation; exact native setting restored: Root Latcher native AtlasTexture binding changed
+PASS: rejects atlas clipping with no points/mutation; exact native setting restored: Root Latcher native AtlasTexture binding changed
+PASS: rejects native AtlasTexture identity with no points/mutation; exact native setting restored: Root Latcher native AtlasTexture binding changed
+PASS: rejects native pixel scale with no points/mutation; exact native setting restored: Root Latcher native scale, pivot or item rectangle changed
+PASS: rejects feet offset with no points/mutation; exact native setting restored: Root Latcher native scale, pivot or item rectangle changed
+PASS: rejects sprite axis with no points/mutation; exact native setting restored: Unsupported Root Latcher billboard mode
+PASS: rejects horizontal flip with no points/mutation; exact native setting restored: Unsupported Root Latcher billboard mode
+PASS: rejects vertical flip with no points/mutation; exact native setting restored: Unsupported Root Latcher billboard mode
+PASS: rejects centred quad with no points/mutation; exact native setting restored: Root Latcher native scale, pivot or item rectangle changed
+PASS: rejects fixed-Y billboard with no points/mutation; exact native setting restored: Unsupported Root Latcher billboard mode
+PASS: rejects fixed screen size with no points/mutation; exact native setting restored: Unsupported Root Latcher billboard mode
+PASS: rejects alternate sprite region mode with no points/mutation; exact native setting restored: Root Latcher native scale, pivot or item rectangle changed
+PASS: rejects alternate frame grid with no points/mutation; exact native setting restored: Root Latcher native scale, pivot or item rectangle changed
+PASS: rejects still transform with no points/mutation; exact native setting restored: Root Latcher native still transform changed
+PASS: rejects custom override shader with no points/mutation; exact native setting restored: Root Latcher material or depth settings changed
+PASS: rejects material overlay with no points/mutation; exact native setting restored: Root Latcher material or depth settings changed
+PASS: rejects depth bypass with no points/mutation; exact native setting restored: Root Latcher material or depth settings changed
+PASS: rejects shaded sprite with no points/mutation; exact native setting restored: Root Latcher material or depth settings changed
+PASS: rejects sprite transparency with no points/mutation; exact native setting restored: Root Latcher material or depth settings changed
+PASS: rejects sprite sidedness with no points/mutation; exact native setting restored: Root Latcher material or depth settings changed
+PASS: rejects alpha discard with no points/mutation; exact native setting restored: Root Latcher material or depth settings changed
+PASS: rejects alpha threshold with no points/mutation; exact native setting restored: Root Latcher material or depth settings changed
+PASS: rejects nearest sampling with no points/mutation; exact native setting restored: Root Latcher material or depth settings changed
+PASS: rejects sprite colour with no points/mutation; exact native setting restored: Root Latcher material or depth settings changed
+PASS: rejects selected still visibility with no points/mutation; exact native setting restored: Root Latcher presented pose visibility changed
+PASS: rejects inactive future-pose drift with no points/mutation; exact native setting restored: Unsupported Root Latcher billboard mode
+PASS: rejects art local basis with no points/mutation; exact native setting restored: Root Latcher art transform or native atlas changed
+PASS: rejects inherited art world basis with no points/mutation; exact native setting restored: Root Latcher art transform or native atlas changed
+PASS: rejects art tree visibility with no points/mutation; exact native setting restored: Root Latcher art transform or native atlas changed
+PASS: rejects nonorthographic camera with no points/mutation; exact native setting restored: Actual orthographic camera basis unavailable
+ERROR: FAIL: rejects scaled camera basis with no points/mutation; exact native setting restored: 
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/root_latcher_art_smoke.gd:396)
+       [1] _reject_property (res://tests/acts/act3/root_latcher_art_smoke.gd:262)
+       [2] _test_failures (res://tests/acts/act3/root_latcher_art_smoke.gd:233)
+       [3] _run (res://tests/acts/act3/root_latcher_art_smoke.gd:76)
+       [4] _prepare (res://tests/acts/act3/root_latcher_art_smoke.gd:121)
+PASS: rejects left-handed camera basis with no points/mutation; exact native setting restored: Camera basis must be unscaled and right-handed
+PASS: rejects actual shadow visibility with no points/mutation; exact native setting restored: Actual rooted contact shadow unavailable
+PASS: rejects shadow transform with no points/mutation; exact native setting restored: Actual rooted contact shadow unavailable
+PASS: rejects actual shadow mesh identity with no points/mutation; exact native setting restored: Actual rooted contact shadow unavailable
+PASS: rejects shadow radius with no points/mutation; exact native setting restored: Contact shadow geometry changed
+PASS: rejects shadow height with no points/mutation; exact native setting restored: Contact shadow geometry changed
+PASS: rejects shadow topology with no points/mutation; exact native setting restored: Contact shadow geometry changed
+PASS: rejects actual shadow material identity with no points/mutation; exact native setting restored: Actual rooted contact shadow unavailable
+PASS: rejects shadow material overlay with no points/mutation; exact native setting restored: Actual rooted contact shadow unavailable
+PASS: rejects actual BaseMaterial3D grow property with no points/mutation; exact native setting restored: Contact shadow material changed
+PASS: rejects shadow shading with no points/mutation; exact native setting restored: Contact shadow material changed
+PASS: rejects shadow colour with no points/mutation; exact native setting restored: Contact shadow material changed
+PASS: rejects shadow billboard with no points/mutation; exact native setting restored: Contact shadow material changed
+PASS: bounds and renderer tests preserve atlas/source bytes and never request camera admission
+Native Root Latcher art source hashes: { "atlas": "05bac37c0e5d03a0238651179e32106bd562ff5999bde36dcb83d3207a0bf810", "art": "5988c036962dce874cbaef0823306c01f4773708ae5ec8033be0e69db238cb7d" }
+PASS: native art/camera leaf cleanup frees the isolated world and adapter
+Root Latcher native art adapter smoke: 118 checks, 9 failures; renderer=false; no combat/admission acceptance
