@@ -169,6 +169,23 @@
         "diagnostic_encoding_accepted": false,
         "scope": "The strict comparison converter refused diagnostic native variants; original valid full snapshot/model preserved. Complete old proof.path absent; do not infer spatial preemption from this envelope."
       }
+    },
+    "priority-spatial-first": {
+      "path": "docs/acts/act2/evidence/A2-L4/priority-spatial-first",
+      "result": {
+        "exit_code": 241,
+        "script_errors": 306,
+        "native_errors": 0,
+        "fail_markers": 0,
+        "source_count": 280,
+        "source_sha256": "d1a3675436337215b92429ea48bd1489a249dbcb8f75668fc22090f76e973b35",
+        "wrapper_sha256": "f626ee0ef2080a653a89a1c8ca0be451a5de8a014335297d09cb8a73a28cc228",
+        "raw_sha256": "24b8fe34e2a9798b108171b25e0a41ac78cc3c171126caa99ea3e0d5900ff6d8"
+      },
+      "first_meaningful_error": "SCRIPT ERROR: Trying to assign an array of type \"Array\" to a variable of type \"Array[String]\".",
+      "result_sha256": "151afb429973ef1d5cf1a7550b80112bb1a2779d5d3d64f09e0092ee886abca5",
+      "classification": "TEST runtime typed Array assignment at live fixture622;306 repeats of one error class,0nativeERROR/0assertionFAIL; verified own child SIGTERM exit241; original frozen280source files retained. No spatial or route result.",
+      "correction": "Replace typed conditional Array initializer with direct typed four-item initializer and assign six-item variant; same complete grammar and guards. Corrected native behavior still untested."
     }
   },
   "limits": [

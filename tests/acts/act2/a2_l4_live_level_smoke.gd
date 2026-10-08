@@ -13,6 +13,7 @@ const LondonSequence: Script = preload("res://scripts/acts/act2/london_approache
 const LondonRoot: Script = preload("res://scripts/acts/act2/london_approaches.gd")
 const LondonFloor: Script = preload("res://scripts/acts/act2/london_approaches_floor.gd")
 const SmokeBank: Script = preload("res://scripts/combat/smoke_bank.gd")
+const ReplacementGeometry: Script = preload("res://scripts/combat/threat_geometry.gd")
 const TailExact: Script = preload("res://scripts/campaign/exact_json.gd")
 const LONDON_SCENE: String = "res://scenes/acts/act2/a2_l4.tscn"
 const LONDON_DESTINATION: String = "res://tests/acts/act2/fixtures/a2_l4_transition_destination.tscn"
@@ -38,6 +39,10 @@ var _hp_watch_reported: bool = false
 var _hp_watch_progress_clock: float = 0.0
 var _hp_watch_timeout: bool = false
 var _hp_watch_dump_path: String = ""
+var _replacement_spatially_clear_checks: int = 0
+var _replacement_witnesses: Array[Dictionary] = []
+var _replacement_witness_keys: Dictionary = {}
+var _replacement_witness_counts: Dictionary = {"clear": 0, "hit": 0, "invalid": 0}
 # TEST ONLY observer after authoritative Hero/Scheduler/consumer/level physics.
 # It observes each native tick; it never steps clocks or moves production nodes.
 class NativeTickProbe:
@@ -413,6 +418,11 @@ func _exact_public_equal(left: Variant, right: Variant) -> bool:
 	var text_right: String = TailExact.stringify(encoded_right.value)
 	return not text_left.is_empty() and not text_right.is_empty() and text_left == text_right
 
+func _diagnostic_public_value(value: Variant) -> Dictionary:
+	# Diagnostic hook only. A derived fixture can classify native identities or
+	# sentinels; strict equality and canonical save encoding never use this hook.
+	return _closed_public_value(value)
+
 func _progress_diagnostic_root() -> String:
 	# A derived TEST fixture may override this with its own isolated save root.
 	return LONDON_TEST_ROOT
@@ -451,7 +461,7 @@ func _observe_hp_watchdog() -> void:
 	var camera: Camera3D = _game.camera
 	var safe: Rect2 = _game.hud.call("combat_safe_rect")
 	var camera_state: Dictionary = {"position": camera.global_position, "basis_x": camera.global_basis.x, "basis_y": camera.global_basis.y, "basis_z": camera.global_basis.z, "width": camera.size, "near": camera.near, "far": camera.far, "viewport_size": camera.get_viewport().get_visible_rect().size, "hud_safe_position": safe.position, "hud_safe_size": safe.size, "framing_state": _game.call("get_camera_framing_state")}
-	var diagnostic: Dictionary = _closed_public_value({"preferred_ids": _hp_watch_targets.duplicate(), "hp": values, "since_clock_s": _hp_watch_clock, "now_clock_s": state.clock_s, "hero": hero_response, "sources": sources, "state": state, "used_proof_keys": _used_proofs.keys(), "camera": camera_state, "last_action": _actions.back() if not _actions.is_empty() else {}})
+	var diagnostic: Dictionary = _diagnostic_public_value({"preferred_ids": _hp_watch_targets.duplicate(), "hp": values, "since_clock_s": _hp_watch_clock, "now_clock_s": state.clock_s, "hero": hero_response, "sources": sources, "state": state, "used_proof_keys": _used_proofs.keys(), "replacement_spatially_clear_checks": _replacement_spatially_clear_checks, "replacement_witnesses": _replacement_witnesses, "camera": camera_state, "last_action": _actions.back() if not _actions.is_empty() else {}})
 	_hp_watch_timeout = true # Stop fixture input while the public pause settles.
 	_game.request_pause()
 	await _settle()
@@ -552,10 +562,95 @@ func _follow_proof(plan: Dictionary, attack: bool) -> bool:
 func _replacement_plan(plan: Dictionary, attack: bool) -> Dictionary:
 	var candidate: Dictionary = _latest_actor_plan(_state().active_ids) if attack else _actor_plan(plan.actor_id)
 	if candidate.is_empty() or candidate.key == plan.key or _used_proofs.has(candidate.key): return {}
+	# Validate before scalar coercion/temporal early returns. Unsupported native
+	# data conservatively preempts instead of accidentally proving a safe path.
+	var decision: Dictionary = _replacement_decision(plan, candidate)
+	if not String(decision.error).is_empty():
+		_record_replacement_witness(plan, candidate, decision)
+		return candidate
 	# A later warning whose real danger begins after the complete current
 	# response is not a reason to abandon this already admitted opening.
 	if float(candidate.reservation.active_from_s) > float(plan.proof.response_complete_s): return {}
-	return candidate if float(candidate.reservation.lock_from_s) > float(plan.reservation.lock_from_s) else {}
+	if float(candidate.reservation.lock_from_s) <= float(plan.reservation.lock_from_s): return {}
+	# TEST selector only: temporal overlap does not imply that a new committed
+	# footprint endangers the original complete admitted path. Use the shared
+	# predicate, including every hold and full primary cadence, without altering
+	# Scheduler admission, proof, timing, native input, or runtime damage.
+	if not decision.intersects: _replacement_spatially_clear_checks += 1
+	_record_replacement_witness(plan, candidate, decision)
+	return candidate if decision.intersects else {}
+
+func _replacement_decision(plan: Dictionary, candidate: Dictionary) -> Dictionary:
+	if not candidate.get("reservation") is Dictionary or not plan.get("reservation") is Dictionary or not plan.get("proof") is Dictionary:
+		return {"intersects": true, "error": "Native candidate/original lease and original proof required"}
+	var lease: Dictionary = candidate.reservation
+	var original: Dictionary = plan.reservation
+	if not ReplacementGeometry.finite_number(original.get("lock_from_s")) or float(original.lock_from_s) < 0.0 or not ReplacementGeometry.finite_number(lease.get("lock_from_s")) or float(lease.lock_from_s) < 0.0:
+		return {"intersects": true, "error": "Finite native original/candidate lock deadlines required"}
+	if lease.get("armed") != true or not lease.get("geometry") is Dictionary:
+		return {"intersects": true, "error": "Candidate lacks its actual armed committed geometry"}
+	var geometry: Dictionary = lease.geometry
+	var problem: String = ReplacementGeometry.error(geometry)
+	if not problem.is_empty(): return {"intersects": true, "error": problem}
+	if not ReplacementGeometry.finite_number(lease.get("active_from_s")) or not ReplacementGeometry.finite_number(lease.get("active_until_s")) or float(lease.active_from_s) <= float(lease.lock_from_s) or float(lease.active_until_s) <= float(lease.active_from_s):
+		return {"intersects": true, "error": "Candidate requires finite ordered actual activation deadlines"}
+	var proof: Dictionary = plan.proof
+	problem = _replacement_path_error(proof)
+	if not problem.is_empty(): return {"intersects": true, "error": problem}
+	if not is_instance_valid(_game) or not is_instance_valid(_game.player) or not _game.player.is_inside_tree() or _game.player.is_queued_for_deletion():
+		return {"intersects": true, "error": "Actual shared Hero body is unavailable"}
+	var hero: CinderPlayer = _game.player
+	var body: CollisionShape3D = hero.get_node_or_null("BodyCollision") as CollisionShape3D
+	if body == null or not body.is_inside_tree() or body.is_queued_for_deletion() or body.disabled or not body.shape is CapsuleShape3D or not hero.global_position.is_finite() or not hero.global_basis.is_finite() or not body.transform.basis.is_finite() or not body.position.is_finite() or not body.global_basis.is_finite() or not body.global_position.is_finite() or not hero.global_basis.is_equal_approx(Basis.IDENTITY) or not body.transform.basis.is_equal_approx(Basis.IDENTITY) or not body.position.is_equal_approx(Vector3(0, CinderThreatScheduler.CAPSULE_CENTER_Y, 0)):
+		return {"intersects": true, "error": "Actual enabled fixed shared capsule convention is required"}
+	var capsule: CapsuleShape3D = body.shape as CapsuleShape3D
+	if not is_finite(capsule.radius) or capsule.radius <= 0.0 or capsule.radius > CinderThreatScheduler.CAPSULE_RADIUS or not is_finite(capsule.height) or capsule.height <= 0.0 or not is_equal_approx(capsule.radius, CinderThreatScheduler.CAPSULE_RADIUS) or not is_equal_approx(capsule.height, CinderThreatScheduler.CAPSULE_HEIGHT):
+		return {"intersects": true, "error": "Actual capsule dimensions differ from shared Scheduler proof"}
+	var path: Array[Dictionary] = []
+	path.assign(proof.path)
+	var padding: float = CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN
+	return {"intersects": ReplacementGeometry.timed_path_hits(geometry, path, float(lease.active_from_s), float(lease.active_until_s), padding), "error": "", "actor_padding": padding, "body": {"hero_path": String(hero.get_path()), "collision_path": String(body.get_path()), "disabled": body.disabled, "hero_basis": hero.global_basis, "collision_basis": body.transform.basis, "collision_position": body.position, "radius": capsule.radius, "height": capsule.height}}
+
+func _replacement_path_error(proof: Dictionary) -> String:
+	# timed_path_hits expects well-formed native segments; it does not itself
+	# validate missing keys/times. Unsupported transport must fail closed here.
+	if proof.get("accepted") != true or proof.get("uses_blast") != false or proof.get("uses_invulnerability") != false or proof.get("proof_scope") != "static_box_floor_full_dash_stationary_primary": return "Complete accepted ordinary-primary native proof required"
+	if not proof.get("path") is Array or proof.path.size() not in [4, 6]: return "Unsupported complete native response path"
+	if not ReplacementGeometry.finite_number(proof.get("primary_time_s")) or not ReplacementGeometry.finite_number(proof.get("response_complete_s")) or float(proof.response_complete_s) <= float(proof.primary_time_s): return "Finite complete primary cadence required"
+	if not ReplacementGeometry.finite_number(_expected_stats.get("primary_cooldown")) or float(_expected_stats.primary_cooldown) <= 0.0 or float(proof.response_complete_s) != float(proof.primary_time_s) + float(_expected_stats.primary_cooldown): return "Original response omits the full exact canonical primary cooldown"
+	if not ReplacementGeometry.finite_vector(proof.get("landing")) or not ReplacementGeometry.finite_vector(proof.get("attack_position")): return "Finite original landing and ordinary-primary position required"
+	var kinds: Array[String] = ["recognition_and_ready", "escape_dash", "recovery_wait", "ordinary_primary"]
+	if proof.path.size() == 6:
+		kinds.assign(["recognition_and_ready", "escape_dash", "recovery_wait", "positioning_dash", "primary_ready", "ordinary_primary"])
+	var previous: Dictionary = {}
+	for index: int in range(proof.path.size()):
+		var segment: Variant = proof.path[index]
+		if not segment is Dictionary or segment.size() != 5: return "Native segment requires its five canonical fields at %d" % index
+		for key: Variant in segment:
+			if not key is String or key not in ["from", "to", "start_s", "end_s", "kind"]: return "Unsupported native segment field at %d" % index
+		if segment.get("kind") != kinds[index] or not ReplacementGeometry.finite_vector(segment.get("from")) or not ReplacementGeometry.finite_vector(segment.get("to")) or not ReplacementGeometry.finite_number(segment.get("start_s")) or not ReplacementGeometry.finite_number(segment.get("end_s")): return "Unsupported or nonfinite native segment at %d" % index
+		if float(segment.start_s) < 0.0 or float(segment.end_s) < float(segment.start_s): return "Unordered native segment at %d" % index
+		if not previous.is_empty() and (float(segment.start_s) != float(previous.end_s) or segment.from != previous.to): return "Discontinuous complete native response at %d" % index
+		if segment.kind not in ["escape_dash", "positioning_dash"] and segment.from != segment.to: return "Native hold moves at %d" % index
+		if segment.kind in ["escape_dash", "positioning_dash"] and (float(segment.end_s) <= float(segment.start_s) or segment.from == segment.to): return "Native dash is empty at %d" % index
+		previous = segment
+	if proof.path[1].to != proof.landing or previous.from != proof.attack_position or float(previous.start_s) != float(proof.primary_time_s) or float(previous.end_s) != float(proof.response_complete_s): return "Path omits its original landing/opening or complete primary cadence"
+	return ""
+
+func _record_replacement_witness(plan: Dictionary, candidate: Dictionary, decision: Dictionary) -> void:
+	# Bounded exact evidence of actual temporal candidates, not manufactured
+	# paths. Preserve up to4 clear,2 intersecting,2 invalid distinct decisions.
+	var category: String = "invalid" if not String(decision.error).is_empty() else ("hit" if decision.intersects else "clear")
+	var key: String = String(plan.key) + "->" + String(candidate.key)
+	if _replacement_witness_keys.has(key) or int(_replacement_witness_counts[category]) >= (4 if category == "clear" else 2): return
+	_replacement_witness_keys[key] = true
+	_replacement_witness_counts[category] = int(_replacement_witness_counts[category]) + 1
+	var witness: Dictionary = {"api_revision": "a2-l4-test-replacement-witness-1", "scope": "Actual native TEST selector differential; no runtime admission/proof mutation", "clock_s": _state().clock_s, "temporal_candidate": true if String(decision.error).is_empty() else null, "later_lock": true if String(decision.error).is_empty() else null, "original": {"source_id": plan.source_id, "actor_id": plan.actor_id, "key": plan.key, "reservation": plan.reservation, "complete_proof": plan.proof}, "candidate": {"source_id": candidate.source_id, "actor_id": candidate.actor_id, "key": candidate.key, "reservation": candidate.reservation}, "decision": decision}
+	_replacement_witnesses.append(witness.duplicate(true))
+	var encoded: Dictionary = _diagnostic_public_value(witness)
+	var exact: String = TailExact.stringify(encoded.get("value", {})) if encoded.get("accepted", false) else ""
+	_expect(not exact.is_empty(), "actual native temporal/spatial selector witness is exact and nonempty: " + category)
+	print("L4 TEST native replacement differential: ", exact)
 
 func _plan_current(plan: Dictionary) -> bool:
 	var current: Dictionary = _state().exchanges.get(plan.actor_id, {})

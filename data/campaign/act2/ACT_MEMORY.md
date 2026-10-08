@@ -211,3 +211,13 @@ Genuine stage5 freshGUI continuation1285/1 reduces Tender30→6, then exposes TE
 ## L4 current bounded selector task
 
 Actual quiet inward swipe restores both admissions, but Tender6HP continuation exits2 incomplete after100native seconds,1609/0/noerrors. Valid full native Hero90/current leases/checkpoint envelope preserved e5753b6d53705c16a79238e404aa321d2da47b410572a23110944a527057bfd1 under priority-stalled-first/earned-timeout. Strict comparison converter refused native diagnostic variants (diagnosticfalse), complete oldproofpath absent. Next narrow TEST-only temporal/spatial replacement review with public timed_path_hits, failclosedcompletepath/nativecapsule validation and exact actual decision logging; diagnostic-only conversion hook separatefrom strict/save authority. Resume genuine earlier6HP model; no runtime change/shared request/human decision. Own engine closed. Lifecyclewatchdog0187 remainsuntested. Fullroute/matrix/lifecycle/portraits stillpending.
+
+
+## Shared publications received during current L4 diagnosis
+
+Root messages ba6562b6-ed68-488a-ad9b-a6ba36ac0544 and52db09ba-3a93-4e80-82c6-3cff50a31409 publish Shared31 4d4564d35c677859e15dfd5da7901f344b594bbc (additive real-candidate camera APIs, live bodies unchanged) and Shared32 9caeddf0540cb9c37479a470ad0fdf86425594cc (narrow Authored comparison/Program/projectedCue/spore serialization optimizations; original targeted scopes/rootcostrequests remain qualified). Current L4 failing-reproduction artifacts/source guards are pinned to original Shared30; close this directly affected TEST selector check, then preserve-adopt exact32 including31 with fullownedretention and ACK. Five unowned generated shared-test UIDs are root-resolved byte-identically; compare published metadata, neverdelete/remint ormergeotherworker settings. No31/32 adoption or newruntime result is claimed yet.
+
+
+## Current L4 spatial test correction
+
+Frozen priority-spatial-first exits241/306 repetitions of one TEST typed-array assignment error,0nativeERROR/0FAIL; only verified own child stopped,280sources/logs/interruption preserved. Direct typed initialization+six-item assign preserves original four/six path grammar; corrected helperSHAaad7c51cafbb9e6530269a8ba5b3ba56c6187c45c7882fd406573b1525a49d02 unexecuted. No spatial/route pass. Own engine closed; preserve-adopt exactShared32including31/fullownedretention, explicit source compatibility, then same genuine6HP check. No human decision/fullL4 completion.
