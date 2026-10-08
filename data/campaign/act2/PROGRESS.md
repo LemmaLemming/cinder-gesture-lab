@@ -1,8 +1,9 @@
 # Act 2 progress
 
-Updated 9 October 2026. **L1/L2 are canonically accepted. L3 authored desktop content and owner validation are complete: five Standard kits, Assisted/Challenge, current native Cargo570/23 views, actual first/fatal375, earned B02252, required-only living-Tender2,631, affected27 lifecycle375 and28 bank73. HUD fix published/adopted. L3 HANDOFF is being finalized; five later productions remain unstarted.** [Progress](PROGRESS.md), [memory](ACT_MEMORY.md), [current L3 handoff](../../../docs/acts/act2/A2_L3_HANDOFF.md) and [exact scoped evidence](../../../docs/acts/act2/evidence/A2-L3/index.json) preserve limitations and original failures. Six Act2 levels remain before canonical completion.
+Updated 9 October 2026. **L1/L2 canonically accepted; complete L3 desktop HANDOFF59746621-2302-436d-ab1c-b99602576475 sent at8ddce7cb5290cd36037033eb1edcb02a6015adfd/shared28. Integration acceptance is separate. L4 source/design gates and initial owned assembly/scenery production are underway, untested. L5 and all three optional productions remain unstarted.** [Current L4 record](levels/A2-L4.md), [frozen L3 handoff](../../../docs/acts/act2/A2_L3_HANDOFF.md) and [progress](PROGRESS.md) preserve exact scopes. Six Act2 levels remain before canonical completion.
 
-Current consumed `campaign-shared-28`, publicationec070f6254082c2cd32a87a707a16c1b9fb61a72, preserving merged869b9a9707c89de2a20f0181d5f775d5343021a from ownedc0ff1faa843de93c2e530b26a811b4913ce383e0. All1,024 tracked owned SHA256 identical and both ancestries verified; ACK26195001-f1d5-4add-ab63-2f37d0848f2f. Shared28 actual ordinary-bank transport73/0 closes changed direct Scheduler/Cue/preload compatibility. The requested HUD correction is resolved by exact published/root native49/0 evidence. All original route/portrait/lifecycle/failed records preserve their original baseline. Complete owned L3 candidate ready for final HANDOFF; integration acceptance remains separate.
+Current consumed `campaign-shared-29`, publication93c3c5a969306d8dda4499349955e0ff3be1c165, preserving merged363c41bccae9f8a5f5cfeb9675db0a3c600ec6a from L3 candidate8dd. All1115 prior owned tracked hashes retained and both ancestries verified; ACKf8555469-2201-4986-ae32-784ca9496a7c. One affected actual L3 first-checkpoint/fatal GUI Continue/Retry375/0 clean, [separate29 evidence](../../../docs/acts/act2/evidence/shared29-adoption/index.json). Frozen L3 source/evidence/candidate remain shared28 and original25/26/27 scopes; no old B02/route/art rerun.
+
 
 Earlier shared23 adoption: publication `2304d25e51d269edd3d6fc90b142f87b2ad35a6d`, preserving merge `74de3ea5f5d06ba5eca8b6ea74b8aceed2fbe28f`, ACK `3144d408-e50c-413e-ac8b-deec18f732dd`. All271 tracked owned files were preserved from exact L2 HANDOFF candidatefd5fd3d. Directly affected actual crossing/fresh-camera/full-route check passes **371/0 clean**, [separate adoption evidence](../../../docs/acts/act2/evidence/A2-L2-shared23-adoption/README.md). Original shared22 bundle/hashes/results remain frozen; no unchanged L1/art/unused crescent/replay/broad suite.
 
@@ -12,8 +13,8 @@ Earlier consumed baseline: Consumed `campaign-shared-22`: publication `4de8b6008
 | --- | --- | --- |
 | A2-L1 Horsell Common | Original candidate/both common Scout patches adopted; current40/42 original files match | Supplemental 186/0 + affected 285/0 clean, adopted8c37b1e0/RESPONSEd810feca |
 | A2-L2 Weybridge and Shepperton | Canonical registry accepted exactfd5fd3d; registration4b0e08d | Integration330/0+338/0+Journey22/0 separate; owner shared23 crossing371/0 retained |
-| A2-L3 Black Smoke and the Ruined House | Complete owned desktop candidate and scoped validation; current shared28 adopted | Exact HANDOFF and independent integration registration/acceptance |
-| A2-L4 Red Weed and the London Approaches | Production unstarted | L3 handoff |
+| A2-L3 Black Smoke and the Ruined House | Complete HANDOFF59746621 at8dd/shared28; affected29 lifecycle375 separate | Independent integration registration/acceptance |
+| A2-L4 Red Weed and the London Approaches | Source/gates complete; initial new assembly/scenery/rules in production, untested | Finish native composition, affected route/lifecycle/portrait checks and HANDOFF |
 | A2-L5 Dead London and Regent's Park | Production unstarted | L4 handoff |
 | A2-O1 Cylinder Perimeter | Production unstarted | Main levels complete; reuse L1 kit |
 | A2-O2 Clear Air Circuit | Production unstarted | O1 handoff; reuse L3 kit |
