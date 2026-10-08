@@ -1,6 +1,6 @@
 # Cinder shared progress
 
-Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current API: campaign-shared-4 [SHARED_CONTRACT](SHARED_CONTRACT.md).
+Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current published API: campaign-shared-15 [SHARED_CONTRACT](SHARED_CONTRACT.md).
 
 ## Inventory and ownership
 
@@ -21,12 +21,12 @@ Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 
 | Durable records and role mailbox | Complete | Three shared records; run `cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2`; no act writes before READY |
 | Reviewed parallel baseline and READY | Complete | Baseline ff34f58; three clean linked act checkouts, canonical roots/common queue/distinct ports verified; READY published in coordination status |
 | Level and executed-world-action interfaces | Verified | campaign-level-1 and world-actions-1; 92 level and 119 action checks, compatible with prior preview API |
-| Shared foundations | Verified modules | Player snapshots72, save/progression45, settings182, bounded scheduler65; consumer evidence below; tracking/lunge and act acceptance remain pending |
-| Campaign/save/scheduler/UI/settings consumers | In progress | Tested live shell/menu/cues/presentation/enemy/input consumers publish as shared3; tracking/lunge/loading-arm adapters remain in progress |
-| Act level acceptance | None | All 15 main/9 optional remain authored proposals; no campaign scenes accepted |
-| Integrated desktop campaign | Pending | All 24 levels and required shared-system flows must be accessible/tested |
+| Shared foundations | Verified modules | Exact player/save/settings, ordinary and replay scheduler, actual-body motion, spore and portrait framing evidence below; authored consumers remain independent acceptance obligations |
+| Campaign/save/scheduler/UI/settings consumers | Verified shared interfaces; authored integration continues | Production Title/Journey/Continue/Retry passed for A1-L1; pure lunge preview, circular consumer and parent capture retirement publication are in progress |
+| Act level acceptance | 1 / 24 | A1-L1 authored06628abb, productionc19832f9 accepted; A1-L2 and A2/A3-L1 active |
+| Integrated desktop campaign | Active | Remaining23 levels and required shared-system flows must be accessible/tested; stop before mobile/release |
 
-No level commits are accepted yet. `campaign-shared-1` passed queued verification and is published at baseline `ff34f58e1c29f44b17958f59107e19c99cc91d86`. READY is a setup milestone, not campaign completion.
+One level is accepted; the endpoint remains all24. The original `campaign-shared-1` passed queued verification and was published at baseline `ff34f58e1c29f44b17958f59107e19c99cc91d86`. READY is a setup milestone, not campaign completion.
 
 ## READY checkout assignments
 
@@ -256,3 +256,20 @@ Focused new target translated_lunge294/0; existing body62/motion19 plus affected
 Regular mailbox/status and compact three-worker check found all active. A1 accepted registration/source plus shared12/13 ancestry independently verified at HEADefe28bd36beaa2c65154da97200dc8f6d320d455; A2 shared12/13 verified at HEAD24de1aa84960477a6c93993827040e586a01ead1; A3 shared12 verified at preserving HEAD7fa49deb3ba1608d27620196fe8fe00b2dc53868 (latest source work). Root owns new A1-L2 circular stationary/committed-rusher opening requestd02f12e5 and Act3 pure pre-admission lunge/camera witness requestad0e557f; canonical responses956bcc1f/4da057ff published immediately, scoped helper circle work and root preview next. Replay parent retirement remains a separate helper dependency; no act ownership changes or duplicate workers. Campaign1/24 accepted, goal ACTIVE.
 
 Development tooling: 20 tests and six profile subtests passed after registering the new named target. No baseline-wide engine suite was repeated.
+
+Exact shared14 `e2e1de591d62e580dbaf1c512a78e3347e5cf277` published atomically to canonical run/status and all three original owners. Pure preview, circle consumer and parent retirement stay separate dependencies.
+
+Independent translated fixture audit measured 28 clear capsule/box sweeps with zero native endpoint error and zero per-step real M&C parity error at all sampled poses, including signed31/−12.4/inward±510. These are shared fixture measurements, not a new authored scene run. Companion draft retained in /tmp/cinder-translated-lunge-evidence.md. Revision14 includes662 engine checks in total; an intermediate user update incorrectly said700 and was explicitly corrected.
+
+Parent capture gate first final69/0 awaits one material review correction: sequence-retired callbacks may alter actual HP/gear/queued motion without immediately publishing a world action. Reference helper owns the exact post-callback frozen-player/live/paused check and genuine damage/deferred-dash regressions. Complete retirement remains committed before callbacks and cannot roll back. Historical/FIFO/paired restore review otherwise found no material defect. Root delegated the separate pure preview implementation to the systems helper after releasing shared14 Scheduler; compatible circle consumer remains the other helper's scope.
+
+Act3 exact shared14 adoption ACK2776ae51 independently verified in assigned checkout ancestry at preserving HEAD21c6b1bce1c372e9e3f07e24fb99b612358666b6; owned native-art64c61ec and limits9cd4ee5 remain intact. Actual first-pocket and multi-fatal tests pending, no authored pass claimed. Last regular compact check: A1 prepares actual L2 rusher; A2 final portrait/default-loadout route underway; A3 camera/retained-source scope in progress. All active.
+
+
+## Shared15 parent capture retirement
+
+New replay-capture-gate-1 binds one exact shared Player and encounter epoch, drains its actual authoritative action history before advancing the actual actor clock, and prepares only its current complete one/two-slot private generation. Whole FIFO retirement plus receipt commits before any consumer callback. Reentrant/historical/altered/incomplete proposals cannot reauthorize a capture; existing gates restore only exact idempotence, fresh gates require the trusted parent's independently validated coherent saved-player unit. Consumed history can remain inert after actor history rolls off; reusable samples must still match actual saved-player history. These hashes bind exact data and do not authenticate arbitrary modified saves or authorize parallel custodians.
+
+Independent review found and repaired a material post-callback gap: genuine damage, gear changes and started/buffered movement do not necessarily publish a completed action. The gate now verifies the exact full live paused player after callbacks while retaining its transaction guard; violations retain retirement and visibly fault the consumer. Failure-handler reentry also rejects. Final leaf112/0, exit0, .cinder/replay-capture-gate-boundary-second.log and absolute engine log; no Script/Parse/runtime errors, existing host CA startup diagnostic retained. Prior69/0 covered only publication callbacks; initial extended112/7 corrected native-history encoding and actual combo-window fixture setup, no production clocks/guards relaxed. Frozen modules/UIDs and local documentation links reviewed.
+
+This additive parent gate changes no existing capture/sequence/cursor/witness/playback/Player or Scheduler behavior; no unused baseline suites repeated. Named dev target maps to the exact tested new fixture. It does not prove/reserve/bind physical playback itself, implement a Crystalman/Echo encounter, certify a portrait/full route, or register a level. Those remain the actual owner's consumer integration obligations. Circle consumer and pure lunge preview candidates are excluded from this publication. One of24 accepted; goal ACTIVE.

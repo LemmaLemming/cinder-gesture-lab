@@ -63,6 +63,7 @@ SUITES = {
     "replay_witness": "tests/replay_witness_smoke.gd",
     "replay_scheduler": "tests/replay_scheduler_smoke.gd",
     "replay_playback": "tests/replay_playback_smoke.gd",
+    "replay_capture_gate": "tests/replay_capture_gate_smoke.gd",
     "spore_field": "tests/spore_field_smoke.gd",
     "spore_repulsion": "tests/spore_repulsion_smoke.gd",
     "repulsion_route": "tests/repulsion_route_smoke.gd",
