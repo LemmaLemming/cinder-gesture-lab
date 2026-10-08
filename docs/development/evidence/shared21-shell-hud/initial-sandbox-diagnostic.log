@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+PASS: only isolated TEST ONLY registry/save bindings configure the actual shell
+PASS: production CampaignShell starts at paused Title without a fabricated campaign level
+ERROR: Could not create directory: '/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-campaign-shell-hud-framing-89513'.
+   at: make_dir_recursive (core/io/dir_access.cpp:179)
+   GDScript backtrace (most recent call first):
+       [0] write_payload (res://scripts/campaign/save_store.gd:75)
+       [1] _commit (res://scripts/campaign/attempts.gd:363)
+       [2] begin_story (res://scripts/campaign/attempts.gd:52)
+       [3] _perform (res://scripts/campaign/shell.gd:222)
+       [4] _drain (res://scripts/campaign/shell.gd:192)
+ERROR: FAIL: public Begin reaches actual native fixture through the shared preparation/save/install path: Cannot create save directory
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/campaign_shell_hud_framing_smoke.gd:153)
+       [1] _run (res://tests/campaign_shell_hud_framing_smoke.gd:56)
+       [2] _frames (res://tests/campaign_shell_hud_framing_smoke.gd:134)
+Campaign Shell HUD framing smoke: 3 checks, 1 failures; /Users/howardchen/Documents/ChatGPT/video game idea/.cinder/campaign-shell-hud-framing-headless-89513
