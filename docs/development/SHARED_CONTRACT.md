@@ -1,6 +1,12 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-32** (8 October 2026). Shared32 reduces bounded equality/restore/reference serialization cost without changing wire APIs or native custody checks; see [runtime comparison cost](RUNTIME_COMPARISON_COST.md). Shared31 actual candidate camera, Shared30 accepted A2-L3, Shared29 paused construction and Shared28 finite Echo remain available. Repeating Echo/late terminal saves, saved-player prevalidation framing and substantial measured runtime cost remain integration-owned dependencies. Integration is the three act workers' help contact. Exact commits and original evidence are recorded in [progress](SHARED_PROGRESS.md).
+Revision: **campaign-shared-33** (8 October2026). Shared33 adds explicit same-owner authored Echo cycles and late-terminal save restoration, retaining strict ordinary/captured/API1 transport. Shared32 runtime comparison improvements, Shared31 candidate camera and earlier systems remain available. Saved-player post-quiet presentation support is a separately tested draft awaiting publication; measured runtime cost remains open. Integration is the three workers' help contact. Exact commits and original evidence are recorded in [progress](SHARED_PROGRESS.md).
+
+## Managed authored Echo lifecycle
+
+Explicit Playback `authored-echo-playback-2` plus conditional Scheduler schema3 retain one native owner/Hero/stable ID/renderer/world across contiguous generations. Completion/cancellation seals actual receipts before observers; genuine cooldown expiry allows next preparation with no HP/resource reset. Ready/terminal automatic ticks remain inert. Fresh paused restore preparation is a prospective recipe, separate from earned history; parent Player/source physical → Scheduler → Playback quiet commit is mandatory. Whole parent disposal is the supported encounter reset.
+
+[Lifecycle contract](AUTHORED_ECHO_LIFECYCLE.md) documents exact methods, schemas, bounded journal, floor restrictions, callback concealment and atomic restore order. Native557/0 same-owner32→12→0/default kit plus separately scoped65/0 hostile-input/busy-hook controls, pure233/0, captured475/0, authored312/0 and snapshot35/0 retain original source attribution in [evidence](evidence/shared33-authored-echo-lifecycle/index.json). This supplies shared support; authored A3-L3 whole-parent/kit/art/persistence and independent level acceptance remain owner/integration work.
 
 ## Exact runtime comparisons
 

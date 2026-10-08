@@ -27,6 +27,9 @@ import time
 ROOT = Path(__file__).resolve().parents[2]
 GODOT_APP = Path(".tools/Godot.app/Contents/MacOS/Godot")
 SUITES = {
+    "authored_echo_lifecycle": "tests/authored_echo_lifecycle_smoke.gd",
+    "authored_echo_lifecycle_codec": "tests/authored_echo_lifecycle_codec_smoke.gd",
+    "authored_echo_restore_input": "tests/authored_echo_restore_input_smoke.gd",
     "camera_candidate_framing": "tests/camera_candidate_framing_smoke.gd",
     "mechanics": "tests/mechanics_smoke.gd",
     "equipment": "tests/equipment_smoke.gd",
