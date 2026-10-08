@@ -109,11 +109,13 @@ static func plan(owner: CharacterBody3D, motion: Dictionary, floor_regions: Arra
 	if sweep.has("error"):
 		return sweep
 	var travel: Vector3 = sweep["travel"]
-	if not travel.is_finite() or absf(travel.y) > EPSILON or travel.dot(direction) < -EPSILON or travel.dot(direction) > float(motion["distance"]) + EPSILON or (travel - direction * travel.dot(direction)).length() > EPSILON:
-		return {"error": "Source collision cannot be represented by a straight shortened route"}
 	var start: Vector3 = owner.global_position
-	var endpoint: Vector3 = start + travel
-	return {"kind": "lunge", "start": start, "planned_endpoint": endpoint, "current_position": start, "current_velocity": Vector3.ZERO, "direction": direction, "speed": float(motion["speed"]), "distance": float(motion["distance"]), "duration_s": duration, "damage_radius": float(motion["damage_radius"]), "body_signature": description["signature"], "body_collision_path": path, "collision_shortened": travel.length() < intended.length() - EPSILON, "actual_collided": false, "finished": false, "geometry": Geometry.lane(start, endpoint, float(motion["damage_radius"])), "source_radius": description["radius"], "foot_offset": description["foot_offset"]}
+	var endpoint: Vector3 = sweep["end"]
+	var route_precision: float = BodySweep.position_rounding_bound(start, endpoint)
+	if not travel.is_finite() or absf(travel.y) > EPSILON or travel.dot(direction) < -route_precision or travel.dot(direction) > float(motion["distance"]) + route_precision or (travel - direction * travel.dot(direction)).length() > route_precision:
+		return {"error": "Source collision cannot be represented by a straight shortened route"}
+	var shortened: bool = sweep["collided"] and travel.dot(direction) < float(motion["distance"]) - route_precision
+	return {"kind": "lunge", "start": start, "planned_endpoint": endpoint, "current_position": start, "current_velocity": Vector3.ZERO, "direction": direction, "speed": float(motion["speed"]), "distance": float(motion["distance"]), "duration_s": duration, "damage_radius": float(motion["damage_radius"]), "body_signature": description["signature"], "body_collision_path": path, "collision_shortened": shortened, "actual_collided": false, "finished": false, "geometry": Geometry.lane(start, endpoint, float(motion["damage_radius"])), "source_radius": description["radius"], "foot_offset": description["foot_offset"]}
 
 
 static func advance(owner: CharacterBody3D, motion: Dictionary, elapsed_s: float, floor_regions: Array = []) -> Dictionary:
@@ -130,7 +132,7 @@ static func advance(owner: CharacterBody3D, motion: Dictionary, elapsed_s: float
 	if not is_finite(elapsed_s) or elapsed_s < 0:
 		return {"error": "Finite elapsed lunge time required"}
 	var progressed: float = minf(float(motion["distance"]), float(motion["speed"]) * elapsed_s)
-	var desired: Vector3 = motion["start"] + motion["direction"] * progressed
+	var desired: Vector3 = BodySweep.anchored_position(motion["start"], motion["direction"], progressed)
 	var step: Vector3 = desired - owner.global_position
 	if step.dot(motion["direction"]) < -EPSILON:
 		return {"error": "Lunge clock cannot move backward"}
@@ -153,19 +155,21 @@ static func advance(owner: CharacterBody3D, motion: Dictionary, elapsed_s: float
 		owner.velocity = Vector3.ZERO
 		return {"error": "Collision-shortened lunge endpoint changed before movement"}
 	owner.velocity = motion["direction"] * float(motion["speed"])
-	var remaining: Vector3 = step
+	var frame_start: Vector3 = owner.global_position
+	var count: int = maxi(1, ceili((step.length() - EPSILON) / SWEEP_STEP))
 	var contact: KinematicCollision3D = null
-	while remaining.length() > EPSILON:
-		var substep: Vector3 = remaining.normalized() * minf(SWEEP_STEP, remaining.length())
+	for index: int in range(count):
+		var target: Vector3 = BodySweep.anchored_position(frame_start, step, float(index + 1) / float(count))
+		var substep: Vector3 = target - owner.global_position
 		contact = owner.move_and_collide(substep, false, SAFE_MARGIN, false, 1)
 		var travelled: Vector3 = owner.global_position - motion["start"]
 		var progress: float = travelled.dot(motion["direction"])
-		if not travelled.is_finite() or absf(travelled.y) > EPSILON or (travelled - motion["direction"] * progress).length() > EPSILON or progress > maximum + ENDPOINT_TOLERANCE:
+		var route_precision: float = BodySweep.position_rounding_bound(motion["start"], owner.global_position)
+		if not travelled.is_finite() or absf(travelled.y) > EPSILON or (travelled - motion["direction"] * progress).length() > route_precision or progress > maximum + ENDPOINT_TOLERANCE:
 			owner.velocity = Vector3.ZERO
 			return {"error": "Real source left the supported straight committed lane"}
 		if contact != null:
 			break
-		remaining -= substep
 	result["current_position"] = owner.global_position
 	result["actual_collided"] = contact != null
 	result["finished"] = contact != null or progressed >= float(motion["distance"]) - EPSILON
