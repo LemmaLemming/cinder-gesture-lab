@@ -103,6 +103,11 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 	if _damage_window_required and (not _damage_window_gate.is_valid() or not bool(_damage_window_gate.call())):
 		_damage_busy = false
 		return result
+	# The configured gate can synchronously pause, retire bindings or defeat
+	# the Hero even when it returns true. HP commits only in current context.
+	if not _context_valid() or hp <= 0.0 or get_tree().paused or phase != "recovery":
+		_damage_busy = false
+		return result
 	var loss: float = minf(hp, amount)
 	hp -= loss
 	result["accepted"] = loss > 0.0

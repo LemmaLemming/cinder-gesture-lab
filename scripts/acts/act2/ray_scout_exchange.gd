@@ -282,6 +282,10 @@ func tick() -> void:
 				record.presentation_witness = {"landing": _proofs[id].landing, "attack_position": _proofs[id].attack_position}
 		record.phase = String(live.state)
 		_present(id)
+		# A held pause cannot preserve danger after this same publication lost
+		# its actual source/cue. Retire it before any paused-path retention.
+		if record.status == "running" and not _required_presentation_valid(id):
+			cancel(id, "required_scout_presentation_unavailable")
 		if get_tree().paused:
 			_freeze_paused_tick(now)
 			_transaction_depth -= 1
@@ -318,7 +322,9 @@ func damage_window_open(actor_id: String) -> bool:
 	if record.status != "running" or record.phase != "recovery" or record.exchange.is_empty() or not record.exchange.adapter.locked or not _required_presentation_valid(actor_id) or not _presentation_allowed(actor_id) or get_tree().paused or not _required_presentation_valid(actor_id):
 		return false
 	var live: Dictionary = _scheduler.reservation_state(String(record.exchange.id))
-	return not get_tree().paused and record.status == "running" and not live.is_empty() and live.armed and live.state == "recovery" and _scheduler.get_clock() > float(live.active_until_s) and _scheduler.get_clock() <= float(live.recovery_until_s) and _exchange_data(live) == record.exchange
+	# Querying another source can synchronously invalidate its owner and run
+	# observers. Recheck this source/Hero after the query before incoming HP.
+	return not get_tree().paused and record.status == "running" and _required_presentation_valid(actor_id) and not live.is_empty() and int(live.source_instance_id) == (_actors[actor_id] as Node3D).get_instance_id() and live.armed and live.state == "recovery" and _scheduler.get_clock() > float(live.active_until_s) and _scheduler.get_clock() <= float(live.recovery_until_s) and _exchange_data(live) == record.exchange
 
 
 func cancel(actor_id: String, reason: String = "scout_cancelled") -> bool:
@@ -398,8 +404,9 @@ func _resolve_segment(id: String, now: float, armed: bool) -> void:
 
 
 func _freeze_paused_tick(now: float) -> void:
-	# A synchronous pause preserves every bound hero sample at this same
-	# committed frame. Retain measured active overlap for resume, never damage.
+	# A synchronous pause retains valid measured overlap, never damage. Native
+	# custody is checked against the existing synchronized cue/phase first;
+	# redraw cannot recreate authority hidden/cleared by a same-tick observer.
 	if not _live_bindings():
 		return
 	if _hero.dead:
@@ -409,8 +416,23 @@ func _freeze_paused_tick(now: float) -> void:
 		var record: Dictionary = _records[id]
 		if record.status != "running":
 			continue
+		if not _required_presentation_valid(id):
+			cancel(id, "required_scout_presentation_unavailable")
+			continue
 		var live: Dictionary = _scheduler.reservation_state(String(record.exchange.id))
-		if record.status != "running" or live.is_empty():
+		if record.status != "running":
+			continue
+		if live.is_empty() or not _required_presentation_valid(id) or int(live.source_instance_id) != (_actors[id] as Node3D).get_instance_id() or _exchange_data(live) != record.exchange:
+			cancel(id, "required_scout_presentation_unavailable")
+			continue
+		# Another source can still carry its prior lock cue at this same paused
+		# frame. Synchronize phase and complete redraw together before the guard.
+		record.phase = String(live.state)
+		_present(id, false)
+		if record.status != "running":
+			continue
+		if not _required_presentation_valid(id) or not _presentation_allowed(id) or not _required_presentation_valid(id):
+			cancel(id, "required_scout_presentation_unavailable")
 			continue
 		var previous: Dictionary = record.sample
 		if live.armed and not record.hit_consumed and now >= float(live.active_from_s) and float(previous.clock_s) <= float(live.active_until_s) and now > float(previous.clock_s):
@@ -419,8 +441,6 @@ func _freeze_paused_tick(now: float) -> void:
 				continue
 			record.deferred_paths.append({"from": previous.position, "to": _hero.global_position, "start_s": previous.clock_s, "end_s": now})
 		record.sample = {"position": _hero.global_position, "clock_s": now}
-		record.phase = String(live.state)
-		_present(id, false)
 
 
 func _present(id: String, notify: bool = true) -> void:
