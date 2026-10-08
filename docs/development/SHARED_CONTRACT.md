@@ -1,6 +1,18 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-11** (8 October 2026), publishing exact-clock replay cursor, whole-sequence escape witness, exclusive scheduler admission and actual-player playback to shared-10 spores and shared-9 exact transport. `campaign-level-1` and `world-actions-1` remain compatible. Physical replay leaves are tested; parent capture retirement, authored Crystalman/Echo encounters and their portrait evidence remain separate dependencies. Integration owns shared runtime. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
+Revision: **campaign-shared-13** (8 October 2026), adding pure staged live-source collision validation to shared-12 camera, shared-11 replay, shared-10 spores and shared-9 exact transport. `campaign-level-1` and `world-actions-1` remain compatible. Physical replay leaves are tested; parent capture retirement, authored Crystalman/Echo encounters and their portrait evidence remain separate dependencies. Integration owns shared runtime. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
+
+## Staged collision for an earlier live lunge source
+
+Optional scheduler bindings `owner_collision_states[stable_owner_id]` provide closed native `{collision_path, enabled: true, layer: int, mask: 1}` after an authored actor envelope has independently validated an earlier live state. Pure `CinderLungeMotion.staged_source_description` derives geometry, resource/registered shape-owner identity and transform from the actual retained one-capsule body; it rejects unknown IDs, malformed flags, extra/pending shapes and signature drift. It permits paused earlier-live prevalidation after the same retained source was genuinely defeated/disabled, without enabling or moving the current body.
+
+Actual actor collision flags, pose and velocity must restore before scheduler commit without yielding. The unchanged strict live descriptor still guards commit; caller-supplied metadata cannot stand in for the actual collider. No snapshot schema, replay logic, solver or motion acceptance changes are introduced. Read [staged collision](STAGED_LUNGE_COLLISION.md) for exact lifecycle/custody rules and62 new/35 affected snapshot checks. The separate translated-world float32 sweep request4ba remains unresolved by this addition.
+
+## Required portrait camera framing
+
+`camera-framing-1` provides a pure finite fixed-width orthographic planner and current-view containment guard. Compatible optional level hook `_camera_framing_points() -> Array` supplies actual source/art/whole committed footprint/landing/opening corners before admission and through recovery; empty retains ordinary .16s close follow. The shared shell adds actual player capsule/full billboard/foot-shadow bounds and uses the actual same-frame wrapped HUD safe rectangle. It translates focusX/Z only, preserving size, basis, focusY and the held final swipe-release aim anchor. Invalid/infeasible data reports a rejected diagnostic, without changing controls, actor motion, clocks, leases or damage.
+
+`Game.camera_framing_plan`, `camera_framing_error`, `get_camera_framing_state`, `camera_billboard_points` and `player_camera_framing_points` are documented in [camera framing](CAMERA_FRAMING.md). A future plan is not actual current visibility or an escape/LOS/fairness proof. Owners must guard actual presentation before lock/damage and supply complete committed render/cue bounds; unsupported atlas/custom shader/native projection modes reject. Shared native planner68, actual shell67headless/75graphical checks pass with normal focus guards retained. Act3's actual far-side authored Sun1 recapture remains required after adoption. A1-L1 has an empty hook and preserves its tested close follow.
 
 ## Captured-action physical replay
 
@@ -91,7 +103,7 @@ Limits: path samples are not an analytic swept capsule; geometry carries a param
 
 ## Canonical campaign registry
 
-[registry.json](../../data/campaign/registry.json) records all 15 main and 9 optional IDs, sequential main links and optional parent clears, derived from the three canonical research files. Its initial entries have `scene_path = null` and `readiness = unimplemented`. Integration alone registers a scene after accepting its exact level commit/API revision; this data is not evidence that campaign content exists. Optional completion stamps have stable once-only reward IDs and no stat growth. The live menu gates playable routes on accepted, validated scenes.
+[registry.json](../../data/campaign/registry.json) records all 15 main and 9 optional IDs, sequential main links and optional parent clears, derived from the three canonical research files. Its initial entries used `scene_path = null` and `readiness = unimplemented`. A1-L1 is now individually registered with exact authored commit06628abb and its shared level API; the remaining23 entries stay unimplemented. Integration alone registers a scene after accepting its exact level commit/API revision; this data is not evidence that campaign content exists. Optional completion stamps have stable once-only reward IDs and no stat growth. The live menu gates playable routes on accepted, validated scenes.
 
 ## player-snapshot-1
 

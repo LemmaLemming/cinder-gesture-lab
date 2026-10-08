@@ -36,7 +36,15 @@ func _run() -> void:
 	_probe = InputProbe.new()
 	_probe.process_mode = Node.PROCESS_MODE_ALWAYS
 	root.add_child(_probe)
-	var real_registry := Registry.new()
+	# The unavailable-scene GUI fixture stays isolated from production entries,
+	# which integration accepts one level at a time.
+	var unavailable_raw: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Registry.DATA_PATH))
+	for entry: Dictionary in unavailable_raw.levels:
+		entry.scene_path = null
+		entry.readiness = "unimplemented"
+		entry.accepted_commit = null
+		entry.api_revision = null
+	var real_registry := Registry.new(unavailable_raw)
 	var real_attempts := Attempts.new(real_registry)
 	var settings := Settings.new("user://test-campaign-menu-unused/settings.json")
 	_menu = Menu.new()
@@ -58,7 +66,7 @@ func _run() -> void:
 	var overlay: Control = _find("CampaignOverlay") as Control
 	_expect(overlay.size.is_equal_approx(Vector2(540, 1170)) and overlay.mouse_filter == Control.MOUSE_FILTER_STOP and not overlay.mouse_force_pass_scroll_events, "portrait overlay fills the logical viewport and stops GUI scroll propagation")
 	_expect(overlay.texture_filter == CanvasItem.TEXTURE_FILTER_NEAREST, "all menu pixels inherit nearest filtering")
-	_expect((_find("BeginStoryButton") as Button).disabled and not real_registry.is_playable("A1-L1"), "real unimplemented opening cannot be launched from Title")
+	_expect((_find("BeginStoryButton") as Button).disabled and not real_registry.is_playable("A1-L1"), "isolated unimplemented opening cannot be launched from Title")
 	_menu.show_journey()
 	await _settle()
 	var positions: Dictionary = _node_positions()
@@ -255,7 +263,7 @@ func _run() -> void:
 	await _settle()
 	await _click(_find("ResumeButton") as Control)
 	_expect(_resume_count == 2 and _menu.page_name() == "resume" and paused, "interrupted resume waits paused for the shell to consume the menu gesture")
-	_expect(not real_registry.is_playable("A1-L1") and real_attempts.state()["story"] == null, "isolated GUI fixtures never alter authored scene acceptance or real campaign state")
+	_expect(not real_registry.is_playable("A1-L1") and real_attempts.state()["story"] == null, "isolated GUI fixtures never alter unavailable entry metadata or its attempt state")
 	_menu.queue_free()
 	_probe.queue_free()
 	await process_frame

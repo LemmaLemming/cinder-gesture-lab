@@ -1,0 +1,2757 @@
+{
+  "schema_version": 1,
+  "level_id": "A1-L1",
+  "title": "Observatory and Launch authored scenic kit",
+  "date": "2026-10-08",
+  "implementation_status": "Authored A1-L1 launch, science, workshop and roof kit prepared on adopted campaign-shared-10 5645590; current gameplay/portrait/save evidence was executed on shared8/9 and applies to the unchanged L1 consumers. Four specified actual scripted graphical routes pass 2348/0 with 52 inspected 540\u00d71170 images, 58 real swipes, 16 zero-shell primaries, no HP change or arm hits, and paired warning-pause freeze plus consumed real GUI Resume. Shared8 first-two rendering/control/source findings apply under unchanged shared9 art/input/camera/cues. Mild longer-dash right sleeve/outer boot trim and partial source/roof diamond overlap are recorded. Human/native-focused execution, conditional balance, performance and canonical/final art acceptance remain unperformed.",
+  "creator": "Cinder Act 1 scoped scenery helper for sole owner01a11adf-2ec8-7702-96c6-0fa1e240c332",
+  "runtime_api": {
+    "builder": "Act1LaunchScenery.build(parent:Node3D)->void; idempotent; parents self when unattached",
+    "hatch": "set_hatch_open(bool)->void; immediate cosmetic hinge pose; no gameplay callback",
+    "cleanup": "all nodes are children of this level-local module; freeing level frees scenery",
+    "physics_or_process": "Scenic and source-visual modules own none; instanced rehearsal bridge delegates gameplay health,accepted hits and feedback clock to the published shared PracticeTarget parent",
+    "loading_arm_visual": "Act1LoadingArmVisual.build(parent:Node3D, origin:Vector3); set_phase(phase:String, progress:float=0); set_parked(bool). Owner instances two children of published CinderLaneMechanism at origin ZERO; progress comes solely from shared state. Inactive+parked internal SourceArtAssembly shifts X\u22124.4 with +X90\u00b0 jib fold. Live assembly ZERO, original poses and source/art-root transforms are unchanged. Four actual scripted graphical routes now instantiate and review current phase/parked geometry; previous failed/staged records are preserved. See portable archive and validation.scripted_graphical_routes. No private clock, cue or collision authority.",
+    "rehearsal_target_visual": "Act1RehearsalTargetVisual.build(parent:Node3D); present_state(state:String, hit_fraction:float). Original ground/hit pivot ZERO through published parent/owner bridge. Split feet/rear tie expose the existing cue; only the spent folded mesh group offsets Z\u22120.75. Actual available/spent cues reviewed across four scripted graphical routes; longer-dash slight sleeve/boot trim recorded. No independent health, clock, cue, input or collision.",
+    "rehearsal_target_bridge": {
+      "path": "scripts/acts/act1/rehearsal_target.gd",
+      "class": "Act1RehearsalTarget extends PracticeTarget",
+      "instanced_by": "scripts/acts/act1/launch_rehearsal.gd",
+      "published_shared_hooks": [
+        "PracticeTarget.build_presentation()",
+        "PracticeTarget.present_state(visual_state:String,hit_feedback_fraction:float)",
+        "CinderInteractionCue.present(state,gesture)"
+      ],
+      "mapping": "Shared cleared -> authored cleared/folded with spent attack cue; exercise-active live/hit -> available cloth with shared normalized hit-feedback fraction and available attack cue; future inactive -> quiet inactive cloth and cleared cue",
+      "authority": "Published shared parent owns health,accepted hit results and feedback clock; act level owns exercise activation/progression and target visibility; bridge owns required practice_targets membership and cue selection; source visual only draws externally supplied state",
+      "current_one_hit_targets": "Level configure(1.0,1.0,0.0,false); accepted primary clears immediately and folds without a private animation clock",
+      "headless_evidence": [
+        ".cinder/a1-l1-opening-shared3-target-test.log",
+        ".cinder/a1-l1-loadouts-shared3-target-test.log",
+        ".cinder/a1-l1-opening-shared6-test.log"
+      ]
+    },
+    "shared_actor_presentation": {
+      "id": "act1_expedition",
+      "canonical_manifest": "assets/characters/presentations/manifest.json",
+      "selected_source": "docs/concept-art/act1/characters/expedition-cast-and-player.png [G07]",
+      "authorship": "Original deterministic pixel-cluster artwork authored by shared integration after inspecting G07; reference guides silhouette/costume/palette; no board crop or irregular source cells imported",
+      "ownership": "Shared LabSprite/CinderPlayer presentation system; no local actor geometry,controller,stats,collision,headwear-equipment slot or presentation bonus introduced here",
+      "observed_capture": "data/campaign/act1/evidence/A1-L1/neutral/01-spawn.png",
+      "observation": "Shared G07-derived brim/crown,pale beard/collar,darkcoat/boots shown in actual idle/dash/landing/ordinary-primary route frames across four specified legal kits. Head/central torso/floorcontact readable; longer-dash targetupright slightly trims right sleeve/outerboot09/11. Nativefocusfalse scripted scope, not final presentation/all-loadout fidelity acceptance.",
+      "prior_observed_capture": "captures/act1/shared5-static/spawn.png"
+    }
+  },
+  "authorship": "Original authored low-segment 3D assemblies and hand-specified pixel polygon cutouts. No reference-board pixel crop, atlas reuse or archival runtime image.",
+  "generator": "assets/acts/act1/launch/build_cutouts.py; Python Pillow, no Node/global dependencies; writes only listed nine PNGs in its own directory",
+  "source_catalogues": [
+    "docs/concept-art/act1/generated-manifest.json",
+    "docs/reference-library/act1/generated-manifest.json",
+    "docs/reference-library/act1/objects-earth-and-dream.json",
+    "docs/reference-library/act1/commons-manifest.json"
+  ],
+  "source_provenance": {
+    "generated_boards": "G04/G08/G11/G14/G16 original built-in image-generation concepts dated2026-10-08; prompts and reference inputs retained in their source manifests",
+    "F01-F05": "Georges Melies underlying1902 film; local Commons source declares public domain, reproduction credit screnshot made by divx; declaration preserved, not a new rights determination",
+    "A13": "Surviving handcoloured workshop frame; local Commons source declares public domain; credit Melies: Fairy Tales in Color; game palette chosen independently",
+    "runtime_rights": "Original project-authored derived shapes and pixel designs; do not relabel source concepts or museum images as these runtime assets"
+  },
+  "layout": {
+    "level_floor_owned_by_other_module": "x[-6,6],z[-16,14],topy0",
+    "central_clear_strip": "Primary hall/workshop centre |x|<1.6 contains no scenic geometry. Landmark silhouettes reach |x|~1.7-2.4; all remain collision-free. Pillar footprints begin at |x|3.32. Scenery does not define or reserve safe gameplay landings; owner verifies legal dash destinations in portrait.",
+    "stage_centres_z": [
+      10,
+      6,
+      0,
+      -6,
+      -12
+    ],
+    "final_capsule_ground_pivot": [
+      0,
+      0,
+      -16.1
+    ],
+    "final_sill_front_z": -14.29,
+    "hall": {
+      "column_origins": [
+        [
+          -3.8,
+          0,
+          12
+        ],
+        [
+          -3.8,
+          0,
+          7
+        ],
+        [
+          -3.8,
+          0,
+          2.9
+        ],
+        [
+          3.8,
+          0,
+          12
+        ],
+        [
+          3.8,
+          0,
+          7
+        ],
+        [
+          3.8,
+          0,
+          2.9
+        ]
+      ],
+      "window_origins": [
+        [
+          -3.1,
+          0.1,
+          12.7
+        ],
+        [
+          -3.1,
+          0.1,
+          5.4
+        ],
+        [
+          3.1,
+          0.1,
+          12.7
+        ],
+        [
+          3.1,
+          0.1,
+          5.4
+        ]
+      ],
+      "window_yaw_degrees_by_side": "-side*65; thin depth-tested wall flats",
+      "fabric_origins": [
+        [
+          -3.16,
+          0.5,
+          13.5
+        ],
+        [
+          -3.16,
+          0.5,
+          6.2
+        ],
+        [
+          3.16,
+          0.5,
+          13.5
+        ],
+        [
+          3.16,
+          0.5,
+          6.2
+        ]
+      ],
+      "bench_origins": [
+        [
+          -2.88,
+          0,
+          11.6
+        ],
+        [
+          2.88,
+          0,
+          11.6
+        ]
+      ],
+      "ringed_instrument_origin": [
+        2.6,
+        0,
+        6.2
+      ],
+      "journey_board_origin": [
+        -2.6,
+        0,
+        6.4
+      ],
+      "academic_origins": [
+        [
+          -2.78,
+          0.025,
+          11.3
+        ],
+        [
+          2.78,
+          0.025,
+          11.3
+        ]
+      ],
+      "composition_intent": "Science landmarks fit inside the7.2-unit portrait width; source-specific column/window vocabulary frames rather than replaces them. Props are ahead of the captured x2.7,z7.8 landing; academics sit behind the opening player."
+    },
+    "workshop": {
+      "truss_origins": [
+        [
+          -3.25,
+          0,
+          0
+        ],
+        [
+          3.25,
+          0,
+          0
+        ]
+      ],
+      "bench_origins": [
+        [
+          -2.8,
+          0,
+          -0.75
+        ],
+        [
+          2.8,
+          0,
+          -0.75
+        ]
+      ],
+      "anvil_origin": [
+        -2.6,
+        0,
+        -1.6
+      ],
+      "capsule_origin": [
+        2.75,
+        0,
+        -1.1
+      ],
+      "capsule_scale": 0.75,
+      "worker_origins": [
+        [
+          -2.78,
+          0.025,
+          -2.9
+        ],
+        [
+          2.88,
+          0.025,
+          3.8
+        ]
+      ],
+      "ladder_origin": [
+        3.08,
+        0,
+        -1.9
+      ],
+      "composition_intent": "Anvil, benches, capsule and working figure appear above the staged centre target/player; entry observer is below the staged player and separated from later right-side targets. All are nonhostile and collision-free."
+    }
+  },
+  "validation": {
+    "generator_ast": "passed Python syntax parse",
+    "images": "Manually visually inspected all nine authored native PNGs, including the quiet 64x64 floor; dimensions and checksums verified. This is asset inspection, not actual portrait validation.",
+    "godot_import": "Historical importer records retained. Current arm internal parking and split/folded cloth geometry are constructed/parsed/rendered by all four owner graphical routes; source/fixture hashes verified against current52-image index. Owner current post-cosmetic opening86 and headless144 pass. No additional import/engine job run by this helper.",
+    "greybox_gameplay": "Owner reported41checks/8actualportraitcaptures with touch first dash,hall tap,edge release/remedy,pause before this composition revision; this is not revised-layout evidence.",
+    "actual_portrait": {
+      "inspected_paths": [
+        "captures/act1/a1_l1_01-opening.png",
+        "captures/act1/a1_l1_02-completed-dash-hall-target.png",
+        "captures/act1/a1_l1_05-screen-edge-release.png",
+        "captures/act1/a1_l1_07-workshop-staged-available.png",
+        "captures/act1/revised-layout-static/spawn.png",
+        "captures/act1/shared3-static/spawn.png",
+        "captures/act1/shared5-static/spawn.png",
+        "captures/act1/shared5-static/staged-roof.png",
+        "captures/act1/shared5-static/staged-boarding.png",
+        "captures/act1/shared5-static/staged-hatch.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/01-spawn.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/02-first-dash.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/03-hall-primary.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/04-workshop-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/05-roof-warning.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/06-roof-lock.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/07-roof-active.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/08-roof-recovery.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/09-roof-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/10-boarding-warning.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/11-boarding-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/12-final-clear.png",
+        "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/13-hatch-contact.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/01-spawn.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/02-first-dash.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/03-hall-primary.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/04-workshop-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/05-roof-warning.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/06-roof-lock.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/07-roof-active.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/08-roof-recovery.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/09-roof-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/10-boarding-warning.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/11-boarding-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/12-final-clear.png",
+        "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/13-hatch-contact.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/01-spawn.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/02-first-dash.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/03-hall-primary.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/04-workshop-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/05-roof-warning.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/06-roof-lock.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/07-roof-active.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/08-roof-recovery.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/09-roof-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/10-boarding-warning.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/11-boarding-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/12-final-clear.png",
+        "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/13-hatch-contact.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/01-spawn.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/02-first-dash.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/03-hall-primary.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/04-workshop-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/05-roof-warning.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/06-roof-lock.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/07-roof-active.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/08-roof-recovery.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/09-roof-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/10-boarding-warning.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/11-boarding-useful-landing.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/12-final-clear.png",
+        "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/13-hatch-contact.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/01-spawn.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/02-first-dash.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/03-hall-primary.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/04-workshop-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/05-roof-warning.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/06-roof-lock.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/07-roof-active.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/08-roof-recovery.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/09-roof-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/10-boarding-warning.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/11-boarding-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/12-final-clear.png",
+        "data/campaign/act1/evidence/A1-L1/neutral/13-hatch-contact.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/01-spawn.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/02-first-dash.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/03-hall-primary.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/04-workshop-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/05-roof-warning.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/06-roof-lock.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/07-roof-active.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/08-roof-recovery.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/09-roof-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/10-boarding-warning.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/11-boarding-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/12-final-clear.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/13-hatch-contact.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/01-spawn.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/02-first-dash.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/03-hall-primary.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/04-workshop-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/05-roof-warning.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/06-roof-lock.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/07-roof-active.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/08-roof-recovery.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/09-roof-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/10-boarding-warning.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/11-boarding-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/12-final-clear.png",
+        "data/campaign/act1/evidence/A1-L1/slowest-primary/13-hatch-contact.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/01-spawn.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/02-first-dash.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/03-hall-primary.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/04-workshop-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/05-roof-warning.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/06-roof-lock.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/07-roof-active.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/08-roof-recovery.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/09-roof-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/10-boarding-warning.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/11-boarding-useful-landing.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/12-final-clear.png",
+        "data/campaign/act1/evidence/A1-L1/fastest-short-dash/13-hatch-contact.png"
+      ],
+      "comparison_sources": [
+        "G16 actual observatory/launch board",
+        "G14 actual modular prop board",
+        "F01 actual Earth observatory film still",
+        "F02 actual Earth workshop film still",
+        "G07 actual expedition cast/player board"
+      ],
+      "initial_findings": "Six hall columns dominate the captured frame. The right-edge landing partially overlaps a column; science props and friendly cast are clipped/hidden; workshop benches and anvil are barely visible.",
+      "revision": "Moved columns outward0.55unit; relocated science/workshop landmarks into close-view side vignettes; no actor,camera,cue,collision,progression or timing changes.",
+      "status": "All52 actual scripted graphical moving-route images across four specified kits inspected against G14/G16/G07. Prior parked actor/plinth cue defects corrected at actual captured poses. Source/footprint/safe-side/HUD/available-spent-contact cues readable, with recorded mild right sleeve/outerboot trim onlongerdash09/11 and partial source/roofcue overlays; no canonical/final art acceptance.",
+      "revised_static_spawn": {
+        "capture_path": "captures/act1/revised-layout-static/spawn.png",
+        "mode": "Owner supported shared shell CLI --capture static render while Mac locked; owner-reported exit0, log inspected with no error text",
+        "log_path": ".cinder/a1-l1-revised-static-spawn.log",
+        "observed_improvements": [
+          "Columns largely move to the outer frame; they no longer dominate this centre spawn image.",
+          "Journey board now shows its chalk Earth/Moon route and stand within the close view.",
+          "Ringed instrument now shows the circular ring/globe/pedestal silhouette without column occlusion.",
+          "Both academics have recognizable pointed hats,beards and quiet indicating hands.",
+          "Centre player silhouette and broad floor marker are unobscured in this static frame."
+        ],
+        "remaining_limits": [
+          "Benches and oblique wall flats hide much of the academics robes/lower bodies; only their upper silhouettes are readily legible.",
+          "Windows and fabric are mainly thin edge framing; this frame does not validate their full texture readability.",
+          "Crossing-ring and chalk details remain simplified original adaptations; no final source-fidelity acceptance.",
+          "Static spawn has no postrevision gesture,pause,edge-landing,workshop-staged,roof or hatch evidence.",
+          "Loading-arm and rehearsal-target visual modules remain uninstanced; this frame validates neither."
+        ],
+        "critical_occlusion": "No critical player or floor-marker occlusion observed at the captured centre spawn; ordinary legal edge destinations still require focused portrait review."
+      },
+      "shared3_static_spawn": {
+        "capture_path": "captures/act1/shared3-static/spawn.png",
+        "log_path": ".cinder/a1-l1-shared3-static-spawn.log",
+        "mode": "Actual supported static render; owner-reported exit0, no gesture/pause/full-level claim",
+        "scenery": "Scenery unchanged from revised static composition: board/ringed instrument remain readable, columns stay at margins, centre actor and broad marker unobscured; academics lower bodies still partly hidden",
+        "actor": "Shared original G07-derived act1_expedition pixel presentation now visibly supplies broad brim/crown,dark coat,pale collar and boots; current spawn facing alone is inspected",
+        "target_art": "Bridge/source children now built in runtime, but first-beat visibility gating hides the targets in this spawn frame; no standing,hit-squash,folded/cue artwork acceptance from this image",
+        "hud_limit": "Two-line authored objective currently shows only its first instruction line in the panel; owner queued shared integration request ae541bfa; no act-local HUD patch",
+        "pending": [
+          "Focused target standing/hit/folded portrait",
+          "Revised legal edge-dash landing and remedy portrait",
+          "Workshop staged landmarks",
+          "Roof/hatch",
+          "Interactive pause,full-level and campaign retry/transition after adoption"
+        ]
+      },
+      "current_spawn_capture": "data/campaign/act1/evidence/A1-L1/neutral/01-spawn.png; current real production-spawn view, both objective lines and G07 body/feet clear; native focus false in explicit scripted mode. Four full routes reviewed separately.",
+      "shared5_static_spawn": {
+        "capture_path": "captures/act1/shared5-static/spawn.png",
+        "log_path": ".cinder/a1-l1-shared5-static-spawn.log",
+        "import_log_path": ".cinder/a1-l1-shared5-import.log",
+        "adopted_shared_baseline": "campaign-shared-5 /767b09e",
+        "mode": "Actual static production-root/shared-actor render only; owner-reported exit0,noerror log; no touch/input/focus/pause/full-level proof",
+        "comparison_sources": [
+          "G07 actual expedition/player board",
+          "G16 actual observatory/launch board"
+        ],
+        "objective_lines": [
+          "SWIPE UP TO THE BROAD FLOOR MARKER",
+          "RELEASE UPPER-LEFT"
+        ],
+        "hud_review": "Both actual authored entry objective lines are legible inside the black panel without clipping. Shared ae541bfa entry issue resolved in this capture; later objectives still require their actual captures.",
+        "science_and_actor": "Journey board/chalk route and ring/globe/pedestal remain readable,columns frame outer edges,G07 shared actor and broad floor marker unobscured.",
+        "npc_limits": "Academics pointed hats/beards/quiet hands readable but benches/wall flats still cover much of their robes/lower bodies. HUD panel partly covers the distant entry worker torso; this is scenic cast occlusion,not observed player/marker/attack-source occlusion at spawn.",
+        "source_base_parse": "Current split-base source was parsed/constructed by the actual production-root renderer; arm/target opening gates hide their artwork,so source glyph/footprint/phase visibility is not established here.",
+        "pending": [
+          "Explicit TESTONLY staged roof/boarding/hatch capture paths before review",
+          "Standing/hit/folded target portrait",
+          "Source glyph plus full committed lane and useful safe landing",
+          "Revised legal edge-dash landing and remedy",
+          "Workshop staged landmarks",
+          "Full phase/pause/gesture/campaign retry/transition/end-to-end validation"
+        ]
+      },
+      "prior_status_history": "shared5 entry and TESTONLY staged roof/boarding/hatch inspected; unparked hatch contact-cue defect recorded. New quiet parked mode authored,unparsed; affected hatch replacement capture and full-phase/interactive/fidelity review pending.",
+      "scripted_graphical_review": "See validation.scripted_graphical_routes and portable data/campaign/act1/evidence/A1-L1/index.json for four kits, logs, exact baselines, 52 archived images/hashes, source hashes, observations, reuse boundaries and limits. Original captures are preserved.",
+      "prior_spawn_capture_history": "captures/act1/shared5-static/spawn.png"
+    },
+    "known_limits": [
+      "Supporting cast are nonhostile static vignettes; no animation sheet/performance likeness claimed.",
+      "Close portrait framing crops some peripheral furniture/cannon/NPC lower bodies. No automatic foreground fade is authored.",
+      "Longer-dash09/11 targetupright slightly trims right sleeve/outerboot; full unobstructed feet cannot be claimed. Partial sourceglyph/roofavailablediamond overlaps remain discernible.",
+      "Separate MeshInstance3D part count/draw cost and desktop performance unmeasured; no mobile/export validation.",
+      "Scenery/source visuals own no player,HUD,camera,recognizer,floor,clocks,health,damage,cues,colliders,scheduler or progression. Published shared parent/owner bridge alone own target/mechanism behavior.",
+      "Four actual scripted graphical routes are measured automated evidence, not human balance/understanding, native-focused execution, every legal route/loadout or canonical/final level/art acceptance."
+    ],
+    "shared3_target_state": {
+      "adopted_shared_baseline": "dcc7a3a / campaign-shared-3",
+      "opening": {
+        "log_path": ".cinder/a1-l1-opening-shared3-target-test.log",
+        "checks": 79,
+        "failures": 0,
+        "exit": "owner-reported0; log read with no warnings/error text"
+      },
+      "loadouts": {
+        "log_path": ".cinder/a1-l1-loadouts-shared3-target-test.log",
+        "checks": 72,
+        "failures": 0,
+        "combinations": 12,
+        "exit": "owner-reported0; log read with no warnings/error text"
+      },
+      "verified_scope": "Published shared hook constructs one cloth/one cue without generic labels; activation draws available; normalized shared nonlethal hit fraction maps to cloth strength; one-hit/cleared target folds immediately with spent cue; silent configure/restore redraws without duplicate notifications; pause/activation does not own or advance shared hit clock; required opening attacks work with empty shells for static extreme kits",
+      "limits": "Headless state/logic evidence only; logs explicitly exclude loading arm,full completion,campaign retry/transition and portrait target-art/presentation acceptance; no helper engine job."
+    },
+    "current_shared6": {
+      "shared_baseline": "2cba17fcdb89c18600355ddf377281c3b5aef8f0",
+      "api_revision": "campaign-shared-6",
+      "owned_level_version": 3,
+      "tests": {
+        "opening": {
+          "log": ".cinder/a1-l1-opening-shared6-test.log",
+          "checks": 80,
+          "failures": 0
+        },
+        "arm": {
+          "log": ".cinder/a1-l1-arm-shared6-transport-test.log",
+          "checks": 150,
+          "failures": 0
+        },
+        "campaign": {
+          "log": ".cinder/a1-l1-campaign-shared6-test.log",
+          "checks": 41,
+          "failures": 0
+        }
+      },
+      "test_status": "Owner-run,all exit0/no errors or warnings; latest physical-source/target binding guard still awaiting affected regression. Staged approach positions and isolated registry/next-level fixture are explicit limits. No focused route or production acceptance.",
+      "portrait": {
+        "roof": "captures/act1/shared6-static/staged-roof.png",
+        "roof_log": ".cinder/a1-l1-shared6-staged-roof.log",
+        "hatch": "captures/act1/shared6-static/staged-hatch.png",
+        "hatch_log": ".cinder/a1-l1-shared6-staged-hatch.log",
+        "status": "clean actual540x1170 owner reviewed; TESTONLY staged beat/position; no inputs/full traversal/human balance"
+      }
+    },
+    "current_shared8": {
+      "baseline": "43c8f6d16fb12e2c137610948083101ec9beecff",
+      "api": "campaign-shared-8",
+      "opening": {
+        "log": ".cinder/a1-l1-opening-shared8-test.log",
+        "checks": 86,
+        "failures": 0,
+        "exit": 0,
+        "error_warning_text": false
+      },
+      "arm": {
+        "log": ".cinder/a1-l1-arm-shared8-test.log",
+        "checks": 150,
+        "failures": 0,
+        "exit": 0,
+        "error_warning_text": false
+      },
+      "scope": "Directly affected existing target hooks/fixed live bindings/paired actor+arm scheduler snapshots/full actual phases/damage and four-kit finite safe-path proofs. Shared8 lunge/replay/spore leaves unused; no unrelated shared-suite rerun. Actual full scripted graphical route pending; native human understanding/performance not established.",
+      "campaign": {
+        "log": ".cinder/a1-l1-campaign-shared8-test.log",
+        "checks": 41,
+        "failures": 0,
+        "exit": 0,
+        "error_warning_text": false,
+        "scope": "Actual authored L1/shared campaign shell with TESTONLY registry and staged approach positions; coherent injured zero-shell warning Continue/Retry, actual completion/contact transition, isolated replay return."
+      },
+      "complete_default_input_route": {
+        "log": ".cinder/a1-l1-route-neutral-shared8-hooks-test.log",
+        "checks": 141,
+        "failures": 0,
+        "exit": 0,
+        "error_warning_text": false,
+        "actual_swipes": 15,
+        "actual_primaries": 4,
+        "scope": "Actual production spawn through real shared touch/drag recognizer to actual physical hatch; no teleports/direct actor action/staged records; headless, no portrait/final acceptance."
+      }
+    },
+    "scripted_graphical_routes": {
+      "scope": "Four actual SCRIPTED GRAPHICAL production-spawn complete A1-L1 routes through normal shared gesture recognizer; no teleports or staged beat/positions; native_focus=false observed/allowed explicitly, normal shared focus-out handler retained",
+      "checks": 2348,
+      "failures": 0,
+      "actual_images_inspected": 52,
+      "actual_swipes": 58,
+      "actual_zero_shell_primaries": 16,
+      "index_path": "data/campaign/act1/evidence/A1-L1/index.json",
+      "source_sha256": {
+        "tests/acts/act1/a1_l1_route.gd": "aa690997a4ab75e04342f946c65880fac76fe4bb9237ad42d06f214c3b158ac7",
+        "scripts/acts/act1/launch_rehearsal.gd": "5b4b5d54f21752035dbbb0294f0b3fdbf0e66d6c901fce88275ca5f455e48d27",
+        "scripts/acts/act1/loading_arm_visual.gd": "923ca6836b4ebc1656950d5e466b1851006c6da28f4ff3271c37550d843bcd01",
+        "scripts/acts/act1/rehearsal_target_visual.gd": "3f11bc583091b3261c5a1a39ed8f4baf13c596b7991ad2bdd8d5e121fa44f41c"
+      },
+      "sha_verification": "Read-only SHA256 verification matched all 52 portable archived PNGs, four archived metadata/log pairs and all four indexed runtime/fixture sources. Originals are retained.",
+      "runs": [
+        {
+          "kit": "neutral",
+          "shared_api": "campaign-shared-8",
+          "shared_baseline": "43c8f6d16fb12e2c137610948083101ec9beecff",
+          "log_path": "data/campaign/act1/evidence/A1-L1/neutral/route.log",
+          "terminal_checks": 591,
+          "failures": 0,
+          "exit": 0,
+          "metadata_checks_at_write": 590,
+          "metadata_final_check_note": "Terminal includes successful final evidence-save check after metadata count was written.",
+          "capture_directory": "data/campaign/act1/evidence/A1-L1/neutral",
+          "metadata_path": "data/campaign/act1/evidence/A1-L1/neutral/evidence.json",
+          "actual_images_inspected": 13,
+          "pixel_size": [
+            540,
+            1170
+          ],
+          "actual_swipes": 15,
+          "actual_zero_shell_primaries": 4,
+          "initial_hp": 100.0,
+          "final_hp": 100.0,
+          "arm_hit_events": [],
+          "observed_public_phases": {
+            "a1_l1_boarding_arm": [
+              "warning",
+              "lock",
+              "clear"
+            ],
+            "a1_l1_roof_arm": [
+              "warning",
+              "lock",
+              "active",
+              "recovery",
+              "clear"
+            ]
+          },
+          "native_focus_observed": false,
+          "native_focus_required": false,
+          "paired_warning_pause_frozen": true,
+          "real_gui_resume_consumed": true,
+          "equipment_ids": {
+            "jacket": "CLOTH-J0",
+            "pants": "CLOTH-P0",
+            "shoes": "CLOTH-S0",
+            "weapon": "WEAPON-01"
+          },
+          "useful_landings": {
+            "roof-useful-landing": [
+              2.8199999332428,
+              -0.00484376167878509,
+              -3.84000182151794
+            ],
+            "boarding-useful-landing": [
+              2.8199987411499,
+              -0.00484376167878509,
+              -9.83999824523926
+            ],
+            "hatch-contact": [
+              -4.82425093650818e-07,
+              -0.00484376167878509,
+              -13.6999998092651
+            ]
+          },
+          "original_capture_directory": "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral",
+          "original_metadata_path": "captures/act1/full-route/scripted-graphical-1791463074-875334-neutral/evidence.json",
+          "original_log_path": ".cinder/a1-l1-scripted-neutral-corrected-art.log",
+          "image_files": [
+            "01-spawn.png",
+            "02-first-dash.png",
+            "03-hall-primary.png",
+            "04-workshop-useful-landing.png",
+            "05-roof-warning.png",
+            "06-roof-lock.png",
+            "07-roof-active.png",
+            "08-roof-recovery.png",
+            "09-roof-useful-landing.png",
+            "10-boarding-warning.png",
+            "11-boarding-useful-landing.png",
+            "12-final-clear.png",
+            "13-hatch-contact.png"
+          ]
+        },
+        {
+          "kit": "slowest-longest-shortest",
+          "shared_api": "campaign-shared-8",
+          "shared_baseline": "43c8f6d16fb12e2c137610948083101ec9beecff",
+          "log_path": "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/route.log",
+          "terminal_checks": 583,
+          "failures": 0,
+          "exit": 0,
+          "metadata_checks_at_write": 582,
+          "metadata_final_check_note": "Terminal includes successful final evidence-save check after metadata count was written.",
+          "capture_directory": "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest",
+          "metadata_path": "data/campaign/act1/evidence/A1-L1/slowest-longest-shortest/evidence.json",
+          "actual_images_inspected": 13,
+          "pixel_size": [
+            540,
+            1170
+          ],
+          "actual_swipes": 14,
+          "actual_zero_shell_primaries": 4,
+          "initial_hp": 100.0,
+          "final_hp": 100.0,
+          "arm_hit_events": [],
+          "observed_public_phases": {
+            "a1_l1_boarding_arm": [
+              "warning",
+              "clear"
+            ],
+            "a1_l1_roof_arm": [
+              "warning",
+              "lock",
+              "active",
+              "recovery",
+              "clear"
+            ]
+          },
+          "native_focus_observed": false,
+          "native_focus_required": false,
+          "paired_warning_pause_frozen": true,
+          "real_gui_resume_consumed": true,
+          "equipment_ids": {
+            "jacket": "CLOTH-J1",
+            "pants": "CLOTH-P2",
+            "shoes": "CLOTH-S2",
+            "weapon": "WEAPON-03"
+          },
+          "useful_landings": {
+            "roof-useful-landing": [
+              2.98199820518494,
+              -0.00484376167878509,
+              -3.62400507926941
+            ],
+            "boarding-useful-landing": [
+              2.98199987411499,
+              -0.00484376167878509,
+              -9.62399864196777
+            ],
+            "hatch-contact": [
+              -5.82309439778328e-07,
+              -0.00484376167878509,
+              -13.7000036239624
+            ]
+          },
+          "original_capture_directory": "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest",
+          "original_metadata_path": "captures/act1/full-route/scripted-graphical-1791463197-1155435-slowest-longest-shortest/evidence.json",
+          "original_log_path": ".cinder/a1-l1-scripted-slowest-longest-shortest.log",
+          "image_files": [
+            "01-spawn.png",
+            "02-first-dash.png",
+            "03-hall-primary.png",
+            "04-workshop-useful-landing.png",
+            "05-roof-warning.png",
+            "06-roof-lock.png",
+            "07-roof-active.png",
+            "08-roof-recovery.png",
+            "09-roof-useful-landing.png",
+            "10-boarding-warning.png",
+            "11-boarding-useful-landing.png",
+            "12-final-clear.png",
+            "13-hatch-contact.png"
+          ]
+        },
+        {
+          "kit": "slowest-primary",
+          "shared_api": "campaign-shared-9",
+          "shared_baseline": "ed355c9525cb9db6d1f28403f9bf3a16def74175",
+          "log_path": "data/campaign/act1/evidence/A1-L1/slowest-primary/route.log",
+          "terminal_checks": 583,
+          "failures": 0,
+          "exit": 0,
+          "metadata_checks_at_write": 582,
+          "metadata_final_check_note": "Terminal includes successful final evidence-save check after metadata count was written.",
+          "capture_directory": "data/campaign/act1/evidence/A1-L1/slowest-primary",
+          "metadata_path": "data/campaign/act1/evidence/A1-L1/slowest-primary/evidence.json",
+          "actual_images_inspected": 13,
+          "pixel_size": [
+            540,
+            1170
+          ],
+          "actual_swipes": 14,
+          "actual_zero_shell_primaries": 4,
+          "initial_hp": 100.0,
+          "final_hp": 100.0,
+          "arm_hit_events": [],
+          "observed_public_phases": {
+            "a1_l1_boarding_arm": [
+              "warning",
+              "clear"
+            ],
+            "a1_l1_roof_arm": [
+              "warning",
+              "lock",
+              "active",
+              "recovery",
+              "clear"
+            ]
+          },
+          "native_focus_observed": false,
+          "native_focus_required": false,
+          "paired_warning_pause_frozen": true,
+          "real_gui_resume_consumed": true,
+          "equipment_ids": {
+            "jacket": "CLOTH-J1",
+            "pants": "CLOTH-P1",
+            "shoes": "CLOTH-S2",
+            "weapon": "WEAPON-03"
+          },
+          "useful_landings": {
+            "roof-useful-landing": [
+              2.9819974899292,
+              -0.00484376167878509,
+              -3.62399840354919
+            ],
+            "boarding-useful-landing": [
+              2.98199915885925,
+              -0.00484376167878509,
+              -9.62400245666504
+            ],
+            "hatch-contact": [
+              3.72529029846191e-08,
+              -0.00484376167878509,
+              -13.6999940872192
+            ]
+          },
+          "original_capture_directory": "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary",
+          "original_metadata_path": "captures/act1/full-route/scripted-graphical-1791463459-1296508-slowest-primary/evidence.json",
+          "original_log_path": ".cinder/a1-l1-scripted-slowest-primary.log",
+          "image_files": [
+            "01-spawn.png",
+            "02-first-dash.png",
+            "03-hall-primary.png",
+            "04-workshop-useful-landing.png",
+            "05-roof-warning.png",
+            "06-roof-lock.png",
+            "07-roof-active.png",
+            "08-roof-recovery.png",
+            "09-roof-useful-landing.png",
+            "10-boarding-warning.png",
+            "11-boarding-useful-landing.png",
+            "12-final-clear.png",
+            "13-hatch-contact.png"
+          ]
+        },
+        {
+          "kit": "fastest-short-dash",
+          "shared_api": "campaign-shared-9",
+          "shared_baseline": "ed355c9525cb9db6d1f28403f9bf3a16def74175",
+          "log_path": "data/campaign/act1/evidence/A1-L1/fastest-short-dash/route.log",
+          "terminal_checks": 591,
+          "failures": 0,
+          "exit": 0,
+          "metadata_checks_at_write": 590,
+          "metadata_final_check_note": "Terminal includes successful final evidence-save check after metadata count was written.",
+          "capture_directory": "data/campaign/act1/evidence/A1-L1/fastest-short-dash",
+          "metadata_path": "data/campaign/act1/evidence/A1-L1/fastest-short-dash/evidence.json",
+          "actual_images_inspected": 13,
+          "pixel_size": [
+            540,
+            1170
+          ],
+          "actual_swipes": 15,
+          "actual_zero_shell_primaries": 4,
+          "initial_hp": 100.0,
+          "final_hp": 100.0,
+          "arm_hit_events": [],
+          "observed_public_phases": {
+            "a1_l1_boarding_arm": [
+              "warning",
+              "lock",
+              "clear"
+            ],
+            "a1_l1_roof_arm": [
+              "warning",
+              "lock",
+              "active",
+              "recovery",
+              "clear"
+            ]
+          },
+          "native_focus_observed": false,
+          "native_focus_required": false,
+          "paired_warning_pause_frozen": true,
+          "real_gui_resume_consumed": true,
+          "equipment_ids": {
+            "jacket": "CLOTH-J0",
+            "pants": "CLOTH-P0",
+            "shoes": "CLOTH-S1",
+            "weapon": "WEAPON-02"
+          },
+          "useful_landings": {
+            "roof-useful-landing": [
+              2.8199999332428,
+              -0.00484376167878509,
+              -3.84000134468079
+            ],
+            "boarding-useful-landing": [
+              2.82000017166138,
+              -0.00484376167878509,
+              -9.83999538421631
+            ],
+            "hatch-contact": [
+              -1.11758708953857e-08,
+              -0.00484376167878509,
+              -13.6999979019165
+            ]
+          },
+          "original_capture_directory": "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash",
+          "original_metadata_path": "captures/act1/full-route/scripted-graphical-1791463582-1024921-fastest-short-dash/evidence.json",
+          "original_log_path": ".cinder/a1-l1-scripted-fastest-short-dash.log",
+          "image_files": [
+            "01-spawn.png",
+            "02-first-dash.png",
+            "03-hall-primary.png",
+            "04-workshop-useful-landing.png",
+            "05-roof-warning.png",
+            "06-roof-lock.png",
+            "07-roof-active.png",
+            "08-roof-recovery.png",
+            "09-roof-useful-landing.png",
+            "10-boarding-warning.png",
+            "11-boarding-useful-landing.png",
+            "12-final-clear.png",
+            "13-hatch-contact.png"
+          ]
+        }
+      ],
+      "source_comparison": [
+        "docs/concept-art/act1/props/earth-launch-modular-kit.png [G14 actual image inspected]",
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16 actual image inspected]",
+        "docs/concept-art/act1/characters/expedition-cast-and-player.png [G07 actual image inspected]"
+      ],
+      "reuse_boundary": "Neutral and slowest-longest-shortest ran exact campaign-shared-8/43c8f6d; slowest-primary and fastest-short-dash ran exact campaign-shared-9/ed355c9. Owner confirms shared9 exact scalar/save transport changed without art, controller, camera, source geometry, cue geometry or gesture changes, so earlier rendering/control/source findings apply. Exact9 persistence/resume tests are separate owner evidence, not supplied by these PNGs.",
+      "prior_critical_defects": "Corrected actual incoming boarding and physical hatch poses clear old parked arm actor occlusion; available/spent cloth ground cues now visible. Preserve failed original13-image route under each affected asset validation, not a passing result.",
+      "observation": "Roof warning/lock/active/recovery show complete physical arm, appropriate footprint/phase presentation, player and broad safe-side floor. Standing roundel and lowered spent silhouette are distinct; normal available diamond, spent broken diamond and hatch contact chevron remain discernible. Both objective lines/HUD readable. Ringed science instrument, journey board, finless capsules, winch/jib/rope, friendly cast and G07 brim/beard/coat retain selected source vocabulary; not final source fidelity acceptance.",
+      "remaining_visibility": [
+        "Longer-dash kits slowest-longest-shortest and slowest-primary land at X\u22482.982 in roof/boarding: the target left upright trims the right sleeve and outer boot edge in 09/11. Face, central torso, remaining foot silhouette and floor contact remain readable. Fully unobstructed feet are not claimed for these kits.",
+        "The roof source central beam partly crosses the source glyph; phase marks, physical source and lane remain discernible.",
+        "The foreground workshop ladder partly overlaps the roof available diamond in 05\u201309; its attack-cue identity remains recognizable.",
+        "The longer-dash incoming boarding upper-left actor silhouette meets a small lane-endcap segment in projection; actual foot position and remaining boundary remain readable.",
+        "Some peripheral furniture, rooftop cannon and NPC lower bodies are cropped or hidden by the close view; those assets lack a complete silhouette/fidelity view."
+      ],
+      "limits": "Scripted automated desktop graphical route evidence for four specified kits/paths only. Native-focused execution, human understanding/balance, all legal movement angles/loadout combinations, conditional timing balance and renderer performance remain unperformed; no mobile/export or canonical/final level/art acceptance claim. Roof first cycle voluntarily observed by test; runtime permits immediate ordinary-primary cancellation without compulsory waiting.",
+      "owner_affected_headless": "Owner reports post-cosmetic opening 86 and headless route 144 clean. Exact shared9 arm 153/0 is now clean; exact9 campaign affected test pending separately. Helper ran no engine/import jobs.",
+      "original_index_path": ".cinder/a1-l1-scripted-portrait-evidence-index.json"
+    },
+    "prior_godot_import_history": "Owner imported shared5 and rendered actual static spawn; .cinder/a1-l1-shared5-static-spawn.log inspected with no error text,ownerreports exit0. Production root constructs preceding split-base arm visuals before opening gating. New parked-only code has static checks only and awaits owner parse/affected hatch capture; helper ran no engine jobs.",
+    "current_shared10_adoption": {
+      "baseline": "564559094bc98229c8140cf092771329b333cea0",
+      "api": "campaign-shared-10",
+      "ack": "db514b4f-d178-4985-bf7b-05bbbac114c3",
+      "shared_paths": 13,
+      "owned_overlap": false,
+      "preserved_owned_file_hashes": 221,
+      "reuse_basis": "Only opt-in AshEnemy/spore/repulsion leaves changed; L1 uses Node3D PracticeTarget and stationary friendly mechanisms. Its player/input/camera/HUD/level/save/lane/scheduler/art/cue roots and settings are unchanged. Do not attribute8/9 executions to10.",
+      "actual_exact_transport_checks": "data/campaign/act1/evidence/A1-L1/checks/summary.json",
+      "canonical_acceptance": "pending independent integration review"
+    }
+  },
+  "assets": [
+    {
+      "id": "A1-ART-LAUNCH-01",
+      "family": "earth-hall-column",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/reference-library/act1/film-stills/f01.jpg [F01]",
+        "O04"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "FlutedColumn",
+        "CapitalBand",
+        "CapitalScroll"
+      ],
+      "readiness": "instanced_scripted_graphical_route_visibility_reviewed_canonical_fidelity_unaccepted",
+      "native_grid": "not_applicable: authored low-segment 3D geometry",
+      "world_dimensions_xyz_approx": [
+        0.9,
+        3.55,
+        0.86
+      ],
+      "pivot": "bottom centre at ground; local(0,0,0)",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Revised static centre spawn reviewed: Columns now occupy mostly the outer image margins; no centre player/marker overlap observed. Their closeness to ordinary edge-dash destinations remains unverified after revision. Focused edge/workshop/roof/hatch views remain pending.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 hall"
+      ],
+      "textures": [],
+      "known_limitations": [
+        "Flutes and scrolls are contemporary geometry interpretation, not claimed original construction.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "layout_instances": [
+        [
+          -3.8,
+          0,
+          12
+        ],
+        [
+          -3.8,
+          0,
+          7
+        ],
+        [
+          -3.8,
+          0,
+          2.9
+        ],
+        [
+          3.8,
+          0,
+          12
+        ],
+        [
+          3.8,
+          0,
+          7
+        ],
+        [
+          3.8,
+          0,
+          2.9
+        ]
+      ],
+      "portrait_review": {
+        "capture_path": "captures/act1/shared5-static/spawn.png",
+        "mode": "actual shared5 static centre-spawn render only; earlier revised entry finding still applies",
+        "finding": "Columns now occupy mostly the outer image margins; no centre player/marker overlap observed. Their closeness to ordinary edge-dash destinations remains unverified after revision.",
+        "acceptance": "readability observation only; no final source-fidelity or revised interactive-portrait pass"
+      },
+      "current_spawn_review": "Shared5 actual static entry inspected against selected G07/G16; previous source/science readability findings retained. Both entry objective lines visible; no revised gesture/edge/phase acceptance.",
+      "readiness_history": [
+        "revised_static_spawn_framing_reviewed_edge_landings_pending"
+      ],
+      "known_limitations_history": [
+        "Flutes and scrolls are contemporary geometry interpretation, not claimed original construction.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-02",
+      "family": "earth-hall-window",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/reference-library/act1/film-stills/f01.jpg [F01]",
+        "O05"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "DividedArchedWindow"
+      ],
+      "readiness": "instanced_scripted_graphical_route_visibility_reviewed_canonical_fidelity_unaccepted",
+      "native_grid": [
+        {
+          "path": "assets/acts/act1/launch/arched_window.png",
+          "native_dimensions_px": [
+            64,
+            112
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "a5f71cf518ce50a3cae229fcea2b8336ee922cf685ebf5941281ab675f68f27d"
+        }
+      ],
+      "world_dimensions_xyz_approx": [
+        1.6,
+        2.8,
+        0
+      ],
+      "pivot": "cutout bottom centre (32,112) pixels",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Revised static centre spawn reviewed: Oblique window flats appear along the portrait edges. Full divided-arch detail and later edge-dash overlap are not established. Focused edge/workshop/roof/hatch views remain pending.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 hall"
+      ],
+      "textures": [
+        {
+          "path": "assets/acts/act1/launch/arched_window.png",
+          "native_dimensions_px": [
+            64,
+            112
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "a5f71cf518ce50a3cae229fcea2b8336ee922cf685ebf5941281ab675f68f27d"
+        }
+      ],
+      "known_limitations": [
+        "Original 64x112 pixel flat; perspective and overlap remain unverified.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "layout_instances": [
+        [
+          -3.1,
+          0.1,
+          12.7
+        ],
+        [
+          -3.1,
+          0.1,
+          5.4
+        ],
+        [
+          3.1,
+          0.1,
+          12.7
+        ],
+        [
+          3.1,
+          0.1,
+          5.4
+        ]
+      ],
+      "portrait_review": {
+        "capture_path": "captures/act1/shared5-static/spawn.png",
+        "mode": "actual shared5 static centre-spawn render only; earlier revised entry finding still applies",
+        "finding": "Oblique window flats appear along the portrait edges. Full divided-arch detail and later edge-dash overlap are not established.",
+        "acceptance": "readability observation only; no final source-fidelity or revised interactive-portrait pass"
+      },
+      "current_spawn_review": "Shared5 actual static entry inspected against selected G07/G16; previous source/science readability findings retained. Both entry objective lines visible; no revised gesture/edge/phase acceptance.",
+      "readiness_history": [
+        "revised_static_spawn_partial_edge_framing_reviewed_fidelity_pending"
+      ],
+      "known_limitations_history": [
+        "Original 64x112 pixel flat; perspective and overlap remain unverified.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-03",
+      "family": "earth-celestial-fabric",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/concept-art/act1/mood/invitation-launch-and-wonder.png [G11]",
+        "game-stage-drapery interpretation"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "CelestialFabricPanel"
+      ],
+      "readiness": "instanced_scripted_graphical_route_visibility_reviewed_canonical_fidelity_unaccepted",
+      "native_grid": [
+        {
+          "path": "assets/acts/act1/launch/celestial_drape.png",
+          "native_dimensions_px": [
+            80,
+            128
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "ffed4b14e9e9619be42e6a348e57ffc918eea94a0fc64f3112257ffbb78fbc3a"
+        }
+      ],
+      "world_dimensions_xyz_approx": [
+        1.68,
+        2.688,
+        0
+      ],
+      "pivot": "cutout bottom centre (40,128) pixels",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Revised static centre spawn reviewed: Fabric panels provide thin side framing in the spawn image. Full embroidery/source detail and edge interaction remain unaccepted. Focused edge/workshop/roof/hatch views remain pending.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 hall; later compatible ceremonial tableau"
+      ],
+      "textures": [
+        {
+          "path": "assets/acts/act1/launch/celestial_drape.png",
+          "native_dimensions_px": [
+            80,
+            128
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "ffed4b14e9e9619be42e6a348e57ffc918eea94a0fc64f3112257ffbb78fbc3a"
+        }
+      ],
+      "known_limitations": [
+        "Celestial fabric is a generated-board scenic proposal; do not label its embroidery as a verified F01 costume.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "layout_instances": [
+        [
+          -3.16,
+          0.5,
+          13.5
+        ],
+        [
+          -3.16,
+          0.5,
+          6.2
+        ],
+        [
+          3.16,
+          0.5,
+          13.5
+        ],
+        [
+          3.16,
+          0.5,
+          6.2
+        ]
+      ],
+      "portrait_review": {
+        "capture_path": "captures/act1/shared5-static/spawn.png",
+        "mode": "actual shared5 static centre-spawn render only; earlier revised entry finding still applies",
+        "finding": "Fabric panels provide thin side framing in the spawn image. Full embroidery/source detail and edge interaction remain unaccepted.",
+        "acceptance": "readability observation only; no final source-fidelity or revised interactive-portrait pass"
+      },
+      "current_spawn_review": "Shared5 actual static entry inspected against selected G07/G16; previous source/science readability findings retained. Both entry objective lines visible; no revised gesture/edge/phase acceptance.",
+      "readiness_history": [
+        "revised_static_spawn_partial_edge_framing_reviewed_fidelity_pending"
+      ],
+      "known_limitations_history": [
+        "Celestial fabric is a generated-board scenic proposal; do not label its embroidery as a verified F01 costume.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-04",
+      "family": "earth-ringed-instrument",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/props/earth-launch-modular-kit.png [G14]",
+        "docs/reference-library/act1/concepts/observatory-launch-object-studies-v2.png [G04]",
+        "docs/reference-library/act1/film-stills/f01.jpg [F01]",
+        "O07"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "RingedAstronomicalInstrument"
+      ],
+      "readiness": "instanced_scripted_graphical_route_visibility_reviewed_canonical_fidelity_unaccepted",
+      "native_grid": "not_applicable: authored low-segment 3D geometry",
+      "world_dimensions_xyz_approx": [
+        1.47,
+        2.8,
+        1.47
+      ],
+      "pivot": "ground pedestal centre",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Revised static centre spawn reviewed: Ring,central globe,pedestal and base are visible within the close portrait, improving the original clipped view. Crossing-ring geometry remains a simplified contemporary adaptation. Focused edge/workshop/roof/hatch views remain pending.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 hall"
+      ],
+      "textures": [],
+      "known_limitations": [
+        "Crossing rings are observed; identification as armillary sphere stays qualified. No interaction cue.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "layout_instances": [
+        [
+          2.6,
+          0,
+          6.2
+        ]
+      ],
+      "portrait_review": {
+        "capture_path": "captures/act1/shared5-static/spawn.png",
+        "mode": "actual shared5 static centre-spawn render only; earlier revised entry finding still applies",
+        "finding": "Ring,central globe,pedestal and base are visible within the close portrait, improving the original clipped view. Crossing-ring geometry remains a simplified contemporary adaptation.",
+        "acceptance": "readability observation only; no final source-fidelity or revised interactive-portrait pass"
+      },
+      "current_spawn_review": "Shared5 actual static entry inspected against selected G07/G16; previous source/science readability findings retained. Both entry objective lines visible; no revised gesture/edge/phase acceptance.",
+      "readiness_history": [
+        "revised_static_spawn_landmark_readability_reviewed_fidelity_pending"
+      ],
+      "known_limitations_history": [
+        "Crossing rings are observed; identification as armillary sphere stays qualified. No interaction cue.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-05",
+      "family": "earth-journey-board",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/props/earth-launch-modular-kit.png [G14]",
+        "docs/reference-library/act1/concepts/observatory-launch-object-studies-v2.png [G04]",
+        "docs/reference-library/act1/film-stills/f01.jpg [F01]",
+        "O06"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "AstronomicalJourneyBoard",
+        "ChalkJourneyDiagram"
+      ],
+      "readiness": "instanced_scripted_graphical_route_visibility_reviewed_canonical_fidelity_unaccepted",
+      "native_grid": [
+        {
+          "path": "assets/acts/act1/launch/journey_board.png",
+          "native_dimensions_px": [
+            96,
+            56
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "d3f26f75346dcb4f82414cb0c3512e61687ef032ca71a435a7b73ba80b696e73"
+        }
+      ],
+      "world_dimensions_xyz_approx": [
+        1.94,
+        1.99,
+        0.36
+      ],
+      "pivot": "ground centre between feet; diagram lower edge localy0.91",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Revised static centre spawn reviewed: Board,Earth/Moon/chalk route and supporting feet are legible at the left side without the previous column occlusion; no final chalk-detail/source-fidelity acceptance. Focused edge/workshop/roof/hatch views remain pending.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 hall"
+      ],
+      "textures": [
+        {
+          "path": "assets/acts/act1/launch/journey_board.png",
+          "native_dimensions_px": [
+            96,
+            56
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "d3f26f75346dcb4f82414cb0c3512e61687ef032ca71a435a7b73ba80b696e73"
+        }
+      ],
+      "known_limitations": [
+        "New Earth/Moon journey diagram contains no invented historic quotation or generated caption; scenery cannot redirect aim.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "layout_instances": [
+        [
+          -2.6,
+          0,
+          6.4
+        ]
+      ],
+      "portrait_review": {
+        "capture_path": "captures/act1/shared5-static/spawn.png",
+        "mode": "actual shared5 static centre-spawn render only; earlier revised entry finding still applies",
+        "finding": "Board,Earth/Moon/chalk route and supporting feet are legible at the left side without the previous column occlusion; no final chalk-detail/source-fidelity acceptance.",
+        "acceptance": "readability observation only; no final source-fidelity or revised interactive-portrait pass"
+      },
+      "current_spawn_review": "Shared5 actual static entry inspected against selected G07/G16; previous source/science readability findings retained. Both entry objective lines visible; no revised gesture/edge/phase acceptance.",
+      "readiness_history": [
+        "revised_static_spawn_landmark_readability_reviewed_fidelity_pending"
+      ],
+      "known_limitations_history": [
+        "New Earth/Moon journey diagram contains no invented historic quotation or generated caption; scenery cannot redirect aim.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-06",
+      "family": "earth-bench",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/props/earth-launch-modular-kit.png [G14]",
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/reference-library/act1/film-stills/f02.jpg [F02]",
+        "docs/reference-library/act1/film-stills/a13.png [A13 handcoloured version]",
+        "O08/O13 visible bench vocabulary"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "PlankBench"
+      ],
+      "readiness": "instanced_scripted_graphical_route_partial_visibility_reviewed_fidelity_unaccepted",
+      "native_grid": "not_applicable: authored low-segment 3D geometry",
+      "world_dimensions_xyz_approx": [
+        0.9,
+        0.83,
+        1.68
+      ],
+      "pivot": "ground centre",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Revised static centre spawn reviewed: Hall benches are visible but cover academics lower bodies. Revised workshop bench/anvil composition has not been reviewed from its staged portrait. Focused edge/workshop/roof/hatch views remain pending.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 hall and workshop; compatible return tableau"
+      ],
+      "textures": [],
+      "known_limitations": [
+        "No breakable or gameplay interaction added from object-library proposals.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "layout_instances": [
+        [
+          -2.88,
+          0,
+          11.6
+        ],
+        [
+          2.88,
+          0,
+          11.6
+        ],
+        [
+          -2.8,
+          0,
+          -0.75
+        ],
+        [
+          2.8,
+          0,
+          -0.75
+        ]
+      ],
+      "portrait_review": {
+        "capture_path": "captures/act1/shared5-static/spawn.png",
+        "mode": "actual shared5 static centre-spawn render only; earlier revised entry finding still applies",
+        "finding": "Hall benches are visible but cover academics lower bodies. Revised workshop bench/anvil composition has not been reviewed from its staged portrait.",
+        "acceptance": "readability observation only; no final source-fidelity or revised interactive-portrait pass"
+      },
+      "current_spawn_review": "Shared5 actual static entry inspected against selected G07/G16; previous source/science readability findings retained. Both entry objective lines visible; no revised gesture/edge/phase acceptance.",
+      "readiness_history": [
+        "revised_static_spawn_hall_bench_reviewed_workshop_pending"
+      ],
+      "known_limitations_history": [
+        "No breakable or gameplay interaction added from object-library proposals.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-07",
+      "family": "earth-workshop-anvil",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/props/earth-launch-modular-kit.png [G14]",
+        "docs/reference-library/act1/concepts/observatory-launch-object-studies-v2.png [G04]",
+        "docs/reference-library/act1/film-stills/a13.png [A13 handcoloured version]",
+        "O11/O12"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "AnvilAndPedestal",
+        "HammerHandle",
+        "HammerHead"
+      ],
+      "readiness": "instanced_scripted_graphical_route_partial_visibility_reviewed_fidelity_unaccepted",
+      "native_grid": "not_applicable: authored low-segment 3D geometry",
+      "world_dimensions_xyz_approx": [
+        0.9,
+        1.17,
+        0.66
+      ],
+      "pivot": "pedestal ground centre",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Initial level portrait exists; revised hall/workshop layout and ordinary legal dash destinations require owner portrait rerun. No accepted final fidelity claim.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 workshop"
+      ],
+      "textures": [],
+      "known_limitations": [
+        "Tool remains scenic; no new weapon profile or equipment identity.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "layout_instances": [
+        [
+          -2.6,
+          0,
+          -1.6
+        ]
+      ],
+      "readiness_history": [
+        "owner_imported_initial_portrait_reviewed_layout_revision_pending"
+      ],
+      "known_limitations_history": [
+        "Tool remains scenic; no new weapon profile or equipment identity.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-08",
+      "family": "earth-workshop-truss",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/reference-library/act1/film-stills/f02.jpg [F02]",
+        "docs/reference-library/act1/film-stills/a13.png [A13 handcoloured version]",
+        "O14/O15"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "PaintedWorkshopTruss",
+        "BackgroundLadder"
+      ],
+      "readiness": "instanced_scripted_graphical_route_partial_visibility_reviewed_fidelity_unaccepted",
+      "native_grid": "not_applicable: authored low-segment 3D geometry",
+      "world_dimensions_xyz_approx": [
+        0.2,
+        3.52,
+        4.15
+      ],
+      "pivot": "ground centre under beam",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Initial level portrait exists; revised hall/workshop layout and ordinary legal dash destinations require owner portrait rerun. No accepted final fidelity claim.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 workshop"
+      ],
+      "textures": [],
+      "known_limitations": [
+        "Truss and ladder do not imply climbing, platforms or collision.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "layout_instances": [
+        [
+          -3.25,
+          0,
+          0
+        ],
+        [
+          3.25,
+          0,
+          0
+        ],
+        [
+          3.08,
+          0,
+          -1.9
+        ]
+      ],
+      "readiness_history": [
+        "owner_imported_initial_portrait_reviewed_layout_revision_pending"
+      ],
+      "known_limitations_history": [
+        "Truss and ladder do not imply climbing, platforms or collision.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-09",
+      "family": "finless-capsule-hatch",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/props/earth-launch-modular-kit.png [G14]",
+        "docs/reference-library/act1/concepts/observatory-launch-object-studies-v2.png [G04]",
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/reference-library/act1/film-stills/f02.jpg [F02]",
+        "docs/reference-library/act1/film-stills/f04.jpg [F04]",
+        "docs/reference-library/act1/film-stills/a13.png [A13 handcoloured version]",
+        "O09/O10"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "ExitCapsule",
+        "WorkshopCapsule",
+        "RivetedCylindricalBody",
+        "RoundedBulletNose",
+        "CircularHatchRim",
+        "HatchHinge",
+        "BroadHatchSill"
+      ],
+      "readiness": "instanced_scripted_graphical_route_visibility_reviewed_canonical_fidelity_unaccepted",
+      "native_grid": [
+        {
+          "path": "assets/acts/act1/launch/riveted_plate.png",
+          "native_dimensions_px": [
+            32,
+            64
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "78c9d87d7f9176b001ec2a2b0ee10ac5af16f86068bdc313772838455ae14b0b"
+        }
+      ],
+      "world_dimensions_xyz_approx": [
+        1.9,
+        1.9,
+        4.08
+      ],
+      "pivot": "ground axis centre; nose-Z, hatch+Z; final capsule world(0,0,-16.1); sill reachesz-14.29",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Initial level portrait exists; revised hall/workshop layout and ordinary legal dash destinations require owner portrait rerun. No accepted final fidelity claim.",
+      "states": [
+        "closed",
+        "open: externally set_hatch_open(bool); door hinge turns108degrees immediately"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 workshop and exit; family intended A1-L2 landing,A1-L5 escape,A1-O1 salvage"
+      ],
+      "textures": [
+        {
+          "path": "assets/acts/act1/launch/riveted_plate.png",
+          "native_dimensions_px": [
+            32,
+            64
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "78c9d87d7f9176b001ec2a2b0ee10ac5af16f86068bdc313772838455ae14b0b"
+        }
+      ],
+      "known_limitations": [
+        "Only open/closed states authored; blocked/damaged/repaired future states are not implemented. Workshop copy is0.75scale and permanently open. Exit trigger/cue belongs to level owner; no automatic signal.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "layout_instances": [
+        [
+          2.75,
+          0,
+          -1.1
+        ],
+        [
+          0,
+          0,
+          -16.1
+        ]
+      ],
+      "readiness_history": [
+        "owner_imported_initial_portrait_reviewed_layout_revision_pending"
+      ],
+      "known_limitations_history": [
+        "Only open/closed states authored; blocked/damaged/repaired future states are not implemented. Workshop copy is0.75scale and permanently open. Exit trigger/cue belongs to level owner; no automatic signal.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-10",
+      "family": "earth-roof-skyline",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/concept-art/act1/mood/invitation-launch-and-wonder.png [G11]",
+        "docs/reference-library/act1/film-stills/f03.jpg [F03]",
+        "O22/O24/O25"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "PaintedChimneySkyline",
+        "DistantRoofBackdrop"
+      ],
+      "readiness": "instanced_scripted_graphical_route_partial_visibility_reviewed_fidelity_unaccepted",
+      "native_grid": [
+        {
+          "path": "assets/acts/act1/launch/rooftop_skyline.png",
+          "native_dimensions_px": [
+            192,
+            96
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "c5179efbbcbf7bf1c659f796c75ef5bb96bc7cf0e8bb2ebf561d173f682a2f1a"
+        }
+      ],
+      "world_dimensions_xyz_approx": [
+        7.68,
+        3.84,
+        0
+      ],
+      "pivot": "cutout bottom centre (96,96) pixels",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Initial level portrait exists; revised hall/workshop layout and ordinary legal dash destinations require owner portrait rerun. No accepted final fidelity claim.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 roof; compatible return tableau"
+      ],
+      "textures": [
+        {
+          "path": "assets/acts/act1/launch/rooftop_skyline.png",
+          "native_dimensions_px": [
+            192,
+            96
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "c5179efbbcbf7bf1c659f796c75ef5bb96bc7cf0e8bb2ebf561d173f682a2f1a"
+        }
+      ],
+      "known_limitations": [
+        "Painted roof flats are distant scenery; smoke animation is not authored and silhouettes are not navigable buildings.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "readiness_history": [
+        "owner_imported_prototype_portrait_acceptance_pending"
+      ],
+      "known_limitations_history": [
+        "Painted roof flats are distant scenery; smoke animation is not authored and silhouettes are not navigable buildings.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-11",
+      "family": "earth-cross-braced-gantry",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/props/earth-launch-modular-kit.png [G14]",
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/reference-library/act1/film-stills/f04.jpg [F04]",
+        "docs/reference-library/act1/film-stills/f05.jpg [F05]",
+        "O23/O28/O29"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "CrossBracedRailing"
+      ],
+      "readiness": "instanced_scripted_graphical_route_partial_visibility_reviewed_fidelity_unaccepted",
+      "native_grid": "not_applicable: authored low-segment 3D geometry",
+      "world_dimensions_xyz_approx": [
+        0.25,
+        1.1,
+        3.6
+      ],
+      "pivot": "ground centre",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Initial level portrait exists; revised hall/workshop layout and ordinary legal dash destinations require owner portrait rerun. No accepted final fidelity claim.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 launch"
+      ],
+      "textures": [],
+      "known_limitations": [
+        "Only railing authored: no additional raised floor or required stairs.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "readiness_history": [
+        "owner_imported_prototype_portrait_acceptance_pending"
+      ],
+      "known_limitations_history": [
+        "Only railing authored: no additional raised floor or required stairs.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-12",
+      "family": "earth-telescope",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/props/earth-launch-modular-kit.png [G14]",
+        "docs/reference-library/act1/concepts/observatory-launch-object-studies-v2.png [G04]",
+        "docs/reference-library/act1/film-stills/f03.jpg [F03]",
+        "O21"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "RooftopTelescope",
+        "TripodLeg",
+        "TelescopeTube"
+      ],
+      "readiness": "instanced_scripted_graphical_route_partial_visibility_reviewed_fidelity_unaccepted",
+      "native_grid": "not_applicable: authored low-segment 3D geometry",
+      "world_dimensions_xyz_approx": [
+        0.95,
+        1.75,
+        1.5
+      ],
+      "pivot": "ground tripod centre",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Initial level portrait exists; revised hall/workshop layout and ordinary legal dash destinations require owner portrait rerun. No accepted final fidelity claim.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 roof; compatible observatory scene"
+      ],
+      "textures": [],
+      "known_limitations": [
+        "Static scientific landmark, no aiming mechanism or usable ranged target.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "readiness_history": [
+        "owner_imported_prototype_portrait_acceptance_pending"
+      ],
+      "known_limitations_history": [
+        "Static scientific landmark, no aiming mechanism or usable ranged target.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-13",
+      "family": "earth-launch-cannon",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/props/earth-launch-modular-kit.png [G14]",
+        "docs/reference-library/act1/concepts/observatory-launch-object-studies-v2.png [G04]",
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/concept-art/act1/mood/invitation-launch-and-wonder.png [G11]",
+        "docs/reference-library/act1/film-stills/f04.jpg [F04]",
+        "docs/reference-library/act1/film-stills/f05.jpg [F05]",
+        "O27"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "EnormousLaunchCannon",
+        "WideRingedBarrel",
+        "CannonMuzzle"
+      ],
+      "readiness": "instanced_scripted_graphical_route_partial_visibility_reviewed_fidelity_unaccepted",
+      "native_grid": [
+        {
+          "path": "assets/acts/act1/launch/riveted_plate.png",
+          "native_dimensions_px": [
+            32,
+            64
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "78c9d87d7f9176b001ec2a2b0ee10ac5af16f86068bdc313772838455ae14b0b"
+        }
+      ],
+      "world_dimensions_xyz_approx": [
+        1.8,
+        2.67,
+        4.2
+      ],
+      "pivot": "ground plinth centre",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Initial level portrait exists; revised hall/workshop layout and ordinary legal dash destinations require owner portrait rerun. No accepted final fidelity claim.",
+      "states": [
+        "static"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 launch tableau"
+      ],
+      "textures": [
+        {
+          "path": "assets/acts/act1/launch/riveted_plate.png",
+          "native_dimensions_px": [
+            32,
+            64
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "78c9d87d7f9176b001ec2a2b0ee10ac5af16f86068bdc313772838455ae14b0b"
+        }
+      ],
+      "known_limitations": [
+        "No firing animation, player steering, environmental attack or collider authored.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "readiness_history": [
+        "owner_imported_prototype_portrait_acceptance_pending"
+      ],
+      "known_limitations_history": [
+        "No firing animation, player steering, environmental attack or collider authored.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-14",
+      "family": "friendly-academic",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/characters/earth-supporting-cast.png [G08]",
+        "docs/concept-art/act1/mood/invitation-launch-and-wonder.png [G11]",
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/reference-library/act1/film-stills/f01.jpg [F01]",
+        "O01/O02/O03"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "CongressAstronomer",
+        "SecondAcademic"
+      ],
+      "readiness": "instanced_scripted_graphical_route_partial_visibility_reviewed_fidelity_unaccepted",
+      "native_grid": [
+        {
+          "path": "assets/acts/act1/launch/academic.png",
+          "native_dimensions_px": [
+            48,
+            72
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "ed73fc5428d3d215877b7e7d03f02be2a23d2f2b03f2628f46c63399b0bd156b"
+        }
+      ],
+      "world_dimensions_xyz_approx": [
+        1.104,
+        1.656,
+        0
+      ],
+      "pivot": "billboard bottom centre (24,72) pixels; ground y0.025",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Revised static centre spawn reviewed: Both pointed hats,beards and indicating hands are visible. Benches and wall flats hide much of robes/lower bodies; single static poses remain unanimated. Focused edge/workshop/roof/hatch views remain pending.",
+      "states": [
+        "static friendly indicating/work/salute pose; mirrored variant"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 hall"
+      ],
+      "textures": [
+        {
+          "path": "assets/acts/act1/launch/academic.png",
+          "native_dimensions_px": [
+            48,
+            72
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "ed73fc5428d3d215877b7e7d03f02be2a23d2f2b03f2628f46c63399b0bd156b"
+        }
+      ],
+      "known_limitations": [
+        "Single authored pose, no animation sheet or exact performer likeness. No collider,healthbar,enemy group,hit response or escort mechanic; scenic figures carry nonhostile_scenery metadata.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "layout_instances": [
+        [
+          -2.78,
+          0.025,
+          11.3
+        ],
+        [
+          2.78,
+          0.025,
+          11.3
+        ]
+      ],
+      "portrait_review": {
+        "capture_path": "captures/act1/shared5-static/spawn.png",
+        "mode": "actual shared5 static centre-spawn render only; earlier revised entry finding still applies",
+        "finding": "Both pointed hats,beards and indicating hands are visible. Benches and wall flats hide much of robes/lower bodies; single static poses remain unanimated.",
+        "acceptance": "readability observation only; no final source-fidelity or revised interactive-portrait pass"
+      },
+      "current_spawn_review": "Shared5 actual static entry inspected against selected G07/G16; previous source/science readability findings retained. Both entry objective lines visible; no revised gesture/edge/phase acceptance.",
+      "readiness_history": [
+        "revised_static_spawn_partial_cast_readability_reviewed_fidelity_pending"
+      ],
+      "known_limitations_history": [
+        "Single authored pose, no animation sheet or exact performer likeness. No collider,healthbar,enemy group,hit response or escort mechanic; scenic figures carry nonhostile_scenery metadata.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-15",
+      "family": "friendly-worker",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/characters/earth-supporting-cast.png [G08]",
+        "docs/concept-art/act1/mood/invitation-launch-and-wonder.png [G11]",
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/reference-library/act1/film-stills/f02.jpg [F02]",
+        "O18"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "WorkshopMetalworker",
+        "CapsuleMetalworker"
+      ],
+      "readiness": "instanced_scripted_graphical_route_partial_visibility_reviewed_fidelity_unaccepted",
+      "native_grid": [
+        {
+          "path": "assets/acts/act1/launch/metalworker.png",
+          "native_dimensions_px": [
+            48,
+            72
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "2f3e816ad5a9c9f9c712199b2b18b619cf687ebb0cc75f388bbbc3955c82d4d3"
+        }
+      ],
+      "world_dimensions_xyz_approx": [
+        1.104,
+        1.656,
+        0
+      ],
+      "pivot": "billboard bottom centre (24,72) pixels; ground y0.025",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Initial level portrait exists; revised hall/workshop layout and ordinary legal dash destinations require owner portrait rerun. No accepted final fidelity claim.",
+      "states": [
+        "static friendly indicating/work/salute pose; mirrored variant"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 workshop; compatible return tableau"
+      ],
+      "textures": [
+        {
+          "path": "assets/acts/act1/launch/metalworker.png",
+          "native_dimensions_px": [
+            48,
+            72
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "2f3e816ad5a9c9f9c712199b2b18b619cf687ebb0cc75f388bbbc3955c82d4d3"
+        }
+      ],
+      "known_limitations": [
+        "Single authored pose, no animation sheet or exact performer likeness. No collider,healthbar,enemy group,hit response or escort mechanic; scenic figures carry nonhostile_scenery metadata.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "layout_instances": [
+        [
+          -2.78,
+          0.025,
+          -2.9
+        ],
+        [
+          2.88,
+          0.025,
+          3.8
+        ]
+      ],
+      "portrait_review": {
+        "capture_path": "captures/act1/shared5-static/spawn.png",
+        "mode": "actual shared5 static entry only",
+        "finding": "Distant entry observer cap/head and lower silhouette are visible but the objective panel covers part of torso; actual workshop worker/landmark staging remains pending.",
+        "acceptance": "partial scenic cast observation only; no pose-animation,full-body or final source-fidelity claim"
+      },
+      "readiness_history": [
+        "instanced_entry_observer_partial_static_spawn_reviewed_workshop_pending"
+      ],
+      "known_limitations_history": [
+        "Single authored pose, no animation sheet or exact performer likeness. No collider,healthbar,enemy group,hit response or escort mechanic; scenic figures carry nonhostile_scenery metadata.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-16",
+      "family": "friendly-launch-attendant",
+      "source_kind": "original runtime art authored from shape observations; no source image crops",
+      "source_references": [
+        "docs/concept-art/act1/characters/earth-supporting-cast.png [G08]",
+        "docs/concept-art/act1/mood/invitation-launch-and-wonder.png [G11]",
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/reference-library/act1/film-stills/f04.jpg [F04]",
+        "O31"
+      ],
+      "runtime_builder": "scripts/acts/act1/launch_scenery.gd",
+      "runtime_parts": [
+        "LaunchAttendantLeft",
+        "LaunchAttendantRight"
+      ],
+      "readiness": "instanced_scripted_graphical_route_partial_visibility_reviewed_fidelity_unaccepted",
+      "native_grid": [
+        {
+          "path": "assets/acts/act1/launch/launch_attendant.png",
+          "native_dimensions_px": [
+            48,
+            72
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "fbf68a9b31048f29073cffa789c14c1acdb222f75a8b1ece6812d0465d0c2bb7"
+        }
+      ],
+      "world_dimensions_xyz_approx": [
+        1.104,
+        1.656,
+        0
+      ],
+      "pivot": "billboard bottom centre (24,72) pixels; ground y0.025",
+      "palette_role": "moon-white / dusty silver / charcoal / black; subdued scenery",
+      "role": "nonhostile scenery; no attack or contact handler",
+      "collision": "none; floor, safety geometry and exit trigger belong to level owner",
+      "occlusion": "Depth tested; no depth-test bypass or foreground fade. Initial level portrait exists; revised hall/workshop layout and ordinary legal dash destinations require owner portrait rerun. No accepted final fidelity claim.",
+      "states": [
+        "static friendly indicating/work/salute pose; mirrored variant"
+      ],
+      "animation_durations_s": "not_applicable: static pose or immediate externally committed state",
+      "reuse_locations": [
+        "A1-L1 roof; compatible return tableau"
+      ],
+      "textures": [
+        {
+          "path": "assets/acts/act1/launch/launch_attendant.png",
+          "native_dimensions_px": [
+            48,
+            72
+          ],
+          "mode": "RGBA",
+          "alpha": "binary opaque/transparent",
+          "sha256": "fbf68a9b31048f29073cffa789c14c1acdb222f75a8b1ece6812d0465d0c2bb7"
+        }
+      ],
+      "known_limitations": [
+        "Single authored pose, no animation sheet or exact performer likeness. No collider,healthbar,enemy group,hit response or escort mechanic; scenic figures carry nonhostile_scenery metadata.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "readiness_history": [
+        "owner_imported_prototype_portrait_acceptance_pending"
+      ],
+      "known_limitations_history": [
+        "Single authored pose, no animation sheet or exact performer likeness. No collider,healthbar,enemy group,hit response or escort mechanic; scenic figures carry nonhostile_scenery metadata.",
+        "Owner imported and captured the initial level on shared2; revised composition and final source fidelity remain unaccepted."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-17",
+      "family": "earth-quiet-stage-floor",
+      "source_kind": "original authored pixel material; not a reference-image crop",
+      "source_references": [
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16]",
+        "docs/concept-art/act1/mood/invitation-launch-and-wonder.png [G11]",
+        "docs/reference-library/act1/film-stills/f01.jpg [F01 stage-floor context]"
+      ],
+      "runtime_builder": "level-owned floor material; scenery module does not create floor or apply this texture",
+      "runtime_parts": [
+        "quiet_floor.png"
+      ],
+      "readiness": "instanced_scripted_graphical_route_visibility_reviewed_canonical_fidelity_unaccepted",
+      "native_grid": [
+        64,
+        64
+      ],
+      "world_dimensions_xyz_approx": [
+        2.88,
+        0,
+        2.88
+      ],
+      "pivot": "UV tile origin; no actor/attachment pivot",
+      "palette_role": "neutral medium gray115 with joints105 and sparse grain112/118; no actionable silhouette",
+      "role": "decorative opaque floor albedo",
+      "collision": "none in texture; level owner retains continuous static floor",
+      "occlusion": "flat material; no alpha,glow,ring or warning graphic; owner must verify shared cues above it",
+      "states": [
+        "static seamless plank tile"
+      ],
+      "animation_durations_s": "not_applicable",
+      "reuse_locations": [
+        "A1-L1 ceremonial hall/workshop; roof variation by owner if appropriate"
+      ],
+      "textures": [
+        {
+          "path": "assets/acts/act1/launch/quiet_floor.png",
+          "native_dimensions_px": [
+            64,
+            64
+          ],
+          "mode": "RGBA",
+          "alpha": "fully opaque",
+          "sha256": "25db1542d327dcf2fe76392c53e8bf8d778db8b6fba415532ff4a03230a32854"
+        }
+      ],
+      "known_limitations": [
+        "Owner-applied quiet floor inspected in initial and revised static centre-spawn portrait. Player/marker separation observed; exact applied UV scale and wider actionable cue/fidelity acceptance still belong to owner.",
+        "Painted plank treatment is a contemporary game adaptation, not asserted original film floor construction.",
+        "Current four-scripted-route review does not establish full peripheral silhouette, native-focused/human understanding, every legal movement/loadout, desktop performance or canonical/final source fidelity acceptance; see top-level current review."
+      ],
+      "portrait_review": {
+        "capture_path": "captures/act1/shared5-static/spawn.png",
+        "mode": "actual shared5 static centre-spawn render only; earlier revised entry finding still applies",
+        "finding": "Quiet floor remains low contrast under clear player and floor marker in centre spawn. This single frame does not establish every attack/warning or later-stage cue contrast.",
+        "acceptance": "readability observation only; no final source-fidelity or revised interactive-portrait pass"
+      },
+      "current_spawn_review": "Shared5 actual static entry inspected against selected G07/G16; previous source/science readability findings retained. Both entry objective lines visible; no revised gesture/edge/phase acceptance.",
+      "readiness_history": [
+        "revised_static_spawn_floor_contrast_reviewed_focused_cues_pending"
+      ],
+      "known_limitations_history": [
+        "Owner-applied quiet floor inspected in initial and revised static centre-spawn portrait. Player/marker separation observed; exact applied UV scale and wider actionable cue/fidelity acceptance still belong to owner.",
+        "Painted plank treatment is a contemporary game adaptation, not asserted original film floor construction."
+      ],
+      "validation": {
+        "current_scripted_graphical_review": "See validation.scripted_graphical_routes: actual52 moving-route images inspected across four kits; specific source/cue/player limitations retained. No helper engine job."
+      }
+    },
+    {
+      "id": "A1-ART-LAUNCH-18",
+      "family": "earth-loading-arm-source",
+      "source_kind": "original authored low-segment 3D geometry; no board crop or historical film-machine claim",
+      "source_references": [
+        "docs/concept-art/act1/props/earth-launch-modular-kit.png [G14 two LOADING ARM \u2014 PROPOSAL cells actually inspected]",
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16 supporting loading-lane context]",
+        "docs/ACT1_CONCEPT.md [friendly loading-arm rehearsal; game adaptation]"
+      ],
+      "runtime_builder": "scripts/acts/act1/loading_arm_visual.gd",
+      "geometry_note": "assets/acts/act1/launch/loading_arm_notes.md",
+      "runtime_parts": [
+        "SourceArtAssembly",
+        "HeavyPlantedBase",
+        "PlantedFootLeft",
+        "PlantedFootRight",
+        "RearPlantedBrace",
+        "UprightFrame",
+        "TopBearingBeam",
+        "SideWinchDrum",
+        "CrankPose",
+        "CommittedJibPose",
+        "LoadingBeam",
+        "TriangularJibStay",
+        "EndPulley",
+        "GravityHangingRope",
+        "SuspendedLoadingHead"
+      ],
+      "readiness": "instanced_four_scripted_graphical_routes_reviewed_canonical_fidelity_unaccepted",
+      "native_grid": "not_applicable: authored BoxMesh/CylinderMesh geometry; twelve-segment circular silhouettes; no new texture",
+      "world_dimensions_xyz_approx": [
+        1.215,
+        2.723,
+        3.57
+      ],
+      "pivot": "ground support centre local(0,0,0) under each CinderLaneMechanism; owner uses build(arm,ZERO) at world(0,0,-7.6)/(0,0,-13.6); jib pivotlocal(0,1.35,0); sweep+Z",
+      "palette_role": "constant charcoal/gray/silver materials; no blink,emission,colour phase cue or reserved actionable pulse",
+      "role": "friendly mechanism attack-source art child of published CinderLaneMechanism; owner shared scheduler/consumer controls danger,phase and remaining time",
+      "collision": "none; no floor,collider,damage volume,physics callback,body or obstacle query",
+      "occlusion": "Depth tested and shadow-free. Internal inactive+parked assembly X\u22124.4 removes old foreground load/body and fixed-stand/hatch actor occlusion at all four actual incoming boarding/physical contact poses. Source/art root remain ZERO; live poses unchanged. Physical source, footprint and safe-side player are readable across real roof phases. The central beam partly crosses the source glyph, which remains discernible around it. Parked props become quiet left-edge scenery, cropped by the close view. No depth override; no universal visibility/fidelity claim.",
+      "states": [
+        "inactive: raised34degrees,hangingload,relaxedwinch",
+        "warning: external progress lowers34\u219212degrees,loadturnsforward,ropeshortens",
+        "lock: absolutelyheld12degreesandforwardload; progressignored",
+        "active: externalprogresssinglecommitted12\u2192\u221214degree+Zarc",
+        "recovery: externalprogressreturn\u221214\u219234degreesandhangingload",
+        "inactive with parked flag: same raised34degrees/hangingload/relaxedwinch; entire internal SourceArtAssembly at(-4.4,0,0), jib/rope/load retain90degree+Xfold; actual mechanism and artroot transforms unchanged"
+      ],
+      "animation_durations_s": "not_applicable: no owned phase clock,frame rate,tween,timer or process; shared adapter alone suppliesphase/progress",
+      "state_api": "set_phase(String,float=0): finiteprogressclamped0\u20131; unknownphasequietinactive; set_parked(bool): caches owner flag and redraws; onlyinactive folds+X,alllivephasesignoreflag; prebuildcallsstorepose/flag; buildidempotent",
+      "reuse_locations": [
+        "A1-L1 loading-arm rehearsal and all-aboard familiar mechanism"
+      ],
+      "textures": [],
+      "validation": {
+        "source_image_inspection": "G14 actual PNG reopened and inspected for this pass; G16 inspected previously",
+        "geometry_arithmetic": "101progresssamplesperphase: conservativepayloadbottomy>=0.168,forwardextent<=3.080,height<=2.723; arithmetic of authored shapes only, not gameplay/path/collision or engine evidence",
+        "engine_import": "Current original mesh geometry parsed, constructed and rendered through production source/target bindings in all four clean scripted graphical routes. New bitmap/import work was unnecessary; helper ran no engine/import job. Historical importer/headless records retained separately.",
+        "actual_portrait": "All52 current actual scripted moving-route portraits inspected; see top-level validation.scripted_graphical_routes for4kits/2348checks/0 and precise source/cue/player/feet observations. Nativefocusfalse observed; canonical/final art/human balance/performance unperformed.",
+        "split_base_static": "Sidefeet |x|>=.36,rearbrace z<=-.37,uprights |x|>=.345 avoid required origin glyph maximumradius.31; width1.215; phase/source-pivot/rope/payload geometry and no-private-clock API preserved",
+        "parse_evidence": {
+          "capture_path": "captures/act1/shared5-static/spawn.png",
+          "log_path": ".cinder/a1-l1-shared5-static-spawn.log",
+          "scope": "root/script parse and split-base node construction; source artwork hidden by opening gate,not glyph/phase/portrait acceptance"
+        },
+        "parked_static": "Authored-shape arithmetic bounds retained; allgeometryunderSourceArtAssembly. Live assemblyZERO/originalangle/cable/nose/crank values; quietoffsetX-4.4/+X90fold withinfloor. Currentactualfourrouteportraits verifycapturedincomingboarding/hatchactorclearance, while engineAABB/universalallanglevisibility notclaimed.",
+        "staged_views": {
+          "mode": "Owner TESTONLY explicit beat/position staging with production root/shared actor; no focus/input/gesture/full-route/campaign claim",
+          "roof": {
+            "capture_path": "captures/act1/shared5-static/staged-roof.png",
+            "log_path": ".cinder/a1-l1-shared5-staged-roof.log",
+            "status": "diagnostic: log contains get_global_transform !is_inside_tree ERROR in source cancellation despite owner-reportedexit0; owner reports root exit-guard fix afterwards,not a clean pass",
+            "observation": "Actor clear at supplied right-side observer,full warning capsule visible; split-base ground gap exists but projected jib/pulley partly hide source glyph; standing cloth readable; foreground workshop capsule sits close below target."
+          },
+          "boarding": {
+            "capture_path": "captures/act1/shared5-static/staged-boarding.png",
+            "log_path": ".cinder/a1-l1-shared5-staged-boarding.log",
+            "status": "owner-reportedexit0; log inspected with no error text; bounded static layout evidence",
+            "observation": "Actor and full finale warning capsule visible with closed exit capsule above; standing cloth readable; source glyph partly covered by projected jib/pulley. No actual landing/attack/timing proof."
+          },
+          "hatch_before_parked_fix": {
+            "capture_path": "captures/act1/shared5-static/staged-hatch.png",
+            "log_path": ".cinder/a1-l1-shared5-staged-hatch.log",
+            "status": "owner-reportedexit0; log inspected with no error text; observed contact-cue occlusion defect",
+            "observation": "Exit hatch visibly open; quiet forward finale rope/load covers contact cue atworld(0,0,-13.2),leaving outerprongs. New parked+X assembly and root contactcueworld(0,0,-12.8) require replacement capture."
+          },
+          "hatch_after_parked_fix": {
+            "capture_path": "captures/act1/shared6-static/staged-hatch.png",
+            "log_path": ".cinder/a1-l1-shared6-staged-hatch.log",
+            "status": "exit0/noERROR/WARNING; actual540x1170 owner reviewed",
+            "observation": "Both cleared sources fold+X; open capsule mouth and distinct contact brackets/chevron beside staged actor are visible. TESTONLY completed art pose/position; no physical input, save or completion claim."
+          },
+          "roof_current": {
+            "capture_path": "captures/act1/shared6-static/staged-roof.png",
+            "log_path": ".cinder/a1-l1-shared6-staged-roof.log",
+            "status": "exit0/noERROR/WARNING; actual540x1170 owner reviewed",
+            "observation": "Physical source, full warning capsule, right-side staged actor and standing cloth visible. Projected frame/jib partly obscure source glyph. Actual moving-camera useful landing and foreground capsule overlap remain pending."
+          },
+          "roof_current_landing": {
+            "capture_path": "captures/act1/shared6-static/roof-landing-clear.png",
+            "log_path": ".cinder/a1-l1-shared6-roof-landing-clear.log",
+            "status": "exit0/noERROR/WARNING; actual540x1170 owner inspected; TESTONLY staged route-matching landing",
+            "observation": "G07 complete head/torso/feet clear beside actual cloth atX3.6; actual source/full warning lane on left. Earlier X2.6 cloth occlusion corrected at these staged poses; moving/rendered route and phase evidence pending."
+          },
+          "boarding_current_landing": {
+            "capture_path": "captures/act1/shared6-static/boarding-landing-clear.png",
+            "log_path": ".cinder/a1-l1-shared6-boarding-landing-clear.log",
+            "status": "exit0/noERROR/WARNING; actual540x1170 owner inspected; TESTONLY staged route-matching landing",
+            "observation": "G07 complete head/torso/feet clear beside actual cloth atX3.6; actual source/full warning lane on left. Earlier X2.6 cloth occlusion corrected at these staged poses; moving/rendered route and phase evidence pending."
+          }
+        },
+        "current_owned_runtime": {
+          "opening": ".cinder/a1-l1-opening-shared8-test.log (86/0)",
+          "arm": ".cinder/a1-l1-arm-shared8-test.log (150/0)",
+          "exit": "0/noERROR/WARNING",
+          "scope": "Actual production source/art binding, silent paired restore and actual shared full phases/damage/proof logic. Portrait captures separately labelled.",
+          "applies_to": "Before current cosmetic internal assembly translation; retain as historical headless source/state evidence, not current geometry regression pass"
+        },
+        "prior_parked_static_history": "Original phase angle/cable/nose/crank definitions and all mesh construction/materials compare identical to prior source. Live phases force zero azimuth. Quiet fold rotates jib basis/rope attachment/payload basis by+90degrees about unchanged pivot; rope remains vertical; frame and root position remain fixed. Quiet tipX1.857044,loadmaxX2.087044,loadnosebottomY1.242592; authored arithmetic only; current code is also instantiated by owner affected headless tests and graphical staged views; arithmetic alone remains no engine AABB proof.",
+        "failed_actual_route_review": {
+          "capture_directory": "captures/act1/full-route/scripted-graphical-1791462388-876952-neutral/",
+          "metadata_path": "captures/act1/full-route/scripted-graphical-1791462388-876952-neutral/evidence.json",
+          "mode": "Actual SCRIPTED GRAPHICAL production-spawn touch route; no actor teleport or staged beat/position; native_focus=false observed and allowed in explicit scripted mode",
+          "terminal_result": "FAILED: owner reports573checks/2compoundassertions; metadata saved572checks/2failures before final metadata-save check; composition findings only, not a pass or acceptance",
+          "actual_input_evidence": {
+            "swipes": 15,
+            "primaries": 4,
+            "native_focus": false,
+            "first_warning_pause_paired_state_frozen": true,
+            "gui_resume_click_consumed": true
+          },
+          "inspected_images": 13,
+          "source_and_landing_observation": "Whole physical arm and warning/lock/active capsule footprint visible with broad safe-side floor; recovery broken source ring discernible around central beam. ShiftedX3.6 cloth clears G07 at both genuine useful landings; workshop capsule sits close below roof landing but does not cover player body/feet. Both objective lines and HUD controls readable throughout. No human balance/mobile/final fidelity claim.",
+          "superseded_geometry": "Historical failed13-image route before current parking/support changes. Four corrected actual scripted graphical routes now pass/review current geometry; preserve failed assertions/images as history, not acceptance.",
+          "occlusion_defects": [
+            {
+              "capture_path": "captures/act1/full-route/scripted-graphical-1791462388-876952-neutral/10-boarding-warning.png",
+              "actual_actor_xz": [
+                1.76846349,
+                -9.13663387
+              ],
+              "observation": "Old already parked roof jib/rope/load crosses incoming G07 lower coat/feet in foreground."
+            },
+            {
+              "capture_path": "captures/act1/full-route/scripted-graphical-1791462388-876952-neutral/13-hatch-contact.png",
+              "actual_actor_xz": [
+                0,
+                -13.69999981
+              ],
+              "observation": "Open capsule mouth/contact chevron readable, but retained finale fixed crossbeam/posts cover G07 beard/torso at physical contact."
+            }
+          ]
+        },
+        "current_cosmetic_change": {
+          "status": "Instantiated in four clean actual scripted graphical routes; corrected actor/cue composition reviewed in 52 images. Owner reports post-cosmetic opening 86/headless 144 and exact9 arm153 clean. Exact9 campaign affected test pending separately; no helper engine job.",
+          "assembly_parent": "SourceArtAssembly under original art root atZERO; all existing geometry below it",
+          "offset_condition": "parked ANDphase==inactive only",
+          "live_invariants": "assemblyZERO, original+Zposes, phase values, rope/payload/crank arithmetic, source/artroot transform, clocks/cues/colliders unchanged",
+          "scope": "Current authored geometry rendered in real production-route captures, provenance/bounds retained; no human/native-focused/balance/performance/canonical/final fidelity claim."
+        },
+        "prior_actual_portrait_history": "Current TESTONLY staged roof and completed-pose hatch actual540x1170 images reviewed by owner. Roof physical source/full capsule/right-side actor/cloth visible; source glyph partly obscured. Parked hatch mouth and approach contact chevron/brackets clear beside staged actor. Beat and position explicitly staged; no focus, gesture, full traversal or human balance acceptance.",
+        "scripted_graphical_routes": "See top-level validation.scripted_graphical_routes and portable data/campaign/act1/evidence/A1-L1/index.json: exact capture paths/hashes, kits, source hashes and shared8\u21929 reuse boundary. Originals retained.",
+        "prior_engine_import_history": "Owner queued opening80/arm150/campaign41 pass exit0/noERROR/WARNING on campaign-shared-6 instantiate current source/parked API. Clean affected current staged hatch and roof graphical jobs parse and render it. No new import pass required; helper ran no engine jobs."
+      },
+      "known_limitations": [
+        "Published CinderLaneMechanism/owner alone own phase timing, damage, cancellation, warning footprint, safe-path proof and progression; artwork adds no private clock.",
+        "The central live beam partly covers the source glyph, but glyph, physical source and lane remain discernible in current actual phase images.",
+        "Parked source art is quiet left-edge scenery after cancellation and may crop; source/root logical anchors remain unchanged.",
+        "Four specified scripted routes do not establish every legal route/loadout, native-focused execution, human balance/understanding, performance or canonical/final fidelity.",
+        "Original G14 proposal adaptation, not historical machinery or authentic dimensions; old failed route/staged lifecycle ERROR remains diagnostic history."
+      ],
+      "source_local_bounds_xyz_approx": {
+        "x": [
+          -0.675,
+          0.54
+        ],
+        "y": [
+          0,
+          2.723
+        ],
+        "z": [
+          -0.49,
+          3.08
+        ],
+        "scope": "conservative authored-shape arithmetic, not actual engine AABB"
+      },
+      "planted_base_bounds_xyz": {
+        "x": [
+          -0.54,
+          0.54
+        ],
+        "y": [
+          0,
+          0.16
+        ],
+        "z": [
+          -0.49,
+          0.23
+        ]
+      },
+      "source_glyph_clearance": {
+        "existing_glyph_height_y": 0.029,
+        "existing_glyph_max_radius": 0.31,
+        "side_feet_inner_abs_x": 0.36,
+        "rear_brace_front_z": -0.37,
+        "uprights_inner_abs_x": 0.345,
+        "reason": "Central solid plinth replaced by two low feet/rear tie. Side support geometry avoids the floor glyph; no required cue geometry/material/depth or logical danger change. Actual perspective readability still requires owner portrait review."
+      },
+      "runtime_binding": {
+        "published_api": "lane-mechanism-1 / campaign-shared-4 1ebd6b5",
+        "instanced_by": "scripts/acts/act1/launch_rehearsal.gd",
+        "source_origins": [
+          [
+            0,
+            0,
+            -7.6
+          ],
+          [
+            0,
+            0,
+            -13.6
+          ]
+        ],
+        "lane_ends": [
+          [
+            0,
+            0,
+            -4.4
+          ],
+          [
+            0,
+            0,
+            -10.4
+          ]
+        ],
+        "lane_radius": 0.6,
+        "progress": "owner reads shared state once after physics;clamp(1-remaining_s/duration,0,1);warningduration=windup_s-lock_s;active=active_s;recovery=recovery_s;lockheld;clearinactive;no independent clock",
+        "currently_adopted_shared_baseline": "campaign-shared-9 /ed355c9525cb9db6d1f28403f9bf3a16def74175",
+        "parked_mode": "Owner calls set_parked(beat > arm_index + 3) after target cancellation. Inactive+parked internal artwork offset(-4.4,0,0); actualsource/artrootZERO/identity unchanged; live phases assemblyZERO/zeroazimuth/exactoriginalposes. Four actual graphicalroutes showclearincomingboarding and physicalhatchactor; no clocks/cues/colliders/progression authority."
+      },
+      "parked_source_local_bounds_xyz_approx": {
+        "x": [
+          -5.075,
+          -2.31
+        ],
+        "y": [
+          0,
+          2.723
+        ],
+        "z": [
+          -0.49,
+          0.23
+        ],
+        "scope": "conservative authored-shape arithmetic with internal(-4.4,0,0) translation and quiet90degree+Xfold; actual source/artroot remainZERO; not engine AABB or rendered visibility proof"
+      },
+      "parked_world_dimensions_xyz_approx": [
+        2.765,
+        2.723,
+        0.72
+      ],
+      "combined_live_parked_bounds_xyz_approx": {
+        "x": [
+          -5.075,
+          0.54
+        ],
+        "y": [
+          0,
+          2.723
+        ],
+        "z": [
+          -0.49,
+          3.08
+        ]
+      },
+      "parked_assembly_offset_xyz": [
+        -4.4,
+        0,
+        0
+      ],
+      "readiness_history": [
+        "authored_parked_actor_occlusion_fix_unrun_corrected_actual_route_and_direct_hook_regression_pending"
+      ],
+      "known_limitations_history": [
+        "Current source/parked API instanced by shared8 opening86/arm150; staged source/hatch/landing renders are clean within TESTONLY scope. Actual scripted graphical full phases/moving route and final source fidelity review pending; no human balance/understanding claim.",
+        "Published CinderLaneMechanism and owner alone control scheduler,damage,cancellation,reservation,warning footprint,safe-path proof and progression; source artwork adds no private clock.",
+        "TESTONLY roof/boarding show projected jib/pulley partial source-glyph occlusion despite geometric base clearance; centre-pad rope/payload may overlap actor. Full live-phase portrait and useful legal landing remain pending.",
+        "Old unparked staged hatch obscured its contact cue. Current parked+X/forward-contact placement shows the approach cue and open hatch in a clean staged render; actual complete gameplay portrait remains untested.",
+        "Roof staged log contains exit-lifecycle ERROR despite reportedexit0; preserve as diagnostic,not a clean pass. Later boarding/hatch static logs have no error text but establish no gesture/route evidence.",
+        "Three-dimensional pose adaptation differs from generated G14 proposal; no historical machine authenticity or final fidelity claim.",
+        "Failed actual graphical route before current revision exposes parked-art actor occlusion at incoming boarding warning and physical hatch contact. Current internal assembly shift is authored/unrun; corrected actual route and direct-hook regression must verify it. Source glyph still partly crossed by projected beam in live-phase images."
+      ]
+    },
+    {
+      "id": "A1-ART-LAUNCH-19",
+      "family": "earth-rehearsal-cloth-roundel",
+      "source_kind": "Original authored low-segment 3D interpretation; no board crop or historical prop authenticity claim",
+      "source_references": [
+        "docs/concept-art/act1/props/earth-launch-modular-kit.png [G14 PRACTICE TARGET \u2014 PROPOSAL cell actually inspected]",
+        "docs/concept-art/act1/environments/01-observatory-and-launch.png [G16 practice floor context]",
+        "docs/ACT1_CONCEPT.md [safe cloth/roundel rehearsal proposal]"
+      ],
+      "runtime_builder": "scripts/acts/act1/rehearsal_target_visual.gd",
+      "runtime_parts": [
+        "LowPlantedSideFoot",
+        "RearPlantedBrace",
+        "StandingClothFrame",
+        "ClothHangingBar",
+        "QuietCanvasCloth",
+        "PaintedOuterRoundel",
+        "QuietRoundelBand",
+        "PaintedRoundelCentre",
+        "FoldedSpentCloth",
+        "BroadFoldedCanvas"
+      ],
+      "geometry_adaptation": "G14 canvas hangs between two thin upright poles with planted feet and a dark concentric roundel. Original runtime uses thin BoxMesh cloth/hem/frame and16-segment CylinderMesh painted discs. Current support revision replaces solid plinth with side feet/rear tie; spent frame/canvas folds remain pure externally supplied state, with only folded mesh group offsetZ-.75 to expose existing spent attack cue. Shared parent/hit centre remains unchanged. Safe rehearsal prop, never a friendly character.",
+      "readiness": "instanced_four_scripted_graphical_routes_reviewed_canonical_fidelity_unaccepted",
+      "native_grid": "not_applicable: authored BoxMesh/CylinderMesh geometry; no new bitmap or reference atlas",
+      "world_dimensions_xyz_approx": [
+        1.08,
+        1.53,
+        1.491634
+      ],
+      "pivot": "ground bottom centre local(0,0,0); shared parent owns world placement; standing face centre local(0,1.04,.04)",
+      "palette_role": "available dusty silver canvas with intrinsic quiet black/silver roundel; inactive dull gray canvas; spent charcoal low folded silhouette; no emissive,blink,pulse,colour phase cue or new reserved cue",
+      "role": "Pure rehearsal-target artwork child of owner bridge; published shared PracticeTarget owns gameplay health/hit feedback; CinderInteractionCue supplies shared attack gesture meaning",
+      "collision": "Visual source has none. Collision/hit detection,damage,health,hit clock,groups and progression belong to the published shared parent/owner bridge/level; artwork adds no independent authority.",
+      "occlusion": "Depth tested and shadow-free. Split feet/rear tie and folded mesh Z\u22120.75 expose actual available/spent ground cues across four real routes. The roof available diamond partly overlaps the foreground workshop ladder in 05\u201309, but its identity remains readable. Actual longer-dash kits at X\u22482.982 put the left target upright across the right player sleeve/outer boot in 09/11. Face, central torso, remaining foot and contact remain readable; fully clear feet are not claimed. Neutral/fast X2.82 landings and physical hatch contact are clear. Shared target/hit centre, standing face and state feedback are unchanged; no cue depth/geometry edits.",
+      "states": [
+        "inactive: standing quiet gray canvas, no hit response",
+        "available: standing silver cloth/roundel; supplied hit fraction squashes only cloth at face-centre pivot",
+        "spent/cleared: standing frame hidden; only FoldedSpentCloth mesh group rests atlocalZ-.75; low folded canvas maxY~.4075; original target/hit centre and fixed support pivot remainZERO"
+      ],
+      "animation_durations_s": "No visual-owned duration/clock. Bridge supplies normalized published parent hit-feedback fraction as squash strength; accepted hit on gameplay HP1 clears/folds immediately. Shared nonlethal mapping is headless-tested; portrait response remains pending.",
+      "state_api": "present_state(String,float): finite fraction clamped0\u20131; available cloth scaleX1\u20131.05,Y1\u20130.9; all other states ignore response; unknown state quiet inactive; prebuild calls cache state; build idempotent",
+      "reuse_locations": [
+        "A1-L1 friendly rehearsal exercises, instanced through published shared PracticeTarget presentation hooks on campaign-shared-3"
+      ],
+      "textures": [],
+      "validation": {
+        "source_inspection": "Actual G14/G16 PNGs reopened in this helper pass; authored source differs from board perspective but retains cloth/poles/roundel vocabulary",
+        "static": "Source API/no private behavior checks retained; module/bridge now parsed and executed by owner shared3 opening/loadout state suites",
+        "engine_import": "Current original mesh geometry parsed, constructed and rendered through production source/target bindings in all four clean scripted graphical routes. New bitmap/import work was unnecessary; helper ran no engine/import job. Historical importer/headless records retained separately.",
+        "actual_portrait": "All52 current actual scripted moving-route portraits inspected; see top-level validation.scripted_graphical_routes for4kits/2348checks/0 and precise source/cue/player/feet observations. Nativefocusfalse observed; canonical/final art/human balance/performance unperformed.",
+        "shared_state_verified": {
+          "adopted_shared_baseline": "dcc7a3a / campaign-shared-3",
+          "opening": {
+            "log_path": ".cinder/a1-l1-opening-shared3-target-test.log",
+            "checks": 79,
+            "failures": 0,
+            "exit": "owner-reported0; log read with no warnings/error text"
+          },
+          "loadouts": {
+            "log_path": ".cinder/a1-l1-loadouts-shared3-target-test.log",
+            "checks": 72,
+            "failures": 0,
+            "combinations": 12,
+            "exit": "owner-reported0; log read with no warnings/error text"
+          },
+          "verified_scope": "Published shared hook constructs one cloth/one cue without generic labels; activation draws available; normalized shared nonlethal hit fraction maps to cloth strength; one-hit/cleared target folds immediately with spent cue; silent configure/restore redraws without duplicate notifications; pause/activation does not own or advance shared hit clock; required opening attacks work with empty shells for static extreme kits",
+          "limits": "Headless state/logic evidence only; logs explicitly exclude loading arm,full completion,campaign retry/transition and portrait target-art/presentation acceptance; no helper engine job."
+        },
+        "current_placement": {
+          "positions": "Original target centres hall(1,0,8.8), workshop(0,0,0), roof(3.6,0,-3.6), finale(3.6,0,-9.6); mesh support/park changes do not move hit centres.",
+          "evidence": "Portable data/campaign/act1/evidence/A1-L1/index.json; four actual scripted graphical routes reviewed, 2348/0.",
+          "remaining_visibility": "Longer-dash X\u22482.982 landings retain slight right sleeve/outer boot trim; source glyph and roof available cue retain partial overlay. No full clear-feet claim for those kits.",
+          "canonical_acceptance": "Pending; human/native-focused execution, conditional balance and performance unperformed."
+        },
+        "failed_actual_route_review": {
+          "capture_directory": "captures/act1/full-route/scripted-graphical-1791462388-876952-neutral/",
+          "metadata_path": "captures/act1/full-route/scripted-graphical-1791462388-876952-neutral/evidence.json",
+          "mode": "Actual SCRIPTED GRAPHICAL production-spawn touch route; no actor teleport or staged beat/position; native_focus=false observed and allowed in explicit scripted mode",
+          "terminal_result": "FAILED: owner reports573checks/2compoundassertions; metadata saved572checks/2failures before final metadata-save check; composition findings only, not a pass or acceptance",
+          "actual_input_evidence": {
+            "swipes": 15,
+            "primaries": 4,
+            "native_focus": false,
+            "first_warning_pause_paired_state_frozen": true,
+            "gui_resume_click_consumed": true
+          },
+          "inspected_images": 13,
+          "source_and_landing_observation": "Whole physical arm and warning/lock/active capsule footprint visible with broad safe-side floor; recovery broken source ring discernible around central beam. ShiftedX3.6 cloth clears G07 at both genuine useful landings; workshop capsule sits close below roof landing but does not cover player body/feet. Both objective lines and HUD controls readable throughout. No human balance/mobile/final fidelity claim.",
+          "superseded_geometry": "Historical failed13-image route before current parking/support changes. Four corrected actual scripted graphical routes now pass/review current geometry; preserve failed assertions/images as history, not acceptance.",
+          "occlusion_defects": [
+            {
+              "capture_paths": [
+                "captures/act1/full-route/scripted-graphical-1791462388-876952-neutral/02-first-dash.png",
+                "captures/act1/full-route/scripted-graphical-1791462388-876952-neutral/03-hall-primary.png",
+                "captures/act1/full-route/scripted-graphical-1791462388-876952-neutral/11-boarding-useful-landing.png",
+                "captures/act1/full-route/scripted-graphical-1791462388-876952-neutral/12-final-clear.png"
+              ],
+              "observation": "Standing roundel/spent low dark silhouette readable, but solid LowPlantedBase covers available/spent ground attack marker. Source read confirms baseY[0,.09] covers cueY.025 and cue outerextent.34."
+            }
+          ]
+        },
+        "current_cosmetic_change": {
+          "status": "Instantiated in four clean actual scripted graphical routes; corrected actor/cue composition reviewed in 52 images. Owner reports post-cosmetic opening 86/headless 144 and exact9 arm153 clean. Exact9 campaign affected test pending separately; no helper engine job.",
+          "support": "feetX\u00b1.45,size(.18,.09,.8); rearbracecentreZ-.43,size(1.08,.09,.12); splayedfeetX\u00b1.435; upright positions unchanged",
+          "folded_only": "mesh group offset(0,0,-.75),railsX\u00b1.435; frontedge<=-.433366",
+          "invariants": "Original target/artroot ground pivot, hit centre, standing cloth face, state mapping and supplied squash values unchanged; pure external state, no clocks/cues/input/collision added",
+          "source": "Actually inspected G14/G16 family retained; authored arithmetic is not actual renderer evidence",
+          "scope": "Current authored geometry rendered in real production-route captures, provenance/bounds retained; no human/native-focused/balance/performance/canonical/final fidelity claim."
+        },
+        "prior_actual_portrait_history": "Shared3 static spawn inspected, but opening gate hides target artwork. Standing,nonlethal squash,immediate folded/spent cue portrait acceptance pending.",
+        "scripted_graphical_routes": "See top-level validation.scripted_graphical_routes and portable data/campaign/act1/evidence/A1-L1/index.json: exact capture paths/hashes, kits, source hashes and shared8\u21929 reuse boundary. Originals retained.",
+        "prior_engine_import_history": "Owner instanced bridge/cloth through published shared3 PracticeTarget hooks; opening79/0 and loadouts72/0, owner-reported exit0; helper ran no engine job",
+        "current_placement_history": {
+          "opening": ".cinder/a1-l1-opening-shared8-test.log (86/0)",
+          "arm": ".cinder/a1-l1-arm-shared8-test.log (150/0)",
+          "prior_shared6_campaign": ".cinder/a1-l1-campaign-placement-test.log (41/0)",
+          "prior_shared6_routes": "Four actual input routes141/135/135/141;58swipes16primaries; no teleports; current shared8 default route pending",
+          "landing_images": [
+            {
+              "capture_path": "captures/act1/shared6-static/roof-landing-clear.png",
+              "log_path": ".cinder/a1-l1-shared6-roof-landing-clear.log",
+              "status": "exit0/noERROR/WARNING; actual540x1170 owner inspected; TESTONLY staged route-matching landing",
+              "observation": "G07 complete head/torso/feet clear beside actual cloth atX3.6; actual source/full warning lane on left. Earlier X2.6 cloth occlusion corrected at these staged poses; moving/rendered route and phase evidence pending."
+            },
+            {
+              "capture_path": "captures/act1/shared6-static/boarding-landing-clear.png",
+              "log_path": ".cinder/a1-l1-shared6-boarding-landing-clear.log",
+              "status": "exit0/noERROR/WARNING; actual540x1170 owner inspected; TESTONLY staged route-matching landing",
+              "observation": "G07 complete head/torso/feet clear beside actual cloth atX3.6; actual source/full warning lane on left. Earlier X2.6 cloth occlusion corrected at these staged poses; moving/rendered route and phase evidence pending."
+            }
+          ],
+          "equipment": "Canonical existing IDs/type matches; revision0/36items/0claims/20abilities/0uses, no new type/placement/reward/ability.",
+          "current_shared8_campaign": ".cinder/a1-l1-campaign-shared8-test.log (41/0)",
+          "current_shared8_route": ".cinder/a1-l1-route-neutral-shared8-hooks-test.log (141/0;15 real swipes4 zero-shell primaries; HEADLESS)"
+        }
+      },
+      "known_limitations": [
+        "Published shared parent/owner bridge alone own health, hits, feedback clock, groups, cues and progression; pure cloth geometry owns none.",
+        "Longer-dash 09/11 left target upright slightly trims the right sleeve/outer boot; fully unobstructed feet are not established. The roof available diamond is partly crossed by the foreground ladder, still discernible.",
+        "Folded canvas is an original game adaptation; G14 does not define its runtime spent state.",
+        "Four specified actual routes verify captured available/spent/contact compositions, not every legal angle/loadout, native-focused execution, human balance, performance or canonical/final fidelity.",
+        "Old plinth cue occlusion/failed route is preserved as history; current geometry was reviewed in four clean actual routes."
+      ],
+      "runtime_bridge": "scripts/acts/act1/rehearsal_target.gd; Act1RehearsalTarget extends published PracticeTarget",
+      "instanced_from": "scripts/acts/act1/launch_rehearsal.gd",
+      "runtime_positions": {
+        "hall": [
+          1,
+          0,
+          8.8
+        ],
+        "workshop": [
+          0,
+          0,
+          0
+        ],
+        "roof": [
+          3.6,
+          0,
+          -3.6
+        ],
+        "finale": [
+          3.6,
+          0,
+          -9.6
+        ],
+        "authority": "Actual stationary target centres also drive shared mechanism ordinary attack opening and pure fixed binding checks; not a presentation-only offset."
+      },
+      "standing_local_bounds_xyz_approx": {
+        "x": [
+          -0.54,
+          0.54
+        ],
+        "y": [
+          0,
+          1.53
+        ],
+        "z": [
+          -0.49,
+          0.425
+        ],
+        "scope": "authored-shape arithmetic including fixed sidefeet/rear tie and standing meshes; not engine AABB"
+      },
+      "spent_local_bounds_xyz_approx": {
+        "x": [
+          -0.54,
+          0.54
+        ],
+        "y": [
+          0,
+          0.4075
+        ],
+        "z": [
+          -1.066634,
+          0.4
+        ],
+        "scope": "authored-shape arithmetic includes fixed supports at original pivot; only folded mesh group lies wholly behindZ-.42"
+      },
+      "folded_group_local_bounds_xyz_approx": {
+        "x": [
+          -0.4675,
+          0.4675
+        ],
+        "y": [
+          0.13017,
+          0.4075
+        ],
+        "z": [
+          -1.066634,
+          -0.433366
+        ],
+        "offset_xyz": [
+          0,
+          0,
+          -0.75
+        ],
+        "scope": "5degree rotated rails set front/back extremities; complete folded group is behindZ-.42, unlike unchanged-origin fixed feet"
+      },
+      "attack_cue_clearance": {
+        "existing_cue_height_y": 0.025,
+        "existing_cue_max_radius": 0.34,
+        "side_feet_inner_abs_x": 0.36,
+        "rear_brace_front_z": -0.37,
+        "splayed_feet_inner_abs_x": 0.3975,
+        "standing_uprights_inner_abs_x": 0.3725,
+        "folded_rails_inner_abs_x": 0.4025,
+        "folded_group_front_z_max": -0.433366,
+        "reason": "Open support planform and rear foldedmesh offset expose existing cue; no depth override, cue mutation, collider/hit centre movement or independent feedback clock. Perspective visibility unrun."
+      },
+      "readiness_history": [
+        "authored_attack_cue_occlusion_fix_unrun_corrected_actual_route_and_direct_hook_regression_pending"
+      ],
+      "known_limitations_history": [
+        "Published bridge/target state logic and bounded route-matching standing cloth/actor landings tested. Full actual scripted graphical route, hit/spent/contact composition and final fidelity review pending; no human/native-focused understanding claim.",
+        "Opening static capture hides target geometry through the level gate; it is not target-art acceptance.",
+        "Published shared parent and owner bridge/level alone own health,accepted hits,feedback clock,group membership,cues and progression; no source health number or DONE label.",
+        "Folded canvas is an authored game adaptation; generated G14 source does not define its runtime spent state.",
+        "Loading-arm source is a separate instanced draft under published CinderLaneMechanism; target publication does not authorize a private arm scheduler.",
+        "Current support/folded offset revision is unrun. Failed actual route before revision showed concealed available/spent attack cue despite readable roundel and low spent silhouette; corrected actual route/direct-hook regression remain pending. No human balance/mobile/final fidelity claim."
+      ]
+    }
+  ],
+  "prior_implementation_status": "Authored scenic kit on exact campaign-shared-8 (43c8f6d); current source/target binding and X3.6 placement pass opening86/arm150/campaign41/default complete touch-route141, all0 failures, exit0/no errors or warnings. Clean actual TESTONLY roof/boarding landing statics expose G07 body/feet; actual scripted graphical route/full-phase fidelity review pending, native human/focus unperformed, no level acceptance."
+}

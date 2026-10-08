@@ -33,6 +33,39 @@ static func source_description(owner: CharacterBody3D, collision_path: String = 
 	return {"signature": signature, "radius": shape.radius, "height": shape.height, "foot_offset": collision.position.y - shape.height * 0.5, "collision": collision}
 
 
+static func staged_source_description(owner: CharacterBody3D, state: Dictionary) -> Dictionary:
+	## Paused aggregate prevalidation only. Lifecycle flags come from a separately
+	## validated actor snapshot; shape/resource/registration/transform come from the
+	## retained actual body. This neither enables collision nor licenses movement.
+	if not Codec.value_error(state).is_empty() or not Codec.keys_error(state, ["collision_path", "enabled", "layer", "mask"]).is_empty():
+		return {"error": "Closed staged source collision state required"}
+	if not state["collision_path"] is String or state["collision_path"].is_empty() or state["collision_path"].contains("\n") or state["collision_path"].contains("\r") or not state["enabled"] is bool or not state["enabled"] or not state["layer"] is int or not Codec.is_integer(state["layer"], 0, 4294967295) or (int(state["layer"]) & 1) != 0 or not state["mask"] is int or state["mask"] != 1:
+		return {"error": "Staged live capsule requires enabled=true, non-scenery layer and scenery-only mask"}
+	if not is_instance_valid(owner) or not owner.is_inside_tree() or owner.is_queued_for_deletion() or not owner.get_tree().paused or owner.axis_lock_linear_x or owner.axis_lock_linear_y or owner.axis_lock_linear_z or owner.global_basis != Basis.IDENTITY or not Geometry.finite_vector(owner.global_position):
+		return {"error": "Paused retained unrotated actual source body required"}
+	var collision_path: String = state["collision_path"]
+	var collision: CollisionShape3D = owner.get_node_or_null(NodePath(collision_path)) as CollisionShape3D
+	if collision == null or collision.get_parent() != owner or String(owner.get_path_to(collision)) != collision_path or collision.is_queued_for_deletion() or not collision.shape is CapsuleShape3D or collision.transform.basis != Basis.IDENTITY or absf(collision.position.x) > EPSILON or absf(collision.position.z) > EPSILON:
+		return {"error": "Staged source requires its retained upright centred capsule at the exact child path"}
+	# Count retained registrations, including disabled owners. Also reject an extra
+	# pending collider child which has not acquired a registration yet.
+	var collider_children: int = 0
+	for child: Node in owner.get_children():
+		if child is CollisionShape3D or child is CollisionPolygon3D:
+			collider_children += 1
+	var shape_owners: PackedInt32Array = owner.get_shape_owners()
+	if collider_children != 1 or shape_owners.size() != 1:
+		return {"error": "Staged source must retain exactly one registered capsule and no pending colliders"}
+	var shape_owner: int = shape_owners[0]
+	if owner.shape_owner_get_owner(shape_owner) != collision or owner.shape_owner_get_shape_count(shape_owner) != 1 or owner.shape_owner_get_shape(shape_owner, 0) != collision.shape or owner.shape_owner_get_transform(shape_owner) != collision.transform or owner.is_shape_owner_disabled(shape_owner) != collision.disabled:
+		return {"error": "Staged capsule must match its actual registered owner, resource, transform and lifecycle"}
+	var shape: CapsuleShape3D = collision.shape as CapsuleShape3D
+	var signature := {"collision_path": collision_path, "centre": Codec.vector3(collision.position), "radius": shape.radius, "height": shape.height, "margin": shape.margin, "custom_solver_bias": shape.custom_solver_bias, "layer": state["layer"], "mask": state["mask"], "linear_axis_locks": [owner.axis_lock_linear_x, owner.axis_lock_linear_y, owner.axis_lock_linear_z]}
+	if not Codec.value_error(signature).is_empty() or shape.radius <= 0 or shape.height < 2.0 * shape.radius:
+		return {"error": "Finite positive retained capsule dimensions required"}
+	return {"signature": signature, "radius": shape.radius, "height": shape.height, "foot_offset": collision.position.y - shape.height * 0.5, "collision": collision}
+
+
 static func plan(owner: CharacterBody3D, motion: Dictionary, floor_regions: Array) -> Dictionary:
 	var path: Variant = motion.get("body_collision_path", "BodyCollision")
 	if not path is String or path.is_empty() or path.contains("\n") or path.contains("\r"):
