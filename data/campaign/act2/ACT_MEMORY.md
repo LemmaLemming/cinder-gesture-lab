@@ -1,6 +1,6 @@
 # Act 2 durable memory
 
-Updated 9 October 2026. **L1 and L2 are canonically accepted; both common Scout patches are adopted. L3 authored floor entry43/0 and corrected B02 art50/0 are verified; Smoke source fidelity is still under correction. Five later productions are unstarted.** [Progress](PROGRESS.md), [L2 design](levels/A2-L2.md), [portable evidence](../../../docs/acts/act2/evidence/A2-L2/README.md) and [history](ACT_MEMORY_HISTORY.md) retain exact scopes. Supplemental Scout 186/0 and affected tracking 285/0 pass cleanly; supplemental adoption confirmed8c37b1e0/RESPONSEd810feca.
+Updated 9 October 2026. **L1 and L2 are canonically accepted; both common Scout patches are adopted. L3 authored floor56/0, corrected B02 art50/0 and Smoke4 current-frame118/0 have scoped native presentation approval; known-component transport50/0 passes. Full Smoke gameplay/route/checkpoint remains incomplete. Five later productions are unstarted.** [Progress](PROGRESS.md), [L2 design](levels/A2-L2.md), [portable evidence](../../../docs/acts/act2/evidence/A2-L2/README.md) and [history](ACT_MEMORY_HISTORY.md) retain exact scopes. Supplemental Scout 186/0 and affected tracking 285/0 pass cleanly; supplemental adoption confirmed8c37b1e0/RESPONSEd810feca.
 
 ## Ownership and consumed baseline
 
@@ -68,3 +68,6 @@ Shared24 adopted preserving604b8047e55a578b0cbaea447ba2ff0a6aea39b2 from frozenf
 
 
 Current L3 update: private supported initial component transport corrected rounded-wall50/0; prior42/46 logs and scopes preserved. Authored floor56/0/three native portraits independently readable, no triggered fade. Smoke1–3 material failures retained; Smoke4 frozen pending same-five native shader/mask/pixel validation. Whole Smoke/route/checkpoint remains incomplete; six Act2 levels remain. Exact receipts in docs/acts/act2/evidence/A2-L3/index.json. Compatible A1-L2 c6a9596 registration available for preserving adoption after owned freeze.
+
+
+Current-frame Smoke4 native verification passed118/0, clean exit0: same five cosmetic views, unchanged runtime/shader, actual pre-draw Hero/source/rim masks and exact after-draw camera signature/current masks. All five originals independently passed scoped selected low Black Smoke material/readability review; overlap now retains black vapour around the protected Hero. Initial108 before-draw result and stale-overlap material failure remain separate and unchanged. Fine faceting/stipple, warm fringe/fill gaps, Tender/lower-right rim overlap and source-cross/boot contact remain. This is staged cosmetic evidence, not bank/contact/grace/tick/damage/next-tell/route/checkpoint acceptance. Parent production wiring must refresh derived smoke masks after normal actual Game camera update, before rendering, and disconnect its owned rendering callback during level exit. No shared camera/controller/cue change is required. Exact receipts: docs/acts/act2/evidence/A2-L3/index.json.

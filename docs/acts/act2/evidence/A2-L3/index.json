@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "level_id": "A2-L3",
-  "status": "BOSS_ART_AND_AUTHORED_FLOOR_PASSED_SMOKE_THREE_FIDELITY_FAILURES_CORRECTION4_UNDERWAY_FULL_LEVEL_INCOMPLETE",
+  "status": "BOSS_ART_AUTHORED_FLOOR_AND_SMOKE4_STAGED_MATERIAL_PASS_FULL_LEVEL_INCOMPLETE",
   "tested_source_commit": "31475ff2757f833fbc7479e528ae9c1d59bfa88b",
   "shared_api": "campaign-shared-23",
   "shared_publication": "2304d25e51d269edd3d6fc90b142f87b2ad35a6d",
@@ -145,12 +145,9 @@
     }
   },
   "new_resources_import": {
-    "command": "python3 scripts/dev/dev.py import > .cinder/a2-l3-new-resources-import.stdout 2>&1",
+    "command": "python3 scripts/dev/dev.py import",
     "exit_code": 0,
-    "session_id": 66844,
-    "stdout": "a2-l3-new-resources-import.stdout",
-    "sha256": "a5ba97c2320b3f61ff8a58cc90504f7577dd3c172c54fcda79820273b8ba6dc2",
-    "reason": "New L3 root/scene/smoke visual/five-view fixture resources and copied original ten native images. No SCRIPT ERROR/Parse Error/ERROR reported; this does not execute the root/route or validate its declared pending consumer/aggregate."
+    "scope": "New smoke shader and focused scripts/UID sidecars; ordinary importer also processed new saved capture PNGs. Session64252 stdout terminal receipt was truncated; not a complete portable raw log or shader pixel acceptance. Native118 and raw engine log separately cover actual affected shader execution."
   },
   "smoke_art_first": {
     "tested_checkout_head": "e66461929b98dae9241207f1f47461509a2001ad",
@@ -341,6 +338,81 @@
       "known-transport-rounded-wall/native.log": "ac582bd5d073144cc0d60ee0b6e3bc2fa1d91c08ac28eab355681586a8e48925",
       "known-transport-rounded-wall/root.gd.txt": "5af3b22a3dd39693fa3d5465a703f7b43a0086dc70e926b8ef2687c7eb9b3fb6",
       "known-transport-rounded-wall/rules.gd.txt": "a60586abbb5745aaa317842b862f5eb17d2b930437ea903a5eebd8ba5895cdfd"
+    }
+  },
+  "smoke_art_revision_4": {
+    "tested_checkout_head": "66ddad26f3e48c0f2e35e4b6b3cd136d818d1c6b",
+    "shared_api": "campaign-shared-24",
+    "shared_publication": "5d7a394c67c6095bd96136e0f07976984075ed0f",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-smoke-art-revision4.log --script tests/acts/act2/a2_l3_smoke_asset_capture.gd -- --revision4",
+    "checks": 108,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-smoke-art-revision4.log",
+    "log_sha256": "67cffd683690d38c9f254ea6eab9a61065a32ac96aacfd41117e2abd31e5fdf5",
+    "sources_sha256": {
+      "scripts/acts/act2/smoke_bank_visual.gd": "d3ec0a90bc650947fefc516dd451c75cf02a6a41bfc8cbe44692e9f33c338642",
+      "assets/acts/act2/shaders/smoke_wisp.gdshader": "032e80de1c09dfde8604faa39d9ef1619d30c6287c7e8c6be7f7a66d6b242d95",
+      "tests/acts/act2/a2_l3_smoke_asset_capture.gd": "a583825bf185512bd2990aecd0ff57a4d2490a110cce80287eb8bf3bef947f61",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.gd": "8f18063b1ff719a04ae5088c0fcd8d7114f956efa7b8d0cd97c34bd02443d611",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.tscn": "3d589c566826e178024365596fc4557b4e56245c1fcc3ea94adee42ea2d3c605",
+      "scripts/cues/threat_cue.gd": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+    },
+    "scope": "Same five TEST ONLY native540x1170 stage-placed cosmetic shared circle cue/Tender/Hero/production floor+kit views. Nine original base checks preserved; four ShaderMaterials/13parts/702native vertices, actual Hero/source/rim projections, exact quiet pose+fresh mask reconstruction, invalid missing/crossed-mask suppression and cleanup. No SmokeBank consumer, Scheduler admission/grace/ticks/damage, route, whole checkpoint, next-tell coexistence, human balance or performance claim. Initial after-draw overlap camera mask was stale; no all-five current rendered-wisp acceptance.",
+    "change": "Nine original base masses unchanged; four neutral charcoal after-fill wisps use depth-tested alpha with native Hero/source/rim masks and current orthographic camera guards. Fresh camera/pose masks required; malformed/stale masks fail to base only. Shader executed on actual Apple M3 Compatibility renderer without script/resource/shader diagnostics.",
+    "artifact_sha256": {
+      "smoke-art-revision4/a2_l3_smoke_asset_capture.gd.txt": "a583825bf185512bd2990aecd0ff57a4d2490a110cce80287eb8bf3bef947f61",
+      "smoke-art-revision4/metadata.json": "b51952dce21147968dfc1aaf67f62b51e6f43533a6cf8c5f85a04675b9e9c6e0",
+      "smoke-art-revision4/smoke-active-hero-overlap.png": "57eb619c96c2cf500a6b66d04aed817c5c1823fe5567363e38d160b35b15af27",
+      "smoke-art-revision4/smoke-active.png": "24836832b03030616eb42cc4d75bb78fc97cc1f5fffd4c6d16128e66014cef40",
+      "smoke-art-revision4/smoke-lock.png": "b31b3f3ffbcde61b4f3de718e81a2895842fd831095b9b75878d9cb30907cf08",
+      "smoke-art-revision4/smoke-recovery.png": "3e1d2ab0e03b97bcfbff8f79f8dbfc27bc74027f5c5cbffa9a095be7a86895f3",
+      "smoke-art-revision4/smoke-warning.png": "c4a291b11c75310f6b542e6098f73b985d8999980be094a28d6ff89b16a0324a",
+      "smoke-art-revision4/smoke_bank_visual.gd.txt": "d3ec0a90bc650947fefc516dd451c75cf02a6a41bfc8cbe44692e9f33c338642",
+      "smoke-art-revision4/smoke_wisp.gdshader.txt": "032e80de1c09dfde8604faa39d9ef1619d30c6287c7e8c6be7f7a66d6b242d95"
+    },
+    "reviews": {
+      "root": "Viewed actual active/recovery/active-overlap at original540x1170. Unobstructed active now has neutral black wisp mass; recovery dark charcoal pooling/thinner fringe. Required source/most rim/Hero torso/facing/feet/dry ground readable. Hero-overlap mask intentionally suppresses much of upper wisp mass, retaining cue-tinted brown base around boots. Short lower-right Tender/rim and center marker/boot-shadow overlaps remain. Independent all-five source/readability verdict pending.",
+      "peer": "All five originals independently viewed: outside-Hero active/recovery now black charcoal low pooling vapour; warning/lock/source/Hero/dry floor readable. Overall five-view material acceptance withheld because post-draw overlap mask is stale and shader correctly suppresses wisps. Actual frame_pre_draw refresh is the minimal correction; no geometry/mask tolerance change. Tender/rim and source/boot contacts persist; fine billowing detail reduced. Cosmetic scope only."
+    },
+    "render_timing_finding": "After the native frame_post_draw, active Hero overlap metadata reports readability.camera_current=false despite prior before-draw checks. Actual Game camera updates later in process; shader correctly rejects its stale mask. Initial108 pass covers before-draw native configuration, not current masks at every captured frame. Preserve all five original images/metadata/source/log. Small fixture-only frame_pre_draw refresh and directly affected same-five rerun required; no camera/hero force or runtime clock change."
+  },
+  "smoke_art_revision_4_current_frame": {
+    "tested_checkout_head": "66ddad26f3e48c0f2e35e4b6b3cd136d818d1c6b",
+    "shared_api": "campaign-shared-24",
+    "shared_publication": "5d7a394c67c6095bd96136e0f07976984075ed0f",
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-smoke-art-revision4-current.log --script tests/acts/act2/a2_l3_smoke_asset_capture.gd -- --revision4-current",
+    "checks": 118,
+    "failures": 0,
+    "exit_code": 0,
+    "raw_log": "a2-l3-smoke-art-revision4-current.log",
+    "log_sha256": "a3f19891e1f6577563d03c797cdfdb3a6b391d3fbdd8fb6523a4be221fd0bc6a",
+    "sources_sha256": {
+      "scripts/acts/act2/smoke_bank_visual.gd": "d3ec0a90bc650947fefc516dd451c75cf02a6a41bfc8cbe44692e9f33c338642",
+      "assets/acts/act2/shaders/smoke_wisp.gdshader": "032e80de1c09dfde8604faa39d9ef1619d30c6287c7e8c6be7f7a66d6b242d95",
+      "tests/acts/act2/a2_l3_smoke_asset_capture.gd": "6dcd9280dcf9e972299134f83fda66a46078ef8081f180b605b6d16cc3fc17a2",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.gd": "8f18063b1ff719a04ae5088c0fcd8d7114f956efa7b8d0cd97c34bd02443d611",
+      "tests/acts/act2/fixtures/a2_l3_smoke_preview.tscn": "3d589c566826e178024365596fc4557b4e56245c1fcc3ea94adee42ea2d3c605",
+      "scripts/cues/threat_cue.gd": "2996af6fc2bc4314599615a5753f1d4baf7940dce91a2f8e262f018e64b36cbb",
+      "scripts/cues/cue_mesh.gd": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+    },
+    "scope": "Same five TEST ONLY native540x1170 stage-placed cosmetic shared circle cue/Tender/Hero/production floor+kit views. Original108 checks plus actual final native frame_pre_draw readability refresh and exact after-draw camera signature/current masks for each captured image. No shared bank consumer, Scheduler admission/grace/ticks/damage, route, whole checkpoint, next-tell coexistence, human balance or performance claim.",
+    "minimal_fix": "Fixture refreshes actual Hero/source/rim masks only after normal shared Game camera update and before native viewport draw. Exact native camera transform/projection/clip/viewport unchanged across captured draw, and current masks asserted after it. Runtime/shader/camera/hero/cue/clocks unchanged. Separate output retains initial108 stale-overlap evidence.",
+    "artifact_sha256": {
+      "smoke-art-revision4-current/a2_l3_smoke_asset_capture.gd.txt": "6dcd9280dcf9e972299134f83fda66a46078ef8081f180b605b6d16cc3fc17a2",
+      "smoke-art-revision4-current/metadata.json": "7ecfbf111fd884c8ebdda5eba691c9db8f9229ba3be851a7e6de9fcf983744f0",
+      "smoke-art-revision4-current/smoke-active-hero-overlap.png": "3e966c0ca0532c73f9aa559d35fe328c9cecf0a55ad4acf63ea40fe17fd2a855",
+      "smoke-art-revision4-current/smoke-active.png": "784b7876b2d32cd74c7350b01339c6deee9dc9dd84f47103ee03a180a2936f89",
+      "smoke-art-revision4-current/smoke-lock.png": "717d68688ab221294442cf15a6adc1caf244c2f769894b5e7717eeeb16c8139f",
+      "smoke-art-revision4-current/smoke-recovery.png": "cc44dd8e6200b7f2c4516736b739c0fb393e5efbe97ebb5403aaeb83947cd122",
+      "smoke-art-revision4-current/smoke-warning.png": "55097d9c0ae917fec5586495adb099f6b16a760d0f772e1cd1b9be552309eb04",
+      "smoke-art-revision4-current/smoke_bank_visual.gd.txt": "d3ec0a90bc650947fefc516dd451c75cf02a6a41bfc8cbe44692e9f33c338642",
+      "smoke-art-revision4-current/smoke_wisp.gdshader.txt": "032e80de1c09dfde8604faa39d9ef1619d30c6287c7e8c6be7f7a66d6b242d95"
+    },
+    "reviews": {
+      "root": "Viewed actual corrected overlap at original540x1170: black pooling wisps now rendered visibly around Hero, with bright source glyph/Hero torso/facing/legs/boots and most rim/dry floor readable. Upper mask leaves a deliberate clear Hero rectangle and cue-tinted base fringe. Lower-right Tender/rim and center marker/boot contact remain. Independent all-five verdict pending.",
+      "peer": "All five corrected original540x1170 frames plus metadata independently reviewed: scoped low Black Smoke material/readability PASS. Active/recovery neutral charcoal pool; overlap retains black vapour left/below protected Hero/source/boots. Shared tell/source/most rim/dry floor readable. All after-draw cameras and masks current with zero native delta. Faceted/stippled details, warm fringe/fill gaps, Tender covering lower-right rim and source cross touching boot edges remain disclosed. No entirely unobstructed full rim, every boot pixel, consumer/damage/grace/next-tell/route/aggregate/fairness claim."
     }
   }
 }

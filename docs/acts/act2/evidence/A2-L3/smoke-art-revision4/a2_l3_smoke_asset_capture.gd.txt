@@ -26,9 +26,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
-	if "--revision4-current" in OS.get_cmdline_user_args():
-		_capture_root = "res://captures/act2/a2-l3-smoke-revision4-current/"
-	elif "--revision4" in OS.get_cmdline_user_args():
+	if "--revision4" in OS.get_cmdline_user_args():
 		_capture_root = "res://captures/act2/a2-l3-smoke-revision4/"
 	elif "--revision3" in OS.get_cmdline_user_args():
 		_capture_root = "res://captures/act2/a2-l3-smoke-revision3/"
@@ -126,24 +124,7 @@ func _run() -> void:
 		_expect(hero.hp == hp_before and hero.get_world_action_records().is_empty() and not level.is_completed() and level.current_checkpoint()["id"].is_empty(), "cosmetic view credits no action, damage or progression: " + view["label"])
 		var framing: String = _game.call("camera_framing_error", level.camera_framing_points())
 		_expect(framing.is_empty(), "actual camera contains full circle, source, Tender and Hero bounds: " + view["label"] + ": " + framing)
-		# SceneTree.process_frame precedes Game._process, which follows the Hero
-		# with its actual camera. Refresh only derived presentation after that
-		# normal update and immediately before native viewport rendering.
-		await RenderingServer.frame_pre_draw
-		camera = _game.get("camera") as Camera3D
-		hero_bounds.assign(_game.call("camera_billboard_points", hero.get_node("ActorSprite")))
-		hero_framing.assign(_game.call("player_camera_framing_points"))
-		source_points = _source_vertices(cue)
-		boundary_points = _circle_boundary(cue)
-		_expect(tender.call("apply_readability", camera, hero_bounds) and smoke.call("apply_readability", camera, hero_framing, source_points, boundary_points) and _native_masks_valid(smoke, camera, hero_framing, source_points, boundary_points), "actual final current camera derives masks before viewport draw: " + view["label"])
-		var draw_camera: Dictionary = _camera_signature(camera)
-		stats = smoke.call("geometry_stats")
-		policies = _material_policy(smoke)
-		wisp_policies = _wisp_material_policy(smoke)
-		framing = _game.call("camera_framing_error", level.camera_framing_points())
 		await RenderingServer.frame_post_draw
-		var draw_masks_valid: bool = _camera_signature(camera) == draw_camera and _native_masks_valid(smoke, camera, hero_framing, source_points, boundary_points)
-		_expect(draw_masks_valid, "same captured native frame retains exact current camera and masks: " + view["label"])
 		var picture: Image = root.get_texture().get_image()
 		var image_path: String = _capture_root + view["label"] + ".png"
 		_expect(picture != null and picture.get_size() == Vector2i(540, 1170) and picture.save_png(image_path) == OK, "native540x1170 smoke frame saved: " + view["label"])
@@ -153,7 +134,7 @@ func _run() -> void:
 			world_quad.append(_vector(point))
 			var screen: Vector2 = camera.unproject_position(point)
 			screen_quad.append([screen.x, screen.y])
-		records.append({"label": view["label"], "phase": view["phase"], "normalized_progress": view["p"], "hero_fixture_position": _vector(hero.global_position), "hero_hp": hero.hp, "hero_on_floor": hero.is_on_floor(), "hero_capsule_radius": actor_radius, "static_circle_occupancy": intersects, "requested_overlap_fixture": view["overlap"], "bank_origin": _vector(source.global_position), "tender_origin": _vector(tender.global_position), "native_geometry_stats": _native_json(stats), "materials": policies, "wisp_materials": _native_json(wisp_policies), "native_material_alpha_ceiling": native_max_alpha, "wisp_alpha_ceiling": SmokeVisual.WISP_ALPHA, "art_revision": SmokeVisual.ART_REVISION, "smoke_mask_state": _native_json(smoke.call("readability_state")), "mask_source_vertices_world": _native_json(source_points), "mask_boundary_world": _native_json(boundary_points), "mask_full_hero_world": _native_json(hero_framing), "shared_cue": _cue_json(state), "hero_billboard_world": world_quad, "hero_billboard_viewport_pixels": screen_quad, "tender_readability": tender.call("readability_state"), "scenery_cutaway_applied": false, "scenery_cutaway_available_paths": kit_root.get_meta("optional_cutaway_paths", []).size(), "smoke_readability_fade_applied": false, "smoke_native_masks_applied": draw_masks_valid, "mask_camera_unchanged_during_draw": _camera_signature(camera) == draw_camera, "camera_position": _vector(camera.global_position), "camera_width": camera.size, "camera_viewport_size": [camera.get_viewport().size.x, camera.get_viewport().size.y], "camera_framing_error": framing, "image": image_path, "image_sha256": FileAccess.get_sha256(image_path), "scope": "TEST ONLY stage placed Hero and cosmetic fixed-circle shared cue; no Scheduler admission/damage/grace/ticks/route/input/save/fairness claim"})
+		records.append({"label": view["label"], "phase": view["phase"], "normalized_progress": view["p"], "hero_fixture_position": _vector(hero.global_position), "hero_hp": hero.hp, "hero_on_floor": hero.is_on_floor(), "hero_capsule_radius": actor_radius, "static_circle_occupancy": intersects, "requested_overlap_fixture": view["overlap"], "bank_origin": _vector(source.global_position), "tender_origin": _vector(tender.global_position), "native_geometry_stats": _native_json(stats), "materials": policies, "wisp_materials": _native_json(wisp_policies), "native_material_alpha_ceiling": native_max_alpha, "wisp_alpha_ceiling": SmokeVisual.WISP_ALPHA, "art_revision": SmokeVisual.ART_REVISION, "smoke_mask_state": _native_json(smoke.call("readability_state")), "mask_source_vertices_world": _native_json(source_points), "mask_boundary_world": _native_json(boundary_points), "mask_full_hero_world": _native_json(hero_framing), "shared_cue": _cue_json(state), "hero_billboard_world": world_quad, "hero_billboard_viewport_pixels": screen_quad, "tender_readability": tender.call("readability_state"), "scenery_cutaway_applied": false, "scenery_cutaway_available_paths": kit_root.get_meta("optional_cutaway_paths", []).size(), "smoke_readability_fade_applied": false, "smoke_native_masks_applied": true, "camera_position": _vector(camera.global_position), "camera_width": camera.size, "camera_viewport_size": [camera.get_viewport().size.x, camera.get_viewport().size.y], "camera_framing_error": framing, "image": image_path, "image_sha256": FileAccess.get_sha256(image_path), "scope": "TEST ONLY stage placed Hero and cosmetic fixed-circle shared cue; no Scheduler admission/damage/grace/ticks/route/input/save/fairness claim"})
 		print("L3 smoke cosmetic capture: " + view["label"])
 	_expect(records.size() == 5, "exact five requested cosmetic image records")
 	var last_camera := _game.get("camera") as Camera3D
@@ -290,11 +271,6 @@ func _visible_wisps(smoke: Node3D) -> int:
 	for child: Node in smoke.get_children():
 		if child is MeshInstance3D and child.material_override is ShaderMaterial and child.visible: result += 1
 	return result
-
-
-func _camera_signature(camera: Camera3D) -> Dictionary:
-	var projection: Projection = camera.get_camera_projection()
-	return {"transform": camera.get_camera_transform(), "projection": [projection.x, projection.y, projection.z, projection.w], "near": camera.near, "far": camera.far, "viewport": camera.get_viewport().get_visible_rect().size}
 
 
 func _native_json(value: Variant) -> Variant:
