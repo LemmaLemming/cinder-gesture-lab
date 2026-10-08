@@ -85,6 +85,26 @@ func update_status(hp: float, max_hp: float, shells: int, max_shells: int, cores
 	if objective_changed:
 		_layout()
 
+## Required combat framing excludes the actual fitted status/objective region
+## and controls. Normalized coordinates also apply to the pixel SubViewport.
+## This pure view does not relayout UI or authorize attacks through overlays.
+func combat_safe_rect() -> Rect2:
+	if not _built or not is_instance_valid(_root) or not is_instance_valid(_objective_label) or not is_instance_valid(_hint_panel):
+		return Rect2()
+	var screen: Vector2 = get_viewport().get_visible_rect().size
+	if screen.x <= 0.0 or screen.y <= 0.0:
+		return Rect2()
+	var factor: float = clampf(screen.x / 540.0, 0.6, 2.0)
+	var edge: float = 22.0 * factor
+	var top: float = _objective_label.position.y + _objective_label.size.y
+	if is_instance_valid(_telemetry_label) and _telemetry_label.visible:
+		top = maxf(top, _telemetry_label.position.y + _telemetry_label.size.y)
+	top += 12.0 * factor
+	var bottom: float = _hint_panel.position.y - 12.0 * factor
+	if bottom <= top or screen.x <= 2.0 * edge:
+		return Rect2()
+	return Rect2(Vector2(edge / screen.x, top / screen.y), Vector2((screen.x - 2.0 * edge) / screen.x, (bottom - top) / screen.y))
+
 
 func show_title() -> void:
 	setup()

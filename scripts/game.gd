@@ -14,6 +14,7 @@ const EnemyScript = preload("res://scripts/enemy.gd")
 const EffectsScript = preload("res://scripts/effects.gd")
 const HUDScript = preload("res://scripts/hud.gd")
 const LevelScript = preload("res://scripts/campaign/level.gd")
+const CameraFraming = preload("res://scripts/presentation/camera_framing.gd")
 const LabScene = preload("res://scenes/lab_arena.tscn")
 
 var player: CinderPlayer
@@ -47,6 +48,8 @@ const CAMERA_OFFSET: Vector3 = Vector3(0, 18, 13)
 # changing camera angle, controller motion or the screen-space aim anchor.
 const CAMERA_FOLLOW_TIME_S: float = 0.16
 var _camera_focus: Vector3 = Vector3.ZERO
+var last_camera_framing_error: String = ""
+var _camera_framing_state: Dictionary = {"enabled": false, "accepted": true, "reason": ""}
 
 func _ready() -> void:
 	_build_view()
@@ -319,10 +322,6 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(player):
 		return
 	_shake = maxf(_shake - delta, 0.0)
-	_update_camera(delta)
-	if _shake > 0.0:
-		camera.position.x += randf_range(-0.035, 0.035)
-		camera.position.z += randf_range(-0.035, 0.035)
 	for index: int in range(_pickups.size() - 1, -1, -1):
 		var pickup: Node3D = _pickups[index]
 		if not is_instance_valid(pickup):
@@ -343,6 +342,12 @@ func _process(delta: float) -> void:
 		objective = active_level.objective_text
 	hud.update_status(player.hp, player.max_hp, player.shells, player.max_shells, cores, objective)
 	hud.update_lab(player, get_aim_anchor(), is_lab_level() and lab_mode == "targets")
+	# Fit against the HUD that this frame actually renders, including a newly
+	# wrapped objective. Never use the previous frame's smaller protected area.
+	_update_camera(delta)
+	if _shake > 0.0:
+		camera.position.x += randf_range(-0.035, 0.035)
+		camera.position.z += randf_range(-0.035, 0.035)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_instance_valid(player) or player.dead or get_tree().paused:
@@ -440,9 +445,109 @@ func _update_camera(delta: float, snap: bool = false) -> void:
 	else:
 		var follow_weight: float = 1.0 - exp(-maxf(delta, 0.0) / CAMERA_FOLLOW_TIME_S)
 		_camera_focus = _camera_focus.lerp(focus, follow_weight)
+	last_camera_framing_error = ""
+	_camera_framing_state = {"enabled": false, "accepted": true, "reason": ""}
+	if is_instance_valid(active_level):
+		var points: Array = active_level.camera_framing_points()
+		if not active_level.last_camera_framing_error.is_empty():
+			last_camera_framing_error = active_level.last_camera_framing_error
+			_camera_framing_state = {"enabled": true, "accepted": false, "reason": last_camera_framing_error}
+		elif not points.is_empty():
+			var planned: Dictionary = camera_framing_plan(points, _camera_focus)
+			_camera_framing_state = planned.duplicate(true)
+			_camera_framing_state.enabled = true
+			if planned.accepted:
+				_camera_focus = planned.focus
+			else:
+				last_camera_framing_error = planned.reason
 	# Shake is applied after this unshaken position so it cannot accumulate into
 	# follow lag. The orientation set in _build_view stays fixed throughout.
 	camera.global_position = _camera_focus + CAMERA_OFFSET
+
+## These views never alter camera, inputs, actor/resources, clocks or leases.
+## A possible future fit does not authorize damage in a currently clipped view.
+func camera_framing_plan(points: Array, desired_focus: Vector3) -> Dictionary:
+	if not is_instance_valid(camera) or not is_instance_valid(player) or not is_instance_valid(hud):
+		return {"accepted": false, "reason": "Ready shared camera/player/HUD required"}
+	var projection_error: String = _camera_projection_error()
+	if not projection_error.is_empty():
+		return {"accepted": false, "reason": projection_error}
+	var mandatory: Array = player_camera_framing_points()
+	if mandatory.is_empty():
+		return {"accepted": false, "reason": "Actual player render/collision bounds unavailable"}
+	var required: Array = points.duplicate()
+	required.append_array(mandatory)
+	return CameraFraming.plan(required, desired_focus, _camera_framing_spec(0.055))
+
+func camera_framing_error(points: Array) -> String:
+	if not is_instance_valid(camera) or not is_instance_valid(player) or not is_instance_valid(hud):
+		return "Ready shared camera/player/HUD required"
+	var projection_error: String = _camera_projection_error()
+	if not projection_error.is_empty():
+		return projection_error
+	var mandatory: Array = player_camera_framing_points()
+	if points.is_empty() or mandatory.is_empty():
+		return "Actual required source and player bounds must be supplied"
+	var required: Array = points.duplicate()
+	required.append_array(mandatory)
+	# The plan reserves max shake + pixel margin. Current projection needs the
+	# pixel margin, including any shake already present in camera.position.
+	return CameraFraming.containment(required, camera.global_position - CAMERA_OFFSET, _camera_framing_spec(0.02))
+
+func get_camera_framing_state() -> Dictionary:
+	return _camera_framing_state.duplicate(true)
+
+func _camera_framing_spec(margin: float) -> Dictionary:
+	return {"basis": camera.global_basis, "offset": CAMERA_OFFSET, "width": camera.size, "viewport_size": Vector2(camera.get_viewport().size), "safe_rect": hud.combat_safe_rect(), "max_shift": 3.6, "safety_margin": margin, "near": camera.near, "far": camera.far}
+
+func _camera_projection_error() -> String:
+	if camera.projection != Camera3D.PROJECTION_ORTHOGONAL or camera.keep_aspect != Camera3D.KEEP_WIDTH or camera.h_offset != 0.0 or camera.v_offset != 0.0 or camera.frustum_offset != Vector2.ZERO:
+		return "Shared orthographic KEEP_WIDTH camera with zero projection offsets required"
+	return ""
+
+## The common player uses one capsule and an enabled Z-axis billboard. Include
+## its real full quad (not billboard's inflated culling sphere) and foot shadow.
+func player_camera_framing_points() -> Array:
+	if not is_instance_valid(player) or not is_instance_valid(camera):
+		return []
+	var collision := player.get_node_or_null("BodyCollision") as CollisionShape3D
+	var sprite := player.get_node_or_null("ActorSprite") as Sprite3D
+	var shadow := player.get_node_or_null("ContactShadow") as MeshInstance3D
+	if collision == null or not collision.shape is CapsuleShape3D or sprite == null or shadow == null or shadow.mesh == null:
+		return []
+	var capsule := collision.shape as CapsuleShape3D
+	var points: Array = _camera_box_points(AABB(Vector3(-capsule.radius, -capsule.height * 0.5, -capsule.radius), Vector3(capsule.radius * 2.0, capsule.height, capsule.radius * 2.0)), collision.global_transform)
+	var quad: Array = camera_billboard_points(sprite)
+	if quad.is_empty():
+		return []
+	points.append_array(quad)
+	points.append_array(_camera_box_points(shadow.get_aabb(), shadow.global_transform))
+	return points
+
+## Standard enabled Z-axis Sprite3D only; full native quad is conservative.
+## Atlas margins, fixed-size or custom-shader billboards need explicit verified
+## owner corners. Empty is rejection, never a physical-proxy fallback.
+func camera_billboard_points(sprite: Sprite3D) -> Array:
+	if not is_instance_valid(camera) or not is_instance_valid(sprite) or not sprite.is_inside_tree() or sprite.texture == null or sprite.texture is AtlasTexture or sprite.billboard != BaseMaterial3D.BILLBOARD_ENABLED or sprite.axis != Vector3.AXIS_Z or sprite.fixed_size or sprite.region_enabled or sprite.hframes != 1 or sprite.vframes != 1 or sprite.material_override != null or sprite.material_overlay != null:
+		return []
+	var scale: Vector3 = sprite.global_basis.get_scale()
+	if not scale.is_finite() or scale.x <= 0.0 or scale.y <= 0.0 or scale.z <= 0.0:
+		return []
+	var mesh: TriangleMesh = sprite.generate_triangle_mesh()
+	if mesh == null:
+		return []
+	var result: Array = []
+	for vertex: Vector3 in mesh.get_faces():
+		result.append(sprite.global_position + camera.global_basis.x * vertex.x * scale.x + camera.global_basis.y * vertex.y * scale.y)
+	return result
+
+func _camera_box_points(bounds: AABB, transform: Transform3D) -> Array:
+	var result: Array = []
+	for x: float in [bounds.position.x, bounds.end.x]:
+		for y: float in [bounds.position.y, bounds.end.y]:
+			for z: float in [bounds.position.z, bounds.end.z]:
+				result.append(transform * Vector3(x, y, z))
+	return result
 
 func handle_tap(screen_pos: Vector2) -> void:
 	if get_tree().paused or not is_instance_valid(player) or player.dead:
