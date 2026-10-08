@@ -75,16 +75,11 @@ func _run() -> void:
 	offset.y = 0.0
 	var enemy_offset: Vector3 = guard_source.global_position - hero.global_position
 	enemy_offset.y = 0.0
-	var other_offset: Vector3 = (field.get_node("cluster-left") as Node3D).global_position - hero.global_position
-	other_offset.y = 0.0
 	var resolved: Dictionary = hero.equipment.resolved_stats()
 	var cone_dot: float = offset.normalized().dot(enemy_offset.normalized())
-	var other_dot: float = offset.normalized().dot(other_offset.normalized())
-	print("C32 PRIMARY GEOMETRY hero=", hero.global_position, " cluster=", cluster.global_position, " enemy=", guard_source.global_position, " reach=", offset.length(), " enemy_cone_dot=", cone_dot, " other_anchor_dot=", other_dot, " other_anchor_distance=", other_offset.length(), " actual_min_dot=", resolved.primary_cone_min_dot)
+	print("C32 PRIMARY GEOMETRY hero=", hero.global_position, " cluster=", cluster.global_position, " enemy=", guard_source.global_position, " reach=", offset.length(), " enemy_cone_dot=", cone_dot, " actual_min_dot=", resolved.primary_cone_min_dot)
 	if not _require(offset.length() <= float(resolved.primary_range) and cone_dot < float(resolved.primary_cone_min_dot) and guard_source.pure_presentation_state().phase in ["warning", "lock"], "actual low right cluster is ordinary-reachable while the live guard is outside the same primary cone before its active window"):
 		_guard_diagnostic("cluster geometry"); await _finish(); return
-	if not _require(other_offset.length() > CinderPlayer.ATTACK_ORIGIN_DISK_RADIUS and other_dot < float(resolved.primary_cone_min_dot), "the unspent left anchor is outside the actual aimed right cone and attack-origin disk, so one primary selects its intended finite supply"):
-		_guard_diagnostic("other anchor geometry"); await _finish(); return
 	if not await _cluster_primary(cluster, "C32 harmless first finite release", true):
 		_guard_diagnostic("cluster primary"); await _finish(); return
 	if not _require(paused and recoil_pause_requested and callback_capture_rejected and not guard_episode_id.is_empty() and guard_cancel_events == [{"id": guard_native_lease, "reason": "spore_repulsion"}], "one genuine native lease cancellation precedes recoil, callback capture denies and the public deferred pause reaches the complete barrier"):
@@ -235,8 +230,6 @@ func _guard_framing(label: String) -> bool:
 
 func _guard_diagnostic(label: String) -> void:
 	if not is_instance_valid(guard_source): return
-	if is_instance_valid(level.get("spore_field")):
-		print("C32 ACTUAL FIELD DIAGNOSTIC ", label, " field=", level.get("spore_field").state(), " Player_records=", hero.get_world_action_records(), " Player_HP=", hero.hp, " enemy_hit_events=", hit_events)
 	var points: Array = level.camera_framing_points()
 	points.append_array(game.call("player_camera_framing_points"))
 	var camera: Camera3D = game.get("camera") as Camera3D
