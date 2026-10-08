@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "TESTED_SCOPED_PATCH_READY",
+  "status": "TESTED_SUPPLEMENT_READY_FIRST_PATCH_ADOPTED",
   "scope": "Two owned common Act2 Scout runtime files; narrow callback correction, no original L1 evidence relabel or L2 final acceptance.",
   "original_L1_runtime": "16f2532518edd8d76aa41ec40f1d10edad607559",
   "original_L1_candidate": "a96edfaddd22e206438e616a8b4080e5c5cdce7a",
@@ -51,5 +51,51 @@
       "sha256": "58f3a8dc657ddd65c6dca20b6c7804bd9d2ac57bed0d32be8faecd998db1ca47"
     }
   ],
-  "fixture_sha256": "b0e12d5d0df02ec799af660eaff2204aad2cc938158827683f69aa54c769586e"
+  "fixture_sha256": "b0e12d5d0df02ec799af660eaff2204aad2cc938158827683f69aa54c769586e",
+  "first_patch": {
+    "owner_commit": "b3fb6854b1d24aa989dbab7b17e5bab22bc70514",
+    "canonical_commit": "7c2fac5116f58f493952a9f9524bef566b3ce5af",
+    "response": "9bd47362-aa1a-47ca-8eda-f957adbf03f1",
+    "fixture_sha256": "b0e12d5d0df02ec799af660eaff2204aad2cc938158827683f69aa54c769586e",
+    "driver_sha256": "1d2883d1cf42812f051422b9be12e5ecb8550649664e07bf1be3b7abc7e96188",
+    "checks": "Original three checks entries remain first-patch evidence."
+  },
+  "supplemental_post_query_guard": {
+    "status": "TESTED_SCOPED_PATCH_READY",
+    "source_parent": "b3fb6854b1d24aa989dbab7b17e5bab22bc70514",
+    "shared_baseline": "811f69fe542f85bc58a26fded567b89e584b51e8",
+    "driver_sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+    "fixture_sha256": "11950732b38e07089fef93463f12dcb983f9c538bf88913461ccfa9e556b4184",
+    "checks": [
+      {
+        "file": "act2-scout-post-query-guard-original.log",
+        "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/act2-scout-post-query-guard-original.log --script tests/acts/act2/a2_scout_callback_custody_smoke.gd",
+        "checks": 186,
+        "failures": 7,
+        "exit_code": 1,
+        "scope": "Expanded actual public query-cleanup required-guard-only invalidation: outgoing5/incoming2 intended failures, native source/cue/Hero/own lease remain valid; prior155/setup controls retained.",
+        "sha256": "7465ef282f441a8192ad5df917508405dd00a50f9929a1d7f2142c72ea6f5ed5"
+      },
+      {
+        "file": "act2-scout-post-query-guard-corrected.log",
+        "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/act2-scout-post-query-guard-corrected.log --script tests/acts/act2/a2_scout_callback_custody_smoke.gd",
+        "checks": 186,
+        "failures": 0,
+        "exit_code": 0,
+        "scope": "Same actual post-query guard-only outgoing/incoming observers now refuse damage; valid old155/pure-pause/true-gate controls preserved. No full-level/native claim.",
+        "sha256": "334c3adf8559140af64bb382948df2e6d57ddd6e095810b2e8378fdb6ed2a320"
+      },
+      {
+        "file": "act2-scout-tracking-after-post-query-guard.log",
+        "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/act2-scout-tracking-after-post-query-guard.log --script tests/acts/act2/a2_l1_ray_exchange_smoke.gd",
+        "checks": 285,
+        "failures": 0,
+        "exit_code": 0,
+        "scope": "Directly affected actual tracking/hit/full-response/presentation/pause/JSON controls after guard-order correction. No full-level/native claim.",
+        "sha256": "58f3a8dc657ddd65c6dca20b6c7804bd9d2ac57bed0d32be8faecd998db1ca47"
+      }
+    ],
+    "change": "Move required guard approval once after callback-producing reservation query in outgoing readiness and incoming recovery gate, then native/exact-lease recheck. Actor/freeze/timing/damage/schema unchanged from first patch.",
+    "review": "Independent static two-method review found no further concrete ordering gap; actual owner-run checks above establish bounded behavior."
+  }
 }
