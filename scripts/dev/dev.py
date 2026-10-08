@@ -34,6 +34,7 @@ SUITES = {
     "level_contract": "tests/level_contract_smoke.gd",
     "world_actions": "tests/world_action_smoke.gd",
     "player_snapshot": "tests/player_snapshot_smoke.gd",
+    "player_dash_framing": "tests/player_dash_framing_smoke.gd",
     "campaign_persistence": "tests/campaign_persistence_smoke.gd",
     "exact_json": "tests/exact_json_smoke.gd",
     "settings": "tests/settings_smoke.gd",

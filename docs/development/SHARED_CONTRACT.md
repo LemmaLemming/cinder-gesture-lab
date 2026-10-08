@@ -390,3 +390,10 @@ Additive lunge-preview-1 on the existing threat-scheduler-4 provides `preview_lu
 Read [pure lunge preview](LUNGE_PREVIEW.md). Actual admission freshly proves and exactly compares the complete candidate/proof/guard before and after ordinary cleanup. Preview is ephemeral native view data, never a reservation or historical save authority. Authored owners must independently fit complete source/corridor/endcaps/player/landing/opening bounds, validate current visibility through damage/recovery, and bind any retained view points to the accepted actual reservation under their own aggregate schema. Physical/contact tolerance and controller behavior stay unchanged.
 
 Named queue target `python3 scripts/dev/dev.py test lunge_preview` passed70/0; directly affected ordinary adapter35/snapshot35/scheduler69 passed0. Independent final review repaired unsupported actual Hero descriptors and custom-path resource identity gaps. Current Act3 camera consumer acceptance remains required.
+
+
+## Shared18 committed Player dash presentation
+
+Additive player-dash-framing-1 exposes pure `get_committed_dash_state()` on the actual shared Player. Active origin/direction/speed/total duration/remaining time come from the accepted cache already persisted by player-snapshot-1; nominal distance is speed times total duration. It is not actual remaining displacement or a wall-shortened endpoint. Idle/completed/dead returns false with finite null span fields; canceled capture preserves ongoing physical motion and buffered requests remain separate until they execute. Getter returns native copied values, emits no events and changes no clocks, diagnostics, gear, controller or schemas.
+
+Read [committed dash framing](PLAYER_DASH_FRAMING.md). The camera owner still measures actual pose/world geometry and current containment; this presentation span cannot authorize a safe landing, escape or collision endpoint. Named target `python3 scripts/dev/dev.py test player_dash_framing` passed38/0, including actual wall blocking, accepted cache after gear changes, real buffering and exact paused fresh restore/continuation. No unused baseline check is required for this isolated accessor.
