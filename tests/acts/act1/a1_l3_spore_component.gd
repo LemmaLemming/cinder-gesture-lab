@@ -151,7 +151,7 @@ func _quiet_component(label: String) -> bool:
 	if not _require(decoded.get("accepted", false) and Exact.stringify(decoded.value) == wire and level.call("restore_component_unit", decoded.value), label + " quiet complete native commit follows physical -> Scheduler -> exchange -> Route order"): return false
 	if not _require(Exact.stringify(level.call("component_unit_state")) == wire and pair_events == count, label + " exact quiet roundtrip preserves every original resource/clock/pose/supply without callbacks"): return false
 	component_units.append({"label": label, "unit": unit.duplicate(true)})
-	var id: String = "umbrella-1"
+	var id: String = level.call("current_source_ids")[0]
 	var malformed: Array[Dictionary] = []
 	var wrong: Dictionary = unit.duplicate(true)
 	wrong.actors[id].repulsion.consumer_id += "-foreign"
@@ -173,6 +173,25 @@ func _quiet_component(label: String) -> bool:
 	malformed.append(wrong)
 	for candidate: Dictionary in malformed:
 		if not _require(not String(level.call("component_unit_error", candidate)).is_empty() and not level.call("restore_component_unit", candidate) and Exact.stringify(level.call("component_unit_state")) == wire and pair_events == count, label + " rejects malformed native stamp/old API/clock/custody atomically"): return false
+	var actor: Act1MushroomSelenite = sources[id]
+	var phase: String = actor.get_spore_response_state().phase
+	var pose: String = "standing"
+	match phase:
+		"recoil", "turn": pose = "recoil"
+		"retreat": pose = "retreat"
+		"hold", "regroup": pose = "regroup"
+		"none":
+			var native_phase: String = actor.pure_presentation_state().phase
+			pose = "standing" if native_phase in ["clear", "idle"] else native_phase
+	if not _require(actor.art_binding_error().is_empty() and actor.get_art().call("pose_name") == pose, label + " selects its actual native/environmental costume pose without a second clock"): return false
+	if phase in ["recoil", "turn", "retreat", "hold", "regroup"]:
+		var sprite: Sprite3D = actor.get_art().call("sprite")
+		var original_texture: Texture2D = sprite.texture
+		var art_script = preload("res://scripts/acts/act1/mushroom_selenite_art.gd")
+		sprite.texture = art_script.TEXTURES[actor.pure_presentation_state().role_id].front.standing
+		var rejected: bool = not actor.art_binding_error().is_empty() and (level.call("component_unit_state") as Dictionary).is_empty() and pair_events == count
+		sprite.texture = original_texture
+		if not _require(rejected and actor.art_binding_error().is_empty() and Exact.stringify(level.call("component_unit_state")) == wire and pair_events == count, label + " rejects a wrong known native pose then restores the exact real unit without gameplay events"): return false
 	return true
 
 

@@ -1,15 +1,17 @@
 class_name Act1MushroomSeleniteArt
 extends Node3D
 ## C31/C32 original costume pixels only. Configure the literal canonical role
-## before add. Native actor phase/facing selects static pixels; the parent owns
+## before add. Actual native/environmental phase and facing select static pixels; the parent owns
 ## visibility, motion, damage, cue and snapshot authority. No animation clock.
 
 const ASSET_DIR: String = "res://assets/acts/act1/grotto/selenites/"
+const REPULSION_ASSET_DIR: String = ASSET_DIR + "repulsion/"
+const REPULSION_POSES: Array[String] = ["recoil", "retreat", "regroup"]
 const PIXEL_SIZE: float = 0.022
 const SPRITE_OFFSET: Vector2 = Vector2(0, 40)
 const NATIVE_SIZES: Dictionary = {"A1-E2": Vector2i(48, 80), "A1-E3": Vector2i(80, 80)}
 const ASSET_NAMES: Dictionary = {"A1-E2": "swarm", "A1-E3": "guard"}
-const PHASES: Array[String] = ["clear", "idle", "warning", "lock", "active", "recovery"]
+const PHASES: Array[String] = ["clear", "idle", "warning", "lock", "active", "recovery", "recoil", "retreat", "regroup"]
 const TEXTURES: Dictionary = {
 	"A1-E2": {
 		"front": {
@@ -18,6 +20,9 @@ const TEXTURES: Dictionary = {
 			"lock": preload("res://assets/acts/act1/grotto/selenites/swarm_front_lock.png"),
 			"active": preload("res://assets/acts/act1/grotto/selenites/swarm_front_active.png"),
 			"recovery": preload("res://assets/acts/act1/grotto/selenites/swarm_front_recovery.png"),
+			"recoil": preload("res://assets/acts/act1/grotto/selenites/repulsion/swarm_front_recoil.png"),
+			"retreat": preload("res://assets/acts/act1/grotto/selenites/repulsion/swarm_front_retreat.png"),
+			"regroup": preload("res://assets/acts/act1/grotto/selenites/repulsion/swarm_front_regroup.png"),
 		},
 		"side": {
 			"standing": preload("res://assets/acts/act1/grotto/selenites/swarm_side_standing.png"),
@@ -25,6 +30,9 @@ const TEXTURES: Dictionary = {
 			"lock": preload("res://assets/acts/act1/grotto/selenites/swarm_side_lock.png"),
 			"active": preload("res://assets/acts/act1/grotto/selenites/swarm_side_active.png"),
 			"recovery": preload("res://assets/acts/act1/grotto/selenites/swarm_side_recovery.png"),
+			"recoil": preload("res://assets/acts/act1/grotto/selenites/repulsion/swarm_side_recoil.png"),
+			"retreat": preload("res://assets/acts/act1/grotto/selenites/repulsion/swarm_side_retreat.png"),
+			"regroup": preload("res://assets/acts/act1/grotto/selenites/repulsion/swarm_side_regroup.png"),
 		},
 		"back": {
 			"standing": preload("res://assets/acts/act1/grotto/selenites/swarm_back_standing.png"),
@@ -32,6 +40,9 @@ const TEXTURES: Dictionary = {
 			"lock": preload("res://assets/acts/act1/grotto/selenites/swarm_back_lock.png"),
 			"active": preload("res://assets/acts/act1/grotto/selenites/swarm_back_active.png"),
 			"recovery": preload("res://assets/acts/act1/grotto/selenites/swarm_back_recovery.png"),
+			"recoil": preload("res://assets/acts/act1/grotto/selenites/repulsion/swarm_back_recoil.png"),
+			"retreat": preload("res://assets/acts/act1/grotto/selenites/repulsion/swarm_back_retreat.png"),
+			"regroup": preload("res://assets/acts/act1/grotto/selenites/repulsion/swarm_back_regroup.png"),
 		},
 	},
 	"A1-E3": {
@@ -41,6 +52,9 @@ const TEXTURES: Dictionary = {
 			"lock": preload("res://assets/acts/act1/grotto/selenites/guard_front_lock.png"),
 			"active": preload("res://assets/acts/act1/grotto/selenites/guard_front_active.png"),
 			"recovery": preload("res://assets/acts/act1/grotto/selenites/guard_front_recovery.png"),
+			"recoil": preload("res://assets/acts/act1/grotto/selenites/repulsion/guard_front_recoil.png"),
+			"retreat": preload("res://assets/acts/act1/grotto/selenites/repulsion/guard_front_retreat.png"),
+			"regroup": preload("res://assets/acts/act1/grotto/selenites/repulsion/guard_front_regroup.png"),
 		},
 		"side": {
 			"standing": preload("res://assets/acts/act1/grotto/selenites/guard_side_standing.png"),
@@ -48,6 +62,9 @@ const TEXTURES: Dictionary = {
 			"lock": preload("res://assets/acts/act1/grotto/selenites/guard_side_lock.png"),
 			"active": preload("res://assets/acts/act1/grotto/selenites/guard_side_active.png"),
 			"recovery": preload("res://assets/acts/act1/grotto/selenites/guard_side_recovery.png"),
+			"recoil": preload("res://assets/acts/act1/grotto/selenites/repulsion/guard_side_recoil.png"),
+			"retreat": preload("res://assets/acts/act1/grotto/selenites/repulsion/guard_side_retreat.png"),
+			"regroup": preload("res://assets/acts/act1/grotto/selenites/repulsion/guard_side_regroup.png"),
 		},
 		"back": {
 			"standing": preload("res://assets/acts/act1/grotto/selenites/guard_back_standing.png"),
@@ -55,6 +72,9 @@ const TEXTURES: Dictionary = {
 			"lock": preload("res://assets/acts/act1/grotto/selenites/guard_back_lock.png"),
 			"active": preload("res://assets/acts/act1/grotto/selenites/guard_back_active.png"),
 			"recovery": preload("res://assets/acts/act1/grotto/selenites/guard_back_recovery.png"),
+			"recoil": preload("res://assets/acts/act1/grotto/selenites/repulsion/guard_back_recoil.png"),
+			"retreat": preload("res://assets/acts/act1/grotto/selenites/repulsion/guard_back_retreat.png"),
+			"regroup": preload("res://assets/acts/act1/grotto/selenites/repulsion/guard_back_regroup.png"),
 		},
 	},
 }
@@ -123,7 +143,7 @@ func role_id() -> String:
 
 func set_pose(phase: String, world_facing: Vector3, camera: Camera3D) -> void:
 	if not _configured or phase not in PHASES:
-		_pose_input_error = "C31/C32 pose requires its configured canonical role and native phase"
+		_pose_input_error = "C31/C32 pose requires its configured canonical role and closed native/environmental presentation phase"
 		return
 	if not is_instance_valid(_sprite) or _sprite.is_queued_for_deletion():
 		_pose_input_error = "C31/C32 art requires its retained sprite"
@@ -158,6 +178,8 @@ func set_pose(phase: String, world_facing: Vector3, camera: Camera3D) -> void:
 			pose = "active"
 		"recovery":
 			pose = "recovery"
+		"recoil", "retreat", "regroup":
+			pose = phase
 	_sprite.texture = TEXTURES[_role_id][artwork_facing][pose]
 	_sprite.flip_h = artwork_facing == "side" and side_amount < 0.0
 	_pose_input_error = ""
@@ -204,7 +226,8 @@ func binding_error() -> String:
 	var key: String = _texture_key()
 	if key.is_empty() or _sprite.texture is AtlasTexture or _sprite.texture.get_size() != Vector2(NATIVE_SIZES[_role_id]):
 		return "C31/C32 sprite must use a known role-specific native standalone Texture2D handle"
-	var expected_path: String = ASSET_DIR + "%s_%s_%s.png" % [ASSET_NAMES[_role_id], key.get_slice("/", 0), key.get_slice("/", 1)]
+	var directory: String = REPULSION_ASSET_DIR if key.get_slice("/", 1) in REPULSION_POSES else ASSET_DIR
+	var expected_path: String = directory + "%s_%s_%s.png" % [ASSET_NAMES[_role_id], key.get_slice("/", 0), key.get_slice("/", 1)]
 	if _sprite.texture.resource_path != expected_path or (_sprite.flip_h and facing_name() != "side"):
 		return "C31/C32 texture path or side-only reflection no longer matches its frame"
 	return ""

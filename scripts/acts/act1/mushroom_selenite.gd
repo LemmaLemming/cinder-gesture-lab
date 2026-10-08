@@ -5,7 +5,7 @@ extends CharacterBody3D
 ## hurt settling, sampled damage and presentation remain authored. C31 approach
 ## is explicitly opt-in. Genuine shared26 environmental motion is optional and
 ## belongs to the bound consumer/Route; there is no auto-cycle or second clock.
-## Costume poses are clockless; new spore-specific pixels remain separate work.
+## Native phases and genuine environmental stamps select clockless costume pixels.
 ## Capture/restore uses one exact Player+actor+Scheduler aggregate; an actor
 ## record is never converted into an AshEnemy envelope.
 
@@ -362,6 +362,9 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 		if not _spore_episode_id.is_empty():
 			_spore_phase = "interrupted"
 			_spore_progress = 0.0
+	# A bound real injury/death changes the stamp before any observer. Select
+	# quiet standing now; inherited death visibility remains actor-owned.
+	if not _spore_consumer_id.is_empty(): _draw_greybox()
 	# Real HP/impulse/hurt and the stamp precede Route release and all defeat/
 	# state observers. Native release never overwrites an external impulse.
 	var consumer: CinderSporeRepulsion = _spore_consumer()
@@ -487,6 +490,9 @@ func cancel_attack_for_spores(consumer: Node, episode_id: String, direction: Vec
 	_spore_direction = direction
 	_spore_progress = 0.0
 	_approach_driving = false
+	# Show the actual committed recoil stamp before native cancel observers.
+	# This selects pixels only; the Scheduler still cancels the real exchange.
+	_draw_greybox()
 	_spore_cancel_delivering = true
 	_spore_nested_damage_used = false
 	var accepted: bool = cancel("spore_repulsion")
@@ -530,6 +536,7 @@ func resume_spore_retreat(consumer: Node, episode_id: String, direction: Vector3
 	_spore_phase = "retreat"
 	_spore_progress = 0.0
 	_approach_driving = false
+	_draw_greybox()
 	return true
 
 
@@ -541,6 +548,9 @@ func finish_spore_episode(consumer: Node, episode_id: String) -> bool:
 	_spore_episode_id = ""
 	_spore_phase = "none"
 	_spore_progress = 0.0
+	# The coordinator keeps this tick held after finishing, so redraw the
+	# cleared stamp synchronously instead of leaving regroup pixels stale.
+	_draw_greybox()
 	# Retain consumer, HP/profile/cooldown and unit direction. No fresh admission.
 	return true
 
@@ -571,9 +581,10 @@ func art_binding_error() -> String:
 		return "C31/C32 requires its retained pixel presentation"
 	var error: String = String(_sprite_art.call("binding_error"))
 	if not error.is_empty(): return error
-	var pose: String = "standing" if _phase in ["clear", "idle"] else _phase
+	var art_phase: String = _art_phase()
+	var pose: String = "standing" if art_phase in ["clear", "idle"] else art_phase
 	if String(_sprite_art.call("role_id")) != String(_configuration.role_id) or String(_sprite_art.call("pose_name")) != pose:
-		return "C31/C32 costume must match its actual immutable role and presented native phase"
+		return "C31/C32 costume must match its actual immutable role and selected native/environmental phase"
 	return ""
 
 
@@ -1266,13 +1277,25 @@ func _build_greybox() -> void:
 	_draw_greybox()
 
 
+func _art_phase() -> String:
+	# Derived presentation only. Episode, turn, movement and deadlines remain
+	# the actual consumer's stamp; never serialize a second art phase/clock.
+	if not _spore_consumer_id.is_empty() and not _spore_episode_id.is_empty():
+		match _spore_phase:
+			"recoil", "turn": return "recoil"
+			"retreat": return "retreat"
+			"hold", "regroup": return "regroup"
+			"interrupted", "failed": return "clear"
+	return _phase
+
+
 func _draw_greybox() -> void:
 	if not is_instance_valid(_visual): return
 	_visual.rotation.y = atan2(_facing.x, _facing.z)
 	# The invisible initial capsule mesh is not a runtime pose dependency. The
-	# native role's fixed pixels alone present its phase, without a second clock.
+	# native role and actual environmental stamp select fixed pixels without a clock.
 	if is_instance_valid(_sprite_art):
-		_sprite_art.call("set_pose", _phase, _facing, get_viewport().get_camera_3d())
+		_sprite_art.call("set_pose", _art_phase(), _facing, get_viewport().get_camera_3d())
 
 
 func _exit_tree() -> void:
