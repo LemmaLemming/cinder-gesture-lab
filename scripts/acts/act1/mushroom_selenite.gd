@@ -2,8 +2,8 @@ class_name Act1MushroomSelenite
 extends CharacterBody3D
 ## C31 / A1-E2 and C32 / A1-E3 bounded greybox consumers. The shared scheduler
 ## owns attack deadlines, cooldowns, proof and C31 ground-lunge motion. Actor HP,
-## hurt settling, sampled damage and presentation remain authored. No approach
-## loop, auto-cycle or spore adapter. C31/C32 costume poses are clockless art.
+## hurt settling, sampled damage and presentation remain authored. C31 approach
+## is explicitly opt-in; no auto-cycle or spore adapter. Costume poses are clockless.
 ## Capture/restore uses one exact Player+actor+Scheduler aggregate; an actor
 ## record is never converted into an AshEnemy envelope.
 
@@ -19,7 +19,8 @@ const ExactJson = preload("res://scripts/campaign/exact_json.gd")
 const CueScript = preload("res://scripts/cues/threat_cue.gd")
 const ArtScript = preload("res://scripts/acts/act1/mushroom_selenite_art.gd")
 const NativeCodec = preload("res://scripts/acts/act1/mushroom_selenite_codec.gd")
-const API_REVISION: String = "act1-mushroom-selenite-1"
+const Approach = preload("res://scripts/acts/act1/mushroom_selenite_approach.gd")
+const API_REVISION: String = "act1-mushroom-selenite-2"
 const SNAPSHOT_SCHEMA_VERSION: int = 1
 const PENDING_SNAPSHOT_SCHEMA_VERSION: int = 2
 const MAX_PENDING_SEGMENTS: int = 256
@@ -34,7 +35,7 @@ const GUARD_RAW_ROLE: Dictionary = {"raw_damage": 8.0, "windup_s": 1.85, "lock_s
 const SWARM_LUNGE: Dictionary = {"speed": 4.0, "distance": 1.0, "damage_radius": 0.38, "body_collision_path": "BodyCollision"}
 const GUARD_LANE: Dictionary = {"length": 2.0, "radius": 0.38}
 const CONTEXT_KEYS: Array[String] = ["encounter_id", "world_revision", "recognition_s", "attack_input_margin_s", "escape_directions", "return_directions", "floor_regions", "world_root"]
-const SNAPSHOT_KEYS: Array[String] = ["api_revision", "schema_version", "role_id", "source_id", "configuration", "hp", "dead", "dormant", "motion", "hurt_left_s", "role_encounter_id", "profile_id", "resolved_role", "reservation_id", "cycle", "sample", "hit_ids", "last_cancel_reason"]
+const SNAPSHOT_KEYS: Array[String] = ["api_revision", "schema_version", "role_id", "source_id", "configuration", "hp", "dead", "dormant", "motion", "hurt_left_s", "approach_driving", "role_encounter_id", "profile_id", "resolved_role", "reservation_id", "cycle", "sample", "hit_ids", "last_cancel_reason"]
 
 var hp: float = 16.0
 var max_hp: float = 16.0
@@ -46,10 +47,17 @@ var dormant: bool = false
 var activation_guard: Callable
 ## Pure renderer-owned admission/sampling guard; a nonempty reason cancels.
 var presentation_guard: Callable
+## Required for opt-in C31 movement. Pure callback receives a native proposal and
+## returns a literal String. Parent guards full next/braking body/art/world/spacing
+## from retained actual bindings and cached state, without pruning Scheduler calls.
+## No environmental/source-control protocol is implied by this ordinary guard.
+var approach_guard: Callable
 var last_error: String = ""
 var last_snapshot_error: String = ""
 var _configuration: Dictionary = {}
 var _native_codec: RefCounted = NativeCodec.new()
+var _approach: RefCounted = Approach.new()
+var _approach_driving: bool = false
 var _scheduler: CinderThreatScheduler
 var _hero: CinderPlayer
 var _collision: CollisionShape3D
@@ -78,12 +86,16 @@ var _snapshot_busy: bool = false
 var _cancelling: bool = false
 
 
-func configure(role_id: String, source_id: String, initially_dormant: bool = true) -> bool:
+func configure(role_id: String, source_id: String, initially_dormant: bool = true, approach_enabled: bool = false) -> bool:
 	if is_instance_valid(_scheduler) or _transaction_depth > 0 or _snapshot_busy:
 		return _reject("Configure immutable Mushroom Selenite data before binding")
 	var selected: String = ROLE_SWARM if role_id in ["C31", ROLE_SWARM] else (ROLE_GUARD if role_id in ["C32", ROLE_GUARD] else "")
 	if selected.is_empty() or not _stable_id(source_id):
 		return _reject("Only canonical C31/A1-E2 or C32/A1-E3 and a stable source ID are supported")
+	if approach_enabled and selected != ROLE_SWARM:
+		return _reject("Only C31 can opt in to authored approach; C32 stays stationary")
+	var approach: Dictionary = Approach.PROVISIONAL_TUNING.duplicate(true)
+	approach.enabled = approach_enabled
 	var raw: Dictionary = (SWARM_RAW_ROLE if selected == ROLE_SWARM else GUARD_RAW_ROLE).duplicate(true)
 	var floors: Dictionary = {"windup_s": raw.windup_s, "lock_s": raw.lock_s, "recovery_s": raw.recovery_s}
 	var difficulty = Difficulty.new()
@@ -92,7 +104,7 @@ func configure(role_id: String, source_id: String, initially_dormant: bool = tru
 		if role.is_empty(): return _reject(difficulty.last_error)
 		if selected == ROLE_SWARM and float(SWARM_LUNGE.distance) / float(SWARM_LUNGE.speed) > float(role.active_s):
 			return _reject("Canonical grounded hop must fit its complete native active window")
-	var next: Dictionary = {"role_id": selected, "entity_id": "C31" if selected == ROLE_SWARM else "C32", "source_id": source_id, "raw_role": raw, "timing_floors": floors, "lunge": SWARM_LUNGE.duplicate(true) if selected == ROLE_SWARM else {}, "lane": GUARD_LANE.duplicate(true) if selected == ROLE_GUARD else {}, "initially_dormant": initially_dormant}
+	var next: Dictionary = {"role_id": selected, "entity_id": "C31" if selected == ROLE_SWARM else "C32", "source_id": source_id, "raw_role": raw, "timing_floors": floors, "lunge": SWARM_LUNGE.duplicate(true) if selected == ROLE_SWARM else {}, "lane": GUARD_LANE.duplicate(true) if selected == ROLE_GUARD else {}, "initially_dormant": initially_dormant, "approach": approach}
 	if not _configuration.is_empty():
 		if not _same(next, _configuration): return _reject("Configured role identity and provisional tuning are immutable")
 		last_error = ""
@@ -101,6 +113,7 @@ func configure(role_id: String, source_id: String, initially_dormant: bool = tru
 	max_hp = float(raw.max_hp)
 	hp = max_hp
 	dormant = initially_dormant
+	_approach_driving = false
 	if is_node_ready(): _apply_lifecycle_flags()
 	last_error = ""
 	return true
@@ -209,7 +222,10 @@ func start(target: Vector3, context: Dictionary, preview: Dictionary = {}) -> Di
 		_profile_id = String(prepared.profile_id)
 		_resolved_role = prepared.role.duplicate(true)
 		_cycle += 1
+		# Opt-in direction is already the stopped aligned native facing. The
+		# default component path retains its original target-facing behavior.
 		_facing = direction
+		_approach_driving = false
 		_hit_ids.clear()
 		_pending_segments.clear()
 		_sample_now()
@@ -225,11 +241,16 @@ func _target_direction(target: Vector3) -> Vector3:
 	if not target.is_finite(): return Vector3.ZERO
 	var delta: Vector3 = target - global_position
 	var planar := Vector3(delta.x, 0.0, delta.z)
-	return planar.normalized() if planar.is_finite() and planar.length() > Motion.EPSILON else Vector3.ZERO
+	if not planar.is_finite() or planar.length() <= Motion.EPSILON: return Vector3.ZERO
+	var direction: Vector3 = planar.normalized()
+	if _configuration.get("approach", {}).get("enabled", false):
+		# Reuse the actual gradual heading; admission cannot snap it to a target.
+		return _facing if direction.distance_to(_facing) <= Motion.EPSILON else Vector3.ZERO
+	return direction
 
 
 func _prepare_start(response_context: Dictionary, direction: Vector3, world_root: Node3D) -> Dictionary:
-	if not _live_bindings() or _transaction_depth > 0 or _snapshot_busy or _cancelling or dead or dormant or get_tree().paused or not _reservation_id.is_empty() or _hurt_left_s > 0.0 or velocity != Vector3.ZERO or not is_visible_in_tree() or _cycle >= Codec.MAX_SAFE_INTEGER:
+	if not _live_bindings() or _transaction_depth > 0 or _snapshot_busy or _cancelling or dead or dormant or get_tree().paused or not _reservation_id.is_empty() or _hurt_left_s > 0.0 or velocity != Vector3.ZERO or _approach_driving or not is_visible_in_tree() or _cycle >= Codec.MAX_SAFE_INTEGER:
 		return {"accepted": false, "reason": "Start requires an activated live stopped unpaused idle C31/C32 outside callbacks"}
 	if not Codec.keys_error(response_context, CONTEXT_KEYS).is_empty() or not _stable_id(response_context.get("encounter_id")) or not Geometry.finite_vector(direction) or absf(direction.y) > Motion.EPSILON or absf(direction.length() - 1.0) > Motion.EPSILON:
 		return {"accepted": false, "reason": "Authored encounter context and fixed normalized world direction required"}
@@ -280,6 +301,8 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 	_transaction_depth += 1
 	# The scheduler stops its velocity first; hurt can then own the real impulse.
 	cancel("actual_player_damage")
+	# Preserve existing momentum plus the genuine impulse for native hurt settling.
+	_approach_driving = false
 	var before: float = hp
 	hp = maxf(0.0, hp - amount)
 	result.accepted = true
@@ -306,6 +329,7 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 func cancel(reason: String = "mushroom_selenite_cancelled") -> bool:
 	if _snapshot_busy or _cancelling:
 		return false
+	_approach_driving = false
 	if dormant:
 		return true
 	_cancelling = true
@@ -328,7 +352,7 @@ func state() -> Dictionary:
 	var record: Dictionary = _scheduler.reservation_state(_reservation_id) if is_instance_valid(_scheduler) and not _reservation_id.is_empty() else {}
 	var phase: String = String(record.get("state", "clear"))
 	var status: String = "dormant" if dormant else ("defeated" if dead else ("running" if not record.is_empty() else ("hurt" if _hurt_left_s > 0.0 else "idle")))
-	var result: Dictionary = {"api_revision": API_REVISION, "role_id": _configuration.get("role_id", ""), "entity_id": _configuration.get("entity_id", ""), "spore_support": false, "presentation_status": "authored_C31_C32_pose_pixels", "source_id": _configuration.get("source_id", ""), "hp": hp, "dead": dead, "dormant": dormant, "status": status, "phase": phase, "reservation_id": _reservation_id, "cycle": _cycle, "source_position": global_position, "opening_position": record.get("opening_position", global_position), "geometry": record.get("geometry", {}).duplicate(true), "resolved_role": _resolved_role.duplicate(true), "hit_ids": _hit_ids.duplicate(), "hurt_left_s": _hurt_left_s, "last_cancel_reason": _last_cancel_reason}
+	var result: Dictionary = {"api_revision": API_REVISION, "role_id": _configuration.get("role_id", ""), "entity_id": _configuration.get("entity_id", ""), "spore_support": false, "presentation_status": "authored_C31_C32_pose_pixels", "source_id": _configuration.get("source_id", ""), "hp": hp, "dead": dead, "dormant": dormant, "status": status, "phase": phase, "reservation_id": _reservation_id, "cycle": _cycle, "source_position": global_position, "opening_position": record.get("opening_position", global_position), "geometry": record.get("geometry", {}).duplicate(true), "resolved_role": _resolved_role.duplicate(true), "hit_ids": _hit_ids.duplicate(), "hurt_left_s": _hurt_left_s, "approach_enabled": _configuration.get("approach", {}).get("enabled", false), "approach_driving": _approach_driving, "velocity": velocity, "facing": _facing, "last_cancel_reason": _last_cancel_reason}
 	for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "armed", "adapter"]:
 		if record.has(key):
 			result[key] = record[key].duplicate(true) if record[key] is Dictionary else record[key]
@@ -341,6 +365,13 @@ func get_cue() -> CinderThreatCue:
 
 func get_art() -> Node3D:
 	return _sprite_art
+
+
+## Pure actual body/resource/lifecycle check for the parent's neighbor queries.
+## No Scheduler accessor, callbacks, pose changes or motion permission.
+func body_binding_error() -> String:
+	var error: String = _retained_body_error()
+	return _lifecycle_error() if error.is_empty() else error
 
 
 func art_binding_error() -> String:
@@ -374,8 +405,17 @@ func _physics_process(delta: float) -> void:
 			if not record.is_empty():
 				_resolve_pending_segments()
 	else:
+		var was_hurt: bool = _hurt_left_s > 0.0
 		_hurt_left_s = maxf(0.0, _hurt_left_s - delta)
-		# Explicit authored settling only; no approach, target tracking or attack.
+		var horizontal := Vector3(velocity.x, 0.0, velocity.z)
+		# A native impulse can outlive its .22s hurt clock. Never reinterpret that
+		# residual velocity as approach-owned: settle to exact zero first.
+		if _configuration.approach.enabled and not was_hurt and (_approach_driving or horizontal == Vector3.ZERO) and _grounded() and velocity.y == 0.0:
+			_step_approach(delta)
+			_transaction_depth -= 1
+			return
+		_approach_driving = false
+		# Original authored hurt/gravity settling, including default components.
 		velocity.x = move_toward(velocity.x, 0.0, HURT_BRAKING * delta)
 		velocity.z = move_toward(velocity.z, 0.0, HURT_BRAKING * delta)
 		if not _grounded():
@@ -386,6 +426,84 @@ func _physics_process(delta: float) -> void:
 		_restored_floor_contact = -1
 		_draw_greybox()
 	_transaction_depth -= 1
+
+
+## Pure forecast only. No guard callback, motion, state/event or Scheduler query.
+## Root must separately guard the actual complete body/art/world/neighbor unit.
+func propose_approach(target: Vector3, delta: float) -> Dictionary:
+	var error: String = _approach_idle_error(false)
+	if not error.is_empty(): return {"accepted": false, "error": error, "reason": "actor_not_ready"}
+	return _approach.plan(global_position, velocity, _facing, target, delta, _configuration.approach)
+
+
+func _approach_idle_error(inside_physics: bool) -> String:
+	if not _live_bindings() or _snapshot_busy or _cancelling or (not inside_physics and _transaction_depth > 0) or dead or dormant or _hero.dead or get_tree().paused:
+		return "Approach requires its live unpaused activated source/Player outside callbacks"
+	if _configuration.role_id != ROLE_SWARM or not _configuration.approach.enabled or not _reservation_id.is_empty() or not _sample.is_empty() or not _pending_segments.is_empty() or not _hit_ids.is_empty() or _hurt_left_s != 0.0:
+		return "Only opt-in idle C31 without a native lease/sample/held delivery can approach"
+	if not _grounded() or velocity.y != 0.0 or (not _approach_driving and Vector3(velocity.x, 0.0, velocity.z) != Vector3.ZERO):
+		return "Approach cannot own airborne motion or residual native hurt/impulse"
+	var error: String = _retained_body_error()
+	if error.is_empty(): error = _lifecycle_error()
+	if error.is_empty(): error = art_binding_error()
+	return error
+
+
+func _movement_error(plan: Dictionary) -> String:
+	if not approach_guard.is_valid(): return "Opt-in approach requires its parent's actual motion/framing guard"
+	var result: Variant = approach_guard.call(plan.duplicate(true))
+	return result if result is String else "Approach movement guard must return a literal String"
+
+
+func _step_approach(delta: float) -> void:
+	var error: String = _approach_idle_error(true)
+	if not error.is_empty():
+		last_error = error
+		return
+	var origin: Vector3 = global_position
+	var original_velocity: Vector3 = velocity
+	var original_facing: Vector3 = _facing
+	var target: Vector3 = _hero.global_position
+	var hp_before: float = hp
+	var driving_before: bool = _approach_driving
+	var plan: Dictionary = _approach.plan(origin, original_velocity, original_facing, target, delta, _configuration.approach)
+	if not plan.get("accepted", false):
+		last_error = String(plan.get("error", "Approach proposal rejected"))
+		return
+	plan["delta_s"] = delta
+	error = _movement_error(plan)
+	var boundary_error: String = _approach_idle_error(true)
+	if not boundary_error.is_empty():
+		last_error = boundary_error
+		return
+	if not error.is_empty():
+		# A guard may suppress pursuit. Braking remains finite owned motion and
+		# must receive its own complete native world/body/art/spacing approval.
+		var disabled: Dictionary = _configuration.approach.duplicate(true)
+		disabled.enabled = false
+		plan = _approach.plan(origin, original_velocity, original_facing, target, delta, disabled)
+		if plan.get("accepted", false):
+			plan["delta_s"] = delta
+			error = _movement_error(plan)
+		else: error = String(plan.get("error", "Approach braking rejected"))
+	var current_error: String = _approach_idle_error(true)
+	if not current_error.is_empty(): error = current_error
+	if global_position != origin or velocity != original_velocity or _facing != original_facing or _hero.global_position != target or hp != hp_before or _approach_driving != driving_before:
+		error = "Pure movement guard changed the actual source/Player boundary"
+	if not error.is_empty():
+		# Reject unsafe motion without manufacturing a stop or discarding actual
+		# velocity. Parent owns persistent unavailable-world cancellation/teardown.
+		last_error = error
+		return
+	velocity = plan.velocity
+	_facing = plan.facing
+	_approach_driving = plan.driving
+	move_and_slide()
+	_restored_floor_contact = -1
+	# Native collision can shorten/stop a proposal; retain actual ownership only.
+	_approach_driving = Vector3(velocity.x, 0.0, velocity.z) != Vector3.ZERO and _grounded() and velocity.y == 0.0
+	_draw_greybox()
+	last_error = ""
 
 
 func _stage_sample() -> bool:
@@ -571,7 +689,7 @@ func _lifecycle_error() -> String:
 
 
 func _dormant_state_error() -> String:
-	if not _configuration.get("initially_dormant", false) or dead or hp != max_hp or velocity != Vector3.ZERO or _hurt_left_s != 0.0 or _cycle != 0 or _phase != "clear" or not _role_encounter_id.is_empty() or not _profile_id.is_empty() or not _resolved_role.is_empty() or not _reservation_id.is_empty() or not _sample.is_empty() or not _pending_segments.is_empty() or not _hit_ids.is_empty() or not _last_cancel_reason.is_empty():
+	if not _configuration.get("initially_dormant", false) or dead or hp != max_hp or velocity != Vector3.ZERO or _hurt_left_s != 0.0 or _approach_driving or _cycle != 0 or _phase != "clear" or not _role_encounter_id.is_empty() or not _profile_id.is_empty() or not _resolved_role.is_empty() or not _reservation_id.is_empty() or not _sample.is_empty() or not _pending_segments.is_empty() or not _hit_ids.is_empty() or not _last_cancel_reason.is_empty():
 		return "Dormant C31/C32 must retain pristine HP and no motion/combat history"
 	if is_instance_valid(_cue) and _cue.state().phase != "clear":
 		return "Dormant C31/C32 cannot hide a required hazard cue"
@@ -614,7 +732,7 @@ func capture_state(paired_scheduler: Dictionary) -> Dictionary:
 	if not last_snapshot_error.is_empty():
 		return {}
 	_snapshot_busy = true
-	var saved: Dictionary = {"api_revision": API_REVISION, "schema_version": SNAPSHOT_SCHEMA_VERSION, "role_id": _configuration.role_id, "source_id": _configuration.source_id, "configuration": _configuration.duplicate(true), "hp": hp, "dead": dead, "dormant": dormant, "motion": {"position": Codec.vector3(global_position), "velocity": Codec.vector3(velocity), "facing": Codec.vector3(_facing), "grounded": _grounded()}, "hurt_left_s": _hurt_left_s, "role_encounter_id": _role_encounter_id, "profile_id": _profile_id, "resolved_role": _resolved_role.duplicate(true), "reservation_id": _reservation_id, "cycle": _cycle, "sample": _encode_sample(), "hit_ids": _hit_ids.duplicate(), "last_cancel_reason": _last_cancel_reason}
+	var saved: Dictionary = {"api_revision": API_REVISION, "schema_version": SNAPSHOT_SCHEMA_VERSION, "role_id": _configuration.role_id, "source_id": _configuration.source_id, "configuration": _configuration.duplicate(true), "hp": hp, "dead": dead, "dormant": dormant, "motion": {"position": Codec.vector3(global_position), "velocity": Codec.vector3(velocity), "facing": Codec.vector3(_facing), "grounded": _grounded()}, "hurt_left_s": _hurt_left_s, "approach_driving": _approach_driving, "role_encounter_id": _role_encounter_id, "profile_id": _profile_id, "resolved_role": _resolved_role.duplicate(true), "reservation_id": _reservation_id, "cycle": _cycle, "sample": _encode_sample(), "hit_ids": _hit_ids.duplicate(), "last_cancel_reason": _last_cancel_reason}
 	if not _pending_segments.is_empty():
 		saved["schema_version"] = PENDING_SNAPSHOT_SCHEMA_VERSION
 		saved["pending_segments"] = []
@@ -666,6 +784,7 @@ func restore_actor_state(saved: Dictionary) -> bool:
 	dead = saved.dead
 	dormant = saved.dormant
 	_hurt_left_s = float(saved.hurt_left_s)
+	_approach_driving = saved.approach_driving
 	_restored_floor_contact = 1 if saved.motion.grounded else 0
 	_apply_lifecycle_flags()
 	_snapshot_busy = false
@@ -680,7 +799,7 @@ func restore_exchange_state(saved: Dictionary) -> bool:
 	if not last_snapshot_error.is_empty():
 		return false
 	var inactive: bool = dead or dormant
-	if hp != saved.hp or dead != saved.dead or dormant != saved.dormant or _hurt_left_s != saved.hurt_left_s or not _same(Codec.vector3(_facing), saved.motion.facing) or not _same(Codec.vector3(global_position), saved.motion.position) or not _same(Codec.vector3(velocity), saved.motion.velocity) or _collision.disabled != inactive or collision_layer != (0 if inactive else 2) or collision_mask != (0 if inactive else 1) or is_in_group("enemies") == inactive or visible == inactive:
+	if hp != saved.hp or dead != saved.dead or dormant != saved.dormant or _hurt_left_s != saved.hurt_left_s or _approach_driving != saved.approach_driving or not _same(Codec.vector3(_facing), saved.motion.facing) or not _same(Codec.vector3(global_position), saved.motion.position) or not _same(Codec.vector3(velocity), saved.motion.velocity) or _collision.disabled != inactive or collision_layer != (0 if inactive else 2) or collision_mask != (0 if inactive else 1) or is_in_group("enemies") == inactive or visible == inactive:
 		last_snapshot_error = "Apply the exact validated actual C31/C32 lifecycle/motion before exchange commit"
 		return false
 	var record: Dictionary = _scheduler.reservation_state(saved.reservation_id) if not saved.reservation_id.is_empty() else {}

@@ -9,10 +9,12 @@ const Layout = preload("res://scripts/acts/act1/mushroom_caverns_layout.gd")
 const GrottoArt = preload("res://scripts/acts/act1/mushroom_grotto_art.gd")
 const ActorScript = preload("res://scripts/acts/act1/mushroom_selenite.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const BodySweep = preload("res://scripts/combat/body_sweep.gd")
 const WORLD_REVISION: int = 1
 const SOURCE_IDS: Array[String] = ["umbrella-1", "umbrella-2", "umbrella-3", "lone-guard"]
 
 @export_enum("Umbrella grove:0", "Lone guard:3") var initial_greybox_room: int = 0
+@export var enable_swarm_approach: bool = false
 
 var scheduler: CinderThreatScheduler
 var sources: Dictionary = {}
@@ -36,12 +38,20 @@ var _floor_collision: CollisionShape3D
 var _floor_shape: BoxShape3D
 var _floor_transform: Transform3D
 var _scenery_art: Node3D
+var _approach_enabled: bool = false
+var _approach_forecasts: Dictionary = {}
+var _approach_camera_requests: Dictionary = {}
+var last_approach_error: String = ""
 
 
 func _ready() -> void:
 	process_physics_priority = 200
+	_approach_enabled = enable_swarm_approach
 	if initial_greybox_room not in [0, 3]:
 		_construction_error = "Only the first grove and isolated guard component previews exist"
+		return
+	if _approach_enabled and initial_greybox_room != 0:
+		_construction_error = "Only the three-swarmer grove opts into authored approach"
 		return
 	Layout.build_geometry(self)
 	_scenery_art = GrottoArt.build_geometry_art(self)
@@ -59,13 +69,14 @@ func _ready() -> void:
 		var actor: Act1MushroomSelenite = ActorScript.new()
 		actor.name = id.replace("-", "_")
 		actor.position = Layout.SOURCE_POINTS["umbrella"][index] if index < 3 else Layout.SOURCE_POINTS["lone-guard"][0]
-		if not actor.configure("C31" if index < 3 else "C32", id, true):
+		if not actor.configure("C31" if index < 3 else "C32", id, true, _approach_enabled and index < 3):
 			_construction_error = actor.last_error
 			actor.free()
 			return
 		add_child(actor)
 		actor.activation_guard = Callable(self, "_activation_permitted")
 		actor.presentation_guard = Callable(self, "_source_presentation_error").bind(id)
+		actor.approach_guard = Callable(self, "_source_approach_error").bind(id)
 		sources[id] = actor
 		_retained_sources[id] = actor
 		var collision := actor.get_node("BodyCollision") as CollisionShape3D
@@ -129,11 +140,16 @@ func _encounter_id() -> String:
 	return "a1_l3_umbrella_greybox" if initial_greybox_room == 0 else "a1_l3_guard_greybox"
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if not _running or _changing or not is_instance_valid(hero): return
 	# Presentation settles at priority200 after real consumers, including death.
 	_refresh_render_state()
 	if not _running: return
+	for id: String in _approach_forecasts.keys():
+		if not _render_sources[id].get("approach_driving", false): _approach_forecasts.erase(id)
+	for id: String in _approach_camera_requests.keys():
+		var state: Dictionary = _render_sources[id]
+		if state.dead or state.dormant or not state.reservation_id.is_empty() or float(state.hurt_left_s) > 0.0: _approach_camera_requests.erase(id)
 	for id: String in _framing.keys():
 		if _render_sources[id].reservation_id != _framing[id].reservation_id: _framing.erase(id)
 	if hero.dead: return
@@ -155,11 +171,11 @@ func _physics_process(_delta: float) -> void:
 		if state.dead or state.dormant or not state.reservation_id.is_empty() or float(state.hurt_left_s) > 0.0: continue
 		var distance: float = Vector2(actor.global_position.x - hero.global_position.x, actor.global_position.z - hero.global_position.z).length()
 		if distance < 0.1 or distance > 4.5: continue
-		_admit(id)
+		_admit(id, delta)
 		if not _render_sources[id].reservation_id.is_empty(): break
 
 
-func _admit(id: String) -> void:
+func _admit(id: String, delta: float) -> void:
 	var actor: Act1MushroomSelenite = sources[id]
 	var context: Dictionary = response_context(String(_render_sources[id].role_id))
 	var target: Vector3 = hero.global_position
@@ -167,6 +183,11 @@ func _admit(id: String) -> void:
 	if not preview.get("accepted", false):
 		last_encounter_error = String(preview.get("reason", "Native preview rejected"))
 		return
+	if _approach_enabled:
+		var gap_error: String = _source_path_gap_error(id, actor.global_position, preview.candidate.opening_position, delta)
+		if not gap_error.is_empty():
+			last_encounter_error = gap_error
+			return
 	if not _proof_window(preview.proof, preview.candidate):
 		last_encounter_error = "Ordinary primary must fit the actual stopped source recovery"
 		return
@@ -256,6 +277,140 @@ func _source_presentation_error(id: String) -> String:
 	return error if not error.is_empty() else _containment_error(_camera_framing_points())
 
 
+## Movement-only actual-world guard called by the owning idle actor. No physical
+## state, clock, lease or input changes. It publishes prospective presentation
+## corners for the shared camera; never use this callback as a snapshot validator.
+func _source_approach_error(plan: Dictionary, id: String) -> String:
+	var actor := sources.get(id) as Act1MushroomSelenite
+	if not _running or _changing or not is_instance_valid(hero) or hero.dead or enable_swarm_approach != _approach_enabled or not _approach_enabled or id not in current_source_ids() or not is_instance_valid(actor) or actor != _retained_sources.get(id) or actor.get_parent() != self:
+		return "Retained opt-in grove source and entered parent required"
+	var braking_only: bool = plan.get("reason") == "disabled_braking"
+	if not braking_only:
+		# A fresh drive replaces its presentation request, including when native
+		# world/spacing validation rejects. No rejected geometry becomes lookahead.
+		_approach_camera_requests.erase(id)
+		_approach_forecasts.erase(id)
+	var error: String = _floor_error()
+	if error.is_empty(): error = _scenery_error()
+	if error.is_empty(): error = actor.art_binding_error()
+	if not error.is_empty():
+		last_approach_error = error
+		return error
+	if not plan.get("accepted", false) or not plan.get("next_position") is Vector3 or not plan.get("braking_position") is Vector3 or not plan.get("velocity") is Vector3 or not plan.get("delta_s") is float or not Codec.in_range(plan.delta_s, 0.000001, 0.25):
+		return "Complete actor-owned approach proposal required"
+	# Reading actor.state() would call the legacy pruning Scheduler accessor.
+	# Parent settles this conservative cache after native physics and every
+	# admission; stale ended leases may delay a drive, never authorize one.
+	var own_state: Dictionary = _render_sources.get(id, {})
+	if own_state.is_empty(): return "Settled parent source state required"
+	if own_state.dead or own_state.dormant or not own_state.reservation_id.is_empty() or float(own_state.hurt_left_s) > 0.0:
+		return "Approach cannot own native combat or hurt motion"
+	for other_id: String in current_source_ids():
+		if other_id == id: continue
+		var other := sources.get(other_id) as Act1MushroomSelenite
+		if not is_instance_valid(other) or other != _retained_sources.get(other_id): return "Retained neighboring capsule required"
+		var other_state: Dictionary = _render_sources.get(other_id, {})
+		if other_state.is_empty(): return "Settled neighboring source state required"
+		if not braking_only and not other_state.reservation_id.is_empty():
+			return "Brake authored approach while another source retains its native exchange"
+	var start: Vector3 = actor.global_position
+	var next: Vector3 = plan.next_position
+	var finish: Vector3 = plan.braking_position
+	if absf(next.y - start.y) > BodySweep.EPSILON or absf(finish.y - start.y) > BodySweep.EPSILON:
+		return "Approach forecast must retain the actual grounded height"
+	var floors: Array = [{"collision": _floor_collision, "safe_rect": Layout.SAFE_RECT}]
+	# Two actual native queries retain the bent proposal rather than assuming
+	# that checking endpoints proves support or collision along its path.
+	for segment: Array in [[start, next], [next, finish]]:
+		var measured: Dictionary = BodySweep.sweep(actor, Transform3D(Basis.IDENTITY, segment[0]), segment[1] - segment[0], floors)
+		if measured.has("error") or measured.get("collided", true):
+			last_approach_error = String(measured.get("error", "Actual scenery obstructs the complete approach/braking path"))
+			return last_approach_error
+		if (measured.end as Vector3).distance_to(segment[1]) > BodySweep.position_rounding_bound(segment[0], segment[1]):
+			return "Actual approach sweep shortened its proposed stopping path"
+	var own_capsule := _retained_capsules.get(id) as CapsuleShape3D
+	var hero_collision := hero.get_node_or_null("BodyCollision") as CollisionShape3D
+	if not is_instance_valid(own_capsule) or not is_instance_valid(hero_collision) or not hero_collision.shape is CapsuleShape3D:
+		return "Actual retained source and shared Player capsules required"
+	var hero_endpoint: Vector3 = hero.global_position
+	var dash: Dictionary = hero.get_committed_dash_state()
+	if dash.get("active", false): hero_endpoint = dash.origin + dash.direction * float(dash.distance)
+	var obstacles: Array[Dictionary] = [{"from": hero.global_position, "to": hero_endpoint, "radius": (hero_collision.shape as CapsuleShape3D).radius}]
+	var neighbors: Dictionary = _neighbor_paths(id, float(plan.delta_s))
+	if not neighbors.get("accepted", false): return String(neighbors.reason)
+	obstacles.append_array(neighbors.paths)
+	for obstacle: Dictionary in obstacles:
+		var minimum: float = own_capsule.radius + float(obstacle.radius) + 0.12
+		for segment: Array in [[start, next], [next, finish]]:
+			if _planar_segment_distance(segment[0], segment[1], obstacle["from"], obstacle["to"]) < minimum:
+				last_approach_error = "Actual approach/braking capsule needs a clear neighboring body gap"
+				return last_approach_error
+	# Every verified C31 pose/facing has the same full 48x80 native frame and
+	# foot-pivot billboard settings. Thus these full quads also enclose the next
+	# front/side/back texture chosen after a gradual turn; opaque pixels need not
+	# have identical bounds. Art binding guards retain all native frame dimensions.
+	var points: Array = _unique_points(_actor_points(id, next) + _actor_points(id, finish))
+	error = _containment_error(_unique_points(_camera_framing_points() + points))
+	if error.is_empty():
+		_approach_forecasts[id] = points
+		if not braking_only: _approach_camera_requests.erase(id)
+	elif not braking_only:
+		# Geometry has passed. Publish only a camera request, not accepted motion;
+		# a stopped source's zero-speed fallback must not erase that request.
+		_approach_camera_requests[id] = points
+	last_approach_error = error
+	return error
+
+
+func _neighbor_paths(id: String, delta: float) -> Dictionary:
+	var paths: Array[Dictionary] = []
+	for other_id: String in current_source_ids():
+		if other_id == id: continue
+		var other := sources.get(other_id) as Act1MushroomSelenite
+		if not is_instance_valid(other) or other != _retained_sources.get(other_id) or other.get_parent() != self or not other.is_inside_tree() or other.is_queued_for_deletion():
+			return {"accepted": false, "reason": "Retained neighboring native source required"}
+		var state: Dictionary = _render_sources.get(other_id, {})
+		if state.is_empty(): return {"accepted": false, "reason": "Settled neighboring native source state required"}
+		if state.dead or state.dormant: continue
+		var body_error: String = other.body_binding_error()
+		if not body_error.is_empty(): return {"accepted": false, "reason": body_error}
+		var measured: Dictionary = BodySweep.source_description(other)
+		var collision := _retained_collisions.get(other_id) as CollisionShape3D
+		var capsule := _retained_capsules.get(other_id) as CapsuleShape3D
+		if measured.has("error") or measured.get("collision") != collision or not is_instance_valid(collision) or collision.shape != capsule:
+			return {"accepted": false, "reason": String(measured.get("error", "Neighbor must retain its actual centered capsule"))}
+		var stopped: Vector3 = other.global_position
+		if not state.reservation_id.is_empty():
+			stopped = state.opening_position
+		else:
+			var horizontal := Vector3(other.velocity.x, 0, other.velocity.z)
+			var speed: float = horizontal.length()
+			if speed > 0.0: stopped += horizontal / speed * (speed * speed / 10.0 + speed * 2.0 * delta)
+		paths.append({"from": other.global_position, "to": stopped, "radius": capsule.radius})
+	return {"accepted": true, "paths": paths}
+
+
+func _source_path_gap_error(id: String, start: Vector3, finish: Vector3, delta: float) -> String:
+	var neighbors: Dictionary = _neighbor_paths(id, delta)
+	if not neighbors.get("accepted", false): return String(neighbors.reason)
+	var capsule := _retained_capsules[id] as CapsuleShape3D
+	for path: Dictionary in neighbors.paths:
+		if _planar_segment_distance(start, finish, path["from"], path["to"]) < capsule.radius + float(path.radius) + 0.12:
+			return "Native source path/opening needs a clear neighboring capsule gap"
+	return ""
+
+
+func _planar_segment_distance(a: Vector3, b: Vector3, c: Vector3, d: Vector3) -> float:
+	# Geometry only for authored capsule spacing. Native BodySweep above owns
+	# actual scenery/floor measurement; this does not prove threat fairness.
+	var p := Vector2(a.x, a.z)
+	var q := Vector2(b.x, b.z)
+	var r := Vector2(c.x, c.z)
+	var s := Vector2(d.x, d.z)
+	if Geometry2D.segment_intersects_segment(p, q, r, s) != null: return 0.0
+	return minf(p.distance_to(Geometry2D.get_closest_point_to_segment(p, r, s)), minf(q.distance_to(Geometry2D.get_closest_point_to_segment(q, r, s)), minf(r.distance_to(Geometry2D.get_closest_point_to_segment(r, p, q)), s.distance_to(Geometry2D.get_closest_point_to_segment(s, p, q)))))
+
+
 func _scenery_error() -> String:
 	if not is_instance_valid(_scenery_art) or not _scenery_art.is_inside_tree() or _scenery_art.is_queued_for_deletion() or _scenery_art.get_parent() != self or get_node_or_null("FungalArt") != _scenery_art:
 		return "Retained authored grotto scenery is unavailable"
@@ -284,6 +439,8 @@ func _framing_ready(points: Array) -> bool:
 func _camera_framing_points() -> Array:
 	if not _floor_error().is_empty() or not _scenery_error().is_empty(): return [Vector3.INF]
 	var points: Array = _forecast_points.duplicate()
+	for forecast: Array in _approach_forecasts.values(): points.append_array(forecast)
+	for request: Array in _approach_camera_requests.values(): points.append_array(request)
 	for id: String in current_source_ids():
 		var actor := sources.get(id) as Act1MushroomSelenite
 		if not is_instance_valid(actor) or actor != _retained_sources.get(id) or not actor.is_inside_tree() or actor.is_queued_for_deletion() or actor.get_parent() != self: return [Vector3.INF]
@@ -390,6 +547,8 @@ func _on_hero_died() -> void:
 	for id: String in SOURCE_IDS: (sources[id] as Act1MushroomSelenite).cancel("actual_player_death")
 	_framing.clear()
 	_forecast_points.clear()
+	_approach_forecasts.clear()
+	_approach_camera_requests.clear()
 
 
 func snapshot_state() -> Dictionary:
@@ -419,4 +578,6 @@ func _on_exit_level() -> void:
 		scheduler.set_physics_process(false)
 	_framing.clear()
 	_forecast_points.clear()
+	_approach_forecasts.clear()
+	_approach_camera_requests.clear()
 	set_physics_process(false)

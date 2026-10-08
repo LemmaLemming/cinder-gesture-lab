@@ -1,5 +1,12 @@
 # A1-L3 greybox design — full level, unvalidated
 
+Current C31 pursuit component now has an opt-in native approach helper, explicit owned actor/codec API `act1-mushroom-selenite-2`, six closed tuning values and exact `approach_driving` ownership. The parent checks actual body/floor/scenery/neighbor/Player corridors, prospective full-source camera bounds and native admission against retained neighbor capsules. Existing isolated component scenes keep approach disabled; `scenes/acts/act1/a1_l3_crowd_greybox.tscn` opts in all three grove swarmers. The genuine crowd fixture is authored but **unexecuted**. No movement/pair/portrait/full-level pass is inferred from import.
+
+Native new-resource import `a1-l3-approach-import-1` completed **exit0 clean**, tested HEAD `f8de1f26ad40106b4bbbafa16b1e9f435f225844` / `campaign-shared-25`, zero pre/post source hash mismatches. Runtime pursuit behavior, API2 paired state and crowd clear now require targeted checks.
+
+Integration published exact reviewed shared26 `c0816fb9ed60caaac36e5e1320ab95d42589e0b8`, RESPONSE `5d216a0c-8ed3-43d4-a925-326290527e25`. Scoped independent review verifies all323 evidence artifacts, all320 extant origin copies, native208/0 and affected Ash87/0 clean, and no Act1 path overlap. **Adoption is pending the preserving merge/ACK.** Current owned actors do not consume its protocol. Full L3 and later levels remain unfinished; internal registration/adoption/acceptance require no human permission decision.
+
+
 Native metadata import `a1-l3-shared25-script-import-1` completed **exit0 clean**, at exact e5eda951/API25, with zero pre/post source hash mismatches. [Portable import evidence](evidence/L3-shared25-import/index.json) preserves 53 exact copies (51 declared frozen sources plus original metadata/log); native codec/test UIDs are retained. This is resource/class metadata evidence only, not gameplay or full L3 acceptance.
 
 Owned component checkpoint **0ad6c934048b13ec0f166fdfb2437f3059a50974** is frozen. Compatible exact shared25 **05869a593ea523e079a3e6d1e6e750f4219e813c** is adopted through **e5eda95172382a234d257c37b1e588675c8200be**, ACK62a7f7db, preserving all1,804 tracked/1,968 physical owned hashes. Used gameplay core is unchanged; evidence below retains original24/frozen-source attribution. Spore composition remains an unpublished separate dependency. No L3 handoff or acceptance.

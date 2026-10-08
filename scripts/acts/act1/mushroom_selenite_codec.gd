@@ -1,8 +1,9 @@
 class_name Act1MushroomSeleniteCodec
 extends RefCounted
 ## Pure native-envelope extraction used by the owned actor. No nodes, clocks, repulsion stamp,
-## environmental hooks or controller authority. Current actor API/schema are
-## unchanged; prospective environmental binding/publication remains separate.
+## environmental hooks or controller authority. Actor API2 adds exact opt-in
+## approach configuration/ownership; schema1/conditionalpending2 remain native.
+## Prospective environmental binding/publication remains separate.
 ##
 ## schema_error/context_error form the stable core. Complete Player/Scheduler
 ## units must ALSO pass their existing shared validators before this logical
@@ -16,7 +17,8 @@ const ExactJson = preload("res://scripts/campaign/exact_json.gd")
 const Difficulty = preload("res://scripts/combat/difficulty.gd")
 const Geometry = preload("res://scripts/combat/threat_geometry.gd")
 const Motion = preload("res://scripts/combat/lunge_motion.gd")
-const API_REVISION: String = "act1-mushroom-selenite-1"
+const Approach = preload("res://scripts/acts/act1/mushroom_selenite_approach.gd")
+const API_REVISION: String = "act1-mushroom-selenite-2"
 const SNAPSHOT_SCHEMA_VERSION: int = 1
 const PENDING_SNAPSHOT_SCHEMA_VERSION: int = 2
 const MAX_PENDING_SEGMENTS: int = 256
@@ -24,9 +26,9 @@ const HURT_S: float = 0.22
 const HERO_ID: String = "hero"
 const ROLE_SWARM: String = "A1-E2"
 const ROLE_GUARD: String = "A1-E3"
-const BINDING_REVISION: String = "act1-mushroom-selenite-codec-binding-1"
-const VIEW_REVISION: String = "act1-mushroom-selenite-native-view-1"
-const SNAPSHOT_KEYS: Array[String] = ["api_revision", "schema_version", "role_id", "source_id", "configuration", "hp", "dead", "dormant", "motion", "hurt_left_s", "role_encounter_id", "profile_id", "resolved_role", "reservation_id", "cycle", "sample", "hit_ids", "last_cancel_reason"]
+const BINDING_REVISION: String = "act1-mushroom-selenite-codec-binding-2"
+const VIEW_REVISION: String = "act1-mushroom-selenite-native-view-2"
+const SNAPSHOT_KEYS: Array[String] = ["api_revision", "schema_version", "role_id", "source_id", "configuration", "hp", "dead", "dormant", "motion", "hurt_left_s", "approach_driving", "role_encounter_id", "profile_id", "resolved_role", "reservation_id", "cycle", "sample", "hit_ids", "last_cancel_reason"]
 
 
 func record_error(actor: Dictionary, scheduler: Dictionary, player: Dictionary, binding: Dictionary) -> String:
@@ -51,6 +53,7 @@ func record_view(actor: Dictionary, binding: Dictionary) -> Dictionary:
 		"alive": not actor.dead and not actor.dormant, "dead": actor.dead,
 		"dormant": actor.dormant, "grounded": actor.motion.grounded,
 		"motion": actor.motion.duplicate(true), "hurt_left_s": actor.hurt_left_s,
+		"approach_driving": actor.approach_driving,
 		"reservation_id": actor.reservation_id, "cycle": actor.cycle}
 
 
@@ -80,10 +83,16 @@ func binding_error(binding: Dictionary) -> String:
 func configuration_error(configuration: Dictionary) -> String:
 	var error: String = Codec.value_error(configuration)
 	if not error.is_empty(): return error
-	if not Codec.keys_error(configuration, ["role_id", "entity_id", "source_id", "raw_role", "timing_floors", "lunge", "lane", "initially_dormant"]).is_empty():
+	if not Codec.keys_error(configuration, ["role_id", "entity_id", "source_id", "raw_role", "timing_floors", "lunge", "lane", "initially_dormant", "approach"]).is_empty():
 		return "Complete immutable native C31/C32 configuration required"
 	if configuration.role_id not in [ROLE_SWARM, ROLE_GUARD] or configuration.entity_id != ("C31" if configuration.role_id == ROLE_SWARM else "C32") or not _stable_id(configuration.source_id) or not configuration.raw_role is Dictionary or not configuration.timing_floors is Dictionary or not configuration.lunge is Dictionary or not configuration.lane is Dictionary or not configuration.initially_dormant is bool:
 		return "Invalid canonical native role/entity/source/configuration types"
+	if not configuration.approach is Dictionary:
+		return "Complete immutable approach configuration required"
+	var approach_error: String = Approach.new().configuration_error(configuration.approach)
+	if not approach_error.is_empty(): return approach_error
+	if configuration.role_id != ROLE_SWARM and configuration.approach.enabled:
+		return "C32 cannot opt in to approach motion"
 	if not Codec.keys_error(configuration.raw_role, ["raw_damage", "windup_s", "lock_s", "active_s", "recovery_s", "attack_interval_s", "max_hp", "move_speed"]).is_empty() or not Codec.keys_error(configuration.timing_floors, ["windup_s", "lock_s", "recovery_s"]).is_empty():
 		return "Closed immutable raw role and timing floors required"
 	var difficulty = Difficulty.new()
@@ -121,6 +130,17 @@ func schema_error(saved: Dictionary, configuration: Dictionary) -> String:
 	var facing: Vector3 = Codec.read_vector3(saved.motion.facing)
 	if absf(facing.y) > Motion.EPSILON or absf(facing.length() - 1.0) > Motion.EPSILON or not saved.hurt_left_s is float or not Codec.in_range(saved.hurt_left_s, 0.0, HURT_S) or not saved.cycle is int or not Codec.is_integer(saved.cycle) or not saved.reservation_id is String or not saved.role_encounter_id is String or not saved.profile_id is String or not saved.resolved_role is Dictionary or not saved.sample is Dictionary or not saved.hit_ids is Array or not saved.last_cancel_reason is String:
 		return "Invalid C31/C32 facing, hurt clock or exchange field types"
+	if not saved.approach_driving is bool:
+		return "Approach ownership requires an exact boolean"
+	if saved.approach_driving:
+		var horizontal := Codec.read_vector3(saved.motion.velocity)
+		horizontal.y = 0.0
+		# Motion.EPSILON applies only to derived native float32 velocity magnitude,
+		# never immutable tuning/copied clocks/identity/sample correspondence.
+		if configuration.role_id != ROLE_SWARM or not configuration.approach.enabled or saved.dead or saved.dormant or not saved.reservation_id.is_empty() or saved.hurt_left_s != 0.0 or not saved.motion.grounded or Codec.read_vector3(saved.motion.velocity).y != 0.0 or horizontal == Vector3.ZERO or horizontal.length() > float(configuration.approach.speed) + Motion.EPSILON:
+			return "Approach driving requires live grounded opt-in idle C31 owned finite motion"
+	if _unowned_approach_residual(saved, configuration) and not _hurt_residual(saved) and saved.last_cancel_reason != "actual_player_death":
+		return "Unowned grounded C31 residual requires actual hurt or a paired fatal cancellation"
 	if saved.schema_version == PENDING_SNAPSHOT_SCHEMA_VERSION and (not saved.pending_segments is Array or saved.pending_segments.is_empty() or saved.pending_segments.size() > MAX_PENDING_SEGMENTS or saved.dead or saved.dormant or saved.reservation_id.is_empty() or saved.hurt_left_s != 0.0 or not saved.hit_ids.is_empty()):
 		return "Pending Mushroom Selenite schema2 requires a bounded unconsumed path in its live unharmed exchange"
 	if saved.dead and (not saved.reservation_id.is_empty() or saved.hurt_left_s != 0.0 or Codec.read_vector3(saved.motion.velocity) != Vector3.ZERO):
@@ -155,6 +175,11 @@ func context_error(saved: Dictionary, paired: Dictionary, saved_player: Dictiona
 	if not error.is_empty(): return error
 	if not paired.get("reservations") is Array or not paired.get("cooldowns") is Array or not paired.get("clock_s") is float or not paired.get("encounter_id") is String or not paired.get("profile") is Dictionary:
 		return "Validated paired scheduler transport required"
+	if _unowned_approach_residual(saved, configuration) and not _hurt_residual(saved):
+		if not saved_player.get("resources") is Dictionary or saved_player.resources.get("dead") != true:
+			return "Unowned unharmed C31 residual requires the paired actual dead Player"
+	if saved.approach_driving and (not saved_player.get("resources") is Dictionary or saved_player.resources.get("dead") != false):
+		return "Driving C31 requires the separately validated living saved Player"
 	var owned: Dictionary = {}
 	for value: Variant in paired.reservations:
 		if not value is Dictionary:
@@ -226,6 +251,16 @@ func context_error(saved: Dictionary, paired: Dictionary, saved_player: Dictiona
 		if not _same(previous.end_s, paired.clock_s) or not _same(previous.to, Codec.vector3(relative)):
 			return "Pending C31/C32 path must end at the exact paired current relative position and clock"
 	return ""
+
+
+func _unowned_approach_residual(saved: Dictionary, configuration: Dictionary) -> bool:
+	# schema_error already established every field/type before this exact check.
+	var actual_velocity: Vector3 = Codec.read_vector3(saved.motion.velocity)
+	return configuration.role_id == ROLE_SWARM and configuration.approach.enabled and not saved.approach_driving and saved.reservation_id.is_empty() and saved.motion.grounded and Vector3(actual_velocity.x, 0.0, actual_velocity.z) != Vector3.ZERO
+
+
+func _hurt_residual(saved: Dictionary) -> bool:
+	return saved.hurt_left_s > 0.0 or (saved.hp < saved.configuration.raw_role.max_hp and saved.last_cancel_reason == "actual_player_damage")
 
 
 func _encode_geometry(shape: Dictionary) -> Dictionary:
