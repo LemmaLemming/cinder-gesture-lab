@@ -73,6 +73,15 @@ func _all_source_ids() -> Array[String]:
 	return NORMAL_SOURCE_IDS.duplicate()
 
 
+func _authored_stalk_specs() -> Array:
+	var specifications: Array = super._authored_stalk_specs()
+	# Normal route only: move the whole real stalk and all its painted/cap
+	# children together. Optical clearance is pending actual portrait review.
+	for spec: Dictionary in specifications:
+		if spec.id == "BreathingStalk": spec["origin"] = Vector3(-5.1, 0, -3.2)
+	return specifications
+
+
 func _source_spec(id: String) -> Dictionary:
 	for room: int in ROOM_SOURCES.size():
 		var index: int = ROOM_SOURCES[room].find(id)

@@ -98,7 +98,28 @@ const SCENIC_SPECS: Array = [
 const PaintedRock = preload("res://assets/acts/act1/lunar/accents/painted_rock_surface.png")
 
 
-static func build_geometry(level: Node3D) -> void:
+static func stalk_specs_error(specifications: Array) -> String:
+	# A whole authored table can relocate an origin, never silently change a
+	# stalk's identity/order, physical size or cap vocabulary. This structural
+	# guard is not a source/body/field/visibility clearance certificate.
+	if specifications.size() != STALK_SPECS.size(): return "Every original mushroom stalk required exactly once"
+	for index: int in range(STALK_SPECS.size()):
+		var supplied: Variant = specifications[index]
+		var original: Dictionary = STALK_SPECS[index]
+		if not supplied is Dictionary or supplied.size() != 4: return "Closed mushroom stalk specification required"
+		for key: Variant in supplied:
+			if not key is String or key not in ["id", "origin", "cap_offset", "cap_size"]: return "Closed String mushroom stalk keys required"
+		if not supplied.get("id") is String or supplied.id != original.id or not supplied.get("origin") is Vector3 or not supplied.get("cap_offset") is Vector3 or not supplied.get("cap_size") is Vector3: return "Original stalk identity/order and native vectors required"
+		var origin: Vector3 = supplied.origin
+		if not origin.is_finite() or origin.y != 0.0 or supplied.cap_offset != original.cap_offset or supplied.cap_size != original.cap_size: return "Retain grounded stalk origin and original cap offset/size"
+		var half: Vector3 = STALK_SIZE * .5
+		if origin.x - half.x < FLOOR_RECT.position.x or origin.x + half.x > FLOOR_RECT.end.x or origin.z - half.z < FLOOR_RECT.position.y or origin.z + half.z > FLOOR_RECT.end.y: return "Whole physical stalk must remain on the authored floor"
+	return ""
+
+
+static func build_geometry(level: Node3D, stalk_specifications: Array = []) -> bool:
+	var specifications: Array = STALK_SPECS.duplicate(true) if stalk_specifications.is_empty() else stalk_specifications.duplicate(true)
+	if not stalk_specs_error(specifications).is_empty(): return false
 	# Call once on the actual level. One supported coplanar Box floor spans all
 	# five connected chambers. Stable names expose real collider bindings.
 	var floor_material := _material(Color(115.0 / 255.0, 115.0 / 255.0, 115.0 / 255.0))
@@ -111,13 +132,14 @@ static func build_geometry(level: Node3D) -> void:
 	var stalk_material := _material(Color(0.48, 0.48, 0.48))
 	var base_material := _material(Color(0.20, 0.20, 0.20))
 	var cap_material := _material(Color(0.67, 0.67, 0.67))
-	for spec: Dictionary in STALK_SPECS:
+	for spec: Dictionary in specifications:
 		var origin: Vector3 = spec.origin
 		var stalk: StaticBody3D = _box_body(level, spec.id, origin + Vector3.UP * STALK_SIZE.y * 0.5, STALK_SIZE, stalk_material)
 		_box_visual(stalk, "GroundedBase", Vector3(0, 0.08 - STALK_SIZE.y * 0.5, 0), Vector3(STALK_SIZE.x, 0.16, STALK_SIZE.z), base_material)
 		_box_visual(level, String(spec.id) + "GreyboxCap", origin + spec.cap_offset, spec.cap_size, cap_material)
 	for spec: Array in SCENIC_SPECS:
 		_box_visual(level, spec[0], spec[1], spec[2], rock_material)
+	return true
 
 
 static func _box_body(parent: Node3D, node_name: String, origin: Vector3, size: Vector3, material: StandardMaterial3D) -> StaticBody3D:

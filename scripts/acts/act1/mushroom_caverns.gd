@@ -42,6 +42,8 @@ var _approach_enabled: bool = false
 var _approach_forecasts: Dictionary = {}
 var _approach_camera_requests: Dictionary = {}
 var last_approach_error: String = ""
+var _stalk_specs: Array = []
+var _stalk_specs_bytes: PackedByteArray
 
 
 func _ready() -> void:
@@ -49,8 +51,15 @@ func _ready() -> void:
 	_approach_enabled = enable_swarm_approach
 	_construction_error = _component_configuration_error()
 	if not _construction_error.is_empty(): return
-	Layout.build_geometry(self)
-	_scenery_art = GrottoArt.build_geometry_art(self)
+	_stalk_specs = _authored_stalk_specs().duplicate(true)
+	_construction_error = Layout.stalk_specs_error(_stalk_specs)
+	if not _construction_error.is_empty(): return
+	_stalk_specs_bytes = var_to_bytes(_stalk_specs)
+	var built: bool = Layout.build_geometry(self, _stalk_specs)
+	if not built:
+		_construction_error = "Validated whole mushroom geometry could not be built"
+		return
+	_scenery_art = GrottoArt.build_geometry_art(self, _stalk_specs)
 	if not is_instance_valid(_scenery_art):
 		_construction_error = "Authored grotto scenery could not bind the actual layout"
 		return
@@ -80,6 +89,10 @@ func _ready() -> void:
 		_retained_capsules[id] = collision.shape
 		_retained_cues[id] = actor.get_cue()
 	objective_text = _initial_objective_text()
+
+
+func _authored_stalk_specs() -> Array:
+	return Layout.STALK_SPECS.duplicate(true) # Original component/default world.
 
 
 ## Defaults deliberately retain the four-source isolated component contract.
@@ -433,6 +446,8 @@ func _planar_segment_distance(a: Vector3, b: Vector3, c: Vector3, d: Vector3) ->
 
 
 func _scenery_error() -> String:
+	if var_to_bytes(_stalk_specs) != _stalk_specs_bytes:
+		return "Retain the same validated whole physical/art stalk table"
 	if not is_instance_valid(_scenery_art) or not _scenery_art.is_inside_tree() or _scenery_art.is_queued_for_deletion() or _scenery_art.get_parent() != self or get_node_or_null("FungalArt") != _scenery_art:
 		return "Retained authored grotto scenery is unavailable"
 	return String(_scenery_art.call("binding_error"))

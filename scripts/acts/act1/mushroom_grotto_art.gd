@@ -24,14 +24,18 @@ var _retained_meshes: Array[Dictionary] = []
 var _retained_materials: Array[Dictionary] = []
 var _expected_court_open: bool = false
 var _custody_ready: bool = false
+var _stalk_specs: Array = []
+var _stalk_specs_bytes: PackedByteArray
 
 
-static func build_geometry_art(level: Node3D) -> Node3D:
+static func build_geometry_art(level: Node3D, stalk_specifications: Array = []) -> Node3D:
+	var specifications: Array = Layout.STALK_SPECS.duplicate(true) if stalk_specifications.is_empty() else stalk_specifications.duplicate(true)
+	if not Layout.stalk_specs_error(specifications).is_empty(): return null
 	# Validate every replacement before hiding anything. Physical nodes, their
 	# resources, GroundedBase, Floor/Visual and all perimeter visuals stay intact.
 	if not is_instance_valid(level) or level.get_node_or_null("FungalArt") != null: return null
 	var replaced: Array[MeshInstance3D] = []
-	for spec: Dictionary in Layout.STALK_SPECS:
+	for spec: Dictionary in specifications:
 		var stalk := level.get_node_or_null(String(spec.id)) as StaticBody3D
 		var visual := level.get_node_or_null(String(spec.id) + "/Visual") as MeshInstance3D
 		var base := level.get_node_or_null(String(spec.id) + "/GroundedBase") as MeshInstance3D
@@ -41,6 +45,8 @@ static func build_geometry_art(level: Node3D) -> Node3D:
 		if not is_instance_valid(collision): return null
 		var shape := collision.shape as BoxShape3D
 		if not is_instance_valid(shape) or shape.size != Layout.STALK_SIZE or collision.disabled: return null
+		if stalk.position != spec.origin + Vector3.UP * Layout.STALK_SIZE.y * .5 or stalk.basis != Basis.IDENTITY or stalk.is_set_as_top_level() or collision.transform != Transform3D.IDENTITY: return null
+		if cap.position != spec.origin + spec.cap_offset or cap.basis != Basis.IDENTITY or cap.is_set_as_top_level() or not cap.mesh is BoxMesh or (cap.mesh as BoxMesh).size != spec.cap_size: return null
 		if visual.mesh == null or base.mesh == null or cap.mesh == null or not visual.material_override is StandardMaterial3D or not base.material_override is StandardMaterial3D or not cap.material_override is StandardMaterial3D: return null
 		replaced.append(visual)
 		replaced.append(cap)
@@ -52,6 +58,8 @@ static func build_geometry_art(level: Node3D) -> Node3D:
 	var art := Act1MushroomGrottoArt.new()
 	art.name = "FungalArt"
 	art.process_mode = Node.PROCESS_MODE_DISABLED
+	art._stalk_specs = specifications.duplicate(true)
+	art._stalk_specs_bytes = var_to_bytes(art._stalk_specs)
 	level.add_child(art)
 	art._build()
 	for visual: MeshInstance3D in replaced: visual.visible = false
@@ -60,7 +68,7 @@ static func build_geometry_art(level: Node3D) -> Node3D:
 
 
 func _build() -> void:
-	for spec: Dictionary in Layout.STALK_SPECS: _mushroom(spec)
+	for spec: Dictionary in _stalk_specs: _mushroom(spec)
 	for spec: Array in Layout.SCENIC_SPECS:
 		if spec[0] == "FallenTrunk": _trunk(spec[1], spec[2])
 		else: _shelf(String(spec[0]), spec[1], spec[2])
@@ -195,6 +203,8 @@ func set_court_open(opened: bool) -> void:
 ## Pure availability/readback guard for scenery that replaces visible physics
 ## surfaces or can occlude an actor. It grants no geometry, motion or clock.
 func binding_error() -> String:
+	if var_to_bytes(_stalk_specs) != _stalk_specs_bytes:
+		return "Retain the same validated whole physical/art stalk table"
 	if not _custody_ready or not is_instance_valid(_bound_level) or not _bound_level.is_inside_tree() or _bound_level.is_queued_for_deletion():
 		return "Retained actual grotto level is unavailable"
 	if not is_inside_tree() or is_queued_for_deletion() or get_parent() != _bound_level or _bound_level.get_node_or_null("FungalArt") != self or get_world_3d() != _bound_level.get_world_3d():
@@ -274,7 +284,7 @@ func _retain_bindings(level: Node3D, replaced: Array[MeshInstance3D]) -> void:
 	_bound_level = level
 	_bound_script = get_script()
 	_bound_level_transform = level.global_transform
-	for spec: Dictionary in Layout.STALK_SPECS:
+	for spec: Dictionary in _stalk_specs:
 		var body := level.get_node_or_null(String(spec.id)) as StaticBody3D
 		var collision := body.get_node_or_null("CollisionShape3D") as CollisionShape3D
 		var shape := collision.shape as BoxShape3D
@@ -282,7 +292,7 @@ func _retain_bindings(level: Node3D, replaced: Array[MeshInstance3D]) -> void:
 	var nodes: Array[Node3D] = [self]
 	for node: Node in find_children("*", "Node3D", true, false): nodes.append(node as Node3D)
 	for node: MeshInstance3D in replaced: nodes.append(node)
-	for spec: Dictionary in Layout.STALK_SPECS: nodes.append(level.get_node(String(spec.id) + "/GroundedBase") as MeshInstance3D)
+	for spec: Dictionary in _stalk_specs: nodes.append(level.get_node(String(spec.id) + "/GroundedBase") as MeshInstance3D)
 	for node: Node3D in nodes:
 		_retained_nodes.append({"node": node, "parent": node.get_parent(), "path": level.get_path_to(node), "transform": node.transform, "global_transform": node.global_transform, "visible": node.visible, "process_mode": node.process_mode, "children": node.get_children()})
 		if node is MeshInstance3D:
