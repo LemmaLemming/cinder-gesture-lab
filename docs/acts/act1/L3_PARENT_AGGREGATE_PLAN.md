@@ -108,4 +108,4 @@ Read-only checkout HEAD: `798d545a045963376d52168b42d9daf1c6e47296`. These ident
 | shared Shell | `9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c` |
 | shared SporeField | `b109f9872e810ec6d2b30a9d017f47e83f70fa3d086cb83f7e6717f757e51cd7` |
 
-Only this private note was written. No source/resource/test/ledger/mailbox edit, engine/import job or commit was performed.
+The original private design review performed no runtime/resource/test/ledger edits or engine jobs. Root later promoted this owned proposal, reviewed unchanged native APIs in shared27, and sent canonical REQUEST `df4cab4f-0809-4dfa-811a-a2e5ecb0b5d4`. The source table above preserves the original inspected26 identities; current actor texture-only additions and shared27 Shell settlement remain separately attributed.
