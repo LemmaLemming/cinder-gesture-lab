@@ -423,7 +423,10 @@ func _advance_lunges() -> void:
 		if record.get("adapter", {}).get("kind") != "lunge" or _clock < float(record["active_from_s"]):
 			continue
 		var owner: CharacterBody3D = (record["_owner"] as WeakRef).get_ref() as CharacterBody3D
-		var advanced: Dictionary = Motion.advance(owner, record["adapter"], minf(_clock - float(record["active_from_s"]), float(record["adapter"]["duration_s"])))
+		var floors: Array[Dictionary] = []
+		for guard: Dictionary in record["_floor_guards"]:
+			floors.append({"collision": (guard["node"] as WeakRef).get_ref(), "safe_rect": guard["safe_rect"]})
+		var advanced: Dictionary = Motion.advance(owner, record["adapter"], minf(_clock - float(record["active_from_s"]), float(record["adapter"]["duration_s"])), floors)
 		if advanced.has("error"):
 			cancel(reservation_id, "lunge_motion_unproved")
 			continue
