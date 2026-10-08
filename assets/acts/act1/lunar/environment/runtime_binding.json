@@ -1,13 +1,13 @@
 {
   "level": "A1-L2",
-  "readiness": "authored quiet-layout prototype verified in actual portrait; full combat/campaign readiness pending",
+  "readiness": "authored scenery with quiet-layout and affected full-combat portrait views verified; L2 integration acceptance and human balance remain pending",
   "runtime_family": "act1_lunar_theatre_clearings",
   "implementation": [
     "scripts/acts/act1/lunar_scenery.gd",
     "scripts/acts/act1/crater_gardens_layout.gd"
   ],
   "source_sha256": {
-    "scripts/acts/act1/lunar_scenery.gd": "4d0e38d867ea3e5c5e68ff29179c664d0c7fbda0bfd6b571cfdc745cc3def8ed",
+    "scripts/acts/act1/lunar_scenery.gd": "680bbb3292ea12225e3388d47c7202bb6fed24c9ec0d407b71b83ea72a066340",
     "scripts/acts/act1/crater_gardens_layout.gd": "a5a23a76a8b24ab92be10aa484a49aca36940e3441d50415c84e0e2be7c0f0d3"
   },
   "producer_manifests": [
@@ -69,7 +69,7 @@
       "origin": [
         2.1,
         1.8,
-        -10
+        -6.5
       ],
       "pixel_size": 0.026,
       "pivot": [
@@ -117,7 +117,7 @@
       "origin": [
         0.55,
         2,
-        -11.8
+        -4.8
       ],
       "pixel_size": 0.024,
       "pivot": [
@@ -178,9 +178,56 @@
   ],
   "actual_evidence": "data/campaign/act1/evidence/A1-L2/lunar-layout/index.json",
   "limitations": [
-    "Full Main sources/footprints/safe-landings/contact readability untested",
+    "Affected corrected full-combat rock/fastest portrait reviewed; open and remaining kit/profile combinations retain separate scopes",
     "Both runs neutral kit/standard preview only; no all-kit/profile/human/performance claim",
     "First failures retained, revised47 is functional/art-layout scope only"
   ],
-  "checked_at": "2026-10-08T15:47:42.720988+00:00"
+  "checked_at": "2026-10-08T16:57:44.153730+00:00",
+  "full_combat_review": {
+    "run": ".cinder/a1-l2-actual-route-portrait-1.json",
+    "functional_checks": 205,
+    "functional_failures": 0,
+    "captures": 30,
+    "native_focus": false,
+    "visual_result": "failed finale occlusion in21\u201329: Saturn masked source/lane and crescent masked Hero body/feet",
+    "correction": "only static crescent/Saturn origins shifted behind camp; same native assets/scales/pivots/depth, no collider/camera/timing or controls change",
+    "recheck": {
+      "run": ".cinder/a1-l2-rock-fastest-portrait-1.json",
+      "checks": 211,
+      "failures": 0,
+      "branch": "rock",
+      "kit": "fastest-short-dash",
+      "primaries": 6,
+      "swipes": 23,
+      "hp": [
+        100,
+        100
+      ],
+      "main_sha256": "a7c6fee88bf8f9ea0130e9f27f8420c680da9dca4f404ab8487730ad1a3d2311",
+      "scenery_sha256": "680bbb3292ea12225e3388d47c7202bb6fed24c9ec0d407b71b83ea72a066340",
+      "native_focus": false,
+      "visual_review": "Owner inspected affected rock11\u201318 and camp/finale/contact19\u201330; full source/lane/circles/puffs and Hero body/feet remain clear of shifted static celestial billboards",
+      "scope": "scripted actual540x1170 renderer; not human balance/performance or all-kit/all-profile acceptance"
+    },
+    "reviewed23_long_kit": {
+      "run": ".cinder/a1-l2-rock-slow-long-portrait-2.json",
+      "portable_index": "data/campaign/act1/evidence/A1-L2/full-route/index.json",
+      "checks": 217,
+      "failures": 0,
+      "branch": "rock",
+      "kit": "slowest-longest-shortest",
+      "primaries": 3,
+      "swipes": 24,
+      "hp": [
+        100,
+        100
+      ],
+      "captures": 30,
+      "main_sha256": "3b27319ea7e316990147e3b051a7868771a2f7ae5f3043b8c9bd53960d8fa688",
+      "scenery_sha256": "680bbb3292ea12225e3388d47c7202bb6fed24c9ec0d407b71b83ea72a066340",
+      "native_focus": false,
+      "visual_review": "Owner inspected all30 actual540x1170 captures: landing/solo/rock/finale source and full lanes/circles/puffs, reachable safe Hero body/feet and ordinary-primary openings, friendly camp, public pause and distinct physical grotto contact remain readable. No shifted celestial art masks the finale.",
+      "scope": "current23 scripted native renderer, this route/kit; no human balance/performance or every-profile portrait claim"
+    }
+  }
 }
