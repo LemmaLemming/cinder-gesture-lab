@@ -95,11 +95,19 @@ func begin_side(kind: String, level_id: String, fresh_snapshot: Dictionary) -> b
 		next["last_replay_equipment"] = (fresh_snapshot.get("equipment_ids", {}) as Dictionary).duplicate(true)
 	return _commit(next)
 
-func complete_active() -> bool:
+func complete_active(snapshot: Dictionary = {}) -> bool:
 	var active: Variant = _active(_state)
 	if active == null:
 		return _reject("No active attempt to complete")
+	if not snapshot.is_empty():
+		if snapshot.get("level_id") != active["level_id"]:
+			return _reject("Completion snapshot differs from the active attempt")
+		var error: String = _snapshot_error(snapshot, _state["unlocked_equipment"])
+		if not error.is_empty():
+			return _reject(error)
 	var next: Dictionary = state()
+	if not snapshot.is_empty():
+		_active(next)["snapshot"] = snapshot.duplicate(true)
 	var id: String = active["level_id"]
 	var entry: Dictionary = registry.entry(id)
 	if entry["kind"] == "main":
@@ -250,6 +258,13 @@ func state_error(candidate: Dictionary) -> String:
 	var story_index: int = route.find(story["level_id"])
 	if story_index != main.size() and story_index != main.size() - 1:
 		return "Story attempt differs from sequential progress"
+	# A production local completion may never persist ahead of its campaign
+	# record. Older checkpoints may reopen the local encounter after a recorded
+	# clear; persistent route access is retained. Transport-only fixtures omit
+	# progress, while the live shell validates the complete local schema.
+	var local_progress: Variant = story["snapshot"]["level"].get("progress")
+	if local_progress is Dictionary and local_progress.get("completed") == true and not main.has(story["level_id"]):
+		return "Local completion precedes its durable campaign record"
 	var side: Variant = candidate["side_attempt"]
 	if side == null:
 		return ""

@@ -75,6 +75,17 @@ var _actor_transaction_depth: int = 0
 # CharacterBody3D's cached contacts are not writable. Preserve the first
 # restored gravity decision without advancing a hidden simulation tick.
 var _restored_floor_contact: int = -1
+var _presentation_id: String = "helmeted_lab"
+var presentation_id: String:
+	get:
+		return _sprite.presentation_id if is_instance_valid(_sprite) else _presentation_id
+
+## Cosmetic act selection; no equipment slot, stat, timing or collision change.
+func set_presentation(id: String) -> bool:
+	if not SpriteScript.PRESENTATION_IDS.has(id) or _actor_transaction_depth > 0 or _snapshot_busy:
+		return false
+	_presentation_id = id
+	return _sprite.set_presentation(id) if is_instance_valid(_sprite) else true
 
 ## Simulation seconds since this player instance entered active physics.
 ## Pausing the shared scene tree stops this clock and dash sampling together.
@@ -94,6 +105,23 @@ func get_world_action_records(after_sequence: int = 0) -> Array[Dictionary]:
 ## Transitions/cancellation must not turn a partial path into a completed dash.
 func cancel_world_action_capture() -> void:
 	_world_dash_record.clear()
+
+## Live authoritative response data. The level adds its actual floor regions,
+## world revision, recognition budget and finite authored swipe candidates.
+## No blast ammo or invulnerability is credited by the scheduler. A moving,
+## falling or buffered actor is explicitly unsupported by the current witness.
+func get_threat_response_state() -> Dictionary:
+	var resolved: Dictionary = equipment.resolved_stats()
+	return {
+		"actor": self, "stats": resolved.duplicate(true),
+		"stable": not dead and _snapshot_grounded() and velocity.is_zero_approx() and _dash_left <= 0.0 and _knockback_left <= 0.0 and _queued_dash.is_zero_approx(),
+		"dash_cooldown_left_s": _dash_cooldown,
+		"primary_cooldown_left_s": _slash_cd,
+		"commitment_remaining_s": maxf(_phase_left, maxf(_dash_left, _knockback_left)),
+		"primary_commitment_s": float(resolved.primary_cooldown) * (0.13 / 0.30),
+		"motion": {"position": global_position, "velocity": velocity, "grounded": _snapshot_grounded(), "dash_left_s": _dash_left, "queued_dash": _queued_dash, "knockback_left_s": _knockback_left},
+		"equipment_ids": equipment.snapshot(), "action_clock_s": _world_action_clock,
+	}
 
 func _ready() -> void:
 	collision_layer = 4
@@ -115,6 +143,7 @@ func _ready() -> void:
 		_sprite.name = "ActorSprite"
 		add_child(_sprite)
 	_sprite.setup("player")
+	_sprite.set_presentation(_presentation_id)
 	_sprite.face(facing)
 	_refresh_equipment()
 	# A floor marker anchors the billboard sprite to its collision position.
@@ -484,6 +513,7 @@ func snapshot_state() -> Dictionary:
 			"pending_dash": _encode_world_record(_world_dash_record),
 		},
 		"presentation": {
+			"id": presentation_id,
 			"action": _sprite.get("_action"), "frame": _sprite.get("_action_frame"),
 			"idle_time_s": _sprite.get("_animation_time"),
 		},
@@ -570,15 +600,22 @@ func restore_state(snapshot: Dictionary) -> bool:
 	for record: Dictionary in capture.history:
 		_world_action_records.append(_decode_world_record(record))
 	_world_dash_record = _decode_world_record(capture.pending_dash)
-	# The current smoke node belongs to the old live presentation, not the save.
-	# Discard it explicitly; reconstructed logical movement retains its route.
-	# Restoring the full connected cosmetic plume is a later effects API.
+	# Retire the old presentation and reconstruct the connected plume from the
+	# actual restored dash origin, elapsed age and live emitter. No motion tick
+	# or action publication is needed to rebuild this required feedback.
 	if is_instance_valid(_dash_plume):
-		_dash_plume.hide()
-		_dash_plume.queue_free()
+		if is_instance_valid(fx) and fx.has_method("retire_effect"):
+			fx.retire_effect(_dash_plume)
+		else:
+			_dash_plume.hide()
+			_dash_plume.queue_free()
 	_dash_plume = null
+	if not dead and _dash_left > 0.0 and is_instance_valid(fx) and fx.has_method("restore_dash_trail"):
+		_dash_plume = fx.restore_dash_trail(self, _dash_origin, _dash_direction, _dash_total, _dash_left)
 	_sprite.face(facing)
 	var presentation: Dictionary = accepted.presentation
+	_presentation_id = presentation.get("id", "helmeted_lab")
+	_sprite.set_presentation(_presentation_id)
 	var frame_count: int = SpriteScript.PLAYER_FRAME_COUNTS[presentation.action]
 	_sprite.set_action(presentation.action, (float(presentation.frame) + 0.25) / frame_count)
 	_sprite.set("_animation_time", float(presentation.idle_time_s))
@@ -700,7 +737,12 @@ func _validate_snapshot(snapshot: Dictionary) -> String:
 	if not error.is_empty():
 		return error
 	var presentation: Dictionary = snapshot.presentation
-	error = SnapshotCodec.keys_error(presentation, ["action", "frame", "idle_time_s"])
+	var fields: Array = ["action", "frame", "idle_time_s"]
+	if presentation.has("id"):
+		fields.append("id")
+		if not presentation.id is String or not SpriteScript.PRESENTATION_IDS.has(presentation.id):
+			return "Unknown player presentation identity"
+	error = SnapshotCodec.keys_error(presentation, fields)
 	if not error.is_empty():
 		return error
 	if not presentation.action is String or not SpriteScript.PLAYER_STATES.has(presentation.action):

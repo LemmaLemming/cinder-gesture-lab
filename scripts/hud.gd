@@ -108,6 +108,13 @@ func set_level_preview(enabled: bool) -> void:
 	_telemetry_label.visible = not enabled
 
 
+func set_campaign_mode() -> void:
+	setup()
+	set_level_preview(true)
+	_reset_button.text = "RETRY"
+	_reset_button.tooltip_text = "Restore the saved checkpoint, including health, ammo and encounter state."
+
+
 func show_pause() -> void:
 	setup()
 	_mode = MODE_TITLE
@@ -172,9 +179,19 @@ func _build_status() -> void:
 	_status_panel.add_child(_hp_fill)
 
 	_objective_label = _label(_root, _objective_text, MUTED, 14)
+	_objective_label.name = "ObjectiveLabel"
+	var objective_backplate := StyleBoxFlat.new()
+	objective_backplate.bg_color = INK
+	objective_backplate.content_margin_left = 8
+	objective_backplate.content_margin_right = 8
+	objective_backplate.content_margin_top = 4
+	objective_backplate.content_margin_bottom = 4
+	_objective_label.add_theme_stylebox_override("normal", objective_backplate)
+	_objective_label.add_theme_color_override("font_color", PALE)
 	_objective_label.clip_text = true
 	_objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_reset_button = Button.new()
+	_reset_button.name = "ResetButton"
 	_reset_button.text = "RESET"
 	_reset_button.focus_mode = Control.FOCUS_NONE
 	_reset_button.pressed.connect(func() -> void: restart_requested.emit())
@@ -262,7 +279,7 @@ func _style_button(button: Button, primary: bool) -> void:
 	button.add_theme_stylebox_override("hover", hover)
 	button.add_theme_stylebox_override("pressed", down)
 	button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
-	button.add_theme_color_override("font_color", PALE)
+	button.add_theme_color_override("font_color", INK if primary else PALE)
 	button.add_theme_color_override("font_hover_color", PALE)
 	button.add_theme_color_override("font_pressed_color", PALE)
 
