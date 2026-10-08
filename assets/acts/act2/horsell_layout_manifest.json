@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "asset_id": "A2-HORSELL-LAYOUT-01",
+  "family": "act2-horsell-dry-route",
+  "readiness": "runtime_prototype_layout_lifecycle_verified_combat_pending",
+  "resources": [
+    "res://scenes/acts/act2/a2_l1.tscn",
+    "res://scripts/acts/act2/horsell_common.gd"
+  ],
+  "source_references": [
+    "docs/ACT2_CONCEPT.md A2-L1",
+    "docs/concept-art/act2/README.md adaptation boundaries",
+    "G05 Horsell Common",
+    "sampleS01 ray-evasion"
+  ],
+  "source_use": "Original runtime floor and perimeter shapes adapting broad dry heath clearings; concept paintings remain reference-only.",
+  "native_world_extent": {
+    "x": [
+      -3.4,
+      3.4
+    ],
+    "z": [
+      -30.2,
+      3.6
+    ],
+    "floor_top_y": 0,
+    "spawn_feet": [
+      -1,
+      0.1,
+      2.6
+    ]
+  },
+  "pivot": "Level root world origin; shared player feet Marker3D. Floor bodies centered y=-.25 with .5 thickness.",
+  "collision": "Layer1 static same-height unrotated BoxShape3D floors; visible soil banks; one stationary common grounded trunk. Scenic kit/Scout previews have no collision.",
+  "occlusion": "Ordinary depth-tested bank/trunk surfaces. Actual portrait edge/overlap review pending.",
+  "states": [
+    "art_preview_only",
+    "shared_entered",
+    "shared_exited"
+  ],
+  "animation_clock": "Level physics scenic_clock inherited pause; no independent timer or shader TIME.",
+  "reuse": [
+    "A2-L1 parent terrain",
+    "future A2-O1 layout rearrangement"
+  ],
+  "limitations": [
+    "No tracking attacks/shared cues yet",
+    "No coherent checkpoint retry or campaign transition consumer",
+    "Current shared helmeted protagonist awaiting Act2 presentation",
+    "Native selected-entry and six pose frames inspected; full gameplay and camera-lag/source-art acceptance pending"
+  ],
+  "evidence": {
+    "shared_baseline": "15589bfd956e74a659a63e843b1e1430d28227b8",
+    "owned_layout_checks": 243,
+    "failures": 0,
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_layout_smoke.gd",
+    "log": ".cinder/a2-l1-selected-spawn-layout.log",
+    "reused_after_cosmetic_changes": "Floor/bank/trunk shapes, collision masks, dimensions and lifecycle/snapshot fields unchanged; changed kit placements and preview-only visibility do not change checked travel/state behavior.",
+    "spawn_revision": "Selected X=-1 native portrait inspected; actual ordinary dash traversal flanks trunk and reaches Woking,243 checks/0 failures."
+  }
+}

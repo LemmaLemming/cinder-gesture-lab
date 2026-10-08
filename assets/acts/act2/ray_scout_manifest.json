@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "asset_id": "act2_ray_scout_visual",
+  "family": "act2_compact_three_leg_mirror_scout",
+  "role": "Cosmetic articulated Ray Scout body attached to the parent actor's one low housing attack point",
+  "runtime_script": "res://scripts/acts/act2/ray_scout_visual.gd",
+  "readiness": "original_runtime_prototype_imported_scoped_portrait_reviewed_full_encounter_art_pending",
+  "verification": {
+    "engine": "Current revised rig instantiated in native capture; target adapter passes33 manual-opening checks/0failures; import2 no script errors.",
+    "portrait": "Root inspected warning/lock/active/recovery/defeated physical poses and selected entry; see portrait_evidence. Parent-owned true ray cues/paired geometry/camera lag still pending.",
+    "static": "3 supports, no autonomous clock/collider/target groups in visual rig; sampled bound<1.9world units remains recorded."
+  },
+  "sources": [
+    {
+      "id": "G16",
+      "path": "docs/concept-art/act2/props/martian-technology.png",
+      "manifest": "docs/concept-art/act2/generated-manifest.json",
+      "native_dimensions_px": [
+        1024,
+        1536
+      ],
+      "readiness": "generated_concept_reference",
+      "adaptation": "Original oxidised camera case, retaining brackets, rivets, piston chains, ribbed actuator and segmented pale parabolic mirror"
+    },
+    {
+      "id": "S01",
+      "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+      "manifest": "docs/concept-art/act2/gameplay/sample-screenshots/prompts.json",
+      "native_dimensions_px": [
+        852,
+        1846
+      ],
+      "readiness": "generated_gameplay_mockup",
+      "adaptation": "Exactly three independent support chains and a compact low housing for the evade-and-counter silhouette"
+    }
+  ],
+  "authorship": {
+    "method": "Original runtime meshes and deterministic procedural pixel textures; no image crops or sampled source pixels",
+    "source_fidelity_limit": "Concept sources supply design vocabulary, not proven mechanical engineering, final runtime art or authored ray timing"
+  },
+  "native_pixels": {
+    "plate_and_rust": [
+      32,
+      32
+    ],
+    "rubber_actuator": [
+      16,
+      16
+    ],
+    "texture_structure": "Four-pixel oxidation clusters with sparse seam or rubber rib rows",
+    "texture_filter": "nearest",
+    "mipmaps": false,
+    "mirror_and_hardware": "not_applicable: faceted meshes and muted solid materials",
+    "atlas": "not_applicable: runtime-generated textures and geometry"
+  },
+  "world_scale": {
+    "units": "Shared world metres at root scale 1",
+    "local_width": 1.8,
+    "local_depth": 1.6,
+    "neutral_height": 1.3825,
+    "standing_pose_height_budget": 1.4,
+    "rotated_support_width_bound": 1.83,
+    "measurement_status": "Analytical intended dimensions and sampled all-yaw support/mirror bounds. Revised mesh silhouette and low-housing occlusion still require parent portrait recapture",
+    "travel_and_reach": "Cosmetic pose cannot move the actor root, alter collider size or change attack range",
+    "posed_planar_envelope_budget": 1.9
+  },
+  "pivots": {
+    "root": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "root_meaning": "Ground-level XZ attack source and feet anchor; parent owns its logical hit point and all movement",
+    "housing_center": [
+      0.0,
+      0.3,
+      0.0
+    ],
+    "case_center": [
+      0.0,
+      0.79,
+      -0.2
+    ],
+    "mirror_swivel": [
+      0.0,
+      0.65,
+      0.54
+    ],
+    "mirror_hinge": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "left_foot": [
+      -0.82,
+      0.045,
+      0.42
+    ],
+    "right_foot": [
+      0.82,
+      0.045,
+      0.42
+    ],
+    "rear_foot": [
+      0.0,
+      0.045,
+      -0.85
+    ],
+    "foot_contact": "Foot-box lower faces lie at local Y=0; each foot stays fixed during planted and collapse poses",
+    "facing": "Local +Z mirror forward. Supplied world planar direction is transformed through the visual root's global basis; upright uniform-scale actor roots are expected",
+    "folded_mirror_swivel": [
+      0.0,
+      0.65,
+      0.3
+    ],
+    "mirror_articulation": "Warning/lock mirror is elevated and forward of the case; paired saddle links connect its hinge to the case. Recovery/defeat retract the hinge before the folded pose, without moving the root or low housing"
+  },
+  "palette_role": {
+    "body": "Muted black, dark rust and oxidised grey plate with restrained brass hardware",
+    "mirror": "Four pale polished mesh segments, dark retaining rim and visible clips. A physical dark cover closes the central idle aperture and retracts on the first warning pose call",
+    "housing": "Dark physical doors reveal a pale low coupler only in recovery or collapse",
+    "cue_policy": "No floor warning, halo, available-state marker or ray drawn here. The parent attaches shared cue components"
+  },
+  "collision_occlusion": {
+    "colliders": "none",
+    "damage_or_target_groups": "none",
+    "damage_or_interaction_logic": "none",
+    "attack_point_count": "Parent owns one logical low-housing attack point; the three supports and mirror are never separate targets",
+    "depth_test": "normal depth testing; no through-wall effect",
+    "shadows": "Mesh shadow casting disabled; parent may attach shared grounded contact presentation",
+    "occlusion": "Compact raised rig is ordinary opaque geometry. Feet, housing, player and shared lane must be reviewed together in portrait"
+  },
+  "api": {
+    "node_type": "Node3D",
+    "class_name": "Act2RayScoutVisual",
+    "build": "_ready constructs one per-instance rig",
+    "pose": "pose(phase: String, progress: float, direction: Vector3, hit_flash: bool = false) -> void",
+    "progress": "Normalized parent phase clock, clamped to [0,1]; nonfinite progress becomes zero",
+    "direction": "World planar direction. Invalid or zero inputs retain the last valid direction. Mirror yaw follows every supplied valid direction; parent supplies immutable direction during lock/active",
+    "pre_ready_calls": "Requested pose is retained and applied after _ready",
+    "snapshot": "Parent restores its authoritative phase, progress, direction and flash then calls pose. Latched support yaw is cosmetic and can be reconstructed at restored phase entry"
+  },
+  "states": [
+    {
+      "id": "idle",
+      "pose": "Compact upright camera case, closed low housing and partly stowed mirror with physical dark aperture cover; body follows supplied direction"
+    },
+    {
+      "id": "approach",
+      "pose": "Same covered compact pose; parent owns translation and clocks"
+    },
+    {
+      "id": "warning",
+      "pose": "Support heading plants on phase entry; physical cover retracts immediately and the exposed mirror tracks direction while tilting from -0.40 to -0.24 radians"
+    },
+    {
+      "id": "lock",
+      "pose": "Held planted supports, fully level exposed bright mirror, closed low housing and fixed parent direction"
+    },
+    {
+      "id": "active",
+      "pose": "Held level mirror with tiny physical shutter release and cosmetic case recoil; no beam or damage"
+    },
+    {
+      "id": "recovery",
+      "pose": "Immediate retracted-and-folded mirror at forward Z=0.30 and open housing doors reveal the low coupler; feet remain grounded for the full parent recovery"
+    },
+    {
+      "id": "defeated",
+      "pose": "Decisive lowered tilted case, bent knees, retracted folded mirror and partly open spent housing; foot contacts stay fixed"
+    },
+    {
+      "id": "hit_flash",
+      "pose": "Externally supplied boolean applies restrained material emission per instance; no own duration or effect lifetime"
+    }
+  ],
+  "duration_clock_owner": {
+    "owner": "Parent actor simulation phase clocks",
+    "seconds": "not_applicable: this asset assigns no attack, reaction, recovery or hit-flash duration",
+    "own_processing": false,
+    "own_timers": false,
+    "shader_time": false,
+    "phase_entry": "Lock, active, recovery and defeated enter decisive readable poses on the first parent pose call",
+    "pause": "No pose advances unless the parent supplies a new normalized phase sample"
+  },
+  "reuse": {
+    "first_level": "A2-L1",
+    "family": "The same canonical Ray Scout rig for authored Act 2 scout placements, including the planned Cylinder Perimeter parent-kit reuse",
+    "instance_state": "Each rig owns its mesh resources, material flash state, phase request and cosmetic planted heading",
+    "shared_systems": "Controller, warning geometry, threat scheduler, damage, cue meanings and actual attack timing remain parent/shared-owned"
+  },
+  "limits": [
+    "Revised rig instantiated in queued native portraits with no errors; no actual Ray fight or desktop performance verification claim.",
+    "Occluded initial mirror corrected and inspected; true shared source/capsule cue/readable paired encounters still require full gameplay portrait acceptance.",
+    "Mirror materials suggest polished segments without rendering real scene reflection",
+    "Root XZ, collider, hit point and deadlines stay fixed even when cosmetic joints collapse or fold",
+    "Body support heading is a cosmetic phase-entry latch, not a saved gameplay reservation or authoritative tracking clock",
+    "Camera-case detail density, contact contrast and higher mesh-node count require actual pixel-scale and desktop performance review",
+    "Shared available/active/spent interaction markers, grounded contact presentation and floor capsule warning renderer are not implemented here"
+  ],
+  "portrait_evidence": {
+    "shared_baseline": "15589bfd956e74a659a63e843b1e1430d28227b8",
+    "native_capture_size": [
+      540,
+      1170
+    ],
+    "render_size": [
+      270,
+      585
+    ],
+    "command": "python3 scripts/dev/dev.py engine --path . --script tests/acts/act2/a2_l1_portrait_capture.gd",
+    "log": ".cinder/a2-l1-portrait-revision2.log",
+    "inspected_frames": [
+      "arrival-idle",
+      "arrival-warning",
+      "road-lock",
+      "common-recovery",
+      "departure-active",
+      "woking-defeated"
+    ],
+    "selected_entry": {
+      "spawn": [
+        -1,
+        0.1,
+        2.6
+      ],
+      "capture": "captures/act2/a2-l1-arrival-left-vignette.png",
+      "command_suffix": "-- --frame=arrival-left-vignette",
+      "log": ".cinder/a2-l1-selected-entry-portrait.log"
+    },
+    "observations": "Prepared mirror/pale facets now readable; low housing has visible open state; cylinder/witnesses visible at selected left entry with player foot separation; end scenery removes black void. Side-facing mirror is partly occluded by its case and needs shared phase/cue view in full exchange. Scenery remains original prototype, not complete source-art fidelity.",
+    "limits": "Fixture repositioning/phase posing only: no ray warning/lock/hit timing, camera-lag acceptance, humanbalance, campaignretry or final presentation claim."
+  },
+  "prior_worker_verification": {
+    "completed": "Initial parent engine import passed. Initial idle/warning/lock/recovery portrait captures inspected; hood occlusion identified and visual-only correction authored",
+    "engine_import": "initial_geometry_passed_parent_import; revised_geometry_pending_parent_queued_job",
+    "portrait_readability": "Initial art-preview captures exposed mirror occlusion. Raised forward mirror, smaller hood and distinct shutter poses await actual recapture",
+    "gameplay": "Parent actor and shared threat/cue adapters are outside this asset; no gameplay verification claim",
+    "initial_reviewed_captures": [
+      "captures/act2/a2-l1-arrival-idle.png",
+      "captures/act2/a2-l1-arrival-warning.png",
+      "captures/act2/a2-l1-road-lock.png",
+      "captures/act2/a2-l1-common-recovery.png"
+    ]
+  }
+}

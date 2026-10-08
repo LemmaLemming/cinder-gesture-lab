@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "asset_id": "A2-RAY-SCOUT-ACTOR-01",
+  "type_match": "A2-E1 Ray Scout; existing L1-authored enemy, not equipment/perk/powerup introduction",
+  "family": "act2-ray-scout",
+  "readiness": "runtime_target_adapter_isolated_manual_opening_verified_fight_pending",
+  "authoring_source": "scripts/acts/act2/ray_scout_actor.gd",
+  "visual_resource": "scripts/acts/act2/ray_scout_visual.gd",
+  "visual_manifest": "assets/acts/act2/ray_scout_manifest.json",
+  "source": [
+    "docs/ACT2_CONCEPT.md A2-L1 Ray Scout",
+    "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+    "docs/concept-art/act2/props/martian-technology.png"
+  ],
+  "source_use": "Ordinary-primary lowhousing opening with a compact three-leg machine; parent visual kit is original geometry. No source-board pixels extracted.",
+  "native_scale": "Same 1.9unit bounded cosmetic visual; actor attack target root at floor height below camera case.",
+  "pivot": "Root world floor XZ is the one reachable housing target; separate moving cosmetic hinge never moves the target.",
+  "collision": "No actor collider or body cage; shared primary scenery-layer1 LOS governs actual hit.",
+  "states": [
+    "idle",
+    "warning",
+    "lock",
+    "active",
+    "recovery",
+    "defeated",
+    "disarmed"
+  ],
+  "simulation_ownership": "Future level/scheduler adapter supplies phase and normalizedprogress/exactworld direction. Actor has no autonomous processing, clocks, damage-to-player, cue or scheduler substitute.",
+  "health": {
+    "max_hp": 30,
+    "status": "provisional_unplaytested",
+    "damage_window": "only configured/live/unpaused recovery; hp0 commits before one guarded defeat signal"
+  },
+  "motion_tuning": {
+    "anchored": true,
+    "knockback_scale": 0.0,
+    "visual_articulation_only": true,
+    "status": "Initial stationary source; no silent travel/momentum/stagger/invulnerability."
+  },
+  "shared_hit_contract": "Exactly one enemies group; accepted/hp_damage/runtime target_id/target_alive_before_hit; stable actor_id separate for level snapshots. Keep spent group until owner cleanup so killing-hit reload credit remains shared-player-owned.",
+  "reuse": [
+    "A2-L1 Ray Scout",
+    "future A2-O1 parent enemy rearrangement"
+  ],
+  "limitations": [
+    "Not integrated into the live scene yet",
+    "Manual target-opening fixture is not fight completion",
+    "Future level must compose actor HP/phases with threat deadlines and disarm on exit",
+    "Tracking rays/capsule cues/live shell/presentation pending"
+  ],
+  "evidence": {
+    "shared_baseline": "15589bfd956e74a659a63e843b1e1430d28227b8",
+    "checks": 33,
+    "failures": 0,
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_scout_target_smoke.gd",
+    "log": ".cinder/a2-l1-scout-target.log",
+    "scope": "Manual recovery only; Heavy ordinary primary at1.8unit reach,0shells, finite/phase/paused/dead/reentry/cleanup guards. No whole exchange claim."
+  }
+}

@@ -1,0 +1,2088 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-08",
+  "art_revision": "a2-horsell-heath-2",
+  "level_id": "A2-L1",
+  "authoring_source": "scripts/acts/act2/heath_kit.gd",
+  "readiness": "original_runtime_prototype_imported_scoped_portrait_reviewed_full_encounter_art_pending",
+  "provenance": "Original procedural mesh assemblies and deterministic pixel clusters authored from the selected Act2 shape/material references. No stock pixels, concept-board crops, board atlas cells, captions or source quotations are imported.",
+  "api": {
+    "build": "static build(parent: Node3D) -> Dictionary: creates own HorsellHeathKit root and returns root, witnesses:Array[Node3D], eruption:Node3D",
+    "set_tableau": "static set_tableau(kit: Dictionary, state: String, progress: float = 0.0) -> void: arrival/retreat/empty witness pose only",
+    "set_eruption": "static set_eruption(kit: Dictionary, visible: bool, normalized_progress: float = 0.0) -> void: independent rise/expansion/fade pose",
+    "ownership": "Root level owns state clocks, snapshot fields, transitions, terrain collision and cleanup. queue_free of root releases nodes/local material clones; immutable cached resources remain reusable."
+  },
+  "resource_policy": {
+    "deterministic_generation": "Integer cluster/hash formulas and fixed hand-authored pixel strokes; no randomize, RNG stream, wall clock or frame-rate-dependent generation",
+    "caching": "Static mesh, texture and material dictionaries reuse immutable resources. Surface UV variants cached by kind/size. Only six eruption-owned material clones change alpha.",
+    "generated_geometry_families": [
+      "plane by size",
+      "box by size for architectural parts only",
+      "tapered cylinder by radii/height/segments/cap",
+      "torus by inner/outer radius",
+      "eight-sided sphere",
+      "original pitched-gable ArrayMesh"
+    ],
+    "gameplay_systems": "none; no colliders, Area3D, bodies, actor AI, player/camera/HUD, scheduler, danger geometry, equipment or ability state"
+  },
+  "assets": [
+    {
+      "id": "A2-HEATH-GROUND",
+      "family": "horsell_floor_surfaces",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "sample-S01",
+          "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "texture_tile_world": [
+          1.44,
+          1.44
+        ],
+        "surface_top_y": 0.004,
+        "max_overlay_top_y": 0.011,
+        "dry_floor_bands": [
+          {
+            "x": [
+              -3.4,
+              3.4
+            ],
+            "z": [
+              -17.6,
+              3.6
+            ]
+          },
+          {
+            "x": [
+              -2.9,
+              2.9
+            ],
+            "z": [
+              -19.2,
+              -17.6
+            ]
+          },
+          {
+            "x": [
+              -3.4,
+              3.4
+            ],
+            "z": [
+              -27.6,
+              -19.2
+            ]
+          },
+          {
+            "x": [
+              -2.9,
+              2.9
+            ],
+            "z": [
+              -30.2,
+              -27.6
+            ]
+          }
+        ],
+        "decorative_ground_beyond_end_banks": [
+          {
+            "x": [
+              -8,
+              8
+            ],
+            "z": [
+              3.6,
+              14
+            ],
+            "top_y": 0.002
+          },
+          {
+            "x": [
+              -8,
+              8
+            ],
+            "z": [
+              -42,
+              -30.2
+            ],
+            "top_y": 0.002
+          }
+        ],
+        "quiet_sand_outside_route": [
+          {
+            "centre": [
+              0,
+              0.006,
+              6.7
+            ],
+            "size_xz": [
+              7,
+              5.6
+            ]
+          },
+          {
+            "centre": [
+              0,
+              0.006,
+              -33.5
+            ],
+            "size_xz": [
+              7,
+              5.6
+            ]
+          }
+        ]
+      },
+      "pivot": "PlaneMesh ground centre; no change to floor travel height",
+      "collision": "none; expanded foreground/background terrain is purely decorative beyond the level-owned end-bank colliders. Route floor, banks and collision unchanged.",
+      "occlusion": "Ordinary world depth, nearest texture filtering; sparse low-contrast marks leave floor warnings legible above y0.011",
+      "states": [
+        "pale_sand",
+        "clearing_sand",
+        "worn_road",
+        "heath_margin",
+        "static_scorch",
+        "foreground_heath_beyond_blocking_bank",
+        "far_heath_beyond_blocking_bank",
+        "quiet_sand_beyond_route"
+      ],
+      "clock": "Static; no shader TIME, processing callback or autonomous timer",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 parent asset reuse; no optional placements implemented"
+      ],
+      "limitations": [
+        "Texture seams and warning contrast need actual portrait review.",
+        "Burned soil is scenery; it has no active damage or reserved warning animation.",
+        "New exterior terrain fills the portrait background; does not enlarge playable ground or permit passing the end banks."
+      ]
+    },
+    {
+      "id": "A2-HEATH-CYLINDER",
+      "family": "oxidised_cylinder_and_lid",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G16",
+          "path": "docs/concept-art/act2/props/martian-technology.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G18",
+          "path": "docs/concept-art/act2/gameplay/01-horsell-common-gameplay.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "root_world": [
+          -4.8,
+          0,
+          -1
+        ],
+        "barrel_length_world": 6.0,
+        "diameter_world": 2.7,
+        "axis_height_world": 0.55,
+        "mouth_local_x": 1.15,
+        "barrel_axis": "local negativeX; root yaw rotates opened mouth toward positiveX/positiveZ",
+        "mesh_radial_segments": 24,
+        "mouth_thread_ring_count": 5,
+        "shell_band_count": 3,
+        "rivet_heads_world_radius": 0.057,
+        "root_yaw_y_radians": -0.55,
+        "mouth_world_xz": [
+          -3.8196,
+          -0.39891
+        ],
+        "dark_mouth_recess_world": 0.12
+      },
+      "pivot": "Ground anchor near mouth; separate shell axis, recessed mouth and lid ground-contact roots",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary depth; body remains beyond bank while upper mouth/rim may crop over the left edge. No collision; actual landing/source occlusion requires new portrait review.",
+      "states": [
+        "open_shell",
+        "recessed_dark_mouth",
+        "raised_rivet_rings",
+        "threaded_collar",
+        "detached_lid",
+        "excavated_sand_heaps"
+      ],
+      "clock": "Static; distant eruption is a separate level-owned visual object",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 cylinder perimeter assets only"
+      ],
+      "limitations": [
+        "Root initial capture showed original cylinder entirely offscreen. Revised anchor/yaw/recess need new portrait inspection for readable mouth and clear legal landing at heroX-3.08.",
+        "Metal texture follows primitive UVs and is not a calibrated cylinder atlas.",
+        "Five separated collar rings approximate visible screw threads; not a mechanical cutaway or archaeological reconstruction.",
+        "No pit hole, descent, rocket fins or damage geometry."
+      ]
+    },
+    {
+      "id": "A2-HEATH-PINES",
+      "family": "tapered_pine_scenery",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "sample-S01",
+          "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "base_world_x": [
+          -4.8,
+          4.8
+        ],
+        "trunk_height_world": [
+          3.4,
+          3.9
+        ],
+        "trunk_radius_world": [
+          0.17,
+          0.055
+        ],
+        "radial_segments": 7,
+        "outboard_crown_offset_world": 0.58,
+        "largest_crown_radius_world": 0.86
+      },
+      "pivot": "Trunk ground base; crown and branch attachments are local to each pine",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Outboard crowns keep their lateral silhouettes beyond the combat corridor; ordinary depth and no cast shadows",
+      "states": [
+        "tapered_bark_trunk",
+        "three_tier_outboard_crown",
+        "outboard_branch"
+      ],
+      "clock": "Static; kit adds no foliage clock",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 pine family"
+      ],
+      "limitations": [
+        "No automatic occluder fade; authored placement avoids the floor, then actual portrait review must confirm it.",
+        "Root level owns the separate low loop trunk; this kit adds no trunk collider."
+      ]
+    },
+    {
+      "id": "A2-HEATH-LOGS",
+      "family": "charred_trunk_and_broken_branches",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "root_world_x": [
+          -4.65,
+          4.65
+        ],
+        "log_length_world": 1.5,
+        "log_radius_world": 0.13,
+        "radial_segments": 6
+      },
+      "pivot": "Grounded log root with two small broken-limb attachment points",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary depth; all grounded dressing remains outside absolute X3.8",
+      "states": [
+        "charred_trunk",
+        "broken_limb",
+        "burned_twig"
+      ],
+      "clock": "Static; no particle emission or damaging scorch",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 boundary dressing"
+      ],
+      "limitations": [
+        "Actual camera silhouette and boundary readability are untested."
+      ]
+    },
+    {
+      "id": "A2-HEATH-ROAD-EDGES",
+      "family": "quiet_road_stones_and_posts",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "stone_root_world_x": [
+          -4,
+          4
+        ],
+        "stone_size_world": [
+          0.22,
+          0.1,
+          "0.28 to 0.44"
+        ],
+        "post_root_world_x": [
+          -4.2,
+          4.2
+        ],
+        "post_height_world": 0.7
+      },
+      "pivot": "Grounded stone/post base",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary depth; restrained stone/wood values and no contact marker",
+      "states": [
+        "weathered_road_stone",
+        "weathered_timber_post"
+      ],
+      "clock": "Static",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 road edging"
+      ],
+      "limitations": [
+        "Road edging is scenic and does not define a contact exit or hazard."
+      ]
+    },
+    {
+      "id": "A2-HEATH-COTTAGES",
+      "family": "victorian_cottage_backdrop",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "root_world_abs_x": [
+          6.3,
+          7.0
+        ],
+        "facade_world": [
+          1.6,
+          1.5,
+          1.25
+        ],
+        "roof_world": [
+          1.85,
+          0.6,
+          1.5
+        ],
+        "approx_total_height_world": 2.35,
+        "roof_mesh": "original six-triangle pitched-gable ArrayMesh"
+      },
+      "pivot": "Foundation at floor; window, sash, door, chimney and roof attachment points",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; distant scenery outside floor, contrasting pitched roofs and sash recesses instead of lab obstacle boxes",
+      "states": [
+        "brick_facade",
+        "pitched_slate_roof",
+        "chimney_stack_and_lip",
+        "dark_timber_door",
+        "recessed_sash_windows_and_sills"
+      ],
+      "clock": "Static",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 distant backdrop"
+      ],
+      "limitations": [
+        "Compressed period-world silhouettes rather than a surveyed station map.",
+        "Only the near facade has authored door/window detail; additional facings and ruin states are deferred.",
+        "Actual portrait backdrop visibility and roof winding are not engine-verified."
+      ]
+    },
+    {
+      "id": "A2-HEATH-ERUPTION",
+      "family": "harmless_distant_ash_vapour",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G16",
+          "path": "docs/concept-art/act2/props/martian-technology.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "root_world": [
+          -3.8196,
+          0.6,
+          -0.39891
+        ],
+        "fixed_puff_count": 6,
+        "mesh": "eight-sided sphere family; variable pose supplied by progress",
+        "opacity_max": 0.58
+      },
+      "pivot": "Separate root at transformed cylinder mouth; each puff stores immutable home position and index",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary depth at transformed mouth; instance-local material clones fade independently. Check cropped left-margin visual volume during the completion tableau.",
+      "states": [
+        "hidden",
+        "rise_and_expand",
+        "thin",
+        "hidden_at_end"
+      ],
+      "clock": "set_eruption(kit, visible, normalized_progress) receives level-owned simulation progress; no elapsed-time sampling or process callbacks",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 cosmetic family only"
+      ],
+      "limitations": [
+        "No gameplay collider, damage, smoke-bank mechanic or additional attack.",
+        "Transparency sorting, floor-warning occlusion and visual volume need actual portrait review."
+      ]
+    },
+    {
+      "id": "A2-HEATH-HEATHER-0",
+      "family": "sparse_rust_heather",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "sample-S01",
+          "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        32,
+        24
+      ],
+      "scale": {
+        "pixel_size_world": 0.0225,
+        "maximum_quad_world": [
+          0.72,
+          0.54
+        ],
+        "instance_world_abs_x": [
+          4.3,
+          4.78
+        ],
+        "bank_top_feet_world": {
+          "wide_bank_abs_x": 3.75,
+          "narrow_bank_abs_x": 3.25,
+          "feet_y": 0.975,
+          "surface_y": 0.95
+        },
+        "foreground_heath_feet_world": {
+          "abs_x": 2.8,
+          "z": [
+            7,
+            10
+          ],
+          "feet_y": 0.025
+        }
+      },
+      "pivot": {
+        "source_pixels": [
+          16,
+          24
+        ],
+        "sprite_offset_pixels": [
+          0,
+          12
+        ]
+      },
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Nearest hard-alpha billboard with normal depth. New cropped bank-top clusters stay outside inner bank faces; no floor-warning or actionable glint.",
+      "states": [
+        "static_sparse_heather"
+      ],
+      "clock": "Static; no shader/time animation",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 parent heather resources"
+      ],
+      "limitations": [
+        "Original transparent stem/flower clusters, not extracted board pixels.",
+        "Rust hue represents heather; no dense red-weed ecology introduced in L1.",
+        "Pixel readability untested in portrait."
+      ]
+    },
+    {
+      "id": "A2-HEATH-HEATHER-1",
+      "family": "sparse_rust_heather",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "sample-S01",
+          "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        32,
+        24
+      ],
+      "scale": {
+        "pixel_size_world": 0.0225,
+        "maximum_quad_world": [
+          0.72,
+          0.54
+        ],
+        "instance_world_abs_x": [
+          4.3,
+          4.78
+        ],
+        "bank_top_feet_world": {
+          "wide_bank_abs_x": 3.75,
+          "narrow_bank_abs_x": 3.25,
+          "feet_y": 0.975,
+          "surface_y": 0.95
+        },
+        "foreground_heath_feet_world": {
+          "abs_x": 2.8,
+          "z": [
+            7,
+            10
+          ],
+          "feet_y": 0.025
+        }
+      },
+      "pivot": {
+        "source_pixels": [
+          16,
+          24
+        ],
+        "sprite_offset_pixels": [
+          0,
+          12
+        ]
+      },
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Nearest hard-alpha billboard with normal depth. New cropped bank-top clusters stay outside inner bank faces; no floor-warning or actionable glint.",
+      "states": [
+        "static_sparse_heather"
+      ],
+      "clock": "Static; no shader/time animation",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 parent heather resources"
+      ],
+      "limitations": [
+        "Original transparent stem/flower clusters, not extracted board pixels.",
+        "Rust hue represents heather; no dense red-weed ecology introduced in L1.",
+        "Pixel readability untested in portrait."
+      ]
+    },
+    {
+      "id": "A2-HEATH-HEATHER-2",
+      "family": "sparse_rust_heather",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "sample-S01",
+          "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        32,
+        24
+      ],
+      "scale": {
+        "pixel_size_world": 0.0225,
+        "maximum_quad_world": [
+          0.72,
+          0.54
+        ],
+        "instance_world_abs_x": [
+          4.3,
+          4.78
+        ],
+        "bank_top_feet_world": {
+          "wide_bank_abs_x": 3.75,
+          "narrow_bank_abs_x": 3.25,
+          "feet_y": 0.975,
+          "surface_y": 0.95
+        },
+        "foreground_heath_feet_world": {
+          "abs_x": 2.8,
+          "z": [
+            7,
+            10
+          ],
+          "feet_y": 0.025
+        }
+      },
+      "pivot": {
+        "source_pixels": [
+          16,
+          24
+        ],
+        "sprite_offset_pixels": [
+          0,
+          12
+        ]
+      },
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Nearest hard-alpha billboard with normal depth. New cropped bank-top clusters stay outside inner bank faces; no floor-warning or actionable glint.",
+      "states": [
+        "static_sparse_heather"
+      ],
+      "clock": "Static; no shader/time animation",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 parent heather resources"
+      ],
+      "limitations": [
+        "Original transparent stem/flower clusters, not extracted board pixels.",
+        "Rust hue represents heather; no dense red-weed ecology introduced in L1.",
+        "Pixel readability untested in portrait."
+      ]
+    },
+    {
+      "id": "A2-HEATH-WITNESS-0",
+      "family": "nonhostile_period_witness",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G01",
+          "path": "docs/concept-art/act2/characters/principal-human-cast.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G03",
+          "path": "docs/concept-art/act2/characters/refugees-and-defenders.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G18",
+          "path": "docs/concept-art/act2/gameplay/01-horsell-common-gameplay.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "sample-S01",
+          "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        48,
+        64
+      ],
+      "scale": {
+        "pixel_size_world": 0.0225,
+        "maximum_quad_world": [
+          1.08,
+          1.44
+        ],
+        "retreat_world_distance_max": 1.2,
+        "costume_role": "notebook_scientist",
+        "arrival_feet_world": [
+          -3.45,
+          0.975,
+          0.8
+        ],
+        "bank_surface_y_world": 0.95,
+        "retreat_direction_world": [
+          0,
+          0,
+          1
+        ]
+      },
+      "pivot": {
+        "source_pixels": [
+          24,
+          64
+        ],
+        "sprite_offset_pixels": [
+          0,
+          32
+        ],
+        "ground_clearance_world": 0.025,
+        "ground_surface": "bank topY0.95; native source feet and 0.025 clearance retained"
+      },
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
+      "states": [
+        "arrival_watching",
+        "retreat_translation",
+        "empty_after_retreat"
+      ],
+      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 parent witness art only; no optional scene work"
+      ],
+      "limitations": [
+        "Appearances are costume interpretations, not proven faces or source quotations.",
+        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
+        "Actual portrait feet contact and costume distinction require review.",
+        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+      ]
+    },
+    {
+      "id": "A2-HEATH-WITNESS-1",
+      "family": "nonhostile_period_witness",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G01",
+          "path": "docs/concept-art/act2/characters/principal-human-cast.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G03",
+          "path": "docs/concept-art/act2/characters/refugees-and-defenders.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G18",
+          "path": "docs/concept-art/act2/gameplay/01-horsell-common-gameplay.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "sample-S01",
+          "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        48,
+        64
+      ],
+      "scale": {
+        "pixel_size_world": 0.0225,
+        "maximum_quad_world": [
+          1.08,
+          1.44
+        ],
+        "retreat_world_distance_max": 1.2,
+        "costume_role": "satchel_hat_journalist",
+        "arrival_feet_world": [
+          3.45,
+          0.975,
+          0.8
+        ],
+        "bank_surface_y_world": 0.95,
+        "retreat_direction_world": [
+          0,
+          0,
+          1
+        ]
+      },
+      "pivot": {
+        "source_pixels": [
+          24,
+          64
+        ],
+        "sprite_offset_pixels": [
+          0,
+          32
+        ],
+        "ground_clearance_world": 0.025,
+        "ground_surface": "bank topY0.95; native source feet and 0.025 clearance retained"
+      },
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
+      "states": [
+        "arrival_watching",
+        "retreat_translation",
+        "empty_after_retreat"
+      ],
+      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 parent witness art only; no optional scene work"
+      ],
+      "limitations": [
+        "Appearances are costume interpretations, not proven faces or source quotations.",
+        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
+        "Actual portrait feet contact and costume distinction require review.",
+        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+      ]
+    },
+    {
+      "id": "A2-HEATH-WITNESS-2",
+      "family": "nonhostile_period_witness",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G01",
+          "path": "docs/concept-art/act2/characters/principal-human-cast.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G03",
+          "path": "docs/concept-art/act2/characters/refugees-and-defenders.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G18",
+          "path": "docs/concept-art/act2/gameplay/01-horsell-common-gameplay.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "sample-S01",
+          "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        48,
+        64
+      ],
+      "scale": {
+        "pixel_size_world": 0.0225,
+        "maximum_quad_world": [
+          1.08,
+          1.44
+        ],
+        "retreat_world_distance_max": 1.2,
+        "costume_role": "rolled_sleeve_workman",
+        "arrival_feet_world": [
+          -2.5,
+          0.975,
+          3.85
+        ],
+        "bank_surface_y_world": 0.95,
+        "retreat_direction_world": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "pivot": {
+        "source_pixels": [
+          24,
+          64
+        ],
+        "sprite_offset_pixels": [
+          0,
+          32
+        ],
+        "ground_clearance_world": 0.025,
+        "ground_surface": "bank topY0.95; native source feet and 0.025 clearance retained"
+      },
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
+      "states": [
+        "arrival_watching",
+        "retreat_translation",
+        "empty_after_retreat"
+      ],
+      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 parent witness art only; no optional scene work"
+      ],
+      "limitations": [
+        "Appearances are costume interpretations, not proven faces or source quotations.",
+        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
+        "Actual portrait feet contact and costume distinction require review.",
+        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+      ]
+    },
+    {
+      "id": "A2-HEATH-WITNESS-3",
+      "family": "nonhostile_period_witness",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G01",
+          "path": "docs/concept-art/act2/characters/principal-human-cast.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G03",
+          "path": "docs/concept-art/act2/characters/refugees-and-defenders.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G18",
+          "path": "docs/concept-art/act2/gameplay/01-horsell-common-gameplay.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "sample-S01",
+          "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        48,
+        64
+      ],
+      "scale": {
+        "pixel_size_world": 0.0225,
+        "maximum_quad_world": [
+          1.08,
+          1.44
+        ],
+        "retreat_world_distance_max": 1.2,
+        "costume_role": "rust_cloak_dress",
+        "arrival_feet_world": [
+          -1.8,
+          0.975,
+          3.85
+        ],
+        "bank_surface_y_world": 0.95,
+        "retreat_direction_world": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "pivot": {
+        "source_pixels": [
+          24,
+          64
+        ],
+        "sprite_offset_pixels": [
+          0,
+          32
+        ],
+        "ground_clearance_world": 0.025,
+        "ground_surface": "bank topY0.95; native source feet and 0.025 clearance retained"
+      },
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
+      "states": [
+        "arrival_watching",
+        "retreat_translation",
+        "empty_after_retreat"
+      ],
+      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 parent witness art only; no optional scene work"
+      ],
+      "limitations": [
+        "Appearances are costume interpretations, not proven faces or source quotations.",
+        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
+        "Actual portrait feet contact and costume distinction require review.",
+        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+      ]
+    },
+    {
+      "id": "A2-HEATH-WITNESS-4",
+      "family": "nonhostile_period_witness",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G01",
+          "path": "docs/concept-art/act2/characters/principal-human-cast.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G03",
+          "path": "docs/concept-art/act2/characters/refugees-and-defenders.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G18",
+          "path": "docs/concept-art/act2/gameplay/01-horsell-common-gameplay.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "sample-S01",
+          "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        48,
+        64
+      ],
+      "scale": {
+        "pixel_size_world": 0.0225,
+        "maximum_quad_world": [
+          1.08,
+          1.44
+        ],
+        "retreat_world_distance_max": 1.2,
+        "costume_role": "formal_long_coat_top_hat",
+        "arrival_feet_world": [
+          1.8,
+          0.975,
+          3.85
+        ],
+        "bank_surface_y_world": 0.95,
+        "retreat_direction_world": [
+          1,
+          0,
+          0
+        ]
+      },
+      "pivot": {
+        "source_pixels": [
+          24,
+          64
+        ],
+        "sprite_offset_pixels": [
+          0,
+          32
+        ],
+        "ground_clearance_world": 0.025,
+        "ground_surface": "bank topY0.95; native source feet and 0.025 clearance retained"
+      },
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
+      "states": [
+        "arrival_watching",
+        "retreat_translation",
+        "empty_after_retreat"
+      ],
+      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 parent witness art only; no optional scene work"
+      ],
+      "limitations": [
+        "Appearances are costume interpretations, not proven faces or source quotations.",
+        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
+        "Actual portrait feet contact and costume distinction require review.",
+        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+      ]
+    },
+    {
+      "id": "A2-HEATH-WITNESS-5",
+      "family": "nonhostile_period_witness",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G01",
+          "path": "docs/concept-art/act2/characters/principal-human-cast.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G03",
+          "path": "docs/concept-art/act2/characters/refugees-and-defenders.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G18",
+          "path": "docs/concept-art/act2/gameplay/01-horsell-common-gameplay.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "sample-S01",
+          "path": "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "runtime_prototype_instantiated_full_family_portrait_review_pending",
+      "native_pixels": [
+        48,
+        64
+      ],
+      "scale": {
+        "pixel_size_world": 0.0225,
+        "maximum_quad_world": [
+          1.08,
+          1.44
+        ],
+        "retreat_world_distance_max": 1.2,
+        "costume_role": "pale_cloak_dress_bundle",
+        "arrival_feet_world": [
+          2.5,
+          0.975,
+          3.85
+        ],
+        "bank_surface_y_world": 0.95,
+        "retreat_direction_world": [
+          1,
+          0,
+          0
+        ]
+      },
+      "pivot": {
+        "source_pixels": [
+          24,
+          64
+        ],
+        "sprite_offset_pixels": [
+          0,
+          32
+        ],
+        "ground_clearance_world": 0.025,
+        "ground_surface": "bank topY0.95; native source feet and 0.025 clearance retained"
+      },
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Nearest hard-alpha billboard, normal depth. Two side-bank figures may be cropped; four end-bank costumes should be fully visible from spawn. No floor body/collider.",
+      "states": [
+        "arrival_watching",
+        "retreat_translation",
+        "empty_after_retreat"
+      ],
+      "clock": "set_tableau(kit, state, progress) receives level-owned state and normalized simulation progress; no actor AI, callbacks, timers or wall clock",
+      "reuse": [
+        "A2-L1",
+        "potential A2-O1 parent witness art only; no optional scene work"
+      ],
+      "limitations": [
+        "Appearances are costume interpretations, not proven faces or source quotations.",
+        "Retreat translates a held cutout; walk/pointing poses are not authored yet.",
+        "Nonhostile scenery: no faction, escort objective, attack, body collider, or player replacement.",
+        "Actual portrait feet contact and costume distinction require review.",
+        "Retreat direction stays along bank tops: side pair moves toward positiveZ, end-bank figures move outwardX; actual portrait motion unreviewed."
+      ]
+    }
+  ],
+  "material_resources": [
+    {
+      "id": "A2-HEATH-MATERIAL-SAND",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": [
+          1.44,
+          1.44
+        ]
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-SAND_CLEAR",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": [
+          1.44,
+          1.44
+        ]
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-ROAD",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": [
+          1.44,
+          1.44
+        ]
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-HEATH",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": [
+          1.44,
+          1.44
+        ]
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-SCORCH",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": [
+          1.44,
+          1.44
+        ]
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-METAL",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G16",
+          "path": "docs/concept-art/act2/props/martian-technology.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-RIM",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G16",
+          "path": "docs/concept-art/act2/props/martian-technology.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-FASTENER",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G16",
+          "path": "docs/concept-art/act2/props/martian-technology.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-CAVITY",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G16",
+          "path": "docs/concept-art/act2/props/martian-technology.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-BARK",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-PINE",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-CHAR",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-WOOD",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-ASH_WOOD",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-STONE",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-BRICK",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-SLATE",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-WINDOW",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-VAPOUR",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G16",
+          "path": "docs/concept-art/act2/props/martian-technology.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        },
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    },
+    {
+      "id": "A2-HEATH-MATERIAL-SHADOW",
+      "family": "deterministic_pixel_material",
+      "authoring_source": "scripts/acts/act2/heath_kit.gd",
+      "source": [
+        {
+          "id": "G05",
+          "path": "docs/concept-art/act2/environments/horsell-common.png",
+          "use": "shape/material/composition reference; no pixels extracted"
+        }
+      ],
+      "readiness": "original_material_imported_in_root_preview_placement_revision_unreviewed",
+      "native_pixels": [
+        64,
+        64
+      ],
+      "scale": {
+        "filter": "nearest",
+        "palette_entries": 4,
+        "surface_tile_world": "native primitive UVs; source density remains to be reviewed"
+      },
+      "pivot": "not_applicable: texture/material resource",
+      "collision": "none; level owns floor, banks, loop trunk and all gameplay geometry",
+      "occlusion": "Ordinary world depth; opaque source texture, except per-instance eruption material clones use alpha transparency",
+      "states": [
+        "immutable_cached_material"
+      ],
+      "clock": "Static. UV-scale variants are cached once. No shader TIME or per-frame texture regeneration",
+      "reuse": [
+        "all appropriate A2-L1 geometry",
+        "potential A2-O1 parent resource reuse"
+      ],
+      "limitations": [
+        "Palette and texture density need portrait review.",
+        "Cached resources are immutable; per-instance tableau opacity does not mutate shared material cache."
+      ]
+    }
+  ],
+  "source_boundaries": [
+    "Heat-Ray visibility and compact enemy mechanics remain governed by ACT2_CONCEPT.md; this scenery kit adds neither.",
+    "Cylinder mouth/pit are a scenic perimeter, not an opening for traversal or descent.",
+    "Static scorch and heather never receive hazard cues.",
+    "No red-weed introduction, new enemy family, boss or optional-level placement.",
+    "The shared player is unchanged; witness cutouts do not replace the protagonist."
+  ],
+  "technical_research": [
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_cylindermesh.html",
+      "inspected": "cap_top/cap_bottom, top/bottom radii, radial_segments; used open shell and tapered trunks",
+      "local_validation": "No engine execution by this scoped worker; owner will validate."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_torusmesh.html",
+      "inspected": "inner_radius, outer_radius, rings and ring_segments; used rim/collar loops",
+      "local_validation": "Unexecuted."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_arraymesh.html",
+      "inspected": "surface arrays and clockwise front-face convention; used pitched-gable roof",
+      "local_validation": "Unexecuted."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_spritebase3d.html",
+      "inspected": "foot offset, pixel_size, billboard, alpha-cut discard and threshold; used nearest transparent cutouts",
+      "local_validation": "Unexecuted; requires portrait review."
+    }
+  ],
+  "validation": {
+    "engine": "Owned scene instantiated and class-cache imports passed; latest actual-floor/lifecycle243 checks/0 failures. No collision changes from kit revisions.",
+    "portrait": "Root inspected six revised native portraits and selected left entry; see portrait_evidence for exact scope. Individual offscreen cottage/pine/lid families still require full encounter art review.",
+    "gameplay": "Kit has no gameplay systems; tracking fights/campaign acceptance pending.",
+    "static": "Owned JSON/relative resource links/UIDs and API/no clock/collision scope passed."
+  },
+  "known_limits": [
+    "Revised native portrait scoped review passed; full encounter/source-art fidelity and offscreen family review remain pending.",
+    "No automatic foreground fade exists; authored outboard placement must be checked at actual camera.",
+    "NPCs have held cutouts and retreat translation, no full motion sheet.",
+    "Owned kit nodes freed by tested reset; desktop draw cost, material-cache memory and dynamic transparency sorting remain unmeasured.",
+    "Optional reuse labels allocate no ability/equipment claim and implement no optional content."
+  ],
+  "placement_revision": {
+    "reason": "Root initial actual portrait captures showed no cylinder/witnesses at spawn and a large black region beyond the arrival end bank.",
+    "inspected_captures": [
+      "captures/act2/a2-l1-arrival-idle.png",
+      "captures/act2/a2-l1-common-recovery.png"
+    ],
+    "camera_constraint": "7.2-unit orthographic width follows hero; initial heroX0 clips scenery beyond horizontal X\u00b13.6.",
+    "changes": [
+      "Move cylinder ground anchor toX-4.8 and yawY-0.55; shallow dark-mouth recess0.12.",
+      "Two witnesses stand on side banks atX\u00b13.45,Y0.975,Z0.8; four on arrival end bank atX\u00b11.8/\u00b12.5,Y0.975,Z3.85.",
+      "Add decorative terrain X\u00b18,Z[3.6,14] and[-42,-30.2] beyond blocking end banks.",
+      "Add cropped quiet bank-top heather with feet beyond the bank inner faces, preserving the combat floor."
+    ],
+    "route_collision": "unchanged; no new collider, body, Area3D or traversal.",
+    "validation": "Original worker authored placements without engine; root subsequently inspected revised native frames/selected entry as recorded in portrait_evidence."
+  },
+  "portrait_evidence": {
+    "shared_baseline": "15589bfd956e74a659a63e843b1e1430d28227b8",
+    "native_capture_size": [
+      540,
+      1170
+    ],
+    "render_size": [
+      270,
+      585
+    ],
+    "command": "python3 scripts/dev/dev.py engine --path . --script tests/acts/act2/a2_l1_portrait_capture.gd",
+    "log": ".cinder/a2-l1-portrait-revision2.log",
+    "inspected_frames": [
+      "arrival-idle",
+      "arrival-warning",
+      "road-lock",
+      "common-recovery",
+      "departure-active",
+      "woking-defeated"
+    ],
+    "selected_entry": {
+      "spawn": [
+        -1,
+        0.1,
+        2.6
+      ],
+      "capture": "captures/act2/a2-l1-arrival-left-vignette.png",
+      "command_suffix": "-- --frame=arrival-left-vignette",
+      "log": ".cinder/a2-l1-selected-entry-portrait.log"
+    },
+    "observations": "Prepared mirror/pale facets now readable; low housing has visible open state; cylinder/witnesses visible at selected left entry with player foot separation; end scenery removes black void. Side-facing mirror is partly occluded by its case and needs shared phase/cue view in full exchange. Scenery remains original prototype, not complete source-art fidelity.",
+    "limits": "Fixture repositioning/phase posing only: no ray warning/lock/hit timing, camera-lag acceptance, humanbalance, campaignretry or final presentation claim."
+  },
+  "prior_worker_validation": {
+    "engine": "Root reports initial import/layout242 passed for prior placement; this scoped worker ran no engine. New placement/extents await root affected checks.",
+    "portrait": "This worker inspected actual initial arrival/common captures and confirmed invisible cylinder/witnesses plus foreground black void. Revised placement has not been captured.",
+    "gameplay": "No gameplay systems or route collision changed; gameplay remains untested by this worker.",
+    "static": "Revised JSON, source references, fixed floor/exterior extents, API presence and absence of collision/clock systems checked."
+  }
+}
