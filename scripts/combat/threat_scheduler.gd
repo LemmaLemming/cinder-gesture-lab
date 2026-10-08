@@ -1000,6 +1000,8 @@ func _guards_valid(guards: Array) -> bool:
 ## supplies a world_root containing EVERY layer-1 blocker in this World3D.
 ## owner_positions/owner_velocities may prevalidate staged enemy motion; restore
 ## additionally checks actual positions/velocities at commit. Apply enemies first
+## Optional owner_collision_states stages validated live lifecycle flags against
+## retained actual capsules; commit still requires actual enabled collision.
 ## without yielding. Old stationary records retain scheduler-snapshot-1 schema;
 ## new records carry an optional, strictly validated adapter object.
 ## Capture never prunes/emits; stale bindings reject. Collision signatures derive
@@ -1097,6 +1099,8 @@ func _bindings_error(bindings: Dictionary) -> String:
 		return "Staged owner_positions must be a dictionary"
 	if bindings.has("owner_velocities") and not bindings["owner_velocities"] is Dictionary:
 		return "Staged owner_velocities must be a dictionary"
+	if bindings.has("owner_collision_states") and not bindings["owner_collision_states"] is Dictionary:
+		return "Staged owner_collision_states must be a dictionary"
 	if bindings.has("actors"):
 		if not bindings.actors is Dictionary:
 			return "Replay actors must be a stable dictionary"
@@ -1116,6 +1120,13 @@ func _bindings_error(bindings: Dictionary) -> String:
 	for owner_id: Variant in bindings.get("owner_velocities", {}):
 		if not bindings["owners"].has(owner_id) or not bindings["owners"][owner_id] is CharacterBody3D or not Geometry.finite_vector(bindings["owner_velocities"][owner_id]):
 			return "Staged velocities require a mapped real source body and finite vector"
+	for owner_id: Variant in bindings.get("owner_collision_states", {}):
+		var state: Variant = bindings["owner_collision_states"][owner_id]
+		if not _stable_id(owner_id) or not bindings["owners"].has(owner_id) or not bindings["owners"][owner_id] is CharacterBody3D or not state is Dictionary:
+			return "Staged collision states require a mapped actual source body and closed state"
+		var description: Dictionary = Motion.staged_source_description(bindings["owners"][owner_id] as CharacterBody3D, state)
+		if description.has("error"):
+			return description["error"]
 	used.clear()
 	var regions: Array = []
 	for floor_id: Variant in bindings["floors"]:
@@ -1302,7 +1313,7 @@ func _snapshot_plan(snapshot: Dictionary, bindings: Dictionary) -> Dictionary:
 					committed["_replay_actor"] = weakref(actor)
 					committed["_replay_world"] = weakref(bindings.world_root)
 			else:
-				adapter = _decode_adapter(record["adapter"] if record["adapter"] is Dictionary else {}, committed, owner, regions, clock_s, bindings.get("owner_velocities", {}).get(record["source_id"], (owner as CharacterBody3D).velocity if owner is CharacterBody3D else Vector3.ZERO))
+				adapter = _decode_adapter(record["adapter"] if record["adapter"] is Dictionary else {}, committed, owner, regions, clock_s, bindings.get("owner_velocities", {}).get(record["source_id"], (owner as CharacterBody3D).velocity if owner is CharacterBody3D else Vector3.ZERO), bindings.get("owner_collision_states", {}).get(record["source_id"], {}))
 			if adapter.has("error"):
 				return adapter
 			committed["adapter"] = adapter
@@ -1444,8 +1455,10 @@ func _encode_adapter(adapter: Dictionary) -> Dictionary:
 	return encoded
 
 
-func _decode_adapter(value: Dictionary, record: Dictionary, owner: Node3D, regions: Array, clock_s: float, staged_velocity: Vector3) -> Dictionary:
+func _decode_adapter(value: Dictionary, record: Dictionary, owner: Node3D, regions: Array, clock_s: float, staged_velocity: Vector3, staged_collision: Dictionary = {}) -> Dictionary:
 	if value.get("kind") == "tracking":
+		if not staged_collision.is_empty():
+			return {"error": "Collision lifecycle staging supports only real-body lunge adapters"}
 		if not Codec.keys_error(value, ["kind", "locked", "reach", "radius", "lock_s", "active_s", "recovery_s", "attack_interval_s"]).is_empty() or not value["locked"] is bool:
 			return {"error": "Invalid tracking adapter fields"}
 		for key: String in ["reach", "radius", "lock_s", "active_s", "recovery_s", "attack_interval_s"]:
@@ -1473,8 +1486,15 @@ func _decode_adapter(value: Dictionary, record: Dictionary, owner: Node3D, regio
 	for key: String in ["speed", "distance", "duration_s", "damage_radius"]:
 		if not Codec.is_number(value[key]) or float(value[key]) <= 0.0:
 			return {"error": "Lunge adapter needs finite positive motion data"}
-	var description: Dictionary = Motion.source_description(owner as CharacterBody3D, value["body_collision_path"])
-	if description.has("error") or not Codec.same_values(description.get("signature", {}), value["body_signature"]):
+	var description: Dictionary
+	if staged_collision.is_empty():
+		description = Motion.source_description(owner as CharacterBody3D, value["body_collision_path"])
+	else:
+		if staged_collision["collision_path"] != value["body_collision_path"]:
+			return {"error": "Staged capsule path differs from the saved lunge body"}
+		description = Motion.staged_source_description(owner as CharacterBody3D, staged_collision)
+	var signature_matches: bool = _same_replay(description.get("signature", {}), value["body_signature"]) if not staged_collision.is_empty() else Codec.same_values(description.get("signature", {}), value["body_signature"])
+	if description.has("error") or not signature_matches:
 		return {"error": "Saved lunge physical source signature changed"}
 	var direction: Vector3 = adapter["direction"]
 	var route: Vector3 = adapter["planned_endpoint"] - adapter["start"]

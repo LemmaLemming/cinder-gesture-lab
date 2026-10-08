@@ -53,6 +53,7 @@ SUITES = {
     "lane_mechanism": "tests/lane_mechanism_smoke.gd",
     "threat_adapters": "tests/threat_adapter_smoke.gd",
     "lunge_motion": "tests/lunge_motion_smoke.gd",
+    "staged_lunge_collision": "tests/staged_lunge_collision_smoke.gd",
     "body_sweep": "tests/body_sweep_smoke.gd",
     "action_capture": "tests/action_capture_smoke.gd",
     "level_player_context": "tests/level_player_context_smoke.gd",
