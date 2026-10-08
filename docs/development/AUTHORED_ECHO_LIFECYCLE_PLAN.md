@@ -1,8 +1,8 @@
-# Authored Echo lifecycle supplement — proposed Shared30
+# Authored Echo lifecycle supplement — proposed Shared31
 
 This is a **design draft, not an implemented or published interface**. It follows canonical Act 3 request `a40888b2-58d1-4574-a38a-1b9b824cbe67`, a supplement to `8b06b4ea-d6f6-41f3-8931-79e6b41ec704`. The request was created on 8 October 2026 at 20:29 UTC. It asks for later full-level saves of genuinely defeated Echoes and another cycle on the same surviving actual owner. It does not request new art support, a Player ability, a moving physical Echo or concurrent mixed commitments.
 
-The proposed Shared28 first-cycle publication remains a bounded stationary, exclusive, enemy-authored prototype. Its constructor, physical consumer and native evidence do not resolve these lifecycle requests. Shared30 must supply and test this supplement separately. This document changes no runtime, schemas, actor, engine queue or acceptance status.
+The proposed Shared28 first-cycle publication remains a bounded stationary, exclusive, enemy-authored prototype. Its constructor, physical consumer and native evidence do not resolve these lifecycle requests. Shared31 must supply and test this supplement separately. This document changes no runtime, schemas, actor, engine queue or acceptance status.
 
 ## The concrete current limits
 
@@ -89,7 +89,7 @@ source_id, source_epoch, generation, stage, sequence, terminal_receipts
 
 The proposed Playback API2 `lifecycle` field is that same exact six-key source entry, equal to its actual/staged Scheduler journal entry. Its ordinary running/terminal payload retains the original program/exchange/current prefix fields and projection where required. It does not embed another API2 Playback snapshot inside the journal; `terminal_receipts` is the sole terminal-history list. Never translate older speculative seven-key `initial_generation/current_generation/current_stage/history` shapes into accepted bytes or recursively nest lifecycle snapshots.
 
-These pure codec files are a separately released implementation draft outside shared28/29. Their targeted native pure-data fixture passed233/0 on a frozen original subset; synthetic histories are not actual admissions, HP ownership or native two-cycle proof. Native Scheduler3/API2 source custody, generation management and whole-parent restoration remain to be implemented and tested before shared30 is published.
+These pure codec files are a separately released implementation draft outside shared28/29. Their targeted native pure-data fixture passed233/0 on a frozen original subset; synthetic histories are not actual admissions, HP ownership or native two-cycle proof. Native Scheduler3/API2 source custody, generation management and whole-parent restoration remain to be implemented and tested before shared31 is published.
 
 ### Reduced terminal receipt
 

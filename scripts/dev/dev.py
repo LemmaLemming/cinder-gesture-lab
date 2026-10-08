@@ -50,6 +50,7 @@ SUITES = {
     "act1_l2_registration": "tests/act1_l2_registration_smoke.gd",
     "act2_registration": "tests/act2_registration_smoke.gd",
     "act2_l2_registration": "tests/act2_l2_registration_smoke.gd",
+    "act2_l3_registration": "tests/act2_l3_registration_smoke.gd",
     "act3_registration": "tests/act3_registration_smoke.gd",
     "act3_l2_registration": "tests/act3_l2_registration_smoke.gd",
     "pause_barrier": "tests/pause_barrier_smoke.gd",

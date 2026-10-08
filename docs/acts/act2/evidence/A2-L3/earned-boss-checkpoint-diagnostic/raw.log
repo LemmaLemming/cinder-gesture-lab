@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Earned B02 source: res://docs/acts/act2/evidence/A2-L3/live-heavy-side-source-first/earned-boss-checkpoint.json SHA256=d03d0c4408056811fa951691e511c39ab0cc6fb0119da63cbf4f8761524da5a0
+B02 Continue diagnostic: { "restore_events": ["ray-phase", "ray-phase"], "paused": true, "menu": "resume", "payload_equal": true, "checkpoint_equal": true, "story_snapshot_equal": true, "campaign_error": "", "attempt_warning": "", "first_exact_payload_differences": [] }
+ERROR: fresh Continue quietly restores exact original story snapshot while preserving its protected B02 checkpoint
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act2/a2_l2_live_level_smoke.gd:692)
+       [1] _bc_restore_route (res://tests/acts/act2/a2_l3_boss_checkpoint_smoke.gd:111)
+       [2] _lc_click (res://tests/acts/act2/a2_l3_retry_level_smoke.gd:219)
+       [3] _lc_settle (res://tests/acts/act2/a2_l3_retry_level_smoke.gd:350)
+A2-L3 earned B02 checkpoint smoke: 81 checks, 1 failures; original actual HP15 checkpoint/fresh GUI Continue/eight real ticks/GUI Retry, no route/fatal/extrema claim
