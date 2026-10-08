@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/smoke_bank_level.gd" id="1"]
+
+[sub_resource type="BoxShape3D" id="Box_floor"]
+size = Vector3(20, 1, 20)
+
+[node name="SmokeBankFixture" type="Node3D"]
+script = ExtResource("1")
+level_id = "A1-L1"
+objective_text = "TEST ONLY SMOKE BANK"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 0)
+
+[node name="Floor" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Collision" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("Box_floor")
