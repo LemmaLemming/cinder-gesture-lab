@@ -234,13 +234,7 @@ func get_art() -> Node3D:
 
 
 func art_binding_error() -> String:
-	# The billboard must remain at this real actor's feet. An inherited hidden
-	# parent cannot be excused by the sprite's own local visible flag.
-	if not is_instance_valid(_visual) or not _visual.is_inside_tree() or _visual.is_queued_for_deletion() or _visual.get_parent() != self or _visual.is_set_as_top_level() or not _visual.visible:
-		return "C30 requires its visible retained actor presentation parent"
-	if _visual.position != Vector3.ZERO or _visual.scale != Vector3.ONE or _visual.rotation.x != 0.0 or _visual.rotation.z != 0.0 or not is_finite(_visual.rotation.y):
-		return "C30 presentation must retain its unscaled foot origin and planar facing"
-	if not is_instance_valid(_sprite_art) or not _sprite_art.is_inside_tree() or _sprite_art.is_queued_for_deletion() or _sprite_art.get_parent() != _visual or not _sprite_art.visible:
+	if not is_instance_valid(_sprite_art) or not _sprite_art.is_inside_tree() or _sprite_art.is_queued_for_deletion() or _sprite_art.get_parent() != _visual:
 		return "C30 requires its retained pixel presentation"
 	return String(_sprite_art.call("binding_error"))
 

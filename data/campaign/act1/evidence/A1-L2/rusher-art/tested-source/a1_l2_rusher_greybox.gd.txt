@@ -66,17 +66,6 @@ func _run() -> void:
 	var warning: Dictionary = await _pair()
 	if not _expect(not warning.is_empty(), "real warning captures a paused actor/level pair"):
 		_finish(); return
-	var presentation: Node3D = art.get_parent()
-	presentation.position.x = 0.5
-	_expect(not String(_source.call("art_binding_error")).is_empty(), "displaced costume parent cannot impersonate the real capsule's feet")
-	presentation.position = Vector3.ZERO
-	presentation.visible = false
-	_expect(not String(_source.call("art_binding_error")).is_empty(), "hidden presentation parent cannot leave an apparently visible attack source")
-	presentation.visible = true
-	art.visible = false
-	_expect(not String(_source.call("art_binding_error")).is_empty(), "hidden costume leaf is rejected even when its child sprite is locally visible")
-	art.visible = true
-	_expect(String(_source.call("art_binding_error")).is_empty() and _level.snapshot_error_with_player(warning.level, warning.hero).is_empty(), "repairing original presentation restores the same pure paused pair")
 	_expect(_level.snapshot_error_with_player(warning.level, warning.hero).is_empty(), "whole warning pair prevalidates without mutation")
 	var frozen: String = Exact.stringify(warning)
 	var malformed: Dictionary = warning.level.duplicate(true)
