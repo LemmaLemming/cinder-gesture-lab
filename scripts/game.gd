@@ -1,5 +1,10 @@
 extends Node
 
+## Observation of this recognizer, separate from executed world-action records.
+## Signals never change the release anchor, redirect an attack or gate controls.
+signal input_observed(record: Dictionary)
+signal aim_anchor_changed(normalized_release: Vector2)
+
 const PlayerScript = preload("res://scripts/player.gd")
 const PlayerScene = preload("res://scenes/player.tscn")
 const TargetScene = preload("res://scenes/practice_target.tscn")
@@ -35,6 +40,8 @@ var _last_tap_time: int = -1000
 var _last_tap_position := Vector2.ZERO
 # Store the completed swipe endpoint in viewport fractions so resizing stays consistent.
 var _swipe_end_normalized := Vector2(0.5, 0.5)
+var _input_sequence: int = 0
+var _last_input_observation: Dictionary = {}
 const CAMERA_OFFSET: Vector3 = Vector3(0, 18, 13)
 # Exponential follow: a distant player pulls faster; approach eases without
 # changing camera angle, controller motion or the screen-space aim anchor.
@@ -200,12 +207,16 @@ func reset_lab() -> void:
 	_pointers.clear()
 	_last_tap_time = -1000
 	_swipe_end_normalized = Vector2(0.5, 0.5)
+	_input_sequence = 0
+	_last_input_observation.clear()
 	cores = 0
 	kills = 0
 	_enemy_count = 0
 	active_level = _create_level_instance()
 	world.add_child(active_level)
 	player = PlayerScene.instantiate()
+	if not active_level.level_id.is_empty():
+		player.set_presentation(LabSprite.presentation_for_act(int(active_level.level_id.substr(1, 1))))
 	if not loadout.is_empty():
 		player.equipment.restore(loadout)
 	player.name = "Player"
@@ -219,7 +230,7 @@ func reset_lab() -> void:
 	player.fired.connect(_on_fired)
 	player.died.connect(func() -> void: hud.show_end(false, cores))
 	player.equipment_changed.connect(func(id: String) -> void: hud.flash_message("Equipped " + player.equipment.item_name(id)))
-	active_level.enter_level(player, fx)
+	active_level.enter_level(player, fx, self)
 	hud.set_level_preview(not is_lab_level())
 	if is_lab_level():
 		_build_lab_exercise()
@@ -393,6 +404,26 @@ func _record_swipe_end(screen_pos: Vector2) -> void:
 	var size: Vector2 = get_viewport().get_visible_rect().size
 	_swipe_end_normalized = screen_pos / size
 	_last_tap_time = -1000
+	aim_anchor_changed.emit(_swipe_end_normalized)
+	_observe_input("swipe_release", screen_pos, Vector3.ZERO, false)
+
+func get_input_observation_state() -> Dictionary:
+	return {"schema_version": 1, "anchor_normalized": _swipe_end_normalized, "sequence": _input_sequence, "last_observation": _last_input_observation.duplicate(true)}
+
+func get_aim_anchor_normalized() -> Vector2:
+	return _swipe_end_normalized
+
+func _observe_input(kind: String, screen_pos: Vector2, direction: Vector3, accepted: bool) -> void:
+	_input_sequence += 1
+	var records: Array[Dictionary] = player.get_world_action_records() if is_instance_valid(player) else []
+	_last_input_observation = {
+		"schema_version": 1, "sequence": _input_sequence, "kind": kind,
+		"screen_position_normalized": screen_pos / get_viewport().get_visible_rect().size,
+		"anchor_normalized": _swipe_end_normalized, "direction": direction,
+		"accepted": accepted, "world_action_sequence": 0 if records.is_empty() else int(records.back().sequence),
+		"action_clock_s": player.get_world_action_clock() if is_instance_valid(player) else 0.0,
+	}
+	input_observed.emit(_last_input_observation.duplicate(true))
 
 func get_aim_anchor() -> Vector2:
 	return _swipe_end_normalized * get_viewport().get_visible_rect().size
@@ -414,18 +445,25 @@ func _update_camera(delta: float, snap: bool = false) -> void:
 	camera.global_position = _camera_focus + CAMERA_OFFSET
 
 func handle_tap(screen_pos: Vector2) -> void:
-	if get_tree().paused:
+	if get_tree().paused or not is_instance_valid(player) or player.dead:
 		return
 	# Aim is relative to the final finger position of the last completed swipe.
 	var direction: Vector3 = aim_direction(screen_pos)
 	var now: int = Time.get_ticks_msec()
+	var before: Array[Dictionary] = player.get_world_action_records()
+	var sequence_before: int = 0 if before.is_empty() else int(before.back().sequence)
+	var kind: String = "primary_tap"
 	if now - _last_tap_time <= 280 and screen_pos.distance_to(_last_tap_position) < 90:
 		player.blast(direction)
 		_last_tap_time = -1000
+		kind = "blast_tap"
 	else:
 		player.slash(direction)
 		_last_tap_time = now
 		_last_tap_position = screen_pos
+	var after: Array[Dictionary] = player.get_world_action_records()
+	var accepted: bool = not after.is_empty() and int(after.back().sequence) > sequence_before
+	_observe_input(kind, screen_pos, player.facing if direction.is_zero_approx() else direction, accepted)
 
 func _on_fired(kind: String) -> void:
 	_shake = 0.12 if kind == "blast" else 0.035

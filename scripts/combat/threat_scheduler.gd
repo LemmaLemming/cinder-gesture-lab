@@ -17,7 +17,10 @@ signal reservation_invalidated(reservation_id: String, reason: String)
 
 const DifficultyScript = preload("res://scripts/combat/difficulty.gd")
 const Geometry = preload("res://scripts/combat/threat_geometry.gd")
-const API_REVISION: String = "threat-scheduler-1"
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const API_REVISION: String = "threat-scheduler-2"
+const SNAPSHOT_API_REVISION: String = "scheduler-snapshot-1"
+const SNAPSHOT_SCHEMA_VERSION: int = 1
 const CAPSULE_RADIUS: float = 0.32
 const CAPSULE_HEIGHT: float = 1.45
 const CAPSULE_CENTER_Y: float = 0.73
@@ -27,6 +30,7 @@ const EPSILON: float = 0.00001
 const TIME_MARGIN: float = 0.001
 
 var last_error: String = ""
+var last_snapshot_error: String = ""
 var _difficulty = DifficultyScript.new()
 var _profile: Dictionary = {}
 var _encounter_id: String = ""
@@ -36,6 +40,9 @@ var _serial: int = 0
 var _reservations: Dictionary = {}
 var _cooldowns: Dictionary = {}
 var _boundary_busy: bool = false
+var _snapshot_busy: bool = false
+var _request_busy: bool = false
+var _transaction_depth: int = 0
 
 
 func _ready() -> void:
@@ -44,7 +51,7 @@ func _ready() -> void:
 
 func begin_encounter(profile_id: String, encounter_id: String = "encounter", world_revision: int = 1) -> bool:
 	last_error = ""
-	if _boundary_busy or not _encounter_id.is_empty():
+	if _snapshot_busy or _request_busy or _transaction_depth > 0 or _boundary_busy or not _encounter_id.is_empty():
 		last_error = "End the current encounter before applying another profile"
 		return false
 	var selected: Dictionary = _difficulty.profile(profile_id)
@@ -61,7 +68,7 @@ func begin_encounter(profile_id: String, encounter_id: String = "encounter", wor
 
 
 func end_encounter(reason: String = "encounter_end") -> void:
-	if _boundary_busy:
+	if _snapshot_busy or _request_busy or _transaction_depth > 0 or _boundary_busy:
 		return
 	_boundary_busy = true
 	for reservation_id: String in _reservations.keys():
@@ -81,6 +88,18 @@ func get_clock() -> float:
 
 
 func request_attack(owner: Node3D, threat: Dictionary, response: Dictionary) -> Dictionary:
+	if _snapshot_busy or _request_busy:
+		last_error = "Scheduler transaction is already in progress"
+		return {"accepted": false, "reason": last_error}
+	_request_busy = true
+	_transaction_depth += 1
+	var result: Dictionary = _request_attack(owner, threat, response)
+	_transaction_depth -= 1
+	_request_busy = false
+	return result
+
+
+func _request_attack(owner: Node3D, threat: Dictionary, response: Dictionary) -> Dictionary:
 	_prune()
 	last_error = _request_error(owner, threat, response)
 	if not last_error.is_empty():
@@ -130,17 +149,19 @@ func request_attack(owner: Node3D, threat: Dictionary, response: Dictionary) -> 
 
 
 func cancel(reservation_id: String, reason: String = "cancelled") -> bool:
-	if not _reservations.has(reservation_id):
+	if _snapshot_busy or not _reservations.has(reservation_id):
 		return false
 	_reservations.erase(reservation_id)
 	# Cancellation releases geometry/budget; cooldown remains conservative until
 	# the scheduled role interval expires. Death/removal cancels owner cooldown too.
+	_transaction_depth += 1
 	reservation_invalidated.emit(reservation_id, reason)
+	_transaction_depth -= 1
 	return true
 
 
 func cancel_owner(owner: Node3D, reason: String = "source_defeated") -> void:
-	if _boundary_busy or not is_instance_valid(owner):
+	if _snapshot_busy or _boundary_busy or not is_instance_valid(owner):
 		return
 	_boundary_busy = true
 	var instance_id: int = owner.get_instance_id()
@@ -154,7 +175,7 @@ func cancel_owner(owner: Node3D, reason: String = "source_defeated") -> void:
 
 
 func invalidate_world(new_revision: int) -> void:
-	if _boundary_busy:
+	if _snapshot_busy or _boundary_busy:
 		return
 	if new_revision <= _world_revision:
 		last_error = "Collision world revision must increase"
@@ -167,7 +188,8 @@ func invalidate_world(new_revision: int) -> void:
 
 
 func reservations() -> Array[Dictionary]:
-	_prune()
+	if not _snapshot_busy:
+		_prune()
 	var result: Array[Dictionary] = []
 	for record: Dictionary in _reservations.values():
 		var copy: Dictionary = record.duplicate(true)
@@ -181,8 +203,10 @@ func reservations() -> Array[Dictionary]:
 func _physics_process(delta: float) -> void:
 	if _encounter_id.is_empty():
 		return
+	_transaction_depth += 1
 	_clock += delta
 	_prune()
+	_transaction_depth -= 1
 
 
 func _prune() -> void:
@@ -349,7 +373,7 @@ func _floor_error(regions: Variant, position: Vector3) -> String:
 		if not is_instance_valid(collision) or not collision.is_inside_tree() or collision.disabled or not collision.shape is BoxShape3D or not collision.get_parent() is StaticBody3D or not collision.global_basis.is_equal_approx(Basis.IDENTITY):
 			return "Floor proof requires a live unrotated solid static box collider"
 		var body: StaticBody3D = collision.get_parent() as StaticBody3D
-		if body.get_world_3d() != get_world_3d() or (body.collision_layer & 1) == 0:
+		if body.is_queued_for_deletion() or body.get_world_3d() != get_world_3d() or (body.collision_layer & 1) == 0:
 			return "Floor collider must participate in the shared scenery mask"
 		var collision_count: int = 0
 		for child: Node in body.get_children():
@@ -449,7 +473,7 @@ func _floor_guards(regions: Array) -> Array[Dictionary]:
 	var guards: Array[Dictionary] = []
 	for region: Dictionary in regions:
 		var collision: CollisionShape3D = region["collision"]
-		guards.append({"node": weakref(collision), "transform": collision.global_transform, "size": (collision.shape as BoxShape3D).size})
+		guards.append({"node": weakref(collision), "transform": collision.global_transform, "size": (collision.shape as BoxShape3D).size, "safe_rect": region["safe_rect"]})
 	return guards
 
 
@@ -459,3 +483,385 @@ func _guards_valid(guards: Array) -> bool:
 		if not is_instance_valid(collision) or not collision.is_inside_tree() or collision.disabled or not collision.shape is BoxShape3D or not collision.global_transform.is_equal_approx(guard["transform"]) or not (collision.shape as BoxShape3D).size.is_equal_approx(guard["size"]):
 			return false
 	return true
+
+
+## Paused aggregate transport. bindings names stable authored owners/floors and
+## supplies a world_root containing EVERY layer-1 blocker in this World3D.
+## owner_positions may prevalidate staged enemy transforms; restore additionally
+## checks actual transforms at commit. Apply enemies first without yielding.
+## Capture never prunes/emits; stale bindings reject. Collision signatures derive
+## from actual shape-owner data, not caller-supplied hashes or visual meshes.
+func snapshot_state(bindings: Dictionary) -> Dictionary:
+	last_snapshot_error = _snapshot_access_error()
+	if not last_snapshot_error.is_empty():
+		return {}
+	_snapshot_busy = true
+	last_snapshot_error = _bindings_error(bindings)
+	var result: Dictionary = {}
+	if last_snapshot_error.is_empty():
+		result = _capture_snapshot(bindings)
+		if not result.is_empty():
+			last_snapshot_error = _snapshot_plan(result, bindings).get("error", "")
+	_snapshot_busy = false
+	return result.duplicate(true) if last_snapshot_error.is_empty() else {}
+
+
+func snapshot_error(snapshot: Dictionary, bindings: Dictionary) -> String:
+	var error: String = _snapshot_access_error()
+	if not error.is_empty():
+		return error
+	_snapshot_busy = true
+	var plan: Dictionary = _snapshot_plan(snapshot, bindings)
+	_snapshot_busy = false
+	return plan.get("error", "")
+
+
+func restore_state(snapshot: Dictionary, bindings: Dictionary) -> bool:
+	last_snapshot_error = _snapshot_access_error()
+	if not last_snapshot_error.is_empty():
+		return false
+	_snapshot_busy = true
+	var plan: Dictionary = _snapshot_plan(snapshot, bindings)
+	last_snapshot_error = plan.get("error", "")
+	if last_snapshot_error.is_empty():
+		for record: Dictionary in plan["reservations"].values():
+			var owner: Node3D = (record["_owner"] as WeakRef).get_ref() as Node3D
+			if not is_instance_valid(owner) or not owner.global_position.is_equal_approx(record["source_position"]):
+				last_snapshot_error = "Apply validated enemy positions before scheduler commit"
+				break
+	if last_snapshot_error.is_empty():
+		# No callbacks, attack requests, damage, cancellation or retiming here.
+		_encounter_id = plan["encounter_id"]
+		_profile = plan["profile"].duplicate(true)
+		_world_revision = plan["world_revision"]
+		_clock = plan["clock_s"]
+		_serial = plan["serial"]
+		_reservations = plan["reservations"]
+		_cooldowns = plan["cooldowns"]
+	_snapshot_busy = false
+	return last_snapshot_error.is_empty()
+
+
+func collision_fingerprint(world_root: Node3D) -> Dictionary:
+	## Public diagnostic only. Empty + last_snapshot_error means unsupported.
+	var result: Dictionary = _collision_signature(world_root)
+	last_snapshot_error = result.get("error", "")
+	return (result.get("signature", {}) as Dictionary).duplicate(true)
+
+
+func _snapshot_access_error() -> String:
+	if not is_inside_tree() or not get_tree().paused:
+		return "Scheduler snapshots require a paused live tree"
+	if _snapshot_busy or _boundary_busy or _request_busy or _transaction_depth > 0:
+		return "Scheduler snapshots require a deferred callback/physics barrier"
+	return ""
+
+
+func _stable_id(value: Variant) -> bool:
+	if not value is String or value.is_empty() or value.length() > 128:
+		return false
+	var pattern := RegEx.new()
+	pattern.compile("^[A-Za-z0-9_./:-]+$")
+	var matched: RegExMatch = pattern.search(value)
+	return matched != null and matched.get_string() == value
+
+
+func _under_root(node: Node, world_root: Node3D) -> bool:
+	return node == world_root or world_root.is_ancestor_of(node)
+
+
+func _bindings_error(bindings: Dictionary) -> String:
+	var world_root: Node3D = bindings.get("world_root") as Node3D
+	if not is_instance_valid(world_root) or not world_root.is_inside_tree() or world_root.is_queued_for_deletion() or world_root.get_world_3d() != get_world_3d():
+		return "Live same-world authored world_root required"
+	if not bindings.get("owners") is Dictionary or not bindings.get("floors") is Dictionary:
+		return "Stable owner and floor mappings required"
+	if bindings.has("owner_positions") and not bindings["owner_positions"] is Dictionary:
+		return "Staged owner_positions must be a dictionary"
+	var used: Dictionary = {}
+	for owner_id: Variant in bindings["owners"]:
+		var owner: Node3D = bindings["owners"][owner_id] as Node3D
+		if not _stable_id(owner_id) or not is_instance_valid(owner) or not owner.is_inside_tree() or owner.is_queued_for_deletion() or owner.get_world_3d() != get_world_3d() or not _under_root(owner, world_root) or used.has(owner.get_instance_id()):
+			return "Owner IDs must map uniquely to live nodes under world_root"
+		used[owner.get_instance_id()] = true
+	for owner_id: Variant in bindings.get("owner_positions", {}):
+		if not bindings["owners"].has(owner_id) or not Geometry.finite_vector(bindings["owner_positions"][owner_id]):
+			return "Staged positions require a mapped stable owner and finite vector"
+	used.clear()
+	var regions: Array = []
+	for floor_id: Variant in bindings["floors"]:
+		var region: Variant = bindings["floors"][floor_id]
+		if not _stable_id(floor_id) or not region is Dictionary:
+			return "Stable authored floor IDs required"
+		var collision: CollisionShape3D = region.get("collision") as CollisionShape3D
+		if not is_instance_valid(collision) or not collision.is_inside_tree() or collision.is_queued_for_deletion() or not _under_root(collision, world_root) or used.has(collision.get_instance_id()):
+			return "Floor IDs must map uniquely to live colliders under world_root"
+		used[collision.get_instance_id()] = true
+		regions.append(region)
+	if not regions.is_empty():
+		var first: CollisionShape3D = regions[0].get("collision") as CollisionShape3D
+		if not first.shape is BoxShape3D:
+			return "Snapshot floor bindings require supported box floors"
+		var floor_y: float = first.global_position.y + (first.shape as BoxShape3D).size.y * 0.5
+		return _floor_error(regions, Vector3(0, floor_y - CAPSULE_CENTER_Y + CAPSULE_HEIGHT * 0.5, 0))
+	return ""
+
+
+func _capture_snapshot(bindings: Dictionary) -> Dictionary:
+	var collision: Dictionary = _collision_signature(bindings["world_root"])
+	if collision.has("error"):
+		last_snapshot_error = collision["error"]
+		return {}
+	var records: Array = []
+	for reservation: Dictionary in _reservations.values():
+		if float(reservation["recovery_until_s"]) < _clock:
+			continue # Pure output filtering; no lifecycle signals.
+		var owner: Node3D = (reservation["_owner"] as WeakRef).get_ref() as Node3D
+		var owner_id: String = _binding_id(bindings["owners"], owner)
+		if owner_id.is_empty() or not owner.global_position.is_equal_approx(reservation["source_position"]) or not _guards_valid(reservation["_floor_guards"]):
+			last_snapshot_error = "Reservation has stale owner/floor bindings"
+			return {}
+		var floors: Array = []
+		for guard: Dictionary in reservation["_floor_guards"]:
+			var node: CollisionShape3D = (guard["node"] as WeakRef).get_ref() as CollisionShape3D
+			var floor_id: String = ""
+			for candidate_id: String in bindings["floors"]:
+				if bindings["floors"][candidate_id]["collision"] == node:
+					floor_id = candidate_id
+			if floor_id.is_empty():
+				last_snapshot_error = "Reserved floor has no stable binding"
+				return {}
+			if not (guard["safe_rect"] as Rect2).is_equal_approx(bindings["floors"][floor_id]["safe_rect"]):
+				last_snapshot_error = "Reserved authored safe rectangle changed"
+				return {}
+			floors.append({"floor_id": floor_id, "signature": _floor_signature(bindings["floors"][floor_id], bindings["world_root"])})
+		var record: Dictionary = {"id": reservation["id"], "source_id": owner_id, "source_position": Codec.vector3(reservation["source_position"]), "geometry": _encode_geometry(reservation["geometry"]), "opening_position": Codec.vector3(reservation["opening_position"]), "floors": floors}
+		for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "profile_id", "world_revision"]:
+			record[key] = reservation[key]
+		records.append(record)
+	var cooldowns: Array = []
+	for cooldown: Dictionary in _cooldowns.values():
+		if float(cooldown["ready_s"]) <= _clock:
+			continue
+		var owner_id: String = _binding_id(bindings["owners"], (cooldown["owner"] as WeakRef).get_ref())
+		if owner_id.is_empty():
+			last_snapshot_error = "Cooldown has no stable live owner binding"
+			return {}
+		cooldowns.append({"source_id": owner_id, "ready_s": cooldown["ready_s"]})
+	return {"api_revision": SNAPSHOT_API_REVISION, "schema_version": SNAPSHOT_SCHEMA_VERSION, "encounter_id": _encounter_id, "profile": _profile.duplicate(true), "world_revision": _world_revision, "clock_s": _clock, "serial": _serial, "collision": collision["signature"], "reservations": records, "cooldowns": cooldowns}
+
+
+func _binding_id(mapping: Dictionary, node: Object) -> String:
+	if not is_instance_valid(node):
+		return ""
+	for stable_id: String in mapping:
+		if mapping[stable_id] == node:
+			return stable_id
+	return ""
+
+
+func _snapshot_plan(snapshot: Dictionary, bindings: Dictionary) -> Dictionary:
+	var error: String = Codec.value_error(snapshot)
+	if error.is_empty():
+		error = Codec.keys_error(snapshot, ["api_revision", "schema_version", "encounter_id", "profile", "world_revision", "clock_s", "serial", "collision", "reservations", "cooldowns"])
+	if error.is_empty():
+		error = _bindings_error(bindings)
+	if not error.is_empty():
+		return {"error": error}
+	if snapshot["api_revision"] != SNAPSHOT_API_REVISION or not Codec.is_integer(snapshot["schema_version"], SNAPSHOT_SCHEMA_VERSION, SNAPSHOT_SCHEMA_VERSION) or not snapshot["encounter_id"] is String or not snapshot["profile"] is Dictionary or not Codec.is_integer(snapshot["world_revision"]) or not Codec.is_integer(snapshot["serial"]) or not Codec.is_number(snapshot["clock_s"]) or float(snapshot["clock_s"]) < 0.0 or not snapshot["reservations"] is Array or not snapshot["cooldowns"] is Array:
+		return {"error": "Invalid scheduler snapshot envelope"}
+	var profile: Dictionary = snapshot["profile"]
+	if snapshot["encounter_id"].is_empty():
+		if not profile.is_empty() or not snapshot["reservations"].is_empty() or not snapshot["cooldowns"].is_empty():
+			return {"error": "Idle scheduler cannot retain committed exchanges"}
+	elif not _stable_id(snapshot["encounter_id"]) or int(snapshot["world_revision"]) < 1 or not profile.get("id") is String or not Codec.same_values(profile, _difficulty.profile(profile["id"])) or profile.is_empty():
+		return {"error": "Encounter profile/revision no longer matches the catalogue"}
+	var collision: Dictionary = _collision_signature(bindings["world_root"])
+	if collision.has("error"):
+		return collision
+	if not Codec.same_values(snapshot["collision"], collision["signature"]):
+		return {"error": "Actual authored collision fingerprint changed"}
+	var records: Dictionary = {}
+	var owners: Dictionary = {}
+	var cooldowns: Dictionary = {}
+	var clock_s: float = snapshot["clock_s"]
+	var budget: int = 0
+	for value: Variant in snapshot["reservations"]:
+		if not value is Dictionary:
+			return {"error": "Reservation must be a dictionary"}
+		var record: Dictionary = value
+		error = Codec.keys_error(record, ["id", "source_id", "source_position", "geometry", "opening_position", "floors", "start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "profile_id", "world_revision"])
+		if not error.is_empty() or not record["id"] is String or not record["id"].begins_with("threat-") or not record["id"].substr(7).is_valid_int() or not Codec.is_integer(int(record["id"].substr(7)), 1, int(snapshot["serial"])) or record["id"] != "threat-%d" % int(record["id"].substr(7)) or records.has(record["id"]) or not _stable_id(record["source_id"]) or not bindings["owners"].has(record["source_id"]) or owners.has(record["source_id"]) or not Codec.is_vector3(record["source_position"]) or not Codec.is_vector3(record["opening_position"]) or not record["geometry"] is Dictionary or not record["floors"] is Array or record["floors"].is_empty() or record["profile_id"] != profile.get("id") or record["world_revision"] != snapshot["world_revision"]:
+			return {"error": "Invalid reservation identity/bindings"}
+		for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
+			if not Codec.is_number(record[key]) or float(record[key]) < 0.0:
+				return {"error": "Reservation deadlines must be finite and nonnegative"}
+		if not (record["start_s"] < record["lock_from_s"] and record["lock_from_s"] < record["active_from_s"] and record["active_from_s"] < record["active_until_s"] and record["active_until_s"] < record["recovery_until_s"] and record["active_from_s"] < record["cooldown_until_s"] and record["start_s"] <= clock_s + EPSILON and clock_s <= record["recovery_until_s"] + EPSILON):
+			return {"error": "Reservation phase deadline order or clock is incoherent"}
+		var geometry: Dictionary = _decode_geometry(record["geometry"])
+		if geometry.is_empty():
+			return {"error": "Invalid serialized authoritative geometry"}
+		var owner: Node3D = bindings["owners"][record["source_id"]]
+		var source_position: Vector3 = Codec.read_vector3(record["source_position"])
+		var staged: Vector3 = bindings.get("owner_positions", {}).get(record["source_id"], owner.global_position)
+		if not staged.is_equal_approx(source_position):
+			return {"error": "Bound/staged owner position differs from saved exchange"}
+		var regions: Array = []
+		var floor_ids: Dictionary = {}
+		for floor_value: Variant in record["floors"]:
+			if not floor_value is Dictionary or not Codec.keys_error(floor_value, ["floor_id", "signature"]).is_empty() or not _stable_id(floor_value["floor_id"]) or not bindings["floors"].has(floor_value["floor_id"]) or floor_ids.has(floor_value["floor_id"]):
+				return {"error": "Reserved floor ID is missing or duplicated"}
+			var region: Dictionary = bindings["floors"][floor_value["floor_id"]]
+			if not Codec.same_values(floor_value["signature"], _floor_signature(region, bindings["world_root"])):
+				return {"error": "Authored floor signature changed"}
+			floor_ids[floor_value["floor_id"]] = true
+			regions.append(region)
+		var committed: Dictionary = record.duplicate(true)
+		committed.erase("source_id")
+		committed.erase("floors")
+		committed["source_position"] = source_position
+		committed["opening_position"] = Codec.read_vector3(record["opening_position"])
+		committed["geometry"] = geometry
+		committed["source_instance_id"] = owner.get_instance_id()
+		committed["_owner"] = weakref(owner)
+		committed["_floor_guards"] = _floor_guards(regions)
+		records[record["id"]] = committed
+		owners[record["source_id"]] = record
+		if float(record["active_until_s"]) >= clock_s:
+			budget += 1
+	if not profile.is_empty() and budget > int(profile["reserved_threat_budget"]):
+		return {"error": "Snapshot exceeds its preparing/active threat budget"}
+	var committed_records: Array = records.values()
+	for first_index: int in range(committed_records.size()):
+		for second_index: int in range(first_index + 1, committed_records.size()):
+			var first: Dictionary = committed_records[first_index]
+			var second: Dictionary = committed_records[second_index]
+			if float(first["active_until_s"]) >= clock_s and float(second["active_until_s"]) >= clock_s and absf(float(first["active_from_s"]) - float(second["active_from_s"])) < float(profile["commit_stagger_s"]) - EPSILON:
+				return {"error": "Snapshot committed activations lost their visible stagger"}
+	for value: Variant in snapshot["cooldowns"]:
+		if not value is Dictionary or not Codec.keys_error(value, ["source_id", "ready_s"]).is_empty() or not _stable_id(value["source_id"]) or not bindings["owners"].has(value["source_id"]) or not Codec.is_number(value["ready_s"]) or float(value["ready_s"]) <= clock_s:
+			return {"error": "Invalid retained source cooldown"}
+		var owner: Node3D = bindings["owners"][value["source_id"]]
+		if cooldowns.has(owner.get_instance_id()):
+			return {"error": "Duplicated source cooldown"}
+		cooldowns[owner.get_instance_id()] = {"owner": weakref(owner), "ready_s": float(value["ready_s"])}
+	for owner_id: String in owners:
+		var record: Dictionary = owners[owner_id]
+		var instance_id: int = (bindings["owners"][owner_id] as Node3D).get_instance_id()
+		if float(record["cooldown_until_s"]) > clock_s and (not cooldowns.has(instance_id) or not is_equal_approx(float(cooldowns[instance_id]["ready_s"]), float(record["cooldown_until_s"]))):
+			return {"error": "Reservation and retained cooldown disagree"}
+	return {"encounter_id": snapshot["encounter_id"], "profile": profile.duplicate(true), "world_revision": int(snapshot["world_revision"]), "clock_s": clock_s, "serial": int(snapshot["serial"]), "reservations": records, "cooldowns": cooldowns}
+
+
+func _encode_geometry(geometry: Dictionary) -> Dictionary:
+	var result: Dictionary = geometry.duplicate(true)
+	for key: String in result:
+		if result[key] is Vector3:
+			result[key] = Codec.vector3(result[key])
+	return result
+
+
+func _decode_geometry(value: Dictionary) -> Dictionary:
+	var keys: Array = []
+	var points: Array = []
+	match value.get("kind"):
+		"circle":
+			keys = ["kind", "origin", "radius"]
+			points = ["origin"]
+		"cone":
+			keys = ["kind", "origin", "direction", "reach", "min_dot", "origin_radius"]
+			points = ["origin", "direction"]
+		"lane":
+			keys = ["kind", "from", "to", "radius"]
+			points = ["from", "to"]
+		_:
+			return {}
+	if not Codec.keys_error(value, keys).is_empty():
+		return {}
+	var result: Dictionary = value.duplicate(true)
+	for key: String in points:
+		if not Codec.is_vector3(result[key]):
+			return {}
+		result[key] = Codec.read_vector3(result[key])
+	return result if Geometry.error(result).is_empty() else {}
+
+
+func _transform_data(value: Transform3D) -> Array:
+	return [Codec.vector3(value.basis.x), Codec.vector3(value.basis.y), Codec.vector3(value.basis.z), Codec.vector3(value.origin)]
+
+
+func _floor_signature(region: Dictionary, world_root: Node3D) -> Dictionary:
+	var collision: CollisionShape3D = region["collision"]
+	var body: StaticBody3D = collision.get_parent() as StaticBody3D
+	var rect: Rect2 = region["safe_rect"]
+	return {"path": String(world_root.get_path_to(collision)), "transform": _transform_data(collision.global_transform), "size": Codec.vector3((collision.shape as BoxShape3D).size), "layer": body.collision_layer, "mask": body.collision_mask, "safe_rect": [rect.position.x, rect.position.y, rect.size.x, rect.size.y]}
+
+
+func _collision_signature(world_root: Node3D) -> Dictionary:
+	if not is_instance_valid(world_root) or not world_root.is_inside_tree() or world_root.get_world_3d() != get_world_3d():
+		return {"error": "Live same-world collision root required"}
+	var colliders: Array = []
+	var pending: Array[Node] = [get_tree().root]
+	while not pending.is_empty():
+		var node: Node = pending.pop_back()
+		pending.append_array(node.get_children())
+		if not node is Node3D or (node as Node3D).get_world_3d() != get_world_3d():
+			continue
+		if node is GridMap or (node is CSGShape3D and (node as CSGShape3D).use_collision):
+			return {"error": "Generated GridMap/CSG collision has no supported stable fingerprint"}
+		if not node is PhysicsBody3D or ((node as PhysicsBody3D).collision_layer & 1) == 0:
+			continue
+		if not node is StaticBody3D or node is AnimatableBody3D or not _under_root(node, world_root):
+			return {"error": "All scenery blockers must be immutable static bodies under world_root"}
+		var body: StaticBody3D = node as StaticBody3D
+		if body.is_queued_for_deletion() or body.constant_linear_velocity != Vector3.ZERO or body.constant_angular_velocity != Vector3.ZERO:
+			return {"error": "Moving static-body collision is unsupported"}
+		var path: String = String(world_root.get_path_to(body))
+		if path.contains("@") or path.contains("\n") or path.contains("\r"):
+			return {"error": "Scenery collider paths require stable authored node names"}
+		var shapes: Array = []
+		for owner_id: int in body.get_shape_owners():
+			if body.is_shape_owner_disabled(owner_id):
+				continue
+			var owner: Object = body.shape_owner_get_owner(owner_id)
+			if not owner is Node or not body.is_ancestor_of(owner as Node):
+				return {"error": "Collision shape owner requires a stable authored child path"}
+			var owner_path: String = String(body.get_path_to(owner as Node))
+			if owner_path.contains("@") or owner_path.contains("\n") or owner_path.contains("\r"):
+				return {"error": "Collision shape paths require stable authored names"}
+			for shape_index: int in range(body.shape_owner_get_shape_count(owner_id)):
+				var shape: Shape3D = body.shape_owner_get_shape(owner_id, shape_index)
+				var data: Dictionary = _shape_data(shape)
+				if data.is_empty():
+					return {"error": "Unsupported scenery collision shape: " + shape.get_class()}
+				shapes.append({"path": owner_path, "index": shape_index, "transform": _transform_data(body.shape_owner_get_transform(owner_id)), "data": data})
+		shapes.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["path"] < b["path"] or (a["path"] == b["path"] and a["index"] < b["index"]))
+		colliders.append({"path": path, "transform": _transform_data(body.global_transform), "layer": body.collision_layer, "mask": body.collision_mask, "priority": body.collision_priority, "shapes": shapes})
+		if colliders.size() > 256:
+			return {"error": "Supported collision fingerprint exceeds 256 bodies"}
+	colliders.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["path"] < b["path"])
+	var signature := {"schema_version": 1, "physics_engine": ProjectSettings.get_setting("physics/3d/physics_engine", "DEFAULT"), "physics_ticks_per_second": Engine.physics_ticks_per_second, "colliders": colliders}
+	var error: String = Codec.value_error(signature)
+	return {"signature": signature} if error.is_empty() else {"error": error}
+
+
+func _shape_data(shape: Shape3D) -> Dictionary:
+	var result := {"type": shape.get_class(), "margin": shape.margin, "custom_solver_bias": shape.custom_solver_bias}
+	if shape is BoxShape3D:
+		result["size"] = Codec.vector3((shape as BoxShape3D).size)
+	elif shape is SphereShape3D:
+		result["radius"] = (shape as SphereShape3D).radius
+	elif shape is CapsuleShape3D or shape is CylinderShape3D:
+		result["radius"] = (shape as CapsuleShape3D).radius if shape is CapsuleShape3D else (shape as CylinderShape3D).radius
+		result["height"] = (shape as CapsuleShape3D).height if shape is CapsuleShape3D else (shape as CylinderShape3D).height
+	elif shape is ConvexPolygonShape3D or shape is ConcavePolygonShape3D:
+		var points: PackedVector3Array = (shape as ConvexPolygonShape3D).points if shape is ConvexPolygonShape3D else (shape as ConcavePolygonShape3D).get_faces()
+		var encoded: Array = []
+		for point: Vector3 in points:
+			encoded.append(Codec.vector3(point))
+		result["points"] = encoded
+		if shape is ConcavePolygonShape3D:
+			result["backface_collision"] = (shape as ConcavePolygonShape3D).backface_collision
+	else:
+		return {}
+	return result

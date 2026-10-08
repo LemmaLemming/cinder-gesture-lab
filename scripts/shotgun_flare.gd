@@ -35,6 +35,9 @@ func configure(shot_direction: Vector3, source: Node3D = null) -> void:
 		direction = Vector3.FORWARD
 	_source = source
 
+func release_source() -> void:
+	_source = null
+
 
 func _ready() -> void:
 	origin = global_position

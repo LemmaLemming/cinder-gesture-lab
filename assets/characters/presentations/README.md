@@ -1,0 +1,13 @@
+# Shared player act presentations
+
+These are original procedural 48 × 64 pixel assets rendered by [LabSprite](../../../scripts/pixel_sprite.gd) and [the act artwork module](../../../scripts/character/player_presentations.gd). [The manifest](manifest.json) records the selected images actually opened, their hashes, adaptations, native scale, pose frames and current review limits. The [historical helmeted lab manifest](../manifest.json) and existing PNG sheets remain intact.
+
+Call `CinderPlayer.set_presentation(id)` for gameplay or `LabSprite.set_presentation(id)` for renderer-only use with `helmeted_lab`, `act1_expedition`, `act2_survivor` or `act3_traveller`; inspect `presentation_id` afterward. `presentation_for_act(1..3)` supplies the stable campaign mapping. Unknown IDs reject without replacing the current artwork. Headwear is presentation and adds no equipment slot or bonus.
+
+The act bodies use human heads and period/travelling coat silhouettes derived from [Act1 G07](../../../docs/concept-art/act1/characters/expedition-cast-and-player.png), [Act2 G18](../../../docs/concept-art/act2/gameplay/01-horsell-common-gameplay.png) and [Act3 G18](../../../docs/concept-art/act3/gameplay/01-twin-suns-gameplay.png). They reuse one set of action pose arrays and drawn weapon attachments. Jackets, pants, shoes and weapons retain existing canonical IDs and receive compatible drawn details.
+
+Selection preserves the current facing, action, frame and clock. The cell, feet pivot, nearest filter, world scale, collider, exact aiming and damage/dash/reload deadlines are unchanged. There are 168 poses per presentation and kit: four facings across idle 8, dash 6, landing 6, primary 8, blast 8 and hurt 6 frames.
+
+[The targeted test](../../../tests/player_presentation_smoke.gd) checks native poses, carried kit appearances, exact drawn muzzle pixels and native world scale and live actor invariants. Its native review image has six columns (idle, dash, landing, primary, blast, hurt) and twelve rows (front, back, left, right for Acts1–3). Godot 4.7.2 passed 73 checks over 5,544 act poses and 11 legal kits;168 historical default poses remained byte-identical. Integration reviewed the native gallery and eight 540×1170 shared UI/HUD and portrait fixture captures. Authored-act scenery/encounter review, human playtesting and physical-device testing remain pending; these fixtures do not mark campaign scenes accepted.
+
+`LabSprite.preview_texture(id, loadout)` produces a native front-facing idle texture using the same renderer and canonical four-slot gear. It creates no actor, collider or simulation clock and rejects unknown IDs or invalid gear with null. Title/replay previews use this path.

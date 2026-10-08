@@ -64,6 +64,20 @@ func track_emitter(source: Node3D, dash_duration: float, physics_driven: bool = 
 	tail_world = head_world
 	_update_dash_geometry()
 
+func restore_tracking(source: Node3D, original_tail: Vector3, dash_duration: float, accepted_elapsed: float) -> void:
+	# Called after the effects owner adds this ready node. The actor supplies only
+	# an already-validated motion snapshot; this function never moves the actor.
+	if not is_instance_valid(source) or _sprite == null or not original_tail.is_finite() or not is_finite(dash_duration) or not is_finite(accepted_elapsed) or dash_duration <= 0.0 or accepted_elapsed < 0.0 or accepted_elapsed > dash_duration:
+		return
+	track_emitter(source, dash_duration, true)
+	tail_world = original_tail
+	_tracking_elapsed = accepted_elapsed
+	_age = accepted_elapsed
+	elapsed = accepted_elapsed
+	frame_index = mini(int(elapsed / lifetime * float(FRAME_COUNT)), FRAME_COUNT - 1)
+	_sprite.texture = _frames[frame_index]
+	_update_dash_geometry()
+
 
 func sample_emitter() -> void:
 	if not emitter_tracking:
@@ -79,6 +93,10 @@ func finish_tracking() -> void:
 	sample_emitter()
 	emitter_tracking = false
 	_update_dash_geometry()
+
+func release_source() -> void:
+	_emitter = null
+	emitter_tracking = false
 
 
 func _ready() -> void:

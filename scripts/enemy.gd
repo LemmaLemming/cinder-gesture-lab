@@ -5,6 +5,9 @@ signal died(where: Vector3)
 
 const SpriteScript = preload("res://scripts/pixel_sprite.gd")
 const Footprint = preload("res://scripts/attack_footprint.gd")
+const SnapshotCodec = preload("res://scripts/campaign/snapshot_codec.gd")
+const SNAPSHOT_API_REVISION: String = "enemy-snapshot-1"
+const SNAPSHOT_SCHEMA_VERSION: int = 1
 const GRAVITY: float = 24.0
 const AGGRO_RANGE: float = 11.0
 const ATTACK_HEIGHT_TOLERANCE: float = 1.35
@@ -21,6 +24,8 @@ const COLOR_HIT: Color = Color(2.0, 2.0, 2.0)
 
 var hp: float = 32.0
 var max_hp: float = 32.0
+var dead: bool = false
+var last_snapshot_error: String = ""
 
 var _hero: Node3D
 var _fx: Node
@@ -46,6 +51,12 @@ var _active_footprint: MeshInstance3D
 var _countdown: Node3D
 var _countdown_pips: Array[MeshInstance3D] = []
 var _recovery_marker: MeshInstance3D
+var _attack_origin: Vector3 = Vector3.INF
+var _death_emitted: bool = false
+var _drop_spawned: bool = false
+var _snapshot_busy: bool = false
+var _actor_transaction_depth: int = 0
+var _restored_floor_contact: int = -1
 
 
 func _ready() -> void:
@@ -57,17 +68,23 @@ func _ready() -> void:
 
 
 func configure(hero: Node3D, fx: Node, kind: int = 0) -> void:
+	_actor_transaction_depth += 1
 	_hero = hero
 	_fx = fx
 	_kind = clampi(kind, 0, 2)
 	_set_variant_stats()
 	hp = max_hp
+	dead = false
+	_death_emitted = false
+	_drop_spawned = false
+	_attack_origin = Vector3.INF
 	if is_inside_tree():
 		_build_visual()
+	_actor_transaction_depth -= 1
 
 
 func take_damage(amount: float, impulse: Vector3) -> Dictionary:
-	var was_alive: bool = hp > 0.0 and not is_queued_for_deletion()
+	var was_alive: bool = hp > 0.0 and not dead and not is_queued_for_deletion()
 	var result: Dictionary = {
 		"accepted": false,
 		"hp_damage": 0.0,
@@ -76,6 +93,7 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 	}
 	if not was_alive or amount <= 0.0:
 		return result
+	_actor_transaction_depth += 1
 	var old_hp: float = hp
 	hp = maxf(0.0, hp - amount)
 	result["accepted"] = true
@@ -84,6 +102,7 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 		_fx.call("tiny_bleed", global_position + Vector3(0.0, 0.8, 0.0), 3, impulse)
 	if hp <= 0.0:
 		_die(impulse)
+		_actor_transaction_depth -= 1
 		return result
 	_hit_flash_left = 0.12
 	_windup_left = 0.0
@@ -94,13 +113,15 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 	velocity += adjusted_impulse
 	velocity.y = maxf(velocity.y, adjusted_impulse.y)
 	_stagger_left = maxf(_stagger_left, 0.14 + minf(adjusted_impulse.length() * 0.035, 0.27))
+	_actor_transaction_depth -= 1
 	return result
 
 
 func _physics_process(delta: float) -> void:
-	if hp <= 0.0:
+	if hp <= 0.0 or dead:
 		return
-	if not is_on_floor():
+	_actor_transaction_depth += 1
+	if not _snapshot_grounded():
 		velocity.y -= GRAVITY * delta
 	elif velocity.y < 0.0:
 		velocity.y = 0.0
@@ -131,9 +152,11 @@ func _physics_process(delta: float) -> void:
 	else:
 		_follow_or_attack(delta)
 	move_and_slide()
+	_restored_floor_contact = -1
 	_update_attack_feedback()
 	if _sprite != null:
 		_sprite.animate(Vector2(velocity.x, velocity.z).length() > 0.25 and is_on_floor(), delta)
+	_actor_transaction_depth -= 1
 
 
 func _follow_or_attack(delta: float) -> void:
@@ -152,7 +175,7 @@ func _follow_or_attack(delta: float) -> void:
 			_sprite.face(_facing)
 	if distance <= _attack_reach and absf(difference.y) <= ATTACK_HEIGHT_TOLERANCE:
 		_slow_planar(10.0 * delta)
-		if _cooldown_left <= 0.0 and is_on_floor():
+		if _cooldown_left <= 0.0 and _snapshot_grounded():
 			_start_windup()
 		return
 	var current: Vector3 = Vector3(velocity.x, 0.0, velocity.z)
@@ -160,7 +183,7 @@ func _follow_or_attack(delta: float) -> void:
 	current = current.move_toward(target, 12.0 * delta)
 	velocity.x = current.x
 	velocity.z = current.z
-	if _kind == 2 and is_on_floor() and _hop_left <= 0.0 and distance > 2.2:
+	if _kind == 2 and _snapshot_grounded() and _hop_left <= 0.0 and distance > 2.2:
 		velocity.y = 7.8
 		_hop_left = 1.45
 
@@ -174,8 +197,10 @@ func _slow_planar(step: float) -> void:
 func _start_windup() -> bool:
 	if not _can_prepare_attack():
 		return false
+	_actor_transaction_depth += 1
 	_windup_left = _windup_duration
 	_attack_facing = _facing
+	_attack_origin = global_position
 	velocity.x = 0.0
 	velocity.z = 0.0
 	# Snapshot the same scenery-aware ground footprint for warning and impact.
@@ -188,10 +213,12 @@ func _start_windup() -> bool:
 	_active_footprint.rotation.y = angle
 	_countdown.rotation.y = angle
 	_update_attack_feedback()
+	_actor_transaction_depth -= 1
 	return true
 
 
 func _strike() -> void:
+	_actor_transaction_depth += 1
 	_windup_left = 0.0
 	_active_left = ACTIVE_FEEDBACK_S
 	_cooldown_left = _attack_interval
@@ -199,23 +226,28 @@ func _strike() -> void:
 	if _fx != null and is_instance_valid(_fx) and _fx.has_method("slash"):
 		_fx.call("slash", global_position + _attack_facing * 0.8 + Vector3(0.0, 0.85, 0.0), _attack_facing, COLOR_WARNING)
 	if not _hero_is_alive():
+		_actor_transaction_depth -= 1
 		return
 	var difference: Vector3 = _hero.global_position - global_position
 	var planar: Vector3 = Vector3(difference.x, 0.0, difference.z)
 	var distance: float = planar.length()
 	if distance > _attack_reach or absf(difference.y) > ATTACK_HEIGHT_TOLERANCE:
+		_actor_transaction_depth -= 1
 		return
 	if distance > 0.1 and planar.normalized().dot(_attack_facing) < ATTACK_DOT:
+		_actor_transaction_depth -= 1
 		return
 	var query := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.7, _hero.global_position + Vector3.UP * 0.7, 1)
 	if not get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+		_actor_transaction_depth -= 1
 		return
 	if _hero.has_method("take_damage"):
 		_hero.call("take_damage", _attack_damage, _attack_facing * 4.0 + Vector3(0.0, 2.5, 0.0))
+	_actor_transaction_depth -= 1
 
 
 func get_attack_state() -> String:
-	if hp <= 0.0:
+	if hp <= 0.0 or dead:
 		return "defeated"
 	if _stagger_left > 0.0:
 		return "stagger"
@@ -242,10 +274,11 @@ func _can_prepare_attack() -> bool:
 func _update_attack_feedback() -> void:
 	if _warning == null:
 		return
-	_warning.visible = _windup_left > 0.0
-	_active_footprint.visible = _active_left > 0.0
-	_countdown.visible = _windup_left > 0.0
-	_recovery_marker.visible = _recovery_left > 0.0
+	var alive: bool = hp > 0.0 and not dead
+	_warning.visible = alive and _windup_left > 0.0
+	_active_footprint.visible = alive and _active_left > 0.0
+	_countdown.visible = alive and _windup_left > 0.0
+	_recovery_marker.visible = alive and _recovery_left > 0.0
 	var remaining_pips: int = ceili(6.0 * _windup_left / _windup_duration)
 	for index: int in range(_countdown_pips.size()):
 		_countdown_pips[index].visible = index < remaining_pips
@@ -258,10 +291,25 @@ func _hero_is_alive() -> bool:
 
 
 func _die(impulse: Vector3) -> void:
+	if dead or _death_emitted:
+		return
+	_actor_transaction_depth += 1
+	dead = true
+	_death_emitted = true
 	if _fx != null and is_instance_valid(_fx) and _fx.has_method("tiny_bleed"):
 		_fx.call("tiny_bleed", global_position + Vector3(0.0, 0.8, 0.0), 5, impulse)
 	died.emit(global_position)
 	queue_free()
+	_actor_transaction_depth -= 1
+
+
+## The drop consumer calls this only after committing its actual stable drop.
+## A death signal alone cannot prove that an external reward was spawned.
+func mark_drop_spawned() -> bool:
+	if not dead or not _death_emitted or _drop_spawned:
+		return false
+	_drop_spawned = true
+	return true
 
 
 func _set_variant_stats() -> void:
@@ -354,3 +402,291 @@ func _floor_material(color: Color) -> StandardMaterial3D:
 	if color.a < 1.0:
 		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	return material
+
+
+## Snapshot at a paused deferred shell boundary after attack/death callbacks.
+## Level-owned stable enemy/drop IDs live outside this shared actor envelope.
+## A just-defeated queued node may be captured before its end-of-frame free.
+## Disk transport uses JSON.stringify(..., "", true, true), as save_store does;
+## shortened float formatting can move a remaining-clock threshold by a tick.
+func snapshot_state() -> Dictionary:
+	last_snapshot_error = _snapshot_boundary_error(false)
+	if not last_snapshot_error.is_empty():
+		return {}
+	_snapshot_busy = true
+	var raw: Dictionary = _role_stats()
+	var tint: Color = _sprite.modulate
+	var snapshot: Dictionary = {
+		"api_revision": SNAPSHOT_API_REVISION, "schema_version": SNAPSHOT_SCHEMA_VERSION,
+		"actor_type": "AshEnemy", "kind": _kind,
+		"resources": {"hp": hp, "max_hp": max_hp},
+		"lifecycle": {"dead": dead or hp <= 0.0, "death_emitted": _death_emitted, "drop_spawned": _drop_spawned},
+		# No difficulty profile has been applied by this prototype controller.
+		# Immutable raw/resolved profile provenance requires a future migration.
+		"role": {"raw_stats": raw.duplicate(true), "resolved_stats": raw.duplicate(true), "difficulty": {}},
+		"motion": {
+			"position": SnapshotCodec.vector3(global_position),
+			"basis": [SnapshotCodec.vector3(global_basis.x), SnapshotCodec.vector3(global_basis.y), SnapshotCodec.vector3(global_basis.z)],
+			"velocity": SnapshotCodec.vector3(velocity), "grounded": _snapshot_grounded(),
+			"facing": SnapshotCodec.vector3(_facing), "attack_facing": SnapshotCodec.vector3(_attack_facing),
+		},
+		"clocks": {
+			"windup_left_s": _windup_left, "active_left_s": _active_left, "recovery_left_s": _recovery_left,
+			"cooldown_left_s": _cooldown_left, "stagger_left_s": _stagger_left,
+			"hop_left_s": _hop_left, "hit_flash_left_s": _hit_flash_left,
+		},
+		"attack_geometry": {
+			"world_origin": null if _attack_origin == Vector3.INF else SnapshotCodec.vector3(_attack_origin),
+			"shape": "radial_cone", "reach": _attack_reach, "cone_min_dot": ATTACK_DOT,
+			"origin_disk_radius": Footprint.SOURCE_RADIUS, "max_vertical_distance": ATTACK_HEIGHT_TOLERANCE,
+			"los": {"policy": "scenery_ray_from_source_to_target", "collision_mask": 1, "height": Footprint.LOS_HEIGHT},
+		},
+		"presentation": {
+			"sprite_kind": _sprite.get("_kind"), "frame": _sprite.get("_frame"),
+			"animation_time_s": _sprite.get("_animation_time"), "modulate": [tint.r, tint.g, tint.b, tint.a],
+		},
+	}
+	last_snapshot_error = _validate_snapshot(snapshot)
+	_snapshot_busy = false
+	return snapshot.duplicate(true) if last_snapshot_error.is_empty() else {}
+
+
+func snapshot_error(snapshot: Dictionary) -> String:
+	var error: String = _snapshot_boundary_error(true)
+	if not error.is_empty():
+		return error
+	_snapshot_busy = true
+	error = _validate_snapshot(snapshot)
+	_snapshot_busy = false
+	return error
+
+
+## Direct commit after full validation. Never configure, start, strike, die,
+## emit a drop/death signal, or run a hidden simulation tick during restore.
+func restore_state(snapshot: Dictionary) -> bool:
+	last_snapshot_error = _snapshot_boundary_error(true)
+	if not last_snapshot_error.is_empty():
+		return false
+	_snapshot_busy = true
+	last_snapshot_error = _validate_snapshot(snapshot)
+	if not last_snapshot_error.is_empty():
+		_snapshot_busy = false
+		return false
+	var accepted: Dictionary = snapshot.duplicate(true)
+	var role: Dictionary = accepted.role.resolved_stats
+	var motion: Dictionary = accepted.motion
+	var clocks: Dictionary = accepted.clocks
+	var lifecycle: Dictionary = accepted.lifecycle
+	_kind = int(accepted.kind)
+	max_hp = float(accepted.resources.max_hp)
+	hp = float(accepted.resources.hp)
+	dead = lifecycle.dead
+	_death_emitted = lifecycle.death_emitted
+	_drop_spawned = lifecycle.drop_spawned
+	collision_layer = 0 if dead else 2
+	collision_mask = 0 if dead else 1
+	_move_speed = float(role.move_speed)
+	_attack_damage = float(role.attack_damage)
+	_attack_reach = float(role.attack_reach)
+	_windup_duration = float(role.windup_s)
+	_attack_interval = float(role.attack_interval_s)
+	_knockback_factor = float(role.knockback_factor)
+	var columns: Array = motion.basis
+	global_transform = Transform3D(Basis(SnapshotCodec.read_vector3(columns[0]), SnapshotCodec.read_vector3(columns[1]), SnapshotCodec.read_vector3(columns[2])), SnapshotCodec.read_vector3(motion.position))
+	if motion.grounded:
+		var exact_transform: Transform3D = global_transform
+		apply_floor_snap()
+		global_transform = exact_transform
+	velocity = SnapshotCodec.read_vector3(motion.velocity)
+	_restored_floor_contact = 1 if motion.grounded else 0
+	_facing = SnapshotCodec.read_vector3(motion.facing)
+	_attack_facing = SnapshotCodec.read_vector3(motion.attack_facing)
+	_windup_left = float(clocks.windup_left_s)
+	_active_left = float(clocks.active_left_s)
+	_recovery_left = float(clocks.recovery_left_s)
+	_cooldown_left = float(clocks.cooldown_left_s)
+	_stagger_left = float(clocks.stagger_left_s)
+	_hop_left = float(clocks.hop_left_s)
+	_hit_flash_left = float(clocks.hit_flash_left_s)
+	_attack_origin = Vector3.INF if accepted.attack_geometry.world_origin == null else SnapshotCodec.read_vector3(accepted.attack_geometry.world_origin)
+	# Restore geometry against the already restored static scenery. No hero
+	# location, preparation count or new attack request participates in this.
+	_rebuild_snapshot_geometry()
+	_sprite.setup(_sprite_kind(_kind))
+	_sprite.set("_animation_time", float(accepted.presentation.animation_time_s))
+	_sprite.set("_frame", int(accepted.presentation.frame))
+	_sprite.face(_facing)
+	_sprite.call("_show_frame")
+	var tint: Array = accepted.presentation.modulate
+	_sprite.modulate = Color(float(tint[0]), float(tint[1]), float(tint[2]), float(tint[3]))
+	_sprite.visible = not dead
+	if dead:
+		remove_from_group("enemies")
+		collision_layer = 0
+		collision_mask = 0
+	else:
+		add_to_group("enemies")
+		collision_layer = 2
+		collision_mask = 1
+	_update_attack_feedback()
+	_snapshot_busy = false
+	last_snapshot_error = ""
+	return true
+
+
+func _snapshot_boundary_error(for_restore: bool) -> String:
+	if not is_inside_tree() or not is_node_ready() or not is_instance_valid(_sprite) or not is_instance_valid(_warning) or not is_instance_valid(_active_footprint) or not is_instance_valid(_countdown) or not is_instance_valid(_recovery_marker) or _countdown_pips.size() != 6:
+		return "Enemy snapshots require a ready actor with its shared feedback nodes"
+	if not _warning.material_override is StandardMaterial3D:
+		return "Enemy warning material is unavailable"
+	for pip: MeshInstance3D in _countdown_pips:
+		if not is_instance_valid(pip):
+			return "Enemy snapshot countdown nodes are unavailable"
+	if not get_tree().paused:
+		return "Enemy snapshots require the paused deferred shell boundary"
+	if _snapshot_busy or _actor_transaction_depth > 0:
+		return "Enemy snapshots cannot run inside actor transactions or callbacks"
+	if for_restore and is_queued_for_deletion():
+		return "Cannot restore an enemy already queued for deletion; create a ready replacement"
+	if not get_platform_velocity().is_zero_approx() or not get_platform_angular_velocity().is_zero_approx():
+		return "Enemy snapshot revision 1 requires static floor; moving-platform contact state is unsupported"
+	return ""
+
+
+func _snapshot_grounded() -> bool:
+	return _restored_floor_contact == 1 if _restored_floor_contact >= 0 else is_on_floor()
+
+
+func _role_stats() -> Dictionary:
+	return {
+		"max_hp": max_hp, "move_speed": _move_speed, "attack_damage": _attack_damage,
+		"attack_reach": _attack_reach, "windup_s": _windup_duration,
+		"attack_interval_s": _attack_interval, "knockback_factor": _knockback_factor,
+		"lock_s": LOCK_LEAD_S, "active_s": ACTIVE_FEEDBACK_S, "recovery_s": RECOVERY_S,
+		"hop_speed": 7.8, "hop_interval_s": 1.45,
+	}
+
+
+func _validate_snapshot(snapshot: Dictionary) -> String:
+	var error: String = SnapshotCodec.value_error(snapshot)
+	if not error.is_empty():
+		return error
+	error = SnapshotCodec.keys_error(snapshot, ["api_revision", "schema_version", "actor_type", "kind", "resources", "lifecycle", "role", "motion", "clocks", "attack_geometry", "presentation"])
+	if not error.is_empty():
+		return error
+	if snapshot.api_revision != SNAPSHOT_API_REVISION or not SnapshotCodec.is_integer(snapshot.schema_version, SNAPSHOT_SCHEMA_VERSION, SNAPSHOT_SCHEMA_VERSION) or snapshot.actor_type != "AshEnemy" or not SnapshotCodec.is_integer(snapshot.kind, 0, 2):
+		return "Unsupported enemy snapshot identity/API/schema/kind"
+	for key: String in ["resources", "lifecycle", "role", "motion", "clocks", "attack_geometry", "presentation"]:
+		if not snapshot[key] is Dictionary:
+			return "Enemy snapshot requires a dictionary: " + key
+	var resources: Dictionary = snapshot.resources
+	error = SnapshotCodec.keys_error(resources, ["hp", "max_hp"])
+	if not error.is_empty():
+		return error
+	if not SnapshotCodec.in_range(resources.max_hp, 0.001, 1000000.0) or not SnapshotCodec.in_range(resources.hp, 0.0, float(resources.max_hp)):
+		return "Enemy HP must fit its raw role maximum"
+	var lifecycle: Dictionary = snapshot.lifecycle
+	error = SnapshotCodec.keys_error(lifecycle, ["dead", "death_emitted", "drop_spawned"])
+	if not error.is_empty():
+		return error
+	for key: String in ["dead", "death_emitted", "drop_spawned"]:
+		if not lifecycle[key] is bool:
+			return "Enemy lifecycle flags must be boolean"
+	if lifecycle.dead != (float(resources.hp) == 0.0) or (not lifecycle.dead and (lifecycle.death_emitted or lifecycle.drop_spawned)) or (lifecycle.drop_spawned and not lifecycle.death_emitted):
+		return "Enemy defeat/death/drop lifecycle is inconsistent"
+	var envelope: Dictionary = snapshot.role
+	error = SnapshotCodec.keys_error(envelope, ["raw_stats", "resolved_stats", "difficulty"])
+	if not error.is_empty():
+		return error
+	if not envelope.raw_stats is Dictionary or not envelope.resolved_stats is Dictionary or not envelope.difficulty is Dictionary or not envelope.difficulty.is_empty():
+		return "Enemy snapshot revision 1 does not claim applied difficulty/scheduler state"
+	if not SnapshotCodec.same_values(envelope.raw_stats, envelope.resolved_stats):
+		return "Unprofiled enemy raw and resolved role data must match"
+	var role: Dictionary = envelope.raw_stats
+	error = SnapshotCodec.keys_error(role, ["max_hp", "move_speed", "attack_damage", "attack_reach", "windup_s", "attack_interval_s", "knockback_factor", "lock_s", "active_s", "recovery_s", "hop_speed", "hop_interval_s"])
+	if not error.is_empty():
+		return error
+	for key: String in ["max_hp", "move_speed", "attack_damage", "attack_reach", "windup_s", "attack_interval_s", "knockback_factor"]:
+		if not SnapshotCodec.in_range(role[key], 0.001, 1000000.0):
+			return "Invalid positive enemy raw stat: " + key
+	if not SnapshotCodec.same_values(role.max_hp, resources.max_hp) or not SnapshotCodec.same_values(role.lock_s, LOCK_LEAD_S) or not SnapshotCodec.same_values(role.active_s, ACTIVE_FEEDBACK_S) or not SnapshotCodec.same_values(role.recovery_s, RECOVERY_S) or not SnapshotCodec.same_values(role.hop_speed, 7.8) or not SnapshotCodec.same_values(role.hop_interval_s, 1.45):
+		return "Enemy role HP/shared timing constants do not match this revision"
+	var motion: Dictionary = snapshot.motion
+	error = SnapshotCodec.keys_error(motion, ["position", "basis", "velocity", "grounded", "facing", "attack_facing"])
+	if not error.is_empty():
+		return error
+	if not SnapshotCodec.is_vector3(motion.position) or not SnapshotCodec.is_vector3(motion.velocity) or not motion.grounded is bool or not _snapshot_direction_valid(motion.facing) or not _snapshot_direction_valid(motion.attack_facing):
+		return "Enemy motion requires finite position/velocity and exact planar facing"
+	if not motion.basis is Array or motion.basis.size() != 3:
+		return "Enemy basis must contain three vectors"
+	for column: Variant in motion.basis:
+		if not SnapshotCodec.is_vector3(column):
+			return "Invalid enemy basis vector"
+	var columns: Array = motion.basis
+	var restored_basis := Basis(SnapshotCodec.read_vector3(columns[0]), SnapshotCodec.read_vector3(columns[1]), SnapshotCodec.read_vector3(columns[2]))
+	if not is_finite(restored_basis.determinant()) or absf(restored_basis.determinant()) < 0.000001:
+		return "Enemy basis must be finite and invertible"
+	var clocks: Dictionary = snapshot.clocks
+	error = SnapshotCodec.keys_error(clocks, ["windup_left_s", "active_left_s", "recovery_left_s", "cooldown_left_s", "stagger_left_s", "hop_left_s", "hit_flash_left_s"])
+	if not error.is_empty():
+		return error
+	var limits: Dictionary = {"windup_left_s": role.windup_s, "active_left_s": ACTIVE_FEEDBACK_S, "recovery_left_s": RECOVERY_S, "cooldown_left_s": role.attack_interval_s, "stagger_left_s": 0.410001, "hop_left_s": 1.45, "hit_flash_left_s": 0.12}
+	for key: String in limits:
+		if not SnapshotCodec.in_range(clocks[key], 0.0, float(limits[key])):
+			return "Invalid remaining enemy clock: " + key
+	var phases: int = int(float(clocks.windup_left_s) > 0.0) + int(float(clocks.active_left_s) > 0.0) + int(float(clocks.recovery_left_s) > 0.0)
+	if phases > 1 or (float(clocks.stagger_left_s) > 0.0 and phases > 0):
+		return "Enemy attack/stagger clocks cannot overlap"
+	var geometry: Dictionary = snapshot.attack_geometry
+	var expected_geometry: Dictionary = {
+		"world_origin": geometry.get("world_origin"), "shape": "radial_cone", "reach": role.attack_reach,
+		"cone_min_dot": ATTACK_DOT, "origin_disk_radius": Footprint.SOURCE_RADIUS,
+		"max_vertical_distance": ATTACK_HEIGHT_TOLERANCE,
+		"los": {"policy": "scenery_ray_from_source_to_target", "collision_mask": 1, "height": Footprint.LOS_HEIGHT},
+	}
+	if not SnapshotCodec.same_values(geometry, expected_geometry):
+		return "Enemy warning geometry must match the snapshotted role and LOS policy"
+	if geometry.world_origin != null and not SnapshotCodec.is_vector3(geometry.world_origin):
+		return "Committed enemy source must be a finite vector"
+	if phases > 0 and geometry.world_origin == null:
+		return "Committed enemy phases require the original geometry source"
+	var presentation: Dictionary = snapshot.presentation
+	error = SnapshotCodec.keys_error(presentation, ["sprite_kind", "frame", "animation_time_s", "modulate"])
+	if not error.is_empty():
+		return error
+	if presentation.sprite_kind != _sprite_kind(int(snapshot.kind)) or not SnapshotCodec.is_integer(presentation.frame, 0, 1) or not SnapshotCodec.in_range(presentation.animation_time_s, 0.0, 1000000000000.0):
+		return "Invalid enemy locomotion pose/clock"
+	if int(presentation.frame) != int(float(presentation.animation_time_s) * 5.0) % 2:
+		return "Enemy locomotion frame must match its simulation clock"
+	if not presentation.modulate is Array or presentation.modulate.size() != 4:
+		return "Enemy presentation tint requires four components"
+	for component: Variant in presentation.modulate:
+		if not SnapshotCodec.in_range(component, 0.0, 10.0):
+			return "Invalid enemy presentation tint"
+	return ""
+
+
+func _snapshot_direction_valid(value: Variant) -> bool:
+	if not SnapshotCodec.is_vector3(value):
+		return false
+	var direction: Vector3 = SnapshotCodec.read_vector3(value)
+	return absf(direction.y) < 0.000001 and is_equal_approx(direction.length_squared(), 1.0)
+
+
+func _sprite_kind(kind: int) -> String:
+	return "armored" if kind == 1 else ("hopper" if kind == 2 else "grunt")
+
+
+func _rebuild_snapshot_geometry() -> void:
+	var origin: Vector3 = global_position if _attack_origin == Vector3.INF else _attack_origin
+	var world_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+	_warning.mesh = Footprint.cone_mesh(_attack_reach, ATTACK_DOT, false, world_state, origin, _attack_facing)
+	_active_footprint.mesh = Footprint.cone_mesh(_attack_reach, ATTACK_DOT, true, world_state, origin, _attack_facing)
+	var angle: float = atan2(_attack_facing.x, _attack_facing.z)
+	_warning.rotation.y = angle
+	_active_footprint.rotation.y = angle
+	_countdown.rotation.y = angle
+	var half_angle: float = acos(ATTACK_DOT)
+	for index: int in range(_countdown_pips.size()):
+		var pip_angle: float = lerpf(-half_angle * 0.82, half_angle * 0.82, float(index) / 5.0)
+		_countdown_pips[index].position = Footprint.radial_point(pip_angle, _attack_reach - 0.16) + Vector3.UP * 0.04
