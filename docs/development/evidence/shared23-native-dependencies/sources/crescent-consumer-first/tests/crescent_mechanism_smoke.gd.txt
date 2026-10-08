@@ -1,0 +1,380 @@
+extends SceneTree
+## Real Hero/Scheduler/native cue and contact fixtures, not authored act content.
+
+const Player = preload("res://scripts/player.gd")
+const Scheduler = preload("res://scripts/combat/threat_scheduler.gd")
+const Mechanism = preload("res://scripts/combat/lane_mechanism.gd")
+const Geometry = preload("res://scripts/combat/threat_geometry.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+
+var _checks: int = 0
+var _failures: int = 0
+
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+
+func _run() -> void:
+	await _test_preview_exact_admission()
+	await _test_actual_inner_pocket_dash()
+	await _test_selected_bearing_snapshot_and_hit()
+	await _test_legacy_bearing_rejection()
+	await _test_containing_root_guard()
+	paused = false
+	print("Crescent mechanism smoke: %d checks, %d failures" % [_checks, _failures])
+	quit(0 if _failures == 0 else 1)
+
+
+func _test_preview_exact_admission() -> void:
+	var arena: Dictionary = await _arena()
+	var mechanism: CinderLaneMechanism = arena.mechanism
+	var scheduler: CinderThreatScheduler = arena.scheduler
+	var bearing := Vector3(0.6, 0, 0.8)
+	var opening := Vector3(0.3, 0, 0)
+	var context: Dictionary = _context(arena)
+	var events: Array[String] = []
+	mechanism.state_changed.connect(func(_value: Dictionary) -> void: events.append("phase"))
+	mechanism.get_cue().state_changed.connect(func(_value: Dictionary) -> void: events.append("cue"))
+	mechanism.hit_resolved.connect(func(_id: String, _cycle: int, _result: Dictionary) -> void: events.append("hit"))
+	scheduler.reservation_invalidated.connect(func(_id: String, _reason: String) -> void: events.append("cancel"))
+	var before: Dictionary = _pair(arena)
+	mechanism.last_error = "prior-mechanism"
+	mechanism.last_snapshot_error = "prior-mechanism-snapshot"
+	scheduler.last_error = "prior-scheduler"
+	scheduler.last_snapshot_error = "prior-scheduler-snapshot"
+	var cue_before: Dictionary = mechanism.get_cue().state()
+	var preview: Dictionary = mechanism.preview_start("hero", context, opening, bearing)
+	_expect(preview.get("accepted", false), "actual nondefault continuous crescent bearing has pure ordinary-primary witness: " + String(preview.get("reason", "")))
+	_expect(mechanism.last_error == "prior-mechanism" and mechanism.last_snapshot_error == "prior-mechanism-snapshot" and scheduler.last_error == "prior-scheduler" and scheduler.last_snapshot_error == "prior-scheduler-snapshot", "pure preview preserves both mechanism and Scheduler diagnostics")
+	_expect(events.is_empty() and mechanism.state().cycle == 0 and mechanism.get_cue().state() == cue_before and _same(before, _pair(arena)), "pure preview keeps actor/source/clock/cycle/serial/cooldown/cue and emits no events")
+	if not preview.get("accepted", false):
+		await _dispose(arena)
+		return
+	_expect(preview.candidate.geometry == _shape(bearing) and preview.candidate.source_position == mechanism.global_position and preview.candidate.opening_position == opening and not preview.proof.uses_blast and not preview.proof.uses_invulnerability, "prospective candidate retains exact selected bearing, configured radii/sector/source and selected ordinary opening")
+	var edited_copy: Dictionary = preview.duplicate(true)
+	edited_copy.candidate.geometry.direction = Vector3.LEFT
+	edited_copy.proof.landing += Vector3.RIGHT
+	_expect(_native_same(preview, mechanism.preview_start("hero", context, opening, bearing)), "returned geometry/proof/guard are defensive native copies")
+	for mutation: String in ["bearing", "radius", "origin", "time-bit", "landing", "array-direction", "unknown"]:
+		var bad: Dictionary = preview.duplicate(true)
+		match mutation:
+			"bearing": bad.candidate.geometry.direction = Vector3.RIGHT
+			"radius": bad.candidate.geometry.inner_radius += 0.1
+			"origin": bad.candidate.geometry.origin += Vector3.RIGHT
+			"time-bit": bad.guard.clock_s = _next_float(float(bad.guard.clock_s))
+			"landing": bad.proof.landing += Vector3.RIGHT
+			"array-direction": bad.candidate.geometry.direction = Codec.vector3(bearing)
+			"unknown": bad.admission_authority = true
+		var unchanged: Dictionary = _pair(arena)
+		_expect(not mechanism.start("hero", context, opening, bearing, bad).accepted and _same(unchanged, _pair(arena)) and events.is_empty(), "tampered " + mutation + " preview rejects before cycle/serial/lease/cue allocation")
+	var unchanged: Dictionary = _pair(arena)
+	_expect(not mechanism.start("hero", context, opening, Vector3.RIGHT, preview).accepted and _same(unchanged, _pair(arena)), "changing selected bearing between pure preview and start rejects exact correspondence")
+	for invalid: Variant in [Vector3.ZERO, Vector3(2, 0, 0), Vector3(1, 1, 0), Vector3(INF, 0, 0), [1.0, 0.0, 0.0], "right"]:
+		mechanism.last_error = "preserve-invalid-bearing"
+		_expect(not mechanism.preview_start("hero", context, opening, invalid).accepted and mechanism.last_error == "preserve-invalid-bearing" and mechanism.state().cycle == 0, "invalid noncanonical bearing rejects pure preflight without mutation")
+	var admitted: Dictionary = mechanism.start("hero", context, opening, bearing, preview)
+	_expect(admitted.get("accepted", false), "unchanged native preview starts the actual crescent cycle: " + String(admitted.get("reason", "")))
+	if admitted.get("accepted", false):
+		var record: Dictionary = admitted.reservation.duplicate(true)
+		for key: String in ["id", "state", "armed"]: record.erase(key)
+		_expect(_native_same(record, preview.candidate) and _native_same(admitted.proof, preview.proof) and admitted.reservation_id == "threat-1" and mechanism.state().cycle == 1, "actual admission commits exact prospective candidate/proof with previously untouched serial and cycle")
+		_expect(mechanism.state().geometry == _shape(bearing) and mechanism.get_cue().state().geometry == _shape(bearing) and mechanism.get_cue().state().source_position == Vector3.ZERO and mechanism.get_cue().global_position == mechanism.global_position, "required warning and public state expose committed selected geometry/source, not configured default bearing")
+		_expect(events == ["cue", "phase"] and arena.hero.shells == 0 and arena.hero.get_world_action_records().is_empty() and not mechanism.has_method("take_damage") and not mechanism.is_in_group("enemies"), "one warning publication creates no fake actor/HP/action/ammo/living-enemy credit")
+	await _dispose(arena)
+
+
+func _test_actual_inner_pocket_dash() -> void:
+	var arena: Dictionary = await _arena("crescent", Vector3(-1.35, 0.02, 0))
+	var mechanism: CinderLaneMechanism = arena.mechanism
+	var hero: CinderPlayer = arena.hero
+	var events: Array[Dictionary] = []
+	mechanism.hit_resolved.connect(func(_id: String, _cycle: int, result: Dictionary) -> void: events.append(result))
+	var preview: Dictionary = mechanism.preview_start("hero", _context(arena), null, Vector3.RIGHT)
+	var answer: Dictionary = mechanism.start("hero", _context(arena), null, Vector3.RIGHT, preview) if preview.get("accepted", false) else preview
+	_expect(answer.get("accepted", false), "hollow pocket fixture obtains actual scheduled crescent cycle: " + String(answer.get("reason", "")))
+	if not answer.get("accepted", false):
+		await _dispose(arena)
+		return
+	_expect(await _until_phase(mechanism, "active") and events.is_empty(), "native capsule inside hollow pocket remains safe through warning/lock into active")
+	var hp: float = hero.hp
+	_expect(hero.request_dash(Vector3.RIGHT), "actual shared public dash crosses hollow inner pocket during active crescent")
+	await _ticks(18)
+	var records: Array[Dictionary] = hero.get_world_action_records()
+	_expect(records.size() == 1 and records[0].kind == "dash" and not records[0].collision_shortened, "actual native collision/floor path publishes completed full dash in static supported world")
+	if records.size() == 1:
+		var record: Dictionary = records[0]
+		var path: Array[Dictionary] = _record_path(record)
+		var radius: float = (hero.get_node("BodyCollision").shape as CapsuleShape3D).radius
+		_expect(not Geometry.timed_path_hits(_shape(Vector3.RIGHT), path, float(record.started_at_s), float(record.completed_at_s), radius), "full measured actual capsule route remains inside genuinely safe hollow domain")
+		var clear_floor: bool = true
+		for point: Dictionary in record.path:
+			clear_floor = clear_floor and arena.region.safe_rect.has_point(Vector2(point.position.x, point.position.z))
+		_expect(clear_floor and hero.hp == hp and events.is_empty() and mechanism.state().hit_ids.is_empty(), "safe actual active path consumes no opportunity or HP; no decorative filled-disc damage proxy")
+	await _dispose(arena)
+
+
+func _test_selected_bearing_snapshot_and_hit() -> void:
+	var bearing := Vector3(0.6, 0, 0.8)
+	var arena: Dictionary = await _arena("crescent", bearing * 2.7 + Vector3.UP * 0.02)
+	var hero: CinderPlayer = arena.hero
+	var mechanism: CinderLaneMechanism = arena.mechanism
+	var scheduler: CinderThreatScheduler = arena.scheduler
+	var hits: Array[Dictionary] = []
+	mechanism.hit_resolved.connect(func(id: String, cycle: int, result: Dictionary) -> void: hits.append({"id": id, "cycle": cycle, "result": result}))
+	var start_hp: float = hero.hp
+	var loss: float = hero.equipment.damage_received(4.0)
+	var preview: Dictionary = mechanism.preview_start("hero", _context(arena), null, bearing)
+	var answer: Dictionary = mechanism.start("hero", _context(arena), null, bearing, preview) if preview.get("accepted", false) else preview
+	_expect(answer.get("accepted", false), "nondefault annular-sector exposure still has ordinary escape/primary proof: " + String(answer.get("reason", "")))
+	if not answer.get("accepted", false):
+		await _dispose(arena)
+		return
+	_expect(await _until_phase(mechanism, "lock") and hits.is_empty() and hero.hp == start_hp, "selected nondefault warning/lock have no early environmental hit")
+	_expect(await _until_phase(mechanism, "active") and hits.size() == 1 and hero.hp == start_hp - loss, "actual selected nondefault sector applies one low armor-respecting environmental hit")
+	_expect(hits.size() == 1 and hits[0].id == "hero" and hits[0].cycle == 1 and hits[0].result.accepted and hits[0].result.impulse == Vector3.ZERO and mechanism.state().hit_ids == ["hero"], "actual contact consumes opportunity before callbacks, zero impulse and no duplicate hit")
+	_expect(mechanism.get_cue().state().geometry == _shape(bearing) and mechanism.get_cue().state().active_fill_visible, "active native required outline/fill retain selected annular direction and hollow dimensions")
+	paused = true
+	await process_frame
+	var saved: Dictionary = _exact_pair(_pair(arena))
+	if saved.is_empty() or saved.get("mechanism", {}).is_empty():
+		_expect(false, "selected crescent paused pair must have a valid complete mechanism envelope: " + mechanism.last_snapshot_error)
+		await _dispose(arena)
+		return
+	_expect(saved.mechanism.schema_version == 1 and not saved.mechanism.has("pending_segments") and saved.mechanism.configuration.geometry.direction == Codec.vector3(Vector3.BACK) and saved.mechanism.exchange.geometry.direction == Codec.vector3(bearing), "closed ordinary schema1 stores immutable default separately from actual nondefault cycle bearing")
+	_expect(saved.mechanism.exchange.geometry.keys().size() == 6 and saved.scheduler.reservations[0].geometry == saved.mechanism.exchange.geometry, "mechanism and Scheduler transport use same closed six-field crescent with no envelope extension")
+	var frozen: String = Exact.stringify(saved)
+	await create_timer(0.04, true).timeout
+	_expect(frozen == Exact.stringify(_pair(arena)), "genuine pause freezes exact actor resources, source/cue deadlines and consumed opportunity")
+	var bindings: Dictionary = _bindings(arena)
+	for mutation: String in ["bearing", "direction-bit", "inner", "outer", "sector", "origin", "kind", "unknown", "nonunit"]:
+		var bad: Dictionary = saved.mechanism.duplicate(true)
+		match mutation:
+			"bearing": bad.exchange.geometry.direction = Codec.vector3(Vector3.RIGHT)
+			"direction-bit": bad.exchange.geometry.direction[0] = _next_float(float(bad.exchange.geometry.direction[0]))
+			"inner": bad.exchange.geometry.inner_radius += 0.01
+			"outer": bad.exchange.geometry.outer_radius += 0.01
+			"sector": bad.exchange.geometry.min_dot += 0.01
+			"origin": bad.exchange.geometry.origin[0] += 0.01
+			"kind": bad.exchange.geometry = {"kind": "circle", "origin": [0.0, 0.0, 0.0], "radius": 3.0}
+			"unknown": bad.exchange.geometry.fake = true
+			"nonunit": bad.exchange.geometry.direction = [0.0, 0.0, 0.0]
+		_expect(_reject_unchanged(arena, bad, bindings), "malformed or copied " + mutation + " transport rejects exact pair without actor/cue/clock/opportunity mutation")
+	var returned: Dictionary = mechanism.state()
+	returned.geometry.direction = Vector3.LEFT
+	returned.geometry.inner_radius = 0.2
+	_expect(Exact.stringify(saved) == Exact.stringify(_pair(arena)), "public state mutation cannot rewrite committed annular source or transport")
+	await _dispose(arena)
+	arena = await _arena("crescent", Vector3.ZERO)
+	hero = arena.hero
+	mechanism = arena.mechanism
+	scheduler = arena.scheduler
+	paused = true
+	await process_frame
+	bindings = _bindings(arena)
+	bindings.hero_positions = {"hero": Codec.read_vector3(saved.hero.motion.position)}
+	var events: Array[String] = []
+	mechanism.state_changed.connect(func(_value: Dictionary) -> void: events.append("phase"))
+	mechanism.get_cue().state_changed.connect(func(_value: Dictionary) -> void: events.append("cue"))
+	mechanism.hit_resolved.connect(func(_id: String, _cycle: int, _result: Dictionary) -> void: events.append("hit"))
+	hero.fired.connect(func(kind: String) -> void:
+		if kind == "hurt": events.append("hurt"))
+	scheduler.reservation_invalidated.connect(func(_id: String, _reason: String) -> void: events.append("cancel"))
+	var restored: bool = hero.snapshot_error(saved.hero).is_empty() and scheduler.snapshot_error(saved.scheduler, bindings).is_empty() and mechanism.snapshot_error(saved.mechanism, bindings, saved.scheduler).is_empty() and hero.restore_state(saved.hero) and scheduler.restore_state(saved.scheduler, bindings) and mechanism.restore_state(saved.mechanism, bindings)
+	_expect(restored, "fresh actual Hero/Scheduler/mechanism prevalidate whole exact staged pair then restore in actor→Scheduler→consumer order")
+	if not restored:
+		print("Crescent fresh restore: ", hero.last_snapshot_error, " / ", scheduler.last_snapshot_error, " / ", mechanism.last_snapshot_error)
+		await _dispose(arena)
+		return
+	_expect(events.is_empty() and Exact.stringify(saved) == Exact.stringify(_pair(arena)) and hero.hp == start_hp - loss and mechanism.state().hit_ids == ["hero"], "quiet fresh restore preserves every saved scalar/resource/opportunity with no warning/damage/event regrant")
+	_expect(mechanism.state().geometry == _shape(bearing) and mechanism.get_cue().state().geometry == _shape(bearing) and mechanism.get_cue().state().phase == "active", "fresh native cue rebuild renders exact selected nondefault sector rather than immutable default")
+	bindings.erase("hero_positions")
+	paused = false
+	await _ticks(50)
+	_expect(hero.hp == start_hp - loss and not events.has("hit") and not events.has("hurt") and mechanism.state().hit_ids == ["hero"], "remaining long active exposure after restored invulnerability expiry cannot spend opportunity again")
+	_expect(await _until_phase(mechanism, "clear") and mechanism.state().status == "complete", "actual recovery completes and releases original finite crescent exchange")
+	var next_bearing := Vector3.LEFT
+	var next_preview: Dictionary = mechanism.preview_start("hero", _context(arena), null, next_bearing)
+	var second: Dictionary = mechanism.start("hero", _context(arena), null, next_bearing, next_preview) if next_preview.get("accepted", false) else next_preview
+	_expect(second.get("accepted", false) and mechanism.state().cycle == 2 and mechanism.state().geometry == _shape(next_bearing), "only explicit new accepted cycle after actual cooldown selects another exact immutable bearing")
+	if second.get("accepted", false):
+		_expect(await _until_phase(mechanism, "active") and hero.hp == start_hp - loss and mechanism.state().hit_ids.is_empty(), "different bearing leaves actual former-sector Hero safe; prior selected direction does not leak into new cycle")
+	await _dispose(arena)
+
+
+func _test_legacy_bearing_rejection() -> void:
+	for kind: String in ["lane", "circle"]:
+		var arena: Dictionary = await _arena(kind)
+		var mechanism: CinderLaneMechanism = arena.mechanism
+		var before: Dictionary = _pair(arena)
+		mechanism.last_error = "legacy-pure-diagnostic"
+		_expect(not mechanism.preview_start("hero", _context(arena), null, Vector3.RIGHT).accepted and mechanism.last_error == "legacy-pure-diagnostic", kind + " explicit bearing rejects pure preflight without diagnostic changes")
+		_expect(not mechanism.start("hero", _context(arena), null, Vector3.RIGHT).accepted and _same(before, _pair(arena)) and mechanism.state().cycle == 0, kind + " bearing cannot retarget legacy shape or allocate cycle/serial")
+		var answer: Dictionary = mechanism.start("hero", _context(arena))
+		_expect(answer.get("accepted", false) and mechanism.state().geometry.kind == kind and mechanism.state().cycle == 1, kind + " legacy two-argument admission remains supported with unchanged geometry")
+		await _dispose(arena)
+
+
+func _test_containing_root_guard() -> void:
+	var arena: Dictionary = await _arena("crescent", Vector3.ZERO, true)
+	var before: Dictionary = _pair(arena)
+	arena.mechanism.last_error = "narrow-root"
+	var denied: Dictionary = arena.mechanism.preview_start("hero", _context(arena), null, Vector3.RIGHT)
+	_expect(not denied.accepted and arena.mechanism.last_error == "narrow-root" and _same(before, _pair(arena)) and not arena.scheduler.has_committed_exchange(), "least common subgroup with sibling native floor fails closed rather than silently omitting real world geometry")
+	await _dispose(arena)
+
+
+func _arena(kind: String = "crescent", hero_position: Vector3 = Vector3.ZERO, nested: bool = false) -> Dictionary:
+	paused = false
+	var world := Node3D.new()
+	world.name = "CrescentMechanismWorld"
+	root.add_child(world)
+	var floor := StaticBody3D.new()
+	floor.name = "Floor"
+	floor.collision_layer = 1
+	floor.collision_mask = 0
+	var support := CollisionShape3D.new()
+	support.name = "Support"
+	var box := BoxShape3D.new()
+	box.size = Vector3(30, 1, 30)
+	support.shape = box
+	floor.add_child(support)
+	world.add_child(floor)
+	floor.position.y = -0.5
+	var wall := StaticBody3D.new()
+	wall.name = "DistantBlocker"
+	wall.collision_layer = 1
+	wall.collision_mask = 0
+	var wall_shape := CollisionShape3D.new()
+	wall_shape.name = "Collision"
+	var wall_box := BoxShape3D.new()
+	wall_box.size = Vector3(0.2, 2, 8)
+	wall_shape.shape = wall_box
+	wall.add_child(wall_shape)
+	world.add_child(wall)
+	wall.position = Vector3(8, 1, 0)
+	var branch: Node3D = world
+	if nested:
+		branch = Node3D.new()
+		branch.name = "ActorsOnly"
+		world.add_child(branch)
+	var hero: CinderPlayer = Player.new()
+	hero.name = "Hero"
+	branch.add_child(hero)
+	hero.position = hero_position
+	hero.shells = 0
+	var scheduler: CinderThreatScheduler = Scheduler.new()
+	scheduler.name = "Scheduler"
+	branch.add_child(scheduler)
+	var mechanism: CinderLaneMechanism = Mechanism.new()
+	mechanism.name = "CrescentSource"
+	var shape: Dictionary = _shape(Vector3.BACK)
+	if kind == "lane": shape = Geometry.lane(Vector3.ZERO, Vector3.RIGHT, 0.3)
+	elif kind == "circle": shape = Geometry.circle(Vector3.ZERO, 0.3)
+	var raw: Dictionary = Mechanism.DEFAULT_RAW_ROLE.duplicate(true)
+	raw.active_s = 1.05
+	raw.attack_interval_s = raw.active_s + raw.recovery_s
+	_expect(mechanism.configure("crescent-mechanism", shape, Vector3.ZERO, raw), "immutable actual " + kind + " source configures before bind")
+	branch.add_child(mechanism)
+	_expect(mechanism.bind(scheduler, {"hero": hero}), "actual source binds stable earlier native Hero/Scheduler")
+	await _ticks(5)
+	_expect(scheduler.begin_encounter("standard", "crescent-unit", 1), "fresh isolated native fixed-world encounter begins")
+	return {"root": world, "hero": hero, "scheduler": scheduler, "mechanism": mechanism, "region": {"collision": support, "safe_rect": Rect2(-15, -15, 30, 30)}}
+
+
+func _shape(direction: Vector3) -> Dictionary:
+	return Geometry.crescent(Vector3.ZERO, direction, 2.4, 3.0, 0.5)
+
+
+func _context(arena: Dictionary) -> Dictionary:
+	return {"encounter_id": "crescent-unit", "world_revision": 1, "recognition_s": 0.12, "attack_input_margin_s": 0.02, "escape_directions": [Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK], "return_directions": [Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK], "floor_regions": [arena.region]}
+
+
+func _bindings(arena: Dictionary) -> Dictionary:
+	return {"world_root": arena.root, "owners": {"crescent-mechanism": arena.mechanism}, "floors": {"main-floor": arena.region}}
+
+
+func _pair(arena: Dictionary) -> Dictionary:
+	var prior: bool = paused
+	paused = true
+	var bindings: Dictionary = _bindings(arena)
+	var local: Dictionary = arena.mechanism.snapshot_state(bindings)
+	var scheduler: Dictionary = arena.scheduler.snapshot_state(bindings)
+	var hero: Dictionary = arena.hero.snapshot_state()
+	_expect(not local.is_empty() and not scheduler.is_empty() and not hero.is_empty(), "exact comparison uses nonempty native mechanism/Scheduler/Hero envelopes")
+	paused = prior
+	return {"hero": hero, "scheduler": scheduler, "mechanism": local}
+
+
+func _exact_pair(value: Dictionary) -> Dictionary:
+	var encoded: String = Exact.stringify(value)
+	var parsed: Dictionary = Exact.parse(encoded)
+	_expect(not encoded.is_empty() and parsed.get("accepted", false) and Exact.stringify(parsed.get("value", {})) == encoded, "whole paused aggregate survives exact tagged JSON bits/types without decimal clock tolerance")
+	return parsed.get("value", {})
+
+
+func _reject_unchanged(arena: Dictionary, bad: Dictionary, bindings: Dictionary) -> bool:
+	var before: Dictionary = _pair(arena)
+	var cue: Dictionary = arena.mechanism.get_cue().state()
+	return not arena.mechanism.restore_state(bad, bindings) and _same(before, _pair(arena)) and _native_same(cue, arena.mechanism.get_cue().state())
+
+
+func _same(left: Dictionary, right: Dictionary) -> bool:
+	var encoded: String = Exact.stringify(left)
+	return not encoded.is_empty() and encoded == Exact.stringify(right)
+
+
+func _native_same(left: Variant, right: Variant) -> bool:
+	if typeof(left) != typeof(right): return false
+	if left is Dictionary:
+		if left.size() != right.size(): return false
+		for key: String in left:
+			if not right.has(key) or not _native_same(left[key], right[key]): return false
+		return true
+	if left is Array:
+		if left.size() != right.size(): return false
+		for index: int in range(left.size()):
+			if not _native_same(left[index], right[index]): return false
+		return true
+	return left == right
+
+
+func _record_path(record: Dictionary) -> Array[Dictionary]:
+	var path: Array[Dictionary] = []
+	for index: int in range(1, record.path.size()):
+		path.append({"from": record.path[index - 1].position, "to": record.path[index].position, "start_s": record.path[index - 1].time_s, "end_s": record.path[index].time_s})
+	return path
+
+
+func _next_float(value: float) -> float:
+	var bytes := PackedByteArray()
+	bytes.resize(8)
+	bytes.encode_double(0, value)
+	bytes.encode_u64(0, bytes.decode_u64(0) + 1)
+	return bytes.decode_double(0)
+
+
+func _until_phase(mechanism: CinderLaneMechanism, phase: String) -> bool:
+	for _index: int in range(450):
+		if mechanism.state().phase == phase: return true
+		await _ticks(1)
+	return false
+
+
+func _ticks(count: int) -> void:
+	for _index: int in range(count):
+		await physics_frame
+		await process_frame
+
+
+func _dispose(arena: Dictionary) -> void:
+	arena.root.queue_free()
+	await process_frame
+
+
+func _expect(condition: bool, description: String) -> void:
+	_checks += 1
+	if not condition:
+		_failures += 1
+		push_error(description)
