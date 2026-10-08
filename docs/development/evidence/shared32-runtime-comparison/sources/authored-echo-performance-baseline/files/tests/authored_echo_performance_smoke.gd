@@ -1,0 +1,281 @@
+extends "res://tests/authored_echo_playback_smoke.gd"
+## TEST ONLY bounded native first-cycle cost, never an FPS/balance benchmark.
+## The original fixture's actual arena/definition/input/proof paths are retained.
+## Test-only subclasses wrap super calls; no proof cache, extra validation call,
+## authority replacement, skipped guard, simulation retiming or saved-state claim.
+## Microsecond measurements INCLUDE nested timers/bookkeeping overhead. Nested
+## inclusive costs must not be added to the enclosing Playback.advance cost.
+## One real required Box visual is measured; production 16-visual art is absent.
+const MAX_ADVANCES: int = 240
+
+class TimedScheduler extends "res://scripts/combat/threat_scheduler.gd":
+	var profiling: bool = false
+	var measurements: Array[Dictionary] = []
+	var totals: Dictionary = {}
+	var overflow: int = 0
+
+	func _timed(label: String, start_us: int, finish_us: int, accepted: bool) -> void:
+		if not profiling: return
+		var elapsed: int = finish_us - start_us
+		if not totals.has(label): totals[label] = {"calls": 0, "inclusive_us": 0, "max_us": 0}
+		var total: Dictionary = totals[label]
+		total.calls += 1
+		total.inclusive_us += elapsed
+		total.max_us = maxi(int(total.max_us), elapsed)
+		if measurements.size() >= 8192:
+			overflow += 1
+			return
+		measurements.append({"call": label, "start_us": start_us, "finish_us": finish_us, "inclusive_us": elapsed, "clock_s": get_clock(), "physics_frame": Engine.get_physics_frames(), "accepted": accepted})
+
+	func request_authored_replay(owner: Node3D, sequence: Dictionary, response: Dictionary, context: Dictionary) -> Dictionary:
+		var began: int = Time.get_ticks_usec()
+		var answer: Dictionary = super.request_authored_replay(owner, sequence, response, context)
+		var ended: int = Time.get_ticks_usec()
+		_timed("request_authored_replay_including_witness", began, ended, answer.get("accepted", false))
+		return answer
+
+	func commit_authored_replay(id: String, response: Dictionary) -> Dictionary:
+		var began: int = Time.get_ticks_usec()
+		var answer: Dictionary = super.commit_authored_replay(id, response)
+		var ended: int = Time.get_ticks_usec()
+		_timed("commit_authored_replay_including_witness", began, ended, answer.get("accepted", false))
+		return answer
+
+	func replay_reservation_error(id: String) -> String:
+		var began: int = Time.get_ticks_usec()
+		var answer: String = super.replay_reservation_error(id)
+		var ended: int = Time.get_ticks_usec()
+		_timed("replay_reservation_error", began, ended, answer.is_empty())
+		return answer
+
+	func authored_replay_source_error(owner: Node3D, sequence: Dictionary, context: Dictionary, floors: Array, profile_id: String = "", revision: int = 0, staged: Dictionary = {}, allow_defeated: bool = false) -> String:
+		var began: int = Time.get_ticks_usec()
+		var answer: String = super.authored_replay_source_error(owner, sequence, context, floors, profile_id, revision, staged, allow_defeated)
+		var ended: int = Time.get_ticks_usec()
+		_timed("authored_replay_source_error", began, ended, answer.is_empty())
+		return answer
+
+	func pure_collision_fingerprint(world: Node3D) -> Dictionary:
+		var began: int = Time.get_ticks_usec()
+		var answer: Dictionary = super.pure_collision_fingerprint(world)
+		var ended: int = Time.get_ticks_usec()
+		_timed("pure_collision_fingerprint", began, ended, not answer.is_empty())
+		return answer
+
+	func authored_floor_signature(world: Node3D, floors: Array) -> Dictionary:
+		var began: int = Time.get_ticks_usec()
+		var answer: Dictionary = super.authored_floor_signature(world, floors)
+		var ended: int = Time.get_ticks_usec()
+		_timed("authored_floor_signature", began, ended, answer.get("accepted", false))
+		return answer
+
+class TimedActor extends "res://tests/fixtures/authored_echo_actor.gd":
+	var profiling: bool = false
+	var profile_scheduler: Node3D
+	var measurements: Array[Dictionary] = []
+	var overflow: int = 0
+	var automatic_tick: bool = false
+
+	func _physics_process(delta: float) -> void:
+		automatic_tick = true
+		super._physics_process(delta)
+		automatic_tick = false
+
+	func advance() -> Dictionary:
+		var clock_before: float = profile_scheduler.get_clock() if profiling and is_instance_valid(profile_scheduler) else -1.0
+		var calls_before: int = profile_scheduler.measurements.size() if profiling and is_instance_valid(profile_scheduler) else 0
+		var began: int = Time.get_ticks_usec()
+		var answer: Dictionary = super.advance()
+		var ended: int = Time.get_ticks_usec()
+		if profiling:
+			if measurements.size() < 240:
+				measurements.append({"start_us": began, "finish_us": ended, "inclusive_us": ended - began, "clock_s": clock_before, "physics_frame": Engine.get_physics_frames(), "process_frame": Engine.get_process_frames(), "automatic_native_tick": automatic_tick, "phase": answer.get("phase", "rejected"), "accepted": answer.get("accepted", false), "event_count": answer.get("events", []).size(), "nested_scheduler_samples": profile_scheduler.measurements.size() - calls_before})
+			else:
+				overflow += 1
+		return answer
+
+var _profile_arena: Dictionary = {}
+
+
+func _run() -> void:
+	root.size = Vector2i(540, 1170)
+	var arena: Dictionary = await _arena()
+	_profile_arena = arena
+	var actor: TimedActor = arena.actor
+	var scheduler: TimedScheduler = arena.scheduler
+	var native_visuals: int = actor.get_enemy_apparition().get_authored_echo_render_bindings().required_visuals.size()
+	var source_position: Vector3 = actor.global_position
+	var source_basis: Basis = actor.global_basis
+	var hp_before: float = arena.player.hp
+	var actions: Array[Dictionary] = []
+	var phases: Array[String] = []
+	arena.player.world_action_executed.connect(func(record: Dictionary) -> void: actions.append(record.duplicate(true)))
+	actor.state_changed.connect(func(value: Dictionary) -> void:
+		var phase: String = String(value.cursor.get("phase", value.status))
+		if not phases.has(phase): phases.append(phase))
+	actor.profile_scheduler = scheduler
+	scheduler.profiling = true
+	actor.profiling = true
+	var wall_start: int = Time.get_ticks_usec()
+	var clock_start: float = scheduler.get_clock()
+	var installed: Dictionary = _install(arena)
+	if installed.is_empty():
+		await _finish_profile(arena, wall_start, clock_start, native_visuals, actions, phases)
+		return
+	var proof: Dictionary = await _lock(arena, installed)
+	if proof.is_empty():
+		await _finish_profile(arena, wall_start, clock_start, native_visuals, actions, phases)
+		return
+	for segment: Dictionary in proof.path:
+		if segment.kind not in ["first_escape_dash", "tether_positioning_dash"]: continue
+		await _until(arena, float(segment.start_s))
+		if _profile_budget_exhausted(): break
+		_expect(_swipe(arena, (segment.to - segment.from).normalized()), "profile executes actual routed " + segment.kind)
+		await _finished_dash(arena)
+		_expect(arena.player.hp == hp_before and actor.global_position == source_position and actor.global_basis == source_basis, "profile harmless route retains real Hero HP and fixed native source")
+	if not _profile_budget_exhausted():
+		await _until(arena, float(proof.primary_time_s))
+		_expect(actor.source_phase() == "recovery" and arena.player.global_position.distance_to(actor.global_position) <= float(arena.player.stats.primary_range), "real profile witness returns to ordinary hittable recovery knot")
+		_expect(_tap(arena, (actor.global_position - arena.player.global_position).normalized()), "real profile first tap executes ordinary primary")
+		_expect(actor.dead and actor.hp == 0.0 and actor.source_hits == 1 and arena.player.hp == hp_before, "real profile route defeats own HP source once without Hero damage")
+	var kinds: Array[String] = []
+	for action: Dictionary in actions: kinds.append(action.kind)
+	_expect(kinds.count("dash") == 2 and kinds.count("primary") == 1 and not kinds.has("blast"), "measurement workload contains two native dashes and one ordinary primary; natural ammo regeneration preserved")
+	await _finish_profile(arena, wall_start, clock_start, native_visuals, actions, phases)
+
+
+func _profile_budget_exhausted() -> bool:
+	return not _profile_arena.is_empty() and (_profile_arena.actor.measurements.size() >= MAX_ADVANCES or _profile_arena.actor.overflow > 0)
+
+
+func _until(arena: Dictionary, clock_s: float) -> void:
+	for _tick: int in range(MAX_ADVANCES):
+		if arena.scheduler.get_clock() >= clock_s or paused: return
+		if _profile_budget_exhausted():
+			_expect(false, "bounded profile native advance budget reached before required route deadline")
+			return
+		await _ticks(1)
+	_expect(false, "bounded native profile clock reaches required route deadline")
+
+
+func _finished_dash(arena: Dictionary) -> void:
+	for _tick: int in range(90):
+		if not arena.player.get_committed_dash_state().active: return
+		if _profile_budget_exhausted():
+			_expect(false, "bounded profile native advance budget reached before genuine dash ended")
+			return
+		await _ticks(1)
+	_expect(false, "actual profile dash ends within its ordinary bounded fixture window")
+
+
+func _finish_profile(arena: Dictionary, wall_start: int, clock_start: float, visuals: int, actions: Array, phases: Array) -> void:
+	var wall_finish: int = Time.get_ticks_usec()
+	var clock_finish: float = arena.scheduler.get_clock()
+	var actor: TimedActor = arena.actor
+	var scheduler: TimedScheduler = arena.scheduler
+	actor.profiling = false
+	scheduler.profiling = false
+	var advances: Array = actor.measurements.duplicate(true)
+	var calls: Array = scheduler.measurements.duplicate(true)
+	var totals: Dictionary = scheduler.totals.duplicate(true)
+	_expect(not advances.is_empty() and actor.overflow == 0 and scheduler.overflow == 0 and advances.size() <= MAX_ADVANCES, "bounded raw native measurements remain complete")
+	var actual_ticks: int = 0
+	var last_clock: float = -1.0
+	var native_costs: Array[int] = []
+	var costs_by_phase: Dictionary = {}
+	for sample: Dictionary in advances:
+		_expect(sample.accepted and sample.inclusive_us >= 0 and sample.clock_s >= last_clock, "profile native advance accepts original authority and monotonic real clock")
+		last_clock = sample.clock_s
+		if not sample.automatic_native_tick: continue
+		actual_ticks += 1
+		native_costs.append(sample.inclusive_us)
+		if not costs_by_phase.has(sample.phase): costs_by_phase[sample.phase] = []
+		costs_by_phase[sample.phase].append(sample.inclusive_us)
+	var phase_summary: Dictionary = {}
+	for phase: String in costs_by_phase: phase_summary[phase] = _cost_summary(costs_by_phase[phase])
+	_expect(actual_ticks > 0 and phases.has("warning") and phases.has("active") and phases.has("recovery"), "profile actually observes finite native warning/active/recovery execution")
+	var action_summary: Array = []
+	for action: Dictionary in actions: action_summary.append({"kind": action.kind, "started_at_s": action.started_at_s, "completed_at_s": action.completed_at_s, "hits": action.get("hits", 0), "damage": action.get("damage", 0.0)})
+	var report: Dictionary = {"api_revision": "test-only-authored-echo-performance-1", "engine": Engine.get_version_info(), "display_driver": DisplayServer.get_name(), "physics_ticks_per_second": Engine.physics_ticks_per_second, "viewport_size": [270, 585], "native_output": [540, 1170], "required_native_visuals": visuals, "wall_start_us": wall_start, "wall_finish_us": wall_finish, "wall_elapsed_us": wall_finish - wall_start, "simulation_start_s": clock_start, "simulation_finish_s": clock_finish, "simulation_elapsed_s": clock_finish - clock_start, "automatic_native_advances": actual_ticks, "advance_cost_summary_us": _cost_summary(native_costs), "advance_phase_summary_us": phase_summary, "scheduler_inclusive_totals": totals, "native_phases_observed": phases, "actual_world_actions": action_summary, "advance_samples": advances, "scheduler_samples": calls, "limitations": "Instrumented one-Box native fixture first cycle; inclusive nested timers/bookkeeping and native loop waits included. Not actual authored A3-L3, production 16-visual art, portrait review, FPS, CPU monitor percentiles, sustained performance or a latency acceptance threshold. No guards or contact/proof authority bypassed."}
+	print("AUTHORED_ECHO_PROFILE_JSON ", JSON.stringify(report))
+	await _dispose(arena)
+	print("Authored echo performance smoke: %d checks, %d failures; native-only first-cycle measurement" % [_checks, _failures])
+	quit(0 if _failures == 0 else 1)
+
+
+func _cost_summary(values: Array) -> Dictionary:
+	if values.is_empty(): return {"count": 0}
+	var ordered: Array = values.duplicate()
+	ordered.sort()
+	var total: int = 0
+	for value: int in ordered: total += value
+	return {"count": ordered.size(), "inclusive_total_us": total, "mean_us": float(total) / ordered.size(), "p50_us": ordered[int(ceil(ordered.size() * 0.50)) - 1], "p95_us": ordered[int(ceil(ordered.size() * 0.95)) - 1], "max_us": ordered[-1]}
+
+
+func _arena(extreme: bool = false, settle: bool = true) -> Dictionary:
+	if settle:
+		paused = false
+	var viewport := SubViewport.new()
+	viewport.name = "TestOnlyOwnEnemyWorld"
+	viewport.size = Vector2i(270, 585)
+	viewport.own_world_3d = true
+	viewport.handle_input_locally = false
+	root.add_child(viewport)
+	var world := Node3D.new()
+	world.name = "NativeWorld"
+	viewport.add_child(world)
+	var body := StaticBody3D.new()
+	body.name = "DryFloor"
+	body.collision_layer = 1
+	body.collision_mask = 0
+	var collision := CollisionShape3D.new()
+	collision.name = "Collision"
+	var box := BoxShape3D.new()
+	box.size = Vector3(16, 1, 16)
+	collision.shape = box
+	body.position = Vector3(0, -0.5, 0)
+	body.add_child(collision)
+	world.add_child(body)
+	var camera := Camera3D.new()
+	camera.name = "NativeCamera"
+	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	camera.size = 7.2
+	world.add_child(camera)
+	camera.position = Vector3(0, 18, 13)
+	camera.look_at(Vector3.ZERO)
+	camera.current = true
+	var hero = Player.new()
+	hero.name = "ActualSharedPlayer"
+	world.add_child(hero)
+	hero.position = Vector3(0.6, 0.1, 0)
+	var scheduler = TimedScheduler.new()
+	scheduler.name = "ActualScheduler"
+	world.add_child(scheduler)
+	_expect(scheduler.begin_encounter("standard", "test-only/own-echo", 1), "actual Scheduler selects a fresh raw Standard encounter")
+	var host = InputHost.new()
+	host.name = "ActualRecognizerHost"
+	host.player = hero
+	host.world = world
+	host.camera = camera
+	root.add_child(host)
+	if settle:
+		await _ticks(8)
+		paused = true
+		await process_frame
+		if extreme:
+			for id: String in ["CLOTH-J1", "CLOTH-P2", "CLOTH-S2", "WEAPON-04"]:
+				_expect(hero.equip_item(id), "legal paused pre-encounter gear selects " + id)
+		var seed: Dictionary = hero.snapshot_state()
+		seed.resources.shells = 0
+		seed.clocks.reload_s = 0.0
+		_expect(hero.restore_state(seed), "TEST ONLY initial paused empty-ammo seed retains coherent actual actor")
+	var floors: Array = [{"collision": collision, "safe_rect": Rect2(-8, -8, 16, 16)}]
+	var signature: Dictionary = ReplayProjection.floor_signature(world, floors)
+	var context: Dictionary = {"world_root": world, "source_id": SOURCE_ID, "source_epoch": EPOCH, "generation": GENERATION, "world_collision_fingerprint": scheduler.pure_collision_fingerprint(world), "world_floor_signature": signature.get("signature", [])}
+	var source = TimedActor.new()
+	source.name = "ActualFixedKnotC52"
+	world.add_child(source)
+	var prepared: Dictionary = {"world_revision": 1, "collision_fingerprint": context.world_collision_fingerprint, "floor_signature": context.world_floor_signature}
+	_expect(source.initialize_source(SOURCE_ID, EPOCH, GENERATION, _definition(), "standard", prepared) and source.attach_source_scheduler(scheduler), "genuine shared Playback subclass owns immutable native definition, HP, visible mesh and fixed endpoint")
+	_expect(source.configure_authored("test-only/physical-echo", source.source_program(), EPOCH, GENERATION), "own enemy configure_authored uses its actual source hooks: " + source.last_error)
+	return {"viewport": viewport, "world": world, "floor": collision, "floors": floors, "camera": camera, "host": host, "player": hero, "scheduler": scheduler, "actor": source, "context": context}
