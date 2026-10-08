@@ -4,10 +4,17 @@ extends CharacterBody3D
 signal died(where: Vector3)
 
 const SpriteScript = preload("res://scripts/pixel_sprite.gd")
+const Footprint = preload("res://scripts/attack_footprint.gd")
 const GRAVITY: float = 24.0
 const AGGRO_RANGE: float = 11.0
 const ATTACK_HEIGHT_TOLERANCE: float = 1.35
 const ATTACK_DOT: float = 0.55
+const ACTIVE_FEEDBACK_S: float = 0.12
+# Arena tuning proposal: hold a readable, stationary opening after each strike.
+# These are prototype roles, not authored campaign Selenite behaviours.
+const RECOVERY_S: float = 0.60
+const LOCK_LEAD_S: float = 0.20
+const MAX_PREPARING_ATTACKERS: int = 2
 const COLOR_CRIMSON: Color = Color(0.68, 0.035, 0.075)
 const COLOR_WARNING: Color = Color(1.0, 0.13, 0.15)
 const COLOR_HIT: Color = Color(2.0, 2.0, 2.0)
@@ -26,12 +33,19 @@ var _attack_interval: float = 1.25
 var _knockback_factor: float = 1.0
 var _facing: Vector3 = Vector3.FORWARD
 var _windup_left: float = 0.0
+var _active_left: float = 0.0
+var _recovery_left: float = 0.0
+var _attack_facing: Vector3 = Vector3.FORWARD
 var _cooldown_left: float = 0.0
 var _stagger_left: float = 0.0
 var _hit_flash_left: float = 0.0
 var _hop_left: float = 0.0
 var _sprite: LabSprite
 var _warning: MeshInstance3D
+var _active_footprint: MeshInstance3D
+var _countdown: Node3D
+var _countdown_pips: Array[MeshInstance3D] = []
+var _recovery_marker: MeshInstance3D
 
 
 func _ready() -> void:
@@ -52,23 +66,35 @@ func configure(hero: Node3D, fx: Node, kind: int = 0) -> void:
 		_build_visual()
 
 
-func take_damage(amount: float, impulse: Vector3) -> void:
-	if hp <= 0.0:
-		return
-	hp = maxf(0.0, hp - maxf(amount, 0.0))
-	if _fx != null and is_instance_valid(_fx) and _fx.has_method("burst"):
-		_fx.call("burst", global_position + Vector3(0.0, 0.8, 0.0), COLOR_CRIMSON, 9, 3.0)
+func take_damage(amount: float, impulse: Vector3) -> Dictionary:
+	var was_alive: bool = hp > 0.0 and not is_queued_for_deletion()
+	var result: Dictionary = {
+		"accepted": false,
+		"hp_damage": 0.0,
+		"target_id": get_instance_id(),
+		"target_alive_before_hit": was_alive,
+	}
+	if not was_alive or amount <= 0.0:
+		return result
+	var old_hp: float = hp
+	hp = maxf(0.0, hp - amount)
+	result["accepted"] = true
+	result["hp_damage"] = old_hp - hp
+	if hp > 0.0 and _fx != null and is_instance_valid(_fx) and _fx.has_method("tiny_bleed"):
+		_fx.call("tiny_bleed", global_position + Vector3(0.0, 0.8, 0.0), 3, impulse)
 	if hp <= 0.0:
 		_die(impulse)
-		return
+		return result
 	_hit_flash_left = 0.12
 	_windup_left = 0.0
-	if _warning != null:
-		_warning.visible = false
+	_active_left = 0.0
+	_recovery_left = 0.0
+	_update_attack_feedback()
 	var adjusted_impulse: Vector3 = impulse * _knockback_factor
 	velocity += adjusted_impulse
 	velocity.y = maxf(velocity.y, adjusted_impulse.y)
 	_stagger_left = maxf(_stagger_left, 0.14 + minf(adjusted_impulse.length() * 0.035, 0.27))
+	return result
 
 
 func _physics_process(delta: float) -> void:
@@ -82,18 +108,30 @@ func _physics_process(delta: float) -> void:
 	_hop_left = maxf(0.0, _hop_left - delta)
 	_hit_flash_left = maxf(0.0, _hit_flash_left - delta)
 	if _sprite != null:
-		_sprite.modulate = COLOR_HIT if _hit_flash_left > 0.0 else Color.WHITE
+		_sprite.modulate = COLOR_HIT if _hit_flash_left > 0.0 else (Color(0.70, 0.72, 0.76) if _recovery_left > 0.0 else Color.WHITE)
 	if _stagger_left > 0.0:
 		_stagger_left = maxf(0.0, _stagger_left - delta)
 		_slow_planar(5.0 * delta)
 	elif _windup_left > 0.0:
-		_windup_left -= delta
-		_slow_planar(12.0 * delta)
+		_windup_left = maxf(_windup_left - delta, 0.0)
+		velocity.x = 0.0
+		velocity.z = 0.0
 		if _windup_left <= 0.0:
 			_strike()
+	elif _active_left > 0.0:
+		_active_left = maxf(_active_left - delta, 0.0)
+		velocity.x = 0.0
+		velocity.z = 0.0
+		if _active_left <= 0.0:
+			_recovery_left = RECOVERY_S
+	elif _recovery_left > 0.0:
+		_recovery_left = maxf(_recovery_left - delta, 0.0)
+		velocity.x = 0.0
+		velocity.z = 0.0
 	else:
 		_follow_or_attack(delta)
 	move_and_slide()
+	_update_attack_feedback()
 	if _sprite != null:
 		_sprite.animate(Vector2(velocity.x, velocity.z).length() > 0.25 and is_on_floor(), delta)
 
@@ -133,23 +171,33 @@ func _slow_planar(step: float) -> void:
 	velocity.z = current.z
 
 
-func _start_windup() -> void:
+func _start_windup() -> bool:
+	if not _can_prepare_attack():
+		return false
 	_windup_left = _windup_duration
+	_attack_facing = _facing
 	velocity.x = 0.0
 	velocity.z = 0.0
-	if _warning != null:
-		_warning.visible = true
-		_warning.position = _facing * (_attack_reach * 0.5) + Vector3(0.0, 0.03, 0.0)
-		_warning.rotation.y = atan2(_facing.x, _facing.z)
-		_warning.scale.z = _attack_reach
+	# Snapshot the same scenery-aware ground footprint for warning and impact.
+	# The source remains stationary until this committed exchange finishes.
+	var world_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+	_warning.mesh = Footprint.cone_mesh(_attack_reach, ATTACK_DOT, false, world_state, global_position, _attack_facing)
+	_active_footprint.mesh = Footprint.cone_mesh(_attack_reach, ATTACK_DOT, true, world_state, global_position, _attack_facing)
+	var angle: float = atan2(_attack_facing.x, _attack_facing.z)
+	_warning.rotation.y = angle
+	_active_footprint.rotation.y = angle
+	_countdown.rotation.y = angle
+	_update_attack_feedback()
+	return true
 
 
 func _strike() -> void:
-	if _warning != null:
-		_warning.visible = false
+	_windup_left = 0.0
+	_active_left = ACTIVE_FEEDBACK_S
 	_cooldown_left = _attack_interval
+	_update_attack_feedback()
 	if _fx != null and is_instance_valid(_fx) and _fx.has_method("slash"):
-		_fx.call("slash", global_position + _facing * 0.8 + Vector3(0.0, 0.85, 0.0), _facing, COLOR_WARNING)
+		_fx.call("slash", global_position + _attack_facing * 0.8 + Vector3(0.0, 0.85, 0.0), _attack_facing, COLOR_WARNING)
 	if not _hero_is_alive():
 		return
 	var difference: Vector3 = _hero.global_position - global_position
@@ -157,10 +205,52 @@ func _strike() -> void:
 	var distance: float = planar.length()
 	if distance > _attack_reach or absf(difference.y) > ATTACK_HEIGHT_TOLERANCE:
 		return
-	if distance > 0.1 and planar.normalized().dot(_facing) < ATTACK_DOT:
+	if distance > 0.1 and planar.normalized().dot(_attack_facing) < ATTACK_DOT:
+		return
+	var query := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.7, _hero.global_position + Vector3.UP * 0.7, 1)
+	if not get_world_3d().direct_space_state.intersect_ray(query).is_empty():
 		return
 	if _hero.has_method("take_damage"):
-		_hero.call("take_damage", _attack_damage, _facing * 4.0 + Vector3(0.0, 2.5, 0.0))
+		_hero.call("take_damage", _attack_damage, _attack_facing * 4.0 + Vector3(0.0, 2.5, 0.0))
+
+
+func get_attack_state() -> String:
+	if hp <= 0.0:
+		return "defeated"
+	if _stagger_left > 0.0:
+		return "stagger"
+	if _windup_left > 0.0:
+		return "lock" if _windup_left <= minf(LOCK_LEAD_S, _windup_duration) else "warning"
+	if _active_left > 0.0:
+		return "active"
+	if _recovery_left > 0.0:
+		return "recovery"
+	return "approach"
+
+
+func _can_prepare_attack() -> bool:
+	var preparing: int = 0
+	for other: Node in get_tree().get_nodes_in_group("enemies"):
+		if other == self or not other.has_method("get_attack_state"):
+			continue
+		var state: String = other.call("get_attack_state")
+		if state == "warning" or state == "lock":
+			preparing += 1
+	return preparing < MAX_PREPARING_ATTACKERS
+
+
+func _update_attack_feedback() -> void:
+	if _warning == null:
+		return
+	_warning.visible = _windup_left > 0.0
+	_active_footprint.visible = _active_left > 0.0
+	_countdown.visible = _windup_left > 0.0
+	_recovery_marker.visible = _recovery_left > 0.0
+	var remaining_pips: int = ceili(6.0 * _windup_left / _windup_duration)
+	for index: int in range(_countdown_pips.size()):
+		_countdown_pips[index].visible = index < remaining_pips
+	var material: StandardMaterial3D = _warning.material_override as StandardMaterial3D
+	material.albedo_color = Color(1.0, 0.88, 0.68) if get_attack_state() == "lock" else COLOR_WARNING
 
 
 func _hero_is_alive() -> bool:
@@ -168,8 +258,8 @@ func _hero_is_alive() -> bool:
 
 
 func _die(impulse: Vector3) -> void:
-	if _fx != null and is_instance_valid(_fx) and _fx.has_method("burst"):
-		_fx.call("burst", global_position + Vector3(0.0, 0.8, 0.0), COLOR_CRIMSON, 24, 6.0 + impulse.length() * 0.25)
+	if _fx != null and is_instance_valid(_fx) and _fx.has_method("tiny_bleed"):
+		_fx.call("tiny_bleed", global_position + Vector3(0.0, 0.8, 0.0), 5, impulse)
 	died.emit(global_position)
 	queue_free()
 
@@ -225,14 +315,42 @@ func _build_visual() -> void:
 	add_child(_sprite)
 	_sprite.face(_facing)
 	if _warning == null:
-		_warning = MeshInstance3D.new()
-		_warning.name = "AttackWarning"
-		var mesh: BoxMesh = BoxMesh.new()
-		mesh.size = Vector3(0.9, 0.04, 1.0)
-		_warning.mesh = mesh
-		var material: StandardMaterial3D = StandardMaterial3D.new()
-		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		material.albedo_color = COLOR_WARNING
-		_warning.material_override = material
-		add_child(_warning)
-	_warning.visible = false
+		_warning = _floor_visual("AttackWarning", Footprint.cone_mesh(_attack_reach, ATTACK_DOT), COLOR_WARNING)
+		_active_footprint = _floor_visual("ActiveAttackFootprint", Footprint.cone_mesh(_attack_reach, ATTACK_DOT, true), Color(1.0, 0.13, 0.15, 0.30))
+		_countdown = Node3D.new()
+		_countdown.name = "AttackCountdown"
+		add_child(_countdown)
+		var half_angle: float = acos(ATTACK_DOT)
+		for index: int in range(6):
+			var pip: MeshInstance3D = MeshInstance3D.new()
+			var pip_mesh: BoxMesh = BoxMesh.new()
+			pip_mesh.size = Vector3(0.085, 0.025, 0.085)
+			pip.mesh = pip_mesh
+			pip.material_override = _floor_material(Color(1.0, 0.88, 0.68))
+			var angle: float = lerpf(-half_angle * 0.82, half_angle * 0.82, float(index) / 5.0)
+			pip.position = Footprint.radial_point(angle, _attack_reach - 0.16) + Vector3.UP * 0.04
+			_countdown.add_child(pip)
+			_countdown_pips.append(pip)
+		_recovery_marker = _floor_visual("RecoveryOpening", Footprint.ring_mesh(0.53), Color(0.94, 0.91, 0.84))
+	_update_attack_feedback()
+
+
+func _floor_visual(node_name: String, mesh: Mesh, color: Color) -> MeshInstance3D:
+	var visual: MeshInstance3D = MeshInstance3D.new()
+	visual.name = node_name
+	visual.mesh = mesh
+	visual.material_override = _floor_material(color)
+	visual.position.y = 0.03
+	visual.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(visual)
+	return visual
+
+
+func _floor_material(color: Color) -> StandardMaterial3D:
+	var material: StandardMaterial3D = StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	material.albedo_color = color
+	if color.a < 1.0:
+		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	return material

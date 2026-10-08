@@ -1,0 +1,893 @@
+{
+  "schema_version": 1,
+  "act": 1,
+  "title": "The Moon",
+  "status": "design_proposal_unimplemented_unplaytested",
+  "researched_date": "2026-10-08",
+  "source_film": "A Trip to the Moon / Le Voyage dans la Lune (Georges Méliès, 1902)",
+  "audience": "New player learning the confirmed gestures and baseline close-range combat",
+  "main_level_count": 5,
+  "main_first_clear_target_minutes": 43,
+  "optional_level_count": 3,
+  "optional_first_clear_range_minutes": [
+    9,
+    15
+  ],
+  "all_content_first_clear_range_minutes": [
+    52,
+    58
+  ],
+  "pacing_baseline": {
+    "document": "../../../GAME_CONCEPT.md",
+    "act1_main_level_count": 5,
+    "act1_target_minutes": [
+      6,
+      8,
+      9,
+      10,
+      10
+    ],
+    "act1_total_minutes": 43,
+    "comparison_documents": [
+      "../../../ACT2_CONCEPT.md",
+      "../../../ACT3_CONCEPT.md"
+    ],
+    "act2_target_minutes": [
+      8,
+      9,
+      9,
+      9,
+      10
+    ],
+    "act3_target_minutes": [
+      8,
+      9,
+      9,
+      9,
+      10
+    ],
+    "campaign_main_first_clear_target_minutes": 133,
+    "campaign_all_content_first_clear_range_minutes": [
+      160,
+      178
+    ],
+    "inherited_rules": [
+      "five main levels",
+      "shorter opening",
+      "roughly ten-minute ceiling",
+      "separately entered 3–5 minute optional levels",
+      "parent-kit reuse for optional levels",
+      "encounter and boss-phase checkpoints",
+      "frozen-state pause/resume"
+    ],
+    "estimate_includes": [
+      "movement",
+      "encounters",
+      "brief transitions"
+    ],
+    "estimate_excludes": [
+      "retries",
+      "deliberate replays",
+      "reference-library reading"
+    ],
+    "no_padding_waves": true,
+    "art_style_inherited_from_other_acts": false
+  },
+  "campaign_constraints": {
+    "orientation": "portrait",
+    "presentation": "pixelated 2.5D; fixed-angle overhead player-following camera",
+    "voluntary_movement": "directional swipes cause ground-plane X/Z dashes only",
+    "attack": "immediate tap slash; nearby second quick tap chains one blast; aim from final swipe release",
+    "weapon": "one carried weapon; pickup replaces current weapon; no hotbar",
+    "damage": "fixed baseline damage; no persistent damage growth",
+    "compulsory_new_controls": false,
+    "forbidden_required_traversal": [
+      "swimming",
+      "underwater movement",
+      "driving",
+      "climbing",
+      "jumping",
+      "precision ledge walking",
+      "powerup-gated dash gaps"
+    ],
+    "optional_baseline_completion": true,
+    "boss_slash_only_completion_required": true,
+    "friendly_earth_cast": true,
+    "celestial_dream_figures_are_scenery": true,
+    "broader_environment_interactables": "future topic after enemy behaviour; do not expand roster here"
+  },
+  "gesture_coordinate_rule": {
+    "player_aim_anchor": "screen-space final finger-release endpoint of the latest swipe",
+    "attack_vector": "from that stored endpoint to tap position; no target redirection",
+    "confirmed_example": "final release upper-left then centre tap strikes down-right regardless of player world position",
+    "anchor_updates": "final finger release, not swipe threshold crossing",
+    "camera_movement": "does not move or reinterpret screen-space anchor",
+    "reset_anchor": "screen centre",
+    "zero_vector_tap": "retain last facing direction",
+    "first_tap": "slash immediately",
+    "second_tap": "one blast after first slash; nearby tap within current prototype 280 ms",
+    "screen_edge_remedy": "ordinary positioning swipe ending at a useful screen point; no separate aim-only gesture",
+    "enemy_targeting": "actual world-space position/lane; distinct from finger-release endpoint",
+    "teaching_cue": "optional short-lived anchor/direction demonstration; must not alter confirmed mapping"
+  },
+  "learning_rules": {
+    "all_confirmed_controls_available_from_opening": true,
+    "sequence": [
+      "safe gesture instance",
+      "changed spatial application",
+      "controlled combination"
+    ],
+    "introduce_enemy_alone_before_mix": true,
+    "successful_action_advances_tutorial": true,
+    "no_required_flawless_streak": true,
+    "no_forced_repeat_lecture_on_retry": true,
+    "progress_states": {
+      "player_mastery": [
+        "screen-anchor aiming",
+        "useful landings",
+        "commitment recognition",
+        "finite spore timing",
+        "priority targets"
+      ],
+      "attempt": [
+        "health",
+        "weapon",
+        "temporary pickups",
+        "spore supply",
+        "remaining enemies",
+        "current encounter"
+      ],
+      "persistent": [
+        "level access",
+        "encounter and phase completion",
+        "optional completion",
+        "cosmetics"
+      ]
+    }
+  },
+  "checkpoints": {
+    "target_minutes_between_saved_completions": [
+      1,
+      3
+    ],
+    "save_before_boss": true,
+    "save_after_boss_phase": true,
+    "short_safe_tutorial_and_camp_can_save_sooner": true,
+    "saved_markers": "save on completed exercise/encounter/phase, not a timed autosave",
+    "retry": "restore coherent section start, intended supplies and enemy positions; no active warning at load",
+    "backgrounding": "freeze all simulation including cooldowns, warnings, spores, temporary effects and boss logic",
+    "resume": "consume overlay tap; continue frozen state without accidental slash or blast",
+    "cleared_rooms": "stay safe; no unannounced respawn behind player"
+  },
+  "regular_enemies": [
+    {
+      "id": "A1-E1",
+      "entity_id": "C30",
+      "name": "Rush Selenite",
+      "canonical_status": "invented game variant of film Selenite family",
+      "first_level": "A1-L2",
+      "role": "short committed rush lane; stopped body slashable in recovery"
+    },
+    {
+      "id": "A1-E2",
+      "entity_id": "C31",
+      "name": "Swarm Selenite",
+      "canonical_status": "invented game variant of film Selenite family",
+      "first_level": "A1-L3",
+      "role": "crowd approach with individually telegraphed short hopping strikes; repelled by spores"
+    },
+    {
+      "id": "A1-E3",
+      "entity_id": "C32",
+      "name": "Spear Guard",
+      "canonical_status": "invented game variant of film Selenite family",
+      "first_level": "A1-L3",
+      "role": "braced short thrust lane; lowered-spear recovery; formation reuse in court"
+    }
+  ],
+  "enemy_tuning_proposals": {
+    "first_demonstration_preparing_attackers": 1,
+    "initial_mix_max_preparing_attackers": 2,
+    "stagger_commitments": true,
+    "first_swarm_body_count": [
+      3,
+      4
+    ],
+    "later_spore_test_body_count": 8,
+    "swarm_health_hypothesis": "one ordinary slash; verify with fixed baseline damage",
+    "contact_damage": false,
+    "bodies_must_allow_normal_dash_escape": true,
+    "health_counts_and_timings_final": false
+  },
+  "spore_interaction": {
+    "confirmed_direction": "hittable spores on mushrooms fall around mushroom and temporarily repel enemies",
+    "not_damage": true,
+    "player_harmed": false,
+    "affected_enemies": "regular Selenites, including rushers and spear guards",
+    "activation": "ordinary hit on low reachable cluster; normal slash viable",
+    "enemy_response": "cancel current attack, recoil, turn and retreat beyond field; avoid it until thinning ends",
+    "tradeoff": "spend finite supply now to create space or save an escape opening for later",
+    "tuning_proposals": {
+      "clusters_per_mushroom": 2,
+      "duration_seconds": 3,
+      "thinning_final_seconds": 0.5,
+      "radius_as_normal_dash_fraction": 0.75,
+      "replenish_during_encounter": false
+    },
+    "extra_hit_during_release_or_field": "consume no second cluster and do not refresh; slash-then-blast does not spend two",
+    "field_collision": "predictable floor boundary; decorative falling particles do not determine affected enemies",
+    "spent_feedback": "visible empty cluster patch",
+    "retry": "restore original encounter supply",
+    "baseline_escape_after_all_clusters_spent": true,
+    "supersedes": "automatic damaging spore vent proposal"
+  },
+  "levels": [
+    {
+      "id": "A1-L1",
+      "name": "Observatory and Launch",
+      "subtitle": "The Launch Rehearsal",
+      "kind": "main",
+      "target_minutes": 6,
+      "objective": "Complete the launch rehearsal and reach the capsule hatch",
+      "skill": "Choose a useful dash landing and deliberately aim from the final swipe release",
+      "mood": "friendly ceremony; comic scientific ambition; lively preparation",
+      "source_urls": [
+        "https://www.cinematheque.fr/objet/392.html",
+        "https://melies.lobsterfilms.com/contes.php#"
+      ],
+      "enemy_ids": [],
+      "boss_ids": [],
+      "beats": [
+        {
+          "name": "A direction to try",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 60,
+          "purpose": "Any-angle swipes across wide safe floor markers; observe dash distance and cooldown"
+        },
+        {
+          "name": "The point you released",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 120,
+          "purpose": "One safe target; upper-left final release and centre tap produce down-right slash"
+        },
+        {
+          "name": "Workshop approach",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 210,
+          "purpose": "Two broad target approaches; safe edge-anchor repositioning; optional one blast after slash"
+        },
+        {
+          "name": "Loading-arm lane",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 300,
+          "purpose": "Observe one slow lock and swing, then choose a safe landing near a target"
+        },
+        {
+          "name": "All aboard",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 360,
+          "purpose": "Known arm plus target; clear rehearsal, contact hatch and brief launch tableau"
+        }
+      ],
+      "kit": [
+        "ceremony hall floor",
+        "columns and arched windows",
+        "astronomical instrument and blackboard",
+        "bench",
+        "friendly robed astronomers",
+        "coated expedition companions",
+        "workers and launch attendants",
+        "hammer and anvil",
+        "finless capsule and hatch",
+        "painted roof and chimney skyline",
+        "telescope",
+        "cannon and railings",
+        "practice target idle/hit/cleared",
+        "floor markers",
+        "loading arm warning/active/recovery"
+      ],
+      "film_object_ids": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O12",
+        "O13",
+        "O14",
+        "O15",
+        "O16",
+        "O17",
+        "O18",
+        "O19",
+        "O20",
+        "O21",
+        "O22",
+        "O23",
+        "O24",
+        "O25",
+        "O26",
+        "O27",
+        "O28",
+        "O29",
+        "O30",
+        "O31"
+      ],
+      "mastery_evidence": "New player demonstrates release upper-left then tap centre to slash down-right, and can reposition for a useful aim anchor",
+      "set_piece": "Friendly loading-arm rehearsal, not a boss or hostile human faction",
+      "tutorial": {
+        "damage_pressure": "none in hall/workshop; low in arm demonstration",
+        "control_locking": false,
+        "success_advances_immediately": true,
+        "replay_skips_instruction_pauses": true,
+        "missed_target_does_not_reset_exercise": true,
+        "no_required_blast": true
+      }
+    },
+    {
+      "id": "A1-L2",
+      "name": "Crater Gardens",
+      "subtitle": "The Celestial Camp",
+      "kind": "main",
+      "target_minutes": 8,
+      "objective": "Cross the lunar clearings and open the grotto passage",
+      "skill": "Read a world-space commitment and choose a safe landing near its recovery",
+      "mood": "lunar wonder; celestial rest; first playful danger",
+      "source_urls": [
+        "https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_07.jpg",
+        "https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_08.jpg"
+      ],
+      "enemy_ids": [
+        "A1-E1"
+      ],
+      "boss_ids": [],
+      "beats": [
+        {
+          "name": "Landing clearing",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 90,
+          "purpose": "One circular impact locks before a square puff; safe pocket visible; crater paint harmless"
+        },
+        {
+          "name": "First Selenite",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 210,
+          "purpose": "One rusher alone; evade committed lane and slash the stopped body"
+        },
+        {
+          "name": "Two approaches",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 330,
+          "purpose": "Rock-framed or open route with one familiar rusher and impact; both routes rejoin"
+        },
+        {
+          "name": "Celestial camp",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 390,
+          "purpose": "Quiet sleeping tableau, save cue and next entrance; no attack until broad threshold"
+        },
+        {
+          "name": "The grotto opens",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 480,
+          "purpose": "One rusher plus staggered impacts; defeating rusher ends impacts and opens contact exit"
+        }
+      ],
+      "kit": [
+        "jagged painted rock flats",
+        "broad crater floor",
+        "landed finless capsule",
+        "cloud and black-sky backdrop",
+        "sleeping expedition",
+        "Earth globe",
+        "crescent performer",
+        "human-faced stars",
+        "Saturn performer",
+        "rusher crouch/lock/rush/recovery",
+        "animated circle impact",
+        "restrained square puff"
+      ],
+      "film_object_ids": [
+        "O34",
+        "O35",
+        "O36",
+        "O37",
+        "O38",
+        "O39",
+        "O40",
+        "O41",
+        "O42",
+        "O49",
+        "O50",
+        "O58"
+      ],
+      "mastery_evidence": "Player waits for lane lock, dashes beside it near the stopping point and deliberately strikes recovery",
+      "route_choice": {
+        "required_routes": 2,
+        "rejoin": true,
+        "both_baseline_completable": true,
+        "long_backtrack": false
+      }
+    },
+    {
+      "id": "A1-L3",
+      "name": "Mushroom Caverns",
+      "subtitle": "The Breathing Grotto",
+      "kind": "main",
+      "target_minutes": 9,
+      "objective": "Break through the fungal chambers and open the court curtain",
+      "skill": "Spend hittable spores to repel a crowd, then use the created space",
+      "mood": "curious ecology; enclosure; breathing room; pursuit",
+      "source_urls": [
+        "https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_09.jpg",
+        "https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_10.jpg"
+      ],
+      "enemy_ids": [
+        "A1-E2",
+        "A1-E3"
+      ],
+      "boss_ids": [],
+      "beats": [
+        {
+          "name": "Umbrella grove",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 90,
+          "purpose": "Three or four swarmers with broad gaps; one prepared hopping strike at a time"
+        },
+        {
+          "name": "Breathing chamber",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 210,
+          "purpose": "Preview reachable cluster; slash releases spores; living enemies retreat then regroup visibly"
+        },
+        {
+          "name": "Crossed grotto",
+          "seconds": 150,
+          "checkpoint_elapsed_seconds": 360,
+          "purpose": "Two mushrooms and initially about eight swarmers; finite clusters and baseline escape after depletion"
+        },
+        {
+          "name": "The spear braces",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 420,
+          "purpose": "One guard alone; brace, short lane lock, thrust and lowered-spear recovery"
+        },
+        {
+          "name": "Court approach",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 540,
+          "purpose": "Small swarm plus one guard; spores repel both; clear group to open contact exit"
+        }
+      ],
+      "kit": [
+        "shallow mushroom caps",
+        "grounded stalks",
+        "porous scenic fungi",
+        "rock shelves",
+        "trunk beside broad ground passage",
+        "continuous chamber floor",
+        "curtain",
+        "swarm crouch/hop/retreat poses",
+        "guard brace/thrust/recovery",
+        "low full/spent spore clusters",
+        "falling square spores",
+        "predictable repulsion boundary and thinning state"
+      ],
+      "film_object_ids": [
+        "O43",
+        "O44",
+        "O45",
+        "O46",
+        "O47",
+        "O48",
+        "O49",
+        "O50",
+        "O51",
+        "O56"
+      ],
+      "mastery_evidence": "Player intentionally hits a cluster and spends retreat space on movement or an isolated attack; does not assume spore damage",
+      "spore_rule_reference": "spore_interaction",
+      "superseded_art_interpretation": "automatic damaging spore vents"
+    },
+    {
+      "id": "A1-L4",
+      "name": "Selenite Court",
+      "subtitle": "The King's Formation",
+      "kind": "main",
+      "target_minutes": 10,
+      "objective": "Break the royal formation and open the exterior curtain",
+      "skill": "Choose a formation gap and prioritise a reachable recovery target",
+      "mood": "ceremonial opposition; comic authority; first boss confidence",
+      "source_urls": [
+        "https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_10.jpg"
+      ],
+      "enemy_ids": [
+        "A1-E3"
+      ],
+      "boss_ids": [
+        "B01"
+      ],
+      "beats": [
+        {
+          "name": "Curtain entrance",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 90,
+          "purpose": "One familiar guard in open floor without a mushroom"
+        },
+        {
+          "name": "Formation court",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 210,
+          "purpose": "Parallel pair then inward pair; wide gaps and staggered commitments"
+        },
+        {
+          "name": "Royal approach",
+          "seconds": 150,
+          "checkpoint_elapsed_seconds": 360,
+          "purpose": "Quiet roundel-impact demonstration then familiar guards; contact boss checkpoint"
+        },
+        {
+          "name": "King phase 1 — The lunge",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 480,
+          "purpose": "King alone steps from throne, locks short lunge, commits and gives slash-range recovery"
+        },
+        {
+          "name": "King phase 2 — The formation",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 600,
+          "purpose": "One finite guard pair enters; known thrusts and King lunge stagger; clear boss and contact curtain"
+        }
+      ],
+      "kit": [
+        "open court floor",
+        "curling scenic panels",
+        "crescent columns",
+        "radial roundels",
+        "drapery and curtain",
+        "compact side throne",
+        "guards and formation poses",
+        "known circle impact warning",
+        "King lunge/recovery/summon",
+        "visible helper entrance",
+        "defeat/open-curtain states"
+      ],
+      "film_object_ids": [
+        "O49",
+        "O50",
+        "O51",
+        "O52",
+        "O53",
+        "O54",
+        "O55",
+        "O56",
+        "O57",
+        "O58"
+      ],
+      "mastery_evidence": "Player recognises guard grammar, removes a helper to simplify the attempt or attacks King recovery from a useful landing",
+      "boss": {
+        "id": "B01",
+        "gameplay_alias": "A1-B1",
+        "name": "Selenite King",
+        "basis_entity_id": "C21",
+        "canonical_basis": "seated royal figure and low seat; mobile lunge and formation fight are game inventions",
+        "invented_weak_point": "ordinary slash-range body during lunge recovery",
+        "phases": 2,
+        "phase_checkpoint_elapsed_seconds": [
+          480,
+          600
+        ],
+        "save_before_boss_elapsed_seconds": 360,
+        "phase_two_helper_count": 2,
+        "helpers_enter_once": true,
+        "repeat_helpers": false,
+        "defeated_helpers_stay_defeated_for_attempt": true,
+        "phase_retry": "restore coherent phase start; no repeat stat rewards",
+        "outcome": "King defeated in game adaptation; exterior curtain opened",
+        "slash_only_completion_required": true
+      }
+    },
+    {
+      "id": "A1-L5",
+      "name": "The Living Moon",
+      "subtitle": "Departure Refused",
+      "kind": "main",
+      "target_minutes": 10,
+      "objective": "Open the capsule hatch and escape the Moon",
+      "skill": "Evade a committed expression and return to a local slash-range eye rim",
+      "mood": "offended celestial face; controlled suspense; playful escape and release",
+      "source_urls": [
+        "https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_07.jpg",
+        "https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_12.jpg",
+        "https://melies.lobsterfilms.com/contes.php#"
+      ],
+      "enemy_ids": [
+        "A1-E1"
+      ],
+      "boss_ids": [
+        "B02"
+      ],
+      "beats": [
+        {
+          "name": "Wrinkled return",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 120,
+          "purpose": "Compact reused rock route; one impact and brief rusher rehearse useful landings"
+        },
+        {
+          "name": "Capsule checkpoint",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 180,
+          "purpose": "Blocked hatch, low eye rim, nearby nose and available floor preview before boss"
+        },
+        {
+          "name": "Moon phase 1 — Blink",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 300,
+          "purpose": "Circle samples actual world position once, locks, strikes; lowered eye-rim recovery"
+        },
+        {
+          "name": "Moon phase 2 — Sneeze",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 420,
+          "purpose": "Nose previews short cone, locks direction, releases; then alternates with known circle"
+        },
+        {
+          "name": "Moon phase 3 — Final expression",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 540,
+          "purpose": "Stagger known circle and cone; visible normal-dash safe pocket; same eye opening"
+        },
+        {
+          "name": "The hatch opens",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 600,
+          "purpose": "Flinch and contact hatch trigger short capsule/cord/clinging-Selenite escape; unlock Act 2"
+        }
+      ],
+      "kit": [
+        "shared painted rock flats",
+        "crater floor",
+        "face-side creases",
+        "near eye/nose/cheek poses",
+        "Blink warning/lock/active/recovery",
+        "Sneeze warning/lock/active/recovery",
+        "low eye-rim contact pose",
+        "capsule blocked/open hatch",
+        "cloud and black-sky frame",
+        "escape cord",
+        "clinging Selenite",
+        "restrained square puffs"
+      ],
+      "film_object_ids": [
+        "O09",
+        "O10",
+        "O32",
+        "O33",
+        "O34",
+        "O35",
+        "O36",
+        "O37",
+        "O39",
+        "O40",
+        "O41",
+        "O59",
+        "O60",
+        "O61"
+      ],
+      "mastery_evidence": "Player reads two known shapes locally, chooses safe useful landing and reaches eye recovery with baseline slash",
+      "boss": {
+        "id": "B02",
+        "gameplay_alias": "A1-B2",
+        "name": "Man in the Moon",
+        "basis_entity_id": "C14",
+        "canonical_basis": "film human-faced Moon and injured eye; all boss hostility, phases and weak-point rules are inventions",
+        "invented_weak_point": "lowered local eye rim at ordinary slash range",
+        "phases": 3,
+        "phase_checkpoint_elapsed_seconds": [
+          300,
+          420,
+          540
+        ],
+        "save_before_boss_elapsed_seconds": 180,
+        "blink_sampling": "actual player world floor position once at windup start; visible lock before activation; no retarget",
+        "sneeze_sampling": "short world-space cone direction locks before release; no retarget",
+        "screen_aim_anchor_is_not_boss_target": true,
+        "repeat_helpers": false,
+        "requires_dash_invulnerability": false,
+        "requires_ranged_attack": false,
+        "outcome": "Moon flinch opens local hatch; contact triggers escape and Act 2 access",
+        "slash_only_completion_required": true
+      }
+    }
+  ],
+  "optional_levels": [
+    {
+      "id": "A1-O1",
+      "name": "Salvage Circuit",
+      "kind": "optional",
+      "parent_level_id": "A1-L2",
+      "target_range_minutes": [
+        3,
+        5
+      ],
+      "initial_budget_minutes": 3,
+      "unlock": "clear parent level",
+      "checkpoint": "before final exercise",
+      "checkpoint_elapsed_seconds": 135,
+      "reward": "one-time cosmetic or completion stamp; no stat increase",
+      "objective": "Collect three capsule parts by contact in any order, then reach the repaired hatch",
+      "skill": "Choose a collection order that preserves a useful return landing",
+      "reused_assets": [
+        "lunar clearings",
+        "painted rock flats",
+        "capsule/hatch",
+        "rushers",
+        "impact warnings"
+      ],
+      "small_additions": [
+        "three recoverable capsule part props",
+        "damaged/repaired hatch states"
+      ],
+      "beats": [
+        {
+          "name": "Read the circuit",
+          "seconds": 45,
+          "checkpoint_elapsed_seconds": 45,
+          "purpose": "See compact loop, three part locations and return hatch"
+        },
+        {
+          "name": "Part circuit",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 135,
+          "purpose": "Choose collection order through familiar rusher/impact arrangements; contact parts"
+        },
+        {
+          "name": "Final hatch approach",
+          "seconds": 45,
+          "checkpoint_elapsed_seconds": 180,
+          "purpose": "One familiar exchange and contact repaired hatch"
+        }
+      ],
+      "baseline_completion_required": true,
+      "boss_rematch_required": false
+    },
+    {
+      "id": "A1-O2",
+      "name": "Spore Bloom",
+      "kind": "optional",
+      "parent_level_id": "A1-L3",
+      "target_range_minutes": [
+        3,
+        5
+      ],
+      "initial_budget_minutes": 4,
+      "unlock": "clear parent level",
+      "checkpoint": "before final exercise",
+      "checkpoint_elapsed_seconds": 150,
+      "reward": "one-time cosmetic or completion stamp; no stat increase",
+      "objective": "Use finite spores through three familiar crowd arrangements and clear the contact exit",
+      "skill": "Choose immediate breathing room or keep supply for the final mixed crowd",
+      "reused_assets": [
+        "fungi/stalks",
+        "porous forms",
+        "shelves/trunk",
+        "full/spent clusters",
+        "repulsion field",
+        "swarmers",
+        "one spear guard"
+      ],
+      "small_additions": [
+        "distinct cluster arrangement or bloom pose"
+      ],
+      "beats": [
+        {
+          "name": "First breathing room",
+          "seconds": 60,
+          "checkpoint_elapsed_seconds": 60,
+          "purpose": "One familiar cluster and small swarm"
+        },
+        {
+          "name": "Paired mushrooms",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 150,
+          "purpose": "Rearranged two-mushroom room; limited supplies and usable baseline exit"
+        },
+        {
+          "name": "Final mixed crowd",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 240,
+          "purpose": "Swarm plus one guard; clear group to open contact exit"
+        }
+      ],
+      "baseline_completion_required": true,
+      "boss_rematch_required": false
+    },
+    {
+      "id": "A1-O3",
+      "name": "Royal Rehearsal",
+      "kind": "optional",
+      "parent_level_id": "A1-L4",
+      "target_range_minutes": [
+        3,
+        5
+      ],
+      "initial_budget_minutes": 5,
+      "unlock": "clear parent level",
+      "checkpoint": "before final exercise",
+      "checkpoint_elapsed_seconds": 180,
+      "reward": "one-time cosmetic or completion stamp; no stat increase",
+      "objective": "Clear three guard formations started by contact with a practice bell",
+      "skill": "Read the same thrust grammar from three approaches and select a useful gap",
+      "reused_assets": [
+        "court floor",
+        "curling panels",
+        "crescent columns",
+        "curtains",
+        "guards",
+        "formation poses"
+      ],
+      "small_additions": [
+        "practice bell",
+        "formation markers"
+      ],
+      "beats": [
+        {
+          "name": "Parallel pair",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 90,
+          "purpose": "Contact bell, clear staggered parallel thrust lanes"
+        },
+        {
+          "name": "Inward pair",
+          "seconds": 90,
+          "checkpoint_elapsed_seconds": 180,
+          "purpose": "Known pair faces inward; choose a flank and useful recovery"
+        },
+        {
+          "name": "Final arrangement",
+          "seconds": 120,
+          "checkpoint_elapsed_seconds": 300,
+          "purpose": "Third familiar placement; no flawless streak or countdown required"
+        }
+      ],
+      "baseline_completion_required": true,
+      "boss_rematch_required": false
+    }
+  ],
+  "art_coverage_categories": [
+    "characters",
+    "environments",
+    "bosses",
+    "mood",
+    "props",
+    "gameplay"
+  ],
+  "gameplay_mockup_count": 3,
+  "gameplay_mockup_coverage": [
+    "Crater Gardens committed rush and useful safe recovery landing",
+    "grotto hittable cluster and retreating living swarm",
+    "Moon circle/cone with safe landing and low slash-range eye opening"
+  ],
+  "required_design_tests": [
+    "new player hall direction demonstration; upper-left release/centre tap; zero-vector tap; camera movement",
+    "screen-edge release and ordinary safe repositioning swipe; no auto-aim or impossible outward tap",
+    "rusher lane commitment and useful recovery landing with normal dash",
+    "two mushrooms/about eight swarmers; deliberate cluster hit, live enemy retreat, finite supply and readable fade",
+    "slash-then-blast releases one cluster and consumes no extra charge while active",
+    "guard pair/King slash-only completion; finite helpers; meaningful attack opening; coherent phase retry",
+    "Moon separate Blink/Sneeze then combined; origin/warning/safe landing/eye rim in existing portrait camera",
+    "baseline slash-only completion with no pickups and no dash invulnerability dependence",
+    "muted audio and finger/scenery occlusion; square effects do not hide next tell",
+    "background and resume during warning, spores and phase transitions; consumed overlay tap",
+    "measure complete-level time with movement and transitions; revise estimates without padding waves"
+  ],
+  "implementation_files_modified": false,
+  "concept_document": "../../../ACT1_CONCEPT.md"
+}

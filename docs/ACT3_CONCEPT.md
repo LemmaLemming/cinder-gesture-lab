@@ -4,6 +4,12 @@
 
 The reference is David Lindsay's *A Voyage to Arcturus* (1920). The act compresses several places and themes into the already selected sequence: **Twin Suns → Living Forest → Mirror Sea → False Paradise → Crystalman**. It follows the game's existing protagonist rather than making the player literally perform Maskull's entire journey. The novel's characters, the game's invented enemies and the interpretation of its ending are recorded separately in the [research database](reference-library/act3/research/RESEARCH.md). The [original novel and chapter contents](https://www.gutenberg.org/cache/epub/1329/pg1329-images.html) remain the primary source.
 
+## Shared character contract
+
+[PLAYER_EQUIPMENT_GUIDELINES.md](PLAYER_EQUIPMENT_GUIDELINES.md) defines the authoritative campaign-wide player and item rules. Acts 1, 2 and 3 use the same base gesture mechanics, controller, and underlying stats. Replaceable jacket, pants, shoes and one carried weapon may modify effective stats or provide bounded conditional effects. **Fixed baseline damage** means unchanged underlying damage: no act multiplier and no farmed permanent stat growth. Acts change encounters and available item themes within equal balance budgets.
+
+Every required route and fight must remain practical with the standard reference loadout, ordinary dash and slash-only attacks. Existing fixed-stat completion tests refer to that loadout. Equipment or temporary powerups may offer alternatives; they never become mandatory traversal or boss keys. The shared guidelines take precedence over earlier unresolved equipment, duration or stacking proposals in this document.
+
 ## Scale inherited from Act 1
 
 Act 1 supplies level count, approximate duration, separately entered side levels, parent-kit reuse, encounter checkpoints and interruption handling. **Its art direction does not carry over.** The campaign-wide portrait format, pixelated 2.5D presentation, fixed-angle overhead camera, ground-plane movement and confirmed gesture mapping still apply.

@@ -16,6 +16,9 @@ func _initialize() -> void:
 func _run() -> void:
 	var game: Node = MainScene.instantiate()
 	root.add_child(game)
+	# Check the spawn snap before the first physics step lowers the capsule to
+	# the floor. Its subsequent translation correctly uses the eased follow.
+	var launch_centered: bool = _camera_centers_on(game.get("camera") as Camera3D, game.get("player") as CinderPlayer)
 	await process_frame
 	for enemy: Node in get_nodes_in_group("enemies"):
 		enemy.set_physics_process(false)
@@ -25,7 +28,7 @@ func _run() -> void:
 	_expect(game.has_method("handle_tap"), "main scene routes tap gestures")
 	_expect(game.has_method("screen_to_direction"), "main scene converts screen swipes into arena directions")
 	_expect(game.has_method("get_aim_anchor") and game.has_method("aim_direction"), "main scene exposes swipe-anchored aim")
-	_expect(game.has_method("_record_swipe_end") and game.has_method("_update_camera"), "main scene updates the final swipe anchor and locked camera")
+	_expect(game.has_method("_record_swipe_end") and game.has_method("_update_camera"), "main scene updates the final swipe anchor and fixed-angle camera")
 	var view_size: Vector2 = game.get_viewport().get_visible_rect().size
 	var view_center: Vector2 = view_size * 0.5
 	var swipe_span: float = minf(view_size.x, view_size.y) * 0.18
@@ -35,7 +38,7 @@ func _run() -> void:
 	var camera: Camera3D = game.get("camera") as Camera3D
 	var locked_basis: Basis = camera.global_basis
 	_expect(camera.projection == Camera3D.PROJECTION_ORTHOGONAL and camera.keep_aspect == Camera3D.KEEP_WIDTH and absf(camera.size - 7.2) < 0.01, "portrait camera is orthographic with locked width and close framing")
-	_expect(_camera_centers_on(camera, gesture_player), "camera centers the player at launch")
+	_expect(launch_centered, "camera centers the player at launch")
 	var initial_anchor: Vector2 = game.call("get_aim_anchor")
 	_expect(initial_anchor.distance_to(view_center) < 1.0, "aim anchor defaults to screen center before a swipe")
 	gesture_player.facing = Vector3.BACK
@@ -56,9 +59,15 @@ func _run() -> void:
 	var gesture_start: Vector3 = gesture_player.global_position
 	var swipe_start: Vector2 = view_center + Vector2(-swipe_span * 0.5, 0.0)
 	await _mouse_swipe(swipe_start, swipe_start + Vector2(swipe_span, 0.0))
-	await create_timer(0.75).timeout
+	await create_timer(0.06).timeout
+	var mid_dash_focus: Vector3 = game.get("_camera_focus")
+	var mid_dash_lag: float = _planar(gesture_player.global_position + Vector3.UP * 0.75 - mid_dash_focus).length()
+	var mid_dash_camera_travel: float = _planar(mid_dash_focus - gesture_start).length()
+	_expect(mid_dash_lag > 0.3 and mid_dash_camera_travel > 0.1, "camera follows partway through a dash with visible lag instead of instant lock")
+	_expect(_basis_matches(camera.global_basis, locked_basis), "mid-dash camera lag preserves its fixed viewing angle")
+	await create_timer(0.69).timeout
 	_expect(gesture_events == ["dash"] and _planar(gesture_player.global_position - gesture_start).length() > 2.4, "mouse press/drag/release dispatches through the scene and produces one dash without an attack")
-	_expect(_camera_centers_on(camera, gesture_player) and _basis_matches(camera.global_basis, locked_basis), "camera follows a dash without changing its viewing angle")
+	_expect(_camera_centers_on(camera, gesture_player) and _basis_matches(camera.global_basis, locked_basis), "camera settles close to the stopped player without changing its viewing angle")
 	var touch_start: Vector3 = gesture_player.global_position
 	await _touch_swipe(view_center + Vector2(0.0, -swipe_span * 0.5), view_center + Vector2(0.0, swipe_span * 0.5))
 	await create_timer(0.75).timeout
@@ -88,18 +97,20 @@ func _run() -> void:
 	gesture_player.facing = Vector3.LEFT
 	game.call("handle_tap", upper_left_end)
 	_expect(gesture_player.facing.dot(Vector3.LEFT) > 0.99, "a tap exactly on the last swipe end keeps last facing")
+	var focus_before_move: Vector3 = game.get("_camera_focus")
 	gesture_player.global_position += Vector3(1.4, 0.0, -1.2)
-	game.call("_update_camera")
+	game.call("_update_camera", 1.0 / 60.0)
 	await process_frame
 	var moved_aim: Vector3 = game.call("aim_direction", view_center)
-	_expect(_planar(moved_aim).normalized().dot(_planar(bottom_right_aim).normalized()) > 0.999, "tap aim is unchanged when the player moves and camera follows")
-	_expect(_camera_centers_on(camera, gesture_player) and _basis_matches(camera.global_basis, locked_basis), "camera stays centered and keeps its angle after teleport")
+	_expect(_planar(moved_aim).normalized().dot(_planar(bottom_right_aim).normalized()) > 0.999 and (game.call("get_aim_anchor") as Vector2).distance_to(release_anchor) < 0.01, "tap aim and final release anchor are unchanged while camera follow lags")
+	_expect((game.get("_camera_focus") as Vector3).distance_to(focus_before_move) > 0.01 and not _camera_centers_on(camera, gesture_player) and _basis_matches(camera.global_basis, locked_basis), "ordinary repositioning catches up smoothly without snapping or rotating")
+	await _camera_easing_checks(game, gesture_player, camera, locked_basis)
 	game.call("reset_lab")
-	await process_frame
 	var reset_player: CinderPlayer = game.get("player") as CinderPlayer
 	var reset_anchor: Vector2 = game.call("get_aim_anchor")
 	_expect(reset_anchor.distance_to(view_center) < 1.0, "reset restores the aim anchor to screen center")
-	_expect(_camera_centers_on(camera, reset_player) and _basis_matches(camera.global_basis, locked_basis), "reset recenters the portrait camera without rotating it")
+	_expect(_camera_centers_on(camera, reset_player) and _basis_matches(camera.global_basis, locked_basis), "reset immediately recenters the portrait camera without rotating it")
+	await process_frame
 	game.queue_free()
 	await process_frame
 
@@ -279,6 +290,49 @@ func _camera_centers_on(camera: Camera3D, player: CinderPlayer) -> bool:
 	var world_target: Vector3 = player.global_position + Vector3.UP * 0.75
 	var viewport_center: Vector2 = Vector2(camera.get_viewport().size) * 0.5
 	return camera.unproject_position(world_target).distance_to(viewport_center) < 2.0
+
+
+func _camera_easing_checks(game: Node, player: CinderPlayer, camera: Camera3D, locked_basis: Basis) -> void:
+	# Freeze autonomous updates to compare equal elapsed time across frame sizes.
+	game.set_process(false)
+	player.set_physics_process(false)
+	var target: Vector3 = player.global_position + Vector3.UP * 0.75
+	var initial: Vector3 = target + Vector3(-4.0, 0.0, 0.0)
+	game.set("_camera_focus", initial)
+	game.call("_update_camera", 0.2)
+	var one_step: Vector3 = game.get("_camera_focus")
+	game.set("_camera_focus", initial)
+	for index: int in range(20):
+		game.call("_update_camera", 0.01)
+	var split_steps: Vector3 = game.get("_camera_focus")
+	_expect(one_step.distance_to(split_steps) < 0.0001, "camera exponential follow is independent of render frame subdivision")
+	game.set("_camera_focus", initial)
+	game.call("_update_camera", 1.0 / 60.0)
+	var far_step: float = (game.get("_camera_focus") as Vector3).distance_to(initial)
+	var near_initial: Vector3 = target + Vector3(-1.0, 0.0, 0.0)
+	game.set("_camera_focus", near_initial)
+	game.call("_update_camera", 1.0 / 60.0)
+	var near_step: float = (game.get("_camera_focus") as Vector3).distance_to(near_initial)
+	_expect(far_step > near_step * 3.99 and near_step > 0.0, "camera catch-up is faster far away and slower near the player")
+	game.set("_camera_focus", initial)
+	var previous_error: float = initial.distance_to(target)
+	var monotonic: bool = true
+	for index: int in range(60):
+		game.call("_update_camera", 1.0 / 60.0)
+		var focus: Vector3 = game.get("_camera_focus")
+		var error: float = focus.distance_to(target)
+		monotonic = monotonic and error <= previous_error and focus.x <= target.x
+		previous_error = error
+	_expect(monotonic and previous_error < 0.01, "camera approaches without overshoot and settles within one second")
+	_expect(_basis_matches(camera.global_basis, locked_basis), "camera easing keeps exact screen-direction basis")
+	game.set("_camera_focus", initial)
+	game.call("_update_camera", 0.0)
+	game.set_process(true)
+	game.call("open_bench")
+	await create_timer(0.10).timeout
+	_expect((game.get("_camera_focus") as Vector3).distance_to(initial) < 0.0001, "loadout pause freezes a pending camera catch-up")
+	game.call("resume_lab")
+	player.set_physics_process(true)
 
 
 func _basis_matches(current: Basis, original: Basis) -> bool:

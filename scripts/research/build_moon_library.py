@@ -1,5 +1,8 @@
 """Build portable reference exports from curated source records and image files."""
 from collections import Counter
+import argparse
+import os
+import struct
 import csv
 import hashlib
 import json
@@ -8,6 +11,8 @@ import sqlite3
 
 ROOT = Path(__file__).resolve().parents[2]
 DEST = ROOT / "docs/reference-library/act1"
+RESEARCH = DEST / "research"
+ART_ROOT = ROOT / "docs/concept-art/act1"
 
 FRAMES = {
     "F01": ("Astronomers' congress", "Observatory", "Robed astronomers, pointed hats, an astronomical diagram, columns and instruments."),
@@ -80,6 +85,183 @@ def load(name):
     return json.loads((DEST / name).read_text())
 
 
+def read_optional(path, key):
+    if not path.is_file():
+        return []
+    data = json.loads(path.read_text())
+    return data if isinstance(data, list) else data.get(key, [])
+
+
+def image_dimensions(path):
+    raw = path.read_bytes()
+    if raw.startswith(b"\x89PNG\r\n\x1a\n"):
+        return struct.unpack(">II", raw[16:24])
+    # Local archival JPEGs already retain source dimensions. New concept art is PNG.
+    return (None, None)
+
+
+def research_extension(legacy_records, strict_art=False):
+    sources = read_optional(RESEARCH / "sources.json", "sources")
+    entities = read_optional(RESEARCH / "entities.json", "entities")
+    declared_artworks = read_optional(ART_ROOT / "generated-manifest.json", "artworks")
+    if strict_art:
+        assert not [art["id"] for art in declared_artworks if art.get("status") in {"planned", "failed"}], "Unfinished art records in strict build"
+    artworks = [art for art in declared_artworks if art.get("status") not in {"planned", "failed"}]
+    source_by_id = {item["id"]: item for item in sources}
+    entity_by_id = {item["id"]: item for item in entities}
+    legacy_by_id = {item["id"]: item for item in legacy_records}
+    assert len(source_by_id) == len(sources), "Duplicate research source IDs"
+    assert len(entity_by_id) == len(entities), "Duplicate entity IDs"
+    gallery = []
+    for source in sources:
+        gallery.append({"id": source["id"], "title": source["title"], "kind": "research-source", "sequence": "Research sources", "category": "sources", "description": source.get("notes", ""), "adaptation": "", "reference_ids": [], "local_path": None, "creator": source.get("author", source.get("publisher", "")), "date": source.get("date", ""), "license": "Research citation; no source pixels or long passages copied", "notes": source.get("notes", ""), "source_urls": [source["url"]], "tags": [source["kind"]], "kit": "research", "source_ids": [source["id"]]})
+    for entity in entities:
+        entity.setdefault("source_ids", [])
+        entity.setdefault("reference_ids", [])
+        entity.setdefault("scene_refs", [])
+        entity.setdefault("canonical_basis_ids", [])
+        entity.setdefault("tags", [])
+        entity.setdefault("notes", "")
+        for identifier in entity["source_ids"]:
+            assert identifier in source_by_id, (entity["id"], identifier)
+        for identifier in entity["reference_ids"]:
+            assert identifier in legacy_by_id, (entity["id"], identifier)
+        for identifier in entity["canonical_basis_ids"]:
+            assert identifier in entity_by_id, (entity["id"], identifier)
+        urls = [source_by_id[identifier]["url"] for identifier in entity["source_ids"] if identifier != "S13"]
+        urls += [url for identifier in entity["reference_ids"] for url in legacy_by_id[identifier]["source_urls"]]
+        entity["source_urls"] = list(dict.fromkeys(urls))
+        gallery.append({"id": entity["id"], "title": entity["title"], "kind": "research-" + {"characters":"character", "environments":"environment", "bosses":"boss", "props":"prop", "mood":"mood"}.get(entity["category"],entity["category"]), "sequence": entity["scene_refs"][0] if entity["scene_refs"] else "Research", "category": entity["category"], "description": entity["description"], "adaptation": entity["game_adaptation"], "reference_ids": entity["reference_ids"] + entity["canonical_basis_ids"], "local_path": None, "creator": "Film evidence and original game design research", "date": "1902 film; 2026 game research", "license": "Original research paraphrase and game proposal; see linked source image credits", "notes": entity["notes"], "source_urls": entity["source_urls"], "tags": entity["tags"], "kit": entity.get("parent_kit", entity["scene_refs"][0].lower().replace(" ", "-") if entity["scene_refs"] else "research"), "canon_status": entity["canon_status"], "source_ids": entity["source_ids"], "scene_refs": entity["scene_refs"], "design_id": entity.get("design_id"), "decision": entity.get("decision"), "performer_attributions": entity.get("performer_attributions", []), "aliases": entity.get("aliases", []), "name_status": entity.get("name_status", "")})
+    art_ids = set()
+    for art in artworks:
+        assert art["id"] not in art_ids, ("Duplicate artwork", art["id"])
+        art_ids.add(art["id"])
+        art.setdefault("entity_ids", [])
+        art.setdefault("source_ids", [])
+        art.setdefault("reference_ids", [])
+        art["reference_ids"] = list(dict.fromkeys(art["reference_ids"] + art.get("object_ids", [])))
+        art.setdefault("kind", "generated-concept")
+        art.setdefault("description", art.get("purpose", "New game concept study"))
+        art.setdefault("notes", "New game concept art, not a film frame or implemented gameplay.")
+        art.setdefault("prompt", "")
+        art.setdefault("canon_status", "game_proposal")
+        for identifier in art["entity_ids"]:
+            assert identifier in entity_by_id, (art["id"], identifier)
+            art["source_ids"] += entity_by_id[identifier]["source_ids"]
+        art["source_ids"] = list(dict.fromkeys(art["source_ids"]))
+        for identifier in art["source_ids"]:
+            assert identifier in source_by_id, (art["id"], identifier)
+        for identifier in art["reference_ids"]:
+            assert identifier in legacy_by_id or identifier in entity_by_id, (art["id"], identifier)
+        value = art.get("local_path") or art.get("path") or art.get("repo_path")
+        path = None
+        if value:
+            candidate = Path(value)
+            choices = [candidate] if candidate.is_absolute() else [ROOT / candidate, ART_ROOT / candidate, DEST / candidate]
+            path = next((candidate.resolve() for candidate in choices if candidate.is_file()), None)
+        if strict_art:
+            assert path is not None, ("Missing generated image", art["id"], value)
+        if path:
+            assert path.is_relative_to(ART_ROOT.resolve()), ("Art outside Act1 concept folder", path)
+        art["file_exists"] = bool(path)
+        art["status"] = "generated" if path else "planned"
+        art["repo_path"] = str(path.relative_to(ROOT)) if path else None
+        art["local_path"] = Path(os.path.relpath(path, DEST)).as_posix() if path else None
+        art["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest() if path else None
+        art["file_bytes"] = path.stat().st_size if path else None
+        art["width"], art["height"] = image_dimensions(path) if path else (None, None)
+        art["source_urls"] = list(dict.fromkeys([source_by_id[identifier]["url"] for identifier in art["source_ids"] if identifier != "S13"] + [url for identifier in art["reference_ids"] for url in (legacy_by_id.get(identifier) or entity_by_id[identifier])["source_urls"]] + [url for identifier in art["entity_ids"] for url in entity_by_id[identifier]["source_urls"]]))
+        refs = list(dict.fromkeys(art["reference_ids"] + art["entity_ids"]))
+        gallery.append({"id": art["id"], "title": art["title"], "kind": art["kind"], "sequence": art.get("sequence", "Game concepts"), "category": art.get("category", "concepts"), "description": art["description"], "adaptation": art.get("game_adaptation", art.get("adaptation", "Generated planning illustration; not a playable level, production sprite or captured game screenshot.")), "reference_ids": refs, "local_path": art["local_path"], "creator": "Built-in image generation tool; project art direction", "date": "2026-10-08", "license": "New generated game concept", "notes": art["notes"], "source_urls": art["source_urls"], "tags": art.get("tags", []) + ["new game concept", art.get("category", "concepts")], "kit": art.get("kit", "game-concepts"), "prompt": art["prompt"], "entity_ids": art["entity_ids"], "source_ids": art["source_ids"], "canon_status": "game_proposal"})
+    plan_path = RESEARCH / "levels.json"
+    plan = json.loads(plan_path.read_text()) if plan_path.is_file() else None
+    if plan:
+        levels = plan.get("levels", []) + plan.get("optional_levels", [])
+        level_ids = {item["id"] for item in levels}
+        assert len(level_ids) == len(levels), "Duplicate level IDs"
+        main = plan.get("levels", [])
+        assert len(main) == 5, "Preserve five Act1 main levels"
+        assert sum(item.get("target_minutes", item.get("initial_budget_minutes", 0)) for item in main) == 43, "Preserve 43-minute Act1 budget"
+        for level in levels:
+            if level.get("parent_level_id"):
+                assert level["parent_level_id"] in level_ids, level["id"]
+            for identifier in level.get("boss_ids", []):
+                assert identifier in entity_by_id and entity_by_id[identifier]["category"] == "bosses", (level["id"], identifier)
+            beats = level.get("beats", [])
+            if beats:
+                assert sum(beat["seconds"] for beat in beats) == round(level.get("target_minutes", level.get("initial_budget_minutes", 0)) * 60), ("Level beat budget", level["id"])
+    return {"sources": sources, "entities": entities, "artworks": artworks, "level_plan": plan, "cast_index": json.loads((RESEARCH / "cast-index.json").read_text()) if (RESEARCH / "cast-index.json").is_file() else None}, gallery
+
+
+def write_research_tables(db, extension):
+    # Legacy `sources` keeps integer URL IDs; research_sources adds cited S01–S13 records.
+    db.executescript("""
+        CREATE TABLE metadata(key TEXT PRIMARY KEY, value_json TEXT NOT NULL);
+        CREATE TABLE research_sources(id TEXT PRIMARY KEY, title TEXT NOT NULL, url TEXT NOT NULL, kind TEXT NOT NULL, accessed_date TEXT, data_json TEXT NOT NULL);
+        CREATE TABLE entities(id TEXT PRIMARY KEY REFERENCES records(id), title TEXT NOT NULL, category TEXT NOT NULL, subcategory TEXT, canon_status TEXT NOT NULL, description TEXT, game_adaptation TEXT, notes TEXT, tags_json TEXT NOT NULL, data_json TEXT NOT NULL);
+        CREATE TABLE entity_sources(entity_id TEXT NOT NULL REFERENCES entities(id), source_id TEXT NOT NULL REFERENCES research_sources(id), PRIMARY KEY(entity_id,source_id));
+        CREATE TABLE entity_relations(entity_id TEXT NOT NULL REFERENCES entities(id), related_entity_id TEXT NOT NULL REFERENCES entities(id), relationship TEXT NOT NULL, PRIMARY KEY(entity_id,related_entity_id,relationship));
+        CREATE TABLE cast_members(id INTEGER PRIMARY KEY, name TEXT NOT NULL, role TEXT NOT NULL, confidence TEXT, data_json TEXT NOT NULL);
+        CREATE TABLE scene_refs(id INTEGER PRIMARY KEY, entity_id TEXT NOT NULL REFERENCES entities(id), position INTEGER NOT NULL, label TEXT NOT NULL);
+        CREATE TABLE artworks(id TEXT PRIMARY KEY REFERENCES records(id), title TEXT NOT NULL, category TEXT NOT NULL, kind TEXT NOT NULL, local_path TEXT, repo_path TEXT, status TEXT NOT NULL, file_exists INTEGER NOT NULL CHECK(file_exists IN (0,1)), sha256 TEXT, file_bytes INTEGER, width INTEGER, height INTEGER, prompt TEXT, notes TEXT, data_json TEXT NOT NULL);
+        CREATE TABLE artwork_entities(artwork_id TEXT NOT NULL REFERENCES artworks(id), entity_id TEXT NOT NULL REFERENCES entities(id), PRIMARY KEY(artwork_id,entity_id));
+        CREATE TABLE artwork_sources(artwork_id TEXT NOT NULL REFERENCES artworks(id), source_id TEXT NOT NULL REFERENCES research_sources(id), PRIMARY KEY(artwork_id,source_id));
+        CREATE TABLE levels(id TEXT PRIMARY KEY, title TEXT NOT NULL, subtitle TEXT, kind TEXT NOT NULL, target_minutes REAL, min_minutes REAL, max_minutes REAL, parent_level_id TEXT REFERENCES levels(id), objective TEXT, skill TEXT, mood TEXT, data_json TEXT NOT NULL);
+        CREATE TABLE level_beats(id INTEGER PRIMARY KEY, level_id TEXT NOT NULL REFERENCES levels(id), position INTEGER NOT NULL, title TEXT NOT NULL, seconds INTEGER NOT NULL, checkpoint_elapsed_seconds INTEGER, purpose TEXT, data_json TEXT NOT NULL);
+        CREATE TABLE level_bosses(level_id TEXT NOT NULL REFERENCES levels(id), entity_id TEXT NOT NULL REFERENCES entities(id), PRIMARY KEY(level_id,entity_id));
+        CREATE TABLE adaptation_enemies(id TEXT PRIMARY KEY, title TEXT NOT NULL, canon_status TEXT NOT NULL, first_level_id TEXT REFERENCES levels(id), entity_id TEXT REFERENCES entities(id), role TEXT, data_json TEXT NOT NULL);
+        CREATE TABLE level_source_links(level_id TEXT NOT NULL REFERENCES levels(id), url TEXT NOT NULL, source_id TEXT REFERENCES research_sources(id), PRIMARY KEY(level_id,url));
+        CREATE TABLE level_record_references(level_id TEXT NOT NULL REFERENCES levels(id), record_id TEXT NOT NULL REFERENCES records(id), PRIMARY KEY(level_id,record_id));
+        CREATE TABLE level_enemies(level_id TEXT NOT NULL REFERENCES levels(id), enemy_id TEXT NOT NULL REFERENCES adaptation_enemies(id), PRIMARY KEY(level_id,enemy_id));
+        CREATE INDEX entities_category ON entities(category);
+        CREATE INDEX entities_canon ON entities(canon_status);
+        CREATE INDEX artworks_category ON artworks(category);
+    """)
+    dump = lambda value: json.dumps(value, ensure_ascii=False)
+    for member in (extension.get("cast_index") or {}).get("records", []):
+        db.execute("INSERT INTO cast_members(name,role,confidence,data_json) VALUES (?,?,?,?)", (member["name"],member["role"],member.get("confidence",""),dump(member)))
+    for source in extension["sources"]:
+        db.execute("INSERT INTO research_sources VALUES (?,?,?,?,?,?)", (source["id"],source["title"],source["url"],source["kind"],source["accessed_date"],dump(source)))
+    for entity in extension["entities"]:
+        db.execute("INSERT INTO entities VALUES (?,?,?,?,?,?,?,?,?,?)", (entity["id"],entity["title"],entity["category"],entity.get("subcategory"),entity["canon_status"],entity["description"],entity["game_adaptation"],entity["notes"],dump(entity["tags"]),dump(entity)))
+        for identifier in entity["source_ids"]:
+            db.execute("INSERT INTO entity_sources VALUES (?,?)", (entity["id"],identifier))
+        for position,scene in enumerate(entity["scene_refs"]):
+            db.execute("INSERT INTO scene_refs(entity_id,position,label) VALUES (?,?,?)", (entity["id"],position,scene))
+    for entity in extension["entities"]:
+        for identifier in entity["canonical_basis_ids"]:
+            db.execute("INSERT INTO entity_relations VALUES (?,?,?)", (entity["id"],identifier,"canonical_basis"))
+    for art in extension["artworks"]:
+        db.execute("INSERT INTO artworks VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (art["id"],art["title"],art.get("category","concepts"),art["kind"],art["local_path"],art["repo_path"],art["status"],int(art["file_exists"]),art["sha256"],art["file_bytes"],art["width"],art["height"],art["prompt"],art["notes"],dump(art)))
+        for identifier in art["entity_ids"]:
+            db.execute("INSERT INTO artwork_entities VALUES (?,?)", (art["id"],identifier))
+        for identifier in art["source_ids"]:
+            db.execute("INSERT INTO artwork_sources VALUES (?,?)", (art["id"],identifier))
+    plan = extension.get("level_plan") or {}
+    levels = plan.get("levels", []) + plan.get("optional_levels", [])
+    source_ids_by_url = {source["url"].rstrip("#"): source["id"] for source in extension["sources"]}
+    for level in levels:
+        target = level.get("target_minutes", level.get("initial_budget_minutes"))
+        minimum,maximum = level.get("target_range_minutes", [target,target])
+        db.execute("INSERT INTO levels VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (level["id"],level.get("title",level.get("name",level["id"])),level.get("subtitle",""),level.get("kind","main"),target,minimum,maximum,level.get("parent_level_id"),level.get("objective",""),level.get("skill",""),level.get("mood",""),dump(level)))
+        for position,beat in enumerate(level.get("beats", [])):
+            db.execute("INSERT INTO level_beats(level_id,position,title,seconds,checkpoint_elapsed_seconds,purpose,data_json) VALUES (?,?,?,?,?,?,?)", (level["id"],position,beat.get("name",beat.get("title","Encounter")),beat["seconds"],beat.get("checkpoint_elapsed_seconds"),beat.get("purpose",""),dump(beat)))
+        for identifier in level.get("boss_ids", []):
+            db.execute("INSERT INTO level_bosses VALUES (?,?)", (level["id"],identifier))
+        for url in level.get("source_urls", []):
+            db.execute("INSERT INTO level_source_links VALUES (?,?,?)", (level["id"],url,source_ids_by_url.get(url.rstrip("#"))))
+        for identifier in level.get("film_object_ids", []):
+            db.execute("INSERT INTO level_record_references VALUES (?,?)", (level["id"],identifier))
+    design_entities = {e["design_id"]:e["id"] for e in extension["entities"] if e.get("design_id")}
+    for enemy in plan.get("regular_enemies", []):
+        db.execute("INSERT INTO adaptation_enemies VALUES (?,?,?,?,?,?,?)", (enemy["id"],enemy.get("name",enemy.get("title",enemy["id"])),"game_proposal",enemy.get("first_level"),design_entities.get(enemy["id"]),enemy.get("role",""),dump(enemy)))
+    for level in levels:
+        for identifier in level.get("enemy_ids", []):
+            db.execute("INSERT INTO level_enemies VALUES (?,?)", (level["id"],identifier))
+    db.execute("INSERT INTO metadata VALUES (?,?)", ("level_plan", dump(plan)))
+    db.execute("INSERT INTO metadata VALUES (?,?)", ("cast_index", dump(extension.get("cast_index"))))
+
+
 def write_credits(records):
     lines = [
         "# Source credits and provenance", "",
@@ -88,7 +270,7 @@ def write_credits(records):
         "A03 carries a CC BY-SA 4.0 declaration: retain its named credit, source and licence when redistributing that image. USER01 is the user-supplied crop with unspecified crop provenance. Generated studies have their own records and are not archival reproductions.", "",
     ]
     for record in records:
-        if record["kind"] in {"film-object", "generated-concept", "generated-object-sheet"}:
+        if record["kind"] in {"film-object", "generated-concept", "generated-object-sheet"} or record["kind"].startswith("research-"):
             continue
         lines += [f"## {record['id']} — {record['title']}", "",
                   f"- Type and date: {record['kind']}; {record['date']}.",
@@ -108,10 +290,81 @@ def write_credits(records):
         if record.get("notes"):
             lines.append(f"- Provenance note: {record['notes']}")
         lines.append("")
+    lines += ["## New Act 1 research and concepts", "", "The research extension uses original paraphrases, direct film-frame relationships, and separately labelled game proposals. [Research sources](research/SOURCES.md) retains the cited institutional and restorer records. [Cast index](research/cast-index.json) separates published performer attributions from unresolved frame identities.", "", "New concept images are generated for this game. Their exact prompts, input reference paths and source/entity relationships remain in [the concept manifest](../../concept-art/act1/generated-manifest.json). They are not archival images or screenshots of implemented gameplay.", ""]
     (DEST / "CREDITS.md").write_text("\n".join(lines).rstrip() + "\n")
 
 
+def write_readme(payload):
+    counts = payload["counts"]
+    categories = counts["entity_categories"]
+    plan = payload.get("level_plan") or {}
+    lines = [
+        "# Act I — A Trip to the Moon library", "",
+        "A research database and concept-art catalogue for the beginner act, inspired by Georges Méliès’s *Le Voyage dans la Lune* (1902). Researched 8 October 2026. The existing evidence and object records remain intact; new story indexes and art extend their coverage.", "",
+        "## Browse", "",
+        "Open [index.html](index.html) in a browser. Search names, performer names, IDs, scenery or design terms; filter by evidence type, scene and category. Open a card for its source, original observation, adaptation boundary, published performer attribution and related concept studies. It works offline when the repository folder structure is preserved; online source links need internet access.", "",
+        f"The build has **{counts['records']} catalogue records**, **{counts['entities']} research/design entities**, **{counts['sources']} cited research sources**, and **{counts['local_images']} catalogued local images**. It retains all **116 earlier records**, including **70 object records** and **6 earlier generated studies**. The new concept collection adds **{counts['artworks']} available art records**; counts describe files and records, not unique historical people or scenes.", "",
+        "| Research category | Records | Scope |", "| --- | ---: | --- |",
+        f"| Characters and roles | {categories.get('characters', 0)} | Named travellers, distinct unnamed roles, overlapping scene ensembles, celestial performers, fauna, published cast roles and three invented enemy variants |",
+        f"| Environments | {categories.get('environments', 0)} | Ceremony, launch, lunar exterior/dream, grotto, palace, escape, sea return and celebration |",
+        f"| Bosses and candidates | {categories.get('bosses', 0)} | Two selected main encounters plus three explicitly unselected comparisons |",
+        f"| Story moods | {categories.get('mood', 0)} | Interpretations of the emotional arc and their beginner-game implications |",
+        f"| Prop/effect kits | {categories.get('props', 0)} | Grouped index linking every O01–O70 observation |", "",
+        "[Film research](research/RESEARCH.md) explains naming and source qualifications. [Cast index](research/cast-index.json) retains the institutional credits: 11 named performers and two ensembles. No one-to-one map between the five named companions and five astronomer actor credits is fabricated.", "",
+        "## Level concept", "",
+        "[Act I concept](../../ACT1_CONCEPT.md) and [level data](research/levels.json) preserve **five main levels: 6, 8, 9, 10 and 10 minutes, totalling 43 minutes**. Three optional levels use their parent kits and separate 3–5 minute ranges; all-content guidance is **52–58 minutes**, excluding retries and deliberate replays. These are first-clear design estimates, not measured completion times.", "",
+        "L1 teaches gestures in a safe launch rehearsal; L2 introduces the rush commitment; L3 adds swarm/spore repulsion and spear grammar; L4 combines guards and the Selenite King; L5 tests learned responses against the Man in the Moon and closes with escape. Optional Salvage Circuit, Spore Bloom and Royal Rehearsal reinforce existing skills. They add no required boss rematch.", "",
+        "Keep the portrait pixel 2.5D camera, swipe-only ground dashes, immediate tap slash, a quick second-tap blast, aim from final swipe release, one carried weapon and fixed baseline damage. All mandatory paths work at normal dash length. Hittable spore clusters shed falling spores that temporarily repel swarmers. These mechanics, tutorial markers and boss attacks are game proposals.", "",
+        "## Concept art and visual continuity", "",
+        "The [new concept collection](../../concept-art/act1/README.md) covers characters, environments, bosses, mood, props and three proposed game views. Its [generation manifest](../../concept-art/act1/generated-manifest.json) retains exact prompts, reference inputs and research relationships. Generated studies are planning illustrations, not archival images, production sprites or implemented game screenshots.", "",
+        "The [style guide](STYLE_GUIDE.md) carries the established theatrical vocabulary: painted wings, jagged lunar flats, dark negative space, period hats/coats/beards, a finless bullet shell, giant shallow mushroom caps, upright masked rib-banded Selenites, and celestial court ornament. Moon-white, dusty silver and black are chosen game art direction; authentic hand-coloured prints remain separately identified.", "",
+        "| Earlier study | Image |", "| --- | --- |",
+        "| G01 | [Lunar surface and celestial tableau](concepts/lunar-tableau-v2.png) |",
+        "| G02 | [Mushroom grotto layouts](concepts/mushroom-grotto-v2.png) — earlier vent treatment is superseded by falling-spore repulsion |",
+        "| G03 | [Selenite court](concepts/selenite-court-v2.png) |",
+        "| G04 | [Observatory and launch objects](concepts/observatory-launch-object-studies-v2.png) |",
+        "| G05 | [Lunar scenery and celestial objects](concepts/lunar-scenery-object-studies.png) |",
+        "| G06 | [Selenites and court objects](concepts/selenite-court-object-studies.png) |", "",
+        "The earlier [G01–G06 prompt manifest](generated-manifest.json), G04 revision input, original exploratory images, archival previews and link-only museum records remain preserved. The new studies extend rather than overwrite them.", "",
+        "## Data and provenance", "",
+        "| File | Purpose |", "| --- | --- |",
+        "| [catalog.json](catalog.json) | Complete records plus research sources/entities/artworks, cast index, level plan, hashes and prompts |",
+        "| [catalog.csv](catalog.csv) | Flat record and level export; structured fields and full data use JSON cells |",
+        "| [library.sqlite](library.sqlite) | Relational source, entity, artwork, cast and level database with foreign keys |",
+        "| [catalog-data.js](catalog-data.js) | Embedded data for offline browsing without fetching JSON |",
+        "| [entities](research/entities.json), [sources](research/sources.json), [cast](research/cast-index.json) | Editable research records and performer attribution index |",
+        "| [O01–O42](objects-earth-and-dream.json), [O43–O70](objects-grotto-and-return.json) | Preserved original observation/adaptation manifests |",
+        "| [Source notes](research/SOURCES.md), [credits](CREDITS.md), [verification](VERIFICATION.md) | Evidence, licence declarations and build checks |", "",
+        "Legacy F01–F13/A01–A17/M01–M09/USER01/O01–O70/G01–G06 IDs remain stable. New C/E/B/D/P/S families and later G IDs connect the research and art. D01–D12 mood IDs avoid colliding with museum M IDs. Film imagery, original costume, c.1930–31 and 1937 retrospective drawings, the 1960 reconstruction, and generated game concepts retain separate provenance.", "",
+        "The legacy `sources` table retains its integer URL IDs. `research_sources` stores S01–S15 citation metadata. New tables include `entities`, `entity_sources`, `entity_relations`, `scene_refs`, `cast_members`, `artworks`, artwork joins, `levels`, `level_beats`, `level_bosses`, `adaptation_enemies`, and `level_enemies`. Full research/level records are preserved as JSON.", "",
+        "```sql", "SELECT id, title, canon_status FROM entities WHERE category = 'characters';", "SELECT name, role FROM cast_members;", "SELECT e.title, s.title, s.url FROM entities e JOIN entity_sources es ON e.id=es.entity_id JOIN research_sources s ON s.id=es.source_id;", "SELECT id, title, target_minutes FROM levels WHERE kind='main';", "SELECT l.title, e.title FROM levels l JOIN level_bosses b ON l.id=b.level_id JOIN entities e ON e.id=b.entity_id;", "SELECT a.title, e.title FROM artworks a JOIN artwork_entities ae ON a.id=ae.artwork_id JOIN entities e ON e.id=ae.entity_id;", "```", "",
+        "## Rebuild", "",
+        "Edit the curated research/object files or generation manifest, then run from the repository root:", "",
+        "```sh", "python3 scripts/research/build_moon_library.py --strict-art", "```", "",
+        "The standard-library builder checks IDs, evidence references, source/entity/art joins, local art files, the five-level/43-minute budget, encounter beat sums and SQLite integrity/foreign keys. It regenerates JSON, CSV, browser data, SQLite, credits and this README. The default build omits planned/failed art records; strict mode rejects unfinished entries. Preserve the concept-art directories beside the reference library for offline image paths.", "",
+        "The earlier `download_moon_references.py` is optional archival collection tooling; no new archival downloads were required for this extension.", "",
+    ]
+    (DEST / "README.md").write_text("\n".join(lines))
+
+
+def write_verification(payload, table_counts, strict_art):
+    counts = payload["counts"]
+    plan = payload.get("level_plan") or {}
+    main = plan.get("levels", [])
+    optional = plan.get("optional_levels", [])
+    object_ids = {f"O{number:02d}" for number in range(1, 71)}
+    covered = {identifier for entity in payload["entities"] if entity["category"] == "props" for identifier in entity["reference_ids"]}
+    assert object_ids == covered, "Prop-kit coverage must preserve all 70 original objects"
+    lines = ["# Act I verification", "", "Rebuilt 8 October 2026 with the standard-library catalogue builder. This report records database/file validation; it does not claim campaign implementation, playtesting or gameplay balance.", "", "## Result", "", f"- Catalogue: **{counts['records']} records**, including all **116 earlier records** and **70 existing object records**.", f"- Research: **{counts['entities']} entities**, **{counts['sources']} sources**, and **{table_counts.get('cast_members', 0)} performer/ensemble attribution entries**.", f"- Images: **{counts['local_images']} catalogued local images**; **{counts['artworks']} new generated art records**. Every available image resolves locally and has a SHA-256 hash and file-size metadata.", f"- Level plan: **{len(main)} main levels**, budgets **{', '.join(str(level.get('target_minutes', level.get('initial_budget_minutes'))) for level in main)} minutes**, total **{sum(level.get('target_minutes', level.get('initial_budget_minutes', 0)) for level in main)} minutes**; **{len(optional)} optional levels**.", f"- Strict-art mode: **{'enabled; every declared entry is finished and its file exists' if strict_art else 'disabled; planned/failed entries are omitted'}**.", "- SQLite integrity check: **ok**. Foreign-key violations: **0**.", "- Unique catalogue/research/source/art IDs, valid legacy evidence links, valid canonical-basis links, valid art/entity/source joins, level-boss links and encounter beat budgets: **passed**.", "- P01–P20 prop kits cover **every O01–O70 record**.", "- JSON, offline JS, CSV, relational SQLite, credits and README derive from the same curated input. CSV includes the eight level rows as well as catalogue records.", "", "## Database rows", "", "| Table | Rows |", "| --- | ---: |"]
+    lines += [f"| `{table}` | {amount} |" for table,amount in table_counts.items()]
+    lines += ["", "## Evidence limits", "", "Original source-object manifests, archival previews, museum links, six earlier generated studies and exploratory revisions remain preserved. No new archival downloads or museum image copying were needed. Museum reconstruction and retrospective drawings retain their dates and kinds. Names, unnamed scene roles, published performer attributions and invented enemy variants remain separate.", "", "The browser uses embedded catalog-data.js and relative image paths. Interactive gallery validation and visual inspection of generated concept art are performed separately from these database checks. Three game-view images are proposed compositions; gesture behaviour, timing, onboarding success and first-clear budgets still need implementation and playtesting.", ""]
+    (DEST / "VERIFICATION.md").write_text("\n".join(lines))
+
+
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--strict-art", action="store_true", help="Require every new concept image listed in the art manifest")
+    args = parser.parse_args()
     records = []
     for source in load("commons-manifest.json"):
         identifier = source["id"]
@@ -165,6 +418,9 @@ def main():
         record.pop("original_generated_path", None)
         record.pop("reference_paths", None)
     records += generated
+    legacy_count = len(records)
+    extension, extension_gallery = research_extension(records, args.strict_art)
+    records += extension_gallery
     by_id = {r["id"]: r for r in records}
     assert len(by_id) == len(records), "Duplicate IDs"
     for record in records:
@@ -181,17 +437,27 @@ def main():
             record.setdefault("creator", "Georges Méliès film reference; game adaptation proposed")
             record.setdefault("date", "Observed in 1902 film imagery")
             record.setdefault("license", "Object description and game-use proposal; see referenced image's source record")
-    payload = {"schema_version": 1, "film": "Le Voyage dans la Lune", "film_year": 1902, "research_date": "2026-10-08", "records": records, "style_rules": STYLE_RULES}
+    payload = {"schema_version": 2, "film": "Le Voyage dans la Lune", "film_year": 1902, "research_date": "2026-10-08", "records": records, "style_rules": STYLE_RULES}
+    payload.update(extension)
+    payload["counts"] = {"records": len(records), "legacy_records": legacy_count, "local_images": sum(bool(r["local_path"]) for r in records), "entities": len(extension["entities"]), "sources": len(extension["sources"]), "artworks": len(extension["artworks"]), "entity_categories": dict(Counter(e["category"] for e in extension["entities"]))}
     write_credits(records)
+    write_readme(payload)
     (DEST / "catalog.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
     (DEST / "catalog-data.js").write_text("window.MOON_LIBRARY = " + json.dumps(payload, ensure_ascii=False).replace("</", "<\\/") + ";\n")
     columns = ["id", "title", "kind", "sequence", "category", "description", "adaptation", "creator", "date", "license", "notes", "kit", "local_path", "reference_ids", "source_urls", "tags"]
+    csv_columns = columns + ["record_type", "canon_status", "source_ids", "entity_ids", "scene_refs", "design_id", "name_status", "target_minutes", "parent_level_id", "data_json"]
+    full_records = {record["id"]: record for record in extension["sources"] + extension["entities"] + extension["artworks"]}
+    plan = extension.get("level_plan") or {}
+    csv_records = [dict(record, record_type="entity" if record["id"] in {e["id"] for e in extension["entities"]} else "artwork" if record["id"] in {a["id"] for a in extension["artworks"]} else "source" if record["kind"] == "research-source" else "legacy", data_json=json.dumps(full_records.get(record["id"], record), ensure_ascii=False)) for record in records]
+    for level in plan.get("levels", []) + plan.get("optional_levels", []):
+        csv_records.append({"id":level["id"], "title":level.get("title",level.get("name")), "kind":"game-level", "category":level.get("kind","main"), "description":level.get("objective",""), "adaptation":level.get("skill",""), "canon_status":"game_proposal", "record_type":"level", "target_minutes":level.get("target_minutes",level.get("initial_budget_minutes")), "parent_level_id":level.get("parent_level_id"), "source_urls":level.get("source_urls", []), "reference_ids":level.get("film_object_ids", []), "data_json":json.dumps(level,ensure_ascii=False)})
     with (DEST / "catalog.csv").open("w", newline="") as output:
-        writer = csv.DictWriter(output, fieldnames=columns, lineterminator="\n")
+        writer = csv.DictWriter(output, fieldnames=csv_columns, lineterminator="\n")
         writer.writeheader()
-        for record in records:
-            writer.writerow({key: json.dumps(record.get(key, []), ensure_ascii=False) if isinstance(record.get(key), list) else record.get(key, "") for key in columns})
+        for record in csv_records:
+            writer.writerow({key: json.dumps(record.get(key, []), ensure_ascii=False) if isinstance(record.get(key), (list,dict)) else record.get(key, "") for key in csv_columns})
     temporary = DEST / "library.build.sqlite"
+    temporary.unlink(missing_ok=True)
     db = sqlite3.connect(temporary)
     db.execute("PRAGMA foreign_keys=ON")
     db.executescript("""
@@ -221,13 +487,18 @@ def main():
             db.execute("INSERT OR IGNORE INTO record_sources VALUES (?,?)", (record["id"], source_id))
         for identifier in record["reference_ids"]:
             db.execute("INSERT INTO record_references VALUES (?,?)", (record["id"], identifier))
+    write_research_tables(db, extension)
+    for key in ["schema_version", "film", "film_year", "research_date", "counts", "style_rules"]:
+        db.execute("INSERT INTO metadata VALUES (?,?)", (key, json.dumps(payload[key], ensure_ascii=False)))
     db.commit()
     assert db.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
     assert not db.execute("PRAGMA foreign_key_check").fetchall()
+    table_counts = {table: db.execute("SELECT COUNT(*) FROM " + table).fetchone()[0] for table in ["records", "entities", "research_sources", "cast_members", "artworks", "artwork_entities", "artwork_sources", "levels", "level_beats", "level_bosses", "adaptation_enemies", "level_enemies", "level_record_references"]}
     db.close()
     temporary.replace(DEST / "library.sqlite")
+    write_verification(payload, table_counts, args.strict_art)
     totals = Counter(r["kind"] for r in records)
-    print(json.dumps({"records": len(records), "local_images": sum(bool(r["local_path"]) for r in records), "types": totals}, indent=2))
+    print(json.dumps({"records": len(records), "local_images": sum(bool(r["local_path"]) for r in records), "types": totals, "research": payload["counts"], "sqlite_integrity": "ok"}, indent=2))
 
 
 if __name__ == "__main__":

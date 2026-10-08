@@ -19,7 +19,7 @@
     .eyebrow { margin: 0 0 12px; color: var(--soft); font-size: 12px; font-weight: 650; letter-spacing: .13em; text-transform: uppercase; }
     h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(36px, 5vw, 64px); font-weight: 400; line-height: 1.08; letter-spacing: -.03em; }
     .subtitle { margin: 14px 0 0; color: var(--soft); max-width: 660px; }
-    .counts { display: flex; gap: 28px; padding-bottom: 3px; }
+    .counts { display: flex; flex-wrap: wrap; gap: 28px; padding-bottom: 3px; }
     .count { display: flex; flex-direction: column; align-items: start; min-width: 66px; }
     .count strong { font-size: 30px; font-weight: 450; line-height: 1.2; }
     .count span { margin-top: 4px; color: var(--soft); font-size: 12px; }
@@ -30,7 +30,7 @@
     .rules ul { margin: 14px 0 0; padding-left: 21px; }
     .rules li + li { margin-top: 8px; }
     .local-label { white-space: nowrap; color: var(--dim); }
-    .filters { display: grid; grid-template-columns: minmax(200px, 1fr) minmax(180px, 240px) minmax(160px, 220px); gap: 16px; align-items: end; }
+    .filters { display: grid; grid-template-columns: minmax(200px, 1fr) minmax(170px, 210px) minmax(150px, 190px) minmax(140px, 170px); gap: 16px; align-items: end; }
     .field { min-width: 0; }
     .field label { display: block; margin-bottom: 7px; color: var(--soft); font-size: 13px; }
     input, select { width: 100%; min-height: 46px; padding: 10px 12px; color: var(--ink); background: var(--panel); border: 1px solid #50534b; border-radius: 4px; }
@@ -91,12 +91,13 @@
       <div>
         <p class="eyebrow">Act I / Visual research archive</p>
         <h1>A handmade Moon</h1>
-        <p class="subtitle"><em>Le Voyage dans la Lune</em> · Georges Méliès, 1902. Film scenery, objects, historical art, and game concept studies.</p>
+        <p class="subtitle"><em>Le Voyage dans la Lune</em> · Georges Méliès, 1902. Characters and performers, environments, bosses, story moods, prop kits and game concept studies.</p>
       </div>
       <div class="counts" aria-label="Library totals">
         <div class="count"><strong id="count-total">0</strong><span>records</span></div>
         <div class="count"><strong id="count-images">0</strong><span>local images</span></div>
         <div class="count"><strong id="count-objects">0</strong><span>film objects</span></div>
+        <div class="count"><strong id="count-entities">0</strong><span>research entities</span></div>
       </div>
     </header>
 
@@ -117,21 +118,26 @@
         <input id="search" type="search" placeholder="Mushrooms, painted rocks, capsule…" autocomplete="off">
       </div>
       <div class="field">
-        <label for="kind">Reference type</label>
+        <label for="kind">Evidence / record type</label>
         <select id="kind"><option value="">All types</option></select>
       </div>
       <div class="field">
-        <label for="sequence">Film sequence</label>
+        <label for="sequence">Scene / sequence</label>
         <select id="sequence"><option value="">All sequences</option></select>
       </div>
+      <div class="field">
+        <label for="category">Category</label>
+        <select id="category"><option value="">All categories</option></select>
+      </div>
     </form>
+    <p class="subtitle"><a href="../../ACT1_CONCEPT.md">Beginner level plan</a> · <a href="../../concept-art/act1/README.md">New concept collection</a> · <a href="research/RESEARCH.md">Film research</a> · <a href="research/cast-index.json">Performer index</a></p>
     <div class="results-bar">
       <p id="result-count" role="status" aria-live="polite" aria-atomic="true">Loading library…</p>
       <button class="clear" id="clear-filters" type="button" hidden>Clear filters</button>
     </div>
     <div class="grid" id="library-grid" aria-label="Reference records"></div>
     <p class="empty" id="empty" hidden>No matching references. Try another term or clear the filters.</p>
-    <footer class="foot">Each record keeps its source, date, provenance, and adaptation notes. Open a card to inspect the full image and related references. <a href="catalog.json">JSON</a> · <a href="catalog.csv">CSV</a> · <a href="library.sqlite">SQLite</a> · <a href="CREDITS.md">Credits</a> · <a href="generated-manifest.json">Generation prompts</a></footer>
+    <footer class="foot">Each record keeps its source, date, provenance, and adaptation notes. Open a card to inspect the full image and related references. <a href="catalog.json">JSON</a> · <a href="catalog.csv">CSV</a> · <a href="library.sqlite">SQLite</a> · <a href="CREDITS.md">Credits</a> · <a href="generated-manifest.json">Earlier prompts</a> · <a href="../../concept-art/act1/generated-manifest.json">New generation prompts</a> · <a href="VERIFICATION.md">Verification</a></footer>
   </main>
 
   <dialog id="record-dialog" aria-labelledby="detail-title">
@@ -157,16 +163,23 @@
         'retrospective-art': 'Retrospective drawing', 'historical-drawing': 'Historical drawing · date unresolved', 'museum-object': 'Museum object',
         'museum-reconstruction': 'Museum reconstruction', 'historical-poster': 'Historical poster',
         'film-object': 'Film object', 'generated-concept': 'Generated game concept',
-        'generated-object-sheet': 'Generated object study', 'user-reference': 'User reference'
+        'generated-object-sheet': 'Generated object study', 'user-reference': 'User reference',
+        'research-source': 'Research source', 'research-character': 'Character / cast role',
+        'research-environment': 'Environment research', 'research-boss': 'Boss proposal',
+        'research-mood': 'Story mood interpretation', 'research-prop': 'Prop / visual kit',
+        'concept-sheet': 'Generated concept sheet', 'gameplay-mockup': 'Proposed game view'
       };
       const search = document.getElementById('search');
       const kind = document.getElementById('kind');
       const sequence = document.getElementById('sequence');
+      const category = document.getElementById('category');
+      const categoryLabels = { characters: 'Characters & performers', environments: 'Environments', bosses: 'Bosses & candidates', mood: 'Story mood', props: 'Prop studies', gameplay: 'Game views', sources: 'Research sources' };
+      const categoryLabel = value => categoryLabels[value] || str(value);
       const grid = document.getElementById('library-grid');
       const dialog = document.getElementById('record-dialog');
       const clear = document.getElementById('clear-filters');
       const empty = document.getElementById('empty');
-      const generated = record => ['generated-concept', 'generated-object-sheet'].includes(record.kind);
+      const generated = record => ['generated-concept', 'generated-object-sheet', 'concept-sheet', 'gameplay-mockup'].includes(record.kind);
       const list = value => Array.isArray(value) ? value : [];
       const str = value => value == null ? '' : String(value);
       const typeLabel = value => labels[value] || str(value).replace(/-/g, ' ');
@@ -193,8 +206,8 @@
       };
       const fallback = record => {
         const content = make('span', 'no-image');
-        content.append(make('span', 'placeholder-title', record.category || typeLabel(record.kind)));
-        content.append(make('span', 'placeholder-note', record.kind === 'film-object' ? 'Object record · open for observations and source references' : 'Linked archive record · open for provenance and source'));
+        content.append(make('span', 'placeholder-title', record.kind === 'research-source' ? 'Research source' : categoryLabel(record.category) || typeLabel(record.kind)));
+        content.append(make('span', 'placeholder-note', record.kind === 'film-object' ? 'Object record · open for observations and source references' : record.kind.startsWith('research-') ? 'Research record · open for film basis and game adaptation' : 'Linked archive record · open for provenance and source'));
         return content;
       };
       const readableSource = url => {
@@ -214,10 +227,13 @@
       document.getElementById('count-total').textContent = records.length;
       document.getElementById('count-images').textContent = records.filter(record => safeImagePath(record.local_path)).length;
       document.getElementById('count-objects').textContent = records.filter(record => record.kind === 'film-object').length;
+      document.getElementById('count-entities').textContent = list(data.entities).length;
       const kinds = [...new Set(records.map(record => str(record.kind)).filter(Boolean))].sort((a, b) => typeLabel(a).localeCompare(typeLabel(b)));
       for (const value of kinds) { const option = make('option', '', typeLabel(value)); option.value = value; kind.append(option); }
       const sequences = [...new Set(records.map(record => str(record.sequence)).filter(Boolean))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
       for (const value of sequences) { const option = make('option', '', value); option.value = value; sequence.append(option); }
+      const categories = [...new Set(records.map(record => str(record.category)).filter(Boolean))].sort((a, b) => categoryLabel(a).localeCompare(categoryLabel(b)));
+      for (const value of categories) { const option = make('option', '', categoryLabel(value)); option.value = value; category.append(option); }
       const rulesList = document.getElementById('rules-list');
       for (const rule of list(data.style_rules)) {
         const text = typeof rule === 'string' ? rule : str(rule.rule || rule.description || rule.title);
@@ -229,11 +245,11 @@
         const priority = record => generated(record) ? 0 : record.kind === 'film-object' ? 3 : safeImagePath(record.local_path) ? 1 : 2;
         return priority(a.record) - priority(b.record) || a.index - b.index;
       }).map(item => item.record);
-      const searchText = new Map(records.map(record => [str(record.id), [record.id, record.title, record.description, record.adaptation, record.sequence, record.category, record.kit, ...list(record.tags)].map(str).join(' ').toLocaleLowerCase()]));
+      const searchText = new Map(records.map(record => [str(record.id), [record.id, record.title, record.description, record.adaptation, record.sequence, record.category, record.kit, record.canon_status, record.name_status, ...list(record.aliases), ...list(record.performer_attributions).map(item => item.name), ...list(record.tags)].map(str).join(' ').toLocaleLowerCase()]));
 
       function render() {
         const terms = search.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
-        const matches = ordered.filter(record => (!kind.value || record.kind === kind.value) && (!sequence.value || str(record.sequence) === sequence.value) && terms.every(term => searchText.get(str(record.id)).includes(term)));
+        const matches = ordered.filter(record => (!kind.value || record.kind === kind.value) && (!sequence.value || str(record.sequence) === sequence.value || list(record.scene_refs).includes(sequence.value)) && (!category.value || record.category === category.value) && terms.every(term => searchText.get(str(record.id)).includes(term)));
         const fragment = document.createDocumentFragment();
         for (const record of matches) {
           const card = make('button', 'card' + (record.kind === 'generated-concept' ? ' concept' : ''));
@@ -257,7 +273,7 @@
           card.append(thumb, body); card.addEventListener('click', () => openRecord(record)); fragment.append(card);
         }
         grid.replaceChildren(fragment);
-        const filtered = Boolean(terms.length || kind.value || sequence.value);
+        const filtered = Boolean(terms.length || kind.value || sequence.value || category.value);
         clear.hidden = !filtered; empty.hidden = matches.length > 0;
         document.getElementById('result-count').textContent = matches.length + ' of ' + records.length + ' records' + (filtered ? '' : ' · concept studies first');
         if (!records.length) empty.textContent = 'The catalogue data is unavailable. Keep catalog-data.js beside this page, then reopen it.';
@@ -283,8 +299,13 @@
         }
         const detail = document.getElementById('detail-body'); detail.replaceChildren();
         if (reference && reference.record.id !== record.id) detail.append(detailSection('Image reference', reference.record.title, 'notes'));
-        if (record.description) detail.append(detailSection(generated(record) ? 'Concept study' : 'Observation', record.description));
+        if (record.description) detail.append(detailSection(generated(record) ? 'Concept study' : record.canon_status === 'interpretation' ? 'Mood interpretation' : record.canon_status === 'game_proposal' ? 'Game proposal' : record.canon_status === 'published_cast_role' ? 'Published role attribution' : record.kind === 'research-source' ? 'Source scope' : 'Observation', record.description));
         if (record.adaptation) detail.append(detailSection('Game adaptation · proposal', record.adaptation));
+        if (record.canon_status) detail.append(detailSection('Evidence status', str(record.canon_status).replace(/_/g, ' '), 'notes'));
+        if (record.name_status) detail.append(detailSection('Identity status', str(record.name_status).replace(/_/g, ' '), 'notes'));
+        if (list(record.performer_attributions).length) detail.append(detailSection('Published performer attributions', list(record.performer_attributions).map(item => item.name + (item.notes ? ' — ' + item.notes : '')).join('; '), 'notes'));
+        if (list(record.aliases).length) detail.append(detailSection('Name variants', list(record.aliases).join(' / '), 'notes'));
+        if (record.decision) detail.append(detailSection('Encounter decision', str(record.decision).replace(/_/g, ' '), 'notes'));
         const metadata = make('section', 'detail-section'); metadata.append(make('h3', '', 'Provenance'));
         const dl = make('dl');
         for (const [label, value] of [['Creator', record.creator], ['Date', record.date], ['Type', typeLabel(record.kind)], ['Category', record.category], ['Kit', record.kit], ['Source credit', record.source_credit_metadata], ['Credit', record.credit], ['Attribution', record.attribution], ['License', record.license], ['Record', record.id]]) {
@@ -301,7 +322,7 @@
         });
         if (sourceList.children.length) { sources.append(make('h3', '', 'Online sources'), sourceList); detail.append(sources); }
         const related = make('section', 'detail-section'); const references = make('ul');
-        for (const id of list(record.reference_ids)) {
+        for (const id of [...new Set([...list(record.reference_ids), ...records.filter(item => generated(item) && list(item.entity_ids).includes(record.id)).map(item => item.id)])]) {
           const linked = byId.get(str(id)); if (!linked || linked.id === record.id) continue;
           const li = make('li'); const button = make('button', 'reference-button', linked.title);
           button.type = 'button'; button.addEventListener('click', () => { openRecord(linked); document.getElementById('close-dialog').focus(); }); li.append(button); references.append(li);
@@ -312,8 +333,8 @@
         dialog.scrollTop = 0;
       }
       document.getElementById('filters').addEventListener('submit', event => event.preventDefault());
-      search.addEventListener('input', render); kind.addEventListener('change', render); sequence.addEventListener('change', render);
-      clear.addEventListener('click', () => { search.value = ''; kind.value = ''; sequence.value = ''; render(); search.focus(); });
+      search.addEventListener('input', render); kind.addEventListener('change', render); sequence.addEventListener('change', render); category.addEventListener('change', render);
+      clear.addEventListener('click', () => { search.value = ''; kind.value = ''; sequence.value = ''; category.value = ''; render(); search.focus(); });
       document.getElementById('close-dialog').addEventListener('click', () => dialog.close());
       dialog.addEventListener('click', event => { if (event.target === dialog) { const rect = dialog.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close(); } });
       render();

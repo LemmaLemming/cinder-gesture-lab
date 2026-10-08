@@ -1,0 +1,213 @@
+<div id="cinder-replay-flow">
+  <div class="cinder-preview-label">Journey menu · illustrative save</div>
+  <div class="cinder-preview viz-dotted-background">
+    <div class="cinder-phone" aria-label="Cinder portrait menu proposal">
+      <div class="cinder-topline"><span>CINDER</span><span id="cinder-mode">STORY</span></div>
+      <main id="cinder-screen" aria-live="polite"></main>
+    </div>
+  </div>
+</div>
+<style>
+  #cinder-replay-flow { color-scheme: light dark; }
+  #cinder-replay-flow .cinder-preview-label { margin: 0 0 12px; opacity: .75; }
+  #cinder-replay-flow .cinder-preview { padding: 20px 10px; display: flex; justify-content: center; }
+  #cinder-replay-flow .cinder-phone { --c-ink: light-dark(#eeeade,#17191b); --c-text: light-dark(#262929,#e9e5d8); --c-low: light-dark(#65665f,#afada4); --c-paper: light-dark(#dfdbcf,#25282b); --c-line: light-dark(#b9b7ad,#494b4b); --c-accent: light-dark(#343c3c,#e9e5d8); --c-on: light-dark(#f4f1e6,#202425); --c-scene: light-dark(#d1d1c4,#101314); background: var(--c-ink); color: var(--c-text); width: min(100%,360px); min-height: 712px; border: 2px solid var(--c-line); padding: 24px 22px 22px; box-sizing: border-box; font-family: 'Courier New',monospace; font-size: 14px; line-height: 1.4; }
+  #cinder-replay-flow .cinder-phone * { box-sizing: border-box; }
+  #cinder-replay-flow .cinder-topline { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; letter-spacing: 2px; color: var(--c-low); padding-bottom: 22px; }
+  #cinder-replay-flow h1, #cinder-replay-flow h2, #cinder-replay-flow h3 { color: var(--c-text); font-family: inherit; font-weight: 500; }
+  #cinder-replay-flow h1 { margin: 14px 0 0; font-size: 40px; letter-spacing: 7px; }
+  #cinder-replay-flow h2 { margin: 4px 0 6px; font-size: 23px; line-height: 1.2; }
+  #cinder-replay-flow h3 { margin: 0; font-size: 16px; }
+  #cinder-replay-flow p { margin: 8px 0; }
+  #cinder-replay-flow .cinder-small { font-size: 12px; color: var(--c-low); }
+  #cinder-replay-flow .cinder-kicker { margin-bottom: 10px; font-size: 11px; letter-spacing: 2px; color: var(--c-low); }
+  #cinder-replay-flow .cinder-stack { display: grid; gap: 10px; }
+  #cinder-replay-flow .cinder-actions { display: grid; gap: 10px; margin-top: 22px; }
+  #cinder-replay-flow button, #cinder-replay-flow select, #cinder-replay-flow summary { font: inherit; }
+  #cinder-replay-flow button { border: 1px solid var(--c-line); background: var(--c-paper); color: var(--c-text); padding: 12px; min-height: 44px; text-align: center; }
+  #cinder-replay-flow button:disabled { opacity: .55; }
+  #cinder-replay-flow button.cinder-primary { background: var(--c-accent); color: var(--c-on); border-color: var(--c-accent); }
+  #cinder-replay-flow button.cinder-quiet { border-color: transparent; background: transparent; text-align: left; padding-left: 0; }
+  #cinder-replay-flow button.cinder-back { margin: -8px 0 14px; min-height: 44px; }
+  #cinder-replay-flow .cinder-title { text-align: center; }
+  #cinder-replay-flow .cinder-poster { position: relative; height: 224px; margin: 24px 0 20px; overflow: hidden; background: var(--c-scene); }
+  #cinder-replay-flow .cinder-curtain { position: absolute; inset: 0 auto 0 0; width: 18%; background: repeating-linear-gradient(90deg,var(--c-paper) 0 8px,var(--c-line) 8px 12px); clip-path: polygon(0 0,100% 0,65% 100%,0 100%); }
+  #cinder-replay-flow .cinder-curtain.cinder-right { left: auto; right: 0; transform: scaleX(-1); }
+  #cinder-replay-flow .cinder-moon { position: absolute; width: 74px; height: 74px; top: 24px; right: 46px; border-radius: 50%; background: var(--c-text); }
+  #cinder-replay-flow .cinder-moon:after { content: ''; position: absolute; inset: -5px 17px 8px -6px; border-radius: 50%; background: var(--c-scene); }
+  #cinder-replay-flow .cinder-ground { position: absolute; bottom: 0; height: 32px; width: 100%; background: var(--c-paper); }
+  #cinder-replay-flow .cinder-traveller { position: relative; width: 62px; height: 82px; margin: 0 auto; image-rendering: pixelated; }
+  #cinder-replay-flow .cinder-poster .cinder-traveller { position: absolute; bottom: 23px; left: calc(50% - 31px); }
+  #cinder-replay-flow .cinder-helmet { position: absolute; top: 2px; left: 16px; width: 34px; height: 32px; border: 2px solid var(--c-text); border-radius: 45%; background: var(--c-text); }
+  #cinder-replay-flow .cinder-visor { position: absolute; top: 8px; left: 4px; width: 22px; height: 13px; border-radius: 3px; background: var(--c-scene); }
+  #cinder-replay-flow .cinder-coat { position: absolute; top: 36px; left: 15px; width: 34px; height: 30px; background: var(--c-text); clip-path: polygon(15% 0,85% 0,100% 100%,0 100%); }
+  #cinder-replay-flow .cinder-leg { position: absolute; top: 64px; left: 19px; width: 9px; height: 16px; background: var(--c-low); box-shadow: 17px 0 0 var(--c-low); }
+  #cinder-replay-flow .cinder-progress { height: 4px; margin: 10px 0 8px; background: var(--c-line); }
+  #cinder-replay-flow .cinder-progress > span { display: block; width: 20%; height: 100%; background: var(--c-text); }
+  #cinder-replay-flow .cinder-act-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; margin: 18px 0; }
+  #cinder-replay-flow .cinder-act-tabs button { padding: 8px 2px; min-height: 52px; font-size: 12px; }
+  #cinder-replay-flow .cinder-act-banner { background: var(--c-paper); padding: 14px; margin-bottom: 12px; }
+  #cinder-replay-flow .cinder-act-banner .cinder-kicker { margin-bottom: 3px; }
+  #cinder-replay-flow .cinder-journey { position: relative; height: 622px; width: 100%; }
+  #cinder-replay-flow .cinder-path-lines { width: 100%; height: 100%; position: absolute; inset: 0; pointer-events: none; }
+  #cinder-replay-flow .cinder-route { fill: none; stroke: var(--c-line); stroke-width: 5px; vector-effect: non-scaling-stroke; }
+  #cinder-replay-flow .cinder-route-done { fill: none; stroke: var(--c-low); stroke-width: 5px; vector-effect: non-scaling-stroke; }
+  #cinder-replay-flow .cinder-branch { fill: none; stroke: var(--c-line); stroke-width: 2px; stroke-dasharray: 4 5; vector-effect: non-scaling-stroke; }
+  #cinder-replay-flow .cinder-path-node { position: absolute; left: var(--node-x); top: var(--node-y); transform: translate(-50%,-50%); padding: 0; width: 62px; height: 62px; min-height: 62px; border: 3px solid var(--c-line); border-radius: 50%; background: var(--c-paper); color: var(--c-text); box-shadow: 0 5px 0 var(--c-line); z-index: 2; display: grid; align-content: center; justify-items: center; }
+  #cinder-replay-flow .cinder-path-node span { display: block; }
+  #cinder-replay-flow .cinder-path-node .cinder-node-number { font-size: 21px; }
+  #cinder-replay-flow .cinder-path-node .cinder-node-status { font-size: 11px; }
+  #cinder-replay-flow .cinder-path-node.cinder-done { background: var(--c-accent); color: var(--c-on); border-color: var(--c-accent); }
+  #cinder-replay-flow .cinder-path-node.cinder-current { background: var(--c-text); color: var(--c-ink); border-color: var(--c-text); outline: 2px solid var(--c-text); outline-offset: 6px; }
+  #cinder-replay-flow .cinder-path-node[aria-pressed="true"] { box-shadow: 0 5px 0 var(--c-line),0 0 0 5px var(--c-ink),0 0 0 7px var(--c-low); }
+  #cinder-replay-flow .cinder-path-node:focus-visible { outline: 3px solid var(--c-text); outline-offset: 9px; }
+  #cinder-replay-flow .cinder-path-node.cinder-optional-node { width: 48px; height: 48px; min-height: 48px; border-radius: 12px; border-width: 2px; }
+  #cinder-replay-flow .cinder-optional-node .cinder-node-number { font-size: 15px; }
+  #cinder-replay-flow .cinder-node-caption { position: absolute; left: clamp(73px,var(--node-x),calc(100% - 73px)); top: calc(var(--node-y) + 40px); transform: translateX(-50%); width: 146px; text-align: center; font-size: 12px; line-height: 1.3; z-index: 1; pointer-events: none; }
+  #cinder-replay-flow .cinder-node-caption span { display: block; }
+  #cinder-replay-flow .cinder-node-caption.cinder-optional-caption { left: clamp(40px,var(--node-x),calc(100% - 40px)); top: calc(var(--node-y) + 31px); width: 80px; font-size: 11px; color: var(--c-low); }
+  #cinder-replay-flow .cinder-journey-traveller { position: absolute; top: 393px; left: calc(37% - 75px); width: 35px; height: 47px; pointer-events: none; }
+  #cinder-replay-flow .cinder-journey-traveller .cinder-traveller { transform: scale(.55); transform-origin: left top; margin: 0; }
+  #cinder-replay-flow .cinder-map-rock { position: absolute; width: 36px; height: 23px; background: var(--c-paper); clip-path: polygon(0 80%,20% 25%,40% 40%,60% 0,100% 85%,85% 100%,10% 100%); pointer-events: none; }
+  #cinder-replay-flow .cinder-map-rock.cinder-rock-a { left: 5%; top: 75px; }
+  #cinder-replay-flow .cinder-map-rock.cinder-rock-b { right: 0; top: 348px; width: 42px; height: 32px; }
+  #cinder-replay-flow .cinder-map-mushroom { position: absolute; width: 27px; height: 33px; background: var(--c-paper); clip-path: polygon(0 30%,15% 10%,50% 0,90% 15%,100% 35%,65% 45%,65% 100%,38% 100%,38% 45%,0 40%); left: 6%; top: 526px; pointer-events: none; }
+  #cinder-replay-flow .cinder-next-act { color: var(--c-low); font-size: 11px; text-align: center; margin: 6px 0 18px; border-top: 1px solid var(--c-line); padding-top: 12px; }
+  #cinder-replay-flow .cinder-selection { background: var(--c-paper); padding: 16px; margin-top: 12px; }
+  #cinder-replay-flow .cinder-selection .cinder-actions { margin-top: 12px; }
+  #cinder-replay-flow .cinder-selection h3 { margin-bottom: 4px; }
+  #cinder-replay-flow .cinder-notice { background: var(--c-paper); padding: 12px; margin: 16px 0; border-left: 3px solid var(--c-text); font-size: 12px; }
+  #cinder-replay-flow .cinder-slot { display: grid; gap: 5px; padding: 10px 0; border-bottom: 1px solid var(--c-line); }
+  #cinder-replay-flow label { display: block; font-size: 12px; }
+  #cinder-replay-flow select { min-width: 0; width: 100%; padding: 9px 8px; min-height: 44px; font-size: 16px; color: var(--c-text); background: var(--c-paper); border: 1px solid var(--c-line); border-radius: 0; }
+  #cinder-replay-flow .cinder-gearline { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 5px 12px; padding: 10px 0; border-bottom: 1px solid var(--c-line); }
+  #cinder-replay-flow .cinder-gearline span:first-child { color: var(--c-low); }
+  #cinder-replay-flow details { margin-top: 16px; }
+  #cinder-replay-flow summary { min-height: 44px; padding: 12px 0; }
+  #cinder-replay-flow table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  #cinder-replay-flow td, #cinder-replay-flow th { padding: 6px 3px; text-align: right; border-bottom: 1px solid var(--c-line); font-weight: 400; }
+  #cinder-replay-flow td:first-child, #cinder-replay-flow th:first-child { text-align: left; }
+  #cinder-replay-flow .cinder-footer { margin-top: 20px; text-align: center; font-size: 11px; color: var(--c-low); }
+  @media(max-width: 360px) { #cinder-replay-flow .cinder-phone { padding: 22px 16px; } #cinder-replay-flow h1 { font-size: 35px; letter-spacing: 5px; } }
+</style>
+<script>
+(() => {
+  const root = document.getElementById('cinder-replay-flow');
+  const screen = root.querySelector('#cinder-screen');
+  const mode = root.querySelector('#cinder-mode');
+  const items = {
+    weapon: [{id:'WEAPON-01',name:'Balanced Edge',note:'Neutral slash and blast profile.',d:{}},{id:'WEAPON-02',name:'Quick Edge',note:'Quicker recovery; weaker hits and shorter reach.',d:{damage:-.15,attack_speed:.15,attack_range:-.05}},{id:'WEAPON-03',name:'Heavy Edge',note:'Stronger hits; slower recovery and shorter reach.',d:{damage:.2,attack_speed:-.2,attack_range:-.1}},{id:'WEAPON-04',name:'Long Edge',note:'Longer reach; slower recovery and weaker hits.',d:{attack_range:.1,attack_speed:-.1,damage:-.05}}],
+    jacket: [{id:'CLOTH-J0',name:'Standard Jacket',note:'Neutral protection and recovery.',d:{}},{id:'CLOTH-J1',name:'Padded Jacket',note:'More protection; slower attack recovery.',d:{armour:.2,attack_speed:-.05}},{id:'CLOTH-J2',name:'Duelist Jacket',note:'Stronger hits; lower health capacity.',d:{damage:.1,max_health:-.1}}],
+    pants: [{id:'CLOTH-P0',name:'Standard Pants',note:'Neutral reach and mobility.',d:{}},{id:'CLOTH-P1',name:'Reach Pants',note:'Longer reach; slower attack recovery.',d:{attack_range:.05,attack_speed:-.05}},{id:'CLOTH-P2',name:'Cargo Pants',note:'More health capacity; slower dash travel.',d:{max_health:.1,dash_speed:-.05}}],
+    shoes: [{id:'CLOTH-S0',name:'Standard Shoes',note:'Standard dash landing and travel speed.',d:{}},{id:'CLOTH-S1',name:'Burst Shoes',note:'Faster dash; weaker attacks. Landing distance stays the same.',d:{dash_speed:.1,damage:-.05}},{id:'CLOTH-S2',name:'Longstep Shoes',note:'Longer dash; slower travel and longer commitment.',d:{dash_distance:.1,dash_speed:-.05}}]
+  };
+  const slots = ['weapon','jacket','pants','shoes'];
+  const names = {weapon:'Weapon',jacket:'Jacket',pants:'Pants',shoes:'Shoes'};
+  const story = Object.freeze({weapon:'WEAPON-01',jacket:'CLOTH-J1',pants:'CLOTH-P2',shoes:'CLOTH-S0'});
+  const levels = ['Observatory and Launch','Crater Gardens','Mushroom Caverns','Selenite Court','Uncharted'];
+  let state = {journeyVersion:2,view:'chapters',selected:3,level:1,side:null,gear:{...story},restored:false};
+  const find = (slot,id) => items[slot].find(x=>x.id===id) || items[slot][0];
+  function applySaved(saved) {
+    const s = saved && saved.privateContent;
+    if (!s || s.journeyVersion!==2 || !['title','chapters','equipment','replay','story'].includes(s.view)) return;
+    state.view = s.view;
+    state.level = Number.isInteger(s.level) && s.level>=0 && s.level<3 ? s.level : 1;
+    state.restored = !!s.restored;
+    state.side = ['Salvage Circuit','Spore Bloom'].includes(s.side) ? s.side : null;
+    state.selected = Number.isInteger(s.selected) && s.selected>=0 && s.selected<4 ? s.selected : ['Salvage Circuit','Spore Bloom'].includes(s.selected) ? s.selected : 3;
+    for (const slot of slots) state.gear[slot] = find(slot,s.gear && s.gear[slot]).id;
+  }
+  applySaved(window.openai && window.openai.widgetState);
+  function persist() {
+    if (window.openai && window.openai.setWidgetState) {
+      window.openai.setWidgetState({modelContent:{proposal:'Cinder winding journey menu and temporary replay equipment',selectedLevel:typeof state.selected==='string'?state.selected:levels[state.selected],replayLevel:state.side || levels[state.level],replayEquipment:{...state.gear},storyEquipment:{...story}},privateContent:{...state,gear:{...state.gear}}}).catch(()=>{});
+    }
+  }
+  const traveller = '<div class="cinder-traveller" aria-hidden="true"><div class="cinder-helmet"><div class="cinder-visor"></div></div><div class="cinder-coat"></div><div class="cinder-leg"></div></div>';
+  const button = (text,action,primary=false) => '<button type="button" class="cursor-interaction '+(primary?'cinder-primary':'')+'" data-action="'+action+'">'+text+'</button>';
+  function gearLines(gear) { return slots.map(slot=>'<div class="cinder-gearline"><span>'+names[slot]+'</span><span>'+find(slot,gear[slot]).name+'</span></div>').join(''); }
+  function stats(gear) {
+    const delta = {};
+    slots.forEach(slot=>Object.entries(find(slot,gear[slot]).d).forEach(([key,val])=>delta[key]=(delta[key]||0)+val));
+    const limits = {damage:[.75,1.3],attack_speed:[.7,1.2],attack_range:[.85,1.15],dash_speed:[.85,1.2],dash_distance:[1,1.15],max_health:[.8,1.2],armour:[1,1.35]};
+    const m = key => Math.min(limits[key][1],Math.max(limits[key][0],1+(delta[key]||0)));
+    return [20*m('damage'),42*m('damage'),.3/m('attack_speed'),.45/m('attack_speed'),2*m('attack_range'),Math.min(3.8,3.1*m('attack_range')),15*m('dash_speed'),2.7*m('dash_distance'),100*m('max_health'),100*(1-1/m('armour'))];
+  }
+  function statTable() {
+    const a=stats(story),b=stats(state.gear);
+    const labels=['Slash damage','Blast damage','Slash cooldown (s)','Blast cooldown (s)','Slash reach','Blast reach','Dash speed','Dash distance','Max HP','Damage reduction'];
+    return '<table aria-label="Resolved story and replay equipment comparison"><thead><tr><th>Resolved stat</th><th>Story</th><th>Replay</th></tr></thead><tbody>'+labels.map((label,i)=>'<tr><td>'+label+'</td><td>'+a[i].toFixed(i===8?0:2)+(i===9?'%':'')+'</td><td>'+b[i].toFixed(i===8?0:2)+(i===9?'%':'')+'</td></tr>').join('')+'</tbody></table>';
+  }
+  function journeyMap() {
+    const positions = [{x:50,y:54},{x:24,y:170},{x:69,y:290},{x:37,y:428},{x:63,y:548}];
+    const optional = {
+      1:{name:'Salvage Circuit',x:80,y:191,marker:'A'},
+      2:{name:'Spore Bloom',x:17,y:302,marker:'B'},
+      3:{name:'Royal Rehearsal',x:84,y:442,marker:'C',locked:true}
+    };
+    const lines='<svg class="cinder-path-lines" viewBox="0 0 100 622" preserveAspectRatio="none" aria-hidden="true"><path class="cinder-route" d="M50 54 C50 110 24 110 24 170 S69 230 69 290 S37 362 37 428 S63 486 63 548 L63 615"/><path class="cinder-route-done" d="M50 54 C50 110 24 110 24 170 S69 230 69 290"/><path class="cinder-branch" d="M24 170 C43 170 56 191 80 191 M69 290 C51 290 38 302 17 302 M37 428 C57 428 65 442 84 442"/></svg>';
+    const nodes=levels.map((name,i)=>{
+      const p=positions[i],style='--node-x:'+p.x+'%;--node-y:'+p.y+'px;',status=i<3?'Completed':i===3?'Current':'Locked';
+      let markup='<button type="button" class="cinder-path-node cursor-interaction '+(i<3?'cinder-done':i===3?'cinder-current':'')+'" style="'+style+'" '+(i===4?'disabled':'data-level="'+i+'" aria-pressed="'+(state.selected===i)+'"')+' aria-label="Level '+(i+1)+': '+name+' · '+status+'"><span class="cinder-node-number">'+(i+1)+'</span><span class="cinder-node-status">'+(i<3?'✓':i===3?'NOW':'LOCK')+'</span></button><div class="cinder-node-caption" style="'+style+'"><span>'+name+'</span>'+(i===4?'<span class="cinder-small">Clear Selenite Court</span>':'')+'</div>';
+      const o=optional[i];
+      if(o){
+        const os='--node-x:'+o.x+'%;--node-y:'+o.y+'px;';
+        markup+='<button type="button" class="cinder-path-node cinder-optional-node cursor-interaction" style="'+os+'" '+(o.locked?'disabled':'data-side="'+o.name+'" aria-pressed="'+(state.selected===o.name)+'"')+' aria-label="Optional: '+o.name+' · '+(o.locked?'Locked until Selenite Court is complete':'Completed')+'"><span class="cinder-node-number">'+o.marker+'</span><span class="cinder-node-status">'+(o.locked?'LOCK':'✓')+'</span></button><div class="cinder-node-caption cinder-optional-caption" style="'+os+'">Optional '+o.marker+'</div>';
+      }
+      return markup;
+    }).join('');
+    return '<div class="cinder-journey" aria-label="Winding Moon journey with five main levels and three optional branches">'+lines+'<div class="cinder-map-rock cinder-rock-a" aria-hidden="true"></div><div class="cinder-map-rock cinder-rock-b" aria-hidden="true"></div><div class="cinder-map-mushroom" aria-hidden="true"></div>'+nodes+'<div class="cinder-journey-traveller">'+traveller+'</div></div>';
+  }
+  function selectionCard() {
+    const current=state.selected===3;
+    const optional=typeof state.selected==='string';
+    const name=optional?state.selected:levels[state.selected];
+    return '<section class="cinder-selection" aria-label="Selected level"><div class="cinder-kicker">'+(current?'CURRENT STORY':optional?'OPTIONAL · COMPLETED':'COMPLETED')+'</div><h3>'+name+'</h3><p class="cinder-small">'+(current?'Checkpoint: Royal approach':'Replay with your choice of unlocked equipment.')+'</p><div class="cinder-actions">'+button(current?'Continue Story':'Replay · Choose Equipment',current?'story':'prepare',true)+'</div></section>';
+  }
+  function render() {
+    mode.textContent = ['equipment','replay'].includes(state.view)?'REPLAY':'STORY';
+    if (state.view==='title') {
+      screen.innerHTML = '<div class="cinder-title"><h1>CINDER</h1><p class="cinder-small">THREE ACTS · ONE JOURNEY</p><div class="cinder-poster" aria-label="Theatrical moon silhouette and pixel traveller"><div class="cinder-moon"></div><div class="cinder-curtain"></div><div class="cinder-curtain cinder-right"></div><div class="cinder-ground"></div>'+traveller+'</div></div><div class="cinder-kicker">YOUR STORY</div><h3>Act I · Selenite Court</h3><p class="cinder-small">Checkpoint: Royal approach</p><div class="cinder-progress" role="progressbar" aria-label="Main campaign completion" aria-valuenow="3" aria-valuemin="0" aria-valuemax="15"><span></span></div><p class="cinder-small">3 / 15 main levels complete</p><div class="cinder-actions">'+button('Continue Story','story',true)+button('Journey','chapters')+'</div><div class="cinder-footer">Settings · Sound · Credits</div>';
+    } else if (state.view==='chapters') {
+      screen.innerHTML = '<button type="button" class="cinder-quiet cinder-back cursor-interaction" data-action="title">← Title</button><h2>Your Journey</h2><div class="cinder-act-tabs"><button type="button" aria-pressed="true" class="cinder-primary cursor-interaction">I<br>The Moon</button><button type="button" disabled>II<br>Locked</button><button type="button" disabled>III<br>Locked</button></div><div class="cinder-act-banner"><div class="cinder-kicker">ACT I</div><h3>The Moon</h3><span class="cinder-small">3 / 5 main levels complete</span></div>'+journeyMap()+'<div class="cinder-next-act">ACT II · Complete the Moon to unlock</div>'+(state.restored?'<div class="cinder-notice">Story equipment restored.<br>Your story checkpoint is preserved.</div>':'')+selectionCard();
+    } else if (state.view==='equipment') {
+      const level=state.side || levels[state.level];
+      screen.innerHTML='<button type="button" class="cinder-quiet cinder-back cursor-interaction" data-action="chapters">← Journey</button><div class="cinder-kicker">REPLAY EQUIPMENT</div><h2>'+level+'</h2><p class="cinder-small">Choose from your unlocked equipment.</p>'+traveller+'<div class="cinder-stack">'+slots.map(slot=>'<div class="cinder-slot"><label for="cinder-'+slot+'">'+names[slot]+'</label><select id="cinder-'+slot+'" data-slot="'+slot+'">'+items[slot].map(item=>'<option value="'+item.id+'" '+(state.gear[slot]===item.id?'selected':'')+'>'+item.name+'</option>').join('')+'</select><span class="cinder-small" id="cinder-note-'+slot+'">'+find(slot,state.gear[slot]).note+'</span></div>').join('')+'</div><details><summary class="cursor-interaction">Compare with story equipment</summary><div id="cinder-stats">'+statTable()+'</div></details><div class="cinder-notice">For this replay only.<br>Your story equipment and checkpoint are preserved.</div><div class="cinder-actions">'+button('Start Replay','start',true)+button('Use Story Equipment','use-story')+'</div>';
+    } else if (state.view==='replay') {
+      screen.innerHTML='<div class="cinder-kicker">REPLAY · PAUSED</div><h2>'+(state.side || levels[state.level])+'</h2><p class="cinder-small">Replay equipment</p>'+gearLines(state.gear)+'<div class="cinder-notice">Your main story is saved at<br>Selenite Court · Royal approach.</div><div class="cinder-actions">'+button('Restart with New Equipment','equipment')+button('Leave Replay','leave',true)+'</div><p class="cinder-small">Retrying keeps this replay equipment.<br>Leaving restores your story equipment.</p>';
+    } else if (state.view==='story') {
+      screen.innerHTML='<div class="cinder-kicker">STORY · SAVED CHECKPOINT</div><h2>Selenite Court</h2><p class="cinder-small">Royal approach</p>'+traveller+'<p>Your story equipment</p>'+gearLines(story)+(state.restored?'<div class="cinder-notice">Story equipment restored.<br>Continue from the same story checkpoint.</div>':'')+'<div class="cinder-actions">'+button('Journey','chapters')+button('Return to Title','title')+'</div>';
+    }
+  }
+  root.addEventListener('click',event=>{
+    const target=event.target.closest('button');
+    if(!target || target.disabled) return;
+    if(target.dataset.level!==undefined) {
+      const level=Number(target.dataset.level);
+      if(Number.isInteger(level) && level>=0 && level<4) state.selected=level;
+    } else if(target.dataset.side) { if(['Salvage Circuit','Spore Bloom'].includes(target.dataset.side)) state.selected=target.dataset.side; }
+    else {
+      const action=target.dataset.action;
+      if(!action) return;
+      if(action==='use-story') { state.gear={...story}; }
+      else if(action==='prepare') { state.side=typeof state.selected==='string'?state.selected:null; if(!state.side && state.selected<3) state.level=state.selected; state.view='equipment'; }
+      else if(action==='start') { state.view='replay'; state.restored=false; }
+      else if(action==='leave') { state.view='chapters'; state.selected=3; state.restored=true; }
+      else { state.view=action; }
+    }
+    render(); persist();
+  });
+  root.addEventListener('change',event=>{
+    const slot=event.target.dataset.slot;
+    if(!slots.includes(slot)) return;
+    state.gear[slot]=find(slot,event.target.value).id;
+    root.querySelector('#cinder-note-'+slot).textContent=find(slot,state.gear[slot]).note;
+    root.querySelector('#cinder-stats').innerHTML=statTable();
+    persist();
+  });
+  window.addEventListener('openai:set_globals',event=>{
+    if(event.detail && event.detail.globals && event.detail.globals.widgetState) { applySaved(event.detail.globals.widgetState); render(); }
+  });
+  render();
+})();
+</script>

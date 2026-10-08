@@ -6,14 +6,30 @@ const MAX_CHUNKS: int = 96
 const MAX_TRANSIENTS: int = 48
 const AUDIO_VOICES: int = 6
 const SAMPLE_RATE: int = 22050
+const Footprint = preload("res://scripts/attack_footprint.gd")
+const SmokeScript = preload("res://scripts/curling_smoke.gd")
+const FlareScript = preload("res://scripts/shotgun_flare.gd")
+const MAX_BLOOD_PARTICLES: int = 24
 
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var _chunks: Array[RigidBody3D] = []
 var _transients: Array[Node3D] = []
+var _blood_particles: Array[Node3D] = []
 var _voices: Array[AudioStreamPlayer] = []
 var _sounds: Dictionary = {}
 var _voice_cursor: int = 0
 var _debris_material: PhysicsMaterial = PhysicsMaterial.new()
+
+func clear_lab() -> void:
+	for chunk in _chunks:
+		if is_instance_valid(chunk):
+			chunk.queue_free()
+	for effect in _transients:
+		if is_instance_valid(effect):
+			effect.queue_free()
+	_chunks.clear()
+	_transients.clear()
+	_blood_particles.clear()
 
 
 func _ready() -> void:
@@ -95,9 +111,12 @@ func slash(pos: Vector3, direction: Vector3, color: Color) -> void:
 	var forward: Vector3 = _floor_direction(direction)
 	var facing_angle: float = atan2(-forward.z, forward.x)
 	var arc: Node3D = Node3D.new()
+	arc.name = "SlashArc"
 	add_child(arc)
 	arc.global_position = pos
 	arc.rotation.y = facing_angle
+	arc.add_to_group("cosmetic_slash_arcs")
+	arc.set_meta("lifetime", 0.28)
 	var material: StandardMaterial3D = _material(color)
 	for index: int in range(8):
 		var angle: float = lerpf(-1.1, 1.1, float(index) / 7.0)
@@ -106,35 +125,77 @@ func slash(pos: Vector3, direction: Vector3, color: Color) -> void:
 		segment.rotation.y = -angle - PI * 0.5
 		arc.add_child(segment)
 	_register_transient(arc)
-	var sweep: Tween = arc.create_tween().set_parallel(true)
-	sweep.tween_property(arc, "rotation:y", facing_angle + 0.32, 0.13)
-	sweep.tween_property(arc, "scale", Vector3.ONE * 1.16, 0.06)
-	sweep.chain().tween_property(arc, "scale", Vector3.ONE * 0.01, 0.07)
-	sweep.chain().tween_callback(_retire_transient.bind(arc))
+	var sweep: Tween = arc.create_tween()
+	sweep.tween_property(arc, "rotation:y", facing_angle + 0.32, 0.28)
+	var settling: Tween = arc.create_tween()
+	settling.tween_property(arc, "scale", Vector3.ONE * 1.16, 0.14)
+	settling.tween_property(arc, "scale", Vector3.ONE * 0.01, 0.14)
+	settling.tween_callback(_retire_transient.bind(arc))
 
 
-func muzzle(pos: Vector3, direction: Vector3) -> void:
+func _emit_smoke(pos: Vector3, flow: Vector3, kind: String, delay: float = 0.0, size: float = 1.0) -> Node3D:
+	var smoke: Node3D = SmokeScript.new() as Node3D
+	smoke.configure(kind, flow, delay)
+	smoke.position = to_local(pos)
+	smoke.scale = Vector3.ONE * size
+	add_child(smoke)
+	_register_transient(smoke)
+	smoke.finished.connect(_retire_transient)
+	return smoke
+
+
+func tiny_bleed(pos: Vector3, count: int = 3, impulse: Vector3 = Vector3.ZERO) -> void:
+	# A few one-pixel-scale flecks, never a flash or a rigid-body explosion.
+	var amount: int = clampi(count, 0, 5)
+	var direction: Vector3 = _floor_direction(impulse)
+	for index: int in range(amount):
+		while _blood_particles.size() >= MAX_BLOOD_PARTICLES:
+			var oldest: Node3D = _blood_particles.pop_front() as Node3D
+			_retire_transient(oldest)
+		var mote: Node3D = Node3D.new()
+		mote.name = "TinyBloodParticle"
+		var width: float = _rng.randf_range(0.025, 0.045)
+		mote.add_child(_box(Vector3.ONE * width, _material(Color(0.46, 0.09, 0.10))))
+		add_child(mote)
+		mote.global_position = pos + Vector3(_rng.randf_range(-0.05, 0.05), _rng.randf_range(-0.04, 0.04), _rng.randf_range(-0.05, 0.05))
+		mote.add_to_group("tiny_blood_particles")
+		_blood_particles.append(mote)
+		_register_transient(mote)
+		var drift: Vector3 = direction * _rng.randf_range(0.03, 0.10) + Vector3(_rng.randf_range(-0.04, 0.04), 0.0, _rng.randf_range(-0.04, 0.04))
+		var tumble: Tween = mote.create_tween()
+		tumble.tween_property(mote, "global_position", mote.global_position + drift + Vector3.UP * 0.05, 0.14).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tumble.tween_property(mote, "global_position", mote.global_position + drift * 1.5 - Vector3.UP * 0.10, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tumble.tween_property(mote, "scale", Vector3.ZERO, 0.08)
+		tumble.tween_callback(_retire_transient.bind(mote))
+
+
+func attack_footprint(pos: Vector3, direction: Vector3, reach: float, cone_min_dot: float, color: Color, duration: float = 0.13) -> void:
+	# Snapshot the same reach, cone and scenery LOS used by the accepted action.
+	# Do not scale or rotate this outline after creation: the hit already resolved.
 	var forward: Vector3 = _floor_direction(direction)
-	var flash: Node3D = Node3D.new()
-	add_child(flash)
-	flash.global_position = pos
-	flash.rotation.y = atan2(-forward.z, forward.x)
-	var white: StandardMaterial3D = _material(Color(1.0, 0.83, 0.75))
-	var red: StandardMaterial3D = _material(Color(1.0, 0.16, 0.12))
-	var core: MeshInstance3D = _box(Vector3(0.44, 0.13, 0.22), white)
-	core.position.x = 0.2
-	flash.add_child(core)
-	for index: int in range(5):
-		var streak: MeshInstance3D = _box(Vector3(0.45, 0.055, 0.055), red)
-		var spread: float = float(index - 2) * 0.16
-		streak.position = Vector3(0.57, 0.03, spread)
-		streak.rotation.y = -spread
-		flash.add_child(streak)
-	_register_transient(flash)
-	var flicker: Tween = flash.create_tween()
-	flicker.tween_property(flash, "scale", Vector3(1.35, 1.0, 0.9), 0.035)
-	flicker.tween_property(flash, "scale", Vector3.ONE * 0.01, 0.08)
-	flicker.tween_callback(_retire_transient.bind(flash))
+	var outline := MeshInstance3D.new()
+	outline.name = "ResolvedAttackFootprint"
+	outline.mesh = Footprint.cone_mesh(reach, cone_min_dot, false, get_world_3d().direct_space_state, pos, forward)
+	var material: StandardMaterial3D = _material(color, true)
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	outline.material_override = material
+	outline.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(outline)
+	outline.global_position = pos + Vector3.UP * 0.035
+	outline.rotation.y = atan2(forward.x, forward.z)
+	_register_transient(outline)
+	var fade: Tween = outline.create_tween()
+	fade.tween_property(material, "albedo_color:a", 0.0, maxf(duration, 0.02))
+	fade.tween_callback(_retire_transient.bind(outline))
+
+
+func muzzle(pos: Vector3, direction: Vector3, source: Node3D = null) -> void:
+	var flare: Node3D = FlareScript.new() as Node3D
+	flare.configure(_floor_direction(direction), source)
+	flare.position = to_local(pos)
+	add_child(flare)
+	_register_transient(flare)
+	flare.finished.connect(_retire_transient)
 
 
 func ring(pos: Vector3, color: Color, radius: float = 1.0) -> void:
@@ -157,22 +218,9 @@ func ring(pos: Vector3, color: Color, radius: float = 1.0) -> void:
 	expansion.chain().tween_callback(_retire_transient.bind(pulse))
 
 
-func dash_trail(pos: Vector3, direction: Vector3, color: Color = Color(1.0, 0.18, 0.2)) -> void:
+func dash_trail(pos: Vector3, direction: Vector3, _color: Color = Color.WHITE) -> Node3D:
 	var forward: Vector3 = _floor_direction(direction)
-	var trail: Node3D = Node3D.new()
-	add_child(trail)
-	trail.global_position = pos
-	trail.rotation.y = atan2(-forward.z, forward.x)
-	var material: StandardMaterial3D = _material(color, true)
-	for index: int in range(5):
-		var width: float = lerpf(0.2, 0.06, float(index) / 4.0)
-		var fragment: MeshInstance3D = _box(Vector3(width, 0.08, width), material)
-		fragment.position.x = -0.18 - float(index) * 0.2
-		trail.add_child(fragment)
-	_register_transient(trail)
-	var fade: Tween = trail.create_tween()
-	fade.tween_property(material, "albedo_color:a", 0.0, 0.18)
-	fade.tween_callback(_retire_transient.bind(trail))
+	return _emit_smoke(pos - forward * 0.12, -forward, "dash", 0.0, 0.78)
 
 
 func floating_text(pos: Vector3, text: String, color: Color) -> void:
@@ -213,6 +261,14 @@ func active_chunk_count() -> int:
 	return _chunks.size()
 
 
+func active_transient_count() -> int:
+	return _transients.size()
+
+
+func active_blood_count() -> int:
+	return _blood_particles.size()
+
+
 func _floor_direction(direction: Vector3) -> Vector3:
 	var flat: Vector3 = Vector3(direction.x, 0.0, direction.z)
 	return flat.normalized() if flat.length_squared() > 0.0001 else Vector3.RIGHT
@@ -240,6 +296,7 @@ func _box(size: Vector3, material: StandardMaterial3D) -> MeshInstance3D:
 func _register_transient(effect: Node3D) -> void:
 	while _transients.size() >= MAX_TRANSIENTS:
 		var oldest: Node3D = _transients.pop_front() as Node3D
+		_blood_particles.erase(oldest)
 		if is_instance_valid(oldest):
 			oldest.queue_free()
 	_transients.append(effect)
@@ -247,6 +304,7 @@ func _register_transient(effect: Node3D) -> void:
 
 func _retire_transient(effect: Node3D) -> void:
 	_transients.erase(effect)
+	_blood_particles.erase(effect)
 	if is_instance_valid(effect):
 		effect.queue_free()
 

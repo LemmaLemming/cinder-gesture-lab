@@ -1,63 +1,42 @@
-# Act 1 environment concepts
+# Act 1 — The Moon: first steps into lunar theatre
 
-**Superseded exploratory pass.** The [researched film library and revised concept studies](../../reference-library/act1/README.md) establish the current Act 1 direction. These earlier images and prompts are retained for design history; their modern spacesuit, finned rocket, crawling creatures and Gothic court details do not define the revised film-based kit.
+Original game concept art inspired by Georges Méliès's *A Trip to the Moon* (1902), developed from the existing researched film library. Read the [complete Act 1 proposal](../../ACT1_CONCEPT.md), browse the [offline research and art gallery](../../reference-library/act1/index.html), or query the [film database](../../reference-library/act1/README.md).
 
-These are planning illustrations for the portrait 2.5D game, generated with the built-in image generation tool. They are visual proposals, not implemented gameplay or production-ready environment assets.
+The new collection contains **20 final image files: 17 development boards and three portrait game-view proposals**, matching the category coverage of Acts 2 and 3. The six earlier researched concept studies and three superseded exploratory images remain available. These are original generated planning illustrations, not current Godot screenshots or production assets. All new art uses the **built-in image generation tool**, with saved reference inputs and full prompts in [generated-manifest.json](generated-manifest.json).
 
-Each image shows a regular environment and a small optional area that continues its existing scenery kit. Optional levels can reuse those same pieces in a different layout with a few added assets.
+| Folder | New images | Coverage |
+| --- | ---: | --- |
+| [characters](characters/) | 4 | Expedition, friendly Earth cast, celestial performers, and Selenite game-role silhouettes. |
+| [environments](environments/) | 5 | Observatory/launch, Crater Gardens, Mushroom Caverns, Selenite Court, Living Moon/return. |
+| [bosses](bosses/) | 3 | Selenite King, Man in the Moon, and candidate/role comparison. |
+| [mood](mood/) | 3 | Invitation/wonder, fungal unease/royal farce, flight/showdown/return. |
+| [props](props/) | 2 | Earth launch kit and lunar/fungal/court modules with reachable spore clusters. |
+| [gameplay](gameplay/) | 3 | Close portrait views of a first Rush Selenite, spore repulsion, and the reachable Moon-eye opening. |
 
-- [Crater Gardens](crater-gardens.png): existing crater scenery plus salvage capsules and a damaged escape hatch.
-- [Mushroom Caverns](mushroom-caverns.png): existing cave and mushroom scenery plus spore vents and visible warnings.
-- [Selenite Court](selenite-court.png): existing palace scenery and guards plus formation markers and a practice bell.
+## Three possible game views
 
-The images explore the palette and composition; exact tile scale, camera crop, character design, and collision boundaries still need refinement. Decorative steps in the court do not establish a new jumping or climbing mechanic.
+1. [Crater Gardens](gameplay/01-crater-gardens-gameplay.png): one clearly committed enemy attack and a generous safe side landing.
+2. [Mushroom Caverns](gameplay/02-mushroom-spores-gameplay.png): the player strikes a low cluster and living swarmers retreat from falling spores.
+3. [The Living Moon](gameplay/03-moon-eye-gameplay.png): the nearby eye rim lowers to floor level for a normal close slash during recovery.
 
-## Generation prompts
+All three preserve portrait format, a close fixed-angle overhead camera, upright pixel sprites against blocky scenery, swipe-only normal ground dashes and one carried weapon. No HUD is depicted so the scene can be assessed clearly. Input and warning timing require playable tests.
 
-### Crater Gardens
+## New-player pacing
 
-```text
-Use case: stylized-concept.
-Asset type: portrait environment concept art for a mobile 2.5D action game, not an implemented screenshot.
-Style: convincing cohesive pixel art with deliberate large square pixel clusters, crisp nearest-neighbor edges, restrained dithering, upright billboard character sprites against blocky three-dimensional scenery. Handmade Georges Melies lunar theatre mood, painted stage scenery.
-Camera: locked-angle orthographic third-person overhead view, looking diagonally down at a navigable floor. Close player-follow framing for a tall iPhone portrait composition, approximately 9:19.5. The full-body player is near the middle, prominent at roughly 10% of image height, not a tiny distant figure. Show a local combat space, not a whole-level map.
-Palette: strictly moon-white, dusty silver, charcoal and deep black. No red, green, blue, or other accent colors.
-Shared character: ivory-coated traveller, square dark face, black boots, one short pale blade, strong black stepped outline. A few lunar insect-like enemy sprites have readable dark silhouettes with pale masks.
-Shared scenery vocabulary: chunky silver floor tiles and lunar stone, stepped black-edged rock forms, reusable modular pieces, sparse square debris with weight. Clear walkable ground, generous spaces for omnidirectional dashes, visible silhouettes and hazards.
-Constraints: gesture-only taps and swipes; no joystick, no hotbar, no weapon-switching buttons, no HUD, no text, no labels, no arrows, no phone frame, no watermark. No smooth painterly blur or photorealism. No side-scrolling platform layout, precision jumping, floating-platform traversal, narrow mandatory bridges, or sprawling distant camera. Keep decorative detail around the edges and the combat floor readable.
-Scene: CRATER GARDENS, a moon-surface combat clearing that resembles a handmade silent-film set. A broad circular dusty-silver crater floor fills most of the frame, bounded by sculpted crater rims and scattered angular rocks. A black void and a few painted stars peek beyond the upper perimeter. One broken bullet-shaped rocket section rests against the rim. Two small lunar enemies approach the centrally framed traveller.
-Optional-level asset reuse: the regular crater kit continues into a small visible side clearing made from the very same floor texture, crater-rim pieces, rocks and rocket debris. Its only distinctive additions are two squat salvage capsules and a damaged rocket escape hatch. Show these as physical scenery and pickups, not interface elements. Same palette, same materials, same enemies. The scene should make the optional salvage space feel like an added use of existing assets rather than another biome.
-Composition: local playable arena viewed from close overhead, broad connected floor with no lethal chasms. Strong bright character against mid-grey ground. Beautiful, strange, welcoming lunar expedition with subtle unease.
-```
+The main path keeps the existing **five levels over 43 minutes**: Observatory and Launch 6, Crater Gardens 8, Mushroom Caverns 9, Selenite Court 10, The Living Moon 10. Gesture direction is taught on a safe floor before committed rush attacks; crowd spacing precedes spore choices; a lone spear guard precedes formations and the King; Blink and Sneeze are taught separately before the finale combines them. The three optional side levels each target 3–5 minutes and reuse their parent scenery/enemy kits. All timing is provisional first-clear pacing, not a countdown or measured playtest result.
 
-### Mushroom Caverns
+Fixed baseline damage, ordinary slash viability, close reachable weak points, generous dash landings and frequent encounter/boss-phase checkpoints keep learning in the player's decisions. The detailed [level plan](../../reference-library/act1/research/levels.json) stores budgets, objectives, checkpoints and reuse rules.
 
-```text
-Use case: stylized-concept.
-Asset type: portrait environment concept art for a mobile 2.5D action game, not an implemented screenshot.
-Style: convincing cohesive pixel art with deliberate large square pixel clusters, crisp nearest-neighbor edges, restrained dithering, upright billboard character sprites against blocky three-dimensional scenery. Handmade Georges Melies lunar theatre mood, painted stage scenery.
-Camera: locked-angle orthographic third-person overhead view, looking diagonally down at a navigable floor. Close player-follow framing for a tall iPhone portrait composition, approximately 9:19.5. The full-body player is near the middle, prominent at roughly 10% of image height, not a tiny distant figure. Show a local combat space, not a whole-level map.
-Palette: strictly moon-white, dusty silver, charcoal and deep black. No red, green, blue, or other accent colors.
-Shared character: ivory-coated traveller, square dark face, black boots, one short pale blade, strong black stepped outline. A few lunar insect-like enemy sprites have readable dark silhouettes with pale masks.
-Shared scenery vocabulary: chunky silver floor tiles and lunar stone, stepped black-edged rock forms, reusable modular pieces, sparse square debris with weight. Clear walkable ground, generous spaces for omnidirectional dashes, visible silhouettes and hazards.
-Constraints: gesture-only taps and swipes; no joystick, no hotbar, no weapon-switching buttons, no HUD, no text, no labels, no arrows, no phone frame, no watermark. No smooth painterly blur or photorealism. No side-scrolling platform layout, precision jumping, floating-platform traversal, narrow mandatory bridges, or sprawling distant camera. Keep decorative detail around the edges and the combat floor readable.
-Scene: MUSHROOM CAVERNS, a broad lunar cave chamber with oversized moon-white mushroom caps, charcoal roots, silver stalagmites and a theatrical painted cave backdrop. Repeated mushroom and root modules border a spacious stone floor. The prominent traveller stands between a small group of pale-masked lunar enemies; there is room to dash around them. Black cavities around the chamber create depth without hiding the walkable path.
-Optional-level asset reuse: a side alcove continues with the exact same cave tiles, roots, mushrooms and enemy designs. Only two new spore vents are added: squat fungal vents made of the same materials, releasing a few clearly square white spore particles. Around one vent, a crisp dithered circular floor warning signals its next pulse; keep this warning visible inside the shot. Distinct encounter arrangement, not a different color palette or environment.
-Composition: a close overhead gameplay-like view of one generous room and its adjoining optional alcove. Mushrooms serve as edge scenery, not a dense forest obscuring the character. Magical paper-mache shapes, delicate silver light, black shadows, and a slightly threatening sense of pulsing life.
-```
+## Research and adaptation boundaries
 
-### Selenite Court
+Read [ADAPTATION_NOTES.md](ADAPTATION_NOTES.md) and the [film-linked style guide](../../reference-library/act1/STYLE_GUIDE.md) before treating an image as reconstruction or implementation. The film supplies handmade stage scenery, Victorian costumes, a finless shell, human celestial performers, shallow giant fungi, upright masked Selenites and curling royal ornament. Monochrome is our chosen game palette; authentic handcoloured prints are separately documented.
 
-```text
-Use case: stylized-concept.
-Asset type: portrait environment concept art for a mobile 2.5D action game, not an implemented screenshot.
-Style: convincing cohesive pixel art with deliberate large square pixel clusters, crisp nearest-neighbor edges, restrained dithering, upright billboard character sprites against blocky three-dimensional scenery. Handmade Georges Melies lunar theatre mood, painted stage scenery.
-Camera: locked-angle orthographic third-person overhead view, looking diagonally down at a navigable floor. Close player-follow framing for a tall iPhone portrait composition, approximately 9:19.5. The full-body player is near the middle, prominent at roughly 10% of image height, not a tiny distant figure. Show a local combat space, not a whole-level map.
-Palette: strictly moon-white, dusty silver, charcoal and deep black. No red, green, blue, or other accent colors.
-Shared character: ivory-coated traveller, square dark face, black boots, one short pale blade, strong black stepped outline. A few lunar insect-like enemy sprites have readable dark silhouettes with pale masks.
-Shared scenery vocabulary: chunky silver floor tiles and lunar stone, stepped black-edged rock forms, reusable modular pieces, sparse square debris with weight. Clear walkable ground, generous spaces for omnidirectional dashes, visible silhouettes and hazards.
-Constraints: gesture-only taps and swipes; no joystick, no hotbar, no weapon-switching buttons, no HUD, no text, no labels, no arrows, no phone frame, no watermark. No smooth painterly blur or photorealism. No side-scrolling platform layout, precision jumping, floating-platform traversal, narrow mandatory bridges, or sprawling distant camera. Keep decorative detail around the edges and the combat floor readable.
-Scene: SELENITE COURT, a lunar palace combat room built from repeating moon-white palace tiles, carved insect-like columns, black archways, ceremonial masks and a partial view of an oversized throne in the distance. Broad central floor, generously spaced columns, theatrical symmetry. The ivory-coated traveller faces three familiar lunar guards positioned in a deliberate formation. Close overhead player-follow framing; the player remains prominent.
-Optional-level asset reuse: an adjoining royal practice alcove uses the exact same palace tiles, columns, guards, masks and lighting. Its only unique additions are simple silver formation-marker discs embedded in the floor and one ornate practice bell at the alcove edge. Give the optional space a changed guard arrangement rather than new enemy species or a new environment kit.
-Composition: one local palace arena with the small practice space readable beyond an arch, ample traversable floor, no stairs required for movement. Crisp black silhouettes, moon-white theatrical architecture, dusty-silver floor values, dignified but alien early-cinema stagecraft.
-```
+Character likenesses, optional costume variants, game enemy roles, tutorial targets, warning patterns, spore repulsion and boss combat are inventions. The King and the Moon are the selected bosses. Candidate studies do not add required encounters. Friendly humans and dream performers remain scenery. Generated captions are unverified labels, not source quotations. When a diagram conflicts with a written rule, [ACT1_CONCEPT.md](../../ACT1_CONCEPT.md) governs the next production pass.
+
+## Earlier work and provenance
+
+[LEGACY_EXPLORATIONS.md](LEGACY_EXPLORATIONS.md) preserves the first three environment images and their full prompts. Their modern spacesuit, finned rocket, crawling creatures, damaging vents and Gothic court no longer define Act 1. The root PNGs are retained without replacement.
+
+The six source-informed earlier studies G01–G06 stay in [the film library's concepts folder](../../reference-library/act1/concepts/); the new collection uses G07–G26. Its historical records and O01–O70 object IDs remain stable. G02's automatic vent depiction is superseded by hittable clusters and harmless enemy repulsion.
+
+The final manifest stores complete prompts, saved paths, reference-image paths, related database IDs, provenance and review notes. The database builder verifies real image dimensions and hashes. Multi-study board counts are planned drawing slots, not a count of production assets or independently verified depicted objects.

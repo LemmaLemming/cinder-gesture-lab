@@ -6,11 +6,17 @@ A pixelated 2.5D action game for iOS and Android, displayed vertically in portra
 
 Combat happens at close range. Swords and shotguns operate in a comparable danger zone. Explosions scatter square particles with convincing gravity, collisions, bounce, and weight.
 
-The campaign has one carried weapon and no weapon-switching hotbar. Picking up another weapon replaces the current one. Baseline damage does not grow through progression. New bosses, encounter rules, and player mastery provide progress. Situational pickups can boost dash speed, boost dash length, or turn a swing into a 360-degree attack. Pickup duration and stacking remain design questions.
+The main character always wears a round astronaut-like helmet in every act, outfit and animation state. All equipment worn by the character, especially replaceable jackets, pants and shoes, must visually suit that helmet and remain compatible when mixed across acts. This is the confirmed protagonist appearance, superseding older hat references. The [equipment appearance rules](PLAYER_EQUIPMENT_GUIDELINES.md#permanent-helmet-and-compatible-equipment-appearance) define how to author it; the Character Lab now implements the shared helmet and compatible clothing in a 48 × 64 pixel family.
+
+The campaign has one carried weapon and no weapon-switching hotbar. Picking up another weapon replaces the current one. The same character mechanics and underlying statistics apply in all three acts. Replaceable jackets, pants, shoes and weapon profiles can modify effective damage, attack speed/reach, dash speed/distance, health, armour and bounded conditional abilities. Equipped clothing and weapon carry between acts; later equipment offers tradeoffs within the same power budget. Baseline damage does not grow through act progression or repeated farming. New bosses, encounter rules, and player mastery provide progress.
+
+The [main character and equipment guidelines](PLAYER_EQUIPMENT_GUIDELINES.md) are the canonical design for these modifiers, the confirmed three-landed-slash combo, replacement, temporary pickups, stacking and acceptance checks. Their [JSON companion](../data/design/player_equipment.json) holds provisional numerical values and stable item/ability IDs, supported by [primary developer research](research/EQUIPMENT_BALANCE_RESEARCH.md). Situational pickups include dash speed, dash length and 360-degree primary attacks. Earlier act notes that leave pickup duration or stacking open defer to these guidelines. The [Character Lab](CHARACTER_LAB.md) now implements nine static clothing presets, four weapon profiles, armour, paused comparisons and finite weapon replacement; conditional perks and temporary powerups remain unimplemented.
 
 ## Current prototype scope
 
-One red-and-black mechanics arena with a pixel player, three enemy variants, obstacles, sword strikes, shotgun blasts, HP, two automatically reloading shells, and bounded physical square debris. Enemies stagger or launch when hit and drop a small collectible core. A tap resets the arena. The prototype has fixed slash/blast actions; weapon replacement, campaign powerups, and the acts below are planned content.
+For future implementation, read the [shared visual, motion and interaction guidelines](GAME_STYLE_GUIDELINES.md) and [asset reuse guide](ASSET_REUSE_GUIDE.md). They keep pixel treatment, movement feel, animation states and subtle actionable-object cues consistent while preserving each act's distinct art. The reuse guide separates implemented systems from concept references that still need production. [AGENTS.md](../AGENTS.md) makes these required starting references for agents working on game content.
+
+One reusable portrait Character Lab with a helmeted pixel traveller, an easing fixed-angle camera, one continuous pixel dash plume, the slower original slash arc, barrel-origin shotgun flares, tiny blood flecks, safe practice targets, one-enemy and three-enemy exercises, obstacles, slash/blast actions, HP and two automatically reloading shells. The starter uses standard jacket/pants/shoes and Balanced Edge. Static clothing and one replaceable weapon profile modify resolved stats within the shared budgets. Enemies retain arena roles, stagger/launch feedback and counter-only core drops; their committed cone warnings now lead into a visible stationary recovery. LOADOUT pauses comparison at a safe boundary. RESET or selecting an exercise explicitly fills HP/ammo and restores local supplies while carrying gear. Campaign powerups, conditional perks, saved checkpoints and the acts below remain planned content.
 
 The first controller used a side-scrolling platforming interpretation. The implemented version now uses free X/Z movement across a floor and gesture-only dashes.
 
@@ -29,13 +35,17 @@ The user confirmed this attack mapping, swipe-only movement, the all-gesture con
 
 This is concept documentation, not implemented campaign content. The player should be able to play on a bus or while waiting for friends, replay earlier levels, and see clear progress toward finishing the game.
 
+The [UI design plan](UI_DESIGN_PLAN.md) records the agreed title and Duolingo-inspired journey layout: levels scattered along a winding portrait path, with optional side branches. Completed levels open a customizable replay loadout; finishing or leaving restores the main story equipment and coherent saved checkpoint. The document and interactive reference are plans, not implemented campaign UI or save handling.
+
 - Target level length: around 10 minutes, with shorter levels where appropriate.
 - Target first campaign completion: roughly 2–3 hours.
 - Working structure: three acts of approximately five levels each. Actual level count and clear times need playtesting.
 - Proposed interruption handling: immediate pause when the app backgrounds, frequent encounter/boss-phase checkpoints, and a paused resume that the player continues with a tap.
 - Proposed replay rewards: optional challenges and cosmetics. Replays do not grant permanent damage increases.
 
-Each act draws on late-19th- or early-20th-century science fiction and has a distinct palette, setting, movement problem, and climax. The red-and-black prototype palette is not a requirement for every act.
+The [difficulty design plan](DIFFICULTY_DESIGN.md) proposes a campaign learning curve, Assisted/Standard/Challenge presets and a shared attack scheduler. Its numerical settings are unplaytested; difficulty selection and scheduling changes remain unimplemented.
+
+Each act draws on late-19th- or early-20th-century science fiction and has a distinct palette, setting, movement problem, and climax. The earlier red-and-black prototype and current neutral lab palettes are not requirements for every act.
 
 **Optional-level asset rule**
 
@@ -49,7 +59,7 @@ The selected reference is Georges Méliès's [A Trip to the Moon (1902)](https:/
 
 - Palette: moon-white, dusty silver, and black.
 - Art direction: handmade lunar theatre, using painted-looking rock flats, broad white streaks and black creases, human figures in stars and planetary discs, oversized fungi, and celestial court ornament. Keep the moon-white, dusty-silver and black palette as our game interpretation; surviving handcoloured film prints are separately documented.
-- Character and prop vocabulary: Victorian expedition coats, hats, beards and umbrellas; embroidered ceremonial astronomer robes; a squat, finless bullet capsule; upright masked Selenites with rib bands, projecting headpieces and spears. The court uses curling panels, crescents, radial roundels and drapery.
+- Character and prop vocabulary: Victorian expedition coats, hats, beards and umbrellas for the film-derived cast; the playable protagonist adapts the expedition clothing around the permanent round helmet. Other references include embroidered ceremonial astronomer robes; a squat, finless bullet capsule; upright masked Selenites with rib bands, projecting headpieces and spears. The court uses curling panels, crescents, radial roundels and drapery.
 - Proposed movement identity: choose a useful dash landing, preserve a retreat, then punish a visibly committed attack. Each level adds a different spatial problem using the same gestures.
 - Proposed earlier boss: the Selenite King in level 4.
 - **Act 1 final boss: the Man in the Moon.** He closes this act; the campaign has a separate final encounter in Act 3.
@@ -214,9 +224,9 @@ Test the hall's direction exercise, one Selenite rush, one mushroom/swarm repuls
 | Mushroom Caverns | Spore Bloom | Stalks, caps, porous fungi, ground passages, shelves, swarmers, a spear guard, and the regular level's hittable clusters/repulsion effect | Rearrange the same mushrooms into a compact sequence where limited spore supplies open different crowd routes. Add a distinct cluster arrangement or bloom animation; an optional 360-swing pickup can ease the final crowd. Defeat the final mixed group to open the contact exit. Keep baseline completion viable. |
 | Selenite Court | Royal Rehearsal | Court floors, curling panels, crescent columns, curtains, guards and their formation animations | Add only a practice bell and formation markers. Contact with the bell starts a short arrangement; clearing it opens the next. Clear three arrangements to finish. No flawless speed run is required. |
 
-These are separately selected side levels unlocked after clearing their parent level. They need approximately 3–5 minutes each as a provisional first pass, with one checkpoint before the final exercise. Their rewards can be a film-themed cosmetic or challenge-completion stamp; none grants permanent damage. Shared main-level mechanics such as the spore vent are already in the parent kit, so do not count them as an entirely new optional-area environment.
+These are separately selected side levels unlocked after clearing their parent level. They need approximately 3–5 minutes each as a provisional first pass, with one checkpoint before the final exercise. Their rewards can be a film-themed cosmetic or challenge-completion stamp; none grants permanent damage. Shared main-level mechanics such as the hittable spore clusters and enemy-repulsion field are already in the parent kit, so do not count them as an entirely new optional-area environment.
 
-The [film reference library](reference-library/act1/README.md) contains the researched scenery and object catalogue, an offline searchable gallery, and six revised concept studies. Its [style guide](reference-library/act1/STYLE_GUIDE.md) connects the visual rules to film frames and museum records. The [earlier concept art](concept-art/act1/README.md) remains as a superseded exploratory pass. New art and all encounter rules are game proposals, not original film material or implemented levels.
+The [expanded Act 1 proposal](ACT1_CONCEPT.md) develops the newcomer learning sequence, per-level time budgets, boss phases, interruption checkpoints and optional levels. The [film reference library](reference-library/act1/README.md) contains the cast, environments, boss candidates, moods, props, historical evidence and an offline searchable gallery. Its [style guide](reference-library/act1/STYLE_GUIDE.md) connects visual rules to film frames and museum records. The [Act 1 concept-art collection](concept-art/act1/README.md) extends the earlier six researched studies with category boards and three portrait game-view proposals, while retaining the superseded exploratory images for history. New art and all encounter rules are game proposals, not original film material or implemented levels.
 
 ### Act 2 — The Invasion
 

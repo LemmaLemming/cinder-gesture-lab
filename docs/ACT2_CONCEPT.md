@@ -4,6 +4,12 @@
 
 The reference is H. G. Wells's *The War of the Worlds* (1898). This is a compressed action-game journey through its places and pressures, rather than a literal simulation of its narrator's movements or chronology. The novel's anonymous narrator is a reference character; the game's existing playable character remains the player. The research database distinguishes named people, unnamed roles, machines, places, moods, and proposed gameplay adaptations. [Novel edition and contents](https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/)
 
+## Shared character contract
+
+[PLAYER_EQUIPMENT_GUIDELINES.md](PLAYER_EQUIPMENT_GUIDELINES.md) defines the authoritative campaign-wide player and item rules. Acts 1, 2 and 3 use the same base gesture mechanics, controller, and underlying stats. Replaceable jacket, pants, shoes and one carried weapon may modify effective stats or provide bounded conditional effects. **Fixed baseline damage** means unchanged underlying damage: no act multiplier and no farmed permanent stat growth. Acts change encounters and available item themes within equal balance budgets.
+
+Every required route and fight must remain practical with the standard reference loadout, ordinary dash and slash-only attacks. Existing fixed-stat completion tests refer to that loadout. Equipment or temporary powerups may offer alternatives; they never become mandatory traversal or boss keys. The shared guidelines take precedence over earlier unresolved equipment, duration or stacking proposals in this document.
+
 ## What carries forward
 
 Use Act 1's **five-level scale, short first level, roughly ten-minute ceiling, separately entered optional levels, frequent checkpoints, and interrupted-session resume**. Act 1 supplies no art-direction template for this act. The game's already confirmed portrait presentation, pixelated 2.5D floor movement, camera, controls, one carried weapon, and fixed baseline damage remain campaign-wide constraints.

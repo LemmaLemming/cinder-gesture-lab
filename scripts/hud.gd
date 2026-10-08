@@ -3,13 +3,14 @@ extends CanvasLayer
 
 signal start_requested
 signal restart_requested
+signal bench_requested
 
 const MODE_PLAY: int = 0
 const MODE_TITLE: int = 1
 const MODE_END: int = 2
 const INK: Color = Color(0.035, 0.035, 0.045, 0.95)
-const RED: Color = Color(0.90, 0.13, 0.17)
-const RED_DARK: Color = Color(0.43, 0.10, 0.13)
+const RED: Color = Color(0.70, 0.75, 0.77)
+const RED_DARK: Color = Color(0.32, 0.36, 0.39)
 const PALE: Color = Color(0.92, 0.90, 0.85)
 const MUTED: Color = Color(0.61, 0.59, 0.59)
 const GESTURE_HINT: String = "SWIPE  ·  DASH     TAP  ·  SLASH\nDOUBLE TAP  ·  BLAST"
@@ -19,6 +20,7 @@ var _mode: int = MODE_PLAY
 var _hp_fraction: float = 1.0
 var _objective_text: String = "TRY MOVEMENT AND COMBAT"
 var _flash_token: int = 0
+var _level_preview: bool = false
 
 var _root: Control
 var _status_panel: Panel
@@ -29,6 +31,10 @@ var _hp_track: ColorRect
 var _hp_fill: ColorRect
 var _objective_label: Label
 var _reset_button: Button
+var _bench_button: Button
+var _telemetry_label: Label
+var _anchor_label: Label
+var _anchor_caption: Label
 var _hint_panel: Panel
 var _hint_label: Label
 var _mouse_hint_label: Label
@@ -50,6 +56,7 @@ func setup() -> void:
 	if _built:
 		return
 	layer = 20
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_root = Control.new()
 	_root.name = "HUDRoot"
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -95,6 +102,24 @@ func hide_overlay() -> void:
 	_reset_button.visible = true
 
 
+func set_level_preview(enabled: bool) -> void:
+	_level_preview = enabled
+	_bench_button.text = "PAUSE" if enabled else "LOADOUT"
+	_telemetry_label.visible = not enabled
+
+
+func show_pause() -> void:
+	setup()
+	_mode = MODE_TITLE
+	_shade.visible = true
+	_reset_button.visible = false
+	_card_kicker.text = "LEVEL PREVIEW"
+	_card_title.text = "PAUSED"
+	_card_body.text = "Simulation paused. Tap below to continue."
+	_card_button.text = "RESUME  >"
+	_layout()
+
+
 func show_end(won: bool, cores: int) -> void:
 	setup()
 	_mode = MODE_END
@@ -104,6 +129,10 @@ func show_end(won: bool, cores: int) -> void:
 	_card_title.text = "TEST COMPLETE" if won else "TEST OVER"
 	_card_body.text = "The mechanics test is complete. Tap below to reset." if won else "You went down. Tap below to try again."
 	_card_button.text = "TAP TO RESET  >"
+	if _level_preview:
+		_card_kicker.text = "LEVEL PREVIEW"
+		_card_title.text = "PREVIEW COMPLETE" if won else "PREVIEW OVER"
+		_card_body.text = "Tap below to restart this level preview."
 	_layout()
 
 
@@ -112,7 +141,19 @@ func flash_message(message: String) -> void:
 	_flash_token += 1
 	_objective_label.text = message.to_upper()
 	if is_inside_tree():
-		get_tree().create_timer(1.8).timeout.connect(_restore_objective.bind(_flash_token))
+		get_tree().create_timer(1.8, false).timeout.connect(_restore_objective.bind(_flash_token))
+
+func update_lab(player: CinderPlayer, anchor: Vector2, teaching: bool) -> void:
+	_name_label.text = "CINDER / " + player.stats.weapon_name.to_upper()
+	_telemetry_label.text = "DASH %.2f UNITS  /  %.2f UNITS/S" % [player.stats.dash_distance, player.stats.dash_speed]
+	if not player.last_action.is_empty():
+		_telemetry_label.text += "\n%s  %.1f DAMAGE  /  %d HITS" % [player.last_action.kind.to_upper(), player.last_action.damage, player.last_action.hits]
+	if player.last_dash_distance > 0.0:
+		_telemetry_label.text += "\nLAST LANDING  %.2f UNITS" % player.last_dash_distance
+	_anchor_label.visible = teaching
+	_anchor_label.position = anchor - Vector2(10, 10)
+	_anchor_caption.visible = teaching
+	_anchor_caption.position = anchor + Vector2(24, 16)
 
 
 func _build_status() -> void:
@@ -139,14 +180,26 @@ func _build_status() -> void:
 	_reset_button.pressed.connect(func() -> void: restart_requested.emit())
 	_root.add_child(_reset_button)
 	_style_button(_reset_button, false)
+	_bench_button = Button.new()
+	_bench_button.text = "LOADOUT"
+	_bench_button.focus_mode = Control.FOCUS_NONE
+	_bench_button.pressed.connect(func() -> void: bench_requested.emit())
+	_root.add_child(_bench_button)
+	_style_button(_bench_button, false)
+	_telemetry_label = _label(_root, "", MUTED, 13)
+	_anchor_label = _label(_root, "+", MUTED, 18)
+	_anchor_label.size = Vector2(20, 20)
+	_anchor_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_anchor_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_anchor_caption = _label(_root, "RELEASE POINT", MUTED, 12)
 
 	_hint_panel = _panel(_root)
 	_hint_label = _label(_hint_panel, GESTURE_HINT, PALE, 16)
 	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_hint_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_mouse_hint_label = _label(_hint_panel, "DESKTOP: DRAG WITH MOUSE TO SWIPE", MUTED, 12)
+	_mouse_hint_label = _label(_hint_panel, "AIM FROM RELEASE POINT TO TAP", MUTED, 12)
 	_mouse_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_mouse_hint_label.visible = not OS.has_feature("mobile")
+	_mouse_hint_label.visible = true
 
 
 func _build_overlay() -> void:
@@ -240,6 +293,12 @@ func _layout() -> void:
 	_objective_label.size = Vector2(screen.x - 2.0 * edge, 45.0 * factor)
 	_reset_button.position = Vector2(screen.x - edge - 88.0 * factor, top)
 	_reset_button.size = Vector2(88.0, 42.0) * factor
+	_bench_button.position = Vector2(_reset_button.position.x, top + 54.0 * factor)
+	_bench_button.size = Vector2(88.0, 42.0) * factor
+	_bench_button.add_theme_font_size_override("font_size", _font(13, factor))
+	_telemetry_label.position = Vector2(edge, top + 170.0 * factor)
+	_telemetry_label.size = Vector2(screen.x - edge * 2.0, 76.0 * factor)
+	_telemetry_label.add_theme_font_size_override("font_size", _font(12, factor))
 
 	var hint_width: float = minf(screen.x - 2.0 * edge, 496.0 * factor)
 	var bottom: float = (70.0 if OS.has_feature("mobile") else 20.0) * factor

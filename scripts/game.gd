@@ -1,15 +1,31 @@
 extends Node
 
 const PlayerScript = preload("res://scripts/player.gd")
+const PlayerScene = preload("res://scenes/player.tscn")
+const TargetScene = preload("res://scenes/practice_target.tscn")
+const BenchScript = preload("res://scripts/lab_bench.gd")
+const WeaponPickupScript = preload("res://scripts/weapon_pickup.gd")
 const EnemyScript = preload("res://scripts/enemy.gd")
 const EffectsScript = preload("res://scripts/effects.gd")
 const HUDScript = preload("res://scripts/hud.gd")
+const LevelScript = preload("res://scripts/campaign/level.gd")
+const LabScene = preload("res://scenes/lab_arena.tscn")
 
 var player: CinderPlayer
 var fx: PixelEffects
 var hud: GameHUD
 var world: Node3D
 var camera: Camera3D
+var bench: LabBench
+@export_file("*.tscn") var level_scene_path: String = ""
+var active_level: CinderLevel
+var level_load_error: String = ""
+var _selected_level_scene: PackedScene
+@export_enum("targets", "duel", "arena") var lab_mode: String = "targets"
+@export var player_start: Vector3 = Vector3(0, 0.1, 1.0)
+@export var practice_target_positions: Array[Vector3] = [Vector3(0, 0, -0.8), Vector3(4, 0, -2.2), Vector3(-4, 0, 1.0)]
+@export var weapon_candidate_positions: Array[Vector3] = [Vector3(-2.7, 0, 5.2), Vector3(0, 0, 5.2), Vector3(2.7, 0, 5.2)]
+var _enemy_count: int = 0
 var cores: int = 0
 var kills: int = 0
 var _shake: float = 0.0
@@ -20,29 +36,59 @@ var _last_tap_position := Vector2.ZERO
 # Store the completed swipe endpoint in viewport fractions so resizing stays consistent.
 var _swipe_end_normalized := Vector2(0.5, 0.5)
 const CAMERA_OFFSET: Vector3 = Vector3(0, 18, 13)
+# Exponential follow: a distant player pulls faster; approach eases without
+# changing camera angle, controller motion or the screen-space aim anchor.
+const CAMERA_FOLLOW_TIME_S: float = 0.16
+var _camera_focus: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	_build_view()
-	_build_arena()
+	for argument: String in OS.get_cmdline_user_args():
+		if argument == "--level-scene":
+			push_error("Use --level-scene=res://...tscn")
+			get_tree().quit(2)
+			return
+		if argument.begins_with("--level-scene="):
+			level_scene_path = argument.trim_prefix("--level-scene=")
+			if level_scene_path.is_empty():
+				push_error("--level-scene requires a res://...tscn path")
+				get_tree().quit(2)
+				return
+	if not load_level_scene(level_scene_path):
+		push_error(level_load_error)
+		get_tree().quit(2)
+		return
 	hud = HUDScript.new()
 	add_child(hud)
 	hud.setup()
 	hud.restart_requested.connect(reset_lab)
-	hud.start_requested.connect(func() -> void: hud.hide_overlay())
+	hud.start_requested.connect(resume_lab)
+	hud.bench_requested.connect(open_bench)
+	bench = BenchScript.new()
+	add_child(bench)
+	bench.resume_requested.connect(resume_lab)
+	bench.item_requested.connect(func(id: String) -> void: player.equip_item(id))
+	bench.exercise_requested.connect(choose_exercise)
 	reset_lab()
 	if "--capture" in OS.get_cmdline_user_args():
 		_capture_preview()
+	elif "--capture-polish" in OS.get_cmdline_user_args():
+		if not is_lab_level():
+			push_error("--capture-polish requires the default lab; use --capture for a level preview")
+			get_tree().quit(2)
+			return
+		_capture_polish()
 
 func _build_view() -> void:
 	var container := SubViewportContainer.new()
 	container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	container.stretch = true
-	container.stretch_shrink = 3
+	container.stretch_shrink = 2
 	container.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(container)
 	var viewport := SubViewport.new()
-	viewport.size = Vector2i(180, 390)
+	viewport.size = Vector2i(270, 585)
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	viewport.own_world_3d = true
 	viewport.handle_input_locally = false
@@ -53,15 +99,15 @@ func _build_view() -> void:
 	var environment := WorldEnvironment.new()
 	var settings := Environment.new()
 	settings.background_mode = Environment.BG_COLOR
-	settings.background_color = Color(0.028, 0.02, 0.035)
+	settings.background_color = Color(0.035, 0.04, 0.05)
 	settings.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	settings.ambient_light_color = Color(0.7, 0.58, 0.64)
+	settings.ambient_light_color = Color(0.76, 0.78, 0.80)
 	settings.ambient_light_energy = 0.7
 	environment.environment = settings
 	world.add_child(environment)
 	var light := DirectionalLight3D.new()
 	light.rotation_degrees = Vector3(-50, -25, 0)
-	light.light_color = Color(1, 0.8, 0.75)
+	light.light_color = Color(0.96, 0.98, 1.0)
 	light.light_energy = 1.0
 	world.add_child(light)
 	camera = Camera3D.new()
@@ -75,29 +121,78 @@ func _build_view() -> void:
 	fx = EffectsScript.new()
 	world.add_child(fx)
 
-func _build_arena() -> void:
-	_platform(Vector3(0, -0.4, 0), Vector3(24, 0.8, 16), Color(0.1, 0.07, 0.115))
-	for x: int in range(-12, 12, 2):
-		for z: int in range(-8, 8, 2):
-			var checker: bool = (x + z) % 4 == 0
-			_block(Vector3(x + 1, 0.008, z + 1), Vector3(1.97, 0.016, 1.97), Color(0.15, 0.105, 0.16) if checker else Color(0.12, 0.085, 0.13))
-	_platform(Vector3(-12.2, 0.8, 0), Vector3(0.4, 2.4, 16.4), Color(0.21, 0.045, 0.075))
-	_platform(Vector3(12.2, 0.8, 0), Vector3(0.4, 2.4, 16.4), Color(0.21, 0.045, 0.075))
-	_platform(Vector3(0, 0.8, -8.2), Vector3(24, 2.4, 0.4), Color(0.21, 0.045, 0.075))
-	_platform(Vector3(0, 0.3, 8.2), Vector3(24, 1.4, 0.4), Color(0.21, 0.045, 0.075))
-	_platform(Vector3(-1.5, 0.65, -1.4), Vector3(2.2, 1.3, 2.2), Color(0.18, 0.12, 0.20))
-	_platform(Vector3(4, 0.65, 2.4), Vector3(2.2, 1.3, 2.2), Color(0.18, 0.12, 0.20))
-	for x: int in range(-11, 12, 2):
-		_block(Vector3(x, 0.03, -7.5), Vector3(0.4, 0.04, 0.16), Color(0.73, 0.035, 0.08))
-		_block(Vector3(x, 0.03, 7.5), Vector3(0.4, 0.04, 0.16), Color(0.73, 0.035, 0.08))
+func is_lab_level() -> bool:
+	return _selected_level_scene == null
+
+func load_level_scene(scene_path: String) -> bool:
+	# Validate before changing selection, so a rejected request preserves the
+	# current preview. Invalid startup CLI requests instead exit with code 2.
+	level_load_error = ""
+	var selected: PackedScene
+	if not scene_path.is_empty():
+		if not scene_path.begins_with("res://") or not scene_path.ends_with(".tscn") or not ResourceLoader.exists(scene_path, "PackedScene"):
+			level_load_error = "Level scene must be an existing res://...tscn: " + scene_path
+			return false
+		selected = load(scene_path) as PackedScene
+		if selected == null:
+			level_load_error = "Could not load level scene: " + scene_path
+			return false
+		var candidate: Node = selected.instantiate()
+		if not candidate is CinderLevel:
+			level_load_error = "Level root must extend CinderLevel: " + scene_path
+		else:
+			level_load_error = (candidate as CinderLevel).contract_error()
+		if candidate != null:
+			candidate.free()
+		if not level_load_error.is_empty():
+			return false
+	_selected_level_scene = selected
+	level_scene_path = scene_path
+	if is_instance_valid(hud):
+		reset_lab()
+	return true
+
+func _create_level_instance() -> CinderLevel:
+	if _selected_level_scene != null:
+		return _selected_level_scene.instantiate() as CinderLevel
+	# Adapt the existing lab without changing its authored floor or obstacles.
+	var level := LevelScript.new() as CinderLevel
+	level.name = "CharacterLab"
+	level.add_child(LabScene.instantiate())
+	var spawn := Marker3D.new()
+	spawn.name = "PlayerSpawn"
+	spawn.position = player_start
+	level.add_child(spawn)
+	return level
 
 func reset_lab() -> void:
+	var loadout: Dictionary = player.equipment.snapshot() if is_instance_valid(player) else {}
+	get_tree().paused = false
+	if is_instance_valid(bench):
+		bench.visible = false
+	if is_instance_valid(active_level):
+		active_level.exit_level()
+		world.remove_child(active_level)
+		active_level.queue_free()
+	fx.clear_lab()
 	if is_instance_valid(player):
 		world.remove_child(player)
 		player.queue_free()
 	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if not world.is_ancestor_of(enemy):
+			continue
 		enemy.get_parent().remove_child(enemy)
 		enemy.queue_free()
+	for target in get_tree().get_nodes_in_group("practice_targets"):
+		if not world.is_ancestor_of(target):
+			continue
+		target.get_parent().remove_child(target)
+		target.queue_free()
+	for candidate in get_tree().get_nodes_in_group("lab_weapons"):
+		if not world.is_ancestor_of(candidate):
+			continue
+		candidate.get_parent().remove_child(candidate)
+		candidate.queue_free()
 	for pickup: Node3D in _pickups:
 		if is_instance_valid(pickup):
 			pickup.queue_free()
@@ -107,18 +202,90 @@ func reset_lab() -> void:
 	_swipe_end_normalized = Vector2(0.5, 0.5)
 	cores = 0
 	kills = 0
-	player = PlayerScript.new()
+	_enemy_count = 0
+	active_level = _create_level_instance()
+	world.add_child(active_level)
+	player = PlayerScene.instantiate()
+	if not loadout.is_empty():
+		player.equipment.restore(loadout)
 	player.name = "Player"
 	player.fx = fx
 	world.add_child(player)
-	player.global_position = Vector3(-6, 0.1, 3.5)
-	_update_camera()
+	player.global_position = active_level.spawn_position()
+	# RESET is an explicit fresh preview/exercise, with full HP/ammo and supplies.
+	player.hp = player.max_hp
+	_shake = 0.0
+	_update_camera(0.0, true)
 	player.fired.connect(_on_fired)
 	player.died.connect(func() -> void: hud.show_end(false, cores))
-	_spawn_enemy(Vector3(-3.0, 0.1, -4.0), 0)
-	_spawn_enemy(Vector3(6, 0.1, -3.0), 1)
-	_spawn_enemy(Vector3(7, 0.1, 5.0), 2)
+	player.equipment_changed.connect(func(id: String) -> void: hud.flash_message("Equipped " + player.equipment.item_name(id)))
+	active_level.enter_level(player, fx)
+	hud.set_level_preview(not is_lab_level())
+	if is_lab_level():
+		_build_lab_exercise()
 	hud.hide_overlay()
+
+func _build_lab_exercise() -> void:
+	match lab_mode:
+		"duel":
+			_enemy_count = 1
+			_spawn_enemy(Vector3(0, 0.1, -2.8), 0)
+		"arena":
+			_enemy_count = 3
+			_spawn_enemy(Vector3(-2.8, 0.1, -3.0), 0)
+			_spawn_enemy(Vector3(3.0, 0.1, -3.0), 1)
+			_spawn_enemy(Vector3(4, 0.1, 5.0), 2)
+		_:
+			_enemy_count = 0
+			for point: Vector3 in practice_target_positions:
+				var target := TargetScene.instantiate() as Node3D
+				world.add_child(target)
+				target.global_position = point
+	_build_weapon_candidates()
+
+func _build_weapon_candidates() -> void:
+	for index: int in range(3):
+		var pickup := WeaponPickupScript.new()
+		pickup.item_id = "WEAPON-%02d" % (index + 2)
+		pickup.title = player.equipment.item_name(pickup.item_id)
+		pickup.hero = player
+		world.add_child(pickup)
+		pickup.add_to_group("lab_weapons")
+		pickup.global_position = weapon_candidate_positions[index] if index < weapon_candidate_positions.size() else Vector3(-2.7 + float(index) * 2.7, 0, 5.2)
+
+func open_bench() -> void:
+	if player.dead:
+		return
+	_clear_gesture_chain()
+	get_tree().paused = true
+	if is_lab_level():
+		bench.show_bench(player, get_tree().get_nodes_in_group("enemies").is_empty())
+	else:
+		hud.show_pause()
+
+func resume_lab() -> void:
+	_clear_gesture_chain()
+	bench.visible = false
+	hud.hide_overlay()
+	get_tree().paused = false
+
+func choose_exercise(mode: String) -> void:
+	if not is_lab_level() or mode not in ["targets", "duel", "arena"]:
+		return
+	lab_mode = mode
+	reset_lab()
+
+func _clear_gesture_chain() -> void:
+	_pointers.clear()
+	_last_tap_time = -1000
+	_last_tap_position = Vector2.ZERO
+
+func _notification(what: int) -> void:
+	if "--capture" in OS.get_cmdline_user_args() or "--capture-polish" in OS.get_cmdline_user_args():
+		return
+	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		if is_instance_valid(bench) and is_instance_valid(player) and not player.dead:
+			open_bench()
 
 func _spawn_enemy(where: Vector3, kind: int = 0) -> AshEnemy:
 	var enemy: AshEnemy = EnemyScript.new()
@@ -141,7 +308,7 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(player):
 		return
 	_shake = maxf(_shake - delta, 0.0)
-	_update_camera()
+	_update_camera(delta)
 	if _shake > 0.0:
 		camera.position.x += randf_range(-0.035, 0.035)
 		camera.position.z += randf_range(-0.035, 0.035)
@@ -160,10 +327,14 @@ func _process(delta: float) -> void:
 			fx.floating_text(target, "+1", Color(1, 0.8, 0.7))
 			pickup.queue_free()
 			_pickups.remove_at(index)
-	hud.update_status(player.hp, player.max_hp, player.shells, player.max_shells, cores, "DASH IN ANY DIRECTION  //  ENEMIES DOWN %d / 3" % kills)
+	var objective: String = "SAFE TARGETS  /  LOADOUT TO COMPARE GEAR" if lab_mode == "targets" else "ENEMIES DOWN %d / %d" % [kills, _enemy_count]
+	if not is_lab_level():
+		objective = active_level.objective_text
+	hud.update_status(player.hp, player.max_hp, player.shells, player.max_shells, cores, objective)
+	hud.update_lab(player, get_aim_anchor(), is_lab_level() and lab_mode == "targets")
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not is_instance_valid(player) or player.dead:
+	if not is_instance_valid(player) or player.dead or get_tree().paused:
 		return
 	if event is InputEventScreenTouch:
 		if event.pressed:
@@ -229,14 +400,22 @@ func get_aim_anchor() -> Vector2:
 func aim_direction(tap_screen: Vector2) -> Vector3:
 	return screen_to_direction(tap_screen - get_aim_anchor())
 
-func _update_camera() -> void:
+func _update_camera(delta: float, snap: bool = false) -> void:
 	if not is_instance_valid(player):
 		return
 	var focus: Vector3 = player.global_position + Vector3.UP * 0.75
-	camera.position = focus + CAMERA_OFFSET
-	camera.look_at(focus)
+	if snap:
+		_camera_focus = focus
+	else:
+		var follow_weight: float = 1.0 - exp(-maxf(delta, 0.0) / CAMERA_FOLLOW_TIME_S)
+		_camera_focus = _camera_focus.lerp(focus, follow_weight)
+	# Shake is applied after this unshaken position so it cannot accumulate into
+	# follow lag. The orientation set in _build_view stays fixed throughout.
+	camera.global_position = _camera_focus + CAMERA_OFFSET
 
 func handle_tap(screen_pos: Vector2) -> void:
+	if get_tree().paused:
+		return
 	# Aim is relative to the final finger position of the last completed swipe.
 	var direction: Vector3 = aim_direction(screen_pos)
 	var now: int = Time.get_ticks_msec()
@@ -250,21 +429,6 @@ func handle_tap(screen_pos: Vector2) -> void:
 
 func _on_fired(kind: String) -> void:
 	_shake = 0.12 if kind == "blast" else 0.035
-
-func _platform(pos: Vector3, dimensions: Vector3, color: Color) -> void:
-	var body := StaticBody3D.new()
-	body.collision_layer = 1
-	body.collision_mask = 0
-	body.position = pos
-	world.add_child(body)
-	var collision := CollisionShape3D.new()
-	var shape := BoxShape3D.new()
-	shape.size = dimensions
-	collision.shape = shape
-	body.add_child(collision)
-	_block(Vector3.ZERO, dimensions, color, body)
-	if dimensions.y > 1.0:
-		_block(Vector3(0, dimensions.y / 2.0 + 0.025, 0), Vector3(dimensions.x, 0.05, dimensions.z), Color(0.32, 0.05, 0.09), body)
 
 func _block(pos: Vector3, dimensions: Vector3, color: Color, parent: Node3D = null) -> MeshInstance3D:
 	var instance := MeshInstance3D.new()
@@ -280,12 +444,81 @@ func _block(pos: Vector3, dimensions: Vector3, color: Color, parent: Node3D = nu
 	return instance
 
 func _capture_preview() -> void:
+	if not is_lab_level():
+		await get_tree().create_timer(0.5).timeout
+		resume_lab()
+		await RenderingServer.frame_post_draw
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://captures"))
+		get_viewport().get_texture().get_image().save_png("res://captures/level-preview.png")
+		get_tree().quit()
+		return
 	await get_tree().create_timer(0.5).timeout
-	player.request_dash(Vector3(1, 0, -0.5))
-	await get_tree().create_timer(0.1).timeout
-	fx.burst(player.global_position + Vector3(1.2, 0.8, -0.5), Color(0.98, 0.04, 0.10), 30, 6.0)
-	await get_tree().create_timer(0.12).timeout
+	resume_lab()
+	player.facing = Vector3.BACK
+	player._sprite.face(player.facing)
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://captures"))
+	get_viewport().get_texture().get_image().save_png("res://captures/character-lab.png")
+	player.slash(Vector3.FORWARD)
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_png("res://captures/character-primary.png")
+	await get_tree().create_timer(0.34).timeout
+	player.blast(Vector3.FORWARD)
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_png("res://captures/character-blast.png")
+	await get_tree().create_timer(0.48).timeout
+	player.request_dash(Vector3(1, 0, -0.5))
+	await get_tree().create_timer(0.07).timeout
+	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png("res://captures/mechanics-lab.png")
+	await get_tree().create_timer(0.2).timeout
+	open_bench()
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_png("res://captures/loadout-bench.png")
+	choose_exercise("duel")
+	var enemy: AshEnemy = get_tree().get_nodes_in_group("enemies")[0]
+	enemy.global_position = player.global_position + Vector3(0, 0, -1.7)
+	await get_tree().create_timer(0.22).timeout
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_png("res://captures/enemy-warning.png")
+	await get_tree().create_timer(0.80).timeout
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_png("res://captures/enemy-recovery.png")
+	get_tree().quit()
+
+
+func _capture_polish() -> void:
+	# Run with --fixed-fps 30 -- --capture-polish. Every PNG is a rendered Godot
+	# frame; real player physics, action clocks and effect simulation keep running.
+	await get_tree().create_timer(0.5).timeout
+	choose_exercise("targets")
+	player.facing = Vector3.BACK
+	player._sprite.face(player.facing)
+	var output_dir: String = "res://captures/polish"
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output_dir))
+	for frame_index: int in range(120):
+		if frame_index == 6:
+			player.request_dash(Vector3.RIGHT)
+		elif frame_index == 45:
+			player.slash(Vector3.BACK)
+		elif frame_index == 68:
+			player.blast(Vector3.RIGHT)
+		elif frame_index == 90:
+			player.blast(Vector3.LEFT)
+		await RenderingServer.frame_post_draw
+		var rendered: Image = get_viewport().get_texture().get_image()
+		rendered.save_png("%s/frame-%03d.png" % [output_dir, frame_index])
+		if frame_index == 9:
+			rendered.save_png("res://captures/dash-plume-mid.png")
+		elif frame_index == 14:
+			rendered.save_png("res://captures/dash-plume-end.png")
+		elif frame_index == 47:
+			rendered.save_png("res://captures/slash-arc.png")
+		elif frame_index == 68:
+			rendered.save_png("res://captures/shot-flare-right.png")
+		elif frame_index == 90:
+			rendered.save_png("res://captures/shot-flare-left.png")
+		await get_tree().process_frame
 	get_tree().quit()

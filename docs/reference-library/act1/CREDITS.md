@@ -409,3 +409,190 @@ A03 carries a CC BY-SA 4.0 declaration: retain its named credit, source and lice
 - Licence / access: Museum reproduction rights not cleared; source link only.
 - [Source record](https://www.cinematheque.fr/objet/1541.html).
 - Provenance note: Catalogue link retained; museum image pixels are not copied or represented as freely licensed.
+
+## G16 — Observatory and launch
+
+- Type and date: concept-sheet; 2026-10-08.
+- Underlying creator / catalogue creator: Built-in image generation tool; project art direction.
+- Licence / access: New generated game concept.
+- Local preview: [../../concept-art/act1/environments/01-observatory-and-launch.png](../../concept-art/act1/environments/01-observatory-and-launch.png).
+- [Source record](https://melies.lobsterfilms.com/contes.php).
+- [Source record](https://www.cinematheque.fr/objet/392.html).
+- [Source record](https://ciclic.fr/sites/default/files/fichiers/livret-enseignant.pdf).
+- [Source record](https://www.cinematheque.fr/film/52565.html).
+- [Source record](https://www.festival-cannes.com/f/le-voyage-dans-la-lune/).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_01.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_07.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_10.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_12.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_02.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:Trip_to_the_Moon_Workshop.png).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_05.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_04.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:A_trip_to_the_moon_Le_voyage_dans_la_Lune_Georges_M%C3%A9li%C3%A8s_1902.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s_Trip_to_the_Moon_cannon_still.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_03.jpg).
+- Provenance note: Original generated game concept, not archival reconstruction, production asset or implemented screenshot. Combat layouts and exact designs are proposals. Reviewed: Earth board contains lunar rock stage flats, decorative crescent costumes and invented explanatory lettering; these are theatrical game proposals. The film's Earth scenery remains governed by F01-F05 and object records.
+
+## G17 — Crater Gardens and celestial camp
+
+- Type and date: concept-sheet; 2026-10-08.
+- Underlying creator / catalogue creator: Built-in image generation tool; project art direction.
+- Licence / access: New generated game concept.
+- Local preview: [../../concept-art/act1/environments/02-crater-gardens.png](../../concept-art/act1/environments/02-crater-gardens.png).
+- [Source record](https://www.cinematheque.fr/film/52565.html).
+- [Source record](https://melies.lobsterfilms.com/contes.php).
+- [Source record](https://ciclic.fr/sites/default/files/fichiers/livret-enseignant.pdf).
+- [Source record](https://www.festival-cannes.com/f/le-voyage-dans-la-lune/).
+- [Source record](https://www.cinematheque.fr/objet/1540.html).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_06.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:A_Trip_to_the_Moon_(Le_Voyage_dans_la_Lune)_(cropped).jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:A_Trip_to_the_Moon_(Le_Voyage_dans_la_Lune).jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:Melies_color_Voyage_dans_la_lune.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s_Trip_to_the_Moon_stars_still.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_08.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s_Trip_to_the_Moon_planets_still.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_10.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_07.jpg).
+- [Source record](https://www.moma.org/collection/works/36891).
+- Provenance note: Original generated game concept, not archival reconstruction, production asset or implemented screenshot. Combat layouts and exact designs are proposals.
+
+## G18 — Mushroom Caverns and breathing room
+
+- Type and date: concept-sheet; 2026-10-08.
+- Underlying creator / catalogue creator: Built-in image generation tool; project art direction.
+- Licence / access: New generated game concept.
+- Local preview: [../../concept-art/act1/environments/03-mushroom-caverns.png](../../concept-art/act1/environments/03-mushroom-caverns.png).
+- [Source record](https://www.cinematheque.fr/objet/1540.html).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_10.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_09.jpg).
+- [Source record](https://www.moma.org/collection/works/38318).
+- Provenance note: Original generated game concept, not archival reconstruction, production asset or implemented screenshot. Combat layouts and exact designs are proposals.
+
+## G19 — Selenite Court and formation chambers
+
+- Type and date: concept-sheet; 2026-10-08.
+- Underlying creator / catalogue creator: Built-in image generation tool; project art direction.
+- Licence / access: New generated game concept.
+- Local preview: [../../concept-art/act1/environments/04-selenite-court.png](../../concept-art/act1/environments/04-selenite-court.png).
+- [Source record](https://melies.lobsterfilms.com/contes.php).
+- [Source record](https://www.cinematheque.fr/film/52565.html).
+- [Source record](https://www.cinematheque.fr/objet/1540.html).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_10.jpg).
+- Provenance note: Original generated game concept, not archival reconstruction, production asset or implemented screenshot. Combat layouts and exact designs are proposals.
+
+## G20 — The Living Moon and return tableau
+
+- Type and date: concept-sheet; 2026-10-08.
+- Underlying creator / catalogue creator: Built-in image generation tool; project art direction.
+- Licence / access: New generated game concept.
+- Local preview: [../../concept-art/act1/environments/05-living-moon-and-return.png](../../concept-art/act1/environments/05-living-moon-and-return.png).
+- [Source record](https://www.cinematheque.fr/film/52565.html).
+- [Source record](https://melies.lobsterfilms.com/contes.php).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_06.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:A_Trip_to_the_Moon_(Le_Voyage_dans_la_Lune)_(cropped).jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:A_Trip_to_the_Moon_(Le_Voyage_dans_la_Lune).jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:Melies_color_Voyage_dans_la_lune.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_12.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:Trip_to_the_Moon_Selenite_on_Shell.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_13.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:Trip_to_the_Moon_Statue_Color.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_11.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:Voyage_dans_la_Lune_cliff_still.jpg).
+- [Source record](https://www.moma.org/collection/works/38327).
+- Provenance note: Original generated game concept, not archival reconstruction, production asset or implemented screenshot. Combat layouts and exact designs are proposals. Selenites in return-route and overview studies establish the reused cast; they do not add helper waves to the Moon fight.
+
+## G21 — Selenite King encounter
+
+- Type and date: concept-sheet; 2026-10-08.
+- Underlying creator / catalogue creator: Built-in image generation tool; project art direction.
+- Licence / access: New generated game concept.
+- Local preview: [../../concept-art/act1/bosses/01-selenite-king.png](../../concept-art/act1/bosses/01-selenite-king.png).
+- [Source record](https://melies.lobsterfilms.com/contes.php).
+- [Source record](https://www.cinematheque.fr/film/52565.html).
+- [Source record](https://www.cinematheque.fr/objet/1540.html).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_10.jpg).
+- Provenance note: Original generated game concept, not archival reconstruction, production asset or implemented screenshot. Combat layouts and exact designs are proposals.
+
+## G22 — Man in the Moon finale
+
+- Type and date: concept-sheet; 2026-10-08.
+- Underlying creator / catalogue creator: Built-in image generation tool; project art direction.
+- Licence / access: New generated game concept.
+- Local preview: [../../concept-art/act1/bosses/02-man-in-the-moon.png](../../concept-art/act1/bosses/02-man-in-the-moon.png).
+- [Source record](https://www.cinematheque.fr/film/52565.html).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_06.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:A_Trip_to_the_Moon_(Le_Voyage_dans_la_Lune)_(cropped).jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:A_Trip_to_the_Moon_(Le_Voyage_dans_la_Lune).jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:Melies_color_Voyage_dans_la_lune.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_07.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_08.jpg).
+- [Source record](https://www.moma.org/collection/works/38327).
+- Provenance note: Original generated game concept, not archival reconstruction, production asset or implemented screenshot. Combat layouts and exact designs are proposals.
+
+## G23 — Boss candidates and threat boundaries
+
+- Type and date: concept-sheet; 2026-10-08.
+- Underlying creator / catalogue creator: Built-in image generation tool; project art direction.
+- Licence / access: New generated game concept.
+- Local preview: [../../concept-art/act1/bosses/03-boss-candidates-and-roles.png](../../concept-art/act1/bosses/03-boss-candidates-and-roles.png).
+- [Source record](https://melies.lobsterfilms.com/contes.php).
+- [Source record](https://ciclic.fr/sites/default/files/fichiers/livret-enseignant.pdf).
+- [Source record](https://www.cinematheque.fr/film/52565.html).
+- [Source record](https://www.festival-cannes.com/f/le-voyage-dans-la-lune/).
+- [Source record](https://www.cinematheque.fr/objet/1540.html).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_10.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_06.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:A_Trip_to_the_Moon_(Le_Voyage_dans_la_Lune)_(cropped).jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:Melies_color_Voyage_dans_la_lune.jpg).
+- [Source record](https://www.moma.org/collection/works/38327).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_08.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s_Trip_to_the_Moon_planets_still.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s_Trip_to_the_Moon_stars_still.jpg).
+- Provenance note: Original generated game concept, not archival reconstruction, production asset or implemented screenshot. Combat layouts and exact designs are proposals.
+
+## G24 — Crater Gardens game view
+
+- Type and date: gameplay-mockup; 2026-10-08.
+- Underlying creator / catalogue creator: Built-in image generation tool; project art direction.
+- Licence / access: New generated game concept.
+- Local preview: [../../concept-art/act1/gameplay/01-crater-gardens-gameplay.png](../../concept-art/act1/gameplay/01-crater-gardens-gameplay.png).
+- [Source record](https://www.cinematheque.fr/objet/1540.html).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_10.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_07.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_08.jpg).
+- Provenance note: Original generated game concept, not archival reconstruction, production asset or implemented screenshot. Combat layouts and exact designs are proposals.
+
+## G25 — Mushroom-spore repulsion game view
+
+- Type and date: gameplay-mockup; 2026-10-08.
+- Underlying creator / catalogue creator: Built-in image generation tool; project art direction.
+- Licence / access: New generated game concept.
+- Local preview: [../../concept-art/act1/gameplay/02-mushroom-spores-gameplay.png](../../concept-art/act1/gameplay/02-mushroom-spores-gameplay.png).
+- [Source record](https://www.cinematheque.fr/objet/1540.html).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_10.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_09.jpg).
+- [Source record](https://www.moma.org/collection/works/38318).
+- Provenance note: Original generated game concept, not archival reconstruction, production asset or implemented screenshot. Combat layouts and exact designs are proposals. Reviewed: the final image contains four living swarmers, rather than the five requested in the exploratory prompt; count is illustrative and not encounter balance.
+
+## G26 — Moon-eye finale game view
+
+- Type and date: gameplay-mockup; 2026-10-08.
+- Underlying creator / catalogue creator: Built-in image generation tool; project art direction.
+- Licence / access: New generated game concept.
+- Local preview: [../../concept-art/act1/gameplay/03-moon-eye-gameplay.png](../../concept-art/act1/gameplay/03-moon-eye-gameplay.png).
+- [Source record](https://www.cinematheque.fr/film/52565.html).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_06.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:A_Trip_to_the_Moon_(Le_Voyage_dans_la_Lune)_(cropped).jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:A_Trip_to_the_Moon_(Le_Voyage_dans_la_Lune).jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:Melies_color_Voyage_dans_la_lune.jpg).
+- [Source record](https://www.moma.org/collection/works/38327).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_07.jpg).
+- [Source record](https://commons.wikimedia.org/wiki/File:M%C3%A9li%C3%A8s,_viaggio_nella_luna_(1902)_08.jpg).
+- Provenance note: Original generated game concept, not archival reconstruction, production asset or implemented screenshot. Combat layouts and exact designs are proposals.
+
+## New Act 1 research and concepts
+
+The research extension uses original paraphrases, direct film-frame relationships, and separately labelled game proposals. [Research sources](research/SOURCES.md) retains the cited institutional and restorer records. [Cast index](research/cast-index.json) separates published performer attributions from unresolved frame identities.
+
+New concept images are generated for this game. Their exact prompts, input reference paths and source/entity relationships remain in [the concept manifest](../../concept-art/act1/generated-manifest.json). They are not archival images or screenshots of implemented gameplay.
