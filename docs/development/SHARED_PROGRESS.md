@@ -1,6 +1,6 @@
 # Cinder shared progress
 
-Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current published API: campaign-shared-16 [SHARED_CONTRACT](SHARED_CONTRACT.md).
+Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 October 2026. Scope and precedence: [CAMPAIGN_MEMORY](CAMPAIGN_MEMORY.md). Current published API: campaign-shared-21 [SHARED_CONTRACT](SHARED_CONTRACT.md), with verified production Shell HUD ordering runtime `b5c83193948e724a46b339e69e31e27978e68984`.
 
 ## Inventory and ownership
 
@@ -22,11 +22,11 @@ Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Updated 8 
 | Reviewed parallel baseline and READY | Complete | Baseline ff34f58; three clean linked act checkouts, canonical roots/common queue/distinct ports verified; READY published in coordination status |
 | Level and executed-world-action interfaces | Verified | campaign-level-1 and world-actions-1; 92 level and 119 action checks, compatible with prior preview API |
 | Shared foundations | Verified modules | Exact player/save/settings, ordinary and replay scheduler, actual-body motion, spore and portrait framing evidence below; authored consumers remain independent acceptance obligations |
-| Campaign/save/scheduler/UI/settings consumers | Verified shared interfaces; authored integration continues | Production Title/Journey/Continue/Retry passed for A1-L1; pure lunge preview, circular consumer and parent capture retirement publication are in progress |
-| Act level acceptance | 1 / 24 | A1-L1 authored06628abb, productionc19832f9 accepted; A1-L2 and A2/A3-L1 active |
-| Integrated desktop campaign | Active | Remaining23 levels and required shared-system flows must be accessible/tested; stop before mobile/release |
+| Campaign/save/scheduler/UI/settings consumers | Verified shared interfaces; authored integration continues | Production Title/Journey/Continue/Retry passed for A1-L1 and A2-L1; prospective lunge, circle callback safety and parent capture retirement are published; actual Shell HUD ordering correction passes24/0 |
+| Act level acceptance | 2 / 24 | A1-L1 source06628abb/registrationc19832f9 and A2-L1 sourcea96edf/registrationd629072f accepted; A1-L2, A2-L2 and A3-L1 active |
+| Integrated desktop campaign | Active | Remaining22 levels and their shared-system flows must be accessible/tested; stop before mobile/release |
 
-One level is accepted; the endpoint remains all24. The original `campaign-shared-1` passed queued verification and was published at baseline `ff34f58e1c29f44b17958f59107e19c99cc91d86`. READY is a setup milestone, not campaign completion.
+Two levels are accepted; the endpoint remains all24. The original `campaign-shared-1` passed queued verification and was published at baseline `ff34f58e1c29f44b17958f59107e19c99cc91d86`. READY is a setup milestone, not campaign completion. Publication sections below preserve their chronological evidence and acceptance counts at each original boundary.
 
 ## READY checkout assignments
 
@@ -46,7 +46,7 @@ Actual queued graphical fixture capture at 540×1170: ignored `captures/campaign
 
 **Latest user test policy:** rerun the changed level's targeted suite plus directly affected shared checks. The initial full baseline verification is complete; repeat a broad suite only for a newly identified cross-system concern. Use `dev.py engine --headless --path . --script <owned-level-test.gd>` for act suites and named `dev.py test` shared suites. `dev.py doctor` verifies paths/slots/version, not gameplay readiness.
 
-The default launch remains the playable Character Lab until the opening authored level is accepted. A separate tested desktop shell provides readiness-gated Title/Journey/settings/replay and coherent fixture persistence/transitions. No real campaign scenes are accepted; tracking/moving threat adapters, campaign-selected abilities and complete authored campaign content remain unfinished. Preview reset refreshes resources/supplies and must not be described as checkpoint retry. Existing warning meshes do not validate safe paths. The new world-action API provides executed movement and parametric attack records; it does not implement captured-sequence validation or persistence for Act 2/3.
+Default Play launches the production desktop campaign shell with Title/Journey/settings/replay and coherent persistence. A1-L1 is the accessible opening; A2-L1 is registered but retains its real A1-L5 story prerequisite. The other22 levels remain unimplemented or in owned development. Character Lab and direct scene previews are explicit developer launches. Preview reset refreshes resources/supplies and is distinct from exact checkpoint Retry. Published tracking/moving threat and captured-replay modules have bounded shared evidence; actual future authored encounters and campaign-selected abilities remain dependent on their owners' placements, reservations and tests. Warning meshes alone do not validate safe paths.
 
 Selected references opened in initial audits include each act's game view, character and environment art. These support distinct act scenery and headwear; they do not establish production readiness. Existing effects and helmeted lab captures remain preserved. No human campaign playtest or mobile/device performance claim is made.
 
@@ -75,6 +75,10 @@ The save suite uses explicitly marked test-only accepted fixtures and transport 
 All owners may progress same-level owned art/layout/notes while these dependencies are implemented. Registration was delayed while integration verified modules; matching launch requests and clean branches were then checked and acknowledged. No duplicate owners/checkouts were created.
 
 ## Open shared requests and implementation order
+
+Current work is autonomous exact level handoffs and support for demonstrated new authored dependencies. Prospective lunge, committed dash framing, circle callbacks, exact persistence, Journey/replay, settings, bounded opening measurements and the actual Shell HUD correction are published through shared21. Future campaign-selected equipment/perks and replay bosses require their actual authored allocations and consumers; unused proposals do not create an implementation gate. Integration remains the help contact and checks all three original workers regularly.
+
+The following list preserves the initial implementation order; it is not a current list of unfinished APIs. Exact completed publications and remaining consumer limits follow chronologically below.
 
 1. Receive A1-L1/A2-L1/A3-L1 owned-path work and precise dependencies; all three user-launched sole owners are registered.
 2. Publish verified campaign-level-1 completion/contact-exit, encounter/boss-phase checkpoint and local snapshot lifecycle.
@@ -335,3 +339,30 @@ Independent settings audit found no persistence/quality/30-60/audio/reduced-moti
 A3 pre-camera owned mechanical milestone1ff97623 has actual first-pocket25/0, retained-source31/0, fatal69/0 and full45/0, precise scopes independently reviewed. New camera consumer is now wiring shared17/18 and needs affected actual native evidence before HANDOFF. Fatal69 seeds isolated publicHP0.1 and covers actual overlap/contact/disk/fresh earlier checkpoint retry, not fresh dead-Continue. No portable final bundle yet; all8 Act3 levels unfinished. A1 exact18 adoption ACKe460c69e and A3 exact18 ACK8ed0fe0e arrived; root verifies ancestry and preserves assignments.
 
 New actual accepted-scene opening performance matrix is separately running, excluded from this publication. First12 valid sampled cells had one harness finalization viewport-null diagnostic; original report/log archived, cleanup-only new-harness repair repeats only this changed matrix for clean evidence. No authored actor/settings/scheduler change or performance optimization inferred. Campaign2/24 accepted, goal ACTIVE.
+
+
+## Shared20 actual opening performance evidence
+
+The new manual graphical harness completed12/12 valid actual accepted A1-L1/A2-L1 quality×30/60 cells,117.47s, exit0 and clean final log. Source3bdd406566b3c371b0b0df4a26db946e52306ca7a8367ac77449b12ad61bfe9c, UID4ffbf84e, finalJSON7c74a61a, log216e95e3 exact originals retained in evidence/campaign-openings-performance. Initial12 cells were valid but finalization referenced a freed viewport; archived initial report/log explicitly excluded as clean evidence, cleanup-only repair repeated this changed harness once. No gameplay/settings/source/scene changed or baseline suite ran.
+
+Actual unchanged Game/root540×1170/world270×585 raster and real routed four completed dashes/four primaries per cell passed validity with real clock progression and no death/laterpause. A1 actual beats0→1→2/one primaryhit/fullHP; A2 remainsarrival/zero primaryhits and real warning/lock/active/recovery/10HP loss. Final A1 mean29.23–29.29 at30cap/55.82–57.67 at60; A2 mean21.17–23.83 at30/45.28–45.87 at60, stalls retained. Allfocusfalse, OS lock not measured; no cap guarantee or cause/quality-ranking claim. Every-frame registry read/full encounter copy/phase JSON plus render instrumentation add unmeasured observer overhead to raw intervals, especially larger A2. Process/physics stats are frame-weighted cached roughly1s maxima, not per-frame percentiles; GPU counters zero/unavailable. Independent actual-source/interval/purity/restoration audit agrees. Reduced-motion/otherencounters/sustained/release/all24/mobile performance remains unmeasured. Details and primary installed-engine source in CAMPAIGN_DESKTOP_PERFORMANCE.md.
+
+Utility remains manual outside default suite, no new act retest or release/mobile gate. Shared19 exact868b2bff published via b3b00dba/bb4c1a1c/7efade73 with conditional pending schema2 migration; root continues canonical blockers and sequential handoffs. Campaign2/24 accepted, goal ACTIVE.
+
+## Consumer follow-up and shared camera ordering
+
+Integration verified Act 2 ACK `c6999a14-ced4-4e8c-ad98-57cdbc11fa7b`: preserving merge `3fe640ee62b35b6e0fb53c011386b3ad82983a1b` contains exact shared19 and production registration `d629072f`. Canonical adoption records were replaced atomically, retaining all original identities, checkouts, branches and owned paths. The owner's latest Heavy/Standard L2 route passes 314 checks with zero failures. Its earlier crossing rejection was an owned opening deadline problem: the direct primary fit the Scout's recovery, whereas adding a return dash missed it. Independent review found no shared19 callback defect; exact paired/retry, other loadouts and portrait evidence remain the owner's unfinished level work.
+
+Act 3's repaired far-Sun1 room log has SHA256 `22ecdfbcf6e0acba7c9f9fbe1d3bbb659fb9c005e86ab615d9705e3b17aab011`. Independent review inspected all six actual 339×736 portraits; root also viewed moving active and recovery return. The same threat lease and complete 32-corner bounds remain visible through the real right escape and left return, followed by an ordinary primary reducing source HP from 36 to 16 with full hero health and no blast. This closes the narrow far-view/obsolete-return issue, not the whole level. Failed originals remain preserved. New default full-route 45/0 and isolated transition 47/0 precede another owned full-level edit; retain their original source attribution until the exact final HANDOFF.
+
+A separate shared review found that production `CinderCampaignShell._process` updates camera framing before its current HUD, unlike base Game. A newly wrapped objective therefore uses the previous frame's smaller protected rectangle. A narrow HUD-before-camera correction and new actual-shell regression are in progress; the existing base-Game camera fixture does not cover this override. No broad or unchanged authored suite is requested. All three workers remain active, integration remains their help contact, and the desktop goal remains active at 2/24 accepted levels.
+
+## Shared21 production HUD before camera framing
+
+The production campaign override now updates its current HUD before camera framing and optional shake. The original Shell SHA256 `31c91a939008f03f3ddbb85d553c9fc0b2c913c0a4b01920a160714987c0e9c9` fails the new actual-shell leaf at both short-to-wrapped and reverse one-call framing-rectangle assertions: 20 checks, two intended failures. The narrow corrected Shell SHA256 `8b8cade988169319181187dff81c1ea80832bcf182e6de28115dd658df37c4bc` passes24/0 in actual 540×1170 graphics, exit0, without script/resource/runtime errors or warnings. Actor/story snapshots, camera basis/width, held aim and independently projected native required bounds remain intact. Only this new directly affected leaf ran; no unchanged level, base camera or broad Shell suite was repeated.
+
+Root and independent reviewers inspected both original portraits: native source, full lane/endcaps, landing and player remain clear below wrapped text. Synchronous pre-yield assertions establish exact one-call ordering; the PNGs show paused rendered views after frame_post_draw. Initial sandbox save-directory failure remains a separate diagnostic, not regression evidence. [Evidence notes](CAMPAIGN_SHELL_HUD_FRAMING.md) and [portable originals](evidence/shared21-shell-hud/index.json) retain hashes and exact scope. The fixture uses isolated TEST ONLY registry/save data, performs no attack or authored encounter, retains normal focus notifications and records focus=false. No gameplay API/schema, controller, scheduler, settings or accepted scene changes.
+
+Leading current readiness paragraphs now correctly show shared21 and two accepted levels; older publication sections retain their historical counts. Latest compact worker check: A1 binds lunar scenery; A2 native route362/0 precedes owned fatal/Assisted edits; A3 committed camera work and loadout sweep continue. Independent A2 review confirms public cancellation supports fatal closure, and its current retry fixture already exits its level before retiring children. New outcomes remain pending, not inferred from older passing logs. Integration remains the sole help contact; goal ACTIVE through all24 desktop levels.
+
+Exact shared21 runtime/evidence commit is `b5c83193948e724a46b339e69e31e27978e68984`. The accompanying documentation commit is the reviewed adoption baseline announced atomically in canonical run/status and immutable worker responses; it changes no tested runtime bytes.

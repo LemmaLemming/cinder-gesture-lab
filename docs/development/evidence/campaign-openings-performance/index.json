@@ -1,0 +1,52 @@
+{
+  "scope": "instrumented scripted background actual accepted A1-L1/A2-L1 openings, not complete campaign/foreground/human/mobile performance",
+  "script_sha256": "3bdd406566b3c371b0b0df4a26db946e52306ca7a8367ac77449b12ad61bfe9c",
+  "committed_source_context": "868b2bff523e538ee093ff6ec58c09c5f2099072",
+  "accepted_scene_sources": {
+    "A1-L1": "06628abb3f38020f1b958562a367811173e556de",
+    "A2-L1": "a96edfaddd22e206438e616a8b4080e5c5cdce7a"
+  },
+  "final": {
+    "exit_code": 0,
+    "valid_cells": 12,
+    "runtime_clean": true,
+    "mean_elapsed_seconds": 117.472734
+  },
+  "initial": {
+    "exit_code": 0,
+    "valid_cells": 12,
+    "runtime_clean": false,
+    "accepted_as_clean_measurement": false,
+    "diagnostic": "harness finalization stale viewport after last Game free, repaired cleanup ordering only"
+  },
+  "interpretation": [
+    "Raw frame intervals include every-frame registry read, larger encounter/source copies, JSON phase observation and native render measurement overhead. Observer overhead is unmeasured.",
+    "Process/physics monitor summaries are repeated cached roughly1second engine window maxima, not per-frame CPU/physics percentiles; may straddle warmup/cell boundaries.",
+    "Native GPU counters are unavailable, not zero GPU cost.",
+    "All focus samples false; OS lock not measured. Fixed-order8second warmup-excluded samples cannot prove causal quality ranking or identify gameplay/render/observer bottleneck.",
+    "A1 opening beats0to2/one primaryhit; A2 arrival genuine warning/lock/active/recovery/zero primaryhits/HP100to90. No fullroute/fairness/loadout/balance claim.",
+    "Reduced motion, sustained/release/all24/device performance remain unmeasured."
+  ],
+  "files": [
+    {
+      "path": "final.json",
+      "sha256": "7c74a61af4669e336ecffbf76cd9a2b3bd69088165cae2aaafe48bd78afe1ef5",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "final.log",
+      "sha256": "216e95e36531368a9d171aaf53410c6751fc5f646fa3adfabbd166293e08c259",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "initial.json",
+      "sha256": "d35df645976a4555dc4f54ba9203ebd4f841126ca16b1d1fd9ba30e03308424e",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "initial.log",
+      "sha256": "880d6cd8a4479f94e8606f2c409fcc89d86ef585784bb88972126b3ac241a0d7",
+      "original_bytes_preserved": true
+    }
+  ]
+}
