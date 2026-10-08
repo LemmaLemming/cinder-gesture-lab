@@ -55,6 +55,7 @@ SUITES = {
     "level_player_context": "tests/level_player_context_smoke.gd",
     "replay_sequence": "tests/replay_sequence_smoke.gd",
     "spore_field": "tests/spore_field_smoke.gd",
+    "spore_repulsion": "tests/spore_repulsion_smoke.gd",
     "repulsion_route": "tests/repulsion_route_smoke.gd",
 }
 SLOT_PORTS = {
