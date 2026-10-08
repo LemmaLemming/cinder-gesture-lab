@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-29** (8 October 2026). Shared29 adds fresh paused level restore construction before pure aggregate validation, with candidate progression/commit gating. Shared28's finite authored Echo and Cargo display correction remain available; shared27 settled Shell persistence and accepted A3-L2. Existing ordinary/captured/spore/smoke schemas remain strict. Repeating Echo cycles and late terminal saves remain the separate integration-owned shared30 dependency. Integration is the three act workers' help contact. Exact commits and original scoped evidence are recorded in [progress](SHARED_PROGRESS.md).
+Revision: **campaign-shared-30** (8 October 2026). Shared30 independently registers accepted A2-L3 and guards SmokeBank display teardown after native children leave the tree. Shared29 paused restore construction and Shared28 finite authored Echo/Cargo display APIs remain available. Existing ordinary/captured/spore/smoke schemas stay strict. Repeating Echo cycles and late terminal saves remain the separate integration-owned candidate31 dependency. Integration is the three act workers' help contact. Exact commits and original evidence are recorded in [progress](SHARED_PROGRESS.md).
 
 ## Native Scheduler-driven spore sources
 
@@ -476,3 +476,8 @@ Additive `level-restore-candidate-1` selects `_on_enter_restore_candidate(local,
 Shell discards old hidden candidates for each whole submitted snapshot, reuses the exact fresh validated world for quiet Player → level restoration, and calls `finish_restore_candidate()` only after successful commit at installation. Before then, progression requests reject; failures dispose the fresh world without retiring the donor. Existing ordinary entry and default constructor hooks remain compatible. [Construction contract and owned migration](RESTORE_CANDIDATE_CONSTRUCTION.md) specify actual source binding guards and full spore parent obligations.
 
 New native constructor/Shell71/0 clean covers earlier-room Retry, same-process and fresh disk Continue, real fixture damage, pure validators, rejection/cache cleanup and legacy default entry. Directly affected Shell52/0 clean and Level92/0 are separate preserved scopes. Level has a macOS CA-certificate startup diagnostic; initial Shell3/1 was sandbox test-directory denial, fixed by permission rather than code. [Portable original evidence](evidence/shared29-restore-candidate/index.json) retains all320 source originals and full logs. This constructor-only fixture is no C31/C32 spore or nineteen-source full A1-L3/portrait proof. Named target: `restore_candidate`. No broad/accepted-level rerun.
+
+
+## SmokeBank display teardown — shared30
+
+A whole shell may leave the scene tree before the level's final exit callback cancels its banks. `_update_indicator` now hides a removed indicator without reading its global transform; `_indicator_owned_pose` returns no pose after indicator tree removal. Live movement/damage/timing/geometry/contact/receipt/admission/schema behavior is unchanged. Actual production A2-L3 direct whole-shell closure verifies this path without diagnostic errors; the original195/0 scope with18 native errors remains preserved. [Registration evidence](ACT2_L3_REGISTRATION.md).
