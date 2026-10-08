@@ -9,6 +9,8 @@ const RoomPath: String = "res://scenes/acts/act3/a3_l1_sun_room.tscn"
 const SourcePath: String = "res://assets/acts/act3/sunbound-stalker-branchspell.png"
 const RecoveryPath: String = "res://assets/acts/act3/sunbound-stalker-recovery.png"
 const AlppainPath: String = "res://assets/acts/act3/sunbound-stalker-alppain.png"
+const BackBracedPath: String = "res://assets/acts/act3/sunbound-stalker-branchspell-back.png"
+const BackRecoveryPath: String = "res://assets/acts/act3/sunbound-stalker-recovery-back.png"
 const OutputPath: String = "res://captures/act3/twin-suns"
 const NativePivot: Vector2i = Vector2i(635, 1051)
 const SpriteOffset: Vector2 = Vector2(-8, 424)
@@ -78,6 +80,16 @@ func _run() -> void:
 			# collider, signal hookup, damage receiver or runtime scene mutation.
 			print("ART SCALE STUDY ONLY: %s; native %dx%d; feet pivot %s; offset %s; visible source Y244..1051; %0.2f units ahead" % [SourcePath, texture.get_width(), texture.get_height(), NativePivot, SpriteOffset, StudyDistance])
 			print("LIMITATIONS: generated still poses; no animation, encounter/cue or damage validation. Actual shared player presentation: %s" % hero.presentation_id)
+			if OS.get_cmdline_user_args().has("--back-facing-only"):
+				disk.top_radius = 0.34
+				disk.bottom_radius = disk.top_radius
+				await _capture_back_candidates(game, level, sprite)
+				game.queue_free()
+				paused = false
+				await process_frame
+				print("Stalker rear still study: %s; outputs %s" % ["failed" if _failed else "complete", ProjectSettings.globalize_path(OutputPath)])
+				quit(1 if _failed else 0)
+				return
 			for candidate: float in [1.1, 1.35]:
 				sprite.pixel_size = candidate / VisibleHeightPixels
 				disk.top_radius = 0.34
@@ -117,6 +129,29 @@ func _run() -> void:
 	await process_frame
 	print("Stalker art scale study: %s; outputs %s" % ["failed" if _failed else "complete", ProjectSettings.globalize_path(OutputPath)])
 	quit(1 if _failed else 0)
+
+
+func _capture_back_candidates(game: Node, level: CinderLevel, sprite: Sprite3D) -> void:
+	var candidates: Array[Dictionary] = [
+		{"path": BackBracedPath, "offset": Vector2(-86, 455), "pivot": Vector2i(713, 1082), "label": "REAR BRACED", "file": "14-stalker-art-back-braced.png"},
+		{"path": BackRecoveryPath, "offset": Vector2(-8, 424), "pivot": Vector2i(635, 1051), "label": "REAR RECOVERY", "file": "15-stalker-art-back-recovery.png"},
+		{"path": BackBracedPath, "offset": Vector2(86, 455), "pivot": Vector2i(541, 1082), "label": "MIRRORED REAR BRACED", "file": "16-stalker-art-back-braced-mirror.png", "mirror": true},
+		{"path": BackRecoveryPath, "offset": Vector2(8, 424), "pivot": Vector2i(619, 1051), "label": "MIRRORED REAR RECOVERY", "file": "17-stalker-art-back-recovery-mirror.png", "mirror": true},
+	]
+	for candidate: Dictionary in candidates:
+		var texture: Texture2D = load(candidate["path"]) as Texture2D
+		if texture == null:
+			push_error("Rear still study requires imported texture: " + str(candidate["path"]))
+			_failed = true
+			return
+		sprite.texture = texture
+		sprite.offset = candidate["offset"]
+		sprite.flip_h = bool(candidate.get("mirror", false))
+		sprite.pixel_size = 1.35 / VisibleHeightPixels
+		level.objective_text = "ART STUDY / " + str(candidate["label"])
+		await _ticks(game, 3)
+		await _save(candidate["file"])
+		print("ART REAR STUDY: %s; pivot %s; offset %s; mirrored %s; common pixel scale %.8f. Provisional placement only; no collision or phase semantics." % [candidate["path"], candidate["pivot"], sprite.offset, sprite.flip_h, sprite.pixel_size])
 
 
 func _ticks(game: Node, count: int) -> void:

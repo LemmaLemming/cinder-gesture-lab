@@ -11,6 +11,7 @@ const BEAT_LABELS: Array[String] = ["A foreign noon", "The useful flank", "Two a
 const BEAT_Z: Array[float] = [43.0, 25.0, 8.0, -13.0, -35.0]
 
 @export var prototype_room: bool = false
+@export var clear_rule_pockets: bool = false
 var sun_state: int = 0
 var sun_elapsed_s: float = 0.0
 var sun_stage: String = "stable"
@@ -24,7 +25,7 @@ func _ready() -> void:
 	scenery = SceneryScript.new()
 	scenery.name = "TwinSunsScenery"
 	add_child(scenery)
-	scenery.call("build", prototype_room)
+	scenery.call("build", prototype_room, clear_rule_pockets)
 	_update_sun_scenery()
 
 

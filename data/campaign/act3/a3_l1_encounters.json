@@ -1,14 +1,34 @@
 {
   "schema_version": 1,
   "level_id": "A3-L1",
-  "status": "authored_tuning_proposal_not_runtime_connected",
+  "status": "rule_verified_authored_route_in_progress_unaccepted",
   "source": "docs/ACT3_CONCEPT.md#A3-L1; G05/G12/G17/G18",
   "floor": {
-    "continuous_box_size": [14.0, 1.0, 108.0],
+    "continuous_box_size": [
+      14.0,
+      1.0,
+      108.0
+    ],
     "top_y": 0.0,
-    "safe_west_east_extent": [-7.0, 7.0],
-    "low_trunk_centers": [[0.0, 8.0], [0.0, -13.0]],
-    "low_trunk_size": [1.0, 0.75, 1.0],
+    "safe_west_east_extent": [
+      -7.0,
+      7.0
+    ],
+    "low_trunk_centers": [
+      [
+        0.0,
+        8.0
+      ],
+      [
+        0.0,
+        -13.0
+      ]
+    ],
+    "low_trunk_size": [
+      1.0,
+      0.75,
+      1.0
+    ],
     "sun_changes_collision": false
   },
   "stalker_raw_role": {
@@ -29,15 +49,48 @@
     "active_duration_policy": "0.30s covers 3.0/12.0s travel plus at least two 60Hz physics ticks; adapter and actual collision tests still required",
     "lane_radius_world": 0.42,
     "source_capsule_radius_world": 0.32,
-    "warning_turn_radians_per_s": 1.2,
     "approach_acceleration_world_per_s2": 8.0,
     "approach_speed_world_per_s": 2.8,
     "recovery_deceleration_world_per_s2": 0.0,
     "recovery_stationary": true,
-    "collision_shortening_policy": "shared_adapter_required; shortened_endpoint_and_opening_reproved_before_commit",
+    "collision_shortening_policy": "published_shared8_actual_capsule_sweep_and_endpoint_reproof; real_grounded_room_execution_passed; authored_low_trunk_shortening_pending",
     "damage_once_per_committed_lunge": true,
     "laser": false,
-    "warning_tracking_policy": "shared_supported_preparing_adapter_required; immutable_after_lock"
+    "warning_tracking_policy": "accepted fixed signed sun-bias heading; actual commit sun/source/hero/facing retained, geometry immutable through warning_lock_active_recovery; later scenic sun changes affect only unleased choices",
+    "approach_turn_radians_per_s": 1.2,
+    "prelock_tracking_proposal": {
+      "status": "unused_not_supported_as_tracking_to_lunge_conversion",
+      "turn_radians_per_s": 1.2
+    },
+    "brace_min_distance_world": 1.8,
+    "brace_max_distance_world": 2.0,
+    "brace_facing_min_dot": 0.99999,
+    "sun_bias_degrees": 20.0,
+    "sun_bias_sign_by_state": {
+      "0": 1,
+      "1": -1
+    },
+    "sun_bias_heading_policy": "source-local signed rotation about world UP from the sampled planar source-to-hero bearing: Sun0 +20deg, Sun1 -20deg; for a +Z hero bearing Sun0 points toward +X and Sun1 toward -X",
+    "approach_brace_policy": "outside the actual 1.80..2.00 world gap, move directly toward the hero or back away from a close entry with speed2.8/acceleration8 and move_and_slide; within the gap stop planar motion and visibly turn to the biased goal; admission rechecks actual post-move gap, grounded stable zero velocity and facing dot>=0.99999; no source-position snap",
+    "committed_sun_presentation_policy": "latest scenic input retained separately; while leased crest uses the accepted commit sun, including paused restore; last commit remains historical after cancellation/defeat",
+    "owned_source_snapshot": {
+      "api_revision": "act3-stalker-snapshot-2",
+      "schema_version": 2,
+      "commit_keys": [
+        "sun_choice",
+        "source_position",
+        "hero_position",
+        "facing"
+      ],
+      "old_format_policy": "reject_without_migration",
+      "vector_fields": [
+        "source_position",
+        "hero_position",
+        "facing"
+      ]
+    },
+    "tuning_authority": "authoring record mirrors the immutable owned runtime TUNING; this JSON does not configure the controller",
+    "sun_flank_status": "owned_signed_rule_actual_two_sun_verified; full_authored_route_and_human_balance_unaccepted"
   },
   "minimum_timing_floors": {
     "windup_s": 1.35,
@@ -60,7 +113,12 @@
       "beat": 1,
       "target_budget_s": 120,
       "entry_z": 30.0,
-      "sources": [{"id": "l1-flank-stalker", "marker": "EncounterSources/UsefulFlank"}],
+      "sources": [
+        {
+          "id": "l1-flank-stalker",
+          "marker": "EncounterSources/UsefulFlank"
+        }
+      ],
       "decision": "Bait one physical lane away from a chosen return pocket, then punish its low flank",
       "checkpoint": "useful-flank-entry"
     },
@@ -69,7 +127,12 @@
       "beat": 2,
       "target_budget_s": 120,
       "entry_z": 15.0,
-      "sources": [{"id": "l1-approach-stalker", "marker": "EncounterSources/TwoApproaches"}],
+      "sources": [
+        {
+          "id": "l1-approach-stalker",
+          "marker": "EncounterSources/TwoApproaches"
+        }
+      ],
       "decision": "Choose either broad stable side of the low tree; both rejoin, with retreat floor retained",
       "checkpoint": "two-approaches-entry"
     },
@@ -79,8 +142,14 @@
       "target_budget_s": 120,
       "entry_z": -6.0,
       "sources": [
-        {"id": "l1-crossing-west", "marker": "EncounterSources/CrossingWest"},
-        {"id": "l1-crossing-east", "marker": "EncounterSources/CrossingEast"}
+        {
+          "id": "l1-crossing-west",
+          "marker": "EncounterSources/CrossingWest"
+        },
+        {
+          "id": "l1-crossing-east",
+          "marker": "EncounterSources/CrossingEast"
+        }
       ],
       "decision": "Choose a priority Stalker and preserve a retreat pocket through staggered commitments and one scenic sun preview",
       "checkpoint": "crossing-shadow-entry",
@@ -92,20 +161,41 @@
       "beat": 4,
       "target_budget_s": 60,
       "entry_z": -29.0,
-      "sources": [{"id": "l1-departure-stalker", "marker": "EncounterSources/Departure"}],
+      "sources": [
+        {
+          "id": "l1-departure-stalker",
+          "marker": "EncounterSources/Departure"
+        }
+      ],
       "decision": "Resolve one brief familiar exchange, then contact the threshold; distant mirage stays scenery",
       "checkpoint": "departure-entry",
       "contact_exit_marker": "PoolingdredThreshold"
     }
   ],
   "equipment": {
-    "baseline_ids": ["CLOTH-J0", "CLOTH-P0", "CLOTH-S0", "WEAPON-01"],
+    "baseline_ids": [
+      "CLOTH-J0",
+      "CLOTH-P0",
+      "CLOTH-S0",
+      "WEAPON-01"
+    ],
     "carried_legal_static_alternatives": true,
     "required_pickups": [],
     "required_blast_ammo": 0,
     "creation_claims": [],
     "ability_introductions": [],
-    "equipment_extreme_tests_pending": true
+    "equipment_extreme_tests_pending": true,
+    "rule_room_evidence": {
+      "shared_api": "campaign-shared-9",
+      "source_api": "act3-stalker-snapshot-2",
+      "native_sun_kit_witnesses": 216,
+      "sun0_legal_kit_witnesses": 108,
+      "sun1_legal_kit_witnesses": 108,
+      "actual_primary_clear_representatives_sun0": 7,
+      "actual_primary_clear_representatives_sun1": 1,
+      "claims_or_new_introductions": [],
+      "scope": "public actual room mechanics; no full authored route, production checkpoints, portrait-gear or human balance acceptance"
+    }
   },
   "implementation_dependencies": [
     "supported_moving_source_lunge_with_fixed_swept_geometry_and_primary_recovery_opening",

@@ -18,11 +18,13 @@ var _blue_sun: MeshInstance3D
 var _scenic_shadows: Array[MeshInstance3D] = []
 
 
-func build(room: bool) -> void:
+func build(room: bool, clear_pockets: bool = false) -> void:
 	var depth: float = 22.0 if room else 108.0
 	floor_body = _solid_box("SafeShelfFloor", Vector3(14, 1, depth), Vector3(0, -0.5, 0))
 	var sand := ShaderMaterial.new()
 	sand.shader = SAND_SHADER
+	if not room:
+		sand.set_shader_parameter("shelf_sediment", 0.55)
 	var surface := BoxMesh.new()
 	surface.size = Vector3(14, 1, depth)
 	var floor_view := MeshInstance3D.new()
@@ -43,8 +45,11 @@ func build(room: bool) -> void:
 		_shelf_dressing(Vector3(-8.9, 0, z), i, -1.0)
 		_shelf_dressing(Vector3(9.1, 0, z - 2.5), i + 3, 1.0)
 	if room:
-		_low_tree(Vector3(-2.8, 0, 1.0), "WestLowTree", false)
-		_low_tree(Vector3(2.8, 0, 2.6), "EastLowTree", false)
+		# Actual lateral portrait showed the east crown hiding the hero's legs.
+		# Only the combat rule variant keeps these noncolliding trees at the
+		# shelf edges; the legacy scenery-room composition stays available.
+		_low_tree(Vector3(-6.3 if clear_pockets else -2.8, 0, 1.0), "WestLowTree", false)
+		_low_tree(Vector3(6.3 if clear_pockets else 2.8, 0, 2.6), "EastLowTree", false)
 		_pillars(Vector3(-8.5, 0, -8.0), 3)
 	else:
 		# Foreign noon / useful flank / two approaches / crossing / departure.
@@ -57,21 +62,34 @@ func build(room: bool) -> void:
 		_pillars(Vector3(8.0, 0, -39.0), 5)
 		_clear_water_alcove(Vector3(-4.7, 0, 32.0))
 		_companion_vignette(Vector3(-4.7, 0, 29.7))
+		for i: int in range(courses.size()):
+			_flat_shelf_strata(courses[i], i)
 	_sun_motifs = Node3D.new()
 	_sun_motifs.name = "ScenicSuns"
 	add_child(_sun_motifs)
 	var sky := MeshInstance3D.new()
 	sky.name = "DistantSkyBand"
 	var quad := QuadMesh.new()
-	quad.size = Vector2(40, 6)
+	quad.size = Vector2(40, 8)
 	sky.mesh = quad
 	sky.position = Vector3(0, 2, -8.2)
 	var sky_material := _material(Color("30263d"))
 	sky_material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
 	sky.material_override = sky_material
 	_sun_motifs.add_child(sky)
-	_white_sun = _orb(_sun_motifs, "Branchspell", Vector3(-3.5, 3.1, -5.8), 1.45, Color("e5dece"))
-	_blue_sun = _orb(_sun_motifs, "Alppain", Vector3(2.9, 3.6, -6.7), 0.82, Color("5171b7"))
+	# Source-room portraits showed the old large orbs clipped by the HUD and
+	# viewport edges. Keep both harmless silhouettes in the upper sky band.
+	_white_sun = _orb(_sun_motifs, "Branchspell", Vector3(-1.25, 0.95, -5.2), 0.65, Color("e5dece"))
+	_blue_sun = _orb(_sun_motifs, "Alppain", Vector3(1.25, 1.1, -4.9), 0.42, Color("5171b7"))
+	if not room:
+		# A distant silhouette stays in the scenery band, above the local play
+		# apron. It supplies the selected black-spine skyline without putting
+		# foreground towers over legal actors, warning lanes or dash landings.
+		for i: int in range(7):
+			var x: float = -3.4 + float(i) * 1.1
+			# The first full portrait placed the earlier skyline under the HUD.
+			# These small silhouettes occupy the visible band behind the suns.
+			_rock_spine(Vector3(x, 0.02, -5.65 - float(i % 2) * 0.15), 0.38 + float((i * 3) % 5) * 0.10, -1.0 if i < 3 else 1.0, _sun_motifs)
 
 
 func follow_landmarks(hero_position: Vector3) -> void:
@@ -116,6 +134,7 @@ func _solid_box(label: String, size: Vector3, at: Vector3) -> StaticBody3D:
 	body.collision_layer = 1
 	body.collision_mask = 0
 	var collider := CollisionShape3D.new()
+	collider.name = "Solid"
 	var shape := BoxShape3D.new()
 	shape.size = size
 	collider.shape = shape
@@ -132,6 +151,25 @@ func _shelf_dressing(at: Vector3, index: int, side: float) -> void:
 	for j: int in range(4):
 		var pebble := _box(Vector3(0.34, 0.16, 0.45), at + Vector3(-side * 1.4, 0.07, float(j) * 0.7 - 1.0), Color("5b2b55"))
 		pebble.rotation_degrees.y = float(j * 27 + index * 15)
+
+
+func _flat_shelf_strata(z: float, index: int) -> void:
+	# Flat dark/violet sediment follows the reusable shelf family. These
+	# irregular filled patches have no raised base, outline, arrow, collision,
+	# interaction or temporal state. Stable ground remains beneath them.
+	for side: float in [-1.0, 1.0]:
+		var at := Vector3(side * (4.1 + float(index % 3) * 0.35), 0.005, z)
+		var contour := PackedVector2Array([
+			Vector2(-1.25, -2.8), Vector2(0.1, -3.0),
+			Vector2(1.6, -1.45), Vector2(1.3, 0.2),
+			Vector2(0.4, 2.65), Vector2(-1.5, 2.0),
+			Vector2(-1.1, 0.6), Vector2(-1.8, -0.4),
+		])
+		var plate: MeshInstance3D = _floor_polygon(contour, at, Color("49263e").lightened(float(index % 2) * 0.025))
+		plate.name = "FlatShelfStratum%d%s" % [index, "West" if side < 0.0 else "East"]
+		for chip: int in range(3):
+			var patch := PackedVector2Array([Vector2(-0.23, -0.3), Vector2(0.16, -0.37), Vector2(0.34, 0.05), Vector2(0.02, 0.32), Vector2(-0.28, 0.17)])
+			_floor_polygon(patch, at + Vector3(-side * (0.5 + float(chip) * 0.62), 0.002, float(chip) * 1.3 - 1.7), ROCK.lightened(0.035))
 
 
 func _low_tree(at: Vector3, label: String, colliding: bool) -> void:
@@ -200,7 +238,7 @@ func _faceted_ledge(at: Vector3, side: float, index: int) -> void:
 	add_child(node)
 
 
-func _rock_spine(at: Vector3, height: float, side: float) -> void:
+func _rock_spine(at: Vector3, height: float, side: float, parent: Node3D = null) -> void:
 	var base: Array[Vector3] = [Vector3(-0.28, 0, -0.38), Vector3(0.32, 0, -0.23), Vector3(0.22, 0, 0.37), Vector3(-0.3, 0, 0.25)]
 	var tip := Vector3(side * 0.3, height, -0.2)
 	var surface := SurfaceTool.new()
@@ -211,7 +249,7 @@ func _rock_spine(at: Vector3, height: float, side: float) -> void:
 	node.mesh = surface.commit()
 	node.position = at
 	node.material_override = _vertex_material()
-	add_child(node)
+	(parent if parent != null else self).add_child(node)
 
 
 func _triangle(surface: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, color: Color) -> void:
