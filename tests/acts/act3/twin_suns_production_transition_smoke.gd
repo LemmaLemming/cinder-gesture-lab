@@ -639,10 +639,12 @@ func _diagnostic() -> String:
 
 
 func _dispose() -> void:
+	var barrier_ref: Variant = _tick_barrier
+	_free_tick_barrier()
 	_watch_restore = false
 	if node_added.is_connected(_observe_candidate):
 		node_added.disconnect(_observe_candidate)
-	var refs: Array = [_game, _hero, _level, _scheduler, _old_hero, _old_level]
+	var refs: Array = [_game, _hero, _level, _scheduler, _old_hero, _old_level, barrier_ref]
 	refs.append_array(_sources.values())
 	refs.append_array(_departed_refs)
 	if is_instance_valid(_shell):

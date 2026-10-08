@@ -10,6 +10,7 @@ const EquipmentScript: GDScript = preload("res://scripts/equipment.gd")
 const ExactJson: GDScript = preload("res://scripts/campaign/exact_json.gd")
 const Codec: GDScript = preload("res://scripts/campaign/snapshot_codec.gd")
 const Geometry: GDScript = preload("res://scripts/combat/threat_geometry.gd")
+const BodySweep: GDScript = preload("res://scripts/combat/body_sweep.gd")
 const FullPath: String = "res://scenes/acts/act3/a3_l1.tscn"
 const RuntimePath: String = "res://scripts/acts/act3/twin_suns_level.gd"
 # Preserve the earlier unframed first-pocket PNGs in their original folder.
@@ -26,6 +27,37 @@ const WarningBudgetS: float = 8.0
 const RouteBudgetS: float = 180.0
 const GroupBudgetS: float = 60.0
 const Replan: String = "new_union_warning"
+
+
+## TEST ONLY observation node. Normal wakes follow every actual actor's fixed
+## callback; synchronous shell pauses can skip this later pausable callback.
+## The deferred pause wake observes the completed boundary without advancing
+## actors or inventing a checkpoint. Existing save/capture settling stays owned
+## by the fixture's ordinary process-frame barriers.
+class PostActorPhysicsBarrier:
+	extends Node
+	signal observed(boundary: String)
+	var waiting: bool = false
+	var _pause_wake_queued: bool = false
+
+	func _physics_process(_delta: float) -> void:
+		_wake("post_actor_physics")
+
+	func _notification(what: int) -> void:
+		if what == NOTIFICATION_PAUSED and waiting and not _pause_wake_queued:
+			_pause_wake_queued = true
+			_wake_paused.call_deferred()
+
+	func _wake_paused() -> void:
+		_pause_wake_queued = false
+		if is_inside_tree() and not is_queued_for_deletion() and get_tree().paused:
+			_wake("paused_deferred_boundary")
+
+	func _wake(boundary: String) -> void:
+		if not waiting:
+			return
+		waiting = false
+		observed.emit(boundary)
 
 var _checks: int = 0
 var _failures: int = 0
@@ -53,6 +85,7 @@ var _checkpoints: Array[String] = []
 var _death_events: Dictionary = {}
 var _warnings: Dictionary = {}
 var _used_warnings: Dictionary = {}
+var _edge_rejoins: Dictionary = {}
 var _records: Dictionary = {}
 var _phases: Dictionary = {}
 var _active_travel: Dictionary = {}
@@ -67,9 +100,18 @@ var _fresh_partial_done: bool = false
 var _union_seen: bool = false
 var _crossing_primary_deferred: bool = false
 var _topology: Array[int] = []
+# Diagnostic only: two selected gear cases retain at most six wait observations.
+var _tick_trace: Array[Dictionary] = []
+var _trace_path_segment: Dictionary = {}
+var _tick_barrier: PostActorPhysicsBarrier
 
 
 func _initialize() -> void:
+	_tick_barrier = PostActorPhysicsBarrier.new()
+	_tick_barrier.name = "TestOnlyPostActorPhysicsBarrier"
+	_tick_barrier.process_mode = Node.PROCESS_MODE_PAUSABLE
+	_tick_barrier.process_physics_priority = 1000
+	root.add_child(_tick_barrier)
 	_run.call_deferred()
 
 
@@ -499,6 +541,8 @@ func _clear_pocket(index: int) -> String:
 			return error
 		print("FOLLOW ACTUAL PROOF: source=%s reservation=%s start=%.9f leases=%d" % [_source_id, _current.id, float(_current.start_s), _scheduler.reservations().size()])
 		for segment: Dictionary in warning.proof.path:
+			if _tick_trace_enabled():
+				_trace_path_segment = {"kind": segment.kind, "start_s": segment.start_s, "end_s": segment.end_s}
 			if segment.kind in ["escape_dash", "positioning_dash"]:
 				error = await _at_time(float(segment.start_s))
 				if error.is_empty():
@@ -543,6 +587,100 @@ func _pending() -> Dictionary:
 	return chosen
 
 
+## A declined outward lane leaves the real player free to rejoin the shelf.
+## This is one ordinary navigation choice, never an invented attack witness.
+func _edge_rejoin_candidate() -> Dictionary:
+	var response: Dictionary = _hero.get_threat_response_state()
+	if paused or response.get("stable") != true or float(response.get("dash_cooldown_left_s", 1.0)) != 0.0:
+		return {}
+	for id: String in _group_ids:
+		var source: CharacterBody3D = _sources[id]
+		var state: Dictionary = source.call("state")
+		if state.get("dead") != false or state.get("phase") != "idle" or state.get("reservation_id") != "" or not source.velocity.is_zero_approx() or int(state.get("cycle", 0)) <= 0 or float(state.get("hp", 0.0)) != float(_expected_hp[id]) or float(state.hp) >= float(state.max_hp) or state.get("last_cancel_reason") != "primary_stagger" or state.get("last_rejection") != "Measured footprint loses continuous floor coverage":
+			continue
+		# A restored fresh world has different actual bodies, even when its
+		# stable IDs and saved cycle are the same. No derived rebind hook needed.
+		var key: String = "%s:%d:%d" % [id, source.get_instance_id(), int(state.cycle)]
+		if _edge_rejoins.has(key):
+			continue
+		var direction: Vector3 = Vector3.RIGHT if _hero.global_position.x < 0.0 else Vector3.LEFT
+		var landing: Vector3 = _hero.global_position + direction * float(_stats.dash_distance)
+		if absf(landing.x) >= absf(_hero.global_position.x):
+			continue
+		return {"id": id, "key": key, "direction": direction}
+	return {}
+
+
+func _edge_rejoin_guard(id: String, held: Array[Dictionary]) -> Dictionary:
+	var source: CharacterBody3D = _sources[id]
+	var response: Dictionary = _level.call("combat_response", id)
+	var bindings: Dictionary = _level.call("scheduler_bindings")
+	var solid: CollisionShape3D = _floor.get_node_or_null("Solid") as CollisionShape3D
+	if response.get("actor") != _hero or response.get("world_root") != _hero.get_parent() or not response.get("floor_regions") is Array or bindings.get("owners") != _sources or bindings.get("floors", {}).get("shelf-floor", {}).get("collision") != solid or not is_instance_valid(solid) or not solid.shape is BoxShape3D or solid.disabled or _floor.get_world_3d() != _hero.get_world_3d() or source.get_world_3d() != _hero.get_world_3d() or _scheduler.get_world_3d() != _hero.get_world_3d() or _hero.collision_layer != 4 or _hero.collision_mask != 1:
+		return {"error": "centerward rejoin lost its actual actor/source/solid-floor bindings"}
+	return {"hero": _hero, "level": _level, "scheduler": _scheduler, "source": source, "clock_s": _scheduler.get_clock(), "hero_transform": _hero.global_transform, "response": response.duplicate(true), "source_state": source.call("state"), "bindings": bindings.duplicate(true), "floor": {"body": _floor, "solid": solid, "shape": solid.shape, "size": (solid.shape as BoxShape3D).size, "transform": solid.global_transform, "disabled": solid.disabled, "layer": _floor.collision_layer, "mask": _floor.collision_mask}, "held": held.duplicate(true), "events": _events.duplicate(true), "topology": _world_topology()}
+
+
+func _edge_rejoin(candidate: Dictionary) -> String:
+	# These ordinary public reads may prune; take the guard after that boundary.
+	var held: Array[Dictionary] = _scheduler.reservations()
+	var guard: Dictionary = _edge_rejoin_guard(candidate.id, held)
+	if guard.has("error"):
+		return String(guard.error)
+	var response: Dictionary = guard.response
+	var now: float = float(guard.clock_s)
+	if now != _hero.get_world_action_clock() or response.get("stable") != true or float(response.get("dash_cooldown_left_s", 1.0)) != 0.0 or not _exact(response.get("equipment_ids"), _kit) or not _exact(response.get("stats"), _stats):
+		return "centerward rejoin lacks the current stopped ready public hero/kit clock"
+	var origin: Vector3 = _hero.global_position
+	var motion: Vector3 = candidate.direction * float(_stats.dash_distance)
+	var landing: Vector3 = BodySweep.anchored_position(origin, motion, 1.0)
+	var regions: Array = response.floor_regions
+	var supported: bool = false
+	var radius: float = CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN
+	for region: Dictionary in regions:
+		if region.get("collision") != guard.floor.solid or not region.get("safe_rect") is Rect2:
+			return "centerward rejoin uses another floor or an unsupported native region"
+		var safe: Rect2 = (region.safe_rect as Rect2).grow(-radius)
+		if safe.has_point(Vector2(origin.x, origin.z)) and safe.has_point(Vector2(landing.x, landing.z)):
+			supported = true
+	if not supported:
+		return "centerward full dash and landing do not fit the actual supported shelf"
+	var sweep: Dictionary = BodySweep.sweep(_hero, _hero.global_transform, motion, regions)
+	if sweep.has("error") or sweep.get("collided") != false or not sweep.get("end") is Vector3 or not sweep.get("travel") is Vector3:
+		return "centerward actual capsule sweep failed: " + String(sweep.get("error", "scenery collision or malformed result"))
+	if _planar((sweep.end as Vector3) - landing).length() > PointTolerance or absf(_planar(sweep.travel).length() - float(_stats.dash_distance)) > PointTolerance:
+		return "centerward actual capsule sweep shortens the ordinary full dash"
+	var duration: float = float(_stats.dash_duration)
+	var steps: int = ceili(duration / _tick_s())
+	var dash_end: float = now + float(steps) * _tick_s()
+	var ready_until: float = now + maxf(float(_stats.dash_cooldown), float(steps) * _tick_s()) + 2.0 * _tick_s()
+	if ready_until > _group_deadline or ready_until > _route_deadline:
+		return "centerward ordinary rejoin exceeds the existing finite pocket/route deadline"
+	var path: Array[Dictionary] = []
+	for index: int in range(steps):
+		var elapsed_from: float = minf(float(index) * _tick_s(), duration)
+		var elapsed_to: float = minf(float(index + 1) * _tick_s(), duration)
+		path.append({"from": BodySweep.anchored_position(origin, motion, elapsed_from / duration), "to": BodySweep.anchored_position(origin, motion, elapsed_to / duration), "start_s": now + float(index) * _tick_s(), "end_s": now + float(index + 1) * _tick_s()})
+	path.append({"from": landing, "to": landing, "start_s": dash_end, "end_s": ready_until})
+	for record: Dictionary in held:
+		if Geometry.timed_path_hits(record.geometry, path, float(record.active_from_s), float(record.active_until_s), radius):
+			return "centerward dash/readiness hold intersects a currently held active footprint"
+		# Fail closed for a tick-boundary rounding variant of the final movement;
+		# this extra spatial envelope grants no tolerance to any action deadline.
+		if maxf(now, float(record.active_from_s)) <= minf(dash_end + 2.0 * _tick_s(), float(record.active_until_s)) and Geometry.segment_hits(record.geometry, origin, landing, radius):
+			return "centerward dash movement envelope intersects a held active footprint"
+	# BodySweep/Geometry above are pure. No await separates this exact recheck
+	# from the existing real public dash request and all its native assertions.
+	if not _exact(guard, _edge_rejoin_guard(candidate.id, _scheduler.reservations())):
+		return "actual clock/pose/floor/binding/held union changed during pure rejoin preflight"
+	_edge_rejoins[candidate.key] = true
+	print("ORDINARY CENTERWARD REJOIN: source=%s cycle=%d clock=%.9f from=%s to=%s held=%d" % [candidate.id, int(guard.source_state.cycle), now, origin, landing, held.size()])
+	var error: String = await _dash({"kind": "route_dash", "from": origin, "to": landing, "start_s": now, "end_s": now + duration})
+	if error.is_empty():
+		_expect(true, "one actual centerward ordinary dash leaves a declined outward lane and seeks a fresh genuine warning")
+	return error
+
+
 func _next_warning() -> Dictionary:
 	var stop: float = minf(_group_deadline, _scheduler.get_clock() + WarningBudgetS)
 	for _tick: int in range(_frame_limit(WarningBudgetS)):
@@ -552,6 +690,13 @@ func _next_warning() -> Dictionary:
 			return warning
 		if _scheduler.get_clock() > stop:
 			break
+		var rejoin: Dictionary = _edge_rejoin_candidate()
+		if not rejoin.is_empty():
+			var rejoin_error: String = await _edge_rejoin(rejoin)
+			if not rejoin_error.is_empty():
+				_expect(false, "bounded actual edge rejoin preserves full capsule/floor/timed union safety", rejoin_error)
+				return {}
+			continue
 		var error: String = await _tick_safe()
 		if not error.is_empty():
 			_expect(false, "bounded live warning wait preserves actual actors/leases/resources", error)
@@ -624,7 +769,11 @@ func _at_time(target: float) -> String:
 			return Replan
 		var now: float = _hero.get_world_action_clock()
 		if now >= target:
-			return "" if now - target <= _tick_s() + TimeEpsilon else "actual action missed its first available fixed tick"
+			if now - target <= _tick_s() + TimeEpsilon:
+				return ""
+			if _tick_trace_enabled():
+				_print_tick_deadline_diagnostic(target, now)
+			return "actual action missed its first available fixed tick"
 		var error: String = await _tick_safe()
 		if not error.is_empty():
 			return error
@@ -979,9 +1128,28 @@ func _final_error(pockets: int) -> String:
 
 
 func _tick_safe() -> String:
-	await physics_frame
-	await process_frame
-	var error: String = _live_error()
+	var error: String = _tick_barrier_error()
+	if not error.is_empty():
+		return error
+	var traced: bool = _tick_trace_enabled()
+	var before: Dictionary = _tick_clock_observation()
+	var boundary: String = ""
+	if paused:
+		# A node already paused cannot receive another pause notification.
+		# Settle ordinary deferred shell work while both real clocks stay frozen.
+		await process_frame
+		boundary = "already_paused_process_boundary"
+		var after: Dictionary = _tick_clock_observation()
+		if not _exact(before.hero_clock_s, after.hero_clock_s) or not _exact(before.scheduler_clock_s, after.scheduler_clock_s):
+			return "already-paused test observation advanced a real actor clock"
+	else:
+		_tick_barrier.waiting = true
+		boundary = await _tick_barrier.observed
+	if traced:
+		_tick_trace.append({"before": before, "boundary": boundary, "post_actor": _tick_clock_observation()})
+		if _tick_trace.size() > 6:
+			_tick_trace.pop_front()
+	error = _live_error()
 	if not error.is_empty():
 		return error
 	if _capture_portrait:
@@ -998,7 +1166,74 @@ func _tick_safe() -> String:
 	return ""
 
 
+func _tick_barrier_error() -> String:
+	if not is_instance_valid(_tick_barrier) or _tick_barrier.get_parent() != root or _tick_barrier.process_mode != Node.PROCESS_MODE_PAUSABLE or not _tick_barrier.is_physics_processing() or _tick_barrier.process_physics_priority != 1000:
+		return "TEST ONLY post-actor physics barrier is missing or incorrectly scheduled"
+	var actors: Array = [_hero, _scheduler, _level]
+	actors.append_array(_sources.values())
+	for actor: Variant in actors:
+		if is_instance_valid(actor) and actor.process_physics_priority >= _tick_barrier.process_physics_priority:
+			return "TEST ONLY observation barrier does not follow an actual actor binding"
+	return ""
+
+
+func _free_tick_barrier() -> void:
+	if is_instance_valid(_tick_barrier):
+		_tick_barrier.waiting = false
+		if _tick_barrier.get_parent() == root:
+			root.remove_child(_tick_barrier)
+		_tick_barrier.queue_free()
+	_tick_barrier = null
+
+
+func _tick_trace_enabled() -> bool:
+	return _kit_selector in ["--compound-extreme", "--long-dash"]
+
+
+func _tick_clock_observation() -> Dictionary:
+	return {
+		"hero_clock_s": _hero.get_world_action_clock() if is_instance_valid(_hero) else -1.0,
+		"scheduler_clock_s": _scheduler.get_clock() if is_instance_valid(_scheduler) else -1.0,
+		"physics_frames": Engine.get_physics_frames(),
+		"process_frames": Engine.get_process_frames(),
+	}
+
+
+func _print_tick_deadline_diagnostic(target: float, actual: float) -> void:
+	var dashes: Array[Dictionary] = []
+	if is_instance_valid(_hero):
+		for action: Dictionary in _hero.get_world_action_records():
+			if action.get("kind") != "dash":
+				continue
+			var stats: Dictionary = action.get("resolved_stats", {})
+			dashes.append({
+				"sequence": action.get("sequence"),
+				"started_at_s": action.get("started_at_s"),
+				"completed_at_s": action.get("completed_at_s"),
+				"origin": Codec.vector3(action.world_origin) if action.get("world_origin") is Vector3 else "unavailable",
+				"landing": Codec.vector3(action.landing) if action.get("landing") is Vector3 else "unavailable",
+				"stats_duration_s": stats.get("dash_duration"),
+				"blocked": action.get("blocked"),
+				"collision_shortened": action.get("collision_shortened"),
+			})
+			if dashes.size() > 2:
+				dashes.pop_front()
+	var source: Variant = _sources.get(_source_id)
+	var source_state: Dictionary = source.call("state") if is_instance_valid(source) else {}
+	var diagnostic: Dictionary = {
+		"target_s": target, "actual_s": actual,
+		"lateness_s": actual - target, "allowed_s": _tick_s() + TimeEpsilon,
+		"path_segment": _trace_path_segment.duplicate(true), "source_id": _source_id,
+		"source_lease": source_state.get("reservation_id", ""), "source_phase": source_state.get("phase", "unavailable"),
+		"clock_observations": _tick_trace.duplicate(true), "last_completed_dashes": dashes,
+	}
+	print("FIXED TICK DEADLINE DIAGNOSTIC: " + ExactJson.stringify(diagnostic))
+
+
 func _live_error() -> String:
+	var barrier_error: String = _tick_barrier_error()
+	if not barrier_error.is_empty():
+		return barrier_error
 	if not is_instance_valid(_hero) or not is_instance_valid(_level) or not is_instance_valid(_scheduler) or _hero.hp != _hp_before or _hero.dead or _scheduler.get_clock() > _route_deadline or int(_events.get("contact", 0)) != 0:
 		return "actual route lost actors, took/healed damage or exceeded finite simulation budget"
 	var level_state: Dictionary = _level.call("state")
@@ -1252,12 +1487,14 @@ func _print_source_physical_diagnostic() -> void:
 
 
 func _dispose() -> void:
+	var barrier_ref: Variant = _tick_barrier
+	_free_tick_barrier()
 	if is_instance_valid(_game) and is_instance_valid(_hero):
 		_game.call("open_bench")
 	if is_instance_valid(_level):
 		_level.exit_level()
 	_expect(not is_instance_valid(_scheduler) or _scheduler.reservations().is_empty(), "public full-level exit releases every source lease")
-	var refs: Array = [_game, _hero, _level, _scheduler, _old_hero, _old_level]
+	var refs: Array = [_game, _hero, _level, _scheduler, _old_hero, _old_level, barrier_ref]
 	for source: Variant in _sources.values():
 		refs.append(source)
 	if is_instance_valid(_game):
