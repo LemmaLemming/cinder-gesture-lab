@@ -26,7 +26,9 @@ const BodySweep = preload("res://scripts/combat/body_sweep.gd")
 const ReplaySequence = preload("res://scripts/combat/replay_sequence.gd")
 const ReplayWitness = preload("res://scripts/combat/replay_witness.gd")
 const ReplayPlayer = preload("res://scripts/player.gd")
+const PreviewExact = preload("res://scripts/campaign/exact_json.gd")
 const API_REVISION: String = "threat-scheduler-4"
+const LUNGE_PREVIEW_API_REVISION: String = "lunge-preview-1"
 const SNAPSHOT_API_REVISION: String = "scheduler-snapshot-1"
 const SNAPSHOT_SCHEMA_VERSION: int = 1
 const CAPSULE_RADIUS: float = 0.32
@@ -115,30 +117,35 @@ func request_attack(owner: Node3D, threat: Dictionary, response: Dictionary) -> 
 
 func _request_attack(owner: Node3D, threat: Dictionary, response: Dictionary, adapter: Dictionary = {}) -> Dictionary:
 	_prune()
-	last_error = _request_error(owner, threat, response, "", adapter.get("kind") == "tracking")
-	if not last_error.is_empty():
-		return {"accepted": false, "reason": last_error}
+	var prepared: Dictionary = _prepare_ordinary_attack(owner, threat, response, adapter)
+	if not prepared.get("accepted", false):
+		return _rejected(prepared["reason"])
+	return _commit_ordinary_attack(owner, prepared["candidate"], prepared["proof"], response)
+
+
+func _prepare_ordinary_attack(owner: Node3D, threat: Dictionary, response: Dictionary, adapter: Dictionary = {}) -> Dictionary:
+	## Shared pure candidate/proof path. Cleanup and admission live outside it.
+	var error: String = _request_error(owner, threat, response, "", adapter.get("kind") == "tracking")
+	if not error.is_empty():
+		return {"accepted": false, "reason": error}
 	if adapter.get("kind") == "lunge" and (owner.global_position.distance_to(adapter["current_position"]) > EPSILON or not _lunge_source_valid(owner, adapter)):
-		return _rejected("Lunge source plan changed during reservation cleanup")
+		return {"accepted": false, "reason": "Lunge source plan changed during reservation cleanup"}
 	if adapter.get("kind") == "tracking" and (not _tracking_geometry_valid(owner, threat["geometry"], adapter) or (threat["opening_position"] as Vector3).distance_to(owner.global_position) > EPSILON):
-		return _rejected("Tracking source lane changed during reservation cleanup")
+		return {"accepted": false, "reason": "Tracking source lane changed during reservation cleanup"}
 	var role: Dictionary = threat["role"]
 	var active_from: float = _clock + float(role["windup_s"])
 	var active_until: float = active_from + float(role["active_s"])
 	var recovery_until: float = active_until + float(role["recovery_s"])
 	if not is_finite(recovery_until) or not is_finite(active_from + float(role["attack_interval_s"])):
-		last_error = "Committed deadlines must remain finite"
-		return {"accepted": false, "reason": last_error}
+		return {"accepted": false, "reason": "Committed deadlines must remain finite"}
 	var budget: int = 0
 	for existing: Dictionary in _reservations.values():
 		if float(existing["active_until_s"]) >= _clock:
 			budget += 1
 			if absf(float(existing["active_from_s"]) - active_from) < float(_profile["commit_stagger_s"]) - EPSILON:
-				last_error = "Committed activations require a visible stagger"
-				return {"accepted": false, "reason": last_error}
+				return {"accepted": false, "reason": "Committed activations require a visible stagger"}
 	if budget >= int(_profile["reserved_threat_budget"]):
-		last_error = "Preparing and active threat budget occupied"
-		return {"accepted": false, "reason": last_error}
+		return {"accepted": false, "reason": "Preparing and active threat budget occupied"}
 	var candidate: Dictionary = {
 		"geometry": (threat["geometry"] as Dictionary).duplicate(true),
 		"active_from_s": active_from, "active_until_s": active_until,
@@ -149,11 +156,7 @@ func _request_attack(owner: Node3D, threat: Dictionary, response: Dictionary, ad
 		candidate["adapter"] = adapter.duplicate(true)
 	var proof: Dictionary = {"accepted": true, "proof_scope": "unarmed_tracking_warning"} if adapter.get("kind") == "tracking" else _prove(candidate, response)
 	if not proof.get("accepted", false):
-		last_error = proof["reason"]
 		return proof
-	_serial += 1
-	var reservation_id: String = "threat-%d" % _serial
-	candidate["id"] = reservation_id
 	candidate["source_instance_id"] = owner.get_instance_id()
 	candidate["source_position"] = owner.global_position
 	candidate["start_s"] = _clock
@@ -161,11 +164,20 @@ func _request_attack(owner: Node3D, threat: Dictionary, response: Dictionary, ad
 	candidate["cooldown_until_s"] = active_from + float(role["attack_interval_s"])
 	candidate["profile_id"] = _profile["id"]
 	candidate["world_revision"] = _world_revision
+	return {"accepted": true, "candidate": candidate, "proof": proof}
+
+
+func _commit_ordinary_attack(owner: Node3D, candidate: Dictionary, proof: Dictionary, response: Dictionary) -> Dictionary:
+	candidate = candidate.duplicate(true)
+	_serial += 1
+	var reservation_id: String = "threat-%d" % _serial
+	candidate["id"] = reservation_id
 	candidate["_owner"] = weakref(owner)
 	candidate["_floor_guards"] = _floor_guards(response["floor_regions"])
 	_reservations[reservation_id] = candidate
 	_cooldowns[owner.get_instance_id()] = {"owner": weakref(owner), "ready_s": candidate["cooldown_until_s"]}
-	return {"accepted": true, "reservation_id": reservation_id, "proof": proof, "profile_id": _profile["id"], "armed": adapter.get("kind") != "tracking", "reservation": _public_record(candidate)}
+	last_error = ""
+	return {"accepted": true, "reservation_id": reservation_id, "proof": proof.duplicate(true), "profile_id": _profile["id"], "armed": candidate.get("adapter", {}).get("kind") != "tracking", "reservation": _public_record(candidate)}
 
 
 func request_replay(owner: Node3D, sequence_snapshot: Dictionary, response: Dictionary, context: Dictionary) -> Dictionary:
@@ -516,38 +528,258 @@ func _commit_tracking(reservation_id: String, geometry: Dictionary, response: Di
 	return {"accepted": true, "armed": true, "reservation_id": reservation_id, "reservation": _public_record(candidate), "proof": proof, "profile_id": _profile["id"]}
 
 
-func request_lunge(owner: CharacterBody3D, threat: Dictionary, response: Dictionary) -> Dictionary:
+func request_lunge(owner: CharacterBody3D, threat: Dictionary, response: Dictionary, preview: Dictionary = {}) -> Dictionary:
 	## Scheduler leases real source motion until release/cancel. Its level script
 	## must suspend approach/gravity/knockback and cancel(id) BEFORE any impulse.
 	## Normal interruptions retain cooldown; cancel_owner is for death/removal.
 	## Active damage is still level-owned and must consume reservation_state.
 	if _snapshot_busy or _request_busy or _boundary_busy or _transaction_depth > 0:
 		return _rejected("Scheduler transaction is already in progress")
+	if not preview.is_empty():
+		# Preview grants no lease. Reprove against actual bodies/union/world and
+		# compare all copied data exactly, both before and after ordinary cleanup.
+		var current: Dictionary = _preview_lunge_current(owner, threat, response)
+		if not current.get("accepted", false):
+			return _rejected(current["reason"])
+		if not _same_lunge_preview(preview, current):
+			return _rejected("Lunge preview no longer matches exact current source/response/world/union")
+		_request_busy = true
+		_transaction_depth += 1
+		_prune()
+		current = _preview_lunge_current(owner, threat, response)
+		var paired_result: Dictionary
+		if not current.get("accepted", false):
+			paired_result = _rejected(current["reason"])
+		elif not _same_lunge_preview(preview, current):
+			paired_result = _rejected("Lunge preview changed during ordinary reservation cleanup")
+		else:
+			paired_result = _commit_ordinary_attack(owner, current["candidate"], current["proof"], response)
+		_transaction_depth -= 1
+		_request_busy = false
+		return paired_result
+	var prepared: Dictionary = _prepare_lunge(owner, threat, response)
+	if not prepared.get("accepted", false):
+		return _rejected(prepared["reason"])
+	_request_busy = true
+	_transaction_depth += 1
+	var result: Dictionary = _request_attack(owner, prepared["threat"], response, prepared["adapter"])
+	_transaction_depth -= 1
+	_request_busy = false
+	return result
+
+
+func _prepare_lunge(owner: CharacterBody3D, threat: Dictionary, response: Dictionary) -> Dictionary:
+	## Pure measured plan shared by legacy admission and prospective preview.
 	if threat.get("source_stationary") != false or threat.get("opening_stationary") != true or not threat.get("lunge") is Dictionary or not response.get("floor_regions") is Array:
-		return _rejected("Explicit real-body lunge and authored floor proof required")
+		return {"accepted": false, "reason": "Explicit real-body lunge and authored floor proof required"}
 	var plan: Dictionary = Motion.plan(owner, threat["lunge"], response["floor_regions"])
 	if plan.has("error"):
-		return _rejected(plan["error"])
+		return {"accepted": false, "reason": plan["error"]}
 	if not threat.get("role") is Dictionary or not Geometry.finite_number(threat["role"].get("active_s")) or float(threat["role"]["active_s"]) < float(plan["duration_s"]) - EPSILON:
-		return _rejected("Active window must cover full resolved distance/speed even when collision shortens travel")
+		return {"accepted": false, "reason": "Active window must cover full resolved distance/speed even when collision shortens travel"}
 	var adjusted_position: Vector3 = owner.global_position + Vector3.UP * (float(plan["foot_offset"]) - CAPSULE_CENTER_Y + CAPSULE_HEIGHT * 0.5)
 	var floor_error: String = _floor_error(response["floor_regions"], adjusted_position)
 	if not floor_error.is_empty() or not _floor_path_supported(plan["start"], plan["planned_endpoint"], response["floor_regions"], float(plan["source_radius"]) + SKIN):
-		return _rejected("Actual lunge source lacks continuous supported floor: " + floor_error)
+		return {"accepted": false, "reason": "Actual lunge source lacks continuous supported floor: " + floor_error}
 	var adapted: Dictionary = threat.duplicate(true)
 	adapted["source_stationary"] = true # proof only: start fixed until active, recovery fixed at endpoint
 	adapted["geometry"] = plan["geometry"]
 	adapted["opening_position"] = plan["planned_endpoint"]
-	plan.erase("geometry")
-	plan.erase("source_radius")
-	plan.erase("foot_offset")
-	plan["current_velocity"] = Vector3.ZERO
-	_request_busy = true
-	_transaction_depth += 1
-	var result: Dictionary = _request_attack(owner, adapted, response, plan)
-	_transaction_depth -= 1
-	_request_busy = false
+	var adapter: Dictionary = plan.duplicate(true)
+	adapter.erase("geometry")
+	adapter.erase("source_radius")
+	adapter.erase("foot_offset")
+	adapter["current_velocity"] = Vector3.ZERO
+	return {"accepted": true, "plan": plan, "threat": adapted, "adapter": adapter}
+
+
+func preview_lunge(owner: CharacterBody3D, threat: Dictionary, response: Dictionary) -> Dictionary:
+	## Pure ephemeral framing data. No prune, flags, clocks, diagnostics, body
+	## mutations, callbacks, serial allocation or cooldown/reservation admission.
+	if _snapshot_busy or _request_busy or _boundary_busy or _transaction_depth > 0:
+		return {"accepted": false, "reason": "Scheduler transaction is already in progress"}
+	return _preview_lunge_current(owner, threat, response).duplicate(true)
+
+
+func _preview_lunge_current(owner: CharacterBody3D, threat: Dictionary, response: Dictionary) -> Dictionary:
+	var error: String = _preview_retained_error()
+	if error.is_empty():
+		error = _preview_response_error(owner, response)
+	if not error.is_empty():
+		return {"accepted": false, "reason": error}
+	# Bound caller native values BEFORE any deep copy. Unsupported object data
+	# or cyclic/oversized containers must fail without engine recursion errors.
+	var authored_response: Dictionary = response.duplicate()
+	for key: String in ["actor", "world_root", "floor_regions"]:
+		authored_response.erase(key)
+	if _lunge_preview_wire(threat).is_empty() or _lunge_preview_wire(authored_response).is_empty():
+		return {"accepted": false, "reason": "Finite bounded native threat/response values required"}
+	var lunge: Dictionary = _prepare_lunge(owner, threat, response)
+	if not lunge.get("accepted", false):
+		return {"accepted": false, "reason": lunge["reason"]}
+	var prepared: Dictionary = _prepare_ordinary_attack(owner, lunge["threat"], response, lunge["adapter"])
+	if not prepared.get("accepted", false):
+		return prepared
+	var world_root: Node3D = response["world_root"]
+	var collision: Dictionary = _collision_signature(world_root)
+	if collision.has("error"):
+		return {"accepted": false, "reason": collision["error"]}
+	authored_response = authored_response.duplicate(true)
+	var floors: Array[Dictionary] = []
+	for region: Dictionary in response["floor_regions"]:
+		var floor_collision: CollisionShape3D = region["collision"]
+		if not _under_root(floor_collision, world_root):
+			return {"accepted": false, "reason": "Every authored preview floor must belong to world_root"}
+		floors.append({"node_instance_id": str(floor_collision.get_instance_id()), "shape_instance_id": str(floor_collision.shape.get_instance_id()), "body_instance_id": str(floor_collision.get_parent().get_instance_id()), "signature": _floor_signature(region, world_root)})
+	var retained: Array[Dictionary] = []
+	var source_paths: Dictionary = {}
+	var ids: Array = _reservations.keys()
+	ids.sort()
+	for reservation_id: String in ids:
+		var record: Dictionary = _reservations[reservation_id]
+		var source: Node3D = (record["_owner"] as WeakRef).get_ref() as Node3D
+		var collision_path: String = String(record.get("adapter", {}).get("body_collision_path", ""))
+		source_paths[source.get_instance_id()] = collision_path
+		var retained_source: Dictionary = _preview_body_state(source, collision_path)
+		if retained_source.has("error"):
+			return {"accepted": false, "reason": retained_source["error"]}
+		retained.append({"record": _public_record(record), "actual_source": retained_source})
+	var cooldowns: Array[Dictionary] = []
+	ids = _cooldowns.keys()
+	ids.sort()
+	for instance_id: int in ids:
+		var entry: Dictionary = _cooldowns[instance_id]
+		var cooldown_source: Dictionary = _preview_body_state((entry["owner"] as WeakRef).get_ref() as Node3D, String(source_paths.get(instance_id, "")))
+		if cooldown_source.has("error"):
+			return {"accepted": false, "reason": cooldown_source["error"]}
+		cooldowns.append({"instance_id": instance_id, "ready_s": entry["ready_s"], "actual_source": cooldown_source})
+	var actor: CinderPlayer = response["actor"]
+	var actual_source: Dictionary = _preview_body_state(owner, lunge["plan"]["body_collision_path"])
+	var actual_actor: Dictionary = _preview_body_state(actor, "BodyCollision")
+	if actual_source.has("error") or actual_actor.has("error"):
+		return {"accepted": false, "reason": actual_source.get("error", actual_actor.get("error", "Unsupported actual preview body"))}
+	var guard := {"scheduler_instance_id": get_instance_id(), "owner_instance_id": owner.get_instance_id(), "actor_instance_id": actor.get_instance_id(), "world_root_instance_id": world_root.get_instance_id(), "clock_s": _clock, "serial": _serial, "encounter_id": _encounter_id, "profile": _profile.duplicate(true), "world_revision": _world_revision, "source": actual_source, "actor": actual_actor, "threat": threat.duplicate(true), "response": authored_response, "floor_bindings": floors, "collision_fingerprint": collision["signature"], "retained_union": retained, "cooldowns": cooldowns}
+	var result := {"accepted": true, "reason": "", "api_revision": LUNGE_PREVIEW_API_REVISION, "plan": lunge["plan"].duplicate(true), "candidate": prepared["candidate"].duplicate(true), "proof": prepared["proof"].duplicate(true), "guard": guard}
+	if _lunge_preview_wire(result).is_empty():
+		return {"accepted": false, "reason": "Preview exceeds bounded supported native data"}
 	return result
+
+
+func _preview_response_error(owner: CharacterBody3D, response: Dictionary) -> String:
+	var error: String = response_error(response)
+	if not error.is_empty():
+		return error
+	var actor: CinderPlayer = response.get("actor") as CinderPlayer
+	var world_root: Node3D = response.get("world_root") as Node3D
+	if not is_instance_valid(actor) or actor.get_script() != ReplayPlayer or not is_instance_valid(world_root) or not world_root.is_inside_tree() or world_root.is_queued_for_deletion() or world_root.get_world_3d() != get_world_3d() or not _under_root(self, world_root) or not _under_root(actor, world_root) or not is_instance_valid(owner) or not _under_root(owner, world_root):
+		return "Preview requires actual shared Player and explicit containing same-world world_root"
+	var description: Dictionary = BodySweep.source_description(actor)
+	if description.has("error"):
+		return "Unsupported actual preview Hero body: " + String(description["error"])
+	var live: Dictionary = actor.get_threat_response_state()
+	for key: String in live:
+		if key == "actor":
+			if response.get(key) != actor:
+				return "Preview must retain the actual response actor"
+		elif not response.has(key) or not _same_lunge_preview(response[key], live[key]):
+			return "Preview response differs from actual public actor state: " + key
+	return ""
+
+
+func _preview_retained_error() -> String:
+	## Conservative read-only equivalent of cleanup conditions. Stale retained
+	## state rejects instead of creating an opportunity by firing cancellation.
+	for record: Dictionary in _reservations.values():
+		var owner: Node3D = (record["_owner"] as WeakRef).get_ref() as Node3D
+		if not is_instance_valid(owner) or not owner.is_inside_tree() or owner.is_queued_for_deletion() or owner.global_position.distance_to(record["source_position"]) > EPSILON or not _guards_valid(record["_floor_guards"]) or _clock > float(record["recovery_until_s"]):
+			return "Stale retained threat union requires ordinary cleanup before preview"
+		if record.get("adapter", {}).get("kind") == "lunge" and not _lunge_source_valid(owner, record["adapter"]):
+			return "Stale retained lunge source requires ordinary cleanup before preview"
+		if _is_replay(record):
+			return "Exclusive replay occupies preview through recovery"
+		if record.get("adapter", {}).get("kind") == "tracking" and not record["adapter"]["locked"] and _clock >= float(record["active_from_s"]) - EPSILON:
+			return "Stale uncommitted tracking warning requires ordinary cleanup before preview"
+	for entry: Dictionary in _cooldowns.values():
+		var owner: Node3D = (entry["owner"] as WeakRef).get_ref() as Node3D
+		if not is_instance_valid(owner) or not owner.is_inside_tree() or owner.is_queued_for_deletion() or _clock >= float(entry["ready_s"]):
+			return "Stale retained cooldown requires ordinary cleanup before preview"
+	return ""
+
+
+func _preview_body_state(node: Node3D, collision_path: String = "") -> Dictionary:
+	var state := {"instance_id": node.get_instance_id(), "transform": node.global_transform}
+	if node is CharacterBody3D:
+		var body: CharacterBody3D = node as CharacterBody3D
+		var measured: Dictionary = BodySweep.source_description(body)
+		if measured.has("error"):
+			return {"error": "Unsupported actual preview source body: " + String(measured["error"])}
+		var collision: CollisionShape3D = measured["collision"]
+		var path: String = String(body.get_path_to(collision))
+		if not collision_path.is_empty() and path != collision_path:
+			return {"error": "Actual preview body must retain its required collision path"}
+		var signature: Dictionary
+		if collision.shape is CapsuleShape3D:
+			var description: Dictionary = Motion.source_description(body, path)
+			if description.has("error"):
+				return {"error": description["error"]}
+			signature = description["signature"]
+		else:
+			# A stationary ordinary union source may retain its genuine BOX.
+			# No capsule proxy is substituted or leased for that source.
+			signature = {"collision_path": path, "centre": Codec.vector3(collision.position), "shape": _shape_data(collision.shape), "layer": body.collision_layer, "mask": body.collision_mask}
+		state.merge({"velocity": body.velocity, "layer": body.collision_layer, "mask": body.collision_mask, "priority": body.collision_priority, "safe_margin": body.safe_margin, "up_direction": body.up_direction, "floor_snap_length": body.floor_snap_length, "motion_mode": body.motion_mode, "platform_velocity": body.get_platform_velocity(), "platform_angular_velocity": body.get_platform_angular_velocity(), "body_signature": signature, "collision_instance_id": str(collision.get_instance_id()), "shape_instance_id": str(collision.shape.get_instance_id()), "collision_transform": collision.global_transform})
+	return state
+
+
+func _same_lunge_preview(left: Variant, right: Variant) -> bool:
+	var wire: String = _lunge_preview_wire(left)
+	return not wire.is_empty() and wire == _lunge_preview_wire(right)
+
+
+func _lunge_preview_wire(value: Variant) -> String:
+	var budget: Array[int] = [262144]
+	var encoded: Dictionary = _encode_lunge_preview(value, 0, budget)
+	return PreviewExact.stringify(encoded["value"]) if encoded.get("accepted", false) else ""
+
+
+func _encode_lunge_preview(value: Variant, depth: int, budget: Array[int]) -> Dictionary:
+	# Injective native encoding: a caller array cannot impersonate a Vector3.
+	# Strict tagged scalar bits/types compare copied data; physical/contact
+	# tolerances and shared14 represented-position allowances remain unchanged.
+	budget[0] -= 1
+	if depth > 32 or budget[0] < 0:
+		return {"accepted": false}
+	var encoded: Variant = value
+	match typeof(value):
+		TYPE_ARRAY, TYPE_DICTIONARY:
+			if value.size() > 16384:
+				return {"accepted": false}
+			var children: Variant = [] if value is Array else {}
+			for key: Variant in (range(value.size()) if value is Array else value.keys()):
+				if value is Dictionary and not key is String:
+					return {"accepted": false}
+				var child: Dictionary = _encode_lunge_preview(value[key], depth + 1, budget)
+				if not child.get("accepted", false):
+					return child
+				if value is Array: children.append(child["value"])
+				else: children[key] = child["value"]
+			encoded = ["Array" if value is Array else "Dictionary", children]
+		TYPE_VECTOR3:
+			encoded = ["Vector3", value.x, value.y, value.z]
+		TYPE_VECTOR2:
+			encoded = ["Vector2", value.x, value.y]
+		TYPE_RECT2:
+			encoded = ["Rect2", value.position.x, value.position.y, value.size.x, value.size.y]
+		TYPE_BASIS:
+			encoded = ["Basis", Codec.vector3(value.x), Codec.vector3(value.y), Codec.vector3(value.z)]
+		TYPE_TRANSFORM3D:
+			encoded = ["Transform3D", _transform_data(value)]
+		TYPE_NIL, TYPE_BOOL, TYPE_STRING, TYPE_INT, TYPE_FLOAT:
+			if not Codec.value_error(value).is_empty():
+				return {"accepted": false}
+		_:
+			return {"accepted": false}
+	return {"accepted": true, "value": encoded}
 
 
 func _rejected(reason: String) -> Dictionary:
