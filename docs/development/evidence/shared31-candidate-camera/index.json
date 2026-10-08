@@ -1,0 +1,687 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-08T22:43:59.766906+00:00",
+  "api_revision": "campaign-shared-31",
+  "scope": "Actual paused candidate-camera seam only; no authored level/portrait/production route acceptance",
+  "source_groups": [
+    {
+      "id": "native1",
+      "manifest": "sources/native1/manifest.json",
+      "original_manifest_sha256": "963026b4f6195a64ae960ab858bbc28af10bed11f6599e5d794e45435d64bcc3",
+      "declared_file_count": 84,
+      "scope": "Exact original pre-queue bounded literal referenced sources and supplied seed docs/tool/configuration, not complete engine import/resource graph. All originals retained independently per submitted job; no native or pass claim is implied."
+    }
+  ],
+  "runs": [
+    {
+      "id": "native1",
+      "session": 84129,
+      "closed": true,
+      "exit_code": 0,
+      "checks": 61,
+      "failures": 0,
+      "script_errors": 0,
+      "native_errors": 0,
+      "source_group": "native1",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--log-file",
+        ".cinder/candidate-camera1.log",
+        "--script",
+        "res://tests/camera_candidate_framing_smoke.gd"
+      ],
+      "shell_redirection": {
+        "stdout": ".cinder/candidate-camera1-wrapper.log",
+        "stderr": "stdout"
+      },
+      "permission_scope": "require_escalated",
+      "no_later_source_execution_credit": true
+    }
+  ],
+  "artifact_count": 91,
+  "artifacts": [
+    {
+      "path": "sources/native1/manifest.json",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/manifest.json",
+      "bytes": 19621,
+      "sha256": "963026b4f6195a64ae960ab858bbc28af10bed11f6599e5d794e45435d64bcc3",
+      "role": "original_prequeue_manifest"
+    },
+    {
+      "path": "sources/native1/files/assets/characters/manifest.json",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/assets/characters/manifest.json",
+      "bytes": 7918,
+      "sha256": "fa645e290daa62f1a518e603cca6fb2c8d3f261a354385ce5c1475e5d7d503b6",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/assets/effects/manifest.json",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/assets/effects/manifest.json",
+      "bytes": 4313,
+      "sha256": "739c134f606ad72318785dbbaeeaa5f864a0ec120e8f3acf995a44727a0fe757",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/assets/references/manifest.json",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/assets/references/manifest.json",
+      "bytes": 2412,
+      "sha256": "c49ac654d0d96cb83c4c8499b15649557b91f6966743b1e942fb9040f3cc6dd0",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/character-blast.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/character-blast.png",
+      "bytes": 46350,
+      "sha256": "2091b464b806fa7d8e9cf56c46d719f5683cfbadfecec0a99a50e2a96a579a2d",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/character-lab.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/character-lab.png",
+      "bytes": 43458,
+      "sha256": "6376b8e7ec8e3d08b03cddcd6fd4f4f44521cc2dd6a835bfaf2fd9dbf2f01409",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/character-primary.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/character-primary.png",
+      "bytes": 47294,
+      "sha256": "4b6c53199c556aa58f86d4e7a02958d979f1ebc1d86389d1fe136cb475fba399",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/dash-plume-end.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/dash-plume-end.png",
+      "bytes": 46039,
+      "sha256": "4194ee6dd6c0f93f2a8433110648aaa6c107ed001ee8005f8e8ac04f8baefba0",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/dash-plume-mid.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/dash-plume-mid.png",
+      "bytes": 44475,
+      "sha256": "c6a2db49a6894db82e709f3395c6f18666bb84b3e71fb5295099a4313ecaafb0",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/enemy-recovery.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/enemy-recovery.png",
+      "bytes": 38409,
+      "sha256": "1330de03fd7970316333efab8bf33778f5bf325153386b6040949afa754f0b5f",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/enemy-warning.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/enemy-warning.png",
+      "bytes": 39107,
+      "sha256": "c66d4fd911ff69ce4fcdece8a432960e91d47d5b74337475536ae950f7533c57",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/level-preview.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/level-preview.png",
+      "bytes": 20745,
+      "sha256": "aadaa05117f1db392c4ea2e6a98bf2faa1abde9949de72ece167d4009ad26767",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/loadout-bench.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/loadout-bench.png",
+      "bytes": 148324,
+      "sha256": "1c708651263e5fd20b4cdea15d06ba9f5d2d5886d8ae7d4fac0836b9250c5c4c",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/mechanics-lab.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/mechanics-lab.png",
+      "bytes": 46497,
+      "sha256": "740ea58b2611294a3bd18f880b81bea52a1272a63d698abc423148e0c48277cb",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/shot-flare-left.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/shot-flare-left.png",
+      "bytes": 50287,
+      "sha256": "6cdee74805b619e0f801404c5cfafe76388620859f9ac4b8d4350930dbf0dce3",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/shot-flare-right.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/shot-flare-right.png",
+      "bytes": 50089,
+      "sha256": "803d303d133e13a728d16c9e15eecf110d39ce91b65d97ac9542606b3e2a640d",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/captures/slash-arc.png",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/captures/slash-arc.png",
+      "bytes": 49204,
+      "sha256": "01e44c59ebd6c23400197139077a896040f9c17dac228e1645fc7e39af53ca7e",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/data/campaign/registry.json",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/data/campaign/registry.json",
+      "bytes": 10890,
+      "sha256": "faec6e35a2cb584334e6fc9104051b9c425f8a3b1444deabff4dacfba2ab2d82",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/data/design/difficulty_profiles.json",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/data/design/difficulty_profiles.json",
+      "bytes": 1313,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/data/design/player_equipment.json",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/data/design/player_equipment.json",
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/docs/concept-art/act1/generated-manifest.json",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/docs/concept-art/act1/generated-manifest.json",
+      "bytes": 128016,
+      "sha256": "626f39561c9c430beef47a399f69711c94c1daf93fd94835bf0d83a33de3b637",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/docs/concept-art/act2/generated-manifest.json",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/docs/concept-art/act2/generated-manifest.json",
+      "bytes": 61369,
+      "sha256": "1145d3d494c8fe1337364b98c432a315c6cab5837409793bef9c6b62331d66f5",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/docs/concept-art/act3/generated-manifest.json",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/docs/concept-art/act3/generated-manifest.json",
+      "bytes": 87066,
+      "sha256": "46be3e8f5cfc321b9d661d41db5e049adce3278ec75f8a8561cf591c5ac4b9d9",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/docs/development/CANDIDATE_CAMERA_FRAMING.md",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/docs/development/CANDIDATE_CAMERA_FRAMING.md",
+      "bytes": 7422,
+      "sha256": "c439d25e51b5225d93972ef11deaddddf57861c46f9e96b2fdd7773737b8c18e",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/docs/reference-library/act1/CREDITS.md",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/docs/reference-library/act1/CREDITS.md",
+      "bytes": 41568,
+      "sha256": "c134fcecf5bb9bd49eeebe4570c36a52b66224e0b5ec05f57c3e5bba250a2ee2",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/docs/reference-library/act2/CREDITS.md",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/docs/reference-library/act2/CREDITS.md",
+      "bytes": 4753,
+      "sha256": "447bf094aea678a623a97f1e909c4713c063271a847ec604bdc743028aa8f527",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/docs/reference-library/act3/research/SOURCES.md",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/docs/reference-library/act3/research/SOURCES.md",
+      "bytes": 4367,
+      "sha256": "0109bb301fe10fc93ab48bb10cfef5fa29f25e7b076ebcb574e428ce8635b4a5",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/project.godot",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/project.godot",
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scenes/lab_arena.tscn",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scenes/lab_arena.tscn",
+      "bytes": 23638,
+      "sha256": "290c0f7fa49b284705c6adec423ca7109a2e7ebd50439866e39ef3856397c361",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scenes/player.tscn",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scenes/player.tscn",
+      "bytes": 1184,
+      "sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scenes/practice_target.tscn",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scenes/practice_target.tscn",
+      "bytes": 180,
+      "sha256": "600553b1326ef7d117e123c308c6e0f8be0e4a4dc4ff80113894add7bf2ee520",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/attack_footprint.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/attack_footprint.gd",
+      "bytes": 4138,
+      "sha256": "e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/attack_footprint.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/attack_footprint.gd.uid",
+      "bytes": 19,
+      "sha256": "6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/attempts.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/attempts.gd",
+      "bytes": 17310,
+      "sha256": "41d5abbe22d19e389e89ab9ef196496672ee3c4bfa25c596ba3ca695f6ec44c0",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/attempts.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/attempts.gd.uid",
+      "bytes": 20,
+      "sha256": "b9d15a9997fe9a59fc5b31ab8d30779dad9769cdfcd306306e40afd61435eec0",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/exact_json.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/exact_json.gd",
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/exact_json.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/exact_json.gd.uid",
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/level.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/level.gd",
+      "bytes": 18317,
+      "sha256": "801bb32c6411ca6c291b216637f54a2ff9cf59e9fa8f8f3301fdba919e5232c4",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/level.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/level.gd.uid",
+      "bytes": 20,
+      "sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/registry.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/registry.gd",
+      "bytes": 6006,
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/registry.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/registry.gd.uid",
+      "bytes": 20,
+      "sha256": "80713da50c61c6b08bed5ce5a8a9cf2bf0e2506e4369ec4b593c69c53b4cff91",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/save_store.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/save_store.gd",
+      "bytes": 7310,
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/save_store.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/save_store.gd.uid",
+      "bytes": 20,
+      "sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/shell.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/shell.gd",
+      "bytes": 31250,
+      "sha256": "c0590f3c066685a595449dbb05d88b413c6f686ae1cdb2b4a189d347dfedcfbe",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/shell.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/shell.gd.uid",
+      "bytes": 20,
+      "sha256": "e193ac7ff2bdcbbf75ca177a71194161a8f6bb3c5a184c304caeec690723eda6",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/snapshot_codec.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/snapshot_codec.gd",
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/campaign/snapshot_codec.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/campaign/snapshot_codec.gd.uid",
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/character/player_presentations.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/character/player_presentations.gd",
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/character/player_presentations.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/character/player_presentations.gd.uid",
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/combat/difficulty.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/combat/difficulty.gd",
+      "bytes": 3145,
+      "sha256": "2fb5f660ec9d28058c7783b52c65a85f53d0757c94a725d6408ff33deec3f56d",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/combat/difficulty.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/combat/difficulty.gd.uid",
+      "bytes": 20,
+      "sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/curling_smoke.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/curling_smoke.gd",
+      "bytes": 14175,
+      "sha256": "5f8fa272a9c5beef47f7c69ad0b916965e7caf30a5d0e6b329d56b227807c36c",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/curling_smoke.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/curling_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "8c283bb9181b5b956ec3746bf98b9d614d5f86a8caddac06ba609e43231b75bb",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/dev/dev.py",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/dev/dev.py",
+      "bytes": 27236,
+      "sha256": "8af0a3f3968a7dc0035c21c282a77157c8a33c8c542e061ecde912dc647f7213",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/effects.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/effects.gd",
+      "bytes": 21962,
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/effects.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/effects.gd.uid",
+      "bytes": 19,
+      "sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/enemy.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/enemy.gd",
+      "bytes": 41287,
+      "sha256": "39c16960c5b7ccb12282cda87c93d4b99280040881bf39b5879e11487a883ed1",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/enemy.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/enemy.gd.uid",
+      "bytes": 20,
+      "sha256": "8f3ba80717e9fe95c6a27620cd909fddd88cd18ed5c425b859b236ccc85a4280",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/equipment.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/equipment.gd",
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/equipment.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/equipment.gd.uid",
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/game.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/game.gd",
+      "bytes": 35434,
+      "sha256": "3b95dfde9d5660f05f01ec4cfd93539f2ad4292babc7c4ed59a72535d998007f",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/game.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/game.gd.uid",
+      "bytes": 19,
+      "sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/hud.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/hud.gd",
+      "bytes": 16609,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/hud.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/hud.gd.uid",
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/lab_bench.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/lab_bench.gd",
+      "bytes": 6324,
+      "sha256": "8f2bb0d92f48cfea32205f0b76854ad03ca7a85127e29dfe9275bdb0b2ea58fb",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/lab_bench.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/lab_bench.gd.uid",
+      "bytes": 20,
+      "sha256": "2a7f596814c6c7fff0b9f0a229de202678f54e5455c1d16c450e5f2a7ef561fe",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/pixel_sprite.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/pixel_sprite.gd",
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/pixel_sprite.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/pixel_sprite.gd.uid",
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/player.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/player.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/player.gd.uid",
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/practice_target.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/practice_target.gd",
+      "bytes": 4451,
+      "sha256": "455e1d0697db73c3b27a9e12136e5103bd438fdf22142bee0d329cd8748ba15e",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/practice_target.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/practice_target.gd.uid",
+      "bytes": 20,
+      "sha256": "653901d6e1e18f9d4ce4eb782af9366629a641679963266065a425d014814531",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/presentation/camera_framing.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/presentation/camera_framing.gd",
+      "bytes": 10132,
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/presentation/camera_framing.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/presentation/camera_framing.gd.uid",
+      "bytes": 20,
+      "sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/settings/game_settings.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/settings/game_settings.gd",
+      "bytes": 13346,
+      "sha256": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/settings/game_settings.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/settings/game_settings.gd.uid",
+      "bytes": 19,
+      "sha256": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/shotgun_flare.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/shotgun_flare.gd",
+      "bytes": 5778,
+      "sha256": "24e526e3850531317285e0d687ee93ebd37aa7819fbf5cd27af19284af0b84e6",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/shotgun_flare.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/shotgun_flare.gd.uid",
+      "bytes": 20,
+      "sha256": "e7c22cc0b7e74fa5181371c644527e6b18ec06ad8369dc72bfa4986505a15ba4",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/ui/campaign_menu.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/ui/campaign_menu.gd",
+      "bytes": 35356,
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/ui/campaign_menu.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/ui/campaign_menu.gd.uid",
+      "bytes": 19,
+      "sha256": "27d6486d87eb8162cc7e6c714ce9db11d313b66236870281aa2e615d8d5fc2e8",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/weapon_pickup.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/weapon_pickup.gd",
+      "bytes": 1750,
+      "sha256": "7a350ffa2efa2f6f031877842fb447e22b3b80d49cc2acc40ee39dd0cc19c56e",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/scripts/weapon_pickup.gd.uid",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/scripts/weapon_pickup.gd.uid",
+      "bytes": 20,
+      "sha256": "0a004b242329bf5742cac245b12a6d41b8e306fc79ad63d43dc0c46896bf8615",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/tests/camera_candidate_framing_smoke.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/tests/camera_candidate_framing_smoke.gd",
+      "bytes": 21155,
+      "sha256": "b63159dd1a04dfbdbf5ec76c0c13d42ca00d5109ed7de434c725c99d3b06f795",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/tests/fixtures/restore_candidate_level.gd",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/tests/fixtures/restore_candidate_level.gd",
+      "bytes": 13248,
+      "sha256": "809fcafd2680674dcf30ab295a1215d4bf996239a0e21c81ab44d4e7008ce760",
+      "role": "original_source"
+    },
+    {
+      "path": "sources/native1/files/tests/fixtures/restore_candidate_level.tscn",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-source/files/tests/fixtures/restore_candidate_level.tscn",
+      "bytes": 663,
+      "sha256": "d577faddd7590aaf58fa4772c441ea3b97e1e3427f8c394e577109601c92d5fd",
+      "role": "original_source"
+    },
+    {
+      "path": "logs/candidate-camera1.log",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1.log",
+      "bytes": 239,
+      "sha256": "6a728edce49fd2c38e4c45df80b8a507942dda65f92ac6009307b9aa6107d986",
+      "role": "full_native_log"
+    },
+    {
+      "path": "logs/candidate-camera1-wrapper.log",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-wrapper.log",
+      "bytes": 239,
+      "sha256": "6a728edce49fd2c38e4c45df80b8a507942dda65f92ac6009307b9aa6107d986",
+      "role": "full_wrapper_log"
+    },
+    {
+      "path": "logs/candidate-camera1-closure.json",
+      "origin_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/candidate-camera1-closure.json",
+      "bytes": 867,
+      "sha256": "abd28b99ce8d40ab61255ad5cff25afa76a07b5e503be94c30bd6aba9fef0180",
+      "role": "process_closure_source_verification"
+    },
+    {
+      "path": ".gdignore",
+      "origin_path": null,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "archive_import_exclusion"
+    },
+    {
+      "path": ".gitattributes",
+      "origin_path": null,
+      "bytes": 29,
+      "sha256": "8b2be205089172c5d668bd9468431e96393044bf09380e6b5d771dd1539c62b4",
+      "role": "original_source_preservation"
+    },
+    {
+      "path": "README.md",
+      "origin_path": null,
+      "bytes": 1434,
+      "sha256": "c6233f3ccb26875ee0d31396c82fe5532770162ead6dac084056a6c126f9f706",
+      "role": "packaging_readme"
+    }
+  ],
+  "index_self_hash_policy": "Self excluded; exact SHA256 recorded in canonical publication"
+}

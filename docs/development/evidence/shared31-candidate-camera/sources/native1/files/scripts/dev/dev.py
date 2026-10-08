@@ -27,7 +27,6 @@ import time
 ROOT = Path(__file__).resolve().parents[2]
 GODOT_APP = Path(".tools/Godot.app/Contents/MacOS/Godot")
 SUITES = {
-    "camera_candidate_framing": "tests/camera_candidate_framing_smoke.gd",
     "mechanics": "tests/mechanics_smoke.gd",
     "equipment": "tests/equipment_smoke.gd",
     "character_lab": "tests/character_lab_smoke.gd",
