@@ -1046,11 +1046,11 @@ func _capture_state() -> void:
 		complete_required.assign(required)
 		var retained_bank_view: Dictionary = {}
 		var required_error: String = ""
+		var tender: Node3D = _actors[LondonRoot.BANK_TO_TENDER[id]] as Node3D
 		if current.status == "running":
 			# Match London._bank_framed for every running phase and finite tail:
 			# the intact source mesh and retained landing/opening stay required
 			# after Tender HP reaches zero. Do not silently omit them in recovery.
-			var tender: Node3D = _actors[LondonRoot.BANK_TO_TENDER[id]] as Node3D
 			var source_points: Array[Vector3] = []
 			source_points.assign(_game.active_level.call("_required_source_points", tender))
 			if not _expect(is_instance_valid(tender) and tender.is_visible_in_tree() and not source_points.is_empty(), "running bank retains its actual intact full source mesh during every phase/tail: " + id): return
@@ -1066,7 +1066,7 @@ func _capture_state() -> void:
 		var native_points: Array = []
 		for point: Vector3 in complete_required: native_points.append(Codec.vector3(point))
 		post_draw_containment.banks[id] = {"required": current.status == "running", "error": required_error}
-		bank_observations[id] = {"phase": current.phase, "status": current.status, "cycle": current.cycle, "geometry": _geometry_json(current.geometry), "reservation_id": current.reservation_id, "original_deadlines": _deadline_json(current.exchange), "grace_progress": current.grace_progress, "contact_since_s": current.contact_since_s, "opportunities_consumed": current.opportunities_consumed, "receipts": current.receipts, "native_required_points": native_points, "retained_bank_presentation_witness": retained_bank_view, "post_draw_camera_error": required_error, "grace_visible": indicator.get_node("GraceBackground").is_visible_in_tree()}
+		bank_observations[id] = {"source_id": LondonRoot.BANK_TO_TENDER[id], "source_hp": tender.get("hp"), "source_position": Codec.vector3(tender.global_position), "source_visible": tender.is_visible_in_tree(), "phase": current.phase, "status": current.status, "cycle": current.cycle, "geometry": _geometry_json(current.geometry), "reservation_id": current.reservation_id, "original_deadlines": _deadline_json(current.exchange), "grace_progress": current.grace_progress, "contact_since_s": current.contact_since_s, "opportunities_consumed": current.opportunities_consumed, "receipts": current.receipts, "native_required_points": native_points, "retained_bank_presentation_witness": retained_bank_view, "post_draw_camera_error": required_error, "grace_visible": indicator.get_node("GraceBackground").is_visible_in_tree()}
 	for label: String in labels:
 		if _captured.has(label) or not current_labels.has(label): continue
 		var path: String = _capture_root + "a2-l4-" + _profile_id + "-" + _loadout_name + "-" + label + ".png"
