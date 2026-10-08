@@ -35,6 +35,9 @@ const ORIGINAL_STORAGE_HASHES: Dictionary = {
 const TEST_SOURCE_EXCLUSIONS: Dictionary = {
 	"tests/acts/act2/a2_l4_live_level_smoke.gd": "Current TEST ONLY helper adds strict equality, full native blocker witnesses, bounded HP-progress diagnostics and quiet native-source inward positioning and capsule-padded complete-path spatial qualification of later temporal candidates. Original hash remains provenance; production/resources/other sources must match exactly.",
 }
+const SHARED32_COMPATIBILITY_PATH: String = "res://docs/acts/act2/evidence/shared32-adoption/source-compatibility.json"
+const SHARED32_COMPATIBILITY_SHA: String = "201841ec607782f7dbcb35382895c5de31ca864734c1cc8a48f5f4430bd16066"
+var _pr_shared_compatibility: Dictionary = {}
 var _pr_payload: Dictionary = {}
 var _pr_original: Dictionary = {}
 var _pr_checkpoint: Dictionary = {}
@@ -110,7 +113,24 @@ func _run() -> void:
 	print("L4 courtyard reproduction: %d checks, %d failures; capture_root=%s; completed_scoped_courtyards=%s; HP_progress_timeout=%s; no full-level/transition acceptance" % [_checks, _failures, ProjectSettings.globalize_path(_pr_capture_root), complete, _hp_watch_timeout])
 	quit(2 if _hp_watch_timeout else (0 if _failures == 0 and complete else 1))
 
+func _pr_read_shared_compatibility() -> bool:
+	if not _expect(FileAccess.get_sha256(SHARED32_COMPATIBILITY_PATH) == SHARED32_COMPATIBILITY_SHA, "exact independently reviewed Shared32 compatibility receipt is pinned"): return false
+	var receipt: Variant = JSON.parse_string(FileAccess.get_file_as_string(SHARED32_COMPATIBILITY_PATH))
+	if not _expect(receipt is Dictionary and receipt.get("publication") == "9caeddf0540cb9c37479a470ad0fdf86425594cc" and receipt.get("original_publication") == "64f34c8776aa81d7eb8f88b71b8b8d64192f35f0" and receipt.get("merge_commit") == "645c360eaa0933621aed18f384cea5b9aa8a32d5" and receipt.get("sources") is Dictionary and receipt.sources.size() == 6, "only exact published Shared32 preservation and six reviewed shared paths authorize compatibility"): return false
+	for path: String in receipt.sources:
+		var entry: Dictionary = receipt.sources[path]
+		if not _expect(entry.get("original_sha256") is String and entry.original_sha256.length() == 64 and entry.get("current_sha256") is String and entry.current_sha256.length() == 64 and entry.get("reason") is String and not entry.reason.is_empty() and FileAccess.get_sha256("res://" + path) == entry.current_sha256, "every reviewed shared dependency matches exact published bytes: " + path): return false
+	_pr_shared_compatibility = receipt.sources.duplicate(true)
+	return true
+
+func _pr_shared_source_allows(path: String, recorded: String, current: String) -> bool:
+	var entry: Dictionary = _pr_shared_compatibility[path]
+	if not _expect(recorded == entry.original_sha256 and current == entry.current_sha256, "original earned-source and actual published Shared32 bytes both match reviewed compatibility: " + path): return false
+	_pr_exclusions["published-shared32:" + path] = {"original_sha256": recorded, "current_sha256": current, "publication": "9caeddf0540cb9c37479a470ad0fdf86425594cc", "receipt_sha256": SHARED32_COMPATIBILITY_SHA, "reason": entry.reason}
+	return true
+
 func _pr_read_source() -> bool:
+	if not _pr_read_shared_compatibility(): return false
 	if not _pr_verify_original_storage() or not _expect(FileAccess.get_sha256(ORIGINAL_ROOT + "source.json") == ORIGINAL_SOURCE_SHA, "exact original source inventory is preserved"): return false
 	var raw: Variant = JSON.parse_string(FileAccess.get_file_as_string(ORIGINAL_ROOT + "source.json"))
 	if not _expect(raw is Dictionary and raw.get("files") is Dictionary and raw.files.size() == 279, "original source inventory contains its complete recorded279-source set"): return false
@@ -121,6 +141,9 @@ func _pr_read_source() -> bool:
 		var current: String = FileAccess.get_sha256("res://" + path)
 		if TEST_SOURCE_EXCLUSIONS.has(path):
 			_pr_exclusions[path] = {"original_sha256": recorded, "current_sha256": current, "reason": TEST_SOURCE_EXCLUSIONS[path]}
+			continue
+		if _pr_shared_compatibility.has(path):
+			if not _pr_shared_source_allows(path, recorded, current): return false
 			continue
 		if not _expect(current == recorded, "actual production/resource/source bytes match the genuine first run: " + path): return false
 		_pr_checked_sources += 1
@@ -163,6 +186,9 @@ func _pr_read_saved_courtyard() -> bool:
 		var current: String = FileAccess.get_sha256("res://" + path)
 		if path in ["tests/acts/act2/a2_l4_priority_repro.gd", "tests/acts/act2/a2_l4_live_level_smoke.gd"]:
 			_pr_exclusions["saved-courtyard:" + path] = {"original_sha256": recorded, "current_sha256": current, "reason": "Only these two TEST files add finite diagnostic transport, genuine saved-courtyard options, quiet native-source inward positioning and TEST selector spatial qualification using original native paths. Original frozen source remains preserved. No production/input timing/Scheduler proof change."}
+			continue
+		if _pr_shared_compatibility.has(path):
+			if not _pr_shared_source_allows(path, recorded, current): return false
 			continue
 		if not _expect(current == recorded, "all non-TEST runtime/resources/frozen helper bytes match actual earned-courtyard source: " + path): return false
 		_pr_stage5_checked_sources += 1
@@ -221,10 +247,16 @@ func _run_route() -> bool:
 	else:
 		if not _expect(_state().beat == "villa_tender_priority" and _pr_defeats.is_empty(), "genuine stage5 GUI continuation skips only its already earned Scout/Handler defeats"): return false
 	if not await _clear(["villa_tender"]) or not await _finish_bank_tail("villa_bank") or not await _clear(["villa_smoke_handler"]): return false
-	var expected: Array[String] = ["villa_tender", "villa_smoke_handler"] if _pr_saved_courtyard_selected() else ["villa_scout", "villa_ray_handler", "villa_tender", "villa_smoke_handler"]
+	var expected: Array[String] = _pr_expected_defeats()
 	if not _expect(_pr_defeats == expected and _state().beat == "putney_entry" and _pr_checkpoints.is_empty() and _pr_completions.is_empty() and _pr_exits.is_empty() and _tail_pending.is_empty() and _tail_completed.has("villa_bank"), "actual Tender-first/native finite tail/remaining Handler earn only the remaining courtyard arrangement"): return false
 	if not await _pr_capture("actual-courtyards-finished", true): return false
 	return _failures == 0
+
+func _pr_expected_defeats() -> Array[String]:
+	var expected: Array[String] = ["villa_scout", "villa_ray_handler", "villa_tender", "villa_smoke_handler"]
+	if _pr_saved_courtyard_selected():
+		expected.assign(["villa_tender", "villa_smoke_handler"])
+	return expected
 
 func _pr_bind_live() -> void:
 	_actors = _game.active_level.get("_actors").duplicate()
