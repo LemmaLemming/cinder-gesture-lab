@@ -54,6 +54,41 @@ The selected reference is Georges Méliès's [A Trip to the Moon (1902)](https:/
 - Proposed earlier boss: the Selenite King in level 4.
 - **Act 1 final boss: the Man in the Moon.** He closes this act; the campaign has a separate final encounter in Act 3.
 
+**Design follow-up — environment interactables**
+
+The user wants to return to a broader set of environment interactables **after enemy design**, with each interaction based on an enemy behaviour it answers. Keep this as a future design topic; do not expand the interactable roster yet. The mushroom-spore interaction below is the first confirmed example. For each later proposal, identify the enemy pressure, the existing tap/swipe action that activates the prop, and the opening it creates.
+
+**Enemy design — proposed Act 1 roster**
+
+Start with three regular enemy roles and the two already planned bosses. Reuse the upright masked Selenite family, pale rib patterns and projecting headpieces from O49–O51; size, movement and attack poses distinguish the roles. These variants are new game designs, not three authenticated species from the film. The Earth's workers and astronomers remain friendly; the celestial dream figures remain scenery.
+
+| Enemy | First appearance | Tell and behaviour | Player decision |
+| --- | --- | --- | --- |
+| Rush Selenite | Crater Gardens | Crouches, locks a visible short rush lane, commits, then takes a moment to recover. | Dash sideways after commitment; choose a landing near its stopped position and punish recovery. |
+| Swarm Selenite | Mushroom Caverns | Small acrobatic bipeds approach in groups. The next attackers visibly crouch and raise their arms before short hopping strikes. | Preserve an escape landing, slash the nearest attackers, or release mushroom spores to open space in the crowd. |
+| Spear Guard | Late Mushroom Caverns; developed further in the court | Raises its oversized spear and braces toward one short lane, then thrusts and recovers. | Approach around a stalk or its flank; choose between attacking the guard and dealing with nearby swarmers. |
+
+Swarm pressure comes from bodies taking up useful approaches. A starting test can use about eight swarmers with only one or two preparing attacks at the same time. Their bodies should yield enough space for a normal dash; a surrounding crowd must not become an unavoidable collision cage. Every actual strike has a tell: simply brushing against a swarmer does not cause repeated contact damage. Swarmers can be fragile enough to fall to one ordinary slash as an initial tuning proposal, with several catchable in a well-aimed swing. This creates a crowd-clearing rhythm with fixed player damage.
+
+The blast remains an optional way to exploit a cluster or launch a larger threat. Every regular encounter and boss opening remains viable with ordinary slashes. Introduce each role alone before combinations: rush plus spear, swarm plus mushroom, then swarm plus one spear guard. Court formations reuse spear guards rather than adding a fourth support enemy. Enemy counts, attack concurrency, health and timings need testing; do not lock these proposals as final balance.
+
+**Confirmed mushroom interaction — falling spores repel enemies**
+
+The user wants a swarm in the mushroom map and spores **on the mushrooms that the player can hit**. Hitting them makes spores fall around the mushroom, **temporarily repelling enemies**. This replaces the earlier automatic damaging spore-vent proposal for the main grotto. It uses ordinary attack gestures and creates space through enemy movement.
+
+Proposed detailed rules:
+
+1. Put a clearly visible hanging spore cluster on the mushroom, low enough for an ordinary slash. A tall unreachable cap cannot be the required target; no jump, ranged-only shot or new interaction button is introduced.
+2. A normal hit releases square spores from the cap above. Their falling motion conveys the effect while a restrained floor boundary shows its useful area. The player remains unharmed by this friendly effect.
+3. Affected regular enemies cancel their current attack, visibly recoil, turn and retreat beyond that boundary. They remain alive and avoid the active spore area; they are repelled, not merely stunned. Rushers and spear guards also respect the field when used in a mixed encounter.
+4. Use the resulting opening to dash through, change sides, isolate an enemy or reach another mushroom. Enemies regroup outside the boundary. As the spores thin, they can approach again, using their normal readable attack tells.
+5. Starting tuning proposal: two visible clusters per mushroom, each consumed by one hit; roughly three seconds of repulsion, with a visibly thinning final half-second. Try a radius of about three-quarters of the normal dash distance. Do not replenish clusters during that encounter in the first test. These quantities, duration and replenishment rules are proposals, not user-confirmed requirements.
+6. A spent cluster leaves a visible empty patch. One strike consumes one cluster per mushroom; while its release/field is active, extra hits do not consume the remaining cluster or refresh the effect. This prevents an ordinary slash-then-blast combination from accidentally spending both charges. Reset its supply on an encounter retry. The field footprint is predictable; random decorative particles do not decide which enemy is repelled.
+
+The repeated decision is **see the crowd approach → dash to a useful mushroom position → aim a slash at its cluster → spores fall and the crowd retreats → spend that opening on movement or an attack**. Limited clusters make early use compete with saving an escape opportunity. All required fights remain completable without a 360-swing pickup, a dash boost or a particular carried weapon.
+
+First test: one broad room, two mushrooms and about eight swarmers, using fixed stats, normal dash and slash only. After one small demonstration, observe whether players deliberately create and use the opening. Check that the cluster is reachable under pressure, retreating bodies leave a usable lane, and the fading spores do not hide the next attack tell. Compare immediate spore use with saving it for a tighter crowd. This is a proposed test, not implemented gameplay.
+
 **Revised regular-level sequence — working design**
 
 Build a journey through five theatrical places, each with a different decision. The catalogue supplies visual references and concept studies; gameplay props, animations, collisions and encounters still need production. All hazards and boss rules below are proposed game adaptations, not claims about the film.
@@ -62,7 +97,7 @@ Build a journey through five theatrical places, each with a different decision. 
 | --- | --- | --- | --- |
 | 1. Observatory and Launch — The Launch Rehearsal | A procession through hall, workshop and broad loading roof | Where should I land so my next attack has a clear direction? | 6 minutes |
 | 2. Crater Gardens — The Celestial Camp | Connected lunar clearings with two approaches that rejoin at camp | Can I make danger commit to one place and land somewhere useful? | 8 minutes |
-| 3. Mushroom Caverns — The Breathing Grotto | Broad fungal chambers with routes around large stalks | Can I reach an opening while keeping a retreat clear? | 9 minutes |
+| 3. Mushroom Caverns — The Breathing Grotto | Broad fungal chambers with a closing swarm and hittable mushroom spores | When should I release spores to create room, and how should I use that opening? | 9 minutes |
 | 4. Selenite Court — The King's Formation | Linked open courts ending at a side-mounted throne | Which formation gap gives me the best target? | 10 minutes |
 | 5. The Living Moon — Departure Refused | A short return to the capsule, then a compact face-side arena | Can I evade the Moon's committed attack and return to its eye in time? | 10 minutes |
 
@@ -104,20 +139,20 @@ These provisional targets total **43 minutes**, within the proposed 40–45-minu
 
 #### 3. Mushroom Caverns — The Breathing Grotto
 
-**Look and layout:** oversized shallow-capped mushrooms, porous fungi, rock shelves and a fallen trunk create irregular scenic chambers. Large stalks split the floor into two useful approaches. The trunk sits beside a generous ground-level passage; shelving suggests depth without mandatory climbing or precision crossings.
+**Look and layout:** oversized shallow-capped mushrooms, porous fungi, rock shelves and a fallen trunk create irregular scenic chambers. Large stalks split the floor into two useful approaches. Reachable spore clusters make selected mushrooms temporary sources of breathing room against the swarm. The trunk sits beside a generous ground-level passage; shelving suggests depth without mandatory climbing or precision crossings.
 
 **Encounter sequence:**
 
-1. **Umbrella grove:** introduce a spear-bearing variant of the same Selenite. It faces a short lane, winds up, thrusts and pauses. Dash around a solid mushroom stalk, then attack the exposed recovery. Only clearly grounded stalks block movement and attacks; decorative caps and ceiling scenery do not.
-2. **Breathing chamber:** demonstrate one proposed spore vent in a quiet room. It visibly swells, marks its floor patch, releases square spores and clears. The vent leaves a broad neighbouring safe area throughout its cycle. Staying still in a safe pocket is a valid decision.
-3. **Crossed grotto:** combine the familiar spear guard with alternating spore patches. Choose a route around the stalk: a quick exposed approach or a covered approach with a later opening. Look for both an attack position and a safe retreat instead of dashing blindly into the nearest enemy.
-4. **Court approach:** two familiar guards stand on opposite sides of a central mushroom and commit at different times. Punish one recovery while keeping the other guard visible. Defeat both to open the curtained passage that previews the court's ornament; crossing it by contact ends the level.
+1. **Umbrella grove:** introduce a small group of swarm Selenites with clear gaps between them. Their short hopping strikes teach crowd spacing and well-aimed swings. Only clearly grounded stalks block movement and attacks; decorative caps and ceiling scenery do not.
+2. **Breathing chamber:** show the reachable spore cluster in a calm approach, then let a small pack come into view. Strike the cluster to release falling spores; the approaching enemies visibly retreat. Use the space to change sides or attack an isolated swarmer. Let the cloud fade so the player sees the crowd regroup before the next threat.
+3. **Crossed grotto:** two mushrooms offer different ways through a larger swarm. Spend a cluster early to open an approach, or wait until more enemies are nearby to create a bigger positional advantage. Each mushroom has a visibly limited supply in the first test. Keep the resulting lane broad enough for a normal dash, and keep a baseline escape route when spores run out.
+4. **Court approach:** introduce one spear guard's windup, thrust and recovery without a crowd first. Then combine that guard with a small swarm around a mushroom. Falling spores repel both types; choose whether the opening is better spent passing the guard or attacking its recovery. Defeat the final guard and swarm to open the curtained passage; crossing it by contact ends the level.
 
 **Film kit:** O43–O48 mushroom caps, clusters, porous forms, trunk and rock shelves; O49–O51 Selenite and spear; O56 curtain arch at the exit.
 
-**New production additions:** one vent with readable state changes and the spear windup/recovery poses. Keep foreground fungi outside the combat sightline or fade them when they would obscure the player or a warning.
+**New production additions:** the small swarmer's movement/strike/retreat poses, reachable full/spent spore clusters, falling-spore repulsion feedback and the spear windup/recovery poses. The existing grotto concept image remains a scenery reference; its earlier vent depiction needs a future art revision to show this interaction. Keep foreground fungi outside the combat sightline or fade them when they would obscure the player, cluster or warning.
 
-**Break points:** save after the first spear guard, after the vent demonstration and before the final clearing. Cleared rooms remain safe; no unannounced respawns behind the player.
+**Break points:** save after the first swarm, after the spore demonstration and before the final mixed encounter. Cleared rooms remain safe; no unannounced respawns behind the player.
 
 #### 4. Selenite Court — The King's Formation
 
@@ -169,14 +204,14 @@ Keep a single compact battlefield throughout the fight. Do not send the player a
 
 **First design tests, before full level production**
 
-Test the hall's direction exercise, one Selenite rush, one mushroom/vent encounter, the King's formation/lunge and the Moon's warning/eye opening as short greyboxes. With fixed stats and the normal dash, a new player should identify the safe landing after one demonstration and recognize where a slash can punish recovery. Observe aiming mistakes separately from missed warning timing. Try slash-only completion, screen-edge swipe releases and a pause/resume during a warning. If safe landings or the boss opening require a wider camera, revise the encounter layout. These are proposed tests; campaign content has not been implemented or playtested.
+Test the hall's direction exercise, one Selenite rush, one mushroom/swarm repulsion room, the King's formation/lunge and the Moon's warning/eye opening as short greyboxes. With fixed stats and the normal dash, a new player should identify a useful landing after one demonstration, deliberately use a spore opening and recognize where a slash can punish recovery. Observe aiming mistakes separately from missed warning timing. Try slash-only completion, screen-edge swipe releases and a pause/resume during a warning or active spore field. If safe landings or the boss opening require a wider camera, revise the encounter layout. These are proposed tests; campaign content has not been implemented or playtested.
 
 **Optional-level examples — proposals**
 
 | Regular level | Optional level | Reused assets | Small additions and play difference |
 | --- | --- | --- | --- |
 | Crater Gardens | Salvage Circuit | Lunar clearings, jagged scenic rocks, capsule/hatch model, impact warnings and the rush Selenite | Add recoverable capsule parts and a damaged hatch state. Collect three parts by contact in any order around a compact loop, then reach the repaired hatch to finish. Each clearing rearranges familiar threats. A dash-length pickup can ease the broad approaches but is unnecessary. |
-| Mushroom Caverns | Spore Bloom | Stalks, caps, porous fungi, ground passages, shelves, spear guards and the regular level's spore vent | Rearrange the same kit into alternating safe pockets. Add a distinct bloom-state animation to the existing vent; an optional 360-swing pickup can ease the final crowd. Defeat the final guard pair to quiet the vents and open the contact exit. Keep baseline completion viable. |
+| Mushroom Caverns | Spore Bloom | Stalks, caps, porous fungi, ground passages, shelves, swarmers, a spear guard, and the regular level's hittable clusters/repulsion effect | Rearrange the same mushrooms into a compact sequence where limited spore supplies open different crowd routes. Add a distinct cluster arrangement or bloom animation; an optional 360-swing pickup can ease the final crowd. Defeat the final mixed group to open the contact exit. Keep baseline completion viable. |
 | Selenite Court | Royal Rehearsal | Court floors, curling panels, crescent columns, curtains, guards and their formation animations | Add only a practice bell and formation markers. Contact with the bell starts a short arrangement; clearing it opens the next. Clear three arrangements to finish. No flawless speed run is required. |
 
 These are separately selected side levels unlocked after clearing their parent level. They need approximately 3–5 minutes each as a provisional first pass, with one checkpoint before the final exercise. Their rewards can be a film-themed cosmetic or challenge-completion stamp; none grants permanent damage. Shared main-level mechanics such as the spore vent are already in the parent kit, so do not count them as an entirely new optional-area environment.

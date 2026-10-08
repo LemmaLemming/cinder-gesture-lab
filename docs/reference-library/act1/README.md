@@ -20,7 +20,7 @@ There are **35 catalogued local images**: 29 archival/user previews and six fina
 
 Use painted-looking stage wings and backdrops, jagged lunar rocks with broad white marks, Victorian travellers, a finless bullet capsule, giant shallow-capped fungi, human celestial performers, and upright rib-patterned Selenites. Build the royal court from curling panels, radial roundels, crescents and drapery. The [style guide](STYLE_GUIDE.md) connects 18 visual rules to source frames and institutional records.
 
-The film's widescreen tableaux become layered scenery around generous playable floors. Preserve the close camera that follows the player, any-angle swipe-only dashes, tap slash, double-tap blast, swipe-end-relative aiming, one carried weapon and fixed baseline damage. Optional levels reuse their regular level's scenery and enemies with a few new props, hazards or formations. Bell markers, spore vents, salvage objectives and boss patterns are proposed game additions.
+The film's widescreen tableaux become layered scenery around generous playable floors. Preserve the close camera that follows the player, any-angle swipe-only dashes, tap slash, double-tap blast, swipe-end-relative aiming, one carried weapon and fixed baseline damage. Optional levels reuse their regular level's scenery and enemies with a few new props, hazards or formations. The current mushroom design uses hittable spore clusters whose falling spores temporarily repel a swarm. Broader environment interactables will be designed after enemy behaviours. Bell markers, spore interactions, salvage objectives and boss patterns are game additions.
 
 ## New concept art
 
@@ -29,7 +29,7 @@ Generated with the **built-in image generation tool**, using locally saved film 
 | ID | Final saved image | Purpose |
 | --- | --- | --- |
 | G01 | [Lunar surface and celestial tableau](concepts/lunar-tableau-v2.png) | Jagged scenic rock wings, Earth/crescent/Saturn figures, finless capsule, Victorian traveller and biped Selenites. |
-| G02 | [Giant mushroom grotto](concepts/mushroom-grotto-v2.png) | Paired regular/optional layouts showing the same fungal scenery kit with added spore vents and warnings. |
+| G02 | [Giant mushroom grotto](concepts/mushroom-grotto-v2.png) | Paired regular/optional layouts sharing a fungal scenery kit. The earlier vent depiction is superseded by the current hittable-spore repulsion design; a future art pass should show clusters and retreating swarmers. |
 | G03 | [Painted Selenite court](concepts/selenite-court-v2.png) | Celestial stage ornament, open combat floor and small optional rehearsal additions. |
 | G04 | [Observatory and launch objects](concepts/observatory-launch-object-studies-v2.png) | Twelve labelled studies; worker costume corrected against the workshop frame. |
 | G05 | [Lunar scenery and celestial objects](concepts/lunar-scenery-object-studies.png) | Twelve labelled studies of painted scenery, celestial performers and grotto pieces. |
