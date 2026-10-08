@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "level_id": "A2-L3",
+  "status": "ACTOR_COMPONENT_PASSED_NATIVE_B02_MATERIAL_VISIBILITY_DEFECT_CORRECTION_UNDERWAY",
+  "tested_source_commit": "31475ff2757f833fbc7479e528ae9c1d59bfa88b",
+  "shared_api": "campaign-shared-23",
+  "shared_publication": "2304d25e51d269edd3d6fc90b142f87b2ad35a6d",
+  "sources_sha256": {
+    "scripts/acts/act2/canister_tender_actor.gd": "c18a4b09ed55761de6f10cfa803d288718db480891ac1da97c9b5a5711e25c29",
+    "scripts/acts/act2/canister_tender_actor.gd.uid": "e50fb36075bcc9792822853c3a491158799b99f909d0bbb4502ffb793138d9fe",
+    "scripts/acts/act2/canister_tender_visual.gd": "d3b8dd7f41eb87808274e067a516efd98acddda838358a9e444dd65a53fb3633",
+    "scripts/acts/act2/canister_tender_visual.gd.uid": "81591eeddc37433f047200257ca15b0a48a72dbf6a0fac58257d4dffd298ed2b",
+    "scripts/acts/act2/handling_machine_boss_visual.gd": "ac74c4a1c82b6faf8526a52c8f69f6586c171fddc6211039d60d5ba404852582",
+    "scripts/acts/act2/handling_machine_boss_actor.gd.uid": "36d4c1aaec4e44b10f7a350d48cdeb654063b920fa989fce733ea5618dcb8087",
+    "scripts/acts/act2/handling_machine_boss_visual.gd.uid": "6b32830c1a3f026f0b6a65a5f56a3f9f16b2dc738d956de8a2e4dae307abdf07",
+    "scripts/acts/act2/handling_machine_boss_actor.gd": "685308db29c7df0b117e6b4755406a42916c31f22cbd707f6b0c3f9afadc8964",
+    "scripts/acts/act2/ruined_house_floor.gd": "a5da64bd225526174845cfbf0b2d33b21ccad40915544ec5b1359dc3a3ca2626",
+    "scripts/acts/act2/ruined_house_kit.gd": "19c694d6257856605f3b175a288ce611a3da2a9d916a1151ce4600512a7f3505",
+    "scripts/acts/act2/ruined_house_sequence.gd": "f73c1d5ec34f6829100b2cec2c3a84cf1e1a2cc4501a892fef56f9fa001f5975",
+    "scripts/acts/act2/ruined_house_sequence.gd.uid": "4fa2aa87083c6c8f45704cf17a6e5bcda9a291a246bf9dbc0793d9cbe8c495da",
+    "scripts/acts/act2/ruined_house_floor.gd.uid": "f146f5816772a888143a25d92c7e157fa1a358ba387a5ccb0eb8ee1b94e8e339",
+    "scripts/acts/act2/ruined_house_kit.gd.uid": "cb5bc95e9659d9566daa53edb7d5cbab44fb65afa0fa3d0387b65220466c43b0",
+    "tests/acts/act2/a2_l3_actor_smoke.gd": "6918dd80560aac519d45f9848f4fc04c800fa9494aa43101da3d557e98fd52cf",
+    "tests/acts/act2/a2_l3_actor_smoke.gd.uid": "e5702c31b709dfd25359477a6df4fa1a34db264b280539f959bf48d6546da086",
+    "tests/acts/act2/a2_l3_asset_capture.gd": "05a16799264b4f31bd4dc4f2089c87baeb070f7d76c9100b1619ca3204bbfc02",
+    "tests/acts/act2/a2_l3_asset_capture.gd.uid": "0bd99107571c3054e06add4d5dee220d5c45a83af3d9c0452cf05de1c93abd68",
+    "tests/acts/act2/fixtures/a2_l3_asset_preview.tscn": "af0d16fe77eeef0c8d6f6f32049afad1e16bfb40dcc4202e91297ac135260454",
+    "tests/acts/act2/fixtures/a2_l3_asset_preview.gd": "3fcb9e5a686a65c1d190a891516c49dfa61f2230f59e45a8a0aafb9d63a0a6b3",
+    "tests/acts/act2/fixtures/a2_l3_asset_preview.gd.uid": "e31c7bcf559cb2d0c2bb609baf0c7e6b4e413a92e7a2299f9bad1c356a5e8a74"
+  },
+  "import": {
+    "command": "python3 scripts/dev/dev.py import",
+    "exit_code": 0,
+    "session_id": 39693,
+    "provenance": "Observed tool startup and complete clean editor stdout; no raw engine log was configured for this successful import",
+    "reason": "Ten new scripts/UIDs and new TEST ONLY preview scene, plus new copied prior native PNG artifacts. No source failure or second import requested."
+  },
+  "actor_component": {
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l3-actor-phase-first.log --script tests/acts/act2/a2_l3_actor_smoke.gd",
+    "raw_log": "a2-l3-actor-phase-first.log",
+    "sha256": "1f06cf54a9a556c85857fe806f2a8fd7d10f91c50158a5ef8c0d34af7fc0950f",
+    "exit_code": 0,
+    "checks": 41,
+    "failures": 0,
+    "scope": "Actual shared Heavy ordinary-primary/zero initial ammo and real stationary Reach/Circle recovery gates. Exact closed phase1 threshold, callback reentry/action refusal, authored BACK rejection, exact paused fresh pending actor, phase2 Place fresh actor and malformed action/HP refill refusal, second actual primary/local disable, Tender rig/native actor transport and cleanup. Isolated actual actors; no full L3/smoke/portrait/full aggregate/canonical claim."
+  },
+  "asset_first_failure": {
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-asset-capture-first.log --script tests/acts/act2/a2_l3_asset_capture.gd",
+    "raw_log": "a2-l3-asset-capture-first.log",
+    "sha256": "4736ccd35e9249c9d0140627280bc9ff7acd7dc444859ed9e29fa191665222b0",
+    "classification": "fixture script/API teardown error",
+    "first_meaningful_error": "Invalid call. Nonexistent function request_pause (via call) in base Node (game.gd), a2_l3_asset_capture.gd62",
+    "exit_code": 130,
+    "exit_provenance": "After first error the yielded native job did not complete; owner interrupted only session11310, preserving original source/rawlog and all10 saved images/metadata first",
+    "fixture_result": "NO result line/completed check count; do not label pass.10 saved native540x1170 cosmetic frames had no reported camera bound failure before teardown; art/readability review pending.",
+    "artifact_sha256": {
+      "asset-first-failed/tender-warning.png": "1330442081b2165a62c8530a112c25fc8bcb9693b14d46f9bb8c0e6c59163dfa",
+      "asset-first-failed/boss-idle.png": "677cb99bed07a7a2e1ea6fb96c3900534809906836b4ed798de0e421de0a0709",
+      "asset-first-failed/metadata.json": "6a049455e24b3a4de6878b01792374190fccaeddae26f26ccf7fd1568e01ca94",
+      "asset-first-failed/boss-reach-recovery.png": "3c0cbbcfb6d067bbbef421cdc1fa98bfdd4d711ed5c6444c7cc452b7a6d78bd0",
+      "asset-first-failed/tender-reload.png": "81727a5fc90aa9e710687bf59fb9a21d92acabaf5d16ad306ece7e59b6436510",
+      "asset-first-failed/boss-place-active.png": "9a7bf8d827040fd104cbf033a199ffbc1117c59489ec2963a120ee9963b3cd62",
+      "asset-first-failed/boss-reach-active.png": "0f8e613035e8d1c2dce9ae532251d58d3ef8e8c5fae9f1e6759c6f6e53c5d2cc",
+      "asset-first-failed/boss-place-recovery.png": "72eaf3030fefd3f76388a3e3c503d36a097fcd5a2b4e9e077ac3186b969a6049",
+      "asset-first-failed/exposed-house.png": "e818034c12ce9c50ca852ed162860a24fef91c530ceac706879be8f8711aaf1b",
+      "asset-first-failed/boss-reach-lock.png": "b328d7d964694ff61d50ec3f507826f2269e2ff260a18d875ab53cb42b7bb597",
+      "asset-first-failed/boss-local-arm-disengaged.png": "9b716254007cbf4ff9ba78cf4251f01a898be590a9eeb2a541d4e1f6246f983b"
+    },
+    "minimal_fix": "Use actual Game.request_pause_deferred and await complete supported deferred barrier before exit/free; CampaignShell.request_pause is unavailable on standalone Game. No resource/production art/controller/damage/camera correction indicated."
+  },
+  "asset_corrected": {
+    "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l3-asset-capture-corrected.log --script tests/acts/act2/a2_l3_asset_capture.gd",
+    "raw_log": "a2-l3-asset-capture-corrected.log",
+    "sha256": "5b04d9d585a41da51cc3cb5f8d80eb8ea9427075a99faf62fa2be727f69d466d",
+    "exit_code": 0,
+    "checks": 48,
+    "failures": 0,
+    "source_changes": "Only fixture teardown: supported standalone Game.request_pause_deferred and three deferred frames/barrier assertion; native art/actor sources unchanged from31475ff. No import or41-check repetition.",
+    "corrected_fixture_sha256": "4a9e8c98d34e3e4fe41bd619f0caa4a8cf5c2fe36f747bafd280340556029856",
+    "scope": "Ten actual native540x1170 cosmetic asset previews in actual shared Game/camera/Act2 player presentation and production floor/kit resources, TEST ONLY stage placed Hero/cosmetic phase. Shared rig cutaway derives actual Hero sprite triangles; scenery candidate cutaways are not applied by this preview. No accepted Scheduler attack/cue/cloud, authored route/input/save/phase checkpoint/full aggregate/balance/canonical acceptance.",
+    "artifact_sha256": {
+      "asset-corrected/tender-warning.png": "e381a75c4368196429e62794677890b3d10b80381c209d45bfcbb5c5ed5f35d0",
+      "asset-corrected/boss-idle.png": "0f02c0fc699f1ef54b16e842db16c95ff4795058596f2b6884ce89f551aedf34",
+      "asset-corrected/metadata.json": "f29ac589506677bce819fea1078b9f1ad0b1129a1b4cd72e0f4361a1875aca3b",
+      "asset-corrected/boss-reach-recovery.png": "01cde90e0eb92f8503e807d8f4900dcc65c42883174602c7026fa1e8cf65a154",
+      "asset-corrected/tender-reload.png": "9c24200bbf8907d3177a15e6b1e1319fa07b342ded6ce3a2c7cf09bcec7bacb9",
+      "asset-corrected/boss-place-active.png": "9d3f9b48c4b2b9066ff5a965ef390862de5b3d8d4fc0739183aaa58f1cd6bc7f",
+      "asset-corrected/boss-reach-active.png": "ea74c209cb89a46c13fac03a67ee46f6935cde53b8bbbf9be86c352ffff30b02",
+      "asset-corrected/boss-place-recovery.png": "57990dbe1a5e1df75048c3644ab128f40c767ade0d8b035635f98317a19af38a",
+      "asset-corrected/exposed-house.png": "5420328fb90d12acacf68b0c02de4724fbbe7509bc8cb03520be3e0ac0392318",
+      "asset-corrected/boss-reach-lock.png": "8c2cac5a0b12c4d7ef5f2803bc42280c2ae6583836b76cf0ea07aea7931cbe15",
+      "asset-corrected/boss-local-arm-disengaged.png": "0248f2b730d0b4f464c18c60d7c7b9033c69274a6d852f1e04959971e10f7ed1"
+    },
+    "reviews": {
+      "root": {
+        "frames": [
+          "boss-idle",
+          "boss-reach-active",
+          "boss-place-recovery",
+          "tender-reload",
+          "exposed-house"
+        ],
+        "finding": "Hero readability maintained; low boss joint/Place footprint hidden under opaque mass. No full art acceptance."
+      },
+      "boss_peer": {
+        "frames": 7,
+        "finding": "Material defect: recovery coupler hidden in both actions, Place plate/arm concealed, Reach lock claw nearly idle beneath canopy, local disengagement barely differentiated. Hero torso/facing/feet clear in all7; low five-support machine/rounded paired-eye tentacled anatomy visible, fifth rear support not established. Focused cosmetic correction only; source/HP origin and gameplay unchanged."
+      },
+      "source_scenery_peer": {
+        "frames": [
+          "tender-warning",
+          "tender-reload",
+          "exposed-house",
+          "boss-idle"
+        ],
+        "finding": "Selected Tender tube/bore/canisters/two skids and worn exposed house/left approach readable without material Hero/floor clutter defect. Tiny coupler/shutters/rivets merge. Right scullery/sink/arch/right approach and distant excavation are outside these views; actual derived scenery cutaway and smoke/cue occlusion remain untested."
+      }
+    }
+  }
+}

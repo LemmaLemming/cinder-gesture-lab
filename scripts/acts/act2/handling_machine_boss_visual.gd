@@ -5,7 +5,8 @@ extends "res://scripts/acts/act2/salvage_handler_visual.gd"
 
 const BOSS_ACTIONS: Array[String] = ["reach", "place"]
 const BOSS_CASE_CENTER: Vector3 = Vector3(0.0, 0.81, -0.23)
-const BOSS_SHOULDER: Vector3 = Vector3(0.0, 0.71, 0.03)
+const BOSS_SHOULDER: Vector3 = Vector3(0.40, 0.71, 0.03)
+const BOSS_OPERATOR_CENTER: Vector3 = Vector3(0.0, 1.05, 0.08)
 const BOSS_REACH_ELBOW: Vector3 = Vector3(0.12, 0.36, 1.76)
 const BOSS_REACH_WRIST: Vector3 = Vector3(0.0, 0.08, 3.50)
 const BOSS_PLACE_ELBOW: Vector3 = Vector3(0.40, 0.57, 0.29)
@@ -14,6 +15,7 @@ const BOSS_PLACE_WRIST: Vector3 = Vector3(0.0, 0.04, 0.0)
 var _boss_action: String = "reach"
 var _boss_plate: Node3D
 var _boss_disengaged_cap: MeshInstance3D
+var _boss_socket_edges: Array[MeshInstance3D] = []
 
 
 func set_action(action: String) -> bool:
@@ -80,23 +82,16 @@ func _build() -> void:
 
 
 func _build_boss_case() -> void:
-	var belly: MeshInstance3D = _cylinder(_case, "RivetedWorkBelly", 0.61, 0.28, _plate, 0.69, 10)
-	belly.scale.z = 0.82
-	_readability_panel(belly)
-	var rim: MeshInstance3D = _cylinder(_case, "WorkBellyRim", 0.63, 0.032, _black, 0.63, 10)
-	rim.position.y = -0.15
-	rim.scale.z = 0.82
-	_readability_panel(rim)
-	var hood: MeshInstance3D = _cylinder(_case, "BroadFacetedCanopy", 0.88, 0.19, _plate, 0.59, 12)
-	hood.position.y = 0.35
-	hood.scale.z = 0.84
-	_readability_panel(hood)
-	var hood_rim: MeshInstance3D = _cylinder(_case, "CanopyRetainingEdge", 0.895, 0.032, _black, 0.895, 12)
-	hood_rim.position.y = 0.245
-	hood_rim.scale.z = 0.84
-	_readability_panel(hood_rim)
+	# Authored open front bay, not opacity or a relocated hitpoint. The full
+	# original cylinder projected onto the central low joint/Place plate. Keep
+	# the rounded rear/side case but leave the front 120 degrees physically open.
+	_open_work_shell("RivetedWorkBelly", 0.61, 0.69, 0.28, 0.82, Vector3.ZERO, _plate)
+	_open_work_shell("WorkBellyRim", 0.63, 0.63, 0.032, 0.82, Vector3(0.0, -0.15, 0.0), _black)
+	_open_work_shell("BroadFacetedCanopy", 0.88, 0.59, 0.19, 0.84, Vector3(0.0, 0.35, 0.0), _plate)
+	_open_work_shell("CanopyRetainingEdge", 0.895, 0.895, 0.032, 0.84, Vector3(0.0, 0.245, 0.0), _black)
 	for index: int in range(12):
 		var angle: float = TAU * float(index) / 12.0
+		if index > 1 and index < 5: continue # No floating rivets across the bay.
 		_box(_case, "CanopyRivet_%02d" % index, Vector3(0.029, 0.022, 0.029), Vector3(cos(angle) * 0.80, 0.278, sin(angle) * 0.67), _brass)
 	for side: float in [-1.0, 1.0]:
 		_readability_panel(_box(_case, "AngledSideArmorLeft" if side < 0.0 else "AngledSideArmorRight", Vector3(0.06, 0.30, 0.73), Vector3(side * 0.60, -0.015, -0.03), _rust))
@@ -111,10 +106,56 @@ func _build_boss_case() -> void:
 	_readability_panel(_box(_case, "RearCylinderPanel", Vector3(0.83, 0.23, 0.055), Vector3(0.0, -0.025, -0.51), _plate))
 
 
+func _open_work_shell(node_name: String, lower_radius: float, upper_radius: float, height: float, depth_scale: float, at: Vector3, material: StandardMaterial3D) -> void:
+	# Twelve-sided industrial shell with four forward sectors absent. Its solid
+	# rear/side facets, exposed cut edges and existing rivets retain G10's hood.
+	var vertices := PackedVector3Array()
+	var normals := PackedVector3Array()
+	var uvs := PackedVector2Array()
+	var bottom_center: Vector3 = Vector3(0.0, -height * 0.5, 0.0)
+	var top_center: Vector3 = Vector3(0.0, height * 0.5, 0.0)
+	for index: int in range(8):
+		var a: float = deg_to_rad(150.0 + float(index) * 30.0)
+		var b: float = a + PI / 6.0
+		var bottom_a: Vector3 = Vector3(cos(a) * lower_radius, bottom_center.y, sin(a) * lower_radius * depth_scale)
+		var bottom_b: Vector3 = Vector3(cos(b) * lower_radius, bottom_center.y, sin(b) * lower_radius * depth_scale)
+		var top_a: Vector3 = Vector3(cos(a) * upper_radius, top_center.y, sin(a) * upper_radius * depth_scale)
+		var top_b: Vector3 = Vector3(cos(b) * upper_radius, top_center.y, sin(b) * upper_radius * depth_scale)
+		_shell_triangle(vertices, normals, uvs, top_center, top_b, top_a, lower_radius)
+		_shell_triangle(vertices, normals, uvs, bottom_center, bottom_a, bottom_b, lower_radius)
+		_shell_triangle(vertices, normals, uvs, bottom_a, top_a, top_b, lower_radius)
+		_shell_triangle(vertices, normals, uvs, bottom_a, top_b, bottom_b, lower_radius)
+		if index == 0:
+			_shell_triangle(vertices, normals, uvs, bottom_center, top_center, top_a, lower_radius)
+			_shell_triangle(vertices, normals, uvs, bottom_center, top_a, bottom_a, lower_radius)
+		if index == 7:
+			_shell_triangle(vertices, normals, uvs, bottom_center, top_b, top_center, lower_radius)
+			_shell_triangle(vertices, normals, uvs, bottom_center, bottom_b, top_b, lower_radius)
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_NORMAL] = normals
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	_readability_panel(_part(_case, node_name, mesh, material, at))
+
+
+func _shell_triangle(vertices: PackedVector3Array, normals: PackedVector3Array, uvs: PackedVector2Array, a: Vector3, b: Vector3, c: Vector3, radius: float) -> void:
+	var normal: Vector3 = (b - a).cross(c - a).normalized()
+	for point: Vector3 in [a, b, c]:
+		vertices.append(point)
+		normals.append(normal)
+		uvs.append(Vector2(point.x / (radius * 2.0) + 0.5, point.z / (radius * 2.0) + 0.5))
+
+
 func _build_boss_operator() -> void:
 	# G10 selected v2: exposed round head-body, dark eyes, beak and two groups
 	# of eight short tentacles. No humanoid pilot or anatomical death animation.
-	var operator: Node3D = _pivot(_case, "ExposedRoundedOperator", Vector3(0.0, 0.11, 0.90))
+	var operator: Node3D = _pivot(_case, "ExposedRoundedOperator", BOSS_OPERATOR_CENTER - BOSS_CASE_CENTER)
+	# Set back and raised within the open hood. From the fixed camera the old
+	# head center and the actual low coupler occupied the same screen position.
+	_readability_panel(_box(_case, "OperatorRearSaddle", Vector3(0.42, 0.10, 0.18), Vector3(0.0, 0.105, 0.25), _rust))
 	var skin: StandardMaterial3D = _material(Color(0.45, 0.38, 0.29))
 	var flesh: StandardMaterial3D = _material(Color(0.44, 0.29, 0.19))
 	var head: MeshInstance3D = _handler_sphere(operator, "RoundedMartianHeadBody", 0.25, Vector3.ZERO, skin)
@@ -148,8 +189,12 @@ func _build_boss_mount() -> void:
 	_readability_panel(_box(_right_door, "RightGuardPlate", Vector3(0.30, 0.21, 0.039), Vector3(-0.15, 0.0, 0.019), _rust))
 	for side: float in [-1.0, 1.0]:
 		_box(mount, "JointFastenerLeft" if side < 0.0 else "JointFastenerRight", Vector3(0.034, 0.034, 0.027), Vector3(side * 0.28, 0.075, 0.214), _brass)
-	_boss_disengaged_cap = _readability_panel(_box(mount, "DisengagedArmSocket", Vector3(0.22, 0.065, 0.10), Vector3(0.0, -0.02, 0.225), _rust))
+	_boss_disengaged_cap = _readability_panel(_box(mount, "DisengagedArmSocket", Vector3(0.22, 0.13, 0.028), Vector3(0.0, 0.055, 0.251), _black))
 	_boss_disengaged_cap.visible = false
+	for side: float in [-1.0, 1.0]:
+		_boss_socket_edges.append(_readability_panel(_box(mount, "EmptySocketSide_%s" % side, Vector3(0.022, 0.15, 0.028), Vector3(side * 0.121, 0.055, 0.268), _pale)))
+		_boss_socket_edges.append(_readability_panel(_box(mount, "EmptySocketCrossbar_%s" % side, Vector3(0.264, 0.022, 0.028), Vector3(0.0, 0.055 + side * 0.076, 0.268), _pale)))
+	for edge: MeshInstance3D in _boss_socket_edges: edge.visible = false
 
 
 func _build_parked_manipulators() -> void:
@@ -189,6 +234,11 @@ func _build_boss_plate() -> void:
 		for z: float in [-0.35, 0.35]:
 			var rivet: MeshInstance3D = _cylinder(_boss_plate, "PlateRivet_%d" % _boss_plate.get_child_count(), 0.029, 0.018, _brass, 0.029, 6)
 			rivet.position = Vector3(x, 0.051, z)
+	# Metal edge strips expose the square ground plant in the open central bay.
+	# They are physical trim, with no glyph, emission or footprint semantics.
+	_readability_panel(_box(_boss_plate, "FrontPlateEdge", Vector3(0.80, 0.014, 0.035), Vector3(0.0, 0.046, 0.398), _brass))
+	for side: float in [-1.0, 1.0]:
+		_readability_panel(_box(_boss_plate, "SidePlateEdge_%s" % side, Vector3(0.035, 0.014, 0.76), Vector3(side * 0.40, 0.046, 0.0), _brass))
 	_readability_panel(_box(_boss_plate, "PlateGripSocket", Vector3(0.16, 0.11, 0.18), Vector3(0.0, 0.085, -0.20), _black))
 
 
@@ -211,20 +261,20 @@ func _apply_pose(phase: String, progress: float, direction: Vector3, hit_flash: 
 	var p: float = progress
 	var plant: float = 0.15
 	var opening: float = 0.0
-	var elbow: Vector3 = Vector3(0.28, 0.79, 0.38)
-	var wrist: Vector3 = Vector3(0.0, 0.57, 0.75)
+	var elbow: Vector3 = Vector3(0.60, 0.81, 0.24) if _boss_action == "reach" else Vector3(-0.64, 0.76, 0.06)
+	var wrist: Vector3 = Vector3(0.70, 0.52, 0.44) if _boss_action == "reach" else Vector3(-0.48, 0.53, 0.33)
 	var grip: float = 0.28
 	var plate_tilt: float = -0.22
 	match phase:
 		"warning":
 			plant = 0.45 + p * 0.45
-			elbow = Vector3(0.28, lerpf(0.87, 1.10, p), 0.30)
-			wrist = Vector3(0.0, lerpf(0.75, 1.04, p), lerpf(0.58, 0.29, p))
+			elbow = Vector3(lerpf(0.60, 0.68, p), lerpf(0.86, 1.06, p), lerpf(0.24, 0.15, p)) if _boss_action == "reach" else Vector3(-0.66, lerpf(0.83, 1.05, p), lerpf(0.10, -0.01, p))
+			wrist = Vector3(lerpf(0.73, 0.84, p), lerpf(0.61, 0.84, p), lerpf(0.46, 0.32, p)) if _boss_action == "reach" else Vector3(lerpf(-0.51, -0.55, p), lerpf(0.60, 0.89, p), lerpf(0.38, 0.29, p))
 			grip = 0.45
 		"lock":
 			plant = 1.0
-			elbow = Vector3(0.28, 1.10, 0.30)
-			wrist = Vector3(0.0, 1.04, 0.29)
+			elbow = Vector3(0.68, 1.06, 0.15) if _boss_action == "reach" else Vector3(-0.66, 1.05, -0.01)
+			wrist = Vector3(0.84, 0.84, 0.32) if _boss_action == "reach" else Vector3(-0.55, 0.89, 0.29)
 			grip = 0.45
 		"active", "recovery":
 			# Plant the complete selected endpoint immediately; hold that ground
@@ -239,14 +289,15 @@ func _apply_pose(phase: String, progress: float, direction: Vector3, hit_flash: 
 			# Local tool disengagement opens the house. The living operator,
 			# canopy and five supports remain standing; no Martian death tableau.
 			plant = 0.65
-			elbow = Vector3(0.46, 0.30, 0.36)
-			wrist = Vector3(0.32, 0.08, 0.79) if _boss_action == "reach" else BOSS_PLACE_WRIST
+			elbow = Vector3(0.91, 0.14, 0.10)
+			wrist = Vector3(0.61, 0.08, 0.63)
 			grip = 0.10
 			plate_tilt = 0.0
 			opening = 1.0
 	_left_door.rotation.y = -opening * 1.15
 	_right_door.rotation.y = opening * 1.15
 	_boss_disengaged_cap.visible = phase == "defeated"
+	for edge: MeshInstance3D in _boss_socket_edges: edge.visible = phase == "defeated"
 	_handler_upper.visible = phase != "defeated"
 	_handler_sleeve.visible = phase != "defeated"
 	_handler_rod.visible = phase != "defeated"
@@ -262,7 +313,7 @@ func _apply_pose(phase: String, progress: float, direction: Vector3, hit_flash: 
 	_handler_claw.visible = _boss_action == "reach"
 	for index: int in range(_handler_fingers.size()):
 		_handler_fingers[index].rotation.y = grip * float(index - 1)
-	_boss_plate.position = wrist
+	_boss_plate.position = BOSS_PLACE_WRIST if phase == "defeated" else wrist
 	_boss_plate.rotation.x = plate_tilt
 	_boss_plate.visible = _boss_action == "place"
 	for material: StandardMaterial3D in _materials:

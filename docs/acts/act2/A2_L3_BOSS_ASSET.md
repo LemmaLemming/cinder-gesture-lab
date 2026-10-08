@@ -1,8 +1,14 @@
 # A2-L3 B02 Handling-Machine visual
 
-Status: new owned procedural visual draft, statically reviewed. No import,
-engine, full encounter, snapshot or native portrait result is claimed here.
-The parent owns B02 gameplay, phase transition, transport and later validation.
+Status: cosmetic revision 2 is statically reviewed and awaiting the owner's
+new native portrait run. The prior TEST ONLY component run passed 41 checks
+and staged shared-Game asset capture passed 48 checks, with clean exits; these
+results precede this visual revision. Review of its seven B02 frames found the
+central low opening and Place plate hidden, the held Reach claw indistinct,
+and local arm disengagement difficult to recognize. Those presentation
+failures prompted the correction below. No corrected-native result, actual
+boss attack, smoke, route or whole aggregate acceptance is claimed here.
+The parent owns B02 gameplay, phase transition, transport and engine checks.
 
 The canonical boss is one five-legged industrial machine with a reachable
 planted tool joint. Its two authored actions are Reach and Place. Local arm
@@ -36,6 +42,17 @@ canopy, five redistributed grounded feet, larger exposed rounded operator,
 folded secondary manipulators, a three-finger claw and a selectable work plate.
 The lower coupler is rebuilt below the regular Handler's coupler height.
 
+Revision 2 removes the forward 120-degree sectors from the belly and canopy,
+retaining rounded rear/side facets, their exposed metal edges and rivets. This
+is an authored open work bay adapted from G10's exposed operator and tooling;
+it adds no hole to the floor or collider. The operator moves up and back into
+that bay, leaving the unchanged central low-joint source below it. The tool
+shoulder moves outboard, held Reach and Place tools occupy opposite sides,
+and the Place plate receives restrained metal edge trim. Defeat leaves an
+empty framed socket and detached lower lever outboard, while its Place plate
+remains grounded at the source. No new action, cue glyph or emission state is
+introduced.
+
 ## Native scale, pivot and bounds
 
 This is procedural 2.5D mesh artwork, not an extracted concept sprite sheet.
@@ -43,27 +60,37 @@ Inherited nearest-filtered 32×32 metal and 16×16 rubber cluster textures use
 the existing rust/black/ivory family; the shared player remains 48×64 at
 0.0225 world units per texel. No new renderer, palette, shader or player scale
 is introduced. Parent/source view validation must establish the final apparent
-pixel scale at native 540×1170.
+pixel scale at native 540×1170. The prior native scale was inspected at that
+resolution; the corrected open bay and tool silhouettes still require a new
+capture.
 
 The visual root is the actual floor-level low-joint source, with unit scale,
 zero local rotation and fixed local +Z. The parent plans world source
-`(0,0,-35)` and unchanged Reach length 3.8. The parent binds physical floors,
+`(0,0,-35)`, Reach length 3.8, and Place circle origin `(0,0,0)` with
+radius 1.1. The parent binds physical floors,
 footprint, ordinary-primary target and source/art framing; this visual has no
 collider, body, hitpoint, HP, target group or independent contact damage.
 
 | Construction | Static envelope in local world units |
 | --- | --- |
 | Five support feet | Centers at `(-.98,.045,.59)`, `(.98,.045,.58)`, `(-1.07,.045,-.30)`, `(1.07,.045,-.33)`, `(0,.045,-1.12)`; inherited .16×.09×.20 foot boxes touch Y0. Largest corner radius is `sqrt(1.06²+.69²) = 1.264792`, below 1.30. Toe plates remain inside that bound. |
-| Case/canopy | Case origin `(0,.81,-.23)`; canopy radius .88, height .19 at local case Y.35 gives maximum top Y1.255, below 1.35. Hood retaining edge is a separate .895-radius mesh; all static body/support geometry stays inside the 1.30 radial support envelope. |
-| Rounded operator | Head center `(0,.92,.67)`, radius .25 and Y scale .80; top Y1.12. Dark eyes and two groups of eight two-segment tentacles remain exposed in front of the canopy lip; no humanoid torso/limbs. |
+| Case/canopy | Case origin remains `(0,.81,-.23)`; open canopy lower radius .88, upper radius .59, height .19 at local case Y.35 gives maximum top Y1.255. The .895-radius retaining edge has the same open forward sectors. Rear/side facets remain inside radius 1.30; supports are unchanged. |
+| Rounded operator | New head center `(0,1.05,.08)`, radius .25 and Y scale .80; top Y1.25. Dark eyes, beak and two groups of eight two-segment tentacles are retained within the open bay, with a rear saddle. Its projection no longer coincides with the ground mount; no humanoid torso/limbs. |
 | Low joint | Coupler center `(0,.235,.194)`, size .40×.13×.04: top Y.30, below .35. Opening guards swing locally; the actual source/root and coupler do not move. |
 | Reach | Active/recovery wrist `(0,.08,3.50)` and elbow `(.12,.36,1.76)`; zero-grip claw reaches at most Z3.776 by endpoint-plus-radius bound. Ground skid bottom is Y0. It never advances the logical 3.8 lane or creates a new footprint. |
-| Place | Active/recovery wrist `(0,.04,0)`; .88×.08×.88 plate is centered on the actual source and its bottom is Y0. The parent circle is the sole authoritative footprint; plate artwork does not set its radius. |
-| Warning/lock | Main joint top is at most 1.205. A conservative bound enclosing the whole tilted plate group gives maximum top Y1.272647, below 1.35; this bound includes combinations of extrema that individual meshes do not occupy. |
+| Place | Active/recovery plate remains .88×.08×.88 at `(0,.04,0)`, bottom Y0; defeat also retains that grounded center. Front/side brass edge strips remain within its .88 footprint. The parent circle remains the sole authoritative footprint. |
+| Warning/lock | Reach lock wrist `(.84,.84,.32)` and elbow `(.68,1.06,.15)` hold the claw outside the canopy; elbow top is Y1.165. Place lock wrist `(-.55,.89,.29)` and elbow `(-.66,1.05,-.01)` hold the tilted plate outboard; plate-part corner bound is Y1.032397 and radius 1.228929. Warning interpolates supplied progress into those poses; its largest conservative plate radius is below the unchanged support radius 1.264792. |
+| Local disengagement | Lower lever rests between elbow `(.91,.14,.10)` and wrist `(.61,.08,.63)`; the detached Reach claw has radial bound 1.181249 and skid bottom Y0. The empty socket remains on the original mount, with trim top Y.322; the original coupler/source are unchanged. |
 
 These are analytic construction bounds, including foot/toe half-extents and
-primitive radius allowances. Actual Godot mesh vertices, all intermediate
-poses and current fixed-camera projection remain engine validation work.
+primitive radius allowances. With the shared camera offset `(0,18,13)` and
+width 7.2, the revised head/coupler centers separate by about .5696 projected
+world units (42.7 pixels at 540 width), compared with approximately 1.1 pixels
+in the failed arrangement. This center separation does not establish complete
+surface visibility. The unchanged supports still define the folded radial
+envelope, and canopy top Y1.255 remains the overall upper bound. Actual Godot
+mesh vertices, intermediate poses and corrected native projection remain
+engine validation work.
 Bounds assume the parent's authored unit-scale, unrotated source transform.
 
 ## Parent pose and quiet restore protocol
@@ -95,11 +122,13 @@ uses the atomic visual-only `restore_boss_pose(...)`. The latter validates
 action and pose together before committing either. Action defaults to Reach;
 it must not be inferred from an omitted saved action or recreated reservation.
 
-Warning visibly raises and prepares the selected tool. Lock holds it. Active
+Warning raises the selected tool outboard using the supplied progress; Reach
+occupies the right and Place the left. Lock holds that exact prepared pose. Active
 immediately plants the complete selected endpoint. Recovery keeps the same
 ground plant at every supplied progress while guards expose the low coupler;
 there is no inherited early arm withdrawal. Defeated hides the upper attached
-lever/sleeve/rod, exposes the disconnected socket and rests the lower tool,
+lever/sleeve/rod, exposes the framed empty socket and rests the lower tool
+outboard. The Place plate remains centered and grounded even when detached,
 while case, operator and five feet remain standing. It is local mechanical
 disengagement. Short parked manipulators remain harmless fixed scenery.
 
@@ -125,12 +154,19 @@ The parent must frame the current full source/art, complete lane/circle,
 low joint, supported escape landing and ordinary-primary approach together.
 This hero cutaway is not proof that the source or shared cue is readable.
 
-Required owner checks remain: import/parse; actual vertex bounds at all seven
-poses for both actions; deterministic pre-ready/fresh quiet action restore and
-malformed refusal; two-instance material isolation; actual ordinary-primary
-low-joint reach; fixed source/feet and complete ground plant through recovery;
-native warning/lock/active/recovery/phase-two close counter/arm disengagement
-at 540×1170 with current HUD. Sixteen individual tentacle strands and the rear
-fifth support may merge or hide in the portrait view and need source review.
-No passed gameplay, whole-level acceptance, human balance, all-pose, mobile,
-export or release claim is made by this draft.
+The directly affected owner checks are import/parse, actual revised vertex
+bounds and deterministic quiet pose/material isolation, followed by the seven
+B02 native frames. They must show the central recovery coupler, held Reach
+claw, centered planted Place plate and locally disengaged arm/socket alongside
+the actual shared Hero/HUD. Prior staged framing contained the assembly and
+kept Hero torso/facing/feet readable, but did not establish those four asset
+requirements. Individual tentacle strands and the rear fifth support may
+merge or hide at portrait scale; the next native review must assess the
+rounded operator, paired eyes, two bunches and distinct support family.
+
+Actual ordinary-primary opening reach, source/cue/footprint/landing framing,
+fixed source/feet during real actions, full recovery opportunity, actual smoke,
+phase transition, whole-level transport and full route remain parent runtime
+work. No human balance, all-pose, mobile, export or release claim is made.
+The original seven-frame review is retained as a presentation failure baseline;
+the prior 41/48 successful component checks do not override it.
