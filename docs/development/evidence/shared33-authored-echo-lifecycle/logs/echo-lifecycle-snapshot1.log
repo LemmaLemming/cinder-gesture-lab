@@ -1,0 +1,38 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: snapshot fixture starts a fixed encounter
+PASS: snapshot fixture reserves a real proved exchange
+PASS: active-tree capture is rejected instead of mixing clock generations
+PASS: paused warning snapshot contains its committed reservation
+PASS: transport contains finite JSON and stable authored IDs instead of object/RID references
+PASS: JSON round-trip accepts integral schema/serial fields and exact saved phase deadlines
+PASS: restore preserves profile, clock, geometry, serial, floors and cooldowns without callbacks
+PASS: returned snapshot is a defensive copy
+PASS: bad deadline ordering rejects before any state commit
+PASS: missing live source cooldown cannot refresh an otherwise old reservation
+PASS: catalogue profile drift rejects instead of applying new multipliers to saved phases
+PASS: newline owner identity cannot alias a stable binding
+PASS: unsupported reservation fields fail closed
+PASS: serial must cover all retained reservation IDs
+PASS: all rejected restores leave cancellation/event history untouched
+PASS: snapshot captures an active reservation after the warning/lock boundary
+PASS: paused active restore preserves remaining lifetime rather than rescheduling windup
+PASS: cancelled geometry still snapshots its retained source cooldown
+PASS: retained cooldown restores independently of a live reservation
+PASS: resuming a cancelled checkpoint does not grant a fresh attack interval
+PASS: staged restore fixture captures a coherent source position
+PASS: staged enemy position supports full aggregate prevalidation before enemy mutation
+PASS: commit independently rejects staged-only positions until live enemies are restored
+PASS: validated matching live enemy position commits without phase reset
+PASS: fresh node instances with the same authored paths/IDs restore despite different instance IDs and RIDs
+PASS: cross-instance transport rebuilds weak owners/floor guards while preserving saved state
+PASS: missing stable source mapping rejects instead of attaching to a different enemy
+PASS: collision guard fixture captures registered static scenery
+PASS: capture and restore reject paused cancellation callbacks until a deferred transaction barrier
+PASS: deferred paused caller can restore after cancellation callback returns
+PASS: changed real wall transform rejects even though every floor signature remains unchanged
+PASS: authored supported-rectangle changes reject even inside the same solid box
+PASS: collision-layer drift changes the actual blocker fingerprint
+PASS: same-world scenery outside authored world_root cannot be omitted from the collision fingerprint
+PASS: unstable generated collider paths reject cross-process transport
+Threat snapshot smoke: 35 checks, 0 failures
