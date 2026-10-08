@@ -3,6 +3,16 @@ extends "res://tests/acts/act1/a1_l3_spore_guard.gd"
 ## continuation in that same world/field. The original guard fixture is intact.
 ## No teleports, actor damage, lease/phase/clock seeds or direct source commands.
 
+const FiniteBodySweep = preload("res://scripts/combat/body_sweep.gd")
+const FiniteGeometry = preload("res://scripts/combat/threat_geometry.gd")
+
+var finite_escape_plan: Dictionary = {}
+var finite_escape_samples: Array[Dictionary] = []
+var finite_escape_error: String = ""
+var finite_escape_dash_start_s: float = -1.0
+var finite_escape_dash_end_s: float = -1.0
+var finite_escape_record: Dictionary = {}
+var finite_escape_completion_pending: bool = false
 var finite_activations: Array[Dictionary] = []
 var finite_reactions: Array[Dictionary] = []
 var finite_observations: Array[Dictionary] = []
@@ -222,7 +232,12 @@ func _second_supply(field: CinderSporeField) -> bool:
 	if not await _swipe(second_direction, "second real full diagonal to the remaining anchor"): return false
 	var aim: Vector3 = _safe_cluster_aim(left)
 	if not _require(aim != Vector3.ZERO and field.state().generation == 1 and left.call("get_cue_state").state == "available", "actual second landing reaches the final available anchor with no living-enemy primary overlap"): return false
-	if not _warning_lead(2.0 * input_pad + float(stats.primary_cooldown), "actual reapproach retains native warning time for the second release"): return false
+	# New primary cooldown starts at the immediate hit, not before it. The
+	# inherited readiness helper has already observed zero current cooldowns.
+	var before_primary: Dictionary = hero.get_threat_response_state()
+	var before_cost: float = _finite_ready_wait(before_primary) + 2.0 * input_pad
+	finite_observations.append({"kind": "before_second_release_cost", "response": before_primary, "required_s": before_cost, "control": scheduler.source_control_state(guard_source)})
+	if not _warning_lead(before_cost, "actual reapproach retains native warning time for the immediate second release"): return false
 	var previous_reactions: int = finite_reactions.size()
 	if not await _finite_primary(left, aim, "second ordinary release consumes the final real anchor", true): return false
 	if not paused and not await _pause_pair("complete second release boundary"): return false
@@ -232,9 +247,12 @@ func _second_supply(field: CinderSporeField) -> bool:
 	# No new environmental episode is required if the actual guard is outside
 	# the expanded domain. A surviving live native lease still needs real lead.
 	var response: Dictionary = hero.get_threat_response_state()
-	var escape_cost: float = maxf(float(response.primary_cooldown_left_s), float(response.commitment_remaining_s)) + dash_cycle + input_pad
+	# Pay the actual new primary recovery before the next recognizer dash.
+	# Travel takes dash_duration; its later cooldown is held at a proved-safe
+	# landing through the actual native active interval, not erased.
+	var escape_cost: float = _finite_ready_wait(response) + input_pad + float(stats.dash_duration)
 	if not _warning_lead(escape_cost, "second release retains a real RIGHT escape before any surviving native danger", true): return false
-	if not await _finite_barrier("second-release") or not await _gui_resume_pair() or not await _swipe(Vector3.RIGHT, "real full RIGHT escape after second release"): return false
+	if not await _finite_barrier("second-release") or not await _finite_real_right_escape(input_pad): return false
 	if not await _wait(func() -> bool: return field.state().phase == "spent" and guard_source.get_spore_response_state().phase == "none", "second real field expires and any genuinely acquired environmental episode ends", 6.0): return false
 	if not await _pause_pair("two genuinely spent supplies"): return false
 	var final: Dictionary = field.state()
@@ -248,6 +266,176 @@ func _second_supply(field: CinderSporeField) -> bool:
 	if not _require(primaries_seen == 3 and cluster_negatives_done and observed_cluster_states.has("available") and observed_cluster_states.has("active") and observed_cluster_states.has("spent"), "exact primary trace and real quiet barriers include refusal and all honest native cluster drawings"): return false
 	finite_observations.append({"kind": "depleted", "field": final, "source": guard_source.get_spore_response_state()})
 	return await _finite_barrier("two-spent")
+
+
+func _finite_ready_wait(response: Dictionary) -> float:
+	# These three clocks advance concurrently. Preserve the inherited all-zero
+	# readiness requirement, including the new post-primary cooldown.
+	return maxf(float(response.primary_cooldown_left_s), maxf(float(response.dash_cooldown_left_s), float(response.commitment_remaining_s)))
+
+
+func _finite_body_binding(body: CharacterBody3D) -> Dictionary:
+	var measured: Dictionary = FiniteBodySweep.source_description(body)
+	if measured.has("error"): return {}
+	var collision: CollisionShape3D = measured.collision
+	if collision != body.get_node_or_null("BodyCollision") or not collision.shape is CapsuleShape3D: return {}
+	var capsule := collision.shape as CapsuleShape3D
+	# Reuse the shared Scheduler's actual capsule/feet contract and tolerance.
+	if not is_equal_approx(capsule.radius, CinderThreatScheduler.CAPSULE_RADIUS) or not is_equal_approx(capsule.height, CinderThreatScheduler.CAPSULE_HEIGHT) or not collision.position.is_equal_approx(Vector3(0, CinderThreatScheduler.CAPSULE_CENTER_Y, 0)): return {}
+	return {"body": body, "collision": collision, "shape": capsule, "transform": collision.transform, "radius": capsule.radius, "height": capsule.height, "bias": capsule.custom_solver_bias, "safe_margin": body.safe_margin, "layer": body.collision_layer, "mask": body.collision_mask, "description": measured}
+
+
+func _finite_escape_custody_error() -> String:
+	for key: String in ["hero_body", "guard_body"]:
+		var saved: Dictionary = finite_escape_plan[key]
+		if not is_instance_valid(saved.body) or not is_instance_valid(saved.collision) or not is_instance_valid(saved.shape): return "Retained actual native capsule resources unavailable"
+		var actual: Dictionary = _finite_body_binding(saved.body)
+		if actual != saved: return "Retained native capsule identity/dimensions/transform/physics changed"
+	var retained_floor: Variant = finite_escape_plan.floor
+	if not is_instance_valid(retained_floor) or not is_instance_valid(finite_escape_plan.floor_body): return "Retained actual supported floor resources unavailable"
+	var floor := retained_floor as CollisionShape3D
+	if not is_instance_valid(floor) or not floor.is_inside_tree() or floor.is_queued_for_deletion() or floor.disabled or floor.shape != finite_escape_plan.floor_shape or floor.global_transform != finite_escape_plan.floor_transform or (floor.shape as BoxShape3D).size != finite_escape_plan.floor_size or floor.get_parent() != finite_escape_plan.floor_body or finite_escape_plan.floor_body.collision_layer != finite_escape_plan.floor_layer or finite_escape_plan.floor_body.collision_mask != finite_escape_plan.floor_mask or finite_escape_plan.floor_body.constant_linear_velocity != finite_escape_plan.floor_velocity or finite_escape_plan.floor_body.constant_angular_velocity != finite_escape_plan.floor_angular_velocity or (floor.shape as BoxShape3D).custom_solver_bias != finite_escape_plan.floor_bias: return "Actual supported floor binding changed"
+	var context: Dictionary = level.call("response_context", "A1-E3")
+	if context.floor_regions != finite_escape_plan.floor_regions or context.world_root != finite_escape_plan.world_root: return "Actual response floor/world references changed"
+	if hero.equipment.resolved_stats() != finite_escape_plan.stats or hero.equipment.snapshot() != finite_escape_plan.equipment_ids: return "Actual RIGHT action equipment/stat snapshot changed"
+	var control: Dictionary = scheduler.source_control_state(guard_source)
+	if control.is_empty() or not control.outside_transaction or control.encounter_id != finite_escape_plan.encounter_id or control.world_revision != finite_escape_plan.world_revision or control.cooldown != finite_escape_plan.cooldown: return "Actual native source control/cooldown changed"
+	var lease: Dictionary = finite_escape_plan.lease
+	if lease.is_empty():
+		if not control.reservations.is_empty(): return "A new native lease appeared during the genuinely lease-free escape"
+	else:
+		if control.reservations.size() != 1: return "The surviving fixed native lease disappeared or multiplied"
+		var actual: Dictionary = control.reservations[0]
+		if actual.size() != lease.size(): return "Surviving native lease record shape changed"
+		for key: String in lease:
+			if key != "state" and actual.get(key) != lease[key]: return "Surviving lease identity/geometry/time/source changed: " + key
+		var native: Dictionary = guard_source.pure_presentation_state()
+		if native.reservation_id != lease.id or native.geometry != lease.geometry or native.source_position != lease.source_position or native.opening_position != lease.opening_position or native.cycle != finite_escape_plan.cycle: return "Actual actor stopped owning the same fixed native lane/cycle"
+	var support: Dictionary = guard_source.get_spore_response_state()
+	if support.is_empty() or not support.alive or not support.grounded or (not lease.is_empty() and guard_source.velocity != Vector3.ZERO) or guard_source.hp != 24.0 or hero.hp != initial_hp or not hit_events.is_empty(): return "Living supported C32/Hero or harmless hit custody changed"
+	return ""
+
+
+func _finite_escape_plan_right(input_pad: float) -> bool:
+	var control: Dictionary = scheduler.source_control_state(guard_source)
+	var context: Dictionary = level.call("response_context", "A1-E3")
+	var response: Dictionary = hero.get_threat_response_state()
+	var hero_body: Dictionary = _finite_body_binding(hero)
+	var guard_body: Dictionary = _finite_body_binding(guard_source)
+	var bindings: Dictionary = level.call("scheduler_bindings")
+	if not _require(paused and response.stable and not hero_body.is_empty() and not guard_body.is_empty() and game.get("player") == hero and bindings.owners.get(GuardSourceId) == guard_source and not control.is_empty() and control.outside_transaction and control.reservations.size() <= 1 and context.floor_regions.size() == 1, "RIGHT escape plan uses actual native Player/C32 capsules, complete barrier and one actual floor"): return false
+	var floor: CollisionShape3D = context.floor_regions[0].collision
+	if not _require(is_instance_valid(floor) and floor.shape is BoxShape3D and floor.get_parent() is StaticBody3D and bindings.floors["mushroom-floor"].collision == floor and bindings.floors["mushroom-floor"].safe_rect == context.floor_regions[0].safe_rect, "RIGHT escape uses the parent's actual supported floor references and safe rectangle"): return false
+	var lease: Dictionary = {} if control.reservations.is_empty() else control.reservations[0].duplicate(true)
+	var native: Dictionary = guard_source.pure_presentation_state()
+	if not lease.is_empty() and not _require(lease.state in ["warning", "lock"] and not lease.has("adapter") and native.role_id == "A1-E3" and native.entity_id == "C32" and native.reservation_id == lease.id and native.geometry == lease.geometry and lease.geometry.kind == "lane" and lease.source_instance_id == guard_source.get_instance_id() and lease.source_position == guard_source.global_position and lease.opening_position == guard_source.global_position and absf((lease.geometry["to"] as Vector3).distance_to(lease.geometry["from"]) - 2.0) <= PositionTolerance and absf(float(lease.geometry.radius) - 0.38) <= 0.00001, "surviving danger is the same actual stationary C32 two-meter native lane, not a substituted proof"): return false
+	var stats: Dictionary = response.stats
+	var measured: Dictionary = FiniteBodySweep.sweep(hero, hero.global_transform, Vector3.RIGHT * float(stats.dash_distance), context.floor_regions)
+	var source_support: Dictionary = FiniteBodySweep.sweep(guard_source, guard_source.global_transform, Vector3.ZERO, context.floor_regions)
+	if not _require(not measured.has("error") and not measured.get("collided", true) and not source_support.has("error") and (measured.end as Vector3).distance_to(hero.global_position + Vector3.RIGHT * float(stats.dash_distance)) <= PositionTolerance, "native full RIGHT BodySweep and grounded C32 use actual scenery/capsule support without shortening"): return false
+	var clock: float = float(control.clock_s)
+	var dash_start: float = clock + _finite_ready_wait(response) + input_pad
+	var dash_end: float = dash_start + float(stats.dash_duration)
+	var held_until: float = maxf(dash_start + float(stats.dash_cooldown), float(lease.get("active_until_s", dash_end)))
+	var padded_radius: float = float(hero_body.radius) + CinderThreatScheduler.SKIN
+	var path: Array[Dictionary] = [
+		{"from": hero.global_position, "to": hero.global_position, "start_s": clock, "end_s": dash_start},
+		{"from": hero.global_position, "to": measured.end, "start_s": dash_start, "end_s": dash_end},
+		{"from": measured.end, "to": measured.end, "start_s": dash_end, "end_s": held_until},
+	]
+	if not lease.is_empty() and not _require(dash_end < float(lease.active_from_s) and not FiniteGeometry.timed_path_hits(lease.geometry, path, float(lease.active_from_s), float(lease.active_until_s), padded_radius) and not FiniteGeometry.segment_hits(lease.geometry, measured.end, measured.end, padded_radius), "remaining primary recovery plus actual RIGHT travel and held full capsule clear the surviving native lane through active_until"): return false
+	finite_escape_plan = {"hero_body": hero_body, "guard_body": guard_body, "floor": floor, "floor_shape": floor.shape, "floor_transform": floor.global_transform, "floor_size": (floor.shape as BoxShape3D).size, "floor_body": floor.get_parent(), "floor_layer": (floor.get_parent() as StaticBody3D).collision_layer, "floor_mask": (floor.get_parent() as StaticBody3D).collision_mask, "floor_velocity": (floor.get_parent() as StaticBody3D).constant_linear_velocity, "floor_angular_velocity": (floor.get_parent() as StaticBody3D).constant_angular_velocity, "floor_bias": (floor.shape as BoxShape3D).custom_solver_bias, "floor_regions": context.floor_regions, "world_root": context.world_root, "encounter_id": control.encounter_id, "world_revision": control.world_revision, "cooldown": control.cooldown, "lease": lease, "cycle": native.cycle, "stats": stats, "equipment_ids": response.equipment_ids, "input_pad": input_pad, "radius": padded_radius, "origin": hero.global_position, "landing": measured.end, "sequence": _last_sequence() + 1}
+	finite_observations.append({"kind": "post_second_release_right_plan", "response": response, "control": control, "required_s": dash_end - clock, "native_sweep_end": measured.end, "padded_capsule_radius": padded_radius, "path": path})
+	return _require(_finite_escape_custody_error().is_empty(), "RIGHT plan retains unchanged actual source/body/floor/control custody")
+
+
+func _finite_escape_sample() -> void:
+	if finishing or aborted or finite_escape_plan.is_empty() or not finite_escape_error.is_empty(): return
+	finite_escape_error = _finite_escape_custody_error()
+	if not finite_escape_error.is_empty(): return
+	var clock: float = scheduler.get_clock()
+	var position: Vector3 = hero.global_position
+	if not finite_escape_samples.is_empty():
+		var previous: Dictionary = finite_escape_samples.back()
+		if clock < float(previous.clock_s) or (clock == float(previous.clock_s) and position != previous.position):
+			finite_escape_error = "Actual physics-boundary position/clock lost monotonic whole-tick custody"; return
+		if clock == float(previous.clock_s): return
+		if clock - float(previous.clock_s) > 1.0 / float(Engine.physics_ticks_per_second) + FiniteGeometry.EPSILON:
+			finite_escape_error = "An actual native physics path interval was not observed"; return
+	finite_escape_samples.append({"clock_s": clock, "position": position})
+	if finite_escape_completion_pending:
+		# This SceneTree physics_frame observes the previous whole native tick.
+		# Do not relabel Player's separate action clock as Scheduler time.
+		finite_escape_completion_pending = false
+		finite_escape_dash_end_s = clock
+
+
+func _finite_escape_fired(kind: String) -> void:
+	if kind != "dash" or finite_escape_dash_start_s >= 0.0:
+		finite_escape_error = "RIGHT escape published an unexpected extra player action"; return
+	finite_escape_error = _finite_escape_custody_error()
+	if not finite_escape_error.is_empty(): return
+	var dash: Dictionary = hero.get_committed_dash_state()
+	finite_escape_dash_start_s = scheduler.get_clock()
+	var lease: Dictionary = finite_escape_plan.lease
+	if not dash.get("active", false) or (dash.direction as Vector3).dot(Vector3.RIGHT) <= 0.9999 or float(dash.distance) != float(finite_escape_plan.stats.dash_distance) or float(dash.speed) != float(finite_escape_plan.stats.dash_speed) or float(dash.duration_s) != float(finite_escape_plan.stats.dash_duration) or float(dash.remaining_s) != float(dash.duration_s) or (dash.origin as Vector3).distance_to(finite_escape_plan.origin) > PositionTolerance or (not lease.is_empty() and finite_escape_dash_start_s + float(dash.duration_s) >= float(lease.active_from_s)):
+		finite_escape_error = "Actual accepted RIGHT dash does not retain full travel before native active"
+
+
+func _finite_escape_completed(record: Dictionary) -> void:
+	if record.kind != "dash" or record.sequence != finite_escape_plan.sequence or finite_escape_dash_start_s < 0.0 or not finite_escape_record.is_empty():
+		finite_escape_error = "RIGHT escape completed an unexpected action sequence"; return
+	finite_escape_record = record.duplicate(true)
+	finite_escape_completion_pending = true
+
+
+func _finite_escape_stop() -> void:
+	if physics_frame.is_connected(_finite_escape_sample): physics_frame.disconnect(_finite_escape_sample)
+	if is_instance_valid(hero):
+		if hero.fired.is_connected(_finite_escape_fired): hero.fired.disconnect(_finite_escape_fired)
+		if hero.world_action_executed.is_connected(_finite_escape_completed): hero.world_action_executed.disconnect(_finite_escape_completed)
+
+
+func _finite_real_right_escape(input_pad: float) -> bool:
+	if not _finite_escape_plan_right(input_pad): return false
+	finite_escape_samples.clear(); finite_escape_error = ""
+	finite_escape_dash_start_s = -1.0; finite_escape_dash_end_s = -1.0
+	finite_escape_record.clear(); finite_escape_completion_pending = false
+	_finite_escape_sample()
+	physics_frame.connect(_finite_escape_sample)
+	hero.fired.connect(_finite_escape_fired)
+	hero.world_action_executed.connect(_finite_escape_completed)
+	if not await _gui_resume_pair() or not await _ready_input("RIGHT escape actual post-primary readiness"):
+		_finite_escape_stop(); return false
+	var control: Dictionary = scheduler.source_control_state(guard_source)
+	var lease: Dictionary = finite_escape_plan.lease
+	if not _require(finite_escape_error.is_empty() and _finite_escape_custody_error().is_empty() and (lease.is_empty() or float(lease.active_from_s) - float(control.clock_s) > input_pad + float(finite_escape_plan.stats.dash_duration)), "after real GUI Resume and actual recovery, the same RIGHT escape still has native input/travel lead"):
+		_finite_escape_stop(); return false
+	if not await _swipe(Vector3.RIGHT, "real full RIGHT escape after second release"):
+		_finite_escape_stop(); return false
+	var held_until: float = maxf(finite_escape_dash_start_s + float(finite_escape_plan.stats.dash_cooldown), float(lease.get("active_until_s", scheduler.get_clock())))
+	if not await _wait(func() -> bool: return not finite_escape_error.is_empty() or scheduler.get_clock() >= held_until, "actual RIGHT landing holds through native active and post-landing cooldown", 8.0):
+		_finite_escape_stop(); return false
+	_finite_escape_sample()
+	_finite_escape_stop()
+	finite_observations.append({"kind": "actual_right_escape", "samples": finite_escape_samples.duplicate(true), "dash_started_native_s": finite_escape_dash_start_s, "dash_completed_native_s": finite_escape_dash_end_s, "world_action": finite_escape_record.duplicate(true), "held_until_native_s": held_until, "error": finite_escape_error})
+	if not _require(finite_escape_error.is_empty() and not finite_escape_record.is_empty() and finite_escape_dash_start_s >= 0.0 and finite_escape_dash_end_s >= finite_escape_dash_start_s + float(finite_escape_plan.stats.dash_duration) and finite_escape_record.resolved_stats == finite_escape_plan.stats and not finite_escape_completion_pending and finite_escape_samples.size() >= 2 and hero.get_world_action_records(finite_escape_plan.sequence - 1) == [finite_escape_record] and hero.hp == initial_hp and guard_source.hp == 24.0 and hit_events.is_empty(), "one actual full RIGHT action has complete native-time/position samples and unchanged HP/zero enemy hits: " + finite_escape_error): return false
+	var path: Array[Dictionary] = []
+	for index: int in range(1, finite_escape_samples.size()):
+		var a: Dictionary = finite_escape_samples[index - 1]
+		var b: Dictionary = finite_escape_samples[index]
+		path.append({"from": a.position, "to": b.position, "start_s": a.clock_s, "end_s": b.clock_s})
+		var from := Transform3D(hero.global_basis, a.position)
+		var measured: Dictionary = FiniteBodySweep.sweep(hero, from, b.position - a.position, finite_escape_plan.floor_regions)
+		if not _require(not measured.has("error") and not measured.get("collided", true) and (measured.end as Vector3).distance_to(b.position) <= PositionTolerance, "every actually observed RIGHT wait/motion/landing interval retains native scenery and capsule support"): return false
+	# Every published real dash sample must have been observed at an actual
+	# whole physics boundary; never assign it invented Scheduler timestamps.
+	var cursor: int = 0
+	for point: Dictionary in finite_escape_record.path:
+		while cursor < finite_escape_samples.size() and finite_escape_samples[cursor].position != point.position: cursor += 1
+		if not _require(cursor < finite_escape_samples.size(), "each real dash-record position appears in the ordered native physics trace"): return false
+	if not lease.is_empty() and not _require(finite_escape_dash_end_s < float(lease.active_from_s) and float(finite_escape_samples.back().clock_s) >= float(lease.active_until_s) and not FiniteGeometry.timed_path_hits(lease.geometry, path, float(lease.active_from_s), float(lease.active_until_s), float(finite_escape_plan.radius)) and not FiniteGeometry.segment_hits(lease.geometry, hero.global_position, hero.global_position, float(finite_escape_plan.radius)), "the real full RIGHT path completes before active and its full held capsule remains outside the unchanged native lane through active_until"): return false
+	return _guard_framing("actual second-release RIGHT landing")
 
 
 func _warning_lead(required_s: float, label: String, allow_no_lease: bool = false) -> bool:
@@ -330,6 +518,7 @@ func _finite_barrier(label: String) -> bool:
 
 func _finish() -> void:
 	if finishing: return
+	_finite_escape_stop()
 	if is_instance_valid(level) and is_instance_valid(level.get("spore_field")):
 		var report: Dictionary = {"scope": "actual C32 same-field finite two-supply continuation; no full L3/campaign/profile/gear proof", "observations": _portable(finite_observations), "activations": _portable(finite_activations), "actual_reactions": _portable(finite_reactions), "final_field": level.get("spore_field").state(), "checks": checks, "failures": failures, "swipes": swipes, "primaries": primaries}
 		print("C32 FINITE ACTUAL OBSERVATIONS ", JSON.stringify(report))
