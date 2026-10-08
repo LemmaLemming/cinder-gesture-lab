@@ -1,16 +1,18 @@
 class_name Act1MushroomSeleniteCodec
 extends RefCounted
-## Pure native-envelope extraction used by the owned actor. No nodes, clocks, repulsion stamp,
-## environmental hooks or controller authority. Actor API2 adds exact opt-in
-## approach configuration/ownership; schema1/conditionalpending2 remain native.
-## Prospective environmental binding/publication remains separate.
+## Pure owned C31/C32 envelope codec; no nodes, clocks, motion or controller authority.
+## API3 keeps ordinary schema1/native-pending2 and adds bound schema3/bound-pending4.
+## The conditional repulsion stamp contains only genuine consumer-owned state.
 ##
-## schema_error/context_error form the stable core. Complete Player/Scheduler
-## units must ALSO pass their existing shared validators before this logical
-## correspondence check; it never replaces physical/native world validation.
-## record_error/record_view use an OWNED draft binding, deliberately distinct
-## from the unpublished scheduler-spore protocol. Its wrapper may change later.
-## record_view is a native logical view, NOT a coordinator repulsion view.
+## schema_error/context_error remain the native core. Complete Player/Scheduler
+## units MUST also pass their existing shared validators. A structurally valid
+## stamp does not prove environmental ownership: the parent/coordinator MUST
+## prevalidate the exact paired episode, Route, fields and whole native unit.
+## Never call this core a complete environmental or physical-world validator.
+## record_error/record_view dispatch only closed owned binding3 or the exact
+## reviewed scheduler-spore-source-1 binding. Native view3 and common view are
+## distinct projections; Route's measured descriptor is explicitly mapped to
+## Motion's capsule signature instead of substituting one schema for the other.
 
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const ExactJson = preload("res://scripts/campaign/exact_json.gd")
@@ -18,34 +20,43 @@ const Difficulty = preload("res://scripts/combat/difficulty.gd")
 const Geometry = preload("res://scripts/combat/threat_geometry.gd")
 const Motion = preload("res://scripts/combat/lunge_motion.gd")
 const Approach = preload("res://scripts/acts/act1/mushroom_selenite_approach.gd")
-const API_REVISION: String = "act1-mushroom-selenite-2"
+const API_REVISION: String = "act1-mushroom-selenite-3"
 const SNAPSHOT_SCHEMA_VERSION: int = 1
 const PENDING_SNAPSHOT_SCHEMA_VERSION: int = 2
+const BOUND_SNAPSHOT_SCHEMA_VERSION: int = 3
+const BOUND_PENDING_SNAPSHOT_SCHEMA_VERSION: int = 4
+const SPORE_PROTOCOL_REVISION: String = "scheduler-spore-source-1"
+const SPORE_ACTOR_REVISION: String = "scheduler-spore-actor-1"
+const REPULSION_KEYS: Array[String] = ["api_revision", "consumer_id", "source_id", "episode_id", "phase", "direction", "progress"]
+const REPULSION_PHASES: Array[String] = ["none", "recoil", "turn", "retreat", "hold", "regroup", "interrupted", "failed"]
 const MAX_PENDING_SEGMENTS: int = 256
 const HURT_S: float = 0.22
 const HERO_ID: String = "hero"
 const ROLE_SWARM: String = "A1-E2"
 const ROLE_GUARD: String = "A1-E3"
-const BINDING_REVISION: String = "act1-mushroom-selenite-codec-binding-2"
-const VIEW_REVISION: String = "act1-mushroom-selenite-native-view-2"
+const BINDING_REVISION: String = "act1-mushroom-selenite-codec-binding-3"
+const VIEW_REVISION: String = "act1-mushroom-selenite-native-view-3"
 const SNAPSHOT_KEYS: Array[String] = ["api_revision", "schema_version", "role_id", "source_id", "configuration", "hp", "dead", "dormant", "motion", "hurt_left_s", "approach_driving", "role_encounter_id", "profile_id", "resolved_role", "reservation_id", "cycle", "sample", "hit_ids", "last_cancel_reason"]
 
 
 func record_error(actor: Dictionary, scheduler: Dictionary, player: Dictionary, binding: Dictionary) -> String:
-	var error: String = binding_error(binding)
+	# Literal revision selects a separately closed adapter, never loose duck typing.
+	if binding.get("api_revision") == SPORE_PROTOCOL_REVISION:
+		return spore_record_error(actor, scheduler, player, binding)
+	var error: String = _native_binding_error(binding)
 	if not error.is_empty(): return error
-	# The caller resolved stable controller/player map IDs to these complete
-	# separately validated units. Ordinary actor envelopes do not store those IDs.
+	# Stable controller/player IDs resolve separately validated complete units.
 	return context_error(actor, scheduler, player, binding.configuration, binding.body_signature)
 
 
 func record_view(actor: Dictionary, binding: Dictionary) -> Dictionary:
-	# Caller first runs record_error against complete paired context. This pure
-	# query repeats the complete native schema/config check, then only copies
-	# genuine resources/motion. It cannot prove context using its two arguments.
-	if not binding_error(binding).is_empty() or not schema_error(actor, binding.configuration).is_empty():
+	if binding.get("api_revision") == SPORE_PROTOCOL_REVISION:
+		return spore_record_view(actor, binding)
+	# Caller first runs record_error against complete paired context. A two-argument
+	# view cannot validate that context or a consumer's saved Route/episode.
+	if not _native_binding_error(binding).is_empty() or not schema_error(actor, binding.configuration).is_empty():
 		return {}
-	return {"api_revision": VIEW_REVISION, "actor_revision": API_REVISION,
+	var result: Dictionary = {"api_revision": VIEW_REVISION, "actor_revision": API_REVISION,
 		"source_id": actor.source_id, "controller_id": binding.controller_id,
 		"player_id": binding.player_id, "role_id": actor.role_id,
 		"entity_id": binding.configuration.entity_id, "hp": actor.hp,
@@ -55,21 +66,26 @@ func record_view(actor: Dictionary, binding: Dictionary) -> Dictionary:
 		"motion": actor.motion.duplicate(true), "hurt_left_s": actor.hurt_left_s,
 		"approach_driving": actor.approach_driving,
 		"reservation_id": actor.reservation_id, "cycle": actor.cycle}
+	if _bound_schema(actor): result["repulsion"] = actor.repulsion.duplicate(true)
+	return result
 
 
 func binding_error(binding: Dictionary) -> String:
+	return spore_binding_error(binding) if binding.get("api_revision") == SPORE_PROTOCOL_REVISION else _native_binding_error(binding)
+
+
+func _native_binding_error(binding: Dictionary) -> String:
 	var error: String = Codec.value_error(binding)
 	if not error.is_empty(): return error
 	if not Codec.keys_error(binding, ["api_revision", "actor_revision", "source_id", "controller_id", "player_id", "configuration", "body_signature"]).is_empty():
-		return "Closed owned native codec binding required; proposed environmental bindings are not adopted"
+		return "Closed owned native codec binding3 required"
 	if binding.api_revision != BINDING_REVISION or binding.actor_revision != API_REVISION or not _stable_id(binding.source_id) or not _stable_id(binding.controller_id) or not _stable_id(binding.player_id) or not binding.configuration is Dictionary or not binding.body_signature is Dictionary:
 		return "Invalid stable native codec binding identity/configuration/signature"
 	error = configuration_error(binding.configuration)
 	if not error.is_empty(): return error
 	if binding.source_id != binding.configuration.source_id:
 		return "Native codec binding source must match the actual immutable configured source"
-	# This is the retained Motion native signature, not Route's distinct measured
-	# environment/body descriptor. Native source validation owns the measurement.
+	# Retained Motion signature; actual native source validation owns measurement.
 	if not Codec.keys_error(binding.body_signature, ["collision_path", "centre", "radius", "height", "margin", "custom_solver_bias", "layer", "mask", "linear_axis_locks"]).is_empty():
 		return "Retained exact native capsule signature required"
 	var body: Dictionary = binding.body_signature
@@ -78,6 +94,73 @@ func binding_error(binding: Dictionary) -> String:
 	for flag: Variant in body.linear_axis_locks:
 		if not flag is bool: return "Native capsule axis lock signature requires actual booleans"
 	return ""
+
+
+## Reviewed helper supplies this exact eight-key binding from actual retained
+## native objects. It remains distinct from the seven-key owned Motion binding.
+func spore_binding_error(binding: Dictionary) -> String:
+	var error: String = Codec.value_error(binding)
+	if not error.is_empty(): return error
+	if not Codec.keys_error(binding, ["api_revision", "actor_revision", "source_id", "controller_id", "player_id", "consumer_id", "configuration", "body_signature"]).is_empty():
+		return "Closed reviewed scheduler-spore-source-1 codec binding required"
+	if binding.api_revision != SPORE_PROTOCOL_REVISION or binding.actor_revision != API_REVISION or not _stable_id(binding.source_id) or not _stable_id(binding.controller_id) or not _stable_id(binding.player_id) or not binding.consumer_id is String or (not binding.consumer_id.is_empty() and not _stable_id(binding.consumer_id)) or not binding.configuration is Dictionary or not binding.body_signature is Dictionary:
+		return "Invalid reviewed native spore codec binding identity/configuration"
+	error = configuration_error(binding.configuration)
+	if not error.is_empty(): return error
+	if binding.source_id != binding.configuration.source_id:
+		return "Spore codec binding source differs from immutable configured source"
+	var body: Dictionary = binding.body_signature
+	if not Codec.keys_error(body, ["path", "centre", "shape", "layer", "mask", "priority"]).is_empty() or body.path != "BodyCollision" or not Codec.is_vector3(body.centre) or not _same(Codec.vector3(Codec.read_vector3(body.centre)), body.centre) or not body.shape is Dictionary or not body.layer is int or body.layer != 2 or not body.mask is int or body.mask != 1 or not body.priority is float or not Codec.in_range(body.priority, 0.0, 1000000000.0):
+		return "Exact measured upright native Route capsule descriptor required"
+	var shape: Dictionary = body.shape
+	if not Codec.keys_error(shape, ["type", "margin", "custom_solver_bias", "radius", "height"]).is_empty() or shape.type != "CapsuleShape3D" or not shape.margin is float or not Codec.in_range(shape.margin, 0.0, 1000000000.0) or not shape.custom_solver_bias is float or not is_finite(shape.custom_solver_bias) or not shape.radius is float or not Codec.in_range(shape.radius, 0.000001, 10000.0) or not shape.height is float or not Codec.in_range(shape.height, 2.0 * float(shape.radius), 10000.0):
+		return "Measured Route signature must retain its actual finite capsule shape data"
+	return ""
+
+
+func spore_record_error(actor: Dictionary, scheduler: Dictionary, player: Dictionary, binding: Dictionary) -> String:
+	var error: String = spore_binding_error(binding)
+	if not error.is_empty(): return error
+	error = schema_error(actor, binding.configuration)
+	if error.is_empty(): error = _spore_binding_correspondence_error(actor, binding)
+	if not error.is_empty(): return error
+	# Route requires all linear/angular axis locks false in its actual measurement.
+	# Explicitly map only equivalent copied fields into Motion's exact signature;
+	# retained live helper/native Scheduler guards still prove actual registration.
+	return context_error(actor, scheduler, player, binding.configuration, _motion_signature_from_route(binding.body_signature))
+
+
+func spore_record_view(actor: Dictionary, binding: Dictionary) -> Dictionary:
+	if not spore_binding_error(binding).is_empty() or not schema_error(actor, binding.configuration).is_empty() or not _spore_binding_correspondence_error(actor, binding).is_empty():
+		return {}
+	var stamp: Dictionary = actor.repulsion.duplicate(true) if _bound_schema(actor) else {
+		"api_revision": SPORE_ACTOR_REVISION, "consumer_id": "", "source_id": actor.source_id,
+		"episode_id": "", "phase": "none", "direction": actor.motion.facing.duplicate(), "progress": 0.0}
+	# Unbound projection is visibly inactive and derives direction from actual
+	# saved facing. A bound source MUST carry its genuine stamp in schema3/4.
+	return {"source_id": actor.source_id, "consumer_id": binding.consumer_id,
+		"alive": not actor.dead and not actor.dormant, "grounded": actor.motion.grounded,
+		"motion": {"position": actor.motion.position.duplicate(), "basis": _identity_basis(),
+			"velocity": actor.motion.velocity.duplicate(), "facing": actor.motion.facing.duplicate()},
+		"repulsion": stamp, "reservation_id": actor.reservation_id}
+
+
+func _spore_binding_correspondence_error(actor: Dictionary, binding: Dictionary) -> String:
+	if binding.consumer_id.is_empty():
+		return "Unbound native protocol cannot accept a bound saved actor" if _bound_schema(actor) else ""
+	if not _bound_schema(actor): return "Bound actual native protocol requires conditional schema3/4 stamp"
+	return "Saved actor stamp differs from actual configured consumer" if actor.repulsion.consumer_id != binding.consumer_id else ""
+
+
+func _motion_signature_from_route(body: Dictionary) -> Dictionary:
+	return {"collision_path": body.path, "centre": body.centre.duplicate(),
+		"radius": body.shape.radius, "height": body.shape.height,
+		"margin": body.shape.margin, "custom_solver_bias": body.shape.custom_solver_bias,
+		"layer": body.layer, "mask": body.mask, "linear_axis_locks": [false, false, false]}
+
+
+func _identity_basis() -> Array:
+	return [Codec.vector3(Basis.IDENTITY.x), Codec.vector3(Basis.IDENTITY.y), Codec.vector3(Basis.IDENTITY.z)]
 
 
 func configuration_error(configuration: Dictionary) -> String:
@@ -118,11 +201,12 @@ func schema_error(saved: Dictionary, configuration: Dictionary) -> String:
 	var error: String = Codec.value_error(saved)
 	if error.is_empty():
 		var keys: Array[String] = SNAPSHOT_KEYS.duplicate()
-		if saved.get("schema_version") == PENDING_SNAPSHOT_SCHEMA_VERSION: keys.append("pending_segments")
+		if _pending_schema(saved): keys.append("pending_segments")
+		if _bound_schema(saved): keys.append("repulsion")
 		error = Codec.keys_error(saved, keys)
 	if not error.is_empty():
 		return error
-	if saved.api_revision != API_REVISION or not saved.schema_version is int or saved.schema_version not in [SNAPSHOT_SCHEMA_VERSION, PENDING_SNAPSHOT_SCHEMA_VERSION] or saved.role_id != configuration.role_id or saved.source_id != configuration.source_id or not saved.configuration is Dictionary or not _same(saved.configuration, configuration) or not Codec.in_range(saved.hp, 0.0, float(configuration.raw_role.max_hp)) or not saved.dead is bool or saved.dead != (saved.hp == 0.0) or not saved.dormant is bool or not saved.motion is Dictionary or not Codec.keys_error(saved.motion, ["position", "velocity", "facing", "grounded"]).is_empty() or not saved.motion.grounded is bool:
+	if saved.api_revision != API_REVISION or not saved.schema_version is int or saved.schema_version not in [SNAPSHOT_SCHEMA_VERSION, PENDING_SNAPSHOT_SCHEMA_VERSION, BOUND_SNAPSHOT_SCHEMA_VERSION, BOUND_PENDING_SNAPSHOT_SCHEMA_VERSION] or saved.role_id != configuration.role_id or saved.source_id != configuration.source_id or not saved.configuration is Dictionary or not _same(saved.configuration, configuration) or not Codec.in_range(saved.hp, 0.0, float(configuration.raw_role.max_hp)) or not saved.dead is bool or saved.dead != (saved.hp == 0.0) or not saved.dormant is bool or not saved.motion is Dictionary or not Codec.keys_error(saved.motion, ["position", "velocity", "facing", "grounded"]).is_empty() or not saved.motion.grounded is bool:
 		return "Invalid immutable C31/C32 identity/configuration/HP/motion envelope"
 	for key: String in ["position", "velocity", "facing"]:
 		if not Codec.is_vector3(saved.motion[key]) or not _same(Codec.vector3(Codec.read_vector3(saved.motion[key])), saved.motion[key]):
@@ -132,6 +216,12 @@ func schema_error(saved: Dictionary, configuration: Dictionary) -> String:
 		return "Invalid C31/C32 facing, hurt clock or exchange field types"
 	if not saved.approach_driving is bool:
 		return "Approach ownership requires an exact boolean"
+	if _bound_schema(saved):
+		if not saved.repulsion is Dictionary: return "Bound actor requires its exact genuine repulsion stamp"
+		error = repulsion_error(saved.repulsion, saved.source_id)
+		if not error.is_empty(): return error
+		error = _spore_ownership_error(saved)
+		if not error.is_empty(): return error
 	if saved.approach_driving:
 		var horizontal := Codec.read_vector3(saved.motion.velocity)
 		horizontal.y = 0.0
@@ -139,10 +229,10 @@ func schema_error(saved: Dictionary, configuration: Dictionary) -> String:
 		# never immutable tuning/copied clocks/identity/sample correspondence.
 		if configuration.role_id != ROLE_SWARM or not configuration.approach.enabled or saved.dead or saved.dormant or not saved.reservation_id.is_empty() or saved.hurt_left_s != 0.0 or not saved.motion.grounded or Codec.read_vector3(saved.motion.velocity).y != 0.0 or horizontal == Vector3.ZERO or horizontal.length() > float(configuration.approach.speed) + Motion.EPSILON:
 			return "Approach driving requires live grounded opt-in idle C31 owned finite motion"
-	if _unowned_approach_residual(saved, configuration) and not _hurt_residual(saved) and saved.last_cancel_reason != "actual_player_death":
-		return "Unowned grounded C31 residual requires actual hurt or a paired fatal cancellation"
-	if saved.schema_version == PENDING_SNAPSHOT_SCHEMA_VERSION and (not saved.pending_segments is Array or saved.pending_segments.is_empty() or saved.pending_segments.size() > MAX_PENDING_SEGMENTS or saved.dead or saved.dormant or saved.reservation_id.is_empty() or saved.hurt_left_s != 0.0 or not saved.hit_ids.is_empty()):
-		return "Pending Mushroom Selenite schema2 requires a bounded unconsumed path in its live unharmed exchange"
+	if _unowned_approach_residual(saved, configuration) and not _hurt_residual(saved) and not _external_residual(saved) and saved.last_cancel_reason != "actual_player_death":
+		return "Unowned grounded C31 residual requires actual hurt, paired fatal cancellation or conditional external custody"
+	if _pending_schema(saved) and (not saved.pending_segments is Array or saved.pending_segments.is_empty() or saved.pending_segments.size() > MAX_PENDING_SEGMENTS or saved.dead or saved.dormant or saved.reservation_id.is_empty() or saved.hurt_left_s != 0.0 or not saved.hit_ids.is_empty()):
+		return "Pending Mushroom Selenite schema2/4 requires a bounded unconsumed path in its live unharmed exchange"
 	if saved.dead and (not saved.reservation_id.is_empty() or saved.hurt_left_s != 0.0 or Codec.read_vector3(saved.motion.velocity) != Vector3.ZERO):
 		return "Defeated C31/C32 cannot retain motion, hurt or a live lease"
 	if saved.dormant and (not configuration.initially_dormant or saved.dead or saved.hp != float(configuration.raw_role.max_hp) or Codec.read_vector3(saved.motion.velocity) != Vector3.ZERO or saved.hurt_left_s != 0.0 or saved.cycle != 0 or not saved.role_encounter_id.is_empty() or not saved.profile_id.is_empty() or not saved.resolved_role.is_empty() or not saved.reservation_id.is_empty() or not saved.sample.is_empty() or not saved.hit_ids.is_empty() or not saved.last_cancel_reason.is_empty()):
@@ -175,7 +265,7 @@ func context_error(saved: Dictionary, paired: Dictionary, saved_player: Dictiona
 	if not error.is_empty(): return error
 	if not paired.get("reservations") is Array or not paired.get("cooldowns") is Array or not paired.get("clock_s") is float or not paired.get("encounter_id") is String or not paired.get("profile") is Dictionary:
 		return "Validated paired scheduler transport required"
-	if _unowned_approach_residual(saved, configuration) and not _hurt_residual(saved):
+	if _unowned_approach_residual(saved, configuration) and not _hurt_residual(saved) and not _external_residual(saved):
 		if not saved_player.get("resources") is Dictionary or saved_player.resources.get("dead") != true:
 			return "Unowned unharmed C31 residual requires the paired actual dead Player"
 	if saved.approach_driving and (not saved_player.get("resources") is Dictionary or saved_player.resources.get("dead") != false):
@@ -251,6 +341,58 @@ func context_error(saved: Dictionary, paired: Dictionary, saved_player: Dictiona
 		if not _same(previous.end_s, paired.clock_s) or not _same(previous.to, Codec.vector3(relative)):
 			return "Pending C31/C32 path must end at the exact paired current relative position and clock"
 	return ""
+
+
+## Stamp validation is structural only. The parent/coordinator additionally
+## proves its exact paired episode/Route and original native control custody.
+func repulsion_error(stamp: Dictionary, source_id: String, consumer_id: String = "") -> String:
+	var error: String = Codec.value_error(stamp)
+	if not error.is_empty(): return error
+	if not Codec.keys_error(stamp, REPULSION_KEYS).is_empty() or stamp.api_revision != SPORE_ACTOR_REVISION or stamp.source_id != source_id or not _stable_id(stamp.consumer_id) or (not consumer_id.is_empty() and stamp.consumer_id != consumer_id) or not stamp.episode_id is String or not stamp.phase is String or stamp.phase not in REPULSION_PHASES or not Codec.is_vector3(stamp.direction) or not _same(Codec.vector3(Codec.read_vector3(stamp.direction)), stamp.direction) or not stamp.progress is float or not Codec.in_range(stamp.progress, 0.0, 1.0):
+		return "Invalid exact conditional native repulsion identity/phase/direction/progress"
+	var direction: Vector3 = Codec.read_vector3(stamp.direction)
+	if absf(direction.y) > Motion.EPSILON or absf(direction.length() - 1.0) > Motion.EPSILON:
+		return "Repulsion stamp retains a unit native planar direction, including phase none"
+	if stamp.phase == "none":
+		return "" if stamp.episode_id.is_empty() and stamp.progress == 0.0 else "Inactive bound stamp cannot retain an episode/progress"
+	if stamp.phase in ["hold", "regroup", "interrupted", "failed"] and stamp.progress != 0.0:
+		return "Stopped/interrupted stamp cannot invent movement or recoil progress"
+	if stamp.phase in ["recoil", "turn"] and stamp.progress >= 1.0:
+		return "Finished recoil/turn must already publish its next native consumer phase"
+	if not _stable_id(stamp.episode_id) or not stamp.episode_id.begins_with(stamp.consumer_id + "/episode-"):
+		return "Active bound stamp requires the same stable consumer episode identity"
+	return ""
+
+
+func _spore_ownership_error(saved: Dictionary) -> String:
+	if saved.dormant: return "Dormant future source cannot carry an actual environmental binding"
+	var phase: String = saved.repulsion.phase
+	if phase == "none": return ""
+	if saved.dead or saved.approach_driving or not saved.reservation_id.is_empty() or not saved.sample.is_empty() or not saved.hit_ids.is_empty() or _pending_schema(saved):
+		return "Active external episode cannot retain approach/native lease or damage opportunity"
+	var motion: Vector3 = Codec.read_vector3(saved.motion.velocity)
+	if phase not in ["interrupted", "failed"]:
+		if saved.hurt_left_s != 0.0 or not saved.motion.grounded or motion.y != 0.0:
+			return "Ordinary external episode requires unharmed actual grounded planar motion"
+		# Recoil can retain the real cancellation-boundary velocity before acquire;
+		# retreat may own actual Route velocity. Complete paired custody proves both.
+		if phase in ["turn", "hold", "regroup"] and motion != Vector3.ZERO:
+			return "Stopped external phase cannot invent retained physical velocity"
+	return ""
+
+
+func _pending_schema(saved: Dictionary) -> bool:
+	return saved.get("schema_version") in [PENDING_SNAPSHOT_SCHEMA_VERSION, BOUND_PENDING_SNAPSHOT_SCHEMA_VERSION]
+
+
+func _bound_schema(saved: Dictionary) -> bool:
+	return saved.get("schema_version") in [BOUND_SNAPSHOT_SCHEMA_VERSION, BOUND_PENDING_SNAPSHOT_SCHEMA_VERSION]
+
+
+func _external_residual(saved: Dictionary) -> bool:
+	# This is NOT a standalone route certificate. Whole environmental prevalidation
+	# is required; a reason string or unbound none stamp grants no external owner.
+	return _bound_schema(saved) and saved.repulsion.phase != "none"
 
 
 func _unowned_approach_residual(saved: Dictionary, configuration: Dictionary) -> bool:

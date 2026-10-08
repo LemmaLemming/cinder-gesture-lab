@@ -3,7 +3,9 @@ extends CharacterBody3D
 ## C31 / A1-E2 and C32 / A1-E3 bounded greybox consumers. The shared scheduler
 ## owns attack deadlines, cooldowns, proof and C31 ground-lunge motion. Actor HP,
 ## hurt settling, sampled damage and presentation remain authored. C31 approach
-## is explicitly opt-in; no auto-cycle or spore adapter. Costume poses are clockless.
+## is explicitly opt-in. Genuine shared26 environmental motion is optional and
+## belongs to the bound consumer/Route; there is no auto-cycle or second clock.
+## Costume poses are clockless; new spore-specific pixels remain separate work.
 ## Capture/restore uses one exact Player+actor+Scheduler aggregate; an actor
 ## record is never converted into an AshEnemy envelope.
 
@@ -20,9 +22,14 @@ const CueScript = preload("res://scripts/cues/threat_cue.gd")
 const ArtScript = preload("res://scripts/acts/act1/mushroom_selenite_art.gd")
 const NativeCodec = preload("res://scripts/acts/act1/mushroom_selenite_codec.gd")
 const Approach = preload("res://scripts/acts/act1/mushroom_selenite_approach.gd")
-const API_REVISION: String = "act1-mushroom-selenite-2"
+const API_REVISION: String = "act1-mushroom-selenite-3"
 const SNAPSHOT_SCHEMA_VERSION: int = 1
 const PENDING_SNAPSHOT_SCHEMA_VERSION: int = 2
+const BOUND_SNAPSHOT_SCHEMA_VERSION: int = 3
+const BOUND_PENDING_SNAPSHOT_SCHEMA_VERSION: int = 4
+const SPORE_ACTOR_REVISION: String = "scheduler-spore-actor-1"
+const RepulsionRoute = preload("res://scripts/combat/repulsion_route.gd")
+const SPORE_PHASES: Array[String] = ["none", "recoil", "turn", "retreat", "hold", "regroup", "interrupted", "failed"]
 const MAX_PENDING_SEGMENTS: int = 256
 const HERO_ID: String = "hero"
 const GRAVITY: float = 24.0
@@ -84,6 +91,16 @@ var _phase: String = "clear"
 var _transaction_depth: int = 0
 var _snapshot_busy: bool = false
 var _cancelling: bool = false
+# Only the actual bound consumer owns episode generation, progress and Route.
+# Weak identity survives quiet reconstruction; never serialize object handles.
+var _spore_consumer_ref: WeakRef
+var _spore_consumer_id: String = ""
+var _spore_episode_id: String = ""
+var _spore_phase: String = "none"
+var _spore_direction: Vector3 = Vector3.FORWARD
+var _spore_progress: float = 0.0
+var _spore_cancel_delivering: bool = false
+var _spore_nested_damage_used: bool = false
 
 
 func configure(role_id: String, source_id: String, initially_dormant: bool = true, approach_enabled: bool = false) -> bool:
@@ -256,7 +273,9 @@ func _prepare_start(response_context: Dictionary, direction: Vector3, world_root
 		return {"accepted": false, "reason": "Authored encounter context and fixed normalized world direction required"}
 	if not is_instance_valid(world_root) or not world_root.is_inside_tree() or world_root.is_queued_for_deletion() or world_root.get_world_3d() != get_world_3d() or not world_root.is_ancestor_of(self) or not world_root.is_ancestor_of(_hero) or not world_root.is_ancestor_of(_scheduler):
 		return {"accepted": false, "reason": "Actual containing same-world root must retain actor, hero and scheduler"}
-	var guard_error: String = _retained_body_error()
+	var guard_error: String = _spore_fresh_error()
+	if guard_error.is_empty():
+		guard_error = _retained_body_error()
 	if guard_error.is_empty():
 		guard_error = _lifecycle_error()
 	if guard_error.is_empty():
@@ -296,12 +315,19 @@ func _prepare_start(response_context: Dictionary, direction: Vector3, world_root
 
 func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 	var result: Dictionary = {"accepted": false, "hp_damage": 0.0, "target_id": get_instance_id(), "target_alive_before_hit": hp > 0.0 and not dead and not dormant and not is_queued_for_deletion()}
-	if not _live_bindings() or _snapshot_busy or _transaction_depth > 0 or not result.target_alive_before_hit or not is_finite(amount) or amount <= 0.0 or not impulse.is_finite():
+	# Exactly ONE real injury may arrive from the native spore-cancel delivery.
+	# No phase/hit/snapshot/general recursive damage boundary is relaxed.
+	var nested: bool = _transaction_depth == 1 and _cancelling and _spore_cancel_delivering and not _spore_nested_damage_used
+	if not _live_bindings() or _snapshot_busy or (_transaction_depth > 0 and not nested) or not result.target_alive_before_hit or not is_finite(amount) or amount <= 0.0 or not impulse.is_finite():
 		return result
+	if nested: _spore_nested_damage_used = true
 	_transaction_depth += 1
-	# The scheduler stops its velocity first; hurt can then own the real impulse.
-	cancel("actual_player_damage")
-	# Preserve existing momentum plus the genuine impulse for native hurt settling.
+	# Outer native cancellation already cleared this exchange before observers.
+	# Recursively cancelling it would destroy the bounded injury delivery order.
+	if nested:
+		_last_cancel_reason = "actual_player_damage"
+	else:
+		cancel("actual_player_damage")
 	_approach_driving = false
 	var before: float = hp
 	hp = maxf(0.0, hp - amount)
@@ -311,16 +337,30 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 		dead = true
 		_hurt_left_s = 0.0
 		velocity = Vector3.ZERO
+		_spore_episode_id = ""
+		_spore_phase = "none"
+		_spore_progress = 0.0
 		_scheduler.cancel_owner(self, "source_defeated")
 		collision_layer = 0
 		collision_mask = 0
-		_collision.set_deferred("disabled", true)
+		# Immediate genuine death state is needed by the synchronous native
+		# protocol post-callback lifecycle proof, before defeat observers.
+		_collision.disabled = true
 		remove_from_group("enemies")
 		visible = false
-		defeated.emit(String(_configuration.source_id))
 	else:
 		velocity += impulse
 		_hurt_left_s = HURT_S
+		if not _spore_episode_id.is_empty():
+			_spore_phase = "interrupted"
+			_spore_progress = 0.0
+	# Real HP/impulse/hurt and the stamp precede Route release and all defeat/
+	# state observers. Native release never overwrites an external impulse.
+	var consumer: CinderSporeRepulsion = _spore_consumer()
+	if consumer != null:
+		consumer.source_interrupted(self, "actual_death" if dead else "actual_damage")
+	if dead:
+		defeated.emit(String(_configuration.source_id))
 	state_changed.emit(state())
 	_transaction_depth -= 1
 	return result
@@ -352,11 +392,129 @@ func state() -> Dictionary:
 	var record: Dictionary = _scheduler.reservation_state(_reservation_id) if is_instance_valid(_scheduler) and not _reservation_id.is_empty() else {}
 	var phase: String = String(record.get("state", "clear"))
 	var status: String = "dormant" if dormant else ("defeated" if dead else ("running" if not record.is_empty() else ("hurt" if _hurt_left_s > 0.0 else "idle")))
-	var result: Dictionary = {"api_revision": API_REVISION, "role_id": _configuration.get("role_id", ""), "entity_id": _configuration.get("entity_id", ""), "spore_support": false, "presentation_status": "authored_C31_C32_pose_pixels", "source_id": _configuration.get("source_id", ""), "hp": hp, "dead": dead, "dormant": dormant, "status": status, "phase": phase, "reservation_id": _reservation_id, "cycle": _cycle, "source_position": global_position, "opening_position": record.get("opening_position", global_position), "geometry": record.get("geometry", {}).duplicate(true), "resolved_role": _resolved_role.duplicate(true), "hit_ids": _hit_ids.duplicate(), "hurt_left_s": _hurt_left_s, "approach_enabled": _configuration.get("approach", {}).get("enabled", false), "approach_driving": _approach_driving, "velocity": velocity, "facing": _facing, "last_cancel_reason": _last_cancel_reason}
+	var result: Dictionary = {"api_revision": API_REVISION, "role_id": _configuration.get("role_id", ""), "entity_id": _configuration.get("entity_id", ""), "spore_support": not _spore_consumer_id.is_empty(), "presentation_status": "authored_C31_C32_pose_pixels", "source_id": _configuration.get("source_id", ""), "hp": hp, "dead": dead, "dormant": dormant, "status": status, "phase": phase, "reservation_id": _reservation_id, "cycle": _cycle, "source_position": global_position, "opening_position": record.get("opening_position", global_position), "geometry": record.get("geometry", {}).duplicate(true), "resolved_role": _resolved_role.duplicate(true), "hit_ids": _hit_ids.duplicate(), "hurt_left_s": _hurt_left_s, "approach_enabled": _configuration.get("approach", {}).get("enabled", false), "approach_driving": _approach_driving, "velocity": velocity, "facing": _facing, "last_cancel_reason": _last_cancel_reason}
+	if not _spore_consumer_id.is_empty():
+		result["repulsion"] = _encode_repulsion()
 	for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "armed", "adapter"]:
 		if record.has(key):
 			result[key] = record[key].duplicate(true) if record[key] is Dictionary else record[key]
 	return result
+
+
+## Pure retained native binding, deliberately distinct from state() which prunes.
+func get_spore_native_bindings() -> Dictionary:
+	if not _live_bindings() or not _retained_body_error().is_empty(): return {}
+	return {"api_revision": SPORE_ACTOR_REVISION, "actor_revision": API_REVISION, "source_id": _configuration.source_id, "scheduler": _scheduler, "player": _hero, "codec": _native_codec, "configuration": _configuration.duplicate(true)}
+
+
+## Common live response has no Scheduler reservation/cooldown query or callback.
+## Dead retained bodies stay available for genuine defeat/tombstone validation.
+func get_spore_response_state() -> Dictionary:
+	if not _live_bindings() or not _retained_body_error().is_empty() or not _lifecycle_error().is_empty(): return {}
+	var direction: Vector3 = _facing if _spore_consumer_id.is_empty() else _spore_direction
+	return {"api_revision": SPORE_ACTOR_REVISION, "source_id": _configuration.source_id, "consumer_id": _spore_consumer_id, "alive": not dead and not dormant, "grounded": _grounded(), "position": global_position, "velocity": velocity, "facing": _facing, "hurt_remaining_s": _hurt_left_s, "body_collision_path": "BodyCollision", "support_radius": float(_retained_capsule.radius) + RepulsionRoute.FLOOR_SKIN, "height": float(_retained_capsule.height), "episode_id": _spore_episode_id, "phase": _spore_phase, "direction": direction, "progress": _spore_progress, "outside_transaction": _transaction_depth == 0 and not _snapshot_busy and not _cancelling}
+
+
+func spore_bind_error(consumer: Node, source_id: String) -> String:
+	if not _live_bindings() or dead or dormant or _transaction_depth > 0 or _snapshot_busy or _cancelling or source_id != _configuration.source_id:
+		return "Bind a living actual C31/C32 outside actor callbacks"
+	var actual: CinderSporeRepulsion = consumer as CinderSporeRepulsion
+	if not is_instance_valid(actual) or not actual.is_inside_tree() or actual.is_queued_for_deletion() or actual.get_world_3d() != get_world_3d() or not _stable_id(actual.consumer_id()) or not actual.source_binding_matches(self, source_id):
+		return "Actual same-world consumer must already stage this permanent source"
+	var error: String = _retained_body_error()
+	if error.is_empty(): error = _lifecycle_error()
+	if not error.is_empty(): return error
+	var control: Dictionary = _scheduler.source_control_state(self)
+	if control.is_empty() or not control.get("outside_transaction", false):
+		return "Bind outside the actual Scheduler transaction"
+	if not _spore_consumer_id.is_empty():
+		return "" if _spore_consumer() == consumer and _spore_consumer_id == actual.consumer_id() else "Environmental consumer identity is immutable"
+	if not _spore_episode_id.is_empty() or _spore_phase != "none":
+		return "Fresh unbound source cannot carry an environmental episode"
+	return ""
+
+
+## Silent one-shot commit after parent/protocol pairwise prevalidation.
+func bind_spore_repulsion(consumer: Node, source_id: String) -> bool:
+	var error: String = spore_bind_error(consumer, source_id)
+	if not error.is_empty(): return _reject(error)
+	if not _spore_consumer_id.is_empty(): return true
+	_spore_consumer_ref = weakref(consumer)
+	_spore_consumer_id = (consumer as CinderSporeRepulsion).consumer_id()
+	_spore_direction = _facing
+	return true
+
+
+func cancel_attack_for_spores(consumer: Node, episode_id: String, direction: Vector3) -> bool:
+	var error: String = _spore_hook_error(consumer, episode_id)
+	if not error.is_empty() or get_tree().paused or not _spore_episode_id.is_empty() or _hurt_left_s != 0.0 or not _grounded() or absf(velocity.y) > Motion.EPSILON or not _unit_direction(direction):
+		return _reject(error if not error.is_empty() else "Environmental cancellation requires an unharmed grounded fresh source")
+	var record: Dictionary = (consumer as CinderSporeRepulsion).source_state(String(_configuration.source_id))
+	var control: Dictionary = _scheduler.source_control_state(self)
+	if record.get("episode_id") != episode_id or record.get("phase") != "recoil" or not record.get("direction") is Vector3 or not _same(Codec.vector3(record.direction), Codec.vector3(direction)) or record.get("progress") != 0.0 or control.is_empty() or not control.get("outside_transaction", false):
+		return _reject("Actual consumer must publish its exact prepared recoil before native cancellation")
+	# Stamp and suppression precede every synchronous native cancellation/cue
+	# observer. Leave original approach velocity until real Route.acquire; only
+	# the Scheduler may stop an owned lunge while cancelling its exact lease.
+	_spore_episode_id = episode_id
+	_spore_phase = "recoil"
+	_spore_direction = direction
+	_spore_progress = 0.0
+	_approach_driving = false
+	_spore_cancel_delivering = true
+	_spore_nested_damage_used = false
+	var accepted: bool = cancel("spore_repulsion")
+	_spore_cancel_delivering = false
+	return accepted
+
+
+func present_spore_phase(consumer: Node, episode_id: String, phase: String, progress: float) -> bool:
+	var error: String = _spore_hook_error(consumer, episode_id)
+	if not error.is_empty() or episode_id != _spore_episode_id or phase == "none" or phase not in SPORE_PHASES or not is_finite(progress) or progress < 0.0 or progress > 1.0:
+		return false
+	var record: Dictionary = (consumer as CinderSporeRepulsion).source_state(String(_configuration.source_id))
+	if record.get("episode_id") != episode_id or record.get("phase") != phase or not _same(record.get("progress"), progress) or not record.get("direction") is Vector3 or not _same(Codec.vector3(record.direction), Codec.vector3(_spore_direction)):
+		return false
+	# Existing facing follows authoritative turn progress without a turn timer
+	# or serialized origin. It changes only the art/facing vector, never basis.
+	if phase == "turn":
+		var prior: float = _spore_progress if _spore_phase == "turn" else 0.0
+		if progress < prior: return false
+		var fraction: float = (progress - prior) / (1.0 - prior) if prior < 1.0 else 0.0
+		_facing = _facing.rotated(Vector3.UP, _facing.signed_angle_to(_spore_direction, Vector3.UP) * fraction).normalized()
+	elif phase in ["retreat", "hold", "regroup"]:
+		_facing = _spore_direction
+	_spore_phase = phase
+	_spore_progress = progress
+	_draw_greybox()
+	return true
+
+
+func resume_spore_retreat(consumer: Node, episode_id: String, direction: Vector3) -> bool:
+	var error: String = _spore_hook_error(consumer, episode_id)
+	if not error.is_empty() or get_tree().paused or episode_id != _spore_episode_id or _spore_phase != "interrupted" or _hurt_left_s != 0.0 or not _grounded() or velocity != Vector3.ZERO or not _reservation_id.is_empty() or not _unit_direction(direction): return false
+	var record: Dictionary = (consumer as CinderSporeRepulsion).source_state(String(_configuration.source_id))
+	var control: Dictionary = _scheduler.source_control_state(self)
+	if record.get("episode_id") != episode_id or record.get("phase") != "interrupted" or control.is_empty() or not control.get("outside_transaction", false) or not control.reservations.is_empty(): return false
+	# Shared consumer assigns the continued direction AFTER actual acquisition.
+	# Do not compare this new prepared direction with its previous record value.
+	_spore_direction = direction
+	_spore_phase = "retreat"
+	_spore_progress = 0.0
+	_approach_driving = false
+	return true
+
+
+func finish_spore_episode(consumer: Node, episode_id: String) -> bool:
+	var error: String = _spore_hook_error(consumer, episode_id)
+	if not error.is_empty() or episode_id != _spore_episode_id or _spore_phase != "regroup" or _hurt_left_s != 0.0 or velocity != Vector3.ZERO or not _reservation_id.is_empty(): return false
+	var record: Dictionary = (consumer as CinderSporeRepulsion).source_state(String(_configuration.source_id))
+	if record.get("episode_id") != episode_id or record.get("phase") != "regroup": return false
+	_spore_episode_id = ""
+	_spore_phase = "none"
+	_spore_progress = 0.0
+	# Retain consumer, HP/profile/cooldown and unit direction. No fresh admission.
+	return true
 
 
 func get_cue() -> CinderThreatCue:
@@ -394,6 +552,18 @@ func art_binding_error() -> String:
 func _physics_process(delta: float) -> void:
 	if dead or dormant or not _live_bindings() or get_tree().paused or _transaction_depth > 0:
 		return
+	# Genuine coordinator step MUST precede this actor's ordinary transaction.
+	# Route owns held motion; false permits only native hurt/airborne settlement
+	# during an episode, never a second pursuit or new attack controller.
+	var consumer: CinderSporeRepulsion = _spore_consumer()
+	if not _spore_consumer_id.is_empty():
+		if consumer == null:
+			last_error = "Retained environmental consumer disappeared; fresh motion is suppressed"
+			if _hurt_left_s <= 0.0 and _grounded() and velocity == Vector3.ZERO: return
+		elif consumer.step_source(self, delta):
+			return
+		if dead or dormant or not _live_bindings() or get_tree().paused or _transaction_depth > 0:
+			return
 	_transaction_depth += 1
 	if not _reservation_id.is_empty():
 		var record: Dictionary = _damage_boundary_record(false)
@@ -410,7 +580,7 @@ func _physics_process(delta: float) -> void:
 		var horizontal := Vector3(velocity.x, 0.0, velocity.z)
 		# A native impulse can outlive its .22s hurt clock. Never reinterpret that
 		# residual velocity as approach-owned: settle to exact zero first.
-		if _configuration.approach.enabled and not was_hurt and (_approach_driving or horizontal == Vector3.ZERO) and _grounded() and velocity.y == 0.0:
+		if _configuration.approach.enabled and _spore_fresh_error().is_empty() and not was_hurt and (_approach_driving or horizontal == Vector3.ZERO) and _grounded() and velocity.y == 0.0:
 			_step_approach(delta)
 			_transaction_depth -= 1
 			return
@@ -439,6 +609,8 @@ func propose_approach(target: Vector3, delta: float) -> Dictionary:
 func _approach_idle_error(inside_physics: bool) -> String:
 	if not _live_bindings() or _snapshot_busy or _cancelling or (not inside_physics and _transaction_depth > 0) or dead or dormant or _hero.dead or get_tree().paused:
 		return "Approach requires its live unpaused activated source/Player outside callbacks"
+	var environmental_error: String = _spore_fresh_error()
+	if not environmental_error.is_empty(): return environmental_error
 	if _configuration.role_id != ROLE_SWARM or not _configuration.approach.enabled or not _reservation_id.is_empty() or not _sample.is_empty() or not _pending_segments.is_empty() or not _hit_ids.is_empty() or _hurt_left_s != 0.0:
 		return "Only opt-in idle C31 without a native lease/sample/held delivery can approach"
 	if not _grounded() or velocity.y != 0.0 or (not _approach_driving and Vector3(velocity.x, 0.0, velocity.z) != Vector3.ZERO):
@@ -450,6 +622,12 @@ func _approach_idle_error(inside_physics: bool) -> String:
 
 
 func _movement_error(plan: Dictionary) -> String:
+	var consumer: CinderSporeRepulsion = _spore_consumer()
+	if not _spore_consumer_id.is_empty():
+		if consumer == null: return "Actual environmental consumer binding is unavailable"
+		var motion: Vector3 = plan.next_position - global_position
+		if not consumer.allows_source_step(self, global_position, motion):
+			return "Actual active field forbids this source's approach reentry"
 	if not approach_guard.is_valid(): return "Opt-in approach requires its parent's actual motion/framing guard"
 	var result: Variant = approach_guard.call(plan.duplicate(true))
 	return result if result is String else "Approach movement guard must return a literal String"
@@ -708,6 +886,47 @@ func _apply_lifecycle_flags() -> void:
 		add_to_group("enemies")
 
 
+func _spore_consumer() -> CinderSporeRepulsion:
+	var value: Variant = _spore_consumer_ref.get_ref() if _spore_consumer_ref != null else null
+	if not is_instance_valid(value) or not value is CinderSporeRepulsion or not value.is_inside_tree() or value.is_queued_for_deletion() or value.get_world_3d() != get_world_3d(): return null
+	return value as CinderSporeRepulsion
+
+
+func _spore_binding_error() -> String:
+	if _spore_consumer_id.is_empty(): return ""
+	var consumer: CinderSporeRepulsion = _spore_consumer()
+	if consumer == null or consumer.consumer_id() != _spore_consumer_id or not consumer.source_binding_matches(self, String(_configuration.source_id)):
+		return "Retain the actual immutable environmental consumer/source binding"
+	return ""
+
+
+func _spore_fresh_error() -> String:
+	if not _spore_episode_id.is_empty(): return "Actual environmental episode suppresses fresh attack/approach"
+	var error: String = _spore_binding_error()
+	if not error.is_empty(): return error
+	if not _spore_consumer_id.is_empty() and not _spore_consumer().placement_accepted():
+		return "Actual environmental custody rejection suppresses fresh attack/approach"
+	return ""
+
+
+func _spore_hook_error(consumer: Node, episode_id: String) -> String:
+	if not _live_bindings() or dead or dormant or _transaction_depth > 0 or _snapshot_busy or _cancelling:
+		return "Environmental hook requires a living actual source outside actor callbacks"
+	var error: String = _spore_binding_error()
+	if not error.is_empty(): return error
+	if _spore_consumer_id.is_empty() or _spore_consumer() != consumer or not _stable_id(episode_id) or not episode_id.begins_with(_spore_consumer_id + "/episode-"):
+		return "Environmental hook must name the retained consumer's genuine episode"
+	return ""
+
+
+func _unit_direction(value: Vector3) -> bool:
+	return value.is_finite() and absf(value.y) <= Motion.EPSILON and absf(value.length() - 1.0) <= Motion.EPSILON
+
+
+func _encode_repulsion() -> Dictionary:
+	return {"api_revision": SPORE_ACTOR_REVISION, "consumer_id": _spore_consumer_id, "source_id": _configuration.source_id, "episode_id": _spore_episode_id, "phase": _spore_phase, "direction": Codec.vector3(_spore_direction), "progress": _spore_progress}
+
+
 func _snapshot_access_error() -> String:
 	var art_error: String = art_binding_error()
 	if not art_error.is_empty():
@@ -716,6 +935,10 @@ func _snapshot_access_error() -> String:
 		return "C31/C32 snapshots require retained ready bindings at the paused deferred barrier"
 	if _transaction_depth > 0 or _snapshot_busy or _cancelling:
 		return "C31/C32 snapshots cannot run inside actor/phase/hit/cancellation callbacks"
+	# Pure identity only: querying the coordinator's snapshot validator here
+	# would recurse while it is validating this same complete native actor unit.
+	var environmental_error: String = _spore_binding_error()
+	if not environmental_error.is_empty(): return environmental_error
 	var retained_error: String = _retained_body_error()
 	if not retained_error.is_empty():
 		return retained_error
@@ -728,8 +951,24 @@ func _snapshot_access_error() -> String:
 
 
 func capture_state(paired_scheduler: Dictionary) -> Dictionary:
+	return _capture_state(paired_scheduler, {})
+
+
+## Complete paired writer; helper never reconstructs a native actor envelope.
+func spore_snapshot_state(paired_scheduler: Dictionary, saved_player: Dictionary) -> Dictionary:
+	if saved_player.is_empty():
+		last_snapshot_error = "Complete actual paired Player required by environmental native capture"
+		return {}
+	return _capture_state(paired_scheduler, saved_player)
+
+
+func _capture_state(paired_scheduler: Dictionary, supplied_player: Dictionary) -> Dictionary:
 	last_snapshot_error = _snapshot_access_error()
 	if not last_snapshot_error.is_empty():
+		return {}
+	var current_player: Dictionary = _hero.snapshot_state()
+	if current_player.is_empty() or (not supplied_player.is_empty() and not _same(current_player, supplied_player)):
+		last_snapshot_error = "Captured actor must use the exact actual paused Player unit"
 		return {}
 	_snapshot_busy = true
 	var saved: Dictionary = {"api_revision": API_REVISION, "schema_version": SNAPSHOT_SCHEMA_VERSION, "role_id": _configuration.role_id, "source_id": _configuration.source_id, "configuration": _configuration.duplicate(true), "hp": hp, "dead": dead, "dormant": dormant, "motion": {"position": Codec.vector3(global_position), "velocity": Codec.vector3(velocity), "facing": Codec.vector3(_facing), "grounded": _grounded()}, "hurt_left_s": _hurt_left_s, "approach_driving": _approach_driving, "role_encounter_id": _role_encounter_id, "profile_id": _profile_id, "resolved_role": _resolved_role.duplicate(true), "reservation_id": _reservation_id, "cycle": _cycle, "sample": _encode_sample(), "hit_ids": _hit_ids.duplicate(), "last_cancel_reason": _last_cancel_reason}
@@ -738,7 +977,10 @@ func capture_state(paired_scheduler: Dictionary) -> Dictionary:
 		saved["pending_segments"] = []
 		for segment: Dictionary in _pending_segments:
 			saved.pending_segments.append({"from": Codec.vector3(segment.from), "to": Codec.vector3(segment.to), "start_s": segment.start_s, "end_s": segment.end_s})
-	last_snapshot_error = _actor_error(saved, paired_scheduler, _hero.snapshot_state())
+	if not _spore_consumer_id.is_empty():
+		saved["schema_version"] = BOUND_PENDING_SNAPSHOT_SCHEMA_VERSION if not _pending_segments.is_empty() else BOUND_SNAPSHOT_SCHEMA_VERSION
+		saved["repulsion"] = _encode_repulsion()
+	last_snapshot_error = _actor_error(saved, paired_scheduler, current_player)
 	if last_snapshot_error.is_empty():
 		last_snapshot_error = _lifecycle_error()
 	_snapshot_busy = false
@@ -802,20 +1044,28 @@ func restore_exchange_state(saved: Dictionary) -> bool:
 	if hp != saved.hp or dead != saved.dead or dormant != saved.dormant or _hurt_left_s != saved.hurt_left_s or _approach_driving != saved.approach_driving or not _same(Codec.vector3(_facing), saved.motion.facing) or not _same(Codec.vector3(global_position), saved.motion.position) or not _same(Codec.vector3(velocity), saved.motion.velocity) or _collision.disabled != inactive or collision_layer != (0 if inactive else 2) or collision_mask != (0 if inactive else 1) or is_in_group("enemies") == inactive or visible == inactive:
 		last_snapshot_error = "Apply the exact validated actual C31/C32 lifecycle/motion before exchange commit"
 		return false
-	var record: Dictionary = _scheduler.reservation_state(saved.reservation_id) if not saved.reservation_id.is_empty() else {}
+	# Quiet actual source-control read: no pruning, cancellation, clocks or cue
+	# callbacks are permitted between the aggregate's physical/native commits.
+	var control: Dictionary = _scheduler.source_control_state(self)
+	if control.is_empty() or not control.get("outside_transaction", false):
+		last_snapshot_error = "Actual restored Scheduler must be outside its native transaction"
+		return false
+	if inactive and control.cooldown != null:
+		last_snapshot_error = "Actual inactive C31/C32 cannot retain its native owner cooldown"
+		return false
+	var records: Array = control.reservations
+	var record: Dictionary = records[0] if records.size() == 1 else {}
 	if not saved.reservation_id.is_empty():
-		if record.is_empty() or int(record.source_instance_id) != get_instance_id() or _scheduler.get_clock() != saved.sample.clock_s or not _same(Codec.vector3(record.source_position), saved.motion.position) or not _same(Codec.vector3(record.get("adapter", {}).get("current_velocity", Vector3.ZERO)), saved.motion.velocity) or not _same(Codec.vector3(_hero.global_position), saved.sample.hero_position):
+		if record.is_empty() or record.get("id") != saved.reservation_id or int(record.source_instance_id) != get_instance_id() or control.clock_s != saved.sample.clock_s or not _same(Codec.vector3(record.source_position), saved.motion.position) or not _same(Codec.vector3(record.get("adapter", {}).get("current_velocity", Vector3.ZERO)), saved.motion.velocity) or not _same(Codec.vector3(_hero.global_position), saved.sample.hero_position):
 			last_snapshot_error = "Actual restored scheduler/source/hero must match the validated sampled exchange"
 			return false
-		var current_pair: Dictionary = {"clock_s": _scheduler.get_clock(), "encounter_id": saved.role_encounter_id, "profile": _scheduler.encounter_profile(), "reservations": [_encode_public_record(record)], "cooldowns": []}
+		var current_pair: Dictionary = {"clock_s": control.clock_s, "encounter_id": control.encounter_id, "profile": _scheduler.encounter_profile(), "reservations": [_encode_public_record(record)], "cooldowns": []}
 		last_snapshot_error = _actor_error(saved, current_pair, _hero.snapshot_state())
 		if not last_snapshot_error.is_empty():
 			return false
-	else:
-		for existing: Dictionary in _scheduler.reservations():
-			if int(existing.source_instance_id) == get_instance_id():
-				last_snapshot_error = "Inactive C31/C32 cannot hide an actual retained reservation"
-				return false
+	elif not records.is_empty():
+		last_snapshot_error = "Inactive C31/C32 cannot hide an actual retained reservation"
+		return false
 	_snapshot_busy = true
 	_role_encounter_id = saved.role_encounter_id
 	_profile_id = saved.profile_id
@@ -830,6 +1080,13 @@ func restore_exchange_state(saved: Dictionary) -> bool:
 	for id: String in saved.hit_ids:
 		_hit_ids.append(id)
 	_last_cancel_reason = saved.last_cancel_reason
+	# Stamp is the final quiet actor exchange commit, after actual physical
+	# actors/Player and native Scheduler. Coordinator Route restore comes last.
+	if saved.has("repulsion"):
+		_spore_episode_id = saved.repulsion.episode_id
+		_spore_phase = saved.repulsion.phase
+		_spore_direction = Codec.read_vector3(saved.repulsion.direction)
+		_spore_progress = saved.repulsion.progress
 	var blocked: bool = _cue.is_blocking_signals()
 	_cue.set_block_signals(true)
 	_cue.clear()
@@ -856,7 +1113,14 @@ func restore_state(saved: Dictionary) -> bool:
 
 
 func _schema_error(saved: Dictionary) -> String:
-	return String(_native_codec.call("schema_error", saved, _configuration))
+	var error: String = String(_native_codec.call("schema_error", saved, _configuration))
+	if not error.is_empty(): return error
+	var bound: bool = not _spore_consumer_id.is_empty()
+	if bound != saved.has("repulsion"):
+		return "Saved native conditional stamp must agree with actual environmental binding"
+	if bound:
+		return String(_native_codec.call("repulsion_error", saved.repulsion, String(_configuration.source_id), _spore_consumer_id))
+	return ""
 
 
 func _actor_error(saved: Dictionary, paired: Dictionary, saved_player: Dictionary) -> String:
@@ -960,6 +1224,11 @@ func _draw_greybox() -> void:
 
 
 func _exit_tree() -> void:
+	# Parent retires its complete field/coordinator unit. This narrow source
+	# hook releases only genuine retained Route custody; never fakes HP/death.
+	var consumer: CinderSporeRepulsion = _spore_consumer()
+	if consumer != null:
+		consumer.source_interrupted(self, "actual_death" if dead else "source_removed")
 	if is_instance_valid(_scheduler):
 		if _scheduler.reservation_invalidated.is_connected(_on_invalidated):
 			_scheduler.reservation_invalidated.disconnect(_on_invalidated)
