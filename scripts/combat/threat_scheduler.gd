@@ -338,6 +338,12 @@ func invalidate_world(new_revision: int) -> void:
 	_boundary_busy = false
 
 
+func has_committed_exchange() -> bool:
+	## Pure diagnostic: stale entries still occupy a compound-proof barrier.
+	## Cleanup and cancellation callbacks remain in ordinary scheduler updates.
+	return not _reservations.is_empty()
+
+
 func reservations() -> Array[Dictionary]:
 	if not _snapshot_busy:
 		_prune()
@@ -456,6 +462,16 @@ func _request_error(owner: Node3D, threat: Dictionary, response: Dictionary, ign
 		return "Stationary committed source and reachable recovery target required"
 	if not Geometry.finite_number(threat.get("cooldown_remaining_s")) or float(threat["cooldown_remaining_s"]) > EPSILON or float(threat["cooldown_remaining_s"]) < 0.0:
 		return "Source must be ready according to its live cooldown"
+	return response_error(response, allow_unstable_warning)
+
+
+func response_error(response: Dictionary, allow_unstable_warning: bool = false) -> String:
+	## Shared live-response/floor preflight for conservative compound witnesses.
+	## Pure: does not prune, allocate, move a body or reserve any timing.
+	if _boundary_busy or _encounter_id.is_empty() or not is_inside_tree() or get_tree().paused:
+		return "An active, unpaused encounter is required"
+	if response.get("world_revision") != _world_revision:
+		return "Current collision world revision required"
 	var actor: CharacterBody3D = response.get("actor") as CharacterBody3D
 	if not is_instance_valid(actor) or not actor.is_inside_tree() or actor.is_queued_for_deletion() or actor.get_world_3d() != get_world_3d() or not Geometry.finite_vector(actor.global_position) or not Geometry.finite_vector(actor.velocity):
 		return "Live finite shared actor required"
