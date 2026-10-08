@@ -230,4 +230,12 @@ func _guard_framing(label: String) -> bool:
 
 func _guard_diagnostic(label: String) -> void:
 	if not is_instance_valid(guard_source): return
+	var points: Array = level.camera_framing_points()
+	points.append_array(game.call("player_camera_framing_points"))
+	var camera: Camera3D = game.get("camera") as Camera3D
+	var projected: Array = []
+	for point: Vector3 in points: projected.append(camera.global_basis.inverse() * point)
+	var bounds := AABB(projected[0], Vector3.ZERO) if not projected.is_empty() else AABB()
+	for point: Vector3 in projected: bounds = bounds.expand(point)
+	print("C32 COMPLETE CAMERA UNION DIAGNOSTIC ", label, " count=", points.size(), " camera_axes_bounds=", bounds, " width=", camera.size, " viewport=", camera.get_viewport().size, " safe_rect=", (game.get("hud") as GameHUD).combat_safe_rect(), " actual_native_forecast=", level.get("_forecast_points"), " field_origin=", (level.get("spore_field") as Node3D).global_position)
 	print("C32 SPORE DIAGNOSTIC ", label, " response=", guard_source.get_spore_response_state(), " native=", guard_source.pure_presentation_state(), " control=", scheduler.source_control_state(guard_source), " consumer=", level.get("spore_consumer").source_state(GuardSourceId) if is_instance_valid(level.get("spore_consumer")) else {}, " component_error=", level.get("last_component_error"), " camera=", game.call("get_camera_framing_state"), " paused=", paused)
