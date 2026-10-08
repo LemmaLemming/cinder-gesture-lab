@@ -1,6 +1,12 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-12** (8 October 2026), adding opt-in fixed-width HUD-safe camera translation to shared-11 replay, shared-10 spores and shared-9 exact transport. `campaign-level-1` and `world-actions-1` remain compatible. Physical replay leaves are tested; parent capture retirement, authored Crystalman/Echo encounters and their portrait evidence remain separate dependencies. Integration owns shared runtime. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
+Revision: **campaign-shared-13** (8 October 2026), adding pure staged live-source collision validation to shared-12 camera, shared-11 replay, shared-10 spores and shared-9 exact transport. `campaign-level-1` and `world-actions-1` remain compatible. Physical replay leaves are tested; parent capture retirement, authored Crystalman/Echo encounters and their portrait evidence remain separate dependencies. Integration owns shared runtime. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md); see [campaign memory](CAMPAIGN_MEMORY.md).
+
+## Staged collision for an earlier live lunge source
+
+Optional scheduler bindings `owner_collision_states[stable_owner_id]` provide closed native `{collision_path, enabled: true, layer: int, mask: 1}` after an authored actor envelope has independently validated an earlier live state. Pure `CinderLungeMotion.staged_source_description` derives geometry, resource/registered shape-owner identity and transform from the actual retained one-capsule body; it rejects unknown IDs, malformed flags, extra/pending shapes and signature drift. It permits paused earlier-live prevalidation after the same retained source was genuinely defeated/disabled, without enabling or moving the current body.
+
+Actual actor collision flags, pose and velocity must restore before scheduler commit without yielding. The unchanged strict live descriptor still guards commit; caller-supplied metadata cannot stand in for the actual collider. No snapshot schema, replay logic, solver or motion acceptance changes are introduced. Read [staged collision](STAGED_LUNGE_COLLISION.md) for exact lifecycle/custody rules and62 new/35 affected snapshot checks. The separate translated-world float32 sweep request4ba remains unresolved by this addition.
 
 ## Required portrait camera framing
 
