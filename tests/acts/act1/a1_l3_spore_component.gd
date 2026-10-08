@@ -33,6 +33,10 @@ func _run() -> void:
 		recoil_pause_requested = game.call("request_pause_deferred"))
 	if not await _swipe(Vector3.FORWARD, "native spore cluster approach"):
 		await _finish(); return
+	# Observe the real native turn-to-approach boundary instead of assuming the
+	# Hero dash finishes in the same source-facing tick on every camera setup.
+	if not await _wait(func() -> bool: return actor.hp == 16.0 and actor.get_spore_response_state().phase == "none" and actor.velocity != Vector3.ZERO and actor.pure_presentation_state().approach_driving and actor.pure_presentation_state().reservation_id.is_empty(), "genuine native C31 finishes its gradual turn and begins its unleased approach"):
+		await _finish(); return
 	var actual_before: Dictionary = actor.get_spore_response_state()
 	print("L3 SPORE APPROACH DIAGNOSTIC response=", actual_before, " native=", actor.pure_presentation_state(), " actor_error=", actor.last_error, " parent_approach=", level.get("last_approach_error"), " parent_encounter=", level.get("last_encounter_error"), " camera=", game.call("get_camera_framing_state"), " camera_error=", game.call("camera_framing_error", level.camera_framing_points()))
 	if not _require(actor.hp == 16.0 and actual_before.velocity != Vector3.ZERO and actual_before.phase == "none" and actor.state().approach_driving and actor.state().reservation_id.is_empty(), "genuine unharmed C31 approaches before repulsion without a fake lease or hurt flag"):
