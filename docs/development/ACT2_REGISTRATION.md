@@ -1,0 +1,15 @@
+# Accepted Horsell Common registration
+
+A2-L1 is individually accepted from authored candidate `a96edfaddd22e206438e616a8b4080e5c5cdce7a`, tested runtime `16f2532518edd8d76aa41ec40f1d10edad607559` on exact shared13. Root installed its entire101-file six-prefix candidate, byte-verified, in `993096ca2ea908605cad1400a8c6bf4f45665779`; no ledgers, settings or other act files were imported. Its production scene is `res://scenes/acts/act2/a2_l1.tscn`, local snapshot version2 with actual shared Act2 survivor presentation.
+
+Production Title/Journey keeps its real A1-L5 prerequisite. At this two-level integration stage it remains story-locked. No missing Act1 level is marked completed by the product. A separate developer preview uses `python3 scripts/dev/dev.py run --level-scene=res://scenes/acts/act2/a2_l1.tscn`; it does not advance the production campaign.
+
+## Actual installation evidence
+
+The [registration fixture](../../tests/act2_registration_smoke.gd) passed132 checks headless and142 in native540×1170 portrait, no failures, on the frozen shared17 Scheduler SHA2565e4cf02158fee0d723d0ab564bd12961234bd38576c13b21643f979ed070310d. The isolated save explicitly seeds the preceding Act1 completion prefix and initial37HP/zeroammo through validated public attempts/store/player restore APIs. It captures the actual paused Horsell actor/local world; it never fabricates a live defeat, actor phase or registry entry. This prerequisite seed is not Act1 gameplay evidence or an A2 route-clear claim.
+
+Actual GUI Journey gating and Continue, consumed Resume, a real routed sampled dash with distinct release-point aim, coherent format2 disk payload, frozen pause clocks/input/camera/resources, fresh production Continue, GUI Retry to exact entry and cleanup pass. The fixture reads actual production registry metadata and asserts its bytes remain unchanged. All five actual portraits were independently inspected; root separately inspected locked Journey and actual default Balanced arrival. [Portable index, original captures and logs](evidence/A2-L1-registration/index.json) retain exact provenance. The queued import has host macOS/editor-settings-save permission diagnostics; both targeted runtime logs have no script/parse/resource/test errors.
+
+The authored full-route/loadout/real death/paired retry evidence is separate: [owner level record](../acts/act2/levels/A2-L1.md) and [owner progress](../acts/act2/PROGRESS.md). Current stationary285/material40/nativeHeavyLEFT304/default269/Challenge269 checks passed on shared13; strict actual death/public retry203 and routed controls41 per side retain their earlier compatible shared10 scopes. Current final portraits show an unarmed warning alongside recovery, not two armed locks. Minor thin source outlines may overlap the counter sprite while its core torso/facing/feet remain readable.
+
+Canonical ability/equipment/numerical validation passes with no uses or claims. This is scripted/routed desktop evidence; focused human balance, broader performance and mobile devices remain untested. Twenty-two further levels remain in progress.

@@ -14,6 +14,7 @@ const EquipmentScript = preload("res://scripts/equipment.gd")
 const SnapshotCodec = preload("res://scripts/campaign/snapshot_codec.gd")
 const SNAPSHOT_API_REVISION: String = "player-snapshot-1"
 const SNAPSHOT_SCHEMA_VERSION: int = 1
+const DASH_FRAMING_API_REVISION: String = "player-dash-framing-1"
 const DASH_SPEED: float = 15.0
 const DASH_DURATION: float = 0.18
 const DASH_COOLDOWN: float = 0.34
@@ -152,6 +153,36 @@ func get_threat_response_state() -> Dictionary:
 		"equipment_ids": equipment.snapshot(), "action_clock_s": _world_action_clock,
 		"pending_weapon_id": _pending_weapon,
 	}
+
+
+## Pure presentation data from the accepted dash cache, including paused retry.
+## The nominal distance is speed * total duration, never a collision endpoint
+## or remaining straight displacement. This query grants no motion authority.
+## Idle/completed/dead values are null; malformed active cache fails closed.
+func get_committed_dash_state() -> Dictionary:
+	var result: Dictionary = {
+		"api_revision": DASH_FRAMING_API_REVISION, "active": false,
+		"origin": null, "direction": null, "speed": null,
+		"duration_s": null, "distance": null, "remaining_s": 0.0,
+	}
+	if dead:
+		return result
+	if not is_finite(_dash_left):
+		return {}
+	if _dash_left <= 0.0:
+		return result
+	var distance: float = _dash_speed * _dash_total
+	if not _dash_origin.is_finite() or not _dash_direction.is_finite() or not is_equal_approx(_dash_direction.y, 0.0) or not is_equal_approx(_dash_direction.length_squared(), 1.0) or not is_finite(_dash_speed) or _dash_speed <= 0.0 or not is_finite(_dash_total) or _dash_total <= 0.0 or not is_finite(distance) or distance <= 0.0 or _dash_left > _dash_total:
+		return {}
+	result["active"] = true
+	result["origin"] = _dash_origin
+	result["direction"] = _dash_direction
+	result["speed"] = _dash_speed
+	result["duration_s"] = _dash_total
+	result["distance"] = distance
+	result["remaining_s"] = _dash_left
+	return result
+
 
 func _ready() -> void:
 	collision_layer = 4
