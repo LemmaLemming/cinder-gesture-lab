@@ -1,0 +1,1860 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-08T20:18:56.716537+00:00",
+  "canonical_root": "/Users/howardchen/Documents/ChatGPT/video game idea",
+  "scope": "Exact original pre-queue bounded literal referenced sources and supplied seed docs/tool/configuration, not complete engine import/resource graph. All originals retained independently per submitted job; no native or pass claim is implied.",
+  "seeds": [
+    "project.godot",
+    "scripts/dev/dev.py",
+    "data/campaign/registry.json",
+    "tests/act3_l2_registration_smoke.gd",
+    "tests/authored_echo_playback_smoke.gd",
+    "tests/authored_echo_projection_smoke.gd",
+    "tests/authored_enemy_sequence_smoke.gd",
+    "docs/development/AUTHORED_ECHO_PLAYBACK.md",
+    "scripts/acts/act1/crater_gardens.gd",
+    "scripts/acts/act1/crater_gardens_layout.gd",
+    "scripts/acts/act1/launch_rehearsal.gd",
+    "scripts/acts/act1/launch_scenery.gd",
+    "scripts/acts/act1/loading_arm_visual.gd",
+    "scripts/acts/act1/lunar_scenery.gd",
+    "scripts/acts/act1/rehearsal_target.gd",
+    "scripts/acts/act1/rehearsal_target_visual.gd",
+    "scripts/acts/act1/rush_selenite.gd",
+    "scripts/acts/act1/rush_selenite_art.gd",
+    "scripts/acts/act1/rusher_greybox.gd",
+    "scripts/acts/act2/giant_foot_visual.gd",
+    "scripts/acts/act2/heath_kit.gd",
+    "scripts/acts/act2/horsell_common.gd",
+    "scripts/acts/act2/horsell_sequence.gd",
+    "scripts/acts/act2/ray_scout_actor.gd",
+    "scripts/acts/act2/ray_scout_exchange.gd",
+    "scripts/acts/act2/ray_scout_visual.gd",
+    "scripts/acts/act2/salvage_handler_actor.gd",
+    "scripts/acts/act2/salvage_handler_visual.gd",
+    "scripts/acts/act2/weybridge.gd",
+    "scripts/acts/act2/weybridge_kit.gd",
+    "scripts/acts/act2/weybridge_scout_actor.gd",
+    "scripts/acts/act2/weybridge_sequence.gd",
+    "scripts/acts/act3/dreamsinter_observer.gd",
+    "scripts/acts/act3/forest_root_room.gd",
+    "scripts/acts/act3/living_forest.gd",
+    "scripts/acts/act3/living_forest_level.gd",
+    "scripts/acts/act3/living_forest_scenery.gd",
+    "scripts/acts/act3/root_latcher.gd",
+    "scripts/acts/act3/root_latcher_art.gd",
+    "scripts/acts/act3/root_latcher_room.gd",
+    "scripts/acts/act3/stalker_art.gd",
+    "scripts/acts/act3/stalker_room.gd",
+    "scripts/acts/act3/sunbound_stalker.gd",
+    "scripts/acts/act3/twin_suns.gd",
+    "scripts/acts/act3/twin_suns_level.gd",
+    "scripts/acts/act3/twin_suns_scenery.gd",
+    "scripts/art/build_character_assets.gd",
+    "scripts/attack_footprint.gd",
+    "scripts/campaign/attempts.gd",
+    "scripts/campaign/exact_json.gd",
+    "scripts/campaign/level.gd",
+    "scripts/campaign/registry.gd",
+    "scripts/campaign/save_store.gd",
+    "scripts/campaign/shell.gd",
+    "scripts/campaign/snapshot_codec.gd",
+    "scripts/character/player_presentations.gd",
+    "scripts/combat/action_capture.gd",
+    "scripts/combat/authored_echo_renderer.gd",
+    "scripts/combat/authored_enemy_sequence.gd",
+    "scripts/combat/body_sweep.gd",
+    "scripts/combat/difficulty.gd",
+    "scripts/combat/lane_mechanism.gd",
+    "scripts/combat/lunge_motion.gd",
+    "scripts/combat/replay_capture_gate.gd",
+    "scripts/combat/replay_cursor.gd",
+    "scripts/combat/replay_footprint.gd",
+    "scripts/combat/replay_playback.gd",
+    "scripts/combat/replay_program.gd",
+    "scripts/combat/replay_sequence.gd",
+    "scripts/combat/replay_witness.gd",
+    "scripts/combat/repulsion_route.gd",
+    "scripts/combat/smoke_bank.gd",
+    "scripts/combat/threat_geometry.gd",
+    "scripts/combat/threat_scheduler.gd",
+    "scripts/cues/cue_mesh.gd",
+    "scripts/cues/interaction_cue.gd",
+    "scripts/cues/threat_cue.gd",
+    "scripts/curling_smoke.gd",
+    "scripts/dev/campaign_desktop_profile.gd",
+    "scripts/dev/desktop_profile.gd",
+    "scripts/effects.gd",
+    "scripts/enemy.gd",
+    "scripts/environment/scheduler_spore_source_protocol.gd",
+    "scripts/environment/spore_cluster.gd",
+    "scripts/environment/spore_field.gd",
+    "scripts/environment/spore_repulsion.gd",
+    "scripts/equipment.gd",
+    "scripts/game.gd",
+    "scripts/hud.gd",
+    "scripts/lab_bench.gd",
+    "scripts/pixel_sprite.gd",
+    "scripts/player.gd",
+    "scripts/practice_target.gd",
+    "scripts/presentation/camera_framing.gd",
+    "scripts/settings/game_settings.gd",
+    "scripts/shotgun_flare.gd",
+    "scripts/ui/campaign_menu.gd",
+    "scripts/weapon_pickup.gd",
+    "assets/acts/act3/compassion-companions.png",
+    "assets/acts/act3/compassion-companions.png.import",
+    "assets/acts/act3/dreamsinter-observer.png",
+    "assets/acts/act3/dreamsinter-observer.png.import",
+    "assets/acts/act3/forest-bark-albedo-v1.png",
+    "assets/acts/act3/forest-bark-albedo-v1.png.import",
+    "assets/acts/act3/forest-leaf-floor.gdshader",
+    "assets/acts/act3/root-latcher-atlas.png",
+    "assets/acts/act3/root-latcher-atlas.png.import",
+    "assets/acts/act3/scarlet_sand.gdshader",
+    "assets/acts/act3/sunbound-stalker-alppain-back.png",
+    "assets/acts/act3/sunbound-stalker-alppain-back.png.import",
+    "assets/acts/act3/sunbound-stalker-alppain-readable.png",
+    "assets/acts/act3/sunbound-stalker-alppain-readable.png.import",
+    "assets/acts/act3/sunbound-stalker-alppain-recovery-back.png",
+    "assets/acts/act3/sunbound-stalker-alppain-recovery-back.png.import",
+    "assets/acts/act3/sunbound-stalker-alppain-recovery.png",
+    "assets/acts/act3/sunbound-stalker-alppain-recovery.png.import",
+    "assets/acts/act3/sunbound-stalker-alppain.png",
+    "assets/acts/act3/sunbound-stalker-alppain.png.import",
+    "assets/acts/act3/sunbound-stalker-branchspell-back.png",
+    "assets/acts/act3/sunbound-stalker-branchspell-back.png.import",
+    "assets/acts/act3/sunbound-stalker-branchspell.png",
+    "assets/acts/act3/sunbound-stalker-branchspell.png.import",
+    "assets/acts/act3/sunbound-stalker-recovery-back.png",
+    "assets/acts/act3/sunbound-stalker-recovery-back.png.import",
+    "assets/acts/act3/sunbound-stalker-recovery.png",
+    "assets/acts/act3/sunbound-stalker-recovery.png.import",
+    "assets/acts/act3/twin-suns-violet-tree.png",
+    "assets/acts/act3/twin-suns-violet-tree.png.import"
+  ],
+  "files": [
+    {
+      "path": "assets/acts/act1/lunar/accents/earth_globe.png",
+      "archived_path": "files/assets/acts/act1/lunar/accents/earth_globe.png",
+      "bytes": 1130,
+      "sha256": "3a378e3ff823c960f2d9a88877158ad606a924bee59444dd994b47ae4202aeee"
+    },
+    {
+      "path": "assets/acts/act1/lunar/accents/human_star_performer.png",
+      "archived_path": "files/assets/acts/act1/lunar/accents/human_star_performer.png",
+      "bytes": 1091,
+      "sha256": "ce3f5e1205bce88304fba1b3c7f4c883a267e523ec7268c682d3d83a09a613c9"
+    },
+    {
+      "path": "assets/acts/act1/lunar/accents/painted_rock_surface.png",
+      "archived_path": "files/assets/acts/act1/lunar/accents/painted_rock_surface.png",
+      "bytes": 1099,
+      "sha256": "6cc1e5b66e2c2ca94c9897cb774da37e5a85a874319214e65bda44bd3fb0ffa4"
+    },
+    {
+      "path": "assets/acts/act1/lunar/accents/saturn_performer.png",
+      "archived_path": "files/assets/acts/act1/lunar/accents/saturn_performer.png",
+      "bytes": 1905,
+      "sha256": "2d51d851bc301d4e1dff9dbd6918c9d3a00cdf8e2437e62db60cdcdec15addb8"
+    },
+    {
+      "path": "assets/acts/act1/lunar/environment/camp_sleeping_tableau.png",
+      "archived_path": "files/assets/acts/act1/lunar/environment/camp_sleeping_tableau.png",
+      "bytes": 1846,
+      "sha256": "59a2a31e60f8169bdfa00c5f8b4271f3c1d03645a1c78afb273cbab50b54b69e"
+    },
+    {
+      "path": "assets/acts/act1/lunar/environment/capsule_landed_closed.png",
+      "archived_path": "files/assets/acts/act1/lunar/environment/capsule_landed_closed.png",
+      "bytes": 2151,
+      "sha256": "9f552e88efaafcd445507428956458a99b3dec7ad52fbaf6ca2f2e0e3924dab9"
+    },
+    {
+      "path": "assets/acts/act1/lunar/environment/crescent_performer.png",
+      "archived_path": "files/assets/acts/act1/lunar/environment/crescent_performer.png",
+      "bytes": 1595,
+      "sha256": "381e3f96628091fbeb11710b557c212dd0c398cd83f0d91f902a85fbf8506822"
+    },
+    {
+      "path": "assets/acts/act1/lunar/environment/floor_silver_tile.png",
+      "archived_path": "files/assets/acts/act1/lunar/environment/floor_silver_tile.png",
+      "bytes": 543,
+      "sha256": "927971422809f26e5492ec6701a69d7b1ced7d1e6498c7d4736542e5b8831c64"
+    },
+    {
+      "path": "assets/acts/act1/lunar/environment/grotto_threshold_open.png",
+      "archived_path": "files/assets/acts/act1/lunar/environment/grotto_threshold_open.png",
+      "bytes": 1861,
+      "sha256": "fb17438bfe84ca14fb08baab36aa522b31190f8dd3ee1bd81174131f263c6d09"
+    },
+    {
+      "path": "assets/acts/act1/lunar/environment/rock_flat_low_a.png",
+      "archived_path": "files/assets/acts/act1/lunar/environment/rock_flat_low_a.png",
+      "bytes": 1314,
+      "sha256": "57935ff87becdcb8c706ea30f0e9ef76a920f7dd0ae17d35a5bce43a7dfc79a3"
+    },
+    {
+      "path": "assets/acts/act1/lunar/environment/rock_flat_low_b.png",
+      "archived_path": "files/assets/acts/act1/lunar/environment/rock_flat_low_b.png",
+      "bytes": 1217,
+      "sha256": "9a022b4def380f71559175c3959af51884f9d1d461711aebc22d8ca37fc15ddf"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_back_crouch.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_back_crouch.png",
+      "bytes": 1248,
+      "sha256": "fae5502a7871cd40db819ed0e660e1c5104165d24a765f25f70e4ea795e86296"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_back_recovery.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_back_recovery.png",
+      "bytes": 1362,
+      "sha256": "1fb3d30ca37b355dc430e389eaade7c12ade92dd9e5e6b7fefe719e52b44ade9"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_back_rush.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_back_rush.png",
+      "bytes": 1268,
+      "sha256": "48edc2244ce28fb3eeeb3f017a0f9620fcfae3b1d2e14a69a35b5c5074f3166c"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_back_standing.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_back_standing.png",
+      "bytes": 1241,
+      "sha256": "f89c57fabac8a6dc2e26dbb29ea0f8a098cfa1d1201690f93d908cd7e73c2c7a"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_front_crouch.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_front_crouch.png",
+      "bytes": 1268,
+      "sha256": "808b068d928226be9cf369a937af0b94fed65958ba160bdad6f3e688e711e6d1"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_front_recovery.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_front_recovery.png",
+      "bytes": 1352,
+      "sha256": "9c8df565524773b8d83523d1fde9c94a9c4639375088b4a61d0c8e7e62ab2df9"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_front_rush.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_front_rush.png",
+      "bytes": 1314,
+      "sha256": "f64aba46d666711813d99fdd13e047b47e5b20ad7f1a5f8ac7c0b45d5fcfe623"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_front_standing.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_front_standing.png",
+      "bytes": 1222,
+      "sha256": "2cfeac6364399cb4969ea93fb6a0819b94c8cf5a4e63860023adb7021af724a3"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_side_crouch.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_side_crouch.png",
+      "bytes": 1220,
+      "sha256": "c35c4be1566c8bd790d1b3822776ba39ff83ca089188373843079562a1e17aa8"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_side_recovery.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_side_recovery.png",
+      "bytes": 1348,
+      "sha256": "2504243da7f599e8decc898e104798377148dfc6bd9d3b14fa4a24b34a0941e9"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_side_rush.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_side_rush.png",
+      "bytes": 1373,
+      "sha256": "e790577c1ee948bf78003080e7b46f577668f7b133ab98d5bf2754b0efc84924"
+    },
+    {
+      "path": "assets/acts/act1/lunar/rusher_side_standing.png",
+      "archived_path": "files/assets/acts/act1/lunar/rusher_side_standing.png",
+      "bytes": 1102,
+      "sha256": "8e58bf8024807d80fadb8d1aa6d335a6b2220797093f5ac82151779e2537e459"
+    },
+    {
+      "path": "assets/acts/act3/compassion-companions.png",
+      "archived_path": "files/assets/acts/act3/compassion-companions.png",
+      "bytes": 1060840,
+      "sha256": "c2ae1c3c24b12a2c31baec14aed2733eba976c8d006dd86a5e4ffdb7068987bb"
+    },
+    {
+      "path": "assets/acts/act3/compassion-companions.png.import",
+      "archived_path": "files/assets/acts/act3/compassion-companions.png.import",
+      "bytes": 984,
+      "sha256": "17b7369fb098f71f994c8cf09f73390ab128480d2b79e1db3b87270c2282bf5b"
+    },
+    {
+      "path": "assets/acts/act3/dreamsinter-observer.png",
+      "archived_path": "files/assets/acts/act3/dreamsinter-observer.png",
+      "bytes": 1481980,
+      "sha256": "27e62f87cab2d937f49c5afe94585caf8ba794d09694c5d03ca0fe9c3a7d289d"
+    },
+    {
+      "path": "assets/acts/act3/dreamsinter-observer.png.import",
+      "archived_path": "files/assets/acts/act3/dreamsinter-observer.png.import",
+      "bytes": 981,
+      "sha256": "18af0784f7e64fb653c7daa2e214da1e7bdde574c6f1c6cce37fe1e4a95d41e5"
+    },
+    {
+      "path": "assets/acts/act3/forest-bark-albedo-v1.png",
+      "archived_path": "files/assets/acts/act3/forest-bark-albedo-v1.png",
+      "bytes": 3050390,
+      "sha256": "3c775c520421ebb696448c93ab76a4e7c5ad96e2e2edefaaf4d613c1b0d9a8e5"
+    },
+    {
+      "path": "assets/acts/act3/forest-bark-albedo-v1.png.import",
+      "archived_path": "files/assets/acts/act3/forest-bark-albedo-v1.png.import",
+      "bytes": 984,
+      "sha256": "df8bf3bf4d57e858106d1de5f7939a453f15f6cc970a64b66603d51cf086e365"
+    },
+    {
+      "path": "assets/acts/act3/forest-leaf-floor.gdshader",
+      "archived_path": "files/assets/acts/act3/forest-leaf-floor.gdshader",
+      "bytes": 1257,
+      "sha256": "a43b00e9181b5b56b9e03839088f882f47f3033b98952ab03562effe91ae8d27"
+    },
+    {
+      "path": "assets/acts/act3/forest-leaf-floor.gdshader.uid",
+      "archived_path": "files/assets/acts/act3/forest-leaf-floor.gdshader.uid",
+      "bytes": 20,
+      "sha256": "cf5e6c501e3b2c1207580928d1cea2726311c1a32026c337fc48c5ec594e10c9"
+    },
+    {
+      "path": "assets/acts/act3/root-latcher-atlas.png",
+      "archived_path": "files/assets/acts/act3/root-latcher-atlas.png",
+      "bytes": 898823,
+      "sha256": "05bac37c0e5d03a0238651179e32106bd562ff5999bde36dcb83d3207a0bf810"
+    },
+    {
+      "path": "assets/acts/act3/root-latcher-atlas.png.import",
+      "archived_path": "files/assets/acts/act3/root-latcher-atlas.png.import",
+      "bytes": 975,
+      "sha256": "7bce973ba1dcaa48c4cd27db6f1e2dced0148db403463febf4a8e092d10685d0"
+    },
+    {
+      "path": "assets/acts/act3/scarlet_sand.gdshader",
+      "archived_path": "files/assets/acts/act3/scarlet_sand.gdshader",
+      "bytes": 952,
+      "sha256": "cb79cbb936b98bd9ddfd7ce6c8bafb92c16c3d6340abb30ff0775cff4b5df10d"
+    },
+    {
+      "path": "assets/acts/act3/scarlet_sand.gdshader.uid",
+      "archived_path": "files/assets/acts/act3/scarlet_sand.gdshader.uid",
+      "bytes": 20,
+      "sha256": "e01f68ee13ba6d9aa81726e715f4046e9f12d9f46e7c948b4c562bc3110fbc69"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-alppain-back.png",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-alppain-back.png",
+      "bytes": 634535,
+      "sha256": "7c2a8297720f14ffbc7cacbe15f072ef7d2e4f9ea5effa9c64048a9eea79f03f"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-alppain-back.png.import",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-alppain-back.png.import",
+      "bytes": 1008,
+      "sha256": "dffd2c68737dee640cc2974aecc534f231b8a367ad15623bf7de09a9e45adf9d"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-alppain-readable.png",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-alppain-readable.png",
+      "bytes": 627238,
+      "sha256": "1453c08eb9a48f6131391a82a548b45d3e90c4d36e3cdba36dcf8966b539c132"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-alppain-readable.png.import",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-alppain-readable.png.import",
+      "bytes": 1020,
+      "sha256": "dd0c6da2158a8667a4e012b8a780f230adeb8015257fc0205e4b0cda3506abdf"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-alppain-recovery-back.png",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-alppain-recovery-back.png",
+      "bytes": 559286,
+      "sha256": "746649632bbd2262cf06cdcc071758dc0c12cdf5d405243404c6c51d16344b56"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-alppain-recovery-back.png.import",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-alppain-recovery-back.png.import",
+      "bytes": 1035,
+      "sha256": "d80413e9cc5123fa6080b35e235ebf6d64be0632584ecfdaf961bec95dff7608"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-alppain-recovery.png",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-alppain-recovery.png",
+      "bytes": 571145,
+      "sha256": "c8214b1bcebe8b34877309f70f16630b028dfec520a811efdc6b27b0943d21d6"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-alppain-recovery.png.import",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-alppain-recovery.png.import",
+      "bytes": 1019,
+      "sha256": "1da8f0922569c669581dbcc0f375da39b0e22408488cf72837057a5586b8e32a"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-alppain.png",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-alppain.png",
+      "bytes": 589299,
+      "sha256": "fc78c4b4c7513185e8f1628f72a267503a38de441b8f279790ff006c4b670249"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-alppain.png.import",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-alppain.png.import",
+      "bytes": 993,
+      "sha256": "23de4b223b16a86f033a89b4da2389c8fce485177a41737ddce33cbd926c4f1f"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-branchspell-back.png",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-branchspell-back.png",
+      "bytes": 591566,
+      "sha256": "52b11bd57dabbf3980b831291d48f9492cd186550219d257317dc62174ca0fa1"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-branchspell-back.png.import",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-branchspell-back.png.import",
+      "bytes": 1018,
+      "sha256": "e25d16ce09d6e7fb7fb3be7eda03b7e715f68341413a71a3fd732569ae67150a"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-branchspell.png",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-branchspell.png",
+      "bytes": 597048,
+      "sha256": "4b26a05de4d86848bb8d1d40d6567097bcc85f9b083d07c2ded110ac5836dcaa"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-branchspell.png.import",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-branchspell.png.import",
+      "bytes": 1005,
+      "sha256": "16c2334cdfafceca7ee4195dcdc06752c93a525bc9ad58c588824eaff72026fa"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-recovery-back.png",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-recovery-back.png",
+      "bytes": 531651,
+      "sha256": "5e57e50e3c3ac991bbb23d5399345d7e6f164cdd49e7a5bde3b23c6ab07b2f31"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-recovery-back.png.import",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-recovery-back.png.import",
+      "bytes": 1011,
+      "sha256": "f69ad749f7e2082f56c08fd8312c586b301b5eac8b6f0a3b1600c145d179dd9a"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-recovery.png",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-recovery.png",
+      "bytes": 570466,
+      "sha256": "8aab2d8763885d4f198b2c346658987145bf585a7b72f31703b32207602c59ac"
+    },
+    {
+      "path": "assets/acts/act3/sunbound-stalker-recovery.png.import",
+      "archived_path": "files/assets/acts/act3/sunbound-stalker-recovery.png.import",
+      "bytes": 996,
+      "sha256": "1af2e642ae93ccd1ab54298de13196558eac142ad5d4ce5f3503569d023b87f7"
+    },
+    {
+      "path": "assets/acts/act3/twin-suns-violet-tree.png",
+      "archived_path": "files/assets/acts/act3/twin-suns-violet-tree.png",
+      "bytes": 672657,
+      "sha256": "5889d94dd035926cdc4c7d575975e4c63af7ddb04f3d308a3f762c1b4a573a38"
+    },
+    {
+      "path": "assets/acts/act3/twin-suns-violet-tree.png.import",
+      "archived_path": "files/assets/acts/act3/twin-suns-violet-tree.png.import",
+      "bytes": 984,
+      "sha256": "0cad3e90661d79d8092555fc7fcae8a29465f6795c2f1d3e6b03a4c53deabf7c"
+    },
+    {
+      "path": "assets/characters/astronaut-turnaround-pixels.png",
+      "archived_path": "files/assets/characters/astronaut-turnaround-pixels.png",
+      "bytes": 2474,
+      "sha256": "4fafc9a697483aa554869cac7543158d7790de966cdeea3ae585f8b9d3afd9d9"
+    },
+    {
+      "path": "assets/characters/equipment-review.json",
+      "archived_path": "files/assets/characters/equipment-review.json",
+      "bytes": 2481,
+      "sha256": "bebac7681918c8d183fe4594faaa3dd288b5dc79fecd2eeb06a3a4171cab78b4"
+    },
+    {
+      "path": "assets/characters/equipment-review.png",
+      "archived_path": "files/assets/characters/equipment-review.png",
+      "bytes": 124535,
+      "sha256": "b3d25e5b894aa2bb5a76cea5f9d623798b5e0a1038568c6f1366bb39959434a3"
+    },
+    {
+      "path": "assets/characters/manifest.json",
+      "archived_path": "files/assets/characters/manifest.json",
+      "bytes": 7918,
+      "sha256": "fa645e290daa62f1a518e603cca6fb2c8d3f261a354385ce5c1475e5d7d503b6"
+    },
+    {
+      "path": "assets/effects/manifest.json",
+      "archived_path": "files/assets/effects/manifest.json",
+      "bytes": 4313,
+      "sha256": "739c134f606ad72318785dbbaeeaa5f864a0ec120e8f3acf995a44727a0fe757"
+    },
+    {
+      "path": "assets/references/manifest.json",
+      "archived_path": "files/assets/references/manifest.json",
+      "bytes": 2412,
+      "sha256": "c49ac654d0d96cb83c4c8499b15649557b91f6966743b1e942fb9040f3cc6dd0"
+    },
+    {
+      "path": "captures/character-blast.png",
+      "archived_path": "files/captures/character-blast.png",
+      "bytes": 46350,
+      "sha256": "2091b464b806fa7d8e9cf56c46d719f5683cfbadfecec0a99a50e2a96a579a2d"
+    },
+    {
+      "path": "captures/character-lab.png",
+      "archived_path": "files/captures/character-lab.png",
+      "bytes": 43458,
+      "sha256": "6376b8e7ec8e3d08b03cddcd6fd4f4f44521cc2dd6a835bfaf2fd9dbf2f01409"
+    },
+    {
+      "path": "captures/character-primary.png",
+      "archived_path": "files/captures/character-primary.png",
+      "bytes": 47294,
+      "sha256": "4b6c53199c556aa58f86d4e7a02958d979f1ebc1d86389d1fe136cb475fba399"
+    },
+    {
+      "path": "captures/dash-plume-end.png",
+      "archived_path": "files/captures/dash-plume-end.png",
+      "bytes": 46039,
+      "sha256": "4194ee6dd6c0f93f2a8433110648aaa6c107ed001ee8005f8e8ac04f8baefba0"
+    },
+    {
+      "path": "captures/dash-plume-mid.png",
+      "archived_path": "files/captures/dash-plume-mid.png",
+      "bytes": 44475,
+      "sha256": "c6a2db49a6894db82e709f3395c6f18666bb84b3e71fb5295099a4313ecaafb0"
+    },
+    {
+      "path": "captures/enemy-recovery.png",
+      "archived_path": "files/captures/enemy-recovery.png",
+      "bytes": 38409,
+      "sha256": "1330de03fd7970316333efab8bf33778f5bf325153386b6040949afa754f0b5f"
+    },
+    {
+      "path": "captures/enemy-warning.png",
+      "archived_path": "files/captures/enemy-warning.png",
+      "bytes": 39107,
+      "sha256": "c66d4fd911ff69ce4fcdece8a432960e91d47d5b74337475536ae950f7533c57"
+    },
+    {
+      "path": "captures/level-preview.png",
+      "archived_path": "files/captures/level-preview.png",
+      "bytes": 20745,
+      "sha256": "aadaa05117f1db392c4ea2e6a98bf2faa1abde9949de72ece167d4009ad26767"
+    },
+    {
+      "path": "captures/loadout-bench.png",
+      "archived_path": "files/captures/loadout-bench.png",
+      "bytes": 148324,
+      "sha256": "1c708651263e5fd20b4cdea15d06ba9f5d2d5886d8ae7d4fac0836b9250c5c4c"
+    },
+    {
+      "path": "captures/mechanics-lab.png",
+      "archived_path": "files/captures/mechanics-lab.png",
+      "bytes": 46497,
+      "sha256": "740ea58b2611294a3bd18f880b81bea52a1272a63d698abc423148e0c48277cb"
+    },
+    {
+      "path": "captures/shot-flare-left.png",
+      "archived_path": "files/captures/shot-flare-left.png",
+      "bytes": 50287,
+      "sha256": "6cdee74805b619e0f801404c5cfafe76388620859f9ac4b8d4350930dbf0dce3"
+    },
+    {
+      "path": "captures/shot-flare-right.png",
+      "archived_path": "files/captures/shot-flare-right.png",
+      "bytes": 50089,
+      "sha256": "803d303d133e13a728d16c9e15eecf110d39ce91b65d97ac9542606b3e2a640d"
+    },
+    {
+      "path": "captures/slash-arc.png",
+      "archived_path": "files/captures/slash-arc.png",
+      "bytes": 49204,
+      "sha256": "01e44c59ebd6c23400197139077a896040f9c17dac228e1645fc7e39af53ca7e"
+    },
+    {
+      "path": "data/campaign/act3/a3_l1_encounters.json",
+      "archived_path": "files/data/campaign/act3/a3_l1_encounters.json",
+      "bytes": 10542,
+      "sha256": "e6aec8f14077b036f621578a16fd0ed1a1c92d95d9184d4b2bfdc4f9164598f6"
+    },
+    {
+      "path": "data/campaign/act3/a3_l2_encounters.json",
+      "archived_path": "files/data/campaign/act3/a3_l2_encounters.json",
+      "bytes": 5303,
+      "sha256": "99d2a7f4458c03d47409d2828e916ac54cc1b59ae0c46b40b55e4bfc977ff544"
+    },
+    {
+      "path": "data/campaign/registry.json",
+      "archived_path": "files/data/campaign/registry.json",
+      "bytes": 10812,
+      "sha256": "8f50a36b5031bb471d8cf00c58d65c2da2eb671acbb2f0e10c324829bec8162b"
+    },
+    {
+      "path": "data/design/difficulty_profiles.json",
+      "archived_path": "files/data/design/difficulty_profiles.json",
+      "bytes": 1313,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c"
+    },
+    {
+      "path": "data/design/player_equipment.json",
+      "archived_path": "files/data/design/player_equipment.json",
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    {
+      "path": "docs/character-atlas-preview.png",
+      "archived_path": "files/docs/character-atlas-preview.png",
+      "bytes": 65542,
+      "sha256": "70ef4e6e868b75395dcf9ee3b123fdd84f33c7fbb18deb6ea677790da54bc2b3"
+    },
+    {
+      "path": "docs/character-turnaround-preview.png",
+      "archived_path": "files/docs/character-turnaround-preview.png",
+      "bytes": 6568,
+      "sha256": "9d4c90931644941960839d43933b82afa07e0ed33e7ccde0bbe58de511fdfa40"
+    },
+    {
+      "path": "docs/concept-art/act1/generated-manifest.json",
+      "archived_path": "files/docs/concept-art/act1/generated-manifest.json",
+      "bytes": 128016,
+      "sha256": "626f39561c9c430beef47a399f69711c94c1daf93fd94835bf0d83a33de3b637"
+    },
+    {
+      "path": "docs/concept-art/act2/generated-manifest.json",
+      "archived_path": "files/docs/concept-art/act2/generated-manifest.json",
+      "bytes": 61369,
+      "sha256": "1145d3d494c8fe1337364b98c432a315c6cab5837409793bef9c6b62331d66f5"
+    },
+    {
+      "path": "docs/concept-art/act3/generated-manifest.json",
+      "archived_path": "files/docs/concept-art/act3/generated-manifest.json",
+      "bytes": 87066,
+      "sha256": "46be3e8f5cfc321b9d661d41db5e049adce3278ec75f8a8561cf591c5ac4b9d9"
+    },
+    {
+      "path": "docs/development/AUTHORED_ECHO_PLAYBACK.md",
+      "archived_path": "files/docs/development/AUTHORED_ECHO_PLAYBACK.md",
+      "bytes": 9493,
+      "sha256": "50b33566dcfd12517ab8c425ecc1a4939b5af41f76d428fd595f9f8a77ac7caf"
+    },
+    {
+      "path": "docs/reference-library/act1/CREDITS.md",
+      "archived_path": "files/docs/reference-library/act1/CREDITS.md",
+      "bytes": 41568,
+      "sha256": "c134fcecf5bb9bd49eeebe4570c36a52b66224e0b5ec05f57c3e5bba250a2ee2"
+    },
+    {
+      "path": "docs/reference-library/act2/CREDITS.md",
+      "archived_path": "files/docs/reference-library/act2/CREDITS.md",
+      "bytes": 4753,
+      "sha256": "447bf094aea678a623a97f1e909c4713c063271a847ec604bdc743028aa8f527"
+    },
+    {
+      "path": "docs/reference-library/act3/research/SOURCES.md",
+      "archived_path": "files/docs/reference-library/act3/research/SOURCES.md",
+      "bytes": 4367,
+      "sha256": "0109bb301fe10fc93ab48bb10cfef5fa29f25e7b076ebcb574e428ce8635b4a5"
+    },
+    {
+      "path": "project.godot",
+      "archived_path": "files/project.godot",
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f"
+    },
+    {
+      "path": "scenes/acts/act3/a3_l2_living_forest.tscn",
+      "archived_path": "files/scenes/acts/act3/a3_l2_living_forest.tscn",
+      "bytes": 1468,
+      "sha256": "a87b3116c79ac734812de525f70ba4cae1f4594c50a20c4b030ad5e25662affb"
+    },
+    {
+      "path": "scenes/lab_arena.tscn",
+      "archived_path": "files/scenes/lab_arena.tscn",
+      "bytes": 23638,
+      "sha256": "290c0f7fa49b284705c6adec423ca7109a2e7ebd50439866e39ef3856397c361"
+    },
+    {
+      "path": "scenes/main.tscn",
+      "archived_path": "files/scenes/main.tscn",
+      "bytes": 171,
+      "sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b"
+    },
+    {
+      "path": "scenes/player.tscn",
+      "archived_path": "files/scenes/player.tscn",
+      "bytes": 1184,
+      "sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac"
+    },
+    {
+      "path": "scenes/practice_target.tscn",
+      "archived_path": "files/scenes/practice_target.tscn",
+      "bytes": 180,
+      "sha256": "600553b1326ef7d117e123c308c6e0f8be0e4a4dc4ff80113894add7bf2ee520"
+    },
+    {
+      "path": "scripts/acts/act1/crater_gardens.gd",
+      "archived_path": "files/scripts/acts/act1/crater_gardens.gd",
+      "bytes": 68876,
+      "sha256": "7e19a94cf95500932698c7502680b92eb9a1d500258cbd261f524e189bb770d9"
+    },
+    {
+      "path": "scripts/acts/act1/crater_gardens.gd.uid",
+      "archived_path": "files/scripts/acts/act1/crater_gardens.gd.uid",
+      "bytes": 20,
+      "sha256": "0a5b0db6b7b617b7e74ec6cb7f0bb96184e2ca763786d0b64800b067979a4708"
+    },
+    {
+      "path": "scripts/acts/act1/crater_gardens_layout.gd",
+      "archived_path": "files/scripts/acts/act1/crater_gardens_layout.gd",
+      "bytes": 3364,
+      "sha256": "a5a23a76a8b24ab92be10aa484a49aca36940e3441d50415c84e0e2be7c0f0d3"
+    },
+    {
+      "path": "scripts/acts/act1/crater_gardens_layout.gd.uid",
+      "archived_path": "files/scripts/acts/act1/crater_gardens_layout.gd.uid",
+      "bytes": 19,
+      "sha256": "b6c6e0fd74ce2746266139486bd393a0b0c0de405df1747e2aa9b975e478f5c7"
+    },
+    {
+      "path": "scripts/acts/act1/launch_rehearsal.gd",
+      "archived_path": "files/scripts/acts/act1/launch_rehearsal.gd",
+      "bytes": 22944,
+      "sha256": "5b4b5d54f21752035dbbb0294f0b3fdbf0e66d6c901fce88275ca5f455e48d27"
+    },
+    {
+      "path": "scripts/acts/act1/launch_rehearsal.gd.uid",
+      "archived_path": "files/scripts/acts/act1/launch_rehearsal.gd.uid",
+      "bytes": 20,
+      "sha256": "7e92c5b726a2762da923654328b9c488154e9cbb8abe5c368b2b5decb0ece499"
+    },
+    {
+      "path": "scripts/acts/act1/launch_scenery.gd",
+      "archived_path": "files/scripts/acts/act1/launch_scenery.gd",
+      "bytes": 18288,
+      "sha256": "373d532e51d37a71b53b23b079ad070bde367a804424c749eef98b094ff58181"
+    },
+    {
+      "path": "scripts/acts/act1/launch_scenery.gd.uid",
+      "archived_path": "files/scripts/acts/act1/launch_scenery.gd.uid",
+      "bytes": 20,
+      "sha256": "da730ea6e37d34733af3a3e61717f6f060473f831812d0d65401fa25e8dd370d"
+    },
+    {
+      "path": "scripts/acts/act1/loading_arm_visual.gd",
+      "archived_path": "files/scripts/acts/act1/loading_arm_visual.gd",
+      "bytes": 9018,
+      "sha256": "923ca6836b4ebc1656950d5e466b1851006c6da28f4ff3271c37550d843bcd01"
+    },
+    {
+      "path": "scripts/acts/act1/loading_arm_visual.gd.uid",
+      "archived_path": "files/scripts/acts/act1/loading_arm_visual.gd.uid",
+      "bytes": 20,
+      "sha256": "b33f50a87d52a8a7b2d9a8a7cdc5b23d4bf461c3d0652ccefb86d364f01fd90d"
+    },
+    {
+      "path": "scripts/acts/act1/lunar_scenery.gd",
+      "archived_path": "files/scripts/acts/act1/lunar_scenery.gd",
+      "bytes": 6751,
+      "sha256": "680bbb3292ea12225e3388d47c7202bb6fed24c9ec0d407b71b83ea72a066340"
+    },
+    {
+      "path": "scripts/acts/act1/lunar_scenery.gd.uid",
+      "archived_path": "files/scripts/acts/act1/lunar_scenery.gd.uid",
+      "bytes": 20,
+      "sha256": "026f50fe8aedc42db0fcbea09426307f8c2d3bc01aafd5d239c539a7e7717b11"
+    },
+    {
+      "path": "scripts/acts/act1/rehearsal_target.gd",
+      "archived_path": "files/scripts/acts/act1/rehearsal_target.gd",
+      "bytes": 1659,
+      "sha256": "60ef55863eefe6514a23212e61cbd43729301eb42d4868678e7f1f97553b3d26"
+    },
+    {
+      "path": "scripts/acts/act1/rehearsal_target.gd.uid",
+      "archived_path": "files/scripts/acts/act1/rehearsal_target.gd.uid",
+      "bytes": 20,
+      "sha256": "36f612bb658299760256edf8a2e1c8735ec1c56af36b1fe22672d5213f5bb0dd"
+    },
+    {
+      "path": "scripts/acts/act1/rehearsal_target_visual.gd",
+      "archived_path": "files/scripts/acts/act1/rehearsal_target_visual.gd",
+      "bytes": 5989,
+      "sha256": "3f11bc583091b3261c5a1a39ed8f4baf13c596b7991ad2bdd8d5e121fa44f41c"
+    },
+    {
+      "path": "scripts/acts/act1/rehearsal_target_visual.gd.uid",
+      "archived_path": "files/scripts/acts/act1/rehearsal_target_visual.gd.uid",
+      "bytes": 20,
+      "sha256": "c19bab35dd82f18d55f7222724ccc3841b569cef91cd027b348d68743da6ac0c"
+    },
+    {
+      "path": "scripts/acts/act1/rush_selenite.gd",
+      "archived_path": "files/scripts/acts/act1/rush_selenite.gd",
+      "bytes": 50071,
+      "sha256": "5a46be35dd1dce4958bf235ced2c4e63cd442a412d340b0744c3922f479d4c92"
+    },
+    {
+      "path": "scripts/acts/act1/rush_selenite.gd.uid",
+      "archived_path": "files/scripts/acts/act1/rush_selenite.gd.uid",
+      "bytes": 21,
+      "sha256": "dd3143c57523045abfb26b62cfdc3eeb4d944d43e359e7e22640593f2136358d"
+    },
+    {
+      "path": "scripts/acts/act1/rush_selenite_art.gd",
+      "archived_path": "files/scripts/acts/act1/rush_selenite_art.gd",
+      "bytes": 7843,
+      "sha256": "195c9de893c985a94a326ca7e3847f3de3a06185263a76588d9db37909c0d7c9"
+    },
+    {
+      "path": "scripts/acts/act1/rush_selenite_art.gd.uid",
+      "archived_path": "files/scripts/acts/act1/rush_selenite_art.gd.uid",
+      "bytes": 20,
+      "sha256": "cfa2daa5b4da5d424b665cc508b552a4ff154261c0abba08c51306988f22ef0e"
+    },
+    {
+      "path": "scripts/acts/act1/rusher_greybox.gd",
+      "archived_path": "files/scripts/acts/act1/rusher_greybox.gd",
+      "bytes": 15769,
+      "sha256": "e9bf0176a18ef869cde9d9bd2d02e4d7675c7b6c32d970530ca734bb599c76ce"
+    },
+    {
+      "path": "scripts/acts/act1/rusher_greybox.gd.uid",
+      "archived_path": "files/scripts/acts/act1/rusher_greybox.gd.uid",
+      "bytes": 20,
+      "sha256": "81483a4ce2df40675cf1f92ce94e77c0e27465bf622512d6b83126fd03d1b70d"
+    },
+    {
+      "path": "scripts/acts/act2/giant_foot_visual.gd",
+      "archived_path": "files/scripts/acts/act2/giant_foot_visual.gd",
+      "bytes": 3279,
+      "sha256": "180a2c6658dc901c240cbd2f4ec84f1906d74211afeb30adb3f4f570d518622d"
+    },
+    {
+      "path": "scripts/acts/act2/giant_foot_visual.gd.uid",
+      "archived_path": "files/scripts/acts/act2/giant_foot_visual.gd.uid",
+      "bytes": 20,
+      "sha256": "05d4c2b350e091efe2622af7af1d91cdafe0245f2aba6ee9f470ea930014721b"
+    },
+    {
+      "path": "scripts/acts/act2/heath_kit.gd",
+      "archived_path": "files/scripts/acts/act2/heath_kit.gd",
+      "bytes": 34239,
+      "sha256": "77768bc24573be2ce25f2255bf8ffa3adbcd363e00bdaf6125692c1cbf0bd4ac"
+    },
+    {
+      "path": "scripts/acts/act2/heath_kit.gd.uid",
+      "archived_path": "files/scripts/acts/act2/heath_kit.gd.uid",
+      "bytes": 20,
+      "sha256": "d0db1c03dc92d953cba5d5e137acd7abbf217632e7b8c1fb089f4cf28782376a"
+    },
+    {
+      "path": "scripts/acts/act2/horsell_common.gd",
+      "archived_path": "files/scripts/acts/act2/horsell_common.gd",
+      "bytes": 46662,
+      "sha256": "077dc406d6eda0392661279029b9a07d190be71d21fcb0903712d678ab2be643"
+    },
+    {
+      "path": "scripts/acts/act2/horsell_common.gd.uid",
+      "archived_path": "files/scripts/acts/act2/horsell_common.gd.uid",
+      "bytes": 20,
+      "sha256": "30fe3f8c74259513eb856c2726ceb039515ccf22007eb987915a1059900a38ab"
+    },
+    {
+      "path": "scripts/acts/act2/horsell_sequence.gd",
+      "archived_path": "files/scripts/acts/act2/horsell_sequence.gd",
+      "bytes": 7424,
+      "sha256": "fbe1457edcf7028ed3eff8ad5d1b7a453063f8ed5541356eaa251dcf3629d5c7"
+    },
+    {
+      "path": "scripts/acts/act2/horsell_sequence.gd.uid",
+      "archived_path": "files/scripts/acts/act2/horsell_sequence.gd.uid",
+      "bytes": 20,
+      "sha256": "cbf64cdd7b3f96f892c57acf58e497961bb1404f2c3b2cc3fdfce06be2073b5e"
+    },
+    {
+      "path": "scripts/acts/act2/ray_scout_actor.gd",
+      "archived_path": "files/scripts/acts/act2/ray_scout_actor.gd",
+      "bytes": 12646,
+      "sha256": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7"
+    },
+    {
+      "path": "scripts/acts/act2/ray_scout_actor.gd.uid",
+      "archived_path": "files/scripts/acts/act2/ray_scout_actor.gd.uid",
+      "bytes": 20,
+      "sha256": "bf1ca88edd2734508e088b870e58aee6607041d15a187df545363f3aa31a3147"
+    },
+    {
+      "path": "scripts/acts/act2/ray_scout_exchange.gd",
+      "archived_path": "files/scripts/acts/act2/ray_scout_exchange.gd",
+      "bytes": 63062,
+      "sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2"
+    },
+    {
+      "path": "scripts/acts/act2/ray_scout_exchange.gd.uid",
+      "archived_path": "files/scripts/acts/act2/ray_scout_exchange.gd.uid",
+      "bytes": 20,
+      "sha256": "109bb1249494d294554492120b9bc6e3a56623ac93bb45f78273ad05eb56964d"
+    },
+    {
+      "path": "scripts/acts/act2/ray_scout_visual.gd",
+      "archived_path": "files/scripts/acts/act2/ray_scout_visual.gd",
+      "bytes": 29429,
+      "sha256": "dda58dd611044a434d25206a03ac1b2b5f73270373d613e3a2fcc7bb5539879a"
+    },
+    {
+      "path": "scripts/acts/act2/ray_scout_visual.gd.uid",
+      "archived_path": "files/scripts/acts/act2/ray_scout_visual.gd.uid",
+      "bytes": 20,
+      "sha256": "2c342d9add57fe98eea2c9557a971affdfed580ded30bda1edc59a5a9e4c8217"
+    },
+    {
+      "path": "scripts/acts/act2/salvage_handler_actor.gd",
+      "archived_path": "files/scripts/acts/act2/salvage_handler_actor.gd",
+      "bytes": 721,
+      "sha256": "42457249e8a30e2d28ad0d03017d16e2f5158092ad3531e528ccf6beb3f70d96"
+    },
+    {
+      "path": "scripts/acts/act2/salvage_handler_actor.gd.uid",
+      "archived_path": "files/scripts/acts/act2/salvage_handler_actor.gd.uid",
+      "bytes": 20,
+      "sha256": "5113c91bd8fc2b39c66747b85bb636a306e91af322760edd9dd9f08a082a4bd9"
+    },
+    {
+      "path": "scripts/acts/act2/salvage_handler_visual.gd",
+      "archived_path": "files/scripts/acts/act2/salvage_handler_visual.gd",
+      "bytes": 14148,
+      "sha256": "601b6713e01d7883d729729eb30c16ca80f23b22359e32ae6bc2ee4ff1ff08d2"
+    },
+    {
+      "path": "scripts/acts/act2/salvage_handler_visual.gd.uid",
+      "archived_path": "files/scripts/acts/act2/salvage_handler_visual.gd.uid",
+      "bytes": 20,
+      "sha256": "1691399738950ffe35ec2dc47c25c3a68cfdbe9cf3cb7c9f569e3aa57cf5be60"
+    },
+    {
+      "path": "scripts/acts/act2/weybridge.gd",
+      "archived_path": "files/scripts/acts/act2/weybridge.gd",
+      "bytes": 53146,
+      "sha256": "171680483795c75272d0d7e8b64a85c348d2b4b552acb92a2d3638febe694a2b"
+    },
+    {
+      "path": "scripts/acts/act2/weybridge.gd.uid",
+      "archived_path": "files/scripts/acts/act2/weybridge.gd.uid",
+      "bytes": 20,
+      "sha256": "0d8fba434b769a929e96d8c742cbec18b88dd7e0694cf0c39b50cd277c374f66"
+    },
+    {
+      "path": "scripts/acts/act2/weybridge_kit.gd",
+      "archived_path": "files/scripts/acts/act2/weybridge_kit.gd",
+      "bytes": 17738,
+      "sha256": "3b045f0d501a69e76df0a80526371f9742b8cbf782e3d7e51247317c58953db2"
+    },
+    {
+      "path": "scripts/acts/act2/weybridge_kit.gd.uid",
+      "archived_path": "files/scripts/acts/act2/weybridge_kit.gd.uid",
+      "bytes": 20,
+      "sha256": "d3ef8517c85dec515c5188d59fcf3a54428e3a54e7672955e858d8b5b9d3c841"
+    },
+    {
+      "path": "scripts/acts/act2/weybridge_scout_actor.gd",
+      "archived_path": "files/scripts/acts/act2/weybridge_scout_actor.gd",
+      "bytes": 1129,
+      "sha256": "7e90bfc541c467162a5a0b0afd6891e8aa6dda9835a4da05362e9301eed78916"
+    },
+    {
+      "path": "scripts/acts/act2/weybridge_scout_actor.gd.uid",
+      "archived_path": "files/scripts/acts/act2/weybridge_scout_actor.gd.uid",
+      "bytes": 19,
+      "sha256": "5989b7441d9204072dc29781966826bd710f010803cbab20d3779c67a424ea1a"
+    },
+    {
+      "path": "scripts/acts/act2/weybridge_sequence.gd",
+      "archived_path": "files/scripts/acts/act2/weybridge_sequence.gd",
+      "bytes": 7204,
+      "sha256": "d28de78224f6985c377a13f9a4d9874ac2766aeb9bc744efe9640ce05f8f7dfc"
+    },
+    {
+      "path": "scripts/acts/act2/weybridge_sequence.gd.uid",
+      "archived_path": "files/scripts/acts/act2/weybridge_sequence.gd.uid",
+      "bytes": 20,
+      "sha256": "7648b4184ac6c9b90dce41d1cafaa15458be3b762402a5319ee74cad343baaef"
+    },
+    {
+      "path": "scripts/acts/act3/dreamsinter_observer.gd",
+      "archived_path": "files/scripts/acts/act3/dreamsinter_observer.gd",
+      "bytes": 1778,
+      "sha256": "52ab1dd39f89243f7aafae86e017cae6a4fafff7770edd9e174878a4a6992270"
+    },
+    {
+      "path": "scripts/acts/act3/dreamsinter_observer.gd.uid",
+      "archived_path": "files/scripts/acts/act3/dreamsinter_observer.gd.uid",
+      "bytes": 20,
+      "sha256": "8325f072fd06a75b8a0546b6f787c7e7ec844067c781b318670093791cc0e7d0"
+    },
+    {
+      "path": "scripts/acts/act3/forest_root_room.gd",
+      "archived_path": "files/scripts/acts/act3/forest_root_room.gd",
+      "bytes": 890,
+      "sha256": "863d47648ca1ecaa1f54d61b87e076524e9e4c4f26bd0ae02ae64429776f5f7b"
+    },
+    {
+      "path": "scripts/acts/act3/forest_root_room.gd.uid",
+      "archived_path": "files/scripts/acts/act3/forest_root_room.gd.uid",
+      "bytes": 20,
+      "sha256": "d15813aeae1f2d8071b82e8aa6a4e2ec0509aac42dcb006e316681e586ea5554"
+    },
+    {
+      "path": "scripts/acts/act3/living_forest.gd",
+      "archived_path": "files/scripts/acts/act3/living_forest.gd",
+      "bytes": 3616,
+      "sha256": "2e9edf054413be1b403b618e3b2c164968f4fb4f188cb833660a917b288be71c"
+    },
+    {
+      "path": "scripts/acts/act3/living_forest.gd.uid",
+      "archived_path": "files/scripts/acts/act3/living_forest.gd.uid",
+      "bytes": 20,
+      "sha256": "2c74615757f20500d6accc6744803d78d6eeb29373009839d693e191301d93ae"
+    },
+    {
+      "path": "scripts/acts/act3/living_forest_level.gd",
+      "archived_path": "files/scripts/acts/act3/living_forest_level.gd",
+      "bytes": 48739,
+      "sha256": "089d84589c8670fd27dac45e1d357782b98c970f8bf52d8a733b4909b3ee7bb1"
+    },
+    {
+      "path": "scripts/acts/act3/living_forest_level.gd.uid",
+      "archived_path": "files/scripts/acts/act3/living_forest_level.gd.uid",
+      "bytes": 20,
+      "sha256": "5e9127f92e601d3271e5cb2093e17a0c0ca4771e93ec5b1f27736c7dab265bec"
+    },
+    {
+      "path": "scripts/acts/act3/living_forest_scenery.gd",
+      "archived_path": "files/scripts/acts/act3/living_forest_scenery.gd",
+      "bytes": 20781,
+      "sha256": "f0dff14927bea2062ee3831fa8630867e544d806c0d446c303a5480217748d61"
+    },
+    {
+      "path": "scripts/acts/act3/living_forest_scenery.gd.uid",
+      "archived_path": "files/scripts/acts/act3/living_forest_scenery.gd.uid",
+      "bytes": 19,
+      "sha256": "a40d14a30ccc70777119f048bb462c114b356ae7cc2fa9c89288adc9de13836f"
+    },
+    {
+      "path": "scripts/acts/act3/root_latcher.gd",
+      "archived_path": "files/scripts/acts/act3/root_latcher.gd",
+      "bytes": 29371,
+      "sha256": "a809efbb34810077536fa48dc863620546ecb47c4179c31490230b526eb3011b"
+    },
+    {
+      "path": "scripts/acts/act3/root_latcher.gd.uid",
+      "archived_path": "files/scripts/acts/act3/root_latcher.gd.uid",
+      "bytes": 20,
+      "sha256": "6887eda655f19a96d1f2bfb9227e0e6daf510c53681b09286203937d913738b2"
+    },
+    {
+      "path": "scripts/acts/act3/root_latcher_art.gd",
+      "archived_path": "files/scripts/acts/act3/root_latcher_art.gd",
+      "bytes": 10491,
+      "sha256": "09a05dfb267e47ef431af0fa5b0e96eaeb038fae46740030892000bb0e59391f"
+    },
+    {
+      "path": "scripts/acts/act3/root_latcher_art.gd.uid",
+      "archived_path": "files/scripts/acts/act3/root_latcher_art.gd.uid",
+      "bytes": 19,
+      "sha256": "186c7b860b5594cbbdea7af7a23a5c1dee9a421fb9de7869657b73fc07aa2370"
+    },
+    {
+      "path": "scripts/acts/act3/root_latcher_room.gd",
+      "archived_path": "files/scripts/acts/act3/root_latcher_room.gd",
+      "bytes": 7830,
+      "sha256": "4d8c3e050f9c5d606ae9f6b0ce5309c8e30049c446338e12a52c15884f57769f"
+    },
+    {
+      "path": "scripts/acts/act3/root_latcher_room.gd.uid",
+      "archived_path": "files/scripts/acts/act3/root_latcher_room.gd.uid",
+      "bytes": 20,
+      "sha256": "71b2d8e6ff65784387f580f876be14d01715f8f8e958f418843b23fb4041aafe"
+    },
+    {
+      "path": "scripts/acts/act3/stalker_art.gd",
+      "archived_path": "files/scripts/acts/act3/stalker_art.gd",
+      "bytes": 10643,
+      "sha256": "08a11bb0db7fd5d9bce5670ec6b067101e4317760a7a2160c1f97fd1bd3b70ae"
+    },
+    {
+      "path": "scripts/acts/act3/stalker_art.gd.uid",
+      "archived_path": "files/scripts/acts/act3/stalker_art.gd.uid",
+      "bytes": 20,
+      "sha256": "89025c4a5a41582d2a7e47fcdce5595b72de6c32659c37a17d1cc676a33d27b6"
+    },
+    {
+      "path": "scripts/acts/act3/stalker_room.gd",
+      "archived_path": "files/scripts/acts/act3/stalker_room.gd",
+      "bytes": 12296,
+      "sha256": "660cd5c7c539c1bfada60f42885db69db62116260491047b84dff73f98d6e72a"
+    },
+    {
+      "path": "scripts/acts/act3/stalker_room.gd.uid",
+      "archived_path": "files/scripts/acts/act3/stalker_room.gd.uid",
+      "bytes": 20,
+      "sha256": "6f16226bd0c2a77c78ba34334e549692f6ecd0e0c0d8cc1b64e766ea11613e3c"
+    },
+    {
+      "path": "scripts/acts/act3/sunbound_stalker.gd",
+      "archived_path": "files/scripts/acts/act3/sunbound_stalker.gd",
+      "bytes": 55209,
+      "sha256": "11d301022b7c04cac7cba438a89cedf52207e2db6297602696c9075cdcd6613b"
+    },
+    {
+      "path": "scripts/acts/act3/sunbound_stalker.gd.uid",
+      "archived_path": "files/scripts/acts/act3/sunbound_stalker.gd.uid",
+      "bytes": 20,
+      "sha256": "de3fe15da2fd9a1dea49dbbabef3e78988fd55c585f4da8dfb639f59f1921f3d"
+    },
+    {
+      "path": "scripts/acts/act3/twin_suns.gd",
+      "archived_path": "files/scripts/acts/act3/twin_suns.gd",
+      "bytes": 3931,
+      "sha256": "ec1392ab0c287e4e099c43bedd9c217f56705e747c8db18c5cd749220e77b897"
+    },
+    {
+      "path": "scripts/acts/act3/twin_suns.gd.uid",
+      "archived_path": "files/scripts/acts/act3/twin_suns.gd.uid",
+      "bytes": 20,
+      "sha256": "71e2b6f0a6d2afa4eb634a05fbfffe9df579da3436a8c229d7898516716ae527"
+    },
+    {
+      "path": "scripts/acts/act3/twin_suns_level.gd",
+      "archived_path": "files/scripts/acts/act3/twin_suns_level.gd",
+      "bytes": 38554,
+      "sha256": "17ae090ea809c3170aef76e8393b0b2edde9f85b719dff2b7e55edfca9499247"
+    },
+    {
+      "path": "scripts/acts/act3/twin_suns_level.gd.uid",
+      "archived_path": "files/scripts/acts/act3/twin_suns_level.gd.uid",
+      "bytes": 19,
+      "sha256": "bbe192ef29ff3c4ae64a270eef88101a48225241c8716208a5db9f257119f019"
+    },
+    {
+      "path": "scripts/acts/act3/twin_suns_scenery.gd",
+      "archived_path": "files/scripts/acts/act3/twin_suns_scenery.gd",
+      "bytes": 15459,
+      "sha256": "de25f3f9b7127360fe84a3f0e7ff08bc35dc642bc739da1e579d2a4015c089c4"
+    },
+    {
+      "path": "scripts/acts/act3/twin_suns_scenery.gd.uid",
+      "archived_path": "files/scripts/acts/act3/twin_suns_scenery.gd.uid",
+      "bytes": 20,
+      "sha256": "e8a7d60e1a58f63b1323ac19e23f98722932c885388be128896caa647715edb1"
+    },
+    {
+      "path": "scripts/art/build_character_assets.gd",
+      "archived_path": "files/scripts/art/build_character_assets.gd",
+      "bytes": 5282,
+      "sha256": "4d6be77f07e5f5e75f69962f3556793c4ebe4c4e318f66f67a779c6c458227ec"
+    },
+    {
+      "path": "scripts/art/build_character_assets.gd.uid",
+      "archived_path": "files/scripts/art/build_character_assets.gd.uid",
+      "bytes": 19,
+      "sha256": "409b1a9ff2ec34d106dc0f2c289321b4decf3014e4f88c89ff1d3f86ace7f316"
+    },
+    {
+      "path": "scripts/attack_footprint.gd",
+      "archived_path": "files/scripts/attack_footprint.gd",
+      "bytes": 4138,
+      "sha256": "e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb"
+    },
+    {
+      "path": "scripts/attack_footprint.gd.uid",
+      "archived_path": "files/scripts/attack_footprint.gd.uid",
+      "bytes": 19,
+      "sha256": "6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627"
+    },
+    {
+      "path": "scripts/campaign/attempts.gd",
+      "archived_path": "files/scripts/campaign/attempts.gd",
+      "bytes": 17310,
+      "sha256": "41d5abbe22d19e389e89ab9ef196496672ee3c4bfa25c596ba3ca695f6ec44c0"
+    },
+    {
+      "path": "scripts/campaign/attempts.gd.uid",
+      "archived_path": "files/scripts/campaign/attempts.gd.uid",
+      "bytes": 20,
+      "sha256": "b9d15a9997fe9a59fc5b31ab8d30779dad9769cdfcd306306e40afd61435eec0"
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd",
+      "archived_path": "files/scripts/campaign/exact_json.gd",
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd.uid",
+      "archived_path": "files/scripts/campaign/exact_json.gd.uid",
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0"
+    },
+    {
+      "path": "scripts/campaign/level.gd",
+      "archived_path": "files/scripts/campaign/level.gd",
+      "bytes": 15364,
+      "sha256": "935dece66f5e0ec38c07e34bb185cbf53aacf044d6539e17e7dce73a14c0c56e"
+    },
+    {
+      "path": "scripts/campaign/level.gd.uid",
+      "archived_path": "files/scripts/campaign/level.gd.uid",
+      "bytes": 20,
+      "sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812"
+    },
+    {
+      "path": "scripts/campaign/registry.gd",
+      "archived_path": "files/scripts/campaign/registry.gd",
+      "bytes": 6006,
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+    },
+    {
+      "path": "scripts/campaign/registry.gd.uid",
+      "archived_path": "files/scripts/campaign/registry.gd.uid",
+      "bytes": 20,
+      "sha256": "80713da50c61c6b08bed5ce5a8a9cf2bf0e2506e4369ec4b593c69c53b4cff91"
+    },
+    {
+      "path": "scripts/campaign/save_store.gd",
+      "archived_path": "files/scripts/campaign/save_store.gd",
+      "bytes": 7310,
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    {
+      "path": "scripts/campaign/save_store.gd.uid",
+      "archived_path": "files/scripts/campaign/save_store.gd.uid",
+      "bytes": 20,
+      "sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1"
+    },
+    {
+      "path": "scripts/campaign/shell.gd",
+      "archived_path": "files/scripts/campaign/shell.gd",
+      "bytes": 29685,
+      "sha256": "9c70320842eec6683ce8ea853104341f75ef1faabcdbdea83b4ecd0e36eb490c"
+    },
+    {
+      "path": "scripts/campaign/shell.gd.uid",
+      "archived_path": "files/scripts/campaign/shell.gd.uid",
+      "bytes": 20,
+      "sha256": "e193ac7ff2bdcbbf75ca177a71194161a8f6bb3c5a184c304caeec690723eda6"
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "archived_path": "files/scripts/campaign/snapshot_codec.gd",
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd.uid",
+      "archived_path": "files/scripts/campaign/snapshot_codec.gd.uid",
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82"
+    },
+    {
+      "path": "scripts/character/player_presentations.gd",
+      "archived_path": "files/scripts/character/player_presentations.gd",
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01"
+    },
+    {
+      "path": "scripts/character/player_presentations.gd.uid",
+      "archived_path": "files/scripts/character/player_presentations.gd.uid",
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651"
+    },
+    {
+      "path": "scripts/combat/action_capture.gd",
+      "archived_path": "files/scripts/combat/action_capture.gd",
+      "bytes": 19785,
+      "sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f"
+    },
+    {
+      "path": "scripts/combat/action_capture.gd.uid",
+      "archived_path": "files/scripts/combat/action_capture.gd.uid",
+      "bytes": 20,
+      "sha256": "a089c978485a2b58adb2d1a73d634aa158fcfc9b6b3355f3cdf4256c81ec3828"
+    },
+    {
+      "path": "scripts/combat/authored_echo_renderer.gd",
+      "archived_path": "files/scripts/combat/authored_echo_renderer.gd",
+      "bytes": 22148,
+      "sha256": "52dcf5b261574171b32d9c3c15da9279b467a697f81dbae17abd2b2b3c62014d"
+    },
+    {
+      "path": "scripts/combat/authored_echo_renderer.gd.uid",
+      "archived_path": "files/scripts/combat/authored_echo_renderer.gd.uid",
+      "bytes": 20,
+      "sha256": "f5c93061cd05add9269454dd6007921d33c20719b2fccb12f0b6c6117b063081"
+    },
+    {
+      "path": "scripts/combat/authored_enemy_sequence.gd",
+      "archived_path": "files/scripts/combat/authored_enemy_sequence.gd",
+      "bytes": 28797,
+      "sha256": "6a66d90ed9c43ffae326273b844f86f04cb789a7b6e6dce59d6da920763225f7"
+    },
+    {
+      "path": "scripts/combat/authored_enemy_sequence.gd.uid",
+      "archived_path": "files/scripts/combat/authored_enemy_sequence.gd.uid",
+      "bytes": 19,
+      "sha256": "a7386bc5ee79dc7f7dcc22242adc7f02bfdd5babcbf9c19347d35889d27507dc"
+    },
+    {
+      "path": "scripts/combat/body_sweep.gd",
+      "archived_path": "files/scripts/combat/body_sweep.gd",
+      "bytes": 17456,
+      "sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9"
+    },
+    {
+      "path": "scripts/combat/body_sweep.gd.uid",
+      "archived_path": "files/scripts/combat/body_sweep.gd.uid",
+      "bytes": 20,
+      "sha256": "ef81e08a544e454636c523ea797029954359eead30c94e225c7de6893dcdcc74"
+    },
+    {
+      "path": "scripts/combat/difficulty.gd",
+      "archived_path": "files/scripts/combat/difficulty.gd",
+      "bytes": 3145,
+      "sha256": "2fb5f660ec9d28058c7783b52c65a85f53d0757c94a725d6408ff33deec3f56d"
+    },
+    {
+      "path": "scripts/combat/difficulty.gd.uid",
+      "archived_path": "files/scripts/combat/difficulty.gd.uid",
+      "bytes": 20,
+      "sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b"
+    },
+    {
+      "path": "scripts/combat/lane_mechanism.gd",
+      "archived_path": "files/scripts/combat/lane_mechanism.gd",
+      "bytes": 40592,
+      "sha256": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064"
+    },
+    {
+      "path": "scripts/combat/lane_mechanism.gd.uid",
+      "archived_path": "files/scripts/combat/lane_mechanism.gd.uid",
+      "bytes": 19,
+      "sha256": "458facdf13d863350dc2ebe082dbf77f6ef5bdaf2f1ceba7ebeba34055c20a6f"
+    },
+    {
+      "path": "scripts/combat/lunge_motion.gd",
+      "archived_path": "files/scripts/combat/lunge_motion.gd",
+      "bytes": 15016,
+      "sha256": "52b048392c7ea5d5728b500d1cc68fa478947f59f5b321bd81f377c265be9a66"
+    },
+    {
+      "path": "scripts/combat/lunge_motion.gd.uid",
+      "archived_path": "files/scripts/combat/lunge_motion.gd.uid",
+      "bytes": 20,
+      "sha256": "26b4d5dc7cbd8540bb060cac7c9e0153860810d20b8cffcb9f4ea30f322e2432"
+    },
+    {
+      "path": "scripts/combat/replay_capture_gate.gd",
+      "archived_path": "files/scripts/combat/replay_capture_gate.gd",
+      "bytes": 23213,
+      "sha256": "5f4d814f3b3bbb90e3274e1a76a7d082e092be553edf2862e9da480bb0042a2e"
+    },
+    {
+      "path": "scripts/combat/replay_capture_gate.gd.uid",
+      "archived_path": "files/scripts/combat/replay_capture_gate.gd.uid",
+      "bytes": 19,
+      "sha256": "42b9ed896dab3109dca8555bab871d0c44d1c889a6932f8cecbf94ba66487a32"
+    },
+    {
+      "path": "scripts/combat/replay_cursor.gd",
+      "archived_path": "files/scripts/combat/replay_cursor.gd",
+      "bytes": 19854,
+      "sha256": "1cbe648ad391d4363a525751fcc23e71f13292eddcc5da46233289a40a787362"
+    },
+    {
+      "path": "scripts/combat/replay_cursor.gd.uid",
+      "archived_path": "files/scripts/combat/replay_cursor.gd.uid",
+      "bytes": 19,
+      "sha256": "60b768dbe4b3c9528567ec0e64afe3ebb775c9d407d55d140eed6e90fcd36d16"
+    },
+    {
+      "path": "scripts/combat/replay_footprint.gd",
+      "archived_path": "files/scripts/combat/replay_footprint.gd",
+      "bytes": 34512,
+      "sha256": "23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b"
+    },
+    {
+      "path": "scripts/combat/replay_footprint.gd.uid",
+      "archived_path": "files/scripts/combat/replay_footprint.gd.uid",
+      "bytes": 19,
+      "sha256": "1ae28025dae1fcc6a4c10c0c4731171be5418eb6413f31383ce4aa14f2024855"
+    },
+    {
+      "path": "scripts/combat/replay_playback.gd",
+      "archived_path": "files/scripts/combat/replay_playback.gd",
+      "bytes": 74396,
+      "sha256": "ef11f05f6c73d7797e47894904617f154b924f642bb418765160177fb42dfaa6"
+    },
+    {
+      "path": "scripts/combat/replay_playback.gd.uid",
+      "archived_path": "files/scripts/combat/replay_playback.gd.uid",
+      "bytes": 20,
+      "sha256": "9772d96bd490fa16ae9e7438910e915e090c6485dfc1252574cae1bf7a977c5a"
+    },
+    {
+      "path": "scripts/combat/replay_program.gd",
+      "archived_path": "files/scripts/combat/replay_program.gd",
+      "bytes": 2045,
+      "sha256": "0736e6c14470270d182940dd5488e45d8f6191791c6658689fcb3f17d6980d3b"
+    },
+    {
+      "path": "scripts/combat/replay_program.gd.uid",
+      "archived_path": "files/scripts/combat/replay_program.gd.uid",
+      "bytes": 19,
+      "sha256": "d150d89ef4ba744f63d05e7a4b7a2acc91e4681d23d355cb9cb2678ac03f1a91"
+    },
+    {
+      "path": "scripts/combat/replay_sequence.gd",
+      "archived_path": "files/scripts/combat/replay_sequence.gd",
+      "bytes": 10638,
+      "sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6"
+    },
+    {
+      "path": "scripts/combat/replay_sequence.gd.uid",
+      "archived_path": "files/scripts/combat/replay_sequence.gd.uid",
+      "bytes": 20,
+      "sha256": "313e93a946f59228685fbc4730bb5d239df9e9ba2ae69855937ccb3c7d35289b"
+    },
+    {
+      "path": "scripts/combat/replay_witness.gd",
+      "archived_path": "files/scripts/combat/replay_witness.gd",
+      "bytes": 23155,
+      "sha256": "da20b193925271e688f61f03699837976ad9ebd848eea4ee5a12fa032ab3fff6"
+    },
+    {
+      "path": "scripts/combat/replay_witness.gd.uid",
+      "archived_path": "files/scripts/combat/replay_witness.gd.uid",
+      "bytes": 20,
+      "sha256": "c3bb32204b630c686744ef4e1a5a9769c8ea0a66fc40606517f734487081da42"
+    },
+    {
+      "path": "scripts/combat/repulsion_route.gd",
+      "archived_path": "files/scripts/combat/repulsion_route.gd",
+      "bytes": 36641,
+      "sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a"
+    },
+    {
+      "path": "scripts/combat/repulsion_route.gd.uid",
+      "archived_path": "files/scripts/combat/repulsion_route.gd.uid",
+      "bytes": 19,
+      "sha256": "cf5907f2957dd0ebe7e2d9a669315823a061a3ead057155ce7a7de325cf861ab"
+    },
+    {
+      "path": "scripts/combat/smoke_bank.gd",
+      "archived_path": "files/scripts/combat/smoke_bank.gd",
+      "bytes": 71227,
+      "sha256": "453e480267b1ff003e6b5ef628406a58ed8db5588cbcecfd3f1bc5b9b6c4f225"
+    },
+    {
+      "path": "scripts/combat/smoke_bank.gd.uid",
+      "archived_path": "files/scripts/combat/smoke_bank.gd.uid",
+      "bytes": 20,
+      "sha256": "e2afd59dbaf14194d58466285488dcb87c3b204b47860ce252af3ddb81559b59"
+    },
+    {
+      "path": "scripts/combat/threat_geometry.gd",
+      "archived_path": "files/scripts/combat/threat_geometry.gd",
+      "bytes": 14303,
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+    },
+    {
+      "path": "scripts/combat/threat_geometry.gd.uid",
+      "archived_path": "files/scripts/combat/threat_geometry.gd.uid",
+      "bytes": 20,
+      "sha256": "dbffe6e46566832c1126d98a643d508a68219fec591d4662f7bccfe297ddccdd"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd",
+      "archived_path": "files/scripts/combat/threat_scheduler.gd",
+      "bytes": 155373,
+      "sha256": "12c8f748c65a42e7a292015c6c222f6cdb51d1a1c321ac8e780f4a7998a84fd9"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd.uid",
+      "archived_path": "files/scripts/combat/threat_scheduler.gd.uid",
+      "bytes": 18,
+      "sha256": "54a051d030eef72dfce3f58a9073b3bce0f469720124e948c251f22a064e974d"
+    },
+    {
+      "path": "scripts/cues/cue_mesh.gd",
+      "archived_path": "files/scripts/cues/cue_mesh.gd",
+      "bytes": 9589,
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+    },
+    {
+      "path": "scripts/cues/cue_mesh.gd.uid",
+      "archived_path": "files/scripts/cues/cue_mesh.gd.uid",
+      "bytes": 19,
+      "sha256": "aab103bd0966b0b298f2a10e8107167ca7e23c451dd94d8be76136bd1bdc4d3a"
+    },
+    {
+      "path": "scripts/cues/interaction_cue.gd",
+      "archived_path": "files/scripts/cues/interaction_cue.gd",
+      "bytes": 2936,
+      "sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2"
+    },
+    {
+      "path": "scripts/cues/interaction_cue.gd.uid",
+      "archived_path": "files/scripts/cues/interaction_cue.gd.uid",
+      "bytes": 20,
+      "sha256": "e60bea9dccf00e376e4869c338851a7162dfd547a1327297b28910ccc4cb1ac2"
+    },
+    {
+      "path": "scripts/cues/threat_cue.gd",
+      "archived_path": "files/scripts/cues/threat_cue.gd",
+      "bytes": 31067,
+      "sha256": "32b92a9d120db84e4bb6bfde6f257610225ce604a75fd6f2ec8668c4841d06b2"
+    },
+    {
+      "path": "scripts/cues/threat_cue.gd.uid",
+      "archived_path": "files/scripts/cues/threat_cue.gd.uid",
+      "bytes": 19,
+      "sha256": "147d2f591ebb3ad3af17a4111b3118811c23bc2e83f3fc6f7574c38c860d4425"
+    },
+    {
+      "path": "scripts/curling_smoke.gd",
+      "archived_path": "files/scripts/curling_smoke.gd",
+      "bytes": 14175,
+      "sha256": "5f8fa272a9c5beef47f7c69ad0b916965e7caf30a5d0e6b329d56b227807c36c"
+    },
+    {
+      "path": "scripts/curling_smoke.gd.uid",
+      "archived_path": "files/scripts/curling_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "8c283bb9181b5b956ec3746bf98b9d614d5f86a8caddac06ba609e43231b75bb"
+    },
+    {
+      "path": "scripts/dev/campaign_desktop_profile.gd",
+      "archived_path": "files/scripts/dev/campaign_desktop_profile.gd",
+      "bytes": 25514,
+      "sha256": "3bdd406566b3c371b0b0df4a26db946e52306ca7a8367ac77449b12ad61bfe9c"
+    },
+    {
+      "path": "scripts/dev/campaign_desktop_profile.gd.uid",
+      "archived_path": "files/scripts/dev/campaign_desktop_profile.gd.uid",
+      "bytes": 20,
+      "sha256": "4ffbf84e221398786e4ae4ab1189d4f1d4367a2442d3c5cbe72e6adb9ad66cf8"
+    },
+    {
+      "path": "scripts/dev/desktop_profile.gd",
+      "archived_path": "files/scripts/dev/desktop_profile.gd",
+      "bytes": 17203,
+      "sha256": "01853cc623f24e412d4a23cc60d319a77fbd059c14f15f0fa5722bc399d162a7"
+    },
+    {
+      "path": "scripts/dev/desktop_profile.gd.uid",
+      "archived_path": "files/scripts/dev/desktop_profile.gd.uid",
+      "bytes": 19,
+      "sha256": "06f7a61910ac99455a39c092956cda7457dfa565536e4da4200c7a0608dbc6d2"
+    },
+    {
+      "path": "scripts/dev/dev.py",
+      "archived_path": "files/scripts/dev/dev.py",
+      "bytes": 26970,
+      "sha256": "c82e0afce0f06837e47f4299b2035245d6e9a822dab9826020a502627f7634b6"
+    },
+    {
+      "path": "scripts/effects.gd",
+      "archived_path": "files/scripts/effects.gd",
+      "bytes": 21962,
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7"
+    },
+    {
+      "path": "scripts/effects.gd.uid",
+      "archived_path": "files/scripts/effects.gd.uid",
+      "bytes": 19,
+      "sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831"
+    },
+    {
+      "path": "scripts/enemy.gd",
+      "archived_path": "files/scripts/enemy.gd",
+      "bytes": 41287,
+      "sha256": "39c16960c5b7ccb12282cda87c93d4b99280040881bf39b5879e11487a883ed1"
+    },
+    {
+      "path": "scripts/enemy.gd.uid",
+      "archived_path": "files/scripts/enemy.gd.uid",
+      "bytes": 20,
+      "sha256": "8f3ba80717e9fe95c6a27620cd909fddd88cd18ed5c425b859b236ccc85a4280"
+    },
+    {
+      "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+      "archived_path": "files/scripts/environment/scheduler_spore_source_protocol.gd",
+      "bytes": 38113,
+      "sha256": "c9a1e5e16abaf4a705a4dbacb6f6926159e8718fb95503a58f815123506e5b32"
+    },
+    {
+      "path": "scripts/environment/scheduler_spore_source_protocol.gd.uid",
+      "archived_path": "files/scripts/environment/scheduler_spore_source_protocol.gd.uid",
+      "bytes": 19,
+      "sha256": "c9f7b2d0e1d5746548438aa3bedec688b25bbad34e8df6b89e032affe01ddd77"
+    },
+    {
+      "path": "scripts/environment/spore_cluster.gd",
+      "archived_path": "files/scripts/environment/spore_cluster.gd",
+      "bytes": 3352,
+      "sha256": "3c69edd4ab9593383605e8b014cb0d9fdf3d0113b18e049c311663a6e2ed8f23"
+    },
+    {
+      "path": "scripts/environment/spore_cluster.gd.uid",
+      "archived_path": "files/scripts/environment/spore_cluster.gd.uid",
+      "bytes": 20,
+      "sha256": "d5da88b0510f93c7937256dbbb764a64cb843781f689d2d17e002bd981dac1d0"
+    },
+    {
+      "path": "scripts/environment/spore_field.gd",
+      "archived_path": "files/scripts/environment/spore_field.gd",
+      "bytes": 16331,
+      "sha256": "b109f9872e810ec6d2b30a9d017f47e83f70fa3d086cb83f7e6717f757e51cd7"
+    },
+    {
+      "path": "scripts/environment/spore_field.gd.uid",
+      "archived_path": "files/scripts/environment/spore_field.gd.uid",
+      "bytes": 20,
+      "sha256": "6496737bba0b24f2afd7cf28988caceecd013a21d5236e46280b49df14850411"
+    },
+    {
+      "path": "scripts/environment/spore_repulsion.gd",
+      "archived_path": "files/scripts/environment/spore_repulsion.gd",
+      "bytes": 59311,
+      "sha256": "74a9ce841f73b1550a2137f3404092f0ebd6f727126dffc487b11af739025db6"
+    },
+    {
+      "path": "scripts/environment/spore_repulsion.gd.uid",
+      "archived_path": "files/scripts/environment/spore_repulsion.gd.uid",
+      "bytes": 20,
+      "sha256": "d31e1b6d21aac4d170fa047f8035e5fe18194f22aa8c411e22a4f336a17831e9"
+    },
+    {
+      "path": "scripts/equipment.gd",
+      "archived_path": "files/scripts/equipment.gd",
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    {
+      "path": "scripts/equipment.gd.uid",
+      "archived_path": "files/scripts/equipment.gd.uid",
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a"
+    },
+    {
+      "path": "scripts/game.gd",
+      "archived_path": "files/scripts/game.gd",
+      "bytes": 28846,
+      "sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc"
+    },
+    {
+      "path": "scripts/game.gd.uid",
+      "archived_path": "files/scripts/game.gd.uid",
+      "bytes": 19,
+      "sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129"
+    },
+    {
+      "path": "scripts/hud.gd",
+      "archived_path": "files/scripts/hud.gd",
+      "bytes": 16193,
+      "sha256": "ab91224f5bd16ad9b44ba61cde2eb6b98b2254e87f479fed5c20d04089cb7613"
+    },
+    {
+      "path": "scripts/hud.gd.uid",
+      "archived_path": "files/scripts/hud.gd.uid",
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5"
+    },
+    {
+      "path": "scripts/lab_bench.gd",
+      "archived_path": "files/scripts/lab_bench.gd",
+      "bytes": 6324,
+      "sha256": "8f2bb0d92f48cfea32205f0b76854ad03ca7a85127e29dfe9275bdb0b2ea58fb"
+    },
+    {
+      "path": "scripts/lab_bench.gd.uid",
+      "archived_path": "files/scripts/lab_bench.gd.uid",
+      "bytes": 20,
+      "sha256": "2a7f596814c6c7fff0b9f0a229de202678f54e5455c1d16c450e5f2a7ef561fe"
+    },
+    {
+      "path": "scripts/pixel_sprite.gd",
+      "archived_path": "files/scripts/pixel_sprite.gd",
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a"
+    },
+    {
+      "path": "scripts/pixel_sprite.gd.uid",
+      "archived_path": "files/scripts/pixel_sprite.gd.uid",
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3"
+    },
+    {
+      "path": "scripts/player.gd",
+      "archived_path": "files/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "path": "scripts/player.gd.uid",
+      "archived_path": "files/scripts/player.gd.uid",
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70"
+    },
+    {
+      "path": "scripts/practice_target.gd",
+      "archived_path": "files/scripts/practice_target.gd",
+      "bytes": 4451,
+      "sha256": "455e1d0697db73c3b27a9e12136e5103bd438fdf22142bee0d329cd8748ba15e"
+    },
+    {
+      "path": "scripts/practice_target.gd.uid",
+      "archived_path": "files/scripts/practice_target.gd.uid",
+      "bytes": 20,
+      "sha256": "653901d6e1e18f9d4ce4eb782af9366629a641679963266065a425d014814531"
+    },
+    {
+      "path": "scripts/presentation/camera_framing.gd",
+      "archived_path": "files/scripts/presentation/camera_framing.gd",
+      "bytes": 10132,
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b"
+    },
+    {
+      "path": "scripts/presentation/camera_framing.gd.uid",
+      "archived_path": "files/scripts/presentation/camera_framing.gd.uid",
+      "bytes": 20,
+      "sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a"
+    },
+    {
+      "path": "scripts/settings/game_settings.gd",
+      "archived_path": "files/scripts/settings/game_settings.gd",
+      "bytes": 13346,
+      "sha256": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2"
+    },
+    {
+      "path": "scripts/settings/game_settings.gd.uid",
+      "archived_path": "files/scripts/settings/game_settings.gd.uid",
+      "bytes": 19,
+      "sha256": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab"
+    },
+    {
+      "path": "scripts/shotgun_flare.gd",
+      "archived_path": "files/scripts/shotgun_flare.gd",
+      "bytes": 5778,
+      "sha256": "24e526e3850531317285e0d687ee93ebd37aa7819fbf5cd27af19284af0b84e6"
+    },
+    {
+      "path": "scripts/shotgun_flare.gd.uid",
+      "archived_path": "files/scripts/shotgun_flare.gd.uid",
+      "bytes": 20,
+      "sha256": "e7c22cc0b7e74fa5181371c644527e6b18ec06ad8369dc72bfa4986505a15ba4"
+    },
+    {
+      "path": "scripts/ui/campaign_menu.gd",
+      "archived_path": "files/scripts/ui/campaign_menu.gd",
+      "bytes": 35356,
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28"
+    },
+    {
+      "path": "scripts/ui/campaign_menu.gd.uid",
+      "archived_path": "files/scripts/ui/campaign_menu.gd.uid",
+      "bytes": 19,
+      "sha256": "27d6486d87eb8162cc7e6c714ce9db11d313b66236870281aa2e615d8d5fc2e8"
+    },
+    {
+      "path": "scripts/weapon_pickup.gd",
+      "archived_path": "files/scripts/weapon_pickup.gd",
+      "bytes": 1750,
+      "sha256": "7a350ffa2efa2f6f031877842fb447e22b3b80d49cc2acc40ee39dd0cc19c56e"
+    },
+    {
+      "path": "scripts/weapon_pickup.gd.uid",
+      "archived_path": "files/scripts/weapon_pickup.gd.uid",
+      "bytes": 20,
+      "sha256": "0a004b242329bf5742cac245b12a6d41b8e306fc79ad63d43dc0c46896bf8615"
+    },
+    {
+      "path": "tests/act3_l2_registration_smoke.gd",
+      "archived_path": "files/tests/act3_l2_registration_smoke.gd",
+      "bytes": 43558,
+      "sha256": "7d13b7b5a7bb9a2ac33656877353e0cd2acd49e31cafa583550da65818c0b648"
+    },
+    {
+      "path": "tests/act3_l2_registration_smoke.gd.uid",
+      "archived_path": "files/tests/act3_l2_registration_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "49676f2001dc1f1c1be1171a7488fb5840cba6f359c4e975d0cca2b9f882f4f8"
+    },
+    {
+      "path": "tests/authored_echo_playback_smoke.gd",
+      "archived_path": "files/tests/authored_echo_playback_smoke.gd",
+      "bytes": 32509,
+      "sha256": "aaa34eebdb1e77f3f55cb7eda927dba749bb57de2bfff9f3b139bba73cd15f8e"
+    },
+    {
+      "path": "tests/authored_echo_playback_smoke.gd.uid",
+      "archived_path": "files/tests/authored_echo_playback_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "3d0a3bb2cd3074986eba92cdf60613c00a6f145c24040682b492771b3b9566dd"
+    },
+    {
+      "path": "tests/authored_echo_projection_smoke.gd",
+      "archived_path": "files/tests/authored_echo_projection_smoke.gd",
+      "bytes": 20827,
+      "sha256": "e3a137c76eaf34ed4da82498fe1f604224534de10e567b0607ef0eda7b720c64"
+    },
+    {
+      "path": "tests/authored_echo_projection_smoke.gd.uid",
+      "archived_path": "files/tests/authored_echo_projection_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "f668d1239de1ec9e66fdb5293289cb9544359e68ded70ec19dfa1fbfcbca4738"
+    },
+    {
+      "path": "tests/authored_enemy_sequence_smoke.gd",
+      "archived_path": "files/tests/authored_enemy_sequence_smoke.gd",
+      "bytes": 24723,
+      "sha256": "32322795347664f178e818637a45a57860267f7955cf7d879f3e49c21b7f6243"
+    },
+    {
+      "path": "tests/authored_enemy_sequence_smoke.gd.uid",
+      "archived_path": "files/tests/authored_enemy_sequence_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "f02f5512255cabeac0a328eaebf8c03a2b23508f6b6bd1454dc45a3f47eaec12"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_actor.gd",
+      "archived_path": "files/tests/fixtures/authored_echo_actor.gd",
+      "bytes": 10006,
+      "sha256": "38d5dc90eead60b1a656ec16d260b81c75a33cb6d5b41a007102aeeee4a044b2"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_actor.gd.uid",
+      "archived_path": "files/tests/fixtures/authored_echo_actor.gd.uid",
+      "bytes": 19,
+      "sha256": "c1f254eb4e0c205d7ee089b591136d3083e43c7c34e21108de83551f5abcd58b"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_native_codec.gd",
+      "archived_path": "files/tests/fixtures/authored_echo_native_codec.gd",
+      "bytes": 9276,
+      "sha256": "4b430b2c9f266ff37c222a2d89a7db62429e0f25b9267a891078f845138c2402"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_native_codec.gd.uid",
+      "archived_path": "files/tests/fixtures/authored_echo_native_codec.gd.uid",
+      "bytes": 19,
+      "sha256": "bc2de0c79282641189a3feda7896fb26d7b61de49006179fc072f826c2e84c1e"
+    }
+  ]
+}
