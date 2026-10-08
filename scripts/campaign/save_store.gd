@@ -4,8 +4,10 @@ extends RefCounted
 ## a verified prior generation remains available after an interrupted/corrupt write.
 ## Flush/rename is tested at process level, not a proof of power-loss durability.
 
-const FORMAT_VERSION: int = 1
+const ExactJson = preload("res://scripts/campaign/exact_json.gd")
+const FORMAT_VERSION: int = 2
 const MAX_BYTES: int = 8 * 1024 * 1024
+const MAX_FILE_BYTES: int = MAX_BYTES * 2 + 1024
 const MAX_GENERATION: int = 9007199254740991
 var path: String
 var last_error: String = ""
@@ -43,6 +45,12 @@ static func json_error(value: Variant, depth: int = 0) -> String:
 	return ""
 
 func write_payload(payload: Dictionary) -> bool:
+	# Enforce codec budgets before recursive semantic validation or a complete
+	# defensive payload copy; rejected input must not create a temporary file.
+	var encoded: String = ExactJson.stringify(payload)
+	if encoded.is_empty():
+		last_error = "Payload cannot use exact bounded JSON transport"
+		return false
 	last_error = json_error(payload)
 	if last_error.is_empty() and payload_validator.is_valid():
 		last_error = payload_validator.call(payload.duplicate(true))
@@ -51,7 +59,6 @@ func write_payload(payload: Dictionary) -> bool:
 	if not path.begins_with("user://"):
 		last_error = "Desktop saves require a user:// path"
 		return false
-	var encoded: String = JSON.stringify(payload, "", true, true)
 	if encoded.to_utf8_buffer().size() > MAX_BYTES:
 		last_error = "Save exceeds size limit"
 		return false
@@ -127,7 +134,9 @@ func _read_file(candidate_path: String) -> Dictionary:
 	var file: FileAccess = FileAccess.open(candidate_path, FileAccess.READ)
 	if file == null:
 		return {}
-	if file.get_length() > MAX_BYTES * 2:
+	# JSON escaping can double the payload text; retain bounded room for the
+	# checksum/version/generation envelope as well as the escaped payload.
+	if file.get_length() > MAX_FILE_BYTES:
 		file.close()
 		return {}
 	var text: String = file.get_as_text()
@@ -136,7 +145,12 @@ func _read_file(candidate_path: String) -> Dictionary:
 	if parser.parse(text) != OK:
 		return {}
 	var parsed: Variant = parser.data
-	if not parsed is Dictionary or parsed.get("format_version") != FORMAT_VERSION:
+	if not parsed is Dictionary:
+		return {}
+	var format: Variant = parsed.get("format_version")
+	# JSON parses numbers as floats. Array.has uses strict Variant types,
+	# so compare supported integral versions numerically after checking type.
+	if not (format is int or format is float) or not (format == 1 or format == FORMAT_VERSION):
 		return {}
 	var serial: Variant = parsed.get("generation")
 	if not (serial is int or serial is float) or not is_finite(float(serial)) or serial < 1 or serial > MAX_GENERATION or serial != floor(serial):
@@ -146,9 +160,18 @@ func _read_file(candidate_path: String) -> Dictionary:
 	var encoded: String = parsed["payload_json"]
 	if encoded.to_utf8_buffer().size() > MAX_BYTES or encoded.sha256_text() != parsed["sha256"]:
 		return {}
-	if parser.parse(encoded) != OK:
-		return {}
-	var payload: Variant = parser.data
+	var payload: Variant
+	if parsed.format_version == 1:
+		# Compatibility only: original float bits lost in a legacy decimal save
+		# cannot be reconstructed. New writes always use exact transport.
+		if parser.parse(encoded) != OK:
+			return {}
+		payload = parser.data
+	else:
+		var decoded: Dictionary = ExactJson.parse(encoded)
+		if not decoded.accepted:
+			return {}
+		payload = decoded.value
 	if not payload is Dictionary or not json_error(payload).is_empty():
 		return {}
 	if payload_validator.is_valid() and not String(payload_validator.call(payload.duplicate(true))).is_empty():
