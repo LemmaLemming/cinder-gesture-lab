@@ -23,3 +23,7 @@ python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act3/m
 python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act3/mirror_echo_resonance_room_smoke.gd
 python3 scripts/dev/dev.py engine --path . --resolution 339x736 --script tests/acts/act3/mirror_echo_resonance_room_smoke.gd -- --capture-portraits
 ```
+
+## First native attempt and targeted correction
+
+Qualified import closed exit0/no diagnostics but did not establish the dynamically loaded room script. Actual first-pulse-only shared31 job at ef51390 stopped before gameplay, exit2: `Projection` conflicts with Godot’s builtin type at runtime line11; subsequent missing methods/level/Nil messages are cascades. No check-summary or portrait was emitted (one FAIL/zero PASS lines). [Original log/source/receipt](../../../assets/acts/act3/evidence/A3-L3-echo-resonance-room/02-first-pulse-alias-parse-failure/receipt.json) preserves all120 frozen resources. Only that alias and its two calls are renamed to `ReplayFloor`; semantics, assertions, view margins and mechanics stay unchanged. Repeat the same narrow target; existing-script correction needs no new import. Whole-room persistence remains explicitly unsupported.

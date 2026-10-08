@@ -8,7 +8,7 @@ const SchedulerScript = preload("res://scripts/combat/threat_scheduler.gd")
 const MechanismScript = preload("res://scripts/combat/lane_mechanism.gd")
 const Shape = preload("res://scripts/combat/threat_geometry.gd")
 const CueMeshes = preload("res://scripts/cues/cue_mesh.gd")
-const Projection = preload("res://scripts/combat/replay_footprint.gd")
+const ReplayFloor = preload("res://scripts/combat/replay_footprint.gd")
 const Witness = preload("res://scripts/combat/replay_witness.gd")
 const API: String = "act3-echo-resonance-room-1"
 const ENCOUNTER_ID: String = "A3-L3/echo-resonance-room"
@@ -122,7 +122,7 @@ func _on_enter_level() -> void:
 	if not threat_scheduler.begin_encounter(profile, ENCOUNTER_ID, 1) or not mechanism.configure(PULSE_ID, Shape.circle(PULSE_ORIGIN, PULSE_RADIUS), FIRST_OPENING) or not mechanism.bind(threat_scheduler, {"hero": hero}):
 		last_configuration_error = threat_scheduler.last_error + "; " + mechanism.last_error
 		return
-	var floors: Dictionary = Projection.floor_signature(get_parent() as Node3D, [_floor])
+	var floors: Dictionary = ReplayFloor.floor_signature(get_parent() as Node3D, [_floor])
 	if not floors.get("accepted", false):
 		last_configuration_error = String(floors.get("reason", "Actual floor signature unavailable"))
 		return
@@ -254,7 +254,7 @@ func _try_echo() -> void:
 		return
 	_echo_view = _proof_positions(candidate)
 	if _projection.is_empty():
-		_projection = Projection.plan_authored(threat_scheduler, echo.call("source_program"), get_parent() as Node3D, [_floor], _context)
+		_projection = ReplayFloor.plan_authored(threat_scheduler, echo.call("source_program"), get_parent() as Node3D, [_floor], _context)
 		if not _projection.get("accepted", false):
 			_fail(String(_projection.get("reason", "Complete required projection rejected")))
 			return
