@@ -6,6 +6,8 @@ const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const ExactJson = preload("res://scripts/campaign/exact_json.gd")
 const Geometry = preload("res://scripts/combat/threat_geometry.gd")
 const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Player = preload("res://scripts/player.gd")
+const Store = preload("res://scripts/campaign/save_store.gd")
 
 class OpeningRusher:
 	extends CharacterBody3D
@@ -39,6 +41,12 @@ func _run() -> void:
 	await _test_circle_crossing_and_exact_restore()
 	await _test_circle_combined_actual_opening()
 	await _test_circle_union_budget()
+	await _test_active_observer_pause_and_fresh_restore()
+	await _test_active_state_pause()
+	await _test_active_cue_dash_pause()
+	await _test_active_cue_unavailability()
+	await _test_multi_hero_callback_boundaries()
+	await _test_repeated_multi_hero_pause()
 	print("Lane mechanism smoke: %d checks, %d failures" % [_checks, _failures])
 	quit(0 if _failures == 0 else 1)
 
@@ -640,6 +648,332 @@ func _reject_unchanged(mechanism: CinderLaneMechanism, bad: Dictionary, bindings
 	var before: Dictionary = mechanism.snapshot_state(bindings)
 	var phase: Dictionary = mechanism.get_cue().state()
 	return not mechanism.restore_state(bad, bindings) and Codec.same_values(before, mechanism.snapshot_state(bindings)) and mechanism.get_cue().state() == phase
+
+
+func _test_active_observer_pause_and_fresh_restore() -> void:
+	var raw: Dictionary = Mechanism.DEFAULT_RAW_ROLE.duplicate(true)
+	raw.active_s = 0.02
+	var arena: Dictionary = World.create(self, raw)
+	await _ticks(5)
+	var hero: CinderPlayer = arena.hero
+	var mechanism: CinderLaneMechanism = arena.mechanism
+	var scheduler: CinderThreatScheduler = arena.scheduler
+	var bindings: Dictionary = World.bindings(arena)
+	scheduler.begin_encounter("standard", "active-cue-pause")
+	var denied: Array[bool] = []
+	var hits: Array[String] = []
+	mechanism.hit_resolved.connect(func(id: String, _cycle: int, _result: Dictionary) -> void: hits.append(id))
+	mechanism.get_cue().state_changed.connect(func(value: Dictionary) -> void:
+		if value.phase == "active":
+			paused = true
+			denied.append(mechanism.snapshot_state(bindings).is_empty())
+	)
+	var answer: Dictionary = mechanism.start("hero", World.context(arena, "active-cue-pause"))
+	_expect(answer.get("accepted", false), "active cue observer fixture receives a real ordinary empty-ammo exchange")
+	if not answer.get("accepted", false):
+		await _dispose(arena)
+		return
+	_expect(await _until_phase(mechanism, "active") and paused and denied == [true], "actual required cue observer pauses synchronously and rejects capture inside callback")
+	await process_frame
+	_expect(hero.hp == hero.max_hp and hits.is_empty() and mechanism.state().hit_ids.is_empty(), "active cue pause causes no same-tick Player damage or consumed opportunity")
+	var pair: Dictionary = _exact_json({"hero": hero.snapshot_state(), "scheduler": scheduler.snapshot_state(bindings), "mechanism": mechanism.snapshot_state(bindings)})
+	_expect(not pair.mechanism.is_empty() and pair.mechanism.schema_version == 2 and pair.mechanism.pending_segments.keys() == ["hero"] and pair.mechanism.pending_segments.hero[-1].to == pair.hero.motion.position and pair.mechanism.pending_segments.hero[-1].end_s == pair.scheduler.clock_s, "paused phase publication retains exact old-to-current segment with current actor/scheduler endpoint and clock")
+	if pair.mechanism.is_empty() or not pair.mechanism.has("pending_segments"):
+		push_error(mechanism.last_snapshot_error)
+		await _dispose(arena)
+		return
+	var frozen: String = ExactJson.stringify(pair)
+	await create_timer(0.04, true).timeout
+	_expect(frozen == ExactJson.stringify({"hero": hero.snapshot_state(), "scheduler": scheduler.snapshot_state(bindings), "mechanism": mechanism.snapshot_state(bindings)}), "genuine tree pause freezes pending path, deadline, exact actor resources and scheduler together")
+	for mutation: String in ["endpoint", "clock", "span", "consumed", "unknown", "schema", "missing"]:
+		var bad: Dictionary = pair.mechanism.duplicate(true)
+		match mutation:
+			"endpoint": bad.pending_segments.hero[-1].to[0] = _adjacent_float(float(bad.pending_segments.hero[-1].to[0]))
+			"clock": bad.pending_segments.hero[-1].end_s = _adjacent_float(float(bad.pending_segments.hero[-1].end_s))
+			"span": bad.pending_segments.hero[0].start_s = float(bad.clock_s) - 0.1
+			"consumed": bad.hit_ids.append("hero")
+			"unknown": bad.pending_segments["unbound"] = bad.pending_segments.hero.duplicate(true)
+			"schema": bad.schema_version = 1
+			"missing": bad.erase("pending_segments")
+		_expect(_exact_reject_unchanged(mechanism, scheduler, bad, bindings), "pending " + mutation + " mutation rejects atomically without losing original opportunity")
+	var save_path: String = "user://test-lane-mechanism/pending-%d.json" % OS.get_process_id()
+	var store = Store.new(save_path)
+	var saved: bool = store.write_payload(pair)
+	_expect(saved, "actual SaveStore persists the coherent pending aggregate with exact tagged transport: " + store.last_error)
+	var reopened = Store.new(save_path)
+	var loaded: Dictionary = reopened.read_payload() if saved else {}
+	_expect(not loaded.is_empty() and ExactJson.stringify(loaded) == frozen, "fresh disk reader preserves every pending path/clock/actor bit before a fresh world restore")
+	if loaded.is_empty():
+		await _dispose(arena)
+		return
+	arena.root.free()
+	paused = false
+	arena = World.create(self, raw)
+	await _ticks(5)
+	hero = arena.hero
+	mechanism = arena.mechanism
+	scheduler = arena.scheduler
+	scheduler.begin_encounter("standard", "active-cue-pause")
+	paused = true
+	await process_frame
+	bindings = World.bindings(arena)
+	bindings.hero_positions = {"hero": Codec.read_vector3(loaded.hero.motion.position)}
+	var phases: Array[String] = []
+	var cues: Array[String] = []
+	hits.clear()
+	mechanism.state_changed.connect(func(value: Dictionary) -> void: phases.append(value.phase))
+	mechanism.get_cue().state_changed.connect(func(value: Dictionary) -> void: cues.append(value.phase))
+	mechanism.hit_resolved.connect(func(id: String, _cycle: int, _result: Dictionary) -> void: hits.append(id))
+	var restored: bool = hero.snapshot_error(loaded.hero).is_empty() and scheduler.snapshot_error(loaded.scheduler, bindings).is_empty() and mechanism.snapshot_error(loaded.mechanism, bindings, loaded.scheduler).is_empty() and hero.restore_state(loaded.hero) and scheduler.restore_state(loaded.scheduler, bindings) and mechanism.restore_state(loaded.mechanism, bindings)
+	_expect(restored and phases.is_empty() and cues.is_empty() and hits.is_empty() and hero.hp == hero.max_hp, "fresh real actors/scheduler/mechanism validate then quietly restore pending active batch without damage or events")
+	if restored:
+		_expect(ExactJson.stringify(mechanism.snapshot_state(bindings)) == ExactJson.stringify(loaded.mechanism), "fresh pending transport roundtrip preserves exact source/cycle/path identities")
+		paused = false
+		await _ticks(3)
+		_expect(hits == ["hero"] and hero.hp == hero.max_hp - hero.equipment.damage_received(4.0) and mechanism.state().hit_ids == ["hero"] and mechanism.state().phase == "recovery", "resume consumes original active sample once even though its short active interval ended on the resumed tick")
+		paused = true
+		await process_frame
+		var drained: Dictionary = mechanism.snapshot_state(bindings)
+		_expect(drained.schema_version == 1 and not drained.has("pending_segments"), "drained ordinary transport remains exact legacy schema1 with no additive field")
+		paused = false
+		await _ticks(35)
+		_expect(hits == ["hero"], "continued exposure never duplicates the restored pending opportunity")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path + ".bak"))
+	await _dispose(arena)
+
+
+func _test_active_state_pause() -> void:
+	var arena: Dictionary = World.create(self)
+	await _ticks(5)
+	var mechanism: CinderLaneMechanism = arena.mechanism
+	var scheduler: CinderThreatScheduler = arena.scheduler
+	scheduler.begin_encounter("standard", "active-state-pause")
+	var paused_once: Array[bool] = [false]
+	var hits: Array[String] = []
+	mechanism.state_changed.connect(func(value: Dictionary) -> void:
+		if value.phase == "active" and not paused_once[0]:
+			paused_once[0] = true
+			paused = true
+	)
+	mechanism.hit_resolved.connect(func(id: String, _cycle: int, _result: Dictionary) -> void: hits.append(id))
+	var started: bool = mechanism.start("hero", World.context(arena, "active-state-pause")).get("accepted", false)
+	var reached: bool = false
+	if started: reached = await _until_phase(mechanism, "active")
+	_expect(started and reached, "mechanism active-state observer receives real committed phase")
+	await process_frame
+	var saved: Dictionary = mechanism.snapshot_state(World.bindings(arena))
+	_expect(paused and arena.hero.hp == arena.hero.max_hp and hits.is_empty() and not saved.is_empty() and saved.schema_version == 2, "mechanism state observer pause retains sample without damaging actual Player")
+	paused = false
+	await _ticks(3)
+	_expect(hits == ["hero"] and mechanism.state().hit_ids == ["hero"], "ordinary source-state resume drains precisely one retained opportunity")
+	await _dispose(arena)
+
+
+func _test_active_cue_dash_pause() -> void:
+	var arena: Dictionary = World.create(self)
+	await _ticks(5)
+	var hero: CinderPlayer = arena.hero
+	var mechanism: CinderLaneMechanism = arena.mechanism
+	var scheduler: CinderThreatScheduler = arena.scheduler
+	hero.position.z = -1.2
+	await _ticks(2)
+	scheduler.begin_encounter("standard", "active-dash-pause")
+	var intercepted: Array[bool] = [false]
+	var hits: Array[Dictionary] = []
+	mechanism.get_cue().state_changed.connect(func(value: Dictionary) -> void:
+		if value.phase == "active" and not intercepted[0]:
+			intercepted[0] = true
+			paused = true
+	)
+	mechanism.hit_resolved.connect(func(_id: String, _cycle: int, result: Dictionary) -> void: hits.append(result.duplicate(true)))
+	var answer: Dictionary = mechanism.start("hero", World.context(arena, "active-dash-pause"))
+	_expect(answer.get("accepted", false), "moving cue-pause fixture receives actual collision/floor-supported exchange")
+	if not answer.get("accepted", false):
+		await _dispose(arena)
+		return
+	await _until_clock(scheduler, float(answer.reservation.active_from_s) - 0.05)
+	_expect(hero.request_dash(Vector3.BACK), "actual shared Player starts a real dash into the upcoming active lane")
+	_expect(await _until_phase(mechanism, "active") and paused, "required active cue pauses after actual shared dash physics moved the hero")
+	await process_frame
+	var bindings: Dictionary = World.bindings(arena)
+	var saved: Dictionary = mechanism.snapshot_state(bindings)
+	var actor: Dictionary = hero.snapshot_state()
+	_expect(not saved.is_empty() and saved.schema_version == 2 and actor.clocks.dash_left_s > 0.0 and Codec.read_vector3(saved.pending_segments.hero[0].from).distance_to(Codec.read_vector3(saved.pending_segments.hero[0].to)) > 0.1 and saved.pending_segments.hero[-1].to == actor.motion.position and hero.hp == hero.max_hp and hits.is_empty(), "paused active crossing preserves nonzero actual sampled motion and unfinished actor dash before any opportunity")
+	if saved.is_empty() or not saved.has("pending_segments"):
+		await _dispose(arena)
+		return
+	paused = false
+	await _ticks(14)
+	_expect(hits.size() == 1 and hits[0].opportunity_consumed and not hits[0].accepted and hero.hp == hero.max_hp and mechanism.state().hit_ids == ["hero"], "resumed original dash crossing consumes once while actual shared dash invulnerability rejects HP damage")
+	_expect(hero.get_world_action_records().size() == 1 and hero.get_world_action_records()[0].kind == "dash", "pause-safe consumer preserves the one real completed actor dash without fabricated action records")
+	await _dispose(arena)
+
+
+func _test_active_cue_unavailability() -> void:
+	for mutation: String in ["mechanism-hide", "cue-hide", "cue-clear", "outline-hide", "fill-hide", "source-hide", "mechanism-clear", "lease-cancel"]:
+		var arena: Dictionary = World.create(self)
+		await _ticks(5)
+		var mechanism: CinderLaneMechanism = arena.mechanism
+		var scheduler: CinderThreatScheduler = arena.scheduler
+		scheduler.begin_encounter("standard", "active-unavailable")
+		var hits: Array[String] = []
+		mechanism.hit_resolved.connect(func(id: String, _cycle: int, _result: Dictionary) -> void: hits.append(id))
+		var observer: Callable = func(value: Dictionary) -> void:
+			if value.phase != "active": return
+			match mutation:
+				"mechanism-hide": mechanism.hide()
+				"cue-hide": mechanism.get_cue().hide()
+				"cue-clear": mechanism.get_cue().clear()
+				"outline-hide": mechanism.get_cue().get_node("RequiredFootprintOutline").hide()
+				"fill-hide": mechanism.get_cue().get_node("RequiredFootprintFill").hide()
+				"source-hide": mechanism.get_cue().get_node("RequiredSourceMarker").hide()
+				"mechanism-clear": mechanism.clear("active_observer_clear")
+				"lease-cancel": scheduler.cancel(String(mechanism.state().reservation_id), "active_observer_lease_cancel")
+		if mutation in ["cue-hide", "outline-hide", "fill-hide", "source-hide"]:
+			mechanism.get_cue().state_changed.connect(observer)
+		else:
+			mechanism.state_changed.connect(observer)
+		var answer: Dictionary = mechanism.start("hero", World.context(arena, "active-unavailable"))
+		_expect(answer.get("accepted", false), mutation + " callback fixture reserves a real visible warning before active")
+		if answer.get("accepted", false):
+			await _until_clock(scheduler, float(answer.reservation.active_from_s) + 0.04)
+			_expect(hits.is_empty() and arena.hero.hp == arena.hero.max_hp and mechanism.state().status == "cancelled" and mechanism.get_cue().state().phase == "clear" and scheduler.reservations().is_empty(), mutation + " during synchronous active publication cancels before same-tick damage")
+			paused = true
+			await process_frame
+			var saved: Dictionary = scheduler.snapshot_state(World.bindings(arena))
+			var local: Dictionary = mechanism.snapshot_state(World.bindings(arena))
+			_expect(saved.cooldowns.size() == 1 and saved.cooldowns[0].ready_s == answer.reservation.cooldown_until_s and local.schema_version == 1, mutation + " retains original cooldown and clears unprocessed danger without schema2 residue")
+		await _dispose(arena)
+
+
+func _multi_arena() -> Dictionary:
+	var arena: Dictionary = World.create(self)
+	arena.mechanism.free()
+	var second: CinderPlayer = Player.new()
+	second.name = "SecondHero"
+	arena.root.add_child(second)
+	second.position.x = 0.25
+	second.shells = 0
+	var mechanism: CinderLaneMechanism = Mechanism.new()
+	mechanism.name = "LoadingArm"
+	mechanism.position = Vector3(-1, 0, 0)
+	mechanism.configure("loading-arm", Geometry.lane(Vector3(-1, 0, 0), Vector3(1, 0, 0), 0.30), Vector3.ZERO)
+	arena.root.add_child(mechanism)
+	mechanism.bind(arena.scheduler, {"a": arena.hero, "b": second})
+	arena.mechanism = mechanism
+	arena["second"] = second
+	return arena
+
+
+func _test_multi_hero_callback_boundaries() -> void:
+	for boundary: String in ["hurt-pause", "hit-pause", "hurt-hide", "hit-clear"]:
+		var arena: Dictionary = _multi_arena()
+		await _ticks(5)
+		var mechanism: CinderLaneMechanism = arena.mechanism
+		var scheduler: CinderThreatScheduler = arena.scheduler
+		var hero: CinderPlayer = arena.hero
+		var second: CinderPlayer = arena.second
+		scheduler.begin_encounter("standard", "multi-callback")
+		var hits: Array[String] = []
+		var intercepted: Array[bool] = [false]
+		hero.fired.connect(func(kind: String) -> void:
+			if kind != "hurt" or intercepted[0] or not boundary.begins_with("hurt"): return
+			intercepted[0] = true
+			if boundary == "hurt-pause": paused = true
+			else: mechanism.get_cue().hide()
+		)
+		mechanism.hit_resolved.connect(func(id: String, _cycle: int, _result: Dictionary) -> void:
+			hits.append(id)
+			if id != "a" or intercepted[0] or not boundary.begins_with("hit"): return
+			intercepted[0] = true
+			if boundary == "hit-pause": paused = true
+			else: mechanism.clear("first_hero_hit_clear")
+		)
+		var answer: Dictionary = mechanism.start("a", World.context(arena, "multi-callback"))
+		_expect(answer.get("accepted", false), boundary + " binds two actual distinct shared Players to one ordinary exchange")
+		if not answer.get("accepted", false):
+			await _dispose(arena)
+			continue
+		var reached: bool = await _until_phase(mechanism, "active" if boundary.ends_with("pause") else "clear")
+		_expect(reached, boundary + " actual first-hero callback reaches its synchronous boundary")
+		await process_frame
+		_expect(intercepted[0] and hits == ["a"] and hero.hp < hero.max_hp and second.hp == second.max_hp and mechanism.state().hit_ids == ["a"], boundary + " consumes first hero before callbacks and prevents same-tick second-hero damage")
+		var bindings: Dictionary = World.bindings(arena)
+		if boundary.ends_with("pause"):
+			var pair: Dictionary = _exact_json({"a": hero.snapshot_state(), "b": second.snapshot_state(), "scheduler": scheduler.snapshot_state(bindings), "mechanism": mechanism.snapshot_state(bindings)})
+			_expect(not pair.mechanism.is_empty() and pair.mechanism.schema_version == 2 and pair.mechanism.pending_segments.keys() == ["b"] and pair.mechanism.hit_ids == ["a"], boundary + " exact paused aggregate retains only second hero pending and first hero consumed")
+			if not pair.mechanism.is_empty() and pair.mechanism.has("pending_segments"):
+				var before: String = ExactJson.stringify(pair)
+				await create_timer(0.03, true).timeout
+				_expect(before == ExactJson.stringify({"a": hero.snapshot_state(), "b": second.snapshot_state(), "scheduler": scheduler.snapshot_state(bindings), "mechanism": mechanism.snapshot_state(bindings)}), boundary + " freezes both actors and remaining sampled path together")
+				var count: int = hits.size()
+				_expect(hero.restore_state(pair.a) and second.restore_state(pair.b) and scheduler.restore_state(pair.scheduler, bindings) and mechanism.restore_state(pair.mechanism, bindings) and hits.size() == count, boundary + " quiet paired commit preserves partial once-hit prefix without damage callbacks")
+				paused = false
+				await _ticks(3)
+				_expect(hits == ["a", "b"] and mechanism.state().hit_ids == ["a", "b"] and second.hp == second.max_hp - second.equipment.damage_received(4.0), boundary + " resumed original batch deals exactly one actual second-hero opportunity")
+				await _ticks(35)
+				_expect(hits == ["a", "b"], boundary + " later active ticks cannot repeat either opportunity")
+		else:
+			paused = true
+			await process_frame
+			var saved: Dictionary = scheduler.snapshot_state(bindings)
+			_expect(mechanism.state().status == "cancelled" and scheduler.reservations().is_empty() and saved.cooldowns.size() == 1 and saved.cooldowns[0].ready_s == answer.reservation.cooldown_until_s, boundary + " cancels remainder while retaining exact source cooldown")
+		await _dispose(arena)
+
+
+func _test_repeated_multi_hero_pause() -> void:
+	var arena: Dictionary = _multi_arena()
+	await _ticks(5)
+	var mechanism: CinderLaneMechanism = arena.mechanism
+	var scheduler: CinderThreatScheduler = arena.scheduler
+	var hero: CinderPlayer = arena.hero
+	var second: CinderPlayer = arena.second
+	scheduler.begin_encounter("standard", "repeat-pause")
+	var phase_pause: Array[bool] = [false]
+	var hurt_pause: Array[bool] = [false]
+	var hits: Array[String] = []
+	mechanism.get_cue().state_changed.connect(func(value: Dictionary) -> void:
+		if value.phase == "active" and not phase_pause[0]:
+			phase_pause[0] = true
+			paused = true
+	)
+	hero.fired.connect(func(kind: String) -> void:
+		if kind == "hurt" and not hurt_pause[0]:
+			hurt_pause[0] = true
+			paused = true
+	)
+	mechanism.hit_resolved.connect(func(id: String, _cycle: int, _result: Dictionary) -> void: hits.append(id))
+	var started: bool = mechanism.start("a", World.context(arena, "repeat-pause")).get("accepted", false)
+	_expect(started, "repeated pause fixture binds actual two-Hero exchange")
+	if not started:
+		await _dispose(arena)
+		return
+	_expect(await _until_phase(mechanism, "active") and paused and hits.is_empty(), "first active cue pause retains both real unprocessed paths before damage")
+	paused = false
+	await _ticks(1)
+	_expect(paused and phase_pause[0] and hurt_pause[0] and hits == ["a"] and second.hp == second.max_hp, "actual first Hero hurt pauses the first resumed tick before remaining Hero damage")
+	await process_frame
+	var bindings: Dictionary = World.bindings(arena)
+	var pair: Dictionary = _exact_json({"a": hero.snapshot_state(), "b": second.snapshot_state(), "scheduler": scheduler.snapshot_state(bindings), "mechanism": mechanism.snapshot_state(bindings)})
+	_expect(not pair.mechanism.is_empty() and pair.mechanism.has("pending_segments") and pair.mechanism.pending_segments.keys() == ["b"] and pair.mechanism.pending_segments.b.size() == 2 and pair.mechanism.pending_segments.b[-1].end_s == pair.scheduler.clock_s and pair.mechanism.pending_segments.b[-1].to == pair.b.motion.position, "second pause stays exactly capturable with both actual contiguous ticks and current actor/scheduler endpoint")
+	if not pair.mechanism.is_empty() and pair.mechanism.has("pending_segments"):
+		for mutation: String in ["join-position", "join-clock", "endpoint", "span"]:
+			var bad: Dictionary = pair.mechanism.duplicate(true)
+			match mutation:
+				"join-position": bad.pending_segments.b[1].from[0] = _adjacent_float(float(bad.pending_segments.b[1].from[0]))
+				"join-clock": bad.pending_segments.b[1].start_s = _adjacent_float(float(bad.pending_segments.b[1].start_s))
+				"endpoint": bad.pending_segments.b[-1].to[0] = _adjacent_float(float(bad.pending_segments.b[-1].to[0]))
+				"span": bad.pending_segments.b[0].start_s = float(bad.pending_segments.b[0].end_s) - 0.1
+			_expect(_exact_reject_unchanged(mechanism, scheduler, bad, bindings), "repeated pending " + mutation + " mutation rejects exact paired transport atomically")
+		var count: int = hits.size()
+		_expect(hero.restore_state(pair.a) and second.restore_state(pair.b) and scheduler.restore_state(pair.scheduler, bindings) and mechanism.restore_state(pair.mechanism, bindings) and hits.size() == count, "quiet exact aggregate restore keeps first Hero's spent opportunity and remaining piecewise path")
+		paused = false
+		await _ticks(4)
+		_expect(hits == ["a", "b"] and mechanism.state().hit_ids == ["a", "b"] and second.hp < second.max_hp, "second resume drains original remaining path once without refreshing first Hero resources")
+		await _ticks(30)
+		_expect(hits == ["a", "b"], "repeated pause/restore never creates an additional Hero hit opportunity")
+	await _dispose(arena)
 
 
 func _until_phase(mechanism: CinderLaneMechanism, phase: String) -> bool:

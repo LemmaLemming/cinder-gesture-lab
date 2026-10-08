@@ -18,6 +18,7 @@ const DEFAULT_RAW_ROLE: Dictionary = {"raw_damage": 4.0, "windup_s": 2.2, "lock_
 const DEFAULT_TIMING_FLOORS: Dictionary = {"windup_s": 2.2, "lock_s": 1.1, "recovery_s": 1.6}
 const EXCHANGE_KEYS: Array[String] = ["id", "source_position", "geometry", "opening_position", "start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "profile_id", "world_revision"]
 const RESPONSE_KEYS: Array[String] = ["encounter_id", "world_revision", "recognition_s", "attack_input_margin_s", "escape_directions", "return_directions", "floor_regions"]
+const MAX_PENDING_SEGMENTS: int = 256
 
 var last_error: String = ""
 var last_snapshot_error: String = ""
@@ -34,6 +35,7 @@ var _exchange: Dictionary = {}
 var _exchange_encounter_id: String = ""
 var _samples: Dictionary = {}
 var _hit_ids: Dictionary = {}
+var _pending_segments: Dictionary = {}
 var _last_cancel_reason: String = ""
 var _transaction_depth: int = 0
 var _snapshot_busy: bool = false
@@ -129,6 +131,7 @@ func start(hero_id: String, response_context: Dictionary, opening_position: Vari
 			_resolved_role = resolved.duplicate(true)
 			_cycle += 1
 			_hit_ids.clear()
+			_pending_segments.clear()
 			_samples.clear()
 			_sample_heroes(_scheduler.get_clock())
 			_status = "running"
@@ -147,6 +150,7 @@ func cancel(reason: String = "mechanism_cancelled") -> bool:
 	_transaction_depth += 1
 	var id: String = String(_exchange.get("id", "")) if _status == "running" else ""
 	_status = "cancelled" if _cycle > 0 else "idle"
+	_pending_segments.clear()
 	_last_cancel_reason = reason
 	if not id.is_empty() and is_instance_valid(_scheduler):
 		_scheduler.cancel(id, reason)
@@ -176,38 +180,48 @@ func state() -> Dictionary:
 
 
 func _physics_process(_delta: float) -> void:
-	if _status != "running" or not is_instance_valid(_scheduler):
+	if _status != "running" or not is_instance_valid(_scheduler) or get_tree().paused or _transaction_depth > 0:
 		return
 	_transaction_depth += 1
-	if not _live_bindings() or not is_visible_in_tree() or not _cue.is_visible_in_tree() or _cue.state().phase != _phase or _cue.state().geometry != _configuration.geometry:
-		cancel("required_source_or_bindings_unavailable")
-	else:
+	if _damage_boundary_ready():
 		var now: float = _scheduler.get_clock()
-		var reservation: Dictionary = _live_reservation(String(_exchange.id))
-		if reservation.is_empty():
-			if now > float(_exchange.recovery_until_s):
-				_status = "complete"
-				_set_phase("clear")
-			else:
-				cancel("reservation_missing")
-		elif _exchange_data(reservation) != _exchange:
-			cancel("committed_exchange_changed")
-		else:
+		# Sample completed actor physics before every observer. On resume append
+		# the real new segment to an unresolved path; never collapse its turns.
+		if _stage_hero_segments(now):
 			_set_phase(_phase_at(now, _exchange))
-			if _status == "running":
-				_resolve_hero_segments(now)
+			if _damage_boundary_ready():
+				_resolve_pending_segments()
 	_transaction_depth -= 1
 
 
-func _resolve_hero_segments(now: float) -> void:
-	for id: String in _heroes:
-		if _status != "running":
-			break
+func _stage_hero_segments(now: float) -> bool:
+	var ids: Array = _heroes.keys()
+	ids.sort()
+	for id: String in ids:
 		var hero: CinderPlayer = _heroes[id]
 		var previous: Dictionary = _samples[id]
-		var path: Array[Dictionary] = [{"from": previous.position, "to": hero.global_position, "start_s": previous.clock_s, "end_s": now}]
+		if not hero.dead and not _hit_ids.has(id):
+			var path: Array = _pending_segments.get(id, [])
+			if path.size() >= MAX_PENDING_SEGMENTS:
+				cancel("pending_path_budget_exceeded")
+				return false
+			path.append({"from": previous.position, "to": hero.global_position, "start_s": previous.clock_s, "end_s": now})
+			_pending_segments[id] = path
 		_samples[id] = {"position": hero.global_position, "clock_s": now}
-		if hero.dead or _hit_ids.has(id) or not Geometry.timed_path_hits(_configuration.geometry, path, float(_exchange.active_from_s), float(_exchange.active_until_s), CinderThreatScheduler.CAPSULE_RADIUS):
+	return true
+
+
+func _resolve_pending_segments() -> void:
+	for id: String in _pending_segments.keys():
+		if not _damage_boundary_ready():
+			return
+		var hero: CinderPlayer = _heroes[id]
+		var path: Array[Dictionary] = []
+		for segment: Dictionary in _pending_segments[id]: path.append(segment)
+		# Commit this entry before any synchronous actor/art callback. A pause
+		# keeps only the unprocessed entries, never a second hit for this hero.
+		_pending_segments.erase(id)
+		if hero.dead or _hit_ids.has(id) or not _active_path_hits(path):
 			continue
 		# Consume the opportunity before entering the player's synchronous
 		# hurt/death callbacks. Invulnerability may legitimately reject damage.
@@ -215,7 +229,67 @@ func _resolve_hero_segments(now: float) -> void:
 		var hp_before: float = hero.hp
 		hero.take_damage(float(_resolved_role.damage), Vector3.ZERO)
 		var result: Dictionary = {"opportunity_consumed": true, "accepted": hero.hp < hp_before, "raw_damage": float(_resolved_role.damage), "hp_damage": maxf(hp_before - hero.hp, 0.0), "impulse": Vector3.ZERO}
+		var hurt_boundary_ready: bool = _damage_boundary_ready()
 		hit_resolved.emit(id, _cycle, result.duplicate(true))
+		var hit_boundary_ready: bool = _damage_boundary_ready()
+		if not hurt_boundary_ready or not hit_boundary_ready:
+			return
+
+
+func _active_path_hits(path: Array[Dictionary]) -> bool:
+	for segment: Dictionary in path:
+		# Spatial tolerances cannot advance a damage opportunity into the last
+		# lock tick when binary64 clock accumulation falls just below active_from.
+		if maxf(float(segment.start_s), float(_exchange.active_from_s)) > minf(float(segment.end_s), float(_exchange.active_until_s)):
+			continue
+		if Geometry.timed_path_hits(_configuration.geometry, [segment], float(_exchange.active_from_s), float(_exchange.active_until_s), CinderThreatScheduler.CAPSULE_RADIUS):
+			return true
+	return false
+
+
+func _damage_boundary_ready() -> bool:
+	if _status != "running":
+		return false
+	if not _live_bindings() or is_queued_for_deletion() or not is_visible_in_tree() or not _required_cue_available():
+		cancel("required_source_or_bindings_unavailable")
+		return false
+	if get_tree().paused:
+		return false
+	var reservation: Dictionary = _live_reservation(String(_exchange.id))
+	if _status != "running":
+		return false
+	if reservation.is_empty():
+		if _scheduler.get_clock() > float(_exchange.recovery_until_s):
+			_status = "complete"
+			_pending_segments.clear()
+			_set_phase("clear")
+		else:
+			cancel("reservation_missing")
+		return false
+	if _exchange_data(reservation) != _exchange:
+		cancel("committed_exchange_changed")
+		return false
+	# Scheduler cleanup can itself notify authored observers.
+	if not _live_bindings() or not is_visible_in_tree() or not _required_cue_available():
+		cancel("required_source_or_bindings_unavailable")
+		return false
+	return not get_tree().paused
+
+
+func _required_cue_available() -> bool:
+	if not is_instance_valid(_cue) or not _cue.is_visible_in_tree():
+		return false
+	var current: Dictionary = _cue.state()
+	if current.phase != _phase or current.geometry != _configuration.geometry or current.source_position != _geometry_source(_configuration.geometry):
+		return false
+	var required: Array[String] = ["RequiredSourceMarker"]
+	if _phase != "recovery": required.append("RequiredFootprintOutline")
+	if _phase == "active": required.append("RequiredFootprintFill")
+	for part_name: String in required:
+		var part: MeshInstance3D = _cue.get_node_or_null(part_name) as MeshInstance3D
+		if not is_instance_valid(part) or part.is_queued_for_deletion() or not part.is_visible_in_tree() or part.mesh == null:
+			return false
+	return true
 
 
 func _sample_heroes(now: float) -> void:
@@ -317,6 +391,13 @@ func snapshot_state(scheduler_bindings: Dictionary) -> Dictionary:
 		for id: String in _samples:
 			samples[id] = {"position": Codec.vector3(_samples[id].position), "clock_s": _samples[id].clock_s}
 		snapshot = {"api_revision": API_REVISION, "schema_version": 1, "mechanism_id": _configuration.mechanism_id, "configuration": _encode_configuration(), "status": _status, "phase": _phase, "cycle": _cycle, "clock_s": paired.clock_s, "resolved_role": _resolved_role.duplicate(true), "exchange_encounter_id": _exchange_encounter_id, "exchange": _encode_exchange(_exchange), "hero_samples": samples, "hit_ids": hits, "last_cancel_reason": _last_cancel_reason}
+		if not _pending_segments.is_empty():
+			snapshot.schema_version = 2
+			snapshot["pending_segments"] = {}
+			for id: String in _pending_segments:
+				snapshot.pending_segments[id] = []
+				for segment: Dictionary in _pending_segments[id]:
+					snapshot.pending_segments[id].append({"from": Codec.vector3(segment.from), "to": Codec.vector3(segment.to), "start_s": segment.start_s, "end_s": segment.end_s})
 		last_snapshot_error = _snapshot_plan_error(snapshot, scheduler_bindings, paired, true)
 	_snapshot_busy = false
 	return snapshot.duplicate(true) if last_snapshot_error.is_empty() else {}
@@ -360,6 +441,11 @@ func restore_state(snapshot: Dictionary, scheduler_bindings: Dictionary) -> bool
 	_hit_ids.clear()
 	for id: String in accepted.hit_ids:
 		_hit_ids[id] = true
+	_pending_segments.clear()
+	for id: String in accepted.get("pending_segments", {}):
+		_pending_segments[id] = []
+		for segment: Dictionary in accepted.pending_segments[id]:
+			_pending_segments[id].append({"from": Codec.read_vector3(segment.from), "to": Codec.read_vector3(segment.to), "start_s": float(segment.start_s), "end_s": float(segment.end_s)})
 	_last_cancel_reason = accepted.last_cancel_reason
 	var was_blocked: bool = _cue.is_blocking_signals()
 	_cue.set_block_signals(true)
@@ -419,11 +505,16 @@ func _decode_exchange(exchange: Dictionary) -> Dictionary:
 func _snapshot_plan_error(snapshot: Dictionary, bindings: Dictionary, paired: Dictionary, actual_heroes: bool = false) -> String:
 	var error: String = Codec.value_error(snapshot)
 	if error.is_empty():
-		error = Codec.keys_error(snapshot, ["api_revision", "schema_version", "mechanism_id", "configuration", "status", "phase", "cycle", "clock_s", "resolved_role", "exchange_encounter_id", "exchange", "hero_samples", "hit_ids", "last_cancel_reason"])
+		var keys: Array = ["api_revision", "schema_version", "mechanism_id", "configuration", "status", "phase", "cycle", "clock_s", "resolved_role", "exchange_encounter_id", "exchange", "hero_samples", "hit_ids", "last_cancel_reason"]
+		if snapshot.get("schema_version") == 2: keys.append("pending_segments")
+		error = Codec.keys_error(snapshot, keys)
 	if not error.is_empty():
 		return error
-	if snapshot.api_revision != API_REVISION or not Codec.is_integer(snapshot.schema_version, 1, 1) or snapshot.mechanism_id != _configuration.mechanism_id or not snapshot.configuration is Dictionary or not _same_exact(snapshot.configuration, _encode_configuration()) or not Codec.is_integer(snapshot.cycle) or snapshot.status not in ["idle", "running", "cancelled", "complete"] or not snapshot.phase is String or not snapshot.resolved_role is Dictionary or not snapshot.exchange is Dictionary or not snapshot.hero_samples is Dictionary or not snapshot.hit_ids is Array or not snapshot.last_cancel_reason is String or not snapshot.exchange_encounter_id is String:
+	if snapshot.api_revision != API_REVISION or not Codec.is_integer(snapshot.schema_version, 1, 2) or snapshot.mechanism_id != _configuration.mechanism_id or not snapshot.configuration is Dictionary or not _same_exact(snapshot.configuration, _encode_configuration()) or not Codec.is_integer(snapshot.cycle) or snapshot.status not in ["idle", "running", "cancelled", "complete"] or not snapshot.phase is String or not snapshot.resolved_role is Dictionary or not snapshot.exchange is Dictionary or not snapshot.hero_samples is Dictionary or not snapshot.hit_ids is Array or not snapshot.last_cancel_reason is String or not snapshot.exchange_encounter_id is String:
 		return "Invalid immutable mechanism identity/configuration/schema"
+	var pending: Variant = snapshot.get("pending_segments", {})
+	if not pending is Dictionary or (snapshot.schema_version == 2 and (pending.is_empty() or snapshot.status != "running" or pending.size() > _heroes.size())):
+		return "Pending schema2 requires a bounded unprocessed running hero batch"
 	if not Codec.is_number(snapshot.clock_s) or float(snapshot.clock_s) != float(paired.clock_s) or not bindings.get("owners") is Dictionary or bindings.owners.get(_configuration.mechanism_id) != self:
 		return "Mechanism must share the actual/staged scheduler clock and stable source binding"
 	if bindings.has("hero_positions") and not bindings.hero_positions is Dictionary:
@@ -497,6 +588,23 @@ func _snapshot_plan_error(snapshot: Dictionary, bindings: Dictionary, paired: Di
 		seen[id] = true
 		if float(snapshot.hero_samples[id].clock_s) < float(exchange.active_from_s):
 			return "A hero opportunity cannot be consumed before the active interval"
+	var latest_batch_start: float = -1.0
+	for id: Variant in pending:
+		var path: Variant = pending[id]
+		if not id is String or not _heroes.has(id) or seen.has(id) or not path is Array or path.is_empty() or path.size() > MAX_PENDING_SEGMENTS:
+			return "Pending segments require unique unconsumed stable heroes and finite sampled paths"
+		var previous: Dictionary = {}
+		for segment: Variant in path:
+			if not segment is Dictionary or not Codec.keys_error(segment, ["from", "to", "start_s", "end_s"]).is_empty() or not Codec.is_vector3(segment.from) or not Codec.is_vector3(segment.to) or not Codec.in_range(segment.start_s, float(exchange.start_s), float(snapshot.clock_s)) or not Codec.in_range(segment.end_s, float(segment.start_s), float(snapshot.clock_s)) or float(segment.end_s) - float(segment.start_s) > 1.0 / float(Engine.physics_ticks_per_second) + Geometry.EPSILON:
+				return "Every pending segment must retain a finite actual single-physics-tick interval"
+			if not previous.is_empty() and (float(segment.start_s) != float(previous.end_s) or not _same_exact(segment.from, previous.to)):
+				return "Pending path must preserve exact contiguous piecewise samples"
+			previous = segment
+		if float(previous.end_s) != float(snapshot.clock_s) or not _same_exact(previous.to, snapshot.hero_samples[id].position):
+			return "Pending path must retain the exact paired current endpoint and clock"
+		if latest_batch_start >= 0.0 and float(previous.start_s) != latest_batch_start:
+			return "Pending heroes must share the latest authoritative sampled batch"
+		latest_batch_start = float(previous.start_s)
 	return ""
 
 

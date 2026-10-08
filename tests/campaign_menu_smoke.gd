@@ -222,6 +222,14 @@ func _run() -> void:
 	await _click(_find("CreditsToggle") as Control)
 	var credit_text: String = _labels_text(_find("CreditsContent"))
 	_expect((_find("CreditsContent") as Control).visible and credit_text.contains("Godot Engine contributors") and credit_text.contains("no music track currently bundled") and credit_text.contains("not a runtime sprite sheet"), "expanded credits disclose actual runtime sources and historical reference limits")
+	var source_paths: int = 0
+	for record: Dictionary in CinderGameSettings.credits():
+		for path: String in record.get("sources", []):
+			source_paths += 1
+			_expect(credit_text.contains(path), "expanded actual credits show documented source path: " + path)
+	_expect(source_paths > 0, "credits regression covers the real array-backed source records")
+	if "--credits-portrait" in OS.get_cmdline_user_args():
+		await _capture_credits_sources()
 	var small_targets: Array[String] = []
 	_collect_small_targets(_menu, small_targets)
 	_expect(small_targets.is_empty(), "interactive settings controls meet the 44 logical pixel minimum: " + ", ".join(small_targets))
@@ -353,3 +361,39 @@ func _expect(condition: bool, description: String) -> void:
 	if not condition:
 		failures += 1
 		push_error(description)
+
+func _capture_credits_sources() -> void:
+	var paths: Array[String] = []
+	for record: Dictionary in CinderGameSettings.credits():
+		for path: String in record.get("sources", []):
+			paths.append(path)
+	if paths.is_empty():
+		_expect(false, "real credits contain source paths for native portrait review")
+		return
+	var longest: String = paths[0]
+	for path: String in paths:
+		if path.length() > longest.length():
+			longest = path
+	var scroll: ScrollContainer = _find("PageScroll") as ScrollContainer
+	var folder: String = "res://captures/credits-sources/"
+	_expect(DirAccess.make_dir_recursive_absolute(folder) == OK, "native credits captures use ignored local output")
+	for item: Dictionary in [{"path": paths[0], "name": "first-array-source"}, {"path": longest, "name": "longest-array-source"}]:
+		var label: Label = _source_label(_find("CreditsContent"), item.path)
+		if label == null or scroll == null:
+			_expect(false, "actual source row and scroll exist for native credits review")
+			continue
+		scroll.ensure_control_visible(label)
+		await _settle()
+		_expect(label.get_global_rect().intersects(scroll.get_global_rect()), "actual source row lies in the native portrait scroll view")
+		await RenderingServer.frame_post_draw
+		var pixels: Image = root.get_texture().get_image()
+		_expect(pixels.get_size() == Vector2i(540, 1170) and pixels.save_png(folder + item.name + ".png") == OK, "original native credits source portrait is saved")
+
+func _source_label(node: Node, source: String) -> Label:
+	if node is Label and node.text == source:
+		return node as Label
+	for child: Node in node.get_children():
+		var found: Label = _source_label(child, source)
+		if found != null:
+			return found
+	return null
