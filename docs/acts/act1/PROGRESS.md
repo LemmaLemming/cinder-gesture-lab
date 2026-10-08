@@ -1,6 +1,14 @@
 # Act 1 progress
 
 
+## Current compatible shared24 adoption — 9 October 2026 (Hong Kong)
+
+Exact reviewed baseline **5d7a394c67c6095bd96136e0f07976984075ed0f**, API **campaign-shared-24**, is adopted through preserving merge **1ddfa2c536078e6d0d81aa41335f53f25bec362c**; canonical ACK **9810b5f7-8c88-478a-a535-a13dc505fe85**. All **1141 tracked owned file hashes** were preserved;178 published changed paths had no Act1 overlap. Earlier1305-file adoption counted physical ignored sidecars as well. Assigned checkout/branch/worker and source HANDOFFdcd1098 remain unchanged.
+
+The scoped dependency audit confirms only additive ReplayFootprint/projected Playback/opt-in ThreatCue runtime changes. L2/C30/Lane use ordinary cue present/clear, never bind projection; their geometry, meshes, materials, callbacks and normal empty-mode behavior remain unchanged. Player, Game/Shell, camera, Scheduler, Geometry, Lane, spore modules and level/save contracts are unchanged. Published ordinary Cue82/0 and Playback475/0 cover the affected shared compatibility paths. Completed owned route/persistence/portrait results retain their executed23 source attribution; no unused projected, unchangedL1 or broad rerun is justified. This is compatibility reasoning, not an owned24 gameplay pass.
+
+Integration RESPONSE6b31d22c acknowledges L2 and has cleared its source/evidence/portrait review; targeted production registration is pending. Act1 remains **1/8 accepted** and L3 remains unauthored. Capsule-spore REQUEST27b2940/RESPONSEd749 remains a separate Integration-owned unfinished dependency; no human approval is required.
+
 ## Read-only next-level preparation — 9 October 2026 (Hong Kong)
 
 Integration RESPONSE **6b31d22c-9f9e-4f5f-955a-681c8f2ad241** acknowledges exact L2 HANDOFF7492/source dcd1098 and separately attributed documentation d139581. Independent source/evidence/portrait review and targeted production registration are owned by Integration. Act1 remains **1/8 accepted**; L3 has no authored scene, actor, placement or engine job.
