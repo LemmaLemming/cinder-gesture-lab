@@ -12,8 +12,9 @@ extends Node3D
 ## established analytically against actual solid floor boxes, not ray samples.
 ## Capsule casts still use the engine's numerical physics tolerances. Owners MUST
 ## cancel their attack on reservation_invalidated; world changes MUST invalidate
-## the encounter before altering collision. Future navigation/replay adapters must
-## supply their own proof rather than opt out of these checks.
+## the encounter before altering collision. Replay uses its own immutable complete
+## sequence proof and exclusive lease; it never enters ordinary proxy geometry.
+## Future unsupported adapters must supply proof rather than opt out of checks.
 
 signal reservation_invalidated(reservation_id: String, reason: String)
 
@@ -21,7 +22,10 @@ const DifficultyScript = preload("res://scripts/combat/difficulty.gd")
 const Geometry = preload("res://scripts/combat/threat_geometry.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const Motion = preload("res://scripts/combat/lunge_motion.gd")
-const API_REVISION: String = "threat-scheduler-3"
+const ReplaySequence = preload("res://scripts/combat/replay_sequence.gd")
+const ReplayWitness = preload("res://scripts/combat/replay_witness.gd")
+const ReplayPlayer = preload("res://scripts/player.gd")
+const API_REVISION: String = "threat-scheduler-4"
 const SNAPSHOT_API_REVISION: String = "scheduler-snapshot-1"
 const SNAPSHOT_SCHEMA_VERSION: int = 1
 const CAPSULE_RADIUS: float = 0.32
@@ -31,6 +35,9 @@ const SKIN: float = 0.01
 const FEET_TOLERANCE: float = 0.015
 const EPSILON: float = 0.00001
 const TIME_MARGIN: float = 0.001
+const MAX_REPLAY_CANCELLATIONS: int = 32
+const REPLAY_ADAPTER_KEYS: Array[String] = ["kind", "locked", "sequence", "source_epoch", "generation", "capture_collision_fingerprint", "timeline_origin_s", "max_dispatch_delay_s"]
+const REPLAY_TOMBSTONE_KEYS: Array[String] = ["id", "source_id", "response_actor_id", "sequence_id", "source_epoch", "generation", "sequence", "capture_collision_fingerprint", "profile_id", "world_revision", "start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "timeline_origin_s", "locked", "max_dispatch_delay_s", "cancelled_at_s", "reason"]
 
 var last_error: String = ""
 var last_snapshot_error: String = ""
@@ -42,6 +49,7 @@ var _clock: float = 0.0
 var _serial: int = 0
 var _reservations: Dictionary = {}
 var _cooldowns: Dictionary = {}
+var _replay_cancellations: Dictionary = {}
 var _boundary_busy: bool = false
 var _snapshot_busy: bool = false
 var _request_busy: bool = false
@@ -67,6 +75,7 @@ func begin_encounter(profile_id: String, encounter_id: String = "encounter", wor
 	_clock = 0.0
 	_reservations.clear()
 	_cooldowns.clear()
+	_replay_cancellations.clear()
 	return true
 
 
@@ -77,6 +86,7 @@ func end_encounter(reason: String = "encounter_end") -> void:
 	for reservation_id: String in _reservations.keys():
 		cancel(reservation_id, reason)
 	_cooldowns.clear()
+	_replay_cancellations.clear()
 	_profile.clear()
 	_encounter_id = ""
 	_boundary_busy = false
@@ -155,6 +165,264 @@ func _request_attack(owner: Node3D, threat: Dictionary, response: Dictionary, ad
 	_reservations[reservation_id] = candidate
 	_cooldowns[owner.get_instance_id()] = {"owner": weakref(owner), "ready_s": candidate["cooldown_until_s"]}
 	return {"accepted": true, "reservation_id": reservation_id, "proof": proof, "profile_id": _profile["id"], "armed": adapter.get("kind") != "tracking", "reservation": _public_record(candidate)}
+
+
+func request_replay(owner: Node3D, sequence_snapshot: Dictionary, response: Dictionary, context: Dictionary) -> Dictionary:
+	## Exclusive compound data; no ordinary circle/lane can stand in for a replay.
+	## Request is pure until the complete proof succeeds. In particular no prune
+	## callback can change another source while the witness is being evaluated.
+	if _snapshot_busy or _request_busy or _boundary_busy or _transaction_depth > 0:
+		return _rejected("Scheduler transaction is already in progress")
+	_request_busy = true
+	_transaction_depth += 1
+	var result: Dictionary = _request_replay(owner, sequence_snapshot, response, context)
+	_transaction_depth -= 1
+	_request_busy = false
+	return result
+
+
+func _request_replay(owner: Node3D, sequence_snapshot: Dictionary, response: Dictionary, context: Dictionary) -> Dictionary:
+	var error: String = _replay_context_error(owner, response.get("actor") as CinderPlayer, context)
+	if error.is_empty():
+		error = replay_exchange_error(sequence_snapshot, context)
+	if error.is_empty() and _cooldowns.has(owner.get_instance_id()):
+		error = "Source attack cooldown is still occupied"
+	if error.is_empty() and _replay_cancellations.size() >= MAX_REPLAY_CANCELLATIONS:
+		error = "Replay cancellation history is full until simulation cooldowns expire"
+	if not error.is_empty():
+		return _rejected(error)
+	var witness = ReplayWitness.new()
+	var proof: Dictionary = witness.prove(self, sequence_snapshot, response, context)
+	if not proof.get("accepted", false):
+		return _rejected(proof.get("reason", "Replay preview was not proved"))
+	var sequence = ReplaySequence.new()
+	if not sequence.restore_state(sequence_snapshot, context.source_epoch, int(context.generation)):
+		return _rejected(sequence.last_snapshot_error)
+	var plan: Dictionary = sequence.state()
+	if owner.global_position.distance_to(plan.authored.tether_position) > EPSILON:
+		return _rejected("Actual stationary replay source must occupy its authored tether")
+	var actor: CinderPlayer = response.actor
+	var adapter := {"kind": "replay", "locked": false, "sequence": sequence.snapshot_state(), "source_epoch": context.source_epoch, "generation": int(context.generation), "capture_collision_fingerprint": context.capture_collision_fingerprint.duplicate(true), "timeline_origin_s": _clock, "max_dispatch_delay_s": ReplayWitness.MAX_DISPATCH_DELAY_S}
+	var record := {"source_instance_id": owner.get_instance_id(), "response_actor_instance_id": actor.get_instance_id(), "source_position": owner.global_position, "opening_position": plan.authored.tether_position, "start_s": _clock, "profile_id": _profile.id, "world_revision": _world_revision, "adapter": adapter, "_owner": weakref(owner), "_floor_guards": _floor_guards(response.floor_regions), "_replay_world": weakref(context.world_root), "_replay_actor": weakref(actor)}
+	_set_replay_deadlines(record, plan, _clock)
+	_serial += 1
+	var reservation_id: String = "threat-%d" % _serial
+	record["id"] = reservation_id
+	_reservations[reservation_id] = record
+	_cooldowns[owner.get_instance_id()] = {"owner": weakref(owner), "ready_s": record.cooldown_until_s}
+	last_error = ""
+	return {"accepted": true, "reservation_id": reservation_id, "armed": false, "profile_id": _profile.id, "proof": proof, "reservation": _public_record(record)}
+
+
+func commit_replay(reservation_id: String, response: Dictionary) -> Dictionary:
+	if _snapshot_busy or _request_busy or _boundary_busy or _transaction_depth > 0:
+		return _rejected("Scheduler transaction is already in progress")
+	_request_busy = true
+	_transaction_depth += 1
+	var result: Dictionary = _commit_replay(reservation_id, response)
+	_transaction_depth -= 1
+	_request_busy = false
+	return result
+
+
+func _commit_replay(reservation_id: String, response: Dictionary) -> Dictionary:
+	var record: Dictionary = _reservations.get(reservation_id, {})
+	if not _is_replay(record) or record.adapter.locked:
+		return _rejected("Live unarmed replay reservation required")
+	if not is_inside_tree() or get_tree().paused or _clock < float(record.lock_from_s):
+		return _rejected("Replay lock is not due in an unpaused encounter")
+	var error: String = replay_reservation_error(reservation_id)
+	if error.is_empty() and response.get("actor") != replay_target(reservation_id):
+		error = "Replay response actor cannot change after preview"
+	var proof: Dictionary = {}
+	if error.is_empty():
+		proof = ReplayWitness.new().prove(self, record.adapter.sequence, response, _replay_context(record), true, reservation_id)
+		if not proof.get("accepted", false):
+			error = proof.get("reason", "Replay lock was not proved")
+	if not error.is_empty():
+		cancel(reservation_id, "replay_lock_unproved")
+		return _rejected(error)
+	var sequence = ReplaySequence.new()
+	sequence.restore_state(record.adapter.sequence, record.adapter.source_epoch, int(record.adapter.generation))
+	var plan: Dictionary = sequence.state()
+	# A delayed legal lock retains its FULL authored lead from this actual clock.
+	var candidate: Dictionary = record.duplicate(true)
+	candidate.adapter.locked = true
+	candidate.adapter.timeline_origin_s = _clock - float(plan.authored.warning_s)
+	_set_replay_deadlines(candidate, plan, candidate.adapter.timeline_origin_s)
+	candidate["lock_from_s"] = _clock
+	_reservations[reservation_id] = candidate
+	_cooldowns[int(candidate.source_instance_id)] = {"owner": candidate._owner, "ready_s": candidate.cooldown_until_s}
+	last_error = ""
+	return {"accepted": true, "reservation_id": reservation_id, "armed": true, "profile_id": _profile.id, "proof": proof, "reservation": _public_record(candidate)}
+
+
+func _set_replay_deadlines(record: Dictionary, plan: Dictionary, origin_s: float) -> void:
+	var last_danger_s: float = float(plan.timeline.replay_until_s)
+	for slot: Dictionary in plan.timeline.slots:
+		for event: Dictionary in slot.events:
+			last_danger_s = maxf(last_danger_s, float(event.at_s) + ReplayWitness.MAX_DISPATCH_DELAY_S + TIME_MARGIN)
+	record["lock_from_s"] = origin_s + float(plan.authored.warning_s)
+	record["active_from_s"] = origin_s + float(plan.timeline.playback_from_s)
+	record["active_until_s"] = origin_s + last_danger_s
+	record["recovery_until_s"] = origin_s + float(plan.timeline.tether_until_s)
+	record["cooldown_until_s"] = record.recovery_until_s
+
+
+func replay_exchange_error(sequence_snapshot: Dictionary, context: Dictionary, reservation_id: String = "") -> String:
+	## Witness self-exclusion is exact, own, unarmed and alone; never a caller proof.
+	if reservation_id.is_empty():
+		return "Replay requires an exclusive exchange" if not _reservations.is_empty() else ""
+	var record: Dictionary = _reservations.get(reservation_id, {})
+	if _reservations.size() != 1 or not _is_replay(record) or record.adapter.locked:
+		return "Only the exact own unarmed exclusive replay may be re-proved"
+	if not _same_replay(record.adapter.sequence, sequence_snapshot) or not _same_replay_context(_replay_context(record), context):
+		return "Replay self-exclusion sequence/context identity changed"
+	return replay_reservation_error(reservation_id)
+
+
+func replay_reservation_state(reservation_id: String) -> Dictionary:
+	## Pure defensive accessor: no expiry/prune callbacks or clock advancement.
+	return _public_record(_reservations[reservation_id]) if replay_reservation_error(reservation_id).is_empty() else {}
+
+
+func replay_target(reservation_id: String) -> CinderPlayer:
+	var record: Dictionary = _reservations.get(reservation_id, {})
+	return (record.get("_replay_actor") as WeakRef).get_ref() as CinderPlayer if _is_replay(record) and record.get("_replay_actor") is WeakRef else null
+
+
+func replay_world_root(reservation_id: String) -> Node3D:
+	## Raw admitted world custody, including a lease whose pure guard now fails.
+	var record: Dictionary = _reservations.get(reservation_id, {})
+	return (record.get("_replay_world") as WeakRef).get_ref() as Node3D if _is_replay(record) and record.get("_replay_world") is WeakRef else null
+
+
+func replay_reservation_error(reservation_id: String) -> String:
+	var record: Dictionary = _reservations.get(reservation_id, {})
+	if not _is_replay(record) or _encounter_id.is_empty() or record.profile_id != _profile.get("id") or record.world_revision != _world_revision or _reservations.size() != 1:
+		return "Current exclusive replay lease required"
+	if not is_finite(_clock) or _clock < 0.0 or _clock > ReplayWitness.MAX_CLOCK_S:
+		return "Replay lease clock exceeds supported precision envelope"
+	if _clock > float(record.recovery_until_s):
+		return "Replay lease has expired"
+	if not record.adapter.locked and _clock >= float(record.active_from_s):
+		return "Replay locked lead was missed"
+	var owner: Node3D = (record._owner as WeakRef).get_ref() as Node3D
+	var actor: CinderPlayer = replay_target(reservation_id)
+	var context: Dictionary = _replay_context(record)
+	var error: String = _replay_context_error(owner, actor, context)
+	if not error.is_empty():
+		return error
+	if owner.global_position.distance_to(record.source_position) > EPSILON or not _guards_valid(record._floor_guards):
+		return "Replay stationary source/floor contract changed"
+	var collision: Dictionary = _collision_signature(context.world_root)
+	if collision.has("error") or not _same_replay(collision.get("signature", {}), record.adapter.capture_collision_fingerprint):
+		return "Replay capture collision world changed"
+	var cooldown: Dictionary = _cooldowns.get(int(record.source_instance_id), {})
+	if cooldown.is_empty() or not _same_replay(cooldown.get("ready_s"), record.cooldown_until_s):
+		return "Replay retained cooldown no longer matches its lease"
+	return ""
+
+
+func _replay_context_error(owner: Node3D, actor: CinderPlayer, context: Dictionary) -> String:
+	if not Codec.keys_error(context, ["world_root", "source_epoch", "generation", "capture_collision_fingerprint"]).is_empty():
+		return "Exact replay world/epoch/generation/capture context required"
+	var world_root: Node3D = context.get("world_root") as Node3D
+	if not is_instance_valid(world_root) or not world_root.is_inside_tree() or world_root.is_queued_for_deletion() or world_root.get_world_3d() != get_world_3d() or not _under_root(self, world_root):
+		return "Live same-world replay root containing scheduler required"
+	if not is_instance_valid(owner) or not owner.is_inside_tree() or owner.is_queued_for_deletion() or owner.get_world_3d() != get_world_3d() or not _under_root(owner, world_root) or not owner.global_position.is_finite():
+		return "Live finite stationary replay owner under world root required"
+	if owner is CharacterBody3D and (not (owner as CharacterBody3D).velocity.is_finite() or (owner as CharacterBody3D).velocity.length() > EPSILON):
+		return "Replay owner must remain stationary"
+	if not is_instance_valid(actor) or not actor.is_inside_tree() or actor.is_queued_for_deletion() or not _under_root(actor, world_root) or actor.get_world_3d() != get_world_3d():
+		return "One actual shared replay player under world root required"
+	if not actor.get_collision_exceptions().is_empty() or actor.get_platform_velocity().length() > EPSILON or actor.get_platform_angular_velocity().length() > EPSILON:
+		return "Replay player must retain fixed-world collision without exceptions/carry"
+	if not context.get("source_epoch") is String or not Codec.is_integer(context.get("generation"), 1) or not context.get("capture_collision_fingerprint") is Dictionary:
+		return "Replay epoch/generation/capture fingerprint required"
+	return ""
+
+
+func _replay_context(record: Dictionary) -> Dictionary:
+	return {"world_root": (record._replay_world as WeakRef).get_ref(), "source_epoch": record.adapter.source_epoch, "generation": record.adapter.generation, "capture_collision_fingerprint": record.adapter.capture_collision_fingerprint.duplicate(true)}
+
+
+func _same_replay_context(left: Dictionary, right: Dictionary) -> bool:
+	if not Codec.keys_error(right, ["world_root", "source_epoch", "generation", "capture_collision_fingerprint"]).is_empty():
+		return false
+	return left.world_root == right.world_root and left.source_epoch == right.source_epoch and _same_replay(left.generation, right.generation) and _same_replay(left.capture_collision_fingerprint, right.capture_collision_fingerprint)
+
+
+func _is_replay(record: Dictionary) -> bool:
+	return record.get("adapter") is Dictionary and record.adapter.get("kind") == "replay"
+
+
+func _same_replay(left: Variant, right: Variant) -> bool:
+	# Full-precision JSON can change int representation, never transport identity.
+	if Codec.is_number(left) and Codec.is_number(right):
+		return float(left) == float(right)
+	if left is Dictionary and right is Dictionary:
+		if left.size() != right.size():
+			return false
+		for key: String in left:
+			if not right.has(key) or not _same_replay(left[key], right[key]):
+				return false
+		return true
+	if left is Array and right is Array:
+		if left.size() != right.size():
+			return false
+		for index: int in range(left.size()):
+			if not _same_replay(left[index], right[index]):
+				return false
+		return true
+	return typeof(left) == typeof(right) and left == right
+
+
+func replay_cancellation_state(reservation_id: String, bindings: Dictionary = {}) -> Dictionary:
+	## Retained tombstone is inert history. Reads never age or emit callbacks.
+	var value: Dictionary = _replay_cancellations.get(reservation_id, {})
+	if value.is_empty() or _clock >= float(value.cooldown_until_s):
+		return {}
+	var result: Dictionary = value.duplicate(true)
+	result.erase("_owner")
+	result.erase("_replay_actor")
+	if bindings.is_empty():
+		return result
+	if not _snapshot_access_error().is_empty() or not _bindings_error(bindings).is_empty() or not _replay_actor_binding_error(_binding_id(bindings.get("actors", {}), (value._replay_actor as WeakRef).get_ref()), bindings).is_empty():
+		return {}
+	return _encode_replay_tombstone(value, bindings)
+
+
+func _encode_replay_tombstone(value: Dictionary, bindings: Dictionary) -> Dictionary:
+	if not bindings.get("owners") is Dictionary or not bindings.get("actors") is Dictionary:
+		return {}
+	var result: Dictionary = value.duplicate(true)
+	result.erase("_owner")
+	result.erase("_replay_actor")
+	var source_id: String = _binding_id(bindings.owners, (value._owner as WeakRef).get_ref())
+	var actor_id: String = _binding_id(bindings.actors, (value._replay_actor as WeakRef).get_ref())
+	if source_id.is_empty() or actor_id.is_empty():
+		return {}
+	result.erase("source_instance_id")
+	result.erase("response_actor_instance_id")
+	result["source_id"] = source_id
+	result["response_actor_id"] = actor_id
+	return result
+
+
+func _retain_replay_cancellation(record: Dictionary, reason: String) -> void:
+	var adapter: Dictionary = record.adapter
+	var value := {"id": record.id, "source_instance_id": record.source_instance_id, "response_actor_instance_id": record.response_actor_instance_id, "sequence_id": adapter.sequence.sequence_id, "source_epoch": adapter.source_epoch, "generation": adapter.generation, "sequence": adapter.sequence.duplicate(true), "capture_collision_fingerprint": adapter.capture_collision_fingerprint.duplicate(true), "timeline_origin_s": adapter.timeline_origin_s, "locked": adapter.locked, "max_dispatch_delay_s": adapter.max_dispatch_delay_s, "cancelled_at_s": _clock, "reason": reason.left(512), "_owner": record._owner, "_replay_actor": record._replay_actor}
+	for key: String in ["profile_id", "world_revision", "start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
+		value[key] = record[key]
+	_replay_cancellations[record.id] = value
+
+
+func _expire_replay_cancellations() -> void:
+	# Called only after a real pausable simulation tick, never read/prune/snapshot.
+	for reservation_id: String in _replay_cancellations.keys():
+		if _clock >= float(_replay_cancellations[reservation_id].cooldown_until_s):
+			_replay_cancellations.erase(reservation_id)
 
 
 func request_tracking(owner: Node3D, threat: Dictionary, response: Dictionary) -> Dictionary:
@@ -302,6 +570,9 @@ func cancel(reservation_id: String, reason: String = "cancelled") -> bool:
 		var source: CharacterBody3D = (record["_owner"] as WeakRef).get_ref() as CharacterBody3D
 		if is_instance_valid(source):
 			source.velocity = Vector3.ZERO
+	if _is_replay(record):
+		reason = reason.left(512) if not reason.is_empty() else "cancelled"
+		_retain_replay_cancellation(record, reason)
 	_reservations.erase(reservation_id)
 	# Cancellation releases geometry/budget; cooldown remains conservative until
 	# the scheduled role interval expires. Death/removal cancels owner cooldown too.
@@ -321,7 +592,11 @@ func cancel_owner(owner: Node3D, reason: String = "source_defeated") -> void:
 			continue
 		if int(_reservations[reservation_id]["source_instance_id"]) == instance_id:
 			cancel(reservation_id, reason)
-	_cooldowns.erase(instance_id)
+	var retained_replay: bool = false
+	for tombstone: Dictionary in _replay_cancellations.values():
+		retained_replay = retained_replay or int(tombstone.source_instance_id) == instance_id
+	if not retained_replay:
+		_cooldowns.erase(instance_id)
 	_boundary_busy = false
 
 
@@ -363,7 +638,9 @@ func _public_record(record: Dictionary) -> Dictionary:
 	var copy: Dictionary = record.duplicate(true)
 	copy.erase("_owner")
 	copy.erase("_floor_guards")
-	var pending: bool = record.get("adapter", {}).get("kind") == "tracking" and not record["adapter"]["locked"]
+	copy.erase("_replay_world")
+	copy.erase("_replay_actor")
+	var pending: bool = record.get("adapter", {}).get("kind") in ["tracking", "replay"] and not record["adapter"]["locked"]
 	copy["armed"] = not pending
 	copy["state"] = "warning" if pending or _clock < float(record["lock_from_s"]) else ("lock" if _clock < float(record["active_from_s"]) else ("active" if _clock <= float(record["active_until_s"]) else "recovery"))
 	return copy
@@ -374,6 +651,7 @@ func _physics_process(delta: float) -> void:
 		return
 	_transaction_depth += 1
 	_clock += delta
+	_expire_replay_cancellations()
 	_prune()
 	_advance_lunges()
 	_transaction_depth -= 1
@@ -393,6 +671,8 @@ func _prune() -> void:
 			cancel(reservation_id, "lunge_source_changed")
 		elif not _guards_valid(record["_floor_guards"]):
 			cancel(reservation_id, "floor_contract_changed")
+		elif _is_replay(record) and _clock <= float(record.recovery_until_s) and not replay_reservation_error(reservation_id).is_empty():
+			cancel(reservation_id, "replay_contract_changed")
 		elif record.get("adapter", {}).get("kind") == "tracking" and not record["adapter"]["locked"] and _clock >= float(record["active_from_s"]) - EPSILON:
 			cancel(reservation_id, "tracking_lock_missed")
 		elif _clock > float(record["recovery_until_s"]):
@@ -447,6 +727,8 @@ func _request_error(owner: Node3D, threat: Dictionary, response: Dictionary, ign
 	if ignored_id.is_empty() and _cooldowns.has(owner.get_instance_id()):
 		return "Source attack cooldown is still occupied"
 	for existing: Dictionary in _reservations.values():
+		if _is_replay(existing):
+			return "Exclusive replay occupies preview through recovery"
 		if existing["id"] != ignored_id and int(existing["source_instance_id"]) == owner.get_instance_id():
 			return "Source already owns a committed exchange"
 	if response.get("world_revision") != _world_revision or not threat.get("role") is Dictionary:
@@ -511,6 +793,11 @@ func response_error(response: Dictionary, allow_unstable_warning: bool = false) 
 
 
 func _prove(candidate: Dictionary, response: Dictionary, ignored_id: String = "") -> Dictionary:
+	if _is_replay(candidate):
+		return {"accepted": false, "reason": "Compound replay has no ordinary proxy geometry"}
+	for existing: Dictionary in _reservations.values():
+		if _is_replay(existing):
+			return {"accepted": false, "reason": "Compound replay cannot enter ordinary timed geometry proof"}
 	var actor: CharacterBody3D = response["actor"]
 	var stats: Dictionary = response["stats"]
 	var origin: Vector3 = actor.global_position
@@ -767,6 +1054,7 @@ func restore_state(snapshot: Dictionary, bindings: Dictionary) -> bool:
 		_serial = plan["serial"]
 		_reservations = plan["reservations"]
 		_cooldowns = plan["cooldowns"]
+		_replay_cancellations = plan["replay_cancellations"]
 	_snapshot_busy = false
 	return last_snapshot_error.is_empty()
 
@@ -809,6 +1097,13 @@ func _bindings_error(bindings: Dictionary) -> String:
 		return "Staged owner_positions must be a dictionary"
 	if bindings.has("owner_velocities") and not bindings["owner_velocities"] is Dictionary:
 		return "Staged owner_velocities must be a dictionary"
+	if bindings.has("actors"):
+		if not bindings.actors is Dictionary:
+			return "Replay actors must be a stable dictionary"
+		for actor_id: Variant in bindings.actors:
+			var actor: CinderPlayer = bindings.actors[actor_id] as CinderPlayer
+			if not _stable_id(actor_id) or not is_instance_valid(actor) or not actor.is_inside_tree() or actor.is_queued_for_deletion() or actor.get_world_3d() != get_world_3d() or not _under_root(actor, world_root):
+				return "Replay actor IDs must resolve actual live shared players under world_root"
 	var used: Dictionary = {}
 	for owner_id: Variant in bindings["owners"]:
 		var owner: Node3D = bindings["owners"][owner_id] as Node3D
@@ -868,11 +1163,20 @@ func _capture_snapshot(bindings: Dictionary) -> Dictionary:
 			if floor_id.is_empty():
 				last_snapshot_error = "Reserved floor has no stable binding"
 				return {}
-			if not (guard["safe_rect"] as Rect2).is_equal_approx(bindings["floors"][floor_id]["safe_rect"]):
+			if not ((guard["safe_rect"] == bindings["floors"][floor_id]["safe_rect"]) if _is_replay(reservation) else (guard["safe_rect"] as Rect2).is_equal_approx(bindings["floors"][floor_id]["safe_rect"])):
 				last_snapshot_error = "Reserved authored safe rectangle changed"
 				return {}
 			floors.append({"floor_id": floor_id, "signature": _floor_signature(bindings["floors"][floor_id], bindings["world_root"])})
-		var record: Dictionary = {"id": reservation["id"], "source_id": owner_id, "source_position": Codec.vector3(reservation["source_position"]), "geometry": _encode_geometry(reservation["geometry"]), "opening_position": Codec.vector3(reservation["opening_position"]), "floors": floors}
+		var record: Dictionary = {"id": reservation["id"], "source_id": owner_id, "source_position": Codec.vector3(reservation["source_position"]), "opening_position": Codec.vector3(reservation["opening_position"]), "floors": floors}
+		if _is_replay(reservation):
+			var error: String = replay_reservation_error(reservation.id)
+			var actor_id: String = _binding_id(bindings.get("actors", {}), replay_target(reservation.id))
+			if not error.is_empty() or actor_id.is_empty():
+				last_snapshot_error = error if not error.is_empty() else "Replay target has no stable actor binding"
+				return {}
+			record["response_actor_id"] = actor_id
+		else:
+			record["geometry"] = _encode_geometry(reservation.geometry)
 		for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "profile_id", "world_revision"]:
 			record[key] = reservation[key]
 		if reservation.has("adapter"):
@@ -887,7 +1191,19 @@ func _capture_snapshot(bindings: Dictionary) -> Dictionary:
 			last_snapshot_error = "Cooldown has no stable live owner binding"
 			return {}
 		cooldowns.append({"source_id": owner_id, "ready_s": cooldown["ready_s"]})
-	return {"api_revision": SNAPSHOT_API_REVISION, "schema_version": SNAPSHOT_SCHEMA_VERSION, "encounter_id": _encounter_id, "profile": _profile.duplicate(true), "world_revision": _world_revision, "clock_s": _clock, "serial": _serial, "collision": collision["signature"], "reservations": records, "cooldowns": cooldowns}
+	var result := {"api_revision": SNAPSHOT_API_REVISION, "schema_version": SNAPSHOT_SCHEMA_VERSION, "encounter_id": _encounter_id, "profile": _profile.duplicate(true), "world_revision": _world_revision, "clock_s": _clock, "serial": _serial, "collision": collision["signature"], "reservations": records, "cooldowns": cooldowns}
+	var cancellations: Array = []
+	for value: Dictionary in _replay_cancellations.values():
+		if _clock >= float(value.cooldown_until_s):
+			continue
+		var encoded: Dictionary = _encode_replay_tombstone(value, bindings)
+		if encoded.is_empty():
+			last_snapshot_error = "Retained replay cancellation lacks stable live owner/player custody"
+			return {}
+		cancellations.append(encoded)
+	if not cancellations.is_empty():
+		result["replay_cancellations"] = cancellations
+	return result
 
 
 func _binding_id(mapping: Dictionary, node: Object) -> String:
@@ -902,16 +1218,21 @@ func _binding_id(mapping: Dictionary, node: Object) -> String:
 func _snapshot_plan(snapshot: Dictionary, bindings: Dictionary) -> Dictionary:
 	var error: String = Codec.value_error(snapshot)
 	if error.is_empty():
-		error = Codec.keys_error(snapshot, ["api_revision", "schema_version", "encounter_id", "profile", "world_revision", "clock_s", "serial", "collision", "reservations", "cooldowns"])
+		var envelope_keys: Array = ["api_revision", "schema_version", "encounter_id", "profile", "world_revision", "clock_s", "serial", "collision", "reservations", "cooldowns"]
+		if snapshot.has("replay_cancellations"):
+			envelope_keys.append("replay_cancellations")
+		error = Codec.keys_error(snapshot, envelope_keys)
 	if error.is_empty():
 		error = _bindings_error(bindings)
 	if not error.is_empty():
 		return {"error": error}
 	if snapshot["api_revision"] != SNAPSHOT_API_REVISION or not Codec.is_integer(snapshot["schema_version"], SNAPSHOT_SCHEMA_VERSION, SNAPSHOT_SCHEMA_VERSION) or not snapshot["encounter_id"] is String or not snapshot["profile"] is Dictionary or not Codec.is_integer(snapshot["world_revision"]) or not Codec.is_integer(snapshot["serial"]) or not Codec.is_number(snapshot["clock_s"]) or float(snapshot["clock_s"]) < 0.0 or not snapshot["reservations"] is Array or not snapshot["cooldowns"] is Array:
 		return {"error": "Invalid scheduler snapshot envelope"}
+	if snapshot.has("replay_cancellations") and (not snapshot.replay_cancellations is Array or snapshot.replay_cancellations.is_empty() or snapshot.replay_cancellations.size() > MAX_REPLAY_CANCELLATIONS):
+		return {"error": "Replay cancellation history must be bounded and nonempty when present"}
 	var profile: Dictionary = snapshot["profile"]
 	if snapshot["encounter_id"].is_empty():
-		if not profile.is_empty() or not snapshot["reservations"].is_empty() or not snapshot["cooldowns"].is_empty():
+		if not profile.is_empty() or not snapshot["reservations"].is_empty() or not snapshot["cooldowns"].is_empty() or snapshot.has("replay_cancellations"):
 			return {"error": "Idle scheduler cannot retain committed exchanges"}
 	elif not _stable_id(snapshot["encounter_id"]) or int(snapshot["world_revision"]) < 1 or not profile.get("id") is String or not Codec.same_values(profile, _difficulty.profile(profile["id"])) or profile.is_empty():
 		return {"error": "Encounter profile/revision no longer matches the catalogue"}
@@ -929,19 +1250,21 @@ func _snapshot_plan(snapshot: Dictionary, bindings: Dictionary) -> Dictionary:
 		if not value is Dictionary:
 			return {"error": "Reservation must be a dictionary"}
 		var record: Dictionary = value
-		var record_keys: Array = ["id", "source_id", "source_position", "geometry", "opening_position", "floors", "start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "profile_id", "world_revision"]
+		var replay: bool = _is_replay(record)
+		var record_keys: Array = ["id", "source_id", "source_position", "opening_position", "floors", "start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "profile_id", "world_revision"]
+		record_keys.append("response_actor_id" if replay else "geometry")
 		if record.has("adapter"):
 			record_keys.append("adapter")
 		error = Codec.keys_error(record, record_keys)
-		if not error.is_empty() or not record["id"] is String or not record["id"].begins_with("threat-") or not record["id"].substr(7).is_valid_int() or not Codec.is_integer(int(record["id"].substr(7)), 1, int(snapshot["serial"])) or record["id"] != "threat-%d" % int(record["id"].substr(7)) or records.has(record["id"]) or not _stable_id(record["source_id"]) or not bindings["owners"].has(record["source_id"]) or owners.has(record["source_id"]) or not Codec.is_vector3(record["source_position"]) or not Codec.is_vector3(record["opening_position"]) or not record["geometry"] is Dictionary or not record["floors"] is Array or record["floors"].is_empty() or record["profile_id"] != profile.get("id") or record["world_revision"] != snapshot["world_revision"]:
+		if not error.is_empty() or not record["id"] is String or not record["id"].begins_with("threat-") or not record["id"].substr(7).is_valid_int() or not Codec.is_integer(int(record["id"].substr(7)), 1, int(snapshot["serial"])) or record["id"] != "threat-%d" % int(record["id"].substr(7)) or records.has(record["id"]) or not _stable_id(record["source_id"]) or not bindings["owners"].has(record["source_id"]) or owners.has(record["source_id"]) or not Codec.is_vector3(record["source_position"]) or not Codec.is_vector3(record["opening_position"]) or (not replay and not record["geometry"] is Dictionary) or not record["floors"] is Array or record["floors"].is_empty() or record["profile_id"] != profile.get("id") or record["world_revision"] != snapshot["world_revision"]:
 			return {"error": "Invalid reservation identity/bindings"}
 		for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
 			if not Codec.is_number(record[key]) or float(record[key]) < 0.0:
 				return {"error": "Reservation deadlines must be finite and nonnegative"}
 		if not (record["start_s"] < record["lock_from_s"] and record["lock_from_s"] < record["active_from_s"] and record["active_from_s"] < record["active_until_s"] and record["active_until_s"] < record["recovery_until_s"] and record["active_from_s"] < record["cooldown_until_s"] and record["start_s"] <= clock_s + EPSILON and clock_s <= record["recovery_until_s"] + EPSILON):
 			return {"error": "Reservation phase deadline order or clock is incoherent"}
-		var geometry: Dictionary = _decode_geometry(record["geometry"])
-		if geometry.is_empty():
+		var geometry: Dictionary = {} if replay else _decode_geometry(record["geometry"])
+		if not replay and geometry.is_empty():
 			return {"error": "Invalid serialized authoritative geometry"}
 		var owner: Node3D = bindings["owners"][record["source_id"]]
 		var source_position: Vector3 = Codec.read_vector3(record["source_position"])
@@ -954,7 +1277,7 @@ func _snapshot_plan(snapshot: Dictionary, bindings: Dictionary) -> Dictionary:
 			if not floor_value is Dictionary or not Codec.keys_error(floor_value, ["floor_id", "signature"]).is_empty() or not _stable_id(floor_value["floor_id"]) or not bindings["floors"].has(floor_value["floor_id"]) or floor_ids.has(floor_value["floor_id"]):
 				return {"error": "Reserved floor ID is missing or duplicated"}
 			var region: Dictionary = bindings["floors"][floor_value["floor_id"]]
-			if not Codec.same_values(floor_value["signature"], _floor_signature(region, bindings["world_root"])):
+			if not (_same_replay(floor_value["signature"], _floor_signature(region, bindings["world_root"])) if replay else Codec.same_values(floor_value["signature"], _floor_signature(region, bindings["world_root"]))):
 				return {"error": "Authored floor signature changed"}
 			floor_ids[floor_value["floor_id"]] = true
 			regions.append(region)
@@ -963,12 +1286,23 @@ func _snapshot_plan(snapshot: Dictionary, bindings: Dictionary) -> Dictionary:
 		committed.erase("floors")
 		committed["source_position"] = source_position
 		committed["opening_position"] = Codec.read_vector3(record["opening_position"])
-		committed["geometry"] = geometry
+		if not replay:
+			committed["geometry"] = geometry
 		committed["source_instance_id"] = owner.get_instance_id()
 		committed["_owner"] = weakref(owner)
 		committed["_floor_guards"] = _floor_guards(regions)
 		if record.has("adapter"):
-			var adapter: Dictionary = _decode_adapter(record["adapter"] if record["adapter"] is Dictionary else {}, committed, owner, regions, clock_s, bindings.get("owner_velocities", {}).get(record["source_id"], (owner as CharacterBody3D).velocity if owner is CharacterBody3D else Vector3.ZERO))
+			var adapter: Dictionary
+			if replay:
+				adapter = _decode_replay_adapter(record.adapter, record, owner, bindings, clock_s, collision.signature)
+				if not adapter.has("error"):
+					var actor: CinderPlayer = bindings.actors[record.response_actor_id]
+					committed.erase("response_actor_id")
+					committed["response_actor_instance_id"] = actor.get_instance_id()
+					committed["_replay_actor"] = weakref(actor)
+					committed["_replay_world"] = weakref(bindings.world_root)
+			else:
+				adapter = _decode_adapter(record["adapter"] if record["adapter"] is Dictionary else {}, committed, owner, regions, clock_s, bindings.get("owner_velocities", {}).get(record["source_id"], (owner as CharacterBody3D).velocity if owner is CharacterBody3D else Vector3.ZERO))
 			if adapter.has("error"):
 				return adapter
 			committed["adapter"] = adapter
@@ -978,6 +1312,9 @@ func _snapshot_plan(snapshot: Dictionary, bindings: Dictionary) -> Dictionary:
 			budget += 1
 	if not profile.is_empty() and budget > int(profile["reserved_threat_budget"]):
 		return {"error": "Snapshot exceeds its preparing/active threat budget"}
+	for record: Dictionary in records.values():
+		if _is_replay(record) and (records.size() != 1 or not _same_replay(snapshot.collision, collision.signature)):
+			return {"error": "Replay snapshot requires an exclusive exact collision-world exchange"}
 	var committed_records: Array = records.values()
 	for first_index: int in range(committed_records.size()):
 		for second_index: int in range(first_index + 1, committed_records.size()):
@@ -995,9 +1332,108 @@ func _snapshot_plan(snapshot: Dictionary, bindings: Dictionary) -> Dictionary:
 	for owner_id: String in owners:
 		var record: Dictionary = owners[owner_id]
 		var instance_id: int = (bindings["owners"][owner_id] as Node3D).get_instance_id()
-		if float(record["cooldown_until_s"]) > clock_s and (not cooldowns.has(instance_id) or not is_equal_approx(float(cooldowns[instance_id]["ready_s"]), float(record["cooldown_until_s"]))):
+		if float(record["cooldown_until_s"]) > clock_s and (not cooldowns.has(instance_id) or not (_same_replay(cooldowns[instance_id]["ready_s"], record["cooldown_until_s"]) if _is_replay(record) else is_equal_approx(float(cooldowns[instance_id]["ready_s"]), float(record["cooldown_until_s"])))):
 			return {"error": "Reservation and retained cooldown disagree"}
-	return {"encounter_id": snapshot["encounter_id"], "profile": profile.duplicate(true), "world_revision": int(snapshot["world_revision"]), "clock_s": clock_s, "serial": int(snapshot["serial"]), "reservations": records, "cooldowns": cooldowns}
+	var cancellations: Dictionary = {}
+	for value: Variant in snapshot.get("replay_cancellations", []):
+		var decoded: Dictionary = _decode_replay_tombstone(value, snapshot, bindings, cooldowns)
+		if decoded.has("error"):
+			return decoded
+		if cancellations.has(decoded.id) or records.has(decoded.id):
+			return {"error": "Replay cancellation identity duplicates a retained/live lease"}
+		cancellations[decoded.id] = decoded
+	return {"encounter_id": snapshot["encounter_id"], "profile": profile.duplicate(true), "world_revision": int(snapshot["world_revision"]), "clock_s": clock_s, "serial": int(snapshot["serial"]), "reservations": records, "cooldowns": cooldowns, "replay_cancellations": cancellations}
+
+
+
+func _replay_adapter_error(value: Dictionary, record: Dictionary, clock_s: float, historical: bool = false) -> String:
+	if not Codec.keys_error(value, REPLAY_ADAPTER_KEYS).is_empty() or not value.locked is bool or not value.source_epoch is String or not Codec.is_integer(value.generation, 1) or not value.sequence is Dictionary or not value.capture_collision_fingerprint is Dictionary or not Codec.is_number(value.timeline_origin_s) or not _same_replay(value.max_dispatch_delay_s, ReplayWitness.MAX_DISPATCH_DELAY_S):
+		return "Invalid replay adapter identity/timing fields"
+	if not Codec.keys_error(value.capture_collision_fingerprint, ["schema_version", "physics_engine", "physics_ticks_per_second", "colliders"]).is_empty() or not Codec.is_integer(value.capture_collision_fingerprint.schema_version, 1, 1) or not value.capture_collision_fingerprint.physics_engine is String or not Codec.is_integer(value.capture_collision_fingerprint.physics_ticks_per_second, 1) or not value.capture_collision_fingerprint.colliders is Array or value.capture_collision_fingerprint.colliders.is_empty() or value.capture_collision_fingerprint.colliders.size() > 256:
+		return "Replay capture fingerprint envelope is invalid"
+	var sequence = ReplaySequence.new()
+	if not sequence.restore_state(value.sequence, value.source_epoch, int(value.generation)):
+		return "Invalid immutable replay sequence: " + sequence.last_snapshot_error
+	var plan: Dictionary = sequence.state()
+	var expected: Dictionary = {}
+	_set_replay_deadlines(expected, plan, float(value.timeline_origin_s))
+	for key: String in ["active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
+		if not _same_replay(record.get(key), expected[key]):
+			return "Replay deadline must exactly derive from its immutable timeline: " + key
+	if not Codec.in_range(record.get("start_s"), 0.0, ReplayWitness.MAX_CLOCK_S) or float(record.start_s) > clock_s or not Codec.in_range(value.timeline_origin_s, 0.0, ReplayWitness.MAX_CLOCK_S):
+		return "Replay request/origin clock is incoherent"
+	var warning_s: float = float(plan.authored.warning_s)
+	if value.locked:
+		# Preserve ACTUAL lock scalar, using the same subtraction as commit.
+		# Re-adding warning could round a bit; no timing epsilon licenses a lock.
+		if float(record.lock_from_s) < float(record.start_s) + warning_s or not _same_replay(value.timeline_origin_s, float(record.lock_from_s) - warning_s) or clock_s < float(record.lock_from_s):
+			return "Armed replay must retain exact actual lock/origin and full warning"
+	elif not _same_replay(value.timeline_origin_s, record.start_s) or not _same_replay(record.lock_from_s, float(record.start_s) + warning_s) or (not historical and clock_s >= float(record.active_from_s)):
+		return "Unarmed replay must retain its exact request origin and unused lead"
+	if not historical and clock_s > float(record.recovery_until_s):
+		return "Replay lease has expired"
+	return ""
+
+
+func _replay_actor_binding_error(actor_id: Variant, bindings: Dictionary) -> String:
+	if not _stable_id(actor_id) or not bindings.get("actors") is Dictionary or bindings.actors.size() != 1 or not bindings.actors.has(actor_id):
+		return "Replay requires one explicit stable shared-player actor binding"
+	var actor: CinderPlayer = bindings.actors[actor_id] as CinderPlayer
+	if not is_instance_valid(actor) or not actor.get_collision_exceptions().is_empty() or actor.get_platform_velocity().length() > EPSILON or actor.get_platform_angular_velocity().length() > EPSILON:
+		return "Replay actor fixed-world collision/carry changed"
+	return ""
+
+
+func _decode_replay_adapter(value: Dictionary, record: Dictionary, owner: Node3D, bindings: Dictionary, clock_s: float, collision: Dictionary) -> Dictionary:
+	var error: String = _replay_adapter_error(value, record, clock_s)
+	if error.is_empty():
+		error = _replay_actor_binding_error(record.get("response_actor_id"), bindings)
+	if not error.is_empty():
+		return {"error": error}
+	if not _same_replay(value.capture_collision_fingerprint, collision):
+		return {"error": "Replay immutable capture collision fingerprint changed"}
+	var sequence = ReplaySequence.new()
+	sequence.restore_state(value.sequence, value.source_epoch, int(value.generation))
+	var plan: Dictionary = sequence.state()
+	if Codec.read_vector3(record.opening_position).distance_to(plan.authored.tether_position) > EPSILON or Codec.read_vector3(record.source_position).distance_to(plan.authored.tether_position) > EPSILON:
+		return {"error": "Replay source/opening must remain the actual authored tether"}
+	var staged_velocity: Vector3 = bindings.get("owner_velocities", {}).get(record.source_id, (owner as CharacterBody3D).velocity if owner is CharacterBody3D else Vector3.ZERO)
+	if staged_velocity.length() > EPSILON:
+		return {"error": "Replay restored source must be stationary"}
+	return value.duplicate(true)
+
+
+func _decode_replay_tombstone(value: Variant, snapshot: Dictionary, bindings: Dictionary, cooldowns: Dictionary) -> Dictionary:
+	if not value is Dictionary or not Codec.keys_error(value, REPLAY_TOMBSTONE_KEYS).is_empty():
+		return {"error": "Invalid replay cancellation fields"}
+	if not value.id is String or not value.id.begins_with("threat-") or not value.id.substr(7).is_valid_int() or not Codec.is_integer(int(value.id.substr(7)), 1, int(snapshot.serial)) or value.id != "threat-%d" % int(value.id.substr(7)) or not _stable_id(value.source_id) or not bindings.owners.has(value.source_id) or not value.reason is String or value.reason.is_empty() or value.reason.length() > 512 or value.profile_id != snapshot.profile.get("id") or not Codec.is_integer(value.world_revision, 1, int(snapshot.world_revision)) or not Codec.in_range(value.cancelled_at_s, 0.0, float(snapshot.clock_s)):
+		return {"error": "Replay cancellation identity/clock/profile is incoherent"}
+	for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
+		if not Codec.is_number(value[key]) or float(value[key]) < 0.0:
+			return {"error": "Invalid historical replay deadline"}
+	var adapter: Dictionary = {}
+	for key: String in REPLAY_ADAPTER_KEYS:
+		adapter[key] = "replay" if key == "kind" else value[key]
+	var error: String = _replay_adapter_error(adapter, value, float(value.cancelled_at_s), true)
+	if error.is_empty():
+		error = _replay_actor_binding_error(value.response_actor_id, bindings)
+	if not error.is_empty():
+		return {"error": error}
+	if value.sequence_id != adapter.sequence.sequence_id or float(value.cooldown_until_s) <= float(snapshot.clock_s):
+		return {"error": "Replay canceled restore requires exact sequence and unexpired retained cooldown"}
+	var owner: Node3D = bindings.owners[value.source_id]
+	var actor: CinderPlayer = bindings.actors[value.response_actor_id]
+	var cooldown: Dictionary = cooldowns.get(owner.get_instance_id(), {})
+	if cooldown.is_empty() or not _same_replay(cooldown.ready_s, value.cooldown_until_s):
+		return {"error": "Replay tombstone and retained source cooldown disagree"}
+	var result: Dictionary = value.duplicate(true)
+	result.erase("source_id")
+	result.erase("response_actor_id")
+	result["source_instance_id"] = owner.get_instance_id()
+	result["response_actor_instance_id"] = actor.get_instance_id()
+	result["_owner"] = weakref(owner)
+	result["_replay_actor"] = weakref(actor)
+	return result
 
 
 func _encode_adapter(adapter: Dictionary) -> Dictionary:

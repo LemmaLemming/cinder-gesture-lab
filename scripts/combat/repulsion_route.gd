@@ -9,6 +9,7 @@ extends RefCounted
 ## and adjacent floor seams. No field avoidance, no-repeat or fairness proof.
 
 const Geometry = preload("res://scripts/combat/threat_geometry.gd")
+const BodySweep = preload("res://scripts/combat/body_sweep.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const API_REVISION: String = "repulsion-route-1"
 const EPSILON: float = 0.00001
@@ -70,7 +71,7 @@ func plan(owner: CharacterBody3D, motion: Dictionary, bindings: Dictionary) -> D
 		return _error("Actual measured source footprint lacks registered safe floor support")
 	if _overlapped(owner, description.collision, regions):
 		return _error("Source starts overlapped with scenery")
-	var sweep: Dictionary = _sweep(owner, owner.global_transform, direction * distance)
+	var sweep: Dictionary = _sweep(owner, owner.global_transform, direction * distance, regions)
 	if sweep.has("error"):
 		return _error(sweep.error)
 	var endpoint: Vector3 = owner.global_position + sweep.travel
@@ -99,7 +100,7 @@ func acquire(owner: CharacterBody3D) -> bool:
 	if not error.is_empty():
 		last_error = error
 		return false
-	var sweep: Dictionary = _sweep(owner, owner.global_transform, _route.direction * float(_route.distance))
+	var sweep: Dictionary = _sweep(owner, owner.global_transform, _route.direction * float(_route.distance), _live_floor_regions())
 	if sweep.has("error") or (owner.global_position + sweep.get("travel", Vector3.ZERO)).distance_to(_route.planned_endpoint) > ENDPOINT_TOLERANCE:
 		last_error = String(sweep.get("error", "Prepared shortening endpoint changed before lease acquisition"))
 		return false
@@ -134,7 +135,7 @@ func advance(owner: CharacterBody3D, elapsed_s: float) -> Dictionary:
 	if step.length() <= EPSILON:
 		_route.elapsed_s = elapsed_s
 		return state()
-	var sweep: Dictionary = _sweep(owner, owner.global_transform, step)
+	var sweep: Dictionary = _sweep(owner, owner.global_transform, step, _live_floor_regions())
 	if sweep.has("error"):
 		return _error(sweep.error)
 	var predicted: Vector3 = owner.global_position + sweep.travel
@@ -147,7 +148,7 @@ func advance(owner: CharacterBody3D, elapsed_s: float) -> Dictionary:
 	var contact: KinematicCollision3D = null
 	while remaining.length() > EPSILON:
 		var substep: Vector3 = remaining.normalized() * minf(SWEEP_STEP, remaining.length())
-		contact = owner.move_and_collide(substep, false, SAFE_MARGIN, true, 1)
+		contact = owner.move_and_collide(substep, false, SAFE_MARGIN, false, 1)
 		var travelled: Vector3 = owner.global_position - _route.start
 		var along: float = travelled.dot(_route.direction)
 		if not travelled.is_finite() or absf(travelled.y) > EPSILON or (travelled - _route.direction * along).length() > EPSILON or along > maximum + ENDPOINT_TOLERANCE:
@@ -194,8 +195,143 @@ func release(owner: CharacterBody3D) -> bool:
 func state() -> Dictionary:
 	var result: Dictionary = _route.duplicate(true)
 	if not result.is_empty():
-		result.leased = _leased
+		result["leased"] = _leased
 	return result
+
+
+## Pure binding/body fingerprint for environmental authoring. No route is
+## prepared/acquired; actor velocity and resources are unchanged.
+static func binding_state(owner: CharacterBody3D, bindings: Dictionary, floor_position: Variant = null) -> Dictionary:
+	var body: Dictionary = _body_description(owner, "BodyCollision", floor_position != null)
+	if body.has("error"):
+		return body
+	var world: Dictionary = _collision_signature(owner, bindings.get("world_root") as Node3D)
+	if world.has("error"):
+		return world
+	var floors: Dictionary = _floor_plan(owner, bindings.get("floors"), bindings.get("world_root") as Node3D, body, floor_position)
+	if floors.has("error"):
+		return floors
+	return {"body_signature": body.signature.duplicate(true), "support_radius": body.support_radius, "foot_offset": body.foot_offset, "world_signature": world.signature.duplicate(true), "floor_signature": floors.signature.duplicate(true)}
+
+
+## Source-independent actual scenery/floor fingerprint. Useful when a saved
+## source is defeated/airborne: it cannot act as a live motion proof owner.
+## body_reference is the immutable measured support_radius/foot_offset from
+## binding_state; floor_position selects the authored static feet plane.
+static func static_environment_state(root: Node3D, floors: Dictionary, body_reference: Dictionary, floor_position: Vector3) -> Dictionary:
+	var world: Dictionary = _collision_signature(root, root)
+	if world.has("error"):
+		return world
+	var plan: Dictionary = _floor_plan(root, floors, root, body_reference, floor_position)
+	if plan.has("error"):
+		return plan
+	return {"world_signature": world.signature.duplicate(true), "floor_signature": plan.signature.duplicate(true)}
+
+
+## Snapshot transport requires a paused controller boundary, not a motion tick.
+## Stable owner paths/floor bindings and actual collision data are validated.
+## staged_motion={position:Vector3,velocity:Vector3} comes from an already
+## validated external actor envelope. No actor teleport/query fallback occurs.
+func snapshot_state(owner: CharacterBody3D) -> Dictionary:
+	last_error = _snapshot_boundary(owner)
+	if not last_error.is_empty() or _route.is_empty():
+		return {}
+	last_error = _guard_error(owner, true)
+	if not last_error.is_empty():
+		return {}
+	var encoded: Dictionary = state()
+	for key: String in ["start", "planned_endpoint", "current_position", "current_velocity", "approach_velocity", "direction"]:
+		encoded[key] = Codec.vector3(encoded[key])
+	var root: Node3D = _world_root.get_ref() as Node3D
+	return {"api_revision": API_REVISION, "schema_version": 1, "source_path": String(root.get_path_to(owner)), "route": encoded, "world_signature": _world_signature.duplicate(true), "floor_signature": _floor_signature.duplicate(true)}
+
+
+func snapshot_error(snapshot: Dictionary, owner: CharacterBody3D, bindings: Dictionary, staged_motion: Dictionary = {}) -> String:
+	var error: String = _snapshot_boundary(owner)
+	if not error.is_empty():
+		return error
+	error = Codec.value_error(snapshot)
+	if not error.is_empty() or not Codec.keys_error(snapshot, ["api_revision", "schema_version", "source_path", "route", "world_signature", "floor_signature"]).is_empty():
+		return "Invalid route snapshot transport/envelope: " + error
+	if snapshot.api_revision != API_REVISION or not Codec.is_integer(snapshot.schema_version, 1, 1) or not snapshot.route is Dictionary:
+		return "Unsupported measured route snapshot identity/version"
+	var value: Dictionary = snapshot.route
+	var keys: Array = ["api_revision", "start", "planned_endpoint", "current_position", "current_velocity", "approach_velocity", "body_collision_path", "body_signature", "support_radius", "foot_offset", "direction", "speed", "distance", "duration_s", "elapsed_s", "collision_shortened", "actual_collided", "finished", "leased"]
+	if not Codec.keys_error(value, keys).is_empty() or value.api_revision != API_REVISION or not value.body_collision_path is String or not _stable_path(value.body_collision_path):
+		return "Invalid measured route fields/body path"
+	for key: String in ["start", "planned_endpoint", "current_position", "current_velocity", "approach_velocity", "direction"]:
+		if not Codec.is_vector3(value[key]):
+			return "Route vectors must be finite JSON triples"
+	for key: String in ["collision_shortened", "actual_collided", "finished", "leased"]:
+		if not value[key] is bool:
+			return "Route lease/contact flags must be boolean"
+	if not Codec.in_range(value.speed, EPSILON, MAX_SPEED) or not Codec.in_range(value.distance, EPSILON, MAX_DISTANCE) or not Codec.in_range(value.duration_s, EPSILON, MAX_DURATION_S) or not Codec.in_range(value.elapsed_s, 0.0, MAX_DURATION_S) or not Codec.same_values(value.duration_s, float(value.distance) / float(value.speed)):
+		return "Route distance/speed/deadline is inconsistent"
+	var direction: Vector3 = Codec.read_vector3(value.direction)
+	var start: Vector3 = Codec.read_vector3(value.start)
+	var endpoint: Vector3 = Codec.read_vector3(value.planned_endpoint)
+	var position: Vector3 = Codec.read_vector3(value.current_position)
+	var velocity: Vector3 = Codec.read_vector3(value.current_velocity)
+	if absf(direction.y) > EPSILON or absf(direction.length() - 1.0) > EPSILON or absf(velocity.y) > EPSILON or absf(Codec.read_vector3(value.approach_velocity).y) > EPSILON:
+		return "Route motion must remain grounded and straight"
+	if not staged_motion.is_empty() and (not Codec.keys_error(staged_motion, ["position", "velocity"]).is_empty() or not staged_motion.position is Vector3 or not staged_motion.velocity is Vector3):
+		return "Staged route motion requires validated native position/velocity"
+	var expected_position: Vector3 = owner.global_position if staged_motion.is_empty() else staged_motion.position
+	var expected_velocity: Vector3 = owner.velocity if staged_motion.is_empty() else staged_motion.velocity
+	if position.distance_to(expected_position) > EPSILON or velocity.distance_to(expected_velocity) > EPSILON:
+		return "Route expected pose/velocity differs from its paired actor"
+	var body: Dictionary = _body_description(owner, value.body_collision_path, true)
+	if body.has("error") or not Codec.same_values(body.get("signature", {}), value.body_signature) or not Codec.same_values(body.get("support_radius"), value.support_radius) or not Codec.same_values(body.get("foot_offset"), value.foot_offset):
+		return "Actual measured route body changed"
+	var root: Node3D = bindings.get("world_root") as Node3D
+	var world: Dictionary = _collision_signature(owner, root)
+	if world.has("error") or snapshot.source_path != String(root.get_path_to(owner)) or not Codec.same_values(world.get("signature"), snapshot.world_signature):
+		return "Route stable source/static collision world changed"
+	var floor_plan: Dictionary = _floor_plan(owner, bindings.get("floors"), root, body, start)
+	if floor_plan.has("error") or not Codec.same_values(floor_plan.get("signature"), snapshot.floor_signature) or not _supported(owner, start, endpoint, floor_plan.get("regions", []), float(body.support_radius) + ENDPOINT_TOLERANCE, float(body.foot_offset)):
+		return "Route immutable floor/signature/support changed"
+	var sweep: Dictionary = _sweep(owner, Transform3D(Basis.IDENTITY, start), direction * float(value.distance), floor_plan.regions)
+	if sweep.has("error") or (start + sweep.get("travel", Vector3.ZERO)).distance_to(endpoint) > ENDPOINT_TOLERANCE or value.collision_shortened != sweep.get("collided"):
+		return "Serialized route endpoint is not the actual bounded collision-shortened route"
+	var progressed: float = minf(float(value.distance), float(value.speed) * float(value.elapsed_s))
+	var expected: Vector3 = endpoint if value.finished else start + direction * progressed
+	if position.distance_to(expected) > ENDPOINT_TOLERANCE or (value.actual_collided and (not value.finished or not value.collision_shortened)) or (value.finished and not value.actual_collided and progressed < float(value.distance) - EPSILON):
+		return "Route contact/progression/endpoint is inconsistent"
+	var expected_route_velocity: Vector3 = Vector3.ZERO if value.finished or float(value.elapsed_s) == 0.0 else direction * float(value.speed)
+	if not value.leased:
+		expected_route_velocity = Vector3.ZERO if value.finished else Codec.read_vector3(value.approach_velocity)
+	if velocity.distance_to(expected_route_velocity) > EPSILON:
+		return "Route velocity does not match its lease/progression"
+	return ""
+
+
+## Full validation precedes assignment. Exact actual actor pose/velocity must
+## already be committed; restore never calls plan/acquire or stops velocity.
+func restore_state(snapshot: Dictionary, owner: CharacterBody3D, bindings: Dictionary) -> bool:
+	last_error = snapshot_error(snapshot, owner, bindings)
+	if not last_error.is_empty():
+		return false
+	_busy = true
+	_route = snapshot.route.duplicate(true)
+	for key: String in ["start", "planned_endpoint", "current_position", "current_velocity", "approach_velocity", "direction"]:
+		_route[key] = Codec.read_vector3(_route[key])
+	_leased = _route.leased
+	_route.erase("leased")
+	_owner = weakref(owner)
+	_world_root = weakref(bindings.world_root)
+	_world_signature = snapshot.world_signature.duplicate(true)
+	_floor_signature = snapshot.floor_signature.duplicate(true)
+	_floors.clear()
+	for id: String in bindings.floors:
+		_floors[id] = {"collision": weakref(bindings.floors[id].collision), "safe_rect": bindings.floors[id].safe_rect}
+	_busy = false
+	return true
+
+
+func _snapshot_boundary(owner: CharacterBody3D) -> String:
+	if _busy or not is_instance_valid(owner) or not owner.is_inside_tree() or not owner.get_tree().paused or owner.is_queued_for_deletion():
+		return "Route snapshots require the paused live source outside motion transactions"
+	return ""
 
 
 func _guard_error(owner: CharacterBody3D, check_velocity: bool) -> String:
@@ -221,8 +357,8 @@ func _guard_error(owner: CharacterBody3D, check_velocity: bool) -> String:
 	return ""
 
 
-static func _body_description(owner: CharacterBody3D, path: String) -> Dictionary:
-	if not is_instance_valid(owner) or not owner.is_inside_tree() or owner.is_queued_for_deletion() or owner.collision_mask != 1 or (owner.collision_layer & 1) != 0 or not owner.global_basis.is_equal_approx(Basis.IDENTITY) or not Geometry.finite_vector(owner.global_position) or not Geometry.finite_vector(owner.velocity) or absf(owner.velocity.y) > EPSILON:
+static func _body_description(owner: CharacterBody3D, path: String, staged: bool = false) -> Dictionary:
+	if not is_instance_valid(owner) or not owner.is_inside_tree() or owner.is_queued_for_deletion() or owner.collision_mask != 1 or (owner.collision_layer & 1) != 0 or not owner.global_basis.is_equal_approx(Basis.IDENTITY) or not Geometry.finite_vector(owner.global_position) or not Geometry.finite_vector(owner.velocity) or (not staged and absf(owner.velocity.y) > EPSILON):
 		return {"error": "Live unscaled upright source with scenery-only mask and grounded planar velocity required"}
 	if owner.axis_lock_linear_x or owner.axis_lock_linear_y or owner.axis_lock_linear_z or owner.axis_lock_angular_x or owner.axis_lock_angular_y or owner.axis_lock_angular_z or not owner.get_collision_exceptions().is_empty() or owner.get_platform_velocity().length() > EPSILON or owner.get_platform_angular_velocity().length() > EPSILON:
 		return {"error": "Axis locks, collision exceptions and moving platforms are unsupported"}
@@ -257,9 +393,10 @@ static func _body_description(owner: CharacterBody3D, path: String) -> Dictionar
 	return {"signature": signature, "collision": collision, "support_radius": radius + FLOOR_SKIN, "foot_offset": collision.position.y - height * 0.5}
 
 
-static func _floor_plan(owner: CharacterBody3D, floors: Variant, root: Node3D, description: Dictionary) -> Dictionary:
+static func _floor_plan(owner: Node3D, floors: Variant, root: Node3D, description: Dictionary, at_position: Variant = null) -> Dictionary:
 	if not floors is Dictionary or floors.is_empty() or floors.size() > 32:
 		return {"error": "One to 32 stable authored floor bindings required"}
+	var measured_position: Vector3 = owner.global_position if at_position == null else at_position
 	var regions: Array = []
 	var signatures: Array = []
 	var ids: Array = floors.keys()
@@ -288,7 +425,7 @@ static func _floor_plan(owner: CharacterBody3D, floors: Variant, root: Node3D, d
 		var rect: Rect2 = floors[id].safe_rect
 		var physical := Rect2(Geometry.planar(collision.global_position) - Vector2(size.x, size.z) * 0.5, Vector2(size.x, size.z))
 		var top: float = collision.global_position.y + size.y * 0.5
-		if not size.is_finite() or minf(size.x, minf(size.y, size.z)) <= EPSILON or not collision.global_position.is_finite() or not rect.position.is_finite() or not rect.size.is_finite() or rect.size.x <= 2.0 * float(description.support_radius) or rect.size.y <= 2.0 * float(description.support_radius) or not physical.encloses(rect) or absf(owner.global_position.y + float(description.foot_offset) - top) > FEET_TOLERANCE or (is_finite(height) and absf(top - height) > EPSILON):
+		if not size.is_finite() or minf(size.x, minf(size.y, size.z)) <= EPSILON or not collision.global_position.is_finite() or not rect.position.is_finite() or not rect.size.is_finite() or rect.size.x <= 2.0 * float(description.support_radius) or rect.size.y <= 2.0 * float(description.support_radius) or not physical.encloses(rect) or absf(measured_position.y + float(description.foot_offset) - top) > FEET_TOLERANCE or (is_finite(height) and absf(top - height) > EPSILON):
 			return {"error": "Authored floor rectangles must fit solid boxes at the measured source feet height"}
 		height = top
 		used[collision.get_instance_id()] = true
@@ -360,29 +497,20 @@ static func _overlapped(owner: CharacterBody3D, collision: CollisionShape3D, reg
 	return not owner.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty()
 
 
-static func _sweep(owner: CharacterBody3D, from: Transform3D, motion: Vector3) -> Dictionary:
-	if not motion.is_finite() or motion.length() > MAX_DISTANCE + EPSILON:
-		return {"error": "Retreat sweep exceeds bounded finite travel"}
-	var direction: Vector3 = motion.normalized()
-	var remaining: float = motion.length()
-	var travel := Vector3.ZERO
-	while remaining > EPSILON:
-		var length: float = minf(SWEEP_STEP, remaining)
-		var step: Vector3 = direction * length
-		var check := KinematicCollision3D.new()
-		var blocked: bool = owner.test_move(from, step, check, SAFE_MARGIN, true, 1)
-		var moved: Vector3 = check.get_travel() if blocked else step
-		if not moved.is_finite() or absf(moved.y) > EPSILON or moved.dot(direction) < -EPSILON or moved.dot(direction) > length + EPSILON or (moved - direction * moved.dot(direction)).length() > EPSILON:
-			return {"error": "Depenetration/nonplanar physics recovery cannot form a straight retreat"}
-		travel += moved
-		if blocked:
-			return {"travel": travel, "collided": true}
-		from.origin += moved
-		remaining -= length
-	return {"travel": travel, "collided": false}
+func _live_floor_regions() -> Array:
+	var regions: Array = []
+	for id: String in _floors:
+		regions.append({"collision": (_floors[id].collision as WeakRef).get_ref(), "safe_rect": _floors[id].safe_rect})
+	return regions
 
 
-static func _collision_signature(owner: CharacterBody3D, root: Node3D) -> Dictionary:
+static func _sweep(owner: CharacterBody3D, from: Transform3D, motion: Vector3, regions: Array) -> Dictionary:
+	# The pure shared query reproduces the installed move_and_collide wrapper,
+	# including floor-only tiny resting recovery and cancel_sliding arithmetic.
+	return BodySweep.sweep(owner, from, motion, regions)
+
+
+static func _collision_signature(owner: Node3D, root: Node3D) -> Dictionary:
 	if not is_instance_valid(root) or not root.is_inside_tree() or root.is_queued_for_deletion() or root.get_world_3d() != owner.get_world_3d() or not _under(owner, root):
 		return {"error": "Actual same-world root containing source and all scenery required"}
 	var pending: Array[Node] = [owner.get_tree().root]
