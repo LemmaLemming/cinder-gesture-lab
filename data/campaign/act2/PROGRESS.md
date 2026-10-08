@@ -1,6 +1,6 @@
 # Act 2 progress
 
-Updated 9 October 2026. **Two of eight Act2 levels are canonically accepted. L3 all five selected Standard loadouts and both checkpoint lifecycle scopes pass; actual Cargo/Longstep native route570/0 has23 reviewed portraits. Heavy Assisted/Challenge remain in the shared queue. Shared HUD maxHP number correction is requested. Five later productions are unstarted.** [Memory](ACT_MEMORY.md), [current L3 design](levels/A2-L3.md) and [portable L3 evidence](../../../docs/acts/act2/evidence/A2-L3/index.json) preserve exact source/results and all original failures. No L3 HANDOFF yet.
+Updated 9 October 2026. **Two of eight Act2 levels are canonically accepted. L3 all five selected Standard loadouts and both checkpoint lifecycle scopes pass; actual Cargo/Longstep native route570/0 has23 reviewed portraits. Heavy Assisted/Challenge both pass495/0. Shared HUD maxHP number correction is requested. Five later productions are unstarted.** [Memory](ACT_MEMORY.md), [current L3 design](levels/A2-L3.md) and [portable L3 evidence](../../../docs/acts/act2/evidence/A2-L3/index.json) preserve exact source/results and all original failures. No L3 HANDOFF yet.
 
 Current consumed `campaign-shared-26`, publicationc0816fb9ed60caaac36e5e1320ab95d42589e0b8, preserving71b1945da655cb637f27794eaf52fcfd196afccc from owned7d78c77351a1223d4f5097e92038d5ac6d8d1df8; all574 tracked owned hashes remained identical, ACK93cd2f4e. Current source/evidence milestone373a35f40884c4259b9af36606829d959d7eec42 is not a HANDOFF. Published shared27 Shell settlement will be preserved-adopted after frozen in-flight routes complete, followed by directly affected lifecycle checks.
 
@@ -12,7 +12,7 @@ Earlier consumed baseline: Consumed `campaign-shared-22`: publication `4de8b6008
 | --- | --- | --- |
 | A2-L1 Horsell Common | Original candidate/both common Scout patches adopted; current40/42 original files match | Supplemental 186/0 + affected 285/0 clean, adopted8c37b1e0/RESPONSEd810feca |
 | A2-L2 Weybridge and Shepperton | Canonical registry accepted exactfd5fd3d; registration4b0e08d | Integration330/0+338/0+Journey22/0 separate; owner shared23 crossing371/0 retained |
-| A2-L3 Black Smoke and the Ruined House | Five Standard loadout routes and native Cargo570; real fatal375 and B02 lifecycle252 pass | Remaining Assisted/Challenge; shared27 adoption/affected lifecycle; HUD request; final closure and HANDOFF |
+| A2-L3 Black Smoke and the Ruined House | Five Standard loadout routes and native Cargo570; real fatal375 and B02 lifecycle252 pass | Shared27 adoption/affected lifecycle; HUD request; final closure and HANDOFF |
 | A2-L4 Red Weed and the London Approaches | Production unstarted | L3 handoff |
 | A2-L5 Dead London and Regent's Park | Production unstarted | L4 handoff |
 | A2-O1 Cylinder Perimeter | Production unstarted | Main levels complete; reuse L1 kit |
@@ -179,3 +179,10 @@ Actual Cargo/Longstep Standard native route passes **570 checks, zero failures, 
 Every Cargo frame displays100/111 despite canonical nominal110 maximum: shared HUD uses ceil of a tiny IEEE representation excess. Actual HP100, stats, physical bar fraction and gameplay are unchanged. Integration REQUEST c12ca5ac-ebed-4885-87bf-23b6c6b0e89d includes original PNG and frozen shared source. Numeric accuracy remains failed/pending separately; Act2 has edited no shared HUD/stat/controller file. No further human decision is needed.
 
 Published shared27 2ffae5a048e8b415bcc495632439fa7a5570886d adds the seven-line Shell quiet pause settlement and accepted A3-L2 registration, with compatible schemas. Root will preserve-adopt only after the frozen Assisted/Challenge wrapper finishes, then run directly affected L3 lifecycle scope, preserving all original shared25/26 evidence. No unchanged art/accepted-level/full-campaign suite follows. Next complete these remaining scopes and final owned hash/link inventory, then send exact L3 HANDOFF. No L4 implementation has started.
+
+
+## Complete selected route matrix at shared26
+
+Heavy Assisted and Challenge both complete the actual full L3 route with **495 checks, zero failures, zero script errors and exit0**. The serial wrapper53670 has completed all six queued selected runs. Together with original Heavy503 and native586, all five selected Standard loadouts and both other profiles are closed at their exact original source baseline. Current Cargo native570/23 is separately reviewed. No production controls, HP, timing, optional-source rule, equipment data or pickups changed. All original failures remain frozen.
+
+Next preserve-adopt published shared27, verify all owned tracked hashes and actual ancestry/ACK, then run only the directly affected existing first-checkpoint/fatal lifecycle. B02 original-artifact252 remains shared26 evidence; its current-byte Shell provenance guard will correctly refuse changed Shell bytes, so no blind rerun or original artifact rewrite. The common commit-barrier behavior is the new lifecycle scope. HUD request has been acknowledged by integration RESPONSE599def9b-ea18-459e-9237-567705247d7e; root owns narrow display fix/test. No further human or mobile decision applies.

@@ -1,6 +1,6 @@
 # A2-L3 — Black Smoke and the Ruined House
 
-Candidate preparation is in progress. The Act2 owner has completed all five selected loadout routes at Standard difficulty and both checkpoint lifecycle scopes. Heavy Challenge, shared27 adoption/affected lifecycle and the shared HUD numeric correction remain pending. Heavy Assisted completed495/0. Native Cargo completed570/0 with23 reviewed views. This record is not a HANDOFF or acceptance yet.
+Candidate preparation is in progress. The Act2 owner has completed all five selected loadout routes at Standard difficulty and both checkpoint lifecycle scopes. Heavy Assisted and Challenge both completed495/0. Shared27 adoption/affected lifecycle and the shared HUD numeric correction remain pending. Native Cargo completed570/0 with23 reviewed views. This record is not a HANDOFF or acceptance yet.
 
 The level uses the shared CampaignShell, traveller presentation, player, camera, HUD, equipment resolver and threat scheduler. It earns three contact checkpoints and one Handling-Machine phase checkpoint before opening the local excavation escape. The L4 destination in owner tests is a test fixture; actual campaign registration and destination verification belong to integration.
 
@@ -22,7 +22,7 @@ Ground is continuous and dry. No swimming, jump, climbing, pit descent, narrow p
 | Full Cargo/Longstep / Standard | 479/0 | [Result](evidence/A2-L3/live-slow_cargo_longstep-standard-first/result.json) |
 | Full Padded/Reach / Standard | 477/0 | [Result](evidence/A2-L3/live-slow_padded_reach-standard-first/result.json) |
 | Full Heavy / Assisted | 495/0 | [Result](evidence/A2-L3/live-heavy-assisted-first/result.json) |
-| Full Heavy / Challenge | Pending | Shared queue |
+| Full Heavy / Challenge | 495/0 | [Result](evidence/A2-L3/live-heavy-challenge-first/result.json) |
 | Native Cargo/Longstep | 570/0;23 reviewed views | [Result](evidence/A2-L3/live-cargo-native-production-first/result.json), [review](evidence/A2-L3/live-cargo-native-production-first/visual-review.json) |
 | First checkpoint, actual fatal damage and GUI Retry | 375/0 | [Result](evidence/A2-L3/first-checkpoint-lifecycle-live-sequence/result.json) |
 | Genuinely earned boss checkpoint Continue/Retry | 252/0 | [Result](evidence/A2-L3/earned-boss-checkpoint-retirement-corrected/result.json) |
