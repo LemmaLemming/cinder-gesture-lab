@@ -46,6 +46,7 @@ SUITES = {
     "threat_snapshot": "tests/threat_snapshot_smoke.gd",
     "campaign_shell": "tests/campaign_shell_smoke.gd",
     "campaign_registration": "tests/campaign_registration_smoke.gd",
+    "act2_registration": "tests/act2_registration_smoke.gd",
     "lunge_preview": "tests/lunge_preview_smoke.gd",
     "camera_framing": "tests/camera_framing_smoke.gd",
     "camera_framing_shell": "tests/camera_framing_shell_smoke.gd",

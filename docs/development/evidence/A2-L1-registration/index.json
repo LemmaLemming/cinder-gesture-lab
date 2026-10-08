@@ -1,0 +1,89 @@
+{
+  "level_id": "A2-L1",
+  "authored_commit": "a96edfaddd22e206438e616a8b4080e5c5cdce7a",
+  "authored_runtime_commit": "16f2532518edd8d76aa41ec40f1d10edad607559",
+  "authored_shared_commit": "fef1b1a79d83401d5b67118f6f69dcf2abea017c",
+  "integrated_content_commit": "993096ca2ea908605cad1400a8c6bf4f45665779",
+  "tested_shared_revision": "campaign-shared-17",
+  "tested_shared_commit": "50093a68b8a69d75550c1683bd14c3f4223502c0",
+  "scheduler_sha256": "5e4cf02158fee0d723d0ab564bd12961234bd38576c13b21643f979ed070310d",
+  "fixture_sha256": "b0042e1c1f357cfd3e191535cb48f905d79a70fe2dc0bb88eec9a06ccf67918d",
+  "godot": "4.7.2.stable.official.ed1daf0bf",
+  "tests": [
+    {
+      "command": "python3 scripts/dev/dev.py test act2_registration",
+      "checks": 132,
+      "failures": 0,
+      "exit_code": 0,
+      "log": "headless.log"
+    },
+    {
+      "command": "python3 scripts/dev/dev.py engine --path . --log-file .cinder/act2-registration-root-portrait.engine.log --script tests/act2_registration_smoke.gd -- --portrait",
+      "checks": 142,
+      "failures": 0,
+      "exit_code": 0,
+      "log": "portrait.log"
+    }
+  ],
+  "captures": [
+    {
+      "path": "arrival.png",
+      "sha256": "3c769417087e5895af9c908c86b6f65e9caf9f27fc5d87a20d6e60e5d8e0f244",
+      "width": 540,
+      "height": 1170,
+      "scope": "actual scripted production GUI/scene capture; isolated TEST ONLY prerequisite prefix and initial HP37/ammo0; no prior Act1 gameplay or A2 clear claim"
+    },
+    {
+      "path": "journey-locked.png",
+      "sha256": "132e05e1cc987ad555fe4b4cc9db00b36dea506e10af2d2c1a82680ff4b70a17",
+      "width": 540,
+      "height": 1170,
+      "scope": "actual scripted production GUI/scene capture; isolated TEST ONLY prerequisite prefix and initial HP37/ammo0; no prior Act1 gameplay or A2 clear claim"
+    },
+    {
+      "path": "journey-seeded.png",
+      "sha256": "e90ad7e243bf19756f5e8196982761997303982071e9747ccbcc574f932f0625",
+      "width": 540,
+      "height": 1170,
+      "scope": "actual scripted production GUI/scene capture; isolated TEST ONLY prerequisite prefix and initial HP37/ammo0; no prior Act1 gameplay or A2 clear claim"
+    },
+    {
+      "path": "title-locked.png",
+      "sha256": "842d4821326f0fa8fa8a461d8efe25e639a36f690f97e9a141342932a3d2b7ae",
+      "width": 540,
+      "height": 1170,
+      "scope": "actual scripted production GUI/scene capture; isolated TEST ONLY prerequisite prefix and initial HP37/ammo0; no prior Act1 gameplay or A2 clear claim"
+    },
+    {
+      "path": "title-seeded.png",
+      "sha256": "a69080c8c64dbcabc584b9b7ece3b34aac8d514fc4f858b99137e308be784465",
+      "width": 540,
+      "height": 1170,
+      "scope": "actual scripted production GUI/scene capture; isolated TEST ONLY prerequisite prefix and initial HP37/ammo0; no prior Act1 gameplay or A2 clear claim"
+    }
+  ],
+  "limits": [
+    "TEST ONLY isolated preceding Act1 completion prefix and initial resources, validated public actual A2 player/local snapshot; not Act1 gameplay.",
+    "Entry/save lifecycle coverage; authored full route/loadout/HP/death/portrait evidence remains separately scoped in owner HANDOFF and docs.",
+    "Mac unfocused scripted native GPU and real routed input recognizer; no focused human balance/playtest or mobile performance.",
+    "Import log records existing host macOS certificate/editor-settings-save permission diagnostics; both actual targeted test logs are clean."
+  ],
+  "canonical_validators": "ability revision0/20/0 uses; equipment revision0/36/0 claims; numerical 256 loadouts/500 conditional subsets/7500 combined states pass; not human balance",
+  "log_files": [
+    {
+      "path": "headless.log",
+      "sha256": "24deab3d42f4af6a0e86f1187c81dadbcb8355a59301b20362a03bb89d505036",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "import.log",
+      "sha256": "63876f8e1ddd7ffee1293bc24dd0c8fab3276a02b2ffda61c67760fe472dff78",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "portrait.log",
+      "sha256": "0ca176708c6967a9e5b769bc693185f0dd6b05fb5175104d178b0b840e62afaa",
+      "original_bytes_preserved": true
+    }
+  ]
+}
