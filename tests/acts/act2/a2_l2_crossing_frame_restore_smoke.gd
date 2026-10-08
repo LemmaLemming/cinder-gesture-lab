@@ -11,10 +11,15 @@ const FRAME_FRESH_ROOT: String = "user://test-a2-l2-crossing-frame-fresh/"
 var _frame_checked: bool = false
 var _frame_busy: bool = false
 var _frame_ok: bool = false
+var _capture_crossing_only: bool = false
 
 func _run() -> void:
+	_capture_crossing_only = "--capture-crossing-only" in OS.get_cmdline_user_args()
 	_loadout_name = "slow_cargo_longstep"
 	if not _read_options() or not _expect(_loadout_name == "slow_cargo_longstep" and _profile_id == "standard" and not _capture_live, "crossing regression selects actual Cargo/Standard without native art claims"):
+		quit(1)
+		return
+	if _capture_crossing_only and not _expect(DisplayServer.get_name() != "headless", "focused actual post-dash portrait requires native display"):
 		quit(1)
 		return
 	root.size = Vector2i(540, 1170)
@@ -22,10 +27,11 @@ func _run() -> void:
 	_l1_fixture_bytes = FileAccess.get_file_as_string("res://tests/acts/act2/fixtures/a2_l1_transition_destination.tscn")
 	_cleanup()
 	_frame_cleanup_files()
-	print("Weybridge crossing frame scope: actual Cargo/Standard full route; one real right-foot escape/pause/ExactJson/fresh saved-camera Shell restore; synthetic preceding prefix/unlocks and TEST ONLY L3")
+	print("Weybridge crossing frame scope: ", "actual earned prefix/post-right-dash native tuple ONLY" if _capture_crossing_only else "actual Cargo/Standard full route; right-foot pause/ExactJson/fresh saved-camera Shell restore", "; synthetic preceding prefix/unlocks and TEST ONLY L3")
 	var failures_before: int = _failures
-	if not await _run_route() and _failures == failures_before: _expect(false, "actual crossing regression route aborted: " + _diagnostic())
-	_expect(_frame_checked and _frame_ok, "actual route exercises the affected right-foot combined response and fresh restoration")
+	var route_finished: bool = await _run_route()
+	if not route_finished and _failures == failures_before and not (_capture_crossing_only and _frame_checked and _frame_ok): _expect(false, "actual crossing regression route aborted: " + _diagnostic())
+	_expect(_frame_checked and _frame_ok, "actual affected right-foot native tuple captured" if _capture_crossing_only else "actual route exercises the affected right-foot combined response and fresh restoration")
 	if is_instance_valid(_fresh): _release_fixture_receiver(_fresh)
 	_fresh = null
 	if is_instance_valid(_game): _release_fixture_shell(_game)
@@ -34,7 +40,7 @@ func _run() -> void:
 	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == _canonical and FileAccess.get_file_as_string("res://tests/acts/act2/fixtures/a2_l1_transition_destination.tscn") == _l1_fixture_bytes, "crossing fixture preserves canonical registry and frozen L1 destination bytes")
 	_cleanup()
 	_frame_cleanup_files()
-	print("Weybridge crossing frame restore smoke: %d checks, %d failures; actual route plus scoped derived presentation transport, no native art/mobile/canonical acceptance" % [_checks, _failures])
+	print("Weybridge crossing frame restore smoke: %d checks, %d failures; scope=%s; no human/mobile/canonical acceptance" % [_checks, _failures, "actual earned prefix and exact post-right-dash portrait ONLY; no full clear or fresh restoration" if _capture_crossing_only else "actual full route and scoped derived presentation transport"])
 	quit(0 if _failures == 0 else 1)
 
 func _step() -> void:
@@ -50,6 +56,20 @@ func _step() -> void:
 	var old_points: Array[Vector3] = _frame_standalone_points(level, _actors.crossing_scout, source)
 	var old_failure: Dictionary = level.call("_framing_failure", camera, old_points)
 	if old_failure.is_empty(): return
+	if _capture_crossing_only:
+		await RenderingServer.frame_post_draw
+		if not _live() or paused or not _stable(): return
+		state = _state()
+		if state.foot_id != "foot_right": return
+		source = state.exchanges.crossing_scout
+		foot = state.mechanisms.foot_right
+		if source.status != "running" or not source.get("armed", false) or source.phase == "recovery" or foot.status != "running": return
+		old_failure = level.call("_framing_failure", camera, _frame_standalone_points(level, _actors.crossing_scout, source))
+		if old_failure.is_empty(): return
+		_frame_checked = true
+		_frame_ok = _frame_actual_portrait(source, foot, old_failure)
+		_pair_diagnostic_stop = true
+		return
 	_frame_busy = true
 	_frame_checked = true
 	_frame_ok = await _frame_pause_and_restore(source, old_failure)
@@ -157,3 +177,28 @@ func _frame_fresh_shell(saved: Dictionary) -> bool:
 func _frame_cleanup_files() -> void:
 	for name: String in ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(FRAME_FRESH_ROOT + name))
+
+func _frame_actual_portrait(source: Dictionary, foot: Dictionary, old_failure: Dictionary) -> bool:
+	var failures_before: int = _failures
+	if not _expect(old_failure.get("reason") == "required_source_footprint_or_landing_offscreen", "focused capture has actual structured offscreen witness"): return false
+	var foot_lease: Dictionary = _reservation(String(foot.reservation_id))
+	if not _expect(_live() and not paused and not foot_lease.is_empty() and foot_lease.get("armed", false), "focused capture retains actual live armed foot lease after query"): return false
+	var current: Dictionary = _state()
+	if not _expect(current.foot_id == "foot_right" and current.mechanisms.foot_right.reservation_id == foot.reservation_id and current.exchanges.crossing_scout.reservation_id == source.reservation_id, "focused capture query retains the exact native source/foot tuple"): return false
+	var directory: String = "res://captures/act2/crossing-tuple/"
+	if not _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory)) == OK, "create separate actual crossing-tuple portrait directory"): return false
+	var image: Image = root.get_texture().get_image()
+	var path: String = directory + "a2-l2-cargo-post-right-dash.png"
+	if not _expect(image.get_size() == Vector2i(540, 1170) and image.save_png(path) == OK, "save exact actual native post-right-dash portrait"): return false
+	var level: CinderLevel = _game.active_level
+	var view: Dictionary = level.get("_views").foot_right.duplicate(true)
+	var landing := Vector3(view.landing[0], view.landing[1], view.landing[2])
+	_expect(_game.player.global_position.distance_to(landing) < 0.00001 and bool(level.call("_exchange_framed", _actors.crossing_scout, source)), "actual completed right-foot escape matches accepted landing and combined guard remains valid")
+	var screen: Vector2 = old_failure.screen
+	var safe: Rect2 = old_failure.safe_rect
+	var metadata: Dictionary = {"scope": "actual earned three defeats/three feet/two contacts then genuine right-foot dash; native exact clipped obsolete standalone tuple only, no full clear/fresh restore/human/mobile acceptance", "image": path, "clock_s": _state().clock_s, "hero_position": Codec.vector3(_game.player.global_position), "hero_hp": _game.player.hp, "shells": _game.player.shells, "combined_view": view, "source": {"status": source.status, "phase": source.phase, "armed": source.armed, "reservation_id": source.reservation_id, "geometry": _geometry_json(source.geometry), "source_position": Codec.vector3(_actors.crossing_scout.global_position), "hp": _actors.crossing_scout.get("hp")}, "foot": {"status": foot.status, "phase": foot.phase, "armed": foot_lease.get("armed", false), "reservation_id": foot.reservation_id, "geometry": _geometry_json(foot.geometry)}, "old_standalone_failure": {"reason": old_failure.reason, "point": Codec.vector3(old_failure.point), "screen": [screen.x, screen.y], "safe_rect": [safe.position.x, safe.position.y, safe.size.x, safe.size.y]}}
+	var file: FileAccess = FileAccess.open(directory + "a2-l2-cargo-post-right-dash-evidence.json", FileAccess.WRITE)
+	if not _expect(file != null, "write exact actual post-dash portrait observations"): return false
+	file.store_string(JSON.stringify(metadata, "\t", true, true))
+	print("Actual focused crossing tuple portrait: ", path, " observation=", metadata)
+	return _failures == failures_before
