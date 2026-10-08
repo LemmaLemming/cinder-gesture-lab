@@ -34,6 +34,7 @@ func _run() -> void:
 	if not await _swipe(Vector3.FORWARD, "native spore cluster approach"):
 		await _finish(); return
 	var actual_before: Dictionary = actor.get_spore_response_state()
+	print("L3 SPORE APPROACH DIAGNOSTIC response=", actual_before, " native=", actor.pure_presentation_state(), " actor_error=", actor.last_error, " parent_approach=", level.get("last_approach_error"), " parent_encounter=", level.get("last_encounter_error"), " camera=", game.call("get_camera_framing_state"), " camera_error=", game.call("camera_framing_error", level.camera_framing_points()))
 	if not _require(actor.hp == 16.0 and actual_before.velocity != Vector3.ZERO and actual_before.phase == "none" and actor.state().approach_driving and actor.state().reservation_id.is_empty(), "genuine unharmed C31 approaches before repulsion without a fake lease or hurt flag"):
 		await _finish(); return
 	if not await _pause_pair("bound approaching native source") or not _quiet_component("bound approaching native source") or not await _capture("bound-approach") or not await _gui_resume_pair():
