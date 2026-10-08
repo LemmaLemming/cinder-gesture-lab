@@ -1,0 +1,97 @@
+{
+  "created_at": "2026-10-08T15:08:19.587013+00:00",
+  "api_revision": "campaign-shared-21",
+  "baseline": "63f1f6a22293c49fd4939ed7118f77d218461887",
+  "engine": "Godot4.7.2 official ed1daf0bf001b61586d9930840f2f1394092c079",
+  "original_shell_sha256": "31c91a939008f03f3ddbb85d553c9fc0b2c913c0a4b01920a160714987c0e9c9",
+  "sources": [
+    {
+      "path": "scripts/campaign/shell.gd",
+      "sha256": "8b8cade988169319181187dff81c1ea80832bcf182e6de28115dd658df37c4bc"
+    },
+    {
+      "path": "tests/campaign_shell_hud_framing_smoke.gd",
+      "sha256": "22cf7edef39109345124711757ac369288f519d3aa92cf3f701cac46632e1fb1"
+    },
+    {
+      "path": "tests/campaign_shell_hud_framing_smoke.gd.uid",
+      "sha256": "5025947cccb9752bb475fa0fbffd9d10213d1b8996bb4845527796afe8aed7c6"
+    },
+    {
+      "path": "tests/fixtures/campaign/shell_hud_framing_level.gd",
+      "sha256": "b2675cdfe6a9e34ab0b3fbbf72d5e557807fbb7e8d85a34c848c0d00b9941a3c"
+    },
+    {
+      "path": "tests/fixtures/campaign/shell_hud_framing_level.gd.uid",
+      "sha256": "cc58947e19411ff06fd6c541b27e0cd912a1df65118d723f5bd0e62eadc492b0"
+    },
+    {
+      "path": "tests/fixtures/campaign/shell_hud_framing_level.tscn",
+      "sha256": "b648c5ca3a7683ab8823c44ff602726e800d962ba0d2aef6fdbfe1f9a4f395e5"
+    }
+  ],
+  "files": [
+    {
+      "path": "initial-sandbox-diagnostic.log",
+      "original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/campaign-shell-hud-framing-before.log",
+      "sha256": "97353e0c59642fb30c17c340e3804674e96ffeaa5570256e3ffec897ede17e3d",
+      "bytes": 1535
+    },
+    {
+      "path": "original-order-regression.log",
+      "original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/campaign-shell-hud-framing-original.log",
+      "sha256": "c379157cdbb8cf3e6b1d647fcae505168d77d1a2e43eb71359c3b2fc5d6719d7",
+      "bytes": 2565
+    },
+    {
+      "path": "corrected-portrait.log",
+      "original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/campaign-shell-hud-framing-final.log",
+      "sha256": "ec44edae0c801d05b255d5fde774ac3be95239e9b131d839bdbffd5a78ab9844",
+      "bytes": 2258
+    },
+    {
+      "path": "evidence.json",
+      "original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/campaign-shell-hud-framing-graphical-8716/evidence.json",
+      "sha256": "0850ce17afa7702af06dc5161c366c2fc610a098f8872cc7fe368a35c85995b8",
+      "bytes": 884
+    },
+    {
+      "path": "01-short-objective.png",
+      "original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/campaign-shell-hud-framing-graphical-8716/01-short-objective.png",
+      "sha256": "f7d0eb6bedbcd5009293b28888f29860b7031a8b3152ce68c10e66797b9d11fd",
+      "bytes": 25043
+    },
+    {
+      "path": "02-wrapped-objective.png",
+      "original": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/campaign-shell-hud-framing-graphical-8716/02-wrapped-objective.png",
+      "sha256": "5cf5c317734b5481694a3e2e1b2185335c0f0373eec6cd139a2b549819f12cd8",
+      "bytes": 42497
+    }
+  ],
+  "results": {
+    "initial_sandbox": {
+      "checks": 3,
+      "failures": 1,
+      "scope": "isolated save path denied before camera regression; diagnostic only"
+    },
+    "original_order": {
+      "checks": 20,
+      "failures": 2,
+      "exit_code": 1,
+      "scope": "expected same-call expansion and contraction safe_rect failures"
+    },
+    "corrected_graphical": {
+      "checks": 24,
+      "failures": 0,
+      "exit_code": 0,
+      "scope": "actual CampaignShell/native geometry/HUD controls; no additional corrected headless run"
+    }
+  },
+  "scope": "Public actual CampaignShell Begin/Resume/Pause/install, TEST ONLY metadata and isolated saves, native540x1170 portrait/nearest270x585 world; no authored level attack/clear/acceptance",
+  "limits": [
+    "Synchronous pre-yield assertions establish one-call ordering; post_draw PNGs are paused rendered views.",
+    "Normal focus handling retained; native focus false, no unlock/focus bypass or human gameplay claim.",
+    "Sparse original arrangement containment already passed; defect is stale current-frame constraints, not a claimed visible clip in this fixture.",
+    "Only new directly affected target executed; no unchanged base-camera/Shell/act suite or performance run."
+  ]
+}
