@@ -55,6 +55,7 @@ SUITES = {
     "lunge_motion": "tests/lunge_motion_smoke.gd",
     "staged_lunge_collision": "tests/staged_lunge_collision_smoke.gd",
     "body_sweep": "tests/body_sweep_smoke.gd",
+    "translated_lunge": "tests/translated_lunge_smoke.gd",
     "action_capture": "tests/action_capture_smoke.gd",
     "level_player_context": "tests/level_player_context_smoke.gd",
     "replay_sequence": "tests/replay_sequence_smoke.gd",
