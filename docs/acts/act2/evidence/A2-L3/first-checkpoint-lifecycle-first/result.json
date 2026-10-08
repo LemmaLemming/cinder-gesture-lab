@@ -1,0 +1,10 @@
+{
+  "exit_code": 1,
+  "checks": 58,
+  "failures": 1,
+  "script_errors": 1,
+  "first_error": "_lc_swipe:227 reads empty unpaused Player.snapshot_state().world_actions",
+  "classification": "fixture/public-API misuse",
+  "scope": "actual road source cleared only; lifecycle/checkpoint/Continue/Retry not reached",
+  "next": "replace only live action sequence reads with last public completed action record; retain paused-only snapshot requirement"
+}
