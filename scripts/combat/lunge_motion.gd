@@ -6,6 +6,7 @@ extends RefCounted
 
 const Geometry = preload("res://scripts/combat/threat_geometry.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const BodySweep = preload("res://scripts/combat/body_sweep.gd")
 const SAFE_MARGIN: float = 0.001
 const ENDPOINT_TOLERANCE: float = 0.005
 const EPSILON: float = 0.00001
@@ -71,7 +72,7 @@ static func plan(owner: CharacterBody3D, motion: Dictionary, floor_regions: Arra
 	query.exclude = excluded
 	if not owner.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty():
 		return {"error": "Source starts overlapped with scenery"}
-	var sweep: Dictionary = _sweep(owner, owner.global_transform, intended)
+	var sweep: Dictionary = _sweep(owner, owner.global_transform, intended, floor_regions)
 	if sweep.has("error"):
 		return sweep
 	var travel: Vector3 = sweep["travel"]
@@ -82,7 +83,7 @@ static func plan(owner: CharacterBody3D, motion: Dictionary, floor_regions: Arra
 	return {"kind": "lunge", "start": start, "planned_endpoint": endpoint, "current_position": start, "current_velocity": Vector3.ZERO, "direction": direction, "speed": float(motion["speed"]), "distance": float(motion["distance"]), "duration_s": duration, "damage_radius": float(motion["damage_radius"]), "body_signature": description["signature"], "body_collision_path": path, "collision_shortened": travel.length() < intended.length() - EPSILON, "actual_collided": false, "finished": false, "geometry": Geometry.lane(start, endpoint, float(motion["damage_radius"])), "source_radius": description["radius"], "foot_offset": description["foot_offset"]}
 
 
-static func advance(owner: CharacterBody3D, motion: Dictionary, elapsed_s: float) -> Dictionary:
+static func advance(owner: CharacterBody3D, motion: Dictionary, elapsed_s: float, floor_regions: Array = []) -> Dictionary:
 	## Mutates only this real source, never a proxy or the player. All geometry,
 	## floor and timing acceptance belongs to the scheduler before this call.
 	var description: Dictionary = source_description(owner, motion["body_collision_path"])
@@ -109,7 +110,7 @@ static func advance(owner: CharacterBody3D, motion: Dictionary, elapsed_s: float
 	# Check before real movement so a removed/changed wall cannot let the source
 	# escape its committed lane. Per-step and full-sweep contact margins differ
 	# numerically; tolerance is smaller than the response proof's 0.01m skin.
-	var sweep: Dictionary = _sweep(owner, owner.global_transform, step)
+	var sweep: Dictionary = _sweep(owner, owner.global_transform, step, floor_regions)
 	if sweep.has("error"):
 		return sweep
 	var will_collide: bool = sweep["collided"]
@@ -143,29 +144,8 @@ static func advance(owner: CharacterBody3D, motion: Dictionary, elapsed_s: float
 	return result
 
 
-static func _sweep(owner: CharacterBody3D, from: Transform3D, motion: Vector3) -> Dictionary:
-	# GodotPhysics uses a finite fraction search. A long sweep has a coarser
-	# absolute contact error than a tick-sized move; fixed <=0.05m virtual sweeps
-	# bound that discrepancy without enlarging the reserved proof skin. These
-	# queries never move the source. Execution uses the same bounded steps.
-	if not motion.is_finite() or motion.length() > MAX_DISTANCE + EPSILON:
-		return {"error": "Lunge sweep exceeds supported finite travel"}
-	var direction: Vector3 = motion.normalized()
-	var remaining: float = motion.length()
-	var travel := Vector3.ZERO
-	while remaining > EPSILON:
-		var length: float = minf(SWEEP_STEP, remaining)
-		var step: Vector3 = direction * length
-		var check := KinematicCollision3D.new()
-		# Report floor depenetration too. It must reject before real movement,
-		# rather than disappear behind a false collision return value.
-		var blocked: bool = owner.test_move(from, step, check, SAFE_MARGIN, true, 1)
-		var moved: Vector3 = check.get_travel() if blocked else step
-		if not moved.is_finite() or absf(moved.y) > EPSILON or moved.dot(direction) < -EPSILON or moved.dot(direction) > length + EPSILON or (moved - direction * moved.dot(direction)).length() > EPSILON:
-			return {"error": "Physical sweep cannot be represented by a straight ground lane"}
-		travel += moved
-		if blocked:
-			return {"travel": travel, "collided": true}
-		from.origin += moved
-		remaining -= length
-	return {"travel": travel, "collided": false}
+static func _sweep(owner: CharacterBody3D, from: Transform3D, motion: Vector3, floor_regions: Array) -> Dictionary:
+	# Pure actual-body query matches installed move_and_collide cancel_sliding,
+	# including separately classified tiny resting floor recovery. Actual floor
+	# collision and source pose remain untouched, and deep/side recovery rejects.
+	return BodySweep.sweep(owner, from, motion, floor_regions)

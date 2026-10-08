@@ -150,6 +150,7 @@ func get_threat_response_state() -> Dictionary:
 		"primary_commitment_s": float(resolved.primary_cooldown) * (0.13 / 0.30),
 		"motion": {"position": global_position, "velocity": velocity, "grounded": _snapshot_grounded(), "dash_left_s": _dash_left, "queued_dash": _queued_dash, "knockback_left_s": _knockback_left},
 		"equipment_ids": equipment.snapshot(), "action_clock_s": _world_action_clock,
+		"pending_weapon_id": _pending_weapon,
 	}
 
 func _ready() -> void:
@@ -323,6 +324,7 @@ func slash(direction: Vector3 = Vector3.ZERO) -> int:
 		fx.attack_footprint(global_position, facing, snapshot.primary_range, snapshot.primary_cone_min_dot, IVORY, _phase_total)
 		fx.sound("slash")
 	var hits: int = _hit_targets(snapshot.primary_range, snapshot.primary_cone_min_dot, snapshot.primary_damage, facing * 3.5 + Vector3.UP * 2.0)
+	_hit_environment_targets("primary", snapshot.primary_range, snapshot.primary_cone_min_dot)
 	if _accepted_enemy_hits > 0 and shells < max_shells:
 		_reload += stats.primary_hit_reload_credit
 		if _reload >= stats.shell_reload:
@@ -352,6 +354,7 @@ func blast(direction: Vector3 = Vector3.ZERO) -> int:
 		fx.attack_footprint(global_position, facing, snapshot.followup_range, snapshot.followup_cone_min_dot, Color(0.76, 0.80, 0.83), _phase_total)
 		fx.sound("blast")
 	var hits: int = _hit_targets(snapshot.followup_range, snapshot.followup_cone_min_dot, snapshot.followup_damage, facing * 10.0 + Vector3.UP * 4.0)
+	_hit_environment_targets("blast", snapshot.followup_range, snapshot.followup_cone_min_dot)
 	world_record["hits"] = hits
 	_publish_world_action(world_record)
 	_record_action("blast", hits, snapshot.followup_damage, snapshot.followup_range)
@@ -390,15 +393,7 @@ func _hit_targets(reach: float, cone: float, damage: float, impulse: Vector3) ->
 	var targets: Array[Node] = get_tree().get_nodes_in_group("enemies")
 	targets.append_array(get_tree().get_nodes_in_group("practice_targets"))
 	for target in targets:
-		var offset: Vector3 = target.global_position - global_position
-		var vertical: float = absf(offset.y)
-		offset.y = 0.0
-		if target.hp <= 0.0 or offset.length() > reach or vertical > ATTACK_MAX_VERTICAL_DISTANCE:
-			continue
-		if offset.length() > ATTACK_ORIGIN_DISK_RADIUS and offset.normalized().dot(facing) < cone:
-			continue
-		var query := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * ATTACK_LOS_HEIGHT, target.global_position + Vector3.UP * ATTACK_LOS_HEIGHT, ATTACK_SCENERY_MASK)
-		if not get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+		if target.hp <= 0.0 or not _attack_reaches_target(target, reach, cone):
 			continue
 		var result: Dictionary = target.take_damage(damage, impulse)
 		if result.get("accepted", false) and float(result.get("hp_damage", 0.0)) > 0.0:
@@ -406,6 +401,28 @@ func _hit_targets(reach: float, cone: float, damage: float, impulse: Vector3) ->
 			if target.is_in_group("enemies"):
 				_accepted_enemy_hits += 1
 	return hits
+
+
+func _attack_reaches_target(target: Node3D, reach: float, cone: float) -> bool:
+	var offset: Vector3 = target.global_position - global_position
+	var vertical: float = absf(offset.y)
+	offset.y = 0.0
+	if offset.length() > reach or vertical > ATTACK_MAX_VERTICAL_DISTANCE:
+		return false
+	if offset.length() > ATTACK_ORIGIN_DISK_RADIUS and offset.normalized().dot(facing) < cone:
+		return false
+	var query := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * ATTACK_LOS_HEIGHT, target.global_position + Vector3.UP * ATTACK_LOS_HEIGHT, ATTACK_SCENERY_MASK)
+	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
+
+
+func _hit_environment_targets(kind: String, reach: float, cone: float) -> void:
+	# Separate interaction channel: no fabricated HP, damage/hit/reload credit,
+	# enemy proc result or extra world-action publication is produced here.
+	for target: Node in get_tree().get_nodes_in_group("environment_attack_targets"):
+		if not target is Node3D or not is_instance_valid(target) or target.is_queued_for_deletion() or target.get_world_3d() != get_world_3d() or not target.has_method("receive_attack"):
+			continue
+		if _attack_reaches_target(target as Node3D, reach, cone):
+			target.call("receive_attack", {"kind": kind, "origin": "player_direct"})
 
 func action_in_progress() -> bool:
 	return _dash_left > 0.0 or _phase_left > 0.0

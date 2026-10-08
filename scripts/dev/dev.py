@@ -49,8 +49,12 @@ SUITES = {
     "lane_mechanism": "tests/lane_mechanism_smoke.gd",
     "threat_adapters": "tests/threat_adapter_smoke.gd",
     "lunge_motion": "tests/lunge_motion_smoke.gd",
+    "body_sweep": "tests/body_sweep_smoke.gd",
     "action_capture": "tests/action_capture_smoke.gd",
     "level_player_context": "tests/level_player_context_smoke.gd",
+    "replay_sequence": "tests/replay_sequence_smoke.gd",
+    "spore_field": "tests/spore_field_smoke.gd",
+    "repulsion_route": "tests/repulsion_route_smoke.gd",
 }
 SLOT_PORTS = {
     "integration": (6005, 6006, 6007),

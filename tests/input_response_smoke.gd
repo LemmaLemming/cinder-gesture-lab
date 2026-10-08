@@ -14,6 +14,7 @@ func _run() -> void:
 	await create_timer(0.3).timeout
 	var response: Dictionary = hero.get_threat_response_state()
 	_expect(response.stable and response.actor == hero and response.motion.grounded, "actual settled shared actor reports supported stationary response")
+	_expect(response.pending_weapon_id is String and response.pending_weapon_id.is_empty(), "settled public response explicitly reports no pending weapon")
 	response.stats.primary_range = 999.0
 	response.equipment_ids.weapon = "invalid"
 	_expect(hero.get_threat_response_state().stats.primary_range != 999.0 and hero.equipment.snapshot().weapon == "WEAPON-01", "public response copies cannot retune equipment or stats")
@@ -36,6 +37,11 @@ func _run() -> void:
 	game.handle_tap(size * 0.5)
 	_expect(observations.back().accepted and observations.back().kind == "primary_tap" and observations.back().direction.x > 0.0 and observations.back().direction.z > 0.0, "observed immediate zero-ammo primary uses final-release direction")
 	_expect(observations.back().world_action_sequence == int(hero.get_world_action_records().back().sequence), "accepted tap observation links the executed action publication sequence")
+	var action_stats: Dictionary = hero.get_threat_response_state().stats
+	_expect(hero.equip_item("WEAPON-02") and hero.get_threat_response_state().pending_weapon_id == "WEAPON-02" and hero.get_threat_response_state().equipment_ids.weapon == "WEAPON-01" and Codec.same_values(hero.get_threat_response_state().stats, action_stats), "public slash-then-equip response exposes the pending legal weapon while actual gear/stats retain the executing action")
+	var pending_copy: Dictionary = hero.get_threat_response_state()
+	pending_copy.pending_weapon_id = "WEAPON-03"
+	_expect(hero.get_threat_response_state().pending_weapon_id == "WEAPON-02", "response mutation cannot replace the actual deferred weapon")
 	response = hero.get_threat_response_state()
 	paused = true
 	var snapshot: Dictionary = hero.snapshot_state()
@@ -44,6 +50,7 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_expect(hero.get_threat_response_state().action_clock_s == clock, "response clock freezes with paused simulation")
+	_expect(hero.get_threat_response_state().pending_weapon_id == "WEAPON-02" and hero.equipment.snapshot().weapon == "WEAPON-01", "pause cannot apply or forget a pending weapon during the unfinished primary")
 	var before: int = observations.size()
 	game.handle_tap(size * 0.5)
 	_expect(observations.size() == before, "paused menu/resume taps create no observation or attack")
@@ -53,6 +60,8 @@ func _run() -> void:
 	var copy: Dictionary = game.get_input_observation_state()
 	copy.last_observation.kind = "modified"
 	_expect(game.get_input_observation_state().last_observation.kind == "blast_tap", "input observer retains defensive bounded last-record state")
+	await create_timer(0.4).timeout
+	_expect(hero.get_threat_response_state().pending_weapon_id.is_empty() and hero.get_threat_response_state().equipment_ids.weapon == "WEAPON-02" and Codec.same_values(hero.get_threat_response_state().stats, hero.equipment.resolved_stats()), "normal deferred application clears pending ID and exposes the actual newly equipped stats")
 	_expect(game.active_level.shared_shell == game, "level receives the supported public shared-shell reference")
 	game.active_level.exit_level()
 	_expect(game.active_level.shared_shell == null, "level exit clears shared observer reference")
