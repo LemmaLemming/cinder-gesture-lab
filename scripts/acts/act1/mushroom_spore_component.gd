@@ -11,6 +11,7 @@ const COMPONENT_API: String = "act1-mushroom-spore-component-1"
 const CONTROLLER_ID: String = "mushroom-scheduler"
 const FIELD_ID: String = "component-mushroom"
 const CONSUMER_ID: String = "component-native-spores"
+const SPORE_CAMERA_PAD: float = 0.05 # Presentation headroom only; no motion tuning.
 
 var spore_field: CinderSporeField
 var spore_consumer: CinderSporeRepulsion
@@ -93,6 +94,24 @@ func _camera_framing_points() -> Array:
 		var centre: Vector3 = origin + offset
 		points.append_array(_box_points(AABB(Vector3(-0.2, -0.05, -0.2), Vector3(0.4, 0.5, 0.4)), Transform3D(Basis.IDENTITY, centre)))
 	for id: String in current_source_ids():
+		var actor: Act1MushroomSelenite = sources[id]
+		if not actor.dead:
+			# Announce the entire possible outside-field silhouette BEFORE a hit.
+			# A reaction callback may pause before Game's next camera update. Keep
+			# all native quad/body extrema, compressed only by convex AABB bounds.
+			var response: Dictionary = actor.get_spore_response_state()
+			if response.is_empty(): return [Vector3.INF]
+			var exit_radius: float = radius + float(response.support_radius) + float(Repulsion.DEFAULTS.exit_clearance) + SPORE_CAMERA_PAD
+			var actual: Array = _actor_points(id, actor.global_position)
+			var extrema: Array = []
+			for x: float in [-exit_radius, exit_radius]:
+				for z: float in [-exit_radius, exit_radius]:
+					var endpoint := Vector3(origin.x + x, actor.global_position.y, origin.z + z)
+					for point: Vector3 in actual: extrema.append(point + endpoint - actor.global_position)
+			if extrema.is_empty(): return [Vector3.INF]
+			var bounds := AABB(extrema[0], Vector3.ZERO)
+			for point: Vector3 in extrema: bounds = bounds.expand(point)
+			points.append_array(_box_points(bounds, Transform3D.IDENTITY))
 		var record: Dictionary = spore_consumer.source_state(id)
 		if record.get("route", {}).get("planned_endpoint") is Vector3:
 			points.append_array(_actor_points(id, record.route.planned_endpoint))

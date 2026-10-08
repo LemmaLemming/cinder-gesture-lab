@@ -46,7 +46,7 @@ func _run() -> void:
 		await _finish(); return
 	if not _require(paused and recoil_pause_requested and callback_capture_rejected and observed_spore_phases.has("umbrella-1/recoil") and actor.get_spore_response_state().phase == "recoil", "actual reaction callback rejects capture and public deferred pause preserves genuine living recoil"):
 		await _finish(); return
-	if not _quiet_component("native recoil") or not _framing("native recoil field/source/retreat") or not await _capture("recoil") or not await _gui_resume_pair():
+	if not _quiet_component("native recoil") or not _spore_framing("native recoil field/source/retreat") or not await _capture("recoil") or not await _gui_resume_pair():
 		await _finish(); return
 	if not await _wait(func() -> bool: return actor.get_spore_response_state().phase == "retreat", "actual shared Route advances a living C31 away from the field"):
 		await _finish(); return
@@ -171,6 +171,14 @@ func _quiet_component(label: String) -> bool:
 	return true
 
 
+func _spore_framing(label: String) -> bool:
+	var points: Array = level.camera_framing_points()
+	var actual_error: String = game.call("camera_framing_error", points)
+	if not actual_error.is_empty() or not level.last_camera_framing_error.is_empty():
+		print("L3 SPORE FRAMING DIAGNOSTIC ", label, " points=", points.size(), " level_error=", level.last_camera_framing_error, " actual_error=", actual_error, " planned=", game.call("get_camera_framing_state"), " source=", sources["umbrella-1"].get_spore_response_state(), " route=", level.get("spore_consumer").source_state("umbrella-1"))
+	return _framing(label)
+
+
 func _finish() -> void:
 	if finishing: return
 	finishing = true
@@ -184,9 +192,11 @@ func _finish() -> void:
 	paused = false
 	await process_frame
 	_require(get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("environment_attack_targets").is_empty(), "complete component teardown removes actual enemy and environmental attack groups")
-	if portrait:
-		var evidence: FileAccess = FileAccess.open(capture_dir.path_join("evidence.json"), FileAccess.WRITE)
-		if evidence != null: evidence.store_string(JSON.stringify({"checks": checks, "failures": failures, "swipes": swipes, "primaries": primaries, "shots": shots, "units": component_units}, "\t"))
+	var evidence_path: String = capture_dir.path_join("evidence.json") if portrait else "res://.cinder/l3-spore-state-%d.json" % Time.get_ticks_usec()
+	var evidence: FileAccess = FileAccess.open(evidence_path, FileAccess.WRITE)
+	if evidence != null:
+		evidence.store_string(JSON.stringify({"checks": checks, "failures": failures, "swipes": swipes, "primaries": primaries, "shots": shots, "units": component_units}, "\t"))
+		print("L3 SPORE STATE EVIDENCE ", ProjectSettings.globalize_path(evidence_path))
 	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
 	print("A1-L3 NATIVE SPORE COMPONENT: %d checks, %d failures; %d real swipes/%d ordinary primaries; full campaign/guard/callback injury/fresh-recipient tests pending" % [checks, failures, swipes, primaries])
 	quit(1 if failures else 0)
