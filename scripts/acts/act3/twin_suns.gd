@@ -87,6 +87,10 @@ func _restore_local_state(state: Dictionary) -> void:
 	sun_stage = "stable" if sun_elapsed_s < SUN_STABLE_S else ("preview" if sun_elapsed_s < SUN_STABLE_S + SUN_PREVIEW_S else "lock")
 	_last_sun_view = ""
 	_update_sun_scenery()
+	# The shared aggregate restores its actor before committing local state.
+	# Align distant motifs now so a paused retry need not wait for motion.
+	if _active and is_instance_valid(hero):
+		scenery.call("follow_landmarks", hero.global_position)
 
 
 func _integer_in_range(value: Variant, minimum: int, maximum: int) -> bool:

@@ -8,6 +8,7 @@ const MainScene: PackedScene = preload("res://scenes/main.tscn")
 const RoomPath: String = "res://scenes/acts/act3/a3_l1_sun_room.tscn"
 const SourcePath: String = "res://assets/acts/act3/sunbound-stalker-branchspell.png"
 const RecoveryPath: String = "res://assets/acts/act3/sunbound-stalker-recovery.png"
+const AlppainPath: String = "res://assets/acts/act3/sunbound-stalker-alppain.png"
 const OutputPath: String = "res://captures/act3/twin-suns"
 const NativePivot: Vector2i = Vector2i(635, 1051)
 const SpriteOffset: Vector2 = Vector2(-8, 424)
@@ -33,6 +34,9 @@ func _run() -> void:
 		push_error("Stalker art scale study requires the shared room/player and imported source texture")
 		_failed = true
 	else:
+		if hero.presentation_id != "act3_traveller":
+			push_error("Stalker art study requires the published Act 3 traveller presentation")
+			_failed = true
 		var ahead: Vector3 = hero.global_position + Vector3.FORWARD * StudyDistance
 		var floor_body: StaticBody3D = (level.get("scenery") as Node).get("floor_body") as StaticBody3D
 		var query := PhysicsRayQueryParameters3D.create(ahead + Vector3.UP * 0.3, ahead - Vector3.UP * 0.3, 1)
@@ -73,7 +77,7 @@ func _run() -> void:
 			# Sprite and filled floor contact are visual-only: no target group,
 			# collider, signal hookup, damage receiver or runtime scene mutation.
 			print("ART SCALE STUDY ONLY: %s; native %dx%d; feet pivot %s; offset %s; visible source Y244..1051; %0.2f units ahead" % [SourcePath, texture.get_width(), texture.get_height(), NativePivot, SpriteOffset, StudyDistance])
-			print("LIMITATIONS: one generated Branchspell still pose; no animation, encounter/cue or damage validation. Shared player remains the helmeted lab presentation.")
+			print("LIMITATIONS: generated still poses; no animation, encounter/cue or damage validation. Actual shared player presentation: %s" % hero.presentation_id)
 			for candidate: float in [1.1, 1.35]:
 				sprite.pixel_size = candidate / VisibleHeightPixels
 				disk.top_radius = 0.34
@@ -96,6 +100,18 @@ func _run() -> void:
 				await _ticks(game, 3)
 				await _save("09-stalker-art-recovery.png")
 				print("ART RECOVERY STUDY: native pivot (635,1060); same %.8f units per pixel; one decorative pose swap only" % sprite.pixel_size)
+			var alppain_texture: Texture2D = load(AlppainPath) as Texture2D
+			if alppain_texture == null:
+				push_error("Stalker Alppain art study requires its imported source texture")
+				_failed = true
+			else:
+				sprite.texture = alppain_texture
+				sprite.offset = SpriteOffset
+				sprite.pixel_size = 1.35 / VisibleHeightPixels
+				level.objective_text = "ART STUDY / FORKED CREST"
+				await _ticks(game, 3)
+				await _save("13-stalker-art-alppain.png")
+				print("ART ALPPAIN STUDY: native pivot %s; unchanged family pixel scale; one decorative crest candidate only" % NativePivot)
 	game.queue_free()
 	paused = false
 	await process_frame
