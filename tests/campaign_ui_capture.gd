@@ -12,13 +12,15 @@ func _run() -> void:
 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
 	create_timer(45.0, true).timeout.connect(func() -> void: quit(1))
 	_cleanup()
-	game = _shell({})
-	await _capture("campaign-title")
-	game.menu.show_journey()
-	await _capture("campaign-journey")
-	game.menu.show_settings()
-	await _capture("campaign-settings")
-	game.free()
+	var restart_only: bool = OS.get_cmdline_user_args().has("--capture-replay-restart")
+	if not restart_only:
+		game = _shell({})
+		await _capture("campaign-title")
+		game.menu.show_journey()
+		await _capture("campaign-journey")
+		game.menu.show_settings()
+		await _capture("campaign-settings")
+		game.free()
 	var raw: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Registry.DATA_PATH))
 	for info: Dictionary in raw.levels:
 		if ["A1-L1", "A1-L2", "A1-O1"].has(info.id):
@@ -49,6 +51,25 @@ func _run() -> void:
 	game.hud.hide_overlay()
 	game.active_level.objective_text = "TEST ONLY · SHARED PORTRAIT PRESENTATION"
 	game._update_status()
+	if restart_only:
+		game.active_level.request_completion("test")
+		await _settle()
+		game.attempts.grant_equipment(["WEAPON-02"])
+		game.menu.replay_requested.emit("A1-L1",CinderEquipment.STARTER)
+		await _settle()
+		game.menu.show_pause()
+		await _capture("test-replay-pause")
+		(game.menu.find_child("RestartReplayButton",true,false) as Button).pressed.emit()
+		await _capture("test-replay-restart-chooser")
+		var scroll: ScrollContainer = game.menu.find_child("PageScroll",true,false) as ScrollContainer
+		scroll.ensure_control_visible(game.menu.find_child("StartReplayButton",true,false) as Control)
+		await _capture("test-replay-restart-action")
+		game.free()
+		paused = false
+		_cleanup()
+		print("Replay restart capture: three targeted540x1170 rendered UI images; no campaign acceptance")
+		quit()
+		return
 	game.hud.show_pause()
 	await _capture("test-shared-preview-paused")
 	game.hud.hide_overlay()

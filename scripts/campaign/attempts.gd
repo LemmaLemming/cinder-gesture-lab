@@ -95,6 +95,18 @@ func begin_side(kind: String, level_id: String, fresh_snapshot: Dictionary) -> b
 		next["last_replay_equipment"] = (fresh_snapshot.get("equipment_ids", {}) as Dictionary).duplicate(true)
 	return _commit(next)
 
+func restart_replay(fresh_snapshot: Dictionary) -> bool:
+	var active: Variant = _state["side_attempt"]
+	if active == null or active["kind"] != "replay" or fresh_snapshot.get("level_id") != active["level_id"]:
+		return _reject("Restart requires the current isolated replay level")
+	var error: String = _snapshot_error(fresh_snapshot, _state["unlocked_equipment"])
+	if not error.is_empty():
+		return _reject(error)
+	var next: Dictionary = state()
+	next["side_attempt"] = _attempt("replay", fresh_snapshot)
+	next["last_replay_equipment"] = fresh_snapshot["equipment_ids"].duplicate(true)
+	return _commit(next)
+
 func complete_active(snapshot: Dictionary = {}) -> bool:
 	var active: Variant = _active(_state)
 	if active == null:
@@ -281,6 +293,9 @@ func state_error(candidate: Dictionary) -> String:
 			return "Replay requires prior completion"
 	else:
 		return "Unsupported side attempt kind"
+	var side_progress: Variant = side["snapshot"]["level"].get("progress")
+	if registry.entry(side["level_id"]).get("kind") == "optional" and side_progress is Dictionary and side_progress.get("completed") == true and not candidate["completed_optional"].has(side["level_id"]):
+		return "Local optional completion precedes its durable completion and reward stamp"
 	return ""
 
 func _attempt(kind: String, snapshot: Dictionary) -> Dictionary:

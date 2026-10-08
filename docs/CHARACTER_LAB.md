@@ -1,6 +1,6 @@
 # Cinder Character Lab
 
-**Implemented prototype, 8 October 2026.** This is the first shared player, starter equipment and bounded test area in Godot. It is separate from the campaign levels. The static clothing and weapon profiles below are playable; conditional perks, temporary powerups, campaign encounters, campaign checkpoints and disk persistence remain unimplemented. The numerical values remain provisional tuning, not established human balance.
+**Implemented prototype, 8 October 2026.** This is the first shared player, starter equipment and bounded test area in Godot. It is separate from the campaign levels. The static clothing and weapon profiles below are playable; conditional perks, temporary powerups and authored campaign encounters remain unimplemented here. Coherent checkpoint/disk persistence is implemented in the separate [desktop shell](development/SHARED_CONTRACT.md#live-desktop-shell-and-menus), with isolated live fixture evidence and real campaign acceptance still pending. The numerical values remain provisional tuning, not established human balance.
 
 The lab follows the [campaign concept](GAME_CONCEPT.md), [shared style and motion](GAME_STYLE_GUIDELINES.md), [equipment specification](PLAYER_EQUIPMENT_GUIDELINES.md), [canonical numerical data](../data/design/player_equipment.json) and [asset reuse guide](ASSET_REUSE_GUIDE.md). The same controller and base-stat definition are intended for all three acts.
 

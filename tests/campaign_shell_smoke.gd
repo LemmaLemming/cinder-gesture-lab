@@ -4,6 +4,12 @@ const Shell = preload("res://scripts/campaign/shell.gd")
 const Registry = preload("res://scripts/campaign/registry.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const TEST_ROOT: String = "user://test-campaign-shell/"
+class ReturnFailStore extends CinderSaveStore:
+	func write_payload(payload: Dictionary) -> bool:
+		if payload.get("side_attempt") == null:
+			last_error = "Injected failure on side-return publication"
+			return false
+		return super.write_payload(payload)
 var checks: int = 0
 var failures: int = 0
 var raw: Dictionary
@@ -92,6 +98,20 @@ func _run() -> void:
 	game.request_retry()
 	await _settle()
 	_expect(game.player.hp == 100 and game.player.shells == 2 and Codec.same_values(game.attempts.story_snapshot(), protected), "replay retry uses its own initial checkpoint and leaves story untouched")
+	game.player.hp = 8.0
+	game.player.shells = 0
+	game.active_level.charges = 0
+	game.active_level.collected = ["supply-1"]
+	game.attempts._store.path = TEST_ROOT + "blocked-save"
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(game.attempts._store.path))
+	var original_player: CinderPlayer = game.player
+	game.menu.restart_replay_requested.emit("A1-L1", protected.equipment_ids)
+	await _settle()
+	_expect(game.player == original_player and game.player.hp == 8 and game.player.shells == 0 and game.active_level.charges == 0 and game.player.equipment.snapshot().weapon == "WEAPON-02", "failed replay restart preserves actual old actor/equipment/spent encounter until new isolated state commits")
+	game.attempts._store.path = TEST_ROOT + "campaign.json"
+	game.retry_pending_operations()
+	await _settle()
+	_expect(game.player.hp == 100 and game.player.shells == 2 and game.active_level.charges == 1 and game.player.equipment.snapshot() == protected.equipment_ids and Codec.same_values(game.attempts.story_snapshot(), protected), "new replay equipment restarts a complete fresh isolated encounter without mixing spent enemies/resources or story state")
 	game.active_level.request_completion("replay-clear")
 	await _settle()
 	game.active_level.request_contact_exit("return", game.player)
@@ -100,12 +120,35 @@ func _run() -> void:
 	game.menu.optional_requested.emit("A1-O1")
 	await _settle()
 	_expect(game.attempts.active_kind() == "optional" and game.active_level.level_id == "A1-O1", "parent-clear optional branch launches through isolated side flow")
+	game.attempts._store.path = TEST_ROOT + "blocked-save"
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(game.attempts._store.path))
 	game.active_level.request_completion("optional-clear")
 	await _settle()
+	_expect(not game._failed_operations.is_empty() and game.attempts.state().completed_optional.is_empty(), "failed optional completion cannot grant its stamp or publish local completion alone")
+	game.attempts._store.path = TEST_ROOT + "campaign.json"
+	var pending_optional: Array = game._failed_operations.duplicate(true)
+	game.menu.journey_requested.emit()
+	game.request_pause()
+	game.menu.settings_changed_request.emit({"audio":{"effects":0.4}})
+	await _settle()
+	_expect(game._failed_operations == pending_optional and not game.attempts.record_snapshot(game.capture_campaign_snapshot()) and game.attempts.state().completed_optional.is_empty(), "Journey/focus/settings preserve pending optional completion and model rejects an unstamped completed side snapshot")
+	game.retry_pending_operations()
+	await _settle()
 	_expect(game.attempts.state().reward_ids == ["A1-O1-completion-stamp"], "actual optional completion records its once-only stamp")
+	var return_store := ReturnFailStore.new(TEST_ROOT + "campaign.json")
+	return_store.generation = game.attempts._store.generation
+	return_store.payload_validator = game.attempts._store.payload_validator
+	game.attempts._store = return_store
 	game.active_level.request_contact_exit("return",game.player)
 	await _settle()
+	_expect(game.attempts.active_kind() == "optional" and not game.attempts.active_snapshot().level.progress.contact_exit_id.is_empty() and not game._failed_operations.is_empty(), "failed second side-return write retains a durable latched side exit and protected story")
+	game.free()
+	game = _new_shell()
+	await _settle()
+	game.resume_campaign()
+	await _settle()
 	_expect(game.attempts.active_kind() == "story" and Codec.same_values(game.capture_campaign_snapshot(),protected), "optional exit restores coherent story automatically")
+	_expect(game.attempts.state().reward_ids.size() == 1 and (game.menu.find_child("MenuStatus",true,false) as Label).text == "Story equipment restored.", "interrupted automatic side return deduplicates reward and reports exact story equipment restoration")
 	game.menu.replay_requested.emit("A1-O1",protected.equipment_ids)
 	await _settle()
 	game.active_level.request_completion("optional-replay-clear")
@@ -147,6 +190,11 @@ func _run() -> void:
 	await _settle()
 	_expect(not game._failed_operations.is_empty() and not game.attempts.active_snapshot().level.progress.completed, "failed completion leaves prior aggregate/progress intact while preserving latched live operation")
 	game.attempts._store.path = TEST_ROOT + "campaign.json"
+	var pending_completion: Array = game._failed_operations.duplicate(true)
+	game.menu.journey_requested.emit()
+	game.request_pause()
+	await _settle()
+	_expect(game._failed_operations == pending_completion and game._failed_operations[0].operation == "complete", "ordinary navigation cannot replace a pending latched completion with an unrecoverable save operation")
 	game.retry_pending_operations()
 	await _settle()
 	_expect(game.attempts.active_snapshot().level.progress.completed and game._failed_operations.is_empty(), "pending completion retries without requiring another suppressed level signal")
@@ -168,7 +216,48 @@ func _run() -> void:
 	game.menu.continue_story_requested.emit()
 	await _settle()
 	_expect(game.campaign_error.is_empty() and game.active_level.level_id == "A1-L3" and game.player.hp == 22 and game.player.shells == 0 and game.get_difficulty_preference() == "assisted", "Continue consumes a saved pending exit after next scene integration, carrying resources and future difficulty preference")
+	await _test_final_exit()
 	_finish()
+
+func _test_final_exit() -> void:
+	game.free()
+	_cleanup()
+	for info: Dictionary in raw.levels:
+		if info.id == "A3-L5":
+			info.scene_path = "res://tests/fixtures/campaign/live_a3_l5.tscn"
+			info.readiness = "accepted"
+			info.accepted_commit = "a".repeat(40)
+			info.api_revision = Registry.API_REVISION
+	game = _new_shell()
+	await _settle()
+	# Explicit TEST ONLY route-prefix seed isolates the terminal boundary; it
+	# neither registers nor claims playing any of the real preceding14 scenes.
+	var candidate: Dictionary = game._prepare("A3-L5", CinderEquipment.STARTER)
+	var snapshot: Dictionary = game._capture(candidate.player,candidate.level,game._fresh_shell_state())
+	var state: Dictionary = game.attempts.state()
+	state.completed_main = game.registry.main_route().slice(0,14)
+	state.story = {"kind":"story","level_id":"A3-L5","snapshot":snapshot,"checkpoint":snapshot.duplicate(true)}
+	_expect(game.attempts.restore_session(state) and game.attempts.record_snapshot(snapshot), "terminal TEST ONLY fixture seeds a valid first14 prefix and final unfinished story")
+	game._dispose(candidate)
+	game.menu.continue_story_requested.emit()
+	await _settle()
+	game.active_level.request_completion("final-tether")
+	await _settle()
+	game.menu.show_title()
+	_expect(game.attempts.state().completed_main.size() == 15 and game.menu.find_child("ContinueStoryButton",true,false) != null, "all main clears retain Continue Story until the authored final exit/coda is committed")
+	game.menu.continue_story_requested.emit()
+	await _settle()
+	_expect(game.active_level.level_id == "A3-L5" and game.menu.page_name() == "resume" and game.active_level.is_completed(), "final completed story can resume its remaining authored exit")
+	game.active_level.request_contact_exit("beyond-image",game.player)
+	await _settle()
+	game.menu.show_title()
+	_expect(game.menu.find_child("ContinueStoryButton",true,false) == null and game.attempts.story_snapshot().level.progress.contact_exit_id == "beyond-image", "committed terminal exit leaves Journey/replay as completed-campaign navigation")
+	var finished: Dictionary = game.attempts.story_snapshot()
+	game.menu.replay_requested.emit("A3-L5",finished.equipment_ids)
+	await _settle()
+	game.menu.leave_side_requested.emit()
+	await _settle()
+	_expect(game.attempts.active_kind() == "story" and Codec.same_values(game.attempts.story_snapshot(),finished) and game.menu.page_name() == "journey", "leaving final-level replay restores completed protected story without reopening the latched ending")
 func _new_shell() -> CinderCampaignShell:
 	var result: CinderCampaignShell = Shell.new()
 	result.configure_runtime(raw, TEST_ROOT+"campaign.json",TEST_ROOT+"settings.json",TEST_ROOT+"preferences.json")
