@@ -306,6 +306,14 @@ func _opening_observation() -> Dictionary:
 
 func _opening_diagnostic(label: String) -> void:
 	var actual: Dictionary = {"label": label, "swipes": swipes, "primaries": primaries, "epochs": opening_epochs.duplicate(), "activation_counts": opening_activation_counts.duplicate(), "route": level.call("route_state") if is_instance_valid(level) else {}, "hero": hero.global_position if is_instance_valid(hero) else Vector3.ZERO, "hp": hero.hp if is_instance_valid(hero) else -1.0, "camera": game.call("get_camera_framing_state") if is_instance_valid(game) else {}, "sources": _source_states(), "admissions": admissions, "checkpoints": opening_checkpoint_events}
+	# Read actual public response data after a failed readiness wait; never
+	# replace the motion, input, floor cache or dash that caused that failure.
+	actual["hero_response"] = hero.get_threat_response_state() if is_instance_valid(hero) else {}
+	actual["committed_dash"] = hero.get_committed_dash_state() if is_instance_valid(hero) else {}
+	actual["hero_physics_processing"] = hero.is_physics_processing() if is_instance_valid(hero) else false
+	actual["tree_paused"] = paused
+	actual["input"] = game.call("get_input_observation_state") if is_instance_valid(game) else {}
+	actual["world_actions"] = hero.get_world_action_records() if is_instance_valid(hero) else []
 	opening_diagnostics.append(_portable(actual))
 	print("NORMAL L3 OPENING DIAGNOSTIC ", label, " ", _portable(actual))
 
