@@ -1,5 +1,8 @@
 # A1-L3 greybox design — full level, unvalidated
 
+Exact reviewed **campaign-shared-26** `c0816fb9ed60caaac36e5e1320ab95d42589e0b8` is adopted through preserving merge **9eb1e9e7b3f051349849b0cc4c253a60986552f6**, canonical ACK **96be6904-928f-4e3b-83b3-5b74b3485b5e**. Publication ancestry and all **1931 tracked / 2095 physical owned hashes** are verified unchanged. Current owned pursuit checkpoint61a1731 is untested behavior despite clean import; native spore hook/codec/parent composition remains unimplemented. Earlier adoption/pending paragraphs are historical. Current import archive records57 exact copies, indexSHA3040ba18055f472d1fcb06c71ae71317433524e7308ba8fe353590901781c391.
+
+
 Current C31 pursuit component now has an opt-in native approach helper, explicit owned actor/codec API `act1-mushroom-selenite-2`, six closed tuning values and exact `approach_driving` ownership. The parent checks actual body/floor/scenery/neighbor/Player corridors, prospective full-source camera bounds and native admission against retained neighbor capsules. Existing isolated component scenes keep approach disabled; `scenes/acts/act1/a1_l3_crowd_greybox.tscn` opts in all three grove swarmers. The genuine crowd fixture is authored but **unexecuted**. No movement/pair/portrait/full-level pass is inferred from import.
 
 Native new-resource import `a1-l3-approach-import-1` completed **exit0 clean**, tested HEAD `f8de1f26ad40106b4bbbafa16b1e9f435f225844` / `campaign-shared-25`, zero pre/post source hash mismatches. Runtime pursuit behavior, API2 paired state and crowd clear now require targeted checks.
