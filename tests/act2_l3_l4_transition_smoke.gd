@@ -519,4 +519,3 @@ func _tr_routed_primary(direction: Vector3) -> int:
 	var input: Dictionary = _game.get_input_observation_state()
 	if not _expect(int(input.sequence) == input_before + 1 and input.last_observation.get("kind") == "primary_tap" and input.last_observation.get("accepted", false) and _actions.size() == before + 1 and _actions.back().kind == "primary", "real routed first tap immediately publishes one ordinary primary, no blast"): return 0
 	return int(_actions.back().hits)
-
