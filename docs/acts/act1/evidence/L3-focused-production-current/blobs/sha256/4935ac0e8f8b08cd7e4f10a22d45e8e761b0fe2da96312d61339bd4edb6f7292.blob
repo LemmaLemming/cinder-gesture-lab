@@ -1,0 +1,72 @@
+# Current quiet-floor proposal review — source only
+
+The frozen floor patch still replays exactly against the current art builder and environment manifest. No concrete new code defect was found in this narrow source review. The old recommendation for a separate import job is incorrect for this proposal: the reused tile already has a current imported resource, and the only prospective changes are text in an existing script/class and its provenance JSON. This review does not parse, import, apply, render or execute the candidate. All existing proposals, archives and the owner’s 383 recorded Save-job inputs remain untouched.
+
+## Exact paired proposal and current inputs
+
+The actual script is `scripts/acts/act1/mushroom_grotto_art.gd` (the owner’s `mushroom_art.gd` shorthand is not a separate target). In-memory unified-diff replay matched all four script hunks and the one manifest hunk without offsets or altered context. The output bytes equal the already frozen script and manifest candidates. The candidate JSON parses; all pre-existing manifest values remain exactly equal and the only appended key is `quiet_floor_overlay_preparation`.
+
+Read-only checkout HEAD: `4cae8a2382efa60f477793242088c75e34ed9ba8`. This is review attribution only, not an execution of the candidate.
+
+| Input / frozen candidate | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `scripts/acts/act1/mushroom_grotto_art.gd` | 29324 | `ef54d6dfbde500c4351bf7b04f33bc21845f207784cdfcb7941010514d6872ce` |
+| `assets/acts/act1/grotto/environment_manifest.json` | 19617 | `4610d217c525aa487c562912b2984f9276c51402c11d1c06e87572379611085c` |
+| `scripts/acts/act1/mushroom_caverns_layout.gd` | 9642 | `122712bf081527534fa2e0b3e8544e478d905fb4d51d616347c4e364c8bd4846` |
+| `scripts/acts/act1/mushroom_caverns.gd` | 45159 | `55b30d6d639bf4a468e27189ef4703039b630e4c96fcc88564b1f7e5d912ecd4` |
+| `scripts/acts/act1/mushroom_caverns_route.gd` | 38882 | `04f0655d4996bef6a9e25ff144ab701a98b3ae333c6faffa8236f3140d4d91f6` |
+| `scripts/acts/act1/mushroom_caverns_full.gd` | 57959 | `e6669c37647542b6225dbcfabd4e2ec99a4085bf77e3d8ef1b757fdf176956d5` |
+| `scripts/acts/act1/mushroom_caverns_route_codec.gd` | 45817 | `4a3c7071a91aa0a0d441396b4b34c6141b0df005fe3f3b729a0e6668b2ea2fa0` |
+| `scripts/acts/act1/mushroom_selenite.gd` | 83213 | `24749ae5a7dd4334aac643fffac603570040098a3970929561e53a4f86e51576` |
+| `assets/acts/act1/lunar/accents/painted_rock_surface.png` | 1099 | `6cc1e5b66e2c2ca94c9897cb774da37e5a85a874319214e65bda44bd3fb0ffa4` |
+| `assets/acts/act1/lunar/environment/floor_silver_tile.png` | 543 | `927971422809f26e5492ec6701a69d7b1ced7d1e6498c7d4736542e5b8831c64` |
+| `assets/acts/act1/lunar/environment/environment_manifest.json` | 24944 | `c6887a4316e01e6a9f97393996d3432e9721505413e49b773f4ea1335fea8c42` |
+| `.cinder/a1-l3-quiet-floor-art.patch` | 9342 | `cd7d73b0ecff4ba161abd1912ba68c2a4ef9ccf274da27fb3e534d5ff6c1eabc` |
+| `.cinder/a1-l3-quiet-floor-art.gd.txt` | 30941 | `2c428ad55872116a8e3b6e180eafd93e5502ddb6afde63a495fb2ba4684d5dee` |
+| `.cinder/a1-l3-quiet-floor-art-manifest.json` | 24879 | `f5e5c2033b333ace9d75e43f2223e80fa4a9801ef9b7b1491948f025be78e4f9` |
+| `.cinder/a1-l3-quiet-floor-art-notes.md` | 6601 | `4d8824f8427942eb0c492178b44a23f5e7add0cc280f0e76c499f40be1dadf3f` |
+| `.cinder/a1-l3-quiet-floor-art-verification.json` | 238626 | `bc7a271a5da4e6d64fb9d82921b37fb511e5caa880451e71a5e1c19798b5a72c` |
+| `assets/acts/act1/lunar/environment/floor_silver_tile.png.import` | 990 | `9a5306e3e40487b55e98f70e4711d8bd32b73cafc2289039aac3d0fc3945ab54` |
+| `.godot/imported/floor_silver_tile.png-d26a488f9395175b253ee2a02677ec14.ctex` | 286 | `81811535c435d8cdc8360b3229662841fced0ad94f394d06263486e0a0c40ab1` |
+| `.godot/imported/floor_silver_tile.png-d26a488f9395175b253ee2a02677ec14.md5` | 91 | `92597ef5d86eb5c233adffbbcda0ff8d8f72f23c75c62c354173e671d3311b6e` |
+
+The original preparation and verification attribution (API34, preparation HEAD8a32fb2, unexecuted candidate) remains historical. The private verification’s old 948-file protected inventory was not repeated. This review checks only the direct inputs above, exact two-target replay, and the presently retained resource/parent guard chain.
+
+## Import qualification without rewriting old notes
+
+The tile is still exactly 64×64, original SHA927971422809f26e5492ec6701a69d7b1ced7d1e6498c7d4736542e5b8831c64. Its existing `.png.import` points to UID `uid://cnwpa17sa8i8m` and `res://.godot/imported/floor_silver_tile.png-d26a488f9395175b253ee2a02677ec14.ctex`; the native cache file exists. Its recorded source MD5 `015da30f065748396ec84fb82e7eec3c` and destination MD5 `6273b55c11f3d131929fb311169ca95f` both match the actual source/cache bytes. The existing import has nearest-use-compatible unmipped texture data (mipmaps disabled), with the original hard-alpha source unchanged.
+
+The candidate adds no resource file, executable class, script path, UID, texture pixel change, shader or material next-pass. Therefore a separate heavy import/discovery job is not warranted merely for this patch. After owner promotion when frozen jobs permit it, the next targeted native fixture must still parse and exercise the exact changed script/material properties. A missing or invalid imported resource would be a new concrete reason for import; none was observed here. The old notes and appended candidate’s “unimported” preparation status/validation wording are preserved as historical text, qualified by this new note rather than silently rewritten. No new runtime readiness is asserted.
+
+## Geometry, provenance and optical obligations
+
+The one static PlaneMesh is presentation only: size14×72, identity basis/scale, local centre `(0,0.002,-18)`, X[-7,7], Z[-54,18], named `FungalArt/QuietGrottoSilverFloorOverlay`. Native floor is still `Layout.FLOOR_SIZE=(14,0.4,72)`, centre `(0,-0.2,-18)`, physical top0; the retained BoxMesh/Floor/Visual and collider are not removed or moved. Existing SAFE_RECT remains(-6.9,-53.9,13.8,71.8). No stalk/wall/support/body/shape owner, actor source point, spore field, cue, response path, camera or controller changes occur.
+
+UV repeat unit is1.536m (64×0.024m/px), `uv1_scale=(14/1.536,72/1.536,1)`. The original lunar silver tile’s family/provenance is reused, not redrawn or extracted from concepts. Its alpha margin exposes the existing gray floor; this proposal does not finish the horizon, new rock wings or all five-room environment art. No mushroom cap/stalk/court geometry or placement is touched. Append-only source IDs/provenance and old readiness/evidence scopes stay distinct from this new binding.
+
+The new plane has ordinary depth testing/priority0, unshaded white albedo, nearest repeat, alpha-scissor.5, antialiasingOFF/edge.3, blendMIX/depthOPAQUE_ONLY and shadowsOFF. It is below the unchanged native spore broken boundary at y.025. The native Hero contact shadow centre is relative y.015 with height.012; that source relationship is unchanged. These separations are source arithmetic, not rendered optical proof: actual Hero/source foot pivots can sit slightly below physical y0 and the extra2mm skin can change depth clipping or contact-shadow contrast. Texture contrast could also compete with faint yellow lanes/harmless broken field edges/low tufts. Those are specific portrait risks; no camera point containment can certify their pixels.
+
+## Retained resource custody and Save/normal consumers
+
+Construction is synchronous: `build_geometry_art` (current line31) calls `_build` (70), which adds the overlay before the existing `_retain_bindings` traversal (281). No yield, signal, clock or extra authority is introduced. The new leaf joins the existing exact parent/path/node composition, transform/global transform, visible ancestor/process state, mesh identity/surface arrays/AABB, renderer state, material/surface override identity, and texture handle/path/size inventory. Replacement with an equivalent plane/material, hiding/detaching, moving/scaling, adding children or surface materials, overlay material or mesh script still fails the same native custody checks.
+
+The only serializer change (current `_material_bytes`327 → candidate356) additionally retains alpha-scissor threshold, AA mode/edge, blend and depth mode for every retained StandardMaterial3D, including original scenery materials. Existing entries are not dropped. Defaults are captured at fresh construction, not guessed from a previous world. No custom shader/next-pass or UV-dependent physics is added. Texture identity/path/size checks remain the existing scope; this proposal does not introduce a dynamic texture updater.
+
+The actual parent chain stays intact:
+
+- Base `_scenery_error`586 calls the retained art’s `binding_error`205. `_floor_error`594 still verifies the original floor collision/resource/transform/disabled flag. Base `_camera_framing_points`616 returns INF on failed floor/scenery custody; source presentation/approach guards keep both boundaries.
+- Route `_source_approach_error` guards body/art/floor/scenery around its native response at430–434. Normal source/cue/field/forecast framing is unchanged; the decorative plane adds no mandatory threat/source framing point and grants no input or admission.
+- Full parent `route_snapshot_runtime_error`202 requires the same paused quiet actual-world boundary and floor/scenery guards at206. `_current_presentation_error`502 first runs that guard, then existing actual Hero22/current source/cue/footprint/response union and canonical HUD camera containment. Its full `_camera_framing_points`575 also returns INF on scenery faults.
+- RouteCodec keeps the exact parent runtime/framing Callables. Each fresh actual world/candidate constructs and retains its own new plane/material; no donor resource identity or saved source pose is substituted. No serialized schema/version, threat/cooldown/epoch, physical proof or progress entitlement changes are proposed. Save compatibility is a source-level expectation only and requires affected native validation if the owner promotes it.
+
+The recorded Save native1 dependency map contains exactly383 original inputs, including old art ef54d6df…, old grotto manifest4610d217… and unchanged tile92797142…. This note is absent from that recorded set. Its recorded/imported/frozen bytes are not changed, and any outcome from that job belongs to its old art source. The candidate2c428ad…/manifestf5e5c203… can acquire native art/Save credit only from later exact executed sources. Current full872 e6669c37…, codec5374a3c7071…, Actor1445 24749ae5…, route67804f0655…, and actual current base77555b30d6d… are the reviewed consumers; the earlier hypothetical base67f86452 is not substituted.
+
+## Minimal next native checks after owner promotion
+
+Use the next already-planned normal-route portrait as the affected rendering check; no separate broad campaign/import suite is suggested solely for the floor. Capture representative native room views through the same complete source/cue/Hero guard, retaining all eight Crossed source silhouettes when that room is active and both blocked/open court states. Check ordinary warning/active/recovery and actual landing/primary frames already produced by that fixture for: floor continuity/seams/flicker, full body/feet and contact shadow, yellow lane + reachable safe landing, harmless broken field perimeter and available/active/spent low cluster contrast, native HUD readability, and no new art occlusion. Hide the public Pause overlay only at the supported paused capture barrier and restore it before real GUI Resume; numeric camera success alone is insufficient. Do not change caps/camera/cue colors or physical tolerances to compensate for a floor failure.
+
+At one existing quiet barrier add directly affected, atomic retained-resource negatives only: mutate each new threshold/AA mode/edge/blend/depth setting independently; hide/detach/translate the actual plane; replace its mesh/material/texture with an equivalent resource; and restore each original value/reference without repairing physics. Require nonempty `binding_error`, unchanged Hero/actor/Scheduler/native units/events during pure checks, INF/denied public framing as applicable, and empty/rejected full capture/preflight before any saved unit commits. Existing original control must recover exactly after each presentation-only restoration. These verify the new guard’s reach; no whole Save acceptance is inferred from a pure negative.
+
+Any later recorder/source gates must consciously record the exact new builder2c428ad… and append-only manifestf5e5c203… rather than relabel the live job or auto-learn expectations. The unchanged tile is already in the current recorded set. No new bitmap/native UID is implied. Root remains responsible for promotion, native validation, visual review and acceptance.
+
+This is a frozen source-only review. No tracked source/resource/manifest, old private artifact, engine/import/cache or public evidence archive was edited; no stage/commit or gameplay/art/Save acceptance was performed.

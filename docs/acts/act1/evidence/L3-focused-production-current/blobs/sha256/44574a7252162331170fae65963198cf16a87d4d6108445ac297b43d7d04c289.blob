@@ -1,0 +1,23 @@
+# CampaignShell quiet-capture proposal — private and unexecuted
+
+Exact base: `.cinder/a1-l3-full-parent-candidate-fixture-writer872.gd.txt`, 492 lines, SHA256 `e2ec6d813286b4a7ff1dce3277884731030d0e911e7ef0841993dcc8a3462552`. This base changes only the prior fixture's producer hash gate to future fullparent872 `e6669c37647542b6225dbcfabd4e2ec99a4085bf77e3d8ef1b757fdf176956d5`. Hash-only promotion does not make that fixture runnable.
+
+New candidate: `.cinder/a1-l3-full-parent-candidate-fixture-campaign-quiet.gd.txt`, 523 lines, SHA256 `ff60f9974cf5a3e48152b4aa744c7263707ffcbb6254986e7b085a00dbd023e6`. New patch: `.cinder/a1-l3-full-parent-candidate-fixture-campaign-quiet.patch`, 40 lines, SHA256 `7d2c96f8a0b2ad1b736678e6fae7eddb9d6124934cc1529cb67a16dd2529c294`. Original492, hash-only492, inherited actual980, old proposals and current job resources are untouched.
+
+## Source-proven boundary
+
+Actual980 `tests/acts/act1/a1_l3_normal_full_route.gd:816–832` now implements `_full_quiet_capture` directly. It never calls this future CampaignShell fixture's `_full_pause` override (`:258–262`) and looks for Resume under GameHUD. Actual CampaignShell `scripts/campaign/shell.gd:114–121` directs deferred Game pause into its operation queue. `_drain`/`_commit_drain` (`:190–218`) stop simulation and commit only after quiet callbacks; pause operation (`:251–254`) opens CampaignMenu. Public `scripts/ui/campaign_menu.gd:92–96,262–273` supplies `is_open`, `page_name` and actual ResumeButton. The menu is the correct observation surface.
+
+## Exact proposed change
+
+Add only a fixture `_full_quiet_capture` override and pure `_aggregate_capture_menu_ready` helper. Preserve the old `_full_pause`, `_capture`, `_gui_resume_pair`, checkpoint service and every existing assertion/function byte-for-byte. The producer gate remains exactly872. The helper rejects absent/freed/wrong menu handles before reading their fields and uses public menu methods plus the existing enabled/visible ResumeButton reader.
+
+The override first retains `_aggregate_settle_checkpoint` with its original 8000ms observed-checkpoint-drain bound. The original SINGLE2 native Hero-clock window then waits jointly for complete CURRENT native camera containment, one real `request_pause_deferred`, actual paused state and CampaignMenu Resume readiness. It uses a Dictionary-reference request latch and calls neither `_full_pause` nor another `_wait`. Living Hero, actual Shell, ordinary input guard and unexpected pause rejection are retained. No future accepted plan grants current containment; inherited `_full_capture_view_ready` is unchanged.
+
+After that same wait, retain `_aggregate_settle` (original eight process frames/campaign-error assertion), confirm the real public menu, retain strict AFTER-pause `_framing`, call unchanged `_capture` (including its independent original eight-frame settlement and actual complete native snapshot) and resume through unchanged real mouse press/release `_gui_resume_pair`. No newly added/reset native wait or drain budget, forced resume, clock/camera/renderer/HUD/menu write or required point omission. Simulation clock stops while paused as before; the existing overall bounded fixture watchdog remains responsible for a permanently absent menu/drain.
+
+## Textual checks and native limits
+
+Candidate minus the exact inserted span equals all original base bytes. Unified diff applies in a disposable copy of the base and exactly matches candidate bytes; whitespace checked. These are textual checks only, not GDScript parsing or execution. Original native control/progression/save assertions are preserved; one additional post-settlement public menu assertion observes the same original `_full_pause` condition. Count is path-dependent and no executed check count is claimed.
+
+Required future promotion still includes the reviewed fullparent872/codec/constructor/opt-in scene and supported explicit presentation writer, plus actual source/resources/dependency closure and exact current inherited fixture. The normal prototype still refuses aggregate saves. Root alone may import/run once all authorized prerequisites are frozen. Narrow native check: genuine first checkpoint drain and resumed approach, this overridden joint capture pause/menu/snapshot/real GUI Resume, then genuine bound Warning/deferred pause/quiet aggregate. Unexpected focus/pause or death and failed save drain must reject; do not repair them. No full-route, fresh Continue/Retry, optical or save acceptance is established by this draft.

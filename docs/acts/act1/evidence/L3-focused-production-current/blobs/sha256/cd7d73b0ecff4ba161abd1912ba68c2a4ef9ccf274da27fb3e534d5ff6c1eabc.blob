@@ -1,0 +1,189 @@
+--- a/scripts/acts/act1/mushroom_grotto_art.gd
++++ b/scripts/acts/act1/mushroom_grotto_art.gd
+@@ -6,6 +6,10 @@
+ 
+ const Layout = preload("res://scripts/acts/act1/mushroom_caverns_layout.gd")
+ const RockPaint = preload("res://assets/acts/act1/lunar/accents/painted_rock_surface.png")
++const SilverFloor = preload("res://assets/acts/act1/lunar/environment/floor_silver_tile.png")
++const FLOOR_OVERLAY_SIZE: Vector2 = Vector2(14, 72)
++const FLOOR_OVERLAY_ORIGIN: Vector3 = Vector3(0, 0.002, -18)
++const FLOOR_TILE_WORLD_SIZE: float = 1.536
+ const CAP_SEGMENTS: int = 24
+ const COURT_ORIGIN: Vector3 = Vector3(0, 0, -52)
+ 
+@@ -68,6 +72,7 @@
+ 
+ 
+ func _build() -> void:
++	_build_quiet_floor_overlay()
+ 	for spec: Dictionary in _stalk_specs: _mushroom(spec)
+ 	for spec: Array in Layout.SCENIC_SPECS:
+ 		if spec[0] == "FallenTrunk": _trunk(spec[1], spec[2])
+@@ -80,6 +85,30 @@
+ 			_wing(side, z, index)
+ 	_court_threshold()
+ 	set_court_open(false)
++
++
++func _build_quiet_floor_overlay() -> void:
++	# Presentation skin only. The original Floor/Visual and physical floor stay
++	# intact beneath transparent margins, with no extra collider or cue authority.
++	var plane := PlaneMesh.new()
++	plane.size = FLOOR_OVERLAY_SIZE
++	var material := StandardMaterial3D.new()
++	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
++	material.albedo_color = Color.WHITE
++	material.albedo_texture = SilverFloor
++	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
++	material.texture_repeat = true
++	material.uv1_scale = Vector3(FLOOR_OVERLAY_SIZE.x / FLOOR_TILE_WORLD_SIZE, FLOOR_OVERLAY_SIZE.y / FLOOR_TILE_WORLD_SIZE, 1)
++	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
++	material.alpha_scissor_threshold = 0.5
++	material.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_OFF
++	material.alpha_antialiasing_edge = 0.3
++	material.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
++	material.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_OPAQUE_ONLY
++	material.no_depth_test = false
++	material.render_priority = 0
++	var overlay := _mesh(self, "QuietGrottoSilverFloorOverlay", plane, material)
++	overlay.position = FLOOR_OVERLAY_ORIGIN
+ 
+ 
+ func _mushroom(spec: Dictionary) -> void:
+@@ -325,7 +354,7 @@
+ 
+ 
+ func _material_bytes(material: StandardMaterial3D) -> PackedByteArray:
+-	return var_to_bytes([material.shading_mode, material.albedo_color, material.cull_mode, material.texture_filter, material.texture_repeat, material.vertex_color_use_as_albedo, material.uv1_scale, material.uv1_offset, material.transparency, material.no_depth_test, material.render_priority, material.billboard_mode, material.grow, material.grow_amount, material.proximity_fade_enabled, material.distance_fade_mode, material.next_pass == null])
++	return var_to_bytes([material.shading_mode, material.albedo_color, material.cull_mode, material.texture_filter, material.texture_repeat, material.vertex_color_use_as_albedo, material.uv1_scale, material.uv1_offset, material.transparency, material.alpha_scissor_threshold, material.alpha_antialiasing_mode, material.alpha_antialiasing_edge, material.blend_mode, material.depth_draw_mode, material.no_depth_test, material.render_priority, material.billboard_mode, material.grow, material.grow_amount, material.proximity_fade_enabled, material.distance_fade_mode, material.next_pass == null])
+ 
+ 
+ func _curtain_half(parent: Node3D, side: float, opened: bool) -> void:
+--- a/assets/acts/act1/grotto/environment_manifest.json
++++ b/assets/acts/act1/grotto/environment_manifest.json
+@@ -423,5 +423,125 @@
+       "Full crowd/five-room route, production save and required legal-kit/profile acceptance"
+     ],
+     "limits": "These scoped native/art results do not establish full L3/final art, all orientations/scenic poses, human balance or performance. Original first generic/HUD/guard overlaps and codec audio warnings remain archived. Current builder adds custody guard without changing geometry/material values."
++  },
++  "quiet_floor_overlay_preparation": {
++    "id": "ACT1-GROTTO-QUIET-SILVER-FLOOR-OVERLAY",
++    "status": "private_inert_candidate_unapplied_unparsed_unimported_unexecuted_no_portrait_acceptance",
++    "historical_record_policy": "All pre-existing manifest fields, asset readiness, producer hashes and evidence scopes are preserved. This appended preparation does not relabel earlier executed sources.",
++    "read_only_preparation_head": "8a32fb2c3acf7418eb2500e08aa1f3336208d67b",
++    "api_at_preparation": 34,
++    "candidate_runtime_builder": {
++      "path": "scripts/acts/act1/mushroom_grotto_art.gd",
++      "base_sha256": "ef54d6dfbde500c4351bf7b04f33bc21845f207784cdfcb7941010514d6872ce",
++      "candidate_sha256": "2c428ad55872116a8e3b6e180eafd93e5502ddb6afde63a495fb2ba4684d5dee"
++    },
++    "base_manifest_sha256": "4610d217c525aa487c562912b2984f9276c51402c11d1c06e87572379611085c",
++    "source_reference_ids": [
++      "G18",
++      "G25",
++      "G15",
++      "G12",
++      "F09",
++      "F10"
++    ],
++    "source_use": "Previously personally inspected local references guide restrained lunar ground presentation only. No concept or film pixels are traced, extracted, or copied.",
++    "reused_asset": {
++      "id": "ACT1-LUNAR-FLOOR-SILVER-TILE",
++      "path": "assets/acts/act1/lunar/environment/floor_silver_tile.png",
++      "sha256": "927971422809f26e5492ec6701a69d7b1ced7d1e6498c7d4736542e5b8831c64",
++      "native_bitmap_size_px": [
++        64,
++        64
++      ],
++      "provenance_manifest": {
++        "path": "assets/acts/act1/lunar/environment/environment_manifest.json",
++        "sha256": "c6887a4316e01e6a9f97393996d3432e9721505413e49b773f4ea1335fea8c42"
++      },
++      "existing_family": "lunar_quiet_silver_floor",
++      "producer_source_ids": [
++        "G15",
++        "G17",
++        "G24",
++        "F07"
++      ],
++      "canonical_basis_ids": [
++        "E06",
++        "E07",
++        "P10",
++        "O35"
++      ],
++      "pixel_authorship": "Existing original L2 handmade texture bytes reused unchanged. No new raster asset."
++    },
++    "native_scale": {
++      "texture_pixel_size_m": 0.024,
++      "texture_repeat_unit_m": [
++        1.536,
++        1.536
++      ],
++      "plane_dimensions_m": [
++        14,
++        72
++      ],
++      "uv1_scale": [
++        9.114583333333334,
++        46.875,
++        1
++      ]
++    },
++    "pivot": {
++      "level_local_plane_centre": [
++        0,
++        0.002,
++        -18
++      ],
++      "bounds_x": [
++        -7,
++        7
++      ],
++      "bounds_z": [
++        -54,
++        18
++      ],
++      "basis": "identity",
++      "scale": [
++        1,
++        1,
++        1
++      ],
++      "parent": "FungalArt"
++    },
++    "geometry": "One static presentation-only PlaneMesh named QuietGrottoSilverFloorOverlay. No collision or walkable geometry is created; Floor/Visual, Floor/CollisionShape3D, floor resources and shape owners remain untouched.",
++    "material": {
++      "type": "StandardMaterial3D",
++      "shading": "unshaded",
++      "albedo": "white",
++      "sampler": "nearest, repeating",
++      "transparency": "alpha_scissor",
++      "alpha_scissor_threshold": 0.5,
++      "alpha_antialiasing_mode": "off",
++      "alpha_antialiasing_edge": 0.3,
++      "blend_mode": "mix",
++      "depth_draw_mode": "opaque_only",
++      "no_depth_test": false,
++      "render_priority": 0,
++      "shadows": "off",
++      "next_pass": null,
++      "custom_shader": false
++    },
++    "states": [
++      "quiet_static"
++    ],
++    "state_binding": "No script on leaf, no process, animation clock, signal, timed cue, availability state or interaction is introduced.",
++    "collision_role": "None. Existing continuous floor/support, walls, grounded stalks and all source/player bodies retain original authority.",
++    "occlusion_role": "At y0.002 the plane supplies ground texture. Transparent margins reveal the retained gray base; real cue/perimeter geometry is unchanged. Actual portrait depth, cue contrast, Hero feet and source silhouettes remain unvalidated for this binding.",
++    "custody": "Existing retained descendant/node/mesh/material/texture/transform composition checks capture the new leaf. Material bytes additionally retain alpha-scissor threshold, antialiasing mode/edge, blend mode and depth draw mode before later authority checks.",
++    "reuse_family": "Shared original lunar quiet silver floor presentation, now proposed across all five existing Mushroom Caverns chambers.",
++    "affected_scope": "Every existing caller of build_geometry_art would receive the same plane after promotion; earlier component art evidence does not establish this new rendered binding.",
++    "validation_required": [
++      "Owner review and clean native parse/import of exact promoted bytes.",
++      "Atomic retained-resource negatives for threshold, antialiasing mode/edge, blend/depth mode, equivalent plane replacement, detached/hidden plane and texture/pivot substitution.",
++      "Actual native portraits of five rooms and court blocked/open states, with Hero/source body-feet, complete native cues/fields, safe landing and HUD checked at warning/active/recovery and ordinary openings.",
++      "Affected gameplay assertions remain unchanged; no full-route, save, campaign, kit/profile, human balance or performance acceptance is inferred."
++    ]
+   }
+ }

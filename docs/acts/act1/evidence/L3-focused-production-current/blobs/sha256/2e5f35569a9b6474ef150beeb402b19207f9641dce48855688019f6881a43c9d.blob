@@ -1,0 +1,33 @@
+# Ordinary reservation custody correction — private, unexecuted
+
+Exact paired actual bases: `scripts/acts/act1/mushroom_caverns.gd`775 SHA256 `67f86452f8dea9da0ec45ca4e515a6e0dfb695d3bb138110bf79280501681dd7`; `tests/acts/act1/a1_l3_initial_admission_custody.gd`282 SHA256 `fc4debce836a818fcc5961ac06a5448c36158f0157c17180187685c0bf747f76`. Both runtime targets remain unchanged; original282/provenance and all old bundles are preserved.
+
+Frozen new outputs:
+
+- `.cinder/a1-l3-initial-admission-ordinary-record-base.gd.txt`: 775 lines, SHA256 `55b30d6d639bf4a468e27189ef4703039b630e4c96fcc88564b1f7e5d912ecd4`.
+- `.cinder/a1-l3-initial-admission-ordinary-record-fixture.gd.txt`: 283 lines, SHA256 `608a70102896f644ef86dbdeefd0d445542de5b9d4f9eeef8f41962e33bcc5fc`.
+- `.cinder/a1-l3-initial-admission-ordinary-record.patch`: 39 lines, SHA256 `b7feb3e68c3f1bc8b4d9ddd31c4c08464a5fd92284da6337ce8f10decac5f44c`.
+
+## Preserved actual failure and exact mismatch
+
+`.cinder/a1-l3-initial-admission-valid.log`/`.json` and `l3-initial-admission-custody-3258871.json` retain the actual Shared37 run:83 checks/1 failure, exit1, no source hash mismatch, zero credited swipes/primaries. The first meaningful failure is the fixture159 compound Warning assertion. Both real Cue and Source packets retain ordinary lease `threat-1`, source instance96099896277, start/clock1.25, cooldown5.1, C31 living cycle1 Warning, Actor `outside_transaction=false`, Scheduler `outside_transaction=true`, no parent response/publication and unpaused state. The lease has no `response_actor_instance_id`; `.get` therefore returns null and cannot equal the actual Hero instance ID. Stored packet values corroborate these conjuncts; route/parent/live Hero ID were not independently serialized in that packet, so this diagnosis does not invent additional observations.
+
+This is not a Player dash/transaction fault. The report retains a real native world action: full2.69999980926514 forward dash, no collision shortening, genuine endpoint(0,-.00484376,12.30000019), completed at Player action clock.3333333333. The fixture aborts before its later receipt assertion/credit, hence reported swipes0. The failed assumption also exists in owned Base `_corresponding_admission`323 and prevents ordinary admission corroboration and its narrowly owned cleanup. Source inspection establishes that follow-on hazard; the first failed fixture does not independently establish every later runtime effect.
+
+## Published record and binding contracts
+
+Shared `scripts/combat/threat_scheduler.gd:189–207` constructs the ordinary candidate without a Player-ID field. `_commit_ordinary_attack:210–221` adds only lease ID/retained owner/floor guards and returns `_public_record`. Pure `source_control_state:1189–1208` reads that actual retained owner record without pruning. `_public_record:1226–1236` copies it, strips private handles and adds native armed/state; it does not synthesize Player IDs. Authored replay construction (`:255,340`) explicitly includes `response_actor_instance_id`; its schema cannot be imposed on ordinary lunge/stationary records.
+
+Actual Player correspondence remains available through the owned Actor's public `get_spore_native_bindings:562–564`, whose live/same-world/retained-body checks precede its exact actual Player/Scheduler aliases. Actor `_prepare_start` builds the response from its immutable actual `_hero` (`:414` onward); native preview `_preview_response_error:1000–1018` compares the actual shared response and `_preview_guard:991–997` retains the ephemeral actual actor identity. Those checked preview guards are not extra persisted ordinary lease fields.
+
+## Exact patch scope
+
+Base323 drops only the nonexistent ordinary-record conjunct. All preceding retained actual Actor/script/parent/tree/world/Player/Scheduler/role-binding checks stay byte-identical; specifically Base318–319 already require `native.player == hero` and `native.scheduler == scheduler`. Same owner instance, returned lease ID, pure Actor reservation ID and subsequent exact full native reservation equality are unchanged. No authority cache, replay schema change, weaker same-lease cleanup or extra shared API is introduced.
+
+Fixture adds one pure actual native-binding read in the Warning observer and replaces only the invented lease field with `native.player == hero` plus `native.scheduler == scheduler`. Its ExpectedSources Base hash alone changes to the chosen775 candidate SHA55b30d6d639bf4a468e27189ef4703039b630e4c96fcc88564b1f7e5d912ecd4. All other hash pins, Owner/source/lease/transaction/state/clock/cooldown assertions, callbacks/labels, genuine recognizer input, cleanup and budgets remain exact. The public binding getter also rejects missing or invalid retained body bindings; no fabricated Player-ID field or diagnostic copy is accepted.
+
+## Verification and next narrow run
+
+Paired unified diff passed `git apply --check --whitespace=error-all` in a disposable private copy; replay equals both inert candidates exactly. Both actual source hashes stayed equal to their original bases. This is textual verification only, not parsing/native execution. No tracked/shared/scene/assets/test dependency mutations, UID creation, engine, import or commit occurred. No assertion count/native success is claimed for the candidates.
+
+After owner review/promotion, rerun only the failed valid custody case first. It must retain the exact initial source/cue/native lease and publish one corroborated parent response, then pass its original public pause/freeze/retained future16/cleanup checks. If that passes, the already planned four source/cue cancel/direct-pause controls can establish their separate semantics. Original4 native readiness,8 wall initial Warning,70 wall watchdog,.5 cleanup timer, input/camera/body/timing/geometry and all strict expectations stay unchanged. This does not establish full-parent save/candidate restore, whole route or portrait acceptance.
