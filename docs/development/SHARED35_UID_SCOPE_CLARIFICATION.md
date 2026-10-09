@@ -1,0 +1,7 @@
+# Shared35 UID inventory scope
+
+The [separate Shared35 resource metadata](evidence/shared35-resource-metadata/index.json) retains the original later import, generated sidecars and custody report. Its recorded counts **288/306/294/310**, in integration/Act1/Act2/Act3 order, are active **script-sidecar .gd.uid** counts. They do not count every text UID resource type. The scan excludes hidden directories and respects .gdignore boundaries, so historical frozen UID copies receive no active-resource credit.
+
+A separate read-only inspection during the Shared35 publication review, including shader sidecars, observed **291/309/297/314** active text UID values in the same checkout order. Both inspections found zero duplicate active values and no collision involving either newly generated script UID (cap56fkt3h38b, c8rkhlx668ow5). These are observations at those inspections, not current counts after subsequent owned imports, binary-cache inspection or a complete resource-reference graph proof.
+
+This clarification does not rewrite the original custody report, metadata index d7917d90416f22c2089cf982a087ed1fdaf5eac996b250ec7b221cac302c8fdd, functional index ec74cd7dc92ccd095da08c8e8b8f42c66dc4b041c6d62aff8f81b4c6b60ea635 or any of the ten original functional source subsets. The later import remains metadata only, with no additional functional assertion, authored-level, performance or earlier-source execution credit.

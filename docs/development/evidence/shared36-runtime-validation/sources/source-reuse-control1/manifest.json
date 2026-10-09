@@ -1,0 +1,914 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-09T00:52:00.499986+00:00",
+  "canonical_root": "/Users/howardchen/Documents/ChatGPT/video game idea",
+  "scope": "Exact original pre-queue bounded literal referenced sources and supplied seed docs/tool/configuration, not complete engine import/resource graph. All originals retained independently per submitted job; no native or pass claim is implied.",
+  "seeds": [
+    ".cinder/local.json",
+    ".cinder/runtime-source-reuse-observed-locked/.gdignore",
+    ".cinder/runtime-source-reuse-observed-locked/README.md",
+    ".cinder/runtime-source-reuse-observed-locked/authored_enemy_sequence.gd",
+    ".cinder/runtime-source-reuse-observed-locked/dev.original.py",
+    ".cinder/runtime-source-reuse-observed-locked/difficulty.gd",
+    ".cinder/runtime-source-reuse-observed-locked/manifest.json",
+    ".cinder/runtime-source-reuse-observed-locked/observation-fixture.patch",
+    ".cinder/runtime-source-reuse-observed-locked/prior-release-manifest.json",
+    ".cinder/runtime-source-reuse-observed-locked/prior-runner.original.py",
+    ".cinder/runtime-source-reuse-observed-locked/replay_program.gd",
+    ".cinder/runtime-source-reuse-observed-locked/run_controlled_fixture.py",
+    ".cinder/runtime-source-reuse-observed-locked/runner.patch",
+    ".cinder/runtime-source-reuse-observed-locked/runtime-adoption.original.json",
+    ".cinder/runtime-source-reuse-observed-locked/self-check.json",
+    ".cinder/runtime-source-reuse-observed-locked/self_check.py",
+    ".cinder/runtime-source-reuse-observed-locked/source_reuse_smoke.gd",
+    ".cinder/runtime-source-reuse-observed-locked/source_reuse_smoke.original.gd",
+    ".cinder/runtime-source-reuse-observed-locked/static-verification.json",
+    ".cinder/runtime-source-reuse-observed-locked/threat_scheduler.gd",
+    ".cinder/runtime-source-reuse-signature-safe/.gdignore",
+    ".cinder/runtime-source-reuse-signature-safe/README.md",
+    ".cinder/runtime-source-reuse-signature-safe/authored_enemy_sequence.gd",
+    ".cinder/runtime-source-reuse-signature-safe/authored_enemy_sequence.original.gd",
+    ".cinder/runtime-source-reuse-signature-safe/build_draft.py",
+    ".cinder/runtime-source-reuse-signature-safe/difficulty.gd",
+    ".cinder/runtime-source-reuse-signature-safe/difficulty.original.gd",
+    ".cinder/runtime-source-reuse-signature-safe/difficulty_profiles.original.bin",
+    ".cinder/runtime-source-reuse-signature-safe/frozen-inputs-before.json",
+    ".cinder/runtime-source-reuse-signature-safe/guarded0939-manifest.json",
+    ".cinder/runtime-source-reuse-signature-safe/manifest.json",
+    ".cinder/runtime-source-reuse-signature-safe/prior-rebased35-manifest.json",
+    ".cinder/runtime-source-reuse-signature-safe/replay_program.gd",
+    ".cinder/runtime-source-reuse-signature-safe/replay_program.original.gd",
+    ".cinder/runtime-source-reuse-signature-safe/run_controlled_fixture.py",
+    ".cinder/runtime-source-reuse-signature-safe/runtime-source-reuse.patch",
+    ".cinder/runtime-source-reuse-signature-safe/source_reuse_smoke.gd",
+    ".cinder/runtime-source-reuse-signature-safe/static-verification.json",
+    ".cinder/runtime-source-reuse-signature-safe/threat_scheduler.gd",
+    ".cinder/runtime-source-reuse-signature-safe/threat_scheduler.original.gd",
+    ".cinder/runtime-source-reuse-signature-safe/verify_draft.py",
+    ".cinder/source-reuse-candidate-adoption.json",
+    "data/design/difficulty_profiles.json",
+    "project.godot",
+    "scripts/combat/authored_enemy_sequence.gd",
+    "scripts/combat/difficulty.gd",
+    "scripts/combat/replay_program.gd",
+    "scripts/combat/threat_scheduler.gd",
+    "scripts/dev/dev.py",
+    "tests/authored_echo_playback_smoke.gd",
+    "tests/fixtures/authored_echo_actor.gd",
+    "tests/fixtures/authored_echo_native_codec.gd"
+  ],
+  "files": [
+    {
+      "path": ".cinder/local.json",
+      "archived_path": "files/.cinder/local.json",
+      "bytes": 207,
+      "sha256": "d814b23dd06fd656260904920d38c2cc1325ffe42c68d7d6cc1d2172bb1fff02"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/.gdignore",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/README.md",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/README.md",
+      "bytes": 6452,
+      "sha256": "206a87d1cfcb9e4e2bd5f50584d939a1658e120438d8ac946229719fd93b0721"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/authored_enemy_sequence.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/authored_enemy_sequence.gd",
+      "bytes": 35759,
+      "sha256": "02d1469d1d1ff657722d2ce43b06e274c136e14f65ae6fdd91ff1521139a399e"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/dev.original.py",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/dev.original.py",
+      "bytes": 28095,
+      "sha256": "671686da399427711dac0c97c80a832387aeb74041c269df2c50f69daac86b27"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/difficulty.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/difficulty.gd",
+      "bytes": 4882,
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/manifest.json",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/manifest.json",
+      "bytes": 4857,
+      "sha256": "b0aca65f534ded21f30c22ed45df3b2117945ea03329504cc216ba924584ab8d"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/observation-fixture.patch",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/observation-fixture.patch",
+      "bytes": 4613,
+      "sha256": "8021bcaf1778befe0da0f3863e8a47c941982c37331128a91be3713f613675f9"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/prior-release-manifest.json",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/prior-release-manifest.json",
+      "bytes": 6443,
+      "sha256": "8c6818f252221ad6f0e7f9be976d4405c5662e09fc4fe83e6df371272f3d9689"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/prior-runner.original.py",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/prior-runner.original.py",
+      "bytes": 3703,
+      "sha256": "1b350acb3bfae33fa34d4c2521edeb5715ccd7b98b48f88b33d28d9542d41839"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/replay_program.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/replay_program.gd",
+      "bytes": 4180,
+      "sha256": "0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/run_controlled_fixture.py",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/run_controlled_fixture.py",
+      "bytes": 12079,
+      "sha256": "3b8dca5789ba1dc64b2d869a80206a61b2accd33fc262a77bf1fb670766290f0"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/runner.patch",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/runner.patch",
+      "bytes": 14996,
+      "sha256": "68ef6f2f95412dac13655146f28593c232f9d48e32ac52165e65d3b7ccbac436"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/runtime-adoption.original.json",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/runtime-adoption.original.json",
+      "bytes": 1195,
+      "sha256": "1cc976b2f008b18912a6a20e5528b07b2878e42d92064fe87e1f39a7b3af9093"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/self-check.json",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/self-check.json",
+      "bytes": 3197,
+      "sha256": "2dcfca2b316814c1093e2c85f9f284cd976c37375a952548d1355e86dd69bc61"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/self_check.py",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/self_check.py",
+      "bytes": 5896,
+      "sha256": "aba18c2f7b2f1823202ce0f1fdf8c4debd2e8539325a0e1bf079b29ede795076"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/source_reuse_smoke.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/source_reuse_smoke.gd",
+      "bytes": 25066,
+      "sha256": "197c2c66288e4b9fe51b09a504e9cf186c690b64f0a833f062564476e2525dc1"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/source_reuse_smoke.original.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/source_reuse_smoke.original.gd",
+      "bytes": 22850,
+      "sha256": "3ce31833b604256d91de8ec779ff07d491233ff58dd840059f37307e76dbf78b"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/static-verification.json",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/static-verification.json",
+      "bytes": 3982,
+      "sha256": "de9cbd4e1478006dfd1c66e2cb2b7b00db9d0654c6b9f05734df55f29aa74709"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-observed-locked/threat_scheduler.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-observed-locked/threat_scheduler.gd",
+      "bytes": 209819,
+      "sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/.gdignore",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/README.md",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/README.md",
+      "bytes": 11026,
+      "sha256": "e2aa6405220c090b3d5949e60903115d62632389678a5e208610e94017377aea"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/authored_enemy_sequence.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/authored_enemy_sequence.gd",
+      "bytes": 35759,
+      "sha256": "02d1469d1d1ff657722d2ce43b06e274c136e14f65ae6fdd91ff1521139a399e"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/authored_enemy_sequence.original.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/authored_enemy_sequence.original.gd",
+      "bytes": 31145,
+      "sha256": "0939da847bd0c390e63f07ba71c6ba4255fbf8e5e90e9b0c7c8179cb8d61e310"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/build_draft.py",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/build_draft.py",
+      "bytes": 10981,
+      "sha256": "af29639bace4b5b31d454bb91ad197276a4cbddcefa059e44c5d9496faa29ac0"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/difficulty.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/difficulty.gd",
+      "bytes": 4882,
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/difficulty.original.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/difficulty.original.gd",
+      "bytes": 3145,
+      "sha256": "2fb5f660ec9d28058c7783b52c65a85f53d0757c94a725d6408ff33deec3f56d"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/difficulty_profiles.original.bin",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/difficulty_profiles.original.bin",
+      "bytes": 1313,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/frozen-inputs-before.json",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/frozen-inputs-before.json",
+      "bytes": 10354,
+      "sha256": "6033bcecc804ce091ddc4d67252f51eb28ff8fbd0f06df935f9dca7b5028f85b"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/guarded0939-manifest.json",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/guarded0939-manifest.json",
+      "bytes": 10059,
+      "sha256": "df4068d5927da25fe094fcbc3fec3d41931f0850fd0b92218d3f6366204c171b"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/manifest.json",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/manifest.json",
+      "bytes": 6443,
+      "sha256": "8c6818f252221ad6f0e7f9be976d4405c5662e09fc4fe83e6df371272f3d9689"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/prior-rebased35-manifest.json",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/prior-rebased35-manifest.json",
+      "bytes": 8648,
+      "sha256": "d2c7d9123344b904d85c3e1aef4b2843ba57c61bd392d3aaa0cf660c10d2ab88"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/replay_program.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/replay_program.gd",
+      "bytes": 4180,
+      "sha256": "0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/replay_program.original.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/replay_program.original.gd",
+      "bytes": 2671,
+      "sha256": "ccfd5c64e1202a21fb1f726d237c6bc412b1d992d9e2cd360798013830a7fd67"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/run_controlled_fixture.py",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/run_controlled_fixture.py",
+      "bytes": 3703,
+      "sha256": "1b350acb3bfae33fa34d4c2521edeb5715ccd7b98b48f88b33d28d9542d41839"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/runtime-source-reuse.patch",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/runtime-source-reuse.patch",
+      "bytes": 13171,
+      "sha256": "dc0655a89cf7ed431e80f1ebd663aa67a7310935029088f76a8fbad907ac982a"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/source_reuse_smoke.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/source_reuse_smoke.gd",
+      "bytes": 22850,
+      "sha256": "3ce31833b604256d91de8ec779ff07d491233ff58dd840059f37307e76dbf78b"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/static-verification.json",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/static-verification.json",
+      "bytes": 2170,
+      "sha256": "b8f9112d86a6434b0d1b6d28343ba257f829ead3530b78a3b3b3b29032113caf"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/threat_scheduler.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/threat_scheduler.gd",
+      "bytes": 209819,
+      "sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/threat_scheduler.original.gd",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/threat_scheduler.original.gd",
+      "bytes": 209796,
+      "sha256": "c824097911e6ea6dfabaee83a75d45da56a36027423b0428123260550867cdae"
+    },
+    {
+      "path": ".cinder/runtime-source-reuse-signature-safe/verify_draft.py",
+      "archived_path": "files/.cinder/runtime-source-reuse-signature-safe/verify_draft.py",
+      "bytes": 6558,
+      "sha256": "8372b142977857395d9bc48566407d4f42f02f88748520f1cc89aadec1352b25"
+    },
+    {
+      "path": ".cinder/source-reuse-candidate-adoption.json",
+      "archived_path": "files/.cinder/source-reuse-candidate-adoption.json",
+      "bytes": 1195,
+      "sha256": "1cc976b2f008b18912a6a20e5528b07b2878e42d92064fe87e1f39a7b3af9093"
+    },
+    {
+      "path": "captures/character-blast.png",
+      "archived_path": "files/captures/character-blast.png",
+      "bytes": 46350,
+      "sha256": "2091b464b806fa7d8e9cf56c46d719f5683cfbadfecec0a99a50e2a96a579a2d"
+    },
+    {
+      "path": "captures/character-lab.png",
+      "archived_path": "files/captures/character-lab.png",
+      "bytes": 43458,
+      "sha256": "6376b8e7ec8e3d08b03cddcd6fd4f4f44521cc2dd6a835bfaf2fd9dbf2f01409"
+    },
+    {
+      "path": "captures/character-primary.png",
+      "archived_path": "files/captures/character-primary.png",
+      "bytes": 47294,
+      "sha256": "4b6c53199c556aa58f86d4e7a02958d979f1ebc1d86389d1fe136cb475fba399"
+    },
+    {
+      "path": "captures/dash-plume-end.png",
+      "archived_path": "files/captures/dash-plume-end.png",
+      "bytes": 46039,
+      "sha256": "4194ee6dd6c0f93f2a8433110648aaa6c107ed001ee8005f8e8ac04f8baefba0"
+    },
+    {
+      "path": "captures/dash-plume-mid.png",
+      "archived_path": "files/captures/dash-plume-mid.png",
+      "bytes": 44475,
+      "sha256": "c6a2db49a6894db82e709f3395c6f18666bb84b3e71fb5295099a4313ecaafb0"
+    },
+    {
+      "path": "captures/enemy-recovery.png",
+      "archived_path": "files/captures/enemy-recovery.png",
+      "bytes": 38409,
+      "sha256": "1330de03fd7970316333efab8bf33778f5bf325153386b6040949afa754f0b5f"
+    },
+    {
+      "path": "captures/enemy-warning.png",
+      "archived_path": "files/captures/enemy-warning.png",
+      "bytes": 39107,
+      "sha256": "c66d4fd911ff69ce4fcdece8a432960e91d47d5b74337475536ae950f7533c57"
+    },
+    {
+      "path": "captures/level-preview.png",
+      "archived_path": "files/captures/level-preview.png",
+      "bytes": 20745,
+      "sha256": "aadaa05117f1db392c4ea2e6a98bf2faa1abde9949de72ece167d4009ad26767"
+    },
+    {
+      "path": "captures/loadout-bench.png",
+      "archived_path": "files/captures/loadout-bench.png",
+      "bytes": 148324,
+      "sha256": "1c708651263e5fd20b4cdea15d06ba9f5d2d5886d8ae7d4fac0836b9250c5c4c"
+    },
+    {
+      "path": "captures/mechanics-lab.png",
+      "archived_path": "files/captures/mechanics-lab.png",
+      "bytes": 46497,
+      "sha256": "740ea58b2611294a3bd18f880b81bea52a1272a63d698abc423148e0c48277cb"
+    },
+    {
+      "path": "captures/shot-flare-left.png",
+      "archived_path": "files/captures/shot-flare-left.png",
+      "bytes": 50287,
+      "sha256": "6cdee74805b619e0f801404c5cfafe76388620859f9ac4b8d4350930dbf0dce3"
+    },
+    {
+      "path": "captures/shot-flare-right.png",
+      "archived_path": "files/captures/shot-flare-right.png",
+      "bytes": 50089,
+      "sha256": "803d303d133e13a728d16c9e15eecf110d39ce91b65d97ac9542606b3e2a640d"
+    },
+    {
+      "path": "captures/slash-arc.png",
+      "archived_path": "files/captures/slash-arc.png",
+      "bytes": 49204,
+      "sha256": "01e44c59ebd6c23400197139077a896040f9c17dac228e1645fc7e39af53ca7e"
+    },
+    {
+      "path": "data/design/difficulty_profiles.json",
+      "archived_path": "files/data/design/difficulty_profiles.json",
+      "bytes": 1313,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c"
+    },
+    {
+      "path": "data/design/player_equipment.json",
+      "archived_path": "files/data/design/player_equipment.json",
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    {
+      "path": "project.godot",
+      "archived_path": "files/project.godot",
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f"
+    },
+    {
+      "path": "scenes/lab_arena.tscn",
+      "archived_path": "files/scenes/lab_arena.tscn",
+      "bytes": 23638,
+      "sha256": "290c0f7fa49b284705c6adec423ca7109a2e7ebd50439866e39ef3856397c361"
+    },
+    {
+      "path": "scenes/player.tscn",
+      "archived_path": "files/scenes/player.tscn",
+      "bytes": 1184,
+      "sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac"
+    },
+    {
+      "path": "scenes/practice_target.tscn",
+      "archived_path": "files/scenes/practice_target.tscn",
+      "bytes": 180,
+      "sha256": "600553b1326ef7d117e123c308c6e0f8be0e4a4dc4ff80113894add7bf2ee520"
+    },
+    {
+      "path": "scripts/attack_footprint.gd",
+      "archived_path": "files/scripts/attack_footprint.gd",
+      "bytes": 4138,
+      "sha256": "e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb"
+    },
+    {
+      "path": "scripts/attack_footprint.gd.uid",
+      "archived_path": "files/scripts/attack_footprint.gd.uid",
+      "bytes": 19,
+      "sha256": "6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627"
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd",
+      "archived_path": "files/scripts/campaign/exact_json.gd",
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd.uid",
+      "archived_path": "files/scripts/campaign/exact_json.gd.uid",
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0"
+    },
+    {
+      "path": "scripts/campaign/level.gd",
+      "archived_path": "files/scripts/campaign/level.gd",
+      "bytes": 21895,
+      "sha256": "d80aec80e5182f8d8e115bc127fca6e1eed4920eed924a9a15cd44fa182b45de"
+    },
+    {
+      "path": "scripts/campaign/level.gd.uid",
+      "archived_path": "files/scripts/campaign/level.gd.uid",
+      "bytes": 20,
+      "sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812"
+    },
+    {
+      "path": "scripts/campaign/save_store.gd",
+      "archived_path": "files/scripts/campaign/save_store.gd",
+      "bytes": 7310,
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    {
+      "path": "scripts/campaign/save_store.gd.uid",
+      "archived_path": "files/scripts/campaign/save_store.gd.uid",
+      "bytes": 20,
+      "sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1"
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "archived_path": "files/scripts/campaign/snapshot_codec.gd",
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd.uid",
+      "archived_path": "files/scripts/campaign/snapshot_codec.gd.uid",
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82"
+    },
+    {
+      "path": "scripts/character/player_presentations.gd",
+      "archived_path": "files/scripts/character/player_presentations.gd",
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01"
+    },
+    {
+      "path": "scripts/character/player_presentations.gd.uid",
+      "archived_path": "files/scripts/character/player_presentations.gd.uid",
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651"
+    },
+    {
+      "path": "scripts/combat/action_capture.gd",
+      "archived_path": "files/scripts/combat/action_capture.gd",
+      "bytes": 19785,
+      "sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f"
+    },
+    {
+      "path": "scripts/combat/action_capture.gd.uid",
+      "archived_path": "files/scripts/combat/action_capture.gd.uid",
+      "bytes": 20,
+      "sha256": "a089c978485a2b58adb2d1a73d634aa158fcfc9b6b3355f3cdf4256c81ec3828"
+    },
+    {
+      "path": "scripts/combat/authored_echo_cycle_journal.gd",
+      "archived_path": "files/scripts/combat/authored_echo_cycle_journal.gd",
+      "bytes": 5717,
+      "sha256": "87fe101b17b5602d5573f060181de366444d8713f2967e3dfe07596a70e04409"
+    },
+    {
+      "path": "scripts/combat/authored_echo_cycle_journal.gd.uid",
+      "archived_path": "files/scripts/combat/authored_echo_cycle_journal.gd.uid",
+      "bytes": 20,
+      "sha256": "bc039f3302f2052d656a6ac395efc9af96e9b1fdab2f7791723944abd31be665"
+    },
+    {
+      "path": "scripts/combat/authored_echo_renderer.gd",
+      "archived_path": "files/scripts/combat/authored_echo_renderer.gd",
+      "bytes": 22148,
+      "sha256": "52dcf5b261574171b32d9c3c15da9279b467a697f81dbae17abd2b2b3c62014d"
+    },
+    {
+      "path": "scripts/combat/authored_echo_renderer.gd.uid",
+      "archived_path": "files/scripts/combat/authored_echo_renderer.gd.uid",
+      "bytes": 20,
+      "sha256": "f5c93061cd05add9269454dd6007921d33c20719b2fccb12f0b6c6117b063081"
+    },
+    {
+      "path": "scripts/combat/authored_echo_terminal_receipt.gd",
+      "archived_path": "files/scripts/combat/authored_echo_terminal_receipt.gd",
+      "bytes": 16559,
+      "sha256": "79705a953e134ed206e835574378bb8164c06061d55be44e8baf8ebbc2c8d94a"
+    },
+    {
+      "path": "scripts/combat/authored_echo_terminal_receipt.gd.uid",
+      "archived_path": "files/scripts/combat/authored_echo_terminal_receipt.gd.uid",
+      "bytes": 20,
+      "sha256": "6ac50eb55f0f1d4c11a02bac5f081dd32604242b17558fd3ed2e1fd0f2d8f943"
+    },
+    {
+      "path": "scripts/combat/authored_enemy_sequence.gd",
+      "archived_path": "files/scripts/combat/authored_enemy_sequence.gd",
+      "bytes": 35759,
+      "sha256": "02d1469d1d1ff657722d2ce43b06e274c136e14f65ae6fdd91ff1521139a399e"
+    },
+    {
+      "path": "scripts/combat/authored_enemy_sequence.gd.uid",
+      "archived_path": "files/scripts/combat/authored_enemy_sequence.gd.uid",
+      "bytes": 19,
+      "sha256": "a7386bc5ee79dc7f7dcc22242adc7f02bfdd5babcbf9c19347d35889d27507dc"
+    },
+    {
+      "path": "scripts/combat/body_sweep.gd",
+      "archived_path": "files/scripts/combat/body_sweep.gd",
+      "bytes": 17456,
+      "sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9"
+    },
+    {
+      "path": "scripts/combat/body_sweep.gd.uid",
+      "archived_path": "files/scripts/combat/body_sweep.gd.uid",
+      "bytes": 20,
+      "sha256": "ef81e08a544e454636c523ea797029954359eead30c94e225c7de6893dcdcc74"
+    },
+    {
+      "path": "scripts/combat/difficulty.gd",
+      "archived_path": "files/scripts/combat/difficulty.gd",
+      "bytes": 4882,
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    {
+      "path": "scripts/combat/difficulty.gd.uid",
+      "archived_path": "files/scripts/combat/difficulty.gd.uid",
+      "bytes": 20,
+      "sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b"
+    },
+    {
+      "path": "scripts/combat/lunge_motion.gd",
+      "archived_path": "files/scripts/combat/lunge_motion.gd",
+      "bytes": 15016,
+      "sha256": "52b048392c7ea5d5728b500d1cc68fa478947f59f5b321bd81f377c265be9a66"
+    },
+    {
+      "path": "scripts/combat/lunge_motion.gd.uid",
+      "archived_path": "files/scripts/combat/lunge_motion.gd.uid",
+      "bytes": 20,
+      "sha256": "26b4d5dc7cbd8540bb060cac7c9e0153860810d20b8cffcb9f4ea30f322e2432"
+    },
+    {
+      "path": "scripts/combat/replay_cursor.gd",
+      "archived_path": "files/scripts/combat/replay_cursor.gd",
+      "bytes": 19854,
+      "sha256": "1cbe648ad391d4363a525751fcc23e71f13292eddcc5da46233289a40a787362"
+    },
+    {
+      "path": "scripts/combat/replay_cursor.gd.uid",
+      "archived_path": "files/scripts/combat/replay_cursor.gd.uid",
+      "bytes": 19,
+      "sha256": "60b768dbe4b3c9528567ec0e64afe3ebb775c9d407d55d140eed6e90fcd36d16"
+    },
+    {
+      "path": "scripts/combat/replay_footprint.gd",
+      "archived_path": "files/scripts/combat/replay_footprint.gd",
+      "bytes": 34512,
+      "sha256": "23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b"
+    },
+    {
+      "path": "scripts/combat/replay_footprint.gd.uid",
+      "archived_path": "files/scripts/combat/replay_footprint.gd.uid",
+      "bytes": 19,
+      "sha256": "1ae28025dae1fcc6a4c10c0c4731171be5418eb6413f31383ce4aa14f2024855"
+    },
+    {
+      "path": "scripts/combat/replay_playback.gd",
+      "archived_path": "files/scripts/combat/replay_playback.gd",
+      "bytes": 136458,
+      "sha256": "e4c7ee2e7d511ee294fd795cc389c20b69672e46fff38c8a5f73e4aa6d081304"
+    },
+    {
+      "path": "scripts/combat/replay_playback.gd.uid",
+      "archived_path": "files/scripts/combat/replay_playback.gd.uid",
+      "bytes": 20,
+      "sha256": "9772d96bd490fa16ae9e7438910e915e090c6485dfc1252574cae1bf7a977c5a"
+    },
+    {
+      "path": "scripts/combat/replay_program.gd",
+      "archived_path": "files/scripts/combat/replay_program.gd",
+      "bytes": 4180,
+      "sha256": "0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9"
+    },
+    {
+      "path": "scripts/combat/replay_program.gd.uid",
+      "archived_path": "files/scripts/combat/replay_program.gd.uid",
+      "bytes": 19,
+      "sha256": "d150d89ef4ba744f63d05e7a4b7a2acc91e4681d23d355cb9cb2678ac03f1a91"
+    },
+    {
+      "path": "scripts/combat/replay_sequence.gd",
+      "archived_path": "files/scripts/combat/replay_sequence.gd",
+      "bytes": 10638,
+      "sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6"
+    },
+    {
+      "path": "scripts/combat/replay_sequence.gd.uid",
+      "archived_path": "files/scripts/combat/replay_sequence.gd.uid",
+      "bytes": 20,
+      "sha256": "313e93a946f59228685fbc4730bb5d239df9e9ba2ae69855937ccb3c7d35289b"
+    },
+    {
+      "path": "scripts/combat/replay_witness.gd",
+      "archived_path": "files/scripts/combat/replay_witness.gd",
+      "bytes": 23615,
+      "sha256": "5bcc9c58b9ea8c496200d9d313f2d9848baa0700665fa062640270945d829295"
+    },
+    {
+      "path": "scripts/combat/replay_witness.gd.uid",
+      "archived_path": "files/scripts/combat/replay_witness.gd.uid",
+      "bytes": 20,
+      "sha256": "c3bb32204b630c686744ef4e1a5a9769c8ea0a66fc40606517f734487081da42"
+    },
+    {
+      "path": "scripts/combat/threat_geometry.gd",
+      "archived_path": "files/scripts/combat/threat_geometry.gd",
+      "bytes": 14303,
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+    },
+    {
+      "path": "scripts/combat/threat_geometry.gd.uid",
+      "archived_path": "files/scripts/combat/threat_geometry.gd.uid",
+      "bytes": 20,
+      "sha256": "dbffe6e46566832c1126d98a643d508a68219fec591d4662f7bccfe297ddccdd"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd",
+      "archived_path": "files/scripts/combat/threat_scheduler.gd",
+      "bytes": 209819,
+      "sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd.uid",
+      "archived_path": "files/scripts/combat/threat_scheduler.gd.uid",
+      "bytes": 18,
+      "sha256": "54a051d030eef72dfce3f58a9073b3bce0f469720124e948c251f22a064e974d"
+    },
+    {
+      "path": "scripts/cues/cue_mesh.gd",
+      "archived_path": "files/scripts/cues/cue_mesh.gd",
+      "bytes": 9589,
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+    },
+    {
+      "path": "scripts/cues/cue_mesh.gd.uid",
+      "archived_path": "files/scripts/cues/cue_mesh.gd.uid",
+      "bytes": 19,
+      "sha256": "aab103bd0966b0b298f2a10e8107167ca7e23c451dd94d8be76136bd1bdc4d3a"
+    },
+    {
+      "path": "scripts/cues/threat_cue.gd",
+      "archived_path": "files/scripts/cues/threat_cue.gd",
+      "bytes": 33466,
+      "sha256": "e47811186785c24d693644e05d1d7ba64fee020ef2ad7278a60e0d2c7c2ef363"
+    },
+    {
+      "path": "scripts/cues/threat_cue.gd.uid",
+      "archived_path": "files/scripts/cues/threat_cue.gd.uid",
+      "bytes": 19,
+      "sha256": "147d2f591ebb3ad3af17a4111b3118811c23bc2e83f3fc6f7574c38c860d4425"
+    },
+    {
+      "path": "scripts/curling_smoke.gd",
+      "archived_path": "files/scripts/curling_smoke.gd",
+      "bytes": 14175,
+      "sha256": "5f8fa272a9c5beef47f7c69ad0b916965e7caf30a5d0e6b329d56b227807c36c"
+    },
+    {
+      "path": "scripts/curling_smoke.gd.uid",
+      "archived_path": "files/scripts/curling_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "8c283bb9181b5b956ec3746bf98b9d614d5f86a8caddac06ba609e43231b75bb"
+    },
+    {
+      "path": "scripts/dev/dev.py",
+      "archived_path": "files/scripts/dev/dev.py",
+      "bytes": 28095,
+      "sha256": "671686da399427711dac0c97c80a832387aeb74041c269df2c50f69daac86b27"
+    },
+    {
+      "path": "scripts/effects.gd",
+      "archived_path": "files/scripts/effects.gd",
+      "bytes": 21962,
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7"
+    },
+    {
+      "path": "scripts/effects.gd.uid",
+      "archived_path": "files/scripts/effects.gd.uid",
+      "bytes": 19,
+      "sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831"
+    },
+    {
+      "path": "scripts/enemy.gd",
+      "archived_path": "files/scripts/enemy.gd",
+      "bytes": 41287,
+      "sha256": "39c16960c5b7ccb12282cda87c93d4b99280040881bf39b5879e11487a883ed1"
+    },
+    {
+      "path": "scripts/enemy.gd.uid",
+      "archived_path": "files/scripts/enemy.gd.uid",
+      "bytes": 20,
+      "sha256": "8f3ba80717e9fe95c6a27620cd909fddd88cd18ed5c425b859b236ccc85a4280"
+    },
+    {
+      "path": "scripts/equipment.gd",
+      "archived_path": "files/scripts/equipment.gd",
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    {
+      "path": "scripts/equipment.gd.uid",
+      "archived_path": "files/scripts/equipment.gd.uid",
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a"
+    },
+    {
+      "path": "scripts/game.gd",
+      "archived_path": "files/scripts/game.gd",
+      "bytes": 38685,
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    {
+      "path": "scripts/game.gd.uid",
+      "archived_path": "files/scripts/game.gd.uid",
+      "bytes": 19,
+      "sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129"
+    },
+    {
+      "path": "scripts/hud.gd",
+      "archived_path": "files/scripts/hud.gd",
+      "bytes": 16609,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b"
+    },
+    {
+      "path": "scripts/hud.gd.uid",
+      "archived_path": "files/scripts/hud.gd.uid",
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5"
+    },
+    {
+      "path": "scripts/lab_bench.gd",
+      "archived_path": "files/scripts/lab_bench.gd",
+      "bytes": 6324,
+      "sha256": "8f2bb0d92f48cfea32205f0b76854ad03ca7a85127e29dfe9275bdb0b2ea58fb"
+    },
+    {
+      "path": "scripts/lab_bench.gd.uid",
+      "archived_path": "files/scripts/lab_bench.gd.uid",
+      "bytes": 20,
+      "sha256": "2a7f596814c6c7fff0b9f0a229de202678f54e5455c1d16c450e5f2a7ef561fe"
+    },
+    {
+      "path": "scripts/pixel_sprite.gd",
+      "archived_path": "files/scripts/pixel_sprite.gd",
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a"
+    },
+    {
+      "path": "scripts/pixel_sprite.gd.uid",
+      "archived_path": "files/scripts/pixel_sprite.gd.uid",
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3"
+    },
+    {
+      "path": "scripts/player.gd",
+      "archived_path": "files/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "path": "scripts/player.gd.uid",
+      "archived_path": "files/scripts/player.gd.uid",
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70"
+    },
+    {
+      "path": "scripts/practice_target.gd",
+      "archived_path": "files/scripts/practice_target.gd",
+      "bytes": 4451,
+      "sha256": "455e1d0697db73c3b27a9e12136e5103bd438fdf22142bee0d329cd8748ba15e"
+    },
+    {
+      "path": "scripts/practice_target.gd.uid",
+      "archived_path": "files/scripts/practice_target.gd.uid",
+      "bytes": 20,
+      "sha256": "653901d6e1e18f9d4ce4eb782af9366629a641679963266065a425d014814531"
+    },
+    {
+      "path": "scripts/presentation/camera_framing.gd",
+      "archived_path": "files/scripts/presentation/camera_framing.gd",
+      "bytes": 10132,
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b"
+    },
+    {
+      "path": "scripts/presentation/camera_framing.gd.uid",
+      "archived_path": "files/scripts/presentation/camera_framing.gd.uid",
+      "bytes": 20,
+      "sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a"
+    },
+    {
+      "path": "scripts/shotgun_flare.gd",
+      "archived_path": "files/scripts/shotgun_flare.gd",
+      "bytes": 5778,
+      "sha256": "24e526e3850531317285e0d687ee93ebd37aa7819fbf5cd27af19284af0b84e6"
+    },
+    {
+      "path": "scripts/shotgun_flare.gd.uid",
+      "archived_path": "files/scripts/shotgun_flare.gd.uid",
+      "bytes": 20,
+      "sha256": "e7c22cc0b7e74fa5181371c644527e6b18ec06ad8369dc72bfa4986505a15ba4"
+    },
+    {
+      "path": "scripts/weapon_pickup.gd",
+      "archived_path": "files/scripts/weapon_pickup.gd",
+      "bytes": 1750,
+      "sha256": "7a350ffa2efa2f6f031877842fb447e22b3b80d49cc2acc40ee39dd0cc19c56e"
+    },
+    {
+      "path": "scripts/weapon_pickup.gd.uid",
+      "archived_path": "files/scripts/weapon_pickup.gd.uid",
+      "bytes": 20,
+      "sha256": "0a004b242329bf5742cac245b12a6d41b8e306fc79ad63d43dc0c46896bf8615"
+    },
+    {
+      "path": "tests/authored_echo_playback_smoke.gd",
+      "archived_path": "files/tests/authored_echo_playback_smoke.gd",
+      "bytes": 33904,
+      "sha256": "2ade5f07a380c2a5d64c05d1f2c90d3b067cecef128e3c03daa6fd0fbd27741a"
+    },
+    {
+      "path": "tests/authored_echo_playback_smoke.gd.uid",
+      "archived_path": "files/tests/authored_echo_playback_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "3d0a3bb2cd3074986eba92cdf60613c00a6f145c24040682b492771b3b9566dd"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_actor.gd",
+      "archived_path": "files/tests/fixtures/authored_echo_actor.gd",
+      "bytes": 10038,
+      "sha256": "bd78c8392f70b6f01e96d4a40c8adafc791a605e43487144e26aa8bb0173d542"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_actor.gd.uid",
+      "archived_path": "files/tests/fixtures/authored_echo_actor.gd.uid",
+      "bytes": 19,
+      "sha256": "c1f254eb4e0c205d7ee089b591136d3083e43c7c34e21108de83551f5abcd58b"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_native_codec.gd",
+      "archived_path": "files/tests/fixtures/authored_echo_native_codec.gd",
+      "bytes": 9276,
+      "sha256": "4b430b2c9f266ff37c222a2d89a7db62429e0f25b9267a891078f845138c2402"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_native_codec.gd.uid",
+      "archived_path": "files/tests/fixtures/authored_echo_native_codec.gd.uid",
+      "bytes": 19,
+      "sha256": "bc2de0c79282641189a3feda7896fb26d7b61de49006179fc072f826c2e84c1e"
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "selected_at": "2026-10-09T01:38:58.083802+00:00",
+  "scope": "Twelve distinct ACTUALLY CLOSED original native scopes; explicit selected records only, bounded source subsets and full native/wrapper logs including original failed9/3camera scope. Metadata import is separate and never backfills functional sources.",
+  "runs": [
+    {
+      "id": "authored-subtree-guard1",
+      "script": "tests/authored_left_mutation_smoke.gd",
+      "manifest_sha256": "eada4f417f1528cc03bf6fed65f85236fa5a9b7d7c3a03ff6ffd8c5961e2c670",
+      "source_count": 59,
+      "expected_result": [
+        165,
+        0
+      ],
+      "expected_exit_code": 0,
+      "note": "Original bounded literal/explicit source subset; independently reviewed closed native evidence, no act acceptance or later source credit. Actual CLI .cinder/local.json was not retained; wrong .cinder/dev.local.json seed does not supply that input.",
+      "original_receipts": [
+        {
+          "path": ".cinder/shared36-source-scope-qualifications.json",
+          "role": "report",
+          "bytes": 5267,
+          "sha256": "091cbed96fbb7bb1f25a93289058642c5829e9b3688a497c216e228dd1d39072"
+        }
+      ]
+    },
+    {
+      "id": "authored-subtree-bounds1",
+      "script": "tests/authored_subtree_reuse_smoke.gd",
+      "manifest_sha256": "523fb8f382b6adc59f2827a11f8837e936244b15c7ac427598ba395518b6c32e",
+      "source_count": 59,
+      "expected_result": [
+        116,
+        0
+      ],
+      "expected_exit_code": 0,
+      "note": "Original bounded literal/explicit source subset; independently reviewed closed native evidence, no act acceptance or later source credit. Actual CLI .cinder/local.json was not retained; wrong .cinder/dev.local.json seed does not supply that input."
+    },
+    {
+      "id": "authored-subtree-performance1",
+      "script": "tests/authored_echo_performance_smoke.gd",
+      "manifest_sha256": "b2095cdc81311b88dd22e98e28e91919dabe55aad719b636f5d32ebc9ebdc549",
+      "source_count": 103,
+      "expected_result": [
+        113,
+        0
+      ],
+      "expected_exit_code": 0,
+      "note": "Original bounded literal/explicit source subset; independently reviewed closed native evidence, no act acceptance or later source credit. Actual CLI .cinder/local.json was not retained; wrong .cinder/dev.local.json seed does not supply that input.",
+      "original_receipts": [
+        {
+          "path": ".cinder/authored-subtree-performance1-root-audit.json",
+          "role": "observation",
+          "bytes": 3319,
+          "sha256": "916cd1413c7feb6cf9e718f25e13929da71f5249dae363cdae94d845167efe6e"
+        }
+      ]
+    },
+    {
+      "id": "authored-subtree-sequence1",
+      "script": "tests/authored_enemy_sequence_smoke.gd",
+      "manifest_sha256": "39b2e66857fb418a908aca7cc951712bb53f543653fc4fce1b21dd16076a2816",
+      "source_count": 57,
+      "expected_result": [
+        76,
+        0
+      ],
+      "expected_exit_code": 0,
+      "note": "Original bounded literal/explicit source subset; independently reviewed closed native evidence, no act acceptance or later source credit. Actual CLI .cinder/local.json was not retained; wrong .cinder/dev.local.json seed does not supply that input."
+    },
+    {
+      "id": "source-reuse-sequence1",
+      "script": "tests/authored_enemy_sequence_smoke.gd",
+      "manifest_sha256": "60a87578beb8a17b22e1ecdd2d67e4360915802bec278d68822d8366cea389b7",
+      "source_count": 57,
+      "expected_result": [
+        76,
+        0
+      ],
+      "expected_exit_code": 0,
+      "note": "Original bounded literal/explicit source subset; independently reviewed closed native evidence, no act acceptance or later source credit."
+    },
+    {
+      "id": "source-reuse-control1",
+      "script": ".cinder/runtime-source-reuse-observed-locked/source_reuse_smoke.gd",
+      "manifest_sha256": "09ac5830b8f11f2c608a5928225ebb2582eda9af2395d2251fe54b3862314b00",
+      "source_count": 142,
+      "expected_result": [
+        276,
+        0
+      ],
+      "expected_exit_code": 0,
+      "note": "Original bounded literal/explicit source subset; independently reviewed closed native evidence, no act acceptance or later source credit.",
+      "original_receipts": [
+        {
+          "path": ".cinder/runtime-source-reuse-observed-locked/submission.json",
+          "role": "submission",
+          "bytes": 1211,
+          "sha256": "9ae20f8566483a104ba95eba868ce39720d8d19b7daa0561c03541b35f0e7c6b",
+          "json_joins": {
+            "run_id": "run_id"
+          }
+        },
+        {
+          "path": ".cinder/runtime-source-reuse-observed-locked/closure.json",
+          "role": "report",
+          "bytes": 2962,
+          "sha256": "0067687562196df4e0c754cd8d8957c26d49e2092437951990f80ba226f0e9fe",
+          "json_joins": {
+            "run_id": "run_id"
+          }
+        },
+        {
+          "path": ".cinder/source-reuse-control1-tool-observation.json",
+          "role": "observation",
+          "bytes": 749,
+          "sha256": "646ad6b5c0b9d686aefde46da43b7fc410fa2c112c7f39fcdeb2c89828fd7f32"
+        },
+        {
+          "path": ".cinder/source-reuse-control1-root-audit.json",
+          "role": "observation",
+          "bytes": 4690,
+          "sha256": "d7382dfa8429222ef5de2680dc8162b2eb7c43ac6c3a85d39143479912fb8d5b"
+        }
+      ]
+    },
+    {
+      "id": "fresh-entry-camera-original1",
+      "script": ".cinder/fresh-entry-camera-review/fresh_entry_camera_smoke.gd",
+      "manifest_sha256": "8febbd279207bebd29d031d715813c8bba8b4f63450a79392b1845487c450136",
+      "source_count": 99,
+      "expected_result": [
+        9,
+        3
+      ],
+      "expected_exit_code": 1,
+      "note": "Original bounded literal/explicit source subset; independently reviewed closed native evidence, no act acceptance or later source credit."
+    },
+    {
+      "id": "fresh-entry-camera-corrected1",
+      "script": ".cinder/fresh-entry-camera-review/fresh_entry_camera_smoke.gd",
+      "manifest_sha256": "48e3eb10fc604125d18680ebd264bad51e44298a5449e5d2a31cee3802c2f9f3",
+      "source_count": 90,
+      "expected_result": [
+        75,
+        0
+      ],
+      "expected_exit_code": 0,
+      "note": "Original bounded literal/explicit source subset; independently reviewed closed native evidence, no act acceptance or later source credit.",
+      "original_receipts": [
+        {
+          "path": ".cinder/fresh-entry-camera-candidate-adoption.json",
+          "role": "observation",
+          "bytes": 626,
+          "sha256": "39f35575b5b1f75e9c57eb2c82ffd1d845eb6ce7e3a226233524dc389fd5efc8"
+        }
+      ]
+    },
+    {
+      "id": "source-reuse-performance1",
+      "script": "tests/authored_echo_performance_smoke.gd",
+      "manifest_sha256": "0e493ab05aaba99e9294eb3686546858ec3c522c90891f46b6162af974e801ad",
+      "source_count": 103,
+      "expected_result": [
+        113,
+        0
+      ],
+      "expected_exit_code": 0,
+      "note": "Original bounded literal/explicit source subset; independently reviewed closed native evidence, no act acceptance or later source credit.",
+      "original_receipts": [
+        {
+          "path": ".cinder/source-reuse-performance1-reference-audit.json",
+          "role": "observation",
+          "bytes": 7020,
+          "sha256": "474b67f8afd70e6631b6bcb2a1bd68a29c8a68fd0b3b138ca0574843340abda6"
+        }
+      ]
+    },
+    {
+      "id": "source-reuse-lifecycle1",
+      "script": "tests/authored_echo_lifecycle_smoke.gd",
+      "manifest_sha256": "fd6595384c322defc74bb7d95078f44307eac9e05c167e32d29e9622c9ca6dcf",
+      "source_count": 107,
+      "expected_result": [
+        557,
+        0
+      ],
+      "expected_exit_code": 0,
+      "note": "Original bounded literal/explicit source subset; independently reviewed closed native evidence, no act acceptance or later source credit."
+    },
+    {
+      "id": "fresh-entry-shell-compat1",
+      "script": "tests/campaign_shell_smoke.gd",
+      "manifest_sha256": "e92f76efe9eaeb76750a9cec0ec1cbda7fe4c873c8b7c959790bf02a833c36fe",
+      "source_count": 87,
+      "expected_result": [
+        52,
+        0
+      ],
+      "expected_exit_code": 0,
+      "note": "Directly affected existing compatibility: actual native source/log/closure verified; no authored level acceptance."
+    },
+    {
+      "id": "fresh-entry-saved-gate1",
+      "script": "tests/candidate_presentation_smoke.gd",
+      "manifest_sha256": "72e3ff1ff2b1e9f3a77e5a7d98cf2ccf2ae18530418a6c5ede78ab9753a4e1d6",
+      "source_count": 86,
+      "expected_result": [
+        35,
+        0
+      ],
+      "expected_exit_code": 0,
+      "note": "Directly affected existing compatibility: actual native source/log/closure verified; no authored level acceptance."
+    }
+  ],
+  "publication_documents": [
+    "docs/development/FRESH_ENTRY_PRESENTATION.md",
+    "docs/development/RUNTIME_COMPARISON_COST.md",
+    "docs/development/SHARED35_UID_SCOPE_CLARIFICATION.md"
+  ]
+}
