@@ -1,6 +1,12 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-40** (9 October 2026). Shared40 compares one fresh private source-guard input against its fully validated reference while preserving public validators, fallback and actual native authority. Targeted574/0 and new139/0 controls pass; two unchanged one-Box profiles113/0 show a lower candidate median with noisy baseline tails. [Evidence and limits](SOURCE_GUARD_REFERENCE.md). [Focused level acceptance](LEVEL_ACCEPTANCE.md) supersedes agent-completed playthrough gates. Campaign8/24 remains accepted; Integration is first help contact and actual worker baselines require preserving ACKs.
+Revision: **campaign-shared-41** (9 October 2026). Optional Lane parent presentation guards close late callback authority before damage while preserving ordinary consumers and saved wire schemas. Side finish/abandon returns to Journey; explicit Continue retains paused Resume. Targeted native48/0, existing Lane243/0 and Shell55/0 pass with original diagnostics preserved. [Guard contract](LANE_PARENT_PRESENTATION_GUARD.md) and [side-return evidence](SIDE_RETURN_JOURNEY.md). [Focused level acceptance](LEVEL_ACCEPTANCE.md) remains authoritative. Campaign8/24 remains accepted; Integration is first help contact and actual worker adoption requires preserving ACKs.
+
+## Optional parent presentation and side return
+
+Shared41 adds bind-once `CinderLaneMechanism.set_presentation_guard` for actual authored sibling/camera custody. Native boundaries run before and after provider delivery; Scheduler notifications invalidate stale answers before hit consumption. Quiet codecs never invoke or serialize the guard, and fresh actual parents bind their own recipients. [Details and exact limits](LANE_PARENT_PRESENTATION_GUARD.md). The original A2-L5 late Sentry reproduction remains awaiting owner hookup and targeted verification after preserving adoption; generic shared48/0 is not a whole-parent result.
+
+Shell side finish/abandon restores the complete protected story and shows Journey; explicit Continue shows paused Resume unless the ending is complete. [Focused55/0](SIDE_RETURN_JOURNEY.md) retains the original stale-expected-unit failure. No equipment unlock, difficulty arrangement, act content or saved schema change is part of this update.
 
 ## Current level acceptance
 

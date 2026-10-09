@@ -8,6 +8,12 @@ Campaign8/24 remains accepted. Root notified all three existing workers immediat
 
 Updated 9 October 2026. Integration owns this durable record. Read it with [SHARED_CONTRACT](SHARED_CONTRACT.md) and [SHARED_PROGRESS](SHARED_PROGRESS.md) after context recovery and before reviewing an act handoff.
 
+## Current integration handoff
+
+Shared41 provides optional Lane actual parent presentation reauthorization and the planned side-return Journey destination, with focused48/0 + existing243/0 + Shell55/0 native closure and original failed diagnostics preserved. Read [guard contract](LANE_PARENT_PRESENTATION_GUARD.md) and [side-return scope](SIDE_RETURN_JOURNEY.md). Actual A2 parent hookup/reproduction remains owner work after compatible adoption; shared support alone is not acceptance. Campaign8/24 remains accepted, with A1-L3/A2-L5/A3-L3 focused frontiers. All three policy documentation merges are observed separately from runtime adoption.
+
+Root remains first help contact and monitors canonical requests. Replay alternate static availability and observable Challenge arrangements remain shared endpoint gaps. The unused private performance-tail proposal is parked unexecuted. No full-route/defeat-all/earned-exit gate applies; preserve and label untested full-playthrough behavior.
+
 ## Authorized endpoint and precedence
 
 Complete a playable, integrated, tested **desktop campaign: 15 main levels and 9 optional levels**. Each act owner completes one level at a time, in authored order, followed by its three existing optional levels. Integration accepts tested levels independently. Stop before mobile export, SDK/signing setup, store submission and subsequent release work. Mobile remains a later release direction, not a gate on this authorized desktop work.
