@@ -1,0 +1,197 @@
+--- a/tests/acts/act3/mirror_sea_route_smoke.gd
++++ b/tests/acts/act3/mirror_sea_route_smoke.gd
+@@ -6,7 +6,9 @@
+ ## recovery death between the SAME mechanism's pulses. --full-route: all six
+ ## entries, surviving Echo between pulses, then seven ordinary deaths/contact.
+ ## --echo-first or --stalker-first selects a real final approach priority.
+-## This is unexecuted mechanic evidence, not saves/retry, art, OS gestures or
++## This ignored adaptation has no native execution credit. It observes genuine
++## checkpoint requests and the one authored admission-to-lock transition; it
++## does not exercise aggregate transport/restore, disk/Retry, portrait art or
+ ## production campaign acceptance. A current native witness is always required.
+ 
+ const ROUTE_ENTRIES: Array[String] = ["shore-and-doubled-sky", "one-real-body", "useful-ending-west", "useful-ending-east", "resonant-apron", "shore-falls-silent"]
+@@ -14,6 +16,7 @@
+ const ROUTE_BEATS: Array[int] = [1, 2, 3, 3, 4, 5]
+ const ROSTER: Array[String] = ["l3-threshold-stalker", "l3-first-echo", "l3-useful-west-echo", "l3-useful-east-echo", "l3-resonant-echo", "l3-priority-echo", "l3-priority-stalker"]
+ const GROUPS: Array = [["l3-threshold-stalker"], ["l3-first-echo"], ["l3-useful-west-echo"], ["l3-useful-east-echo"], ["l3-resonant-echo"], ["l3-priority-echo", "l3-priority-stalker"]]
++const ROUTE_CHECKPOINT_IDS: Array[String] = ["mirror-sea-shore-entry", "mirror-sea-real-body-entry", "mirror-sea-useful-west-entry", "mirror-sea-useful-east-entry", "mirror-sea-resonant-entry", "mirror-sea-final-court-entry"]
+ const PULSE_ID: String = "l3-resonant-pulse"
+ const RESONANT_ID: String = "l3-resonant-echo"
+ const FINAL_ECHO: String = "l3-priority-echo"
+@@ -33,6 +36,9 @@
+ var _source_deaths: Dictionary = {}
+ var _used_leases: Dictionary = {}
+ var _fixed_leases: Dictionary = {}
++var _authored_admissions: Dictionary = {}
++var _authored_lock_clocks: Dictionary = {}
++var _route_checkpoint_receipts: Array[Dictionary] = []
+ var _lease_phases: Dictionary = {}
+ var _travel: Dictionary = {}
+ var _terminal_history: Dictionary = {}
+@@ -83,6 +89,38 @@
+ 	_finish()
+ 
+ 
++func _open() -> String:
++	var error: String = await super._open()
++	if not error.is_empty(): return error
++	var state: Dictionary = _level.call("state")
++	if not state.get("persistence_supported", false) or not state.get("checkpoint_dispatch_supported", false) or not _level.has_method("mirror_sea_codec_checkpoint_ids") or not _exact(_level.call("mirror_sea_codec_checkpoint_ids"), ROUTE_CHECKPOINT_IDS):
++		return "current whole parent and exact six native checkpoint identities required"
++	_level.checkpoint_requested.connect(_observe_route_checkpoint)
++	return _route_checkpoint_error(state)
++
++
++func _observe_route_checkpoint(level_id: String, checkpoint_id: String, kind: String) -> void:
++	var state: Dictionary = _level.call("state")
++	_route_checkpoint_receipts.append({"level_id": level_id, "id": checkpoint_id, "kind": kind, "clock_s": _scheduler.get_clock(), "current": _level.current_checkpoint().duplicate(true), "entries": state.route.entries.duplicate(true), "pending": state.route.pending_checkpoint_boundaries.duplicate(true)})
++
++
++func _route_checkpoint_error(state: Dictionary) -> String:
++	var entries: Array = state.route.entries
++	var pending: Array = state.route.pending_checkpoint_boundaries
++	var acknowledged: int = entries.size() - pending.size()
++	if entries.size() > ROUTE_CHECKPOINT_IDS.size() or acknowledged < 0 or not _exact(pending, entries.slice(acknowledged)) or _events.get("checkpoint", 0) != acknowledged or _route_checkpoint_receipts.size() != acknowledged or not _exact(_level.call("mirror_sea_codec_checkpoint_ids"), ROUTE_CHECKPOINT_IDS):
++		return "actual checkpoint deliveries/pending suffix differ from the earned canonical entry prefix"
++	var previous_clock: float = 0.0
++	for index: int in range(acknowledged):
++		var receipt: Dictionary = _route_checkpoint_receipts[index]
++		if receipt.level_id != "A3-L3" or receipt.id != ROUTE_CHECKPOINT_IDS[index] or receipt.kind != "encounter" or not _exact(receipt.current, {"id": ROUTE_CHECKPOINT_IDS[index], "kind": "encounter"}) or receipt.entries.size() < index + 1 or not _exact(receipt.entries.slice(0, index + 1), entries.slice(0, index + 1)) or not _exact(receipt.pending, receipt.entries.slice(index + 1)) or float(receipt.clock_s) < maxf(previous_clock, float(entries[index].clock_s)) or float(receipt.clock_s) > _scheduler.get_clock():
++			return "actual checkpoint callback lost original ID/kind/current checkpoint/earned receipt ordering"
++		previous_clock = float(receipt.clock_s)
++	var current: Dictionary = _level.current_checkpoint()
++	var latest: String = ROUTE_CHECKPOINT_IDS[acknowledged - 1] if acknowledged > 0 else ""
++	return "" if _exact(current, {"id": latest, "kind": "encounter" if acknowledged > 0 else ""}) else "actual current checkpoint differs from the delivered canonical prefix"
++
++
+ func _options_route() -> String:
+ 	var scope: bool = false
+ 	var priority: bool = false
+@@ -117,8 +155,10 @@
+ 
+ func _entry_error(index: int) -> String:
+ 	var state: Dictionary = _level.call("state")
+-	if state.route.entries.size() != index + 1 or not _exact(state.route.entries, state.route.pending_checkpoint_boundaries):
+-		return "native entered/pending-boundary prefix differs from actual route"
++	if state.route.entries.size() != index + 1:
++		return "native entered prefix differs from actual route"
++	var checkpoint_error: String = _route_checkpoint_error(state)
++	if not checkpoint_error.is_empty(): return checkpoint_error
+ 	var expected: Array[String] = []
+ 	for ordinal: int in range(index + 1):
+ 		var receipt: Dictionary = state.route.entries[ordinal]
+@@ -425,8 +465,10 @@
+ 	if paused: return "actual route paused before complete consumer boundary"
+ 	var reason: String = String(_level.call("runtime_error"))
+ 	if not reason.is_empty(): return reason
+-	if _scheduler.get_instance_id() != _scheduler_identity or _scheduler.get_clock() > ROUTE_BUDGET_S or _hero.dead or _hero.hp != _hero_hp or _hero.shells != _shells or not _exact(_hero.equipment.snapshot(), _kit) or not _exact(_hero.equipment.resolved_stats(), _stats) or _events.get("fired_blast", 0) != 0 or _events.get("route_contact", 0) != 0 or _events.get("pulse_hit", 0) != 0 or _events.get("equipment", 0) != 0 or _events.get("checkpoint", 0) != 0: return "continuous native clock/Hero resources/kit/no-contact/ordinary-only invariant changed"
++	if _scheduler.get_instance_id() != _scheduler_identity or _scheduler.get_clock() > ROUTE_BUDGET_S or _hero.dead or _hero.hp != _hero_hp or _hero.shells != _shells or not _exact(_hero.equipment.snapshot(), _kit) or not _exact(_hero.equipment.resolved_stats(), _stats) or _events.get("fired_blast", 0) != 0 or _events.get("route_contact", 0) != 0 or _events.get("pulse_hit", 0) != 0 or _events.get("equipment", 0) != 0: return "continuous native clock/Hero resources/kit/no-contact/ordinary-only invariant changed"
+ 	var state: Dictionary = _level.call("state")
++	reason = _route_checkpoint_error(state)
++	if not reason.is_empty(): return reason
+ 	if not SAFE_RECT.has_point(Vector2(_hero.global_position.x, _hero.global_position.z)): return "actual native route left its continuous authored shore"
+ 	for index: int in range(state.route.entries.size()):
+ 		if _entry_samples.has(index): continue
+@@ -459,11 +501,8 @@
+ 		var id: String = _owner_id(record)
+ 		if id.is_empty(): return "reservation lacks one real installed owner"
+ 		if record.adapter.get("kind") == "authored_replay" and held.size() != 1: return "actual authored Echo lost honest exclusive lease against another source"
+-		if not _fixed_leases.has(String(record.id)):
+-			_fixed_leases[String(record.id)] = _fixed_record(record)
+-			_lease_phases[String(record.id)] = {}
+-			_travel[String(record.id)] = 0.0
+-		if not _exact(_fixed_leases[String(record.id)], _fixed_record(record)): return "held exact native geometry/deadline/source identity changed"
++		reason = _held_record_error(id, record, state)
++		if not reason.is_empty(): return reason
+ 		var phase: String = _phase(id)
+ 		_lease_phases[String(record.id)][phase] = true
+ 		if _is_stalker(id):
+@@ -508,8 +547,60 @@
+ 	return ""
+ 
+ 
++func _held_record_error(id: String, record: Dictionary, parent_state: Dictionary) -> String:
++	var lease_id: String = String(record.id)
++	var authored: bool = record.adapter.get("kind") == "authored_replay"
++	if not _fixed_leases.has(lease_id):
++		_fixed_leases[lease_id] = _fixed_record(record)
++		_lease_phases[lease_id] = {}
++		_travel[lease_id] = 0.0
++		if authored:
++			if record.adapter.locked or record.start_s != _scheduler.get_clock(): return "first native authored observation skipped its genuine unarmed admission tick"
++			_authored_admissions[lease_id] = record.duplicate(true)
++			_authored_lock_clocks[lease_id] = -1.0
++	if authored:
++		var source: Node3D = _all_sources[id]
++		var playback: Dictionary = source.call("state")
++		var cursor: Dictionary = playback.cursor
++		var owned: Dictionary = parent_state.echo_records[id]
++		var public_record: Dictionary = _scheduler.replay_reservation_state(lease_id)
++		if public_record.is_empty() or not _exact(public_record, record) or playback.status != "running" or playback.reservation_id != lease_id or owned.locked != record.adapter.locked or not _exact(_fixed_record(owned.lease), _fixed_record(record)) or not _exact(source.call("get_authored_cycle_program"), record.adapter.sequence) or source.call("get_authored_cycle_generation") != record.adapter.generation or cursor.configured_at_s != record.start_s or cursor.armed != record.adapter.locked or cursor.last_advanced_clock_s != _scheduler.get_clock():
++			return "same-tick native authored owner/program/parent/Scheduler/Cursor custody differs"
++		var admission: Dictionary = _authored_admissions[lease_id]
++		if record.adapter.locked:
++			if cursor.armed_at_s != record.lock_from_s or cursor.timeline_origin_s != record.adapter.timeline_origin_s: return "actual armed Cursor lost copied native lock/origin"
++			if float(_authored_lock_clocks[lease_id]) < 0.0:
++				var gap: float = float(record.lock_from_s) - float(admission.lock_from_s)
++				if not _exact(_authored_identity(admission), _authored_identity(record)) or record.lock_from_s != _scheduler.get_clock() or gap < 0.0 or gap > _tick_s() + TIME_EPSILON:
++					return "authored lock changed original admission identity or missed its first available due tick"
++				# The pure public native accessor above validates every canonical
++				# deadline sum. Accept this one actual arm transition; keep every
++				# resulting deadline and adapter field exact for all later ticks.
++				_authored_lock_clocks[lease_id] = _scheduler.get_clock()
++				_fixed_leases[lease_id] = _fixed_record(record)
++				print("REAL ROUTE COMMIT: ", id, " lease=", lease_id, " generation=", record.adapter.generation, " admission_s=", record.start_s, " original_due_s=", admission.lock_from_s, " actual_lock_s=", record.lock_from_s)
++		elif float(_authored_lock_clocks[lease_id]) >= 0.0 or cursor.armed_at_s != null or cursor.timeline_origin_s != null:
++			return "actual authored commit reset or unarmed Cursor manufactured an origin"
++	return "" if _exact(_fixed_leases[lease_id], _fixed_record(record)) else "held exact native geometry/deadline/source identity changed"
++
++
++func _authored_identity(record: Dictionary) -> Dictionary:
++	var value: Dictionary = _fixed_record(record)
++	for key: String in FIXED_DEADLINES:
++		if key != "start_s": value.erase(key)
++	value.adapter.erase("locked")
++	value.adapter.erase("timeline_origin_s")
++	return value
++
++
+ func _fixed_record(record: Dictionary) -> Dictionary:
+-	var value: Dictionary = {"source_instance_id": record.source_instance_id, "geometry": record.geometry.duplicate(true), "adapter_kind": record.adapter.get("kind", "")}
++	var value: Dictionary = {"source_instance_id": record.source_instance_id, "adapter_kind": record.adapter.get("kind", "")}
++	# Compound authored exchanges carry the whole immutable program; they do
++	# not have one ordinary geometry key. Lunge/circle geometry remains exact.
++	if record.adapter.get("kind") == "authored_replay":
++		value.merge({"id": record.id, "response_actor_instance_id": record.response_actor_instance_id, "source_position": record.source_position, "opening_position": record.opening_position, "profile_id": record.profile_id, "world_revision": record.world_revision, "adapter": record.adapter.duplicate(true)})
++	else:
++		value["geometry"] = record.geometry.duplicate(true)
+ 	for key: String in FIXED_DEADLINES: value[key] = record[key]
+ 	if record.adapter.get("kind") == "lunge": value.merge({"start": record.adapter.start, "endpoint": record.adapter.planned_endpoint})
+ 	return value
+@@ -583,6 +674,9 @@
+ 
+ func _route_final_error(count: int) -> String:
+ 	var state: Dictionary = _level.call("state")
++	var checkpoint_error: String = _route_checkpoint_error(state)
++	if not checkpoint_error.is_empty(): return checkpoint_error
++	if not state.route.pending_checkpoint_boundaries.is_empty() or _route_checkpoint_receipts.size() != count: return "selected completed route did not deliver every genuine entered boundary"
+ 	var expected_sources: int = 7 if _full_route else 5
+ 	if state.route.entries.size() != count or state.route.deaths.size() != expected_sources or _all_sources.size() != expected_sources or _source_deaths.size() != expected_sources: return "selected exact route entry/death scope incomplete"
+ 	for id: String in _all_sources:
+@@ -600,7 +694,7 @@
+ 	if _actions.is_empty() or not _exact(_actions.slice(maxi(0, _actions.size() - stored.size())), stored): return "actual bounded completed action tail differs from observed full route actions"
+ 	for action: Dictionary in _actions:
+ 		if action.kind not in ["dash", "primary"] or not _exact(action.equipment_ids, _kit): return "route used unsupported action or changed equipment"
+-	return "" if _hero.hp == _hero_hp and _hero.shells == _shells and _events.get("fired_blast", 0) == 0 and _events.get("checkpoint", 0) == 0 and int(_game.get("cores")) == 0 and int(_game.get("kills")) == 0 and get_nodes_in_group("practice_targets").is_empty() and get_nodes_in_group("lab_weapons").is_empty() else "route altered resources or acquired unrelated pickup/reward/state"
++	return "" if _hero.hp == _hero_hp and _hero.shells == _shells and _events.get("fired_blast", 0) == 0 and int(_game.get("cores")) == 0 and int(_game.get("kills")) == 0 and get_nodes_in_group("practice_targets").is_empty() and get_nodes_in_group("lab_weapons").is_empty() else "route altered resources or acquired unrelated pickup/reward/state"
+ 
+ 
+ func _close_route() -> void:
+@@ -620,5 +714,5 @@
+ 
+ 
+ func _finish() -> void:
+-	print("Owned Mirror Sea route: %d checks; failures: %d. %s; no whole-save/full-art/production/OS-human acceptance." % [_checks, _failures, "all6/seven ordinary deaths/contact priority=" + _priority if _full_route else "first5/real recovery-death between same-source pulses"])
++	print("Owned Mirror Sea route: %d checks; failures: %d. %s; native checkpoint/arm observations only; no aggregate transport/restore/full-art/production/OS-human acceptance." % [_checks, _failures, "all6/seven ordinary deaths/contact priority=" + _priority if _full_route else "first5/real recovery-death between same-source pulses"])
+ 	quit(0 if _failures == 0 else 1)
