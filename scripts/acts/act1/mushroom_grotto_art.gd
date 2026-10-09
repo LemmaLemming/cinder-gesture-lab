@@ -152,7 +152,7 @@ func _cap(parent: Node3D, size: Vector3, stalk_projection: Vector3) -> void:
 		_triangle(vertices, colours, uvs, outer[index], bottom_a, bottom_b, 0.28)
 		_triangle(vertices, colours, uvs, outer[index], bottom_b, outer[next], 0.28)
 		_triangle(vertices, colours, uvs, Vector3(stalk_projection.x, -size.y * 0.49, stalk_projection.z), bottom_b, bottom_a, 0.22)
-	_mesh(parent, "FacetedPaintedCap", _array_mesh(vertices, colours, uvs), _vertex_material(true))
+	_mesh(parent, "FacetedPaintedCap", _array_mesh(vertices, colours, uvs), _vertex_material(false))
 	# Fine underside gills converge at the real stalk. All vertices stay within
 	# the original cap envelope; they have normal depth and no cue semantics.
 	for index: int in CAP_SEGMENTS:
