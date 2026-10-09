@@ -6,7 +6,7 @@ const Weybridge = preload("res://scripts/acts/act2/weybridge_kit.gd")
 const House = preload("res://scripts/acts/act2/ruined_house_kit.gd")
 const Weed = preload("res://scripts/acts/act2/red_weed_visual.gd")
 const Floor = preload("res://scripts/acts/act2/london_approaches_floor.gd")
-const ART_REVISION := "a2-london-approaches-4"
+const ART_REVISION := "a2-london-approaches-5"
 const TILE_WORLD_SIZE := 1.44
 const ACTOR_PIXEL_SIZE := 0.0225
 const ARTILLERYMAN_HOME := Vector3(4.00, 0.025, -43.8)
@@ -167,7 +167,10 @@ static func _putney(root: Node3D) -> void:
 		var weed: Node3D = _weed(root, putney, "SparsePutneyWeed_%s" % side, Vector3(sign_side * 4.10, 0.0, -37.6), "sparse", 1)
 		_portrait_weed_transform(weed, side, Vector3(0.9, 1.0, 0.9))
 		_lamp(root, Vector3(sign_side * 4.0, 0.0, -48.0), "PutneyLamp_%s" % side)
-	var gun: Node3D = Weybridge._field_gun(putney, Vector3(-4.30, 0.0, -43.8))
+	var gun: Node3D = Weybridge._field_gun(putney, Vector3(-5.0, 0.0, -43.8))
+	# Expose the existing wheel faces to the fixed camera; native geometry
+	# remains outboard of the dry route and separate from the bridge pier.
+	gun.rotation.y = PI / 3.0
 	gun.name = "QuietAbandonedFieldGun"
 	gun.set_meta("scenery_only", true)
 	_collect_cutaway(root, gun)
