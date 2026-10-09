@@ -18,8 +18,8 @@ Earlier consumed baseline: Consumed `campaign-shared-22`: publication `4de8b6008
 | A2-L1 Horsell Common | Original candidate/both common Scout patches adopted; current40/42 original files match | Supplemental 186/0 + affected 285/0 clean, adopted8c37b1e0/RESPONSEd810feca |
 | A2-L2 Weybridge and Shepperton | Canonical registry accepted exactfd5fd3d; registration4b0e08d | Integration330/0+338/0+Journey22/0 separate; owner shared23 crossing371/0 retained |
 | A2-L3 Black Smoke and the Ruined House | Canonically accepted exact8dd/cec8f329; production64f34c8/shared30 | Original scopes frozen; no remaining L3 production requirement |
-| A2-L4 Red Weed and London Approaches | Seven routes, bank634, actualgun3093 and freshShell6620 passed; scoped portraits reviewed | Freeze full six-prefix payload/runtime+UID/evidence inventories and canonical HANDOFF; independent integration acceptance pending |
-| A2-L5 Dead London and Regent's Park | Production unstarted | L4 handoff |
+| A2-L4 Red Weed and London Approaches | Accepted exact1a5e9ea through bc7d1656; original owner scopes retained | Registration/production243 and real L3→L4 transition1375 accepted independently; closed |
+| A2-L5 Dead London and Regent's Park | Bait native122 passed at37; additive binding15/0 passed at38, first15/1 retained; whole level unimplemented | Promote reviewed B05 actor/ray and assemble distinct circle-foot greybox |
 | A2-O1 Cylinder Perimeter | Production unstarted | Main levels complete; reuse L1 kit |
 | A2-O2 Clear Air Circuit | Production unstarted | O1 handoff; reuse L3 kit |
 | A2-O3 Bleached Canal | Production unstarted | O2 handoff; reuse L4 kit |

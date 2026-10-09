@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: cache binds once to actual ready native Player
+PASS: unbound cache grants no native identity
+PASS: two distinct real Players settle on native dry floor
+ERROR: FAIL: actual binding identifies only its native Hero without initializing bait
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act2/a2_l5_bait_smoke.gd:461)
+       [1] _native_binding_checks (res://tests/acts/act2/a2_l5_bait_smoke.gd:49)
+       [2] _wait_ready (res://tests/acts/act2/a2_l5_bait_smoke.gd:380)
+       [3] _step (res://tests/acts/act2/a2_l5_bait_smoke.gd:407)
+PASS: second cache retains distinct actual Hero identity in the same World3D
+PASS: both boundaries use their respective actual supported floor
+PASS: both complete native Players are captured at actual paused barrier
+PASS: paused identity keeps the exact native bijection
+PASS: custody reads mutate neither actual Player/cache/diagnostic nor publish callbacks
+PASS: permanent cache retirement closes actual identity and rebinding
+PASS: one cache retirement leaves the other actual binding intact
+PASS: a queued native recipient immediately loses binding authority
+PASS: freed native recipient cannot retain bait authority
+PASS: fixture owner disconnects and frees its complete native world
+PASS: complete fixture cleanup leaves both caches disarmed
+A2-L5 bait controller smoke: 15 checks, 1 failures; controller/API only, no ray, recognizer, camera, combat, whole-level or art credit

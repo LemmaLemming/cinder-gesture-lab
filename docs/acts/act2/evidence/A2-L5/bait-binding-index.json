@@ -1,0 +1,62 @@
+{
+  "created_at": "2026-10-09T04:17:06.358052+00:00",
+  "level_id": "A2-L5",
+  "parent_head": "d612a5ef24f44185fcbdee820d14398dc820bf5c",
+  "api_revision": "campaign-shared-38",
+  "shared_publication": "fc4031324db0ae16e8a7c06e1f6144bcf00e5e27",
+  "status": "New additive native Hero binding getter verified15/0; first15/1 wrong test expectation retained. Whole L5 unimplemented/unaccepted.",
+  "active_pins": {
+    "scripts/acts/act2/dead_london_bait.gd": "9ae1b065521e1d521025d0f90fc941aa0f19867851ddc3eaa632432147d94808",
+    "scripts/acts/act2/dead_london_bait.gd.uid": "2f84bacef1b430e69bc9c3b36e5bdad2c5830ba727bc75a58f74f44526da935e",
+    "tests/acts/act2/a2_l5_bait_smoke.gd": "789a1558c3b8715e8e94ed480e37c86cae3bb22c655cda41bebd9e24f91a06a6",
+    "tests/acts/act2/a2_l5_bait_smoke.gd.uid": "5587e3e48f2d89b4ae6aa7fb952f3308e52aa337c4e161758391909989c0ac37",
+    "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+  },
+  "packets": [
+    {
+      "path": "bait-binding-first",
+      "source_sha256": "537eb578eba842e0f02a72429df5b49383441972e301a6893085191bb5ba1aa3",
+      "result_sha256": "936f19ccdbb022e784667a1e85e235d867e1fd989a396cdf9fd3e96f26246dc0",
+      "source_count": 274,
+      "checks": 15,
+      "failures": 1,
+      "exit_code": 1,
+      "script_errors": 0,
+      "native_errors": 1,
+      "physical_source_members_exact": true,
+      "scope": "Native Hero/cache identity, read purity and retirement only."
+    },
+    {
+      "path": "bait-binding-corrected",
+      "source_sha256": "107a3d60f9bf0be547aa4bf28b5c82b4239af2b07ed7071506be20bff5e5bd00",
+      "result_sha256": "587d3c3958939870f83a1add8e8c92b3227081f1d40a3642852f7a661230e41e",
+      "source_count": 274,
+      "checks": 15,
+      "failures": 0,
+      "exit_code": 0,
+      "script_errors": 0,
+      "native_errors": 0,
+      "physical_source_members_exact": true,
+      "scope": "Native Hero/cache identity, read purity and retirement only."
+    }
+  ],
+  "source_members": 548,
+  "old_cache_bodies_exact": true,
+  "old_122_check_bodies_exact": true,
+  "historical_reuse": {
+    "index": "index.json",
+    "tested_api": "campaign-shared-37",
+    "checks": "15/0 nested +107/0 base,122 nonoverlapping in original six packets",
+    "reason": "All earlier cache/check bodies and new-mode-independent default control flow exact; pure getter has no callers in those modes. Direct Shared38 gameplay dependencies unchanged per preserving-adoption audit. Original pin map describes milestone5763f37d, not this later getter."
+  },
+  "expectation_review": {
+    "reviewer": "scout_api_review",
+    "finding": "Exact uninitialized version1 envelope and empty sample are established state() contract; state becomes empty only after actual binding retirement/loss. Only new test expectation repaired. No runtime getter repair or relaxed invariant."
+  },
+  "import": "No new/moved active resource/UID; direct existing-script reload, no import.",
+  "limitations": [
+    "Two-Player native API fixture; no Scheduler/ray/foot/composite damage/B05/full aggregate/recognizer/screen aim/portrait/art/full level acceptance.",
+    "Source copies are explicit/literal resource subset, not a full project clone.",
+    "Archived level-preview PNG is a historical input, not new L5 capture."
+  ]
+}
