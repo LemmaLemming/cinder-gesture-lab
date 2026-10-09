@@ -7,6 +7,7 @@ extends "res://tests/acts/act1/a1_l3_normal_opening.gd"
 ## Full native aggregate/candidate/save support remains explicitly DENIED.
 
 const FullBodySweep = preload("res://scripts/combat/body_sweep.gd")
+const FullGapGeometry = preload("res://scripts/combat/threat_geometry.gd")
 const FullLayout = preload("res://scripts/acts/act1/mushroom_caverns_layout.gd")
 const FullRoomNames: Array[String] = ["umbrella", "breathing", "crossed", "lone-guard", "court"]
 const FullBeats: Array[String] = ["umbrella-grove", "breathing-chamber", "crossed-grotto", "spear-pocket", "court-approach"]
@@ -195,12 +196,80 @@ func _full_opportunity(room: int) -> bool:
 			if state.dead: continue
 			var actual: float = _planar_distance(sources[id].global_position, hero.global_position)
 			if actual < distance: distance = actual; nearest = id
-		if distance <= 4.4 or not scheduler.reservations().is_empty(): break
+		if not scheduler.reservations().is_empty(): break
+		if distance <= 4.4:
+			if not full_room_cycle_seen.get(room, false): break
+			# Native admission distance is not ordinary-primary reach. After a genuine
+			# cycle, a C31 can settle at its authored3m approach stop outside2m reach.
+			# Observe real stopped/unleased bodies before a measured full input step.
+			if not await _full_gap_step(room, nearest): return false
+			continue
 		if not _require(not nearest.is_empty(), "actual room retains a living approach target"): return false
 		var direction: Vector3 = sources[nearest].global_position - hero.global_position
 		direction.y = 0.0
 		if not await _full_route_step(direction.normalized(), "whole actual approach towards " + nearest): return false
 	return await _wait(func() -> bool: return _fresh_warning() != "" or (full_room_cycle_seen.get(room, false) and _reachable_source() != ""), "room-local actual native admission/ordinary opportunity", 12.0)
+
+
+func _full_gap_ready(room: int) -> bool:
+	if not scheduler.reservations().is_empty(): return false
+	for id: String in _full_ids(room):
+		var actual: Variant = sources.get(id)
+		if not is_instance_valid(actual) or not actual is CharacterBody3D: return false
+		var state: Dictionary = actual.call("pure_presentation_state")
+		if state.dead: continue
+		var control: Dictionary = scheduler.source_control_state(actual)
+		var response: Dictionary = actual.call("get_spore_response_state")
+		if control.is_empty() or control.get("source_instance_id") != actual.get_instance_id() or control.get("outside_transaction") != true or not control.reservations.is_empty(): return false
+		if response.is_empty() or not response.alive or not response.grounded or response.get("outside_transaction") != true or response.phase != "none" or response.velocity != Vector3.ZERO: return false
+		if state.dormant or state.status != "idle" or not state.reservation_id.is_empty() or state.velocity != Vector3.ZERO or state.approach_driving or float(state.hurt_left_s) > 0.0: return false
+	return true
+
+
+func _full_gap_step(room: int, id: String) -> bool:
+	if not await _ready_input(id + " real full ordinary-gap step readiness"): return false
+	if _fresh_warning() != "" or _reachable_source() != "": return true
+	if not _require(_full_gap_ready(room), "ordinary-gap query retains genuine stopped unleased current-room bodies"): return false
+	var actor: CharacterBody3D = sources[id]
+	var length: float = float(hero.equipment.resolved_stats().dash_distance)
+	var reach: float = float(hero.equipment.resolved_stats().primary_range) - 0.08
+	if not _require(_planar_distance(actor.global_position, hero.global_position) > reach, id + " still needs a real full step into unchanged ordinary reach"): return false
+	var hero_body: Dictionary = FullBodySweep.source_description(hero)
+	if not _require(not hero_body.has("error") and hero_body.collision.shape is CapsuleShape3D, "ordinary-gap query uses the actual retained shared Hero capsule"): return false
+	var radius: float = (hero_body.collision.shape as CapsuleShape3D).radius
+	var floors: Array = level.call("scheduler_bindings").floors.values()
+	var candidates: Array[Dictionary] = []
+	# Finite canonical cardinal/diagonal inputs. This is fixture input choice,
+	# not an attack/path solver or a changed movement/controller definition.
+	for heading: Vector3 in [Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT, Vector3(1, 0, -1), Vector3(1, 0, 1), Vector3(-1, 0, -1), Vector3(-1, 0, 1)]:
+		var direction: Vector3 = heading.normalized()
+		var motion: Vector3 = direction * length
+		var finish: Vector3 = hero.global_position + motion
+		var predicted_gap: float = _planar_distance(actor.global_position, finish)
+		var measured: Dictionary = {}
+		var clear: bool = false
+		if predicted_gap <= reach:
+			measured = FullBodySweep.sweep(hero, hero.global_transform, motion, floors)
+			clear = not measured.has("error") and not measured.get("collided", true) and measured.get("end") is Vector3 and measured.end.distance_to(finish) <= FullBodySweep.position_rounding_bound(hero.global_position, finish)
+			for other_id: String in _full_ids(room):
+				var other: CharacterBody3D = sources[other_id]
+				if other.get("dead"): continue
+				var body: Dictionary = FullBodySweep.source_description(other)
+				if body.has("error") or not body.collision.shape is CapsuleShape3D: clear = false; break
+				var shape: Dictionary = {"kind": "circle", "origin": other.global_position, "radius": (body.collision.shape as CapsuleShape3D).radius + 0.12}
+				if FullGapGeometry.segment_hits(shape, hero.global_position, finish, radius): clear = false; break
+		# Empty measurement means this direction was outside ordinary reach; no
+		# scenery/native query or pass is invented for that excluded candidate.
+		candidates.append({"direction": direction, "finish": finish, "clear": clear, "measured": measured, "predicted_primary_gap": predicted_gap})
+	_full_diagnostic("real unleased ordinary-gap candidates " + id + " " + str(_portable(candidates)))
+	for candidate: Dictionary in candidates:
+		if not candidate.clear or float(candidate.predicted_primary_gap) > reach: continue
+		# Static sweep/spacing supplies no threat/fairness or future-motion grant.
+		# Parent still owns fresh admission; actual native action/HP/phase/body and
+		# whole camera observers retain authority throughout the real recognizer.
+		if not await _full_route_step(candidate.direction, id + " measured full oblique ordinary approach"): return false
+		return _framing(id + " actual ordinary-gap stopped landing whole native union")
+	return _require(false, id + " has a clear whole native body path to an ordinary opening")
 
 
 func _full_route_step(direction: Vector3, label: String) -> bool:

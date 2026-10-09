@@ -1,6 +1,6 @@
 # Act 1 — current progress
 
-Updated 9 October 2026 (Hong Kong). **Act1 2/8 accepted; campaign 7/24. Current level: A1-L3, unaccepted.** The sole registered owner and adopted Shared34 baseline are recorded; canonical adoption verification is pending. First five-room normal traversal failed350/1 after clean import; finite473/513 passes remain bounded and optically limited. The shared update is adopted after the frozen job closed. No registration or human permission gate remains.
+Updated 9 October 2026 (Hong Kong). **Act1 2/8 accepted; campaign 7/24. Current level: A1-L3, unaccepted.** The sole registered owner and adopted Shared34 baseline are recorded; canonical adoption verification is complete. First five-room normal traversal failed350/1 after clean import; finite473/513 passes remain bounded and optically limited. The shared update is adopted after the frozen job closed. No registration or human permission gate remains.
 
 ## Sequential level order
 
@@ -98,3 +98,7 @@ Root reviewed the full Shared34 runtime diff, gate contract, actual native fixtu
 A separate Shared33 managed-Echo-only preview admission gap is source-proven/unexecuted, reported to Integration REQUEST `8362dfa9-74c0-4885-8f89-5995c33c7280`. Current L3 is wholly unopted C31/C32/Spore and uses unchanged ordinary conditional branches; no managed lifecycle safety claim or private shared repair. Measured performance remains open. No unchanged accepted level or broad suite is rerun for adoption. The next owned check follows the actual350/1 fixture opportunity diagnosis, at its then-current recorded source and API.
 
 Root independently verified and published the separate [first fullroute failure archive](../../../docs/acts/act1/L3_NORMAL_FULL_ROUTE_FIRST_FAILURE.md):352 complete originals/349 frozen dependencies/359 exact files; indexSHA `1732a9f68572c13c541b71c4e7cb860e98011c1f8e2ba5f54632a0ab76adf99c`. The350/1 result and observed camera rejection remain unchanged; no portraits or fullroute acceptance.
+
+## Actual ordinary-gap fixture correction
+
+Canonical run now records the original sole owner on exact Shared34 at2026-10-08T23:56:54Z; preserving merge daccb997 and ACK916d0bd6 are independently verified (RESPONSE9dd0738a). Current fullnormal350/1 failure remains preserved. The owned test now selects among eight canonical full-dash inputs only after a genuine room cycle and actual stopped/unleased/grounded current recipients. Each eligible endpoint is inside unchanged primary reach1.92 and passes actual complete floor/scenery sweep plus every living capsule with original .12 spacing reserve. Existing recognizer, full movement/HP/phase/action/progression/camera guards remain authoritative; no enemy stop distance, controller, timing, geometry or tolerance changes. Exact fixture SHA10fb631d6de3775ff1a2c4d70d71aac55b004f87e62a2d8b730d84e883d1f8ec. Only affected fullnormal headless attempt is next; no gameplay pass yet. Save remains denied and final portrait/fullcandidate/kits/profiles/acceptance remain pending.
