@@ -422,3 +422,8 @@ A concrete strict parent codec V1 is frozen at TMP1482/e66d5cf9 for independent 
 
 
 Shared41 published optional Lane parent presentation guard has been preserving-adopted at merged0c6c8f5be2b29fc45ec731ad48c645d9f58dac9 from bd3c4458cbd1821b79c2bcda6e33f8dbaa0d5e4d. All15,186 prior owned Git/physical files,321 active UID bytes/modes,3settings and707 incoming rows are exact. [Custody](../../../docs/acts/act2/evidence/shared41-adoption/adoption.json) carries no native/import credit. Original19/1 is retained; next is the smallest actual parent callback hookup and that affected native reproduction, then current production codec/loading/save/Retry/visual checks. No human or whole-act blocker.
+
+
+## Closed actual late Foot callback fix
+
+The supported Shared41 parent callback is bound before every actual Foot cycle in the owned 559-line parent. The unchanged failing fixture now closes **19 checks / 0 failures**, with identical raw/wrapper output, no Script/native errors or warnings, no UID additions and all 358 source archive/current bytes and modes exact. The later live Actor hide cancels before a hurt opportunity, preserves the precise parent reason and releases the native world. [Repair evidence](../../../docs/acts/act2/evidence/A2-L5/foot-parent-guard41-index.json) retains the original 19/1 separately; no old evidence is relabelled. This resolves the narrow shared dependency. Production codec, loading, saves, Retry, transitions, cleanup and brief portrait inspection remain unfinished. Full-playthrough behavior is untested and is not an acceptance gate.
