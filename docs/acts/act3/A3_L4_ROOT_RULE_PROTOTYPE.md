@@ -1,3 +1,7 @@
+## Paired-state implementation in progress — 9 October 2026
+
+Local snapshot version2 is written with a closed native Scheduler/two-mechanism/physical tether unit, accepted cycle records, bounded phase-crossing prefix, historical presentation points and exact quiet apply. The tether additions preserve every original damage/presentation method. The ordinary framing provider and candidate optical gate use the actual recipient Hero/Camera/HUD. This source has not been parsed or tested yet; original Shared42 native results below belong to their original frozen source. Next: narrow paired native restore/rejection and directly affected root mechanics check, on the adopted published baseline. The room remains unregistered; authored garden/sun/helper/route/checkpoints/production save loop are unfinished.
+
 # False Paradise root rule prototype
 
 9 October 2026. Act 3 remains **3/8 accepted**; False Paradise is the only production frontier. This small room precedes the authored five-beat level. It does not register A3-L4, grant campaign progression, or implement its saves, helper, sun sequence, garden art or exit.

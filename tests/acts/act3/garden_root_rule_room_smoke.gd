@@ -1,7 +1,7 @@
 extends SceneTree
 ## Focused two-source rule prototype. Actual engine-routed fixture gestures are not
-## native OS input or a human balance/playthrough claim. No save/restore tests:
-## this unregistered rule prototype explicitly refuses campaign/local snapshots.
+## native OS input or a human balance/playthrough claim. Local paired capture is
+## checked at warning pause; full restore/disk/campaign flow needs its own test.
 
 const MainScene: PackedScene = preload("res://scenes/main.tscn")
 const ROOM: String = "res://scenes/acts/act3/a3_l4_garden_root_rule_room.tscn"
@@ -427,8 +427,9 @@ func _pause_check() -> bool:
 		await process_frame
 	if not _expect(paused and not _game.call("is_pause_requested") and before == _observation(), "whole native warning pause freezes actual Hero/target/cues/Scheduler/input/camera without snapshot claims"):
 		return false
-	var unsupported: Dictionary = _level.snapshot_state()
-	if not _expect(unsupported.is_empty() and _level.last_snapshot_error.contains("persistence is unimplemented"), "small prototype explicitly rejects snapshots without granting empty campaign-save credit"):
+	var paired: Dictionary = _level.snapshot_state()
+	var player: Dictionary = _hero.snapshot_state()
+	if not _expect(not paired.is_empty() and not player.is_empty() and _level.snapshot_error_with_player(paired, player).is_empty() and float(paired.local.scheduler.clock_s) == _scheduler.get_clock() and float(paired.local.tether.clock_s) == _scheduler.get_clock() and int(paired.local_snapshot_version) == 2, "small prototype captures the complete actual paired warning at the paused barrier", _level.last_snapshot_error):
 		return false
 	_game.call("resume_lab")
 	return _expect(not paused, "public resume continues the same actual rule unit")
