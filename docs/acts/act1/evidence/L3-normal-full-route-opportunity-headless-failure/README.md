@@ -1,0 +1,11 @@
+# Private normal-route opportunity failure
+
+This separate exact archive preserves CLOSED `a1-l3-normal-full-route-opportunity-headless`: **350 checks / 1 failure, exit 1, five real swipes and two ordinary primaries**, HEAD `59d08db2a1b9e1ef6cf7f603d65d7000fa7939e4`, `campaign-shared-34`. All **353 declared frozen dependencies** match producer hashes; recorded post-execution mismatches are empty. The intended five-room target was not completed.
+
+[Job, revision and scope](index.json), [exact origin map](origin-map.json), [verification](verification.json), [inventory](inventory.json) and [hash closure](hash-closure.json) locate and bound every byte. Original metadata, entire stdout/backtrace and complete native report are copied verbatim. Source code, UID and project settings remain inert `.txt` files under `.gdignore`; original producer references are retained. No current source substitutes for an executed snapshot. The 92 copied PNGs are authored frozen dependencies; **no native portrait exists** for this headless run.
+
+The unchanged room-local native opportunity wait fails in room0 after genuine `umbrella-1` and `umbrella-3` ordinary-primary defeats. No checkpoint, room-completion, campaign-completion or contact receipt is earned. At the last Defeat receipt, `umbrella-2` still has native reservation `threat-3`; the owner's completed-run classification states the new ordinary-gap branch was not exercised. No candidate diagnostic or branch pass is invented. The report preserves all three original source phase barriers and two timing receipts; these are observations rather than exact-time replay or whole-route proof.
+
+The raw failure diagnostic also records native required-camera union rejection. Its presence alone does not establish the runtime cause. Full native save remains DENIED. No later-room, campaign, kit/profile, optical art, human balance or performance acceptance is inferred. The separate private floor proposal is unexecuted and receives no credit from these frozen sources.
+
+Packaging verification is limited to these 353 original dependencies, original job/log/report and new package copies. Old archives and current records are untouched; no unrelated history audit, engine, import, merge, stage or commit was performed.

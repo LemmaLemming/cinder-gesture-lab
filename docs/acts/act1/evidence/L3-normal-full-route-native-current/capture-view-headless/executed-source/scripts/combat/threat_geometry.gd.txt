@@ -1,0 +1,265 @@
+class_name CinderThreatGeometry
+extends RefCounted
+## Logical planar committed geometry, independent of decorative footprint meshes.
+## Continuous segment tests conservatively pad by actor radius. Cone padding is
+## an enclosing intersection of expanded halfplanes/disk (false positives near
+## corners); scenery LOS never removes danger. A lane reserves its entire swept
+## capsule during activation, not an inferred moving-source interpolation.
+
+const EPSILON: float = 0.00001
+# Bounded renderable annular sector; collision uses analytic arcs, never mesh.
+const CRESCENT_MIN_RADIUS: float = 0.001
+const CRESCENT_MAX_RADIUS: float = 1000000.0
+const CRESCENT_MIN_RELATIVE_WIDTH: float = 0.000001
+
+
+static func circle(origin: Vector3, radius: float) -> Dictionary:
+	return {"kind": "circle", "origin": origin, "radius": radius}
+
+
+static func cone(origin: Vector3, direction: Vector3, reach: float, min_dot: float, origin_radius: float = 0.1) -> Dictionary:
+	return {"kind": "cone", "origin": origin, "direction": direction, "reach": reach, "min_dot": min_dot, "origin_radius": origin_radius}
+
+
+static func crescent(origin: Vector3, direction: Vector3, inner_radius: float, outer_radius: float, min_dot: float) -> Dictionary:
+	return {"kind": "crescent", "origin": origin, "direction": direction, "inner_radius": inner_radius, "outer_radius": outer_radius, "min_dot": min_dot}
+
+
+static func lane(start: Vector3, finish: Vector3, radius: float) -> Dictionary:
+	return {"kind": "lane", "from": start, "to": finish, "radius": radius}
+
+
+static func error(shape: Dictionary) -> String:
+	var kind: Variant = shape.get("kind")
+	if kind not in ["circle", "cone", "lane", "crescent"]:
+		return "Unsupported committed threat geometry"
+	for key: String in (["from", "to"] if kind == "lane" else ["origin"]):
+		if not finite_vector(shape.get(key)):
+			return "Missing finite threat point: " + key
+	if kind == "crescent":
+		var keys: Array[String] = ["kind", "origin", "direction", "inner_radius", "outer_radius", "min_dot"]
+		if shape.size() != keys.size():
+			return "Crescent requires exactly its canonical six parameters"
+		for key: Variant in shape:
+			if not key is String or not keys.has(key):
+				return "Unsupported crescent parameter"
+		if not finite_vector(shape.get("direction")) or absf((shape.direction as Vector3).y) > EPSILON or absf((shape.direction as Vector3).length() - 1.0) > EPSILON:
+			return "Crescent direction must be a normalized ground direction"
+		for key: String in ["inner_radius", "outer_radius", "min_dot"]:
+			if not finite_number(shape.get(key)):
+				return "Missing finite crescent parameter: " + key
+		if float(shape.inner_radius) < CRESCENT_MIN_RADIUS or float(shape.outer_radius) <= float(shape.inner_radius) or float(shape.outer_radius) > CRESCENT_MAX_RADIUS or float(shape.min_dot) < 0.0 or float(shape.min_dot) >= 1.0:
+			return "Crescent needs ordered radii between 0.001 and 1e6 meters and a nonzero sector of at most 180 degrees"
+		if (float(shape.outer_radius) - float(shape.inner_radius)) / float(shape.outer_radius) < CRESCENT_MIN_RELATIVE_WIDTH:
+			return "Crescent band is thinner than the supported bounded mesh precision"
+		return ""
+	if kind == "cone":
+		if not finite_vector(shape.get("direction")):
+			return "Cone requires a finite committed direction"
+		var direction: Vector3 = shape["direction"]
+		if absf(direction.y) > EPSILON or absf(direction.length() - 1.0) > EPSILON:
+			return "Cone direction must be a normalized ground direction"
+		for key: String in ["reach", "origin_radius", "min_dot"]:
+			if not finite_number(shape.get(key)):
+				return "Missing finite cone parameter: " + key
+		if float(shape["reach"]) <= 0.0 or float(shape["origin_radius"]) < 0.0 or float(shape["origin_radius"]) > float(shape["reach"]) or float(shape["min_dot"]) < 0.0 or float(shape["min_dot"]) >= 1.0:
+			return "Supported cone needs positive reach and a convex angle"
+	else:
+		if not finite_number(shape.get("radius")) or float(shape["radius"]) <= 0.0:
+			return "Threat radius must be positive and finite"
+		if kind == "lane" and absf((shape["from"] as Vector3).y - (shape["to"] as Vector3).y) > EPSILON:
+			return "Lane must lie in a single ground plane"
+	return ""
+
+
+static func segment_hits(shape: Dictionary, start: Vector3, finish: Vector3, actor_radius: float) -> bool:
+	if not error(shape).is_empty() or not finite_vector(start) or not finite_vector(finish) or not finite_number(actor_radius) or actor_radius < 0.0:
+		return true # Unknown logical geometry cannot prove a safe route.
+	if shape["kind"] == "crescent":
+		return _crescent_segment_hits(shape, start, finish, actor_radius)
+	var a: Vector2 = planar(start)
+	var b: Vector2 = planar(finish)
+	if shape["kind"] == "lane":
+		return _segment_distance(a, b, planar(shape["from"]), planar(shape["to"])) <= float(shape["radius"]) + actor_radius + EPSILON
+	var origin: Vector2 = planar(shape["origin"])
+	if shape["kind"] == "circle":
+		return _circle_interval(a - origin, b - origin, float(shape["radius"]) + actor_radius).x <= _circle_interval(a - origin, b - origin, float(shape["radius"]) + actor_radius).y
+	if _circle_interval(a - origin, b - origin, float(shape["origin_radius"]) + actor_radius).x <= _circle_interval(a - origin, b - origin, float(shape["origin_radius"]) + actor_radius).y:
+		return true
+	var interval: Vector2 = _circle_interval(a - origin, b - origin, float(shape["reach"]) + actor_radius)
+	var forward: Vector2 = planar(shape["direction"])
+	var side: Vector2 = Vector2(-forward.y, forward.x)
+	var cosine: float = float(shape["min_dot"])
+	var sine: float = sqrt(1.0 - cosine * cosine)
+	for normal: Vector2 in [forward * sine + side * cosine, forward * sine - side * cosine]:
+		interval = _clip_linear(interval, normal.dot(a - origin), normal.dot(b - origin), -actor_radius)
+	return interval.x <= interval.y
+
+
+static func timed_path_hits(shape: Dictionary, path: Array[Dictionary], active_from: float, active_until: float, actor_radius: float) -> bool:
+	for segment: Dictionary in path:
+		var begin: float = maxf(float(segment["start_s"]), active_from)
+		var end: float = minf(float(segment["end_s"]), active_until)
+		if begin > end + EPSILON:
+			continue
+		var duration: float = float(segment["end_s"]) - float(segment["start_s"])
+		var start: Vector3 = segment["from"]
+		var finish: Vector3 = segment["to"]
+		var a: Vector3 = start if duration <= EPSILON else start.lerp(finish, clampf((begin - float(segment["start_s"])) / duration, 0.0, 1.0))
+		var b: Vector3 = finish if duration <= EPSILON else start.lerp(finish, clampf((end - float(segment["start_s"])) / duration, 0.0, 1.0))
+		if segment_hits(shape, a, b, actor_radius):
+			return true
+	return false
+
+
+static func planar(point: Vector3) -> Vector2:
+	return Vector2(point.x, point.z)
+
+
+static func finite_vector(value: Variant) -> bool:
+	return value is Vector3 and is_finite(value.x) and is_finite(value.y) and is_finite(value.z)
+
+
+static func finite_number(value: Variant) -> bool:
+	return (value is int or value is float) and is_finite(float(value))
+
+
+static func _circle_interval(a: Vector2, b: Vector2, radius: float) -> Vector2:
+	var movement: Vector2 = b - a
+	var aa: float = movement.length_squared()
+	var cc: float = a.length_squared() - radius * radius
+	if aa <= EPSILON * EPSILON:
+		return Vector2(0, 1) if cc <= EPSILON else Vector2(1, 0)
+	var bb: float = 2.0 * a.dot(movement)
+	var discriminant: float = bb * bb - 4.0 * aa * cc
+	if discriminant < -EPSILON:
+		return Vector2(1, 0)
+	var root: float = sqrt(maxf(0.0, discriminant))
+	return Vector2(maxf(0.0, (-bb - root) / (2.0 * aa)), minf(1.0, (-bb + root) / (2.0 * aa)))
+
+
+static func _clip_linear(interval: Vector2, start: float, finish: float, minimum: float) -> Vector2:
+	var change: float = finish - start
+	if absf(change) <= EPSILON:
+		return interval if start >= minimum - EPSILON else Vector2(1, 0)
+	var crossing: float = (minimum - start) / change
+	return Vector2(maxf(interval.x, crossing), interval.y) if change > 0.0 else Vector2(interval.x, minf(interval.y, crossing))
+
+
+static func _point_segment_distance(point: Vector2, start: Vector2, finish: Vector2) -> float:
+	var edge: Vector2 = finish - start
+	var along: float = clampf((point - start).dot(edge) / edge.length_squared(), 0.0, 1.0) if edge.length_squared() > EPSILON * EPSILON else 0.0
+	return point.distance_to(start + edge * along)
+
+
+static func _segment_distance(a: Vector2, b: Vector2, c: Vector2, d: Vector2) -> float:
+	var ab: Vector2 = b - a
+	var cd: Vector2 = d - c
+	var denominator: float = ab.cross(cd)
+	if absf(denominator) > EPSILON:
+		var along_ab: float = (c - a).cross(cd) / denominator
+		var along_cd: float = (c - a).cross(ab) / denominator
+		if along_ab >= 0.0 and along_ab <= 1.0 and along_cd >= 0.0 and along_cd <= 1.0:
+			return 0.0
+	return minf(minf(_point_segment_distance(a, c, d), _point_segment_distance(b, c, d)), minf(_point_segment_distance(c, a, b), _point_segment_distance(d, a, b)))
+
+
+# Packed double local coordinates avoid float32 subtraction of translated
+# world positions. Native Vector3 inputs retain their actual stored precision.
+static func _crescent_local(point: Vector3, shape: Dictionary) -> PackedFloat64Array:
+	var direction: Vector3 = shape.direction
+	var length: float = sqrt(float(direction.x) * float(direction.x) + float(direction.z) * float(direction.z))
+	var fx: float = float(direction.x) / length
+	var fz: float = float(direction.z) / length
+	var origin: Vector3 = shape.origin
+	var x: float = float(point.x) - float(origin.x)
+	var z: float = float(point.z) - float(origin.z)
+	return PackedFloat64Array([-fz * x + fx * z, fx * x + fz * z])
+
+
+static func _crescent_segment_hits(shape: Dictionary, start: Vector3, finish: Vector3, actor_radius: float) -> bool:
+	var a: PackedFloat64Array = _crescent_local(start, shape)
+	var b: PackedFloat64Array = _crescent_local(finish, shape)
+	var inner: float = float(shape.inner_radius)
+	var outer: float = float(shape.outer_radius)
+	var cosine: float = float(shape.min_dot)
+	if _annular_contains(a, inner, outer, cosine) or _annular_contains(b, inner, outer, cosine):
+		return true
+	var sine: float = sqrt(1.0 - cosine * cosine)
+	var distance: float = minf(_segment_arc_distance(a, b, inner, cosine, sine), _segment_arc_distance(a, b, outer, cosine, sine))
+	for sign_value: float in [-1.0, 1.0]:
+		var c := PackedFloat64Array([sign_value * sine * inner, cosine * inner])
+		var d := PackedFloat64Array([sign_value * sine * outer, cosine * outer])
+		distance = minf(distance, _double_segment_distance(a, b, c, d))
+	return not is_finite(distance) or distance <= actor_radius + EPSILON
+
+
+static func _annular_contains(point: PackedFloat64Array, inner: float, outer: float, cosine: float) -> bool:
+	var radius: float = sqrt(point[0] * point[0] + point[1] * point[1])
+	return radius >= inner and radius <= outer and point[1] >= radius * cosine
+
+
+static func _point_arc_distance(point: PackedFloat64Array, radius: float, cosine: float, sine: float) -> float:
+	var length: float = sqrt(point[0] * point[0] + point[1] * point[1])
+	if length > 0.0 and point[1] >= length * cosine:
+		return absf(length - radius)
+	return minf(_double_distance(point, PackedFloat64Array([-sine * radius, cosine * radius])), _double_distance(point, PackedFloat64Array([sine * radius, cosine * radius])))
+
+
+static func _segment_arc_distance(a: PackedFloat64Array, b: PackedFloat64Array, radius: float, cosine: float, sine: float) -> float:
+	var result: float = minf(_point_arc_distance(a, radius, cosine, sine), _point_arc_distance(b, radius, cosine, sine))
+	for sign_value: float in [-1.0, 1.0]:
+		result = minf(result, _double_point_segment_distance(PackedFloat64Array([sign_value * sine * radius, cosine * radius]), a, b))
+	var x: float = b[0] - a[0]
+	var y: float = b[1] - a[1]
+	var squared: float = x * x + y * y
+	if squared <= EPSILON * EPSILON:
+		return result
+	var projection: float = -(a[0] * x + a[1] * y) / squared
+	var cross_value: float = a[0] * y - a[1] * x
+	var perpendicular_squared: float = cross_value * cross_value / squared
+	if perpendicular_squared <= radius * radius:
+		var extent: float = sqrt(maxf(0.0, (radius * radius - perpendicular_squared) / squared))
+		for along: float in [projection - extent, projection + extent]:
+			if along >= 0.0 and along <= 1.0:
+				var px: float = a[0] + x * along
+				var py: float = a[1] + y * along
+				if py >= sqrt(px * px + py * py) * cosine:
+					return 0.0
+	var along: float = clampf(projection, 0.0, 1.0)
+	var nearest := PackedFloat64Array([a[0] + x * along, a[1] + y * along])
+	var length: float = sqrt(nearest[0] * nearest[0] + nearest[1] * nearest[1])
+	if length > 0.0 and nearest[1] >= length * cosine:
+		result = minf(result, absf(length - radius))
+	return result
+
+
+static func _double_distance(a: PackedFloat64Array, b: PackedFloat64Array) -> float:
+	var x: float = a[0] - b[0]
+	var y: float = a[1] - b[1]
+	return sqrt(x * x + y * y)
+
+
+static func _double_point_segment_distance(point: PackedFloat64Array, a: PackedFloat64Array, b: PackedFloat64Array) -> float:
+	var x: float = b[0] - a[0]
+	var y: float = b[1] - a[1]
+	var squared: float = x * x + y * y
+	var along: float = clampf(((point[0] - a[0]) * x + (point[1] - a[1]) * y) / squared, 0.0, 1.0) if squared > EPSILON * EPSILON else 0.0
+	return _double_distance(point, PackedFloat64Array([a[0] + x * along, a[1] + y * along]))
+
+
+static func _double_segment_distance(a: PackedFloat64Array, b: PackedFloat64Array, c: PackedFloat64Array, d: PackedFloat64Array) -> float:
+	var ax: float = b[0] - a[0]
+	var ay: float = b[1] - a[1]
+	var cx: float = d[0] - c[0]
+	var cy: float = d[1] - c[1]
+	var denominator: float = ax * cy - ay * cx
+	# A thin annular radial edge can have a tiny but real cross product.
+	# It must not be mistaken for parallel geometry; EPSILON pads the final
+	# distance, rather than discarding valid finite segment intersections.
+	if denominator != 0.0:
+		var along_ab: float = ((c[0] - a[0]) * cy - (c[1] - a[1]) * cx) / denominator
+		var along_cd: float = ((c[0] - a[0]) * ay - (c[1] - a[1]) * ax) / denominator
+		if along_ab >= 0.0 and along_ab <= 1.0 and along_cd >= 0.0 and along_cd <= 1.0:
+			return 0.0
+	return minf(minf(_double_point_segment_distance(a, c, d), _double_point_segment_distance(b, c, d)), minf(_double_point_segment_distance(c, a, b), _double_point_segment_distance(d, a, b)))

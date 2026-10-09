@@ -1,0 +1,11 @@
+# Private forecast-lifetime affected native failure
+
+CLOSED `a1-l3-normal-full-route-forecast-lifetime-headless`: **705 checks/1 failure, exit1,12 real swipes/4 ordinary primaries**, HEAD `8b16aa3147adb864dc90188097ed52596830850a`, `campaign-shared-35`. All353 declared frozen dependencies match original hashes; post-execution mismatch is empty. No full-route, Save, portrait or gameplay acceptance credit is granted.
+
+[Index](index.json), [origin map](origin-map.json), [verification](verification.json), [inventory](inventory.json) and [hash closure](hash-closure.json) locate and bound every exact copy. Complete original job metadata, raw stdout/backtrace and portable native report are verbatim. Native code/UID/project settings are inert `.txt` under `.gdignore`. The92 copied PNGs are authored dependencies; zero actual native captures exist. All files are newly copied bytes, with no hardlinks or current-code backfill.
+
+The matched native report is `l3-normal-full-route-61878109.json`: unique705/1,12/4 counts and original modification time `2026-10-09T00:52:29.712498+00:00` inside the job start/finish window match the owner-directed closed scope. The original job does not emit a report-path field; no stronger pointer or later attribution is invented.
+
+First room `umbrella-grove` completes and grants one actual checkpoint. Four source defeats are recorded (three umbrella sources and breathing-1); second room is active with breathing Field/Consumer installed. The actual original assertion **ordinary-gap query retains genuine stopped unleased current-room bodies** fails. Last diagnostic camera accepts, but that is neither a repaired body predicate nor a causal proof. Global completion remainsfalse; no L3 completion/contact/final encoded-history receipt exists. Six phase barriers/three timing receipts remain raw observations.
+
+Installed second-room environment does not certify field episodes or required later rooms. Full native Save remainsDENIED. No whole-L3/art/profile/kit/human/performance/private-floor runtime claim follows. Old scopes are untouched, verification is limited to this original353-source/job/log/report package, and no tracked/runtime/shared/engine/ACK/merge/staging/commit write occurs. Separate private wrapper/copy-map candidates describe possible later owner promotion; they are not an applied publication.

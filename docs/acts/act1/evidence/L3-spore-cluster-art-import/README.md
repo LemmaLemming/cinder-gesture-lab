@@ -1,0 +1,9 @@
+# L3 cluster art resource/class import only
+
+The [original job](run/job.json) and [full raw import stdout](run/stdout.log) record clean exit 0 at `533753c63ebcdf48dd88536610369883987a8657` / `campaign-shared-27`, with no ERROR, WARNING, ScriptError or post-execution source mismatch. Original ANSI/progress/log bytes remain unchanged.
+
+This import discovers the new owned clockless cluster art leaf and original available/active/spent low-cluster resources/contact sheet. It establishes **resource/class import only**. Static stalk correction and guard anchor changes still await affected gameplay/portrait checks at this execution. Importer scanning other shared resource names is preserved as original output, not new Act1 ownership or whole-resource-graph validation.
+
+The 96 exact frozen sources comprise 32 inert `.gd.txt`, five inert `.tscn.txt`, five historical JSON records and 54 authored source PNGs/contact sheets. These artwork files are not native screenshots. No gameplay fixture/assertions, swipe, ordinary primary, environmental episode or native portrait is executed here; no rendered readability, collision/HP/stat/timing, full L3/C32/route/save/campaign/fresh recipient/all loadout/profile, human balance or performance acceptance is inferred. Subsequent 39/1 guard failure and queued API28 portrait4 remain distinct/excluded.
+
+[The index](index.json), [origin map](origin-map.json) and [inventory](inventory.json) map exact copied bytes/hashes. Original producer references remain historical; 96 declared sources are not the complete resource graph. Generated cache/settings/native UIDs outside those declarations are excluded. `.gdignore` and inert suffixes prevent executable artifact classes. No engine/import, runtime/test/asset/current-record edits, old archive edits, staging or commit were performed by the archiver.

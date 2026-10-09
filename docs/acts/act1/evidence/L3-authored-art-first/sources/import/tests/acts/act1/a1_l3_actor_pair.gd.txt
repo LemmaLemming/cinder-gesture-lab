@@ -1,0 +1,302 @@
+extends "res://tests/acts/act1/a1_l3_greybox.gd"
+## Actor-only native transport, never a CinderLevel/campaign/spore aggregate.
+## Inherits the tested real touch/drag/release and shared GUI helpers. Main's
+## presentation cache is not part of this unit: earlier warning -> active
+## round trips do not yield/resume between commits. Parent aggregate resume,
+## callback-phase pause, dead rewind and full campaign persistence are pending.
+
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const ActorIds: Array[String] = ["umbrella-1", "umbrella-2", "umbrella-3", "lone-guard"]
+var pair_events: int = 0
+
+
+func _run() -> void:
+	root.size = PortraitSize
+	if not await _open_world(GrovePath, "grove", Vector3(0, 0.1, 15)) or not await _swipe(Vector3.FORWARD, "paired grove genuine admission approach"):
+		await _finish(); return
+	_watch_pair_events()
+	var id: String = await _first_warning()
+	if id.is_empty() or not await _exercise_pair(id, true):
+		await _finish(); return
+	if not await _close_world(false):
+		await _finish(); return
+	if not await _open_world(GuardPath, "guard", Vector3(0, 0.1, -26)):
+		await _finish(); return
+	_watch_pair_events()
+	if not await _wait(func() -> bool: return _running_warning("lone-guard"), "paired stationary guard publishes its actual warning") or not await _exercise_pair("lone-guard", false):
+		await _finish(); return
+	if not await _close_world(false):
+		await _finish(); return
+	await _finish()
+
+
+func _watch_pair_events() -> void:
+	pair_events = 0
+	for actor: Node in sources.values():
+		actor.connect("defeated", func(_id: String) -> void: pair_events += 1)
+		actor.connect("state_changed", func(_state: Dictionary) -> void: pair_events += 1)
+		(actor.call("get_cue") as CinderThreatCue).state_changed.connect(func(_state: Dictionary) -> void: pair_events += 1)
+	scheduler.reservation_invalidated.connect(func(_id: String, _reason: String) -> void: pair_events += 1)
+	hero.fired.connect(func(_kind: String) -> void: pair_events += 1)
+	hero.died.connect(func() -> void: pair_events += 1)
+	hero.world_action_executed.connect(func(_record: Dictionary) -> void: pair_events += 1)
+	game.connect("input_observed", func(_record: Dictionary) -> void: pair_events += 1)
+
+
+func _exercise_pair(id: String, moving: bool) -> bool:
+	var actor: CharacterBody3D = sources[id]
+	var state: Dictionary = actor.call("state")
+	var lease: String = String(state.reservation_id)
+	var answer: Dictionary = admissions.get(lease, {}).duplicate(true)
+	if not _require(answer.get("accepted", false), id + " pair begins at the actual native admission"):
+		return false
+	if not await _pause_pair(id + " warning"): return false
+	# Explicit paused fixture resource setup, not a damage/no-injury route proof.
+	# Existing actor HP/history are genuine; only Player resources are staged to
+	# prove exact no-heal/no-refill transport under the actual paused exchange.
+	hero.hp = 22.0
+	hero.shells = 0
+	initial_hp = 22.0 # Inherited cleanup must compare this declared test setup.
+	var warning: Dictionary = _pair_capture()
+	if not _require(not warning.is_empty() and _pair_error(warning).is_empty(), id + " actual warning captures Player, all four actors and one native Scheduler"):
+		return false
+	if not _require(level.snapshot_state().is_empty() and not level.last_snapshot_error.is_empty(), id + " successful actor-only capture does not grant unsupported full campaign/spore capture"):
+		return false
+	if not _require(warning.player.resources.hp == 22.0 and warning.player.resources.shells == 0 and warning.actors[id].reservation_id == lease and warning.actors[id].sample.clock_s == warning.scheduler.clock_s, id + " declared injured/zero-ammo resource setup retains the exact sampled native tick"):
+		return false
+	if not _malformed_pairs(warning, id, moving) or not _camera_negatives(warning, id, false): return false
+	if not _quiet_roundtrip(warning, id + " warning"): return false
+	if not await _gui_resume_pair(): return false
+	if not await _swipe(answer.proof.landing - hero.global_position, id + " paired native safe landing"):
+		return false
+	if not await _wait(func() -> bool:
+		var current: Dictionary = actor.call("state")
+		return current.reservation_id == lease and current.phase == "active" and (not moving or not current.adapter.finished), id + " genuine unfinished native active barrier"):
+		return false
+	if not await _pause_pair(id + " active"): return false
+	var active: Dictionary = _pair_capture()
+	if not _require(not active.is_empty() and _pair_error(active).is_empty() and active.actors[id].reservation_id == lease, id + " active full native actor-only unit captures/prevalidates without synthetic samples"):
+		return false
+	if moving and not _require(active.actors[id].motion.velocity != [0.0, 0.0, 0.0] and not _owned_record(active, id).adapter.finished, "C31 active pair contains genuine unfinished physical native lunge"):
+		return false
+	if not moving and not _require(active.actors[id].motion.velocity == [0.0, 0.0, 0.0] and not _owned_record(active, id).has("adapter"), "C32 active pair remains a stationary native lane"):
+		return false
+	if not _malformed_pairs(active, id, moving) or not _camera_negatives(active, id, true): return false
+	if not _quiet_roundtrip(active, id + " active"): return false
+	var frozen: String = Exact.stringify(active)
+	var event_count: int = pair_events
+	if not _require(_pair_error(warning).is_empty() and Exact.stringify(_pair_capture()) == frozen and pair_events == event_count, id + " earlier warning pure validation changes no later active actor/clock/resource/event"):
+		return false
+	# No yield between these actor-only commits. The owning level's cached
+	# camera/progression envelope is deliberately outside this narrow unit.
+	if not _require(_pair_restore(warning) and Exact.stringify(_pair_capture()) == Exact.stringify(warning), id + " exact earlier warning quietly restores physical actors -> Scheduler -> exchanges"):
+		return false
+	if not _require(_pair_restore(active) and Exact.stringify(_pair_capture()) == frozen and pair_events == event_count, id + " exact active pair restores every original resource/time/sample with no action/cue/cancellation callbacks"):
+		return false
+	if not await _gui_resume_pair(): return false
+	if not await _wait(func() -> bool: return actor.call("state").reservation_id == lease and actor.call("state").phase == "recovery", id + " restored genuine active unit naturally reaches the same recovery"):
+		return false
+	return _require(hero.hp == 22.0 and hit_events.is_empty(), id + " resumed component keeps staged injured HP without native enemy damage")
+
+
+func _pause_pair(label: String) -> bool:
+	if not _require(game.call("request_pause_deferred"), label + " requests the public full-tick pause"):
+		return false
+	return await _wait(func() -> bool: return paused, label + " reaches the actual deferred barrier", 2.0, true)
+
+
+func _gui_resume_pair() -> bool:
+	var button: Button = _resume_button(game.get("hud") as Node)
+	if not _require(button != null and paused, "paired fixture uses the actual visible shared Resume button"):
+		return false
+	var before: Dictionary = game.call("get_input_observation_state")
+	var records: Array[Dictionary] = hero.get_world_action_records()
+	var point: Vector2 = button.get_global_rect().get_center()
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT; press.pressed = true; press.position = point; press.global_position = point
+	Input.parse_input_event(press)
+	await process_frame
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT; release.position = point; release.global_position = point
+	Input.parse_input_event(release)
+	await process_frame
+	return _require(not paused and game.call("get_input_observation_state") == before and hero.get_world_action_records() == records, "paired fixture GUI Resume changes no input anchor or world action")
+
+
+func _pair_capture() -> Dictionary:
+	var player: Dictionary = hero.snapshot_state()
+	var native: Dictionary = scheduler.snapshot_state(level.call("scheduler_bindings"))
+	if player.is_empty() or native.is_empty():
+		print("L3 PAIR CAPTURE player=", hero.last_snapshot_error, " scheduler=", scheduler.last_snapshot_error)
+		return {}
+	var actors: Dictionary = {}
+	for id: String in ActorIds:
+		var saved: Dictionary = sources[id].call("capture_state", native)
+		if saved.is_empty():
+			print("L3 ACTOR CAPTURE ", id, " ", sources[id].get("last_snapshot_error"))
+			return {}
+		actors[id] = saved
+	return {"player": player, "actors": actors, "scheduler": native}
+
+
+func _pair_error(pair: Dictionary) -> String:
+	if not Codec.keys_error(pair, ["player", "actors", "scheduler"]).is_empty() or not pair.player is Dictionary or not pair.actors is Dictionary or not pair.scheduler is Dictionary or not Codec.keys_error(pair.actors, ActorIds).is_empty():
+		return "Closed actor-only native unit requires Player, all four actors and Scheduler"
+	var error: String = hero.snapshot_error(pair.player)
+	if not error.is_empty(): return error
+	var active_ids: Array = level.call("current_source_ids")
+	for id: String in ActorIds:
+		if not pair.actors[id] is Dictionary: return "Every retained actor needs its complete closed record"
+		var saved: Dictionary = pair.actors[id]
+		error = String(sources[id].call("snapshot_error", saved, pair.scheduler, pair.player))
+		if not error.is_empty(): return error
+		if saved.dormant != (id not in active_ids): return "This room's fixture composition must preserve activated/dormant retained sources"
+	var bindings: Dictionary = _staged_pair_bindings(pair)
+	if bindings.is_empty(): return "Retained actual actor staging requires four valid closed records"
+	return scheduler.snapshot_error(pair.scheduler, bindings)
+
+
+func _staged_pair_bindings(pair: Dictionary) -> Dictionary:
+	var bindings: Dictionary = level.call("scheduler_bindings")
+	bindings["owner_positions"] = {}
+	bindings["owner_velocities"] = {}
+	bindings["owner_collision_states"] = {}
+	for id: String in ActorIds:
+		if not pair.actors.get(id) is Dictionary: return {}
+		var staged: Dictionary = sources[id].call("staged_actor_bindings", pair.actors[id])
+		if staged.is_empty(): return {}
+		for key: String in ["owner_positions", "owner_velocities", "owner_collision_states"]:
+			for owner_id: String in staged[key]:
+				if bindings[key].has(owner_id): return {}
+				bindings[key][owner_id] = staged[key][owner_id]
+	bindings["hero_positions"] = {"hero": Codec.read_vector3(pair.player.motion.position)}
+	return bindings
+
+
+func _pair_restore(pair: Dictionary) -> bool:
+	# Every Player/actor/native reservation, binding and room condition is pure
+	# validated before ANY commit. Native staging never alters live geometry.
+	if not _pair_error(pair).is_empty(): return false
+	var bindings: Dictionary = _staged_pair_bindings(pair)
+	var event_count: int = pair_events
+	if not hero.restore_state(pair.player): return false
+	for id: String in ActorIds:
+		if not sources[id].call("restore_actor_state", pair.actors[id]): return false
+	if not scheduler.restore_state(pair.scheduler, bindings): return false
+	for id: String in ActorIds:
+		if not sources[id].call("restore_exchange_state", pair.actors[id]): return false
+	return pair_events == event_count
+
+
+func _quiet_roundtrip(pair: Dictionary, label: String) -> bool:
+	var wire: String = Exact.stringify(pair)
+	var decoded: Dictionary = Exact.parse(wire)
+	if not _require(not wire.is_empty() and decoded.get("accepted", false) and Exact.stringify(decoded.value) == wire, label + " exact JSON preserves scalar types and every clock bit"):
+		return false
+	var event_count: int = pair_events
+	if not _require(_pair_restore(decoded.value), label + " prevalidated unit restores all actual nodes in no-yield physical/native/exchange order"):
+		return false
+	return _require(Exact.stringify(_pair_capture()) == wire and pair_events == event_count and hero.hp == 22.0 and hero.shells == int(pair.player.resources.shells), label + " quiet restore retains exact injured HP/ammo/world time/samples with no callbacks or reload/heal")
+
+
+func _malformed_pairs(pair: Dictionary, id: String, moving: bool) -> bool:
+	var cases: Array[Dictionary] = []
+	var malformed: Dictionary = pair.duplicate(true)
+	malformed.actors[id].sample.clock_s += 0.000001
+	cases.append({"label": "forged actor sample clock", "pair": malformed})
+	malformed = pair.duplicate(true)
+	malformed.scheduler.clock_s += 0.000001
+	cases.append({"label": "forged native paired clock", "pair": malformed})
+	malformed = pair.duplicate(true)
+	malformed.actors[id].profile_id = "assisted"
+	cases.append({"label": "forged actor resolved profile", "pair": malformed})
+	malformed = pair.duplicate(true)
+	malformed.actors[id].reservation_id += "-forged"
+	cases.append({"label": "forged actor lease identity", "pair": malformed})
+	malformed = pair.duplicate(true)
+	malformed.player.motion.position[0] += 0.125
+	cases.append({"label": "cross-forged saved Player versus actual actor sample", "pair": malformed})
+	malformed = pair.duplicate(true)
+	var owned: Dictionary = _owned_record(malformed, id)
+	if moving: owned.adapter.body_signature.radius += 0.01
+	else: owned.geometry.radius += 0.01
+	cases.append({"label": "forged retained native capsule/footprint", "pair": malformed})
+	var before: String = Exact.stringify(_pair_capture())
+	var event_count: int = pair_events
+	for test: Dictionary in cases:
+		if not _require(not _pair_error(test.pair).is_empty() and not _pair_restore(test.pair) and Exact.stringify(_pair_capture()) == before and pair_events == event_count, id + " " + test.label + " rejects whole unit before mutation"):
+			return false
+	var actor: CharacterBody3D = sources[id]
+	var collision := actor.get_node("BodyCollision") as CollisionShape3D
+	var original: Shape3D = collision.shape
+	collision.shape = original.duplicate()
+	var rejected: bool = not _pair_error(pair).is_empty() and not _pair_restore(pair)
+	collision.shape = original
+	return _require(rejected and Exact.stringify(_pair_capture()) == before and pair_events == event_count, id + " equivalent replacement capsule identity rejects purely and repairs without restore mutation")
+
+
+func _owned_record(pair: Dictionary, id: String) -> Dictionary:
+	for record: Dictionary in pair.scheduler.reservations:
+		if record.source_id == id: return record
+	return {}
+
+
+func _camera_negatives(pair: Dictionary, id: String, active: bool) -> bool:
+	var before: String = Exact.stringify(pair)
+	var event_count: int = pair_events
+	var actor: CharacterBody3D = sources[id]
+	var actual_map: Dictionary = level.get("sources")
+	actual_map.erase(id)
+	var rejected: bool = _camera_denied()
+	actual_map[id] = actor
+	if not _require(rejected and _camera_repaired(before, event_count), id + " missing published retained actor cannot shrink the source forecast and repair is quiet"):
+		return false
+	actor.visible = false
+	rejected = _camera_denied()
+	actor.visible = true
+	if not _require(rejected and _camera_repaired(before, event_count), id + " hidden actual source is rejected without lease/HP/sample mutation"):
+		return false
+	level.visible = false
+	rejected = _camera_denied()
+	level.visible = true
+	if not _require(rejected and _camera_repaired(before, event_count), id + " hidden source ancestor cannot retain an apparently visible hazard"):
+		return false
+	var cue: CinderThreatCue = actor.call("get_cue")
+	var names: Array[String] = ["RequiredSourceMarker", "RequiredFootprintOutline"]
+	if active: names.append("RequiredFootprintFill")
+	for node_name: String in names:
+		var mesh := cue.get_node(node_name) as MeshInstance3D
+		mesh.visible = false
+		rejected = _camera_denied()
+		mesh.visible = true
+		if not _require(rejected and _camera_repaired(before, event_count), id + " hidden " + node_name + " fails complete phase framing without changing combat"):
+			return false
+		var original: Mesh = mesh.mesh
+		mesh.mesh = null
+		rejected = _camera_denied()
+		mesh.mesh = original
+		if not _require(rejected and _camera_repaired(before, event_count), id + " null " + node_name + " cannot impersonate a readable required cue"):
+			return false
+		# Remove only a mesh leaf while paused. Detaching the actor itself invokes
+		# its intentional native cancellation, which is a lifecycle test, not pure.
+		cue.remove_child(mesh)
+		rejected = _camera_denied()
+		cue.add_child(mesh)
+		if not _require(rejected and _camera_repaired(before, event_count), id + " removed " + node_name + " is rejected; original retained mesh returns quietly"):
+			return false
+	return true
+
+
+func _camera_denied() -> bool:
+	return level.camera_framing_points().is_empty() and not level.last_camera_framing_error.is_empty()
+
+
+func _camera_repaired(before: String, event_count: int) -> bool:
+	return not level.camera_framing_points().is_empty() and level.last_camera_framing_error.is_empty() and Exact.stringify(_pair_capture()) == before and pair_events == event_count
+
+
+func _finish() -> void:
+	if finishing: return
+	print("A1-L3 ACTOR-ONLY PAIR: ", checks, " checks, ", failures, " failures; declared paused Player HP22/ammo0 setup; native warning/active; full parent aggregate excluded")
+	await super._finish()

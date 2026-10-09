@@ -1,0 +1,46 @@
+from pathlib import Path
+import sys,json,hashlib,subprocess,datetime,re
+name,scope,*argv=sys.argv[1:]
+if argv and argv[0]=="--":argv=argv[1:]
+assert argv[:2]==["python3","scripts/dev/dev.py"]
+root=Path.cwd(); out=root/".cinder"; prefix=out/name
+assert not Path(str(prefix)+".json").exists() and not Path(str(prefix)+".log").exists()
+original=json.loads((out/"a1-l3-normal-full-route-capture-view-headless.json").read_text())
+seeds=list(original["source_sha256"])
+seeds += ["scripts/acts/act1/mushroom_caverns_full.gd","scripts/acts/act1/mushroom_caverns_route_codec.gd","scenes/acts/act1/a1_l3_full.tscn","tests/acts/act1/a1_l3_full_parent_candidate.gd","tests/acts/act1/a1_l3_initial_admission_custody.gd","tests/fixtures/campaign/live_a1_l1.tscn","tests/fixtures/campaign/live_a1_l2.tscn","tests/fixtures/campaign/live_level.gd","scripts/dev/dev.py","project.godot","docs/development/SHARED_CONTRACT.md","docs/development/FRESH_ENTRY_PRESENTATION.md"]
+seeds += [str(p) for p in [Path(".cinder/local.json"),Path(".cinder/dev.local.json")] if p.is_file()]
+if "--script" in argv:seeds.append(argv[argv.index("--script")+1])
+if "import" in argv:
+ seeds += [str(p) for p in Path("tests/acts/act1").glob("a1_l3*.gd")]
+ seeds += [str(p) for p in Path("scenes/acts/act1").glob("a1_l3*.tscn")]
+seeds += ['assets/acts/act1/lunar/environment/floor_silver_tile.png.import', '.godot/imported/floor_silver_tile.png-d26a488f9395175b253ee2a02677ec14.ctex', '.godot/imported/floor_silver_tile.png-d26a488f9395175b253ee2a02677ec14.md5', 'assets/acts/act1/lunar/environment/environment_manifest.json']
+queue=list(dict.fromkeys(seeds)); paths=[]; seen=set(); missing=set()
+while queue:
+ n=queue.pop(0)
+ if n in seen:continue
+ seen.add(n);p=root/n
+ if not p.is_file():raise RuntimeError("Missing explicit dependency: "+n)
+ paths.append(n)
+ if p.suffix in [".gd",".tscn",".tres",".gdshader",".json",".godot"]:
+  for ref in re.findall(r"res://([A-Za-z0-9_. /-]+)",p.read_text()):
+   ref=ref.strip()
+   if (root/ref).is_file():queue.append(ref)
+   elif ref and not (root/ref).is_dir():missing.add(ref)
+ if p.suffix==".gd" and (root/(n+".uid")).is_file():queue.append(n+".uid")
+# Source-provenance metadata is separately disclosed; none is an imported class.
+provenance=[".cinder/a1-l3-full-save-promotion-recipe.md",".cinder/a1-l3-full-save-promotion-recipe.json",".cinder/a1-l3-full-save-promotion-root-receipt.json",".cinder/a1-l3-full-parent-candidate-fixture-campaign-quiet-notes.md",".cinder/a1-l3-full-parent-campaign-quiet-independent-audit.md",".cinder/a1-l3-initial-admission-custody-final-runtime-notes.md",".cinder/a1-l3-initial-admission-custody-final-runtime-manifest.json",".cinder/a1-l3-initial-admission-ordinary-record.patch",".cinder/a1-l3-initial-admission-ordinary-record-notes.md",".cinder/a1-l3-initial-admission-ordinary-record-base.gd.txt",".cinder/a1-l3-initial-admission-ordinary-record-fixture.gd.txt",".cinder/a1-l3-ordinary-admission-binding-root-review.md",".cinder/a1-l3-ordinary-admission-binding-promotion.json",str(Path(__file__).relative_to(root))]
+provenance += ['.cinder/a1-l3-quiet-floor-art.patch', '.cinder/a1-l3-quiet-floor-art.gd.txt', '.cinder/a1-l3-quiet-floor-art-manifest.json', '.cinder/a1-l3-quiet-floor-current-source-review.md', '.cinder/a1-l3-quiet-floor-owner-promotion.json', '.cinder/a1-l3-full-parent-candidate-native1-independent-audit.md', '.cinder/a1-l3-floor-resource-guard-root-review.md']
+provenance += ['.cinder/a1-l3-floor-resource-guards-selector.patch', '.cinder/a1-l3-floor-resource-guards-selector.gd.txt', '.cinder/a1-l3-floor-resource-guards-selector-notes.md', '.cinder/a1-l3-floor-resource-guards-selector-text-check.json', '.cinder/a1-l3-floor-resource-guard-owner-promotion.json']
+paths=list(dict.fromkeys(paths+provenance));snap=Path(str(prefix)+"-source");snap.mkdir();hashes={}
+for n in paths:
+ b=(root/n).read_bytes();hashes[n]=hashlib.sha256(b).hexdigest();p=snap/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(b)
+meta={"argv":argv,"head":subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(),"api_revision":re.search(r"Revision: \*\*(campaign-shared-\d+)",(root/"docs/development/SHARED_CONTRACT.md").read_text()).group(1),"runtime_publication":"36090c9d83bb762b14310aa22978f1b31469551f","documentation_publication":"36090c9d83bb762b14310aa22978f1b31469551f","started_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),"scope":scope,"source_sha256":hashes,"source_subset_limit":"Bounded selected literal references plus explicit dynamic TEST predecessors, actual CLI configuration and owned L3 import seeds; not complete editor import/resource graph. Invalid/example strings are reported without fabricating missing inputs.","literal_non_file_refs":sorted(missing),"provenance_only_paths":provenance}
+manifest=Path(str(prefix)+".json");manifest.write_text(json.dumps(meta,indent=2)+"\n")
+log=Path(str(prefix)+".log")
+with log.open("w") as f:result=subprocess.run(argv,stdout=f,stderr=subprocess.STDOUT)
+meta["exit_code"]=result.returncode;meta["finished_at"]=datetime.datetime.now(datetime.timezone.utc).isoformat();meta["post_execution_source_hash_mismatch"]=[n for n,h in hashes.items() if hashlib.sha256((root/n).read_bytes()).hexdigest()!=h];manifest.write_text(json.dumps(meta,indent=2)+"\n")
+print(name,"EXIT",result.returncode,flush=True)
+for line in log.read_text().splitlines():
+ if any(t in line for t in ["checks,","checks/","ERROR:","WARNING:","SCRIPT ERROR:","complete"]):print(line[:900],flush=True)
+if meta["post_execution_source_hash_mismatch"]:print("SOURCE HASH MISMATCH",meta["post_execution_source_hash_mismatch"],flush=True)
+sys.exit(result.returncode or (1 if meta["post_execution_source_hash_mismatch"] else 0))
