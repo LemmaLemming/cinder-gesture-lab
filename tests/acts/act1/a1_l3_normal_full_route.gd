@@ -208,9 +208,30 @@ func _full_opportunity(room: int) -> bool:
 			continue
 		if distance <= 4.4:
 			if not full_room_cycle_seen.get(room, false): break
+			# Finish the existing Hero readiness await BEFORE observing source eligibility.
+			# It may let other living sources approach or a genuine lease begin. This is
+			# the original gap-step readiness window, moved before the stopped predicate.
+			if not await _ready_input(nearest + " real full ordinary-gap step readiness"): return false
+			if _fresh_warning() != "" or _reachable_source() != "": return true
+			if not _full_gap_ready(room):
+				# An empty Scheduler alone does not stop approach-owned native bodies.
+				# Use the SAME original passive budget; never grant a fresh12s window.
+				var wait_start_s: float = hero.get_world_action_clock()
+				if not await _wait(func() -> bool: return _fresh_warning() != "" or (full_room_cycle_seen.get(room, false) and (_reachable_source() != "" or _full_gap_ready(room))), "actual current-room bodies reach a fresh response or genuine stopped ordinary approach", remaining_wait_s): return false
+				remaining_wait_s = maxf(0.0, remaining_wait_s - (hero.get_world_action_clock() - wait_start_s))
+				continue # Reenter with real current bodies and reselect after every wait.
+			# Readiness can change positions. Reselect the living target from actual
+			# stopped bodies now, with no further await before the strict gap query.
+			nearest = ""
+			distance = INF
+			for id: String in _full_ids(room):
+				var state: Dictionary = sources[id].call("pure_presentation_state")
+				if state.dead: continue
+				var actual: float = _planar_distance(sources[id].global_position, hero.global_position)
+				if actual < distance: distance = actual; nearest = id
+			if not _require(not nearest.is_empty(), "actual stopped room retains a living ordinary approach target"): return false
 			# Native admission distance is not ordinary-primary reach. After a genuine
 			# cycle, a C31 can settle at its authored3m approach stop outside2m reach.
-			# Observe real stopped/unleased bodies before a measured full input step.
 			if not await _full_gap_step(room, nearest): return false
 			continue
 		if not _require(not nearest.is_empty(), "actual room retains a living approach target"): return false
@@ -236,7 +257,8 @@ func _full_gap_ready(room: int) -> bool:
 
 
 func _full_gap_step(room: int, id: String) -> bool:
-	if not await _ready_input(id + " real full ordinary-gap step readiness"): return false
+	# The sole caller completed real Hero readiness before observing stopped
+	# source eligibility. Do not yield between that barrier and the strict query.
 	if _fresh_warning() != "" or _reachable_source() != "": return true
 	if not _require(_full_gap_ready(room), "ordinary-gap query retains genuine stopped unleased current-room bodies"): return false
 	var actor: CharacterBody3D = sources[id]
