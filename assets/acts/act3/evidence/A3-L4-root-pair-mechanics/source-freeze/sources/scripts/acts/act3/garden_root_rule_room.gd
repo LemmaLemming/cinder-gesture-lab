@@ -47,8 +47,7 @@ var _control_busy: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_PAUSABLE
-	# Read both native Mechanism100 phases before derived target/HUD appearance.
-	process_physics_priority = 110
+	process_physics_priority = 90
 	scenery = Kit.new()
 	scenery.name = "GardenRuleFloor"
 	add_child(scenery)

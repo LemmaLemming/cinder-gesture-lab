@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act3/garden_root_rule_room.gd" id="1"]
+
+[node name="GardenRootRuleRoom" type="Node3D"]
+script = ExtResource("1")
+level_id = "A3-L4"
+local_snapshot_version = 2
+objective_text = "ROOT ENDS / READ LOCKED LANE OR BROKEN RING"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 1.25)
