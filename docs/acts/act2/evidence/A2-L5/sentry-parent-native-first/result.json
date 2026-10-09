@@ -1,0 +1,46 @@
+{
+  "changed_file_mode_paths": [],
+  "changed_source_paths": [],
+  "exit_code": 1,
+  "log_counts": {
+    "raw": {
+      "assertion_errors": 1,
+      "fail_markers": 1,
+      "native_errors": 2,
+      "script_errors": 0,
+      "unexplained_native_errors": 1
+    },
+    "wrapper": {
+      "assertion_errors": 1,
+      "fail_markers": 1,
+      "native_errors": 2,
+      "script_errors": 0,
+      "unexplained_native_errors": 1
+    }
+  },
+  "mode": "engine",
+  "pass_line_counts": {
+    "raw": 38,
+    "wrapper": 38
+  },
+  "raw_sha256": "27aec81d3928fe82b7eadeff6ee3e52a3b49cc94b5e83f2a4f4bc480f7ba5ebc",
+  "raw_wrapper_equal": true,
+  "result_lines": [
+    "ERROR: FAIL: standard pending brace permits exactly one distinct native Foot introduction",
+    "ERROR: B05 component fixture stopped at Foot introduction admission for standard: { \"api_revision\": \"act2-b05-parent-draft-1\", \"stage\": \"foot-introduction\", \"runtime_error\": \"\", \"actor_hp\": 15.0, \"boss_phase\": 1, \"transition_pending\": true, \"joint_cue\": { \"api_revision\": \"interaction-cue-1\", \"state\": \"spent\", \"trigger\": \"attack\", \"required\": true, \"visible\": true }, \"foot_introduction_started\": false, \"checkpoint_notice_sent\": false, \"clock_s\": 17.3833333333336, \"ray\": { \"api_revision\": \"act2-b05-ray-exchange-1\", \"source_id\": \"A2-L5:dying-sentry\", \"status\": \"cancelled\", \"phase\": \"clear\", \"phase_progress\": 0.0, \"cycle\": 1, \"direction\": (0.0, 0.0, 1.0), \"armed\": false, \"geometry\": { \"kind\": \"lane\", \"from\": (0.0, 0.0, 0.0), \"to\": (0.0, 0.0, 3.8), \"radius\": 0.31 }, \"exchange\": { \"id\": \"threat-1\", \"source_position\": (0.0, 0.0, 0.0), \"geometry\": { \"kind\": \"lane\", \"from\": (0.0, 0.0, 0.0), \"to\": (0.0, 0.0, 3.8), \"radius\": 0.31 }, \"opening_position\": (0.0, 0.0, 0.0), \"start_s\": 0.06666666666667, \"lock_from_s\": 0.51666666666667, \"active_from_s\": 1.61666666666667, \"active_until_s\": 1.77666666666667, \"recovery_until_s\": 3.37666666666667, \"cooldown_until_s\": 3.21666666666667, \"profile_id\": \"standard\", \"world_revision\": 1, \"adapter\": { \"kind\": \"tracking\", \"locked\": true, \"reach\": 3.79999995231628, \"radius\": 0.31, \"lock_s\": 1.1, \"active_s\": 0.16, \"recovery_s\": 1.6, \"attack_interval_s\": 1.6 } }, \"bait_sample\": { \"boundary\": \"sentry-entry\", \"point\": (0.0, 0.0, 1.5), \"last_sequence\": 0, \"dash_sequence\": 0, \"initial_floor\": (0.0, 0.0, 1.5), \"initial_sequence\": 0, \"receipt\": <null>, \"player_clock_s\": 0.06666666666667 }, \"hit_consumed\": false, \"last_cancel_reason\": \"b05_first_brace_spent\", \"proof\": {  }, \"proof_available\": false, \"presentation_witness\": {  } }, \"foot\": { \"api_revision\": \"lane-mechanism-1\", \"mechanism_id\": \"A2-L5:near-foot\", \"status\": \"idle\", \"phase\": \"clear\", \"remaining_s\": 0.0, \"cycle\": 0, \"reservation_id\": \"\", \"geometry\": { \"kind\": \"circle\", \"origin\": (0.0, 0.0, 0.0), \"radius\": 1.1 }, \"source_position\": (0.0, 0.0, 0.0), \"opening_position\": (0.0, 0.0, 0.0), \"resolved_role\": {  }, \"hit_ids\": [], \"last_cancel_reason\": \"\" }, \"ray_introduction\": { \"cycle\": 1, \"exchange\": { \"id\": \"threat-1\", \"source_position\": (0.0, 0.0, 0.0), \"geometry\": { \"kind\": \"lane\", \"from\": (0.0, 0.0, 0.0), \"to\": (0.0, 0.0, 3.8), \"radius\": 0.31 }, \"opening_position\": (0.0, 0.0, 0.0), \"start_s\": 0.06666666666667, \"lock_from_s\": 0.51666666666667, \"active_from_s\": 1.61666666666667, \"active_until_s\": 1.77666666666667, \"recovery_until_s\": 3.37666666666667, \"cooldown_until_s\": 3.21666666666667, \"profile_id\": \"standard\", \"world_revision\": 1, \"adapter\": { \"kind\": \"tracking\", \"locked\": true, \"reach\": 3.79999995231628, \"radius\": 0.31, \"lock_s\": 1.1, \"active_s\": 0.16, \"recovery_s\": 1.6, \"attack_interval_s\": 1.6 } }, \"observed_recovery_clock_s\": 1.78333333333333, \"closing\": \"cancelled\", &\"last_cancel_reason\": \"b05_first_brace_spent\" }, \"foot_introduction\": {  }, \"threshold\": { \"clock_s\": 2.0, \"hp_before\": 30.0, \"hp_after\": 15.0, \"actual_hp_loss\": 15.0, \"opening_receipt\": { \"kind\": \"isolated-ray\", \"ray\": { \"id\": \"threat-1\", \"source_position\": (0.0, 0.0, 0.0), \"geometry\": { \"kind\": \"lane\", \"from\": (0.0, 0.0, 0.0), \"to\": (0.0, 0.0, 3.8), \"radius\": 0.31 }, \"opening_position\": (0.0, 0.0, 0.0), \"start_s\": 0.06666666666667, \"lock_from_s\": 0.51666666666667, \"active_from_s\": 1.61666666666667, \"active_until_s\": 1.77666666666667, \"recovery_until_s\": 3.37666666666667, \"cooldown_until_s\": 3.21666666666667, \"profile_id\": \"standard\", \"world_revision\": 1, \"adapter\": { \"kind\": \"tracking\", \"locked\": true, \"reach\": 3.79999995231628, \"radius\": 0.31, \"lock_s\": 1.1, \"active_s\": 0.16, \"recovery_s\": 1.6, \"attack_interval_s\": 1.6 } }, \"clock_s\": 2.0, \"hp_before\": 30.0 } }, \"defeat\": {  }, \"pair\": {  }, \"accepted_cycles\": [{ \"kind\": \"ray\", \"stage\": \"ray-introduction\", \"cycle\": 1, \"admitted_exchange\": { \"id\": \"threat-1\", \"source_position\": (0.0, 0.0, 0.0), \"geometry\": { \"kind\": \"lane\", \"from\": (0.0, 0.0, 0.0), \"to\": (0.0, 0.0, 3.8), \"radius\": 0.31 }, \"opening_position\": (0.0, 0.0, 0.0), \"start_s\": 0.06666666666667, \"lock_from_s\": 0.51666666666667, \"active_from_s\": 1.61666666666667, \"active_until_s\": 1.77666666666667, \"recovery_until_s\": 3.37666666666667, \"cooldown_until_s\": 3.21666666666667, \"profile_id\": \"standard\", \"world_revision\": 1, \"adapter\": { \"kind\": \"tracking\", \"locked\": false, \"reach\": 3.79999995231628, \"radius\": 0.31, \"lock_s\": 1.1, \"active_s\": 0.16, \"recovery_s\": 1.6, \"attack_interval_s\": 1.6 } } }], \"codec_ready\": false }",
+    "A2-L5 native Sentry parent mechanics smoke: 39 checks, 1 failures; real finite two-pool/one Foot introduction/earned eligibility/paired native recovery only; no portable checkpoint, whole level, recognizer, camera, balance or art credit"
+  ],
+  "scope_complete": false,
+  "source_count": 356,
+  "source_sha256": "3843f55e0cb8fc4a8c7d59b8f51e4d1a758492e156f5a56f5f43ec6d14dd7a62",
+  "sources_unchanged": true,
+  "summaries": [
+    {
+      "checks": 39,
+      "failures": 1,
+      "scope": "real finite two-pool/one Foot introduction/earned eligibility/paired native recovery only; no portable checkpoint, whole level, recognizer, camera, balance or art credit"
+    }
+  ],
+  "uid_additions_after_job": {},
+  "wrapper_sha256": "27aec81d3928fe82b7eadeff6ee3e52a3b49cc94b5e83f2a4f4bc480f7ba5ebc"
+}

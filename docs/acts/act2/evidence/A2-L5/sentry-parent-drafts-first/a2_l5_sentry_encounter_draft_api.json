@@ -1,0 +1,186 @@
+{
+  "api_revision": "act2-b05-parent-draft-plan-1",
+  "draft_path": "/private/tmp/a2_l5_sentry_encounter_draft.gd",
+  "draft_sha256": "d89967446d5786189cae1371a06934256fa901d6c2042bbc9dff6d10195ce26d",
+  "draft_lines": 552,
+  "readiness": "TMP-only authored mechanics skeleton; not promoted, parsed, imported, executed, portable-save-ready, whole-level-ready or art/balance accepted.",
+  "baseline": {
+    "shared_publication": 39,
+    "publication": "9ef31ace408aa9a4ed4a7409351773beb3dca34d",
+    "parent_reported_current_head": "100faaed"
+  },
+  "ownership": "Only this new TMP draft and this TMP JSON written. No checkout, engine, Git, ledger, equipment or shared mutation.",
+  "public_api": {
+    "configure": "configure(hero:CinderPlayer,effects:PixelEffects,scheduler:CinderThreatScheduler,bait:RefCounted,world_root:Node3D,floor_bindings:Dictionary,response_context:Dictionary,joint_at:Vector3,foot_at:Vector3,presentation_guard:Callable)->bool",
+    "start": "start()->bool: actual supported stable entry; initializes public sentry-entry only if host has not already done so.",
+    "checkpoint_ack": "resume_after_phase_checkpoint()->bool: host-only acknowledgement after actual protected checkpoint and public resume; component fixture may exercise acknowledgement without claiming Shell/checkpoint acceptance.",
+    "getters": [
+      "get_actor()->Node3D",
+      "get_ray()->Node3D",
+      "get_foot()->CinderLaneMechanism",
+      "get_joint_cue()->CinderInteractionCue",
+      "owners()->Dictionary",
+      "bindings()->Dictionary",
+      "state()->Dictionary"
+    ],
+    "cleanup": "cleanup()->void: permanently retire ray/actor and disable+hide circle after public clear; host ends its shared Scheduler once and releases bait/action connection on whole-level disposal.",
+    "codec": "snapshot_state returns {}; snapshot_error returns explicit CODEC_PENDING; restore_state returns false. No pretend full aggregate validation."
+  },
+  "signals": [
+    "phase_checkpoint_eligible(receipts:Dictionary)",
+    "sentry_cleared(receipts:Dictionary)",
+    "hit_resolved(source_id:String,result:Dictionary)",
+    "runtime_failed(reason:String)"
+  ],
+  "host_obligations": [
+    "Begin exactly one actual Scheduler epoch before configure; keep it and its clock across both bait boundaries.",
+    "Bind bait to actual Hero and own the world_action_executed -> bait.observe_record connection; parent does not duplicate that observer.",
+    "Supply actual same-world dry floor bindings and exact seven-field response context; preserve native Controller/equipment/Player.",
+    "Supply a synchronous native presentation guard checking actual current and settled camera, source/cue meshes, full circle/lane, accepted landing/attack-position union, Hero and HUD; prospective Ray and Foot preview data are forwarded.",
+    "Request the real CinderLevel/Shell protected phase checkpoint only from deferred eligibility, then acknowledge only after transaction/public resume. This is blocked until whole parent codec is implemented.",
+    "Own continuous level route, earlier Scouts/approach foot, coda contacts, actual exit, full tripod/London production art and full aggregate/schema/progression."
+  ],
+  "state_diagnostics": {
+    "keys": [
+      "api_revision",
+      "stage",
+      "runtime_error",
+      "actor_hp",
+      "boss_phase",
+      "transition_pending",
+      "joint_cue",
+      "foot_introduction_started",
+      "checkpoint_notice_sent",
+      "clock_s",
+      "ray",
+      "foot",
+      "ray_introduction",
+      "foot_introduction",
+      "threshold",
+      "defeat",
+      "pair",
+      "accepted_cycles",
+      "codec_ready"
+    ],
+    "warning": "Native vectors/exchanges are diagnostic receipts, not ExactJson/CinderLevel local_state transport."
+  },
+  "mechanics": [
+    "Distinct persistent owners A2-L5:dying-sentry (ray) and A2-L5:near-foot (circle), one actual joint cue and one actor damage gate.",
+    "Phase1 ray recovery introduction is recorded from actual armed native exchange/cycle/clock BEFORE the joint opens. Threshold spends cue synchronously and cancels Ray without relabeling cancellation complete.",
+    "Exactly one accepted Foot introduction; observer-held pause cannot erase accepted cycle bookkeeping. Foot recovery is observed and completion requires actual status complete plus clock beyond original recovery deadline.",
+    "If first openings are skipped, later real Ray can earn first pool; eligibility drains that latest threshold-owning cancelled Ray exchange too.",
+    "After finite actual15HP threshold, both introductions and original deadlines drain; actual actor commit_phase_two and public bait.begin_boundary(sentry-phase-2) happen nonyielding at supported stable floor. Deferred eligibility emits afterwards; no further attack until host acknowledgement.",
+    "Phase2 Foot first. Standard/Challenge admit Ray after Foot lock; Assisted admits Ray strictly after Foot active_until releases budget1. Shared retimed lock/union proof remains authority.",
+    "Actual returned Ray proof primary_time and response_complete must fit the intersection of BOTH native recovery windows with shared .001 margins and full actual primary cooldown, no blast/invulnerability. Exact current cycles/exchanges/equipment must match before gate opens.",
+    "Public native defeat spends cue/cancels dangerous consumers; deferred cleared signal is local passage eligibility, not microbes defeated/whole Act completion."
+  ],
+  "owned_foot_tune": {
+    "status": "Root-selected proposal in TMP only; native and balance validation pending.",
+    "raw_and_floor_recovery_s": 2.4,
+    "unchanged": {
+      "windup_s": 2.2,
+      "lock_s": 1.1,
+      "active_s": 0.2,
+      "raw_damage": 4.0,
+      "attack_interval_s": 1.8,
+      "circle_radius": 1.1,
+      "max_hp_compatibility_unused": 1.0
+    },
+    "assisted": {
+      "budget": 1,
+      "foot_windup_s": 2.97,
+      "foot_active_s": 0.2,
+      "foot_recovery_s": 3.24,
+      "ray_windup_s": 2.0925,
+      "ray_active_s": 0.16,
+      "ray_recovery_s": 2.16
+    },
+    "default_impossibility": "Default Foot recovery1.6 resolves Assisted2.16; Foot-after-Ray windup2.97+active.2=3.17 exceeds2.16, and Ray-after-Foot windup2.0925+active.16=2.2525 exceeds2.16, before full primary.",
+    "bound": {
+      "formula": "Ray windup + active + max full primary + input margin + max optional return dash + two native tick quantization + both TIME_MARGIN",
+      "max_total_primary_s": 0.4285714285714286,
+      "max_total_dash_s": 0.28588235294117653,
+      "nominal_native_hz": 60,
+      "conditional_temporal_requirement_s": 3.032287114845938,
+      "selected_assisted_recovery_s": 3.24,
+      "conditional_slack_s": 0.2077128851540624
+    },
+    "limits": "Temporal envelope only. Real native admission/full path/capsule/floor/portrait proof can still reject. No shorter reaction, travel, hit window, new gear/type, extra HP or waves.",
+    "sources": [
+      "data/design/difficulty_profiles.json:6",
+      "scripts/combat/difficulty.gd:96",
+      "scripts/equipment.gd:189",
+      "scripts/equipment.gd:196",
+      "scripts/combat/threat_scheduler.gd:181",
+      "scripts/combat/threat_scheduler.gd:770",
+      "scripts/combat/threat_scheduler.gd:1424"
+    ]
+  },
+  "codec_todo": [
+    "Closed parent schema must encode complete Player, bait, full finite actor+actual cue, Scheduler, Ray, circle schema1/2 pending measured paths, immutable source/profile/epoch/configuration, real introductions/threshold/defeat/pair/cycles and checkpoint eligibility/progression.",
+    "Whole pure preflight must use staged full Player/actors/positions/Scheduler and cross-check earned receipts/deadline/cooldown/native floor/cue/gear/cadence/source identity exactly; no fresh Hero comparisons during prospective validation.",
+    "Actual quiet order Player -> bait/full actor+parent cue -> Scheduler -> Ray/circle -> derived poses, without yield/events/requests/resampling/retiming/refill. Preserve per-cue prior signal-block flags.",
+    "Death cannot invent introduction/completion receipts. Pending first pool needs coherent15HP/spent and actual cancelled-Ray deadlines; clear completion must not bypass coda/contact progress.",
+    "Threshold signals expose actual HP delta but not original raw overkill/result; this draft does not fabricate a consumed-overkill journal. Owner may bind actual returned damage result/real native Player action receipt when completing aggregate evidence."
+  ],
+  "known_validation_limits": [
+    "Priority99 guard and parent phase callbacks cancel known native/frame loss, and Ray has its own post-query/guard custody. Lane has no public parent guard hook after arbitrary late mechanism-state observers; specifically test queued Actor/frame loss during late Foot publication before claiming complete callback custody.",
+    "Full save/Continue/Retry and native cue/material/framing signatures are unimplemented here; explicit codec rejects them.",
+    "Inherited Scout rig and one-foot mesh are greybox reuse, not selected full three-legged Sentry production art. No recognizer/camera/art/human balance acceptance."
+  ],
+  "targeted_native_plan": [
+    "Real shared Hero/Heavy/Effects/static floor/Scheduler/Bait before-entry placement, e.g Hero z1.5: outside circle1.1+native capsule.32 and proof padding.33, still Heavy1.8 reach. Parent host guard can be explicit TEST-only true with no portrait credit.",
+    "Execute actual accepted Ray proof controls, first Heavy hit30->15: actual spent cue and cancelled Ray receipt, no extra hit/HP/progression; do not substitute manual phases.",
+    "Follow actual accepted solo Foot escape proof, no primary while pending. Observe exactly one real Foot warning/lock/active/recovery and natural complete; no eligible phase checkpoint before original Ray recovery/cooldown and Foot completion.",
+    "Deferred phase eligibility after actual supported actor/bait phase boundary; TEST-only host acknowledge covers component seam only, not protected Shell save.",
+    "Standard and Assisted phase2 actual Foot-first/Ray stagger, returned full union proof and both recovery/cadence bounds, execute actual controls/ordinary primary to finite0HP and deferred local clear.",
+    "Paired actual current-clock cutoff: observe genuine available joint, then native wait until a late primary cannot fit full current cadence in BOTH windows; actual cue closes/ordinary primary rejects. No clock seeding or weakening accepted proof/isolated openings.",
+    "Cleanup actual nodes/required cues/target groups/owners; malformed/missing host/native binding refuses. Later add strict aggregate paused fresh/Continue/fatal/Retry plus actual portrait after owner implements codec/whole scene."
+  ],
+  "independent_static_review": {
+    "reviewer": "act2_source_review/circle_api_read",
+    "findings_repaired": [
+      "Foot-only actor uses actual Foot recovery pose, matching inherited damage gate.",
+      "Latest real threshold-cancelled Ray deadline drain added.",
+      "Prospective incoming Ray geometry is forwarded to host framing.",
+      "Accepted Foot cycle/history/pair recorded even if callback holds pause."
+    ],
+    "remaining": "No native parser/run; priority99 late Foot callback custody limitation explicitly retained."
+  },
+  "static_text_checks": {
+    "unique_functions": 47,
+    "preload_paths_exist": true,
+    "native_parser_run": false
+  },
+  "inspected_source_sha256": {
+    "data/campaign/act2/levels/A2-L5.md": "adafb3f1ab81617733c02b393e4f2800a4e634215f73ebdf0c00d79e8b044840",
+    "data/design/difficulty_profiles.json": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+    "data/design/player_equipment.json": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+    "scripts/equipment.gd": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+    "scripts/acts/act2/dead_london_sentry_actor.gd": "ffaf6c671894715995f03fa5d2c1f54ea6b2bf720a118fb0a8b97a2269b67b5d",
+    "scripts/acts/act2/dead_london_ray_exchange.gd": "d6bbcc1f35f45b4ac32226f898d924350e3b01543f28f44cf15cade7b75a3ff1",
+    "scripts/acts/act2/dead_london_bait.gd": "9ae1b065521e1d521025d0f90fc941aa0f19867851ddc3eaa632432147d94808",
+    "scripts/acts/act2/giant_foot_visual.gd": "180a2c6658dc901c240cbd2f4ec84f1906d74211afeb30adb3f4f570d518622d",
+    "scripts/combat/lane_mechanism.gd": "52aab391c79cc235ba188066bf6dab5c0e5b81169e4d34fe5c2071ac2c5f5064",
+    "scripts/combat/threat_scheduler.gd": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+    "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+    "scripts/cues/interaction_cue.gd": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2"
+  },
+  "revision": "V2: narrow actual paired full-cadence cutoff",
+  "preserved_v1": {
+    "draft": "/private/tmp/a2_l5_sentry_encounter_draft_v1.gd",
+    "draft_sha256": "b176aa5215721ac708f61a9a1fffeadc85cabe251f5396218240213f5f4fbfe8",
+    "api": "/private/tmp/a2_l5_sentry_encounter_draft_api_v1.json",
+    "api_sha256": "eb9396c7455f4850be53e64a7d2480b9079e91f784c90402bc2f2e53184b97ad"
+  },
+  "paired_current_gate": "Reject paired opening unless actual current Scheduler clock + full finite positive native Player get_threat_response_state().stats.primary_cooldown <= min(actual Ray recovery_until_s, actual Foot recovery_until_s) - shared TIME_MARGIN.",
+  "patch_audit": {
+    "path": "/private/tmp/a2_l5_sentry_encounter_paired_cadence_audit.json",
+    "sha256": "9132aab22024a66ce3cbf4d2473dd9b3cbb40ceaf3bd64d3adec5bfd03b17329",
+    "changed_functions": [
+      "_window_sources"
+    ],
+    "isolated_branch_bytes_exact": true,
+    "all_other_function_bytes_exact": true
+  }
+}

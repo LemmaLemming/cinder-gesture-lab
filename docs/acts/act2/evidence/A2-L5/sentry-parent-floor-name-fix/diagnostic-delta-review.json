@@ -1,0 +1,51 @@
+{
+  "review": "A2-L5 parent Foot refusal diagnostic-only delta",
+  "status": "bounded static byte review passed; native diagnostic not executed by reviewer",
+  "fixture_before": {
+    "path": "/private/tmp/a2_l5_sentry_encounter_smoke_draft.gd",
+    "sha256": "13cb1404604ce0e0ac1912ba884e73443392192d1f2e344b02d528e371ec7bcf",
+    "lines": 335
+  },
+  "fixture_after": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/tests/acts/act2/a2_l5_sentry_encounter_smoke.gd",
+    "sha256": "4ebeba00daae1520c5c59aafc0e8868fb481fb64f2831b9fbf44190a77aeecca",
+    "lines": 338
+  },
+  "parent": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/acts/act2/dead_london_sentry_encounter.gd",
+    "sha256": "d89967446d5786189cae1371a06934256fa901d6c2042bbc9dff6d10195ce26d",
+    "unchanged": true
+  },
+  "changed_functions": [
+    "_create",
+    "_diagnose"
+  ],
+  "all_other_functions_and_header_exact": true,
+  "exact_changes": [
+    "_create retains existing actual authored response context and support CollisionShape3D in the fixture dictionary only.",
+    "_diagnose, after a failed assertion and only when configured, prints pure public Foot.preview_start using existing actual context/current actual actor opening, then prints public Hero response/current position/actual relative floor-shape path.",
+    "No geometry naming fix, clock/transform/receipt/phase/HP write, control or assertion/sampling/tolerance change. Existing failure, state log and cleanup remain exact."
+  ],
+  "pure_query_evidence": {
+    "foot": "scripts/combat/lane_mechanism.gd:154-179 declares preview pure, derives same-world root from actual bound nodes and calls Scheduler.preview_stationary. Diagnostic call matches parent _try_foot input at dead_london_sentry_encounter.gd:213.",
+    "scheduler": "scripts/combat/threat_scheduler.gd:898-934 pure stationary preview refuses busy/native current-cycle state and returns actual guard error; no lease allocation or admission.",
+    "hero": "scripts/player.gd:143-155 reads actual equipment, motion, stability, cooldown, commitment and action clock. No world-action receipt is fabricated or written."
+  },
+  "hypothesis": {
+    "status": "static corroboration only; native refusal reason pending",
+    "fixture_omission": "support CollisionShape3D has no authored name; floor StaticBody3D is AuthoredDryFloor.",
+    "guard": "threat_scheduler.gd _collision_signature rejects @/newline/CR in actual collision shape-owner path with Collision shape paths require stable authored names."
+  },
+  "recorder": {
+    "path": "/private/tmp/cinder_a2_l5_parent_foot_diagnose_record.py",
+    "sha256": "68fb065249712e2291fc9b95fd714f31c55711eb50354f53ece559a694980724",
+    "lines": 166,
+    "only_fixture_pin_diff": true,
+    "python_AST_compile": "passed without import/execution"
+  },
+  "limits": [
+    "No reviewer engine/import/Git/checkout edits.",
+    "Failed first39/1 packet remains closed and preserved.",
+    "No new Foot/native parent/Assisted/save/whole-level acceptance from static diagnostic review."
+  ]
+}
