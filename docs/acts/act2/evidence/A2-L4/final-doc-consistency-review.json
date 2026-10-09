@@ -1,0 +1,68 @@
+{
+  "scope": "read-only current L4 handoff/scenery/level leads and latest closure; latest index/plan scopes and local links only",
+  "reviewed_sources": [
+    {
+      "path": "docs/acts/act2/A2_L4_HANDOFF.md",
+      "sha256": "8925248ad5e22dc5554a0769e3c37483815e38a6a892b6620876c8c47b97edbd"
+    },
+    {
+      "path": "docs/acts/act2/A2_L4_SCENERY_ASSET.md",
+      "sha256": "39d5e58328d2631504e4e20b05728d363708fb7d6b98036b8f51bbf257fa5db9"
+    },
+    {
+      "path": "data/campaign/act2/levels/A2-L4.md",
+      "sha256": "92fbb30f7cdbe43d64c3dc167c2f7e522f4dbcbc07872360763b2d11ea0dbd7d"
+    },
+    {
+      "path": "docs/acts/act2/evidence/A2-L4/index.json",
+      "sha256": "d259be15d546086e3fae29f6aeb6e9db53445f616a1630e99ec1f6b194f93554"
+    },
+    {
+      "path": "docs/acts/act2/evidence/A2-L4/acceptance-plan.json",
+      "sha256": "0148e534d178d7f457374540ef5f5c0a889aec9589dd9b96c6fd27218834b643"
+    }
+  ],
+  "baseline": {
+    "api": "campaign-shared-36",
+    "runtime_publication": "103f4f03704166d8c6066b476ec066abd086e6b6",
+    "documentation_publication": "106c9f0cc5554686cf458a4f2db87011e5954a93"
+  },
+  "verified": [
+    "seven selected full routes plus bank lifecycle634, Kit5gun3093 and freshShell6620 are clean passes in actual result files/index; preserved original Shared32/34/35 and fresh36 attribution matches",
+    "handoff sampled source art, one-image Kit5 recognizability, fine contrast/roof/north/edgecrop limits and incomplete integration acceptance are appropriately bounded",
+    "all existing Markdown/local index+plan references resolve; three collector inventory links intentionally not yet generated",
+    "no L5/optional production or all-variant/human/mobile acceptance claim credited"
+  ],
+  "findings": [
+    {
+      "path": "docs/acts/act2/A2_L4_SCENERY_ASSET.md",
+      "location": "current introductory paragraph",
+      "issue": "Still says checkpoint correction queued and current revision5 recognizability unverified, contradicting the closed3093 head/latest evidence.",
+      "suggestion": "Replace only current queued/unverified wording with scoped closed3093 one-image status; keep original failed/revision sections historical."
+    },
+    {
+      "path": "docs/acts/act2/A2_L4_SCENERY_ASSET.md",
+      "location": "latest Next paragraph",
+      "issue": "Still schedules Shared36 adoption/fresh scope which have now closed6620.",
+      "suggestion": "Current next action is final content freeze/collector/HANDOFF/integration acceptance."
+    },
+    {
+      "path": "data/campaign/act2/levels/A2-L4.md",
+      "location": "current Status lead",
+      "issue": "Still says final custody/adoption remain though current baseline/latest closure establish passed custody/adoption/fresh36.",
+      "suggestion": "Keep inventory/HANDOFF/integration acceptance pending, remove completed custody/adoption from current pending list."
+    },
+    {
+      "path": "docs/acts/act2/evidence/A2-L4/acceptance-plan.json",
+      "location": "full_route_cells[2].limitations",
+      "issue": "Original Heavy omissions/cropping remain valid history, but explicit upcoming correction/add capturelabel/current cosmetic task clauses now falsely read as open work.",
+      "suggestion": "Preserve historical Heavy limits and refer to later Cargo/Quick/Kit5 closure with original scopes."
+    }
+  ],
+  "limits": [
+    "No engine/parser/Git/tracked mutation or broad historical source/inventory audit.",
+    "Three final generated inventory files remain intentionally pending collector after content freeze.",
+    "Owner validation closure is not canonical L4 acceptance."
+  ],
+  "mutation": "only this temporary review record"
+}

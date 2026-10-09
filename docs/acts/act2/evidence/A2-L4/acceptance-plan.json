@@ -1,0 +1,194 @@
+{
+  "level": "A2-L4",
+  "at": "2026-10-08T23:21:42.276758+00:00",
+  "status": "Requiredowner checks closed with originalbaselines; current37 preserveadopted and sourcequalified by shared53/default52, no redundantowned rerun. Finalfrozenpayload and integration acceptance next.",
+  "api_revision": "campaign-shared-37",
+  "full_route_cells": [
+    {
+      "loadout": "standard",
+      "profile": "standard",
+      "capture": true,
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act2/a2_l4_live_level_smoke.gd",
+        "--",
+        "--loadout=standard",
+        "--profile=standard",
+        "--capture-wall"
+      ],
+      "status": "PASSED664/0 cleanShared35 explicitwall2nativeviews; original812/1 and83/1 separatelypreserved",
+      "reason": "Explicit two affected wall portraits plus all unchanged full gameplay checks; default full26 capture gate remains unchanged.",
+      "evidence": "docs/acts/act2/evidence/A2-L4/full-standard-standard-wall-wait-aligned"
+    },
+    {
+      "loadout": "quick",
+      "profile": "standard",
+      "capture": true,
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act2/a2_l4_scenery_inspection.gd",
+        "--",
+        "--loadout=quick",
+        "--profile=standard",
+        "--capture-live"
+      ],
+      "status": "PASSED1293/0 cleanShared35;4realpostclearviews preserved withgunrecognizabilitylimit",
+      "reason": "Remaining required Quick fullroute keeps native route checks and adds four real earned-clear verge views for optionalgun/artilleryman/paleweed. No previouscell rerun/cameraorstate staging.",
+      "evidence": "docs/acts/act2/evidence/A2-L4/full-quick-standard-scenery-first"
+    },
+    {
+      "loadout": "heavy",
+      "profile": "standard",
+      "capture": true,
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act2/a2_l4_live_level_smoke.gd",
+        "--",
+        "--loadout=heavy",
+        "--profile=standard",
+        "--capture-live"
+      ],
+      "status": "PASSED942/0 clean originalShared32source14e44220",
+      "evidence": "docs/acts/act2/evidence/A2-L4/full-heavy-standard-portrait-first",
+      "limitations": [
+        "Original Heavy24 retains Tool recovery metadata without the retained root._views opening; original pixels/metadata remainunchanged. Later Cargo26 supplies actual bound/opening metadata.",
+        "Original Heavy24 does not guarantee a separately running HP0-banktail image. Later Cargo26 captures both actual defeated-Tender running tails.",
+        "Original dense/bleachedweed and Victorian dressing were outboard/cropped; later Quick4 sampled artilleryman/paleforms and Kit5gun3093/0 reviewed one actual correctedgun image. Finecontrast/crop/north/terrace/edge-dish limits remain.",
+        "No humanbalance/mobileFPS or realproductionL5transition acceptance; priorprefix/unlocks/profile andL5destination areexplicitTESTmetadata."
+      ]
+    },
+    {
+      "loadout": "slow_padded_reach",
+      "profile": "standard",
+      "capture": false,
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act2/a2_l4_live_level_smoke.gd",
+        "--",
+        "--loadout=slow_padded_reach",
+        "--profile=standard"
+      ],
+      "status": "PASSED771/0 cleanShared35",
+      "evidence": "docs/acts/act2/evidence/A2-L4/full-padded-standard-first"
+    },
+    {
+      "loadout": "slow_cargo_longstep",
+      "profile": "standard",
+      "capture": true,
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act2/a2_l4_live_level_smoke.gd",
+        "--",
+        "--loadout=slow_cargo_longstep",
+        "--profile=standard",
+        "--capture-live"
+      ],
+      "status": "PASSED858/0 clean Shared34",
+      "evidence": "docs/acts/act2/evidence/A2-L4/full-cargo-standard-portrait-aligned"
+    },
+    {
+      "loadout": "heavy",
+      "profile": "assisted",
+      "capture": false,
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act2/a2_l4_live_level_smoke.gd",
+        "--",
+        "--loadout=heavy",
+        "--profile=assisted"
+      ],
+      "status": "PASSED645/0 cleanShared35",
+      "evidence": "docs/acts/act2/evidence/A2-L4/full-heavy-assisted-first"
+    },
+    {
+      "loadout": "heavy",
+      "profile": "challenge",
+      "capture": false,
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act2/a2_l4_live_level_smoke.gd",
+        "--",
+        "--loadout=heavy",
+        "--profile=challenge"
+      ],
+      "status": "PASSED769/0 cleanShared35",
+      "evidence": "docs/acts/act2/evidence/A2-L4/full-heavy-challenge-first"
+    }
+  ],
+  "route_scope": "All nine actual HP30 defeats; ordinary primary, initialammo0/no blast/no pickups; both actual priority orders, full finite independent bank tails, exact grounded collider path witnesses, three earned contacts, quiet departure, completion/contactexit/fullcleanup. 5kits onStandard + Heavy Assisted/Challenge; no gratuitous15-cell Cartesian repetition.",
+  "lifecycle": {
+    "command": [
+      "python3",
+      "scripts/dev/dev.py",
+      "engine",
+      "--headless",
+      "--path",
+      ".",
+      "--script",
+      "tests/acts/act2/a2_l4_retry_level_smoke.gd",
+      "--",
+      "--loadout=heavy",
+      "--profile=standard"
+    ],
+    "status": "PASSED634/0 cleanShared35",
+    "scope": "Actual firstcheckpoint/runningbank lock GUI Continue, exact quiet saved aggregate/pinned profile despite new preference; actualTender defeat/originaltail with livingScout; realRayfatal, deadContinue/Resumeinert, exactlivingcheckpointRetry/oldsubtreecleanup.",
+    "evidence": "docs/acts/act2/evidence/A2-L4/running-bank-retry-first"
+  },
+  "portraits": "OriginalHeavy24/Cargo26/failedStandard25/correctedStandard2/Quick4 and one newKit5gun original540x1170 views preserved. Cargo originalTools/recoveryopenings/HP0banktails; correctedopaqueWall2, actualartilleryman/paleclumpsQuick4 and Kit5gun1 reviewed separately. Preserve crop/finecontrast/north/edgecrop/terracetraillimits; no allvariant/fullsourceconceptfidelity claim.",
+  "reuse": "Original113 initial/fresh/cleanup remains attributed Shared30 unchanged ordinary semantics. Required canonical validators passedrevision0/no newintroduction. No acceptedL1/L2/L3/broad/unusedAuthored repeats.",
+  "gun_view": {
+    "status": "PASSED3093/0 clean originalShared35; one actualKit5gun PNG/all8nativeoutputs preserved; owner/peer/integration eachactuallyviewed recognizability withlimits. Original2893/1/1255/1 remainfailed,1258/0 Title-only.",
+    "fixture": "tests/acts/act2/a2_l4_gun_view_smoke.gd",
+    "scope": "One genuinely earned late gun photo, two new Putney defeats/publicoriginalContinue/earnedlatepreservation/normalcamera/actualexitcleanup. No priorseven/tailreplay/fullroutecredit.",
+    "failed_evidence": "docs/acts/act2/evidence/A2-L4/gun-view-kit5-first",
+    "current_evidence": "docs/acts/act2/evidence/A2-L4/gun-view-instrumented-continuation",
+    "compatibility_sha256": "b60a6f68141d78f31312e26a06cf9041e2292c66dfe89e81e550ae3e3eec26c7"
+  },
+  "updated_at": "2026-10-09T02:25:31.826063+00:00",
+  "fresh_entry": {
+    "status": "PASSED6620/0 clean Shared36/runtime103/doc106",
+    "fixture": "tests/acts/act2/a2_l4_fresh_entry_smoke.gd",
+    "fixture_sha256": "8c747662859e9e71be3296deb8d991dca67854b547c1859df472de2cb50a9b50",
+    "current_evidence": "docs/acts/act2/evidence/A2-L4/fresh-entry-replay-scroll-aligned",
+    "original_failure": "docs/acts/act2/evidence/A2-L4/fresh-entry-replay-restart-first",
+    "scope": "One Standard kit/profile, actualviewportGUI freshL4 replay/start/restart, exactcomplete initialnativepacket/focus/HUD/currentbindings/protectedstory/history/oldsubtrees/stagingHUD/wholecleanup; no combat/art/performance credit."
+  }
+}

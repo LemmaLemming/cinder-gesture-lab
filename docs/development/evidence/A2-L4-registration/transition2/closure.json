@@ -1,0 +1,40 @@
+{
+  "closed_at": "2026-10-09T03:35:27.710014+00:00",
+  "root_session": 32985,
+  "observed_parent_exit_code": 1,
+  "checks": 5,
+  "failures": 1,
+  "classification": "Sandbox filesystem refusal before original artifact copy/save setup; native system CA access error also present. No route/gameplay/cleanup acceptance. Exact original source349 and complete failed logs retained.",
+  "source_count": 349,
+  "source_manifest_sha256": "0f2a245ca693504bad165ed87c9a93a315e812a2f81c41c83c5946662cef9437",
+  "all_original_copies_exact": true,
+  "original_current_drift": [],
+  "logs": {
+    "native": {
+      "path": ".cinder/a2-l3-l4-transition2.native.log",
+      "bytes": 1318,
+      "sha256": "15cbc8e3673d1b99b1563ef3d54f647c689269c06b0f9091b9329e97bd66068f",
+      "diagnostics": [
+        "ERROR: Condition \"ret != noErr\" is true. Returning: \"\"",
+        "ERROR: Could not create directory: '/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-root-a2-l3-l4-transition-32980-814479'.",
+        "   GDScript backtrace (most recent call first):",
+        "ERROR: create PID-isolated input/save directory",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):"
+      ]
+    },
+    "wrapper": {
+      "path": ".cinder/a2-l3-l4-transition2.wrapper.log",
+      "bytes": 1367,
+      "sha256": "aeb54f43a94d03f477e0513bace2a3ee130d089552734b1413a5afef4efa8aec",
+      "diagnostics": [
+        "ERROR: Condition \"ret != noErr\" is true. Returning: \"\"",
+        "ERROR: Could not create directory: '/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-root-a2-l3-l4-transition-32980-814479'.",
+        "   GDScript backtrace (most recent call first):",
+        "ERROR: create PID-isolated input/save directory",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):"
+      ]
+    }
+  }
+}
