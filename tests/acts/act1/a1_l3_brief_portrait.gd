@@ -1,6 +1,7 @@
 extends "res://tests/acts/act1/a1_l3_gui_capture_repro.gd"
-## Focused current production-scene material/entry inspection. One entrance
-## and one real paused portrait/GUI Resume; no combat or completed route claim.
+## Focused current production-scene material/entry inspection. One actual
+## paused portrait/GUI Resume; optional Crossed setup uses six public test
+## injuries and actual entrance gestures, never claims ordinary combat.
 ## Existing native input, containment, draw and GUI predicates are inherited.
 
 const BriefScene: String = "res://scenes/acts/act1/a1_l3.tscn"
@@ -15,10 +16,13 @@ const BriefPins: Dictionary = {
 	"tests/acts/act1/a1_l3_greybox.gd": "e98a81e75a775c07faf34b7c6b1beb691fd0f154e25eb84132e32de5176feefb"
 }
 var brief_done: bool = false
+var brief_crossed: bool = false
+var brief_test_injuries: Array[Dictionary] = []
 
 
 func _run() -> void:
 	portrait = true
+	brief_crossed = "--crossed" in OS.get_cmdline_user_args()
 	root.size = PortraitSize
 	if not _require(DisplayServer.get_name() != "headless" and "--capture" not in OS.get_cmdline_user_args() and "--capture-polish" not in OS.get_cmdline_user_args(), "brief current portrait requires actual renderer and normal native focus handling"):
 		await _finish(); return
@@ -29,22 +33,52 @@ func _run() -> void:
 	if not await _open_world(BriefScene, "production-opening-current-material", FullLayout.SPAWN): await _finish(); return
 	full_spec = level.call("normal_route_spec")
 	full_world_ids = {"game": str(game.get_instance_id()), "level": str(level.get_instance_id()), "player": str(hero.get_instance_id()), "scheduler": str(scheduler.get_instance_id()), "camera": str((game.get("camera") as Camera3D).get_instance_id())}
-	for id: String in NormalIds: full_defeats[id] = 0
+	for id: String in NormalIds:
+		full_defeats[id] = 0
+		sources[id].connect("defeated", _full_notice_defeat)
 	if not _install_passive_observers(): await _finish(); return
 	process_frame.connect(_sample_opening)
 	process_frame.connect(_sample_crowd)
 	repro_cycle = 1
-	if not await _full_enter_room(0): await _finish(); return
+	if brief_crossed:
+		for room: int in range(2):
+			if not await _full_enter_room(room): await _finish(); return
+			for id: String in _full_ids(room):
+				var before_hp: float = float(sources[id].get("hp"))
+				var damage: Dictionary = sources[id].call("take_damage", before_hp, Vector3.ZERO)
+				if not _require(damage.get("accepted", false) and damage.get("hp_damage") == before_hp and sources[id].get("dead") and full_defeats[id] == 1, "disclosed public TEST injury clears only entitled current source: " + id): await _finish(); return
+				brief_test_injuries.append({"id": id, "room": room, "hp_before": before_hp, "result": _portable(damage), "ordinary_primary": false})
+			if not await _wait(func() -> bool:
+				var current: Dictionary = level.call("route_state")
+				return current.beat_index == room + 1 and current.completed_beats == FullBeats.slice(0, room + 1) and current.room_stage == "approach" and scheduler.reservations().is_empty() and scheduler.encounter_profile().is_empty(), "actual parent publishes representative test-injury room boundary", 2.0): await _finish(); return
+		if not await _full_enter_room(2): await _finish(); return
+	else:
+		if not await _full_enter_room(0): await _finish(); return
 	repro_finished_cycles = 1
-	if not _require(not repro_overflow and shots.size() == 1 and not paused and swipes > 0 and primaries == 0 and hero.hp == initial_hp and hit_events.is_empty() and opening_checkpoint_events.is_empty() and opening_completion_events == 0 and opening_contact_events == 0 and level.call("route_state").beat_index == 0 and level.call("route_state").room_stage == "active" and _future_pristine(CrowdIds, "brief current entrance retains sixteen future dormant actors"), "brief inspection has one actual portrait/GUI Resume and genuine entrance only; no damage, checkpoint or completion"):
+	var selected_room: int = 2 if brief_crossed else 0
+	if not _require(not repro_overflow and shots.size() == 1 and not paused and swipes > 0 and primaries == 0 and hero.hp == initial_hp and hit_events.is_empty() and opening_checkpoint_events.size() == selected_room and opening_completion_events == 0 and opening_contact_events == 0 and level.call("route_state").beat_index == selected_room and level.call("route_state").room_stage == "active" and brief_test_injuries.size() == (6 if brief_crossed else 0) and _future_pristine(_full_allowed(selected_room), "brief current entrance retains every future dormant actor"), "brief inspection has one actual portrait/GUI Resume; disclosed representative setup has no ordinary combat/completion credit"):
 		await _finish(); return
 	brief_done = true
 	await _finish()
 
 
+func _full_quiet_capture(stage: String) -> bool:
+	# Crossed-only inspection omits earlier images and their GUI loops. Retain
+	# actual current containment; no skipped image is reported as a capture.
+	if brief_crossed and stage != "crossed-actual-whole-cast-entrance": return _framing(stage)
+	return await super._full_quiet_capture(stage)
+
+
 func _capture(stage: String) -> bool:
 	if not _require(paused and String(level.call("route_snapshot_runtime_error")).is_empty(), "current Full parent retains actual floor/stalk/art/material/body/cue resources at the paused portrait boundary"): return false
 	return await super._capture(stage)
+
+
+func _watchdog() -> void:
+	var limit: int = 180000 if brief_crossed else WatchdogMs
+	if not finishing and Time.get_ticks_msec() - started_ms > limit:
+		_require_unexpected(false, "brief selected portrait completes within its finite wall budget")
+		_finish.call_deferred()
 
 
 func _finish() -> void:
@@ -80,7 +114,7 @@ func _finish() -> void:
 	var path: String = capture_dir.path_join("evidence.json") if not capture_dir.is_empty() else "res://.cinder/l3-brief-current-%d.json" % Time.get_ticks_usec()
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file != null:
-		file.store_string(JSON.stringify({"scope": "focused actual production Full L3 entry/current pale-cap material and one portrait/real GUI Resume; no combat, save/Continue/Retry, Crossed view, full route, defeat-all, earned exit, campaign traversal or optical acceptance before image review", "checks": checks, "failures": failures, "brief_done": brief_done, "actual_swipes": swipes, "actual_primaries": primaries, "source_count": retained_sources.size(), "normal_focus_out_preserved": true, "current_pins": BriefPins, "world_ids": full_world_ids, "final_route": _portable(final_route), "world_actions": _portable(final_records), "receipt_overflow": repro_overflow, "finished_gui_resumes": repro_finished_cycles, "receipts": repro_receipts, "captures": shots}, "\t"))
+		file.store_string(JSON.stringify({"scope": "focused actual production Full L3 current pale-cap material and one portrait/real GUI Resume; optional Crossed representative prefix uses six disclosed public test injuries and actual entrance gestures. No ordinary combat, save/Continue/Retry, full route, defeat-all, earned exit, campaign traversal or optical acceptance before image review", "checks": checks, "failures": failures, "brief_done": brief_done, "crossed_representative_setup": brief_crossed, "test_injuries": brief_test_injuries, "actual_swipes": swipes, "actual_primaries": primaries, "source_count": retained_sources.size(), "normal_focus_out_preserved": true, "current_pins": BriefPins, "world_ids": full_world_ids, "final_route": _portable(final_route), "world_actions": _portable(final_records), "receipt_overflow": repro_overflow, "finished_gui_resumes": repro_finished_cycles, "receipts": repro_receipts, "captures": shots}, "\t"))
 		file.close()
 	else:
 		checks += 1; failures += 1; push_error("brief current portrait report unavailable")
