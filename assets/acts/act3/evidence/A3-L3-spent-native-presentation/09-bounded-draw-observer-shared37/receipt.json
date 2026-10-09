@@ -1,0 +1,16 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 339x736 --script res://tests/acts/act3/mirror_echo_lifecycle_smoke.gd -- --portraits",
+  "session_id": 95492,
+  "exit_code": 1,
+  "checks": 34,
+  "failures": 1,
+  "script_or_native_errors": [
+    "ERROR: FAIL: portrait observation stopped: ordinary native draw not observed within TEST bound (no PNG/source acceptance); { \"site\": \"live-ready:ordinary-before-TEST-pause\", \"outcome\": { \"observed\": false, \"wait_kind\": \"draw\", \"elapsed_wall_ms\": 5962, \"process_start\": 9, \"process_end\": 873, \"physics_start\": 45, \"physics_end\": 410 }, \"before\": { \"site\": \"live-ready:ordinary-before-TEST-pause:START\", \"wall_ticks_ms\": 6593, \"physics_frames\": 45, \"process_frames\": 9, \"window_has_focus\": true, \"display_window_focused\": true, \"window_visible\": true, \"game_can_process\": true, \"hud_can_process\": true, \"actual\": { \"boundary\": \"live-ready:ordinary-before-TEST-pause:START\", \"tree_paused\": false, \"display_window_focused\": true, \"public_pause_request_pending\": false, \"configuration_error\": \"\", \"camera_error\": \"\", \"camera_framing_error\": \"\", \"input\": { \"schema_version\": 1, \"anchor_normalized\": (0.5, 0.5), \"sequence\": 0, \"last_observation\": {  } }, \"source_phase\": \"cycle_ready\", \"clock_s\": 0.0 } }, \"after\": { \"site\": \"live-ready:ordinary-before-TEST-pause:TIMEOUT\", \"wall_ticks_ms\": 12556, \"physics_frames\": 410, \"process_frames\": 873, \"window_has_focus\": false, \"display_window_focused\": false, \"window_visible\": true, \"game_can_process\": false, \"hud_can_process\": true, \"actual\": { \"boundary\": \"live-ready:ordinary-before-TEST-pause:TIMEOUT\", \"tree_paused\": true, \"display_window_focused\": false, \"public_pause_request_pending\": false, \"configuration_error\": \"\", \"camera_error\": \"\", \"camera_framing_error\": \"\", \"input\": { \"schema_version\": 1, \"anchor_normalized\": (0.5, 0.5), \"sequence\": 0, \"last_observation\": {  } }, \"source_phase\": \"cycle_ready\", \"clock_s\": 0.0 } }, \"png_written\": false, \"classification\": \"incomplete_native_observation_no_source_failure_inference\" }"
+  ],
+  "baseline": "36090c9d83bb762b14310aa22978f1b31469551f",
+  "owned_head": "12dae6a9fa8acaa3958faac41ea2936b66f1fe97",
+  "source_count": 309,
+  "all_frozen_sources_unchanged": true,
+  "closed_at": "2026-10-09T02:59:23.101763+00:00",
+  "scope": "34checks/1failure clean exit1,309 inputs exact. Native real focus/window policy pass; bounded ordinary-before-TESTpause waitSTART unpausedclock0/process9/physics45, no native postdraw signal observed before native8s unscaled timer expires at wall5962ms/process873/physics410; realfocusout occurs. Mainloop is alive. No PNG, source/gameplay/parent acceptance; later draws unattempted. Native cleanup clean. This changes environmental diagnosis; timer8native process seconds is not8strict wallseconds due current-frame delta."
+}

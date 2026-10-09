@@ -1,0 +1,39 @@
+--- a/tests/acts/act3/mirror_sea_route_smoke.gd
++++ b/tests/acts/act3/mirror_sea_route_smoke.gd
+@@ -580,7 +580,7 @@
+ 	for record: Dictionary in held:
+ 		var id: String = _owner_id(record)
+ 		if id.is_empty(): return "reservation lacks one real installed owner"
+-		if record.adapter.get("kind") == "authored_replay" and held.size() != 1: return "actual authored Echo lost honest exclusive lease against another source"
++		if record.get("adapter", {}).get("kind") == "authored_replay" and held.size() != 1: return "actual authored Echo lost honest exclusive lease against another source"
+ 		reason = _held_record_error(id, record, state)
+ 		if not reason.is_empty(): return reason
+ 		var phase: String = _phase(id)
+@@ -629,7 +629,7 @@
+ 
+ func _held_record_error(id: String, record: Dictionary, parent_state: Dictionary) -> String:
+ 	var lease_id: String = String(record.id)
+-	var authored: bool = record.adapter.get("kind") == "authored_replay"
++	var authored: bool = record.get("adapter", {}).get("kind") == "authored_replay"
+ 	if not _fixed_leases.has(lease_id):
+ 		_fixed_leases[lease_id] = _fixed_record(record)
+ 		_lease_phases[lease_id] = {}
+@@ -674,15 +674,15 @@
+ 
+ 
+ func _fixed_record(record: Dictionary) -> Dictionary:
+-	var value: Dictionary = {"source_instance_id": record.source_instance_id, "adapter_kind": record.adapter.get("kind", "")}
++	var value: Dictionary = {"source_instance_id": record.source_instance_id, "adapter_kind": record.get("adapter", {}).get("kind", "")}
+ 	# Compound authored exchanges carry the whole immutable program; they do
+ 	# not have one ordinary geometry key. Lunge/circle geometry remains exact.
+-	if record.adapter.get("kind") == "authored_replay":
++	if record.get("adapter", {}).get("kind") == "authored_replay":
+ 		value.merge({"id": record.id, "response_actor_instance_id": record.response_actor_instance_id, "source_position": record.source_position, "opening_position": record.opening_position, "profile_id": record.profile_id, "world_revision": record.world_revision, "adapter": record.adapter.duplicate(true)})
+ 	else:
+ 		value["geometry"] = record.geometry.duplicate(true)
+ 	for key: String in FIXED_DEADLINES: value[key] = record[key]
+-	if record.adapter.get("kind") == "lunge": value.merge({"start": record.adapter.start, "endpoint": record.adapter.planned_endpoint})
++	if record.get("adapter", {}).get("kind") == "lunge": value.merge({"start": record.adapter.start, "endpoint": record.adapter.planned_endpoint})
+ 	return value
+ 
+ 

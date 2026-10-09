@@ -1,0 +1,62 @@
+{
+  "created_at": "2026-10-09T05:20:21.799627+00:00",
+  "report": "docs/acts/act3/MIRROR_SEA_COST_CALLPATHS.md",
+  "report_sha256": "c777ca2af6469811875819ae69289d0bf51aded7cfc06eb9f92b71698df5f03d",
+  "source_sha256": {
+    "scripts/acts/act3/mirror_echo.gd": "a4f5e47f457b513a348b7e201dbd3374711e4f60cd5d2a40389a5118d422da6c",
+    "scripts/acts/act3/mirror_echo_spent_marker.gd": "c28d5c50a697052dff14560efe0ee2d9cb3a91c9902d047d126e19bd1122129c",
+    "scripts/acts/act3/mirror_sea_level.gd": "4af8680418d0b7449f0750315a8672282f652d5d782878f5c4e7206d6a362b72",
+    "tests/acts/act3/mirror_sea_route_smoke.gd": "62158f6cd3bca6ddee7de26b198ac07438352c144af95e07821a7e24c5541521"
+  },
+  "method": "Peer bounded read-only source review independently checked by Root at exact current source lines.",
+  "native_measurement": false,
+  "sources_edited": false,
+  "queued_hold_session": 83376,
+  "current_source_hold_hashes_exact": 339,
+  "official_research_inspected_at": "2026-10-09T05:32:25.176525+00:00",
+  "official_sources": [
+    {
+      "url": "https://raw.githubusercontent.com/godotengine/godot/4.7.2-stable/main/main.cpp",
+      "sections": [
+        "1429\u20131431",
+        "1782\u20131784",
+        "3621\u20133624"
+      ],
+      "observation": "CLI flags select local debugger and scripts profiling requires active debugger."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/godotengine/godot/4.7.2-stable/core/debugger/local_debugger.cpp",
+      "sections": [
+        "36\u2013108",
+        "110\u2013113",
+        "346\u2013348",
+        "349\u2013369"
+      ],
+      "observation": "Signature-based frame and accumulated total/self/call output; ignored error-break does not suppress send_error output."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/godotengine/godot/4.7.2-stable/core/debugger/engine_debugger.cpp",
+      "sections": [
+        "117\u2013124",
+        "157\u2013169"
+      ],
+      "observation": "Empty URI returns; local URI creates local debugger; normal deinit disables active profilers."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_enginedebugger.html",
+      "sections": [
+        "profiler_enable",
+        "is_active",
+        "is_profiling"
+      ],
+      "observation": "Public debugger activation/profiler-state APIs exist; no installed-native verification."
+    }
+  ],
+  "proposed_command": "python3 scripts/dev/dev.py engine --headless --path . --debug --profiling --ignore-error-breaks --script res://tests/acts/act3/mirror_sea_route_smoke.gd -- --resonant-death-only",
+  "command_executed": false,
+  "closure_reconciled_at": "2026-10-09T05:41:15.739905+00:00",
+  "closed_session": 83376,
+  "original_review_sources": "02-stalker-first-native-approach-s39/sources/",
+  "route_observer_fix_sha256": "1a8ab67e7fd6185ad5069aa8476bb20fa0900bef3a85968c7fb014588ac316f1",
+  "actor_validation_unchanged": true
+}

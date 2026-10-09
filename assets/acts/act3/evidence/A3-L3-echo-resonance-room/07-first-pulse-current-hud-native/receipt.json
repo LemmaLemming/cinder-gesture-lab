@@ -1,0 +1,18 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 339x736 --script tests/acts/act3/mirror_echo_resonance_room_smoke.gd -- --first-pulse-only --capture-portraits",
+  "engine_session": 38365,
+  "actual_exit_code": 1,
+  "checks": 7,
+  "failures": 1,
+  "baseline": "c51efcac811af4b45310d058f19bf2189548a86e",
+  "owned_head": "8bdaf5aa4ca064d54467455122a0336ea8f1c643",
+  "source_count": 124,
+  "frozen_sources_unchanged": true,
+  "native_log": "native.log",
+  "source_freeze": "source-freeze.json",
+  "images": [],
+  "closed_at": "2026-10-08T23:53:43.488964+00:00",
+  "first_meaningful_error": "Explicit whole-unit save/refusal unchanged assertion fails at arrival because new native HUD Rect2 observations were omitted from exact comparator supported-type list; no native mutation demonstrated.",
+  "classification": "test assertion/type-coverage error",
+  "scope": "No pulse/admission/newimage evidence; source1dd/runtimee6/shared34 unchanged. Add exact var_to_bytes Rect2 support, preserving type/bit equality and no tolerance/assertion weakening; then rerun same smallesttarget."
+}

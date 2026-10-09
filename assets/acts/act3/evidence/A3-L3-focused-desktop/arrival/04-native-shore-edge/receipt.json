@@ -1,0 +1,16 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 340x736 --script res://tests/acts/act3/mirror_sea_arrival_draw_smoke.gd -- --shore-edge-only",
+  "session_id": 93048,
+  "exit_code": 1,
+  "checks": 6,
+  "failures": 1,
+  "script_or_native_errors": [
+    "ERROR: FAIL: one original native arrival PNG follows actual draw and exact paused unit/current Camera/HUD; actual arrival actions/resources/events/kit or paired native clocks differ"
+  ],
+  "baseline": "027dfa16e4c215ab1cc9f86bd0e4792088d16446",
+  "owned_head": "32f7e993f67ef708866316aef0be3f1543d7fdf6",
+  "source_count": 341,
+  "all_frozen_sources_unchanged": true,
+  "closed_at": "2026-10-09T06:19:44.235678+00:00",
+  "scope": "Exact original focused shore attempt6/1; original arrival and two-frame native focus pass, two actual lateral unshortened dashes completed, then composite empty-event/currentclock arrival guard refuses. No draw or shoreline PNG; cleanup passes; no gameplay failure inferred pending diagnosis."
+}
