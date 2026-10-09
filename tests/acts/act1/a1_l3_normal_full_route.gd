@@ -187,6 +187,7 @@ func _full_opportunity(room: int) -> bool:
 	# An isolated stationary source may be farther than native4.5m admission.
 	# Walk there only by full actual recognizer dashes before any retained lease;
 	# native preview/admission remains the parent's authority.
+	var remaining_wait_s: float = 12.0 # Original passive window, shared across lease waits.
 	for step: int in range(8):
 		if _fresh_warning() != "" or (full_room_cycle_seen.get(room, false) and _reachable_source() != ""): return true
 		var nearest: String = ""
@@ -196,7 +197,15 @@ func _full_opportunity(room: int) -> bool:
 			if state.dead: continue
 			var actual: float = _planar_distance(sources[id].global_position, hero.global_position)
 			if actual < distance: distance = actual; nearest = id
-		if not scheduler.reservations().is_empty(): break
+		if not scheduler.reservations().is_empty():
+			# A different real lease can still be in flight after the chosen source
+			# dies. Observe its original expiry; then revisit actual input choice.
+			# Never spend another12s per iteration or wait passively at the3m stop.
+			_full_diagnostic("retained actual native lease before ordinary opportunity")
+			var wait_start_s: float = hero.get_world_action_clock()
+			if not await _wait(func() -> bool: return _fresh_warning() != "" or (full_room_cycle_seen.get(room, false) and (_reachable_source() != "" or _full_gap_ready(room))), "actual native lease reaches a fresh response or genuine stopped ordinary approach", remaining_wait_s): return false
+			remaining_wait_s = maxf(0.0, remaining_wait_s - (hero.get_world_action_clock() - wait_start_s))
+			continue
 		if distance <= 4.4:
 			if not full_room_cycle_seen.get(room, false): break
 			# Native admission distance is not ordinary-primary reach. After a genuine
@@ -208,7 +217,7 @@ func _full_opportunity(room: int) -> bool:
 		var direction: Vector3 = sources[nearest].global_position - hero.global_position
 		direction.y = 0.0
 		if not await _full_route_step(direction.normalized(), "whole actual approach towards " + nearest): return false
-	return await _wait(func() -> bool: return _fresh_warning() != "" or (full_room_cycle_seen.get(room, false) and _reachable_source() != ""), "room-local actual native admission/ordinary opportunity", 12.0)
+	return await _wait(func() -> bool: return _fresh_warning() != "" or (full_room_cycle_seen.get(room, false) and _reachable_source() != ""), "room-local actual native admission/ordinary opportunity", remaining_wait_s)
 
 
 func _full_gap_ready(room: int) -> bool:
