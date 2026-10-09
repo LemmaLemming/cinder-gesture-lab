@@ -35,7 +35,8 @@ func _run() -> void:
 	node_added.connect(_fr_observe_added)
 	print("L4 fresh Shell scope: published36, actual L4 completed-level replay and GUI restart; synthetic completed prefix only, real initial protected unit, one Standard kit/profile. No nine-kill route, checkpoint lifecycle, art or performance credit.")
 	var prior_failures: int = _failures
-	if not await _fr_check() and _failures == prior_failures: _expect(false, "bounded actual fresh L4 entry check aborted")
+	var scope_complete: bool = await _fr_check()
+	if not scope_complete and _failures == prior_failures: _expect(false, "bounded actual fresh L4 entry check aborted")
 	_fr_watch = false
 	if is_instance_valid(_game):
 		var old: Array[Dictionary] = _fr_old_refs(true)
@@ -49,7 +50,7 @@ func _run() -> void:
 	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == _canonical, "TEST ONLY injection preserves canonical registry bytes")
 	for path: String in _fr_preserved: _expect(FileAccess.get_file_as_string(path) == _fr_preserved[path], "fixture preserves original helper/scene bytes: " + path)
 	_fr_cleanup()
-	print("L4 fresh Shell smoke: %d checks, %d failures; two fresh actual L4 constructors and saved protected-story return only; no combat or native-art claim" % [_checks, _failures])
+	print("L4 fresh Shell smoke: %d checks, %d failures; scope_complete=%s; requested scope=two fresh actual L4 constructors and saved protected-story return only; no combat or native-art claim" % [_checks, _failures, str(scope_complete)])
 	quit(0 if _failures == 0 else 1)
 
 func _fr_check() -> bool:
@@ -212,9 +213,31 @@ func _fr_click(name: String) -> bool:
 	await _fr_settle()
 	var button: Button = _game.menu.find_child(name, true, false) as Button
 	if not _expect(is_instance_valid(button) and button.is_visible_in_tree() and not button.disabled, "actual current enabled GUI button exists: " + name): return false
+	var button_rect_before_scroll: Rect2 = button.get_global_rect()
+	# Same native ScrollContainer visibility seam used by campaign_menu_smoke.
+	# Expose the actual control; do not invoke its signal or bypass hit testing.
+	var ancestor: Node = button.get_parent()
+	while ancestor != null:
+		if ancestor is ScrollContainer: (ancestor as ScrollContainer).ensure_control_visible(button)
+		ancestor = ancestor.get_parent()
+	await _fr_settle()
+	if not _expect(is_instance_valid(button) and button.is_inside_tree() and button.is_visible_in_tree() and not button.disabled and _game.menu.find_child(name, true, false) == button, "same actual GUI button survives supported scroll/layout without menu replacement: " + name): return false
+	var at: Vector2 = button.get_global_rect().get_center()
+	var geometry: Dictionary = {"button": name, "page_before": _game.menu.page_name(), "button_rect_before_scroll": button_rect_before_scroll, "button_rect": button.get_global_rect(), "hit_center": at, "root_rect": root.get_visible_rect(), "clips": []}
+	var visible_hit: bool = root.get_visible_rect().has_point(at)
+	ancestor = button.get_parent()
+	while ancestor != null:
+		if ancestor is Control and (ancestor as Control).clip_contents:
+			var control: Control = ancestor as Control
+			var entry: Dictionary = {"path": str(control.get_path()), "rect": control.get_global_rect(), "contains_center": control.get_global_rect().has_point(at)}
+			if control is ScrollContainer: entry["scroll_vertical"] = (control as ScrollContainer).scroll_vertical
+			geometry.clips.append(entry)
+			visible_hit = visible_hit and bool(entry.contains_center)
+		ancestor = ancestor.get_parent()
+	print("Actual fresh GUI pre-input geometry: ", geometry)
+	if not _expect(visible_hit, "actual GUI centre is contained by viewport and every clipping ancestor after supported scroll: " + name): return false
 	var presses: Array[String] = []
 	button.pressed.connect(func() -> void: presses.append(name))
-	var at: Vector2 = button.get_global_rect().get_center()
 	var motion := InputEventMouseMotion.new()
 	motion.position = at; motion.global_position = at
 	root.push_input(motion, true)
@@ -226,7 +249,11 @@ func _fr_click(name: String) -> bool:
 	release.pressed = false
 	root.push_input(release, true)
 	await _fr_settle()
-	return _expect(presses == [name] and _game.campaign_error.is_empty(), "one actual viewport GUI click settles without duplicate publication/campaign error: " + name + " " + _game.campaign_error)
+	var one_press: bool = presses == [name]
+	var campaign_ok: bool = _game.campaign_error.is_empty()
+	# The transaction may retire the clicked control; use only captured geometry.
+	print("Actual fresh GUI post-input observations: ", {"button": name, "presses": presses, "count": presses.size(), "one_press": one_press, "campaign_error": _game.campaign_error, "campaign_ok": campaign_ok, "page_after": _game.menu.page_name(), "geometry_before": geometry})
+	return _expect(one_press and campaign_ok, "one actual viewport GUI click settles without duplicate publication/campaign error: " + name + " " + _game.campaign_error)
 
 func _fr_settle() -> void:
 	for frame: int in range(8): await process_frame

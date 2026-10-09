@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "at": "2026-10-09T02:15:31.370166+00:00",
-  "status": "independent static review complete; native execution pending",
+  "status": "Original1656/1 GUI boundary archived; independently reviewed TEST-only scroll/hit prerequisite and accurate scope diagnostics; same native rerun pending",
   "fixture": "tests/acts/act2/a2_l4_fresh_entry_smoke.gd",
-  "fixture_sha256": "45e649111b7a36df3a369330e5e40acff04f97a29525e582801555bff768bdf8",
+  "fixture_sha256": "8c747662859e9e71be3296deb8d991dca67854b547c1859df472de2cb50a9b50",
   "review_sha256": "89069dc3ddf298c1a763ce0c2f85b07c391699700a5345ce36e1b03cdaa37fe4",
   "api_revision": "campaign-shared-36",
   "runtime_publication": "103f4f03704166d8c6066b476ec066abd086e6b6",
@@ -19,5 +19,8 @@
     "--script",
     "tests/acts/act2/a2_l4_fresh_entry_smoke.gd"
   ],
-  "why": "All prior route cells started from actual captured saves; new fresh candidate writer/camera/HUD path requires direct authored L4 recipient coverage. No repetition of applicable original seven routes/634/2271/3093."
+  "why": "All prior route cells started from actual captured saves; new fresh candidate writer/camera/HUD path requires direct authored L4 recipient coverage. No repetition of applicable original seven routes/634/2271/3093.",
+  "gui_source_review_sha256": "ef0c0df7b7b245a91cb110e2a1693fccf21d97864f3cf18173b4a35112c8e5f7",
+  "original_failure": "docs/acts/act2/evidence/A2-L4/fresh-entry-replay-restart-first/result.json",
+  "correction": "Only actual ancestor scroll visibility, strict centre/root/clip containment and same originalButton post-yield guard. Real MouseMotion/press/release/onepress and all native state assertions unchanged. Added safe pre/post geometric and individualconjunct observations; original coordinates stillunknown."
 }
