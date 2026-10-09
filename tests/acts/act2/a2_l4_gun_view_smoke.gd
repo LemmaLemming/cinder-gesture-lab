@@ -171,7 +171,13 @@ func _gun_run_late_scope() -> bool:
 	if not await _pr_click("ResumeButton"): return false
 	if not _expect(_live() and not paused and PriorityJson.stringify(_game.attempts.state().story.checkpoint) == PriorityJson.stringify(_cl_model.story.checkpoint), "actual Resume preserves original protected stage4 checkpoint until genuine Putney contact"): return false
 	if not await _contact("putney_entry", _pr_checkpoints): return false
-	if not _expect(_pr_checkpoints == ["villa-courtyards-clear"] and _game.attempts.state().story.checkpoint.level.local.sequence.stage_index == 7, "one real Putney contact legitimately earns the next living checkpoint"): return false
+	# The level signal is synchronous; the public Shell transaction commits
+	# after this native tick. Observe Attempts only after normal GUI settlement.
+	print("L4 gun checkpoint before public settlement: ", _game.attempts.state().story.checkpoint.level.local.sequence.stage_index)
+	await _pr_settle()
+	var checkpoint: Dictionary = _game.attempts.state().story.checkpoint
+	print("L4 gun checkpoint after public settlement: ", checkpoint.level.local.sequence.stage_index, " id=", checkpoint.level.progress.checkpoint_id)
+	if not _expect(_pr_checkpoints == ["villa-courtyards-clear"] and checkpoint.level.local.sequence.stage_index == 7 and checkpoint.level.progress.checkpoint_id == "villa-courtyards-clear" and checkpoint.level.local.sequence.defeated_ids == _cl_unit.level.local.sequence.defeated_ids, "one real Putney contact legitimately earns the next living checkpoint after public commit"): return false
 	var targets: Array[String] = ["putney_scout", "putney_handler"]
 	if not await _clear(targets): return false
 	for frame: int in range(600):

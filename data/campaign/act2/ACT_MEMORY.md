@@ -285,3 +285,8 @@ Heavy/Assisted passed645/0 clean at Shared35 with283 original sources, inventory
 ## Challenge full route closed and affected Kit5 gun change
 
 Heavy/Challenge passed769/0 clean at Shared35, with283 original sources inventory SHAba18741c82a2b46b7b54469a273b9d2dc244a9d13ccd52edc17817d9c4a545c2 and raw SHA540bd0b46d91b16abc5119beadbabb5179256844fd1313ce6a24635df9dcc79d. All seven required routes and actual bank lifecycle634/0 now pass. After the last own job closed, Kit5 changes only the existing outboard gun root to(-5,0,-43.8),yawPI/3, keeping native meshes/materials/scale/hidden flash and all mechanical/control/collision/timing data. New independently reviewed gun fixture must publicContinue the untouched actual seven-defeat artifact, earn only two Putney defeats, preserve its newly earned quiet unit/model before navigation and capture one strict native view. Actual Kit5 pixels/convergence and final inventories remain pending; no human decision or HANDOFF yet.
+
+
+## Narrow gun fixture checkpoint observation correction
+
+First isolated gun run2893/1 atKit5/Shared35 preserved all288sources and originalraw/result; fresh original unit/model and realPutneycontact succeeded, then TEST queried Attempts before Shell deferred native checkpoint commit. No new kills, earnedlate archive or image exist from that failed scope. Owner and independent source review confirm synchronous level checkpoint signal vs deferred Shell _drain/_commit_drain/Attempts.record_snapshot. Add only the existing eight-process-frame _pr_settle after contact; keep exactstage7/checkpointID/singlecontact and strengthen unchangedseven-defeat prefix assertion. Gunfixture alone is rerun; no production/gameplay change or successful route/courtyard/lifecycle/art repeats.

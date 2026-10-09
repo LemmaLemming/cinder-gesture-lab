@@ -57,7 +57,7 @@ The original Standard 812/1 run at Shared34 missed a flood-margin pair PNG while
 
 ## Work required before final handoff
 
-Close the two remaining Heavy profile cells and the one affected field-gun view with their original sources, logs, results and review limits. Update this draft and the evidence index only after those jobs close. Produce the complete owned candidate delta against the exact consumed shared publication, the production runtime and UID inventory, the portable evidence hashes and the final candidate HEAD. Verify accepted L1–L3 retention and the complete integration payload; do not hand off only a final documentation commit.
+All seven required profile/loadout routes and the bank lifecycle are closed. Close the one affected field-gun view with its original sources, log, result and review limits. Update this draft and the evidence index only after those jobs close. Produce the complete owned candidate delta against the exact consumed shared publication, the production runtime and UID inventory, the portable evidence hashes and the final candidate HEAD. Verify accepted L1–L3 retention and the complete integration payload; do not hand off only a final documentation commit.
 
 L4 remains pending integration and acceptance. No final inventory or ready claim is made here. The desktop scope excludes mobile export, release work, device performance and human balance acceptance. L5 and the optional levels have not started.
 
