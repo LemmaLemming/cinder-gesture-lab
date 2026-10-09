@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-41** (9 October 2026). Optional Lane parent presentation guards close late callback authority before damage while preserving ordinary consumers and saved wire schemas. Side finish/abandon returns to Journey; explicit Continue retains paused Resume. Targeted native48/0, existing Lane243/0 and Shell55/0 pass with original diagnostics preserved. [Guard contract](LANE_PARENT_PRESENTATION_GUARD.md) and [side-return evidence](SIDE_RETURN_JOURNEY.md). [Focused level acceptance](LEVEL_ACCEPTANCE.md) remains authoritative. Campaign8/24 remains accepted; Integration is first help contact and actual worker adoption requires preserving ACKs.
+Revision: **campaign-shared-42** (9 October 2026). Registers independently accepted A3-L3 Mirror Sea with exact content55256309 and accepted L2 prerequisite, leaving L4 unimplemented. [Focused acceptance](A3_L3_ACCEPTANCE.md) records clean Root20/0 production registration/replay/Shared41 Journey return/Continue and brief integrated7/0. Campaign9/24, Act3 3/8; Act3 proceeds to L4 independently. Shared41 parent guard and side-return behavior remain unchanged, with no new gameplay or saved-schema API. Integration remains first help contact and preserving worker ACKs establish actual adoption.
 
 ## Optional parent presentation and side return
 
