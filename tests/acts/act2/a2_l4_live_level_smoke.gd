@@ -56,6 +56,8 @@ class NativeTickProbe:
 
 var _native_probe: NativeTickProbe
 var _capture_pending: bool = false
+var _capture_scope: String = "full"
+var _native_pair_observations: Dictionary = {}
 
 func _run() -> void:
 	if not _read_options(): quit(1); return
@@ -172,14 +174,12 @@ func _run_route() -> bool:
 	for source: String in ["flood_bank", "villa_bank", "tool_garden_handler", "tool_villa_ray_handler", "tool_villa_smoke_handler", "tool_putney_handler", "flood_scout", "villa_scout", "putney_scout"]:
 		for phase: String in ["warning", "lock", "active", "recovery"]: _expect(_native_phases.get(source, {}).has(phase), "actual native %s observed %s" % [source, phase])
 	if _capture_live:
+		if not await _prepare_additional_captures(): return false
 		for settle_frame: int in range(8):
 			if not _capture_pending and _captured.has("clear"): break
 			await process_frame
-		for family: String in ["smoke", "tool", "ray"]:
-			for phase: String in ["warning", "lock", "active", "recovery"]: _expect(_captured.has(family + "-" + phase), "actual native source/phase portrait exists: " + family + "-" + phase)
-		for beat: String in ["flood_margin", "villa_scout_priority", "villa_tender_priority", "putney_mix"]: _expect(_captured.has(beat.replace("_", "-") + "-actual-pair"), "actual mixed source portrait reports real armed flags: " + beat)
-		for bank_id: String in _banks: _expect(_captured.has(bank_id.replace("_", "-") + "-defeated-source-tail"), "actual HP0 intact source and original running bank tail portrait exists: " + bank_id)
-		for label: String in QUIET_LABELS.values() + STAGE_LABELS.values() + ["clear"]: _expect(_captured.has(label), "actual native scenic/stage/quiet-clear portrait exists: " + label)
+		for label: String in _required_capture_labels(): _expect(_captured.has(label), "actual native " + _capture_scope + " portrait exists: " + label)
+		print("L4 TEST native pair observation counts: ", JSON.stringify(_native_pair_observations))
 	_game.request_pause()
 	await _settle()
 	var aggregate: Dictionary = _game.capture_campaign_snapshot()
@@ -684,6 +684,18 @@ func _observe_defeat(id: String) -> void:
 func _observe_runtime() -> void:
 	if not _live(): return
 	var state: Dictionary = _state()
+	var running_sources: int = 0
+	var armed_sources: int = 0
+	for id: String in state.active_ids:
+		var current: Dictionary = state.exchanges[id]
+		if current.get("status") == "running":
+			running_sources += 1
+			if _reservation(String(current.get("reservation_id", ""))).get("armed", false): armed_sources += 1
+	if running_sources == 2:
+		var counts: Dictionary = _native_pair_observations.get(state.beat, {"running_pair_ticks": 0, "armed_pair_ticks": 0})
+		counts.running_pair_ticks += 1
+		if armed_sources == 2: counts.armed_pair_ticks += 1
+		_native_pair_observations[state.beat] = counts
 	for id: String in state.exchanges:
 		var current: Dictionary = state.exchanges[id]
 		if current.get("status") != "running" or current.get("phase") not in ["warning", "lock", "active", "recovery"]: continue
@@ -884,6 +896,9 @@ func _read_options() -> bool:
 		if argument.begins_with("--loadout="): _loadout_name = argument.trim_prefix("--loadout=")
 		elif argument.begins_with("--profile="): _profile_id = argument.trim_prefix("--profile=")
 		elif argument == "--capture-live": _capture_live = true
+		elif argument == "--capture-wall":
+			_capture_live = true
+			_capture_scope = "wall"
 	if not _expect(LOADOUTS.has(_loadout_name) and _profile_id in ["standard", "assisted", "challenge"], "supported existing loadout/profile selectors"): return false
 	_loadout = LOADOUTS[_loadout_name].duplicate(true)
 	_capture_root = LONDON_CAPTURE_ROOT
@@ -970,6 +985,23 @@ func _cleanup() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(LONDON_TEST_ROOT + name))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(LONDON_TEST_ROOT))
 
+# Optional TEST-only real-navigation views after the actual complete route.
+# Default performs no movement; each scope retains its explicit native gate.
+func _prepare_additional_captures() -> bool:
+	return true
+
+func _required_capture_labels() -> Array[String]:
+	var labels: Array[String] = []
+	if _capture_scope == "wall":
+		labels = ["villa-scout-priority-fixed-wall", "villa-scout-priority-actual-pair"]
+		return labels
+	for family: String in ["smoke", "tool", "ray"]:
+		for phase: String in ["warning", "lock", "active", "recovery"]: labels.append(family + "-" + phase)
+	for beat: String in ["flood_margin", "villa_scout_priority", "villa_tender_priority", "putney_mix"]: labels.append(beat.replace("_", "-") + "-actual-pair")
+	for bank_id: String in _banks: labels.append(bank_id.replace("_", "-") + "-defeated-source-tail")
+	for label: String in QUIET_LABELS.values() + STAGE_LABELS.values() + ["clear"]: labels.append(label)
+	return labels
+
 func _capture_labels(state: Dictionary) -> Array[String]:
 	var labels: Array[String] = []
 	for id: String in state.active_ids:
@@ -991,6 +1023,11 @@ func _capture_labels(state: Dictionary) -> Array[String]:
 		var label: String = bank_id.replace("_", "-") + "-defeated-source-tail"
 		if bank_state.status == "running" and float(_actors[LondonRoot.BANK_TO_TENDER[bank_id]].get("hp")) == 0.0 and not _captured.has(label): labels.append(label)
 	if state.beat == "clear" and not _captured.has("clear"): labels.append("clear")
+	if _capture_scope == "wall":
+		var selected: Array[String] = []
+		for label: String in labels:
+			if _required_capture_labels().has(label): selected.append(label)
+		return selected
 	return labels
 
 func _capture_state() -> void:
