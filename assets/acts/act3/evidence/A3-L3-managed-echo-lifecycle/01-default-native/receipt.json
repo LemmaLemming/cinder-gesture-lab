@@ -1,0 +1,18 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --script res://tests/acts/act3/mirror_echo_lifecycle_smoke.gd",
+  "engine_session": 80725,
+  "actual_exit_code": 1,
+  "checks": 12,
+  "failures": 1,
+  "script_errors": 1,
+  "baseline": "c51efcac811af4b45310d058f19bf2189548a86e",
+  "owned_head": "a076379705b1c28104315c8a0f537ff84808656a",
+  "source_count": 213,
+  "frozen_sources_unchanged": true,
+  "closed_at": "2026-10-09T00:19:24.615960+00:00",
+  "native_log": "native.log",
+  "source_freeze": "source-freeze.json",
+  "first_meaningful_error": "Fresh native preflight: Exact retained lifecycle world/floor binding required",
+  "classification": "owned native environment binding missing before pure Scheduler3 prevalidation; later teardown fixture call on null shared shell",
+  "scope": "Initial real ready state/format2 transport/cleanup observed. Failed fresh pure preflight; script diagnostic prevents complete lifecycle acceptance. No exchange/generation2/native art/full parent result."
+}
