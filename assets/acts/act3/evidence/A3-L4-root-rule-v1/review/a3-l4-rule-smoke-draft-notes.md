@@ -1,0 +1,15 @@
+# Ignored A3-L4 rule fixture draft
+
+This is an unexecuted draft at `.cinder/a3-l4-rule-smoke-draft.gd`, prepared for Root to review and publish into its owned test path after the actual scene/API exists. It has not been imported, parsed by Godot, run or accepted. No active file was changed by this subagent.
+
+The fixture follows the current `mirror_resonance_rule_room_smoke.gd` post-actor barrier and engine-routed ScreenTouch/ScreenDrag helpers. It reads public Hero response/dash/action/input observations, actual LaneMechanism state/cue, Scheduler lease/control/clock views, and the new room/target public APIs. The new room and tether implementations were read after they appeared; the draft matches unchanged native `start()` answer/proof and the narrow `get_selected_response()` render-point dictionary.
+
+Planned checks: two fresh Draw-left/Enclose-right cases; public immediate whole-world pause with `auto_attack=false` and disclosed zero-shell initial seed before ticks; actual current camera admission without forced projection/position; a real immediate zero-hit warning primary; pure rejected invalid/closed target damage; native proof escape/return through full real swipes; actual zero-contact recovery and two ordinary routed primary hits; native cooldown plus real wall time beyond the shared 280ms double-tap window; exact original60HP to40HP to30HP monotonic boundary and synchronous lease/cue closure; no blast, rewards or campaign progression; held-warning public exit and recursive descendant WeakRef cleanup. Optional graphical captures use unchanged339×736 native viewport and whole-unit render freeze.
+
+Normal shell reload is allowed. The initial zero-shell condition proves that no ammo grants are part of the fixture; no blast world action may execute. It does not falsely require shells to remain zero during ordinary elapsed time.
+
+The second tap wall timestamp is sampled after routed input, conservatively later than Game's own actual tap timestamp. A headless fast scheduler must still satisfy wall time and actual native cooldown while the held recovery remains open; no private input timer edits or tap-distance evasion are used.
+
+Pending before publication/execution: confirm authored escape directions against real camera capacity; qualified import and parser/type check via the shared dev queue; focused actual headless run; native portrait inspection; review observed HP/damage and source cancellation behavior. Directions are provisional, and the fixture must retain real failed/rejected results if the present proposal does not fit. No full-playthrough, phase2 defeat, side return, disk transport, Retry or save claims are included. Prototype persistence remains explicitly unimplemented.
+
+Sources read: `tests/acts/act3/mirror_resonance_rule_room_smoke.gd`, `tests/acts/act3/root_latcher_room_smoke.gd`, `scripts/acts/act3/garden_root_rule_room.gd`, `scripts/acts/act3/garden_root_tether.gd`, `scripts/player.gd`, `scripts/game.gd`, `scripts/combat/lane_mechanism.gd`, `scripts/combat/threat_scheduler.gd`, `scripts/campaign/level.gd`, `scripts/cues/threat_cue.gd` and the actual new room scene.
