@@ -1,0 +1,43 @@
+{
+  "scope": "Read-only direct two-line paused-process-boundary delta, no engine/analyzer or original failure cause claim",
+  "fixture": {
+    "path": "/private/tmp/a2_l5_act3_transition_interface_boundary_draft.gd",
+    "sha256": "0195030546858c2038518905374d4b8b52e233f13aee4b19ac7c6c0e45e849fb",
+    "lines": 415
+  },
+  "baseline": {
+    "path": "/private/tmp/a2_l5_act3_transition_interface_diagnostic_draft.gd",
+    "sha256": "49bb8514d90aa175a43e0f868ac433a44a553e8b296b375bcacce26353b3d0cf"
+  },
+  "two_line_removal_reconstructs_baseline_exactly": true,
+  "direct_api_evidence": {
+    "shell": "scripts/campaign/shell.gd",
+    "lines": [
+      190,
+      201,
+      216
+    ],
+    "facts": "_drain latches paused and defers _commit_drain; _commit_drain drains operations and settles _draining=false while retaining pause for a Pause operation. Test awaits one actual process_frame and then requires real not-draining/not-queued/Pause menu before original capture."
+  },
+  "findings": [],
+  "preserved": "Original measured Hero identity/position/clock/source/Engine-not-physics guard, original snapshots/once contact, passive reporter and all actual control/carry/disk/cleanup assertions retained. No timer/physics/controller mutation or added snapshot. Source and Hero remain installed while only actual Pause is pending; no new lifetime dereference to retiring unit introduced by this delta.",
+  "recorder": {
+    "path": "/private/tmp/cinder_a2_l5_act3_transition_interface_boundary_record.py",
+    "sha256": "424aa23f17f49e3472b832f469d3dcf7cc4009116ae1b69d24bdef586fb3b2ae",
+    "ast_identical_functions": [
+      "digest",
+      "write_json",
+      "scoped_path",
+      "plain",
+      "log_counts",
+      "class_index",
+      "freeze_sources",
+      "stop_owned_group",
+      "run_queued"
+    ],
+    "differing_functions": [
+      "main"
+    ],
+    "qualification": "Only main source-scope/provenance literal differs; all queue/custody/footer/error functions exact."
+  }
+}
