@@ -558,10 +558,13 @@ func _restore_local_state(data: Dictionary) -> void:
 	# Prevalidation has proved every field. No events, providers, gameplay calls,
 	# yields or deferred writes occur in the physical -> native -> control commit.
 	var bindings: Dictionary = scheduler_bindings()
-	assert(tether.apply_validated_state(data.tether))
-	assert(threat_scheduler.restore_state(data.scheduler, bindings))
+	var target_committed: bool = tether.apply_validated_state(data.tether)
+	assert(target_committed)
+	var scheduler_committed: bool = threat_scheduler.restore_state(data.scheduler, bindings)
+	assert(scheduler_committed)
 	for kind: String in mechanisms:
-		assert((mechanisms[kind] as CinderLaneMechanism).restore_state(data.mechanisms[kind], bindings))
+		var mechanism_committed: bool = (mechanisms[kind] as CinderLaneMechanism).restore_state(data.mechanisms[kind], bindings)
+		assert(mechanism_committed)
 	_cycle_records = data.control.cycle_records.duplicate(true)
 	_cycle_phases.clear()
 	for kind: String in _cycle_records:
@@ -577,7 +580,8 @@ func _restore_local_state(data: Dictionary) -> void:
 	if _view_history.has(last_kind):
 		_views[last_kind] = (_view_history[last_kind] as Dictionary).duplicate(true)
 	_retry_at_s = float(data.control.retry_at_s)
-	assert(tether.present_checked_exposure(not _logical_exposure().is_empty()))
+	var presentation_committed: bool = tether.present_checked_exposure(not _logical_exposure().is_empty())
+	assert(presentation_committed)
 	_update_guidance()
 
 
