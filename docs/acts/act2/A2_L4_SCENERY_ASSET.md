@@ -1,6 +1,6 @@
-# A2-L4 London approaches scenery — authored revisions 1 and 2
+# A2-L4 London approaches scenery — authored revisions 1 through 5
 
-This is an original arrangement of Act 2 module families for the changed garden, dry flood margin, two villa arrangements and broad Putney approach. Revision1 was imported and executed in the first complete actual Heavy/Standard route (942/0, Shared32). Its24 original native540x1170 frames remain unchanged in [the route evidence](evidence/A2-L4/full-heavy-standard-portrait-first/portraits/receipt.json). Review found dry routes and distinct machinery/cues, but dense/bleached weed and Victorian facades were mostly cropped or edge-on. Revision2 adjusts existing instance transforms and room materials; its native Cargo portrait review is pending. Full loadout/profile and lifecycle acceptance remain incomplete.
+This is an original arrangement of Act 2 module families for the changed garden, dry flood margin, two villa arrangements and broad Putney approach. The seven required actual full routes and running-bank Continue/fatal/Retry634/0 are closed. Original revision1 Heavy942/0 atShared32, revision2 Cargo858/0 atShared34, and later Standard664/0/Quick1293/0 atShared35 retain their exact source and image attribution. The current revision5 changes only the existing field gun’s outboard fixed position and yaw. Its first narrow fixture2893/1 stopped at a TEST checkpoint-observation assertion before new combat or pixels; the source-confirmed deferred-commit wait correction is queued. Current revision5 gun recognizability remains unverified. Later sections preserve the historical placement and portrait findings.
 
 ## Sources and adaptation
 
