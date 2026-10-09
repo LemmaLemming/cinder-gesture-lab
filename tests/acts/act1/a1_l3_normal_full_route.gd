@@ -830,8 +830,40 @@ func _full_disconnect_observers() -> void:
 
 func _full_diagnostic(label: String) -> void:
 	var record: Dictionary = {"label": label, "route": level.call("route_state") if is_instance_valid(level) else {}, "hero_response": hero.get_threat_response_state() if is_instance_valid(hero) else {}, "committed_dash": hero.get_committed_dash_state() if is_instance_valid(hero) else {}, "sources": _source_states(), "camera": game.call("get_camera_framing_state") if is_instance_valid(game) else {}, "swipes": swipes, "primaries": primaries, "defeats": full_defeats.duplicate(), "checkpoint_events": opening_checkpoint_events, "completion_receipts": full_completion_receipts, "contact_receipts": full_contact_receipts, "paused": paused}
+	record["camera_provider_diagnostic"] = _full_camera_provider_diagnostic()
 	full_diagnostics.append(_portable(record))
 	print("NORMAL FULL L3 DIAGNOSTIC ", label, " ", _portable(record))
+
+
+func _full_camera_provider_diagnostic() -> Dictionary:
+	# Read-only attribution of the failed current union. Comparative pure plans
+	# never replace required runtime corners, authorize movement or grant damage.
+	if not is_instance_valid(level) or not is_instance_valid(game) or not is_instance_valid(hero): return {}
+	var providers: Dictionary = {"unadmitted_forecast": level.get("_forecast_points").duplicate(true), "approach_forecasts": [], "approach_camera_requests": [], "current_sources_cues": [], "accepted_responses": []}
+	var approach_forecasts: Dictionary = level.get("_approach_forecasts").duplicate(true)
+	var approach_requests: Dictionary = level.get("_approach_camera_requests").duplicate(true)
+	var accepted_frames: Dictionary = level.get("_framing").duplicate(true)
+	for points: Array in approach_forecasts.values(): providers.approach_forecasts.append_array(points)
+	for points: Array in approach_requests.values(): providers.approach_camera_requests.append_array(points)
+	var actual_states: Dictionary = _source_states()
+	for id: String in _full_ids():
+		var state: Dictionary = actual_states.get(id, {})
+		if state.is_empty() or state.get("dead", false) or state.get("dormant", false): continue
+		providers.current_sources_cues.append_array(level.call("_actor_points", id, state.opening_position))
+		if state.get("geometry", {}).get("kind") == "lane": providers.current_sources_cues.append_array(level.call("_lane_points", state.geometry))
+		providers.current_sources_cues.append_array(level.call("_cue_points", id, state))
+	for frame: Dictionary in accepted_frames.values(): providers.accepted_responses.append_array(level.call("_response_points", frame.landing, frame.attack_position))
+	var required: Array = level.call("_camera_framing_points")
+	var desired: Vector3 = hero.global_position + Vector3(0, 0.65, 0)
+	var component: Array = []
+	for points: Array in providers.values(): component.append_array(points)
+	var comparative: Dictionary = {}
+	for excluded: String in providers:
+		var comparison: Array = []
+		for key: String in providers:
+			if key != excluded: comparison.append_array(providers[key])
+		comparative[excluded] = game.call("camera_framing_plan", level.call("_bounded_union", comparison), desired)
+	return {"scope": "pure diagnostic provider comparison only; unchanged actual whole union remains authoritative", "providers": providers, "approach_forecasts_by_source": approach_forecasts, "approach_requests_by_source": approach_requests, "accepted_frames": accepted_frames, "actual_hero_points": game.call("player_camera_framing_points"), "actual_required_points": required, "actual_whole_plan": game.call("camera_framing_plan", required, desired), "actual_whole_containment_error": game.call("camera_framing_error", required), "component_plan": game.call("camera_framing_plan", level.call("_bounded_union", component), desired), "diagnostic_plans_excluding_one_component_provider": comparative}
 
 
 func _watchdog() -> void:
