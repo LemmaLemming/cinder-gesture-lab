@@ -1,5 +1,19 @@
 # Act 1 — current progress
 
+## Current paused frontier — Shared45,9October2026
+
+**PAUSED for the scheduled system update, by explicit human request in Integration chat verified through its userMessage. Resume only after explicit human instruction.** Same sole worker01a11adf-2ec8-7702-96c6-0fa1e240c332, assigned campaign-act1 checkout andcodex/campaign-act1 branch; six owned prefixes unchanged. Act1 **3/8 accepted**, campaign **10/24**. L4 remains the sole current unfinished level; L5 andO1/O2/O3 are unauthored.
+
+New court entrance leaf/wrapper/inheritedscene/fixture committed0946d3d4. Actual preserving Shared45 merge83b566e9 installs exactlythree returned L2 paths and preserves every other owned path/settings/oldUID/evidence; primary and independent custody review clean. ACKd1d2f9b6 reports actual adoption; canonically verified adoption is separate. Post-import UID commit7c9ed3d3 retains3new owned identities;385activeGD+shader IDs/no collision. No private controller/camera/HUD/cue/physics/timing/progress system was added.
+
+[Current art packet](../../../docs/acts/act1/evidence/L4-court-art-entrance/scope.md) preserves1,931 original artifacts/indexSHA6d185b2c300504de16ebb82dc49bb0f77f4481daba3147a22ca57251d10f274a, bounded original selections633/636/636. Import closes0clean, native201/0 and graphical211/0 close0clean/completefooters; native/portrait selected inputs unchanged. Real2swipes/1ordinaryprimary, Hero100/C32HP4,6faults/setter/staticbounds, warning→lock→active→recovery/cooldown, exactpause/GUIconsumption/refusal/cleanup pass.7actual540×1170 images were personally inspected; truefocus persists. Upper scenery is partly HUD-masked and source/Hero overlap at opening/recovery. The open curtain pose has only resource/setter checks; no image. Prior152/0/focusfailures remain their original scope; this new pass does not prove their cause or a permanent focus repair.
+
+All own engine jobs CLOSED: import23504 exit0; native47937 exit0; portrait35359 exit0. No own held/queued job or open preview/editor. All helper tasks completed; no other owner's process/lock was killed/deleted. Current source/drafts/logs/originals/recovery are saved in this checkout. [Resume notes](../../../docs/acts/act1/SYSTEM_UPDATE_PAUSE_2026-10-09.md) give exact commands/paths/remaining work. No implementation/tests/imports/merges/adoption while paused.
+
+After explicit human resume: reread current canonical run/shared/act records and mailbox, then continue authored full L4. Next are faithful three-court composition, SAMEtwo guards parallel→inward, known roundel, DISTINCTB01 King alone then one finite visibly entering pair, coherent phase checkpoints/fullaggregate/freshrecipient/Save/Continue/Retry/contact cleanup. Existing Scheduler/lunge supports an owned King; C31/C32/C30 identities/codecs cannot simply be renamed. Refresh canonical design queries at the next playstyle decision, retain ordinary-primary/no-pickup viability, and run related design validators before completion. Fullroute/defeatall/earnedexit is not an acceptance gate; no whole L4/art fidelity/balance/performance/mobile claim.
+
+The earlier entries below retain their historical frontier states and are superseded by this current record.
+
 ## Current accepted frontier — Shared44
 
 Updated 9 October 2026. **Act1: 3/8 accepted; campaign: 10/24. A1-L3 is accepted; A1-L4 Selenite Court is current: first entrance component passes native152/0, two real dashes/one ordinary primary. Four partial portrait frames are inspected; graphical continuation is environment-limited by native focus loss. Independent court production preparation continues, no human approval gate.** Sole owner registration remains verified; no human permission decision or Act1 task blocker exists.
