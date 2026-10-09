@@ -1,0 +1,49 @@
+Godot: --path /Users/howardchen/Documents/ChatGPT/video game idea --headless --script res://tests/campaign_persistence_smoke.gd
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: authored registry has 15 main and nine optional canonical levels
+PASS: unavailable fixture route does not expose unfinished scenes as playable
+PASS: main sequence and optional parent clear are independent gates
+PASS: optional unlock and inter-act link use canonical IDs
+PASS: invalid registry rejects atomically without discarding the prior route
+PASS: stable optional reward identity cannot silently change and invalidate save stamps
+PASS: test-only accepted fixtures validate root, spawn and matching scene identity
+PASS: existing accepted path with another level identity is not playable
+PASS: first story starts at accepted A1-L1 with an explicit coherent snapshot: 
+PASS: caller cannot mutate protected story resources
+PASS: full-precision fractional actor clocks survive atomic disk verification
+PASS: active state records resources and encounter state together
+PASS: checkpoint retry restores its original resources/enemies/spent supply without healing or refreshing
+PASS: authored checkpoint becomes one coherent retry unit
+PASS: uncompleted main levels cannot start replay
+PASS: story completion advances the record once
+PASS: repeated completion does not duplicate main progress
+PASS: main transition follows canonical sequence without requiring optional clears
+PASS: explicit implemented equipment grant adds catalogue access separately from resources
+PASS: completed-level replay starts with its separate chosen unlocked equipment
+PASS: replay damage/ammo/pickups never overwrite the coherent story
+PASS: replay retry uses its own initial checkpoint and preserves story
+PASS: interrupted replay resumes as an independent paused snapshot
+PASS: finishing replay automatically yields the entire original story and equipment
+PASS: abandoning replay restores story while remembering separate replay choices
+PASS: second main clear unlocks its optional parent branch
+PASS: first optional play is an isolated optional attempt rather than replay
+PASS: optional completion grants its stamp exactly once
+PASS: optional return restores story equipment/resources/local state automatically
+PASS: optional replay never repeats reward or advances the main route
+PASS: unfinished next level preserves the cleared story rather than substituting lab or fake scene
+PASS: corrupt replay is discarded after protected story independently validates
+PASS: corrupt remembered replay preferences cannot invalidate the protected story
+PASS: invalid protected story rejects atomically without overwriting valid live state
+PASS: nonsequential progress cannot unlock later campaign content
+PASS: snapshot cannot add a fifth equipment slot
+PASS: simulation-running snapshots cannot become coherent saves
+PASS: desktop save/load round-trip retains progression, reward, gear, resources and checkpoint paused
+PASS: nonfinite candidate cannot clobber the previous complete disk generation
+PASS: int64 RNG must be encoded as string rather than silently rounded through JSON
+PASS: verified prior generation remains as backup
+PASS: checksum-valid but semantically corrupt story falls back to a protected valid backup
+PASS: semantically corrupt primary never replaces the valid backup during recovery
+PASS: interrupted primary falls back to the verified prior generation
+PASS: failed atomic publication retains the prior model state
+Campaign persistence smoke: 45 checks, 0 failures

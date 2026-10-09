@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "archive_id": "L3-normal-full-route-native-current-functional",
+  "status": "frozen_private_exact_closed_functional_scope_no_level_acceptance",
+  "created_at": "2026-10-09T02:27:44.371023+00:00",
+  "path_base": "All package paths relative to this directory; four original job/log/report/qualifier and original producer references retained whole.",
+  "private_only": true,
+  "origin_map": {
+    "path": "origin-map.json",
+    "sha256": "50ef4aff92b355cb48d6df5eb834adbb69bb08db00bd919bb5736a2a6522cda0"
+  },
+  "inventory": {
+    "path": "inventory.json",
+    "scope": "All package files except inventory.json/hash-closure.json; final closure includes inventory/all bytes except itself."
+  },
+  "verification": {
+    "path": "verification.json"
+  },
+  "hash_closure": {
+    "path": "hash-closure.json"
+  },
+  "runs": [
+    {
+      "id": "a1-l3-normal-full-route-capture-view-headless",
+      "directory": "capture-view-headless",
+      "status": "closed_clean_native_headless_functional_route_scope_not_level_acceptance",
+      "head": "be1ee81fce02cd0f8e9bef28a700fa2d766f1ed7",
+      "api_revision_original_metadata": "campaign-shared-35",
+      "actual_shared_version_qualified": "campaign-shared-36",
+      "actual_shared_publication": "103f4f03704166d8c6066b476ec066abd086e6b6",
+      "metadata": "capture-view-headless/run/job.json",
+      "stdout": "capture-view-headless/run/stdout.log",
+      "raw_native_report": "capture-view-headless/report/l3-normal-full-route-753462746.json",
+      "original_supplementary_api_qualification": "capture-view-headless/run/supplementary-api-qualification.json",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l3_normal_full_route.gd"
+      ],
+      "started_at": "2026-10-09T02:00:25.302029+00:00",
+      "finished_at": "2026-10-09T02:12:59.234911+00:00",
+      "exit_code": 0,
+      "checks": 2493,
+      "failures": 0,
+      "actual_swipes": 46,
+      "actual_primaries": 18,
+      "post_execution_source_hash_mismatch": [],
+      "declared_frozen_source_count": 353,
+      "declared_source_extension_counts": {
+        ".gd": 110,
+        ".gdshader": 3,
+        ".godot": 1,
+        ".json": 16,
+        ".md": 3,
+        ".png": 92,
+        ".py": 1,
+        ".tscn": 17,
+        ".uid": 110
+      },
+      "authored_dependency_png_count": 92,
+      "actual_native_portrait_png_count": 0,
+      "report_matching": {
+        "original_report": ".cinder/l3-normal-full-route-753462746.json",
+        "owner_directed_exact_report_sha256": "f23dff2908c30b007440eddcc42c5e0324b4187dddcea5b1144f7cd47da10cde",
+        "original_report_mtime_utc": "2026-10-09T02:12:59.035150+00:00",
+        "within_original_job_start_finish": true,
+        "original_count_and_action_tuple": [
+          2493,
+          0,
+          46,
+          18
+        ],
+        "attribution_limit": "Owner explicitly directed this complete original report path/SHA; original job has no emitted report-path field. Result/action tuple and report modification time match its closed job; no invented stronger report pointer or current-source reconstruction."
+      },
+      "raw_diagnostics": {
+        "error_count": 0,
+        "script_error_count": 0,
+        "warning_count": 0,
+        "whole_stdout_preserved": true
+      },
+      "original_stdout_result_line": "A1-L3 NORMAL FIVE-ROOM ROUTE ATTEMPT: 2493 checks, 0 failures; 46 real swipes, 18 ordinary primaries; FULL SAVE DENIED / NO CAMPAIGN HANDOFF CLAIM",
+      "native_receipt_counts": {
+        "room_receipts": 5,
+        "checkpoint_guards": 4,
+        "defeat_receipts": 19,
+        "native_phase_barriers": 15,
+        "response_timing_receipts": 12,
+        "completion_receipts": 1,
+        "contact_receipts": 1,
+        "complete_action_signal_trace": 64,
+        "accepted_input_signal_trace": 64,
+        "validated_encoded_history": 64,
+        "worlds": 1,
+        "captures": 0
+      },
+      "native_action_counts": {
+        "dash": 46,
+        "primary": 18
+      },
+      "native_input_counts": {
+        "swipe_release": 46,
+        "primary_tap": 18
+      },
+      "native_phase_counts": {
+        "warning": 5,
+        "active": 5,
+        "recovery": 5
+      },
+      "completed_room_ids": [
+        "umbrella-grove",
+        "breathing-chamber",
+        "crossed-grotto",
+        "spear-pocket",
+        "court-approach"
+      ],
+      "recorded_defeated_source_ids": [
+        "umbrella-1",
+        "umbrella-3",
+        "umbrella-2",
+        "breathing-1",
+        "breathing-2",
+        "breathing-3",
+        "crossed-1",
+        "crossed-3",
+        "crossed-4",
+        "crossed-2",
+        "crossed-5",
+        "crossed-7",
+        "crossed-8",
+        "crossed-6",
+        "lone-guard",
+        "court-1",
+        "court-3",
+        "court-2",
+        "court-guard"
+      ],
+      "all_nineteen_activation_counts_once": true,
+      "actual_final_room_index": 5,
+      "actual_final_room_stage": "complete",
+      "actual_final_encounter_started": false,
+      "actual_final_all_nineteen_sources_dead": true,
+      "actual_final_diagnostic_paused": false,
+      "actual_initial_and_final_hp": [
+        100.0,
+        100.0
+      ],
+      "actual_enemy_hit_events": [],
+      "actual_completion_ids": [
+        "mushroom-caverns-clear"
+      ],
+      "actual_contact_receipts": [
+        {
+          "actual_overlap": true,
+          "exit_id": "open-court",
+          "hero_position": [
+            1.05262768268585,
+            -0.00484376167878509,
+            -50.2534103393555
+          ],
+          "level_id": "A1-L3",
+          "nested_duplicate": false,
+          "world_action_sequence": 63
+        }
+      ],
+      "validated_encoded_history_length": 64,
+      "validated_encoded_history_last_sequence": 64,
+      "native_focus_original_report": true,
+      "normal_focus_out_preserved": true,
+      "original_world_direct_queue_free": false,
+      "full_native_save_supported": false,
+      "executed_owned_source_hashes": {
+        "scripts/acts/act1/mushroom_caverns.gd": "25c2ec1a5b5adf313aa9328401d624994f3ac487e015aa32eb6dbc1f166cbd40",
+        "scripts/acts/act1/mushroom_caverns_route.gd": "ed4f59ac2d0f04455582a0fd3c62811bd3ba0eed207c4245cd24d0558068984a",
+        "scripts/acts/act1/mushroom_selenite.gd": "43378f4ae9481f715c64f7764b90362f6aa235173f71ab8533782c2ae885bb4a",
+        "tests/acts/act1/a1_l3_normal_full_route.gd": "e3a2959cbcf5264a9cfce003b7288b9ca9d32ac54aeaedc304728078b3759dc6"
+      },
+      "kernel_qualification": {
+        "qualification_original_status_preserved": "running_no_result",
+        "qualification_original_created_at": "2026-10-09T02:02:31.057290+00:00",
+        "qualification_original_metadata_header_preserved": "campaign-shared-35",
+        "package_created_after_original_job_closed": "2026-10-09T02:27:44.371023+00:00",
+        "closed_job_result_observed_from_originals": true,
+        "immutable_published_kernel_comparisons": [
+          {
+            "path": "scripts/campaign/level.gd",
+            "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+            "exact_frozen_source_equals_published_kernel": true
+          },
+          {
+            "path": "scripts/campaign/shell.gd",
+            "sha256": "426e8190469e6efef710aba0d943ad77bc86729c58ffc81ff89656513b23948f",
+            "exact_frozen_source_equals_published_kernel": true
+          },
+          {
+            "path": "scripts/combat/authored_enemy_sequence.gd",
+            "sha256": "02d1469d1d1ff657722d2ce43b06e274c136e14f65ae6fdd91ff1521139a399e",
+            "exact_frozen_source_equals_published_kernel": true
+          },
+          {
+            "path": "scripts/combat/difficulty.gd",
+            "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+            "exact_frozen_source_equals_published_kernel": true
+          },
+          {
+            "path": "scripts/combat/replay_program.gd",
+            "sha256": "0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9",
+            "exact_frozen_source_equals_published_kernel": true
+          },
+          {
+            "path": "scripts/combat/threat_scheduler.gd",
+            "sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+            "exact_frozen_source_equals_published_kernel": true
+          }
+        ],
+        "qualification_scope": "Only new index/README classify closure and actual Shared36 attribution. Original qualifier and job metadata remain byte-exact to their respective original creation times."
+      },
+      "bounded_outcome": "One real neutral Standard ordinary-only five-room route reaches19 genuine defeats/4checkpoints/1completion/actual physical exit contact; complete current framing, original64 encoded history and native cleanup assertions pass. No native full Save, campaign handoff, rendered portrait/art, other kit/profile, human or performance acceptance."
+    }
+  ],
+  "limitations": [
+    "2493/0 is one directly affected native headless functional route scope; it does not accept A1-L3 or the campaign.",
+    "Full native Save remains DENIED. Later/private full872, codec537, constructor1445, final775/route678 and their fixtures are not executed sources here.",
+    "Original recorded HEADbe1ee81f/header35 and original qualifier running_no_result remain immutable; exact frozen kernel matches actual Shared36 103f4f, separately qualified at archive creation.",
+    "92 authored dependency PNGs and0 native portraits; no final art/optical/allkits/profiles/human/FPS or performance proof.",
+    "Native original actions/phase observations are genuine receipts; no assertion that gesture execution exactly replays every certified original timing path.",
+    "No campaign transition/production registration/Save acceptance; current-frame/history/physical contact/cleanup assertions belong only to this native test.",
+    "Only357 actual original-copy pairs verified; no unrelated historical package audit/current source substitution."
+  ],
+  "packaging": {
+    "source_code_UID_project_settings": "Exact original bytes renamed .gd.txt/.tscn.txt/.gdshader.txt/.uid.txt/.py.txt/project.godot.txt plus root.gdignore; PNG/JSON/Markdown preserve exact bytes.",
+    "hardlinks_used": false,
+    "unrecorded_or_nested_settings_copied": 0,
+    "current_source_backfill": 0,
+    "engine_jobs": 0,
+    "tracked_or_existing_archive_changes": 0
+  }
+}

@@ -1,0 +1,232 @@
+extends "res://tests/acts/act1/a1_l3_normal_full_route.gd"
+## INERT SOURCE PROPOSAL, not parsed or executed. Root chooses promotion.
+## Fresh same-level GUI/capture seam only: no earned Crossed or route proof.
+## The inherited real pause/current-containment/capture path is unchanged.
+
+const ReproExact = preload("res://scripts/campaign/exact_json.gd")
+const ReproCycles: int = 3
+const ReproReceiptLimit: int = 512
+
+class PassiveObserver extends Node:
+	var receiver: Callable
+	func _init(callback: Callable) -> void:
+		receiver = callback
+		process_mode = Node.PROCESS_MODE_ALWAYS
+	func _process(_delta: float) -> void:
+		if receiver.is_valid(): receiver.call("process_observation", {})
+	func _notification(what: int) -> void:
+		if what in [NOTIFICATION_APPLICATION_FOCUS_IN, NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_WM_WINDOW_FOCUS_IN, NOTIFICATION_WM_WINDOW_FOCUS_OUT]:
+			if receiver.is_valid(): receiver.call("native_notification", {"notification": what})
+
+var repro_receipts: Array[Dictionary] = []
+var repro_overflow: bool = false
+var repro_cycle: int = 0
+var repro_observer: PassiveObserver
+var repro_button: Button
+var repro_hud: GameHUD
+var repro_before: Dictionary = {}
+var repro_records: Array[Dictionary] = []
+var repro_comparison_armed: bool = false
+var repro_previous_state: Dictionary = {}
+var repro_finished_cycles: int = 0
+
+
+func _run() -> void:
+	# Rendering is required, but Game's --capture flags would bypass its normal
+	# native focus handler. Reject those flags instead of changing that handler.
+	portrait = true
+	root.size = PortraitSize
+	if not _require(DisplayServer.get_name() != "headless" and "--capture" not in OS.get_cmdline_user_args() and "--capture-polish" not in OS.get_cmdline_user_args(), "GUI/capture reproduction uses the real renderer with normal focus handling"):
+		await _finish(); return
+	capture_dir = "res://.cinder/captures/l3-gui-capture-repro-%d" % Time.get_ticks_usec()
+	if not _require(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(capture_dir)) == OK, "same-level reproduction evidence directory is writable"):
+		await _finish(); return
+	# Reuse genuine fresh construction, nineteen native recipients, and its
+	# existing rejected premature-progress probes. No actor/clock/progress seed.
+	if not await _open_world(NormalOpeningPath, "fresh-l3-gui-capture-only", FullLayout.SPAWN):
+		await _finish(); return
+	full_spec = level.call("normal_route_spec")
+	full_world_ids = {"game": str(game.get_instance_id()), "level": str(level.get_instance_id()), "player": str(hero.get_instance_id()), "scheduler": str(scheduler.get_instance_id()), "camera": str((game.get("camera") as Camera3D).get_instance_id())}
+	if not _install_passive_observers():
+		await _finish(); return
+	_record_repro("fresh_native_spawn", {})
+	for index: int in range(ReproCycles):
+		repro_cycle = index + 1
+		if not await _full_quiet_capture("fresh-spawn-loop-%d" % repro_cycle):
+			_record_repro("capture_or_resume_failed", {})
+			await _finish(); return
+		repro_finished_cycles += 1
+		_record_repro("loop_completed", {})
+	if not _require(not repro_overflow and hero.hp == initial_hp and hero.get_world_action_records().is_empty() and world_records.is_empty() and input_observations.is_empty() and opening_checkpoint_events.is_empty() and opening_completion_events == 0 and opening_contact_events == 0 and level.call("route_state").room_stage == "approach" and not level.call("route_state").encounter_started and scheduler.encounter_profile().is_empty() and _future_pristine([], "same-level loop retains genuine dormant nineteen"), "narrow GUI reproduction earns no gameplay, progress or encounter and changes no world action"):
+		await _finish(); return
+	await _finish()
+
+
+func _install_passive_observers() -> bool:
+	repro_hud = game.get("hud") as GameHUD
+	repro_button = repro_hud.get("_card_button") as Button if is_instance_valid(repro_hud) else null
+	if not _require(is_instance_valid(repro_hud) and is_instance_valid(repro_button) and repro_button.get_viewport() == root, "observer retains the actual shared HUD card Button in the root viewport"):
+		return false
+	# Native _on_card_pressed and HUD->Game.resume_lab were connected in setup.
+	# These later listeners do not emit, accept, consume or alter an input event.
+	repro_button.gui_input.connect(_repro_gui_input)
+	repro_button.button_down.connect(_repro_button_down)
+	repro_button.button_up.connect(_repro_button_up)
+	repro_button.pressed.connect(_repro_button_pressed)
+	repro_hud.start_requested.connect(_repro_hud_start_requested)
+	root.focus_entered.connect(_repro_window_focus_entered)
+	root.focus_exited.connect(_repro_window_focus_exited)
+	repro_observer = PassiveObserver.new(Callable(self, "_passive_observation"))
+	root.add_child(repro_observer)
+	return true
+
+
+func _gui_resume_pair() -> bool:
+	var button: Button = _resume_button(game.get("hud") as Node)
+	if not _require(button != null and paused, "paired fixture uses the actual visible shared Resume button"): return false
+	if not _require(button == repro_button, "passive GUI signals and parsed mouse events address the same retained Button"): return false
+	var before: Dictionary = game.call("get_input_observation_state")
+	var records: Array[Dictionary] = hero.get_world_action_records()
+	var point: Vector2 = button.get_global_rect().get_center()
+	repro_before = before.duplicate(true)
+	repro_records = records.duplicate(true)
+	repro_comparison_armed = true
+	_record_repro("before_press", {"event_point": [point.x, point.y]})
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = point
+	press.global_position = point
+	Input.parse_input_event(press)
+	_record_repro("immediately_after_press_parse", {"input_event": _event_view(press)})
+	await process_frame
+	_record_repro("after_existing_press_frame", {})
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.position = point
+	release.global_position = point
+	Input.parse_input_event(release)
+	_record_repro("immediately_after_release_parse", {"input_event": _event_view(release)})
+	await process_frame
+	_record_repro("after_existing_release_frame", {})
+	# The original native three-condition predicate and message are unchanged.
+	return _require(not paused and game.call("get_input_observation_state") == before and hero.get_world_action_records() == records, "paired fixture GUI Resume changes no input anchor or world action")
+
+
+func _capture(stage: String) -> bool:
+	_record_repro("before_inherited_pause_capture", {"stage": stage})
+	var result: bool = await super._capture(stage)
+	_record_repro("after_inherited_hide_draw_show_capture", {"stage": stage, "capture_result": result})
+	return result
+
+
+func _passive_observation(kind: String, payload: Dictionary) -> void:
+	if finishing or not is_instance_valid(game): return
+	if kind == "process_observation":
+		var current: Dictionary = {"paused": paused, "pending": bool(game.call("is_pause_requested")), "window_has_focus": root.has_focus(), "native_window_focused": DisplayServer.window_is_focused()}
+		if current == repro_previous_state: return
+		repro_previous_state = current.duplicate(true)
+		_record_repro("observed_pause_pending_focus_transition", current)
+	else:
+		_record_repro(kind, payload)
+
+
+func _repro_gui_input(event: InputEvent) -> void:
+	_record_repro("button_gui_input", {"input_event": _event_view(event)})
+
+func _repro_button_down() -> void:
+	_record_repro("button_down", {})
+
+func _repro_button_up() -> void:
+	_record_repro("button_up", {})
+
+func _repro_button_pressed() -> void:
+	_record_repro("button_pressed", {})
+
+func _repro_hud_start_requested() -> void:
+	_record_repro("hud_start_requested_after_native_game_connection", {})
+
+func _repro_window_focus_entered() -> void:
+	_record_repro("native_window_focus_entered", {})
+
+func _repro_window_focus_exited() -> void:
+	_record_repro("native_window_focus_exited", {})
+
+
+func _event_view(event: InputEvent) -> Dictionary:
+	var result: Dictionary = {"class": event.get_class(), "instance_id": str(event.get_instance_id()), "device": event.device, "as_text": event.as_text()}
+	if event is InputEventMouse:
+		result["position"] = [event.position.x, event.position.y]
+		result["global_position"] = [event.global_position.x, event.global_position.y]
+		result["button_mask"] = event.button_mask
+	if event is InputEventMouseButton:
+		result["button_index"] = event.button_index
+		result["pressed"] = event.pressed
+		result["double_click"] = event.double_click
+		result["factor"] = event.factor
+	return result
+
+
+func _record_repro(boundary: String, payload: Dictionary) -> void:
+	if repro_receipts.size() >= ReproReceiptLimit:
+		repro_overflow = true
+		return
+	var actual_input: Dictionary = game.call("get_input_observation_state") if is_instance_valid(game) else {}
+	var actual_records: Array[Dictionary] = hero.get_world_action_records() if is_instance_valid(hero) else []
+	var hud: GameHUD = repro_hud if is_instance_valid(repro_hud) else null
+	var shade: CanvasItem = hud.get("_shade") as CanvasItem if hud != null else null
+	var button: Button = repro_button if is_instance_valid(repro_button) else null
+	var button_view: Dictionary = {}
+	if button != null:
+		var rect: Rect2 = button.get_global_rect()
+		var center: Vector2 = rect.get_center()
+		button_view = {"instance_id": str(button.get_instance_id()), "text": button.text, "global_rect": {"position": [rect.position.x, rect.position.y], "size": [rect.size.x, rect.size.y]}, "center": [center.x, center.y], "viewport_id": str(button.get_viewport().get_instance_id()), "visible": button.visible, "visible_in_tree": button.is_visible_in_tree(), "enabled": not button.disabled, "process_mode": button.process_mode, "can_process": button.can_process(), "mouse_filter": button.mouse_filter, "action_mode": button.action_mode, "focus_mode": button.focus_mode, "button_pressed_property": button.button_pressed, "draw_mode": button.get_draw_mode(), "mouse_position": _portable(button.get_global_mouse_position())}
+	var viewport_rect: Rect2 = root.get_visible_rect()
+	# Vector components are detached to arrays for ExactJson; native operands
+	# above remain native for the original equality. ExactJson preserves scalar
+	# bits/types; display JSON below is supplemental, never equality authority.
+	var operands: Dictionary = {"before_input": _portable(repro_before), "actual_input": _portable(actual_input), "before_history": _portable(repro_records), "actual_history": _portable(actual_records)}
+	var receipt: Dictionary = {"receipt_sequence": repro_receipts.size() + 1, "cycle": repro_cycle, "boundary": boundary, "monotonic_usec": Time.get_ticks_usec(), "process_frame": Engine.get_process_frames(), "physics_frame": Engine.get_physics_frames(), "paused": paused, "public_pause_requested": bool(game.call("is_pause_requested")) if is_instance_valid(game) else null, "not_paused_operand": not paused, "comparison_armed": repro_comparison_armed, "input_equal_operand": actual_input == repro_before if repro_comparison_armed else null, "history_equal_operand": actual_records == repro_records if repro_comparison_armed else null, "exact_detached_operands": ReproExact.stringify(operands), "operands": operands, "input_native_anchor_type": typeof(actual_input.get("anchor_normalized")), "window_id": str(root.get_window_id()), "window_instance_id": str(root.get_instance_id()), "viewport_bounds": {"position": [viewport_rect.position.x, viewport_rect.position.y], "size": [viewport_rect.size.x, viewport_rect.size.y]}, "window_has_focus": root.has_focus(), "native_window_focused": DisplayServer.window_is_focused(), "button": button_view, "hud": {"instance_id": str(hud.get_instance_id()) if hud != null else "", "mode": hud.get("_mode") if hud != null else null, "shade_visible": shade.visible if shade != null else null, "shade_visible_in_tree": shade.is_visible_in_tree() if shade != null else null}, "actual_world_ids": full_world_ids.duplicate(true), "actual_player_id": str(hero.get_instance_id()) if is_instance_valid(hero) else "", "actual_level_id": str(level.get_instance_id()) if is_instance_valid(level) else "", "actual_camera_id": str((game.get("camera") as Camera3D).get_instance_id()) if is_instance_valid(game) and is_instance_valid(game.get("camera")) else "", "payload": payload.duplicate(true)}
+	repro_receipts.append(receipt)
+
+
+func _watchdog() -> void:
+	# Reuse the existing component70-second bound; this does not extend either
+	# inherited native2-second pause window or the two GUI event frames.
+	if not finishing and Time.get_ticks_msec() - started_ms > WatchdogMs:
+		_require_unexpected(false, "narrow GUI/capture reproduction completes within the existing70-second component bound")
+		_finish.call_deferred()
+
+
+func _finish() -> void:
+	if finishing: return
+	_record_repro("before_fixture_cleanup", {})
+	var final_route: Dictionary = level.call("route_state") if is_instance_valid(level) else {}
+	var final_input: Dictionary = game.call("get_input_observation_state") if is_instance_valid(game) else {}
+	var final_records: Array[Dictionary] = hero.get_world_action_records() if is_instance_valid(hero) else []
+	var final_hp: float = hero.hp if is_instance_valid(hero) else -1.0
+	_full_disconnect_observers()
+	finishing = true
+	if is_instance_valid(repro_observer):
+		repro_observer.receiver = Callable()
+		repro_observer.queue_free()
+	if root.focus_entered.is_connected(_repro_window_focus_entered): root.focus_entered.disconnect(_repro_window_focus_entered)
+	if root.focus_exited.is_connected(_repro_window_focus_exited): root.focus_exited.disconnect(_repro_window_focus_exited)
+	if is_instance_valid(level): level.exit_level()
+	if is_instance_valid(game):
+		var effects: PixelEffects = game.get("fx") as PixelEffects
+		if is_instance_valid(effects): effects.clear()
+		game.queue_free()
+	paused = false
+	await process_frame
+	var path: String = capture_dir.path_join("evidence.json") if not capture_dir.is_empty() else "res://.cinder/l3-gui-capture-repro-%d.json" % Time.get_ticks_usec()
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file != null:
+		var report: Dictionary = {"scope": "fresh actual A1-L3 normal-route spawn, passive real HUD GUI/capture reproduction only; no earned Crossed/five-room route, role combat, campaign save, optical acceptance, kit/profile, human or performance proof", "checks": checks, "failures": failures, "requested_loops": ReproCycles, "finished_loops": repro_finished_cycles, "receipt_overflow": repro_overflow, "actual_swipes": swipes, "actual_primaries": primaries, "normal_focus_out_preserved": true, "capture_flags_rejected": true, "world_ids": full_world_ids, "hp": final_hp, "final_route": _portable(final_route), "final_input": _portable(final_input), "final_world_actions": _portable(final_records), "receipts": repro_receipts, "captures": shots}
+		file.store_string(JSON.stringify(report, "\t")); file.close()
+	else:
+		checks += 1; failures += 1
+		push_error("narrow GUI/capture receipt file could not open")
+	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
+	print("A1-L3 FRESH GUI/CAPTURE REPRO: %d checks, %d failures; %d loops; 0 gameplay credited; report=%s" % [checks, failures, repro_finished_cycles, path])
+	quit(1 if failures else 0)

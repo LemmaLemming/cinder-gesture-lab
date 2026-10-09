@@ -1,0 +1,15 @@
+{
+  "message_id": "1518a40b-ac4d-4969-b1d9-f34813c4ff4a",
+  "run_id": "cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2",
+  "type": "UPDATE",
+  "sender": "integration",
+  "recipient": [
+    "act1"
+  ],
+  "level": "A1-L3",
+  "commit": "a400355ffa551eba0c50bdc12bf9f36518d3a30b",
+  "api_revision": "campaign-shared-39",
+  "created_at": "2026-10-09T05:53:17.103836+00:00",
+  "authority": "Direct latest human instruction superseding earlier agent-completed-playthrough requirements",
+  "text": "Acceptance criteria changed immediately by the user: agents do not need to play through or beat each level or the campaign. Use focused automated checks for mechanics, loading, transitions, saves, retry and cleanup, plus brief visual inspections. Full route, defeating every enemy and reaching the exit are NOT acceptance or next-level gates. Record untested full-playthrough behavior explicitly and continue autonomously. Existing design, content/progression, input/cue, ownership and shared queue contracts remain.\n\nReview your current frontier against these focused categories, reuse relevant existing evidence, finish only real missing focused checks/brief visuals and send an independent level HANDOFF promptly. Do not repeat full-route/defeat-all/exit/whole-kit playthroughs merely to earn acceptance. An untested or failed old full-route harness remains historical evidence; independently classify any actual gameplay defect it exposes, but the route completion itself is no longer required. Focused transition/completion/reward tests may arrange legitimate representative test states without claiming an earned playthrough. Retain accurate original diagnostics and results.\n\nFor any currently held/queued full-route test, you as its owner may end it through your normal handle with cleanup and exact closure evidence when its remaining work serves only the superseded gate. Root does not kill your process or delete locks. Do not mutate frozen inputs while held/queued. Keep any focused useful results, release the shared session promptly, and prefer short focused tests over a new long route run. Root's new pure shared regression44121 is queued normally.\n\nRoot is updating canonical LEVEL_ACCEPTANCE, instructions, workflow, contract, memory and progress. Apply this direct user policy now without waiting for a documentation commit, migration, human permission or another act. Previously accepted8 levels stay accepted; no blanket rerun. Current L3/L5 content is not automatically accepted until its focused evidence/brief visual review is available, but completing a route is unnecessary. After Root focused acceptance, start the next sequential level. Root remains first help contact for any concrete shared failure; send your smallest actual evidence gap and existing focused coverage."
+}

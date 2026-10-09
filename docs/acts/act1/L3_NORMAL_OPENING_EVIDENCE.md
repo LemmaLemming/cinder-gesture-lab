@@ -1,0 +1,9 @@
+# Normal opening: preserved motion failure and bounded passes
+
+The owner reviewed and promoted [this exact package](evidence/L3-normal-opening-motion-readiness-portrait/index.json) after all three original jobs closed. Its private-package creation banners and index `private_only` flag describe its creation stage; every one of its305 files, including packaging metadata, is preserved verbatim. The origin map verifies299 original copies, including276 frozen executed sources. Earlier archives and their inventories are unchanged.
+
+The motion diagnostic remains260/1 atad321ba/API30: actual stable/grounded/stopped Hero retains .04s dash cooldown when four wall seconds advance only .30 native seconds. The fixture-only native-clock correction passes364/0 at7d44439/API30; actual portrait passes380/0 at038ecada/API30. Each has92 original source-file hashes/no mismatch,9 genuine swipes/3 ordinary primaries. Successful scope covers nineteen pristine actors, genuine first-room three-C31 clear/umbrella checkpoint, three breathing Protocols/one Field+Consumer installation, explicit full-save rejection, GUI Resume and cleanup. No full route/save/kit/profile/whole-art acceptance follows.
+
+The owner inspected all fourteen actual portraits. Image13 hides part of the left C31 headpiece behind the real BreathingStalk cap despite numeric camera acceptance; image14 is a Pause modal that obscures the world. Close silhouettes overlap and the gray floor/horizon remains unfinished art. These findings persist with the original380/0 functional result. A later placement fix will receive its own exact evidence.
+
+IndexSHA `1d2973a89ae6a98bf5956fdd85b012c3b717d77fc7a351ff937e3a22ff658278`; origin-mapSHA `1befc951f96eb3913736d3b25eb235f648f661faf0da629b4673c5c483e4c1ac`; inventorySHA `d180c4df4aa04bad168ba4b4e5a2c2c30b4a61f8591d59c410ae30c37047f2dc`. Promotion verifies full hash/size/membership and origin byte equality; no engine was run for packaging.
