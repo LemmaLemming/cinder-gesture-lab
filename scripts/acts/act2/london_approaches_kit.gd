@@ -6,7 +6,7 @@ const Weybridge = preload("res://scripts/acts/act2/weybridge_kit.gd")
 const House = preload("res://scripts/acts/act2/ruined_house_kit.gd")
 const Weed = preload("res://scripts/acts/act2/red_weed_visual.gd")
 const Floor = preload("res://scripts/acts/act2/london_approaches_floor.gd")
-const ART_REVISION := "a2-london-approaches-2"
+const ART_REVISION := "a2-london-approaches-3"
 const TILE_WORLD_SIZE := 1.44
 const ACTOR_PIXEL_SIZE := 0.0225
 const ARTILLERYMAN_HOME := Vector3(4.00, 0.025, -45.8)
@@ -133,6 +133,10 @@ static func _villas(root: Node3D) -> void:
 	_box(root, villas, String(specification.id) + "VisibleBase", specification.at, specification.size, "brick")
 	# Mortar/coping stays within the same measured fixed wall envelope.
 	_box(root, villas, "VillaLowWallCoping", Vector3(0.0, 0.415, -22.6), Vector3(1.5, 0.07, 0.45), "stone")
+	# The low body may fade to reveal feet/cues, but its solid footprint must
+	# remain legible. Reuse opaque brick on one exact ground-level plane.
+	# It is ordinary scenery, never a threat outline or interaction cue.
+	_surface(villas, "VillaLowWallPersistentBrickBase", Vector3(0.0, 0.013, -22.6), Vector2(1.5, 0.45), "brick")
 	for side: int in [-1, 1]:
 		var sign_side: float = float(side)
 		_villa(root, Vector3(sign_side * 4.50, 0.0, -22.0), side, false, "ShutteredVilla_%s" % side)

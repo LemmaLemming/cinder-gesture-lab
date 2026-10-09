@@ -48,3 +48,7 @@ Static checks verify the three new file scopes, resource links, exact rectangles
 ## Revision2 application and verification scope
 
 The existing five cosmetic strips now use earth, road, paving, earth and paving. Their rectangles/Y offsets, underlying dry supports, boundary colliders and two visible blocker bases are unchanged. Existing field gun is at(−4.30,0,−45.8). Villa and selected weed roots record kit_placement_revision and instance scale; immutable native mesh metadata remains local and unchanged. No new mesh family, collider, equipment, cue, clock, input or sequence behavior was introduced. Native Cargo route and all26 required original portrait labels remain pending; original Heavy942/0 and24 images are preserved at revision1.
+
+## Revision3 low-wall footprint
+
+The Cargo revision2 route passed858/0 with26 original native images. Both reviewers found the VillaLowWall body lost against paving when the existing cutaway protected source feet/cues. Revision3 adds one static, opaque PlaneMesh using the existing brick texture at(0,.013,−22.6), size(1.5,.45), exactly matching the native grounded blocker X/Z footprint. This leaf has no collider, clock, signal, glow, warning outline or interaction state and is excluded from optional cutaway like other ground planes. Body/coping still fade for source/Hero visibility; collision and all gameplay remain unchanged. The required remaining Standard route will run graphically to inspect the affected wall view; no repeated Cargo gameplay cell is needed. Native revision3 wall readability is pending.
