@@ -1,6 +1,6 @@
 ## First native paired capture and next scoped restoration check
 
-Shared44 session70592 closes156/0/exit0 clean on477 exact frozen literal/class inputs: both attack orders, genuine ordinary final0, warning-paused whole Hero/local capture and prevalidation, native body/renderer rejection and disposal. [Original evidence](../../assets/acts/act3/evidence/A3-L4-root-pair-mechanics/index.json) preserves the exact priority90 source. A later source-reviewed90→110 change reads native Mechanism100 before derived root appearance, and quiet commit calls now execute independently of assertions. These later bytes await the new paired native target; no retroactive70592 credit. Whole quiet restore/candidate optics/production save loop and callback stress are still untested.
+Shared44 session70592 closes156/0/exit0 clean on477 exact frozen literal/class inputs: both attack orders, genuine ordinary final0, warning-paused whole Hero/local capture and prevalidation, native body/renderer rejection and disposal. [Original evidence](../../../assets/acts/act3/evidence/A3-L4-root-pair-mechanics/index.json) preserves the exact priority90 source. A later source-reviewed90→110 change reads native Mechanism100 before derived root appearance, and quiet commit calls now execute independently of assertions. These later bytes await the new paired native target; no retroactive70592 credit. Whole quiet restore/candidate optics/production save loop and callback stress are still untested.
 
 ## Paired-state implementation in progress — 9 October 2026
 
