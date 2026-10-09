@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-38** (9 October2026). Shared38 registers Act2 Level4 after independent production entry/save/Continue/Retry243/0 and actual earned L3→registered L4 transition1375/0. Campaign8/24 accepted. [Registration and evidence](ACT2_L4_REGISTRATION.md) retain the original authored scopes and failed setup attempt. Shared37 gameplay kernels, idle-menu guard and Shared36 Camera/HUD support remain unchanged; this is compatible content/Registry/test metadata. Measured runtime cost remains open. Integration is the three workers’ help contact. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md).
+Revision: **campaign-shared-39** (9 October 2026). Shared39 preserves projected Cue APIs and native guards while reusing private expected float bits. Targeted correctness439/0 and three unchanged authored first-cycle profiles113/0 support the bounded change; median cost fell while repeat tail samples worsened. [Contract, measurements and limits](CUE_REFERENCE_BITS.md) retain exact evidence. Campaign8/24 remains accepted after [Act2 L4](ACT2_L4_REGISTRATION.md). Broader production runtime cost remains open. Integration is all three workers’ help contact; worker baselines change only after preserving adoption ACKs.
 
 ## Idle menu notifications
 

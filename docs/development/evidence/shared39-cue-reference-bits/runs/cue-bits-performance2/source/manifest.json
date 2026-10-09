@@ -1,0 +1,898 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-09T04:18:44.758789+00:00",
+  "canonical_root": "/Users/howardchen/Documents/ChatGPT/video game idea",
+  "scope": "Original targeted prequeue explicit seeds and literal res references including project entry. Bounded source/resource subset only, not complete Godot import/dynamic/globalclass graph; no native/pass claim. .gdignore created first. No later source or UID backfill.",
+  "seeds": [
+    "assets/characters/manifest.json",
+    "assets/effects/manifest.json",
+    "assets/references/manifest.json",
+    "captures/character-blast.png",
+    "captures/character-lab.png",
+    "captures/character-primary.png",
+    "captures/dash-plume-end.png",
+    "captures/dash-plume-mid.png",
+    "captures/enemy-recovery.png",
+    "captures/enemy-warning.png",
+    "captures/level-preview.png",
+    "captures/loadout-bench.png",
+    "captures/mechanics-lab.png",
+    "captures/shot-flare-left.png",
+    "captures/shot-flare-right.png",
+    "captures/slash-arc.png",
+    "data/campaign/registry.json",
+    "data/design/difficulty_profiles.json",
+    "data/design/player_equipment.json",
+    "docs/concept-art/act1/generated-manifest.json",
+    "docs/concept-art/act2/generated-manifest.json",
+    "docs/concept-art/act3/generated-manifest.json",
+    "docs/reference-library/act1/CREDITS.md",
+    "docs/reference-library/act2/CREDITS.md",
+    "docs/reference-library/act3/research/SOURCES.md",
+    "project.godot",
+    "scenes/campaign_main.tscn",
+    "scenes/lab_arena.tscn",
+    "scenes/player.tscn",
+    "scenes/practice_target.tscn",
+    "scripts/attack_footprint.gd",
+    "scripts/attack_footprint.gd.uid",
+    "scripts/campaign/attempts.gd",
+    "scripts/campaign/attempts.gd.uid",
+    "scripts/campaign/exact_json.gd",
+    "scripts/campaign/exact_json.gd.uid",
+    "scripts/campaign/level.gd",
+    "scripts/campaign/level.gd.uid",
+    "scripts/campaign/registry.gd",
+    "scripts/campaign/registry.gd.uid",
+    "scripts/campaign/save_store.gd",
+    "scripts/campaign/save_store.gd.uid",
+    "scripts/campaign/shell.gd",
+    "scripts/campaign/shell.gd.uid",
+    "scripts/campaign/snapshot_codec.gd",
+    "scripts/campaign/snapshot_codec.gd.uid",
+    "scripts/character/player_presentations.gd",
+    "scripts/character/player_presentations.gd.uid",
+    "scripts/combat/action_capture.gd",
+    "scripts/combat/action_capture.gd.uid",
+    "scripts/combat/authored_echo_cycle_journal.gd",
+    "scripts/combat/authored_echo_cycle_journal.gd.uid",
+    "scripts/combat/authored_echo_renderer.gd",
+    "scripts/combat/authored_echo_renderer.gd.uid",
+    "scripts/combat/authored_echo_terminal_receipt.gd",
+    "scripts/combat/authored_echo_terminal_receipt.gd.uid",
+    "scripts/combat/authored_enemy_sequence.gd",
+    "scripts/combat/authored_enemy_sequence.gd.uid",
+    "scripts/combat/body_sweep.gd",
+    "scripts/combat/body_sweep.gd.uid",
+    "scripts/combat/difficulty.gd",
+    "scripts/combat/difficulty.gd.uid",
+    "scripts/combat/lunge_motion.gd",
+    "scripts/combat/lunge_motion.gd.uid",
+    "scripts/combat/replay_cursor.gd",
+    "scripts/combat/replay_cursor.gd.uid",
+    "scripts/combat/replay_footprint.gd",
+    "scripts/combat/replay_footprint.gd.uid",
+    "scripts/combat/replay_playback.gd",
+    "scripts/combat/replay_playback.gd.uid",
+    "scripts/combat/replay_program.gd",
+    "scripts/combat/replay_program.gd.uid",
+    "scripts/combat/replay_sequence.gd",
+    "scripts/combat/replay_sequence.gd.uid",
+    "scripts/combat/replay_witness.gd",
+    "scripts/combat/replay_witness.gd.uid",
+    "scripts/combat/threat_geometry.gd",
+    "scripts/combat/threat_geometry.gd.uid",
+    "scripts/combat/threat_scheduler.gd",
+    "scripts/combat/threat_scheduler.gd.uid",
+    "scripts/cues/cue_mesh.gd",
+    "scripts/cues/cue_mesh.gd.uid",
+    "scripts/cues/threat_cue.gd",
+    "scripts/cues/threat_cue.gd.uid",
+    "scripts/curling_smoke.gd",
+    "scripts/curling_smoke.gd.uid",
+    "scripts/dev/dev.py",
+    "scripts/effects.gd",
+    "scripts/effects.gd.uid",
+    "scripts/enemy.gd",
+    "scripts/enemy.gd.uid",
+    "scripts/equipment.gd",
+    "scripts/equipment.gd.uid",
+    "scripts/game.gd",
+    "scripts/game.gd.uid",
+    "scripts/hud.gd",
+    "scripts/hud.gd.uid",
+    "scripts/lab_bench.gd",
+    "scripts/lab_bench.gd.uid",
+    "scripts/pixel_sprite.gd",
+    "scripts/pixel_sprite.gd.uid",
+    "scripts/player.gd",
+    "scripts/player.gd.uid",
+    "scripts/practice_target.gd",
+    "scripts/practice_target.gd.uid",
+    "scripts/presentation/camera_framing.gd",
+    "scripts/presentation/camera_framing.gd.uid",
+    "scripts/settings/game_settings.gd",
+    "scripts/settings/game_settings.gd.uid",
+    "scripts/shotgun_flare.gd",
+    "scripts/shotgun_flare.gd.uid",
+    "scripts/ui/campaign_menu.gd",
+    "scripts/ui/campaign_menu.gd.uid",
+    "scripts/weapon_pickup.gd",
+    "scripts/weapon_pickup.gd.uid",
+    "tests/authored_echo_performance_smoke.gd",
+    "tests/authored_echo_performance_smoke.gd.uid",
+    "tests/authored_echo_playback_smoke.gd",
+    "tests/authored_echo_playback_smoke.gd.uid",
+    "tests/fixtures/authored_echo_actor.gd",
+    "tests/fixtures/authored_echo_actor.gd.uid",
+    "tests/fixtures/authored_echo_native_codec.gd",
+    "tests/fixtures/authored_echo_native_codec.gd.uid",
+    ".cinder/cue-bits-performance2-runner.py",
+    ".cinder/cue-bits-performance2-submission.json",
+    ".cinder/freeze_cursor37.py"
+  ],
+  "missing_literal_references": [
+    "...tscn",
+    "...tscn:",
+    "captures",
+    "captures/polish"
+  ],
+  "files": [
+    {
+      "path": ".cinder/cue-bits-performance2-runner.py",
+      "archived_path": "files/.cinder/cue-bits-performance2-runner.py",
+      "bytes": 933,
+      "sha256": "e0eab6826141ae9afd482f0c4937979930199a8d0b26db90ec44aff0f12565c9"
+    },
+    {
+      "path": ".cinder/cue-bits-performance2-submission.json",
+      "archived_path": "files/.cinder/cue-bits-performance2-submission.json",
+      "bytes": 895,
+      "sha256": "c76e2517890eba33a12a56347d06201250eca2a7cad37b328a2671fb54ea4998"
+    },
+    {
+      "path": ".cinder/freeze_cursor37.py",
+      "archived_path": "files/.cinder/freeze_cursor37.py",
+      "bytes": 1690,
+      "sha256": "9509289b4666af5a1020c91f599f91cb7c04a46abf569e482453623c13913112"
+    },
+    {
+      "path": "assets/characters/manifest.json",
+      "archived_path": "files/assets/characters/manifest.json",
+      "bytes": 7918,
+      "sha256": "fa645e290daa62f1a518e603cca6fb2c8d3f261a354385ce5c1475e5d7d503b6"
+    },
+    {
+      "path": "assets/effects/manifest.json",
+      "archived_path": "files/assets/effects/manifest.json",
+      "bytes": 4313,
+      "sha256": "739c134f606ad72318785dbbaeeaa5f864a0ec120e8f3acf995a44727a0fe757"
+    },
+    {
+      "path": "assets/references/manifest.json",
+      "archived_path": "files/assets/references/manifest.json",
+      "bytes": 2412,
+      "sha256": "c49ac654d0d96cb83c4c8499b15649557b91f6966743b1e942fb9040f3cc6dd0"
+    },
+    {
+      "path": "captures/character-blast.png",
+      "archived_path": "files/captures/character-blast.png",
+      "bytes": 46350,
+      "sha256": "2091b464b806fa7d8e9cf56c46d719f5683cfbadfecec0a99a50e2a96a579a2d"
+    },
+    {
+      "path": "captures/character-lab.png",
+      "archived_path": "files/captures/character-lab.png",
+      "bytes": 43458,
+      "sha256": "6376b8e7ec8e3d08b03cddcd6fd4f4f44521cc2dd6a835bfaf2fd9dbf2f01409"
+    },
+    {
+      "path": "captures/character-primary.png",
+      "archived_path": "files/captures/character-primary.png",
+      "bytes": 47294,
+      "sha256": "4b6c53199c556aa58f86d4e7a02958d979f1ebc1d86389d1fe136cb475fba399"
+    },
+    {
+      "path": "captures/dash-plume-end.png",
+      "archived_path": "files/captures/dash-plume-end.png",
+      "bytes": 46039,
+      "sha256": "4194ee6dd6c0f93f2a8433110648aaa6c107ed001ee8005f8e8ac04f8baefba0"
+    },
+    {
+      "path": "captures/dash-plume-mid.png",
+      "archived_path": "files/captures/dash-plume-mid.png",
+      "bytes": 44475,
+      "sha256": "c6a2db49a6894db82e709f3395c6f18666bb84b3e71fb5295099a4313ecaafb0"
+    },
+    {
+      "path": "captures/enemy-recovery.png",
+      "archived_path": "files/captures/enemy-recovery.png",
+      "bytes": 38409,
+      "sha256": "1330de03fd7970316333efab8bf33778f5bf325153386b6040949afa754f0b5f"
+    },
+    {
+      "path": "captures/enemy-warning.png",
+      "archived_path": "files/captures/enemy-warning.png",
+      "bytes": 39107,
+      "sha256": "c66d4fd911ff69ce4fcdece8a432960e91d47d5b74337475536ae950f7533c57"
+    },
+    {
+      "path": "captures/level-preview.png",
+      "archived_path": "files/captures/level-preview.png",
+      "bytes": 20745,
+      "sha256": "aadaa05117f1db392c4ea2e6a98bf2faa1abde9949de72ece167d4009ad26767"
+    },
+    {
+      "path": "captures/loadout-bench.png",
+      "archived_path": "files/captures/loadout-bench.png",
+      "bytes": 148324,
+      "sha256": "1c708651263e5fd20b4cdea15d06ba9f5d2d5886d8ae7d4fac0836b9250c5c4c"
+    },
+    {
+      "path": "captures/mechanics-lab.png",
+      "archived_path": "files/captures/mechanics-lab.png",
+      "bytes": 46497,
+      "sha256": "740ea58b2611294a3bd18f880b81bea52a1272a63d698abc423148e0c48277cb"
+    },
+    {
+      "path": "captures/shot-flare-left.png",
+      "archived_path": "files/captures/shot-flare-left.png",
+      "bytes": 50287,
+      "sha256": "6cdee74805b619e0f801404c5cfafe76388620859f9ac4b8d4350930dbf0dce3"
+    },
+    {
+      "path": "captures/shot-flare-right.png",
+      "archived_path": "files/captures/shot-flare-right.png",
+      "bytes": 50089,
+      "sha256": "803d303d133e13a728d16c9e15eecf110d39ce91b65d97ac9542606b3e2a640d"
+    },
+    {
+      "path": "captures/slash-arc.png",
+      "archived_path": "files/captures/slash-arc.png",
+      "bytes": 49204,
+      "sha256": "01e44c59ebd6c23400197139077a896040f9c17dac228e1645fc7e39af53ca7e"
+    },
+    {
+      "path": "data/campaign/registry.json",
+      "archived_path": "files/data/campaign/registry.json",
+      "bytes": 10968,
+      "sha256": "30ae5f8fc5641e71eac81c8243063f7afcf88153d2fd0692dc0497678c7b36c5"
+    },
+    {
+      "path": "data/design/difficulty_profiles.json",
+      "archived_path": "files/data/design/difficulty_profiles.json",
+      "bytes": 1313,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c"
+    },
+    {
+      "path": "data/design/player_equipment.json",
+      "archived_path": "files/data/design/player_equipment.json",
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    {
+      "path": "docs/concept-art/act1/generated-manifest.json",
+      "archived_path": "files/docs/concept-art/act1/generated-manifest.json",
+      "bytes": 128016,
+      "sha256": "626f39561c9c430beef47a399f69711c94c1daf93fd94835bf0d83a33de3b637"
+    },
+    {
+      "path": "docs/concept-art/act2/generated-manifest.json",
+      "archived_path": "files/docs/concept-art/act2/generated-manifest.json",
+      "bytes": 61369,
+      "sha256": "1145d3d494c8fe1337364b98c432a315c6cab5837409793bef9c6b62331d66f5"
+    },
+    {
+      "path": "docs/concept-art/act3/generated-manifest.json",
+      "archived_path": "files/docs/concept-art/act3/generated-manifest.json",
+      "bytes": 87066,
+      "sha256": "46be3e8f5cfc321b9d661d41db5e049adce3278ec75f8a8561cf591c5ac4b9d9"
+    },
+    {
+      "path": "docs/reference-library/act1/CREDITS.md",
+      "archived_path": "files/docs/reference-library/act1/CREDITS.md",
+      "bytes": 41568,
+      "sha256": "c134fcecf5bb9bd49eeebe4570c36a52b66224e0b5ec05f57c3e5bba250a2ee2"
+    },
+    {
+      "path": "docs/reference-library/act2/CREDITS.md",
+      "archived_path": "files/docs/reference-library/act2/CREDITS.md",
+      "bytes": 4753,
+      "sha256": "447bf094aea678a623a97f1e909c4713c063271a847ec604bdc743028aa8f527"
+    },
+    {
+      "path": "docs/reference-library/act3/research/SOURCES.md",
+      "archived_path": "files/docs/reference-library/act3/research/SOURCES.md",
+      "bytes": 4367,
+      "sha256": "0109bb301fe10fc93ab48bb10cfef5fa29f25e7b076ebcb574e428ce8635b4a5"
+    },
+    {
+      "path": "project.godot",
+      "archived_path": "files/project.godot",
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f"
+    },
+    {
+      "path": "scenes/campaign_main.tscn",
+      "archived_path": "files/scenes/campaign_main.tscn",
+      "bytes": 177,
+      "sha256": "e6b51208b7c9d6182c16cf07b60f2f0fa9b52327c6a7dcf0feedc290b555a713"
+    },
+    {
+      "path": "scenes/lab_arena.tscn",
+      "archived_path": "files/scenes/lab_arena.tscn",
+      "bytes": 23638,
+      "sha256": "290c0f7fa49b284705c6adec423ca7109a2e7ebd50439866e39ef3856397c361"
+    },
+    {
+      "path": "scenes/player.tscn",
+      "archived_path": "files/scenes/player.tscn",
+      "bytes": 1184,
+      "sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac"
+    },
+    {
+      "path": "scenes/practice_target.tscn",
+      "archived_path": "files/scenes/practice_target.tscn",
+      "bytes": 180,
+      "sha256": "600553b1326ef7d117e123c308c6e0f8be0e4a4dc4ff80113894add7bf2ee520"
+    },
+    {
+      "path": "scripts/attack_footprint.gd",
+      "archived_path": "files/scripts/attack_footprint.gd",
+      "bytes": 4138,
+      "sha256": "e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb"
+    },
+    {
+      "path": "scripts/attack_footprint.gd.uid",
+      "archived_path": "files/scripts/attack_footprint.gd.uid",
+      "bytes": 19,
+      "sha256": "6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627"
+    },
+    {
+      "path": "scripts/campaign/attempts.gd",
+      "archived_path": "files/scripts/campaign/attempts.gd",
+      "bytes": 17310,
+      "sha256": "41d5abbe22d19e389e89ab9ef196496672ee3c4bfa25c596ba3ca695f6ec44c0"
+    },
+    {
+      "path": "scripts/campaign/attempts.gd.uid",
+      "archived_path": "files/scripts/campaign/attempts.gd.uid",
+      "bytes": 20,
+      "sha256": "b9d15a9997fe9a59fc5b31ab8d30779dad9769cdfcd306306e40afd61435eec0"
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd",
+      "archived_path": "files/scripts/campaign/exact_json.gd",
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd.uid",
+      "archived_path": "files/scripts/campaign/exact_json.gd.uid",
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0"
+    },
+    {
+      "path": "scripts/campaign/level.gd",
+      "archived_path": "files/scripts/campaign/level.gd",
+      "bytes": 22401,
+      "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d"
+    },
+    {
+      "path": "scripts/campaign/level.gd.uid",
+      "archived_path": "files/scripts/campaign/level.gd.uid",
+      "bytes": 20,
+      "sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812"
+    },
+    {
+      "path": "scripts/campaign/registry.gd",
+      "archived_path": "files/scripts/campaign/registry.gd",
+      "bytes": 6006,
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+    },
+    {
+      "path": "scripts/campaign/registry.gd.uid",
+      "archived_path": "files/scripts/campaign/registry.gd.uid",
+      "bytes": 20,
+      "sha256": "80713da50c61c6b08bed5ce5a8a9cf2bf0e2506e4369ec4b593c69c53b4cff91"
+    },
+    {
+      "path": "scripts/campaign/save_store.gd",
+      "archived_path": "files/scripts/campaign/save_store.gd",
+      "bytes": 7310,
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    {
+      "path": "scripts/campaign/save_store.gd.uid",
+      "archived_path": "files/scripts/campaign/save_store.gd.uid",
+      "bytes": 20,
+      "sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1"
+    },
+    {
+      "path": "scripts/campaign/shell.gd",
+      "archived_path": "files/scripts/campaign/shell.gd",
+      "bytes": 45089,
+      "sha256": "01440e201b83334793cc0e607c7b2f1777d02833f6cdb2c539bad30bce9dd07a"
+    },
+    {
+      "path": "scripts/campaign/shell.gd.uid",
+      "archived_path": "files/scripts/campaign/shell.gd.uid",
+      "bytes": 20,
+      "sha256": "e193ac7ff2bdcbbf75ca177a71194161a8f6bb3c5a184c304caeec690723eda6"
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "archived_path": "files/scripts/campaign/snapshot_codec.gd",
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd.uid",
+      "archived_path": "files/scripts/campaign/snapshot_codec.gd.uid",
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82"
+    },
+    {
+      "path": "scripts/character/player_presentations.gd",
+      "archived_path": "files/scripts/character/player_presentations.gd",
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01"
+    },
+    {
+      "path": "scripts/character/player_presentations.gd.uid",
+      "archived_path": "files/scripts/character/player_presentations.gd.uid",
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651"
+    },
+    {
+      "path": "scripts/combat/action_capture.gd",
+      "archived_path": "files/scripts/combat/action_capture.gd",
+      "bytes": 19785,
+      "sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f"
+    },
+    {
+      "path": "scripts/combat/action_capture.gd.uid",
+      "archived_path": "files/scripts/combat/action_capture.gd.uid",
+      "bytes": 20,
+      "sha256": "a089c978485a2b58adb2d1a73d634aa158fcfc9b6b3355f3cdf4256c81ec3828"
+    },
+    {
+      "path": "scripts/combat/authored_echo_cycle_journal.gd",
+      "archived_path": "files/scripts/combat/authored_echo_cycle_journal.gd",
+      "bytes": 5717,
+      "sha256": "87fe101b17b5602d5573f060181de366444d8713f2967e3dfe07596a70e04409"
+    },
+    {
+      "path": "scripts/combat/authored_echo_cycle_journal.gd.uid",
+      "archived_path": "files/scripts/combat/authored_echo_cycle_journal.gd.uid",
+      "bytes": 20,
+      "sha256": "bc039f3302f2052d656a6ac395efc9af96e9b1fdab2f7791723944abd31be665"
+    },
+    {
+      "path": "scripts/combat/authored_echo_renderer.gd",
+      "archived_path": "files/scripts/combat/authored_echo_renderer.gd",
+      "bytes": 22148,
+      "sha256": "52dcf5b261574171b32d9c3c15da9279b467a697f81dbae17abd2b2b3c62014d"
+    },
+    {
+      "path": "scripts/combat/authored_echo_renderer.gd.uid",
+      "archived_path": "files/scripts/combat/authored_echo_renderer.gd.uid",
+      "bytes": 20,
+      "sha256": "f5c93061cd05add9269454dd6007921d33c20719b2fccb12f0b6c6117b063081"
+    },
+    {
+      "path": "scripts/combat/authored_echo_terminal_receipt.gd",
+      "archived_path": "files/scripts/combat/authored_echo_terminal_receipt.gd",
+      "bytes": 16559,
+      "sha256": "79705a953e134ed206e835574378bb8164c06061d55be44e8baf8ebbc2c8d94a"
+    },
+    {
+      "path": "scripts/combat/authored_echo_terminal_receipt.gd.uid",
+      "archived_path": "files/scripts/combat/authored_echo_terminal_receipt.gd.uid",
+      "bytes": 20,
+      "sha256": "6ac50eb55f0f1d4c11a02bac5f081dd32604242b17558fd3ed2e1fd0f2d8f943"
+    },
+    {
+      "path": "scripts/combat/authored_enemy_sequence.gd",
+      "archived_path": "files/scripts/combat/authored_enemy_sequence.gd",
+      "bytes": 35759,
+      "sha256": "02d1469d1d1ff657722d2ce43b06e274c136e14f65ae6fdd91ff1521139a399e"
+    },
+    {
+      "path": "scripts/combat/authored_enemy_sequence.gd.uid",
+      "archived_path": "files/scripts/combat/authored_enemy_sequence.gd.uid",
+      "bytes": 19,
+      "sha256": "a7386bc5ee79dc7f7dcc22242adc7f02bfdd5babcbf9c19347d35889d27507dc"
+    },
+    {
+      "path": "scripts/combat/body_sweep.gd",
+      "archived_path": "files/scripts/combat/body_sweep.gd",
+      "bytes": 17456,
+      "sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9"
+    },
+    {
+      "path": "scripts/combat/body_sweep.gd.uid",
+      "archived_path": "files/scripts/combat/body_sweep.gd.uid",
+      "bytes": 20,
+      "sha256": "ef81e08a544e454636c523ea797029954359eead30c94e225c7de6893dcdcc74"
+    },
+    {
+      "path": "scripts/combat/difficulty.gd",
+      "archived_path": "files/scripts/combat/difficulty.gd",
+      "bytes": 4882,
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    {
+      "path": "scripts/combat/difficulty.gd.uid",
+      "archived_path": "files/scripts/combat/difficulty.gd.uid",
+      "bytes": 20,
+      "sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b"
+    },
+    {
+      "path": "scripts/combat/lunge_motion.gd",
+      "archived_path": "files/scripts/combat/lunge_motion.gd",
+      "bytes": 15016,
+      "sha256": "52b048392c7ea5d5728b500d1cc68fa478947f59f5b321bd81f377c265be9a66"
+    },
+    {
+      "path": "scripts/combat/lunge_motion.gd.uid",
+      "archived_path": "files/scripts/combat/lunge_motion.gd.uid",
+      "bytes": 20,
+      "sha256": "26b4d5dc7cbd8540bb060cac7c9e0153860810d20b8cffcb9f4ea30f322e2432"
+    },
+    {
+      "path": "scripts/combat/replay_cursor.gd",
+      "archived_path": "files/scripts/combat/replay_cursor.gd",
+      "bytes": 19854,
+      "sha256": "1cbe648ad391d4363a525751fcc23e71f13292eddcc5da46233289a40a787362"
+    },
+    {
+      "path": "scripts/combat/replay_cursor.gd.uid",
+      "archived_path": "files/scripts/combat/replay_cursor.gd.uid",
+      "bytes": 19,
+      "sha256": "60b768dbe4b3c9528567ec0e64afe3ebb775c9d407d55d140eed6e90fcd36d16"
+    },
+    {
+      "path": "scripts/combat/replay_footprint.gd",
+      "archived_path": "files/scripts/combat/replay_footprint.gd",
+      "bytes": 34512,
+      "sha256": "23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b"
+    },
+    {
+      "path": "scripts/combat/replay_footprint.gd.uid",
+      "archived_path": "files/scripts/combat/replay_footprint.gd.uid",
+      "bytes": 19,
+      "sha256": "1ae28025dae1fcc6a4c10c0c4731171be5418eb6413f31383ce4aa14f2024855"
+    },
+    {
+      "path": "scripts/combat/replay_playback.gd",
+      "archived_path": "files/scripts/combat/replay_playback.gd",
+      "bytes": 136458,
+      "sha256": "e4c7ee2e7d511ee294fd795cc389c20b69672e46fff38c8a5f73e4aa6d081304"
+    },
+    {
+      "path": "scripts/combat/replay_playback.gd.uid",
+      "archived_path": "files/scripts/combat/replay_playback.gd.uid",
+      "bytes": 20,
+      "sha256": "9772d96bd490fa16ae9e7438910e915e090c6485dfc1252574cae1bf7a977c5a"
+    },
+    {
+      "path": "scripts/combat/replay_program.gd",
+      "archived_path": "files/scripts/combat/replay_program.gd",
+      "bytes": 4180,
+      "sha256": "0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9"
+    },
+    {
+      "path": "scripts/combat/replay_program.gd.uid",
+      "archived_path": "files/scripts/combat/replay_program.gd.uid",
+      "bytes": 19,
+      "sha256": "d150d89ef4ba744f63d05e7a4b7a2acc91e4681d23d355cb9cb2678ac03f1a91"
+    },
+    {
+      "path": "scripts/combat/replay_sequence.gd",
+      "archived_path": "files/scripts/combat/replay_sequence.gd",
+      "bytes": 10638,
+      "sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6"
+    },
+    {
+      "path": "scripts/combat/replay_sequence.gd.uid",
+      "archived_path": "files/scripts/combat/replay_sequence.gd.uid",
+      "bytes": 20,
+      "sha256": "313e93a946f59228685fbc4730bb5d239df9e9ba2ae69855937ccb3c7d35289b"
+    },
+    {
+      "path": "scripts/combat/replay_witness.gd",
+      "archived_path": "files/scripts/combat/replay_witness.gd",
+      "bytes": 23615,
+      "sha256": "5bcc9c58b9ea8c496200d9d313f2d9848baa0700665fa062640270945d829295"
+    },
+    {
+      "path": "scripts/combat/replay_witness.gd.uid",
+      "archived_path": "files/scripts/combat/replay_witness.gd.uid",
+      "bytes": 20,
+      "sha256": "c3bb32204b630c686744ef4e1a5a9769c8ea0a66fc40606517f734487081da42"
+    },
+    {
+      "path": "scripts/combat/threat_geometry.gd",
+      "archived_path": "files/scripts/combat/threat_geometry.gd",
+      "bytes": 14303,
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+    },
+    {
+      "path": "scripts/combat/threat_geometry.gd.uid",
+      "archived_path": "files/scripts/combat/threat_geometry.gd.uid",
+      "bytes": 20,
+      "sha256": "dbffe6e46566832c1126d98a643d508a68219fec591d4662f7bccfe297ddccdd"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd",
+      "archived_path": "files/scripts/combat/threat_scheduler.gd",
+      "bytes": 209819,
+      "sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd.uid",
+      "archived_path": "files/scripts/combat/threat_scheduler.gd.uid",
+      "bytes": 18,
+      "sha256": "54a051d030eef72dfce3f58a9073b3bce0f469720124e948c251f22a064e974d"
+    },
+    {
+      "path": "scripts/cues/cue_mesh.gd",
+      "archived_path": "files/scripts/cues/cue_mesh.gd",
+      "bytes": 9589,
+      "sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+    },
+    {
+      "path": "scripts/cues/cue_mesh.gd.uid",
+      "archived_path": "files/scripts/cues/cue_mesh.gd.uid",
+      "bytes": 19,
+      "sha256": "aab103bd0966b0b298f2a10e8107167ca7e23c451dd94d8be76136bd1bdc4d3a"
+    },
+    {
+      "path": "scripts/cues/threat_cue.gd",
+      "archived_path": "files/scripts/cues/threat_cue.gd",
+      "bytes": 37198,
+      "sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a"
+    },
+    {
+      "path": "scripts/cues/threat_cue.gd.uid",
+      "archived_path": "files/scripts/cues/threat_cue.gd.uid",
+      "bytes": 19,
+      "sha256": "147d2f591ebb3ad3af17a4111b3118811c23bc2e83f3fc6f7574c38c860d4425"
+    },
+    {
+      "path": "scripts/curling_smoke.gd",
+      "archived_path": "files/scripts/curling_smoke.gd",
+      "bytes": 14175,
+      "sha256": "5f8fa272a9c5beef47f7c69ad0b916965e7caf30a5d0e6b329d56b227807c36c"
+    },
+    {
+      "path": "scripts/curling_smoke.gd.uid",
+      "archived_path": "files/scripts/curling_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "8c283bb9181b5b956ec3746bf98b9d614d5f86a8caddac06ba609e43231b75bb"
+    },
+    {
+      "path": "scripts/dev/dev.py",
+      "archived_path": "files/scripts/dev/dev.py",
+      "bytes": 28231,
+      "sha256": "f3fe58271e6fba79d48e9be5c1d111271737c861e4f8a4ff5d08db52c40184ec"
+    },
+    {
+      "path": "scripts/effects.gd",
+      "archived_path": "files/scripts/effects.gd",
+      "bytes": 21962,
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7"
+    },
+    {
+      "path": "scripts/effects.gd.uid",
+      "archived_path": "files/scripts/effects.gd.uid",
+      "bytes": 19,
+      "sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831"
+    },
+    {
+      "path": "scripts/enemy.gd",
+      "archived_path": "files/scripts/enemy.gd",
+      "bytes": 41287,
+      "sha256": "39c16960c5b7ccb12282cda87c93d4b99280040881bf39b5879e11487a883ed1"
+    },
+    {
+      "path": "scripts/enemy.gd.uid",
+      "archived_path": "files/scripts/enemy.gd.uid",
+      "bytes": 20,
+      "sha256": "8f3ba80717e9fe95c6a27620cd909fddd88cd18ed5c425b859b236ccc85a4280"
+    },
+    {
+      "path": "scripts/equipment.gd",
+      "archived_path": "files/scripts/equipment.gd",
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    {
+      "path": "scripts/equipment.gd.uid",
+      "archived_path": "files/scripts/equipment.gd.uid",
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a"
+    },
+    {
+      "path": "scripts/game.gd",
+      "archived_path": "files/scripts/game.gd",
+      "bytes": 38685,
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    {
+      "path": "scripts/game.gd.uid",
+      "archived_path": "files/scripts/game.gd.uid",
+      "bytes": 19,
+      "sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129"
+    },
+    {
+      "path": "scripts/hud.gd",
+      "archived_path": "files/scripts/hud.gd",
+      "bytes": 16609,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b"
+    },
+    {
+      "path": "scripts/hud.gd.uid",
+      "archived_path": "files/scripts/hud.gd.uid",
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5"
+    },
+    {
+      "path": "scripts/lab_bench.gd",
+      "archived_path": "files/scripts/lab_bench.gd",
+      "bytes": 6324,
+      "sha256": "8f2bb0d92f48cfea32205f0b76854ad03ca7a85127e29dfe9275bdb0b2ea58fb"
+    },
+    {
+      "path": "scripts/lab_bench.gd.uid",
+      "archived_path": "files/scripts/lab_bench.gd.uid",
+      "bytes": 20,
+      "sha256": "2a7f596814c6c7fff0b9f0a229de202678f54e5455c1d16c450e5f2a7ef561fe"
+    },
+    {
+      "path": "scripts/pixel_sprite.gd",
+      "archived_path": "files/scripts/pixel_sprite.gd",
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a"
+    },
+    {
+      "path": "scripts/pixel_sprite.gd.uid",
+      "archived_path": "files/scripts/pixel_sprite.gd.uid",
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3"
+    },
+    {
+      "path": "scripts/player.gd",
+      "archived_path": "files/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "path": "scripts/player.gd.uid",
+      "archived_path": "files/scripts/player.gd.uid",
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70"
+    },
+    {
+      "path": "scripts/practice_target.gd",
+      "archived_path": "files/scripts/practice_target.gd",
+      "bytes": 4451,
+      "sha256": "455e1d0697db73c3b27a9e12136e5103bd438fdf22142bee0d329cd8748ba15e"
+    },
+    {
+      "path": "scripts/practice_target.gd.uid",
+      "archived_path": "files/scripts/practice_target.gd.uid",
+      "bytes": 20,
+      "sha256": "653901d6e1e18f9d4ce4eb782af9366629a641679963266065a425d014814531"
+    },
+    {
+      "path": "scripts/presentation/camera_framing.gd",
+      "archived_path": "files/scripts/presentation/camera_framing.gd",
+      "bytes": 10132,
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b"
+    },
+    {
+      "path": "scripts/presentation/camera_framing.gd.uid",
+      "archived_path": "files/scripts/presentation/camera_framing.gd.uid",
+      "bytes": 20,
+      "sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a"
+    },
+    {
+      "path": "scripts/settings/game_settings.gd",
+      "archived_path": "files/scripts/settings/game_settings.gd",
+      "bytes": 13346,
+      "sha256": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2"
+    },
+    {
+      "path": "scripts/settings/game_settings.gd.uid",
+      "archived_path": "files/scripts/settings/game_settings.gd.uid",
+      "bytes": 19,
+      "sha256": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab"
+    },
+    {
+      "path": "scripts/shotgun_flare.gd",
+      "archived_path": "files/scripts/shotgun_flare.gd",
+      "bytes": 5778,
+      "sha256": "24e526e3850531317285e0d687ee93ebd37aa7819fbf5cd27af19284af0b84e6"
+    },
+    {
+      "path": "scripts/shotgun_flare.gd.uid",
+      "archived_path": "files/scripts/shotgun_flare.gd.uid",
+      "bytes": 20,
+      "sha256": "e7c22cc0b7e74fa5181371c644527e6b18ec06ad8369dc72bfa4986505a15ba4"
+    },
+    {
+      "path": "scripts/ui/campaign_menu.gd",
+      "archived_path": "files/scripts/ui/campaign_menu.gd",
+      "bytes": 35356,
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28"
+    },
+    {
+      "path": "scripts/ui/campaign_menu.gd.uid",
+      "archived_path": "files/scripts/ui/campaign_menu.gd.uid",
+      "bytes": 19,
+      "sha256": "27d6486d87eb8162cc7e6c714ce9db11d313b66236870281aa2e615d8d5fc2e8"
+    },
+    {
+      "path": "scripts/weapon_pickup.gd",
+      "archived_path": "files/scripts/weapon_pickup.gd",
+      "bytes": 1750,
+      "sha256": "7a350ffa2efa2f6f031877842fb447e22b3b80d49cc2acc40ee39dd0cc19c56e"
+    },
+    {
+      "path": "scripts/weapon_pickup.gd.uid",
+      "archived_path": "files/scripts/weapon_pickup.gd.uid",
+      "bytes": 20,
+      "sha256": "0a004b242329bf5742cac245b12a6d41b8e306fc79ad63d43dc0c46896bf8615"
+    },
+    {
+      "path": "tests/authored_echo_performance_smoke.gd",
+      "archived_path": "files/tests/authored_echo_performance_smoke.gd",
+      "bytes": 18890,
+      "sha256": "8817689cca194962b1aaa85aa950a2222ba8e56c04d1a72008e45a5e6b333ecb"
+    },
+    {
+      "path": "tests/authored_echo_performance_smoke.gd.uid",
+      "archived_path": "files/tests/authored_echo_performance_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "0d0b1dcb8c0dc050024ce65775873406899ea5c70f67645054d880fadb883b70"
+    },
+    {
+      "path": "tests/authored_echo_playback_smoke.gd",
+      "archived_path": "files/tests/authored_echo_playback_smoke.gd",
+      "bytes": 33904,
+      "sha256": "2ade5f07a380c2a5d64c05d1f2c90d3b067cecef128e3c03daa6fd0fbd27741a"
+    },
+    {
+      "path": "tests/authored_echo_playback_smoke.gd.uid",
+      "archived_path": "files/tests/authored_echo_playback_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "3d0a3bb2cd3074986eba92cdf60613c00a6f145c24040682b492771b3b9566dd"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_actor.gd",
+      "archived_path": "files/tests/fixtures/authored_echo_actor.gd",
+      "bytes": 10038,
+      "sha256": "bd78c8392f70b6f01e96d4a40c8adafc791a605e43487144e26aa8bb0173d542"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_actor.gd.uid",
+      "archived_path": "files/tests/fixtures/authored_echo_actor.gd.uid",
+      "bytes": 19,
+      "sha256": "c1f254eb4e0c205d7ee089b591136d3083e43c7c34e21108de83551f5abcd58b"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_native_codec.gd",
+      "archived_path": "files/tests/fixtures/authored_echo_native_codec.gd",
+      "bytes": 9276,
+      "sha256": "4b430b2c9f266ff37c222a2d89a7db62429e0f25b9267a891078f845138c2402"
+    },
+    {
+      "path": "tests/fixtures/authored_echo_native_codec.gd.uid",
+      "archived_path": "files/tests/fixtures/authored_echo_native_codec.gd.uid",
+      "bytes": 19,
+      "sha256": "bc2de0c79282641189a3feda7896fb26d7b61de49006179fc072f826c2e84c1e"
+    }
+  ]
+}
