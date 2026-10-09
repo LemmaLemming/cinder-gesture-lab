@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-39** (9 October 2026). Shared39 preserves projected Cue APIs and native guards while reusing private expected float bits. Targeted correctness439/0 and three unchanged authored first-cycle profiles113/0 support the bounded change; median cost fell while repeat tail samples worsened. [Contract, measurements and limits](CUE_REFERENCE_BITS.md) retain exact evidence. Campaign8/24 remains accepted after [Act2 L4](ACT2_L4_REGISTRATION.md). Broader production runtime cost remains open. Integration is all three workers’ help contact; worker baselines change only after preserving adoption ACKs.
+Revision: **campaign-shared-40** (9 October 2026). Shared40 compares one fresh private source-guard input against its fully validated reference while preserving public validators, fallback and actual native authority. Targeted574/0 and new139/0 controls pass; two unchanged one-Box profiles113/0 show a lower candidate median with noisy baseline tails. [Evidence and limits](SOURCE_GUARD_REFERENCE.md). [Focused level acceptance](LEVEL_ACCEPTANCE.md) supersedes agent-completed playthrough gates. Campaign8/24 remains accepted; Integration is first help contact and actual worker baselines require preserving ACKs.
 
 ## Current level acceptance
 
