@@ -2,7 +2,7 @@
 
 ## Current accepted frontier — Shared44
 
-Updated 9 October 2026. **Act1: 3/8 accepted; campaign: 10/24. A1-L3 is accepted; A1-L4 Selenite Court is current: its first entrance component and focused fixture are authored, new-resource import closed cleanly, native/portrait checks are next.** Sole owner registration remains verified; no human permission decision or Act1 task blocker exists.
+Updated 9 October 2026. **Act1: 3/8 accepted; campaign: 10/24. A1-L3 is accepted; A1-L4 Selenite Court is current: first entrance component passes native152/0, two real dashes/one ordinary primary. Four partial portrait frames are inspected; graphical continuation is environment-limited by native focus loss. Independent court production preparation continues, no human approval gate.** Sole owner registration remains verified; no human permission decision or Act1 task blocker exists.
 
 Integration ACCEPTED `69f528dd-acd5-4fa5-b3ce-3385611efe6d` accepts exact owner content `0129e260a25405dc1e24d1869bbe607884eca430` (authored Shared40), integrated at `5a38ee04a96253d4bd323098fcba8992152c8fd9` and published at Shared44 `d22cb47b2346a54e81ca6c5ed77f36efd1b4b667`. The [acceptance record](../../../docs/development/A1_L3_ACCEPTANCE.md) governs. New Root transport is **2277/0**, exit0 clean, with411 original inputs: production loading, one genuine entrance swipe, whole Save, fresh Continue, exact earlier Retry and all-descendant cleanup, with zero Hero placements/injuries. Retained **191/0** brief visual evidence covers the opening. Fresh constructor null-Player state is source-backed; the inherited Title assertion directly tests no active level, not separately null Player.
 
@@ -26,6 +26,10 @@ Integration RESPONSE `36054d35` closes registration1 after 621.88 wall seconds w
 
 Updated 9 October 2026 (Hong Kong). **Act 1: 2/8 accepted; campaign: 9/24 (A3-L3 accepted). A1-L3 remains unaccepted; A1-L4 is not authored.** This chat is the sole registered Act1 owner. The latest human policy, **focused-desktop-level-1** (Integration UPDATE1518a40b), requires focused mechanics/loading/transitions/saves/Retry/cleanup checks and brief visual inspections. Full-route, defeat-all, earned-save/exit and blanket kit/profile playthrough lists below are historical and superseded as acceptance gates. The current focused checklist below governs recovery and handoff. Original failures and their executed sources remain unchanged; current full-playthrough behavior is untested. Current checkout has adopted Shared43 through `7b4eec51`; the submitted L3 HANDOFF remains frozen at 0129e260 / Shared40. All owned jobs are closed. Integration reports independent source/brief review pass, with production registration next; canonical Shared42 ACK/receipt/merge ancestry and Lane/Shell source verification was observed at 2026-10-09T07:17:32Z. Broad receipt counts remain owner-reported. No human permission decision is pending.
 
+## L4 first component — current specific limitation
+
+[Exact entrance component record](../../../docs/acts/act1/evidence/L4-curtain-component/scope.md): import clean, first margin-API failure1/1 corrected, native152/0 at88f0b405, real2swipes/1ordinary primary/Hero100/C32HP4 and complete native pause/refusal/cleanup. Original graphical46/1 has four actual540×1170 images inspected; later startup-focus9/1 has none. Focus loss remains unexplained; no unchanged retry loop. Native mechanics/resource baseline remains applicable, while fullportrait/court/formation/roundel/King/codec/campaignflow are unfinished. Goal remains ACTIVE and independent production preparation continues. All owner engine jobs CLOSED. Exactly three acceptedL2 paths remain temporarily Integration-owned for Challenge work; do not edit them until scoped return.
+
 ## Sequential level order
 
 | Order | Level | State |
@@ -33,7 +37,7 @@ Updated 9 October 2026 (Hong Kong). **Act 1: 2/8 accepted; campaign: 9/24 (A3-L3
 | 1 | [A1-L1 Observatory and Launch](levels/A1-L1.md) | Accepted/frozen; receipt e5067494; registration c19832f; production 23/26 zero |
 | 2 | [A1-L2 Crater Gardens](levels/A1-L2.md) | Accepted/frozen; receipt 4bd4799c; registration c6a9596; production 297/305 zero |
 | 3 | [A1-L3 Mushroom Caverns](levels/A1-L3.md) | Accepted/frozen; receipt69f528dd; Shared44 production2277/0 + brief191/0 |
-| 4 | A1-L4 Selenite Court | Current first entrance greybox imported; native/portrait checks pending; authoring authorized after accepted L3 |
+| 4 | A1-L4 Selenite Court | Current first entrance native152/0; partial4-frame visual check; portrait continuation focus-limited; court production preparation continues |
 | 5 | A1-L5 The Living Moon | Not authored; follows L4 acceptance |
 | 6 | A1-O1 Salvage Circuit (parent L2) | Not authored; follows all five main levels |
 | 7 | A1-O2 Spore Bloom (parent L3) | Not authored; follows O1 |

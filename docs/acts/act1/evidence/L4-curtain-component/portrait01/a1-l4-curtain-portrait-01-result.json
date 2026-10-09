@@ -1,0 +1,226 @@
+{
+  "state": "CLOSED",
+  "session_id": 72211,
+  "observed_closed_at": "2026-10-09T09:15:22.029244+00:00",
+  "command": "python3 scripts/dev/dev.py engine --path . --script tests/acts/act1/a1_l4_curtain_greybox.gd -- --portrait",
+  "head": "88f0b405ddff944aaaa4b4b7dd4ae173710b8868",
+  "exit_code": 1,
+  "checks": 46,
+  "failures": 1,
+  "swipes": 2,
+  "primaries": 0,
+  "raw_log": ".cinder/a1-l4-curtain-portrait-01.log",
+  "raw_sha256": "e04553b37837676a84212d4ea78d73e714dd078e0e650b4277a6916564c46a5c",
+  "report": ".cinder/l4-curtain-greybox-1674715.json",
+  "report_sha256": "66b15efc8a6ffddf87aae2faf089f19fec3c5471eebaceedb6f6a013d77e8e07",
+  "source_manifest": ".cinder/a1-l4-curtain-portrait-01-source/manifest.json",
+  "source_manifest_sha256": "af8099bc4455633654421b273c526d4641e988b477c1e63820122fac02f9540f",
+  "source_originals": 626,
+  "archive_hashes_verified": true,
+  "current_source_changes": [],
+  "captures": [
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l4-curtain-1675167/01-curtain-paused-warning.png",
+      "bytes": 34862,
+      "sha256": "814d559fd726e66cd6f81ccaf009e103a60e720e52892d84112b18c859f76295",
+      "stage": "paused-warning",
+      "native_focus": true
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l4-curtain-1675167/02-curtain-warning.png",
+      "bytes": 31768,
+      "sha256": "9f8627e9b47ba63f9229f190126e5cf032281a60af8a8e64ee5ce5f2bc36498d",
+      "stage": "warning",
+      "native_focus": true
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l4-curtain-1675167/03-curtain-safe-landing.png",
+      "bytes": 32323,
+      "sha256": "8ce03ef3b69189febb6432afc21400592e59d5b670d7ea823bf952f943cd69e6",
+      "stage": "safe-landing",
+      "native_focus": true
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l4-curtain-1675167/04-curtain-active.png",
+      "bytes": 31585,
+      "sha256": "bfc004eca03067f2f0b0da339beb0de857da8a4f7af151dabafdc1e450b7d19a",
+      "stage": "active",
+      "native_focus": true
+    }
+  ],
+  "first_meaningful_error": {
+    "camera": {
+      "accepted": true,
+      "api_revision": "camera-framing-1",
+      "basis": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.585491, -0.810679), Z: (0.0, 0.810679, 0.585491)]",
+      "camera_plane_correction": [
+        0.0,
+        0.0
+      ],
+      "camera_plane_shift_intervals": [
+        [
+          -1.57909286022186,
+          0.802240312099457
+        ],
+        [
+          -2.27476048469543,
+          5.15048933029175
+        ]
+      ],
+      "camera_position": [
+        1.56842613220215,
+        18.7444534301758,
+        12.7943706512451
+      ],
+      "depth_range": [
+        21.3243236541748,
+        24.0841789245605
+      ],
+      "desired_focus": [
+        1.56842613220215,
+        0.74445366859436,
+        -0.205629363656044
+      ],
+      "enabled": true,
+      "focus": [
+        1.56842613220215,
+        0.74445366859436,
+        -0.205629363656044
+      ],
+      "numerical_headroom": 0.001,
+      "point_count": 122,
+      "reason": "",
+      "safe_rect": "[P: (0.040741, 0.17265), S: (0.918519, 0.719658)]",
+      "safety_margin": 0.055,
+      "screen_bounds": "[P: (0.159941, 0.322057), S: (0.572222, 0.236501)]",
+      "shift": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shift_distance": 0.0,
+      "width": 7.19999980926514
+    },
+    "input": {
+      "anchor_normalized": [
+        0.5,
+        0.555555582046509
+      ],
+      "last_observation": {
+        "accepted": false,
+        "action_clock_s": 2.18333333333333,
+        "anchor_normalized": [
+          0.5,
+          0.555555582046509
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kind": "swipe_release",
+        "schema_version": 1,
+        "screen_position_normalized": [
+          0.5,
+          0.555555582046509
+        ],
+        "sequence": 2,
+        "world_action_sequence": 1
+      },
+      "schema_version": 1,
+      "sequence": 2
+    },
+    "label": "unexpected focus/pause/death stops scripted input; fixture never forces resume",
+    "native_focus": false,
+    "paused": true,
+    "sources": {
+      "court-curtain-guard": {
+        "active_from_s": 1.95,
+        "active_until_s": 2.15,
+        "api_revision": "act1-mushroom-selenite-3",
+        "approach_driving": false,
+        "approach_enabled": false,
+        "armed": true,
+        "cooldown_until_s": 3.95,
+        "cycle": 1,
+        "dead": false,
+        "dormant": false,
+        "entity_id": "C32",
+        "facing": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "geometry": {
+          "from": [
+            0.0,
+            -0.00492187542840838,
+            -2.0
+          ],
+          "kind": "lane",
+          "radius": 0.38,
+          "to": [
+            0.0,
+            -0.00492187542840838,
+            0.0
+          ]
+        },
+        "hit_ids": [],
+        "hp": 24.0,
+        "hurt_left_s": 0.0,
+        "last_cancel_reason": "",
+        "lock_from_s": 1.1,
+        "opening_position": [
+          0.0,
+          -0.00492187542840838,
+          -2.0
+        ],
+        "phase": "recovery",
+        "presentation_status": "authored_C31_C32_pose_pixels",
+        "recovery_until_s": 4.55,
+        "reservation_id": "threat-1",
+        "resolved_role": {
+          "active_s": 0.2,
+          "attack_interval_s": 2.0,
+          "damage": 8.0,
+          "difficulty_profile": "standard",
+          "difficulty_schema": 1,
+          "lock_s": 0.85,
+          "max_hp": 24.0,
+          "move_speed": 0.0,
+          "raw_damage": 8.0,
+          "raw_role": {
+            "active_s": 0.2,
+            "attack_interval_s": 2.0,
+            "lock_s": 0.85,
+            "max_hp": 24.0,
+            "move_speed": 0.0,
+            "raw_damage": 8.0,
+            "recovery_s": 2.4,
+            "windup_s": 1.85
+          },
+          "recovery_s": 2.4,
+          "tuning_status": "provisional_unplaytested",
+          "windup_s": 1.85
+        },
+        "role_id": "A1-E3",
+        "source_id": "court-curtain-guard",
+        "source_position": [
+          0.0,
+          -0.00492187542840838,
+          -2.0
+        ],
+        "spore_support": false,
+        "start_s": 0.1,
+        "status": "running",
+        "velocity": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "classification": "unexpected native OS focus/pause during real return swipe; guard correctly aborted; actual cause of focus loss not established",
+  "scope": "first graphical attempt46/1,2swipes/0primary; partial original captures only, no full portrait success. Native02 headless152/0 remains distinct."
+}

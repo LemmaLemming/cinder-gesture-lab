@@ -1,0 +1,134 @@
+{
+  "state": "CLOSED",
+  "session_id": 33828,
+  "observed_closed_at": "2026-10-09T09:18:06.014784+00:00",
+  "command": "python3 scripts/dev/dev.py engine --path . --script tests/acts/act1/a1_l4_curtain_greybox.gd -- --portrait",
+  "head": "4eea566518c8cbcd42a85e6a2b326f97422407f7",
+  "exit_code": 1,
+  "checks": 9,
+  "failures": 1,
+  "swipes": 0,
+  "primaries": 0,
+  "raw_log": ".cinder/a1-l4-curtain-portrait-02.log",
+  "raw_sha256": "86cf5974ed669c1d3b05dfd5140453d00226806b2c82124fb58532a87efbfdec",
+  "report": ".cinder/l4-curtain-greybox-1918969.json",
+  "report_sha256": "5fefd83e7a4640abe9d1ce0cb429116ba76f8293ec407c856826b358494b9e76",
+  "source_manifest": ".cinder/a1-l4-curtain-portrait-02-source/manifest.json",
+  "source_manifest_sha256": "72f02349d8a85a1236707c90f2dcc0b482be54c3439fd620eb0b1c6ed7578c99",
+  "source_originals": 626,
+  "archive_hashes_verified": true,
+  "current_source_changes": [],
+  "captures": [],
+  "first_meaningful_error": {
+    "camera": {
+      "accepted": true,
+      "api_revision": "camera-framing-1",
+      "basis": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.585491, -0.810679), Z: (0.0, 0.810679, 0.585491)]",
+      "camera_plane_correction": [
+        0.0,
+        0.0
+      ],
+      "camera_plane_shift_intervals": [
+        [
+          -2.37066674232483,
+          2.37066650390625
+        ],
+        [
+          -2.16697597503662,
+          5.32209205627441
+        ]
+      ],
+      "camera_position": [
+        0.0,
+        18.8500003814697,
+        13.0
+      ],
+      "depth_range": [
+        21.4447174072266,
+        24.2469654083252
+      ],
+      "desired_focus": [
+        0.0,
+        0.850000023841858,
+        0.0
+      ],
+      "enabled": true,
+      "focus": [
+        0.0,
+        0.850000023841858,
+        0.0
+      ],
+      "numerical_headroom": 0.001,
+      "point_count": 38,
+      "reason": "",
+      "safe_rect": "[P: (0.040741, 0.17265), S: (0.918519, 0.719658)]",
+      "safety_margin": 0.055,
+      "screen_bounds": "[P: (0.377778, 0.315148), S: (0.244444, 0.23241)]",
+      "shift": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shift_distance": 0.0,
+      "width": 7.19999980926514
+    },
+    "input": {
+      "anchor_normalized": [
+        0.5,
+        0.5
+      ],
+      "last_observation": {},
+      "schema_version": 1,
+      "sequence": 0
+    },
+    "label": "unexpected focus/pause/death stops scripted input; fixture never forces resume",
+    "native_focus": false,
+    "paused": true,
+    "sources": {
+      "court-curtain-guard": {
+        "api_revision": "act1-mushroom-selenite-3",
+        "approach_driving": false,
+        "approach_enabled": false,
+        "cycle": 0,
+        "dead": false,
+        "dormant": false,
+        "entity_id": "C32",
+        "facing": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "geometry": {},
+        "hit_ids": [],
+        "hp": 24.0,
+        "hurt_left_s": 0.0,
+        "last_cancel_reason": "",
+        "opening_position": [
+          0.0,
+          0.0,
+          -2.0
+        ],
+        "phase": "clear",
+        "presentation_status": "authored_C31_C32_pose_pixels",
+        "reservation_id": "",
+        "resolved_role": {},
+        "role_id": "A1-E3",
+        "source_id": "court-curtain-guard",
+        "source_position": [
+          0.0,
+          0.0,
+          -2.0
+        ],
+        "spore_support": false,
+        "status": "idle",
+        "velocity": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "classification": "native focus lost after actual 200ms startup focus and Main construction; normal pause/stronger fixture focus guard aborted before first warning. Origin of OS focus loss not established.",
+  "scope": "graphical9/1,0swipes/0primaries/no captures; startup focus alone did not resolve intermittent focus loss. No unchanged repeat; portrait continuation remains environment-limited while owned production preparation may progress."
+}
