@@ -79,6 +79,7 @@ func _authored_stalk_specs() -> Array:
 	# children together. Optical clearance is pending actual portrait review.
 	for spec: Dictionary in specifications:
 		if spec.id == "BreathingStalk": spec["origin"] = Vector3(-5.1, 0, -3.2)
+		if spec.id == "CrossedRightStalk": spec["origin"] = Vector3(5.6, 0, -16.0)
 	return specifications
 
 

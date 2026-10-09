@@ -9,7 +9,7 @@ extends "res://tests/acts/act1/a1_l3_normal_opening.gd"
 const CustodyCases: Array[String] = ["valid", "source-cancel", "cue-cancel", "source-pause", "cue-pause"]
 const ExpectedSources: Dictionary = {
 	"res://scripts/acts/act1/mushroom_caverns.gd": "55b30d6d639bf4a468e27189ef4703039b630e4c96fcc88564b1f7e5d912ecd4",
-	"res://scripts/acts/act1/mushroom_caverns_route.gd": "04f0655d4996bef6a9e25ff144ab701a98b3ae333c6faffa8236f3140d4d91f6",
+	"res://scripts/acts/act1/mushroom_caverns_route.gd": "3784a019bfd5dec6e49b18e64e73ca00b7fd21dc6497258b9f948154762b18bb",
 	"res://scripts/acts/act1/mushroom_selenite.gd": "24749ae5a7dd4334aac643fffac603570040098a3970929561e53a4f86e51576",
 	"res://tests/acts/act1/a1_l3_normal_opening.gd": "6938db3d34ac3b70ed24641b345f1f8f1e80a9e54acf81ad0d477eb573d41a91",
 	"res://tests/acts/act1/a1_l3_crowd.gd": "d3e15e72118ac27f3725f7513090d44647792b643ac04dae46c8f223146e2c80",
