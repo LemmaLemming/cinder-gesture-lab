@@ -1,0 +1,56 @@
+{
+  "level_id": "A2-L5",
+  "at": "2026-10-09T02:51:24.281816+00:00",
+  "classification": "Read-only canonical playstyle gates; no reservation/claim/use allocated.",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "equipment",
+        "status",
+        "--markdown"
+      ],
+      "exit_code": 0,
+      "path": "/private/tmp/a2-l5-design-gates-first/gate-0.txt",
+      "sha256": "4c60c8577f303ae2789711e566a7bb44bce5bef0c82d73145dfbd41a8d509182"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "ability",
+        "status",
+        "--level",
+        "A2-L5"
+      ],
+      "exit_code": 0,
+      "path": "/private/tmp/a2-l5-design-gates-first/gate-1.txt",
+      "sha256": "a47f2a3aa95b85529d79f623f17ee91836b4eec8325f67494f62cac9c482f166"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "ability",
+        "available",
+        "--level",
+        "A2-L5"
+      ],
+      "exit_code": 0,
+      "path": "/private/tmp/a2-l5-design-gates-first/gate-2.txt",
+      "sha256": "0a03ec6ae90831d91c8b5e7f058a51d3cf01a63a6b2c33b65e8db04b0bf04a20"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "ability",
+        "status"
+      ],
+      "exit_code": 0,
+      "path": "/private/tmp/a2-l5-design-gates-first/gate-3.txt",
+      "sha256": "684f4a1b90344a76c99f8ece1b5fddd626410dc88081a9ef99ac1e47aa124f8e"
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "at": "2026-10-09T03:37:18.177443+00:00",
+  "level_id": "A2-L5",
+  "status": "First bait component implemented and native-tested; whole level not implemented or accepted.",
+  "api_revision": "campaign-shared-37",
+  "shared_publication": "36090c9d83bb762b14310aa22978f1b31469551f",
+  "tested_parent_head": "1a5e9ea197233fe2f5db808dfcce2e8288f79845",
+  "active_pins": {
+    "scripts/acts/act2/dead_london_bait.gd": "3aa242301ffea12f6a8488df9d6a2541243a81e066c279203cada1a8f57068ba",
+    "scripts/acts/act2/dead_london_bait.gd.uid": "2f84bacef1b430e69bc9c3b36e5bdad2c5830ba727bc75a58f74f44526da935e",
+    "tests/acts/act2/a2_l5_bait_smoke.gd": "b64f2fde5307fbb8c8e8fd3e9eef8d3cc579b3e8ae78116be39e160be1659f7e",
+    "tests/acts/act2/a2_l5_bait_smoke.gd.uid": "5587e3e48f2d89b4ae6aa7fb952f3308e52aa337c4e161758391909989c0ac37",
+    "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+    "scripts/campaign/snapshot_codec.gd": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+    "scripts/campaign/exact_json.gd": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+  },
+  "functional_packets": [
+    {
+      "path": "bait-import-first",
+      "source_count": 257,
+      "source_sha256": "5e0c0cffcef0ee79b3b7749f39d5a18acb34af8cb773031caf708b2fcaf654e8",
+      "result_sha256": "a7eb2345480e077cd8c30f049540aeef988a51c401b5cab427c16efc85902c78",
+      "checks": null,
+      "failures": null,
+      "dev_exit_code": 0,
+      "log_counts": {
+        "wrapper": {
+          "script_errors": 0,
+          "native_errors": 0,
+          "fail_markers": 0
+        }
+      },
+      "scope": "Import/parser only",
+      "originals_unchanged": true
+    },
+    {
+      "path": "bait-controller-first",
+      "source_count": 259,
+      "source_sha256": "5506d2da3dc1e684976fff2dfb85488c1fc557b9552336ca12b9ee5282fea93d",
+      "result_sha256": "9b8091627ab7084b24d80eaee2f3a02693630458e7ac8282e14b76432a98501f",
+      "checks": 105,
+      "failures": 0,
+      "dev_exit_code": 0,
+      "log_counts": {
+        "wrapper": {
+          "script_errors": 0,
+          "native_errors": 0,
+          "fail_markers": 0
+        },
+        "raw": {
+          "script_errors": 0,
+          "native_errors": 0,
+          "fail_markers": 0
+        }
+      },
+      "scope": "controller/API only",
+      "originals_unchanged": true
+    },
+    {
+      "path": "bait-nested-original",
+      "source_count": 259,
+      "source_sha256": "321c42b7c0edcf5164ee55ccacd60b3843543f14c17d426aca153738482be53b",
+      "result_sha256": "e72ef470598185a3792ee83be54cdb79a35c34a22d6aa69cc475e0caebc25a99",
+      "checks": null,
+      "failures": null,
+      "dev_exit_code": 0,
+      "log_counts": {
+        "wrapper": {
+          "script_errors": 2,
+          "native_errors": 1,
+          "fail_markers": 0
+        },
+        "raw": {
+          "script_errors": 2,
+          "native_errors": 1,
+          "fail_markers": 0
+        }
+      },
+      "scope": "Import/parser only",
+      "originals_unchanged": true
+    },
+    {
+      "path": "bait-nested-before-fix",
+      "source_count": 259,
+      "source_sha256": "0d6eb57fb18b78016e7887b7be7519da1a8129e049f047aceda57d03bfb21f9c",
+      "result_sha256": "c6319bef89b5feddcfa892ac9e980068ce6914c7f620196aef2d48d871d27ef5",
+      "checks": 15,
+      "failures": 7,
+      "dev_exit_code": 1,
+      "log_counts": {
+        "wrapper": {
+          "script_errors": 0,
+          "native_errors": 7,
+          "fail_markers": 7
+        },
+        "raw": {
+          "script_errors": 0,
+          "native_errors": 7,
+          "fail_markers": 7
+        }
+      },
+      "scope": "controller/API only",
+      "originals_unchanged": true
+    },
+    {
+      "path": "bait-nested-corrected",
+      "source_count": 259,
+      "source_sha256": "b1ece15c4077b1db8aa3f938a171f6a1b48f60964686631608c630f5777233a8",
+      "result_sha256": "450695b3536dc2feae423e6173e944aa136f0e459558a668be5819cf71cfc249",
+      "checks": 15,
+      "failures": 0,
+      "dev_exit_code": 0,
+      "log_counts": {
+        "wrapper": {
+          "script_errors": 0,
+          "native_errors": 0,
+          "fail_markers": 0
+        },
+        "raw": {
+          "script_errors": 0,
+          "native_errors": 0,
+          "fail_markers": 0
+        }
+      },
+      "scope": "controller/API only",
+      "originals_unchanged": true
+    },
+    {
+      "path": "bait-controller-corrected",
+      "source_count": 259,
+      "source_sha256": "e4e2dcf42fb7492ccb23e143da2326b3015e72903d2834be219757881acb94af",
+      "result_sha256": "4f570ee441da37a1503f41d65bda610f0baebf8742e29c0873a8969e455c9998",
+      "checks": 107,
+      "failures": 0,
+      "dev_exit_code": 0,
+      "log_counts": {
+        "wrapper": {
+          "script_errors": 0,
+          "native_errors": 0,
+          "fail_markers": 0
+        },
+        "raw": {
+          "script_errors": 0,
+          "native_errors": 0,
+          "fail_markers": 0
+        }
+      },
+      "scope": "controller/API only",
+      "originals_unchanged": true
+    }
+  ],
+  "declared_archived_source_count": 1552,
+  "corrected_nonoverlapping_checks": 122,
+  "correction": "Genuine nested Player publication order drained atomically; exact already-consumed notifications acknowledged without mutation. Strict actual restored Player tuple checked before cache commit.",
+  "failure_custody": [
+    "Parser-only root invocation typo preserved with exact source/log/diagnosis; exit0 not a pass.",
+    "Genuine native15/7 stale-cursor callback failure preserved; seven ERROR lines are test assertions.",
+    "Metadata audit first2-only expectation failed; actual2 L5 +8 preceding test sidecars recorded separately,301 existing identities unchanged."
+  ],
+  "independent_review": {
+    "agent": "/root/scout_api_review",
+    "method": "Read-only source/result/log/hash comparison; no new engine execution.",
+    "result": "All1552 declared archived members exact; corrected15/0+107/0 and activepins exact; no unexplained errors. Git membership is root-verified separately."
+  },
+  "other_records": [
+    "source-review-first.json",
+    "design-gates-first/receipt.json",
+    "bait-technique-research.json",
+    "bait-import-first/metadata-after.json",
+    "bait-callback-repair.json",
+    "record-helper-custody.json"
+  ],
+  "limits": [
+    "Native public-controller fixture only: no recognizer/screen aim/ray/foot/camera/combat/art/whole-level/save-Shell acceptance.",
+    "One historical level-preview.png per source packet is an input resource, not a new L5 portrait capture.",
+    "Literal/explicit archive subset is not a complete project clone. Later import metadata/helper preservation never enters earlier execution manifests.",
+    "B05 brace/isolated-foot/staggered phase policy is chosen but unimplemented/unbalanced; whole native aggregate and authored portrait remain next.",
+    "Finite native history consistency does not authenticate arbitrary old external receipts; whole trusted parent provenance/epoch/support and full Player validation remain required."
+  ]
+}

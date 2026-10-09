@@ -1,0 +1,37 @@
+{
+  "exit_code": 1,
+  "log_counts": {
+    "wrapper": {
+      "script_errors": 0,
+      "native_errors": 7,
+      "fail_markers": 7
+    },
+    "raw": {
+      "script_errors": 0,
+      "native_errors": 7,
+      "fail_markers": 7
+    }
+  },
+  "result_lines": [
+    "ERROR: FAIL: nested drain and outer genuine notification both succeed",
+    "       [1] _nested_publication_checks (res://tests/acts/act2/a2_l5_bait_smoke.gd:452)",
+    "ERROR: FAIL: nested drain consumes native publication order and retains only real dash landing",
+    "       [1] _nested_publication_checks (res://tests/acts/act2/a2_l5_bait_smoke.gd:453)",
+    "ERROR: FAIL: outer already-consumed dash notification makes no duplicate cache update",
+    "       [1] _nested_publication_checks (res://tests/acts/act2/a2_l5_bait_smoke.gd:454)",
+    "ERROR: FAIL: later genuine completion remains consumable without repeating the nested primary",
+    "       [1] _nested_publication_checks (res://tests/acts/act2/a2_l5_bait_smoke.gd:463)",
+    "ERROR: FAIL: final bait advances to the second actual completed physical landing",
+    "       [1] _nested_publication_checks (res://tests/acts/act2/a2_l5_bait_smoke.gd:464)",
+    "ERROR: FAIL: later native completion cannot mutate an earlier sampled cycle copy",
+    "       [1] _nested_publication_checks (res://tests/acts/act2/a2_l5_bait_smoke.gd:465)",
+    "ERROR: FAIL: genuine consumed notifications are idempotent with no cache or native-history mutation",
+    "       [1] _nested_publication_checks (res://tests/acts/act2/a2_l5_bait_smoke.gd:467)",
+    "A2-L5 bait controller smoke: 15 checks, 7 failures; controller/API only, no ray, recognizer, camera, combat, whole-level or art credit"
+  ],
+  "source_count": 259,
+  "sources_unchanged": true,
+  "source_sha256": "0d6eb57fb18b78016e7887b7be7519da1a8129e049f047aceda57d03bfb21f9c",
+  "wrapper_sha256": "309d6579abad8471464fc8d501c2e9e2291e597a4b6bb22f2c87a69ece8069e0",
+  "raw_sha256": "5325a19e8ef5d6927a720a0c2d74a29e081a90b60e5da69288ed355a7447b12e"
+}

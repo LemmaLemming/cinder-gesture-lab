@@ -1,0 +1,64 @@
+{
+  "level_id": "A2-L5",
+  "at": "2026-10-09T03:00:33.192585+00:00",
+  "classification": "Source and actual reference-image preparation only; no runtime art or gameplay readiness.",
+  "owner_visually_inspected": [
+    {
+      "id": "G09",
+      "path": "docs/concept-art/act2/environments/dead-london-regents-park.png",
+      "sha256": "f287720f9efa10cdb0e0c9e513ff4931ce0e224af6464f1f6e8d7f05cf22191e",
+      "observations": "Empty facades, paving/paper, gates, pale weed, low rubble court, inert machine silhouettes and birds. Board wetness does not authorize water traversal."
+    },
+    {
+      "id": "G11",
+      "path": "docs/concept-art/act2/bosses/fighting-tripod-boss.png",
+      "sha256": "5b04a275d761b26a453d1104e9c06bede2383d127532d7afede56f5c216086a9",
+      "observations": "Three articulated legs, broad riveted hood, low actuator, polished mirror arm, rope/cage vocabulary. A ray and low-joint duel are adaptations; no lingering fire hazard inferred."
+    },
+    {
+      "id": "G20",
+      "path": "docs/concept-art/act2/gameplay/03-dead-london-gameplay.png",
+      "sha256": "e292b4bb056a550114c2bf26f684133fe087375cee4ae4101f2176b691cc30d5",
+      "observations": "Close local foot/joint at right, complete lane and broad dry floor. Full tripod may extend out of frame; source and useful opening may not."
+    },
+    {
+      "id": "S03",
+      "path": "docs/concept-art/act2/gameplay/sample-screenshots/03-tripod-bait-and-strike.png",
+      "sha256": "9a6d81176796088a7bde3202ab77a14b1cbe3d6a21b3152d776503d3723d74e3",
+      "observations": "Local mirror and bent near leg with low brace, clear full lane and return. Tiny illustrated HUD does not replace canonical HUD."
+    },
+    {
+      "id": "G15",
+      "path": "docs/concept-art/act2/mood/silence-and-recovery.png",
+      "sha256": "4f6693a382e157c510877eb335e7b4138b1a34ebfdb59d54ccfafd4c090bbebd",
+      "observations": "Absence, stopped machinery, black birds, pale weed and fragile dawn; no compulsory reunion quest or magical bacteria particles."
+    }
+  ],
+  "peer_review": "act2_source_review independently inspected these plus G04 anatomy; no files or engine state changed.",
+  "novel_sources": [
+    {
+      "url": "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2482/book-twothe-earth-under-the-martians-chapter-8-dead-london/",
+      "inspection": "Opened the chapter and inspected empty streets/black dust, park gate/overturned bus, howling and wrecked Handler, the stopping cry, birds/redoubt and microbial collapse.",
+      "application": "Quiet compressed streets and contact-led coda; player opens only a local route. Continuous dry floor replaces literal flooding/clambering.",
+      "validation": "Written proposal only; authored environment and coda still unimplemented."
+    },
+    {
+      "url": "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2463/book-onethe-coming-of-the-martians-chapter-6-the-heat-ray-in-the-chobham-road/",
+      "inspection": "Opened primary chapter; narrator describes invisible heating and a polished mirror with explicitly conjectural internal explanation.",
+      "application": "Visible floor lane and local mirror tell are readability adaptations.",
+      "validation": "No B05 ray execution yet."
+    }
+  ],
+  "reuse": [
+    "Existing shared Player/Camera/HUD/Scheduler/Lane/ThreatCue/InteractionCue/save systems",
+    "Act2 Ray Scout and giant-foot apparatus/material/animation families",
+    "Victorian facade/paving/ironwork/props and bleached weed",
+    "Distinct five-legged Handler as wreck scenery, not a live added role"
+  ],
+  "unimplemented": [
+    "Whole L5 scene, floor and progression",
+    "B05 live actor/visual/two-phase encounter and per-cycle sampled ray",
+    "Quiet redoubt/inert Martians/machines/dawn/survivor coda",
+    "Native full routes, save/retry/fatal, portrait, loadout/profile and production transition acceptance"
+  ]
+}

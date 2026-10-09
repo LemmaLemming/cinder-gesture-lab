@@ -1,0 +1,65 @@
+{
+  "at": "2026-10-09T03:16:33.751834+00:00",
+  "existing_count": 301,
+  "existing_unchanged": true,
+  "new_l5": {
+    "scripts/acts/act2/dead_london_bait.gd.uid": {
+      "sha256": "2f84bacef1b430e69bc9c3b36e5bdad2c5830ba727bc75a58f74f44526da935e",
+      "text": "uid://bx0ue33tmsc4s"
+    },
+    "tests/acts/act2/a2_l5_bait_smoke.gd.uid": {
+      "sha256": "5587e3e48f2d89b4ae6aa7fb952f3308e52aa337c4e161758391909989c0ac37",
+      "text": "uid://dy21bf5ebxyt6"
+    }
+  },
+  "new_older_test_metadata": {
+    "tests/acts/act2/a2_l4_courtyard_closure_smoke.gd.uid": {
+      "sha256": "61363b7489b9e5009b0c71c26041d99aa1c4a7c9f1642239115be7f8ba0d43ac",
+      "text": "uid://ofolb0166ho6",
+      "source_sha256": "5b71ca57ff99b36463d6f5c4853163e5d40abfe0774c8df7d1a285233a9868f8"
+    },
+    "tests/acts/act2/a2_l4_diagnostic_transport_smoke.gd.uid": {
+      "sha256": "79d7471336f0178e2fa96403937150693533d0361b2cd108fef2c487ac704f36",
+      "text": "uid://bq6pyo144b2db",
+      "source_sha256": "6abae0a631b1d62f23b1b585f0a949d85f52f2950c8c0648bf45c2dd9a48cb79"
+    },
+    "tests/acts/act2/a2_l4_fresh_entry_smoke.gd.uid": {
+      "sha256": "9a4c7f73f87d29585bc55c9da824b909ea1388df0c3e4813729d54388d57473f",
+      "text": "uid://fu3soo4214ms",
+      "source_sha256": "8c747662859e9e71be3296deb8d991dca67854b547c1859df472de2cb50a9b50"
+    },
+    "tests/acts/act2/a2_l4_gun_view_smoke.gd.uid": {
+      "sha256": "ba760ac62745e7c2ad2ebc79d4ecfdcfb18682380103086f046035149b9ee62e",
+      "text": "uid://cpgcahk1i8hau",
+      "source_sha256": "03b579fecc31240bafbd0d3ad05dd0aa241cc63dc4f4d2f04b83f7f4098976f2"
+    },
+    "tests/acts/act2/a2_l4_live_level_smoke.gd.uid": {
+      "sha256": "cb39c80747aeaffb8937a58219bffed0b0cbfd050af2d9a679d0e297ae8e6e91",
+      "text": "uid://jnvnfrrejtnc",
+      "source_sha256": "f485ead8e1dd92014969f3ae43e7fef24488f81b13d26a78208007a6f72adfba"
+    },
+    "tests/acts/act2/a2_l4_priority_repro.gd.uid": {
+      "sha256": "b3710f7f142ccd32b07c630de33f44d970357674e867ffa7ba021d7a15c6f0ab",
+      "text": "uid://c4m14tiv7jeyl",
+      "source_sha256": "f2e58732e284d53be7c318b0c859209ebd983c5c8927e1ce1e0d55ee7b0d8fa5"
+    },
+    "tests/acts/act2/a2_l4_retry_level_smoke.gd.uid": {
+      "sha256": "c4e9d7d418d1910e456abdd4829988825da3948b22c10b6f54de9a2d81d5c514",
+      "text": "uid://c4jtsx7m332eb",
+      "source_sha256": "0187e3a34be3a8b327752303df2e5a88bc5891f0d6b1c46df0370ad259f30c49"
+    },
+    "tests/acts/act2/a2_l4_scenery_inspection.gd.uid": {
+      "sha256": "78ea85f3a60a2545e202303cee6a99d0711c23d909f2acee9b5f19ab2d3cc5a0",
+      "text": "uid://duvlvbfpqgpnd",
+      "source_sha256": "6ca8491641ab2bc9fed5f2b1db6c64eff5874e508dadc60074e1fecd3c3d873d"
+    }
+  },
+  "unique_count": 311,
+  "first_metadata_expectation": {
+    "exit_code": 1,
+    "category": "metadata audit expectation",
+    "error": "Expected exactly 2 new sidecars, but actual import generated 10: 2 new L5 scripts and 8 preceding L4 test scripts without prior sidecars. All 301 existing sidecars unchanged. Initial tool traceback output was truncated; no full original log retained.",
+    "correction": "Enumerate and verify actual 10 generated paths plus unchanged prior identities and unique UIDs; do not delete metadata or alter frozen L4 candidate/inventories."
+  },
+  "scope": "Later import-generated metadata; no retroactive addition to pre-import source manifest or sealed L4 evidence. Eight older test sidecars stay preserved outside the upcoming L5 scoped commit."
+}
