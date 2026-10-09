@@ -32,6 +32,11 @@ var full_teardown: bool = false
 var full_evidence_history: Array[Dictionary] = []
 var full_diagnostics: Array[Dictionary] = []
 var full_response_timing_receipts: Array[Dictionary] = []
+# Optional renderer coverage only. Every use below is gated by portrait.
+var full_floor_court_attempted: bool = false
+var full_floor_field_attempted: bool = false
+var full_floor_capture_request: Dictionary = {}
+var full_floor_coverage: Dictionary = {"court": {"status": "not_observed", "reason": "no_closed_court_C32_primary_observed"}, "field": {"status": "not_observed", "reason": "no_current_room_natural_increment_observed"}}
 
 
 func _run() -> void:
@@ -481,6 +486,8 @@ func _full_living_ids() -> Array[String]:
 
 
 func _primary(actor: CharacterBody3D, label: String) -> bool:
+	# Resume happens BEFORE the original readiness/aim/reach/input calculation.
+	if portrait and not await _full_floor_court_before_primary(actor): return false
 	if not await _ready_input(label + " primary readiness"): return false
 	while Time.get_ticks_msec() - last_primary_ms <= 300:
 		if not _guard_input(): return false
@@ -494,6 +501,11 @@ func _primary(actor: CharacterBody3D, label: String) -> bool:
 	var before_hp: Dictionary = {}
 	for id: String in NormalIds: before_hp[id] = float(sources[id].get("hp"))
 	var actual_ids: Array[String] = _full_ids()
+	var floor_room_before: int = -1
+	var floor_generations_before: Dictionary = {}
+	if portrait and not full_floor_field_attempted:
+		floor_room_before = int(level.call("route_state").beat_index)
+		floor_generations_before = _full_floor_generations()
 	var target_id: String = String(actor.call("pure_presentation_state").source_id)
 	var sequence: int = _last_sequence()
 	var press := InputEventScreenTouch.new()
@@ -524,7 +536,92 @@ func _primary(actor: CharacterBody3D, label: String) -> bool:
 	if not _require(hit_count > 0 and hit_count == int(records[0].hits) and float(actor.get("hp")) < float(before_hp[target_id]) and hero.hp == initial_hp and hit_events.is_empty(), label + " credits all actual hit recipients and preserves Hero HP/no enemy hits"):
 		return false
 	crowd_primary_receipts.append({"sequence": records[0].sequence, "shells_at_release": actual_shells, "shells_staged": false, "actual_hp_losses": losses, "record": _portable(records[0])})
+	if portrait and not await _full_floor_after_primary(floor_room_before, floor_generations_before, int(records[0].sequence)): return false
 	return true
+
+
+func _full_floor_court_before_primary(actor: CharacterBody3D) -> bool:
+	if not portrait or full_floor_court_attempted: return true
+	var route: Dictionary = level.call("route_state")
+	if int(route.beat_index) != 4: return true
+	var native: Dictionary = actor.call("get_spore_native_bindings")
+	var art: Node = level.get_node_or_null("FungalArt")
+	if native.is_empty() or native.configuration.entity_id != "C32" or not is_instance_valid(art) or art.get("court_open") != false: return true
+	full_floor_court_attempted = true
+	full_floor_capture_request = {"kind": "court_before_primary", "source_id": native.source_id, "entity_id": native.configuration.entity_id, "role_id": native.configuration.role_id, "requested_route": route.duplicate(true)}
+	var result: bool = await _full_quiet_capture("court-actual-C32-before-primary")
+	full_floor_capture_request = {}
+	if not result: return false
+	var observed: Dictionary = shots.back().floor_view_native
+	var court: Dictionary = observed.court
+	var blocked: bool = court.get("court_open") == false and court.get("blocked_visible_in_tree") == true and court.get("open_visible_in_tree") == false
+	full_floor_coverage.court = {"status": "captured_blocked_native_state" if blocked else "missing_blocked_state_at_capture", "path": shots.back().path, "actual_paused": observed}
+	return true
+
+
+func _full_floor_generations() -> Dictionary:
+	var generations: Dictionary = {}
+	if not portrait: return generations
+	for child: Node in level.get_children():
+		if child is CinderSporeField:
+			var state: Dictionary = (child as CinderSporeField).state()
+			generations[String(state.instance_id)] = int(state.generation)
+	return generations
+
+
+func _full_floor_after_primary(before_room: int, before: Dictionary, sequence: int) -> bool:
+	if not portrait or full_floor_field_attempted: return true
+	var route: Dictionary = level.call("route_state")
+	if int(route.beat_index) != before_room or route.room_stage != "active":
+		full_floor_coverage.field = {"status": "missing", "reason": "room_changed_after_actual_primary", "primary_sequence": sequence, "before_room": before_room, "actual_route": route.duplicate(true)}
+		return true
+	for child: Node in level.get_children():
+		if not child is CinderSporeField: continue
+		var field: CinderSporeField = child as CinderSporeField
+		var state: Dictionary = field.state()
+		var id: String = String(state.instance_id)
+		if id not in full_spec.room_fields[before_room] or not before.has(id) or int(state.generation) != int(before[id]) + 1: continue
+		if field.active_domain().is_empty():
+			full_floor_coverage.field = {"status": "missing", "reason": "natural_increment_already_expired_before_capture_request", "primary_sequence": sequence, "actual_field": state.duplicate(true)}
+			return true
+		full_floor_field_attempted = true
+		full_floor_capture_request = {"kind": "post_primary_field_observation", "field_id": id, "generation_before": before[id], "primary_sequence": sequence, "requested_room": before_room, "actual_field_at_request": state.duplicate(true)}
+		# Neutral label: this real field can expire during the unchanged view wait.
+		var result: bool = await _full_quiet_capture("actual-ordinary-primary-field-observation")
+		full_floor_capture_request = {}
+		if not result: return false
+		var observed: Dictionary = shots.back().floor_view_native
+		var actual: Dictionary = observed.fields.get(id, {})
+		var same_room: bool = int(observed.route.beat_index) == before_room and observed.route.room_stage == "active"
+		var live: bool = same_room and not actual.get("native_domain", {}).is_empty() and actual.get("state", {}).get("generation") == state.generation and actual.get("state", {}).get("deadline_s") == state.deadline_s and actual.get("state", {}).get("spent_ids") == state.spent_ids
+		var active_cluster: bool = false
+		var spent_cluster: bool = false
+		for cue: Dictionary in actual.get("cluster_cues", []):
+			active_cluster = active_cluster or cue.get("state") == "active"
+			spent_cluster = spent_cluster or cue.get("state") == "spent"
+		var covered: bool = live and active_cluster and spent_cluster
+		var missing_reason: String = "" if covered else ("room_changed_during_view_settlement" if not same_room else ("field_expired_during_view_settlement" if actual.get("native_domain", {}).is_empty() else "actual_active_and_spent_pair_not_observed"))
+		full_floor_coverage.field = {"status": "captured_actual_active_and_spent_cluster_states" if covered else "missing_active_and_spent_at_capture", "reason": missing_reason, "path": shots.back().path, "actual_paused": observed}
+		return true
+	full_floor_coverage.field = {"status": "missing", "reason": "no_natural_current_room_generation_increment", "primary_sequence": sequence, "room": before_room}
+	return true
+
+
+func _full_floor_paused_view() -> Dictionary:
+	var view: Dictionary = {}
+	if not portrait or full_floor_capture_request.is_empty(): return view
+	view = {"route": level.call("route_state"), "court": {}, "fields": {}, "required_frame_points": level.camera_framing_points()}
+	var art: Node = level.get_node_or_null("FungalArt")
+	var blocked: Node3D = level.get_node_or_null("FungalArt/CourtCurtainO56/BlockedDrapery") as Node3D
+	var opened: Node3D = level.get_node_or_null("FungalArt/CourtCurtainO56/OpenGatheredDrapery") as Node3D
+	if is_instance_valid(art) and is_instance_valid(blocked) and is_instance_valid(opened):
+		view.court = {"court_open": art.get("court_open"), "blocked_visible": blocked.visible, "blocked_visible_in_tree": blocked.is_visible_in_tree(), "open_visible": opened.visible, "open_visible_in_tree": opened.is_visible_in_tree()}
+	for child: Node in level.get_children():
+		if child is CinderSporeField:
+			var field: CinderSporeField = child as CinderSporeField
+			var state: Dictionary = field.state()
+			view.fields[String(state.instance_id)] = {"state": state, "native_domain": field.active_domain(), "cluster_cues": field.get_cue_state().clusters, "origin": field.global_position}
+	return view
 
 
 func _full_environment(room: int, fresh: bool) -> bool:
@@ -856,6 +953,7 @@ func _capture(stage: String) -> bool:
 	var hud: GameHUD = game.get("hud") as GameHUD
 	if not _require(paused and is_instance_valid(hud) and _resume_button(hud) != null, "native full-route capture requires real paused HUD/clock before removing its modal"): return false
 	var before: Dictionary = _opening_observation()
+	var floor_view: Dictionary = _full_floor_paused_view()
 	hud.hide_overlay()
 	var result: bool = await super._capture(stage)
 	hud.show_pause()
@@ -863,6 +961,9 @@ func _capture(stage: String) -> bool:
 	shots.back()["capture_overlay"] = "public HUD hide_overlay only while whole native world paused; public show_pause before real GUI Resume"
 	shots.back()["room_ids"] = _full_ids()
 	shots.back()["fields"] = _portable(before.fields)
+	if not full_floor_capture_request.is_empty():
+		shots.back()["floor_view_request"] = _portable(full_floor_capture_request)
+		shots.back()["floor_view_native"] = _portable(floor_view)
 	return _require(paused and _opening_observation() == before and _resume_button(hud) != null, "unobstructed native renderer/camera capture changes no observed source/field/Player/clock/event and restores public Pause")
 
 
@@ -971,7 +1072,9 @@ func _finish() -> void:
 	var path: String = capture_dir.path_join("evidence.json") if portrait else "res://.cinder/l3-normal-full-route-%d.json" % Time.get_ticks_usec()
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file != null:
-		file.store_string(JSON.stringify({"scope": "actual one-world neutral/Standard five-room ordinary-only traversal attempt; assertions target19 real defeats/4CPs/1completion/physicalcontact; full native save remainsDENIED; no campaign transition/profile-kit/spent-all/human/performance or optical acceptance inference", "checks": checks, "failures": failures, "actual_swipes": swipes, "actual_primaries": primaries, "native_focus": DisplayServer.window_is_focused(), "normal_focus_out_preserved": true, "world_ids": full_world_ids, "observed_epochs": opening_epochs, "activation_counts": opening_activation_counts, "defeat_receipts": full_defeat_receipts, "room_receipts": full_room_receipts, "checkpoint_guards": full_checkpoint_guards, "completion_receipts": full_completion_receipts, "contact_receipts": full_contact_receipts, "complete_action_signal_trace": _portable(world_records), "accepted_input_signal_trace": _portable(input_observations), "validated_encoded_history": full_evidence_history, "primary_receipts": crowd_primary_receipts, "native_phase_barriers": full_phase_barriers, "response_timing_receipts": _portable(full_response_timing_receipts), "diagnostics": full_diagnostics, "worlds": worlds, "captures": shots}, "\t"))
+		var report: Dictionary = {"scope": "actual one-world neutral/Standard five-room ordinary-only traversal attempt; assertions target19 real defeats/4CPs/1completion/physicalcontact; full native save remainsDENIED; no campaign transition/profile-kit/spent-all/human/performance or optical acceptance inference", "checks": checks, "failures": failures, "actual_swipes": swipes, "actual_primaries": primaries, "native_focus": DisplayServer.window_is_focused(), "normal_focus_out_preserved": true, "world_ids": full_world_ids, "observed_epochs": opening_epochs, "activation_counts": opening_activation_counts, "defeat_receipts": full_defeat_receipts, "room_receipts": full_room_receipts, "checkpoint_guards": full_checkpoint_guards, "completion_receipts": full_completion_receipts, "contact_receipts": full_contact_receipts, "complete_action_signal_trace": _portable(world_records), "accepted_input_signal_trace": _portable(input_observations), "validated_encoded_history": full_evidence_history, "primary_receipts": crowd_primary_receipts, "native_phase_barriers": full_phase_barriers, "response_timing_receipts": _portable(full_response_timing_receipts), "diagnostics": full_diagnostics, "worlds": worlds, "captures": shots}
+		if portrait: report["floor_portrait_coverage"] = _portable(full_floor_coverage)
+		file.store_string(JSON.stringify(report, "\t"))
 		file.close()
 	else:
 		checks += 1; failures += 1; push_error("normal full-route evidence file could not open")
