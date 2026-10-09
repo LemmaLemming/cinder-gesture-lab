@@ -6,6 +6,10 @@ extends Node3D
 
 const Layout = preload("res://scripts/acts/act1/mushroom_caverns_layout.gd")
 const RockPaint = preload("res://assets/acts/act1/lunar/accents/painted_rock_surface.png")
+const SilverFloor = preload("res://assets/acts/act1/lunar/environment/floor_silver_tile.png")
+const FLOOR_OVERLAY_SIZE: Vector2 = Vector2(14, 72)
+const FLOOR_OVERLAY_ORIGIN: Vector3 = Vector3(0, 0.002, -18)
+const FLOOR_TILE_WORLD_SIZE: float = 1.536
 const CAP_SEGMENTS: int = 24
 const COURT_ORIGIN: Vector3 = Vector3(0, 0, -52)
 
@@ -68,6 +72,7 @@ static func build_geometry_art(level: Node3D, stalk_specifications: Array = []) 
 
 
 func _build() -> void:
+	_build_quiet_floor_overlay()
 	for spec: Dictionary in _stalk_specs: _mushroom(spec)
 	for spec: Array in Layout.SCENIC_SPECS:
 		if spec[0] == "FallenTrunk": _trunk(spec[1], spec[2])
@@ -80,6 +85,30 @@ func _build() -> void:
 			_wing(side, z, index)
 	_court_threshold()
 	set_court_open(false)
+
+
+func _build_quiet_floor_overlay() -> void:
+	# Presentation skin only. The original Floor/Visual and physical floor stay
+	# intact beneath transparent margins, with no extra collider or cue authority.
+	var plane := PlaneMesh.new()
+	plane.size = FLOOR_OVERLAY_SIZE
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.albedo_color = Color.WHITE
+	material.albedo_texture = SilverFloor
+	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	material.texture_repeat = true
+	material.uv1_scale = Vector3(FLOOR_OVERLAY_SIZE.x / FLOOR_TILE_WORLD_SIZE, FLOOR_OVERLAY_SIZE.y / FLOOR_TILE_WORLD_SIZE, 1)
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	material.alpha_scissor_threshold = 0.5
+	material.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_OFF
+	material.alpha_antialiasing_edge = 0.3
+	material.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
+	material.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_OPAQUE_ONLY
+	material.no_depth_test = false
+	material.render_priority = 0
+	var overlay := _mesh(self, "QuietGrottoSilverFloorOverlay", plane, material)
+	overlay.position = FLOOR_OVERLAY_ORIGIN
 
 
 func _mushroom(spec: Dictionary) -> void:
@@ -325,7 +354,7 @@ func _renderer_bytes(node: MeshInstance3D) -> PackedByteArray:
 
 
 func _material_bytes(material: StandardMaterial3D) -> PackedByteArray:
-	return var_to_bytes([material.shading_mode, material.albedo_color, material.cull_mode, material.texture_filter, material.texture_repeat, material.vertex_color_use_as_albedo, material.uv1_scale, material.uv1_offset, material.transparency, material.no_depth_test, material.render_priority, material.billboard_mode, material.grow, material.grow_amount, material.proximity_fade_enabled, material.distance_fade_mode, material.next_pass == null])
+	return var_to_bytes([material.shading_mode, material.albedo_color, material.cull_mode, material.texture_filter, material.texture_repeat, material.vertex_color_use_as_albedo, material.uv1_scale, material.uv1_offset, material.transparency, material.alpha_scissor_threshold, material.alpha_antialiasing_mode, material.alpha_antialiasing_edge, material.blend_mode, material.depth_draw_mode, material.no_depth_test, material.render_priority, material.billboard_mode, material.grow, material.grow_amount, material.proximity_fade_enabled, material.distance_fade_mode, material.next_pass == null])
 
 
 func _curtain_half(parent: Node3D, side: float, opened: bool) -> void:
