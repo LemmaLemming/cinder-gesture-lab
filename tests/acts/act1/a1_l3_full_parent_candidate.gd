@@ -26,6 +26,7 @@ var aggregate_saved: Dictionary = {}
 var aggregate_receipts: Array[Dictionary] = []
 var aggregate_quiet_events: int = 0
 var aggregate_earlier_wire: String = ""
+var aggregate_floor_guards_only: bool = false
 
 
 func _initialize() -> void:
@@ -42,12 +43,16 @@ func _shell() -> CinderCampaignShell:
 
 func _run() -> void:
 	portrait = false # Selected native/headless save scope; no new portrait claim.
+	aggregate_floor_guards_only = "--floor-resource-guards-only" in OS.get_cmdline_user_args()
 	root.size = PortraitSize
 	if not _require(ResourceLoader.exists(AggregateScene) and FileAccess.file_exists(AggregateScript) and FileAccess.get_file_as_string(AggregateScript).sha256_text() == ExpectedCandidateSHA, "fixture explicitly requires promoted exact full-parent843; never substitute save-denied scaffold"):
 		await _finish(); return
 	if not await _aggregate_start(): await _finish(); return
 	var pristine: Dictionary = _shell().capture_campaign_snapshot()
 	if not _require(not pristine.is_empty() and _local_closed(pristine.level.local) and pristine.level.local.beat_index == 0 and pristine.level.local.room_stage == "approach" and pristine.level.local.completed_beats.is_empty() and pristine.level.local.framing.is_empty() and pristine.level.local.scheduler.reservations.is_empty() and pristine.level.local.scheduler.profile.is_empty(), "real initial whole aggregate has exact nine local roots/pristine19/empty native encounter"):
+		await _finish(); return
+	if aggregate_floor_guards_only:
+		_floor_resource_guards(pristine)
 		await _finish(); return
 	if not _future_pristine([], "fresh full aggregate") or not _durable_exact(_shell()) or not await _gui_resume_pair(): await _finish(); return
 	process_frame.connect(_sample_opening)
@@ -489,6 +494,161 @@ func _durable_exact(shell: CinderCampaignShell) -> bool:
 	return decoded.get("accepted", false) and Exact.stringify(decoded.value) == Exact.stringify(shell.attempts.state())
 
 
+func _floor_resource_guards(pristine: Dictionary) -> bool:
+	# Optional pure resource scope: actual initial Shell world, no gameplay,
+	# clocks/HP/grounding/history seeding, resume, production install or Save write.
+	if not _require(paused and _durable_exact(_shell()) and swipes == 0 and primaries == 0 and _shell().player == hero and _shell().active_level == level, "floor selector retains genuine pristine paused full19 and canonical entry disk"): return false
+	var donor: Dictionary = _floor_donor_observation()
+	var installed: Dictionary = _floor_references(level)
+	if not _require(not installed.is_empty() and _floor_positive(level, hero, pristine, {}), "installed pristine full19 has retained exact floor/current view/native whole snapshot"): return false
+	# Use the canonical fresh-construction -> Player -> level quiet commits ->
+	# actual saved Camera/canonical HUD optical gate. Do not reuse the old helper
+	# whose entitlement assertions require beat1 and six active recipients.
+	aggregate_candidate = _shell()._prepare_snapshot(pristine)
+	if not _require(not aggregate_candidate.is_empty(), "canonical prepare_snapshot restores a distinct actual pristine19 recipient and current optical context"): return false
+	var recipient: CinderLevel = aggregate_candidate.level
+	var recipient_hero: CinderPlayer = aggregate_candidate.player
+	var restored: Dictionary = _floor_references(recipient)
+	if not _require(not restored.is_empty() and recipient != level and recipient_hero != hero and aggregate_candidate.camera != _shell().camera and restored.art != installed.art and restored.overlay != installed.overlay and restored.mesh != installed.mesh and restored.material != installed.material and restored.texture == installed.texture and recipient.is_restore_candidate() and recipient.snapshot_state().is_empty() and _floor_positive(recipient, recipient_hero, pristine, aggregate_candidate), "quiet recipient owns distinct art/leaf/plane/material and actual native19; immutable preload may share; nonplayable live capture stays forbidden"): return false
+	if not _require(_floor_donor_observation() == donor and Exact.stringify(_shell().capture_campaign_snapshot()) == Exact.stringify(pristine), "canonical recipient construction/quiet optical check leaves donor native/effects/UI/attempts/all fixture disk exact"): return false
+	# Observe PURE negative/recovery queries after construction. These listeners
+	# cannot certify callbacks during the already completed canonical quiet commit.
+	_watch_quiet(recipient, recipient_hero)
+	if not _floor_cases(recipient, recipient_hero, pristine, aggregate_candidate, "quiet pristine recipient"): return false
+	if not _floor_cases(level, hero, pristine, {}, "installed pristine donor"): return false
+	aggregate_receipts.append({"scope": "floor resource guards only", "pristine_whole_sha256": Exact.stringify(pristine).sha256_text(), "quiet_recipient_local_sha256": Exact.stringify(recipient.call("_capture_local_state")).sha256_text(), "actual_source_count": NormalIds.size(), "pure_query_events": aggregate_quiet_events, "real_swipes": swipes, "real_ordinary_primaries": primaries})
+	_shell()._dispose(aggregate_candidate); aggregate_candidate = {}
+	return _require(_floor_donor_observation() == donor and Exact.stringify(_shell().capture_campaign_snapshot()) == Exact.stringify(pristine), "normal quiet candidate disposal preserves original paused donor/effects/UI/disk; no production installation or floor visual acceptance")
+
+
+func _floor_references(native_level: CinderLevel) -> Dictionary:
+	var raw: Variant = native_level.get_node_or_null("FungalArt")
+	if not is_instance_valid(raw) or not raw is Act1MushroomGrottoArt: return {}
+	var art: Act1MushroomGrottoArt = raw
+	raw = art.get_node_or_null("QuietGrottoSilverFloorOverlay")
+	if not is_instance_valid(raw) or not raw is MeshInstance3D: return {}
+	var overlay: MeshInstance3D = raw
+	if not overlay.mesh is PlaneMesh or not overlay.material_override is StandardMaterial3D: return {}
+	var plane: PlaneMesh = overlay.mesh
+	var material: StandardMaterial3D = overlay.material_override
+	var texture: Texture2D = material.albedo_texture
+	if not is_instance_valid(texture) or texture != Act1MushroomGrottoArt.SilverFloor or texture.resource_path != "res://assets/acts/act1/lunar/environment/floor_silver_tile.png" or texture.get_size() != Vector2(64, 64): return {}
+	if art.get_parent() != native_level or overlay.get_parent() != art or not overlay.is_inside_tree() or not overlay.is_visible_in_tree() or overlay.get_world_3d() != native_level.get_world_3d() or overlay.get_script() != null or not overlay.get_children().is_empty(): return {}
+	if plane.size != Act1MushroomGrottoArt.FLOOR_OVERLAY_SIZE or overlay.position != Act1MushroomGrottoArt.FLOOR_OVERLAY_ORIGIN or overlay.basis != Basis.IDENTITY or material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR or material.alpha_scissor_threshold != .5 or material.alpha_antialiasing_mode != BaseMaterial3D.ALPHA_ANTIALIASING_OFF or material.blend_mode != BaseMaterial3D.BLEND_MODE_MIX or material.depth_draw_mode != BaseMaterial3D.DEPTH_DRAW_OPAQUE_ONLY or material.no_depth_test or material.next_pass != null or not art.binding_error().is_empty(): return {}
+	return {"art": art, "overlay": overlay, "mesh": plane, "material": material, "texture": texture, "parent": art, "index": overlay.get_index(), "transform": overlay.transform, "visible": overlay.visible}
+
+
+func _floor_positive(native_level: CinderLevel, native_hero: CinderPlayer, pristine: Dictionary, candidate: Dictionary) -> bool:
+	var refs: Dictionary = _floor_references(native_level)
+	if refs.is_empty() or not native_level.call("route_snapshot_runtime_error").is_empty() or not native_level.snapshot_error(pristine.level).is_empty() or not native_level.snapshot_error_with_player(pristine.level, pristine.player).is_empty(): return false
+	var points: Array = native_level.camera_framing_points()
+	if points.is_empty() or not native_level.last_camera_framing_error.is_empty() or Exact.stringify(native_hero.snapshot_state()) != Exact.stringify(pristine.player) or Exact.stringify(native_level.call("_capture_local_state")) != Exact.stringify(pristine.level.local): return false
+	if not candidate.is_empty():
+		return _shell()._candidate_presentation_error(candidate, pristine.shell).is_empty()
+	return Exact.stringify(_shell().capture_campaign_snapshot()) == Exact.stringify(pristine)
+
+
+func _floor_leaf_observation(refs: Dictionary) -> Dictionary:
+	var overlay: MeshInstance3D = refs.overlay
+	var material: StandardMaterial3D = refs.material
+	return {"parent": overlay.get_parent().get_instance_id() if overlay.get_parent() != null else 0, "index": overlay.get_index(), "inside_tree": overlay.is_inside_tree(), "visible": overlay.visible, "visible_in_tree": overlay.is_visible_in_tree(), "transform": overlay.transform, "global_transform": overlay.global_transform if overlay.is_inside_tree() else null, "mesh": overlay.mesh.get_instance_id(), "material": overlay.material_override.get_instance_id(), "texture": material.albedo_texture.get_instance_id(), "threshold": material.alpha_scissor_threshold, "aa_mode": material.alpha_antialiasing_mode, "aa_edge": material.alpha_antialiasing_edge, "blend": material.blend_mode, "depth": material.depth_draw_mode}
+
+
+func _floor_cases(native_level: CinderLevel, native_hero: CinderPlayer, pristine: Dictionary, candidate: Dictionary, label: String) -> bool:
+	var refs: Dictionary = _floor_references(native_level)
+	if refs.is_empty(): return _require(false, label + " actual retained floor required before faults")
+	var material: StandardMaterial3D = refs.material
+	var overlay: MeshInstance3D = refs.overlay
+	var baseline: Dictionary = _floor_leaf_observation(refs)
+	var same_mesh: PlaneMesh = refs.mesh.duplicate()
+	var same_material: StandardMaterial3D = material.duplicate()
+	var same_texture: ImageTexture = ImageTexture.create_from_image(refs.texture.get_image())
+	if not _require(same_mesh != refs.mesh and same_mesh.size == refs.mesh.size and same_material != material and same_material.albedo_texture == refs.texture and same_texture != refs.texture and same_texture.get_size() == refs.texture.get_size() and same_texture.get_image().get_data() == refs.texture.get_image().get_data(), label + " fault replacements keep equivalent original geometry/material/texture pixels but distinct native handles"): return false
+	var cases: Array[Dictionary] = [
+		{"property": "alpha_scissor_threshold", "value": material.alpha_scissor_threshold + .125},
+		{"property": "alpha_antialiasing_mode", "value": BaseMaterial3D.ALPHA_ANTIALIASING_ALPHA_TO_COVERAGE},
+		{"property": "alpha_antialiasing_edge", "value": material.alpha_antialiasing_edge + .125},
+		{"property": "blend_mode", "value": BaseMaterial3D.BLEND_MODE_ADD},
+		{"property": "depth_draw_mode", "value": BaseMaterial3D.DEPTH_DRAW_DISABLED},
+		{"property": "visibility"}, {"property": "transform"}, {"property": "detach"},
+		{"property": "equivalent_mesh"}, {"property": "equivalent_material"}, {"property": "equivalent_texture"},
+	]
+	for fault: Dictionary in cases:
+		var name: String = fault.property
+		var previous: Variant = material.get(name) if fault.has("value") else null
+		var native_before: Dictionary = _native_candidate_probe(native_level, native_hero)
+		var donor_before: Dictionary = _floor_donor_observation()
+		var fx_before: Dictionary = _floor_effects_observation(candidate.fx if not candidate.is_empty() else _shell().fx)
+		var candidate_camera: Transform3D = candidate.camera.global_transform if not candidate.is_empty() else _shell().camera.global_transform
+		var quiet_before: int = aggregate_quiet_events
+		match name:
+			"visibility": overlay.visible = false
+			"transform": overlay.position += Vector3(.125, 0, 0)
+			"detach": refs.parent.remove_child(overlay)
+			"equivalent_mesh": overlay.mesh = same_mesh
+			"equivalent_material": overlay.material_override = same_material
+			"equivalent_texture": material.albedo_texture = same_texture
+			_: material.set(name, fault.value)
+		# No yield while malformed. All authoritative probes are real paused API
+		# queries; only diagnostic strings may change. Never re-pin/repair custody.
+		var changed: bool = _floor_leaf_observation(refs) != baseline
+		var art_error: String = refs.art.binding_error()
+		var runtime_error: String = native_level.call("route_snapshot_runtime_error")
+		var points: Array = native_level.camera_framing_points()
+		var framing_error: String = native_level.last_camera_framing_error
+		var local_refused: bool = (native_level.call("_capture_local_state") as Dictionary).is_empty()
+		var capture_refused: bool = _shell().capture_campaign_snapshot().is_empty() if candidate.is_empty() else local_refused
+		var preflight_error: String = native_level.snapshot_error(pristine.level)
+		var context_error: String = native_level.snapshot_error_with_player(pristine.level, pristine.player)
+		var commit_refused: bool = not native_level.restore_state(pristine.level)
+		var optical_error: String = _shell()._candidate_presentation_error(candidate, pristine.shell) if not candidate.is_empty() else runtime_error
+		var unchanged: bool = _native_candidate_probe(native_level, native_hero) == native_before and _floor_donor_observation() == donor_before and _floor_effects_observation(candidate.fx if not candidate.is_empty() else _shell().fx) == fx_before and (candidate.camera.global_transform if not candidate.is_empty() else _shell().camera.global_transform) == candidate_camera and aggregate_quiet_events == quiet_before
+		# Restore only this actual fault's original value/reference. No physics
+		# collider is detached and no native shape-owner identity is recreated.
+		match name:
+			"visibility": overlay.visible = refs.visible
+			"transform": overlay.transform = refs.transform
+			"detach": refs.parent.add_child(overlay); refs.parent.move_child(overlay, refs.index)
+			"equivalent_mesh": overlay.mesh = refs.mesh
+			"equivalent_material": overlay.material_override = material
+			"equivalent_texture": material.albedo_texture = refs.texture
+			_: material.set(name, previous)
+		var recovered: bool = _floor_leaf_observation(refs) == baseline and _floor_positive(native_level, native_hero, pristine, candidate) and _native_candidate_probe(native_level, native_hero) == native_before and _floor_donor_observation() == donor_before and aggregate_quiet_events == quiet_before
+		aggregate_receipts.append({"scope": label, "fault": name, "changed": changed, "art_error": art_error, "runtime_error": runtime_error, "framing_error": framing_error, "local_capture_refused": local_refused, "authoritative_capture_refused": capture_refused, "preflight_error": preflight_error, "saved_player_error": context_error, "restore_refused": commit_refused, "restored_optical_error": optical_error, "native_unchanged": unchanged, "exact_recovery": recovered})
+		if not _require(changed and not art_error.is_empty() and not runtime_error.is_empty() and points.is_empty() and not framing_error.is_empty() and local_refused and capture_refused and not preflight_error.is_empty() and not context_error.is_empty() and commit_refused and not optical_error.is_empty(), label + " " + name + " independently rejects actual retained floor/capture/preflight/framing/commit before mutation"): return false
+		if not _require(unchanged, label + " " + name + " pure denial preserves native19/Player/Scheduler/effects/UI/all disk/leases/events"): return false
+		if not _require(recovered, label + " " + name + " exact original presentation restoration recovers the same pristine whole unit/current view"): return false
+	return true
+
+
+func _floor_effects_observation(fx: PixelEffects) -> Dictionary:
+	# Public policy + actual effect/audio node readback. Do not call the count
+	# getters: those prune retired private registries and are not pure observers.
+	var nodes: Array[Dictionary] = []
+	var children: Array[Node] = fx.find_children("*", "", true, false)
+	for child: Node in children:
+		var state: Dictionary = {"id": child.get_instance_id(), "parent": child.get_parent().get_instance_id(), "class": child.get_class(), "queued": child.is_queued_for_deletion(), "process_mode": child.process_mode}
+		if child is Node3D: state.transform = (child as Node3D).transform; state.visible = (child as Node3D).visible
+		if child is AudioStreamPlayer:
+			var voice := child as AudioStreamPlayer
+			state.audio = [voice.playing, voice.stream_paused, voice.stream.get_instance_id() if voice.stream != null else 0, voice.bus, voice.pitch_scale, voice.volume_db]
+		nodes.append(state)
+	return {"id": fx.get_instance_id(), "policy": fx.policy_snapshot(), "children": nodes}
+
+
+func _floor_donor_observation() -> Dictionary:
+	# Whole live capture is separately tested, since fault refusal changes only
+	# documented Shell/Level diagnostic strings. No diagnostic is erased/reset.
+	var disk: Dictionary = {}
+	var directory := DirAccess.open(aggregate_root)
+	if directory != null:
+		for name: String in directory.get_files(): disk[name] = FileAccess.get_file_as_bytes(aggregate_root + name)
+	var buses: Array[Dictionary] = []
+	for index: int in AudioServer.bus_count:
+		buses.append({"name": AudioServer.get_bus_name(index), "send": AudioServer.get_bus_send(index), "volume_db": AudioServer.get_bus_volume_db(index), "mute": AudioServer.is_bus_mute(index), "solo": AudioServer.is_bus_solo(index), "bypass": AudioServer.is_bus_bypassing_effects(index)})
+	return {"ids": _identities(_shell()), "native": _native_candidate_probe(level, hero), "attempts": Exact.stringify(_shell().attempts.state()), "ui": _ui_receipt(_shell()), "disk": disk, "effects": _floor_effects_observation(_shell().fx), "audio_buses": buses, "events": events, "checkpoints": opening_checkpoint_events.duplicate(true), "completion_events": opening_completion_events, "contact_events": opening_contact_events, "actions": _portable(hero.get_world_action_records()), "paused": paused}
+
+
 func _finish() -> void:
 	if finishing: return
 	finishing = true; paused = true
@@ -512,12 +672,15 @@ func _finish() -> void:
 	if file == null:
 		checks += 1; failures += 1; push_error("native aggregate fixture report unavailable")
 	else:
-		file.store_string(JSON.stringify({"scope": "TEST predecessors/registry only; genuine neutral Standard umbrella ordinary clear + breathing warning; native full19 aggregate candidate/TitleContinue/earlierRetry attempt; no all19 clear/fulllevel/portrait/profile-kit/sporedepletion/human/FPS acceptance", "checks": checks, "failures": failures, "real_swipes": swipes, "real_ordinary_primaries": primaries, "receipts": aggregate_receipts, "native_phase_observations": _portable(phase_observations), "diagnostics": full_diagnostics, "fixture_mode": "selected native aggregate/candidate prefix only"}, "\t")); file.close()
+		file.store_string(JSON.stringify({"scope": ("TEST predecessors/registry only; pristine paused full19 floor resource guards and distinct canonical quiet recipient/current optics; no gameplay/active warning/TitleContinue/Retry/fulllevel/portrait/floor visual/human/FPS acceptance" if aggregate_floor_guards_only else "TEST predecessors/registry only; genuine neutral Standard umbrella ordinary clear + breathing warning; native full19 aggregate candidate/TitleContinue/earlierRetry attempt; no all19 clear/fulllevel/portrait/profile-kit/sporedepletion/human/FPS acceptance"), "checks": checks, "failures": failures, "real_swipes": swipes, "real_ordinary_primaries": primaries, "receipts": aggregate_receipts, "native_phase_observations": _portable(phase_observations), "diagnostics": full_diagnostics, "fixture_mode": ("floor-resource-guards-only" if aggregate_floor_guards_only else "selected native aggregate/candidate prefix only")}, "\t")); file.close()
 	var directory := DirAccess.open(aggregate_root)
 	if directory != null:
 		for name: String in directory.get_files(): DirAccess.remove_absolute(ProjectSettings.globalize_path(aggregate_root + name))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(aggregate_root))
 	Engine.max_fps = aggregate_old_fps; AudioServer.set_bus_layout(aggregate_old_audio)
 	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
-	print("A1-L3 NATIVE FULL-AGGREGATE PREFIX/CANDIDATE ATTEMPT: %d checks/%d failures; %d recognizer swipes/%d ordinary primaries; TEST PREDECESSORS ONLY / NO FULL19 CLEAR / NO LEVEL ACCEPTANCE" % [checks, failures, swipes, primaries])
+	if aggregate_floor_guards_only:
+		print("A1-L3 PRISTINE FLOOR RESOURCE GUARDS: %d checks/%d failures; %d recognizer swipes/%d ordinary primaries; QUIET PRISTINE19 ONLY / NO ACTIVE WARNING / NO FLOOR VISUAL OR LEVEL ACCEPTANCE" % [checks, failures, swipes, primaries])
+	else:
+		print("A1-L3 NATIVE FULL-AGGREGATE PREFIX/CANDIDATE ATTEMPT: %d checks/%d failures; %d recognizer swipes/%d ordinary primaries; TEST PREDECESSORS ONLY / NO FULL19 CLEAR / NO LEVEL ACCEPTANCE" % [checks, failures, swipes, primaries])
 	quit(1 if failures else 0)
