@@ -42,6 +42,7 @@ var _boundaries: Array = []
 var _capture_camera: Camera3D
 var _capture_hud: GameHUD
 var _capture_error: String = ""
+var _control_busy: bool = false
 
 
 func _ready() -> void:
@@ -134,6 +135,15 @@ func response_context(direction: Vector3) -> Dictionary:
 
 
 func start_attack(kind: String, escape_direction: Vector3) -> Dictionary:
+	if _control_busy:
+		return {"accepted": false, "reason": "Garden admission and phase control cannot reenter"}
+	_control_busy = true
+	var answer: Dictionary = _start_attack(kind, escape_direction)
+	_control_busy = false
+	return answer
+
+
+func _start_attack(kind: String, escape_direction: Vector3) -> Dictionary:
 	if not _active or get_tree().paused or tether.dead or not mechanisms.has(kind) or escape_direction not in [Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK] or not runtime_error().is_empty():
 		return {"accepted": false, "reason": "Actual unpaused garden and ordinary authored approach required"}
 	for source: CinderLaneMechanism in mechanisms.values():
@@ -187,6 +197,8 @@ func exposure_open() -> bool:
 
 func _on_phase_boundary() -> void:
 	# Called after HP/phase commit, before damage/phase observers. No HP reset.
+	var was_busy: bool = _control_busy
+	_control_busy = true
 	var triggering: Dictionary = _logical_exposure(tether.phase - 1)
 	if triggering.is_empty():
 		last_configuration_error = "A genuine accepted recovery must precede a root phase crossing"
@@ -196,6 +208,7 @@ func _on_phase_boundary() -> void:
 		source.cancel("garden_phase_boundary")
 	_retry_at_s = threat_scheduler.get_clock() + 0.25
 	_update_guidance()
+	_control_busy = was_busy
 
 
 func _parent_presentation_guard(_mechanism_id: String, _current: Dictionary) -> bool:
@@ -414,7 +427,7 @@ func _local_snapshot_error(data: Dictionary) -> String:
 
 
 func _local_snapshot_error_with_player(data: Dictionary, player: Dictionary) -> String:
-	if not get_tree().paused or not _active:
+	if not get_tree().paused or not _active or _control_busy:
 		return "Garden pair requires the completed paused barrier"
 	var error: String = runtime_error()
 	if error.is_empty():
@@ -458,8 +471,11 @@ func _control_error(data: Dictionary) -> String:
 	var latest_serial: int = 0
 	var latest_kind: String = ""
 	var held: int = 0
+	var total_cycles: int = 0
+	var seen_serials: Dictionary = {}
 	for kind: String in ["draw", "enclose"]:
 		var packet: Dictionary = data.mechanisms[kind]
+		total_cycles += int(packet.cycle)
 		if int(packet.cycle) == 0:
 			if control.cycle_records.has(kind) or control.framing.has(kind):
 				return "Idle source cannot invent accepted cycle or response presentation"
@@ -468,13 +484,16 @@ func _control_error(data: Dictionary) -> String:
 		var earned: Variant = control.cycle_records.get(kind)
 		if not earned is Dictionary or not Codec.keys_error(earned, ["cycle", "exchange_id", "tether_phase"]).is_empty() or not Codec.is_integer(earned.cycle, 1) or earned.cycle != packet.cycle or earned.exchange_id != packet.exchange.id or not Codec.is_integer(earned.tether_phase, 1, 2):
 			return "Latest genuine cycle, exchange identity and phase association must agree"
-		if packet.exchange_encounter_id != ENCOUNTER_ID or not _exact_position(packet.exchange.opening_position, TetherScript.FIXED_POSITION) or int(earned.tether_phase) > int(data.tether.phase):
+		if packet.exchange_encounter_id != ENCOUNTER_ID or packet.exchange.profile_id != data.scheduler.profile.id or int(packet.exchange.world_revision) != int(data.scheduler.world_revision) or float(packet.exchange.start_s) > float(data.scheduler.clock_s) or not _exact_position(packet.exchange.opening_position, TetherScript.FIXED_POSITION) or int(earned.tether_phase) > int(data.tether.phase):
 			return "Every executed garden exchange retains the actual fixed external tether"
 		if packet.status == "running":
 			held += 1
 			if int(earned.tether_phase) != int(data.tether.phase) or int(data.tether.phase) == 3:
 				return "An older phase cannot reopen the current tether"
 		var serial: int = int(String(earned.exchange_id).substr(7))
+		if serial < 1 or serial > int(data.scheduler.serial) or int(packet.cycle) > serial or seen_serials.has(serial) or earned.exchange_id != "threat-%d" % serial:
+			return "Distinct consumed source cycles cannot exceed the paired native serial"
+		seen_serials[serial] = true
 		if serial > latest_serial:
 			latest_serial = serial
 			latest_kind = kind
@@ -487,7 +506,7 @@ func _control_error(data: Dictionary) -> String:
 			var point: Vector3 = Codec.read_vector3(view[key])
 			if not FLOOR_RECT.grow(-CinderThreatScheduler.CAPSULE_RADIUS).has_point(Vector2(point.x, point.z)) or absf(point.y) > 0.1:
 				return "Historical render points must retain firm native capsule support"
-	if control.cycle_records.size() != executed.size() or control.framing.size() != executed.size() or held > 1:
+	if control.cycle_records.size() != executed.size() or control.framing.size() != executed.size() or held > 1 or total_cycles > int(data.scheduler.serial):
 		return "Separate teachings retain exactly their genuinely consumed source records"
 	var expected_next: String = "draw" if latest_kind.is_empty() or latest_kind == "enclose" else "enclose"
 	if control.next_kind != expected_next:
@@ -515,6 +534,14 @@ func _control_error(data: Dictionary) -> String:
 	var expected_retry: float = 0.0 if control.boundaries.is_empty() else prior_clock + 0.25
 	if float(control.retry_at_s) != expected_retry:
 		return "Auto-admission retry preference must retain the exact last crossing clock"
+	for kind: String in executed:
+		var admitted_phase: int = 1
+		var start_s: float = float(data.mechanisms[kind].exchange.start_s)
+		for crossing: Dictionary in control.boundaries:
+			if start_s >= float(crossing.clock_s):
+				admitted_phase = int(crossing.to_phase)
+		if int(control.cycle_records[kind].tether_phase) != admitted_phase or admitted_phase > 2:
+			return "Accepted source phase must agree with admission time and the real boundary prefix"
 	return ""
 
 
@@ -555,6 +582,8 @@ func _restore_local_state(data: Dictionary) -> void:
 
 func _presentation_error(camera: Camera3D, hud: GameHUD) -> String:
 	var error: String = runtime_error()
+	if error.is_empty():
+		error = tether.presentation_error(not _logical_exposure().is_empty())
 	if not error.is_empty():
 		return error
 	if not is_instance_valid(camera) or not is_instance_valid(hud):

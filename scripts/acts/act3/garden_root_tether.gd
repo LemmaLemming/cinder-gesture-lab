@@ -283,6 +283,16 @@ func present_checked_exposure(logical_exposed: bool) -> bool:
 	return true
 
 
+func presentation_error(logical_exposed: bool) -> String:
+	# Pure derived appearance check; never consult the live damage provider.
+	var error: String = runtime_error()
+	if not error.is_empty():
+		return error
+	var body_color: Color = Color("201d29") if dead else Color("46334e")
+	var band_color: Color = Color("514650") if dead else (Color("e5dece") if logical_exposed else Color("74616f"))
+	return "Actual root palette disagrees with its native logical recovery" if _materials[0].albedo_color != body_color or _materials[1].albedo_color != band_color else ""
+
+
 func _persistence_palette(logical_exposed: bool) -> void:
 	_materials[0].albedo_color = Color("201d29") if dead else Color("46334e")
 	_materials[1].albedo_color = Color("514650") if dead else (Color("e5dece") if logical_exposed else Color("74616f"))

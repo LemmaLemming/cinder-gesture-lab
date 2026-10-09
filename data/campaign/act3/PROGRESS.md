@@ -1,3 +1,9 @@
+## Current Shared44 and paired implementation — 9 October 2026
+
+Shared44 `d22cb47b` is actually preserve-adopted at `6cd32313`; [exact custody](../../../assets/acts/act3/evidence/A3-L4-shared44-adoption/garden-root-shared44-adoption.json) proves15,478 owned tracked/15,483 physical/settings/ledgers and1,684 incoming nonowned bytes/modes exact,381 prior source UID identities/382total/1new/0collisions. Shared43 runtime is unchanged. Campaign10/24, Act3 still3/8. Current small-room local version2/accepted-cycle/boundary/quiet physical-native pairing is written, source review fixes are in progress, and no current native result exists yet. Original Shared42 prototype75/0,156/0,183/0,171/0 remain their original frozen-source evidence. All own engine jobs are closed; next is a narrow paired restore/rejection plus affected mechanics check. Full authored L4/garden art/production flow remains unfinished.
+
+Earlier present-tense source/result statements below describe their original boundary; they do not grant current paired implementation credit.
+
 ## Current accepted frontier — 9 October 2026
 
 A3-L3 Mirror Sea is independently **ACCEPTED**, canonical response `aa5d2447-49c9-401b-ab7e-030bace1beb0` at publication `afa6fbfd`. Act3 is **3/8 accepted**, next A3-L4 False Paradise. Exact content `55256309` is integrated at `13ebcb50`; canonical registration names the real L3 scene, previous L2 and unimplemented next L4. [Original acceptance](../../../assets/acts/act3/evidence/A3-L3-acceptance/aa5d2447-49c9-401b-ab7e-030bace1beb0-ACCEPTED.json) preserves Root20/0 production and brief7/0 scope. No full route, defeat-all or earned-exit gate; untested terminal/contact-next/two-pulse transport/whole-kit/every-court art and scenic crop/weak lake identity remain limits.
