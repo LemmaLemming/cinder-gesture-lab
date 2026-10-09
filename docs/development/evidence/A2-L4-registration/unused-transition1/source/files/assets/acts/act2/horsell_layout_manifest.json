@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "asset_id": "A2-HORSELL-LAYOUT-01",
+  "family": "act2-horsell-dry-route",
+  "readiness": "original_runtime_L1_scripted_route_native_portrait_and_canonical_registration_accepted",
+  "resources": [
+    "res://scenes/acts/act2/a2_l1.tscn",
+    "res://scripts/acts/act2/horsell_common.gd"
+  ],
+  "source_references": [
+    "docs/ACT2_CONCEPT.md A2-L1",
+    "docs/concept-art/act2/README.md adaptation boundaries",
+    "G05 Horsell Common",
+    "sampleS01 ray-evasion"
+  ],
+  "source_use": "Original runtime floor and perimeter shapes adapting broad dry heath clearings; concept paintings remain reference-only.",
+  "native_world_extent": {
+    "x": [
+      -3.4,
+      3.4
+    ],
+    "z": [
+      -30.2,
+      3.6
+    ],
+    "floor_top_y": 0,
+    "spawn_feet": [
+      -1,
+      0.1,
+      2.6
+    ]
+  },
+  "pivot": "Level root world origin; shared player feet Marker3D. Floor bodies centered y=-.25 with .5 thickness.",
+  "collision": "Layer1 static same-height unrotated box floors, ten visible soil banks and one grounded trunk, all body/shape paths authored. Six actual support bindings use2mm proof inset and>=.8m adjacent overlap; extended supports stay wholly inside the existing ground union, so playable outline/banks/visible terrain remain fixed. Scenic kit and Scouts have no gameplay collider.",
+  "occlusion": "Actual layer1 banks keep full collider dimensions/transforms. Owned BankSurface materials derive alpha0.12 only when the actual camera ray meets a bank before protected player/source/lane/proof points; opaque otherwise. No shared cue override, new collision or serialized opacity.",
+  "states": [
+    "legacy_art_preview_only",
+    "live_shared_entered",
+    "route_left_or_right",
+    "scouts_cleared",
+    "woking_contact_exit",
+    "shared_exited"
+  ],
+  "animation_clock": "Level physics scenic_clock inherited pause; no independent timer or shader TIME.",
+  "reuse": [
+    "A2-L1 parent terrain",
+    "future A2-O1 layout rearrangement"
+  ],
+  "limitations": [
+    "Actual default269 and nativeHeavy304 shared13 all0; earlierHeavyboth541/Cargo248/Padded269/Quick264/Assisted264 retain explicitly reused scopes.",
+    "Actual seven final nativeframes independentlyreviewed; thin sourceoutlines locallyoverlap closecounter sprite whilecore torso/facing/feet remainreadable.",
+    "Exactauthoredpaireddeathretry203 shared10/driver285 current13 all0. Emptyoptional camera hook preservesordinaryfollow; stationaryL1 unusednewlunge/spore/replay consumers.",
+    "Humanbalance/nativefocusedplay/mobileperformance untested; canonical acceptance/registryintegration separate."
+  ],
+  "prior_shared2_evidence": {
+    "shared_baseline": "15589bfd956e74a659a63e843b1e1430d28227b8",
+    "owned_layout_checks": 243,
+    "failures": 0,
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_layout_smoke.gd",
+    "log": ".cinder/a2-l1-selected-spawn-layout.log",
+    "reused_after_cosmetic_changes": "Floor/bank/trunk shapes, collision masks, dimensions and lifecycle/snapshot fields unchanged; changed kit placements and preview-only visibility do not change checked travel/state behavior.",
+    "spawn_revision": "Selected X=-1 native portrait inspected; actual ordinary dash traversal flanks trunk and reaches Woking,243 checks/0 failures."
+  },
+  "evidence": {
+    "shared_baseline": "dcc7a3a735b2ef00f7b5e9fd5b74320d8db69b32",
+    "merge_commit": "36760edac58e3bf9f92f484c57fda34fde47c811",
+    "owned_floor_snapshot_checks": 257,
+    "failures": 0,
+    "log": ".cinder/a2-l1-shared3-floor-snapshot-passed.log",
+    "scope": "Actual dry travel, local scenic lifecycle and empty-encounter shared scheduler stable collision JSON/cross-instance restoration; no attack admission or combat. New advancing tableau checks pending after this result.",
+    "live_routes": {
+      "shared_baseline": "43c8f6d16fb12e2c137610948083101ec9beecff",
+      "preserving_head": "46f7f036e28630e6c2c3cbd667c47b071786dd39",
+      "checks": 541,
+      "failures": 0,
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_live_level_smoke.gd",
+      "log": ".cinder/a2-l1-shared8-live-routes-settle-diagnostic.log",
+      "scope": "Actual shared shell/controller Heavy ordinary-primary, initial0ammo/no pickups, both completed-world-dash branches, six required defeats, four checkpoints, once clear, separate actual contact transition/resource preservation/old-node cleanup. Later narrow pending-weapon guard/root actual-commit preflight require affected checks before handoff."
+    }
+  },
+  "diagnosis": {
+    "first_result": ".cinder/a2-l1-shared3-floor-snapshot.log:257checks/4failures",
+    "minimal_reproduction": ".cinder/a2-l1-floor-binding-diagnostic.log",
+    "cause": "Departure box float32 global-position/half-size reconstruction does not exactly enclose its independently authored full rectangle (one rounding unit); the displayed coordinates round to the same numbers.",
+    "fix": "Inset only all authored proof rectangles by 0.002 world units. Keep actual collision geometry and exact shared validation. No assertion tolerance or scheduler modification."
+  },
+  "current_validation": {
+    "shared_publication": "fef1b1a79d83401d5b67118f6f69dcf2abea017c / campaign-shared-13",
+    "bank_cutaway": {
+      "checks": 39,
+      "failures": 0,
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_bank_readability_smoke.gd -- --a2-art-preview",
+      "log": ".cinder/a2-l1-shared10-bank-readability-first.log",
+      "scope": "Two actual previews/20 unique bank materials, projected foreground depth, alpha restoration, unchanged body/collider/floor geometry, sharedcue/material isolation, cleanup. Synthetic lane probes are TESTONLY cosmetic evidence."
+    },
+    "layout": {
+      "checks": 259,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared8-floor-overlap-layout.log",
+      "scope": "Actual support overlaps/dashes/fingerprint/tableau/reset; collider/floor unchanged by new bank visual cutaway."
+    }
+  },
+  "support_overlap_revision": {
+    "shared_publication": "2cba17fcdb89c18600355ddf377281c3b5aef8f0 / campaign-shared-6",
+    "status": "implemented_actual_live_both_routes541_and_layout259_verified",
+    "cause": "Shrinking each .6m/.4m old overlap by both playerR.32+skin.02 and2mm safe insets left conservative support gaps. Physical union was continuous but the ordinary response prover correctly rejected those routes.",
+    "new_specs": {
+      "arrival": [
+        -3.4,
+        -4.0,
+        6.8,
+        7.6
+      ],
+      "reunion_road": [
+        -2.9,
+        -20.0,
+        5.8,
+        3.2
+      ],
+      "woking_road": [
+        -2.9,
+        -30.2,
+        5.8,
+        3.4
+      ]
+    },
+    "preserved": "Existing flat ground union, floor top0, body/shape names, banks/trunk/camera/visible kit and actual movement distance. Shared proof/tolerances unchanged.",
+    "fingerprints": "New support dimensions validated on shared8 layout259/0; unchanged by derived materials.",
+    "actual_evidence": ".cinder/a2-l1-shared6-live-routes-floor-repaired.log:170checks/1fixture contact-navigation failure after first4 actual primary clears; fulllevel remains pending."
+  },
+  "current_runtime_evidence": {
+    "adopted_baseline": "fef1b1a79d83401d5b67118f6f69dcf2abea017c",
+    "api_revision": "campaign-shared-13",
+    "preserving_merge": "24de1aa84960477a6c93993827040e586a01ead1",
+    "tracking_consumer": {
+      "checks": 285,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-tracking-consumer.log"
+    },
+    "scout_materials": {
+      "checks": 40,
+      "failures": 0,
+      "eligible_meshes": 29,
+      "owned_material_copies": 32,
+      "log": ".cinder/a2-l1-shared13-scout-readability-final.log",
+      "scope": "Measured-position quarter-recovery cosmetic reconstruction, palette/texture preservation, isolation,flash,clear,weakcontext and fresh restore; no fabricated fullfight."
+    },
+    "actual_native_route": {
+      "checks": 304,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-live-portrait-final.log",
+      "evidence": "docs/acts/act2/evidence/A2-L1/live-evidence.json",
+      "scope": "Actual Standard/Heavy left clear with allseven native540x1170 frames and unchanged27.05s closecounter hero(.397689,-25.587755); no material captured-state defect."
+    },
+    "actual_default_route": {
+      "checks": 269,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-live-standard-left.log",
+      "loadout": "WEAPON-01/CLOTH-J0/P0/S0",
+      "scope": "Actual six required primary defeats, initialzeroammo/no pickups, four checkpoints/onceclear/contacttransition/cleanup."
+    },
+    "exact_authored_retry": {
+      "checks": 203,
+      "failures": 0,
+      "baseline": "campaign-shared-10",
+      "log": ".cinder/a2-l1-shared10-authored-pair-retry-exact-final.log",
+      "scope": "Real firstfour clears/contact checkpoint, pair warning/lock pause/exact wholeaggregate transport, actualraydeath and fresh protectedretry."
+    },
+    "limits": [
+      "Thin preserved outlines locally overlap closecounter sprite; core torso/facing/feet readable.",
+      "Scripted unfocused scope, humanbalance/nativefocus/mobile/performance untested.",
+      "Integration canonical acceptance/registration remains separate; laterlevels unimplemented."
+    ],
+    "actual_challenge_route": {
+      "checks": 269,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-live-challenge-padded-left.log",
+      "loadout": "WEAPON-03/CLOTH-J1/P1/S0",
+      "profile": "challenge",
+      "scope": "Actual full ordinaryprimary/initialzeroammo/no pickup route with slowest primary recovery;4boundaries/contact/cleanup."
+    },
+    "tested_owned_runtime_commit": "16f2532518edd8d76aa41ec40f1d10edad607559"
+  },
+  "canonical_acceptance": {
+    "message_id": "73244c16-dcb2-4351-a354-b13bf11a81c0",
+    "candidate": "a96edfaddd22e206438e616a8b4080e5c5cdce7a",
+    "runtime": "16f2532518edd8d76aa41ec40f1d10edad607559",
+    "integrated_content": "993096ca2ea908605cad1400a8c6bf4f45665779",
+    "registration": "d629072f2ca2086878981ef3e19543d9a68ece41",
+    "authored_baseline": "fef1b1a79d83401d5b67118f6f69dcf2abea017c",
+    "authored_api": "campaign-shared-13",
+    "production_headless_checks": 132,
+    "production_native_checks": 142,
+    "failures": 0,
+    "scope": "Individual L1 production registration/lifecycle acceptance; TEST ONLY priorAct1 prefix and initialHP37/0ammo. Actual A1-L5 prerequisite remains. No preceding-level gameplay, human balance or mobile performance claim."
+  }
+}

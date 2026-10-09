@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "asset_id": "A2-RAY-SCOUT-ACTOR-01",
+  "type_match": "A2-E1 Ray Scout; existing L1-authored enemy, not equipment/perk/powerup introduction",
+  "family": "act2-ray-scout",
+  "readiness": "original_runtime_L1_scripted_route_native_portrait_and_canonical_registration_accepted",
+  "authoring_source": "scripts/acts/act2/ray_scout_actor.gd",
+  "visual_resource": "scripts/acts/act2/ray_scout_visual.gd",
+  "visual_manifest": "assets/acts/act2/ray_scout_manifest.json",
+  "source": [
+    "docs/ACT2_CONCEPT.md A2-L1 Ray Scout",
+    "docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+    "docs/concept-art/act2/props/martian-technology.png"
+  ],
+  "source_use": "Ordinary-primary lowhousing opening with a compact three-leg machine; parent visual kit is original geometry. No source-board pixels extracted.",
+  "native_scale": "Same 1.9unit bounded cosmetic visual; actor attack target root at floor height below camera case.",
+  "pivot": "Root world floor XZ is the one reachable housing target; separate moving cosmetic hinge never moves the target.",
+  "collision": "No actor collider or body cage; shared primary scenery-layer1 LOS governs actual hit.",
+  "states": [
+    "idle",
+    "warning",
+    "lock",
+    "active",
+    "recovery",
+    "defeated",
+    "disarmed"
+  ],
+  "simulation_ownership": "Level/published scheduler adapter supplies phase and normalized progress/exact world direction. Actor has no autonomous processing, phase clocks, player damage, cue or scheduler substitute. Snapshot transport does not claim a complete saved encounter.",
+  "health": {
+    "max_hp": 30,
+    "status": "provisional_unplaytested",
+    "damage_window": "Configured/live/unpaused recovery plus ephemeral owner gate checks the actual scheduler recovery deadline and required exposed housing cue; HP0 commits before one guarded defeat signal."
+  },
+  "motion_tuning": {
+    "anchored": true,
+    "knockback_scale": 0.0,
+    "visual_articulation_only": true,
+    "status": "Initial stationary source; no silent travel/momentum/stagger/invulnerability."
+  },
+  "shared_hit_contract": "Exactly one enemies group; accepted/hp_damage/runtime target_id/target_alive_before_hit; stable actor_id separate for level snapshots. Keep spent group until owner cleanup so killing-hit reload credit remains shared-player-owned.",
+  "reuse": [
+    "A2-L1 Ray Scout",
+    "future A2-O1 parent enemy rearrangement"
+  ],
+  "limitations": [
+    "Actual complete scripted default/Heavy routes and equipment extremes pass; human/nativefocusbalance/mobileperformance untested.",
+    "Current40 materials +native304 allseven capturedstatesreadable; thin preservedoutlineoverlap remainsat closecounter.",
+    "Actor196 shared8 boundgate remainsapplicable to unchangedstate/hit/timing; materialrevision hasno gameplayauthority."
+  ],
+  "evidence": {
+    "shared_baseline": "15589bfd956e74a659a63e843b1e1430d28227b8",
+    "checks": 33,
+    "failures": 0,
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_scout_target_smoke.gd",
+    "log": ".cinder/a2-l1-scout-target.log",
+    "scope": "Prior manual recovery only; Heavy ordinary primary at1.8unit reach,0shells, finite/phase/paused/dead/reentry/cleanup guards. This33-check result predates actor snapshots; no whole exchange claim."
+  },
+  "snapshot": {
+    "api_revision": "act2-ray-scout-snapshot-2",
+    "schema_version": 2,
+    "methods": [
+      "snapshot_state() -> Dictionary",
+      "snapshot_error(snapshot: Dictionary) -> String",
+      "restore_state(snapshot: Dictionary) -> bool"
+    ],
+    "diagnostic": "last_snapshot_error",
+    "fields": [
+      "api_revision",
+      "schema_version",
+      "actor_id",
+      "max_hp",
+      "hp",
+      "phase",
+      "phase_progress",
+      "direction",
+      "root_position",
+      "body_yaw"
+    ],
+    "barrier": "Configured ready same-world actor, paused tree, outside actor damage/snapshot transactions; parent owns the deferred aggregate barrier",
+    "identity": "Stable actor ID and world housing root latch once at configure; snapshot cannot move to a different authored root",
+    "transport": "Finite JSON fields; normalized planar direction triples; finite cosmetic body_yaw in [-PI, PI] with a 0.000001-radian JSON boundary tolerance; HP/defeated phase consistency; exact ten-field schema. The public visual restore validator runs before actor mutation; accepted/returned nested data is defensive.",
+    "restoration": "Restores HP/maxHP/phase/progress/direction, the fixed housing root and the distinct warning-entry cosmetic body-yaw latch through silent visual restore_pose. Fresh lock/active/recovery/defeated rigs do not relatch chassis heading from the later mirror direction. No configuration, attacks, reward, defeat, drop or progression signals. Explicit earlier alive snapshots rewind the actor timeline; defeated snapshots remain silent enemies tombstones until owner tree exit.",
+    "dead_hero": "Valid paused bound shared hero may be dead for aggregate capture/restore. Damage and live phase presentation still reject a dead hero",
+    "retirement": "Disarmed/queued/unbound instances reject capture/validation/restore and cannot reconfigure",
+    "parent_state": "Route/phase deadlines/tracking/locked geometry/reservation identity/active-hit latch/flash clock/defeat progression remain in the validated level aggregate",
+    "max_hp_policy": "Actor validates finite positive maxHP and bounded HP; parent must cross-validate maxHP against the saved resolved role and encounter profile",
+    "status": "Schema2 isolated target and fresh-instance cosmetic latch verified196checks/0failures on shared5; full live exchange aggregate remains pending.",
+    "visual_methods": [
+      "get_body_yaw() -> float",
+      "restore_pose_error(phase: String, progress: float, direction: Vector3, body_yaw: float) -> String",
+      "restore_pose(phase: String, progress: float, direction: Vector3, body_yaw: float, hit_flash: bool = false) -> bool"
+    ],
+    "version_policy": "Unshipped actor schema/API advanced to version2; schema1 or a missing body_yaw rejects atomically. No migration or private shared-schema substitute.",
+    "body_yaw": "Local warning-entry planted chassis heading, separately saved from mirror direction; retained exactly through silent restoration. Canonical [-PI, PI] accepts only a 0.000001-radian serialization boundary tolerance; no wrapping or inferred relatch."
+  },
+  "snapshot_revision_evidence": {
+    "shared_publication": "767b09e7987637d6a5f7495b84ad130e54ff80da / campaign-shared-5",
+    "implementation": "Owned visual/actor/target test and their manifests only; no shared or level-root edits",
+    "static_checks": "JSON/schema/public API/ownership inspection; no engine job run by author",
+    "targeted_command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_scout_target_smoke.gd",
+    "result": "196checks_0failures_exit0_no_script_or_resource_errors",
+    "checks_added": "Fresh instances after warning tracking changes direction restore warning/lock/active/recovery/defeated actual chassis, mirror hinge/swivel, housing and door transforms; subsequent held poses preserve the plant. Malformed/nonfinite/out-of-range yaw rejects without actor or rig mutation. Pre-ready explicit pose restoration retains the latch. Exact negative and positive PI body-yaw JSON boundary round trips restore finite actual chassis orientation.",
+    "checks": 196,
+    "failures": 0,
+    "log": ".cinder/a2-l1-shared5-foundation-scout.log"
+  },
+  "prior_snapshot1_evidence": {
+    "api_revision": "act2-ray-scout-snapshot-1",
+    "schema_version": 1,
+    "checks": 130,
+    "failures": 0,
+    "report_source": "Parent integration owner verified the initial actor snapshot suite before this cosmetic latch revision",
+    "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act2/a2_l1_scout_target_smoke.gd",
+    "scope": "Historical isolated actual-primary and actor snapshot1 coverage. The source and fresh-restored rigs were not compared after warning mirror tracking changed direction; this result does not validate schema2."
+  },
+  "exchange_consumer": {
+    "source": "scripts/acts/act2/ray_scout_exchange.gd",
+    "api_revision": "act2-ray-exchange-1",
+    "verified_checks": 285,
+    "failures": 0,
+    "log": ".cinder/a2-l1-shared10-copied-clock-exchange.log",
+    "shared_publication": "564559094bc98229c8140cf092771329b333cea0 / campaign-shared-10",
+    "ownership": "One shared scheduler/hero/effects; parent begins/ends epoch, chooses active source IDs and supplies current portrait/floor context. No new controls, body collider, gear or ability.",
+    "deadlines": "Raw10 damage, windup1.55/full lock1.10/active.16/recovery1.60, source interval1.60, maxHP30/move_speed0; fresh role resolved once against fixed saved profile.",
+    "pause_transport": "Copied outer/sample/reservation clocks/deadlines/adapter scalars/cooldown and adjacent deferred boundaries require exact scalar equality; five adjacent-lower-binary64 mutations reject atomically using exact-json-1 full-unit before/after encoding. Derived durations/progress and vector reconstruction keep existing policy. Source HP/plant, immutable paired scheduler, current hero sample, bounded deferred paths and presentation-only landing/opening witnesses restore silently.",
+    "cleanup": "Cancel owner before progression; bound actor gate closes permanently on release; source/cue/portrait invalidation closes ray before outgoing damage."
+  },
+  "current_runtime_evidence": {
+    "adopted_baseline": "fef1b1a79d83401d5b67118f6f69dcf2abea017c",
+    "api_revision": "campaign-shared-13",
+    "preserving_merge": "24de1aa84960477a6c93993827040e586a01ead1",
+    "tracking_consumer": {
+      "checks": 285,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-tracking-consumer.log"
+    },
+    "scout_materials": {
+      "checks": 40,
+      "failures": 0,
+      "eligible_meshes": 29,
+      "owned_material_copies": 32,
+      "log": ".cinder/a2-l1-shared13-scout-readability-final.log",
+      "scope": "Measured-position quarter-recovery cosmetic reconstruction, palette/texture preservation, isolation,flash,clear,weakcontext and fresh restore; no fabricated fullfight."
+    },
+    "actual_native_route": {
+      "checks": 304,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-live-portrait-final.log",
+      "evidence": "docs/acts/act2/evidence/A2-L1/live-evidence.json",
+      "scope": "Actual Standard/Heavy left clear with allseven native540x1170 frames and unchanged27.05s closecounter hero(.397689,-25.587755); no material captured-state defect."
+    },
+    "actual_default_route": {
+      "checks": 269,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-live-standard-left.log",
+      "loadout": "WEAPON-01/CLOTH-J0/P0/S0",
+      "scope": "Actual six required primary defeats, initialzeroammo/no pickups, four checkpoints/onceclear/contacttransition/cleanup."
+    },
+    "exact_authored_retry": {
+      "checks": 203,
+      "failures": 0,
+      "baseline": "campaign-shared-10",
+      "log": ".cinder/a2-l1-shared10-authored-pair-retry-exact-final.log",
+      "scope": "Real firstfour clears/contact checkpoint, pair warning/lock pause/exact wholeaggregate transport, actualraydeath and fresh protectedretry."
+    },
+    "limits": [
+      "Thin preserved outlines locally overlap closecounter sprite; core torso/facing/feet readable.",
+      "Scripted unfocused scope, humanbalance/nativefocus/mobile/performance untested.",
+      "Integration canonical acceptance/registration remains separate; laterlevels unimplemented."
+    ],
+    "actual_challenge_route": {
+      "checks": 269,
+      "failures": 0,
+      "log": ".cinder/a2-l1-shared13-live-challenge-padded-left.log",
+      "loadout": "WEAPON-03/CLOTH-J1/P1/S0",
+      "profile": "challenge",
+      "scope": "Actual full ordinaryprimary/initialzeroammo/no pickup route with slowest primary recovery;4boundaries/contact/cleanup."
+    },
+    "tested_owned_runtime_commit": "16f2532518edd8d76aa41ec40f1d10edad607559"
+  },
+  "canonical_acceptance": {
+    "message_id": "73244c16-dcb2-4351-a354-b13bf11a81c0",
+    "candidate": "a96edfaddd22e206438e616a8b4080e5c5cdce7a",
+    "runtime": "16f2532518edd8d76aa41ec40f1d10edad607559",
+    "integrated_content": "993096ca2ea908605cad1400a8c6bf4f45665779",
+    "registration": "d629072f2ca2086878981ef3e19543d9a68ece41",
+    "authored_baseline": "fef1b1a79d83401d5b67118f6f69dcf2abea017c",
+    "authored_api": "campaign-shared-13",
+    "production_headless_checks": 132,
+    "production_native_checks": 142,
+    "failures": 0,
+    "scope": "Individual L1 production registration/lifecycle acceptance; TEST ONLY priorAct1 prefix and initialHP37/0ammo. Actual A1-L5 prerequisite remains. No preceding-level gameplay, human balance or mobile performance claim."
+  }
+}

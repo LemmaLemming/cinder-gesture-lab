@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-37** (9 October2026). Shared37 keeps idle Title/Journey/Settings pages in place when application pause/focus-out notifications arrive; installed living and fatal levels retain their existing pause and persistence paths. Shared36 fresh native Camera/HUD capture and guarded pure validation, Shared35 managed owner exclusion and earlier systems remain available. Measured runtime cost remains open. Integration is the three workers' help contact. Exact commits and original evidence are recorded in [progress](SHARED_PROGRESS.md).
+Revision: **campaign-shared-38** (9 October2026). Shared38 registers Act2 Level4 after independent production entry/save/Continue/Retry243/0 and actual earned L3→registered L4 transition1375/0. Campaign8/24 accepted. [Registration and evidence](ACT2_L4_REGISTRATION.md) retain the original authored scopes and failed setup attempt. Shared37 gameplay kernels, idle-menu guard and Shared36 Camera/HUD support remain unchanged; this is compatible content/Registry/test metadata. Measured runtime cost remains open. Integration is the three workers’ help contact. Exact commits and evidence are recorded in [progress](SHARED_PROGRESS.md).
 
 ## Idle menu notifications
 
