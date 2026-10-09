@@ -2,7 +2,7 @@
 
 ## Paused for scheduled system update
 
-Direct human instruction at 2026-10-09T10:00:58.580478+00:00: save and pause everyone. Root and the blocker heartbeat are paused; all original act workers were notified through their actual chats and canonical mailbox. Worker acknowledgements are pending. [Saved recovery point](SYSTEM_UPDATE_PAUSE.md) records the exact current source state, including the incomplete unparsed menu patch, original329/7 baseline and retained frozen diagnostics. Campaign10/24 and Shared45 publication remain unchanged. Resume only after explicit human instruction.
+Direct human instruction at 2026-10-09T10:00:58.580478+00:00: save and pause everyone. Root and the blocker heartbeat are paused; all original act workers were notified through their actual chats and canonical mailbox. All three workers have saved, acknowledged pause and completed their turns. The existing GitHub repository is now public with integration and all three saved act branches uploaded. [Saved recovery point](SYSTEM_UPDATE_PAUSE.md) records the exact current source state, including the incomplete unparsed menu patch, original329/7 baseline and retained frozen diagnostics. Campaign10/24 and Shared45 publication remain unchanged. Resume only after explicit human instruction.
 
 ## Current acceptance policy — 9 October 2026
 
