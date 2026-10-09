@@ -1,0 +1,345 @@
+{
+  "schema_version": 1,
+  "archive_id": "L3-normal-full-route-source-readiness-native-failure",
+  "status": "frozen_private_exact_unaccepted_failed_affected_scope",
+  "created_at": "2026-10-09T01:13:21.760746+00:00",
+  "path_base": "All package paths relative to this directory; exact original job/source/log/report and original producer references retained whole.",
+  "private_only": true,
+  "origin_map": {
+    "path": "origin-map.json",
+    "sha256": "e164593714bde057310675b0f27870e9bc5bdef6609b34cb58ee1821d1543b64"
+  },
+  "inventory": {
+    "path": "inventory.json",
+    "scope": "All files except inventory/hash-closure; closure separately hashes inventory."
+  },
+  "verification": {
+    "path": "verification.json"
+  },
+  "hash_closure": {
+    "path": "hash-closure.json"
+  },
+  "runs": [
+    {
+      "id": "a1-l3-normal-full-route-source-readiness-headless",
+      "directory": "source-readiness-headless",
+      "status": "preserved_failed_crossed_complete_current_view_after_first_two_rooms_clear",
+      "head": "cc8fa530b10d71041dbb4ed9bd40e50b374a9692",
+      "api_revision": "campaign-shared-35",
+      "metadata": "source-readiness-headless/run/job.json",
+      "stdout": "source-readiness-headless/run/stdout.log",
+      "raw_native_report": "source-readiness-headless/report/l3-normal-full-route-163362788.json",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l3_normal_full_route.gd"
+      ],
+      "started_at": "2026-10-09T00:59:30.715493+00:00",
+      "finished_at": "2026-10-09T01:04:25.149071+00:00",
+      "exit_code": 1,
+      "checks": 1056,
+      "failures": 1,
+      "actual_swipes": 18,
+      "actual_primaries": 6,
+      "post_execution_source_hash_mismatch": [],
+      "declared_frozen_source_count": 353,
+      "declared_source_extension_counts": {
+        ".gd": 110,
+        ".gdshader": 3,
+        ".godot": 1,
+        ".json": 16,
+        ".md": 3,
+        ".png": 92,
+        ".py": 1,
+        ".tscn": 17,
+        ".uid": 110
+      },
+      "authored_dependency_png_count": 92,
+      "actual_native_portrait_png_count": 0,
+      "source_copy_resolution": "origin-map.json resolves every original producer path to exact inert source copy/hash/size.",
+      "report_matching": {
+        "original_report": ".cinder/l3-normal-full-route-163362788.json",
+        "original_report_sha256": "1553c37720eb57b3619e8d15c6915f7559f208da6ad6475e6e9e673fdf0edbbf",
+        "original_report_mtime_utc": "2026-10-09T01:04:25.075889+00:00",
+        "within_original_job_start_finish": true,
+        "owner_directed_exact_path_and_sha256": true,
+        "original_count_and_action_tuple": [
+          1056,
+          1,
+          18,
+          6
+        ],
+        "matching_owner_selected_report_count": 1,
+        "attribution_limit": "Original metadata has no emitted report-path field. Owner explicitly supplied this exact closed report path/SHA; count/action tuple and original job time window match. No claimed uniqueness search over unrelated reports or later-source reconstruction."
+      },
+      "first_failure": "complete actual room source/art/field union contains actual source/art/full lane and native response corners in the shared portrait camera",
+      "raw_diagnostics": {
+        "error_count": 1,
+        "script_error_count": 0,
+        "warning_count": 0,
+        "whole_stdout_backtrace_preserved": true
+      },
+      "native_receipt_counts": {
+        "room_receipts": 2,
+        "checkpoint_guards": 2,
+        "defeat_receipts": 6,
+        "native_phase_barriers": 6,
+        "response_timing_receipts": 4,
+        "completion_receipts": 0,
+        "contact_receipts": 0
+      },
+      "bounded_outcome": "Actual Umbrella and Breathing rooms clear with six genuine native defeats/two checkpoints. Actual Crossed has eight living nondormant cycle0/no-lease sources when the current complete-view assertion fails. Native whole plan fits from current Hero+.65 reference but actual current containment rejects and Game cached plan reports max-shift rejection. Lag cause unresolved; no complete route/Save/optical/public-profile/performance acceptance.",
+      "completed_room_ids": [
+        "umbrella-grove",
+        "breathing-chamber"
+      ],
+      "recorded_defeated_source_ids": [
+        "umbrella-1",
+        "umbrella-3",
+        "umbrella-2",
+        "breathing-1",
+        "breathing-2",
+        "breathing-3"
+      ],
+      "actual_current_room_index": 2,
+      "installed_field_ids": [
+        "breathing",
+        "crossed-left",
+        "crossed-right"
+      ],
+      "installed_consumer_ids": [
+        "breathing",
+        "crossed"
+      ],
+      "crossed_source_states_at_failure": {
+        "crossed-1": {
+          "source_position": [
+            -2.40000009536743,
+            -0.00492187589406967,
+            -12.8000001907349
+          ],
+          "opening_position": [
+            -2.40000009536743,
+            -0.00492187589406967,
+            -12.8000001907349
+          ],
+          "hp": 16.0,
+          "dead": false,
+          "dormant": false,
+          "cycle": 0,
+          "phase": "clear",
+          "reservation_id": "",
+          "approach_driving": false
+        },
+        "crossed-2": {
+          "source_position": [
+            2.40000009536743,
+            -0.00492187589406967,
+            -12.8000001907349
+          ],
+          "opening_position": [
+            2.40000009536743,
+            -0.00492187589406967,
+            -12.8000001907349
+          ],
+          "hp": 16.0,
+          "dead": false,
+          "dormant": false,
+          "cycle": 0,
+          "phase": "clear",
+          "reservation_id": "",
+          "approach_driving": false
+        },
+        "crossed-3": {
+          "source_position": [
+            -0.800000011920929,
+            -0.00515625113621354,
+            -13.6000003814697
+          ],
+          "opening_position": [
+            -0.800000011920929,
+            -0.00515625113621354,
+            -13.6000003814697
+          ],
+          "hp": 16.0,
+          "dead": false,
+          "dormant": false,
+          "cycle": 0,
+          "phase": "clear",
+          "reservation_id": "",
+          "approach_driving": false
+        },
+        "crossed-4": {
+          "source_position": [
+            0.800000011920929,
+            -0.00526041770353913,
+            -13.6000003814697
+          ],
+          "opening_position": [
+            0.800000011920929,
+            -0.00526041770353913,
+            -13.6000003814697
+          ],
+          "hp": 16.0,
+          "dead": false,
+          "dormant": false,
+          "cycle": 0,
+          "phase": "clear",
+          "reservation_id": "",
+          "approach_driving": false
+        },
+        "crossed-5": {
+          "source_position": [
+            -2.40000009536743,
+            -0.00492187589406967,
+            -19.2000007629395
+          ],
+          "opening_position": [
+            -2.40000009536743,
+            -0.00492187589406967,
+            -19.2000007629395
+          ],
+          "hp": 16.0,
+          "dead": false,
+          "dormant": false,
+          "cycle": 0,
+          "phase": "clear",
+          "reservation_id": "",
+          "approach_driving": false
+        },
+        "crossed-6": {
+          "source_position": [
+            2.40000009536743,
+            -0.00492187589406967,
+            -19.2000007629395
+          ],
+          "opening_position": [
+            2.40000009536743,
+            -0.00492187589406967,
+            -19.2000007629395
+          ],
+          "hp": 16.0,
+          "dead": false,
+          "dormant": false,
+          "cycle": 0,
+          "phase": "clear",
+          "reservation_id": "",
+          "approach_driving": false
+        },
+        "crossed-7": {
+          "source_position": [
+            -0.800000011920929,
+            -0.00484375096857548,
+            -18.3999996185303
+          ],
+          "opening_position": [
+            -0.800000011920929,
+            -0.00484375096857548,
+            -18.3999996185303
+          ],
+          "hp": 16.0,
+          "dead": false,
+          "dormant": false,
+          "cycle": 0,
+          "phase": "clear",
+          "reservation_id": "",
+          "approach_driving": false
+        },
+        "crossed-8": {
+          "source_position": [
+            0.800000011920929,
+            -0.00484375096857548,
+            -18.3999996185303
+          ],
+          "opening_position": [
+            0.800000011920929,
+            -0.00484375096857548,
+            -18.3999996185303
+          ],
+          "hp": 16.0,
+          "dead": false,
+          "dormant": false,
+          "cycle": 0,
+          "phase": "clear",
+          "reservation_id": "",
+          "approach_driving": false
+        }
+      },
+      "actual_whole_plan_summary": {
+        "accepted": true,
+        "desired_focus": [
+          1.10647630691528,
+          0.64515620470047,
+          -12.5345659255981
+        ],
+        "focus": [
+          0.322566449642181,
+          0.64515620470047,
+          -15.4315299987793
+        ],
+        "shift": [
+          -0.783909857273102,
+          0.0,
+          -2.89696407318115
+        ],
+        "shift_distance": 3.0011522769928,
+        "camera_plane_correction": [
+          -0.783909857273102,
+          2.34850883483887
+        ],
+        "camera_plane_shift_intervals": [
+          [
+            -1.42904317378998,
+            -0.783909857273102
+          ],
+          [
+            2.34850883483887,
+            5.38064098358154
+          ]
+        ],
+        "point_count": 30,
+        "depth_range": [
+          19.6675052642822,
+          25.5656604766846
+        ]
+      },
+      "actual_whole_containment_error": "Required source, footprint, player or landing lies outside the protected screen rectangle",
+      "last_diagnostic_camera_state": {
+        "accepted": false,
+        "api_revision": "camera-framing-1",
+        "enabled": true,
+        "reason": "Required framing exceeds the permitted planar focus shift"
+      },
+      "whole_union_sovereign": true,
+      "provider_comparison_limit": "Component/excluding-one-bucket diagnostics reconstruct only five base buckets and omit route Field/lowcluster/expanded prospective endpoint domains. They cannot replace the genuine whole required union, trim/filter points or authorize current movement/damage.",
+      "camera_attribution": "Game updater plans from previous possibly fitted/interpolated follow focus toward Hero+.75; report pure whole comparison uses actual Hero+.65. Rejected cached result omits desired focus/corner identity. Current failed containment and accepted future fit are distinct; no proven lag/entry-order fix.",
+      "fixture_change_scope": "Affected actual normal fullroute after fixture-only source readiness ordering correction at9209c80abb6; current69525c2ec1a runtime forecast fix unchanged. Existing Hero readiness before stopped-source eligibility, original shared12native passive budget debited through source settlement, actual target reselected without await before strict stopped query. All actual full dash/body/camera/HP/nativephase/progression/wholeunion guards retained. No custody/floor/fullparent/Save changes; SaveDENIED.",
+      "native_focus": true,
+      "native_focus_limit": "Headless report boolean retained exactly; zero actual portrait captures, no native desktop-focused/human optical credit."
+    }
+  ],
+  "limitations": [
+    "Failed affected actual route attempt; earned two-room prefix/two checkpoints do not accept full L3 or complete whole traversal.",
+    "All eight Crossed sources are genuinely live cycle0/no lease at current-view failure; later eight-body approach/admission/repulsion/ordinary completion remains unproved.",
+    "Accepted native full-union fit3.001152<3.6 does not grant current containment; exact cached-follow input/lag cause unresolved. No camera policy/fitting or point relaxation inferred.",
+    "Pure component/provider comparison omits route fields/expanded endpoints and is not complete whole-union authority.",
+    "Full native Save remainsDENIED. No fullparent/constructor/Continue/Retry/profile-kit/art/human/FPS/mobile acceptance.",
+    "Zero native portrait captures.92 declared dependency PNGs are source files, not camera evidence.",
+    "Later private entry/factored-writer/bounds-note proposals are excluded from native-job sources/evidence; no retroactive execution credit.",
+    "Only these353 frozen source originals and complete job/log/report/new copies verified; old packages untouched by construction."
+  ],
+  "packaging": {
+    "source_code_UID_project_settings": "Original .gd/.gdshader/.godot/.uid/.tscn/.py bytes copied under .txt suffix; outer .gdignore retained. Metadata references are unchanged; origin-map resolves inert destinations.",
+    "hardlinks_used": false,
+    "unrecorded_or_nested_settings_copied": 0,
+    "current_source_backfill": 0,
+    "original_art_PNG_JSON": "Exact original recorded sources, no image modifications or native-capture interpretation.",
+    "engine_jobs": 0,
+    "tracked_or_existing_archive_changes": 0
+  }
+}
