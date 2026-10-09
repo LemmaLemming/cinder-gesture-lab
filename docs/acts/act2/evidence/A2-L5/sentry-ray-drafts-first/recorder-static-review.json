@@ -1,0 +1,31 @@
+{
+  "helper": "/private/tmp/cinder_a2_l5_ray_record.py",
+  "helper_sha256": "5073321ebbb2dae9a5df92c5c645385f90829268b93d621ff5dd3967985b6c7c",
+  "line_count": 162,
+  "review": "Bounded static source/CLI and AST review only; recorder was not executed.",
+  "published_baseline": "9ef31ace408aa9a4ed4a7409351773beb3dca34d",
+  "api_revision": "campaign-shared-39",
+  "threat_cue_sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+  "fixture_sha256": "dfcc7703b110f5e56c954390135dc9eaa509d05aea0cd52a114b0096ca8d23f1",
+  "claims": [
+    "Hardcoded source seeds are separate from the engine CLI; no source-only arguments are forwarded.",
+    "Only LABEL import|engine is accepted; engine script path is fixed to the actual ray fixture.",
+    "Mode-specific scope records give import zero gameplay credit.",
+    "Original literal dependency/configuration/resource/UID/import-sidecar bytes, native modes and executable bits are captured and rechecked.",
+    "Raw engine log and original wrapper log are retained; import has wrapper output only because dev.py import supplies no raw log argument.",
+    "Helper original source is retained separately.",
+    "UIDs newly created for bounded captured scripts are explicit generated-after-job artifacts; other Shared39 sibling UID handling remains root's separate 316-before inventory scope.",
+    "Failure summaries/assertion errors/ScriptErrors/unexplained native errors stay distinct; no whole B05/level/camera/art/effects-policy credit."
+  ],
+  "prior_helpers_unchanged": {
+    "cinder_a2_l5_record.py": "e0d9f3c2401b6908d9b91682c1b8c1836897685cebdf45c7c8d020ec8ffba7f0",
+    "cinder_a2_l5_sentry_record.py": "d78db633bdc3de8ac0417e6cb6b8044dc808ee3da73b530a5f0be18f348fc8bb",
+    "cinder_a2_l5_binding_record.py": "b7d7d9670809ce204ce3eccfa4a8a2bae8c22d664831a6a17dd7841fdacee1da"
+  },
+  "not_executed": [
+    "collector/source capture",
+    "Godot/import/native fixture",
+    "Git mutations",
+    "checkout writes"
+  ]
+}

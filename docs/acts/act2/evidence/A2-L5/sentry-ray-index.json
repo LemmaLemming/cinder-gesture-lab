@@ -1,0 +1,135 @@
+{
+  "at": "2026-10-09T05:03:50.883531+00:00",
+  "status": "Closed first actual isolated persistent ray component729/0; full B05/level remains open",
+  "source_head": "b95d58d03808d2bd93b3d5fad74bfe0dfc8d484d",
+  "shared_publication": "9ef31ace408aa9a4ed4a7409351773beb3dca34d",
+  "api_revision": "campaign-shared-39",
+  "fixture_sha256": "dfcc7703b110f5e56c954390135dc9eaa509d05aea0cd52a114b0096ca8d23f1",
+  "packets": {
+    "sentry-ray-import-first": {
+      "source_sha256": "fb8cea7faa73693abde0a4f575abc8b8828b0186036f8bffa19970f18893c341",
+      "result_sha256": "516aba43f41689f0dab4fe9a55dc815df2c8ca86e08d6f281f1d927e583f48c7",
+      "source_count": 353,
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "import"
+      ],
+      "result": {
+        "changed_file_mode_paths": [],
+        "changed_source_paths": [],
+        "exit_code": 0,
+        "log_counts": {
+          "wrapper": {
+            "assertion_errors": 0,
+            "fail_markers": 0,
+            "native_errors": 0,
+            "script_errors": 0,
+            "unexplained_native_errors": 0
+          }
+        },
+        "mode": "import",
+        "raw_sha256": null,
+        "result_lines": [],
+        "scope_complete": true,
+        "source_count": 353,
+        "source_sha256": "fb8cea7faa73693abde0a4f575abc8b8828b0186036f8bffa19970f18893c341",
+        "sources_unchanged": true,
+        "summaries": [],
+        "uid_additions_after_job": {
+          "tests/acts/act2/a2_l5_sentry_ray_smoke.gd.uid": "14d02c75dd0cf8dde452112482664655164a9fa6f569dfa4769ece96839eae8c"
+        },
+        "wrapper_sha256": "57dc105f4c013317804a9862dee9e87b730f91566e77c076baf83c69af42787e"
+      }
+    },
+    "sentry-ray-native-first": {
+      "source_sha256": "531c17036914a2e26c448d450f60af086801bcd0b2fde20d59420c439823e8d1",
+      "result_sha256": "2e8fbcd8ac6ea477715c9c5fc89a2730a02e15fe89bd324f23bb53d9a46539de",
+      "source_count": 354,
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-l5-sentry-ray-native-first.log",
+        "--headless",
+        "--script",
+        "res://tests/acts/act2/a2_l5_sentry_ray_smoke.gd"
+      ],
+      "result": {
+        "changed_file_mode_paths": [],
+        "changed_source_paths": [],
+        "exit_code": 0,
+        "log_counts": {
+          "raw": {
+            "assertion_errors": 0,
+            "fail_markers": 0,
+            "native_errors": 0,
+            "script_errors": 0,
+            "unexplained_native_errors": 0
+          },
+          "wrapper": {
+            "assertion_errors": 0,
+            "fail_markers": 0,
+            "native_errors": 0,
+            "script_errors": 0,
+            "unexplained_native_errors": 0
+          }
+        },
+        "mode": "engine",
+        "raw_sha256": "3a2574fc542cc1d4d3e5014344f2cc3cce46e10607c68f199eb5b73eb9b71eae",
+        "result_lines": [
+          "PASS: public bait restore checks actual restored full native Player",
+          "A2-L5 isolated persistent Sentry ray smoke: 729 checks, 0 failures; actual admission/full lock/immutable bait/pending component transport only; no Foot, recognizer, camera, full B05/level/checkpoint, balance or art credit"
+        ],
+        "scope_complete": true,
+        "source_count": 354,
+        "source_sha256": "531c17036914a2e26c448d450f60af086801bcd0b2fde20d59420c439823e8d1",
+        "sources_unchanged": true,
+        "summaries": [
+          {
+            "checks": 729,
+            "failures": 0,
+            "scope": "actual admission/full lock/immutable bait/pending component transport only; no Foot, recognizer, camera, full B05/level/checkpoint, balance or art credit"
+          }
+        ],
+        "uid_additions_after_job": {},
+        "wrapper_sha256": "3a2574fc542cc1d4d3e5014344f2cc3cce46e10607c68f199eb5b73eb9b71eae"
+      }
+    }
+  },
+  "original_source_rows": 707,
+  "unique_original_input_paths": 354,
+  "independent_review": {
+    "path": "sentry-ray-drafts-first/native-independent-review.json",
+    "sha256": "928b62ba4a6d859966366e74b1dc41e6937f72175d006b96357ae05ba9928640",
+    "all_archived_and_current_input_hashes_and_modes_exact": true,
+    "native_raw_wrapper_identical": true
+  },
+  "metadata": {
+    "before": "sentry-ray-drafts-first/metadata-before.json",
+    "after": "sentry-ray-import-first/metadata-after.json",
+    "prior_count": 316,
+    "prior_sha_and_uri_unchanged": true,
+    "new_count": 2,
+    "current_unique_count": 318,
+    "shared_sidecar": "tests/threat_cue_reference_bits_smoke.gd.uid",
+    "integration_request": "dd1cfcdd-69d5-41f0-9077-e48d82c6a0a4",
+    "shared_sidecar_policy": "Preserved physical/untracked/outside owned staging; exact copy separately archived, source/current pin separately reported to integration, no claim included in bounded707 sources."
+  },
+  "preserved_pre_native_inventory_error": "sentry-ray-drafts-first/metadata-inventory-expectation-failure.json:313 script-only count versus316 script+shader identities; corrected inventory only, no native/import failure or repeat",
+  "scope": [
+    "Real persistent native source+oneThreatCue, request_tracking unarmed admission, fresh actual commit/full returned1.10lock, immutable original floor sample across actual diagonal dash, latest completed receipt only on nextcycle",
+    "Measured active path retained after parent-first active publication synchronously pauses; full exact Player/bait/actor/jointcue/Scheduler/ray packet, prospective fresh preflight and quiet complete ordered restoration",
+    "Distinct wrong-order actual commit refusals, four malformed aggregate atomic refusals, actual restored active path resolves shared hurt once/no refreshedcooldown, permanent driver/source/wholeworld cleanup"
+  ],
+  "limits": [
+    "729 counts _expect invocations including repeated parent pose/cue checks pernative tick, not729 scenarios",
+    "No Foot/composite fullB05/wholelevel/earned phasecheckpoint, recognizer/screen aim, no-ammo/pickup/loadout/profile viability, camera/portrait/art/balance/performance acceptance",
+    "Effects is a fresh native context; no whole Game/effects-policy transport proof",
+    "Bounded explicit/literal input subset captures originals/modes and reports unresolved illustrative/commentary references; no completeprojectclone/import scan credit",
+    "Historical bait122at37, binding15/actor75at38 retainoriginalsources/scopes and were not rerun"
+  ]
+}
