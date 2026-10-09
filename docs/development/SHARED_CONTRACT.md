@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-34** (8 October2026). Shared34 adds an optional post-quiet candidate presentation gate and explicit actual candidate HUD/camera framing views. Shared33 same-owner Echo lifecycle and earlier systems remain available. Measured runtime cost remains open. Integration is the three workers' help contact. Exact commits and original evidence are recorded in [progress](SHARED_PROGRESS.md).
+Revision: **campaign-shared-35** (9 October2026). Shared35 excludes managed authored owners from every ordinary preview/admission path before cleanup or allocation. Shared34 candidate presentation, Shared33 lifecycle and earlier systems remain available. Measured runtime cost remains open. Integration is the three workers' help contact. Exact commits and original evidence are recorded in [progress](SHARED_PROGRESS.md).
 
 ## Actual saved candidate presentation
 
@@ -502,3 +502,11 @@ New native constructor/Shell71/0 clean covers earlier-room Retry, same-process a
 ## SmokeBank display teardown — shared30
 
 A whole shell may leave the scene tree before the level's final exit callback cancels its banks. `_update_indicator` now hides a removed indicator without reading its global transform; `_indicator_owned_pose` returns no pose after indicator tree removal. Live movement/damage/timing/geometry/contact/receipt/admission/schema behavior is unchanged. Actual production A2-L3 direct whole-shell closure verifies this path without diagnostic errors; the original195/0 scope with18 native errors remains preserved. [Registration evidence](ACT2_L3_REGISTRATION.md).
+
+## Managed authored owner admission
+
+Managed authored lifecycle owners may not use ordinary `request_attack`, `request_tracking`, `request_lunge`, `preview_stationary` or `preview_lunge`, including exact-preview admission. Actual retained owner exclusion follows the existing public transaction barriers and precedes body/world proof, prune callbacks and allocation. Common pure preparation and final ordinary commit also refuse; pure previews/preparation preserve diagnostics and state. Existing captured refusal, authored-ready admission and initial fresh-owner lease/cooldown/history exclusion remain. Tracking updates/commits require an existing ordinary lease that registration/whole Scheduler3 restoration cannot assign to a managed source. Unmanaged ordinary/captured/authored API1 behavior and all existing schemas/physics/HP/timing remain unchanged.
+
+Closed targeted evidence: original11/3 and diagnostic12/4 failures remain distinct; existing stationary146/0 and lunge70/0 pass with one retained macOS CA startup ERROR each. Lifecycle119/14 was sandbox-blocked at isolated temporary-save writes; authorized unchanged lifecycle2 closed 557/0 with zero Script/Error lines. Captured406/11 retains sandbox-write/roundtrip and dependent assertion failures. Corrected1 printed21/0 is INVALID because 31 Script Errors and one load ERROR prevented its matrix. Authorized unchanged captured2 closed475/0; corrected2 actual Node3D/CharacterBody3D stage/reentry matrix closed317/0, both with zero Script/Error lines. All original sources/logs/closures remain separate. No all-native-error-free or performance claim.
+
+Read the [managed ordinary admission contract and full original evidence](MANAGED_ORDINARY_ADMISSION.md).
