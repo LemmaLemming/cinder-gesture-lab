@@ -1,0 +1,16 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 339x736 --script res://tests/acts/act3/mirror_echo_lifecycle_smoke.gd -- --portraits",
+  "session_id": 68881,
+  "exit_code": 1,
+  "checks": 7,
+  "failures": 1,
+  "script_or_native_errors": [
+    "ERROR: FAIL: portrait fresh Main has its real paused native339x736 window before focus setup"
+  ],
+  "baseline": "103f4f03704166d8c6066b476ec066abd086e6b6",
+  "owned_head": "9b4f310fc74582543194ab37eb5922033fe408f9",
+  "source_count": 309,
+  "all_frozen_sources_unchanged": true,
+  "closed_at": "2026-10-09T02:20:56.673733+00:00",
+  "scope": "Optional real-focus/immediate pause trace closes7/1 before native focus request: added fresh-window composite precondition fails at process0/physics1, no PNG/gameplay/lifecycle result. Exact failing precondition component not logged; diagnostic refinement is pending. Cleanup is clean with no outside-tree error. Actual309 original inputs retained; prior35/1 unmasked portrait and unexpected pause retain their own scopes."
+}
