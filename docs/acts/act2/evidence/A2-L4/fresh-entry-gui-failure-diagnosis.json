@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-09T02:18:29.427606+00:00",
+  "command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--path",
+    ".",
+    "--log-file",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-l4-fresh-entry-replay-restart-first.log",
+    "--headless",
+    "--script",
+    "tests/acts/act2/a2_l4_fresh_entry_smoke.gd"
+  ],
+  "head": "2b090403cc5472ab7e2c2a78618e2c59b970d509",
+  "runtime_publication": "103f4f03704166d8c6066b476ec066abd086e6b6",
+  "documentation_publication": "106c9f0cc5554686cf458a4f2db87011e5954a93",
+  "classification": "TEST GUI input/readout before proven fresh recipient entry; no engine parser/resource error or campaign_error observed",
+  "first_meaningful_error": "one actual viewport GUI click settles without duplicate publication/campaign error: StartReplayButton",
+  "raw_log": "fresh-entry-replay-restart-first/raw.log",
+  "source_sha256": "88c60770c988622baa5d2187f66c3758f0961353513d3c2b19c3512ffcceae40",
+  "raw_sha256": "b3cee58064781d0461d3df5248ee93922be17bf4820e6a9edd5a0eef020900ce",
+  "observed": "Title and Continue succeeded, StartReplayButton existed/visible_in_tree/enabled, but exactlyonepressed conjunction failed with empty campaign_error. Individual press count/button/clip rectangles were not recorded. No inferred newfreshentry/restart/return credit.",
+  "source_findings": [
+    "Final237-line _fr_click already starts with8processframe settle, unchanged from successful retryhelper. No repeatedwait-only fix justified.",
+    "CampaignMenu.show_replay_setup puts StartReplayButton last inside PageScroll after four selectors/presets/itemdescription/comparison. ScrollContainer clips descendants by default. Visibility in tree is not visible-hit containment.",
+    "Owner and independent source peer identify clipping as a supported hypothesis, not proven original coordinates."
+  ],
+  "primary_reference": {
+    "url": "https://docs.godotengine.org/en/stable/classes/class_scrollcontainer.html#class-scrollcontainer-method-ensure-control-visible",
+    "actually_inspected": "Official ensure_control_visible accepts direct/indirect child, requires layout after newly added frame; ScrollContainer clip_contents defaults true. Existing menu uses it for Journey.",
+    "application": "Actual ancestor ensure_control_visible after existing8frame settle; one processframe then re-read button center/scroll/root clip containment and record individual press count/page/error. Existing actual viewport mouse events/exactonepress remain."
+  },
+  "next_scope": "Fixture-only public UI scroll/diagnostic correction then same focused freshL4entry/restart; no runtime/geometry/equipment/control/presentation or globaltolerance changes; no routes634/gun3093 rerun."
+}

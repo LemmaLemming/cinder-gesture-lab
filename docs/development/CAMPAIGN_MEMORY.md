@@ -1,6 +1,6 @@
 # Cinder campaign memory
 
-Updated 8 October 2026. Integration owns this durable record. Read it with [SHARED_CONTRACT](SHARED_CONTRACT.md) and [SHARED_PROGRESS](SHARED_PROGRESS.md) after context recovery and before reviewing an act handoff.
+Updated 9 October 2026. Integration owns this durable record. Read it with [SHARED_CONTRACT](SHARED_CONTRACT.md) and [SHARED_PROGRESS](SHARED_PROGRESS.md) after context recovery and before reviewing an act handoff.
 
 ## Authorized endpoint and precedence
 
@@ -75,3 +75,10 @@ Every introduced asset records source, readiness, native scale, pivot, collision
 - [UI plan](../UI_DESIGN_PLAN.md), [difficulty plan](../DIFFICULTY_DESIGN.md), [Character Lab](../CHARACTER_LAB.md), [character assets](../CHARACTER_ASSETS.md), [character manifest](../../assets/characters/manifest.json), [effect manifest](../../assets/effects/manifest.json).
 
 Before accepting a level or recovering context, read this file, the shared contract/progress, that act's `docs/acts/actN/ACT_MEMORY.md` and `PROGRESS.md`, and its individual level record. Pending requests and historical acceptance evidence must survive context resets. Temporary mailbox status never transfers ownership.
+
+
+## Shared38 recovery point (9 October03:37UTC)
+
+Campaign8/24 accepted: A1-L1/L2, A2-L1/L2/L3/L4, A3-L1/L2. Latest compatible registration is [A2-L4](ACT2_L4_REGISTRATION.md): complete owner1a5e9ea, exact content05a15, actual root entry243/0 and untouched earned L3→production L4 transition1375/0. Original failed sandbox setup5/1/source-only unused freeze and prior authored scopes retain their attribution in portable evidence. Gameplay kernels remain Shared37; worker adoption ACKs are separate and canonical run.json records each actual baseline.
+
+Root remains sole integration/help owner. Act1 L3 prefix Save665/0 is independently verified; current floor/portrait/extremes/acceptance remain. Act3 headless whole-parent warning/Continue/Retry progresses while rendering timeout/focus diagnosis remains open. Act2 proceeds L5 after this acceptance; all optional levels remain separate authored work. Runtime cost requests remain open without demonstrated gain. Continue targeted changed-level/directly affected checks; full24-level desktop goal stays ACTIVE, stop before mobile/export/release.

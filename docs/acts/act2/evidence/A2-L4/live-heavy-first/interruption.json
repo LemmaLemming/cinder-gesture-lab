@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-08T22:14:17.165827+00:00",
+  "classification": "incomplete controlled run; progress stalled after five kills, no native/script/assertion error observed",
+  "reason": "Ten minutes of own headless run, sustained100%CPU, no new completion after villa_ray_handler; outer2400-iteration bound includes long nested physics waits and gives inadequate progress diagnostic. Need bounded native-clock/HP watchdog before affected reproduction. Not full route acceptance.",
+  "pid": 81494,
+  "verified_argv": "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot --path . --log-file /Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-l4-live-heavy-first.log --headless --script tests/acts/act2/a2_l4_live_level_smoke.gd -- --loadout=heavy --profile=standard",
+  "signal": "SIGTERM only verified own noninteractive child; no other worker/session/lock touched",
+  "last_clear_ids": [
+    "garden_handler",
+    "flood_scout",
+    "flood_tender",
+    "villa_scout",
+    "villa_ray_handler"
+  ],
+  "gameplay_conclusion": "unknown; later HP/phase/admission/proof state not instrumented in original run",
+  "profiler_limit": "3-second macOS sample confirms busy main thread, stripped release symbols cannot identify GDScript function."
+}

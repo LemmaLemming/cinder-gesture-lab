@@ -16,4 +16,9 @@ Original fixture parse failure and195/0 with18 native removed-tree transform err
 
 Required-only owner2631/0 leaves SideTender30HP/unhit through actual Boss30→15→0/quiet completion/exit. Fine machinery features, cutaways and a short overlapped smoke rim remain documented art limits; original Cargo100/111 pixels preserve the numeric defect fixed separately in Shared28. No human balance or mobile performance claim.
 
-A2-L4 is unimplemented in the production registry. Owner full routes use a disclosed test-only following destination; actual production L3→L4 transition is checked when L4 is accepted. Optional A2-O2 remains separately authored/accepted work, and cannot gate the main route. Act2 continues sequentialL4 while root finishes independent Echo lifecycle support. Shared30 publishes this registration/teardown change; repeating Echo lifecycle is separate candidate31.
+At the original Shared30 publication, A2-L4 was unimplemented in the production registry. Owner full routes use a disclosed test-only following destination; actual production L3→L4 transition is checked when L4 is accepted. Optional A2-O2 remains separately authored/accepted work, and cannot gate the main route. Act2 continues sequentialL4 while root finishes independent Echo lifecycle support. Shared30 publishes this registration/teardown change; repeating Echo lifecycle is separate candidate31.
+
+
+## Later registered destination (Shared38)
+
+[A2-L4 is now registered](ACT2_L4_REGISTRATION.md) from exact owner1a5e9ea. A new directly affected compatibility scope1375/0 uses the unchanged original earned Heavy/Standard Boss15 complete Attempts artifact, genuine ordinary remainder and real breakout to reach the actual production L4, with carried resources/gear/anchor and donor retirement. It preserves the historical strict Boss fixture and previous route evidence; no earlier campaign route is replayed or credited. Campaign8/24 accepted.

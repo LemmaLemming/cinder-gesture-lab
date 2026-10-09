@@ -1,0 +1,38 @@
+{
+  "publication": "9caeddf0540cb9c37479a470ad0fdf86425594cc",
+  "api_revision": "campaign-shared-32",
+  "original_publication": "64f34c8776aa81d7eb8f88b71b8b8d64192f35f0",
+  "merge_commit": "645c360eaa0933621aed18f384cea5b9aa8a32d5",
+  "sources": {
+    "scripts/combat/authored_enemy_sequence.gd": {
+      "original_sha256": "6a66d90ed9c43ffae326273b844f86f04cb789a7b6e6dce59d6da920763225f7",
+      "current_sha256": "7ffd8dd72d834b3b8f7bd06a6604f39e78c5a2b1a6f1e8db6fa97018de57f8b9",
+      "reason": "Authored wire comparator; L4 does not construct an Authored sequence."
+    },
+    "scripts/combat/replay_program.gd": {
+      "original_sha256": "0736e6c14470270d182940dd5488e45d8f6191791c6658689fcb3f17d6980d3b",
+      "current_sha256": "ccfd5c64e1202a21fb1f726d237c6bc412b1d992d9e2cd360798013830a7fd67",
+      "reason": "Authored Program restore single pass; unused by L4 ordinary sources."
+    },
+    "scripts/cues/threat_cue.gd": {
+      "original_sha256": "32b92a9d120db84e4bb6bfde6f257610225ce604a75fd6f2ec8668c4841d06b2",
+      "current_sha256": "e47811186785c24d693644e05d1d7ba64fee020ef2ad7278a60e0d2c7c2ef363",
+      "reason": "Private authored projected-reference comparison only; L4 ordinary present/clear path unchanged."
+    },
+    "scripts/dev/dev.py": {
+      "original_sha256": "8af0a3f3968a7dc0035c21c282a77157c8a33c8c542e061ecde912dc647f7213",
+      "current_sha256": "7747c969fffc90ff68818e95ac18bd102f0c2ee10f5d283bcae11ada81086bfe",
+      "reason": "New targeted suite names only; existing raw engine queue/lock/job unchanged."
+    },
+    "scripts/environment/scheduler_spore_source_protocol.gd": {
+      "original_sha256": "c9a1e5e16abaf4a705a4dbacb6f6926159e8718fb95503a58f815123506e5b32",
+      "current_sha256": "924c662cc7572c239f1f239e2fcc80c226954cd89a618b795d5463021457338e",
+      "reason": "Immutable expected spore serialization; no L4 spores/protocol consumer."
+    },
+    "scripts/game.gd": {
+      "original_sha256": "76213692d63a8369a26cfd905231cea5c7571362d48f22f7e43ac9654d0c1ffc",
+      "current_sha256": "3b95dfde9d5660f05f01ec4cfd93539f2ad4292babc7c4ed59a72535d998007f",
+      "reason": "Additive explicit actual-player/current-camera pure views only; existing live methods unchanged; L4 never invokes new APIs."
+    }
+  }
+}

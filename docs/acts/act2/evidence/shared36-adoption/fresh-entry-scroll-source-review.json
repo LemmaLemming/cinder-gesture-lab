@@ -1,0 +1,24 @@
+{
+  "scope": "read-only fixture-only diff review; no engine/parser execution",
+  "current_sha256": "8c747662859e9e71be3296deb8d991dca67854b547c1859df472de2cb50a9b50",
+  "frozen_first_sha256": "45e649111b7a36df3a369330e5e40acff04f97a29525e582801555bff768bdf8",
+  "frozen_first_result": "1656 checks / 1 failure; no native hit rectangle or press count recorded; cause unknown",
+  "verified": [
+    "existing initial 8-frame settle remains",
+    "actual ancestor ScrollContainer.ensure_control_visible used after layout settle",
+    "current centre checked against root viewport and every clipping Control ancestor",
+    "exact native mouse motion/left press/release and one-press plus empty-campaign-error predicate retained",
+    "post-click transaction observations use captured geometry; no retired Button dereference",
+    "scope_complete output no longer credits requested paths after early refusal"
+  ],
+  "finding": {
+    "location": "_fr_click immediately after second await _fr_settle()",
+    "issue": "Original Button is dereferenced for geometry without rechecking native validity/visibility/enabled after the newly added yield. Public pause/focus notification may replace page children during process frames.",
+    "minimal_correction": "Repeat original Button validity/inside-tree/visible/enabled guard after this await and before get_global_rect(); fail normally if retired.",
+    "status": "resolved in current reviewed fixture",
+    "resolution": "After the scroll-settle yield the same Button is checked valid, inside tree, visible, enabled, and identical to the current menu find_child before any rectangle read. Pre-scroll rectangle diagnostic is captured before yielding; it does not retroactively establish the original failure cause."
+  },
+  "mutation": "only /private/tmp review record",
+  "previous_reviewed_sha256": "acff91088f97f7dca04dedbc359ab0bb53834219448ab383265de471604c949a",
+  "result": "No remaining concrete issue in the two-line scoped update; engine execution pending."
+}
