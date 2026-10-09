@@ -2,7 +2,7 @@
 
 **Draft: final packaging pending.** L1–L3 are canonically accepted. All seven required routes, the634-check bank lifecycle and the3,093-check affected Kit5 gun continuation passed. Its original native image is owner-reviewed and its eight outputs are preserved unchanged; Shared36 adoption/direct fresh-entry coverage and final inventories remain. L4 is not yet handed off or accepted. The [level notes](../../../data/campaign/act2/levels/A2-L4.md), [evidence index](evidence/A2-L4/index.json) and [acceptance plan](evidence/A2-L4/acceptance-plan.json) retain exact scopes.
 
-The current consumed publication is Shared 35, `a445cda7556dcbb03a9af04ad9b9098486bd2163`, preserving merge `41d2f45d00675e0629959faffbe61c2341ed75bd`. Earlier results retain their original Shared 30, Shared 32 and Shared 34 attribution. The complete owned candidate delta, final runtime and UID list, portable evidence hash list and final candidate HEAD have not been prepared. A final records commit alone will not be a sufficient integration candidate.
+The current consumed publication is Shared36, `103f4f03704166d8c6066b476ec066abd086e6b6`, preserving merge `778640660250ddc38959c06b332c49c6d7f8b44f`. [Complete custody](evidence/shared36-adoption/adoption.json) and [direct audit](evidence/shared36-adoption/direct-l4-audit.json) passed. Earlier results retain original Shared30/32/34/35 attribution; the directly affected fresh L4 Shell entry/restart is pending. The complete owned candidate delta, final runtime and UID list, portable evidence hash list and final candidate HEAD have not been prepared. A final records commit alone will not be a sufficient integration candidate.
 
 ## Implemented content and player decisions
 
@@ -63,7 +63,7 @@ The first narrow Kit 5 gun fixture passed exact original SaveStore and fresh GUI
 
 ## Work required before final handoff
 
-All required routes, bank lifecycle and affected Kit5 gun continuation are closed. Owner and independent peer viewed the actual new image. Preserve-adopt Shared36 with full owned byte/UID/configuration custody, then exercise the directly affected actual fresh L4 Shell entry and restart. Do not repeat the seven routes, prior courtyards or bank lifecycle merely for adoption. Produce the complete owned candidate delta against exactShared36, production runtime/UID inventory, portable evidence hashes and final candidate HEAD. Verify accepted L1–L3 retention and the complete integration payload; a final documentation commit alone is insufficient.
+All required routes, bank lifecycle and affected Kit5 gun continuation are closed. Owner and independent peer viewed the actual new image. Shared36 adoption preserved all owned bytes/UIDs/configuration. Exercise the directly affected actual fresh L4 Shell entry and restart. Do not repeat the seven routes, prior courtyards or bank lifecycle merely for adoption. Produce the complete owned candidate delta against exactShared36, production runtime/UID inventory, portable evidence hashes and final candidate HEAD. Verify accepted L1–L3 retention and the complete integration payload; a final documentation commit alone is insufficient.
 
 L4 remains pending integration and acceptance. No final inventory or ready claim is made here. The desktop scope excludes mobile export, release work, device performance and human balance acceptance. L5 and the optional levels have not started.
 
