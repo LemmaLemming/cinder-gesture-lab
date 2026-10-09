@@ -1,5 +1,11 @@
 # Cinder shared progress
 
+## Current acceptance policy — 9 October 2026
+
+The latest direct human instruction establishes [focused-desktop-level-1](LEVEL_ACCEPTANCE.md): focused automated mechanics/loading/transitions/saves/Retry/cleanup checks plus brief visual inspections. Agents need no full route, defeat-all, earned exit or campaign playthrough before level acceptance and next-level work. Record untested full-playthrough behavior and continue autonomously. This supersedes historical forward playthrough requirements below while preserving their original test results and source custody.
+
+Campaign8/24 remains accepted. Root notified all three existing workers immediately through canonical UPDATE1518a40b (Act1),4747655d (Act2),8cb5d40f (Act3) and their actual chats. Current frontier reviews are A1-L3, A2-L5 and A3-L3 against focused evidence, not route completion. Workers update their owned current progress/level records; Root retains shared ownership and first-help responsibility. Changed-level/directly affected suites only; no blanket requalification or mobile gate.
+
 Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Current publication: campaign-shared-39 [SHARED_CONTRACT](SHARED_CONTRACT.md), compatible private projected Cue reference-bit reuse with native guards unchanged. [439/0 correctness and bounded timing](CUE_REFERENCE_BITS.md) are independently reviewed; production runtime cost remains open. Campaign **8/24 accepted**: A1-L1/L2, A2-L1/L2/L3/L4 and A3-L1/L2; remaining16. All original workers retain ownership and integration help contact.
 
 ## Inventory and ownership

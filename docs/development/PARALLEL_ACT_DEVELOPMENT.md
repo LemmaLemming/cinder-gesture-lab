@@ -86,10 +86,12 @@ Initially serialize imports, smoke tests, previews and asset-export scripts. Mob
 
 ## Acceptance and integration
 
+The direct user update of 9 October 2026 establishes [focused-desktop-level-1](LEVEL_ACCEPTANCE.md). Agents need no full route, defeat-all, earned exit or campaign playthrough for level acceptance or starting the next level. Use focused automated mechanics/loading/transitions/saves/Retry/cleanup checks and brief visual inspections, record untested full-playthrough behavior, then continue autonomously after independent integration acceptance. This overrides earlier playthrough gates; existing accepted levels require no blanket rerun.
+
 For each first greybox, the worker supplies its scene path, stable research level ID, playable objective, implementation status, equipment decision record, asset readiness notes, tests and remaining limitations. Use the existing act design instead of inventing extra bosses/mechanics from an illustration.
 
 1. Run the changed level's targeted suite through `dev.py engine --headless --path . --script <owned-level-test.gd>` and directly affected named shared suites through `dev.py test`. The reviewed full baseline is already verified; a broad rerun requires a newly identified cross-system concern.
-2. Inspect the actual portrait preview. Check spawn/floor contact, exact controls, warnings/source/safe landing, occlusion, ordinary-kit viability, pause/resume and reset cleanup.
+2. Briefly inspect the actual portrait preview for representative spawn/floor contact, warnings/source/safe landing, occlusion and presentation. Use focused mechanics/pause/Retry/cleanup checks; a completed route or every legal-kit playthrough is unnecessary.
 3. Review changed files against ownership. Integrate one act change at a time without replacing canonical live ledgers with branch copies.
 4. Rerun affected checks and portrait inspection after integration. Publish the updated shared baseline before workers depend on new shared APIs.
 
@@ -99,7 +101,7 @@ The current authorized endpoint is an integrated, playable and tested desktop ca
 
 ## Future worker prompt template
 
-> Work in ASSIGNED_CHECKOUT on the assigned act branch. Read AGENTS.md and the parallel workflow, then the campaign/style/reuse/act references required for game content. Own only this act's assigned paths. Build one playable greybox for LEVEL_ID using CinderLevel and the shared shell; derive protagonist headwear from the selected act concept art while preserving the shared actor/equipment system, collision, feet pivot, action/facing language, controls, camera and cue meanings. Headwear has no slot or bonuses. When deciding the level's playstyle, consult the canonical equipment grid, record existing type matches and reserve any creation work before building it. Reserve perk/powerup introductions separately through the canonical ability CLI. Use dev.py for queued Godot jobs. Report portrait validation, tests, asset readiness and unimplemented dependencies. Request shared API/catalogue changes from the integration owner rather than forking shared systems.
+> Work in ASSIGNED_CHECKOUT on the assigned act branch. Read AGENTS.md and the parallel workflow, then the campaign/style/reuse/act references required for game content. Own only this act's assigned paths. Build one playable greybox for LEVEL_ID using CinderLevel and the shared shell; derive protagonist headwear from the selected act concept art while preserving the shared actor/equipment system, collision, feet pivot, action/facing language, controls, camera and cue meanings. Headwear has no slot or bonuses. When deciding the level's playstyle, consult the canonical equipment grid, record existing type matches and reserve any creation work before building it. Reserve perk/powerup introductions separately through the canonical ability CLI. Use dev.py for queued Godot jobs. Report focused mechanics/loading/transitions/saves/Retry/cleanup checks, brief portrait inspection, asset readiness and unimplemented dependencies. Follow LEVEL_ACCEPTANCE.md; full route, defeat-all and reaching the exit are not acceptance gates. Record untested full-playthrough behavior and proceed sequentially after independent acceptance. Request shared API/catalogue changes from the integration owner rather than forking shared systems.
 
 ## Official references
 

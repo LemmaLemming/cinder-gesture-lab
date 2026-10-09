@@ -45,6 +45,8 @@ Touch events are implemented, but this version has only been tested on the Mac. 
 
 ## Development
 
+Current [desktop level acceptance](docs/development/LEVEL_ACCEPTANCE.md) uses focused automated mechanics/loading/transitions/saves/Retry/cleanup checks plus brief visual inspections. Agents need no completed route, defeat-all, earned exit or campaign playthrough before accepting a level and starting the next. Untested full-playthrough behavior is recorded explicitly; existing accepted levels remain accepted.
+
 The [parallel act development workflow](docs/development/PARALLEL_ACT_DEVELOPMENT.md) and [setup record](docs/development/SETUP_RECORD.md) describe the VSCode workspace, official Godot Tools extension, shared level-preview entry point and three-agent ownership rules. Run `python3 scripts/dev/dev.py doctor` to inspect this checkout and `python3 scripts/dev/dev.py check` for serialized import and smoke checks. Generate this checkout's ignored machine settings with `python3 scripts/dev/setup_vscode.py --slot integration --canonical-root "$PWD"`, then open `.cinder/cinder.code-workspace` in VSCode. Act worktrees use their own slot and the same absolute canonical root.
 
 When deciding a level's playstyle, consult [the equipment design grid](docs/EQUIPMENT_DESIGN_GRID.md). Its live catalogue and shared creation claims prevent three workers independently creating the same equipment type; the existing ability ledger separately coordinates campaign introductions. The grid review is triggered by playstyle decisions, not every startup.
