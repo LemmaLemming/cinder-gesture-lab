@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-44** (9 October 2026). A1-L3 is independently accepted with focused production2,277/0 and the inspected brief191/0; campaign10/24, Act1 3/8, L4 may begin. [Acceptance and recorded limits](A1_L3_ACCEPTANCE.md). Shared43 runtime is unchanged: thirteen static replay items, atomic legacy availability migration in `load_saved`, memory-only `restore_session`, four slots and existing schemas. [Replay evidence](REPLAY_STATIC_AVAILABILITY.md). Separate CP2 framing/native-frame observations remain follow-up work; no full-route or all-room optical gate. Integration remains first help contact, and actual preserving ACKs establish adoption separately from availability.
+Revision: **campaign-shared-45** (9 October 2026). Shared45 adds the checked A1-L2 conditional arrangement reader and actual Challenge first-impact B→A, retaining original/legacy A→B. [Exact compatibility, focused results and limitations](A1_L2_CHALLENGE_ARRANGEMENT.md). Older readers reject the new key: preserve-adopt45 before reading new-receipt saves; never strip a receipt. No Player/Scheduler/Lane/envelope schema, geometry, HP, timing or control change. Campaign10/24 remains accepted, and A1-L3 evidence/limitations remain [separately recorded](A1_L3_ACCEPTANCE.md). Integration is first help contact; actual preserving ACK establishes adoption separately from availability.
 
 ## Static replay availability
 
