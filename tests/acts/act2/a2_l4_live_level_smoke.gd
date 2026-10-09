@@ -718,7 +718,8 @@ func _required_points(id: String, current: Dictionary) -> Array[Vector3]:
 	var points: Array[Vector3] = []
 	points.append_array(_game.call("player_camera_framing_points"))
 	if _actors.has(id) and _actors[id].is_visible_in_tree() and float(_actors[id].get("hp")) > 0.0:
-		_append_native_bounds(_actors[id], points)
+		# Use the exact production conservative transformed mesh-AABB point set.
+		points.append_array(_game.active_level.call("_required_source_points", _actors[id]))
 	if current.has("bank_id") and _banks.has(current.bank_id):
 		points.append_array(_banks[current.bank_id].call("get_required_camera_points"))
 	elif current.get("geometry") is Dictionary and not current.geometry.is_empty() and current.phase != "recovery":
