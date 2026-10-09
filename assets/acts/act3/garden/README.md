@@ -1,0 +1,9 @@
+# False Paradise produced presentation family
+
+Original likeness PNG is copied byte-for-byte from imagegen, SHA256 `f45558d704cb00e0b2d751bc495bd24bdeb556e1c1259cbc72c121065bccb852`; generation/alpha/primary-source records remain original. It is one harmless still with native1254canvas/pivot627,1204, nearest billboard/discard.5, no physical or target node. The owned consumer supplies paused cosmetic fade/restore and complete actual-Camera quad bounds.
+
+Garden geometry reuses existing Twin Suns opaque box/polygon helpers: six low fixed root ribbons and124 removable blossoms/bed/fork meshes, no collider/floor/cue/HP. Published back beds move to Z-1.75 and protected lowerZ-.6 for a closer trial; the original ignored wide draft remains historical. The publishing parent must check its actual response envelope and opaque projection.
+
+Production readiness: limited native cosmetic fixture verified31/0/exit0 clean, with four original339×736 frames and actual quad/root containment. Public pause freezes the fade; ExactJson quietly restores its remaining time; real unpaused ticks hide the likeness while the permanent floor, low roots, HP and sources stay intact. The [bounded packet](../evidence/A3-L4-garden-art/README.md) preserves the first visually obscured pass, unexpected-pause failure, conflicting automatic-preview failure and corrected result separately.
+
+Root viewed welcome/Draw/hidden originals: the relaxed clothed likeness and two low pale-flower beds are visible; player/source/footprint remain readable. Peripheral forks and side beds lie outside this close view. The sparse violet floor and cubic root ends remain prototype art. Prototype v2 persistence does not include these consumers; disengagement is disclosed test setup. Full authored garden, aggregate and production flow remain unfinished. No active/recovery, whole-kit, smooth-alpha, balance, performance or application-focus acceptance follows.
