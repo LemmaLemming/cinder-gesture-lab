@@ -250,23 +250,98 @@ func _admit(id: String, delta: float) -> void:
 	# The native whole plan may fit while CURRENT projection is still waiting.
 	# Only a rejected plan discards this optional proposal; no fit grants a lease.
 	if not _framing_ready(_camera_framing_points(), id): return
-	last_admission = actor.start(target, context, preview)
-	if not last_admission.get("accepted", false):
+	# start() may notify an observer before returning its original native answer.
+	# Keep that returned value independent from the writable diagnostic/cache.
+	var answer: Dictionary = actor.start(target, context, preview)
+	last_admission = answer.duplicate(true)
+	if answer.get("accepted") != true:
 		_clear_forecast_hint(id)
-		last_encounter_error = String(last_admission.get("reason", "Native admission rejected"))
+		last_encounter_error = String(answer.get("reason", "Native admission rejected"))
 		return
-	_framing[id] = {"reservation_id": String(last_admission.reservation_id), "landing": last_admission.proof.landing, "attack_position": last_admission.proof.attack_position}
+	var custody_error: String = _admission_custody_error(id, answer)
+	if not custody_error.is_empty():
+		_reject_corresponding_admission(id, answer, custody_error)
+		return
+	_framing[id] = {"reservation_id": String(answer.reservation_id), "landing": answer.proof.landing, "attack_position": answer.proof.attack_position}
 	_clear_forecast_hint(id)
 	_refresh_render_state()
-	if not _running: return
+	custody_error = _admission_custody_error(id, answer)
+	if not custody_error.is_empty():
+		_reject_corresponding_admission(id, answer, custody_error)
+		return
 	if not _framing_ready(_camera_framing_points()):
-		actor.cancel("greybox_response_not_visible")
-		_framing.erase(id)
+		_reject_corresponding_admission(id, answer, "greybox_response_not_visible", "greybox_response_not_visible")
+		return
+	# The presentation read is pure; nevertheless do not publish a changed owner
+	# or lease if an authored callback fault crossed this final boundary.
+	custody_error = _admission_custody_error(id, answer)
+	if not custody_error.is_empty():
+		_reject_corresponding_admission(id, answer, custody_error)
 		return
 	last_encounter_error = ""
 	_callback_depth += 1
-	native_admission_published.emit(id, last_admission.duplicate(true))
+	native_admission_published.emit(id, answer.duplicate(true))
 	_callback_depth -= 1
+
+
+## Pure post-start custody: never prune a lease, move a body, or emit a callback.
+## A recorder runs inside the parent's publication callback, so the parent's
+## _callback_depth is intentionally not an Actor/Scheduler readiness condition.
+func _admission_custody_error(id: String, answer: Dictionary) -> String:
+	if not is_inside_tree() or is_queued_for_deletion() or not _running or _changing or get_tree().paused or is_restore_candidate():
+		return "Native admission requires the live unpaused playable parent"
+	var correspondence: Dictionary = _corresponding_admission(id, answer)
+	if correspondence.is_empty(): return "Returned admission no longer names the same retained actual owner/Player/Scheduler lease"
+	var actual: Act1MushroomSelenite = correspondence.actor
+	if id not in current_source_ids() or actual.dead or actual.dormant or hero.dead:
+		return "Native admission source and Hero must remain living in the same current room"
+	var response: Dictionary = actual.get_spore_response_state()
+	if response.get("source_id") != id or response.get("alive") != true or response.get("outside_transaction") != true or correspondence.control.get("outside_transaction") != true:
+		return "Native admission must finish the actual Actor and Scheduler callback barriers"
+	if not answer.get("reservation") is Dictionary or var_to_bytes(correspondence.record) != var_to_bytes(answer.reservation):
+		return "Returned native reservation differs from the actual current admitted exchange"
+	return ""
+
+
+## Return only a freshly corroborated retained owner with the SAME returned ID.
+## No use of state(), reservations(), or reservation_state(): those may prune.
+## This narrower ownership read also works after a direct pause or Hero death;
+## it grants no playable admission, response proof, or cancellation receipt.
+func _corresponding_admission(id: String, answer: Dictionary) -> Dictionary:
+	if answer.get("accepted") != true or not answer.get("reservation_id") is String or String(answer.reservation_id).is_empty() or not is_inside_tree(): return {}
+	var raw: Variant = sources.get(id)
+	if not is_instance_valid(raw) or not raw is Act1MushroomSelenite: return {}
+	var actual: Act1MushroomSelenite = raw
+	if actual != _retained_sources.get(id) or actual.get_script() != ActorScript or not actual.is_inside_tree() or actual.is_queued_for_deletion() or actual.get_parent() != self: return {}
+	if not is_instance_valid(hero) or not hero.is_inside_tree() or hero.is_queued_for_deletion() or not is_instance_valid(scheduler) or not scheduler.is_inside_tree() or scheduler.is_queued_for_deletion() or scheduler.get_parent() != self: return {}
+	if actual.get_tree() != get_tree() or hero.get_tree() != get_tree() or scheduler.get_tree() != get_tree() or actual.get_world_3d() != get_world_3d() or hero.get_world_3d() != get_world_3d() or scheduler.get_world_3d() != get_world_3d() or not is_instance_valid(_world_root()): return {}
+	var native: Dictionary = actual.get_spore_native_bindings()
+	if native.get("api_revision") != ActorScript.SPORE_ACTOR_REVISION or native.get("actor_revision") != ActorScript.API_REVISION or native.get("source_id") != id or native.get("scheduler") != scheduler or native.get("player") != hero: return {}
+	var control: Dictionary = scheduler.source_control_state(actual)
+	if control.get("api_revision") != "scheduler-source-control-1" or control.get("source_instance_id") != actual.get_instance_id() or control.get("encounter_id") != _encounter_id() or control.get("world_revision") != WORLD_REVISION or not control.get("reservations") is Array or control.reservations.size() != 1: return {}
+	var record: Variant = control.reservations[0]
+	if not record is Dictionary or record.get("id") != answer.reservation_id or record.get("source_instance_id") != actual.get_instance_id() or record.get("response_actor_instance_id") != hero.get_instance_id(): return {}
+	var presentation: Dictionary = actual.pure_presentation_state()
+	if presentation.get("source_id") != id or presentation.get("reservation_id") != answer.reservation_id: return {}
+	return {"actor": actual, "control": control, "record": record}
+
+
+## Mutation is separate from the pure guard. Re-read custody after rejection;
+## never cancel a replacement/new lease or repair accepted history/resources.
+## Native actor.cancel preserves the original real Scheduler cooldown.
+func _reject_corresponding_admission(id: String, answer: Dictionary, reason: String, cancel_reason: String = "owned_admission_custody_rejected") -> void:
+	var correspondence: Dictionary = _corresponding_admission(id, answer)
+	if not correspondence.is_empty():
+		var actual: Act1MushroomSelenite = correspondence.actor
+		var response: Dictionary = actual.get_spore_response_state()
+		if response.get("outside_transaction") == true and correspondence.control.get("outside_transaction") == true:
+			actual.cancel(cancel_reason)
+	# Discard only this provisional response if it still names our rejected ID.
+	# A different response/history is an honest fault, not ours to repin or erase.
+	var frame: Variant = _framing.get(id)
+	if frame is Dictionary and frame.get("reservation_id") == answer.get("reservation_id"): _framing.erase(id)
+	_clear_forecast_hint(id)
+	last_encounter_error = reason
 
 
 ## Optional presentation lifetime only. Fresh native preview/admission and all
@@ -658,7 +733,12 @@ func _on_hero_died() -> void:
 	_approach_camera_requests.clear()
 
 
+func _native_route_snapshot_enabled() -> bool:
+	return false # Separate full subclass opts in; component stays unsupported.
+
+
 func snapshot_state() -> Dictionary:
+	if _native_route_snapshot_enabled(): return super.snapshot_state()
 	last_snapshot_error = "L3 component greybox has no full campaign/spore aggregate yet"
 	return {}
 

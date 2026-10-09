@@ -109,6 +109,22 @@ var _spore_cancel_delivering: bool = false
 var _spore_nested_damage_used: bool = false
 var _bound_spore_route_guard: Callable
 var _bound_spore_route_guard_required: bool = false
+# Transient construction custody only. Never actor configuration or wire data.
+var _restore_recipient_constructed: bool = false
+var _restore_level_ref: WeakRef
+var _restore_level_script: Script
+var _restore_source_parent: WeakRef
+var _restore_source_script: Script
+var _restore_source_transform: Transform3D
+var _restore_source_facing: Vector3
+var _restore_configuration_sha256: String = ""
+var _restore_scheduler_parent: WeakRef
+var _restore_scheduler_script: Script
+var _restore_hero_parent: WeakRef
+var _restore_hero_script: Script
+var _restore_hero_collision: CollisionShape3D
+var _restore_hero_capsule: CapsuleShape3D
+var _restore_hero_body_signature: Dictionary = {}
 
 
 func configure(role_id: String, source_id: String, initially_dormant: bool = true, approach_enabled: bool = false) -> bool:
@@ -165,7 +181,118 @@ func _ready() -> void:
 	add_child(_cue)
 	_build_greybox()
 	_apply_lifecycle_flags()
+	var restore_owner: CinderLevel = _restore_owner_level()
+	_restore_level_ref = weakref(restore_owner) if restore_owner != null else null
+	_restore_level_script = restore_owner.get_script() as Script if restore_owner != null else null
+	_restore_source_parent = weakref(get_parent())
+	_restore_source_script = get_script() as Script
+	_restore_source_transform = global_transform
+	_restore_source_facing = _facing
+	_restore_configuration_sha256 = ExactJson.stringify(_configuration).sha256_text() if not _configuration.is_empty() else ""
 
+
+const RESTORE_RECIPIENT_API: String = "act1-restore-recipient-construction-1"
+const RESTORE_RECIPIENT_KEYS: Array[String] = ["api_revision", "source_id", "room_id", "installed_rooms", "installed_fields", "configuration_sha256", "authored_position"]
+
+
+func construct_restore_recipient(candidate: CinderLevel, descriptor: Dictionary) -> bool:
+	# This does not restore an actor. It only exposes a genuine pristine living
+	# native recipient in an actual paused, nonplayable candidate for real bind.
+	var error: String = _restore_recipient_error(candidate, descriptor, 0)
+	if not error.is_empty(): return _reject(error)
+	_transaction_depth += 1
+	var decision: Variant = candidate.call("restore_recipient_construction_error", self, descriptor.duplicate(true))
+	# Parent must be literally pure. Recheck actual aliases/resources/pristine
+	# state after the call; a copied source ID/empty string is not sole custody.
+	error = _restore_recipient_error(candidate, descriptor, 1)
+	if not decision is String or not String(decision).is_empty() or not error.is_empty():
+		_transaction_depth -= 1
+		return _reject(error if not error.is_empty() else (String(decision) if decision is String else "Owned restore entitlement must return a literal String"))
+	# Consume before the first lifecycle property changes. No ordinary activation,
+	# role/profile/cycle/HP/sample/hurt/pose/ground/stamp write, draw or signal.
+	_restore_recipient_constructed = true
+	dormant = false
+	_apply_lifecycle_flags()
+	error = _retained_body_error()
+	if error.is_empty(): error = _lifecycle_error()
+	if error.is_empty(): error = art_binding_error()
+	_transaction_depth -= 1
+	# A post-property failure consumes this partial candidate; the owner disposes
+	# it. Do not heal/rewind or reuse a failed constructor as a new native source.
+	if not error.is_empty(): return _reject("Dispose partial native restore recipient: " + error)
+	last_error = ""
+	return true
+
+
+func _restore_recipient_error(candidate: CinderLevel, descriptor: Dictionary, depth: int) -> String:
+	if _restore_recipient_constructed or _transaction_depth != depth or _snapshot_busy or _cancelling or _spore_cancel_delivering:
+		return "One-shot restore construction must run outside actor state/cancellation callbacks"
+	if not is_instance_valid(candidate) or not candidate.is_inside_tree() or candidate.is_queued_for_deletion() or not candidate.is_restore_candidate() or not get_tree().paused:
+		return "Actual fresh paused CinderLevel restore candidate required"
+	var owner: Variant = _restore_level_ref.get_ref() if _restore_level_ref != null else null
+	var parent: Variant = _restore_source_parent.get_ref() if _restore_source_parent != null else null
+	if owner != candidate or _restore_owner_level() != candidate or get_parent() != parent or candidate.get_script() != _restore_level_script or get_script() != _restore_source_script or _restore_source_script == null or _restore_source_script.resource_path != "res://scripts/acts/act1/mushroom_selenite.gd":
+		return "Retain the actual ready source/script/parent and nearest owning candidate"
+	if not candidate.has_method("restore_recipient_construction_error") or not _live_bindings() or candidate.hero != _hero or candidate.get("scheduler") != _scheduler or candidate.get_world_3d() != get_world_3d():
+		return "Owned saved-prefix entitlement and actual same-candidate Hero/Scheduler aliases required"
+	var scheduler_parent: Variant = _restore_scheduler_parent.get_ref() if _restore_scheduler_parent != null else null
+	var player_parent: Variant = _restore_hero_parent.get_ref() if _restore_hero_parent != null else null
+	if not candidate.is_ancestor_of(_scheduler) or _scheduler.get_parent() != scheduler_parent or _scheduler.get_script() != _restore_scheduler_script or _hero.get_parent() != player_parent or _hero.get_script() != _restore_hero_script:
+		return "Retain actual earlier-physics Scheduler/Player script and native parent identities"
+	if global_transform != _restore_source_transform or _facing != _restore_source_facing or _restored_floor_contact != -1:
+		return "Fresh recipient keeps its actual authored native transform/facing and unset restoration floor cache"
+	var error: String = _retained_body_error()
+	if error.is_empty(): error = _lifecycle_error()
+	if error.is_empty(): error = art_binding_error()
+	if not error.is_empty(): return error
+	if not dormant or not _configuration.get("initially_dormant", false) or not _dormant_state_error().is_empty():
+		return "Only a genuinely pristine configured initially-dormant full-HP recipient can be constructed"
+	if _cue.get_script() != CueScript or _sprite_art.get_script() != ArtScript or _native_codec.get_script() != NativeCodec:
+		return "Retain actual owned codec/role-art and shared cue scripts"
+	error = String(_native_codec.call("configuration_error", _configuration))
+	if not error.is_empty(): return error
+	if _restore_configuration_sha256.is_empty() or ExactJson.stringify(_configuration).sha256_text() != _restore_configuration_sha256:
+		return "Retain the actual immutable ready-time source configuration"
+	if _spore_consumer_ref != null or not _spore_consumer_id.is_empty() or not _spore_episode_id.is_empty() or _spore_phase != "none" or _spore_progress != 0.0 or _spore_direction != Vector3.FORWARD or _spore_nested_damage_used or _bound_spore_route_guard.is_valid() or _bound_spore_route_guard_required:
+		return "Fresh native restore recipient cannot retain a prior environment binding/stamp/history"
+	var player_body: Dictionary = Motion.source_description(_hero)
+	if player_body.has("error") or player_body.get("collision") != _restore_hero_collision or not is_instance_valid(_restore_hero_collision) or _restore_hero_collision.shape != _restore_hero_capsule or _hero.get_node_or_null("BodyCollision") != _restore_hero_collision or not _same(player_body.get("signature", {}), _restore_hero_body_signature):
+		return "Retain the actual shared Player capsule node/resource/native properties"
+	var control: Dictionary = _scheduler.source_control_state(self)
+	if control.get("api_revision") != "scheduler-source-control-1" or not control.get("source_instance_id") is int or control.source_instance_id != get_instance_id() or not control.get("outside_transaction") is bool or control.outside_transaction != true or not control.get("encounter_id") is String or control.encounter_id != "" or not control.get("clock_s") is float or control.clock_s != 0.0 or not control.get("reservations") is Array or not control.reservations.is_empty() or not control.has("cooldown") or control.cooldown != null or not _scheduler.encounter_profile().is_empty() or _scheduler.get_clock() != 0.0 or _scheduler.has_committed_exchange():
+		return "Actual fresh unbegun Scheduler must retain empty profile/clock/leases/readiness"
+	error = _restore_descriptor_error(descriptor)
+	return error
+
+
+func _restore_descriptor_error(descriptor: Dictionary) -> String:
+	var error: String = Codec.value_error(descriptor)
+	if error.is_empty(): error = Codec.keys_error(descriptor, RESTORE_RECIPIENT_KEYS)
+	if not error.is_empty(): return error
+	if descriptor.api_revision != RESTORE_RECIPIENT_API or not descriptor.source_id is String or descriptor.source_id != _configuration.source_id or not descriptor.room_id is String or not _stable_id(descriptor.room_id) or not descriptor.installed_rooms is Array or descriptor.installed_rooms.is_empty() or descriptor.installed_rooms.size() > 5 or not descriptor.installed_fields is Array or descriptor.installed_fields.size() > 4 or not descriptor.configuration_sha256 is String or not Codec.is_vector3(descriptor.authored_position):
+		return "Closed owned constructor source/room/prefix/field/configuration descriptor required"
+	var rooms: Array = []
+	for value: Variant in descriptor.installed_rooms:
+		if not value is String or not _stable_id(value) or rooms.has(value): return "Distinct bounded installed room IDs required"
+		rooms.append(value)
+	var fields: Array = []
+	for value: Variant in descriptor.installed_fields:
+		if not value is String or not _stable_id(value) or fields.has(value): return "Distinct bounded installed field IDs required"
+		fields.append(value)
+	if not rooms.has(descriptor.room_id) or descriptor.configuration_sha256 != _restore_configuration_sha256 or not _same(descriptor.authored_position, Codec.vector3(_restore_source_transform.origin)):
+		return "Constructor descriptor must match actual immutable source configuration/authored placement and installed room"
+	# Ordered contiguous prefix, source->room membership, exact field subsets and
+	# copied saved-stage correspondence remain the owning parent/aggregate codec's
+	# single authority. No raw saved actor state is interpreted here.
+	return ""
+
+
+func _restore_owner_level() -> CinderLevel:
+	var node: Node = get_parent()
+	while is_instance_valid(node):
+		if node is CinderLevel: return node as CinderLevel
+		node = node.get_parent()
+	return null
 
 func activate() -> bool:
 	if not _live_bindings() or _transaction_depth > 0 or _snapshot_busy or _cancelling or not activation_guard.is_valid():
@@ -214,6 +341,14 @@ func bind(scheduler: CinderThreatScheduler, hero: CinderPlayer) -> bool:
 		return true if _scheduler == scheduler and _hero == hero else _reject("C31/C32 scheduler and hero bindings are immutable")
 	_scheduler = scheduler
 	_hero = hero
+	_restore_scheduler_parent = weakref(scheduler.get_parent())
+	_restore_scheduler_script = scheduler.get_script() as Script
+	_restore_hero_parent = weakref(hero.get_parent())
+	_restore_hero_script = hero.get_script() as Script
+	var restore_player_body: Dictionary = Motion.source_description(hero)
+	_restore_hero_body_signature = restore_player_body.get("signature", {}).duplicate(true)
+	_restore_hero_collision = hero.get_node_or_null("BodyCollision") as CollisionShape3D
+	_restore_hero_capsule = _restore_hero_collision.shape as CapsuleShape3D if _restore_hero_collision != null else null
 	_scheduler.reservation_invalidated.connect(_on_invalidated)
 	last_error = ""
 	return true

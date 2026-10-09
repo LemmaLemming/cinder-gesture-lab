@@ -220,15 +220,20 @@ func _begin_room() -> void:
 
 
 func _install_room_environment() -> String:
-	var field_ids: Array = ROOM_FIELDS[beat_index]
+	return _install_authored_room_environment(beat_index)
+
+
+func _install_authored_room_environment(room: int) -> String:
+	if room < 0 or room >= 5: return "Known authored room required"
+	var field_ids: Array = ROOM_FIELDS[room]
 	if field_ids.is_empty(): return ""
-	var room_id: String = Layout.ROOM_IDS[beat_index]
+	var room_id: String = Layout.ROOM_IDS[room]
 	if _consumers.has(room_id): return "A room's permanent spore consumer cannot be rebound"
 	var native: Dictionary = scheduler_bindings()
 	var environment: Dictionary = {"world_root": native.world_root, "floors": native.floors}
 	var recipients: Dictionary = {}
 	var protocols: Dictionary = {}
-	for id: String in current_source_ids():
+	for id: String in ROOM_SOURCES[room]:
 		var actor: Act1MushroomSelenite = sources[id]
 		var callback: Callable = Callable(self, "_normal_spore_route_error").bind(id, room_id)
 		_route_callbacks[id] = callback
@@ -639,6 +644,7 @@ func route_state() -> Dictionary:
 
 
 func snapshot_state() -> Dictionary:
+	if _native_route_snapshot_enabled(): return super.snapshot_state()
 	last_snapshot_error = SAVE_REFUSAL
 	return {}
 
