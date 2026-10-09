@@ -1,5 +1,11 @@
 # Instructions for agents working on Cinder
 
+## Current desktop acceptance
+
+- Follow [focused level acceptance](docs/development/LEVEL_ACCEPTANCE.md), effective 9 October 2026 by direct user instruction. Use focused automated checks for mechanics, loading, transitions, saves, retry and cleanup, plus brief visual inspections.
+- Agents do not need to complete a full route, defeat every enemy, reach the exit or beat the campaign before accepting a level and starting the next. Record untested full-playthrough behavior and continue autonomously. This supersedes older playthrough gates in project/objective/act records.
+- Preserve existing accepted levels and reuse unchanged evidence. Run only changed-level/directly affected checks; retain real failed/canceled/unexecuted results and investigate concrete focused failures. Integration is the first help contact and accepts levels independently.
+
 ## Parallel act development
 
 - Before implementing an act in parallel, read [the development workflow](docs/development/PARALLEL_ACT_DEVELOPMENT.md) and [the setup record](docs/development/SETUP_RECORD.md). These define the shared level interface, worktree ownership, engine commands and launch conditions.
