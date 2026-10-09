@@ -1,0 +1,39 @@
+{
+  "recorded_at": "2026-10-09T06:25:05.749636+00:00",
+  "baseline": "027dfa16e4c215ab1cc9f86bd0e4792088d16446",
+  "commands": [
+    {
+      "command": "python3 scripts/dev/dev.py ability validate",
+      "exit_code": 0,
+      "result": {
+        "ok": true,
+        "revision": 0,
+        "registered_count": 20,
+        "use_count": 0,
+        "active_use_count": 0,
+        "unregistered_ids": [],
+        "semantic_review_required": true
+      }
+    },
+    {
+      "command": "python3 scripts/dev/dev.py equipment validate",
+      "exit_code": 0,
+      "result": {
+        "ok": true,
+        "revision": 0,
+        "ability_usage_revision": 0,
+        "item_count": 36,
+        "catalogue_duplicate_types": [],
+        "claim_count": 0,
+        "active_claim_count": 0,
+        "semantic_review_required": true
+      }
+    },
+    {
+      "command": "python3 scripts/design/validate_equipment.py",
+      "exit_code": 0,
+      "result": "12clothing/4weapons/6powerups/14perk definitions;10numeric fixtures;256gear/500conditional subsets/7500combined states/15legal powerups screened. Structural/numeric screening, not timing/ammo/human balance."
+    }
+  ],
+  "scope": "Actual focused completion validators; no new equipment or ability allocation. Existing default kit/controls retained."
+}

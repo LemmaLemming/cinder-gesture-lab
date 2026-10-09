@@ -1,4 +1,14 @@
-## Focused acceptance policy applied; superseded route test closed
+## Current focused acceptance — 9 October 2026
+
+[focused-desktop-level-1](../../../docs/development/LEVEL_ACCEPTANCE.md) governs the current frontier. Policy `027dfa16` is preserve-adopted at `32f7e993`; Act3 remains **2/8 accepted**, A3-L3 only. [The focused L3 evidence map](../../../docs/acts/act3/A3_L3_FOCUSED_ACCEPTANCE.md) records original commands/results/baselines and current caveats. Production warning 18/0 supports ordinary encounters, Save/Continue/Retry and disposal; other managed/finite/arrival/held-exit/control results retain their separate scopes.
+
+Current-parent centre/west-shore portrait checks each pass7/0; focused production Journey/replay/return passes14/0, with two consumed GUI Resume gestures, exact protected story/disk/core and native donor/final cleanup. Sources are frozen/current and native logs clean. All design validators pass with no new ability/equipment allocation. Brief floor/Hero/HUD readability passes; partial scenic cast crop and weak distant lake identity remain explicit art limitations. Focused evidence is ready for independent integration review and canonical registration; acceptance is not claimed. Full route, defeat-all, an earned exit and whole-kit playthroughs are **untested full-playthrough behavior**, not acceptance or next-level gates. Authored content, shared controls, coherent saves/Retry/cleanup, ownership and canonical ledgers remain required. Proceed sequentially after independent integration acceptance.
+
+## Historical milestone records and superseded test plans
+
+All milestone status and instructions below are historical as-of records, including headings or sentences saying “current”, “next”, “running”, “required”, “gate” or “before L4”. Their old playthrough, defeat-all, earned-exit and whole-kit test gates are superseded by the current focused policy above. Original results, failures, commands and source attribution remain unchanged. Confirmed authored content, existing equipment IDs and shared control/design requirements remain applicable; their old query/status/test-plan statements do not set present acceptance requirements.
+
+## Historical focused-policy application and route closure
 
 Direct human instruction was verified in integration's actual userMessage and canonical UPDATE8cb5d40f. Acceptance uses focused mechanics/loading/transitions/saves/retry/cleanup checks plus brief actual visual inspection. Full route, defeating every enemy, physical exit and whole-kit playthroughs no longer gate L3 acceptance or the next sequential level. Preserve all eight Act3 content requirements and shared controls/design/ownership/queue contracts. Record full-playthrough behavior as untested; independently fix actual defects discovered by old tests.
 
@@ -6,7 +16,7 @@ Own superseded13326 full-route test is actually CLOSED exit241 after SIGTERM req
 
 Next: current-source focused coverage/gap review, the smallest remaining representative transition/save/loading check and brief actual portrait inspection; send L3 HANDOFF promptly for autonomous integration acceptance. Long terminal/kit route preparations are optional unexecuted diagnostics, not prerequisites. Reviewed kitbe02203f/21d29cb8 and arrivalb9e1e2d/80b1720d inherit current1a8 exactly; terminal493a016c remains unchanged. Act3 stays2/8/L3 frontier until focused acceptance. No human decision is requested.
 
-## Corrected observer native retest is running
+## Historical observer retest before owner closure
 
 Handle13326 is RUNNING on the same affected full-route/stalker-first target, with a new339-input freeze at7b237dfd/metadata-baselinea400355f. ActualGodot4.7.2/startupPASS and thresholdStalker genuine recoveryhits36→16→0 are observed; no footer/result/full-route acceptance yet. Current route1a8 differs from original83376's62158 by exactly five optional-adapter kind reads; every other consumed path hash is identical. Hold all339 inputs until actual closure. Native log `.cinder/mirror-sea-full-route-stalker-first-optional-adapter-s39-native.log`; failed83376 is closed and archived, not restarted unchanged. No engine/import/cue/controller alteration.
 
