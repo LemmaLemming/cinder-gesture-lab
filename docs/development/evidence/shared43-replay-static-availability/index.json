@@ -1,0 +1,2103 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-09T07:45:18.325353+00:00",
+  "shared_api_revision": "campaign-shared-43",
+  "policy": "13 existing implemented static items available for completed-level replay; load_saved-only atomic legacy availability migration; restore_session memory-only",
+  "base_commit": "5a38ee04a96253d4bd323098fcba8992152c8fd9",
+  "attempts_sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+  "groups": [
+    {
+      "id": "focused-replay",
+      "session_id": 1140,
+      "actual_session_status": "CLOSED",
+      "checks": 92,
+      "failures": 0,
+      "source_count": 94,
+      "source_manifest": "focused-replay/source/manifest.json",
+      "original_manifest_sha256": "796d8229f56d8db710a7fbcbda829855893c35b487345045c05ffa653a958c56",
+      "result": "focused-replay/result.json",
+      "raw_log": "focused-replay/wrapper.log",
+      "raw_log_sha256": "bc0219fa3f19801ff80ce071b2f7894051154fa21408016176143840e592c5e1",
+      "scope": "Targeted actual native replay selectors/13existing static IDs/resolver; exact protected story/interrupted side/four-slot remembered kit across format2 legacy availability migration/two relaunches; memory-only restore; genuine filesystem publication failure/retry; original-ownership recovery and malformed/unimplemented/unowned rejection. TEST ONLY fixture rooms/metadata/resources; UI callbacks, no native gesture or new portrait/act/campaign/playthrough/performance claim."
+    },
+    {
+      "id": "persistence",
+      "session_id": null,
+      "actual_session_status": "CLOSED",
+      "checks": 45,
+      "failures": 0,
+      "source_count": 93,
+      "source_manifest": "persistence/source/manifest.json",
+      "original_manifest_sha256": "4c649bef39a8aaa92b35250519c9646f285d390e05b0efad6401f1ba092af443",
+      "result": "persistence/result.json",
+      "raw_log": "persistence/wrapper.log",
+      "raw_log_sha256": "3207f69eff294ebb69e6cc520d44c94e8a8a7624ce25222c4b2208b0196f522d",
+      "scope": "Directly affected shared model/format2 persistence, exact protected story/optional/replay/resource isolation and reward deduplication; focused fixture metadata only, no authored-level acceptance."
+    },
+    {
+      "id": "menu",
+      "session_id": 17180,
+      "actual_session_status": "CLOSED",
+      "checks": 67,
+      "failures": 0,
+      "source_count": 93,
+      "source_manifest": "menu/source/manifest.json",
+      "original_manifest_sha256": "691baea9062169a85d463d7af07f1ab7fb8a2b86e87ad36332085894c50d6aaa",
+      "result": "menu/result.json",
+      "raw_log": "menu/wrapper.log",
+      "raw_log_sha256": "c2f7a3679d48da8b2e85262ff214580c9b834c5cad9756a90a1fd742f2247fa6",
+      "scope": "Directly affected actual portrait menu/13static slot filtering/replay choices and protected model state; bounded native UI fixtures, no authored-level or fullplaythrough claim."
+    },
+    {
+      "id": "resource-import",
+      "session_id": 83809,
+      "actual_session_status": "CLOSED",
+      "source_count": 94,
+      "source_manifest": "resource-import/source/manifest.json",
+      "original_manifest_sha256": "9a25541a4acb4c15298ebf757690c40f45fe0ee39a42570e75437f440b1a3255",
+      "result": "resource-import/result.json",
+      "returncode": 0,
+      "raw_log": "resource-import/wrapper.log",
+      "raw_log_sha256": "ed52259be5934267b4065840be0aa6d2342171b82dca936f2d3dd04fb0738155",
+      "scope": "Canonical queued resource import and generation of missing new Root static-replay test UID metadata only; no mechanics/level/portrait/pass claim. Original frozen existing inputs remain exact; new UID is recorded separately after closure without historical backfill."
+    }
+  ],
+  "artifact_count": 407,
+  "artifacts": [
+    {
+      "path": ".gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2187,
+      "sha256": "1ff77ced9543cf76d866bd9e3a902dc1679c4860de51cdb2fd532b21ae427e6c"
+    },
+    {
+      "path": "focused-replay/result.json",
+      "bytes": 1196,
+      "sha256": "2403103d605ce6be834fecbc21565e419bab7d5e2a14a029318624f611a4f986"
+    },
+    {
+      "path": "focused-replay/runner.py",
+      "bytes": 2039,
+      "sha256": "6923a6dc09e2b3839e3418e7d9fee154a1c3fe3636043f607a85ece720b945b0"
+    },
+    {
+      "path": "focused-replay/source/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "focused-replay/source/files/assets/characters/manifest.json",
+      "bytes": 7918,
+      "sha256": "fa645e290daa62f1a518e603cca6fb2c8d3f261a354385ce5c1475e5d7d503b6"
+    },
+    {
+      "path": "focused-replay/source/files/assets/effects/manifest.json",
+      "bytes": 4313,
+      "sha256": "739c134f606ad72318785dbbaeeaa5f864a0ec120e8f3acf995a44727a0fe757"
+    },
+    {
+      "path": "focused-replay/source/files/assets/references/manifest.json",
+      "bytes": 2412,
+      "sha256": "c49ac654d0d96cb83c4c8499b15649557b91f6966743b1e942fb9040f3cc6dd0"
+    },
+    {
+      "path": "focused-replay/source/files/captures/character-blast.png",
+      "bytes": 46350,
+      "sha256": "2091b464b806fa7d8e9cf56c46d719f5683cfbadfecec0a99a50e2a96a579a2d"
+    },
+    {
+      "path": "focused-replay/source/files/captures/character-lab.png",
+      "bytes": 43458,
+      "sha256": "6376b8e7ec8e3d08b03cddcd6fd4f4f44521cc2dd6a835bfaf2fd9dbf2f01409"
+    },
+    {
+      "path": "focused-replay/source/files/captures/character-primary.png",
+      "bytes": 47294,
+      "sha256": "4b6c53199c556aa58f86d4e7a02958d979f1ebc1d86389d1fe136cb475fba399"
+    },
+    {
+      "path": "focused-replay/source/files/captures/dash-plume-end.png",
+      "bytes": 46039,
+      "sha256": "4194ee6dd6c0f93f2a8433110648aaa6c107ed001ee8005f8e8ac04f8baefba0"
+    },
+    {
+      "path": "focused-replay/source/files/captures/dash-plume-mid.png",
+      "bytes": 44475,
+      "sha256": "c6a2db49a6894db82e709f3395c6f18666bb84b3e71fb5295099a4313ecaafb0"
+    },
+    {
+      "path": "focused-replay/source/files/captures/enemy-recovery.png",
+      "bytes": 38409,
+      "sha256": "1330de03fd7970316333efab8bf33778f5bf325153386b6040949afa754f0b5f"
+    },
+    {
+      "path": "focused-replay/source/files/captures/enemy-warning.png",
+      "bytes": 39107,
+      "sha256": "c66d4fd911ff69ce4fcdece8a432960e91d47d5b74337475536ae950f7533c57"
+    },
+    {
+      "path": "focused-replay/source/files/captures/level-preview.png",
+      "bytes": 20745,
+      "sha256": "aadaa05117f1db392c4ea2e6a98bf2faa1abde9949de72ece167d4009ad26767"
+    },
+    {
+      "path": "focused-replay/source/files/captures/loadout-bench.png",
+      "bytes": 148324,
+      "sha256": "1c708651263e5fd20b4cdea15d06ba9f5d2d5886d8ae7d4fac0836b9250c5c4c"
+    },
+    {
+      "path": "focused-replay/source/files/captures/mechanics-lab.png",
+      "bytes": 46497,
+      "sha256": "740ea58b2611294a3bd18f880b81bea52a1272a63d698abc423148e0c48277cb"
+    },
+    {
+      "path": "focused-replay/source/files/captures/shot-flare-left.png",
+      "bytes": 50287,
+      "sha256": "6cdee74805b619e0f801404c5cfafe76388620859f9ac4b8d4350930dbf0dce3"
+    },
+    {
+      "path": "focused-replay/source/files/captures/shot-flare-right.png",
+      "bytes": 50089,
+      "sha256": "803d303d133e13a728d16c9e15eecf110d39ce91b65d97ac9542606b3e2a640d"
+    },
+    {
+      "path": "focused-replay/source/files/captures/slash-arc.png",
+      "bytes": 49204,
+      "sha256": "01e44c59ebd6c23400197139077a896040f9c17dac228e1645fc7e39af53ca7e"
+    },
+    {
+      "path": "focused-replay/source/files/data/campaign/registry.json",
+      "bytes": 11057,
+      "sha256": "95e7fbcd91067d823f962495c421cb6eb7447f5641db21f1defda4922e04953c"
+    },
+    {
+      "path": "focused-replay/source/files/data/design/difficulty_profiles.json",
+      "bytes": 1313,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c"
+    },
+    {
+      "path": "focused-replay/source/files/data/design/player_equipment.json",
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    {
+      "path": "focused-replay/source/files/docs/concept-art/act1/generated-manifest.json",
+      "bytes": 128016,
+      "sha256": "626f39561c9c430beef47a399f69711c94c1daf93fd94835bf0d83a33de3b637"
+    },
+    {
+      "path": "focused-replay/source/files/docs/concept-art/act2/generated-manifest.json",
+      "bytes": 61369,
+      "sha256": "1145d3d494c8fe1337364b98c432a315c6cab5837409793bef9c6b62331d66f5"
+    },
+    {
+      "path": "focused-replay/source/files/docs/concept-art/act3/generated-manifest.json",
+      "bytes": 87066,
+      "sha256": "46be3e8f5cfc321b9d661d41db5e049adce3278ec75f8a8561cf591c5ac4b9d9"
+    },
+    {
+      "path": "focused-replay/source/files/docs/development/LEVEL_ACCEPTANCE.md",
+      "bytes": 4685,
+      "sha256": "8cf9763324e684a3d1f4b6648fa559eb8bc3eabb987218a73bd07a48d19bd2d3"
+    },
+    {
+      "path": "focused-replay/source/files/docs/reference-library/act1/CREDITS.md",
+      "bytes": 41568,
+      "sha256": "c134fcecf5bb9bd49eeebe4570c36a52b66224e0b5ec05f57c3e5bba250a2ee2"
+    },
+    {
+      "path": "focused-replay/source/files/docs/reference-library/act2/CREDITS.md",
+      "bytes": 4753,
+      "sha256": "447bf094aea678a623a97f1e909c4713c063271a847ec604bdc743028aa8f527"
+    },
+    {
+      "path": "focused-replay/source/files/docs/reference-library/act3/research/SOURCES.md",
+      "bytes": 4367,
+      "sha256": "0109bb301fe10fc93ab48bb10cfef5fa29f25e7b076ebcb574e428ce8635b4a5"
+    },
+    {
+      "path": "focused-replay/source/files/project.godot",
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f"
+    },
+    {
+      "path": "focused-replay/source/files/scenes/campaign_main.tscn",
+      "bytes": 177,
+      "sha256": "e6b51208b7c9d6182c16cf07b60f2f0fa9b52327c6a7dcf0feedc290b555a713"
+    },
+    {
+      "path": "focused-replay/source/files/scenes/lab_arena.tscn",
+      "bytes": 23638,
+      "sha256": "290c0f7fa49b284705c6adec423ca7109a2e7ebd50439866e39ef3856397c361"
+    },
+    {
+      "path": "focused-replay/source/files/scenes/player.tscn",
+      "bytes": 1184,
+      "sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac"
+    },
+    {
+      "path": "focused-replay/source/files/scenes/practice_target.tscn",
+      "bytes": 180,
+      "sha256": "600553b1326ef7d117e123c308c6e0f8be0e4a4dc4ff80113894add7bf2ee520"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/attack_footprint.gd",
+      "bytes": 4138,
+      "sha256": "e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/attack_footprint.gd.uid",
+      "bytes": 19,
+      "sha256": "6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/attempts.gd",
+      "bytes": 18347,
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/attempts.gd.uid",
+      "bytes": 20,
+      "sha256": "b9d15a9997fe9a59fc5b31ab8d30779dad9769cdfcd306306e40afd61435eec0"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/exact_json.gd",
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/exact_json.gd.uid",
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/level.gd",
+      "bytes": 22401,
+      "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/level.gd.uid",
+      "bytes": 20,
+      "sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/registry.gd",
+      "bytes": 6006,
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/registry.gd.uid",
+      "bytes": 20,
+      "sha256": "80713da50c61c6b08bed5ce5a8a9cf2bf0e2506e4369ec4b593c69c53b4cff91"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/save_store.gd",
+      "bytes": 7310,
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/save_store.gd.uid",
+      "bytes": 20,
+      "sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/shell.gd",
+      "bytes": 45143,
+      "sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/shell.gd.uid",
+      "bytes": 20,
+      "sha256": "e193ac7ff2bdcbbf75ca177a71194161a8f6bb3c5a184c304caeec690723eda6"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/snapshot_codec.gd",
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/campaign/snapshot_codec.gd.uid",
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/character/player_presentations.gd",
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/character/player_presentations.gd.uid",
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/combat/difficulty.gd",
+      "bytes": 4882,
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/combat/difficulty.gd.uid",
+      "bytes": 20,
+      "sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/curling_smoke.gd",
+      "bytes": 14175,
+      "sha256": "5f8fa272a9c5beef47f7c69ad0b916965e7caf30a5d0e6b329d56b227807c36c"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/curling_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "8c283bb9181b5b956ec3746bf98b9d614d5f86a8caddac06ba609e43231b75bb"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/dev/dev.py",
+      "bytes": 28551,
+      "sha256": "28afb59c142488b8f80e1c93072ea790d674aa12868988602b5c55e096a03192"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/effects.gd",
+      "bytes": 21962,
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/effects.gd.uid",
+      "bytes": 19,
+      "sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/enemy.gd",
+      "bytes": 41287,
+      "sha256": "39c16960c5b7ccb12282cda87c93d4b99280040881bf39b5879e11487a883ed1"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/enemy.gd.uid",
+      "bytes": 20,
+      "sha256": "8f3ba80717e9fe95c6a27620cd909fddd88cd18ed5c425b859b236ccc85a4280"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/equipment.gd",
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/equipment.gd.uid",
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/game.gd",
+      "bytes": 38685,
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/game.gd.uid",
+      "bytes": 19,
+      "sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/hud.gd",
+      "bytes": 16609,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/hud.gd.uid",
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/lab_bench.gd",
+      "bytes": 6324,
+      "sha256": "8f2bb0d92f48cfea32205f0b76854ad03ca7a85127e29dfe9275bdb0b2ea58fb"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/lab_bench.gd.uid",
+      "bytes": 20,
+      "sha256": "2a7f596814c6c7fff0b9f0a229de202678f54e5455c1d16c450e5f2a7ef561fe"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/pixel_sprite.gd",
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/pixel_sprite.gd.uid",
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/player.gd.uid",
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/practice_target.gd",
+      "bytes": 4451,
+      "sha256": "455e1d0697db73c3b27a9e12136e5103bd438fdf22142bee0d329cd8748ba15e"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/practice_target.gd.uid",
+      "bytes": 20,
+      "sha256": "653901d6e1e18f9d4ce4eb782af9366629a641679963266065a425d014814531"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/presentation/camera_framing.gd",
+      "bytes": 10132,
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/presentation/camera_framing.gd.uid",
+      "bytes": 20,
+      "sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/settings/game_settings.gd",
+      "bytes": 13346,
+      "sha256": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/settings/game_settings.gd.uid",
+      "bytes": 19,
+      "sha256": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/shotgun_flare.gd",
+      "bytes": 5778,
+      "sha256": "24e526e3850531317285e0d687ee93ebd37aa7819fbf5cd27af19284af0b84e6"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/shotgun_flare.gd.uid",
+      "bytes": 20,
+      "sha256": "e7c22cc0b7e74fa5181371c644527e6b18ec06ad8369dc72bfa4986505a15ba4"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/ui/campaign_menu.gd",
+      "bytes": 35356,
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/ui/campaign_menu.gd.uid",
+      "bytes": 19,
+      "sha256": "27d6486d87eb8162cc7e6c714ce9db11d313b66236870281aa2e615d8d5fc2e8"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/weapon_pickup.gd",
+      "bytes": 1750,
+      "sha256": "7a350ffa2efa2f6f031877842fb447e22b3b80d49cc2acc40ee39dd0cc19c56e"
+    },
+    {
+      "path": "focused-replay/source/files/scripts/weapon_pickup.gd.uid",
+      "bytes": 20,
+      "sha256": "0a004b242329bf5742cac245b12a6d41b8e306fc79ad63d43dc0c46896bf8615"
+    },
+    {
+      "path": "focused-replay/source/files/tests/campaign_menu_smoke.gd",
+      "bytes": 23903,
+      "sha256": "c724893ece05e36d35a04c4f12ddb75a70a8bc71ca9c29ced95c5e9f10d47c95"
+    },
+    {
+      "path": "focused-replay/source/files/tests/campaign_menu_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "78b3f8070ef047d27fa6bf00e92d27ebd41aaddb4add27e87921ea488422029a"
+    },
+    {
+      "path": "focused-replay/source/files/tests/campaign_persistence_smoke.gd",
+      "bytes": 14256,
+      "sha256": "85b6e36a1a432b6f855aaf2090fc86c89b4c6ca63a5f101902b26ac84fc92a01"
+    },
+    {
+      "path": "focused-replay/source/files/tests/campaign_persistence_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "7b4f4c6d281d8d2fbf41d7c65f3d4fa271b1619b1d3f6de61b8a7b3c5d6539b3"
+    },
+    {
+      "path": "focused-replay/source/files/tests/campaign_shell_smoke.gd",
+      "bytes": 32100,
+      "sha256": "d54a10502d750b9a3b5773538e445dd0c270bfbd59bfd7f14d9393f1f7618f71"
+    },
+    {
+      "path": "focused-replay/source/files/tests/campaign_shell_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "46f5510a4b06c050fbd72c47bcad41886147655366be31e990e39f985d07ca5d"
+    },
+    {
+      "path": "focused-replay/source/files/tests/fixtures/campaign/a1_l2.tscn",
+      "bytes": 286,
+      "sha256": "78a76a3354d8e8f76f013adf8981b5e855a28304de9a5cdd4af129bf970a2ff0"
+    },
+    {
+      "path": "focused-replay/source/files/tests/fixtures/campaign/live_a1_l3.tscn",
+      "bytes": 645,
+      "sha256": "cc95fb758e39247ddfe6fe523941e4849046669c12037ac8bf991aec0f879eaa"
+    },
+    {
+      "path": "focused-replay/source/files/tests/fixtures/campaign/live_a3_l5.tscn",
+      "bytes": 645,
+      "sha256": "eaaab6b38b74303970d0a65217b6920f23a4fca4c382b1ab84cd5a6211794cf5"
+    },
+    {
+      "path": "focused-replay/source/files/tests/fixtures/campaign/live_level.gd",
+      "bytes": 1612,
+      "sha256": "7bb790fd03e3a36d0471df5b2f178a7187bb68a0118f47c94628c2bd30afb4c7"
+    },
+    {
+      "path": "focused-replay/source/files/tests/fixtures/campaign/live_level.gd.uid",
+      "bytes": 19,
+      "sha256": "2fe384a5be10da493bfe776f97015644834b93adbb9e5c575fcb872b5b7ff24e"
+    },
+    {
+      "path": "focused-replay/source/files/tests/replay_static_availability_smoke.gd",
+      "bytes": 19919,
+      "sha256": "f05df35d5f14b4e516872d3980f47f1b757674f7661268ba2de2159e1339344f"
+    },
+    {
+      "path": "focused-replay/source/manifest.json",
+      "bytes": 22369,
+      "sha256": "796d8229f56d8db710a7fbcbda829855893c35b487345045c05ffa653a958c56"
+    },
+    {
+      "path": "focused-replay/wrapper.log",
+      "bytes": 309,
+      "sha256": "bc0219fa3f19801ff80ce071b2f7894051154fa21408016176143840e592c5e1"
+    },
+    {
+      "path": "menu/result.json",
+      "bytes": 880,
+      "sha256": "e5caa3b49a17cadee86566ce2e1b69243092ca12433c8397fa25596ddc80f898"
+    },
+    {
+      "path": "menu/runner.py",
+      "bytes": 1722,
+      "sha256": "ceb03eeace8b667489533a1c243f8f44e00016195ee8886153239286fe545e3f"
+    },
+    {
+      "path": "menu/source/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "menu/source/files/assets/characters/manifest.json",
+      "bytes": 7918,
+      "sha256": "fa645e290daa62f1a518e603cca6fb2c8d3f261a354385ce5c1475e5d7d503b6"
+    },
+    {
+      "path": "menu/source/files/assets/effects/manifest.json",
+      "bytes": 4313,
+      "sha256": "739c134f606ad72318785dbbaeeaa5f864a0ec120e8f3acf995a44727a0fe757"
+    },
+    {
+      "path": "menu/source/files/assets/references/manifest.json",
+      "bytes": 2412,
+      "sha256": "c49ac654d0d96cb83c4c8499b15649557b91f6966743b1e942fb9040f3cc6dd0"
+    },
+    {
+      "path": "menu/source/files/captures/character-blast.png",
+      "bytes": 46350,
+      "sha256": "2091b464b806fa7d8e9cf56c46d719f5683cfbadfecec0a99a50e2a96a579a2d"
+    },
+    {
+      "path": "menu/source/files/captures/character-lab.png",
+      "bytes": 43458,
+      "sha256": "6376b8e7ec8e3d08b03cddcd6fd4f4f44521cc2dd6a835bfaf2fd9dbf2f01409"
+    },
+    {
+      "path": "menu/source/files/captures/character-primary.png",
+      "bytes": 47294,
+      "sha256": "4b6c53199c556aa58f86d4e7a02958d979f1ebc1d86389d1fe136cb475fba399"
+    },
+    {
+      "path": "menu/source/files/captures/dash-plume-end.png",
+      "bytes": 46039,
+      "sha256": "4194ee6dd6c0f93f2a8433110648aaa6c107ed001ee8005f8e8ac04f8baefba0"
+    },
+    {
+      "path": "menu/source/files/captures/dash-plume-mid.png",
+      "bytes": 44475,
+      "sha256": "c6a2db49a6894db82e709f3395c6f18666bb84b3e71fb5295099a4313ecaafb0"
+    },
+    {
+      "path": "menu/source/files/captures/enemy-recovery.png",
+      "bytes": 38409,
+      "sha256": "1330de03fd7970316333efab8bf33778f5bf325153386b6040949afa754f0b5f"
+    },
+    {
+      "path": "menu/source/files/captures/enemy-warning.png",
+      "bytes": 39107,
+      "sha256": "c66d4fd911ff69ce4fcdece8a432960e91d47d5b74337475536ae950f7533c57"
+    },
+    {
+      "path": "menu/source/files/captures/level-preview.png",
+      "bytes": 20745,
+      "sha256": "aadaa05117f1db392c4ea2e6a98bf2faa1abde9949de72ece167d4009ad26767"
+    },
+    {
+      "path": "menu/source/files/captures/loadout-bench.png",
+      "bytes": 148324,
+      "sha256": "1c708651263e5fd20b4cdea15d06ba9f5d2d5886d8ae7d4fac0836b9250c5c4c"
+    },
+    {
+      "path": "menu/source/files/captures/mechanics-lab.png",
+      "bytes": 46497,
+      "sha256": "740ea58b2611294a3bd18f880b81bea52a1272a63d698abc423148e0c48277cb"
+    },
+    {
+      "path": "menu/source/files/captures/shot-flare-left.png",
+      "bytes": 50287,
+      "sha256": "6cdee74805b619e0f801404c5cfafe76388620859f9ac4b8d4350930dbf0dce3"
+    },
+    {
+      "path": "menu/source/files/captures/shot-flare-right.png",
+      "bytes": 50089,
+      "sha256": "803d303d133e13a728d16c9e15eecf110d39ce91b65d97ac9542606b3e2a640d"
+    },
+    {
+      "path": "menu/source/files/captures/slash-arc.png",
+      "bytes": 49204,
+      "sha256": "01e44c59ebd6c23400197139077a896040f9c17dac228e1645fc7e39af53ca7e"
+    },
+    {
+      "path": "menu/source/files/data/campaign/registry.json",
+      "bytes": 11057,
+      "sha256": "95e7fbcd91067d823f962495c421cb6eb7447f5641db21f1defda4922e04953c"
+    },
+    {
+      "path": "menu/source/files/data/design/difficulty_profiles.json",
+      "bytes": 1313,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c"
+    },
+    {
+      "path": "menu/source/files/data/design/player_equipment.json",
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    {
+      "path": "menu/source/files/docs/concept-art/act1/generated-manifest.json",
+      "bytes": 128016,
+      "sha256": "626f39561c9c430beef47a399f69711c94c1daf93fd94835bf0d83a33de3b637"
+    },
+    {
+      "path": "menu/source/files/docs/concept-art/act2/generated-manifest.json",
+      "bytes": 61369,
+      "sha256": "1145d3d494c8fe1337364b98c432a315c6cab5837409793bef9c6b62331d66f5"
+    },
+    {
+      "path": "menu/source/files/docs/concept-art/act3/generated-manifest.json",
+      "bytes": 87066,
+      "sha256": "46be3e8f5cfc321b9d661d41db5e049adce3278ec75f8a8561cf591c5ac4b9d9"
+    },
+    {
+      "path": "menu/source/files/docs/reference-library/act1/CREDITS.md",
+      "bytes": 41568,
+      "sha256": "c134fcecf5bb9bd49eeebe4570c36a52b66224e0b5ec05f57c3e5bba250a2ee2"
+    },
+    {
+      "path": "menu/source/files/docs/reference-library/act2/CREDITS.md",
+      "bytes": 4753,
+      "sha256": "447bf094aea678a623a97f1e909c4713c063271a847ec604bdc743028aa8f527"
+    },
+    {
+      "path": "menu/source/files/docs/reference-library/act3/research/SOURCES.md",
+      "bytes": 4367,
+      "sha256": "0109bb301fe10fc93ab48bb10cfef5fa29f25e7b076ebcb574e428ce8635b4a5"
+    },
+    {
+      "path": "menu/source/files/project.godot",
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f"
+    },
+    {
+      "path": "menu/source/files/scenes/campaign_main.tscn",
+      "bytes": 177,
+      "sha256": "e6b51208b7c9d6182c16cf07b60f2f0fa9b52327c6a7dcf0feedc290b555a713"
+    },
+    {
+      "path": "menu/source/files/scenes/lab_arena.tscn",
+      "bytes": 23638,
+      "sha256": "290c0f7fa49b284705c6adec423ca7109a2e7ebd50439866e39ef3856397c361"
+    },
+    {
+      "path": "menu/source/files/scenes/player.tscn",
+      "bytes": 1184,
+      "sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac"
+    },
+    {
+      "path": "menu/source/files/scenes/practice_target.tscn",
+      "bytes": 180,
+      "sha256": "600553b1326ef7d117e123c308c6e0f8be0e4a4dc4ff80113894add7bf2ee520"
+    },
+    {
+      "path": "menu/source/files/scripts/attack_footprint.gd",
+      "bytes": 4138,
+      "sha256": "e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb"
+    },
+    {
+      "path": "menu/source/files/scripts/attack_footprint.gd.uid",
+      "bytes": 19,
+      "sha256": "6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/attempts.gd",
+      "bytes": 18347,
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/attempts.gd.uid",
+      "bytes": 20,
+      "sha256": "b9d15a9997fe9a59fc5b31ab8d30779dad9769cdfcd306306e40afd61435eec0"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/exact_json.gd",
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/exact_json.gd.uid",
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/level.gd",
+      "bytes": 22401,
+      "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/level.gd.uid",
+      "bytes": 20,
+      "sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/registry.gd",
+      "bytes": 6006,
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/registry.gd.uid",
+      "bytes": 20,
+      "sha256": "80713da50c61c6b08bed5ce5a8a9cf2bf0e2506e4369ec4b593c69c53b4cff91"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/save_store.gd",
+      "bytes": 7310,
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/save_store.gd.uid",
+      "bytes": 20,
+      "sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/shell.gd",
+      "bytes": 45143,
+      "sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/shell.gd.uid",
+      "bytes": 20,
+      "sha256": "e193ac7ff2bdcbbf75ca177a71194161a8f6bb3c5a184c304caeec690723eda6"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/snapshot_codec.gd",
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    {
+      "path": "menu/source/files/scripts/campaign/snapshot_codec.gd.uid",
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82"
+    },
+    {
+      "path": "menu/source/files/scripts/character/player_presentations.gd",
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01"
+    },
+    {
+      "path": "menu/source/files/scripts/character/player_presentations.gd.uid",
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651"
+    },
+    {
+      "path": "menu/source/files/scripts/combat/difficulty.gd",
+      "bytes": 4882,
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    {
+      "path": "menu/source/files/scripts/combat/difficulty.gd.uid",
+      "bytes": 20,
+      "sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b"
+    },
+    {
+      "path": "menu/source/files/scripts/curling_smoke.gd",
+      "bytes": 14175,
+      "sha256": "5f8fa272a9c5beef47f7c69ad0b916965e7caf30a5d0e6b329d56b227807c36c"
+    },
+    {
+      "path": "menu/source/files/scripts/curling_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "8c283bb9181b5b956ec3746bf98b9d614d5f86a8caddac06ba609e43231b75bb"
+    },
+    {
+      "path": "menu/source/files/scripts/dev/dev.py",
+      "bytes": 28551,
+      "sha256": "28afb59c142488b8f80e1c93072ea790d674aa12868988602b5c55e096a03192"
+    },
+    {
+      "path": "menu/source/files/scripts/effects.gd",
+      "bytes": 21962,
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7"
+    },
+    {
+      "path": "menu/source/files/scripts/effects.gd.uid",
+      "bytes": 19,
+      "sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831"
+    },
+    {
+      "path": "menu/source/files/scripts/enemy.gd",
+      "bytes": 41287,
+      "sha256": "39c16960c5b7ccb12282cda87c93d4b99280040881bf39b5879e11487a883ed1"
+    },
+    {
+      "path": "menu/source/files/scripts/enemy.gd.uid",
+      "bytes": 20,
+      "sha256": "8f3ba80717e9fe95c6a27620cd909fddd88cd18ed5c425b859b236ccc85a4280"
+    },
+    {
+      "path": "menu/source/files/scripts/equipment.gd",
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    {
+      "path": "menu/source/files/scripts/equipment.gd.uid",
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a"
+    },
+    {
+      "path": "menu/source/files/scripts/game.gd",
+      "bytes": 38685,
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    {
+      "path": "menu/source/files/scripts/game.gd.uid",
+      "bytes": 19,
+      "sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129"
+    },
+    {
+      "path": "menu/source/files/scripts/hud.gd",
+      "bytes": 16609,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b"
+    },
+    {
+      "path": "menu/source/files/scripts/hud.gd.uid",
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5"
+    },
+    {
+      "path": "menu/source/files/scripts/lab_bench.gd",
+      "bytes": 6324,
+      "sha256": "8f2bb0d92f48cfea32205f0b76854ad03ca7a85127e29dfe9275bdb0b2ea58fb"
+    },
+    {
+      "path": "menu/source/files/scripts/lab_bench.gd.uid",
+      "bytes": 20,
+      "sha256": "2a7f596814c6c7fff0b9f0a229de202678f54e5455c1d16c450e5f2a7ef561fe"
+    },
+    {
+      "path": "menu/source/files/scripts/pixel_sprite.gd",
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a"
+    },
+    {
+      "path": "menu/source/files/scripts/pixel_sprite.gd.uid",
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3"
+    },
+    {
+      "path": "menu/source/files/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "path": "menu/source/files/scripts/player.gd.uid",
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70"
+    },
+    {
+      "path": "menu/source/files/scripts/practice_target.gd",
+      "bytes": 4451,
+      "sha256": "455e1d0697db73c3b27a9e12136e5103bd438fdf22142bee0d329cd8748ba15e"
+    },
+    {
+      "path": "menu/source/files/scripts/practice_target.gd.uid",
+      "bytes": 20,
+      "sha256": "653901d6e1e18f9d4ce4eb782af9366629a641679963266065a425d014814531"
+    },
+    {
+      "path": "menu/source/files/scripts/presentation/camera_framing.gd",
+      "bytes": 10132,
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b"
+    },
+    {
+      "path": "menu/source/files/scripts/presentation/camera_framing.gd.uid",
+      "bytes": 20,
+      "sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a"
+    },
+    {
+      "path": "menu/source/files/scripts/settings/game_settings.gd",
+      "bytes": 13346,
+      "sha256": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2"
+    },
+    {
+      "path": "menu/source/files/scripts/settings/game_settings.gd.uid",
+      "bytes": 19,
+      "sha256": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab"
+    },
+    {
+      "path": "menu/source/files/scripts/shotgun_flare.gd",
+      "bytes": 5778,
+      "sha256": "24e526e3850531317285e0d687ee93ebd37aa7819fbf5cd27af19284af0b84e6"
+    },
+    {
+      "path": "menu/source/files/scripts/shotgun_flare.gd.uid",
+      "bytes": 20,
+      "sha256": "e7c22cc0b7e74fa5181371c644527e6b18ec06ad8369dc72bfa4986505a15ba4"
+    },
+    {
+      "path": "menu/source/files/scripts/ui/campaign_menu.gd",
+      "bytes": 35356,
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28"
+    },
+    {
+      "path": "menu/source/files/scripts/ui/campaign_menu.gd.uid",
+      "bytes": 19,
+      "sha256": "27d6486d87eb8162cc7e6c714ce9db11d313b66236870281aa2e615d8d5fc2e8"
+    },
+    {
+      "path": "menu/source/files/scripts/weapon_pickup.gd",
+      "bytes": 1750,
+      "sha256": "7a350ffa2efa2f6f031877842fb447e22b3b80d49cc2acc40ee39dd0cc19c56e"
+    },
+    {
+      "path": "menu/source/files/scripts/weapon_pickup.gd.uid",
+      "bytes": 20,
+      "sha256": "0a004b242329bf5742cac245b12a6d41b8e306fc79ad63d43dc0c46896bf8615"
+    },
+    {
+      "path": "menu/source/files/tests/campaign_menu_smoke.gd",
+      "bytes": 23903,
+      "sha256": "c724893ece05e36d35a04c4f12ddb75a70a8bc71ca9c29ced95c5e9f10d47c95"
+    },
+    {
+      "path": "menu/source/files/tests/campaign_menu_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "78b3f8070ef047d27fa6bf00e92d27ebd41aaddb4add27e87921ea488422029a"
+    },
+    {
+      "path": "menu/source/files/tests/campaign_persistence_smoke.gd",
+      "bytes": 14256,
+      "sha256": "85b6e36a1a432b6f855aaf2090fc86c89b4c6ca63a5f101902b26ac84fc92a01"
+    },
+    {
+      "path": "menu/source/files/tests/campaign_persistence_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "7b4f4c6d281d8d2fbf41d7c65f3d4fa271b1619b1d3f6de61b8a7b3c5d6539b3"
+    },
+    {
+      "path": "menu/source/files/tests/campaign_shell_smoke.gd",
+      "bytes": 32100,
+      "sha256": "d54a10502d750b9a3b5773538e445dd0c270bfbd59bfd7f14d9393f1f7618f71"
+    },
+    {
+      "path": "menu/source/files/tests/campaign_shell_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "46f5510a4b06c050fbd72c47bcad41886147655366be31e990e39f985d07ca5d"
+    },
+    {
+      "path": "menu/source/files/tests/fixtures/campaign/a1_l2.tscn",
+      "bytes": 286,
+      "sha256": "78a76a3354d8e8f76f013adf8981b5e855a28304de9a5cdd4af129bf970a2ff0"
+    },
+    {
+      "path": "menu/source/files/tests/fixtures/campaign/live_a1_l3.tscn",
+      "bytes": 645,
+      "sha256": "cc95fb758e39247ddfe6fe523941e4849046669c12037ac8bf991aec0f879eaa"
+    },
+    {
+      "path": "menu/source/files/tests/fixtures/campaign/live_a3_l5.tscn",
+      "bytes": 645,
+      "sha256": "eaaab6b38b74303970d0a65217b6920f23a4fca4c382b1ab84cd5a6211794cf5"
+    },
+    {
+      "path": "menu/source/files/tests/fixtures/campaign/live_level.gd",
+      "bytes": 1612,
+      "sha256": "7bb790fd03e3a36d0471df5b2f178a7187bb68a0118f47c94628c2bd30afb4c7"
+    },
+    {
+      "path": "menu/source/files/tests/fixtures/campaign/live_level.gd.uid",
+      "bytes": 19,
+      "sha256": "2fe384a5be10da493bfe776f97015644834b93adbb9e5c575fcb872b5b7ff24e"
+    },
+    {
+      "path": "menu/source/files/tests/replay_static_availability_smoke.gd",
+      "bytes": 19919,
+      "sha256": "f05df35d5f14b4e516872d3980f47f1b757674f7661268ba2de2159e1339344f"
+    },
+    {
+      "path": "menu/source/manifest.json",
+      "bytes": 22085,
+      "sha256": "691baea9062169a85d463d7af07f1ab7fb8a2b86e87ad36332085894c50d6aaa"
+    },
+    {
+      "path": "menu/wrapper.log",
+      "bytes": 272,
+      "sha256": "c2f7a3679d48da8b2e85262ff214580c9b834c5cad9756a90a1fd742f2247fa6"
+    },
+    {
+      "path": "original-source-draft/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "original-source-draft/README.md",
+      "bytes": 7560,
+      "sha256": "5118fc6f5d59beb5c85121db0c00bbf5e579e5479b72443574cd5a478f7664a8"
+    },
+    {
+      "path": "original-source-draft/attempts.candidate.gd",
+      "bytes": 18347,
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0"
+    },
+    {
+      "path": "original-source-draft/attempts.original.gd",
+      "bytes": 17310,
+      "sha256": "41d5abbe22d19e389e89ab9ef196496672ee3c4bfa25c596ba3ca695f6ec44c0"
+    },
+    {
+      "path": "original-source-draft/candidate.patch",
+      "bytes": 2934,
+      "sha256": "7b0a27e47c57f0339e3221cae481d96e7c486c78df975e8710960ba49fa9c25d"
+    },
+    {
+      "path": "original-source-draft/equipment-status.json",
+      "bytes": 67091,
+      "sha256": "1bba430562efaee9b13c4f322672acaa7e0586aefef9b4ef4fb7a3391de80509"
+    },
+    {
+      "path": "original-source-draft/manifest.json",
+      "bytes": 6076,
+      "sha256": "3c7e009745a5e046dc21e898df3d8f14a59d32661dbd580296abb14d993206b6"
+    },
+    {
+      "path": "original-source-draft/test-leaf.gd",
+      "bytes": 19921,
+      "sha256": "ae2ab6643b84e6a0faa3d345504980471f6259fd66a7f86a3a8ccdc7214cd132"
+    },
+    {
+      "path": "persistence/result.json",
+      "bytes": 921,
+      "sha256": "079e2070be82a003b942d35c96a78c1bb48fb8349f2d9060e7b52d7a26fac22a"
+    },
+    {
+      "path": "persistence/runner.py",
+      "bytes": 1769,
+      "sha256": "043db0bc4059a8cb3c57b7bc5415f5150110fd0ce93b5e1eaeb3326af0346c83"
+    },
+    {
+      "path": "persistence/source/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "persistence/source/files/assets/characters/manifest.json",
+      "bytes": 7918,
+      "sha256": "fa645e290daa62f1a518e603cca6fb2c8d3f261a354385ce5c1475e5d7d503b6"
+    },
+    {
+      "path": "persistence/source/files/assets/effects/manifest.json",
+      "bytes": 4313,
+      "sha256": "739c134f606ad72318785dbbaeeaa5f864a0ec120e8f3acf995a44727a0fe757"
+    },
+    {
+      "path": "persistence/source/files/assets/references/manifest.json",
+      "bytes": 2412,
+      "sha256": "c49ac654d0d96cb83c4c8499b15649557b91f6966743b1e942fb9040f3cc6dd0"
+    },
+    {
+      "path": "persistence/source/files/captures/character-blast.png",
+      "bytes": 46350,
+      "sha256": "2091b464b806fa7d8e9cf56c46d719f5683cfbadfecec0a99a50e2a96a579a2d"
+    },
+    {
+      "path": "persistence/source/files/captures/character-lab.png",
+      "bytes": 43458,
+      "sha256": "6376b8e7ec8e3d08b03cddcd6fd4f4f44521cc2dd6a835bfaf2fd9dbf2f01409"
+    },
+    {
+      "path": "persistence/source/files/captures/character-primary.png",
+      "bytes": 47294,
+      "sha256": "4b6c53199c556aa58f86d4e7a02958d979f1ebc1d86389d1fe136cb475fba399"
+    },
+    {
+      "path": "persistence/source/files/captures/dash-plume-end.png",
+      "bytes": 46039,
+      "sha256": "4194ee6dd6c0f93f2a8433110648aaa6c107ed001ee8005f8e8ac04f8baefba0"
+    },
+    {
+      "path": "persistence/source/files/captures/dash-plume-mid.png",
+      "bytes": 44475,
+      "sha256": "c6a2db49a6894db82e709f3395c6f18666bb84b3e71fb5295099a4313ecaafb0"
+    },
+    {
+      "path": "persistence/source/files/captures/enemy-recovery.png",
+      "bytes": 38409,
+      "sha256": "1330de03fd7970316333efab8bf33778f5bf325153386b6040949afa754f0b5f"
+    },
+    {
+      "path": "persistence/source/files/captures/enemy-warning.png",
+      "bytes": 39107,
+      "sha256": "c66d4fd911ff69ce4fcdece8a432960e91d47d5b74337475536ae950f7533c57"
+    },
+    {
+      "path": "persistence/source/files/captures/level-preview.png",
+      "bytes": 20745,
+      "sha256": "aadaa05117f1db392c4ea2e6a98bf2faa1abde9949de72ece167d4009ad26767"
+    },
+    {
+      "path": "persistence/source/files/captures/loadout-bench.png",
+      "bytes": 148324,
+      "sha256": "1c708651263e5fd20b4cdea15d06ba9f5d2d5886d8ae7d4fac0836b9250c5c4c"
+    },
+    {
+      "path": "persistence/source/files/captures/mechanics-lab.png",
+      "bytes": 46497,
+      "sha256": "740ea58b2611294a3bd18f880b81bea52a1272a63d698abc423148e0c48277cb"
+    },
+    {
+      "path": "persistence/source/files/captures/shot-flare-left.png",
+      "bytes": 50287,
+      "sha256": "6cdee74805b619e0f801404c5cfafe76388620859f9ac4b8d4350930dbf0dce3"
+    },
+    {
+      "path": "persistence/source/files/captures/shot-flare-right.png",
+      "bytes": 50089,
+      "sha256": "803d303d133e13a728d16c9e15eecf110d39ce91b65d97ac9542606b3e2a640d"
+    },
+    {
+      "path": "persistence/source/files/captures/slash-arc.png",
+      "bytes": 49204,
+      "sha256": "01e44c59ebd6c23400197139077a896040f9c17dac228e1645fc7e39af53ca7e"
+    },
+    {
+      "path": "persistence/source/files/data/campaign/registry.json",
+      "bytes": 11057,
+      "sha256": "95e7fbcd91067d823f962495c421cb6eb7447f5641db21f1defda4922e04953c"
+    },
+    {
+      "path": "persistence/source/files/data/design/difficulty_profiles.json",
+      "bytes": 1313,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c"
+    },
+    {
+      "path": "persistence/source/files/data/design/player_equipment.json",
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    {
+      "path": "persistence/source/files/docs/concept-art/act1/generated-manifest.json",
+      "bytes": 128016,
+      "sha256": "626f39561c9c430beef47a399f69711c94c1daf93fd94835bf0d83a33de3b637"
+    },
+    {
+      "path": "persistence/source/files/docs/concept-art/act2/generated-manifest.json",
+      "bytes": 61369,
+      "sha256": "1145d3d494c8fe1337364b98c432a315c6cab5837409793bef9c6b62331d66f5"
+    },
+    {
+      "path": "persistence/source/files/docs/concept-art/act3/generated-manifest.json",
+      "bytes": 87066,
+      "sha256": "46be3e8f5cfc321b9d661d41db5e049adce3278ec75f8a8561cf591c5ac4b9d9"
+    },
+    {
+      "path": "persistence/source/files/docs/reference-library/act1/CREDITS.md",
+      "bytes": 41568,
+      "sha256": "c134fcecf5bb9bd49eeebe4570c36a52b66224e0b5ec05f57c3e5bba250a2ee2"
+    },
+    {
+      "path": "persistence/source/files/docs/reference-library/act2/CREDITS.md",
+      "bytes": 4753,
+      "sha256": "447bf094aea678a623a97f1e909c4713c063271a847ec604bdc743028aa8f527"
+    },
+    {
+      "path": "persistence/source/files/docs/reference-library/act3/research/SOURCES.md",
+      "bytes": 4367,
+      "sha256": "0109bb301fe10fc93ab48bb10cfef5fa29f25e7b076ebcb574e428ce8635b4a5"
+    },
+    {
+      "path": "persistence/source/files/project.godot",
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f"
+    },
+    {
+      "path": "persistence/source/files/scenes/campaign_main.tscn",
+      "bytes": 177,
+      "sha256": "e6b51208b7c9d6182c16cf07b60f2f0fa9b52327c6a7dcf0feedc290b555a713"
+    },
+    {
+      "path": "persistence/source/files/scenes/lab_arena.tscn",
+      "bytes": 23638,
+      "sha256": "290c0f7fa49b284705c6adec423ca7109a2e7ebd50439866e39ef3856397c361"
+    },
+    {
+      "path": "persistence/source/files/scenes/player.tscn",
+      "bytes": 1184,
+      "sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac"
+    },
+    {
+      "path": "persistence/source/files/scenes/practice_target.tscn",
+      "bytes": 180,
+      "sha256": "600553b1326ef7d117e123c308c6e0f8be0e4a4dc4ff80113894add7bf2ee520"
+    },
+    {
+      "path": "persistence/source/files/scripts/attack_footprint.gd",
+      "bytes": 4138,
+      "sha256": "e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb"
+    },
+    {
+      "path": "persistence/source/files/scripts/attack_footprint.gd.uid",
+      "bytes": 19,
+      "sha256": "6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/attempts.gd",
+      "bytes": 18347,
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/attempts.gd.uid",
+      "bytes": 20,
+      "sha256": "b9d15a9997fe9a59fc5b31ab8d30779dad9769cdfcd306306e40afd61435eec0"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/exact_json.gd",
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/exact_json.gd.uid",
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/level.gd",
+      "bytes": 22401,
+      "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/level.gd.uid",
+      "bytes": 20,
+      "sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/registry.gd",
+      "bytes": 6006,
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/registry.gd.uid",
+      "bytes": 20,
+      "sha256": "80713da50c61c6b08bed5ce5a8a9cf2bf0e2506e4369ec4b593c69c53b4cff91"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/save_store.gd",
+      "bytes": 7310,
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/save_store.gd.uid",
+      "bytes": 20,
+      "sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/shell.gd",
+      "bytes": 45143,
+      "sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/shell.gd.uid",
+      "bytes": 20,
+      "sha256": "e193ac7ff2bdcbbf75ca177a71194161a8f6bb3c5a184c304caeec690723eda6"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/snapshot_codec.gd",
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    {
+      "path": "persistence/source/files/scripts/campaign/snapshot_codec.gd.uid",
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82"
+    },
+    {
+      "path": "persistence/source/files/scripts/character/player_presentations.gd",
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01"
+    },
+    {
+      "path": "persistence/source/files/scripts/character/player_presentations.gd.uid",
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651"
+    },
+    {
+      "path": "persistence/source/files/scripts/combat/difficulty.gd",
+      "bytes": 4882,
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    {
+      "path": "persistence/source/files/scripts/combat/difficulty.gd.uid",
+      "bytes": 20,
+      "sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b"
+    },
+    {
+      "path": "persistence/source/files/scripts/curling_smoke.gd",
+      "bytes": 14175,
+      "sha256": "5f8fa272a9c5beef47f7c69ad0b916965e7caf30a5d0e6b329d56b227807c36c"
+    },
+    {
+      "path": "persistence/source/files/scripts/curling_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "8c283bb9181b5b956ec3746bf98b9d614d5f86a8caddac06ba609e43231b75bb"
+    },
+    {
+      "path": "persistence/source/files/scripts/dev/dev.py",
+      "bytes": 28551,
+      "sha256": "28afb59c142488b8f80e1c93072ea790d674aa12868988602b5c55e096a03192"
+    },
+    {
+      "path": "persistence/source/files/scripts/effects.gd",
+      "bytes": 21962,
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7"
+    },
+    {
+      "path": "persistence/source/files/scripts/effects.gd.uid",
+      "bytes": 19,
+      "sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831"
+    },
+    {
+      "path": "persistence/source/files/scripts/enemy.gd",
+      "bytes": 41287,
+      "sha256": "39c16960c5b7ccb12282cda87c93d4b99280040881bf39b5879e11487a883ed1"
+    },
+    {
+      "path": "persistence/source/files/scripts/enemy.gd.uid",
+      "bytes": 20,
+      "sha256": "8f3ba80717e9fe95c6a27620cd909fddd88cd18ed5c425b859b236ccc85a4280"
+    },
+    {
+      "path": "persistence/source/files/scripts/equipment.gd",
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    {
+      "path": "persistence/source/files/scripts/equipment.gd.uid",
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a"
+    },
+    {
+      "path": "persistence/source/files/scripts/game.gd",
+      "bytes": 38685,
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    {
+      "path": "persistence/source/files/scripts/game.gd.uid",
+      "bytes": 19,
+      "sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129"
+    },
+    {
+      "path": "persistence/source/files/scripts/hud.gd",
+      "bytes": 16609,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b"
+    },
+    {
+      "path": "persistence/source/files/scripts/hud.gd.uid",
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5"
+    },
+    {
+      "path": "persistence/source/files/scripts/lab_bench.gd",
+      "bytes": 6324,
+      "sha256": "8f2bb0d92f48cfea32205f0b76854ad03ca7a85127e29dfe9275bdb0b2ea58fb"
+    },
+    {
+      "path": "persistence/source/files/scripts/lab_bench.gd.uid",
+      "bytes": 20,
+      "sha256": "2a7f596814c6c7fff0b9f0a229de202678f54e5455c1d16c450e5f2a7ef561fe"
+    },
+    {
+      "path": "persistence/source/files/scripts/pixel_sprite.gd",
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a"
+    },
+    {
+      "path": "persistence/source/files/scripts/pixel_sprite.gd.uid",
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3"
+    },
+    {
+      "path": "persistence/source/files/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "path": "persistence/source/files/scripts/player.gd.uid",
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70"
+    },
+    {
+      "path": "persistence/source/files/scripts/practice_target.gd",
+      "bytes": 4451,
+      "sha256": "455e1d0697db73c3b27a9e12136e5103bd438fdf22142bee0d329cd8748ba15e"
+    },
+    {
+      "path": "persistence/source/files/scripts/practice_target.gd.uid",
+      "bytes": 20,
+      "sha256": "653901d6e1e18f9d4ce4eb782af9366629a641679963266065a425d014814531"
+    },
+    {
+      "path": "persistence/source/files/scripts/presentation/camera_framing.gd",
+      "bytes": 10132,
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b"
+    },
+    {
+      "path": "persistence/source/files/scripts/presentation/camera_framing.gd.uid",
+      "bytes": 20,
+      "sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a"
+    },
+    {
+      "path": "persistence/source/files/scripts/settings/game_settings.gd",
+      "bytes": 13346,
+      "sha256": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2"
+    },
+    {
+      "path": "persistence/source/files/scripts/settings/game_settings.gd.uid",
+      "bytes": 19,
+      "sha256": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab"
+    },
+    {
+      "path": "persistence/source/files/scripts/shotgun_flare.gd",
+      "bytes": 5778,
+      "sha256": "24e526e3850531317285e0d687ee93ebd37aa7819fbf5cd27af19284af0b84e6"
+    },
+    {
+      "path": "persistence/source/files/scripts/shotgun_flare.gd.uid",
+      "bytes": 20,
+      "sha256": "e7c22cc0b7e74fa5181371c644527e6b18ec06ad8369dc72bfa4986505a15ba4"
+    },
+    {
+      "path": "persistence/source/files/scripts/ui/campaign_menu.gd",
+      "bytes": 35356,
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28"
+    },
+    {
+      "path": "persistence/source/files/scripts/ui/campaign_menu.gd.uid",
+      "bytes": 19,
+      "sha256": "27d6486d87eb8162cc7e6c714ce9db11d313b66236870281aa2e615d8d5fc2e8"
+    },
+    {
+      "path": "persistence/source/files/scripts/weapon_pickup.gd",
+      "bytes": 1750,
+      "sha256": "7a350ffa2efa2f6f031877842fb447e22b3b80d49cc2acc40ee39dd0cc19c56e"
+    },
+    {
+      "path": "persistence/source/files/scripts/weapon_pickup.gd.uid",
+      "bytes": 20,
+      "sha256": "0a004b242329bf5742cac245b12a6d41b8e306fc79ad63d43dc0c46896bf8615"
+    },
+    {
+      "path": "persistence/source/files/tests/campaign_menu_smoke.gd",
+      "bytes": 23903,
+      "sha256": "c724893ece05e36d35a04c4f12ddb75a70a8bc71ca9c29ced95c5e9f10d47c95"
+    },
+    {
+      "path": "persistence/source/files/tests/campaign_menu_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "78b3f8070ef047d27fa6bf00e92d27ebd41aaddb4add27e87921ea488422029a"
+    },
+    {
+      "path": "persistence/source/files/tests/campaign_persistence_smoke.gd",
+      "bytes": 14256,
+      "sha256": "85b6e36a1a432b6f855aaf2090fc86c89b4c6ca63a5f101902b26ac84fc92a01"
+    },
+    {
+      "path": "persistence/source/files/tests/campaign_persistence_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "7b4f4c6d281d8d2fbf41d7c65f3d4fa271b1619b1d3f6de61b8a7b3c5d6539b3"
+    },
+    {
+      "path": "persistence/source/files/tests/campaign_shell_smoke.gd",
+      "bytes": 32100,
+      "sha256": "d54a10502d750b9a3b5773538e445dd0c270bfbd59bfd7f14d9393f1f7618f71"
+    },
+    {
+      "path": "persistence/source/files/tests/campaign_shell_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "46f5510a4b06c050fbd72c47bcad41886147655366be31e990e39f985d07ca5d"
+    },
+    {
+      "path": "persistence/source/files/tests/fixtures/campaign/a1_l2.tscn",
+      "bytes": 286,
+      "sha256": "78a76a3354d8e8f76f013adf8981b5e855a28304de9a5cdd4af129bf970a2ff0"
+    },
+    {
+      "path": "persistence/source/files/tests/fixtures/campaign/live_a1_l3.tscn",
+      "bytes": 645,
+      "sha256": "cc95fb758e39247ddfe6fe523941e4849046669c12037ac8bf991aec0f879eaa"
+    },
+    {
+      "path": "persistence/source/files/tests/fixtures/campaign/live_a3_l5.tscn",
+      "bytes": 645,
+      "sha256": "eaaab6b38b74303970d0a65217b6920f23a4fca4c382b1ab84cd5a6211794cf5"
+    },
+    {
+      "path": "persistence/source/files/tests/fixtures/campaign/live_level.gd",
+      "bytes": 1612,
+      "sha256": "7bb790fd03e3a36d0471df5b2f178a7187bb68a0118f47c94628c2bd30afb4c7"
+    },
+    {
+      "path": "persistence/source/files/tests/fixtures/campaign/live_level.gd.uid",
+      "bytes": 19,
+      "sha256": "2fe384a5be10da493bfe776f97015644834b93adbb9e5c575fcb872b5b7ff24e"
+    },
+    {
+      "path": "persistence/source/files/tests/replay_static_availability_smoke.gd",
+      "bytes": 19919,
+      "sha256": "f05df35d5f14b4e516872d3980f47f1b757674f7661268ba2de2159e1339344f"
+    },
+    {
+      "path": "persistence/source/manifest.json",
+      "bytes": 22085,
+      "sha256": "4c649bef39a8aaa92b35250519c9646f285d390e05b0efad6401f1ba092af443"
+    },
+    {
+      "path": "persistence/wrapper.log",
+      "bytes": 3563,
+      "sha256": "3207f69eff294ebb69e6cc520d44c94e8a8a7624ce25222c4b2208b0196f522d"
+    },
+    {
+      "path": "resource-import/generated-metadata.json",
+      "bytes": 375,
+      "sha256": "faed6ed9b2ea2459af51fcaf5542b6435a816e33f4a60049b267faedd9cd6e78"
+    },
+    {
+      "path": "resource-import/replay_static_availability_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "732a7f1e12856723d9a5496a5425c4daaf345dbfcf1f72dc3254c9234c0dd248"
+    },
+    {
+      "path": "resource-import/result.json",
+      "bytes": 956,
+      "sha256": "27e24afb15ccbb5b50ad26dd6da030997845f89addc8d10ac3640223ccc079ff"
+    },
+    {
+      "path": "resource-import/runner.py",
+      "bytes": 1803,
+      "sha256": "99f147858c3822c194a90a3be0d3a847b1461206ec6d917767e649857f557bb2"
+    },
+    {
+      "path": "resource-import/source/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "resource-import/source/files/assets/characters/manifest.json",
+      "bytes": 7918,
+      "sha256": "fa645e290daa62f1a518e603cca6fb2c8d3f261a354385ce5c1475e5d7d503b6"
+    },
+    {
+      "path": "resource-import/source/files/assets/effects/manifest.json",
+      "bytes": 4313,
+      "sha256": "739c134f606ad72318785dbbaeeaa5f864a0ec120e8f3acf995a44727a0fe757"
+    },
+    {
+      "path": "resource-import/source/files/assets/references/manifest.json",
+      "bytes": 2412,
+      "sha256": "c49ac654d0d96cb83c4c8499b15649557b91f6966743b1e942fb9040f3cc6dd0"
+    },
+    {
+      "path": "resource-import/source/files/captures/character-blast.png",
+      "bytes": 46350,
+      "sha256": "2091b464b806fa7d8e9cf56c46d719f5683cfbadfecec0a99a50e2a96a579a2d"
+    },
+    {
+      "path": "resource-import/source/files/captures/character-lab.png",
+      "bytes": 43458,
+      "sha256": "6376b8e7ec8e3d08b03cddcd6fd4f4f44521cc2dd6a835bfaf2fd9dbf2f01409"
+    },
+    {
+      "path": "resource-import/source/files/captures/character-primary.png",
+      "bytes": 47294,
+      "sha256": "4b6c53199c556aa58f86d4e7a02958d979f1ebc1d86389d1fe136cb475fba399"
+    },
+    {
+      "path": "resource-import/source/files/captures/dash-plume-end.png",
+      "bytes": 46039,
+      "sha256": "4194ee6dd6c0f93f2a8433110648aaa6c107ed001ee8005f8e8ac04f8baefba0"
+    },
+    {
+      "path": "resource-import/source/files/captures/dash-plume-mid.png",
+      "bytes": 44475,
+      "sha256": "c6a2db49a6894db82e709f3395c6f18666bb84b3e71fb5295099a4313ecaafb0"
+    },
+    {
+      "path": "resource-import/source/files/captures/enemy-recovery.png",
+      "bytes": 38409,
+      "sha256": "1330de03fd7970316333efab8bf33778f5bf325153386b6040949afa754f0b5f"
+    },
+    {
+      "path": "resource-import/source/files/captures/enemy-warning.png",
+      "bytes": 39107,
+      "sha256": "c66d4fd911ff69ce4fcdece8a432960e91d47d5b74337475536ae950f7533c57"
+    },
+    {
+      "path": "resource-import/source/files/captures/level-preview.png",
+      "bytes": 20745,
+      "sha256": "aadaa05117f1db392c4ea2e6a98bf2faa1abde9949de72ece167d4009ad26767"
+    },
+    {
+      "path": "resource-import/source/files/captures/loadout-bench.png",
+      "bytes": 148324,
+      "sha256": "1c708651263e5fd20b4cdea15d06ba9f5d2d5886d8ae7d4fac0836b9250c5c4c"
+    },
+    {
+      "path": "resource-import/source/files/captures/mechanics-lab.png",
+      "bytes": 46497,
+      "sha256": "740ea58b2611294a3bd18f880b81bea52a1272a63d698abc423148e0c48277cb"
+    },
+    {
+      "path": "resource-import/source/files/captures/shot-flare-left.png",
+      "bytes": 50287,
+      "sha256": "6cdee74805b619e0f801404c5cfafe76388620859f9ac4b8d4350930dbf0dce3"
+    },
+    {
+      "path": "resource-import/source/files/captures/shot-flare-right.png",
+      "bytes": 50089,
+      "sha256": "803d303d133e13a728d16c9e15eecf110d39ce91b65d97ac9542606b3e2a640d"
+    },
+    {
+      "path": "resource-import/source/files/captures/slash-arc.png",
+      "bytes": 49204,
+      "sha256": "01e44c59ebd6c23400197139077a896040f9c17dac228e1645fc7e39af53ca7e"
+    },
+    {
+      "path": "resource-import/source/files/data/campaign/registry.json",
+      "bytes": 11057,
+      "sha256": "95e7fbcd91067d823f962495c421cb6eb7447f5641db21f1defda4922e04953c"
+    },
+    {
+      "path": "resource-import/source/files/data/design/difficulty_profiles.json",
+      "bytes": 1313,
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c"
+    },
+    {
+      "path": "resource-import/source/files/data/design/player_equipment.json",
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    {
+      "path": "resource-import/source/files/docs/concept-art/act1/generated-manifest.json",
+      "bytes": 128016,
+      "sha256": "626f39561c9c430beef47a399f69711c94c1daf93fd94835bf0d83a33de3b637"
+    },
+    {
+      "path": "resource-import/source/files/docs/concept-art/act2/generated-manifest.json",
+      "bytes": 61369,
+      "sha256": "1145d3d494c8fe1337364b98c432a315c6cab5837409793bef9c6b62331d66f5"
+    },
+    {
+      "path": "resource-import/source/files/docs/concept-art/act3/generated-manifest.json",
+      "bytes": 87066,
+      "sha256": "46be3e8f5cfc321b9d661d41db5e049adce3278ec75f8a8561cf591c5ac4b9d9"
+    },
+    {
+      "path": "resource-import/source/files/docs/development/LEVEL_ACCEPTANCE.md",
+      "bytes": 4685,
+      "sha256": "8cf9763324e684a3d1f4b6648fa559eb8bc3eabb987218a73bd07a48d19bd2d3"
+    },
+    {
+      "path": "resource-import/source/files/docs/reference-library/act1/CREDITS.md",
+      "bytes": 41568,
+      "sha256": "c134fcecf5bb9bd49eeebe4570c36a52b66224e0b5ec05f57c3e5bba250a2ee2"
+    },
+    {
+      "path": "resource-import/source/files/docs/reference-library/act2/CREDITS.md",
+      "bytes": 4753,
+      "sha256": "447bf094aea678a623a97f1e909c4713c063271a847ec604bdc743028aa8f527"
+    },
+    {
+      "path": "resource-import/source/files/docs/reference-library/act3/research/SOURCES.md",
+      "bytes": 4367,
+      "sha256": "0109bb301fe10fc93ab48bb10cfef5fa29f25e7b076ebcb574e428ce8635b4a5"
+    },
+    {
+      "path": "resource-import/source/files/project.godot",
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f"
+    },
+    {
+      "path": "resource-import/source/files/scenes/campaign_main.tscn",
+      "bytes": 177,
+      "sha256": "e6b51208b7c9d6182c16cf07b60f2f0fa9b52327c6a7dcf0feedc290b555a713"
+    },
+    {
+      "path": "resource-import/source/files/scenes/lab_arena.tscn",
+      "bytes": 23638,
+      "sha256": "290c0f7fa49b284705c6adec423ca7109a2e7ebd50439866e39ef3856397c361"
+    },
+    {
+      "path": "resource-import/source/files/scenes/player.tscn",
+      "bytes": 1184,
+      "sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac"
+    },
+    {
+      "path": "resource-import/source/files/scenes/practice_target.tscn",
+      "bytes": 180,
+      "sha256": "600553b1326ef7d117e123c308c6e0f8be0e4a4dc4ff80113894add7bf2ee520"
+    },
+    {
+      "path": "resource-import/source/files/scripts/attack_footprint.gd",
+      "bytes": 4138,
+      "sha256": "e202873c089e018231a7ac01d6f665f323654804edeea3cb39dd1a0f16d2fcbb"
+    },
+    {
+      "path": "resource-import/source/files/scripts/attack_footprint.gd.uid",
+      "bytes": 19,
+      "sha256": "6f49cf6ffe2b06ba65e11a0d8a0ace2d6678c08b37285068ae718b1c555bd627"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/attempts.gd",
+      "bytes": 18347,
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/attempts.gd.uid",
+      "bytes": 20,
+      "sha256": "b9d15a9997fe9a59fc5b31ab8d30779dad9769cdfcd306306e40afd61435eec0"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/exact_json.gd",
+      "bytes": 9330,
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/exact_json.gd.uid",
+      "bytes": 20,
+      "sha256": "17b8db6b593b5d323901d318d07cf82a9562731d8254bfe418e70a7544f883e0"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/level.gd",
+      "bytes": 22401,
+      "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/level.gd.uid",
+      "bytes": 20,
+      "sha256": "3f1289a9ee3e3586e0e5b16600517f7af18a79ae7bdc01b1a440ec7f9155b812"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/registry.gd",
+      "bytes": 6006,
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/registry.gd.uid",
+      "bytes": 20,
+      "sha256": "80713da50c61c6b08bed5ce5a8a9cf2bf0e2506e4369ec4b593c69c53b4cff91"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/save_store.gd",
+      "bytes": 7310,
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/save_store.gd.uid",
+      "bytes": 20,
+      "sha256": "9d900a8ada96ac304fb1df06c8b93a6dc5e4d5ce0569158d0c3f00e362ac39d1"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/shell.gd",
+      "bytes": 45143,
+      "sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/shell.gd.uid",
+      "bytes": 20,
+      "sha256": "e193ac7ff2bdcbbf75ca177a71194161a8f6bb3c5a184c304caeec690723eda6"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/snapshot_codec.gd",
+      "bytes": 3350,
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    {
+      "path": "resource-import/source/files/scripts/campaign/snapshot_codec.gd.uid",
+      "bytes": 20,
+      "sha256": "3d1e2bebc4e99f59d00b208037bef7e66119959d08b935c2b2b4fc72d7df5e82"
+    },
+    {
+      "path": "resource-import/source/files/scripts/character/player_presentations.gd",
+      "bytes": 12558,
+      "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01"
+    },
+    {
+      "path": "resource-import/source/files/scripts/character/player_presentations.gd.uid",
+      "bytes": 20,
+      "sha256": "c355fe1b339f0cd9f9ce696caa5c1856cc16b482d97db52481e1d07c6ac92651"
+    },
+    {
+      "path": "resource-import/source/files/scripts/combat/difficulty.gd",
+      "bytes": 4882,
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    {
+      "path": "resource-import/source/files/scripts/combat/difficulty.gd.uid",
+      "bytes": 20,
+      "sha256": "67649a881ed65fed80580798646a09b1916ad8ca03a7442dca805f234087685b"
+    },
+    {
+      "path": "resource-import/source/files/scripts/curling_smoke.gd",
+      "bytes": 14175,
+      "sha256": "5f8fa272a9c5beef47f7c69ad0b916965e7caf30a5d0e6b329d56b227807c36c"
+    },
+    {
+      "path": "resource-import/source/files/scripts/curling_smoke.gd.uid",
+      "bytes": 19,
+      "sha256": "8c283bb9181b5b956ec3746bf98b9d614d5f86a8caddac06ba609e43231b75bb"
+    },
+    {
+      "path": "resource-import/source/files/scripts/dev/dev.py",
+      "bytes": 28551,
+      "sha256": "28afb59c142488b8f80e1c93072ea790d674aa12868988602b5c55e096a03192"
+    },
+    {
+      "path": "resource-import/source/files/scripts/effects.gd",
+      "bytes": 21962,
+      "sha256": "c5b8294b88e999d913a9043fd9f588a2b1f7f942280c71945a92d91d1be5b6d7"
+    },
+    {
+      "path": "resource-import/source/files/scripts/effects.gd.uid",
+      "bytes": 19,
+      "sha256": "d0042236bbd05c3b01e337610154c0b00d3e38970ee381441832b2a7f9fcc831"
+    },
+    {
+      "path": "resource-import/source/files/scripts/enemy.gd",
+      "bytes": 41287,
+      "sha256": "39c16960c5b7ccb12282cda87c93d4b99280040881bf39b5879e11487a883ed1"
+    },
+    {
+      "path": "resource-import/source/files/scripts/enemy.gd.uid",
+      "bytes": 20,
+      "sha256": "8f3ba80717e9fe95c6a27620cd909fddd88cd18ed5c425b859b236ccc85a4280"
+    },
+    {
+      "path": "resource-import/source/files/scripts/equipment.gd",
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    {
+      "path": "resource-import/source/files/scripts/equipment.gd.uid",
+      "bytes": 20,
+      "sha256": "25917e75633ca2b0c2133142882fc15ab97373c69a71fc1377bed7ff1d096b4a"
+    },
+    {
+      "path": "resource-import/source/files/scripts/game.gd",
+      "bytes": 38685,
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    {
+      "path": "resource-import/source/files/scripts/game.gd.uid",
+      "bytes": 19,
+      "sha256": "ef1b176ec4e92535f63b4913fd257364b2e2e20250bb21ab152d44a55f083129"
+    },
+    {
+      "path": "resource-import/source/files/scripts/hud.gd",
+      "bytes": 16609,
+      "sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b"
+    },
+    {
+      "path": "resource-import/source/files/scripts/hud.gd.uid",
+      "bytes": 20,
+      "sha256": "70a9ef089b6201cdd4e82f8c617ac548e11145f62e7fcd1aaa36f82f425a85c5"
+    },
+    {
+      "path": "resource-import/source/files/scripts/lab_bench.gd",
+      "bytes": 6324,
+      "sha256": "8f2bb0d92f48cfea32205f0b76854ad03ca7a85127e29dfe9275bdb0b2ea58fb"
+    },
+    {
+      "path": "resource-import/source/files/scripts/lab_bench.gd.uid",
+      "bytes": 20,
+      "sha256": "2a7f596814c6c7fff0b9f0a229de202678f54e5455c1d16c450e5f2a7ef561fe"
+    },
+    {
+      "path": "resource-import/source/files/scripts/pixel_sprite.gd",
+      "bytes": 25114,
+      "sha256": "69a1846a55d251b1e8b44764b429546b814f97aba18379c7ee06b3267938747a"
+    },
+    {
+      "path": "resource-import/source/files/scripts/pixel_sprite.gd.uid",
+      "bytes": 20,
+      "sha256": "e122d2f88538ac29e667e57008aacc678de4ed9d92a1be0493f37687b0a0b9d3"
+    },
+    {
+      "path": "resource-import/source/files/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "path": "resource-import/source/files/scripts/player.gd.uid",
+      "bytes": 19,
+      "sha256": "064e4b400f36f2e612baa7a0ec47fd22ac2de3dac6646e02b9921f3675784d70"
+    },
+    {
+      "path": "resource-import/source/files/scripts/practice_target.gd",
+      "bytes": 4451,
+      "sha256": "455e1d0697db73c3b27a9e12136e5103bd438fdf22142bee0d329cd8748ba15e"
+    },
+    {
+      "path": "resource-import/source/files/scripts/practice_target.gd.uid",
+      "bytes": 20,
+      "sha256": "653901d6e1e18f9d4ce4eb782af9366629a641679963266065a425d014814531"
+    },
+    {
+      "path": "resource-import/source/files/scripts/presentation/camera_framing.gd",
+      "bytes": 10132,
+      "sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b"
+    },
+    {
+      "path": "resource-import/source/files/scripts/presentation/camera_framing.gd.uid",
+      "bytes": 20,
+      "sha256": "64b72a728eb61dfdd37069ff53b7259483bef7d3c238660617af463b1b50778a"
+    },
+    {
+      "path": "resource-import/source/files/scripts/settings/game_settings.gd",
+      "bytes": 13346,
+      "sha256": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2"
+    },
+    {
+      "path": "resource-import/source/files/scripts/settings/game_settings.gd.uid",
+      "bytes": 19,
+      "sha256": "f1b82776f1b83f512b5ed0d6307de1fda84ac886456ce53b7276770c2d7c03ab"
+    },
+    {
+      "path": "resource-import/source/files/scripts/shotgun_flare.gd",
+      "bytes": 5778,
+      "sha256": "24e526e3850531317285e0d687ee93ebd37aa7819fbf5cd27af19284af0b84e6"
+    },
+    {
+      "path": "resource-import/source/files/scripts/shotgun_flare.gd.uid",
+      "bytes": 20,
+      "sha256": "e7c22cc0b7e74fa5181371c644527e6b18ec06ad8369dc72bfa4986505a15ba4"
+    },
+    {
+      "path": "resource-import/source/files/scripts/ui/campaign_menu.gd",
+      "bytes": 35356,
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28"
+    },
+    {
+      "path": "resource-import/source/files/scripts/ui/campaign_menu.gd.uid",
+      "bytes": 19,
+      "sha256": "27d6486d87eb8162cc7e6c714ce9db11d313b66236870281aa2e615d8d5fc2e8"
+    },
+    {
+      "path": "resource-import/source/files/scripts/weapon_pickup.gd",
+      "bytes": 1750,
+      "sha256": "7a350ffa2efa2f6f031877842fb447e22b3b80d49cc2acc40ee39dd0cc19c56e"
+    },
+    {
+      "path": "resource-import/source/files/scripts/weapon_pickup.gd.uid",
+      "bytes": 20,
+      "sha256": "0a004b242329bf5742cac245b12a6d41b8e306fc79ad63d43dc0c46896bf8615"
+    },
+    {
+      "path": "resource-import/source/files/tests/campaign_menu_smoke.gd",
+      "bytes": 23903,
+      "sha256": "c724893ece05e36d35a04c4f12ddb75a70a8bc71ca9c29ced95c5e9f10d47c95"
+    },
+    {
+      "path": "resource-import/source/files/tests/campaign_menu_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "78b3f8070ef047d27fa6bf00e92d27ebd41aaddb4add27e87921ea488422029a"
+    },
+    {
+      "path": "resource-import/source/files/tests/campaign_persistence_smoke.gd",
+      "bytes": 14256,
+      "sha256": "85b6e36a1a432b6f855aaf2090fc86c89b4c6ca63a5f101902b26ac84fc92a01"
+    },
+    {
+      "path": "resource-import/source/files/tests/campaign_persistence_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "7b4f4c6d281d8d2fbf41d7c65f3d4fa271b1619b1d3f6de61b8a7b3c5d6539b3"
+    },
+    {
+      "path": "resource-import/source/files/tests/campaign_shell_smoke.gd",
+      "bytes": 32100,
+      "sha256": "d54a10502d750b9a3b5773538e445dd0c270bfbd59bfd7f14d9393f1f7618f71"
+    },
+    {
+      "path": "resource-import/source/files/tests/campaign_shell_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "46f5510a4b06c050fbd72c47bcad41886147655366be31e990e39f985d07ca5d"
+    },
+    {
+      "path": "resource-import/source/files/tests/fixtures/campaign/a1_l2.tscn",
+      "bytes": 286,
+      "sha256": "78a76a3354d8e8f76f013adf8981b5e855a28304de9a5cdd4af129bf970a2ff0"
+    },
+    {
+      "path": "resource-import/source/files/tests/fixtures/campaign/live_a1_l3.tscn",
+      "bytes": 645,
+      "sha256": "cc95fb758e39247ddfe6fe523941e4849046669c12037ac8bf991aec0f879eaa"
+    },
+    {
+      "path": "resource-import/source/files/tests/fixtures/campaign/live_a3_l5.tscn",
+      "bytes": 645,
+      "sha256": "eaaab6b38b74303970d0a65217b6920f23a4fca4c382b1ab84cd5a6211794cf5"
+    },
+    {
+      "path": "resource-import/source/files/tests/fixtures/campaign/live_level.gd",
+      "bytes": 1612,
+      "sha256": "7bb790fd03e3a36d0471df5b2f178a7187bb68a0118f47c94628c2bd30afb4c7"
+    },
+    {
+      "path": "resource-import/source/files/tests/fixtures/campaign/live_level.gd.uid",
+      "bytes": 19,
+      "sha256": "2fe384a5be10da493bfe776f97015644834b93adbb9e5c575fcb872b5b7ff24e"
+    },
+    {
+      "path": "resource-import/source/files/tests/replay_static_availability_smoke.gd",
+      "bytes": 19919,
+      "sha256": "f05df35d5f14b4e516872d3980f47f1b757674f7661268ba2de2159e1339344f"
+    },
+    {
+      "path": "resource-import/source/manifest.json",
+      "bytes": 22369,
+      "sha256": "9a25541a4acb4c15298ebf757690c40f45fe0ee39a42570e75437f440b1a3255"
+    },
+    {
+      "path": "resource-import/wrapper.log",
+      "bytes": 1732,
+      "sha256": "ed52259be5934267b4065840be0aa6d2342171b82dca936f2d3dd04fb0738155"
+    }
+  ]
+}
