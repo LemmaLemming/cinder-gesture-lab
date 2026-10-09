@@ -1,7 +1,7 @@
 extends CinderLevel
-## Untested authored A3-L3 parent. One continuous native Scheduler; recipients
-## are installed only by real spatial entry. Full paired persistence is NOT
-## implemented here: entry receipts are pending boundaries, never saved retries.
+## Owned A3-L3 aggregate candidate with one native Scheduler and actual
+## spatial recipients. Source-free arrival capture is verified; restored
+## combat, full route, Shell persistence and native art acceptance are pending.
 
 const Shore = preload("res://scripts/acts/act3/mirror_sea_scenery.gd")
 const Stalker = preload("res://scripts/acts/act3/sunbound_stalker.gd")
@@ -16,7 +16,9 @@ const Shape = preload("res://scripts/combat/threat_geometry.gd")
 const CueMeshes = preload("res://scripts/cues/cue_mesh.gd")
 const ContactCue = preload("res://scripts/cues/interaction_cue.gd")
 const Value = preload("res://scripts/campaign/snapshot_codec.gd")
-const API: String = "act3-mirror-sea-parent-candidate-1"
+const ParentCodec = preload("res://scripts/acts/act3/mirror_sea_codec.gd")
+const Vignettes = preload("res://scripts/acts/act3/mirror_sea_vignettes.gd")
+const API: String = "act3-mirror-sea-parent-1"
 const LAYOUT: String = "res://data/campaign/act3/mirror_sea_layout_candidate.json"
 const ENCOUNTER_ID: String = "A3-L3/mirror-sea-shore"
 const WORLD_REVISION: int = 1
@@ -48,6 +50,10 @@ class RequiredViewObserver:
 			observe.call()
 
 var scenery: Node3D
+var vignettes: Node3D
+var _vignette_instance_id: int = 0
+var _vignette_world: World3D
+var _vignette_children: int = 0
 var sources: Dictionary = {}
 var threat_scheduler: CinderThreatScheduler
 var mechanism: CinderLaneMechanism
@@ -83,6 +89,12 @@ var _exit_queued: bool = false
 var _exit_generation: int = 0
 var _view_observer: RequiredViewObserver
 var _pre_consumer_guard_busy: bool = false
+var _parent_codec = ParentCodec.new()
+var _owned_restore_error: String = ""
+var _owned_capture_busy: bool = false
+var _owned_capture_error: String = ""
+var _owned_capture_camera: Camera3D
+var _owned_capture_hud: GameHUD
 
 
 func _ready() -> void:
@@ -110,6 +122,14 @@ func _ready() -> void:
 		_rows[String(row.id)] = row.duplicate(true)
 	for row: Dictionary in _layout.fixed_stones:
 		_build_stone(row)
+	vignettes = Vignettes.new()
+	vignettes.name = "OptionalStaticShoreVignettes"
+	if not vignettes.call("build", self):
+		last_configuration_error = "Optional authored scenery construction refused: " + String(vignettes.get("last_error"))
+		return
+	_vignette_instance_id = vignettes.get_instance_id()
+	_vignette_world = vignettes.get_world_3d()
+	_vignette_children = vignettes.get_child_count()
 	threat_scheduler = Scheduler.new()
 	threat_scheduler.name = "ContinuousShoreScheduler"
 	add_child(threat_scheduler)
@@ -255,6 +275,7 @@ func _physics_process(_delta: float) -> void:
 		return
 	if _advance_entry():
 		return # Newly installed owners cannot process until the next native tick.
+	_dispatch_pending_checkpoint()
 	_pending_view.clear()
 	_step_ring()
 	for id: String in ENEMY_IDS:
@@ -338,7 +359,7 @@ func _advance_entry() -> bool:
 	var receipt: Dictionary = {"id": ENTRY_IDS[index], "beat": ENTRY_BEATS[index], "clock_s": threat_scheduler.get_clock(), "hero_position": Value.vector3(hero.global_position), "capsule_radius": body.radius}
 	_entries.append(receipt)
 	_pending_boundaries.append(receipt.duplicate(true))
-	# No request_checkpoint: unsupported whole-unit persistence cannot protect it.
+	# Defer actual dispatch until the next complete native current-view boundary.
 	_update_presentation()
 	return true
 
@@ -360,7 +381,7 @@ func _previous_entry_clear(index: int) -> bool:
 	return true
 
 
-func _install_source(id: String) -> bool:
+func _install_source(id: String, prepare_managed: bool = true) -> bool:
 	if sources.has(id) or (id == PULSE_ID and is_instance_valid(mechanism)):
 		_fail("Spatial entry cannot configure a duplicate owner: " + id)
 		return false
@@ -392,7 +413,7 @@ func _install_source(id: String) -> bool:
 	var context: Dictionary = {"world_root": get_parent() as Node3D, "source_id": id, "source_epoch": String(row.source_epoch_recipe), "generation": 1, "world_collision_fingerprint": threat_scheduler.pure_collision_fingerprint(get_parent() as Node3D), "world_floor_signature": signature.signature}
 	var prepared: Dictionary = {"world_revision": WORLD_REVISION, "collision_fingerprint": context.world_collision_fingerprint, "floor_signature": context.world_floor_signature}
 	var definition: Dictionary = native_definition(id)
-	if not source.call("configure_source", id, context.source_epoch, 1, definition, _profile, prepared, threat_scheduler) or not source.call("retain_source_environment", get_parent() as Node3D, [_floor]) or not source.call("enable_authored_cycle_tracking", threat_scheduler, {"hero": hero}, [_floor], context) or not source.call("source_cycles_managed"):
+	if not source.call("configure_source", id, context.source_epoch, 1, definition, _profile, prepared, threat_scheduler) or not source.call("retain_source_environment", get_parent() as Node3D, [_floor]) or (prepare_managed and (not source.call("enable_authored_cycle_tracking", threat_scheduler, {"hero": hero}, [_floor], context) or not source.call("source_cycles_managed"))):
 		_fail(id + ": " + String(source.get("source_snapshot_error")) + "; " + String(source.get("last_error")))
 		return false
 	_echo_records[id] = {"context": context, "projection": {}, "lease": {}, "proof": {}, "positions": [], "locked": false, "admissions": []}
@@ -705,7 +726,7 @@ func _view_guard(id: String, current: bool) -> String:
 	return last_camera_error
 
 
-func _echo_bounds(id: String, prospective: Dictionary = {}) -> Dictionary:
+func _echo_bounds(id: String, prospective: Dictionary = {}, framing_camera: Camera3D = null) -> Dictionary:
 	var source: Node3D = sources[id]
 	var art: Dictionary = source.call("framing_points")
 	if not String(art.get("error", "Actual native Echo art bounds unavailable")).is_empty():
@@ -737,17 +758,17 @@ func _echo_bounds(id: String, prospective: Dictionary = {}) -> Dictionary:
 		if view == null or not view.is_visible_in_tree() or view.mesh == null:
 			return _bounds_error("Actual complete harmless outline geometry required")
 		_append_mesh(points, view.mesh, view.global_transform)
-	var error: String = _append_hero_forecasts(points, data.get("positions", []))
+	var error: String = _append_hero_forecasts(points, data.get("positions", []), framing_camera)
 	return _enclosure(points) if error.is_empty() else _bounds_error(error)
 
 
-func _pulse_render_bounds(positions: Array) -> Dictionary:
+func _pulse_render_bounds(positions: Array, framing_camera: Camera3D = null) -> Dictionary:
 	if not is_instance_valid(_mineral) or not is_instance_valid(mechanism) or not _mineral.is_visible_in_tree() or _mineral.mesh == null:
 		return _bounds_error("Actual complete mineral pulse source required")
 	var points: Array = _pulse_bounds.duplicate()
 	_append_mesh(points, _mineral.mesh, _mineral.global_transform)
 	_append_cue(points, mechanism.get_cue())
-	var error: String = _append_hero_forecasts(points, positions)
+	var error: String = _append_hero_forecasts(points, positions, framing_camera)
 	return _enclosure(points) if error.is_empty() else _bounds_error(error)
 
 
@@ -771,8 +792,8 @@ func _proof_positions(proof: Dictionary) -> Array[Vector3]:
 	return points
 
 
-func _append_hero_forecasts(points: Array, positions: Array) -> String:
-	var native: Array = shared_shell.call("player_camera_framing_points")
+func _append_hero_forecasts(points: Array, positions: Array, framing_camera: Camera3D = null) -> String:
+	var native: Array = shared_shell.call("player_camera_framing_points_for", hero, framing_camera) if framing_camera != null else shared_shell.call("player_camera_framing_points")
 	if native.is_empty() or positions.is_empty():
 		return "Complete real Hero corners and native selected response path required"
 	for position: Variant in positions:
@@ -926,7 +947,7 @@ func _build_reflection(id: String, translation: Vector3) -> void:
 	_reflections[id] = reflection
 
 
-func _update_presentation() -> void:
+func _update_presentation(quiet: bool = false) -> void:
 	if is_instance_valid(hero) and is_instance_valid(scenery):
 		# Keep the ordinary-depth horizon behind this authored court's whole
 		# route, including a rear escape. A HeroZ follower masks its start.
@@ -935,10 +956,25 @@ func _update_presentation() -> void:
 		var court_z: float = float(_layout.arrangements[court_index].court_origin_world[2])
 		scenery.call("follow_landmarks", Vector3(hero.global_position.x, 0, court_z + 0.4))
 	if is_instance_valid(exit_cue):
+		var silent_objects: Array[Object] = [exit_cue]
+		var signal_flags: Array[bool] = []
+		if quiet:
+			# Preserve the actual native cue, child visibility and existing
+			# material observers through derived reconstruction.
+			for child: Node in exit_cue.get_children():
+				silent_objects.append(child)
+				if child is MeshInstance3D and child.material_override != null:
+					silent_objects.append(child.material_override)
+			for object: Object in silent_objects:
+				signal_flags.append(object.is_blocking_signals())
+				object.set_block_signals(true)
 		if _exit_state == "clear":
 			exit_cue.clear()
 		else:
 			exit_cue.present(_exit_state, "contact")
+		if quiet:
+			for index: int in range(silent_objects.size()):
+				silent_objects[index].set_block_signals(signal_flags[index])
 	if not last_configuration_error.is_empty():
 		objective_text = "MIRROR SEA UNAVAILABLE\n" + last_configuration_error
 	elif _exit_state != "clear":
@@ -977,6 +1013,9 @@ func runtime_error() -> String:
 	var error: String = scenery.call("runtime_error")
 	if not error.is_empty():
 		return error
+	error = _vignette_root_error()
+	if not error.is_empty():
+		return error
 	for id: String in _stones:
 		var spec: Dictionary = _stones[id]
 		var body: StaticBody3D = spec.body
@@ -999,6 +1038,22 @@ func runtime_error() -> String:
 	return ""
 
 
+## Cheap retained-root custody only. Never193 native property/texture hashes
+## from physics, admission, contact or the ordinary camera follow callback.
+func _vignette_root_error() -> String:
+	if not is_instance_valid(vignettes) or vignettes.get_instance_id() != _vignette_instance_id or vignettes.get_script() != Vignettes or vignettes.get_parent() != self or not vignettes.is_inside_tree() or not vignettes.is_node_ready() or vignettes.is_queued_for_deletion() or vignettes.get_world_3d() != _vignette_world or vignettes.get_world_3d() != get_world_3d() or vignettes.global_transform != Transform3D.IDENTITY or not vignettes.visible or vignettes.get_child_count() != _vignette_children or not vignettes.get_groups().is_empty() or vignettes.is_processing() or vignettes.is_physics_processing():
+		return "Original static noninteractive vignette root required"
+	return ""
+
+
+## Finite native gate: build already validates; complete capture and saved
+## candidate presentation recheck real buffers, textures, crops and resources.
+## Its complete optional banks never enter mandatory combat/save view bounds.
+func _vignette_full_error() -> String:
+	var error: String = _vignette_root_error()
+	return error if not error.is_empty() else String(vignettes.call("native_error"))
+
+
 func scheduler_bindings() -> Dictionary:
 	var owners: Dictionary = sources.duplicate()
 	if is_instance_valid(mechanism):
@@ -1013,40 +1068,294 @@ func state() -> Dictionary:
 			actual[id] = {"kind": _rows[id].kind, "installed": true, "source": sources[id].call("get_source_state") if _rows[id].kind == "echo" else sources[id].call("state"), "playback": sources[id].call("state") if _rows[id].kind == "echo" else {}}
 		else:
 			actual[id] = {"kind": _rows[id].kind, "installed": false}
-	return {"api_revision": API, "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else -1.0, "configuration_error": last_configuration_error, "admission_reason": last_admission_reason, "camera_error": last_camera_error, "route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "pending_checkpoint_boundaries": _pending_boundaries.duplicate(true)}, "sources": actual, "ring": {"installed": is_instance_valid(mechanism), "stage": _ring_stage, "history": _ring_history.duplicate(true), "mechanism": mechanism.state() if is_instance_valid(mechanism) else {}, "proofs": _pulse_proofs.duplicate(true), "exchanges": _pulse_exchanges.duplicate(true), "between_receipt": _between_receipt.duplicate(true)}, "echo_records": _echo_records.duplicate(true), "completed": is_completed(), "exit_state": _exit_state, "contact": _contact.duplicate(true), "persistence_supported": false, "checkpoint_dispatch_supported": false}
+	return {"api_revision": API, "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else -1.0, "configuration_error": last_configuration_error, "admission_reason": last_admission_reason, "camera_error": last_camera_error, "route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "pending_checkpoint_boundaries": _pending_boundaries.duplicate(true)}, "sources": actual, "ring": {"installed": is_instance_valid(mechanism), "stage": _ring_stage, "history": _ring_history.duplicate(true), "mechanism": mechanism.state() if is_instance_valid(mechanism) else {}, "proofs": _pulse_proofs.duplicate(true), "exchanges": _pulse_exchanges.duplicate(true), "between_receipt": _between_receipt.duplicate(true)}, "echo_records": _echo_records.duplicate(true), "completed": is_completed(), "exit_state": _exit_state, "contact": _contact.duplicate(true), "persistence_supported": true, "checkpoint_dispatch_supported": true}
 
 
 func snapshot_state() -> Dictionary:
-	last_snapshot_error = SAVE_LIMIT
-	return {}
+	return _capture_checked(null, null)
 
 
-func snapshot_error(_snapshot: Dictionary) -> String:
-	return SAVE_LIMIT
+## Shared36 ordinary-fresh opt-in. Actual native receiver context is retained
+## only for this synchronous owned call; Game aliases/focus are never replaced.
+func snapshot_state_for_presentation(framing_camera: Camera3D, framing_hud: GameHUD) -> Dictionary:
+	if is_restore_candidate():
+		last_snapshot_error = "Explicit fresh capture cannot substitute for saved restoration"
+		return {}
+	if not is_instance_valid(framing_camera) or not is_instance_valid(framing_hud):
+		last_snapshot_error = "Actual fresh native Camera/HUD pair required"
+		return {}
+	return _capture_checked(framing_camera, framing_hud)
 
 
-func snapshot_error_with_player(_snapshot: Dictionary, _saved_player: Dictionary) -> String:
-	return SAVE_LIMIT
+func _capture_checked(framing_camera: Camera3D, framing_hud: GameHUD) -> Dictionary:
+	if _owned_capture_busy:
+		last_snapshot_error = "Owned checked writer cannot reenter"
+		return {}
+	if (framing_camera == null) != (framing_hud == null):
+		last_snapshot_error = "Complete actual native presentation context required"
+		return {}
+	last_snapshot_error = _vignette_full_error()
+	if not last_snapshot_error.is_empty(): return {}
+	_owned_capture_busy = true
+	_owned_capture_error = ""
+	_owned_capture_camera = framing_camera
+	_owned_capture_hud = framing_hud
+	# Base retains lifecycle, snapshot-busy, complete value/local validation and
+	# the original progression envelope. No header or busy exemption is added.
+	var saved: Dictionary = super.snapshot_state()
+	var capture_error: String = _owned_capture_error
+	_owned_capture_error = ""
+	_owned_capture_camera = null
+	_owned_capture_hud = null
+	_owned_capture_busy = false
+	if saved.is_empty():
+		# Preserve this synchronous native capture refusal after base validation
+		# rejects its empty local unit. A call that never captured keeps base error.
+		if not capture_error.is_empty(): last_snapshot_error = capture_error
+		return {}
+	last_snapshot_error = snapshot_error(saved)
+	if last_snapshot_error.is_empty():
+		last_snapshot_error = _parent_codec.live_presentation_error(self) if framing_camera == null else _parent_codec.candidate_presentation_error(self, framing_camera, framing_hud)
+	return saved if last_snapshot_error.is_empty() else {}
 
 
-func restore_state(_snapshot: Dictionary) -> bool:
-	last_snapshot_error = SAVE_LIMIT
-	return false
+func snapshot_error(saved: Dictionary) -> String:
+	var error: String = super.snapshot_error(saved)
+	return error if not error.is_empty() else _parent_codec.progress_error(saved.local, saved.progress, self)
+
+
+func snapshot_error_with_player(saved: Dictionary, saved_player: Dictionary) -> String:
+	var error: String = super.snapshot_error_with_player(saved, saved_player)
+	return error if not error.is_empty() else _parent_codec.progress_error(saved.local, saved.progress, self)
+
+
+func restore_state(saved: Dictionary) -> bool:
+	var error: String = snapshot_error(saved)
+	if not error.is_empty():
+		last_snapshot_error = error
+		return false
+	_owned_restore_error = ""
+	var restored: bool = super.restore_state(saved)
+	if not _owned_restore_error.is_empty():
+		last_snapshot_error = _owned_restore_error
+		return false # Shell disposes the entire failed native candidate.
+	return restored
+
+
+func _capture_local_state() -> Dictionary:
+	var saved: Dictionary = _parent_codec.capture(self, hero.snapshot_state(), _owned_capture_camera, _owned_capture_hud)
+	last_snapshot_error = _parent_codec.last_error
+	if _owned_capture_busy: _owned_capture_error = last_snapshot_error
+	return saved
+
+
+func _local_snapshot_error(local: Dictionary) -> String:
+	return _parent_codec.record_error(local, self, hero.snapshot_state())
+
+
+func _local_snapshot_error_with_player(local: Dictionary, saved_player: Dictionary) -> String:
+	return _parent_codec.record_error(local, self, saved_player)
+
+
+func _restore_local_state(local: Dictionary) -> void:
+	if not _parent_codec.restore_local(local, self, hero.snapshot_state()):
+		_owned_restore_error = _parent_codec.last_error
 
 
 func restore_candidate_construction_required() -> bool:
-	return true # A supplied prefix cannot be interpreted by ordinary live entry.
+	return true
 
 
-func _on_enter_restore_candidate(_local: Dictionary, _saved_player: Dictionary) -> String:
-	return SAVE_LIMIT
+func _on_enter_restore_candidate(local: Dictionary, saved_player: Dictionary) -> String:
+	_active = false
+	if not local.get("world") is Dictionary or not local.world.get("profile_id") is String:
+		return "Complete canonical saved world/profile recipe required"
+	_profile = local.world.profile_id
+	if not threat_scheduler.begin_encounter(_profile, ENCOUNTER_ID, WORLD_REVISION):
+		return threat_scheduler.last_error
+	var recipe: Dictionary = _parent_codec.constructor_recipe(local, self, saved_player)
+	if not recipe.get("accepted", false):
+		return String(recipe.get("error", "Immutable entitled constructor recipe refused"))
+	for id: String in recipe.recipe.source_ids:
+		if not _install_source(id, false):
+			return last_configuration_error
+	if recipe.recipe.mechanism_entitled and not _install_source(PULSE_ID, false):
+		return last_configuration_error
+	# All recipients are native immutable configuration only. Pure complete
+	# Scheduler/source validation precedes every prospective Playback recipe.
+	return _parent_codec.prepare_sources(local, self, saved_player)
 
 
-func _restore_candidate_presentation_error(_camera: Camera3D, _hud: GameHUD) -> String:
-	return SAVE_LIMIT # No optics gate can license an absent whole mechanical codec.
+func _restore_candidate_presentation_error(camera: Camera3D, hud: GameHUD) -> String:
+	var error: String = _vignette_full_error()
+	return error if not error.is_empty() else _parent_codec.candidate_presentation_error(self, camera, hud)
+
+
+func mirror_sea_codec_checkpoint_ids() -> Array[String]:
+	return ["mirror-sea-shore-entry", "mirror-sea-real-body-entry", "mirror-sea-useful-west-entry", "mirror-sea-useful-east-entry", "mirror-sea-resonant-entry", "mirror-sea-final-court-entry"]
+
+
+func mirror_sea_codec_owned_state() -> Dictionary:
+	var views: Dictionary = {}
+	for id: String in _echo_records:
+		var positions: Array = []
+		for at: Vector3 in _echo_records[id].positions:
+			positions.append(Value.vector3(at))
+		views[id] = positions
+	var pulses: Array = []
+	for at: Vector3 in _pulse_view:
+		pulses.append(Value.vector3(at))
+	var exchanges: Dictionary = {}
+	for label: String in _pulse_exchanges:
+		exchanges[label] = ParentCodec.encode_pulse_exchange(_pulse_exchanges[label])
+	return {"route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "pending_checkpoint_boundaries": _pending_boundaries.duplicate(true), "exit_state": _exit_state, "contact": _contact.duplicate(true)}, "ring": {"stage": _ring_stage, "history": _ring_history.duplicate(true), "exchanges": exchanges, "between_receipt": _between_receipt.duplicate(true), "mechanism": {}}, "view": {"echoes": views, "pulse": pulses}}
+
+
+func mirror_sea_codec_framing_union(framing_camera: Camera3D = null) -> Dictionary:
+	var camera: Camera3D = framing_camera if framing_camera != null else shared_shell.get("camera") as Camera3D
+	var native: Array = shared_shell.call("player_camera_framing_points_for", hero, camera)
+	if native.is_empty():
+		return _bounds_error("Actual current Hero/native context camera bounds required")
+	var points: Array = native.duplicate()
+	var court_ids: Array = [] if _entries.is_empty() else _layout.arrangements[_entries.size() - 1].source_ids.duplicate()
+	for id: String in sources:
+		var source: Node3D = sources[id]
+		var actual: Dictionary = source.call("state")
+		var held: bool = actual.get("status") == "running" if _rows[id].kind == "echo" else not String(actual.get("reservation_id", "")).is_empty()
+		if not held and not court_ids.has(id):
+			continue # Remote inactive history is still mechanically retained.
+		var bounds: Dictionary
+		if _rows[id].kind == "stalker":
+			bounds = source.call("camera_framing_points_for_context", shared_shell, hero, camera, {}, {}, true) if held else source.call("current_render_framing_points_for_context", shared_shell, hero, camera)
+		elif held:
+			bounds = _echo_bounds(id, {}, camera)
+		else:
+			bounds = _current_echo_render_bounds(id)
+		if not String(bounds.get("error", "Native current-court source bounds unavailable")).is_empty():
+			return _bounds_error(id + ": " + String(bounds.error))
+		if bounds.get("points", []).is_empty():
+			if _rows[id].kind == "stalker" and bool(source.get("dead")) and not held:
+				continue # Getter validated the genuinely hidden retired body/cue.
+			return _bounds_error(id + ": Incomplete current native source group")
+		var group: Dictionary = _enclosure(bounds.points)
+		if not group.error.is_empty():
+			return group
+		points.append_array(group.points)
+	if is_instance_valid(mechanism) and (court_ids.has(PULSE_ID) or mechanism.state().status == "running"):
+		var pulse: Dictionary = _pulse_render_bounds(_pulse_view, camera) if mechanism.state().status == "running" else _current_pulse_render_bounds()
+		if not pulse.error.is_empty():
+			return pulse
+		points.append_array(pulse.points)
+	if not _entries.is_empty():
+		for row: Dictionary in _layout.fixed_stones:
+			if row.arrangement_id != ENTRY_IDS[_entries.size() - 1]:
+				continue
+			var spec: Dictionary = _stones[row.id]
+			var stone: Array = []
+			_append_mesh(stone, spec.mesh, spec.view.global_transform)
+			points.append_array((_enclosure(stone) as Dictionary).points)
+	if _exit_state != "clear":
+		var contact: Dictionary = _contact_bounds()
+		if not contact.error.is_empty():
+			return contact
+		points.append_array(contact.points)
+	return _bounds_error("Complete current native union exceeds224corners") if points.size() > 224 else {"error": "", "points": points}
+
+
+func _current_echo_render_bounds(id: String) -> Dictionary:
+	var art: Dictionary = sources[id].call("framing_points")
+	if not String(art.get("error", "Actual native Echo art unavailable")).is_empty():
+		return _bounds_error(id + ": " + String(art.error))
+	var points: Array = art.points.duplicate()
+	if not is_instance_valid(_reflections.get(id)):
+		return _bounds_error("Retained harmless outline required: " + id)
+	for child: Node in _reflections[id].get_children():
+		var visual: MeshInstance3D = child as MeshInstance3D
+		if visual == null or not visual.is_visible_in_tree() or visual.mesh == null:
+			return _bounds_error("Complete actual harmless outline group required")
+		_append_mesh(points, visual.mesh, visual.global_transform)
+	for cue: Node3D in sources[id].call("get_cues"):
+		_append_cue(points, cue)
+	var route: MeshInstance3D = sources[id].get_node_or_null("ExactHarmlessRoutes") as MeshInstance3D
+	if route != null and route.is_visible_in_tree() and route.mesh != null:
+		_append_mesh(points, route.mesh, route.global_transform)
+	return _enclosure(points)
+
+
+func _current_pulse_render_bounds() -> Dictionary:
+	if not is_instance_valid(mechanism) or not is_instance_valid(_mineral) or not _mineral.is_visible_in_tree() or _mineral.mesh == null:
+		return _bounds_error("Actual retained mineral source required")
+	var points: Array = []
+	_append_mesh(points, _mineral.mesh, _mineral.global_transform)
+	_append_cue(points, mechanism.get_cue())
+	return _enclosure(points)
+
+
+func _dispatch_pending_checkpoint() -> void:
+	if _pending_boundaries.is_empty() or not _active or hero.dead or is_restore_candidate() or is_completed():
+		return
+	var union: Dictionary = mirror_sea_codec_framing_union()
+	if not union.error.is_empty() or not String(shared_shell.call("camera_framing_error", union.points)).is_empty():
+		return # A future camera fit never earns a protected actual-world view.
+	var boundary: Dictionary = _pending_boundaries.pop_front()
+	var index: int = -1
+	for candidate: int in range(_entries.size()):
+		if Authored.exact_equal(_entries[candidate], boundary):
+			index = candidate
+			break
+	if index < 0 or not request_checkpoint(mirror_sea_codec_checkpoint_ids()[index], "encounter"):
+		_pending_boundaries.push_front(boundary)
+	# Remove before synchronous observers capture native progress. A successful
+	# request records delivery; the Shell independently owns actual protection.
+
+
+func mirror_sea_codec_apply_owned_state(owned: Dictionary) -> String:
+	_entries.clear()
+	for receipt: Dictionary in owned.route.entries:
+		_entries.append(receipt.duplicate(true))
+	_deaths = owned.route.deaths.duplicate(true)
+	_pending_boundaries.clear()
+	for receipt: Dictionary in owned.route.pending_checkpoint_boundaries:
+		_pending_boundaries.append(receipt.duplicate(true))
+	_exit_state = owned.route.exit_state
+	_contact = owned.route.contact.duplicate(true)
+	_ring_stage = owned.ring.stage
+	_ring_history.clear()
+	for receipt: Dictionary in owned.ring.history:
+		_ring_history.append(receipt.duplicate(true))
+	_between_receipt = owned.ring.between_receipt.duplicate(true)
+	_pulse_exchanges.clear()
+	for label: String in owned.ring.exchanges:
+		_pulse_exchanges[label] = ParentCodec.decode_pulse_exchange(owned.ring.exchanges[label])
+	_pulse_view.clear()
+	for at: Array in owned.view.pulse:
+		_pulse_view.append(Value.read_vector3(at))
+	var world: Dictionary = ParentCodec.native_world(self)
+	for id: String in _echo_records:
+		var source: Node3D = sources[id]
+		var positions: Array[Vector3] = []
+		for at: Array in owned.view.echoes[id]:
+			positions.append(Value.read_vector3(at))
+		var actual: Dictionary = source.call("state")
+		_echo_records[id].context = ParentCodec.echo_context(world, self, id, int(source.call("get_authored_cycle_generation")))
+		_echo_records[id].projection = source.call("get_footprint_projection")
+		_echo_records[id].lease = threat_scheduler.replay_reservation_state(String(actual.get("reservation_id", ""))) if actual.get("status") == "running" else {}
+		_echo_records[id].positions = positions
+		_echo_records[id].locked = bool(_echo_records[id].lease.get("adapter", {}).get("locked", false))
+		_echo_records[id].proof = {}
+		_echo_records[id].admissions = [] # Diagnostic only, not transported authority.
+		_bind_echo_cues(id)
+	_pending_view.clear()
+	_pulse_proofs.clear()
+	_exit_generation += 1
+	_exit_queued = false
+	_active = true # Still paused/nonplayable until Shell finishes its real gate.
+	_update_presentation(true)
+	return runtime_error()
 
 
 func _on_exit_level() -> void:
+	var discarded_candidate: bool = is_restore_candidate()
 	_active = false
 	if is_instance_valid(_view_observer):
 		_view_observer.set_physics_process(false)
@@ -1064,8 +1373,80 @@ func _on_exit_level() -> void:
 		if is_instance_valid(source):
 			source.set_physics_process(false)
 	if is_instance_valid(mechanism):
+		if mechanism.state_changed.is_connected(_on_pulse_phase):
+			mechanism.state_changed.disconnect(_on_pulse_phase)
 		mechanism.set_physics_process(false)
+	# A managed journal refuses end_encounter reset. Retire actual native held
+	# owners while Hero/resources remain inside this whole parent, never later
+	# through an already removed Echo's _exit_tree presentation callback.
+	if is_instance_valid(threat_scheduler) and threat_scheduler.is_inside_tree() and not threat_scheduler.is_queued_for_deletion():
+		for id: String in sources:
+			_retire_held_parent_owner(sources[id], String(_rows[id].kind), discarded_candidate)
+		if is_instance_valid(mechanism):
+			_retire_held_parent_owner(mechanism, "environmental_mechanism", discarded_candidate)
 	if is_instance_valid(exit_cue):
 		exit_cue.clear()
 	if is_instance_valid(threat_scheduler):
 		threat_scheduler.end_encounter("mirror_sea_level_exit")
+
+
+func _retire_held_parent_owner(owner: Node3D, kind: String, discarded_candidate: bool) -> void:
+	if not is_instance_valid(owner) or not owner.is_inside_tree():
+		return
+	if owner.is_queued_for_deletion() or owner.get_parent() != self:
+		push_error("Whole-parent exit refuses a foreign or already removing native owner")
+		return
+	var control: Dictionary = threat_scheduler.source_control_state(owner)
+	if control.is_empty():
+		push_error("Whole-parent exit requires this actual owner/Scheduler world custody")
+		return
+	if control.reservations.is_empty():
+		return # Unadmitted/ready and original terminal history stay untouched.
+	if not control.outside_transaction:
+		push_error("Whole-parent retirement requires an outside native transaction boundary")
+		return
+	var reason: String = "mirror_sea_whole_parent_exit"
+	if kind == "echo":
+		var current: Dictionary = owner.call("state")
+		var recipe: Dictionary = owner.call("get_authored_cycle_restore_recipe")
+		var unfinished: bool = discarded_candidate and not recipe.is_empty()
+		if control.reservations.size() != 1 or not owner.call("source_cycles_managed"):
+			push_error("Retire only this actual managed Echo lease, never foreign or legacy history")
+			return
+		var id: String = String(control.reservations[0].id)
+		if current.get("status") == "running":
+			if current.get("reservation_id") != id:
+				push_error("Native running Playback must retain its original held lease")
+				return
+			var accepted: bool = owner.call("cancel", reason)
+			if not unfinished:
+				var terminal: Dictionary = owner.call("get_authored_cycle_terminal_receipt")
+				assert(accepted and terminal.get("outcome") == "cancelled" and terminal.get("reason") == reason and terminal.get("exchange", {}).get("id") == id, "Committed owner retirement must seal its original real cancellation")
+		else:
+			if not unfinished or current.get("status") not in ["idle", "cycle_ready"]:
+				push_error("Only a discarded unfinished native candidate may hold an uncommitted Playback lease")
+				return
+		var remaining: Dictionary = threat_scheduler.source_control_state(owner)
+		if not remaining.reservations.is_empty():
+			if not unfinished:
+				push_error("Only a genuine unfinished discarded candidate may use raw owner retirement")
+				return
+			# Scheduler may have committed before this Playback. Remove only its
+			# real held lease; unsealed history stays unusable and is discarded.
+			threat_scheduler.cancel_owner(owner, reason + "_unfinished_candidate")
+	elif kind == "stalker":
+		threat_scheduler.cancel_owner(owner, reason)
+	elif kind == "environmental_mechanism":
+		var current: Dictionary = owner.call("state")
+		if current.get("status") == "running":
+			var accepted: bool = owner.call("cancel", reason)
+			assert(accepted, "Retire the actual running mechanism through its public cancel")
+		else:
+			if not discarded_candidate or not String(current.get("reservation_id", "")).is_empty():
+				push_error("Only an unfinished discarded mechanism candidate may have a staged raw lease")
+				return
+			threat_scheduler.cancel_owner(owner, reason + "_unfinished_candidate")
+	else:
+		assert(false, "Known actual native parent owner kind required for retirement")
+	var after: Dictionary = threat_scheduler.source_control_state(owner)
+	assert(not after.is_empty() and after.reservations.is_empty() and Authored.exact_equal(control.clock_s, after.clock_s), "Retire the actual native held owner before whole-parent disposal without clock advancement")
