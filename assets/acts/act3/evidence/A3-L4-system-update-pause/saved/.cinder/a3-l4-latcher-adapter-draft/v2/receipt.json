@@ -1,0 +1,95 @@
+{
+  "scope": "Ignored unpublished unparsed unexecuted owned adapter v2; exact source custody after actual Shared45 adoption",
+  "created_at_utc": "2026-10-09T09:57:54.512619+00:00",
+  "worktree": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea",
+  "adopted_merge": "0ede1f2950e23edb4fe8a1fdbcab06f413d8d8cf",
+  "head_at_read": "0b6fbe34646b8b2253387758d88e5502a37e343d",
+  "shared_api_revision": "campaign-shared-45",
+  "shared_publication": "ca82dffa1f0cfece41df46580b1d297de6bdf8bf",
+  "adoption_receipt": {
+    "path": ".cinder/false-paradise-shared45-adoption.json",
+    "sha256": "a3cf11877797b06fd16cbce11992d8351f865313d2aa993c8aaf472de66bf1ac",
+    "bytes": 695890
+  },
+  "original_finalized_v1_receipt": {
+    "path": ".cinder/a3-l4-latcher-adapter-draft/receipt.json",
+    "sha256": "9d687f954707f134f1ceb7db424594710f9a700ed1c3f033a2277c5c5d27a257",
+    "unchanged": true
+  },
+  "files": [
+    {
+      "path": ".cinder/a3-l4-latcher-adapter-draft/v2/garden_root_latcher.gd",
+      "sha256": "10b2db1cc1b02c875874de46b81642b95328c764f1a5a76cfca45076640fb0ee",
+      "bytes": 6910
+    },
+    {
+      "path": ".cinder/a3-l4-latcher-adapter-draft/v2/garden_root_latcher_art.gd",
+      "sha256": "e1c58848fc9513b63d6527df680beb0afacc8dff3b2bc4ebf71ecdf8325aab70",
+      "bytes": 6395
+    },
+    {
+      "path": ".cinder/a3-l4-latcher-adapter-draft/v2/README.md",
+      "sha256": "753e161fc95ee2a6b7d7b0f16fad4a04a70b540cbf72548b80ab09ebeae032f0",
+      "bytes": 11315
+    }
+  ],
+  "source_inputs_as_of_read": [
+    {
+      "path": "scripts/acts/act3/root_latcher.gd",
+      "sha256": "a809efbb34810077536fa48dc863620546ecb47c4179c31490230b526eb3011b",
+      "bytes": 29371,
+      "matches_adopted_merge": true,
+      "adopted_merge_sha256": "a809efbb34810077536fa48dc863620546ecb47c4179c31490230b526eb3011b"
+    },
+    {
+      "path": "scripts/acts/act3/root_latcher_art.gd",
+      "sha256": "09a05dfb267e47ef431af0fa5b0e96eaeb038fae46740030892000bb0e59391f",
+      "bytes": 10491,
+      "matches_adopted_merge": true,
+      "adopted_merge_sha256": "09a05dfb267e47ef431af0fa5b0e96eaeb038fae46740030892000bb0e59391f"
+    },
+    {
+      "path": "scripts/combat/lane_mechanism.gd",
+      "sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+      "bytes": 43592,
+      "matches_adopted_merge": true,
+      "adopted_merge_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd",
+      "sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+      "bytes": 209819,
+      "matches_adopted_merge": true,
+      "adopted_merge_sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+    },
+    {
+      "path": "scripts/game.gd",
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "bytes": 38685,
+      "matches_adopted_merge": true,
+      "adopted_merge_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    }
+  ],
+  "semantic_changes": [
+    "Retain actual is_visible_in_tree guards for art, root and current cues; reject real hidden Node3D ancestors.",
+    "Remove local-visible/hidden-ancestor allowance; actual Shell stages by hiding its SubViewportContainer Control.",
+    "Preserve explicit actual-current-camera/full-billboard and current-spent overloads, atlas/runtime/schema/default legacy semantics."
+  ],
+  "intended_owned_paths": [
+    "scripts/acts/act3/garden_root_latcher.gd",
+    "scripts/acts/act3/garden_root_latcher_art.gd"
+  ],
+  "native_execution": "none",
+  "native_import_credit": "none",
+  "active_source_edits_by_this_task": "none",
+  "static_findings": [
+    "No donor Shell camera alias or visibility bypass.",
+    "Intended art preload awaits publication; draft is not standalone executable.",
+    "No class registration, shared Player private fields, body/HP/collision mutation or legacy L2/L3 wrapper changes."
+  ],
+  "limitations": [
+    "This is an exact source receipt, not a native execution freeze.",
+    "Explicit-camera methods and retirement composition remain unparsed and unexecuted.",
+    "Actual candidate Camera/HUD, native staging, bounds, held admission and paired restore need focused owner validation after publication."
+  ]
+}

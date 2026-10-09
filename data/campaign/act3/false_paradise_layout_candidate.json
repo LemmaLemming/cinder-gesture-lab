@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "level_id": "A3-L4",
+  "created_at": "2026-10-09T09:30:45.276062+00:00",
+  "readiness": "authored candidate data; unimplemented/unmeasured placements, not earned history or acceptance",
+  "spawn_world": [
+    0.0,
+    0.1,
+    58.0
+  ],
+  "floor": {
+    "size_world": [
+      14.0,
+      1.0,
+      78.0
+    ],
+    "center_world": [
+      0.0,
+      -0.5,
+      25.0
+    ],
+    "safe_rect_xz": [
+      -7.0,
+      -14.0,
+      14.0,
+      78.0
+    ],
+    "top_y": 0.0,
+    "dynamic_collision": false
+  },
+  "arrangements": [
+    {
+      "id": "offered-rest",
+      "entry_index": 0,
+      "beat": 1,
+      "entry_z": 60.0,
+      "checkpoint_id": "garden-rest-entry",
+      "source_ids": [
+        "l4-rest-stalker"
+      ]
+    },
+    {
+      "id": "beauty-source",
+      "entry_index": 1,
+      "beat": 2,
+      "entry_z": 42.0,
+      "checkpoint_id": "garden-beauty-entry",
+      "source_ids": [
+        "l4-beauty-root"
+      ]
+    },
+    {
+      "id": "plain-path",
+      "entry_index": 2,
+      "beat": 3,
+      "entry_z": 24.0,
+      "checkpoint_id": "garden-plain-path-entry",
+      "source_ids": [
+        "l4-plain-echo",
+        "l4-plain-root"
+      ]
+    },
+    {
+      "id": "root-court",
+      "entry_index": 3,
+      "beat": 4,
+      "entry_z": 7.0,
+      "checkpoint_id": "garden-boss-court-entry",
+      "source_ids": [
+        "l4-garden-draw",
+        "l4-garden-enclose"
+      ]
+    },
+    {
+      "id": "garden-release",
+      "entry_index": 4,
+      "beat": 5,
+      "entry_kind": "genuine_target_phase_boundary",
+      "checkpoint_id": "garden-phase2-entry",
+      "source_ids": [
+        "l4-garden-helper"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "l4-rest-stalker",
+      "kind": "stalker",
+      "canonical_role_id": "C50",
+      "position_world": [
+        1.2,
+        0.1,
+        54.0
+      ],
+      "arrangement_id": "offered-rest"
+    },
+    {
+      "id": "l4-beauty-root",
+      "kind": "root",
+      "canonical_role_id": "C51",
+      "position_world": [
+        0.0,
+        0.0,
+        36.0
+      ],
+      "arrangement_id": "beauty-source"
+    },
+    {
+      "id": "l4-plain-echo",
+      "kind": "echo",
+      "canonical_role_id": "C52",
+      "definition_translation_world": [
+        -0.7,
+        0.0,
+        18.0
+      ],
+      "definition_id": "l4-plain-echo/straight-return",
+      "source_epoch_recipe": "A3-L4/l4-plain-echo/own-sequence",
+      "own_route_world": [
+        {
+          "position": [
+            -0.7,
+            0.0,
+            15.5
+          ],
+          "at_s": 0.0
+        },
+        {
+          "position": [
+            -0.7,
+            0.0,
+            17.5
+          ],
+          "at_s": 0.3
+        }
+      ],
+      "fixed_knot_world": [
+        -0.7,
+        0.0,
+        17.5
+      ],
+      "slash_origin_world": [
+        -0.7,
+        0.0,
+        17.5
+      ],
+      "slash_direction_world": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "arrangement_id": "plain-path"
+    },
+    {
+      "id": "l4-plain-root",
+      "kind": "root",
+      "canonical_role_id": "C51",
+      "position_world": [
+        1.2,
+        0.0,
+        18.0
+      ],
+      "arrangement_id": "plain-path"
+    },
+    {
+      "id": "l4-garden-draw",
+      "kind": "environmental_mechanism",
+      "position_world": [
+        -1.0,
+        0.0,
+        1.25
+      ],
+      "geometry": {
+        "kind": "lane",
+        "from_world": [
+          -1.0,
+          0.0,
+          1.25
+        ],
+        "to_world": [
+          1.0,
+          0.0,
+          1.25
+        ],
+        "radius_world": 0.28
+      },
+      "arrangement_id": "root-court"
+    },
+    {
+      "id": "l4-garden-enclose",
+      "kind": "environmental_mechanism",
+      "position_world": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "geometry": {
+        "kind": "crescent",
+        "origin_world": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "initial_bearing_world": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "inner_radius_world": 0.75,
+        "outer_radius_world": 1.65,
+        "min_dot": 0.5
+      },
+      "arrangement_id": "root-court"
+    },
+    {
+      "id": "l4-garden-helper",
+      "kind": "root",
+      "canonical_role_id": "C51",
+      "position_world": [
+        -1.5,
+        0.0,
+        2.0
+      ],
+      "arrangement_id": "garden-release",
+      "required_defeat": false
+    }
+  ],
+  "external_tether": {
+    "id": "l4-garden-tether",
+    "canonical_boss_id": "B05",
+    "position_world": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "max_hp": 60.0,
+    "phase_boundary_hp": 30.0,
+    "hp_reset_on_phase": false,
+    "required_damage": "ordinary primary during actual same-phase native root recovery"
+  },
+  "root_role": {
+    "raw_damage": 8.0,
+    "max_hp": 1.0,
+    "windup_s": 2.2,
+    "lock_s": 1.1,
+    "active_s": 0.2,
+    "recovery_s": 1.8,
+    "attack_interval_s": 4.0,
+    "move_speed": 0.0
+  },
+  "root_timing_floors": {
+    "windup_s": 2.2,
+    "lock_s": 1.1,
+    "recovery_s": 1.8
+  },
+  "phase2_sun": {
+    "initial_state": 0,
+    "start_stage": "preview",
+    "preview_s": 3.0,
+    "lock_s": 1.0,
+    "stable_s": 10.0,
+    "period_s": 14.0,
+    "anchor": "actual first target phase-boundary clock",
+    "effect": "select +Z/-Z Enclose bearing only at a fresh admission after familiar preview/lock; held shape never changes",
+    "direct_damage": false,
+    "floor_collision_changes": false,
+    "gesture_changes": false
+  },
+  "contact_exit": {
+    "id": "adage-plain-threshold",
+    "completion_id": "false-paradise-disengaged",
+    "position_world": [
+      0.0,
+      0.1,
+      -8.0
+    ],
+    "rect_xz": [
+      -1.2,
+      -8.65,
+      2.4,
+      1.3
+    ]
+  },
+  "presentation": {
+    "likeness": "single harmless clothed projection; no HP/collider/target/attack/reward",
+    "first_anchor_world": [
+      -0.85,
+      0.0,
+      51.5
+    ],
+    "boss_anchor_world": [
+      -0.85,
+      0.0,
+      -1.5
+    ],
+    "anchor_change": "offscreen boss-entry presentation only, derived from parent entry; no arbitrary saved pose",
+    "stripping": "disengagement hides decorative flowers/arches and retires likeness cosmetically; permanent floor and fixed roots unchanged"
+  },
+  "equipment": {
+    "reuse_ids": [
+      "CLOTH-J0",
+      "CLOTH-P0",
+      "CLOTH-S0",
+      "WEAPON-01"
+    ],
+    "carried_static_equipment": true,
+    "grants": [],
+    "ability_use_ids": [],
+    "creation_claim_ids": [],
+    "decision": "identify the real low source; choose removable helper pressure or required root during recovery; a plain safe pocket and ordinary return remain",
+    "required_blast": false,
+    "required_pickup": false
+  },
+  "scope_notes": [
+    "Five canonical beats, four spatial courts; phase2 shares the root court. These positions/timings beyond unchanged local root rule require actual parent witness/portrait checks.",
+    "One shared Player/controller/stat definition, one actual Scheduler spanning regular actors/managed own-sequence Echo/root network.",
+    "Do not inherit prototype small-floor/empty-progression/Scheduler1-only/sibling-running veto as full-level guarantees.",
+    "Helper removed once remains dead for attempt; surviving helper can be retired for departure only through legitimate retained leaf lifecycle, never fabricated death.",
+    "Not L5 player capture, production registration, full-route proof, balance, performance or mobile work."
+  ]
+}

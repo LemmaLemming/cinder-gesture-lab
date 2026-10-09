@@ -1,0 +1,310 @@
+{
+  "status": "ignored unimplemented authored composition proposal; no native fit or acceptance claim",
+  "level_id": "A3-L4",
+  "canonical_boss_id": "B05",
+  "proposed_parent_scene": "res://scenes/acts/act3/a3_l4_false_paradise.tscn",
+  "floor": {
+    "safe_rect_xz": [
+      -7.0,
+      -12.0,
+      14.0,
+      78.0
+    ],
+    "size": [
+      14.0,
+      1.0,
+      78.0
+    ],
+    "center": [
+      0.0,
+      -0.5,
+      27.0
+    ],
+    "top_y": 0.0,
+    "dynamic_collision": false
+  },
+  "spawn": [
+    0.0,
+    0.1,
+    64.0
+  ],
+  "encounter": {
+    "id": "A3-L4/false-paradise-garden",
+    "world_revision": 1,
+    "begin_once": true
+  },
+  "arrangements": [
+    {
+      "id": "offered-rest",
+      "beat": 1,
+      "entry_z": 58.0,
+      "court_origin": [
+        0.0,
+        0.0,
+        53.0
+      ],
+      "checkpoint_id": "garden-rest-entry",
+      "source_ids": [
+        "l4-rest-stalker"
+      ]
+    },
+    {
+      "id": "beauty-source",
+      "beat": 2,
+      "entry_z": 40.0,
+      "court_origin": [
+        0.0,
+        0.0,
+        36.0
+      ],
+      "checkpoint_id": "garden-beauty-entry",
+      "source_ids": [
+        "l4-beauty-root"
+      ]
+    },
+    {
+      "id": "plain-path",
+      "beat": 3,
+      "entry_z": 24.0,
+      "court_origin": [
+        0.0,
+        0.0,
+        20.0
+      ],
+      "checkpoint_id": "garden-plain-path-entry",
+      "source_ids": [
+        "l4-plain-echo",
+        "l4-plain-root"
+      ]
+    },
+    {
+      "id": "root-court",
+      "beat": 4,
+      "entry_z": 7.0,
+      "court_origin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "checkpoint_id": "garden-boss-court-entry",
+      "source_ids": [
+        "l4-garden-draw",
+        "l4-garden-enclose"
+      ],
+      "target_id": "l4-garden-tether",
+      "suggested_first_response_pose": [
+        0.0,
+        0.0,
+        1.25
+      ]
+    },
+    {
+      "id": "garden-release",
+      "beat": 5,
+      "entry_kind": "genuine target phase1->phase2 boundary; same court",
+      "checkpoint_id": "garden-phase2-entry",
+      "source_ids": [
+        "l4-garden-helper"
+      ],
+      "helper_spawn_once": true
+    }
+  ],
+  "sources": [
+    {
+      "id": "l4-rest-stalker",
+      "kind": "stalker",
+      "canonical_role": "C50",
+      "position": [
+        1.2,
+        0.1,
+        53.0
+      ],
+      "entry": "offered-rest",
+      "reuse": "sunbound_stalker.gd defaults"
+    },
+    {
+      "id": "l4-beauty-root",
+      "kind": "latcher",
+      "canonical_role": "C51",
+      "position": [
+        0.0,
+        0.0,
+        36.0
+      ],
+      "entry": "beauty-source",
+      "reuse": "root_latcher.gd unchanged raw role/tuning"
+    },
+    {
+      "id": "l4-plain-echo",
+      "kind": "managed_echo",
+      "canonical_role": "C52",
+      "definition_translation": [
+        -0.7,
+        0.0,
+        20.0
+      ],
+      "entry": "plain-path",
+      "own_route": [
+        {
+          "position": [
+            -0.7,
+            0.0,
+            17.5
+          ],
+          "at_s": 0.0
+        },
+        {
+          "position": [
+            -0.7,
+            0.0,
+            19.5
+          ],
+          "at_s": 0.3
+        }
+      ],
+      "fixed_knot": [
+        -0.7,
+        0.0,
+        19.5
+      ],
+      "source_epoch": "A3-L4/l4-plain-echo/own-sequence",
+      "definition_id": "l4-plain-echo/straight-return",
+      "reuse": "mirror_echo_rule_room.native_definition structural recipe; own route, never Player capture"
+    },
+    {
+      "id": "l4-plain-root",
+      "kind": "latcher",
+      "canonical_role": "C51",
+      "position": [
+        1.2,
+        0.0,
+        19.0
+      ],
+      "entry": "plain-path",
+      "reuse": "root_latcher.gd unchanged raw role/tuning"
+    },
+    {
+      "id": "l4-garden-draw",
+      "kind": "environmental_mechanism",
+      "position": [
+        -1.0,
+        0.0,
+        1.25
+      ],
+      "geometry": {
+        "kind": "lane",
+        "from": [
+          -1.0,
+          0.0,
+          1.25
+        ],
+        "to": [
+          1.0,
+          0.0,
+          1.25
+        ],
+        "radius": 0.28
+      },
+      "opening": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entry": "root-court"
+    },
+    {
+      "id": "l4-garden-enclose",
+      "kind": "environmental_mechanism",
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "geometry": {
+        "kind": "crescent",
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "inner_radius": 0.75,
+        "outer_radius": 1.65,
+        "min_dot": 0.5
+      },
+      "opening": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entry": "root-court"
+    },
+    {
+      "id": "l4-garden-helper",
+      "kind": "latcher",
+      "canonical_role": "C51",
+      "position": [
+        -1.5,
+        0.0,
+        2.0
+      ],
+      "entry": "garden-release",
+      "proposal_unmeasured": true,
+      "spawn_once": true,
+      "reuse": "root_latcher.gd unchanged raw role/tuning"
+    }
+  ],
+  "root_network": {
+    "target_id": "l4-garden-tether",
+    "target_position": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "max_hp": 60.0,
+    "phase_boundary_hp": 30.0,
+    "phase2_hp_reset": false,
+    "opening_rule": "same actual accepted native recovery, matching cycle and target phase; unchanged ordinary damage gate",
+    "phase1_admission": "exclusive teaching: no other root mechanism running",
+    "phase2_admission": "later warning may overlap old recovery; use actual Scheduler preparing/active budget and timed held union including helper; do not preserve prototype sibling-running veto",
+    "scheduler_wire": "full parent Scheduler1 before managed Echo, Scheduler3 afterwards; do not strip journals or embed a duplicate root-only Scheduler"
+  },
+  "phase2_sun": {
+    "initial_state": 0,
+    "stable_s": 10.0,
+    "preview_s": 3.0,
+    "lock_s": 1.0,
+    "period_s": 14.0,
+    "activation": "start familiar preview at genuine first phase boundary; global Scheduler clock never resets",
+    "minimal_effect": "preview changes later Enclose bearing +Z/-Z only at a fresh admission; held exchange never changes; Draw unchanged",
+    "requires_new_focused_check": true
+  },
+  "contact_exit": {
+    "id": "adage-plain-threshold",
+    "completion_id": "false-paradise-disengaged",
+    "position": [
+      0.0,
+      0.1,
+      -8.0
+    ],
+    "rect_xz": [
+      -1.2,
+      -8.65,
+      2.4,
+      1.3
+    ]
+  },
+  "completion_proposal": "real network phase3/dead0 after genuine boss entitlement; prior required approach encounters cleared; phase2 helper removal optional, surviving helper quiet-cancelled/disabled for departure with HP preserved",
+  "ability_use_ids": [],
+  "claim_ids": [],
+  "notes": [
+    "All new non-garden IDs and coordinates are explicitly proposed stable IDs, not allocations or earned history.",
+    "Five beats occupy four spatial courts; beat5 is the actual phase boundary at the same fixed court.",
+    "All actual native body/floor/witness/current portrait checks remain authoritative; this file is not a proof.",
+    "No L5 authored resource or registration is created by this proposal."
+  ]
+}
