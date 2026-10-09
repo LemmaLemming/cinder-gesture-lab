@@ -38,7 +38,7 @@ func _ready() -> void:
 	_court_floor_visual_transform = _court_floor_visual.global_transform
 	if _court_floor.get_shape_owners().size() == 1:
 		_court_floor_shape_owner = int(_court_floor.get_shape_owners()[0])
-	_court_floor_margin = _floor_collision.margin
+	_court_floor_margin = _floor_shape.margin
 	_construction_error = _floor_error()
 	if _construction_error.is_empty(): _construction_error = _scenery_error()
 	if not _construction_error.is_empty(): return
@@ -111,7 +111,7 @@ func _floor_error() -> String:
 		return "Retained court StaticBody floor is unavailable or changed"
 	if not is_instance_valid(_floor_collision) or not is_instance_valid(_floor_shape) or not _floor_collision.is_inside_tree() or _floor_collision.is_queued_for_deletion() or get_node_or_null("Floor/CollisionShape3D") != _floor_collision or _floor_collision.get_parent() != _court_floor:
 		return "Retained court floor collision binding is unavailable"
-	if _floor_collision.shape != _floor_shape or _floor_shape.size != COURT_FLOOR_SIZE or _floor_collision.global_transform != _floor_transform or _floor_transform != COURT_FLOOR_TRANSFORM or _floor_collision.transform != Transform3D.IDENTITY or _floor_collision.disabled or _floor_collision.margin != _court_floor_margin:
+	if _floor_collision.shape != _floor_shape or _floor_shape.size != COURT_FLOOR_SIZE or _floor_collision.global_transform != _floor_transform or _floor_transform != COURT_FLOOR_TRANSFORM or _floor_collision.transform != Transform3D.IDENTITY or _floor_collision.disabled or _floor_shape.margin != _court_floor_margin:
 		return "Retained court floor geometry changed"
 	if _court_floor.get_shape_owners().size() != 1 or int(_court_floor.get_shape_owners()[0]) != _court_floor_shape_owner or _court_floor.shape_owner_get_owner(_court_floor_shape_owner) != _floor_collision or _court_floor.is_shape_owner_disabled(_court_floor_shape_owner) or _court_floor.shape_owner_get_transform(_court_floor_shape_owner) != Transform3D.IDENTITY or _court_floor.shape_owner_get_shape_count(_court_floor_shape_owner) != 1 or _court_floor.shape_owner_get_shape(_court_floor_shape_owner, 0) != _floor_shape:
 		return "Retained court floor native shape owner changed"
