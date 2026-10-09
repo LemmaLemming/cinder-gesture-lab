@@ -29,6 +29,8 @@ var _construction_error: String = ""
 var _render_sources: Dictionary = {}
 var _framing: Dictionary = {}
 var _forecast_points: Array = []
+var _forecast_owner: String = ""
+var _forecast_premise: Dictionary = {} # Optional actual-pose hint, never a lease/proof/world cache.
 var _retained_sources: Dictionary = {}
 var _retained_collisions: Dictionary = {}
 var _retained_capsules: Dictionary = {}
@@ -131,6 +133,7 @@ func _on_enter_level() -> void:
 		actor.state_changed.connect(callback)
 		_source_callbacks[id] = callback
 	hero.died.connect(_on_hero_died)
+	if not hero.fired.is_connected(_on_hero_fired): hero.fired.connect(_on_hero_fired)
 	_refresh_render_state()
 	if not _running: return
 	_start_initial_encounter()
@@ -156,6 +159,7 @@ func _start_initial_encounter() -> void:
 
 
 func _entry_failed(reason: String) -> void:
+	_clear_forecast_hint()
 	_construction_error = reason
 	last_encounter_error = reason
 	_running = false
@@ -175,6 +179,7 @@ func _encounter_id() -> String:
 
 
 func _physics_process(delta: float) -> void:
+	_cleanup_forecast_hint() # Storage cleanup belongs to owned physics, not pure queries.
 	if not _running or _changing or not is_instance_valid(hero): return
 	# Presentation settles at priority200 after real consumers, including death.
 	_refresh_render_state()
@@ -210,31 +215,48 @@ func _physics_process(delta: float) -> void:
 
 
 func _admit(id: String, delta: float) -> void:
+	_cleanup_forecast_hint()
+	# One feasible stopped proposal waits for the real camera update. A different
+	# source's rejected preview must not erase that selected owner's lookahead.
+	if not _forecast_owner.is_empty() and _forecast_owner != id: return
 	var actor: Act1MushroomSelenite = sources[id]
 	var context: Dictionary = response_context(String(_render_sources[id].role_id))
 	var target: Vector3 = hero.global_position
 	var preview: Dictionary = actor.preview_start(target, context)
 	if not preview.get("accepted", false):
+		_clear_forecast_hint(id)
 		last_encounter_error = String(preview.get("reason", "Native preview rejected"))
 		return
 	if _approach_enabled:
 		var gap_error: String = _source_path_gap_error(id, actor.global_position, preview.candidate.opening_position, delta)
 		if not gap_error.is_empty():
+			_clear_forecast_hint(id)
 			last_encounter_error = gap_error
 			return
 	if not _proof_window(preview.proof, preview.candidate):
+		_clear_forecast_hint(id)
 		last_encounter_error = "Ordinary primary must fit the actual stopped source recovery"
 		return
-	_forecast_points = _actor_points(id, preview.candidate.opening_position)
-	_forecast_points.append_array(_lane_points(preview.candidate.geometry))
-	_forecast_points.append_array(_response_points(preview.proof.landing, preview.proof.attack_position))
-	if not _framing_ready(_camera_framing_points()): return
+	var proposed: Array = _actor_points(id, preview.candidate.opening_position)
+	proposed.append_array(_lane_points(preview.candidate.geometry))
+	proposed.append_array(_response_points(preview.proof.landing, preview.proof.attack_position))
+	_forecast_owner = id
+	_forecast_premise = {"source": actor, "source_instance_id": actor.get_instance_id(), "source_transform": actor.global_transform, "source_facing": actor.pure_presentation_state().facing, "hero": hero, "hero_instance_id": hero.get_instance_id(), "hero_transform": hero.global_transform, "hero_facing": hero.facing}
+	_forecast_points = proposed
+	if not _forecast_hint_current():
+		_clear_forecast_hint(id)
+		last_encounter_error = "Optional lookahead requires the actual stopped source/Hero premise"
+		return
+	# The native whole plan may fit while CURRENT projection is still waiting.
+	# Only a rejected plan discards this optional proposal; no fit grants a lease.
+	if not _framing_ready(_camera_framing_points(), id): return
 	last_admission = actor.start(target, context, preview)
 	if not last_admission.get("accepted", false):
+		_clear_forecast_hint(id)
 		last_encounter_error = String(last_admission.get("reason", "Native admission rejected"))
 		return
 	_framing[id] = {"reservation_id": String(last_admission.reservation_id), "landing": last_admission.proof.landing, "attack_position": last_admission.proof.attack_position}
-	_forecast_points.clear()
+	_clear_forecast_hint(id)
 	_refresh_render_state()
 	if not _running: return
 	if not _framing_ready(_camera_framing_points()):
@@ -245,6 +267,46 @@ func _admit(id: String, delta: float) -> void:
 	_callback_depth += 1
 	native_admission_published.emit(id, last_admission.duplicate(true))
 	_callback_depth -= 1
+
+
+## Optional presentation lifetime only. Fresh native preview/admission and all
+## live body/world/resource checks still run; this stamp grants no permission.
+func _forecast_hint_current() -> bool:
+	if _forecast_points.is_empty() or _forecast_owner.is_empty() or _forecast_premise.is_empty() or not _running or _changing or not is_inside_tree() or is_queued_for_deletion() or _forecast_owner not in current_source_ids(): return false
+	var raw: Variant = sources.get(_forecast_owner)
+	if not is_instance_valid(raw) or not raw is Act1MushroomSelenite: return false
+	var actor: Act1MushroomSelenite = raw
+	if actor != _retained_sources.get(_forecast_owner) or actor != _forecast_premise.get("source") or actor.get_instance_id() != _forecast_premise.get("source_instance_id") or actor.get_script() != ActorScript or not actor.is_inside_tree() or actor.is_queued_for_deletion() or actor.get_parent() != self: return false
+	if not is_instance_valid(hero) or hero != _forecast_premise.get("hero") or hero.get_instance_id() != _forecast_premise.get("hero_instance_id") or not hero.is_inside_tree() or hero.is_queued_for_deletion() or hero.dead or not is_instance_valid(scheduler) or not scheduler.is_inside_tree() or scheduler.is_queued_for_deletion() or scheduler.get_parent() != self: return false
+	if actor.get_tree() != get_tree() or hero.get_tree() != get_tree() or scheduler.get_tree() != get_tree() or actor.get_world_3d() != get_world_3d() or hero.get_world_3d() != get_world_3d() or scheduler.get_world_3d() != get_world_3d() or not is_instance_valid(_world_root()): return false
+	if actor.global_transform != _forecast_premise.get("source_transform") or hero.global_transform != _forecast_premise.get("hero_transform") or hero.facing != _forecast_premise.get("hero_facing"): return false
+	var native: Dictionary = actor.get_spore_native_bindings()
+	if native.get("source_id") != _forecast_owner or native.get("scheduler") != scheduler or native.get("player") != hero: return false
+	var state: Dictionary = actor.pure_presentation_state()
+	if state.get("source_id") != _forecast_owner or state.get("dead") != false or state.get("dormant") != false or state.get("reservation_id") != "" or state.get("hurt_left_s") != 0.0 or state.get("approach_driving") != false or state.get("velocity") != Vector3.ZERO or state.get("facing") != _forecast_premise.get("source_facing"): return false
+	var response: Dictionary = actor.get_spore_response_state()
+	var control: Dictionary = scheduler.source_control_state(actor)
+	if response.get("alive") != true or response.get("grounded") != true or response.get("outside_transaction") != true or control.get("source_instance_id") != actor.get_instance_id() or control.get("encounter_id") != _encounter_id() or control.get("world_revision") != WORLD_REVISION or control.get("outside_transaction") != true or not control.get("reservations") is Array or not control.reservations.is_empty(): return false
+	var player_response: Dictionary = hero.get_threat_response_state()
+	var dash: Dictionary = hero.get_committed_dash_state()
+	return player_response.get("actor") == hero and player_response.get("stable") == true and player_response.get("motion", {}).get("velocity") == Vector3.ZERO and player_response.get("motion", {}).get("queued_dash") == Vector3.ZERO and dash.get("active") == false
+
+
+func _clear_forecast_hint(owner: String = "") -> void:
+	if not owner.is_empty() and _forecast_owner != owner: return
+	_forecast_points.clear()
+	_forecast_owner = ""
+	_forecast_premise.clear()
+
+
+func _cleanup_forecast_hint() -> void:
+	if not _forecast_hint_current(): _clear_forecast_hint()
+
+
+func _on_hero_fired(_kind: String) -> void:
+	# Genuine accepted dash/slash/blast/hurt publication invalidates an unadmitted
+	# response premise promptly. Actual leases/frames/approach maps are untouched.
+	_clear_forecast_hint()
 
 
 func _proof_window(proof: Dictionary, candidate: Dictionary) -> bool:
@@ -300,6 +362,7 @@ func _refresh_render_state() -> void:
 
 func _on_source_state(state: Dictionary, id: String) -> void:
 	_render_sources[id] = state.duplicate(true)
+	if state.dead or state.dormant or not state.reservation_id.is_empty() or float(state.hurt_left_s) > 0.0: _clear_forecast_hint(id)
 	if state.reservation_id.is_empty() or state.dead: _framing.erase(id)
 
 
@@ -465,9 +528,12 @@ func _containment_error(points: Array) -> String:
 	return String(shared_shell.call("camera_framing_error", points))
 
 
-func _framing_ready(points: Array) -> bool:
-	if points.is_empty() or points.size() > 224 or not is_instance_valid(shared_shell): return false
+func _framing_ready(points: Array, optional_owner: String = "") -> bool:
+	if points.is_empty() or points.size() > 224 or not is_instance_valid(shared_shell):
+		if not optional_owner.is_empty(): _clear_forecast_hint(optional_owner)
+		return false
 	var plan: Dictionary = shared_shell.call("camera_framing_plan", points, hero.global_position + Vector3(0, 0.65, 0))
+	if plan.get("accepted") != true and not optional_owner.is_empty(): _clear_forecast_hint(optional_owner)
 	last_encounter_error = String(plan.get("reason", "")) if not plan.get("accepted", false) else _containment_error(points)
 	return plan.get("accepted", false) and last_encounter_error.is_empty()
 
@@ -477,7 +543,9 @@ func _camera_framing_points() -> Array:
 	# A stopped component has no remaining authored camera requirements.
 	if not _running: return []
 	if not _floor_error().is_empty() or not _scenery_error().is_empty(): return [Vector3.INF]
-	var points: Array = _forecast_points.duplicate()
+	# Pure selection only: invalid unadmitted hints cannot poison the full union.
+	# Storage is cleared by owned callbacks/physics; current native corners stay.
+	var points: Array = _forecast_points.duplicate() if _forecast_hint_current() else []
 	for forecast: Array in _approach_forecasts.values(): points.append_array(forecast)
 	for request: Array in _approach_camera_requests.values(): points.append_array(request)
 	for id: String in current_source_ids():
@@ -585,7 +653,7 @@ func _unique_points(points: Array) -> Array:
 func _on_hero_died() -> void:
 	for id: String in _all_source_ids(): (sources[id] as Act1MushroomSelenite).cancel("actual_player_death")
 	_framing.clear()
-	_forecast_points.clear()
+	_clear_forecast_hint()
 	_approach_forecasts.clear()
 	_approach_camera_requests.clear()
 
@@ -604,7 +672,9 @@ func _local_snapshot_error(_state: Dictionary) -> String:
 func _on_exit_level() -> void:
 	_running = false
 	_activation_entitlement = ""
-	if is_instance_valid(hero) and hero.died.is_connected(_on_hero_died): hero.died.disconnect(_on_hero_died)
+	if is_instance_valid(hero):
+		if hero.died.is_connected(_on_hero_died): hero.died.disconnect(_on_hero_died)
+		if hero.fired.is_connected(_on_hero_fired): hero.fired.disconnect(_on_hero_fired)
 	for id: String in _all_source_ids():
 		# A genuinely defeated source can be removed after retained tombstone
 		# validation. Check its actual handle before attempting a typed cast.
@@ -619,7 +689,7 @@ func _on_exit_level() -> void:
 		if scheduler.is_inside_tree(): scheduler.end_encounter("mushroom_greybox_exit")
 		scheduler.set_physics_process(false)
 	_framing.clear()
-	_forecast_points.clear()
+	_clear_forecast_hint()
 	_approach_forecasts.clear()
 	_approach_camera_requests.clear()
 	set_physics_process(false)
