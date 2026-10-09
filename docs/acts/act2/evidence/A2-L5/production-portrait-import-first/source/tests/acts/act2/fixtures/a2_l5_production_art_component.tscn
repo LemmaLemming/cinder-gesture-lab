@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/campaign/level.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/acts/act2/dead_london.tscn" id="2"]
+[sub_resource type="BoxShape3D" id="ExactEntryGateShape"]
+size = Vector3(5.34, 0.8, 0.12)
+
+[node name="TEST_ONLY_ProductionArtComponentWorld" type="Node3D"]
+script = ExtResource("1")
+level_id = "A2-L5"
+objective_text = "TEST ONLY / DIRECT PRODUCTION PRESENTATION"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.02, -26.1)
+
+[node name="ActualProductionGeometry" parent="." instance=ExtResource("2")]
+
+[node name="TEST_ONLY_ExactClosedEntryGate" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+position = Vector3(0, 0.4, -25.22)
+
+[node name="AuthoredShape" type="CollisionShape3D" parent="TEST_ONLY_ExactClosedEntryGate"]
+shape = SubResource("ExactEntryGateShape")

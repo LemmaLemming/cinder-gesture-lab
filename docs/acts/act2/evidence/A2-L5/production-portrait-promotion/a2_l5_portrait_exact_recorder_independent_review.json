@@ -1,0 +1,34 @@
+{
+  "delta": {
+    "added_functions": [
+      "decode_exact_metadata"
+    ],
+    "ast_parse": "pass",
+    "changed_existing_functions": [
+      "archive_portraits"
+    ],
+    "new_import": "math"
+  },
+  "findings": [],
+  "limitations": [
+    "static inspection and Python AST parse only; peer synthetic decoder checks are separate from native evidence",
+    "original four PNGs and exact metadata must be preserved and inspected after Root-owned native run",
+    "no pixel/art/native fixture or campaign acceptance from this review"
+  ],
+  "native_or_helper_execution": false,
+  "pins": {
+    "actual_exact_json": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+    "derivative": "14b025d839b1e1d4deede3633338f2f7d40f21fb2e16e0184760d4a1e755e7e7",
+    "strict_base": "8485841ea4248ffa50ab5d41347b6737736b32cd99f4350d9713396f7a17c55b",
+    "synthetic_peer_checks": "0fa0aa6350e83049b7e18653d87eb0f4000b8d30749fd03389492b6f44a97a98"
+  },
+  "result": "no-concrete-blocker-found",
+  "review": "bounded-static-portrait-recorder-exact-json-reader",
+  "verified": [
+    "archive_portraits reads the actual exact-json-1 envelope rather than treating it as decoded payload",
+    "closed envelope, scalar tags, finite little-endian float64 including negative zero, canonical bounded integer text, bounded tagged arrays/dictionaries, unique string dictionary keys, and depth/node/entry/byte budgets match actual direct metadata requirements",
+    "raw allocation scanner is bounded before JSON parse; no eval, objects, native calls, engine work or metadata authority",
+    "only decoder import/helper and archive_portraits metadata reader call changed; all other existing function ASTs remain identical to strict-warning base",
+    "strict warning filter and original fixed source/CLI/image/receipt predicates remain intact"
+  ]
+}
