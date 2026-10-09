@@ -25,6 +25,8 @@ const CHECKPOINTS: Array[String] = ["landing-clearing", "first-selenite", "appro
 const COMPLETION_ID: String = "crater-gardens-clear"
 const EXIT_ID: String = "open-grotto"
 const WORLD_REVISION: int = 1
+const ORIGINAL_ARRANGEMENT: String = "crater-original-1"
+const CHALLENGE_ARRANGEMENT: String = "crater-finale-reversed-1"
 const LOCAL_KEYS: Array[String] = ["beat_index", "completed_beats", "chosen_route", "encounter_started", "sources", "circles", "scheduler", "framing", "custody", "sequence"]
 const FRAME_KEYS: Array[String] = ["reservation_id", "landing", "attack_position", "primary_time_s", "response_complete_s"]
 const CUSTODY_KEYS: Array[String] = ["host_id", "host_cycle", "host_reservation_id", "host_start_s", "host_active_until_s", "host_recovery_until_s", "opening_position", "primary_time_s", "response_complete_s", "supported"]
@@ -61,6 +63,7 @@ var _activation_entitlement: String = ""
 var _framing: Dictionary = {}
 var _custody: Dictionary = {}
 var _sequence: Dictionary = {}
+var _arrangement: Dictionary = {}
 var _forecast_points: Array = []
 var _render_sources: Dictionary = {}
 var _render_circles: Dictionary = {}
@@ -269,6 +272,10 @@ func _fresh_encounter(id: String) -> bool:
 	# Only this actual new beat may release the previous profile/cooldown epoch.
 	scheduler.end_encounter("fresh_authored_clearing")
 	var accepted: bool = scheduler.begin_encounter(profile, id, WORLD_REVISION)
+	if accepted:
+		# Only a genuine fresh boundary selects order. Old quiet restores retain
+		# their saved recipe (including absence) until the next actual boundary.
+		_arrangement = {"version": 1, "id": CHALLENGE_ARRANGEMENT if profile == "challenge" else ORIGINAL_ARRANGEMENT}
 	last_encounter_error = "" if accepted else scheduler.last_error
 	return accepted
 
@@ -452,9 +459,16 @@ func _native_frame(answer: Dictionary) -> Dictionary:
 
 
 func _associated_circles(id: String) -> Array[String]:
+	return _circles_for_arrangement(id, _arrangement)
+
+
+func _circles_for_arrangement(id: String, arrangement: Dictionary) -> Array[String]:
 	if id == "rock": return ["rock-impact"]
 	if id == "open": return ["open-impact"]
-	if id == "finale": return ["finale-impact-a", "finale-impact-b"]
+	if id == "finale":
+		if arrangement.get("id") == CHALLENGE_ARRANGEMENT:
+			return ["finale-impact-b", "finale-impact-a"]
+		return ["finale-impact-a", "finale-impact-b"]
 	return []
 
 
@@ -935,7 +949,11 @@ func _capture_local_state() -> Dictionary:
 	for id: String in _custody:
 		custody[id] = _custody[id].duplicate(true)
 		custody[id]["opening_position"] = Codec.vector3(_custody[id].opening_position)
-	return {"beat_index": beat_index, "completed_beats": completed_beats.duplicate(), "chosen_route": chosen_route, "encounter_started": encounter_started, "sources": saved_sources, "circles": saved_circles, "scheduler": paired, "framing": framing, "custody": custody, "sequence": _sequence.duplicate(true)}
+	var local: Dictionary = {"beat_index": beat_index, "completed_beats": completed_beats.duplicate(), "chosen_route": chosen_route, "encounter_started": encounter_started, "sources": saved_sources, "circles": saved_circles, "scheduler": paired, "framing": framing, "custody": custody, "sequence": _sequence.duplicate(true)}
+	# Missing receipt is the original order for every legacy profile. Preserve
+	# that omission on quiet recapture rather than migrating ongoing history.
+	if not _arrangement.is_empty(): local["arrangement"] = _arrangement.duplicate(true)
+	return local
 
 
 func _local_snapshot_error(state: Dictionary) -> String:
@@ -949,7 +967,9 @@ func _local_snapshot_error_with_player(state: Dictionary, saved_player: Dictiona
 func _validate_pair(state: Dictionary, saved_player: Dictionary) -> String:
 	if _changing or _callback_depth > 0 or not _activation_entitlement.is_empty(): return "Aggregate prevalidation requires a quiet authored boundary"
 	var error: String = Codec.value_error(state)
-	if error.is_empty(): error = Codec.keys_error(state, LOCAL_KEYS)
+	var keys: Array[String] = LOCAL_KEYS.duplicate()
+	if state.has("arrangement"): keys.append("arrangement")
+	if error.is_empty(): error = Codec.keys_error(state, keys)
 	if not error.is_empty(): return error
 	if not Codec.is_integer(state.beat_index, 0, 5) or not state.completed_beats is Array or state.completed_beats.size() != int(state.beat_index) or state.chosen_route not in ["", "rock", "open"] or not state.encounter_started is bool:
 		return "Authored beat, exact completed prefix, route and encounter flag required"
@@ -957,6 +977,8 @@ func _validate_pair(state: Dictionary, saved_player: Dictionary) -> String:
 		if state.completed_beats[index] != BEATS[index]: return "Completed beats cannot be unknown, reordered or repeated"
 	for key: String in ["sources", "circles", "scheduler", "framing", "custody", "sequence"]:
 		if not state[key] is Dictionary: return "Closed aggregate dictionaries required"
+	error = _arrangement_error(state)
+	if not error.is_empty(): return error
 	if not Codec.keys_error(state.sources, SOURCE_IDS).is_empty() or not Codec.keys_error(state.circles, CIRCLE_IDS).is_empty(): return "All four retained actors and five stable impacts are required"
 	error = _runtime_error()
 	if not error.is_empty(): return error
@@ -994,6 +1016,8 @@ func _validate_pair(state: Dictionary, saved_player: Dictionary) -> String:
 		error = _frame_error(state.framing[id], records[id], saved_player)
 		if not error.is_empty(): return error
 	error = _custody_error(state, saved_player)
+	if not error.is_empty(): return error
+	error = _retained_finale_order_error(state)
 	if not error.is_empty(): return error
 	return _sequence_error(state)
 
@@ -1110,16 +1134,49 @@ func _frame_error(frame: Variant, record: Dictionary, saved_player: Dictionary) 
 	return ""
 
 
+func _arrangement_error(state: Dictionary) -> String:
+	if not state.has("arrangement"): return "" # Original order, including old Challenge.
+	var value: Variant = state.arrangement
+	if not value is Dictionary or not Codec.keys_error(value, ["version", "id"]).is_empty() or not value.version is int or value.version != 1 or not value.id is String or value.id not in [ORIGINAL_ARRANGEMENT, CHALLENGE_ARRANGEMENT]:
+		return "Known closed versioned Crater Gardens arrangement required"
+	var profile: Variant = state.scheduler.get("profile", {})
+	if not profile is Dictionary: return "Saved arrangement requires its saved encounter profile"
+	var expected: String = CHALLENGE_ARRANGEMENT if profile.get("id") == "challenge" else ORIGINAL_ARRANGEMENT
+	return "Saved arrangement must match its own fresh encounter profile" if value.id != expected else ""
+
+
 func _sequence_error(state: Dictionary) -> String:
 	var id: String = "solo" if state.beat_index == 1 else (state.chosen_route if state.beat_index == 2 else ("finale" if state.beat_index == 4 else ""))
 	var active: bool = not id.is_empty() and not state.sources[id].reservation_id.is_empty()
-	var associated: Array[String] = _associated_circles(id)
+	# Pure prevalidation derives order from the submitted saved recipe. Neither
+	# the current recipient recipe nor a changed menu preference grants history.
+	var associated: Array[String] = _circles_for_arrangement(id, state.get("arrangement", {}))
 	if not active or associated.is_empty(): return "Inactive/solo source cannot retain a companion cursor" if not state.sequence.is_empty() else ""
 	if not Codec.keys_error(state.sequence, ["host_reservation_id", "next_index"]).is_empty() or state.sequence.host_reservation_id != state.sources[id].reservation_id or not Codec.is_integer(state.sequence.next_index, 0, associated.size()): return "Compound sequence must retain its current host and bounded cursor"
+	var previous_start_s: float = -1.0
 	for index: int in range(associated.size()):
 		var custody: Dictionary = state.custody.get(associated[index], {})
 		var admitted: bool = not custody.is_empty() and custody.host_reservation_id == state.sequence.host_reservation_id and custody.supported
 		if admitted != (index < int(state.sequence.next_index)): return "Companion cursor must match the actual ordered accepted cycle prefix"
+		if admitted:
+			var start_s: float = float(state.circles[associated[index]].exchange.start_s)
+			if start_s <= previous_start_s: return "Companion starts must preserve the saved arrangement order"
+			previous_start_s = start_s
+	return ""
+
+
+func _retained_finale_order_error(state: Dictionary) -> String:
+	# Completed/cancelled hosts clear their cursor, but keep native impact history.
+	# Compare the retained pair without inventing overwritten earlier cycles.
+	var order: Array[String] = _circles_for_arrangement("finale", state.get("arrangement", {}))
+	var first: Dictionary = state.custody.get(order[0], {})
+	var second: Dictionary = state.custody.get(order[1], {})
+	if second.is_empty(): return ""
+	if first.is_empty() or second.host_cycle > first.host_cycle:
+		return "Retained second finale impact requires its earlier first impact"
+	if second.host_cycle == first.host_cycle:
+		if second.host_reservation_id != first.host_reservation_id or float(state.circles[order[0]].exchange.start_s) >= float(state.circles[order[1]].exchange.start_s):
+			return "Retained same-host finale impacts must preserve saved arrangement order"
 	return ""
 
 
@@ -1203,6 +1260,7 @@ func _restore_local_state(state: Dictionary) -> void:
 		_custody[id] = state.custody[id].duplicate(true)
 		_custody[id]["opening_position"] = Codec.read_vector3(state.custody[id].opening_position)
 	_sequence = state.sequence.duplicate(true)
+	_arrangement = state.get("arrangement", {}).duplicate(true)
 	_forecast_points.clear()
 	_activation_entitlement = ""
 	last_admission.clear()
