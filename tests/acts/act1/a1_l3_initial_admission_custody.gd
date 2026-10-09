@@ -18,7 +18,7 @@ const ExpectedSources: Dictionary = {
 	"res://scripts/game.gd": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
 	"res://scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
 	"res://scripts/combat/threat_scheduler.gd": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
-	"res://scripts/cues/threat_cue.gd": "e47811186785c24d693644e05d1d7ba64fee020ef2ad7278a60e0d2c7c2ef363",
+	"res://scripts/cues/threat_cue.gd": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
 	"res://scenes/main.tscn": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
 	"res://scenes/acts/act1/a1_l3_route_greybox.tscn": "57f48e099659d6d5458f9780c97d7cc3754b5b74b30df8186e46ca89443d7327"
 }
