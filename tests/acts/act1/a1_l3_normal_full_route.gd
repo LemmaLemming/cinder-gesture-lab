@@ -134,7 +134,7 @@ func _full_enter_room(room: int) -> bool:
 		advances += 1
 	if not await _wait(func() -> bool:
 		var actual: Dictionary = level.call("route_state")
-		return actual.beat_index == room and actual.room_stage == "active" and actual.encounter_started, "actual room %d begins at its native threshold" % room, 2.0): return false
+		return actual.beat_index == room and actual.room_stage == "active" and actual.encounter_started and _full_room_framing_ready(), "actual room %d begins at its native threshold with complete current framing" % room, 2.0): return false
 	_sample_opening()
 	var ids: Array[String] = _full_ids(room)
 	var control: Dictionary = scheduler.source_control_state(sources[ids[0]])
@@ -150,6 +150,14 @@ func _full_enter_room(room: int) -> bool:
 	if not _retained_truth("native room entrance") or not _future_pristine(_full_allowed(room), "actual room future pristine") or not _full_environment(room, true) or not _framing("complete actual room source/art/field union"):
 		return false
 	return await _full_quiet_capture("%s-actual-whole-cast-entrance" % FullRoomNames[room])
+
+
+func _full_room_framing_ready() -> bool:
+	# Same original entrance wait: actual activation alone is not a rendered view.
+	# Observe CURRENT complete containment; no proposed focus grants readiness.
+	if not is_instance_valid(level) or not is_instance_valid(game): return false
+	var points: Array = level.camera_framing_points()
+	return not points.is_empty() and points.size() <= 224 and level.last_camera_framing_error.is_empty() and String(game.call("camera_framing_error", points)).is_empty()
 
 
 func _full_expected_epochs(room: int) -> Array[String]:
@@ -885,7 +893,27 @@ func _full_camera_provider_diagnostic() -> Dictionary:
 		for key: String in providers:
 			if key != excluded: comparison.append_array(providers[key])
 		comparative[excluded] = game.call("camera_framing_plan", level.call("_bounded_union", comparison), desired)
-	return {"scope": "pure diagnostic provider comparison only; unchanged actual whole union remains authoritative", "providers": providers, "approach_forecasts_by_source": approach_forecasts, "approach_requests_by_source": approach_requests, "accepted_frames": accepted_frames, "actual_hero_points": game.call("player_camera_framing_points"), "actual_required_points": required, "actual_whole_plan": game.call("camera_framing_plan", required, desired), "actual_whole_containment_error": game.call("camera_framing_error", required), "component_plan": game.call("camera_framing_plan", level.call("_bounded_union", component), desired), "diagnostic_plans_excluding_one_component_provider": comparative}
+	return {"scope": "pure diagnostic provider comparison only; unchanged actual whole union remains authoritative", "providers": providers, "approach_forecasts_by_source": approach_forecasts, "approach_requests_by_source": approach_requests, "accepted_frames": accepted_frames, "actual_hero_points": game.call("player_camera_framing_points"), "actual_required_points": required, "actual_whole_plan": game.call("camera_framing_plan", required, desired), "native_camera_context": _full_native_camera_context(required), "actual_whole_containment_error": game.call("camera_framing_error", required), "component_plan": game.call("camera_framing_plan", level.call("_bounded_union", component), desired), "diagnostic_plans_excluding_one_component_provider": comparative}
+
+
+func _full_native_camera_context(required: Array) -> Dictionary:
+	# Diagnostic reads only. Never update/follow/fit the camera, HUD or world here.
+	# The existing Hero+.65 comparison remains separate and unchanged above.
+	var raw_camera: Variant = game.get("camera") if is_instance_valid(game) else null
+	var raw_hud: Variant = game.get("hud") if is_instance_valid(game) else null
+	var focus: Variant = game.get("_camera_focus") if is_instance_valid(game) else null
+	if not is_instance_valid(raw_camera) or not raw_camera is Camera3D or not is_instance_valid(raw_hud) or not raw_hud is GameHUD or not focus is Vector3 or not focus.is_finite() or not is_instance_valid(hero): return {"available": false, "reason": "Actual native camera/HUD/follow focus/Player unavailable"}
+	var native_camera: Camera3D = raw_camera
+	var native_hud: GameHUD = raw_hud
+	if not native_camera.is_inside_tree() or not native_hud.is_inside_tree(): return {"available": false, "reason": "Actual native camera/HUD must remain in their tree"}
+	var viewport: Viewport = native_camera.get_viewport()
+	var hud_viewport: Viewport = native_hud.get_viewport()
+	var current_camera: Camera3D = viewport.get_camera_3d()
+	var actual_world: World3D = native_camera.get_world_3d()
+	var safe: Rect2 = native_hud.combat_safe_rect()
+	var screen: Vector2 = hud_viewport.get_visible_rect().size
+	var hero_focus: Vector3 = hero.global_position + Vector3.UP * 0.75
+	return {"available": true, "camera_instance_id": native_camera.get_instance_id(), "global_position": native_camera.global_position, "global_basis_columns": [native_camera.global_basis.x, native_camera.global_basis.y, native_camera.global_basis.z], "width": native_camera.size, "viewport_instance_id": viewport.get_instance_id(), "viewport_size": Vector2(viewport.size), "current_camera_instance_id": current_camera.get_instance_id() if is_instance_valid(current_camera) else 0, "world_instance_id": actual_world.get_instance_id() if is_instance_valid(actual_world) else 0, "same_player_viewport": hero.get_viewport() == viewport, "same_player_world": hero.get_world_3d() == actual_world, "hud_instance_id": native_hud.get_instance_id(), "hud_viewport_instance_id": hud_viewport.get_instance_id(), "hud_visible_size": screen, "hud_safe_rect_normalized": [safe.position.x, safe.position.y, safe.size.x, safe.size.y], "hud_safe_rect_pixels": [safe.position.x * screen.x, safe.position.y * screen.y, safe.size.x * screen.x, safe.size.y * screen.y], "actual_follow_focus": focus, "hero_plus_075_focus": hero_focus, "whole_plan_at_actual_follow_focus": game.call("camera_framing_plan", required, focus), "whole_plan_at_hero_plus_075": game.call("camera_framing_plan", required, hero_focus)}
 
 
 func _watchdog() -> void:
