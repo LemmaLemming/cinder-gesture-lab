@@ -94,6 +94,7 @@ SUITES = {
     "authored_program_restore": "tests/authored_program_restore_smoke.gd",
     "authored_echo_performance": "tests/authored_echo_performance_smoke.gd",
     "threat_cue_reference_comparison": "tests/threat_cue_reference_comparison_smoke.gd",
+    "threat_cue_reference_bits": "tests/threat_cue_reference_bits_smoke.gd",
     "scheduler_spore_reference": "tests/scheduler_spore_reference_smoke.gd",
     "authored_echo_projection": "tests/authored_echo_projection_smoke.gd",
     "authored_echo_playback": "tests/authored_echo_playback_smoke.gd",
