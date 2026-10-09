@@ -1,0 +1,118 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act1/launch_rehearsal.gd" id="1_level"]
+[ext_resource type="Texture2D" path="res://assets/acts/act1/launch/quiet_floor.png" id="2_floor"]
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(12, 1, 30)
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+size = Vector3(12, 1, 30)
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_texture = ExtResource("2_floor")
+texture_filter = 0
+uv1_scale = Vector3(4.166667, 10.416667, 1)
+shading_mode = 0
+
+[sub_resource type="CylinderMesh" id="MarkerMesh"]
+top_radius = 0.9
+bottom_radius = 0.9
+height = 0.018
+radial_segments = 16
+
+[sub_resource type="StandardMaterial3D" id="MarkerMaterial"]
+albedo_color = Color(0.77, 0.80, 0.78, 1)
+shading_mode = 0
+
+[sub_resource type="BoxShape3D" id="SideShape"]
+size = Vector3(0.2, 0.4, 30)
+
+[sub_resource type="BoxShape3D" id="EndShape"]
+size = Vector3(12, 0.4, 0.2)
+
+[sub_resource type="BoxMesh" id="SideMesh"]
+size = Vector3(0.2, 0.4, 30)
+
+[sub_resource type="BoxMesh" id="EndMesh"]
+size = Vector3(12, 0.4, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="EdgeMaterial"]
+albedo_color = Color(0.2, 0.22, 0.23, 1)
+
+[node name="LaunchRehearsal" type="Node3D"]
+script = ExtResource("1_level")
+level_id = "A1-L1"
+local_snapshot_version = 3
+objective_text = "SWIPE TO THE BROAD FLOOR MARKER"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 10.5)
+
+[node name="DashMarker" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 7.8)
+
+[node name="Visual" type="MeshInstance3D" parent="DashMarker"]
+position = Vector3(0, -0.087, 0)
+mesh = SubResource("MarkerMesh")
+material_override = SubResource("MarkerMaterial")
+
+[node name="Floor" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.5, -1)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("FloorShape")
+
+[node name="Visual" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("FloorMesh")
+material_override = SubResource("FloorMaterial")
+
+[node name="LeftEdge" type="StaticBody3D" parent="."]
+position = Vector3(-6.1, 0.2, -1)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="LeftEdge"]
+shape = SubResource("SideShape")
+
+[node name="Visual" type="MeshInstance3D" parent="LeftEdge"]
+mesh = SubResource("SideMesh")
+material_override = SubResource("EdgeMaterial")
+
+[node name="RightEdge" type="StaticBody3D" parent="."]
+position = Vector3(6.1, 0.2, -1)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="RightEdge"]
+shape = SubResource("SideShape")
+
+[node name="Visual" type="MeshInstance3D" parent="RightEdge"]
+mesh = SubResource("SideMesh")
+material_override = SubResource("EdgeMaterial")
+
+[node name="BackEdge" type="StaticBody3D" parent="."]
+position = Vector3(0, 0.2, 14.1)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="BackEdge"]
+shape = SubResource("EndShape")
+
+[node name="Visual" type="MeshInstance3D" parent="BackEdge"]
+mesh = SubResource("EndMesh")
+material_override = SubResource("EdgeMaterial")
+
+[node name="FrontEdge" type="StaticBody3D" parent="."]
+position = Vector3(0, 0.2, -16.1)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape3D" parent="FrontEdge"]
+shape = SubResource("EndShape")
+
+[node name="Visual" type="MeshInstance3D" parent="FrontEdge"]
+mesh = SubResource("EndMesh")
+material_override = SubResource("EdgeMaterial")
