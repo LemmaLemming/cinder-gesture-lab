@@ -494,7 +494,7 @@ func _finish_bank_tail(id: String) -> bool:
 
 func _quiet_stage(beat: String) -> bool:
 	if not _expect(_state().beat == beat and _tail_pending.is_empty(), "actual earned quiet stage retains no unfinished Tender tail: " + beat): return false
-	if not _capture_live: return true
+	if not _capture_live or not _required_capture_labels().has(QUIET_LABELS[beat]): return true
 	# There are no active attacks here; render settling cannot delay a proof.
 	for frame: int in range(8):
 		if not _live(): return false
