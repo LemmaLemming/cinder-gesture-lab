@@ -1,3 +1,11 @@
+## Focused acceptance policy applied; superseded route test closed
+
+Direct human instruction was verified in integration's actual userMessage and canonical UPDATE8cb5d40f. Acceptance uses focused mechanics/loading/transitions/saves/retry/cleanup checks plus brief actual visual inspection. Full route, defeating every enemy, physical exit and whole-kit playthroughs no longer gate L3 acceptance or the next sequential level. Preserve all eight Act3 content requirements and shared controls/design/ownership/queue contracts. Record full-playthrough behavior as untested; independently fix actual defects discovered by old tests.
+
+Own superseded13326 full-route test is actually CLOSED exit241 after SIGTERM requested only for verified child52233. Child+wrapper51786 are absent and all339 original inputs/rawlog/receipt preserved; no final footer/test count, full-route success/failure or fixturecleanup is claimed. Earlier targeted productionwarning18/0/ordinary fixture cleanups remain separately scoped. The5-read observer correction is retained. The shared queue is released; no other owner's process or lock was touched.
+
+Next: current-source focused coverage/gap review, the smallest remaining representative transition/save/loading check and brief actual portrait inspection; send L3 HANDOFF promptly for autonomous integration acceptance. Long terminal/kit route preparations are optional unexecuted diagnostics, not prerequisites. Reviewed kitbe02203f/21d29cb8 and arrivalb9e1e2d/80b1720d inherit current1a8 exactly; terminal493a016c remains unchanged. Act3 stays2/8/L3 frontier until focused acceptance. No human decision is requested.
+
 ## Corrected observer native retest is running
 
 Handle13326 is RUNNING on the same affected full-route/stalker-first target, with a new339-input freeze at7b237dfd/metadata-baselinea400355f. ActualGodot4.7.2/startupPASS and thresholdStalker genuine recoveryhits36→16→0 are observed; no footer/result/full-route acceptance yet. Current route1a8 differs from original83376's62158 by exactly five optional-adapter kind reads; every other consumed path hash is identical. Hold all339 inputs until actual closure. Native log `.cinder/mirror-sea-full-route-stalker-first-optional-adapter-s39-native.log`; failed83376 is closed and archived, not restarted unchanged. No engine/import/cue/controller alteration.
