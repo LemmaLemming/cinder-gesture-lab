@@ -21,3 +21,11 @@ Shared36 session68881 closes7/1, exit1, before the real focus request. The added
 ## Corrected exact policy; suspended paused draw
 
 08: Actual Shared37 graphical5681 passes physical340×736/logical540×1170 policy and two real consecutive focus frames with exact paused unit.32PASS/0FAIL lines, no final summary or PNG. After first ordinary draw/public resume, TESTpause at clock0 and actual windowfocusout at process17/physics73, the following uninstrumented paused process_frame/frame_post_draw sequence does not complete for more than120 wallseconds. The exact outstanding wait and suspension cause remain unproved. Root cancels only exact ownedchild71845(SIGTERM); wrapper closes241. All309 originals retained unchanged; sample/cancellation/publication receipts retained. No completed lifecycle, source failure, portrait, cleanup or parent proof. Do not auto-resume/change render or focus policy. Bounded diagnostic is separate next work.
+
+## Bounded ordinary draw observation
+
+09: [95492](09-bounded-draw-observer-shared37/receipt.json),1768/Shared37, **34 checks/1 failure, exit1**,309 exact originals/clean disposal. Ordinary-draw START: unpaused/clock0/process9/physics45; no `frame_post_draw`. Native8.0 unscaled process seconds expire after5962 wallms/process873/physics410, paused/focusfalse; main loop alive. [Immediate stack](09-bounded-draw-observer-shared37/native.log) proves `Game._notification → open_bench` focus-out setter at process10/physics45 in this run only. Original15290/5681 causes remain unproved. No PNG/completed graphical lifecycle; subsequent draws unattempted.
+
+## Separate fresh-focus refusal
+
+10: [10238](10-public-draw-gate-observation-shared37/receipt.json),c806/Shared37, **24 checks/1 failure, exit1**,309 exact originals/clean disposal. First Main focus/ready/negatives/transport pass. Second fresh Main fails existing actual Window/DisplayServer focus at idle/clock0 before quiet restore commit or portrait diagnostics. Public draw getters load but never run: no getter values/PNG/restored peer/full lifecycle. Stop unchanged graphics reruns; independent production Shell fixture remains next. All originals retained; no policy/mechanical change or whole-parent/art/level acceptance.
