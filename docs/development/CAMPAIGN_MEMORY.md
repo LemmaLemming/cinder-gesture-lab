@@ -1,5 +1,11 @@
 # Cinder campaign memory
 
+## Latest user acceptance decision — 9 October 2026
+
+The latest direct human instruction establishes [focused-desktop-level-1](LEVEL_ACCEPTANCE.md): focused automated mechanics/loading/transitions/saves/Retry/cleanup checks plus brief visual inspections. Agents need no full route, defeat-all, earned exit or campaign playthrough before level acceptance and next-level work. Record untested full-playthrough behavior and continue autonomously. This supersedes historical forward playthrough requirements below while preserving their original test results and source custody.
+
+Campaign8/24 remains accepted. Root notified all three existing workers immediately through canonical UPDATE1518a40b (Act1),4747655d (Act2),8cb5d40f (Act3) and their actual chats. Current frontier reviews are A1-L3, A2-L5 and A3-L3 against focused evidence, not route completion. Workers update their owned current progress/level records; Root retains shared ownership and first-help responsibility. Changed-level/directly affected suites only; no blanket requalification or mobile gate.
+
 Updated 9 October 2026. Integration owns this durable record. Read it with [SHARED_CONTRACT](SHARED_CONTRACT.md) and [SHARED_PROGRESS](SHARED_PROGRESS.md) after context recovery and before reviewing an act handoff.
 
 ## Authorized endpoint and precedence

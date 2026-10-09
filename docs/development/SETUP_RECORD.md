@@ -40,3 +40,8 @@ Xcode is installed and selected at `/Applications/Xcode.app/Contents/Developer`.
 ## Maintenance
 
 Keep the official extension and engine version aligned with the repo's tested baseline. Revalidate settings/schema and the game after any upgrade. Preserve `.gd.uid` files; ignore import caches, local workspace settings, credentials and build products. Use the existing nvm policy if future tooling introduces Node/npm/pnpm. Update this record when infrastructure or verified prerequisites change.
+
+
+## Acceptance policy update — 9 October 2026
+
+The direct user instruction establishes [focused desktop level acceptance](LEVEL_ACCEPTANCE.md). Focused automated mechanics/loading/transitions/saves/Retry/cleanup checks and brief visual inspections replace agent-completed route, defeat-all, earned-exit and campaign playthrough gates. Record untested full-playthrough behavior; accept each level independently, then continue sequential development. Existing ownership, checkouts, queue, ledgers and8 accepted levels remain. Historical setup/test records retain their original scope.
