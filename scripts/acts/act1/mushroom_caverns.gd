@@ -320,7 +320,7 @@ func _corresponding_admission(id: String, answer: Dictionary) -> Dictionary:
 	var control: Dictionary = scheduler.source_control_state(actual)
 	if control.get("api_revision") != "scheduler-source-control-1" or control.get("source_instance_id") != actual.get_instance_id() or control.get("encounter_id") != _encounter_id() or control.get("world_revision") != WORLD_REVISION or not control.get("reservations") is Array or control.reservations.size() != 1: return {}
 	var record: Variant = control.reservations[0]
-	if not record is Dictionary or record.get("id") != answer.reservation_id or record.get("source_instance_id") != actual.get_instance_id() or record.get("response_actor_instance_id") != hero.get_instance_id(): return {}
+	if not record is Dictionary or record.get("id") != answer.reservation_id or record.get("source_instance_id") != actual.get_instance_id(): return {}
 	var presentation: Dictionary = actual.pure_presentation_state()
 	if presentation.get("source_id") != id or presentation.get("reservation_id") != answer.reservation_id: return {}
 	return {"actor": actual, "control": control, "record": record}
