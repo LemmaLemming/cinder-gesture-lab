@@ -1,0 +1,212 @@
+--- a/scripts/combat/difficulty.gd
++++ b/scripts/combat/difficulty.gd
+@@ -6,9 +6,12 @@
+ 
+ const DATA_PATH: String = "res://data/design/difficulty_profiles.json"
+ const SCHEMA_VERSION: int = 1
++## Reuse is optional above this bound; catalogue parsing/acceptance is unchanged.
++const MAX_VALIDATION_INPUT_BYTES: int = 65536
+ 
+ var last_error: String = ""
+ var _profiles: Dictionary = {}
++var _validation_input := PackedByteArray()
+ 
+ 
+ func _init() -> void:
+@@ -16,12 +19,41 @@
+ 	if file == null:
+ 		last_error = "Difficulty catalogue unavailable"
+ 		return
+-	var parsed: Variant = JSON.parse_string(file.get_as_text())
++	# Keep the ORIGINAL native text decoder and its UTF8/BOM/error behavior.
++	# This receipt describes exactly the String passed to JSON, not its unknown
++	# pre-decoding raw encoding. No old cached profile becomes fresh authority.
++	var input_text: String = file.get_as_text()
++	var parsed: Variant = JSON.parse_string(input_text)
+ 	if not parsed is Dictionary or parsed.get("schema_version") != SCHEMA_VERSION or not parsed.get("profiles") is Array:
+ 		last_error = "Unsupported difficulty catalogue"
+ 		return
+ 	for profile: Dictionary in parsed["profiles"]:
+ 		_profiles[String(profile["id"])] = profile.duplicate(true)
++	# At most 4*limit UTF8 bytes are temporarily encoded; larger catalogues keep
++	# the original accepted set but disable this optional validation reuse.
++	if not input_text.is_empty() and input_text.length() <= MAX_VALIDATION_INPUT_BYTES:
++		var bytes: PackedByteArray = input_text.to_utf8_buffer()
++		if bytes.size() <= MAX_VALIDATION_INPUT_BYTES:
++			_validation_input = bytes
++
++
++## Private validation dependency transported only between fresh pure codecs.
++## Packed bytes are defensive; this is never an actor/world authorization.
++func _catalogue_validation_input() -> PackedByteArray:
++	return _validation_input.duplicate()
++
++
++static func _catalogue_validation_input_matches(expected: PackedByteArray) -> bool:
++	# Fresh raw read at the binding boundary; no second decoder/error side effect.
++	# BOM/malformed encodings normally differ from the parser's normalized UTF8
++	# input and use the old validator. Missing/large/short files also fall back.
++	if expected.is_empty() or expected.size() > MAX_VALIDATION_INPUT_BYTES:
++		return false
++	var file: FileAccess = FileAccess.open(DATA_PATH, FileAccess.READ)
++	if file == null or file.get_length() != expected.size():
++		return false
++	var current: PackedByteArray = file.get_buffer(expected.size())
++	return current.size() == expected.size() and current == expected
+ 
+ 
+ func profile(profile_id: String) -> Dictionary:
+--- a/scripts/combat/authored_enemy_sequence.gd
++++ b/scripts/combat/authored_enemy_sequence.gd
+@@ -27,6 +27,11 @@
+ var last_error: String = ""
+ var last_snapshot_error: String = ""
+ var _json: Dictionary = {}
++## Private one-call parser dependency; never serialized/native authority.
++var _validation_input := PackedByteArray()
++## Temporary sink armed ONLY by a fresh exact-native internal reader.
++## Detached on every return BEFORE the Scheduler calls its source hook.
++var _source_guard_inputs: Variant = null
+ 
+ 
+ func configure(sequence_id: String, native_definition: Dictionary, source_id: String, source_epoch: String, generation: int, profile_id: String, prepared_world: Dictionary) -> bool:
+@@ -164,6 +169,60 @@
+ 		_json = snapshot.duplicate(true)
+ 	last_error = ""
+ 	return true
++
++
++## Internal Scheduler source-error preparation only. A fresh empty codec owns
++## this input for ONE immediate source_error call; public restores never do.
++func _restore_for_source_guard(snapshot: Dictionary, source_epoch: String, generation: int) -> bool:
++	# Only Scheduler's local fresh Program reader calls this. No subclass may
++	# collect dependencies around virtual callbacks or supply accepted flags.
++	if get_script() != CinderAuthoredEnemySequence or not _json.is_empty() or _source_guard_inputs != null or not _validation_input.is_empty():
++		last_snapshot_error = "Fresh exact-native source-guard reader required"
++		return false
++	var validation_inputs: Array = []
++	_source_guard_inputs = validation_inputs
++	# ORIGINAL public restore/snapshot_error bodies, signatures and call order.
++	var restored: bool = restore_state(snapshot, source_epoch, generation)
++	# No return, hook, callback or yield intervenes before detaching the sink.
++	_source_guard_inputs = null
++	if not restored:
++		_validation_input = PackedByteArray()
++		return false
++	_validation_input = _shared_validation_input(validation_inputs)
++	return true
++
++## Internal Scheduler tail on its fresh reader from _restore_for_source_guard.
++## The wire and catalogue are rechecked AFTER the actual native source getter.
++## A mismatch falls back to the ORIGINAL full validator and error ordering.
++## No caller accepted flag, retained native proof or reusable receipt exists.
++func _binding_error_for_source_guard(snapshot: Dictionary, expected_source_id: String, source_epoch: String, generation: int, profile_id: String, expected_native_definition: Dictionary, actual_world: Dictionary, staged_binding: Dictionary = {}) -> String:
++	var validation_input: PackedByteArray = _validation_input
++	_validation_input = PackedByteArray()
++	var reuse: bool = get_script() == CinderAuthoredEnemySequence and _source_guard_inputs == null and not validation_input.is_empty() and not _json.is_empty() and _json.source_epoch == source_epoch and typeof(_json.generation) == TYPE_INT and _json.generation == generation and exact_equal(_json, snapshot) and Difficulty._catalogue_validation_input_matches(validation_input)
++	var error: String = _binding_tail(snapshot, expected_source_id, profile_id, expected_native_definition, actual_world) if reuse else binding_error(snapshot, expected_source_id, source_epoch, generation, profile_id, expected_native_definition, actual_world)
++	if not error.is_empty(): return error
++	if not staged_binding.is_empty():
++		if not staged_binding.get("definition") is Dictionary:
++			return "Staged immutable source definition differs"
++		var staged_error: String = _binding_tail(snapshot, expected_source_id, profile_id, staged_binding.definition, actual_world) if reuse else binding_error(snapshot, expected_source_id, source_epoch, generation, profile_id, staged_binding.definition, actual_world)
++		if not staged_error.is_empty(): return "Staged immutable source definition differs"
++	return ""
++
++
++func _binding_tail(snapshot: Dictionary, expected_source_id: String, profile_id: String, expected_native_definition: Dictionary, actual_world: Dictionary) -> String:
++	# Exact original binding_error tail; only pure closed native encoding/math.
++	var encoded: Dictionary = _encode_definition(expected_native_definition)
++	if encoded.is_empty() or snapshot.source_id != expected_source_id or snapshot.profile_id != profile_id or not exact_equal(snapshot.definition, encoded) or not exact_equal(snapshot.world, actual_world):
++		return "Actual source/definition/cycle/profile/world binding differs"
++	return ""
++
++
++func _shared_validation_input(inputs: Array) -> PackedByteArray:
++	# Successful current snapshot validation has two independent fresh resolves.
++	# Unexpected/missing/different read dependencies safely disable reuse.
++	if inputs.size() != 2 or not inputs[0] is PackedByteArray or not inputs[1] is PackedByteArray or inputs[0].is_empty() or inputs[0] != inputs[1]:
++		return PackedByteArray()
++	return inputs[0].duplicate()
+ 
+ 
+ static func exact_equal(left: Variant, right: Variant) -> bool:
+@@ -424,7 +483,13 @@
+ 
+ 
+ func _resolve(definition: Dictionary, profile_id: String) -> Dictionary:
+-	return Difficulty.new().resolve_role(definition.raw_role, profile_id, definition.timing_floors)
++	var difficulty = Difficulty.new()
++	var resolved: Dictionary = difficulty.resolve_role(definition.raw_role, profile_id, definition.timing_floors)
++	# Preserve the original virtual signature/arity and both independent reads.
++	# Public calls and subclasses never arm this exact-native factory's sink.
++	if _source_guard_inputs is Array:
++		_source_guard_inputs.append(difficulty._catalogue_validation_input())
++	return resolved
+ 
+ 
+ func _authored(definition: Dictionary, resolved: Dictionary) -> Dictionary:
+--- a/scripts/combat/replay_program.gd
++++ b/scripts/combat/replay_program.gd
+@@ -58,6 +58,33 @@
+ 	return true
+ 
+ 
++## Internal source_error-only factory seam. NEVER used by public restore.
++## Scheduler creates this reader locally and consumes/discards it in ONE call.
++func _restore_authored_for_source_guard(snapshot: Dictionary, source_epoch: String, generation: int) -> bool:
++	if get_script() != CinderReplayProgram or _reader != null or not _kind.is_empty():
++		last_snapshot_error = "Fresh exact-native source-guard reader required"
++		return false
++	var api: Variant = snapshot.get("api_revision")
++	if not api is String or api != Authored.API_REVISION:
++		last_snapshot_error = "Distinct immutable authored enemy program required"
++		return false
++	var candidate = Authored.new()
++	if not candidate._restore_for_source_guard(snapshot, source_epoch, generation):
++		last_snapshot_error = candidate.last_snapshot_error
++		return false
++	_reader = candidate
++	_kind = api
++	last_snapshot_error = ""
++	last_error = ""
++	return true
++
++
++## Internal matching tail; no retained-reader/public fast binding API.
++func _authored_binding_error_for_source_guard(snapshot: Dictionary, expected_source_id: String, source_epoch: String, generation: int, profile_id: String, native_definition: Dictionary, actual_world: Dictionary, staged_binding: Dictionary = {}) -> String:
++	if _reader == null or not is_authored_enemy():
++		return "Distinct immutable authored enemy program required"
++	return _reader._binding_error_for_source_guard(snapshot, expected_source_id, source_epoch, generation, profile_id, native_definition, actual_world, staged_binding)
++
+ func state() -> Dictionary:
+ 	return {} if _reader == null else _reader.state()
+ 
+--- a/scripts/combat/threat_scheduler.gd
++++ b/scripts/combat/threat_scheduler.gd
+@@ -558,7 +558,7 @@
+ 	if not world_root.is_inside_tree() or world_root.is_queued_for_deletion() or owner.get_world_3d() != get_world_3d() or world_root.get_world_3d() != get_world_3d() or not _under_root(owner, world_root) or not _under_root(self, world_root): return "Authored owner/Scheduler must share the complete actual world"
+ 	if PreviewExact.stringify(sequence_snapshot).is_empty(): return "Bounded exact authored program required"
+ 	var reader = ReplayProgram.new()
+-	if not reader.restore_state(sequence_snapshot, context.source_epoch, context.generation) or not reader.is_authored_enemy(): return "Distinct immutable authored enemy program required"
++	if not reader._restore_authored_for_source_guard(sequence_snapshot, context.source_epoch, context.generation) or not reader.is_authored_enemy(): return "Distinct immutable authored enemy program required"
+ 	var plan: Dictionary = reader.state()
+ 	var native: Variant = owner.call("get_authored_echo_binding")
+ 	if not is_instance_valid(owner) or not owner.is_inside_tree() or owner.is_queued_for_deletion() or owner.get_script() != actual_script or not native is Dictionary or not Codec.keys_error(native, ["api_revision", "source_id", "source_epoch", "generation", "definition", "alive", "knot_position"]).is_empty() or native.api_revision != "authored-echo-source-1" or not native.source_id is String or not native.source_epoch is String or not native.generation is int or not Codec.is_integer(native.generation, 0) or not native.definition is Dictionary or not native.alive is bool or not native.knot_position is Vector3 or not native.knot_position.is_finite(): return "Actual pure authored source binding rejected"
+@@ -575,11 +575,11 @@
+ 	var profile_id: String = _profile.get("id", "") if expected_profile_id.is_empty() else expected_profile_id
+ 	var revision: int = _world_revision if expected_world_revision == 0 else expected_world_revision
+ 	var world: Dictionary = {"world_revision": revision, "collision_fingerprint": collision, "floor_signature": floor.signature}
+-	var codec = AuthoredSequence.new()
+-	var error: String = codec.binding_error(sequence_snapshot, context.source_id, context.source_epoch, context.generation, profile_id, native.definition, world)
+-	if not error.is_empty(): return error
+-	if not staged_binding.is_empty() and not codec.binding_error(sequence_snapshot, context.source_id, context.source_epoch, context.generation, profile_id, selected.definition, world).is_empty(): return "Staged immutable source definition differs"
+-	return ""
++	# Reuse only this call's fresh private Program validation. The reader checks
++	# its exact current wire/epoch/generation and freshly reads catalogue bytes
++	# HERE, after every original native getter/resource/world guard above.
++	# Any mismatch executes the old full binding validator at this same point.
++	return reader._authored_binding_error_for_source_guard(sequence_snapshot, context.source_id, context.source_epoch, context.generation, profile_id, native.definition, world, staged_binding)
+ 
+ 
+ func authored_floor_signature(world_root: Node3D, floor_regions: Array) -> Dictionary:
