@@ -31,6 +31,8 @@ const GUN_GOAL: Vector3 = Vector3(-3.0, 0.0, -44.0)
 const GUN_GOAL_RADIUS: float = 0.20
 const GUN_EXIT_FRONT_Z: float = -47.9
 
+var _gun_title_only: bool = false
+var _gun_focus_events: Array[Dictionary] = []
 var _gun_compatibility_sha: String = ""
 var _gun_compatibility: Dictionary = {}
 var _gun_inventory: Dictionary = {}
@@ -43,6 +45,7 @@ var _gun_earned_files: Dictionary = {}
 func _read_options() -> bool:
 	if not super._read_options(): return false
 	for argument: String in OS.get_cmdline_user_args():
+		if argument == "--diagnose-title-only": _gun_title_only = true
 		if argument.begins_with("--compatibility-sha256="): _gun_compatibility_sha = argument.trim_prefix("--compatibility-sha256=")
 	_capture_live = false # This child owns one manual post-draw view, no parent capture loop.
 	return _expect(_profile_id == "standard" and _loadout_name == "heavy" and DisplayServer.get_name() != "headless" and _gun_sha_valid(_gun_compatibility_sha), "gun view requires archived Heavy/Standard, graphics and an explicit compatibility manifest SHA")
@@ -50,6 +53,8 @@ func _read_options() -> bool:
 func _run() -> void:
 	if not _read_options(): quit(1); return
 	root.size = Vector2i(540, 1170)
+	root.focus_entered.connect(func() -> void: _gun_record_focus("focus_entered"))
+	root.focus_exited.connect(func() -> void: _gun_record_focus("focus_exited"))
 	_native_probe = NativeTickProbe.new()
 	root.add_child(_native_probe)
 	_canonical = FileAccess.get_file_as_string(Registry.DATA_PATH)
@@ -60,10 +65,10 @@ func _run() -> void:
 		node_added.connect(_cl_observe_added)
 		_cl_cleanup_paths()
 		good = await _gun_install_original()
-		if good:
+		if good and not _gun_title_only:
 			for frame: int in range(8): await process_frame
 			good = _expect(paused and _cl_events.is_empty() and _cl_retirements_exact() and PriorityJson.stringify(_game.capture_campaign_snapshot()) == PriorityJson.stringify(_cl_unit) and PriorityJson.stringify(_game.attempts.state()) == PriorityJson.stringify(_cl_model), "fresh paused original complete unit/model holds silently before any new action")
-		if good:
+		if good and not _gun_title_only:
 			_cl_watch = false
 			_pr_bind_live()
 			good = await _gun_run_late_scope()
@@ -77,7 +82,10 @@ func _run() -> void:
 	_cl_verify_artifact_hashes()
 	_gun_guard_sources()
 	_expect(get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "gun fixture retires whole native units and leaves no enemy/cue identities")
-	print("L4 gun view smoke: %d checks, %d failures; late_scope_complete=%s; HP_progress_timeout=%s; one actual gun view only, no full-route/matrix or prior-tail replay credit" % [_checks, _failures, good, _hp_watch_timeout])
+	if _gun_title_only:
+		print("L4 gun Title-only diagnostic: %d checks, %d failures; title_initialization=%s; no Continue/contact/new defeats/late archive/gun photo or fullroute credit" % [_checks, _failures, good])
+	else:
+		print("L4 gun view smoke: %d checks, %d failures; late_scope_complete=%s; HP_progress_timeout=%s; one actual gun view only, no full-route/matrix or prior-tail replay credit" % [_checks, _failures, good, _hp_watch_timeout])
 	quit(2 if _hp_watch_timeout else (0 if good and _failures == 0 else 1))
 
 func _gun_sha_valid(value: Variant) -> bool:
@@ -160,8 +168,11 @@ func _gun_install_original() -> bool:
 	if not _expect(_game.configure_runtime(raw, GUN_TEST_ROOT + "campaign.json", GUN_TEST_ROOT + "settings.json", GUN_TEST_ROOT + "preferences.json"), "fresh Shell owns isolated gun-view save paths"): return false
 	_cl_events.clear(); _cl_watch = true
 	root.add_child(_game)
+	_gun_print_title("immediately_after_add_child")
 	await _pr_settle()
+	_gun_print_title("after_existing_public_settlement")
 	if not _expect(paused and _game.menu.page_name() == "title" and _game.campaign_error.is_empty() and _cl_events.is_empty() and _cl_retirements_exact(), "real Title validates original snapshot/checkpoint with exact pristine retirements only"): return false
+	if _gun_title_only: return true
 	if not await _pr_click("ContinueStoryButton"): return false
 	var actual: Dictionary = _game.capture_campaign_snapshot()
 	if not _expect(paused and _game.menu.page_name() == "resume" and _game.campaign_error.is_empty() and _cl_events.is_empty() and _cl_retirements_exact() and PriorityJson.stringify(actual) == PriorityJson.stringify(_cl_unit) and PriorityJson.stringify(_game.attempts.state()) == PriorityJson.stringify(_cl_model), "real GUI Continue silently installs exact original whole unit/model/history"): return false
@@ -360,3 +371,16 @@ func _progress_diagnostic_root() -> String:
 func _cl_cleanup_paths() -> void:
 	for name: String in ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(GUN_TEST_ROOT + name))
+
+func _gun_record_focus(kind: String) -> void:
+	var page: String = _game.menu.page_name() if is_instance_valid(_game) and is_instance_valid(_game.menu) else "no-menu"
+	_gun_focus_events.append({"kind": kind, "wall_ticks_ms": Time.get_ticks_msec(), "paused": paused, "page": page, "active_level_valid": is_instance_valid(_game) and is_instance_valid(_game.active_level)})
+
+func _gun_print_title(label: String) -> void:
+	var drivers: Dictionary = {}
+	for entry: Dictionary in _cl_pristine_retirements:
+		var id: String = str(entry.node_id)
+		if not drivers.has(id): drivers[id] = []
+		drivers[id].append(entry.actor_id)
+	var diagnostic: Dictionary = {"label": label, "wall_ticks_ms": Time.get_ticks_msec(), "paused": paused, "menu_page": _game.menu.page_name(), "campaign_error": _game.campaign_error, "active_level_valid": is_instance_valid(_game.active_level), "observer_events": _cl_events.duplicate(), "pristine_retirement_count": _cl_pristine_retirements.size(), "pristine_retirements_exact": _cl_retirements_exact(), "pristine_drivers": drivers, "pending_operations": _game.get("_operations").duplicate(true), "draining": _game.get("_draining"), "drain_queued": _game.get("_drain_queued"), "native_focus_events": _gun_focus_events.duplicate(true)}
+	print("L4 gun actual Title observation: ", PriorityJson.stringify(diagnostic))
