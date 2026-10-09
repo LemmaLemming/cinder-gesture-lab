@@ -68,6 +68,8 @@ func _run() -> void:
 	if portrait:
 		if not _require(DisplayServer.get_name() != "headless", "portrait mode requires the actual graphical renderer"):
 			await _finish(); return
+		if not await _prepare_portrait_focus():
+			await _finish(); return
 		capture_dir = "res://.cinder/captures/l4-curtain-%d" % Time.get_ticks_usec()
 		if not _require(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(capture_dir)) == OK, "portrait evidence directory is writable"):
 			await _finish(); return
@@ -239,7 +241,7 @@ func _close_curtain() -> bool:
 		var transported: Dictionary = CinderPlayer.encode_world_action_record(record, hero.get_world_action_clock())
 		if not _require(not transported.is_empty() and record.kind in ["dash", "primary"], "actual world action retains public exact native transport"): return false
 		encoded.append(transported)
-	if not _require(input_observations.size() == records.size() and world_records.size() == records.size() and primaries == 1 and swipes >= 1, "one accepted recognizer receipt maps to each actual dash/ordinary primary"): return false
+	if not _require(input_observations.size() == records.size() and world_records.size() == records.size() and primaries == 1 and swipes >= 1, "one observed recognizer release maps to each actual dash/ordinary primary"): return false
 	worlds.append({"scope": current_scope, "initial_hp": initial_hp, "final_hp": hero.hp, "max_preparing": max_preparing, "phases": _portable(phase_observations), "admissions": _portable(admissions), "world_actions": encoded, "input_observations": _portable(input_observations), "source_states": _portable(_source_states()), "hit_events": _portable(hit_events)})
 	var actor: Act1MushroomSelenite = sources[SourceID]
 	var lease: String = String(actor.pure_presentation_state().reservation_id)
@@ -337,7 +339,25 @@ func _ready_input(label: String) -> bool:
 
 func _guard_input() -> bool:
 	if aborted or finishing: return false
-	return _require_unexpected(not paused and is_instance_valid(hero) and not hero.dead, "unexpected focus/pause/death stops scripted input; fixture never forces resume")
+	var focused: bool = not portrait or (root.has_focus() and DisplayServer.window_is_focused(root.get_window_id()))
+	return _require_unexpected(focused and not paused and is_instance_valid(hero) and not hero.dead, "unexpected focus/pause/death stops scripted input; fixture never forces resume")
+
+
+func _prepare_portrait_focus() -> bool:
+	# TEST setup before constructing Main. Request foreground once, then observe
+	# genuine native focus; never synthesize a focus event or resume after loss.
+	DisplayServer.window_move_to_foreground(root.get_window_id())
+	var deadline: int = Time.get_ticks_msec() + 4000
+	var stable_since: int = -1
+	while Time.get_ticks_msec() < deadline and not finishing:
+		if root.has_focus() and DisplayServer.window_is_focused(root.get_window_id()):
+			if stable_since < 0: stable_since = Time.get_ticks_msec()
+			if Time.get_ticks_msec() - stable_since >= 200:
+				return _require(true, "portrait startup observes 200ms genuine native focus before Main construction")
+		else:
+			stable_since = -1
+		await process_frame
+	return _require(false, "portrait startup requires genuine stable native focus; no gameplay started")
 
 func _framing(label: String) -> bool:
 	var points: Array = level.camera_framing_points()
