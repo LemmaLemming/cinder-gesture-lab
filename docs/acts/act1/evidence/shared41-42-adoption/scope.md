@@ -1,0 +1,12 @@
+# Shared41/42 Act1 adoption receipts
+
+These two JSON files are byte-exact copies of the original owner receipts, filesystem mode 0644. Their preservation counts are receipt-reported scope, not a new audit of the whole checkout or ignored artifacts.
+
+- [Shared41 receipt](a1-shared41-adoption.json): SHA `178d1503f6701700b6a7fcc10d8051493a6e35e3367ce2cea5ca4e4a22914e6e`; publication `bd3c4458cbd1821b79c2bcda6e33f8dbaa0d5e4d`, actual merge `92eb68334c91a97472556d36218a13a9698235c1`. Records 8,969 prior tracked owned Git rows, 897 bounded protected physical runtime/resource/UID/config and focused-packet rows, 707 exact incoming rows and no mismatch. ACK `b2589fb3-4fd1-490a-ba89-f18406cc9495` was sent.
+- [Shared42 receipt](a1-shared42-adoption.json): SHA `b23b7b3183e9da3476f89cbb81154a87288f0ff6f3ca6c4e07f2e2e4d1a77b6a`; publication `afa6fbfdd14f8ffb917829fa7ca1a5d44ae40b79`, actual merge `b6457f6258ffe237f273e2800cbf924d251ca6e3`. Records 8,969 prior tracked owned Git rows, 895 bounded protected physical rows, 15,172 exact incoming rows and no mismatch. The different bounded physical counts are the two receipts' original scope, not a decrease in all-owned preservation. ACK `f7046091-ff61-4264-976d-3bebc5e1f605` was sent.
+
+Both receipts retain the frozen 507-member [L3 focused packet](../L3-focused-production-current/index.json), index `c0c6d5323eb59c2168d117746e43667dba2cbbbcec0f0351d7fd4496d7367196`. Submitted HANDOFF `4ec9aaab-ddce-4557-9a65-a29913722d8e` stays at `0129e260a25405dc1e24d1869bbe607884eca430` / Shared40. Original sources, tests, failures, visual limitations and save wires are not relabelled.
+
+Shared41's Lane opt-in is not consumed by ordinary main-L3 C31/C32. Future side finish/abandon returns to Journey, then explicit Continue Story enters paused Resume. Shared42 changes no shared runtime or Act1 content; its A3-L3 acceptance raises campaign progress to 9/24, not Act1 L3 acceptance. Act1 stays 2/8; L3 unaccepted/L4 unauthored. No engine/import/new native credit follows from receipt copying or either adoption.
+
+This update's canonical run read still shows the verified Act1 worker baseline at Shared40 and lists L3 as “Independent source and brief review pass; Root production registration next.” Actual owner adoption and sent Shared41/42 ACKs are distinct from canonical ACK verification, which remains pending until observed. All owned jobs are closed; this documentation task runs no engine, modifies no shared/mailbox/run file and supplies no new visual approval.
