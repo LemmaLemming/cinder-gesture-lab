@@ -1,0 +1,119 @@
+{
+  "recorded_at": "2026-10-09T01:07:00.221344+00:00",
+  "scope": "Original frozen manifests remain unchanged. Packets retain bounded literal-reference/explicit-seed inputs, not complete importer/resource graphs. Four older authored-subtree packets omitted the actual CLI configuration .cinder/local.json while declaring nonexistent .cinder/dev.local.json. That original input was not retained and is not backfilled. New source-reuse and camera packets retain their actual .cinder/local.json. ProjectContext is defined inside archived scripts/dev/dev.py, not the nonexistent project_context.py seed. Registry.DATA_PATH reads data/campaign/registry.json; exact original registry.json is retained in both camera packets despite the wrong levels.json seed. No all-seeds/full-input-graph completeness claim is made.",
+  "closed_runs": [
+    {
+      "run_id": "authored-subtree-guard1",
+      "manifest_sha256": "eada4f417f1528cc03bf6fed65f85236fa5a9b7d7c3a03ff6ffd8c5961e2c670",
+      "original_files": 59,
+      "declared_seeds_without_archived_file": [
+        ".cinder/dev.local.json"
+      ],
+      "actual_cli_config_not_retained": [
+        ".cinder/local.json"
+      ]
+    },
+    {
+      "run_id": "authored-subtree-bounds1",
+      "manifest_sha256": "523fb8f382b6adc59f2827a11f8837e936244b15c7ac427598ba395518b6c32e",
+      "original_files": 59,
+      "declared_seeds_without_archived_file": [
+        ".cinder/dev.local.json"
+      ],
+      "actual_cli_config_not_retained": [
+        ".cinder/local.json"
+      ]
+    },
+    {
+      "run_id": "authored-subtree-performance1",
+      "manifest_sha256": "b2095cdc81311b88dd22e98e28e91919dabe55aad719b636f5d32ebc9ebdc549",
+      "original_files": 103,
+      "declared_seeds_without_archived_file": [
+        ".cinder/dev.local.json"
+      ],
+      "actual_cli_config_not_retained": [
+        ".cinder/local.json"
+      ]
+    },
+    {
+      "run_id": "authored-subtree-sequence1",
+      "manifest_sha256": "39b2e66857fb418a908aca7cc951712bb53f543653fc4fce1b21dd16076a2816",
+      "original_files": 57,
+      "declared_seeds_without_archived_file": [
+        ".cinder/dev.local.json"
+      ],
+      "actual_cli_config_not_retained": [
+        ".cinder/local.json"
+      ]
+    },
+    {
+      "run_id": "source-reuse-sequence1",
+      "manifest_sha256": "60a87578beb8a17b22e1ecdd2d67e4360915802bec278d68822d8366cea389b7",
+      "original_files": 57,
+      "declared_seeds_without_archived_file": [
+        "scripts/dev/project_context.py"
+      ]
+    },
+    {
+      "run_id": "source-reuse-control1",
+      "manifest_sha256": "09ac5830b8f11f2c608a5928225ebb2582eda9af2395d2251fe54b3862314b00",
+      "original_files": 142,
+      "declared_seeds_without_archived_file": []
+    },
+    {
+      "run_id": "fresh-entry-camera-original1",
+      "manifest_sha256": "8febbd279207bebd29d031d715813c8bba8b4f63450a79392b1845487c450136",
+      "original_files": 99,
+      "declared_seeds_without_archived_file": [
+        "data/campaign/levels.json"
+      ],
+      "actual_registry_retained": "data/campaign/registry.json"
+    },
+    {
+      "run_id": "fresh-entry-camera-corrected1",
+      "manifest_sha256": "48e3eb10fc604125d18680ebd264bad51e44298a5449e5d2a31cee3802c2f9f3",
+      "original_files": 90,
+      "declared_seeds_without_archived_file": [
+        "data/campaign/levels.json"
+      ],
+      "actual_config_retained": ".cinder/local.json",
+      "native_result": "ACTUALLY CLOSED exit0; exact full logs/closure remain separate originals",
+      "actual_registry_retained": "data/campaign/registry.json"
+    },
+    {
+      "run_id": "source-reuse-performance1",
+      "manifest_sha256": "0e493ab05aaba99e9294eb3686546858ec3c522c90891f46b6162af974e801ad",
+      "original_files": 103,
+      "declared_seeds_without_archived_file": [],
+      "actual_config_retained": ".cinder/local.json",
+      "native_result": "ACTUALLY CLOSED exit0; exact full logs/closure remain separate originals"
+    },
+    {
+      "run_id": "source-reuse-lifecycle1",
+      "manifest_sha256": "fd6595384c322defc74bb7d95078f44307eac9e05c167e32d29e9622c9ca6dcf",
+      "original_files": 107,
+      "declared_seeds_without_archived_file": [],
+      "actual_config_retained": ".cinder/local.json",
+      "native_result": "ACTUALLY CLOSED exit0; exact full logs/closure remain separate originals"
+    },
+    {
+      "run_id": "fresh-entry-shell-compat1",
+      "manifest_sha256": "e92f76efe9eaeb76750a9cec0ec1cbda7fe4c873c8b7c959790bf02a833c36fe",
+      "original_files": 87,
+      "declared_seeds_without_archived_file": [],
+      "actual_config_retained": ".cinder/local.json",
+      "native_result": "ACTUALLY CLOSED exit0; exact full logs/closure remain separate originals",
+      "actual_registry_retained": "data/campaign/registry.json"
+    },
+    {
+      "run_id": "fresh-entry-saved-gate1",
+      "manifest_sha256": "72e3ff1ff2b1e9f3a77e5a7d98cf2ccf2ae18530418a6c5ede78ab9753a4e1d6",
+      "original_files": 86,
+      "declared_seeds_without_archived_file": [],
+      "actual_config_retained": ".cinder/local.json",
+      "native_result": "ACTUALLY CLOSED exit0; exact full logs/closure remain separate originals",
+      "actual_registry_retained": "data/campaign/registry.json"
+    }
+  ],
+  "updated_at": "2026-10-09T01:38:58.083802+00:00"
+}

@@ -1,0 +1,100 @@
+{
+  "full_native_sha256": "ec361828e95f01a92cd48ad14d151c04221a6c079580af5f01b2293b7c50b631",
+  "decoded_report": {
+    "engine": {
+      "build": "official",
+      "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "hex": 263938,
+      "major": 4,
+      "minor": 7,
+      "patch": 2,
+      "status": "stable",
+      "string": "4.7.2-stable (official)",
+      "timestamp": 0
+    },
+    "display_driver": "headless",
+    "required_native_visuals": 1,
+    "automatic_native_advances": 72,
+    "simulation_elapsed_s": 1.2,
+    "wall_elapsed_us": 5096364,
+    "advance_cost_summary_us": {
+      "count": 72,
+      "inclusive_total_us": 4453473,
+      "max_us": 119276,
+      "mean_us": 61853.7916666667,
+      "p50_us": 60866,
+      "p95_us": 63538
+    },
+    "separate_fixed_clock_probe_summary_us": {
+      "authored_replay_source_error": {
+        "count": 3,
+        "inclusive_total_us": 11961,
+        "max_us": 4141,
+        "mean_us": 3987.0,
+        "p50_us": 3976,
+        "p95_us": 4141
+      },
+      "cue.projection_error": {
+        "count": 3,
+        "inclusive_total_us": 12846,
+        "max_us": 4369,
+        "mean_us": 4282.0,
+        "p50_us": 4296,
+        "p95_us": 4369
+      },
+      "cursor.snapshot_error": {
+        "count": 3,
+        "inclusive_total_us": 8609,
+        "max_us": 2930,
+        "mean_us": 2869.66666666667,
+        "p50_us": 2854,
+        "p95_us": 2930
+      },
+      "renderer_guard.current_error": {
+        "count": 3,
+        "inclusive_total_us": 1437,
+        "max_us": 495,
+        "mean_us": 479.0,
+        "p50_us": 486,
+        "p95_us": 495
+      },
+      "replay_reservation_error": {
+        "count": 3,
+        "inclusive_total_us": 13097,
+        "max_us": 4524,
+        "mean_us": 4365.66666666667,
+        "p50_us": 4318,
+        "p95_us": 4524
+      }
+    },
+    "actual_world_actions": [
+      {
+        "completed_at_s": 0.933333333333335,
+        "damage": 0.0,
+        "hits": 0,
+        "kind": "dash",
+        "started_at_s": 0.750000000000001
+      },
+      {
+        "completed_at_s": 1.46666666666667,
+        "damage": 0.0,
+        "hits": 0,
+        "kind": "dash",
+        "started_at_s": 1.28333333333333
+      },
+      {
+        "completed_at_s": 1.55,
+        "damage": 20.0,
+        "hits": 1,
+        "kind": "primary",
+        "started_at_s": 1.55
+      }
+    ],
+    "limitations": "Instrumented one-Box native source first cycle with EXACT real Scheduler; advance end timestamps exclude appended sample bookkeeping. Cycle wall elapsed includes separately reported direct fixed-clock probes, admission/projection/bind, native loop waits and other observer overhead; probe costs are not nested production call counts. Three samples per API inspect only the genuine admitted prelock clock; Cue, renderer guard and Cursor probes use the actual retained instances, not new guards or cached authority. Not actual authored A3-L3, production 16-visual art, portrait review, FPS, CPU monitor percentiles, sustained performance or a latency acceptance threshold. No guards or contact/proof authority bypassed."
+  },
+  "total_actual_samples_verified": 73,
+  "exact_fixed_clock_probe_records_verified": 15,
+  "actual_automatic_native_samples_verified": 72,
+  "manual_native_admission_sample_verified": 1,
+  "percentile_sums_recomputed": true
+}
