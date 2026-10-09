@@ -1,5 +1,17 @@
 # A3-L3 Mirror Sea focused handoff
 
+## Accepted status and later Shared41 owner check
+
+Canonical response `aa5d2447-49c9-401b-ab7e-030bace1beb0` independently accepts exact55256309 at publicationafa6fbfd/integration13ebcb50. Act3 advances to3/8 and L4; [the original response](../../../assets/acts/act3/evidence/A3-L3-acceptance/aa5d2447-49c9-401b-ab7e-030bace1beb0-ACCEPTED.json) retains Root20/0 canonical registration and brief7/0. Original owner39 14/0 and portraits retain their separate scopes.
+
+The sole changed owner production fixture now passes **15/0**, exit0 on actual Shared41bd3c4458, no diagnostics,341 frozen/current inputs exact, independently reviewed. New default Leave Side opens Journey; real public Back/Continue reconstructs a fresh quiet story recipient before the unchanged consumed viewport GUI Resume/public pause. Complete protected story/core/disk and recursive donor/final cleanup remain exact. [All originals](../../../assets/acts/act3/evidence/A3-L3-shared41-production-replay/index.json) preserve fixturea77784ca, raw2156-byte native log01e10406 and closure/source freeze. Actual41 adoption02e4cc32/custody is separate;42 preservation follows this closed job. This is a navigation-fixture adjustment for the published shared behavior, with no gameplay/packet guard weakened.
+
+Fullplaythrough/defeat-all/earned exit/whole-kit/campaign/terminal-contact/two-pulse-terminal/every-court art remain untested limits; scenic crop/weak lake identity remain art limits. These do not gate L4. No new equipment/ability allocation or mobile credit.
+
+## Original submitted evidence/handoff — historical
+
+Statuses below saying2/8, pending review or current14/0 describe their original handoff time. Assertions of then-current byte equality are as-of that original baseline, not a claim that later Shared41 Shell/Lane bytes are unchanged. Their historical commands/results/source attribution remain intact.
+
 Scene: `res://scenes/acts/act3/a3_l3_mirror_sea.tscn`. Runtime: `scripts/acts/act3/mirror_sea_level.gd`, SHA256 `4af8680418d0b7449f0750315a8672282f652d5d782878f5c4e7206d6a362b72`. Scene SHA256 `26af5a413d9d7d2f363622b066aa64b389f9b3cbf54b443aaafc729635a0a71f`. Shared baseline `027dfa16e4c215ab1cc9f86bd0e4792088d16446`, API `campaign-shared-39`; preserve-adopted at32f7e993. Exact submitted content commit is recorded in the unique canonical HANDOFF message after this document is committed.
 
 [Focused acceptance](../../development/LEVEL_ACCEPTANCE.md) governs. The level is implemented and focused evidence is ready for independent integration review; acceptance and canonical production registration belong to integration. Act3 remains2/8 until its actual acceptance response. L4 follows sequentially.

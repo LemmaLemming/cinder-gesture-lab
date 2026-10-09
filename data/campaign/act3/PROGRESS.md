@@ -1,4 +1,18 @@
+## Current accepted frontier — 9 October 2026
+
+A3-L3 Mirror Sea is independently **ACCEPTED**, canonical response `aa5d2447-49c9-401b-ab7e-030bace1beb0` at publication `afa6fbfd`. Act3 is **3/8 accepted**, next A3-L4 False Paradise. Exact content `55256309` is integrated at `13ebcb50`; canonical registration names the real L3 scene, previous L2 and unimplemented next L4. [Original acceptance](../../../assets/acts/act3/evidence/A3-L3-acceptance/aa5d2447-49c9-401b-ab7e-030bace1beb0-ACCEPTED.json) preserves Root20/0 production and brief7/0 scope. No full route, defeat-all or earned-exit gate; untested terminal/contact-next/two-pulse transport/whole-kit/every-court art and scenic crop/weak lake identity remain limits.
+
+Own changed Shared41 production fixture actually CLOSED **15/0**, exit0, no diagnostics, all341 original/live inputs exact: default Journey return, explicit public Back/Continue Story, two consumed GUI Resume/public pauses, complete protected story/core/disk and all native donor/final cleanup. [Original packet](../../../assets/acts/act3/evidence/A3-L3-shared41-production-replay/index.json) and independent review are retained separately from original39 14/0 and centre/west-shore7/0. Actual41 preserving adoption is `02e4cc32`, ACK `d3c4aa75`; Shared42 adoption is the next step after this closed job. No new equipment/ability allocation.
+
+[False Paradise preparation](levels/A3-L4.md) supplies actual source/art/equipment queries, five beats and proposed bounded root rule. L4 production remains unbegun while42 is adopted; then start the small rule room and authored level sequentially. Latest explicit www YouTube retry remains rejected by saved browser permission; no footage, workaround or further human question.
+
+## Prior current/handoff records — historical
+
+All following statuses saying2/8, L3 pending or L4 waiting for L3 acceptance are superseded by the actual acceptance above. Original evidence/baselines and raw history are unchanged.
+
 ## Current focused acceptance — 9 October 2026
+
+Current Shared41 `bd3c4458` is now actually preserve-adopted at `02e4cc32`; [custody](../../../assets/acts/act3/evidence/A3-L3-shared41-adoption/mirror-sea-shared41-adoption.json) proves14371 prior owned Git rows/14376 physical files/settings/ledgers/all707 incoming bytes+modes/347activeUID0collisions exact. ACK `d3c4aa75-cf13-4302-be00-9925961de2ce` is submitted. Original39 results remain separately attributed. The directly affected owned replay fixture is being adapted to the new default side return to Journey, with explicit public Back/Continue Story before the unchanged consumed GUI Resume checks; the new41 fixture is not yet executed. No broad rerun or full-route gate. L3 acceptance remains pending.
 
 [focused-desktop-level-1](../../../docs/development/LEVEL_ACCEPTANCE.md) governs the current frontier. Policy `027dfa16` is preserve-adopted at `32f7e993`; Act3 remains **2/8 accepted**, A3-L3 only. [The focused L3 evidence map](../../../docs/acts/act3/A3_L3_FOCUSED_ACCEPTANCE.md) records original commands/results/baselines and current caveats. Production warning 18/0 supports ordinary encounters, Save/Continue/Retry and disposal; other managed/finite/arrival/held-exit/control results retain their separate scopes.
 
