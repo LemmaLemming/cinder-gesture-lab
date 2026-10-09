@@ -1,3 +1,17 @@
+## Native live-held fixture cleanup verified — 9 October 2026
+
+The smallest actual disposal check closes **15 checks,0 failures, exit0**, with no script/native errors: session48669 on Shared36, owned052b1700,311 unchanged frozen inputs. [Original receipt](../../../../assets/acts/act3/evidence/A3-L3-live-fixture-exit/02-actual-locked-source-retirement/receipt.json) and full native log preserve the real generation1 admission/due lock/public pause. Fixture exit now calls the actual held Echo's public cancellation while Hero/source/renderer/Scheduler are inside the tree; its original terminal/tombstone/cooldown and exact clock/HP36/zero hits/native resources survive until whole disposal. Three genuine cleanup callbacks occur once, then all WeakRefs/cues/groups retire without further callbacks. This verifies the locked fixture removal path, not active attack timing, full parent disposal or the original pause setter.
+
+[New-resource import](../../../../assets/acts/act3/evidence/A3-L3-live-fixture-exit/01-qualified-new-driver-import/receipt.json) closes30541 exit0/no errors on334 originals; two newly generated owned UID files are metadata only. Actual fixture11186c1c replaces only its exit tail. New driver06cf219e preserves the reviewed667b draft except awaiting the original open, compatible with the separate optional focus coroutine. Shared/source/HP/control/history code is unchanged. All Root engine jobs are closed.
+
+Full parent a0b and the earlier codec-parent draft also lack explicit managed-held retirement before end_encounter; this directly affected issue is assigned for their bounded candidate exit correction. Full-parent/fatal/candidate disposal needs its own native test. Optional native focus plus immediate every-pause attribution remains an ignored unexecuted draft; no focus cause or current dead-portrait claim. Act3 remains2/8 accepted, L3 only; no human decision.
+
+## Current milestone and documentation adoption — 9 October 2026
+
+Owned milestone `fef5c9313ad13218dcf44878c77345f36228ddf3` preserves the managed Echo lifecycle, spent-marker evidence and connected Mirror Sea first-two combat frontier. Documentation-only publication `106c9f0cc5554686cf458a4f2db87011e5954a93` is adopted at preserving merge `052b1700593d153ed1a64656a6ce973999983278`; ACK `83c37d4b-6292-4e98-b3bc-170cd3a3b4c4`. Only the shared contract revision line changes. Runtime stays exact Shared36 `103f4f03704166d8c6066b476ec066abd086e6b6`; all5965 owned Git rows,5979 physical owned files and local settings are preserved. Existing test headers and evidence remain original; no native rerun is needed for documentation.
+
+Act3 remains **2/8 accepted**, L3 alone. All Root engine jobs are closed. The user's blocker check confirms no human decision is pending. YouTube retains the saved browser denial. Native portrait focus/active cleanup failures are being corrected in separate ignored drafts; full-parent persistence, full route, legal extremes and complete portrait acceptance remain unfinished. Shared runtime cost remains integration-owned OPEN. Later levels wait for autonomous L3 acceptance.
+
 # Act 3 progress
 
 ## Actual normal live portrait; focused native setup and live cleanup next
