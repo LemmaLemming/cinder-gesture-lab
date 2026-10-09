@@ -1,0 +1,21 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act3/mirror_echo_rule_room_smoke.gd",
+  "exit_code": 1,
+  "checks": 3,
+  "failures": 1,
+  "classification": "owned authored-route floor domain mismatch",
+  "first_meaningful_error": "Captured absolute route lost floor at sample 0: Authored safe rectangle must fit a continuous box floor at actor feet height",
+  "shared_baseline": "ec070f6254082c2cd32a87a707a16c1b9fb61a72",
+  "owned_head": "7360084a4b7449b18eac2cd18a38c912e5c64ba4",
+  "attempted": "actual MainScene binding; first actual own-source admission failed; actual cleanup passed",
+  "unattempted": [
+    "lock",
+    "active",
+    "recovery",
+    "primary clear",
+    "quiet snapshot reconstruction",
+    "second kit",
+    "portraits"
+  ],
+  "queue_wait_is_failure": false
+}

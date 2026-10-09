@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act3/living_forest_level.gd" id="1"]
+
+[node name="LivingForest" type="Node3D"]
+script = ExtResource("1")
+level_id = "A3-L2"
+objective_text = "Vast red trunks — follow the open leaf court"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 43)
+
+[node name="EncounterSources" type="Node3D" parent="."]
+
+[node name="l2_threshold_stalker" type="Marker3D" parent="EncounterSources"]
+position = Vector3(1.2, 0.1, 34)
+
+[node name="l2_promise_root" type="Marker3D" parent="EncounterSources"]
+position = Vector3(0, 0, 22)
+
+[node name="l2_trunk_root" type="Marker3D" parent="EncounterSources"]
+position = Vector3(1.1, 0, 8)
+
+[node name="l2_priority_root" type="Marker3D" parent="EncounterSources"]
+position = Vector3(1.2, 0, -4.5)
+
+[node name="l2_priority_stalker" type="Marker3D" parent="EncounterSources"]
+position = Vector3(-1.3, 0.1, -4)
+
+[node name="l2_watched_root" type="Marker3D" parent="EncounterSources"]
+position = Vector3(-1.2, 0, -20)
+
+[node name="l2_watched_stalker" type="Marker3D" parent="EncounterSources"]
+position = Vector3(1.3, 0.1, -19.5)
+
+[node name="l2_slit_root" type="Marker3D" parent="EncounterSources"]
+position = Vector3(1.2, 0, -36.5)
+
+[node name="l2_slit_stalker" type="Marker3D" parent="EncounterSources"]
+position = Vector3(-1.3, 0.1, -36)
+
+[node name="DryThreshold" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, -47)

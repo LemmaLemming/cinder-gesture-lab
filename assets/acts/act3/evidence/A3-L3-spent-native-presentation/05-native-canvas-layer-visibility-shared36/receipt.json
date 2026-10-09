@@ -1,0 +1,17 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 339x736 --script res://tests/acts/act3/mirror_echo_lifecycle_smoke.gd -- --portraits",
+  "session_id": 15290,
+  "exit_code": 1,
+  "checks": 35,
+  "failures": 1,
+  "script_or_native_errors": [
+    "ERROR: FAIL: actual route cannot advance while paused",
+    "ERROR: Condition \"!is_inside_tree()\" is true. Returning: Transform3D()"
+  ],
+  "baseline": "103f4f03704166d8c6066b476ec066abd086e6b6",
+  "owned_head": "621bb4dc1f16719479f298a495579443e7c78589",
+  "source_count": 309,
+  "all_frozen_sources_unchanged": true,
+  "closed_at": "2026-10-09T01:58:15.809815+00:00",
+  "scope": "Native CanvasLayer correction35/1 exit1 on309 unchanged Shared36 inputs. First actual339x736 live-ready PNG is normal/current HUD and independently inspected. Later unexpected real pause during active generation1 after first escape dash, native focusfalse and config/cameraerrors empty/publicpausependingfalse; notification cause unproved. No dead portraits/full lifecycle/readability/wholeparent acceptance."
+}

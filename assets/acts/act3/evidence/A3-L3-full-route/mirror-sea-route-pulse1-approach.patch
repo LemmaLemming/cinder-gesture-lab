@@ -1,0 +1,106 @@
+--- a/tests/acts/act3/mirror_sea_route_smoke.gd
++++ b/tests/acts/act3/mirror_sea_route_smoke.gd
+@@ -10,6 +10,8 @@
+ ## checkpoint requests and the one authored admission-to-lock transition; it
+ ## does not exercise aggregate transport/restore, disk/Retry, portrait art or
+ ## production campaign acceptance. A current native witness is always required.
++
++const PulseApproachSweep = preload("res://scripts/combat/body_sweep.gd")
+ 
+ const ROUTE_ENTRIES: Array[String] = ["shore-and-doubled-sky", "one-real-body", "useful-ending-west", "useful-ending-east", "resonant-apron", "shore-falls-silent"]
+ const ROUTE_Z: Array[float] = [39.0, 27.0, 15.0, 2.0, -14.0, -32.0]
+@@ -413,6 +415,7 @@
+ 
+ func _next_pulse(cycle: int) -> String:
+ 	var stop: float = _scheduler.get_clock() + WAIT_BUDGET_S
++	var approached: bool = false
+ 	for _i: int in range(_frames(WAIT_BUDGET_S)):
+ 		var ring: Dictionary = (_level.call("state") as Dictionary).ring
+ 		var mechanism: CinderLaneMechanism = _level.get("mechanism") as CinderLaneMechanism
+@@ -424,9 +427,86 @@
+ 			if _current_lease.is_empty() or _current_lease.source_instance_id != mechanism.get_instance_id() or _current_lease.geometry.kind != "circle" or _current_lease.geometry.origin != mechanism.global_position: return "pulse is not a real native same-source fixed filled disk exchange"
+ 			return ""
+ 		if _scheduler.get_clock() >= stop: break
++		# The apron entry is earlier than the fixed ordinary opening. Rejoin
++		# it once through real input; a rejected preview grants no attack lease.
++		var response: Dictionary = _hero.get_threat_response_state()
++		if cycle == 1 and not approached and mechanism != null and ring.stage == "pulse1_wait" and mechanism.state().status == "idle" and mechanism.state().cycle == 0 and _scheduler.reservations().is_empty() and response.stable and float(response.dash_cooldown_left_s) == 0.0 and response.motion.queued_dash == Vector3.ZERO:
++			var opening: Vector3 = mechanism.state().opening_position
++			var offset: Vector3 = opening - _hero.global_position
++			offset.y = 0.0
++			if offset.length() > float(_stats.primary_range) - CinderThreatScheduler.SKIN:
++				approached = true
++				var approach_error: String = await _pulse1_unleased_approach(mechanism, stop)
++				if not approach_error.is_empty(): return approach_error
++				continue # Observe the parent's fresh actual warning before acting again.
+ 		var reason: String = await _tick()
+ 		if not reason.is_empty(): return reason
+ 	return "pulse%d did not genuinely admit within bounded native wait: " % cycle + _diagnostic()
++
++
++func _pulse1_unleased_approach(mechanism: CinderLaneMechanism, stop: float) -> String:
++	var current: Dictionary = mechanism.state()
++	var state: Dictionary = _level.call("state")
++	var response: Dictionary = _hero.get_threat_response_state()
++	if paused or _hero.dead or not _hero.is_on_floor() or not response.stable or float(response.dash_cooldown_left_s) != 0.0 or response.motion.queued_dash != Vector3.ZERO or not _scheduler.reservations().is_empty() or state.ring.stage != "pulse1_wait" or current.status != "idle" or current.cycle != 0 or not String(current.reservation_id).is_empty() or not state.ring.proofs.is_empty() or not state.ring.exchanges.is_empty() or not _exact(_hero.equipment.snapshot(), _kit) or not _exact(_hero.equipment.resolved_stats(), _stats):
++		return "first-pulse approach requires actual unleased idle cycle0 and ready grounded Hero"
++	var entry_error: String = _entry_error(4)
++	if not entry_error.is_empty(): return entry_error
++	var context: Dictionary = _level.call("pulse_response", 1)
++	var bindings: Dictionary = _level.call("scheduler_bindings")
++	var floors: Array = context.get("floor_regions", [])
++	var world: Node3D = bindings.get("world_root") as Node3D
++	if not is_instance_valid(world) or not world.is_inside_tree() or not world.is_ancestor_of(_hero) or not world.is_ancestor_of(mechanism) or not world.is_ancestor_of(_scheduler) or bindings.actors.get("hero") != _hero or bindings.owners.get(PULSE_ID) != mechanism or floors.size() != 1 or not floors[0] is Dictionary or not _exact(floors[0], bindings.floors.get("firm-shore")) or not _exact(context.escape_directions, [Vector3.LEFT]) or not _exact(context.return_directions, [Vector3.RIGHT]):
++		return "first-pulse approach lost actual world/owner/Hero/floor or authored LEFT/RIGHT bindings"
++	var opening: Vector3 = current.opening_position
++	var offset: Vector3 = opening - _hero.global_position
++	offset.y = 0.0
++	var distance: float = offset.length()
++	var reach: float = float(_stats.primary_range) - CinderThreatScheduler.SKIN
++	if not opening.is_finite() or not is_finite(distance) or distance <= reach:
++		return "first-pulse approach requires the actual still-unreachable fixed opening"
++	var guard: Dictionary = _pulse1_approach_guard(mechanism)
++	var preview: Dictionary = mechanism.preview_start("hero", context)
++	if preview.get("accepted", false) or String(preview.get("reason", "")) != "No supported collision/floor-safe timed escape and ordinary-primary opening through the committed threat union":
++		return "first-pulse approach expected a native rejected far-opening preview: " + str(preview)
++	var direction: Vector3 = offset.normalized()
++	var motion: Vector3 = direction * float(_stats.dash_distance)
++	var origin: Vector3 = _hero.global_position
++	var endpoint: Vector3 = PulseApproachSweep.anchored_position(origin, motion, 1.0)
++	var after: Vector3 = opening - endpoint
++	after.y = 0.0
++	if after.length() >= distance or after.length() > reach:
++		return "one ordinary full dash cannot reach the first-pulse opening; no fabricated witness or extra approach"
++	var description: Dictionary = PulseApproachSweep.source_description(_hero)
++	if description.has("error"): return "actual first-pulse approach capsule: " + String(description.error)
++	var half: Vector2 = description.footprint_half
++	var floor: Dictionary = floors[0]
++	if not floor.get("safe_rect") is Rect2: return "actual first-pulse approach floor rectangle missing"
++	var safe: Rect2 = (floor.safe_rect as Rect2).grow(-(maxf(half.x, half.y) + CinderThreatScheduler.SKIN))
++	if not safe.has_point(Vector2(origin.x, origin.z)) or not safe.has_point(Vector2(endpoint.x, endpoint.z)):
++		return "first-pulse approach whole capsule would leave the actual continuous shore floor"
++	var sweep: Dictionary = PulseApproachSweep.sweep(_hero, _hero.global_transform, motion, floors)
++	if sweep.has("error") or sweep.get("collided", true) or not sweep.get("end") is Vector3 or not sweep.get("travel") is Vector3 or (sweep.end as Vector3).distance_to(endpoint) > POINT_TOLERANCE or (sweep.travel as Vector3).distance_to(motion) > POINT_TOLERANCE:
++		return "first-pulse approach actual scenery/floor sweep rejected: " + str(sweep)
++	var now: float = _scheduler.get_clock()
++	var completed_by: float = now + ceil(float(_stats.dash_duration) / _tick_s()) * _tick_s() + _tick_s()
++	var ready_by: float = maxf(completed_by, now + maxf(float(_stats.dash_cooldown), float(response.primary_cooldown_left_s))) + 2.0 * _tick_s()
++	if ready_by > minf(stop, minf(_group_deadline, ROUTE_BUDGET_S)):
++		return "first-pulse ordinary approach/readiness would exceed existing native wait/group/route budget"
++	if not _exact(guard, _pulse1_approach_guard(mechanism)) or not _exact(_hero.get_world_action_clock(), now):
++		return "pure first-pulse preview/sweep changed actual clock, bindings, sources, Hero or observations"
++	# No await between the final native recheck and the inherited routed input.
++	# No lease exists; parent admits only from a stable grounded actual Hero.
++	var segment: Dictionary = {"from": origin, "to": endpoint, "start_s": now, "end_s": now + float(_stats.dash_duration), "kind": "positioning_dash"}
++	var error: String = await _dash(direction, segment, "unleased actual first-pulse opening approach")
++	if not error.is_empty(): return error
++	if _scheduler.get_clock() > stop: return "first-pulse approach exceeded original native wait deadline"
++	print("PULSE1 APPROACH: actual ordinary dash from=", origin, " landing=", _hero.global_position, " opening=", opening, " native_clock=", _scheduler.get_clock(), "; admission/proof remain parent-owned")
++	return ""
++
++
++func _pulse1_approach_guard(mechanism: CinderLaneMechanism) -> Dictionary:
++	return {"clock_s": _scheduler.get_clock(), "hero_clock_s": _hero.get_world_action_clock(), "hero_transform": _hero.global_transform, "hero_velocity": _hero.velocity, "response": _hero.get_threat_response_state(), "kit": _hero.equipment.snapshot(), "stats": _hero.equipment.resolved_stats(), "sequence": _last_sequence(), "held": _scheduler.reservations(), "level": _level.call("state"), "mechanism_instance": mechanism.get_instance_id(), "mechanism_transform": mechanism.global_transform, "mechanism": mechanism.state(), "bindings": _level.call("scheduler_bindings"), "events": _events.duplicate(true), "actions": _actions.duplicate(true)}
+ 
+ 
+ func _wait_pulse_terminal(cycle: int) -> String:

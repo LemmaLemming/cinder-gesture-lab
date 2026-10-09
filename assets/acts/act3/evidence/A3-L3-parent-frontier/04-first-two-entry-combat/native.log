@@ -1,0 +1,29 @@
+Waiting for the shared Godot session to close…
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: paused actual Main installs one connected native L3 with no future sources
+PASS: whole save/paired validators/restore explicitly refuse without live mutation
+SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+          at: _entry_error (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:202)
+          GDScript backtrace (most recent call first):
+              [0] _entry_error (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:202)
+              [1] _travel_entry (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:184)
+              [2] _dash (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:451)
+              [3] _tick (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:514)
+              [4] _wake (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:38)
+              [5] _physics_process (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:31)
+PASS: real final-release swipes earn only the first native Stalker entry
+ERROR: FAIL: actual moving Stalker dies to ordinary routed recovery taps; completed actual dash does not match displayed landing/timing
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:630)
+       [1] _run (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:88)
+       [2] _clear_stalker (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:234)
+       [3] _follow (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:403)
+       [4] _dash (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:450)
+       [5] _tick (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:514)
+       [6] _wake (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:38)
+       [7] _physics_process (res://tests/acts/act3/mirror_sea_frontier_smoke.gd:31)
+FIRST MEANINGFUL FAILURE; later frontier actions unattempted: completed actual dash does not match displayed landing/timing; { "clock_s": 2.38333333333333, "hero_position": (2.560897, -0.004844, 38.45545), "configuration_error": "", "admission_reason": "", "camera_error": "", "entries": [{ "id": "shore-and-doubled-sky", "beat": 1, "clock_s": 0.56666666666667, "hero_position": [0.0, -0.00484376167879, 38.5499992370605], "capsule_radius": 0.31999999284744 }], "deaths": {  }, "sources": { "l3-threshold-stalker": { "kind": "stalker", "installed": true, "source": { "stable_id": "l3-threshold-stalker", "hp": 36.0, "max_hp": 36.0, "dead": false, "phase": "warning", "reservation_id": "threat-1", "cycle": 1, "position": (0.625697, -0.004161, 35.72691), "velocity": (0.0, 0.0, 0.0), "facing": (0.026671, 0.0, 0.999644), "clock_s": 2.38333333333333, "cooldown_until_s": 6.98333333333333, "retry_at_s": 2.18333333333333, "hit_consumed": false, "raw_role": { "id": "A3-E1", "raw_damage": 12.0, "max_hp": 36.0, "windup_s": 1.35, "lock_s": 0.45, "active_s": 0.3, "recovery_s": 2.0, "attack_interval_s": 3.7, "move_speed": 2.8, "provisional_unplaytested": true }, "resolved_role": { "id": "A3-E1", "raw_damage": 12.0, "max_hp": 36.0, "windup_s": 1.35, "lock_s": 0.45, "active_s": 0.3, "recovery_s": 2.0, "attack_interval_s": 3.7, "move_speed": 2.8, "provisional_unplaytested": true, "damage": 12.0, "difficulty_schema": 1, "difficulty_profile": "standard", "tuning_status": "provisional_unplaytested", "raw_role": { "id": "A3-E1", "raw_damage": 12.0, "max_hp": 36.0, "windup_s": 1.35, "lock_s": 0.45, "active_s": 0.3, "recovery_s": 2.0, "attack_interval_s": 3.7, "move_speed": 2.8, "provisional_unplaytested": true } }, "proof": { "accepted": true, "path": [{ "from": (0.0, -0.004844, 37.6), "to": (0.0, -0.004844, 37.6), "start_s": 1.93333333333333, "end_s": 2.18333333333333, "kind": "recognition_and_ready" }, { "from": (0.0, -0.004844, 37.6), "to": (2.560897, -0.004844, 38.45546), "start_s": 2.18333333333333, "end_s": 2.36333333333333, "kind": "escape_dash" }, { "from": (2.560897, -0.004844, 38.45546), "to": (2.560897, -0.004844, 38.45546), "start_s": 2.36333333333333, "end_s": 3.64433333333333, "kind": "recovery_wait" }, { "from": (2.560897, -0.004844, 38.45546), "to": (2.560897, -0.004844, 38.45546), "start_s": 3.64433333333333, "end_s": 3.94433333333333, "kind": "ordinary_primary" }], "landing": (2.560897, -0.004844, 38.45546), "attack_position": (2.560897, -0.004844, 38.45546), "primary_time_s": 3.64433333333333, "response_complete_s": 3.94433333333333, "uses_blast": false, "uses_invulnerability": false, "proof_scope": "static_box_floor_full_dash_stationary_primary" }, "sun_visual": 0, "effective_sun": 0, "commit": { "sun_choice": 0, "source_position": (0.625697, -0.004161, 35.72691), "hero_position": (0.0, -0.004844, 37.6), "facing": (0.026671, 0.0, 0.999644) }, "framing": { "landing": (2.560897, -0.004844, 38.45546), "attack_position": (2.560897, -0.004844, 38.45546) }, "framing_error": "", "last_rejection": "", "last_cancel_reason": "" }, "playback": {  } }, "l3-first-echo": { "kind": "echo", "installed": false }, "l3-useful-west-echo": { "kind": "echo", "installed": false }, "l3-useful-east-echo": { "kind": "echo", "installed": false }, "l3-resonant-echo": { "kind": "echo", "installed": false }, "l3-priority-echo": { "kind": "echo", "installed": false }, "l3-priority-stalker": { "kind": "stalker", "installed": false } }, "events": { "fired_dash": 3 } }
+PASS: actual parent/sources/Scheduler/Hero/barrier free with no enemy residue
+Owned Mirror Sea frontier: 5 checks; failures: 1. Routed first two entries only; no full persistence/route/art/native-human acceptance.

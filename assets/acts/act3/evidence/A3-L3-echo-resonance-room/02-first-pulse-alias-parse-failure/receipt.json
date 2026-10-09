@@ -1,0 +1,22 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act3/mirror_echo_resonance_room_smoke.gd -- --first-pulse-only",
+  "exit_code": 2,
+  "failure_class": "script_parse_resource_initialization",
+  "first_meaningful_error": "Parse Error: The member \"Projection\" cannot have the same name as a builtin type. Runtime line11",
+  "shared_baseline": "4d4564d35c677859e15dfd5da7901f344b594bbc",
+  "owned_head": "ef5139099663f297f131f6e37965857d915b52f8",
+  "source_freeze_exact_match": true,
+  "frozen_sources": 120,
+  "final_check_summary": "not emitted; exactly one FAIL line and zero PASS lines observed before exit2",
+  "native_portraits": 0,
+  "attempted_scope": "first-pulse-only narrow reproduction; actual Main loading fails before native room/Hero initialization",
+  "unattempted": [
+    "pulse admission",
+    "phase/timing/view",
+    "actual dash",
+    "Echo/cycle2",
+    "pause/wholeunit refusal",
+    "gameplay cleanup"
+  ],
+  "fix": "Rename owned GDScript alias only to ReplayFloor; no mechanics/assertions/tolerances/API change; rerun same target after compatible32 adoption. Existing script edit needs no new import."
+}

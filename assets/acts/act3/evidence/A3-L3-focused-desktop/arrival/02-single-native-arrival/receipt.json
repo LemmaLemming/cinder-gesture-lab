@@ -1,0 +1,16 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 340x736 --script res://tests/acts/act3/mirror_sea_arrival_draw_smoke.gd -- --arrival-only",
+  "session_id": 61890,
+  "exit_code": 1,
+  "checks": 5,
+  "failures": 1,
+  "script_or_native_errors": [
+    "ERROR: FAIL: one native focus request earns two actual focus frames without changing the paused native unit; paused native focus precondition refused: single-host arrival earned future entries/sources/pulses/leases/contact"
+  ],
+  "baseline": "027dfa16e4c215ab1cc9f86bd0e4792088d16446",
+  "owned_head": "32f7e993f67ef708866316aef0be3f1543d7fdf6",
+  "source_count": 341,
+  "all_frozen_sources_unchanged": true,
+  "closed_at": "2026-10-09T06:13:33.387344+00:00",
+  "scope": "Actual single Main source-free arrival loads; composite fixture pre-focus state guard refuses5checks1failure; no focus request/draw/PNG. Clean actual parent/source/Scheduler/Hero/barrier/observational-node disposal; no gameplay result or visual success."
+}
