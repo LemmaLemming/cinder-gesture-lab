@@ -814,9 +814,41 @@ func _full_pause(label: String) -> bool:
 
 
 func _full_quiet_capture(stage: String) -> bool:
-	if not await _full_pause(stage): return false
+	# The original SINGLE2 native pause window now includes current view readiness.
+	# A physics-complete deferred pause does not settle the pausable Game camera.
+	# Dictionary capture is shared by reference; do not capture a mutable bool.
+	var observation: Dictionary = {"requested": false}
+	if not await _wait(func() -> bool:
+		if not _require_unexpected(is_instance_valid(hero) and not hero.dead, stage + " retains the actual living Hero during capture observation"): return false
+		if paused:
+			if not _require_unexpected(observation.requested, stage + " unexpected focus/pause before the requested capture stops observation"): return false
+			return _resume_button(game.get("hud") as Node) != null
+		if not _guard_input(): return false
+		if observation.requested or not _full_capture_view_ready(): return false
+		observation.requested = bool(game.call("request_pause_deferred"))
+		_require_unexpected(observation.requested, stage + " requests one actual deferred pause after complete current view readiness")
+		return false, stage + " reaches complete current framing and the actual pause barrier", 2.0, true): return false
 	if not _framing(stage) or not await _capture(stage): return false
 	return await _gui_resume_pair()
+
+
+func _full_capture_view_ready() -> bool:
+	# Pure CURRENT containment only. Original strict _framing remains after pause.
+	if not is_instance_valid(level) or not is_instance_valid(game) or not is_instance_valid(hero): return false
+	var points: Array = level.camera_framing_points()
+	if not level.last_camera_framing_error.is_empty(): return false
+	if points.is_empty():
+		# The genuine unbegun intermediate approach has no live source requirement.
+		# Read every actual shared Hero corner; later strict approach guards retain
+		# their complete source/epoch/body/configuration checks without duplication.
+		var route: Dictionary = level.call("route_state")
+		if route.get("room_stage") != "approach" or route.get("encounter_started") != false or not route.get("beat_index") is int or route.beat_index < 0 or route.beat_index >= 5 or level.is_completed(): return false
+		if not String(game.get("last_camera_framing_error")).is_empty(): return false
+		points = game.call("player_camera_framing_points")
+	if points.is_empty() or points.size() > 224: return false
+	for point: Variant in points:
+		if not point is Vector3 or not point.is_finite(): return false
+	return String(game.call("camera_framing_error", points)).is_empty()
 
 
 func _capture(stage: String) -> bool:
