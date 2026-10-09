@@ -13,6 +13,16 @@ const WatchdogMs: int = 70000
 const SafeRect := Rect2(-6.5, -7.5, 13, 15)
 const Exact = preload("res://scripts/campaign/exact_json.gd")
 
+class FocusObserver:
+	extends Node
+	var receive: Callable
+	func _notification(what: int) -> void:
+		if not receive.is_valid(): return
+		if what == NOTIFICATION_APPLICATION_FOCUS_IN: receive.call("application-focus-in")
+		elif what == NOTIFICATION_APPLICATION_FOCUS_OUT: receive.call("application-focus-out")
+		elif what == NOTIFICATION_APPLICATION_PAUSED: receive.call("application-paused")
+		elif what == NOTIFICATION_APPLICATION_RESUMED: receive.call("application-resumed")
+
 var game: Node
 var level: CinderLevel
 var hero: CinderPlayer
@@ -53,6 +63,8 @@ var primary_not_before_s: float = 0.0
 var recovery_until_s: float = 0.0
 var primary_release_clock_s: float = -1.0
 var damage_cancel_clock_s: float = -1.0
+var focus_receipts: Array[Dictionary] = []
+var focus_observer: Node
 
 
 func _initialize() -> void:
@@ -63,6 +75,16 @@ func _initialize() -> void:
 
 func _run() -> void:
 	portrait = "--portrait" in OS.get_cmdline_user_args()
+	if portrait:
+		var observer := FocusObserver.new()
+		observer.name = "CourtFixtureFocusObserver"
+		observer.process_mode = Node.PROCESS_MODE_ALWAYS
+		observer.receive = Callable(self, "_record_focus")
+		focus_observer = observer
+		root.add_child(observer)
+		root.focus_entered.connect(_record_focus.bind("window-focus-entered"))
+		root.focus_exited.connect(_record_focus.bind("window-focus-exited"))
+		_record_focus("before-portrait-resize")
 	root.size = PortraitSize
 	report_path = "res://.cinder/l4-curtain-greybox-%d.json" % Time.get_ticks_usec()
 	if portrait:
@@ -148,12 +170,12 @@ func _run() -> void:
 func _open_curtain() -> bool:
 	await process_frame
 	game = MainScene.instantiate()
-	game.set("level_scene_path", ScenePath)
+	game.set("level_scene_path", _component_scene_path())
 	root.add_child(game)
 	level = game.get("active_level") as CinderLevel
 	hero = game.get("player") as CinderPlayer
 	scheduler = level.get("scheduler") as CinderThreatScheduler if level != null else null
-	if not _require(level != null and hero != null and scheduler != null and level.scene_file_path == ScenePath and level.get_script().resource_path == RuntimePath and level.level_id == "A1-L4" and level.contract_error().is_empty() and level.hero == hero and level.shared_shell == game and hero.global_position == Vector3(0, 0.1, 0), "actual A1-L4 component loads through shared Main at the exact authored spawn"):
+	if not _require(level != null and hero != null and scheduler != null and level.scene_file_path == _component_scene_path() and level.get_script().resource_path == _component_runtime_path() and level.level_id == "A1-L4" and level.contract_error().is_empty() and level.hero == hero and level.shared_shell == game and hero.global_position == Vector3(0, 0.1, 0), "actual A1-L4 component loads through shared Main at the exact authored spawn"):
 		return false
 	sources = (level.get("sources") as Dictionary).duplicate()
 	if not _require(sources.size() == 1 and sources.has(SourceID) and level.call("current_source_ids") == [SourceID], "court preview retains and activates only its one actual C32"):
@@ -178,8 +200,18 @@ func _open_curtain() -> bool:
 	hero.world_action_executed.connect(func(record: Dictionary) -> void: world_records.append(record.duplicate(true)); events += 1)
 	game.connect("input_observed", func(observation: Dictionary) -> void: input_observations.append(observation.duplicate(true)))
 	_retain_descendants(game)
+	_record_focus("before-initial-public-resume")
 	game.call("resume_lab") # Initial public resume only; never repeated on focus loss.
+	_record_focus("after-initial-public-resume")
 	return _require(not paused, "one initial public preview resume preserves ordinary focus handling")
+
+
+func _component_scene_path() -> String:
+	return ScenePath
+
+
+func _component_runtime_path() -> String:
+	return RuntimePath
 
 
 func _pause_warning(lease: String) -> bool:
@@ -210,12 +242,15 @@ func _pause_warning(lease: String) -> bool:
 	var point: Vector2 = button.get_global_rect().get_center()
 	var press := InputEventMouseButton.new()
 	press.button_index = MOUSE_BUTTON_LEFT; press.pressed = true; press.position = point; press.global_position = point
+	_record_focus("before-gui-resume-press")
 	Input.parse_input_event(press)
 	await process_frame
+	_record_focus("after-gui-resume-press-frame")
 	var release := InputEventMouseButton.new()
 	release.button_index = MOUSE_BUTTON_LEFT; release.position = point; release.global_position = point
 	Input.parse_input_event(release)
 	await process_frame
+	_record_focus("after-gui-resume-release-frame")
 	return _require(not paused and game.call("get_input_observation_state") == input_before and hero.get_world_action_records() == records_before, "genuine GUI press/frame/release/frame Resume is consumed without attack/dash/anchor change")
 
 
@@ -346,6 +381,7 @@ func _guard_input() -> bool:
 func _prepare_portrait_focus() -> bool:
 	# TEST setup before constructing Main. Request foreground once, then observe
 	# genuine native focus; never synthesize a focus event or resume after loss.
+	_record_focus("before-single-foreground-request")
 	DisplayServer.window_move_to_foreground(root.get_window_id())
 	var deadline: int = Time.get_ticks_msec() + 4000
 	var stable_since: int = -1
@@ -353,11 +389,22 @@ func _prepare_portrait_focus() -> bool:
 		if root.has_focus() and DisplayServer.window_is_focused(root.get_window_id()):
 			if stable_since < 0: stable_since = Time.get_ticks_msec()
 			if Time.get_ticks_msec() - stable_since >= 200:
+				_record_focus("genuine-startup-focus-stable")
 				return _require(true, "portrait startup observes 200ms genuine native focus before Main construction")
 		else:
 			stable_since = -1
 		await process_frame
 	return _require(false, "portrait startup requires genuine stable native focus; no gameplay started")
+
+
+func _record_focus(event: String) -> void:
+	if not portrait or focus_receipts.size() >= 128: return
+	# Both focus getters refer to the same native Window flag; they are not
+	# independent witnesses. Notification and UI/clock state are passive receipts.
+	var window_id: int = root.get_window_id()
+	var position: Vector2i = DisplayServer.window_get_position(window_id)
+	var size: Vector2i = DisplayServer.window_get_size(window_id)
+	focus_receipts.append({"event": event, "wall_usec": Time.get_ticks_usec(), "process_frame": Engine.get_process_frames(), "physics_frame": Engine.get_physics_frames(), "window_id": window_id, "window_position": [position.x, position.y], "window_size": [size.x, size.y], "window_mode": root.mode, "window_has_focus": root.has_focus(), "native_focus": DisplayServer.window_is_focused(window_id), "paused": paused, "pause_requested": bool(game.call("is_pause_requested")) if is_instance_valid(game) else null, "hero_dead": hero.dead if is_instance_valid(hero) else null, "action_clock_s": hero.get_world_action_clock() if is_instance_valid(hero) else null})
 
 func _framing(label: String) -> bool:
 	var points: Array = level.camera_framing_points()
@@ -417,7 +464,8 @@ func _require(condition: bool, label: String) -> bool:
 		failures += 1
 		aborted = true
 		if failures == 1:
-			first_failure = {"label": label, "paused": paused, "native_focus": DisplayServer.window_is_focused(), "sources": _portable(_source_states()), "camera": _portable(game.call("get_camera_framing_state")) if is_instance_valid(game) else {}, "input": _portable(game.call("get_input_observation_state")) if is_instance_valid(game) else {}}
+			_record_focus("first-failure/" + label)
+			first_failure = {"label": label, "paused": paused, "native_focus": DisplayServer.window_is_focused(), "sources": _portable(_source_states()), "camera": _portable(game.call("get_camera_framing_state")) if is_instance_valid(game) else {}, "input": _portable(game.call("get_input_observation_state")) if is_instance_valid(game) else {}, "focus_receipts": focus_receipts.duplicate(true)}
 			print("FIRST L4 CURTAIN FAILURE: ", JSON.stringify(first_failure))
 		push_error(label)
 	return condition
@@ -483,18 +531,22 @@ func _source_states() -> Dictionary:
 
 func _capture(stage: String) -> bool:
 	if not portrait: return not aborted and not finishing
+	_record_focus("before-capture/" + stage)
 	await RenderingServer.frame_post_draw
 	if aborted or finishing: return false
 	var image: Image = root.get_texture().get_image()
 	var path: String = capture_dir.path_join("%02d-curtain-%s.png" % [shots.size() + 1, stage])
 	if not _require(image != null and image.get_size() == PortraitSize and image.save_png(path) == OK, "actual540x1170 renderer saves " + stage): return false
 	shots.append({"stage": stage, "path": ProjectSettings.globalize_path(path), "hero_position": _portable(hero.global_position), "hp": hero.hp, "paused": paused, "native_focus": DisplayServer.window_is_focused(), "sources": _portable(_source_states()), "camera": _portable(game.call("get_camera_framing_state"))})
+	_record_focus("after-capture/" + stage)
 	return true
 
 
 func _finish() -> void:
 	if finishing: return
 	finishing = true
+	_record_focus("fixture-finish")
+	if is_instance_valid(focus_observer): focus_observer.queue_free()
 	if is_instance_valid(level): level.exit_level()
 	if is_instance_valid(game):
 		var fx: PixelEffects = game.get("fx") as PixelEffects
@@ -502,7 +554,7 @@ func _finish() -> void:
 		game.queue_free()
 	paused = false
 	await process_frame
-	var report: Dictionary = {"scope": "actual-input neutral/Standard A1-L4 one-C32 curtain component through shared Main preview; no King's B01/roundel/fulllevel/campaign save/earned prefix/human/mobile/performance claim", "checks": checks, "failures": failures, "actual_swipes": swipes, "actual_primaries": primaries, "test_ammo_setup": "zero shells immediately before primary; native reload unchanged", "normal_focus_out_preserved": true, "primary_release_clock_s": primary_release_clock_s, "damage_cancel_clock_s": damage_cancel_clock_s, "first_failure": first_failure, "worlds": worlds, "quiet_native_units": quiet_units, "captures": shots}
+	var report: Dictionary = {"scope": "actual-input neutral/Standard A1-L4 one-C32 curtain component through shared Main preview; no King's B01/roundel/fulllevel/campaign save/earned prefix/human/mobile/performance claim", "checks": checks, "failures": failures, "actual_swipes": swipes, "actual_primaries": primaries, "test_ammo_setup": "zero shells immediately before primary; native reload unchanged", "normal_focus_out_preserved": true, "primary_release_clock_s": primary_release_clock_s, "damage_cancel_clock_s": damage_cancel_clock_s, "first_failure": first_failure, "worlds": worlds, "quiet_native_units": quiet_units, "captures": shots, "focus_receipts": focus_receipts, "component_scene_path": _component_scene_path(), "component_runtime_path": _component_runtime_path()}
 	var file := FileAccess.open(report_path, FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify(report, "\t")); file.close()
