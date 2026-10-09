@@ -1,0 +1,189 @@
+{
+  "audited_at": "2026-10-09T01:21:52.713291+00:00",
+  "run_id": "source-reuse-performance1",
+  "source_manifest_sha256": "0e493ab05aaba99e9294eb3686546858ec3c522c90891f46b6162af974e801ad",
+  "original_source_count": 103,
+  "original_membership_hashes_exact": true,
+  "logs": {
+    ".cinder/source-reuse-performance1.log": {
+      "bytes": 31047,
+      "sha256": "131500b887253bd64a2186677376cf2c6ee2077c4555201f9990e565189dc5bf",
+      "errors": 0,
+      "script_errors": 0,
+      "warnings": 0
+    },
+    ".cinder/source-reuse-performance1-wrapper.log": {
+      "bytes": 31096,
+      "sha256": "3e82ee2bfc98d455cbe82ea16e8fdce269eee3202775cdd66a09064bfb3a38d2",
+      "errors": 0,
+      "script_errors": 0,
+      "warnings": 0
+    }
+  },
+  "closed_at": "2026-10-09T01:20:31.288975+00:00",
+  "actual_exit": 0,
+  "checks": 113,
+  "failures": 0,
+  "native_report_equal_between_full_logs": true,
+  "samples_total": 73,
+  "automatic_native_samples": 72,
+  "manual_samples": [
+    {
+      "accepted": true,
+      "automatic_native_tick": false,
+      "clock_s": 0.616666666666667,
+      "event_count": 0,
+      "finish_us": 2930996,
+      "inclusive_us": 62877,
+      "phase": "lock",
+      "physics_frame": 38,
+      "process_frame": 22,
+      "start_us": 2868119
+    }
+  ],
+  "automatic_summary_matching_original_report": {
+    "count": 72,
+    "inclusive_total_us": 5313843,
+    "mean_us": 73803.375,
+    "p50_us": 62978,
+    "p95_us": 122141,
+    "max_us": 344040
+  },
+  "inclusive_all_73_summary_independently_derived": {
+    "count": 73,
+    "inclusive_total_us": 5376720,
+    "mean_us": 73653.69863013699,
+    "p50_us": 62978,
+    "p95_us": 122141,
+    "max_us": 344040
+  },
+  "summary_method": "Nearest-rank ceil(n*p)-1 as original _cost_summary; sums/mean exact integers before display. Original report filters automatic_native_tick and contains72; all73 inclusive summary is this audit only.",
+  "phase_automatic_summaries": {
+    "active": {
+      "count": 14,
+      "inclusive_total_us": 943311,
+      "mean_us": 67379.35714285714,
+      "p50_us": 62950,
+      "p95_us": 122141,
+      "max_us": 122141
+    },
+    "lock": {
+      "count": 23,
+      "inclusive_total_us": 1541074,
+      "mean_us": 67003.21739130435,
+      "p50_us": 62129,
+      "p95_us": 106378,
+      "max_us": 114052
+    },
+    "recovery": {
+      "count": 19,
+      "inclusive_total_us": 1205815,
+      "mean_us": 63463.94736842105,
+      "p50_us": 61734,
+      "p95_us": 75216,
+      "max_us": 75216
+    },
+    "warning": {
+      "count": 16,
+      "inclusive_total_us": 1623643,
+      "mean_us": 101477.6875,
+      "p50_us": 64927,
+      "p95_us": 344040,
+      "max_us": 344040
+    }
+  },
+  "wall_elapsed_us": 5983149,
+  "simulation_elapsed_s": 1.2,
+  "admission_projection_bind_inclusive_us": 184216,
+  "separate_fixed_clock_probe_elapsed_us": 48788,
+  "separate_fixed_clock_probe_summaries": {
+    "replay_reservation_error": {
+      "count": 3,
+      "inclusive_total_us": 13193,
+      "mean_us": 4397.666666666667,
+      "p50_us": 4389,
+      "p95_us": 4418,
+      "max_us": 4418
+    },
+    "authored_replay_source_error": {
+      "count": 3,
+      "inclusive_total_us": 11740,
+      "mean_us": 3913.3333333333335,
+      "p50_us": 3914,
+      "p95_us": 3918,
+      "max_us": 3918
+    },
+    "cue.projection_error": {
+      "count": 3,
+      "inclusive_total_us": 13269,
+      "mean_us": 4423.0,
+      "p50_us": 4418,
+      "p95_us": 4466,
+      "max_us": 4466
+    },
+    "renderer_guard.current_error": {
+      "count": 3,
+      "inclusive_total_us": 1440,
+      "mean_us": 480.0,
+      "p50_us": 480,
+      "p95_us": 483,
+      "max_us": 483
+    },
+    "cursor.snapshot_error": {
+      "count": 3,
+      "inclusive_total_us": 8967,
+      "mean_us": 2989.0,
+      "p50_us": 2992,
+      "p95_us": 3001,
+      "max_us": 3001
+    }
+  },
+  "actual_world_actions": [
+    {
+      "completed_at_s": 0.933333333333335,
+      "damage": 0.0,
+      "hits": 0,
+      "kind": "dash",
+      "started_at_s": 0.750000000000001
+    },
+    {
+      "completed_at_s": 1.46666666666667,
+      "damage": 0.0,
+      "hits": 0,
+      "kind": "dash",
+      "started_at_s": 1.28333333333333
+    },
+    {
+      "completed_at_s": 1.55,
+      "damage": 20.0,
+      "hits": 1,
+      "kind": "primary",
+      "started_at_s": 1.55
+    }
+  ],
+  "native_assertion_scope": "Full native log confirms fixed-source/unchanged Hero HP during both real dashes and source dead/HP0/source_hits1 after ordinary primary. The report itself does not contain a separate raw final HP packet; no such field synthesized.",
+  "kernel_source_sha256": {
+    "scripts/campaign/level.gd": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+    "scripts/combat/authored_enemy_sequence.gd": "02d1469d1d1ff657722d2ce43b06e274c136e14f65ae6fdd91ff1521139a399e",
+    "scripts/combat/difficulty.gd": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+    "scripts/combat/replay_program.gd": "0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9",
+    "scripts/combat/threat_scheduler.gd": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+  },
+  "limits": "Instrumented one-Box native source first cycle with EXACT real Scheduler; advance end timestamps exclude appended sample bookkeeping. Cycle wall elapsed includes separately reported direct fixed-clock probes, admission/projection/bind, native loop waits and other observer overhead; probe costs are not nested production call counts. Three samples per API inspect only the genuine admitted prelock clock; Cue, renderer guard and Cursor probes use the actual retained instances, not new guards or cached authority. Not actual authored A3-L3, production 16-visual art, portrait review, FPS, CPU monitor percentiles, sustained performance or a latency acceptance threshold. No guards or contact/proof authority bypassed.",
+  "no_causal_percentage_or_fps_claim": true,
+  "no_native_rerun_or_original_mutation": true,
+  "earlier_guard_profile_auto72_independent_recomputation": {
+    "native_log_sha256": "ec361828e95f01a92cd48ad14d151c04221a6c079580af5f01b2293b7c50b631",
+    "raw_samples_total": 73,
+    "original_automatic_summary": {
+      "count": 72,
+      "inclusive_total_us": 4453473,
+      "p50_us": 60866,
+      "p95_us": 63538,
+      "max_us": 119276
+    },
+    "wall_elapsed_us": 5096364
+  },
+  "measurement_interpretation": "Original emitted summary uses72 automatic samples only;73 retained observations include one manual lock sample62877us. Independent all73 summary is derived separately and never attributed to original summary. Separate variable-CPU runs show no demonstrated runtime gain or causal percentage; performance request remains open.",
+  "clock_transport_limit": "Raw performance JSON decimal clocks are observational values, not exact bit-preserving snapshot transport. Native fixture uses ExactJson before/after clock/state comparisons in its pure-probe assertions; this audit does not reconstruct original float64 clock bits from decimal report."
+}

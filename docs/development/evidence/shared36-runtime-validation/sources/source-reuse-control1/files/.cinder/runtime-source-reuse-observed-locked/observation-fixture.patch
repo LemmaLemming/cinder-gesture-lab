@@ -1,0 +1,59 @@
+--- frozen-signature-safe/source_reuse_smoke.gd
++++ new-observed-locked/source_reuse_smoke.gd
+@@ -1,10 +1,13 @@
+ extends "res://tests/authored_echo_playback_smoke.gd"
+ ## OFFLINE / UNPARSED future control. Runs ONLY after root adopts/reviews the
+ ## four candidate files and explicitly authorizes canonical catalogue writes.
+-## The accompanying Python wrapper provides process-level try/finally restore.
++## Runner restores exact catalogue bytes+mode before canonical lock release.
+ const ReuseProgram = preload("res://scripts/combat/replay_program.gd")
+ const ReusePlan = preload("res://scripts/combat/authored_enemy_sequence.gd")
+ const PROFILE_PATH: String = "res://data/design/difficulty_profiles.json"
++## Diagnostics only: finite full actual packet receipts, never restore authority.
++const MAX_OBSERVATION_UNIT_BYTES: int = 2097152
++const MAX_OBSERVATION_LINE_BYTES: int = 10485760
+ 
+ class OriginalSignatureProbe extends "res://scripts/combat/authored_enemy_sequence.gd":
+ 	var input_calls: int = 0
+@@ -182,6 +185,10 @@
+ 	_callbacks.clear()
+ 	var results: Array[String] = []
+ 	for legacy: bool in [false, true]:
++		_callbacks.clear()
++		var control_before: String = Exact.stringify(_native_unit(arena))
++		_expect(not control_before.is_empty() and control_before == before, mode + " each actual control starts from the original nonempty complete unit")
++		if control_before.is_empty(): return
+ 		var sequence: Dictionary = arena.actor.source_program()
+ 		var staged: Dictionary = arena.actor.get_authored_echo_binding().duplicate(true) if mode in ["staged_normal", "staged_definition"] else {}
+ 		arena.actor.submitted = sequence
+@@ -202,6 +209,7 @@
+ 		_expect(arena.actor.write_error.is_empty() and (mode in ["normal", "staged_normal"] or arena.actor.getter_calls == 1), mode + " mutation occurs once inside the actual source getter")
+ 		var after: String = Exact.stringify(_native_unit(arena))
+ 		_expect(not after.is_empty() and _callbacks.is_empty() and after == before, mode + " pure validation preserves HP, all clocks/history, native pose/renderer/cue/resource identities and callbacks")
++		_emit_observation(mode, legacy, control_before, after, error, arena.actor.getter_calls, arena.actor.write_error)
+ 	_expect(results[0] == results[1], mode + " optimized decision/error equals original full-binding path: " + results[0] + " / " + results[1])
+ 	if mode in ["normal", "staged_normal", "catalogue_lexical", "catalogue_other"]:
+ 		_expect(results[0].is_empty(), mode + " retains the genuine original pass rather than denying changed bytes outright")
+@@ -209,6 +217,22 @@
+ 		_expect(not results[0].is_empty(), mode + " genuine forged/current-world or catalogue mismatch rejects")
+ 	if mode == "floor_catalogue":
+ 		_expect(results[0] == "Actual authored floor/collision guards differ", "earlier real native-world refusal wins over changed catalogue at original error boundary")
++
++
++func _emit_observation(mode: String, legacy: bool, before: String, after: String, error: String, getter_calls: int, write_error: String) -> void:
++	var callbacks: Array[String] = _callbacks.duplicate()
++	var bounded: bool = not before.is_empty() and not after.is_empty() and before.to_utf8_buffer().size() <= MAX_OBSERVATION_UNIT_BYTES and after.to_utf8_buffer().size() <= MAX_OBSERVATION_UNIT_BYTES and callbacks.size() <= 128 and error.to_utf8_buffer().size() <= 16384 and write_error.to_utf8_buffer().size() <= 16384
++	for value: String in callbacks:
++		bounded = bounded and value.to_utf8_buffer().size() <= 256
++	_expect(bounded, mode + " original actual control observations are nonempty and bounded before publication")
++	if not bounded: return
++	# Both strings were encoded from actual full native/public observations.
++	# Decode those tagged receipts independently; do not coerce native IDs/bits.
++	var observed: Dictionary = {"api_revision": "test-only-source-reuse-observation-1", "mode": mode, "legacy_original_path": legacy, "before_exact": before, "after_exact": after, "callbacks": callbacks, "decision_error": error, "getter_calls": getter_calls, "catalogue_write_error": write_error, "same_actual_unit": before == after, "scope": "actual_paused_control_diagnostics_not_saved_actor_authority"}
++	var wire: String = JSON.stringify(observed)
++	_expect(not wire.is_empty() and wire.to_utf8_buffer().size() <= MAX_OBSERVATION_LINE_BYTES, mode + " complete raw observation line encodes without omission")
++	if wire.is_empty() or wire.to_utf8_buffer().size() > MAX_OBSERVATION_LINE_BYTES: return
++	print("AUTHORED_SOURCE_REUSE_OBSERVATION ", wire)
+ 
+ 
+ func _native_unit(arena: Dictionary) -> Dictionary:

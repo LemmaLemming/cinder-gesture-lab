@@ -1,0 +1,96 @@
+{
+  "scope": "Python fake-child tests against actual imported dev.main/run_child bodies; canonical godot_lock and native Popen replaced ONLY in this synthetic process",
+  "cases": [
+    {
+      "control": "nonzero_child",
+      "fake_dev_main_exit": 7,
+      "fake_child_exit": 7,
+      "propagated_exception": null,
+      "events": [
+        "dev_main_lock_enter",
+        "preflight_under_lock",
+        "original_run_child_created_fake_child",
+        "original_fake_child_closed",
+        "restore_after_child_close_while_held",
+        "dev_main_lock_exit_after_exact_restore"
+      ],
+      "bytes_and_mode_restored": true,
+      "native_process_started": false,
+      "real_lock_acquired": false
+    },
+    {
+      "control": "unexpected_wait_exception",
+      "fake_dev_main_exit": 130,
+      "fake_child_exit": 0,
+      "propagated_exception": null,
+      "events": [
+        "dev_main_lock_enter",
+        "preflight_under_lock",
+        "original_run_child_created_fake_child",
+        "first_wait_exception_child_still_live",
+        "original_fake_child_closed",
+        "restore_after_child_close_while_held",
+        "dev_main_lock_exit_after_exact_restore"
+      ],
+      "bytes_and_mode_restored": true,
+      "native_process_started": false,
+      "real_lock_acquired": false
+    },
+    {
+      "control": "dev_caught_oserror",
+      "fake_dev_main_exit": 2,
+      "fake_child_exit": 0,
+      "propagated_exception": null,
+      "events": [
+        "dev_main_lock_enter",
+        "preflight_under_lock",
+        "original_run_child_created_fake_child",
+        "first_wait_oserror_child_still_live",
+        "original_fake_child_closed",
+        "restore_after_child_close_while_held",
+        "dev_main_lock_exit_after_exact_restore"
+      ],
+      "bytes_and_mode_restored": true,
+      "native_process_started": false,
+      "real_lock_acquired": false
+    },
+    {
+      "control": "propagated_runtime_error",
+      "fake_dev_main_exit": null,
+      "fake_child_exit": 0,
+      "propagated_exception": "synthetic wait error",
+      "events": [
+        "dev_main_lock_enter",
+        "preflight_under_lock",
+        "original_run_child_created_fake_child",
+        "first_wait_runtimeerror_child_still_live",
+        "original_fake_child_closed",
+        "restore_after_child_close_while_held",
+        "dev_main_lock_exit_after_exact_restore"
+      ],
+      "bytes_and_mode_restored": true,
+      "native_process_started": false,
+      "real_lock_acquired": false
+    },
+    {
+      "control": "mode_only",
+      "fake_dev_main_exit": 0,
+      "fake_child_exit": 0,
+      "propagated_exception": null,
+      "events": [
+        "dev_main_lock_enter",
+        "preflight_under_lock",
+        "original_run_child_created_fake_child",
+        "original_fake_child_closed",
+        "restore_after_child_close_while_held",
+        "dev_main_lock_exit_after_exact_restore"
+      ],
+      "bytes_and_mode_restored": true,
+      "native_process_started": false,
+      "real_lock_acquired": false
+    }
+  ],
+  "native_jobs_started": 0,
+  "canonical_catalogue_writes": 0,
+  "limitation": "Does not execute GDScript/Godot, acquire a real lock, or guarantee hard-termination recovery"
+}

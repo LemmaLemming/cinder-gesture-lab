@@ -1,0 +1,80 @@
+{
+  "api_revision": "test-only-source-reuse-submission-1",
+  "run_id": "source-reuse-control1",
+  "submitted_at": "2026-10-09T00:57:37.134908+00:00",
+  "release_manifest_sha256": "b0aca65f534ded21f30c22ed45df3b2117945ea03329504cc216ba924584ab8d",
+  "runner_pid": 88679,
+  "actual_runner_argv": [
+    ".cinder/runtime-source-reuse-observed-locked/run_controlled_fixture.py",
+    "--execute-reviewed-candidates",
+    "--run-id",
+    "source-reuse-control1"
+  ],
+  "canonical_dev_main_argv": [
+    "engine",
+    "--headless",
+    "--verbose",
+    "--path",
+    "/Users/howardchen/Documents/ChatGPT/video game idea",
+    "--script",
+    "res://.cinder/runtime-source-reuse-observed-locked/source_reuse_smoke.gd",
+    "--log-file",
+    "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/source-reuse-control1.log",
+    "--",
+    "--allow-canonical-catalogue-mutation"
+  ],
+  "actual_native_argv": [
+    "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+    "--headless",
+    "--verbose",
+    "--path",
+    "/Users/howardchen/Documents/ChatGPT/video game idea",
+    "--script",
+    "res://.cinder/runtime-source-reuse-observed-locked/source_reuse_smoke.gd",
+    "--log-file",
+    "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/source-reuse-control1.log",
+    "--",
+    "--allow-canonical-catalogue-mutation"
+  ],
+  "lock_entered": true,
+  "permission_provenance": null,
+  "tool_session": null,
+  "provenance_limit": "Actual local argv only; approval/session provenance is not manufactured",
+  "cleanup_limit": "Catchable shutdown waits for the original child; SIGKILL/process or machine loss can prevent finally",
+  "locked_at": "2026-10-09T01:01:31.871832+00:00",
+  "borrowed_lock_fd": 6,
+  "original_catalogue": {
+    "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+    "bytes": 1313,
+    "mode": 420,
+    "captured_under_lock": true
+  },
+  "child_started_at": "2026-10-09T01:01:31.884919+00:00",
+  "actual_child_exit": 0,
+  "actual_child_pid": 16851,
+  "child_closed_at": "2026-10-09T01:01:41.674052+00:00",
+  "restored_catalogue": {
+    "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+    "bytes": 1313,
+    "mode": 420,
+    "restored_at": "2026-10-09T01:01:41.674315+00:00",
+    "while_canonical_lock_held": true
+  },
+  "deferred_shutdown_signals": [],
+  "closed_at": "2026-10-09T01:01:41.674701+00:00",
+  "dev_main_exit": 0,
+  "exception": null,
+  "logs": [
+    {
+      "path": ".cinder/source-reuse-control1.log",
+      "bytes": 8725903,
+      "sha256": "0c1f6d1eb00a411834b204f6104ff1b9bc8e64e518347e633370b3cef02bc6fc"
+    },
+    {
+      "path": ".cinder/source-reuse-control1-wrapper.log",
+      "bytes": 8726219,
+      "sha256": "52ae513da4f1f8d652204386d4f5f1e8067b6cd8e0be9acd37199f0639e25576"
+    }
+  ],
+  "scope": "Actual future source-reuse control; classify full logs independently, never infer native pass from dev exit"
+}
