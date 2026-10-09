@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act1/mushroom_caverns.gd" id="1_level"]
+
+[node name="MushroomGuardGreybox" type="Node3D"]
+script = ExtResource("1_level")
+level_id = "A1-L3"
+local_snapshot_version = 1
+initial_greybox_room = 3
+objective_text = "GREYBOX · LONE SPEAR GUARD\nREAD ITS LANE · FLANK WITH AN ORDINARY PRIMARY"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, -26)

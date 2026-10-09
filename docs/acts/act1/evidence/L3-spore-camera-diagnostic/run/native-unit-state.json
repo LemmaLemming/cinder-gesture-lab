@@ -1,0 +1,5249 @@
+{
+	"checks": 43,
+	"failures": 1,
+	"primaries": 1,
+	"shots": [],
+	"swipes": 1,
+	"units": [
+		{
+			"label": "bound approaching native source",
+			"unit": {
+				"actors": {
+					"lone-guard": {
+						"api_revision": "act1-mushroom-selenite-3",
+						"approach_driving": false,
+						"configuration": {
+							"approach": {
+								"acceleration": 3.0,
+								"braking": 5.0,
+								"enabled": false,
+								"settle_distance": 0.001,
+								"speed": 1.2,
+								"stop_distance": 3.0,
+								"turn_rate": 3.0
+							},
+							"entity_id": "C32",
+							"initially_dormant": true,
+							"lane": {
+								"length": 2.0,
+								"radius": 0.38
+							},
+							"lunge": {},
+							"raw_role": {
+								"active_s": 0.2,
+								"attack_interval_s": 2.0,
+								"lock_s": 0.85,
+								"max_hp": 24.0,
+								"move_speed": 0.0,
+								"raw_damage": 8.0,
+								"recovery_s": 2.4,
+								"windup_s": 1.85
+							},
+							"role_id": "A1-E3",
+							"source_id": "lone-guard",
+							"timing_floors": {
+								"lock_s": 0.85,
+								"recovery_s": 2.4,
+								"windup_s": 1.85
+							}
+						},
+						"cycle": 0,
+						"dead": false,
+						"dormant": true,
+						"hit_ids": [],
+						"hp": 24.0,
+						"hurt_left_s": 0.0,
+						"last_cancel_reason": "",
+						"motion": {
+							"facing": [
+								0.0,
+								0.0,
+								-1.0
+							],
+							"grounded": false,
+							"position": [
+								0.0,
+								0.00499999988824129,
+								-30.0
+							],
+							"velocity": [
+								0.0,
+								0.0,
+								0.0
+							]
+						},
+						"profile_id": "",
+						"reservation_id": "",
+						"resolved_role": {},
+						"role_encounter_id": "",
+						"role_id": "A1-E3",
+						"sample": {},
+						"schema_version": 1,
+						"source_id": "lone-guard"
+					},
+					"umbrella-1": {
+						"api_revision": "act1-mushroom-selenite-3",
+						"approach_driving": true,
+						"configuration": {
+							"approach": {
+								"acceleration": 3.0,
+								"braking": 5.0,
+								"enabled": true,
+								"settle_distance": 0.001,
+								"speed": 1.2,
+								"stop_distance": 3.0,
+								"turn_rate": 3.0
+							},
+							"entity_id": "C31",
+							"initially_dormant": true,
+							"lane": {},
+							"lunge": {
+								"body_collision_path": "BodyCollision",
+								"damage_radius": 0.38,
+								"distance": 1.0,
+								"speed": 4.0
+							},
+							"raw_role": {
+								"active_s": 0.4,
+								"attack_interval_s": 2.0,
+								"lock_s": 0.85,
+								"max_hp": 16.0,
+								"move_speed": 4.0,
+								"raw_damage": 6.0,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							},
+							"role_id": "A1-E2",
+							"source_id": "umbrella-1",
+							"timing_floors": {
+								"lock_s": 0.85,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							}
+						},
+						"cycle": 0,
+						"dead": false,
+						"dormant": false,
+						"hit_ids": [],
+						"hp": 16.0,
+						"hurt_left_s": 0.0,
+						"last_cancel_reason": "",
+						"motion": {
+							"facing": [
+								0.946300089359283,
+								0.0,
+								0.323289573192596
+							],
+							"grounded": true,
+							"position": [
+								-2.39760994911194,
+								-0.00492187589406967,
+								10.0007305145264
+							],
+							"velocity": [
+								0.0953435301780701,
+								0.0,
+								0.0300467610359192
+							]
+						},
+						"profile_id": "",
+						"repulsion": {
+							"api_revision": "scheduler-spore-actor-1",
+							"consumer_id": "component-native-spores",
+							"direction": [
+								0.0,
+								0.0,
+								-1.0
+							],
+							"episode_id": "",
+							"phase": "none",
+							"progress": 0.0,
+							"source_id": "umbrella-1"
+						},
+						"reservation_id": "",
+						"resolved_role": {},
+						"role_encounter_id": "",
+						"role_id": "A1-E2",
+						"sample": {},
+						"schema_version": 3,
+						"source_id": "umbrella-1"
+					},
+					"umbrella-2": {
+						"api_revision": "act1-mushroom-selenite-3",
+						"approach_driving": false,
+						"configuration": {
+							"approach": {
+								"acceleration": 3.0,
+								"braking": 5.0,
+								"enabled": true,
+								"settle_distance": 0.001,
+								"speed": 1.2,
+								"stop_distance": 3.0,
+								"turn_rate": 3.0
+							},
+							"entity_id": "C31",
+							"initially_dormant": true,
+							"lane": {},
+							"lunge": {
+								"body_collision_path": "BodyCollision",
+								"damage_radius": 0.38,
+								"distance": 1.0,
+								"speed": 4.0
+							},
+							"raw_role": {
+								"active_s": 0.4,
+								"attack_interval_s": 2.0,
+								"lock_s": 0.85,
+								"max_hp": 16.0,
+								"move_speed": 4.0,
+								"raw_damage": 6.0,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							},
+							"role_id": "A1-E2",
+							"source_id": "umbrella-2",
+							"timing_floors": {
+								"lock_s": 0.85,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							}
+						},
+						"cycle": 0,
+						"dead": false,
+						"dormant": true,
+						"hit_ids": [],
+						"hp": 16.0,
+						"hurt_left_s": 0.0,
+						"last_cancel_reason": "",
+						"motion": {
+							"facing": [
+								0.0,
+								0.0,
+								-1.0
+							],
+							"grounded": false,
+							"position": [
+								2.40000009536743,
+								0.00499999988824129,
+								10.0
+							],
+							"velocity": [
+								0.0,
+								0.0,
+								0.0
+							]
+						},
+						"profile_id": "",
+						"reservation_id": "",
+						"resolved_role": {},
+						"role_encounter_id": "",
+						"role_id": "A1-E2",
+						"sample": {},
+						"schema_version": 1,
+						"source_id": "umbrella-2"
+					},
+					"umbrella-3": {
+						"api_revision": "act1-mushroom-selenite-3",
+						"approach_driving": false,
+						"configuration": {
+							"approach": {
+								"acceleration": 3.0,
+								"braking": 5.0,
+								"enabled": true,
+								"settle_distance": 0.001,
+								"speed": 1.2,
+								"stop_distance": 3.0,
+								"turn_rate": 3.0
+							},
+							"entity_id": "C31",
+							"initially_dormant": true,
+							"lane": {},
+							"lunge": {
+								"body_collision_path": "BodyCollision",
+								"damage_radius": 0.38,
+								"distance": 1.0,
+								"speed": 4.0
+							},
+							"raw_role": {
+								"active_s": 0.4,
+								"attack_interval_s": 2.0,
+								"lock_s": 0.85,
+								"max_hp": 16.0,
+								"move_speed": 4.0,
+								"raw_damage": 6.0,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							},
+							"role_id": "A1-E2",
+							"source_id": "umbrella-3",
+							"timing_floors": {
+								"lock_s": 0.85,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							}
+						},
+						"cycle": 0,
+						"dead": false,
+						"dormant": true,
+						"hit_ids": [],
+						"hp": 16.0,
+						"hurt_left_s": 0.0,
+						"last_cancel_reason": "",
+						"motion": {
+							"facing": [
+								0.0,
+								0.0,
+								-1.0
+							],
+							"grounded": false,
+							"position": [
+								-2.40000009536743,
+								0.00499999988824129,
+								7.19999980926514
+							],
+							"velocity": [
+								0.0,
+								0.0,
+								0.0
+							]
+						},
+						"profile_id": "",
+						"reservation_id": "",
+						"resolved_role": {},
+						"role_encounter_id": "",
+						"role_id": "A1-E2",
+						"sample": {},
+						"schema_version": 1,
+						"source_id": "umbrella-3"
+					}
+				},
+				"api_revision": "act1-mushroom-spore-component-1",
+				"coordinator": {
+					"api_revision": "spore-repulsion-1",
+					"definition": {
+						"directions": [
+							[
+								-1.0,
+								0.0,
+								0.0
+							],
+							[
+								1.0,
+								0.0,
+								0.0
+							],
+							[
+								0.0,
+								0.0,
+								-1.0
+							],
+							[
+								0.0,
+								0.0,
+								1.0
+							],
+							[
+								-0.70710676908493,
+								0.0,
+								-0.70710676908493
+							],
+							[
+								-0.70710676908493,
+								0.0,
+								0.70710676908493
+							],
+							[
+								0.70710676908493,
+								0.0,
+								-0.70710676908493
+							],
+							[
+								0.70710676908493,
+								0.0,
+								0.70710676908493
+							]
+						],
+						"id": "component-native-spores",
+						"parameters": {
+							"exit_clearance": 0.08,
+							"max_distance": 8.0,
+							"recoil_s": 0.12,
+							"regroup_s": 0.35,
+							"speed": 4.0,
+							"turn_s": 0.1
+						}
+					},
+					"failures": {},
+					"field_geometry": {
+						"component-mushroom": {
+							"origin": [
+								-1.60000002384186,
+								0.0,
+								11.0
+							],
+							"radius": 1.5
+						}
+					},
+					"field_references": {
+						"component-mushroom": {
+							"activation_s": null,
+							"clock_s": 0.633333333333334,
+							"deadline_s": null,
+							"generation": 0,
+							"geometry": {
+								"origin": [
+									-1.60000002384186,
+									0.0,
+									11.0
+								],
+								"radius": 1.5
+							},
+							"phase": "available"
+						}
+					},
+					"records": {},
+					"schema_version": 2,
+					"serial": 0,
+					"source_environments": {
+						"umbrella-1": {
+							"body_signature": {
+								"centre": [
+									0.0,
+									0.730000019073486,
+									0.0
+								],
+								"layer": 2,
+								"mask": 1,
+								"path": "BodyCollision",
+								"priority": 1.0,
+								"shape": {
+									"custom_solver_bias": 0.0,
+									"height": 1.45000004768372,
+									"margin": 0.0399999991059303,
+									"radius": 0.319999992847443,
+									"type": "CapsuleShape3D"
+								}
+							},
+							"floor_signature": [
+								{
+									"floor_id": "mushroom-floor",
+									"layer": 1,
+									"mask": 0,
+									"path": "MushroomSporeGroveComponent/Floor/CollisionShape3D",
+									"safe_rect": [
+										-6.90000009536743,
+										-53.9000015258789,
+										13.8000001907349,
+										71.8000030517578
+									],
+									"shape": {
+										"custom_solver_bias": 0.0,
+										"margin": 0.0399999991059303,
+										"size": [
+											14.0,
+											0.400000005960464,
+											72.0
+										],
+										"type": "BoxShape3D"
+									},
+									"transform": [
+										[
+											1.0,
+											0.0,
+											0.0
+										],
+										[
+											0.0,
+											1.0,
+											0.0
+										],
+										[
+											0.0,
+											0.0,
+											1.0
+										],
+										[
+											0.0,
+											-0.200000002980232,
+											-18.0
+										]
+									]
+								}
+							],
+							"foot_offset": 0.00499999523162842,
+							"support_radius": 0.329999992847443,
+							"world_signature": {
+								"colliders": [
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/BreathingStalk",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														1.10000002384186,
+														2.20000004768372,
+														1.10000002384186
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												-4.59999990463257,
+												1.10000002384186,
+												-2.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/CourtStalk",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														1.10000002384186,
+														2.20000004768372,
+														1.10000002384186
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												4.5,
+												1.10000002384186,
+												-43.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/CrossedLeftStalk",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														1.10000002384186,
+														2.20000004768372,
+														1.10000002384186
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												-5.59999990463257,
+												1.10000002384186,
+												-15.1999998092651
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/CrossedRightStalk",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														1.10000002384186,
+														2.20000004768372,
+														1.10000002384186
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												5.59999990463257,
+												1.10000002384186,
+												-18.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/EastEdge",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														0.200000002980232,
+														0.699999988079071,
+														72.0
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												7.0,
+												0.349999994039536,
+												-18.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/Floor",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														14.0,
+														0.400000005960464,
+														72.0
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												-0.200000002980232,
+												-18.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/NorthEdge",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														14.0,
+														0.699999988079071,
+														0.200000002980232
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.349999994039536,
+												-54.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/SouthEdge",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														14.0,
+														0.699999988079071,
+														0.200000002980232
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.349999994039536,
+												18.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/UmbrellaStalk",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														1.10000002384186,
+														2.20000004768372,
+														1.10000002384186
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												-4.80000019073486,
+												1.10000002384186,
+												10.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/WestEdge",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														0.200000002980232,
+														0.699999988079071,
+														72.0
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												-7.0,
+												0.349999994039536,
+												-18.0
+											]
+										]
+									}
+								],
+								"engine": "DEFAULT",
+								"tick_rate": 60
+							}
+						}
+					},
+					"source_protocols": {
+						"umbrella-1": {
+							"actor_revision": "act1-mushroom-selenite-3",
+							"actor_sha256": "0bdcd1d45f7fa7d1c5650b9dec547095f519160667111a5bad04916225ca31d4",
+							"api_revision": "scheduler-spore-source-1",
+							"configuration_sha256": "b0d7b9069977760156fc195e44fcb739a2e31f190cfd5fa3c56c0b08ed594a48",
+							"controller_id": "mushroom-scheduler",
+							"player_id": "hero",
+							"source_id": "umbrella-1"
+						}
+					}
+				},
+				"fields": {
+					"component-mushroom": {
+						"activation_s": null,
+						"api_revision": "spore-field-1",
+						"clock_s": 0.633333333333334,
+						"deadline_s": null,
+						"definition": {
+							"clusters": [
+								{
+									"id": "cluster-left",
+									"offset": [
+										-0.349999994039536,
+										0.800000011920929,
+										-0.25
+									]
+								},
+								{
+									"id": "cluster-right",
+									"offset": [
+										0.349999994039536,
+										0.800000011920929,
+										0.25
+									]
+								}
+							],
+							"id": "component-mushroom",
+							"parameters": {
+								"duration_s": 3.0,
+								"radius": 1.5,
+								"thinning_s": 0.5
+							}
+						},
+						"generation": 0,
+						"geometry": {
+							"origin": [
+								-1.60000002384186,
+								0.0,
+								11.0
+							],
+							"radius": 1.5
+						},
+						"phase": "available",
+						"schema_version": 1,
+						"spent_ids": []
+					}
+				},
+				"player": {
+					"actor_type": "CinderPlayer",
+					"api_revision": "player-snapshot-1",
+					"clocks": {
+						"blast_cooldown_s": 0.0,
+						"dash_cooldown_s": 0.0,
+						"dash_left_s": 0.0,
+						"invulnerability_s": 0.0,
+						"knockback_left_s": 0.0,
+						"primary_cooldown_s": 0.0,
+						"reload_s": 0.0
+					},
+					"equipment": {
+						"jacket": "CLOTH-J0",
+						"pants": "CLOTH-P0",
+						"shoes": "CLOTH-S0",
+						"weapon": "WEAPON-01"
+					},
+					"last_action": {},
+					"last_dash_distance": 2.69999980926514,
+					"motion": {
+						"basis": [
+							[
+								1.0,
+								0.0,
+								0.0
+							],
+							[
+								0.0,
+								1.0,
+								0.0
+							],
+							[
+								0.0,
+								0.0,
+								1.0
+							]
+						],
+						"dash_direction": [
+							0.0,
+							0.0,
+							-1.0
+						],
+						"dash_origin": null,
+						"dash_speed": 15.0,
+						"dash_total_s": 0.18,
+						"facing": [
+							0.0,
+							0.0,
+							-1.0
+						],
+						"grounded": true,
+						"position": [
+							0.0,
+							-0.00484376167878509,
+							12.3000001907349
+						],
+						"queued_dash": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"velocity": [
+							0.0,
+							0.0,
+							0.0
+						]
+					},
+					"pending_weapon": "",
+					"phases": {
+						"landing_left_s": 0.00333333333333338,
+						"logical": "idle",
+						"logical_left_s": 0.0,
+						"logical_total_s": 0.0,
+						"visual": "idle",
+						"visual_left_s": 0.0,
+						"visual_total_s": 0.0
+					},
+					"presentation": {
+						"action": "landing",
+						"frame": 5,
+						"id": "act1_expedition",
+						"idle_time_s": 0.0
+					},
+					"resources": {
+						"dead": false,
+						"hp": 100.0,
+						"max_hp": 100.0,
+						"max_shells": 2,
+						"shells": 2
+					},
+					"schema_version": 1,
+					"world_actions": {
+						"clock_s": 0.666666666666667,
+						"history": [
+							{
+								"blocked": false,
+								"collision_shortened": false,
+								"completed_at_s": 0.45,
+								"direction": [
+									0.0,
+									0.0,
+									-1.0
+								],
+								"distance": 2.69999980926514,
+								"equipment_ids": {
+									"jacket": "CLOTH-J0",
+									"pants": "CLOTH-P0",
+									"shoes": "CLOTH-S0",
+									"weapon": "WEAPON-01"
+								},
+								"kind": "dash",
+								"landing": [
+									0.0,
+									-0.00484376167878509,
+									12.3000001907349
+								],
+								"movement_damage": false,
+								"origin": "player_direct",
+								"path": [
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											15.0
+										],
+										"time_s": 0.266666666666667
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											14.75
+										],
+										"time_s": 0.283333333333333
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											14.5
+										],
+										"time_s": 0.3
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											14.25
+										],
+										"time_s": 0.316666666666667
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											14.0
+										],
+										"time_s": 0.333333333333333
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											13.75
+										],
+										"time_s": 0.35
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											13.5
+										],
+										"time_s": 0.366666666666667
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											13.25
+										],
+										"time_s": 0.383333333333333
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											13.0
+										],
+										"time_s": 0.4
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											12.75
+										],
+										"time_s": 0.416666666666667
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											12.5
+										],
+										"time_s": 0.433333333333333
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											12.3000001907349
+										],
+										"time_s": 0.45
+									}
+								],
+								"resolved_stats": {
+									"armour": 1.0,
+									"capped_stats": [],
+									"damage_reduction": 0.0,
+									"dash_cooldown": 0.34,
+									"dash_distance": 2.7,
+									"dash_duration": 0.18,
+									"dash_invulnerability": 0.12,
+									"dash_speed": 15.0,
+									"effective_health": 100.0,
+									"followup_cone_min_dot": 0.5,
+									"followup_cooldown": 0.45,
+									"followup_damage": 42.0,
+									"followup_range": 3.1,
+									"gear_multipliers": {
+										"armour": 1.0,
+										"attack_range": 1.0,
+										"attack_speed": 1.0,
+										"damage": 1.0,
+										"dash_distance": 1.0,
+										"dash_speed": 1.0,
+										"max_health": 1.0
+									},
+									"hurt_invulnerability": 0.8,
+									"max_health": 100.0,
+									"primary_cadence_estimate": 0.3,
+									"primary_cone_min_dot": 0.05,
+									"primary_cooldown": 0.3,
+									"primary_damage": 20.0,
+									"primary_hit_reload_credit": 0.45,
+									"primary_range": 2.0,
+									"raw_gear_multipliers": {
+										"armour": 1.0,
+										"attack_range": 1.0,
+										"attack_speed": 1.0,
+										"damage": 1.0,
+										"dash_distance": 1.0,
+										"dash_speed": 1.0,
+										"max_health": 1.0
+									},
+									"shell_capacity": 2,
+									"shell_reload": 1.15,
+									"total_multipliers": {
+										"armour": 1.0,
+										"attack_range": 1.0,
+										"attack_speed": 1.0,
+										"damage": 1.0,
+										"dash_distance": 1.0,
+										"dash_speed": 1.0,
+										"max_health": 1.0
+									},
+									"weapon_id": "WEAPON-01",
+									"weapon_name": "Balanced Edge"
+								},
+								"schema_version": 1,
+								"sequence": 1,
+								"started_at_s": 0.266666666666667,
+								"world_origin": [
+									0.0,
+									-0.00484376167878509,
+									15.0
+								]
+							}
+						],
+						"pending_dash": {},
+						"schema_version": 1,
+						"sequence": 1
+					}
+				},
+				"scheduler": {
+					"api_revision": "scheduler-snapshot-1",
+					"clock_s": 0.666666666666667,
+					"collision": {
+						"colliders": [
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/BreathingStalk",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												1.10000002384186,
+												2.20000004768372,
+												1.10000002384186
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										-4.59999990463257,
+										1.10000002384186,
+										-2.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/CourtStalk",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												1.10000002384186,
+												2.20000004768372,
+												1.10000002384186
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										4.5,
+										1.10000002384186,
+										-43.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/CrossedLeftStalk",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												1.10000002384186,
+												2.20000004768372,
+												1.10000002384186
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										-5.59999990463257,
+										1.10000002384186,
+										-15.1999998092651
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/CrossedRightStalk",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												1.10000002384186,
+												2.20000004768372,
+												1.10000002384186
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										5.59999990463257,
+										1.10000002384186,
+										-18.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/EastEdge",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												0.200000002980232,
+												0.699999988079071,
+												72.0
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										7.0,
+										0.349999994039536,
+										-18.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/Floor",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												14.0,
+												0.400000005960464,
+												72.0
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										0.0,
+										-0.200000002980232,
+										-18.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/NorthEdge",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												14.0,
+												0.699999988079071,
+												0.200000002980232
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										0.0,
+										0.349999994039536,
+										-54.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/SouthEdge",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												14.0,
+												0.699999988079071,
+												0.200000002980232
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										0.0,
+										0.349999994039536,
+										18.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/UmbrellaStalk",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												1.10000002384186,
+												2.20000004768372,
+												1.10000002384186
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										-4.80000019073486,
+										1.10000002384186,
+										10.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/WestEdge",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												0.200000002980232,
+												0.699999988079071,
+												72.0
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										-7.0,
+										0.349999994039536,
+										-18.0
+									]
+								]
+							}
+						],
+						"physics_engine": "DEFAULT",
+						"physics_ticks_per_second": 60,
+						"schema_version": 1
+					},
+					"cooldowns": [],
+					"encounter_id": "a1_l3_umbrella_greybox",
+					"profile": {
+						"arrangement": "mixed_roles_meaningful_landings",
+						"commit_stagger_s": 0.12,
+						"id": "standard",
+						"name": "Standard",
+						"raw_damage_multiplier": 1.0,
+						"recovery_multiplier": 1.0,
+						"reserved_threat_budget": 2.0,
+						"windup_multiplier": 1.0
+					},
+					"reservations": [],
+					"schema_version": 1,
+					"serial": 0,
+					"world_revision": 1
+				}
+			}
+		},
+		{
+			"label": "native recoil",
+			"unit": {
+				"actors": {
+					"lone-guard": {
+						"api_revision": "act1-mushroom-selenite-3",
+						"approach_driving": false,
+						"configuration": {
+							"approach": {
+								"acceleration": 3.0,
+								"braking": 5.0,
+								"enabled": false,
+								"settle_distance": 0.001,
+								"speed": 1.2,
+								"stop_distance": 3.0,
+								"turn_rate": 3.0
+							},
+							"entity_id": "C32",
+							"initially_dormant": true,
+							"lane": {
+								"length": 2.0,
+								"radius": 0.38
+							},
+							"lunge": {},
+							"raw_role": {
+								"active_s": 0.2,
+								"attack_interval_s": 2.0,
+								"lock_s": 0.85,
+								"max_hp": 24.0,
+								"move_speed": 0.0,
+								"raw_damage": 8.0,
+								"recovery_s": 2.4,
+								"windup_s": 1.85
+							},
+							"role_id": "A1-E3",
+							"source_id": "lone-guard",
+							"timing_floors": {
+								"lock_s": 0.85,
+								"recovery_s": 2.4,
+								"windup_s": 1.85
+							}
+						},
+						"cycle": 0,
+						"dead": false,
+						"dormant": true,
+						"hit_ids": [],
+						"hp": 24.0,
+						"hurt_left_s": 0.0,
+						"last_cancel_reason": "",
+						"motion": {
+							"facing": [
+								0.0,
+								0.0,
+								-1.0
+							],
+							"grounded": false,
+							"position": [
+								0.0,
+								0.00499999988824129,
+								-30.0
+							],
+							"velocity": [
+								0.0,
+								0.0,
+								0.0
+							]
+						},
+						"profile_id": "",
+						"reservation_id": "",
+						"resolved_role": {},
+						"role_encounter_id": "",
+						"role_id": "A1-E3",
+						"sample": {},
+						"schema_version": 1,
+						"source_id": "lone-guard"
+					},
+					"umbrella-1": {
+						"api_revision": "act1-mushroom-selenite-3",
+						"approach_driving": false,
+						"configuration": {
+							"approach": {
+								"acceleration": 3.0,
+								"braking": 5.0,
+								"enabled": true,
+								"settle_distance": 0.001,
+								"speed": 1.2,
+								"stop_distance": 3.0,
+								"turn_rate": 3.0
+							},
+							"entity_id": "C31",
+							"initially_dormant": true,
+							"lane": {},
+							"lunge": {
+								"body_collision_path": "BodyCollision",
+								"damage_radius": 0.38,
+								"distance": 1.0,
+								"speed": 4.0
+							},
+							"raw_role": {
+								"active_s": 0.4,
+								"attack_interval_s": 2.0,
+								"lock_s": 0.85,
+								"max_hp": 16.0,
+								"move_speed": 4.0,
+								"raw_damage": 6.0,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							},
+							"role_id": "A1-E2",
+							"source_id": "umbrella-1",
+							"timing_floors": {
+								"lock_s": 0.85,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							}
+						},
+						"cycle": 0,
+						"dead": false,
+						"dormant": false,
+						"hit_ids": [],
+						"hp": 16.0,
+						"hurt_left_s": 0.0,
+						"last_cancel_reason": "spore_repulsion",
+						"motion": {
+							"facing": [
+								0.863209426403046,
+								0.0,
+								0.504846096038818
+							],
+							"grounded": true,
+							"position": [
+								-2.38374328613281,
+								-0.00492187589406967,
+								10.0063104629517
+							],
+							"velocity": [
+								0.0,
+								0.0,
+								0.0
+							]
+						},
+						"profile_id": "",
+						"repulsion": {
+							"api_revision": "scheduler-spore-actor-1",
+							"consumer_id": "component-native-spores",
+							"direction": [
+								-1.0,
+								0.0,
+								0.0
+							],
+							"episode_id": "component-native-spores/episode-1",
+							"phase": "recoil",
+							"progress": 0.138888888888889,
+							"source_id": "umbrella-1"
+						},
+						"reservation_id": "",
+						"resolved_role": {},
+						"role_encounter_id": "",
+						"role_id": "A1-E2",
+						"sample": {},
+						"schema_version": 3,
+						"source_id": "umbrella-1"
+					},
+					"umbrella-2": {
+						"api_revision": "act1-mushroom-selenite-3",
+						"approach_driving": false,
+						"configuration": {
+							"approach": {
+								"acceleration": 3.0,
+								"braking": 5.0,
+								"enabled": true,
+								"settle_distance": 0.001,
+								"speed": 1.2,
+								"stop_distance": 3.0,
+								"turn_rate": 3.0
+							},
+							"entity_id": "C31",
+							"initially_dormant": true,
+							"lane": {},
+							"lunge": {
+								"body_collision_path": "BodyCollision",
+								"damage_radius": 0.38,
+								"distance": 1.0,
+								"speed": 4.0
+							},
+							"raw_role": {
+								"active_s": 0.4,
+								"attack_interval_s": 2.0,
+								"lock_s": 0.85,
+								"max_hp": 16.0,
+								"move_speed": 4.0,
+								"raw_damage": 6.0,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							},
+							"role_id": "A1-E2",
+							"source_id": "umbrella-2",
+							"timing_floors": {
+								"lock_s": 0.85,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							}
+						},
+						"cycle": 0,
+						"dead": false,
+						"dormant": true,
+						"hit_ids": [],
+						"hp": 16.0,
+						"hurt_left_s": 0.0,
+						"last_cancel_reason": "",
+						"motion": {
+							"facing": [
+								0.0,
+								0.0,
+								-1.0
+							],
+							"grounded": false,
+							"position": [
+								2.40000009536743,
+								0.00499999988824129,
+								10.0
+							],
+							"velocity": [
+								0.0,
+								0.0,
+								0.0
+							]
+						},
+						"profile_id": "",
+						"reservation_id": "",
+						"resolved_role": {},
+						"role_encounter_id": "",
+						"role_id": "A1-E2",
+						"sample": {},
+						"schema_version": 1,
+						"source_id": "umbrella-2"
+					},
+					"umbrella-3": {
+						"api_revision": "act1-mushroom-selenite-3",
+						"approach_driving": false,
+						"configuration": {
+							"approach": {
+								"acceleration": 3.0,
+								"braking": 5.0,
+								"enabled": true,
+								"settle_distance": 0.001,
+								"speed": 1.2,
+								"stop_distance": 3.0,
+								"turn_rate": 3.0
+							},
+							"entity_id": "C31",
+							"initially_dormant": true,
+							"lane": {},
+							"lunge": {
+								"body_collision_path": "BodyCollision",
+								"damage_radius": 0.38,
+								"distance": 1.0,
+								"speed": 4.0
+							},
+							"raw_role": {
+								"active_s": 0.4,
+								"attack_interval_s": 2.0,
+								"lock_s": 0.85,
+								"max_hp": 16.0,
+								"move_speed": 4.0,
+								"raw_damage": 6.0,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							},
+							"role_id": "A1-E2",
+							"source_id": "umbrella-3",
+							"timing_floors": {
+								"lock_s": 0.85,
+								"recovery_s": 1.8,
+								"windup_s": 1.85
+							}
+						},
+						"cycle": 0,
+						"dead": false,
+						"dormant": true,
+						"hit_ids": [],
+						"hp": 16.0,
+						"hurt_left_s": 0.0,
+						"last_cancel_reason": "",
+						"motion": {
+							"facing": [
+								0.0,
+								0.0,
+								-1.0
+							],
+							"grounded": false,
+							"position": [
+								-2.40000009536743,
+								0.00499999988824129,
+								7.19999980926514
+							],
+							"velocity": [
+								0.0,
+								0.0,
+								0.0
+							]
+						},
+						"profile_id": "",
+						"reservation_id": "",
+						"resolved_role": {},
+						"role_encounter_id": "",
+						"role_id": "A1-E2",
+						"sample": {},
+						"schema_version": 1,
+						"source_id": "umbrella-3"
+					}
+				},
+				"api_revision": "act1-mushroom-spore-component-1",
+				"coordinator": {
+					"api_revision": "spore-repulsion-1",
+					"definition": {
+						"directions": [
+							[
+								-1.0,
+								0.0,
+								0.0
+							],
+							[
+								1.0,
+								0.0,
+								0.0
+							],
+							[
+								0.0,
+								0.0,
+								-1.0
+							],
+							[
+								0.0,
+								0.0,
+								1.0
+							],
+							[
+								-0.70710676908493,
+								0.0,
+								-0.70710676908493
+							],
+							[
+								-0.70710676908493,
+								0.0,
+								0.70710676908493
+							],
+							[
+								0.70710676908493,
+								0.0,
+								-0.70710676908493
+							],
+							[
+								0.70710676908493,
+								0.0,
+								0.70710676908493
+							]
+						],
+						"id": "component-native-spores",
+						"parameters": {
+							"exit_clearance": 0.08,
+							"max_distance": 8.0,
+							"recoil_s": 0.12,
+							"regroup_s": 0.35,
+							"speed": 4.0,
+							"turn_s": 0.1
+						}
+					},
+					"failures": {},
+					"field_geometry": {
+						"component-mushroom": {
+							"origin": [
+								-1.60000002384186,
+								0.0,
+								11.0
+							],
+							"radius": 1.5
+						}
+					},
+					"field_references": {
+						"component-mushroom": {
+							"activation_s": 0.700000000000001,
+							"clock_s": 0.716666666666667,
+							"deadline_s": 3.7,
+							"generation": 1,
+							"geometry": {
+								"origin": [
+									-1.60000002384186,
+									0.0,
+									11.0
+								],
+								"radius": 1.5
+							},
+							"phase": "active"
+						}
+					},
+					"records": {
+						"umbrella-1": {
+							"age_s": 0.0166666666666667,
+							"direction": [
+								-1.0,
+								0.0,
+								0.0
+							],
+							"episode_id": "component-native-spores/episode-1",
+							"members": [
+								"component-mushroom/field-1"
+							],
+							"original_endpoint": [
+								-3.25115942955017,
+								-0.00492187589406967,
+								10.0063104629517
+							],
+							"phase": "recoil",
+							"phase_age_s": 0.0166666666666667,
+							"progress": 0.138888888888889,
+							"route": {
+								"api_revision": "repulsion-route-1",
+								"floor_signature": [
+									{
+										"floor_id": "mushroom-floor",
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/Floor/CollisionShape3D",
+										"safe_rect": [
+											-6.90000009536743,
+											-53.9000015258789,
+											13.8000001907349,
+											71.8000030517578
+										],
+										"shape": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												14.0,
+												0.400000005960464,
+												72.0
+											],
+											"type": "BoxShape3D"
+										},
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												-0.200000002980232,
+												-18.0
+											]
+										]
+									}
+								],
+								"route": {
+									"actual_collided": false,
+									"api_revision": "repulsion-route-1",
+									"approach_velocity": [
+										0.272854775190353,
+										0.0,
+										0.121206797659397
+									],
+									"body_collision_path": "BodyCollision",
+									"body_signature": {
+										"centre": [
+											0.0,
+											0.730000019073486,
+											0.0
+										],
+										"layer": 2,
+										"mask": 1,
+										"path": "BodyCollision",
+										"priority": 1.0,
+										"shape": {
+											"custom_solver_bias": 0.0,
+											"height": 1.45000004768372,
+											"margin": 0.0399999991059303,
+											"radius": 0.319999992847443,
+											"type": "CapsuleShape3D"
+										}
+									},
+									"collision_shortened": false,
+									"current_position": [
+										-2.38374328613281,
+										-0.00492187589406967,
+										10.0063104629517
+									],
+									"current_velocity": [
+										0.0,
+										0.0,
+										0.0
+									],
+									"direction": [
+										-1.0,
+										0.0,
+										0.0
+									],
+									"distance": 0.867416162490845,
+									"duration_s": 0.216854040622711,
+									"elapsed_s": 0.0,
+									"finished": false,
+									"foot_offset": 0.00499999523162842,
+									"leased": true,
+									"planned_endpoint": [
+										-3.25115942955017,
+										-0.00492187589406967,
+										10.0063104629517
+									],
+									"speed": 4.0,
+									"start": [
+										-2.38374328613281,
+										-0.00492187589406967,
+										10.0063104629517
+									],
+									"support_radius": 0.329999992847443
+								},
+								"schema_version": 1,
+								"source_path": "MushroomSporeGroveComponent/umbrella_1",
+								"world_signature": {
+									"colliders": [
+										{
+											"layer": 1,
+											"mask": 0,
+											"path": "MushroomSporeGroveComponent/BreathingStalk",
+											"priority": 1.0,
+											"shapes": [
+												{
+													"data": {
+														"custom_solver_bias": 0.0,
+														"margin": 0.0399999991059303,
+														"size": [
+															1.10000002384186,
+															2.20000004768372,
+															1.10000002384186
+														],
+														"type": "BoxShape3D"
+													},
+													"index": 0,
+													"path": "CollisionShape3D",
+													"transform": [
+														[
+															1.0,
+															0.0,
+															0.0
+														],
+														[
+															0.0,
+															1.0,
+															0.0
+														],
+														[
+															0.0,
+															0.0,
+															1.0
+														],
+														[
+															0.0,
+															0.0,
+															0.0
+														]
+													]
+												}
+											],
+											"transform": [
+												[
+													1.0,
+													0.0,
+													0.0
+												],
+												[
+													0.0,
+													1.0,
+													0.0
+												],
+												[
+													0.0,
+													0.0,
+													1.0
+												],
+												[
+													-4.59999990463257,
+													1.10000002384186,
+													-2.0
+												]
+											]
+										},
+										{
+											"layer": 1,
+											"mask": 0,
+											"path": "MushroomSporeGroveComponent/CourtStalk",
+											"priority": 1.0,
+											"shapes": [
+												{
+													"data": {
+														"custom_solver_bias": 0.0,
+														"margin": 0.0399999991059303,
+														"size": [
+															1.10000002384186,
+															2.20000004768372,
+															1.10000002384186
+														],
+														"type": "BoxShape3D"
+													},
+													"index": 0,
+													"path": "CollisionShape3D",
+													"transform": [
+														[
+															1.0,
+															0.0,
+															0.0
+														],
+														[
+															0.0,
+															1.0,
+															0.0
+														],
+														[
+															0.0,
+															0.0,
+															1.0
+														],
+														[
+															0.0,
+															0.0,
+															0.0
+														]
+													]
+												}
+											],
+											"transform": [
+												[
+													1.0,
+													0.0,
+													0.0
+												],
+												[
+													0.0,
+													1.0,
+													0.0
+												],
+												[
+													0.0,
+													0.0,
+													1.0
+												],
+												[
+													4.5,
+													1.10000002384186,
+													-43.0
+												]
+											]
+										},
+										{
+											"layer": 1,
+											"mask": 0,
+											"path": "MushroomSporeGroveComponent/CrossedLeftStalk",
+											"priority": 1.0,
+											"shapes": [
+												{
+													"data": {
+														"custom_solver_bias": 0.0,
+														"margin": 0.0399999991059303,
+														"size": [
+															1.10000002384186,
+															2.20000004768372,
+															1.10000002384186
+														],
+														"type": "BoxShape3D"
+													},
+													"index": 0,
+													"path": "CollisionShape3D",
+													"transform": [
+														[
+															1.0,
+															0.0,
+															0.0
+														],
+														[
+															0.0,
+															1.0,
+															0.0
+														],
+														[
+															0.0,
+															0.0,
+															1.0
+														],
+														[
+															0.0,
+															0.0,
+															0.0
+														]
+													]
+												}
+											],
+											"transform": [
+												[
+													1.0,
+													0.0,
+													0.0
+												],
+												[
+													0.0,
+													1.0,
+													0.0
+												],
+												[
+													0.0,
+													0.0,
+													1.0
+												],
+												[
+													-5.59999990463257,
+													1.10000002384186,
+													-15.1999998092651
+												]
+											]
+										},
+										{
+											"layer": 1,
+											"mask": 0,
+											"path": "MushroomSporeGroveComponent/CrossedRightStalk",
+											"priority": 1.0,
+											"shapes": [
+												{
+													"data": {
+														"custom_solver_bias": 0.0,
+														"margin": 0.0399999991059303,
+														"size": [
+															1.10000002384186,
+															2.20000004768372,
+															1.10000002384186
+														],
+														"type": "BoxShape3D"
+													},
+													"index": 0,
+													"path": "CollisionShape3D",
+													"transform": [
+														[
+															1.0,
+															0.0,
+															0.0
+														],
+														[
+															0.0,
+															1.0,
+															0.0
+														],
+														[
+															0.0,
+															0.0,
+															1.0
+														],
+														[
+															0.0,
+															0.0,
+															0.0
+														]
+													]
+												}
+											],
+											"transform": [
+												[
+													1.0,
+													0.0,
+													0.0
+												],
+												[
+													0.0,
+													1.0,
+													0.0
+												],
+												[
+													0.0,
+													0.0,
+													1.0
+												],
+												[
+													5.59999990463257,
+													1.10000002384186,
+													-18.0
+												]
+											]
+										},
+										{
+											"layer": 1,
+											"mask": 0,
+											"path": "MushroomSporeGroveComponent/EastEdge",
+											"priority": 1.0,
+											"shapes": [
+												{
+													"data": {
+														"custom_solver_bias": 0.0,
+														"margin": 0.0399999991059303,
+														"size": [
+															0.200000002980232,
+															0.699999988079071,
+															72.0
+														],
+														"type": "BoxShape3D"
+													},
+													"index": 0,
+													"path": "CollisionShape3D",
+													"transform": [
+														[
+															1.0,
+															0.0,
+															0.0
+														],
+														[
+															0.0,
+															1.0,
+															0.0
+														],
+														[
+															0.0,
+															0.0,
+															1.0
+														],
+														[
+															0.0,
+															0.0,
+															0.0
+														]
+													]
+												}
+											],
+											"transform": [
+												[
+													1.0,
+													0.0,
+													0.0
+												],
+												[
+													0.0,
+													1.0,
+													0.0
+												],
+												[
+													0.0,
+													0.0,
+													1.0
+												],
+												[
+													7.0,
+													0.349999994039536,
+													-18.0
+												]
+											]
+										},
+										{
+											"layer": 1,
+											"mask": 0,
+											"path": "MushroomSporeGroveComponent/Floor",
+											"priority": 1.0,
+											"shapes": [
+												{
+													"data": {
+														"custom_solver_bias": 0.0,
+														"margin": 0.0399999991059303,
+														"size": [
+															14.0,
+															0.400000005960464,
+															72.0
+														],
+														"type": "BoxShape3D"
+													},
+													"index": 0,
+													"path": "CollisionShape3D",
+													"transform": [
+														[
+															1.0,
+															0.0,
+															0.0
+														],
+														[
+															0.0,
+															1.0,
+															0.0
+														],
+														[
+															0.0,
+															0.0,
+															1.0
+														],
+														[
+															0.0,
+															0.0,
+															0.0
+														]
+													]
+												}
+											],
+											"transform": [
+												[
+													1.0,
+													0.0,
+													0.0
+												],
+												[
+													0.0,
+													1.0,
+													0.0
+												],
+												[
+													0.0,
+													0.0,
+													1.0
+												],
+												[
+													0.0,
+													-0.200000002980232,
+													-18.0
+												]
+											]
+										},
+										{
+											"layer": 1,
+											"mask": 0,
+											"path": "MushroomSporeGroveComponent/NorthEdge",
+											"priority": 1.0,
+											"shapes": [
+												{
+													"data": {
+														"custom_solver_bias": 0.0,
+														"margin": 0.0399999991059303,
+														"size": [
+															14.0,
+															0.699999988079071,
+															0.200000002980232
+														],
+														"type": "BoxShape3D"
+													},
+													"index": 0,
+													"path": "CollisionShape3D",
+													"transform": [
+														[
+															1.0,
+															0.0,
+															0.0
+														],
+														[
+															0.0,
+															1.0,
+															0.0
+														],
+														[
+															0.0,
+															0.0,
+															1.0
+														],
+														[
+															0.0,
+															0.0,
+															0.0
+														]
+													]
+												}
+											],
+											"transform": [
+												[
+													1.0,
+													0.0,
+													0.0
+												],
+												[
+													0.0,
+													1.0,
+													0.0
+												],
+												[
+													0.0,
+													0.0,
+													1.0
+												],
+												[
+													0.0,
+													0.349999994039536,
+													-54.0
+												]
+											]
+										},
+										{
+											"layer": 1,
+											"mask": 0,
+											"path": "MushroomSporeGroveComponent/SouthEdge",
+											"priority": 1.0,
+											"shapes": [
+												{
+													"data": {
+														"custom_solver_bias": 0.0,
+														"margin": 0.0399999991059303,
+														"size": [
+															14.0,
+															0.699999988079071,
+															0.200000002980232
+														],
+														"type": "BoxShape3D"
+													},
+													"index": 0,
+													"path": "CollisionShape3D",
+													"transform": [
+														[
+															1.0,
+															0.0,
+															0.0
+														],
+														[
+															0.0,
+															1.0,
+															0.0
+														],
+														[
+															0.0,
+															0.0,
+															1.0
+														],
+														[
+															0.0,
+															0.0,
+															0.0
+														]
+													]
+												}
+											],
+											"transform": [
+												[
+													1.0,
+													0.0,
+													0.0
+												],
+												[
+													0.0,
+													1.0,
+													0.0
+												],
+												[
+													0.0,
+													0.0,
+													1.0
+												],
+												[
+													0.0,
+													0.349999994039536,
+													18.0
+												]
+											]
+										},
+										{
+											"layer": 1,
+											"mask": 0,
+											"path": "MushroomSporeGroveComponent/UmbrellaStalk",
+											"priority": 1.0,
+											"shapes": [
+												{
+													"data": {
+														"custom_solver_bias": 0.0,
+														"margin": 0.0399999991059303,
+														"size": [
+															1.10000002384186,
+															2.20000004768372,
+															1.10000002384186
+														],
+														"type": "BoxShape3D"
+													},
+													"index": 0,
+													"path": "CollisionShape3D",
+													"transform": [
+														[
+															1.0,
+															0.0,
+															0.0
+														],
+														[
+															0.0,
+															1.0,
+															0.0
+														],
+														[
+															0.0,
+															0.0,
+															1.0
+														],
+														[
+															0.0,
+															0.0,
+															0.0
+														]
+													]
+												}
+											],
+											"transform": [
+												[
+													1.0,
+													0.0,
+													0.0
+												],
+												[
+													0.0,
+													1.0,
+													0.0
+												],
+												[
+													0.0,
+													0.0,
+													1.0
+												],
+												[
+													-4.80000019073486,
+													1.10000002384186,
+													10.0
+												]
+											]
+										},
+										{
+											"layer": 1,
+											"mask": 0,
+											"path": "MushroomSporeGroveComponent/WestEdge",
+											"priority": 1.0,
+											"shapes": [
+												{
+													"data": {
+														"custom_solver_bias": 0.0,
+														"margin": 0.0399999991059303,
+														"size": [
+															0.200000002980232,
+															0.699999988079071,
+															72.0
+														],
+														"type": "BoxShape3D"
+													},
+													"index": 0,
+													"path": "CollisionShape3D",
+													"transform": [
+														[
+															1.0,
+															0.0,
+															0.0
+														],
+														[
+															0.0,
+															1.0,
+															0.0
+														],
+														[
+															0.0,
+															0.0,
+															1.0
+														],
+														[
+															0.0,
+															0.0,
+															0.0
+														]
+													]
+												}
+											],
+											"transform": [
+												[
+													1.0,
+													0.0,
+													0.0
+												],
+												[
+													0.0,
+													1.0,
+													0.0
+												],
+												[
+													0.0,
+													0.0,
+													1.0
+												],
+												[
+													-7.0,
+													0.349999994039536,
+													-18.0
+												]
+											]
+										}
+									],
+									"engine": "DEFAULT",
+									"tick_rate": 60
+								}
+							},
+							"route_revision": 1,
+							"route_started_age_s": 0.0
+						}
+					},
+					"schema_version": 2,
+					"serial": 1,
+					"source_environments": {
+						"umbrella-1": {
+							"body_signature": {
+								"centre": [
+									0.0,
+									0.730000019073486,
+									0.0
+								],
+								"layer": 2,
+								"mask": 1,
+								"path": "BodyCollision",
+								"priority": 1.0,
+								"shape": {
+									"custom_solver_bias": 0.0,
+									"height": 1.45000004768372,
+									"margin": 0.0399999991059303,
+									"radius": 0.319999992847443,
+									"type": "CapsuleShape3D"
+								}
+							},
+							"floor_signature": [
+								{
+									"floor_id": "mushroom-floor",
+									"layer": 1,
+									"mask": 0,
+									"path": "MushroomSporeGroveComponent/Floor/CollisionShape3D",
+									"safe_rect": [
+										-6.90000009536743,
+										-53.9000015258789,
+										13.8000001907349,
+										71.8000030517578
+									],
+									"shape": {
+										"custom_solver_bias": 0.0,
+										"margin": 0.0399999991059303,
+										"size": [
+											14.0,
+											0.400000005960464,
+											72.0
+										],
+										"type": "BoxShape3D"
+									},
+									"transform": [
+										[
+											1.0,
+											0.0,
+											0.0
+										],
+										[
+											0.0,
+											1.0,
+											0.0
+										],
+										[
+											0.0,
+											0.0,
+											1.0
+										],
+										[
+											0.0,
+											-0.200000002980232,
+											-18.0
+										]
+									]
+								}
+							],
+							"foot_offset": 0.00499999523162842,
+							"support_radius": 0.329999992847443,
+							"world_signature": {
+								"colliders": [
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/BreathingStalk",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														1.10000002384186,
+														2.20000004768372,
+														1.10000002384186
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												-4.59999990463257,
+												1.10000002384186,
+												-2.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/CourtStalk",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														1.10000002384186,
+														2.20000004768372,
+														1.10000002384186
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												4.5,
+												1.10000002384186,
+												-43.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/CrossedLeftStalk",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														1.10000002384186,
+														2.20000004768372,
+														1.10000002384186
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												-5.59999990463257,
+												1.10000002384186,
+												-15.1999998092651
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/CrossedRightStalk",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														1.10000002384186,
+														2.20000004768372,
+														1.10000002384186
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												5.59999990463257,
+												1.10000002384186,
+												-18.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/EastEdge",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														0.200000002980232,
+														0.699999988079071,
+														72.0
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												7.0,
+												0.349999994039536,
+												-18.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/Floor",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														14.0,
+														0.400000005960464,
+														72.0
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												-0.200000002980232,
+												-18.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/NorthEdge",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														14.0,
+														0.699999988079071,
+														0.200000002980232
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.349999994039536,
+												-54.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/SouthEdge",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														14.0,
+														0.699999988079071,
+														0.200000002980232
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.349999994039536,
+												18.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/UmbrellaStalk",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														1.10000002384186,
+														2.20000004768372,
+														1.10000002384186
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												-4.80000019073486,
+												1.10000002384186,
+												10.0
+											]
+										]
+									},
+									{
+										"layer": 1,
+										"mask": 0,
+										"path": "MushroomSporeGroveComponent/WestEdge",
+										"priority": 1.0,
+										"shapes": [
+											{
+												"data": {
+													"custom_solver_bias": 0.0,
+													"margin": 0.0399999991059303,
+													"size": [
+														0.200000002980232,
+														0.699999988079071,
+														72.0
+													],
+													"type": "BoxShape3D"
+												},
+												"index": 0,
+												"path": "CollisionShape3D",
+												"transform": [
+													[
+														1.0,
+														0.0,
+														0.0
+													],
+													[
+														0.0,
+														1.0,
+														0.0
+													],
+													[
+														0.0,
+														0.0,
+														1.0
+													],
+													[
+														0.0,
+														0.0,
+														0.0
+													]
+												]
+											}
+										],
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												-7.0,
+												0.349999994039536,
+												-18.0
+											]
+										]
+									}
+								],
+								"engine": "DEFAULT",
+								"tick_rate": 60
+							}
+						}
+					},
+					"source_protocols": {
+						"umbrella-1": {
+							"actor_revision": "act1-mushroom-selenite-3",
+							"actor_sha256": "530db209f383c45e23b6a0f26f3632f2877475bcab77245522ff1f12d2095d9b",
+							"api_revision": "scheduler-spore-source-1",
+							"configuration_sha256": "b0d7b9069977760156fc195e44fcb739a2e31f190cfd5fa3c56c0b08ed594a48",
+							"controller_id": "mushroom-scheduler",
+							"player_id": "hero",
+							"source_id": "umbrella-1"
+						}
+					}
+				},
+				"fields": {
+					"component-mushroom": {
+						"activation_s": 0.700000000000001,
+						"api_revision": "spore-field-1",
+						"clock_s": 0.716666666666667,
+						"deadline_s": 3.7,
+						"definition": {
+							"clusters": [
+								{
+									"id": "cluster-left",
+									"offset": [
+										-0.349999994039536,
+										0.800000011920929,
+										-0.25
+									]
+								},
+								{
+									"id": "cluster-right",
+									"offset": [
+										0.349999994039536,
+										0.800000011920929,
+										0.25
+									]
+								}
+							],
+							"id": "component-mushroom",
+							"parameters": {
+								"duration_s": 3.0,
+								"radius": 1.5,
+								"thinning_s": 0.5
+							}
+						},
+						"generation": 1,
+						"geometry": {
+							"origin": [
+								-1.60000002384186,
+								0.0,
+								11.0
+							],
+							"radius": 1.5
+						},
+						"phase": "active",
+						"schema_version": 1,
+						"spent_ids": [
+							"cluster-right"
+						]
+					}
+				},
+				"player": {
+					"actor_type": "CinderPlayer",
+					"api_revision": "player-snapshot-1",
+					"clocks": {
+						"blast_cooldown_s": 0.0,
+						"dash_cooldown_s": 0.0,
+						"dash_left_s": 0.0,
+						"invulnerability_s": 0.0,
+						"knockback_left_s": 0.0,
+						"primary_cooldown_s": 0.283333333333333,
+						"reload_s": 0.0166666666666667
+					},
+					"equipment": {
+						"jacket": "CLOTH-J0",
+						"pants": "CLOTH-P0",
+						"shoes": "CLOTH-S0",
+						"weapon": "WEAPON-01"
+					},
+					"last_action": {
+						"damage": 20.0,
+						"hits": 0,
+						"kind": "slash",
+						"reach": 2.0
+					},
+					"last_dash_distance": 2.69999980926514,
+					"motion": {
+						"basis": [
+							[
+								1.0,
+								0.0,
+								0.0
+							],
+							[
+								0.0,
+								1.0,
+								0.0
+							],
+							[
+								0.0,
+								0.0,
+								1.0
+							]
+						],
+						"dash_direction": [
+							0.0,
+							0.0,
+							-1.0
+						],
+						"dash_origin": null,
+						"dash_speed": 15.0,
+						"dash_total_s": 0.18,
+						"facing": [
+							-0.765704751014709,
+							0.0,
+							-0.643192231655121
+						],
+						"grounded": true,
+						"position": [
+							0.0,
+							-0.00484376167878509,
+							12.3000001907349
+						],
+						"queued_dash": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"velocity": [
+							0.0,
+							0.0,
+							0.0
+						]
+					},
+					"pending_weapon": "",
+					"phases": {
+						"landing_left_s": 0.0,
+						"logical": "primary",
+						"logical_left_s": 0.113333333333333,
+						"logical_total_s": 0.13,
+						"visual": "primary",
+						"visual_left_s": 0.263333333333333,
+						"visual_total_s": 0.28
+					},
+					"presentation": {
+						"action": "primary",
+						"frame": 0,
+						"id": "act1_expedition",
+						"idle_time_s": 0.0
+					},
+					"resources": {
+						"dead": false,
+						"hp": 100.0,
+						"max_hp": 100.0,
+						"max_shells": 2,
+						"shells": 0
+					},
+					"schema_version": 1,
+					"world_actions": {
+						"clock_s": 0.750000000000001,
+						"history": [
+							{
+								"blocked": false,
+								"collision_shortened": false,
+								"completed_at_s": 0.45,
+								"direction": [
+									0.0,
+									0.0,
+									-1.0
+								],
+								"distance": 2.69999980926514,
+								"equipment_ids": {
+									"jacket": "CLOTH-J0",
+									"pants": "CLOTH-P0",
+									"shoes": "CLOTH-S0",
+									"weapon": "WEAPON-01"
+								},
+								"kind": "dash",
+								"landing": [
+									0.0,
+									-0.00484376167878509,
+									12.3000001907349
+								],
+								"movement_damage": false,
+								"origin": "player_direct",
+								"path": [
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											15.0
+										],
+										"time_s": 0.266666666666667
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											14.75
+										],
+										"time_s": 0.283333333333333
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											14.5
+										],
+										"time_s": 0.3
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											14.25
+										],
+										"time_s": 0.316666666666667
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											14.0
+										],
+										"time_s": 0.333333333333333
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											13.75
+										],
+										"time_s": 0.35
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											13.5
+										],
+										"time_s": 0.366666666666667
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											13.25
+										],
+										"time_s": 0.383333333333333
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											13.0
+										],
+										"time_s": 0.4
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											12.75
+										],
+										"time_s": 0.416666666666667
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											12.5
+										],
+										"time_s": 0.433333333333333
+									},
+									{
+										"position": [
+											0.0,
+											-0.00484376167878509,
+											12.3000001907349
+										],
+										"time_s": 0.45
+									}
+								],
+								"resolved_stats": {
+									"armour": 1.0,
+									"capped_stats": [],
+									"damage_reduction": 0.0,
+									"dash_cooldown": 0.34,
+									"dash_distance": 2.7,
+									"dash_duration": 0.18,
+									"dash_invulnerability": 0.12,
+									"dash_speed": 15.0,
+									"effective_health": 100.0,
+									"followup_cone_min_dot": 0.5,
+									"followup_cooldown": 0.45,
+									"followup_damage": 42.0,
+									"followup_range": 3.1,
+									"gear_multipliers": {
+										"armour": 1.0,
+										"attack_range": 1.0,
+										"attack_speed": 1.0,
+										"damage": 1.0,
+										"dash_distance": 1.0,
+										"dash_speed": 1.0,
+										"max_health": 1.0
+									},
+									"hurt_invulnerability": 0.8,
+									"max_health": 100.0,
+									"primary_cadence_estimate": 0.3,
+									"primary_cone_min_dot": 0.05,
+									"primary_cooldown": 0.3,
+									"primary_damage": 20.0,
+									"primary_hit_reload_credit": 0.45,
+									"primary_range": 2.0,
+									"raw_gear_multipliers": {
+										"armour": 1.0,
+										"attack_range": 1.0,
+										"attack_speed": 1.0,
+										"damage": 1.0,
+										"dash_distance": 1.0,
+										"dash_speed": 1.0,
+										"max_health": 1.0
+									},
+									"shell_capacity": 2,
+									"shell_reload": 1.15,
+									"total_multipliers": {
+										"armour": 1.0,
+										"attack_range": 1.0,
+										"attack_speed": 1.0,
+										"damage": 1.0,
+										"dash_distance": 1.0,
+										"dash_speed": 1.0,
+										"max_health": 1.0
+									},
+									"weapon_id": "WEAPON-01",
+									"weapon_name": "Balanced Edge"
+								},
+								"schema_version": 1,
+								"sequence": 1,
+								"started_at_s": 0.266666666666667,
+								"world_origin": [
+									0.0,
+									-0.00484376167878509,
+									15.0
+								]
+							},
+							{
+								"commitment_duration_s": 0.13,
+								"completed_at_s": 0.733333333333334,
+								"cooldown_s": 0.3,
+								"damage": 20.0,
+								"damage_timing": "instant_at_execution",
+								"direction": [
+									-0.765704751014709,
+									0.0,
+									-0.643192231655121
+								],
+								"equipment_ids": {
+									"jacket": "CLOTH-J0",
+									"pants": "CLOTH-P0",
+									"shoes": "CLOTH-S0",
+									"weapon": "WEAPON-01"
+								},
+								"geometry": {
+									"cone_min_dot": 0.05,
+									"los": {
+										"collision_mask": 1,
+										"height": 0.7,
+										"policy": "scenery_ray_from_source_to_target"
+									},
+									"max_vertical_distance": 1.4,
+									"origin_disk_radius": 0.1,
+									"reach": 2.0,
+									"shape": "radial_cone"
+								},
+								"hits": 0,
+								"kind": "primary",
+								"origin": "player_direct",
+								"resolved_stats": {
+									"armour": 1.0,
+									"capped_stats": [],
+									"damage_reduction": 0.0,
+									"dash_cooldown": 0.34,
+									"dash_distance": 2.7,
+									"dash_duration": 0.18,
+									"dash_invulnerability": 0.12,
+									"dash_speed": 15.0,
+									"effective_health": 100.0,
+									"followup_cone_min_dot": 0.5,
+									"followup_cooldown": 0.45,
+									"followup_damage": 42.0,
+									"followup_range": 3.1,
+									"gear_multipliers": {
+										"armour": 1.0,
+										"attack_range": 1.0,
+										"attack_speed": 1.0,
+										"damage": 1.0,
+										"dash_distance": 1.0,
+										"dash_speed": 1.0,
+										"max_health": 1.0
+									},
+									"hurt_invulnerability": 0.8,
+									"max_health": 100.0,
+									"primary_cadence_estimate": 0.3,
+									"primary_cone_min_dot": 0.05,
+									"primary_cooldown": 0.3,
+									"primary_damage": 20.0,
+									"primary_hit_reload_credit": 0.45,
+									"primary_range": 2.0,
+									"raw_gear_multipliers": {
+										"armour": 1.0,
+										"attack_range": 1.0,
+										"attack_speed": 1.0,
+										"damage": 1.0,
+										"dash_distance": 1.0,
+										"dash_speed": 1.0,
+										"max_health": 1.0
+									},
+									"shell_capacity": 2,
+									"shell_reload": 1.15,
+									"total_multipliers": {
+										"armour": 1.0,
+										"attack_range": 1.0,
+										"attack_speed": 1.0,
+										"damage": 1.0,
+										"dash_distance": 1.0,
+										"dash_speed": 1.0,
+										"max_health": 1.0
+									},
+									"weapon_id": "WEAPON-01",
+									"weapon_name": "Balanced Edge"
+								},
+								"schema_version": 1,
+								"sequence": 2,
+								"started_at_s": 0.733333333333334,
+								"world_origin": [
+									0.0,
+									-0.00484376167878509,
+									12.3000001907349
+								]
+							}
+						],
+						"pending_dash": {},
+						"schema_version": 1,
+						"sequence": 2
+					}
+				},
+				"scheduler": {
+					"api_revision": "scheduler-snapshot-1",
+					"clock_s": 0.750000000000001,
+					"collision": {
+						"colliders": [
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/BreathingStalk",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												1.10000002384186,
+												2.20000004768372,
+												1.10000002384186
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										-4.59999990463257,
+										1.10000002384186,
+										-2.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/CourtStalk",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												1.10000002384186,
+												2.20000004768372,
+												1.10000002384186
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										4.5,
+										1.10000002384186,
+										-43.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/CrossedLeftStalk",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												1.10000002384186,
+												2.20000004768372,
+												1.10000002384186
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										-5.59999990463257,
+										1.10000002384186,
+										-15.1999998092651
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/CrossedRightStalk",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												1.10000002384186,
+												2.20000004768372,
+												1.10000002384186
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										5.59999990463257,
+										1.10000002384186,
+										-18.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/EastEdge",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												0.200000002980232,
+												0.699999988079071,
+												72.0
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										7.0,
+										0.349999994039536,
+										-18.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/Floor",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												14.0,
+												0.400000005960464,
+												72.0
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										0.0,
+										-0.200000002980232,
+										-18.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/NorthEdge",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												14.0,
+												0.699999988079071,
+												0.200000002980232
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										0.0,
+										0.349999994039536,
+										-54.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/SouthEdge",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												14.0,
+												0.699999988079071,
+												0.200000002980232
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										0.0,
+										0.349999994039536,
+										18.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/UmbrellaStalk",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												1.10000002384186,
+												2.20000004768372,
+												1.10000002384186
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										-4.80000019073486,
+										1.10000002384186,
+										10.0
+									]
+								]
+							},
+							{
+								"layer": 1,
+								"mask": 0,
+								"path": "MushroomSporeGroveComponent/WestEdge",
+								"priority": 1.0,
+								"shapes": [
+									{
+										"data": {
+											"custom_solver_bias": 0.0,
+											"margin": 0.0399999991059303,
+											"size": [
+												0.200000002980232,
+												0.699999988079071,
+												72.0
+											],
+											"type": "BoxShape3D"
+										},
+										"index": 0,
+										"path": "CollisionShape3D",
+										"transform": [
+											[
+												1.0,
+												0.0,
+												0.0
+											],
+											[
+												0.0,
+												1.0,
+												0.0
+											],
+											[
+												0.0,
+												0.0,
+												1.0
+											],
+											[
+												0.0,
+												0.0,
+												0.0
+											]
+										]
+									}
+								],
+								"transform": [
+									[
+										1.0,
+										0.0,
+										0.0
+									],
+									[
+										0.0,
+										1.0,
+										0.0
+									],
+									[
+										0.0,
+										0.0,
+										1.0
+									],
+									[
+										-7.0,
+										0.349999994039536,
+										-18.0
+									]
+								]
+							}
+						],
+						"physics_engine": "DEFAULT",
+						"physics_ticks_per_second": 60,
+						"schema_version": 1
+					},
+					"cooldowns": [],
+					"encounter_id": "a1_l3_umbrella_greybox",
+					"profile": {
+						"arrangement": "mixed_roles_meaningful_landings",
+						"commit_stagger_s": 0.12,
+						"id": "standard",
+						"name": "Standard",
+						"raw_damage_multiplier": 1.0,
+						"recovery_multiplier": 1.0,
+						"reserved_threat_budget": 2.0,
+						"windup_multiplier": 1.0
+					},
+					"reservations": [],
+					"schema_version": 1,
+					"serial": 0,
+					"world_revision": 1
+				}
+			}
+		}
+	]
+}

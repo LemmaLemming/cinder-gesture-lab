@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "status": "provisional_unplaytested",
+  "default_profile": "standard",
+  "profiles": [
+    {"id": "assisted", "name": "Assisted", "raw_damage_multiplier": 0.70, "windup_multiplier": 1.35, "recovery_multiplier": 1.35, "reserved_threat_budget": 1, "commit_stagger_s": 0.12, "arrangement": "generous_approaches_simple_mixtures"},
+    {"id": "standard", "name": "Standard", "raw_damage_multiplier": 1.00, "windup_multiplier": 1.00, "recovery_multiplier": 1.00, "reserved_threat_budget": 2, "commit_stagger_s": 0.12, "arrangement": "mixed_roles_meaningful_landings"},
+    {"id": "challenge", "name": "Challenge", "raw_damage_multiplier": 1.00, "windup_multiplier": 1.00, "recovery_multiplier": 1.00, "reserved_threat_budget": 2, "commit_stagger_s": 0.12, "arrangement": "authored_target_priority_and_positioning"}
+  ],
+  "limits": ["Values require playtesting; scheduler acceptance is a conservative supported-response witness, not full encounter fairness.", "Health, approach speed, geometry, player stats and gestures are unchanged by these profiles.", "Threat budget includes preparing and active reservations; recovery retains its reservation and opening but does not occupy the budget.", "Assisted recovery multiplier and commitment stagger are provisional implementation defaults."]
+}

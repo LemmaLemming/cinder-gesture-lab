@@ -1,0 +1,352 @@
+{
+  "schema_version": 1,
+  "archive_id": "L3-normal-full-route-first-headless-failure",
+  "status": "frozen_private_exact_failed_scope",
+  "created_at": "2026-10-08T23:50:53.084919+00:00",
+  "path_base": "All packaging paths relative to this directory; original metadata/log/report/source bytes and internal producer references retained verbatim.",
+  "private_only": true,
+  "origin_map": {
+    "path": "origin-map.json",
+    "sha256": "9f543b3831959993fd8d97edd2c22f9cba96f4df4b5b8e63a0e0562bdc94afbd"
+  },
+  "inventory": {
+    "path": "inventory.json",
+    "scope": "Every package file except inventory.json and its final hash-closure.json; final hash closure covers the inventory and all original/packaging files except itself."
+  },
+  "verification": {
+    "path": "verification.json"
+  },
+  "hash_closure": {
+    "path": "hash-closure.json"
+  },
+  "runs": [
+    {
+      "id": "a1-l3-normal-full-route-headless",
+      "directory": "first-headless",
+      "status": "preserved_failed_first_actual_five_room_attempt_stopped_in_room_zero",
+      "head": "421403364857be3634be0b073083586b0d0b4d6e",
+      "api_revision": "campaign-shared-32",
+      "metadata": "first-headless/run/job.json",
+      "stdout": "first-headless/run/stdout.log",
+      "raw_native_report": "first-headless/report/l3-normal-full-route-31939205.json",
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l3_normal_full_route.gd"
+      ],
+      "started_at": "2026-10-08T23:38:25.112186+00:00",
+      "finished_at": "2026-10-08T23:44:25.248095+00:00",
+      "producer_intended_scope": "First actual one-world neutral Standard five-room recognizer traversal:19 ordinary defeats/4CP1completion/realArea contact; full native aggregateSave DENIED; no profile/kit/spent-all/optical/campaign acceptance",
+      "exit_code": 1,
+      "checks": 350,
+      "failures": 1,
+      "actual_swipes": 5,
+      "actual_primaries": 2,
+      "post_execution_source_hash_mismatch": [],
+      "diagnostics": {
+        "error_count": 1,
+        "errors": [
+          "ERROR: room-local actual native admission/ordinary opportunity within original finite simulation window"
+        ],
+        "warning_count": 0,
+        "script_error_count": 0,
+        "raw_backtrace_preserved": true,
+        "diagnostic_record_count": 2,
+        "assertion": "room-local actual native admission/ordinary opportunity within original finite simulation window",
+        "finite_simulation_wait_s": 12.0,
+        "wall_watchdog_ms": 900000,
+        "watchdog_failure": false
+      },
+      "observed_bounded_scope": {
+        "native_world_ids": {
+          "game": 46774879707,
+          "level": 76302780352,
+          "player": 101267279151,
+          "scheduler": 93751086032
+        },
+        "observed_epochs": [
+          "a1_l3_umbrella"
+        ],
+        "room_at_failure": {
+          "beat_index": 0,
+          "room_stage": "active",
+          "encounter_started": true,
+          "completed_beats": [],
+          "installed_fields": [],
+          "installed_consumers": [],
+          "save_supported": false
+        },
+        "genuine_defeat_ids": [
+          "umbrella-1",
+          "umbrella-3"
+        ],
+        "defeat_receipt_count": 2,
+        "remaining_source": {
+          "api_revision": "act1-mushroom-selenite-3",
+          "approach_driving": false,
+          "approach_enabled": true,
+          "cycle": 1,
+          "dead": false,
+          "dormant": false,
+          "entity_id": "C31",
+          "facing": [
+            -0.985930979251862,
+            0.0,
+            -0.167153418064117
+          ],
+          "geometry": {},
+          "hit_ids": [],
+          "hp": 16.0,
+          "hurt_left_s": 0.0,
+          "last_cancel_reason": "",
+          "opening_position": [
+            0.51671427488327,
+            -0.00492187589406967,
+            10.1108074188232
+          ],
+          "phase": "clear",
+          "presentation_status": "authored_C31_C32_pose_pixels",
+          "reservation_id": "",
+          "resolved_role": {
+            "active_s": 0.4,
+            "attack_interval_s": 2.0,
+            "damage": 6.0,
+            "difficulty_profile": "standard",
+            "difficulty_schema": 1,
+            "lock_s": 0.85,
+            "max_hp": 16.0,
+            "move_speed": 4.0,
+            "raw_damage": 6.0,
+            "raw_role": {
+              "active_s": 0.4,
+              "attack_interval_s": 2.0,
+              "lock_s": 0.85,
+              "max_hp": 16.0,
+              "move_speed": 4.0,
+              "raw_damage": 6.0,
+              "recovery_s": 1.8,
+              "windup_s": 1.85
+            },
+            "recovery_s": 1.8,
+            "tuning_status": "provisional_unplaytested",
+            "windup_s": 1.85
+          },
+          "role_id": "A1-E2",
+          "source_id": "umbrella-2",
+          "source_position": [
+            0.51671427488327,
+            -0.00492187589406967,
+            10.1108074188232
+          ],
+          "spore_support": false,
+          "status": "idle",
+          "velocity": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "stopped_hero_response": {
+          "action_clock_s": 19.6833333333335,
+          "actor": "native object omitted: CharacterBody3D",
+          "commitment_remaining_s": 0.0,
+          "dash_cooldown_left_s": 0.0,
+          "equipment_ids": {
+            "jacket": "CLOTH-J0",
+            "pants": "CLOTH-P0",
+            "shoes": "CLOTH-S0",
+            "weapon": "WEAPON-01"
+          },
+          "motion": {
+            "dash_left_s": 0.0,
+            "grounded": true,
+            "knockback_left_s": 0.0,
+            "position": [
+              -2.39275026321411,
+              -0.00484376167878509,
+              9.61754035949707
+            ],
+            "queued_dash": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "pending_weapon_id": "",
+          "primary_commitment_s": 0.13,
+          "primary_cooldown_left_s": 0.0,
+          "stable": true,
+          "stats": {
+            "armour": 1.0,
+            "capped_stats": [],
+            "damage_reduction": 0.0,
+            "dash_cooldown": 0.34,
+            "dash_distance": 2.7,
+            "dash_duration": 0.18,
+            "dash_invulnerability": 0.12,
+            "dash_speed": 15.0,
+            "effective_health": 100.0,
+            "followup_cone_min_dot": 0.5,
+            "followup_cooldown": 0.45,
+            "followup_damage": 42.0,
+            "followup_range": 3.1,
+            "gear_multipliers": {
+              "armour": 1.0,
+              "attack_range": 1.0,
+              "attack_speed": 1.0,
+              "damage": 1.0,
+              "dash_distance": 1.0,
+              "dash_speed": 1.0,
+              "max_health": 1.0
+            },
+            "hurt_invulnerability": 0.8,
+            "max_health": 100.0,
+            "primary_cadence_estimate": 0.3,
+            "primary_cone_min_dot": 0.05,
+            "primary_cooldown": 0.3,
+            "primary_damage": 20.0,
+            "primary_hit_reload_credit": 0.45,
+            "primary_range": 2.0,
+            "raw_gear_multipliers": {
+              "armour": 1.0,
+              "attack_range": 1.0,
+              "attack_speed": 1.0,
+              "damage": 1.0,
+              "dash_distance": 1.0,
+              "dash_speed": 1.0,
+              "max_health": 1.0
+            },
+            "shell_capacity": 2,
+            "shell_reload": 1.15,
+            "total_multipliers": {
+              "armour": 1.0,
+              "attack_range": 1.0,
+              "attack_speed": 1.0,
+              "damage": 1.0,
+              "dash_distance": 1.0,
+              "dash_speed": 1.0,
+              "max_health": 1.0
+            },
+            "weapon_id": "WEAPON-01",
+            "weapon_name": "Balanced Edge"
+          }
+        },
+        "hero_hp100_scope": "Root closed-run report and frozen fixture initial_hp100 plus actual primary/no-enemy-hit assertions; full report diagnostics do not emit a separate hero_hp scalar. No full-route resource/cleanup acceptance inferred.",
+        "no_checkpoint_completion_or_contact": true,
+        "no_later_room_activated": true,
+        "camera_observation": {
+          "accepted": false,
+          "api_revision": "camera-framing-1",
+          "enabled": true,
+          "reason": "Required union cannot fit the fixed-width HUD-safe rectangle"
+        },
+        "route_last_error": "Required source, footprint, player or landing lies outside the protected screen rectangle",
+        "camera_causal_status": "Observed rejection; not yet proven runtime cause of the opportunity timeout."
+      },
+      "original_receipts": {
+        "native_phase_barrier_count": 3,
+        "barriers": [
+          {
+            "id": "umbrella-1",
+            "cycle": 1,
+            "lease": "threat-1",
+            "phase": "warning",
+            "native_clock_s": 1.31666666666667
+          },
+          {
+            "id": "umbrella-1",
+            "cycle": 1,
+            "lease": "threat-1",
+            "phase": "active",
+            "native_clock_s": 3.11666666666666
+          },
+          {
+            "id": "umbrella-1",
+            "cycle": 1,
+            "lease": "threat-1",
+            "phase": "recovery",
+            "native_clock_s": 3.51666666666666
+          }
+        ],
+        "response_timing_receipt_count": 2,
+        "response_timing_policy": "All original static proofs, actual action publications/deltas and source receipts remain verbatim in raw report; no claim exact-timed proof replay.",
+        "primary_receipt_count": 2,
+        "complete_world_action_signal_trace_count": 7,
+        "world_action_kinds": {
+          "dash": 5,
+          "primary": 2
+        },
+        "accepted_input_signal_trace_count": 7,
+        "encoded_final_history_count": 0
+      },
+      "declared_frozen_sources": {
+        "count": 349,
+        "metadata_manifest_key": "source_sha256",
+        "origin_map_category": "original_declared_frozen_source",
+        "source_extension_counts": {
+          ".gd": 108,
+          ".tscn": 17,
+          ".json": 16,
+          ".png": 92,
+          ".gdshader": 3,
+          ".md": 3,
+          ".godot": 1,
+          ".py": 1,
+          ".uid": 108
+        },
+        "uid_count": 108,
+        "authored_dependency_png_count": 92,
+        "actual_native_capture_png_count": 0,
+        "extra_undeclared_frozen_source_files_copied": 0,
+        "purpose": "Exact producer dependency snapshot, including shared/other-act resources declared by the frozen job; copying them is provenance, not an assertion those game scopes were exercised."
+      },
+      "native_focus_report_value": true,
+      "focus_scope": "Headless recorder field retained exactly; no actual rendered window/portrait/focus acceptance.",
+      "diagnosis_under_review": {
+        "fixture_source": "first-headless/executed-source/tests/acts/act1/a1_l3_normal_full_route.gd.txt",
+        "native_approach_source": "first-headless/executed-source/scripts/acts/act1/mushroom_selenite_approach.gd.txt",
+        "frozen_fixture_passive_approach_break_distance": 4.4,
+        "frozen_native_approach_stop_distance": 3.0,
+        "frozen_fixture_reachable_distance": "actual primary_range2.0 minus .08 reserve =1.92",
+        "status": "Static ordering/distance concern under Root diagnosis; no amended source, new pass or proven unique runtime cause included."
+      }
+    }
+  ],
+  "limitations": [
+    "Failed room-zero attempt; no full-route/19-defeat/4-checkpoint/1-completion/contact success, later-room/crowd/field validation, save/campaign transition, required kit/profile, portrait/art/human/performance acceptance.",
+    "Full native aggregate/candidate/save remains unsupported and no campaign handoff was completed.",
+    "Headless has zero actual native captures; 92 PNGs are original authored source dependencies, not game-view images.",
+    "Original warning/active/recovery and static proof/action receipts are preserved without relabeling as exact timed execution of their proposed response.",
+    "Camera union rejection and native stop/passive break/reach discrepancy are observations/diagnosis concerns; cause is not proven by this failed attempt."
+  ],
+  "packaging": {
+    "original_copy_count": 352,
+    "declared_source_copy_count": 349,
+    "original_metadata_stdout_report_count": 3,
+    "uid_originals": 108,
+    "source_texture_pngs": 92,
+    "actual_native_png_count": 0,
+    "inert_source_extensions": [
+      ".gd.txt",
+      ".tscn.txt",
+      ".gdshader.txt",
+      ".uid.txt",
+      ".py.txt",
+      "project.godot.txt"
+    ],
+    "gdignore": ".gdignore",
+    "no_current_source_substitution": true,
+    "no_engine_import_or_gameplay_run": true,
+    "prior_packages_not_modified": true
+  }
+}

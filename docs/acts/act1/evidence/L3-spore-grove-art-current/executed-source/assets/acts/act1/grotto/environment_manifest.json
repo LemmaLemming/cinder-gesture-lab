@@ -1,0 +1,427 @@
+{
+  "schema_version": 1,
+  "path_base": "repository_root",
+  "family": "act1_mushroom_grotto_theatre",
+  "created_date": "2026-10-09",
+  "first_level": "A1-L3",
+  "runtime_readiness": "component_wired_native_custody_validated; optical_portraits_scoped_to_grove_and_isolated_guard; full_level_pending",
+  "authorship": "Original deterministic code-authored static 3D geometry, with existing Act1 painted-rock texture reuse. No new bitmap creation or edits; no source-image pixels are extracted, traced or cropped.",
+  "runtime_builder": {
+    "path": "scripts/acts/act1/mushroom_grotto_art.gd",
+    "sha256": "8e32a13825e9aa4a0172fd5328f196930685fe7233dfc0fa36abfaf779d1d770"
+  },
+  "layout_template": {
+    "path": "scripts/acts/act1/mushroom_caverns_layout.gd",
+    "sha256": "9fe359d8c8d88ade08ea129cfde2409997eae1d918088a3175dc8183e3ed6731"
+  },
+  "api": {
+    "build_geometry_art": "Act1MushroomGrottoArt.build_geometry_art(level: Node3D) -> Node3D. Validates all named replacement mesh leaves and stalk/base node types before creating FungalArt; returns null for an invalid level, missing required leaf or existing FungalArt.",
+    "integration": "Owned mushroom_caverns.gd calls builder on the actual layout, retains FungalArt and requires binding_error before admission/sampling/camera forecasts.",
+    "set_court_open": "Returned FungalArt provides set_court_open(opened: bool). This synchronous leaf toggles BlockedDrapery/OpenGatheredDrapery visibility only; starts blocked, stores court_open and emits no event.",
+    "process_mode": "FungalArt is PROCESS_MODE_DISABLED, has no process callback, timers, tweens, particles, randomness or elapsed-time shader. Geometry and drapery states are static.",
+    "binding_error": "Pure retained actual level/world/identity/tree, five native BOX stalk/body resources, visible bases/surfaces/caps/scenic composition, native mesh/material/renderer/texture readback and supported curtain setter checks."
+  },
+  "palette": {
+    "basis": "Handmade monochrome lunar theatre: moon-white, dusty silver, charcoal and black creases. RGB components are equal; this is the selected game interpretation, not a claim that every historical print was monochrome.",
+    "geometry_grays": [
+      0.19,
+      0.22,
+      0.28,
+      0.3,
+      0.32,
+      0.35,
+      0.45,
+      0.47,
+      0.52,
+      0.53,
+      0.58,
+      0.6,
+      0.61,
+      0.63,
+      0.65,
+      0.67,
+      0.7,
+      0.71,
+      0.73,
+      0.74,
+      0.75,
+      0.78,
+      0.79,
+      0.81,
+      0.84,
+      0.85
+    ],
+    "material": "Opaque ordinary depth, unshaded, double-sided geometry, nearest texture filtering; no alpha-cutout hiding of collision, no transparent cue imitation.",
+    "quiet_floor": "Existing layout floor material, floor mesh, physical support and perimeter remain untouched."
+  },
+  "source_provenance": [
+    {
+      "id": "G18",
+      "path": "docs/concept-art/act1/environments/03-mushroom-caverns.png",
+      "sha256": "02454bb2ab8455a5897e15450d67f8449c05c7f2a2d02b3be8c302d89ccbe34b",
+      "kind": "generated_game_concept",
+      "pixel_use": "none; personally inspected actual local image pixels for silhouette/composition reference only",
+      "application": "Selected shallow oversized caps, moon-white stalks and low waist/chest cluster staging; cluster creation remains the native consumer task."
+    },
+    {
+      "id": "G25",
+      "path": "docs/concept-art/act1/gameplay/02-mushroom-spores-gameplay.png",
+      "sha256": "516339d2f3b5ab83bf0f2a972cc2fe2a6402c8a49458bbf775a003f64373d2b6",
+      "kind": "generated_game_concept",
+      "pixel_use": "none; personally inspected actual local image pixels for silhouette/composition reference only",
+      "application": "Low primary-reachable cluster and living upright retreating Selenites; no actors, clusters, field footprints or particles are authored by this scenery file."
+    },
+    {
+      "id": "G15",
+      "path": "docs/concept-art/act1/props/lunar-grotto-and-court-modular-kit.png",
+      "sha256": "c8b61dc9115e2ed98546c05b65ca79f34e2fe998af191e82bf2b582cf225d53e",
+      "kind": "generated_game_concept",
+      "pixel_use": "none; personally inspected actual local image pixels for silhouette/composition reference only",
+      "application": "Modular caps, radial gills, porous dressing, shelves, trunk and ornamental court curtain; illustrative board anchors do not override the frozen physical layout."
+    },
+    {
+      "id": "G12",
+      "path": "docs/concept-art/act1/mood/grotto-curiosity-and-royal-menace.png",
+      "sha256": "fb10c6c2bdb26005f87deac7cd59bbc2573dd83df7c92e7248bc6515e0e839e9",
+      "kind": "generated_game_concept",
+      "pixel_use": "none; personally inspected actual local image pixels for silhouette/composition reference only",
+      "application": "Fungal curiosity and theatrical court drapery; no new boss, hostile performer or mechanic is inferred."
+    },
+    {
+      "id": "F09",
+      "path": "docs/reference-library/act1/film-stills/f09.jpg",
+      "sha256": "414aa169c8c002012227a362cd609b178cc478006033c31c79a3f8094a7884ec",
+      "kind": "1902_film_frame_local_reference",
+      "pixel_use": "none; personally inspected actual local image pixels for silhouette/composition reference only",
+      "application": "Shallow umbrella silhouettes, stalk grain, porous foreground, trunk and rock shelving."
+    },
+    {
+      "id": "F10",
+      "path": "docs/reference-library/act1/film-stills/f10.jpg",
+      "sha256": "2af0136f438c066455ea39d766caa3fcb0c6b68e1954e731d19014af71a28c06",
+      "kind": "1902_film_frame_local_reference",
+      "pixel_use": "none; personally inspected actual local image pixels for silhouette/composition reference only",
+      "application": "Curling court panels, crescent crowns and gathered drapery; not a Gothic cathedral."
+    }
+  ],
+  "source_records": [
+    {
+      "path": "docs/concept-art/act1/generated-manifest.json",
+      "sha256": "626f39561c9c430beef47a399f69711c94c1daf93fd94835bf0d83a33de3b637"
+    },
+    {
+      "path": "docs/reference-library/act1/commons-manifest.json",
+      "sha256": "a3bbeb77ab79099115f4ce494ab537949f569daebb23f52628c999e82359960d"
+    },
+    {
+      "path": "docs/reference-library/act1/objects-grotto-and-return.json",
+      "sha256": "abe5683162dee598d068fe6b22da2b1be53fa310b210ee1aa5fcd3df5fbd75e7"
+    },
+    {
+      "path": "docs/reference-library/act1/research/entities.json",
+      "sha256": "86b5555b3f896594df45de34cfbed95cf27d5aef1ebe7903922f033022903a3a"
+    },
+    {
+      "path": "docs/reference-library/act1/research/levels.json",
+      "sha256": "a37ef980cec61c02d6d5d408b16a13ceee2b21c19a96077997935db11c985281"
+    },
+    {
+      "path": "docs/reference-library/act1/STYLE_GUIDE.md",
+      "sha256": "65d59434017b770e07b0922d26cd8f0d399e07e8d7ecbd50a873aaa4f2bd17fb"
+    },
+    {
+      "path": "docs/concept-art/act1/ADAPTATION_NOTES.md",
+      "sha256": "df42b639e9f85593f273ef749a5717731597b48f3b08d550c3971dc4cd2cb604"
+    },
+    {
+      "path": "docs/ACT1_CONCEPT.md",
+      "sha256": "0b1f276f2f51a17d5106a26ebadebddbecae3fdfd9a79ebc6c623c1446594a8f"
+    },
+    {
+      "path": "docs/ASSET_REUSE_GUIDE.md",
+      "sha256": "2507aa2d654026bb1466125bd4c9241060f073f026425287a6c8912907e7f983"
+    }
+  ],
+  "reused_assets": [
+    {
+      "id": "ACT1-LUNAR-PAINTED-ROCK-SURFACE",
+      "path": "assets/acts/act1/lunar/accents/painted_rock_surface.png",
+      "sha256": "6cc1e5b66e2c2ca94c9897cb774da37e5a85a874319214e65bda44bd3fb0ffa4",
+      "native_bitmap_size_px": [
+        64,
+        64
+      ],
+      "sampler": "nearest, repeating; cap vertex colors and silver tint modulate existing texture",
+      "provenance_manifest": {
+        "path": "assets/acts/act1/lunar/accents/lunar_accents_manifest.json",
+        "sha256": "c8bb17ccfb3bd1536587b95efc34b75677283321d18980a46dfedf4253bc6f45"
+      },
+      "reuse": "Existing L2 painted-rock material family; reused bytes unchanged, not reattributed as new production."
+    }
+  ],
+  "physical_layout_preserved": {
+    "floor_rect_xz": [
+      -7,
+      -54,
+      14,
+      72
+    ],
+    "floor_top_y": 0,
+    "safe_rect_xz": [
+      -6.9,
+      -53.9,
+      13.8,
+      71.8
+    ],
+    "spawn": [
+      0,
+      0.1,
+      15
+    ],
+    "exit": [
+      0,
+      0.8,
+      -51
+    ],
+    "stalk_collider_size": [
+      1.1,
+      2.2,
+      1.1
+    ],
+    "stalk_templates": [
+      {
+        "id": "UmbrellaStalk",
+        "origin": [
+          -5.1,
+          0,
+          8.4
+        ],
+        "cap_offset": [
+          0.4,
+          2.4,
+          0
+        ],
+        "cap_size": [
+          3.2,
+          0.16,
+          1.6
+        ]
+      },
+      {
+        "id": "BreathingStalk",
+        "origin": [
+          -4.6,
+          0,
+          -2
+        ],
+        "cap_offset": [
+          1.2,
+          2.4,
+          0
+        ],
+        "cap_size": [
+          4.8,
+          0.16,
+          1.6
+        ]
+      },
+      {
+        "id": "CrossedLeftStalk",
+        "origin": [
+          -5.6,
+          0,
+          -15.2
+        ],
+        "cap_offset": [
+          1.2,
+          2.4,
+          0
+        ],
+        "cap_size": [
+          4.8,
+          0.16,
+          1.6
+        ]
+      },
+      {
+        "id": "CrossedRightStalk",
+        "origin": [
+          5.6,
+          0,
+          -18
+        ],
+        "cap_offset": [
+          -1.2,
+          2.4,
+          0
+        ],
+        "cap_size": [
+          4.8,
+          0.16,
+          1.6
+        ]
+      },
+      {
+        "id": "CourtStalk",
+        "origin": [
+          4.5,
+          0,
+          -43
+        ],
+        "cap_offset": [
+          -1.2,
+          2.4,
+          0
+        ],
+        "cap_size": [
+          4.8,
+          0.16,
+          1.6
+        ]
+      }
+    ],
+    "central_stalk_free_passage_x": [
+      -3.5,
+      3.5
+    ],
+    "floor_collision": "Original actual floor and four perimeter collision shapes/resources/layers/masks remain. FungalArt adds no PhysicsBody3D, CollisionShape3D, Area3D or collider.",
+    "preserved_visible_leaves": "Every GroundedBase (1.1 x 0.16 x 1.1, y 0..0.16), Floor/Visual and original perimeter visuals remain exposed.",
+    "hidden_original_mesh_leaves": [
+      "UmbrellaStalk/Visual",
+      "UmbrellaStalkGreyboxCap",
+      "BreathingStalk/Visual",
+      "BreathingStalkGreyboxCap",
+      "CrossedLeftStalk/Visual",
+      "CrossedLeftStalkGreyboxCap",
+      "CrossedRightStalk/Visual",
+      "CrossedRightStalkGreyboxCap",
+      "CourtStalk/Visual",
+      "CourtStalkGreyboxCap",
+      "WestShelf",
+      "EastShelf",
+      "FallenTrunk"
+    ],
+    "replacement_method": "Hide only the listed original MeshInstance3D leaves after building art. Keep their nodes and resources alive; no freeing or collision mutation.",
+    "transform_contract": "New FungalArt root has local identity under the provided level; it uses layout-local native world-unit coordinates. Runtime validation must still verify actual level/root transforms and binding."
+  },
+  "assets": [
+    {
+      "id": "ACT1-GROTTO-STALK-CAP",
+      "source_ids": [
+        "G18",
+        "G15",
+        "G12",
+        "F09"
+      ],
+      "canonical_objects": [
+        "O43",
+        "O44"
+      ],
+      "readiness": "scene_bound_native_custody_validated; optical_portrait_scope_grove_and_guard_only; later_rooms_and_curtain_states_pending",
+      "native_scale": "1 Godot unit per frozen layout unit; no conversion or actor/camera rescaling.",
+      "pivot": "Each PaintedSurface root uses the frozen stalk foot-origin at y0. Cap root uses the exact frozen cap_offset.",
+      "geometry": "Five complete square stalk surfaces retain the visible collider footprint. Existing GroundedBase covers y0..0.16; new textured core covers y0.16..2.2. Fourteen painted grain strips per stalk. Twenty-four-sector shallow faceted caps and twenty-four radial underside gills converge at the real stalk projection.",
+      "bounds": "Core x/z +/-0.55. Cosmetic front/side grain projects at most 0.005 beyond the collider face. Cap/gill vertices stay inside each frozen cap_size envelope; cap world y2.32..2.48. No broadened cap or raised cluster target.",
+      "collision_role": "Presentation of the existing five grounded BOX colliders only. Original GroundedBase and collision nodes/resources unchanged.",
+      "occlusion_role": "Opaque, shallow caps can overlap distant actor quads in the fixed following camera. Actual full source/art/footprint/safe-landing framing must be reviewed after owner wiring; current component greybox views do not validate this material/art.",
+      "states": [
+        "static"
+      ],
+      "reuse_family": "E11/P12 grotto structure; intended L3 and later A1-O2 reuse, not an implemented optional-level placement.",
+      "scope_limit": "O44 is scenic low fungus reference only. This file does not create a hittable spore cluster, finite supply, footprint, field or release cue."
+    },
+    {
+      "id": "ACT1-GROTTO-ROCK-POROUS",
+      "source_ids": [
+        "G18",
+        "G15",
+        "F09"
+      ],
+      "canonical_objects": [
+        "O45",
+        "O47"
+      ],
+      "readiness": "scene_bound_native_custody_validated; optical_portrait_scope_grove_and_guard_only; later_rooms_and_curtain_states_pending",
+      "native_scale": "Jagged flat local x[-0.43,0.43], y[0,3.05] at x +/-7.65 and z10/-3/-16/-30/-43. Closest flat edge is abs(x)7.22, beyond the original perimeter outer face abs(x)7.1.",
+      "pivot": "Scenery foot origin at ground y0, outside floor; no new overhead collision or roof.",
+      "geometry": "Painted irregular side wings with ornamental annular motifs; separate porous fungus pieces at x +/-8.45, z+0.65 carry five ten-sector annular openings each. Separate pieces have genuinely unfilled centres radius0.20, outer radius0.31; no solid backing mesh in those centres.",
+      "bounds": "Separate porous pieces remain outside floor, closest abs(x)>=7.96; y0.02..2.36. Wing motifs may have painted wing behind them; only the separate pieces promise open mesh centres.",
+      "collision_role": "None. These are scenic outside-floor forms, never traversable holes, support surfaces or scenery collision proxies.",
+      "occlusion_role": "Ordinary depth; porous negative space preserves background gaps, subject to actual camera/other-scenery overlap. No generated central ceiling conceals actor/cue quads.",
+      "states": [
+        "static"
+      ],
+      "reuse_family": "E11/P12 grotto porous rock flats; prospective L3/A1-O2 kit."
+    },
+    {
+      "id": "ACT1-GROTTO-TRUNK-SHELVES",
+      "source_ids": [
+        "G15",
+        "F09"
+      ],
+      "canonical_objects": [
+        "O46",
+        "O48"
+      ],
+      "readiness": "scene_bound_native_custody_validated; optical_portrait_scope_grove_and_guard_only; later_rooms_and_curtain_states_pending",
+      "native_scale": "WestShelf(-7.6,1,-8) and EastShelf(7.6,1.2,-35) use original 0.8 x 0.5 x 4 volumes. FallenTrunk(7.6,0.4,-25) uses an eight-sided 5-unit horizontal timber inside original 0.7 x 0.8 x 5 envelope.",
+      "pivot": "Original layout scenic centre origins, exact unchanged positions.",
+      "geometry": "Texture and irregular silver shelf lips, faceted timber and four long pale wood-grain strokes. No bridge gameplay is authored.",
+      "collision_role": "None, matching the frozen scenic-only leaves. No invisible shelves/trunk collider or fake floor.",
+      "occlusion_role": "Outside continuous floor; owner checks portrait edge visibility after wiring.",
+      "states": [
+        "static"
+      ],
+      "reuse_family": "E11/P12 static grotto shelves and fallen timber."
+    },
+    {
+      "id": "ACT1-GROTTO-COURT-CURTAIN",
+      "source_ids": [
+        "G15",
+        "G12",
+        "F10"
+      ],
+      "canonical_objects": [
+        "O56"
+      ],
+      "readiness": "scene_bound_native_custody_validated; optical_portrait_scope_grove_and_guard_only; later_rooms_and_curtain_states_pending",
+      "native_scale": "Root(0,0,-52); columns x+/-2.9, curling panels x+/-3.65, top rail y3.72. Overall nominal bounds x+/-4.17, y0..4.5, z[-52.2,-51.8].",
+      "pivot": "Floor origin behind the frozen exit marker; each curtain leaf has local identity.",
+      "geometry": "Paired moon-white columns, non-self-crossing crescent crowns, charcoal curling panels, silver curls and twenty cloth folds with silver hems per state.",
+      "states": [
+        "blocked_drapery",
+        "open_gathered_drapery"
+      ],
+      "state_binding": "set_court_open selects one pose synchronously. Open folds leave an approximately 4.14-unit central visual gap. No animation clock, touch target, collect cue, event or progression state is created.",
+      "collision_role": "None. Actual blocked/open contact gate and completion logic belong to the level owner.",
+      "occlusion_role": "Opaque drapery behind exit can mask later room/actors if placed in the follow-camera sightline. Owner must validate finale/contact and open pose in actual portrait; geometry is not visually accepted.",
+      "reuse_family": "O56 ornamental court threshold; prospective L3 exit dressing and later court reuse, no authored L4 placement or boss."
+    }
+  ],
+  "native_spore_scope": {
+    "unchanged_proposals": "Frozen FIELD_ORIGINS/CLUSTER_OFFSETS remain in Layout. This scenery author does not install clusters, finite supplies, native domains or spore field logic.",
+    "requirements": "Native consumer must validate full-circle expansion against real walls, floor support and grounded stalks, ordinary-primary access, retained source/cue/safe-landing framing and quiet state restoration.",
+    "visual_priority": "Future low cluster targets and every live source quad, footprint and Hero body/feet must remain readable beneath offset cap edges. No decorative particle, glow, field-shaped circle or attack cue is fabricated here."
+  },
+  "validation": {
+    "completed": [
+      "Static provenance/reference hashes and geometry envelope checks by original author",
+      "Root clean new-resource import/native UIDs on shared24",
+      "189/0 actual native pair with paused hidden/removed/null/equivalent scenery and sprite fault rejection/quiet reconstruction",
+      "Current184/0 actual scripted540x1170 component portraits, all12 individually owner reviewed: complete3-swarmer silhouettes belowHUD and isolatedguard source/footprint/landing/ordinaryrecovery body visibility"
+    ],
+    "evidence": [
+      "docs/acts/act1/evidence/L3-authored-art-first/index.json",
+      "docs/acts/act1/evidence/L3-custody-codec/index.json",
+      "docs/acts/act1/evidence/L3-all-sources-portrait/index.json"
+    ],
+    "pending": [
+      "Applied static UmbrellaStalk origin (-5.1,0,8.4), not yet engine-tested: fresh native single-C31 hold/regroup portrait and whole-unit/route validation after the static placement revision; prior screenshots at (-4.8,0,10) show headpiece occlusion.",
+      "Later-room cap occlusion and actual complete enemy/cluster/retreat/landing optical review",
+      "Court blocked/open visual and physical contact/progression proof",
+      "Real clusters/finitefield/expandedcircle/native routes after reviewed publication",
+      "Full crowd/five-room route, production save and required legal-kit/profile acceptance"
+    ],
+    "limits": "These scoped native/art results do not establish full L3/final art, all orientations/scenic poses, human balance or performance. Original first generic/HUD/guard overlaps and codec audio warnings remain archived. Current builder adds custody guard without changing geometry/material values."
+  }
+}

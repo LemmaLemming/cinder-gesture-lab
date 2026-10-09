@@ -1,0 +1,39 @@
+--- a/scripts/acts/act1/mushroom_caverns.gd
++++ b/scripts/acts/act1/mushroom_caverns.gd
+@@ -320,7 +320,7 @@
+ 	var control: Dictionary = scheduler.source_control_state(actual)
+ 	if control.get("api_revision") != "scheduler-source-control-1" or control.get("source_instance_id") != actual.get_instance_id() or control.get("encounter_id") != _encounter_id() or control.get("world_revision") != WORLD_REVISION or not control.get("reservations") is Array or control.reservations.size() != 1: return {}
+ 	var record: Variant = control.reservations[0]
+-	if not record is Dictionary or record.get("id") != answer.reservation_id or record.get("source_instance_id") != actual.get_instance_id() or record.get("response_actor_instance_id") != hero.get_instance_id(): return {}
++	if not record is Dictionary or record.get("id") != answer.reservation_id or record.get("source_instance_id") != actual.get_instance_id(): return {}
+ 	var presentation: Dictionary = actual.pure_presentation_state()
+ 	if presentation.get("source_id") != id or presentation.get("reservation_id") != answer.reservation_id: return {}
+ 	return {"actor": actual, "control": control, "record": record}
+--- a/tests/acts/act1/a1_l3_initial_admission_custody.gd
++++ b/tests/acts/act1/a1_l3_initial_admission_custody.gd
+@@ -8,7 +8,7 @@
+ 
+ const CustodyCases: Array[String] = ["valid", "source-cancel", "cue-cancel", "source-pause", "cue-pause"]
+ const ExpectedSources: Dictionary = {
+-	"res://scripts/acts/act1/mushroom_caverns.gd": "67f86452f8dea9da0ec45ca4e515a6e0dfb695d3bb138110bf79280501681dd7",
++	"res://scripts/acts/act1/mushroom_caverns.gd": "55b30d6d639bf4a468e27189ef4703039b630e4c96fcc88564b1f7e5d912ecd4",
+ 	"res://scripts/acts/act1/mushroom_caverns_route.gd": "04f0655d4996bef6a9e25ff144ab701a98b3ae333c6faffa8236f3140d4d91f6",
+ 	"res://scripts/acts/act1/mushroom_selenite.gd": "24749ae5a7dd4334aac643fffac603570040098a3970929561e53a4f86e51576",
+ 	"res://tests/acts/act1/a1_l3_normal_opening.gd": "6938db3d34ac3b70ed24641b345f1f8f1e80a9e54acf81ad0d477eb573d41a91",
+@@ -147,6 +147,7 @@
+ 	var state: Dictionary = actor.pure_presentation_state()
+ 	var control: Dictionary = scheduler.source_control_state(actor)
+ 	var response: Dictionary = actor.get_spore_response_state()
++	var native: Dictionary = actor.get_spore_native_bindings()
+ 	var route: Dictionary = level.call("route_state")
+ 	var cue: Dictionary = (actor.get_cue() as CinderThreatCue).state()
+ 	if state.get("cycle") != 1: return # This fixture targets only genuine initial publication.
+@@ -156,7 +157,7 @@
+ 	var wanted: String = "cue" if custody_case.begins_with("cue-") else "source"
+ 	if origin != wanted or not selected.is_empty(): return
+ 	if not _require(scheduler.encounter_profile().get("id") == "standard" and cue.get("phase") == "warning" and cue.get("geometry") == state.get("geometry") and cue.get("source_position") == actor.global_position and cue.get("source_visible") == true and cue.get("footprint_visible") == true and cue.get("active_fill_visible") == false, "actual Standard initial Warning presents its matching required native source marker and complete footprint before the observer action"): return
+-	if not _require(route.get("beat_index") == 0 and route.get("room_stage") == "active" and route.get("encounter_started") == true and id in level.call("current_source_ids") and actor.get_parent() == level and state.get("entity_id") == "C31" and state.get("phase") == "warning" and state.get("status") == "running" and state.get("dead") == false and not state.get("dormant", true) and response.get("alive") == true and response.get("outside_transaction") == false and control.get("outside_transaction") == true and control.get("encounter_id") == "a1_l3_umbrella" and control.get("world_revision") == 1 and control.get("source_instance_id") == actor.get_instance_id() and control.get("reservations") is Array and control.reservations.size() == 1 and control.reservations[0].get("id") == state.get("reservation_id") and control.reservations[0].get("source_instance_id") == actor.get_instance_id() and control.reservations[0].get("response_actor_instance_id") == hero.get_instance_id() and control.reservations[0].get("start_s") == control.get("clock_s") and control.get("cooldown") is Dictionary and not frames.has(id) and publication_receipts.is_empty() and not paused, "real initial " + origin + " Warning occurs inside unfinished actor.start with its exact native owner/Player lease and cooldown, before parent response publication"): return
++	if not _require(route.get("beat_index") == 0 and route.get("room_stage") == "active" and route.get("encounter_started") == true and id in level.call("current_source_ids") and actor.get_parent() == level and state.get("entity_id") == "C31" and state.get("phase") == "warning" and state.get("status") == "running" and state.get("dead") == false and not state.get("dormant", true) and response.get("alive") == true and response.get("outside_transaction") == false and control.get("outside_transaction") == true and control.get("encounter_id") == "a1_l3_umbrella" and control.get("world_revision") == 1 and control.get("source_instance_id") == actor.get_instance_id() and control.get("reservations") is Array and control.reservations.size() == 1 and control.reservations[0].get("id") == state.get("reservation_id") and control.reservations[0].get("source_instance_id") == actor.get_instance_id() and native.get("player") == hero and native.get("scheduler") == scheduler and control.reservations[0].get("start_s") == control.get("clock_s") and control.get("cooldown") is Dictionary and not frames.has(id) and publication_receipts.is_empty() and not paused, "real initial " + origin + " Warning occurs inside unfinished actor.start with its exact native owner/Player lease and cooldown, before parent response publication"): return
+ 	selected = {"id": id, "lease_id": state.reservation_id, "record": control.reservations[0].duplicate(true), "cooldown": control.cooldown.duplicate(true), "clock_s": control.clock_s, "origin": origin, "source_instance_id": actor.get_instance_id(), "hero_instance_id": hero.get_instance_id()}
+ 	if custody_case == "valid": return
+ 	action_taken = true # Set before nested clear observers can re-enter this test.

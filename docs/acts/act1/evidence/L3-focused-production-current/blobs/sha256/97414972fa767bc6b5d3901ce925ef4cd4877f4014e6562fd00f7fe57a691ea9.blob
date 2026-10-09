@@ -1,0 +1,41 @@
+from pathlib import Path
+import sys,json,hashlib,subprocess,datetime,re
+name,scope,*argv=sys.argv[1:]
+if argv and argv[0]=="--":argv=argv[1:]
+assert argv[:2]==["python3","scripts/dev/dev.py"]
+root=Path.cwd();out=root/".cinder";prefix=out/name
+assert not Path(str(prefix)+".json").exists() and not Path(str(prefix)+".log").exists()
+original=json.loads((out/"a1-l3-normal-floor-five-room-portrait-native1.json").read_text())
+seeds=[p for p in original["source_sha256"] if p not in original["provenance_only_paths"]]
+if "--script" in argv:seeds.append(argv[argv.index("--script")+1])
+seeds += ["scenes/acts/act1/a1_l3.tscn", "tests/acts/act1/a1_l3_brief_portrait.gd"]
+queue=list(dict.fromkeys(seeds));paths=[];seen=set();missing=set()
+while queue:
+ n=queue.pop(0)
+ if n in seen:continue
+ seen.add(n);p=root/n
+ if not p.is_file():raise RuntimeError("Missing explicit dependency: "+n)
+ paths.append(n)
+ if p.suffix in [".gd",".tscn",".tres",".gdshader",".json",".godot"]:
+  for ref in re.findall(r"res://([A-Za-z0-9_. /-]+)",p.read_text()):
+   ref=ref.strip()
+   if (root/ref).is_file():queue.append(ref)
+   elif ref and not (root/ref).is_dir():missing.add(ref)
+ if p.suffix==".gd" and (root/(n+".uid")).is_file():queue.append(n+".uid")
+provenance=['.cinder/a1-shared40-adoption.json', '.cinder/a1-focused-policy-adoption.json', '.cinder/a1-shared39-supplement-adoption.json', '.cinder/a1-l3-pale-cap-owner-promotion.json', '.cinder/a1-l3-focused-portrait-inspection-plan.md', '.cinder/a1-l3-focused-save-policy-review/REVIEW.md', '.cinder/a1-l3-brief-owner-review.json', '.cinder/record_l3_focused_job_shared40.py']
+paths=list(dict.fromkeys(paths+provenance));snap=Path(str(prefix)+"-source");snap.mkdir();hashes={}
+for n in paths:
+ b=(root/n).read_bytes();hashes[n]=hashlib.sha256(b).hexdigest();p=snap/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(b)
+canonical=Path("/Users/howardchen/Documents/ChatGPT/video game idea");run=json.loads((canonical/".cinder/agent-chat/cinder-campaign/run.json").read_text())
+assert run["workers"]["act1"]["worker_id"]=="01a11adf-2ec8-7702-96c6-0fa1e240c332"
+assert subprocess.run(["git","merge-base","--is-ancestor","4b3e944595e700a2b0a5269485a4922bb8d59946","HEAD"],capture_output=True).returncode==0
+meta={"argv":argv,"working_tree_at_start":subprocess.check_output(["git","status","--porcelain"],text=True).splitlines(),"head":subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(),"api_revision":"campaign-shared-40","adopted_publication":"4b3e944595e700a2b0a5269485a4922bb8d59946","canonical_worker_baseline_at_start":run["workers"]["act1"]["worker_baseline"],"started_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),"scope":scope,"source_sha256":hashes,"source_subset_limit":"Current bounded literal closure seeded from prior408 declared inputs minus their provenance, plus actual production alias/brief fixture and scoped current policy/art review. Not a complete editor/resource graph; old executed evidence is never relabelled.","literal_non_file_refs":sorted(missing),"provenance_only_paths":provenance}
+manifest=Path(str(prefix)+".json");manifest.write_text(json.dumps(meta,indent=2)+"\n")
+log=Path(str(prefix)+".log")
+with log.open("w") as f:result=subprocess.run(argv,stdout=f,stderr=subprocess.STDOUT)
+meta["exit_code"]=result.returncode;meta["finished_at"]=datetime.datetime.now(datetime.timezone.utc).isoformat();meta["post_execution_source_hash_mismatch"]=[n for n,h in hashes.items() if not(root/n).is_file() or hashlib.sha256((root/n).read_bytes()).hexdigest()!=h];manifest.write_text(json.dumps(meta,indent=2)+"\n")
+print(name,"EXIT",result.returncode,flush=True)
+for line in log.read_text().splitlines():
+ if any(t in line for t in ["checks,","checks/","ERROR:","WARNING:","SCRIPT ERROR:","report="]):print(line[:1000],flush=True)
+if meta["post_execution_source_hash_mismatch"]:print("SOURCE HASH MISMATCH",meta["post_execution_source_hash_mismatch"],flush=True)
+sys.exit(result.returncode or(1 if meta["post_execution_source_hash_mismatch"] else 0))

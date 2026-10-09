@@ -1,0 +1,134 @@
+extends "res://tests/acts/act1/a1_l3_actor_pair.gd"
+## Native codec comparison against a genuine paused native warning and genuine
+## ordinary-primary defeat. No environmental stamp/hooks/repulsion or campaign
+## claims. The removed-source test retains ONLY closed actual captured values.
+
+const NativeCodec = preload("res://scripts/acts/act1/mushroom_selenite_codec.gd")
+const NativeMotion = preload("res://scripts/combat/lunge_motion.gd")
+
+
+func _run() -> void:
+	root.size = PortraitSize
+	if not await _open_world(GrovePath, "grove", Vector3(0, 0.1, 15)) or not await _swipe(Vector3.FORWARD, "codec genuine grove admission approach"):
+		await _finish(); return
+	_watch_pair_events()
+	var id: String = await _first_warning()
+	if id.is_empty() or not await _pause_pair("codec native warning"):
+		await _finish(); return
+	var pair: Dictionary = _pair_capture()
+	if not _require(not pair.is_empty() and _pair_error(pair).is_empty(), "codec test begins with separately validated complete Player/all-actor/Scheduler native units"):
+		await _finish(); return
+	var decoder: RefCounted = NativeCodec.new()
+	var bindings: Dictionary = {}
+	for source_id: String in ActorIds:
+		var actual: CharacterBody3D = sources[source_id]
+		# Capture signature while using the actor's documented exact lifecycle.
+		# Dormant capsules remain disabled; no temporary collision enabling.
+		var measured: Dictionary = NativeMotion.staged_source_description(actual, {"collision_path": "BodyCollision", "enabled": true, "layer": 2, "mask": 1})
+		if not _require(not measured.has("error"), source_id + " retained native signature measures without enabling a dormant source"):
+			await _finish(); return
+		bindings[source_id] = {"api_revision": NativeCodec.BINDING_REVISION, "actor_revision": NativeCodec.API_REVISION, "source_id": source_id, "controller_id": "mushroom-scheduler", "player_id": "hero", "configuration": pair.actors[source_id].configuration.duplicate(true), "body_signature": measured.signature.duplicate(true)}
+	var before: String = Exact.stringify(pair)
+	var binding_before: String = Exact.stringify(bindings)
+	var event_count: int = pair_events
+	for source_id: String in ActorIds:
+		var binding: Dictionary = bindings[source_id]
+		var saved: Dictionary = pair.actors[source_id]
+		if not _require(String(decoder.call("record_error", saved, pair.scheduler, pair.player, binding)).is_empty(), source_id + " native codec accepts the genuine complete native record/context"):
+			await _finish(); return
+		var view: Dictionary = decoder.call("record_view", saved, binding)
+		if not _require(not view.is_empty() and view.hp == saved.hp and view.dead == saved.dead and view.dormant == saved.dormant and view.motion == saved.motion and view.reservation_id == saved.reservation_id and not view.has("repulsion"), source_id + " native logical view copies actual resources/motion and invents no environmental episode"):
+			await _finish(); return
+		view.motion.position[0] += 1.0
+		if not _require(Exact.stringify(_pair_capture()) == before and Exact.stringify(bindings) == binding_before and pair_events == event_count, source_id + " codec/readback/view edits leave original native units and bindings untouched"):
+			await _finish(); return
+	if not _codec_negatives(decoder, pair, bindings[id], id):
+		await _finish(); return
+	if not await _gui_resume_pair() or not await _fight_cycle(id, false):
+		await _finish(); return
+	var actor: CharacterBody3D = sources[id]
+	if not _require(actor.get("dead") and actor.get("hp") == 0.0, "real ordinary primary creates the codec test's genuine defeat"):
+		await _finish(); return
+	if not await _pause_pair("codec genuine native defeat"):
+		await _finish(); return
+	var defeated: Dictionary = _pair_capture()
+	if not _require(not defeated.is_empty() and _pair_error(defeated).is_empty(), "actual defeated native unit separately prevalidates before source removal"):
+		await _finish(); return
+	var tombstone: Dictionary = defeated.actors[id].duplicate(true)
+	var controller: Dictionary = defeated.scheduler.duplicate(true)
+	var player: Dictionary = defeated.player.duplicate(true)
+	var retained: Dictionary = bindings[id].duplicate(true)
+	var frozen: String = Exact.stringify({"actor": tombstone, "controller": controller, "player": player, "binding": retained})
+	var weak: WeakRef = weakref(actor)
+	# Genuine defeat owns removal. Never manufacture a defeated actor, clear a
+	# lease directly, or treat a absent living record as a supported tombstone.
+	(level.get("sources") as Dictionary).erase(id)
+	sources.erase(id)
+	actor.queue_free()
+	await process_frame
+	if not _require(weak.get_ref() == null, "genuine defeated source is actually removed before independent decoder validation"):
+		await _finish(); return
+	if not _require(String(decoder.call("record_error", tombstone, controller, player, retained)).is_empty(), "retained closed decoder/configuration validates the genuine HP0 defeat without a live actor"):
+		await _finish(); return
+	var dead_view: Dictionary = decoder.call("record_view", tombstone, retained)
+	if not _require(not dead_view.is_empty() and dead_view.hp == 0.0 and dead_view.dead and not dead_view.alive and dead_view.motion == tombstone.motion and Exact.stringify({"actor": tombstone, "controller": controller, "player": player, "binding": retained}) == frozen, "removed-source view preserves actual native defeat and creates neither HP nor replacement actor"):
+		await _finish(); return
+	var forged: Dictionary = tombstone.duplicate(true)
+	forged.hp = 1.0
+	_require(not String(decoder.call("record_error", forged, controller, player, retained)).is_empty(), "removed genuine defeat cannot hide invented living HP under its dead flag")
+	forged = controller.duplicate(true)
+	forged.cooldowns.append({"source_id": id, "ready_s": float(controller.clock_s) + 0.1})
+	_require(not String(decoder.call("record_error", tombstone, forged, player, retained)).is_empty(), "removed defeated source cannot retain an owner cooldown")
+	await _finish()
+
+
+func _codec_negatives(decoder: RefCounted, pair: Dictionary, binding: Dictionary, id: String) -> bool:
+	var cases: Array[Dictionary] = []
+	var copied: Dictionary = pair.duplicate(true)
+	copied.actors[id].sample.clock_s += 0.000001
+	cases.append({"label": "copied actor sample clock", "pair": copied})
+	copied = pair.duplicate(true)
+	copied.scheduler.clock_s += 0.000001
+	cases.append({"label": "copied Scheduler clock", "pair": copied})
+	copied = pair.duplicate(true)
+	copied.actors[id].reservation_id += "-forged"
+	cases.append({"label": "native lease identity", "pair": copied})
+	copied = pair.duplicate(true)
+	copied.actors[id].profile_id = "assisted"
+	cases.append({"label": "native resolved profile", "pair": copied})
+	copied = pair.duplicate(true)
+	var owned: Dictionary = _owned_record(copied, id)
+	owned.adapter.body_signature.radius += 0.01
+	cases.append({"label": "retained native capsule signature", "pair": copied})
+	copied = pair.duplicate(true)
+	copied.player.motion.position[0] += 0.125
+	cases.append({"label": "paired Player/source sample", "pair": copied})
+	copied = pair.duplicate(true)
+	copied.actors[id].schema_version = 2
+	cases.append({"label": "conditional pending schema without complete pending segments", "pair": copied})
+	copied = pair.duplicate(true)
+	copied.actors[id].schema_version = 1.0
+	cases.append({"label": "float substitution for genuine integer native schema", "pair": copied})
+	var before: String = Exact.stringify(_pair_capture())
+	var event_count: int = pair_events
+	for test: Dictionary in cases:
+		if not _require(not String(decoder.call("record_error", test.pair.actors[id], test.pair.scheduler, test.pair.player, binding)).is_empty() and Exact.stringify(_pair_capture()) == before and pair_events == event_count, "native codec rejects " + test.label + " without native mutation"):
+			return false
+	var wrong_binding: Dictionary = binding.duplicate(true)
+	wrong_binding.source_id += "-other"
+	return _require(not String(decoder.call("record_error", pair.actors[id], pair.scheduler, pair.player, wrong_binding)).is_empty() and (decoder.call("record_view", pair.actors[id], wrong_binding) as Dictionary).is_empty(), "codec binding source mismatch rejects both record and view")
+
+
+func _finish() -> void:
+	if finishing: return
+	finishing = true
+	if is_instance_valid(level): level.exit_level()
+	if is_instance_valid(game):
+		var effects: PixelEffects = game.get("fx") as PixelEffects
+		if is_instance_valid(effects): effects.clear()
+		game.queue_free()
+	paused = false
+	await process_frame
+	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
+	print("A1-L3 NATIVE CODEC: %d checks, %d failures; genuine native warning/ordinary-primary defeat; no environmental protocol claim" % [checks, failures])
+	quit(1 if failures else 0)
