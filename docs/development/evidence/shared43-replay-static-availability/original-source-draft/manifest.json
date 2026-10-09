@@ -1,0 +1,191 @@
+{
+  "status": "FROZEN_SOURCE_ONLY_UNPARSED_UNEXECUTED",
+  "captured_at_utc": "2026-10-09T07:31:20.231410+00:00",
+  "base_head": "5a38ee04a96253d4bd323098fcba8992152c8fd9",
+  "policy": "13 existing implemented static equipment IDs available in fresh campaign replay; durable availability migration only in load_saved; restore_session retains original memory-only/submitted-ownership semantics",
+  "candidate_target": "scripts/campaign/attempts.gd",
+  "proposed_test_target": "tests/replay_static_availability_smoke.gd",
+  "no_changes": [
+    "tracked runtime or tests",
+    "canonical catalogue or ledgers",
+    "act content",
+    "engine launch",
+    "Git staging/commit",
+    "mailbox/worker messaging"
+  ],
+  "canonical_read_only_query": {
+    "argv": [
+      "python3",
+      "scripts/dev/dev.py",
+      "equipment",
+      "status"
+    ],
+    "exit_code": 0,
+    "revision": 0,
+    "creation_claims": 0,
+    "item_count": 36,
+    "capture": "equipment-status.json"
+  },
+  "static_checks": {
+    "live_attempts_base_still_exact": true,
+    "original_unchanged_function_count": 24,
+    "original_unchanged_functions": [
+      "state",
+      "story_snapshot",
+      "active_snapshot",
+      "active_kind",
+      "begin_story",
+      "record_snapshot",
+      "retry_snapshot",
+      "begin_side",
+      "restart_replay",
+      "complete_active",
+      "leave_side",
+      "next_story_id",
+      "advance_story",
+      "grant_equipment",
+      "saved_payload_error",
+      "state_error",
+      "_attempt",
+      "_attempt_error",
+      "_snapshot_error",
+      "_equipment_error",
+      "_unique_strings",
+      "_active",
+      "_commit",
+      "_reject"
+    ],
+    "original_staging_checks_exact_except_false_to_empty_return": true,
+    "no_native_parse_or_test_claim": true
+  },
+  "inspected_inputs": [
+    {
+      "path": "scripts/campaign/attempts.gd",
+      "sha256": "41d5abbe22d19e389e89ab9ef196496672ee3c4bfa25c596ba3ca695f6ec44c0",
+      "bytes": 17310
+    },
+    {
+      "path": "scripts/equipment.gd",
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "bytes": 9130
+    },
+    {
+      "path": "data/design/player_equipment.json",
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+      "bytes": 32678
+    },
+    {
+      "path": "scripts/ui/campaign_menu.gd",
+      "sha256": "33781eb8150da96a9eed0e194cadff146f1b9712831c742195f539943dfeff28",
+      "bytes": 35356
+    },
+    {
+      "path": "scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330
+    },
+    {
+      "path": "scripts/campaign/shell.gd",
+      "sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+      "bytes": 45143
+    },
+    {
+      "path": "scripts/campaign/registry.gd",
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006
+    },
+    {
+      "path": "data/campaign/registry.json",
+      "sha256": "f8ee9677c6bfd47147de3aa890b907bd232e04575513378f8163bde98d7c456f",
+      "bytes": 11136
+    },
+    {
+      "path": "scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906
+    },
+    {
+      "path": "tests/campaign_shell_smoke.gd",
+      "sha256": "d54a10502d750b9a3b5773538e445dd0c270bfbd59bfd7f14d9393f1f7618f71",
+      "bytes": 32100
+    },
+    {
+      "path": "tests/campaign_menu_smoke.gd",
+      "sha256": "c724893ece05e36d35a04c4f12ddb75a70a8bc71ca9c29ced95c5e9f10d47c95",
+      "bytes": 23903
+    },
+    {
+      "path": "tests/campaign_persistence_smoke.gd",
+      "sha256": "85b6e36a1a432b6f855aaf2090fc86c89b4c6ca63a5f101902b26ac84fc92a01",
+      "bytes": 14256
+    },
+    {
+      "path": "tests/fixtures/campaign/live_level.gd",
+      "sha256": "7bb790fd03e3a36d0471df5b2f178a7187bb68a0118f47c94628c2bd30afb4c7",
+      "bytes": 1612
+    },
+    {
+      "path": "tests/fixtures/campaign/live_a1_l1.tscn",
+      "sha256": "116251f85d878ca788bcec23ab65fbeaf9094b01bf096a77d085bbed14b35b03",
+      "bytes": 645
+    },
+    {
+      "path": "tests/fixtures/campaign/live_a1_l2.tscn",
+      "sha256": "29cc18232bf8dd6d3e0e0a1c7ecff6246a999e7256e8abbf1c2c288823705929",
+      "bytes": 645
+    },
+    {
+      "path": "docs/EQUIPMENT_DESIGN_GRID.md",
+      "sha256": "227fe062aa1bd0d189b255b3413cd11ebbbf0f7626e5227eaca3089b8a7b950b",
+      "bytes": 5531
+    },
+    {
+      "path": "docs/PLAYER_EQUIPMENT_GUIDELINES.md",
+      "sha256": "1fa6a5f8525d6a41c662cf1a163ec77ac51487473f89edc24c68bcd5fac06cbc",
+      "bytes": 42065
+    }
+  ],
+  "input_scope": "Explicit inspected current-source subset, not original native source receipt/full literal import or resource graph. Only Attempts original bytes are copied; other inputs are current-hash references.",
+  "artifacts": [
+    {
+      "path": ".gdignore",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "README.md",
+      "sha256": "5118fc6f5d59beb5c85121db0c00bbf5e579e5479b72443574cd5a478f7664a8",
+      "bytes": 7560
+    },
+    {
+      "path": "attempts.candidate.gd",
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "bytes": 18347
+    },
+    {
+      "path": "attempts.original.gd",
+      "sha256": "41d5abbe22d19e389e89ab9ef196496672ee3c4bfa25c596ba3ca695f6ec44c0",
+      "bytes": 17310
+    },
+    {
+      "path": "candidate.patch",
+      "sha256": "7b0a27e47c57f0339e3221cae481d96e7c486c78df975e8710960ba49fa9c25d",
+      "bytes": 2934
+    },
+    {
+      "path": "equipment-status.json",
+      "sha256": "1bba430562efaee9b13c4f322672acaa7e0586aefef9b4ef4fb7a3391de80509",
+      "bytes": 67091
+    },
+    {
+      "path": "test-leaf.gd",
+      "sha256": "ae2ab6643b84e6a0faa3d345504980471f6259fd66a7f86a3a8ccdc7214cd132",
+      "bytes": 19921
+    }
+  ]
+}

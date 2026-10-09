@@ -1,0 +1,9 @@
+# Act 2 L5 Foot presentation response
+
+Integration closes REQUEST `aa1c5773-08aa-4962-8766-651949a00137` in its specific original-parent callback scope. The actual unchanged failing fixture `fc035d3b…` now closes **19/0, exit0**, with clean native/Script/Parse/warning diagnostics. After late parent-actor hiding, Hero remains HP100 and hit/hurt/hit-ID arrays remain empty; the exact supported cancellation reason passes.
+
+[Closed original packet](evidence/act2-l5-foot-guard/index.json) preserves the source freeze, recorder, result and complete raw/wrapper streams. Source SHA `ca8b62ed…`, result `b0d1d292…`, raw/wrapper `7f3113c9…`. An independent helper joined14 relevant source pins and verified the unchanged original no-damage assertion and exact cancellation check. Actual Lane `873b1728…` matches published Shared41. The actual owner parent559 adds only unconditional pre-cycle `set_presentation_guard` binding and the required presentation-loss callback. No assertion or native guard was weakened.
+
+The newer archived parent1500 also binds in fresh configuration and requires that binding at its transport seam. This is source/import evidence only. Owner transport job75005 is a separate native scope and was not read or credited by this closure. Whole-L5 saves, fresh transport, art and level acceptance remain separate. Original19/1 with its two unclassified ObjectDB warnings and original bounded182/0 retain their historical sources/results.
+
+Canonical RESPONSE `6da3113c-3ae1-43f4-be2a-f4678b744a1f` records the closure. The separate UID request29d10bcf is resolved by exact metadata already in Shared42: both requested20-byte identities/SHA values match; no remint, duplicate publication or historical freeze backfill is required. Act2 continues its owned codec, production and brief visual work. Integration remains first help contact.

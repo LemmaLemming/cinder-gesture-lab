@@ -337,7 +337,10 @@ raise SystemExit(17 if failure and any(failure in arg for arg in sys.argv[1:]) e
         result = self.invoke("check", environment=environment)
         self.assertEqual(result.returncode, 17, result.stderr)
         starts = [event for event in self.events() if event["kind"] == "start"]
-        self.assertEqual(len(starts), 3)
+        equipment_index = list(dev.SUITES.values()).index(dev.SUITES["equipment"])
+        expected_prefix = ["res://" + relative for relative in list(dev.SUITES.values())[:equipment_index + 1]]
+        self.assertEqual(starts[0]["args"][-2:], ["--headless", "--import"])
+        self.assertEqual([event["args"][-1] for event in starts[1:]], expected_prefix)
         self.assertTrue(starts[-1]["args"][-1].endswith("equipment_smoke.gd"))
 
     def test_run_passes_level_to_shared_entry_and_rejects_escape(self):

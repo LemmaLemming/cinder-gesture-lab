@@ -1,0 +1,74 @@
+--- a/scripts/campaign/attempts.gd
++++ b/scripts/campaign/attempts.gd
+@@ -20,7 +20,7 @@
+ 	_state = {
+ 		"schema_version": SCHEMA_VERSION, "completed_main": [], "completed_optional": [],
+ 		"reward_ids": [], "story": null, "side_attempt": null,
+-		"last_replay_equipment": {}, "unlocked_equipment": Equipment.STARTER.values(),
++		"last_replay_equipment": {}, "unlocked_equipment": Equipment.IMPLEMENTED_IDS.duplicate(),
+ 	}
+ 	if _store != null:
+ 		var owner: WeakRef = weakref(self)
+@@ -175,6 +175,16 @@
+ 	return _commit(next)
+ 
+ func restore_session(candidate: Dictionary) -> bool:
++	# Explicit in-memory restore retains the submitted availability policy and
++	# never writes a file. Desktop legacy migration belongs only to load_saved.
++	var accepted: Dictionary = _stage_session(candidate)
++	if accepted.is_empty():
++		return false
++	_state = accepted.duplicate(true)
++	last_error = ""
++	return true
++
++func _stage_session(candidate: Dictionary) -> Dictionary:
+ 	# A malformed side attempt is dropped only after the protected core/story
+ 	# independently validate. Invalid story/progress never changes live memory.
+ 	last_warning = ""
+@@ -185,7 +195,7 @@
+ 	accepted["last_replay_equipment"] = {}
+ 	last_error = state_error(accepted)
+ 	if not last_error.is_empty():
+-		return false
++		return {}
+ 	if remembered is Dictionary and (remembered.is_empty() or _equipment_error(remembered, accepted["unlocked_equipment"]).is_empty()):
+ 		accepted["last_replay_equipment"] = remembered
+ 	else:
+@@ -196,9 +206,7 @@
+ 		if not side_error.is_empty():
+ 			accepted["side_attempt"] = null
+ 			last_warning += ("; " if not last_warning.is_empty() else "") + "Interrupted side attempt unavailable; story snapshot preserved: " + side_error
+-	_state = accepted.duplicate(true)
+-	last_error = ""
+-	return true
++	return accepted
+ 
+ func load_saved() -> bool:
+ 	if _store == null:
+@@ -206,7 +214,24 @@
+ 	var candidate: Dictionary = _store.read_payload()
+ 	if candidate.is_empty():
+ 		return _reject(_store.last_error)
+-	return restore_session(candidate)
++	var accepted: Dictionary = _stage_session(candidate)
++	if accepted.is_empty():
++		return false
++	# Validate old ownership first. New replay availability cannot legitimize
++	# an invalid old story, side attempt or remembered kit. Copy this list so
++	# staging never modifies the caller/store payload through a shallow alias.
++	var available: Array = (accepted["unlocked_equipment"] as Array).duplicate()
++	var migrated: bool = false
++	for id: String in Equipment.IMPLEMENTED_IDS:
++		if not available.has(id):
++			available.append(id)
++			migrated = true
++	accepted["unlocked_equipment"] = available
++	if migrated and not _store.write_payload(accepted):
++		return _reject(_store.last_error)
++	_state = accepted.duplicate(true)
++	last_error = ""
++	return true
+ 
+ func saved_payload_error(candidate: Dictionary) -> String:
+ 	# Disk fallback/backup retention must use protected-story semantics, rather
