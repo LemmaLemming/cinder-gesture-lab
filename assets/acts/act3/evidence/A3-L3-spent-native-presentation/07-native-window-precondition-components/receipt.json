@@ -1,0 +1,16 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 339x736 --script res://tests/acts/act3/mirror_echo_lifecycle_smoke.gd -- --portraits",
+  "session_id": 41464,
+  "exit_code": 1,
+  "checks": 7,
+  "failures": 1,
+  "script_or_native_errors": [
+    "ERROR: FAIL: portrait fresh Main has its real paused native339x736 window before focus setup; { \"predicates\": { \"paused\": true, \"non_headless\": true, \"game_valid\": true, \"root_size_exact339x736\": false }, \"window_id\": 0, \"display_server_name\": \"macOS\", \"root_size\": (340, 736), \"display_window_size\": (340, 736), \"root_visible_rect\": [P: (0.0, 0.0), S: (540.0, 1170.0)], \"root_texture_size\": (213.0, 463.0), \"content_scale_size\": (540, 1170), \"content_scale_mode\": 1, \"content_scale_aspect\": 1, \"content_scale_factor\": 1.0, \"physics_frames\": 1, \"process_frames\": 0, \"public_state\": { \"boundary\": \"focus-precondition-before-request\", \"tree_paused\": true, \"display_window_focused\": false, \"public_pause_request_pending\": false, \"configuration_error\": \"\", \"camera_error\": \"\", \"camera_framing_error\": \"\", \"input\": { \"schema_version\": 1, \"anchor_normalized\": (0.5, 0.5), \"sequence\": 0, \"last_observation\": {  } }, \"source_phase\": \"cycle_ready\", \"clock_s\": 0.0 } }"
+  ],
+  "baseline": "103f4f03704166d8c6066b476ec066abd086e6b6",
+  "owned_head": "4c3c6f6f44bd83cc17db630ada06581365a0ce8d",
+  "source_count": 309,
+  "all_frozen_sources_unchanged": true,
+  "closed_at": "2026-10-09T02:29:06.612821+00:00",
+  "scope": "Unchanged startup predicate diagnostic7/1, exit1, no focus request or PNG. Sole false component rootWindow340x736 vs wrongly assumed339x736; actualDS340x736, macOS, pausedtrue/gamevalidtrue. Visible logicalviewport540x1170 and stale initialtexture213x463 at process0. All309 inputs exact; disposalclean. Correct native Window identity/dimension expectation while retaining original exact post-draw339x736 image and gameplay/purity checks."
+}

@@ -1,0 +1,37 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 339x736 --script tests/acts/act3/mirror_shore_preview_smoke.gd -- --capture-portraits",
+  "exit_code": 0,
+  "checks": 28,
+  "failures": 0,
+  "native_diagnostics": "clean",
+  "native_portraits": 6,
+  "shared_baseline": "64f34c8776aa81d7eb8f88b71b8b8d64192f35f0",
+  "owned_head": "f1c897590ceee2b41379dcac8854c9589df16b19",
+  "scope": "directly affected familiarStalker/current81cshore scenery portrait rerun after originalquiet13/0views; noacceptedL1/L2/broadrerun",
+  "portrait_dimensions": [
+    339,
+    736
+  ],
+  "actual_portrait_review": {
+    "status": "Root reviewed all six original archived images; independent image review not performed",
+    "reviewers": [
+      "Root"
+    ],
+    "independent_review_performed": false,
+    "reviewed_images": [
+      "01-quiet-arrival.png",
+      "02-warning.png",
+      "03-lock.png",
+      "04-moving-active.png",
+      "05-recovery.png",
+      "06-cleared-shore.png"
+    ],
+    "observations": [
+      "Warning, lock, moving-active and recovery retain the familiar source, lane, marker, Hero and landing clearly.",
+      "Quiet arrival retains the actual pause overlay.",
+      "Cleared shore is quiet and clean."
+    ],
+    "acceptance": "Finite familiar-Stalker/corrected-scenery evidence only; no Echo, full A3-L3, canonical registration or finished-art acceptance."
+  },
+  "limits": "FamiliarStalker scaffold/correctedscenery only, noEcho/fullL3/canonicalregistration/artacceptance."
+}

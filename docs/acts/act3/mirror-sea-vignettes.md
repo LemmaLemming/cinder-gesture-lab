@@ -1,0 +1,82 @@
+# Mirror Sea — optional static shore vignettes
+
+9 October 2026. **Published composition candidate; portrait review pending.** The actual full parent now preconstructs [mirror_sea_vignettes.gd](../../../scripts/acts/act3/mirror_sea_vignettes.gd). Qualified imports30541/4688 and the [source-free arrival check12085](../../../assets/acts/act3/evidence/A3-L3-whole-parent-arrival/03-first-native-capture-error-correction/receipt.json) cover native construction and capture-time custody at clock0. No actual parent portrait, cast visibility, combat occlusion, native mutation rejection, art or performance acceptance follows. The bounds-only correction separates snapped triangle custody from the complete unsnapped rendered sprite rectangle.
+
+The candidate preconstructs quiet scenery for the six authored A3-L3 courts. It adds no floor, collider, HP, enemy/target group, warning, contact marker, timer, action, item, interaction, history, pulse or progression. It never follows or samples Hero movement. All transforms are fixed world placements. Native ordinary depth remains enabled; opaque geometry and discard-alpha original cast pixels use nearest filtering, with shadows off. This record does not promote earlier isolated art evidence into full-parent acceptance.
+
+## References actually inspected
+
+The author reopened the actual local [G02 companion/shore board](../../concept-art/act3/characters/02-compassion-and-shore.png), [G07 Mirror Sea environment](../../concept-art/act3/environments/03-mirror-sea.png), [G14 music/listening mood](../../concept-art/act3/mood/02-dominion-and-false-beauty.png), [G17 modular shore and objects](../../concept-art/act3/props/02-journey-and-modules.png) and [G19 portrait proposal](../../concept-art/act3/gameplay/02-mirror-sea-gameplay.png). G07's broad black mineral surface, separate still water and impossible island forms inform the dry scenery. G02 distinguishes bald, sturdy three-eyed Polecrab from yellow-haired three-eyed Gleameil. G14's listening shore informs the quiet Earthrid/lake relationship. G17 supplies a shared stone/branching mineral family. None supplies finished meshes, a sprite atlas, collider definitions, controls or new enemies.
+
+The original [Polecrab/Gleameil transparent cutout](../../../assets/acts/act3/mirror-shore-witnesses-v1.png) and the actual current Earthrid [centred quiet portrait](../../../assets/acts/act3/evidence/A3-L3-irontick-preview/03-articulated-pose-native-pass/portraits/01-centred-sun0.png) were also reopened for this task. Their existing manifests/builders and production records were read before reuse. This task makes no new online novel inspection or watched-video claim.
+
+The [canonical L3 five beats](../../ACT3_CONCEPT.md#a3-l3-mirror-sea--refuse-the-reflection), [adaptation notes](../../concept-art/act3/ADAPTATION_NOTES.md), [shared style](../../GAME_STYLE_GUIDELINES.md), [reuse guide](../../ASSET_REUSE_GUIDE.md#act-3--author-one-false-world-kit), [parent plan](mirror-sea-parent-plan.md) and [layout candidate](../../../data/campaign/act3/mirror_sea_layout_candidate.json) govern this composition. Irontick is the lake itself; there is no new musical instrument machine or B04 boss. Earthrid, Polecrab and Gleameil remain nonhostile source people. A pale floor fragment is scenery, not an extra Mirror Echo or a damage footprint.
+
+## Fixed six-court composition
+
+The IDs and court origins are checked against the actual authoring JSON, using exact finite component numbers. JSON binary64 numbers are not compared to widened native Vector3 components. Native transforms and mesh/texture values are retained exactly after actual engine assignment.
+
+| Index / court | World origin | Quiet additions |
+| --- | --- | --- |
+| 0 / shore-and-doubled-sky | `(0,0,34)` | Original mineral modules, one interrupted distant arch, restrained filled white-shadow fragments; Polecrab/Gleameil's separate west dry bank at `(-8.2,0,43)`. |
+| 1 / one-real-body | `(0,0,21)` | Two quiet floor-shadow fragments only. The canonical policy omits another32-piece mineral repeat here. |
+| 2 / useful-ending-west | `(0,0,9)` | Original mineral modules, an east distant arch and quiet floor-shadow fragments. |
+| 3 / useful-ending-east | `(0,0,-3)` | Two quiet floor-shadow fragments only; no crowded mineral repeat. |
+| 4 / resonant-apron | `(0,0,-21)` | Original mineral modules, a west distant arch and quiet floor-shadow fragments; complete Earthrid/Irontick east-bank vignette. |
+| 5 / shore-falls-silent | `(0,0,-38)` | Original mineral modules, an east distant arch and quiet floor-shadow fragments. These remain static through final combat and departure. |
+
+The module repeats match the declared sparse centres34/9/−21/−38. They retain their existing32 meshes per repeat: broad low mineral plates and outside-floor shelves, spines and branching minerals. No geometry or material in the module helper is edited. The six groups do not install, activate or name future enemy owners, their journal or a pulse.
+
+Each distant form is five static filled BoxMesh parts at unity scale, origin X±8.25 and Z=court−4.9. Unequal piers, an offset upper slab and detached crown imply an interrupted impossible arch rather than a required bridge. Heights are1.25/2.45WU, with the small crown reaching3.15WU. Their complete raised X extents lie beyond the physical ±7WU floor. They have no collision, emission, bright border or priority override. A close camera may show only part of them; source-faithful visible scale is pending actual views.
+
+The white-shadow motif uses two irregular filled pale-grey floor polygons per court, at X±5.2 /±4.75 and Y.018/.019. Their Z offsets are+1.3/+2.55; the large fragment spans about.52×2.38WU and the small fragment about.48×.53WU. These are low-value static material fragments `524b59` and a darker companion, without rails, arrows, endpoint circles, standing humanoid decoys, countdowns or pulsing edges. They are an original representation of the white-shadow motif; their placement is not threat geometry. Their contrast with warnings and feet still needs native review.
+
+## Unchanged cast resources and original pivots
+
+The [shore builder](../../../scripts/acts/act3/mirror_shore_witnesses.gd) consumes the original1254×1254RGBA PNG unchanged through two clipped AtlasTexture regions. Polecrab region `(117,347,652,864)` / offset `(-22,424)`; Gleameil region `(773,0,339,1248)` / offset `(-79.5,616)`. Common nominal pixel size1/600WU and pivot spacing557/600WU remain unchanged; the source builder retains the actual assigned native pixel_size values exactly. The bottom soles retain the existing localY.02 offset above a flat dry visual bank. There is one still per figure, full billboard, discard threshold.5, normal depth and no shadow. No raster operation, rescaling, costume, eye or net edit is made.
+
+The parent anchor is the declared `(-8.2,0,43)`, outside the west playable edge. An irregular flat black bank centred `(-8.25,0,43)` supports the visual soles; its full X extent remains outside the actual floor. It is scenery, not a walkable extension or contact destination. Viewing is voluntary from reachable west-shoulder floor. Full atlas quads may require a small ordinary shared camera translation for a quiet view; off-screen scenery is not proof of a visible cast.
+
+The [current Earthrid/lake builder](../../../scripts/acts/act3/mirror_irontick_scenery.gd) is invoked temporarily at its supported identity room coordinates as a resource factory. Its public native validator must pass first. The31 original mesh and material resources are reused unchanged in new render-only nodes, and the temporary factory is then freed. This does not translate the old room consumer or weaken its room-only validator.
+
+The original24 body/detail meshes, contact polygon, three water meshes and three rim meshes remain complete. Water/rim receive one fixed translation to the canonical lake centre `(9.2,-.031,-21)`, radius1.6WU. Native body/contact meshes retain unity scale and their relative pose around the established original sole pivot. The parent dry-bank anchor is `(7.65,0,-19.8)`, with the original body sole offsetY.02 preserved. A fixed rotation−0.9119902906774204rad aboutY points the existing reaching posture toward the canonical lake-to-bank X/Z bearing; no animation, new anatomy or gameplay facing is inferred. This new orientation and relative lake placement are unreviewed in the native parent.
+
+The separate dry visual bank centres `(7.85,0,-19.8)`; its minimumX7.15 remains beyond the real floor. Water coverage begins atX7.6 and all rim/body resources are outside the continuous required route. The compact lake is a game-scale adaptation, not the novel's half-mile extent. Earthrid's kneeling height, pale face, sparse hair and filled folded forehead come from the current3f recipe; small hands, knees and face detail remain primitive. No instrument projectile, sound clock, corpse or alternate boss is added.
+
+## Public interface and native custody
+
+`build(parent:Node3D)->bool` requires one empty untransformed component under the actual live untransformed CinderLevel. It constructs once. Repeating the same call verifies the existing unit; changing its parent is refused. Construction expects193 mesh leaves, two original cast sprites and16 complete optional groups.
+
+`native_error()->String` is pure. It rejects removed/extra children, changed names/scripts/relative transforms/visibility/groups, collision nodes or process callbacks. Every actual MeshInstance3D retains its native mesh/material identity, buffers, geometry AABB, node properties, surface materials and opaque ordinary-depth nearest unshaded material properties. Shadows remain off. Original cast AtlasTexture identity/regions/margins/filter_clip, native triangle vertices, offsets/scale/settings and underlying imported image bytes are retained. These receipts use the engine's actual assigned values; there is no blanket float tolerance, automatic rebuild or correction on validation.
+
+`current_court_bounds(index:int)->Dictionary` returns `{error,court_id,court_origin,framing_optional,groups,points,layout_sha256,readiness}`. Each group includes ID, role, full world bounds, eight conservative world-AABB corners and the original native point count. Mesh bounds use every actual transformed native mesh AABB. Cast rendering bounds use all four unsnapped native `Sprite3D.get_item_rect()` corners multiplied by the actual assigned pixel_size, including the original offset and raster-Y sign, then transformed by the existing public world Camera3D billboard basis. The component does not move or replace that camera.
+
+The six generated native mesh faces remain immutable custody evidence. Godot's TriangleMesh creation snaps those vertices to0.0001WU; sprite drawing does not. Each rendered corner's exactly snapped counterpart must occur in the original complete four-corner native mesh. This checks shape consistency without replacing the rendered corners, trimming pixels or admitting an epsilon. The first publication `8228cbaad007edaa60c467fa10dd2d17dc093cb56378977a07f4a326f778cfde` used generated faces alone for bounds and is preserved byte-for-byte at ignored `.cinder/mirror_sea_vignettes-8228-pre-unsnapped.gd`. The independent source review identified the omission before native consumption; no captured clipping or native failure is claimed. Crops, material, transforms, mesh buffers and actual appearance are unchanged by this correction.
+
+The result contains at most four groups/32 compressed points for one court. Compression encloses complete geometry; no source pixels, geometry or bounds are trimmed. Entire edge/background groups are naturally wider than the close combat view. Their complete bounds do not promise whole-camera containment. The consumer can select a complete optional quiet cast group when actually required; it must not append every background group to mandatory combat framing or invent a zoom change. All parts remain preconstructed and visible with ordinary depth, regardless of whether a quiet view is requested.
+
+Native construction and the full capture-time custody check pass at source-free arrival. Actual portrait billboard projection, native mutation rejection and combat occlusion still need affected checks. Parent arrival disposal is clean. Native texture-byte checks have an unmeasured cost; no performance claim follows.
+
+Official sections inspected for this implementation: [Godot4.7 Mesh methods](https://docs.godotengine.org/en/4.7/classes/class_mesh.html#methods), notably `get_aabb/get_faces/surface_get_arrays`; [ArrayMesh methods](https://docs.godotengine.org/en/4.7/classes/class_arraymesh.html#methods), notably its own `surface_get_primitive_type` and triangle-array construction; [SpriteBase3D](https://docs.godotengine.org/en/4.7/classes/class_spritebase3d.html), `generate_triangle_mesh`, pixel_size, axis and billboard. These support the public construction/bounds approach, not a rendered acceptance result. BoxMesh triangles are stamped through native faces/buffers; the ArrayMesh-only primitive getter is never called on generic Mesh.
+
+## Source custody and finite existing evidence
+
+| Reused input | SHA256 at authoring |
+| --- | --- |
+| Shore module helper | `68603304989ef5aa71a8393a442c9055997615c408167e647fba51cf9a1ee9ac` |
+| Polecrab/Gleameil builder | `c5dcede383975a83734e6fc56791633b2c6e0b2ed37d6c14769d5b54e0a181eb` |
+| Original cutout pixels | `eecd39d9efe3c7039023887813be460fe3f7ab07caccc69627c96f431f4743f5` |
+| Current Earthrid/lake builder | `3f5dc269f0cf2614f9c7b6767957958a020d89dc8a21a7f8a1ca2645f59023a0` |
+| Canonical layout candidate | `4cbba73342e4f8658dfe67e838de7dfa4e4802b91ef192f6802cf0a68c3e1a2a` |
+
+The [shore production record](mirror-sea-production.md) and [witness manifest](../../../assets/acts/act3/mirror-shore-witnesses-v1.json) record13/0 clean/four native quiet views of the original cast, independently inspected earlier. The [Earthrid production record](mirror-irontick-production.md) and [manifest](../../../assets/acts/act3/mirror-irontick-native-v1.json) record current3f13/0 clean/four native centred/lateral-left views, also independently inspected earlier. Their original images/logs/source freezes are untouched. They establish isolated static resource evidence only. The separately authored five-view module helper is awaiting its native run; importing it earlier did not accept its graphics.
+
+## Integration frontier and required native views
+
+Root published the combined parent after earlier jobs closed and qualified the new resources through dev.py. The actual parent now calls `build(self)` once, retains cheap root custody during physics, and uses complete checks at construction/capture/candidate presentation. Errors reject rather than heal parts or change mechanics. This integration is a tested arrival candidate, with complete portrait and route review pending.
+
+For a quiet west-shoulder view, include the complete `shore-and-doubled-sky/shore-people` group together with the actual Hero. For the resonant east-shoulder view, include the complete `resonant-apron/earthrid-irontick` group. The unchanged common camera owns any supported translation. Restore must reconstruct the same immutable candidate and verify its native custody and actual chosen quiet view before final presentation; this component supplies no save state or checkpoint authority.
+
+Required actual339×736 views are centred and reachable lateralX±2.7/±5.4 for arrival, first Echo, both stone courts, both pulses/Echo between them, both final priorities and quiet contact departure. Inspect real warning/lock/active/recovery, complete routes/slash footprints, full Hero, grounded knot, harmless reflection, escape landing and return against the new opaque scenery. Check lower feet/net/hair/heads belowHUD, bank grounding, water/firm-floor distinction, current HP/ammo UI, white-shadow contrast and distant-form depth. Preserve original pause overlays and native pixels. If a whole quiet group cannot fit, report that finite view or omit the optional composition; never hide an opaque foreground by render priority or no_depth_test.
+
+Current readiness: source/provenance and static authoring only. The module is not imported, run or portrait-reviewed; no full-parent art, full-level, persistence, human, performance, mobile or production acceptance is claimed. Reuse belongs to A3-L3 and later parent-derived A3-O3 shore scenery; it adds no new equipment or ability allocation.

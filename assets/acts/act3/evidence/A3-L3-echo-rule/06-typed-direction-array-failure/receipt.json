@@ -1,0 +1,21 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 339x736 --script tests/acts/act3/mirror_echo_rule_room_smoke.gd -- --capture-portraits",
+  "exit_code": 1,
+  "checks": 4,
+  "failures": 1,
+  "native_portraits": 0,
+  "shared_baseline": "ec070f6254082c2cd32a87a707a16c1b9fb61a72",
+  "owned_head": "7360084a4b7449b18eac2cd18a38c912e5c64ba4",
+  "classification": "owned GDScript typed-array assignment runtime error",
+  "first_meaningful_error": "Trying to assign an array of type Array to a variable of type Array[Vector3] at combat_response208",
+  "cause": "ternary literal array loses the direct typed initialization conversion; default response returns empty after native script error",
+  "unattempted": [
+    "actual admission",
+    "warning restore",
+    "locks",
+    "routes",
+    "clears",
+    "portraits"
+  ],
+  "scope": "Main binding and cleanup only; repeated native errors retained, downstream missing-Hero/floor denial is not the root failure"
+}

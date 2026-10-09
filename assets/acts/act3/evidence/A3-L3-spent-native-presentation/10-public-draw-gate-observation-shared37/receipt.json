@@ -1,0 +1,16 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 339x736 --script res://tests/acts/act3/mirror_echo_lifecycle_smoke.gd -- --portraits",
+  "session_id": 10238,
+  "exit_code": 1,
+  "checks": 24,
+  "failures": 1,
+  "script_or_native_errors": [
+    "ERROR: FAIL: bounded native foreground request did not earn actual Window and DisplayServer focus; { \"observed\": [{ \"frame\": 1, \"state\": [false, false], \"clock_s\": 0.0, \"paused\": true }], \"diagnostics\": { \"boundary\": \"focus-not-earned\", \"tree_paused\": true, \"display_window_focused\": false, \"public_pause_request_pending\": false, \"configuration_error\": \"\", \"camera_error\": \"\", \"camera_framing_error\": \"\", \"input\": { \"schema_version\": 1, \"anchor_normalized\": (0.5, 0.5), \"sequence\": 0, \"last_observation\": {  } }, \"source_phase\": \"idle\", \"clock_s\": 0.0 } }"
+  ],
+  "baseline": "36090c9d83bb762b14310aa22978f1b31469551f",
+  "owned_head": "12dae6a9fa8acaa3958faac41ea2936b66f1fe97",
+  "source_count": 309,
+  "all_frozen_sources_unchanged": true,
+  "closed_at": "2026-10-09T03:09:48.315837+00:00",
+  "scope": "24checks/1failure clean exit1,309 exact originals. First fresh Main focus setup passes; ready unit/marker rejection/transport/disposal pass. Attempting independent fresh reconstruction reaches second Main, where actual Window/DisplayServer focus exits and existing bounded focus precondition fails BEFORE quiet restore commit or portrait diagnostics. Source idle clock0. New public draw getters load natively but are never invoked. No PNG, draw-state cause, full lifecycle or parent acceptance. Native source/world/Scheduler/barrier/group cleanup passes. Do not repeat unchanged focus environment."
+}

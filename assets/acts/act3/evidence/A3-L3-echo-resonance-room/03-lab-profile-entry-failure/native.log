@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Invalid call. Nonexistent function 'get_difficulty_preference (via call)' in base 'Node (game.gd)'.
+          at: _on_enter_level (res://scripts/acts/act3/mirror_echo_resonance_room.gd:121)
+          GDScript backtrace (most recent call first):
+              [0] _on_enter_level (res://scripts/acts/act3/mirror_echo_resonance_room.gd:121)
+              [1] enter_level (res://scripts/campaign/level.gd:103)
+              [2] reset_lab (res://scripts/game.gd:237)
+              [3] _ready (res://scripts/game.gd:83)
+              [4] _open (res://tests/acts/act3/mirror_echo_resonance_room_smoke.gd:168)
+              [5] _case (res://tests/acts/act3/mirror_echo_resonance_room_smoke.gd:69)
+              [6] _run (res://tests/acts/act3/mirror_echo_resonance_room_smoke.gd:64)
+PASS: actual MainScene installs the bounded mixed room
+PASS: shared traveller and actual HP-free/source priority90/100/110/postactor1000 contract
+ERROR: FAIL: fresh real world has one configured idle Echo and one unadmitted pulse at native clock0
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/mirror_echo_resonance_room_smoke.gd:445)
+       [1] _case (res://tests/acts/act3/mirror_echo_resonance_room_smoke.gd:79)
+       [2] _run (res://tests/acts/act3/mirror_echo_resonance_room_smoke.gd:64)
+PASS: public exit clears the actual shared Scheduler leases
+PASS: actual world/owners/cues/groups retire cleanly
+Mirror mixed finite room: 5 checks; failures: 1. first pulse only; no ring/whole-save/full-L3 acceptance.
