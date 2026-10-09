@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-35** (9 October2026). Shared35 excludes managed authored owners from every ordinary preview/admission path before cleanup or allocation. Shared34 candidate presentation, Shared33 lifecycle and earlier systems remain available. Measured runtime cost remains open. Integration is the three workers' help contact. Exact commits and original evidence are recorded in [progress](SHARED_PROGRESS.md).
+Revision: **campaign-shared-36** (9 October2026). Shared36 prepares the actual native Camera/HUD before ordinary fresh entry capture and reuses only guarded pure validation within one call. Shared35 excludes managed authored owners from every ordinary preview/admission path before cleanup or allocation. Shared34 candidate presentation, Shared33 lifecycle and earlier systems remain available. Measured runtime cost remains open. Integration is the three workers' help contact. Exact commits and original evidence are recorded in [progress](SHARED_PROGRESS.md).
 
 ## Actual saved candidate presentation
 
