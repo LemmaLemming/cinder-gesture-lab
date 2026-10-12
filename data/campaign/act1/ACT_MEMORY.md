@@ -1,5 +1,11 @@
 # Act 1 — durable memory
 
+## Read-only next-level preparation — 2026-10-12T09:56:01.911651+00:00
+
+While submittedL4awaitsindependentreview, read-onlyupcoming REQUEST0ef60b92-f0e9-4782-ae54-011544cfb375 records the existingnativepreflight gap: stationarycircleorigin mustequal actualowner position and Lanegeometry isimmutable/lane-circle-crescent. CanonicalL5Blink requires actualeye source and once-sampledHero worldfloorcircle; Integration is asked for an existing supportedpath or scopednative seam, preserving current guards. Thisrequest isnonblockingforL4 and doesnotauthorize orclaimprivateL5implementation.
+
+Owner personally opened selectedG20LivingMoonenvironment/G22Moonboss/G26eye-recoverygameplay boards. Read-onlyobservations: expressivehumanface/brow/lid/nose/cheek, lowoutlinedlocaleyerim, jaggedpaintedflats/cratertexture, white-silver-black, squatfinlesscapsule/circularrearhatch, darksky/cloudborder. IllustratedoverviewSelenites remainnon-authorityforhelpers; flight/cord/celestial/harbour panels remainreferencevocabulary. ActualsourceSHA/size/inspection record is.cinder/a1-l5-readonly-reference-inspection.json. No L5scene/asset/consumer/leveldesign/equipmentchoice/allocation iscreated beforeL4ACCEPTED. Act1 3/8,campaign14/24, full8desktopgoalACTIVE.
+
 ## Submitted focused handoff — 2026-10-12T09:49:03.133514+00:00
 
 Canonical HANDOFF3910bf36-4e9e-451d-bae5-1d95e653c92b is actually published for submitted9f1d6fe012e4f2859ea2a482a98260c1a226ba4a/contentbfc0061279cc524a528e68fb4c669a163c540a65. [Seven focused categories](../../../docs/acts/act1/A1_L4_FOCUSED_HANDOFF.md) bind currentnative373/0 at8b9236b0/Shared53, exactsource/portableoriginals/representativevisualreuse andnarrowlimits. AllownjobsCLOSED; nohumanpermissionorwholegraphicalroutegate. Integration independentreview/productionregistration/ACCEPTED ispending; L4isnotacceptedfromsubmission. Act1 3/8,campaign14/24; L5read-onlyrequirements/art/sharedseam researchisprepared, butnoL5file/implementation/designallocationiscreatedbeforeacceptance. All8desktopgoalACTIVE.
