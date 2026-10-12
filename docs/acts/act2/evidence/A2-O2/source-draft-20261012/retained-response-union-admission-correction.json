@@ -1,0 +1,62 @@
+{
+  "at": "2026-10-12T06:23:43.687503+00:00",
+  "original_diagnostic": "docs/acts/act2/evidence/A2-O2/mechanics-native-view-loss/raw.log",
+  "log_sha256": "5b9903f712c4096ecd59c824c351a1198e2e7499a2f0302ad851f97efb2a10cf",
+  "actual_boundary": [
+    {
+      "cached_bytes": 23352,
+      "camera": [
+        -0.241571232676506,
+        18.7452793121338,
+        12.2477798461914
+      ],
+      "camera_size": 7.19999980926514,
+      "clock_s": 1.06666666666667,
+      "current_error": "",
+      "cycle": 1,
+      "hero": [
+        0.701712012290955,
+        -0.00484376167878509,
+        -1.7241427898407
+      ],
+      "id": "west_bank",
+      "phase": "warning",
+      "point_count": 82,
+      "settled": {
+        "attack_position": {
+          "at": [
+            -1.9982887506485,
+            -0.00484376167878509,
+            -1.72414207458496
+          ],
+          "delta": [
+            -1.75671756267548,
+            -0.000123977661132812,
+            -0.971921920776367
+          ],
+          "error": "Required source, footprint, player or landing lies outside the protected screen rectangle"
+        },
+        "landing": {
+          "at": [
+            0.701711297035217,
+            -0.00484376167878509,
+            -1.72414207458496
+          ],
+          "delta": [
+            0.943282544612885,
+            -0.000123977661132812,
+            -0.971921920776367
+          ],
+          "error": ""
+        }
+      },
+      "signature_bytes": 23352,
+      "signature_equal": true
+    }
+  ],
+  "before_sha256": "248ca1d1d517729ec84c83751eaa732d565031b3490fbf7c3e7aedc8001d0ac5",
+  "after_sha256": "764ea7a7eeea9d156c7b20c249d2a71bea268cefddfd88bb3c3f7e830f102885",
+  "diagnosis": "Native exact1.0667 preserved original cue23352/current82-pointunion, but originalwestattack settledcamera clips after secondsource joins. Newproposal originallychecked only its own future views. Protect all already-admitted original response futureposes before allocation; rejectnewsource instead of invalidatingolder ordinary response.",
+  "change_scope": "Owned presentation/admission coexistence gate only. Existing continuous live guard, source bounds, cue custody, response proof/timing/damage/controller/camera/codec unchanged. No assertion weakening or accepted-level edit.",
+  "next": "Same affected ordinary mechanics then directly affected loading regression plus plannedextrema/actualportraits; no wholecampaign suite"
+}
