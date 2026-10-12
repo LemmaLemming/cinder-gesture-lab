@@ -1,5 +1,7 @@
 # Act 1 — durable memory
 
+Current King closure: native224/0 + actual portrait235/0 at55074c5e/Shared46, eight originals personally inspected; packet2,564artifacts/indexccec72a3 preserves original parse failure and allsource custody. Real2swipes/1ordinaryprimary, Hero100/King80→60, phase/framing/callback-pause refusal/wrongpose/paired restore/GUIResume/cleanup pass. Slight close garment overlap and barefloor/untested side/back/summon/defeat views remain. All jobs CLOSED; no wholeL4/campaignSave/two-boss-phase/helper/acceptance claim. ActualShared46 merge8ff9b4e4/ACK1eea1c36 adopted;390unique activeGD+shader UID identities after4newKing sidecars. FullL4 formation/knownroundel/twophases/finitehelperpair/coherentwholecodec/freshSaveContinueRetry/contact remains next. All8desktop scope remains intact. Earlier source-only/paused statements below are historical.
+
 Current12Oct source increment: distinct B01 `act1-selenite-king-native-1` reuses the reviewed owned C30 lifecycle/codec pattern with original21-mesh royal art, shared actual lunge/Cue/Scheduler and an exact paired component. Current80HP/1.6unit lunge/2.4s recovery data are provisional. The new component/test is authored but unexecuted. Full three-court/same-pair arrangement/roundel/two King phases/finite helpers/whole campaign SaveContinueRetry remain unfinished. Actual Shared45 metadata is reconciled; Shared46 is published/read and preserving adoption is next. All8 desktop scope, existing human overrides and sequential acceptance remain intact.
 
 ## Current resumed frontier —12October2026
