@@ -1,0 +1,53 @@
+{
+  "created_at": "2026-10-09T04:13:58.922835+00:00",
+  "status": "TMP draft only, not production/imported/native-tested",
+  "scope": "Owned stationary finite B05 actor API only; Scout rig is a greybox placeholder, no tripod/art/combat/full-level acceptance.",
+  "parent_head": "d612a5ef24f44185fcbdee820d14398dc820bf5c",
+  "api_revision": "campaign-shared-38",
+  "files": {
+    "actor-original.gd": "0e0d33aeecb8dbdfed053a59d7135727d78cb7d704a59e184e82f00cb7e77a48",
+    "actor-live-projection.gd": "a74c9d8f4768c7b838bf8ce0744456b6df7b4d1852cee0e2c1894fbf38dcec6c",
+    "actor-corrected.gd": "ffaf6c671894715995f03fa5d2c1f54ea6b2bf720a118fb0a8b97a2269b67b5d",
+    "ray-driver-draft.gd": "e19853e62caed6eb16d0b5157d616d8ed071251c6d45a33a8fd223929a43c243"
+  },
+  "static_findings": [
+    {
+      "reviewer": "scout_api_review",
+      "before": "actor-original.gd",
+      "problem": "Pure source projection returned empty inside native damage transaction, so a real composite gate reading ray recovery could reject every ordinary hit.",
+      "repair": "Only live source projection permits phase/base damage-busy state; full paused snapshots retain all transaction barriers.",
+      "native_credit": false
+    },
+    {
+      "reviewer": "act2_source_review",
+      "before": "actor-live-projection.gd",
+      "problem": "Redundant redraw after base restore could recompute and replace accepted saved idle body_yaw.",
+      "repair": "Removed only post-super restore redraw; exact native base pose remains committed.",
+      "native_credit": false
+    }
+  ],
+  "parent_obligations": [
+    "Spend actual composite cue in first threshold/defeat observer before later coherent source projections; transient missing projection fails closed.",
+    "Full parent proves actor HP/phase, isolated receipts, foot/ray, Scheduler and actual cue correspondence. Shape-only flat source is not complete saved authority.",
+    "Block actual cue signals during quiet restore; restore Player/actor/cue before Scheduler and consumer commit.",
+    "Earn and finish both real isolated introductions before pending15HP phase-two checkpoint. No added HP/waves/wait."
+  ],
+  "next": "Review drafted focused native actor fixture, promote actor/driver/tests only after current binding-only source-frozen job closes. New resources justify one queued import; then smallest native component/whole-greybox checks.",
+  "ray_driver": {
+    "reviewer": "scout_api_review with b05_ray_draft_review peer",
+    "lines": 917,
+    "status": "Frozen source-only TMP draft; not imported/parser/native-tested.",
+    "public_boundary": "Parent alone owns composite gate/cue/pose/HP/phase and persistent distinct circle foot. Persistent ray requests tracking once with immutable actual completed-bait lane; fresh public commit adopts full native lock. Full Player/bait/source/actual cue and paired Scheduler preflight/quiet commit remain required.",
+    "peer_repairs": [
+      "Callback retirement/reentry and captured cancellation custody.",
+      "Pure recovery predicate without circular available-cue prerequisite.",
+      "Inactive prior-boundary save and actual sampled receipt/clock/history consistency.",
+      "Refusal retains actual admitted/retimed cooldown."
+    ],
+    "whole_parent_obligations": [
+      "Keep one encounter epoch/clock across both bait boundaries.",
+      "Demonstrate legal clothing/dash sample reach, full required portrait and genuine admission/return opportunities.",
+      "Full native ray/foot/phase/receipt/Player/Scheduler/cue aggregate and quiet restore."
+    ]
+  }
+}

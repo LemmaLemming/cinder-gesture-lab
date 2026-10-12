@@ -1,0 +1,64 @@
+{
+  "api_revision": "act2-l5-sentry-readability-independent-static-review-1",
+  "at_utc": "2026-10-09T09:53:21.402415+00:00",
+  "baseline": {
+    "assigned_original_byte_match": true,
+    "lines": 329,
+    "path": "/private/tmp/a2_l5_sentry_visual_before_readability.gd",
+    "sha256": "0d616507311b2c46dc66b9a35190088f4f95dea1712cf18ba33ed7928645e9f7"
+  },
+  "brace_registration_review": {
+    "cutaway_policy": "Inherited projected triangle overlap and foreground-depth test only; faded per-instance alpha remains READABILITY_ALPHA0.14 and normal state restores original alpha/transparency. No blanket hide or new cue meaning.",
+    "existing_material_palette_textures_preserved": "Inherited _readability_panel duplicates each effective StandardMaterial3D into per-MeshInstance material/surface override, preserving shared immutable textures, source base color/transparency and parent hit-flash list. No shared material or mesh edit.",
+    "geometry_dimensions_positions_pivots_rotations_unchanged": true,
+    "mechanics_unchanged": "No collider, damage group, HP, phase clock, travel/timing, request/cue policy, Foot pose/linkage, mirror/brace pose, saved exact body_yaw or source framing node geometry changes.",
+    "ten_existing_meshes": [
+      "RoundLowJoint",
+      "LowJointOxidisedRing",
+      "OrdinaryPrimaryBraceInterior",
+      "five LowBraceRib meshes",
+      "LeftRivetedGuard",
+      "RightRivetedGuard"
+    ]
+  },
+  "byte_audit": {
+    "changed_method": "_build_low_brace",
+    "new_constant": "SENTRY_MAX_HERO_BOUND_POINTS=22",
+    "new_method": "_readability_error",
+    "new_validator_exact_inherited_except_bound_token": true,
+    "reverse_delta_reconstructs329_exact": true,
+    "unchanged_methods": [
+      "set_ray_pose",
+      "set_brace_pose",
+      "bind_near_foot",
+      "release_near_foot",
+      "required_source_nodes",
+      "_build",
+      "_build_remote_support",
+      "_apply_pose",
+      "_near_ankle",
+      "_near_foot_upper",
+      "_pose_brace",
+      "_recompute_readability",
+      "_exit_tree"
+    ]
+  },
+  "candidate": {
+    "lines": 347,
+    "path": "/private/tmp/a2_l5_sentry_visual_readability_candidate.gd",
+    "sha256": "58b0f58c2a8641c7a55727ca616dd8cdf829f57f3f9166e58db4e15ad83ca2d4"
+  },
+  "limits": [
+    "Static source/API/delta review only; no parser/Godot/import/helper invocation, checkout edit or Git mutation.",
+    "New candidate native direct22 cutaway and actual pixels still require focused changed portrait check.",
+    "Production8-point path was already valid; closer-Hero production visual behavior remains untested by this static record.",
+    "No full-route, balance, boss defeat or art acceptance inferred; prior4053 native portrait result remains original329 source scope."
+  ],
+  "source_context": {
+    "inherited_Scout_SHA256": "dda58dd611044a434d25206a03ac1b2b5f73270373d613e3a2fcc7bb5539879a",
+    "original_cause_nuance": "Production host _sentry_actual_hero_points531 consumes actual native22 but conservatively returns8 AABB corners; _refresh_cosmetic_readability707 passes those8, already accepted by inherited max16. Only the direct portrait fixture passes native22 and silently rejects prior inherited validator. This patch is correct complete22 compatibility and brace eligibility; it does not prove production readability was disabled.",
+    "production_host_SHA256": "a7d9d948961183d1035f7c4af57072925c255afb94e6a0f0fad443130c40bd8e"
+  },
+  "status": "No concrete blocker found in bounded owned validator and brace cutaway delta",
+  "validator_review": "Owned override preserves built/tree/same-world native camera, finite orthographic camera position/basis, min3/max22, every point finite/in front, and positive projected hull area. All22 complete native points are retained and used; no truncation, sampling, camera/stat/control repair or shared source change. Inherited apply_readability and recompute dispatch this owned validator."
+}

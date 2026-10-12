@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-09T03:24:07.751723+00:00",
+  "problem": "Keep B05 bait at actual completed physical landing and immutable per-ray sample, with safe ownership of nested records and signal callbacks.",
+  "inspected": [
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_characterbody3d.html",
+      "method": "Opened official stable page and located get_position_delta/get_real_velocity descriptions.",
+      "observation": "Engine documents actual travel from move_and_slide separately from requested velocity.",
+      "application": "Consume the existing native Player completed landing receipt; never infer from request distance or screen release. Existing Player remains the sole movement owner.",
+      "local_validation": "First native fixture105/0 exercises actual wall-shortened and fully blocked movement."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_dictionary.html",
+      "method": "Opened official stable page and located duplicate(deep).",
+      "observation": "Deep duplication copies nested arrays/dictionaries; Resource references remain shared.",
+      "application": "Store closed encoded JSON-value receipts with duplicate(true); defensive sample/state copies must not alias the cache.",
+      "local_validation": "First105/0 includes caller mutation and fresh restoration deep-copy checks."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_signal.html",
+      "method": "Opened official stable page and located connect/disconnect/emit.",
+      "observation": "The API connects callables and emits arguments to connected observers; duplicate connections and absent disconnects are errors.",
+      "application": "Parent owns one explicit connection and guarded disconnect. Actual Player source review, rather than this generic documentation, identified nested publication order.",
+      "local_validation": "First105/0 covers disarm and world cleanup. New earlier-observer nested primary regression is pending."
+    }
+  ],
+  "secondary_skill_record": {
+    "path": "/Users/howardchen/.codex/skills/game-design-mechanics/SKILL.md",
+    "reference": "/Users/howardchen/.codex/skills/game-design-mechanics/references/progression-videos.md",
+    "method": "Read the local skill and its two stored summaries; no new original YouTube playback or transcript inspected.",
+    "application": "Separate attempt damage, earned phase checkpoint and player mastery; one authored introduction is not a HP/time padding rule.",
+    "limit": "Summaries are illustrative secondary records, not new audiovisual research or proof of player learning."
+  },
+  "limits": [
+    "Official documentation is external API context, not exact installed-engine or authored-level proof. Native fixture uses local4.7.2/shared37.",
+    "No recognizer, actual ray/foot Scheduler, camera, whole-level, art, human balance or mobile acceptance."
+  ]
+}

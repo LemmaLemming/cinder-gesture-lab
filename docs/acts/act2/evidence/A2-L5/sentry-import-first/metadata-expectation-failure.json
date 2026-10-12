@@ -1,0 +1,10 @@
+{
+  "classification": "root metadata-audit expectation error, not native import/parser failure",
+  "at": "2026-10-09T04:26:54.413324+00:00",
+  "original_exit_code": 1,
+  "command_scope": "Post-import Python metadata-audit inline tool, before Actor test. All312 prior hashes already passed; exact new set assertion expected only3owned paths.",
+  "first_error": "AssertionError: ({'scripts/acts/act2/dead_london_ray_exchange.gd.uid', 'tests/acts/act2/a2_l5_sentry_actor_smoke.gd.uid', 'tests/act2_l3_l4_transition_smoke.gd.uid', 'scripts/acts/act2/dead_london_sentry_actor.gd.uid'}, {'scripts/acts/act2/dead_london_ray_exchange.gd.uid', 'tests/acts/act2/a2_l5_sentry_actor_smoke.gd.uid', 'scripts/acts/act2/dead_london_sentry_actor.gd.uid'})",
+  "diagnosis": "Shared38 introduced the earlier shared literal-path transition fixture without a committed UID. This first worker import also generated its sidecar. Root audit expected only three brand-new Act2 scripts and overlooked that known older missing sidecar.",
+  "correction": "Retain all4 generated native identities, verify threeowned new scripts and one existing shared test; preserve all312 prior hashes and316 unique identities. Keep shared sidecar outside owned staging, notify integration with exact identity/SHA. No repeated import/native actor test.",
+  "original_full_log": "Native import wrapper.log preserved exact and clean; inline audit traceback is preserved in recorded tool output, not a separate captured process log. This record transcribes its complete assertion, no invented full file log."
+}
