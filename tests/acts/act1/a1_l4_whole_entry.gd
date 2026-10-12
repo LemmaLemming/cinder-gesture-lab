@@ -392,7 +392,7 @@ func _require(condition: bool, label: String) -> bool:
 	if condition: return true
 	failures += 1; aborted = true
 	if first_failure.is_empty():
-		first_failure = {"scope": scope, "label": label, "paused": paused, "room": level.get("room") if is_instance_valid(level) else null, "helper_stage": level.get("helper_stage") if is_instance_valid(level) else null, "contract_error": level.contract_error() if is_instance_valid(level) else "missing level", "clock_s": scheduler.get_clock() if is_instance_valid(scheduler) else null, "camera": _portable(game.call("get_camera_framing_state")) if is_instance_valid(game) else {}, "entry_records": _portable(level.get("_entry_records")) if is_instance_valid(level) else {}, "entry_outcomes": _portable(level.get("_entry_outcomes")) if is_instance_valid(level) else {}}
+		first_failure = {"scope": scope, "label": label, "paused": paused, "room": level.get("room") if is_instance_valid(level) else null, "helper_stage": level.get("helper_stage") if is_instance_valid(level) else null, "contract_error": level.contract_error() if is_instance_valid(level) else "missing level", "clock_s": scheduler.get_clock() if is_instance_valid(scheduler) else null, "camera": _portable(game.call("get_camera_framing_state")) if is_instance_valid(game) else {}, "entry_records": _portable(level.get("_entry_records")) if is_instance_valid(level) else {}, "entry_outcomes": _portable(level.get("_entry_outcomes")) if is_instance_valid(level) else {}, "entry_stop_diagnostics": _portable(level.get("entry_stop_diagnostics")) if is_instance_valid(level) else {}}
 		print("FIRST WHOLE COURT ENTRY FAILURE ", JSON.stringify(first_failure))
 	push_error(label)
 	return false

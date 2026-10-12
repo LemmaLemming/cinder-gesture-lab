@@ -42,6 +42,8 @@ var _awaiting_room: int = -1
 var _roundel_demonstrated: bool = false
 var _roundel_cycle: int = 0
 var _helpers_once: bool = false
+var _pending_boss_contact: bool = false
+var entry_stop_diagnostics: Dictionary = {}
 
 
 func _ready() -> void:
@@ -117,6 +119,7 @@ func _physics_process(_delta: float) -> void:
 		if _awaiting_room == 3:
 			_boss_area.set_deferred("monitoring", true)
 			_boss_cue.present("available", "contact")
+			if not _pending_boss_contact and _boss_area.monitoring and _boss_area.overlaps_body(hero): _boss_contact(hero)
 		elif hero.global_position.z <= (-6.0 if _awaiting_room == 1 else -14.0): _begin_room(_awaiting_room)
 		return
 	if room == 1 and formation == "parallel" and _parallel_demonstrated():
@@ -292,6 +295,7 @@ func _update_helper_entry() -> void:
 			_entry_outcomes[id] = {"outcome": "defeated" if actor.get("dead") else "injured", "endpoint": actor.global_position}
 			continue
 		if not _entry_clear(id) or _entry_deadline_missed(id):
+			entry_stop_diagnostics[id] = {"native_error": String(actor.get("last_error")), "view_error": presentation_error(), "clock_s": scheduler.get_clock(), "position": actor.global_position, "velocity": actor.velocity, "original": _entry_records[id].duplicate(true), "deadline_missed": _entry_deadline_missed(id)}
 			var stopped: Dictionary = actor.call("stop_court_entry_motion", self, _entry_records[id], "blocked")
 			if stopped.get("accepted") != true: _construction_error = String(stopped.get("reason", "Native court entry stop refused")); return
 			_entry_outcomes[id] = {"outcome": "blocked", "endpoint": actor.global_position}
@@ -369,11 +373,19 @@ func _finish_king_defeat() -> void:
 
 
 func _boss_contact(body: Node3D) -> void:
-	if body != hero or not _running or hero.dead or get_tree().paused or _awaiting_room != 3 or not _boss_area.overlaps_body(hero): return
+	if _pending_boss_contact or body != hero or not _live_boundary() or _awaiting_room != 3 or not _boss_area.overlaps_body(hero): return
+	_pending_boss_contact = true
+	_commit_boss_contact.call_deferred(body)
+
+
+func _commit_boss_contact(body: Node3D) -> void:
+	_pending_boss_contact = false
+	if not _live_boundary() or body != hero or _awaiting_room != 3 or not _boss_area.overlaps_body(hero): return
+	# Native source lifecycle changes run after Area query delivery has ended.
 	_boss_cue.present("spent", "contact")
 	_boss_area.set_deferred("monitoring", false)
-	request_checkpoint("court-boss-entry", "boss_phase")
 	_begin_room(3)
+	if _construction_error.is_empty(): request_checkpoint("court-boss-entry", "boss_phase")
 
 
 func _exit_contact(body: Node3D) -> void:
