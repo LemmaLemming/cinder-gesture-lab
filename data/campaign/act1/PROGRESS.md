@@ -1,5 +1,11 @@
 # Act 1 — current progress
 
+## Native observer boundary diagnostic — 2026-10-12T09:29:55.786077+00:00
+
+Contact-guards01 closes276/1 after86.1seconds on3ce96165/Shared53, all725source and461priorUIDbytes unchanged. It parses/loads and reaches actual completedlocalSave. The first synchronous public exit_level case passes: actualoverlap/oneevent/queuedShell operation, retainedclearcue/availableart/releasedaliases/stoppedprocessing and complete disposal. The second queuedShell observer assertion fails; its deferred returned-state values were not included before the failed assertion, so no cue/art cause is yet proved. Nativefirstfailure saysShellabsent at laterdiagnosis. Originalfailedscope is preserved; ordinary final contactedSave/Continue/Retry is not established by01.
+
+A receipt-only fixture change preserves each actual observer returned/admitted/event packet before its assertion, while retaining sourceguards/expectations/limits/setup. The smallest supported terminal selector is rerun for actualdiagnosis. No shared/runtime change or assertion weakening is inferred from missing fields. Focus/pixel reuse qualification remainsunchanged; Act1 3/8/campaign14/24,L4only/unaccepted, all8desktopgoalACTIVE.
+
 ## Scoped synchronous contact regression source — 2026-10-12T08:50:09.382628+00:00
 
 Current existing wholeSave fixture gains opt-in --contact-observer-boundaries inside --terminal-save. Two isolated copies of the real local available-contact save reconstruct fresh real Shells through actual TitleContinue, retain the ordinary Shell handler, and observe real Area/body contact. One synchronous observer publicly exits the level; another clears the cue and queues Shell disposal without releasing aliases first. The deferred root-owned recorder checks actual admission/once-event/queuedexit and no subsequent cue/art reopening, with normal descendant/group disposal. Original store bytes remain untouched before ordinary terminal-save checks continue.

@@ -356,6 +356,7 @@ func _terminal_contact_observer_boundaries(saved: Dictionary, earlier_wire: Stri
 		var admitted: Dictionary = observers[0]
 		if not _expect(admitted.actual_overlap and admitted.monitoring and admitted.cue.state == "available" and admitted.cue.trigger == "contact" and admitted.cue.visible and admitted.shell_operations.size() == 1 and admitted.shell_operations[0].operation == "exit" and admitted.shell_operations[0].level_id == "A1-L4", "observer receives actual admitted overlap after the retained ordinary Shell exit handler: " + mode): return false
 		var after: Dictionary = returned.after_callback
+		receipts.append({"stage": "diagnostic actual contact observer returned boundary", "observer": mode, "admitted": admitted, "returned": returned.duplicate(true), "contact_events": contacts.duplicate(true), "completion_events": completions.duplicate(true)})
 		if not _expect(after.get("objects_live") == true and after.shell_queued and after.contact_exit_id == "court-exterior" and after.cue == returned.observer_cue and after.cue.state == "clear" and not after.cue.visible and after.art == returned.observer_art and after.art.exterior_state == "available", "contact return preserves observer cleanup and does not reopen its cue or exterior artwork: " + mode): return false
 		if mode == "exit_level":
 			if not _expect(after.aliases_released and not after.owner_physics and not after.scheduler_physics and not after.roundel_physics and not after.monitoring, "synchronous public exit retains released aliases and stopped native owner/contact processing"): return false
