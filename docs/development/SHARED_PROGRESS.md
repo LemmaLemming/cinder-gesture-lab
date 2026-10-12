@@ -1,5 +1,13 @@
 # Cinder shared progress
 
+## Shared47 publication and continued worker development
+
+Shared47 is published at `cf423911844d63c458c59e5503f82c8b1e61574b`, with exact content/registration `f0b3ad6bc642d9d34a27d1a23eaa7b3e81306c59` and [postcommit verification](SHARED47_PUBLICATION_VERIFICATION.json) supplement `a8bbe9ea40b6f45c80c0dc9aa28f5302cc236e86`. All15,796 payload paths match the reviewed plan; the following five-path correction changes current summaries/descriptive registry status only. Campaign11/24, Act2 5/8, and A2-O1 next are reconciled without repeating native checks.
+
+Canonical ACCEPTED `af34871f-f764-4a44-9961-3d17740b89cd` releases Act2 to A2-O1; RESPONSE `afb78bd3-b653-48a0-9208-5fea7ee02340` returns exactly five genuinely generated owned test/fixture UID sidecars. All other owned work/settings/evidence/UIDs remain protected. The acceptance's nested metadata mistakenly used26 as its local snapshot version; correction RESPONSE `e18f7cf2-f68e-425d-bd47-9be64e0a64c8` and current canonical run record specify **version1, local key count26**. The immutable original and actual source/test results are retained; no save migration or new execution follows from this descriptive correction.
+
+UPDATE notices `06e93350-fcb6-4133-9e2d-b0829315fe29` (Act1), `54b7826b-d86b-497e-9a4e-58898517088a` (Act2) and `8d4fc00e-c234-40d5-9fe0-000b115dfd32` (Act3), plus successful actual chat messages, reiterate the human instruction to recover saved context and continue. A compact snapshot confirms all three active: A1-L4 King/court, A2-O1 Cylinder Perimeter, and A3-L4 garden persistence/helpers/sun/art. Root remains first help contact. Shared47 adoption requires each actual ACK and is separate from publication. Research-only browser restrictions do not block game development. [Coordination receipt](SHARED47_COORDINATION_PUBLICATION.json) records the exact identities and messages. The full24-level desktop goal remains ACTIVE.
+
 ## Act2 L5 — independent focused acceptance
 
 Exact HANDOFFe8c09941 at5703fd42, ownedsealf71c3458 and actual45merge33daba/receipt3d24 are reviewed. All14383six-prefixdelta rows/994740316bytes,3497 frozen members/62references, native scopes and four final actual portraits verify. [Acceptance, Root235/0 and limitations](ACT2_L5_ACCEPTANCE.md). Production delta19newpaths leaves accepted production unchanged. Root necessary import closesclean0 with685originals;398priorUIDbytes retained plus6newmetadata sidecars,404unique/no collision/no earlierbackfill. Its descriptive390 guess is separately qualified without rewritingoriginals.
