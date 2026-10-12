@@ -1,5 +1,9 @@
 # Act 1 — current progress
 
+## Human-requested pause — 2026-10-12T10:03:59.131899+00:00
+
+The human explicitly requested all agents pause; direct Integration-chat user message01a12f8c and canonicalREQUEST37f2b1aa independently verified. Current work is saved, all own native/import/portrait handles CLOSED and supporting children completed/stopped. SubmittedL4 HANDOFF3910bf36/current373/0/Shared53 remains pending independentproductionregistration/ACCEPTED; Act1 3/8,campaign14/24, full8desktopobjective incomplete. L5 has read-onlypreparation/REQUEST0ef60b92 only, no implementation/allocation. Preserve all originalfailures/settings/UIDs/queue locks. [Recovery point](PAUSE_RECOVERY_2026-10-12.md). Resume only on explicit human instruction.
+
 ## Read-only next-level preparation — 2026-10-12T09:56:01.911651+00:00
 
 While submittedL4awaitsindependentreview, read-onlyupcoming REQUEST0ef60b92-f0e9-4782-ae54-011544cfb375 records the existingnativepreflight gap: stationarycircleorigin mustequal actualowner position and Lanegeometry isimmutable/lane-circle-crescent. CanonicalL5Blink requires actualeye source and once-sampledHero worldfloorcircle; Integration is asked for an existing supportedpath or scopednative seam, preserving current guards. Thisrequest isnonblockingforL4 and doesnotauthorize orclaimprivateL5implementation.
