@@ -1,5 +1,13 @@
 # Cinder shared progress
 
+## Shared50 — first optional acceptance and retired-menu callback repair
+
+Cylinder Perimeter A2-O1 is independently accepted at exact485d26f98bec0246b9de4b76dd51f6b85032e282/contentd8fb470f after canonical HANDOFFd5edc8d3, seven-category evidence, independent source/commit review and Root inspection of four original540×1170 portraits. [Acceptance](ACT2_O1_ACCEPTANCE.md). All5474incomingpaths remain in Act2's six prefixes; earlier accepted production is unchanged. Root actual untouchedRegistry/public optional/whole-save/Continue/fatalRetry/contacts/stamp/exit/GUI replayWeapon03/Resume-Pause-Leave/exact protected-story/cleanup closes88/0 clean; original67/1 offscreen fixture failure stays failed. Owner48/57/82/84 native scopes retain Shared47 attribution; actual later preserving49merge72b16cb9 is separately verified. Campaign **12/24**, Act2 **6/8**; A2-O2 may proceed. A1/A3 L4 continue independently.
+
+Root answers the shared freed-callback category with a deterministic actual native Title/Shell destruction reproducer and WeakRef-only captures. [Original130/0 withfourerrors, repaired130/0 clean and directly affected scenic363/0](MENU_SCENERY_LIFECYCLE.md). Living layout, full save/model/input/clock custody stay exact. First incomplete parser draft stays incomplete; historical authored122/0 and14/0 nonclean results are not relabelled. Native88 used the earlier Menu bytes; lifecycle/scenery separately cover the later repair. No full-route, broad accepted-level rerun or mobile gate.
+
+[Camera diagnostics](CAMERA_FOLLOW_DIAGNOSTIC.md) remain original31/1 and owned90s124/nofooter. Complete actual pure packets/witnesses are retained; all3focus references refuse shift. Eleven ordinary updates still fail containment, so no recovery/cause/FPS claim. Next shared cost investigation measures inclusive actor/consumer/all-source Protocol/world invocation times; no limits or fresh guard boundaries are weakened. Root remains first help contact, original workers/assignments retained, full24 desktop goal ACTIVE.
+
 ## Shared49 — native reference comparison with measured query reduction
 
 Only the Root native Protocol and directly affected reference fixture change. Three configure-time private trees require their original nonempty exact receipts; exact native Script/matching receipt selects the finite typed/bit comparison, otherwise original serialization remains. All five comparison expressions preserve fresh native world/floor/body reads, resources, source/controller/codec hooks, error order and every pre/post boundary. All406 UID bytes stay exact and unique; no import, schema, public signature, act-owned content, gear/ability allocation, motion/hit timing or settings change.

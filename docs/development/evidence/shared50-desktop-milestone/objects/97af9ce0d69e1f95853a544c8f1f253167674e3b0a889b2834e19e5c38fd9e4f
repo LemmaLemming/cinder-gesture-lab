@@ -1,0 +1,36 @@
+from pathlib import Path
+import hashlib,json
+ROOT=Path.cwd();dest=ROOT/'docs/development/evidence/shared50-desktop-milestone'
+assert not dest.exists();dest.mkdir(parents=True);(dest/'.gdignore').write_text('')
+rows=[];objects={};jobs=[]
+def add(path,role,job=None,logical_path=None):
+ b=path.read_bytes();h=hashlib.sha256(b).hexdigest();obj=dest/'objects'/h
+ if h not in objects:
+  obj.parent.mkdir(exist_ok=True);obj.write_bytes(b);objects[h]=len(b)
+ row={'origin':str(path.relative_to(ROOT)),'role':role,'job':job,'logical_path':logical_path,'bytes':len(b),'sha256':h,'portable_object':str(obj.relative_to(dest))}
+ rows.append(row);return row
+normal=['camera-follow-native1','camera-follow-native2','a2-o1-production1','a2-o1-production2','menu-scenery-lifecycle-original','menu-scenery-lifecycle-original2','menu-scenery-lifecycle-fixed','menu-scenery-affected1']
+imports=['a2-o1-import1','shared50-metadata1']
+for tag in normal+imports:
+ mp=ROOT/'.cinder'/(tag+'-source/manifest.json');m=json.loads(mp.read_text())
+ for row in m['files']:
+  p=mp.parent/row['archived_path'];assert len(p.read_bytes())==row['bytes'] and hashlib.sha256(p.read_bytes()).hexdigest()==row['sha256']
+  add(p,'original_frozen_input',tag,row['path'])
+ mr=add(mp,'original_source_manifest',tag)
+ rp=ROOT/'.cinder'/(tag+'-result.json');r=json.loads(rp.read_text());rr=add(rp,'original_closure_result',tag)
+ lp=ROOT/'.cinder'/(tag+('-wrapper.log' if tag in normal else '.log'))
+ lr=add(lp,'original_complete_diagnostic_stream',tag)
+ assert lr['sha256']==r['wrapper_log_sha256']
+ jobs.append({'tag':tag,'source_manifest':mr,'result':rr,'stream':lr,'source_count':len(m['files']),'exit':r['returncode'],'footers':r.get('footers',[]),'errors':r.get('engine_error_lines',r.get('errors')),'scope':r['scope']})
+for name in ['camera-follow-findings.json','a2-o1-import-plan.json','worker-continue-reminder-20261012.json','worker-continue-reminder-dispatch-20261012.json']:
+ add(ROOT/'.cinder'/name,'coordination_or_scope_record')
+for role,name in [('act2','d5edc8d3-6fda-4134-b360-843cf14febcd-HANDOFF.json'),('act1','dcb08a8e-3851-400b-b966-87c83ed6cb08-REQUEST.json')]:
+ add(ROOT/'.cinder/agent-chat/cinder-campaign'/role/'messages'/name,'original_canonical_message')
+for name in ['archive-shared50-evidence.py','camera-follow-tools.py','camera-follow-tools2.py','a2-o1-registration-tools.py','menu-scenery-lifecycle-tools.py','menu-scenery-affected-tools.py']:
+ add(ROOT/'.cinder'/name,'original_runner_or_archive_tool')
+index={'schema_version':1,'scope':'Original bounded explicit/literal-resource source subsets and recorded active UIDs, not complete dynamic dependency graphs or all-mode execution. Content-addressed objects deduplicate immutable bytes; rows preserve each original job/path attribution. Failed/nonclean/incomplete jobs retain actual outcomes.','jobs':jobs,'artifact_rows':len(rows),'unique_objects':len(objects),'unique_bytes':sum(objects.values()),'artifacts':rows}
+(dest/'index.json').write_text(json.dumps(index,indent=2)+'\n')
+(dest/'README.md').write_text('# Shared50 original evidence\n\n[Original job/path index](index.json) maps immutable source, stream, result and coordination bytes to content-addressed objects. Original manifests/results are retained byte-exact; resolve their logical input paths through the index rather than treating an object filename as a script path.\n\nOnly clean O1 production88/0, repaired lifecycle130/0 and affected scenery363/0 receive their stated native credit. Metadata imports have no gameplay credit. Camera31/1 and124/nofooter, O1 fixture67/1, lifecycle parse failure and original130/0-with-four-errors retain failed, incomplete or nonclean scopes. No full-route, accepted-level blanket rerun, FPS or device claim.\n')
+for row in rows:
+ p=dest/row['portable_object'];assert len(p.read_bytes())==row['bytes'] and hashlib.sha256(p.read_bytes()).hexdigest()==row['sha256']
+print(json.dumps({'artifact_rows':len(rows),'unique_objects':len(objects),'unique_bytes':sum(objects.values()),'index_sha256':hashlib.sha256((dest/'index.json').read_bytes()).hexdigest(),'jobs':len(jobs)}))
