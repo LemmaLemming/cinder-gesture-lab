@@ -1,12 +1,32 @@
 # Cinder shared progress
 
+## Shared46 — saved menu resources and checkpoint presentation
+
+Root resumed its existing desktop goal ACTIVE after the user continuation. All three original worker resume ACKs are recorded: Act1d15ebe97, Act28d65d3da, Act335fde1f2. Actual Shared45 adoption metadata is reconciled for Act1d1d2f9b6/83b566e9/receipt456bed9d and Act3708545d7/0ede1f29/receipta3cf1187 after exact Root receipt/parents/current ancestry and independent named runtime/UID/returned-path byte checks. Broad preservation counts retain owner scope. Act2 actual45 ACK70a4023b/merge33dabae6/receipt3d24f9d5 now verifies exact receipt, publication second parent and retained current ancestry; broader packet custody is reviewed with its new handoff. All original identities/checkouts/branches/owned paths are retained; Root remains first help contact.
+
+The saved HP display bug is corrected: actual37HP remains37/0discarded for90 or110 max, and95HP becomes prospective90/5discarded. The menu displays the saved checkpoint and shared current Journey traveller; counters derive from actual registry entries. Native331/0, directly affected GUI/model67/0 and strengthened graphical475/0 all close clean on4.7.2. Root and an independent reviewer inspect three actual540×1170 images; exact paused whole-unit/model/disk/input/actions/ID guards pass across native layout/scroll/draw. [Scope and originals](REPLAY_MENU_COMPARISON.md) retain original329/7 failure,2,266 prequeue sources/2,293 artifacts and the compatibility runner's separately qualified descriptive error. No full-route/GUI-hit-test/replayactivation/human/device/scenic-art claim.
+
+Late genuine canonical metadata import retains380 active UID bytes, adds only `uid://4dmrswtijy4u` for the new test and has381 unique identities; earlier inputs remain unchanged. Design validators pass with revision0/no allocations and their stated numerical screening limits. No gameplay/save schema, controller/camera/stat/ability or act-path changes. Campaign10/24; A1L4/A2L5/A3L4 remain their independent frontiers. A2 exact HANDOFFe8c09941 at5703fd42/Shared45 is received for independent focused production registration, not yet accepted; A3 imports its owned resources and starts its affected entry check; A1 continues its distinct King/native lifecycle. No new shared blocker or level acceptance is inferred.
+
+## Worker development resumed — 12 October 2026
+
+The human explicitly asked all worker agents to recover where they left off and continue, superseding their scheduled-system-update pause. Integration sent canonical REQUESTs `e792d6c7-218d-47a7-9ff7-61881a243cc2` (Act1), `cf70806b-ac2a-4281-8260-102c7b6cd2e7` (Act2) and `24e71ced-2eb0-4dd5-ad46-31f7145dfef5` (Act3), plus actual messages to all three registered chats. Compact app snapshots confirm each active and recovering saved context. Original identities, assigned checkouts, branches, owned paths and prior accepted/evidence records are preserved.
+
+Act1 resumes A1-L4 court encounters/aggregate; Act2 resumes A2-L5 local uncommitted visibility/recovery work; Act3 resumes A3-L4 separate recovery-receipt correction and initial loading. Workers read their saved recovery record, ACT_MEMORY/PROGRESS/current level notes and current AGENTS before continuing. Canonical resume ACKs remain pending; no new level acceptance or engine execution is claimed by coordination. Campaign remains10/24, Shared45 available, focused-desktop-level-1 authoritative. No full-route/defeat-all/earned-exit/campaign playthrough gate; changed-level/directly affected suites only. Integration remains first help contact.
+
+The existing blocker heartbeat is restored ACTIVE at its original30-minute cadence, quiet on unchanged state. Root's existing desktop goal still shows paused in the goal UI; it has not been recreated. The [saved system-update record](SYSTEM_UPDATE_PAUSE.md) remains historical recovery evidence.
+
+## Paused for scheduled system update
+
+Direct human instruction at 2026-10-09T10:00:58.580478+00:00: save and pause everyone. Root and the blocker heartbeat are paused; all original act workers were notified through their actual chats and canonical mailbox. All three workers have saved, acknowledged pause and completed their turns. The existing GitHub repository is now public with integration and all three saved act branches uploaded. [Saved recovery point](SYSTEM_UPDATE_PAUSE.md) records the exact current source state, including the incomplete unparsed menu patch, original329/7 baseline and retained frozen diagnostics. Campaign10/24 and Shared45 publication remain unchanged. Resume only after explicit human instruction.
+
 ## Current acceptance policy — 9 October 2026
 
 The latest direct human instruction establishes [focused-desktop-level-1](LEVEL_ACCEPTANCE.md): focused automated mechanics/loading/transitions/saves/Retry/cleanup checks plus brief visual inspections. Agents need no full route, defeat-all, earned exit or campaign playthrough before level acceptance and next-level work. Record untested full-playthrough behavior and continue autonomously. This supersedes historical forward playthrough requirements below while preserving their original test results and source custody.
 
 The eight levels accepted when this policy was issued remain accepted without requalification; the current total is10/24. Root notified all three existing workers immediately through canonical UPDATE1518a40b (Act1),4747655d (Act2),8cb5d40f (Act3) and their actual chats. Current frontiers are accepted A1-L3 proceeding to L4, A2-L5 implementation and accepted A3-L3 proceeding to L4 under focused evidence. Workers update their owned current progress/level records; Root retains shared ownership and first-help responsibility. Changed-level/directly affected suites only; no blanket requalification or mobile gate.
 
-Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Current publication: campaign-shared-45 [SHARED_CONTRACT](SHARED_CONTRACT.md), checked A1-L2 Challenge amendment; A1-L3 remains independently accepted. Campaign **10/24 accepted**: A1-L1/L2/L3, A2-L1/L2/L3/L4 and A3-L1/L2/L3. All original workers retain ownership and first help contact.
+Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Current publication: campaign-shared-46 [SHARED_CONTRACT](SHARED_CONTRACT.md), checked A1-L2 Challenge amendment; A1-L3 remains independently accepted. Campaign **10/24 accepted**: A1-L1/L2/L3, A2-L1/L2/L3/L4 and A3-L1/L2/L3. All original workers retain ownership and first help contact.
 
 ## Current owner coordination and focused policy supplement
 
@@ -27,6 +47,8 @@ Actual clean queued checks: affected production297/0, entry/transport782/0, nati
 Five TEST floor approaches/two explicit zero-shell controls stage each native component. Two genuine earlier primaries execute; finale primary is response proof only. Second companion, actual finale defeat/earned exit, full routes/all legal kits/human balance/performance remain untested. These are recorded limitations under focused-desktop-level-1, not next-level gates. Root returns the three released paths through the canonical publication response and remains first help contact. Actual45 adoption is separate from availability.
 
 Latest independently audited frontier: A1 L4 native component152/0, two environment-limited portrait attempts; owner continues its formations/aggregate. A2 four native queries confirm expanded starting-capsule overlap at low brace; the corrected genuine angled approach now reports4053/0/four portrait views, pending complete handoff review, with no shared timing/geometry safety relaxation. A2 common transition107/0 and A3 cosmetic31/0/four views retain separate focused scopes; complete L5/L4 handoffs are pending. No new shared API request or human/setup blocker.
+
+Shared45 runtime/test/evidence publication is `ca82dffa1f0cfece41df46580b1d297de6bdf8bf`, parent scoped content `1a691715551d064c5bc0650e5dcd8a3cc650fd75`. [Postcommit verification](SHARED45_PUBLICATION_VERIFICATION.json) joins all1,248 exact published blobs to the reviewed plan and a clean checkout. This following verification is documentation only, with no new native execution. Canonical HANDOFF838d3b79 returns the three A1 paths; UPDATE0c058846/60fcfd0f/56fd064d and actual chat messages notify all original workers. Actual preserving adoption remains separately acknowledged.
 
 ## Shared44 — independently accepted Mushroom Caverns
 
