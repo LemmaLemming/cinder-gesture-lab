@@ -1,0 +1,25 @@
+{
+  "inspected_at": "2026-10-12T03:56:40.378520+00:00",
+  "engine_evidence": {
+    "build": "4.7.2.stable.official.ed1daf0bf",
+    "actual_native_log": ".cinder/protocol-reference-candidate1-wrapper.log",
+    "scope": "Observed native build header; documentation guidance does not prove comparator correctness."
+  },
+  "sources": [
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_packedbytearray.html#class-packedbytearray-method-encode-double",
+      "actually_inspected": "4.7 PackedByteArray encode_double description and search/open result",
+      "observation": "The method writes a 64-bit floating value into an already allocated eight-byte region. Native byte representation is an implementation detail for external applications.",
+      "adaptation": "Use the same eight-byte method as existing ExactJson on both values within this native build. Preserve signed zero and all finite bits; no external encoding or changed save-format promise.",
+      "validation": "Strict original-serializer differentials and actual native one-bit shape/floor/world controls; new320/0 result separate from API guidance."
+    },
+    {
+      "url": "https://docs.godotengine.org/en/4.7/classes/class_dictionary.html",
+      "actually_inspected": "4.7 Dictionary description/key and type API listing",
+      "observation": "Native dictionary key/value handling is distinct from the application closed-JSON domain.",
+      "adaptation": "Retain explicit key Variant-type checks before lookup and original String-only JSON oracle; do not infer safety from text-equal keys.",
+      "inference": "StringName alias rejection is supported by executed native differential tests, not claimed as a quotation from this page."
+    }
+  ],
+  "scope": "Concrete comparator implementation research only; no footage/community source or performance proof."
+}

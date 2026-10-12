@@ -1,0 +1,442 @@
+extends "res://tests/scheduler_spore_source_smoke.gd"
+## Supplemental immutable-reference checks only. Inherits the existing genuine
+## native actor/Player/Scheduler/floor fixture, without rerunning its 208 checks.
+## TEST ONLY native property mutations are paused, confirmed at their getters,
+## and restored; no descriptor cache or controller internals are edited.
+## Strict finite-reference comparator and original serialization fallback controls.
+## Original30 native checks and their property-mutation order remain literal.
+## New pure differentials use original bounded Exact.stringify as oracle;
+## private comparator inputs and diagnostic native64 tags are NOT bindings.
+## Uses reviewed private Protocol seams; original ExactJson remains the oracle.
+const NativeRoute = preload("res://scripts/combat/repulsion_route.gd")
+
+
+func _run() -> void:
+	var w: Dictionary = await _reference_world()
+	if not w.ready:
+		await _dispose(w)
+		_finish()
+		return
+	paused = true
+	var context: Dictionary = _context(w)
+	var unit: Dictionary = context.sources["native-source"]
+	_expect(not unit.is_empty() and w.protocol.binding_error().is_empty(), "genuine paused native unit starts with valid world/floor/body references")
+	if unit.is_empty():
+		await _dispose(w)
+		_finish()
+		return
+	var events: Array = []
+	w.scheduler.reservation_invalidated.connect(func(id: String, reason: String) -> void: events.append([id, reason]))
+	w.source.hit_resolved.connect(func(result: Dictionary) -> void: events.append(result))
+	w.scheduler.last_error = "reference-request-diagnostic"
+	w.scheduler.last_snapshot_error = "reference-snapshot-diagnostic"
+	w.protocol.last_error = "reference-protocol-diagnostic"
+
+	var original_descriptor: Dictionary = w.protocol.binding_state()
+	var before: Dictionary = _native_receipt(w, context)
+	var alias: Dictionary = w.protocol.binding_state()
+	alias.source_environment.world_signature.colliders.clear()
+	alias.source_environment.floor_signature[0].shape.size[0] += 1.0
+	alias.source_environment.body_signature.shape.radius += 0.1
+	alias.source_environment.support_radius += 1.0
+	alias.height += 1.0
+	_expect(_same(original_descriptor, w.protocol.binding_state()), "public nested world/floor/body descriptor is a defensive copy")
+	_expect(w.protocol.binding_error().is_empty() and w.protocol.unit_error(unit, _pair(context)).is_empty(), "mutating the public descriptor cannot alter live admission or saved-unit validation")
+	_expect(_native_receipt(w, context) == before and events.is_empty() and w.protocol.last_error == "reference-protocol-diagnostic", "pure descriptor/validator queries change no native state, clocks, diagnostics or callbacks")
+	_expect(_same(unit, w.protocol.current_unit(_pair(context))) and w.protocol.last_error.is_empty() and _native_receipt(w, context) == before, "public writer still captures the exact unit and clears only its documented capture diagnostic")
+
+	# One native binary32 ULP, not a binary64 edit rounded away by Vector3.
+	var scenery: BoxShape3D = w.scenery_collision.shape
+	var old_scenery: Vector3 = scenery.size
+	var changed_scenery := Vector3(_next_native_float(old_scenery.x), old_scenery.y, old_scenery.z)
+	scenery.size = changed_scenery
+	_expect(scenery.size == changed_scenery and scenery.size != old_scenery, "actual nonfloor scenery resource retains the one-bit dimension change")
+	var measured: Dictionary = _fresh_environment(w, original_descriptor)
+	_expect(not measured.has("error") and not _same(measured.world_signature, original_descriptor.source_environment.world_signature) and _same(measured.floor_signature, original_descriptor.source_environment.floor_signature), "real scenery mutation changes only the actual world fingerprint, leaving registered floor descriptors intact")
+	_reject_unchanged(w, context, unit, events, "one-bit actual static world")
+	scenery.size = old_scenery
+	_expect(w.protocol.binding_error().is_empty() and _same(unit, w.protocol.current_unit(_pair(context))), "restoring only the injected native scenery dimension recovers the original exact unit")
+
+	var floor_shape: BoxShape3D = w.floor.collision.shape
+	var old_floor: Vector3 = floor_shape.size
+	var changed_floor := Vector3(_next_native_float(old_floor.x), old_floor.y, old_floor.z)
+	floor_shape.size = changed_floor
+	_expect(floor_shape.size == changed_floor and floor_shape.size != old_floor, "actual retained floor Box resource retains its one-bit size change")
+	measured = _fresh_environment(w, original_descriptor)
+	_expect(not measured.has("error") and not _same(measured.floor_signature, original_descriptor.source_environment.floor_signature), "enlarged real floor still provides valid support but has a different exact native floor signature")
+	_reject_unchanged(w, context, unit, events, "one-bit actual floor")
+	floor_shape.size = old_floor
+	_expect(w.protocol.binding_error().is_empty() and _same(unit, w.protocol.current_unit(_pair(context))), "restoring only the injected floor size recovers exact supported state")
+
+	var collision: CollisionShape3D = w.source.get_node("BodyCollision")
+	var body_shape: CapsuleShape3D = collision.shape
+	var old_margin: float = body_shape.margin
+	var changed_margin: float = _next_native_float(old_margin)
+	body_shape.margin = changed_margin
+	_expect(body_shape.margin == changed_margin and body_shape.margin != old_margin, "actual retained Capsule resource retains its one-bit solver margin change")
+	measured = _fresh_environment(w, original_descriptor)
+	_expect(not measured.has("error") and _same(measured.world_signature, original_descriptor.source_environment.world_signature) and _same(measured.floor_signature, original_descriptor.source_environment.floor_signature), "native body-property mutation leaves actual static world/floor signatures unchanged")
+	_reject_unchanged(w, context, unit, events, "one-bit actual body property")
+	body_shape.margin = old_margin
+	_expect(w.protocol.binding_error().is_empty() and w.protocol.unit_error(unit, _pair(context)).is_empty() and _same(unit, w.protocol.current_unit(_pair(context))), "restoring only the actual body margin recovers original full native unit")
+	_expect(_same(original_descriptor, w.protocol.binding_state()) and _native_receipt(w, context) == before and events.is_empty(), "all test controls return the complete original reference/native unit with unchanged clocks/history/diagnostics")
+	_reference_instance_controls(w, context, events)
+	await _dispose(w)
+	_reference_differentials()
+	await _reference_subclass_controls()
+	print("Protocol reference differentials: original30 native controls plus new private strict oracle/fallback controls; no cost/gameplay claim")
+	_finish()
+
+
+func _reference_world() -> Dictionary:
+	var w: Dictionary = await _world(false)
+	if not w.ready: return w
+	paused = true
+	# Add real scenery before configuring this supplemental protocol. The base
+	# unbound protocol is retired; its original scene helpers remain unchanged.
+	var wall := StaticBody3D.new()
+	wall.name = "ReferenceScenery"
+	wall.position = Vector3(8.0, 1.0, 8.0)
+	wall.collision_layer = 1
+	wall.collision_mask = 0
+	var collision := CollisionShape3D.new()
+	collision.name = "NativeBox"
+	var box := BoxShape3D.new()
+	box.size = Vector3(0.8, 2.0, 0.8)
+	collision.shape = box
+	wall.add_child(collision)
+	w.root.add_child(wall)
+	var protocol = Protocol.new()
+	w.ready = protocol.configure(w.source, w.scheduler, w.hero, "native-source", "controller", "hero", {"world_root": w.root, "floors": {"ground": w.floor}})
+	_expect(w.ready, "fresh actual protocol binds the complete native world including genuine nonfloor scenery: " + protocol.last_error)
+	w.protocol = protocol
+	w.bindings.source_protocols["native-source"] = protocol
+	w["scenery_collision"] = collision
+	if w.ready:
+		w.ready = w.consumer.bind_environment(w.bindings)
+		_expect(w.ready, "actual repulsion consumer admits the genuine source/controller/Player/world unit: " + w.consumer.last_error)
+	return w
+
+
+func _fresh_environment(w: Dictionary, descriptor: Dictionary) -> Dictionary:
+	return NativeRoute.static_environment_state(w.root, {"ground": w.floor}, descriptor.source_environment, Vector3(0.0, w.source.global_position.y, 0.0))
+
+
+func _reject_unchanged(w: Dictionary, context: Dictionary, unit: Dictionary, events: Array, label: String) -> void:
+	var before: Dictionary = _native_receipt(w, context)
+	var diagnostic: String = w.protocol.last_error
+	_expect(not w.protocol.binding_error().is_empty(), label + " fails the live native guard")
+	_expect(not w.protocol.unit_error(unit, _pair(context)).is_empty() and w.protocol.last_error == diagnostic, label + " pure paired validation rejects without changing diagnostics")
+	_expect(w.protocol.current_unit(_pair(context)).is_empty() and not w.protocol.last_error.is_empty(), label + " public writer rejects with its documented diagnostic instead of a stale-reference capture")
+	_expect(_native_receipt(w, context) == before and events.is_empty(), label + " rejection is atomic: no clock, controller, source/Player resources, geometry or Scheduler diagnostics mutation")
+
+
+func _native_receipt(w: Dictionary, context: Dictionary) -> Dictionary:
+	var collision: CollisionShape3D = w.source.get_node("BodyCollision")
+	var body: CapsuleShape3D = collision.shape
+	return {"paused": paused, "clock": w.scheduler.get_clock(), "control": w.scheduler.source_control_state(w.source), "source": Exact.stringify(w.source.spore_snapshot_state(context.controllers.controller, context.players.hero)), "player": Exact.stringify(w.hero.snapshot_state()), "native": [w.source.global_transform, w.source.velocity, w.hero.global_transform, w.hero.velocity, w.source.hp, w.source.dead, collision.global_transform, body.get_instance_id(), body.radius, body.height, body.margin, w.floor.collision.global_transform, w.floor.collision.shape.get_instance_id(), w.floor.collision.shape.size, w.scenery_collision.global_transform, w.scenery_collision.shape.get_instance_id(), w.scenery_collision.shape.size], "descriptor": Exact.stringify(w.protocol.binding_state()), "diagnostics": [w.scheduler.last_error, w.scheduler.last_snapshot_error]}
+
+
+func _next_native_float(value: float) -> float:
+	var bytes := PackedByteArray()
+	bytes.resize(4)
+	bytes.encode_float(0, value)
+	bytes.encode_u32(0, bytes.decode_u32(0) + 1)
+	return bytes.decode_float(0)
+
+
+func _finish() -> void:
+	print("Scheduler spore reference supplement: %d checks, %d failures; actual native properties + strict finite-reference/fallback controls; no cost/gameplay claim" % [checks, failures])
+	quit(0 if failures == 0 else 1)
+
+
+class ReferenceDispatchProtocol extends "res://scripts/environment/scheduler_spore_source_protocol.gd":
+	var comparison_kinds: Array[String] = []
+	func _same_bound_reference(actual: Variant, expected_json: String, kind: String) -> bool:
+		comparison_kinds.append(kind)
+		return super._same_bound_reference(actual, expected_json, kind)
+
+
+func _reference_instance_controls(w: Dictionary, context: Dictionary, events: Array) -> void:
+	var descriptor: Dictionary = w.protocol.binding_state()
+	var environment: Dictionary = _fresh_environment(w, descriptor)
+	var collision: CollisionShape3D = w.source.get_node("BodyCollision")
+	var actual_body: Dictionary = Protocol._body_properties(w.source, collision)
+	var before: String = _reference_observation_wire(w, context)
+	_expect(not before.is_empty() and not environment.has("error"), "new comparator controls start from a NONEMPTY exact genuine paused native observation")
+	if before.is_empty() or environment.has("error"): return
+	_expect(w.protocol.get_script() == Protocol, "genuine configured source protocol retains the exact canonical native Script")
+	var references: Variant = w.protocol.get("_comparison_references")
+	_expect(references is Dictionary and references.size() == 3, "exact canonical configure keeps three separately admitted private references")
+	for kind: String in ["world", "floor", "body"]:
+		var actual: Variant = environment.world_signature if kind == "world" else (environment.floor_signature if kind == "floor" else actual_body)
+		var wire: String = Exact.stringify(actual)
+		_expect(not wire.is_empty() and Protocol._same_reference(actual, wire) and w.protocol._same_bound_reference(actual, wire, kind), kind + " actual freshly measured native tree retains original nonempty exact comparison")
+		# Wrong/missing receipts must reach the original serializer. This unrelated
+		# finite tree is ONLY a private comparator input, never a native binding.
+		var unrelated: Dictionary = {"finite": [kind, 1, 1.0, null]}
+		var other_wire: String = Exact.stringify(unrelated)
+		_expect(not other_wire.is_empty() and w.protocol._same_bound_reference(unrelated, other_wire, kind) == Protocol._same_reference(unrelated, other_wire), kind + " different expected receipt falls back to the original current serialization")
+		_expect(not w.protocol._same_bound_reference(actual, "", kind) and not w.protocol._same_bound_reference(actual, other_wire, kind), kind + " empty or different original receipt cannot license a retained-reference match")
+	var unbound = Protocol.new()
+	var closed: Dictionary = {"empty": {}, "array": [], "zero": 0.0}
+	var closed_wire: String = Exact.stringify(closed)
+	_expect(not closed_wire.is_empty() and unbound._same_bound_reference(closed, closed_wire, "world") == Protocol._same_reference(closed, closed_wire), "missing private reference retains original comparison, without configuring fake native authority")
+	_expect(w.protocol._same_bound_reference(closed, closed_wire, "not-a-reference-kind") == Protocol._same_reference(closed, closed_wire), "unknown private kind retains original fallback instead of any world/body alias")
+	_expect(not unbound._same_bound_reference({}, "", "body") and not unbound._same_bound_reference(null, "", "floor"), "missing/empty expected receipts remain false even for valid empty/null current values")
+	var after: String = _reference_observation_wire(w, context)
+	_expect(not after.is_empty() and after == before and events.is_empty(), "new private comparison selection changes no actual source/Player/controller/diagnostics or callbacks; both exact witnesses nonempty")
+	print("PROTOCOL_REFERENCE_NATIVE_BEFORE " + before)
+	print("PROTOCOL_REFERENCE_NATIVE_AFTER " + after)
+
+
+func _reference_differentials() -> void:
+	var negative_zero: float = PackedByteArray([0, 0, 0, 0, 0, 0, 0, 128]).decode_double(0)
+	var typed_array: Array[float] = [0.0, -2.0, 3.0]
+	var typed_dictionary: Dictionary[String, Variant] = {"point": typed_array, "label": "港🙂"}
+	var references: Array = [null, true, false, 0, -1, 0.0, negative_zero, 1.0, "港🙂", [], {}, [0.0, -2.0, 3.0], {"point": [0.0, -2.0, 3.0], "ready": true}, typed_dictionary]
+	for index: int in range(references.size()):
+		var reference: Variant = references[index]
+		var copy: Variant = reference.duplicate(true) if reference is Array or reference is Dictionary else reference
+		_reference_differential("finite reference/typed metadata%d" % index, copy, reference, true)
+	var patterns: Array[String] = ["0000000000000000", "0000000000000080", "0100000000000000", "0100000000000080", "000000000000f03f", "010000000000f03f", "ffffffffffffef7f", "ffffffffffffefff"]
+	var values: Array[float] = []
+	for pattern: String in patterns:
+		var value: float = pattern.hex_decode().decode_double(0)
+		_expect(_reference_double_bytes(value).hex_encode() == pattern and not Exact.stringify(value).is_empty(), "native binary64 edge pattern roundtrips and passes original full Exact admission: " + pattern)
+		values.append(value)
+	for lhs: int in range(values.size()):
+		for rhs: int in range(values.size()):
+			_reference_differential("binary64 edge pair%d/%d" % [lhs, rhs], values[lhs], values[rhs], patterns[lhs] == patterns[rhs])
+	var reference: Dictionary = {"point": [0.0, -2.0, 3.0], "time": 1.0, "label": "finite", "nested": {"ready": true}, "integer": 1}
+	_reference_differential("dictionary insertion order and typed array", {"integer": 1, "nested": {"ready": true}, "label": "finite", "time": 1.0, "point": typed_array}, reference, true)
+	var variants: Dictionary = {}
+	var changed: Dictionary = reference.duplicate(true)
+	changed.point[0] = negative_zero
+	variants["coordinate opposite signed zero"] = changed
+	changed = reference.duplicate(true)
+	changed.time = _reference_next_double(1.0)
+	variants["scalar one binary64 bit"] = changed
+	for index: int in range(3):
+		changed = reference.duplicate(true)
+		changed.point[index] = _reference_next_double(float(changed.point[index]))
+		variants["coordinate one binary64 bit%d" % index] = changed
+	changed = reference.duplicate(true)
+	changed.time = 1
+	variants["equal integer replaces float"] = changed
+	changed = reference.duplicate(true)
+	changed.integer = 1.0
+	variants["equal float replaces integer"] = changed
+	changed = reference.duplicate(true)
+	changed.label = StringName("finite")
+	variants["StringName scalar with identical text"] = changed
+	changed = reference.duplicate(true)
+	var key_value: Variant = changed.nested.ready
+	changed.nested.erase("ready")
+	changed.nested[StringName("ready")] = key_value
+	variants["nested native StringName key aliases String text"] = changed
+	changed = reference.duplicate(true)
+	key_value = changed.time
+	changed.erase("time")
+	changed[StringName("time")] = key_value
+	variants["root native StringName key aliases String text"] = changed
+	changed = reference.duplicate(true)
+	changed.erase("integer")
+	variants["missing key"] = changed
+	changed = reference.duplicate(true)
+	changed["extra"] = null
+	variants["extra key"] = changed
+	changed = reference.duplicate(true)
+	changed.point = [0.0, 3.0, -2.0]
+	variants["array order"] = changed
+	changed = reference.duplicate(true)
+	changed.point = PackedFloat64Array([0.0, -2.0, 3.0])
+	variants["native packed array metadata is a different Variant type"] = changed
+	changed = reference.duplicate(true)
+	changed.time = INF
+	variants["infinite scalar"] = changed
+	changed = reference.duplicate(true)
+	changed.point[1] = NAN
+	variants["NaN coordinate"] = changed
+	changed = reference.duplicate(true)
+	changed.integer = 9007199254740992
+	variants["unsafe integer candidate"] = changed
+	changed = reference.duplicate(true)
+	changed.point.resize(Exact.MAX_ENTRIES + 1)
+	variants["oversized foreign array arity"] = changed
+	changed = reference.duplicate(true)
+	changed.label = "x".repeat(Exact.MAX_BYTES + 1)
+	variants["oversized same-type foreign String"] = changed
+	var live := Node3D.new()
+	changed = reference.duplicate(true)
+	changed.nested = live
+	variants["live native Object"] = changed
+	var callback_hits: Array = []
+	var callback: Callable = func() -> void: callback_hits.append(true)
+	changed = reference.duplicate(true)
+	changed.nested = callback
+	variants["native Callable never invoked"] = changed
+	for label: String in variants:
+		_reference_differential(label, variants[label], reference, false)
+	_expect(callback_hits.is_empty(), "pure foreign Callable comparison never executes its body")
+	live.free()
+	for native: Variant in [Vector2.ZERO, Vector3.ZERO, Rect2(), Color.WHITE, Basis.IDENTITY, Transform3D.IDENTITY, RID(), PackedByteArray([1, 2])]:
+		_reference_differential("foreign native Variant type%d" % typeof(native), native, [0.0, 0.0, 0.0], false)
+	_reference_differential("bool versus equal integer", 0, false, false)
+	_reference_differential("null versus empty array", [], null, false)
+	_reference_differential("both admitted empty structures", {"list": [], "dict": {}}, {"dict": {}, "list": []}, true)
+	_reference_differential("all safe integer endpoints", [-Exact.MAX_INTEGER, Exact.MAX_INTEGER], [-Exact.MAX_INTEGER, Exact.MAX_INTEGER], true)
+	var shared: Dictionary = {"point": [1.0, negative_zero, 3.0], "word": "港"}
+	_reference_differential("shared acyclic alias occurrences", [shared, shared], [shared.duplicate(true), shared.duplicate(true)], true)
+	var cycle: Array = []
+	cycle.append(cycle)
+	_reference_differential("same-arity cyclic candidate", cycle, [[null]], false)
+	cycle.clear()
+	var mapping_cycle: Dictionary = {}
+	mapping_cycle["same"] = mapping_cycle
+	_reference_differential("same-key cyclic candidate", mapping_cycle, {"same": {"same": null}}, false)
+	mapping_cycle.clear()
+	var deepest: Variant = null
+	for _depth: int in range(Exact.MAX_DEPTH): deepest = [deepest]
+	_reference_differential("original64-depth accepted reference", deepest, deepest, true)
+	_reference_differential("foreign65-depth candidate", [deepest], deepest, false)
+	var entries: Array = []
+	entries.resize(Exact.MAX_ENTRIES)
+	_reference_differential("original16384-entry accepted reference", entries, entries.duplicate(), true)
+	var extra: Array = entries.duplicate()
+	extra.append(null)
+	_reference_differential("foreign16385-entry candidate", extra, entries, false)
+	var chunk: Array = []
+	chunk.resize(16383)
+	var tail: Array = []
+	tail.resize(16382)
+	var exact_nodes: Array = []
+	for _alias: int in range(15): exact_nodes.append(chunk)
+	exact_nodes.append(tail)
+	_reference_differential("original262144 charged alias/node occurrences", exact_nodes.duplicate(), exact_nodes, true)
+	var over_nodes: Array = exact_nodes.duplicate()
+	var over_tail: Array = tail.duplicate()
+	over_tail.append(null)
+	over_nodes[15] = over_tail
+	_reference_differential("foreign262145 charged nodes", over_nodes, exact_nodes, false)
+	var large: String = "x".repeat(1024 * 1024 + 32)
+	_reference_differential("valid reference larger than Authored1MiB limit", large, large, true)
+	_reference_differential("same-length distinct UTF8 values", "à", "é", false)
+	_reference_differential("escaped control reference", "prefix" + String.chr(11) + "suffix", "prefix" + String.chr(11) + "suffix", true)
+	# This path must not call the finite-reference comparator at all: these
+	# references have NO original admission receipt and cannot be authority.
+	var unbound = Protocol.new()
+	var invalid: Array = [INF, NAN, Vector3.ZERO, 9007199254740992, [deepest], extra, over_nodes, "x".repeat(Exact.MAX_BYTES + 1)]
+	for index: int in range(invalid.size()):
+		var wire: String = Exact.stringify(invalid[index])
+		_expect(wire.is_empty() and not unbound._same_bound_reference(invalid[index], wire, "body"), "unadmitted expected reference%d has empty receipt and retains original rejection" % index)
+
+
+func _reference_differential(label: String, candidate: Variant, reference: Variant, expected: bool) -> void:
+	# ORIGINAL Exact.stringify is bounded and deliberately rejects hostile
+	# candidates. Only the reference's nonempty original admission licenses
+	# the separate private finite-reference recursion; never copy candidates.
+	var reference_wire: String = Exact.stringify(reference)
+	_expect(not reference_wire.is_empty(), label + " reference passes unchanged full8MiB Exact admission")
+	if reference_wire.is_empty(): return
+	var candidate_wire: String = Exact.stringify(candidate)
+	var original: bool = not candidate_wire.is_empty() and candidate_wire == reference_wire
+	var actual: bool = Protocol._same_closed_reference(candidate, reference)
+	_expect(original == expected and actual == original and Protocol._same_reference(candidate, reference_wire) == original, label + " strict private comparator matches original complete serializer and fallback")
+
+
+func _reference_subclass_controls() -> void:
+	var w: Dictionary = await _world(false)
+	if not w.ready:
+		await _dispose(w)
+		return
+	paused = true
+	# A fresh actual source remains unbound to its consumer. Configure a real
+	# legitimate protocol subclass against that actual body/Hero/controller.
+	var wall := StaticBody3D.new()
+	wall.name = "ReferenceSubclassScenery"
+	wall.position = Vector3(8.0, 1.0, 8.0)
+	wall.collision_layer = 1
+	wall.collision_mask = 0
+	var collision := CollisionShape3D.new()
+	collision.name = "NativeBox"
+	var box := BoxShape3D.new()
+	box.size = Vector3(0.8, 2.0, 0.8)
+	collision.shape = box
+	wall.add_child(collision)
+	w.root.add_child(wall)
+	w["scenery_collision"] = collision
+	var derived := ReferenceDispatchProtocol.new()
+	var configured: bool = derived.configure(w.source, w.scheduler, w.hero, "native-source", "controller", "hero", {"world_root": w.root, "floors": {"ground": w.floor}})
+	_expect(configured, "legitimate real-source Protocol subclass configures through original native constructor: " + derived.last_error)
+	if not configured:
+		await _dispose(w)
+		return
+	w.protocol = derived
+	var context: Dictionary = _context(w)
+	var unit: Dictionary = context.sources["native-source"]
+	var private_references: Variant = derived.get("_comparison_references")
+	_expect(derived.get_script() != Protocol and private_references is Dictionary and private_references.is_empty(), "legitimate derived Script retains original fallback and never installs exact-native private references")
+	_expect(not unit.is_empty() and derived.binding_error().is_empty(), "genuine subclass captures and validates an actual complete native unit")
+	if unit.is_empty():
+		await _dispose(w)
+		return
+	derived.last_error = "reference-subclass-retained"
+	var before: String = _reference_observation_wire(w, context)
+	_expect(not before.is_empty(), "subclass native before receipt has nonempty exact tagged resources/identities")
+	derived.comparison_kinds.clear()
+	_expect(derived.binding_error().is_empty() and derived.comparison_kinds == ["world", "floor", "body"], "legitimate virtual comparison dispatch preserves actual world then floor then native-body ordering")
+	var current: Dictionary = {"finite": [0.0, 1, "subclass"]}
+	var wire: String = Exact.stringify(current)
+	_expect(not wire.is_empty() and derived._same_bound_reference(current, wire, "world") == Protocol._same_reference(current, wire), "subclass public signature remains compatible and uses original unrelated-receipt serializer fallback")
+	var events: Array = []
+	w.source.hit_resolved.connect(func(value: Dictionary) -> void: events.append(value))
+	w.scheduler.reservation_invalidated.connect(func(id: String, reason: String) -> void: events.append([id, reason]))
+	_expect(derived.unit_error(unit, _pair(context)).is_empty() and derived.last_error == "reference-subclass-retained", "subclass saved-unit pure validator preserves native custody and diagnostics")
+	var after: String = _reference_observation_wire(w, context)
+	_expect(not before.is_empty() and not after.is_empty() and after == before and events.is_empty(), "subclass fallback preserves exact source/Player/Scheduler resources/clocks/callbacks with nonempty witnesses")
+	print("PROTOCOL_REFERENCE_SUBCLASS_BEFORE " + before)
+	print("PROTOCOL_REFERENCE_SUBCLASS_AFTER " + after)
+	await _dispose(w)
+
+
+func _reference_observation_wire(w: Dictionary, context: Dictionary) -> String:
+	var observation: Dictionary = _native_receipt(w, context)
+	observation["protocol_diagnostic"] = w.protocol.last_error
+	return Exact.stringify(_reference_observed_value(observation))
+
+
+static func _reference_observed_value(value: Variant) -> Variant:
+	# Diagnostic identity encoding ONLY; production snapshots and bounds are
+	# unchanged. Native64 instance IDs are exact tagged decimal strings.
+	match typeof(value):
+		TYPE_INT:
+			return {"native_int64_decimal": str(value)} if value < -Exact.MAX_INTEGER or value > Exact.MAX_INTEGER else value
+		TYPE_VECTOR3:
+			return [float(value.x), float(value.y), float(value.z)]
+		TYPE_BASIS:
+			return [_reference_observed_value(value.x), _reference_observed_value(value.y), _reference_observed_value(value.z)]
+		TYPE_TRANSFORM3D:
+			return {"basis": _reference_observed_value(value.basis), "origin": _reference_observed_value(value.origin)}
+		TYPE_ARRAY:
+			var copied: Array = []
+			for child: Variant in value: copied.append(_reference_observed_value(child))
+			return copied
+		TYPE_DICTIONARY:
+			var copied: Dictionary = {}
+			for key: Variant in value: copied[key] = _reference_observed_value(value[key])
+			return copied
+	return value
+
+
+static func _reference_double_bytes(value: float) -> PackedByteArray:
+	var bytes := PackedByteArray()
+	bytes.resize(8)
+	bytes.encode_double(0, value)
+	return bytes
+
+
+static func _reference_next_double(value: float) -> float:
+	var bytes: PackedByteArray = _reference_double_bytes(value)
+	bytes[0] = bytes[0] ^ 1
+	return bytes.decode_double(0)

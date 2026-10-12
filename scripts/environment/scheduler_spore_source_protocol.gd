@@ -36,6 +36,8 @@ var _native_body: Dictionary = {}
 var _native_body_json: String = ""
 var _world_signature_json: String = ""
 var _floor_signature_json: String = ""
+# Private configure-time finite comparison copies; never returned or current authority.
+var _comparison_references: Dictionary = {}
 var _configuration: Dictionary = {}
 var _configuration_json: String = ""
 var _descriptor: Dictionary = {}
@@ -125,6 +127,16 @@ func configure(source: CharacterBody3D, scheduler: CinderThreatScheduler, player
 	_descriptor = {"api_revision": API_REVISION, "actor_revision": native.actor_revision, "source_id": source_id, "controller_id": controller_id, "player_id": player_id, "configuration_sha256": configuration_json.sha256_text(), "source_environment": measured.duplicate(true), "height": float(body.height)}
 	_world_signature_json = Exact.stringify(_descriptor.source_environment.world_signature)
 	_floor_signature_json = Exact.stringify(_descriptor.source_environment.floor_signature)
+	# ORIGINAL nonempty receipts dominate these separate closed-value copies.
+	# Exact Script only: subclass virtual construction keeps the legacy comparer.
+	# No source hook, yield or callback intervenes between validation and copying.
+	if get_script() == CinderSchedulerSporeSourceProtocol:
+		if not _native_body_json.is_empty():
+			_comparison_references["body"] = {"value": _native_body.duplicate(true), "json": _native_body_json}
+		if not _world_signature_json.is_empty():
+			_comparison_references["world"] = {"value": _descriptor.source_environment.world_signature.duplicate(true), "json": _world_signature_json}
+		if not _floor_signature_json.is_empty():
+			_comparison_references["floor"] = {"value": _descriptor.source_environment.floor_signature.duplicate(true), "json": _floor_signature_json}
 	last_error = ""
 	return true
 
@@ -280,7 +292,7 @@ func unit_error(actor: Dictionary, context: Dictionary) -> String:
 		return "Missing live source requires a ready external replacement"
 	var saved_position: Vector3 = Codec.read_vector3(view.motion.position)
 	var environment: Dictionary = Route.static_environment_state(_world_node(), _environment.floors, _descriptor.source_environment, Vector3(saved_position.x, _ground_y - float(_descriptor.source_environment.foot_offset), saved_position.z))
-	if environment.has("error") or not _same_reference(environment.get("world_signature"), _world_signature_json) or not _same_reference(environment.get("floor_signature"), _floor_signature_json):
+	if environment.has("error") or not _same_bound_reference(environment.get("world_signature"), _world_signature_json, "world") or not _same_bound_reference(environment.get("floor_signature"), _floor_signature_json, "floor"):
 		return "Actual registered static world/floor assumptions changed"
 	return ""
 
@@ -363,7 +375,7 @@ func _binding_error(allow_missing_defeat: bool) -> String:
 		if (_environment.floors[id].collision as CollisionShape3D).shape != _floor_shapes[id]:
 			return "Retained actual floor shape resource changed"
 	var static_environment: Dictionary = Route.static_environment_state(world, _environment.floors, _descriptor.source_environment, Vector3(0.0, _ground_y - float(_descriptor.source_environment.foot_offset), 0.0))
-	if static_environment.has("error") or not _same_reference(static_environment.get("world_signature"), _world_signature_json) or not _same_reference(static_environment.get("floor_signature"), _floor_signature_json):
+	if static_environment.has("error") or not _same_bound_reference(static_environment.get("world_signature"), _world_signature_json, "world") or not _same_bound_reference(static_environment.get("floor_signature"), _floor_signature_json, "floor"):
 		return "Retained actual static world/floor binding changed"
 	if not _consumer_id.is_empty() and not _live(_consumer_node()):
 		return "Retained environmental consumer disappeared"
@@ -380,7 +392,7 @@ func _binding_error(allow_missing_defeat: bool) -> String:
 	if not native is Dictionary or not _keys(native, ["api_revision", "actor_revision", "source_id", "scheduler", "player", "codec", "configuration"]) or native.api_revision != ACTOR_REVISION or native.actor_revision != _descriptor.actor_revision or native.source_id != _descriptor.source_id or not _valid_object(native.scheduler) or not _valid_object(native.player) or not _valid_object(native.codec) or native.scheduler != scheduler or native.player != player or native.codec != _codec or not native.configuration is Dictionary or Exact.stringify(native.configuration) != _configuration_json:
 		return "Owned immutable source/controller/codec/configuration binding changed"
 	var collision: CollisionShape3D = _collision.get_ref() as CollisionShape3D
-	if not _live(collision) or collision.get_parent() != source or source.get_node_or_null("BodyCollision") != collision or collision.shape != _shape or not is_instance_valid(_shape) or not _same_reference(_body_properties(source, collision), _native_body_json):
+	if not _live(collision) or collision.get_parent() != source or source.get_node_or_null("BodyCollision") != collision or collision.shape != _shape or not is_instance_valid(_shape) or not _same_bound_reference(_body_properties(source, collision), _native_body_json, "body"):
 		return "Retained native body/collider/resource/properties changed"
 	var owners: PackedInt32Array = source.get_shape_owners()
 	if owners.size() != 1 or owners[0] != _shape_owner or source.shape_owner_get_owner(_shape_owner) != collision or source.shape_owner_get_shape_count(_shape_owner) != 1 or source.shape_owner_get_shape(_shape_owner, 0) != _shape or source.shape_owner_get_transform(_shape_owner) != collision.transform or source.is_shape_owner_disabled(_shape_owner) != collision.disabled:
@@ -572,6 +584,60 @@ static func _vector(value: Vector3) -> Array:
 
 static func _basis(value: Basis) -> Array:
 	return [_vector(value.x), _vector(value.y), _vector(value.z)]
+
+
+## Internal selection only; actual native trees are STILL derived at each boundary.
+## Missing/empty/changed receipt or subclass keeps the ORIGINAL serialization path.
+func _same_bound_reference(actual: Variant, expected_json: String, kind: String) -> bool:
+	if get_script() != CinderSchedulerSporeSourceProtocol:
+		return _same_reference(actual, expected_json)
+	var retained: Variant = _comparison_references.get(kind)
+	if not retained is Dictionary or not retained.has("value") or not retained.get("json") is String or retained.json.is_empty() or retained.json != expected_json:
+		return _same_reference(actual, expected_json)
+	return _same_closed_reference(actual, retained.value)
+
+
+## ONLY a separately private reference accepted by ORIGINAL Exact.stringify is
+## supplied here. Equality implies identical depth64/entries16384/nodes262144,
+## safe-int and final escaped8MiB charges, including repeated alias occurrences.
+## Candidate descent follows that finite reference; this is NOT a JSON validator.
+static func _same_closed_reference(candidate: Variant, reference: Variant) -> bool:
+	if typeof(candidate) != typeof(reference):
+		return false
+	match typeof(reference):
+		TYPE_NIL:
+			return true
+		TYPE_BOOL, TYPE_INT:
+			return candidate == reference
+		TYPE_STRING:
+			return candidate.length() == reference.length() and candidate == reference
+		TYPE_FLOAT:
+			var lhs := PackedByteArray()
+			var rhs := PackedByteArray()
+			lhs.resize(8)
+			rhs.resize(8)
+			lhs.encode_double(0, candidate)
+			rhs.encode_double(0, reference)
+			return lhs == rhs
+		TYPE_ARRAY:
+			if candidate.size() != reference.size():
+				return false
+			for index: int in range(reference.size()):
+				if not _same_closed_reference(candidate[index], reference[index]):
+					return false
+			return true
+		TYPE_DICTIONARY:
+			if candidate.size() != reference.size():
+				return false
+			# StringName can alias a String lookup: test ALL keys before ANY lookup.
+			for key: Variant in candidate:
+				if typeof(key) != TYPE_STRING:
+					return false
+			for key: String in reference:
+				if not candidate.has(key) or not _same_closed_reference(candidate[key], reference[key]):
+					return false
+			return true
+	return false
 
 
 ## Compare a freshly read native value with one configure-time immutable reference.
