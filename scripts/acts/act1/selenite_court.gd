@@ -286,6 +286,10 @@ func _admit_roundel() -> void:
 
 
 func _enter_helper_phase() -> void:
+	# Publish the retained dormant pair's full body/art and finite route before
+	# birth. The actual shared camera must contain it, alongside the continuing
+	# King and every live response proof, before these helpers become visible.
+	if not _framing_ready(): return
 	var king: CharacterBody3D = sources["court-king"]
 	king.call("cancel", "court_phase_two_entry")
 	_frames.clear()
@@ -315,6 +319,10 @@ func _update_helper_entry() -> void:
 				_entry_outcomes[id] = {"outcome": "defeated" if actor.get("dead") else "injured", "endpoint": actor.global_position}
 				continue
 			if not actor.is_on_floor() or actor.velocity != Vector3.ZERO: return
+		# Settlement may finish before the render-owned camera reads the complete
+		# entry lookahead. Establish actual containment before starting its clock;
+		# an already started interval is never postponed or rebased.
+		if not _framing_ready(): return
 		var start: float = scheduler.get_clock()
 		for id: String in Layout.ROOM_SOURCE_IDS[4]:
 			if _entry_outcomes.has(id): continue
@@ -514,6 +522,10 @@ func _camera_framing_points() -> Array:
 		# it. Contact cannot birth a newly clipped source or checkpoint while
 		# the shared fixed camera is still approaching this local court.
 		points.append_array(_actor_points("court-king", sources["court-king"].global_position))
+	if room == 3 and not _helpers_once and not sources["court-king"].get("dead") and float(sources["court-king"].get("hp")) <= 40.0:
+		for id: String in Layout.ROOM_SOURCE_IDS[4]:
+			var endpoint: Vector3 = sources[id].global_position + Vector3(0, 0, Layout.HELPER_ENTRY_DISTANCE)
+			points.append_array(_actor_points(id, endpoint, true))
 	for id: String in _current_ids():
 		var retained: Variant = sources.get(id)
 		if not is_instance_valid(retained) or not retained is CharacterBody3D or retained != _retained.get(id) or retained.is_queued_for_deletion() or retained.get_parent() != self or not retained.is_inside_tree(): return [Vector3.INF]
@@ -522,9 +534,11 @@ func _camera_framing_points() -> Array:
 		if state.dead or state.dormant: continue
 		points.append_array(_actor_points(id, state.opening_position))
 		if not String(state.reservation_id).is_empty(): points.append_array(_geometry_points(state.geometry)); points.append_array(_cue_points(actor.call("get_cue")))
-	if helper_stage == "entering":
-		for id: String in _entry_records:
-			if not _entry_outcomes.has(id): points.append_array(_actor_points(id, _entry_records[id].to))
+	if helper_stage in ["settling", "entering"]:
+		for id: String in Layout.ROOM_SOURCE_IDS[4]:
+			if _entry_outcomes.has(id): continue
+			var endpoint: Vector3 = _entry_records[id].to if helper_stage == "entering" else sources[id].global_position + Vector3(0, 0, Layout.HELPER_ENTRY_DISTANCE)
+			points.append_array(_actor_points(id, endpoint))
 	if room == 2:
 		var state: Dictionary = roundel.state()
 		if state.status == "running": points.append_array(_geometry_points(state.geometry)); points.append_array(_cue_points(roundel.get_cue()))
@@ -545,8 +559,9 @@ func _camera_framing_points() -> Array:
 	return _unique_points(points if not points.is_empty() else _hero_points())
 
 
-func _actor_points(id: String, endpoint: Vector3) -> Array:
+func _actor_points(id: String, endpoint: Vector3, prospective_helper: bool = false) -> Array:
 	var actor: CharacterBody3D = sources[id]
+	if prospective_helper and (id not in Layout.ROOM_SOURCE_IDS[4] or not actor.get("dormant") or actor.get("dead")): return [Vector3.INF]
 	var camera: Camera3D = _actual_camera()
 	var shared_camera: Camera3D = shared_shell.get("camera") as Camera3D if is_instance_valid(shared_shell) else null
 	# The shared billboard helper uses its fixed camera basis. A fresh candidate
@@ -561,10 +576,10 @@ func _actor_points(id: String, endpoint: Vector3) -> Array:
 	else:
 		var art: Node3D = actor.call("get_art")
 		for node: Node in art.find_children("*", "Sprite3D", true, false):
-			if node.is_visible_in_tree(): points.append_array(shared_shell.call("camera_billboard_points", node))
+			if node.is_visible_in_tree() or (prospective_helper and node.visible): points.append_array(shared_shell.call("camera_billboard_points", node))
 		for node: Node in art.find_children("*", "MeshInstance3D", true, false):
 			var mesh := node as MeshInstance3D
-			if mesh.mesh != null and mesh.is_visible_in_tree(): points.append_array(_box_points(mesh.get_aabb(), mesh.global_transform))
+			if mesh.mesh != null and (mesh.is_visible_in_tree() or (prospective_helper and mesh.visible)): points.append_array(_box_points(mesh.get_aabb(), mesh.global_transform))
 	for point: Vector3 in points.duplicate(): points.append(point + endpoint - actor.global_position)
 	return _unique_points(points)
 
