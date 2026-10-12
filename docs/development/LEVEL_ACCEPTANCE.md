@@ -26,7 +26,7 @@ The worker's handoff names the exact content commit, adopted shared baseline/API
 
 Integration reviews and accepts each level independently under this policy, records the exact commit/evidence and completes its production registration with focused checks. The worker then proceeds to the next assigned level in sequence. Do not wait for another act, a full-playthrough test, human balancing or mobile validation. Internal acceptance remains autonomous.
 
-The eight levels accepted when this policy was issued remain accepted without requalification. The current total is13/24, including independently checked [A3-L4 False Paradise](ACT3_L4_ACCEPTANCE.md); later acceptances follow this policy. Pending levels require review of their focused evidence and brief visuals; this policy does not silently accept unfinished content. Optional completion remains independent of the main route and parent unlock rules remain tested through focused flows.
+The eight levels accepted when this policy was issued remain accepted without requalification. The current total is14/24, including independently checked [A3-L4 False Paradise](ACT3_L4_ACCEPTANCE.md) and [A2-O2 Clear Air Circuit](ACT2_O2_ACCEPTANCE.md); later acceptances follow this policy. Pending levels require review of their focused evidence and brief visuals; this policy does not silently accept unfinished content. Optional completion remains independent of the main route and parent unlock rules remain tested through focused flows.
 
 ## Untested behavior and original evidence
 

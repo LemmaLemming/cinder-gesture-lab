@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "status": "PASS_NARROW_SHARED52_ADOPTION",
+  "observed_at": "2026-10-12T07:25:50.207614+00:00",
+  "publication": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+  "run_id": "cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2",
+  "scope": "Actual canonical ACK/registered identity/checkout/branch, exact merge parents/current ancestry/original receipt pins and six named publication\u2192merge\u2192current HEAD\u2192index\u2192physical bytes/modes. Batched tree/index queries and one batched Git object read; no historical-bank byte sweep.",
+  "acts": {
+    "act1": {
+      "registered_identity": {
+        "worker_id": "01a11adf-2ec8-7702-96c6-0fa1e240c332",
+        "checkout": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+        "branch": "codex/campaign-act1"
+      },
+      "ack": {
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/act1/messages/56fa5cc7-994a-4c8b-928a-1decff9bb78b-ACK.json",
+        "bytes": 1847,
+        "sha256": "86b207bf23b543c643301d60abcee0659bb5d25c4de9465543729cb2edd41ff5"
+      },
+      "merge_commit": "11c19478b124da69d592933bea73295ca8ed1ae0",
+      "actual_parents": [
+        "379a303377682023f27b7c6c14b34a1cc2040058",
+        "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f"
+      ],
+      "observed_head": "bdadee4f16343e437c6b04a66599648700fc010e",
+      "ancestry": [
+        {
+          "ancestor": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+          "descendant": "11c19478b124da69d592933bea73295ca8ed1ae0",
+          "verified": true
+        },
+        {
+          "ancestor": "379a303377682023f27b7c6c14b34a1cc2040058",
+          "descendant": "11c19478b124da69d592933bea73295ca8ed1ae0",
+          "verified": true
+        },
+        {
+          "ancestor": "11c19478b124da69d592933bea73295ca8ed1ae0",
+          "descendant": "bdadee4f16343e437c6b04a66599648700fc010e",
+          "verified": true
+        }
+      ],
+      "checks": {
+        "canonical_ack_sha": true,
+        "registered_run_worker_sender": true,
+        "registered_checkout_branch": true,
+        "publication_matches": true,
+        "original_receipt_sha": true,
+        "exact_merge_parents": true,
+        "actual_merge_commit_matches_receipt": true,
+        "later_tracked_changes_only_owned": true
+      },
+      "original_receipt": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-shared52-adoption.json",
+        "bytes": 20333,
+        "sha256": "4a601d312d13af8181468971f53395329e9ec5ab9223a34c3dfb2641647c5c8f"
+      },
+      "receipt_commit_check": {},
+      "named_files": [
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+          "bytes": 45116,
+          "git_mode": "100644",
+          "physical_mode": "0o644",
+          "blob_oid": "c0ab577a0bdf0b80f673ec7cc79101768657d349",
+          "publication_merge_current_head_index_and_physical_exact": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+          "bytes": 43768,
+          "git_mode": "100644",
+          "physical_mode": "0o644",
+          "blob_oid": "ba9468e36321ad0fe013b03f14b8b106005e15a7",
+          "publication_merge_current_head_index_and_physical_exact": true
+        },
+        {
+          "path": "data/campaign/registry.json",
+          "sha256": "4c7b75792501734a213ecbff53a565195021c55fc60eb84a8d2c0646413c72fb",
+          "bytes": 11391,
+          "git_mode": "100644",
+          "physical_mode": "0o644",
+          "blob_oid": "49bb7380620bd79fabb1ad23b142dca3b39c7263",
+          "publication_merge_current_head_index_and_physical_exact": true
+        },
+        {
+          "path": "scripts/dev/dev.py",
+          "sha256": "fb6d41cb2ef4a22c66c6010f5d959c1fe8638f0065bb2bf0d18c34dec7b7ed80",
+          "bytes": 29161,
+          "git_mode": "100755",
+          "physical_mode": "0o755",
+          "blob_oid": "679bbe725c6e9e0dc31985d0e63a625b6041e578",
+          "publication_merge_current_head_index_and_physical_exact": true
+        },
+        {
+          "path": "tests/act3_l4_registration_smoke.gd",
+          "sha256": "04acea8c809e2c7226ec43aba940b75b14651e8776792735e9a0812aacc18ec2",
+          "bytes": 3367,
+          "git_mode": "100644",
+          "physical_mode": "0o644",
+          "blob_oid": "2790b0fabbc95d04955a3f39f48f6a1eda864184",
+          "publication_merge_current_head_index_and_physical_exact": true
+        },
+        {
+          "path": "tests/act3_l4_registration_smoke.gd.uid",
+          "sha256": "f4cfd3f295b9bf87169fb5311d23740a98ccd0cbfaad540adb12f599a8fa7249",
+          "bytes": 20,
+          "git_mode": "100644",
+          "physical_mode": "0o644",
+          "blob_oid": "5b26943f0a1dcfe6ee0721d30238b8df8340aa31",
+          "publication_merge_current_head_index_and_physical_exact": true
+        }
+      ],
+      "later_owned_changes": {
+        "paths": [
+          "assets/acts/act1/court/king_manifest.json",
+          "assets/acts/act1/court/whole_environment_manifest.json",
+          "data/campaign/act1/ACT_MEMORY.md",
+          "data/campaign/act1/PROGRESS.md",
+          "data/campaign/act1/levels/A1-L4.md",
+          "docs/acts/act1/L4_WHOLE_PORTRAIT_REVIEW.json",
+          "scripts/acts/act1/selenite_court.gd",
+          "scripts/acts/act1/selenite_court_whole_art.gd",
+          "tests/acts/act1/a1_l4_whole_portrait.gd",
+          "tests/acts/act1/a1_l4_whole_portrait.gd.uid",
+          "tests/acts/act1/a1_l4_whole_save.gd"
+        ],
+        "current_tracked_working_changes": [],
+        "qualification": "Actual post-merge owner commits/current owned changes remain separate. Their presence does not invalidate prior adoption preservation; the six shared publication files themselves are exact."
+      },
+      "owner_reported_preservation_counts": {
+        "owned_git_rows": 18895,
+        "owned_physical_rows": 19093,
+        "bounded_protected_physical_rows": 20934,
+        "nonowned_publication_git_rows": 81117,
+        "changed_nonowned_physical_rows": 2666,
+        "prior_active_uids": 428,
+        "current_active_uids": 455
+      },
+      "counts_qualification": "Original owner-reported scope retained; no independent full 81,117/39,168-file, historical-original, settings, or active/recursive UID inventory repeated."
+    },
+    "act2": {
+      "registered_identity": {
+        "worker_id": "01a11adf-a56f-77d2-a7bc-45fd94702ab1",
+        "checkout": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+        "branch": "codex/campaign-act2"
+      },
+      "ack": {
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/act2/messages/2192b18a-10f5-43db-a9cf-0eed16f275db-ACK.json",
+        "bytes": 2110,
+        "sha256": "6acef5c01a7aed7bc802305e326a4a9462d80ab5e9e55c451428e4c10a50723f"
+      },
+      "merge_commit": "32a683be7f2897bbf1aa5082df34a7839ff80d7e",
+      "actual_parents": [
+        "6c548ab6cc9dcd9bce7f6b5597d9a5b9077c2845",
+        "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f"
+      ],
+      "observed_head": "dadbf52ab13592a25fac1166d976e1e7f25c358c",
+      "ancestry": [
+        {
+          "ancestor": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+          "descendant": "32a683be7f2897bbf1aa5082df34a7839ff80d7e",
+          "verified": true
+        },
+        {
+          "ancestor": "6c548ab6cc9dcd9bce7f6b5597d9a5b9077c2845",
+          "descendant": "32a683be7f2897bbf1aa5082df34a7839ff80d7e",
+          "verified": true
+        },
+        {
+          "ancestor": "32a683be7f2897bbf1aa5082df34a7839ff80d7e",
+          "descendant": "dadbf52ab13592a25fac1166d976e1e7f25c358c",
+          "verified": true
+        }
+      ],
+      "checks": {
+        "canonical_ack_sha": true,
+        "registered_run_worker_sender": true,
+        "registered_checkout_branch": true,
+        "publication_matches": true,
+        "original_receipt_sha": true,
+        "exact_merge_parents": true,
+        "actual_merge_commit_matches_receipt": true,
+        "ack_nested_merge_parents": true,
+        "later_tracked_changes_only_owned": true
+      },
+      "original_receipt": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/evidence/shared52-adoption/adoption.json",
+        "bytes": 938791,
+        "sha256": "c54cd9c24bf3ac287c35eb029c947225d889be5a04302f6c06ad0ac342c73729"
+      },
+      "receipt_commit_check": {
+        "current_receipt_committed_at_observed_head": true,
+        "committed_receipt_sha256": "c54cd9c24bf3ac287c35eb029c947225d889be5a04302f6c06ad0ac342c73729"
+      },
+      "named_files": [
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+          "bytes": 45116,
+          "git_mode": "100644",
+          "physical_mode": "0o644",
+          "blob_oid": "c0ab577a0bdf0b80f673ec7cc79101768657d349",
+          "publication_merge_current_head_index_and_physical_exact": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+          "bytes": 43768,
+          "git_mode": "100644",
+          "physical_mode": "0o644",
+          "blob_oid": "ba9468e36321ad0fe013b03f14b8b106005e15a7",
+          "publication_merge_current_head_index_and_physical_exact": true
+        },
+        {
+          "path": "data/campaign/registry.json",
+          "sha256": "4c7b75792501734a213ecbff53a565195021c55fc60eb84a8d2c0646413c72fb",
+          "bytes": 11391,
+          "git_mode": "100644",
+          "physical_mode": "0o644",
+          "blob_oid": "49bb7380620bd79fabb1ad23b142dca3b39c7263",
+          "publication_merge_current_head_index_and_physical_exact": true
+        },
+        {
+          "path": "scripts/dev/dev.py",
+          "sha256": "fb6d41cb2ef4a22c66c6010f5d959c1fe8638f0065bb2bf0d18c34dec7b7ed80",
+          "bytes": 29161,
+          "git_mode": "100755",
+          "physical_mode": "0o755",
+          "blob_oid": "679bbe725c6e9e0dc31985d0e63a625b6041e578",
+          "publication_merge_current_head_index_and_physical_exact": true
+        },
+        {
+          "path": "tests/act3_l4_registration_smoke.gd",
+          "sha256": "04acea8c809e2c7226ec43aba940b75b14651e8776792735e9a0812aacc18ec2",
+          "bytes": 3367,
+          "git_mode": "100644",
+          "physical_mode": "0o644",
+          "blob_oid": "2790b0fabbc95d04955a3f39f48f6a1eda864184",
+          "publication_merge_current_head_index_and_physical_exact": true
+        },
+        {
+          "path": "tests/act3_l4_registration_smoke.gd.uid",
+          "sha256": "f4cfd3f295b9bf87169fb5311d23740a98ccd0cbfaad540adb12f599a8fa7249",
+          "bytes": 20,
+          "git_mode": "100644",
+          "physical_mode": "0o644",
+          "blob_oid": "5b26943f0a1dcfe6ee0721d30238b8df8340aa31",
+          "publication_merge_current_head_index_and_physical_exact": true
+        }
+      ],
+      "later_owned_changes": {
+        "paths": [
+          "data/campaign/act2/ACT_MEMORY.md",
+          "data/campaign/act2/PROGRESS.md",
+          "data/campaign/act2/levels/A2-O2.md",
+          "docs/acts/act2/A2_O2_HANDOFF.md",
+          "docs/acts/act2/evidence/A2-O2/focused-handoff-20261012/index.json",
+          "docs/acts/act2/evidence/shared52-adoption/.gdignore",
+          "docs/acts/act2/evidence/shared52-adoption/ack-record.json",
+          "docs/acts/act2/evidence/shared52-adoption/actual-independent-review.json",
+          "docs/acts/act2/evidence/shared52-adoption/adoption.json",
+          "docs/acts/act2/evidence/shared52-adoption/before.json",
+          "docs/acts/act2/evidence/shared52-adoption/merge.log",
+          "docs/acts/act2/evidence/shared52-adoption/preserve-adopt-original.py"
+        ],
+        "current_tracked_working_changes": [],
+        "qualification": "Actual post-merge owner commits/current owned changes remain separate. Their presence does not invalidate prior adoption preservation; the six shared publication files themselves are exact."
+      },
+      "owner_reported_preservation_counts": {
+        "actual_active_UID_count_after": 444,
+        "actual_active_UID_count_before": 417,
+        "actual_active_UIDs_unique": true,
+        "actual_prior_active_UID_bytes_modes_identities_preserved": true,
+        "historical_evidence_original_bytes_modes_preserved": 95823,
+        "ignored_UID_count_after": 30394,
+        "ignored_UID_count_before": 29851,
+        "incoming_exact_target_git_physical_bytes_modes": 2666,
+        "local_settings_preserved": 3,
+        "owned_git_bytes_modes_preserved": 39168,
+        "owned_physical_bytes_modes_preserved": 39168,
+        "prior_all_recursive_UID_bytes_modes_preserved": 30268,
+        "prior_gdignore_boundaries_preserved": 312,
+        "recursive_UID_count_after": 30838,
+        "scope_complete": true
+      },
+      "counts_qualification": "Original owner-reported scope retained; no independent full 81,117/39,168-file, historical-original, settings, or active/recursive UID inventory repeated."
+    }
+  },
+  "findings": [],
+  "limits": [
+    "Publication Git tree is authority; Root current runtime or registry drafts are not compared.",
+    "Broader preservation counts are owner-reported, not independently promoted by this narrow audit.",
+    "No Godot/import/job, native/performance/level acceptance credit, owner messaging, Git/index/canonical-run/status/runtime/owner mutation.",
+    "Act1 original receipt is retained in ignored .cinder and matches the ACK hash; Act2 original portable receipt is now committed in its later owned handoff commit.",
+    "Only Root scratch audit JSON written."
+  ]
+}
