@@ -1,0 +1,844 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-12T06:34:46.885720+00:00",
+  "scope": "Read-only new closed artifact/input/UID/source/report joins; no engine execution or acceptance. Earlier audit is retained unchanged.",
+  "jobs": [
+    {
+      "label": "a1-l4-king-intro-save-01",
+      "result_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l4-king-intro-save-01-result.json",
+      "result_sha256": "ec57993f78f58c4a6fac32405cfb3344ab30f0ee85d7838f7775615d6ac1884f",
+      "native_report_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l4-whole-save-60136812.json",
+      "native_report_sha256": "5b8d070093b304e50d0f469204f4820d2a09b4537d786368cae97854afef88b4",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l4_whole_save.gd",
+        "--",
+        "--moving-king-intro-save"
+      ],
+      "revision": "ffdb2860b02e0401ef1a4110fc618180b2c0041b",
+      "shared_runtime_publication": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+      "closed_at": "2026-10-12T06:13:35.539891+00:00",
+      "exit_code": 0,
+      "checks": 210,
+      "failures": 0,
+      "original_result_counters": [
+        210,
+        0
+      ],
+      "fixture_mode": "moving-king-intro-save",
+      "source_count": 690,
+      "input_mismatches": [],
+      "raw_diagnostics": [],
+      "prior_uid_count": 427,
+      "current_prior_uid_changes": [],
+      "critical_source_joins": [
+        {
+          "path": "scenes/acts/act1/a1_l4.tscn",
+          "frozen_sha256": "cb72883eb3f85f1e52c218888878c908f37012cac5282a6549e327c95f8709bf",
+          "executed_git_sha256": "cb72883eb3f85f1e52c218888878c908f37012cac5282a6549e327c95f8709bf",
+          "matches_executed_git": true,
+          "current_sha256": "cb72883eb3f85f1e52c218888878c908f37012cac5282a6549e327c95f8709bf",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "matches_executed_git": true,
+          "current_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "fffa022cdf8c6fb23e0b3a3d773476f6a8e2be6adcc23d068e48aecaf4c054b2",
+          "executed_git_sha256": "fffa022cdf8c6fb23e0b3a3d773476f6a8e2be6adcc23d068e48aecaf4c054b2",
+          "matches_executed_git": true,
+          "current_sha256": "fffa022cdf8c6fb23e0b3a3d773476f6a8e2be6adcc23d068e48aecaf4c054b2",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "matches_executed_git": true,
+          "current_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "matches_executed_git": true,
+          "current_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_whole_art.gd",
+          "frozen_sha256": "0da70f45d6a7bce46f08bb79b6348bd65cf4dd5e0fd44de08e899a7ff1195149",
+          "executed_git_sha256": "0da70f45d6a7bce46f08bb79b6348bd65cf4dd5e0fd44de08e899a7ff1195149",
+          "matches_executed_git": true,
+          "current_sha256": "0da70f45d6a7bce46f08bb79b6348bd65cf4dd5e0fd44de08e899a7ff1195149",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "matches_executed_git": true,
+          "current_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king_art.gd",
+          "frozen_sha256": "04885651a06e678d4ba427043ed17295fe4898b57bf10e77b0d8683e1bee9105",
+          "executed_git_sha256": "04885651a06e678d4ba427043ed17295fe4898b57bf10e77b0d8683e1bee9105",
+          "matches_executed_git": true,
+          "current_sha256": "04885651a06e678d4ba427043ed17295fe4898b57bf10e77b0d8683e1bee9105",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "matches_executed_git": true,
+          "current_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/registry.gd",
+          "frozen_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+          "executed_git_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+          "matches_executed_git": true,
+          "current_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "matches_executed_git": true,
+          "current_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/snapshot_codec.gd",
+          "frozen_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+          "executed_git_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+          "matches_executed_git": true,
+          "current_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "executed_git_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "matches_executed_git": true,
+          "current_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/dev/dev.py",
+          "frozen_sha256": "18d78062d4ec437c61475f9a44ab8f02e7c007b2982b72b4afbc754b07ef6f7d",
+          "executed_git_sha256": "18d78062d4ec437c61475f9a44ab8f02e7c007b2982b72b4afbc754b07ef6f7d",
+          "matches_executed_git": true,
+          "current_sha256": "18d78062d4ec437c61475f9a44ab8f02e7c007b2982b72b4afbc754b07ef6f7d",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+          "executed_git_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+          "matches_executed_git": true,
+          "current_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_king_greybox.gd",
+          "frozen_sha256": "f7018c9c8c741bac21d1d47c364656a708ad9be5e35abce292d064441cd956c5",
+          "executed_git_sha256": "f7018c9c8c741bac21d1d47c364656a708ad9be5e35abce292d064441cd956c5",
+          "matches_executed_git": true,
+          "current_sha256": "f7018c9c8c741bac21d1d47c364656a708ad9be5e35abce292d064441cd956c5",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "ea279514030731592a429a6eeba8adc08a8bf2df8174cd5305d85f8a79d4fc9b",
+          "executed_git_sha256": "ea279514030731592a429a6eeba8adc08a8bf2df8174cd5305d85f8a79d4fc9b",
+          "matches_executed_git": true,
+          "current_sha256": "ea279514030731592a429a6eeba8adc08a8bf2df8174cd5305d85f8a79d4fc9b",
+          "current_matches_frozen": true
+        }
+      ],
+      "joins": {
+        "result_revision": true,
+        "result_shared": true,
+        "manifest_revision": true,
+        "manifest_shared": true,
+        "manifest_sha256": true,
+        "source_count": true,
+        "raw_sha256": true,
+        "explicit_footer": true,
+        "clean_raw": true,
+        "clean_report": true,
+        "process_closed": true,
+        "frozen_inputs_unchanged": true,
+        "no_changed_prior_uids": true,
+        "no_new_uids": true,
+        "report_sha256": true,
+        "report_counters": true,
+        "critical_git_sources_exact": true
+      },
+      "native_intro_observations": [
+        {
+          "stage": "actual unfinished King intro Save",
+          "level_envelope_metadata": {
+            "api_revision": "campaign-level-1",
+            "level_id": "A1-L4",
+            "local_snapshot_version": 2,
+            "scene_path": "res://scenes/acts/act1/a1_l4.tscn",
+            "schema_version": 1
+          },
+          "local_api": "act1-court-aggregate-2",
+          "local_keys": 16,
+          "clock_s": 0.13333333333333333,
+          "intro": {
+            "outcome": {},
+            "record": {
+              "active": true,
+              "end_s": 0.5333333333333333,
+              "from": [
+                -1.25,
+                -0.004921875894069672,
+                -29.0
+              ],
+              "speed": 1.4,
+              "start_s": 0.03333333333333333,
+              "to": [
+                -1.25,
+                -0.004921875894069672,
+                -28.299999237060547
+              ]
+            },
+            "stage": "entering"
+          },
+          "king_motion": {
+            "facing": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "grounded": true,
+            "position": [
+              -1.25,
+              -0.004921875894069672,
+              -28.860000610351562
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              1.3999557495117188
+            ]
+          },
+          "king_hp": 80.0,
+          "helpers_once": false,
+          "player_resources": {
+            "dead": false,
+            "hp": 23.0,
+            "max_hp": 100.0,
+            "max_shells": 2,
+            "shells": 2
+          },
+          "action_history": []
+        },
+        {
+          "stage": "fresh unfinished King intro Resume completed",
+          "level_envelope_metadata": {
+            "api_revision": "campaign-level-1",
+            "level_id": "A1-L4",
+            "local_snapshot_version": 2,
+            "scene_path": "res://scenes/acts/act1/a1_l4.tscn",
+            "schema_version": 1
+          },
+          "local_api": "act1-court-aggregate-2",
+          "local_keys": 16,
+          "clock_s": 0.6166666666666669,
+          "intro": {
+            "outcome": {
+              "endpoint": [
+                -1.25,
+                -0.004921875894069672,
+                -28.299999237060547
+              ],
+              "outcome": "complete"
+            },
+            "record": {
+              "active": true,
+              "end_s": 0.5333333333333333,
+              "from": [
+                -1.25,
+                -0.004921875894069672,
+                -29.0
+              ],
+              "speed": 1.4,
+              "start_s": 0.03333333333333333,
+              "to": [
+                -1.25,
+                -0.004921875894069672,
+                -28.299999237060547
+              ]
+            },
+            "stage": "done"
+          },
+          "king_motion": {
+            "facing": [
+              0.47751346230506897,
+              0.0,
+              0.878624439239502
+            ],
+            "grounded": true,
+            "position": [
+              -1.25,
+              -0.004921875894069672,
+              -28.299999237060547
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "king_hp": 80.0,
+          "helpers_once": false,
+          "player_resources": {
+            "dead": false,
+            "hp": 23.0,
+            "max_hp": 100.0,
+            "max_shells": 2,
+            "shells": 2
+          },
+          "action_history": []
+        },
+        {
+          "stage": "actual earlier boss-entry Retry after moving intro",
+          "level_envelope_metadata": {
+            "api_revision": "campaign-level-1",
+            "level_id": "A1-L4",
+            "local_snapshot_version": 2,
+            "scene_path": "res://scenes/acts/act1/a1_l4.tscn",
+            "schema_version": 1
+          },
+          "local_api": "act1-court-aggregate-2",
+          "local_keys": 16,
+          "clock_s": 0.0,
+          "intro": {
+            "outcome": {},
+            "record": {},
+            "stage": "settling"
+          },
+          "king_motion": {
+            "facing": [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "grounded": false,
+            "position": [
+              -1.25,
+              0.004999999888241291,
+              -29.0
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "king_hp": 80.0,
+          "helpers_once": false,
+          "player_resources": {
+            "dead": false,
+            "hp": 23.0,
+            "max_hp": 100.0,
+            "max_shells": 2,
+            "shells": 2
+          },
+          "action_history": null
+        }
+      ],
+      "approach_cases": [],
+      "actual_swipes": null,
+      "actual_primaries": null,
+      "captures": 0,
+      "scope": "TEST metadata/generic predecessors/injured carryover; default is actual entrance Warning Save/format2/pristine constructors/fresh Continue/earlier Retry/quiet cleanup only. Opt-in King intro/helper transport reuses labelled public injuries/placement; the intro selector leaves the King uninjured and observes actual finite movement/fresh Resume/earlier boss-entry Retry. No earned route, production registration, art/kit/balance/performance/mobile acceptance"
+    },
+    {
+      "label": "a1-l4-king-fallback-01",
+      "result_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l4-king-fallback-01-result.json",
+      "result_sha256": "0cea41b2f9d60f9b80b0108097be42c15800b3fe9dc1d1d2f365705ee58bdbe5",
+      "native_report_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/l4-king-greybox-705921.json",
+      "native_report_sha256": "fc572403d56896ad72d2385e127c6d5faa5a1b1318d7dd5458c42cd64c24c72d",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l4_king_greybox.gd"
+      ],
+      "revision": "ffdb2860b02e0401ef1a4110fc618180b2c0041b",
+      "shared_runtime_publication": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+      "closed_at": "2026-10-12T06:19:06.901819+00:00",
+      "exit_code": 0,
+      "checks": 227,
+      "failures": 0,
+      "original_result_counters": [
+        227,
+        0
+      ],
+      "fixture_mode": null,
+      "source_count": 690,
+      "input_mismatches": [],
+      "raw_diagnostics": [],
+      "prior_uid_count": 427,
+      "current_prior_uid_changes": [],
+      "critical_source_joins": [
+        {
+          "path": "scenes/acts/act1/a1_l4.tscn",
+          "frozen_sha256": "cb72883eb3f85f1e52c218888878c908f37012cac5282a6549e327c95f8709bf",
+          "executed_git_sha256": "cb72883eb3f85f1e52c218888878c908f37012cac5282a6549e327c95f8709bf",
+          "matches_executed_git": true,
+          "current_sha256": "cb72883eb3f85f1e52c218888878c908f37012cac5282a6549e327c95f8709bf",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "matches_executed_git": true,
+          "current_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "fffa022cdf8c6fb23e0b3a3d773476f6a8e2be6adcc23d068e48aecaf4c054b2",
+          "executed_git_sha256": "fffa022cdf8c6fb23e0b3a3d773476f6a8e2be6adcc23d068e48aecaf4c054b2",
+          "matches_executed_git": true,
+          "current_sha256": "fffa022cdf8c6fb23e0b3a3d773476f6a8e2be6adcc23d068e48aecaf4c054b2",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "matches_executed_git": true,
+          "current_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "matches_executed_git": true,
+          "current_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_whole_art.gd",
+          "frozen_sha256": "0da70f45d6a7bce46f08bb79b6348bd65cf4dd5e0fd44de08e899a7ff1195149",
+          "executed_git_sha256": "0da70f45d6a7bce46f08bb79b6348bd65cf4dd5e0fd44de08e899a7ff1195149",
+          "matches_executed_git": true,
+          "current_sha256": "0da70f45d6a7bce46f08bb79b6348bd65cf4dd5e0fd44de08e899a7ff1195149",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "matches_executed_git": true,
+          "current_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king_art.gd",
+          "frozen_sha256": "04885651a06e678d4ba427043ed17295fe4898b57bf10e77b0d8683e1bee9105",
+          "executed_git_sha256": "04885651a06e678d4ba427043ed17295fe4898b57bf10e77b0d8683e1bee9105",
+          "matches_executed_git": true,
+          "current_sha256": "04885651a06e678d4ba427043ed17295fe4898b57bf10e77b0d8683e1bee9105",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "matches_executed_git": true,
+          "current_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/registry.gd",
+          "frozen_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+          "executed_git_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+          "matches_executed_git": true,
+          "current_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "matches_executed_git": true,
+          "current_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/snapshot_codec.gd",
+          "frozen_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+          "executed_git_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+          "matches_executed_git": true,
+          "current_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "executed_git_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "matches_executed_git": true,
+          "current_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/dev/dev.py",
+          "frozen_sha256": "18d78062d4ec437c61475f9a44ab8f02e7c007b2982b72b4afbc754b07ef6f7d",
+          "executed_git_sha256": "18d78062d4ec437c61475f9a44ab8f02e7c007b2982b72b4afbc754b07ef6f7d",
+          "matches_executed_git": true,
+          "current_sha256": "18d78062d4ec437c61475f9a44ab8f02e7c007b2982b72b4afbc754b07ef6f7d",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+          "executed_git_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+          "matches_executed_git": true,
+          "current_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_king_greybox.gd",
+          "frozen_sha256": "f7018c9c8c741bac21d1d47c364656a708ad9be5e35abce292d064441cd956c5",
+          "executed_git_sha256": "f7018c9c8c741bac21d1d47c364656a708ad9be5e35abce292d064441cd956c5",
+          "matches_executed_git": true,
+          "current_sha256": "f7018c9c8c741bac21d1d47c364656a708ad9be5e35abce292d064441cd956c5",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "ea279514030731592a429a6eeba8adc08a8bf2df8174cd5305d85f8a79d4fc9b",
+          "executed_git_sha256": "ea279514030731592a429a6eeba8adc08a8bf2df8174cd5305d85f8a79d4fc9b",
+          "matches_executed_git": true,
+          "current_sha256": "ea279514030731592a429a6eeba8adc08a8bf2df8174cd5305d85f8a79d4fc9b",
+          "current_matches_frozen": true
+        }
+      ],
+      "joins": {
+        "result_revision": true,
+        "result_shared": true,
+        "manifest_revision": true,
+        "manifest_shared": true,
+        "manifest_sha256": true,
+        "source_count": true,
+        "raw_sha256": true,
+        "explicit_footer": true,
+        "clean_raw": true,
+        "clean_report": true,
+        "process_closed": true,
+        "frozen_inputs_unchanged": true,
+        "no_changed_prior_uids": true,
+        "no_new_uids": true,
+        "report_sha256": true,
+        "report_counters": true,
+        "critical_git_sources_exact": true
+      },
+      "native_intro_observations": [],
+      "approach_cases": [],
+      "actual_swipes": 2,
+      "actual_primaries": 1,
+      "captures": 0,
+      "scope": "one actual B01/Standard neutral King component; genuine input/paired native transport/retained capsule; no phases/helpers/natural boss defeat/fullL4/campaignSave/art fidelity/human/balance/performance/mobile claim"
+    },
+    {
+      "label": "a1-c31-approach-01",
+      "result_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-c31-approach-01-result.json",
+      "result_sha256": "30a34dca8add385ef29eb4464d9838ed2b3683a459abb41d525ff24e3db6f914",
+      "native_report_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/l3-spore-state-13064856.json",
+      "native_report_sha256": "9fd2296e99fe15d6b442a093de9d64bc78b86252df3dc28fa4c8e632d7f0a5bb",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l3_spore_component.gd",
+        "--",
+        "--approach-proof-boundaries"
+      ],
+      "revision": "ffdb2860b02e0401ef1a4110fc618180b2c0041b",
+      "shared_runtime_publication": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+      "closed_at": "2026-10-12T06:13:57.063146+00:00",
+      "exit_code": 0,
+      "checks": 135,
+      "failures": 0,
+      "original_result_counters": [
+        null,
+        null
+      ],
+      "fixture_mode": "approach-proof-boundaries",
+      "source_count": 698,
+      "input_mismatches": [],
+      "raw_diagnostics": [],
+      "prior_uid_count": 427,
+      "current_prior_uid_changes": [],
+      "critical_source_joins": [
+        {
+          "path": "scenes/acts/act1/a1_l4.tscn",
+          "frozen_sha256": "cb72883eb3f85f1e52c218888878c908f37012cac5282a6549e327c95f8709bf",
+          "executed_git_sha256": "cb72883eb3f85f1e52c218888878c908f37012cac5282a6549e327c95f8709bf",
+          "matches_executed_git": true,
+          "current_sha256": "cb72883eb3f85f1e52c218888878c908f37012cac5282a6549e327c95f8709bf",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "matches_executed_git": true,
+          "current_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "fffa022cdf8c6fb23e0b3a3d773476f6a8e2be6adcc23d068e48aecaf4c054b2",
+          "executed_git_sha256": "fffa022cdf8c6fb23e0b3a3d773476f6a8e2be6adcc23d068e48aecaf4c054b2",
+          "matches_executed_git": true,
+          "current_sha256": "fffa022cdf8c6fb23e0b3a3d773476f6a8e2be6adcc23d068e48aecaf4c054b2",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "matches_executed_git": true,
+          "current_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "matches_executed_git": true,
+          "current_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_whole_art.gd",
+          "frozen_sha256": "0da70f45d6a7bce46f08bb79b6348bd65cf4dd5e0fd44de08e899a7ff1195149",
+          "executed_git_sha256": "0da70f45d6a7bce46f08bb79b6348bd65cf4dd5e0fd44de08e899a7ff1195149",
+          "matches_executed_git": true,
+          "current_sha256": "0da70f45d6a7bce46f08bb79b6348bd65cf4dd5e0fd44de08e899a7ff1195149",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "matches_executed_git": true,
+          "current_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king_art.gd",
+          "frozen_sha256": "04885651a06e678d4ba427043ed17295fe4898b57bf10e77b0d8683e1bee9105",
+          "executed_git_sha256": "04885651a06e678d4ba427043ed17295fe4898b57bf10e77b0d8683e1bee9105",
+          "matches_executed_git": true,
+          "current_sha256": "04885651a06e678d4ba427043ed17295fe4898b57bf10e77b0d8683e1bee9105",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "matches_executed_git": true,
+          "current_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/registry.gd",
+          "frozen_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+          "executed_git_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+          "matches_executed_git": true,
+          "current_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "matches_executed_git": true,
+          "current_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/snapshot_codec.gd",
+          "frozen_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+          "executed_git_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+          "matches_executed_git": true,
+          "current_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "executed_git_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "matches_executed_git": true,
+          "current_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/dev/dev.py",
+          "frozen_sha256": "18d78062d4ec437c61475f9a44ab8f02e7c007b2982b72b4afbc754b07ef6f7d",
+          "executed_git_sha256": "18d78062d4ec437c61475f9a44ab8f02e7c007b2982b72b4afbc754b07ef6f7d",
+          "matches_executed_git": true,
+          "current_sha256": "18d78062d4ec437c61475f9a44ab8f02e7c007b2982b72b4afbc754b07ef6f7d",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+          "executed_git_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+          "matches_executed_git": true,
+          "current_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l3_spore_component.gd",
+          "frozen_sha256": "3dd281b5180184329b81850d86a0472ee9e712342238409c795de879255dd737",
+          "executed_git_sha256": "3dd281b5180184329b81850d86a0472ee9e712342238409c795de879255dd737",
+          "matches_executed_git": true,
+          "current_sha256": "3dd281b5180184329b81850d86a0472ee9e712342238409c795de879255dd737",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_king_greybox.gd",
+          "frozen_sha256": "f7018c9c8c741bac21d1d47c364656a708ad9be5e35abce292d064441cd956c5",
+          "executed_git_sha256": "f7018c9c8c741bac21d1d47c364656a708ad9be5e35abce292d064441cd956c5",
+          "matches_executed_git": true,
+          "current_sha256": "f7018c9c8c741bac21d1d47c364656a708ad9be5e35abce292d064441cd956c5",
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "ea279514030731592a429a6eeba8adc08a8bf2df8174cd5305d85f8a79d4fc9b",
+          "executed_git_sha256": "ea279514030731592a429a6eeba8adc08a8bf2df8174cd5305d85f8a79d4fc9b",
+          "matches_executed_git": true,
+          "current_sha256": "ea279514030731592a429a6eeba8adc08a8bf2df8174cd5305d85f8a79d4fc9b",
+          "current_matches_frozen": true
+        }
+      ],
+      "joins": {
+        "result_revision": true,
+        "result_shared": true,
+        "manifest_revision": true,
+        "manifest_shared": true,
+        "manifest_sha256": true,
+        "source_count": true,
+        "raw_sha256": true,
+        "explicit_footer": true,
+        "clean_raw": true,
+        "clean_report": true,
+        "process_closed": true,
+        "frozen_inputs_unchanged": true,
+        "no_changed_prior_uids": true,
+        "no_new_uids": true,
+        "original_null_counters_retained": true,
+        "join_result_sha256": true,
+        "join_raw_sha256": true,
+        "join_report_sha256": true,
+        "join_revision": true,
+        "join_shared": true,
+        "join_counters": true,
+        "report_path_in_raw": true,
+        "critical_git_sources_exact": true
+      },
+      "native_intro_observations": [],
+      "approach_cases": [
+        {
+          "case": "success-damage-refused",
+          "parent_attempts": 1,
+          "calls": 1,
+          "paused_after": false,
+          "ordinary_damage_attempt": {
+            "accepted": false,
+            "hp_damage": 0.0,
+            "target_alive_before_hit": true,
+            "target_id": 96351554520
+          },
+          "scope": "One genuine native source physics transaction after one full recognizer swipe; no manually invoked step, spore release, injury, lease or clock setup"
+        },
+        {
+          "case": "first-denied-braking",
+          "parent_attempts": 2,
+          "calls": 2,
+          "paused_after": false,
+          "ordinary_damage_attempt": {},
+          "scope": "One genuine native source physics transaction after one full recognizer swipe; no manually invoked step, spore release, injury, lease or clock setup"
+        },
+        {
+          "case": "braking-denied",
+          "parent_attempts": 2,
+          "calls": 2,
+          "paused_after": false,
+          "ordinary_damage_attempt": {},
+          "scope": "One genuine native source physics transaction after one full recognizer swipe; no manually invoked step, spore release, injury, lease or clock setup"
+        },
+        {
+          "case": "empty-pause",
+          "parent_attempts": 1,
+          "calls": 1,
+          "paused_after": true,
+          "ordinary_damage_attempt": {},
+          "scope": "One genuine native source physics transaction after one full recognizer swipe; no manually invoked step, spore release, injury, lease or clock setup"
+        },
+        {
+          "case": "empty-body-mutation",
+          "parent_attempts": 1,
+          "calls": 1,
+          "paused_after": false,
+          "ordinary_damage_attempt": {},
+          "scope": "One genuine native source physics transaction after one full recognizer swipe; no manually invoked step, spore release, injury, lease or clock setup"
+        },
+        {
+          "case": "empty-field-mutation",
+          "parent_attempts": 1,
+          "calls": 1,
+          "paused_after": false,
+          "ordinary_damage_attempt": {},
+          "scope": "One genuine native source physics transaction after one full recognizer swipe; no manually invoked step, spore release, injury, lease or clock setup"
+        }
+      ],
+      "actual_swipes": 6,
+      "actual_primaries": 0,
+      "captures": 0,
+      "scope": "Original bounded source selection and actual process closure, not a complete dependency graph. Import metadata changes separately disclosed. Native assertions only prove executed cases; no route, fidelity, balance, performance or acceptance claim."
+    }
+  ],
+  "errors": []
+}

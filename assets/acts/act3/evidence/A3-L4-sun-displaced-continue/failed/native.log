@@ -1,0 +1,25 @@
+Waiting for the shared Godot session to close…
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Lambda capture at index 0 was freed. Passed "null" instead.
+   at: call (modules/gdscript/gdscript_lambda_callable.cpp:110)
+ERROR: Lambda capture at index 1 was freed. Passed "null" instead.
+   at: call (modules/gdscript/gdscript_lambda_callable.cpp:110)
+SCRIPT ERROR: Invalid access to property or key 'world_actions' on a base object of type 'Dictionary'.
+          at: _save_pending_dash (res://tests/acts/act3/false_paradise_displaced_continue_smoke.gd:31)
+          GDScript backtrace (most recent call first):
+              [0] _save_pending_dash (res://tests/acts/act3/false_paradise_displaced_continue_smoke.gd:31)
+              [1] _tick (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:258)
+              [2] _settled (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:43)
+              [3] _physics_process (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:30)
+ERROR: copy-only malformed route/clock/death/source/context reject atomically: malformed route_clock or positive pure validation mutated live state/input/disk/supplied data: Aggregate validation requires a paused candidate boundary
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:550)
+       [1] _run (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:86)
+       [2] _save_pending_dash (res://tests/acts/act3/false_paradise_displaced_continue_smoke.gd:31)
+       [3] _tick (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:258)
+       [4] _settled (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:43)
+       [5] _physics_process (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:30)
+FIRST MEANINGFUL L4 ENTRY PRODUCTION FAILURE; later actions unattempted: malformed route_clock or positive pure validation mutated live state/input/disk/supplied data: Aggregate validation requires a paused candidate boundary; { "paused": false, "clock_s": 0.15, "hero": (-0.25, -0.004844, 58.0), "parent": { "api_revision": "act3-false-paradise-parent-1", "clock_s": 0.15, "configuration_error": "", "admission_reason": "", "camera_error": "", "profile": "standard", "route": { "entries": [{ "id": "offered-rest", "beat": 1, "clock_s": 0.1, "hero_position": [0.0, -0.00484376167879, 58.0], "capsule_radius": 0.31999999284744 }], "deaths": {  }, "pending_checkpoint_boundaries": [], "retired_sources": {  } }, "sources": { "l4-rest-stalker": { "installed": true, "kind": "stalker", "source": { "stable_id": "l4-rest-stalker", "hp": 36.0, "max_hp": 36.0, "dead": false, "phase": "approach", "reservation_id": "", "cycle": 0, "position": (1.196037, 0.06, 54.01273), "velocity": (-0.12282, -1.2, 0.380496), "facing": (-0.059964, 0.0, 0.998201), "clock_s": 0.15, "cooldown_until_s": 0.0, "retry_at_s": 0.0, "hit_consumed": false, "raw_role": { "id": "A3-E1", "raw_damage": 12.0, "max_hp": 36.0, "windup_s": 1.35, "lock_s": 0.45, "active_s": 0.3, "recovery_s": 2.0, "attack_interval_s": 3.7, "move_speed": 2.8, "provisional_unplaytested": true }, "resolved_role": { "id": "A3-E1", "raw_damage": 12.0, "max_hp": 36.0, "windup_s": 1.35, "lock_s": 0.45, "active_s": 0.3, "recovery_s": 2.0, "attack_interval_s": 3.7, "move_speed": 2.8, "provisional_unplaytested": true, "damage": 12.0, "difficulty_schema": 1, "difficulty_profile": "standard", "tuning_status": "provisional_unplaytested", "raw_role": { "id": "A3-E1", "raw_damage": 12.0, "max_hp": 36.0, "windup_s": 1.35, "lock_s": 0.45, "active_s": 0.3, "recovery_s": 2.0, "attack_interval_s": 3.7, "move_speed": 2.8, "provisional_unplaytested": true } }, "proof": {  }, "sun_visual": 0, "effective_sun": 0, "commit": {  }, "framing": {  }, "framing_error": "", "last_rejection": "", "last_cancel_reason": "" }, "retired": false }, "l4-beauty-root": { "installed": false, "kind": "root", "source": {  }, "retired": false }, "l4-plain-echo": { "installed": false, "kind": "echo", "source": {  }, "retired": false }, "l4-plain-root": { "installed": false, "kind": "root", "source": {  }, "retired": false }, "l4-garden-helper": { "installed": false, "kind": "root", "source": {  }, "retired": false } }, "echo_records": {  }, "root_network": {  }, "sun": { "started": false, "anchor_s": <null>, "cycle": 0, "elapsed_s": 0.0, "stage": "stable", "effective_index": 0, "incoming_index": 1 }, "disengaged": false, "completed": false, "exit_state": "clear", "contact": {  }, "persistence_supported": true, "checkpoint_dispatch_supported": true }, "campaign_error": "", "events": ["checkpoint", "fired_dash"], "quiet_events": [] }
+TEST ONLY False Paradise first-entry production: 8 checks; failures: 1. Actual first-entry Scheduler1/whole local1 Save, disk Continue, protected Retry/consumed GUI Resume only; seeded accepted metadata/prefix13 are not earned campaign clears. No combat/full-route/core/Echo/sun/transition/art/native-OS claim.

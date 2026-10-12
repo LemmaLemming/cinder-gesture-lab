@@ -1,5 +1,17 @@
 # A3-L3 focused acceptance record
 
+## Accepted status and later Shared41 owner check
+
+Canonical response `aa5d2447-49c9-401b-ab7e-030bace1beb0` independently accepts exact55256309 at publicationafa6fbfd/integration13ebcb50. Act3 advances to3/8 and L4; [the original response](../../../assets/acts/act3/evidence/A3-L3-acceptance/aa5d2447-49c9-401b-ab7e-030bace1beb0-ACCEPTED.json) retains Root20/0 canonical registration and brief7/0. Original owner39 14/0 and portraits retain their separate scopes.
+
+The sole changed owner production fixture now passes **15/0**, exit0 on actual Shared41bd3c4458, no diagnostics,341 frozen/current inputs exact, independently reviewed. New default Leave Side opens Journey; real public Back/Continue reconstructs a fresh quiet story recipient before the unchanged consumed viewport GUI Resume/public pause. Complete protected story/core/disk and recursive donor/final cleanup remain exact. [All originals](../../../assets/acts/act3/evidence/A3-L3-shared41-production-replay/index.json) preserve fixturea77784ca, raw2156-byte native log01e10406 and closure/source freeze. Actual41 adoption02e4cc32/custody is separate;42 preservation follows this closed job. This is a navigation-fixture adjustment for the published shared behavior, with no gameplay/packet guard weakened.
+
+Fullplaythrough/defeat-all/earned exit/whole-kit/campaign/terminal-contact/two-pulse-terminal/every-court art remain untested limits; scenic crop/weak lake identity remain art limits. These do not gate L4. No new equipment/ability allocation or mobile credit.
+
+## Original submitted evidence/handoff — historical
+
+Statuses below saying2/8, pending review or current14/0 describe their original handoff time. Assertions of then-current byte equality are as-of that original baseline, not a claim that later Shared41 Shell/Lane bytes are unchanged. Their historical commands/results/source attribution remain intact.
+
 Current policy is [focused-desktop-level-1](../../development/LEVEL_ACCEPTANCE.md), effective 9 October 2026 by direct human instruction and canonical Act3 UPDATE8cb5d40f. Policy publication `027dfa16e4c215ab1cc9f86bd0e4792088d16446` is preserve-adopted at `32f7e993f67ef708866316aef0be3f1543d7fdf6`. This is an evidence map, not a handoff or acceptance result. Act3 remains **2/8 accepted**, with A3-L3 the sole frontier.
 
 Focused mechanics, loading, transitions, saves, Retry, cleanup and brief actual portrait inspection govern review. A completed route, defeating every enemy, an exit earned through ordinary play and whole-kit playthroughs are not acceptance or next-level gates. Authored content, ordinary controls, coherent persistence, sequential ownership and canonical equipment/ability rules remain required.
@@ -33,3 +45,5 @@ Record **untested full-playthrough behavior**: no completed L3 route, defeat-all
 Historical milestone status and test plans in [ACT_MEMORY](../../../data/campaign/act3/ACT_MEMORY.md), [PROGRESS](../../../data/campaign/act3/PROGRESS.md) and [the level record](../../../data/campaign/act3/levels/A3-L3.md) are superseded for acceptance by this policy. Their authored content and shared control/design requirements remain. Independent integration acceptance precedes the next sequential level; no human balancing, mobile or measured-performance gate is added.
 
 Actual brief images: [centre arrival](../../../assets/acts/act3/evidence/A3-L3-focused-desktop/arrival/03-native-quiet-cue/arrival.png), [west shore](../../../assets/acts/act3/evidence/A3-L3-focused-desktop/arrival/05-native-shore-dash-events/arrival.png). [Preserved packet scope](../../../assets/acts/act3/evidence/A3-L3-focused-desktop/README.md) and [brief peer review](../../../assets/acts/act3/evidence/A3-L3-focused-desktop/metadata/mirror-sea-arrival-shore-review-v2-20261009.md) retain measured results and visual limitations. Current completion validators pass: ability/equipment revision0, no uses/claims; numerical design10fixtures. These are structural/numeric checks, not balance approval.
+
+Submitted HANDOFF f06c96af at exact owned55256309 remains unchanged after compatible Shared40 preserve-adoptionc6d37474. [Actual40 custody](../../../assets/acts/act3/evidence/A3-L3-shared40-adoption/mirror-sea-shared40-adoption.json) verifies all14350priorowned Gitrows/14355physical files/configs/ledgers/544incoming/347UID identities; public contracts unchanged. Original native39 results keep original attribution. Integration reviews/registers independently; L4 waits that internal acceptance, with no human decision.

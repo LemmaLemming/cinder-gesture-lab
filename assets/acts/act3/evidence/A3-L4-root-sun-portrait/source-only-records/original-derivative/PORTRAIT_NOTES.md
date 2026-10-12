@@ -1,0 +1,18 @@
+# Mixed root/Sun portraits — ignored graphical derivative
+
+[Source](garden_mixed_root_portrait.gd), SHA256 `797c0316e351a43da0674a734df323ef5547f1aeb649b16913e10a536e52021a`. Concrete source-only TEST derivative; no Godot parser/import/graphical result. Intended owned publication: `tests/acts/act3/garden_mixed_root_portrait.gd`. [Custody](portrait-custody.json) records the exact as-read parent/helper/kernel inputs. Root owns publication and the one graphical run. No active/shared source or resource changed.
+
+Root reports actual declared root-only41259 closed120/0/exit0clean with447 native ticks on Shared49: real target60→30→0, real first-boundary helper/Sun, immutable held Enclose geometry through sun flip, pending and settled living-helper release, public Save/fresh Continue/staged abort/donor cleanup. That mechanical result is separate; it does not render the new images. The existing root-only driver and its real admissions, gestures, proof, damage, deadlines, roundtrips and cleanup are inherited unchanged.
+
+Default or `--root-only` runs just that living-helper root branch once. An override calls the actual parent `_roundtrip_and_abort` first, then captures only these already-earned labels:
+
+- `held-phase2-Enclose` → `01-held-phase2-enclose.png`: actual target30/phase2, running real Enclose and started derived Sun.
+- `settled-native-release` → `02-settled-native-release.png`: actual target0/phase3, settled release and preserved living helper retirement, with no invented helper death.
+
+Each capture uses the installed fresh paused receiver after the real successful public roundtrip. It requires actual current same-world Camera and native Sun runtime validity. The public native Sun bounds must expose16 corners; the complete Core/Echo/helper/Hero union and Sun16 each pass current `camera_framing_error` against the same fixed Camera/HUD. These are current projection checks, not independently proposed fits. No camera pose, zoom, source/cue geometry or Sun placement changes to satisfy them.
+
+Public Resume clears the actual overlay; the next statement freezes the tree without any await/native physics. This is a disclosed TEST ONLY render freeze. A bounded32-process-frame draw observation captures the original root texture at339×736. Full campaign PairExact wire, recognizer input, native Camera transform/projection/settings, gameplay/quiet/negative-event arrays and exact derived Sun model remain unchanged. Native Vector2/Transform3D guard values use `var_to_bytes`; only transport-compatible campaign/model packets use PairExact. No native-value comparer is applied to unsupported transport types.
+
+Original PNGs and small per-image receipts persist under `.cinder/a3-l4-mixed-root-portrait-output/`. Receipts record hashes, native dimensions/corner counts/current-camera error and exact frozen-pair/model scope. If a Sun containment check fails, the unchanged diagnostic PNG/receipt is retained before failure, without adjusting runtime or suppressing the check. The inherited driver disposes actual recipients normally and removes only its isolated user-save folder; the native image files remain.
+
+This derivative adds no HP, pose, source, Player/Scheduler clock, earned boundary, equipment or canonical registry mutation. It does not repeat exchanges to stage pictures and does not run the Echo cell. It supplies no canonical earlier-court/full-route completion, actual OS input, human balance, mobile/performance or garden-art acceptance claim. Root may inspect the two actual scenes for Sun recognition, whole root/source/cue/Hero/landing visibility and quiet stripped beauty after execution. Current material, root and Sun resources remain unchanged before those actual pixels exist.

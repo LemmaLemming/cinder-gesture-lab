@@ -1,0 +1,7 @@
+# Actual held attack and settled root release
+
+Root inspected both original339×736 GPU PNGs after the closed138/0 run. In the held phase2 frame, both full Sun16 bounds lie below the actual HUD; the white orb has clear lateral separation from the full harmless maroon-haired likeness. Hero feet, fixed external roots, yellow crescent cue, helper and two restrained flower beds are visible together on permanent mineral floor. The Sun preview reads as two white/blue orbs; no damage, collision or input meaning is introduced.
+
+In the settled release frame, the yellow attack cue and flower beds are gone; the same permanent floor, full likeness, Hero, spent external roots, both suns and retired living helper remain visible. Both images preserve the exact real paused whole component/input/Camera/events/model. New offsets only improve the HUD margin/likeness separation. The source geometry, sphere radii/palette/depth, held attack and actual Sun choice clocks remain unchanged.
+
+This is the explicitly declared mixed component/shared ProductionShell view. The earlier actual canonical first-court portrait remains separate. Peripheral scenery is simplified and these two views do not claim full concept-board fidelity, human balance, performance, canonical late-history or full-playthrough acceptance. Native source/framing/resource assertions complement this brief visual inspection; they do not turn the TEST component into canonical earlier-court history.

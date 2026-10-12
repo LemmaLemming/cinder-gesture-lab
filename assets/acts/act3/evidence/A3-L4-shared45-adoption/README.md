@@ -1,0 +1,5 @@
+# Act 3 actual Shared45 adoption
+
+Custody only. Actual merge `0ede1f2950e23edb4fe8a1fdbcab06f413d8d8cf` retains parents `79312622c6c532bf33dfe38fc4e0d9e8d23b3d4f` and published Shared45 `ca82dffa1f0cfece41df46580b1d297de6bdf8bf`. [Exact receipt](false-paradise-shared45-adoption.json), SHA256 `a3cf11877797b06fd16cbce11992d8351f865313d2aa993c8aaf472de66bf1ac`, verifies16,054 owned Git rows/16,061 physical files, settings and both worker/canonical ledgers unchanged;1,674 incoming nonowned Git/blob/physical bytes and modes match publication. All386 prior source UIDs remain exact;389 current, three new A1-L2 test sidecars and no collisions. Two authored candidates and five old previews remain untracked and exact.
+
+No Godot/import/native execution occurs in adoption. The incoming A1-L2 receipt reader is adopted before new-receipt saves. Shared44 root233 and cosmetic31 evidence retain their original source attribution and bounded scope: no changed Act3 or shared Scheduler/Lane/Player/Shell kernel. The full authored L4 parent, coherent persistence and focused CampaignShell flows remain unfinished; no L4 acceptance or full-route claim.

@@ -1,0 +1,18 @@
+{
+  "session_id": 8079,
+  "exit_code": 0,
+  "closed_at": "2026-10-09T09:10:20.088023+00:00",
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 340x736 --script res://tests/acts/act3/garden_art_portrait.gd -- --capture",
+  "baseline": "d22cb47b2346a54e81ca6c5ed77f36efd1b4b667",
+  "owned_head": "a311d5771501ec30811779506ed7655eef5b5af8",
+  "checks": null,
+  "failures": 1,
+  "footer_present": false,
+  "source_count": 485,
+  "changed_inputs": [],
+  "log_sha256": "61fddedbd9198743a0391601417a57f132da95815e74c518dc3a995adfffcc7e",
+  "portraits": {
+    "welcoming-court.png": "9813e52b1fec29cc81de1900fedd11f6989b6bd952c1d1302f91e88a6e74563f"
+  },
+  "classification": "Fixture configuration error: Main._ready responds to --capture by launching its own _capture_preview, whose timing/pause/quit conflicts with custom fixture. Existing flag cannot be used just to suppress OS focus. Exit0 is NOT a passing/in-fixture-cleanup result; actual one assertion failed and final footer/descendant disposal assertion absent. Remove conflicting selector and handle any genuine pause through public bounded resume without disabling focus."
+}

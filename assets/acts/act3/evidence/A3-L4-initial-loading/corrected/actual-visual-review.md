@@ -1,0 +1,7 @@
+# Corrected actual first-view inspection
+
+Root opened the actual58258 PNG c98d6f224de5bc455a233f656bc13d433b7b3516479899c5116fa35636c785e1 after native31/0 clean closure. The one relaxed clothed maroon-haired likeness is fully visible below the HUD, to the left of the familiar Stalker, with no visible overlap. Selected Act3 traveller boots/shadow, Stalker/shadow, normal HUD and two low flower beds remain readable. Floor/camera/HP/source controls did not change; only the scenic anchor moved51.5→53.5.
+
+This corrects the actual original26952 likeness crop. Failed92020 ended18/1 before anyPNG, through the pause-only barrier wake path; exact operands were absent and application-focus cause remains inferred/unverified. Root temporarily viewed the stale global outputPNG during diagnosis, which was the original26952 image and earns no92020 credit. Diagnostic58258 preserves the identical assertions and only adds operand text; no assertion/tolerance or product pause/focus rule was weakened. Its new picture is copied only from the actual printed successful capture.
+
+This is first-entry readability, not an attack/active/recovery/whole-garden art/full level/whole-save/Retry/production transition/full-route/focus/balance/performance result. Violet floor remains flat greybox; peripheral spines/arches are offscreen. All original manifests/logs/images and old source attribution remain unchanged.
