@@ -1,0 +1,55 @@
+{
+  "changed_file_mode_paths": [],
+  "changed_source_paths": [],
+  "execution": {
+    "child_exited": true,
+    "engine_banner_observed": true,
+    "owned_wrapper_pid": 72552,
+    "queue_wait_has_no_timeout": true,
+    "started_job_limit_s": 900.0,
+    "termination": ""
+  },
+  "exit_code": 1,
+  "log_counts": {
+    "raw": {
+      "assertion_errors": 0,
+      "fail_markers": 0,
+      "native_errors": 3,
+      "script_errors": 0,
+      "unexplained_native_errors": 3,
+      "warnings": 0
+    },
+    "wrapper": {
+      "assertion_errors": 0,
+      "fail_markers": 0,
+      "native_errors": 3,
+      "script_errors": 0,
+      "unexplained_native_errors": 3,
+      "warnings": 0
+    }
+  },
+  "mode": "engine",
+  "portrait_receipt_sha256": "c899940c89d5dd06201a8df639203394fab549f4ee4fcc4107710373db41b922",
+  "prior_capture_move_receipt_sha256": "8f60273164ba17fc31e4f732d8255ac98463188877bb948c220cc1bafe265b53",
+  "raw_sha256": "ff39d38cfea4f15cad9ff1ea94f0f75a856c379d67ec52d18507109ad3b87101",
+  "result_lines": [
+    "ERROR: bounded actual lock publication: { \"api_revision\": \"act2-b05-ray-exchange-1\", \"source_id\": \"A2-L5:dying-sentry\", \"status\": \"cancelled\", \"phase\": \"clear\", \"phase_progress\": 0.0, \"cycle\": 4, \"direction\": (0.0, 0.0, 1.0), \"armed\": false, \"geometry\": { \"kind\": \"lane\", \"from\": (0.0, 0.0, -28.4), \"to\": (0.0, 0.0, -24.6), \"radius\": 0.31 }, \"exchange\": { \"id\": \"threat-4\", \"source_position\": (0.0, 0.0, -28.4), \"geometry\": { \"kind\": \"lane\", \"from\": (0.0, 0.0, -28.4), \"to\": (0.0, 0.0, -24.6), \"radius\": 0.31 }, \"opening_position\": (0.0, 0.0, -28.4), \"start_s\": 9.50000000000005, \"lock_from_s\": 9.95000000000005, \"active_from_s\": 11.0500000000001, \"active_until_s\": 11.2100000000001, \"recovery_until_s\": 12.8100000000001, \"cooldown_until_s\": 12.6500000000001, \"profile_id\": \"standard\", \"world_revision\": 1, \"adapter\": { \"kind\": \"tracking\", \"locked\": false, \"reach\": 3.79999923706055, \"radius\": 0.31, \"lock_s\": 1.1, \"active_s\": 0.16, \"recovery_s\": 1.6, \"attack_interval_s\": 1.6 } }, \"bait_sample\": { \"boundary\": \"sentry-entry\", \"point\": (0.0, 0.0, -27.74356), \"last_sequence\": 3, \"dash_sequence\": 3, \"initial_floor\": (0.0, 0.0, -26.1), \"initial_sequence\": 0, \"receipt\": { \"kind\": \"dash\", \"started_at_s\": 1.03333333333333, \"origin\": \"player_direct\", \"world_origin\": [0.0, -0.00415791757405, -25.6009769439697], \"direction\": [0.0, 0.0, -1.0], \"blocked\": true, \"equipment_ids\": { \"jacket\": \"CLOTH-J0\", \"pants\": \"CLOTH-P0\", \"shoes\": \"CLOTH-S0\", \"weapon\": \"WEAPON-01\" }, \"resolved_stats\": { \"primary_damage\": 20.0, \"followup_damage\": 42.0, \"primary_range\": 2.0, \"followup_range\": 3.1, \"primary_cooldown\": 0.3, \"followup_cooldown\": 0.45, \"primary_cone_min_dot\": 0.05, \"followup_cone_min_dot\": 0.5, \"primary_cadence_estimate\": 0.3, \"dash_speed\": 15.0, \"dash_distance\": 2.7, \"dash_duration\": 0.18, \"dash_cooldown\": 0.34, \"dash_invulnerability\": 0.12, \"hurt_invulnerability\": 0.8, \"max_health\": 100.0, \"armour\": 1.0, \"damage_reduction\": 0.0, \"effective_health\": 100.0, \"shell_capacity\": 2, \"shell_reload\": 1.15, \"primary_hit_reload_credit\": 0.45, \"gear_multipliers\": { \"damage\": 1.0, \"attack_speed\": 1.0, \"attack_range\": 1.0, \"dash_speed\": 1.0, \"dash_distance\": 1.0, \"max_health\": 1.0, \"armour\": 1.0 }, \"total_multipliers\": { \"damage\": 1.0, \"attack_speed\": 1.0, \"attack_range\": 1.0, \"dash_speed\": 1.0, \"dash_distance\": 1.0, \"max_health\": 1.0, \"armour\": 1.0 }, \"raw_gear_multipliers\": { \"damage\": 1.0, \"attack_speed\": 1.0, \"attack_range\": 1.0, \"dash_speed\": 1.0, \"dash_distance\": 1.0, \"max_health\": 1.0, \"armour\": 1.0 }, \"capped_stats\": [], \"weapon_id\": \"WEAPON-01\", \"weapon_name\": \"Balanced Edge\" }, \"path\": [{ \"position\": [0.0, -0.00415791757405, -25.6009769439697], \"time_s\": 1.03333333333333 }, { \"position\": [0.0, -0.00415791757405, -25.8509769439697], \"time_s\": 1.05 }, { \"position\": [0.0, -0.00415791757405, -26.1009769439697], \"time_s\": 1.06666666666667 }, { \"position\": [0.0, -0.00415791757405, -26.3509769439697], \"time_s\": 1.08333333333333 }, { \"position\": [0.0, -0.00415791757405, -26.6009769439697], \"time_s\": 1.1 }, { \"position\": [0.0, -0.00415791757405, -26.8509769439697], \"time_s\": 1.11666666666667 }, { \"position\": [0.0, -0.00415791757405, -27.1009769439697], \"time_s\": 1.13333333333333 }, { \"position\": [0.0, -0.00415791757405, -27.3509769439697], \"time_s\": 1.15 }, { \"position\": [0.0, -0.00415791757405, -27.6009769439697], \"time_s\": 1.16666666666667 }, { \"position\": [0.0, -0.00415791757405, -27.7435550689697], \"time_s\": 1.18333333333333 }, { \"position\": [0.0, -0.00415791757405, -27.7435550689697], \"time_s\": 1.2 }, { \"position\": [0.0, -0.00415791757405, -27.7435550689697], \"time_s\": 1.21666666666667 }], \"landing\": [0.0, -0.00415791757405, -27.7435550689697], \"completed_at_s\": 1.21666666666667, \"distance\": 2.142578125, \"collision_shortened\": true, \"movement_damage\": false, \"schema_version\": 1, \"sequence\": 3 }, \"player_clock_s\": 10.9000000000001 }, \"hit_consumed\": false, \"last_cancel_reason\": \"tracking_lock_unproved\", \"proof\": {  }, \"proof_available\": false, \"presentation_witness\": {  } } / []",
+    "ERROR: exact four selected brief views, no partial gallery accepted",
+    "ERROR: actual rendered labels preserve exact scoped order",
+    "L5 brief production portrait smoke: 2842 checks, 3 failures; scope_complete=false; entry + native component locks + direct inert scenery only"
+  ],
+  "scope_complete": false,
+  "source_count": 415,
+  "source_sha256": "9728a59300c49b66e35f57a28d1bf90b9986d7192b33af9b4fab0ee3d067af3e",
+  "sources_unchanged": true,
+  "summaries": [
+    {
+      "checks": 2842,
+      "failures": 3,
+      "scope": "entry + native component locks + direct inert scenery only",
+      "scope_complete": false
+    }
+  ],
+  "uid_additions_after_job": {},
+  "wrapper_sha256": "79588dcd05769558e3f330c11e05786f51cf89adcedb7d75c4b530d92ddbfef0"
+}

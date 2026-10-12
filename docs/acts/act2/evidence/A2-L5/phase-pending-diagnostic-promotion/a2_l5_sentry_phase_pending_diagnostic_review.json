@@ -1,0 +1,42 @@
+{
+  "delta": {
+    "assertions_predicates_tolerances_clocks_waits_unchanged": true,
+    "exact_reversal_reconstructs_original258": true,
+    "native_readonly_getters_and_original_packet_only": true,
+    "new_function": "_phase_diagnose_pending",
+    "no_additional_component_capture_or_validation": true,
+    "only_existing_function_changed": "_phase_transport one call immediately after original pending capture"
+  },
+  "diagnostic": {
+    "lines": 277,
+    "path": "/private/tmp/a2_l5_sentry_phase_transport_diagnostic_draft.gd",
+    "sha256": "29bbc0fc8f7839cda13dac918d5a0089b9a9ef8e7f09b12af8cb1270ba4f5cc0"
+  },
+  "failed_result": {
+    "bundle": "docs/acts/act2/evidence/A2-L5/production-sentry-phase-transport-first",
+    "checks": 18,
+    "failures": 1,
+    "first_failure": "initial strict pending15HP packet conjunction at line64",
+    "late_states_executed": false,
+    "passes": 17,
+    "script_errors": 0,
+    "wrapper_warning": "2 ObjectDB instances leaked; no cause attribution yet"
+  },
+  "native_run": false,
+  "observations": [
+    "Raw log has no individual capture conjunct/errors or saved pending packet; cannot select a cause from18/1 alone",
+    "Actual first public Heavy hit and full isolated-primary window passed before capture",
+    "Player and parent require paused/nontransactional snapshot; existing barrier already sets paused true and awaits2 process frames",
+    "Native parent requires actual Actor/Joint/Ray/Foot packet coherence; preserve each capture last_snapshot_error before pure state/get calls",
+    "Diagnostic prints original exact packet as returned; an empty refused parent stays empty, never synthesized"
+  ],
+  "preserved_original": {
+    "path": "/private/tmp/a2_l5_sentry_phase_transport_first_original.gd",
+    "sha256": "6aa89c3b316e591620bd7060519d46401936039a4ffcf3d649c2f1f83dba9f46"
+  },
+  "root_promotion_needed": true,
+  "suspects_not_claimed": [
+    "component snapshot refusal vs actual native pending scalar/cue/notification mismatch",
+    "native transaction/publication or receipt validation errors"
+  ]
+}

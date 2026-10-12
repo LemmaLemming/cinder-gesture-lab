@@ -1,0 +1,58 @@
+{
+  "actual_first_failure": {
+    "Script_errors": 0,
+    "closed_checks": 86,
+    "closed_failures": 2,
+    "first_assertion": "deferred public Pause retains the actual observed source/Hero/overlap without another native tick",
+    "original_capture_reached": false,
+    "packet": "docs/acts/act2/evidence/A2-L5/production-act3-transition-interface-first",
+    "raw_wrapper_sha256": "561687f9726bb8e770d9a996ead74d2dafad894fa61af4b54471b2bbcabdf0cf",
+    "scope_accepted": false,
+    "secondary_failure": "measured overlap reaches supported paused capture and public contact dispatch",
+    "warnings": 0
+  },
+  "byte_delta": {
+    "calls_added": [
+      "before unchanged original pre-capture guard",
+      "after existing original capture only if reached"
+    ],
+    "exact_reverse_reconstructs_original374": true,
+    "helper_added": "_flow_diagnose_contact",
+    "native_Object_serialization": false,
+    "only_existing_function_changed": "_flow_dispatch_contact",
+    "waits_assertions_controls_capture_calls_validator_calls_unchanged": true
+  },
+  "cause": "UNDETERMINED until actual diagnostic values; Player snapshot rejection is not established because original pre-capture guard failed first",
+  "diagnostic_fields": [
+    "all original pre-capture conjuncts",
+    "actual observed/current clock and position",
+    "live source/Hero/observer identity",
+    "paused/in_physics flags",
+    "shell campaign capture error",
+    "inherited Game level_load_error; Game has no standalone last_snapshot_error",
+    "actual Hero last_snapshot_error and CinderLevel last_snapshot_error",
+    "source completed flag",
+    "existing capture empty/progress predicate if reached",
+    "pure shell drain/pause flags",
+    "actual exit point/Y overlap"
+  ],
+  "diagnostic_fixture": {
+    "lines": 413,
+    "path": "/private/tmp/a2_l5_act3_transition_interface_diagnostic_draft.gd",
+    "sha256": "49bb8514d90aa175a43e0f868ac433a44a553e8b296b375bcacce26353b3d0cf"
+  },
+  "original_fixture": {
+    "lines": 374,
+    "path": "/private/tmp/a2_l5_act3_transition_interface_first_original.gd",
+    "sha256": "9f8f7ba5d348b02371e85c8e5bed0fd8636f7bf9c4437195de1991e5f9316880"
+  },
+  "recorder": {
+    "AST_parse_only": true,
+    "all_existing_functions_AST_unchanged_except_main_scope_label": true,
+    "base_sha256": "5c5ad3ef70d78c1319a17d1addeef7904f3d3978e00d9ec5be86916e05f0dce9",
+    "lines": 331,
+    "path": "/private/tmp/cinder_a2_l5_act3_transition_interface_diagnostic_record.py",
+    "sha256": "01af0f720c4ef316d0d862f516adc4fdcb42c3cababdad1f486ffb934e230d7f"
+  },
+  "scope": "TMP-only passive first pre-capture guard diagnosis; no native/helper invocation/source/Git changes"
+}

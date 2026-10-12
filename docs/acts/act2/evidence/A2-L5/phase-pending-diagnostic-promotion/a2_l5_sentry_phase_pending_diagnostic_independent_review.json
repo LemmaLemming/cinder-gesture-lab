@@ -1,0 +1,48 @@
+{
+  "checkout_or_owned_changes": false,
+  "delta": {
+    "changed_existing_functions": [
+      "_phase_transport"
+    ],
+    "diagnostic_call_location": "immediately after original _phase_capture and before unchanged first pending conjunction",
+    "exact_reversal_reconstructs_original258": true,
+    "new_functions": [
+      "_phase_diagnose_pending"
+    ]
+  },
+  "diagnostic": {
+    "lines": 277,
+    "path": "/private/tmp/a2_l5_sentry_phase_transport_diagnostic_draft.gd",
+    "sha256": "29bbc0fc8f7839cda13dac918d5a0089b9a9ef8e7f09b12af8cb1270ba4f5cc0"
+  },
+  "findings": [],
+  "limitations": [
+    "static byte/direct-API inspection only; no parser or runtime acceptance",
+    "prior18/1 result and lifetime warning are context from supplied review, not independently reaudited here",
+    "no late pending/dead/phase2/pair transport credit until actual assertions pass",
+    "no existing failure or ObjectDB warning cause attribution from static review"
+  ],
+  "native_or_engine_run": false,
+  "preserved_original": {
+    "lines": 258,
+    "path": "/private/tmp/a2_l5_sentry_phase_transport_first_original.gd",
+    "sha256": "6aa89c3b316e591620bd7060519d46401936039a4ffcf3d649c2f1f83dba9f46"
+  },
+  "result": "no-concrete-blocker-found",
+  "review": "bounded-independent-passive-first-pending-capture-diagnostic",
+  "suitability": "Separates actual capture refusal/error from individual first pending HP/phase/cue/notification mismatch while preserving the genuine failing assertion and original packet. Actual native result is needed to identify the cause.",
+  "supplied_review": {
+    "path": "/private/tmp/a2_l5_sentry_phase_pending_diagnostic_review.json",
+    "sha256": "4a072b081ce848c978b41e8bee50b6fd8b9246866b1f2d3c81e90f96bcb14a34"
+  },
+  "verified": [
+    "exact removal of the one call/new helper reconstructs original258 byte-for-byte",
+    "every original wait, control, capture, assertion predicate, tolerance, cleanup and footer remains unchanged; no assertions added or relaxed",
+    "errors are copied immediately from existing Player/Scheduler/parent/Actor/Ray/Foot capture error fields before additional state getters; owner getters merely return existing native references",
+    "helper uses only readonly native fields/pure state/getters and the already returned packet; no new component capture/preflight/restore/transaction/clock mutation",
+    "diagnostic conjuncts handle empty refused parent/Actor body via Dictionary.get without manufacturing a replacement packet",
+    "diagnostic summary contains only closed scalar/string/bool/null/dictionary values; Joint state is the actual closed interaction-cue dictionary, no native Hero/Object/proof reference included",
+    "PhaseExact prints only the already returned actual portable captured packet and retains exact types/bits; refused empty components remain empty",
+    "actual callback/publication counters are readonly diagnostic observations; no control/cancellation/resume or authority retry is introduced"
+  ]
+}

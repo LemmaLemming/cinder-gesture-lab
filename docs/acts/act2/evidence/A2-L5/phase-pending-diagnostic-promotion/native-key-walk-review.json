@@ -1,0 +1,39 @@
+{
+  "delta": {
+    "added_function": "_phase_report_non_string_keys",
+    "exact_reversal_reconstructs_original277": true,
+    "no_new_snapshot_getter_wait_clock_assertion_or_resource_mutation": true,
+    "only_existing_function_changed": "_phase_diagnose_pending three lines",
+    "recorder_code_except_fixture_pin_and_source_attribution_exact": true
+  },
+  "failed_diagnostic": {
+    "native_hp": 15.0,
+    "native_joint": "spent",
+    "native_pending": true,
+    "native_phase": 1,
+    "packet": "docs/acts/act2/evidence/A2-L5/production-sentry-phase-pending-diagnostic",
+    "parent_error": "Snapshot dictionary keys must be strings",
+    "player_and_scheduler_packets_nonempty": true
+  },
+  "fixture": {
+    "lines": 294,
+    "path": "/private/tmp/a2_l5_sentry_phase_key_diagnostic_draft.gd",
+    "sha256": "9bfcf7375d03abb1f4fbeff9734e63311babd028582eccfc12dd675b49304c20"
+  },
+  "native_job_executed_by_author": false,
+  "preserved_original": {
+    "path": "/private/tmp/a2_l5_sentry_phase_pending_diagnostic_original.gd",
+    "sha256": "29bbc0fc8f7839cda13dac918d5a0089b9a9ef8e7f09b12af8cb1270ba4f5cc0"
+  },
+  "proposed_if_confirmed": "Replace only that new-field setter with _ray_intro[\"last_cancel_reason\"] = ray_state.last_cancel_reason; do not stringify all keys or loosen Codec validation",
+  "recorder": {
+    "path": "/private/tmp/cinder_a2_l5_sentry_phase_key_diagnostic_record.py",
+    "sha256": "3000222d721af5bab2c1b952ac8140e9b80f91500f0c5cb43a52bf76efdeb7c7"
+  },
+  "source_candidate": {
+    "path": "scripts/acts/act2/dead_london_sentry_encounter.gd:510",
+    "reason": "New field missing from the original five-key receipt at507, later first-threshold cancellation introduces it through dictionary dot setter; all other new receipt insertions examined use explicit String brackets",
+    "statement": "_ray_intro.last_cancel_reason = ray_state.last_cancel_reason",
+    "status": "actual key class/path still requires native passive walk; no production fix or diagnostic speculative credit"
+  }
+}

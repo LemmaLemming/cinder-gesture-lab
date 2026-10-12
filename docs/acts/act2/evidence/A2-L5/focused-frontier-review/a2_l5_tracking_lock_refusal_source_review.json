@@ -1,0 +1,172 @@
+{
+  "api_revision": "act2-b05-tracking-lock-refusal-source-review-1",
+  "call_chain": [
+    {
+      "line": 231,
+      "operation": "Actual due unarmed reservation; immutable stored windup geometry; fresh provider/context and source/portrait guards",
+      "path": "scripts/acts/act2/dead_london_ray_exchange.gd"
+    },
+    {
+      "line": 250,
+      "operation": "One fresh actual Hero.get_threat_response_state plus authored context; pending_weapon_id must be empty",
+      "path": "scripts/acts/act2/dead_london_ray_exchange.gd"
+    },
+    {
+      "line": 256,
+      "operation": "Public Scheduler.commit_tracking(reservation_id, geometry, response)",
+      "path": "scripts/acts/act2/dead_london_ray_exchange.gd"
+    },
+    {
+      "line": 750,
+      "operation": "Native prune and live unarmed reservation/due clock/source-anchored fixed lane validation",
+      "path": "scripts/combat/threat_scheduler.gd"
+    },
+    {
+      "line": 765,
+      "operation": "Native request_error includes actual response/body/equipment/box-floor preflight",
+      "path": "scripts/combat/threat_scheduler.gd"
+    },
+    {
+      "line": 768,
+      "operation": "Candidate starts full actual lock at current Scheduler clock, retains active/recovery/cooldown durations",
+      "path": "scripts/combat/threat_scheduler.gd"
+    },
+    {
+      "line": 778,
+      "operation": "Retimed lock must retain declared visible stagger with other reservations",
+      "path": "scripts/combat/threat_scheduler.gd"
+    },
+    {
+      "line": 782,
+      "operation": "Native _prove(candidate,response,id), no immunity/blast/collision-shortened ideal path credit",
+      "path": "scripts/combat/threat_scheduler.gd"
+    },
+    {
+      "line": 436,
+      "operation": "Synchronous reservation_invalidated calls cancel(reason); returned Scheduler reason is not retained when native Ray record already becomes cancelled",
+      "path": "scripts/acts/act2/dead_london_ray_exchange.gd"
+    }
+  ],
+  "conclusion": "Source trace complete; generic cancellation is insufficient to assign actual cause. No assertion, HUD/exclusion meaning, controller/timing/camera, shared runtime or production change recommended from this source review alone.",
+  "direct_sources": {
+    "scripts/acts/act2/dead_london_ray_exchange.gd": {
+      "matches_archived_bytes": true,
+      "sha256": "d6bbcc1f35f45b4ac32226f898d924350e3b01543f28f44cf15cade7b75a3ff1"
+    },
+    "scripts/acts/act2/dead_london_sentry_encounter.gd": {
+      "matches_archived_bytes": true,
+      "sha256": "f36e42c36e32edc2e20f7fed8d2dd21b0758f356fcc7cd53332ebd93109edfc1"
+    },
+    "scripts/combat/threat_scheduler.gd": {
+      "matches_archived_bytes": true,
+      "sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+    },
+    "tests/acts/act2/a2_l5_production_portrait_smoke.gd": {
+      "matches_archived_bytes": true,
+      "sha256": "642faf7bce97ea3a7c52d584a2cedf97f89d3a43fd700ecefc04eb711c720a7a"
+    }
+  },
+  "evidence": {
+    "art_scope_complete": false,
+    "bundle": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/evidence/A2-L5/production-portrait-native-approach",
+    "exit_code": 1,
+    "native_state_observed": {
+      "armed": false,
+      "bait_collision_shortened": true,
+      "bait_dash_sequence": 3,
+      "bait_landing_z": -27.7435550689697,
+      "cancel_reason": "tracking_lock_unproved",
+      "cycle": 4,
+      "lane_to": [
+        0.0,
+        0.0,
+        -24.6
+      ],
+      "parent_errors": [],
+      "proof": {},
+      "radius": 0.31,
+      "ray_phase": "clear",
+      "ray_status": "cancelled",
+      "source_position": [
+        0.0,
+        0.0,
+        -28.4
+      ]
+    },
+    "raw_sha256": "ff39d38cfea4f15cad9ff1ea94f0f75a856c379d67ec52d18507109ad3b87101",
+    "source_sha256": "9728a59300c49b66e35f57a28d1bf90b9986d7192b33af9b4fab0ee3d067af3e",
+    "summary": [
+      {
+        "checks": 2842,
+        "failures": 3,
+        "scope": "entry + native component locks + direct inert scenery only",
+        "scope_complete": false
+      }
+    ]
+  },
+  "proof_exhaustion_categories": [
+    {
+      "category": "Finite complete ordinary-primary cadence fits actual recovery end minus .001s; recognition/current commitment/dash cooldown and full dash/return durations included",
+      "line": 1432
+    },
+    {
+      "category": "Attack point within actual primary_range-.01 and vertical delta<=1.4; native mask1 LOS ray at +.7y must be clear",
+      "line": 1436
+    },
+    {
+      "category": "Every complete path segment continuously covered by union of safe rectangles inset by .33; native start/end down-ray must resolve to a declared floor",
+      "line": 1440
+    },
+    {
+      "category": "Actual shared capsule expanded to radius .33 and height1.5; mask1 native start overlap, full cast_motion and endpoint overlap must clear, excluding only actual Hero and declared floor bodies",
+      "line": 1440
+    },
+    {
+      "category": "Public Geometry.timed_path_hits across full path and each actual candidate/retained reservation active interval at radius .33; includes circle/lane endcaps and all holds/primary",
+      "line": 1446
+    }
+  ],
+  "publication": "c6db356d2771d2b68e213a94dbcd3262e2421b3d",
+  "purely_diagnosable": [
+    "Exact native public commit return reason separates outer branch from generic _prove exhaustion; current cancelled Ray state alone cannot.",
+    "Captured immutable geometry/body transforms/canonical stats/floor rectangles/ordered deadlines and candidate directions can be checked structurally/arithmetic from an actual diagnostic packet.",
+    "Public Geometry.timed_path_hits can evaluate a genuinely captured complete path and actual immutable threat intervals; an absent failed proof cannot be replaced by fabricated accepted proof.",
+    "Native LOS/floor registration/capsule overlap-cast results require actual native observations. Current archive has no per-candidate query evidence; no exact failure category or shared fault is established."
+  ],
+  "recorded_head": "efcc6d36c475c8e105e29142d6ca5a24f87eeb12",
+  "scope": "Read-only directly consumed source trace of preserved approach440 native failure; no native call, engine, source mutation or inferred rejection branch",
+  "shared_api": "campaign-shared-43",
+  "smallest_supported_diagnostic": {
+    "custody": "Diagnostic Object/shape identity tags must remain separate from canonical proof/save data; preserve rejected native exit and original failures.",
+    "seam": "Fixture-only actual Scheduler subclass override of public commit_tracking(reservation_id:String, geometry:Dictionary, response:Dictionary)->Dictionary",
+    "sequence": [
+      "Capture one actual get_clock value, deep copied value fields and actual native identity/body/floor descriptions before super",
+      "Call super.commit_tracking exactly once with original arguments",
+      "Retain the exact returned accepted/reason/proof and the same captured clock after all ordinary callbacks",
+      "Return the answer unchanged; never issue extra request/cancel/reservation_state/reservations queries or substitute directions/proof"
+    ],
+    "shared_request": "Existing public return reason already supports outer diagnosis. Ask canonical owner for narrow native candidate diagnostics only if the actual returned generic exhaustion cannot be explained by owned input/geometry evidence; no public proof replacement or private algorithm copy."
+  },
+  "tracking_lock_unproved_cancel_branches": [
+    {
+      "line": 760,
+      "reason": "Tracking lock cannot change source, lane reach or radius"
+    },
+    {
+      "line": 766,
+      "reason": "Specific _request_error/response_error/floor_error returned reason"
+    },
+    {
+      "line": 776,
+      "reason": "Locked deadlines must remain finite"
+    },
+    {
+      "line": 780,
+      "reason": "Retimed tracking lock lost its visible stagger"
+    },
+    {
+      "line": 784,
+      "reason": "_prove result: exclusive replay guard or exhausted supported timed response candidates"
+    }
+  ]
+}

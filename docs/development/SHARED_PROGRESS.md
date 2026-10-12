@@ -1,5 +1,13 @@
 # Cinder shared progress
 
+## Act2 L5 — independent focused acceptance
+
+Exact HANDOFFe8c09941 at5703fd42, ownedsealf71c3458 and actual45merge33daba/receipt3d24 are reviewed. All14383six-prefixdelta rows/994740316bytes,3497 frozen members/62references, native scopes and four final actual portraits verify. [Acceptance, Root235/0 and limitations](ACT2_L5_ACCEPTANCE.md). Production delta19newpaths leaves accepted production unchanged. Root necessary import closesclean0 with685originals;398priorUIDbytes retained plus6newmetadata sidecars,404unique/no collision/no earlierbackfill. Its descriptive390 guess is separately qualified without rewritingoriginals.
+
+Root actual untouched Registry/GUI/prerequisite/A3recipientlock, fullPlayer/local26/Scheduler/Shell entry and consumedResume→genuinedash/exactaim→wholePauseformat2→freshGUIContinue→earlierGUIRetry→allretirement closes235/0clean with691originals. Ninepredecessor/HP37/zeroammo setup is TEST-only; no earnedroute, strictterminal or proxy source in this Rootleaf. Reuse unchanged owner182/19/99/154/89/107 andfinal4053views with original41/43sourceattribution. Fullroute/defeatall/earnedboss/coda/strictproductionexit/allkits/humanbalance/performance/mobile remain recordednongates.
+
+Campaign **11/24**, Act2 **5/8**; A2-O1 can begin, thenO2→O3. A1L4/A3L4 continue independently. Root remains first help contact; same original identities/checkouts/branches/ownedpaths. Actual compatible47publication and returned5ownedUIDmetadata follow exact scopedcommit/verification, not inferredadoption.
+
 ## Shared46 — saved menu resources and checkpoint presentation
 
 Root resumed its existing desktop goal ACTIVE after the user continuation. All three original worker resume ACKs are recorded: Act1d15ebe97, Act28d65d3da, Act335fde1f2. Actual Shared45 adoption metadata is reconciled for Act1d1d2f9b6/83b566e9/receipt456bed9d and Act3708545d7/0ede1f29/receipta3cf1187 after exact Root receipt/parents/current ancestry and independent named runtime/UID/returned-path byte checks. Broad preservation counts retain owner scope. Act2 actual45 ACK70a4023b/merge33dabae6/receipt3d24f9d5 now verifies exact receipt, publication second parent and retained current ancestry; broader packet custody is reviewed with its new handoff. All original identities/checkouts/branches/owned paths are retained; Root remains first help contact.
@@ -24,9 +32,9 @@ Direct human instruction at 2026-10-09T10:00:58.580478+00:00: save and pause eve
 
 The latest direct human instruction establishes [focused-desktop-level-1](LEVEL_ACCEPTANCE.md): focused automated mechanics/loading/transitions/saves/Retry/cleanup checks plus brief visual inspections. Agents need no full route, defeat-all, earned exit or campaign playthrough before level acceptance and next-level work. Record untested full-playthrough behavior and continue autonomously. This supersedes historical forward playthrough requirements below while preserving their original test results and source custody.
 
-The eight levels accepted when this policy was issued remain accepted without requalification; the current total is10/24. Root notified all three existing workers immediately through canonical UPDATE1518a40b (Act1),4747655d (Act2),8cb5d40f (Act3) and their actual chats. Current frontiers are accepted A1-L3 proceeding to L4, A2-L5 implementation and accepted A3-L3 proceeding to L4 under focused evidence. Workers update their owned current progress/level records; Root retains shared ownership and first-help responsibility. Changed-level/directly affected suites only; no blanket requalification or mobile gate.
+The eight levels accepted when this policy was issued remain accepted without requalification; the current total is11/24. Root notified all three existing workers immediately through canonical UPDATE1518a40b (Act1),4747655d (Act2),8cb5d40f (Act3) and their actual chats. Current frontiers are accepted A1-L3 proceeding to L4, A2-L5 implementation and accepted A3-L3 proceeding to L4 under focused evidence. Workers update their owned current progress/level records; Root retains shared ownership and first-help responsibility. Changed-level/directly affected suites only; no blanket requalification or mobile gate.
 
-Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Current publication: campaign-shared-46 [SHARED_CONTRACT](SHARED_CONTRACT.md), checked A1-L2 Challenge amendment; A1-L3 remains independently accepted. Campaign **10/24 accepted**: A1-L1/L2/L3, A2-L1/L2/L3/L4 and A3-L1/L2/L3. All original workers retain ownership and first help contact.
+Integration owner: Codex chat `01a11abb-d174-7c11-9dc7-8343269bf06e`. Current publication: campaign-shared-47 [SHARED_CONTRACT](SHARED_CONTRACT.md), checked A1-L2 Challenge amendment; A1-L3 remains independently accepted. Campaign **11/24 accepted**: A1-L1/L2/L3, A2-L1/L2/L3/L4/L5 and A3-L1/L2/L3. All original workers retain ownership and first help contact.
 
 ## Current owner coordination and focused policy supplement
 

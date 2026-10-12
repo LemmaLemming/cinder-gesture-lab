@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-09T03:26:22.112218+00:00",
+  "category": "owned fixture script/parser",
+  "command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--path",
+    ".",
+    "--log-file",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-l5-bait-nested-original.log",
+    "--headless",
+    "--quit-after",
+    "1800",
+    "--script",
+    "tests/acts/act2/a2_l5_bait_smoke.gd",
+    "--",
+    "--nested-only"
+  ],
+  "head": "1a5e9ea197233fe2f5db808dfcce2e8288f79845",
+  "shared_publication": "36090c9d83bb762b14310aa22978f1b31469551f",
+  "first_error": "Function _nested_notification_checks() not found in base self.",
+  "log": "raw.log",
+  "cause": "Root insertion called the reviewed function with a different name from the fragment definition _nested_publication_checks. No gameplay executed.",
+  "fix": "Correct the two invocation names only; original cache unchanged.",
+  "fixture_before_sha256": "592aa84513943a680d3c8e79c54bbafe9b7e7cbcb125523b7045371ec92344b0",
+  "fixture_after_sha256": "a3d124e80e4f4b4fb266d1f745ed9d4813fe73dbea826cad7d3ce0827d422f9f",
+  "next_scope": "bait-nested-before-fix; same narrow native callback reproduction."
+}

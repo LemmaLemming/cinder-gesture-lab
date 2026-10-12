@@ -1,0 +1,64 @@
+{
+  "api_revision": "act2-l5-public-commit-passive-review-1",
+  "scope": "Static TMP-only review; no engine/analyzer/import/checkout write; diagnostic not accepted art/mechanics",
+  "files": {
+    "/private/tmp/a2_l5_tracking_commit_observer.gd": {
+      "sha256": "5d2fc9238fd3ba83cf6a3ac73402f5eec9f145be292f8d5c6d6103475a0b4160",
+      "lines": 167
+    },
+    "/private/tmp/a2_l5_production_proof_diagnostic.gd": {
+      "sha256": "34a44f1923c091de8f736cd143182d0b28f516593aec79f5c5feb9a6c53680b9",
+      "lines": 467
+    },
+    "/private/tmp/cinder_a2_l5_production_proof_diagnostic_record.py": {
+      "sha256": "2cf02f5c3babae4d838bc23392961971e7534a4a6c7ea2cb238bd2a58c572454",
+      "lines": 514
+    }
+  },
+  "baseline": {
+    "path": "/private/tmp/a2_l5_production_portrait_approach_fixed.gd",
+    "sha256": "642faf7bce97ea3a7c52d584a2cedf97f89d3a43fd700ecefc04eb711c720a7a",
+    "lines": 440
+  },
+  "fixture_delta": {
+    "changed_original_functions": [
+      "_run",
+      "_art_components"
+    ],
+    "new_function": "_art_write_commit_diagnostic",
+    "restoration_checks": "Removing writer call exactly restores _run; replacing diagnostic Scheduler construction+property context with original ArtScheduler.new exactly restores _art_components; every other original function byte-identical. Two preload/output constants added only. All43 _expect sites retained.",
+    "assertions_original": 43,
+    "assertions_derivative": 43
+  },
+  "observer": "One exact super.commit_tracking call; native last_error read immediately afterward before conversions/query; exact answer returned unchanged. Before argument conversion captures native refs immediately. Max4 observations, bounded tagged native conversion/no raw native objects or oversized IDs/nonfinite authority. Only exact generic false answer invokes two zero-motion native overlap queries, same actual Hero/floor exclusions/mask1. Actual Player BodyCollision/global_transform compared with exact Scheduler expanded capsule at actual current Hero position+0.73; not historical landing Y. No cast/path/LOS/reproof/prune/validation/admission query/cue repair.",
+  "native_shape_query_public_docs": [
+    "https://docs.godotengine.org/en/stable/classes/class_physicsdirectspacestate3d.html#class-physicsdirectspacestate3d-method-intersect-shape",
+    "https://docs.godotengine.org/en/stable/classes/class_collisionobject3d.html#class-collisionobject3d-method-shape-find-owner",
+    "https://docs.godotengine.org/en/stable/classes/class_collisionobject3d.html#class-collisionobject3d-method-shape-owner-get-owner"
+  ],
+  "subclass_contract_evidence": {
+    "parent": "scripts/acts/act2/dead_london_sentry_encounter.gd:705",
+    "ray": "scripts/acts/act2/dead_london_ray_exchange.gd:455",
+    "foot": "scripts/combat/lane_mechanism.gd:478",
+    "facts": "Native live world/lifecycle/type checks accept typed CinderThreatScheduler subclass; no exact Scheduler get_script()== check altered or bypassed."
+  },
+  "recorder": "AST parsed; full current source pins read-only verified (proposed two new files checked against their exact TMP bytes). All five plain/class_index/freeze_sources/stop_owned_group/run_queued definitions AST match trusted phase312; six digest/write/scoped/Exact decoder/capture_members/preserve_prior definitions match approach395. Partial portraits archive definition matches guard453. Full EOF/read-thread, native start-only timeout, private wrapper-group stopping and dev.py queue retained. Generic node/floor/capsule diagnostic archive separately from original exit1/three inherited failed assertions; scope_complete=false/art_accepted=false.",
+  "prior_captures_exact": {
+    "captures/act2/a2-l5-production-brief": {
+      "metadata.exact.json": "9c00ba08b9b38007d18fef521a1637cc695877385bf88b2478081568aa5741d3",
+      "production-entry.png": "4bcfd7dbe122ba212602ca4285df482c0a86351b0689ad5449e691a573aff0fa"
+    },
+    "captures/act2/a2-l5-production-proof-diagnostic": {}
+  },
+  "original_failed_log_classification": {
+    "script_errors": 0,
+    "parse_or_load_errors": 0,
+    "native_errors": 3,
+    "assertion_errors": 3,
+    "unexplained_native_errors": 0,
+    "fail_markers": 0,
+    "warnings": 0
+  },
+  "findings": [],
+  "remaining": "Native parser/run/actual returned reason/current padded overlap unexecuted; no cause inferred from arithmetic. Root owns promotion and serialized dev.py execution."
+}

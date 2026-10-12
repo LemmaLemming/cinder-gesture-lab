@@ -1,0 +1,77 @@
+{
+  "review": "A2-L5 native Sentry encounter fixture static review",
+  "mode": "read-only; no Godot, import, Git or assigned-checkout mutation",
+  "fixture": {
+    "path": "/private/tmp/a2_l5_sentry_encounter_smoke_draft.gd",
+    "sha256": "36c33d7eeab5c1f04a240ec81370a13e767f073b76b8f1913d76a2f0bf2ba8cc",
+    "lines": 335,
+    "preserved_original": "/private/tmp/a2_l5_sentry_encounter_smoke_draft_v2.gd",
+    "preserved_original_sha256": "0a169e6c2fb079c8c2c36573204ba4883afb80d02dabedb283dc17a1e52bb828"
+  },
+  "parent": {
+    "path": "/private/tmp/a2_l5_sentry_encounter_draft.gd",
+    "sha256": "d89967446d5786189cae1371a06934256fa901d6c2042bbc9dff6d10195ce26d",
+    "lines": 552,
+    "codec": "explicitly rejected/TODO; no save authority"
+  },
+  "findings": [
+    {
+      "id": "foot-cooldown-null-after-native-expiry",
+      "severity": "blocking fixture expectation",
+      "fixture_lines": [
+        230,
+        232
+      ],
+      "api_path": "scripts/combat/threat_scheduler.gd",
+      "api_lines": [
+        1189,
+        1208,
+        1274,
+        1278
+      ],
+      "evidence": "source_control_state is a pure retained read and returns either null or the original ready_s. _prune erases cooldown entries at clock >= ready_s. Normal Foot cancellation preserves a still-retained cooldown, but cannot preserve an entry already expired/pruned. The fixture unconditionally dereferences foot_control.cooldown.ready_s after a paired late-recovery defeat.",
+      "smallest_correction": "Accept a retained Dictionary only when ready_s equals the exact original pair.foot_exchange.cooldown_until_s. Accept null only when the actual authoritative clock is at or after that exact deadline. Retain the Ray null predicate after actual source_defeated/cancel_owner and all epoch/reservation checks. No clock tolerance or future regrant."
+    },
+    {
+      "id": "action-sampler-extra-render-await",
+      "severity": "concrete scheduling risk in fixture",
+      "fixture_lines": [
+        303,
+        305
+      ],
+      "evidence": "_step first resumes after the priority-120 native physics probe, then awaits process_frame. A render/process frame can encompass multiple native physics steps, so the next action predicate is no longer sampled once per authoritative tick. The dash setup only checks clock < segment.end_s; it may miss the intended start without a strict one-tick diagnostic.",
+      "smallest_correction": "Keep the priority-120 probe as the action sampler and remove the additional process_frame await from _step. Deferred checkpoint/clear publication still occurs through the normal engine main loop. Keep process waits only in actual cleanup/setup transactions. Do not loosen proof times or response predicates."
+    }
+  ],
+  "verified": [
+    "The added line 209 recovery-pose and actual planar Heavy-reach predicates attribute the late zero-hit refusal to the full-cadence gate rather than range or idle actor rejection.",
+    "The late primary is still a real public slash with a newly retained primary action record, unchanged HP15, and no clear. No live HP/phase/clock/motion assignment.",
+    "Threshold observation is synchronous and checks its saved observation, so later Foot admission during the first primary cooldown does not falsely claim Foot started before first brace spending.",
+    "Natural Foot completion and original cancelled-Ray recovery/cooldown drains are required before deferred eligibility. The test host acknowledgement is explicitly component-only, not a protected Shell checkpoint.",
+    "Actual source defeat removes the Ray owner cooldown through public cancel_owner; normal Foot cancellation has the retained-state behavior above.",
+    "Stopping after the first profile failure preserves the first affected native diagnosis; no second-profile result is fabricated."
+  ],
+  "scope_limits": [
+    "Flat authored 20x20 floor, native direct public inputs, Heavy, Standard/Assisted only; no physical joint-base blocker, Longstep, touch recognizer, camera/portrait, balance or full-level credit.",
+    "Proof-directed dash receipts verify real completion, no shortening/blocking, and bait consumption, but currently do not independently compare each receipt endpoint/start time to every accepted theoretical segment. No exact full-path replay identity credit.",
+    "Parent full quiet codec deliberately rejects; fixture tests no Save, Continue, fatal restoration, protected checkpoint or whole campaign progression."
+  ],
+  "conclusion": "Both advised fixture corrections resolved statically in exact 13cb1404 bytes. No remaining concrete blocker in the bounded flat-floor mechanics fixture; native/parser execution remains pending.",
+  "corrected_fixture": {
+    "path": "/private/tmp/a2_l5_sentry_encounter_smoke_draft.gd",
+    "sha256": "13cb1404604ce0e0ac1912ba884e73443392192d1f2e344b02d528e371ec7bcf",
+    "lines": 335,
+    "preserved_previous": "/private/tmp/a2_l5_sentry_encounter_smoke_draft_v3.gd",
+    "preserved_previous_sha256": "36c33d7eeab5c1f04a240ec81370a13e767f073b76b8f1913d76a2f0bf2ba8cc",
+    "changed_functions": [
+      "_real_two_owner_route",
+      "_step"
+    ]
+  },
+  "resolution": [
+    "Final cooldown predicate accepts a retained dictionary only with original exact ready_s and accepts null only at/after the original exact deadline. Ray null assertion remains unchanged.",
+    "Native action sampler now awaits only priority-120 probe; cleanup process barriers unchanged.",
+    "The late actual recovery/reach predicates remain present.",
+    "No parent552, runtime, cadence, authority, geometry or tolerance changes."
+  ]
+}
