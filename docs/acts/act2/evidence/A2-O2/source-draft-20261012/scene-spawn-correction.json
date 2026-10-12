@@ -1,0 +1,10 @@
+{
+  "failing_result": "loading-side-first/result.json",
+  "failing_scope": "2 checks/1 failure at isolated Registry optional scene validation; no subsequent gameplay/save steps ran",
+  "first_meaningful_error": "Level requires a Marker3D at spawn_path: PlayerSpawn, derived from actual Registry.scene_error contract and the failed scene/source originals",
+  "cause": "Root omitted scene Marker while host built one only in _ready; Registry checks candidate before entering tree",
+  "fix": "Restore single scene-owned PlayerSpawn and remove redundant host creation; same authored spawn Vector3(0,.1,2.6). Before-final HUD uses plain smoke-fade wording. No gameplay timing/stats/schema/route change.",
+  "current_host_sha256": "a4676e75e9ccb24a2eb4bcbd9de87ad5df6eb5e73f7184435b3ca172af37ece0",
+  "current_scene_sha256": "546aa9130dd45f4b96555736002660d0918783d01d688f38d407f5ed19453d0f",
+  "scope": "Owned assembly correction; original failed result/source frozen. No new/moved resource or UID; rerun only affected loading fixture."
+}

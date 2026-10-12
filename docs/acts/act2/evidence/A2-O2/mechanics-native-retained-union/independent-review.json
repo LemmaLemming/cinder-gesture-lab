@@ -1,0 +1,526 @@
+{
+  "api_revision": "act2-o2-retained-union-fix-independent-review-1",
+  "at": "2026-10-12T06:33:58.823893+00:00",
+  "canonical_extrema": [
+    {
+      "actual_actions": 6,
+      "complete": true,
+      "hero_hp": 100.0,
+      "id": "slow-dash-short-reach",
+      "loadout": {
+        "jacket": "CLOTH-J1",
+        "pants": "CLOTH-P2",
+        "shoes": "CLOTH-S2",
+        "weapon": "WEAPON-03"
+      },
+      "phases": {
+        "east_bank": {
+          "active": true,
+          "lock": true,
+          "recovery": true,
+          "warning": true
+        },
+        "final_tool": {
+          "active": true,
+          "lock": true,
+          "recovery": true,
+          "warning": true
+        },
+        "west_bank": {
+          "active": true,
+          "lock": true,
+          "recovery": true,
+          "warning": true
+        }
+      },
+      "resolved_stats": {
+        "dash_distance": 2.9700000000000006,
+        "dash_duration": 0.22000000000000008,
+        "dash_speed": 13.499999999999998,
+        "max_health": 110.00000000000001,
+        "primary_cooldown": 0.39999999999999997,
+        "primary_damage": 24.0,
+        "primary_range": 1.8
+      }
+    },
+    {
+      "actual_actions": 7,
+      "complete": true,
+      "hero_hp": 100.0,
+      "id": "slow-primary-reach",
+      "loadout": {
+        "jacket": "CLOTH-J1",
+        "pants": "CLOTH-P1",
+        "shoes": "CLOTH-S0",
+        "weapon": "WEAPON-03"
+      },
+      "phases": {
+        "east_bank": {
+          "active": true,
+          "lock": true,
+          "recovery": true,
+          "warning": true
+        },
+        "final_tool": {
+          "active": true,
+          "lock": true,
+          "recovery": true,
+          "warning": true
+        },
+        "west_bank": {
+          "active": true,
+          "lock": true,
+          "recovery": true,
+          "warning": true
+        }
+      },
+      "resolved_stats": {
+        "dash_distance": 2.7,
+        "dash_duration": 0.18000000000000002,
+        "dash_speed": 15.0,
+        "max_health": 100.0,
+        "primary_cooldown": 0.4285714285714286,
+        "primary_damage": 24.0,
+        "primary_range": 1.9000000000000001
+      }
+    }
+  ],
+  "exact_current_source": {
+    "fixture": {
+      "lines": 499,
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/tests/acts/act2/a2_o2_focused_smoke.gd",
+      "sha256": "83614b6e4051b2240e0f7d5a0c1fad9c0e59e591efa9801dabf00931d73e7a7f"
+    },
+    "host": {
+      "lines": 1252,
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/acts/act2/clear_air_circuit.gd",
+      "sha256": "764ea7a7eeea9d156c7b20c249d2a71bea268cefddfd88bb3c3f7e830f102885"
+    }
+  },
+  "gate_review": {
+    "allocation_location": "scripts/acts/act2/clear_air_circuit.gd:277",
+    "checks": [
+      "Pure preallocation call occurs after new proposal current/new-future framing check and before _forecasts assignment/native start/lease allocation",
+      "Builds full prospective new-required points plus every other running consumer current required source/footprint/cue/native/landing/attack points through existing shared helper",
+      "Visits both Banks and final tool, skipping candidate and nonrunning sources; uses each retained original _native_view landing/attack rather than new proposal proof or a recomputed old response",
+      "For both original response endpoints uses unchanged settled-follow delta and existing actual camera/HUD/framing helper; missing witness/current binding/nonfinite point/budget/viewport errors refuse new proposal",
+      "Reject reason prospective_union_clips_retained_running_response leaves old allocation/view/proof/cycle intact; old before-contact/current/future cue guard stays in place",
+      "No geometry/floor/spawn/role/deadline/equipment/Player/Scheduler/camera-size/HUD-rectangle/tolerance change by this gate; no private damage/control/save duplication",
+      "Field comparison remains correct for immutable ordinary leases; no guard dropped to pass original17/2",
+      "Temporary owned pre-cancel host telemetry removed from currenthost; passive failure-only fixture source diagnostics remain observer-only"
+    ],
+    "findings": [],
+    "location": "scripts/acts/act2/clear_air_circuit.gd:643"
+  },
+  "observed_original_cause": {
+    "actual_log_sha256": "5b9903f712c4096ecd59c824c351a1198e2e7499a2f0302ad851f97efb2a10cf",
+    "at_failure_clock_s": 5.616666666666652,
+    "current_cycle": 2,
+    "current_reservation_id": "threat-3",
+    "failed_segment_kind": "positioning_dash",
+    "inference": "Native log proves current combined82-point union/cue signature fits while original west attack future clips. Old proposal checked only new proof endpoints against retained sources; admission lacked symmetric check at old retained response endpoints. Source traversal and successful affected reruns support that this coexistence omission caused recorded old-cycle cancellation, without implying every other future camera arrangement.",
+    "invalidations": [
+      {
+        "clock_s": 1.0666666666666678,
+        "reason": "circuit_required_presentation_before_contact",
+        "reservation_id": "threat-1"
+      }
+    ],
+    "original_reservation": {
+      "active_from_s": 2.6,
+      "active_until_s": 5.6,
+      "id": "threat-1",
+      "lock_from_s": 1.5,
+      "recovery_until_s": 7.5,
+      "start_s": 0.39999999999999997
+    },
+    "original_retained_lease": {},
+    "pre_cancel": {
+      "cached_bytes": 23352,
+      "camera": [
+        -0.241571232676506,
+        18.7452793121338,
+        12.2477798461914
+      ],
+      "camera_size": 7.19999980926514,
+      "clock_s": 1.06666666666667,
+      "current_error": "",
+      "cycle": 1,
+      "hero": [
+        0.701712012290955,
+        -0.00484376167878509,
+        -1.7241427898407
+      ],
+      "id": "west_bank",
+      "phase": "warning",
+      "point_count": 82,
+      "settled": {
+        "attack_position": {
+          "at": [
+            -1.9982887506485,
+            -0.00484376167878509,
+            -1.72414207458496
+          ],
+          "delta": [
+            -1.75671756267548,
+            -0.000123977661132812,
+            -0.971921920776367
+          ],
+          "error": "Required source, footprint, player or landing lies outside the protected screen rectangle"
+        },
+        "landing": {
+          "at": [
+            0.701711297035217,
+            -0.00484376167878509,
+            -1.72414207458496
+          ],
+          "delta": [
+            0.943282544612885,
+            -0.000123977661132812,
+            -0.971921920776367
+          ],
+          "error": ""
+        }
+      },
+      "signature_bytes": 23352,
+      "signature_equal": true
+    },
+    "runtime_error": ""
+  },
+  "preserved_original_failures": {
+    "mechanics-native-cancellation": {
+      "actual_raw_sha256": "64d17ae84bd38a497e60387c7e104cc22519af7dbed2383cf6ab9c22323977f8",
+      "declared_raw_sha256": "64d17ae84bd38a497e60387c7e104cc22519af7dbed2383cf6ab9c22323977f8",
+      "exit_code": 1,
+      "manifest_preserved": true,
+      "raw_hash_matches": true,
+      "result_sha256": "db256b21acee215ebec939b05efb8bf3c7c5e241119f571071211b49532bc9de",
+      "scope_complete": false,
+      "source_preserved": true,
+      "summaries": [
+        {
+          "checks": 17,
+          "failures": 2,
+          "scope": "scope_complete=false; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "unexplained_errors": 0
+    },
+    "mechanics-native-first": {
+      "actual_raw_sha256": "1616e2f442ddc669a5b5b53b190783526454dc94addc5685b9b35dbb61faf37c",
+      "declared_raw_sha256": "1616e2f442ddc669a5b5b53b190783526454dc94addc5685b9b35dbb61faf37c",
+      "exit_code": 1,
+      "manifest_preserved": true,
+      "raw_hash_matches": true,
+      "result_sha256": "03b622b42a33d54adb83ddaddeedc6e1c08c5cc06b3131579671d17e23a393a8",
+      "scope_complete": false,
+      "source_preserved": true,
+      "summaries": [
+        {
+          "checks": 10,
+          "failures": 2,
+          "scope": "scope_complete=false; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "unexplained_errors": 0
+    },
+    "mechanics-native-plan-loss": {
+      "actual_raw_sha256": "d41fce958ddf433095575bdbd485e81a102eb5d98fcb87e5b1ac9cad79b3abbc",
+      "declared_raw_sha256": "d41fce958ddf433095575bdbd485e81a102eb5d98fcb87e5b1ac9cad79b3abbc",
+      "exit_code": 1,
+      "manifest_preserved": true,
+      "raw_hash_matches": true,
+      "result_sha256": "df468aac1f2e031370d985e409ceab66e93c4f95a2915677226e68473e4ec900",
+      "scope_complete": false,
+      "source_preserved": true,
+      "summaries": [
+        {
+          "checks": 17,
+          "failures": 2,
+          "scope": "scope_complete=false; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "unexplained_errors": 0
+    },
+    "mechanics-native-view-loss": {
+      "actual_raw_sha256": "5b9903f712c4096ecd59c824c351a1198e2e7499a2f0302ad851f97efb2a10cf",
+      "declared_raw_sha256": "5b9903f712c4096ecd59c824c351a1198e2e7499a2f0302ad851f97efb2a10cf",
+      "exit_code": 1,
+      "manifest_preserved": true,
+      "raw_hash_matches": true,
+      "result_sha256": "12c8a74fdb04087cb05b109f0022f9d8eb46a52e8361d8fc183a375c9649589e",
+      "scope_complete": false,
+      "source_preserved": true,
+      "summaries": [
+        {
+          "checks": 17,
+          "failures": 2,
+          "scope": "scope_complete=false; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "unexplained_errors": 0
+    },
+    "mechanics-native-warning-follow": {
+      "actual_raw_sha256": "698a1c84fb1c1351c2af5f3bdf401ca678dc8bda6cb990c0c0e04da0aae17c35",
+      "declared_raw_sha256": "698a1c84fb1c1351c2af5f3bdf401ca678dc8bda6cb990c0c0e04da0aae17c35",
+      "exit_code": 1,
+      "manifest_preserved": true,
+      "raw_hash_matches": true,
+      "result_sha256": "24984203f378ea1f408df61cd4a721df8e39ccfb82c74dbefdd9e761cf4bf5b4",
+      "scope_complete": false,
+      "source_preserved": true,
+      "summaries": [
+        {
+          "checks": 17,
+          "failures": 2,
+          "scope": "scope_complete=false; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "unexplained_errors": 0
+    }
+  },
+  "reused_and_pending_scopes": {
+    "loading": "Earlier116/0 retains its original pre-gate source/candidate attribution; directly affected actual currenthost loading regression is separately queued/running by Root and not accepted by this review",
+    "native_scope": "Actual original warning proof and normal shared dash/return/one primary/full native cooldown/noammo per Smoke/Handler component, preserved HeroHP and low source remains living after natural tested primary. Prerequisite/final progression setup public gated injuries and feet placement remain TEST-only, not earned route/ordinary defeat-all credit.",
+    "portraits": "Still pending: these two runs are headless. Generic footer mention of portraits/extremes does not create native pixel/art acceptance",
+    "unchanged_parent": "Accepted Tender/Handler/visual/Smoke/Lane/shared control/queue/save leaves reused; this review verifies selected dependency bytes in the two affected archives/current source, not an all-parent requalification"
+  },
+  "review_limits": [
+    "No engine/parser/import/active edit, shared or canonical mutation, broad other-level/API audit or rerun; only this TMP receipt written",
+    "602 source/mode unchanged claim is recorder-reported; independently rehashed original/current8 directly selected code/data paths plus original raw/wrapper logs and6 component pins reflected by the selected/new-source manifests; no wholesale602 semantic audit",
+    "Successful257/0 and523/0 confirm recorded two-source coexistence/natural controls and two legal extrema arrangements, not every possible endpoint path/pose/loadout/profile combination",
+    "No full route/earned optional clear/full campaign/pacing/all-kit human balance/mobile/performance claim",
+    "Root retains first-help/acceptance ownership and must review actual current loading regression and brief original portrait pixels before handoff"
+  ],
+  "status": "PASS bounded observed-cause/admission-gate and scoped native-evidence review; O2 acceptance/portraits/loading regression not claimed",
+  "tested_results": {
+    "extremes-native-retained-union": {
+      "PASS_line_counts": {
+        "raw": 0,
+        "wrapper": 0
+      },
+      "actual_log_sha256": {
+        "raw": "ab48f12d698b7db034a37c5dcab720e59039e260cbee90a9b7f0fae87a3915e0",
+        "wrapper": "ab48f12d698b7db034a37c5dcab720e59039e260cbee90a9b7f0fae87a3915e0"
+      },
+      "api_revision": "campaign-shared-50",
+      "assertion_reporting": "count-only",
+      "checks": 523,
+      "clean_scoped_result_independently_confirmed": true,
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o2-extremes-native-retained-union.log",
+        "--headless",
+        "--script",
+        "res://tests/acts/act2/a2_o2_focused_smoke.gd",
+        "--",
+        "--a2-o2-extremes"
+      ],
+      "failures": 0,
+      "graphical": false,
+      "job_watch": {
+        "child_exited": true,
+        "engine_banner_observed": true,
+        "owned_wrapper_pid": 96118,
+        "queue_wait_has_no_timeout": true,
+        "started_job_limit_s": 180.0,
+        "termination": "",
+        "wrapper_stream_complete": true
+      },
+      "manifest_sha256": "89d679648dd5352e1047b1c1fa37becd54410943c11ab94d0d60e9a65e7ffb3f",
+      "recorder_reports_602_sources_modes_unchanged": true,
+      "result_sha256": "f5a4390bd2d1a83ea69c810c5889608042035236152250d9814ffa9b1446ae94",
+      "scope_complete": true,
+      "selected_8_original_current_modes_and_hashes_match": true,
+      "selected_custody": {
+        "data/design/player_equipment.json": {
+          "archived_mode": "0o644",
+          "archived_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+          "current_mode": "0o644",
+          "current_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+          "declared": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+          "declared_mode": "0o644"
+        },
+        "scripts/acts/act2/clear_air_circuit.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "764ea7a7eeea9d156c7b20c249d2a71bea268cefddfd88bb3c3f7e830f102885",
+          "current_mode": "0o644",
+          "current_sha256": "764ea7a7eeea9d156c7b20c249d2a71bea268cefddfd88bb3c3f7e830f102885",
+          "declared": "764ea7a7eeea9d156c7b20c249d2a71bea268cefddfd88bb3c3f7e830f102885",
+          "declared_mode": "0o644"
+        },
+        "scripts/combat/lane_mechanism.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "current_mode": "0o644",
+          "current_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "declared": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "declared_mode": "0o644"
+        },
+        "scripts/combat/smoke_bank.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+          "current_mode": "0o644",
+          "current_sha256": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+          "declared": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+          "declared_mode": "0o644"
+        },
+        "scripts/combat/threat_scheduler.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+          "current_mode": "0o644",
+          "current_sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+          "declared": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+          "declared_mode": "0o644"
+        },
+        "scripts/game.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+          "current_mode": "0o644",
+          "current_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+          "declared": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+          "declared_mode": "0o644"
+        },
+        "scripts/player.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+          "current_mode": "0o644",
+          "current_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+          "declared": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+          "declared_mode": "0o644"
+        },
+        "tests/acts/act2/a2_o2_focused_smoke.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "83614b6e4051b2240e0f7d5a0c1fad9c0e59e591efa9801dabf00931d73e7a7f",
+          "current_mode": "0o644",
+          "current_sha256": "83614b6e4051b2240e0f7d5a0c1fad9c0e59e591efa9801dabf00931d73e7a7f",
+          "declared": "83614b6e4051b2240e0f7d5a0c1fad9c0e59e591efa9801dabf00931d73e7a7f",
+          "declared_mode": "0o644"
+        }
+      },
+      "shared_publication": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+      "source_count": 602,
+      "source_sha256": "d96dbdc0bb7fd4a121da863b25018e1c1a9988671a3e968d988a79e8037d0a01",
+      "test_scope": "Focused native ordinary Smoke and Handler responses for two canonical legal loadout extrema, actual resolver/actions and minimum speed/reach/slower cadence; disclosed gated prerequisite injuries. No all-kit/fullroute/art/balance/performance claim.; directly affected original-reservation coexistence admission fix now in currentsource, prior originalresults preserved",
+      "zero_log_counts": true
+    },
+    "mechanics-native-retained-union": {
+      "PASS_line_counts": {
+        "raw": 0,
+        "wrapper": 0
+      },
+      "actual_log_sha256": {
+        "raw": "c28c7410c6b68b4dd8b61b0a1d9f358dc8f8689ea71a9a8c4917120318239935",
+        "wrapper": "c28c7410c6b68b4dd8b61b0a1d9f358dc8f8689ea71a9a8c4917120318239935"
+      },
+      "api_revision": "campaign-shared-50",
+      "assertion_reporting": "count-only",
+      "checks": 257,
+      "clean_scoped_result_independently_confirmed": true,
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o2-mechanics-native-retained-union.log",
+        "--headless",
+        "--script",
+        "res://tests/acts/act2/a2_o2_focused_smoke.gd"
+      ],
+      "failures": 0,
+      "graphical": false,
+      "job_watch": {
+        "child_exited": true,
+        "engine_banner_observed": true,
+        "owned_wrapper_pid": 95598,
+        "queue_wait_has_no_timeout": true,
+        "started_job_limit_s": 180.0,
+        "termination": "",
+        "wrapper_stream_complete": true
+      },
+      "manifest_sha256": "7d34c036aa58899deaa933bb166083fbf10f71964d513f01dc0170098156fe1f",
+      "recorder_reports_602_sources_modes_unchanged": true,
+      "result_sha256": "d3da8f0363ea5aafab0117e3cfc2cba1489e21be21e02facd68834db8d5de014",
+      "scope_complete": true,
+      "selected_8_original_current_modes_and_hashes_match": true,
+      "selected_custody": {
+        "data/design/player_equipment.json": {
+          "archived_mode": "0o644",
+          "archived_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+          "current_mode": "0o644",
+          "current_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+          "declared": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+          "declared_mode": "0o644"
+        },
+        "scripts/acts/act2/clear_air_circuit.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "764ea7a7eeea9d156c7b20c249d2a71bea268cefddfd88bb3c3f7e830f102885",
+          "current_mode": "0o644",
+          "current_sha256": "764ea7a7eeea9d156c7b20c249d2a71bea268cefddfd88bb3c3f7e830f102885",
+          "declared": "764ea7a7eeea9d156c7b20c249d2a71bea268cefddfd88bb3c3f7e830f102885",
+          "declared_mode": "0o644"
+        },
+        "scripts/combat/lane_mechanism.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "current_mode": "0o644",
+          "current_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "declared": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+          "declared_mode": "0o644"
+        },
+        "scripts/combat/smoke_bank.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+          "current_mode": "0o644",
+          "current_sha256": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+          "declared": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+          "declared_mode": "0o644"
+        },
+        "scripts/combat/threat_scheduler.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+          "current_mode": "0o644",
+          "current_sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+          "declared": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+          "declared_mode": "0o644"
+        },
+        "scripts/game.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+          "current_mode": "0o644",
+          "current_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+          "declared": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+          "declared_mode": "0o644"
+        },
+        "scripts/player.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+          "current_mode": "0o644",
+          "current_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+          "declared": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+          "declared_mode": "0o644"
+        },
+        "tests/acts/act2/a2_o2_focused_smoke.gd": {
+          "archived_mode": "0o644",
+          "archived_sha256": "83614b6e4051b2240e0f7d5a0c1fad9c0e59e591efa9801dabf00931d73e7a7f",
+          "current_mode": "0o644",
+          "current_sha256": "83614b6e4051b2240e0f7d5a0c1fad9c0e59e591efa9801dabf00931d73e7a7f",
+          "declared": "83614b6e4051b2240e0f7d5a0c1fad9c0e59e591efa9801dabf00931d73e7a7f",
+          "declared_mode": "0o644"
+        }
+      },
+      "shared_publication": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+      "source_count": 602,
+      "source_sha256": "aa31eb997a06846ca295ee594ec2c142de1d595f98b2cb136366f54b5c448a62",
+      "test_scope": "Focused actual shared Hero ordinary Smoke and Handler proof responses, any-angle grounded dash/return/one primary/full cooldown with unchanged HP/no blast ammo/no pickup; disclosed public gated-injury/contact progression arrangements only. No whole earned route, Shell loading, full art, pacing, all-kit balance, mobile or performance claim.",
+      "zero_log_counts": true
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "api_revision": "act2-o2-same-plan-field-review-1",
+  "at": "2026-10-12T06:12:50.851299+00:00",
+  "current_guard": "running source status, original cycle/reservation ID, current armed lease, then seven immutable selected fields",
+  "equality_fields": {
+    "active_from_s": "Admission clock plus resolved windup, fixed",
+    "active_until_s": "Original active_from plus resolved active duration, fixed",
+    "geometry": "Deep copied original stationary threat Circle/Lane dictionary, fixed",
+    "lock_from_s": "Ordinary admitted active_from_s minus resolved lock duration, fixed",
+    "opening_position": "Actual original stationary low mount, fixed",
+    "recovery_until_s": "Original active_until plus resolved recovery duration, fixed",
+    "start_s": "Authored native admission clock, fixed until lease removal"
+  },
+  "failure_scope": "Parent reports corrected warning-follow native CLOSED17/2 at next original action _same_plan; original escape passes, no Script/parse/unexplained errors or source drift. No exact current state/lease diagnostic yet inspected by this review.",
+  "inspected_fixture": {
+    "frozen_matching_TMP": "/private/tmp/a2_o2_focused_warning_follow_draft_20261012.gd",
+    "lines_at_read": 491,
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/tests/acts/act2/a2_o2_focused_smoke.gd",
+    "sha256_at_read": "2381b2817b7d0f0ab604d2c7f06e8354bfbfeb5aebaa899a575fb110a65475c7"
+  },
+  "limitations": [
+    "Source review cannot prove which base guard failed or establish native cancellation cause. No recommendation to remove immutable comparison or loosen one-tick timing.",
+    "Only new TMP receipt written; no active source/engine/parser/UID/Git/registry/ledger mutation.",
+    "No broader audit or test claim."
+  ],
+  "native_source_pins": {
+    "scripts/combat/lane_mechanism.gd": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+    "scripts/combat/smoke_bank.gd": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+    "scripts/combat/threat_scheduler.gd": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+  },
+  "next_action": "Retain original failure and all assertions. Passive failure-only dump of actual current consumer state/current lease/original lease/segment/clock/Hero response can distinguish changed fields, empty/expired lease, cancellation/cycle replacement or earlier source framing loss. Root owns one narrow queued reproduction.",
+  "nonapplicable_dynamic_changes": [
+    "Tracking update/lock reproof mutates geometry/deadlines for a tracking adapter; these native stationary consumers have no such adapter",
+    "Replay/authored replay timeline lock retimes its specialized records; not this ordinary O2 bank/tool",
+    "Lunge advance changes moving source/opening; not fixed Circle/Lane ordinary O2 source"
+  ],
+  "schema_evidence": [
+    {
+      "line": 165,
+      "path": "scripts/combat/threat_scheduler.gd",
+      "scope": "_prepare_ordinary_attack constructs and stores ordinary candidate/proof/deadlines/geometry/opening once"
+    },
+    {
+      "line": 211,
+      "path": "scripts/combat/threat_scheduler.gd",
+      "scope": "_commit_ordinary_attack copies candidate and adds stable id/owner/floor refs, without retiming fields"
+    },
+    {
+      "line": 1220,
+      "path": "scripts/combat/threat_scheduler.gd",
+      "scope": "reservation_state may call _prune, then returns public record"
+    },
+    {
+      "line": 1226,
+      "path": "scripts/combat/threat_scheduler.gd",
+      "scope": "_public_record strips private refs and only adds dynamic armed and state; added equality field list excludes those dynamic fields"
+    },
+    {
+      "line": 177,
+      "path": "scripts/combat/smoke_bank.gd",
+      "scope": "Smoke threat supplied to ordinary stationary preview/request has fixed circle/opening and no tracking/lunge/replay adapter"
+    },
+    {
+      "line": 172,
+      "path": "scripts/combat/lane_mechanism.gd",
+      "scope": "Lane preview/request uses ordinary fixed selected geometry/opening; no tracking/replay/lunge retiming adapter"
+    }
+  ],
+  "status": "PASS bounded field schema review: no intentionally dynamic equality field found for the two ordinary stationary consumers; native failure cause unresolved"
+}
