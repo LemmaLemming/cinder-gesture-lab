@@ -226,6 +226,10 @@ func _helpers_moving() -> bool:
 	return true
 
 
+func _planar_distance(left: Vector3, right: Vector3) -> float:
+	return Vector2(left.x - right.x, left.z - right.z).length()
+
+
 func _entry_history_unchanged() -> bool:
 	return _require(var_to_bytes(level.get("_entry_records")) == var_to_bytes(entry_originals) and _retained_identities(), "outcomes preserve the original six-key paths/deadlines and all eight source handles")
 
