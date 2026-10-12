@@ -1,8 +1,8 @@
 extends CinderLevel
-## Initial authored A3-L4 composition; native validation pending, unregistered.
+## Complete authored A3-L4 codec integration; native qualification pending, unregistered.
 ## Preloads use owned paths; core/adapter are published
 ## together before the qualified new-resource import.
-## Whole save/candidate restore explicitly refuse until the complete codec exists.
+## Complete native units and actual Camera/HUD gates; no partial writer.
 
 const Scenery = preload("res://scripts/acts/act3/false_paradise_scenery.gd")
 const RootCore = preload("res://scripts/acts/act3/garden_root_network.gd")
@@ -17,6 +17,7 @@ const Witness = preload("res://scripts/combat/replay_witness.gd")
 const CueMeshes = preload("res://scripts/cues/cue_mesh.gd")
 const ContactCue = preload("res://scripts/cues/interaction_cue.gd")
 const Value = preload("res://scripts/campaign/snapshot_codec.gd")
+const ParentCodec = preload("res://scripts/acts/act3/false_paradise_codec.gd")
 const API: String = "act3-false-paradise-parent-1"
 const LAYOUT: String = "res://data/campaign/act3/false_paradise_layout_candidate.json"
 const ENCOUNTER_ID: String = "A3-L4/false-paradise-garden"
@@ -33,7 +34,6 @@ const EXIT_ID: String = "adage-plain-threshold"
 const COMPLETION_ID: String = "false-paradise-disengaged"
 const EXIT_RECT: Rect2 = Rect2(-1.2, -8.65, 2.4, 1.3)
 const ROOT_COURT_RECT: Rect2 = Rect2(-7, -5, 14, 12)
-const SAVE_LIMIT: String = "False Paradise has no complete whole-parent codec: Save, Continue, checkpoint dispatch and fresh Retry restoration are unsupported"
 const SUN_PREVIEW_S: float = 3.0
 const SUN_LOCK_S: float = 1.0
 const SUN_STABLE_S: float = 10.0
@@ -82,6 +82,18 @@ var _exit_state: String = "clear"
 var _contact: Dictionary = {}
 var _exit_queued: bool = false
 var _exit_generation: int = 0
+# Owned transient flags set ONLY by the future validated whole restore hook.
+# They are not serialized state, damage permission, or native receipt authority.
+var _codec_restore_started: bool = false
+var _codec_restore_finished: bool = false
+var _codec_restore_expected: Dictionary = {}
+var _parent_codec = ParentCodec.new()
+var _owned_restore_error: String = ""
+var _owned_capture_busy: bool = false
+var _owned_capture_error: String = ""
+var _owned_capture_camera: Camera3D
+var _owned_capture_hud: GameHUD
+
 
 
 func _ready() -> void:
@@ -203,6 +215,9 @@ func _physics_process(_delta: float) -> void:
 		return
 	if _advance_entry():
 		return # Genuine new native owners begin on their next ordinary tick.
+	_dispatch_pending_checkpoint()
+	if not _active or get_tree().paused or not is_instance_valid(hero) or hero.dead or not last_configuration_error.is_empty():
+		return
 	if _disengagement_pending:
 		_finish_disengagement()
 		if not _active or not last_configuration_error.is_empty():
@@ -270,7 +285,7 @@ func _previous_entry_clear(index: int) -> bool:
 	return true
 
 
-func _install_source(id: String) -> bool:
+func _install_source(id: String, prepare_managed: bool = true) -> bool:
 	if sources.has(id) or not _rows.has(id) or _rows[id].kind not in ["stalker", "root", "echo"]:
 		_fail("Only one genuine fresh entitled original source may be installed: " + id)
 		return false
@@ -297,7 +312,7 @@ func _install_source(id: String) -> bool:
 		return false
 	var context: Dictionary = {"world_root": get_parent() as Node3D, "source_id": id, "source_epoch": String(row.source_epoch_recipe), "generation": 1, "world_collision_fingerprint": threat_scheduler.pure_collision_fingerprint(get_parent() as Node3D), "world_floor_signature": signature.signature}
 	var prepared: Dictionary = {"world_revision": WORLD_REVISION, "collision_fingerprint": context.world_collision_fingerprint, "floor_signature": context.world_floor_signature}
-	if not source.call("configure_source", id, context.source_epoch, 1, native_definition(id), _profile, prepared, threat_scheduler) or not source.call("retain_source_environment", get_parent() as Node3D, [_floor]) or not source.call("enable_authored_cycle_tracking", threat_scheduler, {"hero": hero}, [_floor], context) or not source.call("source_cycles_managed"):
+	if not source.call("configure_source", id, context.source_epoch, 1, native_definition(id), _profile, prepared, threat_scheduler) or not source.call("retain_source_environment", get_parent() as Node3D, [_floor]) or (prepare_managed and (not source.call("enable_authored_cycle_tracking", threat_scheduler, {"hero": hero}, [_floor], context) or not source.call("source_cycles_managed"))):
 		_fail(id + ": " + String(source.get("source_snapshot_error")) + "; " + String(source.get("last_error")))
 		return false
 	_echo_records[id] = {"context": context, "projection": {}, "lease": {}, "proof": {}, "positions": [], "locked": false, "admissions": []}
@@ -308,7 +323,7 @@ func _install_source(id: String) -> bool:
 	return true
 
 
-func _install_root_network() -> bool:
+func _install_root_network(activate: bool = true) -> bool:
 	if is_instance_valid(root_network):
 		_fail("Root network can be constructed only at the genuinely earned boss court")
 		return false
@@ -319,7 +334,7 @@ func _install_root_network() -> bool:
 		_fail(String(root_network.get("last_configuration_error")))
 		return false
 	root_network.connect("phase_boundary", _on_root_boundary)
-	if not root_network.call("set_active", true):
+	if activate and not root_network.call("set_active", true):
 		_fail("Actual retained root network could not enter its earned live court")
 		return false
 	return true
@@ -506,32 +521,50 @@ func scheduler_bindings() -> Dictionary:
 	return {"world_root": get_parent() as Node3D, "owners": _all_scheduler_owners(), "actors": {"hero": hero}, "floors": {FLOOR_ID: _floor}}
 
 
-func _retire_source_held(id: String, reason: String) -> String:
+func false_paradise_codec_discard_in_progress() -> bool:
+	return is_restore_candidate() and get_tree().paused and _codec_restore_started and not _codec_restore_finished and not _codec_restore_expected.is_empty()
+
+
+func _retire_source_held(id: String, reason: String, discarded_candidate: bool = false) -> String:
 	if not sources.has(id) or not is_instance_valid(sources[id]) or not sources[id].is_inside_tree() or not is_instance_valid(threat_scheduler):
 		return "Actual inside-tree retained source/Scheduler required for retirement: " + id
 	var source: Node3D = sources[id]
 	var owner: Node3D = source.call("get_mechanism") if _rows[id].kind == "root" else source
 	var control: Dictionary = threat_scheduler.source_control_state(owner)
-	if control.is_empty():
-		return "Actual retained native owner control required for retirement: " + id
-	if control.reservations.is_empty():
-		return "" # Empty/ready/terminal owners remain inert, including dead roots.
+	if control.is_empty(): return "Actual native owner control required: " + id
+	if control.reservations.is_empty(): return "" # Empty ready/terminal/dead remains inert.
+	var expected: Dictionary = _codec_restore_expected.get("sources", {}).get(id, {}) if discarded_candidate else {}
+	var staged: bool = discarded_candidate and false_paradise_codec_discard_in_progress() and not expected.is_empty() and control.reservations.size() == 1 and control.clock_s == _codec_restore_expected.scheduler.clock_s
+	var held_id: String = String(control.reservations[0].id)
 	if _rows[id].kind == "echo":
-		source.call("cancel", reason)
-		# A native cue callback may be inside Playback's transaction and refuse
-		# owner.cancel. Only its genuine still-held lease permits this fallback.
-		control = threat_scheduler.source_control_state(owner)
-		if not control.is_empty() and not control.reservations.is_empty():
+		var current: Dictionary = source.call("state")
+		var unfinished: bool = staged and not (source.call("get_authored_cycle_restore_recipe") as Dictionary).is_empty() and expected.get("playback", {}).get("reservation_id") == held_id
+		if current.get("status") == "running":
+			if current.get("reservation_id") != held_id: return "Running Playback and actual held owner differ: " + id
+			source.call("cancel", reason)
+		elif not unfinished or current.get("status", "idle") not in ["idle", "cycle_ready"]:
+			return "Only a genuine unfinished candidate may have an uncommitted Playback lease: " + id
+		var remaining: Dictionary = threat_scheduler.source_control_state(owner)
+		if not remaining.is_empty() and not remaining.reservations.is_empty():
+			if current.get("status") != "running" and not unfinished: return "No raw cancellation for an inert committed Playback: " + id
+			# Living cue callbacks use the actual running-owner fallback; incomplete
+			# staged recipients only discard their real remaining lease, no terminal claim.
 			threat_scheduler.cancel_owner(owner, reason)
+		if not unfinished:
+			var terminal: Dictionary = source.call("get_authored_cycle_terminal_receipt")
+			if (source.call("state") as Dictionary).get("status") != "cancelled" or terminal.get("outcome") != "cancelled" or terminal.get("reason") != reason or terminal.get("exchange", {}).get("id") != held_id: return "Committed Echo retirement requires its genuine exact cancellation: " + id
 	elif _rows[id].kind == "root":
-		(owner as CinderLaneMechanism).cancel(reason)
+		var current: Dictionary = (owner as CinderLaneMechanism).state()
+		if current.status == "running":
+			(owner as CinderLaneMechanism).cancel(reason)
+		var remaining: Dictionary = threat_scheduler.source_control_state(owner)
+		if not remaining.is_empty() and not remaining.reservations.is_empty():
+			if not staged or not String(current.get("reservation_id", "")).is_empty() or expected.get("actor", {}).get("mechanism", {}).get("exchange", {}).get("id") != held_id: return "Only unfinished actual Root candidate may discard a staged raw lease: " + id
+			threat_scheduler.cancel_owner(owner, reason)
 	else:
 		threat_scheduler.cancel_owner(owner, reason)
-	control = threat_scheduler.source_control_state(owner)
-	if control.is_empty() or not control.reservations.is_empty():
-		return "Actual native held owner could not finish public retirement: " + id
-	if _rows[id].kind == "echo" and ((source.call("state") as Dictionary).get("status") != "cancelled" or (source.call("get_authored_cycle_terminal_receipt") as Dictionary).is_empty()):
-		return "Managed held Echo retirement must retain its genuine cancelled terminal: " + id
+	var after: Dictionary = threat_scheduler.source_control_state(owner)
+	if after.is_empty() or not after.reservations.is_empty() or after.clock_s != control.clock_s: return "Actual native held owner could not retire without clock advancement: " + id
 	return ""
 
 
@@ -584,12 +617,26 @@ func _all_required_cleared() -> bool:
 	return _deaths.has(HELPER_ID) or _retired_sources.has(HELPER_ID)
 
 
-func _update_presentation() -> void:
+func _update_presentation(quiet: bool = false) -> void:
 	if is_instance_valid(exit_cue):
+		var objects: Array[Object] = [exit_cue]
+		var flags: Array[bool] = []
+		if quiet:
+			for child: Node in exit_cue.get_children():
+				objects.append(child)
+				if child is MeshInstance3D and child.material_override != null:
+					objects.append(child.material_override)
+			for object: Object in objects:
+				flags.append(object.is_blocking_signals())
+				object.set_block_signals(true)
 		if _exit_state == "clear":
 			exit_cue.clear()
 		else:
 			exit_cue.present(_exit_state, "contact")
+		if quiet:
+			for index: int in range(objects.size()):
+				objects[index].set_block_signals(flags[index])
+
 	if not last_configuration_error.is_empty():
 		objective_text = "FALSE PARADISE UNAVAILABLE\n" + last_configuration_error
 	elif _exit_state != "clear":
@@ -641,37 +688,231 @@ func state() -> Dictionary:
 	var actual: Dictionary = {}
 	for id: String in ENEMY_IDS:
 		actual[id] = {"installed": sources.has(id), "kind": (_rows.get(id, {}) as Dictionary).get("kind", ""), "source": sources[id].call("get_source_state") if sources.has(id) and _rows[id].kind == "echo" else (sources[id].call("state") if sources.has(id) else {}), "retired": _retired_sources.has(id)}
-	return {"api_revision": API, "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else -1.0, "configuration_error": last_configuration_error, "admission_reason": last_admission_reason, "camera_error": last_camera_error, "profile": _profile, "route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "pending_checkpoint_boundaries": _pending_boundaries.duplicate(true), "retired_sources": _retired_sources.duplicate(true)}, "sources": actual, "echo_records": _echo_records.duplicate(true), "root_network": root_network.call("state") if is_instance_valid(root_network) else {}, "sun": _sun_state.duplicate(true), "disengaged": _disengaged, "completed": is_completed(), "exit_state": _exit_state, "contact": _contact.duplicate(true), "persistence_supported": false, "checkpoint_dispatch_supported": false}
+	return {"api_revision": API, "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else -1.0, "configuration_error": last_configuration_error, "admission_reason": last_admission_reason, "camera_error": last_camera_error, "profile": _profile, "route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "pending_checkpoint_boundaries": _pending_boundaries.duplicate(true), "retired_sources": _retired_sources.duplicate(true)}, "sources": actual, "echo_records": _echo_records.duplicate(true), "root_network": root_network.call("state") if is_instance_valid(root_network) else {}, "sun": _sun_state.duplicate(true), "disengaged": _disengaged, "completed": is_completed(), "exit_state": _exit_state, "contact": _contact.duplicate(true), "persistence_supported": true, "checkpoint_dispatch_supported": true}
+
+
+func snapshot_state() -> Dictionary:
+	return _capture_checked(null, null)
+
+
+func snapshot_state_for_presentation(camera: Camera3D, hud: GameHUD) -> Dictionary:
+	if is_restore_candidate():
+		last_snapshot_error = "Fresh context capture cannot substitute for saved candidate restoration"
+		return {}
+	if not is_instance_valid(camera) or not is_instance_valid(hud):
+		last_snapshot_error = "Explicit fresh context writer requires the actual native Camera/HUD pair"
+		return {}
+	return _capture_checked(camera, hud)
+
+
+func _capture_checked(camera: Camera3D, hud: GameHUD) -> Dictionary:
+	if _owned_capture_busy:
+		last_snapshot_error = "Owned whole writer cannot reenter"
+		return {}
+	if (camera == null) != (hud == null):
+		last_snapshot_error = "Complete actual native Camera/HUD context required"
+		return {}
+	_owned_capture_busy = true
+	_owned_capture_error = ""
+	_owned_capture_camera = camera
+	_owned_capture_hud = hud
+	var saved: Dictionary = super.snapshot_state()
+	var error: String = _owned_capture_error
+	_owned_capture_camera = null
+	_owned_capture_hud = null
+	_owned_capture_error = ""
+	_owned_capture_busy = false
+	if saved.is_empty():
+		if not error.is_empty(): last_snapshot_error = error
+		return {}
+	last_snapshot_error = snapshot_error(saved)
+	if last_snapshot_error.is_empty():
+		last_snapshot_error = _parent_codec.live_presentation_error(self) if camera == null else _parent_codec.candidate_presentation_error(self, camera, hud)
+	return saved if last_snapshot_error.is_empty() else {}
+
+
+func _snapshot_envelope_error(saved: Dictionary) -> String:
+	var error: String = super._snapshot_envelope_error(saved)
+	return error if not error.is_empty() else _parent_codec.progress_error(saved.local, saved.progress, self)
+
+
+func snapshot_error(saved: Dictionary) -> String:
+	var error: String = super.snapshot_error(saved)
+	return error if not error.is_empty() else _parent_codec.progress_error(saved.local, saved.progress, self)
+
+
+func snapshot_error_with_player(saved: Dictionary, player: Dictionary) -> String:
+	var error: String = super.snapshot_error_with_player(saved, player)
+	return error if not error.is_empty() else _parent_codec.progress_error(saved.local, saved.progress, self)
+
+
+func restore_state(saved: Dictionary) -> bool:
+	if not is_restore_candidate():
+		last_snapshot_error = "Whole restoration requires a genuine fresh CinderLevel candidate"
+		return false
+	last_snapshot_error = snapshot_error(saved)
+	if not last_snapshot_error.is_empty(): return false
+	_owned_restore_error = ""
+	var restored: bool = super.restore_state(saved)
+	if not _owned_restore_error.is_empty():
+		last_snapshot_error = _owned_restore_error
+		return false # The entire partially committed candidate is disposed.
+	return restored
 
 
 func _capture_local_state() -> Dictionary:
-	last_snapshot_error = SAVE_LIMIT
-	return {}
+	var local: Dictionary = _parent_codec.capture(self, hero.snapshot_state(), _owned_capture_camera, _owned_capture_hud)
+	last_snapshot_error = _parent_codec.last_error
+	if _owned_capture_busy: _owned_capture_error = last_snapshot_error
+	return local
 
 
-func _local_snapshot_error(_local: Dictionary) -> String:
-	return SAVE_LIMIT
+func _local_snapshot_error(local: Dictionary) -> String:
+	return _parent_codec.record_error(local, self, hero.snapshot_state())
 
 
-func _local_snapshot_error_with_player(_local: Dictionary, _saved_player: Dictionary) -> String:
-	return SAVE_LIMIT
+func _local_snapshot_error_with_player(local: Dictionary, player: Dictionary) -> String:
+	return _parent_codec.record_error(local, self, player)
+
+
+func _restore_local_state(local: Dictionary) -> void:
+	_codec_restore_expected = local.duplicate(true) # Base has fully prevalidated.
+	_codec_restore_started = true
+	_codec_restore_finished = false
+	if not _parent_codec.restore_local(local, self, hero.snapshot_state()):
+		_owned_restore_error = _parent_codec.last_error
+		return
+	_codec_restore_finished = true
 
 
 func restore_candidate_construction_required() -> bool:
 	return true
 
 
-func _on_enter_restore_candidate(_local: Dictionary, _saved_player: Dictionary) -> String:
-	return SAVE_LIMIT
+func _on_enter_restore_candidate(local: Dictionary, player: Dictionary) -> String:
+	_active = false
+	if not local.get("world") is Dictionary or not local.world.get("profile_id") is String:
+		return "Actual saved canonical profile/world recipe required"
+	_profile = local.world.profile_id
+	if not threat_scheduler.begin_encounter(_profile, ENCOUNTER_ID, WORLD_REVISION):
+		return threat_scheduler.last_error
+	var recipe: Dictionary = _parent_codec.constructor_recipe(local, self, player)
+	if not recipe.get("accepted", false): return String(recipe.get("error", "Immutable constructor entitlement refused"))
+	var error: String = false_paradise_codec_construct_recipe(recipe.recipe)
+	return error if not error.is_empty() else _parent_codec.prepare_sources(local, self, player)
 
 
-func _restore_local_state(_local: Dictionary) -> void:
-	push_error(SAVE_LIMIT) # Pure local validation refuses before this hook.
+func finish_restore_candidate() -> bool:
+	var finished: bool = super.finish_restore_candidate()
+	if finished:
+		_codec_restore_expected.clear()
+		_codec_restore_started = false
+		_codec_restore_finished = false
+	return finished
 
 
-func snapshot_state_for_presentation(_camera: Camera3D, _hud: GameHUD) -> Dictionary:
-	last_snapshot_error = SAVE_LIMIT
-	return {}
+func _restore_candidate_presentation_error(camera: Camera3D, hud: GameHUD) -> String:
+	if not _codec_restore_finished or _codec_restore_expected.is_empty():
+		return "Actual whole quiet candidate must commit before native optics"
+	return _parent_codec.verify_candidate_pair(_codec_restore_expected, self, hero.snapshot_state(), camera, hud)
+
+
+func false_paradise_codec_boundary_error() -> String:
+	if not get_tree().paused or _control_busy or _pre_consumer_guard_busy or _exit_queued:
+		return "Whole transport requires the actual settled paused native callback boundary"
+	return last_configuration_error
+
+
+func false_paradise_codec_construct_recipe(recipe: Dictionary) -> String:
+	if not is_restore_candidate() or not get_tree().paused or _active or not _entries.is_empty() or not _deaths.is_empty() or not _pending_boundaries.is_empty() or not _retired_sources.is_empty() or not sources.is_empty() or is_instance_valid(root_network) or threat_scheduler.has_committed_exchange():
+		return "Construct only fresh actual paused inactive entitled topology"
+	if not Value.keys_error(recipe, ["api_revision", "profile_id", "source_ids", "core_entitled", "world"]).is_empty() or recipe.get("api_revision") != "act3-false-paradise-constructor-1" or recipe.get("profile_id") != _profile or not recipe.get("source_ids") is Array or not recipe.get("core_entitled") is bool or not recipe.get("world") is Dictionary or not Authored.exact_equal(recipe.world, ParentCodec.native_world(self)):
+		return "Exact original immutable native constructor recipe required"
+	var accepted_count: int = -1
+	for count: int in range(6):
+		if Authored.exact_equal(recipe.source_ids, ParentCodec.entitled_sources(count)) and recipe.core_entitled == (count >= 4):
+			accepted_count = count
+			break
+	if accepted_count < 0: return "Canonical entitlement prefix required; no arbitrary topology"
+	for id: String in recipe.source_ids:
+		if not _install_source(id, false): return last_configuration_error
+	if recipe.core_entitled and not _install_root_network(false): return last_configuration_error
+	return ""
+
+
+func false_paradise_codec_owned_state() -> Dictionary:
+	var views: Dictionary = {}
+	for id: String in _echo_records:
+		var positions: Array = []
+		for at: Vector3 in _echo_records[id].positions: positions.append(Value.vector3(at))
+		views[id] = positions
+	return {"route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "pending_checkpoint_boundaries": _pending_boundaries.duplicate(true), "retired_sources": _retired_sources.duplicate(true), "disengaged": _disengaged, "disengagement_pending": _disengagement_pending, "exit_state": _exit_state, "contact": _contact.duplicate(true)}, "sun": _sun_state.duplicate(true), "presentation": scenery.call("presentation_state"), "view": {"echoes": views}}
+
+
+func false_paradise_codec_apply_owned_state(owned: Dictionary) -> String:
+	_entries.clear()
+	for receipt: Dictionary in owned.route.entries: _entries.append(receipt.duplicate(true))
+	_deaths = owned.route.deaths.duplicate(true)
+	_pending_boundaries.clear()
+	for receipt: Dictionary in owned.route.pending_checkpoint_boundaries: _pending_boundaries.append(receipt.duplicate(true))
+	_retired_sources = owned.route.retired_sources.duplicate(true)
+	_disengaged = owned.route.disengaged
+	_disengagement_pending = owned.route.disengagement_pending
+	_exit_state = owned.route.exit_state
+	_contact = owned.route.contact.duplicate(true)
+	_sun_anchor_s = owned.sun.anchor_s
+	_sun_state = ParentCodec.sun_at(_sun_anchor_s, threat_scheduler.get_clock())
+	if not Authored.exact_equal(_sun_state, owned.sun): return "Quiet restored sun must derive from real native clock/boundary"
+	if not scenery.call("restore_presentation", owned.presentation, _entries.size() >= 4, _disengaged and not _disengagement_pending): return "Quiet derived native scenery declined"
+	if is_instance_valid(root_network) and not root_network.call("set_active", not (_disengaged and not _disengagement_pending)): return "Quiet actual root activation changed"
+	for id: String in sources:
+		sources[id].set_physics_process(not _retired_sources.has(id))
+	var world: Dictionary = ParentCodec.native_world(self)
+	for id: String in _echo_records:
+		var source: Node3D = sources[id]
+		var actual: Dictionary = source.call("state")
+		var positions: Array[Vector3] = []
+		for at: Array in owned.view.echoes[id]: positions.append(Value.read_vector3(at))
+		_echo_records[id].context = ParentCodec.echo_context(world, self, int(source.call("get_authored_cycle_generation")))
+		_echo_records[id].projection = source.call("get_footprint_projection")
+		_echo_records[id].lease = {}
+		if actual.get("status") == "running":
+			var control: Dictionary = threat_scheduler.source_control_state(source)
+			if control.reservations.size() != 1 or control.reservations[0].id != actual.reservation_id: return "Quiet actual Echo held binding differs"
+			_echo_records[id].lease = control.reservations[0].duplicate(true)
+		_echo_records[id].positions = positions
+		_echo_records[id].locked = bool(_echo_records[id].lease.get("adapter", {}).get("locked", false))
+		_echo_records[id].proof = {}
+		_echo_records[id].admissions = [] # Diagnostics are never saved authority.
+		_bind_echo_cues(id)
+	_pending_view.clear()
+	_exit_generation += 1
+	_exit_queued = false
+	_active = true # Still paused; actual Shell candidate gate is mandatory.
+	_update_presentation(true)
+	return runtime_error()
+
+
+func false_paradise_codec_framing_union(camera: Camera3D = null) -> Dictionary:
+	return camera_framing_union("", [], false, false, {}, camera)
+
+
+func sun_presentation_state() -> Dictionary:
+	return _sun_state.duplicate(true) # No independent SunArt/clock/damage/wire.
+
+
+func _dispatch_pending_checkpoint() -> void:
+	if _pending_boundaries.is_empty() or not _active or hero.dead or get_tree().paused or _control_busy or is_restore_candidate() or is_completed(): return
+	var union: Dictionary = false_paradise_codec_framing_union()
+	if not String(union.get("error", "Actual native union required")).is_empty() or not String(shared_shell.call("camera_framing_error", union.points)).is_empty(): return
+	var boundary: Dictionary = _pending_boundaries.pop_front()
+	var index: int = -1
+	for candidate: int in range(_entries.size()):
+		if Authored.exact_equal(boundary, _entries[candidate]):
+			index = candidate
+			break
+	if index < 0 or not request_checkpoint(CHECKPOINT_IDS[index], "encounter"):
+		_pending_boundaries.push_front(boundary)
 
 
 func _fail(reason: String) -> void:
@@ -682,6 +923,7 @@ func _fail(reason: String) -> void:
 
 
 func _on_exit_level() -> void:
+	var discarded_candidate: bool = false_paradise_codec_discard_in_progress()
 	# Disarm local callbacks first, while actual recipients/resources are alive.
 	_active = false
 	_exit_generation += 1
@@ -698,13 +940,19 @@ func _on_exit_level() -> void:
 	if is_instance_valid(root_network):
 		if root_network.is_connected("phase_boundary", _on_root_boundary):
 			root_network.disconnect("phase_boundary", _on_root_boundary)
-		root_network.call("retire", "garden_whole_parent_exit")
+		var staged_retired: bool = discarded_candidate and root_network.call("discard_staged_candidate", "garden_unfinished_candidate_exit")
+		if not staged_retired:
+			root_network.call("retire", "garden_whole_parent_exit")
+		for mechanism: CinderLaneMechanism in (root_network.call("get_mechanisms") as Dictionary).values():
+			var control: Dictionary = threat_scheduler.source_control_state(mechanism)
+			if control.is_empty() or not control.reservations.is_empty():
+				push_error("Actual root candidate/live retirement did not empty its native owner")
 	for id: String in sources:
 		var source: Node3D = sources[id]
 		if not is_instance_valid(source) or not source.is_inside_tree():
 			continue
 		source.set_physics_process(false)
-		var error: String = _retire_source_held(id, "garden_whole_parent_exit")
+		var error: String = _retire_source_held(id, "garden_whole_parent_exit", discarded_candidate)
 		if not error.is_empty():
 			last_configuration_error = error
 			push_error(error) # Real cleanup failure is not suppressed or relabeled.
@@ -984,14 +1232,14 @@ func _camera_framing_points() -> Array:
 	return result.points if last_camera_framing_error.is_empty() else []
 
 
-func camera_framing_union(candidate_id: String = "", candidate_points: Array = [], current_view: bool = false, include_pending: bool = true, core_prospective: Dictionary = {}) -> Dictionary:
+func camera_framing_union(candidate_id: String = "", candidate_points: Array = [], current_view: bool = false, include_pending: bool = true, core_prospective: Dictionary = {}, framing_camera: Camera3D = null) -> Dictionary:
 	if not _active or not last_configuration_error.is_empty() or not is_instance_valid(shared_shell) or not is_instance_valid(hero):
 		return _bounds_error("Actual entered parent/Hero/presentation bindings required")
 	if not candidate_id.is_empty() and not sources.has(candidate_id):
 		return _bounds_error("Prospective source must be genuinely installed")
 	if candidate_id.is_empty() and not candidate_points.is_empty():
 		return _bounds_error("Prospective bounds require their actual source ID")
-	var camera: Camera3D = get_viewport().get_camera_3d()
+	var camera: Camera3D = framing_camera if framing_camera != null else get_viewport().get_camera_3d()
 	var native_hero: Array = shared_shell.call("player_camera_framing_points_for", hero, camera)
 	var hero_bounds: Dictionary = _enclosure(native_hero)
 	if not String(hero_bounds.error).is_empty():
@@ -1014,9 +1262,9 @@ func camera_framing_union(candidate_id: String = "", candidate_points: Array = [
 		if _rows[id].kind == "stalker":
 			bounds = source.call("camera_framing_points_for_context", shared_shell, hero, camera, {}, {}, current_view) if held else source.call("current_render_framing_points_for_context", shared_shell, hero, camera)
 		elif _rows[id].kind == "root":
-			bounds = _latcher_bounds(id) if held else source.call("current_render_framing_points_for_camera", camera)
+			bounds = _latcher_bounds(id, {}, [], camera) if held else source.call("current_render_framing_points_for_camera", camera)
 		else:
-			bounds = _echo_bounds(id) if held else _echo_current_bounds(id)
+			bounds = _echo_bounds(id, {}, camera) if held else _echo_current_bounds(id)
 		if not String(bounds.get("error", "Complete native source corners required")).is_empty():
 			return _bounds_error(id + ": " + String(bounds.error))
 		if bounds.points.is_empty() and bool(source.get("dead")) and float(source.get("hp")) == 0.0 and not source.is_in_group("enemies"):
@@ -1040,7 +1288,7 @@ func camera_framing_union(candidate_id: String = "", candidate_points: Array = [
 	if include_pending and not _pending_view.is_empty():
 		var id: String = String(_pending_view.get("id", ""))
 		if id != candidate_id and sources.has(id) and not _source_held(id):
-			var bounds: Dictionary = _echo_bounds(id, _pending_view) if _pending_view.kind == "echo" else _latcher_bounds(id, _pending_view.geometry, _pending_view.positions)
+			var bounds: Dictionary = _echo_bounds(id, _pending_view, camera) if _pending_view.kind == "echo" else _latcher_bounds(id, _pending_view.geometry, _pending_view.positions, camera)
 			if not String(bounds.error).is_empty():
 				return bounds
 			points.append_array(bounds.points)
@@ -1071,9 +1319,9 @@ func _view_guard(id: String, current: bool) -> String:
 	return _guard_union(union, current)
 
 
-func _latcher_bounds(id: String, geometry: Dictionary = {}, positions: Array = []) -> Dictionary:
+func _latcher_bounds(id: String, geometry: Dictionary = {}, positions: Array = [], framing_camera: Camera3D = null) -> Dictionary:
 	var source: Node3D = sources[id]
-	var camera: Camera3D = get_viewport().get_camera_3d()
+	var camera: Camera3D = framing_camera if framing_camera != null else get_viewport().get_camera_3d()
 	var native: Dictionary = source.call("framing_points_for_camera", camera, geometry)
 	if not String(native.get("error", "Native actual Root Latcher current-camera bounds required")).is_empty():
 		return _bounds_error(String(native.error))
@@ -1083,13 +1331,13 @@ func _latcher_bounds(id: String, geometry: Dictionary = {}, positions: Array = [
 		if not selected.is_empty():
 			positions = [selected.landing, selected.attack_position]
 	if not positions.is_empty():
-		var error: String = _append_hero_forecasts(points, positions)
+		var error: String = _append_hero_forecasts(points, positions, camera)
 		if not error.is_empty():
 			return _bounds_error(error)
 	return _enclosure(points)
 
 
-func _echo_bounds(id: String, prospective: Dictionary = {}) -> Dictionary:
+func _echo_bounds(id: String, prospective: Dictionary = {}, framing_camera: Camera3D = null) -> Dictionary:
 	var source: Node3D = sources[id]
 	var art: Dictionary = source.call("framing_points")
 	if not String(art.get("error", "Actual retained own-sequence Echo bounds required")).is_empty():
@@ -1116,7 +1364,7 @@ func _echo_bounds(id: String, prospective: Dictionary = {}) -> Dictionary:
 	var reflection_error: String = _append_reflection(points, id)
 	if not reflection_error.is_empty():
 		return _bounds_error(reflection_error)
-	var error: String = _append_hero_forecasts(points, data.get("positions", []))
+	var error: String = _append_hero_forecasts(points, data.get("positions", []), framing_camera)
 	return _enclosure(points) if error.is_empty() else _bounds_error(error)
 
 
@@ -1160,8 +1408,9 @@ func _append_reflection(points: Array, id: String) -> String:
 	return ""
 
 
-func _append_hero_forecasts(points: Array, positions: Array) -> String:
-	var native: Array = shared_shell.call("player_camera_framing_points_for", hero, get_viewport().get_camera_3d())
+func _append_hero_forecasts(points: Array, positions: Array, framing_camera: Camera3D = null) -> String:
+	var camera: Camera3D = framing_camera if framing_camera != null else get_viewport().get_camera_3d()
+	var native: Array = shared_shell.call("player_camera_framing_points_for", hero, camera)
 	if native.is_empty() or positions.is_empty():
 		return "Complete actual Hero and selected native path positions required"
 	for position: Variant in positions:

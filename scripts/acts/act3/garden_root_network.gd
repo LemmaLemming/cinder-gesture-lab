@@ -1,5 +1,5 @@
 extends Node3D
-## Initial authored root-network core, API/schema2; native validation pending.
+## Authored root-network API/schema2; added candidate disposal awaits native validation.
 ## Retains each genuine recovery receipt before phase-boundary cancellation.
 ## The parent supplies the one actual Scheduler and immutable native floor.
 ## Never enters/starts an encounter, dispatches progression, or allocates a kit.
@@ -359,6 +359,43 @@ func retire(reason: String = "garden_parent_exit") -> void:
 			source.cancel(reason)
 	# Do not reset/end the parent encounter or erase any managed history.
 	_control_busy = was_busy
+
+
+## Disposal-only exception for an ACTUAL unfinished paused whole candidate.
+## No capture/admission/terminal receipt is produced; the whole unit is discarded.
+func discard_staged_candidate(reason: String = "garden_unfinished_candidate_exit") -> bool:
+	if not _configured or _retired or _quiet_stage not in [1, 2, 3] or _control_busy or not get_tree().paused or not is_instance_valid(_parent_level) or not _parent_level.is_restore_candidate() or not _parent_level.has_method("false_paradise_codec_discard_in_progress") or not _parent_level.call("false_paradise_codec_discard_in_progress") or reason.is_empty():
+		return false
+	for kind: String in KINDS:
+		var source: CinderLaneMechanism = mechanisms[kind]
+		var control: Dictionary = threat_scheduler.source_control_state(source)
+		if control.is_empty() or control.encounter_id != _encounter_id or control.world_revision != _world_revision or not control.outside_transaction:
+			return false
+		if not control.reservations.is_empty():
+			var saved: Dictionary = _staged_unit.mechanisms[kind]
+			if control.reservations.size() != 1 or control.clock_s != _staged_scheduler.clock_s or control.reservations[0].id != saved.exchange.get("id"):
+				return false
+	_control_busy = true
+	_active = false
+	_retired = true # Permanently disable this discarded unit BEFORE observers.
+	var cleared: bool = true
+	for kind: String in KINDS:
+		var source: CinderLaneMechanism = mechanisms[kind]
+		var control: Dictionary = threat_scheduler.source_control_state(source)
+		if control.reservations.is_empty():
+			continue
+		if source.state().status == "running":
+			source.cancel(reason)
+		var remaining: Dictionary = threat_scheduler.source_control_state(source)
+		if not remaining.is_empty() and not remaining.reservations.is_empty():
+			# Scheduler committed, this actual Lane did not. Cancel only the
+			# verified remaining native owner lease; never synthesize its exchange.
+			threat_scheduler.cancel_owner(source, reason)
+		var after: Dictionary = threat_scheduler.source_control_state(source)
+		cleared = cleared and not after.is_empty() and after.reservations.is_empty() and after.clock_s == control.clock_s
+	_clear_staging()
+	_control_busy = false
+	return cleared
 
 
 func scheduler_owners() -> Dictionary:
