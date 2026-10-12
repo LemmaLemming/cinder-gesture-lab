@@ -508,7 +508,12 @@ func _camera_framing_points() -> Array:
 	if not _running or not is_instance_valid(hero) or not is_instance_valid(shared_shell): return []
 	var points: Array = []
 	if is_completed(): return _contact_points(_exit_area, _exit_cue)
-	if _boss_contact_near(): points.append_array(_contact_points(_boss_area, _boss_cue))
+	if _boss_contact_near():
+		points.append_array(_contact_points(_boss_area, _boss_cue))
+		# Retain the actual dormant King's full native body/art before exposing
+		# it. Contact cannot birth a newly clipped source or checkpoint while
+		# the shared fixed camera is still approaching this local court.
+		points.append_array(_actor_points("court-king", sources["court-king"].global_position))
 	for id: String in _current_ids():
 		var retained: Variant = sources.get(id)
 		if not is_instance_valid(retained) or not retained is CharacterBody3D or retained != _retained.get(id) or retained.is_queued_for_deletion() or retained.get_parent() != self or not retained.is_inside_tree(): return [Vector3.INF]
