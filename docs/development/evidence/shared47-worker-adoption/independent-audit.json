@@ -1,0 +1,466 @@
+{
+  "schema_version": 1,
+  "audit_revision": "shared47-worker-independent-audit-1",
+  "observed_at_utc": "2026-10-12T03:29:12.223378+00:00",
+  "reviewer": "/root/act_readiness_audit",
+  "canonical_root": "/Users/howardchen/Documents/ChatGPT/video game idea",
+  "run_id": "cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2",
+  "publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+  "api_revision": "campaign-shared-47",
+  "method": [
+    "Read immutable canonical ACK and exact receipt bytes",
+    "Read actual Git commit parents, observed branch and merge ancestry",
+    "Compare immutable publication, merge and current worker physical named bytes",
+    "Compare all prior six-prefix owned Git trees; admit only explicit five Act2 UID additions"
+  ],
+  "workers": {
+    "act1": {
+      "worker_id": "01a11adf-2ec8-7702-96c6-0fa1e240c332",
+      "checkout": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+      "expected_branch": "codex/campaign-act1",
+      "observed_branch": "codex/campaign-act1",
+      "ack": {
+        "message_id": "b16b1409-d97e-4be0-a0af-89294d8d44e5",
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/act1/messages/b16b1409-d97e-4be0-a0af-89294d8d44e5-ACK.json",
+        "sha256": "4999dca309154aeec48b3b7186e37d8b2400ad1025b36fb47d612247f0c31eb1",
+        "created_at": "2026-10-12T03:05:37.839869+00:00",
+        "identity_and_run_verified": true
+      },
+      "receipt": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-shared47-adoption.json",
+        "sha256": "59b8683abcbe4584176c4bd47d7c12fb3656bea1bea19e61210ddeea471ff428",
+        "expected_sha256_from_ack": "59b8683abcbe4584176c4bd47d7c12fb3656bea1bea19e61210ddeea471ff428",
+        "matches_ack": true,
+        "api_revision": "campaign-shared-47",
+        "counts_scope": "Broad custody counts retained as owner-reported; no broad physical audit repeated."
+      },
+      "merge_commit": "e6ad6da14b25c1d9fac8ebab4471d00929da41e4",
+      "actual_parents": [
+        "e48f741d2100ad00e5304043b949e48a66ff02a4",
+        "cf423911844d63c458c59e5503f82c8b1e61574b"
+      ],
+      "second_parent_is_publication": true,
+      "observed_head": "6553ff354883b94cbd73a9d8a7be39ae1820753d",
+      "merge_is_ancestor_of_observed_head": true,
+      "six_owned_prefixes": [
+        "scenes/acts/act1/",
+        "scripts/acts/act1/",
+        "assets/acts/act1/",
+        "tests/acts/act1/",
+        "data/campaign/act1/",
+        "docs/acts/act1/"
+      ],
+      "prior_owned_git_changes": [],
+      "expected_owned_exception_paths": [],
+      "all_prior_owned_git_blobs_and_modes_preserved": true,
+      "named_bytes": {
+        "scripts/ui/campaign_menu.gd": {
+          "sha256": {
+            "publication": "afdb380e539e4b8f2b88c263a883064d80cd6ecdee477891fcc984e00999e3b7",
+            "merge": "afdb380e539e4b8f2b88c263a883064d80cd6ecdee477891fcc984e00999e3b7",
+            "worker_current": "afdb380e539e4b8f2b88c263a883064d80cd6ecdee477891fcc984e00999e3b7"
+          },
+          "sizes": {
+            "publication": 37348,
+            "merge": 37348,
+            "worker_current": 37348
+          },
+          "publication_merge_current_equal": true
+        },
+        "scripts/dev/dev.py": {
+          "sha256": {
+            "publication": "c9d0044de3b034adc190470427f664aa2fec10dca838921c04c411b83f025954",
+            "merge": "c9d0044de3b034adc190470427f664aa2fec10dca838921c04c411b83f025954",
+            "worker_current": "c9d0044de3b034adc190470427f664aa2fec10dca838921c04c411b83f025954"
+          },
+          "sizes": {
+            "publication": 28830,
+            "merge": 28830,
+            "worker_current": 28830
+          },
+          "publication_merge_current_equal": true
+        },
+        "scripts/campaign/registry.gd": {
+          "sha256": {
+            "publication": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+            "merge": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+            "worker_current": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+          },
+          "sizes": {
+            "publication": 6006,
+            "merge": 6006,
+            "worker_current": 6006
+          },
+          "publication_merge_current_equal": true
+        },
+        "data/campaign/registry.json": {
+          "sha256": {
+            "publication": "054d7e39fd64be41d072366c15a068a6f810cf9b9046fce144befbdf05ca2fe4",
+            "merge": "054d7e39fd64be41d072366c15a068a6f810cf9b9046fce144befbdf05ca2fe4",
+            "worker_current": "054d7e39fd64be41d072366c15a068a6f810cf9b9046fce144befbdf05ca2fe4"
+          },
+          "sizes": {
+            "publication": 11220,
+            "merge": 11220,
+            "worker_current": 11220
+          },
+          "publication_merge_current_equal": true
+        },
+        "tests/act2_l5_registration_smoke.gd": {
+          "sha256": {
+            "publication": "8f2a595322feac979aa699ae7f647bffc99f9d78c6e3965ddd2954be1c3f43c8",
+            "merge": "8f2a595322feac979aa699ae7f647bffc99f9d78c6e3965ddd2954be1c3f43c8",
+            "worker_current": "8f2a595322feac979aa699ae7f647bffc99f9d78c6e3965ddd2954be1c3f43c8"
+          },
+          "sizes": {
+            "publication": 19793,
+            "merge": 19793,
+            "worker_current": 19793
+          },
+          "publication_merge_current_equal": true
+        },
+        "tests/act2_l5_registration_smoke.gd.uid": {
+          "sha256": {
+            "publication": "e918136ed517ced42a5f224786d507f12e92cde3c19697f455a114e473a060a3",
+            "merge": "e918136ed517ced42a5f224786d507f12e92cde3c19697f455a114e473a060a3",
+            "worker_current": "e918136ed517ced42a5f224786d507f12e92cde3c19697f455a114e473a060a3"
+          },
+          "sizes": {
+            "publication": 20,
+            "merge": 20,
+            "worker_current": 20
+          },
+          "publication_merge_current_equal": true
+        }
+      },
+      "returned_uid_metadata": [],
+      "immutable_adoption_verified": true
+    },
+    "act2": {
+      "worker_id": "01a11adf-a56f-77d2-a7bc-45fd94702ab1",
+      "checkout": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+      "expected_branch": "codex/campaign-act2",
+      "observed_branch": "codex/campaign-act2",
+      "ack": {
+        "message_id": "5b8bca56-4355-482a-a6e9-a7a148cc3c6e",
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/act2/messages/5b8bca56-4355-482a-a6e9-a7a148cc3c6e-ACK.json",
+        "sha256": "d0739011d875e330580fa2dffcc4441dceee0ae443f83c64db4247a00c171621",
+        "created_at": "2026-10-12T02:48:33.025620+00:00",
+        "identity_and_run_verified": true
+      },
+      "receipt": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/evidence/shared47-adoption/adoption.json",
+        "sha256": "60abb7b7beea3e817249481efb5f16149f3c519ab12861f44de49dc70a53797a",
+        "expected_sha256_from_ack": "60abb7b7beea3e817249481efb5f16149f3c519ab12861f44de49dc70a53797a",
+        "matches_ack": true,
+        "api_revision": "not separately present",
+        "counts_scope": "Broad custody counts retained as owner-reported; no broad physical audit repeated."
+      },
+      "merge_commit": "ef2db5cbb695dc43f5ab0abe5d7032341fa7db03",
+      "actual_parents": [
+        "86c8daff7c30216a6463c2058b9a520e3250d6c3",
+        "cf423911844d63c458c59e5503f82c8b1e61574b"
+      ],
+      "second_parent_is_publication": true,
+      "observed_head": "2ae15df0ae795d45a949e6b63c230794daf269ba",
+      "merge_is_ancestor_of_observed_head": true,
+      "six_owned_prefixes": [
+        "scenes/acts/act2/",
+        "scripts/acts/act2/",
+        "assets/acts/act2/",
+        "tests/acts/act2/",
+        "data/campaign/act2/",
+        "docs/acts/act2/"
+      ],
+      "prior_owned_git_changes": [
+        "A\ttests/acts/act2/a2_l5_act3_transition_interface_smoke.gd.uid",
+        "A\ttests/acts/act2/a2_l5_production_guard_diagnostic.gd.uid",
+        "A\ttests/acts/act2/a2_l5_production_proof_diagnostic.gd.uid",
+        "A\ttests/acts/act2/a2_l5_sentry_phase_transport_smoke.gd.uid",
+        "A\ttests/acts/act2/fixtures/a2_l5_tracking_commit_observer.gd.uid"
+      ],
+      "expected_owned_exception_paths": [
+        "tests/acts/act2/a2_l5_production_proof_diagnostic.gd.uid",
+        "tests/acts/act2/a2_l5_act3_transition_interface_smoke.gd.uid",
+        "tests/acts/act2/a2_l5_production_guard_diagnostic.gd.uid",
+        "tests/acts/act2/a2_l5_sentry_phase_transport_smoke.gd.uid",
+        "tests/acts/act2/fixtures/a2_l5_tracking_commit_observer.gd.uid"
+      ],
+      "all_prior_owned_git_blobs_and_modes_preserved": true,
+      "named_bytes": {
+        "scripts/ui/campaign_menu.gd": {
+          "sha256": {
+            "publication": "afdb380e539e4b8f2b88c263a883064d80cd6ecdee477891fcc984e00999e3b7",
+            "merge": "afdb380e539e4b8f2b88c263a883064d80cd6ecdee477891fcc984e00999e3b7",
+            "worker_current": "afdb380e539e4b8f2b88c263a883064d80cd6ecdee477891fcc984e00999e3b7"
+          },
+          "sizes": {
+            "publication": 37348,
+            "merge": 37348,
+            "worker_current": 37348
+          },
+          "publication_merge_current_equal": true
+        },
+        "scripts/dev/dev.py": {
+          "sha256": {
+            "publication": "c9d0044de3b034adc190470427f664aa2fec10dca838921c04c411b83f025954",
+            "merge": "c9d0044de3b034adc190470427f664aa2fec10dca838921c04c411b83f025954",
+            "worker_current": "c9d0044de3b034adc190470427f664aa2fec10dca838921c04c411b83f025954"
+          },
+          "sizes": {
+            "publication": 28830,
+            "merge": 28830,
+            "worker_current": 28830
+          },
+          "publication_merge_current_equal": true
+        },
+        "scripts/campaign/registry.gd": {
+          "sha256": {
+            "publication": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+            "merge": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+            "worker_current": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+          },
+          "sizes": {
+            "publication": 6006,
+            "merge": 6006,
+            "worker_current": 6006
+          },
+          "publication_merge_current_equal": true
+        },
+        "data/campaign/registry.json": {
+          "sha256": {
+            "publication": "054d7e39fd64be41d072366c15a068a6f810cf9b9046fce144befbdf05ca2fe4",
+            "merge": "054d7e39fd64be41d072366c15a068a6f810cf9b9046fce144befbdf05ca2fe4",
+            "worker_current": "054d7e39fd64be41d072366c15a068a6f810cf9b9046fce144befbdf05ca2fe4"
+          },
+          "sizes": {
+            "publication": 11220,
+            "merge": 11220,
+            "worker_current": 11220
+          },
+          "publication_merge_current_equal": true
+        },
+        "tests/act2_l5_registration_smoke.gd": {
+          "sha256": {
+            "publication": "8f2a595322feac979aa699ae7f647bffc99f9d78c6e3965ddd2954be1c3f43c8",
+            "merge": "8f2a595322feac979aa699ae7f647bffc99f9d78c6e3965ddd2954be1c3f43c8",
+            "worker_current": "8f2a595322feac979aa699ae7f647bffc99f9d78c6e3965ddd2954be1c3f43c8"
+          },
+          "sizes": {
+            "publication": 19793,
+            "merge": 19793,
+            "worker_current": 19793
+          },
+          "publication_merge_current_equal": true
+        },
+        "tests/act2_l5_registration_smoke.gd.uid": {
+          "sha256": {
+            "publication": "e918136ed517ced42a5f224786d507f12e92cde3c19697f455a114e473a060a3",
+            "merge": "e918136ed517ced42a5f224786d507f12e92cde3c19697f455a114e473a060a3",
+            "worker_current": "e918136ed517ced42a5f224786d507f12e92cde3c19697f455a114e473a060a3"
+          },
+          "sizes": {
+            "publication": 20,
+            "merge": 20,
+            "worker_current": 20
+          },
+          "publication_merge_current_equal": true
+        }
+      },
+      "returned_uid_metadata": [
+        {
+          "path": "tests/acts/act2/a2_l5_production_proof_diagnostic.gd.uid",
+          "identity": "uid://chdwqmw03oinp",
+          "sha256": {
+            "publication": "65cf33e6c806eade8faba1f95e0e71b0cf22bab334eee117dd4b862cd11602a0",
+            "merge": "65cf33e6c806eade8faba1f95e0e71b0cf22bab334eee117dd4b862cd11602a0",
+            "worker_current": "65cf33e6c806eade8faba1f95e0e71b0cf22bab334eee117dd4b862cd11602a0"
+          },
+          "publication_merge_current_equal": true,
+          "absent_in_first_parent": true,
+          "qualification": "Declared post-import metadata only; not backfilled into candidate5703 or original native manifests."
+        },
+        {
+          "path": "tests/acts/act2/a2_l5_act3_transition_interface_smoke.gd.uid",
+          "identity": "uid://b8ef6x5qdommh",
+          "sha256": {
+            "publication": "0f577b68142e409a6ef9b3a431158a51c3ba5b4c5ae2119004d3585034470710",
+            "merge": "0f577b68142e409a6ef9b3a431158a51c3ba5b4c5ae2119004d3585034470710",
+            "worker_current": "0f577b68142e409a6ef9b3a431158a51c3ba5b4c5ae2119004d3585034470710"
+          },
+          "publication_merge_current_equal": true,
+          "absent_in_first_parent": true,
+          "qualification": "Declared post-import metadata only; not backfilled into candidate5703 or original native manifests."
+        },
+        {
+          "path": "tests/acts/act2/a2_l5_production_guard_diagnostic.gd.uid",
+          "identity": "uid://bv0d8eiee1yfd",
+          "sha256": {
+            "publication": "db0eca924354558b22bde0e59d6f4b3adf8d8efbd051725285ff08a49ea4b3d6",
+            "merge": "db0eca924354558b22bde0e59d6f4b3adf8d8efbd051725285ff08a49ea4b3d6",
+            "worker_current": "db0eca924354558b22bde0e59d6f4b3adf8d8efbd051725285ff08a49ea4b3d6"
+          },
+          "publication_merge_current_equal": true,
+          "absent_in_first_parent": true,
+          "qualification": "Declared post-import metadata only; not backfilled into candidate5703 or original native manifests."
+        },
+        {
+          "path": "tests/acts/act2/a2_l5_sentry_phase_transport_smoke.gd.uid",
+          "identity": "uid://b244msmst40cf",
+          "sha256": {
+            "publication": "a1a29a2a42e5a5884d64203ec0481e1cb58923823ae2272e8e6e81de0f18052a",
+            "merge": "a1a29a2a42e5a5884d64203ec0481e1cb58923823ae2272e8e6e81de0f18052a",
+            "worker_current": "a1a29a2a42e5a5884d64203ec0481e1cb58923823ae2272e8e6e81de0f18052a"
+          },
+          "publication_merge_current_equal": true,
+          "absent_in_first_parent": true,
+          "qualification": "Declared post-import metadata only; not backfilled into candidate5703 or original native manifests."
+        },
+        {
+          "path": "tests/acts/act2/fixtures/a2_l5_tracking_commit_observer.gd.uid",
+          "identity": "uid://tjdq46jpgj3h",
+          "sha256": {
+            "publication": "d3831e90f013614f3cb25e5a84552f095a56b9a13bff5154a5c3a8cc71991261",
+            "merge": "d3831e90f013614f3cb25e5a84552f095a56b9a13bff5154a5c3a8cc71991261",
+            "worker_current": "d3831e90f013614f3cb25e5a84552f095a56b9a13bff5154a5c3a8cc71991261"
+          },
+          "publication_merge_current_equal": true,
+          "absent_in_first_parent": true,
+          "qualification": "Declared post-import metadata only; not backfilled into candidate5703 or original native manifests."
+        }
+      ],
+      "immutable_adoption_verified": true
+    },
+    "act3": {
+      "worker_id": "01a11ae0-0acf-7d00-a987-321a98de5b66",
+      "checkout": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea",
+      "expected_branch": "codex/campaign-act3",
+      "observed_branch": "codex/campaign-act3",
+      "ack": {
+        "message_id": "2e4170fe-2ca0-4b74-ad56-a63e0096245d",
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/act3/messages/2e4170fe-2ca0-4b74-ad56-a63e0096245d-ACK.json",
+        "sha256": "16f6762c74f34749de9101969313d7a2c2ed588c2e99b86b5b5d09bfcb7f80c9",
+        "created_at": "2026-10-12T02:21:50.694701+00:00",
+        "identity_and_run_verified": true
+      },
+      "receipt": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/false-paradise-shared47-adoption.json",
+        "sha256": "1a27d98105e481daa1b74e9ccf559a57234735da3e3b61c02ef7982daa01885a",
+        "expected_sha256_from_ack": "1a27d98105e481daa1b74e9ccf559a57234735da3e3b61c02ef7982daa01885a",
+        "matches_ack": true,
+        "api_revision": "campaign-shared-47",
+        "counts_scope": "Broad custody counts retained as owner-reported; no broad physical audit repeated."
+      },
+      "merge_commit": "6b8391c74a054e1bd960e6dc4d318e364270bdf0",
+      "actual_parents": [
+        "7a06f8053335498d2b6c39f955b4abdd3c73203c",
+        "cf423911844d63c458c59e5503f82c8b1e61574b"
+      ],
+      "second_parent_is_publication": true,
+      "observed_head": "9fb753bc2cac87a54ef14980440fff274f0269f0",
+      "merge_is_ancestor_of_observed_head": true,
+      "six_owned_prefixes": [
+        "scenes/acts/act3/",
+        "scripts/acts/act3/",
+        "assets/acts/act3/",
+        "tests/acts/act3/",
+        "data/campaign/act3/",
+        "docs/acts/act3/"
+      ],
+      "prior_owned_git_changes": [],
+      "expected_owned_exception_paths": [],
+      "all_prior_owned_git_blobs_and_modes_preserved": true,
+      "named_bytes": {
+        "scripts/ui/campaign_menu.gd": {
+          "sha256": {
+            "publication": "afdb380e539e4b8f2b88c263a883064d80cd6ecdee477891fcc984e00999e3b7",
+            "merge": "afdb380e539e4b8f2b88c263a883064d80cd6ecdee477891fcc984e00999e3b7",
+            "worker_current": "afdb380e539e4b8f2b88c263a883064d80cd6ecdee477891fcc984e00999e3b7"
+          },
+          "sizes": {
+            "publication": 37348,
+            "merge": 37348,
+            "worker_current": 37348
+          },
+          "publication_merge_current_equal": true
+        },
+        "scripts/dev/dev.py": {
+          "sha256": {
+            "publication": "c9d0044de3b034adc190470427f664aa2fec10dca838921c04c411b83f025954",
+            "merge": "c9d0044de3b034adc190470427f664aa2fec10dca838921c04c411b83f025954",
+            "worker_current": "c9d0044de3b034adc190470427f664aa2fec10dca838921c04c411b83f025954"
+          },
+          "sizes": {
+            "publication": 28830,
+            "merge": 28830,
+            "worker_current": 28830
+          },
+          "publication_merge_current_equal": true
+        },
+        "scripts/campaign/registry.gd": {
+          "sha256": {
+            "publication": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+            "merge": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+            "worker_current": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+          },
+          "sizes": {
+            "publication": 6006,
+            "merge": 6006,
+            "worker_current": 6006
+          },
+          "publication_merge_current_equal": true
+        },
+        "data/campaign/registry.json": {
+          "sha256": {
+            "publication": "054d7e39fd64be41d072366c15a068a6f810cf9b9046fce144befbdf05ca2fe4",
+            "merge": "054d7e39fd64be41d072366c15a068a6f810cf9b9046fce144befbdf05ca2fe4",
+            "worker_current": "054d7e39fd64be41d072366c15a068a6f810cf9b9046fce144befbdf05ca2fe4"
+          },
+          "sizes": {
+            "publication": 11220,
+            "merge": 11220,
+            "worker_current": 11220
+          },
+          "publication_merge_current_equal": true
+        },
+        "tests/act2_l5_registration_smoke.gd": {
+          "sha256": {
+            "publication": "8f2a595322feac979aa699ae7f647bffc99f9d78c6e3965ddd2954be1c3f43c8",
+            "merge": "8f2a595322feac979aa699ae7f647bffc99f9d78c6e3965ddd2954be1c3f43c8",
+            "worker_current": "8f2a595322feac979aa699ae7f647bffc99f9d78c6e3965ddd2954be1c3f43c8"
+          },
+          "sizes": {
+            "publication": 19793,
+            "merge": 19793,
+            "worker_current": 19793
+          },
+          "publication_merge_current_equal": true
+        },
+        "tests/act2_l5_registration_smoke.gd.uid": {
+          "sha256": {
+            "publication": "e918136ed517ced42a5f224786d507f12e92cde3c19697f455a114e473a060a3",
+            "merge": "e918136ed517ced42a5f224786d507f12e92cde3c19697f455a114e473a060a3",
+            "worker_current": "e918136ed517ced42a5f224786d507f12e92cde3c19697f455a114e473a060a3"
+          },
+          "sizes": {
+            "publication": 20,
+            "merge": 20,
+            "worker_current": 20
+          },
+          "publication_merge_current_equal": true
+        }
+      },
+      "returned_uid_metadata": [],
+      "immutable_adoption_verified": true
+    }
+  },
+  "limitations": [
+    "Root Shared48 working Menu and later publication are excluded; no comparison to Root working runtime.",
+    "Broad physical-file/settings/ignored-original/UID preservation counts are owner-reported except specifically enumerated byte observations.",
+    "No engine/import/gameplay/portrait/level acceptance credit is supplied by adoption or this audit.",
+    "No canonical status/run/worker record, assignment, owner file or Git state is mutated.",
+    "Later current worker changes are observations at the recorded time; immutable adoption facts remain tied to the exact ACK and merge."
+  ],
+  "findings": [],
+  "outcome": "PASS"
+}

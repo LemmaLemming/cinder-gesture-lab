@@ -19,6 +19,7 @@ signal retry_failed_operation_requested
 const Equipment = preload("res://scripts/equipment.gd")
 const Difficulty = preload("res://scripts/combat/difficulty.gd")
 const PlayerArt = preload("res://scripts/pixel_sprite.gd")
+const MenuScenery = preload("res://scripts/ui/campaign_scenery.gd")
 const REPLAY_SLOTS: Array[String] = ["weapon", "jacket", "pants", "shoes"]
 const DIFFICULTY_IDS: Array[String] = ["assisted", "standard", "challenge"]
 const ACT_NAMES: Array[String] = ["The Moon", "The Invasion", "Tormance"]
@@ -36,6 +37,10 @@ class RouteCanvas extends Control:
 	func _draw() -> void:
 		for act: int in range(region_colours.size()):
 			draw_rect(Rect2(0, act * ACT_HEIGHT, size.x, ACT_HEIGHT - 8.0), region_colours[act])
+
+class RouteLinks extends Control:
+	var segments: Array[PackedVector2Array] = []
+	func _draw() -> void:
 		for segment: PackedVector2Array in segments:
 			draw_line(segment[0], segment[1], Color("77818b"), 3.0, false)
 
@@ -53,6 +58,9 @@ var _return_page: String = "title"
 var _selected_id: String = ""
 var _journey_scroll: ScrollContainer
 var _route_canvas: RouteCanvas
+var _route_links: RouteLinks
+var _route_scenery: Array[Control] = []
+var _route_header_backdrops: Array[ColorRect] = []
 var _node_buttons: Dictionary = {}
 var _story_marker: Label
 var _story_traveller: TextureRect
@@ -169,11 +177,40 @@ func show_journey() -> void:
 	_route_canvas.region_colours = ACT_BACKGROUNDS.duplicate()
 	_journey_scroll.add_child(_route_canvas)
 	_node_buttons.clear()
+	_route_scenery.clear()
 	for act: int in range(3):
-		var title: Label = _label(_route_canvas, "ACT %d · %s" % [act + 1, ACT_NAMES[act]], 24, ACT_COLOURS[act])
+		var scenery := MenuScenery.new()
+		scenery.name = "Act%dRouteScenery" % (act + 1)
+		scenery.configure(act + 1, "route", _act_reached(act + 1), act == 0 and not _moon_reached())
+		scenery.position.y = act * ACT_HEIGHT
+		scenery.clip_contents = true
+		_route_canvas.add_child(scenery)
+		_route_scenery.append(scenery)
+	# Connections remain above decoration and below the unchanged node family.
+	_route_links = RouteLinks.new()
+	_route_links.name = "JourneyConnections"
+	_route_links.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_route_canvas.add_child(_route_links)
+	_route_header_backdrops.clear()
+	for act: int in range(3):
+		var backdrop := ColorRect.new()
+		backdrop.name = "Act%dHeaderBackdrop" % (act + 1)
+		backdrop.color = ACT_BACKGROUNDS[act]
+		backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_route_canvas.add_child(backdrop)
+		_route_header_backdrops.append(backdrop)
+		# Shape at a real width before entering the tree. A zero-width wrapped
+		# label can otherwise retain a tall minimum paragraph behind one line.
+		var title := Label.new()
+		title.text = "ACT %d · %s" % [act + 1, ACT_NAMES[act]]
+		title.add_theme_font_size_override("font_size", 24)
+		title.add_theme_color_override("font_color", ACT_COLOURS[act])
+		title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		title.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		title.position = Vector2(16, act * ACT_HEIGHT + 20)
 		title.size = Vector2(264, 64)
 		title.name = "Act%dTitle" % (act + 1)
+		_route_canvas.add_child(title)
 	if _registry != null:
 		for id: String in _registry.ids():
 			var node: Button = _button(_route_canvas, "", "Node_" + id.replace("-", "_"))
@@ -547,7 +584,14 @@ func _layout_journey() -> void:
 		return
 	var width: float = maxf(_journey_scroll.size.x - 16.0, 264.0)
 	_route_canvas.size.x = width
+	_route_links.size = Vector2(width, ACT_HEIGHT * 3.0)
+	for scenery: Control in _route_scenery:
+		# Transparent route art uses the full160x360 grid at its natural scale;
+		# the parent's8px region gap remains visible underneath.
+		scenery.size = Vector2(width, ACT_HEIGHT)
 	for act: int in range(3):
+		_route_header_backdrops[act].position = Vector2(0, act * ACT_HEIGHT + 12.0)
+		_route_header_backdrops[act].size = Vector2(width, 80)
 		(_route_canvas.get_node("Act%dTitle" % (act + 1)) as Label).size.x = width - 32.0
 	_route_canvas.segments.clear()
 	var route_x: Array[float] = [0.5, 0.28, 0.72, 0.28, 0.5]
@@ -576,6 +620,8 @@ func _layout_journey() -> void:
 		_story_marker.position = story_node.position + Vector2(0, story_node.size.y + 4.0)
 		var beside_x: float = story_node.position.x - 56.0 if story_node.position.x >= 56.0 else story_node.position.x + story_node.size.x + 8.0
 		_story_traveller.position = Vector2(beside_x, story_node.position.y + 6.0)
+	_route_links.segments = _route_canvas.segments.duplicate()
+	_route_links.queue_redraw()
 	_route_canvas.queue_redraw()
 
 func _restore_journey_scroll() -> void:
@@ -667,6 +713,20 @@ func _story_id() -> String:
 	var story: Variant = _state().get("story")
 	return String(story["level_id"]) if story is Dictionary else ""
 
+func _act_reached(act: int) -> bool:
+	if act == 1 or _story_id().begins_with("A%d-" % act):
+		return true
+	for id: String in _state().get("completed_main", []):
+		if id.begins_with("A%d-" % act):
+			return true
+	return false
+
+func _moon_reached() -> bool:
+	# The opening belongs to Earth. Lunar scenery appears after that visit,
+	# without using optional completion or readiness as a story unlock.
+	var story: String = _story_id()
+	return not story.is_empty() and story != "A1-L1"
+
 func _story_checkpoint_label() -> String:
 	var story: Variant = _state().get("story")
 	if not story is Dictionary:
@@ -707,7 +767,25 @@ func _presentation_note(parent: Node, id: String) -> void:
 	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_portrait.texture = PlayerArt.preview_texture(PlayerArt.presentation_for_act(act + 1), _replay_gear if _page == "replay" else _story_gear())
-	parent.add_child(_portrait)
+	if _page == "title":
+		var scenery := MenuScenery.new()
+		scenery.name = "TitleScenery"
+		scenery.custom_minimum_size = Vector2(0, 264)
+		scenery.configure(act + 1, "title", true, act == 0 and not _moon_reached())
+		parent.add_child(scenery)
+		scenery.add_child(_portrait)
+		var portrait: TextureRect = _portrait
+		var layout_portrait: Callable = func() -> void:
+			if not is_instance_valid(scenery) or not is_instance_valid(portrait):
+				return
+			var rect: Rect2 = scenery.traveller_rect()
+			portrait.custom_minimum_size = rect.size
+			portrait.position = rect.position
+			portrait.size = rect.size
+		scenery.resized.connect(layout_portrait)
+		layout_portrait.call_deferred()
+	else:
+		parent.add_child(_portrait)
 
 func _scroll_box() -> VBoxContainer:
 	var scroll: ScrollContainer = _scroll(_host, "PageScroll")

@@ -49,6 +49,7 @@ SUITES = {
     "enemy_snapshot": "tests/enemy_snapshot_smoke.gd",
     "campaign_menu": "tests/campaign_menu_smoke.gd",
     "replay_comparison": "tests/replay_comparison_snapshot_smoke.gd",
+    "menu_scenery": "tests/menu_scenery_smoke.gd",
     "input_response": "tests/input_response_smoke.gd",
     "effects_settings": "tests/effects_settings_smoke.gd",
     "practice_target": "tests/practice_target_smoke.gd",
