@@ -1,0 +1,190 @@
+{
+  "api_revision": "act2-native-sentry-phase154-scoped-review-1",
+  "corrected_packet_scope": {
+    "api_revision": "campaign-shared-43",
+    "checks": 154,
+    "exit": 0,
+    "failures": 0,
+    "no_native_script_warning_parse_errors": true,
+    "no_uid_additions": true,
+    "publication": "c6db356d2771d2b68e213a94dbcd3262e2421b3d",
+    "raw_wrapper_sha256": "9001dc3956a0e31088baa4a0a7442b3f40cc1a80434b18a75860c786c9888955",
+    "sources": 388,
+    "sources_modes_unchanged": true
+  },
+  "event_observer_scope": [
+    "Hero world_action_executed/action_resolved/fired/died/equipment_changed",
+    "Scheduler reservation_invalidated",
+    "Parent phase_checkpoint_eligible/sentry_cleared/hit_resolved/runtime_failed",
+    "Ray/Foot state_changed/hit_resolved and required cue state_changed",
+    "Joint cue state_changed",
+    "Actor phase_boundary_reached/defeated"
+  ],
+  "exact_production_delta": {
+    "active_production_and_fixture_match_corrected_packet": {
+      "scripts/acts/act2/dead_london_sentry_encounter.gd": "f36e42c36e32edc2e20f7fed8d2dd21b0758f356fcc7cd53332ebd93109edfc1",
+      "tests/acts/act2/a2_l5_sentry_phase_transport_smoke.gd": "6aa89c3b316e591620bd7060519d46401936039a4ffcf3d649c2f1f83dba9f46"
+    },
+    "all_other_original388_source_hashes_identical": true,
+    "changed_paths": {
+      "scripts/acts/act2/dead_london_sentry_encounter.gd": {
+        "new": "f36e42c36e32edc2e20f7fed8d2dd21b0758f356fcc7cd53332ebd93109edfc1",
+        "old": "c66f9b6b25aed7f1e0b14a5f84b3cf1666bead2b40d36b14fdaf3bc011b1ea52"
+      }
+    },
+    "text_delta": "_ray_intro.last_cancel_reason setter -> _ray_intro[\"last_cancel_reason\"] setter at510; creates canonical String dictionary key instead of StringName; value/source/cancel/clock/deadline/HP/gate/cadence unchanged",
+    "unchanged_original_fixture": true
+  },
+  "five_native_tuples": [
+    {
+      "exact_typed_json_roundtrip": true,
+      "fresh_same_call_preflight_before_first_physics": true,
+      "held_paused_exact": true,
+      "label": "actual pending first brace",
+      "two_quiet_commits_exact_recapture": true
+    },
+    {
+      "exact_typed_json_roundtrip": true,
+      "fresh_same_call_preflight_before_first_physics": true,
+      "held_paused_exact": true,
+      "label": "actual dead pending brace",
+      "two_quiet_commits_exact_recapture": true
+    },
+    {
+      "exact_typed_json_roundtrip": true,
+      "fresh_same_call_preflight_before_first_physics": true,
+      "held_paused_exact": true,
+      "label": "actual pending phase2 notification",
+      "two_quiet_commits_exact_recapture": true
+    },
+    {
+      "exact_typed_json_roundtrip": true,
+      "fresh_same_call_preflight_before_first_physics": true,
+      "held_paused_exact": true,
+      "label": "actual delivered phase2 boundary",
+      "two_quiet_commits_exact_recapture": true
+    },
+    {
+      "exact_typed_json_roundtrip": true,
+      "fresh_same_call_preflight_before_first_physics": true,
+      "held_paused_exact": true,
+      "label": "actual armed phase2 pair",
+      "two_quiet_commits_exact_recapture": true
+    }
+  ],
+  "limits": [
+    "Standard/Heavy component with two owners/one authored floor; no production hood/offset/camera framing claim",
+    "Five native transport tuples are asserted and exact-roundtripped in memory; this packet does not archive the native tuple JSON as durable capture artifacts",
+    "TEST-only phase acknowledgement is not protected Shell/Attempts checkpoint/GUI persistence",
+    "No whole L5 route, second-pool defeat, recognizer, transition, production portrait or balance acceptance",
+    "No engine, source edit or Git mutation by reviewer"
+  ],
+  "packets": [
+    {
+      "all_archive_source_hashes_modes_verified": true,
+      "checks": 18,
+      "exit_code": 1,
+      "failures": 1,
+      "fixture_sha256": "6aa89c3b316e591620bd7060519d46401936039a4ffcf3d649c2f1f83dba9f46",
+      "hashes": {
+        "raw.log": "a0c6beeaaa818ff99d4e55edbf897c6602195d9f1fd104d17980892ce3948ebb",
+        "result.json": "8bc30d2f1677f459a268fe4fc55606fda0fb307ab1236b98ebf3c707f343d51f",
+        "source.json": "0f33e3237e14c2d76be73ab0b81ab1fbffedbf8ed2c58f75369466a2413ea749",
+        "wrapper.log": "4b2be16ff647d2a748f9dfdc65e43b6984637843a02f540422af2956322e227e"
+      },
+      "name": "production-sentry-phase-transport-first",
+      "raw_error_lines": [
+        "ERROR: FAIL: real first Heavy hit yields strict pending15HP/spent source packet before phase commit"
+      ],
+      "raw_warnings": 0,
+      "raw_wrapper_equal": false,
+      "script_errors": 0,
+      "source_count": 388,
+      "source_sha256": "c66f9b6b25aed7f1e0b14a5f84b3cf1666bead2b40d36b14fdaf3bc011b1ea52",
+      "uid_source_count": 119,
+      "wrapper_warnings": 1
+    },
+    {
+      "all_archive_source_hashes_modes_verified": true,
+      "checks": 18,
+      "exit_code": 1,
+      "failures": 1,
+      "fixture_sha256": "29bbc0fc8f7839cda13dac918d5a0089b9a9ef8e7f09b12af8cb1270ba4f5cc0",
+      "hashes": {
+        "raw.log": "dc65251920416026c1ddff907206875ec09e5e90e1e72f9e0bfcde16d059d09c",
+        "result.json": "649dec57c6a632ee370dfe6918b6a355cab5973d780024cbce1c2915eab29194",
+        "source.json": "76ddb77bdec4f0680f7dd48241285a0d75dc7a079ab44eb4e1de097f21d5ec3c",
+        "wrapper.log": "5ef2c06a36da5048199b3c2c4158696d07ec3ec7fd9925425fe14e62e59f89c5"
+      },
+      "name": "production-sentry-phase-pending-diagnostic",
+      "raw_error_lines": [
+        "ERROR: FAIL: real first Heavy hit yields strict pending15HP/spent source packet before phase commit"
+      ],
+      "raw_warnings": 0,
+      "raw_wrapper_equal": false,
+      "script_errors": 0,
+      "source_count": 388,
+      "source_sha256": "c66f9b6b25aed7f1e0b14a5f84b3cf1666bead2b40d36b14fdaf3bc011b1ea52",
+      "uid_source_count": 119,
+      "wrapper_warnings": 1
+    },
+    {
+      "all_archive_source_hashes_modes_verified": true,
+      "checks": 18,
+      "exit_code": 1,
+      "failures": 1,
+      "fixture_sha256": "9bfcf7375d03abb1f4fbeff9734e63311babd028582eccfc12dd675b49304c20",
+      "hashes": {
+        "raw.log": "58e7414d977c8c2623bba79d1a48c27ffba9df2cad4ba68ebc3b8d6b9f0dc1a5",
+        "result.json": "982ad06e76041abfda47208aae97141e1b4e5ae33358990ae638cb640f559ba7",
+        "source.json": "76960dcb0fa64a0c82c392baf3e74389ccb460f925d8d1b2e8fd0b2f20495be0",
+        "wrapper.log": "58e7414d977c8c2623bba79d1a48c27ffba9df2cad4ba68ebc3b8d6b9f0dc1a5"
+      },
+      "name": "production-sentry-phase-key-diagnostic",
+      "raw_error_lines": [
+        "ERROR: FAIL: real first Heavy hit yields strict pending15HP/spent source packet before phase commit"
+      ],
+      "raw_warnings": 0,
+      "raw_wrapper_equal": true,
+      "script_errors": 0,
+      "source_count": 388,
+      "source_sha256": "c66f9b6b25aed7f1e0b14a5f84b3cf1666bead2b40d36b14fdaf3bc011b1ea52",
+      "uid_source_count": 119,
+      "wrapper_warnings": 0
+    },
+    {
+      "all_archive_source_hashes_modes_verified": true,
+      "checks": 154,
+      "exit_code": 0,
+      "failures": 0,
+      "fixture_sha256": "6aa89c3b316e591620bd7060519d46401936039a4ffcf3d649c2f1f83dba9f46",
+      "hashes": {
+        "raw.log": "9001dc3956a0e31088baa4a0a7442b3f40cc1a80434b18a75860c786c9888955",
+        "result.json": "3dafb7214627c336cf9a9f03a788270bcbb1c98726c9bcc44281b1cafc5c37fc",
+        "source.json": "8dd635aac8be3e4a7abce7ecbb172e31a3c2376357f1cc08f714fdde2b0bd9a7",
+        "wrapper.log": "9001dc3956a0e31088baa4a0a7442b3f40cc1a80434b18a75860c786c9888955"
+      },
+      "name": "production-sentry-phase-string-key-repair",
+      "raw_error_lines": [],
+      "raw_warnings": 0,
+      "raw_wrapper_equal": true,
+      "script_errors": 0,
+      "source_count": 388,
+      "source_sha256": "f36e42c36e32edc2e20f7fed8d2dd21b0758f356fcc7cd53332ebd93109edfc1",
+      "uid_source_count": 119,
+      "wrapper_warnings": 0
+    }
+  ],
+  "preserved_failure_attribution": "Original first18/1 and pending/key diagnostic18/1 packets remain failed; first two wrapper warnings are retained. Only corrected native154/0 receives its late component scope. Original fixture assertions are unchanged.",
+  "result": "no concrete closure mismatch found",
+  "semantic_checks": [
+    "Actual original Ray proof/controller dashes and one real Heavy primary earn first finite threshold15HP/spent cue",
+    "Public shared fatal hurt creates a genuine dead/pending source; native barrier cancels both owners retaining earned threshold/deadlines/history",
+    "Natural original Foot completion and drained original Ray leases earn phase2 before deferred notification",
+    "Fresh pending restore publishes eligibility exactly once after real resume; delivered restore publishes none; acknowledgement explicitly TEST ONLY",
+    "First actual phase2 Foot-first + armed Ray combined proof retains both-window/full-primary-cadence and no blast/invulnerability",
+    "Four malformed saved tuples refuse prospective preflight/source commit atomically with unchanged full recapture/event count",
+    "Each of five genuine tuples is ExactJson round-tripped in memory, prepared on fresh native configured bodies in same call before recipient physics, restored Player -> source/Bait/Actor/Joint -> one Scheduler -> consumers/parent, recaptured exactly twice with no events",
+    "Held paused fields, native clocks and notification intentions remain exact; whole fixture worlds/controllers/owners/cues are freed"
+  ]
+}

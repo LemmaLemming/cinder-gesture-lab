@@ -1,0 +1,108 @@
+{
+  "api_revision": "act2-l5-host-codec-draft-1",
+  "source_path": "/private/tmp/a2_l5_dead_london_codec_level_draft.gd",
+  "source_sha256": "b37799dc5139ec699a37d530faa49cad7881f8d8589bf0783e3161851e580061",
+  "lines": 1394,
+  "preserved_host": {
+    "path": "/private/tmp/a2_l5_dead_london_production_level_draft.gd",
+    "sha256": "79cac76d20e374f87706b9d14b7ac2d1752070e95cc574687e00f131e000734a"
+  },
+  "parent_required": {
+    "path": "/private/tmp/a2_l5_sentry_encounter_codec_draft.gd",
+    "sha256": "c1d1050c5c847c6c40bfbef4c8ade3afc1756e1f5e3e7f9061f913de7c83e51e",
+    "version": "V2",
+    "API": "act2-b05-parent-snapshot-1"
+  },
+  "local_keys": "[\"stage\", \"defeated_scouts\", \"contacts\", \"contact_seen\", \"rehearsal_complete\", \"sentry_started\", \"phase2_checkpoint\", \"passage_open\", \"profile_id\", \"world_revision\", \"last_action_sequence\", \"pending_checkpoints\", \"completion_pending\", \"exit_requested\", \"pending_defeats\", \"pending_phase2\", \"pending_clear\", \"phase2_admitted_after_checkpoint\", \"gate_states\", \"scheduler\", \"familiar\", \"rehearsal\", \"rehearsal_view\", \"sentry_foot_view\", \"bait\", \"sentry\"]",
+  "owner_ids": [
+    "A2-L5:square-scout",
+    "A2-L5:park-scout",
+    "A2-L5:approach-foot",
+    "A2-L5:dying-sentry",
+    "A2-L5:near-foot"
+  ],
+  "floor_ids": [
+    "square-1",
+    "square-2",
+    "park",
+    "sentry-apron",
+    "redoubt",
+    "departure"
+  ],
+  "hooks": [
+    "snapshot_state",
+    "snapshot_error",
+    "snapshot_error_with_player",
+    "restore_state",
+    "_capture_local_state",
+    "_local_snapshot_error",
+    "_local_snapshot_error_with_player",
+    "_on_enter_restore_candidate",
+    "_restore_local_state"
+  ],
+  "construction": "Pure closed shape/earned stage/gate precheck before synchronous fresh paused native topology construction; saved fixed profile independently chosen. No yield/native tick/Player or HP/phase/clock seeding. Gate booleans construct authored collider topology only on unentered candidate.",
+  "validation": "Complete Player -> closed local26/earned contacts/defeats/queued intents -> exact whole Scheduler -> Familiar/Approach/Bait/B05 public readers -> copied clock/sample/profile equality -> retained exact view facts -> outer progression coherence. Current native scripts, transforms, cue mesh/material bytes, original guards and gate/prop settled correspondence must be intact.",
+  "commit_order": [
+    "actual full Player already restored by Shell",
+    "B05 Bait/Actor/Joint quiet source split",
+    "two familiar complete Actors quiet",
+    "ONE full Scheduler",
+    "Familiar consumer",
+    "Approach circle consumer",
+    "B05 Ray/Foot/parent quiet consumer split",
+    "bounded host history/views",
+    "quiet derived current cue/scenery/rig projection preserving saved yaw"
+  ],
+  "changed_existing_functions": [
+    "_on_enter_level",
+    "_parent_api_present",
+    "_activate_rehearsal",
+    "_on_rehearsal_state",
+    "_rehearsal_framed",
+    "_camera_framing_points",
+    "_derive_presentation",
+    "_build_ground_and_props",
+    "restore_candidate_construction_required",
+    "_capture_local_state",
+    "_local_snapshot_error",
+    "_local_snapshot_error_with_player",
+    "_on_enter_restore_candidate",
+    "_restore_local_state"
+  ],
+  "new_functions": [
+    "_update_objective",
+    "_component_errors",
+    "_portable_view",
+    "_saved_sentry_foot_view",
+    "_native_gate_states",
+    "_same_exact",
+    "_local_shape_error",
+    "_exact_prefix",
+    "_earned_checkpoint_ids",
+    "_whole_local_error",
+    "_stage_component_error",
+    "_rehearsal_view_error",
+    "_saved_point_supported",
+    "_transport_native_error",
+    "_contact_native_error",
+    "_on_local_cue_publication",
+    "_finish_local_cue_publication",
+    "snapshot_state",
+    "snapshot_error",
+    "snapshot_error_with_player",
+    "restore_state",
+    "_progress_error"
+  ],
+  "mechanics_delta": "No controller/damage/deadline/stat/HP changes. Retain full original approach view7 once real start accepted; clear view on failed frame/start or actual inactive callback; loops explicitly use landing/attack_position only. Required contact cue publication blocks nested transport and quiet construction/restore blocks observer emission.",
+  "pending": [
+    "Godot parse/import and representative actual whole-unit transport/loading/Continue/Retry/fatal/cleanup",
+    "Same-call fresh native direct-space proof/floor availability in parent historical audit",
+    "Actual narrow portrait/art acceptance; no full-route requirement or claim"
+  ],
+  "static_checks": {
+    "duplicate_functions": false,
+    "unresolved_owned_calls": false,
+    "shared_or_checkout_writes": false,
+    "engine_or_import_run": false
+  }
+}

@@ -1,0 +1,258 @@
+{
+  "schema_version": 1,
+  "level_id": "A3-L1",
+  "status": "accepted_desktop_registered",
+  "source": "docs/ACT3_CONCEPT.md#A3-L1; G05/G12/G17/G18",
+  "floor": {
+    "continuous_box_size": [
+      14.0,
+      1.0,
+      108.0
+    ],
+    "top_y": 0.0,
+    "safe_west_east_extent": [
+      -7.0,
+      7.0
+    ],
+    "low_trunk_centers": [
+      [
+        0.0,
+        8.0
+      ],
+      [
+        0.0,
+        -13.0
+      ]
+    ],
+    "low_trunk_size": [
+      1.0,
+      0.75,
+      1.0
+    ],
+    "sun_changes_collision": false
+  },
+  "stalker_raw_role": {
+    "id": "A3-E1",
+    "raw_damage": 12.0,
+    "max_hp": 36.0,
+    "windup_s": 1.35,
+    "lock_s": 0.45,
+    "active_s": 0.3,
+    "recovery_s": 2.0,
+    "attack_interval_s": 3.7,
+    "move_speed": 2.8,
+    "provisional_unplaytested": true
+  },
+  "stalker_lunge": {
+    "max_distance_world": 3.0,
+    "lunge_speed_world_per_s": 12.0,
+    "active_duration_policy": "0.30s retained: real room/source and authored route travel/contact checks passed at their recorded baselines; 3.0/12.0s travel retains its existing two-60Hz-tick allowance",
+    "lane_radius_world": 0.42,
+    "source_capsule_radius_world": 0.32,
+    "approach_acceleration_world_per_s2": 8.0,
+    "approach_speed_world_per_s": 2.8,
+    "recovery_deceleration_world_per_s2": 0.0,
+    "recovery_stationary": true,
+    "collision_shortening_policy": "shared14_translated_native_capsule_path_and_measured_contact_endpoint_reproof_adopted; actual_grounded_room_and_authored_first_pocket_passed; deliberately_shortened_authored_enemy_lunge_against_low_trunk_not_observed",
+    "damage_once_per_committed_lunge": true,
+    "laser": false,
+    "warning_tracking_policy": "accepted fixed signed sun-bias heading; actual commit sun/source/hero/facing retained, geometry immutable through warning_lock_active_recovery; later scenic sun changes affect only unleased choices",
+    "approach_turn_radians_per_s": 1.2,
+    "prelock_tracking_proposal": {
+      "status": "unused_not_supported_as_tracking_to_lunge_conversion",
+      "turn_radians_per_s": 1.2
+    },
+    "brace_min_distance_world": 1.8,
+    "brace_max_distance_world": 2.0,
+    "brace_facing_min_dot": 0.99999,
+    "sun_bias_degrees": 20.0,
+    "sun_bias_sign_by_state": {
+      "0": 1,
+      "1": -1
+    },
+    "sun_bias_heading_policy": "source-local signed rotation about world UP from the sampled planar source-to-hero bearing: Sun0 +20deg, Sun1 -20deg; for a +Z hero bearing Sun0 points toward +X and Sun1 toward -X",
+    "approach_brace_policy": "outside the actual 1.80..2.00 world gap, move directly toward the hero or back away from a close entry with speed2.8/acceleration8 and move_and_slide; within the gap stop planar motion and visibly turn to the biased goal; admission rechecks actual post-move gap, grounded stable zero velocity and facing dot>=0.99999; no source-position snap",
+    "committed_sun_presentation_policy": "latest scenic input retained separately; while leased crest uses the accepted commit sun, including paused restore; last commit remains historical after cancellation/defeat",
+    "owned_source_snapshot": {
+      "api_revision": "act3-stalker-snapshot-3",
+      "schema_version": 3,
+      "commit_keys": [
+        "sun_choice",
+        "source_position",
+        "hero_position",
+        "facing"
+      ],
+      "old_format_policy": "reject_without_migration",
+      "vector_fields": [
+        "source_position",
+        "hero_position",
+        "facing"
+      ],
+      "framing_keys": [
+        "landing",
+        "attack_position"
+      ],
+      "framing_vector_fields": [
+        "landing",
+        "attack_position"
+      ],
+      "isolated_room_local_version": 4,
+      "authored_full_local_version": 5,
+      "authored_full_api_revision": "act3-twin-suns-level-1"
+    },
+    "tuning_authority": "checked numeric motion fields mirror immutable owned runtime TUNING; this authoring JSON does not configure the controller",
+    "sun_flank_status": "signed_two_sun_rule_and_selected_authored_routes_verified; exact_desktop_candidate_independently_accepted; human_pacing_balance_unplaytested"
+  },
+  "minimum_timing_floors": {
+    "windup_s": 1.35,
+    "lock_s": 0.45,
+    "recovery_s": 2.0,
+    "reason": "provisional_floor_until_supported_union_escape_and_primary_return_proof_plus_actual_loadout_tests"
+  },
+  "encounters": [
+    {
+      "id": "foreign-noon",
+      "beat": 0,
+      "target_budget_s": 60,
+      "entry_z": 43.0,
+      "sources": [],
+      "decision": "Move freely during one harmless scenic sun preview; retain stable floor",
+      "mandatory_timer_wait": false
+    },
+    {
+      "id": "useful-flank",
+      "beat": 1,
+      "target_budget_s": 120,
+      "entry_z": 30.0,
+      "sources": [
+        {
+          "id": "l1-flank-stalker",
+          "marker": "EncounterSources/UsefulFlank"
+        }
+      ],
+      "decision": "Bait one physical lane away from a chosen return pocket, then punish its low flank",
+      "checkpoint": "useful-flank-entry"
+    },
+    {
+      "id": "two-approaches",
+      "beat": 2,
+      "target_budget_s": 120,
+      "entry_z": 15.0,
+      "sources": [
+        {
+          "id": "l1-approach-stalker",
+          "marker": "EncounterSources/TwoApproaches"
+        }
+      ],
+      "decision": "Choose either broad stable side of the low tree; both rejoin, with retreat floor retained",
+      "checkpoint": "two-approaches-entry"
+    },
+    {
+      "id": "crossing-shadow",
+      "beat": 3,
+      "target_budget_s": 120,
+      "entry_z": -6.0,
+      "sources": [
+        {
+          "id": "l1-crossing-west",
+          "marker": "EncounterSources/CrossingWest"
+        },
+        {
+          "id": "l1-crossing-east",
+          "marker": "EncounterSources/CrossingEast"
+        }
+      ],
+      "decision": "Choose a priority Stalker and preserve a retreat pocket through staggered commitments and one scenic sun preview",
+      "checkpoint": "crossing-shadow-entry",
+      "simultaneous_budget_policy": "common_scheduler_preparing_and_active_union; second_commit_only_after_live_reproof",
+      "respawn_removed_source": false
+    },
+    {
+      "id": "pillars-recede",
+      "beat": 4,
+      "target_budget_s": 60,
+      "entry_z": -29.0,
+      "sources": [
+        {
+          "id": "l1-departure-stalker",
+          "marker": "EncounterSources/Departure"
+        }
+      ],
+      "decision": "Resolve one brief familiar exchange, then contact the threshold; distant mirage stays scenery",
+      "checkpoint": "departure-entry",
+      "contact_exit_marker": "PoolingdredThreshold"
+    }
+  ],
+  "equipment": {
+    "baseline_ids": [
+      "CLOTH-J0",
+      "CLOTH-P0",
+      "CLOTH-S0",
+      "WEAPON-01"
+    ],
+    "carried_legal_static_alternatives": true,
+    "required_pickups": [],
+    "required_blast_ammo": 0,
+    "creation_claims": [],
+    "ability_introductions": [],
+    "equipment_extreme_tests_pending": false,
+    "rule_room_evidence": {
+      "shared_api": "campaign-shared-9",
+      "source_api": "act3-stalker-snapshot-2",
+      "native_sun_kit_witnesses": 216,
+      "sun0_legal_kit_witnesses": 108,
+      "sun1_legal_kit_witnesses": 108,
+      "actual_primary_clear_representatives_sun0": 7,
+      "actual_primary_clear_representatives_sun1": 1,
+      "claims_or_new_introductions": [],
+      "scope": "public actual room mechanics; no full authored route, production checkpoints, portrait-gear or human balance acceptance"
+    },
+    "current_evidence": {
+      "shared_api": "campaign-shared-21",
+      "source_api": "act3-stalker-snapshot-3",
+      "scope": "selected representative authored routes plus inherited 216 camera-gated reservation witnesses, not 216 clears or human balance",
+      "compound_full_checks": 45,
+      "weak_full_checks": 45,
+      "east_partial_checks": 34,
+      "standard_production_checks": 45,
+      "assisted_production_checks": 50,
+      "compound_execution_head": "66132f7599dfe9f2bd427d448dc520bd214dc49c",
+      "weak_east_production_execution_head": "0645b6c3e2a3c990435a6344f5e5ba3c08fccdaa",
+      "long_selector_status": "identical_compound_kit_and_downstream_driver_mechanical_reuse_no_rerun_claim",
+      "claims_or_new_introductions": []
+    }
+  },
+  "implementation_dependencies": [
+    "supported_moving_source_lunge_with_fixed_swept_geometry_and_primary_recovery_opening",
+    "public_live_player_response_commitment_and_cooldowns",
+    "shared_source_footprint_landing_and_interaction_cues",
+    "coherent_actor_level_reservation_checkpoint_retry_and_contact_transition_shell",
+    "selected_Act3_shared_presentation_with_carried_gear"
+  ],
+  "authoring_evidence": {
+    "portable_index": "assets/acts/act3/evidence/A3-L1/index.json",
+    "shared_published_commit": "811f69fe542f85bc58a26fded567b89e584b51e8",
+    "owned_runtime_behavior_commit": "5f0ad8345dd60deabfe4da21c501c32accfb931b",
+    "metadata_scope": "unused descriptive fields only; source introductions now include later comment-only revisions",
+    "timing_evidence_status": "scoped union escape/ordinary primary return/216 actual camera-admission witnesses and selected full routes passed; snapshot-bound minimum_timing_floors.reason retained as historical provisional text; human balance unplaytested",
+    "integration_acceptance": "accepted",
+    "all_eight_levels_unfinished": false,
+    "later_seven_levels_unbegun": false,
+    "accepted_levels": 1,
+    "unfinished_levels": 7,
+    "current_level": "A3-L2",
+    "current_level_state": "small_room_design_and_prototype_preparation_not_implemented",
+    "later_six_levels_unbegun": true,
+    "acceptance_message_id": "cfe2c7c0-e16a-4299-9e7c-9e2039cbbeeb",
+    "authored_commit": "fb9da07faa58e1b8e9517c8241007b4eaf2cc221",
+    "integrated_content_commit": "a35cd4c503b550982287a8e89c2296213eddeb47",
+    "registration_commit": "59d9097cdc1b24936c22004e60ea44fa1297b03e",
+    "registration_evidence": "docs/development/evidence/A3-L1-registration/index.json",
+    "registration_scope": "253headless_261graphical_four540x1170_root_reviewed_menus_arrival; no_new_full_route_predecessor_native_human_mobile_or_performance_claim",
+    "current_shared_published_commit": "4de8b6008741bc9f155c83cbccb60629fac154a2",
+    "current_shared_api": "campaign-shared-22",
+    "current_adopted_merge": "5c43da099b0d5fb9652b4f52d10c7137fc94d971",
+    "adoption_ack": "77cb8594-9f82-4c3c-b412-34387029ab14",
+    "replay_applicability": "unused_by_L1; schema1_drained_compatible; interrupted_nonempty_pending_delivery_closed_schema2_requires_updated_reader_and_trusted_parent; no_unused_suite_or_import"
+  }
+}

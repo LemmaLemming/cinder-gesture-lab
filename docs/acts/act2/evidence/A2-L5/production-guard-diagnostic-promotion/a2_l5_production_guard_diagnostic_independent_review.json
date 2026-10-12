@@ -1,0 +1,48 @@
+{
+  "delta": {
+    "added_functions": [
+      "_diag_json_value"
+    ],
+    "changed_existing_functions": [
+      "_art_until_phase",
+      "_diag_pixels"
+    ],
+    "narrow_change": "_art_until_phase only wraps packet through _diag_json_value before diagnostic ExactJson serialization",
+    "separator_only_function": "_diag_pixels: added final blank separator before new helper; executable bytes unchanged"
+  },
+  "findings": [],
+  "fixture": {
+    "lines": 144,
+    "path": "/private/tmp/a2_l5_production_guard_diagnostic.gd",
+    "sha256": "d5913a4705ebf73511cab1de5a2d9b16e9c16434638574a72caba4bf4513bcaa"
+  },
+  "limitations": [
+    "static only; no engine/parser/fixture execution or image review",
+    "actual observed row values must establish cause; no camera/hidden-cue hypothesis is accepted from this review",
+    "diagnostic classification is lossy and must not be consumed as saved state or scheduler proof",
+    "original inherited failed-scope/result must remain preserved; no Ray/Foot/coda/art/native acceptance credit"
+  ],
+  "original_concrete_blocker": "Actual Hero response has actor:self; inherited _art_encode retains Object, so ExactJson.stringify original115 packet would refuse. Original is preserved and never executed.",
+  "pins": {
+    "scripts/acts/act2/dead_london_sentry_actor.gd": "ffaf6c671894715995f03fa5d2c1f54ea6b2bf720a118fb0a8b97a2269b67b5d",
+    "scripts/acts/act2/dead_london_sentry_visual.gd": "0d616507311b2c46dc66b9a35190088f4f95dea1712cf18ba33ed7928645e9f7",
+    "scripts/acts/act2/ray_scout_visual.gd": "dda58dd611044a434d25206a03ac1b2b5f73270373d613e3a2fcc7bb5539879a",
+    "scripts/campaign/exact_json.gd": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+    "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+    "tests/acts/act2/a2_l5_production_portrait_smoke.gd": "7fcd2192ba89e945c7b78b8a6282868cf5cddab6bae26144a66b5e20848f8142"
+  },
+  "preserved_unexecuted_original": {
+    "path": "/private/tmp/a2_l5_production_guard_diagnostic.before_closed_native_conversion.gd",
+    "sha256": "eacbb1ff65bc6c08dd2f79f96ce3ad0b1233b2144d0fe95821be209d51ed6cc4"
+  },
+  "result": "no-remaining-concrete-blocker-found",
+  "review": "bounded-static-passive-production-guard-diagnostic",
+  "verified": [
+    "inherited original presentation guard called exactly once and its boolean returned unchanged",
+    "first native observation is captured synchronously after actual guard refusal before parent closes/cancels its sources",
+    "actual component points remain Array[Vector3]; other typed point copies use assign; actual source/ray/Foot/pure metadata APIs and inherited get_body_yaw exist",
+    "later twelve ordinary process frames remain passive and occur after genuine original awaited phase assertion refusal, before component cleanup; no authority retry",
+    "diagnostic-only closed conversion classifies native Objects via validity/class/path metadata, handles native transforms/rects/bounds, and tags unsupported variants; it never makes proof/source/restore authority",
+    "All old executable function bodies except the single diagnostic serialization call in _art_until_phase are unchanged; _diag_pixels differs only by its new final blank separator. Original437/guard/runtime untouched."
+  ]
+}

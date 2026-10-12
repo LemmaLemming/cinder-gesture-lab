@@ -1,0 +1,15 @@
+{
+  "classification": "fixture metadata/path identity defect; not proved parent/shared gameplay defect",
+  "native_reason": "Collision shape paths require stable authored names",
+  "native_actual_bad_path": "AuthoredDryFloor/@CollisionShape3D@2",
+  "original_fixture_sha256": "4ebeba00daae1520c5c59aafc0e8868fb481fb64f2831b9fbf44190a77aeecca",
+  "fixed_fixture_sha256": "0b62a86763609b566809f2e0ae6e30cbe9c91b563d8e3421aff7f6ab2b9192b5",
+  "changed_functions": [
+    "_create"
+  ],
+  "all_other_bytes_exact": true,
+  "delta": "one authored name on existing floor CollisionShape3D before tree entry; no control/assertion/geometry/timing/parent change",
+  "parent_unchanged_sha256": "d89967446d5786189cae1371a06934256fa901d6c2042bbc9dff6d10195ce26d",
+  "retest": "same affected owned parent mechanics target; no import/newresource/olderpassedcomponent or broad suite repeat",
+  "original_failed_diagnostics_retained": true
+}

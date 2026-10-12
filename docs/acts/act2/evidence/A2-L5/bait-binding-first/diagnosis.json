@@ -1,0 +1,30 @@
+{
+  "classification": "test assertion expectation, not gameplay/parser/environment/queue",
+  "command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--path",
+    ".",
+    "--log-file",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-l5-bait-binding-first.log",
+    "--headless",
+    "--script",
+    "tests/acts/act2/a2_l5_bait_smoke.gd",
+    "--",
+    "--binding-only"
+  ],
+  "tested_head": "d612a5ef24f44185fcbdee820d14398dc820bf5c",
+  "tested_shared": "campaign-shared-38",
+  "first_error": "FAIL: actual binding identifies only its native Hero without initializing bait",
+  "actual_contract": "state() returns the exact closed uninitialized version1 envelope for a live bound cache; only sample_for_ray() returns empty before boundary. This contract predates the new getter.",
+  "test_mistake": "New assertion incorrectly required bait.state().is_empty(). No native runtime change is required.",
+  "repair": "Replace only this expectation with exact uninitialized envelope plus empty ray sample, keeping all identity predicates.",
+  "retained_originals": [
+    "source.json",
+    "result.json",
+    "wrapper.log",
+    "raw.log"
+  ],
+  "next_retest": "Same --binding-only 15-check case only; prior122 bodies unchanged/reused. No import or broader test."
+}

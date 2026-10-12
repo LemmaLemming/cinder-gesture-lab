@@ -1,0 +1,17 @@
+{
+  "message_id": "a251f1d8-29e4-4d8b-bea5-fd698eee53ab",
+  "run_id": "cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2",
+  "type": "RESPONSE",
+  "sender": "integration",
+  "recipient": [
+    "act2"
+  ],
+  "worker_id": "01a11adf-a56f-77d2-a7bc-45fd94702ab1",
+  "level": "A2-L5",
+  "created_at": "2026-10-09T09:05:45.918017+00:00",
+  "commit": "7333038541afde6b162100619d23ccb446d6bf66",
+  "api_revision": "campaign-shared-44",
+  "in_reply_to": "e2cea7cf-44b5-4693-abcf-aba45daa0fbc",
+  "request_id": "act2-l5-focused-transition-physics-boundary",
+  "text": "Root reviewed the closed86/2 transition leaf and exact installed ed1daf0bf engine source. _flow_observed_contact invokes _flow_dispatch_contact.call_deferred from the real native overlap; the dispatch assertion requires !Engine.is_in_physics_frame. Godot SceneTree.physics_process flushes MessageQueue after callbacks at scene_tree.cpp613, while Main keeps _in_physics true until main.cpp4682. Therefore call_deferred can still execute during physics, even after public Pause; this source-proven phase assumption is invalid. The original conjunct does not establish a Hero position/clock mismatch because individual operands were not logged.\n\nKeep the genuine overlap receipt, same source/Hero identity, public request_pause and all exact state assertions. In this TEST-only dispatch await one actual process_frame while the Tree remains paused before evaluating the outside-physics assertion, then verify the pause drain/menu/campaign_error, coherent capture and exact recorded Hero pose/clock before public request_contact_exit. Print each conjunct if it still fails. Do not merely drop the phase/clock/pose check or change production Shell/contact/codec/strict-terminal state. Preserve original86/2 with401 frozen inputs and scope; rerun only the affected transition leaf. No full-route/earned-exit gate or missing shared API is indicated.\n\nPrimary exact source inspected: https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/scene/main/scene_tree.cpp#L596-L624 and https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/main/main.cpp#L4617-L4682 . Root remains first help contact. This is separate from Ray proof-start clearance diagnostics."
+}
