@@ -311,8 +311,9 @@ func _capture(stage: String) -> bool:
 	var image: Image = root.get_texture().get_image()
 	var path: String = capture_dir.path_join("%02d-whole-%s.png" % [shots.size() + 1, stage])
 	if not _require(image != null and image.get_size() == PortraitSize and image.save_png(path) == OK, "actual540x1170 renderer saves " + stage): return false
-	var ids: Array[String] = ["exterior"] if level.is_completed() else (["entrance"] if int(level.get("room")) == 0 else (["formation"] if int(level.get("room")) == 1 else (["approach", "roundel"] if int(level.get("room")) == 2 else ["throne", "helper-entries"])))
-	if stage.contains("boss-contact"): ids = ["throne", "helper-entries"]
+	var ids: Array[String] = []
+	ids.assign(["exterior"] if level.is_completed() else (["entrance"] if int(level.get("room")) == 0 else (["formation"] if int(level.get("room")) == 1 else (["approach", "roundel"] if int(level.get("room")) == 2 else ["throne", "helper-entries"]))))
+	if stage.contains("boss-contact"): ids.assign(["throne", "helper-entries"])
 	var bounds: Dictionary = {}
 	for id: String in ids:
 		var corners: Array = art.call("landmark_world_corners", id)
