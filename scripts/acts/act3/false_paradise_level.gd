@@ -4,6 +4,7 @@ extends CinderLevel
 ## together before the qualified new-resource import.
 ## Complete native units and actual Camera/HUD gates; no partial writer.
 
+const SunArt = preload("res://scripts/acts/act3/garden_sun_art.gd")
 const Scenery = preload("res://scripts/acts/act3/false_paradise_scenery.gd")
 const RootCore = preload("res://scripts/acts/act3/garden_root_network.gd")
 const Latcher = preload("res://scripts/acts/act3/garden_root_latcher.gd")
@@ -49,6 +50,7 @@ class RequiredViewObserver:
 		if observe.is_valid():
 			observe.call()
 
+var sun_art: Node3D
 var scenery: Node3D
 var root_network: Node3D
 var sources: Dictionary = {}
@@ -198,8 +200,22 @@ func _on_enter_level() -> void:
 	if not threat_scheduler.begin_encounter(_profile, ENCOUNTER_ID, WORLD_REVISION):
 		_fail(threat_scheduler.last_error)
 		return
+	if not _configure_sun_art():
+		return
 	_active = true
 	_update_presentation()
+
+
+func _configure_sun_art() -> bool:
+	if is_instance_valid(sun_art):
+		return String(sun_art.call("runtime_error")).is_empty()
+	sun_art = SunArt.new()
+	sun_art.name = "HarmlessParentOwnedSuns"
+	add_child(sun_art)
+	if not sun_art.call("configure", self, hero):
+		last_configuration_error = String(sun_art.get("last_error"))
+		return false
+	return true
 
 
 func _physics_process(_delta: float) -> void:
@@ -618,6 +634,8 @@ func _all_required_cleared() -> bool:
 
 
 func _update_presentation(quiet: bool = false) -> void:
+	if is_instance_valid(sun_art) and not sun_art.call("present", quiet):
+		last_configuration_error = String(sun_art.get("last_error"))
 	if is_instance_valid(exit_cue):
 		var objects: Array[Object] = [exit_cue]
 		var flags: Array[bool] = []
@@ -661,6 +679,11 @@ func runtime_error() -> String:
 		return "Actual configured identity parent/Hero/shared shell/Scheduler/scenery required"
 	if not is_instance_valid(_view_observer) or _view_observer.get_parent() != self or _view_observer.observe != _guard_before_consumers or not _view_observer.is_physics_processing() or _view_observer.process_mode != Node.PROCESS_MODE_PAUSABLE or _view_observer.process_physics_priority != 90 or hero.process_physics_priority >= 90 or threat_scheduler.process_physics_priority >= 90:
 		return "Actual view observer90 must precede native contact and Playback110"
+	if not is_instance_valid(sun_art) or sun_art.get_parent() != self or sun_art.get_script() != SunArt:
+		return "Actual parent-owned harmless sun presentation required"
+	var sun_error: String = String(sun_art.call("runtime_error"))
+	if not sun_error.is_empty():
+		return sun_error
 	var error: String = String(scenery.call("runtime_error"))
 	if not error.is_empty():
 		return error
@@ -796,6 +819,8 @@ func _on_enter_restore_candidate(local: Dictionary, player: Dictionary) -> Strin
 	_profile = local.world.profile_id
 	if not threat_scheduler.begin_encounter(_profile, ENCOUNTER_ID, WORLD_REVISION):
 		return threat_scheduler.last_error
+	if not _configure_sun_art():
+		return last_configuration_error
 	var recipe: Dictionary = _parent_codec.constructor_recipe(local, self, player)
 	if not recipe.get("accepted", false): return String(recipe.get("error", "Immutable constructor entitlement refused"))
 	var error: String = false_paradise_codec_construct_recipe(recipe.recipe)
@@ -898,7 +923,7 @@ func false_paradise_codec_framing_union(camera: Camera3D = null) -> Dictionary:
 
 
 func sun_presentation_state() -> Dictionary:
-	return _sun_state.duplicate(true) # No independent SunArt/clock/damage/wire.
+	return _sun_state.duplicate(true) # Harmless art reads this; no independent clock/damage.
 
 
 func _dispatch_pending_checkpoint() -> void:

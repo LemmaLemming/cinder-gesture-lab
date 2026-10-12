@@ -1,5 +1,9 @@
 extends Node3D
-## A3-L4 authored scenery consumer; initial source-only, unparsed/unrendered.
+## A3-L4 material-only garden presentation; actual portrait qualification pending.
+## Parent/collision/mesh transforms/dimensions and cosmetic wire are unchanged.
+## G08/G10 adaptation adds only static opaque mineral color planes/grain and
+## a restrained approach-flower palette. No new geometry, raster or sun clock.
+## Original proposal and source custody remain separately retained.
 ## G08/G10: permanent dark mineral ground, pale removable garden beauty,
 ## external low roots and ONE harmless maroon-haired clothed projection.
 ## Reuses TwinSuns helpers independently, published GardenArt130 and the
@@ -24,12 +28,50 @@ const BOSS_ANCHOR := Vector3(-0.85, 0, -1.5)
 const PRESENTATION_SCHEMA: int = 1
 const BED_CONTOUR := [Vector2(-0.95, -0.33), Vector2(-0.51, -0.54), Vector2(0.37, -0.47), Vector2(1.02, -0.13), Vector2(0.72, 0.39), Vector2(0.02, 0.49), Vector2(-0.81, 0.28)]
 const BLOOM_OFFSETS: Array[Vector2] = [Vector2(-0.49, -0.08), Vector2(0.08, 0.14), Vector2(0.53, -0.12)]
-const FLOOR_COLOR := Color("302438")
-const BED_COLOR := Color("767260")
-const PETAL_COLOR := Color("bab6a7")
-const STEM_COLOR := Color("5a5d49")
-const ARCH_COLOR := Color("68634f")
+const FLOOR_COLOR := Color("24252d")
+const BED_COLOR := Color("72765d")
+const PETAL_COLOR := Color("d0cbb8")
+const STEM_COLOR := Color("505a45")
+const ARCH_COLOR := Color("62694f")
 const NEW_MESH_COUNT: int = 205 # Floor1, permanent12, approach beauty192.
+
+
+## Static filled mineral clusters, no rings/lines/pulses or outlined pockets.
+## World units stay continuous; this quantizes COLOR only. Vertex positions,
+## depth, opacity and floor collision never depend on the material pattern.
+const MINERAL_SHADER_CODE: String = """
+shader_type spatial;
+render_mode unshaded, depth_draw_opaque, cull_back;
+uniform vec4 mineral_a : source_color;
+uniform vec4 mineral_b : source_color;
+uniform vec4 side_color : source_color;
+uniform vec2 pitch_world;
+varying vec2 world_xz;
+varying float top_face;
+float mineral_hash(vec2 cell) {
+	return fract(sin(dot(cell, vec2(127.1, 311.7))) * 43758.5453);
+}
+void vertex() {
+	world_xz = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xz;
+	top_face = step(0.5, NORMAL.y);
+}
+void fragment() {
+	float row = floor(world_xz.y / pitch_world.y);
+	vec2 tile = floor(vec2(world_xz.x / pitch_world.x + mod(row, 2.0) * 0.36,
+		world_xz.y / pitch_world.y));
+	float broad = floor(mineral_hash(tile) * 4.0) / 3.0;
+	vec3 stone = mix(mineral_a.rgb, mineral_b.rgb, 0.15 + broad * 0.65);
+	float coarse = floor(mineral_hash(floor(world_xz * 18.0)) * 3.0) / 2.0;
+	stone *= 0.97 + coarse * 0.03;
+	ALBEDO = mix(side_color.rgb, stone, top_face);
+}
+"""
+const MINERAL_PARAMETERS: Dictionary = {
+	"mineral_a": Color("25262f"),
+	"mineral_b": Color("3a343e"),
+	"side_color": Color("211f28"),
+	"pitch_world": Vector2(1.60, 2.35),
+}
 
 var floor_body: StaticBody3D
 var garden: Node3D
@@ -39,6 +81,9 @@ var _approach_beauty: Node3D
 var _floor_shape: BoxShape3D
 var _floor_margin: float = 0.0
 var _floor_disable_mode: int = 0
+var _mineral_shader: Shader
+var _mineral_material: ShaderMaterial
+var _mineral_native_parameters: Dictionary = {}
 var _parts: Array[Dictionary] = []
 var _built: bool = false
 var _boss_entered: bool = false
@@ -70,6 +115,8 @@ func build() -> bool:
 	var floor_view: MeshInstance3D = _kit.call("_box", FLOOR_SIZE, Vector3.ZERO, FLOOR_COLOR)
 	floor_view.name = "PermanentMineralSurface"
 	floor_view.reparent(floor_body, false)
+	# Assign render-only material before retaining native mesh/material custody.
+	floor_view.material_override = _new_mineral_material()
 	_register(floor_view, "floor")
 	for index: int in range(APPROACH_COURTS.size()):
 		_approach_court(APPROACH_COURTS[index], index)
@@ -216,9 +263,13 @@ func runtime_error() -> String:
 		var part: MeshInstance3D = spec.node
 		if not is_instance_valid(part) or part.is_queued_for_deletion() or part.get_parent() != spec.parent or part.transform != spec.transform or part.global_transform != spec.global_transform or part.mesh != spec.mesh or part.mesh.get_aabb() != spec.aabb or part.material_override != spec.material or not part.visible or not part.get_groups().is_empty() or part.get_child_count() != 0 or part.layers != 1 or part.transparency != 0.0 or part.material_overlay != null or part.top_level or part.cast_shadow != GeometryInstance3D.SHADOW_CASTING_SETTING_OFF:
 			return "Original static noncolliding scenic mesh custody changed"
-		var material: StandardMaterial3D = spec.material
-		if material.shading_mode != BaseMaterial3D.SHADING_MODE_UNSHADED or material.texture_filter != BaseMaterial3D.TEXTURE_FILTER_NEAREST or material.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED or material.no_depth_test or material.albedo_color != spec.color or material.albedo_texture != null or material.next_pass != null or material.billboard_mode != BaseMaterial3D.BILLBOARD_DISABLED or material.vertex_color_use_as_albedo != spec.vertex_color or material.cull_mode != spec.cull_mode or material.emission_enabled:
-			return "Quiet opaque nearest ordinary-depth scenic material required"
+		if spec.family == "floor":
+			var material_error: String = _mineral_material_error(spec.material)
+			if not material_error.is_empty(): return material_error
+		else:
+			var material: StandardMaterial3D = spec.material as StandardMaterial3D
+			if not is_instance_valid(material) or material.shading_mode != BaseMaterial3D.SHADING_MODE_UNSHADED or material.texture_filter != BaseMaterial3D.TEXTURE_FILTER_NEAREST or material.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED or material.no_depth_test or material.albedo_color != spec.color or material.albedo_texture != null or material.next_pass != null or material.billboard_mode != BaseMaterial3D.BILLBOARD_DISABLED or material.vertex_color_use_as_albedo != spec.vertex_color or material.cull_mode != spec.cull_mode or material.emission_enabled:
+				return "Quiet opaque nearest ordinary-depth scenic material required"
 		if part.mesh is ArrayMesh:
 			if part.mesh.get_surface_count() != 1 or part.mesh.surface_get_arrays(0) != spec.arrays:
 				return "Original filled mineral/bed/spine triangles changed"
@@ -250,7 +301,7 @@ func _approach_court(z: float, index: int) -> void:
 		for bloom: int in range(BLOOM_OFFSETS.size()):
 			var at: Vector2 = centre + BLOOM_OFFSETS[bloom]
 			_blossom(Vector3(at.x, 0, at.y), index * 6 + bloom + (3 if side > 0 else 0))
-		var patch: MeshInstance3D = _kit.call("_floor_polygon", PackedVector2Array([Vector2(-0.65, -1.6), Vector2(0.45, -1.35), Vector2(0.78, 0.6), Vector2(-0.3, 1.5), Vector2(-0.8, 0.5)]), Vector3(side * 5.2, 0.002, z), Color("3d3442"))
+		var patch: MeshInstance3D = _kit.call("_floor_polygon", PackedVector2Array([Vector2(-0.65, -1.6), Vector2(0.45, -1.35), Vector2(0.78, 0.6), Vector2(-0.3, 1.5), Vector2(-0.8, 0.5)]), Vector3(side * 5.2, 0.002, z), Color("34323c"))
 		patch.name = "PermanentQuietMineral%d_%s" % [index, str(side)]
 		_register(patch, "permanent")
 		# Complete raised extents stay outside the full±7 floor, not just a lane.
@@ -291,12 +342,43 @@ func _beauty_box(label: String, size: Vector3, at: Vector3, color: Color, yaw: f
 	_register(part, "approach_beauty")
 
 
+func _new_mineral_material() -> ShaderMaterial:
+	_mineral_shader = Shader.new()
+	_mineral_shader.code = MINERAL_SHADER_CODE
+	_mineral_material = ShaderMaterial.new()
+	_mineral_material.shader = _mineral_shader
+	for parameter: String in MINERAL_PARAMETERS:
+		_mineral_material.set_shader_parameter(parameter, MINERAL_PARAMETERS[parameter])
+		# Exact native values, not nominal binary64 color/vector assumptions.
+		_mineral_native_parameters[parameter] = _mineral_material.get_shader_parameter(parameter)
+	return _mineral_material
+
+
+func _mineral_material_error(material: Material) -> String:
+	if not is_instance_valid(material) or not material is ShaderMaterial or material != _mineral_material or not is_instance_valid(_mineral_shader) or _mineral_material.shader != _mineral_shader or _mineral_shader.code != MINERAL_SHADER_CODE or _mineral_material.next_pass != null or _mineral_material.render_priority != 0 or _mineral_native_parameters.size() != MINERAL_PARAMETERS.size():
+		return "Original static opaque ordinary-depth mineral material required"
+	for parameter: String in MINERAL_PARAMETERS:
+		var native: Variant = _mineral_material.get_shader_parameter(parameter)
+		if typeof(native) != typeof(MINERAL_PARAMETERS[parameter]) or typeof(native) != typeof(_mineral_native_parameters[parameter]) or native != _mineral_native_parameters[parameter]:
+			return "Immutable native mineral palette/pitch changed: " + parameter
+	return ""
+
+
 func _register(part: MeshInstance3D, family: String) -> void:
 	part.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var material: StandardMaterial3D = part.material_override
-	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
-	var spec: Dictionary = {"node": part, "family": family, "parent": part.get_parent(), "transform": part.transform, "global_transform": part.global_transform, "mesh": part.mesh, "aabb": part.mesh.get_aabb(), "material": material, "color": material.albedo_color, "vertex_color": material.vertex_color_use_as_albedo, "cull_mode": material.cull_mode}
+	var material: Material = part.material_override
+	var spec: Dictionary = {"node": part, "family": family, "parent": part.get_parent(), "transform": part.transform, "global_transform": part.global_transform, "mesh": part.mesh, "aabb": part.mesh.get_aabb(), "material": material}
+	if family == "floor":
+		# Shader has no samplers/alpha/time/depth bypass. All geometry custody
+		# still uses the same original native BoxMesh and measured floor shape.
+		if not _mineral_material_error(material).is_empty(): return
+	else:
+		var flat: StandardMaterial3D = material as StandardMaterial3D
+		flat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		flat.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
+		spec.color = flat.albedo_color
+		spec.vertex_color = flat.vertex_color_use_as_albedo
+		spec.cull_mode = flat.cull_mode
 	if part.mesh is ArrayMesh:
 		spec.arrays = part.mesh.surface_get_arrays(0).duplicate(true)
 	else:
