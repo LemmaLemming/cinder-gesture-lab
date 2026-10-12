@@ -78,7 +78,7 @@ func _run() -> void:
 	scheduler = level.get("scheduler") as CinderThreatScheduler
 	if not _require(king != null and scheduler != null and level.hero == hero and level.level_id == "A1-L4" and level.contract_error().is_empty(), "one shared Hero and actual B01/Scheduler retain the level contract"):
 		await _finish(); return
-	if not _require(hero.global_position == level.spawn_position and level.spawn_position == Vector3(0, 0.1, 3) and king.global_position == Vector3(0, 0.005, 0) and king.get("hp") == 80.0 and not king.get("dead"), "pristine authored spawn/source and live80HP King precede native simulation"):
+	if not _require(hero.global_position == level.spawn_position() and level.spawn_position() == Vector3(0, 0.1, 3) and king.global_position == Vector3(0, 0.005, 0) and king.get("hp") == 80.0 and not king.get("dead"), "pristine authored spawn/source and live80HP King precede native simulation"):
 		await _finish(); return
 	if not _require(not level.is_completed() and not game.call("is_lab_level") and level.current_checkpoint() == {"id": "", "kind": ""}, "custom component claims no campaign checkpoint/completion or Character Lab"):
 		await _finish(); return
