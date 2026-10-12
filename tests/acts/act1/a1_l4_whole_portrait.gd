@@ -34,6 +34,7 @@ var hit_receipts: Array[Dictionary] = []
 var focus_observer: Node
 var expected_pause: bool = false
 var representative_only: bool = false
+var terminal_views_only: bool = false
 var swipes: int = 0
 var primaries: int = 0
 var gui_resumes: int = 0
@@ -44,7 +45,8 @@ var king_intro_original: Dictionary = {}
 
 func _run() -> void:
 	scope = "whole-court-brief-portrait"
-	representative_only = "--representative-only" in OS.get_cmdline_user_args()
+	terminal_views_only = "--terminal-views-only" in OS.get_cmdline_user_args()
+	representative_only = terminal_views_only or "--representative-only" in OS.get_cmdline_user_args()
 	root.size = PortraitSize
 	report_path = "res://.cinder/a1-l4-whole-portrait-%d.json" % Time.get_ticks_usec()
 	if not _require(DisplayServer.get_name() != "headless" and "--capture" not in OS.get_cmdline_user_args() and "--capture-polish" not in OS.get_cmdline_user_args(), "whole portrait requires the actual renderer and ordinary focus handling"):
@@ -72,6 +74,10 @@ func _run() -> void:
 	game.connect("input_observed", func(record: Dictionary) -> void: input_receipts.append(record.duplicate(true)))
 	for id: String in sources:
 		sources[id].connect("hit_resolved", Callable(self, "_notice_portrait_hit").bind(id))
+	if terminal_views_only:
+		setups.append({"scope": scope, "kind": "explicit_mode", "label": "TEST terminal-only visual regression; earlier unchanged views and gestures are not rerun or claimed"})
+		if not await _terminal_views() or not _require(shots.size() == 3 and swipes == 0 and primaries == 0 and gui_resumes == 0 and _retained_identities(), "three actual terminal views retain the original cast and declared zero-input scope") or not await _contact_exit_and_cleanup(): await _finish(); return
+		await _finish(); return
 	if not await _wait(func() -> bool: return _current_framing_error().is_empty(), "actual current camera contains the complete opening cast", 3.0) or not await _capture("opening-real-view"):
 		await _finish(); return
 	if not await _wait(func() -> bool: return _native_warning(SourceID) and (level.get("_frames") as Dictionary).get(SourceID, {}).has("proof"), "real curtain warning retains the parent's actual native proof", 4.0) or not await _capture("curtain-native-warning") or not await _pause_probe():
@@ -114,6 +120,28 @@ func _curtain_gesture() -> bool:
 	gesture_unit["shells_after"] = hero.shells
 	gesture_unit["world_actions"] = _portable(hero.get_world_action_records())
 	return await _capture("curtain-real-surviving-primary")
+
+
+func _terminal_views() -> bool:
+	# Use real parent progression and public TEST injuries/placements to reach
+	# only the changed completion/contact view; no room, clock or source writes.
+	if not _test_damage(SourceID, 24.0, "TEST curtain defeat for terminal visual regression") or not await _wait(func() -> bool: return level.current_checkpoint().id == "court-after-curtain", "actual cleared curtain boundary", 3.0) or not await _test_position(Vector3(0, 0.1, -7), "TEST actual formation approach"): return false
+	if not await _wait(func() -> bool: return int(level.get("room")) == 1 and not sources["court-formation-west"].get("dormant") and not sources["court-formation-east"].get("dormant"), "actual original formation pair activates", 3.0): return false
+	for id: String in Layout.ROOM_SOURCE_IDS[1]:
+		if not _test_damage(id, 24.0, "TEST formation defeat for terminal visual regression"): return false
+	if not await _wait(func() -> bool: return level.current_checkpoint().id == "court-after-formation", "actual cleared formation boundary", 3.0) or not await _test_position(Vector3(0, 0.1, -17), "TEST actual royal approach"): return false
+	if not await _wait(func() -> bool: return int(level.get("room")) == 2 and level.get("_roundel_demonstrated") == true and not sources["court-approach-west"].get("dormant") and not sources["court-approach-east"].get("dormant"), "actual quiet roundel completes before familiar approach sources activate", 10.0): return false
+	for id: String in Layout.ROOM_SOURCE_IDS[2]:
+		if not _test_damage(id, 24.0, "TEST approach defeat for terminal visual regression"): return false
+	if not await _wait(func() -> bool: return level.current_checkpoint().id == "court-after-approach", "actual cleared approach boundary", 3.0) or not await _test_position(Vector3(0, 0.1, -24.5), "TEST supported local throne approach"): return false
+	if not await _wait(func() -> bool: return (level.get_node("BossContactArea") as Area3D).monitoring and _current_framing_error().is_empty(), "actual local throne contact has full current view", 3.0) or not await _test_position(Vector3(0, 0.1, -26), "TEST actual native boss contact"): return false
+	if not await _wait(func() -> bool: return int(level.get("room")) == 3 and (level.get("king_intro") as Dictionary).stage == "done", "actual original finite King introduction completes", 4.0) or not await _test_position(Vector3(0, 0.1, -28.2), "TEST central supported helper view") or not _test_damage("court-king", 40.0, "TEST actual half-HP helper threshold"): return false
+	if not await _wait(func() -> bool: return int(level.get("room")) == 4 and level.get("helper_stage") == "done", "actual once-born helper pair completes original entry", 4.0) or not _test_damage("court-king", 40.0, "TEST terminal native King injury"): return false
+	if not await _wait(func() -> bool: return level.is_completed() and _current_framing_error().is_empty(), "completed distant court retains a coherent actual view", 3.0): return false
+	if not _require(not (level.get_node("ExitArea") as Area3D).monitoring and level.get("_exit_cue").state().state == "clear", "completed distant exit remains inactive with no off-screen available cue") or not await _capture("TEST-completed-distant-contact-clear"): return false
+	if not await _test_position(Vector3(0, 0.1, -33.8), "TEST supported local exterior approach") or not await _wait(func() -> bool: return (level.get_node("ExitArea") as Area3D).monitoring and level.get("_exit_cue").state().state == "available" and _current_framing_error().is_empty(), "actual local full view exposes available contact", 3.0) or not await _capture("TEST-exterior-available-contact-cue"): return false
+	if not await _test_position(Vector3(0, 0.1, -35), "TEST supported actual exterior contact") or not await _wait(func() -> bool: return _event_count("contact") == 1 and art.call("presentation_state").exterior_state == "open" and level.get("_exit_cue").state().state == "spent", "actual guarded contact opens cloth and becomes spent exactly once", 3.0): return false
+	return await _capture("TEST-exterior-open-after-real-contact")
 
 
 func _representative_courts() -> bool:
@@ -366,7 +394,7 @@ func _finish() -> void:
 	if is_instance_valid(focus_observer): focus_observer.queue_free()
 	paused = false
 	await process_frame
-	var report: Dictionary = {"scope": "brief actual Main540x1170 whole-court renderer; actual curtain recognizer response unless explicitly representative-only; later native boundaries/birth/contact reached through labelled TEST public injuries/placements; actual unpaused King step and derived summon observed without source/phase/clock writes", "aggregate_api_revision": CourtCodec.API_REVISION, "aggregate_schema_version": CourtCodec.SCHEMA_VERSION, "world_revision": CourtCodec.WORLD_REVISION, "checks": checks, "failures": failures, "first_failure": first_failure, "labelled_test_setups": setups, "cases": scenarios, "representative_only": representative_only, "actual_swipes": swipes, "actual_primaries": primaries, "actual_GUI_resumes": gui_resumes, "gesture_unit": gesture_unit, "pause_unit": pause_receipt, "king_intro_original": _portable(king_intro_original), "normal_focus_out_preserved": true, "captures": shots, "focus_receipts": focus_receipts, "input_observations": _portable(input_receipts), "action_receipts": _portable(action_receipts), "hit_receipts": _portable(hit_receipts), "native_events": native_events, "progress_events": progress_events, "observations": observations, "wall_elapsed_ms": Time.get_ticks_msec() - started_ms, "no_claims": ["earned route/kills/contact", "defeat-all", "full natural playthrough", "Save/Continue/Retry", "registered campaign traversal", "portrait fidelity before root image review", "all-kit balance", "performance", "mobile"]}
+	var report: Dictionary = {"scope": "brief actual Main540x1170 whole-court renderer; actual curtain recognizer response unless explicitly representative-only; later native boundaries/birth/contact reached through labelled TEST public injuries/placements; actual unpaused King step and derived summon observed without source/phase/clock writes", "aggregate_api_revision": CourtCodec.API_REVISION, "aggregate_schema_version": CourtCodec.SCHEMA_VERSION, "world_revision": CourtCodec.WORLD_REVISION, "checks": checks, "failures": failures, "first_failure": first_failure, "labelled_test_setups": setups, "cases": scenarios, "representative_only": representative_only, "terminal_views_only": terminal_views_only, "actual_swipes": swipes, "actual_primaries": primaries, "actual_GUI_resumes": gui_resumes, "gesture_unit": gesture_unit, "pause_unit": pause_receipt, "king_intro_original": _portable(king_intro_original), "normal_focus_out_preserved": true, "captures": shots, "focus_receipts": focus_receipts, "input_observations": _portable(input_receipts), "action_receipts": _portable(action_receipts), "hit_receipts": _portable(hit_receipts), "native_events": native_events, "progress_events": progress_events, "observations": observations, "wall_elapsed_ms": Time.get_ticks_msec() - started_ms, "no_claims": ["earned route/kills/contact", "defeat-all", "full natural playthrough", "Save/Continue/Retry", "registered campaign traversal", "portrait fidelity before root image review", "all-kit balance", "performance", "mobile"]}
 	var file := FileAccess.open(report_path, FileAccess.WRITE)
 	if file != null: file.store_string(JSON.stringify(report, "\t")); file.close()
 	else: checks += 1; failures += 1; push_error("whole portrait report cannot be written")
