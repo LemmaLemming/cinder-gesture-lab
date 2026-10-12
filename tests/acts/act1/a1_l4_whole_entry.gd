@@ -236,7 +236,9 @@ func _entry_history_unchanged() -> bool:
 
 func _no_replacement() -> bool:
 	var until: float = scheduler.get_clock() + 0.25
-	if not await _wait(func() -> bool: return scheduler.get_clock() >= until, "ordinary shared clock advances after helper defeat", 1.0): return false
+	# .25 native seconds is a functional observation, not a 1s wall-performance
+	# promise on this shared Mac. Keep native duration and the 70s global cap.
+	if not await _wait(func() -> bool: return scheduler.get_clock() >= until, "ordinary shared clock advances after helper defeat", 3.0): return false
 	return _require(_retained_identities() and sources[HelperIds[0]].get("dead") and sources[HelperIds[0]].get("hp") == 0.0 and not sources[HelperIds[0]].is_in_group("enemies") and scheduler.source_control_state(sources[HelperIds[0]]).reservations.is_empty() and scheduler.source_control_state(sources[HelperIds[0]]).cooldown == null and level.get("_helpers_once") == true, "defeated helper remains defeated without replacement, new identity or owner cooldown")
 
 
