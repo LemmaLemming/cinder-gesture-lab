@@ -214,6 +214,13 @@ func _terminal_save() -> bool:
 	if not _direct_candidate(available) or not await _terminal_replace_continue(available, earlier_wire, "completed available-contact"): return false
 	_terminal_watch(game.active_level, completions, contacts)
 	if not _terminal_available(game.capture_campaign_snapshot()) or not _expect(completions.size() == 1 and contacts.is_empty(), "quiet fresh completed Continue does not replay completion or fabricate contact") or not await _resume(game): return false
+	if not await _place(Vector3(0, 0.1, -33.8)) or not await _wait(func() -> bool: return (game.active_level.get_node("ExitArea") as Area3D).monitoring and game.active_level.get("_exit_cue").state().state == "available", "local approach exposes the full actual available exterior contact", 8.0) or not await _pause(): return false
+	var local_available: Dictionary = game.capture_campaign_snapshot()
+	if not _closed(local_available) or not _terminal_available(local_available) or not _terminal_histories(local_available, intro_wire, entries_wire) or not _expect(completions.size() == 1 and contacts.is_empty() and _durable(game), "local available-contact Save is durable without another completion or premature contact"): return false
+	receipts.append({"stage": "actual local available-contact Save", "exact_snapshot": Exact.stringify(local_available)})
+	if not _direct_candidate(local_available) or not await _terminal_replace_continue(local_available, earlier_wire, "local available-contact"): return false
+	_terminal_watch(game.active_level, completions, contacts)
+	if not _terminal_available(game.capture_campaign_snapshot()) or not await _resume(game): return false
 	if not await _terminal_contact(contacts): return false
 	# The canonical exit operation commits the contact snapshot before attempting
 	# unavailable A1-L5. Preserve the actual failed operation and its exact error;
@@ -254,7 +261,9 @@ func _terminal_histories(saved: Dictionary, intro_wire: String, entries_wire: St
 
 
 func _terminal_available(saved: Dictionary) -> bool:
-	return _expect(not saved.is_empty() and saved.level.local.room == 4 and saved.level.progress.completed and saved.level.progress.completion_id == "court-clear" and saved.level.progress.contact_exit_id == "" and saved.level.local.actors["court-king"].dead and saved.level.local.actors["court-king"].hp == 0.0 and saved.level.local.scheduler.encounter_id == "" and saved.level.local.scheduler.reservations.is_empty() and (game.active_level.get_node("ExitArea") as Area3D).monitoring and (game.active_level.get("_whole_art") as Node3D).call("presentation_state") == {"stage": "exterior", "helpers_open": true, "exterior_state": "available"}, "actual completed saved unit has retired danger and its available native exterior contact/scenery")
+	var near: bool = game.active_level.call("_exit_contact_near") == true
+	var cue: Dictionary = game.active_level.get("_exit_cue").state()
+	return _expect(not saved.is_empty() and saved.level.local.room == 4 and saved.level.progress.completed and saved.level.progress.completion_id == "court-clear" and saved.level.progress.contact_exit_id == "" and saved.level.local.actors["court-king"].dead and saved.level.local.actors["court-king"].hp == 0.0 and saved.level.local.scheduler.encounter_id == "" and saved.level.local.scheduler.reservations.is_empty() and (game.active_level.get_node("ExitArea") as Area3D).monitoring == near and cue.state == ("available" if near else "clear") and cue.visible == near and (game.active_level.get("_whole_art") as Node3D).call("presentation_state") == {"stage": "exterior", "helpers_open": true, "exterior_state": "available"}, "actual completed saved unit retires danger, retaining exterior scenery and only a genuinely local available contact cue")
 
 
 func _terminal_replace_continue(saved: Dictionary, earlier_wire: String, label: String) -> bool:
@@ -434,8 +443,11 @@ func _direct_candidate(saved: Dictionary) -> bool:
 	var optical: String = game._candidate_presentation_error(candidate, saved.shell)
 	var local: Dictionary = target.call("_capture_local_state")
 	if "--terminal-save" in OS.get_cmdline_user_args() and saved.level.progress.completed:
-		var exact_level: Dictionary = target.snapshot_state()
-		if not _expect(not exact_level.is_empty() and Exact.stringify(exact_level) == Exact.stringify(saved.level) and target.is_completed() and target.current_checkpoint().id == saved.level.progress.checkpoint_id and quiet_events == quiet_before and _donor() == donor, "terminal-only quiet direct candidate also preserves exact completed/contact/checkpoint progress with zero callbacks"): return false
+		# A nonplayable restore candidate cannot publish a live snapshot. Inspect
+		# its actual pure progress fields alongside the existing exact local,
+		# Player, optical and zero-callback checks instead.
+		var progress: Dictionary = saved.level.progress
+		if not _expect(target.is_completed() == progress.completed and target.current_checkpoint() == {"id": progress.checkpoint_id, "kind": progress.checkpoint_kind} and target.get("_completion_id") == progress.completion_id and target.get("_contact_exit_id") == progress.contact_exit_id and Exact.stringify(target.get("_checkpoint_ids")) == Exact.stringify(progress.checkpoint_ids) and quiet_events == quiet_before and _donor() == donor, "terminal-only quiet direct candidate preserves exact completed/contact/checkpoint progress with zero callbacks"): return false
 	if not _expect(optical.is_empty() and Exact.stringify(player.snapshot_state()) == Exact.stringify(saved.player) and Exact.stringify(local) == Exact.stringify(saved.level.local) and quiet_events == quiet_before and target.is_restore_candidate() and _donor() == donor, "quiet native unit preserves exact HP/clocks/cues/proof/history with zero callbacks and actual candidate optics"): return false
 	receipts.append({"stage": "direct actual candidate quiet restore", "room": saved.level.local.room, "exact_local": Exact.stringify(local), "quiet_callback_delta": quiet_events - quiet_before})
 	var refs: Array[WeakRef] = _descendant_refs(candidate.container)

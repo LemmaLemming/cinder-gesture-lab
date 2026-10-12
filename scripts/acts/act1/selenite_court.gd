@@ -146,6 +146,10 @@ func _fresh_activation_entitled(id: String) -> bool:
 func _physics_process(_delta: float) -> void:
 	if not _running or not _construction_error.is_empty() or not is_instance_valid(hero) or hero.dead or get_tree().paused: return
 	_refresh_frames()
+	if is_completed():
+		_update_exterior_contact()
+		_refresh_objective()
+		return
 	if _awaiting_room >= 0:
 		if _awaiting_room == 3:
 			# The cleared approach checkpoint precedes the local throne approach.
@@ -490,8 +494,7 @@ func _finish_king_defeat() -> void:
 		if not sources[id].get("dead"): sources[id].call("cancel", "king_defeated")
 	scheduler.end_encounter("king_defeated")
 	request_completion(COMPLETE_ID)
-	_exit_area.set_deferred("monitoring", true)
-	_exit_cue.present("available", "contact")
+	_update_exterior_contact()
 	_refresh_objective()
 
 
@@ -513,7 +516,28 @@ func _commit_boss_contact(body: Node3D) -> void:
 
 func _exit_contact(body: Node3D) -> void:
 	if body == hero and _running and not hero.dead and not get_tree().paused and is_completed() and _exit_area.overlaps_body(hero):
-		if request_contact_exit(EXIT_ID, hero): _exterior_open = true; _sync_art_presentation()
+		if request_contact_exit(EXIT_ID, hero):
+			_exterior_open = true
+			_exit_area.set_deferred("monitoring", false)
+			_exit_cue.present("spent", "contact")
+			_sync_art_presentation()
+
+
+func _exit_contact_near() -> bool:
+	return is_instance_valid(hero) and Vector2(hero.global_position.x - Layout.EXIT_POSITION.x, hero.global_position.z - Layout.EXIT_POSITION.z).length() <= CONTACT_APPROACH_DISTANCE
+
+
+func _update_exterior_contact() -> void:
+	# Completion can pause/save immediately at the King's ordinary attack range.
+	# Expose this distant contact only after local approach and actual full-view
+	# containment, without changing the shared camera or moving the native Area.
+	var near: bool = _exit_contact_near()
+	var available: bool = near and _contact_exit_id.is_empty() and _framing_ready()
+	_exit_area.set_deferred("monitoring", available)
+	if available: _exit_cue.present("available", "contact")
+	elif near and not _contact_exit_id.is_empty(): _exit_cue.present("spent", "contact")
+	else: _exit_cue.clear()
+	if available and _exit_area.monitoring and _exit_area.overlaps_body(hero): _exit_contact(hero)
 
 
 func _encounter_id() -> String:
@@ -531,7 +555,7 @@ func _refresh_objective() -> void:
 	# callback. Completion needs no parent-derived step/summon refresh, which
 	# must still refuse reentry into that native damage transaction.
 	if _running and not is_completed() and not _refresh_king_presentation(): _construction_error = "Actual King presentation could not refresh"; return
-	if is_completed(): objective_text = "THE COURT IS OPEN\nCONTACT THE EXTERIOR CURTAIN"; return
+	if is_completed(): objective_text = "THE COURT IS OPEN\n" + ("CONTACT THE EXTERIOR CURTAIN" if _exit_contact_near() else "DASH TO THE EXTERIOR CURTAIN"); return
 	if _awaiting_room == 3: objective_text = "THE KING AWAITS\n" + ("CONTACT THE THRONE APPROACH" if _boss_contact_near() else "DASH TO THE THRONE APPROACH"); return
 	if _awaiting_room >= 0: objective_text = "COURT CLEARED\nDASH TO THE NEXT OPEN COURT"; return
 	match room:
@@ -600,7 +624,10 @@ func _roundel_presentation(_id: String, _state: Dictionary) -> bool:
 func _camera_framing_points() -> Array:
 	if not _running or not is_instance_valid(hero) or not is_instance_valid(shared_shell): return []
 	var points: Array = []
-	if is_completed(): return _contact_points(_exit_area, _exit_cue)
+	if is_completed():
+		points.append_array(_hero_points())
+		if _exit_contact_near(): points.append_array(_contact_points(_exit_area, _exit_cue))
+		return _unique_points(points)
 	if _boss_contact_near():
 		points.append_array(_contact_points(_boss_area, _boss_cue))
 		# Retain the actual dormant King's full native body/art before exposing
@@ -951,8 +978,9 @@ func restore_state(saved: Dictionary) -> bool:
 	if not _quiet_commit_error.is_empty(): last_snapshot_error = _quiet_commit_error; return false
 	if accepted:
 		_exterior_open = not String(saved.progress.contact_exit_id).is_empty()
-		_exit_area.monitoring = is_completed() and String(saved.progress.contact_exit_id).is_empty()
-		if not _present_contact_quiet(_exit_cue, "available" if _exit_area.monitoring else "spent"):
+		_exit_area.monitoring = is_completed() and String(saved.progress.contact_exit_id).is_empty() and _exit_contact_near()
+		var contact_state: String = "available" if _exit_area.monitoring else ("spent" if _exit_contact_near() and not String(saved.progress.contact_exit_id).is_empty() else "clear")
+		if not _present_contact_quiet(_exit_cue, contact_state):
 			_fail_quiet_commit(_exit_cue.last_error); last_snapshot_error = _quiet_commit_error; return false
 		_refresh_objective()
 	return accepted
@@ -996,8 +1024,8 @@ func _restore_local_state(state: Dictionary) -> void:
 	if not _present_contact_quiet(_boss_cue, "available" if _boss_area.monitoring else ("clear" if _awaiting_room == 3 else "spent")):
 		_fail_quiet_commit(_boss_cue.last_error); return
 	var terminal: bool = room >= 3 and state.actors["court-king"].dead and state.scheduler.encounter_id.is_empty()
-	_exit_area.monitoring = terminal
-	if not _present_contact_quiet(_exit_cue, "available" if terminal else "spent"):
+	_exit_area.monitoring = terminal and _exit_contact_near()
+	if not _present_contact_quiet(_exit_cue, "available" if _exit_area.monitoring else "clear"):
 		_fail_quiet_commit(_exit_cue.last_error); return
 	_refresh_objective()
 	_quiet_commit = false

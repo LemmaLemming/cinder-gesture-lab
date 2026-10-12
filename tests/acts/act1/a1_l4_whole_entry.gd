@@ -320,8 +320,10 @@ func _observe(label: String) -> void:
 
 func _contact_exit_and_cleanup() -> bool:
 	if not _require(level.is_completed() and _event_count("completion") == 1 and scheduler.encounter_profile().is_empty(), "one native completion retires the King epoch"): return false
-	if not await _wait(func() -> bool: return (level.get_node("ExitArea") as Area3D).monitoring, "deferred native contact exit becomes available", 2.0): return false
-	if not await _test_position(Vector3(0, 0.1, -35), "TEST cross actual exterior contact Area") or not await _wait(func() -> bool: return _event_count("contact") == 1, "actual contact emits the declared exterior exit request", 2.0): return false
+	# A completed distant exit stays inactive until actual local approach. An
+	# already observed contact is spent, so cleanup must not await a second one.
+	if _event_count("contact") == 0:
+		if not await _test_position(Vector3(0, 0.1, -35), "TEST local approach across actual exterior contact Area") or not await _wait(func() -> bool: return _event_count("contact") == 1, "actual locally contained contact emits the declared exterior exit request", 2.0): return false
 	if not _require(level.get("_contact_exit_id") == "court-exterior" and _event_count("completion") == 1 and _retained_identities(), "contact remains distinct and preserves the original finite cast"): return false
 	_observe("actual-contact-before-disposal")
 	scenarios.append({"scope": scope, "result": "focused_sequence_complete", "completion_events": _event_count("completion"), "contact_events": _event_count("contact"), "checkpoint_events": _event_count("checkpoint"), "stage_observations": _scope_observations()})
