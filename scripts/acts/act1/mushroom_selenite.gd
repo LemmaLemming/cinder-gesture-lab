@@ -1105,6 +1105,7 @@ func _step_approach(delta: float) -> void:
 	if not boundary_error.is_empty():
 		last_error = boundary_error
 		return
+	var current_error: String = ""
 	if not error.is_empty():
 		# A guard may suppress pursuit. Braking remains finite owned motion and
 		# must receive its own complete native world/body/art/spacing approval.
@@ -1115,7 +1116,10 @@ func _step_approach(delta: float) -> void:
 			plan["delta_s"] = delta
 			error = _movement_error(plan)
 		else: error = String(plan.get("error", "Approach braking rejected"))
-	var current_error: String = _approach_idle_error(true)
+		# The braking path can cross another parent observer. Keep its full fresh
+		# proof even when planning fails; the success path has just checked the
+		# first observer and performs only local branching before the pose guard.
+		current_error = _approach_idle_error(true)
 	if not current_error.is_empty(): error = current_error
 	if global_position != origin or velocity != original_velocity or _facing != original_facing or _hero.global_position != target or hp != hp_before or _approach_driving != driving_before:
 		error = "Pure movement guard changed the actual source/Player boundary"
