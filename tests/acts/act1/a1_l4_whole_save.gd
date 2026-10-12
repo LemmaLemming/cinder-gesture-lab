@@ -704,6 +704,12 @@ func _expect(ok: bool, label: String) -> bool:
 		if first_failure.is_empty():
 			first_failure = {"label": label, "paused": paused, "campaign_error": game.campaign_error if is_instance_valid(game) else "Shell absent"}
 			if is_instance_valid(game) and is_instance_valid(game.active_level):
+				# Preserve the first underlying refusal before later diagnostic
+				# snapshot queries can replace a component's last-error field.
+				first_failure["level_snapshot_error"] = game.active_level.last_snapshot_error
+				first_failure["level_capture_error"] = game.active_level.get("_capture_error")
+				first_failure["player_snapshot_error"] = game.player.get("last_snapshot_error")
+				first_failure["failed_operations"] = _portable(game.get("_failed_operations"))
 				first_failure["court_room"] = game.active_level.get("room")
 				first_failure["awaiting_room"] = game.active_level.get("_awaiting_room")
 				first_failure["helper_stage"] = game.active_level.get("helper_stage")
