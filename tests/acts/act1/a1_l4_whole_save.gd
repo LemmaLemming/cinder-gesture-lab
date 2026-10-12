@@ -12,6 +12,9 @@ const ScriptPath: String = "res://scripts/acts/act1/selenite_court.gd"
 const LocalKeys: Array[String] = ["api_revision", "schema_version", "world_revision", "room", "formation", "awaiting_room", "roundel_demonstrated", "helpers_once", "helper_stage", "entry_records", "entry_outcomes", "actors", "scheduler", "roundel", "framing", "king_intro"]
 const SourceIds: Array[String] = ["court-curtain-guard", "court-formation-west", "court-formation-east", "court-approach-west", "court-approach-east", "court-king", "court-helper-west", "court-helper-east"]
 const WatchdogMs: int = 120000
+# Two extra real Shell reconstruction/disposal cases add bounded wall work,
+# retaining all original8second observations and all native timing/guards.
+const ContactObserverAllowanceMs: int = 60000
 var game: CinderCampaignShell
 var fresh: CinderCampaignShell
 var candidate: Dictionary = {}
@@ -218,6 +221,8 @@ func _terminal_save() -> bool:
 	var local_available: Dictionary = game.capture_campaign_snapshot()
 	if not _closed(local_available) or not _terminal_available(local_available) or not _terminal_histories(local_available, intro_wire, entries_wire) or not _expect(completions.size() == 1 and contacts.is_empty() and _durable(game), "local available-contact Save is durable without another completion or premature contact"): return false
 	receipts.append({"stage": "actual local available-contact Save", "exact_snapshot": Exact.stringify(local_available)})
+	if "--contact-observer-boundaries" in OS.get_cmdline_user_args():
+		if not await _terminal_contact_observer_boundaries(local_available, earlier_wire): return false
 	if not _direct_candidate(local_available) or not await _terminal_replace_continue(local_available, earlier_wire, "local available-contact"): return false
 	_terminal_watch(game.active_level, completions, contacts)
 	if not _terminal_available(game.capture_campaign_snapshot()) or not await _resume(game): return false
@@ -292,6 +297,93 @@ func _terminal_contact(contacts: Array[Dictionary]) -> bool:
 	# ordinary floor-ready return. The actual saved capsule/floor validation,
 	# rather than an invented is_on_floor flag, proves this contact position.
 	return await _wait(func() -> bool: return contacts.size() == 1 and game.active_level.get("_contact_exit_id") == "court-exterior", "actual supported native Area contact emits exactly one exterior exit", 8.0, true)
+
+
+func _terminal_contact_observer_boundaries(saved: Dictionary, earlier_wire: String) -> bool:
+	# Terminal-only regression: reuse the exact real local available-contact Save.
+	# Copy its existing file bytes to isolated case stores; never rewrite saved
+	# progress/contact bits or interrupt the ordinary Shell's signal handler.
+	var original_files: Dictionary = _disk()
+	if not _expect(original_files.has("campaign.json") and Exact.stringify(game.capture_campaign_snapshot()) == Exact.stringify(saved), "observer cases begin from the exact durable real local available-contact Save"): return false
+	var donor_refs: Array[WeakRef] = _descendant_refs(game)
+	if is_instance_valid(game.fx): game.fx.clear()
+	game.free(); game = null
+	if not _expect(_all_freed(donor_refs), "normal donor disposal precedes observer-case unpause; no second world advances"): return false
+	for mode: String in ["exit_level", "queued_shell"]:
+		var prefix: String = test_root + "contact-boundary-" + mode + "-"
+		for name: String in original_files:
+			var copy_file := FileAccess.open(prefix + name, FileAccess.WRITE)
+			if not _expect(copy_file != null, "isolated observer-case copy is writable: " + mode + "/" + name): return false
+			copy_file.store_buffer(original_files[name]); copy_file.close()
+		var shell: CinderCampaignShell = Shell.new()
+		if not _expect(shell.configure_runtime(raw, prefix + "campaign.json", prefix + "settings.json", prefix + "preferences.json"), "real observer-case Shell keeps canonical handlers and isolated copied stores: " + mode):
+			shell.free(); return false
+		game = shell; root.add_child(game)
+		if not await _settle() or not _expect(paused and game.player == null and game.active_level == null and game.menu.page_name() == "title", "fresh real observer-case Title installs no world: " + mode) or not _press(game, "ContinueStoryButton") or not await _settle(): return false
+		if not _expect(paused and game.menu.page_name() == "resume" and Exact.stringify(game.capture_campaign_snapshot()) == Exact.stringify(saved) and Exact.stringify(game.attempts.state().story.checkpoint) == earlier_wire, "fresh quiet public Continue reconstructs exact local terminal unit and earlier Retry: " + mode) or not _terminal_available(game.capture_campaign_snapshot()) or not _bindings(game): return false
+		var target: CinderLevel = game.active_level
+		var player: CinderPlayer = game.player
+		var area := target.get_node("ExitArea") as Area3D
+		var cue := target.get("_exit_cue") as CinderInteractionCue
+		var art := target.get("_whole_art") as Node3D
+		var refs: Array[WeakRef] = _descendant_refs(game)
+		var completions: Array[Dictionary] = []
+		var contacts: Array[Dictionary] = []
+		var observers: Array[Dictionary] = []
+		var returned: Dictionary = {}
+		_terminal_watch(target, completions, contacts)
+		# Connected after the real installed Shell handler. The admitted receipt
+		# observes native overlap and the Shell's actual queued exit operation.
+		target.contact_exit_requested.connect(func(id: String, exit_id: String) -> void:
+			observers.append({"level_id": id, "exit_id": exit_id, "actual_overlap": area.overlaps_body(player), "monitoring": area.monitoring, "cue": cue.state(), "shell_operations": _portable(shell.get("_operations"))})
+			if mode == "exit_level": target.exit_level()
+			else: returned["clear_accepted"] = cue.clear() # Public observer-owned presentation cleanup before disposal.
+			returned["observer_cue"] = cue.state()
+			returned["observer_art"] = art.call("presentation_state")
+			shell.queue_free()
+			# Root owns this recorder. Deferred calls run after the production
+			# callback returns and before queued deletion; no runtime hook is added.
+			_terminal_contact_observer_return.call_deferred(returned, target, shell, cue, art)
+		)
+		if not await _resume(game) or not await _wait(func() -> bool: return player.get_threat_response_state().stable and player.velocity == Vector3.ZERO, "actual stopped original Hero before observer-case contact placement: " + mode, 8.0): return false
+		var position := Vector3(0, 0.1, -35)
+		if not _expect(Layout.SAFE_RECT.has_point(Vector2(position.x, position.z)) and area.monitoring and cue.state().state == "available" and not area.overlaps_body(player), "observer case approaches the original admitted native Area from supported nonoverlap: " + mode): return false
+		var before: Vector3 = player.global_position
+		player.global_position = position
+		setups.append({"kind": "TEST supported Hero placement for actual exterior contact observer boundary", "observer": mode, "from": Codec.vector3(before), "to": Codec.vector3(position)})
+		if not await _wait(func() -> bool: return returned.has("after_callback"), "root records the actual observer boundary after production contact returns: " + mode, 8.0, true): return false
+		if not _expect(contacts == [{"level_id": "A1-L4", "exit_id": "court-exterior"}] and completions.is_empty() and observers.size() == 1, "actual native contact emits once and invokes one synchronous observer without replaying completion: " + mode): return false
+		var admitted: Dictionary = observers[0]
+		if not _expect(admitted.actual_overlap and admitted.monitoring and admitted.cue.state == "available" and admitted.cue.trigger == "contact" and admitted.cue.visible and admitted.shell_operations.size() == 1 and admitted.shell_operations[0].operation == "exit" and admitted.shell_operations[0].level_id == "A1-L4", "observer receives actual admitted overlap after the retained ordinary Shell exit handler: " + mode): return false
+		var after: Dictionary = returned.after_callback
+		if not _expect(after.get("objects_live") == true and after.shell_queued and after.contact_exit_id == "court-exterior" and after.cue == returned.observer_cue and after.cue.state == "clear" and not after.cue.visible and after.art == returned.observer_art and after.art.exterior_state == "available", "contact return preserves observer cleanup and does not reopen its cue or exterior artwork: " + mode): return false
+		if mode == "exit_level":
+			if not _expect(after.aliases_released and not after.owner_physics and not after.scheduler_physics and not after.roundel_physics and not after.monitoring, "synchronous public exit retains released aliases and stopped native owner/contact processing"): return false
+		elif not _expect(returned.get("clear_accepted") == true and not after.aliases_released, "queued Shell disposal independently preserves public cue cleanup before lifecycle alias release"): return false
+		receipts.append({"stage": "actual synchronous exterior contact observer " + mode, "admitted": admitted, "returned": returned, "contact_events": contacts, "completion_events": completions, "scope": "actual callback/lifecycle boundary and normal queued disposal; isolated store, no successor qualification"})
+		await process_frame
+		if not _expect(_all_freed(refs) and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "queued observer-owned Shell disposal releases all real descendants/groups: " + mode): return false
+		game = null
+	for name: String in original_files:
+		if not _expect(FileAccess.get_file_as_bytes(test_root + name) == original_files[name], "observer cases leave the original terminal store bytes unchanged: " + name): return false
+	game = _new_shell()
+	if game == null or not await _settle() or not _press(game, "ContinueStoryButton") or not await _settle(): return false
+	return _expect(paused and game.menu.page_name() == "resume" and Exact.stringify(game.capture_campaign_snapshot()) == Exact.stringify(saved) and Exact.stringify(game.attempts.state().story.checkpoint) == earlier_wire and _durable(game), "fresh original-store Continue restores the unchanged ordinary terminal-save path after observer cases") and _bindings(game)
+
+
+func _terminal_contact_observer_return(record: Dictionary, target: CinderLevel, shell: CinderCampaignShell, cue: CinderInteractionCue, art: Node3D) -> void:
+	var after: Dictionary = {"objects_live": is_instance_valid(target) and is_instance_valid(shell) and is_instance_valid(cue) and is_instance_valid(art)}
+	record["after_callback"] = after
+	if not after.objects_live: return
+	after["shell_queued"] = shell.is_queued_for_deletion()
+	after["contact_exit_id"] = target.get("_contact_exit_id")
+	after["cue"] = cue.state()
+	after["art"] = art.call("presentation_state")
+	after["aliases_released"] = target.hero == null and target.shared_shell == null
+	after["owner_physics"] = target.is_physics_processing()
+	after["scheduler_physics"] = target.get("scheduler").is_physics_processing()
+	after["roundel_physics"] = target.get("roundel").is_physics_processing()
+	after["monitoring"] = (target.get_node("ExitArea") as Area3D).monitoring
 
 
 func _unfinished_king_intro_transport() -> bool:
@@ -704,7 +796,7 @@ func _portable(value: Variant) -> Variant:
 
 
 func _watchdog() -> void:
-	if not finishing and Time.get_ticks_msec() - started_ms > WatchdogMs:
+	if not finishing and Time.get_ticks_msec() - started_ms > WatchdogMs + (ContactObserverAllowanceMs if "--contact-observer-boundaries" in OS.get_cmdline_user_args() else 0):
 		_expect(false, "bounded focused whole-court Save fixture"); aborted = true; _finish.call_deferred()
 
 
