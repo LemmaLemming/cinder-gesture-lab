@@ -1,5 +1,11 @@
 # Act 1 — durable memory
 
+## Retiring Shell contact-presentation correction — 2026-10-12T09:33:49.067708+00:00
+
+Diagnostic contact-guards02 closes276/1 at a49dbd2a/Shared53 after81.05seconds, all725source/461UIDbytes unchanged. The real queuedShell observer successfully cleared its cue and queued actualShell disposal. Deferredinspection finds the same live objects/Shellqueued=true/contactonce/artavailable unchanged, but Cuehasbeenre-presented asSPENT/visible whileowner/actorprocessing remainlive. This identifies a later completed-presentation writer before deferred disposal; it does not relabel the immediate callback as the faulty writer. Original01 missingaftervalues and02 fullactualpacket remainimmutable.
+
+The minimal owned runtime correction adds retained live-boundary admission at _update_exterior_contact, allowing ordinary heldPause but refusing queuedShell/level/disposedalias ownership before any Area/Cue write. Existing _exit_contact post-signalguard remains unchanged. Actual normalcontact/save, completed far/near states, clocks/geometry/bodies/controller/Cue meaning/art are unchanged; synchronousobservercleanup now remainsauthoritative during the retiring interval. This source change is unexecuted until the same focusedterminal+observer regression closes. No assertion/limit/input or native timing is weakened. Act1 3/8/campaign14/24,L4only/unaccepted; all8desktopgoalACTIVE.
+
 ## Native observer boundary diagnostic — 2026-10-12T09:29:55.784940+00:00
 
 Contact-guards01 closes276/1 after86.1seconds on3ce96165/Shared53, all725source and461priorUIDbytes unchanged. It parses/loads and reaches actual completedlocalSave. The first synchronous public exit_level case passes: actualoverlap/oneevent/queuedShell operation, retainedclearcue/availableart/releasedaliases/stoppedprocessing and complete disposal. The second queuedShell observer assertion fails; its deferred returned-state values were not included before the failed assertion, so no cue/art cause is yet proved. Nativefirstfailure saysShellabsent at laterdiagnosis. Originalfailedscope is preserved; ordinary final contactedSave/Continue/Retry is not established by01.

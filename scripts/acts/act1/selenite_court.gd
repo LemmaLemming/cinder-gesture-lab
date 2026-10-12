@@ -538,6 +538,9 @@ func _exit_contact_near() -> bool:
 
 
 func _update_exterior_contact() -> void:
+	# A completed court can receive another native tick before deferred Shell
+	# disposal. Preserve synchronous observer cleanup throughout that interval.
+	if not _live_boundary(null, null, true): return
 	# Completion can pause/save immediately at the King's ordinary attack range.
 	# Expose this distant contact only after local approach and actual full-view
 	# containment, without changing the shared camera or moving the native Area.
