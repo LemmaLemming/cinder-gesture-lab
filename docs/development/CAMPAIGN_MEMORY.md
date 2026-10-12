@@ -1,5 +1,7 @@
 # Cinder campaign memory
 
+Current milestone: independently accepted [A2-O2 Clear Air Circuit](ACT2_O2_ACCEPTANCE.md) advances the campaign to **14/24**, Act2 **7/8**; its owner may start O3 after canonical ACCEPTED. Dedicated isolated canonical41/0/import0 complements unchanged original owner257/523/116/322 and brief portraits. A3-L4 is already accepted and L5 continues; A1-L4 remains independently authored. Integration remains first help contact. Shared53 preserves published runtime and changes only O2 registration plus its test/records; configuration-reference optimization remains private untested scratch. Full desktop15-main/9-optional work continues. Earlier milestone paragraphs retain their historical scope.
+
 ## Current desktop milestone — Shared50
 
 A2-O1 Cylinder Perimeter is independently accepted at485d26f9, campaign12/24 and Act2 6/8. [Root88/0 production optional/save/Continue/Retry/contact/stamp/GUI replay/story restoration, four inspected original portraits and untested limits](ACT2_O1_ACCEPTANCE.md). A2-O2 is next; A1/A3 L4 remain independent. The shared deferred Title callback now uses WeakRefs with clean130/0 plusdirectlyaffected363/0; [original errors and scope](MENU_SCENERY_LIFECYCLE.md) stay preserved. Camera/frame-cost investigation remains open with [actual rejected/incomplete diagnostics](CAMERA_FOLLOW_DIAGNOSTIC.md). This current milestone supersedes earlier counts/frontiers while preserving historical evidence. Root is first help contact; full15-main/9-optional desktop scope remains ACTIVE.

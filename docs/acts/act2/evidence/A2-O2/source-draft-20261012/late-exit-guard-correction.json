@@ -1,0 +1,10 @@
+{
+  "failing_result": "loading-side-scene-spawn-fixed/result.json",
+  "meaningful_error": "Condition !is_inside_tree in Lane.state285 via clear/cancel during CinderLevel late fallback after fixture Shell.free",
+  "normal_disposal": "Actual shared Game.reset184\u2013187/Shell._install716\u2013728/_dispose742\u2013748 calls level.exit_level before free. Direct fixture Shell.free triggers children-first late fallback; native leaf exit hooks cancel leases.",
+  "owner_fix": "Disconnect valid references as before; bank.cancel,tool.clear,scheduler.end_encounter and cue.clear only for recipients still inside tree. Actor reference/gate retirement remains unconditional for valid refs. Still-in-tree queued nodes retain normal public cancellation. No shared leaf/code/schema/timing change.",
+  "test": "Existing active Handler disk restore keeps direct Shell.free to exercise exact prior late fallback; other restores use explicit live level exit. Completed second order uses public replay event; assertions are preserved.",
+  "host_sha256": "4f383d90147a9b2f3c9b908c78128586b5c051e3c99249eb5e47e5e0cb9b7567",
+  "fixture_sha256": "87c3cd25f7b375d9e4ad4d7d56160511a0b4c3373fe7df528d6d50fc52f642d0",
+  "scope": "Source correction before affected rerun; no native credit yet"
+}

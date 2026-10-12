@@ -1,0 +1,45 @@
+{
+  "scope": "Actual required canonical ability/equipment/numerical validation; no equipment creation/ability introduction or native gameplay/art credit",
+  "cwd": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+  "head": "0744614a41acf078bf9c3ca8a06f99b327211524",
+  "results": [
+    {
+      "label": "ability",
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "ability",
+        "validate"
+      ],
+      "at": "2026-10-12T06:03:30.982785+00:00",
+      "exit_code": 0,
+      "log": "docs/acts/act2/evidence/A2-O2/canonical-design-validation/ability.log",
+      "log_sha256": "b217bc448439ef5145c4887c13cc094c3c839046458bd366687f9ecc794d4e80"
+    },
+    {
+      "label": "equipment",
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "equipment",
+        "validate"
+      ],
+      "at": "2026-10-12T06:03:31.253293+00:00",
+      "exit_code": 0,
+      "log": "docs/acts/act2/evidence/A2-O2/canonical-design-validation/equipment.log",
+      "log_sha256": "b3a4eefc1d324dadd25e4e52870a4470a58c4cb812d02853712bfac3a890a13c"
+    },
+    {
+      "label": "numerical",
+      "command": [
+        "python3",
+        "scripts/design/validate_equipment.py"
+      ],
+      "at": "2026-10-12T06:03:31.361628+00:00",
+      "exit_code": 0,
+      "log": "docs/acts/act2/evidence/A2-O2/canonical-design-validation/numerical.log",
+      "log_sha256": "dfd4ab79c99e773325b8cb50acdc16e96b9f929f6315fbfee4e6ac5f7a647a74"
+    }
+  ],
+  "all_passed": true
+}
