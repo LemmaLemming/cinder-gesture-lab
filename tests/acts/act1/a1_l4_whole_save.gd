@@ -93,7 +93,7 @@ func _run() -> void:
 	game.request_retry()
 	if not await _settle(): await _finish(); return
 	if not _expect(paused and game.menu.page_name() == "resume" and Exact.stringify(game.capture_campaign_snapshot()) == protected_wire and game.player.hp == 23.0 and game.player.shells == 0 and _identities(game.active_level, game.player) != old_ids and _all_freed(old_refs) and _durable(game), "public earlier Retry installs pristine native recipients with exact protected resources/no refill and disposes later warning world") or not _bindings(game): await _finish(); return
-	if "--representative-helpers" in OS.get_cmdline_user_args():
+	if "--representative-helpers" in OS.get_cmdline_user_args() or "--moving-helper-save" in OS.get_cmdline_user_args():
 		if not await _representative_helpers(): await _finish(); return
 	await _finish()
 
@@ -122,7 +122,9 @@ func _representative_helpers() -> bool:
 	if not await _checkpoint("court-after-approach") or not await _place(Vector3(0, 0.1, -26)): return false
 	if not await _wait(func() -> bool: return int(game.active_level.get("room")) == 3 and game.active_level.current_checkpoint().id == "court-boss-entry", "actual broad native Area enters King epoch", 8.0) or not await _settle(): return false
 	if paused and not await _resume(game): return false
-	if not _damage("court-king", 40.0) or not await _wait(func() -> bool: return int(game.active_level.get("room")) == 4 and game.active_level.get("helper_stage") == "done", "actual once-only native helper entry completes", 12.0) or not await _checkpoint("court-king-phase-two"): return false
+	if not _damage("court-king", 40.0): return false
+	if "--moving-helper-save" in OS.get_cmdline_user_args(): return await _unfinished_helper_transport()
+	if not await _wait(func() -> bool: return int(game.active_level.get("room")) == 4 and game.active_level.get("helper_stage") == "done", "actual once-only native helper entry completes", 12.0) or not await _checkpoint("court-king-phase-two"): return false
 	if not _damage("court-helper-west", 5.0): return false
 	game.player.shells = 0
 	setups.append({"kind": "TEST zero shells immediately before representative helper pause", "clock_s": _scheduler().get_clock()})
@@ -138,6 +140,62 @@ func _representative_helpers() -> bool:
 	game.request_retry()
 	if not await _settle(): return false
 	return _expect(paused and Exact.stringify(game.capture_campaign_snapshot()) == earlier_wire and _identities(game.active_level, game.player) != ids and game.player.snapshot_state().resources == earlier.player.resources and _durable(game), "representative Retry restores the actual earlier phase checkpoint/resources; no claimed current-state heal or fabricated checkpoint") and _bindings(game)
+
+
+
+func _unfinished_helper_transport() -> bool:
+	# Observe genuine native entry. No authored phase, start, end, floor flag,
+	# position or lease is assigned to a source to manufacture a save window.
+	if not await _wait(func() -> bool: return _moving_helpers(), "real unfinished moving helper boundary", 12.0): return false
+	game.player.shells = 0
+	setups.append({"kind": "TEST zero shells immediately before moving-entry pause", "clock_s": _scheduler().get_clock()})
+	game.request_pause_deferred()
+	if not await _settle() or not _expect(paused and game.menu.page_name() == "pause", "public deferred pause captures the complete current native tick"): return false
+	var saved: Dictionary = game.capture_campaign_snapshot()
+	if not _closed(saved) or not _expect(saved.level.local.room == 4 and saved.level.local.helper_stage == "entering" and saved.level.local.entry_records.size() == 2 and saved.level.local.entry_outcomes.is_empty() and saved.player.resources.shells == 0, "actual moving save retains original entry rather than a fabricated settled or terminal state"): return false
+	for id: String in ["court-helper-west", "court-helper-east"]:
+		var actor: Dictionary = saved.level.local.actors[id]
+		var entry: Dictionary = saved.level.local.entry_records[id]
+		var position: Vector3 = Codec.read_vector3(actor.motion.position)
+		var from: Vector3 = Codec.read_vector3(entry.from)
+		var goal: Vector3 = Codec.read_vector3(entry.to)
+		if not _expect(actor.motion.grounded and actor.motion.velocity[2] > 0.0 and actor.motion.velocity[0] == 0.0 and actor.motion.velocity[1] == 0.0 and actor.hp == 24.0 and actor.cycle == 0 and actor.reservation_id == "" and position.z > from.z and position.z < goal.z and entry.end_s == entry.start_s + 0.7 / 1.4 and saved.level.local.scheduler.clock_s < entry.end_s, "saved actual helper owns unfinished grounded finite entry: " + id): return false
+	var original_entry: String = Exact.stringify(saved.level.local.entry_records)
+	receipts.append({"stage": "TEST actual unfinished helper Save", "exact_snapshot": Exact.stringify(saved)})
+	if not _direct_candidate(saved): return false
+	# Close the real donor before unpausing a fresh world. Unpausing while both
+	# worlds survive would advance both, making a fresh-resume observation false.
+	var old_refs: Array[WeakRef] = _descendant_refs(game)
+	if is_instance_valid(game.fx): game.fx.clear()
+	game.free(); game = null
+	if not _expect(_all_freed(old_refs), "normal close disposes donor before fresh moving Continue"): return false
+	game = _new_shell()
+	if game == null or not await _settle() or not _press(game, "ContinueStoryButton") or not await _settle(): return false
+	if not _expect(paused and game.menu.page_name() == "resume" and Exact.stringify(game.capture_campaign_snapshot()) == Exact.stringify(saved) and _durable(game), "fresh real Title Continue reconstructs exact unfinished native entry and clocks"): return false
+	_watch(game.active_level, game.player, false)
+	for id: String in ["court-helper-west", "court-helper-east"]:
+		var actor: CharacterBody3D = _sources()[id]
+		if not _expect(not actor.is_on_floor() and saved.level.local.actors[id].motion.grounded and actor.velocity.z > 0.0, "fresh native body has no prior slide contact; genuine restored transport supplies floor support: " + id): return false
+	if not _bindings(game) or not await _resume(game): return false
+	if not await _wait(func() -> bool: return game.active_level.get("helper_stage") == "done", "fresh resumed entry reaches its original finite terminal boundary", 12.0, true) or not await _checkpoint("court-king-phase-two") or not await _pause(): return false
+	var finished: Dictionary = game.capture_campaign_snapshot()
+	if not _closed(finished) or not _expect(Exact.stringify(finished.level.local.entry_records) == original_entry, "fresh resume preserves exact original from/to/start/end/speed records without rebase"): return false
+	for id: String in ["court-helper-west", "court-helper-east"]:
+		var actual: Dictionary = finished.level.local.actors[id]
+		var endpoint: Vector3 = Codec.read_vector3(finished.level.local.entry_records[id].to)
+		var position: Vector3 = Codec.read_vector3(actual.motion.position)
+		if not _expect(finished.level.local.entry_outcomes[id].outcome == "complete" and Vector2(position.x, position.z).distance_to(Vector2(endpoint.x, endpoint.z)) <= 0.005 and actual.motion.velocity == [0.0, 0.0, 0.0] and actual.hp == 24.0 and actual.cycle == 0 and actual.reservation_id == "" and String(_sources()[id].get("last_error")).is_empty(), "fresh restored native helper completes original entry without unsupported groundedness or a replacement attack: " + id): return false
+	receipts.append({"stage": "fresh unfinished helper Resume completed", "exact_snapshot": Exact.stringify(finished)})
+	return true
+
+
+func _moving_helpers() -> bool:
+	if int(game.active_level.get("room")) != 4 or game.active_level.get("helper_stage") != "entering": return false
+	for id: String in ["court-helper-west", "court-helper-east"]:
+		var actor: CharacterBody3D = _sources()[id]
+		var record: Dictionary = (game.active_level.get("_entry_records") as Dictionary).get(id, {})
+		if record.is_empty() or actor.velocity.z <= 0.0 or actor.global_position.z <= record.from.z or actor.global_position.z >= record.to.z - 0.1: return false
+	return true
 
 
 func _direct_candidate(saved: Dictionary) -> bool:
@@ -456,7 +514,7 @@ func _finish() -> void:
 	var file := FileAccess.open(report, FileAccess.WRITE)
 	if file == null: _expect(false, "focused native report is writable")
 	else:
-		file.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "setups": setups, "receipts": receipts, "fixture_mode": "representative-helpers" if "--representative-helpers" in OS.get_cmdline_user_args() else "entrance-only", "wall_ms": Time.get_ticks_msec() - started_ms, "scope": "TEST metadata/generic predecessors/injured carryover; default is actual entrance Warning Save/format2/pristine constructors/fresh Continue/earlier Retry/quiet cleanup only. Opt-in helper state adds labelled public injuries/placement; no earned route, production registration, art/kit/balance/performance/mobile acceptance"}, "\t")); file.close()
+		file.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "setups": setups, "receipts": receipts, "fixture_mode": "moving-helper-save" if "--moving-helper-save" in OS.get_cmdline_user_args() else ("representative-helpers" if "--representative-helpers" in OS.get_cmdline_user_args() else "entrance-only"), "wall_ms": Time.get_ticks_msec() - started_ms, "scope": "TEST metadata/generic predecessors/injured carryover; default is actual entrance Warning Save/format2/pristine constructors/fresh Continue/earlier Retry/quiet cleanup only. Opt-in helper state adds labelled public injuries/placement; no earned route, production registration, art/kit/balance/performance/mobile acceptance"}, "\t")); file.close()
 	var dir := DirAccess.open(test_root)
 	if dir != null:
 		for name: String in dir.get_files(): DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root + name))
