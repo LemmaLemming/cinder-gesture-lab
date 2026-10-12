@@ -144,9 +144,9 @@ func _art_components() -> bool:
 		_art_records.append(record.duplicate(true))
 		_expect(bool(_art_bait.call("observe_record", record)), "actual contiguous completed controller receipt reaches bait")
 	_game.player.world_action_executed.connect(_art_action_observer)
-	# Retain both actual collision-shortened receipts, then approach the real
-	# low brace again. The latest completed landing is the genuine ray bait.
-	if not await _art_dash(Vector3.FORWARD) or not await _art_dash(Vector3.BACK) or not await _art_dash(Vector3.FORWARD): return false
+	# Retain both actual collision-shortened receipts, then approach diagonally
+	# around the measured low brace. The latest actual landing is the ray bait.
+	if not await _art_dash(Vector3.FORWARD) or not await _art_dash(Vector3.BACK) or not await _art_dash(Vector3(0.5, 0.0, -sqrt(0.75))): return false
 	# Ordinary rendered follow frames precede construction of the encounter;
 	# neither an attack clock nor camera/hero/source state is advanced by hand.
 	await _art_settle(12)
@@ -341,7 +341,14 @@ func _art_step() -> void:
 		native_body.assign(_game.player_camera_framing_points())
 		var actor: Node3D = _art_parent.call("get_actor")
 		actor.call("get_cosmetic_rig").call("apply_readability", _game.camera, native_body)
-		(_art_parent.call("get_foot") as Node3D).get_node("InheritedGreyboxGiantFoot").call("apply_readability", _game.camera, native_body)
+		# Match the production host's conservative Foot bounds from all native
+		# Hero points; the original full22 presentation guards remain unchanged.
+		var foot_bounds := AABB(_game.player.global_position, Vector3.ZERO)
+		for point: Vector3 in native_body:
+			foot_bounds = foot_bounds.expand(point)
+		var foot_body: Array[Vector3] = []
+		for index: int in range(8): foot_body.append(foot_bounds.get_endpoint(index))
+		(_art_parent.call("get_foot") as Node3D).get_node("InheritedGreyboxGiantFoot").call("apply_readability", _game.camera, foot_body)
 
 func _art_settle(frames: int) -> void:
 	for _frame: int in range(frames): await process_frame

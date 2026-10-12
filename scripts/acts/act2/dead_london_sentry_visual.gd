@@ -9,6 +9,7 @@ const FootVisualScript: Script = preload("res://scripts/acts/act2/giant_foot_vis
 const NEAR_FOOT_AT: Vector3 = Vector3(0.65, 0.0, -0.95)
 const HOOD_AT: Vector3 = Vector3(0.0, 2.55, -1.03)
 const BRACE_AT: Vector3 = Vector3(0.0, 0.34, 0.0)
+const SENTRY_MAX_HERO_BOUND_POINTS: int = 22
 
 var _brace: Node3D
 var _generator: Node3D
@@ -175,16 +176,18 @@ func _build_low_brace() -> void:
 	_brace = _pivot(_chassis, "ReachableLowBrace", BRACE_AT)
 	var hub: MeshInstance3D = _cylinder(_brace, "RoundLowJoint", 0.29, 0.28, _black, 0.29, 12)
 	hub.rotation.x = PI * 0.5
+	_readability_panel(hub)
 	var face: MeshInstance3D = _cylinder(_brace, "LowJointOxidisedRing", 0.31, 0.055, _rust, 0.31, 12)
 	face.position.z = 0.17
 	face.rotation.x = PI * 0.5
-	_box(_brace, "OrdinaryPrimaryBraceInterior", Vector3(0.35, 0.22, 0.035), Vector3(0.0, 0.0, 0.215), _pale)
+	_readability_panel(face)
+	_readability_panel(_box(_brace, "OrdinaryPrimaryBraceInterior", Vector3(0.35, 0.22, 0.035), Vector3(0.0, 0.0, 0.215), _pale))
 	for index: int in range(5):
-		_brace_ribs.append(_box(_brace, "LowBraceRib", Vector3(0.025, 0.18, 0.032), Vector3(-0.14 + index * 0.07, 0.0, 0.24), _black))
+		_brace_ribs.append(_readability_panel(_box(_brace, "LowBraceRib", Vector3(0.025, 0.18, 0.032), Vector3(-0.14 + index * 0.07, 0.0, 0.24), _black)))
 	_left_door = _pivot(_brace, "LeftBraceGuard", Vector3(-0.26, 0.0, 0.22))
 	_right_door = _pivot(_brace, "RightBraceGuard", Vector3(0.26, 0.0, 0.22))
-	_box(_left_door, "LeftRivetedGuard", Vector3(0.26, 0.25, 0.055), Vector3(0.13, 0.0, 0.0), _rust)
-	_box(_right_door, "RightRivetedGuard", Vector3(0.26, 0.25, 0.055), Vector3(-0.13, 0.0, 0.0), _rust)
+	_readability_panel(_box(_left_door, "LeftRivetedGuard", Vector3(0.26, 0.25, 0.055), Vector3(0.13, 0.0, 0.0), _rust))
+	_readability_panel(_box(_right_door, "RightRivetedGuard", Vector3(0.26, 0.25, 0.055), Vector3(-0.13, 0.0, 0.0), _rust))
 	for side: float in [-1.0, 1.0]:
 		_box(_brace, "BraceRetainingBolt", Vector3(0.05, 0.05, 0.035), Vector3(side * 0.20, 0.11, 0.265), _brass)
 	_broken_guard = _pivot(_brace, "FirstBraceBrokenPhysicalPlate", Vector3(0.34, -0.17, 0.05))
@@ -315,6 +318,21 @@ func _pose_brace() -> void:
 	_broken_guard.visible = _brace_stage == 2 or _brace_opening == "spent"
 	for index: int in range(_brace_ribs.size()):
 		_brace_ribs[index].visible = _brace_stage == 1 or index % 2 == 0
+
+
+func _readability_error(camera: Camera3D, hero_bounds: Array[Vector3]) -> String:
+	if not _built or not is_inside_tree() or not is_instance_valid(camera) or not camera.is_inside_tree() or camera.get_world_3d() != get_world_3d():
+		return "Readability requires a built rig and live same-world camera"
+	if camera.projection != Camera3D.PROJECTION_ORTHOGONAL or not camera.global_position.is_finite() or not camera.global_basis.x.is_finite() or not camera.global_basis.y.is_finite() or not camera.global_basis.z.is_finite():
+		return "Readability requires the finite shared orthographic camera"
+	if hero_bounds.size() < 3 or hero_bounds.size() > SENTRY_MAX_HERO_BOUND_POINTS:
+		return "Readability requires bounded world silhouette points"
+	for point: Vector3 in hero_bounds:
+		if not point.is_finite() or camera.is_position_behind(point):
+			return "Readability world silhouette points must be finite and in front of the camera"
+	if _projected_hull(camera, hero_bounds).is_empty():
+		return "Readability world silhouette must have positive projected area"
+	return ""
 
 
 func _recompute_readability() -> void:
