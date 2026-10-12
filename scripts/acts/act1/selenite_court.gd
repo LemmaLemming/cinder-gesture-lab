@@ -626,7 +626,9 @@ func _camera_framing_points() -> Array:
 	var points: Array = []
 	if is_completed():
 		points.append_array(_hero_points())
-		if _exit_contact_near(): points.append_array(_contact_points(_exit_area, _exit_cue))
+		# Include any still-visible native marker as well as local lookahead,
+		# including a held pause at the instant the Hero crosses the range edge.
+		if _exit_contact_near() or _exit_cue.state().visible: points.append_array(_contact_points(_exit_area, _exit_cue))
 		return _unique_points(points)
 	if _boss_contact_near():
 		points.append_array(_contact_points(_boss_area, _boss_cue))
