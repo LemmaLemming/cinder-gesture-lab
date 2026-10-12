@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act2/dead_london.gd" id="1"]
+
+[ext_resource type="Script" path="res://scripts/acts/act2/dead_london_sentry_presented_encounter.gd" id="2"]
+
+[node name="DeadLondonAndRegentsPark" type="Node3D"]
+script = ExtResource("1")
+sentry_parent_script = ExtResource("2")
+level_id = "A2-L5"
+objective_text = "REACH THE REDOUBT / THE CRY STOPS"
+local_snapshot_version = 1
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 2.2)
+
+[node name="SentryJointAuthoredAnchor" type="Marker3D" parent="."]
+position = Vector3(0, 0, -28.4)
+
+[node name="SentryFootAuthoredAnchor" type="Marker3D" parent="."]
+position = Vector3(0.65, 0, -29.35)
