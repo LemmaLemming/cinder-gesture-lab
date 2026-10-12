@@ -1,5 +1,9 @@
 # Act 1 — current progress
 
+## Current whole-court frontier — 2026-10-12T02:52:50.162610+00:00
+
+Act1 registration is retained and goal metadata now reports ACTIVE; the historical paused-accounting paragraphs below are superseded. No current human/setup/shared API blocker. Campaign11/24, Act1 3/8, only A1-L4 in progress. Actual Shared46 runtime adopted; published Shared47 preservation adoption follows this owned source seal. New whole scene/layout/parent and the C32 finite helper-entry and B01 fresh-recipient seams are source-only/unparsed/unexecuted. Whole Save/candidate hooks explicitly refuse unfinished aggregate transport. Earlier King224/0 native/235/0 portrait at55074c5e remain exact original component evidence and do not cover new seams. Full court art, aggregate Save/Continue/Retry and affected mechanics/portraits remain due. See [current L4 record](levels/A1-L4.md). L5/O1/O2/O3 remain sequentially deferred; no mobile/release work.
+
 Current King closure: native224/0 + actual portrait235/0 at55074c5e/Shared46, eight originals personally inspected; packet2,564artifacts/indexccec72a3 preserves original parse failure and allsource custody. Real2swipes/1ordinaryprimary, Hero100/King80→60, phase/framing/callback-pause refusal/wrongpose/paired restore/GUIResume/cleanup pass. Slight close garment overlap and barefloor/untested side/back/summon/defeat views remain. All jobs CLOSED; no wholeL4/campaignSave/two-boss-phase/helper/acceptance claim. ActualShared46 merge8ff9b4e4/ACK1eea1c36 adopted;390unique activeGD+shader UID identities after4newKing sidecars. FullL4 formation/knownroundel/twophases/finitehelperpair/coherentwholecodec/freshSaveContinueRetry/contact remains next. All8desktop scope remains intact. Earlier source-only/paused statements below are historical.
 
 ## Current resumed frontier —12October2026

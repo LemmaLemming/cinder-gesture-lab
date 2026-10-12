@@ -41,6 +41,12 @@ const SWARM_RAW_ROLE: Dictionary = {"raw_damage": 6.0, "windup_s": 1.85, "lock_s
 const GUARD_RAW_ROLE: Dictionary = {"raw_damage": 8.0, "windup_s": 1.85, "lock_s": 0.85, "active_s": 0.2, "recovery_s": 2.4, "attack_interval_s": 2.0, "max_hp": 24.0, "move_speed": 0.0}
 const SWARM_LUNGE: Dictionary = {"speed": 4.0, "distance": 1.0, "damage_radius": 0.38, "body_collision_path": "BodyCollision"}
 const GUARD_LANE: Dictionary = {"length": 2.0, "radius": 0.38}
+# Narrow court-only entry; these values are not a new role or attack adapter.
+const COURT_SCRIPT_PATH: String = "res://scripts/acts/act1/selenite_court.gd"
+const COURT_HELPER_IDS: Array[String] = ["court-helper-west", "court-helper-east"]
+const COURT_ENTRY_KEYS: Array[String] = ["active", "from", "to", "start_s", "end_s", "speed"]
+const COURT_ENTRY_DISTANCE: float = 0.7
+const COURT_ENTRY_SPEED: float = 1.4
 const CONTEXT_KEYS: Array[String] = ["encounter_id", "world_revision", "recognition_s", "attack_input_margin_s", "escape_directions", "return_directions", "floor_regions", "world_root"]
 const SNAPSHOT_KEYS: Array[String] = ["api_revision", "schema_version", "role_id", "source_id", "configuration", "hp", "dead", "dormant", "motion", "hurt_left_s", "approach_driving", "role_encounter_id", "profile_id", "resolved_role", "reservation_id", "cycle", "sample", "hit_ids", "last_cancel_reason"]
 
@@ -111,6 +117,9 @@ var _bound_spore_route_guard: Callable
 var _bound_spore_route_guard_required: bool = false
 # Transient construction custody only. Never actor configuration or wire data.
 var _restore_recipient_constructed: bool = false
+# Construction custody, not wire state. The court transports its own once/entry
+# history together with this actor's unchanged native motion envelope.
+var _court_entry_consumed: bool = false
 var _restore_level_ref: WeakRef
 var _restore_level_script: Script
 var _restore_source_parent: WeakRef
@@ -313,6 +322,109 @@ func activate() -> bool:
 	state_changed.emit(state())
 	_transaction_depth -= 1
 	return true
+
+
+## Sole production court may expose each pristine helper once in its ongoing
+## King epoch. This never calls begin/end, assigns a role, or clears cooldowns.
+func activate_court_entry(court: CinderLevel, encounter_id: String) -> bool:
+	var error: String = _court_entry_activation_error(court, encounter_id, 0)
+	if not error.is_empty(): return _reject(error)
+	_transaction_depth += 1
+	var boundary: Dictionary = _court_entry_boundary()
+	var decision: Variant = court.call("court_entry_activation_error", self, encounter_id)
+	error = _court_entry_activation_error(court, encounter_id, 1)
+	if error.is_empty() and _court_entry_boundary() != boundary:
+		error = "Pure court activation entitlement changed actual source/Player/Scheduler custody"
+	if not decision is String or not String(decision).is_empty() or not error.is_empty():
+		_transaction_depth -= 1
+		return _reject(error if not error.is_empty() else (String(decision) if decision is String else "Court activation entitlement must return a literal String"))
+	# A partial failed exposure is consumed; dispose its parent instead of healing
+	# lifecycle flags or re-granting this native object's one-shot entitlement.
+	_court_entry_consumed = true
+	dormant = false
+	_apply_lifecycle_flags()
+	var exposed: Dictionary = boundary.duplicate(true)
+	exposed.consumed = true
+	exposed.actor.dormant = false
+	exposed.actor.status = "idle"
+	error = _court_motion_error(court, 1)
+	if error.is_empty(): error = _lifecycle_error()
+	if error.is_empty(): error = art_binding_error()
+	if error.is_empty() and _court_entry_boundary() != exposed:
+		error = "Court exposure must preserve all actual native state except its consumed lifecycle"
+	if error.is_empty():
+		state_changed.emit(state())
+		error = _court_motion_error(court, 1)
+		if error.is_empty() and _court_entry_boundary() != exposed:
+			error = "Court activation observer changed the actual native exposure boundary"
+	_transaction_depth -= 1
+	if not error.is_empty(): return _reject("Dispose partial court helper exposure: " + error)
+	last_error = ""
+	return true
+
+
+func _court_parent_error(court: CinderLevel, depth: int) -> String:
+	if _transaction_depth != depth or _snapshot_busy or _cancelling or _spore_cancel_delivering or not _live_bindings():
+		return "Court entry requires actual retained native bindings outside nested callbacks"
+	if not is_instance_valid(court) or not court.is_inside_tree() or not court.is_node_ready() or court.is_queued_for_deletion() or court.is_restore_candidate() or court.level_id != "A1-L4" or get_tree().paused or _hero.dead:
+		return "Actual ready unpaused playable A1-L4 court and living shared Player required"
+	var owner: Variant = _restore_level_ref.get_ref() if _restore_level_ref != null else null
+	var parent: Variant = _restore_source_parent.get_ref() if _restore_source_parent != null else null
+	if owner != court or _restore_owner_level() != court or get_parent() != parent or court.get_script() != _restore_level_script or _restore_level_script == null or _restore_level_script.resource_path != COURT_SCRIPT_PATH or get_script() != _restore_source_script or _restore_source_script == null or _restore_source_script.resource_path != "res://scripts/acts/act1/mushroom_selenite.gd":
+		return "Court entry retains the exact ready-time owning court/source scripts and parent"
+	if _configuration.get("role_id") != ROLE_GUARD or _configuration.get("entity_id") != "C32" or _configuration.get("source_id") not in COURT_HELPER_IDS or _configuration.get("initially_dormant") != true or _configuration.get("approach", {}).get("enabled") != false:
+		return "Only the court's two canonical initially-dormant C32 helper identities can enter"
+	var scheduler_parent: Variant = _restore_scheduler_parent.get_ref() if _restore_scheduler_parent != null else null
+	var player_parent: Variant = _restore_hero_parent.get_ref() if _restore_hero_parent != null else null
+	if court.hero != _hero or court.get("scheduler") != _scheduler or not court.is_ancestor_of(_scheduler) or court.get_world_3d() != get_world_3d() or _scheduler.get_parent() != scheduler_parent or _scheduler.get_script() != _restore_scheduler_script or _hero.get_parent() != player_parent or _hero.get_script() != _restore_hero_script:
+		return "Court entry retains actual same-world bound Player/Scheduler aliases and parents"
+	var player_body: Dictionary = Motion.source_description(_hero)
+	if player_body.has("error") or player_body.get("collision") != _restore_hero_collision or not is_instance_valid(_restore_hero_collision) or _restore_hero_collision.shape != _restore_hero_capsule or not _same(player_body.get("signature", {}), _restore_hero_body_signature):
+		return "Court entry retains the actual shared Player capsule and native body properties"
+	var error: String = _retained_body_error()
+	if error.is_empty(): error = _lifecycle_error()
+	if error.is_empty(): error = art_binding_error()
+	if not error.is_empty(): return error
+	if _restore_configuration_sha256.is_empty() or ExactJson.stringify(_configuration).sha256_text() != _restore_configuration_sha256 or _native_codec.get_script() != NativeCodec or _cue.get_script() != CueScript or _sprite_art.get_script() != ArtScript:
+		return "Court entry retains immutable native configuration, codec, cue and role art"
+	if error.is_empty() and get_parent() is Node3D and not (get_parent() as Node3D).is_visible_in_tree():
+		error = "Court entry cannot reveal a helper under a hidden parent"
+	return error
+
+
+func _court_entry_activation_error(court: CinderLevel, encounter_id: String, depth: int) -> String:
+	var error: String = _court_parent_error(court, depth)
+	if not error.is_empty(): return error
+	if _court_entry_consumed or _restore_recipient_constructed or not dormant or not _dormant_state_error().is_empty() or global_transform != _restore_source_transform or _facing != _restore_source_facing or _restored_floor_contact != -1:
+		return "Court helper exposure requires its one-shot pristine authored placement/facing"
+	if not court.has_method("court_entry_activation_error") or not _stable_id(encounter_id):
+		return "Actual court must supply its literal one-shot entry entitlement and stable epoch"
+	if not _court_entry_environment_error().is_empty(): return _court_entry_environment_error()
+	return _court_entry_control_error(encounter_id)
+
+
+func _court_entry_control_error(encounter_id: String = "") -> String:
+	var control: Dictionary = _scheduler.source_control_state(self)
+	var profile: Dictionary = _scheduler.encounter_profile()
+	if control.get("api_revision") != "scheduler-source-control-1" or control.get("source_instance_id") != get_instance_id() or control.get("outside_transaction") != true or not control.get("encounter_id") is String or not _stable_id(control.encounter_id) or (not encounter_id.is_empty() and control.encounter_id != encounter_id) or not control.get("clock_s") is float or not Codec.in_range(control.clock_s, 0.0, 1000000000.0) or control.clock_s != _scheduler.get_clock() or profile.is_empty() or not control.get("reservations") is Array or not control.reservations.is_empty() or not control.has("cooldown") or control.cooldown != null:
+		return "Court helper must retain the ongoing nonempty native epoch/profile and no own lease/readiness"
+	return ""
+
+
+func _court_entry_environment_error() -> String:
+	if _spore_consumer_ref != null or not _spore_consumer_id.is_empty() or not _spore_episode_id.is_empty() or _spore_phase != "none" or _spore_progress != 0.0 or _spore_direction != Vector3.FORWARD or _spore_nested_damage_used or _bound_spore_route_guard.is_valid() or _bound_spore_route_guard_required:
+		return "Court entry cannot repurpose a genuine environment binding/stamp/history"
+	return ""
+
+
+## Pure local callback witness; no pruning accessor or paused capture is used.
+func _court_entry_boundary() -> Dictionary:
+	return {"actor": pure_presentation_state(), "transform": global_transform,
+		"ground": _restored_floor_contact, "cue": _cue.state(),
+		"consumed": _court_entry_consumed, "constructed": _restore_recipient_constructed,
+		"control": _scheduler.source_control_state(self), "profile": _scheduler.encounter_profile(),
+		"hero_transform": _hero.global_transform, "hero_hp": _hero.hp,
+		"hero_shells": _hero.shells, "hero_response": _hero.get_threat_response_state()}
 
 
 func _activation_error() -> String:
@@ -738,6 +850,9 @@ func _physics_process(delta: float) -> void:
 			return
 		if dead or dormant or not _live_bindings() or get_tree().paused or _transaction_depth > 0:
 			return
+	# Only these two helpers in the exact retained court opt in. All previous
+	# C31/C32 consumers follow their original physics branches unchanged.
+	if _step_court_entry_if_active(delta): return
 	_transaction_depth += 1
 	if not _reservation_id.is_empty():
 		var record: Dictionary = _damage_boundary_record(false)
@@ -770,6 +885,139 @@ func _physics_process(delta: float) -> void:
 		_restored_floor_contact = -1
 		_draw_greybox()
 	_transaction_depth -= 1
+
+
+## Record a genuinely shortened entry without rebasing its original clock/path.
+## The parent calls this synchronously before marking the corresponding original
+## entry terminal; its pure stop entitlement remains available after the corridor
+## provider withdraws motion. Damage/death use their original native paths instead.
+func stop_court_entry_motion(court: CinderLevel, original_context: Dictionary, reason: String) -> Dictionary:
+	var error: String = _court_motion_error(court, 0)
+	if error.is_empty(): error = _court_motion_context_error(original_context, 1.0 / float(Engine.physics_ticks_per_second))
+	if error.is_empty() and (reason not in ["blocked", "king_defeated"] or not court.has_method("court_entry_stop_error")):
+		error = "Court entry stop requires its literal blocked/king_defeated entitlement"
+	if not error.is_empty(): return _denied(error)
+	_transaction_depth += 1
+	var boundary: Dictionary = _court_entry_boundary()
+	var decision: Variant = court.call("court_entry_stop_error", self, original_context.duplicate(true), reason)
+	error = _court_motion_error(court, 1)
+	if error.is_empty(): error = _court_motion_context_error(original_context, 1.0 / float(Engine.physics_ticks_per_second))
+	if error.is_empty() and _court_entry_boundary() != boundary:
+		error = "Pure court stop entitlement changed the actual native entry boundary"
+	if not decision is String or not String(decision).is_empty() or not error.is_empty():
+		_transaction_depth -= 1
+		return _denied(error if not error.is_empty() else (String(decision) if decision is String else "Court stop entitlement must return a literal String"))
+	# This is the entry's own grounded, unhurt, unleased velocity only. Do not
+	# cancel an attack, brake a damage impulse, set hurt, heal or alter facing/pose.
+	velocity = Vector3.ZERO
+	var stopped: Dictionary = boundary.duplicate(true)
+	stopped.actor.velocity = Vector3.ZERO
+	error = _court_motion_error(court, 1)
+	if error.is_empty() and _court_entry_boundary() != stopped:
+		error = "Stopping entry must preserve every native field except its own velocity"
+	_transaction_depth -= 1
+	if not error.is_empty(): return _denied(error)
+	last_error = ""
+	# Native vectors remain runtime observations. The whole parent codec encodes
+	# the original six-key record and actual terminal endpoint/outcome together.
+	return {"accepted": true, "outcome": reason, "actual_endpoint": global_position,
+		"velocity": velocity, "clock_s": float(boundary.control.clock_s),
+		"original_context": original_context.duplicate(true)}
+
+
+## Parent-owned finite nonattack entry. Empty context means ordinary stationary
+## C32 physics. Actual injury, leases and environmental movement stay in their
+## original branches; entry never invents an approach/hurt/attack ownership bit.
+func _step_court_entry_if_active(delta: float) -> bool:
+	if _configuration.get("role_id") != ROLE_GUARD or _configuration.get("source_id") not in COURT_HELPER_IDS:
+		return false
+	var court: CinderLevel = _restore_owner_level()
+	if not is_instance_valid(court) or court.get_script() != _restore_level_script or _restore_level_script == null or _restore_level_script.resource_path != COURT_SCRIPT_PATH or not court.has_method("court_entry_motion_context"):
+		return false
+	if dead or dormant or _hurt_left_s > 0.0 or not _reservation_id.is_empty() or hp != max_hp:
+		return false
+	var error: String = _court_parent_error(court, 0)
+	if not error.is_empty():
+		last_error = error
+		return true
+	_transaction_depth += 1
+	var boundary: Dictionary = _court_entry_boundary()
+	var answer: Variant = court.call("court_entry_motion_context", self)
+	error = _court_parent_error(court, 1)
+	if error.is_empty() and _court_entry_boundary() != boundary:
+		error = "Pure court entry provider changed actual native source/Player/Scheduler custody"
+	if error.is_empty() and not answer is Dictionary:
+		error = "Court entry provider must return its closed native context or an empty Dictionary"
+	if not error.is_empty():
+		_transaction_depth -= 1
+		last_error = error
+		return true
+	var context: Dictionary = answer
+	if context.is_empty():
+		_transaction_depth -= 1
+		if velocity != Vector3.ZERO and _hurt_left_s == 0.0 and _grounded():
+			last_error = "Court entry permission was withdrawn; record and stop its actual shortened entry"
+			return true
+		return false
+	error = _court_motion_error(court, 1)
+	if error.is_empty(): error = _court_motion_context_error(context, delta)
+	if not error.is_empty():
+		_transaction_depth -= 1
+		last_error = error
+		return true
+	var clock: float = float(boundary.control.clock_s)
+	var elapsed: float = clampf(clock - float(context.start_s), 0.0, float(context.end_s) - float(context.start_s))
+	var desired: Vector3 = context.from + Vector3.BACK * (COURT_ENTRY_SPEED * elapsed)
+	var remaining: float = desired.z - global_position.z
+	if remaining < -Motion.EPSILON or remaining > COURT_ENTRY_SPEED * delta + Motion.EPSILON:
+		_transaction_depth -= 1
+		last_error = "Court entry cannot rebase its clock or catch up delayed/collided motion"
+		return true
+	velocity = Vector3(0.0, 0.0, minf(COURT_ENTRY_SPEED, maxf(0.0, remaining) / delta))
+	_facing = Vector3.BACK
+	move_and_slide()
+	_restored_floor_contact = -1
+	# Stop only the entry's own finite velocity after its original deadline and
+	# actual endpoint. A collision is retained and reported, never pose-snapped.
+	if clock >= float(context.end_s) and Vector2(global_position.x, global_position.z).distance_to(Vector2(context.to.x, context.to.z)) <= Motion.EPSILON:
+		velocity = Vector3.ZERO
+	_draw_greybox()
+	error = _court_motion_error(court, 1)
+	if error.is_empty() and (_scheduler.source_control_state(self) != boundary.control or _scheduler.encounter_profile() != boundary.profile or _hero.global_transform != boundary.hero_transform or _hero.get_threat_response_state() != boundary.hero_response):
+		error = "Native court entry changed retained Player/Scheduler custody"
+	if error.is_empty() and (not _grounded() or velocity.y != 0.0 or absf(global_position.x - context.from.x) > Motion.EPSILON or global_position.z > context.to.z + Motion.EPSILON or global_position.z < context.from.z - Motion.EPSILON):
+		error = "Native court entry departed its approved grounded straight corridor"
+	if error.is_empty() and absf(global_position.z - desired.z) > Motion.EPSILON:
+		error = "Native scenery collision shortened the original finite court entry"
+	_transaction_depth -= 1
+	last_error = error
+	return true
+
+
+func _court_motion_error(court: CinderLevel, depth: int) -> String:
+	var error: String = _court_parent_error(court, depth)
+	if not error.is_empty(): return error
+	if not _court_entry_consumed and not _restore_recipient_constructed:
+		return "Court entry motion requires a genuinely exposed or fresh restored helper"
+	if dead or dormant or hp != max_hp or _hurt_left_s != 0.0 or _approach_driving or _cycle != 0 or _phase != "clear" or not _role_encounter_id.is_empty() or not _profile_id.is_empty() or not _resolved_role.is_empty() or not _reservation_id.is_empty() or not _sample.is_empty() or not _pending_segments.is_empty() or not _hit_ids.is_empty() or not _last_cancel_reason.is_empty():
+		return "Court entry owns only pristine live unleased C32 motion before its first thrust"
+	error = _court_entry_environment_error()
+	return _court_entry_control_error() if error.is_empty() else error
+
+
+func _court_motion_context_error(context: Dictionary, delta: float) -> String:
+	if not Codec.keys_error(context, COURT_ENTRY_KEYS).is_empty() or not context.get("active") is bool or context.active != true or not context.get("from") is Vector3 or not context.get("to") is Vector3 or not context.from.is_finite() or not context.to.is_finite() or not context.get("start_s") is float or not context.get("end_s") is float or not context.get("speed") is float:
+		return "Exact active/from/to/start_s/end_s/speed native court entry context required"
+	if not is_finite(delta) or delta < 0.000001 or delta > 0.25 or not Codec.in_range(context.start_s, 0.0, 1000000000.0) or not Codec.in_range(context.end_s, context.start_s, 1000000000.0) or context.speed != COURT_ENTRY_SPEED or context.end_s != context.start_s + COURT_ENTRY_DISTANCE / COURT_ENTRY_SPEED or context.to != context.from + Vector3.BACK * COURT_ENTRY_DISTANCE:
+		return "Court entry retains its original .7-unit +Z path at 1.4 units/s and half-second deadline"
+	if context.from.x != _restore_source_transform.origin.x or context.from.z != _restore_source_transform.origin.z or absf(context.from.y - _restore_source_transform.origin.y) > 0.02 or absf(global_position.x - context.from.x) > Motion.EPSILON or absf(global_position.y - context.from.y) > Motion.EPSILON or global_position.z < context.from.z - Motion.EPSILON or global_position.z > context.to.z + Motion.EPSILON:
+		return "Court entry must retain its actual authored settled feet and bounded straight corridor"
+	if not _grounded() or velocity.y != 0.0 or velocity.x != 0.0 or velocity.z < 0.0 or velocity.z > COURT_ENTRY_SPEED + Motion.EPSILON or _scheduler.get_clock() < context.start_s:
+		return "Native grounded finite entry velocity and original shared-clock start required"
+	# The exact parent provider separately proves the full corridor against its
+	# retained 14x44 floor, actual Hero/other actors, scenery and whole art/camera.
+	# A copied context is not a substitute for those owned physical-world guards.
+	return ""
 
 
 ## Pure forecast only. No guard callback, motion, state/event or Scheduler query.

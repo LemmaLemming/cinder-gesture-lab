@@ -31,6 +31,8 @@ const DEFAULT_TIMING_FLOORS: Dictionary = {"windup_s": 1.85, "lock_s": 0.85, "re
 const DEFAULT_LUNGE: Dictionary = {"speed": 4.0, "distance": 1.6, "damage_radius": 0.38, "body_collision_path": "BodyCollision"}
 const CONTEXT_KEYS: Array[String] = ["encounter_id", "world_revision", "recognition_s", "attack_input_margin_s", "escape_directions", "return_directions", "floor_regions"]
 const SNAPSHOT_KEYS: Array[String] = ["api_revision", "schema_version", "source_id", "configuration", "hp", "dead", "dormant", "motion", "hurt_left_s", "role_encounter_id", "profile_id", "resolved_role", "reservation_id", "cycle", "sample", "hit_ids", "last_cancel_reason"]
+const RESTORE_RECIPIENT_API: String = "act1-king-restore-recipient-construction-1"
+const RESTORE_RECIPIENT_KEYS: Array[String] = ["api_revision", "source_id", "room_id", "installed_rooms", "installed_fields", "configuration_sha256", "authored_position"]
 
 var hp: float = 80.0
 var max_hp: float = 80.0
@@ -70,6 +72,22 @@ var _phase: String = "clear"
 var _transaction_depth: int = 0
 var _snapshot_busy: bool = false
 var _cancelling: bool = false
+# Transient fresh-recipient custody only; never configuration or saved state.
+var _restore_recipient_constructed: bool = false
+var _restore_level_ref: WeakRef
+var _restore_level_script: Script
+var _restore_source_parent: WeakRef
+var _restore_source_script: Script
+var _restore_source_transform: Transform3D
+var _restore_source_facing: Vector3
+var _restore_configuration_sha256: String = ""
+var _restore_scheduler_parent: WeakRef
+var _restore_scheduler_script: Script
+var _restore_hero_parent: WeakRef
+var _restore_hero_script: Script
+var _restore_hero_collision: CollisionShape3D
+var _restore_hero_capsule: CapsuleShape3D
+var _restore_hero_body_signature: Dictionary = {}
 
 
 func configure(source_id: String, raw_role: Dictionary = DEFAULT_RAW_ROLE, timing_floors: Dictionary = DEFAULT_TIMING_FLOORS, lunge: Dictionary = DEFAULT_LUNGE, initially_dormant: bool = false) -> bool:
@@ -125,6 +143,113 @@ func _ready() -> void:
 	add_child(_cue)
 	_build_king()
 	_apply_lifecycle_flags()
+	var restore_owner: CinderLevel = _restore_owner_level()
+	_restore_level_ref = weakref(restore_owner) if restore_owner != null else null
+	_restore_level_script = restore_owner.get_script() as Script if restore_owner != null else null
+	_restore_source_parent = weakref(get_parent())
+	_restore_source_script = get_script() as Script
+	_restore_source_transform = global_transform
+	_restore_source_facing = _facing
+	_restore_configuration_sha256 = ExactJson.stringify(_configuration).sha256_text() if not _configuration.is_empty() else ""
+
+
+func construct_restore_recipient(candidate: CinderLevel, descriptor: Dictionary) -> bool:
+	# This exposes a pristine native B01 recipient; it does not interpret or
+	# restore saved HP/pose/history, activate gameplay or begin a Scheduler epoch.
+	var error: String = _restore_recipient_error(candidate, descriptor, 0)
+	if not error.is_empty(): return _reject(error)
+	var player_before: Dictionary = _hero.snapshot_state()
+	if player_before.is_empty(): return _reject("Actual complete paused Player required before King constructor entitlement")
+	_transaction_depth += 1
+	var decision: Variant = candidate.call("restore_recipient_construction_error", self, descriptor.duplicate(true))
+	# Recheck actual aliases, ready resources, authored frame and complete pristine
+	# boundary after the pure callback. IDs or an empty String alone grant nothing.
+	error = _restore_recipient_error(candidate, descriptor, 1)
+	if error.is_empty() and not _same(_hero.snapshot_state(), player_before):
+		error = "Owned King constructor entitlement must preserve the actual complete Player"
+	if not decision is String or not String(decision).is_empty() or not error.is_empty():
+		_transaction_depth -= 1
+		return _reject(error if not error.is_empty() else (String(decision) if decision is String else "Owned King restore entitlement must return a literal String"))
+	# Consume before the first lifecycle property change. No HP/pose/ground/cache,
+	# role/profile/cycle/sample/clock write, art draw or gameplay/cue signal.
+	_restore_recipient_constructed = true
+	dormant = false
+	_apply_lifecycle_flags()
+	error = _retained_body_error()
+	if error.is_empty(): error = _lifecycle_error()
+	if error.is_empty(): error = art_binding_error()
+	_transaction_depth -= 1
+	# A property observer can invalidate a partially exposed recipient. Its owner
+	# must dispose this candidate; never rewind/heal/retry the consumed constructor.
+	if not error.is_empty(): return _reject("Dispose partial native King restore recipient: " + error)
+	last_error = ""
+	return true
+
+
+func _restore_recipient_error(candidate: CinderLevel, descriptor: Dictionary, depth: int) -> String:
+	if _restore_recipient_constructed or _transaction_depth != depth or _snapshot_busy or _cancelling:
+		return "One-shot King restore construction must run outside actor state/cancellation callbacks"
+	if not is_instance_valid(candidate) or not candidate.is_inside_tree() or candidate.is_queued_for_deletion() or not candidate.is_restore_candidate() or not get_tree().paused:
+		return "Actual fresh paused CinderLevel restore candidate required"
+	var owner: Variant = _restore_level_ref.get_ref() if _restore_level_ref != null else null
+	var parent: Variant = _restore_source_parent.get_ref() if _restore_source_parent != null else null
+	if owner != candidate or _restore_owner_level() != candidate or get_parent() != parent or candidate.get_script() != _restore_level_script or get_script() != _restore_source_script or _restore_source_script == null or _restore_source_script.resource_path != "res://scripts/acts/act1/selenite_king.gd":
+		return "Retain the actual ready B01 script/parent and nearest owning candidate"
+	if not candidate.has_method("restore_recipient_construction_error") or not _live_bindings() or candidate.hero != _hero or candidate.get("scheduler") != _scheduler or candidate.get_world_3d() != get_world_3d():
+		return "Owned court-prefix entitlement and actual same-candidate Hero/Scheduler aliases required"
+	var scheduler_parent: Variant = _restore_scheduler_parent.get_ref() if _restore_scheduler_parent != null else null
+	var player_parent: Variant = _restore_hero_parent.get_ref() if _restore_hero_parent != null else null
+	if not candidate.is_ancestor_of(_scheduler) or _scheduler.get_parent() != scheduler_parent or _scheduler.get_script() != _restore_scheduler_script or _hero.get_parent() != player_parent or _hero.get_script() != _restore_hero_script:
+		return "Retain actual earlier-physics Scheduler/Player scripts and native parent identities"
+	if global_transform != _restore_source_transform or _facing != _restore_source_facing or _restored_floor_contact != -1:
+		return "Fresh B01 recipient keeps its actual authored transform/facing and unset restoration floor cache"
+	var error: String = _retained_body_error()
+	if error.is_empty(): error = _lifecycle_error()
+	if error.is_empty(): error = art_binding_error()
+	if not error.is_empty(): return error
+	if not dormant or not _configuration.get("initially_dormant", false) or not _dormant_state_error().is_empty():
+		return "Only a genuinely pristine configured initially-dormant full-HP B01 can be constructed"
+	if _configuration.get("role_id") != "B01" or _cue.get_script() != CueScript or _cue.get_parent() != self or get_node_or_null("ThreatCue") != _cue or _king_art.get_script() != ArtScript:
+		return "Retain the actual B01 identity and original shared cue/royal art bindings"
+	if _restore_configuration_sha256.is_empty() or ExactJson.stringify(_configuration).sha256_text() != _restore_configuration_sha256:
+		return "Retain the actual immutable ready-time King configuration"
+	var player_body: Dictionary = Motion.source_description(_hero)
+	if player_body.has("error") or player_body.get("collision") != _restore_hero_collision or not is_instance_valid(_restore_hero_collision) or _restore_hero_collision.shape != _restore_hero_capsule or _hero.get_node_or_null("BodyCollision") != _restore_hero_collision or not _same(player_body.get("signature", {}), _restore_hero_body_signature):
+		return "Retain the actual shared Player capsule node/resource/native properties"
+	var control: Dictionary = _scheduler.source_control_state(self)
+	if control.get("api_revision") != "scheduler-source-control-1" or not control.get("source_instance_id") is int or control.source_instance_id != get_instance_id() or not control.get("outside_transaction") is bool or control.outside_transaction != true or not control.get("encounter_id") is String or control.encounter_id != "" or not control.get("clock_s") is float or control.clock_s != 0.0 or not control.get("reservations") is Array or not control.reservations.is_empty() or not control.has("cooldown") or control.cooldown != null or not _scheduler.encounter_profile().is_empty() or _scheduler.get_clock() != 0.0 or _scheduler.has_committed_exchange():
+		return "Actual fresh unbegun Scheduler must retain empty profile/clock/leases/readiness"
+	return _restore_descriptor_error(descriptor)
+
+
+func _restore_descriptor_error(descriptor: Dictionary) -> String:
+	var error: String = Codec.value_error(descriptor)
+	if error.is_empty(): error = Codec.keys_error(descriptor, RESTORE_RECIPIENT_KEYS)
+	if not error.is_empty(): return error
+	if descriptor.api_revision != RESTORE_RECIPIENT_API or not descriptor.source_id is String or descriptor.source_id != _configuration.source_id or not descriptor.room_id is String or not _stable_id(descriptor.room_id) or not descriptor.installed_rooms is Array or descriptor.installed_rooms.is_empty() or descriptor.installed_rooms.size() > 5 or not descriptor.installed_fields is Array or descriptor.installed_fields.size() > 5 or not descriptor.configuration_sha256 is String or not Codec.is_vector3(descriptor.authored_position):
+		return "Closed owned King constructor source/court-prefix/roundel/configuration descriptor required"
+	var rooms: Array = []
+	for value: Variant in descriptor.installed_rooms:
+		if not value is String or not _stable_id(value) or rooms.has(value): return "Distinct bounded installed court room IDs required"
+		rooms.append(value)
+	var fields: Array = []
+	for value: Variant in descriptor.installed_fields:
+		if not value is String or not _stable_id(value) or fields.has(value): return "Distinct bounded installed roundel IDs required"
+		fields.append(value)
+	if not rooms.has(descriptor.room_id) or descriptor.configuration_sha256 != _restore_configuration_sha256 or not _same(descriptor.authored_position, Codec.vector3(_restore_source_transform.origin)):
+		return "King constructor descriptor must match actual ready configuration/authored placement and installed court room"
+	# The actual parent alone validates the ordered five-beat prefix, exact B01
+	# membership and explicit roundel mapping. Normally installed_fields is empty;
+	# no fungal Field/Consumer state or raw saved actor data is interpreted here.
+	return ""
+
+
+func _restore_owner_level() -> CinderLevel:
+	var node: Node = get_parent()
+	while is_instance_valid(node):
+		if node is CinderLevel: return node as CinderLevel
+		node = node.get_parent()
+	return null
 
 
 func activate() -> bool:
@@ -174,6 +299,14 @@ func bind(scheduler: CinderThreatScheduler, hero: CinderPlayer) -> bool:
 		return true if _scheduler == scheduler and _hero == hero else _reject("B01 scheduler and hero bindings are immutable")
 	_scheduler = scheduler
 	_hero = hero
+	_restore_scheduler_parent = weakref(scheduler.get_parent())
+	_restore_scheduler_script = scheduler.get_script() as Script
+	_restore_hero_parent = weakref(hero.get_parent())
+	_restore_hero_script = hero.get_script() as Script
+	var restore_player_body: Dictionary = Motion.source_description(hero)
+	_restore_hero_body_signature = restore_player_body.get("signature", {}).duplicate(true)
+	_restore_hero_collision = hero.get_node_or_null("BodyCollision") as CollisionShape3D
+	_restore_hero_capsule = _restore_hero_collision.shape as CapsuleShape3D if _restore_hero_collision != null else null
 	_scheduler.reservation_invalidated.connect(_on_invalidated)
 	last_error = ""
 	return true
