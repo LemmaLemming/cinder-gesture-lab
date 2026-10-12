@@ -40,6 +40,8 @@ var _mixed_barrier: MixedBarrier
 var _echo: Node3D
 var _helper_dead_branch: bool = false
 var _pair_only: bool = false
+var _root_only: bool = false
+var _echo_only: bool = false
 var _cell_path: String = ""
 var _canonical_registry: String = ""
 var _isolated_root: String = ""
@@ -70,19 +72,21 @@ func _run() -> void:
 	var args: PackedStringArray = OS.get_cmdline_user_args()
 	_helper_dead_branch = args.size() == 1 and args[0] == "--helper-dead"
 	_pair_only = args.size() == 1 and args[0] == "--pair-only"
-	if not _expect(args.is_empty() or _helper_dead_branch or _pair_only, "only default living retirement, --helper-dead or --pair-only is declared", str(args)):
+	_root_only = args.size() == 1 and args[0] == "--root-only"
+	_echo_only = args.size() == 1 and args[0] == "--echo-only"
+	if not _expect(args.is_empty() or _helper_dead_branch or _pair_only or _root_only or _echo_only, "only default, --helper-dead, --root-only, --echo-only or --pair-only is declared", str(args)):
 		await _finish()
 		return
 	_canonical_registry = FileAccess.get_file_as_string(CampaignRegistry.DATA_PATH)
 	if not node_added.is_connected(_watch_mixed_node): node_added.connect(_watch_mixed_node)
-	if await _open_cell(ROOT_CELL):
+	if not _echo_only and await _open_cell(ROOT_CELL):
 		if _pair_only:
 			var held: Dictionary = await _admit("draw", Vector3.LEFT)
 			if not held.is_empty(): await _roundtrip_and_abort("held-Draw-Scheduler3", true)
 		else:
 			await _root_component()
 	await _close()
-	if not _pair_only and _failures == 0 and await _open_cell(ECHO_CELL):
+	if not _pair_only and not _root_only and _failures == 0 and await _open_cell(ECHO_CELL):
 		await _echo_component()
 	await _finish()
 
@@ -150,6 +154,7 @@ func _bind_mixed() -> bool:
 	_core = _level.get("root_network") as Node3D
 	_scheduler = _level.get("threat_scheduler") as CinderThreatScheduler
 	_echo = _level.get("echo") as Node3D
+	if is_instance_valid(_echo): _echo.playback_failed.connect(_record_echo_renderer_failure.bind(_echo))
 	if not _expect(is_instance_valid(_core) and is_instance_valid(_scheduler) and is_instance_valid(_echo) and String(_level.call("runtime_error")).is_empty(), "actual native Core/Scheduler/managed Echo configure", String(_level.call("runtime_error"))): return false
 	_tether = _core.call("get_tether") as StaticBody3D
 	_mechanisms = _core.call("get_mechanisms")
@@ -280,6 +285,20 @@ func _echo_component() -> void:
 	await _roundtrip_and_abort("native-Echo-terminal", false)
 
 
+func _record_echo_renderer_failure(reason: String, source: Node3D) -> void:
+	if reason != "required_authored_enemy_presentation_failed" or not is_instance_valid(source): return
+	var playback: Dictionary = source.call("state")
+	var renderer: Node3D = source.call("get_authored_echo_renderer") as Node3D
+	if not is_instance_valid(renderer):
+		print("ECHO_RENDERER_DIAGNOSTIC: actual renderer unavailable")
+		return
+	var native: Dictionary = renderer.call("native_pose")
+	var poses: Array = playback.get("cursor", {}).get("poses", [])
+	var cursor_pose: Dictionary = poses[0] if poses.size() == 1 else {}
+	var requested: Variant = native.get("pose", {}).get("position")
+	print("ECHO_RENDERER_DIAGNOSTIC: " + JSON.stringify({"reason": reason, "clock_s": _scheduler.get_clock(), "status": playback.get("status"), "cursor_position": str(cursor_pose.get("position")), "cursor_position_bytes": var_to_bytes(cursor_pose.get("position")).hex_encode(), "renderer_requested_position": str(requested), "renderer_requested_bytes": var_to_bytes(requested).hex_encode(), "renderer_global_position": str(renderer.global_position), "renderer_global_bytes": var_to_bytes(renderer.global_position).hex_encode(), "renderer_local_position": str(renderer.position), "source_position": str(source.global_position), "renderer_top_level": renderer.top_level, "source_native_error": source.call("source_native_error"), "component_runtime_error": _level.call("runtime_error"), "native_pose_visible": native.get("visible")}))
+
+
 func _admit(kind: String, direction: Vector3) -> Dictionary:
 	_active_kind = kind
 	if paused: _game.call("resume_lab")
@@ -328,7 +347,7 @@ func _follow_native_proof(proof: Dictionary) -> bool:
 	if not _expect(proof.get("accepted", false) and proof.get("path") is Array and not proof.get("uses_blast", true) and not proof.get("uses_invulnerability", true), "actual native ordinary proof supplies the route", str(proof)): return false
 	var dashes: int = 0
 	for segment: Dictionary in proof.path:
-		if segment.kind not in ["escape_dash", "positioning_dash"]: continue
+		if segment.kind not in ["escape_dash", "positioning_dash", "first_escape_dash", "second_escape_dash", "tether_positioning_dash"]: continue
 		if not await _until(float(segment.start_s)): return false
 		var error: String = _swipe((segment.to - segment.from).normalized())
 		if not _expect(error.is_empty(), "engine-routed actual proved dash", error) or not await _complete_dash(segment): return false
@@ -623,5 +642,5 @@ func _finish() -> void:
 	await _close()
 	if node_added.is_connected(_watch_mixed_node): node_added.disconnect(_watch_mixed_node)
 	_expect(_canonical_registry.is_empty() or FileAccess.get_file_as_string(CampaignRegistry.DATA_PATH) == _canonical_registry, "canonical registry remains byte-identical")
-	print("TEST ONLY garden mixed component: %d checks; %d post-actor ticks; failures: %d. Selector: %s. --pair-only covers one held Draw/Scheduler3 pair, ready Echo, fresh Continue and actual staged discard without combat; default living helper or --helper-dead covers the separate fixed-core and nearby own-Echo cells. Native gestures, public Pause/Save and independent fresh Continue retain the original clock0 checkpoint; no canonical earlier court/full route/production campaign/GUI/mobile acceptance. Unsupported native proof/input/timing remains a finite failure." % [_checks, _native_ticks, _failures, "--pair-only" if _pair_only else "--helper-dead" if _helper_dead_branch else "default"])
+	print("TEST ONLY garden mixed component: %d checks; %d post-actor ticks; failures: %d. Selector: %s. --pair-only covers one held Draw/Scheduler3 pair, ready Echo, fresh Continue and actual staged discard without combat; --echo-only covers the independent managed own-Echo cell; --root-only covers the native Core/helper/sun/release cell; default living helper or --helper-dead additionally covers the separate nearby own-Echo cell. Native gestures, public Pause/Save and independent fresh Continue retain the original clock0 checkpoint; no canonical earlier court/full route/production campaign/GUI/mobile acceptance. Unsupported native proof/input/timing remains a finite failure." % [_checks, _native_ticks, _failures, "--pair-only" if _pair_only else "--root-only" if _root_only else "--echo-only" if _echo_only else "--helper-dead" if _helper_dead_branch else "default"])
 	quit(0 if _failures == 0 else 1)

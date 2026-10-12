@@ -117,6 +117,9 @@ func _ready() -> void:
 	super._ready()
 	_renderer = PorcelainRenderer.new()
 	_renderer.name = "PorcelainOwnSequence"
+	# Keep native replay pivots exact without a parent inverse/recompose roundtrip.
+	# The shared renderer guard retains this root flag immutably.
+	_renderer.top_level = true
 	add_child(_renderer)
 	_fixed_knot = MeshInstance3D.new()
 	_fixed_knot.name = "FixedLowRecoveryKnot"
@@ -305,7 +308,7 @@ func _current_native_error() -> String:
 		return "Retained actual source parent/world/Scheduler required"
 	if global_position != _knot or global_basis != Basis.IDENTITY or not is_visible_in_tree() or get_script() != _native_source_script:
 		return "Actual HP target must retain visible fixed knot, basis and script"
-	if not is_instance_valid(_renderer) or _renderer.is_queued_for_deletion() or _renderer.get_parent() != self or not _renderer.is_visible_in_tree() or _renderer.get_script() != _native_renderer_script or not is_instance_valid(_fixed_knot) or _fixed_knot.is_queued_for_deletion() or _fixed_knot.get_parent() != self or not _fixed_knot.is_visible_in_tree():
+	if not is_instance_valid(_renderer) or _renderer.is_queued_for_deletion() or not _renderer.top_level or _renderer.get_parent() != self or not _renderer.is_visible_in_tree() or _renderer.get_script() != _native_renderer_script or not is_instance_valid(_fixed_knot) or _fixed_knot.is_queued_for_deletion() or _fixed_knot.get_parent() != self or not _fixed_knot.is_visible_in_tree():
 		return "Actual porcelain renderer or fixed low knot was lost"
 	var visuals: Array[MeshInstance3D] = _visuals()
 	if visuals.size() != _native_handles.size():
