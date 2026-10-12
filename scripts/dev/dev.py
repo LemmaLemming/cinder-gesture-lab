@@ -80,6 +80,7 @@ SUITES = {
     "player_presentation": "tests/player_presentation_smoke.gd",
     "cues": "tests/cue_smoke.gd",
     "lane_mechanism": "tests/lane_mechanism_smoke.gd",
+    "lane_mechanism_lifecycle": "tests/lane_mechanism_lifecycle_smoke.gd",
     "lane_parent_presentation": "tests/lane_parent_presentation_smoke.gd",
     "smoke_bank": "tests/smoke_bank_smoke.gd",
     "threat_adapters": "tests/threat_adapter_smoke.gd",

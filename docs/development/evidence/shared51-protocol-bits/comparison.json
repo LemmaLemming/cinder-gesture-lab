@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "status": "INDEPENDENTLY_VERIFIED_CLOSED_SCOPES",
+  "cost_input_paths_per_job": 696,
+  "four_cost_path_sets_equal": true,
+  "same_common_input_paths": 695,
+  "sole_cost_source_delta": "scripts/environment/scheduler_spore_source_protocol.gd",
+  "baseline_protocol_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+  "candidate_protocol_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+  "cost_fixture_sha256": "82f3ae55c4942d1c0dc4291503d6257eda84d1dc774d3baad98bfafc2bfa9046",
+  "runner_sha256": "e0969121c400a8a38ed210c1dbba5798e7db5e4ca8aead31a509d0bc6c25e0ae",
+  "cost_runs": [
+    {
+      "tag": "protocol-bits-baseline1",
+      "wall_us": 7013996,
+      "physics_frames": 8,
+      "process_frames": 1,
+      "player_elapsed_s": 0.133333333333334,
+      "scheduler_elapsed_s": 0.133333333333333,
+      "player_clock_bits": "060000000000f03f",
+      "scheduler_clock_bits": "ffffffffffffcf3f",
+      "packet_bytes": 66972,
+      "packet_sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "native_bytes": 675514,
+      "native_sha256": "3a07f24d063db55cfd82cc2a4dc5f29aaa4d7374c7ab33bf669a8028dc138308"
+    },
+    {
+      "tag": "protocol-bits-candidate1",
+      "wall_us": 5204008,
+      "physics_frames": 8,
+      "process_frames": 1,
+      "player_elapsed_s": 0.133333333333334,
+      "scheduler_elapsed_s": 0.133333333333333,
+      "player_clock_bits": "060000000000f03f",
+      "scheduler_clock_bits": "ffffffffffffcf3f",
+      "packet_bytes": 66972,
+      "packet_sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "native_bytes": 675514,
+      "native_sha256": "8b0cc5baa6a3528ce3f2487145e4eb532e1dd079dcf630f6a8c0be461ee612dc"
+    },
+    {
+      "tag": "protocol-bits-baseline2",
+      "wall_us": 6721346,
+      "physics_frames": 8,
+      "process_frames": 1,
+      "player_elapsed_s": 0.133333333333334,
+      "scheduler_elapsed_s": 0.133333333333333,
+      "player_clock_bits": "060000000000f03f",
+      "scheduler_clock_bits": "ffffffffffffcf3f",
+      "packet_bytes": 66972,
+      "packet_sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "native_bytes": 675514,
+      "native_sha256": "9797af132b1994919743eb5d06fbe7fed80dda6048219e4a919e2c2c5ae92082"
+    },
+    {
+      "tag": "protocol-bits-candidate2",
+      "wall_us": 5350699,
+      "physics_frames": 8,
+      "process_frames": 1,
+      "player_elapsed_s": 0.133333333333334,
+      "scheduler_elapsed_s": 0.133333333333333,
+      "player_clock_bits": "060000000000f03f",
+      "scheduler_clock_bits": "ffffffffffffcf3f",
+      "packet_bytes": 66972,
+      "packet_sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "native_bytes": 675514,
+      "native_sha256": "7f41fa3eb8d567f59115b242146c5a37b28b92374997406efadc53040c24e975"
+    }
+  ],
+  "paired_observed_wall_reductions_percent": [
+    25.805375423652936,
+    20.39244817927838
+  ],
+  "complete_packet_hash_all_equal": true,
+  "focused_native_hashes_all_equal": false,
+  "original_protocol_functions": 45,
+  "original_protocol_functions_changed": [
+    "configure",
+    "_same_bound_reference"
+  ],
+  "original_protocol_functions_literal_unchanged": 43,
+  "all_original_native_getters_guards_and_old_comparers_literal_unchanged": true,
+  "new_private_functions": [
+    "_compile_reference_bits",
+    "_same_bits_reference"
+  ],
+  "reference1_original320_only": true,
+  "reference2_original320_preserved_plus207": true,
+  "reference2_equals_original_additive_draft": true,
+  "root_recovery_check_qualification": "Root reported correction of its pre-copy arithmetic/recovery check; frozen executed fixture has no changes from the additive draft, and original320 helpers/assertions recover exactly. No fabricated native failure or fixture weakening.",
+  "limits": [
+    "Whole-window elapsed times only; no instrumented hook counts or FPS.",
+    "Two paired intervals do not establish sustained performance, general cause or campaign acceptance.",
+    "Focused native hashes differ across independently constructed worlds; no cross-run native equality claim.",
+    "Packet/witness lengths and hashes are emitted, not complete raw packet strings.",
+    "Whole-parent optical Pause capture remains refused after the disclosed TEST relocation.",
+    "Historical design review contains separately unadopted owned-actor proposal context; no owned actor change is credited here."
+  ]
+}

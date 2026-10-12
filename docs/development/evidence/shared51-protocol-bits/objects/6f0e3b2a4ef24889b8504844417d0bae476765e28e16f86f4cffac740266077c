@@ -1,0 +1,79 @@
+{
+  "status": "SOURCE_ONLY_REVIEW_NO_BLOCKING_DEFECT",
+  "native_execution": false,
+  "edits": "Only this private review report; no runtime, owner, engine, staging or publication changes.",
+  "act1": {
+    "proposal": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-spore-proof-callsite-draft.txt",
+      "sha256": "a0416042d5d3a0628cebecb2057831b8a153009a0271d29642507722ec80c31a",
+      "bytes": 6190
+    },
+    "actor": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/scripts/acts/act1/mushroom_selenite.gd",
+      "sha256": "ca6f83fa9604f84ce5f75e1813979162a62680659600d71ca317232934885666",
+      "bytes": 104665
+    },
+    "pinned_actor_matches_proposal": true,
+    "checked_boundary": "_step_approach1087–1139: entry1088; actual provider1103; immediate fresh proof1104–1107; error-only braking1108–1119; repeated proof1120; exact native pose/HP/facing/target/driving1122; native motion1130–1133.",
+    "conclusion": "Successful first-provider path has only String.is_empty and local error branching between completion of the retained fresh proof and the repeated proof. No callback, clock, state write or native motion intervenes. Moving the last fresh proof inside the existing braking branch preserves it after every second-provider attempt and after a rejected pure braking proposal.",
+    "purity_source": "mushroom_selenite_approach.plan is stateless; exact ArtScript.binding_error203–241 only reads native resources, pose and flags. Its actual native callback does not mutate state or emit signals.",
+    "preserve": [
+      "Entry and physics-level fresh proof",
+      "Immediate unconditional post-first-provider proof",
+      "Error priority and braking-plan/second-provider ordering",
+      "Last fresh proof on the entire original error branch",
+      "Exact original pose/HP/facing/Player-target/driving equality before velocity assignment and move_and_slide",
+      "All approach/native/body/art/world/field/route guards"
+    ],
+    "hazards": [
+      "Indent the final proof under the whole not-error-empty branch, not only under accepted braking plan; otherwise a rejected braking plan loses its existing final guard.",
+      "Do not remove the earlier _physics_process environmental check or introduce same-tick/lifetime proof tokens.",
+      "Do not extend the argument to a mutating art helper or arbitrary virtual subclass; it relies on the actual reviewed pure native helper contract.",
+      "Actual take_damage577 rejects ordinary _step_approach transaction injury; any test must distinguish that real refusal from supported cancellation-delivery injury, without fake HP/impulse mutation."
+    ],
+    "narrow_affected_verification": [
+      "A focused native C31 control with a successful first parent provider and genuine native movement",
+      "First provider rejection followed by actual disabled-braking plan and second provider, including second rejection and invalid-braking-plan refusal",
+      "Empty-result provider callbacks that genuinely pause or alter required body/field/presentation custody must prevent unsafe native motion; retain exact original state/error outcomes",
+      "Existing tests/acts/act1/a1_l3_spore_component.gd actual approaching grove and repulsion/retreat/regroup path is directly affected; unchanged C32/full campaign routes are not required"
+    ],
+    "ownership": "ACK proposal is not a handoff; actor remains owner-held. No implementation, parser, performance or acceptance credit."
+  },
+  "protocol_bits": {
+    "reviewed_current": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/environment/scheduler_spore_source_protocol.gd",
+      "sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+      "bytes": 45116
+    },
+    "baseline_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+    "cue_oracle": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/cues/threat_cue.gd",
+      "sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+      "bytes": 37198
+    },
+    "exact_transport": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330
+    },
+    "exact_literal_delta": "Only configure and _same_bound_reference original method bodies differ; 43 other original method bodies remain identical. New _compile_reference_bits/_same_bits_reference match the existing Cue424–501 algorithm.",
+    "simplest_policy": "Retain original separately cloned value and its nonempty exact receipt; append private bits compiled only after original full admission and canonical Script selection. Original missing/mismatched receipt, subclass and missing-bits paths retain existing comparers.",
+    "acceptance_proof": [
+      "Originally accepted references contain only nil/bool/safe-int/String/finite-float/Array/Dictionary with String keys; PackedByteArray is never an admitted input, so private8/24-byte sentinels cannot alias an accepted value.",
+      "Scalar sentinel requires TYPE_FLOAT and fresh8-byte encoding; triplet sentinel requires TYPE_ARRAY, exact3 arity and all3 TYPE_FLOAT, with fresh0/8/16 byte encoding and all24 bytes compared.",
+      "Other arrays retain original arity/order; dictionary ordering is ignored but every current native key must be TYPE_STRING before lookup. Typed container metadata remains ignored as under original transport.",
+      "Full binary64 equality preserves positive/negative zero, subnormals, one-bit adjacent values and maximum finite values; NaN/Inf cannot byte-equal a finite reference. No numeric shortcut or coercion.",
+      "Candidate traversal remains bounded by the finite admitted tree; equal data has the original depth64/entries16384/nodes262144/safe-int/final8MiB charges. Foreign cycles, native values, objects or excessive mismatching shapes cannot acquire authority.",
+      "No current candidate/native/world value is cached. All existing environment reads, Codec.value_error, native body/resources, source getters, callbacks and diagnostics retain their original boundaries."
+    ],
+    "trust_limit": "Private value/json/bits are not exposed by a getter and derive from the original accepted bind. This is the existing private-wire trust model, not authentication against private reflection/property replacement or a native read-only assignment bypass.",
+    "targeted_controls": [
+      "Extend the existing admitted-reference differential to compare new bits helper with unchanged _same_closed_reference and full Exact.stringify oracle. Preserve all original320 controls.",
+      "Both signed zero, subnormal/adjacent/max-finite signs, scalar and every triplet coordinate; mixed/3-int/short/long/typed arrays and PackedFloat64Array/PackedByteArray mismatches.",
+      "StringName keys/scalars, native objects/Callable/cycles/alias/reordered keys and existing depth/entry/node/>1MiB accepted references.",
+      "Actual world/floor/body one-bit mutations and all existing native callback/quiet pair guarantees; missing/empty/mismatched original receipt and actual subclass fallback remain tested.",
+      "Directly affected native source208 target after compiler/parity check; repeat an identical inclusive or paused-query cost workload only to establish actual measured value, with no predicted speed/FPS claim."
+    ],
+    "performance": "Only expected encoding/allocation work is removed. Fresh candidate encoding/all native scans still execute. Cost benefit remains unmeasured for this current candidate."
+  }
+}

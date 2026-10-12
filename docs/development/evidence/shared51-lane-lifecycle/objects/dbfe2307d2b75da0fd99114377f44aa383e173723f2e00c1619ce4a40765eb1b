@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_REVIEW_PASS_NO_BLOCKING_DEFECT",
+  "scope": "Independent read-only Lane detached clear publication design and three native regression source cases. No engine, runtime/fixture/owner edits, staging, or new native result claims.",
+  "inputs": {
+    "original_lane": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/combat/lane_mechanism.gd",
+      "sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+      "bytes": 43768
+    },
+    "tester_review": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/level-testing/act2/lane-teardown-review-20261012T055343Z.json",
+      "sha256": "191e04f9dc7b7128d9629c1fbe77b6fb84141be81fd52b00cecd4271e3441b5e",
+      "bytes": 7802
+    },
+    "native_regression_source": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/level-testing/act2/lane-detached-clear-smoke.gd",
+      "sha256": "411f4eae753ab97b71236d4ea17819f4f1152349e39a66a1e09f59d534e50f20",
+      "bytes": 7971
+    }
+  },
+  "proposed_change": {
+    "path": "scripts/combat/lane_mechanism.gd",
+    "line": 456,
+    "old": "if changed and notify and _phase == phase:",
+    "new": "if changed and notify and _phase == phase and is_inside_tree():",
+    "conclusion": "Suppress only the detached world-state publication. Keep state() as a live world observer; do not fabricate detached positions or rewrite clocks."
+  },
+  "callback_and_custody_findings": [
+    {
+      "lines": "Lane252\u2013270",
+      "finding": "cancel commits cancelled/idle status, clears pending segments, records reason, releases its actual running reservation, and invokes cue/phase clear before publication. The new condition changes none of those actions, transaction/cancellation barriers or idempotent repeated-clear semantics."
+    },
+    {
+      "lines": "Lane444\u2013457",
+      "finding": "The native inside-tree check runs after both Cue presentation/clear observer stacks and the existing second clear repair. It catches actual callback removal before state() reads global_position285. Existing changed/notify/current-phase ordering is retained; quiet notify=false continues to short-circuit."
+    },
+    {
+      "lines": "Lane468\u2013477",
+      "finding": "Existing child exit first disconnects its invalidation handler, calls actual Scheduler.cancel_owner and releases captured parent Callable. Explicit later parent clear still clears local phase/Cue, while detached world publication is suppressed."
+    },
+    {
+      "lines": "Cue104\u2013133",
+      "finding": "Ordinary clear hides and releases all three meshes and publishes only its defensive stored local receipt. It does not access detached global transforms. The Lane change does not suppress Cue observers or alter their rejection of nested clear."
+    },
+    {
+      "lines": "Scheduler1129\u20131167",
+      "finding": "Ordinary cancel retains cooldown; cancel_owner removal clears owner cooldown. Those existing distinct semantics and native callback ordering remain unchanged."
+    },
+    {
+      "lines": "Level504\u2013505",
+      "finding": "Actual parent _exit_tree calls exit_level after its children have exited, matching the observed O2 shutdown edge rather than an ordinary live gameplay clear."
+    }
+  ],
+  "three_case_review": [
+    {
+      "case": "live clear",
+      "meaningful_evidence": "Actual native Hero/floor/Scheduler admission, paused original warning, exactly one clear/cancelled notification with actual nonzero source x=-1, lease/Cue retirement, unchanged native Hero resources/pose/velocity and Scheduler clock, repeated clear emits no duplicate."
+    },
+    {
+      "case": "removed child clear",
+      "meaningful_evidence": "Physical remove_child runs Lane and Cue exits before explicit public clear. Detached diagnostics use local stored phase/status/cycle/reason and Cue.state only. No detached Lane.state or replacement transform; zero Lane state notifications, repeated cleanup, genuine WeakRef release."
+    },
+    {
+      "case": "whole parent exit clear",
+      "meaningful_evidence": "Actual parent tree_exiting observer calls clear after its child exits; tests the child_detached flag and exact no-publication expectation. Paused native local Hero resources/clocks retained, all actual world/Player/Scheduler/Lane/Cue objects freed."
+    }
+  ],
+  "coverage_limits": [
+    "World.create leaves the parent at identity; the actual Lane source is at x=-1. This tests live actual position and the detached access error, not a translated-parent geometry regression.",
+    "scheduler.reservations() performs pruning, so its empty result alone is not a fresh independent proof of pre-prune raw-table cleanup. The unchanged _exit_tree source explicitly calls cancel_owner.",
+    "This focused fixture does not newly prove full quiet restore, opt-in provider Callable release or live cooldown preservation. Reuse unchanged existing evidence; do not describe these as newly exercised.",
+    "Removal during the actual Cue callback is statically covered by postcallback guard placement; these three cases exercise explicit live/removed-child/parent-exit clear, not a fourth callback-removal workload.",
+    "No external detached public state() support, geometry/schema changes, HP/clock setters, gameplay/portrait/performance/O2 acceptance or Challenge-profile repair credit."
+  ],
+  "native_verification": "Root original reproducer was in progress when review assigned; no active logs read and no pass/closure inferred. The same focused three-case source is the meaningful changed-runtime verification; no unrelated broad reruns required.",
+  "separate_owner_issue": "The A2-O2 profile77/1 assertion remains independent, owner-held and unresolved by this notification guard.",
+  "writes": "Only this private JSON report."
+}

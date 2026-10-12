@@ -1,0 +1,68 @@
+Canonical dev.py queue acquired; exact owned90s deadline starts now.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: detached-live-clear actual supported Hero and fresh fixed encounter
+PASS: detached-live-clear genuine native ordinary proof admits warning: 
+PASS: detached-live-clear original warning lease and required cue are real
+PASS: public living clear succeeds under actual pause
+PASS: living clear preserves exactly one correct native world-state notification
+PASS: living clear removes its lease and required cue
+PASS: living clear preserves actual paused Hero HP/pose/resources and Scheduler clock
+PASS: repeated living clear has no duplicate phase notification
+PASS: detached-child-clear actual supported Hero and fresh fixed encounter
+PASS: detached-child-clear genuine native ordinary proof admits warning: 
+PASS: detached-child-clear original warning lease and required cue are real
+PASS: physical child removal retires the actual warning lease
+ERROR: Condition "!is_inside_tree()" is true. Returning: Transform3D()
+   at: get_global_transform (scene/3d/node_3d.cpp:649)
+   GDScript backtrace (most recent call first):
+       [0] state (res://scripts/combat/lane_mechanism.gd:285)
+       [1] _set_phase (res://scripts/combat/lane_mechanism.gd:457)
+       [2] cancel (res://scripts/combat/lane_mechanism.gd:263)
+       [3] clear (res://scripts/combat/lane_mechanism.gd:270)
+       [4] _removed_child_clear (res://.cinder/level-testing/act2/lane-detached-clear-smoke.gd:87)
+       [5] _admitted_warning (res://.cinder/level-testing/act2/lane-detached-clear-smoke.gd:38)
+PASS: public clear accepts removed child cleanup
+PASS: removed child clear retires phase/cue without detached world-state getter
+ERROR: FAIL: removed child clear emits no detached world-state notification
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/lane_mechanism_smoke.gd:1013)
+       [1] _removed_child_clear (res://.cinder/level-testing/act2/lane-detached-clear-smoke.gd:90)
+       [2] _admitted_warning (res://.cinder/level-testing/act2/lane-detached-clear-smoke.gd:38)
+PASS: removed child clear preserves actual paused Hero HP/pose/resources and Scheduler clock
+ERROR: FAIL: repeated removed child clear is idempotent and notification-free
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/lane_mechanism_smoke.gd:1013)
+       [1] _removed_child_clear (res://.cinder/level-testing/act2/lane-detached-clear-smoke.gd:93)
+PASS: detached native mechanism and cue free completely
+PASS: detached-parent-clear actual supported Hero and fresh fixed encounter
+PASS: detached-parent-clear genuine native ordinary proof admits warning: 
+PASS: detached-parent-clear original warning lease and required cue are real
+ERROR: Condition "!is_inside_tree()" is true. Returning: Transform3D()
+   at: get_global_transform (scene/3d/node_3d.cpp:649)
+   GDScript backtrace (most recent call first):
+       [0] state (res://scripts/combat/lane_mechanism.gd:285)
+       [1] _set_phase (res://scripts/combat/lane_mechanism.gd:457)
+       [2] cancel (res://scripts/combat/lane_mechanism.gd:263)
+       [3] clear (res://scripts/combat/lane_mechanism.gd:270)
+       [4] <anonymous lambda> (res://.cinder/level-testing/act2/lane-detached-clear-smoke.gd:116)
+       [5] _whole_parent_exit_clear (res://.cinder/level-testing/act2/lane-detached-clear-smoke.gd:118)
+       [6] _admitted_warning (res://.cinder/level-testing/act2/lane-detached-clear-smoke.gd:38)
+PASS: whole-parent exit invokes public clear after actual child tree exit
+ERROR: FAIL: parent exit clears actual phase/cue/lease without detached world-state publication
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/lane_mechanism_smoke.gd:1013)
+       [1] _whole_parent_exit_clear (res://.cinder/level-testing/act2/lane-detached-clear-smoke.gd:121)
+       [2] _admitted_warning (res://.cinder/level-testing/act2/lane-detached-clear-smoke.gd:38)
+PASS: whole-parent exit preserves actual paused Hero HP/local pose/resources and Scheduler clock
+ERROR: FAIL: parent hook cleanup remains idempotent
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/lane_mechanism_smoke.gd:1013)
+       [1] _whole_parent_exit_clear (res://.cinder/level-testing/act2/lane-detached-clear-smoke.gd:124)
+PASS: removed whole native parent/Player/Scheduler/Lane/cue free completely
+PASS: focused native worlds leave no required cues
+Lane detached clear smoke: 27 checks, 4 failures; live clear, detached child clear, parent exit hook, paused native resources and idempotent cleanup only
