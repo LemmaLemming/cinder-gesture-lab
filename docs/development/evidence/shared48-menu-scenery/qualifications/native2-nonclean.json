@@ -1,0 +1,11 @@
+{
+  "original_result_sha256": "473f2d824acbfc327f2bb60f48ab0e1fc4892e7ebb282d714afd46db30269032",
+  "original_log_sha256": "872deecf7ec7b0c2b6607eeaaf5c0f999989f8702f00e29eba4dd09ed6f36ca9",
+  "functional_checks": 360,
+  "functional_failures": 0,
+  "original_exit_code": 0,
+  "generic_engine_error_lines": 120,
+  "clean_closure": false,
+  "cause": "New test-only _node_states queried main parent metadata with null default; Godot removes a null metadata value and get_meta(null-default) still logs missing-key ERROR. Returned null kept structural comparisons passing; this is not clean native success.",
+  "correction": "Test-only has_meta guard before get_meta, preserves actual null parent semantics and all assertions. Runner now explicitly rejects generic ERROR lines. Original sources/result/log retained, no runtime/source-guard weakening."
+}
