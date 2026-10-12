@@ -1,0 +1,58 @@
+{
+  "api_revision": "act2-o2-focused-capture-await-correction-1",
+  "at": "2026-10-12T05:21:42.374808+00:00",
+  "capture_invocations": [
+    {
+      "awaited": true,
+      "line": 133,
+      "text": "if _capture: await _capture_view(\"entry\",\"original actors/ruin/work apron and initial decorative stores; no full-crate-framing or encounter/progression seed claim\")"
+    },
+    {
+      "awaited": true,
+      "line": 141,
+      "text": "if _capture: await _capture_view(\"tender-lock\",\"actual admitted bounded smoke/source/landing/low mount union in full native lock\")"
+    },
+    {
+      "awaited": true,
+      "line": 152,
+      "text": "await _capture_view(\"empty-west-store\",\"actual empty west enemy store; labelled setup defeat and feet placement, no resource grant\")"
+    },
+    {
+      "awaited": true,
+      "line": 164,
+      "text": "if _capture: await _capture_view(\"handler-lock\",\"actual ordinary Handler/tool full native lock with low opening, footprint and admitted safe landing\")"
+    },
+    {
+      "awaited": true,
+      "line": 182,
+      "text": "await _capture_view(\"opened-circuit-marker\",\"actual completed circuit marker; labelled gate injuries/placement, no route or reward credit\")"
+    },
+    {
+      "awaited": true,
+      "line": 277,
+      "text": "await _capture_view(\"full-west-store\",\"actual full west enemy store; TEST feet placement, no action/resource/route claim\")"
+    },
+    {
+      "awaited": true,
+      "line": 283,
+      "text": "await _capture_view(\"smoke-grace\",\"actual bounded low smoke/source/native grace bar around TEST placed Hero; no route/no-damage claim\")"
+    }
+  ],
+  "changes": [
+    "Added await to tender-lock and handler-lock _capture_view calls so proof-following begins only after that capture completes",
+    "Replaced unproven claim that east remains beyond admission range with explicit host-determined admission limitation"
+  ],
+  "corrected": {
+    "lines": 462,
+    "path": "/private/tmp/a2_o2_focused_smoke_draft.gd",
+    "sha256": "2bdef7009164cf5a980f1fc6373bc6f15299a4290c83d18cc7f508179ae63920"
+  },
+  "frozen_original": {
+    "lines": 461,
+    "path": "/private/tmp/a2_o2_focused_smoke_draft_before_capture_await_20261012.gd",
+    "sha256": "7db613c3c80f817a46151d747ac17afa119e0fd4f3ec28b6e7b8dc2f822dc2ee"
+  },
+  "remaining_limit": "Awaiting a capture consumes real render/native time. Actual proof timing and retained lock phase remain untested and must be checked in the owned native run; no tolerance was loosened.",
+  "scope": "Only the two capture invocation lines and the directly related initial-dash comment changed. Original preserved byte-for-byte. No active files, engine, parser, import, UID, Git, registry or ledger edits.",
+  "status": "TMP-only bounded source correction; unparsed/unexecuted; no engine/import/native/pixel result"
+}
