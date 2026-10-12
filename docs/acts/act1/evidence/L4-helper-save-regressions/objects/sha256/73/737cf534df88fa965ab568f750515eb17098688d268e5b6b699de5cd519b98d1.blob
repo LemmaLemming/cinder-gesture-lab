@@ -1,0 +1,1179 @@
+{
+  "schema_version": "1.0.0",
+  "design_status": "partially_implemented_prototype_unplaytested",
+  "date": "2026-10-08",
+  "authority": {
+    "normative_rules": "docs/PLAYER_EQUIPMENT_GUIDELINES.md",
+    "numeric_values": "this file",
+    "research": "docs/research/EQUIPMENT_BALANCE_RESEARCH.md",
+    "formula_strings_are_documentation_not_executable_code": true
+  },
+  "controls": {
+    "voluntary_movement": "swipe_dash_only",
+    "primary": "immediate_first_tap",
+    "followup": "second_nearby_tap",
+    "double_tap_window_s": 0.28,
+    "double_tap_distance_virtual_px_strictly_less_than": 90,
+    "aim_origin": "last_completed_swipe_release_screen_position",
+    "initial_aim_origin": "viewport_center",
+    "zero_direction": "retain_last_facing",
+    "dash_buffer_capacity": 1,
+    "auto_aim": false,
+    "act_specific_controller": false
+  },
+  "baseline": {
+    "max_health": 100,
+    "primary_damage": 20,
+    "primary_range_world_units": 2,
+    "primary_cooldown_s": 0.3,
+    "primary_cone_min_dot": 0.05,
+    "followup_damage": 42,
+    "followup_range_world_units": 3.1,
+    "followup_cooldown_s": 0.45,
+    "followup_cone_min_dot": 0.5,
+    "shell_capacity": 2,
+    "shell_reload_s": 1.15,
+    "primary_hit_reload_credit_s": 0.45,
+    "dash_speed_world_units_per_s": 15,
+    "dash_distance_world_units": 2.7,
+    "dash_cooldown_s": 0.34,
+    "dash_invulnerability_s": 0.12,
+    "hurt_invulnerability_s": 0.8,
+    "armour_multiplier": 1
+  },
+  "modifier_contract": {
+    "combine": "add_fractional_deltas_then_clamp_once_per_stage",
+    "gear_stage": "clamp(1 + sum(weapon_and_clothing_deltas), gear_min, gear_max)",
+    "total_stage": "clamp(gear_multiplier + sum(eligible_conditional_powerup_and_action_scoped_deltas), total_min, total_max)",
+    "damage_received": "raw_damage / armour_multiplier",
+    "effective_health": "max_health * armour_multiplier",
+    "dash_duration_s": "effective_dash_distance / effective_dash_speed",
+    "attack_cooldown_s": "baseline_action_cooldown_s / attack_speed_multiplier",
+    "act_number_enters_equation": false,
+    "negative_dash_distance_modifiers_allowed": false,
+    "rounding": "retain_float_values; round_only_for_display",
+    "followup_range_absolute_max_world_units": 3.8,
+    "same_ability_multiple_sources": "one_instance_highest_bonus_no_added_stacks",
+    "reload_extra_credit_policy": "use_highest_eligible_extra_credit_not_sum",
+    "reload_total_credit_cap_per_action_s": 0.65,
+    "scoped_modifiers": "include only deltas eligible for the resolved action or target before the single total-stage clamp",
+    "primary_only_cadence_planning_margin_s": 0.02
+  },
+  "stats": {
+    "damage": {
+      "gear_min": 0.75,
+      "gear_max": 1.3,
+      "total_min": 0.75,
+      "total_max": 1.75,
+      "budget_step": 0.05,
+      "budget_weight": 1
+    },
+    "attack_speed": {
+      "gear_min": 0.7,
+      "gear_max": 1.2,
+      "total_min": 0.7,
+      "total_max": 1.35,
+      "budget_step": 0.05,
+      "budget_weight": 1.5
+    },
+    "attack_range": {
+      "gear_min": 0.85,
+      "gear_max": 1.15,
+      "total_min": 0.85,
+      "total_max": 1.3,
+      "budget_step": 0.05,
+      "budget_weight": 1.5
+    },
+    "dash_speed": {
+      "gear_min": 0.85,
+      "gear_max": 1.2,
+      "total_min": 0.85,
+      "total_max": 1.35,
+      "budget_step": 0.05,
+      "budget_weight": 1
+    },
+    "dash_distance": {
+      "gear_min": 1,
+      "gear_max": 1.15,
+      "total_min": 1,
+      "total_max": 1.35,
+      "budget_step": 0.05,
+      "budget_weight": 1.5
+    },
+    "max_health": {
+      "gear_min": 0.8,
+      "gear_max": 1.2,
+      "total_min": 0.8,
+      "total_max": 1.3,
+      "budget_step": 0.1,
+      "budget_weight": 1
+    },
+    "armour": {
+      "gear_min": 1,
+      "gear_max": 1.35,
+      "total_min": 1,
+      "total_max": 1.5,
+      "budget_step": 0.1,
+      "budget_weight": 1.5
+    }
+  },
+  "budgets": {
+    "clothing_net_points_max": 3,
+    "perk_points": 2,
+    "drawback_credit_fraction": 0.5,
+    "drawback_credit_points_max": 1,
+    "nonzero_stats_without_perk_max": 2,
+    "nonzero_stats_with_perk_max": 2,
+    "positive_static_stats_with_perk_max": 1,
+    "formula": "sum(positive_delta / step * weight) + perk_points - min(1, 0.5 * sum(abs(negative_delta) / step * weight))",
+    "same_budget_all_acts": true,
+    "rarity_adds_power_budget": false,
+    "weapon_neutral_primary_dps_ratio_min": 0.8,
+    "weapon_neutral_primary_dps_ratio_max": 1.05,
+    "range_has_separate_cost": true
+  },
+  "loadout_gates": {
+    "gear_primary_dps_proxy_ratio_max": 1.35,
+    "conditional_primary_dps_proxy_ratio_max": 1.6,
+    "temporary_primary_dps_proxy_ratio_max": 1.85,
+    "gear_effective_health_ratio_max": 1.4,
+    "total_effective_health_ratio_max": 1.6,
+    "primary_per_hit_damage_ratio_max": 1.75,
+    "evaluate_all_conditional_peaks_not_expected_uptime_only": true,
+    "dps_proxy": "damage_multiplier * attack_speed_multiplier; upper bound ignores gesture recognition ammo and misses",
+    "geometry_min_primary_range_world_units": 1.7,
+    "geometry_min_dash_distance_world_units": 2.7,
+    "max_active_perks": 3,
+    "max_active_powerup_groups": 2
+  },
+  "lifecycle": {
+    "clothing_swap": "paused_loadout_menu_at_encounter_boundary",
+    "weapon_swap": "contact_replaces_weapon_when_current_action_finishes",
+    "one_weapon_defines": "both_primary_and_followup_profiles; no_weapon_hotbar",
+    "swap_health": "min(old_current_health, new_max_health)",
+    "weapon_swap_ammo": "preserve_current_shells",
+    "weapon_swap_reload": "preserve_elapsed_reload_time",
+    "cooldown_swap": "preserve_outstanding_deadline_never_shorten",
+    "buff_pause": "freeze_active_simulation_timers",
+    "checkpoint": "restore_coherent_loadout_health_ammo_buffs_rng_and_loot_snapshot",
+    "between_acts": "carry_equipped_loadout_clear_temporary_effects",
+    "neutral_loadout_available_at_checkpoints": true,
+    "death": "restore_checkpoint_not_accrue_permanent_stats",
+    "weapon_swap_action_end": "end_of_resolved_dash_or_attack_phase; not_cooldown_expiry"
+  },
+  "effect_event_order": [
+    "gesture_recognized",
+    "validate_action",
+    "snapshot_static_and_active_stats",
+    "snapshot_pre_action_health_and_target_states",
+    "reserve_ammo_charges_and_cooldown_deadlines",
+    "compute_action_and_target_bonuses",
+    "resolve_direct_hits",
+    "advance_combo_and_apply_once_per_action_credits",
+    "resolve_future_eligible_effects_without_recursion",
+    "finalize_expiry_and_state_commits"
+  ],
+  "perks": [
+    {
+      "id": "PERK-01",
+      "name": "Triple Cadence",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "primary_hit",
+        "distinct_primary_actions": 3,
+        "max_gap_s": 1.2
+      },
+      "effect": {
+        "stat": "damage",
+        "delta": 0.3,
+        "scope": "third_primary_action"
+      },
+      "limits": {
+        "reset_on": [
+          "primary_miss",
+          "damage_taken",
+          "gap_timeout",
+          "weapon_replacement",
+          "encounter_end"
+        ],
+        "advance_on_followup": false,
+        "advance_on_prop_hit": false,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "damage": -0.05
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-02",
+      "name": "Last Thread",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "attack_begin",
+        "health_fraction_below": 0.6
+      },
+      "effect": {
+        "stat": "damage",
+        "delta_max": 0.2,
+        "scope": "primary_and_followup"
+      },
+      "limits": {
+        "max_bonus_at_health_fraction": 0.35,
+        "snapshot": "current_health_over_effective_max_health",
+        "self_damage_rewards": false,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "max_health": -0.1
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "expression": "0.20 * clamp((0.60 - health_fraction) / 0.25, 0, 1)",
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-03",
+      "name": "Armoured Stride",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "dash_begin",
+        "reads": "static_gear_snapshot"
+      },
+      "effect": {
+        "stat": "dash_speed",
+        "delta_max": 0.12,
+        "scaling_coefficient": 0.5
+      },
+      "limits": {
+        "reads_current_health": false,
+        "reads_temporary_armour": false,
+        "changes_distance": false,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "max_health": -0.1
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "expression": "min(0.12, 0.50 * (gear_armour - 1) / gear_health_multiplier)",
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-04",
+      "name": "Counterstep",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "completed_dash",
+        "requires": "dash_begins_inside_locked_threat_footprint_and_ends_outside_before_activation_without_taking_its_hit",
+        "requires_no_threat_collision_even_if_invulnerability_blocks_damage": true
+      },
+      "effect": {
+        "stat": "damage",
+        "delta": 0.15,
+        "scope": "next_primary_action"
+      },
+      "limits": {
+        "duration_s": 1,
+        "cooldown_s": 3,
+        "consumed_on": "primary_action_begin",
+        "awards_for_invulnerability_tanking": false,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "damage": -0.05
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-05",
+      "name": "Settled Reach",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "stationary_after_dash",
+        "stationary_time_s": 0.35
+      },
+      "effect": {
+        "stat": "attack_range",
+        "delta": 0.12,
+        "scope": "next_primary_action"
+      },
+      "limits": {
+        "duration_s": 1,
+        "consumed_on": "primary_action_begin",
+        "reset_on": [
+          "dash_begin",
+          "damage_taken"
+        ],
+        "line_of_sight_required": true,
+        "uses_per_completed_dash": 1,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "attack_speed": -0.05
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-06",
+      "name": "Sweep Economy",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "primary_hit",
+        "distinct_live_enemy_targets_min": 3
+      },
+      "effect": {
+        "stat": "reload_credit_s",
+        "amount": 0.2
+      },
+      "limits": {
+        "cooldown_s": 1.5,
+        "maximum_total_reload_credit_per_action_s": 0.65,
+        "no_credit_when_full": true,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "damage": -0.05
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-07",
+      "name": "Empty Chamber",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "primary_hit",
+        "shells_at_action_begin": 0
+      },
+      "effect": {
+        "stat": "reload_credit_s",
+        "amount": 0.15
+      },
+      "limits": {
+        "cooldown_s": 1.15,
+        "maximum_total_reload_credit_per_action_s": 0.65,
+        "no_instant_shell_refill": true,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "damage": -0.05
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-08",
+      "name": "Backtrack",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "completed_dash",
+        "previous_dash_gap_s_max": 1,
+        "direction_dot_max": -0.85
+      },
+      "effect": {
+        "stat": "knockback",
+        "delta": 0.12,
+        "scope": "next_primary_action"
+      },
+      "limits": {
+        "duration_s": 0.6,
+        "cooldown_s": 2,
+        "boss_displacement": false,
+        "consumed_on": "primary_action_begin",
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "dash_speed": -0.05
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-09",
+      "name": "Followthrough",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "followup_hit",
+        "requires": "same_target_as_immediately_preceding_primary",
+        "max_gap_s": 0.28
+      },
+      "effect": {
+        "stat": "knockback",
+        "delta": 0.1,
+        "scope": "qualifying_target"
+      },
+      "limits": {
+        "no_damage_bonus": true,
+        "boss_displacement": false,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "attack_range": -0.05
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-10",
+      "name": "Recovery Seam",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "primary_hit",
+        "target_state": "explicit_recovery"
+      },
+      "effect": {
+        "stat": "damage",
+        "delta": 0.1,
+        "scope": "qualifying_target"
+      },
+      "limits": {
+        "cooldown_s": 2,
+        "extra_damage_does_not_make_enemy_vulnerable": true,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "damage": -0.05
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-11",
+      "name": "Reserve Stitch",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "damage_taken",
+        "crosses_health_fraction_below": 0.4,
+        "requires_alive_after_hit": true
+      },
+      "effect": {
+        "stat": "armour",
+        "delta": 0.15,
+        "scope": "future_hits"
+      },
+      "limits": {
+        "duration_s": 2,
+        "uses_per_encounter": 1,
+        "affects_triggering_hit": false,
+        "healing_amount": 0,
+        "refreshes": false,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "max_health": -0.1
+      },
+      "eligible_origin": "accepted_enemy_or_environment_damage",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-12",
+      "name": "Release Valve",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "primary_miss"
+      },
+      "effect": {
+        "stat": "dash_speed",
+        "delta": 0.1,
+        "scope": "next_dash"
+      },
+      "limits": {
+        "duration_s": 0.6,
+        "cooldown_s": 4,
+        "consumed_on": "dash_begin",
+        "duration_refresh_on_miss": false,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "damage": -0.05
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-13",
+      "name": "Precision Feed",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "primary_hit",
+        "distinct_live_enemy_targets_exact": 1
+      },
+      "effect": {
+        "stat": "reload_credit_s",
+        "amount": 0.1
+      },
+      "limits": {
+        "cooldown_s": 0.6,
+        "maximum_total_reload_credit_per_action_s": 0.65,
+        "no_credit_from_props": true,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "attack_range": -0.05
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    },
+    {
+      "id": "PERK-14",
+      "name": "First Opening",
+      "status": "proposed_unplaytested",
+      "trigger": {
+        "event": "primary_hit",
+        "requires": "target_has_taken_no_prior_direct_player_hit_this_encounter"
+      },
+      "effect": {
+        "stat": "damage",
+        "delta": 0.15,
+        "scope": "qualifying_target"
+      },
+      "limits": {
+        "uses_per_enemy": 1,
+        "boss_uses_per_phase": 1,
+        "generated_hits_eligible": false,
+        "target_evaluation": "snapshot_all_qualifying_targets_before_action; commit_state_after_resolution"
+      },
+      "required_tradeoff": {
+        "attack_speed": -0.05
+      },
+      "eligible_origin": "player_direct",
+      "count_scope": "once_per_action",
+      "can_trigger_other_effects": false,
+      "cooldown_start": "first_eligible_trigger_event"
+    }
+  ],
+  "clothing": [
+    {
+      "id": "CLOTH-J0",
+      "name": "Standard Jacket",
+      "kind": "clothing",
+      "slot": "jacket",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {},
+      "perk_id": null,
+      "role": "neutral baseline",
+      "tradeoff": "none"
+    },
+    {
+      "id": "CLOTH-J1",
+      "name": "Padded Jacket",
+      "kind": "clothing",
+      "slot": "jacket",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "armour": 0.2,
+        "attack_speed": -0.05
+      },
+      "perk_id": null,
+      "role": "survive mistakes",
+      "tradeoff": "slower attack recovery"
+    },
+    {
+      "id": "CLOTH-J2",
+      "name": "Duelist Jacket",
+      "kind": "clothing",
+      "slot": "jacket",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "damage": 0.1,
+        "max_health": -0.1
+      },
+      "perk_id": null,
+      "role": "stronger individual hits",
+      "tradeoff": "less health capacity"
+    },
+    {
+      "id": "CLOTH-J3",
+      "name": "Frayed Jacket",
+      "kind": "clothing",
+      "slot": "jacket",
+      "status": "proposed_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "max_health": -0.1
+      },
+      "perk_id": "PERK-02",
+      "role": "damage when injured",
+      "tradeoff": "less health; remaining injured is dangerous"
+    },
+    {
+      "id": "CLOTH-P0",
+      "name": "Standard Pants",
+      "kind": "clothing",
+      "slot": "pants",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {},
+      "perk_id": null,
+      "role": "neutral baseline",
+      "tradeoff": "none"
+    },
+    {
+      "id": "CLOTH-P1",
+      "name": "Reach Pants",
+      "kind": "clothing",
+      "slot": "pants",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "attack_range": 0.05,
+        "attack_speed": -0.05
+      },
+      "perk_id": null,
+      "role": "slightly safer approach",
+      "tradeoff": "slower attack recovery"
+    },
+    {
+      "id": "CLOTH-P2",
+      "name": "Cargo Pants",
+      "kind": "clothing",
+      "slot": "pants",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "max_health": 0.1,
+        "dash_speed": -0.05
+      },
+      "perk_id": null,
+      "role": "health capacity",
+      "tradeoff": "slower dash travel"
+    },
+    {
+      "id": "CLOTH-P3",
+      "name": "Cadence Pants",
+      "kind": "clothing",
+      "slot": "pants",
+      "status": "proposed_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "damage": -0.05
+      },
+      "perk_id": "PERK-01",
+      "role": "maintain three landed primary actions",
+      "tradeoff": "weaker first hits; misses or damage break sequence"
+    },
+    {
+      "id": "CLOTH-S0",
+      "name": "Standard Shoes",
+      "kind": "clothing",
+      "slot": "shoes",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {},
+      "perk_id": null,
+      "role": "neutral baseline",
+      "tradeoff": "none"
+    },
+    {
+      "id": "CLOTH-S1",
+      "name": "Burst Shoes",
+      "kind": "clothing",
+      "slot": "shoes",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "dash_speed": 0.1,
+        "damage": -0.05
+      },
+      "perk_id": null,
+      "role": "quicker arrival at same landing",
+      "tradeoff": "weaker attacks"
+    },
+    {
+      "id": "CLOTH-S2",
+      "name": "Longstep Shoes",
+      "kind": "clothing",
+      "slot": "shoes",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "dash_distance": 0.1,
+        "dash_speed": -0.05
+      },
+      "perk_id": null,
+      "role": "longer committed dash",
+      "tradeoff": "slower travel and overshoot risk"
+    },
+    {
+      "id": "CLOTH-S3",
+      "name": "Armoured Stride Shoes",
+      "kind": "clothing",
+      "slot": "shoes",
+      "status": "proposed_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "armour": 0.05,
+        "max_health": -0.1
+      },
+      "perk_id": "PERK-03",
+      "role": "convert invested armour into bounded dash speed",
+      "tradeoff": "less health; needs armour investment"
+    }
+  ],
+  "weapons": [
+    {
+      "id": "WEAPON-01",
+      "name": "Balanced Edge",
+      "kind": "weapon",
+      "slot": "weapon",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {},
+      "perk_id": null,
+      "role": "baseline primary and blast pair",
+      "tradeoff": "none"
+    },
+    {
+      "id": "WEAPON-02",
+      "name": "Quick Edge",
+      "kind": "weapon",
+      "slot": "weapon",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "damage": -0.15,
+        "attack_speed": 0.15,
+        "attack_range": -0.05
+      },
+      "perk_id": null,
+      "role": "quicker recovery and follow-up opportunities",
+      "tradeoff": "less damage per hit and shorter reach"
+    },
+    {
+      "id": "WEAPON-03",
+      "name": "Heavy Edge",
+      "kind": "weapon",
+      "slot": "weapon",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "damage": 0.2,
+        "attack_speed": -0.2,
+        "attack_range": -0.1
+      },
+      "perk_id": null,
+      "role": "strong short opening hits",
+      "tradeoff": "slower recovery and closer positioning"
+    },
+    {
+      "id": "WEAPON-04",
+      "name": "Long Edge",
+      "kind": "weapon",
+      "slot": "weapon",
+      "status": "implemented_prototype_unplaytested",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "attack_range": 0.1,
+        "attack_speed": -0.1,
+        "damage": -0.05
+      },
+      "perk_id": null,
+      "role": "slightly farther approaches",
+      "tradeoff": "slower and weaker hits"
+    }
+  ],
+  "powerups": [
+    {
+      "id": "POWER-01",
+      "name": "Fleet Spark",
+      "kind": "powerup",
+      "status": "proposed_unplaytested",
+      "group": "mobility",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "dash_speed": 0.15
+      },
+      "duration_s": 12,
+      "charges": null,
+      "shape_override": null,
+      "max_stacks": 1,
+      "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+      "different_id_repickup": "replace_same_group",
+      "expires_on": [
+        "encounter_end",
+        "death"
+      ],
+      "timer_clock": "active_simulation",
+      "eligible_charge_action": "executed_primary",
+      "action_modifiers": {}
+    },
+    {
+      "id": "POWER-02",
+      "name": "Long Arc",
+      "kind": "powerup",
+      "status": "proposed_unplaytested",
+      "group": "mobility",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "dash_distance": 0.15
+      },
+      "duration_s": 12,
+      "charges": null,
+      "shape_override": null,
+      "max_stacks": 1,
+      "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+      "different_id_repickup": "replace_same_group",
+      "expires_on": [
+        "encounter_end",
+        "death"
+      ],
+      "timer_clock": "active_simulation",
+      "eligible_charge_action": "executed_primary",
+      "action_modifiers": {}
+    },
+    {
+      "id": "POWER-03",
+      "name": "Keen Spark",
+      "kind": "powerup",
+      "status": "proposed_unplaytested",
+      "group": "combat",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "damage": 0.15
+      },
+      "duration_s": 10,
+      "charges": null,
+      "shape_override": null,
+      "max_stacks": 1,
+      "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+      "different_id_repickup": "replace_same_group",
+      "expires_on": [
+        "encounter_end",
+        "death"
+      ],
+      "timer_clock": "active_simulation",
+      "eligible_charge_action": "executed_primary",
+      "action_modifiers": {}
+    },
+    {
+      "id": "POWER-04",
+      "name": "Quick Spark",
+      "kind": "powerup",
+      "status": "proposed_unplaytested",
+      "group": "combat",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "attack_speed": 0.15
+      },
+      "duration_s": 10,
+      "charges": null,
+      "shape_override": null,
+      "max_stacks": 1,
+      "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+      "different_id_repickup": "replace_same_group",
+      "expires_on": [
+        "encounter_end",
+        "death"
+      ],
+      "timer_clock": "active_simulation",
+      "eligible_charge_action": "executed_primary",
+      "action_modifiers": {}
+    },
+    {
+      "id": "POWER-05",
+      "name": "Guard Spark",
+      "kind": "powerup",
+      "status": "proposed_unplaytested",
+      "group": "combat",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {
+        "armour": 0.15
+      },
+      "duration_s": 10,
+      "charges": null,
+      "shape_override": null,
+      "max_stacks": 1,
+      "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+      "different_id_repickup": "replace_same_group",
+      "expires_on": [
+        "encounter_end",
+        "death"
+      ],
+      "timer_clock": "active_simulation",
+      "eligible_charge_action": "executed_primary",
+      "action_modifiers": {}
+    },
+    {
+      "id": "POWER-06",
+      "name": "Orbit Cut",
+      "kind": "powerup",
+      "status": "proposed_unplaytested",
+      "group": "combat",
+      "acts": [
+        1,
+        2,
+        3
+      ],
+      "modifiers": {},
+      "duration_s": null,
+      "charges": 3,
+      "shape_override": "primary_360_degrees",
+      "max_stacks": 1,
+      "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+      "different_id_repickup": "replace_same_group",
+      "expires_on": [
+        "encounter_end",
+        "death"
+      ],
+      "timer_clock": "active_simulation",
+      "eligible_charge_action": "executed_primary",
+      "action_modifiers": {
+        "primary": {
+          "damage": -0.2
+        }
+      }
+    }
+  ],
+  "numeric_fixtures": [
+    {
+      "id": "FIX-01",
+      "input": {
+        "raw_damage": 20,
+        "armour_multiplier": 1.25
+      },
+      "expected": {
+        "damage_received": 16,
+        "damage_reduction_fraction": 0.2
+      }
+    },
+    {
+      "id": "FIX-02",
+      "input": {
+        "dash_speed_multiplier": 1.2,
+        "dash_distance_multiplier": 1
+      },
+      "expected": {
+        "dash_speed": 18,
+        "dash_distance": 2.7,
+        "dash_duration_s": 0.15
+      }
+    },
+    {
+      "id": "FIX-03",
+      "input": {
+        "dash_speed_multiplier": 1,
+        "dash_distance_multiplier": 1.2
+      },
+      "expected": {
+        "dash_speed": 15,
+        "dash_distance": 3.24,
+        "dash_duration_s": 0.216
+      }
+    },
+    {
+      "id": "FIX-04",
+      "input": {
+        "damage_deltas": [
+          0.1,
+          0.15
+        ]
+      },
+      "expected": {
+        "damage_multiplier": 1.25
+      }
+    },
+    {
+      "id": "FIX-05",
+      "input": {
+        "old_hp": 70,
+        "new_max_hp": 120
+      },
+      "expected": {
+        "new_hp": 70
+      }
+    },
+    {
+      "id": "FIX-06",
+      "input": {
+        "old_hp": 95,
+        "new_max_hp": 80
+      },
+      "expected": {
+        "new_hp": 80
+      }
+    },
+    {
+      "id": "FIX-07",
+      "input": {
+        "three_hit_damage_deltas": [
+          0,
+          0,
+          0.3
+        ]
+      },
+      "expected": {
+        "cycle_average_damage_ratio": 1.1
+      }
+    },
+    {
+      "id": "FIX-08",
+      "input": {
+        "gear_armour": 1.25,
+        "gear_health_multiplier": 0.9
+      },
+      "expected": {
+        "armoured_stride_speed_delta": 0.12
+      }
+    },
+    {
+      "id": "FIX-09",
+      "input": {
+        "health_fraction": 0.4
+      },
+      "expected": {
+        "last_thread_damage_delta": 0.16
+      }
+    },
+    {
+      "id": "FIX-10",
+      "input": {
+        "orbit_primary_damage_delta": -0.2,
+        "baseline_primary_damage": 20,
+        "baseline_followup_damage": 42
+      },
+      "expected": {
+        "orbit_primary_damage": 16,
+        "orbit_followup_damage": 42
+      }
+    }
+  ],
+  "validation_status": {
+    "numerical_screen": "passed_example_catalogue_only",
+    "real_gesture_cadence": "not_tested",
+    "encounter_balance": "not_tested",
+    "mobile_device_validation": "not_tested"
+  },
+  "confirmed_preferences": {
+    "combo_interpretation": "three_landed_primary_actions_with_modest_finisher",
+    "equipment_between_acts": "carry_equipped_loadout",
+    "status": "user_confirmed"
+  },
+  "hit_contract": {
+    "primary_hit": "accepted_nonzero_direct_damage_to_enemy_alive_at_action_begin_including_lethal_hits",
+    "primary_miss": "executed_primary_with_zero_accepted_live_enemy_damage_results",
+    "immune_overlap_counts_as_hit": false,
+    "per_target_result_fields": [
+      "accepted",
+      "hp_damage",
+      "target_id",
+      "target_alive_before_hit"
+    ],
+    "target_scoped_bonuses": "all_qualifying_targets_from_pre_action_snapshot; commit_cooldown_once_after_resolution",
+    "first_opening_ledger": "per_target; reset_boss_use_marker_at_new_phase"
+  }
+}
