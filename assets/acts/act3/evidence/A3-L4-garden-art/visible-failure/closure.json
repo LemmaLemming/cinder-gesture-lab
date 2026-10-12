@@ -1,0 +1,23 @@
+{
+  "session_id": 13308,
+  "exit_code": 1,
+  "closed_at": "2026-10-09T09:07:14.833717+00:00",
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 340x736 --script res://tests/acts/act3/garden_art_portrait.gd",
+  "baseline": "d22cb47b2346a54e81ca6c5ed77f36efd1b4b667",
+  "owned_head": "a311d5771501ec30811779506ed7655eef5b5af8",
+  "checks": 27,
+  "failures": 1,
+  "source_count": 485,
+  "changed_inputs": [],
+  "diagnostics": [
+    "ERROR: FAIL: ordinary rule response cannot tick while paused"
+  ],
+  "log_sha256": "ef8f3c722e0a0312304d882f2edc25c260bffe4ec3be7b821726aec64853de0e",
+  "portraits": {
+    "welcoming-court.png": "9813e52b1fec29cc81de1900fedd11f6989b6bd952c1d1302f91e88a6e74563f",
+    "stripped-paused.png": "513d4adf0f9253476ba19c55111c01c305815e437513bfe5b921c113cb9b9eba",
+    "draw-warning.png": "4716219b5890a95e814d8a8e20957e41c47d4ccffc62b2e059c7a5c8f4f03079"
+  },
+  "classification": "Unexpected native tree pause during fade probe. Actual PostActorBarrier._wake appears in trace; Game has existing application-focus/pause handler. Exact notification was not recorded; environment cause is an inference. No inferred gameplay or controller failure. Select existing --capture mode to suppress OS focus notifications only in this disclosed visual fixture; public pause/fade checks remain.",
+  "visual_status": "Root viewed actual welcome/Draw originals: player/low roots/footprint remain visible; likeness and two back flower beds visible. Partial visual evidence only; hidden frame absent and whole target failed. Never relabel as a passed fixture."
+}

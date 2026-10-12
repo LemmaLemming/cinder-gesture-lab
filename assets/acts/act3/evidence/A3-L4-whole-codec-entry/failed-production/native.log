@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: real first entry earns and persists its actual protected checkpoint: GUI Resume was not consumed or changed actual actions/input/resources
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:531)
+       [1] _run (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:82)
+       [2] _open (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:164)
+       [3] _settle_shell (res://tests/acts/act3/false_paradise_production_entry_smoke.gd:180)
+FIRST MEANINGFUL L4 ENTRY PRODUCTION FAILURE; later actions unattempted: GUI Resume was not consumed or changed actual actions/input/resources; { "paused": false, "clock_s": 0.0, "hero": (0.0, 0.1, 58.0), "parent": { "api_revision": "act3-false-paradise-parent-1", "clock_s": 0.0, "configuration_error": "", "admission_reason": "", "camera_error": "", "profile": "standard", "route": { "entries": [], "deaths": {  }, "pending_checkpoint_boundaries": [], "retired_sources": {  } }, "sources": { "l4-rest-stalker": { "installed": false, "kind": "stalker", "source": {  }, "retired": false }, "l4-beauty-root": { "installed": false, "kind": "root", "source": {  }, "retired": false }, "l4-plain-echo": { "installed": false, "kind": "echo", "source": {  }, "retired": false }, "l4-plain-root": { "installed": false, "kind": "root", "source": {  }, "retired": false }, "l4-garden-helper": { "installed": false, "kind": "root", "source": {  }, "retired": false } }, "echo_records": {  }, "root_network": {  }, "sun": { "started": false, "anchor_s": <null>, "cycle": 0, "elapsed_s": 0.0, "stage": "stable", "effective_index": 0, "incoming_index": 1 }, "disengaged": false, "completed": false, "exit_state": "clear", "contact": {  }, "persistence_supported": true, "checkpoint_dispatch_supported": true }, "campaign_error": "", "events": [], "quiet_events": [] }
+TEST ONLY False Paradise first-entry production: 5 checks; failures: 1. Actual first-entry Scheduler1/whole local1 Save, disk Continue, protected Retry/consumed GUI Resume only; seeded accepted metadata/prefix13 are not earned campaign clears. No combat/full-route/core/Echo/sun/transition/art/native-OS claim.

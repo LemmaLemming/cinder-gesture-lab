@@ -1,0 +1,18 @@
+{
+  "closed_at": "2026-10-12T03:12:19.611636+00:00",
+  "actual_session": 76142,
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --resolution 340x736 --script res://tests/acts/act3/false_paradise_production_entry_smoke.gd",
+  "exit_code": 1,
+  "checks": 5,
+  "failures": 1,
+  "footer_printed": true,
+  "script_errors": [],
+  "assertion_diagnostics": [
+    "ERROR: real first entry earns and persists its actual protected checkpoint: GUI Resume was not consumed or changed actual actions/input/resources"
+  ],
+  "classification": "fixture uses JSON-only equality on native Vector2 input observation; identical native values necessarily reject before first-entry gameplay. Other GUI operands absent from original diagnostic.",
+  "source_count": 514,
+  "all_original_rows_current_exact": true,
+  "log_sha256": "0cb5cefdc0bc5bb9cee044de1286254aa9a30b90a11b2e9fe06f750aaca477e1",
+  "scope": "Actual clock0 Main pair\u2192public production candidate Continue and initial format2 save succeed; first GUI Resume assertion fails, later entry/dash/diskContinue/Retry unattempted. Cleanup/canonical Registry unchanged verified; no first-entry or consumed GUI credit."
+}
