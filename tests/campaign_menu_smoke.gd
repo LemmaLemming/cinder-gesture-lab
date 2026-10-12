@@ -282,7 +282,7 @@ func _run() -> void:
 func _snapshot(registry: CinderCampaignRegistry, id: String) -> Dictionary:
 	var scene: Variant = registry.entry(id)["scene_path"]
 	return {"schema_version": 1, "level_id": id, "scene_path": scene, "paused": true,
-		"equipment_ids": Equipment.STARTER.duplicate(true), "player": {"hp": 37.0, "shells": 0},
+		"equipment_ids": Equipment.STARTER.duplicate(true), "player": {"resources": {"hp": 37.0, "shells": 0}},
 		"level": {"level_id": id, "scene_path": scene, "local": {}}, "shell": {}}
 
 func _find(node_name: String) -> Node:

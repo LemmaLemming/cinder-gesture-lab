@@ -1,6 +1,6 @@
 # Cinder — title, journey menu and replay equipment
 
-**Saved: 8 October 2026.** This records the UI direction agreed in the design conversation. The shared desktop Title/Journey/replay/settings consumers and coherent story/side saves are now implemented and tested over explicitly isolated live fixtures. All 24 real campaign scenes still await individual acceptance; scenic title/route art and authored encounter validation remain in progress. The existing [Character Lab](CHARACTER_LAB.md) remains the default prototype entry. Phone validation is unperformed; [shared progress](development/SHARED_PROGRESS.md) records exact consumer evidence.
+**Saved design: 8 October 2026; current status: 12 October 2026.** The shared desktop Title/Journey/replay/settings consumers and coherent story/side saves are implemented and tested over explicitly isolated live fixtures. The canonical registry has10 individually accepted levels and14 unfinished entries. The default entry is the [campaign shell](../scenes/campaign_main.tscn); the [Character Lab](CHARACTER_LAB.md) remains an explicit development scene. Saved checkpoint labels and the shared current-level Journey traveller are implemented, with focused native and actual portrait evidence. Scenic title/route art still needs production work. Phone validation is unperformed; [shared progress](development/SHARED_PROGRESS.md) records exact consumer evidence.
 
 ## Requirements and design authority
 
@@ -28,7 +28,7 @@ For a new save, replace Continue Story with **Begin Story**. After campaign comp
 
 Use a vertically scrolling journey with a winding path and large level nodes staggered left and right. The scattering is authored and stable, so players can learn where each location is. A connecting path makes sequence clear. Scrolling this menu never moves the gameplay character.
 
-Each act forms a different region. Start with the current campaign plan's five main nodes per act and optional side branches; the campaign counts remain subject to the act plans and playtesting. Opening Journey should bring the current story node into view. Provide an act shortcut so returning to an earlier region does not require scrolling through the whole campaign.
+Each act forms a different region. Use the canonical five main nodes and three optional branches per act, deriving displayed totals from the registry's15-main/nine-optional definitions. Opening Journey should bring the current story node into view. Provide an act shortcut so returning to an earlier region does not require scrolling through the whole campaign.
 
 | Node state | Appearance | Selection and action |
 | --- | --- | --- |

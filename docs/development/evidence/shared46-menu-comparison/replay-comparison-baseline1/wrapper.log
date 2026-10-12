@@ -1,0 +1,49 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: FAIL: fresh Story Title names the saved Entrance checkpoint
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/campaign_shell_smoke.gd:477)
+       [1] _run (res://tests/replay_comparison_snapshot_smoke.gd:52)
+       [2] _settle (res://tests/campaign_shell_smoke.gd:460)
+ERROR: FAIL: Title SavedCheckpointLabel names the actual saved checkpoint ID
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/campaign_shell_smoke.gd:477)
+       [1] _run (res://tests/replay_comparison_snapshot_smoke.gd:73)
+       [2] _settle (res://tests/campaign_shell_smoke.gd:460)
+ERROR: FAIL: Journey current LevelCardBody names the actual saved checkpoint ID
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/campaign_shell_smoke.gd:477)
+       [1] _run (res://tests/replay_comparison_snapshot_smoke.gd:78)
+       [2] _settle (res://tests/campaign_shell_smoke.gd:460)
+ERROR: FAIL: Journey exposes the nearest-filtered nonempty actual StoryTraveller
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/campaign_shell_smoke.gd:477)
+       [1] _check_story_traveller (res://tests/replay_comparison_snapshot_smoke.gd:164)
+       [2] _run (res://tests/replay_comparison_snapshot_smoke.gd:80)
+       [3] _settle (res://tests/campaign_shell_smoke.gd:460)
+ERROR: FAIL: HP37 smaller max exact nested-resource comparison line; actual=Swap rule comparison: 90.0 HP retained, 10.0 discarded; larger max HP does not heal. Replay starting resources follow the level's fresh-start policy.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/campaign_shell_smoke.gd:477)
+       [1] _compare_selection (res://tests/replay_comparison_snapshot_smoke.gd:134)
+       [2] _run (res://tests/replay_comparison_snapshot_smoke.gd:87)
+       [3] _settle (res://tests/campaign_shell_smoke.gd:460)
+ERROR: FAIL: HP37 larger max exact nested-resource comparison line; actual=Swap rule comparison: 100.0 HP retained, 0.0 discarded; larger max HP does not heal. Replay starting resources follow the level's fresh-start policy.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/campaign_shell_smoke.gd:477)
+       [1] _compare_selection (res://tests/replay_comparison_snapshot_smoke.gd:134)
+       [2] _run (res://tests/replay_comparison_snapshot_smoke.gd:91)
+       [3] _settle (res://tests/campaign_shell_smoke.gd:460)
+ERROR: FAIL: HP95 smaller max exact nested-resource comparison line; actual=Swap rule comparison: 90.0 HP retained, 10.0 discarded; larger max HP does not heal. Replay starting resources follow the level's fresh-start policy.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/campaign_shell_smoke.gd:477)
+       [1] _compare_selection (res://tests/replay_comparison_snapshot_smoke.gd:134)
+       [2] _run (res://tests/replay_comparison_snapshot_smoke.gd:101)
+       [3] _settle (res://tests/campaign_shell_smoke.gd:460)
+Replay comparison smoke: 329 checks, 7 failures (TEST ONLY actual Shell callbacks; no GUI hit-test or full route)
