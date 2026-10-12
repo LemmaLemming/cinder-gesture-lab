@@ -55,6 +55,7 @@ var _journey_scroll: ScrollContainer
 var _route_canvas: RouteCanvas
 var _node_buttons: Dictionary = {}
 var _story_marker: Label
+var _story_traveller: TextureRect
 var _card_title: Label
 var _card_body: Label
 var _card_action: Button
@@ -126,13 +127,16 @@ func show_title() -> void:
 		begin.pressed.connect(func() -> void: begin_story_requested.emit())
 		if begin.disabled:
 			_label(box, "The opening level is awaiting integration.", 19, MUTED)
-	elif state.get("completed_main", []).size() < 15 or String(state.get("story", {}).get("snapshot", {}).get("level", {}).get("progress", {}).get("contact_exit_id", "")).is_empty():
+	elif state.get("completed_main", []).size() < _campaign_totals().main or String(state.get("story", {}).get("snapshot", {}).get("level", {}).get("progress", {}).get("contact_exit_id", "")).is_empty():
 		var continue_button: Button = _button(box, "Continue Story · " + story, "ContinueStoryButton")
 		continue_button.disabled = not _playable(story)
 		continue_button.pressed.connect(func() -> void: continue_story_requested.emit())
 		_label(box, "Resume your preserved story equipment and checkpoint.", 19, MUTED)
 	else:
 		_label(box, "The main journey is complete. Visit cleared levels or optional paths.", 21)
+	if not story.is_empty():
+		var checkpoint: Label = _label(box, "Checkpoint · " + _story_checkpoint_label(), 20, MUTED)
+		checkpoint.name = "SavedCheckpointLabel"
 	if state.get("side_attempt") != null:
 		var side: Dictionary = state["side_attempt"]
 		_button(box, "Resume %s · %s" % [String(side["kind"]).capitalize(), side["level_id"]], "ResumeSideButton").pressed.connect(func() -> void: resume_requested.emit())
@@ -142,7 +146,8 @@ func show_title() -> void:
 func show_journey() -> void:
 	_open_page("journey", "Journey", true)
 	var state: Dictionary = _state()
-	_label(_host, "%d / 15 main  ·  %d / 9 optional" % [state.get("completed_main", []).size(), state.get("completed_optional", []).size()], 20)
+	var totals: Dictionary = _campaign_totals()
+	_label(_host, "%d / %d main  ·  %d / %d optional" % [state.get("completed_main", []).size(), totals.main, state.get("completed_optional", []).size(), totals.optional], 20)
 	var shortcuts := HBoxContainer.new()
 	_host.add_child(shortcuts)
 	for act: int in range(3):
@@ -191,6 +196,19 @@ func show_journey() -> void:
 	_story_marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_story_marker.size = Vector2(NODE_SIZE.x, 22)
 	_route_canvas.add_child(_story_marker)
+	_story_traveller = TextureRect.new()
+	_story_traveller.name = "StoryTraveller"
+	_story_traveller.custom_minimum_size = Vector2(48, 64)
+	_story_traveller.size = Vector2(48, 64)
+	_story_traveller.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_story_traveller.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_story_traveller.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_story_traveller.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var story: String = _story_id()
+	_story_traveller.visible = not story.is_empty()
+	if _story_traveller.visible:
+		_story_traveller.texture = PlayerArt.preview_texture(PlayerArt.presentation_for_act(int(story.substr(1, 1))), _story_gear())
+	_route_canvas.add_child(_story_traveller)
 	_route_canvas.resized.connect(_layout_journey)
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel", _style(Color("151b25"), Color("738390")))
@@ -237,7 +255,7 @@ func select_level(id: String) -> void:
 		_card_body.text = "Awaiting integration. This scene is not available to play."
 		_card_action.text = "Awaiting integration"
 	elif id == _story_id() and not state.get("completed_main", []).has(id):
-		_card_body.text = "Current story checkpoint. Your story equipment and resources are preserved."
+		_card_body.text = "Checkpoint · %s. Your story equipment and resources are preserved." % _story_checkpoint_label()
 		_card_action.text = "Continue Story"
 		_card_action.disabled = false
 	elif state.get("completed_main", []).has(id) or state.get("completed_optional", []).has(id):
@@ -551,10 +569,13 @@ func _layout_journey() -> void:
 		_route_canvas.segments.append(PackedVector2Array([parent.position + NODE_SIZE / 2.0, node.position + NODE_SIZE / 2.0]))
 	var story: String = _story_id()
 	_story_marker.visible = _node_buttons.has(story)
+	_story_traveller.visible = _story_marker.visible
 	if _story_marker.visible:
 		_story_marker.size = Vector2(NODE_SIZE.x, 22)
 		var story_node: Button = _node_buttons[story]
 		_story_marker.position = story_node.position + Vector2(0, story_node.size.y + 4.0)
+		var beside_x: float = story_node.position.x - 56.0 if story_node.position.x >= 56.0 else story_node.position.x + story_node.size.x + 8.0
+		_story_traveller.position = Vector2(beside_x, story_node.position.y + 6.0)
 	_route_canvas.queue_redraw()
 
 func _restore_journey_scroll() -> void:
@@ -598,7 +619,7 @@ func _refresh_comparison(slot: String) -> void:
 	var after: Dictionary = selected_gear.resolved_stats()
 	var item: Dictionary = selected_gear.item(String(_replay_gear[slot]))
 	_item_description.text = "%s\n%s\nTradeoff: %s" % [item["name"], item["role"], item["tradeoff"]]
-	var hp: float = float(_attempts.story_snapshot().get("player", {}).get("hp", before["max_health"]))
+	var hp: float = float(_attempts.story_snapshot().get("player", {}).get("resources", {}).get("hp", before["max_health"]))
 	var retained_hp: float = Equipment.health_after_swap(hp, float(after["max_health"]))
 	_comparison.text = "Story equipment → Selected replay equipment\n" \
 		+ "Slash damage: %.1f → %.1f\nBlast damage: %.1f → %.1f\n" % [before["primary_damage"], after["primary_damage"], before["followup_damage"], after["followup_damage"]] \
@@ -645,6 +666,25 @@ func _state() -> Dictionary:
 func _story_id() -> String:
 	var story: Variant = _state().get("story")
 	return String(story["level_id"]) if story is Dictionary else ""
+
+func _story_checkpoint_label() -> String:
+	var story: Variant = _state().get("story")
+	if not story is Dictionary:
+		return "Entrance"
+	var checkpoint: Variant = story.get("checkpoint")
+	if not checkpoint is Dictionary:
+		return "Entrance"
+	var id: String = String(checkpoint.get("level", {}).get("progress", {}).get("checkpoint_id", ""))
+	return "Entrance" if id.is_empty() else id
+
+func _campaign_totals() -> Dictionary:
+	var totals: Dictionary = {"main": 0, "optional": 0}
+	if _registry != null:
+		for id: String in _registry.ids():
+			var kind: String = String(_registry.entry(id).get("kind", ""))
+			if totals.has(kind):
+				totals[kind] += 1
+	return totals
 
 func _playable(id: String) -> bool:
 	return _registry != null and _registry.is_playable(id)
