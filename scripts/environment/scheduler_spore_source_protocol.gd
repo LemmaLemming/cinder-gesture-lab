@@ -137,6 +137,9 @@ func configure(source: CharacterBody3D, scheduler: CinderThreatScheduler, player
 			_comparison_references["world"] = {"value": _descriptor.source_environment.world_signature.duplicate(true), "json": _world_signature_json}
 		if not _floor_signature_json.is_empty():
 			_comparison_references["floor"] = {"value": _descriptor.source_environment.floor_signature.duplicate(true), "json": _floor_signature_json}
+		for kind: String in _comparison_references:
+			var retained: Dictionary = _comparison_references[kind]
+			retained["bits"] = _compile_reference_bits(retained.value)
 	last_error = ""
 	return true
 
@@ -594,7 +597,89 @@ func _same_bound_reference(actual: Variant, expected_json: String, kind: String)
 	var retained: Variant = _comparison_references.get(kind)
 	if not retained is Dictionary or not retained.has("value") or not retained.get("json") is String or retained.json.is_empty() or retained.json != expected_json:
 		return _same_reference(actual, expected_json)
+	if retained.has("bits"):
+		return _same_bits_reference(actual, retained.bits)
 	return _same_closed_reference(actual, retained.value)
+
+
+## Compile ONLY an originally admitted private expected tree. These bytes are
+## immutable comparison data; fresh candidate/native values are never retained.
+static func _compile_reference_bits(reference: Variant) -> Variant:
+	match typeof(reference):
+		TYPE_FLOAT:
+			var bytes := PackedByteArray()
+			bytes.resize(8)
+			bytes.encode_double(0, reference)
+			return bytes
+		TYPE_ARRAY:
+			if reference.size() == 3 and typeof(reference[0]) == TYPE_FLOAT and typeof(reference[1]) == TYPE_FLOAT and typeof(reference[2]) == TYPE_FLOAT:
+				var bytes := PackedByteArray()
+				bytes.resize(24)
+				for index: int in range(3):
+					bytes.encode_double(index * 8, reference[index])
+				return bytes
+			var items: Array = []
+			for item: Variant in reference:
+				items.append(_compile_reference_bits(item))
+			return items
+		TYPE_DICTIONARY:
+			var items: Dictionary = {}
+			for key: String in reference:
+				items[key] = _compile_reference_bits(reference[key])
+			return items
+	return reference
+
+
+## Strict typed/bit parity with the original finite-reference comparer below.
+## Packed expected leaves distinguish scalar8 bytes from three-float24 bytes.
+## Candidate shape/types/ALL float bytes remain freshly checked on every call.
+static func _same_bits_reference(candidate: Variant, mirror: Variant) -> bool:
+	if typeof(mirror) == TYPE_PACKED_BYTE_ARRAY:
+		var size: int = mirror.size()
+		if size == 8:
+			if typeof(candidate) != TYPE_FLOAT:
+				return false
+			var bytes := PackedByteArray()
+			bytes.resize(8)
+			bytes.encode_double(0, candidate)
+			return bytes == mirror
+		if size == 24:
+			if typeof(candidate) != TYPE_ARRAY or candidate.size() != 3 or typeof(candidate[0]) != TYPE_FLOAT or typeof(candidate[1]) != TYPE_FLOAT or typeof(candidate[2]) != TYPE_FLOAT:
+				return false
+			var bytes := PackedByteArray()
+			bytes.resize(24)
+			for index: int in range(3):
+				bytes.encode_double(index * 8, candidate[index])
+			return bytes == mirror
+		return false
+	if typeof(candidate) != typeof(mirror):
+		return false
+	match typeof(mirror):
+		TYPE_NIL:
+			return true
+		TYPE_BOOL, TYPE_INT:
+			return candidate == mirror
+		TYPE_STRING:
+			return candidate.length() == mirror.length() and candidate == mirror
+		TYPE_ARRAY:
+			if candidate.size() != mirror.size():
+				return false
+			for index: int in range(mirror.size()):
+				if not _same_bits_reference(candidate[index], mirror[index]):
+					return false
+			return true
+		TYPE_DICTIONARY:
+			if candidate.size() != mirror.size():
+				return false
+			# StringName aliases String: reject ALL non-String keys before lookup.
+			for key: Variant in candidate:
+				if typeof(key) != TYPE_STRING:
+					return false
+			for key: String in mirror:
+				if not candidate.has(key) or not _same_bits_reference(candidate[key], mirror[key]):
+					return false
+			return true
+	return false
 
 
 ## ONLY a separately private reference accepted by ORIGINAL Exact.stringify is

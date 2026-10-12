@@ -81,8 +81,10 @@ func _run() -> void:
 	_expect(w.protocol.binding_error().is_empty() and w.protocol.unit_error(unit, _pair(context)).is_empty() and _same(unit, w.protocol.current_unit(_pair(context))), "restoring only the actual body margin recovers original full native unit")
 	_expect(_same(original_descriptor, w.protocol.binding_state()) and _native_receipt(w, context) == before and events.is_empty(), "all test controls return the complete original reference/native unit with unchanged clocks/history/diagnostics")
 	_reference_instance_controls(w, context, events)
+	_reference_bits_instance_controls(w, context, events)
 	await _dispose(w)
 	_reference_differentials()
+	_reference_bits_differentials()
 	await _reference_subclass_controls()
 	print("Protocol reference differentials: original30 native controls plus new private strict oracle/fallback controls; no cost/gameplay claim")
 	_finish()
@@ -440,3 +442,160 @@ static func _reference_next_double(value: float) -> float:
 	var bytes: PackedByteArray = _reference_double_bytes(value)
 	bytes[0] = bytes[0] ^ 1
 	return bytes.decode_double(0)
+
+
+## NEW source-only mirror differentials. Every expected reference first passes
+## the ORIGINAL full Exact admission. Mirrors are comparison-only TEST data,
+## never native source/controller/world bindings or accepted caller tokens.
+func _reference_bits_differentials() -> void:
+	var negative_zero: float = "0000000000000080".hex_decode().decode_double(0)
+	var typed: Array[float] = [1.0, 2.0, 3.0]
+	_reference_bits_differential("typed three-float candidate equals untyped reference", typed, [1.0, 2.0, 3.0], true)
+	_reference_bits_differential("untyped candidate equals typed three-float reference", [1.0, 2.0, 3.0], typed, true)
+	var typed_mapping: Dictionary[String, Variant] = {"point": typed, "label": "港🙂"}
+	_reference_bits_differential("typed dictionary carries admitted triplet", {"label": "港🙂", "point": [1.0, 2.0, 3.0]}, typed_mapping, true)
+	_reference_bits_differential("mixed-array shape retains exact int and float types", [1, 2.0, 3.0], [1, 2.0, 3.0], true)
+	_reference_bits_differential("plain Array and native packed array are distinct", PackedFloat64Array([1.0, 2.0, 3.0]), typed, false)
+	# These values are built from actual native binary64 bytes, avoiding literal
+	# negative-zero normalization or a subnormal rounded by Vector3 conversion.
+	var edges: Array[String] = ["0100000000000000", "0100000000000080", "ffffffffffffef7f", "ffffffffffffefff"]
+	for axis: int in range(3):
+		var normal: Array[float] = [1.0, 2.0, 3.0]
+		var changed: Array = [1.0, 2.0, 3.0]
+		changed[axis] = _reference_next_double(normal[axis])
+		_reference_bits_differential("triplet axis%d changes one normal binary64 bit" % axis, changed, normal, false)
+		var zero_reference: Array = [1.0, 2.0, 3.0]
+		zero_reference[axis] = 0.0
+		changed = zero_reference.duplicate()
+		changed[axis] = negative_zero
+		_reference_bits_differential("triplet axis%d distinguishes opposite zero bits" % axis, changed, zero_reference, false)
+		_reference_bits_differential("triplet axis%d preserves genuine negative zero" % axis, changed.duplicate(), changed, true)
+		for pattern: String in edges:
+			var value: float = pattern.hex_decode().decode_double(0)
+			_expect(_reference_double_bytes(value).hex_encode() == pattern and not Exact.stringify(value).is_empty(), "mirror triplet axis%d edge has exact native bytes and original admission: %s" % [axis, pattern])
+			var reference: Array = [1.0, 2.0, 3.0]
+			reference[axis] = value
+			_reference_bits_differential("triplet axis%d copies finite edge %s" % [axis, pattern], reference.duplicate(), reference, true)
+			changed = reference.duplicate()
+			changed[axis] = _reference_next_double(value)
+			_reference_bits_differential("triplet axis%d rejects adjacent edge bits %s" % [axis, pattern], changed, reference, false)
+		var integers: Array = [1.0, 2.0, 3.0]
+		integers[axis] = axis + 1
+		_reference_bits_differential("triplet axis%d integer cannot replace equal float" % axis, integers, normal, false)
+		_reference_bits_differential("triplet axis%d float cannot replace equal integer" % axis, normal, integers, false)
+	# Existing edge-pair controls exercise the old comparator; these additional
+	# admitted scalar receipts exercise the new eight-byte mirror branch too.
+	for pattern: String in ["0000000000000000", "0000000000000080", "0100000000000000", "0100000000000080", "0000000000001000", "0000000000001080", "000000000000f03f", "ffffffffffffef7f", "ffffffffffffefff"]:
+		var value: float = pattern.hex_decode().decode_double(0)
+		_expect(_reference_double_bytes(value).hex_encode() == pattern and not Exact.stringify(value).is_empty(), "mirror scalar edge retains native bytes and full admission: " + pattern)
+		_reference_bits_differential("scalar mirror preserves finite edge " + pattern, value, value, true)
+		_reference_bits_differential("scalar mirror rejects adjacent bits " + pattern, _reference_next_double(value), value, false)
+	_reference_bits_differential("scalar mirror rejects positive infinity", INF, 1.0, false)
+	_reference_bits_differential("scalar mirror rejects NaN", NAN, 1.0, false)
+	_reference_bits_differential("scalar mirror retains int versus float", 1, 1.0, false)
+	_reference_bits_differential("scalar float cannot replace integer mirror", 1.0, 1, false)
+	_reference_bits_differential("triplet arity too short", [1.0, 2.0], typed, false)
+	_reference_bits_differential("triplet arity too long", [1.0, 2.0, 3.0, 4.0], typed, false)
+	var key_alias: Dictionary = {}
+	key_alias[StringName("point")] = [1.0, 2.0, 3.0]
+	_reference_bits_differential("mirror rejects root StringName key before aliased lookup", key_alias, {"point": typed}, false)
+	_reference_bits_differential("mirror rejects nested StringName key before aliased lookup", {"child": key_alias}, {"child": {"point": typed}}, false)
+	_reference_bits_differential("mirror rejects equal-text StringName scalar", {"point": typed, "label": StringName("same")}, {"point": typed, "label": "same"}, false)
+	var shared: Dictionary = {"point": [1.0, negative_zero, 3.0], "name": "shared"}
+	_reference_bits_differential("mirror preserves repeated acyclic aliases", [shared, shared], [shared.duplicate(true), shared.duplicate(true)], true)
+	var changed_alias: Dictionary = shared.duplicate(true)
+	changed_alias.point[1] = 0.0
+	_reference_bits_differential("changed repeated alias cannot hide a zero-bit forgery", [changed_alias, changed_alias], [shared, shared], false)
+	var triplet_cycle: Array = [null, 2.0, 3.0]
+	triplet_cycle[0] = triplet_cycle
+	_reference_bits_differential("cyclic three-array cannot impersonate a finite float batch", triplet_cycle, typed, false)
+	triplet_cycle.clear()
+	var recursive_cycle: Array = []
+	recursive_cycle.append(recursive_cycle)
+	_reference_bits_differential("recursive cyclic candidate stops at admitted reference shape", recursive_cycle, [[null]], false)
+	recursive_cycle.clear()
+	var mapping_cycle: Dictionary = {}
+	mapping_cycle["child"] = mapping_cycle
+	_reference_bits_differential("cyclic mapping cannot impersonate finite mirror shape", mapping_cycle, {"child": {"child": null}}, false)
+	mapping_cycle.clear()
+	# The original large-budget controls remain untouched above. These actual
+	# admitted shapes additionally exercise the new mirror across those limits.
+	var deepest: Variant = null
+	for _depth: int in range(Exact.MAX_DEPTH): deepest = [deepest]
+	_reference_bits_differential("mirror retains original depth64 boundary", deepest, deepest, true)
+	_reference_bits_differential("mirror rejects additional depth65 candidate", [deepest], deepest, false)
+	var entries: Array = []
+	entries.resize(Exact.MAX_ENTRIES)
+	_reference_bits_differential("mirror retains original16384 entries", entries.duplicate(), entries, true)
+	var too_many: Array = entries.duplicate()
+	too_many.append(null)
+	_reference_bits_differential("mirror rejects16385 entries", too_many, entries, false)
+	var chunk: Array = []
+	chunk.resize(16383)
+	var tail: Array = []
+	tail.resize(16382)
+	var exact_nodes: Array = []
+	for _alias: int in range(15): exact_nodes.append(chunk)
+	exact_nodes.append(tail)
+	_reference_bits_differential("mirror retains262144 charged aliased nodes", exact_nodes.duplicate(), exact_nodes, true)
+	var too_many_nodes: Array = exact_nodes.duplicate()
+	var too_many_tail: Array = tail.duplicate()
+	too_many_tail.append(null)
+	too_many_nodes[15] = too_many_tail
+	_reference_bits_differential("mirror rejects262145 charged nodes", too_many_nodes, exact_nodes, false)
+	var large: String = "x".repeat(1024 * 1024 + 32)
+	_reference_bits_differential("mirror retains admitted String beyond Authored1MiB cap", large, large, true)
+	_reference_bits_differential("mirror retains exact String text beyond shape and length", "à", "é", false)
+
+
+func _reference_bits_differential(label: String, candidate: Variant, reference: Variant, expected: bool) -> void:
+	var reference_wire: String = Exact.stringify(reference)
+	_expect(not reference_wire.is_empty(), label + " expected reference passes ORIGINAL full Exact admission before compilation")
+	if reference_wire.is_empty(): return
+	var mirror: Variant = Protocol._compile_reference_bits(reference)
+	var candidate_wire: String = Exact.stringify(candidate)
+	var original: bool = not candidate_wire.is_empty() and candidate_wire == reference_wire
+	var old_closed: bool = Protocol._same_closed_reference(candidate, reference)
+	var actual: bool = Protocol._same_bits_reference(candidate, mirror)
+	_expect(original == expected and old_closed == original and actual == original and Protocol._same_reference(candidate, reference_wire) == original, label + " new mirror agrees with BOTH unchanged closed comparator and complete Exact serializer/fallback")
+
+
+func _reference_bits_instance_controls(w: Dictionary, context: Dictionary, events: Array) -> void:
+	var descriptor: Dictionary = w.protocol.binding_state()
+	var environment: Dictionary = _fresh_environment(w, descriptor)
+	var collision: CollisionShape3D = w.source.get_node("BodyCollision")
+	var actual_body: Dictionary = Protocol._body_properties(w.source, collision)
+	var before: String = _reference_observation_wire(w, context)
+	_expect(not before.is_empty() and not environment.has("error") and w.protocol.get_script() == Protocol, "bits selection starts at the genuine exact-Script native world with nonempty observed state")
+	if before.is_empty() or environment.has("error") or w.protocol.get_script() != Protocol: return
+	var references: Variant = w.protocol.get("_comparison_references")
+	_expect(references is Dictionary and references.size() == 3, "bits controls retain all three actual configure-time finite reference kinds")
+	if not references is Dictionary: return
+	for kind: String in ["world", "floor", "body"]:
+		var retained: Variant = references.get(kind)
+		var present: bool = retained is Dictionary and retained.has("bits")
+		_expect(present, kind + " genuine canonical constructor enables new mirror before these controls")
+		if not present: continue
+		var actual: Variant = environment.world_signature if kind == "world" else (environment.floor_signature if kind == "floor" else actual_body)
+		var wire: String = Exact.stringify(actual)
+		_expect(not wire.is_empty() and Protocol._same_closed_reference(actual, retained.value) and w.protocol._same_bound_reference(actual, wire, kind), kind + " actual newly read native tree agrees with admitted old and mirror selection")
+		# TEST-only field absence simulates the documented older internal record.
+		# Preserve/restore the exact retained mirror object without a native tick,
+		# callback, receipt/value edit or recomputed binding authority.
+		var original_bits: Variant = retained["bits"]
+		retained.erase("bits")
+		var without_bits: bool = w.protocol._same_bound_reference(actual, wire, kind)
+		retained["bits"] = original_bits
+		_expect(without_bits == Protocol._same_closed_reference(actual, retained.value) and without_bits == Protocol._same_reference(actual, wire), kind + " missing bits field preserves old admitted closed-reference comparison")
+		var different: Dictionary = {"point": [negative_zero_for_reference_bits(), 2.0, 3.0], "kind": kind}
+		var different_wire: String = Exact.stringify(different)
+		_expect(not different_wire.is_empty() and retained.has("bits") and w.protocol._same_bound_reference(different, different_wire, kind) == Protocol._same_reference(different, different_wire) and w.protocol._same_bound_reference(different, different_wire, kind), kind + " changed nonempty caller receipt falls back to original serialization while genuine retained bits remain installed")
+		_expect(not w.protocol._same_bound_reference(actual, different_wire, kind) and not w.protocol._same_bound_reference(actual, "", kind), kind + " mismatching or empty expected receipt cannot authorize the genuine mirror")
+	var after: String = _reference_observation_wire(w, context)
+	_expect(not before.is_empty() and not after.is_empty() and after == before and events.is_empty(), "bits selection/missing-field/changed-receipt controls preserve complete source/Player/Scheduler/diagnostic observations and publish no callback")
+	print("PROTOCOL_REFERENCE_BITS_NATIVE_BEFORE " + before)
+	print("PROTOCOL_REFERENCE_BITS_NATIVE_AFTER " + after)
+
+
+static func negative_zero_for_reference_bits() -> float:
+	return "0000000000000080".hex_decode().decode_double(0)
