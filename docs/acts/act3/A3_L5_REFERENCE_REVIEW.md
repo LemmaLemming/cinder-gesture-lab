@@ -1,0 +1,9 @@
+# Crystalman selected-reference review
+
+Root opened G09/G11/G15/G20 on12October2026, following the canonical concept, manifests and adaptation notes. These are source-inspired concept boards, not sprite sheets or runtime-ready assets. G09/G11 show a broad calm sulphur/ivory face implied by black architecture, violet crystalline shrubs, a low rooted luminous tether and intact/stripped scenery. G20 places a finite violet traveller apparition, exact route/arc and nearby tether on a broad black permanent floor. G15 moves from reassurance to doubt, restrained square stripping, a plain shore and distant tower.
+
+Production adapts those motifs into code-native modular scenery after the first rule-room passes. Actual meshes need scale/pivot/collision/occlusion/state/reuse records and portrait verification. Decorative seams stay subdued; they cannot impersonate shared actionable cues. The face/white shadows/reflections remain non-damageable scenery. The coda uses a distant tower and sea around firm ground. Illustrated bridges, apertures, boat and tower windows do not authorize jumps, compulsory climbing/swimming, gap traversal, new bosses or a victory over the cosmic source.
+
+Reuse the act's mineral floor, rock spines, reflective overlays, garden layers, selected shared act3traveller and projectedPlayback/cue systems. New art work is limited to a landscape presence, crystal growths/low tether/capture framing and strip/coda states. All legal carried clothing/weapon profiles retain the shared Player body, feet pivot and gesture language. No full paintings are passed off as runtime sheets.
+
+Initial prototype is mechanics only, one slot/one complete recorded combination/one low tether. Full landscape-body likeness, second phase, native whole-level transport and coda remain unimplemented. The prototype will not establish human balance, full-route fidelity or desktop/mobile performance.

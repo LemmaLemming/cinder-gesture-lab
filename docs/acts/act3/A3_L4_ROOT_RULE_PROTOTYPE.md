@@ -1,3 +1,7 @@
+## Accepted garden prototype record — 12 October 2026
+
+Canonical ACCEPTED e608927c independently accepts A3-L4 exact content741fe48/docs7e3a9d13 after the seven-category review and isolated18/0 actualcanonical entry/wholeSave/displacedContinue/Retry/GUI/cleanup. Act3four/eight; L5 is active. Original component/transition/portrait/failed/nonclean/untested scopes stay separately attributed. Actual Shared52 adoption81f04 preserves all current owned source/evidence/history. No garden fullroute/rerun/human gate; earlier sections below are historical. See current data/campaign/act3/levels/A3-L4.md and A3-L5.md.
+
 ## Submitted handoff and actual Shared51 adoption — 12 October 2026
 
 Canonical HANDOFF `397f7057-00cc-42d2-80e9-7e1dd82c8c43` submits exact Shared50 content `741fe48ee2db1ad27ba6e9ce2f7c7ab0a41fb6a7` / docs-only HEAD7e3a9d13 and its seven-category handoff for independent Integration/tester acceptance. A bounded read-only child audit confirms all147 artifacts/four indexes, nine links and docs-only seal match. Still3/8 accepted; A3-L4 awaits acceptance before L5. All own jobs closed; original failed/canceled/nonclean/unexecuted scopes remain unchanged.
