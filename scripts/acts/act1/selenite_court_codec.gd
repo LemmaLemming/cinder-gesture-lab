@@ -9,12 +9,12 @@ const Exact = preload("res://scripts/campaign/exact_json.gd")
 const Layout = preload("res://scripts/acts/act1/selenite_court_layout.gd")
 const Motion = preload("res://scripts/combat/lunge_motion.gd")
 const BodySweep = preload("res://scripts/combat/body_sweep.gd")
-const API_REVISION: String = "act1-court-aggregate-1"
-const SCHEMA_VERSION: int = 1
-const WORLD_REVISION: int = 1
+const API_REVISION: String = "act1-court-aggregate-2"
+const SCHEMA_VERSION: int = 2
+const WORLD_REVISION: int = 2
 const SOURCE_IDS: Array[String] = ["court-curtain-guard", "court-formation-west", "court-formation-east", "court-approach-west", "court-approach-east", "court-king", "court-helper-west", "court-helper-east"]
 const HELPER_IDS: Array[String] = ["court-helper-west", "court-helper-east"]
-const LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "world_revision", "room", "formation", "awaiting_room", "roundel_demonstrated", "helpers_once", "helper_stage", "entry_records", "entry_outcomes", "actors", "scheduler", "roundel", "framing"]
+const LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "world_revision", "room", "formation", "awaiting_room", "roundel_demonstrated", "helpers_once", "helper_stage", "king_intro", "entry_records", "entry_outcomes", "actors", "scheduler", "roundel", "framing"]
 const ACTOR_KEYS: Array[String] = ["api_revision", "schema_version", "source_id", "configuration", "hp", "dead", "dormant", "motion", "hurt_left_s", "role_encounter_id", "profile_id", "resolved_role", "reservation_id", "cycle", "sample", "hit_ids", "last_cancel_reason"]
 const SCHEDULER_KEYS: Array[String] = ["api_revision", "schema_version", "encounter_id", "profile", "world_revision", "clock_s", "serial", "collision", "reservations", "cooldowns"]
 const RESERVATION_KEYS: Array[String] = ["id", "source_id", "source_position", "opening_position", "floors", "geometry", "start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "profile_id", "world_revision"]
@@ -39,7 +39,7 @@ static func envelope_error(value: Variant) -> String:
 		return "Bounded current room and awaiting boundary required"
 	if not saved.formation is String or saved.formation not in ["parallel", "inward"] or not saved.helper_stage is String or saved.helper_stage not in ["unborn", "settling", "entering", "done"] or not saved.roundel_demonstrated is bool or not saved.helpers_once is bool:
 		return "Closed court arrangement / roundel / helper metadata required"
-	for key: String in ["entry_records", "entry_outcomes", "actors", "scheduler", "roundel", "framing"]:
+	for key: String in ["king_intro", "entry_records", "entry_outcomes", "actors", "scheduler", "roundel", "framing"]:
 		if not saved[key] is Dictionary: return "Dictionary required: " + key
 	error = Codec.keys_error(saved.actors, SOURCE_IDS)
 	if not error.is_empty(): return "Exact original eight-identity cast required: " + error
@@ -79,7 +79,8 @@ static func metadata_error(saved: Dictionary) -> String:
 		if float(saved.actors["court-king"].hp) > 40.0: return "Once-only helpers cannot precede the actual King half-HP boundary"
 		error = _entry_error(saved)
 		if not error.is_empty(): return error
-	return _epoch_error(saved, exposed)
+	error = _king_intro_error(saved)
+	return _epoch_error(saved, exposed) if error.is_empty() else error
 
 
 ## Inputs are detached JSON-only READY-TIME fingerprints and encoded positions,
@@ -254,6 +255,57 @@ static func _approach_guards_dead(saved: Dictionary) -> bool:
 	for id: String in Layout.ROOM_SOURCE_IDS[2]:
 		if not saved.actors[id].dead: return false
 	return true
+
+
+static func _king_intro_error(saved: Dictionary) -> String:
+	var intro: Dictionary = saved.king_intro
+	var error: String = Codec.keys_error(intro, ["stage", "record", "outcome"])
+	if not error.is_empty(): return error
+	if not intro.stage is String or intro.stage not in ["unborn", "settling", "entering", "done"] or not intro.record is Dictionary or not intro.outcome is Dictionary: return "Closed King intro stage, original record and outcome required"
+	if saved.room < 3:
+		return "" if intro.stage == "unborn" and intro.record.is_empty() and intro.outcome.is_empty() else "King intro cannot precede actual royal contact"
+	if intro.stage == "unborn" or (saved.room == 4 and intro.stage != "done"): return "Actual King intro is settled before phase two"
+	var actor: Dictionary = saved.actors["court-king"]
+	if intro.stage == "settling":
+		if not intro.record.is_empty() or not intro.outcome.is_empty() or actor.cycle != 0 or not actor.reservation_id.is_empty(): return "Initial King settlement has no authored step or native attack"
+		# A pristine body may still be acquiring real vertical floor contact; it
+		# cannot already have travelled horizontally without its original plan.
+		# Native injury/death before the parent callback retains its actual impulse.
+		if not actor.dead and actor.hp == actor.configuration.raw_role.max_hp:
+			var position: Vector3 = Codec.read_vector3(actor.motion.position)
+			var velocity: Vector3 = Codec.read_vector3(actor.motion.velocity)
+			var authored: Vector3 = Layout.SOURCES["court-king"].position
+			if position.x != authored.x or position.z != authored.z or velocity.x != 0.0 or velocity.z != 0.0 or actor.hurt_left_s != 0.0 or not actor.role_encounter_id.is_empty() or not actor.profile_id.is_empty() or not actor.resolved_role.is_empty() or not actor.sample.is_empty() or not actor.hit_ids.is_empty() or not actor.last_cancel_reason.is_empty() or not _same(actor.motion.facing, Codec.vector3(Vector3.FORWARD)): return "Pristine settling King retains its authored horizontal placement and empty native history"
+		return ""
+	var origin := Vector3.ZERO
+	var goal := Vector3.ZERO
+	if not intro.record.is_empty():
+		var record: Dictionary = intro.record
+		if not Codec.keys_error(record, ENTRY_KEYS).is_empty() or not record.active is bool or record.active != true or not _native_vector(record.from) or not _native_vector(record.to) or not record.start_s is float or not record.end_s is float or not record.speed is float or not Codec.in_range(record.start_s, 0.0, 1000000000.0) or not Codec.in_range(record.end_s, record.start_s, 1000000000.0): return "Exact six-key original King step record required"
+		origin = Codec.read_vector3(record.from)
+		goal = Codec.read_vector3(record.to)
+		var authored: Vector3 = Layout.SOURCES["court-king"].position
+		if origin.x != authored.x or origin.z != authored.z or absf(origin.y - authored.y) > 0.02 or not _same(record.to, Codec.vector3(origin + Vector3.BACK * Layout.KING_INTRO_DISTANCE)) or record.speed != Layout.KING_INTRO_SPEED or record.end_s != record.start_s + Layout.KING_INTRO_DURATION or saved.scheduler.clock_s < record.start_s: return "Retain King's authored settled origin and original .7/1.4/.5 step"
+	if intro.stage == "entering":
+		if intro.record.is_empty() or not intro.outcome.is_empty(): return "Unfinished King intro retains exactly its original record"
+		# Native injury/death may precede the parent's next retirement callback.
+		if actor.dead or actor.hp < actor.configuration.raw_role.max_hp: return ""
+		var position: Vector3 = Codec.read_vector3(actor.motion.position)
+		var velocity: Vector3 = Codec.read_vector3(actor.motion.velocity)
+		if actor.dormant or actor.hurt_left_s != 0.0 or not actor.reservation_id.is_empty() or actor.cycle != 0 or not actor.role_encounter_id.is_empty() or not actor.profile_id.is_empty() or not actor.resolved_role.is_empty() or not actor.last_cancel_reason.is_empty() or not actor.motion.grounded or absf(position.x - origin.x) > Motion.EPSILON or absf(position.y - origin.y) > Motion.EPSILON or position.z < origin.z - Motion.EPSILON or position.z > goal.z + Motion.EPSILON or velocity.x != 0.0 or velocity.y != 0.0 or velocity.z < 0.0 or velocity.z > Layout.KING_INTRO_SPEED + Motion.EPSILON: return "Unfinished King step retains pristine grounded unleased native motion"
+		var elapsed: float = clampf(saved.scheduler.clock_s - intro.record.start_s, 0.0, Layout.KING_INTRO_DURATION)
+		var expected: Vector3 = BodySweep.anchored_position(origin, Vector3.BACK, Layout.KING_INTRO_SPEED * elapsed)
+		return "" if position.distance_to(expected) <= BodySweep.position_rounding_bound(position, expected) else "King step retains its original-clock anchor without catch-up"
+	if intro.outcome.is_empty() or not Codec.keys_error(intro.outcome, ["outcome", "endpoint"]).is_empty() or not intro.outcome.outcome is String or intro.outcome.outcome not in ["complete", "injured", "defeated", "blocked"] or not _native_vector(intro.outcome.endpoint): return "Completed King intro retains its closed real retirement outcome"
+	var outcome: Dictionary = intro.outcome
+	if outcome.outcome == "injured" and actor.hp >= actor.configuration.raw_role.max_hp: return "King intro injury retains actual lost health"
+	if outcome.outcome == "defeated" and not actor.dead: return "King intro defeat retains actual death"
+	if intro.record.is_empty(): return "" if outcome.outcome in ["injured", "defeated"] else "Completed or blocked step retains its original plan"
+	var endpoint: Vector3 = Codec.read_vector3(outcome.endpoint)
+	if outcome.outcome == "complete" and (saved.scheduler.clock_s < intro.record.end_s or absf(endpoint.y - origin.y) > BodySweep.position_rounding_bound(endpoint, origin) or Vector2(endpoint.x - goal.x, endpoint.z - goal.z).length() > Motion.ENDPOINT_TOLERANCE): return "King intro completion retains the actual reached endpoint and deadline"
+	if outcome.outcome == "blocked" and (absf(endpoint.x - origin.x) > Motion.EPSILON or absf(endpoint.y - origin.y) > Motion.EPSILON or endpoint.z < origin.z - Motion.EPSILON or endpoint.z > goal.z + Motion.EPSILON): return "Blocked King intro retains the actual shortened corridor endpoint"
+	# Retirement is historical. Later native damage/attacks may change body pose.
+	return ""
 
 
 static func _entry_error(saved: Dictionary) -> String:

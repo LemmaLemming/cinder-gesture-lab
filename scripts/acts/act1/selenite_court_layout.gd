@@ -1,13 +1,13 @@
 class_name Act1SeleniteCourtLayout
 extends RefCounted
-## A1-L4 whole-level authored scaffold, UNPARSED/UNEXECUTED.
+## A1-L4 whole-level authored layout. Runtime readiness lives in level notes.
 ## ACT1_CONCEPT.md:185-207 owns the five beats/three open courts, same
 ## formation pair and one finite King helper pair. G19/G15/G21/F10 inform
 ## quiet theatre scenery; no concept pixels or combat diagrams are authority.
 ## This detached table creates no actors, clock, Cue, contact or progression.
 
 const LEVEL_ID: String = "A1-L4"
-const LAYOUT_REVISION: int = 1
+const LAYOUT_REVISION: int = 2
 const FLOOR_SIZE: Vector3 = Vector3(14, 1, 44)
 const FLOOR_CENTRE: Vector3 = Vector3(0, -0.5, -17)
 const FLOOR_RECT: Rect2 = Rect2(-7, -39, 14, 44)
@@ -80,6 +80,9 @@ const EXIT_POSITION: Vector3 = Vector3(0, 0, -35)
 const CONTACT_BOX_SIZE: Vector3 = Vector3(2.4, 1.6, 1.2)
 const CONTACT_BOX_OFFSET: Vector3 = Vector3(0, 0.8, 0)
 const THRONE_POSITION: Vector3 = Vector3(-1.25, 0, -30.2)
+const KING_INTRO_DISTANCE: float = 0.7
+const KING_INTRO_SPEED: float = 1.4
+const KING_INTRO_DURATION: float = KING_INTRO_DISTANCE / KING_INTRO_SPEED
 const HELPER_ENTRY_DISTANCE: float = 0.7
 const HELPER_ENTRY_SPEED: float = 1.4
 const HELPER_ENTRY_DURATION: float = HELPER_ENTRY_DISTANCE / HELPER_ENTRY_SPEED

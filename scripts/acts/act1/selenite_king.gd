@@ -14,6 +14,7 @@ signal hit_resolved(hero_id: String, cycle: int, result: Dictionary)
 const Geometry = preload("res://scripts/combat/threat_geometry.gd")
 const Difficulty = preload("res://scripts/combat/difficulty.gd")
 const Motion = preload("res://scripts/combat/lunge_motion.gd")
+const BodySweep = preload("res://scripts/combat/body_sweep.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const ExactJson = preload("res://scripts/campaign/exact_json.gd")
 const CueScript = preload("res://scripts/cues/threat_cue.gd")
@@ -26,6 +27,10 @@ const HERO_ID: String = "hero"
 const GRAVITY: float = 24.0
 const HURT_BRAKING: float = 5.0
 const HURT_S: float = 0.22
+const COURT_SCRIPT_PATH: String = "res://scripts/acts/act1/selenite_court.gd"
+const COURT_INTRO_DISTANCE: float = 0.7
+const COURT_INTRO_SPEED: float = 1.4
+const COURT_INTRO_KEYS: Array[String] = ["active", "from", "to", "start_s", "end_s", "speed"]
 const DEFAULT_RAW_ROLE: Dictionary = {"raw_damage": 16.0, "windup_s": 1.85, "lock_s": 0.85, "active_s": 0.4, "recovery_s": 2.4, "attack_interval_s": 2.0, "max_hp": 80.0, "move_speed": 4.0}
 const DEFAULT_TIMING_FLOORS: Dictionary = {"windup_s": 1.85, "lock_s": 0.85, "recovery_s": 2.4}
 const DEFAULT_LUNGE: Dictionary = {"speed": 4.0, "distance": 1.6, "damage_radius": 0.38, "body_collision_path": "BodyCollision"}
@@ -414,6 +419,8 @@ func take_damage(amount: float, impulse: Vector3) -> Dictionary:
 	else:
 		velocity += impulse
 		_hurt_left_s = HURT_S
+		# Court-only quiet poses yield immediately to genuine native injury.
+		if _court_bound_owner() != null: _draw_king()
 	state_changed.emit(state())
 	_transaction_depth -= 1
 	return result
@@ -479,8 +486,9 @@ func art_binding_error() -> String:
 		return "B01 requires exactly its retained distinct King art leaf"
 	var error: String = String(_king_art.call("binding_error"))
 	if not error.is_empty(): return error
-	var expected_phase: String = "defeat" if dead else ("idle" if _phase == "clear" else _phase)
-	if _king_art.call("pose_name") != expected_phase:
+	var selection: Dictionary = _court_pose_selection()
+	if not selection.error.is_empty(): return selection.error
+	if _king_art.call("pose_name") != selection.phase:
 		return "B01 royal pose must match its actual native lifecycle and phase"
 	var camera: Camera3D = _king_art.get("_camera") as Camera3D
 	if is_instance_valid(camera):
@@ -499,6 +507,7 @@ func art_binding_error() -> String:
 func _physics_process(delta: float) -> void:
 	if dead or dormant or not _live_bindings() or get_tree().paused or _transaction_depth > 0:
 		return
+	if _step_court_intro_if_active(delta): return
 	_transaction_depth += 1
 	if not _reservation_id.is_empty():
 		var record: Dictionary = _damage_boundary_record(false)
@@ -522,6 +531,255 @@ func _physics_process(delta: float) -> void:
 		_restored_floor_contact = -1
 		_draw_king()
 	_transaction_depth -= 1
+
+
+## Pure court ownership/pose selection. This never asks the parent for framing,
+## native bindings or Save state: those providers validate this art in turn.
+func _court_bound_owner() -> CinderLevel:
+	var court: CinderLevel = _restore_owner_level()
+	if not is_instance_valid(court): return null
+	var script: Script = court.get_script() as Script
+	return court if script != null and script.resource_path == COURT_SCRIPT_PATH else null
+
+
+func _court_binding_error(court: CinderLevel) -> String:
+	if not _live_bindings() or not is_instance_valid(court) or not court.is_inside_tree() or not court.is_node_ready() or court.is_queued_for_deletion() or court.level_id != "A1-L4":
+		return "King court presentation/motion requires its ready actual A1-L4 owner"
+	var owner: Variant = _restore_level_ref.get_ref() if _restore_level_ref != null else null
+	var parent: Variant = _restore_source_parent.get_ref() if _restore_source_parent != null else null
+	if owner != court or _restore_owner_level() != court or get_parent() != court or parent != court or court.get_script() != _restore_level_script or _restore_level_script == null or _restore_level_script.resource_path != COURT_SCRIPT_PATH or get_script() != _restore_source_script or _restore_source_script == null or _restore_source_script.resource_path != "res://scripts/acts/act1/selenite_king.gd":
+		return "King court retains its exact ready-time native source/parent/owner scripts"
+	if _configuration.get("role_id") != "B01" or _configuration.get("source_id") != "court-king" or _configuration.get("initially_dormant") != true or _restore_configuration_sha256.is_empty() or ExactJson.stringify(_configuration).sha256_text() != _restore_configuration_sha256:
+		return "Only the immutable initially-dormant court-king can use court presentation/motion"
+	var scheduler_parent: Variant = _restore_scheduler_parent.get_ref() if _restore_scheduler_parent != null else null
+	var player_parent: Variant = _restore_hero_parent.get_ref() if _restore_hero_parent != null else null
+	if court.hero != _hero or court.get("scheduler") != _scheduler or not court.is_ancestor_of(_scheduler) or court.get_world_3d() != get_world_3d() or _scheduler.get_parent() != scheduler_parent or _scheduler.get_script() != _restore_scheduler_script or _hero.get_parent() != player_parent or _hero.get_script() != _restore_hero_script:
+		return "King court retains its actual bound same-world Player/Scheduler aliases and scripts"
+	var player_body: Dictionary = Motion.source_description(_hero)
+	if player_body.has("error") or player_body.get("collision") != _restore_hero_collision or not is_instance_valid(_restore_hero_collision) or _hero.get_node_or_null("BodyCollision") != _restore_hero_collision or _restore_hero_collision.shape != _restore_hero_capsule or not _same(player_body.get("signature", {}), _restore_hero_body_signature):
+		return "King court retains the actual shared Player capsule/resource/native properties"
+	var error: String = _retained_body_error()
+	if error.is_empty(): error = _lifecycle_error()
+	if not error.is_empty(): return error
+	if _cue.get_script() != CueScript or _cue.get_parent() != self or get_node_or_null("ThreatCue") != _cue or not is_instance_valid(_king_art) or _king_art.get_script() != ArtScript or not court.is_visible_in_tree():
+		return "King court retains native Cue/royal art and its visible actual owner"
+	return ""
+
+
+func _court_pose_selection() -> Dictionary:
+	var native_phase: String = "defeat" if dead else ("idle" if _phase == "clear" else _phase)
+	var result: Dictionary = {"phase": native_phase, "error": ""}
+	# Genuine native attack, dormancy and hurt always choose their original pose.
+	# Draws within owned physics/restore transactions use the same pure selector
+	# as outside art checks. Paused recipients may be refreshed after metadata.
+	if dead or dormant or _hurt_left_s != 0.0 or not _reservation_id.is_empty() or _phase != "clear": return result
+	var court: CinderLevel = _court_bound_owner()
+	if court == null or not _live_bindings(): return result
+	var error: String = _court_binding_error(court)
+	if not error.is_empty(): result.error = error; return result
+	if not court.has_method("court_king_presentation"):
+		result.error = "Actual court must supply its pure King presentation selector"; return result
+	var boundary: Dictionary = _court_intro_boundary()
+	var answer: Variant = court.call("court_king_presentation", self)
+	error = _court_binding_error(court)
+	if error.is_empty() and _court_intro_boundary() != boundary:
+		error = "Pure King presentation selector changed native source/Player/Scheduler custody"
+	if error.is_empty() and (not answer is String or answer not in ["idle", "step", "summon"]):
+		error = "Court King presentation must return literal idle/step/summon"
+	if not error.is_empty(): result.error = error; return result
+	if answer == "step":
+		# Parent stage alone cannot grant a damaged/used actor a pristine intro.
+		error = _court_intro_pristine_error()
+		if not error.is_empty(): return result
+		result.phase = "step"
+	elif answer == "summon" and _grounded() and velocity == Vector3.ZERO:
+		result.phase = "summon"
+	return result
+
+
+## Quiet art-only refresh after an actual parent transition or restored metadata.
+## No HP, native phase/facing, transform, motion, Cue, clock or history is changed.
+func refresh_court_presentation() -> bool:
+	var court: CinderLevel = _court_bound_owner()
+	if court == null or _transaction_depth != 0 or _snapshot_busy or _cancelling:
+		return _reject("Court royal refresh requires its retained owner outside native callbacks")
+	var error: String = _court_binding_error(court)
+	if error.is_empty() and (not is_instance_valid(_king_art) or not String(_king_art.call("binding_error")).is_empty()):
+		error = "Court royal refresh requires its actual retained clockless art leaf"
+	if not error.is_empty(): return _reject(error)
+	_transaction_depth += 1
+	var boundary: Dictionary = _court_intro_boundary()
+	_draw_king()
+	error = _court_binding_error(court)
+	if error.is_empty(): error = art_binding_error()
+	if error.is_empty() and _court_intro_boundary() != boundary:
+		error = "Quiet royal refresh must preserve the actual complete native boundary"
+	_transaction_depth -= 1
+	if not error.is_empty(): return _reject(error)
+	last_error = ""
+	return true
+
+
+func _court_intro_boundary() -> Dictionary:
+	return {"actor": pure_presentation_state(), "transform": global_transform,
+		"velocity": velocity, "ground": _restored_floor_contact, "cue": _cue.state(),
+		"configuration": _configuration.duplicate(true), "role_encounter_id": _role_encounter_id,
+		"profile_id": _profile_id, "resolved_role": _resolved_role.duplicate(true),
+		"sample": _sample.duplicate(true), "pending_segments": _pending_segments.duplicate(true),
+		"hit_ids": _hit_ids.duplicate(), "last_cancel_reason": _last_cancel_reason,
+		"constructed": _restore_recipient_constructed,
+		"control": _scheduler.source_control_state(self), "profile": _scheduler.encounter_profile(),
+		"hero_transform": _hero.global_transform, "hero_hp": _hero.hp,
+		"hero_shells": _hero.shells, "hero_response": _hero.get_threat_response_state()}
+
+
+func _court_intro_parent_error(court: CinderLevel, depth: int) -> String:
+	if _transaction_depth != depth or _snapshot_busy or _cancelling:
+		return "King intro requires its retained actor outside nested native callbacks"
+	var error: String = _court_binding_error(court)
+	if not error.is_empty(): return error
+	if get_tree().paused or court.is_restore_candidate() or _hero.dead:
+		return "King intro requires the actual unpaused playable court and living Player"
+	return art_binding_error()
+
+
+func _court_intro_pristine_error() -> String:
+	if dead or dormant or hp != 80.0 or max_hp != 80.0 or _hurt_left_s != 0.0 or _cycle != 0 or _phase != "clear" or not _role_encounter_id.is_empty() or not _profile_id.is_empty() or not _resolved_role.is_empty() or not _reservation_id.is_empty() or not _sample.is_empty() or not _pending_segments.is_empty() or not _hit_ids.is_empty() or not _last_cancel_reason.is_empty() or _cue.state().phase != "clear":
+		return "King intro owns only its pristine full-80-HP unhurt unleased native body"
+	return ""
+
+
+func _court_intro_motion_error(court: CinderLevel, depth: int) -> String:
+	var error: String = _court_intro_parent_error(court, depth)
+	if error.is_empty(): error = _court_intro_pristine_error()
+	if not error.is_empty(): return error
+	var control: Dictionary = _scheduler.source_control_state(self)
+	var profile: Dictionary = _scheduler.encounter_profile()
+	if control.get("api_revision") != "scheduler-source-control-1" or control.get("source_instance_id") != get_instance_id() or control.get("outside_transaction") != true or not control.get("encounter_id") is String or not _stable_id(control.encounter_id) or not control.get("clock_s") is float or not Codec.in_range(control.clock_s, 0.0, 1000000000.0) or control.clock_s != _scheduler.get_clock() or profile.is_empty() or not control.get("reservations") is Array or not control.reservations.is_empty() or not control.has("cooldown") or control.cooldown != null:
+		return "King intro retains its ongoing native epoch/profile and no own lease/readiness"
+	return ""
+
+
+func _court_intro_context_error(context: Dictionary, delta: float) -> String:
+	if not Codec.keys_error(context, COURT_INTRO_KEYS).is_empty() or not context.get("active") is bool or context.active != true or not context.get("from") is Vector3 or not context.get("to") is Vector3 or not context.from.is_finite() or not context.to.is_finite() or not context.get("start_s") is float or not context.get("end_s") is float or not context.get("speed") is float:
+		return "Exact active/from/to/start_s/end_s/speed native King intro context required"
+	if not is_finite(delta) or delta < 0.000001 or delta > 0.25 or not Codec.in_range(context.start_s, 0.0, 1000000000.0) or not Codec.in_range(context.end_s, context.start_s, 1000000000.0) or context.speed != COURT_INTRO_SPEED or context.end_s != context.start_s + COURT_INTRO_DISTANCE / COURT_INTRO_SPEED or context.to != context.from + Vector3.BACK * COURT_INTRO_DISTANCE:
+		return "King intro retains its original .7-unit +Z path at 1.4 units/s and half-second deadline"
+	if context.from.x != _restore_source_transform.origin.x or context.from.z != _restore_source_transform.origin.z or absf(context.from.y - _restore_source_transform.origin.y) > 0.02 or absf(global_position.x - context.from.x) > Motion.EPSILON or absf(global_position.y - context.from.y) > Motion.EPSILON or global_position.z < context.from.z - Motion.EPSILON or global_position.z > context.to.z + Motion.EPSILON:
+		return "King intro must retain its actual authored settled feet and bounded straight corridor"
+	if not _grounded() or velocity.y != 0.0 or velocity.x != 0.0 or velocity.z < 0.0 or velocity.z > COURT_INTRO_SPEED + Motion.EPSILON or _scheduler.get_clock() < context.start_s:
+		return "Native grounded finite King intro velocity and original shared-clock start required"
+	# The actual parent separately proves its entire retained floor/corridor,
+	# Player/neighbors, scenery and complete current/endpoint royal art framing.
+	return ""
+
+
+## Stop only the intro's own velocity after the parent proves actual blockage or
+## an irrecoverably missed original deadline. Native injury/death own their paths.
+func stop_court_intro_motion(court: CinderLevel, original_context: Dictionary, reason: String) -> Dictionary:
+	var error: String = _court_intro_motion_error(court, 0)
+	if error.is_empty(): error = _court_intro_context_error(original_context, 1.0 / float(Engine.physics_ticks_per_second))
+	if error.is_empty() and (reason != "blocked" or not court.has_method("court_intro_stop_error")):
+		error = "King intro stop requires its literal blocked entitlement"
+	if not error.is_empty(): return _denied(error)
+	_transaction_depth += 1
+	var boundary: Dictionary = _court_intro_boundary()
+	var decision: Variant = court.call("court_intro_stop_error", self, original_context.duplicate(true), reason)
+	error = _court_intro_motion_error(court, 1)
+	if error.is_empty(): error = _court_intro_context_error(original_context, 1.0 / float(Engine.physics_ticks_per_second))
+	if error.is_empty() and _court_intro_boundary() != boundary:
+		error = "Pure King stop entitlement changed the actual native intro boundary"
+	if not decision is String or not String(decision).is_empty() or not error.is_empty():
+		_transaction_depth -= 1
+		return _denied(error if not error.is_empty() else (String(decision) if decision is String else "King intro stop entitlement must return a literal String"))
+	velocity = Vector3.ZERO
+	var stopped: Dictionary = boundary.duplicate(true)
+	stopped.velocity = Vector3.ZERO
+	error = _court_intro_motion_error(court, 1)
+	if error.is_empty() and _court_intro_boundary() != stopped:
+		error = "Stopping King intro preserves every native field except its own velocity"
+	_transaction_depth -= 1
+	if not error.is_empty(): return _denied(error)
+	last_error = ""
+	return {"accepted": true, "outcome": reason, "actual_endpoint": global_position,
+		"velocity": velocity, "clock_s": float(boundary.control.clock_s),
+		"original_context": original_context.duplicate(true)}
+
+
+## Actual nonattack CharacterBody movement, opt-in through the exact owning court.
+## There is no local intro clock, lease, role, attack phase or actor wire field.
+func _step_court_intro_if_active(delta: float) -> bool:
+	var court: CinderLevel = _court_bound_owner()
+	if court == null or not court.has_method("court_intro_motion_context"): return false
+	if dead or dormant or _hurt_left_s > 0.0 or not _reservation_id.is_empty() or hp != max_hp: return false
+	var error: String = _court_intro_parent_error(court, 0)
+	if not error.is_empty(): last_error = error; return true
+	_transaction_depth += 1
+	var boundary: Dictionary = _court_intro_boundary()
+	var answer: Variant = court.call("court_intro_motion_context", self)
+	error = _court_intro_parent_error(court, 1)
+	if error.is_empty() and _court_intro_boundary() != boundary:
+		error = "Pure King intro provider changed actual native source/Player/Scheduler custody"
+	if error.is_empty() and not answer is Dictionary:
+		error = "King intro provider must return its closed native context or an empty Dictionary"
+	if not error.is_empty():
+		_transaction_depth -= 1; last_error = error; return true
+	var context: Dictionary = answer
+	if context.is_empty():
+		_transaction_depth -= 1
+		if velocity != Vector3.ZERO and _hurt_left_s == 0.0 and _grounded():
+			last_error = "King intro permission was withdrawn; record and stop its actual shortened path"
+			return true
+		return false
+	error = _court_intro_motion_error(court, 1)
+	if error.is_empty(): error = _court_intro_context_error(context, delta)
+	if not error.is_empty():
+		_transaction_depth -= 1; last_error = error; return true
+	var clock: float = float(boundary.control.clock_s)
+	var elapsed: float = clampf(clock - float(context.start_s), 0.0, float(context.end_s) - float(context.start_s))
+	var desired: Vector3 = BodySweep.anchored_position(context.from, Vector3.BACK, COURT_INTRO_SPEED * elapsed)
+	var previous_elapsed: float = clampf(clock - float(context.start_s) - delta, 0.0, float(context.end_s) - float(context.start_s))
+	var previous: Vector3 = BodySweep.anchored_position(context.from, Vector3.BACK, COURT_INTRO_SPEED * previous_elapsed)
+	if global_position.distance_to(previous) > BodySweep.position_rounding_bound(global_position, previous) or desired.z < global_position.z - Motion.EPSILON:
+		_transaction_depth -= 1
+		last_error = "King intro cannot rebase its clock or catch up delayed/collided motion"
+		return true
+	var step: Vector3 = desired - global_position
+	var sweep: Dictionary = BodySweep.sweep(self, global_transform, step, court.call("response_context").floor_regions)
+	if sweep.has("error") or sweep.get("collided", true):
+		_transaction_depth -= 1
+		last_error = "Actual finite King intro scenery query refused its anchored next step"
+		return true
+	velocity = Vector3.BACK * minf(COURT_INTRO_SPEED, maxf(0.0, desired.z - previous.z) / delta)
+	_facing = Vector3.BACK
+	var frame_start: Vector3 = global_position
+	var count: int = maxi(1, ceili((step.length() - Motion.EPSILON) / BodySweep.SWEEP_STEP))
+	for index: int in range(count):
+		var target: Vector3 = BodySweep.anchored_position(frame_start, step, float(index + 1) / float(count))
+		var contact: KinematicCollision3D = move_and_collide(target - global_position, false, BodySweep.SAFE_MARGIN, false, 1)
+		if contact != null: break
+	# Genuine support query transports floor custody for fresh recipients; the
+	# original ordinary move_and_slide branch clears this cache as before.
+	var support: Dictionary = BodySweep.sweep(self, global_transform, Vector3.ZERO, court.call("response_context").floor_regions)
+	if support.has("error") or support.get("collided", true):
+		_restored_floor_contact = 0
+		_transaction_depth -= 1
+		last_error = "Actual finite King intro lost post-step native body/floor support: " + String(support.get("error", "scenery contact"))
+		return true
+	_restored_floor_contact = 1
+	if clock >= float(context.end_s) and Vector2(global_position.x, global_position.z).distance_to(Vector2(context.to.x, context.to.z)) <= Motion.EPSILON:
+		velocity = Vector3.ZERO
+	_draw_king()
+	error = _court_intro_motion_error(court, 1)
+	if error.is_empty() and (_scheduler.source_control_state(self) != boundary.control or _scheduler.encounter_profile() != boundary.profile or _hero.global_transform != boundary.hero_transform or _hero.hp != boundary.hero_hp or _hero.shells != boundary.hero_shells or _hero.get_threat_response_state() != boundary.hero_response):
+		error = "Native King intro changed retained Player/Scheduler custody"
+	if error.is_empty() and (not _grounded() or velocity.y != 0.0 or absf(global_position.x - context.from.x) > Motion.EPSILON or global_position.z > context.to.z + Motion.EPSILON or global_position.z < context.from.z - Motion.EPSILON):
+		error = "Native King intro departed its approved grounded straight corridor"
+	if error.is_empty() and absf(global_position.z - desired.z) > Motion.EPSILON:
+		error = "Native scenery collision shortened the original finite King intro"
+	_transaction_depth -= 1
+	last_error = error
+	return true
 
 
 func _stage_sample() -> bool:
@@ -1036,7 +1294,8 @@ func _draw_king() -> void:
 	# No private camera or pose-driven movement. Before Game installs its actual
 	# camera, retain the authored idle leaf; bind when the native camera exists.
 	if is_instance_valid(camera):
-		_king_art.call("set_pose", "defeat" if dead else _phase, _facing, camera)
+		var selection: Dictionary = _court_pose_selection()
+		if selection.error.is_empty(): _king_art.call("set_pose", selection.phase, _facing, camera)
 
 
 func camera_art_points(camera: Camera3D) -> Array:

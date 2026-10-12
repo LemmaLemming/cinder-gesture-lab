@@ -8,7 +8,7 @@ const PIXEL_STEP: float = 0.022
 const LOGICAL_SIZE: Vector2i = Vector2i(80, 96)
 const FEET_PIVOT: Vector2i = Vector2i(40, 96)
 const FULL_RESERVE: AABB = AABB(Vector3(-0.88, 0, -0.022), Vector3(1.76, 2.112, 0.044))
-const PHASES: Array[String] = ["idle", "warning", "lock", "active", "recovery", "summon", "defeat"]
+const PHASES: Array[String] = ["idle", "warning", "lock", "active", "recovery", "summon", "defeat", "step"]
 const FACINGS: Array[String] = ["front", "side", "back"]
 const SIDE_FLIP: Transform3D = Transform3D(Basis(Vector3(-1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, 1)), Vector3.ZERO)
 const NODE_MUTABLE: Array[String] = ["transform", "position", "rotation", "rotation_degrees", "quaternion", "scale", "visible"]
@@ -171,7 +171,7 @@ func _binding_error(include_input_error: bool, check_camera_frame: bool) -> Stri
 	if not is_inside_tree() or is_queued_for_deletion() or get_script() != _script or not is_instance_valid(_parent) or not is_instance_valid(_actor): return "King art requires its retained actual owner tree"
 	if get_parent() != _parent or _parent.get_parent() != _actor or not _parent.is_inside_tree() or _parent.is_queued_for_deletion() or not _actor.is_inside_tree() or _actor.is_queued_for_deletion() or _parent.name != "KingPresentation" or _parent.get_script() != null or _actor.get_script() != _actor_script: return "King art owner identity or script binding changed"
 	if get_world_3d() != _world or _parent.get_world_3d() != _world or _actor.get_world_3d() != _world or _parent.transform != Transform3D.IDENTITY or _parent.global_basis != _owner_basis or _parent.is_set_as_top_level() or transform != Transform3D.IDENTITY or is_set_as_top_level(): return "King art must retain its actor world and identity feet frame"
-	if _phase not in PHASES or _facing not in FACINGS or (_mirror and _facing != "side") or _poses.size() != 21: return "Retain the closed original King pose/facing table"
+	if _phase not in PHASES or _facing not in FACINGS or (_mirror and _facing != "side") or _poses.size() != PHASES.size() * FACINGS.size(): return "Retain the closed original King pose/facing table"
 	if not is_instance_valid(_carrier): return "Retained King camera-facing carrier is unavailable"
 	for facing: String in FACINGS:
 		for phase: String in PHASES:
@@ -260,7 +260,7 @@ static func _build_pose(facing: String, phase: String) -> ArrayMesh:
 	var vertices := PackedVector3Array()
 	var colors := PackedColorArray()
 	var lowered: int = 5 if phase == "recovery" else (18 if phase == "defeat" else 0)
-	var lean: int = 4 if phase == "active" else 0
+	var lean: int = 4 if phase == "active" else (2 if phase == "step" else 0)
 	if facing == "side":
 		_side_costume(vertices, colors, phase, lowered, lean)
 	else:
@@ -283,10 +283,18 @@ static func _broad_costume(v: PackedVector3Array, c: PackedColorArray, back: boo
 	for index: int in 3:
 		_rect(v,c,17+index*4,72+index*3,2,8,SHADE,0.006)
 		_rect(v,c,61-index*4,72+index*3,2,8,MID,0.006)
-	_poly(v,c,[[33,55+low],[39,58+low],[37,82],[36,93],[28,93],[29,81]],INK,0.004)
-	_poly(v,c,[[41,58+low],[47,55+low],[51,81],[53,93],[44,93],[43,83]],INK,0.004)
-	_poly(v,c,[[28,91],[37,91],[39,96],[25,96],[25,94]],LIGHT,0.008)
-	_poly(v,c,[[45,91],[52,91],[56,95],[56,96],[43,96]],SILVER,0.008)
+	if phase == "step":
+		# One planted boot and one lifted boot signal the actual bounded body step.
+		# The unchanged actor feet pivot and full royal art reserve carry motion.
+		_poly(v,c,[[33,55],[39,58],[39,81],[36,93],[28,93],[30,80]],INK,0.004)
+		_poly(v,c,[[41,58],[47,55],[54,78],[57,90],[49,91],[45,80]],INK,0.004)
+		_poly(v,c,[[28,91],[37,91],[39,96],[25,96],[25,94]],LIGHT,0.008)
+		_poly(v,c,[[49,88],[56,88],[60,92],[60,93],[47,93]],SILVER,0.008)
+	else:
+		_poly(v,c,[[33,55+low],[39,58+low],[37,82],[36,93],[28,93],[29,81]],INK,0.004)
+		_poly(v,c,[[41,58+low],[47,55+low],[51,81],[53,93],[44,93],[43,83]],INK,0.004)
+		_poly(v,c,[[28,91],[37,91],[39,96],[25,96],[25,94]],LIGHT,0.008)
+		_poly(v,c,[[45,91],[52,91],[56,95],[56,96],[43,96]],SILVER,0.008)
 	_poly(v,c,[[30+lean,35+low],[50+lean,35+low],[49,58+low],[40,67],[31,58+low]],SHADE,0.006)
 	for index: int in 6:
 		var y: int = 38+low+index*4
@@ -305,12 +313,14 @@ static func _broad_costume(v: PackedVector3Array, c: PackedColorArray, back: boo
 	var hand := Vector2(10 if phase == "summon" else 16, 31+low if lifted else 57+low)
 	if phase == "lock": hand = Vector2(22,44)
 	if phase == "active": hand = Vector2(19,43)
+	if phase == "step": hand = Vector2(19,61)
 	_sleeve(v,c,Vector2(31+lean,38+low),hand)
 	_hand(v,c,hand,lifted)
 	var staff_x: int = 66 if phase == "summon" else 62
 	var staff_top: int = 28 if lifted else (48 if phase == "recovery" else 38)
 	if phase == "lock": staff_top = 32
 	if phase == "defeat": staff_top = 62
+	if phase == "step": staff_top = 42
 	_sleeve(v,c,Vector2(49+lean,38+low),Vector2(staff_x-2,staff_top+17))
 	_rect(v,c,staff_x,staff_top+5,2,87-(staff_top+5),SILVER,0.014)
 	_hand(v,c,Vector2(staff_x-2,staff_top+17),false)
@@ -322,10 +332,16 @@ static func _broad_costume(v: PackedVector3Array, c: PackedColorArray, back: boo
 static func _side_costume(v: PackedVector3Array, c: PackedColorArray, phase: String, low: int, lean: int) -> void:
 	_poly(v,c,[[35+lean,35+low],[27,44+low],[18,87],[33,90],[41,67],[44,48+low]],COAL,0)
 	_ribbon(v,c,Vector2(32+lean,38+low),Vector2(24,87),2,LIGHT,0.004)
-	_poly(v,c,[[36,60],[42,61],[42,83],[38,95],[30,95],[34,80]],INK,0.004)
-	_poly(v,c,[[43,60],[48,58],[53,80],[58,94],[49,95],[44,82]],COAL,0.004)
-	_poly(v,c,[[30,91],[37,91],[38,96],[26,96],[26,94]],LIGHT,0.008)
-	_poly(v,c,[[49,92],[56,92],[61,95],[61,96],[47,96]],SILVER,0.008)
+	if phase == "step":
+		_poly(v,c,[[36,60],[42,61],[40,80],[33,92],[25,92],[33,79]],INK,0.004)
+		_poly(v,c,[[43,60],[48,58],[55,80],[61,94],[52,95],[46,82]],COAL,0.004)
+		_poly(v,c,[[25,88],[32,88],[35,93],[35,94],[22,94]],LIGHT,0.008)
+		_poly(v,c,[[52,92],[59,92],[64,95],[64,96],[50,96]],SILVER,0.008)
+	else:
+		_poly(v,c,[[36,60],[42,61],[42,83],[38,95],[30,95],[34,80]],INK,0.004)
+		_poly(v,c,[[43,60],[48,58],[53,80],[58,94],[49,95],[44,82]],COAL,0.004)
+		_poly(v,c,[[30,91],[37,91],[38,96],[26,96],[26,94]],LIGHT,0.008)
+		_poly(v,c,[[49,92],[56,92],[61,95],[61,96],[47,96]],SILVER,0.008)
 	_poly(v,c,[[35+lean,35+low],[48+lean,36+low],[47,59+low],[40,65],[34,57+low]],SHADE,0.006)
 	for index: int in 6:
 		var y: int = 38+low+index*4
@@ -338,12 +354,17 @@ static func _side_costume(v: PackedVector3Array, c: PackedColorArray, phase: Str
 	var hand := Vector2(65,33+low if raised else 55+low)
 	if phase == "lock": hand = Vector2(61,43)
 	if phase == "active": hand = Vector2(72,42)
+	# Summon is a separate high open hand, not the side warning silhouette.
+	if phase == "summon": hand = Vector2(72,24)
+	if phase == "step": hand = Vector2(63,58)
 	_sleeve(v,c,Vector2(45+lean,39+low),hand)
 	_hand(v,c,hand,raised)
-	var staff_x: int = 25
+	var staff_x: int = 20 if phase == "summon" else (28 if phase == "step" else 25)
 	var top: int = 32 if raised else (48 if phase == "recovery" else 40)
 	if phase == "lock": top = 34
 	if phase == "defeat": top = 63
+	if phase == "summon": top = 24
+	if phase == "step": top = 43
 	_sleeve(v,c,Vector2(36+lean,38+low),Vector2(staff_x+3,top+17))
 	_rect(v,c,staff_x,top+5,2,88-(top+5),SILVER,0.014)
 	_hand(v,c,Vector2(staff_x+3,top+17),false)

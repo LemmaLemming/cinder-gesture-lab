@@ -13,7 +13,7 @@ const Exact = preload("res://scripts/campaign/exact_json.gd")
 const CourtCodec = preload("res://scripts/acts/act1/selenite_court_codec.gd")
 const WholeArt = preload("res://scripts/acts/act1/selenite_court_whole_art.gd")
 const Cue = preload("res://scripts/cues/interaction_cue.gd")
-const WORLD_REVISION: int = 1
+const WORLD_REVISION: int = 2
 const COMPLETE_ID: String = "court-clear"
 const EXIT_ID: String = "court-exterior"
 const CONTACT_APPROACH_DISTANCE: float = 4.5
@@ -24,6 +24,7 @@ var roundel: CinderLaneMechanism
 var room: int = 0
 var formation: String = "parallel"
 var helper_stage: String = "unborn"
+var king_intro: Dictionary = {"stage": "unborn", "record": {}, "outcome": {}}
 var last_encounter_error: String = ""
 var _running: bool = false
 var _construction_error: String = ""
@@ -126,6 +127,7 @@ func _begin_room(next: int) -> void:
 	if not _running or next < 0 or next > 3 or not _live_boundary(null, null, next == 0 and scheduler.encounter_profile().is_empty()): return
 	room = next
 	_awaiting_room = -1
+	if room == 3: king_intro = {"stage": "settling", "record": {}, "outcome": {}}
 	var profile: String = String(shared_shell.call("get_difficulty_preference")) if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference") else "standard"
 	if not scheduler.begin_encounter(profile, _encounter_id(), WORLD_REVISION): _construction_error = scheduler.last_error; return
 	_frames.clear(); _forecast.clear()
@@ -171,11 +173,14 @@ func _physics_process(_delta: float) -> void:
 			scheduler.end_encounter("court_roundel_demonstration_complete")
 			_begin_room(2)
 		else: _admit_roundel(); return
-	if room == 3 and float(sources["court-king"].get("hp")) <= 40.0 and not sources["court-king"].get("dead"):
-		_enter_helper_phase()
 	if room >= 3 and sources["court-king"].get("dead"):
 		_finish_king_defeat()
 		return
+	if room == 3 and king_intro.stage in ["settling", "entering"]:
+		_update_king_intro()
+		return
+	if room == 3 and float(sources["court-king"].get("hp")) <= 40.0:
+		_enter_helper_phase()
 	if room == 4 and helper_stage in ["settling", "entering"]:
 		_update_helper_entry()
 		return
@@ -285,6 +290,78 @@ func _admit_roundel() -> void:
 	_forecast.clear()
 
 
+func _update_king_intro() -> void:
+	var king: CharacterBody3D = sources["court-king"]
+	if king.get("dead") or king.get("hp") < king.get("max_hp"):
+		king_intro.outcome = {"outcome": "defeated" if king.get("dead") else "injured", "endpoint": king.global_position}
+		king_intro.stage = "done"
+		_refresh_objective()
+		return
+	if king_intro.stage == "settling":
+		if not king.is_on_floor() or king.velocity != Vector3.ZERO or not _framing_ready(): return
+		var start: float = scheduler.get_clock()
+		var from: Vector3 = king.global_position
+		king_intro.record = {"active": true, "from": from, "to": from + Vector3.BACK * Layout.KING_INTRO_DISTANCE, "start_s": start, "end_s": start + Layout.KING_INTRO_DURATION, "speed": Layout.KING_INTRO_SPEED}
+		king_intro.stage = "entering"
+		_refresh_objective()
+		return
+	if not _king_intro_clear() or _king_intro_deadline_missed():
+		var stopped: Dictionary = king.call("stop_court_intro_motion", self, king_intro.record, "blocked")
+		if stopped.get("accepted") != true: _construction_error = String(stopped.get("reason", "Native King intro stop refused")); return
+		king_intro.outcome = {"outcome": "blocked", "endpoint": king.global_position}
+		king_intro.stage = "done"
+		_refresh_objective()
+		return
+	var goal: Vector3 = king_intro.record.to
+	if king.velocity != Vector3.ZERO or Vector2(king.global_position.x - goal.x, king.global_position.z - goal.z).length() > Motion.ENDPOINT_TOLERANCE: return
+	king_intro.outcome = {"outcome": "complete", "endpoint": king.global_position}
+	king_intro.stage = "done"
+	_refresh_objective()
+
+
+func court_intro_motion_context(actor: CharacterBody3D) -> Dictionary:
+	if not _running or room != 3 or king_intro.stage != "entering" or is_restore_candidate() or sources.get("court-king") != actor or _retained.get("court-king") != actor or actor.get_parent() != self or not _king_intro_clear(): return {}
+	return king_intro.record.duplicate(true)
+
+
+func _king_intro_clear() -> bool:
+	if king_intro.record.is_empty() or not _floor_error().is_empty() or not presentation_error().is_empty(): return false
+	var actor: CharacterBody3D = sources["court-king"]
+	var move := Vector3(0, 0, maxf(0.0, king_intro.record.to.z - actor.global_position.z))
+	var sweep: Dictionary = BodySweep.sweep(actor, actor.global_transform, move, response_context().floor_regions)
+	if sweep.has("error") or sweep.get("collided", true): return false
+	var lane: Dictionary = Geometry.lane(actor.global_position, actor.global_position + move, 0.32)
+	if Geometry.segment_hits(lane, hero.global_position, hero.global_position, CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN): return false
+	for other: CharacterBody3D in sources.values():
+		if other != actor and not other.get("dead") and not other.get("dormant") and Geometry.segment_hits(lane, other.global_position, other.global_position, 0.32 + CinderThreatScheduler.SKIN): return false
+	return true
+
+
+func _king_intro_deadline_missed() -> bool:
+	if king_intro.record.is_empty(): return false
+	var goal: Vector3 = king_intro.record.to
+	var actor: CharacterBody3D = sources["court-king"]
+	return scheduler.get_clock() > float(king_intro.record.end_s) + 1.0 / float(Engine.physics_ticks_per_second) and Vector2(actor.global_position.x - goal.x, actor.global_position.z - goal.z).length() > Motion.ENDPOINT_TOLERANCE
+
+
+func court_intro_stop_error(actor: CharacterBody3D, original: Dictionary, reason: String) -> String:
+	if not _running or room != 3 or king_intro.stage != "entering" or is_restore_candidate() or sources.get("court-king") != actor or _retained.get("court-king") != actor or actor.get_parent() != self or reason != "blocked" or var_to_bytes(original) != var_to_bytes(king_intro.record): return "Actual original King intro stop entitlement is closed"
+	return "Actual intro remains clear within its original deadline" if _king_intro_clear() and not _king_intro_deadline_missed() else ""
+
+
+func court_king_presentation(actor: CharacterBody3D) -> String:
+	if not _running or sources.get("court-king") != actor or _retained.get("court-king") != actor or actor.get_parent() != self: return "idle"
+	if room == 3 and king_intro.stage == "entering": return "step"
+	if room == 4 and helper_stage in ["settling", "entering"]: return "summon"
+	return "idle"
+
+
+func _refresh_king_presentation() -> bool:
+	var actor: CharacterBody3D = sources.get("court-king")
+	if not is_instance_valid(actor) or not actor.has_method("refresh_court_presentation"): return false
+	return actor.call("refresh_court_presentation") == true
+
+
 func _enter_helper_phase() -> void:
 	# Publish the retained dormant pair's full body/art and finite route before
 	# birth. The actual shared camera must contain it, alongside the continuing
@@ -296,6 +373,7 @@ func _enter_helper_phase() -> void:
 	room = 4
 	_helpers_once = true
 	helper_stage = "settling"
+	if not _refresh_king_presentation(): _construction_error = "Actual King summon presentation could not refresh"; return
 	for id: String in Layout.ROOM_SOURCE_IDS[4]: _phase_entitlements[id] = true
 	for id: String in Layout.ROOM_SOURCE_IDS[4]:
 		var accepted: bool = sources[id].call("activate_court_entry", self, _encounter_id())
@@ -397,6 +475,9 @@ func _live_boundary(expected_hero: CinderPlayer = null, expected_shell: Node = n
 
 func _finish_king_defeat() -> void:
 	if is_completed(): return
+	if king_intro.stage in ["settling", "entering"]:
+		king_intro.outcome = {"outcome": "defeated", "endpoint": sources["court-king"].global_position}
+		king_intro.stage = "done"
 	if helper_stage == "entering":
 		for id: String in _entry_records:
 			if _entry_outcomes.has(id): continue
@@ -446,6 +527,7 @@ func _boss_contact_near() -> bool:
 
 func _refresh_objective() -> void:
 	_sync_art_presentation()
+	if _running and not _refresh_king_presentation(): _construction_error = "Actual King presentation could not refresh"; return
 	if is_completed(): objective_text = "THE COURT IS OPEN\nCONTACT THE EXTERIOR CURTAIN"; return
 	if _awaiting_room == 3: objective_text = "THE KING AWAITS\n" + ("CONTACT THE THRONE APPROACH" if _boss_contact_near() else "DASH TO THE THRONE APPROACH"); return
 	if _awaiting_room >= 0: objective_text = "COURT CLEARED\nDASH TO THE NEXT OPEN COURT"; return
@@ -453,7 +535,7 @@ func _refresh_objective() -> void:
 		0: objective_text = "CURTAIN GUARD\nDASH BESIDE THE THRUST · PRIMARY AT RECOVERY"
 		1: objective_text = "TWO GUARDS · " + formation.to_upper() + "\nCHOOSE THE GAP AND EARLIER RECOVERY"
 		2: objective_text = "ROYAL ROUNDEL\n" + ("OBSERVE ONE KNOWN IMPACT" if not _roundel_demonstrated else "REMOVE A GUARD · KEEP A DRY LANDING")
-		3: objective_text = "SELENITE KING\nREAD THE LUNGE · PRIMARY AT RECOVERY"
+		3: objective_text = "SELENITE KING\n" + ("THE KING STEPS FROM HIS THRONE" if king_intro.stage in ["settling", "entering"] else "READ THE LUNGE · PRIMARY AT RECOVERY")
 		4: objective_text = "ONE FINITE GUARD PAIR\n" + ("VISIBLE ENTRY · NO REPLACEMENT WAVE" if helper_stage != "done" else "SIMPLIFY THE GUARDS OR PUNISH THE KING")
 
 
@@ -521,7 +603,7 @@ func _camera_framing_points() -> Array:
 		# Retain the actual dormant King's full native body/art before exposing
 		# it. Contact cannot birth a newly clipped source or checkpoint while
 		# the shared fixed camera is still approaching this local court.
-		points.append_array(_actor_points("court-king", sources["court-king"].global_position))
+		points.append_array(_actor_points("court-king", sources["court-king"].global_position + Vector3.BACK * Layout.KING_INTRO_DISTANCE))
 	if room == 3 and not _helpers_once and not sources["court-king"].get("dead") and float(sources["court-king"].get("hp")) <= 40.0:
 		for id: String in Layout.ROOM_SOURCE_IDS[4]:
 			var endpoint: Vector3 = sources[id].global_position + Vector3(0, 0, Layout.HELPER_ENTRY_DISTANCE)
@@ -539,6 +621,9 @@ func _camera_framing_points() -> Array:
 			if _entry_outcomes.has(id): continue
 			var endpoint: Vector3 = _entry_records[id].to if helper_stage == "entering" else sources[id].global_position + Vector3(0, 0, Layout.HELPER_ENTRY_DISTANCE)
 			points.append_array(_actor_points(id, endpoint))
+	if room == 3 and king_intro.stage in ["settling", "entering"]:
+		var endpoint: Vector3 = king_intro.record.to if king_intro.stage == "entering" else sources["court-king"].global_position + Vector3.BACK * Layout.KING_INTRO_DISTANCE
+		points.append_array(_actor_points("court-king", endpoint))
 	if room == 2:
 		var state: Dictionary = roundel.state()
 		if state.status == "running": points.append_array(_geometry_points(state.geometry)); points.append_array(_cue_points(roundel.get_cue()))
@@ -749,7 +834,7 @@ func _capture_local_state() -> Dictionary:
 	for record: Dictionary in paired.reservations:
 		if not _frames.has(record.source_id) or _frames[record.source_id].reservation_id != record.id: _capture_error = "Actual live lease lost its original response witness"; return {}
 		frames[record.source_id] = _frames[record.source_id].duplicate(true)
-	return {"api_revision": CourtCodec.API_REVISION, "schema_version": CourtCodec.SCHEMA_VERSION, "world_revision": WORLD_REVISION, "room": room, "formation": formation, "awaiting_room": _awaiting_room, "roundel_demonstrated": _roundel_demonstrated, "helpers_once": _helpers_once, "helper_stage": helper_stage, "entry_records": _encode_native(_entry_records), "entry_outcomes": _encode_native(_entry_outcomes), "actors": actors, "scheduler": paired, "roundel": lane, "framing": _encode_native(frames)}
+	return {"api_revision": CourtCodec.API_REVISION, "schema_version": CourtCodec.SCHEMA_VERSION, "world_revision": WORLD_REVISION, "room": room, "formation": formation, "awaiting_room": _awaiting_room, "roundel_demonstrated": _roundel_demonstrated, "helpers_once": _helpers_once, "helper_stage": helper_stage, "king_intro": _encode_native(king_intro), "entry_records": _encode_native(_entry_records), "entry_outcomes": _encode_native(_entry_outcomes), "actors": actors, "scheduler": paired, "roundel": lane, "framing": _encode_native(frames)}
 
 
 func _local_snapshot_error(state: Dictionary) -> String:
@@ -774,6 +859,12 @@ func _local_snapshot_error_with_player(state: Dictionary, saved_player: Dictiona
 
 
 func _saved_entry_support_error(state: Dictionary) -> String:
+	if state.king_intro.stage == "entering":
+		var king: Dictionary = state.actors["court-king"]
+		if not king.dead and king.hp == king.configuration.raw_role.max_hp:
+			var position: Vector3 = Codec.read_vector3(king.motion.position)
+			var support: Dictionary = BodySweep.sweep(sources["court-king"], Transform3D(Basis.IDENTITY, position), Vector3.ZERO, scheduler_bindings().floors.values())
+			if support.has("error") or support.get("collided", true): return "Unfinished King intro lacks actual native floor/body support"
 	for id: String in state.entry_records:
 		if state.entry_outcomes.has(id): continue
 		var saved: Dictionary = state.actors[id]
@@ -894,6 +985,7 @@ func _restore_local_state(state: Dictionary) -> void:
 	if not roundel.restore_state(state.roundel, scheduler_bindings()): _fail_quiet_commit(roundel.last_snapshot_error); return
 	room = state.room; formation = state.formation; _awaiting_room = state.awaiting_room
 	_roundel_demonstrated = state.roundel_demonstrated; _helpers_once = state.helpers_once; helper_stage = state.helper_stage
+	king_intro = _decode_native(state.king_intro)
 	_entry_records = _decode_native(state.entry_records); _entry_outcomes = _decode_native(state.entry_outcomes); _frames = _decode_native(state.framing)
 	_roundel_cycle = state.roundel.cycle
 	_forecast.clear(); _forecast_frames.clear(); _phase_entitlements.clear(); entry_stop_diagnostics.clear(); _pending_boss_contact = false

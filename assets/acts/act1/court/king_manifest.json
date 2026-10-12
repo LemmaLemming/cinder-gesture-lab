@@ -8,15 +8,15 @@
   "authoring_date": "2026-10-12",
   "reuse_family": "act1-selenite-royal-theatre",
   "readiness": {
-    "status": "AUTHORED_UNEXECUTED",
-    "scope": "New original code-authored shallow-mesh presentation only. No Godot parse/import, UID, native actor integration, rendering, gameplay, save or portrait acceptance by this author.",
-    "static_validation": "JSON, referenced bytes and source consistency; numeric-only nominal envelope inspection. This is not native triangulation/resource/tree validation.",
-    "remaining": "Owner imports/parses, integrates the actual B01 actor, runs directly affected native custody/framing checks and brief actual portraits."
+    "status": "AUTHORED_CURRENT_INCREMENT_UNEXECUTED",
+    "scope": "Current24-pose source adds actual-parent-derived step and a distinct side summon. Older21-pose native224/0 and portrait235/0 remain their original source/API component scopes. No native/portrait pass is claimed for this increment.",
+    "static_validation": "Author static construction report counts24poses/874polygons within original80x96/.022 reserve, preserves20older pose constructions. This is not native triangulation/resource/tree or pixel QA.",
+    "remaining": "Run directly affected B01 fallback and actual whole-intro/finite-helper Save checks, then inspect actual step/summon and whole-court portraits. No new resource is introduced by these existing-source edits."
   },
   "source": {
     "path": "scripts/acts/act1/selenite_king_art.gd",
-    "sha256": "fd835d6bbda3c98a3be9fb8618599797b5511be35d0e47aa5caf94ddad29d1e2",
-    "bytes": 21955,
+    "sha256": "04885651a06e678d4ba427043ed17295fe4898b57bf10e77b0d8683e1bee9105",
+    "bytes": 23160,
     "authorship": "Original hand-authored native stepped polygons, grayscale ribs/robe/crown/sceptre. No raster generation, concept pixel extraction/tracing, new image generation or C32 pixel reuse."
   },
   "references": [
@@ -103,8 +103,8 @@
       0,
       0.018
     ],
-    "nominal_points_checked": "All 21 authored pose source point sets lie within logical X[0,80], Y[0,96] and the depth reserve; native ArrayMesh triangulation/AABBs remain unexecuted.",
-    "pose_foot_treatment": "Both boots remain exposed with their bottom at logical Y96. The split robe stops above them; no collision, root translation or foot-pivot changes are implied."
+    "nominal_points_checked": "Static current24pose/874polygon source construction remains within logical X[0,80], Y[0,96] and original depth reserve. Current native triangulation/AABBs and renderer QA remain due.",
+    "pose_foot_treatment": "Original feet pivot remains at logical(40,96). Step keeps one planted boot atY96 and lifts the other within the same full reserve; other poses preserve original boot treatment. Actor owns all actual travel."
   },
   "appearance": {
     "silhouette": "Compact projecting royal star crown, masked face, pale chevron ribs, broad dark split robe and gathered sleeves, short star sceptre, crescent/star embroidery and two separated planted feet.",
@@ -127,14 +127,15 @@
       "lock": "Compact held arm/sceptre pose, both feet planted; native Cue owns lock meaning/timing.",
       "active": "Forward hand/body lean selected only during the actual native active phase; art adds no travel or damage.",
       "recovery": "Lowered head/body/sceptre and readable feet; no recovery duration defined here.",
-      "summon": "Broad open royal gesture; creates no guard, signal or replacement wave.",
-      "defeat": "Lowered royal pose without gore; native actor owns death, collider retirement and inherited hiding."
+      "summon": "Actual living unhurt unleased helper-entry gesture, with a distinct high open side hand and separated sceptre; creates no guard, signal or replacement wave.",
+      "defeat": "Lowered royal pose without gore; native actor owns death, collider retirement and inherited hiding.",
+      "step": "Clockless short advancing-boot/weight-shift silhouette selected only by the actual parent intro; introduces no cosmetic travel or attack clock."
     }
   },
   "api": {
-    "constructor": "_init() builds KingArt/PoseCarrier and 21 independent authored ArrayMesh resources before attachment.",
+    "constructor": "_init() builds KingArt/PoseCarrier and24 independent authored ArrayMesh resources before attachment.",
     "set_pose": "set_pose(phase: String, world_facing: Vector3, camera: Camera3D) -> void",
-    "phase_input": "Closed idle/warning/lock/active/recovery/summon/defeat; clear maps to idle.",
+    "phase_input": "Closed idle/warning/lock/active/recovery/summon/defeat/step; clear maps to idle.",
     "facing_input": "Actual finite nonzero world X/Z facing, selected relative to actual native camera forward/right axes; front/side/back, side-only reflection.",
     "pure_guard": "binding_error() -> String; empty means retained bindings, nonempty means fail closed without repair.",
     "pure_bounds": "world_corners(camera: Camera3D) -> Array; eight complete reserved-frame world corners plus eight actual AABB corners for each locally selected mesh (normally16); invalid or unmatched/unbound camera returns [Vector3.INF].",
@@ -148,23 +149,23 @@
     "owner": "Actual native identity KingPresentation Node3D, itself under the retained actual actor. No actor or KingPresentation rotation is performed.",
     "root": "KingPresentation/KingArt",
     "carrier": "KingPresentation/KingArt/PoseCarrier",
-    "mesh_name_rule": "FrontIdle, FrontWarning, FrontLock, FrontActive, FrontRecovery, FrontSummon, FrontDefeat; corresponding Side and Back names.",
-    "authored_mesh_count": 21,
+    "mesh_name_rule": "FrontIdle, FrontWarning, FrontLock, FrontActive, FrontRecovery, FrontSummon, FrontDefeat, FrontStep; corresponding Side and Back names.",
+    "authored_mesh_count": 24,
     "visibility": "One local pose mesh visible. Local root/carrier visibility remains true and guarded. Inherited hiding from the native actor/KingPresentation is valid for dormant/dead snapshots; the actor lifecycle guard owns rejection of a hidden living source.",
     "processing": "Root/carrier/meshes PROCESS_MODE_DISABLED, no process or physics callbacks.",
     "retention": "Authored tree/resources/settings are retained off-tree before attachment notifications. First actual owner/world/basis identities are latched once in native _enter_tree; reattachment cannot learn a new owner."
   },
   "camera_and_bounds": {
-    "frame": "PoseCarrier local basis = KingArt actual global basis inverse × actual native camera global basis, read back from native transform after the supported pose setter. Root/KingPresentation feet frames remain identity.",
+    "frame": "PoseCarrier local basis = KingArt actual global basis inverse \u00d7 actual native camera global basis, read back from native transform after the supported pose setter. Root/KingPresentation feet frames remain identity.",
     "camera_identity": "Exact live native current camera of the same actual viewport/world; no script or proxy camera.",
     "projection_retention": "Exact native projection matrix, projection mode, size, fov, keep_aspect, near/far, frustum offset, h/v offsets and viewport identity retained from first valid pose.",
     "basis_retention": "Actual camera basis and supported PoseCarrier local/global basis retained; actual actor translation remains native movement, not a cosmetic offset.",
-    "full_bounds": "Complete 80×96 reserve including blank margins/depth plus all current actual mesh AABBs; no opaque-pixel crop, narrowed proxy, pose-distance filter or private camera policy.",
+    "full_bounds": "Complete 80\u00d796 reserve including blank margins/depth plus all current actual mesh AABBs; no opaque-pixel crop, narrowed proxy, pose-distance filter or private camera policy.",
     "collision": "None. Parent uses its actual native collision capsule and shared Motion/Geometry proofs, separately from the full costume bounds.",
     "cue_role": "None. Parent/shared native Cue remains sole lane, countdown, active footprint and reachable-landing authority."
   },
   "native_material": {
-    "type": "Per-leaf StandardMaterial3D shared only by this leaf’s pose meshes",
+    "type": "Per-leaf StandardMaterial3D shared only by this leaf\u2019s pose meshes",
     "shading": "UNSHADED",
     "vertex_color_use_as_albedo": true,
     "albedo_color": [
@@ -192,5 +193,5 @@
     "Dormant/dead inherited hiding remains codec-valid; locally hidden/detached art remains invalid.",
     "Brief actual warning/lock/active/recovery/summon/defeat views with complete crown/sceptre/mask/feet, Hero, actual native footprint and safe landing; record overlap honestly."
   ],
-  "known_limits": "Unparsed/unimported/unrendered at author freeze. Static nominal envelope inspection does not prove native triangulation, projection fit, silhouette readability, facing coverage, equipment compatibility, collision suitability, ordinary attack viability, campaign wire fidelity or human balance. Legacy accepted actor/scenery assets and evidence remain untouched."
+  "known_limits": "Current step/summon source increment is unparsed/unrendered at this seal. Earlier21-pose component evidence remains historical and supplies no current intro or whole-level credit. Source envelope checks do not establish pixels, full facing coverage, ordinary attack viability, coherent new local aggregate, balance or performance."
 }
