@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-12T06:25:39.044788+00:00",
+  "reviewer": "/root/act2_level_testing",
+  "level_id": "A2-O2",
+  "scope": "Read-only independent review of separate original fresh/repeated entry77/1 assertion. No engine, owner/shared source/settings/ledger/run/Git mutation. Prior plan and lane report preserved.",
+  "conclusion": "Original fixture incorrectly emits optional_requested after O2 is already completed. Frozen Attempts correctly rejects a repeated first optional attempt. The bundled _live/paused/profile assertion therefore fails without demonstrating a difficulty locking fault. Owner later corrected the replay event and obtained a separate clean116/0 loading result with all shared profile code unchanged.",
+  "classification": "Owned test arrangement, not demonstrated shared profile defect; no O2 acceptance inferred.",
+  "original_evidence": {
+    "packet": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/evidence/A2-O2/loading-side-scene-spawn-fixed",
+    "source_sha256": "b7e7174bfc4107b1108a128c2d78eed6413a86ed09abcbe80f07707ec52a22f9",
+    "result_sha256": "26771ce209939547a037313a511b3879403d4f6855614df293fac0e04b1c4dfb",
+    "raw_sha256": "d9e8f27eae9f82b77c9cd36d1b23ac4c62f7c1b1e1a12e4b4b6e80860dbc676d",
+    "wrapper_sha256": "4a0a22c735062ee711c2851c2e87dae65693ba8228d75dfabf7fff36cb13765c",
+    "api_revision": "campaign-shared-50",
+    "result": "77 checks / 1 assertion failure plus separate native shutdown getter error",
+    "failure_label": "fresh/repeated optional applies current Challenge at its own entry",
+    "actual_failing_profile_value": "Not printed. The label does not prove _profile_id was wrong. The assertion at original fixture137 combines _live(), paused and _profile_id==challenge. _live() at317 also requires empty campaign_error.",
+    "preservation": "All original input/log bytes remain untouched; native Lane cleanup error remains separate."
+  },
+  "original_observations_and_scope": [
+    {
+      "observation": "Fixture113 tested saved local profile Standard alongside current preference Challenge;118 tested exact recipient retained Standard/protected Story after preference change.",
+      "evidence_kind": "Original count-only run has only one reported failed assertion at137, and reaches later three actual injury receipts; these preceding assertions did not report a failure. No separate saved profile dump retained in original stdout."
+    },
+    {
+      "observation": "First iteration reached three TEST recovery-gated injuries in order east_tender, west_tender, final_handler.",
+      "evidence_kind": "Original raw/wrapper contain actual injury receipt IDs/accepted results, not ordinary route/primary victory evidence."
+    },
+    {
+      "observation": "The first loop optional entry Challenge assertion did not fail; failure occurs at the later iteration after first completion/contact return.",
+      "evidence_kind": "Source loop order plus original three injury receipts and sole77/1 failure at entry assertion; causal location inferred from these actual observations."
+    },
+    {
+      "observation": "At failure no current preference, actual _profile_id, active level ID, campaign_error or attempt kind is printed.",
+      "evidence_kind": "Direct original log inspection. Do not label this an observed Standard-on-fresh-O2 regression."
+    }
+  ],
+  "deterministic_source_trace": [
+    {
+      "path": "tests/acts/act2/a2_o2_loading_side_smoke.gd",
+      "line": 133,
+      "finding": "Comment calls second iteration replay, but both iterations unconditionally emit optional_requested(A2-O2). ORDERS is east/west then west/east."
+    },
+    {
+      "path": "tests/acts/act2/a2_o2_loading_side_smoke.gd",
+      "line": 172,
+      "finding": "First completion asserts completed_optional=[A2-O2], reward once, unchanged protected Story/gear/stats. Contact return leaves same completion recorded; only1 failure is subsequently reported."
+    },
+    {
+      "path": "scripts/campaign/attempts.gd",
+      "line": 76,
+      "finding": "begin_side requires protected Story/no active side. kind optional requires uncompleted optional; completed optional is rejected at84 with First optional attempt requires an uncompleted optional level. Replay requires completed level and is the valid branch."
+    },
+    {
+      "path": "scripts/campaign/shell.gd",
+      "line": 309,
+      "finding": "side branch records current Story, constructs/captures fresh candidate, then invokes attempts.begin_side. On rejection disposes candidate and _fail(attempts.last_error); no install of invalid repeated optional. Thus _live() fails through error/Story identity before testing candidate profile."
+    },
+    {
+      "path": "scripts/ui/campaign_menu.gd",
+      "line": 571,
+      "finding": "Production selected-level handler routes completed levels to replay setup; replay start emits replay_requested(id,loadout) at388. The original fixture skipped this supported distinction."
+    }
+  ],
+  "profile_locking_path": [
+    {
+      "path": "scripts/campaign/shell.gd",
+      "lines": [
+        41,
+        67,
+        96,
+        111,
+        807
+      ],
+      "finding": "Fixture supplies isolated preferences.json path; Shell loads validated preference separately from campaign save/cosmetic settings. Public difficulty event persists Challenge and updates preference. No active encounter retuning."
+    },
+    {
+      "path": "scripts/campaign/shell.gd",
+      "lines": [
+        593,
+        755,
+        797
+      ],
+      "finding": "Fresh _prepare enters level with actual Shell; fresh shell state records current preference. Saved shell restore retains saved difficulty_at_entry independently from preference."
+    },
+    {
+      "path": "scripts/campaign/level.gd",
+      "lines": [
+        94,
+        112,
+        494
+      ],
+      "finding": "Fresh enter provides shared_shell; restore construction uses paused native recipients, with default _on_enter_restore_candidate calling ordinary entry before quiet saved commit."
+    },
+    {
+      "path": "scripts/acts/act2/clear_air_circuit.gd",
+      "lines": [
+        121,
+        126,
+        962,
+        1011,
+        1157
+      ],
+      "finding": "Fresh host reads Shell.get_difficulty_preference into _profile_id and starts shared Scheduler with it. Local snapshot records fixed profile; preflight demands Scheduler/profile correspondence; quiet restore sets _profile_id to saved profile. Corrected loading changed cleanup only, not these assignments."
+    },
+    {
+      "path": "scripts/game.gd",
+      "finding": "Plain Main preview has no get_difficulty_preference implementation; protected Story seed deliberately records standard. Actual production Shell overrides getter. No base Game retune explains repeated invalid first-attempt event."
+    },
+    {
+      "path": "scripts/settings/game_settings.gd",
+      "finding": "Settings source contains no difficulty/profile setting; isolated preferences store handles difficulty separately."
+    },
+    {
+      "path": "scripts/campaign/save_store.gd",
+      "lines": [
+        115,
+        131
+      ],
+      "finding": "Read chooses valid primary payload then backup; report found no original evidence of preference fallback/loss. Store/Settings/Preferences paths remain exact across fixture _new_shell calls."
+    }
+  ],
+  "corrected_owner_evidence": {
+    "packet": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/evidence/A2-O2/loading-side-replay-late-exit-fixed",
+    "source_at": "2026-10-12T05:54:47.861321+00:00",
+    "api_revision": "campaign-shared-50",
+    "source_sha256": "78bc3adcb2c09b12c5355c525be843db607c65004ad292a8260aeac6cdb92b1c",
+    "result_sha256": "a11571ce5115f56c5616e30471746c2d1dae320891c0003e21c9bfb67b4a277b",
+    "raw_sha256": "dd0d5561c5881071635ef06f30a803823e781d75843c53e31b2409ad3599e20c",
+    "wrapper_sha256": "dd0d5561c5881071635ef06f30a803823e781d75843c53e31b2409ad3599e20c",
+    "frozen_input_count": 602,
+    "independently_verified_archive_findings": [],
+    "exit_code": 0,
+    "scope_complete": true,
+    "summaries": [
+      {
+        "checks": 116,
+        "failures": 0,
+        "scope": "active/grace/fresh exact disk restore/HP0 original tails/paused fatal Retry/optional both-order gated TEST injuries/CP/final/stamp/Story return/cleanup. No earned route/ordinary combat/art/balance/mobile claim"
+      }
+    ],
+    "log_counts": {
+      "raw": {
+        "assertion_errors": 0,
+        "fail_markers": 0,
+        "native_errors": 0,
+        "parse_or_load_errors": 0,
+        "script_errors": 0,
+        "unexplained_native_errors": 0,
+        "warnings": 0
+      },
+      "wrapper": {
+        "assertion_errors": 0,
+        "fail_markers": 0,
+        "native_errors": 0,
+        "parse_or_load_errors": 0,
+        "script_errors": 0,
+        "unexplained_native_errors": 0,
+        "warnings": 0
+      }
+    },
+    "exact_corrections": "Fixture now checks completed_optional and emits public replay_requested(A2-O2,current supported equipment snapshot), otherwise optional_requested. Fixture also uses explicit live exit except retained running-Lane directfree case. Host cleanup adds is_inside_tree guards for Banks/Lane/Scheduler/cues. No profile-lock source change.",
+    "scope_qualification": "Clean116/0 establishes corrected owner loading/optional/replay/save/Continue/entrance Retry/order/stamp/contact return/cleanup scope on Shared50/unfixedLane873b1728 and owned late-exit guard. It is not Root shared51 regression or new independent engine credit, and does not accept O2."
+  },
+  "source_pins": {
+    "tests/acts/act2/a2_o2_loading_side_smoke.gd": {
+      "original": "076eb9f6ec46f6d27d3fb025907cd6d88c8ad444922514e37e2192b1aee97fd4",
+      "frozen_original_actual": "076eb9f6ec46f6d27d3fb025907cd6d88c8ad444922514e37e2192b1aee97fd4",
+      "corrected_loading": "87c3cd25f7b375d9e4ad4d7d56160511a0b4c3373fe7df528d6d50fc52f642d0",
+      "root_current": null,
+      "owner_current": "87c3cd25f7b375d9e4ad4d7d56160511a0b4c3373fe7df528d6d50fc52f642d0"
+    },
+    "scripts/acts/act2/clear_air_circuit.gd": {
+      "original": "a4676e75e9ccb24a2eb4bcbd9de87ad5df6eb5e73f7184435b3ca172af37ece0",
+      "frozen_original_actual": "a4676e75e9ccb24a2eb4bcbd9de87ad5df6eb5e73f7184435b3ca172af37ece0",
+      "corrected_loading": "4f383d90147a9b2f3c9b908c78128586b5c051e3c99249eb5e47e5e0cb9b7567",
+      "root_current": null,
+      "owner_current": "764ea7a7eeea9d156c7b20c249d2a71bea268cefddfd88bb3c3f7e830f102885"
+    },
+    "scripts/campaign/shell.gd": {
+      "original": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+      "frozen_original_actual": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+      "corrected_loading": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+      "root_current": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+      "owner_current": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc"
+    },
+    "scripts/game.gd": {
+      "original": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "frozen_original_actual": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "corrected_loading": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "root_current": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "owner_current": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    "scripts/campaign/level.gd": {
+      "original": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+      "frozen_original_actual": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+      "corrected_loading": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+      "root_current": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+      "owner_current": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d"
+    },
+    "scripts/campaign/attempts.gd": {
+      "original": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "frozen_original_actual": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "corrected_loading": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "root_current": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "owner_current": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0"
+    },
+    "scripts/campaign/save_store.gd": {
+      "original": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "frozen_original_actual": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "corrected_loading": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "root_current": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "owner_current": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    "scripts/settings/game_settings.gd": {
+      "original": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2",
+      "frozen_original_actual": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2",
+      "corrected_loading": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2",
+      "root_current": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2",
+      "owner_current": "b22f655ee4a605eb13be3e36c01939ae0697dfdc815735a84ad1f6df7b8370e2"
+    },
+    "scripts/combat/difficulty.gd": {
+      "original": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "frozen_original_actual": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "corrected_loading": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "root_current": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "owner_current": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    "scripts/ui/campaign_menu.gd": {
+      "original": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1",
+      "frozen_original_actual": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1",
+      "corrected_loading": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1",
+      "root_current": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1",
+      "owner_current": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1"
+    }
+  },
+  "remaining_bounded_work": [
+    "Keep original77/1 and native shutdown error exact; record corrected116/0 at its own frozen source/API.",
+    "Owner natural ordinary mechanics/extrema/portraits remain separate live work; do not infer their readiness from116 loading.",
+    "For future bundled entry assertions, include campaign_error, active level ID/kind, current preference, saved/fresh profile and selected event so a failed branch is not mislabelled as profile mismatch.",
+    "Use actual latest checkpoint Retry where missing from seven-category plan; no full route/every-enemy/earned-exit gate."
+  ],
+  "coordination": "Report only to Root; no worker chat messages sent. No new shared defect request warranted by the original profile assertion.",
+  "write_scope": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/level-testing/act2"
+}
