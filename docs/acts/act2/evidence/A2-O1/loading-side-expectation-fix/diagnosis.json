@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-12T03:38:48.358079+00:00",
+  "classification": "TEST assertion/barrier expectation; actual public Shell automatically resumes live checkpoint and completion drains",
+  "original_result": "docs/acts/act2/evidence/A2-O1/loading-side-first/result.json",
+  "original_checks": 37,
+  "original_failures": 1,
+  "original_source_sha256": "ec1fb6c96a2a7772b109269ad1e870d91fb52ded1b75f5db9c41fb9334e8afcd",
+  "corrected_source_sha256": "4b2cdaf97f0791b5f013d0e5e2e6425a00d2ee2902cc5489d61c28485889c21a",
+  "changes": "Two real public Pause requests before frozen CP/completion assertions; final-cycle assertion reads the actual durable checkpoint rather than a possibly resumed current actor; failure note carries real checkpoint/error. Every original checkpoint/history/OnceStamp/protectedStory/cleanup condition remains. No production/shared/source-gate change.",
+  "shared_evidence": "scripts/campaign/shell.gd: enqueue resume_after policy / perform / commit_drain deferred resume",
+  "next": "Rerun only this failed focused loading/side fixture using a fresh packet and updated actual hash; no new import or broad suite."
+}

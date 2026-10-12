@@ -1,0 +1,207 @@
+extends "res://.cinder/a1-l3-stage-diagnostic4.gd"
+## Private camera comparison and bounded ordinary follow diagnostic.
+## Real original CP2 -> GUI Continue/Resume -> ONE TEST Hero placement -> real
+## Crossed activation -> public Pause. No actor/progress/camera/clock setters.
+## Only installed8 native Protocols are timed; all receipts are outside timing.
+
+const NativeProtocol = preload("res://scripts/environment/scheduler_spore_source_protocol.gd")
+const CostRoute = preload("res://scripts/combat/repulsion_route.gd")
+var _cost_label: String = "unset"
+var _cost_events: Array = []
+var _cost_sources: Array[String] = []
+var _cost_rows: Array[Dictionary] = []
+var _cost_packet_error: String = ""
+var _cost_native_error: String = ""
+
+
+func _initialize() -> void:
+	_stage_started_us = Time.get_ticks_usec()
+	_test_root = "user://test-protocol-reference-cost-%d-%d/" % [OS.get_process_id(), _stage_started_us]
+	_expected_commit = STAGE_COMMIT
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--measurement-label="): _cost_label = argument.trim_prefix("--measurement-label=")
+		else: _expect(false, "unsupported direct-query measurement selector")
+	node_added.connect(_observe_restore_node)
+	create_timer(85.0, true).timeout.connect(func() -> void:
+		if not _finished:
+			_stage_outcome = "returning_event_loop_watchdog"
+			_expect(false, "direct-query measurement returns within its event-loop bound")
+			_finish())
+	_run.call_deferred()
+
+
+func _run() -> void:
+	root.size = Vector2i(540, 1170)
+	root.content_scale_size = Vector2i(540, 1170)
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	paused = true
+	_trace("cost_setup", {"measurement_label": _cost_label})
+	if failures > 0 or not _stage_seed_original(): _finish(); return
+	_restore_events.clear()
+	_watching_restore = true
+	game = _new_shell()
+	await _settle()
+	if not _title_valid("original CP2 direct-query measurement") or not _expect(game.player == null, "actual Title retains NULL Player before Continue"): _finish(); return
+	await _click(_find("ContinueStoryButton") as Control)
+	_watching_restore = false
+	if not _actual_entry(): _finish(); return
+	var original: String = Exact.stringify(_stage_payload.story.snapshot)
+	var actual: String = Exact.stringify(game.capture_campaign_snapshot())
+	if not _expect(not actual.is_empty() and actual == original and _restore_events.is_empty(), "actual fresh native Continue exactly recaptures the original complete19-source CP2 without gameplay signals"): _finish(); return
+	if not _resume_consumed("original CP2 cost probe") or not _place_hero_once(): _finish(); return
+	_trace("cost_activation_before")
+	_stage_room_returned = await _wait_stage_room()
+	_trace("cost_activation_after", {"room_active": _stage_room_returned})
+	if not _expect(_stage_room_returned, "real Crossed room activates within the one physics/process await-pair bound"): _finish(); return
+	var groups: Dictionary = game.active_level.get("_protocols")
+	var protocols: Dictionary = groups.get("crossed", {})
+	for id: Variant in protocols:
+		if typeof(id) == TYPE_STRING: _cost_sources.append(id)
+	_cost_sources.sort()
+	if not _expect(protocols.size() == 8 and _cost_sources.size() == 8, "measurement contains all8 actual installed Crossed Protocols rather than absent approach resources"): _finish(); return
+	for id: String in _cost_sources:
+		var protocol: NativeProtocol = protocols[id]
+		if not _expect(protocol.get_script() == NativeProtocol and protocol.binding_state().source_id == id and protocol.binding_error().is_empty(), "actual retained exact native Protocol and valid binding: " + id): _finish(); return
+	var scheduler: CinderThreatScheduler = game.active_level.get("scheduler")
+	var sources: Dictionary = game.active_level.get("sources")
+	scheduler.reservation_invalidated.connect(func(id: String, reason: String) -> void: _cost_events.append(["scheduler", id, reason]))
+	for id: String in sources:
+		var source: Node = sources[id]
+		source.connect("hit_resolved", func(source_id: String, cycle: int, result: Dictionary) -> void: _cost_events.append(["hit", source_id, cycle, result]))
+		source.connect("defeated", func(source_id: String) -> void: _cost_events.append(["defeat", source_id]))
+		source.connect("state_changed", func(state: Dictionary) -> void: _cost_events.append(["source_state", state]))
+		var cue: Node = source.call("get_cue")
+		cue.connect("state_changed", func(state: Dictionary) -> void: _cost_events.append(["cue_state", state]))
+	for retained: Variant in (game.active_level.get("_fields") as Dictionary).values():
+		var field: Node = retained
+		field.connect("activated", func(state: Dictionary) -> void: _cost_events.append(["field_activated", state]))
+		field.connect("state_changed", func(state: Dictionary) -> void: _cost_events.append(["field_state", state]))
+	for retained: Variant in (game.active_level.get("_consumers") as Dictionary).values():
+		var consumer: Node = retained
+		consumer.connect("reaction_started", func(source_id: String, episode_id: String) -> void: _cost_events.append(["reaction", source_id, episode_id]))
+		consumer.connect("placement_rejected", func(source_id: String, reason: String) -> void: _cost_events.append(["rejected", source_id, reason]))
+	var initial_points: Array = game.active_level.camera_framing_points()
+	var initial_error: String = game.camera_framing_error(initial_points)
+	_trace("camera_follow_before", {"current_error": initial_error, "purpose": "Observe ordinary follow after the one disclosed TEST placement; no camera update/snap/fitting setter."})
+	var follow_start: float = game.player.get_world_action_clock()
+	var recovered: bool = false
+	var opportunities: int = 0
+	for opportunity: int in range(30):
+		await process_frame
+		opportunities += 1
+		if paused or not is_instance_valid(game.player) or game.player.dead: break
+		var current_points: Array = game.active_level.camera_framing_points()
+		var current_error: String = game.camera_framing_error(current_points)
+		_trace("camera_follow_sample", {"opportunity": opportunity, "point_count": current_points.size(), "provider_error": game.active_level.last_camera_framing_error, "current_error": current_error, "elapsed_player_clock": game.player.get_world_action_clock() - follow_start, "recorded_plan": game.get_camera_framing_state()})
+		if not current_points.is_empty() and game.active_level.last_camera_framing_error.is_empty() and current_error.is_empty():
+			recovered = true
+			break
+		if game.player.get_world_action_clock() - follow_start >= 2.0: break
+	game.request_pause()
+	await _settle()
+	_trace("camera_follow_after", {"ordinary_opportunities": opportunities, "containment_recovered": recovered, "elapsed_player_clock": game.player.get_world_action_clock() - follow_start, "monitored_events_during_normal_simulation": _cost_events.size()})
+	_cost_events.clear()
+	if not _expect(paused, "ordinary follow returns through public Pause"): _finish(); return
+	if not _camera_probe(protocols, "after_ordinary_follow"): _finish(); return
+	if not _expect(recovered, "actual containment recovers within30 ordinary process opportunities and2 native player seconds without camera or actor setters"): _finish(); return
+	var actual_unit: Dictionary = game.capture_campaign_snapshot()
+	_trace("camera_final_capture", {"nonempty": not actual_unit.is_empty(), "campaign_error": game.campaign_error, "scope": "Actual public paused capture after observed containment; never permission from hypothetical fit."})
+	_expect(not actual_unit.is_empty(), "supported whole-parent capture is available after actual ordinary containment recovery")
+	_stage_outcome = "ordinary_follow_containment_recovered" if failures == 0 else "focused_failure"
+	_finish()
+
+
+func _camera_probe(protocols: Dictionary, label: String) -> bool:
+	var points: Array = game.active_level.camera_framing_points()
+	if not _expect(not points.is_empty() and points.size() <= 256 and game.active_level.last_camera_framing_error.is_empty(), label + " supplies actual bounded required points"): return false
+	var before_packets: String = _cost_packets()
+	var before_native: String = _cost_native(protocols)
+	if not _expect(not before_packets.is_empty() and not before_native.is_empty(), label + " has complete19actor/Player/Scheduler and focused native witnesses"): return false
+	var smoothed: Vector3 = game.get("_camera_focus")
+	var hero_focus: Vector3 = game.player.global_position + Vector3.UP * .75
+	var advisory_focus: Vector3 = game.player.global_position + Vector3.UP * .65
+	var containment: String = game.camera_framing_error(points)
+	var observations: Dictionary = {"label": label, "provider_points": points, "mandatory_player_points": game.player_camera_framing_points(), "camera_transform": game.camera.global_transform, "hud_safe_rect": game.hud.combat_safe_rect(), "native_spec": game.call("_camera_framing_spec", .055), "smoothed_focus": smoothed, "hero_focus": hero_focus, "owned_advisory_focus": advisory_focus, "recorded_follow_state": game.get_camera_framing_state(), "recomputed_follow_plan": game.camera_framing_plan(points, smoothed), "hero_reference_plan": game.camera_framing_plan(points, hero_focus), "owned_advisory_reference_plan": game.camera_framing_plan(points, advisory_focus), "current_containment": containment}
+	var repeated_containment: String = game.camera_framing_error(points)
+	_stage_observation_error = ""
+	var budget: Array[int] = [0]
+	var wire: String = Exact.stringify(_stage_observation_value(observations, budget))
+	var after_native: String = _cost_native(protocols)
+	var after_packets: String = _cost_packets()
+	var unchanged: bool = _stage_observation_error.is_empty() and not wire.is_empty() and before_native == after_native and before_packets == after_packets and repeated_containment == containment and _cost_events.is_empty()
+	_trace("camera_reference_comparison", {"label": label, "observations_exact_json": wire, "packet_sha256": before_packets.sha256_text(), "native_sha256": before_native.sha256_text(), "packet_bytes": before_packets.to_utf8_buffer().size(), "native_bytes": before_native.to_utf8_buffer().size(), "pure_unchanged": unchanged, "scope": "Same-clock paused pure queries; complete packets plus explicitly focused native identity/resource/input/optics/session/diagnostic witness, not arbitrary Script internals."})
+	return _expect(unchanged, label + " pure three-reference queries preserve complete packets, focused native witnesses, clocks, actual containment and monitored callbacks")
+
+
+func _cost_packets() -> String:
+	_cost_packet_error = ""
+	var level: Node = game.active_level
+	var controller: CinderThreatScheduler = level.get("scheduler")
+	var scheduler: Dictionary = controller.snapshot_state(level.call("scheduler_bindings"))
+	var player: Dictionary = game.player.snapshot_state()
+	if scheduler.is_empty() or player.is_empty():
+		_cost_packet_error = "Scheduler=" + controller.last_snapshot_error + "; Player=" + game.player.last_snapshot_error
+		return ""
+	var actors: Dictionary = {}
+	var sources: Dictionary = level.get("sources")
+	for id: String in sources:
+		var unit: Dictionary = sources[id].spore_snapshot_state(scheduler, player)
+		if unit.is_empty():
+			_cost_packet_error = id + ": " + String(sources[id].get("last_snapshot_error"))
+			return ""
+		actors[id] = unit
+	if actors.size() != 19: return ""
+	return Exact.stringify({"scheduler": scheduler, "player": player, "actors": actors})
+
+
+func _cost_native(protocols: Dictionary) -> String:
+	_cost_native_error = ""
+	var references: Dictionary = {}
+	var controller: CinderThreatScheduler = game.active_level.get("scheduler")
+	var sources: Dictionary = game.active_level.get("sources")
+	var diagnostics: Dictionary = {"campaign": game.campaign_error, "scheduler": [controller.last_error, controller.last_snapshot_error], "sources": {}, "protocols": {}}
+	for id: String in sources:
+		var source: Node = sources[id]
+		diagnostics.sources[id] = [source.get("last_error"), source.get("last_snapshot_error")]
+	for id: String in _cost_sources:
+		var descriptor: Dictionary = protocols[id].binding_state()
+		var environment: Dictionary = CostRoute.static_environment_state(game.active_level.call("_world_root"), game.active_level.call("scheduler_bindings").floors, descriptor.source_environment, Vector3(0.0, float(protocols[id].get("_ground_y")) - float(descriptor.source_environment.foot_offset), 0.0))
+		if environment.has("error"):
+			_cost_native_error = id + ": " + String(environment.error)
+			return ""
+		references[id] = {"descriptor": descriptor, "fresh_environment": environment, "fresh_body": NativeProtocol._body_properties(sources[id], sources[id].get_node("BodyCollision"))}
+		diagnostics.protocols[id] = protocols[id].last_error
+	# The original all-node Script-field diagnostic exceeded its65536-node
+	# observation budget. This explicitly scoped direct-query witness includes
+	# actual native handles/properties and shared input/optics/session state;
+	# complete19actor/Player/Scheduler packets are independently required.
+	# It is neither a whole-parent save nor arbitrary Script-internals capture.
+	var native_sources: Dictionary = {}
+	for id: String in sources:
+		var source: CharacterBody3D = sources[id]
+		var collision: CollisionShape3D = source.get_node("BodyCollision")
+		native_sources[id] = {"node_id": str(source.get_instance_id()), "script_id": str(source.get_script().get_instance_id()), "pose": source.global_transform, "velocity": source.velocity, "grounded": source.is_on_floor(), "collision_id": str(collision.get_instance_id()), "shape_id": str(collision.shape.get_instance_id()), "collision_pose": collision.global_transform, "disabled": collision.disabled}
+	var focused: Dictionary = {"paused": paused, "shell_id": str(game.get_instance_id()), "shell_script": str(game.get_script().get_instance_id()), "level_id": str(game.active_level.get_instance_id()), "level_script": str(game.active_level.get_script().get_instance_id()), "hero_id": str(game.player.get_instance_id()), "hero_script": str(game.player.get_script().get_instance_id()), "controller_id": str(controller.get_instance_id()), "controller_script": str(controller.get_script().get_instance_id()), "controller_clock_bits": _clock_bits(controller.get_clock()), "player_clock_bits": _clock_bits(game.player.get_world_action_clock()), "input": game.get_input_observation_state(), "aim": game.get_aim_anchor_normalized(), "camera_pose": game.camera.global_transform, "camera_size": game.camera.size, "camera_projection": game.camera.projection, "camera_focus": game.get("_camera_focus"), "hud_safe": game.hud.combat_safe_rect(), "attempts": game.attempts.state(), "menu": game.menu.page_name(), "beat_index": game.active_level.get("beat_index"), "room_stage": game.active_level.get("room_stage"), "completed_beats": game.active_level.get("completed_beats"), "sources": native_sources}
+	_stage_observation_error = ""
+	var budget: Array[int] = [0]
+	var observed: Variant = _stage_observation_value(focused, budget)
+	if not _stage_observation_error.is_empty():
+		_cost_native_error = "Focused native witness: " + _stage_observation_error
+		return ""
+	var wire: String = Exact.stringify({"references": references, "diagnostics": diagnostics, "focused_native": observed, "scope": "Fresh native references and explicit session/input/optics/identity properties plus separately required complete19actor/Player/Scheduler packets; not arbitrary Script internals or optical parent save."})
+	if wire.is_empty(): _cost_native_error = "Focused native witness exceeds original Exact admission"
+	return wire
+
+
+func _finish() -> void:
+	if _finished: return
+	_finished = true
+	_trace("cost_cleanup_before", {"measurement_label": _cost_label, "outcome": _stage_outcome, "query_count": _cost_rows.size()})
+	_close_shell()
+	paused = false
+	await create_timer(0.2, true).timeout
+	_cleanup_saves()
+	_expect(FileAccess.get_sha256(STAGE_ORIGINAL) == STAGE_ORIGINAL_SHA and FileAccess.get_file_as_string(Registry.DATA_PATH) == _registry_text, "cost probe preserves original CP2 and canonical registry bytes")
+	_trace("cost_cleanup_after", {"measurement_label": _cost_label, "outcome": _stage_outcome})
+	print("Camera follow diagnostic: %d checks, %d failures; label=%s; outcome=%s; one TEST placement, pure comparisons and bounded ordinary follow; no full-route/FPS claim." % [checks, failures, _cost_label, _stage_outcome])
+	quit(0 if failures == 0 else 1)

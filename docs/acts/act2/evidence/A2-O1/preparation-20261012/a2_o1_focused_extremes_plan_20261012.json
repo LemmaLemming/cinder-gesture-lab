@@ -1,0 +1,110 @@
+{
+  "api_revision": "act2-o1-focused-extremes-1",
+  "fixture": {
+    "tmp_path": "/private/tmp/a2_o1_focused_extremes_smoke_draft.gd",
+    "proposed_path": "tests/acts/act2/a2_o1_focused_smoke.gd",
+    "sha256": "e2774381d8d5fe1e0ddf64bbc269aafe1f1e46573f016de028e54bfac8d8f5c0",
+    "lines": 477
+  },
+  "base": {
+    "path": "/private/tmp/a2_o1_focused_smoke_draft.gd",
+    "sha256": "ff442c2c3da9ae8f07c6d0f53a84d5fd8627030c933359ecafcbb956c09ab593",
+    "lines": 405,
+    "immutable": true
+  },
+  "delta": {
+    "existing_functions_changed": [
+      "_run",
+      "_boot"
+    ],
+    "new_functions": [
+      "_run_extremes",
+      "_select_initial_gear",
+      "_finish_extremes"
+    ],
+    "unchanged_functions": [
+      "_initialize",
+      "_prepare_capture_root",
+      "_combat_component",
+      "_follow",
+      "_contact_component",
+      "_place_contact",
+      "_dash",
+      "_wait_phase",
+      "_step",
+      "_state",
+      "_ray",
+      "_clock",
+      "_sequence",
+      "_live",
+      "_capture_view",
+      "_wait_capture",
+      "_interaction_states",
+      "_encode",
+      "_sources",
+      "_refs",
+      "_release",
+      "_expect",
+      "_finish"
+    ],
+    "unflagged_semantics": "Conditional _run branch is inactive; _boot follows original Main, default gear, signals, resume and default assertion with no additional expectations. Original _combat_component, _follow, _contact_component, every capture method, cleanup and baseline footer remain byte-identical."
+  },
+  "flag": "--a2-o1-extremes",
+  "reporting": {
+    "footer_prefix": "A2-O1 focused equipment extremes smoke:",
+    "policy": "count-only _expect, zero PASS lines; full footer/zero native diagnostics/scope_complete true required",
+    "headless_only": true,
+    "capture_files": false
+  },
+  "equipment": [
+    {
+      "id": "slow-dash-short-reach",
+      "loadout": {
+        "jacket": "CLOTH-J1",
+        "pants": "CLOTH-P2",
+        "shoes": "CLOTH-S2",
+        "weapon": "WEAPON-03"
+      },
+      "nominal_constraints": {
+        "gear_dash_speed": 0.9,
+        "gear_dash_distance": 1.1,
+        "gear_attack_speed": 0.75,
+        "primary_range": 1.8,
+        "primary_cooldown": 0.39999999999999997,
+        "dash_speed": 13.5,
+        "dash_distance": 2.9700000000000006,
+        "dash_duration": 0.22000000000000006,
+        "primary_damage": 24,
+        "max_health": 110
+      }
+    },
+    {
+      "id": "slow-primary-reach",
+      "loadout": {
+        "jacket": "CLOTH-J1",
+        "pants": "CLOTH-P1",
+        "shoes": "CLOTH-S0",
+        "weapon": "WEAPON-03"
+      },
+      "nominal_constraints": {
+        "gear_attack_speed": 0.7,
+        "primary_range": 1.9,
+        "primary_cooldown": 0.4285714285714286,
+        "dash_speed": 15,
+        "dash_distance": 2.7,
+        "dash_duration": 0.18000000000000002,
+        "primary_damage": 24,
+        "max_health": 100
+      }
+    }
+  ],
+  "numbers_policy": "Native authoritative exact stats are independently resolved by actual CinderEquipment; documented nominal numbers are explanatory, no rounded values injected or tolerance changed. Parent correction P2 replaces initial P0 proposal. Both IDs/slots/no-perk checked native; no creation/ability catalogue allocation.",
+  "conditioning": "Actual Main with existing ProfileSeedGame Standard getter; public equipment.restore + Hero.equip_item weapon before first native clock/action/activation. No live HP/phase/proof/motion/clock changes. Original authorized shells=0 at actual primary stays unchanged, reload native. Cargo max HP increases but actual HP is not refilled.",
+  "scope": "Two focused native single-Scout responses with full warning/lock/active/recovery, real dash/return/ordinary-primary and actual full cooldown; not all-kit balance/full route/defeat-all/art or transport/contacts. New branch isolated before original baseline/contact run.",
+  "source_pins": {
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/equipment.gd": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/data/design/player_equipment.json": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd": "17d23892d1b80c8bd7a95e8ccd3adf2b6e5a75561d26416fe8816debf732bf3e"
+  },
+  "status": "TMP static authored only; peer/parser/native pending; no engine/checkout/import/Git operation"
+}

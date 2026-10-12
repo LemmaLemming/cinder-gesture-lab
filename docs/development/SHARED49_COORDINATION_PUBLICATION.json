@@ -1,0 +1,169 @@
+{
+  "published_at": "2026-10-12T04:18:37.848974+00:00",
+  "publication": "9f73e65e5848c6747542b283bb0d9be3c75c8454",
+  "documentation_supplement": "6327672377b0ec5854f554261e1e5bdd6540d5d3",
+  "notice_ids": {
+    "act1": "8add1107-ea6c-4b09-8302-079de79c3c4d",
+    "act2": "c1bdca7b-7b7a-47bf-b866-4309af927035",
+    "act3": "14da12b9-c7a2-486f-91fa-83c9e5c9e0a9"
+  },
+  "worker_ids": {
+    "act1": "01a11adf-2ec8-7702-96c6-0fa1e240c332",
+    "act2": "01a11adf-a56f-77d2-a7bc-45fd94702ab1",
+    "act3": "01a11ae0-0acf-7d00-a987-321a98de5b66"
+  },
+  "assignments_confirmations_retained": true,
+  "accepted_count": 11,
+  "run_sha256_at_publication": "81641703b9d2296e108d8095389776b222ed3cbabdf27ed029d634cf868ad419",
+  "scope": "CanonicalUPDATEpublication+successfulactualchatdispatch+compactallactive snapshot; no newnativeexecution/acceptance/adoption.",
+  "recorded_at": "2026-10-12T04:21:00.983612+00:00",
+  "actual_chat_dispatch": {
+    "act1": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"threadId\":\"01a11adf-2ec8-7702-96c6-0fa1e240c332\"}"
+        }
+      ],
+      "isError": false
+    },
+    "act2": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"threadId\":\"01a11adf-a56f-77d2-a7bc-45fd94702ab1\"}"
+        }
+      ],
+      "isError": false
+    },
+    "act3": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"threadId\":\"01a11ae0-0acf-7d00-a987-321a98de5b66\"}"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "compact_worker_snapshot": {
+    "timedOut": true,
+    "wake": null,
+    "polls": [
+      {
+        "schemaVersion": 1,
+        "cursor": "ef3575bc-a127-47c1-91fb-31a375eaad2f:71",
+        "revision": 71,
+        "changed": true,
+        "thread": {
+          "id": "01a11adf-2ec8-7702-96c6-0fa1e240c332",
+          "hostId": "local",
+          "status": {
+            "type": "active",
+            "activeFlags": []
+          }
+        },
+        "latestTurn": {
+          "id": "01a12e40-f8df-7ea0-91e3-fac4fa35a365",
+          "status": "inProgress",
+          "error": null,
+          "startedAt": 1791777372,
+          "completedAt": null,
+          "durationMs": null
+        },
+        "latestAssistantMessageId": "msg_0b19596337dccc92016acc5d5f6f5881919d7787152d7096aa",
+        "latestAssistantMessage": {
+          "id": "msg_0b19596337dccc92016acc5d5f6f5881919d7787152d7096aa",
+          "turnId": "01a12e40-f8df-7ea0-91e3-fac4fa35a365",
+          "phase": "commentary",
+          "text": "Static review found that contact cues could emit callbacks during save restoration. I\u2019ve suppressed those signals during the restore and added a failure check so a partially restored candidate cannot be installed. The native save fixture will test the full path next."
+        },
+        "latestToolMarkerId": "exec-a6329e3f-5459-47b3-b495-7e2b1205d6c1",
+        "latestToolMarker": {
+          "id": "exec-a6329e3f-5459-47b3-b495-7e2b1205d6c1",
+          "turnId": "01a12e40-f8df-7ea0-91e3-fac4fa35a365",
+          "type": "commandExecution",
+          "name": "commandExecution",
+          "status": "completed"
+        }
+      },
+      {
+        "schemaVersion": 1,
+        "cursor": "9d3dcae4-c16a-4dad-9a11-51ad72fb2f9e:73",
+        "revision": 73,
+        "changed": true,
+        "thread": {
+          "id": "01a11adf-a56f-77d2-a7bc-45fd94702ab1",
+          "hostId": "local",
+          "status": {
+            "type": "active",
+            "activeFlags": []
+          }
+        },
+        "latestTurn": {
+          "id": "01a12e1a-6318-7802-84a9-97dcb1aa6c01",
+          "status": "inProgress",
+          "error": null,
+          "startedAt": 1791774843,
+          "completedAt": null,
+          "durationMs": null
+        },
+        "latestAssistantMessageId": "msg_0f9555f020f63fb3016acc5fa06348819184394dae177e01f1",
+        "latestAssistantMessage": {
+          "id": "msg_0f9555f020f63fb3016acc5fa06348819184394dae177e01f1",
+          "turnId": "01a12e1a-6318-7802-84a9-97dcb1aa6c01",
+          "phase": "commentary",
+          "text": "The independent visual review passed all four captured states. Cylinder Perimeter\u2019s focused checks are complete, with full-playthrough and balance limits recorded. I\u2019m sealing the evidence and handing it to Integration; no human decision is required."
+        },
+        "latestToolMarkerId": "exec-720eb649-f1f1-4e3a-bf9a-9afc5d475edb",
+        "latestToolMarker": {
+          "id": "exec-720eb649-f1f1-4e3a-bf9a-9afc5d475edb",
+          "turnId": "01a12e1a-6318-7802-84a9-97dcb1aa6c01",
+          "type": "commandExecution",
+          "name": "commandExecution",
+          "status": "completed"
+        }
+      },
+      {
+        "schemaVersion": 1,
+        "cursor": "3b5f178a-f437-4d39-8171-6f776285d47f:81",
+        "revision": 81,
+        "changed": true,
+        "thread": {
+          "id": "01a11ae0-0acf-7d00-a987-321a98de5b66",
+          "hostId": "local",
+          "status": {
+            "type": "active",
+            "activeFlags": []
+          }
+        },
+        "latestTurn": {
+          "id": "01a12de5-98c5-7fd1-90ec-dc593085e4ca",
+          "status": "inProgress",
+          "error": null,
+          "startedAt": 1791771384,
+          "completedAt": null,
+          "durationMs": null
+        },
+        "latestAssistantMessageId": "msg_02bd3e144a324f62016acc5e8c1df081919471106644b149b6",
+        "latestAssistantMessage": {
+          "id": "msg_02bd3e144a324f62016acc5e8c1df081919471106644b149b6",
+          "turnId": "01a12de5-98c5-7fd1-90ec-dc593085e4ca",
+          "phase": "commentary",
+          "text": "The equipment and ability consistency checks passed, with no new equipment types or grants introduced. I\u2019m narrowing the next run to one held root attack and a fresh restore with the full Scheduler, so it can expose restore or cleanup faults without a long route test."
+        },
+        "latestToolMarkerId": "exec-654e5d06-b93c-4e5f-8737-a9ea81f5aae9",
+        "latestToolMarker": {
+          "id": "exec-654e5d06-b93c-4e5f-8737-a9ea81f5aae9",
+          "turnId": "01a12de5-98c5-7fd1-90ec-dc593085e4ca",
+          "type": "commandExecution",
+          "name": "commandExecution",
+          "status": "completed"
+        }
+      }
+    ]
+  },
+  "actual_tool_receipt_sha256": "13aebb3d70ab9ff9f219ceebf90f2ae6f796a1a52f7abd8c6e24a58a79f06c27",
+  "actual_adoption": "No Shared49 ACK observed or inferred by this coordination receipt; available publication includes compatible48.",
+  "goal_state": "ACTIVE; full24desktopendpoint11/24; ownerA2O1evidencebeingsealed, no newacceptance yet."
+}

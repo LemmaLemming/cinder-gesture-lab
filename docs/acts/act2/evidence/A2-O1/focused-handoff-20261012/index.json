@@ -1,0 +1,1335 @@
+{
+  "schema": "act2-o1-focused-handoff-index-draft-1",
+  "created_at": "2026-10-12T04:20:19.536528+00:00",
+  "level_id": "A2-O1",
+  "title": "Cylinder Perimeter",
+  "kind": "optional",
+  "parent": "A2-L1",
+  "scene": "scenes/acts/act2/a2_o1.tscn",
+  "author_role": "act2",
+  "draft": false,
+  "ready_for_integration_handoff": true,
+  "status": "READY: all seven focused categories closed, original47 native evidence/failed scopes retained, actual49 preserving adoption complete. Independent Integration acceptance/registration remains pending; Act2 stays5/8,campaign11/24.",
+  "content_commit": "d8fb470f4b0bac4840900b908b80d323526f1f4d",
+  "final_handoff_head": "The exact later documentation HEAD is supplied by canonical HANDOFF; this index cannot contain its own circular commit hash.",
+  "observed_preseal_head": "2ae15df0ae795d45a949e6b63c230794daf269ba",
+  "registered_checkout": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+  "no_human_decision_required": true,
+  "current_actual_baseline": {
+    "api_revision": "campaign-shared-49",
+    "publication": "9f73e65e5848c6747542b283bb0d9be3c75c8454",
+    "merge": "72b16cb9fe0dc285eec916bc3724087abf86be96",
+    "parents": [
+      "d8fb470f4b0bac4840900b908b80d323526f1f4d",
+      "9f73e65e5848c6747542b283bb0d9be3c75c8454"
+    ],
+    "adoption_ack": "455133fc-35be-472b-b7e7-d4e72966b2e0",
+    "receipt": "docs/acts/act2/evidence/shared49-adoption/adoption.json",
+    "receipt_sha256": "ec79da0101ce9aa0c865c1925a63181f654aaedb4f11aa007204ca96fb4ebdfb",
+    "scope": "Preservation only, no new native/import/pixel acceptance. All original O1 engine jobs remain actual47; current Protocol/Menu/dev have deliberate postclosure changes. No O1 spore usage or Player/Game/Shell/Scheduler/cue/equipment/save schema change."
+  },
+  "acceptance_policy": {
+    "categories": [
+      "Mechanics",
+      "Loading",
+      "Transitions",
+      "Saves",
+      "Retry",
+      "Cleanup",
+      "Brief actual-pixel inspection"
+    ],
+    "scope": "Focused actual mechanics/loading/transitions/save/retry/cleanup and brief portrait with disclosed untested playthrough behavior. No complete route, defeat-all, all-kit matrix, earned exit, human balance, mobile or campaign-wide repeat gate.",
+    "format_only_reference": "Existing L5 index format used only; no L5 test/art scope credited as O1 execution."
+  },
+  "integration_payload": {
+    "production_runtime": [
+      {
+        "path": "scenes/acts/act2/a2_o1.tscn",
+        "sha256": "6ebc29e80ab4ad9f87e64912364b887d4241bad9915f30d73e02c8b5b7190a6c",
+        "bytes": 383,
+        "stat_mode": "0o644",
+        "lines": 12
+      },
+      {
+        "path": "scripts/acts/act2/cylinder_perimeter.gd",
+        "sha256": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+        "bytes": 39554,
+        "stat_mode": "0o644",
+        "lines": 772
+      },
+      {
+        "path": "scripts/acts/act2/cylinder_perimeter_kit.gd",
+        "sha256": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+        "bytes": 9926,
+        "stat_mode": "0o644",
+        "lines": 207
+      }
+    ],
+    "production_UID_sidecars": [
+      {
+        "path": "scripts/acts/act2/cylinder_perimeter.gd.uid",
+        "sha256": "e7077109d30c73d3c6b4a6c966a6630f3dd6447055c5d0dafaf4fb9049690ce6",
+        "bytes": 19,
+        "stat_mode": "0o644",
+        "identity": "uid://s7cv6cux3i77",
+        "origin": "docs/acts/act2/evidence/A2-O1/new-resource-import-first/generated-after-job/scripts/acts/act2/cylinder_perimeter.gd.uid"
+      },
+      {
+        "path": "scripts/acts/act2/cylinder_perimeter_kit.gd.uid",
+        "sha256": "284be796db1f8872ba5a59551aed43d4bfd7333f1da95ae3e9b4f78af03d376f",
+        "bytes": 20,
+        "stat_mode": "0o644",
+        "identity": "uid://dx8s3hl886o40",
+        "origin": "docs/acts/act2/evidence/A2-O1/new-resource-import-first/generated-after-job/scripts/acts/act2/cylinder_perimeter_kit.gd.uid"
+      }
+    ],
+    "test_UID_sidecars": [
+      {
+        "path": "tests/acts/act2/a2_o1_focused_smoke.gd.uid",
+        "sha256": "3b0f1dd20e9edd9345f15b9c719e76e182a535ef78a4eb913acab3702cd6c2c6",
+        "bytes": 20,
+        "stat_mode": "0o644",
+        "identity": "uid://c0pjae007gpaj",
+        "origin": "docs/acts/act2/evidence/A2-O1/new-resource-import-first/generated-after-job/tests/acts/act2/a2_o1_focused_smoke.gd.uid"
+      },
+      {
+        "path": "tests/acts/act2/a2_o1_loading_side_smoke.gd.uid",
+        "sha256": "528a4b5381c2d180376971ccb86e52877f05b346b0d55b57e1c15784044efa00",
+        "bytes": 20,
+        "stat_mode": "0o644",
+        "identity": "uid://dmjw67bbrxhqv",
+        "origin": "docs/acts/act2/evidence/A2-O1/new-resource-import-first/generated-after-job/tests/acts/act2/a2_o1_loading_side_smoke.gd.uid"
+      }
+    ],
+    "validation_tests": [
+      {
+        "path": "tests/acts/act2/a2_o1_loading_side_smoke.gd",
+        "sha256": "4b2cdaf97f0791b5f013d0e5e2e6425a00d2ee2902cc5489d61c28485889c21a",
+        "bytes": 19051,
+        "stat_mode": "0o644"
+      },
+      {
+        "path": "tests/acts/act2/a2_o1_focused_smoke.gd",
+        "sha256": "eac14159c2ad7bedbdfe913056dc26d260223d9dc1b289cb8fa9f64c16788a60",
+        "bytes": 31020,
+        "stat_mode": "0o644"
+      }
+    ],
+    "asset_manifest": {
+      "path": "assets/acts/act2/cylinder_perimeter_manifest.json",
+      "sha256": "f7b9ca6e98f1f9bb47c1899383eb850e69d6886d79a3a14806e822acb6f6d86c",
+      "bytes": 15765,
+      "stat_mode": "0o644"
+    },
+    "documentation_and_evidence": [
+      "data/campaign/act2/levels/A2-O1.md",
+      "data/campaign/act2/ACT_MEMORY.md",
+      "data/campaign/act2/PROGRESS.md",
+      "docs/acts/act2/evidence/A2-O1/"
+    ],
+    "integration_action": "Merge exact owned runtime and four genuine UID originals along with scoped tests/docs/evidence; preserve active tokens. Shared registry acceptance/readiness belongs to Integration after actual handoff checks. O1 remains unaccepted currently.",
+    "no_new_runtime_kit_external_assets": "Kit composes accepted Heath leaf methods and ordinary accepted Scout Actor/Exchange; only three journal props and one exit marker are small additions. No new perk, equipment type, enemy/boss or permanent stats."
+  },
+  "packets": [
+    {
+      "id": "import537",
+      "directory": "docs/acts/act2/evidence/A2-O1/new-resource-import-first",
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O1/new-resource-import-first/source.json",
+        "sha256": "9205cfa3014c23935d7ca8274bc93e137c842e91b52ef7fce0a1d9021ca51c4b",
+        "bytes": 181112,
+        "stat_mode": "0o644"
+      },
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O1/new-resource-import-first/result.json",
+        "sha256": "2191f4372da95a50046c1b2ddd15a0a61b809a1d6bd4c0a47b66fb2d375b6dea",
+        "bytes": 2760,
+        "stat_mode": "0o644"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O1/new-resource-import-first/manifest-original.json",
+        "sha256": "a61949d67f7ff5d30b90c413886cc42159fd411bd1af8b02c79d9f33f55ed2f8",
+        "bytes": 1711,
+        "stat_mode": "0o644"
+      },
+      "recorder": {
+        "path": "docs/acts/act2/evidence/A2-O1/new-resource-import-first/recorder-original.py",
+        "sha256": "93e99402241e234bc9cb156215f6be907ef217e1c4e83664042a43506bc959aa",
+        "bytes": 21406,
+        "stat_mode": "0o644"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "import"
+      ],
+      "recorded_head": "2ae15df0ae795d45a949e6b63c230794daf269ba",
+      "shared_publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+      "api_revision": "campaign-shared-47",
+      "selected_source_count": 537,
+      "component_pins": {
+        "scenes/acts/act2/a2_o1.tscn": "6ebc29e80ab4ad9f87e64912364b887d4241bad9915f30d73e02c8b5b7190a6c",
+        "scripts/acts/act2/cylinder_perimeter.gd": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+        "scripts/acts/act2/cylinder_perimeter_kit.gd": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+        "tests/acts/act2/a2_o1_focused_smoke.gd": "ff442c2c3da9ae8f07c6d0f53a84d5fd8627030c933359ecafcbb956c09ab593",
+        "tests/acts/act2/a2_o1_loading_side_smoke.gd": "ec1fb6c96a2a7772b109269ad1e870d91fb52ded1b75f5db9c41fb9334e8afcd"
+      },
+      "mode": "import",
+      "exit_code": 0,
+      "scope_complete": true,
+      "footer": [],
+      "assertion_reporting": "count-only",
+      "raw": null,
+      "wrapper": {
+        "path": "docs/acts/act2/evidence/A2-O1/new-resource-import-first/wrapper.log",
+        "sha256": "b40316182b9e2564427c4c749473cbb5e2b9cab5b3c09937b8ec231190a29f22",
+        "bytes": 17616,
+        "stat_mode": "0o644"
+      },
+      "raw_wrapper_equal": null,
+      "source_custody_at_job_closure": {
+        "recorded_unchanged": true,
+        "changed_sources": [],
+        "changed_modes": [],
+        "UID_additions": {
+          "scripts/acts/act2/cylinder_perimeter.gd.uid": {
+            "executable_bits": 0,
+            "identity": "uid://s7cv6cux3i77",
+            "sha256": "e7077109d30c73d3c6b4a6c966a6630f3dd6447055c5d0dafaf4fb9049690ce6",
+            "stat_mode": "0o644"
+          },
+          "scripts/acts/act2/cylinder_perimeter_kit.gd.uid": {
+            "executable_bits": 0,
+            "identity": "uid://dx8s3hl886o40",
+            "sha256": "284be796db1f8872ba5a59551aed43d4bfd7333f1da95ae3e9b4f78af03d376f",
+            "stat_mode": "0o644"
+          },
+          "tests/acts/act2/a2_o1_focused_smoke.gd.uid": {
+            "executable_bits": 0,
+            "identity": "uid://c0pjae007gpaj",
+            "sha256": "3b0f1dd20e9edd9345f15b9c719e76e182a535ef78a4eb913acab3702cd6c2c6",
+            "stat_mode": "0o644"
+          },
+          "tests/acts/act2/a2_o1_loading_side_smoke.gd.uid": {
+            "executable_bits": 0,
+            "identity": "uid://dmjw67bbrxhqv",
+            "sha256": "528a4b5381c2d180376971ccb86e52877f05b346b0d55b57e1c15784044efa00",
+            "stat_mode": "0o644"
+          }
+        },
+        "UID_presence_changes": {
+          "scripts/acts/act2/cylinder_perimeter.gd.uid": {
+            "after": true,
+            "before": false
+          },
+          "scripts/acts/act2/cylinder_perimeter_kit.gd.uid": {
+            "after": true,
+            "before": false
+          },
+          "tests/acts/act2/a2_o1_focused_smoke.gd.uid": {
+            "after": true,
+            "before": false
+          },
+          "tests/acts/act2/a2_o1_loading_side_smoke.gd.uid": {
+            "after": true,
+            "before": false
+          }
+        },
+        "import_presence_changes": {}
+      },
+      "claim": "Import/metadata custody only, no native gameplay/pixels"
+    },
+    {
+      "id": "loading48",
+      "directory": "docs/acts/act2/evidence/A2-O1/loading-side-corrected",
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-corrected/source.json",
+        "sha256": "05b1b04dcc5cb06552d06db5c2fbdd4eb38718ec92ce36db905f3c44f8f54bf1",
+        "bytes": 198898,
+        "stat_mode": "0o644"
+      },
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-corrected/result.json",
+        "sha256": "174f76b7505698c9700c765b63270df058e0b3769271125694868ccbaae40684",
+        "bytes": 3529,
+        "stat_mode": "0o644"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-corrected/manifest-original.json",
+        "sha256": "06b56973494ba6a3ee12991128c9a3cc49cc9be95781934ece580599cd5631ca",
+        "bytes": 1967,
+        "stat_mode": "0o644"
+      },
+      "recorder": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-corrected/recorder-original.py",
+        "sha256": "93e99402241e234bc9cb156215f6be907ef217e1c4e83664042a43506bc959aa",
+        "bytes": 21406,
+        "stat_mode": "0o644"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o1-loading-side-corrected.log",
+        "--headless",
+        "--script",
+        "res://tests/acts/act2/a2_o1_loading_side_smoke.gd"
+      ],
+      "recorded_head": "2ae15df0ae795d45a949e6b63c230794daf269ba",
+      "shared_publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+      "api_revision": "campaign-shared-47",
+      "selected_source_count": 592,
+      "component_pins": {
+        "scenes/acts/act2/a2_o1.tscn": "6ebc29e80ab4ad9f87e64912364b887d4241bad9915f30d73e02c8b5b7190a6c",
+        "scripts/acts/act2/cylinder_perimeter.gd": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+        "scripts/acts/act2/cylinder_perimeter_kit.gd": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+        "tests/acts/act2/a2_o1_focused_smoke.gd": "ff442c2c3da9ae8f07c6d0f53a84d5fd8627030c933359ecafcbb956c09ab593",
+        "tests/acts/act2/a2_o1_loading_side_smoke.gd": "4b2cdaf97f0791b5f013d0e5e2e6425a00d2ee2902cc5489d61c28485889c21a"
+      },
+      "mode": "engine",
+      "exit_code": 0,
+      "scope_complete": true,
+      "footer": [
+        {
+          "checks": 48,
+          "failures": 0,
+          "scope": "production loading/paused exact disk active Continue/fixed profile/malformed atomic refusal/public fatal Retry/real optional contacts and stamp/protected Journey return/cleanup. TEST prior prefix/readiness and contact placements; no full route/ordinary combat/art/balance/mobile claim"
+        }
+      ],
+      "assertion_reporting": "count-only",
+      "raw": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-corrected/raw.log",
+        "sha256": "2bf29bf3086d7036e80d81541726a5c2534c04a9a25be4c6c99867cf0e6ef356",
+        "bytes": 638,
+        "stat_mode": "0o644"
+      },
+      "wrapper": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-corrected/wrapper.log",
+        "sha256": "2bf29bf3086d7036e80d81541726a5c2534c04a9a25be4c6c99867cf0e6ef356",
+        "bytes": 638,
+        "stat_mode": "0o644"
+      },
+      "raw_wrapper_equal": true,
+      "source_custody_at_job_closure": {
+        "recorded_unchanged": true,
+        "changed_sources": [],
+        "changed_modes": [],
+        "UID_additions": {},
+        "UID_presence_changes": {},
+        "import_presence_changes": {}
+      },
+      "claim": "Qualified production Shell optional loading/transport/retry/side-return/contact/completion and cleanup"
+    },
+    {
+      "id": "focused57",
+      "directory": "docs/acts/act2/evidence/A2-O1/focused-native-first",
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-native-first/source.json",
+        "sha256": "1a0f477686fad6e1d93695a2de73c010a752543ee66a6ce8a27d327b72e3c93f",
+        "bytes": 198909,
+        "stat_mode": "0o644"
+      },
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-native-first/result.json",
+        "sha256": "d81cc2c72324c4cd58cf412b053352c31303821afa8b7ae495dca965d6262a4b",
+        "bytes": 2909,
+        "stat_mode": "0o644"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-native-first/manifest-original.json",
+        "sha256": "9e5d892fa8f776894e1d5811ab7ff070c4df14b38d52f8ee2c22182106a5e298",
+        "bytes": 1993,
+        "stat_mode": "0o644"
+      },
+      "recorder": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-native-first/recorder-original.py",
+        "sha256": "93e99402241e234bc9cb156215f6be907ef217e1c4e83664042a43506bc959aa",
+        "bytes": 21406,
+        "stat_mode": "0o644"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o1-focused-native-first.log",
+        "--headless",
+        "--script",
+        "res://tests/acts/act2/a2_o1_focused_smoke.gd"
+      ],
+      "recorded_head": "2ae15df0ae795d45a949e6b63c230794daf269ba",
+      "shared_publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+      "api_revision": "campaign-shared-47",
+      "selected_source_count": 592,
+      "component_pins": {
+        "scenes/acts/act2/a2_o1.tscn": "6ebc29e80ab4ad9f87e64912364b887d4241bad9915f30d73e02c8b5b7190a6c",
+        "scripts/acts/act2/cylinder_perimeter.gd": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+        "scripts/acts/act2/cylinder_perimeter_kit.gd": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+        "tests/acts/act2/a2_o1_focused_smoke.gd": "ff442c2c3da9ae8f07c6d0f53a84d5fd8627030c933359ecafcbb956c09ab593",
+        "tests/acts/act2/a2_o1_loading_side_smoke.gd": "4b2cdaf97f0791b5f013d0e5e2e6425a00d2ee2902cc5489d61c28485889c21a"
+      },
+      "mode": "engine",
+      "exit_code": 0,
+      "scope_complete": true,
+      "footer": [
+        {
+          "checks": 57,
+          "failures": 0,
+          "scope": "scope_complete=true; ordinary native response + representative contacts/brief portraits, no full-route/Shell-return claim"
+        }
+      ],
+      "assertion_reporting": "count-only",
+      "raw": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-native-first/raw.log",
+        "sha256": "800468c747a988a732829decfb0f0b27230eb61ddd901f620c62d030aced6070",
+        "bytes": 257,
+        "stat_mode": "0o644"
+      },
+      "wrapper": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-native-first/wrapper.log",
+        "sha256": "5f926f94148b079c5d88231b7caef8d5f1f091607fc2f0498a7693af84e771d6",
+        "bytes": 306,
+        "stat_mode": "0o644"
+      },
+      "raw_wrapper_equal": false,
+      "source_custody_at_job_closure": {
+        "recorded_unchanged": true,
+        "changed_sources": [],
+        "changed_modes": [],
+        "UID_additions": {},
+        "UID_presence_changes": {},
+        "import_presence_changes": {}
+      },
+      "claim": "Qualified actual native ordinary response plus representative local contacts/public requests and cleanup"
+    },
+    {
+      "id": "loading_first37_1",
+      "directory": "docs/acts/act2/evidence/A2-O1/loading-side-first",
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-first/source.json",
+        "sha256": "7a19c7b3118c7fe59a85f86ac1e8af4f273ded4b40a04dad9ab41cda5fc9539f",
+        "bytes": 198894,
+        "stat_mode": "0o644"
+      },
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-first/result.json",
+        "sha256": "576b5d2f25ddc94acab229e2c6aa5cfd1bfb8c1d2ea5cccc63e96b967c771257",
+        "bytes": 3653,
+        "stat_mode": "0o644"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-first/manifest-original.json",
+        "sha256": "2d833c3db9987b8a5885f6aff82560d5be89f835c0db22bba21416d3dc208689",
+        "bytes": 1967,
+        "stat_mode": "0o644"
+      },
+      "recorder": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-first/recorder-original.py",
+        "sha256": "93e99402241e234bc9cb156215f6be907ef217e1c4e83664042a43506bc959aa",
+        "bytes": 21406,
+        "stat_mode": "0o644"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o1-loading-side-first.log",
+        "--headless",
+        "--script",
+        "res://tests/acts/act2/a2_o1_loading_side_smoke.gd"
+      ],
+      "recorded_head": "2ae15df0ae795d45a949e6b63c230794daf269ba",
+      "shared_publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+      "api_revision": "campaign-shared-47",
+      "selected_source_count": 592,
+      "component_pins": {
+        "scenes/acts/act2/a2_o1.tscn": "6ebc29e80ab4ad9f87e64912364b887d4241bad9915f30d73e02c8b5b7190a6c",
+        "scripts/acts/act2/cylinder_perimeter.gd": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+        "scripts/acts/act2/cylinder_perimeter_kit.gd": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+        "tests/acts/act2/a2_o1_focused_smoke.gd": "ff442c2c3da9ae8f07c6d0f53a84d5fd8627030c933359ecafcbb956c09ab593",
+        "tests/acts/act2/a2_o1_loading_side_smoke.gd": "ec1fb6c96a2a7772b109269ad1e870d91fb52ded1b75f5db9c41fb9334e8afcd"
+      },
+      "mode": "engine",
+      "exit_code": 1,
+      "scope_complete": false,
+      "footer": [
+        {
+          "checks": 37,
+          "failures": 1,
+          "scope": "production loading/paused exact disk active Continue/fixed profile/malformed atomic refusal/public fatal Retry/real optional contacts and stamp/protected Journey return/cleanup. TEST prior prefix/readiness and contact placements; no full route/ordinary combat/art/balance/mobile claim"
+        }
+      ],
+      "assertion_reporting": "count-only",
+      "raw": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-first/raw.log",
+        "sha256": "4069443095ae523a796e774c2e455ca08d44970febf6274b1b262ab8c3e64034",
+        "bytes": 1082,
+        "stat_mode": "0o644"
+      },
+      "wrapper": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-first/wrapper.log",
+        "sha256": "4069443095ae523a796e774c2e455ca08d44970febf6274b1b262ab8c3e64034",
+        "bytes": 1082,
+        "stat_mode": "0o644"
+      },
+      "raw_wrapper_equal": true,
+      "source_custody_at_job_closure": {
+        "recorded_unchanged": true,
+        "changed_sources": [],
+        "changed_modes": [],
+        "UID_additions": {},
+        "UID_presence_changes": {},
+        "import_presence_changes": {}
+      },
+      "claim": "Immutable failed TEST checkpoint freeze expectation; not accepted"
+    },
+    {
+      "id": "portrait_first20_4",
+      "directory": "docs/acts/act2/evidence/A2-O1/focused-portrait-first",
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-first/source.json",
+        "sha256": "22c2f598bccefbb4eca9bc7d8744102633019265a74d41bfc4bc345cee1db9c6",
+        "bytes": 199113,
+        "stat_mode": "0o644"
+      },
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-first/result.json",
+        "sha256": "1008d28e9403f41d51cbfe5f125b8655c9fea3268349a5d152a21913b525dd08",
+        "bytes": 3236,
+        "stat_mode": "0o644"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-first/manifest-original.json",
+        "sha256": "2870e92e715908551011a587d38d2fcb349270a9645e1760cb340b2846fc74c9",
+        "bytes": 2141,
+        "stat_mode": "0o644"
+      },
+      "recorder": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-first/recorder-original.py",
+        "sha256": "93e99402241e234bc9cb156215f6be907ef217e1c4e83664042a43506bc959aa",
+        "bytes": 21406,
+        "stat_mode": "0o644"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o1-focused-portrait-first.log",
+        "--script",
+        "res://tests/acts/act2/a2_o1_focused_smoke.gd",
+        "--",
+        "--a2-o1-portraits",
+        "--a2-o1-capture-root=res://docs/acts/act2/evidence/A2-O1/focused-portrait-first/images/"
+      ],
+      "recorded_head": "2ae15df0ae795d45a949e6b63c230794daf269ba",
+      "shared_publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+      "api_revision": "campaign-shared-47",
+      "selected_source_count": 592,
+      "component_pins": {
+        "scenes/acts/act2/a2_o1.tscn": "6ebc29e80ab4ad9f87e64912364b887d4241bad9915f30d73e02c8b5b7190a6c",
+        "scripts/acts/act2/cylinder_perimeter.gd": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+        "scripts/acts/act2/cylinder_perimeter_kit.gd": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+        "tests/acts/act2/a2_o1_focused_smoke.gd": "ff442c2c3da9ae8f07c6d0f53a84d5fd8627030c933359ecafcbb956c09ab593",
+        "tests/acts/act2/a2_o1_loading_side_smoke.gd": "4b2cdaf97f0791b5f013d0e5e2e6425a00d2ee2902cc5489d61c28485889c21a"
+      },
+      "mode": "engine",
+      "exit_code": 1,
+      "scope_complete": false,
+      "footer": [
+        {
+          "checks": 20,
+          "failures": 4,
+          "scope": "scope_complete=false; ordinary native response + representative contacts/brief portraits, no full-route/Shell-return claim"
+        }
+      ],
+      "assertion_reporting": "count-only",
+      "raw": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-first/raw.log",
+        "sha256": "c5d153c6a694f2c43cf6a4109d066ef159e182ffa8ef91572c5a8bd55b84c975",
+        "bytes": 2155,
+        "stat_mode": "0o644"
+      },
+      "wrapper": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-first/wrapper.log",
+        "sha256": "70fa4a395b18e201bdb6b73fb8bc4ee3cee2d0c7464f8c7b9c07648873d94e7b",
+        "bytes": 2204,
+        "stat_mode": "0o644"
+      },
+      "raw_wrapper_equal": false,
+      "source_custody_at_job_closure": {
+        "recorded_unchanged": true,
+        "changed_sources": [],
+        "changed_modes": [],
+        "UID_additions": {},
+        "UID_presence_changes": {},
+        "import_presence_changes": {}
+      },
+      "claim": "Immutable failed graphics; single paused entry image, no accepted portrait or ordinary response from this run"
+    },
+    {
+      "id": "extremes82",
+      "directory": "docs/acts/act2/evidence/A2-O1/focused-equipment-extremes-first",
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-equipment-extremes-first/source.json",
+        "sha256": "4cbd60711a14598b178ecd400209e566e89ba9694a6d89a9839d0769e3dfea4e",
+        "bytes": 199738,
+        "stat_mode": "0o644"
+      },
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-equipment-extremes-first/result.json",
+        "sha256": "1796e84ac4afb9c07d6e1cf2372a185dc55ed1133ff2dcc3bd6ce6176edbe24f",
+        "bytes": 9968,
+        "stat_mode": "0o644"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-equipment-extremes-first/manifest-original.json",
+        "sha256": "8a23d5fc1463e75c7cf2cf81d57d58d95325d3b8ffb5211355eb383e2b9d6a4d",
+        "bytes": 2076,
+        "stat_mode": "0o644"
+      },
+      "recorder": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-equipment-extremes-first/recorder-original.py",
+        "sha256": "93e99402241e234bc9cb156215f6be907ef217e1c4e83664042a43506bc959aa",
+        "bytes": 21406,
+        "stat_mode": "0o644"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o1-focused-equipment-extremes-first.log",
+        "--headless",
+        "--script",
+        "res://tests/acts/act2/a2_o1_focused_smoke.gd",
+        "--",
+        "--a2-o1-extremes"
+      ],
+      "recorded_head": "2ae15df0ae795d45a949e6b63c230794daf269ba",
+      "head_qualification": "Actual frozen working-tree component pins, not an assertion that every fixture derivative was already committed at this recorded pre-test HEAD.",
+      "shared_publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+      "api_revision": "campaign-shared-47",
+      "selected_source_count": 594,
+      "component_pins": {
+        "scenes/acts/act2/a2_o1.tscn": "6ebc29e80ab4ad9f87e64912364b887d4241bad9915f30d73e02c8b5b7190a6c",
+        "scripts/acts/act2/cylinder_perimeter.gd": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+        "scripts/acts/act2/cylinder_perimeter_kit.gd": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+        "tests/acts/act2/a2_o1_focused_smoke.gd": "1223876604717e1f3704d8b2e601ed480237a6c4383620cd0c089da90723d6ad",
+        "tests/acts/act2/a2_o1_loading_side_smoke.gd": "4b2cdaf97f0791b5f013d0e5e2e6425a00d2ee2902cc5489d61c28485889c21a"
+      },
+      "mode": "engine",
+      "exit_code": 0,
+      "scope_complete": true,
+      "footer": [
+        {
+          "checks": 82,
+          "failures": 0,
+          "scope": "scope_complete=true; two initial legal static loadouts, native ordinary escape/return/noammo primary/cadence/cleanup; no contacts/portraits/full-route/all-kit balance claim"
+        }
+      ],
+      "assertion_reporting": "count-only",
+      "raw": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-equipment-extremes-first/raw.log",
+        "sha256": "501662f74f1077a55e82b524e47d6dd17635ab5fae88f6f73b293cde61d0a31a",
+        "bytes": 6629,
+        "stat_mode": "0o644"
+      },
+      "wrapper": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-equipment-extremes-first/wrapper.log",
+        "sha256": "501662f74f1077a55e82b524e47d6dd17635ab5fae88f6f73b293cde61d0a31a",
+        "bytes": 6629,
+        "stat_mode": "0o644"
+      },
+      "raw_wrapper_equal": true,
+      "source_custody_at_job_closure": {
+        "recorded_unchanged": true,
+        "changed_sources": [],
+        "changed_modes": [],
+        "UID_additions": {},
+        "UID_presence_changes": {},
+        "import_presence_changes": {}
+      },
+      "claim": "Two initial canonical legal static equipment extremes, unchanged native ordinary Scout response/noammo primary/full cadence/cleanup; no contacts/portraits/all-kit balance.",
+      "job_watch": {
+        "child_exited": true,
+        "engine_banner_observed": true,
+        "owned_wrapper_pid": 61472,
+        "queue_wait_has_no_timeout": true,
+        "started_job_limit_s": 180.0,
+        "termination": "",
+        "wrapper_stream_complete": true
+      }
+    },
+    {
+      "id": "portrait84",
+      "directory": "docs/acts/act2/evidence/A2-O1/focused-portrait-typed-final",
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-typed-final/source.json",
+        "sha256": "1e32f959c274ecc549499943bcc884e3430d58816f9838142739505df5adad34",
+        "bytes": 200765,
+        "stat_mode": "0o644"
+      },
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-typed-final/result.json",
+        "sha256": "c3d260d526f9d4dd9debe27874f3f889438f795403fa8e64cbe0a31821b97475",
+        "bytes": 3847,
+        "stat_mode": "0o644"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-typed-final/manifest-original.json",
+        "sha256": "4ea6216ec7236f16fa96426dd685a37ce0aae860d656a81697d6f8d2f4d2fbb5",
+        "bytes": 3060,
+        "stat_mode": "0o644"
+      },
+      "recorder": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-typed-final/recorder-original.py",
+        "sha256": "93e99402241e234bc9cb156215f6be907ef217e1c4e83664042a43506bc959aa",
+        "bytes": 21406,
+        "stat_mode": "0o644"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o1-focused-portrait-typed-final.log",
+        "--script",
+        "res://tests/acts/act2/a2_o1_focused_smoke.gd",
+        "--",
+        "--a2-o1-portraits",
+        "--a2-o1-capture-root=res://docs/acts/act2/evidence/A2-O1/focused-portrait-typed-final/images/"
+      ],
+      "recorded_head": "2ae15df0ae795d45a949e6b63c230794daf269ba",
+      "head_qualification": "Actual frozen working-tree component pins, not an assertion that every fixture derivative was already committed at this recorded pre-test HEAD.",
+      "shared_publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+      "api_revision": "campaign-shared-47",
+      "selected_source_count": 594,
+      "component_pins": {
+        "scenes/acts/act2/a2_o1.tscn": "6ebc29e80ab4ad9f87e64912364b887d4241bad9915f30d73e02c8b5b7190a6c",
+        "scripts/acts/act2/cylinder_perimeter.gd": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+        "scripts/acts/act2/cylinder_perimeter_kit.gd": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+        "tests/acts/act2/a2_o1_focused_smoke.gd": "eac14159c2ad7bedbdfe913056dc26d260223d9dc1b289cb8fa9f64c16788a60",
+        "tests/acts/act2/a2_o1_loading_side_smoke.gd": "4b2cdaf97f0791b5f013d0e5e2e6425a00d2ee2902cc5489d61c28485889c21a"
+      },
+      "mode": "engine",
+      "exit_code": 0,
+      "scope_complete": true,
+      "footer": [
+        {
+          "checks": 84,
+          "failures": 0,
+          "scope": "scope_complete=true; ordinary native response + representative contacts/brief portraits, no full-route/Shell-return claim"
+        }
+      ],
+      "assertion_reporting": "count-only",
+      "raw": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-typed-final/raw.log",
+        "sha256": "78ff131a1fa24aa5013acdbad259133d69d7987397061cc9e1cc9986b9d26ce7",
+        "bytes": 334,
+        "stat_mode": "0o644"
+      },
+      "wrapper": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-typed-final/wrapper.log",
+        "sha256": "78ff131a1fa24aa5013acdbad259133d69d7987397061cc9e1cc9986b9d26ce7",
+        "bytes": 334,
+        "stat_mode": "0o644"
+      },
+      "raw_wrapper_equal": true,
+      "source_custody_at_job_closure": {
+        "recorded_unchanged": true,
+        "changed_sources": [],
+        "changed_modes": [],
+        "UID_additions": {},
+        "UID_presence_changes": {},
+        "import_presence_changes": {}
+      },
+      "claim": "Four actual post-draw portrait states, exact metadata and native component/contact assertions; art remains separate captured-state inspection.",
+      "job_watch": {
+        "child_exited": true,
+        "engine_banner_observed": true,
+        "owned_wrapper_pid": 89259,
+        "queue_wait_has_no_timeout": true,
+        "started_job_limit_s": 180.0,
+        "termination": "",
+        "wrapper_stream_complete": true
+      }
+    },
+    {
+      "id": "portrait_resumed84_1",
+      "directory": "docs/acts/act2/evidence/A2-O1/focused-portrait-resumed",
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-resumed/source.json",
+        "sha256": "4d52f9278942ac1b6247ee280542b8dbb5decf92164caffcc1288ad979b3f069",
+        "bytes": 200086,
+        "stat_mode": "0o644"
+      },
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-resumed/result.json",
+        "sha256": "ab911d54ece8d368f1c759670de4ac19995e8ddc58efb4b6ad69e8458b3d2df7",
+        "bytes": 3239,
+        "stat_mode": "0o644"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-resumed/manifest-original.json",
+        "sha256": "fd742b0111b61c96f87132ae769b22c7558cdd3520f21472b879cd42f310ba11",
+        "bytes": 2385,
+        "stat_mode": "0o644"
+      },
+      "recorder": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-resumed/recorder-original.py",
+        "sha256": "93e99402241e234bc9cb156215f6be907ef217e1c4e83664042a43506bc959aa",
+        "bytes": 21406,
+        "stat_mode": "0o644"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o1-focused-portrait-resumed.log",
+        "--script",
+        "res://tests/acts/act2/a2_o1_focused_smoke.gd",
+        "--",
+        "--a2-o1-portraits",
+        "--a2-o1-capture-root=res://docs/acts/act2/evidence/A2-O1/focused-portrait-resumed/images/"
+      ],
+      "recorded_head": "2ae15df0ae795d45a949e6b63c230794daf269ba",
+      "head_qualification": "Actual frozen working-tree component pins, not an assertion that every fixture derivative was already committed at this recorded pre-test HEAD.",
+      "shared_publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+      "api_revision": "campaign-shared-47",
+      "selected_source_count": 594,
+      "component_pins": {
+        "scenes/acts/act2/a2_o1.tscn": "6ebc29e80ab4ad9f87e64912364b887d4241bad9915f30d73e02c8b5b7190a6c",
+        "scripts/acts/act2/cylinder_perimeter.gd": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+        "scripts/acts/act2/cylinder_perimeter_kit.gd": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+        "tests/acts/act2/a2_o1_focused_smoke.gd": "1223876604717e1f3704d8b2e601ed480237a6c4383620cd0c089da90723d6ad",
+        "tests/acts/act2/a2_o1_loading_side_smoke.gd": "4b2cdaf97f0791b5f013d0e5e2e6425a00d2ee2902cc5489d61c28485889c21a"
+      },
+      "mode": "engine",
+      "exit_code": 1,
+      "scope_complete": false,
+      "footer": [
+        {
+          "checks": 84,
+          "failures": 1,
+          "scope": "scope_complete=true; ordinary native response + representative contacts/brief portraits, no full-route/Shell-return claim"
+        }
+      ],
+      "assertion_reporting": "count-only",
+      "raw": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-resumed/raw.log",
+        "sha256": "52c332455695b0c2ee15a5288741907d93dee9e1bb643dedfc51aa7dedf5b3ea",
+        "bytes": 702,
+        "stat_mode": "0o644"
+      },
+      "wrapper": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-resumed/wrapper.log",
+        "sha256": "52c332455695b0c2ee15a5288741907d93dee9e1bb643dedfc51aa7dedf5b3ea",
+        "bytes": 702,
+        "stat_mode": "0o644"
+      },
+      "raw_wrapper_equal": true,
+      "source_custody_at_job_closure": {
+        "recorded_unchanged": true,
+        "changed_sources": [],
+        "changed_modes": [],
+        "UID_additions": {},
+        "UID_presence_changes": {},
+        "import_presence_changes": {}
+      },
+      "claim": "FAILED metadata serialization, all originals preserved; no acceptance.",
+      "job_watch": {
+        "child_exited": true,
+        "engine_banner_observed": true,
+        "owned_wrapper_pid": 53970,
+        "queue_wait_has_no_timeout": true,
+        "started_job_limit_s": 180.0,
+        "termination": "",
+        "wrapper_stream_complete": true
+      }
+    },
+    {
+      "id": "portrait_typed_incomplete",
+      "directory": "docs/acts/act2/evidence/A2-O1/focused-portrait-metadata-fixed",
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-metadata-fixed/source.json",
+        "sha256": "7bf5bbd1095c192d7b5be06532903f9e203f4b38be6ade3eab025d904bda248c",
+        "bytes": 200627,
+        "stat_mode": "0o644"
+      },
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-metadata-fixed/result.json",
+        "sha256": "b21593e4b862fc7db2c68f79fa07d0a394842ad7a5b968d2701a1d6c3d1d1343",
+        "bytes": 3118,
+        "stat_mode": "0o644"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-metadata-fixed/manifest-original.json",
+        "sha256": "809d217ee2c12c3baa9034fa4f58392e12bbb30ff31217138df492d65f60342c",
+        "bytes": 2919,
+        "stat_mode": "0o644"
+      },
+      "recorder": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-metadata-fixed/recorder-original.py",
+        "sha256": "93e99402241e234bc9cb156215f6be907ef217e1c4e83664042a43506bc959aa",
+        "bytes": 21406,
+        "stat_mode": "0o644"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o1-focused-portrait-metadata-fixed.log",
+        "--script",
+        "res://tests/acts/act2/a2_o1_focused_smoke.gd",
+        "--",
+        "--a2-o1-portraits",
+        "--a2-o1-capture-root=res://docs/acts/act2/evidence/A2-O1/focused-portrait-metadata-fixed/images/"
+      ],
+      "recorded_head": "2ae15df0ae795d45a949e6b63c230794daf269ba",
+      "head_qualification": "Actual frozen working-tree component pins, not an assertion that every fixture derivative was already committed at this recorded pre-test HEAD.",
+      "shared_publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+      "api_revision": "campaign-shared-47",
+      "selected_source_count": 594,
+      "component_pins": {
+        "scenes/acts/act2/a2_o1.tscn": "6ebc29e80ab4ad9f87e64912364b887d4241bad9915f30d73e02c8b5b7190a6c",
+        "scripts/acts/act2/cylinder_perimeter.gd": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+        "scripts/acts/act2/cylinder_perimeter_kit.gd": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+        "tests/acts/act2/a2_o1_focused_smoke.gd": "63ededc93f19abc8bb018a747c57f2df2b2be73b97a592aa28a581228b1a3cac",
+        "tests/acts/act2/a2_o1_loading_side_smoke.gd": "4b2cdaf97f0791b5f013d0e5e2e6425a00d2ee2902cc5489d61c28485889c21a"
+      },
+      "mode": "engine",
+      "exit_code": -15,
+      "scope_complete": false,
+      "footer": [],
+      "assertion_reporting": "count-only",
+      "raw": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-metadata-fixed/raw.log",
+        "sha256": "a77d25b0d0aac9266dda1c2e2f496cc9fc02232ccc17f90cc9e8e753f9ea57d2",
+        "bytes": 572,
+        "stat_mode": "0o644"
+      },
+      "wrapper": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-metadata-fixed/wrapper.log",
+        "sha256": "ad9d581a949b362db11f9c61f9ce72960d760282697b8a2347cd3ca55c572d5c",
+        "bytes": 665,
+        "stat_mode": "0o644"
+      },
+      "raw_wrapper_equal": false,
+      "source_custody_at_job_closure": {
+        "recorded_unchanged": true,
+        "changed_sources": [],
+        "changed_modes": [],
+        "UID_additions": {},
+        "UID_presence_changes": {},
+        "import_presence_changes": {}
+      },
+      "claim": "INCOMPLETE typed Array diagnostic script error, recorder terminated own job; no footer/acceptance.",
+      "job_watch": {
+        "child_exited": true,
+        "engine_banner_observed": true,
+        "owned_wrapper_pid": 83543,
+        "queue_wait_has_no_timeout": true,
+        "started_job_limit_s": 180.0,
+        "termination": "script_error_incomplete_scope",
+        "wrapper_stream_complete": true
+      }
+    }
+  ],
+  "categories": [
+    {
+      "category": "Mechanics",
+      "status": "focused57/0 and selected legal-equipment82/0 passed",
+      "evidence": [
+        "focused57",
+        "extremes82"
+      ],
+      "covered": [
+        "Actual ordinary west Scout warning/armed lock/active/recovery; accepted supported tracking proof/full1.10 lock; native priority120 public dash/ordinary slash and actual one-tick action-start/readiness.",
+        "One actual low-housing hit after explicit public Hero.shells=0, no blast, full primary cooldown in retained recovery, no Hero HP loss and source remains alive.",
+        "Independent five TEST Hero positions resolve actual east/west/north unsorted contact order, repeat suppression, once before-final checkpoint, living-Scout collection completion and separate once-only exit request."
+      ],
+      "limits": [
+        "Public methods do not establish routed gesture input; five TEST placements are not earned navigation.",
+        "No exact theoretical-to-actual complete path identity assertion, fullroute/all-defeats/all-loadout or balance claim."
+      ],
+      "pending": []
+    },
+    {
+      "category": "Loading",
+      "status": "focused loading48/0 passed",
+      "evidence": [
+        "loading48"
+      ],
+      "covered": [
+        "Actual production O1 scene through public optional Shell/menu signal flow, actual protected pristine A2-L2 story, initial full12-key local tuple, two actual Scouts/floor/profile with no fabricated cycles/contacts.",
+        "Public Resume/Pause/Title and different saved/current preferences; entry Resume-menu tap is consumed without action/state change."
+      ],
+      "limits": [
+        "Isolated TEST readiness and prior-main prefix; no canonical O1 acceptance or earned parent clear.",
+        "Menu signals/tap-consumption assertion are not pointer/button hit-testing."
+      ]
+    },
+    {
+      "category": "Transitions",
+      "status": "focused loading48/0 and local focused57/0 passed",
+      "evidence": [
+        "loading48",
+        "focused57"
+      ],
+      "covered": [
+        "Actual optional completion awards exactly A2-O1-completion-stamp while protecting complete story; completion and exit are distinct.",
+        "Early abandon grants no stamp/main progress; completed stable exit returns actual Journey/protected A2-L2 story; explicit Continue Story offers paused Resume.",
+        "Living Scouts need not be defeated; main prefix does not advance from optional completion."
+      ],
+      "limits": [
+        "No complete earned O1 traversal or independent Integration registration/acceptance."
+      ]
+    },
+    {
+      "category": "Saves",
+      "status": "focused loading48/0 passed",
+      "evidence": [
+        "loading48"
+      ],
+      "covered": [
+        "Paused full real Player/local aggregate persisted to actual isolated disk; independent recipient restores exact active optional tuple quietly, saved Standard despite new Challenge preference.",
+        "Four malformed unknown/duplicate/future/north-pending contact/checkpoint tuples pure-refuse and restore-refuse atomically without changed exact capture.",
+        "Actual automatic checkpoint/completion drains followed by public Pause; durable before-final checkpoint stores final cycle0, north completion ends Scheduler danger."
+      ],
+      "limits": [
+        "Representative initial/contact-conditioned tuples; no every possible live cycle/save boundary or complete route claim."
+      ]
+    },
+    {
+      "category": "Retry",
+      "status": "focused loading48/0 passed",
+      "evidence": [
+        "loading48"
+      ],
+      "covered": [
+        "Public TEST shared lethal injury produces frozen dead side tuple; dead Resume preserves it.",
+        "Public Retry reinstalls exact earlier optional entrance/gear/HP/ammo/clocks/aim quietly without gameplay callbacks; protected story remains exact."
+      ],
+      "limits": [
+        "Fatality is explicit TEST injury, not observed enemy harm or earned combat route."
+      ]
+    },
+    {
+      "category": "Cleanup",
+      "status": "focused loading48/0 and focused57/0 passed",
+      "evidence": [
+        "loading48",
+        "focused57",
+        "extremes82",
+        "portrait84"
+      ],
+      "covered": [
+        "Old independent Shell/native subtree weakrefs disposed before fresh disk recipient; final full active descendants dispose.",
+        "Explicit production exit_level refuses source reactivation, all Main/native subtree/enemy/required-cue weakrefs/groups free.",
+        "Isolated test stores cleaned; canonical registry unchanged; audio/fps restored in fixture finish."
+      ],
+      "limits": [
+        "No sustained/performance/leak stress claim beyond actual focused disposal checks."
+      ]
+    },
+    {
+      "category": "Brief actual-pixel inspection",
+      "status": "final actualgraphical84/0 + owner/independent four-pixel captured-statePASS",
+      "evidence": [
+        "portrait84"
+      ],
+      "covered": [
+        "All four original540x1170 entry/armed Scout lock/collected journal/opened-exit images inspected with exact hashes/metadata.",
+        "Hero boots/ground, complete source/locked footprint and dry side landing room, contact and exit cues remain readable."
+      ],
+      "pending": [],
+      "limits": [
+        "Exact-contact spent page partly under Hero; fine support/rivet/piston details and exterior cylinder/cottage/pine context small/cropped.",
+        "No full-scene/lid/thread/excavation/all-pose/full-route/balance/performance/device acceptance.",
+        "Final Scout ordinary response is not separately exercised; prior final context refusal and west offscreen refusal from TEST contact repositioning retained."
+      ]
+    }
+  ],
+  "pending_final_evidence": {
+    "integration_acceptance_pending": {
+      "status": "Independent Integration review/registration is pending; O1 is not yet accepted",
+      "handoff_message": "Supplied by canonical mailbox after exact final documentation commit",
+      "acceptance": null
+    }
+  },
+  "existing_independent_reviews": [
+    {
+      "path": "docs/acts/act2/evidence/A2-O1/preparation-20261012/a2_o1_new_resource_import_independent_review_20261012.json",
+      "sha256": "4e0a80496ab72cba27dc74b1bec99f5c504fe945b39b24b9267fb57b00d9181d",
+      "bytes": 9221,
+      "stat_mode": "0o644"
+    },
+    {
+      "path": "docs/acts/act2/evidence/A2-O1/preparation-20261012/a2_o1_loading_side_corrected_independent_review_20261012.json",
+      "sha256": "6659087c40bddaf5cf919ca6d96578bc77e34ae4fac79f2eb878c840b5078e77",
+      "bytes": 10022,
+      "stat_mode": "0o644"
+    },
+    {
+      "path": "docs/acts/act2/evidence/A2-O1/preparation-20261012/a2_o1_focused_native_first_independent_review_20261012.json",
+      "sha256": "cf8369fa1a88e53f366b2bd968e1b863f919b4f1e25f6815e6536a3cde088603",
+      "bytes": 7709,
+      "stat_mode": "0o644"
+    },
+    {
+      "path": "docs/acts/act2/evidence/A2-O1/preparation-20261012/a2_o1_focused_fixture_independent_review_20261012.json",
+      "sha256": "35baa407cf199a1a7815da0fda8dc52f6351b0165d695a49a26078a8b1245153",
+      "bytes": 6631,
+      "stat_mode": "0o644"
+    },
+    {
+      "path": "docs/acts/act2/evidence/A2-O1/preparation-20261012/a2_o1_host_static_peer_review_20261012.json",
+      "sha256": "664410e689df2dfdcc8cbe50eafcaef425789718aac809a06bc1b199d78e77cd",
+      "bytes": 2693,
+      "stat_mode": "0o644"
+    },
+    {
+      "path": "docs/acts/act2/evidence/A2-O1/preparation-20261012/a2_o1_kit_v2_static_peer_review_20261012.json",
+      "sha256": "35f510b6ee1a01634d2650f4aeea9b57652cab3ed2a0a2927130c30d9de92a7d",
+      "bytes": 2005,
+      "stat_mode": "0o644"
+    }
+  ],
+  "runtime_art_and_source_provenance": {
+    "manifest": {
+      "path": "assets/acts/act2/cylinder_perimeter_manifest.json",
+      "sha256": "f7b9ca6e98f1f9bb47c1899383eb850e69d6886d79a3a14806e822acb6f6d86c",
+      "bytes": 15765,
+      "stat_mode": "0o644"
+    },
+    "reuse_brief": {
+      "path": "docs/acts/act2/evidence/A2-O1/preparation-20261012/a2_o1_source_asset_reuse_brief_20261012.json",
+      "sha256": "6b18b63e861f05e00ed3bfb4b63165bb816f78747cc5737631bfe2d11031daa4",
+      "bytes": 14946,
+      "stat_mode": "0o644"
+    },
+    "source_vocabulary": "Novel cylinder/heath/Heat-Ray vocabulary is source-based. Compact Ray Scout, visible bounded floor lane and slashable low housing are gameplay adaptations; mirror mechanism is narrator uncertainty. Three journal fragments are optional objective props, not source-authorized equipment/faction/escort/new attack. Rust-red/black/pale-ash keeps Act2 identity; no recoloured Moon/lab kit.",
+    "realized_as_authored_runtime": [
+      "Compact broad continuous dry O1 loop, host banks/stump native collision, original Heath cylinder/lid/rivets/pines/logs/heather/cottage materials/modules; shared ordinary two Scouts/warning grammar.",
+      "Exactly three collisionless available/open/spent paper journal props and one quiet hidden/open/spent timber exit marker; contact cues/progression remain host/shared authority."
+    ],
+    "adapted": [
+      "Original Heath leaf methods reused with O1 layout instead of parent build; cosmetic upper bank/stump local cutaway with persistent opaque base; static scenery adds no support or timing.",
+      "Novel cylinder/heath/Heat-Ray vocabulary becomes compact slashable Scout low housing and bounded visible ray lanes; journal props serve optional objective, not equipment or new faction."
+    ],
+    "deferred_or_untested": [
+      "Full navigation/playthrough, 3\u20135minute pacing estimate, whole-kit balance, all possible presentation states/poses, fine contrast/art fidelity and performance/device behavior.",
+      "No copied novel page text, atlas extraction or broader new environment/enemy kit; no perk/powerup offered."
+    ],
+    "native_scale_pivot_state_records": [
+      {
+        "id": "A2-O1-HEATH-LOOP",
+        "native_scale": "64x64 existing nearest material tiles at1.44m; dry overlay6.8x14.4,topY.004,.008,.010; exterior16x35.2 behind banks fills foreground throughZ14.0.",
+        "pivot": "Ground-centre planes, static original module foot/foundation roots.",
+        "states": "Static; no witness/eruption extras."
+      },
+      {
+        "id": "A2-O1-CENTRAL-TRUNK",
+        "native_scale": "7facet cylinderR.35/H1.2,root(0,0,-3.6); quiet16facet footprintR.35/topY.012.",
+        "pivot": "Ground feet(0,0,0),bodycenterY.6.",
+        "states": "Static."
+      },
+      {
+        "id": "A2-O1-JOURNALS-WEST-EAST-NORTH",
+        "native_scale": "Backing.58x.024x.82m; folded page.46x.016x.66; open pair.32x.016x.66 each, maxstate planar envelope approximately.72x.82m/topY.052.",
+        "pivot": "Exact grounded fragment roots in layout; root stays fixed in every visual state.",
+        "states": {
+          "available": "folded paper with five quiet ink lines",
+          "active": "two opened leaves",
+          "spent": "empty weathered backing",
+          "hidden": "root hidden"
+        }
+      },
+      {
+        "id": "A2-O1-EXIT-MARKER",
+        "native_scale": "Single grounded postH.60m plus.68x.15x.055 sign; state tilt maxheight approximately.65m.",
+        "pivot": "Exact root(0,0,-9.9),postfeet atlocalX-.35,Y0.",
+        "states": {
+          "available": "upright sign",
+          "active": "smallfixed-.08radtilt",
+          "spent": "fixed.28radtilt",
+          "hidden": "root hidden"
+        }
+      }
+    ],
+    "readiness_qualification": "Imported/executed in actual focused native states, four final actual pixels owner+independent captured-statePASS. Boards remain references; no full-scene/all-poses/balance/performance/device claim. Current owner records reconciled; independent Integration acceptance remains pending."
+  },
+  "design_validation": {
+    "query_receipt": {
+      "path": "docs/acts/act2/evidence/A2-O1/preparation-20261012/query-receipt.json",
+      "sha256": "8d8dcafe74321f1b74741d373700f42c5e664ea8343321578bd6270335842989",
+      "bytes": 1591,
+      "stat_mode": "0o644"
+    },
+    "required_canonical_validators": {
+      "path": "docs/acts/act2/evidence/A2-O1/preparation-20261012/required-canonical-validators.json",
+      "sha256": "5dd17fec3a3a2fe88f62a77f4608303a893e7c051e3334d9955d5895cdf33ce1",
+      "bytes": 2372,
+      "stat_mode": "0o644"
+    },
+    "recorded_existing_ids": [
+      "CLOTH-J0",
+      "CLOTH-P0",
+      "CLOTH-S0",
+      "WEAPON-01",
+      "CLOTH-S1",
+      "CLOTH-S2",
+      "WEAPON-02",
+      "WEAPON-03",
+      "WEAPON-04",
+      "CLOTH-J1",
+      "CLOTH-P1",
+      "CLOTH-P2"
+    ],
+    "new_equipment_or_ability_introductions": false,
+    "canonical_validators_recorded_exit0": true,
+    "scope": "Structural/numerical canonical validators only; no native encounter/human-balance credit."
+  },
+  "immutable_failure_history": {
+    "loading37_1": {
+      "packet": "loading_first37_1",
+      "diagnosis": {
+        "path": "docs/acts/act2/evidence/A2-O1/loading-side-expectation-fix/diagnosis.json",
+        "sha256": "4d7927e516428707d07523804aa159282ec4245ca9c0baaddf4ec69c14403797",
+        "bytes": 1138,
+        "stat_mode": "0o644"
+      },
+      "reason": "Original TEST expected paused immediately after shared automatically resumed live checkpoint/completion. Corrected public Pause/durable checkpoint expectation; no production change.",
+      "accepted": false
+    },
+    "portrait20_4": {
+      "packet": "portrait_first20_4",
+      "diagnosis": {
+        "path": "docs/acts/act2/evidence/A2-O1/portrait-focus-pause-diagnosis/diagnosis.json",
+        "sha256": "752e8d38a15861c0c1870cd755691acbae8fbe94bfc0a86c715153d57e5d0147",
+        "bytes": 1803,
+        "stat_mode": "0o644"
+      },
+      "reason": "Observed PAUSED entry pixel, native bounded readiness fails; focus-out source remains a plausible uninstrumented inference, not proven event cause.",
+      "accepted": false,
+      "original_entry_image": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-first/images/entry.png",
+        "sha256": "ff001f87c0c81625a20d2338c82b5e910c41aa0a683a83ef3a7834ede064f4c0",
+        "bytes": 45721,
+        "stat_mode": "0o644"
+      },
+      "original_metadata": {
+        "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-first/images/metadata.exact.json",
+        "sha256": "b0c403e6fcc23c8a1281c591f31ec80f36b6d19a5d4ff446ba06b7af3b378f6f",
+        "bytes": 10228,
+        "stat_mode": "0o644"
+      }
+    },
+    "portrait84_1": {
+      "packet": "portrait_resumed84_1",
+      "diagnosis": {
+        "path": "docs/acts/act2/evidence/A2-O1/portrait-metadata-diagnosis/diagnosis.json",
+        "sha256": "4409823c375d317a1cb9276daac56996e0785725145cc4994ed6d6072c112e46",
+        "bytes": 1912,
+        "stat_mode": "0o644"
+      },
+      "accepted": false
+    },
+    "portrait_typed_error": {
+      "packet": "portrait_typed_incomplete",
+      "diagnosis": {
+        "path": "docs/acts/act2/evidence/A2-O1/portrait-metadata-typed-budget-diagnosis/diagnosis.json",
+        "sha256": "e94356533b21ecd58d1be9a970ef6bb0377300dd6d2993124786263a8f54565b",
+        "bytes": 1510,
+        "stat_mode": "0o644"
+      },
+      "accepted": false
+    }
+  },
+  "owner_finalize_fields": [
+    "Canonical HANDOFF supplies exact final candidate commit; wait for independent Integration acceptance before implementing A2-O2."
+  ],
+  "next_level": "A2-O2 Clear Air Circuit",
+  "advance_condition": "Begin O2 only after separate canonical Integration acceptance of O1; no full-route/human-balance/mobile gate.",
+  "execution_limit": "No engine/import/Git/checkout writes by scaffold author; TMP only. All named closed packet credits keep actual47 and original source pins.",
+  "closed_final_evidence": {
+    "portrait_native_review": {
+      "path": "docs/acts/act2/evidence/A2-O1/focused-handoff-20261012/a2_o1_portrait_typed_final_independent_review_20261012.json",
+      "sha256": "96d368b499265ef912a1249c5b4e87393a03cd849fe36d5cd1b535f48cf15a76",
+      "bytes": 20173,
+      "stat_mode": "0o644"
+    },
+    "portrait_owner_review": {
+      "path": "docs/acts/act2/evidence/A2-O1/focused-handoff-20261012/owner-pixel-review.json",
+      "sha256": "14591f12afee9b97ce88f4d7f39518ea5bd794fe4abdfff03fd293d01efa637e",
+      "bytes": 4633,
+      "stat_mode": "0o644"
+    },
+    "portrait_independent_pixel_review": {
+      "path": "docs/acts/act2/evidence/A2-O1/focused-handoff-20261012/a2_o1_final_portrait_independent_review_20261012.json",
+      "sha256": "984a71261dbf6b72965ce690ce43b939d8975b6ec5139019dcc4f9d9ed22a946",
+      "bytes": 19481,
+      "stat_mode": "0o644"
+    },
+    "portrait_metadata": {
+      "path": "docs/acts/act2/evidence/A2-O1/focused-portrait-typed-final/images/metadata.exact.json",
+      "sha256": "94bd937baa867c1a5b2bb8e8c33ea3710e4265292ba583e7c1a32abe889ed5c0",
+      "bytes": 59094,
+      "stat_mode": "0o644"
+    },
+    "extremes_review": {
+      "path": "docs/acts/act2/evidence/A2-O1/preparation-20261012/a2_o1_equipment_extremes_independent_review_20261012.json",
+      "sha256": "e959516f16185b7281eb58e2eb723d72e306d9921eeff4d8845e4b39d0aa333e",
+      "bytes": 12621,
+      "stat_mode": "0o644"
+    },
+    "all_owned_jobs_closed": true,
+    "native_execution_baseline": "campaign-shared-47",
+    "strict_unsupported_fallbacks": "Final Resume events0 and oversized integer tags0; no new execution claim for those fallback branches. Final retained Vector2/Rect2 diagnostic content is actual."
+  },
+  "finalized_at": "2026-10-12T04:31:09.481467+00:00",
+  "native_execution_baseline": {
+    "api_revision": "campaign-shared-47",
+    "publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+    "merge_as_recorded_in_owned_frontier": "ef2db5cbb695dc43f5ab0abe5d7032341fa7db03",
+    "ack_as_recorded_in_owned_frontier": "5b8bca56-4355-482a-a6e9-a7a148cc3c6e",
+    "new_Shared48_publication_available_not_adopted": "c1d565301827c8e3cf268463fae8124d041abdd3",
+    "attribution": "Every currently recorded native result remains actual47. Any later exact preserving48 adoption must be a separate receipt/merge and supplies no new O1 native credit.",
+    "new_Shared49_publication_available_not_adopted": "9f73e65e5848c6747542b283bb0d9be3c75c8454"
+  },
+  "completed_adoption": {
+    "receipt": "docs/acts/act2/evidence/shared49-adoption/adoption.json",
+    "receipt_sha256": "ec79da0101ce9aa0c865c1925a63181f654aaedb4f11aa007204ca96fb4ebdfb",
+    "ack": "455133fc-35be-472b-b7e7-d4e72966b2e0",
+    "merge": "72b16cb9fe0dc285eec916bc3724087abf86be96",
+    "content_seal": "d8fb470f4b0bac4840900b908b80d323526f1f4d",
+    "scope_complete": true,
+    "findings": [],
+    "bounded_independent_review": {
+      "path": "docs/acts/act2/evidence/shared49-adoption/a2_shared49_actual_adoption_independent_review_20261012.json",
+      "sha256": "f91269215366f9b5187ad72bc79db00ed5b3d4df9554532de47cec2426be9d29",
+      "scope": "Actual receipt/merge parents/owned Git preservation/named shared publication\u2192merge\u2192current bytes and modes. Broad preservation counts retain owner-receipt scope."
+    }
+  }
+}
