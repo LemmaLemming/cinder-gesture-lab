@@ -1,0 +1,883 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-12T07:06:48.114346+00:00",
+  "level_id": "A2-O2",
+  "title": "Clear Air Circuit",
+  "kind": "optional",
+  "parent": "A2-L3",
+  "scene": "res://scenes/acts/act2/a2_o2.tscn",
+  "acceptance_policy": "focused-desktop-level-1",
+  "status": "Complete focused worker handoff; Integration independent acceptance/productionregistration pending",
+  "worker": {
+    "id": "01a11adf-a56f-77d2-a7bc-45fd94702ab1",
+    "checkout": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+    "branch": "codex/campaign-act2",
+    "owned_prefixes": [
+      "scripts/acts/act2/",
+      "scenes/acts/act2/",
+      "assets/acts/act2/",
+      "data/campaign/act2/",
+      "tests/acts/act2/",
+      "docs/acts/act2/"
+    ]
+  },
+  "content_seal": "4399c54c77d8334f899ca88c95a299e520bf0130",
+  "submission_candidate": "Exact final commit containing this index is in canonicalHANDOFF; self-containing document cannot embed its own commit/hash. Runtime seal, sourcepins and actualsharedmerge are separate below.",
+  "actual_adopted_shared": {
+    "api_revision": "campaign-shared-51",
+    "publication": "16311879af3e4dde69f96574d32572796bcf0d23",
+    "merge": "9de68faf8c431abe74229ff5b65e46a6ebc81a5b",
+    "ack": "bab8a47e-1c50-4c12-8389-c6e5e701e256",
+    "receipt": {
+      "path": "docs/acts/act2/evidence/shared51-adoption/adoption.json",
+      "sha256": "1c980662b01d16ce76e0a25be4c5d065fc58327f044b9af5a9a510fc9cf9dd01"
+    },
+    "independent_bounded_review": {
+      "path": "docs/acts/act2/evidence/shared51-adoption/actual-independent-review.json",
+      "sha256": "65488589a83662e6811bce5e67019843de6ff3ccd0a3eb41a4de08698c64a198"
+    },
+    "native_attribution": "All ownerclosed nativepackets retain actualShared50/9c0165bc; actualadoption gives no native/import/art/reacceptancecredit. Protocolchange spore-only and devsuitealias; Lane livephysics/damage/state/codec unchanged, detachednotificationguard separateRoot27/0. No O2scene/Player/actors/gear/HUD/camera/codec change from51."
+  },
+  "source_pins": {
+    "scripts/acts/act2/clear_air_circuit.gd": "084235779abe01c543471440fa06b86f239c3291668854196b4feb37f4b04e23",
+    "scripts/acts/act2/clear_air_circuit_kit.gd": "3433b437bab99975fce947739d5041c6dc85dbcaa1d79dbf9dfa8a9874d44970",
+    "scenes/acts/act2/a2_o2.tscn": "546aa9130dd45f4b96555736002660d0918783d01d688f38d407f5ed19453d0f",
+    "tests/acts/act2/a2_o2_loading_side_smoke.gd": "87c3cd25f7b375d9e4ad4d7d56160511a0b4c3373fe7df528d6d50fc52f642d0",
+    "tests/acts/act2/a2_o2_focused_smoke.gd": "3ce9870f2e4f1dffd08281611c7705dc05948aa7b58902b6ad6660197adcb6de",
+    "assets/acts/act2/clear_air_circuit_manifest.json": "16cc38424cc0eed89a5df947caee323390a5621e94dc3c7fbb8943a50151ba2e"
+  },
+  "actual_generated_uid_originals": {
+    "scripts/acts/act2/clear_air_circuit.gd.uid": {
+      "path": "scripts/acts/act2/clear_air_circuit.gd.uid",
+      "sha256": "cee2ec7ffcb43b157b7104e70d5500558bea1f71f994c5e8e2729d9c4c3152e0"
+    },
+    "scripts/acts/act2/clear_air_circuit_kit.gd.uid": {
+      "path": "scripts/acts/act2/clear_air_circuit_kit.gd.uid",
+      "sha256": "e64eab6083dfdb7b38f06fccae3373d9712b19b38d13593dc5fa4caaeda032cd"
+    },
+    "tests/acts/act2/a2_o2_loading_side_smoke.gd.uid": {
+      "path": "tests/acts/act2/a2_o2_loading_side_smoke.gd.uid",
+      "sha256": "f54723ccd3ddca6bf5c276b519ae27860b1a5aac7966333d49f2ce62e659dffe"
+    },
+    "tests/acts/act2/a2_o2_focused_smoke.gd.uid": {
+      "path": "tests/acts/act2/a2_o2_focused_smoke.gd.uid",
+      "sha256": "9dade2da5c28638764bc7f25294e70c6c7b06643019716a1207ed1a38cabbcfb"
+    }
+  },
+  "closed_packets": {
+    "import": {
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/source-import-after-scan-warning/result.json",
+        "sha256": "af4967be73abcb24e577571b59f6f3986972c1c8fd481c537acc0ff3a9a8855c"
+      },
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O2/source-import-after-scan-warning/source.json",
+        "sha256": "b557c7ed38ef92cfc4f7eec75423b84af8d37589dd34ee31a6493737c693c2d5"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O2/source-import-after-scan-warning/manifest-original.json",
+        "sha256": "eb2cf7c67b1a3b4b9c32111dd5ff579d2ac2ad1f386b9e2110a7342e4572173a"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "import"
+      ],
+      "source_count": 602,
+      "original_native_api": "campaign-shared-50",
+      "original_native_shared_publication": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+      "source_sha256": "b557c7ed38ef92cfc4f7eec75423b84af8d37589dd34ee31a6493737c693c2d5",
+      "raw_sha256": null,
+      "wrapper_sha256": "997775e36762da816b4d1f1c22d7dcf59adf13cfa816695d7e574db6f19c5718",
+      "summaries": [],
+      "scope": "Explicit new-resource import and exact generated metadata custody only; no native mechanics, pixels or level acceptance",
+      "errors_and_warnings": {
+        "wrapper": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "uid_or_mode_drift": false
+    },
+    "mechanics": {
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/mechanics-native-retained-union/result.json",
+        "sha256": "d3da8f0363ea5aafab0117e3cfc2cba1489e21be21e02facd68834db8d5de014"
+      },
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O2/mechanics-native-retained-union/source.json",
+        "sha256": "aa31eb997a06846ca295ee594ec2c142de1d595f98b2cb136366f54b5c448a62"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O2/mechanics-native-retained-union/manifest-original.json",
+        "sha256": "7d34c036aa58899deaa933bb166083fbf10f71964d513f01dc0170098156fe1f"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o2-mechanics-native-retained-union.log",
+        "--headless",
+        "--script",
+        "res://tests/acts/act2/a2_o2_focused_smoke.gd"
+      ],
+      "source_count": 602,
+      "original_native_api": "campaign-shared-50",
+      "original_native_shared_publication": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+      "source_sha256": "aa31eb997a06846ca295ee594ec2c142de1d595f98b2cb136366f54b5c448a62",
+      "raw_sha256": "c28c7410c6b68b4dd8b61b0a1d9f358dc8f8689ea71a9a8c4917120318239935",
+      "wrapper_sha256": "c28c7410c6b68b4dd8b61b0a1d9f358dc8f8689ea71a9a8c4917120318239935",
+      "summaries": [
+        {
+          "checks": 257,
+          "failures": 0,
+          "scope": "scope_complete=true; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "scope": "Focused actual shared Hero ordinary Smoke and Handler proof responses, any-angle grounded dash/return/one primary/full cooldown with unchanged HP/no blast ammo/no pickup; disclosed public gated-injury/contact progression arrangements only. No whole earned route, Shell loading, full art, pacing, all-kit balance, mobile or performance claim.",
+      "errors_and_warnings": {
+        "raw": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "uid_or_mode_drift": false
+    },
+    "extrema": {
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/extremes-native-retained-union/result.json",
+        "sha256": "f5a4390bd2d1a83ea69c810c5889608042035236152250d9814ffa9b1446ae94"
+      },
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O2/extremes-native-retained-union/source.json",
+        "sha256": "d96dbdc0bb7fd4a121da863b25018e1c1a9988671a3e968d988a79e8037d0a01"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O2/extremes-native-retained-union/manifest-original.json",
+        "sha256": "89d679648dd5352e1047b1c1fa37becd54410943c11ab94d0d60e9a65e7ffb3f"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o2-extremes-native-retained-union.log",
+        "--headless",
+        "--script",
+        "res://tests/acts/act2/a2_o2_focused_smoke.gd",
+        "--",
+        "--a2-o2-extremes"
+      ],
+      "source_count": 602,
+      "original_native_api": "campaign-shared-50",
+      "original_native_shared_publication": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+      "source_sha256": "d96dbdc0bb7fd4a121da863b25018e1c1a9988671a3e968d988a79e8037d0a01",
+      "raw_sha256": "ab48f12d698b7db034a37c5dcab720e59039e260cbee90a9b7f0fae87a3915e0",
+      "wrapper_sha256": "ab48f12d698b7db034a37c5dcab720e59039e260cbee90a9b7f0fae87a3915e0",
+      "summaries": [
+        {
+          "checks": 523,
+          "failures": 0,
+          "scope": "scope_complete=true; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "scope": "Focused native ordinary Smoke and Handler responses for two canonical legal loadout extrema, actual resolver/actions and minimum speed/reach/slower cadence; disclosed gated prerequisite injuries. No all-kit/fullroute/art/balance/performance claim.; directly affected original-reservation coexistence admission fix now in currentsource, prior originalresults preserved",
+      "errors_and_warnings": {
+        "raw": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "uid_or_mode_drift": false
+    },
+    "loading": {
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/loading-side-separated-marker/result.json",
+        "sha256": "190b17d46ca49879d2b9cf9fe71f1d711687375203fae5a3c40195e67edd7d15"
+      },
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O2/loading-side-separated-marker/source.json",
+        "sha256": "d1fed2983cd78d6f94d09ede809db4c242f737d3f9fd563b1e7755bf096251ee"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O2/loading-side-separated-marker/manifest-original.json",
+        "sha256": "5a6b8c8d22a95564d08b7ca73e44c6f533412d920c3e9b34f9fb13cca3c24e35"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o2-loading-side-separated-marker.log",
+        "--headless",
+        "--script",
+        "res://tests/acts/act2/a2_o2_loading_side_smoke.gd"
+      ],
+      "source_count": 602,
+      "original_native_api": "campaign-shared-50",
+      "original_native_shared_publication": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+      "source_sha256": "d1fed2983cd78d6f94d09ede809db4c242f737d3f9fd563b1e7755bf096251ee",
+      "raw_sha256": "6daf1160bff7fca3ea1545889e3065469387bb6784f4776e2d6e9dc9c4820f0f",
+      "wrapper_sha256": "6daf1160bff7fca3ea1545889e3065469387bb6784f4776e2d6e9dc9c4820f0f",
+      "summaries": [
+        {
+          "checks": 116,
+          "failures": 0,
+          "scope": "active/grace/fresh exact disk restore/HP0 original tails/paused fatal Retry/optional both-order gated TEST injuries/CP/final/stamp/Story return/cleanup. No earned route/ordinary combat/art/balance/mobile claim"
+        }
+      ],
+      "scope": "Initial focused optional Shell loading/full native active-grace/HP0 original tails/Handler Lane quiet disk transport/malformed refusals/fatal Retry/both labelled gated-injury orders/CP/completion stamp/contact return/abandon/cleanup. TEST prior prefix/readiness/public injuries/feet arrangements explicit; no earned whole route/ordinary-combat/pixels/balance/mobile credit; directly affected original-reservation coexistence admission fix now in currentsource, prior originalresults preserved; directlyaffected cosmeticmarker/cue separation and exactposition custody, TESTreviewpose explicitlydisclosed, all originalresults retained",
+      "errors_and_warnings": {
+        "raw": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "uid_or_mode_drift": false
+    },
+    "portraits": {
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/portrait-native-separated-marker/result.json",
+        "sha256": "634a41f5c81dace35d36d5c9389f52565a63d1e034448e26d312c019e16b820e"
+      },
+      "source": {
+        "path": "docs/acts/act2/evidence/A2-O2/portrait-native-separated-marker/source.json",
+        "sha256": "6517b30231f7a3322969843ac8e21e526be73b7cdb87c372d17f6d94d17d5319"
+      },
+      "manifest": {
+        "path": "docs/acts/act2/evidence/A2-O2/portrait-native-separated-marker/manifest-original.json",
+        "sha256": "3f26c7d2133841231a7237954fb1d00748b17cb6a9fe3a58b2bd18b06a7ed522"
+      },
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/a2-o2-portrait-native-separated-marker.log",
+        "--script",
+        "res://tests/acts/act2/a2_o2_focused_smoke.gd",
+        "--",
+        "--a2-o2-portraits",
+        "--a2-o2-capture-root=res://docs/acts/act2/evidence/A2-O2/portrait-native-separated-marker/images/"
+      ],
+      "source_count": 602,
+      "original_native_api": "campaign-shared-50",
+      "original_native_shared_publication": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+      "source_sha256": "6517b30231f7a3322969843ac8e21e526be73b7cdb87c372d17f6d94d17d5319",
+      "raw_sha256": "df69b8d913e56beced8642affb5dd2511d28ecb9a340b602230aacb0e4cba77e",
+      "wrapper_sha256": "df69b8d913e56beced8642affb5dd2511d28ecb9a340b602230aacb0e4cba77e",
+      "summaries": [
+        {
+          "checks": 322,
+          "failures": 0,
+          "scope": "scope_complete=true; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "scope": "Actual native graphical seven captured states plus original ordinary two-consumer responses/disclosed gated setup and contact arrangements. Frames/exact metadata require actual owner/independent pixel review; no automatic art/earned route/full balance/performance/mobile credit.; directlyaffected cosmeticmarker/cue separation and exactposition custody, TESTreviewpose explicitlydisclosed, all originalresults retained",
+      "errors_and_warnings": {
+        "raw": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "uid_or_mode_drift": false
+    }
+  },
+  "categories": [
+    {
+      "category": "Mechanics",
+      "status": "PASS in recorded focused scope; independent level acceptance pending",
+      "already_scoped": "Disclosed gated prerequisites and full loading order arrangements are distinct from these natural ordinary component controls.",
+      "test_source": "tests/acts/act2/a2_o2_focused_smoke.gd",
+      "limits": [
+        "Public controller calls are not routed gesture/pointer end-to-end proof.",
+        "Exact theoretical-to-actual whole-path replay identity, all-kit balance and full encounter playthrough are not claimed."
+      ],
+      "evidence": [
+        "mechanics",
+        "extrema",
+        "portraits"
+      ],
+      "covered": [
+        "Actual original armed warning proof, public completed oblique escape/return, one real primary each against Tender and Handler, full cooldown, unchanged HeroHP/no blast/no pickup.",
+        "New admission preserves existing original landing/ordinary-primary view before allocation; old liveguard and all strict timing/reach assertions remain.",
+        "Two canonical static extrema retain actual resolver/equipment on all controls, HP100 and four phases; minimumspeed/reach and slowerprimary cadence covered."
+      ]
+    },
+    {
+      "category": "Loading",
+      "status": "PASS in recorded focused scope; independent level acceptance pending",
+      "evidence": [
+        "loading"
+      ],
+      "covered": [
+        "Actual O2 production scene under supported isolated shared Shell optional entry, canonical IDs/parent links and real initial local16/three actors/two banks/one Lane, without fabricated cycles/defeats.",
+        "Protected actual pristine A2-L4 Story and optional entrance checkpoint; ready/unready scene spawn is scene-owned at the same authored position.",
+        "Actual fixed saved Standard profile survives fresh disk Continue after current preference changes to Challenge; new optional/replay entry asserts current Challenge."
+      ],
+      "limits": [
+        "TEST readiness and earlier-main prefix are disclosed registry/Attempts setup, not earned parent progression or canonical registration.",
+        "Public menu signals and paused tap consumption are not GUI pointer hit-testing."
+      ]
+    },
+    {
+      "category": "Transitions",
+      "status": "PASS in recorded focused scope; independent level acceptance pending",
+      "evidence": [
+        "loading"
+      ],
+      "covered": [
+        "Two disclosed TEST gated-injury orders reach durable before-Handler checkpoint, actual final recovery gate/quiet completion and contact return.",
+        "Early abandon preserves protected Story with no reward. Completed replay uses public replay_requested with current complete legal gear; duplicate completion is refused and only one cosmetic stamp persists.",
+        "Completed contact returns exact protected Story to Journey; explicit Continue Story offers paused Resume."
+      ],
+      "limits": [
+        "TEST Hero placements/public Actor.take_damage(10000,ZERO) arrange representative boundaries. No earned route, ordinary defeat-all or exit reached through ordinary play claim."
+      ]
+    },
+    {
+      "category": "Saves",
+      "status": "PASS in recorded focused scope; independent level acceptance pending",
+      "evidence": [
+        "loading"
+      ],
+      "covered": [
+        "ExactJson retains full Player, three actors, one Scheduler, both Banks, one Lane, original source/world/floor/profile/views/clocks/deadlines/HP/ammo/gear.",
+        "Actual active Smoke contact grace before first tick, HP0 original recovery tails and actual running Handler active state restore into distinct native units, repeat exact snapshots and suppress watched gameplay/cue/progression events.",
+        "Nine malformed changes refuse atomically without native mutation."
+      ],
+      "limits": [
+        "Naturally retained pending-segment schema2 transport did not occur at the complete actual nativebarriers; originallogs expressly record schema1 exact and schema2 unexecuted. No fabricated pending path/movingcontact/allphase credit."
+      ]
+    },
+    {
+      "category": "Retry",
+      "status": "PASS in recorded focused scope; independent level acceptance pending",
+      "evidence": [
+        "loading"
+      ],
+      "covered": [
+        "Public TEST lethal Hero.take_damage gives actual dead optional unit; dead Resume retains frozen aggregate.",
+        "Public Retry restores earlier complete pristine optional entrance resources/HP/gear/ammo/actors/consumers/floor/Scheduler quietly; Story/replay protection remains distinct."
+      ],
+      "limits": [
+        "Hero injury is explicit TEST setup, with no enemy-caused fatal attribution or earned mid-route death.",
+        "Later checkpoint Retry variants outside the executed fixture remain unclaimed."
+      ]
+    },
+    {
+      "category": "Cleanup",
+      "status": "PASS in recorded focused scope; independent level acceptance pending",
+      "evidence": [
+        "loading"
+      ],
+      "covered": [
+        "Most disk swaps explicitly exit living level before whole Shell removal; old native descendant weakrefs free before fresh recipient.",
+        "Actual running Handler/Lane deliberately retains direct Shell.free to reproduce late CinderLevel tree-exit fallback. Owned host disconnects valid callbacks and skips native phase publications after recipient removal.",
+        "No leftover watched events, duplicate reward/main progress, modified canonical registry or fixture user-save files after final cleanup."
+      ],
+      "limits": [
+        "Owner late-exit guard and its native50 reproduction remain distinct from Root51 sharedprivate/public27/0 detachedLane repair; actual51 adopted with no newowner enginecredit."
+      ]
+    },
+    {
+      "category": "Brief visual inspection",
+      "status": "PASS in recorded focused scope; independent level acceptance pending",
+      "limits": [
+        "Seven actual540x1170 capturedstates pass owner and independent review. Original321nativeclean/centered-marker visualfailure and allartfalse metadata preserved.",
+        "Faint completedboard plate, quietearth margins/distantcrop/fine jar/tap/rivet/valve contrast and allpose/fullart/pacing/performance remainlimits."
+      ],
+      "evidence": [
+        "portraits"
+      ],
+      "covered": [
+        "Full shared Act2 Hero cap/torso/facing/boots/contact shadow on dry support; actual source/outline/full footprint/landing/opening/current+settled safe bounds/HUD.",
+        "Reused oxidised Tender/regularHandler low housings, full bounded nativecircle/lane and lowSmoke/grace; no boss inferred.",
+        "Same west nonactionable crate full versus empty after actual defeat, plain completed circuit marker and reused ruined-house/work-apron vocabulary."
+      ],
+      "actual_pixel_reviews": [
+        {
+          "path": "docs/acts/act2/evidence/A2-O2/portrait-native-separated-marker/owner-actual-pixel-review.json",
+          "sha256": "34f91e02855109e0d43e87a20007c10d74e757d4597f094024473fba96b20361"
+        },
+        {
+          "path": "docs/acts/act2/evidence/A2-O2/portrait-native-separated-marker/independent-actual-pixel-review.json",
+          "sha256": "b2cb987ff9b4056b8443bb5d9a8ce9f62655065a59dc1d3c2b281a679fdbd0c9"
+        }
+      ]
+    }
+  ],
+  "authored_contract": {
+    "objective": "Two existing Tender positions in either order, harmless original tails, before-final contact checkpoint, one regular Handler and separate completion/contact return. No B02 or new enemy/attack family.",
+    "floor": "One upright Box dry floor Rect2(-3.4,-14.8,6.8,18.4), spawn (0,.1,2.6); all kit scenery collisionless.",
+    "sources": "west_tender/east_tender at (\u00b11.8,0,-2.7), independent west_bank/east_bank at (\u00b11.5,0,-4.3), R1.05; final_handler (0,0,-10.5), fixed existing BACK3.8/R.31 Lane.",
+    "checkpoint": "clear-air-before-final-handler, stable native contact Z[-7.2,-6.2] after both actual defeats and quiet tails; actual side_attempt protected checkpoint must commit before final admission.",
+    "completion": "clear-air-circuit-complete; one A2-O2-completion-stamp; no stats/resources granted.",
+    "return": "clear-air-circuit-return, separate contact marker (0,0,-13.9), returns protected Story.",
+    "lifetimes": "Tender HP0 prevents later starts but leaves admitted original bank tail/clock/exchange/receipts intact; no refill/restart. Final Handler defeat and quiet consumers end Scheduler before completion."
+  },
+  "equipment_and_player_decision": {
+    "decision": "Choose either area-denial Tender to remove first, using known low recovery mounts before the larger regular Handler. No new control or smoke-clearing device.",
+    "baseline_ids": {
+      "jacket": "CLOTH-J0",
+      "pants": "CLOTH-P0",
+      "shoes": "CLOTH-S0",
+      "weapon": "WEAPON-01"
+    },
+    "pending_extrema": [
+      {
+        "id": "slow-dash-short-reach",
+        "loadout": {
+          "jacket": "CLOTH-J1",
+          "pants": "CLOTH-P2",
+          "shoes": "CLOTH-S2",
+          "weapon": "WEAPON-03"
+        }
+      },
+      {
+        "id": "slow-primary-reach",
+        "loadout": {
+          "jacket": "CLOTH-J1",
+          "pants": "CLOTH-P1",
+          "shoes": "CLOTH-S0",
+          "weapon": "WEAPON-03"
+        }
+      }
+    ],
+    "canonical_query_evidence": "docs/acts/act2/evidence/A2-O2/preparation-20261012/query-receipt.json",
+    "ability_revision": 0,
+    "allocations": "none; no use/reservation/type creation; proposed perks/powerups not implemented or granted",
+    "crate_policy": "Nonactionable enemy canister stores full while corresponding Tender lives, empty after actual defeat. No HP/ammo/equipment/perk/powerup supply, pickup, action glow or new cue.",
+    "reward": "one cosmetic/completion stamp only; optional never advances/blocks main route or grants permanent growth"
+  },
+  "canonical_design_validation": {
+    "path": "docs/acts/act2/evidence/A2-O2/canonical-design-validation/receipt.json",
+    "sha256": "4cf7a97550b5700d8bd590c96449fc7560e2e6cb6c290b8306020309eacd00b9"
+  },
+  "art_source_reuse": {
+    "source_brief": "docs/acts/act2/evidence/A2-O2/preparation-20261012/a2_o2_source_asset_reuse_brief_20261012.json",
+    "API_brief": "docs/acts/act2/evidence/A2-O2/preparation-20261012/a2_o2_parent_api_reuse_map_20261012.json",
+    "asset_manifest": "assets/acts/act2/clear_air_circuit_manifest.json",
+    "source_boards": [
+      "G07 docs/concept-art/act2/environments/black-smoke-ruined-house.png",
+      "G16 docs/concept-art/act2/props/martian-technology.png",
+      "G17 docs/concept-art/act2/props/victorian-survival-props.png",
+      "G19 docs/concept-art/act2/gameplay/02-ruined-house-gameplay.png",
+      "sample-S02 docs/concept-art/act2/gameplay/sample-screenshots/02-handling-machine-counter.png"
+    ],
+    "authored_realized_not_yet_pixel_accepted": [
+      "Native scale1 grounded continuous ash/timber/paving floor, low outboard brick/plaster rooms.",
+      "Unchanged pantry/jars/plates/flour tin, dry sink/tap/pot, cold hearth/charred firewood, rotated open brick arch.",
+      "Original quiet rods/clamp/plate work stand and riveted industrial plate pile; isolated original pixel materials/cutaway.",
+      "Two existing Tender/Smoke5 actor/consumer visual families and existing regular Handler/low rounded tentacled operator, not B02.",
+      "Only documented new props: two timber canister-store compositions and one plain completed circuit marker."
+    ],
+    "adapted": [
+      "Compact optional circuit/front wall and route roof removed; no full long HouseKit build or literal novel floor plan.",
+      "Domestic/manufacturing modules repositioned outboard with feet pivots/native materials preserved; derived per-instance alpha protects actual Hero/source/geometry/witness/contact points.",
+      "Crate contents are decorative enemy stock, not an emission count, pickup or grant."
+    ],
+    "deferred": [
+      "Full panoramic house/skyline/industrial pit, intact facade/roof, captivity/crowds and whole-board detail.",
+      "New smoke-clearing/gas-mask control, pit descent/water/ecological hazard/new caste or boss are not authorized.",
+      "New all-pose art/whole-scene acceptance remains outside brief captured-state scope."
+    ]
+  },
+  "actual_asset_readiness": "Authored runtime joined dryfoundation/rooms/workapron/scenery, two reusedTenderSmoke pairs+regularHandlerLane, documented full/emptyenemy stores and completedplainboard. Boards are references, not runtimeatlases; sourcefeatures realized/adapted/deferred and native scales/pivots/collision/occlusion/states/families remain in ownedmanifest.",
+  "current_cosmetic_marker": "Board/post+.9x beside unchanged centercontactCue/exitregion; disclosed Hero-.9x reviewpose. Exactnativeanchorvalidator follows board; local16 codec/controls/damage/timing/equipment unchanged.",
+  "reuse_qualification": "After257/523, only cosmeticmarkeranchor/corresponding exactnativeposition check and disclosed finalcaptureHero pose changed; current322 repeats naturalSmoke/Handler controls and116 verifies markertransport/completion/contactcleanup. Canonicaltwoextrema523 have unchanged staticgear/controller/collision/actor/admission/timing and never complete/showmarker. Assetmanifest readiness metadata updated afterclosures only; neverruntime-loaded. Shared51 namedlivekernel equivalence independently reviewed; no gratuitousrerun.",
+  "source_portability": {
+    "path": "docs/acts/act2/evidence/A2-O2/focused-handoff-20261012/exact-portability.json",
+    "sha256": "2d53b21e5c61375ca9420152ab7e43e9c84faa80c6fe39d114b53f82b5453f5e"
+  },
+  "original_failures": [
+    {
+      "packet": "source-import-first",
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/source-import-first/result.json",
+        "sha256": "60b56225b7420c543d5bea3cc017c30653022b248296227df100a5f8bd4d0793"
+      },
+      "native_summary": [],
+      "scope_complete": false,
+      "log_counts": {
+        "wrapper": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 1
+        }
+      },
+      "qualification": "Originalfailed/nonclean/incomplete input/log/result unchanged; fixes/diagnoses are separate"
+    },
+    {
+      "packet": "loading-side-first",
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/loading-side-first/result.json",
+        "sha256": "0717b4547294421e77d08a4fdf2454423624fc2f942aa95dde3c6dae883a706b"
+      },
+      "native_summary": [
+        {
+          "checks": 2,
+          "failures": 1,
+          "scope": "active/grace/fresh exact disk restore/HP0 original tails/paused fatal Retry/optional both-order gated TEST injuries/CP/final/stamp/Story return/cleanup. No earned route/ordinary combat/art/balance/mobile claim"
+        }
+      ],
+      "scope_complete": false,
+      "log_counts": {
+        "raw": {
+          "assertion_errors": 1,
+          "fail_markers": 1,
+          "native_errors": 1,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 1,
+          "fail_markers": 1,
+          "native_errors": 1,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "qualification": "Originalfailed/nonclean/incomplete input/log/result unchanged; fixes/diagnoses are separate"
+    },
+    {
+      "packet": "loading-side-scene-spawn-fixed",
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/loading-side-scene-spawn-fixed/result.json",
+        "sha256": "26771ce209939547a037313a511b3879403d4f6855614df293fac0e04b1c4dfb"
+      },
+      "native_summary": [
+        {
+          "checks": 77,
+          "failures": 1,
+          "scope": "active/grace/fresh exact disk restore/HP0 original tails/paused fatal Retry/optional both-order gated TEST injuries/CP/final/stamp/Story return/cleanup. No earned route/ordinary combat/art/balance/mobile claim"
+        }
+      ],
+      "scope_complete": false,
+      "log_counts": {
+        "raw": {
+          "assertion_errors": 1,
+          "fail_markers": 1,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 1,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 1,
+          "fail_markers": 1,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 1,
+          "warnings": 0
+        }
+      },
+      "qualification": "Originalfailed/nonclean/incomplete input/log/result unchanged; fixes/diagnoses are separate"
+    },
+    {
+      "packet": "mechanics-native-first",
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/mechanics-native-first/result.json",
+        "sha256": "03b622b42a33d54adb83ddaddeedc6e1c08c5cc06b3131579671d17e23a393a8"
+      },
+      "native_summary": [
+        {
+          "checks": 10,
+          "failures": 2,
+          "scope": "scope_complete=false; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "scope_complete": false,
+      "log_counts": {
+        "raw": {
+          "assertion_errors": 2,
+          "fail_markers": 2,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 2,
+          "fail_markers": 2,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "qualification": "Originalfailed/nonclean/incomplete input/log/result unchanged; fixes/diagnoses are separate"
+    },
+    {
+      "packet": "mechanics-native-warning-follow",
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/mechanics-native-warning-follow/result.json",
+        "sha256": "24984203f378ea1f408df61cd4a721df8e39ccfb82c74dbefdd9e761cf4bf5b4"
+      },
+      "native_summary": [
+        {
+          "checks": 17,
+          "failures": 2,
+          "scope": "scope_complete=false; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "scope_complete": false,
+      "log_counts": {
+        "raw": {
+          "assertion_errors": 2,
+          "fail_markers": 2,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 2,
+          "fail_markers": 2,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "qualification": "Originalfailed/nonclean/incomplete input/log/result unchanged; fixes/diagnoses are separate"
+    },
+    {
+      "packet": "mechanics-native-plan-loss",
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/mechanics-native-plan-loss/result.json",
+        "sha256": "df468aac1f2e031370d985e409ceab66e93c4f95a2915677226e68473e4ec900"
+      },
+      "native_summary": [
+        {
+          "checks": 17,
+          "failures": 2,
+          "scope": "scope_complete=false; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "scope_complete": false,
+      "log_counts": {
+        "raw": {
+          "assertion_errors": 2,
+          "fail_markers": 2,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 2,
+          "fail_markers": 2,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "qualification": "Originalfailed/nonclean/incomplete input/log/result unchanged; fixes/diagnoses are separate"
+    },
+    {
+      "packet": "mechanics-native-cancellation",
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/mechanics-native-cancellation/result.json",
+        "sha256": "db256b21acee215ebec939b05efb8bf3c7c5e241119f571071211b49532bc9de"
+      },
+      "native_summary": [
+        {
+          "checks": 17,
+          "failures": 2,
+          "scope": "scope_complete=false; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "scope_complete": false,
+      "log_counts": {
+        "raw": {
+          "assertion_errors": 2,
+          "fail_markers": 2,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 2,
+          "fail_markers": 2,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "qualification": "Originalfailed/nonclean/incomplete input/log/result unchanged; fixes/diagnoses are separate"
+    },
+    {
+      "packet": "mechanics-native-view-loss",
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/mechanics-native-view-loss/result.json",
+        "sha256": "12c8a74fdb04087cb05b109f0022f9d8eb46a52e8361d8fc183a375c9649589e"
+      },
+      "native_summary": [
+        {
+          "checks": 17,
+          "failures": 2,
+          "scope": "scope_complete=false; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "scope_complete": false,
+      "log_counts": {
+        "raw": {
+          "assertion_errors": 2,
+          "fail_markers": 2,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 2,
+          "fail_markers": 2,
+          "native_errors": 2,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "qualification": "Originalfailed/nonclean/incomplete input/log/result unchanged; fixes/diagnoses are separate"
+    },
+    {
+      "packet": "portrait-native-retained-union",
+      "result": {
+        "path": "docs/acts/act2/evidence/A2-O2/portrait-native-retained-union/result.json",
+        "sha256": "7348c743dc07107b7d4d43a2907fb4dd1cba8516023b6fa7dd5749e616c09ddf"
+      },
+      "native_summary": [
+        {
+          "checks": 321,
+          "failures": 0,
+          "scope": "scope_complete=true; actual ordinary Smoke/Tender + Handler/Lane/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+        }
+      ],
+      "scope_complete": true,
+      "log_counts": {
+        "raw": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        },
+        "wrapper": {
+          "assertion_errors": 0,
+          "fail_markers": 0,
+          "native_errors": 0,
+          "parse_or_load_errors": 0,
+          "script_errors": 0,
+          "unexplained_native_errors": 0,
+          "warnings": 0
+        }
+      },
+      "qualification": "Native321clean but centeredmarker pixelissue retained separately"
+    }
+  ],
+  "untested_full_playthrough_behavior": [
+    "Earned full route, everyenemydefeat and both clearorders through ordinarycombat",
+    "Exit reached by earnedwholeplaythrough; fixturecontact/killsetup explicitlydisclosed",
+    "Naturally retained pendingsegments2 transport/allphase-movingsaves",
+    "Alllegalgear/allposes/fullart/pacing/humanbalance/mobile/export/release/performance"
+  ],
+  "human_or_setup_blocker": false,
+  "owned_engine_jobs": "All CLOSED; no held or queued ownerjob",
+  "next": "Integration/assignedindependenttester accepts exactcandidate/productionregisters autonomously; onlythen implementA2-O3 BleachedCanal. FullAct2eightlevelgoal remainsACTIVE; stopbeforemobile/export/release."
+}
