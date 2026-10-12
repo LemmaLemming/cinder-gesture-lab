@@ -1,5 +1,13 @@
 # Cinder shared progress
 
+## Shared48 dispatch and Shared47 actual adoption reconciliation — 2026-10-12T03:30:42.062566+00:00
+
+All three actual Shared48 chat notifications succeeded. The canonical UPDATEs and original owner ACK/receipt bytes are retained in the [coordination archive](evidence/shared47-worker-adoption/index.json); [dispatch receipt](SHARED48_COORDINATION_PUBLICATION.json) preserves the original publication IDs. A compact snapshot confirms all three workers active at their existing frontiers. Act1 is correcting a missing fixture helper, Act2 has passed canonical validators and is preparing O1 native checks, and Act3 reports a clean13/0 production entry/save/Continue/Retry check. These owner observations do not supply Root acceptance or whole-level coverage.
+
+[Independent actual Shared47 adoption verification](SHARED47_WORKER_ADOPTION_VERIFICATION.json) now covers A1 mergee6ad6da1, A2 mergeef2db5cb and A3 merge6b8391c7. Registered identities, exact immutable ACK/receipt hashes, two parents, retained current ancestry, prior six-prefix owned Git trees and named immutable-publication→merge→current bytes pass. Act2 adds only the five explicitly returned genuine UID sidecars; all prior owned Git rows remain exact. Broad physical/settings custody counts keep owner scope. Root rechecked receipt hashes, parents and ancestry, then atomically reconciled run.json while preserving every assignment and confirmation. All workers now have actual47 recorded and48 available; no48 adoption is inferred. Independent final receipt review also caught and corrected A1/A2 stale46 current aliases (`reviewed_baseline`, `api_revision`, `shared_update_ack_message_id`); their original46 alias values and evidence remain retained.
+
+Campaign11/24 and the full desktop goal remain ACTIVE. Root is first help contact; quiet blocker monitoring remains active. This is documentation/coordination, with no engine rerun, new acceptance, full-route gate or performance claim.
+
 ## Shared48 — static menu scenery and protected route headings
 
 The new shared `menu-scenery-1` drawing control supplies Earth observatory/finless-shell, later lunar rock, Invasion masonry/cylinder/redweed and Tormance twin-sun/ridge/crystal silhouettes around the existing shared traveller. Unreached regions remain abstract; current story, rather than a completion stamp alone, determines whether the Moon has been visited. All authored24 node positions, locks, optional branches and path endpoints are unchanged. A separate link layer and static header backdrops protect labels; initial label width is configured before entering the tree.
