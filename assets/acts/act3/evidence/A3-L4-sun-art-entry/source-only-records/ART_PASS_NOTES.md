@@ -1,0 +1,29 @@
+# False Paradise material pass — ignored concrete derivative
+
+[Source](false_paradise_scenery_mineral_v1.gd), SHA256 `22a2b2a20b57ed509cf91eba9f16cc420db2f5c2c567883af9e891a9636877a3`. This complete replacement candidate derives from active `false_paradise_scenery.gd` (`02ede003…`). It is source-only: no Godot parser, shader compilation, import or portrait result. Root owns publication and the focused actual portrait/production checks. Original active consumers/assets are unchanged by this task.
+
+The actual selected G08 [False Paradise](../../docs/concept-art/act3/environments/04-false-paradise.png) and G10 [Sullenbode Garden](../../docs/concept-art/act3/bosses/01-sullenbode-garden.png) were opened. Their broad dark mineral court, pale clustered flowers and quiet green/violet fibrous roots inform this adaptation. The boards remain references, not runtime sheets; their floor circles, diagrams and proposed raised attacks add no mechanic. The source/adaptation boundaries remain in the existing Act3 concept/adaptation records.
+
+## Concrete change
+
+The original floor Box receives a static opaque unshaded material with filled charcoal/violet mineral planes, world pitches1.60×2.35, alternating row offset0.36 cell and very restrained three-step color grain at1/18wu. Top-face color ranges between `25262f` and `3a343e`; sides stay `211f28`. The shader writes ALBEDO only. It has no samplers, outline/ring, TIME, alpha/discard, emission, displacement, animation or depth bypass. It quantizes color rather than movement or collision. Shader resource/code, next-pass/priority and each assigned native parameter are retained and validated. The actual native parameter type must also match its declared Color/Vector2 type; no generic scalar tolerance is introduced.
+
+Existing approach meshes use pale petals `d0cbb8`, quiet olive beds `72765d`, dark stems `505a45`, side arches `62694f`, and muted mineral insets `34323c`. Pale blossoms become a little brighter against the darker ground, without glow or an actionable edge. The existing boss Garden130/root ribbons, black-spine vertex palette, harmless f455 likeness, source skins and shared cues are reused unchanged. This retains a small established palette and original geometry, rather than adding another asset kit.
+
+## Native dimensions, pivots and state
+
+- Permanent Box floor14×1×78 at(0,−.5,25), safe Rect2(−7,−14,14,78), topY0. Exact first Solid/body transform, shape, native margin/disable mode, layer1/mask0 and velocities remain guarded. Only this floor collides.
+- Existing205 new meshes plus Garden130 remain335; no mesh, vertex, transform, bound or raised silhouette changes. Approach courtsZ54/36/18; beds atX±2.25/Zcourt+5.5 retain their existing irregular filled contours. Nine-box blossoms keep soleY0/maxY.1675. Side forks/spines retain off-floorX±8.5. Their placement does not prove they appear in the close portrait.
+- Boss Garden's six root ribbons remainY.008/.010, connecting source ends(−1,1.25)/(1,1.25)/(0,0) to(1,0). Its124 removable beauty meshes and ordinary depth stay unchanged. Decorative roots have no HP/collider/group/cue; physical attackable roots remain separately owned source geometry.
+- One original1254RGBA likeness `f45558d7…`: native feet(627,1204), offset(0,577), trial pixel1.5/1166, nearest billboard/discard.5. Actual child retains assigned native scale/color. The same parent-derived anchor is(−.85,0,53.5), changing to(−.85,0,−1.5) only at boss entry. No new figure/hostility/root attachment is added.
+- Existing presentation schema1 and show/restore/fade behavior are byte-exact. Stripping removes the same beauty parent and keeps the same mineral floor/permanent roots. No new saved field, separate Scheduler, sun or gameplay/cosmetic clock is added.
+
+The current separately published sun consumer reads the parent's closed7-key model, has no processing/clock, and hides both orbs while `started=false` at first entry. It reuses native radii.65/.42 and Hero-relative positions(−1.25,.95,−5.2)/(1.25,1.1,−4.9), with familiar white/blue/incoming palettes and16 native bounds corners when shown. Its wiring/model remains Root's responsibility. This derivative neither instantiates suns nor reads/changes that clock. Actual phase2 preview/lock/helper portraits can assess the familiar palette with this floor; source geometry/bounds alone do not establish containment or recognition.
+
+## Actual observations and intended brief check
+
+The corrected native first-court [portrait](../../assets/acts/act3/evidence/A3-L4-initial-loading/corrected/portraits/fresh-offered-rest.png) was opened: Hero and Stalker silhouettes are clear, one thin harmless likeness appears belowHUD, and two low flower beds read over a nearly uniform violet field. The earlier actual stripped prototype picture was also opened; low ribbons/cubic ends remain prototype art. These are original pixels, not this derivative's rendered result.
+
+Root's focused first-court fixture will test the new material with actual Main/Hero/first source, current Camera/HUD, pair/input freeze and normal cleanup, then the affected production13 fixture verifies unchanged persistence. Briefly inspect dark-mineral variation, cream blossoms and likeness grounding without competing with the actual source/footprint/landing. Use the existing native boss warning/recovery/stripping view when that component is exercised, rather than requiring a full route or every optional decoration in frame. Quiet suns need their actual owned preview/lock view when wired; this file grants no sun evidence.
+
+Cubic gameplay-root ends and sparse peripheral architecture remain a bounded presentation limitation, not a new acceptance gate. A readable native source/cue with this chosen low beauty can be reviewed without another broad polish cycle. No full garden fidelity, human balance, grayscale, mobile/performance or full-level acceptance claim is made.

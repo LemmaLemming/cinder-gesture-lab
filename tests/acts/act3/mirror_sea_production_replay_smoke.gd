@@ -9,6 +9,7 @@ var _replay_prefix: Array[String] = []
 var _replay_core: Dictionary = {}
 var _replay_departure_refs: Array[WeakRef] = []
 var _replay_return_refs: Array[WeakRef] = []
+var _replay_continue_refs: Array[WeakRef] = []
 
 
 func _run() -> void:
@@ -25,16 +26,18 @@ func _run() -> void:
 					reason = await _resume_and_repause("fresh replay")
 					if _expect(reason.is_empty(), "fresh replay GUI Resume is consumed and public pause preserves the whole packet", reason):
 						reason = await _return_protected_story()
-						if _expect(reason.is_empty(), "public Leave Side Attempt quietly returns the exact protected story in fresh recipients", reason):
-							reason = await _resume_and_repause("returned story")
-							_expect(reason.is_empty(), "returned story GUI Resume is consumed without earned gameplay or packet changes", reason)
+						if _expect(reason.is_empty(), "public Leave Side Attempt quietly returns the exact protected story to Journey in fresh recipients", reason):
+							reason = await _continue_returned_story()
+							if _expect(reason.is_empty(), "public Back/Continue Story quietly installs the same protected packet and offers paused Resume", reason):
+								reason = await _resume_and_repause("continued returned story")
+								_expect(reason.is_empty(), "continued returned story GUI Resume is consumed without earned gameplay or packet changes", reason)
 	if not reason.is_empty():
 		print("FIRST MEANINGFUL PRODUCTION REPLAY FAILURE; later actions unattempted: ", reason, "; ", _diagnostic())
 	await _dispose_host(_failures == 0)
 	if node_added.is_connected(_watch_new_node): node_added.disconnect(_watch_new_node)
 	_expect(_canonical_registry_bytes.is_empty() or FileAccess.get_file_as_string(ProductionRegistry.DATA_PATH) == _canonical_registry_bytes, "canonical registry bytes remain unchanged")
 	_cleanup_owned_path(_test_root)
-	print("TEST ONLY Mirror Sea focused production replay: %d checks; failures: %d. Declared historical prefix13; genuine initial packet, Journey/fresh replay/return, GUI Resume, exact story/disk and native donor cleanup. No earned clear/contact-next/full route/combat/pixels/canonical registration claim." % [_checks, _failures])
+	print("TEST ONLY Mirror Sea focused production replay: %d checks; failures: %d. Declared historical prefix13; genuine initial packet, Journey/fresh replay/return to Journey/explicit Continue, GUI Resume, exact story/disk and native donor cleanup. No earned clear/contact-next/full route/combat/pixels/canonical registration claim." % [_checks, _failures])
 	quit(0 if _failures == 0 else 1)
 
 
@@ -121,7 +124,7 @@ func _return_protected_story() -> String:
 	_replay_return_refs = _current_native_refs()
 	_prepare_fixture_rebind()
 	leave.pressed.emit()
-	error = await _settle_shell("resume")
+	error = await _settle_shell("journey")
 	_watch_restore = false
 	if not error.is_empty(): return error
 	if not _quiet_events.is_empty() or not _exact(events, _events) or not _exact(actions, _actions): return "quiet protected-story return emitted gameplay observers: " + str(_quiet_events)
@@ -132,6 +135,42 @@ func _return_protected_story() -> String:
 	error = _source_free_packet_error(returned)
 	if error.is_empty(): error = _protected_story_error("story")
 	if error.is_empty(): error = await _donor_freed_error(_replay_return_refs, returned)
+	if error.is_empty(): error = _disk_error(_shell.attempts.state())
+	return error
+
+
+func _continue_returned_story() -> String:
+	var before: Dictionary = _shell.capture_campaign_snapshot()
+	var error: String = _source_free_packet_error(before)
+	if not error.is_empty(): return error
+	if _shell.menu.page_name() != "journey": return "default side return did not open the actual paused Journey"
+	var events: Dictionary = _events.duplicate(true)
+	var actions: Array[Dictionary] = _actions.duplicate(true)
+	var quiet: Array[String] = _quiet_events.duplicate()
+	var back: Button = _shell.menu.find_child("BackButton", true, false) as Button
+	if back == null or back.disabled or not back.is_visible_in_tree(): return "actual Journey Back button unavailable"
+	# Navigation uses real public button signals, as above; only Resume is
+	# claimed as actual viewport GUI input. Back itself changes no native unit.
+	back.pressed.emit()
+	if _shell.menu.page_name() != "title" or not _exact(before, _shell.capture_campaign_snapshot()) or not _exact(events, _events) or not _exact(actions, _actions) or not _exact(quiet, _quiet_events):
+		return "public Journey Back changed the protected packet or gameplay observers"
+	var continue_button: Button = _shell.menu.find_child("ContinueStoryButton", true, false) as Button
+	if continue_button == null or continue_button.disabled or not continue_button.is_visible_in_tree() or continue_button.text != "Continue Story · A3-L3":
+		return "actual title Continue Story button unavailable"
+	_replay_continue_refs = _current_native_refs()
+	_prepare_fixture_rebind()
+	continue_button.pressed.emit()
+	error = await _settle_shell("resume")
+	_watch_restore = false
+	if not error.is_empty(): return error
+	if not _quiet_events.is_empty() or not _exact(events, _events) or not _exact(actions, _actions): return "explicit quiet Continue emitted gameplay observers: " + str(_quiet_events)
+	error = _bind_runtime()
+	if not error.is_empty(): return error
+	var continued: Dictionary = _shell.capture_campaign_snapshot()
+	if continued.is_empty() or not _exact(continued, before) or not _exact(continued, _replay_story.snapshot): return "explicit Continue changed the whole protected story: " + _shell.campaign_error
+	error = _source_free_packet_error(continued)
+	if error.is_empty(): error = _protected_story_error("story")
+	if error.is_empty(): error = await _donor_freed_error(_replay_continue_refs, continued)
 	if error.is_empty(): error = _disk_error(_shell.attempts.state())
 	return error
 

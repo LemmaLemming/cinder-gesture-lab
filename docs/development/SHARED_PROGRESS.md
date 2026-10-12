@@ -1,5 +1,11 @@
 # Cinder shared progress
 
+## Shared52 — delegated False Paradise acceptance
+
+The independent Act3 tester verified canonical HANDOFF397f7057/sealed741fe48e/docs7e3a9d13 and all seven focused categories, then executed an isolated actual public registration check: import0 clean and **18/0 clean**, with527/528 exact frozen input rows and genuine new Root test UID custody. [Acceptance and limits](ACT3_L4_ACCEPTANCE.md). Original120/95/138 mechanics/portrait and96 terminaltransition evidence is reused, with TEST prefix13/readiness/contact/empty recipient and untested late canonical history/full-playthrough scopes explicit. Existing warnings/failures/canceled runs retain their exact scopes. Only A3-L4 registry row changes; other23 entries are exact. Shared51 runtime fixes remain unchanged. Campaign **13/24**, Act3 **4/8**; full desktop goal ACTIVE, owner may start L5 after canonical publication.
+
+Three dedicated testers now remove the review bottleneck from Integration while it owns shared fixes and final production registration. Separate scratch paths and a managed frozen Act3 validation checkout prevent writes to the author's active files; one canonical engine queue remains. A1 independently verified new intro210/King227/C31boundary135 results and still needs its final current helper/terminal/whole-court handoff. A2 independently verified mechanics257/extrema523/loading116/portraits322 and inspected seven images; final seal/adoption/handoff and a bounded latest-checkpoint Retry scope remain. No full route or broad accepted-level rerun is required. Root remains first help contact.
+
 ## Shared51 — expected bytes, native removal cleanup and parallel testing
 
 Verified publication `16311879af3e4dde69f96574d32572796bcf0d23` contains 94 exact paths. [Original coordination receipts](evidence/shared51-coordination/index.json) preserve the Git byte/mode verification, three canonical responses and three successful actual worker chat dispatches. Shared51 is available; worker adoption requires its own preserving ACK and is not inferred from delivery. All Root engine jobs are closed.

@@ -1,0 +1,5 @@
+# Act3 actual Shared49 adoption
+
+Publication9f73e65e actually preserve-adopted ateed149c2abacfe00eeb05d89b7a7047d37b242fd, exact f2db509e/9f73e65e parents. Original receipt SHAf37f1c674e24a5ac20ae88cf3c40d9a32f3ac17917a0bb44c2068800adf66e81. All16,570 owned Git rows/16,575 physical files/settings/worker+canonical ledgers and4,389 incoming nonowned Git/physical bytes/modes are exact. All432 prior UIDs unchanged/zero collisions, no new UID/owned-path exception. Five old previews retained. All own engine jobs closed before adoption; no new engine/import/native credit.
+
+Runtime delta is only native spore reference comparison; A3/Player/Game/Shell/Scheduler/Lane/Menu unchanged. Existing mixed39/entryportrait8/displaced14 keep original Shared48 scopes, original early13 Shared47 and older evidence its original attribution. Nonclean Title lambda diagnostics remain unresolved; no performance claim. Supplement63276723 is separately available. Act3 stays3/8; L4 helper/sun/Echo and transition continue independently.

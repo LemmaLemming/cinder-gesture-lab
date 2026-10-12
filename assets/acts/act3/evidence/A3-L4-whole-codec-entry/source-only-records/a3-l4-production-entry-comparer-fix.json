@@ -1,0 +1,8 @@
+{
+  "previous_fixture_sha256": "ef11414ce3b32b956b4a6c44a875603be70e5b60b417134ec3c6b6bf7cf91759",
+  "corrected_fixture_sha256": "3f042046683832d308f2515bd89233f0f670310501dc02e85ed8a7fd3b3a8f89",
+  "helper_source": "tests/acts/act3/mirror_sea_frontier_smoke.gd",
+  "helper_source_sha256": "8424bedbb8001c3e02b55e7cf18ad525527936933dc1556339bdc3b8ce664fed",
+  "change": "Replace JSON-only authored-sequence comparer with the existing exact recursive native comparer: scalar type+binary float equality; native Vector2/Vector3/Basis/Transform3D/Color/AABB byte equality; containers recursively exact. This corrects the observation domain, not tolerances. Every assertion and production input unchanged; original failed5/1 frozen.",
+  "remaining": "Native run must verify all GUI comparands and later actual consumer flows."
+}
