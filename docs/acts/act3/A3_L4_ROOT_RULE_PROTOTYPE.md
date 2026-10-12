@@ -1,3 +1,9 @@
+## Actual Shared47 adoption — 12 October2026
+
+Shared47cf423911 is preserve-adopted at6b8391c7, with exact7a06f805/cf423911 parents. [Original custody](../../../assets/acts/act3/evidence/A3-L4-shared47-adoption/README.md) verifies16,347 owned Git/16,352 physical files, settings/worker+canonical ledgers and15,798 incoming nonowned bytes/modes exact. All398 prior UIDs remain exact;23 incoming tokens give421 identities/zero collisions. ACK2e4170fe-2ca0-4b74-ad56-a63e0096245d. All own frozen engine jobs closed before adoption; no native/import/retro47 credit.
+
+A3/shared Player/Game/Campaign/Scheduler/Lane runtime is unchanged; Registry adds accepted A2-L5 and dev.py its suite. The original component58, entry28/corrected31 and prototype233/cosmetic31 retain their separate46/45/44 attribution and bounded applicability; entire old source graphs are not claimed current-identical. Optional verification supplementa8bbe9ea is available, separately from exact publication adoption. Act3 remains3/8, A3-L4 sole frontier. Whole-codec v2 and separate complete parent/core v3 derivatives are still ignored/unpublished; production SaveContinueRetry/transitions/helper/sun/art remain unfinished and active fullSave refused. Continue focused tests and sequential independent acceptance without human/full-route/research gates.
+
 ## Focused API2 recovery component passed — 12 October 2026
 
 Act 3 remains **3/8 accepted**. A3-L4 False Paradise is the sole frontier on actual Shared46 (6718844f, preserving merge8a4fa34d). The [component evidence](../../../assets/acts/act3/evidence/A3-L4-core-api2-component/README.md) records a new-resource import with clean exit0 and a focused native run with **58 checks,0 failures,exit0**, clean diagnostics. All own engine jobs are closed.
