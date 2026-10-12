@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "label": "a1-l4-whole-native-02",
+  "mode": "native",
+  "command": [
+    "/opt/homebrew/anaconda3/bin/python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--headless",
+    "--path",
+    ".",
+    "--script",
+    "tests/acts/act1/a1_l4_whole_entry.gd"
+  ],
+  "checkout": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+  "revision": "63bc40c1a16076da726851bee12d70c178b7d411",
+  "shared_runtime_publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+  "started_at": "2026-10-12T03:20:15.441572+00:00",
+  "closed_at": "2026-10-12T03:20:31.128630+00:00",
+  "wall_seconds": 15.686513042019214,
+  "exit_code": 1,
+  "raw_log": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l4-whole-native-02-wrapper.log",
+  "raw_sha256": "d337351cd0ef343689c787d1d7bfaab7d462259c43c1dee27be94aa72a5290fe",
+  "source_archive": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l4-whole-native-02-source",
+  "source_manifest_sha256": "f54a7b1dceb4a870d4ad123dcacf25e676de889e9912800651dae1eab180e6ac",
+  "frozen_source_files": 662,
+  "post_run_frozen_member_changes": [],
+  "raw_error_warning_lines": [
+    "ERROR: Can't change this state while flushing queries. Use call_deferred() or set_deferred() to change monitoring state instead.",
+    "ERROR: actual complete entry has its stopped endpoint and original deadline court-helper-west"
+  ],
+  "explicit_footer": [
+    "66",
+    "1",
+    "res://.cinder/a1-l4-whole-entry-658529.json"
+  ],
+  "native_report": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l4-whole-entry-658529.json",
+  "native_report_sha256": "322d9bead9a1ec6f0d8da98b718aca0a6a51b07c99707044c0b290da4bacdcda",
+  "report_checks": 66,
+  "report_failures": 1,
+  "first_failure": {
+    "camera": {
+      "accepted": true,
+      "api_revision": "camera-framing-1",
+      "basis": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.585491, -0.810679), Z: (0.0, 0.810679, 0.585491)]",
+      "camera_plane_correction": [
+        0.0,
+        0.0331912748515606
+      ],
+      "camera_plane_shift_intervals": [
+        [
+          -0.370666682720184,
+          0.370666444301605
+        ],
+        [
+          0.0331912748515606,
+          5.2965784072876
+        ]
+      ],
+      "camera_position": [
+        0.0,
+        18.7462463378906,
+        -13.0716857910156
+      ],
+      "depth_range": [
+        21.4035663604736,
+        27.9180145263672
+      ],
+      "desired_focus": [
+        0.0,
+        0.746245622634888,
+        -26.0307426452637
+      ],
+      "enabled": true,
+      "focus": [
+        0.0,
+        0.746245622634888,
+        -26.0716857910156
+      ],
+      "numerical_headroom": 0.001,
+      "point_count": 128,
+      "reason": "",
+      "safe_rect": "[P: (0.040741, 0.17265), S: (0.918519, 0.719658)]",
+      "safety_margin": 0.055,
+      "screen_bounds": "[P: (0.1, 0.176239), S: (0.8, 0.375082)]",
+      "shift": [
+        0.0,
+        0.0,
+        -0.0409431457519531
+      ],
+      "shift_distance": 0.0409431457519531,
+      "width": 7.19999980926514
+    },
+    "clock_s": 0.700000000000001,
+    "contract_error": "",
+    "entry_outcomes": {
+      "court-helper-east": {
+        "endpoint": [
+          2.0,
+          -0.00492187542840838,
+          -30.6733436584473
+        ],
+        "outcome": "blocked"
+      },
+      "court-helper-west": {
+        "endpoint": [
+          -2.0,
+          -0.00492187542840838,
+          -30.6733436584473
+        ],
+        "outcome": "blocked"
+      }
+    },
+    "entry_records": {
+      "court-helper-east": {
+        "active": true,
+        "end_s": 0.55,
+        "from": [
+          2.0,
+          -0.00492187542840838,
+          -31.0
+        ],
+        "speed": 1.4,
+        "start_s": 0.05,
+        "to": [
+          2.0,
+          -0.00492187542840838,
+          -30.2999992370605
+        ]
+      },
+      "court-helper-west": {
+        "active": true,
+        "end_s": 0.55,
+        "from": [
+          -2.0,
+          -0.00492187542840838,
+          -31.0
+        ],
+        "speed": 1.4,
+        "start_s": 0.05,
+        "to": [
+          -2.0,
+          -0.00492187542840838,
+          -30.2999992370605
+        ]
+      }
+    },
+    "helper_stage": "done",
+    "label": "actual complete entry has its stopped endpoint and original deadline court-helper-west",
+    "paused": false,
+    "room": 4,
+    "scope": "full_entry"
+  },
+  "captures": [],
+  "focus_receipts": [],
+  "new_art_sidecars_before": {
+    "scripts/acts/act1/selenite_king.gd": {
+      "sha256": "37c77d7254598fcbba4f1769a37d630797183c11da4c9be1d8f190558a12d667",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_king_art.gd": {
+      "sha256": "2254c38cd3603690f3d1b7113f246403b567338ee1d71f2f322ba4e069589426",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_king_greybox.gd": {
+      "sha256": "15bace841fc45efbe6a1d20bb684c38f1def64d5589cc156dc2422280da7ce67",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_court.gd": {
+      "sha256": "cb7962c2271b43a1c08d7ba618b70be1a755d5136e58b8a6ff58bb17a0ecc942",
+      "bytes": 19,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_court_layout.gd": {
+      "sha256": "74ab93d3a59d7896df376e88681637b222059a3021862a15b3a014bf9e580c96",
+      "bytes": 20,
+      "mode": 420
+    },
+    "tests/acts/act1/a1_l4_whole_entry.gd": {
+      "sha256": "9524c711314c0e4096a65ece5eb9b995ccf8f1260826efaedc4e1db53c0a5dfd",
+      "bytes": 20,
+      "mode": 420
+    }
+  },
+  "new_art_sidecars_after": {
+    "scripts/acts/act1/selenite_king.gd": {
+      "sha256": "37c77d7254598fcbba4f1769a37d630797183c11da4c9be1d8f190558a12d667",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_king_art.gd": {
+      "sha256": "2254c38cd3603690f3d1b7113f246403b567338ee1d71f2f322ba4e069589426",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_king_greybox.gd": {
+      "sha256": "15bace841fc45efbe6a1d20bb684c38f1def64d5589cc156dc2422280da7ce67",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_court.gd": {
+      "sha256": "cb7962c2271b43a1c08d7ba618b70be1a755d5136e58b8a6ff58bb17a0ecc942",
+      "bytes": 19,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_court_layout.gd": {
+      "sha256": "74ab93d3a59d7896df376e88681637b222059a3021862a15b3a014bf9e580c96",
+      "bytes": 20,
+      "mode": 420
+    },
+    "tests/acts/act1/a1_l4_whole_entry.gd": {
+      "sha256": "9524c711314c0e4096a65ece5eb9b995ccf8f1260826efaedc4e1db53c0a5dfd",
+      "bytes": 20,
+      "mode": 420
+    }
+  },
+  "scope": "Bounded original selection and actual process closure only. Import may legitimately change cache members/generate sidecars; never backfill originals. No complete dependency graph, whole Save/Continue/Retry/production art/acceptance, fidelity, human balance or performance claim."
+}
