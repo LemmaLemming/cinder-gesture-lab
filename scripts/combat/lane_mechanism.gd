@@ -453,7 +453,9 @@ func _set_phase(phase: String, notify: bool = true) -> void:
 		# rejected nested clear, so clear again after that callback returns.
 		if _phase == "clear":
 			_cue.clear()
-	if changed and notify and _phase == phase:
+	# Parent exit cleanup may run after this child has left the native tree.
+	# Retire its phase/cue/lease normally, but publish world state only while live.
+	if changed and notify and _phase == phase and is_inside_tree():
 		state_changed.emit(state())
 
 

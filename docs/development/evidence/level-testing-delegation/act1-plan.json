@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-10-12",
+  "reviewer": "/root/act1_level_testing",
+  "level_id": "A1-L4",
+  "policy": "focused-desktop-level-1",
+  "state": "Await exact finished owner HANDOFF and Root-assigned isolated validation checkout; no Godot execution or acceptance performed",
+  "owner": {
+    "worker_id": "01a11adf-2ec8-7702-96c6-0fa1e240c332",
+    "checkout": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+    "branch": "codex/campaign-act1",
+    "content_owner_unchanged": true,
+    "scene_path": "res://scenes/acts/act1/a1_l4.tscn",
+    "script_path": "res://scripts/acts/act1/selenite_court.gd",
+    "latest_closed_test_revision": "5914b9c4ed1e7b9e2c5fd8a54f5dc3881b9f2ff9",
+    "adopted_shared_baseline": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+    "api_revision": "campaign-shared-50",
+    "observed_source_head": "f807536f57fa94e688b0d95c0971972c958a1a16",
+    "unfrozen_work_observed": [
+      "scripts/acts/act1/selenite_court.gd",
+      "scripts/acts/act1/selenite_court_codec.gd",
+      "scripts/acts/act1/selenite_court_layout.gd",
+      "scripts/acts/act1/selenite_king.gd",
+      "tests/acts/act1/a1_l4_whole_save.gd"
+    ]
+  },
+  "reviewer_write_scope": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/level-testing/act1/",
+  "reviewer_constraints": [
+    "Read-only owner checkout, mailbox, ledgers, statuses, evidence and shared/content source",
+    "No stage, commit, registration, acceptance or messaging owner chat",
+    "No Godot until Root assigns an exact source handoff and isolated validation checkout",
+    "Later engine jobs use python3 scripts/dev/dev.py and the shared queue",
+    "Never delete a held lock, foreign-kill a process or bypass a queued engine job"
+  ],
+  "read_records": [
+    "AGENTS.md",
+    "docs/development/LEVEL_ACCEPTANCE.md",
+    "docs/development/PARALLEL_ACT_DEVELOPMENT.md",
+    "docs/development/SETUP_RECORD.md",
+    "docs/development/SHARED_CONTRACT.md",
+    "data/campaign/act1/ACT_MEMORY.md",
+    "data/campaign/act1/PROGRESS.md",
+    "data/campaign/act1/levels/A1-L4.md",
+    "docs/acts/act1/evidence/L4-whole-court-history/index.json",
+    "docs/acts/act1/evidence/L4-helper-save-regressions/index.json",
+    "docs/acts/act1/evidence/L4-king-component/scope.md",
+    "docs/acts/act1/evidence/L4-court-art-entrance/scope.md"
+  ],
+  "canonical_mailbox": {
+    "root": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign",
+    "run_id": "cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2",
+    "actual_adoption_ack": "a72309bb-81ae-4123-89f6-2c695c5ecdca",
+    "latest_l4_continuation_ack": "8bce6c23-4ccf-4d18-8f83-090d65189077",
+    "latest_related_source_review": "82e42eda-b9a7-4e3e-9a9d-4a121e70ff0d",
+    "l4_handoff_submitted": false,
+    "pending_level_reviews": {},
+    "pending_level_handoffs": {},
+    "metadata_discrepancy": {
+      "run_accepted_level_count": 11,
+      "run_accepted_levels_array_length": 11,
+      "latest_reminder_and_owner_ack_count": 12,
+      "run_current_handoff_review": "A2-O1 accepted with 88/0 on Shared50; array/count do not yet include A2-O1",
+      "run_updated_at": "2026-10-12T03:24:13.299094+00:00",
+      "resolution_owner": "Root; reviewer only reports discrepancy"
+    }
+  },
+  "custody_audit": {
+    "artifact": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/level-testing/act1/a1-l4-evidence-audit-20261012.json",
+    "scope": "Original portable object hashes/bytes and original physical hashes/bytes/modes; manifest/result/raw/report/footer/source revision joins. No new native evidence.",
+    "whole_history": {"references": 9507, "unique_objects": 777, "index_sha256": "03662df9de439c0f3bf6e991efd5f0bae65e42bee00e8cf7f3ca6d85c9d209ec", "mismatches": 0},
+    "helper_regressions": {"references": 1390, "unique_objects": 698, "index_sha256": "53a1b2e657ef916d5750e49c95822bf78197be545513bea052eb3788378f395b", "mismatches": 0},
+    "selected_jobs_join_without_mismatch": true,
+    "critical_frozen_sources_match_executed_git_revision": true,
+    "complete_dynamic_dependency_graph_claim": false
+  },
+  "existing_evidence": [
+    {
+      "job": "a1-l4-save-moving-06",
+      "revision": "5914b9c4ed1e7b9e2c5fd8a54f5dc3881b9f2ff9",
+      "checks": 201, "failures": 0, "clean": true,
+      "command": ["python3", "scripts/dev/dev.py", "engine", "--headless", "--path", ".", "--script", "tests/acts/act1/a1_l4_whole_save.gd", "--", "--moving-helper-save"],
+      "covered": ["actual Shell entry with TEST registry/predecessors", "entrance warning Save and pristine Retry", "actual fresh candidate whole-unit quiet restore/optics", "genuine unfinished helper Save at clock1.2", "fresh Title disk Continue and consumed GUI Resume", "exact original1.1-to1.6 entry records/endpoints and native floor support", "normal donor/candidate cleanup"],
+      "limitations": ["TEST predecessor completions, public actor injuries, stationary Hero placement and zero-ammo setup", "no production registration", "no actual whole-art portrait", "no new King intro wire"],
+      "inputs": 690, "prior_uids": 427, "post_run_input_changes": 0,
+      "rerun_rule": "Reuse unchanged portions; rerun directly affected aggregate/helper transport after the new King intro/codec change is frozen"
+    },
+    {
+      "job": "a1-l4-save-helper-boundary-01",
+      "revision": "5914b9c4ed1e7b9e2c5fd8a54f5dc3881b9f2ff9",
+      "checks": 201, "failures": 0, "clean": true,
+      "command": ["python3", "scripts/dev/dev.py", "engine", "--headless", "--path", ".", "--script", "tests/acts/act1/a1_l4_whole_save.gd", "--", "--representative-helpers"],
+      "covered": ["actual later King40/helper19HP whole Save", "fresh Title Continue", "actual earlier phase Retry", "paused candidate optics and quiet cleanup"],
+      "limitations": ["representative public TEST injuries/placements", "no production registration or story/replay boundary assertion", "no whole-art portrait", "no new King intro wire"],
+      "rerun_rule": "Directly affected aggregate/constructor changes require a bounded repeat; do not repeat accepted levels"
+    },
+    {
+      "job": "a1-l4-curtain-regression-01",
+      "revision": "5914b9c4ed1e7b9e2c5fd8a54f5dc3881b9f2ff9",
+      "checks": 152, "failures": 0, "clean": true,
+      "command": ["python3", "scripts/dev/dev.py", "engine", "--headless", "--path", ".", "--script", "tests/acts/act1/a1_l4_curtain_greybox.gd"],
+      "covered": ["native default C32 component", "2 real swipes", "1 ordinary primary", "normal cleanup"],
+      "rerun_rule": "Reuse unless new finished handoff changes its directly executed C32/control/cue/motion semantics. The separate approach-only spore call-site request is not grounds for an unchanged C32/full-route repeat."
+    },
+    {
+      "job": "a1-l4-whole-native-05",
+      "revision": "30a901d2f0e066d15a1c6bca9879ad12b6cdc59b",
+      "shared_baseline": "cf423911844d63c458c59e5503f82c8b1e61574b",
+      "checks": 1179, "failures": 0, "clean": true,
+      "command": ["python3", "scripts/dev/dev.py", "engine", "--headless", "--path", ".", "--script", "tests/acts/act1/a1_l4_whole_entry.gd"],
+      "covered": ["actual Main whole scene eight identities", "formation/quiet roundel and once-only finite helper lifecycle", "full/injured-blocked/King-before-entry/King-during-entry focused cases", "one actual completion and contact per case", "normal descendant/group cleanup"],
+      "limitations": ["50 public TEST injuries/placements/cancellation setups", "no registered transitions", "no whole Save", "no earned route", "no new King intro stage", "no art/portrait fidelity"],
+      "rerun_rule": "Use original stable subcase evidence; run only changed native intro/summon/entry/contact seams under final source. Do not rerun four cases automatically if the final change is narrowly demonstrably independent."
+    }
+  ],
+  "category_gaps": [
+    {"category": "mechanics", "owner_unfinished": "Faithful native nonattack King step/summon is actively being added; new actual motion/stage authority and interrupt outcomes have no executed result yet", "root_backlog": "Independent final-source checks for changed seam after HANDOFF"},
+    {"category": "loading", "owner_unfinished": "Final stable content commit not submitted", "root_backlog": "Canonical accepted scene/commit/API metadata, real Journey prerequisite and production Shell entry; current TEST registry override is not canonical registration"},
+    {"category": "transitions", "owner_unfinished": "Final exact completion/contact source handoff pending", "root_backlog": "Real production court-clear/contact-exterior flow, persisted main completion, resource/history carryover, supported unavailable L5 and unavailable A1-O3 parent unlock state"},
+    {"category": "saves", "owner_unfinished": "New king_intro key/constructor logic must validate moving intro Save/fresh Continue/Resume and malformed refusal", "root_backlog": "Final aggregate consistency and the production registry/candidate seam; repeat only affected prior helper/phase cases"},
+    {"category": "retry", "owner_unfinished": "New intro needs earlier boss-entry Retry result", "root_backlog": "Production checkpoint restoration and story/replay separation; existing entrance and phase Retry evidence stays scoped"},
+    {"category": "cleanup", "owner_unfinished": "New intro/summon has no disposal evidence yet", "root_backlog": "Changed actors/leases/cues/signals/temp effects disposed through normal candidate/level retirement"},
+    {"category": "brief_visual", "owner_unfinished": "Whole authored court plus native step/summon has no current actual portrait packet", "root_backlog": "Brief representative final portraits for floor/HUD/framing/cues/source-safe landing/occlusion/contact availability; no full-route image sequence"}
+  ],
+  "visual_coverage": {
+    "existing_only": [
+      "Shared45 entrance art211/0: seven actual540x1170 portraits of one C32; HUD crops upper rail/crescents and side panel; close primary overlap; no open gathered-curtain image",
+      "Shared46 King component235/0: eight actual540x1170 portraits on bare gray floor; crown/robe/sceptre/boots and attack lane readable; no combined throne/drapery/formation/helper composition or step/summon views"
+    ],
+    "reviewer_reopened": [
+      "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/L4-king-component/portrait01/captures/05-king-active.png",
+      "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/L4-court-art-entrance/portrait01/captures/03-curtain-safe-landing.png"
+    ],
+    "required_bounded_views": ["whole-court entrance/formation or roundel representative", "King native step with side throne", "King summon and visible finite helper pair", "representative combat source/footprint/reachable safe landing", "completion contact curtain available/open state"],
+    "full_route_capture_sequence_required": false
+  },
+  "execution_prerequisites": [
+    "Owner finishes content and submits immutable HANDOFF with exact content commit, adopted shared baseline/API, level/scene identity, source hashes, commands/results, actual portraits and stated limits",
+    "Root assigns an isolated validation checkout based on the exact frozen content/shared pair, exclusive fixture/report paths and canonical queue settings",
+    "Review exact diff and dependency fingerprints before selecting affected checks; never test live owner edits or relabel5914 evidence as new source",
+    "Only one queued Godot job at a time; imports only when genuinely new resources/metadata require them; immutable originals frozen before execution",
+    "Final production registration fixture must use canonical Registry/Shell interfaces and process-isolated user stores; TEST predecessor/prefix/state preparation must be labelled",
+    "Fixtures observe actual native clocks/motion/support, GUI press-release Resume, whole aggregate prevalidation/quiet commit and normal disposal; no phase/clock/grounded setter or hidden progress bypass",
+    "Read actual raw diagnostics/footer/report and compare post-run frozen inputs; retain failed/canceled/unexecuted results"
+  ],
+  "bounded_next_checks": [
+    {"id": "king-intro-save", "status": "proposed owner command; unexecuted", "command": ["python3", "scripts/dev/dev.py", "engine", "--headless", "--path", ".", "--script", "tests/acts/act1/a1_l4_whole_save.gd", "--", "--moving-king-intro-save"], "assertions": ["real unfinished native King motion before first attack", "exact original start/end/from/to/speed without rebase", "fresh disk Continue/consumed Resume", "terminal support and no helpers/attacks born early", "earlier boss-entry Retry and cleanup"]},
+    {"id": "changed-intro-summon", "status": "fixture required on final HANDOFF", "assertions": ["actual step/summon visual authority follows grounded native state", "callback pause/body/art mutation rejects before movement", "injured/blocked/defeated intro terminates without false completion", "once-only helper birth remains same pair with no replacement"]},
+    {"id": "affected-aggregate-regression", "status": "conditional on final dependency diff", "commands": ["a1_l4_whole_save.gd -- --moving-helper-save", "a1_l4_whole_save.gd -- --representative-helpers"], "assertions": ["new complete wire does not mix refreshed resources with old encounters", "malformed packets refuse atomically", "quiet native core/Scheduler/exchange/Lane restore order", "earlier phase Retry still preserves actual resources"]},
+    {"id": "final-production-registration", "status": "Root fixture not yet assigned", "assertions": ["canonical24-entry registry exact L4 scene/commit/API and L3 prerequisite", "real Title/Journey/Continue identity and portrait entry", "representative actual court-clear then same-Hero contact-exterior", "completion once and durable progress", "unavailable L5/A1-O3 supported UI and coherent retained story", "replay does not overwrite Story", "normal disposal"]},
+    {"id": "brief-final-portrait", "status": "actual final-source capture fixture required", "assertions": ["representative whole-art protected portrait views", "floor contact/full feet", "HUD/source/safe landing readable together", "restrained actionable cues and scenery occlusion", "native step/summon/available-contact presentation"]}
+  ],
+  "limitations_to_preserve": [
+    "untested full-playthrough behavior",
+    "defeat-all, earned exit and all-kit playthrough untested",
+    "human balance, sustained performance and mobile/export untested/outside desktop scope",
+    "original122/0 entrance job remains NONCLEAN with freed-lambda diagnostics",
+    "original moving01-05 remain failed under their exact prior sources/APIs",
+    "original native parser/query/numeric/watchdog and portrait focus failures remain actual historical results"
+  ],
+  "acceptance_rule": "Integration independently accepts only after all applicable focused categories have final-source evidence and brief representative portrait review. Full route, every enemy, earned exit and campaign completion are not gates. This reviewer does not expose or accept unfinished content."
+}
