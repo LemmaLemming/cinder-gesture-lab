@@ -994,7 +994,18 @@ func _step_court_entry_if_active(delta: float) -> bool:
 		var target: Vector3 = BodySweep.anchored_position(frame_start, step, float(index + 1) / float(count))
 		var contact: KinematicCollision3D = move_and_collide(target - global_position, false, BodySweep.SAFE_MARGIN, false, 1)
 		if contact != null: break
-	_restored_floor_contact = -1
+	# move_and_collide does not establish CharacterBody3D's move_and_slide floor
+	# history on a freshly restored body. Certify the actual post-step feet/body
+	# against the retained static support instead of discarding genuine support
+	# or manufacturing an engine is_on_floor flag. Ordinary physics clears this
+	# transported support after its next real move_and_slide as before.
+	var support: Dictionary = BodySweep.sweep(self, global_transform, Vector3.ZERO, court.call("response_context").floor_regions)
+	if support.has("error") or support.get("collided", true):
+		_restored_floor_contact = 0
+		_transaction_depth -= 1
+		last_error = "Actual finite court entry lost native post-step floor/body support: " + String(support.get("error", "scenery contact"))
+		return true
+	_restored_floor_contact = 1
 	# Stop only the entry's own finite velocity after its original deadline and
 	# actual endpoint. A collision is retained and reported, never pose-snapped.
 	if clock >= float(context.end_s) and Vector2(global_position.x, global_position.z).distance_to(Vector2(context.to.x, context.to.z)) <= Motion.EPSILON:
