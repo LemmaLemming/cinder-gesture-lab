@@ -515,12 +515,22 @@ func _commit_boss_contact(body: Node3D) -> void:
 
 
 func _exit_contact(body: Node3D) -> void:
-	if body == hero and _running and not hero.dead and not get_tree().paused and is_completed() and _exit_area.overlaps_body(hero):
-		if request_contact_exit(EXIT_ID, hero):
-			_exterior_open = true
-			_exit_area.set_deferred("monitoring", false)
-			_exit_cue.present("spent", "contact")
-			_sync_art_presentation()
+	if body != hero or not _live_boundary() or not is_completed() or not _exit_area.monitoring or not _exit_contact_near() or not _exit_area.overlaps_body(hero): return
+	if not _native_runtime_error().is_empty() or not _framing_ready(): return
+	var cue_state: Dictionary = _exit_cue.state()
+	if cue_state.state != "available" or cue_state.trigger != "contact" or not cue_state.visible: return
+	var admitted_hero: CinderPlayer = hero
+	var admitted_shell: Node = shared_shell
+	if not request_contact_exit(EXIT_ID, admitted_hero): return
+	# A synchronous contact observer may legally exit or dispose the court.
+	# The ordinary Shell pauses while deferring its transition; retain that
+	# pause, but never re-show a cue after observer-owned exit/disposal.
+	if not _live_boundary(admitted_hero, admitted_shell, true) or not is_instance_valid(_exit_area) or _exit_area.is_queued_for_deletion() or _exit_area.get_parent() != self or not is_instance_valid(_exit_cue) or _exit_cue.is_queued_for_deletion() or _exit_cue.get_parent() != self: return
+	_exterior_open = true
+	_exit_area.set_deferred("monitoring", false)
+	if _exit_contact_near() and _framing_ready(): _exit_cue.present("spent", "contact")
+	else: _exit_cue.clear()
+	_sync_art_presentation()
 
 
 func _exit_contact_near() -> bool:
