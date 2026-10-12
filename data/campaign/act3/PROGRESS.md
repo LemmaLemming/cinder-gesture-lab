@@ -1,3 +1,7 @@
+## Actual Shared48 adoption — 12 October 2026
+
+Shared48c1d56530 is actually preserve-adopted at94af3911, exact f3787ad9/c1d56530 parents. [Original receipt](../../../assets/acts/act3/evidence/A3-L4-shared48-adoption/README.md) verifies16,431 owned Git/16,436 physical files/settings/ledgers and5,649 incoming nonowned bytes/modes exact;422 prior UIDs retained plus two shared additions/424 unique/zero collisions. All own jobs closed before adoption; no engine/import/native credit. Shared Menu/scenery changed; A3 and shared Player/Game/Shell/Scheduler/Lane gameplay/save delta is empty. Early producer13/production13 keep their original Shared47 attribution and bounded applicability, older evidence its original scopes. Optional verification supplement110912b5 is separately available. Act3 remains3/8 accepted, L4 sole frontier; mixed components, sun/art and production transition continue independently.
+
 ## Whole-level first-checkpoint persistence verified — 12 October 2026
 
 Act 3 remains **3/8 accepted**, with A3-L4 False Paradise the sole unfinished frontier on actual Shared47. The complete owned codec and parent hooks are now published: full Save is supported for coherent valid states. [Original evidence](../../../assets/acts/act3/evidence/A3-L4-whole-codec-entry/README.md) records import52737 (exit0, clean), producer10260 (**13/0/exit0**) and production23381 (**13/0/exit0**), with all original frozen inputs exact and all own engine jobs closed. The import retained421 prior UIDs and generated one owned codec UID, giving422 unique identities.
