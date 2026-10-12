@@ -1,5 +1,10 @@
 # Act 1 — current progress
 
+## Whole portrait necessary import — 2026-10-12T07:11:49.809537+00:00
+
+One necessary import for the genuinely new whole-court portrait fixture closes0 clean at actual Shared52. All716 bounded originals are unchanged except the two explicitly selected generated cache files; all455 prior activeUID bytes remain unchanged, with exactly one new owned portrait sidecar:456unique. Original preimport archive does not backfill the later UID. The duplicateguard was removed before import; this establishes parsing/import only, with no native gameplay/pixel credit. Brief representative actual portrait is next; current helper/terminal transport and focused handoff remain due. Act1 3/8, campaign13/24; all8 desktopgoalACTIVE.
+
+
 ## Actual Shared52 adoption — 2026-10-12T07:10:49.512162+00:00
 
 Actual preserving Shared52 merge 11c19478b124da69d592933bea73295ca8ed1ae0 retains all18,895 prior owned Git/19,093 physical rows and20,934 bounded protected rows; all81,117 nonowned publication Git/2,666 changed physical rows exact. All428 prior active UID bytes retained plus27 genuine incoming identities:26 accepted Act3 resources and one Root registration test,455unique. The initial one-UID preparation assumption was rejected before snapshot/merge and corrected to the exact publication set, with separate record preserved. Exact original published whitespace retained; remaining changed-source strictcheck clean. Shared51 runtime/source bytes unchanged. No new engine/acceptance credit for this owner. A3-L4 independent acceptance advances canonical campaign13/24; Act1 remains3/8, L4only. C31 Protocol and wholeCourt Lane cleanup checks remain the directlyaffected51 consumers; standalone227/0 unaffected and original210/135 remain50scope. New portrait source now has one focus-aware guard and is ready for necessary firstimport; no human permission gate. ReceiptSHA `4a601d312d13af8181468971f53395329e9ec5ab9223a34c3dfb2641647c5c8f`; canonicalACK `56fa5cc7-994a-4c8b-928a-1decff9bb78b`.
