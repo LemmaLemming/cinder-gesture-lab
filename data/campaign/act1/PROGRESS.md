@@ -1,5 +1,15 @@
 # Act 1 — current progress
 
+## Current resumed frontier —12October2026
+
+The human explicitly resumed allworkerwork; Integration REQUESTe792d6c7 and independently read userMessage01a12da3-e868-7133-a59f-222726f2c9c8 revoke the system-update pause. Same soleworker/check-out/codex branch/sixprefixes. Recovered HEAD549c93ea is initiallyclean; no currentGodot/devprocess observed, oldclosedhandles are not repolled. Act1 3/8/campaign10/24, L4 sole unfinishedfrontier. ActualShared45 preservingadoption83b566e9/ACKd1d2f9b6 is retained, Canonical registration and actual Shared45 metadata are now reconciled by Integration; no remerge is needed. Existinggoalcontrol lastreportspaused and has no available resumemutation; no duplicategoal is created, authorizedrepositorywork continues.
+
+New distinct B01 actor, native royal art/manifest, paired King component/scene and focused fixture are authored and reviewed but remain unparsed/unimported/unexecuted at this source seal. Native phase/facing correspondence and post-callback live/unpaused admission custody are guarded. New regression includes supported wrong-pose refusal and callback-pause rejection; results are pending. Shared46 publication6718844/UPDATE15169b6e is read; all own jobs are closed. Preserving adoption, one new-resource import and directly affected King native/portrait checks are next. Full court/two phases/once-only pair/whole campaign codec are unfinished; no component completion narrows the all8 objective.
+
+Saved201/0native+211/0portrait at7c9ed3d3 remain scoped to the art entrance, with HUDcrop/sourceHerooverlap and unsupportedwholeSave. No unchanged test/import/proofaudit rerun. Rootsharedmenuwork doesnotgateownedL4. Fresh [formation design queries](levels/A1-L4-formation-design-query-2026-10-12.json) allpass read-only: canonicalrev0/13existingimplementedstaticitems/20eligibleabilities/nouses/noclaims; no allocation. Playerdecision: choose the pair's gap/usefulrecovery target, then remove a helper or punish theKing with existingneutralCLOTH-J0/P0/S0+WEAPON-01; retain alllegal carriedloadouts/ordinaryattack/no pickups or blastrequirements. Numbers/geometry/newplacements remain provisional until targeted checks.
+
+ContinuefullL4: same2retainedC32parallel→inward, quietknownroundel then guards, distinctB01shortlunge/2phases/onevisiblefinitepair, coherentphasecheckpoint/fullaggregate/freshrecipient/SaveContinueRetry/contactcleanup; address knowncourtcomposition in thatlayout. ScopedAPI/arthelperwork restarted. L5/O1/O2/O3 remainunauthored. All8desktop objective staysintact; currentwork doesnotestablishfullL4acceptance. Olderpausedfrontier below is historical.
+
 ## Current paused frontier — Shared45,9October2026
 
 **PAUSED for the scheduled system update, by explicit human request in Integration chat verified through its userMessage. Resume only after explicit human instruction.** Same sole worker01a11adf-2ec8-7702-96c6-0fa1e240c332, assigned campaign-act1 checkout andcodex/campaign-act1 branch; six owned prefixes unchanged. Act1 **3/8 accepted**, campaign **10/24**. L4 remains the sole current unfinished level; L5 andO1/O2/O3 are unauthored.
