@@ -1,5 +1,13 @@
 # Cinder shared progress
 
+## Shared48 — static menu scenery and protected route headings
+
+The new shared `menu-scenery-1` drawing control supplies Earth observatory/finless-shell, later lunar rock, Invasion masonry/cylinder/redweed and Tormance twin-sun/ridge/crystal silhouettes around the existing shared traveller. Unreached regions remain abstract; current story, rather than a completion stamp alone, determines whether the Moon has been visited. All authored24 node positions, locks, optional branches and path endpoints are unchanged. A separate link layer and static header backdrops protect labels; initial label width is configured before entering the tree.
+
+Necessary import preserves404 prior UID bytes and adds exactly two shared identities,406 unique/no collisions. Native360/0, final actual portrait725/0/eight inspected images and directly affected comparison331/0 close clean on4.7.2. Original descriptor script error, nonclean360/0 with120 test metadata errors, pre-mask722/0 views and725/3 heading-bound failure remain individually attributed. [Implementation, commands and exact scope](MENU_SCENERY.md); [portable originals](evidence/shared48-menu-scenery/index.json) retain5,566 original source copies across eight jobs. Root and both independent peers reviewed the final actual images. Four standalone act themes are TEST art previews, not current A2/A3 worlds or earned progression; no GUI hit-test/full-route/device/performance claim.
+
+Actual Shared47 adoption is verified for Act3 ACK2e4170fe/merge6b8391c7/receipt1a27d981, with exact registered identity/parents/observed ancestry/prior owned Git preservation and named immutable Menu/Registry/dev/registration source+UID bytes. Root's new uncommitted48 menu was excluded from that audit; broad physical/settings custody remains owner-reported. Shared48 publication remains separate from actual adoption. Campaign11/24 remains: A1-L4, A2-O1 and A3-L4 proceed independently, with Root first help contact and the quiet blocker monitor active. The full24-level desktop goal remains ACTIVE; native responsiveness, remaining authored content and scoped end-state audits are still open.
+
 ## Shared47 publication and continued worker development
 
 Shared47 is published at `cf423911844d63c458c59e5503f82c8b1e61574b`, with exact content/registration `f0b3ad6bc642d9d34a27d1a23eaa7b3e81306c59` and [postcommit verification](SHARED47_PUBLICATION_VERIFICATION.json) supplement `a8bbe9ea40b6f45c80c0dc9aa28f5302cc236e86`. All15,796 payload paths match the reviewed plan; the following five-path correction changes current summaries/descriptive registry status only. Campaign11/24, Act2 5/8, and A2-O1 next are reconciled without repeating native checks.
