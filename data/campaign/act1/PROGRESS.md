@@ -1,5 +1,9 @@
 # Act 1 — current progress
 
+## Current native whole-court frontier — 2026-10-12T03:39:12.209603+00:00
+
+Clean1,179/0 at30a901d2/actualShared47 closes four focused actual Main entry/interruption/completion/contact/cleanup cases; all50 injuries/placements/cancel operations are labelled TEST. Original parser, physics-query and numeric-entry failures remain recorded separately in [L4](levels/A1-L4.md); no whole Save/portraits/earned route/art/acceptance claim. Three generated owned IDs bring416activeUIDs; all old413bytes retained. Current work is whole aggregate Save/Continue/Retry/candidate optics/production court art, B01 constructor cases and one affected default C32 regression. Pure codec draft is frozen/private/unparsed/unbound. Shared48 is read/available and preserving adoption pending; own native jobs are closed. No external/human/shared blocker; goalACTIVE,Act1 3/8,campaign11/24. Later levels remain sequentially deferred.
+
 ## Actual Shared47 adoption — 2026-10-12T03:07:41.689380+00:00
 
 Actual preserving merge `e6ad6da14b25c1d9fac8ebab4471d00929da41e4` has exact parents `e48f741d2100ad00e5304043b949e48a66ff02a4` / `cf423911844d63c458c59e5503f82c8b1e61574b`. Receipt `.cinder/a1-shared47-adoption.json`, SHA `59b8683abcbe4584176c4bd47d7c12fb3656bea1bea19e61210ddeea471ff428`, and canonical ACK `b16b1409-d97e-4be0-a0af-89294d8d44e5` retain all16,686 prior six-prefix Git rows and16,884 physical rows,62,070 exact nonowned publication Git rows and15,798 changed physical rows,390 prior active GD/shader UIDs plus23 published identities (413unique), and7,872 bounded settings/cache/original guards. No Act1 owned exception or intentional protection change. Counts are owner-verified; separate focused independent adoption review is underway. No native/gameplay/portrait or level acceptance credit follows.
