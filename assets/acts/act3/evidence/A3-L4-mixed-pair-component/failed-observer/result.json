@@ -1,0 +1,17 @@
+{
+  "closed_at": "2026-10-12T04:26:09.018465+00:00",
+  "actual_session": 21549,
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --resolution 340x736 --script res://tests/acts/act3/garden_mixed_component_smoke.gd -- --pair-only",
+  "exit_code": 1,
+  "checks": 33,
+  "failures": 1,
+  "native_ticks": 6,
+  "first_error": "Compound staged-discard weakref/cancel/exit assertion failed; cancellation threat1 and empty control at same0.1 clock logged, individual freed operand/surviving paths absent",
+  "diagnostic_errors": [
+    "ERROR: FAIL: actual committed Scheduler leases cancel without clock advance and discarded native recipients release: held-Draw-Scheduler3; [{ \"id\": \"threat-1\", \"reason\": \"test_mixed_unfinished_exit\", \"clock_s\": 0.1 }]; [{ \"empty\": true, \"clock_s\": 0.1 }]"
+  ],
+  "source_count": 534,
+  "all_original_rows_current_exact": true,
+  "log_sha256": "28370304a8f8018cce2294d6d10cb31a77bb2df33bcab49bc16b1bc54ad7407c",
+  "scope": "Actual clock0component/freshShellseed/genuine heldDraw/Scheduler3 capture/3pureatomic negatives/publicheldSave/deliberatefreshcandidateabort/donorisolation observed. Finalweakref compound fails; successful later actual heldContinue not attempted. No fullpair/discard acceptance."
+}

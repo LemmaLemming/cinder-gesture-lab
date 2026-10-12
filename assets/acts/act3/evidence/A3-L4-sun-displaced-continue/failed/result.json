@@ -1,0 +1,19 @@
+{
+  "closed_at": "2026-10-12T03:57:12.374492+00:00",
+  "actual_session": 80614,
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --resolution 340x736 --script res://tests/acts/act3/false_paradise_displaced_continue_smoke.gd",
+  "exit_code": 1,
+  "printed_checks": 8,
+  "printed_failures": 1,
+  "first_script_error": "Fixture31 calls paused-only Hero.snapshot_state while live; returned empty Dictionary has no world_actions",
+  "diagnostic_errors": [
+    "ERROR: Lambda capture at index 0 was freed. Passed \"null\" instead.",
+    "ERROR: Lambda capture at index 1 was freed. Passed \"null\" instead.",
+    "SCRIPT ERROR: Invalid access to property or key 'world_actions' on a base object of type 'Dictionary'.",
+    "ERROR: copy-only malformed route/clock/death/source/context reject atomically: malformed route_clock or positive pure validation mutated live state/input/disk/supplied data: Aggregate validation requires a paused candidate boundary"
+  ],
+  "source_count": 520,
+  "all_original_rows_current_exact": true,
+  "log_sha256": "09c918ee561afdc98f37dd4599633f0a679bcaa3ca4f1ffc78d63839fe7dfc72",
+  "scope": "Original failed displaced fixture, no changed-position Save/fresh displacedContinue credit. Printed save-success after ScriptError is invalid because typed async error default-returned empty String; later negative fails while still live. Genuine earlier inherited checkpoint/pendingdash assertions retain bounded setup scope. Four? actualtwo freed-lambda diagnostics remain original shared48 issue."
+}

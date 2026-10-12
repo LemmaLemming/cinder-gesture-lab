@@ -1,0 +1,56 @@
+{
+  "time_utc": "2026-10-09T06:48:49.356709+00:00",
+  "level_id": "A3-L4",
+  "kind": "read-only canonical equipment/ability queries, no reservation",
+  "worker_checkout": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea",
+  "canonical_root": "/Users/howardchen/Documents/ChatGPT/video game idea",
+  "rows": [
+    {
+      "file": "equipment-status.txt",
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "equipment",
+        "status",
+        "--markdown"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "4c60c8577f303ae2789711e566a7bb44bce5bef0c82d73145dfbd41a8d509182",
+      "stdout_bytes": 8021,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0
+    },
+    {
+      "file": "ability-status.txt",
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "ability",
+        "status",
+        "--level",
+        "A3-L4"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "41415b20550c3500218ba956ba2bab8c018682997192fb4b7349992385dec589",
+      "stdout_bytes": 3577,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0
+    },
+    {
+      "file": "ability-available.txt",
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "ability",
+        "available",
+        "--level",
+        "A3-L4"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "6dec24433631bb59dccb94214b7ce30c1dfca5d7920a7af50395e7d1a3937f1c",
+      "stdout_bytes": 3409,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 0
+    }
+  ]
+}
