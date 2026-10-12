@@ -1,0 +1,13 @@
+# Retired Title scenery callback
+
+Shared50 repairs a deferred Title layout callback that captured native scenery and portrait nodes. Destroying either the native Title subtree or its Shell before deferred delivery emitted freed-capture errors before the callback's validity check could run. The callback now captures two retained WeakRefs, resolves live nodes inside its body and quietly returns for missing, queued, detached or wrongly parented recipients. Living traveller rectangle assignments, resize connection and deferred initial delivery are unchanged. No input, simulation, save schema, controller or act artwork changes.
+
+The exact original parsed native reproducer closes130/0 with four freed-capture errors and a native exit0. It is **nonclean**, not passed. The unchanged focused fixture after the repair closes130/0, exit0 with clean complete diagnostics. It destroys actual native Title controls and a Shell with a pending layout, checks retirement, immediate Title/Journey rebuild, living portrait resize and exact whole-save/model/Player/input/actions/clocks custody, then verifies fresh disk Continue with independent native IDs. The existing plain A1-L1 test floor is a disclosed fixture; no authored campaign playthrough is claimed.
+
+The directly affected existing scenic native check closes363/0 clean, without new captures. Prior scenic pixels remain unchanged reference evidence, and the newly accepted O1's four original images have their own source attribution. The first new lifecycle draft had two parse errors because the inherited assertion method returns void; its incomplete original log and source remain retained separately.
+
+This deterministic shared repro and repair address the requested error category from Act1 request `dcb08a8e-3851-400b-b966-87c83ed6cb08` and Act3 request `334acc3f`. Historical authored results remain nonclean at their original scopes: the shared test does not retroactively turn Act1's122/0 or Act3's earlier14/0 into clean runs. Each owner preserves its work, adopts the compatible publication after closed jobs, then checks only the directly affected callback path if needed.
+
+[Installed Godot source](https://github.com/godotengine/godot/blob/ed1daf0bf001b61586d9930840f2f1394092c079/modules/gdscript/gdscript_lambda_callable.cpp#L93-L111), actually inspected by the reviewer, explains why a body-level guard cannot suppress native capture validation. The native original/fixed pair supplies execution evidence. Original source manifests, streams and results are retained in [the Shared50 evidence index](evidence/shared50-desktop-milestone/index.json).
+
+Targeted rerun: `python3 scripts/dev/dev.py test --suite menu_scenery_lifecycle`.

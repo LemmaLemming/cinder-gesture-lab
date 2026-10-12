@@ -774,14 +774,19 @@ func _presentation_note(parent: Node, id: String) -> void:
 		scenery.configure(act + 1, "title", true, act == 0 and not _moon_reached())
 		parent.add_child(scenery)
 		scenery.add_child(_portrait)
-		var portrait: TextureRect = _portrait
+		# A deferred lambda validates native captures before its body executes.
+		# Capture retained WeakRefs so a retired page is a quiet no-op instead.
+		var scenery_ref: WeakRef = weakref(scenery)
+		var portrait_ref: WeakRef = weakref(_portrait)
 		var layout_portrait: Callable = func() -> void:
-			if not is_instance_valid(scenery) or not is_instance_valid(portrait):
-				return
-			var rect: Rect2 = scenery.traveller_rect()
-			portrait.custom_minimum_size = rect.size
-			portrait.position = rect.position
-			portrait.size = rect.size
+			var current_scenery := scenery_ref.get_ref() as MenuScenery
+			var current_portrait := portrait_ref.get_ref() as TextureRect
+			if not is_instance_valid(current_scenery) or not is_instance_valid(current_portrait): return
+			if current_scenery.is_queued_for_deletion() or current_portrait.is_queued_for_deletion() or not current_scenery.is_inside_tree() or current_portrait.get_parent() != current_scenery: return
+			var rect: Rect2 = current_scenery.traveller_rect()
+			current_portrait.custom_minimum_size = rect.size
+			current_portrait.position = rect.position
+			current_portrait.size = rect.size
 		scenery.resized.connect(layout_portrait)
 		layout_portrait.call_deferred()
 	else:
