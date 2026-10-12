@@ -15,6 +15,10 @@ const Value = preload("res://scripts/campaign/snapshot_codec.gd")
 const Footprint = preload("res://scripts/combat/replay_footprint.gd")
 const Witness = preload("res://scripts/combat/replay_witness.gd")
 const CueMeshes = preload("res://scripts/cues/cue_mesh.gd")
+const TransitionContactCue = preload("res://scripts/cues/interaction_cue.gd")
+const TEST_COMPLETION_ID: String = "false-paradise-disengaged"
+const TEST_EXIT_ID: String = "adage-plain-threshold"
+const TEST_EXIT_RECT := Rect2(-1.2, 3.6, 2.4, 1.3)
 const ENCOUNTER: String = "TEST/A3-L4/mixed-native-components"
 const FLOOR_ID: String = "test-firm-garden"
 const FLOOR_RECT := Rect2(-7, -14, 14, 78)
@@ -23,6 +27,10 @@ const ECHO_EPOCH: String = "TEST/A3-L4/mixed-own-sequence"
 const HELPER_ID: String = "test-garden-helper"
 const HELPER_POSITION := Vector3(-1.5, 0, 2)
 @export_enum("root", "echo") var declared_cell: String = "root"
+@export var test_production_transition: bool = false
+var test_exit_cue: CinderInteractionCue
+var _test_transition_at_ready: bool = false
+var _test_contact_committed: bool = false
 
 class Observer:
 	extends Node
@@ -98,6 +106,12 @@ func _ready() -> void:
 	_observer.callback = _before_consumers
 	add_child(_observer)
 	_sun = Model.sun_at(null, 0.0)
+	_test_transition_at_ready = test_production_transition
+	if test_production_transition:
+		test_exit_cue = TransitionContactCue.new()
+		test_exit_cue.name = "DeclaredTestContactThreshold"
+		test_exit_cue.position = Vector3(0, 0.1, 4.25)
+		add_child(test_exit_cue)
 
 func _on_enter_level() -> void:
 	var profile: String = String(shared_shell.call("get_difficulty_preference")) if shared_shell.has_method("get_difficulty_preference") else "standard"
@@ -304,6 +318,7 @@ func _present(quiet: bool = false) -> void:
 	if not _configured or not _sun_configured: return
 	_sun = Model.sun_at(_anchor, threat_scheduler.get_clock())
 	if not sun_art.call("present", quiet): configuration_error = String(sun_art.get("last_error"))
+	_present_test_exit(quiet)
 	objective_text = "TEST COMPONENT / %s / SUN%d %s -> SUN%d" % [declared_cell.to_upper(), int(_sun.effective_index), String(_sun.stage).to_upper(), int(_sun.incoming_index)]
 
 func sun_presentation_state() -> Dictionary:
@@ -314,6 +329,11 @@ func component_state() -> Dictionary:
 
 func runtime_error() -> String:
 	if not configuration_error.is_empty(): return configuration_error
+	if test_production_transition != _test_transition_at_ready: return "Immutable declared TEST transition opt-in required"
+	if test_production_transition:
+		if not is_instance_valid(test_exit_cue) or test_exit_cue.get_parent() != self or test_exit_cue.get_script() != TransitionContactCue or test_exit_cue.position != Vector3(0, 0.1, 4.25) or test_exit_cue.basis != Basis.IDENTITY: return "Exact native declared TEST contact cue required"
+		var visual_state: String = "clear" if not is_completed() else ("spent" if _test_contact_committed else "available")
+		if test_exit_cue.state().get("state") != visual_state: return "Actual TEST progress-derived contact presentation differs"
 	if not _configured or not is_instance_valid(hero) or not is_instance_valid(shared_shell) or global_transform != Transform3D.IDENTITY: return "Actual configured component/Hero/Shell required"
 	if not is_instance_valid(_observer) or _observer.get_parent() != self or _observer.callback != _before_consumers or _observer.process_mode != Node.PROCESS_MODE_PAUSABLE or _observer.process_physics_priority != 85 or not _observer.is_physics_processing() or hero.process_physics_priority >= 85 or threat_scheduler.process_physics_priority >= 85: return "Actual pre-consumer85 observer after native Hero/Scheduler required"
 	var error: String = String(scenery.call("runtime_error"))
@@ -375,6 +395,10 @@ func framing_union(camera: Camera3D, prospective: Dictionary = {}, helper_previe
 		for key: String in ["landing", "attack_position"]:
 			if selected.get(key) is Vector3:
 				for corner: Vector3 in shared_shell.call("player_camera_framing_points_for", hero, camera): points.append(corner + selected[key] - hero.global_position)
+	if test_production_transition and is_instance_valid(test_exit_cue):
+		var contact_points: Array = []
+		_append_cue(contact_points, test_exit_cue)
+		points.append_array(_enclose(contact_points))
 	return {"error": "" if points.size() <= 224 else "Complete native component groups exceed224", "points": points}
 
 func _camera_framing_points() -> Array:
@@ -451,7 +475,13 @@ func _snapshot_envelope_error(data: Dictionary) -> String:
 	var error: String = super._snapshot_envelope_error(data)
 	if not error.is_empty(): return error
 	var progress: Dictionary = data.progress
-	if progress.completed or not progress.completion_id.is_empty() or not progress.contact_exit_id.is_empty() or not progress.checkpoint_id.is_empty() or not progress.checkpoint_kind.is_empty() or not progress.checkpoint_ids.is_empty(): return "Declared component never invents campaign progression"
+	if not test_production_transition:
+		if progress.completed or not progress.completion_id.is_empty() or not progress.contact_exit_id.is_empty() or not progress.checkpoint_id.is_empty() or not progress.checkpoint_kind.is_empty() or not progress.checkpoint_ids.is_empty(): return "Declared component never invents campaign progression"
+	else:
+		if test_production_transition != _test_transition_at_ready or declared_cell != "root" or not Value.keys_error(progress, ["completed", "completion_id", "contact_exit_id", "checkpoint_id", "checkpoint_kind", "checkpoint_ids"]).is_empty() or not progress.checkpoint_id.is_empty() or not progress.checkpoint_kind.is_empty() or not progress.checkpoint_ids.is_empty(): return "Declared TEST transition retains immutable root topology and no invented checkpoints"
+		if progress.completed:
+			if progress.completion_id != TEST_COMPLETION_ID or progress.contact_exit_id not in ["", TEST_EXIT_ID]: return "Exact TEST completion/contact identity required"
+			if not data.local.get("control") is Dictionary or not data.local.get("core") is Dictionary or not data.local.core.get("tether") is Dictionary or not data.local.control.get("released", false) or data.local.control.get("pending_release", true) or data.local.core.tether.get("hp") != 0.0 or data.local.core.tether.get("phase") != 3 or not data.local.core.tether.get("dead", false): return "TEST completion requires genuine final0 and settled native release"
 	return _pair.shape_error(data.local, self)
 
 func restore_candidate_construction_required() -> bool:
@@ -484,6 +514,9 @@ func restore_state(saved: Dictionary) -> bool:
 	if not _restore_error.is_empty():
 		last_snapshot_error = _restore_error
 		return false
+	if accepted:
+		_test_contact_committed = test_production_transition and not String(saved.progress.contact_exit_id).is_empty()
+		_present_test_exit(true)
 	return accepted
 
 func _restore_candidate_presentation_error(camera: Camera3D, hud: GameHUD) -> String:
@@ -545,6 +578,7 @@ func owned_transport() -> Dictionary:
 
 func _on_exit_level() -> void:
 	_live = false
+	if is_instance_valid(test_exit_cue): test_exit_cue.clear()
 	if is_instance_valid(_observer): _observer.set_physics_process(false)
 	if not is_instance_valid(root_network) or not is_instance_valid(threat_scheduler): return
 	if root_network.is_connected("phase_boundary", _on_boundary): root_network.disconnect("phase_boundary", _on_boundary)
@@ -565,3 +599,61 @@ func _on_exit_level() -> void:
 	if is_instance_valid(helper): helper.set_physics_process(false)
 	if is_instance_valid(echo): echo.set_physics_process(false)
 	# Never end/reset a Scheduler3 managed journal; dispose this entire unit.
+
+
+# Opt-in TEST production interface. The unchanged default component continues
+# to refuse campaign progress; these calls never invent earlier court history.
+func request_test_component_completion() -> bool:
+	if not _test_released_error().is_empty() or is_completed(): return false
+	var accepted: bool = request_completion(TEST_COMPLETION_ID)
+	if accepted: _present_test_exit()
+	return accepted
+
+func request_test_component_contact(body: Node3D) -> bool:
+	if not _test_released_error().is_empty() or body != hero or not is_completed() or not _test_capsule_contact() or test_exit_cue.state().get("state") != "available": return false
+	if not test_exit_cue.present("active", "contact"): return false
+	var accepted: bool = request_contact_exit(TEST_EXIT_ID, body)
+	_test_contact_committed = _test_contact_committed or accepted
+	_present_test_exit()
+	return accepted
+
+func test_transition_state() -> Dictionary:
+	return {"enabled": test_production_transition, "completed": is_completed(), "exit_rect": [TEST_EXIT_RECT.position.x, TEST_EXIT_RECT.position.y, TEST_EXIT_RECT.size.x, TEST_EXIT_RECT.size.y], "cue": test_exit_cue.state() if is_instance_valid(test_exit_cue) else {}, "contact_supported": _test_capsule_contact() if is_instance_valid(hero) else false}
+
+func _test_released_error() -> String:
+	if not test_production_transition or not _test_transition_at_ready or declared_cell != "root" or not _live or _busy or is_restore_candidate() or not is_instance_valid(hero) or hero.dead: return "Actual installed opted-in TEST root component required"
+	if not _released or _pending_release or not is_instance_valid(helper): return "Actual final target/helper release must settle"
+	var target: Node3D = root_network.call("get_tether")
+	if not bool(target.get("dead")) or float(target.get("hp")) != 0.0 or int(target.get("phase")) != 3 or (_helper_retired.is_empty() and _helper_death.is_empty()): return "Real final0 and actual helper retirement/death required"
+	for owner: Node3D in scheduler_bindings().owners.values():
+		var control: Dictionary = threat_scheduler.source_control_state(owner)
+		if control.is_empty() or not control.reservations.is_empty(): return "Actual retained TEST owners must be unleased"
+	return runtime_error()
+
+func _test_capsule_contact() -> bool:
+	if not is_instance_valid(hero) or hero.dead or not hero.is_on_floor(): return false
+	var body: CollisionShape3D = hero.get_node_or_null("BodyCollision") as CollisionShape3D
+	if body == null or body.disabled or not body.shape is CapsuleShape3D or body.global_basis != Basis.IDENTITY: return false
+	var shape: CapsuleShape3D = body.shape as CapsuleShape3D
+	var feet_y: float = body.global_position.y - shape.height * 0.5
+	return is_finite(shape.radius) and shape.radius > 0.0 and absf(feet_y) <= 0.2 and TEST_EXIT_RECT.grow(-shape.radius).has_point(Vector2(body.global_position.x, body.global_position.z))
+
+func _present_test_exit(quiet: bool = false) -> void:
+	if not test_production_transition or not is_instance_valid(test_exit_cue): return
+	var nodes: Array[Object] = [test_exit_cue]
+	if quiet:
+		for child: Node in test_exit_cue.get_children():
+			nodes.append(child)
+			if child is MeshInstance3D and (child as MeshInstance3D).material_override != null: nodes.append((child as MeshInstance3D).material_override)
+	var prior: Array[bool] = []
+	for node: Object in nodes:
+		prior.append(node.is_blocking_signals())
+		if quiet: node.set_block_signals(true)
+	var accepted: bool = false
+	if not is_completed(): accepted = test_exit_cue.clear()
+	else:
+		# A cosmetic mirror of the actual successful public request, rebuilt
+		# only from the accepted CinderLevel progress on quiet restoration.
+		accepted = test_exit_cue.present("spent" if _test_contact_committed else "available", "contact")
+	for index: int in range(nodes.size()): nodes[index].set_block_signals(prior[index])
+	if not accepted: configuration_error = "Actual TEST contact cue rejected quiet/live progression presentation: " + test_exit_cue.last_error

@@ -1,0 +1,17 @@
+--- a/ignored/garden_mixed_production_transition_smoke.gd
++++ b/ignored/garden_mixed_production_transition_smoke_v2.gd
+@@ -157,6 +157,14 @@
+ 	if not _expect(error.is_empty(), "ordinary full native contact approach retains routed release anchor", error) or not await _complete_dash({"from": start, "to": finish}): return false
+ 	var actions: Array[Dictionary] = _hero.get_world_action_records()
+ 	if not _expect(actions.size() == count + 1 and actions.back().kind == "dash" and (_level.call("test_transition_state") as Dictionary).contact_supported and _hero.hp == _hero_hp and not _hero.dead, "genuine grounded full capsule enters the declared TEST threshold after one complete ordinary dash"): return false
++	# _complete_dash returns inside the physics barrier. Shell deliberately
++	# defers its pause there; complete the real public barrier first so the
++	# synchronous contact observer can legally capture the outgoing Hero.
++	var contact_pose: Transform3D = _hero.global_transform
++	var contact_clock: float = _hero.get_world_action_clock()
++	var contact_history: Array[Dictionary] = _hero.get_world_action_records()
++	if not await _completed_pause(): return false
++	if not _expect(_hero.global_transform == contact_pose and _hero.get_world_action_clock() == contact_clock and _scheduler.get_clock() == contact_clock and _wire_exact(_hero.get_world_action_records(), contact_history) and bool((_level.call("test_transition_state") as Dictionary).contact_supported), "public completed contact pause retains the exact genuine grounded pose/clocks/history before native exit request"): return false
+ 	var refs: Array[WeakRef] = _current_recipient_refs()
+ 	_release_fixture_barrier()
+ 	if not _expect(_level.call("request_test_component_contact", _hero), "actual grounded Hero contact forwards the exact canonical exit once through the TEST threshold"): return false

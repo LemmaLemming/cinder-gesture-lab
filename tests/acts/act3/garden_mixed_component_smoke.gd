@@ -514,6 +514,8 @@ func _tick() -> bool:
 		if int((_level.call("component_state") as Dictionary).sun.effective_index) != _enclose_sun: _flip_seen = true
 	_native_ticks += 1
 	var ok: bool = not _mixed_barrier.expired and not paused and error.is_empty() and fixed and not _hero.dead and _hero.hp == _hero_hp and _hero.equipment.snapshot() == _kit and not _events.has("fired_blast") and not _events.has("completion") and not _events.has("checkpoint") and not _events.has("exit") and _scheduler.get_clock() <= MIXED_LIMIT_S
+	if not ok:
+		print("ROOT_TICK_DIAGNOSTIC: " + JSON.stringify({"native_tick": _native_ticks, "barrier_expired": _mixed_barrier.expired, "tree_paused": paused, "runtime_error": error, "fixed_sources": fixed, "hero_dead": _hero.dead, "hero_hp": _hero.hp, "expected_hp": _hero_hp, "kit_exact": _hero.equipment.snapshot() == _kit, "events": _events, "scheduler_clock_s": _scheduler.get_clock(), "clock_limit_s": MIXED_LIMIT_S, "window_can_draw": DisplayServer.window_can_draw(root.get_window_id()), "window_has_focus": root.has_focus(), "window_visible": root.visible, "window_mode": root.mode, "hero_position": str(_hero.global_position), "core_hp": _tether.get("hp")}))
 	return true if ok else _expect(false, "bounded post-actor tick preserves actual ordinary controls/fixed sources/HP and TEST scope", error)
 
 

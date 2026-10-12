@@ -6,7 +6,7 @@ extends Node3D
 const Kit = preload("res://scripts/acts/act3/twin_suns_scenery.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const KEYS: Array[String] = ["started", "anchor_s", "cycle", "elapsed_s", "stage", "effective_index", "incoming_index"]
-const POSITIONS: Array[Vector3] = [Vector3(-1.25, 0.95, -5.2), Vector3(1.25, 1.1, -4.9)]
+const POSITIONS: Array[Vector3] = [Vector3(-1.8, 0.95, -4.2), Vector3(1.6, 1.1, -4.1)]
 const RADII: Array[float] = [0.65, 0.42]
 var _owner: CinderLevel
 var _hero: CinderPlayer
