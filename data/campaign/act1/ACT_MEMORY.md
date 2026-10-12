@@ -1,5 +1,12 @@
 # Act 1 — durable memory
 
+## Current whole-court portrait and terminal fixture — 2026-10-12T07:24:22.161858+00:00
+
+Wholeportrait03 closes **596/0 clean**,14 actual540×1170 views/oneGUIResume at current Shared52. All720 declaredinputs/all456 activeUIDbytes unchanged. Root personally inspected all14 original images and recorded exact imagehashes in the owned L4_WHOLE_PORTRAIT_REVIEW.json. Actual originalKingstep/summon and onceborn .7/.5 helperpair show full maskedheads after the scenicportalcorrection; actualcompletion/available/opencontact and normalcleanup now pass. No swipe/primary credit from the explicit representative-only mode; original152/227 nativegesture scopes remain separately attributed. Wholeart/King readiness records retain authorhistory and add this exactcurrentincrement.
+
+Existing wholeSave fixture gains only the opt-in --terminal-save draft after source review: actual completedintro/stoppedhelpers, publicKingdefeat, completed/contact format2 Save, quietcandidate/freshTitleContinue/GUIResume and earlierphaseRetry, preserving the actual unavailable-A1-L5 exit failure. This sourceaddition is unexecuted; current movinghelpertransport and terminaltransport are next, with changed-Protocol C31 boundary check required byShared51. No newresource/UID/import needed for existingfileedits. L4 unregistered/unaccepted, Act1 3/8/campaign13/24, all8desktopgoalACTIVE.
+
+
 ## Whole portrait terminal/occlusion diagnosis — 2026-10-12T07:19:36.378907+00:00
 
 Original portrait02 closes290/1 with12 actual540×1170 captures and no extra diagnostics beyond its assertion. All720 frozen inputs/all456UID bytes are unchanged. King step/summon and original fullHP helperpair genuinely execute; terminal public Kingdefeat then raises contracterror because completedparent attempted quietrefresh inside the native damagecallback. Native defeat art is already drawn before that callback. Fix preserves the strict nonreentrant actor API and omits unnecessary completed-parent derivedpose refresh. Root personally inspected opening/parallel/quietroundel/Kingstep/summon/stoppedpair images: painted curling flats, crescentfringedcloth, masked ribbands and sharedtraveller read, but helperheads clipbehind the vertical portal during entry. Only decorative portalanchors move Z−31.5→−33.2 behind fullbillboard silhouettes; no body/floor/camera/cue/timer changes. Sourcecorrections are untested until affectedportrait/native checks. Originalfailure/report/images stayimmutable; no completedterminal/wholelevelacceptance credit. Act1 3/8, campaign13/24, goalACTIVE.

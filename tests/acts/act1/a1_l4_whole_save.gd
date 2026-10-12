@@ -93,7 +93,7 @@ func _run() -> void:
 	game.request_retry()
 	if not await _settle(): await _finish(); return
 	if not _expect(paused and game.menu.page_name() == "resume" and Exact.stringify(game.capture_campaign_snapshot()) == protected_wire and game.player.hp == 23.0 and game.player.shells == 0 and _identities(game.active_level, game.player) != old_ids and _all_freed(old_refs) and _durable(game), "public earlier Retry installs pristine native recipients with exact protected resources/no refill and disposes later warning world") or not _bindings(game): await _finish(); return
-	if "--representative-helpers" in OS.get_cmdline_user_args() or "--moving-helper-save" in OS.get_cmdline_user_args() or "--moving-king-intro-save" in OS.get_cmdline_user_args():
+	if "--representative-helpers" in OS.get_cmdline_user_args() or "--moving-helper-save" in OS.get_cmdline_user_args() or "--moving-king-intro-save" in OS.get_cmdline_user_args() or "--terminal-save" in OS.get_cmdline_user_args():
 		if not await _representative_helpers(): await _finish(); return
 	await _finish()
 
@@ -132,6 +132,8 @@ func _representative_helpers() -> bool:
 		if not _damage(id, 24.0): return false
 	if not await _checkpoint("court-after-approach") or not await _place(Vector3(0, 0.1, -26)): return false
 	if not await _wait(func() -> bool: return int(game.active_level.get("room")) == 3 and game.active_level.current_checkpoint().id == "court-boss-entry", "actual broad native Area enters King epoch", 8.0, true): return false
+	if "--terminal-save" in OS.get_cmdline_user_args():
+		return await _terminal_save()
 	if "--moving-king-intro-save" in OS.get_cmdline_user_args():
 		# Do not spend eight arbitrary draw frames inside the new half-second
 		# observation window. Its actual durable checkpoint is checked after the
@@ -159,6 +161,126 @@ func _representative_helpers() -> bool:
 	if not await _settle(): return false
 	return _expect(paused and Exact.stringify(game.capture_campaign_snapshot()) == earlier_wire and _identities(game.active_level, game.player) != ids and game.player.snapshot_state().resources == earlier.player.resources and _durable(game), "representative Retry restores the actual earlier phase checkpoint/resources; no claimed current-state heal or fabricated checkpoint") and _bindings(game)
 
+
+
+func _terminal_save() -> bool:
+	# Only this opt-in extends the representative native progression to terminal
+	# Save/contact. The unchanged entrance still declares HP23/zero initial ammo;
+	# passive reload stays enabled and every later resource is observed, not reset.
+	if not _expect(game.registry.next_main("A1-L4") == "A1-L5" and game.registry.scene_error("A1-L5") == "Level is awaiting integration", "terminal opt-in discloses the actual unavailable next frontier without altering TEST metadata"): return false
+	var original_ids: Dictionary = _identities(game.active_level, game.player)
+	var completions: Array[Dictionary] = []
+	var contacts: Array[Dictionary] = []
+	_terminal_watch(game.active_level, completions, contacts)
+	if paused and not await _resume(game): return false
+	if not await _wait(func() -> bool: return game.active_level.get("king_intro").stage == "done", "actual room3 King intro completes before any terminal-mode King injury", 12.0): return false
+	var intro: Dictionary = (game.active_level.get("king_intro") as Dictionary).duplicate(true)
+	var record: Dictionary = intro.record
+	var goal: Vector3 = record.get("to", Vector3.ZERO)
+	var endpoint: Vector3 = intro.outcome.get("endpoint", Vector3.ZERO)
+	var king: CharacterBody3D = _sources()["court-king"]
+	if not _expect(Codec.keys_error(record, ["active", "from", "to", "start_s", "end_s", "speed"]).is_empty() and record.active and record.from is Vector3 and record.to is Vector3 and record.to == record.from + Vector3.BACK * 0.7 and record.speed == 1.4 and record.end_s == record.start_s + 0.7 / 1.4 and intro.outcome.outcome == "complete" and Vector2(endpoint.x, endpoint.z).distance_to(Vector2(goal.x, goal.z)) <= 0.005 and _scheduler().get_clock() >= record.end_s and king.get("hp") == 80.0 and not king.get("dead") and not game.active_level.get("_helpers_once"), "terminal setup retains the real completed .7-unit King step at1.4/.5 and untouched80HP before helper birth"): return false
+	var intro_wire: String = Exact.stringify(_portable(intro))
+	receipts.append({"stage": "terminal opt-in actual room3 intro completed", "intro": _portable(intro), "initial_resources_declared": {"hp": 23.0, "shells": 0}, "actual_current_resources": _portable(game.player.snapshot_state().resources)})
+	if not await _place(Vector3(0, 0.1, -28.2)) or not _damage("court-king", 40.0): return false
+	if not await _wait(func() -> bool: return _moving_helpers(), "actual once-born finite helpers move before terminal completion", 12.0): return false
+	var entries: Dictionary = (game.active_level.get("_entry_records") as Dictionary).duplicate(true)
+	for id: String in ["court-helper-west", "court-helper-east"]:
+		var entry: Dictionary = entries[id]
+		var actor: CharacterBody3D = _sources()[id]
+		if not _expect(Codec.keys_error(entry, ["active", "from", "to", "start_s", "end_s", "speed"]).is_empty() and entry.active and entry.from is Vector3 and entry.to == entry.from + Vector3.BACK * 0.7 and entry.speed == 1.4 and entry.end_s == entry.start_s + 0.7 / 1.4 and actor.get("hp") == 24.0 and not actor.get("dead") and actor.velocity.z > 0.0, "terminal setup observes the original real half-second moving helper: " + id): return false
+	var entries_wire: String = Exact.stringify(_portable(entries))
+	if not await _wait(func() -> bool: return int(game.active_level.get("room")) == 4 and game.active_level.get("helper_stage") == "done", "actual terminal-mode helper pair stops at its original phase boundary", 12.0, true) or not await _checkpoint("court-king-phase-two"): return false
+	var earlier: Dictionary = game.attempts.state().story.checkpoint.duplicate(true)
+	var earlier_wire: String = Exact.stringify(earlier)
+	if not _closed(earlier) or not _expect(earlier.level.progress.checkpoint_id == "court-king-phase-two" and not earlier.level.progress.completed and earlier.level.progress.contact_exit_id == "" and earlier.level.local.room == 4 and earlier.level.local.helpers_once and earlier.level.local.helper_stage == "done" and earlier.level.local.actors["court-king"].hp == 40.0 and earlier.player.resources.hp == 23.0 and _identities(game.active_level, game.player) == original_ids, "terminal mode protects the actual earlier incomplete phase checkpoint/resources and original native cast") or not _terminal_histories(earlier, intro_wire, entries_wire): return false
+	for id: String in ["court-helper-west", "court-helper-east"]:
+		var outcome: Dictionary = earlier.level.local.entry_outcomes[id]
+		var actor: Dictionary = earlier.level.local.actors[id]
+		var position: Vector3 = Codec.read_vector3(actor.motion.position)
+		var entry_goal: Vector3 = Codec.read_vector3(earlier.level.local.entry_records[id].to)
+		if not _expect(outcome.outcome == "complete" and actor.hp == 24.0 and not actor.dead and actor.motion.velocity == [0.0, 0.0, 0.0] and Vector2(position.x, position.z).distance_to(Vector2(entry_goal.x, entry_goal.z)) <= 0.005 and earlier.level.local.scheduler.clock_s >= earlier.level.local.entry_records[id].end_s, "actual protected checkpoint retains stopped original full-HP helper endpoint: " + id): return false
+	receipts.append({"stage": "terminal opt-in protected actual earlier phase checkpoint", "exact_snapshot": earlier_wire})
+	if not _damage("court-king", 40.0) or not await _wait(func() -> bool: return game.active_level.is_completed(), "actual public terminal King injury requests completion", 8.0, true) or not await _settle(): return false
+	if paused:
+		if not _expect(game.menu.page_name() == "resume", "only the actual completed Resume page may precede terminal Pause") or not await _resume(game): return false
+	if not await _pause(): return false
+	var available: Dictionary = game.capture_campaign_snapshot()
+	if not _closed(available) or not _terminal_available(available) or not _terminal_histories(available, intro_wire, entries_wire) or not _expect(completions.size() == 1 and contacts.is_empty() and Exact.stringify(game.attempts.state().story.checkpoint) == earlier_wire and available.player.resources.hp == earlier.player.resources.hp and _durable(game), "public completed available-contact Save is exact/durable, completes once and preserves earlier Retry/resources"): return false
+	var completed_main: Array = game.attempts.state().completed_main.duplicate(true)
+	receipts.append({"stage": "actual completed available-contact Save", "exact_snapshot": Exact.stringify(available), "exact_earlier_checkpoint": earlier_wire, "completion_events": completions.duplicate(true), "completed_main": completed_main})
+	if not _direct_candidate(available) or not await _terminal_replace_continue(available, earlier_wire, "completed available-contact"): return false
+	_terminal_watch(game.active_level, completions, contacts)
+	if not _terminal_available(game.capture_campaign_snapshot()) or not _expect(completions.size() == 1 and contacts.is_empty(), "quiet fresh completed Continue does not replay completion or fabricate contact") or not await _resume(game): return false
+	if not await _terminal_contact(contacts): return false
+	# The canonical exit operation commits the contact snapshot before attempting
+	# unavailable A1-L5. Preserve the actual failed operation and its exact error;
+	# no private operation/error clearing and no new accepted successor is seeded.
+	if not await _wait(func() -> bool: return not game.get("_draining") and not game.get("_drain_queued") and (game.get("_operations") as Array).is_empty(), "actual exterior contact drain closes", 8.0, true): return false
+	var pending: Array = game.get("_failed_operations") as Array
+	if not _expect(paused and game.menu.page_name() == "pause" and game.campaign_error == "Level is awaiting integration" and pending.size() == 1 and pending[0].operation == "exit" and pending[0].level_id == "A1-L4" and contacts.size() == 1 and completions.size() == 1, "actual once-only contact preserves the expected unavailable-next exit failure without a duplicate contact or completion"): return false
+	var contacted: Dictionary = game.attempts.story_snapshot()
+	var live_contact: Dictionary = game.capture_campaign_snapshot()
+	if not _closed(contacted) or not _expect(Exact.stringify(live_contact) == Exact.stringify(contacted) and contacted.level.progress.completed and contacted.level.progress.completion_id == "court-clear" and contacted.level.progress.contact_exit_id == "court-exterior" and (game.active_level.get("_whole_art") as Node3D).call("presentation_state").exterior_state == "open" and Exact.stringify(game.attempts.state().story.checkpoint) == earlier_wire and game.attempts.state().completed_main == completed_main and _durable(game), "canonical contact operation saves the exact real overlapped terminal unit to format2 before unavailable successor construction") or not _terminal_histories(contacted, intro_wire, entries_wire): return false
+	receipts.append({"stage": "actual exterior contact Save before unavailable-next failure", "exact_snapshot": Exact.stringify(contacted), "exact_earlier_checkpoint": earlier_wire, "contact_events": contacts.duplicate(true), "observed_expected_campaign_error": game.campaign_error, "preserved_failed_operations": _portable(pending), "scope": "actual contact persistence; no successor transition acceptance"})
+	if not await _terminal_replace_continue(contacted, earlier_wire, "latched exterior contact"): return false
+	_terminal_watch(game.active_level, completions, contacts)
+	var restored_contact: Dictionary = game.capture_campaign_snapshot()
+	if not _closed(restored_contact) or not _expect((game.active_level.get_node("ExitArea") as Area3D).monitoring == false and (game.active_level.get("_whole_art") as Node3D).call("presentation_state").exterior_state == "open" and restored_contact.level.progress.contact_exit_id == "court-exterior" and contacts.size() == 1 and completions.size() == 1 and (game.get("_failed_operations") as Array).is_empty(), "fresh Continue restores the spent latched contact without another event or an inherited pending operation"): return false
+	var ids: Dictionary = _identities(game.active_level, game.player)
+	var refs: Array[WeakRef] = _descendant_refs(game.world)
+	game.request_retry()
+	if not await _settle(): return false
+	if not _expect(paused and game.menu.page_name() == "resume" and Exact.stringify(game.capture_campaign_snapshot()) == earlier_wire and _identities(game.active_level, game.player) != ids and _all_freed(refs) and game.player.snapshot_state().resources == earlier.player.resources and game.attempts.state().completed_main == completed_main and contacts.size() == 1 and completions.size() == 1 and _durable(game), "public earlier Retry restores exact incomplete phase state/resources with fresh recipients, retains recorded completion and disposes contacted world"): return false
+	receipts.append({"stage": "actual earlier phase Retry after terminal contact Continue", "exact_snapshot": Exact.stringify(game.capture_campaign_snapshot()), "completion_events": completions.duplicate(true), "contact_events": contacts.duplicate(true), "completed_main": completed_main})
+	return _bindings(game)
+
+
+func _terminal_watch(target: CinderLevel, completions: Array[Dictionary], contacts: Array[Dictionary]) -> void:
+	target.completion_requested.connect(func(id: String, complete_id: String) -> void: completions.append({"level_id": id, "completion_id": complete_id}))
+	target.contact_exit_requested.connect(func(id: String, exit_id: String) -> void: contacts.append({"level_id": id, "exit_id": exit_id}))
+
+
+func _terminal_histories(saved: Dictionary, intro_wire: String, entries_wire: String) -> bool:
+	if not _expect(saved.level.local.king_intro.stage == "done" and saved.level.local.king_intro.outcome.outcome == "complete" and Exact.stringify(saved.level.local.king_intro) == intro_wire and saved.level.local.helpers_once and saved.level.local.helper_stage == "done" and Exact.stringify(saved.level.local.entry_records) == entries_wire and saved.level.local.entry_outcomes.size() == 2, "terminal transport preserves original completed intro and once-only finite helper history without rebase"): return false
+	for id: String in ["court-helper-west", "court-helper-east"]:
+		var outcome: Dictionary = saved.level.local.entry_outcomes[id]
+		var endpoint: Vector3 = Codec.read_vector3(outcome.endpoint)
+		var goal: Vector3 = Codec.read_vector3(saved.level.local.entry_records[id].to)
+		if not _expect(outcome.outcome == "complete" and Vector2(endpoint.x, endpoint.z).distance_to(Vector2(goal.x, goal.z)) <= 0.005 and saved.level.local.actors[id].hp == 24.0 and not saved.level.local.actors[id].dead, "terminal history retains the actual original full entry retirement and full-HP helper: " + id): return false
+	return true
+
+
+func _terminal_available(saved: Dictionary) -> bool:
+	return _expect(not saved.is_empty() and saved.level.local.room == 4 and saved.level.progress.completed and saved.level.progress.completion_id == "court-clear" and saved.level.progress.contact_exit_id == "" and saved.level.local.actors["court-king"].dead and saved.level.local.actors["court-king"].hp == 0.0 and saved.level.local.scheduler.encounter_id == "" and saved.level.local.scheduler.reservations.is_empty() and (game.active_level.get_node("ExitArea") as Area3D).monitoring and (game.active_level.get("_whole_art") as Node3D).call("presentation_state") == {"stage": "exterior", "helpers_open": true, "exterior_state": "available"}, "actual completed saved unit has retired danger and its available native exterior contact/scenery")
+
+
+func _terminal_replace_continue(saved: Dictionary, earlier_wire: String, label: String) -> bool:
+	var ids: Dictionary = _identities(game.active_level, game.player)
+	var refs: Array[WeakRef] = _descendant_refs(game)
+	if is_instance_valid(game.fx): game.fx.clear()
+	game.free(); game = null
+	if not _expect(_all_freed(refs), "normal close disposes the terminal donor before fresh " + label + " Continue"): return false
+	game = _new_shell()
+	if game == null or not await _settle(): return false
+	if not _expect(paused and game.active_level == null and game.player == null and game.menu.page_name() == "title", "fresh real Title has no installed terminal world before " + label + " Continue") or not _press(game, "ContinueStoryButton") or not await _settle(): return false
+	if not _expect(paused and game.menu.page_name() == "resume" and Exact.stringify(game.capture_campaign_snapshot()) == Exact.stringify(saved) and _identities(game.active_level, game.player) != ids and Exact.stringify(game.attempts.state().story.checkpoint) == earlier_wire and game.player.snapshot_state().resources == saved.player.resources and _durable(game), "fresh disk Continue exactly reconstructs " + label + " native state/resources/history and preserves earlier Retry"): return false
+	_watch(game.active_level, game.player, false)
+	receipts.append({"stage": "fresh Title Continue " + label, "exact_snapshot": Exact.stringify(game.capture_campaign_snapshot()), "exact_earlier_checkpoint": earlier_wire})
+	return _bindings(game)
+
+
+func _terminal_contact(contacts: Array[Dictionary]) -> bool:
+	if not await _wait(func() -> bool: return game.player.get_threat_response_state().stable and game.player.velocity == Vector3.ZERO, "actual stopped Hero before terminal TEST contact placement", 8.0): return false
+	var position := Vector3(0, 0.1, -35)
+	if not _expect(Layout.SAFE_RECT.has_point(Vector2(position.x, position.z)), "terminal TEST contact placement remains on the authored supported floor"): return false
+	var before: Vector3 = game.player.global_position
+	game.player.global_position = position
+	setups.append({"kind": "TEST supported Hero placement for actual exterior contact", "from": Codec.vector3(before), "to": Codec.vector3(position), "clock_s": _scheduler().get_clock()})
+	# Native Area delivery/exit legitimately pauses the Shell before _place's
+	# ordinary floor-ready return. The actual saved capsule/floor validation,
+	# rather than an invented is_on_floor flag, proves this contact position.
+	return await _wait(func() -> bool: return contacts.size() == 1 and game.active_level.get("_contact_exit_id") == "court-exterior", "actual supported native Area contact emits exactly one exterior exit", 8.0, true)
 
 
 func _unfinished_king_intro_transport() -> bool:
@@ -309,6 +431,9 @@ func _direct_candidate(saved: Dictionary) -> bool:
 	if not _expect(player.restore_state(saved.player) and target.restore_state(saved.level), "quiet actual Player then whole native local commit succeeds"): return false
 	var optical: String = game._candidate_presentation_error(candidate, saved.shell)
 	var local: Dictionary = target.call("_capture_local_state")
+	if "--terminal-save" in OS.get_cmdline_user_args() and saved.level.progress.completed:
+		var exact_level: Dictionary = target.snapshot_state()
+		if not _expect(not exact_level.is_empty() and Exact.stringify(exact_level) == Exact.stringify(saved.level) and target.is_completed() and target.current_checkpoint().id == saved.level.progress.checkpoint_id and quiet_events == quiet_before and _donor() == donor, "terminal-only quiet direct candidate also preserves exact completed/contact/checkpoint progress with zero callbacks"): return false
 	if not _expect(optical.is_empty() and Exact.stringify(player.snapshot_state()) == Exact.stringify(saved.player) and Exact.stringify(local) == Exact.stringify(saved.level.local) and quiet_events == quiet_before and target.is_restore_candidate() and _donor() == donor, "quiet native unit preserves exact HP/clocks/cues/proof/history with zero callbacks and actual candidate optics"): return false
 	receipts.append({"stage": "direct actual candidate quiet restore", "room": saved.level.local.room, "exact_local": Exact.stringify(local), "quiet_callback_delta": quiet_events - quiet_before})
 	var refs: Array[WeakRef] = _descendant_refs(candidate.container)
@@ -614,7 +739,7 @@ func _finish() -> void:
 	var file := FileAccess.open(report, FileAccess.WRITE)
 	if file == null: _expect(false, "focused native report is writable")
 	else:
-		file.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "setups": setups, "receipts": receipts, "fixture_mode": "moving-king-intro-save" if "--moving-king-intro-save" in OS.get_cmdline_user_args() else ("moving-helper-save" if "--moving-helper-save" in OS.get_cmdline_user_args() else ("representative-helpers" if "--representative-helpers" in OS.get_cmdline_user_args() else "entrance-only")), "wall_ms": Time.get_ticks_msec() - started_ms, "scope": "TEST metadata/generic predecessors/injured carryover; default is actual entrance Warning Save/format2/pristine constructors/fresh Continue/earlier Retry/quiet cleanup only. Opt-in King intro/helper transport reuses labelled public injuries/placement; the intro selector leaves the King uninjured and observes actual finite movement/fresh Resume/earlier boss-entry Retry. No earned route, production registration, art/kit/balance/performance/mobile acceptance"}, "\t")); file.close()
+		file.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "setups": setups, "receipts": receipts, "fixture_mode": "terminal-save" if "--terminal-save" in OS.get_cmdline_user_args() else ("moving-king-intro-save" if "--moving-king-intro-save" in OS.get_cmdline_user_args() else ("moving-helper-save" if "--moving-helper-save" in OS.get_cmdline_user_args() else ("representative-helpers" if "--representative-helpers" in OS.get_cmdline_user_args() else "entrance-only"))), "wall_ms": Time.get_ticks_msec() - started_ms, "scope": "TEST metadata/generic predecessors/injured carryover; default is actual entrance Warning Save/format2/pristine constructors/fresh Continue/earlier Retry/quiet cleanup only. Opt-in King intro/helper transport reuses labelled public injuries/placement; the intro selector leaves the King uninjured and observes actual finite movement/fresh Resume/earlier boss-entry Retry. The terminal selector observes real completed intro/stopped helpers, public King defeat, completed/contact format2 transport, exact fresh Title Continue and earlier phase Retry; its actual unavailable A1-L5 exit failure is preserved and is not a successor acceptance. No earned route, production registration, art/kit/balance/performance/mobile acceptance"}, "\t")); file.close()
 	var dir := DirAccess.open(test_root)
 	if dir != null:
 		for name: String in dir.get_files(): DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root + name))
