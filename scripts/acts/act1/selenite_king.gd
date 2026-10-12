@@ -744,6 +744,13 @@ func _snapshot_access_error() -> String:
 	return ""
 
 
+func get_court_native_bindings() -> Dictionary:
+	# Pure actual bindings/configuration for the owning court. No state capture,
+	# Scheduler pruning, construction entitlement or saved-state interpretation.
+	if not _live_bindings() or not _retained_body_error().is_empty() or not art_binding_error().is_empty(): return {}
+	return {"source_id": _configuration.source_id, "configuration": _configuration.duplicate(true), "scheduler": _scheduler, "player": _hero}
+
+
 func snapshot_state(paired_scheduler: Dictionary) -> Dictionary:
 	last_snapshot_error = _snapshot_access_error()
 	if not last_snapshot_error.is_empty():
@@ -821,20 +828,25 @@ func restore_exchange_state(saved: Dictionary) -> bool:
 	if hp != saved.hp or dead != saved.dead or dormant != saved.dormant or not _same(Codec.vector3(global_position), saved.motion.position) or not _same(Codec.vector3(velocity), saved.motion.velocity) or _collision.disabled != inactive or collision_layer != (0 if inactive else 2) or collision_mask != (0 if inactive else 1) or is_in_group("enemies") == inactive or visible == inactive:
 		last_snapshot_error = "Apply the exact validated actual B01 lifecycle/motion before exchange commit"
 		return false
-	var record: Dictionary = _scheduler.reservation_state(saved.reservation_id) if not saved.reservation_id.is_empty() else {}
+	var control: Dictionary = _scheduler.source_control_state(self)
+	if control.get("outside_transaction") != true:
+		last_snapshot_error = "Quiet King exchange requires actual stable Scheduler custody"
+		return false
+	var record: Dictionary = {}
+	for existing: Dictionary in control.reservations:
+		if existing.id == saved.reservation_id: record = existing
 	if not saved.reservation_id.is_empty():
 		if record.is_empty() or int(record.source_instance_id) != get_instance_id() or _scheduler.get_clock() != saved.sample.clock_s or not _same(Codec.vector3(record.source_position), saved.motion.position) or not _same(Codec.vector3(record.adapter.current_velocity), saved.motion.velocity) or not _same(Codec.vector3(_hero.global_position), saved.sample.hero_position):
 			last_snapshot_error = "Actual restored scheduler/source/hero must match the validated sampled exchange"
 			return false
-		var current_pair: Dictionary = {"clock_s": _scheduler.get_clock(), "encounter_id": saved.role_encounter_id, "profile": _scheduler.encounter_profile(), "reservations": [_encode_public_record(record)], "cooldowns": []}
+		var current_pair: Dictionary = {"clock_s": control.clock_s, "encounter_id": control.encounter_id, "profile": _scheduler.encounter_profile(), "reservations": [_encode_public_record(record)], "cooldowns": []}
 		last_snapshot_error = _actor_error(saved, current_pair, _hero.snapshot_state())
 		if not last_snapshot_error.is_empty():
 			return false
 	else:
-		for existing: Dictionary in _scheduler.reservations():
-			if int(existing.source_instance_id) == get_instance_id():
-				last_snapshot_error = "Inactive B01 cannot hide an actual retained reservation"
-				return false
+		if not control.reservations.is_empty():
+			last_snapshot_error = "Inactive B01 cannot hide an actual retained reservation"
+			return false
 	_snapshot_busy = true
 	_role_encounter_id = saved.role_encounter_id
 	_profile_id = saved.profile_id

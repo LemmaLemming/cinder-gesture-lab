@@ -1,5 +1,5 @@
 extends CinderLevel
-## Whole L4 gameplay draft. Unregistered/unexecuted; aggregate codec unfinished.
+## Whole L4 authored gameplay. Unregistered; whole persistence checks remain due.
 ## One real Hero and shared Scheduler. No private input/camera/HUD/save system.
 
 const Layout = preload("res://scripts/acts/act1/selenite_court_layout.gd")
@@ -9,6 +9,9 @@ const Geometry = preload("res://scripts/combat/threat_geometry.gd")
 const Motion = preload("res://scripts/combat/lunge_motion.gd")
 const BodySweep = preload("res://scripts/combat/body_sweep.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const CourtCodec = preload("res://scripts/acts/act1/selenite_court_codec.gd")
+const WholeArt = preload("res://scripts/acts/act1/selenite_court_whole_art.gd")
 const Cue = preload("res://scripts/cues/interaction_cue.gd")
 const WORLD_REVISION: int = 1
 const COMPLETE_ID: String = "court-clear"
@@ -44,6 +47,18 @@ var _roundel_cycle: int = 0
 var _helpers_once: bool = false
 var _pending_boss_contact: bool = false
 var entry_stop_diagnostics: Dictionary = {}
+var _trusted_configurations: Dictionary = {}
+var _configuration_hashes: Dictionary = {}
+var _authored_positions: Dictionary = {}
+var _constructor_open: bool = false
+var _constructor_entitlements: Dictionary = {}
+var _quiet_commit_error: String = ""
+var _quiet_commit: bool = false
+var _capture_error: String = ""
+var _contact_pins: Dictionary = {}
+var _whole_art: Node3D
+var _art_stage_key: String = ""
+var _exterior_open: bool = false
 
 
 func _ready() -> void:
@@ -81,6 +96,17 @@ func _ready() -> void:
 	_exit_area.body_entered.connect(_exit_contact)
 	_boss_cue = Cue.new(); _boss_cue.name = "BossContactCue"; _boss_cue.position = Layout.BOSS_CONTACT_POSITION + Vector3(0, 0.035, 0); add_child(_boss_cue)
 	_exit_cue = Cue.new(); _exit_cue.name = "ExteriorContactCue"; _exit_cue.position = Layout.EXIT_POSITION + Vector3(0, 0.035, 0); add_child(_exit_cue)
+	for area: Area3D in [_boss_area, _exit_area]:
+		var collision := area.get_node_or_null("CollisionShape3D") as CollisionShape3D
+		if collision == null or not collision.shape is BoxShape3D:
+			_construction_error = "Actual upright native contact boxes required"; return
+		_contact_pins[area.name] = {"area": area, "frame": area.global_transform, "collision": collision, "shape": collision.shape, "collision_frame": collision.transform, "size": (collision.shape as BoxShape3D).size, "layer": area.collision_layer, "mask": area.collision_mask}
+	# Replace only the earlier scenic placeholders. Their authored anchors and
+	# every actual floor/contact/collision resource remain the original scene.
+	for path: String in ["CompactSideThrone", "HelperDoorWest", "HelperDoorEast"]:
+		for node: Node in get_node(path).find_children("*", "MeshInstance3D", true, false): (node as MeshInstance3D).visible = false
+	_whole_art = WholeArt.build_whole_art(self)
+	if not is_instance_valid(_whole_art): _construction_error = "Authored whole court art could not bind its actual original floor/skin"; return
 
 
 func _on_enter_level() -> void:
@@ -89,6 +115,8 @@ func _on_enter_level() -> void:
 		if actor.call("bind", scheduler, hero) != true: _construction_error = String(actor.get("last_error")); return
 	if not roundel.bind(scheduler, {"hero": hero}) or not roundel.set_presentation_guard(Callable(self, "_roundel_presentation")):
 		_construction_error = roundel.last_error; return
+	_construction_error = _pin_native_bindings()
+	if not _construction_error.is_empty(): return
 	_running = true
 	_begin_room(0)
 
@@ -389,7 +417,8 @@ func _commit_boss_contact(body: Node3D) -> void:
 
 
 func _exit_contact(body: Node3D) -> void:
-	if body == hero and _running and not hero.dead and not get_tree().paused and is_completed() and _exit_area.overlaps_body(hero): request_contact_exit(EXIT_ID, hero)
+	if body == hero and _running and not hero.dead and not get_tree().paused and is_completed() and _exit_area.overlaps_body(hero):
+		if request_contact_exit(EXIT_ID, hero): _exterior_open = true; _sync_art_presentation()
 
 
 func _encounter_id() -> String:
@@ -398,6 +427,7 @@ func _encounter_id() -> String:
 
 
 func _refresh_objective() -> void:
+	_sync_art_presentation()
 	if is_completed(): objective_text = "THE COURT IS OPEN\nCONTACT THE EXTERIOR CURTAIN"; return
 	if _awaiting_room == 3: objective_text = "THE KING AWAITS\nCONTACT THE THRONE APPROACH"; return
 	if _awaiting_room >= 0: objective_text = "COURT CLEARED\nDASH TO THE NEXT OPEN COURT"; return
@@ -483,25 +513,36 @@ func _camera_framing_points() -> Array:
 	if room == 2:
 		var state: Dictionary = roundel.state()
 		if state.status == "running": points.append_array(_geometry_points(state.geometry)); points.append_array(_cue_points(roundel.get_cue()))
-	for frame: Dictionary in _frames.values(): points.append_array(_response_points(frame.landing, frame.attack_position))
+	for id: String in _frames:
+		var owner: Node3D = roundel if id == Layout.ROUND_EL_ID else sources.get(id) as Node3D
+		if not is_instance_valid(owner): return [Vector3.INF]
+		for record: Dictionary in scheduler.source_control_state(owner).get("reservations", []):
+			if record.id == _frames[id].reservation_id: points.append_array(_response_points(_frames[id].landing, _frames[id].attack_position))
 	if not _forecast.is_empty() and _forecast_frames.get("hero") == hero.global_transform:
 		var id: String = _forecast_frames.id
 		var owner: Node3D = roundel if id == Layout.ROUND_EL_ID else sources.get(id) as Node3D
 		if is_instance_valid(owner) and owner.global_transform == _forecast_frames.source: points.append_array(_forecast)
 	var dash: Dictionary = hero.get_committed_dash_state()
 	if dash.get("active", false):
-		for point: Vector3 in shared_shell.call("player_camera_framing_points"): points.append(point + dash.origin + dash.direction * float(dash.distance) - hero.global_position)
-	return _unique_points(points)
+		for point: Vector3 in _hero_points(): points.append(point + dash.origin + dash.direction * float(dash.distance) - hero.global_position)
+	# A genuinely cleared court has no living threat. Keep the actual Hero
+	# bounds at this deferred checkpoint instead of inventing a future source.
+	return _unique_points(points if not points.is_empty() else _hero_points())
 
 
 func _actor_points(id: String, endpoint: Vector3) -> Array:
 	var actor: CharacterBody3D = sources[id]
+	var camera: Camera3D = _actual_camera()
+	var shared_camera: Camera3D = shared_shell.get("camera") as Camera3D if is_instance_valid(shared_shell) else null
+	# The shared billboard helper uses its fixed camera basis. A fresh candidate
+	# must first retain that exact basis; its world/focus belongs to this viewport.
+	if not is_instance_valid(camera) or not is_instance_valid(shared_camera) or camera.global_basis != shared_camera.global_basis: return [Vector3.INF]
 	if not String(actor.call("art_binding_error")).is_empty(): return [Vector3.INF]
 	var collision := actor.get_node_or_null("BodyCollision") as CollisionShape3D
 	if not is_instance_valid(collision) or not collision.shape is CapsuleShape3D: return [Vector3.INF]
 	var capsule := collision.shape as CapsuleShape3D
 	var points: Array = _box_points(AABB(Vector3(-capsule.radius, -capsule.height * 0.5, -capsule.radius), Vector3(2 * capsule.radius, capsule.height, 2 * capsule.radius)), collision.global_transform)
-	if id == "court-king": points.append_array(actor.call("camera_art_points", shared_shell.get("camera") as Camera3D))
+	if id == "court-king": points.append_array(actor.call("camera_art_points", _actual_camera()))
 	else:
 		var art: Node3D = actor.call("get_art")
 		for node: Node in art.find_children("*", "Sprite3D", true, false):
@@ -544,7 +585,7 @@ func _geometry_points(shape: Dictionary) -> Array:
 
 func _response_points(landing: Vector3, attack: Vector3) -> Array:
 	var points: Array = []
-	for point: Vector3 in shared_shell.call("player_camera_framing_points"): points.append(point + landing - hero.global_position); points.append(point + attack - hero.global_position)
+	for point: Vector3 in _hero_points(): points.append(point + landing - hero.global_position); points.append(point + attack - hero.global_position)
 	return points
 
 
@@ -571,17 +612,379 @@ func contract_error() -> String:
 	return _construction_error if not _construction_error.is_empty() else super.contract_error()
 
 
+func restore_candidate_construction_required() -> bool:
+	return true
+
+
+func _pin_native_bindings() -> String:
+	if global_transform != Transform3D.IDENTITY or not is_instance_valid(hero) or hero.get_world_3d() != get_world_3d(): return "Actual fixed authored court and same-world Hero required"
+	for id: String in Layout.SOURCES:
+		var actor: CharacterBody3D = sources[id]
+		var native: Dictionary = actor.call("get_court_native_bindings" if id == "court-king" else "get_spore_native_bindings")
+		if native.is_empty() or native.get("source_id") != id or native.get("player") != hero or native.get("scheduler") != scheduler or actor.global_position != Layout.SOURCES[id].position: return "Retain actual immutable authored source/Player/Scheduler: " + id
+		_trusted_configurations[id] = native.configuration.duplicate(true)
+		_configuration_hashes[id] = Exact.stringify(native.configuration).sha256_text()
+		_authored_positions[id] = Codec.vector3(actor.global_position)
+	return ""
+
+
+func _native_runtime_error() -> String:
+	if not _construction_error.is_empty(): return _construction_error
+	if not _quiet_commit_error.is_empty(): return _quiet_commit_error
+	if not _running or not is_instance_valid(hero) or not is_instance_valid(shared_shell) or not is_instance_valid(scheduler) or scheduler.get_parent() != self or not is_instance_valid(roundel) or roundel.get_parent() != self: return "Actual entered court native bindings required"
+	var error: String = _floor_error()
+	if not error.is_empty(): return error
+	if not is_instance_valid(_whole_art) or _whole_art.get_parent() != self or get_node_or_null("WholeCourtArt") != _whole_art: return "Retain actual authored whole court art"
+	error = String(_whole_art.call("binding_error"))
+	if not error.is_empty(): return error
+	if not Codec.keys_error(sources, Layout.SOURCES.keys()).is_empty() or not Codec.keys_error(_trusted_configurations, Layout.SOURCES.keys()).is_empty(): return "Retain the exact eight native identities/configurations"
+	for id: String in Layout.SOURCES:
+		var raw: Variant = sources.get(id)
+		if not is_instance_valid(raw) or not raw is CharacterBody3D or raw != _retained.get(id) or raw.get_parent() != self or not raw.is_inside_tree() or raw.is_queued_for_deletion(): return "Retained actual source unavailable: " + id
+		var native: Dictionary = raw.call("get_court_native_bindings" if id == "court-king" else "get_spore_native_bindings")
+		if native.is_empty() or native.get("player") != hero or native.get("scheduler") != scheduler or not _same(native.configuration, _trusted_configurations[id]): return "Actual native source aliases/configuration changed: " + id
+	for key: String in _contact_pins:
+		var pin: Dictionary = _contact_pins[key]
+		var area: Area3D = pin.area
+		var collision: CollisionShape3D = pin.collision
+		if not is_instance_valid(area) or not is_instance_valid(collision) or area.get_parent() != self or area.is_queued_for_deletion() or area.global_transform != pin.frame or area.get_node_or_null("CollisionShape3D") != collision or collision.shape != pin.shape or collision.transform != pin.collision_frame or (collision.shape as BoxShape3D).size != pin.size or collision.disabled or area.collision_layer != pin.layer or area.collision_mask != pin.mask: return "Retain actual contact Area/frame/shape/masks"
+	return ""
+
+
+func _on_enter_restore_candidate(local: Dictionary, _saved_player: Dictionary) -> String:
+	if not is_restore_candidate() or not _construction_error.is_empty(): return "Fresh paused actual court required"
+	for actor: CharacterBody3D in sources.values():
+		if actor.call("bind", scheduler, hero) != true: return String(actor.get("last_error"))
+	if not roundel.bind(scheduler, {"hero": hero}) or not roundel.set_presentation_guard(Callable(self, "_roundel_presentation")): return roundel.last_error
+	var error: String = _pin_native_bindings()
+	if not error.is_empty(): return error
+	var plan: Dictionary = CourtCodec.construction_plan(local, _configuration_hashes, _authored_positions)
+	if plan.get("accepted") != true: return String(plan.get("error", "Court construction plan refused"))
+	_constructor_entitlements = plan.descriptors.duplicate(true)
+	_constructor_open = true
+	for id: String in plan.activated_source_ids:
+		var actor: CharacterBody3D = sources[id]
+		var accepted: Variant = actor.call("construct_restore_recipient", self, _constructor_entitlements[id].duplicate(true))
+		_constructor_entitlements.erase(id)
+		if accepted != true:
+			_constructor_open = false; _constructor_entitlements.clear()
+			return String(actor.get("last_error")) if is_instance_valid(actor) else "Native recipient disappeared"
+	_constructor_open = false; _constructor_entitlements.clear()
+	_running = true
+	return _native_runtime_error()
+
+
+func restore_recipient_construction_error(actor: CharacterBody3D, descriptor: Dictionary) -> String:
+	if not _constructor_open or not is_restore_candidate() or _quiet_commit or not _quiet_commit_error.is_empty(): return "Court native construction entitlement is closed"
+	var id: Variant = descriptor.get("source_id")
+	if not id is String or not _constructor_entitlements.has(id) or not is_instance_valid(actor) or sources.get(id) != actor or _retained.get(id) != actor or actor.get_parent() != self or actor.get_world_3d() != get_world_3d(): return "Only the actual retained entitled native recipient may be constructed"
+	return "" if _same(descriptor, _constructor_entitlements[id]) else "Descriptor differs from the closed copied court-prefix plan"
+
+
+func snapshot_state() -> Dictionary:
+	return _snapshot_in_context(_actual_camera(), shared_shell.get("hud") as GameHUD if is_instance_valid(shared_shell) else null)
+
+
+func snapshot_state_for_presentation(camera: Camera3D, hud: GameHUD) -> Dictionary:
+	return _snapshot_in_context(camera, hud)
+
+
+func _snapshot_in_context(camera: Camera3D, hud: GameHUD) -> Dictionary:
+	if is_restore_candidate(): last_snapshot_error = "Nonplayable candidate cannot supply live capture"; return {}
+	last_snapshot_error = _current_presentation_error(camera, hud)
+	if not last_snapshot_error.is_empty(): return {}
+	_capture_error = ""
+	var saved: Dictionary = super.snapshot_state()
+	if saved.is_empty():
+		if not _capture_error.is_empty(): last_snapshot_error = _capture_error
+		return {}
+	last_snapshot_error = snapshot_error(saved)
+	return saved if last_snapshot_error.is_empty() else {}
+
+
 func _capture_local_state() -> Dictionary:
-	# Honest refusal until the complete cast/phase/roundel/entry aggregate exists.
-	return {}
+	_capture_error = _native_runtime_error()
+	if _capture_error.is_empty() and (_pending_boss_contact or _constructor_open or _quiet_commit): _capture_error = "Capture requires the settled deferred boundary outside construction/commit"
+	if not _capture_error.is_empty(): return {}
+	var paired: Dictionary = scheduler.snapshot_state(scheduler_bindings())
+	if paired.is_empty(): _capture_error = scheduler.last_snapshot_error; return {}
+	var actors: Dictionary = {}
+	for id: String in Layout.SOURCES:
+		actors[id] = sources[id].call("snapshot_state", paired)
+		if actors[id].is_empty(): _capture_error = String(sources[id].get("last_snapshot_error")); return {}
+	var lane: Dictionary = roundel.snapshot_state(scheduler_bindings())
+	if lane.is_empty(): _capture_error = roundel.last_snapshot_error; return {}
+	var frames: Dictionary = {}
+	for record: Dictionary in paired.reservations:
+		if not _frames.has(record.source_id) or _frames[record.source_id].reservation_id != record.id: _capture_error = "Actual live lease lost its original response witness"; return {}
+		frames[record.source_id] = _frames[record.source_id].duplicate(true)
+	return {"api_revision": CourtCodec.API_REVISION, "schema_version": CourtCodec.SCHEMA_VERSION, "world_revision": WORLD_REVISION, "room": room, "formation": formation, "awaiting_room": _awaiting_room, "roundel_demonstrated": _roundel_demonstrated, "helpers_once": _helpers_once, "helper_stage": helper_stage, "entry_records": _encode_native(_entry_records), "entry_outcomes": _encode_native(_entry_outcomes), "actors": actors, "scheduler": paired, "roundel": lane, "framing": _encode_native(frames)}
 
 
-func _local_snapshot_error(_state: Dictionary) -> String:
-	return "Whole court aggregate/fresh candidate persistence is unfinished"
+func _local_snapshot_error(state: Dictionary) -> String:
+	return _local_snapshot_error_with_player(state, hero.snapshot_state())
 
 
-func _on_enter_restore_candidate(_local: Dictionary, _saved_player: Dictionary) -> String:
-	return "Whole court candidate construction/codec is unfinished"
+func _local_snapshot_error_with_player(state: Dictionary, saved_player: Dictionary) -> String:
+	var error: String = _native_runtime_error()
+	if error.is_empty(): error = CourtCodec.metadata_error(state)
+	if not error.is_empty(): return error
+	for id: String in Layout.SOURCES:
+		if not _same(state.actors[id].configuration, _trusted_configurations[id]): return "Saved actor differs from immutable actual native configuration: " + id
+		error = String(sources[id].call("actor_snapshot_error", state.actors[id], state.scheduler, saved_player))
+		if not error.is_empty(): return id + ": " + error
+	var bindings: Dictionary = _staged_bindings(state, saved_player)
+	if bindings.is_empty(): return "Complete native staging maps unavailable"
+	error = scheduler.snapshot_error(state.scheduler, bindings)
+	if error.is_empty(): error = roundel.snapshot_error(state.roundel, bindings, state.scheduler)
+	if error.is_empty(): error = _saved_entry_support_error(state)
+	if error.is_empty(): error = _saved_response_error(state, saved_player)
+	return error
+
+
+func _saved_entry_support_error(state: Dictionary) -> String:
+	for id: String in state.entry_records:
+		if state.entry_outcomes.has(id): continue
+		var saved: Dictionary = state.actors[id]
+		# Hurt/death before the parent callback is genuine native state. The next
+		# parent tick records its retirement; it must not resume pristine entry.
+		if saved.dead or saved.hp < saved.configuration.raw_role.max_hp: continue
+		var position: Vector3 = Codec.read_vector3(saved.motion.position)
+		var support: Dictionary = BodySweep.sweep(sources[id], Transform3D(Basis.IDENTITY, position), Vector3.ZERO, scheduler_bindings().floors.values())
+		if support.has("error") or support.get("collided", true): return "Unfinished helper entry lacks its actual static native floor/body support"
+	return ""
+
+
+func _staged_bindings(state: Dictionary, saved_player: Dictionary) -> Dictionary:
+	var bindings: Dictionary = scheduler_bindings()
+	for key: String in ["owner_positions", "owner_velocities", "owner_collision_states"]: bindings[key] = {}
+	for id: String in Layout.SOURCES:
+		var maps: Dictionary = sources[id].call("staged_actor_bindings", state.actors[id])
+		if not Codec.keys_error(maps, ["owner_positions", "owner_velocities", "owner_collision_states"]).is_empty(): return {}
+		for key: String in maps:
+			for owner_id: String in maps[key]:
+				if owner_id != id or bindings[key].has(owner_id): return {}
+				bindings[key][owner_id] = maps[key][owner_id]
+	bindings["hero_positions"] = {"hero": Codec.read_vector3(saved_player.motion.position)}
+	return bindings
+
+
+func snapshot_error(saved: Dictionary) -> String:
+	var error: String = super.snapshot_error(saved)
+	return _whole_progress_error(saved, hero.snapshot_state()) if error.is_empty() else error
+
+
+func snapshot_error_with_player(saved: Dictionary, saved_player: Dictionary) -> String:
+	var error: String = super.snapshot_error_with_player(saved, saved_player)
+	return _whole_progress_error(saved, saved_player) if error.is_empty() else error
+
+
+func _whole_progress_error(saved: Dictionary, saved_player: Dictionary) -> String:
+	var local: Dictionary = saved.local
+	var progress: Dictionary = saved.progress
+	var allowed: Dictionary = {}
+	for index: int in 3:
+		var id: String = "court-after-" + Layout.ROOM_IDS[index]
+		if index < local.room: allowed[id] = "encounter"
+		elif index == local.room and _saved_room_dead(local, index) and local.scheduler.encounter_id.is_empty():
+			if progress.checkpoint_ids.has(id): allowed[id] = "encounter" # legitimate pre-parent callback
+	if local.room >= 3: allowed["court-boss-entry"] = "boss_phase"
+	if local.room == 4 and local.helper_stage == "done": allowed["court-king-phase-two"] = "boss_phase"
+	if not _same(progress.checkpoint_ids, allowed): return "Checkpoint history must match genuine ordered court boundaries"
+	var latest: String = "" if allowed.is_empty() else String(allowed.keys().back())
+	if progress.checkpoint_id != latest or progress.checkpoint_kind != allowed.get(latest, ""): return "Current checkpoint must retain the latest genuine ordered boundary"
+	if local.awaiting_room >= 0 and not progress.checkpoint_ids.has("court-after-" + Layout.ROOM_IDS[local.room]): return "Awaiting the next court requires the actual preceding checkpoint"
+	if progress.completed:
+		if local.room < 3 or not local.actors["court-king"].dead or not local.scheduler.encounter_id.is_empty() or progress.completion_id != COMPLETE_ID: return "Completion requires actual King defeat and retired native danger"
+	elif not progress.completion_id.is_empty() or not progress.contact_exit_id.is_empty(): return "Uncompleted court cannot carry terminal progress"
+	if not progress.contact_exit_id.is_empty():
+		if progress.contact_exit_id != EXIT_ID or not progress.completed: return "Exact exterior contact follows genuine court completion"
+		var body := hero.get_node_or_null("BodyCollision") as CollisionShape3D
+		if body == null or not body.shape is CapsuleShape3D: return "Actual retained Hero capsule required for saved contact"
+		var capsule := body.shape as CapsuleShape3D
+		var pin: Dictionary = _contact_pins[_exit_area.name]
+		var collision: CollisionShape3D = pin.collision
+		var box := AABB(collision.global_position - pin.size * 0.5, pin.size)
+		var centre: Vector3 = Codec.read_vector3(saved_player.motion.position) + body.position
+		var half_line: float = capsule.height * 0.5 - capsule.radius
+		var nearest := Vector3(clampf(centre.x, box.position.x, box.end.x), clampf(centre.y, box.position.y - half_line, box.end.y + half_line), clampf(centre.z, box.position.z, box.end.z))
+		if centre.distance_squared_to(nearest) > capsule.radius * capsule.radius: return "Saved exterior progress lacks actual native capsule/box overlap"
+	return ""
+
+
+func _saved_room_dead(local: Dictionary, index: int) -> bool:
+	for id: String in Layout.ROOM_SOURCE_IDS[index]:
+		if not local.actors[id].dead: return false
+	return true
+
+
+func restore_state(saved: Dictionary) -> bool:
+	if not _quiet_commit_error.is_empty(): last_snapshot_error = _quiet_commit_error; return false
+	last_snapshot_error = snapshot_error(saved)
+	if not last_snapshot_error.is_empty(): return false
+	var accepted: bool = super.restore_state(saved)
+	if not _quiet_commit_error.is_empty(): last_snapshot_error = _quiet_commit_error; return false
+	if accepted:
+		_exterior_open = not String(saved.progress.contact_exit_id).is_empty()
+		_exit_area.monitoring = is_completed() and String(saved.progress.contact_exit_id).is_empty()
+		if not _present_contact_quiet(_exit_cue, "available" if _exit_area.monitoring else "spent"):
+			_fail_quiet_commit(_exit_cue.last_error); last_snapshot_error = _quiet_commit_error; return false
+		_refresh_objective()
+	return accepted
+
+
+func _sync_art_presentation() -> void:
+	if not is_instance_valid(_whole_art): return
+	var stage: String = "exterior" if is_completed() else Layout.ROOM_IDS[room]
+	var exterior: String = "open" if _exterior_open else ("available" if is_completed() else "closed")
+	var key: String = stage + ":" + str(_helpers_once) + ":" + exterior
+	if key == _art_stage_key: return
+	if _whole_art.call("set_presentation", stage, _helpers_once, exterior) != true:
+		_construction_error = "Actual whole court scenic presentation refused retained bindings"; return
+	_art_stage_key = key
+
+
+func _restore_local_state(state: Dictionary) -> void:
+	_quiet_commit = true
+	for id: String in Layout.SOURCES:
+		if sources[id].call("restore_actor_state", state.actors[id]) != true:
+			_fail_quiet_commit(id + ": " + String(sources[id].get("last_snapshot_error"))); return
+	if not scheduler.restore_state(state.scheduler, scheduler_bindings()): _fail_quiet_commit(scheduler.last_snapshot_error); return
+	for id: String in Layout.SOURCES:
+		if sources[id].call("restore_exchange_state", state.actors[id]) != true:
+			_fail_quiet_commit(id + ": " + String(sources[id].get("last_snapshot_error"))); return
+	if not roundel.restore_state(state.roundel, scheduler_bindings()): _fail_quiet_commit(roundel.last_snapshot_error); return
+	room = state.room; formation = state.formation; _awaiting_room = state.awaiting_room
+	_roundel_demonstrated = state.roundel_demonstrated; _helpers_once = state.helpers_once; helper_stage = state.helper_stage
+	_entry_records = _decode_native(state.entry_records); _entry_outcomes = _decode_native(state.entry_outcomes); _frames = _decode_native(state.framing)
+	_roundel_cycle = state.roundel.cycle
+	_forecast.clear(); _forecast_frames.clear(); _phase_entitlements.clear(); entry_stop_diagnostics.clear(); _pending_boss_contact = false
+	_boss_area.monitoring = _awaiting_room == 3
+	if not _present_contact_quiet(_boss_cue, "available" if _awaiting_room == 3 else "spent"):
+		_fail_quiet_commit(_boss_cue.last_error); return
+	var terminal: bool = room >= 3 and state.actors["court-king"].dead and state.scheduler.encounter_id.is_empty()
+	_exit_area.monitoring = terminal
+	if not _present_contact_quiet(_exit_cue, "available" if terminal else "spent"):
+		_fail_quiet_commit(_exit_cue.last_error); return
+	_refresh_objective()
+	_quiet_commit = false
+
+
+func _present_contact_quiet(cue: CinderInteractionCue, state: String) -> bool:
+	if not is_instance_valid(cue) or cue.get_parent() != self or cue.is_queued_for_deletion(): return false
+	var blocked: bool = cue.is_blocking_signals()
+	cue.set_block_signals(true)
+	var accepted: bool = cue.present(state, "contact")
+	cue.set_block_signals(blocked)
+	return accepted
+
+
+func _fail_quiet_commit(error: String) -> void:
+	_quiet_commit_error = error if not error.is_empty() else "Unexpected whole native quiet commit refusal"
+	_quiet_commit = false; _running = false
+	for actor: CharacterBody3D in sources.values(): actor.set_physics_process(false)
+	scheduler.set_physics_process(false); roundel.set_physics_process(false); set_physics_process(false)
+
+
+func finish_restore_candidate() -> bool:
+	if _quiet_commit or _constructor_open or not _quiet_commit_error.is_empty(): return false
+	var accepted: bool = super.finish_restore_candidate()
+	if accepted: _refresh_objective()
+	return accepted
+
+
+func _restore_candidate_presentation_error(camera: Camera3D, hud: GameHUD) -> String:
+	if _quiet_commit or _constructor_open or not _quiet_commit_error.is_empty(): return "Discard incomplete native quiet candidate"
+	return _current_presentation_error(camera, hud)
+
+
+func _actual_camera() -> Camera3D:
+	if not is_inside_tree(): return null
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	return camera if is_instance_valid(camera) and camera.get_script() == null and camera.get_world_3d() == get_world_3d() and camera.get_viewport() == get_viewport() else null
+
+
+func _hero_points() -> Array:
+	return shared_shell.call("player_camera_framing_points_for", hero, _actual_camera()) if is_instance_valid(shared_shell) else []
+
+
+func _current_presentation_error(camera: Camera3D, hud: GameHUD) -> String:
+	var error: String = _native_runtime_error()
+	if not error.is_empty(): return error
+	if camera != _actual_camera() or not is_instance_valid(camera) or not is_instance_valid(hud): return "Actual current court camera and canonical HUD required"
+	var points: Array = _camera_framing_points()
+	if points.is_empty() or points.size() > 224 or points.has(Vector3.INF) or _hero_points().size() != 22: return "Complete actual source/footprint/landing/contact/Hero corners required"
+	return String(shared_shell.call("camera_framing_error_for_context", points, hero, camera, hud))
+
+
+func _saved_response_error(state: Dictionary, saved_player: Dictionary) -> String:
+	if not _same(hero.equipment.snapshot(), saved_player.equipment): return "Actual candidate equipment must match saved complete Player"
+	var stats: Dictionary = hero.equipment.resolved_stats()
+	var threats: Array[Dictionary] = []
+	for record: Dictionary in state.scheduler.reservations:
+		var shape: Dictionary = _decode_native(record.geometry)
+		var error: String = Geometry.error(shape)
+		if not error.is_empty(): return error
+		threats.append({"record": record, "shape": shape})
+	for item: Dictionary in threats:
+		var record: Dictionary = item.record
+		var proof: Dictionary = state.framing[record.source_id].proof
+		var path: Array[Dictionary] = []
+		for segment: Dictionary in proof.path: path.append(_decode_native(segment))
+		if path[0].end_s < record.start_s + 0.18: return "Saved response removes the original recognition margin"
+		if path.size() == 6 and path[3].start_s < maxf(maxf(path[1].end_s, record.active_until_s + CinderThreatScheduler.TIME_MARGIN), path[1].start_s + float(stats.dash_cooldown)): return "Saved positioning dash skips the actual dash cooldown/recovery boundary"
+		var input_ready: float = path[3].end_s if path.size() == 6 else maxf(path[1].end_s, record.active_until_s + CinderThreatScheduler.TIME_MARGIN)
+		if proof.primary_time_s < input_ready + 0.08: return "Saved ordinary primary removes the original input margin"
+		for segment: Dictionary in path:
+			var move: Vector3 = segment.to - segment.from
+			if segment.kind in ["escape_dash", "positioning_dash"]:
+				if absf(move.y) > BodySweep.EPSILON or absf(move.length() - float(stats.dash_distance)) > BodySweep.position_rounding_bound(segment.from, segment.to) or segment.end_s != segment.start_s + float(stats.dash_duration): return "Retain actual full native response dash distance/duration"
+			elif move != Vector3.ZERO: return "Stationary response cannot hide travel"
+			var sweep: Dictionary = BodySweep.sweep(hero, Transform3D(Basis.IDENTITY, segment.from), move, scheduler_bindings().floors.values())
+			if sweep.has("error") or sweep.get("collided", true) or not sweep.get("end") is Vector3 or sweep.end.distance_to(segment.to) > BodySweep.position_rounding_bound(segment.from, segment.to): return "Saved response lacks actual static floor/full capsule support"
+		for threat: Dictionary in threats:
+			if Geometry.timed_path_hits(threat.shape, path, threat.record.active_from_s, threat.record.active_until_s, CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN): return "Saved response crosses the committed danger union"
+		var opening: Vector3 = Codec.read_vector3(record.opening_position)
+		var attack: Vector3 = Codec.read_vector3(proof.attack_position)
+		var reserve: float = Motion.ENDPOINT_TOLERANCE if record.get("adapter", {}).get("kind") == "lunge" and not record.adapter.get("finished", false) else 0.0
+		if Vector2(opening.x - attack.x, opening.z - attack.z).length() > float(stats.primary_range) - reserve - CinderThreatScheduler.SKIN or absf(opening.y - attack.y) > 1.4: return "Saved ordinary primary cannot reach its actual native opening"
+		var ray := PhysicsRayQueryParameters3D.create(attack + Vector3.UP * 0.7, opening + Vector3.UP * 0.7, 1)
+		if not get_world_3d().direct_space_state.intersect_ray(ray).is_empty(): return "Static court scenery blocks the original primary"
+		if proof.response_complete_s < proof.primary_time_s + float(stats.primary_cooldown): return "Saved response truncates ordinary primary recovery"
+	return ""
+
+
+func _encode_native(value: Variant) -> Variant:
+	if value is Vector3: return Codec.vector3(value)
+	if value is Array:
+		var result: Array = []
+		for item: Variant in value: result.append(_encode_native(item))
+		return result
+	if value is Dictionary:
+		var result: Dictionary = {}
+		for key: String in value: result[key] = _encode_native(value[key])
+		return result
+	return value
+
+
+func _decode_native(value: Variant) -> Variant:
+	# Decode only explicitly documented native coordinate fields, never arbitrary
+	# length-three arrays (hit histories and deadline groups remain literal).
+	if value is Array:
+		var result: Array = []
+		for item: Variant in value: result.append(_decode_native(item))
+		return result
+	if value is Dictionary:
+		var result: Dictionary = {}
+		for key: String in value:
+			result[key] = Codec.read_vector3(value[key]) if key in ["from", "to", "endpoint", "landing", "attack_position", "origin", "direction", "source_position"] and Codec.is_vector3(value[key]) else _decode_native(value[key])
+		return result
+	return value
+
+
+func _same(left: Variant, right: Variant) -> bool:
+	var text: String = Exact.stringify(left)
+	return not text.is_empty() and text == Exact.stringify(right)
 
 
 func _on_exit_level() -> void:
