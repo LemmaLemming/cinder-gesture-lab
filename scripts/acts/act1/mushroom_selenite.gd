@@ -1492,6 +1492,13 @@ func restore_actor_state(saved: Dictionary) -> bool:
 	_hurt_left_s = float(saved.hurt_left_s)
 	_approach_driving = saved.approach_driving
 	_restored_floor_contact = 1 if saved.motion.grounded else 0
+	# An unexposed helper in a FRESH court candidate is still its genuine
+	# ready-time cold body, not a previously grounded recipient. Preserve that
+	# unset cache so its later one-shot entry birth can prove pristine custody.
+	# The serialized grounded=false value is unchanged; no floor flag is forged.
+	var court: CinderLevel = _restore_owner_level()
+	if dormant and _configuration.source_id in COURT_HELPER_IDS and not _court_entry_consumed and not _restore_recipient_constructed and not is_on_floor() and is_instance_valid(court) and court.is_restore_candidate() and court.get_script() == _restore_level_script and _restore_level_script.resource_path == COURT_SCRIPT_PATH and global_transform == _restore_source_transform:
+		_restored_floor_contact = -1
 	_apply_lifecycle_flags()
 	_snapshot_busy = false
 	return true

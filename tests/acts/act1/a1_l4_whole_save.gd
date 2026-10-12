@@ -506,6 +506,11 @@ func _expect(ok: bool, label: String) -> bool:
 				first_failure["court_room"] = game.active_level.get("room")
 				first_failure["awaiting_room"] = game.active_level.get("_awaiting_room")
 				first_failure["helper_stage"] = game.active_level.get("helper_stage")
+				first_failure["construction_error"] = game.active_level.get("_construction_error")
+				first_failure["native_source_errors"] = {}
+				for id: String in SourceIds:
+					var actor: CharacterBody3D = _sources()[id]
+					first_failure.native_source_errors[id] = {"last_error": actor.get("last_error"), "position": Codec.vector3(actor.global_position), "velocity": Codec.vector3(actor.velocity), "native_on_floor": actor.is_on_floor(), "state": _portable(actor.call("pure_presentation_state"))}
 				first_failure["player_position"] = Codec.vector3(game.player.global_position)
 				first_failure["framing"] = game.get_camera_framing_state()
 				first_failure["native_local"] = game.active_level.call("_capture_local_state") if paused else {}
