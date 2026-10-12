@@ -424,14 +424,6 @@ func _input_safe(point: Vector2) -> bool:
 	return point.is_finite() and Rect2(20, 300, 500, 670).has_point(point)
 
 
-func _guard() -> bool:
-	if aborted or finishing: return false
-	# Only the explicit public pause probe may inspect its genuine paused UI.
-	# An unexpected focus pause remains a failure; this changes fixture handling,
-	# never application focus or the shared pause implementation.
-	return true if is_instance_valid(level) and is_instance_valid(hero) and is_instance_valid(scheduler) and not hero.dead and (not paused or expected_pause) and level.contract_error().is_empty() else _require(false, "unexpected pause, Hero death, native alias loss or actual court contract failure")
-
-
 func _last_sequence() -> int:
 	var records: Array[Dictionary] = hero.get_world_action_records()
 	return 0 if records.is_empty() else int(records.back().sequence)

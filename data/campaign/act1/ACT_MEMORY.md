@@ -1,5 +1,12 @@
 # Act 1 — durable memory
 
+## Actual Shared51 adoption — 2026-10-12T06:42:19.960302+00:00
+
+Actual preserving Shared51 merge d98e4f448784b94ec676c47d27de1b7c741ddbd7 retains all 18895 prior owned Git/19093 physical rows and 20926 bounded protected rows; all 78466 nonowned publication Git/144 changed physical rows exact. All427 prior active UID bytes retained plus one genuine incoming Lane lifecycle test UID:428unique. Exact published original whitespace retained, remaining changed-source strictcheck clean. No engine or new acceptance credit. C31 Protocol approach and whole Court Lane cleanup are directly affected; their focused checks follow. Current L4 portrait source reviewed; duplicate fixture guard removed before necessary first import. Earlier Shared50 native/evidence scopes remain immutable. Act1 remains3/8 and L4 only frontier; campaign12/24; no human approval gate. Receipt SHA `98231fa9b22080e20672c6fe301ad1aed2a82d9bc9dfaecebccd8f0ddbfbb26f`; canonical ACK `69182901-6f33-4cab-a698-9d223ce0070c`.
+
+The [three-job intro/C31 packet](../../../docs/acts/act1/evidence/L4-king-intro-and-c31-proof/README.md) retains2,094 original references/711CAS objects atffdb2860/Shared50, independently root-verified against every original SHA/size/mode and inert CAS byte. Original imported md5 blankEOF is preserved. IndexSHAcacbc19535c81e19d7cd145ae094ea4c4fed816e12ddd1472da5bb938b20adaa. Packaging establishes custody, not new engine/portrait credit.
+
+
 ## Current revision2 native checks — 2026-10-12T06:27:24.915074+00:00
 
 Actual new King intro Save → fresh Title Continue → GUI Resume → original endpoint/history → earlier boss-entry Retry closes **210/0 clean** atffdb2860/Shared50. Outer local snapshot version2 and16-key aggregate2 are exercised. Direct quiet candidate restores native Player/King/Scheduler plus parent intro, refreshing actual derived pose before optics. The directly affected standalone B01 fallback closes **227/0 clean**, two real swipes/one ordinary primary. Each690-source selection/prior427UID bytes is unchanged. These results establish the executed native cases; actual step/summon/whole-court portrait, current revision2 helper transport/terminal transitions and final independent acceptance remain due. Old201/201/152 results below retain their earlier revision1 scope.
