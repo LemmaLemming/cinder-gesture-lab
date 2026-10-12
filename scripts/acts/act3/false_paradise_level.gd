@@ -773,6 +773,12 @@ func restore_state(saved: Dictionary) -> bool:
 	if not is_restore_candidate():
 		last_snapshot_error = "Whole restoration requires a genuine fresh CinderLevel candidate"
 		return false
+	# Shell has already restored this fresh candidate's actual Hero. Align only
+	# harmless derived art before the repeated pure validator; no saved model,
+	# source, Scheduler or story authority is read or changed here.
+	if not get_tree().paused or not is_instance_valid(sun_art) or not sun_art.call("present", true):
+		last_snapshot_error = "Quiet candidate sun must follow its actual already-restored Hero"
+		return false
 	last_snapshot_error = snapshot_error(saved)
 	if not last_snapshot_error.is_empty(): return false
 	_owned_restore_error = ""
