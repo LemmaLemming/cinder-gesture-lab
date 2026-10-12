@@ -1,8 +1,13 @@
 # Scheduler-driven spore sources
 
-This interface is **native-verified for campaign-shared-26**, resolving canonical Act1 REQUEST `27b2940a-6455-4ad5-86d0-937a437c87fc`. The [composition helper](../../scripts/environment/scheduler_spore_source_protocol.gd), additive pure Scheduler accessor and opt-in coordinator branch pass **208/0** native checks; the directly affected existing Ash leaf passes **87/0**. Both actual queued jobs exit0 with clean raw and wrapper logs. Exact publication commit and adoption responses are recorded in the canonical mailbox and [shared progress](SHARED_PROGRESS.md). This is shared API evidence; A1-L3 remains an independently authored, unaccepted level.
+## Current compatible reference comparison — Shared49
 
-The confirmed rule is [harmless repulsion of living enemies](../ACT1_CONCEPT.md#hittable-spores-create-breathing-room). C31's proposed short grounded lunge with a cosmetic hop and C32's proposed stationary thrust lane can use the existing Scheduler. This interface adds their environmental binding and coherent restoration, without new damage, airborne physics, player equipment or ability allocation.
+The native Protocol now uses private finite configure-time expected copies only after each original nonempty ExactJson receipt. Actual world/floor/body reads, resources, source/controller/codec hooks, pre/post boundaries and error order remain fresh. Exact native Script/matching original receipt selects typed/bit comparison; all other cases retain the original serializer. No wire, public signature, damage/motion/timing, import or UID change. [Implementation,320/0 strict/native controls,208/0 directly affected source, matched actual8Crossed paused measurements and retained failures/limits](PROTOCOL_REFERENCE_COMPARISON.md). This does not close sustained frame performance, camera containment or whole-parent optical capture.
+
+
+At Shared26 publication, this interface was **native-verified for campaign-shared-26**, resolving canonical Act1 REQUEST `27b2940a-6455-4ad5-86d0-937a437c87fc`. The [composition helper](../../scripts/environment/scheduler_spore_source_protocol.gd), additive pure Scheduler accessor and opt-in coordinator branch pass **208/0** native checks; the directly affected existing Ash leaf passes **87/0**. Both actual queued jobs exit0 with clean raw and wrapper logs. Exact publication commit and adoption responses are recorded in the canonical mailbox and [shared progress](SHARED_PROGRESS.md). This is that publication's shared API evidence; A1-L3 was then independently authored and unaccepted. Its later independent acceptance is recorded in [Shared44 acceptance](A1_L3_ACCEPTANCE.md).
+
+The confirmed rule is [harmless repulsion of living enemies](../ACT1_CONCEPT.md#hittable-spores-create-breathing-room). At that publication, C31's proposed short grounded lunge with a cosmetic hop and C32's proposed stationary thrust lane can use the existing Scheduler. This interface adds their environmental binding and coherent restoration, without new damage, airborne physics, player equipment or ability allocation.
 
 ## Composition and existing authority
 

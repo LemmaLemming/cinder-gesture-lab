@@ -1,0 +1,85 @@
+{
+  "status": "UNIMPLEMENTED_UNPARSED_UNEXECUTED",
+  "scope": "Source-only private Protocol immutable-reference comparison proposal; no production/source/test/catalogue/worker edits or engine job",
+  "source": {
+    "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+    "sha256": "924c662cc7572c239f1f239e2fcc80c226954cd89a618b795d5463021457338e"
+  },
+  "reviewed_dependencies": [
+    {
+      "path": "scripts/combat/authored_enemy_sequence.gd",
+      "sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3"
+    },
+    {
+      "path": "scripts/combat/repulsion_route.gd",
+      "sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a"
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    {
+      "path": "tests/scheduler_spore_reference_smoke.gd",
+      "sha256": "04a0136c0fe60e997d7af913aa01769ccb8368a67f86efb9ffccf4e59855a6b1"
+    },
+    {
+      "path": "tests/scheduler_spore_source_smoke.gd",
+      "sha256": "c9c6dcbe2d3616f9b391fc2b6603bc381a31630f49db15848570e72713919754"
+    }
+  ],
+  "candidate_target": "scripts/environment/scheduler_spore_source_protocol.gd only; implementation requires separate Root selection",
+  "problem_scope": {
+    "original": "_same_reference(actual, expected_json) at lines579-581 calls Exact.stringify on every freshly derived world/floor/body tree, allocating tagged trees, sorting keys and serializing each comparison",
+    "call_sites": [
+      "unit_error line283: world then floor",
+      "_binding_error line366: world then floor",
+      "_binding_error line383: actual native body"
+    ],
+    "attribution": "Unmeasured opportunity only. No claim that these comparisons cause A1 frame delays or that replacing them improves timing. Native SceneTree scans and all source/controller hooks remain."
+  },
+  "reuse_assessment": {
+    "algorithm": "Authored9aed _same_source_guard_reference lines227-272 supplies a reviewed reference-bounded strict typed recursion and eight-byte float comparison algorithm",
+    "not_a_supported_shared_helper": "Do not call another module's private source-guard helper. Authored.exact_equal has its own tighter 1MiB/structural budgets and is not acceptance-equivalent to Protocol's 8MiB ExactJson comparator. Codec.same_values uses numeric tolerance and is unsuitable.",
+    "minimal_implementation": "Small Protocol-local private finite-reference comparator; retain original _same_reference unchanged as fallback. No new public signatures/schema/API or public accepted flag."
+  },
+  "proposed_delta": [
+    "At successful configure, retain separate PRIVATE deep copies of the three originally derived native body/world/floor trees ONLY when their existing respective Exact.stringify receipts are nonempty. Existing configure behavior is unchanged, including the presently possible empty receipt; do not newly accept that case.",
+    "Replace only the five comparison expressions with an instance-private selection: exact actual Protocol Script plus present validated private reference and matching original receipt -> bounded comparison; otherwise original _same_reference(actual, original_json). Subclasses retain original fallback and public method signatures/virtual call order.",
+    "Walk the private reference shape. Check typeof before equality; array/dictionary sizes before descent; all candidate dictionary keys TYPE_STRING before ANY lookup; string length before equality; finite reference float equals only through all original eight encoded bytes. Do not use numeric tolerance, generic Variant/array equality, decode-double shortcuts, key coercion, or lookup that aliases StringName keys.",
+    "Change no caller native read/hook/control flow. Route.static_environment_state and _body_properties stay freshly executed at their original places; world then floor then body error order remains; every pre/post source hook guard, renderer/body/resource identity, HP/motion/controller/clock/diagnostic behavior stays unchanged.",
+    "Never parse caller or archived JSON into reference authority. Private expected references derive from configure-time actual measured native handles and are never returned or serialized as accepted tokens. Public binding_state remains a defensive copy. No current native value/proof/world scan result is retained across boundaries."
+  ],
+  "accepted_set_proof": {
+    "domination": "A nonempty ORIGINAL Exact.stringify receipt proves the private expected tree is closed, finite and accepted by ExactJson before copying. Private tree is retained once under exact native Script custody with no exported alias.",
+    "budgets": "Original ExactJson: depth64, entries16384 per container, nodes262144, int range +/-9007199254740991 and final escaped UTF8 bytes8MiB. Typed exact equality implies identical primitive bytes and structural/alias-occurrence budget charges; dictionary insertion order is irrelevant because original stringify sorts String keys. Do not impose Authored's tighter budgets.",
+    "bounded_rejection": "Mismatch stops on bounded reference descent; cyclic/oversized/nonclosed current inputs cannot match its finite leaf shape. Candidate container arity is checked before loops, so candidate traversal cannot exceed reference-sized work. Object/native variants/StringName keys or values/nonfinite/unsafe integers cannot typed-bit-match a valid reference.",
+    "fallback": "Missing/invalid receipt, reference unavailable or subclass -> unchanged original serialization comparator. Empty receipt must remain failure. No validation call, hook, error ordering or actual native authority is skipped."
+  },
+  "meaningful_correctness_strategy": [
+    "Small private comparator differential oracle against original Exact.stringify equality: nil/bool/int-v-float/String-v-StringName, +/-zero, adjacent float bits/subnormals/maxfinite/nonfinite, native Variant/Object, StringName dictionary keys before lookup, reordered String keys, extra/missing keys, cyclic candidates and shared acyclic aliases.",
+    "Original ExactJson reference budgets at boundaries: depth64/65,16384/16385 entries,nodes,integer range,escaped UTF8 final-byte boundary. Empty/overbudget original receipt must not become an accepted fast reference. Reference construction dominates copy; do not allocate giant candidate fixtures before bounded checks.",
+    "Directly affected existing tests/scheduler_spore_reference_smoke.gd: defensive public copies and actual one-native-bit scenery/floor/body mutations retain same rejection, exact original restoration, no clocks/resources/diagnostics/callback mutation. Add equivalent native resource replacement and fixed-point Script/subclass fallback controls only if not already covered.",
+    "Focused genuine owned source getter changes actual floor/world/body between original pre/post passes: legacy/candidate must preserve the same errors/refusal/native impulse/resources/HP/controller/cooldown/clock and callback observations. Current source getters and every complete world scan remain called in original order.",
+    "Use tests/scheduler_spore_source_smoke.gd only as the directly affected native Protocol/paired transport integration suite if Root selects implementation; no all/accepted-level/full-route rerun or Ash-only suite from a comparator-only change."
+  ],
+  "actual_crossed_measurement": {
+    "feasible": true,
+    "actual_state_required": "Actual retained Full beat_index2,room_stage active with _protocols['crossed'] containing all8 configured native Protocols and both authored fields, same actual Hero/Scheduler/world; verify actual IDs/native Script and binding errors. Never time absent resources.",
+    "supported_entry": "Root may extend its separate diagnostic after the genuine CP2 GUIContinue -> consumed GUIResume -> existing ONE supported Hero TEST placement -> actual native room activation tick, then public whole pause settlement. Alternatively observe the owner's actual first Crossed native phase pause barrier. No edits to beat/progress/CP/clock/actors/physics authority, and no broad earned route gate is required for isolated cost observations.",
+    "specific_zero_probe_fix": "Existing stage diagnostic _run_paused_probes executes BEFORE CP2 approach activation and selects protocols.get('breathing',{}); that state has zero installed protocols. Move observation ONLY to the actual active paused Crossed barrier and select 'crossed', logging membership8 and individual valid source IDs. Do not infer timing from the earlier zero calls.",
+    "bounded_samples": "At one genuine paused stable barrier,3 synchronous binding_error samples per actual retained Protocol, no await/callback hook insertion inside timing. Emit count,total/per-source microseconds and actual native clock bits/phase/membership. Source getter callbacks still run normally. Verify before/after nonempty exact actual actor,Player,Scheduler packets and immutable native receipts, plus no signals/diagnostic changes; failed optics/full parent capture remains a separate reported limitation rather than fabricated permission.",
+    "interpretation": "Paused direct-query cost is separate from actual frame/workload inclusive cost. Keep baseline/candidate identical actual state and native workload if selected; no FPS, causal stall attribution, gameplay acceptance or guaranteed gain from this proposal."
+  },
+  "explicit_exclusions": [
+    "No scan narrowing from SceneTree root to world_root",
+    "No response_state/binding_error hook removal",
+    "No across-frame authority cache or TTL",
+    "No numeric key coercion",
+    "No catalogue/file writes",
+    "No implementation/native parse/test/performance claim"
+  ]
+}
