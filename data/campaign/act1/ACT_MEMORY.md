@@ -1,5 +1,15 @@
 # Act 1 — durable memory
 
+## Clean focused terminal seal — 2026-10-12T09:41:22.914987+00:00
+
+Current contact-guards03 closes373/0clean in100.545seconds at8b9236b008553ada817aaa96f0fbf2208f0bade4/actualShared53. All725frozeninputs/all461activeUIDbytes unchanged, no rawScript/resource/warning/error diagnostics. Realcompletedintro/finitehelpers precede farcompletedSave/directquiet/freshTitleContinue, localavailableSave, once-onlyactualcontactSave with expectedunavailableA1L5, latchedContinue/no duplicatecontact, exactearlierphaseRetry and normalcleanup. Bothactual admitted synchronous observers (publicexit_level; clearcue+queuedShell) retain their owncleanup through the production return and subsequent retiring interval, then all descendants/groups free. No copiedstore contact bit/progress is altered. Originalpredecessors/injuries/Heroplacements remainexplicitTEST.
+
+Final six-job packet preserves threefocusfailures and both276/1 observerfailures alongside373/0:4335originalsource rows/4377originalreferences/776 inertCASobjects/five report-bound failed-scopePNGs. Root independently reread everyexactoriginSHA/size/mode, separateinodeCASbyte andmanifestrow. IndexSHAb6f6ccc381cccd585c2a053c4797879533e0899e540a71d19af605bfa31a1130; first builder failed only on derivedjoin keylabel versusjob and leftno destination; separatefixedbuilder and record preserve that artifactauthoringerror withoutchangingorigins. Existing current-native/portrait/intro/history packets stayimmutable. Historicalfirst completedavailableSave label remainsqualified asactualfarclear; localavailable is separate. Distant/DASH andcurrentSPENTpixels remainuninspected;14existing actualportraits/nearavailable/opencloth reuse214pins underIntegrationguidance. No newgraphical/fullroute gate.
+
+All ownenginehandles CLOSED. L4 is focused-handoff-ready as owner evidence, pending exact submittedcommit/seven-category HANDOFF and independentIntegrationproductionregistration/ACCEPTED. Act1 remains3/8, campaign14/24; L5willnotbeauthoredbeforeacceptance. All8desktopgoalACTIVE; nohumanpermissiongate.
+
+[Final focused originals](../../../docs/acts/act1/evidence/L4-final-focused/README.md).
+
 ## Retiring Shell contact-presentation correction — 2026-10-12T09:33:49.067708+00:00
 
 Diagnostic contact-guards02 closes276/1 at a49dbd2a/Shared53 after81.05seconds, all725source/461UIDbytes unchanged. The real queuedShell observer successfully cleared its cue and queued actualShell disposal. Deferredinspection finds the same live objects/Shellqueued=true/contactonce/artavailable unchanged, but Cuehasbeenre-presented asSPENT/visible whileowner/actorprocessing remainlive. This identifies a later completed-presentation writer before deferred disposal; it does not relabel the immediate callback as the faulty writer. Original01 missingaftervalues and02 fullactualpacket remainimmutable.
