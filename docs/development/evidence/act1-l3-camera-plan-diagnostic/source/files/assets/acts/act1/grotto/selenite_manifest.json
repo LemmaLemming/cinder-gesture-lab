@@ -1,0 +1,1743 @@
+{
+  "schema_version": 1,
+  "first_level": "A1-L3",
+  "created_date": "2026-10-09",
+  "authorship": "original deterministic hand-authored Pillow integer geometry; no source pixels",
+  "generator": "selenites/build_selenite_cutouts.py",
+  "generator_sha256": "676c2a4ae78173e2be63beeea27bdd89c4056a893ce4b122f5d6a347363505af",
+  "palette": {
+    "ink": [
+      20,
+      20,
+      20,
+      255
+    ],
+    "coal": [
+      39,
+      39,
+      39,
+      255
+    ],
+    "shade": [
+      67,
+      67,
+      67,
+      255
+    ],
+    "mid": [
+      105,
+      105,
+      105,
+      255
+    ],
+    "silver": [
+      147,
+      147,
+      147,
+      255
+    ],
+    "light": [
+      193,
+      193,
+      193,
+      255
+    ],
+    "white": [
+      231,
+      231,
+      231,
+      255
+    ]
+  },
+  "palette_basis": "existing Act1 launch/C30 seven-tone grayscale family",
+  "palette_basis_sha256": "a7c45730eb46dbb70ff5ee4334669159de8311b6af561cd31937ba05607fe8b1",
+  "source_provenance": [
+    {
+      "id": "G10",
+      "path": "docs/concept-art/act1/characters/selenite-costumes-and-roles.png",
+      "sha256": "f1545c30c57809aff0c65d29247c171999e983802571fa6289066f3bdad123f5",
+      "kind": "generated_concept_costume_and_role_board",
+      "pixel_use": "none; actual image inspected, no crop/edit/source pixel reuse"
+    },
+    {
+      "id": "G15",
+      "path": "docs/concept-art/act1/props/lunar-grotto-and-court-modular-kit.png",
+      "sha256": "c8b61dc9115e2ed98546c05b65ca79f34e2fe998af191e82bf2b582cf225d53e",
+      "kind": "generated_concept_theatrical_material_and_harmless_repulsion_reference",
+      "pixel_use": "none; actual image inspected, no crop/edit/source pixel reuse"
+    },
+    {
+      "id": "F10",
+      "path": "docs/reference-library/act1/film-stills/f10.jpg",
+      "sha256": "2af0136f438c066455ea39d766caa3fcb0c6b68e1954e731d19014af71a28c06",
+      "kind": "1902_film_frame_upright_costume_and_oversized_spear_basis",
+      "pixel_use": "none; actual image inspected, no crop/edit/source pixel reuse"
+    }
+  ],
+  "canonical_entities_path": "docs/reference-library/act1/research/entities.json",
+  "canonical_entities_sha256": "86b5555b3f896594df45de34cfbed95cf27d5aef1ebe7903922f033022903a3a",
+  "notes": {
+    "file": "selenites/SELENITE_ART_NOTES.md",
+    "sha256": "8d086004ae0dd8a9b9a6e3bd2815e676d171c478a19667b1b9100f3c606dc304"
+  },
+  "presentation_leaf": {
+    "file": "scripts/acts/act1/mushroom_selenite_art.gd",
+    "sha256": "14223ac05f4e8039f1d2426bbc6b5fa00805653551d0fd4f83ea00e2972ccb74",
+    "binding": "configure(role_id) before add; set_pose(native_phase,actual_world_facing,actual_camera)"
+  },
+  "readiness": "all30_original_pixels_imported_and_role_leaf_bound; native_phase_custody_validated; component_portraits_scoped; all_orientation_review_pending",
+  "spore_connection": "none; future recoil/retreat/regroup assets and shared protocol remain separate",
+  "actor_transform": "identity art leaf; source feet remain fixed at native actor origin",
+  "preview": {
+    "file": "selenites/selenite_contact_sheet.png",
+    "sha256": "41d6740f51cc03becdcea4f7df5a125bd5e1bf2233122826811500c33eaaf972",
+    "runtime": false
+  },
+  "assets": [
+    {
+      "id": "ACT1-C31-FRONT-STANDING",
+      "file": "selenites/swarm_front_standing.png",
+      "sha256": "4bbb57517b914afebb60034145bad263749c20c31a345948cf51a593876cdba2",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "front",
+      "side_authorship": "explicit authored orientation",
+      "pose": "standing",
+      "native_phases": [
+        "clear",
+        "idle"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        6,
+        12,
+        42,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.39599999999999996,
+        0.0,
+        0.39599999999999996,
+        1.496
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-FRONT-WARNING",
+      "file": "selenites/swarm_front_warning.png",
+      "sha256": "216357453a5aaa7dc5059120a2dd6df8732ad9052ba9a89df223459a92fb2bcb",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "front",
+      "side_authorship": "explicit authored orientation",
+      "pose": "warning",
+      "native_phases": [
+        "warning"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        6,
+        20,
+        42,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.39599999999999996,
+        0.0,
+        0.39599999999999996,
+        1.3199999999999998
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-FRONT-LOCK",
+      "file": "selenites/swarm_front_lock.png",
+      "sha256": "fd50585aa7f9d479c94d3e770035554df37b19b58996428ca8d3512a0ee2d9f1",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "front",
+      "side_authorship": "explicit authored orientation",
+      "pose": "lock",
+      "native_phases": [
+        "lock"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        6,
+        16,
+        42,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.39599999999999996,
+        0.0,
+        0.39599999999999996,
+        1.408
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-FRONT-ACTIVE",
+      "file": "selenites/swarm_front_active.png",
+      "sha256": "3ca550e3b6343b6a53a0fddcbb24a8ce85a33b199cb6c5ce27eb2863bbf7a673",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "front",
+      "side_authorship": "explicit authored orientation",
+      "pose": "active",
+      "native_phases": [
+        "active"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        8,
+        16,
+        44,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.352,
+        0.0,
+        0.43999999999999995,
+        1.408
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-FRONT-RECOVERY",
+      "file": "selenites/swarm_front_recovery.png",
+      "sha256": "df5e8ac52e7d78722e2dc8a2d59d8b58dc9bab62725b1a9233c51211ebda6d26",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "front",
+      "side_authorship": "explicit authored orientation",
+      "pose": "recovery",
+      "native_phases": [
+        "recovery"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        6,
+        13,
+        42,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.39599999999999996,
+        0.0,
+        0.39599999999999996,
+        1.474
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-SIDE-STANDING",
+      "file": "selenites/swarm_side_standing.png",
+      "sha256": "4c44ba7b9fb634d0a15d07f4b4ae0d9f3b67fb7f3e03c50a48c34d2b57b62e94",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "side",
+      "side_authorship": "right facing authored; left reflected by leaf only",
+      "pose": "standing",
+      "native_phases": [
+        "clear",
+        "idle"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        8,
+        6,
+        39,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.352,
+        0.0,
+        0.32999999999999996,
+        1.628
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-SIDE-WARNING",
+      "file": "selenites/swarm_side_warning.png",
+      "sha256": "674cddd662e29678856341c095058b2e56372b48ca5b16f481f3943949fc7050",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "side",
+      "side_authorship": "right facing authored; left reflected by leaf only",
+      "pose": "warning",
+      "native_phases": [
+        "warning"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        8,
+        14,
+        43,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.352,
+        0.0,
+        0.418,
+        1.452
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-SIDE-LOCK",
+      "file": "selenites/swarm_side_lock.png",
+      "sha256": "4f48f673dd808fee18d2ee67f1dc88c70614a71476fb46937c2a69e874b4f90b",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "side",
+      "side_authorship": "right facing authored; left reflected by leaf only",
+      "pose": "lock",
+      "native_phases": [
+        "lock"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        8,
+        10,
+        44,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.352,
+        0.0,
+        0.43999999999999995,
+        1.5399999999999998
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-SIDE-ACTIVE",
+      "file": "selenites/swarm_side_active.png",
+      "sha256": "53ee6746510d5a70f7ad4f7f7eeca8f02437ba6b72a5b477eaefa709bb8ff8b2",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "side",
+      "side_authorship": "right facing authored; left reflected by leaf only",
+      "pose": "active",
+      "native_phases": [
+        "active"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        10,
+        10,
+        46,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.308,
+        0.0,
+        0.484,
+        1.5399999999999998
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-SIDE-RECOVERY",
+      "file": "selenites/swarm_side_recovery.png",
+      "sha256": "e7f43acf31f68175e9c6c5c6bedb598456c473869bf1843bae48c4144b9b788a",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "side",
+      "side_authorship": "right facing authored; left reflected by leaf only",
+      "pose": "recovery",
+      "native_phases": [
+        "recovery"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        8,
+        7,
+        39,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.352,
+        0.0,
+        0.32999999999999996,
+        1.6059999999999999
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-BACK-STANDING",
+      "file": "selenites/swarm_back_standing.png",
+      "sha256": "77d1087eaed5b6d94906dba564208d0b022fffbadaf080109a272fc43f50c9ee",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "back",
+      "side_authorship": "explicit authored orientation",
+      "pose": "standing",
+      "native_phases": [
+        "clear",
+        "idle"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        6,
+        12,
+        42,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.39599999999999996,
+        0.0,
+        0.39599999999999996,
+        1.496
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-BACK-WARNING",
+      "file": "selenites/swarm_back_warning.png",
+      "sha256": "f16e166fca42fd1a84a5ecf947f8e3695fa6b53f93ee05b96c3c3d649d3e9e08",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "back",
+      "side_authorship": "explicit authored orientation",
+      "pose": "warning",
+      "native_phases": [
+        "warning"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        6,
+        20,
+        42,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.39599999999999996,
+        0.0,
+        0.39599999999999996,
+        1.3199999999999998
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-BACK-LOCK",
+      "file": "selenites/swarm_back_lock.png",
+      "sha256": "94e1fb81669cc33a6e54536cf5085d6d49ed589f78f8f4fd018ee0283cce4756",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "back",
+      "side_authorship": "explicit authored orientation",
+      "pose": "lock",
+      "native_phases": [
+        "lock"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        6,
+        16,
+        42,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.39599999999999996,
+        0.0,
+        0.39599999999999996,
+        1.408
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-BACK-ACTIVE",
+      "file": "selenites/swarm_back_active.png",
+      "sha256": "c3df8f50820a4f1612908e3a53812f48c93d46a332526475ab85ce9960227776",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "back",
+      "side_authorship": "explicit authored orientation",
+      "pose": "active",
+      "native_phases": [
+        "active"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        8,
+        16,
+        44,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.352,
+        0.0,
+        0.43999999999999995,
+        1.408
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C31-BACK-RECOVERY",
+      "file": "selenites/swarm_back_recovery.png",
+      "sha256": "45905a7ca25d53219d90343430fc30a0c14e75a376ddb74ef63df95cc5b8349e",
+      "entity_id": "C31",
+      "design_id": "A1-E2",
+      "basis_id": "C20",
+      "width": 48,
+      "family": "act1_grotto_selenite_C31_swarm",
+      "facing": "back",
+      "side_authorship": "explicit authored orientation",
+      "pose": "recovery",
+      "native_phases": [
+        "recovery"
+      ],
+      "native_grid": [
+        48,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        24,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        6,
+        13,
+        42,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.39599999999999996,
+        0.0,
+        0.39599999999999996,
+        1.474
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C20"
+      ],
+      "canonical_record_sha256": "031baa8a9f5ba08e97d1c9a4e58ef26b9213d664ad21bc47fda436e4954faad4",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-FRONT-STANDING",
+      "file": "selenites/guard_front_standing.png",
+      "sha256": "6be52e6b40d440dff1e6839b31fe85298167acfea5247e52b545c3504bfbb694",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "front",
+      "side_authorship": "explicit authored orientation",
+      "pose": "standing",
+      "native_phases": [
+        "clear",
+        "idle"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        21,
+        2,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.418,
+        0.0,
+        0.858,
+        1.716
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-FRONT-WARNING",
+      "file": "selenites/guard_front_warning.png",
+      "sha256": "83b6404e89f96b84d712fda73ff5b9bd92bf650250ac31ed1e726ac2eacc301d",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "front",
+      "side_authorship": "explicit authored orientation",
+      "pose": "warning",
+      "native_phases": [
+        "warning"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        20,
+        2,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.43999999999999995,
+        0.0,
+        0.858,
+        1.716
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-FRONT-LOCK",
+      "file": "selenites/guard_front_lock.png",
+      "sha256": "1226c25a5ebe36936e5553af44735d33952dda4587282e5739c43d067d18f04b",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "front",
+      "side_authorship": "explicit authored orientation",
+      "pose": "lock",
+      "native_phases": [
+        "lock"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        19,
+        5,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.46199999999999997,
+        0.0,
+        0.858,
+        1.65
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-FRONT-ACTIVE",
+      "file": "selenites/guard_front_active.png",
+      "sha256": "7d35455f9b279c881b4e46adba551537b2ec94cea77a9f7be4c4999fab39b701",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "front",
+      "side_authorship": "explicit authored orientation",
+      "pose": "active",
+      "native_phases": [
+        "active"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        18,
+        4,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.484,
+        0.0,
+        0.858,
+        1.672
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-FRONT-RECOVERY",
+      "file": "selenites/guard_front_recovery.png",
+      "sha256": "cc59da062a061dac2667f1f667e3c934696c4cdb51cbe2a369ff12004e127f53",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "front",
+      "side_authorship": "explicit authored orientation",
+      "pose": "recovery",
+      "native_phases": [
+        "recovery"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        22,
+        1,
+        78,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.39599999999999996,
+        0.0,
+        0.836,
+        1.738
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-SIDE-STANDING",
+      "file": "selenites/guard_side_standing.png",
+      "sha256": "bfd3015368eddb454c6a8ce52000a301e3c244690d24e3121a4c4f145f7612fa",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "side",
+      "side_authorship": "right facing authored; left reflected by leaf only",
+      "pose": "standing",
+      "native_phases": [
+        "clear",
+        "idle"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        21,
+        4,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.418,
+        0.0,
+        0.858,
+        1.672
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-SIDE-WARNING",
+      "file": "selenites/guard_side_warning.png",
+      "sha256": "fc52145e55bb21dc7dfdeeb15e07e59855e4a0256d9c34027f4696c0d337178f",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "side",
+      "side_authorship": "right facing authored; left reflected by leaf only",
+      "pose": "warning",
+      "native_phases": [
+        "warning"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        20,
+        2,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.43999999999999995,
+        0.0,
+        0.858,
+        1.716
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-SIDE-LOCK",
+      "file": "selenites/guard_side_lock.png",
+      "sha256": "932e5ddff4dadc85ad3be987b16e0ec96bd24938a8df8e07c552d71a2dd4e4bc",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "side",
+      "side_authorship": "right facing authored; left reflected by leaf only",
+      "pose": "lock",
+      "native_phases": [
+        "lock"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        19,
+        7,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.46199999999999997,
+        0.0,
+        0.858,
+        1.6059999999999999
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-SIDE-ACTIVE",
+      "file": "selenites/guard_side_active.png",
+      "sha256": "a940ee6e288ad31c84ee8e1ddd465f33f2cc3ecdc119223c13b336fa2dbea9d8",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "side",
+      "side_authorship": "right facing authored; left reflected by leaf only",
+      "pose": "active",
+      "native_phases": [
+        "active"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        18,
+        6,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.484,
+        0.0,
+        0.858,
+        1.628
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-SIDE-RECOVERY",
+      "file": "selenites/guard_side_recovery.png",
+      "sha256": "dad482d41eedbade0003dc5d32b8392c77cf75702cb267d152461ae48e421f67",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "side",
+      "side_authorship": "right facing authored; left reflected by leaf only",
+      "pose": "recovery",
+      "native_phases": [
+        "recovery"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        22,
+        3,
+        78,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.39599999999999996,
+        0.0,
+        0.836,
+        1.694
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-BACK-STANDING",
+      "file": "selenites/guard_back_standing.png",
+      "sha256": "b16644cd56edeaf185bf230283da840c44d155b282488469bf7e61c58c226ea8",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "back",
+      "side_authorship": "explicit authored orientation",
+      "pose": "standing",
+      "native_phases": [
+        "clear",
+        "idle"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        21,
+        2,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.418,
+        0.0,
+        0.858,
+        1.716
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-BACK-WARNING",
+      "file": "selenites/guard_back_warning.png",
+      "sha256": "80baf49b4aa5cab7166a75ac0ce6cf3e96cb8c6a39d3b65cec1e3956a579f192",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "back",
+      "side_authorship": "explicit authored orientation",
+      "pose": "warning",
+      "native_phases": [
+        "warning"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        20,
+        2,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.43999999999999995,
+        0.0,
+        0.858,
+        1.716
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-BACK-LOCK",
+      "file": "selenites/guard_back_lock.png",
+      "sha256": "86f9dcee3ac187f794cb63dcf0b947a294ff21fc4e62956120d954ab0fe08e58",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "back",
+      "side_authorship": "explicit authored orientation",
+      "pose": "lock",
+      "native_phases": [
+        "lock"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        19,
+        5,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.46199999999999997,
+        0.0,
+        0.858,
+        1.65
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-BACK-ACTIVE",
+      "file": "selenites/guard_back_active.png",
+      "sha256": "08176f54a5e6b5db22ec928f117087f38ff81839cc24cad41236d1380f35c6c3",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "back",
+      "side_authorship": "explicit authored orientation",
+      "pose": "active",
+      "native_phases": [
+        "active"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        18,
+        4,
+        79,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.484,
+        0.0,
+        0.858,
+        1.672
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    },
+    {
+      "id": "ACT1-C32-BACK-RECOVERY",
+      "file": "selenites/guard_back_recovery.png",
+      "sha256": "2d5d88042fabbd7ade40d183bc77aa4032e4f7081e99efaab20e46490b9491e5",
+      "entity_id": "C32",
+      "design_id": "A1-E3",
+      "basis_id": "C22",
+      "width": 80,
+      "family": "act1_grotto_selenite_C32_spear_guard",
+      "facing": "back",
+      "side_authorship": "explicit authored orientation",
+      "pose": "recovery",
+      "native_phases": [
+        "recovery"
+      ],
+      "native_grid": [
+        80,
+        80
+      ],
+      "pixel_size_provisional": 0.022,
+      "feet_pivot_pixels": [
+        40,
+        80
+      ],
+      "sprite_offset_centered_pixels": [
+        0,
+        40
+      ],
+      "opaque_bounds_exclusive_pixels": [
+        22,
+        1,
+        78,
+        80
+      ],
+      "opaque_bounds_from_pivot_world_provisional": [
+        -0.39599999999999996,
+        0.0,
+        0.836,
+        1.738
+      ],
+      "collision": "none; retained shared-motion actor capsule is authoritative",
+      "occlusion": "ordinary depth; no cue, shadow, field, particles or source marker baked",
+      "timing": "not_applicable; static native-phase selection with no asset clock",
+      "source_ids": [
+        "G10",
+        "G15",
+        "F10"
+      ],
+      "canonical_basis_ids": [
+        "C22"
+      ],
+      "canonical_record_sha256": "d6f0af2a69242f8048f22f5c9b75c93031c5b8cdae00cecc1d500f998d4fd04f",
+      "readiness": "original_pixels_static_reviewed_imported_known_role_handle; leaf_native_guard_validated; no_claim_each_orientation_pose_portrait_exercised"
+    }
+  ],
+  "validation": {
+    "head": "0841bf971ba59b291f21ef9c889632d8299a1065 plus frozen executed uncommitted sources",
+    "api_revision": "campaign-shared-24",
+    "native_pair_checks": 189,
+    "graphical_component_checks": 184,
+    "failures": 0,
+    "portrait_count": 12,
+    "review": "Owner individually inspected current12 actual540x1170 views; completegrove3body silhouettes belowHUD, visible C31 crouch/groundedhop/recovery and C32brace/thrust/loweredrecovery; isolatedguard two genuineprimaryopenings remain separatefromHero. No every30pose/nativefacing or fullcrowd claim.",
+    "evidence": [
+      "docs/acts/act1/evidence/L3-authored-art-first/index.json",
+      "docs/acts/act1/evidence/L3-custody-codec/index.json",
+      "docs/acts/act1/evidence/L3-all-sources-portrait/index.json"
+    ],
+    "pending": [
+      "C31approach and living spore recoil/retreat/regroup",
+      "Larger crowds/laterrooms/all legal kits/profiles/full parent route/save",
+      "All pose/orientation optical runtime coverage and final whole-level art acceptance"
+    ]
+  }
+}

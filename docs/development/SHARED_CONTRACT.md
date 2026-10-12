@@ -1,6 +1,6 @@
 # Cinder shared contract
 
-Revision: **campaign-shared-43** (9 October 2026). Completed-level replay exposes thirteen existing static items, with original-ownership validation and atomic legacy availability migration only in `load_saved`; `restore_session` remains memory-only. [Policy, compatibility and clean92/0 +45/0 +67/0 evidence](REPLAY_STATIC_AVAILABILITY.md). Four slots, stat definitions, catalogue/ability allocations and saved schemas are unchanged. Campaign remains9/24; accepted A3-L3 proceeds to L4. [A1-L3 review](A1_L3_REVIEW.md) records its clean brief191/0 and interrupted native registration without acceptance. Integration remains first help contact; actual preserving ACKs establish adoption separately from availability.
+Revision: **campaign-shared-45** (9 October 2026). Shared45 adds the checked A1-L2 conditional arrangement reader and actual Challenge first-impact B→A, retaining original/legacy A→B. [Exact compatibility, focused results and limitations](A1_L2_CHALLENGE_ARRANGEMENT.md). Older readers reject the new key: preserve-adopt45 before reading new-receipt saves; never strip a receipt. No Player/Scheduler/Lane/envelope schema, geometry, HP, timing or control change. Campaign10/24 remains accepted, and A1-L3 evidence/limitations remain [separately recorded](A1_L3_ACCEPTANCE.md). Integration is first help contact; actual preserving ACK establishes adoption separately from availability.
 
 ## Static replay availability
 

@@ -1,6 +1,9 @@
 # Cinder difficulty design plan
 
-**Status: proposed design, 8 October 2026.** Build difficulty through increasingly demanding encounter decisions and optional Assisted, Standard and Challenge settings. All preset values below are unplaytested starting points. Saving this plan does not implement difficulty settings or establish campaign balance.
+**Original plan: 8 October 2026.** Build difficulty through increasingly demanding encounter decisions and optional Assisted, Standard and Challenge settings. All preset values below are unplaytested starting points. Saving this plan does not implement difficulty settings or establish campaign balance.
+
+
+**Current implementation, 9 October 2026:** shared profiles, scheduling and fresh-boundary persistence are implemented; numerical values remain provisional. Shared45 checks one authored Challenge arrangement in A1-L2: existing finale companions reverse from A→B to B→A with unchanged bodies, timing and stats. Native first-companion/proof/persistence checks and one brief portrait pass; second companion, finale defeat and human balance are untested. This does not establish difficulty arrangements for the other23 levels. [Implementation and exact scope](development/A1_L2_CHALLENGE_ARRANGEMENT.md). Historical observations below retain their original dates.
 
 The repeated decision stays **read a committed threat → swipe to a useful landing → aim a primary attack → choose whether to add the blast → read the next threat**. Players should improve on repeated attempts with the same equipment and statistics.
 
