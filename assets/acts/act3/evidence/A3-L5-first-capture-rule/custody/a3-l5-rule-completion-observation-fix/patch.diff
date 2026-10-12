@@ -1,0 +1,41 @@
+--- tests/acts/act3/crystalman_rule_room_smoke.gd
++++ tests/acts/act3/crystalman_rule_room_smoke.gd
+@@ -1,5 +1,5 @@
+ extends SceneTree
+-## DRAFT, UNEXECUTED. First sole-Gate/projected physical captured-action join.
++## Focused first sole-Gate/projected physical captured-action join.
+ ## Routed synthetic Godot input, actual physics and public snapshots only.
+ ## No native OS/human, whole-parent Save/Retry, production art or phase2 claim.
+ 
+@@ -173,9 +173,15 @@
+ 		if segment.kind not in ["first_escape_dash", "tether_positioning_dash"]: continue
+ 		if not await _until(float(segment.start_s)): return false
+ 		if not _expect(_hero.global_position.distance_to(segment.from) < 0.02, "real actor begins the proved ordinary dash at its actual source", str(_hero.global_position)): return false
++		var sequence_before: int = _latest_sequence()
+ 		var error: String = _swipe((segment.to - segment.from).normalized())
+ 		if not _expect(error.is_empty(), "real routed ordinary dash follows complete proved response", error): return false
+ 		if not await _until(float(segment.end_s)): return false
++		# Nominal witness time is not a completed-action publication. Wait the
++		# actual final partial physics tick, without waiting for dash cooldown.
++		var timeline: Dictionary = _room.call("state").sequence.timeline
++		var deadline: float = float(proof.timeline_origin_s) + float(timeline.slots[0].from_s if segment.kind == "first_escape_dash" else timeline.tether_until_s) - _scheduler.TIME_MARGIN
++		if not await _complete_response_dash(sequence_before, deadline): return false
+ 		if not (_hero.global_position.distance_to(segment.to) < 0.02 and _hero.hp == _hp):
+ 			var response_now: Dictionary = _hero.get_threat_response_state()
+ 			var records_now: Array[Dictionary] = _hero.get_world_action_records(0)
+@@ -188,6 +194,15 @@
+ 		moved = true
+ 	if not await _until(float(proof.primary_time_s)): return false
+ 	return _expect(moved and _hero.global_position.distance_to(proof.attack_position) < 0.02 and _hero.get_threat_response_state().primary_cooldown_left_s == 0.0 and _room.call("state").phase == "exposed", "complete ordinary response reaches low tether inside actual finite recovery")
++
++
++func _complete_response_dash(sequence_before: int, deadline: float) -> bool:
++	for _i: int in range(60):
++		if float(_hero.get_threat_response_state().motion.dash_left_s) == 0.0:
++			var actions: Array[Dictionary] = _hero.get_world_action_records(sequence_before)
++			return _expect(actions.size() == 1 and actions[0].kind == "dash" and not actions[0].collision_shortened and not actions[0].movement_damage and actions[0].equipment_ids == _kit and float(actions[0].completed_at_s) <= deadline and _scheduler.get_clock() <= deadline and _hero.is_on_floor(), "response dash actually completes and publishes once before unchanged witness deadline", str(actions))
++		if not await _tick(): return false
++	return _expect(false, "finite actual response dash completes without cooldown wait")
+ 
+ 
+ func _sever_with_real_primary() -> bool:

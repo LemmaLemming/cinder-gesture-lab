@@ -1,0 +1,13 @@
+--- tests/acts/act3/crystalman_rule_room_smoke.gd before
++++ tests/acts/act3/crystalman_rule_room_smoke.gd after
+@@ -176,6 +176,10 @@
+ 		var error: String = _swipe((segment.to - segment.from).normalized())
+ 		if not _expect(error.is_empty(), "real routed ordinary dash follows complete proved response", error): return false
+ 		if not await _until(float(segment.end_s)): return false
++		if not (_hero.global_position.distance_to(segment.to) < 0.02 and _hero.hp == _hp):
++			var response_now: Dictionary = _hero.get_threat_response_state()
++			var records_now: Array[Dictionary] = _hero.get_world_action_records(0)
++			print("READONLY LANDING FAILURE OPERANDS " + var_to_str({"actual_position": _hero.global_position, "expected_position": segment.to, "distance_error": _hero.global_position.distance_to(segment.to), "actual_hp": _hero.hp, "original_hp": _hp, "player_clock_s": _hero.get_world_action_clock(), "scheduler_clock_s": _scheduler.get_clock(), "motion": response_now.motion, "segment": segment, "latest_record": records_now.back() if not records_now.is_empty() else {}, "room_phase": _room.call("state").phase}))
+ 		if not _expect(_hero.global_position.distance_to(segment.to) < 0.02 and _hero.hp == _hp, "actual completed response reaches clear landing without absorbing replay damage"): return false
+ 		if not moved and pause_active:
+ 			var active_from: float = float(_room.call("state").lease.active_from_s)
