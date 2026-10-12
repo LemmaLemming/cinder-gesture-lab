@@ -1,0 +1,58 @@
+{
+  "at": "2026-10-12T03:21:49.484135+00:00",
+  "status": "static authored only; no engine/parser/native/portrait result",
+  "fixture": {
+    "path": "/private/tmp/a2_o1_focused_smoke_draft.gd",
+    "sha256": "ff442c2c3da9ae8f07c6d0f53a84d5fd8627030c933359ecafcbb956c09ab593",
+    "lines": 405
+  },
+  "capture_custody_delta": {
+    "prior_path": "/private/tmp/a2_o1_focused_smoke_before_capture_custody.gd",
+    "prior_sha256": "3f696a8c6324c52d7a3c91fe34eff0c0c7863acfeec0bb80c9b0950b958de4a2",
+    "changed_functions": [
+      "_run",
+      "_capture_view"
+    ],
+    "new_functions": [
+      "_prepare_capture_root"
+    ],
+    "unchanged_functions": [
+      "_initialize",
+      "_boot",
+      "_combat_component",
+      "_follow",
+      "_contact_component",
+      "_place_contact",
+      "_dash",
+      "_wait_phase",
+      "_step",
+      "_state",
+      "_ray",
+      "_clock",
+      "_sequence",
+      "_live",
+      "_wait_capture",
+      "_interaction_states",
+      "_encode",
+      "_sources",
+      "_refs",
+      "_release",
+      "_expect",
+      "_finish"
+    ],
+    "preamble": "fixed unowned reusable CAPTURE_ROOT replaced with OWNED_CAPTURE_PREFIX and one current capture root field; actual mechanical controls unchanged"
+  },
+  "direct_api_checks": [
+    "Actual CinderPlayer get_threat_response_state keys, request_dash, slash, world_action_executed arity and retained records match current source.",
+    "Array[Vector3].assign is used for actual Game and authored mesh/cue accumulation; no untyped array passed to _append_mesh_points.",
+    "Native120 probe samples after actual root110. Lock post-draw coroutine is not awaited by action sampling; current lock/armed state and full source/lane/witness/Hero union are rechecked on actual capture.",
+    "Actual primary/native dash readiness is checked before action; full actual primary cooldown must fit and finish in retained recovery, no shortened cadence.",
+    "CinderLevel public exit_level invokes O1 cleanup before real whole-subtree queued release; all descendant WeakRefs and required-cue/enemy groups checked afterward.",
+    "Public conditioned fields only: Hero.shells=0 once at ordinary strike, Hero.global_position for explicitly authorized independent representative contact unit. No actor HP/phase/clock/proof/progress writes."
+  ],
+  "scopes_not_claimed": [
+    "Actual parser/load/native checks, portraits and human art review pending.",
+    "No Shell/SaveContinueRetry/stamp/side return/full route or all-loadout credit."
+  ],
+  "recording_policy": "count-only assertions, zero per-check PASS prints; footer A2-O1 focused mechanics/contact smoke: requires complete EOF plus full engine diagnostics, actual scope_complete=true and zero failures; headless writes no captures"
+}
