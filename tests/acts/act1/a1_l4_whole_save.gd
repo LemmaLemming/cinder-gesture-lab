@@ -181,7 +181,9 @@ func _terminal_save() -> bool:
 	var king: CharacterBody3D = _sources()["court-king"]
 	if not _expect(Codec.keys_error(record, ["active", "from", "to", "start_s", "end_s", "speed"]).is_empty() and record.active and record.from is Vector3 and record.to is Vector3 and record.to == record.from + Vector3.BACK * 0.7 and record.speed == 1.4 and record.end_s == record.start_s + 0.7 / 1.4 and intro.outcome.outcome == "complete" and Vector2(endpoint.x, endpoint.z).distance_to(Vector2(goal.x, goal.z)) <= 0.005 and _scheduler().get_clock() >= record.end_s and king.get("hp") == 80.0 and not king.get("dead") and not game.active_level.get("_helpers_once"), "terminal setup retains the real completed .7-unit King step at1.4/.5 and untouched80HP before helper birth"): return false
 	var intro_wire: String = Exact.stringify(_portable(intro))
-	receipts.append({"stage": "terminal opt-in actual room3 intro completed", "intro": _portable(intro), "initial_resources_declared": {"hp": 23.0, "shells": 0}, "actual_current_resources": _portable(game.player.snapshot_state().resources)})
+	# The public Player snapshot is paused-only. This live receipt observes only
+	# the actual public HP/ammo fields, without forcing a new pause or snapshot.
+	receipts.append({"stage": "terminal opt-in actual room3 intro completed", "intro": _portable(intro), "initial_resources_declared": {"hp": 23.0, "shells": 0}, "actual_current_resources": {"hp": game.player.hp, "shells": game.player.shells}})
 	if not await _place(Vector3(0, 0.1, -28.2)) or not _damage("court-king", 40.0): return false
 	if not await _wait(func() -> bool: return _moving_helpers(), "actual once-born finite helpers move before terminal completion", 12.0): return false
 	var entries: Dictionary = (game.active_level.get("_entry_records") as Dictionary).duplicate(true)
