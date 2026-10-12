@@ -217,7 +217,7 @@ func _admit_actor(id: String) -> void:
 		if not _live_boundary(admitted_hero, admitted_shell) or sources.get(id) != actor or _retained.get(id) != actor or actor.get_parent() != self or actor.is_queued_for_deletion() or not control.get("outside_transaction", false) or not actor_control.get("outside_transaction", false) or actual.get("reservation_id") != answer.reservation_id or matching.is_empty() or var_to_bytes(matching) != var_to_bytes(answer.reservation):
 			actor.call("cancel", "court_admission_custody_lost")
 		else:
-			_frames[id] = {"reservation_id": answer.reservation_id, "landing": answer.proof.landing, "attack_position": answer.proof.attack_position}
+			_frames[id] = {"reservation_id": answer.reservation_id, "landing": answer.proof.landing, "attack_position": answer.proof.attack_position, "proof": answer.proof.duplicate(true)}
 	_forecast.clear()
 	if not presentation_error().is_empty(): actor.call("cancel", "court_current_view_lost"); _frames.erase(id)
 
@@ -243,7 +243,7 @@ func _admit_roundel() -> void:
 			if record.get("id") == answer.reservation_id: matching = record
 		if not _live_boundary(admitted_hero, admitted_shell) or roundel != admitted_roundel or roundel.get_parent() != self or roundel.is_queued_for_deletion() or not control.get("outside_transaction", false) or matching.is_empty() or var_to_bytes(matching) != var_to_bytes(answer.reservation) or roundel.state().get("reservation_id") != answer.reservation_id: roundel.cancel("court_roundel_returned_admission_lost")
 		else:
-			_frames[Layout.ROUND_EL_ID] = {"reservation_id": answer.reservation_id, "landing": answer.proof.landing, "attack_position": answer.proof.attack_position}
+			_frames[Layout.ROUND_EL_ID] = {"reservation_id": answer.reservation_id, "landing": answer.proof.landing, "attack_position": answer.proof.attack_position, "proof": answer.proof.duplicate(true)}
 			_roundel_cycle = int(roundel.state().cycle)
 	_forecast.clear()
 
