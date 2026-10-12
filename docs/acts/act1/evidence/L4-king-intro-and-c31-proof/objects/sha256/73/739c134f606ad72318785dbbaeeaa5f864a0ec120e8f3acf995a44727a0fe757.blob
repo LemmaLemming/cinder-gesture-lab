@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-08",
+  "readiness": "Implemented Character Lab effects; physical-phone readability/performance and campaign scenery integration remain untested.",
+  "assets": [
+    {
+      "id": "FX-SMOKE-CURL",
+      "family": "shared_curling_smoke",
+      "authoring_source": "scripts/curling_smoke.gd",
+      "emission_source": "scripts/player.gd",
+      "provenance": "Original procedural pixel stream, informed by user-supplied curling smoke reference; no reference pixels imported.",
+      "native_cell_pixels": [
+        80,
+        32
+      ],
+      "frame_count": 16,
+      "source_pivot_pixels": [
+        3.5,
+        16.5
+      ],
+      "attachment_offset_world": "0.08 units above the player root and 0.12 units behind the accepted dash direction.",
+      "palette": "Three muted cool greys, maximum alpha 0.62.",
+      "world_scale": {
+        "cross_axis_pixel_size": 0.045,
+        "long_axis": "Stretches to the actual projected source-to-tail distance; no predicted landing."
+      },
+      "collision": "none; cosmetic",
+      "occlusion": "Nearest filtered, ordinary world depth, render priority -3.",
+      "clock": "0.80 s active simulation time; paused with scene tree.",
+      "states": [
+        "attached source",
+        "connected growing trail",
+        "rolling curl",
+        "traveling breakup",
+        "fade"
+      ],
+      "emission": "Exactly one node per accepted dash; physics samples actual travel and latches the final collision-shortened endpoint. Later movement never lengthens it.",
+      "reuse": [
+        "Character Lab",
+        "future shared player across all three acts"
+      ]
+    },
+    {
+      "id": "FX-SLASH-ARC",
+      "family": "shared_primary_sweep",
+      "authoring_source": "scripts/effects.gd",
+      "provenance": "Restored original eight-segment cosmetic slash geometry with slower visual timing.",
+      "native_cell_pixels": null,
+      "geometry": {
+        "segment_count": 8,
+        "radius_world": 0.78,
+        "angle_radians": [
+          -1.1,
+          1.1
+        ],
+        "segment_box_world": [
+          0.28,
+          0.07,
+          0.1
+        ],
+        "sweep_radians": 0.32
+      },
+      "pivot": "Accepted player slash source.",
+      "palette": "Pale ivory",
+      "collision": "none; separate resolved range/cone/LOS footprint remains authoritative.",
+      "occlusion": "Ordinary world depth.",
+      "clock": "0.28 s active simulation time; paused with scene tree.",
+      "states": [
+        "immediate release",
+        "sweep/expand",
+        "shrink/retire"
+      ],
+      "emission": "One arc, no slash smoke.",
+      "reuse": [
+        "Character Lab",
+        "future shared primary attack"
+      ]
+    },
+    {
+      "id": "FX-SHOTGUN-FLARE",
+      "family": "shared_shotgun_flare",
+      "authoring_source": "scripts/shotgun_flare.gd",
+      "attachment_source": "scripts/pixel_sprite.gd:get_muzzle_world_position",
+      "provenance": "Original code-authored bright flare and short five-way pellet streaks.",
+      "native_cell_pixels": [
+        36,
+        24
+      ],
+      "frame_count": 10,
+      "source_pivot_pixels": [
+        2.5,
+        12.5
+      ],
+      "pixel_size_world_units": 0.03,
+      "palette": "Bright white core, pale yellow, gold and orange stepped fan.",
+      "collision": "none; no projectile or delayed damage.",
+      "occlusion": "Nearest filtered, ordinary world depth, render priority 5; 0.006-unit normal offset avoids coplanar flicker.",
+      "clock": "0.24 s active simulation time; first 0.048 s hold a bright attached core; paused with scene tree.",
+      "states": [
+        "barrel release",
+        "expanding fan",
+        "outward streaks",
+        "fade"
+      ],
+      "emission": "Starts at the rendered barrel-tip texel centre; follows that barrel during initial 0.04 s of recoil, then freezes the release point. Exact aim direction is snapshotted and projected continuously.",
+      "reuse": [
+        "Character Lab",
+        "future shared blast across all weapon profiles"
+      ]
+    }
+  ],
+  "budgets": {
+    "shared_transients": 48,
+    "tiny_blood_particles": 24,
+    "physical_debris": 96
+  },
+  "gameplay_contract": "Effects never change dash distance, immediate hit results, damage, ammo, reload or cooldown deadlines."
+}
