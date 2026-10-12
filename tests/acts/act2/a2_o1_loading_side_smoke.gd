@@ -147,10 +147,15 @@ func _run() -> void:
 		if not await _test_contact(O1.FRAGMENT_POSITIONS[id]): _finish(); return
 		_expect(_shell.active_level.call("encounter_state").collected_ids.has(id), "actual stable native contact collects " + id + " via TEST placement")
 	if not await _test_contact(Vector3(0,0,-5.25)): _finish(); return
+	# Live checkpoint drains automatically resume. Use the real public Pause
+	# before asserting a frozen current unit and its durable checkpoint.
+	_shell.request_pause()
 	await _settle()
-	if not _expect(paused and _shell.active_level.current_checkpoint().id == O1.CHECKPOINT_ID and _shell.attempts.state().side_attempt.checkpoint.level.progress.checkpoint_id == O1.CHECKPOINT_ID, "actual before-final stable contact durably drains checkpoint before final admission"): _finish(); return
-	_expect(int(_shell.active_level.call("encounter_state").sources.final.exchange.cycle) == 0, "before-final checkpoint recipient has not admitted final Scout")
+	if not _expect(paused and _shell.active_level.current_checkpoint().id == O1.CHECKPOINT_ID and _shell.attempts.state().side_attempt.checkpoint.level.progress.checkpoint_id == O1.CHECKPOINT_ID, "actual before-final stable contact durably drains checkpoint before final admission: " + str(_shell.active_level.current_checkpoint()) + " / " + _shell.campaign_error): _finish(); return
+	_expect(int(_shell.attempts.state().side_attempt.checkpoint.level.local.exchange.records.final.cycle) == 0, "actual protected before-final checkpoint precedes final Scout admission")
 	if not await _test_contact(O1.FRAGMENT_POSITIONS.north): _finish(); return
+	# Completion shares the supported automatic-resume policy.
+	_shell.request_pause()
 	await _settle()
 	if not _expect(paused and _shell.active_level.is_completed() and _shell.campaign_error.is_empty(), "third actual contact cancels threats/completes optional through real Shell: " + _shell.campaign_error): _finish(); return
 	var completed: Dictionary = _shell.capture_campaign_snapshot()

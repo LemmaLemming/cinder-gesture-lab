@@ -1,0 +1,103 @@
+{
+  "api_revision": "act2-o1-loading-boundary-static-peer-1",
+  "api_revision_actual": "campaign-shared-47",
+  "at": "2026-10-12T03:41:55.525105+00:00",
+  "corrected_fixture": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/tests/acts/act2/a2_o1_loading_side_smoke.gd",
+    "sha256": "4b2cdaf97f0791b5f013d0e5e2e6425a00d2ee2902cc5489d61c28485889c21a",
+    "splitlines": 284
+  },
+  "limits": [
+    "Only loading component pin changes in each v2 manifest; every other field/portrait flag/capture path/footer remains exact to its preserved original.",
+    "Fresh corrected loading leaf differs only in invocation command because original loading-side-first failure packet is occupied. Unused focused/portrait first leaves remain fresh.",
+    "No new import is called or required by the test-only correction; original537-source import and original loading37/1 source packets retain their exact provenance.",
+    "Three next jobs remain unexecuted by this preparer; no native pass or art acceptance is inferred."
+  ],
+  "manifests": [
+    {
+      "command": [
+        "python3",
+        "/private/tmp/cinder_a2_o1_focused_record_v3.py",
+        "--mode",
+        "engine",
+        "--manifest",
+        "/private/tmp/a2_o1_loading_manifest_v2_20261012.json",
+        "--output-dir",
+        "docs/acts/act2/evidence/A2-O1/loading-side-corrected"
+      ],
+      "mode": "loading",
+      "original": {
+        "path": "/private/tmp/a2_o1_loading_manifest_20261012.json",
+        "sha256": "2d833c3db9987b8a5885f6aff82560d5be89f835c0db22bba21416d3dc208689"
+      },
+      "output_dir": "docs/acts/act2/evidence/A2-O1/loading-side-corrected",
+      "path": "/private/tmp/a2_o1_loading_manifest_v2_20261012.json",
+      "sha256": "06b56973494ba6a3ee12991128c9a3cc49cc9be95781934ece580599cd5631ca",
+      "sole_manifest_delta": "tests/acts/act2/a2_o1_loading_side_smoke.gd source SHA256"
+    },
+    {
+      "command": [
+        "python3",
+        "/private/tmp/cinder_a2_o1_focused_record_v3.py",
+        "--mode",
+        "engine",
+        "--manifest",
+        "/private/tmp/a2_o1_focused_manifest_v2_20261012.json",
+        "--output-dir",
+        "docs/acts/act2/evidence/A2-O1/focused-native-first"
+      ],
+      "mode": "focused",
+      "original": {
+        "path": "/private/tmp/a2_o1_focused_manifest_20261012.json",
+        "sha256": "1224436ff3240966eebe76a302ca04475294a15ab8d548b051cc318ab17a32e8"
+      },
+      "output_dir": "docs/acts/act2/evidence/A2-O1/focused-native-first",
+      "path": "/private/tmp/a2_o1_focused_manifest_v2_20261012.json",
+      "sha256": "9e5d892fa8f776894e1d5811ab7ff070c4df14b38d52f8ee2c22182106a5e298",
+      "sole_manifest_delta": "tests/acts/act2/a2_o1_loading_side_smoke.gd source SHA256"
+    },
+    {
+      "command": [
+        "python3",
+        "/private/tmp/cinder_a2_o1_focused_record_v3.py",
+        "--mode",
+        "engine",
+        "--graphical",
+        "--manifest",
+        "/private/tmp/a2_o1_portrait_manifest_v2_20261012.json",
+        "--output-dir",
+        "docs/acts/act2/evidence/A2-O1/focused-portrait-first"
+      ],
+      "mode": "portrait",
+      "original": {
+        "path": "/private/tmp/a2_o1_portrait_manifest_20261012.json",
+        "sha256": "9677291d88f0e53094f7f650cce36365a9196d7b33c1df44ded27d9e9446e59b"
+      },
+      "output_dir": "docs/acts/act2/evidence/A2-O1/focused-portrait-first",
+      "path": "/private/tmp/a2_o1_portrait_manifest_v2_20261012.json",
+      "sha256": "2870e92e715908551011a587d38d2fcb349270a9645e1760cb340b2846fc74c9",
+      "sole_manifest_delta": "tests/acts/act2/a2_o1_loading_side_smoke.gd source SHA256"
+    }
+  ],
+  "original_failure": {
+    "checks": 37,
+    "classification": "Wrong TEST parked-state expectation after successful automatically resumed live checkpoint drain. Original remains failed; later completion/stamp/exit scope was not reached.",
+    "exit_code": 1,
+    "failures": 1,
+    "parse_errors": 0,
+    "raw_sha256": "4069443095ae523a796e774c2e455ca08d44970febf6274b1b262ab8c3e64034",
+    "result": "docs/acts/act2/evidence/A2-O1/loading-side-first/result.json",
+    "script_errors": 0,
+    "source_count": 592,
+    "unexplained_native_errors": 0,
+    "warnings": 0
+  },
+  "publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+  "scope": "Read-only exact failed packet/shared Shell/Level code and corrected test delta; three TMP v2 manifests prepared from actual installed source pins. No recorder invocation, engine/import/job, checkout edit or Git mutation.",
+  "verified_interpretation": [
+    "Shell._enqueue marks live checkpoint/complete operations resume_after=true; _perform retains it and _commit_drain defers public resume_campaign after successful settlement.",
+    "Two real public request_pause calls after checkpoint/third-contact helper and before settle establish an explicit frozen current barrier; no production pause policy is changed.",
+    "Admission ordering is checked on the actual durable protected checkpoint final record cycle0, since a later resumed current actor may legitimately begin a new cycle.",
+    "Only these two calls, durable cycle assertion and failure diagnostic text differ from279 original; no checkpoint/history/once stamp/protected story/cleanup assertion or source guard is removed."
+  ]
+}

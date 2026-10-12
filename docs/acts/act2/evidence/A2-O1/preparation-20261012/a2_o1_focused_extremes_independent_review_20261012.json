@@ -1,0 +1,69 @@
+{
+  "api_revision": "act2-o1-focused-extremes-static-peer-1",
+  "at": "2026-10-12T03:56:36.782141+00:00",
+  "base": {
+    "lines": 405,
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/tests/acts/act2/a2_o1_focused_smoke.gd",
+    "sha256": "ff442c2c3da9ae8f07c6d0f53a84d5fd8627030c933359ecafcbb956c09ab593"
+  },
+  "details": {
+    "changed_existing_functions": [
+      "_run",
+      "_boot"
+    ],
+    "new_functions": [
+      "_run_extremes",
+      "_select_initial_gear",
+      "_finish_extremes"
+    ],
+    "unchanged_original_functions": [
+      "_initialize",
+      "_prepare_capture_root",
+      "_combat_component",
+      "_follow",
+      "_contact_component",
+      "_place_contact",
+      "_dash",
+      "_wait_phase",
+      "_step",
+      "_state",
+      "_ray",
+      "_clock",
+      "_sequence",
+      "_live",
+      "_capture_view",
+      "_wait_capture",
+      "_interaction_states",
+      "_encode",
+      "_sources",
+      "_refs",
+      "_release",
+      "_expect",
+      "_finish"
+    ],
+    "verified": [
+      "Absent --a2-o1-extremes leaves original _run/_boot path semantically unchanged with no additional expectations; all23 other original methods are byte-exact.",
+      "Each flagged case instantiates a distinct production Main, sets the supported ProfileSeedGame script/getter before tree entry and uses Standard; one shared native Player/Scheduler/Actor remains.",
+      "Initial gear selection asserts paused clock0, no completed actions/action clock0 and exact implemented static slot/no-perk identities. CinderEquipment.restore validates the whole loadout; public weapon equip refreshes shared stats/visuals and clamps rather than refills HP. Fixture explicitly asserts HP/ammo/clock/actions unchanged.",
+      "J1/P2/S2/W03 combines canonical 0.90dash speed/1.10distance and 0.75attack speed/1.80range; J1/P1/S0/W03 has0.70attack speed/1.90range. Actual native resolver values, not nominal rounded constraints, drive proof and cadence.",
+      "Original _combat_component/_follow/_dash/_wait_phase/_step/cleanup are reused with real warning/lock/full returned proof/native action-start/ordinary-primary empty-ammo/full cooldown assertions. All actual world-action receipts must retain exact selected equipment/resolved stats.",
+      "Two independent cases have no contacts, graphical capture, Shell/transport, full-route/all-kit-balance or new perk/ability/type claim. No HP/motion/pose/phase/clock/proof assignment is added."
+    ]
+  },
+  "limits": [
+    "Actual native legal-combo escape/return/cadence viability remains untested by this static review.",
+    "Combined graphical public Resume does not suppress production focus handling; real timing/proof and postdraw/pixels remain deciding native checks.",
+    "Promotion must occur only after current jobs are closed; original405 inputs/passes/failures retain their original source pins and scopes."
+  ],
+  "plan": {
+    "path": "/private/tmp/a2_o1_focused_extremes_plan_20261012.json",
+    "sha256": "437c5e8b86de687fb8a78b1eaf3207e9c96e7d59c917ff0d128da5a8e56120a5"
+  },
+  "result": "No concrete remaining static API/authority shortcut found in frozen bytes.",
+  "scope": "Bounded read-only source delta/public API/canonical equipment/focus policy review only; no GDScript parser/native run, engine/import, checkout edit or Git mutation.",
+  "source": {
+    "lines": 477,
+    "path": "/private/tmp/a2_o1_focused_extremes_smoke_draft.gd",
+    "sha256": "e2774381d8d5fe1e0ddf64bbc269aafe1f1e46573f016de028e54bfac8d8f5c0"
+  }
+}

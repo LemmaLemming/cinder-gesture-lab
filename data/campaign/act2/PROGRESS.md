@@ -1,5 +1,15 @@
 # Act 2 progress
 
+## Current frontier — 12 October 2026
+
+Act2 **5/8** accepted, campaign **11/24**. All main levels remain accepted and unchanged. Current **A2-O1 Cylinder Perimeter** is authored/imported/executed: loading48/0, ordinary mechanics/contact57/0, two legal-gear extrema82/0 and final actual graphical84/0 clean. Four original540×1170 final images/Exact metadata are retained; owner and independent captured-statePASS, final native custody clean; content/adoption/handoff sealing next. Actual baseline47 remains ef2db5cb/ACK5b8bca56; available49 (including48) preservation adoption follows closed owned jobs, with no new gameplay/save schema or human decision. [Current level scope](levels/A2-O1.md) and [frontier](../../../docs/acts/act2/evidence/A2-O1/preparation-20261012/current-frontier.json).
+
+All owned Godot jobs are CLOSED. Original loading37/1, graphical20/4 and84/1, incomplete typed-budget script-error run, failed preflight/nonexecuted variants and all original input/log/pixel bytes retain their exact scope. Corrections affect TEST explicit pause/capture-environment public Resume/metadata serialization and typed diagnostic budget; production host772/kit207/scene are unchanged from2ae15df0. No equipment/ability introduction/claim or permanent reward. Untested full-playthrough/all-kit balance/pacing/performance/device scope remains explicit. No human/setup/shared API blocker.
+
+Next: seal seven closed focused categories, preserve-adopt49 (including48), submit exact candidate for independent Integration acceptance; then A2-O2(parentL3), followed by A2-O3(parentL4) after sequential acceptance. Earlier dated records below are preserved historical scopes.
+
+
+
 Current baseline is **campaign-shared-40**, exact publication `4b3e944595e700a2b0a5269485a4922bb8d59946`, preserving merge `72208f5f8ffd4e3281d149c404c1fb39777ba127`. [Custody](../../../docs/acts/act2/evidence/shared40-adoption/adoption.json) retains all15,181 owned Git/physical files,321 active UID bytes/modes and3settings; all544 incoming rows/modes match. Only private Authored source comparison, named pure target and shared documentation/evidence change. Public native/default Lane/Player/controller/camera/cues/gear are unchanged. Original182/0 and19/1 preserve actual39/027, a400metadata/9efmechanical attribution; no unchanged engine/import repeat.
 
 Updated 9 October 2026. **L1–L4 are accepted (4/8); campaign 8/24.** Canonical ACCEPTED `bc7d1656-9066-4ad1-9056-2c7c20a71b42` accepts complete L4 owner candidate `1a5e9ea197233fe2f5db808dfcce2e8288f79845`. Independent production entry/save/Continue/Retry passed 243/0 and genuine earned L3 → registered L4 passed 1375/0. [Registration](../../../docs/development/ACT2_L4_REGISTRATION.md) keeps all prior route/art/failed scopes and limits. L5 is the sole current frontier: bait122, binding15/0, actor75/0, ray729/0 and finite parent182/0 are closed component scopes. Production scene/strict saves/retry/transitions/cleanup and brief art/portrait remain unfinished. Full-playthrough behavior is untested and is not an acceptance gate; no human decision.

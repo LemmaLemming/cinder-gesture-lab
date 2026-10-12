@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-12T03:54:08.460594+00:00",
+  "owned_job": 45396,
+  "packet": "docs/acts/act2/evidence/A2-O1/focused-portrait-first",
+  "classification": "graphical test environment/observed production pause; no concrete gameplay or import fault",
+  "result": {
+    "exit": 1,
+    "checks": 20,
+    "failures": 4,
+    "scope_complete": false
+  },
+  "first_meaningful_error": "FAIL: bounded native stable Hero/dash readiness",
+  "original_raw_sha256": "c5d153c6a694f2c43cf6a4109d066ef159e182ffa8ef91572c5a8bd55b84c975",
+  "fixture_sha256": "ff442c2c3da9ae8f07c6d0f53a84d5fd8627030c933359ecafcbb956c09ab593",
+  "observed": "Actual entry.png contains the shared PAUSED overlay; exact metadata has healthy on-floor Hero, no actions, level clock0.11666666666666665, empty runtime_error and camera_error. No source/UID/import drift or script/parse warning occurred. Only one of four requested frames exists.",
+  "inference": "Game._notification opens the pause UI on application focus out; window-focus change is a plausible source of the observed pause, not instrumented OS-event proof.",
+  "correction": "Graphical TEST-only use of actual public resume_lab at observed pause, with exact native clock/health/pose/action-history invariance assertions and event metadata, plus bounded post-draw unpaused capture. Do not disable production focus handling or use --capture (which starts a separate automatic preview/quit). Original proof/action/cadence assertions remain.",
+  "retest": "Corrected graphical job only; preserve original20/4 and paused entry pixel. Headless57/0 and loading48/0 retain exact original fixture/input scopes. Equipment extremes is a separate newly required bounded mechanics scope.",
+  "status": "TMP500 candidate awaiting scoped peer; no source promoted or corrected job started"
+}

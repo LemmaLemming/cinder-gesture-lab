@@ -4,10 +4,18 @@ extends SceneTree
 ## TEST_ONLY set public shells=0 once at the real opening; reload stays native.
 ## Unit2: disclosed representative Hero placements test actual contact handling.
 ## No actor HP/driver phase/clock/proof/progress seed. No Shell reward/side return.
+## --a2-o1-extremes: two independent TEST_ONLY legal initial static loadouts;
+## ordinary component only, no contacts/portraits/full-route/all-kit balance claim.
 
 const MainScene: PackedScene = preload("res://scenes/main.tscn")
 const O1_PATH: String = "res://scenes/acts/act2/a2_o1.tscn"
 const Exact: Script = preload("res://scripts/campaign/exact_json.gd")
+const Equipment: Script = preload("res://scripts/equipment.gd")
+const ProfileSeedGame: Script = preload("res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd")
+const EXTREME_LOADOUTS: Array[Dictionary] = [
+	{"id":"slow-dash-short-reach", "loadout":{"jacket":"CLOTH-J1","pants":"CLOTH-P2","shoes":"CLOTH-S2","weapon":"WEAPON-03"}},
+	{"id":"slow-primary-reach", "loadout":{"jacket":"CLOTH-J1","pants":"CLOTH-P1","shoes":"CLOTH-S0","weapon":"WEAPON-03"}},
+]
 const OWNED_CAPTURE_PREFIX: String = "res://docs/acts/act2/evidence/A2-O1/"
 const LABELS: Array[String] = ["entry", "scout-lock", "collected-journal", "opened-exit"]
 const MAX_TICKS: int = 600
@@ -40,6 +48,11 @@ var _exits: Array[Dictionary] = []
 var _actions: Array[Dictionary] = []
 var _abort: bool = false
 var _scope_complete: bool = false
+var _extremes: bool = false
+var _extreme_loadout: Dictionary = {}
+var _extreme_stats: Dictionary = {}
+var _extreme_results: Array[Dictionary] = []
+var _capture_resume_events: Array[Dictionary] = []
 
 
 func _initialize() -> void:
@@ -51,11 +64,17 @@ func _run() -> void:
 	root.content_scale_size = root.size
 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
 	_capture = "--a2-o1-portraits" in OS.get_cmdline_user_args()
+	_extremes = "--a2-o1-extremes" in OS.get_cmdline_user_args()
+	if _extremes and not _expect(not _capture and DisplayServer.get_name() == "headless", "equipment extremes are explicit headless mechanics-only, no portraits"):
+		_finish_extremes(); return
 	if _capture:
 		if not _expect(DisplayServer.get_name() != "headless", "portrait option requires actual native graphics"): _finish(); return
 		if not _prepare_capture_root(): _finish(); return
 	_probe = NativeTickProbe.new()
 	root.add_child(_probe)
+	if _extremes:
+		await _run_extremes()
+		return
 	var combat_ok: bool = await _combat_component()
 	_expect(combat_ok, "focused actual ordinary response component completes")
 	await _release()
@@ -68,11 +87,15 @@ func _run() -> void:
 		var actual: Array[String] = []
 		for f: Dictionary in _frames: actual.append(f["label"])
 		_expect(actual == LABELS, "exact four actual entry/lock/contact/open-exit portrait labels")
-		var packet: Dictionary = {"api_revision":"act2-o1-focused-preview-1", "scope":"production Main/Hero/native ordinary exchange; representative TEST_ONLY contact placements; no route/Shell stamp/side-return/all-defeats claim", "setup":{"empty_ammo":"public Hero.shells=0 once immediately before real ordinary primary; no reload/stat suppression", "contact_order":["east","west","north"], "contact_placements":"TEST_ONLY actual Hero.global_position, stable native floor before observations"}, "checks":_checks, "failures":_failures, "scope_complete":_scope_complete, "frames":_frames, "source_files":_sources(), "art_accepted":false}
+		var packet: Dictionary = {"api_revision":"act2-o1-focused-preview-1", "scope":"production Main/Hero/native ordinary exchange; representative TEST_ONLY contact placements; no route/Shell stamp/side-return/all-defeats claim", "setup":{"empty_ammo":"public Hero.shells=0 once immediately before real ordinary primary; no reload/stat suppression", "contact_order":["east","west","north"], "contact_placements":"TEST_ONLY actual Hero.global_position, stable native floor before observations"}, "checks":_checks, "failures":_failures, "scope_complete":_scope_complete, "frames":_frames, "source_files":_sources(), "art_accepted":false, "capture_environment_resume_events":_capture_resume_events}
 		var encoded: String = Exact.stringify(packet)
 		if not _expect(not FileAccess.file_exists(_capture_root + "metadata.exact.json"), "new metadata preserves every prior capture original"): _finish(); return
 		var file: FileAccess = FileAccess.open(_capture_root + "metadata.exact.json", FileAccess.WRITE)
-		_expect(file != null and not encoded.is_empty(), "exact finite native metadata output opens")
+		var metadata_error: String = ""
+		if encoded.is_empty():
+			var metadata_budget: Array[int] = [Exact.MAX_NODES, Exact.MAX_BYTES]
+			metadata_error = String(Exact._encode(packet, 0, metadata_budget).get("reason", ""))
+		_expect(file != null and not encoded.is_empty(), "exact finite native metadata output opens: " + metadata_error)
 		if file != null:
 			packet["checks"] = _checks
 			packet["failures"] = _failures
@@ -82,6 +105,52 @@ func _run() -> void:
 	if is_instance_valid(_probe): _probe.queue_free()
 	await process_frame
 	_finish()
+
+
+func _run_extremes() -> void:
+	var completed: int = 0
+	for definition: Dictionary in EXTREME_LOADOUTS:
+		_extreme_loadout = definition["loadout"].duplicate(true)
+		_extreme_stats.clear()
+		print("TEST_ONLY O1 initial legal static equipment: ", definition["id"], " ", _extreme_loadout)
+		var okay: bool = await _combat_component()
+		_expect(okay, "focused real ordinary escape/primary component completes for " + String(definition["id"]))
+		var same_actions: bool = not _actions.is_empty()
+		for record: Dictionary in _actions:
+			same_actions = same_actions and record["equipment_ids"] == _extreme_loadout and record["resolved_stats"] == _extreme_stats
+		_expect(same_actions, "every actual dash/ordinary-primary record retains the selected exact legal equipment/stats " + String(definition["id"]))
+		var actors: Dictionary = _level.get("_actors") if is_instance_valid(_level) else {}
+		_extreme_results.append({"id":definition["id"], "completed":okay, "loadout":_extreme_loadout.duplicate(true), "resolved_stats":_extreme_stats.duplicate(true), "actual_phases":_phases.duplicate(), "hero_hp":_hero.hp if is_instance_valid(_hero) else null, "west_hp":actors["west"].get("hp") if actors.has("west") else null, "actual_actions":_actions.size(), "checks":_checks, "failures":_failures})
+		print("O1 focused extreme result: ", Exact.stringify(_extreme_results.back()))
+		await _release()
+		if not okay or _failures > 0: break
+		completed += 1
+	_scope_complete = completed == EXTREME_LOADOUTS.size()
+	_expect(_scope_complete, "both distinct canonical extrema complete supported native ordinary escape/return/cadence without pickups or blast")
+	_extreme_loadout.clear()
+	if is_instance_valid(_probe): _probe.queue_free()
+	await process_frame
+	_finish_extremes()
+
+
+func _select_initial_gear() -> bool:
+	# Same TEST_ONLY supported fresh-entry selection used by the accepted L1/L4
+	# fixtures. There has been no physics tick/admission; this is not a live bench.
+	if not _expect(paused and _clock() == 0.0 and _hero.get_world_action_records().is_empty() and float(_hero.get_threat_response_state()["action_clock_s"]) == 0.0, "selected equipment precedes every actual encounter/player clock and executed action"): return false
+	var resolver: CinderEquipment = Equipment.new()
+	if not _expect(resolver.restore(_extreme_loadout) and resolver.acceptance_errors().is_empty(), "canonical resolver accepts the complete implemented loadout and numerical gates"): return false
+	for slot: String in CinderEquipment.SLOTS:
+		if not _expect(resolver.is_implemented(String(_extreme_loadout[slot])) and resolver.item(String(_extreme_loadout[slot]))["slot"] == slot and resolver.item(String(_extreme_loadout[slot]))["perk_id"] == null, "existing static canonical slot, no perk allocation: " + slot): return false
+	_extreme_stats = resolver.resolved_stats()
+	var hp_before: float = _hero.hp
+	var shells_before: int = _hero.shells
+	var selected: bool = _hero.equipment.restore(_extreme_loadout) and _hero.equip_item(String(_extreme_loadout["weapon"]))
+	return _expect(selected and _hero.equipment.snapshot() == _extreme_loadout and _hero.stats == _extreme_stats and _hero.hp == hp_before and _hero.shells == shells_before and _clock() == 0.0 and _hero.get_world_action_records().is_empty(), "public shared weapon equip refreshes exact initial gear/visual/stats without HP/ammo/action/admission seeding")
+
+
+func _finish_extremes() -> void:
+	print("A2-O1 focused equipment extremes smoke: %d checks, %d failures; scope_complete=%s; two initial legal static loadouts, native ordinary escape/return/noammo primary/cadence/cleanup; no contacts/portraits/full-route/all-kit balance claim" % [_checks,_failures,str(_scope_complete)])
+	quit(0 if _failures == 0 else 1)
 
 
 func _prepare_capture_root() -> bool:
@@ -108,6 +177,9 @@ func _boot() -> bool:
 	_abort = false
 	_phases.clear(); _checkpoints.clear(); _completions.clear(); _exits.clear(); _actions.clear()
 	_game = MainScene.instantiate()
+	if not _extreme_loadout.is_empty():
+		_game.set_script(ProfileSeedGame)
+		_game.set("test_profile_id", "standard")
 	_game.set("level_scene_path", O1_PATH)
 	root.add_child(_game)
 	_level = _game.get("active_level") as CinderLevel
@@ -115,12 +187,17 @@ func _boot() -> bool:
 	if not _expect(is_instance_valid(_level) and is_instance_valid(_hero) and _level.level_id == "A2-O1" and _level.contract_error().is_empty(), "actual production Main installs O1 identity/shared Hero contract"): return false
 	_driver = _level.get("_exchange") as Node3D
 	if not _expect(is_instance_valid(_driver) and _level.get("_actors").size() == 2, "actual production two ordinary reused Scouts and native exchange"): return false
+	if not _extreme_loadout.is_empty():
+		paused = true
+		if not _select_initial_gear(): return false
 	_level.checkpoint_requested.connect(func(id: String, checkpoint: String, kind: String) -> void: _checkpoints.append({"level":id,"id":checkpoint,"kind":kind}))
 	_level.completion_requested.connect(func(id: String, complete: String) -> void: _completions.append({"level":id,"id":complete}))
 	_level.contact_exit_requested.connect(func(id: String, exit: String) -> void: _exits.append({"level":id,"id":exit}))
 	_hero.world_action_executed.connect(func(record: Dictionary) -> void: _actions.append(record.duplicate(true)))
 	_game.call("resume_lab")
 	for _tick: int in range(12): await _step()
+	if not _extreme_loadout.is_empty():
+		return _expect(_live() and _hero.presentation_id == "act2_survivor" and _hero.is_on_floor() and _hero.equipment.snapshot() == _extreme_loadout and _hero.stats == _extreme_stats, "actual selected legal Act2 Hero settles with exact shared resolved gear on native dry O1 floor")
 	return _expect(_live() and _hero.presentation_id == "act2_survivor" and _hero.is_on_floor() and _hero.equipment.snapshot()["weapon"] == "WEAPON-01", "actual default Act2 Hero settles on native dry O1 floor")
 
 
@@ -266,6 +343,7 @@ func _wait_phase(phase: String) -> Dictionary:
 
 
 func _step() -> void:
+	if _capture and paused: _resume_capture_focus_pause()
 	await _probe.tick_finished
 	if not _live(): return
 	var state: Dictionary = _ray()
@@ -293,9 +371,30 @@ func _live() -> bool:
 	return not _abort and is_instance_valid(_game) and is_instance_valid(_level) and is_instance_valid(_hero) and not _hero.dead
 
 
+func _resume_capture_focus_pause() -> void:
+	# TEST_ONLY graphical automation may lose macOS application focus. Use the
+	# actual public Resume, preserving native clock/HP/actions rather than
+	# suppressing production focus handling or resetting an encounter.
+	if not _capture or not paused or not _live(): return
+	var before: Dictionary = {"level_clock_s":_clock(), "player_clock_s":_hero.get_threat_response_state()["action_clock_s"], "hp":_hero.hp, "position":_hero.global_position, "actions":_hero.get_world_action_records()}
+	_game.call("resume_lab")
+	var after: Dictionary = {"level_clock_s":_clock(), "player_clock_s":_hero.get_threat_response_state()["action_clock_s"], "hp":_hero.hp, "position":_hero.global_position, "actions":_hero.get_world_action_records()}
+	_expect(not paused and before == after, "public capture-environment Resume preserves actual native clocks/HP/pose/action history")
+	_capture_resume_events.append({"before":_encode(before), "after":_encode(after), "reason":"observed production pause during graphical automation"})
+
+
 func _capture_view(label: String, scope: String) -> void:
 	_capture_pending = true
-	await RenderingServer.frame_post_draw
+	var capture_live: bool = false
+	for _frame: int in range(4):
+		if paused: _resume_capture_focus_pause()
+		await RenderingServer.frame_post_draw
+		if not paused:
+			capture_live = true
+			break
+	if not _expect(capture_live, "bounded public Resume removes focus-pause overlay before capture " + label):
+		_capture_pending = false
+		return
 	if not _live():
 		_expect(false, "actual live source/Hero survives capture barrier " + label)
 		_capture_pending = false
@@ -351,6 +450,9 @@ func _interaction_states() -> Dictionary:
 
 
 func _encode(value: Variant) -> Variant:
+	if value is Vector2: return [value.x, value.y]
+	if value is Rect2: return {"diagnostic_native_type":"Rect2", "position":_encode(value.position), "size":_encode(value.size)}
+	if value is int and (value < -9007199254740991 or value > 9007199254740991): return {"diagnostic_native_integer_decimal":str(value)}
 	if value is Vector3: return [value.x, value.y, value.z]
 	if value is Basis: return {"x":_encode(value.x),"y":_encode(value.y),"z":_encode(value.z)}
 	if value is Array:
