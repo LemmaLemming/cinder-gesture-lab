@@ -1,5 +1,11 @@
 # Act 2 progress
 
+## Ready for independent acceptance — 2026-10-12T07:15:50.059543+00:00
+
+Act2 **6/8**, campaign **13/24**. All O2 focused categories are complete and all owned engine jobs closed. [Final handoff index](../../../docs/acts/act2/evidence/A2-O2/focused-handoff-20261012/index.json), SHA9203261a3b2f15c0ef7c23c8e3895741e028bb14d3c24223b33ec9cf20ebc5ea, maps original native50 mechanics257/0, extrema523/0, latestloading116/0 and actualportraits322/0 plus owner/independent seven captured-statePASS. Originalfailures/artfalse/unexecuted/fullplaythrough limits stay intact. Runtime seal4399c54c; portablecomplete source/evidence seal6c548ab6 indexes all9628originalinputrows with originalmodes.
+
+Actual compatible51 is adopted9de68faf/ACKbab8a47e; actual52 is adopted32a683be/ACK2192b18a-10f5-43db-a9cf-0eed16f275db/receiptSHAc54cd9c24bf3ac287c35eb029c947225d889be5a04302f6c06ad0ac342c73729. All39168ownedGit/physicalrows,95823historicaloriginals/312gdignore/30268oldrecursiveUIDs/3settings preserved,2666sharedincomingexact/0ownedoverlap,417→444activeUIDs withnewA3acceptedcontent/Roottestmetadata only. Adoption gives no native/import/artcredit. Integration owns its isolated narrow latest-before-finalRetry check; no repeatedwholeloading/fullroute gate. Final exactcandidate is submitted next; independentacceptance/registrationbeforeO3 implementation. No human/setupblocker. Stop beforemobile/export/release.
+
 ## Focused handoff seal — 2026-10-12T07:09:39.232255+00:00
 
 Act2 **6/8**, campaign **13/24** after independent A3-L4 acceptance. O2 all seven focused categories are complete; exact [handoff index](../../../docs/acts/act2/evidence/A2-O2/focused-handoff-20261012/index.json) maps source and original results. Source seal4399c54c and actual51 preserving merge9de68faf/ACKbab8a47e are distinct from native50 evidence. All9628 frozen source rows retain exactbytes/modes;2912 existing captured configuration/ctex inputs omitted by ordinary Gitignore are now explicitly indexed, with no fresh/backfilled bytes. Owner and independent seven-view PASS and current116 loading/322graphics remain scoped. All owned engine jobs closed.
