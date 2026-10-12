@@ -1,0 +1,32 @@
+extends RefCounted
+## PRIVATE nearest-INSTRUMENTED-ancestor counts; inclusive times overlap.
+static var enabled: bool = false
+static var rows: Dictionary = {}
+static var edges: Dictionary = {}
+static var stack: Array[String] = []
+
+static func begin(label: String) -> int:
+	if not enabled: return 0
+	stack.append(label)
+	return Time.get_ticks_usec()
+
+static func finish(label: String, started: int) -> void:
+	if started == 0: return
+	var elapsed: int = Time.get_ticks_usec() - started
+	var parent: String = stack[stack.size() - 2] if stack.size() > 1 else "unobserved_caller"
+	var edge: String = parent + " -> " + label
+	if not rows.has(label): rows[label] = {"calls": 0, "inclusive_us": 0, "max_us": 0}
+	rows[label].calls += 1
+	rows[label].inclusive_us += elapsed
+	rows[label].max_us = maxi(rows[label].max_us, elapsed)
+	if not edges.has(edge): edges[edge] = {"calls": 0, "inclusive_us": 0}
+	edges[edge].calls += 1
+	edges[edge].inclusive_us += elapsed
+	assert(not stack.is_empty() and stack.back() == label)
+	stack.pop_back()
+
+static func reset() -> void:
+	rows.clear(); edges.clear(); stack.clear()
+
+static func state() -> Dictionary:
+	return {"methods": rows.duplicate(true), "nearest_instrumented_ancestor_edges": edges.duplicate(true), "stack_empty": stack.is_empty()}

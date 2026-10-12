@@ -1,0 +1,139 @@
+"""Exclusive bounded source freezes and canonical queued Protocol evaluation.
+
+No independent engine runtime/queue: use actual dev.py ProjectContext, lock,
+resolver and owned90s deadline. Every source/output keeps its original scope.
+"""
+from pathlib import Path
+import datetime, hashlib, importlib.util, json, os, re, subprocess, sys
+
+ROOT = Path.cwd()
+SCRIPTS = {
+    'cost': 'res://.cinder/protocol-reference-bits-cost.gd',
+    'reference': 'res://tests/scheduler_spore_reference_smoke.gd',
+    'source': 'res://tests/scheduler_spore_source_smoke.gd',
+}
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def uids():
+    rows = []
+    for folder, dirs, files in os.walk(ROOT):
+        p = Path(folder)
+        if p != ROOT and (p / '.gdignore').exists():
+            dirs[:] = []
+            continue
+        dirs[:] = [n for n in dirs if n not in {'.git', '.godot', '.tools', '.cinder', 'exports', 'captures', '__pycache__'}]
+        for name in files:
+            if name.endswith('.uid'):
+                q = p / name
+                rows.append({'path': str(q.relative_to(ROOT)), 'sha256': sha(q), 'uid': q.read_text().strip()})
+    return sorted(rows, key=lambda x: x['path'])
+
+
+def freeze(tag, mode):
+    assert mode in SCRIPTS
+    target = ROOT / '.cinder' / (tag + '-source')
+    assert not target.exists()
+    seeds = [SCRIPTS[mode][6:], '.cinder/protocol-reference-bits-tools.py',
+             'scripts/environment/scheduler_spore_source_protocol.gd',
+             'scripts/dev/dev.py', 'project.godot', '.godot/global_script_class_cache.cfg']
+    if mode == 'cost':
+        seeds += ['.cinder/a1-l3-stage-diagnostic4.gd', '.cinder/a1-l3-stage-source/campaign.json',
+                  'scenes/acts/act1/a1_l3.tscn', 'scripts/acts/act1/mushroom_caverns_full.gd',
+                  'data/campaign/registry.json', 'scripts/ui/campaign_scenery.gd']
+    seen = set()
+    todo = seeds[:]
+    while todo:
+        relative = todo.pop()
+        source = ROOT / relative
+        assert source.is_file(), source
+        if relative in seen:
+            continue
+        seen.add(relative)
+        if source.suffix in {'.gd', '.tscn', '.tres', '.json'}:
+            for child in re.findall(r'res://([^\s"\'\)]+)', source.read_text()):
+                if (ROOT / child).is_file():
+                    todo.append(child)
+    seen.update(row['path'] for row in uids())
+    target.mkdir()
+    (target / '.gdignore').write_text('')
+    rows = []
+    for relative in sorted(seen):
+        source = ROOT / relative
+        b = source.read_bytes()
+        q = target / 'files' / relative
+        q.parent.mkdir(parents=True, exist_ok=True)
+        q.write_bytes(b)
+        rows.append({'path': relative, 'archived_path': str(q.relative_to(target)), 'bytes': len(b), 'sha256': hashlib.sha256(b).hexdigest()})
+    value = {'schema_version': 1, 'captured_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+             'mode': mode, 'seeds': seeds, 'files': rows, 'uids': uids(),
+             'scope': 'Original bounded explicit/literal-resource subset plus all active UID bytes. Not a complete dynamic dependency/import graph. Private uninstrumented whole native interval uses genuine CP2/actual Crossed/one TEST Hero placement; no campaign acceptance or sustained FPS/cause claim. Native reference/source modes are separate correctness scopes.'}
+    (target / 'manifest.json').write_text(json.dumps(value, indent=2) + '\n')
+    print(json.dumps({'manifest': str((target / 'manifest.json').relative_to(ROOT)), 'manifest_sha256': sha(target / 'manifest.json'), 'files': len(rows), 'uid_count': len(value['uids'])}))
+
+
+def run(tag, mode):
+    mp = ROOT / '.cinder' / (tag + '-source/manifest.json')
+    m = json.loads(mp.read_text())
+    assert mode == m['mode']
+    def verify():
+        for row in m['files']:
+            for p in [ROOT / row['path'], mp.parent / row['archived_path']]:
+                assert len(p.read_bytes()) == row['bytes'] and sha(p) == row['sha256'], p
+        assert uids() == m['uids']
+    verify()
+    log = ROOT / '.cinder' / (tag + '-wrapper.log')
+    result = ROOT / '.cinder' / (tag + '-result.json')
+    assert not log.exists() and not result.exists()
+    started = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    command = [sys.executable, '.cinder/protocol-reference-bits-tools.py', 'engine', mode, tag]
+    with log.open('xb') as output:
+        child = subprocess.Popen(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT)
+        code = child.wait()
+    verify()
+    raw = log.read_bytes()
+    text = raw.decode('utf8', 'replace')
+    errors = [s for s in text.splitlines() if s.startswith('ERROR:') or 'SCRIPT ERROR' in s or 'Parse Error' in s]
+    footer_pattern = {'cost': r'Native Protocol bits interval: (\d+) checks, (\d+) failures;',
+                      'reference': r'Scheduler spore reference supplement: (\d+) checks, (\d+) failures;',
+                      'source': r'Scheduler spore source smoke: (\d+) checks, (\d+) failures'}[mode]
+    footers = re.findall(footer_pattern, text)
+    # Footer absence never receives successful-check credit, even with exit0.
+    value = {'started_at': started, 'closed_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+             'command': command, 'child_pid': child.pid, 'returncode': code,
+             'source_manifest': str(mp.relative_to(ROOT)), 'source_manifest_sha256': sha(mp), 'source_count': len(m['files']),
+             'source_archive_current_exact_at_closure': True, 'active_uids_unchanged': True,
+             'wrapper_log': str(log.relative_to(ROOT)), 'wrapper_log_bytes': len(raw), 'wrapper_log_sha256': hashlib.sha256(raw).hexdigest(),
+             'engine_error_lines': len(errors), 'footers': footers, 'scope': m['scope']}
+    result.write_text(json.dumps(value, indent=2) + '\n')
+    print(json.dumps(value))
+    for line in text.splitlines():
+        if any(t in line for t in ['FAIL:', 'SCRIPT ERROR', 'Parse Error', 'checks,', 'cost_sample', 'cost_full_capture_after', 'cost_activation_after', 'runtime_bits_interval', 'runtime_bits_paused_witness']):
+            print(line)
+    sys.exit(1 if errors or 'FAIL:' in text or not footers or int(footers[-1][1]) else code)
+
+
+def engine(mode, tag):
+    spec = importlib.util.spec_from_file_location('cinder_dev', ROOT / 'scripts/dev/dev.py')
+    dev = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = dev
+    spec.loader.exec_module(dev)
+    context = dev.ProjectContext()
+    command = [str(dev.resolve_godot(context)), '--path', str(ROOT), '--headless', '--script', SCRIPTS[mode]]
+    if mode == 'cost':
+        command += ['--', '--measurement-label=' + tag]
+    with dev.godot_lock(context.root) as lock:
+        print('Canonical dev.py queue acquired; exact owned90s deadline starts now.', flush=True)
+        code = dev.run_validation(command, context, lock, 90, detect_godot_errors=True)
+    sys.exit(code)
+
+
+if __name__ == '__main__':
+    action = sys.argv[1]
+    assert action in {'freeze', 'run', 'engine'}
+    if action == 'freeze': freeze(sys.argv[2], sys.argv[3])
+    elif action == 'run': run(sys.argv[2], sys.argv[3])
+    else: engine(sys.argv[2], sys.argv[3])

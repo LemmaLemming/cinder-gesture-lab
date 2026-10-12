@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "three_root_jobs_complete": true,
+  "private_original_fixed_same_paths": true,
+  "private_pair_sole_source_delta": "scripts/combat/lane_mechanism.gd",
+  "original_lane_sha256": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+  "fixed_lane_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+  "original_functions": 44,
+  "unchanged_other_functions": 43,
+  "only_changed_function": "_set_phase",
+  "state_world_getter_literal_unchanged": true,
+  "runtime_diff": "--- frozen_original_Lane\n+++ frozen_fixed_Lane\n@@ -453,7 +453,9 @@\n \t\t# rejected nested clear, so clear again after that callback returns.\n \t\tif _phase == \"clear\":\n \t\t\t_cue.clear()\n-\tif changed and notify and _phase == phase:\n+\t# Parent exit cleanup may run after this child has left the native tree.\n+\t# Retire its phase/cue/lease normally, but publish world state only while live.\n+\tif changed and notify and _phase == phase and is_inside_tree():\n \t\tstate_changed.emit(state())\n \n \n",
+  "private_public_fixture_byte_exact": true,
+  "fixture_sha256": "411f4eae753ab97b71236d4ea17819f4f1152349e39a66a1e09f59d534e50f20",
+  "original_root_native_errors": 2,
+  "original_root_assertion_failures": 4,
+  "fixed_private_checks": 27,
+  "fixed_public_checks": 27,
+  "import_scope": "Observed actual canonical dev.py import exit0/output only. NO frozen prequeue input set exists or is manufactured.",
+  "uid_prior": 412,
+  "uid_after": 413,
+  "all_prior_uid_rows_and_current_bytes_exact": true,
+  "new_uid_unique": [
+    {
+      "path": "tests/lane_mechanism_lifecycle_smoke.gd.uid",
+      "sha256": "c8e43653c5d36fe8d89e1b87d18f7cba0e88d8856dc3bf5f62b2cef70d935b70",
+      "uid": "uid://bstfl6nch48qo"
+    }
+  ],
+  "late_mapping": {
+    "added_after_public_closure": true,
+    "current_dev_sha256": "f5c65fdb0a18d5aee9c8529bcabfa4bd4e7eca9f6a6384f1e45ff1aaf3ea0115",
+    "earlier_public_frozen_dev_sha256": "18d78062d4ec437c61475f9a44ab8f02e7c007b2982b72b4afbc754b07ef6f7d",
+    "delta": "Only new lane_mechanism_lifecycle named suite mapping; earlier public job invoked literal script through its wrapper."
+  },
+  "historical_review_label_qualification": "The unchanged design-review input field named original_lane carries bcf6558d, the fixed candidate digest. The actual original873b1728/fixedbcf6558d job manifests are authoritative; the report is preserved unchanged.",
+  "owner_o2": {
+    "checks": 77,
+    "failures": 1,
+    "exit": 1,
+    "scope_complete": false,
+    "raw_transform_error_count": 1,
+    "raw_fresh_entry_assertion_count": 1,
+    "classification": "SEPARATE UNATTRIBUTED fresh-entry Challenge assertion/owner investigation. No determination of fixture, owned host or another shared path; not claimed resolved. Shared native Lane teardown is evidenced independently.",
+    "owner_source_metadata_rows": 602,
+    "owner_source_payload_copied": false,
+    "role": "Exact pinned closed result/native/wrapper/source metadata and recorder artifacts only; not a second602-source bundle validation."
+  },
+  "limits": [
+    "World.create leaves the parent at identity; the actual Lane source is at x=-1. This tests live actual position and the detached access error, not a translated-parent geometry regression.",
+    "scheduler.reservations() performs pruning, so its empty result alone is not a fresh independent proof of pre-prune raw-table cleanup. The unchanged _exit_tree source explicitly calls cancel_owner.",
+    "This focused fixture does not newly prove full quiet restore, opt-in provider Callable release or live cooldown preservation. Reuse unchanged existing evidence; do not describe these as newly exercised.",
+    "Removal during the actual Cue callback is statically covered by postcallback guard placement; these three cases exercise explicit live/removed-child/parent-exit clear, not a fourth callback-removal workload.",
+    "No external detached public state() support, geometry/schema changes, HP/clock setters, gameplay/portrait/performance/O2 acceptance or Challenge-profile repair credit."
+  ]
+}

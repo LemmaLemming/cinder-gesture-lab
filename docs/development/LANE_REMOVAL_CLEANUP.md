@@ -1,0 +1,13 @@
+# Lane cleanup after native removal
+
+An independent Act2 testing reviewer found a real shared lifecycle fault in O2's loading fixture. Godot removes children before their parent's exit hook. The host then calls public Lane `clear()`: cancellation clears the phase/cue/lease, but `_set_phase` builds a `state_changed` payload using `state().source_position = global_position` after the Lane has left the tree. The original native getter errors. The separate O2 fresh-entry difficulty assertion remains owner work and is not resolved by this repair.
+
+Shared51 requires `is_inside_tree()` before publishing that world-state payload. The condition runs after Cue callbacks, so synchronous removal also cannot reach the getter. Live cancellation still emits the same state in the same order. Detached cleanup still retires phase, cue and pending cancellation work; it publishes no invented world position. Public `state()` remains a live-world observer. No schema, cooldown, damage timing or quiet-restore path changes.
+
+The [portable original index](evidence/shared51-lane-lifecycle/index.json) retains the same native reproducer **27/4, exit1**, with two native transform errors and four assertion errors. The repaired private fixture closes **27/0**, clean, and the exact public fixture independently closes **27/0**, clean. Three genuine standard warning admissions cover ordinary live clear, physically removed-child clear and whole-parent exit cleanup after child removal. They check live notification geometry, absence of detached notifications, actual pause/resource/clock preservation, repeated cleanup and complete native disposal. No clock, phase, cue, HP or pose is seeded to obtain a pass.
+
+This is focused teardown/publication coverage. The Scheduler reservations accessor can prune invalid owners; the check is not a new standalone proof of every lease/cooldown/provider-release path. Those runtime paths remain byte-unchanged. No new quiet-restore, authored O2 mechanics, portrait, replay, full route or acceptance credit follows.
+
+The necessary canonical import closes0. Its actual tool output is retained without claiming a prequeue frozen import graph. All earlier 412 active UID bytes remain exact; only the genuine new lifecycle-test UID is added, for 413 unique identities. Earlier job inputs keep their original 412-UID scope.
+
+Targeted command: `python3 scripts/dev/dev.py test --suite lane_mechanism_lifecycle`. The native public fixture ran before this CLI alias was added; alias-to-exact-path selection is separately verified. Act2 preserves its original nonclean loading result and reruns only the affected check after preserving adoption. Integration remains first help contact; O2 remains unaccepted until its complete focused handoff.

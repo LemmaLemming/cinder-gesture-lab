@@ -1,0 +1,21 @@
+extends RefCounted
+## PRIVATE temporary instrumentation. Inclusive times overlap; no FPS claim.
+static var enabled: bool = false
+static var rows: Dictionary = {}
+
+static func begin() -> int:
+	return Time.get_ticks_usec() if enabled else 0
+
+static func finish(label: String, started: int) -> void:
+	if started == 0: return
+	var elapsed: int = Time.get_ticks_usec() - started
+	if not rows.has(label): rows[label] = {"calls": 0, "inclusive_us": 0, "max_us": 0}
+	rows[label].calls += 1
+	rows[label].inclusive_us += elapsed
+	rows[label].max_us = maxi(rows[label].max_us, elapsed)
+
+static func reset() -> void:
+	rows.clear()
+
+static func state() -> Dictionary:
+	return rows.duplicate(true)

@@ -1,0 +1,39 @@
+from pathlib import Path
+import json,re,hashlib
+backup=Path('.cinder/runtime-guard-originals2');assert not backup.exists();backup.mkdir()
+selection={
+ 'scripts/environment/spore_repulsion.gd':['step_source','_binding_error','_response_for','_native_boundary_state','placement_accepted','allows_source_step'],
+ 'scripts/environment/scheduler_spore_source_protocol.gd':['_binding_error','response_state','control_state','profile_state','_same_bound_reference'],
+ 'scripts/combat/repulsion_route.gd':['static_environment_state','_collision_signature','_floor_plan'],
+ 'scripts/campaign/snapshot_codec.gd':['value_error']}
+rows=[]
+for name,methods in selection.items():
+ p=Path(name);original=p.read_bytes();bp=backup/p.name;bp.write_bytes(original);s=original.decode()
+ boundaries=list(re.finditer(r'^(?:static )?func (\w+)\([^\n]*\) -> (\w+):\n',s,re.M));edits=[]
+ for i,match in enumerate(boundaries):
+  method,return_type=match.groups()
+  if method not in methods:continue
+  end=boundaries[i+1].start() if i+1<len(boundaries) else len(s)
+  segment=s[match.end():end];label=f'{p.stem}.{method}';entry=f'CinderPrivateGuardProfile.begin(\"{label}\")';entry=entry+' if depth == 0 else 0' if method=='value_error' else entry;new=[f'\tvar _cinder_profile_started: int = {entry}\n'];counter=0
+  for line in segment.splitlines(True):
+   # Explicitly exclude nested sort lambdas; only enclosing method returns.
+   if 'return ' not in line or 'func(' in line or 'func (' in line or line.lstrip().startswith('#'):
+    new.append(line);continue
+   prefix,expr=line.rstrip('\n').split('return ',1);indent=prefix[:len(prefix)-len(prefix.lstrip('\t'))]
+   if prefix.strip():
+    assert prefix.rstrip().endswith(':'),(name,method,line)
+    new.append(prefix.rstrip()+'\n');indent+='\t'
+   counter+=1;var=f'_cinder_profile_result_{counter}'
+   new.append(f'{indent}var {var}: {return_type} = {expr}\n')
+   new.append(f'{indent}if _cinder_profile_started != 0: CinderPrivateGuardProfile.finish("{p.stem}.{method}", _cinder_profile_started)\n')
+   new.append(f'{indent}return {var}\n')
+  edits.append((match.end(),end,''.join(new)))
+  assert counter>0,(name,method)
+ assert len(edits)==len(methods),(name,len(edits))
+ for a,b,replacement in reversed(edits):s=s[:a]+replacement+s[b:]
+ s=s.replace('extends ', 'extends ',1)
+ # Top-level const after the existing extends line, preserving method names.
+ pos=re.search(r'^extends [^\n]+\n',s,re.M).end();s=s[:pos]+'const CinderPrivateGuardProfile = preload("res://.cinder/runtime-guard-profiler.gd")\n'+s[pos:]
+ p.write_text(s);rows.append({'path':name,'original_sha256':hashlib.sha256(original).hexdigest(),'instrumented_sha256':hashlib.sha256(s.encode()).hexdigest(),'methods':methods,'backup':str(bp)})
+Path('.cinder/runtime-guard-instrumentation2.json').write_text(json.dumps(rows,indent=2)+'\n')
+print(json.dumps(rows))
