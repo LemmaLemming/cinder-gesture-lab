@@ -1,0 +1,318 @@
+{
+  "api_revision": "act2-o2-source-asset-reuse-preparation-1",
+  "at": "2026-10-12T04:46:46.787866+00:00",
+  "status": "Read-only/TMP source/reuse preparation only. No O2 implementation, engine/import/UID/Git/active-path change, gear/playstyle choice, allocation or readiness claim. Root controls sequential gate after O1 canonical acceptance.",
+  "canonical_requirement_source": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/docs/reference-library/act2/research/levels.json",
+    "sha256": "e7d42cfa6d0943d5ba59223a3685c1865f4cd8bd93035c8d18070efaded27571",
+    "assigned_identical": true
+  },
+  "confirmed_requirements": {
+    "id": "A2-O2",
+    "name": "Clear Air Circuit",
+    "kind": "optional",
+    "parent_level_id": "A2-L3",
+    "target_range_minutes": [
+      3,
+      5
+    ],
+    "initial_budget_minutes": 4,
+    "unlock": "clear parent level",
+    "checkpoint": "before final handler",
+    "reward": "cosmetic or completion stamp; no stat increase",
+    "objective": "Clear two tender positions in either order, then defeat a final handler and reach the exit",
+    "reused_assets": [
+      "work apron",
+      "ruined-house walls",
+      "canister tubes",
+      "tenders",
+      "handler",
+      "smoke states"
+    ],
+    "small_additions": [
+      "empty/full supply-crate states",
+      "circuit marker"
+    ],
+    "skill": "Prioritise area-denial sources before the largest body"
+  },
+  "concept_clarifications": [
+    "Two Tender positions can be cleared in either order, then one final regular Handler; actual checkpoint before final Handler, finish contact with opened exit. No all-main-enemies/previous-boss requirement.",
+    "Exactly two distinctive empty/full supply-crate states and one completed-circuit marker are the small additions. No gas-mask control, smoke-clearing device, new controller/attack/environment/enemy family.",
+    "Ordinary dashes/baseline close primary/current carried weapon remain viable with no ammo/pickup requirement; new optional reward is cosmetic/completion stamp only, once-only, no permanent growth or Act3 prerequisite.",
+    "3\u20135minutes/start4 is provisional pacing budget, not a compulsory waiting timer. Optional sources should use generous continuous dry ground; no jump/climb/pit descent/narrow plank/swim.",
+    "Restorable ordinary supplies at saved restart state are concept policy. Exact resource/quantity/trigger and empty/full transition timing are unspecified; do not infer perk/powerup grants from a full crate. No selection/allocation made here."
+  ],
+  "source_boundaries": [
+    "Novel T05 thick tube/canister and heavy low-pooling Black Smoke without explosive detonation; bounded previewed hazard/reset/floor pockets are game adaptations.",
+    "T08/E20/E21 five-legged construction/probing machine and ruined scullery/manufacturing are source vocabulary; C102 Tender and C103 Handler, low ordinary-primary mounts, attack phases and damage are invented roles, not warrior castes.",
+    "Selected G10-v2 rounded head/body and tentacles supersede humanoid pilot v1; three-legged fighting machinery remains distinct.",
+    "Optional circuit is a compact reordering of the accepted parent families, not a literal nine-day cupboard/pit reconstruction or an extra boss. No ecological/red-weed/fungal mechanics added."
+  ],
+  "boards_previously_visually_inspected": [
+    {
+      "id": "G07",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/environments/black-smoke-ruined-house.png",
+      "sha256": "35070da144b4ae8f64916c9b568685a7fd2744f1eb8526ae6b11dd37f0a59fcb",
+      "dimensions_px": [
+        1536,
+        1024
+      ],
+      "vocabulary": "Opened scullery/kitchen and low black vapour beside industrial earthwork.",
+      "inspection": "Original pixels visually inspected in earlier L3/L2/L4 same-source work; reused source evidence, no new crop/atlas extraction or whole-board acceptance."
+    },
+    {
+      "id": "G10-v2",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/bosses/handling-machine-boss-v2.png",
+      "sha256": "1696af701d1694d21f442dd6354f880e98733edf5f7ec582bb7bd5705bfe737b",
+      "dimensions_px": [
+        1536,
+        1024
+      ],
+      "vocabulary": "Low five-legged industrial machinery, rounded living head/body and tentacle bunches; source vocabulary for the regular Handler, not an additional optional boss.",
+      "inspection": "Original pixels visually inspected in earlier L3/L2/L4 same-source work; reused source evidence, no new crop/atlas extraction or whole-board acceptance."
+    },
+    {
+      "id": "G16",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/props/martian-technology.png",
+      "sha256": "d7bb3d36baf62bf424387f436dbc5145fdf6504753d7b45e91815569501b535b",
+      "dimensions_px": [
+        1024,
+        1536
+      ],
+      "vocabulary": "Thick oxidised launching tube, dark canisters, rivets/rods/alien apparatus; smoke and warnings are game adaptations.",
+      "inspection": "Original pixels visually inspected in earlier L3/L2/L4 same-source work; reused source evidence, no new crop/atlas extraction or whole-board acceptance."
+    },
+    {
+      "id": "G17",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/props/victorian-survival-props.png",
+      "sha256": "4fe979367f3eef6374e8758362a679b7b783f8e938aaf21011b9dfed7c0766c3",
+      "dimensions_px": [
+        1024,
+        1536
+      ],
+      "vocabulary": "Victorian household/store/ruin module material language; new supply-crate contents/rewards are not fixed by illustration.",
+      "inspection": "Original pixels visually inspected in earlier L3/L2/L4 same-source work; reused source evidence, no new crop/atlas extraction or whole-board acceptance."
+    },
+    {
+      "id": "G19",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/gameplay/02-ruined-house-gameplay.png",
+      "sha256": "e38938995714e40b70340dc3b2f8725d5249d1ee6b55ac819d4a82de18d84d81",
+      "dimensions_px": [
+        851,
+        1847
+      ],
+      "vocabulary": "Close portrait dry work floor, opened house edges and low ordinary-primary opening; illustrated boss does not authorize O2 B02.",
+      "inspection": "Original pixels visually inspected in earlier L3/L2/L4 same-source work; reused source evidence, no new crop/atlas extraction or whole-board acceptance."
+    },
+    {
+      "id": "sample-S02",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/gameplay/sample-screenshots/02-handling-machine-counter.png",
+      "sha256": "da547d49a74749f809824867bf1496ff6019697f18373c9e4b3d7fcd0a0ffd9e",
+      "dimensions_px": [
+        853,
+        1844
+      ],
+      "vocabulary": "Compact dry counter space and readable planted tool opening; gameplay sample S02 is distinct from primary-text source S02.",
+      "inspection": "Original pixels visually inspected in earlier L3/L2/L4 same-source work; reused source evidence, no new crop/atlas extraction or whole-board acceptance."
+    }
+  ],
+  "reusable_families": [
+    {
+      "family": "Dry work apron / exposed ruin / industrial edge",
+      "paths": [
+        "scripts/acts/act2/ruined_house_kit.gd",
+        "scripts/acts/act2/ruined_house_floor.gd"
+      ],
+      "native_scale_pivot": "Scale1 ground-centre/Y0 foundations; original continuous visual6.8\u00d744.6m atY.004, low wall2.5\u00d7.45\u00d7.45m at(0,.225,-13.4), material tile1.44m, original64\u00d764 nearest ash/timber/plaster/ceramic/pottery. Rods/plates/riveted panels/brick/charred beams share existing Heath/Weybridge leaves.",
+      "collision_occlusion": "Kit collisionless; Floor builder creates actual mask1 immutable box supports/blockers. Optional meshes use root-relative optional_cutaway_paths and weybridge_cutaway_candidate with per-instance StandardMaterial3D overrides; ground opaque. Scene-specific native bounds are not O2 support proof.",
+      "states_clock": "Static surfaces/ruin; optional harmless work_tableau normalized supplied state only, no autonomous clocks/cues/damage.",
+      "public_interfaces": [
+        "static build(parent:Node3D)->{root,witnesses:[],work_tableau}",
+        "static set_work_tableau(kit,active:bool,progress:float=0)->void",
+        "Floor.build(parent)->Array[Dictionary] original L3 IDs/body/collision/rect/safe_rect"
+      ],
+      "reuse_limit": "build/Floor.build hardcode long L3 positions/central wall and boss-opening segment. Recompose only needed original leaf/material modules into owned compact O2 arrangement; preserve accepted L3. Neither whole L3 host/sequence/B02 snapshot rules nor seven-target list is optional reuse authority."
+    },
+    {
+      "family": "Canister Tender C102/A2-E2",
+      "paths": [
+        "scripts/acts/act2/canister_tender_actor.gd",
+        "scripts/acts/act2/canister_tender_visual.gd",
+        "docs/acts/act2/A2_L3_TENDER_ASSET.md"
+      ],
+      "native_scale_pivot": "Scale1 feet/root(0,0,0), two1.22m skids/four short braces; declared construction supportR\u2264.895m/top\u22641.10m. Tube pivot(0,.635,-.13), length.82m/radius.162m; low reload mount(.0,.22,.25). Original32px oxidation/16px rubber textures. Bounds are retained parent construction references, not newly measured O2 meshes.",
+      "collision_occlusion": "One anchored inherited ordinary HP30 target; rig has no collider/hazard. Broad native parts use inherited per-instance triangle cutaway. Base readability accepts3..16 points; production may enclose complete native22 Hero points in8 AABB corners, not pass unvalidated direct22.",
+      "states_clock": "idle/approach/warning raised tube/held lock/bounded recoil active/low reload recovery/defeated spent. Actual consumer/actor owns clocks and accepted hits; no projectile/independent local timer.",
+      "public_interfaces": [
+        "Actor inherited configure/bind_damage_window/take_damage/snapshot_error/restore_state",
+        "Visual present(phase,progress,direction,hit_flash=false), pose_snapshot(), get_body_yaw(), restore_pose_error/restore_pose",
+        "Inherited apply_readability(camera,hero_bounds), clear_readability()"
+      ],
+      "reuse_limit": "Invented game role, not canonical caste. Two positions required by O2; no additional Tender type or emission respawns authorized. Clearing emitter stops future admissions while original independent bank tails retain deadlines."
+    },
+    {
+      "family": "Regular Salvage Handler C103/A2-E3",
+      "paths": [
+        "scripts/acts/act2/salvage_handler_actor.gd",
+        "scripts/acts/act2/salvage_handler_visual.gd",
+        "assets/acts/act2/salvage_handler_manifest.json"
+      ],
+      "native_scale_pivot": "Scale1 grounded root/ordinary target, exactly five distinct supports; width1.66m/depth1.38m, bodytop1.1025m, parent measured grounded support/body radialbound.944141m (active tool extension separately reaches3.8m). MountY.30, case(0,.69,-.21), shoulder(0,.60,.16), active wrist(0,.16,3.52), actual claw reaches local+Z3.8. Rounded operator head/body/two-eye/beak/tentacle-bunch family; no humanoid torso.",
+      "collision_occlusion": "Inherited anchored HP30/damage-window/reload/quiet actor transport, no additional rig collider. Per-instance materials and refreshed dynamic arm mesh cutaway cache; actual Hero/source/cue/landing visibility remains new host duty.",
+      "states_clock": "quiet idle, reach-back warning, held lock, ground reach active, retracted/low-mount recovery, spent defeated; supplied actual native phase/progress/yaw only.",
+      "public_interfaces": [
+        "Actor inherited configure/bind_damage_window/snapshot_error/restore_state",
+        "Scout visual pose/get_body_yaw/restore_pose_error/restore_pose/apply_readability/clear_readability seams",
+        "Existing shared LaneMechanism for fixed local tool lane and real recovery gate"
+      ],
+      "reuse_limit": "Final ordinary Handler only. G10-v2 is source/art vocabulary; O2 does not require B02 finite15+15 pools, alternating Place circle, phase checkpoint, optional helper or new boss."
+    },
+    {
+      "family": "Low Black Smoke revision5 + shared finite bank",
+      "paths": [
+        "scripts/acts/act2/smoke_bank_visual.gd",
+        "assets/acts/act2/shaders/smoke_wisp.gdshader",
+        "scripts/combat/smoke_bank.gd",
+        "docs/acts/act2/A2_L3_SMOKE_ASSET.md"
+      ],
+      "native_scale_pivot": "Unit upright bank/source origin(0,0,0), art configure_radius before construction0<R\u22641.05. Nine irregular base parcels + four upper wisps; cached sphere topology, isolated9 StandardMaterial3D +4 ShaderMaterials; art planarceiling.94R/top.20m. Existing R1.05 presentation is reusable, not a new O2 radius/timing choice.",
+      "collision_occlusion": "Cosmetic rig has no collider/exposure/lease. Shared SmokeBank owns fixed circle/grace/ticks/contact and original emission/opening. Wisps mask actual full Hero points, actual required source-glyph mesh vertices and ordered64 native circle-boundary points, refreshed after actual Game camera update before draw. Missing/stale masks suppress wisps; geometry/alpha cannot grant safe hazard area.",
+      "states_clock": "idle/clear/spent hidden; warning/lock faint inactive; active grows low neutral-charcoal within whole preview; recovery thins on parent actual progress. No randomness/local process/global shaderTIME/fog-volume/scenery clearing control.",
+      "public_interfaces": [
+        "configure_radius(radius)->bool before construction",
+        "pose(phase,normalized_progress)->bool",
+        "apply_readability(camera,hero_points,source_points,boundary_points)->bool; readability_state(),geometry_stats()",
+        "Shared Bank configure/preview_start/start/state/snapshot_error(with full saved Player)/restore_state/cancel; exact API map supplied separately by Scout"
+      ],
+      "reuse_limit": "Parent accepted material/onset/mask scopes are reusable context, not O2 image/admission/transport proof. Actual emitter art including intact HP0 original tail, low opening, accepted landing/attack and complete current+settled Hero/source/footprint union are host obligations. Native bank camera points alone do not include emitter art/view witness."
+    }
+  ],
+  "minimal_new_props": [
+    {
+      "asset": "two empty/full supply-crate visual states",
+      "reuse": "Existing wood/metal/plank/box material and primitive family; no complete new scenery kit. RuinedHouseKit has household/industrial stores but no reusable authored full supply-crate interaction API.",
+      "native_scale_pivot": "New compact grounded bottom/feet pivot to be authored after gate; dimensions unspecified, must remain visually distinguishable without hiding required floor.",
+      "collision_cue_states": "No inferred collider/attack HP/resource grant. If actionable, root uses shared repeated available/active/spent cue with real claim semantics; full/empty cosmetic state alone is not authority."
+    },
+    {
+      "asset": "one completed-circuit/exit marker",
+      "reuse": "Existing original period sign/post/marker primitive/material vocabulary and shared contact InteractionCue.",
+      "native_scale_pivot": "Grounded local point; exact placement/dimensions unchosen.",
+      "collision_cue_states": "Contact exit distinct from combat taps; derived hidden/available/active/spent from actual root progress, no private cue or stat award."
+    }
+  ],
+  "implemented_vs_unimplemented": {
+    "accepted_parent": "Canonical registry A2-L3 accepted8ddce7cb5290cd36037033eb1edcb02a6015adfd. Current kit/Tender/Handler/Smoke5+shader and shared consumers are actual reusable runtime families; parent handoff has scoped native/transport/art evidence. Historical initial asset-note headings still describe early untested state; later handoff/evidence establishes current parent provenance without erasing failures.",
+    "O2": "Canonical registry still null scene/readiness unimplemented at observation. No O2 floor/topology/owners/order receipts/target/bank bindings/CP/exit/transport/presentation/capture are authored or tested by this brief.",
+    "shared_dependency": "No genuine missing public API found by this source slice; complete native/world/clock/Player/Scheduler/bank/actor quiet transport and cue/custody/frame guard wiring remain O2 host work, with Scout API map separate.",
+    "scene_hardcoding": "Accepted L3 floor/kit/sequence/snapshot-rules contain L3 owner IDs, positions, seven sources/B02. Reuse leaf systems/materials, do not alias or modify accepted L3."
+  },
+  "unknowns_before_production": [
+    "Exact compact floor dimensions, broad blockade/approaches, two emission-circle origins and actual Tender/Handler placements/facing.",
+    "Whether both Tender positions prepare together or are approached separately; either-order objective does not require arbitrary simultaneous cages.",
+    "Exact quiet-tail condition for before-Handler checkpoint/completion; original finite emissions must not disappear or reset when Tender dies.",
+    "Supply contents/count/contact or claim timing and retry restoration; no runtime pickup granted in this prep.",
+    "Marker/exit position, visual crop/cutaway and actual source/cue/landing/HUD union.",
+    "O2 own closed snapshot schema/order/receipt IDs and public Shell loading/side SaveContinueRetry/completion-stamp/protected Journey return validation."
+  ],
+  "registry_observation": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/data/campaign/registry.json",
+    "sha256": "e88eb5995de8cc5eb2e870e07cf3d9a93c73cd91e288725e75af0e61e08dac82",
+    "entries": {
+      "A2-L3": {
+        "id": "A2-L3",
+        "act": 2,
+        "kind": "main",
+        "name": "Black Smoke and the Ruined House",
+        "source": "docs/reference-library/act2/research/levels.json",
+        "parent_level_id": null,
+        "scene_path": "res://scenes/acts/act2/a2_l3.tscn",
+        "readiness": "accepted",
+        "accepted_commit": "8ddce7cb5290cd36037033eb1edcb02a6015adfd",
+        "api_revision": "campaign-level-1",
+        "previous_main_id": "A2-L2",
+        "next_main_id": "A2-L4"
+      },
+      "A2-O1": {
+        "id": "A2-O1",
+        "act": 2,
+        "kind": "optional",
+        "name": "Cylinder Perimeter",
+        "source": "docs/reference-library/act2/research/levels.json",
+        "parent_level_id": "A2-L1",
+        "scene_path": "res://scenes/acts/act2/a2_o1.tscn",
+        "readiness": "accepted",
+        "accepted_commit": "485d26f98bec0246b9de4b76dd51f6b85032e282",
+        "api_revision": "campaign-level-1",
+        "reward_id": "A2-O1-completion-stamp",
+        "reward_policy": "once_only_completion_stamp_no_stat_growth"
+      },
+      "A2-O2": {
+        "id": "A2-O2",
+        "act": 2,
+        "kind": "optional",
+        "name": "Clear Air Circuit",
+        "source": "docs/reference-library/act2/research/levels.json",
+        "parent_level_id": "A2-L3",
+        "scene_path": null,
+        "readiness": "unimplemented",
+        "accepted_commit": null,
+        "api_revision": null,
+        "reward_id": "A2-O2-completion-stamp",
+        "reward_policy": "once_only_completion_stamp_no_stat_growth"
+      }
+    },
+    "qualification": "O1 registry declares accepted485d26f9 during read, reported to owner; this observation does not broaden this assigned preparation-only scope or replace canonical response/adoption."
+  },
+  "source_record_pointers": {
+    "research": "E20,E21,T05,T08,T09,C102,C103 in entities.json; original source S01/S02 same edition, not independent corroboration",
+    "primary_urls": [
+      "https://www.gutenberg.org/cache/epub/36/pg36-images.html",
+      "https://www.gutenberg.org/cache/epub/36/pg36.txt"
+    ],
+    "chapters": [
+      "Book I.15 What Had Happened in Surrey",
+      "Book II.1 Under Foot",
+      "Book II.2 What We Saw from the Ruined House",
+      "Book II.3 The Days of Imprisonment",
+      "Book II.4 The Death of the Curate"
+    ]
+  },
+  "exact_file_pins": {
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/AGENTS.md": "7a27041d53be2b7e356ad5a4430d684c42a7c882c622390402267a450e529349",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/GAME_CONCEPT.md": "06d8442899e420d3dcd5b98a297485969f042cd70b469a7f5f889a843fc0e9a2",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/GAME_STYLE_GUIDELINES.md": "9c5d7680174b240cda25eb059db6babc4b4ebf129dcfcfeae8bdd59be2b2c1d1",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/ASSET_REUSE_GUIDE.md": "2507aa2d654026bb1466125bd4c9241060f073f026425287a6c8912907e7f983",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/ACT2_CONCEPT.md": "f5596e2bb8ec70dfc9e47df60272b6a9ef1b412b1e4af05413a1a6e618e5e696",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/reference-library/act2/research/levels.json": "e7d42cfa6d0943d5ba59223a3685c1865f4cd8bd93035c8d18070efaded27571",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/reference-library/act2/research/entities.json": "02aa3e7b4e6a7ec5f205a25f7ccc3bb96a3697c52a59338fe7544a7119dbf0a7",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/reference-library/act2/research/sources.json": "3975a1fd7d708182964b4db7f82cbd3ef62761c9c1db6dc26a427bd12f95e68a",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/README.md": "fbee5d8514e9f00695eb16e918e6581740f4ae6f22c7438a7be39efd9f934133",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/generated-manifest.json": "1145d3d494c8fe1337364b98c432a315c6cab5837409793bef9c6b62331d66f5",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/environments/README.md": "4ec08629ef9517bd016ebcbd4ae03c1f959321b41dbe00d14ac911540fb47843",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/props/README.md": "5b3cfd4a53c46953d51aff6306ed901e0c4471f38822988e383dc4405c31af76",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/bosses/README.md": "33866beb731adafb71a41a5140d5875985c191abfeeb86f9093dae58bee5fd31",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/gameplay/README.md": "f4bd6dba0217cdce76675cda81b747d59a9f1edede5a0eb38536ba6d0771f1c8",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/gameplay/sample-screenshots/README.md": "9e5f213fd69334418a2011c5d5ea30129f499b880e838fde893a7e7ab30e7ed1",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/A2_L3_HANDOFF.md": "6b4a4d4a71e359acf5103cbe94393bd74b516e8d53cb379324d0f3fbe25a1f08",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/A2_L3_TENDER_ASSET.md": "972b43084eb3dc6f5ec09c9ca1e4de6cfb13a49330a62f5d141ca0e330cd6e48",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/A2_L3_SCENERY_ASSET.md": "cb1c020880292bf36321f94d119b9f8210932c483b60ab5c770addfbea4c8b0c",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/A2_L3_SMOKE_ASSET.md": "a3cf442f5d7b82a94c7ad395fcdc7e7933a78c7ab6685935f1239cea73b6866b",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/acts/act2/ruined_house_kit.gd": "19c694d6257856605f3b175a288ce611a3da2a9d916a1151ce4600512a7f3505",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/acts/act2/ruined_house_floor.gd": "a5da64bd225526174845cfbf0b2d33b21ccad40915544ec5b1359dc3a3ca2626",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/acts/act2/canister_tender_actor.gd": "c18a4b09ed55761de6f10cfa803d288718db480891ac1da97c9b5a5711e25c29",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/acts/act2/canister_tender_visual.gd": "d3b8dd7f41eb87808274e067a516efd98acddda838358a9e444dd65a53fb3633",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/acts/act2/smoke_bank_visual.gd": "90d6fb068104381cce36790f9d6ab1c8ad36a63e22cc9c6f02f1c28d45d6f7f1",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/assets/acts/act2/shaders/smoke_wisp.gdshader": "032e80de1c09dfde8604faa39d9ef1619d30c6287c7e8c6be7f7a66d6b242d95",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/acts/act2/salvage_handler_actor.gd": "42457249e8a30e2d28ad0d03017d16e2f5158092ad3531e528ccf6beb3f70d96",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/acts/act2/salvage_handler_visual.gd": "601b6713e01d7883d729729eb30c16ca80f23b22359e32ae6bc2ee4ff1ff08d2",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/assets/acts/act2/salvage_handler_manifest.json": "3562138e202836b73e99aa5fbfd6480ee624ba550b36f20f9683e2ddf426f831",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/combat/smoke_bank.gd": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/combat/lane_mechanism.gd": "873b1728019b40b229f2b7778a970cc5c8fa0001d50800cf50f2cdd50f502253",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/data/campaign/act2/ACT_MEMORY.md": "6e31d36050c52f1b4d5dec7b327281a45df3cf1d97ffe347b65fe7745564127e",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/data/campaign/act2/PROGRESS.md": "388f5855f700be298bcba908cb2c69a0a8e785c9770b9e75c8b34ff2333de46c"
+  },
+  "canonical_equal_pinned_files": false,
+  "peer_api_coordination": "Scout confirmed minimal recompose CinderLevel+two Tender/SmokeBank owners+one regular Handler/Lane, no full L3/B02 inheritance. Exact sealed API map pending independently; source slice above is not a combat/snapshot audit.",
+  "limitations": "No new pixel inspection/research-technique claim needed: relevant originals were previously inspected. No concept-board atlas/frame extraction, whole-board/scene/native/route/art/balance readiness, mobile/export or future O3 work."
+}
