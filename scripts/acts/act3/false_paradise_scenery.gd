@@ -19,7 +19,7 @@ const FLOOR_SIZE := Vector3(14, 1, 78)
 const FLOOR_CENTER := Vector3(0, -0.5, 25)
 const SAFE_RECT := Rect2(-7, -14, 14, 78)
 const APPROACH_COURTS: Array[float] = [54.0, 36.0, 18.0]
-const APPROACH_ANCHOR := Vector3(-0.85, 0, 51.5)
+const APPROACH_ANCHOR := Vector3(-0.85, 0, 53.5)
 const BOSS_ANCHOR := Vector3(-0.85, 0, -1.5)
 const PRESENTATION_SCHEMA: int = 1
 const BED_CONTOUR := [Vector2(-0.95, -0.33), Vector2(-0.51, -0.54), Vector2(0.37, -0.47), Vector2(1.02, -0.13), Vector2(0.72, 0.39), Vector2(0.02, 0.49), Vector2(-0.81, 0.28)]
@@ -143,7 +143,7 @@ func restore_presentation(data: Dictionary, parent_boss_entered: bool, parent_di
 
 
 ## The fixed approach observer is optional scenery when the Hero has passed.
-## It must not force camera focus/zoom from51.5 while combat travels to36/18.
+## It must not force camera focus/zoom from53.5 while combat travels to36/18.
 ## Complete native quad remains explicit for representative portrait checking.
 func likeness_framing_points(camera: Camera3D) -> Dictionary:
 	var error: String = runtime_error()
