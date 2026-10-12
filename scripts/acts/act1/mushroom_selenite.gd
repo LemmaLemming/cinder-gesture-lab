@@ -16,6 +16,7 @@ signal hit_resolved(hero_id: String, cycle: int, result: Dictionary)
 const Geometry = preload("res://scripts/combat/threat_geometry.gd")
 const Difficulty = preload("res://scripts/combat/difficulty.gd")
 const Motion = preload("res://scripts/combat/lunge_motion.gd")
+const BodySweep = preload("res://scripts/combat/body_sweep.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const ExactJson = preload("res://scripts/campaign/exact_json.gd")
 const CueScript = preload("res://scripts/cues/threat_cue.gd")
@@ -967,15 +968,32 @@ func _step_court_entry_if_active(delta: float) -> bool:
 		return true
 	var clock: float = float(boundary.control.clock_s)
 	var elapsed: float = clampf(clock - float(context.start_s), 0.0, float(context.end_s) - float(context.start_s))
-	var desired: Vector3 = context.from + Vector3.BACK * (COURT_ENTRY_SPEED * elapsed)
-	var remaining: float = desired.z - global_position.z
-	if remaining < -Motion.EPSILON or remaining > COURT_ENTRY_SPEED * delta + Motion.EPSILON:
+	var desired: Vector3 = BodySweep.anchored_position(context.from, Vector3.BACK, COURT_ENTRY_SPEED * elapsed)
+	var previous_elapsed: float = clampf(clock - float(context.start_s) - delta, 0.0, float(context.end_s) - float(context.start_s))
+	var previous: Vector3 = BodySweep.anchored_position(context.from, Vector3.BACK, COURT_ENTRY_SPEED * previous_elapsed)
+	# Native float32 world addition at Z-31 cannot stand in for clock custody.
+	# Corroborate the previous anchor using the shared coordinate-rounding proof,
+	# then use the existing lunge's measured move_and_collide primitive. A missed
+	# prior step is refused; no catch-up, speed retune, position assignment or
+	# original-deadline change is introduced.
+	if global_position.distance_to(previous) > BodySweep.position_rounding_bound(global_position, previous) or desired.z < global_position.z - Motion.EPSILON:
 		_transaction_depth -= 1
 		last_error = "Court entry cannot rebase its clock or catch up delayed/collided motion"
 		return true
-	velocity = Vector3(0.0, 0.0, minf(COURT_ENTRY_SPEED, maxf(0.0, remaining) / delta))
+	var step: Vector3 = desired - global_position
+	var sweep: Dictionary = BodySweep.sweep(self, global_transform, step, court.call("response_context").floor_regions)
+	if sweep.has("error") or sweep.get("collided", true):
+		_transaction_depth -= 1
+		last_error = "Actual finite court entry scenery query refused its anchored next step"
+		return true
+	velocity = Vector3.BACK * minf(COURT_ENTRY_SPEED, maxf(0.0, desired.z - previous.z) / delta)
 	_facing = Vector3.BACK
-	move_and_slide()
+	var frame_start: Vector3 = global_position
+	var count: int = maxi(1, ceili((step.length() - Motion.EPSILON) / BodySweep.SWEEP_STEP))
+	for index: int in range(count):
+		var target: Vector3 = BodySweep.anchored_position(frame_start, step, float(index + 1) / float(count))
+		var contact: KinematicCollision3D = move_and_collide(target - global_position, false, BodySweep.SAFE_MARGIN, false, 1)
+		if contact != null: break
 	_restored_floor_contact = -1
 	# Stop only the entry's own finite velocity after its original deadline and
 	# actual endpoint. A collision is retained and reported, never pose-snapped.
