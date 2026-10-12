@@ -37,7 +37,7 @@ var _custody_ready: bool = false
 
 static func whole_specs() -> Dictionary:
 	# A detached nominal art table; physics positions and camera are never edited.
-	return {"revision": 1, "id": "selenite-whole-theatre", "floor_size": Vector2(14, 44), "floor_origin": Vector3(0, 0.002, -17), "entrance_origin": Vector3(0, 0, -5.2), "entrance_panels": [Vector3(-3.05, 0, -4.8), Vector3(3.05, 0, -4.8)], "formation_panels": [Vector3(-3.15, 0, -12.4), Vector3(3.15, 0, -12.4)], "approach_panels": [Vector3(-3.25, 0, -22.2), Vector3(3.25, 0, -22.2)], "roundel_origin": Vector3(0, 0.01, -20), "throne_origin": Vector3(-1.25, 0, -30.2), "helper_origins": [Vector3(-2, 0, -31.5), Vector3(2, 0, -31.5)], "exterior_origin": Vector3(0, 0, -36.75)}
+	return {"revision": 1, "id": "selenite-whole-theatre", "floor_size": Vector2(14, 44), "floor_origin": Vector3(0, 0.002, -17), "entrance_origin": Vector3(0, 0, -5.2), "entrance_panels": [Vector3(-3.05, 0, -4.8), Vector3(3.05, 0, -4.8)], "formation_panels": [Vector3(-3.15, 0, -12.4), Vector3(3.15, 0, -12.4)], "approach_panels": [Vector3(-3.25, 0, -22.2), Vector3(3.25, 0, -22.2)], "roundel_origin": Vector3(0, 0.01, -20), "throne_origin": Vector3(-1.25, 0, -30.2), "helper_origins": [Vector3(-2, 0, -33.2), Vector3(2, 0, -33.2)], "exterior_origin": Vector3(0, 0, -36.75)}
 
 
 static func build_whole_art(level: CinderLevel, immutable_court_specs: Dictionary = {}) -> Node3D:

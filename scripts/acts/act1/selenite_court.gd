@@ -527,7 +527,10 @@ func _boss_contact_near() -> bool:
 
 func _refresh_objective() -> void:
 	_sync_art_presentation()
-	if _running and not _refresh_king_presentation(): _construction_error = "Actual King presentation could not refresh"; return
+	# Native fatal damage draws the final defeat pose before emitting its guarded
+	# callback. Completion needs no parent-derived step/summon refresh, which
+	# must still refuse reentry into that native damage transaction.
+	if _running and not is_completed() and not _refresh_king_presentation(): _construction_error = "Actual King presentation could not refresh"; return
 	if is_completed(): objective_text = "THE COURT IS OPEN\nCONTACT THE EXTERIOR CURTAIN"; return
 	if _awaiting_room == 3: objective_text = "THE KING AWAITS\n" + ("CONTACT THE THRONE APPROACH" if _boss_contact_near() else "DASH TO THE THRONE APPROACH"); return
 	if _awaiting_room >= 0: objective_text = "COURT CLEARED\nDASH TO THE NEXT OPEN COURT"; return
