@@ -1,0 +1,213 @@
+{
+  "schema_version": 1,
+  "at_utc": "2026-10-12T04:24:39.599176+00:00",
+  "status": "frozen TMP derivative, AST/static only; independent peer pending",
+  "helper": {
+    "path": "/private/tmp/cinder_a2_shared49_preserve_adopt.py",
+    "sha256": "b2452f4439c33b4a93073348a61ec8fc86c11a4af8a79081259997b0472e3d61",
+    "lines": 416,
+    "stat_mode": "0o644"
+  },
+  "reviewed_baseline_helper": {
+    "path": "/private/tmp/cinder_a2_shared48_preserve_adopt.py",
+    "sha256": "03208568c5a8b3e776ea63d41cfb5610e300df5c9880d0227851c28e845d61fc",
+    "lines": 416,
+    "stat_mode": "0o644"
+  },
+  "baseline_independent_peer": {
+    "path": "/private/tmp/a2_shared48_preserve_adopt_independent_review_20261012.json",
+    "sha256": "d08868f9f0715d424fb47d5634a967d466ac63bcf1e9e344eea88779a7fe01ce",
+    "lines": 55,
+    "stat_mode": "0o644"
+  },
+  "base": "cf423911844d63c458c59e5503f82c8b1e61574b",
+  "publication": "9f73e65e5848c6747542b283bb0d9be3c75c8454",
+  "api_revision": "campaign-shared-49",
+  "documentation_supplement_available_separately": "6327672377b0ec5854f554261e1e5bdd6540d5d3",
+  "canonical_notice": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/integration/messages/c1bdca7b-7b7a-47bf-b866-4309af927035-UPDATE.json",
+    "sha256": "86ac99d101f41a5d18afc5938da051eebc3adf36a4b7f937ae5aa9a371533195",
+    "lines": 21,
+    "stat_mode": "0o644"
+  },
+  "canonical_protocol_scope": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/docs/development/PROTOCOL_REFERENCE_COMPARISON.md",
+    "sha256": "75bf207bf0ee7406bfe59463797876223b7f99c3124f07a810cba6432d6841e8",
+    "lines": 49,
+    "stat_mode": "0o644"
+  },
+  "canonical_postpublication_verification": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/docs/development/SHARED49_PUBLICATION_VERIFICATION.json",
+    "sha256": "f38c89bddf1dbd8b115f87ad2cbdb01c4dd8805c38b71c3bda27d0154525a9f8",
+    "lines": 57,
+    "stat_mode": "0o644"
+  },
+  "literal_changes": [
+    {
+      "before": "cinder_a2_shared48_preserve_adopt.py",
+      "after": "cinder_a2_shared49_preserve_adopt.py",
+      "occurrences": 1
+    },
+    {
+      "before": "c1d565301827c8e3cf268463fae8124d041abdd3",
+      "after": "9f73e65e5848c6747542b283bb0d9be3c75c8454",
+      "occurrences": 1
+    },
+    {
+      "before": "shared48-adoption",
+      "after": "shared49-adoption",
+      "occurrences": 1
+    },
+    {
+      "before": "Shared48 publication",
+      "after": "Shared49 publication",
+      "occurrences": 2
+    }
+  ],
+  "reverse_literal_changes_reconstruct_reviewed48_byte_exact": true,
+  "17_nonmain_preservation_AST_functions_unchanged": [
+    "digest",
+    "git",
+    "ancestor",
+    "safe_path",
+    "record",
+    "write_json",
+    "status_rows",
+    "refuse_dirty",
+    "indexed",
+    "tree",
+    "blob_records",
+    "add_git_bytes",
+    "physical_inventory",
+    "active_uids",
+    "incoming_delta",
+    "incoming_preflight",
+    "compare_preserved"
+  ],
+  "main_control_flow_byte_exact_after_reversal": true,
+  "target_includes_48_ancestor": true,
+  "readonly_delta": {
+    "paths": 10035,
+    "counts": {
+      "A": 10026,
+      "M": 9
+    },
+    "owned_or_settings_or_protected_runtime_changes": [],
+    "protected_runtime_paths_checked": [
+      "scripts/player.gd",
+      "scripts/game.gd",
+      "scripts/equipment.gd",
+      "scripts/campaign/shell.gd",
+      "scripts/campaign/snapshot_codec.gd",
+      "scripts/campaign/exact_json.gd",
+      "scripts/campaign/save_store.gd",
+      "scripts/combat/threat_scheduler.gd",
+      "scripts/cues/threat_cue.gd"
+    ],
+    "modified_paths": [
+      {
+        "status": "M",
+        "path": "docs/UI_DESIGN_PLAN.md"
+      },
+      {
+        "status": "M",
+        "path": "docs/development/CAMPAIGN_MEMORY.md"
+      },
+      {
+        "status": "M",
+        "path": "docs/development/SCHEDULER_SPORE_SOURCE.md"
+      },
+      {
+        "status": "M",
+        "path": "docs/development/SHARED_CONTRACT.md"
+      },
+      {
+        "status": "M",
+        "path": "docs/development/SHARED_PROGRESS.md"
+      },
+      {
+        "status": "M",
+        "path": "scripts/dev/dev.py"
+      },
+      {
+        "status": "M",
+        "path": "scripts/environment/scheduler_spore_source_protocol.gd"
+      },
+      {
+        "status": "M",
+        "path": "scripts/ui/campaign_menu.gd"
+      },
+      {
+        "status": "M",
+        "path": "tests/scheduler_spore_reference_smoke.gd"
+      }
+    ],
+    "nonarchive_UID_changes": [
+      {
+        "status": "A",
+        "path": "scripts/ui/campaign_scenery.gd.uid"
+      },
+      {
+        "status": "A",
+        "path": "tests/menu_scenery_smoke.gd.uid"
+      }
+    ],
+    "qualification": "Two nonarchive additions are exactly UI scenery/test sidecars from48;49 itself introduces no new UID or import or owned-path exception."
+  },
+  "Protocol_scope": {
+    "target_sha256": "c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06",
+    "public_signatures_unchanged": [
+      "configure(source: CharacterBody3D, scheduler: CinderThreatScheduler, player: CinderPlayer, source_id: String, controller_id: String, player_id: String, environment: Dictionary) -> bool:",
+      "binding_state() -> Dictionary:",
+      "matches_source(source: CharacterBody3D, source_id: String) -> bool:",
+      "binding_compatibility_error(other: CinderSchedulerSporeSourceProtocol) -> String:",
+      "binding_error() -> String:",
+      "bind_error(consumer: Node) -> String:",
+      "bind(consumer: Node) -> bool:",
+      "response_state() -> Dictionary:",
+      "control_state() -> Dictionary:",
+      "profile_state() -> Dictionary:",
+      "unit_error(actor: Dictionary, context: Dictionary) -> String:",
+      "unit_view(actor: Dictionary, context: Dictionary) -> Dictionary:",
+      "current_unit(context: Dictionary) -> Dictionary:"
+    ],
+    "canonical_change": "Private finite configure-time reference comparisons only; same scheduler-spore-source-1/schema/public hooks/fresh native reads/original receipts and fallback. Canonical strict320/0/direct208/0 and scoped paused-query comparison remain primary publication evidence, not re-executed here.",
+    "O1_entry_and_Scout_direct_spore_mentions": {
+      "scripts/acts/act2/cylinder_perimeter.gd": [],
+      "scripts/acts/act2/cylinder_perimeter_kit.gd": [],
+      "scripts/acts/act2/ray_scout_actor.gd": [],
+      "scripts/acts/act2/ray_scout_exchange.gd": [],
+      "scenes/acts/act2/a2_o1.tscn": []
+    },
+    "O1_selected_closure_paths_deliberately_changed_after_adoption": [
+      "scripts/dev/dev.py",
+      "scripts/environment/scheduler_spore_source_protocol.gd",
+      "scripts/ui/campaign_menu.gd"
+    ],
+    "source_attribution": "Although global-class closures include Protocol, actual O1 host/kit/scene/ordinary Scout path does not instantiate spore Protocol. Menu/dev.py changes are UI/additive launcher. Original537/48/57/82/84 source_unchanged flags mean job closure at actual47, never all-selected-path unchanged after49 or new49 O1/native/performance acceptance."
+  },
+  "retained_guard_scope": [
+    "Explicit Root --closed-owned-jobs declaration and actual assigned checkout/codex branch; full clean status and exact base/target ancestry.",
+    "Dynamic actual clean HEAD/counts at invocation; no fixed stale HEAD. Preserve all six owned Git/physical originals including all existing four O1 and five previous47 UID sidecars; no new exception/restore override.",
+    "Preserve three settings, complete historical evidence originals, .gdignore ancestor boundaries and all recursive versus active unique UID records.",
+    "Preflight incoming owned/settings changes, divergent shared paths, UID/archive/boundary changes and unindexed overwrites; recheck full original custody/HEAD after long read.",
+    "Exclusive new shared49-adoption packet and exact single no-ff merge only on explicit Root invocation; postmerge exact preserved hashes/modes/index rows, incoming targets, active uniqueness, additions and exact two parents.",
+    "Failure receipt/log retained without automatic rollback; no engine/import helper subprocess or native acceptance."
+  ],
+  "exact_Root_invocation": {
+    "cwd": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+    "command": [
+      "python3",
+      "/private/tmp/cinder_a2_shared49_preserve_adopt.py",
+      "--closed-owned-jobs"
+    ],
+    "precondition": "All own Godot jobs closed and all own source/evidence sealed; actual checkout clean. Preparation itself is not invocation or adoption."
+  },
+  "engine_invoked": false,
+  "helper_imported_or_invoked": false,
+  "Git_mutation": false,
+  "assigned_checkout_write": false,
+  "adoption_inferred": false,
+  "new_mechanical_native_or_performance_credit": false,
+  "findings": []
+}

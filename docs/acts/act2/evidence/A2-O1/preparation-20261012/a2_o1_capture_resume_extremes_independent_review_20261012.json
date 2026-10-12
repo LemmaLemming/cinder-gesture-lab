@@ -1,0 +1,42 @@
+{
+  "api_revision": "act2-o1-focused-combined-static-peer-1",
+  "at": "2026-10-12T03:56:36.782796+00:00",
+  "base": {
+    "lines": 405,
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/tests/acts/act2/a2_o1_focused_smoke.gd",
+    "sha256": "ff442c2c3da9ae8f07c6d0f53a84d5fd8627030c933359ecafcbb956c09ab593"
+  },
+  "details": {
+    "changed_functions_relative_to477": [
+      "_run",
+      "_step",
+      "_capture_view"
+    ],
+    "extremes_boot_and_selection_exact": true,
+    "new_function": "_resume_capture_focus_pause",
+    "verified": [
+      "Shared Game._notification opens the production pause overlay on application paused/focus-out; public resume_lab clears gesture chain/hides overlay/unpauses. --capture is an independent preview+quit mode and is correctly absent from this fixture.",
+      "Capture-only helper calls that public Resume and records exact before/after native Player+Scheduler clock/HP/position/completed history; assertion requires synchronous equality and genuinely unpaused state, with no phase/proof/deadline/pose edits.",
+      "_step checks only graphical observed pause before its original native tick await. Headless _capture=false behavior remains unchanged, including extremes mode.",
+      "Bounded four-postdraw capture loop never accepts an overlay-paused frame; a pause seen after draw forces another public resume+draw rather than changing the camera or capturing before redraw. Repeated failure remains an assertion.",
+      "All original action-start/proof/recovery/primary timing and actual body/source/HUD containment assertions remain byte-exact; captured metadata adds disclosed environment resume events only.",
+      "Original graphical45396 20/4 is retained as failed. Paused entry pixels and no completed actions support this focused fixture environment diagnosis, not a production gameplay retune or art pass."
+    ]
+  },
+  "limits": [
+    "Actual native legal-combo escape/return/cadence viability remains untested by this static review.",
+    "Combined graphical public Resume does not suppress production focus handling; real timing/proof and postdraw/pixels remain deciding native checks.",
+    "Promotion must occur only after current jobs are closed; original405 inputs/passes/failures retain their original source pins and scopes."
+  ],
+  "plan": {
+    "path": "/private/tmp/a2_o1_focused_extremes_plan_20261012.json",
+    "sha256": "437c5e8b86de687fb8a78b1eaf3207e9c96e7d59c917ff0d128da5a8e56120a5"
+  },
+  "result": "No concrete remaining static API/authority shortcut found in frozen bytes.",
+  "scope": "Bounded read-only source delta/public API/canonical equipment/focus policy review only; no GDScript parser/native run, engine/import, checkout edit or Git mutation.",
+  "source": {
+    "lines": 500,
+    "path": "/private/tmp/a2_o1_focused_capture_resume_extremes_draft.gd",
+    "sha256": "1223876604717e1f3704d8b2e601ed480237a6c4383620cd0c089da90723d6ad"
+  }
+}

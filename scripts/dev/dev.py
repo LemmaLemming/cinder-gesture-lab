@@ -64,6 +64,8 @@ SUITES = {
     "act2_l3_registration": "tests/act2_l3_registration_smoke.gd",
     "act2_l4_registration": "tests/act2_l4_registration_smoke.gd",
     "act2_l5_registration": "tests/act2_l5_registration_smoke.gd",
+    "act2_o1_registration": "tests/act2_o1_registration_smoke.gd",
+    "menu_scenery_lifecycle": "tests/menu_scenery_lifecycle_smoke.gd",
     "act2_l3_l4_transition": "tests/act2_l3_l4_transition_smoke.gd",
     "act3_registration": "tests/act3_registration_smoke.gd",
     "act3_l2_registration": "tests/act3_l2_registration_smoke.gd",

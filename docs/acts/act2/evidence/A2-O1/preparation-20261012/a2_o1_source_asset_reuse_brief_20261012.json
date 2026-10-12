@@ -1,0 +1,212 @@
+{
+  "api_revision": "act2-o1-source-reuse-preparation-1",
+  "date": "2026-10-12",
+  "status": "Read-only/TMP preparation; O1 implementation waits for L5 canonical acceptance. No engine, checkout/Git/ledger mutation or allocation/readiness claim.",
+  "canonical_requirement_source": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/docs/reference-library/act2/research/levels.json",
+    "sha256": "e7d42cfa6d0943d5ba59223a3685c1865f4cd8bd93035c8d18070efaded27571"
+  },
+  "assigned_research_identical": true,
+  "confirmed_documented_scope": {
+    "id": "A2-O1",
+    "name": "Cylinder Perimeter",
+    "kind": "optional",
+    "parent_level_id": "A2-L1",
+    "target_range_minutes": [
+      3,
+      5
+    ],
+    "initial_budget_minutes": 3,
+    "unlock": "clear parent level",
+    "checkpoint": "before final exchange",
+    "reward": "cosmetic or completion stamp; no stat increase",
+    "objective": "Collect three journal fragments by contact around a compact loop, then reach the opened exit",
+    "reused_assets": [
+      "heath clearings",
+      "cylinder/pit edge",
+      "trunks",
+      "Ray Scouts",
+      "lane warnings"
+    ],
+    "small_additions": [
+      "three journal fragment props",
+      "exit marker"
+    ],
+    "skill": "Choose collection order and bait a ray away from the useful return route"
+  },
+  "constraints": [
+    "Continuous broad dry ground; pit/cylinder mouth is scenic boundary, no descent/jump/swim/narrow-plank requirement.",
+    "Shared portrait fixed-angle follow, feet pivot, gestures, exact swipe-release aiming and ordinary-primary/no-ammo/no-pickup viable openings. No joystick/new movement/attack family.",
+    "Choose collection order and ordinary Scout tracking-ray return route; O1 does not inherit B05 last-completed-world-landing bait mechanic.",
+    "No boss/Handler/Tender/padded waves or permanent stat growth.3\u20135min is a pacing estimate, not timer/wait requirement.",
+    "Contact collection and opened exit remain distinct from combat taps/low housing. Cosmetic or completion stamp only, awarded once rather than death farming.",
+    "Restorable supplies are proposal-level guidance; exact placement/quantity is not required or implemented here. No new perk/powerup offered by this preparation."
+  ],
+  "art_and_source": [
+    {
+      "id": "G05",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/environments/horsell-common.png",
+      "sha256": "33a7542ea38a7b5a05e91c5cdb7138e2af0a447b7eacb656b4625755bb3da4f0",
+      "vocabulary": "Pale sand/heath, tapered pines, cylinder/excavation and road/cottage modules.",
+      "inspection": "Relevant original board previously visually inspected during L1 source work; reused evidence, no new view/crop/atlas extraction needed for this brief."
+    },
+    {
+      "id": "G16",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/props/martian-technology.png",
+      "sha256": "d7bb3d36baf62bf424387f436dbc5145fdf6504753d7b45e91815569501b535b",
+      "vocabulary": "Oxidised cylinder shell, detached lid, threaded rim/rivets and alien apparatus.",
+      "inspection": "Relevant original board previously visually inspected during L1 source work; reused evidence, no new view/crop/atlas extraction needed for this brief."
+    },
+    {
+      "id": "G18",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/gameplay/01-horsell-common-gameplay.png",
+      "sha256": "6cd7fa272c5068a4e473ba261e9dc78291ef68d7207830196ee337bb82948869",
+      "vocabulary": "Portrait common, compact invented Scout, source/lane/low opening.",
+      "inspection": "Relevant original board previously visually inspected during L1 source work; reused evidence, no new view/crop/atlas extraction needed for this brief."
+    },
+    {
+      "id": "sample-S01",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/gameplay/sample-screenshots/01-ray-evasion.png",
+      "sha256": "106d337d6012f32a506f49d2629e77b2dfd338644aa1e38d6792b042dc5101b0",
+      "vocabulary": "Close shared-camera evasion and ordinary-primary housing approach.",
+      "inspection": "Relevant original board previously visually inspected during L1 source work; reused evidence, no new view/crop/atlas extraction needed for this brief."
+    }
+  ],
+  "source_boundaries": "Novel cylinder/heath/Heat-Ray vocabulary is source-based. Compact Ray Scout, visible bounded floor lane and slashable low housing are gameplay adaptations; mirror mechanism is narrator uncertainty. Three journal fragments are optional objective props, not source-authorized equipment/faction/escort/new attack. Rust-red/black/pale-ash keeps Act2 identity; no recoloured Moon/lab kit.",
+  "reusable_parent_families": [
+    {
+      "family": "Heath surfaces/road margins",
+      "paths": [
+        "scripts/acts/act2/heath_kit.gd",
+        "assets/acts/act2/heath_kit_manifest.json"
+      ],
+      "native": "Original deterministic64x64 nearest pixel materials,1.44\u00d71.44world tile; ground overlayY.004 with sparse overlays throughY.011. Ground-centre pivots.",
+      "role": "Collisionless visual; parent supplies actual floor/banks. Static pale sand/worn road/heath/scorch; scenery scorch causes no damage.",
+      "reuse_limit": "build(parent) creates hardcoded L1 route/edge placements. Do not assume it constructs O1 loop or supported floor. New O1 arrangement/local stable collider IDs and actual source/cue/landing framing need owned validation."
+    },
+    {
+      "family": "Oxidised cylinder/lid/excavation",
+      "paths": [
+        "scripts/acts/act2/heath_kit.gd"
+      ],
+      "native": "Barrel6.0m\u00d72.7m,ground anchor; lid2.7m. L1 root(-4.8,0,-1),yaw\u2212.55; shallow mouth.12 and five ring approximation, raised rivets.",
+      "role": "Static collisionless scenic landmark with original earthwork contact/feet; cylinder/pit is not playable descent. Normal depth, no automatic fade.",
+      "states": "Open shell/dark mouth/thread collar/detached lid/pale sand heaps. All static.",
+      "reuse_limit": "Preserve mesh/material family, recomposition requires portrait/capsule/source/cue review; original cropped lid/native L1 visibility is not O1 placement approval."
+    },
+    {
+      "family": "Pines/charred trunks/heather/road edges/cottages",
+      "paths": [
+        "scripts/acts/act2/heath_kit.gd",
+        "scripts/acts/act2/horsell_common.gd"
+      ],
+      "native": "Pines3.4\u20133.9m trunk height,7facets; charred logs6facets; sparse heather32x24 hard-alpha nearest cutouts with bottom/feet anchor. Brick/pitched-roof/sash/chimney foundations grounded.",
+      "role": "Kit pieces collisionless/outboard ordinary depth; required blocking trunk is separately level-owned (L1 radius.35,height1.2). Keep visible native blocker bases and broad bypasses; no hidden collision in foliage.",
+      "states": "Static live pine/charred branch/heather/weathered post/cottage. Kit has no process/clock.",
+      "reuse_limit": "No new forest/cast needed. Witness/eruption optional atmosphere already exists but is not an O1 documented requirement or extra mandatory wait."
+    },
+    {
+      "family": "Ray Scout actor/visual/owned adapter + shared lane",
+      "paths": [
+        "scripts/acts/act2/ray_scout_actor.gd",
+        "scripts/acts/act2/ray_scout_visual.gd",
+        "scripts/acts/act2/ray_scout_exchange.gd",
+        "assets/acts/act2/ray_scout_manifest.json"
+      ],
+      "native": "Scale1: neutral width1.8m/depth1.6m/height1.3825m,planted root(0,0,0),low housing centreY.30,local+Z mirror;3supports fixed floor-contact feet. No rig collider/extra targets.",
+      "role": "One parent logical low-housing HP target. Material cutaway instance-local alpha.14 on positive projected foreground Hero overlap; actual mesh triangles preserved, no global fade/source hide.",
+      "states": "idle/approach/warning/lock/active/recovery/defeated; pose,body_yaw and quiet restore interfaces supplied by actor/level clock. Immutable locked lane3.8m/radius.31 and returned shared deadlines; no cosmetic travel/hit timing.",
+      "reuse_limit": "Original base readability accepts3..16 points; supported producer may supply8 conservative corners enclosing full native22, while guards retain full mandatory bounds. Do not blindly pass direct22. New owner/floor IDs, complete staged Player/Scheduler/actor/adapter snapshots and current-view guards remain O1 host work."
+    }
+  ],
+  "implemented_vs_pending": {
+    "implemented_parent": {
+      "heath_readiness": "original_runtime_L1_scripted_route_native_portrait_and_canonical_registration_accepted",
+      "scout_readiness": "original_runtime_L1_scripted_route_native_portrait_and_canonical_registration_accepted",
+      "meaning": "Accepted L1 runtime/art families and published shared contracts are reuse inputs with their precise historical provenance, not an O1 run or optional registration."
+    },
+    "pending_O1": "No authored O1 scene/loop/fragment props/local progress/contacts/checkpoint/exit/transport/native portrait present from this preparation. Exactly three journal props and one exit marker are documented additions; no extra enemy/environment kit or numeric tier.",
+    "not_fixed_by_source": "Exact enemy count/encounter ordering/loop dimensions/fragment locations and final exchange condition are not specified in research. Do not invent defeat-all as a requirement. Root must author a compact meaningful arrangement after L5 acceptance."
+  },
+  "public_reuse_interfaces": {
+    "heath": {
+      "build": "static build(parent: Node3D) -> Dictionary: creates own HorsellHeathKit root and returns root, witnesses:Array[Node3D], eruption:Node3D",
+      "set_tableau": "static set_tableau(kit: Dictionary, state: String, progress: float = 0.0) -> void: existing witness roots/retreat translation with derived watch, turn, two retreat-step textures and empty visibility",
+      "set_eruption": "static set_eruption(kit: Dictionary, visible: bool, normalized_progress: float = 0.0) -> void: independent rise/expansion/fade pose",
+      "ownership": "Root level owns state clocks, snapshot fields, transitions, terrain collision and cleanup. queue_free of root releases nodes/local material clones; immutable cached resources remain reusable."
+    },
+    "scout": "Visual pose/get_body_yaw/restore_pose_error/restore_pose/apply_readability/clear_readability; Actor.configure/bind_damage_window/snapshot_state/snapshot_error/restore_state/cleanup; Exchange.configure/state/snapshot_state(bindings)/snapshot_error(state,bindings,stagedScheduler)/restore_state(state,bindings)/cleanup. Use current actual signatures/shared Scheduler/Player, no forked controls/cue/saves."
+  },
+  "canonical_gate_observations": {
+    "root_ran_queries": true,
+    "equipment_grid": {
+      "path": "/private/tmp/a2_o1_live_equipment_grid_20261012.md",
+      "sha256": "f7e2028d7562f7e822b90ef02151cfdb8011a9d1601941f9a2a6b8f54aacd68f"
+    },
+    "ability_status": {
+      "path": "/private/tmp/a2_o1_ability_status_20261012.json",
+      "sha256": "4416db5bdb96d1a6835bf82ed24418fe8bb6a88365a2dbfda9c8d697fd1618a3"
+    },
+    "ability_available": {
+      "path": "/private/tmp/a2_o1_ability_available_20261012.json",
+      "sha256": "2dcdd7f8d0821b823639ccb323b5a7629900c982169c6b19ead6627464feb0c0"
+    },
+    "revision": 0,
+    "uses": 0,
+    "reservations": 0,
+    "ledger_available_count": 20,
+    "readiness": "Root reports13 implemented static clothes/weapons; all20 ledger-available perks/powerups proposed/unimplemented. Availability is not runtime implementation.",
+    "root_recorded_prep_decision": "Reuse existing Scouts/heath/trunks/lanes; baseline J0/P0/S0/WEAPON-01. Existing S1/S2 range/cadence choices remain canonical carried gear, no granting/new claim/introduction. Collection order/return-route decision requires no new equipment/ability allocation."
+  },
+  "direct_record_pointers": [
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/ACT2_CONCEPT.md",
+      "sha256": "f5596e2bb8ec70dfc9e47df60272b6a9ef1b412b1e4af05413a1a6e618e5e696"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/README.md",
+      "sha256": "fbee5d8514e9f00695eb16e918e6581740f4ae6f22c7438a7be39efd9f934133"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/generated-manifest.json",
+      "sha256": "1145d3d494c8fe1337364b98c432a315c6cab5837409793bef9c6b62331d66f5"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/environments/README.md",
+      "sha256": "4ec08629ef9517bd016ebcbd4ae03c1f959321b41dbe00d14ac911540fb47843"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/props/README.md",
+      "sha256": "5b3cfd4a53c46953d51aff6306ed901e0c4471f38822988e383dc4405c31af76"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/gameplay/README.md",
+      "sha256": "f4bd6dba0217cdce76675cda81b747d59a9f1edede5a0eb38536ba6d0771f1c8"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/gameplay/sample-screenshots/README.md",
+      "sha256": "9e5f213fd69334418a2011c5d5ea30129f499b880e838fde893a7e7ab30e7ed1"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/ASSET_REUSE_GUIDE.md",
+      "sha256": "2507aa2d654026bb1466125bd4c9241060f073f026425287a6c8912907e7f983"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/GAME_STYLE_GUIDELINES.md",
+      "sha256": "9c5d7680174b240cda25eb059db6babc4b4ebf129dcfcfeae8bdd59be2b2c1d1"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/data/campaign/act2/levels/A2-L1.md",
+      "sha256": "5339f877c0e45dda9d7342bf10f4848ca70488640f6aa9a840b2fd4d0822f382"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/assets/acts/act2/heath_kit_manifest.json",
+      "sha256": "4af035d04396559b6961e9955b4006db22ca245d8b30fd000ebe2c86908ea470"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/assets/acts/act2/ray_scout_manifest.json",
+      "sha256": "7ae18dbe2787ab9e7706cfface2aaa0b67ef74d09b4a575187967407cc7e870e"
+    }
+  ],
+  "acceptance_limit": "Latest focused level policy: representative mechanics/loading/transitions/save/retry/cleanup and brief actual-pixel inspection, with untested playthrough behavior disclosed. Full route/defeat every enemy/whole-kit matrix is not an acceptance gate. This brief supplies no native O1 result and does not begin O2/O3."
+}

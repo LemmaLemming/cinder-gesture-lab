@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-12T04:09:06.363604+00:00",
+  "owned_job": 98688,
+  "classification": "TEST diagnostic call typed-array error",
+  "packet": "docs/acts/act2/evidence/A2-O1/focused-portrait-metadata-fixed",
+  "actual_exit": -15,
+  "termination": "script_error_incomplete_scope",
+  "footer_present": false,
+  "source_count": 594,
+  "source_sha256": "7bf5bbd1095c192d7b5be06532903f9e203f4b38be6ade3eab025d904bda248c",
+  "first_meaningful_error": "SCRIPT ERROR: Invalid type in function '_encode' in base 'GDScript'. The array of argument 3 (Array) does not have the same element type as the expected typed array argument.",
+  "cause": "Root added a direct Exact._encode diagnostic with an untyped array literal although its third parameter is Array[int]. It was evaluated even when stringify succeeded.",
+  "correction": "Use a local Array[int] budget, and request the error reason only if the actual public stringify result is empty. Keep the exact metadata nonempty/file-open assertion. Production behavior and metadata geometry fields remain unchanged.",
+  "next": "Affected corrected graphical check only; retain original incomplete run/pixels/empty file, loading48/focused57/extremes82 scopes unchanged. No imported/shared/runtime source changes.",
+  "promotion_preflight": "One duplicate-copy guard rejected before mutation. Manifest then strictly refused old503 pin before creating output or launching Godot; no engine job/result. Existing identical archived review reused, source507 promoted exactly."
+}
