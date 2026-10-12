@@ -16,6 +16,7 @@ const Cue = preload("res://scripts/cues/interaction_cue.gd")
 const WORLD_REVISION: int = 1
 const COMPLETE_ID: String = "court-clear"
 const EXIT_ID: String = "court-exterior"
+const CONTACT_APPROACH_DISTANCE: float = 4.5
 
 var scheduler: CinderThreatScheduler
 var sources: Dictionary = {}
@@ -145,9 +146,14 @@ func _physics_process(_delta: float) -> void:
 	_refresh_frames()
 	if _awaiting_room >= 0:
 		if _awaiting_room == 3:
-			_boss_area.set_deferred("monitoring", true)
-			_boss_cue.present("available", "contact")
-			if not _pending_boss_contact and _boss_area.monitoring and _boss_area.overlaps_body(hero): _boss_contact(hero)
+			# The cleared approach checkpoint precedes the local throne approach.
+			# Expose its full contact box/glyph only in that reachable local view;
+			# no distant available cue is omitted from an accepted optical unit.
+			var near: bool = _boss_contact_near()
+			_boss_area.set_deferred("monitoring", near)
+			if near: _boss_cue.present("available", "contact")
+			else: _boss_cue.clear()
+			if near and not _pending_boss_contact and _boss_area.monitoring and _boss_area.overlaps_body(hero): _boss_contact(hero)
 		elif hero.global_position.z <= (-6.0 if _awaiting_room == 1 else -14.0): _begin_room(_awaiting_room)
 		return
 	if room == 1 and formation == "parallel" and _parallel_demonstrated():
@@ -401,14 +407,14 @@ func _finish_king_defeat() -> void:
 
 
 func _boss_contact(body: Node3D) -> void:
-	if _pending_boss_contact or body != hero or not _live_boundary() or _awaiting_room != 3 or not _boss_area.overlaps_body(hero): return
+	if _pending_boss_contact or body != hero or not _live_boundary() or _awaiting_room != 3 or not _boss_contact_near() or not _boss_area.monitoring or not _boss_area.overlaps_body(hero): return
 	_pending_boss_contact = true
 	_commit_boss_contact.call_deferred(body)
 
 
 func _commit_boss_contact(body: Node3D) -> void:
 	_pending_boss_contact = false
-	if not _live_boundary() or body != hero or _awaiting_room != 3 or not _boss_area.overlaps_body(hero): return
+	if not _live_boundary() or body != hero or _awaiting_room != 3 or not _boss_contact_near() or not _boss_area.monitoring or not _boss_area.overlaps_body(hero) or not presentation_error().is_empty(): return
 	# Native source lifecycle changes run after Area query delivery has ended.
 	_boss_cue.present("spent", "contact")
 	_boss_area.set_deferred("monitoring", false)
@@ -426,10 +432,14 @@ func _encounter_id() -> String:
 	return "court-king" if room >= 3 else "court-" + Layout.ROOM_IDS[room]
 
 
+func _boss_contact_near() -> bool:
+	return _awaiting_room == 3 and is_instance_valid(hero) and Vector2(hero.global_position.x - Layout.BOSS_CONTACT_POSITION.x, hero.global_position.z - Layout.BOSS_CONTACT_POSITION.z).length() <= CONTACT_APPROACH_DISTANCE
+
+
 func _refresh_objective() -> void:
 	_sync_art_presentation()
 	if is_completed(): objective_text = "THE COURT IS OPEN\nCONTACT THE EXTERIOR CURTAIN"; return
-	if _awaiting_room == 3: objective_text = "THE KING AWAITS\nCONTACT THE THRONE APPROACH"; return
+	if _awaiting_room == 3: objective_text = "THE KING AWAITS\n" + ("CONTACT THE THRONE APPROACH" if _boss_contact_near() else "DASH TO THE THRONE APPROACH"); return
 	if _awaiting_room >= 0: objective_text = "COURT CLEARED\nDASH TO THE NEXT OPEN COURT"; return
 	match room:
 		0: objective_text = "CURTAIN GUARD\nDASH BESIDE THE THRUST · PRIMARY AT RECOVERY"
@@ -498,7 +508,7 @@ func _camera_framing_points() -> Array:
 	if not _running or not is_instance_valid(hero) or not is_instance_valid(shared_shell): return []
 	var points: Array = []
 	if is_completed(): return _contact_points(_exit_area, _exit_cue)
-	if _awaiting_room == 3: points.append_array(_contact_points(_boss_area, _boss_cue))
+	if _boss_contact_near(): points.append_array(_contact_points(_boss_area, _boss_cue))
 	for id: String in _current_ids():
 		var retained: Variant = sources.get(id)
 		if not is_instance_valid(retained) or not retained is CharacterBody3D or retained != _retained.get(id) or retained.is_queued_for_deletion() or retained.get_parent() != self or not retained.is_inside_tree(): return [Vector3.INF]
@@ -637,6 +647,7 @@ func _native_runtime_error() -> String:
 	if not is_instance_valid(_whole_art) or _whole_art.get_parent() != self or get_node_or_null("WholeCourtArt") != _whole_art: return "Retain actual authored whole court art"
 	error = String(_whole_art.call("binding_error"))
 	if not error.is_empty(): return error
+	if not _same(_whole_art.call("presentation_state"), _expected_art_state()): return "Actual scenic presentation differs from the court's native stage/helper/completion state"
 	if not Codec.keys_error(sources, Layout.SOURCES.keys()).is_empty() or not Codec.keys_error(_trusted_configurations, Layout.SOURCES.keys()).is_empty(): return "Retain the exact eight native identities/configurations"
 	for id: String in Layout.SOURCES:
 		var raw: Variant = sources.get(id)
@@ -835,13 +846,20 @@ func restore_state(saved: Dictionary) -> bool:
 
 func _sync_art_presentation() -> void:
 	if not is_instance_valid(_whole_art): return
-	var stage: String = "exterior" if is_completed() else Layout.ROOM_IDS[room]
-	var exterior: String = "open" if _exterior_open else ("available" if is_completed() else "closed")
+	var expected: Dictionary = _expected_art_state()
+	var stage: String = expected.stage
+	var exterior: String = expected.exterior_state
 	var key: String = stage + ":" + str(_helpers_once) + ":" + exterior
-	if key == _art_stage_key: return
+	if key == _art_stage_key:
+		if not _same(_whole_art.call("presentation_state"), expected): _construction_error = "Scenic state changed outside the actual court stage transition"
+		return
 	if _whole_art.call("set_presentation", stage, _helpers_once, exterior) != true:
 		_construction_error = "Actual whole court scenic presentation refused retained bindings"; return
 	_art_stage_key = key
+
+
+func _expected_art_state() -> Dictionary:
+	return {"stage": "exterior" if is_completed() else Layout.ROOM_IDS[room], "helpers_open": _helpers_once, "exterior_state": "open" if _exterior_open else ("available" if is_completed() else "closed")}
 
 
 func _restore_local_state(state: Dictionary) -> void:
@@ -859,8 +877,8 @@ func _restore_local_state(state: Dictionary) -> void:
 	_entry_records = _decode_native(state.entry_records); _entry_outcomes = _decode_native(state.entry_outcomes); _frames = _decode_native(state.framing)
 	_roundel_cycle = state.roundel.cycle
 	_forecast.clear(); _forecast_frames.clear(); _phase_entitlements.clear(); entry_stop_diagnostics.clear(); _pending_boss_contact = false
-	_boss_area.monitoring = _awaiting_room == 3
-	if not _present_contact_quiet(_boss_cue, "available" if _awaiting_room == 3 else "spent"):
+	_boss_area.monitoring = _boss_contact_near()
+	if not _present_contact_quiet(_boss_cue, "available" if _boss_area.monitoring else ("clear" if _awaiting_room == 3 else "spent")):
 		_fail_quiet_commit(_boss_cue.last_error); return
 	var terminal: bool = room >= 3 and state.actors["court-king"].dead and state.scheduler.encounter_id.is_empty()
 	_exit_area.monitoring = terminal
@@ -874,7 +892,7 @@ func _present_contact_quiet(cue: CinderInteractionCue, state: String) -> bool:
 	if not is_instance_valid(cue) or cue.get_parent() != self or cue.is_queued_for_deletion(): return false
 	var blocked: bool = cue.is_blocking_signals()
 	cue.set_block_signals(true)
-	var accepted: bool = cue.present(state, "contact")
+	var accepted: bool = cue.clear() if state == "clear" else cue.present(state, "contact")
 	cue.set_block_signals(blocked)
 	return accepted
 

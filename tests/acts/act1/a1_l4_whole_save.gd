@@ -68,7 +68,7 @@ func _run() -> void:
 		if not _expect(game.active_level.level_id == id and game.active_level.scene_file_path == "res://tests/fixtures/campaign/live_%s.tscn" % id.to_lower().replace("-", "_"), "only disclosed generic predecessor is installed: " + id): await _finish(); return
 		if not _expect(game.active_level.request_completion("TEST-court-entry"), "TEST predecessor public completion is setup") or not await _settle(): await _finish(); return
 		if not _expect(game.active_level.request_contact_exit("TEST-court-entry-contact", game.player), "TEST predecessor public same-Hero exit is setup") or not await _settle(): await _finish(); return
-	if not _expect(paused and game.active_level.scene_file_path == ScenePath and game.active_level.get_script().resource_path == ScriptPath and game.active_level.restore_candidate_construction_required(), "real Shell installs actual whole court and opts into fresh construction") or not _bindings(game): await _finish(); return
+	if not _expect(paused and game.active_level.scene_file_path == ScenePath and game.active_level.get_script().resource_path == ScriptPath and game.active_level.restore_candidate_construction_required(), "real Shell installs actual whole court and opts into fresh construction") or not _bindings(game) or not _scenic_state_refusal(): await _finish(); return
 	_watch(game.active_level, game.player, false)
 	var pristine: Dictionary = game.capture_campaign_snapshot()
 	if not _closed(pristine) or not _expect(pristine.level.local.room == 0 and pristine.level.local.actors["court-curtain-guard"].dormant == false and pristine.level.local.actors["court-king"].dormant == true and pristine.player.resources.hp == 23.0 and pristine.player.resources.shells == 0 and pristine.level.local.scheduler.clock_s == 0.0 and pristine.level.local.scheduler.reservations.is_empty(), "pristine actual entrance retains injured carryover/zeroammo and future dormant King/helpers"):
@@ -96,6 +96,17 @@ func _run() -> void:
 	if "--representative-helpers" in OS.get_cmdline_user_args() or "--moving-helper-save" in OS.get_cmdline_user_args():
 		if not await _representative_helpers(): await _finish(); return
 	await _finish()
+
+
+func _scenic_state_refusal() -> bool:
+	var art: Node3D = game.active_level.get("_whole_art")
+	var original: Dictionary = art.call("presentation_state")
+	var before: Dictionary = _probe(game.active_level, game.player)
+	if not _expect(art.call("set_presentation", "king2", true, "open") == true, "TEST supported scenic-state mismatch is actually installed"): return false
+	var rejected: Dictionary = game.capture_campaign_snapshot()
+	if not _expect(rejected.is_empty() and game.active_level.last_snapshot_error.contains("scenic presentation") and _probe(game.active_level, game.player) == before, "supported wrong scenic stage cannot authorize capture or mutate native gameplay"): return false
+	if not _expect(art.call("set_presentation", original.stage, original.helpers_open, original.exterior_state) == true and not game.capture_campaign_snapshot().is_empty() and _probe(game.active_level, game.player) == before, "restore original scenic state without changing native clocks/HP/progress"): return false
+	return true
 
 
 func _new_shell() -> CinderCampaignShell:
@@ -489,7 +500,16 @@ func _expect(ok: bool, label: String) -> bool:
 	if not ok:
 		failures += 1
 		push_error("FAIL: " + label)
-		if first_failure.is_empty(): first_failure = {"label": label, "paused": paused, "campaign_error": game.campaign_error if is_instance_valid(game) else "Shell absent"}
+		if first_failure.is_empty():
+			first_failure = {"label": label, "paused": paused, "campaign_error": game.campaign_error if is_instance_valid(game) else "Shell absent"}
+			if is_instance_valid(game) and is_instance_valid(game.active_level):
+				first_failure["court_room"] = game.active_level.get("room")
+				first_failure["awaiting_room"] = game.active_level.get("_awaiting_room")
+				first_failure["helper_stage"] = game.active_level.get("helper_stage")
+				first_failure["player_position"] = Codec.vector3(game.player.global_position)
+				first_failure["framing"] = game.get_camera_framing_state()
+				first_failure["native_local"] = game.active_level.call("_capture_local_state") if paused else {}
+				first_failure["entry_stop_diagnostics"] = _portable(game.active_level.get("entry_stop_diagnostics"))
 	return ok
 
 
