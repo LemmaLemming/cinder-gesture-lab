@@ -1,5 +1,15 @@
 # Act 1 — current progress
 
+## Human-authorized recovery and continuation — 2026-10-13T01:15:27.318844+00:00
+
+The human's direct Integration-chat message `01a132ca-d9d5-7572-8df5-c8d6e58fc6f8` says “tell all agents to continue.” This owner verified the actual user message through read_thread; canonical resume REQUEST `1de7966f-0b98-444b-839e-bf188550c6cf` revokes the 12 October pause. Work resumes in the same assigned checkout, branch and six prefixes; the original pause record remains historical.
+
+Recovery HEAD is `a70cc1ee23d7c8f41ee24644dc83221ece9fe471`. Bounded independent verification finds no deviations: all 10 focused bindings match the current/submitted files; all eight runtime/scene/art/fixture sources match executed frozen originals; both later readiness manifests match their qualified final bytes; all 461 prior UID identities match SHA256/size/mode. The original HANDOFF `3910bf36-4e9e-451d-bae5-1d95e653c92b` and submitted `9f1d6fe0` remain intact. All own engine/import/portrait/queue handles are terminal; no new check is needed merely because work resumed.
+
+Integration resumes isolated production registration and acceptance. L4 remains unaccepted; Act 1 has 3/8 accepted and the campaign has 14/24. Current owner373/0 and representative portrait reuse retain their exact limits. L5 implementation starts only after canonical L4 ACCEPTED. Upcoming native sampled-Blink request `0ef60b92-f0e9-4782-ae54-011544cfb375` and first-hand G20/G22/G26 read-only preparation are saved; no private shared substitute or new gear/ability allocation exists.
+
+The latest get_goal still reports the automatic goal control paused. Its available status API has no resume operation; computer use refused Codex access for safety reasons. This control limitation is reported separately from verified human authorization to continue the campaign work. No completed/blocked goal claim, reset, duplicate owner, source/evidence rewrite or human implementation permission gate is introduced.
+
 ## Human-requested pause — 2026-10-12T10:03:59.131899+00:00
 
 The human explicitly requested all agents pause; direct Integration-chat user message01a12f8c and canonicalREQUEST37f2b1aa independently verified. Current work is saved, all own native/import/portrait handles CLOSED and supporting children completed/stopped. SubmittedL4 HANDOFF3910bf36/current373/0/Shared53 remains pending independentproductionregistration/ACCEPTED; Act1 3/8,campaign14/24, full8desktopobjective incomplete. L5 has read-onlypreparation/REQUEST0ef60b92 only, no implementation/allocation. Preserve all originalfailures/settings/UIDs/queue locks. [Recovery point](PAUSE_RECOVERY_2026-10-12.md). Resume only on explicit human instruction.
