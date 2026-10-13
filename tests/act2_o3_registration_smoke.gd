@@ -66,12 +66,19 @@ func _run() -> void:
 	for id: String in ["first_scout", "second_handler"]:
 		if not await _test_defeat(id) or not await _wait_quiet(id):
 			_finish(); return
+	# Reuse the original passing loading fixture's supported pre-CP approach.
+	# This lets the native following camera approach the final pocket; no
+	# camera setter, widened bounds, new source cycle or gate bypass is used.
+	if not await _test_contact(Vector3(0, 0.04, -21.8)):
+		_finish(); return
+	_expect(_state().stage_index == 2 and not _state().checkpoint_committed and int(_native("final_scout").cycle) == 0 and int(_native("final_handler").cycle) == 0, "pre-checkpoint approach cannot admit either final source")
 	if not await _test_contact(CP_AT):
 		_finish(); return
 	_shell.request_pause()
 	await _settle()
 	var checkpoint: Dictionary = _shell.attempts.state().side_attempt.checkpoint
 	var original_input: Dictionary = _shell.get_input_observation_state()
+	print("O3 actual canonical checkpoint framing: ", Exact.stringify({"camera_focus": checkpoint.shell.camera_focus, "hero": _encode(_shell.player.global_position), "camera": _encode(_shell.camera.global_position), "level_points": _encode(_shell.active_level.camera_framing_points())}))
 	if not _expect(paused and checkpoint.level.progress.checkpoint_id == CP_ID and checkpoint.level.local.stage_index == 3 and checkpoint.level.local.defeated_ids == ["first_scout", "second_handler"] and int(checkpoint.level.local.exchange.records.final_scout.cycle) == 0 and int(checkpoint.level.local.tools.final_handler.cycle) == 0 and not _same(checkpoint, entrance), "actual latest before-third contact durably captures a whole earlier unit before final admissions"):
 		_finish(); return
 	_shell.menu.resume_requested.emit()
