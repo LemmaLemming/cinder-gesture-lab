@@ -1,0 +1,826 @@
+{
+  "actual_preparation_HEAD": "f142bb5152f9733996a91dd1497d4463b7cb5aad",
+  "actual_preparation_status_raw": "?? docs/acts/act2/evidence/shared53-adoption/actual-adoption-independent-review.json\n",
+  "all_numeric_constants_exact": true,
+  "at_utc": "2026-10-13T05:52:31.704452+00:00",
+  "before_HEAD_policy": "Unchanged helper reads actual clean HEAD and all dynamic custody counts at invocation. The f142 handed candidate remains original; later owner-only sealing commit need not regenerate this helper.",
+  "candidate": {
+    "bytes": 25550,
+    "lines": 442,
+    "path": "/private/tmp/cinder_a2_shared54_preserve_adopt.py",
+    "sha256": "a7299851b7b0e82876dae9e83d36d3dae4b5f63104a97309e629bfd3db83cd9f",
+    "stat_mode": "0o644"
+  },
+  "canonical_identity": {
+    "api_revision": "campaign-shared-54",
+    "message_id": "cbd6e5ac-df5f-4b9c-84a5-df29a82a35a1",
+    "message_sha256": "1e68c8a86c93bcb96f9f6d86e24ad7ef5576b2fbf2f19ebb56eda62bcb260234",
+    "preceding_baseline": "8cb1da79ba000d758fe677054782e23f48cb6dfd",
+    "publication": "00635be0456df5ac3e0eacdd9f8b08dbe4223fc4"
+  },
+  "clean_precondition_observation": "One owner Shared53 review is currently untracked; Root will seal it before invocation. Unchanged refuse_dirty includes untracked originals.",
+  "controlled_unified_diff": "--- frozen-shared53-helper\n+++ tmp-shared54-helper\n@@ -1,7 +1,7 @@\n #!/usr/bin/env python3\n \"\"\"Prepared Root-run preservation helper. Never imported or invoked by its author.\n From the assigned Act2 checkout, AFTER owned jobs are closed and changes sealed:\n-  python3 /private/tmp/cinder_a2_shared53_preserve_adopt.py --closed-owned-jobs\n+  python3 /private/tmp/cinder_a2_shared54_preserve_adopt.py --closed-owned-jobs\n Only this explicit main invocation may write its new receipt and merge the exact\n published supplement. No Godot/import/helper subprocess or automatic rollback.\n \"\"\"\n@@ -18,13 +18,13 @@\n import sys\n \n ASSIGNED_CHECKOUT = \"/Users/howardchen/.codex/worktrees/campaign-act2/video game idea\"\n-PUBLICATION = \"8cb1da79ba000d758fe677054782e23f48cb6dfd\"\n-BASE = \"ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f\"\n+PUBLICATION = \"00635be0456df5ac3e0eacdd9f8b08dbe4223fc4\"\n+BASE = \"8cb1da79ba000d758fe677054782e23f48cb6dfd\"\n OWNED = (\"scripts/acts/act2/\", \"scenes/acts/act2/\", \"assets/acts/act2/\",\n          \"data/campaign/act2/\", \"tests/acts/act2/\", \"docs/acts/act2/\")\n GAME_FOLDERS = (\"scripts\", \"scenes\", \"assets\", \"data\", \"tests\", \"docs\", \"captures\")\n SETTINGS = (\"project.godot\", \".cinder/local.json\", \".vscode/settings.json\")\n-OUT_NAME = \"docs/acts/act2/evidence/shared53-adoption\"\n+OUT_NAME = \"docs/acts/act2/evidence/shared54-adoption\"\n UID_SUFFIXES = (\".gd.uid\", \".gdshader.uid\")\n UID_PATTERN = re.compile(r\"uid://[a-z0-9]+\")\n \n@@ -282,7 +282,7 @@\n         raise RuntimeError(\"Exact published supplement is unavailable\")\n     old_head = git(root, \"rev-parse\", \"HEAD\").decode().strip()\n     if not ancestor(root, BASE, PUBLICATION) or not ancestor(root, BASE, old_head):\n-        raise RuntimeError(\"Actual HEAD/target lack the required published Shared52 baseline\")\n+        raise RuntimeError(\"Actual HEAD/target lack the required published Shared53 baseline\")\n     if ancestor(root, PUBLICATION, old_head):\n         raise RuntimeError(\"Exact supplement already adopted; refuse duplicate receipt/merge\")\n     output = safe_path(root, OUT_NAME)\n@@ -296,7 +296,7 @@\n     all_incoming = incoming_delta(root, BASE, PUBLICATION)\n     owned_incoming = {name: row for name, row in all_incoming.items() if name.startswith(OWNED)}\n     incoming = {name: row for name, row in all_incoming.items() if not name.startswith(OWNED)}\n-    # Shared53 contains our already accepted O2. Every incoming owned path\n+    # Shared54 may contain already accepted Act2 content. Every incoming owned path\n     # must already exist; immutable evidence/runtime must match exactly. Only\n     # the owner's newer committed notes may differ, and the merge keeps them.\n     for name, row in owned_incoming.items():\n@@ -352,14 +352,14 @@\n                        \"shared_conflicts\": shared_conflicts, \"scope_complete\": False, \"rollback_performed\": False})\n             raise RuntimeError(\"Merge precommit failed outside owned preservation; no automatic rollback\")\n         # Explicit scope-preserving merge resolution, not rollback: Root's\n-        # imported O2 overlaps our exact accepted submission. Restore every assigned\n+        # published Act2 overlaps our exact accepted submission. Restore every assigned\n         # prefix from the captured clean owner HEAD before committing, so newer\n         # owner notes and all original runtime/evidence/sidecars stay exact.\n         restored = subprocess.run([\"git\", \"restore\", \"--source=\" + old_head, \"--staged\", \"--worktree\", \"--\", *OWNED],\n                                   cwd=root, stdout=log, stderr=subprocess.STDOUT)\n         if restored.returncode != 0 or git(root, \"diff\", \"--name-only\", \"--diff-filter=U\", \"-z\"):\n             raise RuntimeError(\"Owned preservation resolution failed; original receipt/log retained\")\n-        committed = subprocess.run([\"git\", \"commit\", \"-m\", \"Merge compatible Shared53 publication into Act 2 preserving originals\"],\n+        committed = subprocess.run([\"git\", \"commit\", \"-m\", \"Merge compatible Shared54 publication into Act 2 preserving originals\"],\n                                    cwd=root, stdout=log, stderr=subprocess.STDOUT)\n         if committed.returncode != 0:\n             raise RuntimeError(\"Preserving merge commit failed; original receipt/log retained\")\n@@ -412,7 +412,7 @@\n     if unexpected_status:\n         findings.append(\"unexpected final status outside new receipt\")\n     receipt = {\"at\": datetime.datetime.now(datetime.timezone.utc).isoformat(), \"scope_complete\": not findings,\n-               \"status\": \"exact preserving Shared53 publication adoption\" if not findings else \"post-merge custody verification FAILED\",\n+               \"status\": \"exact preserving Shared54 publication adoption\" if not findings else \"post-merge custody verification FAILED\",\n                \"publication\": PUBLICATION, \"preceding_actual_baseline\": BASE,\n                \"merge\": head, \"parents\": parents, \"captured_actual_before_head\": old_head,\n                \"before_sha256\": record(output / \"before.json\")[\"sha256\"],\n",
+  "current_HEAD_to_target_delta_qualification": {
+    "Git_name_status_read": "--no-renames preserves exact path semantics, matching helper tree comparison. No rename heuristic or source move interpreted.",
+    "exact_name_status_equal_BASE53_to_target54_delta": true,
+    "nonowned_nonsettings_paths": 22294,
+    "observed_HEAD": "f142bb5152f9733996a91dd1497d4463b7cb5aad",
+    "owned_paths_intentionally_retained_from_captured_HEAD": 7794,
+    "policy": "The helper uses BASE53\u219254 shared incoming delta and dynamically captures the invocation ownerHEAD, never interprets newer O3 owned rows as deletions.",
+    "settings_paths_intentionally_retained": 0,
+    "total_paths_before_preservation_filter": 30088
+  },
+  "executable_mask_0o111_unchanged": true,
+  "findings": [],
+  "guard_qualification": [
+    "Assigned checkout, codex branch and clean tracked/untracked status required; closed-owned-jobs is explicit operator declaration.",
+    "BASE ancestry and exact target identity checked before capture; duplicate adoption/output refused.",
+    "Six owned prefixes, actual Git blobs/modes and all physical originals/history/.gdignore/recursive UIDs captured. Only .gdignore-aware identities count active; old evidence copies retained unchanged.",
+    "Any owned overlap must already exist; runtime/evidence must equal target, with only newer owner notes retained. Whole six-prefix restore uses captured clean HEAD, never global ours.",
+    "All nonowned incoming paths preflight base-or-target Git binding, UID/archive/boundary custody, settings exclusion and no unindexed overwrite.",
+    "Long read-only capture rechecks clean HEAD/physical/settings before mutation. One explicit no-commit merge, only owned conflicts allowed, captured owned restore, exact two-parent commit.",
+    "Post-merge verifies all original rows, exact incoming physical/Git hashes/modes, source UID uniqueness/additions, three settings, merge parents and final status. Findings retain receipt with no rollback.",
+    "Canonical ledgers/catalogue have no proposed alteration; helper does not allocate, merge stale private ledgers or execute engine/ability/equipment commands.",
+    "No engine/import/native/source/visual acceptance credit from this helper or publication delivery."
+  ],
+  "incoming_delta": {
+    "change_counts": {
+      "A": 22279,
+      "M": 15
+    },
+    "definition": "Exact BASE53\u2192publication54 Git tree delta; owner HEADf142 independently contains BASE53. Actual invocation repeats native preflight; no current globalours strategy.",
+    "local_setting_path_count": 0,
+    "local_setting_paths": [],
+    "modified_rows_exact_target_pins": [
+      {
+        "blob": "3b4375bae815fee232615459dc96d550b095928c",
+        "bytes": 16350,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "README.md",
+        "publication_sha256": "6caa11cced9c44fa8a632fd5248befcaf448ee7315c9163dc43d8eca50249124"
+      },
+      {
+        "blob": "dbb9bcc19a3c322bbc650d26ec2b4d7fd9e09143",
+        "bytes": 165644,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "data/campaign/act1/ACT_MEMORY.md",
+        "publication_sha256": "1e56db2859db0e701913bd0f1fe004845023824df2a2f101b79f5bd493c16c16"
+      },
+      {
+        "blob": "7f06b0fc39c3cbcdd19724feac8a99522b3c3c00",
+        "bytes": 164883,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "data/campaign/act1/PROGRESS.md",
+        "publication_sha256": "57a2c3e0106b5bdbd92e9473daaf732ee0906e8bec1eff9a99fd5b9ed049e9ff"
+      },
+      {
+        "blob": "9efa77230e85234c5465f2a72b25a56dc570a978",
+        "bytes": 134546,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "data/campaign/act1/levels/A1-L3.md",
+        "publication_sha256": "842b34bf0f48fa40e90acf36473a55ad92c52c7a2c77e30f5f124dfd645f0f99"
+      },
+      {
+        "blob": "1f0baab80cd8b174ca759a5e6dbe214a98ba239b",
+        "bytes": 11547,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "data/campaign/registry.json",
+        "publication_sha256": "9d10499813c60fe6a95522e9773875d427cba8c6b9c4ba2746f036e7d3ab9e3d"
+      },
+      {
+        "blob": "41d3ad09ee2b353088849758520f501da997340f",
+        "bytes": 15399,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "docs/acts/act1/L2_ACCEPTANCE_REVIEW.md",
+        "publication_sha256": "380e0006a6f771d2717689af1831160eaff4cc03ba5f4735c824521ccdd373f2"
+      },
+      {
+        "blob": "b0a2fa9c1a2b0400bbc31304d14113967193b2dc",
+        "bytes": 381,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "docs/acts/act1/PROGRESS.md",
+        "publication_sha256": "b0151923251900c77d19b6ac8967c609e18ec9978b6537b88109bcb4c10d58ba"
+      },
+      {
+        "blob": "9b6c23163009195a4f4b20955f6c48e7777521a2",
+        "bytes": 22967,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "docs/development/CAMPAIGN_MEMORY.md",
+        "publication_sha256": "f7263157caf6a83f191e8753754d10cea1f63b6a9dcc5e72a118dfae17363896"
+      },
+      {
+        "blob": "054880855168f9f37aa92b38aae72f5b82e76daf",
+        "bytes": 4952,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "docs/development/LEVEL_ACCEPTANCE.md",
+        "publication_sha256": "699c1d26dd5bf447958c053d724c37d2761e83f4190d35a471c83bd16952acf9"
+      },
+      {
+        "blob": "b8f692b500b10aadb2e4c0443ab373bc8c3127ce",
+        "bytes": 6568,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "docs/development/LEVEL_TESTING_DELEGATION.md",
+        "publication_sha256": "73d72c481af45261741475b867c5ac371642a089e531e9f5ae7a8fc5382cc296"
+      },
+      {
+        "blob": "4ea5956b474aecc1d954f49dc2b096d2fc632e49",
+        "bytes": 114009,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "docs/development/SHARED_CONTRACT.md",
+        "publication_sha256": "34fb4d87c500d3680c0c372436c7e905b90470d3088fe924b91d6a7eb1cc1a4e"
+      },
+      {
+        "blob": "f394987a1ce99e3f75d92984bddd83438385a4fa",
+        "bytes": 208209,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "docs/development/SHARED_PROGRESS.md",
+        "publication_sha256": "ff406651c522b6460e8ba2bc701469e1635bf235727fcd3bf57c79d6eb0eee29"
+      },
+      {
+        "blob": "8d5ed38cac5b4622da62053ab7067f4a5005eb0c",
+        "bytes": 104912,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "scripts/acts/act1/mushroom_selenite.gd",
+        "publication_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932"
+      },
+      {
+        "blob": "428f48194941d502dc4886e4f05dad1cf0a5fe71",
+        "bytes": 29295,
+        "change": "M",
+        "git_mode": "100755",
+        "path": "scripts/dev/dev.py",
+        "publication_sha256": "4af0970db3b29d3525747047093ee1b8ff03816050b0788debdb7fb4f58d4c4a"
+      },
+      {
+        "blob": "d773ff7160e503617c8277f3e08ddb72854dabcf",
+        "bytes": 39038,
+        "change": "M",
+        "git_mode": "100644",
+        "path": "tests/acts/act1/a1_l3_spore_component.gd",
+        "publication_sha256": "3dd281b5180184329b81850d86a0472ee9e712342238409c795de879255dd737"
+      }
+    ],
+    "new_nonarchive_UIDs_exact_target_pins": [
+      {
+        "blob": "605277d7b5dbbcd29af07c371ce4d2be08b502fd",
+        "bytes": 19,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://cci5pw8vlh38",
+        "path": "scripts/acts/act1/selenite_court.gd.uid",
+        "publication_sha256": "cb7962c2271b43a1c08d7ba618b70be1a755d5136e58b8a6ff58bb17a0ecc942"
+      },
+      {
+        "blob": "2f2feb043d3b8e919eba7d3d0815bcb650204285",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://bur1ty8gqobtd",
+        "path": "scripts/acts/act1/selenite_court_art.gd.uid",
+        "publication_sha256": "3afb009a84d133eb532fca3ffa18a743ba3e6fdd1689cdb7e5d096bb626efb0c"
+      },
+      {
+        "blob": "77e0b73943c053fc529d0b3bbf4adab95aa9535a",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://dl28ct8hvhtk3",
+        "path": "scripts/acts/act1/selenite_court_codec.gd.uid",
+        "publication_sha256": "a02125cdc08eb8f7add178d49bebdfdf2bb59424f8cab1e859115bb417301c0c"
+      },
+      {
+        "blob": "01e09f27847a6bb06cd34ec73b5e2f8f00d64556",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://bbyttqbhmqooi",
+        "path": "scripts/acts/act1/selenite_court_greybox.gd.uid",
+        "publication_sha256": "2b4f759c6e4cc6633e33b7c3d49e1cebc68bd3a709bbd5710f20a7a2a57e4d05"
+      },
+      {
+        "blob": "0d2d61e6f9c34e69544503326e452d5420930d10",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://dv7drwoyl4d67",
+        "path": "scripts/acts/act1/selenite_court_layout.gd.uid",
+        "publication_sha256": "74ab93d3a59d7896df376e88681637b222059a3021862a15b3a014bf9e580c96"
+      },
+      {
+        "blob": "f7c075e9a77281a97920ef51ec013841b73bfb33",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://bicpcdm3ek6jq",
+        "path": "scripts/acts/act1/selenite_court_presented.gd.uid",
+        "publication_sha256": "bd43e435e3f30d095999e798f7538351d04e89825e74b523a08bb42624c52399"
+      },
+      {
+        "blob": "3775ab96776ae1a12858e657c4524c058146d104",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://bdx3gdato8too",
+        "path": "scripts/acts/act1/selenite_court_whole_art.gd.uid",
+        "publication_sha256": "ae0d8f3c6edf9427ae1726c6b2b81aaf09296b8dc3e1aeb852f5bb4c39efbfc5"
+      },
+      {
+        "blob": "136f1674bcff3488719614be4aa1f3ad7b0434d6",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://d2j6ckdffxsli",
+        "path": "scripts/acts/act1/selenite_king.gd.uid",
+        "publication_sha256": "37c77d7254598fcbba4f1769a37d630797183c11da4c9be1d8f190558a12d667"
+      },
+      {
+        "blob": "91699681f9c2e1cf74ec1810b013217c980b1668",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://bc0l3e008khw1",
+        "path": "scripts/acts/act1/selenite_king_art.gd.uid",
+        "publication_sha256": "2254c38cd3603690f3d1b7113f246403b567338ee1d71f2f322ba4e069589426"
+      },
+      {
+        "blob": "eccb73e60f291d74f7921e9f76c0ce5ce07cdf8a",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://dv1sjyr2bq82g",
+        "path": "scripts/acts/act1/selenite_king_greybox.gd.uid",
+        "publication_sha256": "15bace841fc45efbe6a1d20bb684c38f1def64d5589cc156dc2422280da7ce67"
+      },
+      {
+        "blob": "ea839b49568666c3e7e71d906947a579303e6aab",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://cxpqe8wrdc7in",
+        "path": "tests/act1_l4_registration_smoke.gd.uid",
+        "publication_sha256": "e951bbec9053815a015a7849d93fd0fdfd93844d86945dc29569f63b269f5564"
+      },
+      {
+        "blob": "0c3ea3deed02da1d846f9fc91cc9c97e4b4767d5",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://c41fktght3sou",
+        "path": "tests/acts/act1/a1_l4_court_art.gd.uid",
+        "publication_sha256": "4ad5b924f4f7665196c68af1b5da8e2b8163b621d9ab72b61ad85c4664f6ff25"
+      },
+      {
+        "blob": "4665ffb5b1c5dbb581b7882b1b2a5cc216f434a2",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://dwhaduqcq3tuh",
+        "path": "tests/acts/act1/a1_l4_curtain_greybox.gd.uid",
+        "publication_sha256": "0987799de4f6b82f979948c7d2d94bfaa60ec0b7937adc7860a2c00fda25403f"
+      },
+      {
+        "blob": "e674108073be9e270d5bd93156c080622f362d93",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://b12xnqqbrigeo",
+        "path": "tests/acts/act1/a1_l4_king_greybox.gd.uid",
+        "publication_sha256": "50939c2f9e616a4c84173734bb8f82446645be258fdb1b1c72be965e808c885f"
+      },
+      {
+        "blob": "676492695bb1f1e6db3e7eee1500d6cb33682aa8",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://c14qgimh4buju",
+        "path": "tests/acts/act1/a1_l4_whole_entry.gd.uid",
+        "publication_sha256": "9524c711314c0e4096a65ece5eb9b995ccf8f1260826efaedc4e1db53c0a5dfd"
+      },
+      {
+        "blob": "adb4625c94eb2c9761d81d017ed7e7f56ccaa647",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://c2j5tp1gfkg2u",
+        "path": "tests/acts/act1/a1_l4_whole_portrait.gd.uid",
+        "publication_sha256": "38ee1c84a851b545effab34067243c2f00f00665fb2486b621c3631a89248ffc"
+      },
+      {
+        "blob": "67d39d967b1cb18ad002c000c6a5f22a004a2f72",
+        "bytes": 20,
+        "change": "A",
+        "git_mode": "100644",
+        "identity": "uid://c8bdtv8ierw2r",
+        "path": "tests/acts/act1/a1_l4_whole_save.gd.uid",
+        "publication_sha256": "0cabb693f4bd44f328188a30aa434eba5a4004b0ca5f5b61af22789aa1ab6181"
+      }
+    ],
+    "nonarchive_count": 70,
+    "nonarchive_paths": [
+      {
+        "change": "M",
+        "path": "README.md"
+      },
+      {
+        "change": "A",
+        "path": "assets/acts/act1/court/environment_manifest.json"
+      },
+      {
+        "change": "A",
+        "path": "assets/acts/act1/court/king_manifest.json"
+      },
+      {
+        "change": "A",
+        "path": "assets/acts/act1/court/whole_environment_manifest.json"
+      },
+      {
+        "change": "M",
+        "path": "data/campaign/act1/ACT_MEMORY.md"
+      },
+      {
+        "change": "M",
+        "path": "data/campaign/act1/PROGRESS.md"
+      },
+      {
+        "change": "M",
+        "path": "data/campaign/act1/levels/A1-L3.md"
+      },
+      {
+        "change": "A",
+        "path": "data/campaign/act1/levels/A1-L4-art-plan.md"
+      },
+      {
+        "change": "A",
+        "path": "data/campaign/act1/levels/A1-L4-equipment-query.json"
+      },
+      {
+        "change": "A",
+        "path": "data/campaign/act1/levels/A1-L4-formation-design-query-2026-10-12.json"
+      },
+      {
+        "change": "A",
+        "path": "data/campaign/act1/levels/A1-L4.md"
+      },
+      {
+        "change": "M",
+        "path": "data/campaign/registry.json"
+      },
+      {
+        "change": "A",
+        "path": "docs/acts/act1/A1_L4_FOCUSED_HANDOFF.md"
+      },
+      {
+        "change": "M",
+        "path": "docs/acts/act1/L2_ACCEPTANCE_REVIEW.md"
+      },
+      {
+        "change": "A",
+        "path": "docs/acts/act1/L4_FOCUSED_SOURCE_BINDINGS.json"
+      },
+      {
+        "change": "A",
+        "path": "docs/acts/act1/L4_WHOLE_PORTRAIT_REVIEW.json"
+      },
+      {
+        "change": "M",
+        "path": "docs/acts/act1/PROGRESS.md"
+      },
+      {
+        "change": "A",
+        "path": "docs/acts/act1/SYSTEM_UPDATE_PAUSE_2026-10-09.md"
+      },
+      {
+        "change": "A",
+        "path": "docs/development/ACT1_L4_ACCEPTANCE.md"
+      },
+      {
+        "change": "M",
+        "path": "docs/development/CAMPAIGN_MEMORY.md"
+      },
+      {
+        "change": "A",
+        "path": "docs/development/FOCUSED_FRONTIER_SUPPORT_20261012.md"
+      },
+      {
+        "change": "M",
+        "path": "docs/development/LEVEL_ACCEPTANCE.md"
+      },
+      {
+        "change": "M",
+        "path": "docs/development/LEVEL_TESTING_DELEGATION.md"
+      },
+      {
+        "change": "A",
+        "path": "docs/development/NATIVE_BOUNDARY_STAGE_PROFILE.md"
+      },
+      {
+        "change": "A",
+        "path": "docs/development/PAUSED_RECOVERY_20261012.md"
+      },
+      {
+        "change": "A",
+        "path": "docs/development/PAUSED_RECOVERY_20261013.md"
+      },
+      {
+        "change": "A",
+        "path": "docs/development/PROTOCOL_CONFIGURATION_EXPERIMENT.md"
+      },
+      {
+        "change": "M",
+        "path": "docs/development/SHARED_CONTRACT.md"
+      },
+      {
+        "change": "M",
+        "path": "docs/development/SHARED_PROGRESS.md"
+      },
+      {
+        "change": "A",
+        "path": "scenes/acts/act1/a1_l4.tscn"
+      },
+      {
+        "change": "A",
+        "path": "scenes/acts/act1/a1_l4_court_art_preview.tscn"
+      },
+      {
+        "change": "A",
+        "path": "scenes/acts/act1/a1_l4_curtain_greybox.tscn"
+      },
+      {
+        "change": "A",
+        "path": "scenes/acts/act1/a1_l4_king_greybox.tscn"
+      },
+      {
+        "change": "M",
+        "path": "scripts/acts/act1/mushroom_selenite.gd"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court.gd"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_art.gd"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_art.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_codec.gd"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_codec.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_greybox.gd"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_greybox.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_layout.gd"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_layout.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_presented.gd"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_presented.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_whole_art.gd"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_court_whole_art.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_king.gd"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_king.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_king_art.gd"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_king_art.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_king_greybox.gd"
+      },
+      {
+        "change": "A",
+        "path": "scripts/acts/act1/selenite_king_greybox.gd.uid"
+      },
+      {
+        "change": "M",
+        "path": "scripts/dev/dev.py"
+      },
+      {
+        "change": "A",
+        "path": "tests/act1_l4_registration_smoke.gd"
+      },
+      {
+        "change": "A",
+        "path": "tests/act1_l4_registration_smoke.gd.uid"
+      },
+      {
+        "change": "M",
+        "path": "tests/acts/act1/a1_l3_spore_component.gd"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_court_art.gd"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_court_art.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_curtain_greybox.gd"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_curtain_greybox.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_king_greybox.gd"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_king_greybox.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_whole_entry.gd"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_whole_entry.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_whole_portrait.gd"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_whole_portrait.gd.uid"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_whole_save.gd"
+      },
+      {
+        "change": "A",
+        "path": "tests/acts/act1/a1_l4_whole_save.gd.uid"
+      }
+    ],
+    "owned_path_count": 0,
+    "owned_paths": [],
+    "path_count": 22294
+  },
+  "literal_rules": [
+    {
+      "from": "cinder_a2_shared53_preserve_adopt.py",
+      "occurrences": 1,
+      "to": "cinder_a2_shared54_preserve_adopt.py"
+    },
+    {
+      "from": "PUBLICATION = \"8cb1da79ba000d758fe677054782e23f48cb6dfd\"",
+      "occurrences": 1,
+      "to": "PUBLICATION = \"00635be0456df5ac3e0eacdd9f8b08dbe4223fc4\""
+    },
+    {
+      "from": "BASE = \"ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f\"",
+      "occurrences": 1,
+      "to": "BASE = \"8cb1da79ba000d758fe677054782e23f48cb6dfd\""
+    },
+    {
+      "from": "OUT_NAME = \"docs/acts/act2/evidence/shared53-adoption\"",
+      "occurrences": 1,
+      "to": "OUT_NAME = \"docs/acts/act2/evidence/shared54-adoption\""
+    },
+    {
+      "from": "required published Shared52 baseline",
+      "occurrences": 1,
+      "to": "required published Shared53 baseline"
+    },
+    {
+      "from": "# Shared53 contains our already accepted O2. Every incoming owned path",
+      "occurrences": 1,
+      "to": "# Shared54 may contain already accepted Act2 content. Every incoming owned path"
+    },
+    {
+      "from": "# imported O2 overlaps our exact accepted submission. Restore every assigned",
+      "occurrences": 1,
+      "to": "# published Act2 overlaps our exact accepted submission. Restore every assigned"
+    },
+    {
+      "from": "Merge compatible Shared53 publication into Act 2 preserving originals",
+      "occurrences": 1,
+      "to": "Merge compatible Shared54 publication into Act 2 preserving originals"
+    },
+    {
+      "from": "exact preserving Shared53 publication adoption",
+      "occurrences": 1,
+      "to": "exact preserving Shared54 publication adoption"
+    }
+  ],
+  "original": {
+    "bytes": 25538,
+    "lines": 442,
+    "repository_path": "docs/acts/act2/evidence/shared53-adoption/preserve-adopt-original.py",
+    "sha256": "8d632e9dd86a8961062b8f1ac3473157e6534006ea72f5dd39ec636496ab8985",
+    "unchanged": true
+  },
+  "preservation_functions_AST_unchanged": [
+    "active_uids",
+    "add_git_bytes",
+    "ancestor",
+    "blob_records",
+    "compare_preserved",
+    "digest",
+    "git",
+    "incoming_delta",
+    "incoming_preflight",
+    "indexed",
+    "physical_inventory",
+    "record",
+    "refuse_dirty",
+    "safe_path",
+    "status_rows",
+    "tree",
+    "write_json"
+  ],
+  "registry_direct_effect": {
+    "after_row": {
+      "accepted_commit": "9f1d6fe012e4f2859ea2a482a98260c1a226ba4a",
+      "act": 1,
+      "api_revision": "campaign-level-1",
+      "id": "A1-L4",
+      "kind": "main",
+      "name": "Selenite Court",
+      "next_main_id": "A1-L5",
+      "parent_level_id": null,
+      "previous_main_id": "A1-L3",
+      "readiness": "accepted",
+      "scene_path": "res://scenes/acts/act1/a1_l4.tscn",
+      "source": "docs/reference-library/act1/research/levels.json"
+    },
+    "baseline_sha256": "39b6d3f31f6a03474dcdeeaa7cf2a2238aade203f55c36cf7d2fc6672e01e88f",
+    "before_row": {
+      "accepted_commit": null,
+      "act": 1,
+      "api_revision": null,
+      "id": "A1-L4",
+      "kind": "main",
+      "name": "Selenite Court",
+      "next_main_id": "A1-L5",
+      "parent_level_id": null,
+      "previous_main_id": "A1-L3",
+      "readiness": "unimplemented",
+      "scene_path": null,
+      "source": "docs/reference-library/act1/research/levels.json"
+    },
+    "diagnostic_status_after": "desktop_campaign_integration_15_of_24_accepted",
+    "diagnostic_status_before": "desktop_campaign_integration_11_of_24_accepted",
+    "level_count": 24,
+    "only_changed_level": "A1-L4",
+    "other_23_rows_byte_value_equal": true,
+    "path": "data/campaign/registry.json",
+    "publication_sha256": "9d10499813c60fe6a95522e9773875d427cba8c6b9c4ba2746f036e7d3ab9e3d",
+    "route_envelope_and_order_equal": true
+  },
+  "reverse_reconstructs_original_byte_exact": true,
+  "schema_version": 1,
+  "scope": "TMP preparation/static source and exact read-only publication delta only. No helper import/invocation, merge, engine/import, checkout write, whole before.json or historical physical audit.",
+  "unchanged_named_shared_source_pins": [
+    {
+      "baseline_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes_equal": true,
+      "path": "scripts/player.gd",
+      "publication_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "baseline_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "bytes_equal": true,
+      "path": "scripts/game.gd",
+      "publication_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    {
+      "baseline_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+      "bytes_equal": true,
+      "path": "scripts/campaign/shell.gd",
+      "publication_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc"
+    },
+    {
+      "baseline_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+      "bytes_equal": true,
+      "path": "scripts/campaign/level.gd",
+      "publication_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d"
+    },
+    {
+      "baseline_sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+      "bytes_equal": true,
+      "path": "scripts/combat/threat_scheduler.gd",
+      "publication_sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+    },
+    {
+      "baseline_sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes_equal": true,
+      "path": "scripts/combat/threat_geometry.gd",
+      "publication_sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+    },
+    {
+      "baseline_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+      "bytes_equal": true,
+      "path": "scripts/combat/lane_mechanism.gd",
+      "publication_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d"
+    },
+    {
+      "baseline_sha256": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+      "bytes_equal": true,
+      "path": "scripts/combat/smoke_bank.gd",
+      "publication_sha256": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9"
+    },
+    {
+      "baseline_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "bytes_equal": true,
+      "path": "scripts/combat/difficulty.gd",
+      "publication_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    {
+      "baseline_sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "bytes_equal": true,
+      "path": "scripts/equipment.gd",
+      "publication_sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    {
+      "baseline_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes_equal": true,
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "publication_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    {
+      "baseline_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes_equal": true,
+      "path": "scripts/campaign/exact_json.gd",
+      "publication_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    {
+      "baseline_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+      "bytes_equal": true,
+      "path": "data/design/player_equipment.json",
+      "publication_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    {
+      "baseline_sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+      "bytes_equal": true,
+      "path": "scripts/cues/threat_cue.gd",
+      "publication_sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a"
+    },
+    {
+      "baseline_sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2",
+      "bytes_equal": true,
+      "path": "scripts/cues/interaction_cue.gd",
+      "publication_sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2"
+    }
+  ],
+  "unexecuted": true
+}
