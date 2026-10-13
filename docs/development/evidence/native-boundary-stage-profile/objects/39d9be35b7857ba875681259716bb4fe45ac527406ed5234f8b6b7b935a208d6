@@ -1,0 +1,137 @@
+"""Generate isolated timing copies; never select them or run Godot.
+
+Only primitive observation statements and typed, single-evaluation return
+temporaries are added. The inverse must recover both originals byte for byte.
+"""
+from pathlib import Path
+import difflib
+import hashlib
+import json
+import re
+
+ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
+SINK = 'const BoundaryProfile = preload("res://.cinder/native-boundary-profile/sink.gd")\n'
+
+SOURCES = {
+    "protocol": "scripts/environment/scheduler_spore_source_protocol.gd",
+    "route": "scripts/combat/repulsion_route.gd",
+}
+
+STAGES = {
+    '\tvar static_environment: Dictionary = Route.static_environment_state': "Protocol.fresh_static_environment",
+    '\tif static_environment.has("error")': "Protocol.world_floor_condition",
+    '\tif not _consumer_id.is_empty() and not _live(_consumer_node())': "Protocol.source_handle_and_priority",
+    '\tvar native: Variant = source.call("get_spore_native_bindings")': "Protocol.owned_binding_getter",
+    '\tif not _live(source) or not _live(scheduler) or not _live(player) or not _live(world) or not _valid_object(_codec)': "Protocol.native_configuration_check",
+    '\tvar collision: CollisionShape3D = _collision.get_ref()': "Protocol.body_condition",
+    '\tvar owners: PackedInt32Array = source.get_shape_owners()': "Protocol.registration_and_native_motion",
+    '\tvar response: Variant = source.call("get_spore_response_state")': "Protocol.owned_response_getter",
+    '\tif not _live(source) or not _live(scheduler) or not _live(player) or not _live(world) or not _live(collision)': "Protocol.response_validation_and_lifecycle",
+    '\tvar control: Variant = scheduler.call("source_control_state", source)': "Protocol.source_control_getter",
+    '\treturn _control_error(control, source.get_instance_id())': "Protocol.source_control_validation",
+}
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def instrument(text, specs):
+    matches = list(re.finditer(r"^(?:static )?func (\w+)\([^\n]*", text, re.M))
+    blocks = []
+    for index, match in enumerate(matches):
+        if match[1] not in specs:
+            continue
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        original = text[match.start():end]
+        return_type, label, owner, segmented = specs[match[1]]
+        lines = original.splitlines(keepends=True)
+        result = [lines[0], f'\tvar _bp_started: int = BoundaryProfile.begin({label}{owner})\n']
+        current = "Protocol.native_handles_and_floor_resources"
+        if segmented:
+            result += [f'\tvar _bp_stage_label: String = "{current}"\n', '\tvar _bp_stage_started: int = BoundaryProfile.begin(_bp_stage_label)\n']
+        return_count = 0
+        encountered = []
+        for line in lines[1:]:
+            if segmented:
+                targets = [value for prefix, value in STAGES.items() if line.startswith(prefix)]
+                assert len(targets) <= 1, line
+                if targets:
+                    current = targets[0]
+                    encountered.append(current)
+                    result += ['\tBoundaryProfile.finish(_bp_stage_label, _bp_stage_started)\n', f'\t_bp_stage_label = "{current}"\n', '\t_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)\n']
+            returned = re.match(r"^(\t+)return (.+)\n$", line)
+            if returned:
+                indent, expression = returned.groups()
+                name = f"_bp_result_{return_count}"
+                return_count += 1
+                result.append(f'{indent}var {name}: {return_type} = {expression}\n')
+                if segmented:
+                    result.append(f'{indent}BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)\n')
+                result += [f'{indent}BoundaryProfile.finish({label}, _bp_started)\n', f'{indent}return {name}\n']
+            else:
+                result.append(line)
+        if segmented:
+            assert encountered == list(STAGES.values()), encountered
+        replacement = ''.join(result)
+        assert inverse(replacement) == original
+        blocks.append((match.start(), end, replacement, {
+            "method": match[1], "original_sha256": digest(original.encode()),
+            "instrumented_sha256": digest(replacement.encode()),
+            "typed_return_expressions_evaluated_once": return_count,
+            "sequential_stages": ["Protocol.native_handles_and_floor_resources", *encountered] if segmented else [],
+            "inverse_recovers_original_exactly": True,
+        }))
+    assert len(blocks) == len(specs)
+    for start, end, replacement, _ in reversed(blocks):
+        text = text[:start] + replacement + text[end:]
+    # Preload remains the only top-level source change.
+    text = text.replace('const ', SINK + 'const ', 1)
+    return text, [block[3] for block in blocks]
+
+
+def inverse(text):
+    result = []
+    for line in text.splitlines(keepends=True):
+        if line == SINK or 'BoundaryProfile.' in line or re.match(r'^\t+(?:var )?_bp_(?:started|stage_label|stage_started)', line):
+            continue
+        returned = re.match(r'^(\t+)var _bp_result_\d+: \w+ = (.+)\n$', line)
+        if returned:
+            result.append(returned[1] + 'return ' + returned[2] + '\n')
+        elif not re.match(r'^\t+return _bp_result_\d+\n$', line):
+            result.append(line)
+    return ''.join(result)
+
+
+def main():
+    assert HERE.is_dir() and (HERE / '.gdignore').exists()
+    specifications = {
+        "protocol": {
+            "_binding_error": ("String", '"Protocol._binding_error"', ', get_instance_id()', True),
+            "_same_bound_reference": ("bool", '"Protocol.compare." + kind', ', get_instance_id()', False),
+            "_body_properties": ("Dictionary", '"Protocol.body_properties"', '', False),
+        },
+        "route": {
+            "static_environment_state": ("Dictionary", '"Route.static_environment_state"', '', False),
+            "_collision_signature": ("Dictionary", '"Route.collision_signature"', '', False),
+            "_floor_plan": ("Dictionary", '"Route.floor_plan"', '', False),
+        },
+    }
+    proof = {"status": "SOURCE_ONLY_UNPARSED_UNEXECUTED", "sources": []}
+    patch = []
+    for name, path in SOURCES.items():
+        original = (ROOT / path).read_text()
+        assert '_bp_' not in original and 'BoundaryProfile' not in original
+        candidate, methods = instrument(original, specifications[name])
+        assert inverse(candidate) == original
+        (HERE / (name + '.original.gd')).write_text(original)
+        (HERE / (name + '.candidate.gd')).write_text(candidate)
+        patch.extend(difflib.unified_diff(original.splitlines(True), candidate.splitlines(True), fromfile='a/' + path, tofile='b/' + path))
+        proof['sources'].append({"path": path, "original_bytes": len(original.encode()), "original_sha256": digest(original.encode()), "candidate_bytes": len(candidate.encode()), "candidate_sha256": digest(candidate.encode()), "whole_source_inverse_exact": True, "methods": methods, "all_other_statements_and_methods_literal": True})
+    (HERE / 'instrumentation.patch').write_text(''.join(patch))
+    (HERE / 'statement-proof.json').write_text(json.dumps(proof, indent=2) + '\n')
+
+
+if __name__ == '__main__':
+    main()

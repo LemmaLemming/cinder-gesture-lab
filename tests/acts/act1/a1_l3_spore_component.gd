@@ -10,6 +10,8 @@ const ClusterPixels: Dictionary = {
 	"spent": preload("res://assets/acts/act1/grotto/spore-clusters/cluster_spent.png"),
 }
 const NativeInteractionCue = preload("res://scripts/cues/interaction_cue.gd")
+const ApproachSweep = preload("res://scripts/combat/body_sweep.gd")
+const ApproachWatchdogMs: int = 120000 # Six fresh native worlds; default retains70s.
 var component_units: Array[Dictionary] = []
 var observed_spore_phases: Dictionary = {}
 var recoil_pause_requested: bool = false
@@ -17,9 +19,27 @@ var callback_capture_rejected: bool = false
 var observed_cluster_states: Dictionary = {}
 var cluster_events: int = 0
 var cluster_negatives_done: bool = false
+var approach_boundary_cases: Array[Dictionary] = []
+var approach_case: String = ""
+var approach_actor: Act1MushroomSelenite
+var approach_field: CinderSporeField
+var approach_capsule: CapsuleShape3D
+var approach_radius: float
+var approach_field_transform: Transform3D
+var approach_original_guard: Callable
+var approach_calls: Array[Dictionary] = []
+var approach_before: Dictionary = {}
+var approach_after: Dictionary = {}
+var approach_damage: Dictionary = {}
+var approach_armed: bool = false
+var approach_observed: bool = false
+var approach_parent_attempts: int = 0
 
 
 func _run() -> void:
+	if "--approach-proof-boundaries" in OS.get_cmdline_user_args():
+		await _run_approach_boundaries()
+		return
 	portrait = "--portrait" in OS.get_cmdline_user_args()
 	root.size = PortraitSize
 	if portrait:
@@ -100,6 +120,154 @@ func _run() -> void:
 	_require(hero.hp == initial_hp and hit_events.is_empty() and field.state().generation == 1 and field.state().spent_ids == ["cluster-right"] and not level.is_completed(), "harmless component preserves Player HP and finite supply without granting campaign completion")
 	_require(cluster_negatives_done and observed_cluster_states.has("available") and observed_cluster_states.has("active") and observed_cluster_states.has("spent"), "original ordinary episode observes all three honest cluster drawings and bounded binding negatives")
 	await _finish()
+
+
+func _run_approach_boundaries() -> void:
+	# All stimuli occur inside the genuine actor physics transaction, after its
+	# original actual parent has approved the complete native proposal. Each
+	# case starts a fresh real world and performs one unchanged recognizer dash.
+	root.size = PortraitSize
+	for kind: String in ["success-damage-refused", "first-denied-braking", "braking-denied", "empty-pause", "empty-body-mutation", "empty-field-mutation"]:
+		approach_case = kind; approach_armed = false; approach_observed = false
+		if not await _open_spore_world(SporeGrovePath, "grove", Vector3(0, 0.1, 15)):
+			await _finish(); return
+		_watch_pair_events()
+		if not await _wait(func() -> bool: return level.get("spores_ready"), "approach case installs the real native field/protocol/consumer") or not await _swipe(Vector3.FORWARD, "approach boundary " + kind):
+			await _finish(); return
+		approach_actor = sources["umbrella-1"]
+		approach_field = level.get("spore_field")
+		if not await _wait(func() -> bool:
+			var state: Dictionary = approach_actor.pure_presentation_state()
+			return state.approach_driving and state.velocity != Vector3.ZERO and state.reservation_id.is_empty() and state.hp == 16.0 and approach_actor.get_spore_response_state().phase == "none", "real already-driving unleased C31 is ready for " + kind):
+			await _finish(); return
+		approach_original_guard = approach_actor.approach_guard
+		approach_capsule = approach_actor.get_node("BodyCollision").shape as CapsuleShape3D
+		if not _require(approach_original_guard.is_valid() and approach_original_guard.get_object() == level and approach_capsule != null and approach_field != null and (level.get("spore_consumer") as CinderSporeRepulsion).placement_accepted(), "case retains its original parent guard and actual body/field/native custody"):
+			await _finish(); return
+		approach_radius = approach_capsule.radius
+		approach_field_transform = approach_field.transform
+		approach_case = kind
+		approach_calls.clear(); approach_before.clear(); approach_after.clear(); approach_damage.clear()
+		approach_armed = false; approach_observed = false; approach_parent_attempts = 0
+		approach_actor.approach_guard = Callable(self, "_approach_guard_boundary")
+		if not await _wait(func() -> bool: return approach_observed, "one real native approach transaction closes for " + kind, 8.0, true):
+			_restore_approach_objects(); await _finish(); return
+		# Restore only the original mutated resource fields, after observing the
+		# genuine refusal. Never repair a source pose, velocity, clock or floor flag.
+		_restore_approach_objects()
+		if not _check_approach_boundary(kind): await _finish(); return
+		var unit: Dictionary = level.call("component_unit_state")
+		if not _require(not unit.is_empty() and String(level.call("component_unit_error", unit)).is_empty(), "original actual resources recover complete paused native custody after " + kind):
+			await _finish(); return
+		component_units.append({"label": "approach boundary " + kind, "unit": unit.duplicate(true)})
+		approach_boundary_cases.append({"case": kind, "parent_attempts": approach_parent_attempts, "calls": _portable(approach_calls), "before": _portable(approach_before), "after": _portable(approach_after), "ordinary_damage_attempt": _portable(approach_damage), "scope": "One genuine native source physics transaction after one full recognizer swipe; no manually invoked step, spore release, injury, lease or clock setup"})
+		if not await _close_approach_world(): await _finish(); return
+	await _finish()
+
+
+func _approach_guard_boundary(plan: Dictionary) -> String:
+	# The original observer remains the actual body/art/floor/neighbor/camera
+	# authority. A nonempty answer is returned unchanged, without injecting a case.
+	var answer: Variant = approach_original_guard.call(plan.duplicate(true))
+	approach_parent_attempts += 1
+	if not answer is String: return "Original actual approach parent did not return a String"
+	if not approach_armed:
+		if not String(answer).is_empty() or plan.get("reason") == "disabled_braking" or plan.get("next_position") == approach_actor.global_position: return String(answer)
+		approach_armed = true
+		approach_before = _approach_live_boundary()
+		_approach_tick_closed.call_deferred()
+	approach_calls.append({"plan": plan.duplicate(true), "original_parent_answer": answer})
+	if not String(answer).is_empty(): return String(answer)
+	if approach_calls.size() == 1:
+		match approach_case:
+			"success-damage-refused":
+				approach_damage = approach_actor.take_damage(1.0, Vector3.ZERO)
+			"first-denied-braking", "braking-denied":
+				return "TEST original drive approval is declined by its observer"
+			"empty-pause":
+				game.call("open_bench") # Supported direct pause; not deferred damage.
+			"empty-body-mutation":
+				approach_capsule.radius = approach_radius + 0.01
+			"empty-field-mutation":
+				approach_field.position += Vector3(0.01, 0, 0)
+	elif approach_case == "braking-denied":
+		return "TEST original braking approval is declined by its observer"
+	return ""
+
+
+func _approach_live_boundary() -> Dictionary:
+	return {"transform": approach_actor.global_transform, "position": approach_actor.global_position, "velocity": approach_actor.velocity, "native": approach_actor.pure_presentation_state(), "last_error": approach_actor.last_error, "hero_transform": hero.global_transform, "hero_hp": hero.hp, "hero_records": hero.get_world_action_records().duplicate(true), "clock_s": scheduler.get_clock(), "control": scheduler.source_control_state(approach_actor), "field": approach_field.state(), "field_transform": approach_field.transform, "capsule_radius": approach_capsule.radius, "pair_events": pair_events, "paused": paused}
+
+
+func _approach_tick_closed() -> void:
+	if finishing or approach_observed or not is_instance_valid(approach_actor): return
+	# Native physics has returned. Freeze through the existing public UI after
+	# reading the actual result; callbacks never manufacture a completed step.
+	approach_after = _approach_live_boundary()
+	if not paused: game.call("open_bench")
+	approach_observed = true
+
+
+func _restore_approach_objects() -> void:
+	if approach_armed and approach_case == "empty-body-mutation" and is_instance_valid(approach_capsule) and approach_capsule.radius != approach_radius: approach_capsule.radius = approach_radius
+	if approach_armed and approach_case == "empty-field-mutation" and is_instance_valid(approach_field) and approach_field.transform != approach_field_transform: approach_field.transform = approach_field_transform
+	if is_instance_valid(approach_actor) and approach_original_guard.is_valid(): approach_actor.approach_guard = approach_original_guard
+
+
+func _check_approach_boundary(kind: String) -> bool:
+	if not _require(approach_armed and not approach_calls.is_empty() and approach_calls[0].original_parent_answer == "" and approach_before.native.approach_driving and approach_before.velocity != Vector3.ZERO and approach_before.native.reservation_id == "", kind + " begins at the actual approved already-driving native boundary"): return false
+	if not _require(approach_after.clock_s == approach_before.clock_s and approach_after.hero_transform == approach_before.hero_transform and approach_after.hero_hp == approach_before.hero_hp and approach_after.hero_records == approach_before.hero_records and approach_after.native.hp == approach_before.native.hp and approach_after.native.hurt_left_s == approach_before.native.hurt_left_s and approach_after.native.reservation_id == "", kind + " preserves same-tick native clock/Player/actions/HP and creates no lease or fake injury"): return false
+	if kind in ["success-damage-refused", "first-denied-braking"]:
+		var index: int = 1 if kind == "first-denied-braking" else 0
+		if not _require(approach_calls.size() == index + 1 and approach_after.last_error == "", kind + " executes only its actual approved native motion"): return false
+		var plan: Dictionary = approach_calls[index].plan
+		var actual: Vector3 = approach_after.transform.origin
+		if not _require(approach_after.transform != approach_before.transform and actual.distance_to(plan.next_position) <= ApproachSweep.position_rounding_bound(actual, plan.next_position) and approach_actor.body_binding_error().is_empty() and approach_actor.art_binding_error().is_empty(), kind + " performs real supported body motion matching the native proposal"): return false
+		if kind == "success-damage-refused":
+			return _require(approach_damage.get("accepted") == false and approach_damage.get("hp_damage") == 0.0 and approach_after.pair_events == approach_before.pair_events, "ordinary approach-transaction damage remains rejected, without injury or gameplay callbacks")
+		return _require(plan.reason == "disabled_braking" and approach_calls[1].original_parent_answer == "" and approach_after.velocity.length() < approach_before.velocity.length(), "first-provider rejection uses a second actual parent-approved finite braking plan")
+	if not _require(not String(approach_after.last_error).is_empty() and approach_after.transform == approach_before.transform and approach_after.velocity == approach_before.velocity and approach_after.native.facing == approach_before.native.facing and approach_after.native.approach_driving == approach_before.native.approach_driving, kind + " refuses before source motion without fabricating a stop"): return false
+	match kind:
+		"braking-denied":
+			return _require(approach_calls.size() == 2 and approach_calls[1].plan.reason == "disabled_braking" and approach_calls[1].original_parent_answer == "", "rejected second observer leaves actual braking velocity/pose untouched and reports an error")
+		"empty-pause":
+			return _require(approach_calls.size() == 1 and approach_after.paused, "empty-return observer public pause is respected by immediate post-provider proof")
+		"empty-body-mutation":
+			return _require(approach_calls.size() == 1 and approach_after.capsule_radius != approach_before.capsule_radius, "empty-return actual capsule mutation is detected before motion")
+		"empty-field-mutation":
+			return _require(approach_calls.size() == 1 and approach_after.field_transform != approach_before.field_transform, "empty-return actual field mutation is detected before motion")
+	return false
+
+
+func _close_approach_world() -> bool:
+	# Same public exit/effects/paused AudioServer drain as component cleanup;
+	# this approach-only scope does not require a combat preparation or defeat.
+	paused = true
+	var refs: Array[WeakRef] = []
+	refs.append(weakref(game)); refs.append(weakref(level)); refs.append(weakref(hero)); refs.append(weakref(scheduler))
+	for source: Node in sources.values(): refs.append(weakref(source))
+	level.exit_level()
+	if not _require(not scheduler.is_physics_processing() and scheduler.reservations().is_empty(), "approach case normal exit retires its real Scheduler without a lease"): return false
+	var effects: PixelEffects = game.get("fx") as PixelEffects
+	if is_instance_valid(effects): effects.clear()
+	await create_timer(0.5, true).timeout
+	game.free()
+	sources.clear(); game = null; level = null; hero = null; scheduler = null
+	approach_actor = null; approach_field = null; approach_capsule = null; approach_original_guard = Callable()
+	paused = false
+	await process_frame
+	var removed: bool = true
+	for ref: WeakRef in refs: removed = removed and ref.get_ref() == null
+	return _require(removed and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("environment_attack_targets").is_empty(), "fresh approach case cleanup frees real nodes and native groups")
+
+
+func _watchdog() -> void:
+	if "--approach-proof-boundaries" not in OS.get_cmdline_user_args():
+		super._watchdog()
+		return
+	if not finishing and Time.get_ticks_msec() - started_ms > ApproachWatchdogMs:
+		_require_unexpected(false, "six fresh approach boundary cases complete within120 seconds; native deadlines unchanged")
+		_finish.call_deferred()
 
 
 func _open_spore_world(path: String, scope: String, spawn: Vector3) -> bool:
@@ -336,6 +504,7 @@ func _capture(stage: String) -> bool:
 
 func _finish() -> void:
 	if finishing: return
+	if "--approach-proof-boundaries" in OS.get_cmdline_user_args(): _restore_approach_objects()
 	finishing = true
 	paused = true
 	if is_instance_valid(level): level.exit_level()
@@ -350,7 +519,7 @@ func _finish() -> void:
 	var evidence_path: String = capture_dir.path_join("evidence.json") if portrait else "res://.cinder/l3-spore-state-%d.json" % Time.get_ticks_usec()
 	var evidence: FileAccess = FileAccess.open(evidence_path, FileAccess.WRITE)
 	if evidence != null:
-		evidence.store_string(JSON.stringify({"checks": checks, "failures": failures, "swipes": swipes, "primaries": primaries, "shots": shots, "units": component_units}, "\t"))
+		evidence.store_string(JSON.stringify({"checks": checks, "failures": failures, "swipes": swipes, "primaries": primaries, "shots": shots, "units": component_units, "fixture_mode": "approach-proof-boundaries" if "--approach-proof-boundaries" in OS.get_cmdline_user_args() else "native-spore-component", "approach_cases": approach_boundary_cases, "approach_current": {"case": approach_case, "armed": approach_armed, "observed": approach_observed, "parent_attempts": approach_parent_attempts, "calls": _portable(approach_calls), "before": _portable(approach_before), "after": _portable(approach_after), "ordinary_damage_attempt": _portable(approach_damage)}}, "\t"))
 		print("L3 SPORE STATE EVIDENCE ", ProjectSettings.globalize_path(evidence_path))
 	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
 	print("A1-L3 NATIVE SPORE COMPONENT: %d checks, %d failures; %d real swipes/%d ordinary primaries; full campaign/guard/callback injury/fresh-recipient tests pending" % [checks, failures, swipes, primaries])

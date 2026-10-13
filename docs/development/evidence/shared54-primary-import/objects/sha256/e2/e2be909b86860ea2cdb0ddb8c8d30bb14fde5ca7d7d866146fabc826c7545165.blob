@@ -1,0 +1,248 @@
+"""SOURCE-READY PROPOSAL ONLY. No import/freezer runs without Root assignment.
+
+Adapted from the preserved Shared53 primary import recorder. Root first selects
+registry descriptive metadata and CLI alias, then writes assignment.json with
+exact post-selection pins and execution_authorized=true. The only child command
+is python3 -B scripts/dev/dev.py import. dev.py owns queue/deadline/child closure.
+"""
+from pathlib import Path
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import stat
+import subprocess
+import sys
+import time
+
+sys.dont_write_bytecode = True
+ROOT = Path(__file__).resolve().parents[2]
+OUT = ROOT / '.cinder/shared54-root-import'
+COMMAND = ['python3', '-B', 'scripts/dev/dev.py', 'import']
+EXPECTED_ENGINE_SHA256 = 'c7cccbf8fb143e34e02fd6521e09be2c2b974f0d5db080b19071c9c570718ccf'
+ORIGINAL = ROOT / '.cinder/shared53-root-import/run_import.py'
+ORIGINAL_SHA256 = 'd516a47d27c597df5082817a6df8815fe92ad69beaa2c9bcbc0c11100bf87124'
+EXPECTED_PRIOR_UIDS = 462
+NATIVE_ROOTS = {'scripts', 'scenes', 'assets', 'tests', 'data'}
+EXCLUDE = {'.git', '.godot', '.tools', '.cinder', 'exports', 'captures', '__pycache__'}
+PROTECTED = ['project.godot', '.cinder/local.json', '.gitignore',
+             'data/design/player_equipment.json', 'data/design/difficulty_profiles.json',
+             'data/design/equipment_claims.json', 'data/design/ability_usage.json',
+             'data/campaign/registry.json']
+OPTIONAL_SETTINGS = ['.vscode/settings.json', '.vscode/tasks.json', '.vscode/launch.json',
+                     '.cinder/cinder.code-workspace']
+CACHE_INPUTS = ['.godot/global_script_class_cache.cfg', '.godot/uid_cache.bin',
+                '.godot/editor/project_metadata.cfg']
+ANSI = re.compile(r'\x1b\[[0-?]*[ -/]*[@-~]')
+
+
+def utc():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def row(path):
+    assert path.is_file() and not path.is_symlink(), path
+    data = path.read_bytes()
+    return {'path': str(path.relative_to(ROOT)), 'bytes': len(data),
+            'sha256': hashlib.sha256(data).hexdigest(),
+            'mode': format(stat.S_IMODE(path.stat().st_mode), '04o')}
+
+
+def inventory():
+    native, uids, sidecars, ignored = [], [], [], []
+    for folder, dirs, files in os.walk(ROOT):
+        current = Path(folder)
+        if current != ROOT and '.gdignore' in files:
+            ignored.append({'path': str(current.relative_to(ROOT)),
+                            'classification': 'Native .gdignore boundary; archived UID/assets inside are excluded without enumeration/count.'})
+            dirs[:] = []
+            continue
+        dirs[:] = [name for name in dirs if name not in EXCLUDE]
+        for name in files:
+            path = current / name
+            relative = path.relative_to(ROOT)
+            if not relative.parts or relative.parts[0] not in NATIVE_ROOTS or name == '.DS_Store' or name.endswith('.lock'):
+                continue
+            if name.endswith('.uid'):
+                value = row(path)
+                value['uid'] = path.read_text().strip()
+                uids.append(value)
+            elif name.endswith('.import'):
+                sidecars.append(row(path))
+            else:
+                native.append(row(path))
+    protected = [row(ROOT / name) for name in PROTECTED]
+    protected += [row(ROOT / name) for name in OPTIONAL_SETTINGS if (ROOT / name).is_file()]
+    cache = [row(ROOT / name) for name in CACHE_INPUTS if (ROOT / name).is_file()]
+    return {'captured_at': utc(),
+            'active_native_files': sorted(native, key=lambda value: value['path']),
+            'active_uids': sorted(uids, key=lambda value: value['path']),
+            'active_import_sidecars': sorted(sidecars, key=lambda value: value['path']),
+            'protected_settings_ledger_catalogue_registry': protected,
+            'selected_generated_cache': cache,
+            'ignored_native_boundaries': sorted(ignored, key=lambda value: value['path']),
+            'archive_uid_assets_counted': False,
+            'scope': 'All active scripts/scenes/assets/tests/data files, actual UID/import sidecars and explicit config/settings/ledger/catalogue/registry. Native .gdignore and tool/private/archive/export/capture banks excluded. Three existing derived cache inputs selected separately; not a complete dynamic/import/cache graph.'}
+
+
+def compare(old, new):
+    before = {value['path']: value for value in old}
+    after = {value['path']: value for value in new}
+    return {'removed': sorted(set(before) - set(after)),
+            'added': [after[name] for name in sorted(set(after) - set(before))],
+            'changed': [{'path': name, 'before': before[name], 'after': after[name]}
+                        for name in sorted(set(before) & set(after)) if before[name] != after[name]}
+
+
+def write(packet, name, value):
+    path = packet / name
+    with path.open('x') as stream:
+        stream.write(json.dumps(value, indent=2) + '\n')
+    return row(path)
+
+
+def freeze_before(packet, before):
+    selected = {}
+    for kind in ['active_native_files', 'active_uids', 'active_import_sidecars',
+                 'protected_settings_ledger_catalogue_registry', 'selected_generated_cache']:
+        for value in before[kind]:
+            selected.setdefault(value['path'], value)
+    for path in [Path(__file__), ORIGINAL, OUT / 'assignment.json']:
+        selected[str(path.relative_to(ROOT))] = row(path)
+    frozen = []
+    for relative, value in sorted(selected.items()):
+        source = ROOT / relative
+        assert row(source)['sha256'] == value['sha256']
+        target = packet / 'frozen-before' / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+        target.chmod(int(value['mode'], 8))
+        assert digest(target) == value['sha256'] and target.stat().st_size == value['bytes']
+        frozen.append({**value, 'frozen_relative': str(target.relative_to(packet))})
+    return frozen
+
+
+def main():
+    assignment_path = OUT / 'assignment.json'
+    assert assignment_path.is_file(), 'Root exact execution assignment required; proposal performs no freeze/import without it.'
+    assignment = json.loads(assignment_path.read_text())
+    assert assignment['execution_authorized'] is True and assignment['scope'] == 'primary_import_only'
+    assert assignment['root'] == str(ROOT) and assignment['command'] == COMMAND
+    assert assignment['expected_active_uid_count'] == EXPECTED_PRIOR_UIDS
+    assert digest(ORIGINAL) == ORIGINAL_SHA256
+    assert digest(ROOT / 'scripts/dev/dev.py') == assignment['expected_dev_sha256']
+    assert digest(ROOT / 'data/campaign/registry.json') == assignment['expected_registry_sha256']
+    assert digest(ROOT / 'tests/act1_l4_registration_smoke.gd') == assignment['fixture_sha256']
+    assert digest(ROOT / 'tests/act1_l4_registration_smoke.gd.uid') == assignment['fixture_uid_sha256']
+    assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip() == assignment['expected_head']
+    registry = json.loads((ROOT / 'data/campaign/registry.json').read_text())
+    assert registry['status'] == assignment['expected_registry_status']
+    spec = importlib.util.spec_from_file_location('cinder_primary_import_dev', ROOT / 'scripts/dev/dev.py')
+    dev = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(dev)
+    assert dev.IMPORT_TIMEOUT == 300
+    alias = assignment['required_alias']
+    assert dev.SUITES.get(alias['name']) == alias['fixture']
+    context = dev.ProjectContext(ROOT)
+    engine = dev.resolve_godot(context)
+    assert str(engine) == assignment['engine_path']
+    assert digest(engine) == assignment['engine_sha256'] == EXPECTED_ENGINE_SHA256
+    label = assignment['job_label']
+    assert re.fullmatch(r'[a-z0-9-]+', label)
+    packet = OUT / label
+    assert not packet.exists()
+    before = inventory()
+    assert len(before['active_uids']) == EXPECTED_PRIOR_UIDS
+    assert len({value['uid'] for value in before['active_uids']}) == EXPECTED_PRIOR_UIDS
+    packet.mkdir()
+    (packet / '.gdignore').write_bytes(b'')
+    frozen = freeze_before(packet, before)
+    before_record = write(packet, 'before.json', before)
+    write(packet, 'frozen-before-manifest.json', {'captured_at': utc(), 'rows': frozen,
+                                                'scope': before['scope'], 'engine_binary_not_redistributed': True})
+    submission = {'submitted_at': utc(), 'command': COMMAND, 'cwd': str(ROOT),
+                  'expected_head': assignment['expected_head'], 'before_inventory': before_record,
+                  'driver_sha256': digest(Path(__file__)), 'preserved_original_driver_sha256': ORIGINAL_SHA256,
+                  'dev_sha256': digest(ROOT / 'scripts/dev/dev.py'), 'engine_path': str(engine),
+                  'engine_sha256': digest(engine), 'engine_bytes': engine.stat().st_size,
+                  'engine_mode': format(stat.S_IMODE(engine.stat().st_mode), '04o'),
+                  'shared_lock': str(dev.shared_lock_path(ROOT)),
+                  'deadline_owner': 'Canonical dev.py IMPORT_TIMEOUT300 begins after queue acquisition; recorder imposes no queue timeout.',
+                  'scope': 'Only necessary canonical primary headless import; no suite/gameplay/editor/portrait/full route/acceptance.'}
+    write(packet, 'submission.json', submission)
+    print('Canonical command: python3 -B scripts/dev/dev.py import', flush=True)
+    print('Prior inventory:462 unique active UIDs; .gdignore archived banks excluded.', flush=True)
+    started = utc()
+    clock = time.monotonic()
+    admitted_elapsed = None
+    line_buffer = b''
+    raw_path = packet / 'original-output.log'
+    with raw_path.open('xb') as raw:
+        child = subprocess.Popen(COMMAND, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        write(packet, 'child-submission.json', {'started_at': started, 'child_pid': child.pid,
+                                               'command': COMMAND, 'cwd': str(ROOT),
+                                               'scope': 'Recorder-created canonical CLI child only; no direct Godot process/foreign intervention.'})
+        while True:
+            block = child.stdout.read1(65536)
+            if not block: break
+            raw.write(block)
+            raw.flush()
+            sys.stdout.buffer.write(block)
+            sys.stdout.buffer.flush()
+            line_buffer += block
+            while b'\n' in line_buffer:
+                line, line_buffer = line_buffer.split(b'\n', 1)
+                if admitted_elapsed is None and ANSI.sub('', line.decode(errors='replace')).startswith('Godot: '):
+                    admitted_elapsed = time.monotonic() - clock
+        code = child.wait()
+        child.stdout.close()
+    closed = utc()
+    after = inventory()
+    after_record = write(packet, 'after.json', after)
+    keys = ['active_native_files', 'active_uids', 'active_import_sidecars',
+            'protected_settings_ledger_catalogue_registry', 'selected_generated_cache']
+    deltas = {key: compare(before[key], after[key]) for key in keys}
+    changed_metadata = []
+    for kind in ['active_import_sidecars', 'selected_generated_cache']:
+        for value in deltas[kind]['added'] + [value['after'] for value in deltas[kind]['changed']]:
+            target = packet / 'derived-after' / value['path']
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((ROOT / value['path']).read_bytes())
+            target.chmod(int(value['mode'], 8))
+            assert digest(target) == value['sha256']
+            changed_metadata.append({**value, 'classification': kind, 'preserved_relative': str(target.relative_to(packet))})
+    text = ANSI.sub('', raw_path.read_text(errors='replace'))
+    diagnostics = [line for line in text.splitlines() if re.search(r'^\s*(?:ERROR:|WARNING:|SCRIPT ERROR:)|Parse Error|Compile Error|Compilation failed|Failed to load script|Unclaimed StringName|ObjectDB instances leaked', line)]
+    uid_unchanged = not any(deltas['active_uids'].values())
+    uid_unique = len({value['uid'] for value in after['active_uids']}) == len(after['active_uids'])
+    native_unchanged = not any(deltas['active_native_files'].values())
+    protected_unchanged = not any(deltas['protected_settings_ledger_catalogue_registry'].values())
+    metadata_paths = {value['path'] for value in deltas['active_import_sidecars']['added']} | {value['path'] for value in deltas['active_import_sidecars']['changed']} | set(deltas['active_import_sidecars']['removed'])
+    sidecar_qualified = metadata_paths <= set(assignment['allowed_import_sidecar_changes'])
+    clean = code == 0 and not diagnostics and admitted_elapsed is not None and uid_unchanged and uid_unique and len(after['active_uids']) == EXPECTED_PRIOR_UIDS and native_unchanged and protected_unchanged and sidecar_qualified
+    closure = {'started_at': started, 'closed_at': closed, 'elapsed_seconds_including_queue': time.monotonic() - clock,
+               'observed_queue_admission_elapsed_s': admitted_elapsed, 'actual_command': COMMAND,
+               'cwd': str(ROOT), 'child_pid': child.pid, 'actual_terminal_exit': code,
+               'owned_child_closed': child.poll() is not None, 'clean_import_scope': clean,
+               'original_merged_output': row(raw_path), 'before_inventory': before_record,
+               'after_inventory': after_record, 'deltas': deltas, 'diagnostic_lines': diagnostics,
+               'prior_uid_count': EXPECTED_PRIOR_UIDS, 'after_active_uid_count': len(after['active_uids']),
+               'after_uid_values_unique': uid_unique, 'all_prior_UID_bytes_modes_unchanged_no_addition': uid_unchanged,
+               'native_runtime_unchanged': native_unchanged, 'protected_settings_ledgers_registry_unchanged': protected_unchanged,
+               'import_sidecar_deltas_explicitly_qualified': sidecar_qualified,
+               'derived_cache_sidecar_originals': changed_metadata,
+               'acceptance': False,
+               'scope': 'Necessary primary import/cache/metadata refresh only. No new gameplay/registration/portrait/suite credit; isolated625/import0 and owner373 are not rerun. .gdignore archived UID banks never count as active. Derived selected cache deltas and explicitly allowed import-sidecar deltas are separately preserved; any nonclean/original source drift remains a failure.'}
+    write(packet, 'closure.json', closure)
+    print('Primary import terminal exit%d; clean scope=%s; active UIDs%d; diagnostics%d.' % (code, clean, len(after['active_uids']), len(diagnostics)), flush=True)
+    return 0 if clean else (code if code else 1)
+
+
+if __name__ == '__main__':
+    sys.exit(main())

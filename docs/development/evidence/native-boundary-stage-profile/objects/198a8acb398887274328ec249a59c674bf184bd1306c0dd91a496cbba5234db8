@@ -1,0 +1,1257 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-12T09:47:53.500647+00:00",
+  "status": "CLOSED_SAMPLE_VERIFIED_WITH_INSTRUMENTATION_SCOPE_QUALIFICATION",
+  "jobs": [
+    {
+      "tag": "native-boundary-parse1",
+      "mode": "parse",
+      "returncode": 0,
+      "checks": null,
+      "failures": null,
+      "clean": true,
+      "source_count": 757,
+      "uid_count": 445,
+      "source_manifest_sha256": "d3ea4fd719a54b5e70e81a4872ae32d9693187ae2fbdc502906b51d4a1f63c4a",
+      "result_sha256": "e64908d509ecb1cbcc17695d571a8f99275bdba4b420adc11e6f385f1d1b7d39",
+      "submission": {
+        "engine_command": [
+          "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+          "--path",
+          "/Users/howardchen/Documents/ChatGPT/video game idea",
+          "--headless",
+          "--script",
+          "res://.cinder/native-boundary-profile/profile.gd",
+          "--log-file",
+          "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/native-boundary-profile/jobs/native-boundary-parse1/raw.log",
+          "--check-only"
+        ],
+        "mode": "parse",
+        "deadline_s_after_queue_acquisition": 90
+      },
+      "original_streams": {
+        "wrapper": {
+          "path": ".cinder/native-boundary-profile/jobs/native-boundary-parse1/wrapper.log",
+          "bytes": 136,
+          "sha256": "f19fb8e9ec708d99ce96d389ed05fb660b93fdbf52d20d118bf2961b401e882a"
+        },
+        "native": {
+          "path": ".cinder/native-boundary-profile/jobs/native-boundary-parse1/raw.log",
+          "bytes": 73,
+          "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e"
+        }
+      },
+      "source_closure_qualification": "Current equality recorded at original closure. Two instrumented canonical files were intentionally restored only after both jobs closed; no retroactive current-candidate equality claim."
+    },
+    {
+      "tag": "native-boundary-profile1",
+      "mode": "profile",
+      "returncode": 0,
+      "checks": 21,
+      "failures": 0,
+      "clean": true,
+      "source_count": 757,
+      "uid_count": 445,
+      "source_manifest_sha256": "60e8873c512e3918c0d6fc6ef5cb60b18663c89e899333802bce0955313856dc",
+      "result_sha256": "07dddf8431eddba36088e956214776f2c66213021b46c473774dedab8d14fca9",
+      "submission": {
+        "engine_command": [
+          "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+          "--path",
+          "/Users/howardchen/Documents/ChatGPT/video game idea",
+          "--headless",
+          "--script",
+          "res://.cinder/native-boundary-profile/profile.gd",
+          "--log-file",
+          "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/native-boundary-profile/jobs/native-boundary-profile1/raw.log",
+          "--",
+          "--measurement-label=native-boundary-profile1"
+        ],
+        "mode": "profile",
+        "deadline_s_after_queue_acquisition": 90
+      },
+      "original_streams": {
+        "wrapper": {
+          "path": ".cinder/native-boundary-profile/jobs/native-boundary-profile1/wrapper.log",
+          "bytes": 41477,
+          "sha256": "4f4d88df88d2d2f77427fdb98a32fb7c6e373d1cc6bd62503f2ff68f870fcdc2"
+        },
+        "native": {
+          "path": ".cinder/native-boundary-profile/jobs/native-boundary-profile1/raw.log",
+          "bytes": 41414,
+          "sha256": "02d584c47a9a922e2cc1134130b758d895470515195827867e4f662d58601ef7"
+        }
+      },
+      "source_closure_qualification": "Current equality recorded at original closure. Two instrumented canonical files were intentionally restored only after both jobs closed; no retroactive current-candidate equality claim."
+    }
+  ],
+  "all1514_original_frozen_inputs_bytes_modes_verified": true,
+  "two757_input_sets_identical": true,
+  "all445_uid_bytes_unchanged_and_unique": true,
+  "original_raw_wrapper_stage_records_equal": true,
+  "decoded_stage_records": 17,
+  "source_statement_inverse": [
+    {
+      "source": "scripts/environment/scheduler_spore_source_protocol.gd",
+      "original_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+      "instrumented_sha256": "de66dffab8b18916c14b6fcf14eb8c762e7006807ee881235dc5b635d44b5bb3",
+      "original_inverse_exact": true,
+      "actual_frozen_selected_sha256": "de66dffab8b18916c14b6fcf14eb8c762e7006807ee881235dc5b635d44b5bb3",
+      "restored_original_now_exact": true
+    },
+    {
+      "source": "scripts/combat/repulsion_route.gd",
+      "original_sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+      "instrumented_sha256": "9a1bc35106969c17f02022934c89bd8a3cba9f3dade5efb412d13295c539927c",
+      "original_inverse_exact": true,
+      "actual_frozen_selected_sha256": "9a1bc35106969c17f02022934c89bd8a3cba9f3dade5efb412d13295c539927c",
+      "restored_original_now_exact": true
+    }
+  ],
+  "return_expressions_evaluated_once": 46,
+  "allother_current_inputs_match": true,
+  "current_intentional_withdrawal_paths": [
+    "scripts/combat/repulsion_route.gd",
+    "scripts/environment/scheduler_spore_source_protocol.gd"
+  ],
+  "restored_sources": [
+    {
+      "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+      "sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+      "bytes": 45116,
+      "current_original_mode": 420
+    },
+    {
+      "path": "scripts/combat/repulsion_route.gd",
+      "sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+      "bytes": 36641,
+      "current_original_mode": 420
+    }
+  ],
+  "withdrawal_handles_closed": true,
+  "ignored_private_uid_outputs": [],
+  "interval": {
+    "actor_identities_unchanged": true,
+    "beat_index": 2,
+    "campaign_error": "",
+    "dead": false,
+    "encounter_error": "Authored encounter context and fixed normalized world direction required",
+    "engine_pid": 53657,
+    "hero_position": [
+      0.0,
+      -0.00484376167878509,
+      -10.3999996185303
+    ],
+    "hp": 100.0,
+    "hp_before": 100.0,
+    "paused": false,
+    "physics_frame_index": 61,
+    "physics_frames": 8,
+    "player_clock_bits": "060000000000f03f",
+    "player_clock_s": 1.0,
+    "player_elapsed_s": 0.133333333333334,
+    "process_frame_index": 25,
+    "process_frames": 1,
+    "room_stage": "active",
+    "scheduler_clock_bits": "ffffffffffffcf3f",
+    "scheduler_clock_s": 0.25,
+    "scheduler_elapsed_s": 0.133333333333333,
+    "scope": "Temporary native statement timing: sequential stages plus inclusive nested methods overlap; activation/setup/paused witnesses excluded; one native await interval, no exclusive sum/FPS/gain/cause claim.",
+    "shells": 2,
+    "stage": "native_boundary_profile_interval",
+    "ticks_started": 1,
+    "wall_us": 5439731
+  },
+  "aggregate_methods": {
+    "Protocol._binding_error": {
+      "calls": 2944,
+      "inclusive_us": 4386862,
+      "max_us": 2462
+    },
+    "Protocol.body_condition": {
+      "calls": 2944,
+      "inclusive_us": 100174,
+      "max_us": 65
+    },
+    "Protocol.body_properties": {
+      "calls": 2944,
+      "inclusive_us": 14754,
+      "max_us": 17
+    },
+    "Protocol.compare.body": {
+      "calls": 2944,
+      "inclusive_us": 59862,
+      "max_us": 45
+    },
+    "Protocol.compare.floor": {
+      "calls": 2944,
+      "inclusive_us": 48790,
+      "max_us": 29
+    },
+    "Protocol.compare.world": {
+      "calls": 2944,
+      "inclusive_us": 580325,
+      "max_us": 417
+    },
+    "Protocol.fresh_static_environment": {
+      "calls": 2944,
+      "inclusive_us": 2562067,
+      "max_us": 1643
+    },
+    "Protocol.native_configuration_check": {
+      "calls": 2944,
+      "inclusive_us": 327479,
+      "max_us": 186
+    },
+    "Protocol.native_handles_and_floor_resources": {
+      "calls": 2944,
+      "inclusive_us": 23300,
+      "max_us": 22
+    },
+    "Protocol.owned_binding_getter": {
+      "calls": 2944,
+      "inclusive_us": 35670,
+      "max_us": 61
+    },
+    "Protocol.owned_response_getter": {
+      "calls": 2944,
+      "inclusive_us": 33304,
+      "max_us": 78
+    },
+    "Protocol.registration_and_native_motion": {
+      "calls": 2944,
+      "inclusive_us": 213083,
+      "max_us": 247
+    },
+    "Protocol.response_validation_and_lifecycle": {
+      "calls": 2944,
+      "inclusive_us": 285494,
+      "max_us": 167
+    },
+    "Protocol.source_control_getter": {
+      "calls": 2944,
+      "inclusive_us": 6173,
+      "max_us": 6
+    },
+    "Protocol.source_control_validation": {
+      "calls": 2944,
+      "inclusive_us": 8162,
+      "max_us": 10
+    },
+    "Protocol.source_handle_and_priority": {
+      "calls": 2944,
+      "inclusive_us": 8613,
+      "max_us": 10
+    },
+    "Protocol.world_floor_condition": {
+      "calls": 2944,
+      "inclusive_us": 654920,
+      "max_us": 449
+    },
+    "Route.collision_signature": {
+      "calls": 2944,
+      "inclusive_us": 2408085,
+      "max_us": 1507
+    },
+    "Route.floor_plan": {
+      "calls": 2944,
+      "inclusive_us": 32182,
+      "max_us": 75
+    },
+    "Route.static_environment_state": {
+      "calls": 2944,
+      "inclusive_us": 2525193,
+      "max_us": 1621
+    }
+  },
+  "per_source_methods": {
+    "crossed-1": {
+      "Protocol._binding_error": {
+        "calls": 368,
+        "inclusive_us": 552986,
+        "max_us": 2075
+      },
+      "Protocol.body_condition": {
+        "calls": 368,
+        "inclusive_us": 12633,
+        "max_us": 53
+      },
+      "Protocol.body_properties": {
+        "calls": 368,
+        "inclusive_us": 1885,
+        "max_us": 9
+      },
+      "Protocol.compare.body": {
+        "calls": 368,
+        "inclusive_us": 7523,
+        "max_us": 30
+      },
+      "Protocol.compare.floor": {
+        "calls": 368,
+        "inclusive_us": 6101,
+        "max_us": 26
+      },
+      "Protocol.compare.world": {
+        "calls": 368,
+        "inclusive_us": 72710,
+        "max_us": 286
+      },
+      "Protocol.fresh_static_environment": {
+        "calls": 368,
+        "inclusive_us": 322973,
+        "max_us": 1048
+      },
+      "Protocol.native_configuration_check": {
+        "calls": 368,
+        "inclusive_us": 41143,
+        "max_us": 157
+      },
+      "Protocol.native_handles_and_floor_resources": {
+        "calls": 368,
+        "inclusive_us": 3049,
+        "max_us": 14
+      },
+      "Protocol.owned_binding_getter": {
+        "calls": 368,
+        "inclusive_us": 4588,
+        "max_us": 21
+      },
+      "Protocol.owned_response_getter": {
+        "calls": 368,
+        "inclusive_us": 4240,
+        "max_us": 78
+      },
+      "Protocol.registration_and_native_motion": {
+        "calls": 368,
+        "inclusive_us": 26882,
+        "max_us": 247
+      },
+      "Protocol.response_validation_and_lifecycle": {
+        "calls": 368,
+        "inclusive_us": 35905,
+        "max_us": 137
+      },
+      "Protocol.source_control_getter": {
+        "calls": 368,
+        "inclusive_us": 790,
+        "max_us": 6
+      },
+      "Protocol.source_control_validation": {
+        "calls": 368,
+        "inclusive_us": 1037,
+        "max_us": 6
+      },
+      "Protocol.source_handle_and_priority": {
+        "calls": 368,
+        "inclusive_us": 1098,
+        "max_us": 5
+      },
+      "Protocol.world_floor_condition": {
+        "calls": 368,
+        "inclusive_us": 82065,
+        "max_us": 354
+      },
+      "Route.collision_signature": {
+        "calls": 368,
+        "inclusive_us": 303106,
+        "max_us": 979
+      },
+      "Route.floor_plan": {
+        "calls": 368,
+        "inclusive_us": 4148,
+        "max_us": 22
+      },
+      "Route.static_environment_state": {
+        "calls": 368,
+        "inclusive_us": 318311,
+        "max_us": 1035
+      }
+    },
+    "crossed-2": {
+      "Protocol._binding_error": {
+        "calls": 368,
+        "inclusive_us": 548629,
+        "max_us": 1898
+      },
+      "Protocol.body_condition": {
+        "calls": 368,
+        "inclusive_us": 12592,
+        "max_us": 65
+      },
+      "Protocol.body_properties": {
+        "calls": 368,
+        "inclusive_us": 1835,
+        "max_us": 14
+      },
+      "Protocol.compare.body": {
+        "calls": 368,
+        "inclusive_us": 7559,
+        "max_us": 45
+      },
+      "Protocol.compare.floor": {
+        "calls": 368,
+        "inclusive_us": 6151,
+        "max_us": 24
+      },
+      "Protocol.compare.world": {
+        "calls": 368,
+        "inclusive_us": 73006,
+        "max_us": 242
+      },
+      "Protocol.fresh_static_environment": {
+        "calls": 368,
+        "inclusive_us": 320071,
+        "max_us": 1155
+      },
+      "Protocol.native_configuration_check": {
+        "calls": 368,
+        "inclusive_us": 40906,
+        "max_us": 140
+      },
+      "Protocol.native_handles_and_floor_resources": {
+        "calls": 368,
+        "inclusive_us": 2926,
+        "max_us": 12
+      },
+      "Protocol.owned_binding_getter": {
+        "calls": 368,
+        "inclusive_us": 4430,
+        "max_us": 21
+      },
+      "Protocol.owned_response_getter": {
+        "calls": 368,
+        "inclusive_us": 4157,
+        "max_us": 21
+      },
+      "Protocol.registration_and_native_motion": {
+        "calls": 368,
+        "inclusive_us": 26711,
+        "max_us": 166
+      },
+      "Protocol.response_validation_and_lifecycle": {
+        "calls": 368,
+        "inclusive_us": 35670,
+        "max_us": 155
+      },
+      "Protocol.source_control_getter": {
+        "calls": 368,
+        "inclusive_us": 773,
+        "max_us": 6
+      },
+      "Protocol.source_control_validation": {
+        "calls": 368,
+        "inclusive_us": 1017,
+        "max_us": 7
+      },
+      "Protocol.source_handle_and_priority": {
+        "calls": 368,
+        "inclusive_us": 1076,
+        "max_us": 5
+      },
+      "Protocol.world_floor_condition": {
+        "calls": 368,
+        "inclusive_us": 82382,
+        "max_us": 271
+      },
+      "Route.collision_signature": {
+        "calls": 368,
+        "inclusive_us": 300801,
+        "max_us": 1069
+      },
+      "Route.floor_plan": {
+        "calls": 368,
+        "inclusive_us": 4011,
+        "max_us": 22
+      },
+      "Route.static_environment_state": {
+        "calls": 368,
+        "inclusive_us": 315447,
+        "max_us": 1137
+      }
+    },
+    "crossed-3": {
+      "Protocol._binding_error": {
+        "calls": 368,
+        "inclusive_us": 548389,
+        "max_us": 2143
+      },
+      "Protocol.body_condition": {
+        "calls": 368,
+        "inclusive_us": 12514,
+        "max_us": 51
+      },
+      "Protocol.body_properties": {
+        "calls": 368,
+        "inclusive_us": 1846,
+        "max_us": 13
+      },
+      "Protocol.compare.body": {
+        "calls": 368,
+        "inclusive_us": 7458,
+        "max_us": 33
+      },
+      "Protocol.compare.floor": {
+        "calls": 368,
+        "inclusive_us": 6096,
+        "max_us": 28
+      },
+      "Protocol.compare.world": {
+        "calls": 368,
+        "inclusive_us": 72789,
+        "max_us": 417
+      },
+      "Protocol.fresh_static_environment": {
+        "calls": 368,
+        "inclusive_us": 320315,
+        "max_us": 1239
+      },
+      "Protocol.native_configuration_check": {
+        "calls": 368,
+        "inclusive_us": 40923,
+        "max_us": 136
+      },
+      "Protocol.native_handles_and_floor_resources": {
+        "calls": 368,
+        "inclusive_us": 2892,
+        "max_us": 16
+      },
+      "Protocol.owned_binding_getter": {
+        "calls": 368,
+        "inclusive_us": 4498,
+        "max_us": 61
+      },
+      "Protocol.owned_response_getter": {
+        "calls": 368,
+        "inclusive_us": 4132,
+        "max_us": 30
+      },
+      "Protocol.registration_and_native_motion": {
+        "calls": 368,
+        "inclusive_us": 26537,
+        "max_us": 88
+      },
+      "Protocol.response_validation_and_lifecycle": {
+        "calls": 368,
+        "inclusive_us": 35629,
+        "max_us": 138
+      },
+      "Protocol.source_control_getter": {
+        "calls": 368,
+        "inclusive_us": 772,
+        "max_us": 3
+      },
+      "Protocol.source_control_validation": {
+        "calls": 368,
+        "inclusive_us": 1023,
+        "max_us": 10
+      },
+      "Protocol.source_handle_and_priority": {
+        "calls": 368,
+        "inclusive_us": 1066,
+        "max_us": 6
+      },
+      "Protocol.world_floor_condition": {
+        "calls": 368,
+        "inclusive_us": 82117,
+        "max_us": 449
+      },
+      "Route.collision_signature": {
+        "calls": 368,
+        "inclusive_us": 301188,
+        "max_us": 1138
+      },
+      "Route.floor_plan": {
+        "calls": 368,
+        "inclusive_us": 3996,
+        "max_us": 18
+      },
+      "Route.static_environment_state": {
+        "calls": 368,
+        "inclusive_us": 315690,
+        "max_us": 1221
+      }
+    },
+    "crossed-4": {
+      "Protocol._binding_error": {
+        "calls": 368,
+        "inclusive_us": 547249,
+        "max_us": 1761
+      },
+      "Protocol.body_condition": {
+        "calls": 368,
+        "inclusive_us": 12449,
+        "max_us": 41
+      },
+      "Protocol.body_properties": {
+        "calls": 368,
+        "inclusive_us": 1833,
+        "max_us": 9
+      },
+      "Protocol.compare.body": {
+        "calls": 368,
+        "inclusive_us": 7447,
+        "max_us": 25
+      },
+      "Protocol.compare.floor": {
+        "calls": 368,
+        "inclusive_us": 6122,
+        "max_us": 29
+      },
+      "Protocol.compare.world": {
+        "calls": 368,
+        "inclusive_us": 72273,
+        "max_us": 235
+      },
+      "Protocol.fresh_static_environment": {
+        "calls": 368,
+        "inclusive_us": 319599,
+        "max_us": 954
+      },
+      "Protocol.native_configuration_check": {
+        "calls": 368,
+        "inclusive_us": 40965,
+        "max_us": 186
+      },
+      "Protocol.native_handles_and_floor_resources": {
+        "calls": 368,
+        "inclusive_us": 2867,
+        "max_us": 12
+      },
+      "Protocol.owned_binding_getter": {
+        "calls": 368,
+        "inclusive_us": 4404,
+        "max_us": 25
+      },
+      "Protocol.owned_response_getter": {
+        "calls": 368,
+        "inclusive_us": 4151,
+        "max_us": 33
+      },
+      "Protocol.registration_and_native_motion": {
+        "calls": 368,
+        "inclusive_us": 26573,
+        "max_us": 120
+      },
+      "Protocol.response_validation_and_lifecycle": {
+        "calls": 368,
+        "inclusive_us": 35742,
+        "max_us": 167
+      },
+      "Protocol.source_control_getter": {
+        "calls": 368,
+        "inclusive_us": 765,
+        "max_us": 4
+      },
+      "Protocol.source_control_validation": {
+        "calls": 368,
+        "inclusive_us": 1023,
+        "max_us": 6
+      },
+      "Protocol.source_handle_and_priority": {
+        "calls": 368,
+        "inclusive_us": 1075,
+        "max_us": 6
+      },
+      "Protocol.world_floor_condition": {
+        "calls": 368,
+        "inclusive_us": 81657,
+        "max_us": 277
+      },
+      "Route.collision_signature": {
+        "calls": 368,
+        "inclusive_us": 300531,
+        "max_us": 897
+      },
+      "Route.floor_plan": {
+        "calls": 368,
+        "inclusive_us": 3988,
+        "max_us": 16
+      },
+      "Route.static_environment_state": {
+        "calls": 368,
+        "inclusive_us": 315039,
+        "max_us": 940
+      }
+    },
+    "crossed-5": {
+      "Protocol._binding_error": {
+        "calls": 368,
+        "inclusive_us": 548696,
+        "max_us": 2164
+      },
+      "Protocol.body_condition": {
+        "calls": 368,
+        "inclusive_us": 12511,
+        "max_us": 49
+      },
+      "Protocol.body_properties": {
+        "calls": 368,
+        "inclusive_us": 1831,
+        "max_us": 8
+      },
+      "Protocol.compare.body": {
+        "calls": 368,
+        "inclusive_us": 7460,
+        "max_us": 32
+      },
+      "Protocol.compare.floor": {
+        "calls": 368,
+        "inclusive_us": 6061,
+        "max_us": 22
+      },
+      "Protocol.compare.world": {
+        "calls": 368,
+        "inclusive_us": 72866,
+        "max_us": 264
+      },
+      "Protocol.fresh_static_environment": {
+        "calls": 368,
+        "inclusive_us": 320380,
+        "max_us": 1480
+      },
+      "Protocol.native_configuration_check": {
+        "calls": 368,
+        "inclusive_us": 40940,
+        "max_us": 133
+      },
+      "Protocol.native_handles_and_floor_resources": {
+        "calls": 368,
+        "inclusive_us": 2878,
+        "max_us": 22
+      },
+      "Protocol.owned_binding_getter": {
+        "calls": 368,
+        "inclusive_us": 4450,
+        "max_us": 19
+      },
+      "Protocol.owned_response_getter": {
+        "calls": 368,
+        "inclusive_us": 4132,
+        "max_us": 29
+      },
+      "Protocol.registration_and_native_motion": {
+        "calls": 368,
+        "inclusive_us": 26605,
+        "max_us": 96
+      },
+      "Protocol.response_validation_and_lifecycle": {
+        "calls": 368,
+        "inclusive_us": 35740,
+        "max_us": 155
+      },
+      "Protocol.source_control_getter": {
+        "calls": 368,
+        "inclusive_us": 772,
+        "max_us": 5
+      },
+      "Protocol.source_control_validation": {
+        "calls": 368,
+        "inclusive_us": 1012,
+        "max_us": 6
+      },
+      "Protocol.source_handle_and_priority": {
+        "calls": 368,
+        "inclusive_us": 1077,
+        "max_us": 5
+      },
+      "Protocol.world_floor_condition": {
+        "calls": 368,
+        "inclusive_us": 82146,
+        "max_us": 295
+      },
+      "Route.collision_signature": {
+        "calls": 368,
+        "inclusive_us": 301219,
+        "max_us": 1405
+      },
+      "Route.floor_plan": {
+        "calls": 368,
+        "inclusive_us": 4010,
+        "max_us": 19
+      },
+      "Route.static_environment_state": {
+        "calls": 368,
+        "inclusive_us": 315774,
+        "max_us": 1467
+      }
+    },
+    "crossed-6": {
+      "Protocol._binding_error": {
+        "calls": 368,
+        "inclusive_us": 546342,
+        "max_us": 1723
+      },
+      "Protocol.body_condition": {
+        "calls": 368,
+        "inclusive_us": 12428,
+        "max_us": 49
+      },
+      "Protocol.body_properties": {
+        "calls": 368,
+        "inclusive_us": 1832,
+        "max_us": 8
+      },
+      "Protocol.compare.body": {
+        "calls": 368,
+        "inclusive_us": 7431,
+        "max_us": 32
+      },
+      "Protocol.compare.floor": {
+        "calls": 368,
+        "inclusive_us": 6116,
+        "max_us": 29
+      },
+      "Protocol.compare.world": {
+        "calls": 368,
+        "inclusive_us": 72363,
+        "max_us": 243
+      },
+      "Protocol.fresh_static_environment": {
+        "calls": 368,
+        "inclusive_us": 318964,
+        "max_us": 954
+      },
+      "Protocol.native_configuration_check": {
+        "calls": 368,
+        "inclusive_us": 40784,
+        "max_us": 127
+      },
+      "Protocol.native_handles_and_floor_resources": {
+        "calls": 368,
+        "inclusive_us": 2905,
+        "max_us": 12
+      },
+      "Protocol.owned_binding_getter": {
+        "calls": 368,
+        "inclusive_us": 4397,
+        "max_us": 17
+      },
+      "Protocol.owned_response_getter": {
+        "calls": 368,
+        "inclusive_us": 4138,
+        "max_us": 24
+      },
+      "Protocol.registration_and_native_motion": {
+        "calls": 368,
+        "inclusive_us": 26694,
+        "max_us": 177
+      },
+      "Protocol.response_validation_and_lifecycle": {
+        "calls": 368,
+        "inclusive_us": 35580,
+        "max_us": 159
+      },
+      "Protocol.source_control_getter": {
+        "calls": 368,
+        "inclusive_us": 760,
+        "max_us": 3
+      },
+      "Protocol.source_control_validation": {
+        "calls": 368,
+        "inclusive_us": 1021,
+        "max_us": 4
+      },
+      "Protocol.source_handle_and_priority": {
+        "calls": 368,
+        "inclusive_us": 1075,
+        "max_us": 5
+      },
+      "Protocol.world_floor_condition": {
+        "calls": 368,
+        "inclusive_us": 81659,
+        "max_us": 270
+      },
+      "Route.collision_signature": {
+        "calls": 368,
+        "inclusive_us": 299887,
+        "max_us": 893
+      },
+      "Route.floor_plan": {
+        "calls": 368,
+        "inclusive_us": 3992,
+        "max_us": 22
+      },
+      "Route.static_environment_state": {
+        "calls": 368,
+        "inclusive_us": 314371,
+        "max_us": 941
+      }
+    },
+    "crossed-7": {
+      "Protocol._binding_error": {
+        "calls": 368,
+        "inclusive_us": 546836,
+        "max_us": 2146
+      },
+      "Protocol.body_condition": {
+        "calls": 368,
+        "inclusive_us": 12532,
+        "max_us": 52
+      },
+      "Protocol.body_properties": {
+        "calls": 368,
+        "inclusive_us": 1838,
+        "max_us": 17
+      },
+      "Protocol.compare.body": {
+        "calls": 368,
+        "inclusive_us": 7507,
+        "max_us": 31
+      },
+      "Protocol.compare.floor": {
+        "calls": 368,
+        "inclusive_us": 6080,
+        "max_us": 29
+      },
+      "Protocol.compare.world": {
+        "calls": 368,
+        "inclusive_us": 72039,
+        "max_us": 251
+      },
+      "Protocol.fresh_static_environment": {
+        "calls": 368,
+        "inclusive_us": 319621,
+        "max_us": 1425
+      },
+      "Protocol.native_configuration_check": {
+        "calls": 368,
+        "inclusive_us": 40880,
+        "max_us": 140
+      },
+      "Protocol.native_handles_and_floor_resources": {
+        "calls": 368,
+        "inclusive_us": 2886,
+        "max_us": 21
+      },
+      "Protocol.owned_binding_getter": {
+        "calls": 368,
+        "inclusive_us": 4457,
+        "max_us": 35
+      },
+      "Protocol.owned_response_getter": {
+        "calls": 368,
+        "inclusive_us": 4156,
+        "max_us": 22
+      },
+      "Protocol.registration_and_native_motion": {
+        "calls": 368,
+        "inclusive_us": 26542,
+        "max_us": 92
+      },
+      "Protocol.response_validation_and_lifecycle": {
+        "calls": 368,
+        "inclusive_us": 35572,
+        "max_us": 112
+      },
+      "Protocol.source_control_getter": {
+        "calls": 368,
+        "inclusive_us": 774,
+        "max_us": 6
+      },
+      "Protocol.source_control_validation": {
+        "calls": 368,
+        "inclusive_us": 1013,
+        "max_us": 5
+      },
+      "Protocol.source_handle_and_priority": {
+        "calls": 368,
+        "inclusive_us": 1063,
+        "max_us": 7
+      },
+      "Protocol.world_floor_condition": {
+        "calls": 368,
+        "inclusive_us": 81339,
+        "max_us": 283
+      },
+      "Route.collision_signature": {
+        "calls": 368,
+        "inclusive_us": 300371,
+        "max_us": 1190
+      },
+      "Route.floor_plan": {
+        "calls": 368,
+        "inclusive_us": 4052,
+        "max_us": 75
+      },
+      "Route.static_environment_state": {
+        "calls": 368,
+        "inclusive_us": 315001,
+        "max_us": 1402
+      }
+    },
+    "crossed-8": {
+      "Protocol._binding_error": {
+        "calls": 368,
+        "inclusive_us": 547735,
+        "max_us": 2462
+      },
+      "Protocol.body_condition": {
+        "calls": 368,
+        "inclusive_us": 12515,
+        "max_us": 56
+      },
+      "Protocol.body_properties": {
+        "calls": 368,
+        "inclusive_us": 1854,
+        "max_us": 12
+      },
+      "Protocol.compare.body": {
+        "calls": 368,
+        "inclusive_us": 7477,
+        "max_us": 34
+      },
+      "Protocol.compare.floor": {
+        "calls": 368,
+        "inclusive_us": 6063,
+        "max_us": 22
+      },
+      "Protocol.compare.world": {
+        "calls": 368,
+        "inclusive_us": 72279,
+        "max_us": 242
+      },
+      "Protocol.fresh_static_environment": {
+        "calls": 368,
+        "inclusive_us": 320144,
+        "max_us": 1643
+      },
+      "Protocol.native_configuration_check": {
+        "calls": 368,
+        "inclusive_us": 40938,
+        "max_us": 164
+      },
+      "Protocol.native_handles_and_floor_resources": {
+        "calls": 368,
+        "inclusive_us": 2897,
+        "max_us": 11
+      },
+      "Protocol.owned_binding_getter": {
+        "calls": 368,
+        "inclusive_us": 4446,
+        "max_us": 33
+      },
+      "Protocol.owned_response_getter": {
+        "calls": 368,
+        "inclusive_us": 4198,
+        "max_us": 54
+      },
+      "Protocol.registration_and_native_motion": {
+        "calls": 368,
+        "inclusive_us": 26539,
+        "max_us": 130
+      },
+      "Protocol.response_validation_and_lifecycle": {
+        "calls": 368,
+        "inclusive_us": 35656,
+        "max_us": 161
+      },
+      "Protocol.source_control_getter": {
+        "calls": 368,
+        "inclusive_us": 767,
+        "max_us": 5
+      },
+      "Protocol.source_control_validation": {
+        "calls": 368,
+        "inclusive_us": 1016,
+        "max_us": 5
+      },
+      "Protocol.source_handle_and_priority": {
+        "calls": 368,
+        "inclusive_us": 1083,
+        "max_us": 10
+      },
+      "Protocol.world_floor_condition": {
+        "calls": 368,
+        "inclusive_us": 81555,
+        "max_us": 271
+      },
+      "Route.collision_signature": {
+        "calls": 368,
+        "inclusive_us": 300982,
+        "max_us": 1507
+      },
+      "Route.floor_plan": {
+        "calls": 368,
+        "inclusive_us": 3985,
+        "max_us": 30
+      },
+      "Route.static_environment_state": {
+        "calls": 368,
+        "inclusive_us": 315560,
+        "max_us": 1621
+      }
+    }
+  },
+  "observed_source_id_map": {
+    "crossed-1": "-9223370817654485193",
+    "crossed-2": "-9223370817553822564",
+    "crossed-3": "-9223370817453159610",
+    "crossed-4": "-9223370817352496253",
+    "crossed-5": "-9223370817251832761",
+    "crossed-6": "-9223370817151170485",
+    "crossed-7": "-9223370817050507233",
+    "crossed-8": "-9223370816949843783"
+  },
+  "nearest_instrumented_edges": {
+    "Protocol._binding_error -> Protocol.body_condition": {
+      "calls": 2944,
+      "inclusive_us": 100174,
+      "max_us": 65
+    },
+    "Protocol._binding_error -> Protocol.fresh_static_environment": {
+      "calls": 2944,
+      "inclusive_us": 2562067,
+      "max_us": 1643
+    },
+    "Protocol._binding_error -> Protocol.native_configuration_check": {
+      "calls": 2944,
+      "inclusive_us": 327479,
+      "max_us": 186
+    },
+    "Protocol._binding_error -> Protocol.native_handles_and_floor_resources": {
+      "calls": 2944,
+      "inclusive_us": 23300,
+      "max_us": 22
+    },
+    "Protocol._binding_error -> Protocol.owned_binding_getter": {
+      "calls": 2944,
+      "inclusive_us": 35670,
+      "max_us": 61
+    },
+    "Protocol._binding_error -> Protocol.owned_response_getter": {
+      "calls": 2944,
+      "inclusive_us": 33304,
+      "max_us": 78
+    },
+    "Protocol._binding_error -> Protocol.registration_and_native_motion": {
+      "calls": 2944,
+      "inclusive_us": 213083,
+      "max_us": 247
+    },
+    "Protocol._binding_error -> Protocol.response_validation_and_lifecycle": {
+      "calls": 2944,
+      "inclusive_us": 285494,
+      "max_us": 167
+    },
+    "Protocol._binding_error -> Protocol.source_control_getter": {
+      "calls": 2944,
+      "inclusive_us": 6173,
+      "max_us": 6
+    },
+    "Protocol._binding_error -> Protocol.source_control_validation": {
+      "calls": 2944,
+      "inclusive_us": 8162,
+      "max_us": 10
+    },
+    "Protocol._binding_error -> Protocol.source_handle_and_priority": {
+      "calls": 2944,
+      "inclusive_us": 8613,
+      "max_us": 10
+    },
+    "Protocol._binding_error -> Protocol.world_floor_condition": {
+      "calls": 2944,
+      "inclusive_us": 654920,
+      "max_us": 449
+    },
+    "Protocol.body_condition -> Protocol.body_properties": {
+      "calls": 2944,
+      "inclusive_us": 14754,
+      "max_us": 17
+    },
+    "Protocol.body_condition -> Protocol.compare.body": {
+      "calls": 2944,
+      "inclusive_us": 59862,
+      "max_us": 45
+    },
+    "Protocol.fresh_static_environment -> Route.static_environment_state": {
+      "calls": 2944,
+      "inclusive_us": 2525193,
+      "max_us": 1621
+    },
+    "Protocol.world_floor_condition -> Protocol.compare.floor": {
+      "calls": 2944,
+      "inclusive_us": 48790,
+      "max_us": 29
+    },
+    "Protocol.world_floor_condition -> Protocol.compare.world": {
+      "calls": 2944,
+      "inclusive_us": 580325,
+      "max_us": 417
+    },
+    "Route.static_environment_state -> Route.collision_signature": {
+      "calls": 2944,
+      "inclusive_us": 2408085,
+      "max_us": 1507
+    },
+    "Route.static_environment_state -> Route.floor_plan": {
+      "calls": 2944,
+      "inclusive_us": 32182,
+      "max_us": 75
+    },
+    "unobserved_caller -> Protocol._binding_error": {
+      "calls": 2944,
+      "inclusive_us": 4386862,
+      "max_us": 2462
+    }
+  },
+  "method_source_count_time_max_joins_exact": true,
+  "incoming_edge_count_time_max_joins_exact": true,
+  "sequential_binding_stages": [
+    "Protocol.body_condition",
+    "Protocol.fresh_static_environment",
+    "Protocol.native_configuration_check",
+    "Protocol.native_handles_and_floor_resources",
+    "Protocol.owned_binding_getter",
+    "Protocol.owned_response_getter",
+    "Protocol.registration_and_native_motion",
+    "Protocol.response_validation_and_lifecycle",
+    "Protocol.source_control_getter",
+    "Protocol.source_control_validation",
+    "Protocol.source_handle_and_priority",
+    "Protocol.world_floor_condition"
+  ],
+  "sequential_binding_stage_inclusive_sum_us": 4258439,
+  "binding_residual_including_observation_overhead_us": 128423,
+  "sum_of_all_overlapping_method_times_us": 14314492,
+  "paused_witness": {
+    "beat_index": 2,
+    "campaign_error": "Required source, footprint, player or landing lies outside the protected screen rectangle",
+    "dead": false,
+    "encounter_error": "Authored encounter context and fixed normalized world direction required",
+    "engine_pid": 53657,
+    "hero_position": [
+      0.0,
+      -0.00484376167878509,
+      -10.3999996185303
+    ],
+    "hp": 100.0,
+    "native_bytes": 675514,
+    "native_sha256": "84dcd4103f91944f297716f2651969f7719bf8cf3d6c4e451ce50ee0002bebe7",
+    "packet_bytes": 66972,
+    "packet_sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+    "paused": true,
+    "physics_frame_index": 76,
+    "player_clock_bits": "060000000000f03f",
+    "player_clock_s": 1.0,
+    "process_frame_index": 33,
+    "room_stage": "active",
+    "scheduler_clock_bits": "ffffffffffffcf3f",
+    "scheduler_clock_s": 0.25,
+    "scope": "Optical Pause refusal is reported; no fitting, Save permission or recovery claim.",
+    "shells": 2,
+    "stage": "native_boundary_profile_paused_witness",
+    "ticks_started": 1,
+    "wall_us": 20168768
+  },
+  "limits": [
+    "Native timers/stack/counter allocation and descendant observer overhead are included. Inclusive method and stage times overlap; no exclusive sum/FPS/gain/cause claim.",
+    "Only the selected eight actual Protocols are attributed. Top-level unselected and ownerless/owner0 calls are not represented; this is not a complete native call stack or whole-runtime cost.",
+    "Recorded RefCounted IDs are negative but original sink uses owner<0 as inheritance sentinel. Generic nested unselected negative-owner suppression is not sound. This sample has no nested binding edge; flat same-owner joins reconcile. Original sink/proposal retained unchanged, not retrospectively repaired.",
+    "Explicit/literal dependency closure plus active UIDs is bounded; it is not a complete dynamic/import graph.",
+    "Packet and focused-native STRING BODIES are not printed/archived by this fixture. Byte lengths and SHA256 plus assertion/code provenance attest nonempty observations; do not independently reconstruct their contents or claim same-run before/after packet equality.",
+    "Printed complete packet hash equals prior verified c2d139 original scopes. Fresh focused-native hash is separate and includes fresh identities; no cross-run native equality claim.",
+    "Encounter context refusal persists and publicPause reports optical containment refusal. No supported current view/wholeparent optical save/encounter acceptance or recovery is established.",
+    "Preexecution source-only proposal statuses describe their original time; actual native parse0 and profile21/0 are separate closed evidence."
+  ],
+  "next_useful_action": "Only further observational partition of Route._collision_signature: tree get_children/pop/filter/native class/world reads vs collider/shape description/native getter/path work and shape/collider sort, then final Codec.value_error. Retain original LIFO traversal/check order, same-world scans including outside-world-root rejection, GridMap/CSG refusal and every native read. Record visited-node/collider/shape counts as primitive observations. No optimization yet. Native find_children equivalence remains unproved because filtering and traversal/error order may change."
+}

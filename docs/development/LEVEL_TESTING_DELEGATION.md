@@ -4,9 +4,9 @@ On 12 October 2026 the user requested testing subagents so Integration can imple
 
 | Reviewer | Current level | Exclusive scratch folder in Integration |
 | --- | --- | --- |
-| `/root/act1_level_testing` | A1-L4 | `.cinder/level-testing/act1/` |
-| `/root/act2_level_testing` | A2-O2 | `.cinder/level-testing/act2/` |
-| `/root/act3_level_testing` | A3-L4 | `.cinder/level-testing/act3/` |
+| `/root/act1_level_testing` | A1-L5 | `.cinder/level-testing/act1/` |
+| `/root/act2_level_testing` | A2-O3 | `.cinder/level-testing/act2/` |
+| `/root/act3_level_testing` | A3-L5 | `.cinder/level-testing/act3/` |
 
 The three registered act workers retain their existing checkouts, branches and six content prefixes. Testing reviewers are supporting subagents, not additional act owners. They read original closed evidence and prepare checks in their exclusive scratch folders. They do not edit the owners' active files, shared runtime, settings, canonical ledgers, registration or production registry. Integration remains the first help contact and owns shared repairs and production registration.
 
@@ -27,3 +27,5 @@ The initial review is preserved in [original assignment and audit evidence](evid
 The first completed handoff through this delegation is [A3-L4 False Paradise](ACT3_L4_ACCEPTANCE.md). Its dedicated tester used a managed isolated checkout containing exact sealed content and Shared51, plus Integration's narrow actual registry/fixture. Import0 and actual canonical registration18/0 are clean; unchanged component/terminal/portrait originals are reused. Integration registers the tested row and publishes ACCEPTED independently. This advances the campaign to13/24 and lets the author start L5. Other act reviewers continue preparing only their current changed-level checks.
 
 The second is [A2-O2 Clear Air Circuit](ACT2_O2_ACCEPTANCE.md). Its reviewer used the separate managed `level-test-act2` checkout with exact dadbf52 handoff and Shared52. Import0 and actual canonical registration/latest-before-final checkpoint Retry41/0 close clean; all2,449 input rows and original streams verify. The author's unchanged mechanics/extrema/loading/portrait evidence is reused. Integration copies only the sealed six Act2 prefixes and the exact tested registration/fixture/genuine UID. The campaign advances to14/24, Act2 7/8, and the author may start O3. Original failures and untested full-playthrough behavior remain recorded. The next review frontiers are A1-L4, A2-O3 and A3-L5; each retains its exclusive scratch folder and original sole content owner.
+
+The third delegated acceptance is [A1-L4 Selenite Court](ACT1_L4_ACCEPTANCE.md). Its isolated canonical625/0 and import0 reuse the author's existing373 terminal and14 reviewed portraits; no full route is rerun. The exact primary source review and necessary import0 close the integration scope. Shared54 advances15/24 and Act1 four/eight; L5 then becomes its next frontier. Registry descriptive status correction and test alias are separate metadata qualifications. Original failed outcomes and uninspected far/DASH/SPENT states remain preserved.
