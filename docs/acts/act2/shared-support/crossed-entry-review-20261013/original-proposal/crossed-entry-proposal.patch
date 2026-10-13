@@ -1,0 +1,169 @@
+--- a/scripts/acts/act1/mushroom_caverns_full.gd
++++ b/scripts/acts/act1/mushroom_caverns_full.gd
+@@ -10,6 +10,7 @@
+ const Geometry = preload("res://scripts/combat/threat_geometry.gd")
+ const NativeMotion = preload("res://scripts/combat/lunge_motion.gd")
+ const NativeCueMesh = preload("res://scripts/cues/cue_mesh.gd")
++const CROSSED_ENTRY_Z: float = -12.0 # Owned full-route candidate; actual optics still gate birth.
+ const FIELD_IDS: Array[String] = ["breathing", "crossed-left", "crossed-right", "court"]
+ const CONSUMER_ROOMS: Array[String] = ["breathing", "crossed", "court"]
+ const PROOF_KEYS: Array[String] = ["accepted", "path", "landing", "attack_position", "primary_time_s", "response_complete_s", "uses_blast", "uses_invulnerability", "proof_scope"]
+@@ -39,6 +40,120 @@
+ var _contact_material: Material
+ var _contact_mesh: Mesh
+ var _cue_parts: Dictionary = {} # Actual ready native node/material/readback pins.
++
++
++## Optional ordinary-follow lookahead; paused capture / fresh candidates keep
++## the existing actual-current provider and original approach topology.
++func camera_framing_points() -> Array:
++	var actual: Array = super.camera_framing_points()
++	if not last_camera_framing_error.is_empty() or not _crossed_entry_approach_live(): return actual
++	var upcoming: Array = _crossed_entry_points()
++	if upcoming.is_empty() or upcoming.has(Vector3.INF): return actual
++	var points: Array = _bounded_union(actual + upcoming)
++	var plan: Dictionary = shared_shell.call("camera_framing_plan_for_player", points, hero.global_position + Vector3(0, .65, 0), hero, _actual_presentation_camera())
++	# An impossible lateral / early pose keeps ordinary Player following. This
++	# pure hint neither makes a source live nor relaxes mandatory current optics.
++	return points if plan.get("accepted") == true else actual
++
++
++func normal_route_spec() -> Dictionary:
++	var result: Dictionary = super.normal_route_spec()
++	result.thresholds[2] = CROSSED_ENTRY_Z
++	return result
++
++
++func _begin_room() -> void:
++	if beat_index == 2:
++		if room_stage != "approach": return
++		if not _crossed_entry_approach_live() or hero.global_position.z > CROSSED_ENTRY_Z: return
++		# Wait for the real ordinary swipe/dash to finish; do not introduce bodies
++		# into its already committed path, alter movement, or invent a hold timer.
++		if hero.get_committed_dash_state().get("active", false) or not hero.is_on_floor(): return
++		var entry_error: String = _crossed_entry_body_gap_error()
++		if not entry_error.is_empty(): last_encounter_error = entry_error; return
++		var upcoming: Array = _crossed_entry_points()
++		if upcoming.is_empty() or upcoming.has(Vector3.INF): last_encounter_error = "Retained upcoming Crossed presentation unavailable"; return
++		var points: Array = _bounded_union(_camera_framing_points() + upcoming)
++		# Existing bounded plan AND actual current containment are both required
++		# before end/begin, actor.activate, fields, protocols or observer delivery.
++		if not _framing_ready(points): return
++	super._begin_room()
++
++
++func _crossed_entry_approach_live() -> bool:
++	return is_inside_tree() and _running and not _changing and not get_tree().paused and not is_restore_candidate() and beat_index == 2 and room_stage == "approach" and is_instance_valid(hero) and not hero.dead and is_instance_valid(shared_shell)
++
++
++func _crossed_entry_body_gap_error() -> String:
++	var player_body: Dictionary = BodySweep.source_description(hero)
++	if player_body.has("error") or player_body.get("collision") != _player_body.get("collision") or _player_body.get("shape") != player_body.collision.shape or not player_body.collision.shape is CapsuleShape3D: return "Retain the actual Player capsule at Crossed birth"
++	var player_shape: CapsuleShape3D = player_body.collision.shape
++	var player_center: Vector3 = player_body.collision.global_position
++	for id: String in ROOM_SOURCES[2]:
++		var actor := sources.get(id) as Act1MushroomSelenite
++		var collision := _retained_collisions.get(id) as CollisionShape3D
++		var capsule := _retained_capsules.get(id) as CapsuleShape3D
++		if not is_instance_valid(actor) or not is_instance_valid(collision) or not is_instance_valid(capsule) or collision.shape != capsule: return "Retain actual dormant body before Crossed birth: " + id
++		var delta: Vector3 = collision.global_position - player_center
++		# Conservative finite coplanar holding clearance. Parent/source native
++		# binding checks below independently retain actual capsule transforms.
++		if Vector2(delta.x, delta.z).length() <= player_shape.radius + capsule.radius + BodySweep.position_rounding_bound(player_center, collision.global_position): return "Move to a clear ordinary holding position before Crossed sources appear"
++	return ""
++
++
++func _crossed_entry_points() -> Array:
++	# Prospective optical bounds only, from already-retained dormant bodies/art
++	# and the same immutable field/leaf factories the original birth will use.
++	# No activate, fields, nodes, target groups, native binding, clock or Save data.
++	if not _crossed_entry_approach_live() or not _floor_error().is_empty() or not _scenery_error().is_empty() or not _billboard_camera_error(_actual_presentation_camera()).is_empty(): return [Vector3.INF]
++	for field_id: String in ROOM_FIELDS[2]:
++		if _fields.has(field_id): return [Vector3.INF] # Approach topology must stay absent.
++	if _consumers.has("crossed") or _protocols.has("crossed"): return [Vector3.INF]
++	var points: Array = []
++	var source_points: Dictionary = {}
++	var support: Dictionary = {}
++	for id: String in ROOM_SOURCES[2]:
++		var actor := sources.get(id) as Act1MushroomSelenite
++		if not is_instance_valid(actor) or actor != _retained_sources.get(id) or actor.get_parent() != self or not actor.is_inside_tree() or actor.is_queued_for_deletion() or not actor.dormant or actor.dead or actor.global_position != _source_spec(id).position or not actor.body_binding_error().is_empty() or not actor.art_binding_error().is_empty(): return [Vector3.INF]
++		var collision := _retained_collisions.get(id) as CollisionShape3D
++		var capsule := _retained_capsules.get(id) as CapsuleShape3D
++		if not is_instance_valid(collision) or not is_instance_valid(capsule) or collision != actor.get_node_or_null("BodyCollision") or collision.shape != capsule or not collision.disabled: return [Vector3.INF]
++		var actual: Array = _box_points(AABB(Vector3(-capsule.radius, -capsule.height * .5, -capsule.radius), Vector3(capsule.radius * 2, capsule.height, capsule.radius * 2)), collision.global_transform)
++		var art: Node3D = actor.get_art()
++		if not is_instance_valid(art): return [Vector3.INF]
++		# Local visibility is intentional ONLY for this optional dormant forecast.
++		# The current required provider continues using is_visible_in_tree().
++		for node: Node in art.find_children("*", "Sprite3D", true, false):
++			var sprite := node as Sprite3D
++			if not sprite.visible: continue
++			var quad: Array = shared_shell.call("camera_billboard_points", sprite)
++			if quad.is_empty(): return [Vector3.INF]
++			actual.append_array(quad)
++		for node: Node in art.find_children("*", "MeshInstance3D", true, false):
++			var mesh := node as MeshInstance3D
++			if mesh.visible and mesh.mesh != null: actual.append_array(_box_points(mesh.get_aabb(), mesh.global_transform))
++		var response: Dictionary = actor.get_spore_response_state()
++		if response.is_empty() or not response.get("support_radius") is float or not is_finite(response.support_radius): return [Vector3.INF]
++		source_points[id] = actual
++		support[id] = response.support_radius
++		points.append_array(actual)
++	var camera: Camera3D = _actual_presentation_camera()
++	for field_id: String in ROOM_FIELDS[2]:
++		var origin: Vector3 = NORMAL_FIELD_POINTS[field_id]
++		for x: float in [-Layout.FIELD_RADIUS, Layout.FIELD_RADIUS]:
++			for z: float in [-Layout.FIELD_RADIUS, Layout.FIELD_RADIUS]: points.append(origin + Vector3(x, .03, z))
++		for offset: Vector3 in Layout.CLUSTER_OFFSETS:
++			var leaf: Array = LowClusterArt.available_entry_points(origin + offset, camera.global_basis)
++			if leaf.is_empty(): return [Vector3.INF]
++			points.append_array(leaf)
++		for id: String in ROOM_SOURCES[2]:
++			var actor: Act1MushroomSelenite = sources[id]
++			var radius: float = Layout.FIELD_RADIUS + float(support[id]) + float(Repulsion.DEFAULTS.exit_clearance) + SPORE_CAMERA_PAD
++			for x: float in [-radius, radius]:
++				for z: float in [-radius, radius]:
++					var endpoint := Vector3(origin.x + x, actor.global_position.y, origin.z + z)
++					for point: Vector3 in source_points[id]: points.append(point + endpoint - actor.global_position)
++	return _bounded_union(points)
+ 
+ 
+ func _ready() -> void:
+--- a/scripts/acts/act1/mushroom_cluster_art.gd
++++ b/scripts/acts/act1/mushroom_cluster_art.gd
+@@ -5,6 +5,7 @@
+ const ClusterNative = preload("res://scripts/environment/spore_cluster.gd")
+ const FieldNative = preload("res://scripts/environment/spore_field.gd")
+ const InteractionCue = preload("res://scripts/cues/interaction_cue.gd")
++const EntryCueMesh = preload("res://scripts/cues/cue_mesh.gd")
+ const ASSET_DIR: String = "res://assets/acts/act1/grotto/spore-clusters/"
+ const STATES: Array[String] = ["available", "active", "spent"]
+ const TEXTURES: Dictionary = {
+@@ -148,6 +149,27 @@
+ 	return points
+ 
+ 
++## Detached optical definition for a future available leaf. This creates no
++## Field/Cluster/Node/cue state or target; native current framing remains above.
++## Caller must recheck the actual factory/resource correspondence at real birth.
++static func available_entry_points(origin: Vector3, fixed_basis: Basis) -> Array:
++	var texture: Texture2D = TEXTURES.available
++	if not origin.is_finite() or not fixed_basis.is_finite() or absf(fixed_basis.determinant() - 1.0) > .00001 or not is_instance_valid(texture) or texture.get_script() != null or texture is AtlasTexture or texture.get_size() != Vector2(24, 20) or texture.resource_path != ASSET_DIR + "cluster_available.png": return []
++	# Same 24x20 whole canvas, .016 pixel size and feet offset(0,10) as _init.
++	# The enclosing owned camera-basis union keeps its unchanged .0001 reserve.
++	var points: Array = []
++	for x: float in [-12.0, 12.0]:
++		for y: float in [0.0, 20.0]: points.append(origin + fixed_basis.x * x * .016 + fixed_basis.y * y * .016)
++	# Same native interaction factory and marker local y as Cluster/Cue ready.
++	var mesh: ArrayMesh = EntryCueMesh.interaction_mesh("available", "attack")
++	if mesh == null: return []
++	var bounds: AABB = mesh.get_aabb()
++	for x: float in [bounds.position.x, bounds.end.x]:
++		for y: float in [bounds.position.y, bounds.end.y]:
++			for z: float in [bounds.position.z, bounds.end.z]: points.append(origin + Vector3(x, y + .025, z))
++	return points
++
++
+ func _structure_error() -> String:
+ 	if not _live(_cluster) or not _live(_field) or _cluster.get_script() != ClusterNative or _field.get_script() != FieldNative or _cluster.get_parent() != _field or not _cluster.is_in_group("environment_attack_targets") or not _field.is_in_group("required_cues"):
+ 		return "Retain actual native field/cluster identity and target membership"

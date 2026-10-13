@@ -1,5 +1,9 @@
 # B02 sampled-circle Shell support
 
+## Integration support acceptance — 13 October 2026
+
+Integration canonically accepted exact Shell71 support candidate `279024d6` and published its five TEST resources, two genuine UIDs and original evidence at `bdd4fa39ebe26e6c491bfd2e47fc646c455e727e`, ACCEPTED `70b40698-8973-4e61-ae5b-67c3fb4445af`. API56 and campaign16/24 remain. This scoped test/document supplement requires no mandatory adoption or native rerun. The original 71/0 evidence and limitations below remain unchanged.
+
 ## Current native handoff — 13 October 2026
 
 The focused Shell support suite passed **71 checks, zero failures**, with exit 0 and no engine errors or warnings. Actual Shared56 (`26f59b28`) was preserve-adopted at merge `a7737647`; the actual adoption, interface comparison and native custody reviews are retained. [Final evidence index](evidence/final-handoff-20261013/index.json) pins the installed three TEST sources and two genuine importer-generated UID files, all original import/native inputs and logs, exact typed output payloads and independent reviews. All eight accepted Act 2 levels remain unchanged.
