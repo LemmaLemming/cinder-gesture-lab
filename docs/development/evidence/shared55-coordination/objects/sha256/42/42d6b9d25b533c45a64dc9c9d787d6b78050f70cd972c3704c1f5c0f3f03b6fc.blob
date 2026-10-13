@@ -1,0 +1,251 @@
+{
+  "reviewed_at": "2026-10-13T06:31:27.185738+00:00",
+  "review_scope": "Read-only audit of exact CLOSED import-01 and registration-01 packets, manifests, frozen-before custody, raw/wrapper logs and results. No engine, git/index, project source or protected manifest changes; registration-02 was not inventoried or read. Own scratch output only.",
+  "runs": {
+    "import-01": {
+      "packet": "/Users/howardchen/.codex/worktrees/level-test-act2-o3/video game idea/.cinder/level-testing/act2-o3/import-01",
+      "recorded_result": {
+        "at": "2026-10-13T06:16:37.174061+00:00",
+        "status": "CLOSED",
+        "candidate": "fe894b39231af4cd623e0fef3f346ed56b5e97a7",
+        "mode": "import",
+        "native_wrapper_exit_code": 0,
+        "clean": true,
+        "summaries": [],
+        "queue_wait_s": 0.0297512499964796,
+        "elapsed_including_queue_s": 6.98587995802518,
+        "frozen_rows": 2323,
+        "all_frozen_original_bytes_exact": true,
+        "active_uid_before": 466,
+        "active_uid_after": 467,
+        "all_prior_uids_exact": true,
+        "unique_uid_identity": true,
+        "diagnostics": [],
+        "raw_sha256": "22d9788c22fc7674035657aaaa9307f2fa6e33052a8f1360d4384f11e68a7c0b",
+        "wrapper_sha256": "0086f880ef07ded9812a5d5fa79a1663c1e767fe94f460f6578f186c9fd2ed8b",
+        "source_sha256": "ff5453da583df3249aefbb9911674a9eea152ab27436065e1fb0bc5540085a10",
+        "actual_engine_sha256": "c7cccbf8fb143e34e02fd6521e09be2c2b974f0d5db080b19071c9c570718ccf",
+        "engine_and_canonical_queue_handles_closed": true,
+        "scope": "Only necessary import or narrow actualcanonical O3 registration; original136/mechanics/terminal/portraits reused, no fullroute/inheritedsuite"
+      },
+      "actual_packet_sha256": {
+        "source.json": "ff5453da583df3249aefbb9911674a9eea152ab27436065e1fb0bc5540085a10",
+        "before.json": "cfe57ae72f213a71c0a372e1e518e3909caab7f8d10a896f272a6aa0b2ea9801",
+        "after.json": "1dca85d11ab7cddd1157721b3a0a2499a81f3b491493a3469700710b60637179",
+        "command.json": "334ce319061eba2d92b4f8ce844c0e0ac6f74bab5cfd829b86dbc2868444d364",
+        "result.json": "d2896b7e9579b900d8f782a3669de99f83408361dc160c7b1bd73e0cd37ad460",
+        "raw.log": "22d9788c22fc7674035657aaaa9307f2fa6e33052a8f1360d4384f11e68a7c0b",
+        "wrapper.log": "0086f880ef07ded9812a5d5fa79a1663c1e767fe94f460f6578f186c9fd2ed8b"
+      },
+      "result_custody_hashes_match": {
+        "raw.log": true,
+        "wrapper.log": true,
+        "source.json": true
+      },
+      "frozen_custody": {
+        "count": 2323,
+        "all_bytes_hashes_modes_exact": true,
+        "mismatches": [],
+        "all_before_manifest_paths_present": true,
+        "all_before_overlap_bytes_hashes_modes_exact": true,
+        "extra_frozen_metadata_paths": [
+          ".cinder/level-testing/act2-o3/assignment.json",
+          ".cinder/level-testing/act2-o3/run_jobs.py"
+        ]
+      },
+      "uids": {
+        "prior_count": 466,
+        "after_count": 467,
+        "all_prior_rows_exact": true,
+        "unique_after_identities": true,
+        "additions": [
+          {
+            "path": "tests/act2_o3_registration_smoke.gd.uid",
+            "bytes": 19,
+            "sha256": "09982117be27ddc972aca33abc4838580e104e7c560f6f8313e2bc8ec51055e1",
+            "mode": "0644",
+            "uid": "uid://mnh0olaebkhi"
+          }
+        ]
+      },
+      "independent_manifest_deltas": {
+        "active_native_files": {
+          "before": 1676,
+          "after": 1676,
+          "removed": [],
+          "added_count": 0,
+          "changed": []
+        },
+        "active_uids": {
+          "before": 466,
+          "after": 467,
+          "removed": [],
+          "added_count": 1,
+          "changed": []
+        },
+        "active_import_sidecars": {
+          "before": 172,
+          "after": 304,
+          "removed": [],
+          "added_count": 132,
+          "changed": []
+        },
+        "protected_settings_ledger_catalogue_registry": {
+          "before": 12,
+          "after": 12,
+          "removed": [],
+          "added_count": 0,
+          "changed": []
+        },
+        "selected_generated_cache": {
+          "before": 0,
+          "after": 3,
+          "removed": [],
+          "added_count": 3,
+          "changed": []
+        }
+      },
+      "identity_fields_match": true,
+      "engine_hash_fields_match": true,
+      "fixture_registry_driver_hashes_match_frozen_rows": {
+        "fixture_sha256": true,
+        "registry_sha256": true,
+        "driver_sha256": true
+      }
+    },
+    "registration-01": {
+      "packet": "/Users/howardchen/.codex/worktrees/level-test-act2-o3/video game idea/.cinder/level-testing/act2-o3/registration-01",
+      "recorded_result": {
+        "at": "2026-10-13T06:17:55.957930+00:00",
+        "status": "CLOSED",
+        "candidate": "fe894b39231af4cd623e0fef3f346ed56b5e97a7",
+        "mode": "native",
+        "native_wrapper_exit_code": 1,
+        "clean": false,
+        "summaries": [
+          {
+            "checks": 33,
+            "failures": 1
+          }
+        ],
+        "queue_wait_s": 0.028109333012253046,
+        "elapsed_including_queue_s": 27.359743042034097,
+        "frozen_rows": 2459,
+        "all_frozen_original_bytes_exact": true,
+        "active_uid_before": 467,
+        "active_uid_after": 467,
+        "all_prior_uids_exact": true,
+        "unique_uid_identity": true,
+        "diagnostics": [
+          "ERROR: FAIL A2-O3 loading: single actual GUI click settles RetryButton: Restore candidate presentation failed: Required source, footprint, player or landing lies outside the protected screen rectangle",
+          "ERROR: FAIL A2-O3 loading: single actual GUI click settles RetryButton: Restore candidate presentation failed: Required source, footprint, player or landing lies outside the protected screen rectangle",
+          "WARNING: 4 ObjectDB instances were leaked at exit (run with `--verbose` for details)."
+        ],
+        "raw_sha256": "a55d4bf1d000bdbf2f8f5e138f2c6964f07ed0f79bef9ffeb1ee25d82b3c9e98",
+        "wrapper_sha256": "c25008d7468592c4bcb70241ce6cbc0019aa9864ff819909294115f7e0fc43a4",
+        "source_sha256": "8d8ff5de3ae714e1acf6d84957f6620f380ac9d2446141249d0417208826b4fb",
+        "actual_engine_sha256": "c7cccbf8fb143e34e02fd6521e09be2c2b974f0d5db080b19071c9c570718ccf",
+        "engine_and_canonical_queue_handles_closed": true,
+        "scope": "Only necessary import or narrow actualcanonical O3 registration; original136/mechanics/terminal/portraits reused, no fullroute/inheritedsuite"
+      },
+      "actual_packet_sha256": {
+        "source.json": "8d8ff5de3ae714e1acf6d84957f6620f380ac9d2446141249d0417208826b4fb",
+        "before.json": "42ac9cc5ec1ce3c4cfb8dc6e071e8e8c08d83fcc27f5b9695972816a49b54bd4",
+        "after.json": "2dbe582eb3f9c205e9b5ec8f81d4f4467ef5220f5285689b4a11c9b9121dcde4",
+        "command.json": "ea8281c7ff87eec11dbceb826e5e16320d60939656c6e90c52c526f5694ec84a",
+        "result.json": "4a56d3f2280c60989eead7e52af39b0e4f9336b485bb41cc3423ea469ea2c7ea",
+        "raw.log": "a55d4bf1d000bdbf2f8f5e138f2c6964f07ed0f79bef9ffeb1ee25d82b3c9e98",
+        "wrapper.log": "c25008d7468592c4bcb70241ce6cbc0019aa9864ff819909294115f7e0fc43a4"
+      },
+      "result_custody_hashes_match": {
+        "raw.log": true,
+        "wrapper.log": true,
+        "source.json": true
+      },
+      "frozen_custody": {
+        "count": 2459,
+        "all_bytes_hashes_modes_exact": true,
+        "mismatches": [],
+        "all_before_manifest_paths_present": true,
+        "all_before_overlap_bytes_hashes_modes_exact": true,
+        "extra_frozen_metadata_paths": [
+          ".cinder/level-testing/act2-o3/assignment.json",
+          ".cinder/level-testing/act2-o3/run_jobs.py"
+        ]
+      },
+      "uids": {
+        "prior_count": 467,
+        "after_count": 467,
+        "all_prior_rows_exact": true,
+        "unique_after_identities": true,
+        "additions": []
+      },
+      "independent_manifest_deltas": {
+        "active_native_files": {
+          "before": 1676,
+          "after": 1676,
+          "removed": [],
+          "added_count": 0,
+          "changed": []
+        },
+        "active_uids": {
+          "before": 467,
+          "after": 467,
+          "removed": [],
+          "added_count": 0,
+          "changed": []
+        },
+        "active_import_sidecars": {
+          "before": 304,
+          "after": 304,
+          "removed": [],
+          "added_count": 0,
+          "changed": []
+        },
+        "protected_settings_ledger_catalogue_registry": {
+          "before": 12,
+          "after": 12,
+          "removed": [],
+          "added_count": 0,
+          "changed": []
+        },
+        "selected_generated_cache": {
+          "before": 3,
+          "after": 3,
+          "removed": [],
+          "added_count": 0,
+          "changed": []
+        }
+      },
+      "identity_fields_match": true,
+      "engine_hash_fields_match": true,
+      "fixture_registry_driver_hashes_match_frozen_rows": {
+        "fixture_sha256": true,
+        "registry_sha256": true,
+        "driver_sha256": true
+      }
+    }
+  },
+  "handoff_import_after_to_registration_before_exact_except_capture_time": true,
+  "findings": [
+    {
+      "result": "import-01 clean prerequisite only",
+      "evidence": "result.json CLOSED, exit 0, clean true, empty smoke summaries; diagnostics empty; original manifests unchanged except generated addition of 1 UID, 132 import sidecars and 3 selected caches."
+    },
+    {
+      "result": "registration-01 real failed run preserved",
+      "evidence": "raw.log line 3: RetryButton restore presentation fails protected screen rectangle; raw.log line 12: 33 checks, 1 failures. result.json CLOSED, exit 1, clean false. Failure appears once in raw and once again in wrapper; these are the same failed check, not two distinct failures."
+    },
+    {
+      "result": "four ObjectDB leaks preserved",
+      "evidence": "wrapper.log line 14: WARNING: 4 ObjectDB instances were leaked at exit; result diagnostics retains warning. Native raw.log does not include this exit warning."
+    }
+  ],
+  "scope_limits": [
+    "Evidence covers necessary import and the narrow actual canonical O3 registration leaf only; original mechanics/terminal/portraits/full-route suites were not rerun.",
+    "Registration summary explicitly declares TEST prefix/feet/two public gated injuries/lethal injury and excludes earned route/final clear/art or inherited full-suite claims.",
+    "Manifest scope covers active scripts/scenes/assets/tests/data and actual UID/import sidecars plus explicit settings/ledger/catalogue/registry and three selected derived caches; it excludes native .gdignore and tool/private/archive/export/capture banks and does not claim a complete dynamic/import/cache graph.",
+    "Engine identity and closed queue/engine handle status are recorded packet assertions; this bounded audit verified their field consistency without touching engine binary or live process state.",
+    "Candidate Git identity is recorded and consistent across allowed packets; this audit did not inspect Git/index or current live source."
+  ]
+}

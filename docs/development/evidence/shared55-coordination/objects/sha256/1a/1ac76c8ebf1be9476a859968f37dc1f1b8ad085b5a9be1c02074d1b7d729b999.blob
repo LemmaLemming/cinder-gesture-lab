@@ -1,0 +1,129 @@
+import datetime, hashlib, importlib.util, json, os, re, stat, subprocess, sys, time
+from pathlib import Path
+sys.dont_write_bytecode = True
+ROOT = Path(__file__).resolve().parents[3]
+OUT = Path(__file__).resolve().parent
+NATIVE_ROOTS = {'scripts', 'scenes', 'assets', 'tests', 'data'}
+EXCLUDE = {'.git', '.godot', '.tools', '.cinder', 'exports', 'captures', '__pycache__'}
+PROTECTED = ['project.godot', '.cinder/local.json', '.gitignore', 'data/design/player_equipment.json', 'data/design/difficulty_profiles.json', 'data/design/equipment_claims.json', 'data/design/ability_usage.json', 'data/campaign/registry.json']
+OPTIONAL_SETTINGS = ['.vscode/settings.json', '.vscode/tasks.json', '.vscode/launch.json', '.cinder/cinder.code-workspace']
+CACHE_INPUTS = ['.godot/global_script_class_cache.cfg', '.godot/uid_cache.bin', '.godot/editor/project_metadata.cfg']
+def utc():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def row(path):
+    assert path.is_file() and not path.is_symlink(), path
+    data = path.read_bytes()
+    return {'path': str(path.relative_to(ROOT)), 'bytes': len(data),
+            'sha256': hashlib.sha256(data).hexdigest(),
+            'mode': format(stat.S_IMODE(path.stat().st_mode), '04o')}
+
+
+def inventory():
+    native, uids, sidecars, ignored = [], [], [], []
+    for folder, dirs, files in os.walk(ROOT):
+        current = Path(folder)
+        if current != ROOT and '.gdignore' in files:
+            ignored.append({'path': str(current.relative_to(ROOT)),
+                            'classification': 'Native .gdignore boundary; archived UID/assets inside are excluded without enumeration/count.'})
+            dirs[:] = []
+            continue
+        dirs[:] = [name for name in dirs if name not in EXCLUDE]
+        for name in files:
+            path = current / name
+            relative = path.relative_to(ROOT)
+            if not relative.parts or relative.parts[0] not in NATIVE_ROOTS or name == '.DS_Store' or name.endswith('.lock'):
+                continue
+            if name.endswith('.uid'):
+                value = row(path)
+                value['uid'] = path.read_text().strip()
+                uids.append(value)
+            elif name.endswith('.import'):
+                sidecars.append(row(path))
+            else:
+                native.append(row(path))
+    protected = [row(ROOT / name) for name in PROTECTED]
+    protected += [row(ROOT / name) for name in OPTIONAL_SETTINGS if (ROOT / name).is_file()]
+    cache = [row(ROOT / name) for name in CACHE_INPUTS if (ROOT / name).is_file()]
+    return {'captured_at': utc(),
+            'active_native_files': sorted(native, key=lambda value: value['path']),
+            'active_uids': sorted(uids, key=lambda value: value['path']),
+            'active_import_sidecars': sorted(sidecars, key=lambda value: value['path']),
+            'protected_settings_ledger_catalogue_registry': protected,
+            'selected_generated_cache': cache,
+            'ignored_native_boundaries': sorted(ignored, key=lambda value: value['path']),
+            'archive_uid_assets_counted': False,
+            'scope': 'All active scripts/scenes/assets/tests/data files, actual UID/import sidecars and explicit config/settings/ledger/catalogue/registry. Native .gdignore and tool/private/archive/export/capture banks excluded. Three existing derived cache inputs selected separately; not a complete dynamic/import/cache graph.'}
+
+
+def compare(old, new):
+    before = {value['path']: value for value in old}
+    after = {value['path']: value for value in new}
+    return {'removed': sorted(set(before) - set(after)),
+            'added': [after[name] for name in sorted(set(after) - set(before))],
+            'changed': [{'path': name, 'before': before[name], 'after': after[name]}
+                        for name in sorted(set(before) & set(after)) if before[name] != after[name]]}
+
+
+def write(p, value):
+    p.write_text(json.dumps(value, indent=2)+'\n')
+def main():
+    label, mode = sys.argv[1:]
+    assert mode in {'import', 'native'}
+    packet=OUT/label; packet.mkdir(exist_ok=False)
+    assignment=json.loads((OUT/'assignment.json').read_text())
+    assert assignment['execution_authorized'] and assignment['root']==str(ROOT)
+    assert digest(Path(__file__))==assignment['driver_sha256']
+    assert digest(ROOT/'tests/act2_o3_registration_smoke.gd')==assignment['fixture_sha256']
+    assert digest(ROOT/'data/campaign/registry.json')==assignment['registry_sha256']
+    head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+    assert head==assignment['candidate']
+    before=inventory(); write(packet/'before.json',before)
+    selected={x['path']:x for kind in ['active_native_files','active_uids','active_import_sidecars','protected_settings_ledger_catalogue_registry','selected_generated_cache'] for x in before[kind]}
+    for p in [Path(__file__),OUT/'assignment.json']: selected[str(p.relative_to(ROOT))]=row(p)
+    frozen=[]
+    for name,x in sorted(selected.items()):
+        p=ROOT/name; target=packet/'frozen-before'/name;target.parent.mkdir(parents=True,exist_ok=True)
+        assert row(p)==x
+        target.write_bytes(p.read_bytes());target.chmod(int(x['mode'],8))
+        assert digest(target)==x['sha256']
+        frozen.append({**x,'frozen_relative':str(target.relative_to(packet))})
+    write(packet/'source.json',{'at':utc(),'mode':mode,'candidate':head,'submitted':assignment['submitted'],'frozen_rows':frozen,'scope':before['scope'],'engine_sha256':assignment['engine_sha256'],'immutable_while_queued_and_live':True})
+    spec=importlib.util.spec_from_file_location('cinder_o3_dev',ROOT/'scripts/dev/dev.py');dev=importlib.util.module_from_spec(spec);spec.loader.exec_module(dev)
+    context=dev.ProjectContext(ROOT);assert context.canonical_root==Path(assignment['canonical_root'])
+    engine=dev.resolve_godot(context);assert digest(engine)==assignment['engine_sha256']
+    command=[str(engine),'--path',str(ROOT),'--headless','--log-file',str(packet/'raw.log')]
+    command+=['--import'] if mode=='import' else ['--script','res://tests/act2_o3_registration_smoke.gd']
+    write(packet/'command.json',{'command':command,'queue':'scripts/dev/dev.py godot_lock(context.root) then run_validation; no bypass','deadline_after_queue_s':300 if mode=='import' else 200})
+    start=time.monotonic()
+    with (packet/'wrapper.log').open('w') as stream:
+        from contextlib import redirect_stdout,redirect_stderr
+        with redirect_stdout(stream),redirect_stderr(stream):
+            with dev.godot_lock(ROOT) as lock_fd:
+                acquired=time.monotonic();print('QUEUE_ACQUIRED',utc(),flush=True)
+                code=dev.run_validation(command,context,lock_fd,300 if mode=='import' else 200,detect_godot_errors=True)
+    closed=utc(); elapsed=time.monotonic()-start
+    after=inventory();write(packet/'after.json',after)
+    deltas={k:compare(before[k],after[k]) for k in ['active_native_files','active_uids','active_import_sidecars','protected_settings_ledger_catalogue_registry','selected_generated_cache']}
+    raw=(packet/'raw.log').read_text(errors='replace');wrapper=(packet/'wrapper.log').read_text(errors='replace')
+    diagnostic=re.compile(r'\bSCRIPT ERROR:|\bERROR:|\bWARNING:|Parse Error|leaked|Orphan|Failed to (?:load|compile)',re.I)
+    notices=[line for line in (raw+'\n'+wrapper).splitlines() if diagnostic.search(line)]
+    stable=lambda k:not any(deltas[k].values())
+    uids=deltas['active_uids'];uid_ok=not uids['removed'] and not uids['changed'] and (len(uids['added'])==1 and uids['added'][0]['path']=='tests/act2_o3_registration_smoke.gd.uid' if mode=='import' else not uids['added'])
+    identities=[x['uid'] for x in after['active_uids']];assert len(identities)==len(set(identities))
+    # Import sidecars are generated metadata only; no native source may drift.
+    sidecar_ok=stable('active_import_sidecars') if mode=='native' else not deltas['active_import_sidecars']['removed']
+    frozen_ok=all(digest(packet/x['frozen_relative'])==x['sha256'] for x in frozen)
+    summaries=[{'checks':int(m.group(1)),'failures':int(m.group(2))} for m in re.finditer(r'A2-O3 canonical registration smoke: (\d+) checks, (\d+) failures',raw)]
+    clean=code==0 and not notices and stable('active_native_files') and stable('protected_settings_ledger_catalogue_registry') and uid_ok and sidecar_ok and frozen_ok
+    if mode=='native':clean=clean and stable('selected_generated_cache') and len(summaries)==1 and summaries[0]['failures']==0
+    result={'at':closed,'status':'CLOSED','candidate':head,'mode':mode,'native_wrapper_exit_code':code,'clean':clean,'summaries':summaries,'queue_wait_s':acquired-start,'elapsed_including_queue_s':elapsed,'frozen_rows':len(frozen),'all_frozen_original_bytes_exact':frozen_ok,'active_uid_before':len(before['active_uids']),'active_uid_after':len(after['active_uids']),'all_prior_uids_exact':not uids['removed'] and not uids['changed'],'unique_uid_identity':True,'diagnostics':notices,'deltas':deltas,'raw_sha256':digest(packet/'raw.log'),'wrapper_sha256':digest(packet/'wrapper.log'),'source_sha256':digest(packet/'source.json'),'actual_engine_sha256':digest(engine),'engine_and_canonical_queue_handles_closed':True,'scope':'Only necessary import or narrow actualcanonical O3 registration; original136/mechanics/terminal/portraits reused, no fullroute/inheritedsuite'}
+    write(packet/'result.json',result)
+    print(json.dumps({k:v for k,v in result.items() if k!='deltas'},indent=2),flush=True)
+    return 0 if clean else 1
+if __name__=='__main__':sys.exit(main())
