@@ -10,6 +10,8 @@ The actual suite covers the supplied Shell Hero, genuine eye HP/lease owner, one
 
 TEST arrangements are explicit: the existing A2-O3 logical row is substituted only in memory, a prerequisite prefix initializes protected Story, the active observer synchronously pauses the tree, a public 1HP injury tests worn Replay resources, and probe completion supplies the isolated optional stamp. The held suffix is Continued and then retried; resumed held-path damage settlement is untested. Moving Hero evidence is during warning, and the held active endpoint is stationary. This evidence does not establish authored B02/Act1-L5 acceptance, art, full playthrough, balance, performance or mobile/export behavior. Earlier Root component 103/69/35/17 results retain their separate scopes.
 
+The [final index review](evidence/final-handoff-20261013/a2_b02_shell_final_index_review_20261013.json) passed with zero findings. It is a post-index evidence addition, preserved separately from the unchanged 1,338-row index. The tested resources and indexed packet were sealed at `36eb30c1f265cfc92daabc0c6abdbdd4a41dd9ee`.
+
 All owned engine/import/helper sessions are closed. Integration remains sole shared production owner and receives this exact narrow support candidate. Historical unexecuted drafts, source findings, Root native failures and their diagnostic limits remain intact. No human decision or development blocker remains for this handoff.
 
 ## Historical source preparation
