@@ -1,5 +1,7 @@
 # Independent focused level testing
 
+The fourth focused acceptance is [A2-O3 Bleached Canal](ACT2_O3_ACCEPTANCE.md). Final source/delta review was complete before two temporary model-capacity failures stopped its original reviewer. Integration prepared a separate exact Shared54/f142 validation checkout and executed only the new leaf; a fresh independent source/custody reviewer confirms43/0, all2459 frozen inputs/467UIDs exact. Original33/1 and unchanged owner136/104/247/164/28 scopes remain. Act2 eight/eight; remaining frontiers A1L5/A3L5 and their optional content. Testers write exclusive scratch and validation paths; no new act owners, broad routes or cross-act/human gates.
+
 On 12 October 2026 the user requested testing subagents so Integration can implement shared systems while levels are reviewed. Three reviewers are assigned to the current frontiers:
 
 | Reviewer | Current level | Exclusive scratch folder in Integration |

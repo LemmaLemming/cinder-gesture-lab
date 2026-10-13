@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/campaign/level.gd" id="1"]
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(14, 1, 14)
+
+[node name="DeclaredTestNextFloor" type="Node3D"]
+script = ExtResource("1")
+level_id = "A3-L5"
+local_snapshot_version = 1
+objective_text = "TEST ONLY / EMPTY NEXT FLOOR"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 0)
+
+[node name="FirmFloor" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Solid" type="CollisionShape3D" parent="FirmFloor"]
+position = Vector3(0, -0.5, 0)
+shape = SubResource("FloorShape")

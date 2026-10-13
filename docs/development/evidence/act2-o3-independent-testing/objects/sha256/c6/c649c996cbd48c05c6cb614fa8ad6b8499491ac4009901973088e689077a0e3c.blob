@@ -1,0 +1,13 @@
+{
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act1/a1_l1_route.gd",
+  "checkout": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+  "shared_baseline": "2cba17fcdb89c18600355ddf377281c3b5aef8f0",
+  "api_revision": "campaign-shared-6",
+  "test_sha256_before_fix": "aa769042994d538308ac2510145ea590155b6139ec45c9e51602d7a5c287ad30",
+  "exit_code": 1,
+  "observed_result": "135 checks,1 failure;15 actual swipes,4 actual primaries,no teleports",
+  "first_meaningful_error": "executed swipe route physically overlaps hatch and emits actual contact exit",
+  "classification": "test/API misuse: snapshot_state called with active simulation",
+  "diagnosis": "CinderLaneMechanism._snapshot_access_error line369 requires paused barrier. Test final assertion combined a guaranteed-empty unpaused level snapshot with physical contact facts. No game source fix follows from this failure.",
+  "correction": "Assert actual overlaps/contact signal first, then pause/await process_frame before capture, preserving all original semantic assertions and exposing last_snapshot_error."
+}

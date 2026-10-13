@@ -1,0 +1,269 @@
+extends SceneTree
+## Narrow actual Main post-stop custody regression. Solo/open approaches are
+## fixture-only placements on the real floor, not a traversal claim. Landing
+## resolution, zero-shell first tap, compound admission, safe recognizer dash and
+## native stop are genuine. Pause occurs after a completed frame, never from a
+## phase observer. Copied custody/opening/time fields keep exact comparisons.
+const MainScene = preload("res://scenes/main.tscn")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Layout = preload("res://scripts/acts/act1/crater_gardens_layout.gd")
+const Motion = preload("res://scripts/combat/lunge_motion.gd")
+const LEVEL_PATH: String = "res://scenes/acts/act1/a1_l2.tscn"
+var game: Node
+var level: CinderLevel
+var hero: CinderPlayer
+var source: Act1RushSelenite
+var circle: CinderLaneMechanism
+var scheduler: CinderThreatScheduler
+var host_admission: Dictionary = {}
+var circle_admission: Dictionary = {}
+var checks: int = 0
+var failures: int = 0
+var events: int = 0
+var finishing: bool = false
+
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+
+func _run() -> void:
+	create_timer(35.0, true).timeout.connect(func() -> void:
+		if not finishing:
+			_expect(false, "bounded stopped-custody fixture completes within35 seconds")
+			_finish())
+	root.size = Vector2i(540, 1170)
+	game = MainScene.instantiate()
+	game.set("level_scene_path", LEVEL_PATH)
+	root.add_child(game)
+	level = game.get("active_level") as CinderLevel
+	hero = game.get("player") as CinderPlayer
+	if not _expect(level != null and hero != null and level.hero == hero and level.scene_file_path == LEVEL_PATH and level.contract_error().is_empty(), "actual L2 Main enters with its shared Player"):
+		_finish(); return
+	game.call("resume_lab")
+	if not _expect(await _wait_for(func() -> bool: return level.get("beat_index") == 1, 800), "native landing dangerous interval genuinely resolves before solo staging"):
+		_diagnose_setup("landing"); _finish(); return
+	var sources: Dictionary = level.get("sources")
+	var solo: Act1RushSelenite = sources["solo"]
+	_stage_approach(Vector3(0, 0.005, 9.5))
+	game.call("resume_lab")
+	if not _expect(await _wait_for(func() -> bool: return not solo.dormant, 200), "real solo activates at its authored boundary"):
+		_diagnose_setup("solo activation"); _finish(); return
+	var sequence: int = _last_sequence()
+	if not _solo_primary():
+		_finish(); return
+	if not _expect(await _wait_for(func() -> bool: return solo.dead and level.get("beat_index") == 2, 200), "one genuine ordinary primary clears solo and reaches the fork"):
+		_diagnose_setup("solo primary"); _finish(); return
+	var primary: Array[Dictionary] = hero.get_world_action_records(sequence)
+	_expect(primary.size() == 1 and primary[0].kind == "primary" and primary[0].hits == 1, "one first tap has one real accepted-hit world record")
+	source = sources["open"]
+	circle = (level.get("circles") as Dictionary)["open-impact"]
+	scheduler = level.get("scheduler") as CinderThreatScheduler
+	_stage_approach(Layout.OPEN_SOURCE + Vector3.BACK * 3.0)
+	game.call("resume_lab")
+	if not _expect(await _wait_for(func() -> bool: return level.get("chosen_route") == "open" and not source.dormant and not source.state().reservation_id.is_empty() and circle.state().status == "running", 450), "actual staged open approach naturally admits the live rusher and companion"):
+		_diagnose_setup("compound admission"); _finish(); return
+	host_admission = (level.get("last_admission") as Dictionary).duplicate(true)
+	circle_admission = (level.get("last_circle_admission") as Dictionary).duplicate(true)
+	if not _expect(host_admission.get("accepted", false) and circle_admission.get("accepted", false) and host_admission.reservation_id == source.state().reservation_id and circle_admission.reservation_id == circle.state().reservation_id and not circle_admission.proof.uses_blast and not circle_admission.proof.uses_invulnerability, "both real reservations publish an ordinary-primary companion response"):
+		_diagnose_setup("published admission"); _finish(); return
+	_expect(circle_admission.reservation.opening_position == host_admission.reservation.opening_position and float(circle_admission.proof.primary_time_s) >= float(host_admission.reservation.active_until_s) and float(circle_admission.proof.response_complete_s) < float(host_admission.reservation.recovery_until_s), "earlier companion accepts the exact planned opening inside its living host recovery")
+	var hp_before: float = hero.hp
+	if not await _escape(circle_admission.proof.landing):
+		_diagnose_setup("native proof escape"); _finish(); return
+	if not _expect(await _wait_for(_stopped_with_live_circle, 450), "actual C30 finishes physical motion and enters recovery while its earlier companion remains live"):
+		_diagnose_setup("native stop"); _finish(); return
+	# Normal idle-frame observation, not a phase callback. The tiny timer emits
+	# after the node frame; the ordinary shared pause then clears gesture chaining.
+	await process_frame
+	await create_timer(0.001, true).timeout
+	if not _expect(_stopped_with_live_circle(), "completed frame still contains the same stopped living host and companion"):
+		_diagnose_setup("completed stop frame"); _finish(); return
+	game.call("open_bench")
+	await process_frame
+	if not _expect(paused and _stopped_with_live_circle() and hero.hp == hp_before and source.state().hit_ids.is_empty() and circle.state().hit_ids.is_empty(), "public normal pause retains the safe actual stopped exchange without damage"):
+		_diagnose_setup("normal paused stop"); _finish(); return
+	var native: Dictionary = _diagnostic()
+	print("STOPPED CUSTODY DIAGNOSTIC ", Exact.stringify(native))
+	var current: Dictionary = scheduler.reservation_state(String(source.state().reservation_id))
+	var planned: Vector3 = host_admission.reservation.adapter.planned_endpoint
+	var stopped: Vector3 = current.opening_position
+	_expect(current.adapter.finished and stopped == source.global_position and (current.adapter.current_position as Vector3) == stopped and stopped.distance_to(planned) <= Motion.ENDPOINT_TOLERANCE, "native finished body/opening retains only the published physical planned-to-actual endpoint bound")
+	_expect(stopped != planned and circle.state().opening_position == circle_admission.reservation.opening_position and circle.state().opening_position == planned, "regression genuinely distinguishes the stopped host from the immutable earlier accepted companion opening")
+	var saved: Dictionary = _pair()
+	if not _expect(not saved.player.is_empty() and not saved.level.is_empty(), "whole post-stop Player/Level unit captures purely at the ordinary deferred barrier: " + level.last_snapshot_error):
+		_finish(); return
+	_watch_events()
+	var prior_events: int = events
+	var wire: String = Exact.stringify(saved)
+	_expect(level.snapshot_error_with_player(saved.level, saved.player).is_empty() and Exact.stringify(_pair()) == wire and events == prior_events, "post-stop context validation changes no actor/cue/progress/scheduler state")
+	var decoded: Dictionary = Exact.parse(wire)
+	if not _expect(not wire.is_empty() and decoded.get("accepted", false) and decoded.get("value") is Dictionary and Exact.stringify(decoded.value) == wire, "complete post-stop native pair transports exact copied clocks and immutable accepted opening"):
+		_finish(); return
+	_expect(_restore_pair(decoded.value) and Exact.stringify(_pair()) == wire and events == prior_events, "quiet public restore retains every post-stop actor/circle/custody/framing field without events")
+	var malformed: Dictionary = saved.duplicate(true)
+	malformed.level.local.custody["open-impact"].opening_position[0] += 0.25
+	_reject(malformed, "forged immutable custody opening")
+	malformed = saved.duplicate(true)
+	malformed.level.local.custody["open-impact"].host_active_until_s += 0.000001
+	_reject(malformed, "nonidentical copied host deadline")
+	malformed = saved.duplicate(true)
+	malformed.level.local.circles["open-impact"].exchange.opening_position[0] += 0.25
+	_reject(malformed, "forged accepted circle opening")
+	malformed = saved.duplicate(true)
+	# Stage only a SAVED candidate: synchronize copied live positions so this
+	# cannot pass as a new finished physical endpoint beyond the native bound.
+	var shifted: Array = Codec.vector3(Codec.read_vector3(malformed.level.local.sources.open.motion.position) + Vector3(0.25, 0, 0))
+	malformed.level.local.sources.open.motion.position = shifted.duplicate()
+	malformed.level.local.sources.open.sample.source_position = shifted.duplicate()
+	for record: Dictionary in malformed.level.local.scheduler.reservations:
+		if record.source_id == "open":
+			record.source_position = shifted.duplicate()
+			record.opening_position = shifted.duplicate()
+			record.adapter.current_position = shifted.duplicate()
+	_reject(malformed, "coherently copied but impossible actual stopped endpoint")
+	_expect(Exact.stringify(_pair()) == wire and events == prior_events, "all malformed post-stop candidates leave the original exact live pair untouched")
+	_finish()
+
+
+func _stopped_with_live_circle() -> bool:
+	var state: Dictionary = source.state()
+	return not source.dead and state.phase == "recovery" and not state.reservation_id.is_empty() and state.get("adapter", {}).get("finished", false) and circle.state().status == "running" and source.velocity == Vector3.ZERO
+
+
+func _diagnostic() -> Dictionary:
+	var bindings: Dictionary = level.call("scheduler_bindings")
+	var paired: Dictionary = scheduler.snapshot_state(bindings)
+	var actor: Dictionary = source.snapshot_state(paired) if not paired.is_empty() else {}
+	var actor_error: String = source.last_snapshot_error
+	var impact: Dictionary = circle.snapshot_state(bindings)
+	var impact_error: String = circle.last_snapshot_error
+	var captured: Dictionary = level.snapshot_state()
+	return {"paused": paused, "clock_s": scheduler.get_clock(), "planned_opening": Codec.vector3(host_admission.reservation.opening_position), "planned_endpoint": Codec.vector3(host_admission.reservation.adapter.planned_endpoint), "stopped_opening": Codec.vector3(source.state().opening_position), "actual_source_position": Codec.vector3(source.global_position), "immutable_circle_opening": Codec.vector3(circle.state().opening_position), "circle_primary_time_s": circle_admission.proof.primary_time_s, "circle_response_complete_s": circle_admission.proof.response_complete_s, "native_physical_endpoint_bound": Motion.ENDPOINT_TOLERANCE, "player": hero.snapshot_state(), "scheduler": paired, "source": actor, "source_error": actor_error, "circle": impact, "circle_error": impact_error, "level": captured, "level_error": level.last_snapshot_error, "level_capture_error": String(level.get("last_capture_error"))}
+
+
+func _solo_primary() -> bool:
+	var tap: Vector2 = (game.call("get_aim_anchor") as Vector2) + Vector2(0, -180)
+	if not _expect((game.call("aim_direction", tap) as Vector3).dot(Vector3.FORWARD) > 0.9999, "real shared release anchor supplies the solo tap direction"): return false
+	hero.shells = 0
+	var press := InputEventScreenTouch.new()
+	press.index = 8; press.pressed = true; press.position = tap
+	Input.parse_input_event(press); Input.flush_buffered_events()
+	var release := InputEventScreenTouch.new()
+	release.index = 8; release.position = tap
+	Input.parse_input_event(release); Input.flush_buffered_events()
+	return _expect(hero.shells == 0, "actual first-tap primary executes with zero starting shells and shared passive reload intact")
+
+
+func _escape(landing: Vector3) -> bool:
+	if not _expect(await _wait_for(_dash_ready, 100), "ordinary native input is ready before the companion-proof escape"): return false
+	var direction := Vector3(landing.x - hero.global_position.x, 0, landing.z - hero.global_position.z).normalized()
+	var camera: Camera3D = game.get("camera") as Camera3D
+	var right: Vector3 = camera.global_basis.x; right.y = 0.0; right = right.normalized()
+	var down: Vector3 = camera.global_basis.z; down.y = 0.0; down = down.normalized()
+	var determinant: float = right.x * down.z - right.z * down.x
+	if not _expect(absf(determinant) > 0.001, "actual shared camera supplies an invertible screen-to-ground basis"): return false
+	var delta := Vector2((direction.x * down.z - direction.z * down.x) / determinant, (right.x * direction.z - right.z * direction.x) / determinant).normalized() * 180.0
+	var release_position := Vector2(270, 650)
+	if not _expect((game.call("screen_to_direction", delta) as Vector3).dot(direction) > 0.9999, "actual recognizer gesture matches the published native safe-landing direction"): return false
+	var sequence: int = _last_sequence()
+	var press := InputEventScreenTouch.new()
+	press.index = 7; press.pressed = true; press.position = release_position - delta
+	Input.parse_input_event(press)
+	await process_frame
+	var drag := InputEventScreenDrag.new()
+	drag.index = 7; drag.position = release_position; drag.relative = delta
+	Input.parse_input_event(drag)
+	await process_frame
+	var release := InputEventScreenTouch.new()
+	release.index = 7; release.position = release_position
+	Input.parse_input_event(release)
+	await process_frame
+	if not _expect(await _wait_for(_dash_ready, 150), "one actual safe-side dash reaches its deliberate native stop"): return false
+	var records: Array[Dictionary] = hero.get_world_action_records(sequence)
+	# Reuse the real route fixture's existing landing check only for physical dash
+	# execution. No tolerance applies to snapshots, custody or copied deadlines.
+	# The shared shell stores a native normalized endpoint. Mapping it back to
+	# pixels may round 650 to650.000061; compare the actual stored value exactly.
+	var normalized: Vector2 = release_position / Vector2(root.size)
+	return _expect(records.size() == 1 and records[0].kind == "dash" and not records[0].collision_shortened and (records[0].direction as Vector3).dot(direction) > 0.9999 and Vector2(hero.global_position.x - landing.x, hero.global_position.z - landing.z).length() <= 0.035 and (game.call("get_aim_anchor_normalized") as Vector2) == normalized, "one recorded recognizer dash reaches the native proof landing and retains its exact normalized release")
+
+
+func _dash_ready() -> bool:
+	var state: Dictionary = hero.get_threat_response_state()
+	return not paused and not hero.dead and state.stable and float(state.commitment_remaining_s) == 0.0 and float(state.dash_cooldown_left_s) == 0.0
+
+
+func _stage_approach(position: Vector3) -> void:
+	paused = true
+	hero.global_position = position
+	hero.velocity = Vector3.ZERO
+
+
+func _watch_events() -> void:
+	level.checkpoint_requested.connect(func(_id: String, _checkpoint: String, _kind: String) -> void: events += 1)
+	level.completion_requested.connect(func(_id: String, _completion: String) -> void: events += 1)
+	for collection: String in ["sources", "circles"]:
+		for actor: Node in (level.get(collection) as Dictionary).values():
+			actor.connect("state_changed", func(_state: Dictionary) -> void: events += 1)
+
+
+func _pair() -> Dictionary:
+	return {"player": hero.snapshot_state(), "level": level.snapshot_state()}
+
+
+func _restore_pair(saved: Dictionary) -> bool:
+	if not hero.snapshot_error(saved.player).is_empty() or not level.snapshot_error_with_player(saved.level, saved.player).is_empty(): return false
+	if not hero.restore_state(saved.player): return false
+	return level.restore_state(saved.level)
+
+
+func _reject(malformed: Dictionary, message: String) -> void:
+	var before: String = Exact.stringify(_pair())
+	var before_events: int = events
+	_expect(not level.snapshot_error_with_player(malformed.level, malformed.player).is_empty(), message + " rejects through pure saved-player prevalidation")
+	_expect(not _restore_pair(malformed) and Exact.stringify(_pair()) == before and events == before_events, message + " rejects before Player/Level/cue/scheduler or progress mutation")
+
+
+func _wait_for(predicate: Callable, attempts: int) -> bool:
+	for attempt: int in range(attempts):
+		if finishing: return false
+		if predicate.call() == true: return true
+		await create_timer(0.01, true).timeout
+	return false
+
+
+func _last_sequence() -> int:
+	var records: Array[Dictionary] = hero.get_world_action_records()
+	return 0 if records.is_empty() else int(records.back().sequence)
+
+
+func _diagnose_setup(stage: String) -> void:
+	print("STOPPED CUSTODY SETUP ", stage, " ", level.call("encounter_state"), " host=", level.get("last_admission"), " circle=", level.get("last_circle_admission"), " camera=", game.get("last_camera_framing_error"), " paused=", paused)
+
+
+func _expect(ok: bool, message: String) -> bool:
+	checks += 1
+	if not ok:
+		failures += 1
+		push_error(message)
+	return ok
+
+
+func _finish() -> void:
+	if finishing: return
+	finishing = true
+	paused = true
+	if is_instance_valid(level): level.exit_level()
+	if is_instance_valid(scheduler):
+		_expect(not scheduler.is_physics_processing() and scheduler.reservations().is_empty() and get_nodes_in_group("enemies").is_empty(), "exit retires native leases, processing and live target groups")
+	if is_instance_valid(game):
+		var effects: PixelEffects = game.get("fx") as PixelEffects
+		if is_instance_valid(effects): effects.clear()
+	await create_timer(0.5, true).timeout
+	if is_instance_valid(game): game.free()
+	paused = false
+	await process_frame
+	print("A1-L2 STOPPED CUSTODY: %d checks, %d failures (staged approaches; no route acceptance)" % [checks, failures])
+	quit(1 if failures else 0)

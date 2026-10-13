@@ -1,0 +1,264 @@
+extends SceneTree
+
+const Geometry: GDScript = preload("res://scripts/combat/threat_geometry.gd")
+const CueMesh: GDScript = preload("res://scripts/cues/cue_mesh.gd")
+const CueScript: GDScript = preload("res://scripts/cues/threat_cue.gd")
+const PlayerScript: GDScript = preload("res://scripts/player.gd")
+
+var _checks: int = 0
+var _failures: int = 0
+
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+
+func _run() -> void:
+	_validation_checks()
+	_contact_checks()
+	_time_and_union_checks()
+	_mesh_checks()
+	await _actual_capsule_checks()
+	await _cue_checks()
+	paused = false
+	print("Crescent geometry smoke: %d checks, %d failures" % [_checks, _failures])
+	quit(0 if _failures == 0 else 1)
+
+
+func _validation_checks() -> void:
+	var shape: Dictionary = Geometry.crescent(Vector3(3, 0.4, -2), Vector3.BACK, 2.0, 3.0, 0.5)
+	_expect(Geometry.error(shape).is_empty() and shape.size() == 6 and shape.kind == "crescent", "public constructor retains exactly the six canonical parameters")
+	_expect(CueMesh.canonical_geometry(shape) == shape and CueMesh.anchor(shape) == shape.origin, "canonical cue copy preserves the hollow shape and fixed source origin")
+	var copied: Dictionary = CueMesh.canonical_geometry(shape)
+	copied["inner_radius"] = 0.25
+	_expect(shape.inner_radius == 2.0, "canonical geometry is defensive native data")
+	for direction: Vector3 in [Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK, Vector3(0.6, 0, 0.8)]:
+		_expect(Geometry.error(Geometry.crescent(Vector3.ZERO, direction, 2.0, 3.0, 0.0)).is_empty(), "cardinal and continuous fixed directions support the complete 180 degree sector")
+	_expect(Geometry.error(Geometry.crescent(Vector3.ZERO, Vector3.BACK, 2.999, 3.0, 0.5)).is_empty(), "practical thin annular bands remain supported")
+	var invalid: Array[Dictionary] = []
+	for values: Array in [[0.0, 3.0, 0.5], [-1.0, 3.0, 0.5], [3.0, 3.0, 0.5], [4.0, 3.0, 0.5], [2.0, INF, 0.5], [NAN, 3.0, 0.5], [2.0, 3.0, -0.1], [2.0, 3.0, 1.0], [2.0, 3.0, NAN], [2.0, Geometry.CRESCENT_MAX_RADIUS + 1.0, 0.5], [2.9999999, 3.0, 0.5], [0.0005, 0.000999, 0.5], [0.000999, 0.002, 0.5], [1e-100, 2e-100, 0.5], [1e-100, 3.0, 0.5], [5e-324, 0.002, 0.5]]:
+		invalid.append(Geometry.crescent(Vector3.ZERO, Vector3.BACK, values[0], values[1], values[2]))
+	for direction: Vector3 in [Vector3.ZERO, Vector3(2, 0, 0), Vector3(1, 1, 0), Vector3(INF, 0, 0)]:
+		invalid.append(Geometry.crescent(Vector3.ZERO, direction, 2.0, 3.0, 0.5))
+	invalid.append(Geometry.crescent(Vector3(NAN, 0, 0), Vector3.BACK, 2.0, 3.0, 0.5))
+	var unknown: Dictionary = shape.duplicate(true)
+	unknown["radius"] = 3.0
+	invalid.append(unknown)
+	var missing: Dictionary = shape.duplicate(true)
+	missing.erase("inner_radius")
+	invalid.append(missing)
+	var wrong_type: Dictionary = shape.duplicate(true)
+	wrong_type["min_dot"] = "0.5"
+	invalid.append(wrong_type)
+	var named_key: Dictionary = shape.duplicate(true)
+	named_key.erase("kind")
+	named_key[StringName("kind")] = "crescent"
+	invalid.append(named_key)
+	for candidate: Dictionary in invalid:
+		_expect(not Geometry.error(candidate).is_empty() and Geometry.segment_hits(candidate, Vector3.ZERO, Vector3.ZERO, 0.32), "malformed, degenerate, nonfinite or unsupported crescent fails closed before contact proof")
+	_expect(Geometry.segment_hits(shape, Vector3.ZERO, Vector3.ZERO, -0.1) and Geometry.segment_hits(shape, Vector3.ZERO, Vector3.ZERO, NAN), "invalid actor padding cannot prove a safe pocket")
+
+
+func _contact_checks() -> void:
+	var shape: Dictionary = Geometry.crescent(Vector3.ZERO, Vector3.BACK, 2.0, 3.0, 0.5)
+	_expect(not _point(shape, Vector3.ZERO, 0.32), "source-centered real capsule remains in the hollow inner safe pocket")
+	_expect(_point(shape, Vector3(0, 0, 2.5), 0.0), "point inside the annular band contacts")
+	_expect(not _point(shape, Vector3(0, 0, -2.5), 0.32), "rear point is outside the bounded sector rather than a full ring")
+	_expect(_point(shape, Vector3(0, 0, 1.68), 0.32) and not _point(shape, Vector3(0, 0, 1.66), 0.32), "inner arc capsule tangency contacts while a separated pocket remains safe")
+	_expect(_point(shape, Vector3(0, 0, 3.32), 0.32) and not _point(shape, Vector3(0, 0, 3.34), 0.32), "outer arc capsule tangency contacts without widening danger beyond existing epsilon")
+	var edge: Vector3 = Vector3(sqrt(3.0) * 1.25, 0, 1.25)
+	var normal: Vector3 = Vector3(0.5, 0, -sqrt(3.0) * 0.5)
+	_expect(_point(shape, edge + normal * 0.32, 0.32) and not _point(shape, edge + normal * 0.34, 0.32), "angular radial end has its actual padded side contact")
+	var corner: Vector3 = Vector3(sqrt(3.0) * 1.5, 0, 1.5)
+	var outward: Vector3 = (corner.normalized() + normal).normalized()
+	_expect(_point(shape, corner + outward * 0.32, 0.32) and not _point(shape, corner + outward * 0.34, 0.32), "outer angular corner uses round capsule padding, not a filled-cone corner approximation")
+	_expect(not Geometry.segment_hits(shape, Vector3(-1.4, 0, 0), Vector3(1.4, 0, 0), 0.32), "complete swept capsule path across the inner pocket stays safe")
+	_expect(Geometry.segment_hits(shape, Vector3.ZERO, Vector3(0, 0, 4), 0.0), "ring crossing is detected even with both segment endpoints outside the annular band")
+	_expect(Geometry.segment_hits(shape, Vector3(-4, 0, 2.5), Vector3(4, 0, 2.5), 0.0), "swept path catches bounded circle-arc intersections between exterior endpoints")
+	_expect(Geometry.segment_hits(shape, Vector3(-4, 0, 3.32), Vector3(4, 0, 3.32), 0.32), "swept outer-arc tangent is detected at an interior segment minimum")
+	_expect(not Geometry.segment_hits(shape, Vector3(-4, 0, 3.34), Vector3(4, 0, 3.34), 0.32), "separated parallel swept tangent remains clear")
+	_expect(Geometry.segment_hits(shape, Vector3(-2.8, 0, 1.1), Vector3(2.8, 0, 1.1), 0.0), "sweep crossing both radial ends detects annular side contact")
+	for translation: Vector3 in [Vector3(12.5, 3, -12.4), Vector3(-14.125, 0, 30.974), Vector3(1000, 0, -2000)]:
+		var moved: Dictionary = Geometry.crescent(translation, Vector3.BACK, 2.0, 3.0, 0.5)
+		_expect(not Geometry.segment_hits(moved, translation + Vector3(-1.4, 0, 0), translation + Vector3(1.4, 0, 0), 0.32), "translated native coordinates retain the hollow capsule pocket")
+		_expect(Geometry.segment_hits(moved, translation, translation + Vector3(0, 0, 4), 0.32), "translated actual native coordinates retain ring crossing")
+	for direction: Vector3 in [Vector3.RIGHT, Vector3.FORWARD, Vector3(0.6, 0, 0.8)]:
+		var rotated: Dictionary = Geometry.crescent(Vector3.ZERO, direction, 2.0, 3.0, 0.5)
+		_expect(_point(rotated, direction * 2.5, 0.0) and not _point(rotated, -direction * 2.5, 0.32), "continuous fixed orientation rotates contact and rear escape together")
+	var narrow: Dictionary = Geometry.crescent(Vector3.ZERO, Vector3.BACK, 2.0, 3.0, 0.999999)
+	_expect(Geometry.segment_hits(narrow, Vector3(-1, 0, 2.5), Vector3(1, 0, 2.5), 0.0) and not _point(narrow, Vector3(1, 0, 2.5), 0.01), "very narrow supported sector retains its real angular boundaries")
+	var short_crossing: Dictionary = Geometry.crescent(Vector3.ZERO, Vector3.BACK, 2.499, 2.501, 0.9999999)
+	_expect(Geometry.segment_hits(short_crossing, Vector3(-0.002, 0, 2.5), Vector3(0.002, 0, 2.5), 0.0), "short transverse sweep detects both very small finite radial-end intersections")
+	var half: Dictionary = Geometry.crescent(Vector3.ZERO, Vector3.BACK, 2.0, 3.0, 0.0)
+	_expect(_point(half, Vector3(2.5, 0, 0), 0.0) and not _point(half, Vector3(0, 0, -2.5), 0.32), "180 degree crescent includes radial side and excludes rear half-plane")
+
+
+func _time_and_union_checks() -> void:
+	var shape: Dictionary = Geometry.crescent(Vector3.ZERO, Vector3.BACK, 2.0, 3.0, 0.5)
+	var crossing: Array[Dictionary] = [{"from": Vector3.ZERO, "to": Vector3(0, 0, 4), "start_s": 0.0, "end_s": 1.0}]
+	_expect(Geometry.timed_path_hits(shape, crossing, 0.4, 0.8, 0.32), "actual active subinterval catches swept crescent crossing")
+	_expect(not Geometry.timed_path_hits(shape, crossing, 0.0, 0.3, 0.32) and not Geometry.timed_path_hits(shape, crossing, 1.1, 1.2, 0.32), "outside active time does not turn a safe inner segment into contact")
+	# Logical union fixture, not a scheduler reservation or authored encounter.
+	var stalker_lane: Dictionary = Geometry.lane(Vector3(-3, 0, 3.8), Vector3(3, 0, 3.8), 0.3)
+	var clear: Array[Dictionary] = [{"from": Vector3(-1.4, 0, 0), "to": Vector3(1.4, 0, 0), "start_s": 0.0, "end_s": 1.0}]
+	_expect(not _union_hits([shape, stalker_lane], clear, 0.0, 1.0, 0.32), "hollow inner route remains clear across crescent plus finite Stalker corridor union")
+	_expect(_union_hits([shape, stalker_lane], crossing, 0.0, 1.0, 0.32), "compound union retains crescent and Stalker lane danger")
+	var lane_only: Array[Dictionary] = [{"from": Vector3(-4, 0, 3.8), "to": Vector3(4, 0, 3.8), "start_s": 0.0, "end_s": 1.0}]
+	_expect(not Geometry.timed_path_hits(shape, lane_only, 0.0, 1.0, 0.32) and _union_hits([shape, stalker_lane], lane_only, 0.0, 1.0, 0.32), "crescent clear does not suppress the independent padded finite lane")
+	_expect(Geometry.segment_hits(Geometry.circle(Vector3.ZERO, 1.0), Vector3(-2, 0, 0), Vector3(2, 0, 0), 0.32), "existing circle contact is retained")
+	_expect(Geometry.segment_hits(Geometry.cone(Vector3.ZERO, Vector3.BACK, 3.0, 0.5), Vector3.ZERO, Vector3.ZERO, 0.32), "existing cone keeps its source disk")
+	_expect(Geometry.segment_hits(stalker_lane, Vector3(3.6, 0, 3.8), Vector3(3.6, 0, 3.8), 0.32), "existing finite lane retains its actual round endcap")
+
+
+func _mesh_checks() -> void:
+	for radii: Vector2 in [Vector2(2, 3), Vector2(2.999, 3), Vector2(0.02, 0.03)]:
+		for cosine: float in [0.0, 0.5, 0.999999]:
+			var shape: Dictionary = Geometry.crescent(Vector3(10, 0.2, -3), Vector3(0.6, 0, 0.8), radii.x, radii.y, cosine)
+			var boundary: Array[Vector3] = CueMesh.boundary(shape)
+			var outline: PackedVector3Array = _vertices(CueMesh.geometry_mesh(shape, false))
+			var fill: PackedVector3Array = _vertices(CueMesh.geometry_mesh(shape, true))
+			_expect(boundary.size() >= 2 * (CueMesh.SEGMENTS + 1) and boundary.size() <= 2 * (CueMesh.CRESCENT_MAX_SEGMENTS + 1), "bounded outline samples both ordered annular arcs")
+			var all_on_arcs: bool = true
+			for point: Vector3 in boundary:
+				all_on_arcs = all_on_arcs and (absf(_length(point) - radii.x) < 0.000001 or absf(_length(point) - radii.y) < 0.000001)
+			_expect(all_on_arcs and not outline.is_empty(), "actual outline includes inner/outer arcs and joins at both radial ends")
+			_expect(not fill.is_empty() and fill.size() <= CueMesh.CRESCENT_MAX_SEGMENTS * 6, "active annular fill is finite and bounded independently of source marker")
+			_expect(_fill_is_hollow(fill, radii.x, radii.y), "every actual active mesh triangle stays outside the inner safe disk and inside outer radius")
+	var thin: Dictionary = Geometry.crescent(Vector3.ZERO, Vector3.BACK, 2.999996, 3.0, 0.0)
+	_expect(Geometry.error(thin).is_empty() and _fill_is_hollow(_vertices(CueMesh.geometry_mesh(thin, true)), thin.inner_radius, thin.outer_radius), "near supported minimum band has truthful nonfolding float32 fill")
+	for outer: float in [0.002, 0.001001]:
+		var smallest: Dictionary = Geometry.crescent(Vector3.ZERO, Vector3(0.6, 0, 0.8), Geometry.CRESCENT_MIN_RADIUS, outer, 0.5)
+		_expect(Geometry.error(smallest).is_empty(), "explicit minimum inner radius and practical narrow minimum-scale band are admitted")
+		var small_fill: PackedVector3Array = _vertices(CueMesh.geometry_mesh(smallest, true))
+		var small_outline: PackedVector3Array = _vertices(CueMesh.geometry_mesh(smallest, false))
+		_expect(not small_outline.is_empty() and _fill_is_hollow(small_fill, smallest.inner_radius, smallest.outer_radius), "minimum-scale native outline and every actual fill triangle retain the nonzero hollow pocket")
+	var legacy: Dictionary = Geometry.circle(Vector3.ZERO, 1.0)
+	_expect(CueMesh.boundary(legacy).size() == CueMesh.SEGMENTS and not _vertices(CueMesh.geometry_mesh(legacy, true)).is_empty(), "existing star-shaped circle mesh behavior is retained")
+
+
+func _actual_capsule_checks() -> void:
+	var arena := Node3D.new()
+	root.add_child(arena)
+	var floor_body := StaticBody3D.new()
+	floor_body.collision_layer = 1
+	floor_body.collision_mask = 0
+	var collision := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(30, 1, 30)
+	collision.shape = box
+	floor_body.add_child(collision)
+	arena.add_child(floor_body)
+	floor_body.position = Vector3(0, -0.5, 0)
+	var actor: CinderPlayer = PlayerScript.new()
+	actor.position = Vector3(-1.35, 0.02, 0)
+	arena.add_child(actor)
+	await _ticks(8)
+	var capsule: CapsuleShape3D = (actor.get_node("BodyCollision") as CollisionShape3D).shape as CapsuleShape3D
+	_expect(absf(capsule.radius - 0.32) < Geometry.EPSILON and capsule.height > 1.0, "fixture uses the actual shared Player capsule rather than caller proxy dimensions")
+	var hp_before: float = actor.hp
+	_expect(actor.request_dash(Vector3.RIGHT), "actual public swipe movement starts the inner-pocket capsule path")
+	await _ticks(18)
+	var records: Array[Dictionary] = actor.get_world_action_records()
+	_expect(records.size() == 1 and records[0].kind == "dash" and records[0].distance > 2.0, "actual physics publishes the completed continuous route")
+	if records.size() == 1:
+		var dash: Dictionary = records[0]
+		var path: Array[Dictionary] = _record_path(dash)
+		var pocket: Dictionary = Geometry.crescent(Vector3.ZERO, Vector3.RIGHT, 2.4, 3.0, 0.0)
+		_expect(not Geometry.timed_path_hits(pocket, path, dash.started_at_s, dash.completed_at_s, capsule.radius), "complete actual Player capsule samples remain safe through the hollow pocket")
+		var translated: Dictionary = Geometry.crescent(dash.world_origin, Vector3.RIGHT, 1.0, 2.0, 0.5)
+		_expect(Geometry.timed_path_hits(translated, path, dash.started_at_s, dash.completed_at_s, capsule.radius), "the same actual completed physics path crosses a translated finite crescent band")
+		_expect(actor.hp == hp_before, "pure geometry and cue support creates no attacks, damage or resource change")
+	arena.queue_free()
+	await process_frame
+
+
+func _cue_checks() -> void:
+	var cue: CinderThreatCue = CueScript.new()
+	root.add_child(cue)
+	var shape: Dictionary = Geometry.crescent(Vector3(1, 0.1, -2), Vector3.RIGHT, 1.2, 2.4, 0.5)
+	_expect(cue.present(shape, "warning"), "shared required warning accepts the canonical fixed crescent")
+	var outline: MeshInstance3D = cue.get_node("RequiredFootprintOutline")
+	var fill: MeshInstance3D = cue.get_node("RequiredFootprintFill")
+	var source: MeshInstance3D = cue.get_node("RequiredSourceMarker")
+	var committed_outline: PackedVector3Array = _vertices(outline.mesh)
+	_expect(outline.visible and not fill.visible and source.visible and cue.state().source_position == shape.origin, "warning keeps fixed actual source, complete hollow outline and no active fill")
+	_expect(cue.present(shape, "lock") and cue.present(shape, "active"), "public lock and active reuse the exact same fixed shape")
+	_expect(outline.visible and fill.visible and source.visible and _vertices(outline.mesh) == committed_outline and _fill_is_hollow(_vertices(fill.mesh), 1.2, 2.4), "actual required active fill preserves its inner pocket and immutable outline")
+	var wrong: Dictionary = shape.duplicate(true)
+	wrong["direction"] = Vector3.LEFT
+	var before: Dictionary = cue.state()
+	_expect(not cue.present(wrong, "active") and cue.state() == before, "locked crescent cannot track or retarget")
+	paused = true
+	await create_timer(0.03).timeout
+	_expect(cue.state() == before and fill.visible, "pause leaves all externally supplied crescent presentation exact")
+	paused = false
+	_expect(cue.present(shape, "recovery") and source.visible and not fill.visible and not outline.visible, "recovery exposes the fixed source without pretending danger remains active")
+	_expect(cue.clear() and not source.visible and not fill.visible and not outline.visible, "clear removes all required crescent cues")
+	cue.queue_free()
+	await process_frame
+
+
+func _point(shape: Dictionary, point: Vector3, radius: float) -> bool:
+	return Geometry.segment_hits(shape, point, point, radius)
+
+
+func _union_hits(shapes: Array[Dictionary], path: Array[Dictionary], begin: float, end: float, radius: float) -> bool:
+	for shape: Dictionary in shapes:
+		if Geometry.timed_path_hits(shape, path, begin, end, radius):
+			return true
+	return false
+
+
+func _record_path(record: Dictionary) -> Array[Dictionary]:
+	var path: Array[Dictionary] = []
+	for index: int in range(1, record.path.size()):
+		path.append({"from": record.path[index - 1].position, "to": record.path[index].position, "start_s": record.path[index - 1].time_s, "end_s": record.path[index].time_s})
+	return path
+
+
+func _vertices(mesh: Mesh) -> PackedVector3Array:
+	return PackedVector3Array() if mesh == null or mesh.get_surface_count() == 0 else mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+
+
+func _fill_is_hollow(vertices: PackedVector3Array, inner: float, outer: float) -> bool:
+	if vertices.is_empty() or vertices.size() % 3 != 0:
+		return false
+	for index: int in range(0, vertices.size(), 3):
+		var a: Vector3 = vertices[index]
+		var b: Vector3 = vertices[index + 1]
+		var c: Vector3 = vertices[index + 2]
+		if not Geometry.finite_vector(a) or not Geometry.finite_vector(b) or not Geometry.finite_vector(c) or _length(a) > outer or _length(b) > outer or _length(c) > outer:
+			return false
+		var cross_ab: float = float(a.x) * float(b.z) - float(a.z) * float(b.x)
+		var cross_bc: float = float(b.x) * float(c.z) - float(b.z) * float(c.x)
+		var cross_ca: float = float(c.x) * float(a.z) - float(c.z) * float(a.x)
+		if (cross_ab >= 0.0 and cross_bc >= 0.0 and cross_ca >= 0.0) or (cross_ab <= 0.0 and cross_bc <= 0.0 and cross_ca <= 0.0):
+			return false # A filled triangle must never contain the hollow origin.
+		if minf(_edge_distance(a, b), minf(_edge_distance(b, c), _edge_distance(c, a))) < inner:
+			return false
+	return true
+
+
+func _length(point: Vector3) -> float:
+	return sqrt(float(point.x) * float(point.x) + float(point.z) * float(point.z))
+
+
+func _edge_distance(a: Vector3, b: Vector3) -> float:
+	var x: float = float(b.x) - float(a.x)
+	var z: float = float(b.z) - float(a.z)
+	var squared: float = x * x + z * z
+	var along: float = clampf(-(float(a.x) * x + float(a.z) * z) / squared, 0.0, 1.0) if squared > 0.0 else 0.0
+	return sqrt(pow(float(a.x) + along * x, 2.0) + pow(float(a.z) + along * z, 2.0))
+
+
+func _ticks(count: int) -> void:
+	for _index: int in range(count):
+		await physics_frame
+		await process_frame
+
+
+func _expect(condition: bool, description: String) -> void:
+	_checks += 1
+	if not condition:
+		_failures += 1
+		push_error("FAIL: " + description)

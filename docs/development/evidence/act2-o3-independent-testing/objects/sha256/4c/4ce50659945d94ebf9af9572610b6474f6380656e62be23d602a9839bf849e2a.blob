@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {"label": "Cinder: Doctor", "type": "process", "command": "python3", "args": ["scripts/dev/dev.py", "doctor"], "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []},
+    {"label": "Cinder: Equipment grid for playstyle design", "type": "process", "command": "python3", "args": ["scripts/dev/dev.py", "equipment", "status", "--markdown"], "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []},
+    {"label": "Cinder: Import", "type": "process", "command": "python3", "args": ["scripts/dev/dev.py", "import"], "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []},
+    {"label": "Cinder: Check", "type": "process", "command": "python3", "args": ["scripts/dev/dev.py", "check"], "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": [], "group": {"kind": "test", "isDefault": true}},
+    {"label": "Cinder: Run Lab", "type": "process", "command": "python3", "args": ["scripts/dev/dev.py", "run"], "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []},
+    {"label": "Cinder: Preview Level", "type": "process", "command": "python3", "args": ["scripts/dev/dev.py", "run", "--level-scene", "${input:cinderLevel}"], "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []},
+    {"label": "Cinder: Open Godot Editor", "type": "process", "command": "python3", "args": ["scripts/dev/dev.py", "editor"], "options": {"cwd": "${workspaceFolder}"}, "problemMatcher": []}
+  ],
+  "inputs": [
+    {"id": "cinderLevel", "type": "promptString", "description": "Level scene extending CinderLevel, e.g. res://scenes/acts/act1/a1_l1.tscn"}
+  ]
+}

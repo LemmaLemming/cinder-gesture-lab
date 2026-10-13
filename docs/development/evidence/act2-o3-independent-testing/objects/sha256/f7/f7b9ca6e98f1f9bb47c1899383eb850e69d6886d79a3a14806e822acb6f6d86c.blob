@@ -1,0 +1,348 @@
+{
+  "api_revision": "act2-o1-cylinder-kit-proposal-2",
+  "level_id": "A2-O1",
+  "status": "Authored imported/executed O1 runtime kit. Focused native loading48/mechanics57/extremes82/final graphical84 clean; four actual owner-reviewed pixels captured-statePASS, independent pixel review captured-statePASS; Integration acceptance pending. Boards remain references, not runtime atlases or complete art.",
+  "candidate": {
+    "path": "/private/tmp/a2_o1_cylinder_perimeter_kit_v2_draft.gd",
+    "sha256": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+    "lines": 207,
+    "proposed_owned_path": "scripts/acts/act2/cylinder_perimeter_kit.gd"
+  },
+  "api": {
+    "build": "static build(parent:Node3D)->Dictionary returns {root,journals:Dictionary west/east/north -> Node3D,exit_marker:Node3D}.",
+    "journal": "static set_journal(kit:Dictionary,id:String,state:String)->void",
+    "exit": "static set_exit(kit:Dictionary,state:String)->void",
+    "states": [
+      "available",
+      "active",
+      "spent",
+      "hidden"
+    ],
+    "defaults": "Three available journals, hidden exit. Host alone authorizes actual contacts/collection/open exit/shared InteractionCue and saved state. No derived visual state is admission/progression authority.",
+    "cleanup": "Host frees returned root; immutable Heath meshes/textures stay cached; eligible materials are local clones. No authored signal/process/timer/clock."
+  },
+  "layout": {
+    "coordinate_system": "Ground X/Z metres, upright scale1; fixed shared camera/Hero feet pivot. All proposed colliders belong to host, kit has none.",
+    "floor": {
+      "rect_xz": [
+        -3.4,
+        -10.8,
+        6.8,
+        14.4
+      ],
+      "top_y": 0.0,
+      "proof_inset_proposal": 0.002
+    },
+    "spawn": [
+      0.0,
+      0.1,
+      2.6
+    ],
+    "journals": {
+      "west": [
+        -2.05,
+        0.0,
+        -0.6
+      ],
+      "east": [
+        2.05,
+        0.0,
+        -0.6
+      ],
+      "north": [
+        -1.4,
+        0.0,
+        -8.9
+      ]
+    },
+    "exit_center": [
+      0.0,
+      0.0,
+      -9.9
+    ],
+    "exit_contact_region_proposal": [
+      -2.2,
+      -10.7,
+      4.4,
+      1.0
+    ],
+    "before_final_checkpoint": [
+      -3.1,
+      -6.8,
+      6.2,
+      3.1
+    ],
+    "ordinary_scout_anchors_proposal": {
+      "west": [
+        -0.65,
+        0.0,
+        -2.0
+      ],
+      "final": [
+        0.65,
+        0.0,
+        -7.8
+      ]
+    },
+    "central_trunk_collider_proposal": {
+      "name": "LoopGroundedTrunk",
+      "center": [
+        0.0,
+        0.6,
+        -3.6
+      ],
+      "radius": 0.35,
+      "height": 1.2,
+      "collision_layer": 1,
+      "collision_mask": 0
+    },
+    "bank_body_proposals": [
+      {
+        "id": "WestBank",
+        "center": [
+          -3.65,
+          0.45,
+          -3.6
+        ],
+        "size": [
+          0.5,
+          1.0,
+          14.4
+        ]
+      },
+      {
+        "id": "EastBank",
+        "center": [
+          3.65,
+          0.45,
+          -3.6
+        ],
+        "size": [
+          0.5,
+          1.0,
+          14.4
+        ]
+      },
+      {
+        "id": "NearEndBank",
+        "center": [
+          0.0,
+          0.45,
+          3.9
+        ],
+        "size": [
+          7.8,
+          1.0,
+          0.6
+        ]
+      },
+      {
+        "id": "FarEndBank",
+        "center": [
+          0.0,
+          0.45,
+          -11.1
+        ],
+        "size": [
+          7.8,
+          1.0,
+          0.6
+        ]
+      }
+    ],
+    "spatial_intent": "Free west/east/north collection order around a central visible stump; broad3.05m geometric sides before capsule clearance. North journal beyond final Scout and separate from suggested exit contact zone. Host quiet-drains earned CP before final activation. Two normal Scouts are an authored proposal, no all-defeats requirement or B05 bait."
+  },
+  "reuse": {
+    "source_helper": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/acts/act2/heath_kit.gd",
+      "sha256": "77768bc24573be2ce25f2255bf8ffa3adbcd363e00bdaf6125692c1cbf0bd4ac"
+    },
+    "leaf_calls": [
+      "_box",
+      "_branch",
+      "_cottage",
+      "_cylinder",
+      "_cylinder_landmark",
+      "_heather",
+      "_log",
+      "_material",
+      "_pine",
+      "_plane"
+    ],
+    "not_called": [
+      "Heath.build",
+      "Heath._ground",
+      "Heath._road_edges",
+      "Heath._witness",
+      "Heath._eruption",
+      "Heath.set_tableau",
+      "Heath.set_eruption"
+    ],
+    "policy": "Original Heath pixel material/immutable cached mesh/texture resources used directly. Optional meshes clone StandardMaterial3D override per leaf; cached material and other L1/O1 instances remain unchanged. Existing ten complete leaf methods referenced, no copied texture/scenery generation.",
+    "names": "Normalize only native autogenerated @ cosmetic names to deterministic class+sibling-index before recording relative cutaway paths; journal IDs/required authored roots preserved. New labels avoid float/native ID names."
+  },
+  "asset_manifest": [
+    {
+      "id": "A2-O1-HEATH-LOOP",
+      "source": [
+        "G05",
+        "G16",
+        "G18",
+        "sample-S01"
+      ],
+      "readiness": "TMP new arrangement pending actual portrait",
+      "native_scale": "64x64 existing nearest material tiles at1.44m; dry overlay6.8x14.4,topY.004,.008,.010; exterior16x35.2 behind banks fills foreground throughZ14.0.",
+      "pivot": "Ground-centre planes, static original module foot/foundation roots.",
+      "collision": "None; host floor/banks actual support. Exterior is scenic, not extra traversable floor.",
+      "occlusion": "Ground and persistent boundary footprints opaque. Cylinder/earthworks, bank upper bodies, trunks/cottage/pines/logs have instance-local optional_cutaway_paths and weybridge_cutaway_candidate marker. No private cutaway evaluator or shader.",
+      "states": "Static; no witness/eruption extras.",
+      "reuse": "Same full6m/2.7m cylinder+lid/thread/rivets, two existing pines, two charred logs, sparse32x24 hard-alpha heather, one cottage/chimney and sparse quiet stones. No new environment kit.",
+      "limitations": "Actual loop framing/texture contrast/source/cue/landing/edge Hero visibility untested. Outboard cropping expected, required bases must be checked.",
+      "clock": "Static. No process/timer/shaderTIME; host owns cue/progression clocks."
+    },
+    {
+      "id": "A2-O1-CENTRAL-TRUNK",
+      "source": "Existing Horsell grounded trunk and Heath char material/branch primitive family",
+      "readiness": "TMP geometry pending host native collider and portrait",
+      "native_scale": "7facet cylinderR.35/H1.2,root(0,0,-3.6); quiet16facet footprintR.35/topY.012.",
+      "pivot": "Ground feet(0,0,0),bodycenterY.6.",
+      "collision": "Kit none; proposed host layer1 cylinder exactR.35/H1.2. Visible opaque footprint is retained when upper body fades.",
+      "occlusion": "Body/twig optional instance-local cutaway; persistent charcoal base is not a danger/action marking.",
+      "states": "Static.",
+      "clock": "None",
+      "reuse": "Same stationary visible-blocker family, no new obstacle mechanic.",
+      "limitations": "Both actual supported capsule bypasses and floor probes pending."
+    },
+    {
+      "id": "A2-O1-JOURNALS-WEST-EAST-NORTH",
+      "source": "ACT2_CONCEPT optional scope and canonical levels.json; original small paper shape/quiet ink using Heath ash_wood/char/wood/excavation meshes/materials. No atlas/novel page text copied.",
+      "readiness": "New documented props TMP, no native/art/collection evidence yet.",
+      "native_scale": "Backing.58x.024x.82m; folded page.46x.016x.66; open pair.32x.016x.66 each, maxstate planar envelope approximately.72x.82m/topY.052.",
+      "pivot": "Exact grounded fragment roots in layout; root stays fixed in every visual state.",
+      "collision": "None; host measured contact and shared InteractionCue. No HP/group/attackable object.",
+      "occlusion": "Low opaque papers/quiet backing, no emission/overlay/bright action texture; actual shared cue supplied separately by host.",
+      "states": {
+        "available": "folded paper with five quiet ink lines",
+        "active": "two opened leaves",
+        "spent": "empty weathered backing",
+        "hidden": "root hidden"
+      },
+      "clock": "No elapsed time, state setters quiet absolute presentation only.",
+      "reuse": "Only three journal prop instances added; their contacts, text/lore, receipts/checkpoint and stamp are host responsibilities.",
+      "limitations": "Contact extents/gesture distinction/cue contrast and available-active-spent read pending."
+    },
+    {
+      "id": "A2-O1-EXIT-MARKER",
+      "source": "Documented one exit marker; Heath road post/pale sign/char notch material/primitive family.",
+      "readiness": "TMP new marker pending actual shared exit state/portrait",
+      "native_scale": "Single grounded postH.60m plus.68x.15x.055 sign; state tilt maxheight approximately.65m.",
+      "pivot": "Exact root(0,0,-9.9),postfeet atlocalX-.35,Y0.",
+      "collision": "None; no blocking door or hidden contact trigger, host owns actual exit rectangle/progression.",
+      "occlusion": "Low opaque quiet timber/pale sign, no private cue/light/blast-target semantics.",
+      "states": {
+        "available": "upright sign",
+        "active": "smallfixed-.08radtilt",
+        "spent": "fixed.28radtilt",
+        "hidden": "root hidden"
+      },
+      "clock": "Host state only; no timing/animation travel.",
+      "reuse": "One documented marker, not extra reward/equipment.",
+      "limitations": "Exit/contact distinction and open/spent cue readability untested."
+    }
+  ],
+  "host_contract": "Root owns native floor/banks/trunk collision, both Actor/Exchange/shared Scheduler and immutable normal ray locks/proofs, profile/equipment, three actual fragment receipts, once before-final checkpoint, local aggregate preflight/quiet restore/cleanup, actual shared InteractionCue states and opened exit. Kit grants no ability/stat/pickup, no enemy/clock/cue authority and no defeat-all gate. Host creates native bank/stump bodies/collisions only; kit supplies their sole visible geometry. Do not duplicate bank/stump meshes in host. Endbank native centerZ3.9/-11.1,size7.8x1x.6 exactly matches kit upper mesh and persistent grounded footprint; side banks/stump unchanged.",
+  "source_records": [
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/ACT2_CONCEPT.md",
+      "sha256": "f5596e2bb8ec70dfc9e47df60272b6a9ef1b412b1e4af05413a1a6e618e5e696"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/reference-library/act2/research/levels.json",
+      "sha256": "e7d42cfa6d0943d5ba59223a3685c1865f4cd8bd93035c8d18070efaded27571"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/README.md",
+      "sha256": "fbee5d8514e9f00695eb16e918e6581740f4ae6f22c7438a7be39efd9f934133"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/concept-art/act2/generated-manifest.json",
+      "sha256": "1145d3d494c8fe1337364b98c432a315c6cab5837409793bef9c6b62331d66f5"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/GAME_STYLE_GUIDELINES.md",
+      "sha256": "9c5d7680174b240cda25eb059db6babc4b4ebf129dcfcfeae8bdd59be2b2c1d1"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/ASSET_REUSE_GUIDE.md",
+      "sha256": "2507aa2d654026bb1466125bd4c9241060f073f026425287a6c8912907e7f983"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/assets/acts/act2/heath_kit_manifest.json",
+      "sha256": "4af035d04396559b6961e9955b4006db22ca245d8b30fd000ebe2c86908ea470"
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/acts/act2/horsell_common.gd",
+      "sha256": "077dc406d6eda0392661279029b9a07d190be71d21fcb0903712d678ab2be643"
+    }
+  ],
+  "prior_brief": {
+    "path": "/private/tmp/a2_o1_source_asset_reuse_brief_20261012.json",
+    "sha256": "6b18b63e861f05e00ed3bfb4b63165bb816f78747cc5737631bfe2d11031daa4"
+  },
+  "static_checks": {
+    "all_referenced_Heath_static_methods_present": true,
+    "no_process_physics_Timer_colliders_target_groups_authored_signals": true,
+    "native": "None; static source/schema/API review only.",
+    "host_bank_mesh_dimensions_aligned": "Source agreement only, not measured native execution. Endcaps updated to3.9/-11.1/.6; side/trunk already exact."
+  },
+  "remaining": "Focused actual import/load/mechanics/transport/retry/cleanup and brief portrait after root promotion. Full route/defeat-all/whole-kit playthrough is not a gate; untested behavior must be disclosed. No O2/O3 work.",
+  "v2_provenance": {
+    "original_kit": {
+      "path": "/private/tmp/a2_o1_cylinder_perimeter_kit_draft.gd",
+      "sha256": "e0a8b51f307ea56fda7cd13f3734adfa542648fe1eaf3da7ffb59a158419b854"
+    },
+    "original_proposal": {
+      "path": "/private/tmp/a2_o1_cylinder_perimeter_kit_proposal.json",
+      "sha256": "0aac622cca56efb46dec58a3404a3da072c753c963449c78dc969438da1595c6"
+    },
+    "byte_audit": {
+      "path": "/private/tmp/a2_o1_cylinder_perimeter_kit_v2_byte_audit.json",
+      "sha256": "e870a1e3b8cc53011987269921b032fca2ad598f1eb58a4343b7e6abe662b61b"
+    },
+    "reason": "Align prepromotion kit endcaps with actual host native bodies; preserve original207 and all other kit functions/props/cutaway/material APIs. No readiness upgrade."
+  },
+  "promotion": {
+    "at": "2026-10-12T03:04:49.235994+00:00",
+    "host_sha256": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+    "kit_sha256": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+    "scene_sha256": "6ebc29e80ab4ad9f87e64912364b887d4241bad9915f30d73e02c8b5b7190a6c",
+    "readiness": "owned authored source only; unparsed/unimported/unexecuted; no native or pixel credit",
+    "accepted_parent_paths_changed": false,
+    "new_equipment_or_ability_introductions": false
+  },
+  "historical_preimplementation_status": "L5 accepted; authorized TMP implementation draft. Never imported/parsed/run/promoted. No native/playthrough/art acceptance claim.",
+  "actual_runtime": {
+    "owned_script": "scripts/acts/act2/cylinder_perimeter_kit.gd",
+    "sha256": "0676ebcb302b0e037c5c9f426c518d87b714edf5d536868259e7a23e7bd8478d",
+    "host": "scripts/acts/act2/cylinder_perimeter.gd",
+    "host_sha256": "2c9768f851dc14e1bc433251c13a29154db6213085dda644742fbc366e243fc7",
+    "scene": "scenes/acts/act2/a2_o1.tscn",
+    "exit_contact_rect_xz": [
+      -0.65,
+      -10.45,
+      1.3,
+      1.1
+    ],
+    "exit_marker": [
+      0,
+      0,
+      -9.9
+    ],
+    "proposal_fields_qualification": "Earlier fields named proposal preserve static design history; actual host contact rectangle above supersedes the older broad exit-region proposal. No collision comes from this manifest or cosmetic kit.",
+    "readiness": "Runtime resource, imported and exercised only in documented focused desktop states",
+    "visual_evidence": "docs/acts/act2/evidence/A2-O1/focused-portrait-typed-final/images/",
+    "owner_review": "docs/acts/act2/evidence/A2-O1/focused-handoff-20261012/owner-pixel-review.json",
+    "limits": "Untested full-playthrough/allposes/whole-sourceboardfidelity/allkits/pacing/performance/device behavior; independent acceptance pending.",
+    "independent_pixel_review": "docs/acts/act2/evidence/A2-O1/focused-handoff-20261012/a2_o1_final_portrait_independent_review_20261012.json"
+  }
+}

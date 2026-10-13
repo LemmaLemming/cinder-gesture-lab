@@ -1,0 +1,54 @@
+{
+  "added_review_methods": [
+    "_review_exit_component",
+    "_review_event",
+    "_review_connect_restore_observers",
+    "_write_review_metadata"
+  ],
+  "at": "2026-10-13T05:22:29.222285+00:00",
+  "candidate": {
+    "lines": 646,
+    "path": "/private/tmp/a2_o3_focused_exit_review_20261013.gd",
+    "sha256": "98cd7c5313e41ca3e97b70c9ffa98faa5d0699e64db596c82d4fa8eb315b1212"
+  },
+  "changed_original_methods": [
+    "_run",
+    "_finish"
+  ],
+  "checks": [
+    "Official Exact.parse returns accepted/value on success; both decoded values are checked Dictionary before access. Actual completed input and original portrait metadata hashes match the two pinned physical files.",
+    "Review mode is explicit and excludes original portraits/extremes. With review absent, original _run selection and _finish reporting behavior remain equivalent.",
+    "Every original mechanics/approach/input/proof/cadence/camera/capture/cleanup helper is byte-exact; only _run/_finish add the isolated review branch. All original assertions remain intact.",
+    "Saved profile is supplied through the existing ProfileSeedGame before fresh tree entry. Public complete Player and staged Level preflight precede Player\u2192Level restore without any await/tick. Exact Player and Level snapshots and zero observed restore events are asserted before TEST pose or native ticks.",
+    "Restore observers cover actual Player actions/gear/death, actor defeats, progression, Ray/Lane phase/hit/cancel and required cues; watch ends before labelled live presentation movement.",
+    "The sole TEST pose(2.1,.1,-24.8) is outside the authored exit Rect on continuous support. Existing _test_place/_step and60 native ticks provide ordinary follow; no camera/focus/phase/proof/deadline/HP/gear writes are added.",
+    "A real available required contact cue, grounded/stable Hero, no action or contact signals and outside-region feet are checked before one postdraw opened-exit-separated capture. Original camera framing/pixel/hash assertions are reused unchanged.",
+    "Metadata explicitly excludes Shell context, earned route/combat and art acceptance. Saved Player resources are restored as captured; no heal/resource grant or source re-admission is introduced."
+  ],
+  "findings": [],
+  "frozen_inputs": [
+    {
+      "bytes": 36611,
+      "path": "docs/acts/act2/evidence/A2-O3/completed-review-input-20261013/completed-order-1.exact.json",
+      "sha256": "b2e14450660ff557327fd343508156d2fc7d721c1b212453ef12966276daa519"
+    },
+    {
+      "bytes": 314864,
+      "path": "docs/acts/act2/evidence/A2-O3/portrait-native-first/images/metadata.exact.json",
+      "sha256": "cc3b1bf3be15cdd4341265f36d1a4d8f7a25355240a423ff03ee3f7f3d9ff708"
+    }
+  ],
+  "limits": [
+    "Source-only review; no Godot parser/engine/native or image-readability result.",
+    "The new supported pose/follow projection remains subject to actual native camera/HUD and postdraw checks; source inspection does not predict success.",
+    "Root already verified the eight original production metadata pins and completed tuple structure. This bounded review does not repeat the prior loading136 packet or mechanics/art/adoption audits."
+  ],
+  "original": {
+    "lines": 554,
+    "path": "/private/tmp/a2_o3_focused_closer_approach_trial_20261012.gd",
+    "sha256": "0bf159faf61e544866d22bd88d0f339c588b3b498f93223d043fcb1cfe74f290"
+  },
+  "review_revision": "act2-o3-brief-exit-source-peer-1",
+  "status": "bounded static review complete; no concrete blocker found",
+  "unchanged_original_method_count": 39
+}

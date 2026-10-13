@@ -1,0 +1,1 @@
+Exact closed isolated O3 registration originals: import0, original33/1nonclean and corrected43/0clean. See index.json for path/mode/hash mappings, TEST arrangements, reused source scopes and untested behavior. Packaging is source preservation, not extra execution or canonical acceptance.

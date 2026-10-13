@@ -1,0 +1,160 @@
+{
+  "review_revision": "act2-o3-host-transport-cleanup-static-1",
+  "at_utc": "2026-10-12T09:16:53.372309+00:00",
+  "candidate": {
+    "path": "/private/tmp/a2_o3_host_draft_20261012.gd",
+    "sha256": "810ccfd8ab1a58951ea7f53926aa7ba2b689b935d1acf5e8f3019b6a6769a9f1",
+    "lines": 1138
+  },
+  "scope": "Bounded source-only closed17/prefix/checkpoint, staged transport/quiet restore and cleanup review. Root separately reviews live mechanics/framing. No engine/parser, Git, ledger, checkout edit or draft mutation.",
+  "direct_dependency_pins": [
+    {
+      "path": "scripts/campaign/level.gd",
+      "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d"
+    },
+    {
+      "path": "scripts/acts/act2/ray_scout_actor.gd",
+      "sha256": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7"
+    },
+    {
+      "path": "scripts/acts/act2/weybridge_scout_actor.gd",
+      "sha256": "7e90bfc541c467162a5a0b0afd6891e8aa6dda9835a4da05362e9301eed78916"
+    },
+    {
+      "path": "scripts/acts/act2/salvage_handler_actor.gd",
+      "sha256": "42457249e8a30e2d28ad0d03017d16e2f5158092ad3531e528ccf6beb3f70d96"
+    },
+    {
+      "path": "scripts/acts/act2/ray_scout_exchange.gd",
+      "sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd",
+      "sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+    },
+    {
+      "path": "scripts/combat/lane_mechanism.gd",
+      "sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d"
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    }
+  ],
+  "reviewed_host_methods": [
+    "_checkpoint_is_committed",
+    "_flush_progress_requests",
+    "_on_actor_defeated",
+    "_flush_defeats",
+    "_scheduler_bindings",
+    "_runtime_content_error",
+    "_capture_local_state",
+    "_whole_snapshot_error",
+    "_saved_tool_error",
+    "_saved_view_error",
+    "_saved_point_supported",
+    "snapshot_state",
+    "snapshot_error",
+    "snapshot_error_with_player",
+    "restore_state",
+    "_progress_snapshot_error",
+    "_restore_local_state",
+    "_on_hero_died",
+    "_on_exit_level",
+    "_restore_candidate_presentation_error"
+  ],
+  "findings": [
+    {
+      "severity": "P2",
+      "title": "Ended parent fails to retain the Ray consumer fixed epoch/profile identity",
+      "host_path": "/private/tmp/a2_o3_host_draft_20261012.gd",
+      "host_lines": [
+        929,
+        972
+      ],
+      "evidence": "The host fixes Scheduler.world_revision and active encounter/profile, and fixes executed Lane epoch/profile in _saved_tool_error. It then calls Exchange.snapshot_error and compares duplicated Scout actor snapshots, but does not independently require exchange.configuration.encounter_id/world_revision/profile_id to equal ENCOUNTER_ID/WORLD_REVISION/state.profile_id. The unchanged Ray reader binds those values to the paired Scheduler only when its encounter_id is nonempty. Its authored comparison checks anchors/raw_role/timing_floors and saved context, not the fixed parent epoch values.",
+      "dependency_evidence": [
+        {
+          "path": "scripts/acts/act2/ray_scout_exchange.gd",
+          "lines": [
+            936,
+            952
+          ],
+          "meaning": "Configuration accepts any stable encounter ID, positive world revision and canonical saved profile; parent pairing check is conditional on not ended."
+        },
+        {
+          "path": "scripts/acts/act2/ray_scout_exchange.gd",
+          "lines": [
+            1009,
+            1010
+          ],
+          "meaning": "Retained executed Ray exchange world/profile must match its own configuration; they are not independently tied to the ended parent world."
+        }
+      ],
+      "material_effect": "A copied completed snapshot can consistently relabel the Ray configuration/retained Ray exchange world while leaving the host, ended Scheduler and Lane histories at world1. That rewrites original consumer provenance and permits an incoherent full parent tuple, though it does not create a live post-completion attack.",
+      "smallest_fix": "After the public Ray snapshot_error succeeds (so its configuration schema is known valid), reject unless exchange.configuration.encounter_id == ENCOUNTER_ID, exchange.configuration.world_revision == WORLD_REVISION and exchange.configuration.profile_id == state.profile_id. Keep the shared reader unchanged and use exact scalar equality.",
+      "focused_malformed_case": "From a legitimate completed portable local17 dictionary, change only Ray configuration.world_revision from1 to2 and each executed Ray record.exchange.world_revision to2. Keep Scheduler.world_revision and Lane/history/Player/root values at1. Whole preflight/restore must reject atomically. This is a proposed dictionary-refusal case; no native reproduction was run.",
+      "status": "Reported to Root and host author; frozen source not edited.",
+      "exact_native_dictionary_case": {
+        "input": "A legitimate completed CinderLevel snapshot from the focused fixture; mutate a deep portable copy, not live state.",
+        "required_state": "local.stage_index == 4, local.scheduler.encounter_id == empty string, local.world_revision == 1, all native consumers quiet.",
+        "mutations": [
+          {
+            "path": "local.exchange.configuration.world_revision",
+            "from": 1,
+            "to": 2
+          },
+          {
+            "path": "local.exchange.records.first_scout.exchange.world_revision",
+            "from": 1,
+            "to": 2,
+            "condition": "Only if records.first_scout.cycle > 0, so its original exchange exists."
+          },
+          {
+            "path": "local.exchange.records.final_scout.exchange.world_revision",
+            "from": 1,
+            "to": 2,
+            "condition": "Only if records.final_scout.cycle > 0, so its original exchange exists."
+          }
+        ],
+        "do_not_modify": [
+          "local.world_revision",
+          "local.scheduler.world_revision",
+          "local.profile_id",
+          "local.actors",
+          "local.tools",
+          "local.defeated_ids",
+          "local.defeat_times",
+          "local.pending_defeats",
+          "progress",
+          "complete saved Player",
+          "Ray actors, clocks, samples, geometry, adapter, source/opening or context"
+        ],
+        "zero_cycle_rule": "For a legitimate cycle0 defeated Ray, leave its empty exchange empty; do not invent a world_revision key.",
+        "shell_wrapper": "If the test stores a full Game/Shell unit, the same paths are under level.local rather than bare local.",
+        "assertion": "Public whole preflight and restore must refuse without changes to the actual Player/actors/Scheduler/Ray/Lanes/progress/cues/resources/events. No live HP/phase/history/clock mutation and no new native admission."
+      }
+    }
+  ],
+  "supported_source_seams": [
+    "Closed17 keys/value validation precedes nested dictionary indexing; actor/tool native schemas are checked before derived local field reads. Committed/pending ID and chronological time maps enforce first Scout, second Handler, then either final order.",
+    "Before-final admission uses actual current local checkpoint plus protected side_attempt checkpoint acknowledgement through public Attempts state. Physics flush sets stage3/checkpoint intent before the public request; no final admissions occur while the pending request is set.",
+    "Complete saved Player is validated first; pure external staging supplies hero_positions from saved motion. One Scheduler is staged with complete actual owner/floor mapping before Ray/Lane public snapshot_error calls.",
+    "Quiet commit restores all actual actors/saved yaw before Scheduler, then Ray and both Lanes; Handler projection uses _pose_tools(false), retaining restored actor yaw. Ray uses its supported saved visual restore seam. Parent blocks opening/exit cue signals for derived quiet redraw.",
+    "Running Handler view identity, original reservation, full primary_time+primary_cooldown, actual recovery interval, admitted canonical equipment, supported landing/return and ordinary LOS are checked. Copied consumer clock equality is exact.",
+    "CinderLevel outer completion/checkpoint/contact fields are paired with local pending flags. Death cancels original consumers and retains pending earned defeat receipts without corpse-driven progression.",
+    "Candidate presentation hook uses public Shell camera_framing_error_for_context with actual Hero/source requirements; no camera/controller/HP/clock repair is introduced in restore.",
+    "Exit disconnects RenderingServer/Hero/source callbacks before native cleanup, clears only entered Lane/cues/Scheduler, releases Handler damage gate and disarms actors. Detached fallback skips live state/world queries; deferred defeat flush closes through _live_level after exit."
+  ],
+  "limits": [
+    "Static review is not Godot compilation or actual source/schema/save/Retry execution.",
+    "Native same-call fresh-recipient endpoint physics, paused pending flags and mixed-source presentation still belong to the targeted focused fixtures; no hypothetical broad route requirement added.",
+    "No art/source-board, unrelated accepted-level, controller/stat or whole-campaign audit."
+  ],
+  "status": "One concrete parent coherence finding; other bounded public seams reviewed without an additional concrete blocker.",
+  "prior_static_report": {
+    "path": "/private/tmp/a2_o3_host_transport_cleanup_independent_review_20261012.json",
+    "sha256": "786d6ae2753ac0e6664d8245272f549ed21957cb7627519c5dd77a14e09893c1",
+    "qualification": "Original static finding unchanged; final supplement supplies exact portable mutation paths only."
+  }
+}
