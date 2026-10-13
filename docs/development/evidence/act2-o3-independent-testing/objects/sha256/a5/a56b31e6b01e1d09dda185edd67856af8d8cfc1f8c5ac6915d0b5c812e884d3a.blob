@@ -1,0 +1,85 @@
+Waiting for the shared Godot session to close…
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: level has canonical identity and a valid shared spawn contract
+PASS: level receives exactly one shared actor and effects
+PASS: friendly rehearsal introduces no lab enemies or weapon stands
+PASS: shared player starts at the authored feet marker
+PASS: four stable rehearsal target IDs are exposed
+PASS: elapsed time alone cannot complete the dash exercise
+PASS: initial authored state is snapshot-ready
+PASS: v3 snapshot declares five local roots including paired scheduler/arms and exact target feedback
+PASS: uncleared hatch rejects both shared hero and unrelated contact
+PASS: out-of-order primary leaves an inactive workshop target and progression intact
+PASS: opening dash is accepted by the shared controller
+PASS: dash request alone cannot complete a landing exercise
+PASS: exercise observes a real completed dash landing at the authored marker
+PASS: first real landing advances exactly one exercise
+PASS: wrong primary direction gives a miss without resetting or advancing the lesson
+PASS: ordinary primary genuinely clears the safe hall target with empty shells
+PASS: authored practice primary grants no living-enemy reload credit
+PASS: accepted hit immediately folds authored cloth with a spent attack cue and no generic DONE label
+PASS: successful hall hit advances immediately without an instruction timer
+PASS: rejected repeat input cannot duplicate exercise progress
+PASS: v1 snapshots cannot silently lose target feedback and paired arms in the v3 level
+PASS: v2 snapshots cannot omit the v3 paired scheduler and mechanism unit
+PASS: invalid target feedback clock rejects atomically: -0.001
+PASS: invalid target feedback clock rejects atomically: 0.151
+PASS: invalid target feedback clock rejects atomically: nan
+PASS: invalid target feedback clock rejects atomically: inf
+PASS: invalid target feedback clock rejects atomically: 0.1
+PASS: invalid target feedback clock rejects atomically: true
+PASS: target schema requires an explicit feedback clock
+PASS: target schema rejects undeclared fields without mutation
+PASS: an untouched one-hit target cannot carry feedback from an invented hit
+PASS: invalid beat is rejected without partial mutation: -1
+PASS: invalid beat is rejected without partial mutation: 6
+PASS: invalid beat is rejected without partial mutation: 1.25
+PASS: invalid beat is rejected without partial mutation: 2
+PASS: missing local fields are rejected atomically
+PASS: beat cannot advance without matching completed exercises and targets
+PASS: completed exercises require an array rather than a string
+PASS: duplicate exercise IDs cannot replace the ordered completed prefix
+PASS: undeclared local snapshot fields are rejected without mutation
+PASS: rehearsal target HP must represent an available or cleared target
+PASS: valid-looking completion cannot contradict an unfinished opening
+PASS: otherwise valid checkpoint history rejects an unauthored boundary
+PASS: current checkpoint must match the latest completed exercise, not an older valid boundary
+PASS: accepted primary at the already cleared target cannot duplicate progress
+PASS: workshop approach also clears through a real primary without blast ammo
+PASS: three opening exercises do not falsely complete the arm-dependent rehearsal
+PASS: valid local snapshot restores the completed hall boundary
+PASS: restore coherently reopens workshop while preserving the cleared hall
+PASS: local restore emits no progression and does not heal or refill the shared actor
+PASS: paused restore applies exact captured shared feedback clocks
+PASS: silent restore redraws cleared and standing cloth/cues without target state notifications
+PASS: paused restored target clocks and resources remain exact without another hit or event
+PASS: restore rejects a missing required runtime target before committing fields
+PASS: idle static weapon can be selected before preview reset
+PASS: preview reset creates a fresh opening instead of pretending to retry a checkpoint
+PASS: exited level releases shared references and cannot allocate stale progress
+PASS: exit freezes the retired shared target clock and clears its required cue
+PASS: exit disconnects its shared action observer
+PASS: fresh preview restores HP/ammo and keeps static equipment
+PASS: reset retains one shared actor at the authored spawn
+PASS: old level, actor and level-owned target are freed
+PASS: reentrant fixture starts a real completed dash
+PASS: checkpoint callback waits for the coherent deferred actor barrier
+PASS: a genuine nested primary is observed after the current checkpoint leaves dispatch
+PASS: both genuine actions retain coherent local and checkpoint history
+PASS: capture-envelope fixture begins with a valid authored snapshot
+PASS: public base request can create a checkpoint outside the authored exercise prefix
+PASS: capture rejects inconsistent checkpoint progress with a diagnostic and no local mutation
+PASS: valid original snapshot recovers checkpoint state without healing or refilling
+PASS: public base request can mark completion before authored exercises clear
+PASS: capture rejects premature completion with a diagnostic and no local mutation
+PASS: valid original snapshot recovers premature completion without healing or refilling
+PASS: authored hook fixture uses shared configuration before tree entry
+PASS: authored target has one cloth/one cue and an inactive future gate without generic label geometry
+PASS: activation presents the shared available attack cue on standing cloth
+PASS: shared nonlethal hit maps to available cloth with the actual normalized feedback fraction
+PASS: silent cleared configuration immediately folds cloth and redraws spent cue
+PASS: silent live configuration restores a partial shared feedback clock and standing cloth without notifications
+PASS: activation redraw and pause do not own or advance the shared hit clock
+A1-L1 opening core: 80 checks, 0 failures
+NOT TESTED: loading arm, full-level completion, coherent campaign retry/transition and portrait art.

@@ -1,0 +1,775 @@
+{
+  "api_revision": "act2-clear-air-circuit-scenery-1",
+  "art_revision": "a2-clear-air-circuit-kit-1",
+  "level_id": "A2-O2",
+  "draft_path": "/private/tmp/a2_o2_clear_air_circuit_kit_draft.gd",
+  "draft_sha256": "2f9d0d952559e1ea329c7bc24bec711c3b9f831086fb08268674af9dae5bddfe",
+  "readiness": "Imported/executed focused desktop arrangement; mechanics257, selectedextrema523, latestloading116 and actualgraphical322 allclean on Shared50. Owner and independentseven captured-statepixelPASS; independentlevelacceptancepending.",
+  "api": {
+    "build": "static build(parent: Node3D) -> Dictionary {root: Node3D, crates: Dictionary, marker: Node3D}",
+    "set_progress": "static set_progress(kit: Dictionary, cleared_ids: Array[String], completed: bool) -> void",
+    "crate_ids": [
+      "west_tender",
+      "east_tender"
+    ],
+    "crate_metadata": "store_state=full/empty; FullCanisters child visibility",
+    "marker_metadata": "marker_state=hidden/completed; root visibility",
+    "cutaway_metadata": "root-relative optional_cutaway_paths; original weybridge_cutaway_candidate marker on unique StandardMaterial3D leaf overrides"
+  },
+  "authored_layout": {
+    "dry_floor_rect_xz": [
+      -3.4,
+      -14.8,
+      6.8,
+      18.4
+    ],
+    "spawn": [
+      0,
+      0.1,
+      2.6
+    ],
+    "tender_origins": {
+      "west_tender": [
+        -1.8,
+        0,
+        -2.7
+      ],
+      "east_tender": [
+        1.8,
+        0,
+        -2.7
+      ]
+    },
+    "bank_origins": {
+      "west_bank": [
+        -1.5,
+        0,
+        -4.3
+      ],
+      "east_bank": [
+        1.5,
+        0,
+        -4.3
+      ]
+    },
+    "bank_radius_m": 1.05,
+    "regular_handler_origin": [
+      0,
+      0,
+      -10.5
+    ],
+    "checkpoint_z_interval": [
+      -7.2,
+      -6.2
+    ],
+    "exit_marker_origin": [
+      0,
+      0,
+      -13.9
+    ],
+    "crate_origins": {
+      "west_tender": [
+        -3.85,
+        0,
+        -2.7
+      ],
+      "east_tender": [
+        3.85,
+        0,
+        -2.7
+      ]
+    },
+    "native_collision": "host-only floor, one upright BoxShape3D; kit has no collision objects",
+    "cosmetic_circuit_marker_origin": [
+      0.9,
+      0,
+      -13.9
+    ],
+    "contact_exit_cue_origin": [
+      0,
+      0,
+      -13.9
+    ]
+  },
+  "source_records": [
+    {
+      "path": "docs/ACT2_CONCEPT.md",
+      "sha256": "f5596e2bb8ec70dfc9e47df60272b6a9ef1b412b1e4af05413a1a6e618e5e696"
+    },
+    {
+      "path": "docs/reference-library/act2/research/levels.json",
+      "sha256": "e7d42cfa6d0943d5ba59223a3685c1865f4cd8bd93035c8d18070efaded27571"
+    },
+    {
+      "path": "docs/concept-art/act2/README.md",
+      "sha256": "fbee5d8514e9f00695eb16e918e6581740f4ae6f22c7438a7be39efd9f934133"
+    },
+    {
+      "path": "docs/GAME_STYLE_GUIDELINES.md",
+      "sha256": "9c5d7680174b240cda25eb059db6babc4b4ebf129dcfcfeae8bdd59be2b2c1d1"
+    },
+    {
+      "path": "docs/ASSET_REUSE_GUIDE.md",
+      "sha256": "2507aa2d654026bb1466125bd4c9241060f073f026425287a6c8912907e7f983"
+    },
+    {
+      "path": "docs/concept-art/act2/environments/black-smoke-ruined-house.png",
+      "sha256": "35070da144b4ae8f64916c9b568685a7fd2744f1eb8526ae6b11dd37f0a59fcb"
+    },
+    {
+      "path": "docs/concept-art/act2/props/martian-technology.png",
+      "sha256": "d7bb3d36baf62bf424387f436dbc5145fdf6504753d7b45e91815569501b535b"
+    },
+    {
+      "path": "docs/concept-art/act2/props/victorian-survival-props.png",
+      "sha256": "4fe979367f3eef6374e8758362a679b7b783f8e938aaf21011b9dfed7c0766c3"
+    },
+    {
+      "path": "docs/concept-art/act2/gameplay/02-ruined-house-gameplay.png",
+      "sha256": "e38938995714e40b70340dc3b2f8725d5249d1ee6b55ac819d4a82de18d84d81"
+    },
+    {
+      "path": "docs/concept-art/act2/gameplay/sample-screenshots/02-handling-machine-counter.png",
+      "sha256": "da547d49a74749f809824867bf1496ff6019697f18373c9e4b3d7fcd0a0ffd9e"
+    }
+  ],
+  "reused_runtime_pins": [
+    {
+      "path": "scripts/acts/act2/ruined_house_kit.gd",
+      "sha256": "19c694d6257856605f3b175a288ce611a3da2a9d916a1151ce4600512a7f3505"
+    },
+    {
+      "path": "scripts/acts/act2/heath_kit.gd",
+      "sha256": "77768bc24573be2ce25f2255bf8ffa3adbcd363e00bdaf6125692c1cbf0bd4ac"
+    },
+    {
+      "path": "scripts/acts/act2/weybridge_kit.gd",
+      "sha256": "3b045f0d501a69e76df0a80526371f9742b8cbf782e3d7e51247317c58953db2"
+    }
+  ],
+  "leaf_calls": [
+    "House._surface",
+    "House._node",
+    "House._box",
+    "House._rod",
+    "House._cylinder",
+    "House._ring",
+    "House._pantry",
+    "House._sink",
+    "House._hearth",
+    "House._brick_arch",
+    "House._work_tableau",
+    "House.set_work_tableau"
+  ],
+  "reuse_policy": "No full House/Heath/Weybridge build call and no accepted parent edit. Materials are original cached deterministic nearest textures; every cutaway-eligible primitive obtains a separate original material override through House helpers. Cached meshes/textures are never mutated. Existing leaf behavior remains exact; only local arrangements/root placement and documented crate/marker compositions are new.",
+  "source_boundaries": "G07/E20 opened kitchen/scullery/pantry and E21 industrial excavation provide domestic ruin/manufacturing vocabulary. Wide dry work apron/front-wall removal/compact store are gameplay presentation adaptations, not literal novel floor plan or novel enemy castes. T05 canister stores do not introduce explosion, smoke-clearing, supply grants or gas-mask control. Ordinary actors/banks/Handler are host-owned reuse, not kit children. No B02, pit descent, water, red weed, novel faction or new attack.",
+  "assets": [
+    {
+      "id": "a2-o2-continuous-dry-foundation",
+      "source": [
+        "G07",
+        "G19",
+        "sample-S02"
+      ],
+      "readiness": "Imported/executed arrangement and actualseven-view ownerinspection at capturedstates; fine/fullpose/allscene artlimits remain, independentreviewpending",
+      "native_scale": 1.0,
+      "pivot_m": [
+        0,
+        0.004,
+        -5.6
+      ],
+      "native_dimensions_m": {
+        "continuous_size_xz": [
+          6.8,
+          18.4
+        ],
+        "floor_rect_xz": [
+          -3.4,
+          -14.8,
+          6.8,
+          18.4
+        ],
+        "visual_overlay_y": [
+          0.004,
+          0.006
+        ]
+      },
+      "collision_role": "none; no body, shape, layer or target group",
+      "occlusion_role": "Floor planes and low edge stones remain opaque and are excluded from optional cutaway; decoration stays outboard.",
+      "states": [
+        "static"
+      ],
+      "clock_owner": "none; static or absolute redraw from accepted host progress; no process, timer, shader time or local events",
+      "reuse_family": "Heath cached PlaneMesh plus House ash/timber and Weybridge paving/earth textures",
+      "actual_meshes": [
+        "ContinuousPaleAshFoundation: PlaneMesh 6.8x18.4",
+        "ArrivalWornHouseFloor: PlaneMesh 6.8x7.0",
+        "ClearAirWorkApron: PlaneMesh 6.8x8.0",
+        "QuietExitAshFloor: PlaneMesh 6.8x3.4",
+        "ScenicUnderlyingEarth: PlaneMesh 20x36",
+        "OutboardHouseFoundation_-1/1: PlaneMesh 2x18.4",
+        "14 OutboardEdgeStone boxes .20x.07x.48"
+      ],
+      "limitations": "Exactly one continuous visual floor. The host supplies the sole upright Box collider. Lower 20x36m underlying earth and outboard foundation are scenic, not additional supported floor. No pits, water, rail, plank or central obstacle."
+    },
+    {
+      "id": "a2-o2-reused-domestic-rooms",
+      "source": [
+        "G07",
+        "G19",
+        "E20"
+      ],
+      "readiness": "Imported/executed arrangement and actualseven-view ownerinspection at capturedstates; fine/fullpose/allscene artlimits remain, independentreviewpending",
+      "native_scale": 1.0,
+      "pivot_m": [
+        0,
+        0,
+        0
+      ],
+      "native_dimensions_m": {
+        "side_piers_x": [
+          -3.86,
+          3.86
+        ],
+        "piers_size": [
+          0.34,
+          0.8,
+          0.42
+        ],
+        "plaster_size": [
+          0.14,
+          0.8,
+          2.8
+        ],
+        "coping_top_y": 0.86
+      },
+      "collision_role": "none; no body, shape, layer or target group",
+      "occlusion_role": "Per-mesh isolated original StandardMaterial3D overrides; eligible for host-derived cutaway through root-relative optional_cutaway_paths.",
+      "states": [
+        "static"
+      ],
+      "clock_owner": "none; static or absolute redraw from accepted host progress; no process, timer, shader time or local events",
+      "reuse_family": "House/Heath broken brick, chipped plaster and charred timber",
+      "actual_meshes": [
+        "6 low brick piers",
+        "6 worn coping blocks",
+        "6 chipped plaster panels",
+        "6 short charred tapered rods"
+      ],
+      "limitations": "Compact rearrangement, not a literal source floor plan. Removed front wall/roof keep both Tender sources, circles and Handler approach open. Tall furniture is outboard; camera may crop source details."
+    },
+    {
+      "id": "a2-o2-reused-pantry",
+      "source": [
+        "G07",
+        "E20"
+      ],
+      "readiness": "Imported/executed arrangement and actualseven-view ownerinspection at capturedstates; fine/fullpose/allscene artlimits remain, independentreviewpending",
+      "native_scale": 1.0,
+      "pivot_m": [
+        -3.65,
+        0,
+        0
+      ],
+      "native_dimensions_m": {
+        "module_root_scale": [
+          1,
+          1,
+          1
+        ],
+        "shelves_width_x_depth_z": [
+          0.66,
+          1.59
+        ],
+        "shelf_y": [
+          0.3,
+          0.69,
+          1.08
+        ],
+        "back_timber_top_y": 1.41
+      },
+      "collision_role": "none; no body, shape, layer or target group",
+      "occlusion_role": "Per-mesh isolated original StandardMaterial3D overrides; eligible for host-derived cutaway through root-relative optional_cutaway_paths.",
+      "states": [
+        "static"
+      ],
+      "clock_owner": "none; static or absolute redraw from accepted host progress; no process, timer, shader time or local events",
+      "reuse_family": "unchanged House._pantry",
+      "actual_meshes": [
+        "original pantry timber/uprights/3 shelves",
+        "3 open pottery jars, R.115 H.25",
+        "6 plates, R.17",
+        "low flour tin .29x.26x.27"
+      ],
+      "limitations": "Original shelves, pottery, plates and flour tin are decoration. Closest nominal plate edge X -3.43 remains outside dry support; fine rims may merge or crop. Native rendered recognition pending."
+    },
+    {
+      "id": "a2-o2-reused-scullery",
+      "source": [
+        "G07",
+        "E20"
+      ],
+      "readiness": "Imported/executed arrangement and actualseven-view ownerinspection at capturedstates; fine/fullpose/allscene artlimits remain, independentreviewpending",
+      "native_scale": 1.0,
+      "pivot_m": [
+        3.72,
+        0,
+        -6
+      ],
+      "native_dimensions_m": {
+        "module_root_scale": [
+          1,
+          1,
+          1
+        ],
+        "cabinet_size": [
+          0.71,
+          0.68,
+          1.28
+        ],
+        "tap_top_y_approx": 1.035,
+        "nearest_rim_x": 3.44
+      },
+      "collision_role": "none; no body, shape, layer or target group",
+      "occlusion_role": "Per-mesh isolated original StandardMaterial3D overrides; eligible for host-derived cutaway through root-relative optional_cutaway_paths.",
+      "states": [
+        "static"
+      ],
+      "clock_owner": "none; static or absolute redraw from accepted host progress; no process, timer, shader time or local events",
+      "reuse_family": "unchanged House._sink",
+      "actual_meshes": [
+        "original wood cabinet",
+        "dark basin and 4 ceramic rims",
+        "bent metal tap/quiet crossbar",
+        "empty black pot with handles"
+      ],
+      "limitations": "Dry basin and empty pot, no water/smoke clearing/interaction. Original parts remain unchanged; root placement keeps all nominal pieces outboard. Detailed tap/rim recognition pending."
+    },
+    {
+      "id": "a2-o2-reused-hearth",
+      "source": [
+        "G07",
+        "E20"
+      ],
+      "readiness": "Imported/executed arrangement and actualseven-view ownerinspection at capturedstates; fine/fullpose/allscene artlimits remain, independentreviewpending",
+      "native_scale": 1.0,
+      "pivot_m": [
+        -3.75,
+        0,
+        -10.7
+      ],
+      "native_dimensions_m": {
+        "module_root_scale": [
+          1,
+          1,
+          1
+        ],
+        "floor_size": [
+          0.85,
+          0.13,
+          1.55
+        ],
+        "mantel_top_y": 0.9125,
+        "nearest_stone_x": -3.445
+      },
+      "collision_role": "none; no body, shape, layer or target group",
+      "occlusion_role": "Per-mesh isolated original StandardMaterial3D overrides; eligible for host-derived cutaway through root-relative optional_cutaway_paths.",
+      "states": [
+        "static"
+      ],
+      "clock_owner": "none; static or absolute redraw from accepted host progress; no process, timer, shader time or local events",
+      "reuse_family": "unchanged House._hearth",
+      "actual_meshes": [
+        "original cold hearth stone/brick cheeks/lintel",
+        "black pot/dark interior/handles",
+        "2 charred wood rods",
+        "broken mantel timber"
+      ],
+      "limitations": "Cold decorative firebox, pot and firewood. No burning/smoke/damage state. Outboard cropping and small pot/branch contrast require actual portrait review."
+    },
+    {
+      "id": "a2-o2-reused-brick-arch",
+      "source": [
+        "G07",
+        "E20"
+      ],
+      "readiness": "Imported/executed arrangement and actualseven-view ownerinspection at capturedstates; fine/fullpose/allscene artlimits remain, independentreviewpending",
+      "native_scale": 1.0,
+      "pivot_m": [
+        3.7,
+        0,
+        -12.2
+      ],
+      "native_dimensions_m": {
+        "module_root_scale": [
+          1,
+          1,
+          1
+        ],
+        "yaw_y_radians": 1.5707963267948966,
+        "local_span_x": 1.58,
+        "top_y": 1.675,
+        "turned_inner_x": 3.55
+      },
+      "collision_role": "none; no body, shape, layer or target group",
+      "occlusion_role": "Per-mesh isolated original StandardMaterial3D overrides; eligible for host-derived cutaway through root-relative optional_cutaway_paths.",
+      "states": [
+        "static"
+      ],
+      "clock_owner": "none; static or absolute redraw from accepted host progress; no process, timer, shader time or local events",
+      "reuse_family": "unchanged House._brick_arch",
+      "actual_meshes": [
+        "2 pillars .28x.88x.30",
+        "9 rotated voussoir BoxMeshes .218x.27x.30"
+      ],
+      "limitations": "Turned open arch runs along the outboard room rather than crossing the escape floor. Nine separate stones retain a real opening. Highest source outline may crop; not a required door, path or blocker."
+    },
+    {
+      "id": "a2-o2-reused-fixed-work-tableau",
+      "source": [
+        "G07",
+        "G16",
+        "E21",
+        "sample-S02"
+      ],
+      "readiness": "Imported/executed arrangement and actualseven-view ownerinspection at capturedstates; fine/fullpose/allscene artlimits remain, independentreviewpending",
+      "native_scale": 1.0,
+      "pivot_m": [
+        4.55,
+        0,
+        -9.2
+      ],
+      "native_dimensions_m": {
+        "module_root_scale": [
+          1,
+          1,
+          1
+        ],
+        "original_quiet_pose_progress": 0.0,
+        "quiet_plate_center_local": [
+          -0.65,
+          0.15,
+          0.36
+        ],
+        "quiet_plate_size": [
+          0.62,
+          0.045,
+          0.57
+        ],
+        "nominal_plate_inner_x": 3.59
+      },
+      "collision_role": "none; no body, shape, layer or target group",
+      "occlusion_role": "Per-mesh isolated original StandardMaterial3D overrides; eligible for host-derived cutaway through root-relative optional_cutaway_paths.",
+      "states": [
+        "static quiet original pose; work_active=false, work_progress=0"
+      ],
+      "clock_owner": "none; static or absolute redraw from accepted host progress; no process, timer, shader time or local events",
+      "reuse_family": "unchanged House._work_tableau and House.set_work_tableau",
+      "actual_meshes": [
+        "original low stand/feet/twin uprights",
+        "fixed/moving round journals",
+        "2 fitted tapered work rods",
+        "clamp with 2 fingers",
+        "transferred plate",
+        "3 stationary supply rods"
+      ],
+      "limitations": "Original stand/rods/clamp/plate geometry reused once; only root position changes. No local animation, waiting requirement, new enemy or B02. Original helper source retains available quiet pose API, but O2 build pins this tableau to its first inactive pose."
+    },
+    {
+      "id": "a2-o2-reused-industrial-plates",
+      "source": [
+        "G07",
+        "G16",
+        "E21"
+      ],
+      "readiness": "Imported/executed arrangement and actualseven-view ownerinspection at capturedstates; fine/fullpose/allscene artlimits remain, independentreviewpending",
+      "native_scale": 1.0,
+      "pivot_m": [
+        -4.05,
+        0,
+        -6.1
+      ],
+      "native_dimensions_m": {
+        "plate_size": [
+          0.78,
+          0.045,
+          0.82
+        ],
+        "plate_stack_y_centers": [
+          0.055,
+          0.12,
+          0.185
+        ],
+        "inner_x": -3.66
+      },
+      "collision_role": "none; no body, shape, layer or target group",
+      "occlusion_role": "Per-mesh isolated original StandardMaterial3D overrides; eligible for host-derived cutaway through root-relative optional_cutaway_paths.",
+      "states": [
+        "static"
+      ],
+      "clock_owner": "none; static or absolute redraw from accepted host progress; no process, timer, shader time or local events",
+      "reuse_family": "House/Heath original oxidised plate, rivet and rod leaves",
+      "actual_meshes": [
+        "3 plate BoxMeshes",
+        "9 fastener BoxMeshes .028x.017x.028",
+        "3 loose tapered rod CylinderMeshes, R.025"
+      ],
+      "limitations": "Only a compact arrangement of the existing work-apron family. No collectible ammunition, cluster/weakpoint, damage cue or destructible debris."
+    },
+    {
+      "id": "a2-o2-canister-store-west_tender",
+      "source": [
+        "G16/T05 tube/canister technology",
+        "G07 work-apron adaptation",
+        "canonical A2-O2 empty/full supply-crate addition"
+      ],
+      "readiness": "Imported/executed arrangement and actualseven-view ownerinspection at capturedstates; fine/fullpose/allscene artlimits remain, independentreviewpending",
+      "native_scale": 1.0,
+      "pivot_m": [
+        -3.85,
+        0,
+        -2.7
+      ],
+      "native_dimensions_m": {
+        "root_scale": [
+          1,
+          1,
+          1
+        ],
+        "local_conservative_aabb_position": [
+          -0.36,
+          0,
+          -0.44
+        ],
+        "local_conservative_aabb_size": [
+          0.72,
+          0.67,
+          0.88
+        ],
+        "base_size": [
+          0.72,
+          0.09,
+          0.88
+        ],
+        "nominal_max_content_y": 0.659,
+        "minimum_abs_x": 3.49
+      },
+      "collision_role": "none; no body, shape, layer or target group",
+      "occlusion_role": "Per-mesh isolated original StandardMaterial3D overrides; eligible for host-derived cutaway through root-relative optional_cutaway_paths.",
+      "states": [
+        "full: FullCanisters visible while id absent from cleared_ids",
+        "empty: FullCanisters hidden after actual corresponding Tender defeat; crate base/slats/dark interior stay visible"
+      ],
+      "clock_owner": "none; static or absolute redraw from accepted host progress; no process, timer, shader time or local events",
+      "reuse_family": "new documented prop composition, using unchanged House/Heath wood/metal/rim/cavity leaves",
+      "actual_meshes": [
+        "grounded timber base and dark interior",
+        "12 open side/end slats",
+        "4 dull corner straps",
+        "FullCanisters child with 6 closed oxidised cylinders R.09 H.43",
+        "6 raised torus rims",
+        "6 dark closed caps",
+        "6 small valve boxes"
+      ],
+      "limitations": "Nonactionable enemy canister store. Six small decorative tubes imply stock only, not six emissions or resources. No pickup/control, cue/glow, HP/ammo/gear/perk/powerup grant. Host owns real defeats; no force-clear/wave/state authority. Full/empty recognizability and crop pending native portrait."
+    },
+    {
+      "id": "a2-o2-canister-store-east_tender",
+      "source": [
+        "G16/T05 tube/canister technology",
+        "G07 work-apron adaptation",
+        "canonical A2-O2 empty/full supply-crate addition"
+      ],
+      "readiness": "Imported/executed arrangement and actualseven-view ownerinspection at capturedstates; fine/fullpose/allscene artlimits remain, independentreviewpending",
+      "native_scale": 1.0,
+      "pivot_m": [
+        3.85,
+        0,
+        -2.7
+      ],
+      "native_dimensions_m": {
+        "root_scale": [
+          1,
+          1,
+          1
+        ],
+        "local_conservative_aabb_position": [
+          -0.36,
+          0,
+          -0.44
+        ],
+        "local_conservative_aabb_size": [
+          0.72,
+          0.67,
+          0.88
+        ],
+        "base_size": [
+          0.72,
+          0.09,
+          0.88
+        ],
+        "nominal_max_content_y": 0.659,
+        "minimum_abs_x": 3.49
+      },
+      "collision_role": "none; no body, shape, layer or target group",
+      "occlusion_role": "Per-mesh isolated original StandardMaterial3D overrides; eligible for host-derived cutaway through root-relative optional_cutaway_paths.",
+      "states": [
+        "full: FullCanisters visible while id absent from cleared_ids",
+        "empty: FullCanisters hidden after actual corresponding Tender defeat; crate base/slats/dark interior stay visible"
+      ],
+      "clock_owner": "none; static or absolute redraw from accepted host progress; no process, timer, shader time or local events",
+      "reuse_family": "new documented prop composition, using unchanged House/Heath wood/metal/rim/cavity leaves",
+      "actual_meshes": [
+        "grounded timber base and dark interior",
+        "12 open side/end slats",
+        "4 dull corner straps",
+        "FullCanisters child with 6 closed oxidised cylinders R.09 H.43",
+        "6 raised torus rims",
+        "6 dark closed caps",
+        "6 small valve boxes"
+      ],
+      "limitations": "Nonactionable enemy canister store. Six small decorative tubes imply stock only, not six emissions or resources. No pickup/control, cue/glow, HP/ammo/gear/perk/powerup grant. Host owns real defeats; no force-clear/wave/state authority. Full/empty recognizability and crop pending native portrait."
+    },
+    {
+      "id": "a2-o2-completed-circuit-marker",
+      "source": [
+        "canonical A2-O2 completed-circuit marker addition",
+        "G17 weathered Victorian timber/stone",
+        "Heath original wood/ash_wood/rim materials"
+      ],
+      "readiness": "Imported/executed arrangement and actualseven-view ownerinspection at capturedstates; fine/fullpose/allscene artlimits remain, independentreviewpending",
+      "native_scale": 1.0,
+      "pivot_m": [
+        0.9,
+        0,
+        -13.9
+      ],
+      "native_dimensions_m": {
+        "root_scale": [
+          1,
+          1,
+          1
+        ],
+        "local_conservative_aabb_position": [
+          -0.36,
+          0,
+          -0.12
+        ],
+        "local_conservative_aabb_size": [
+          0.72,
+          0.73,
+          0.24
+        ],
+        "board_size": [
+          0.72,
+          0.26,
+          0.075
+        ],
+        "actual_board_top_y": 0.72
+      },
+      "collision_role": "none; no body, shape, layer or target group",
+      "occlusion_role": "Per-mesh isolated original StandardMaterial3D overrides; eligible for host-derived cutaway through root-relative optional_cutaway_paths.",
+      "states": [
+        "hidden before host completion",
+        "completed: entire marker visible after host completion"
+      ],
+      "clock_owner": "none; static or absolute redraw from accepted host progress; no process, timer, shader time or local events",
+      "reuse_family": "new documented marker using existing timber/stone/dull-fastener primitives",
+      "actual_meshes": [
+        "stone foot .32x.09x.24",
+        "timber post .065x.59x.07",
+        "plain worn board .72x.26x.075",
+        "3 dull short fastener cylinders R.033 H.027"
+      ],
+      "limitations": "Plain worn completed board beside unchanged central contact ExitCue; no glow/control/reward authority. Original centered-board portrait overlapped Hero head and faded. New offset and separated TEST review pose await actual native pixel validation; continuous cutaway remains enabled."
+    }
+  ],
+  "validation": {
+    "static_only": [
+      "JSON parsed successfully by author",
+      "existing reused leaf signatures inspected",
+      "nominal floor band endpoints cover the exact floor without gaps",
+      "nominal outboard module/prop dimensions recorded"
+    ],
+    "closed_native_scopes": [
+      {
+        "evidence": "docs/acts/act2/evidence/A2-O2/source-import-after-scan-warning/result.json",
+        "scope": "602-input resource import clean; four genuine UID sidecars retained; no gameplay/art credit"
+      },
+      {
+        "evidence": "docs/acts/act2/evidence/A2-O2/loading-side-replay-late-exit-fixed/result.json",
+        "scope": "116/0 loading/full saves/native grace/tails/Retry/order setup/stamp/contact return/cleanup only"
+      },
+      {
+        "evidence": "docs/acts/act2/evidence/A2-O2/mechanics-native-retained-union/result.json",
+        "scope": "257/0 actualordinarySmoke/Handler proof responses/cooldown/HP/noammo; unchangedcombatlogic retained after cosmeticmarkeranchoronly"
+      },
+      {
+        "evidence": "docs/acts/act2/evidence/A2-O2/extremes-native-retained-union/result.json",
+        "scope": "523/0 two selected legalgear extremes; static/controller/admission/timing unchanged after markerartdelta"
+      },
+      {
+        "evidence": "docs/acts/act2/evidence/A2-O2/loading-side-separated-marker/result.json",
+        "scope": "Currentanchor116/0 actualloading/save/Retry/order-staging/stamp/contact/cleanup"
+      },
+      {
+        "evidence": "docs/acts/act2/evidence/A2-O2/portrait-native-separated-marker/result.json",
+        "scope": "322/0 nativegraphical+actualordinarycomponents oncurrentruntime; separate ownercaptured-statePASS/independentpending"
+      }
+    ],
+    "retained_failures": [
+      "source-import-first warning",
+      "loading-side-first2/1 Registry spawn",
+      "loading-side-scene-spawn-fixed77/1 plus native late-tree error",
+      "mechanics-native-first10/2 original-proof timing fixture assumption"
+    ],
+    "not_run_or_incomplete": [
+      "IndependentIntegrationlevelacceptance pending; fullpose/art and humanbalance outsidecaptured-statePASS",
+      "Naturally retained Smoke pendingsegments schema2 transport was notexecuted at these complete nativebarriers",
+      "Earnedwhole route/allkits/pacing/humanbalance/fullart/mobile/performance"
+    ],
+    "no_transferred_acceptance": "Accepted parent leaves remain reuse provenance; no individual art acceptance or O2 level acceptance is transferred."
+  },
+  "deferred_and_limits": [
+    "Dense black-smoke banks, canister impact, Tender/Handler motion/weakpoint/cue states are supplied separately by unchanged actors/shared consumers under the host.",
+    "Full panoramic house/pit/skyline, front facade/roof, crowds/captivity, ecology and all board details are not realized by this compact optional arrangement.",
+    "Outboard details may crop at a close fixed portrait; fine pottery/valves/rivets and full/empty stores need actual current/settled native inspection.",
+    "Marker/Hero contact overlap and source/body/landing cutaway remain untested. Floor/base marks remain opaque; host must use actual visible mesh corners rather than metadata as proof.",
+    "No full-route, both defeat-order playthrough, all-pose, pacing, balance, mobile/export/performance or finished-board acceptance claim."
+  ],
+  "runtime_path": "scripts/acts/act2/clear_air_circuit_kit.gd",
+  "manifest_path": "assets/acts/act2/clear_air_circuit_manifest.json",
+  "promotion": {
+    "at": "2026-10-12T05:31:09.158378+00:00",
+    "scope": "Owner source promotion only; no parser/native/pixel/acceptance credit",
+    "kit_sha256": "2f9d0d952559e1ea329c7bc24bec711c3b9f831086fb08268674af9dae5bddfe"
+  },
+  "historical_pre_native_validation": {
+    "static_only": [
+      "JSON parsed successfully by author",
+      "existing reused leaf signatures inspected",
+      "nominal floor band endpoints cover the exact floor without gaps",
+      "nominal outboard module/prop dimensions recorded"
+    ],
+    "not_run": [
+      "GDScript parser/import",
+      "Godot/native geometry/material identity inspection",
+      "actual 540x1170 portrait/cutaway/source/cue/landing review",
+      "O2 admission/progression/save/Continue/Retry/cleanup checks"
+    ],
+    "no_transferred_acceptance": "Accepted parent leaf families provide reuse provenance only; their prior portraits and tests do not establish this arrangement or new props as tested."
+  },
+  "current_readiness_at": "2026-10-12T06:49:52.003227+00:00",
+  "current_art_frontier": {
+    "retained_original_graphical_packet": "docs/acts/act2/evidence/A2-O2/portrait-native-retained-union",
+    "native_result": "321/0 clean, seven actual540x1170 views, originalart_acceptedfalse",
+    "owner_pixel_issue": "Centered completed board overlaps Herohead/paleExitCue and is barely recognizable after cutaway. Six other states read at captured poses; no all-art acceptance inferred.",
+    "correction": "Cosmeticboard at+.9x, unchanged contactExitCue0x/exitRect, separated TEST Hero-.9x preview pose; no geometry/control/stat/timing/schema change",
+    "next": "Ownedsource/evidenceseal, actualpreserving51adoption/ACK and finalseven-categoryHANDOFF; IntegrationacceptancebeforeO3",
+    "latest_graphical_packet": "docs/acts/act2/evidence/A2-O2/portrait-native-separated-marker",
+    "latest_native_result": "322/0 clean, seven actual540x1170 views; originalart_acceptedfalse preserved",
+    "owner_pixel_status": "PASS at seven capturedstates; separated board/post/fasteners and paleExitCue visible; board faintcontrast retained",
+    "latest_loading_result": "loading-side-separated-marker116/0 clean, exactnativeanchor/currentquiettransport/cleanup",
+    "independent_pixel_review": "portrait-native-separated-marker/independent-actual-pixel-review.json b2cb987f PASS at capturedstates; faintboard/crop/finedetail limits retained"
+  }
+}

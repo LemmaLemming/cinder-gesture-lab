@@ -1,0 +1,516 @@
+extends SceneTree
+## Direct paired unit proof for the native crescent room.
+## The full level's local snapshot wrapper remains outside this fixture.
+## Actual public actions, shared contact and a fresh real world
+## supply the states; no actor HP write, teleport or clock retiming is used.
+
+const MainScene: PackedScene = preload("res://scenes/main.tscn")
+const RoomPath: String = "res://scenes/acts/act3/a3_l2_root_room.tscn"
+const RootScript = preload("res://scripts/acts/act3/root_latcher.gd")
+const ObliqueRoomPath: String = "res://tests/acts/act3/fixtures/root_crescent_oblique.tscn"
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const ExactJson = preload("res://scripts/campaign/exact_json.gd")
+
+class PostActorBarrier:
+	extends Node
+	signal completed
+	var waiting: bool = false
+	func _ready() -> void:
+		process_mode = Node.PROCESS_MODE_PAUSABLE
+		process_physics_priority = 1000
+	func wait_next() -> void:
+		waiting = true
+		await completed
+		waiting = false
+	func _physics_process(_delta: float) -> void:
+		if waiting:
+			completed.emit()
+	func _notification(what: int) -> void:
+		if what == NOTIFICATION_PAUSED and waiting:
+			_wake.call_deferred()
+	func _wake() -> void:
+		if waiting:
+			completed.emit()
+
+var _checks: int = 0
+var _failures: int = 0
+var _game: Node
+var _level: CinderLevel
+var _hero: CinderPlayer
+var _source: CinderAct3RootLatcher
+var _scheduler: CinderThreatScheduler
+var _mechanism: CinderLaneMechanism
+var _cue: CinderThreatCue
+var _barrier: PostActorBarrier
+var _events: Dictionary = {}
+var _hits: Array[Dictionary] = []
+var _pause_on_active: bool = false
+var _deferred_active_pause: bool = false
+var _initial_hp: float = 0.0
+var _room_path: String = RoomPath
+
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+
+func _run() -> void:
+	var arguments: PackedStringArray = OS.get_cmdline_user_args()
+	if "--oblique-bait" in arguments:
+		_room_path = ObliqueRoomPath
+	var selected: int = int("--hit-only" in arguments) + int("--pending-only" in arguments) + int("--deferred-only" in arguments)
+	if not _expect(selected <= 1, "selectors choose one direct case or the default three"):
+		await _finish()
+		return
+	if selected == 0 or "--hit-only" in arguments:
+		await _case(false)
+	if _failures == 0 and (selected == 0 or "--pending-only" in arguments):
+		await _case(true)
+	if _failures == 0 and (selected == 0 or "--deferred-only" in arguments):
+		await _case(true, true)
+	await _finish()
+
+
+func _case(pending: bool, deferred_pause: bool = false) -> void:
+	print("CASE: " + ("actual active callback/deferred drained schema1" if deferred_pause else ("actual active callback/direct pending schema2" if pending else "actual consumed contact/recovery schema1")))
+	if not await _open_room(false):
+		return
+	var locked: Dictionary = await _wait_phase("lock", 4.0)
+	if locked.is_empty():
+		return
+	var reservation: Dictionary = _scheduler.reservation_state(String(locked.mechanism.reservation_id))
+	if not _expect(not reservation.is_empty(), "real shared stationary exchange supplies the case deadlines"):
+		return
+	if _room_path == ObliqueRoomPath and not _expect(reservation.geometry.direction != Vector3.BACK and reservation.geometry.origin == _source.global_position, "actual oblique bait supplies the selected nondefault crescent for exact fresh restoration"):
+		return
+	_game.call("open_bench")
+	await _settle_pause()
+	var earlier_hero: Dictionary = _hero.snapshot_state()
+	if not _expect(not earlier_hero.is_empty() and _hero.snapshot_error(earlier_hero).is_empty(), "actual earlier stationary hero independently validates before pairing checks"):
+		return
+	_game.call("resume_lab")
+	if pending:
+		var target: float = float(reservation.active_from_s) - 2.0 / float(Engine.physics_ticks_per_second)
+		if not await _at_time(target, 2.0):
+			return
+		_pause_on_active = true
+		_deferred_active_pause = deferred_pause
+		if not _expect(_source.state().phase == "lock" and _hero.request_dash(Vector3.RIGHT), "a real right dash begins during the final lock ticks"):
+			return
+		for _i: int in range(_limit(0.2)):
+			if paused:
+				break
+			await _tick()
+		if not _expect(paused and _mechanism.state().phase == "active", "active observer reaches its declared " + ("deferred complete native tick" if deferred_pause else "direct conditional pending boundary")):
+			return
+	else:
+		if (await _wait_phase("recovery", 2.0)).is_empty():
+			return
+		if not _expect(_hero.hp < _initial_hp and _hits.size() == 1 and _hits[0].result.accepted and _mechanism.state().hit_ids == ["hero"], "one real shared contact lowers HP and consumes its opportunity before capture"):
+			return
+		if not _expect(_hero.request_dash(Vector3.RIGHT), "an ordinary recovery dash begins from the real contact position"):
+			return
+		await _tick()
+		_game.call("open_bench")
+	await _settle_pause()
+	var native: Dictionary = _capture()
+	if not _expect(not native.is_empty() and _hero.get_committed_dash_state().active and float(native.hero.clocks.dash_left_s) > 0.0 and _hero.global_position.x > 0.0, "deferred paused unit capture retains a genuinely moving unfinished dash"):
+		return
+	var schema: int = int(native.source.mechanism.schema_version)
+	var unresolved: bool = pending and not deferred_pause
+	if not _expect(schema == (2 if unresolved else 1) and native.source.mechanism.phase == ("active" if pending else "recovery") and (not native.source.mechanism.get("pending_segments", {}).is_empty()) == unresolved, "conditional common mechanism payload retains exactly this actual pending/consumed state"):
+		return
+	if deferred_pause:
+		print("ACTUAL DEFERRED CONTACT: ", {"hero_position": _hero.global_position, "geometry": _mechanism.state().geometry, "hit_ids": _mechanism.state().hit_ids, "hit_events": _hits, "dash": _hero.get_committed_dash_state()})
+	if deferred_pause and not _expect(not _game.call("is_pause_requested") and _hits.size() == 1 and _mechanism.state().hit_ids == ["hero"], "supported pause flush drains the actual active opportunity once before capturing the aggregate"):
+		return
+	var cue_before: Dictionary = _cue.state()
+	var encoded: String = ExactJson.stringify(native)
+	var decoded: Dictionary = ExactJson.parse(encoded) if not encoded.is_empty() else {"accepted": false, "reason": "empty encoding"}
+	if not _expect(not encoded.is_empty() and decoded.get("accepted", false) and decoded.get("value") is Dictionary and _exact(native, decoded.value), "published exact JSON preserves every native type, scalar bit, actor and conditional path"):
+		return
+	var saved: Dictionary = decoded.value
+	if not _pure_checks(saved, earlier_hero, unresolved):
+		return
+	var before_frozen: Dictionary = _observe()
+	await process_frame
+	await process_frame
+	if not _expect(_exact(before_frozen, _observe()), "paused pair leaves motion, clocks, HP/resources, path custody, cue and events frozen"):
+		return
+	var old_source: WeakRef = weakref(_source)
+	var old_hero: WeakRef = weakref(_hero)
+	await _close_room()
+	if not _expect(old_source.get_ref() == null and old_hero.get_ref() == null, "old real world and both source/hero nodes are released before reconstruction"):
+		return
+	if not await _open_room(true):
+		return
+	var fresh_before: Dictionary = _observe()
+	var input_before: Dictionary = saved.duplicate(true)
+	var error: String = _pair_error(saved)
+	if not _expect(error.is_empty() and _exact(saved, input_before) and _exact(_observe(), fresh_before), "complete saved hero/source/scheduler prevalidation is pure on fresh actual bindings; " + error):
+		return
+	var events_before: Dictionary = _events.duplicate(true)
+	# No await, request, damage or new lease between these public commits.
+	if not _expect(_hero.restore_state(saved.hero) and _source.apply_validated_state(saved.source) and _scheduler.restore_state(saved.scheduler, _bindings()) and _source.restore_mechanism_state(saved.source, _bindings()), "ordered actual hero → fixed bulb → scheduler → mechanism quietly reconstructs the unit; " + _hero.last_snapshot_error + "; " + _source.last_snapshot_error + "; " + _scheduler.last_snapshot_error):
+		return
+	if not _expect(_exact(_capture(), saved) and _exact(_cue.state(), cue_before) and _exact(events_before, _events), "fresh recapture preserves exact phase/deadlines/HP/resources/history/pending dash/cues without restore events"):
+		return
+	var body: CollisionShape3D = _source.get_node("BodyCollision") as CollisionShape3D
+	if not _expect(not body.disabled and _source.collision_layer == 2 and _source.collision_mask == 1 and _source.is_in_group("enemies") and _hero.global_position == Codec.read_vector3(saved.hero.motion.position) and _scheduler.get_clock() == float(saved.scheduler.clock_s), "restored real capsule, living primary target, native hero pose and shared clock match saved authority"):
+		return
+	var stable: Dictionary = _observe()
+	await process_frame
+	await process_frame
+	if not _expect(_exact(stable, _observe()), "fresh reconstructed unit remains frozen before public resume"):
+		return
+	await _continue_and_clear(saved, unresolved)
+	await _close_room()
+
+
+func _open_room(quiet: bool) -> bool:
+	_events.clear()
+	_hits.clear()
+	_pause_on_active = false
+	_game = MainScene.instantiate()
+	_game.set("level_scene_path", _room_path)
+	root.add_child(_game)
+	_barrier = PostActorBarrier.new()
+	_game.add_child(_barrier)
+	if quiet:
+		# Main's public reset may unpause while constructing, but this same
+		# call stack pauses before yielding or advancing any fresh actor tick.
+		_game.call("open_bench")
+		await _settle_pause()
+	else:
+		await _ticks(12)
+	_level = _game.get("active_level") as CinderLevel
+	_hero = _game.get("player") as CinderPlayer
+	_source = _level.get("root_latcher") as CinderAct3RootLatcher if _level != null else null
+	_scheduler = _level.get("threat_scheduler") as CinderThreatScheduler if _level != null else null
+	if not _expect(_level != null and _hero != null and _source != null and _scheduler != null and _level.scene_file_path == _room_path and String(_level.get("last_configuration_error")).is_empty(), "actual MainScene opens ready isolated crescent bindings" + (" at a quiet fresh barrier" if quiet else "")):
+		return false
+	_mechanism = _source.get_mechanism()
+	_cue = _mechanism.get_cue()
+	if not _expect(_mechanism != null and _cue != null and _barrier.process_physics_priority > _level.process_physics_priority and _level.process_physics_priority > _mechanism.process_physics_priority and _mechanism.process_physics_priority > _source.process_physics_priority, "post-actor observation follows actual source/mechanism/level transactions"):
+		return false
+	_wire_events()
+	if quiet:
+		# Read the normal public hook; no private camera update or focus write.
+		_level.camera_framing_points()
+		return _expect(paused and _scheduler.get_clock() == 0.0 and _mechanism.state().status == "idle" and _scheduler.reservations().is_empty(), "fresh world is configured without a physics tick, lease, damage or cooldown")
+	_hero.shells = 0 # Public zero-ammo fixture setup, never an attack/damage proof.
+	_initial_hp = _hero.hp
+	return _expect(_hero.is_on_floor() and _hero.presentation_id == "act3_traveller", "real shared traveller uses continuous firm floor and Act3 presentation")
+
+
+func _wire_events() -> void:
+	_source.died.connect(func(_where: Vector3) -> void: _event("source_death"))
+	_source.state_changed.connect(func(_state: Dictionary) -> void: _event("source_phase"))
+	_mechanism.state_changed.connect(_on_phase)
+	_mechanism.hit_resolved.connect(func(id: String, cycle: int, result: Dictionary) -> void:
+		_event("hit")
+		_hits.append({"hero_id": id, "cycle": cycle, "result": result.duplicate(true)})
+	)
+	_cue.state_changed.connect(func(_state: Dictionary) -> void: _event("cue"))
+	_scheduler.reservation_invalidated.connect(func(_id: String, _reason: String) -> void: _event("cancel"))
+	_hero.fired.connect(func(kind: String) -> void: _event("fired_" + kind))
+	_hero.world_action_executed.connect(func(_record: Dictionary) -> void: _event("world_action"))
+	_hero.action_resolved.connect(func(_kind: String, _hits_count: int, _damage: float) -> void: _event("action"))
+	_hero.died.connect(func() -> void: _event("hero_death"))
+	_hero.equipment_changed.connect(func(_id: String) -> void: _event("equipment"))
+
+
+func _on_phase(state: Dictionary) -> void:
+	_event("mechanism_phase")
+	if _pause_on_active and state.get("phase") == "active":
+		_pause_on_active = false
+		if _deferred_active_pause:
+			_expect(_game.call("request_pause_deferred") and _game.call("is_pause_requested"), "actual active callback queues supported complete-tick pause")
+		else:
+			# TEST ONLY: directly isolate the existing conditional schema2 child
+			# path. This does not establish a coherent full-level aggregate.
+			paused = true
+
+
+func _event(name: String) -> void:
+	_events[name] = int(_events.get(name, 0)) + 1
+
+
+func _bindings(saved_hero: Dictionary = {}) -> Dictionary:
+	var bindings: Dictionary = _level.call("scheduler_bindings")
+	if not saved_hero.is_empty():
+		bindings["hero_positions"] = {"hero": Codec.read_vector3(saved_hero.motion.position)}
+	return bindings
+
+
+func _capture() -> Dictionary:
+	var hero: Dictionary = _hero.snapshot_state()
+	var scheduler: Dictionary = _scheduler.snapshot_state(_bindings())
+	var source: Dictionary = _source.snapshot_state(_bindings())
+	if hero.is_empty() or scheduler.is_empty() or source.is_empty():
+		print("CAPTURE ERROR hero=", _hero.last_snapshot_error, "; scheduler=", _scheduler.last_snapshot_error, "; source=", _source.last_snapshot_error)
+		return {}
+	return {"hero": hero, "source": source, "scheduler": scheduler}
+
+
+func _pair_error(pair: Dictionary) -> String:
+	var error: String = _hero.snapshot_error(pair.hero)
+	if not error.is_empty():
+		return error
+	var bindings: Dictionary = _bindings(pair.hero)
+	error = _scheduler.snapshot_error(pair.scheduler, bindings)
+	return _source.snapshot_error(pair.source, bindings, pair.scheduler) if error.is_empty() else error
+
+
+func _observe() -> Dictionary:
+	var body: CollisionShape3D = _source.get_node("BodyCollision") as CollisionShape3D
+	return {"pair": _capture(), "position": _hero.global_position, "velocity": _hero.velocity, "dash": _hero.get_committed_dash_state(), "source": _source.state(), "body_disabled": body.disabled, "layer": _source.collision_layer, "mask": _source.collision_mask, "enemies": _source.is_in_group("enemies"), "cue": _cue.state(), "events": _events.duplicate(true), "hits": _hits.duplicate(true)}
+
+
+func _pure_checks(saved: Dictionary, earlier_hero: Dictionary, pending: bool) -> bool:
+	var before: Dictionary = _observe()
+	var original: Dictionary = saved.duplicate(true)
+	if not _expect(_pair_error(saved).is_empty() and _exact(saved, original) and _exact(_observe(), before), "actual paused native pair independently validates without input/live mutation"):
+		return false
+	var forged: Array[Dictionary] = []
+	var labels: Array[String] = []
+	var bad: Dictionary = saved.duplicate(true)
+	bad.source.position[0] += 0.125
+	forged.append(bad)
+	labels.append("fixed bulb position")
+	bad = saved.duplicate(true)
+	bad.source.schema_version = 1
+	forged.append(bad)
+	labels.append("unsupported owned schema")
+	bad = saved.duplicate(true)
+	bad.source.mechanism.configuration.geometry.outer_radius += 0.125
+	forged.append(bad)
+	labels.append("immutable shared mechanism geometry")
+	bad = saved.duplicate(true)
+	bad.source.framing = {}
+	forged.append(bad)
+	labels.append("running source without its retained selected frame")
+	bad = saved.duplicate(true)
+	bad.source.framing.landing[0] = 100.0
+	forged.append(bad)
+	labels.append("off-floor historical landing")
+	bad = saved.duplicate(true)
+	bad.source.mechanism.exchange.geometry.direction = [1.0, 0.0, 0.0]
+	forged.append(bad)
+	labels.append("valid nondefault source direction detached from paired scheduler")
+	bad = saved.duplicate(true)
+	bad.source.dead = true
+	forged.append(bad)
+	labels.append("forged death with live HP")
+	bad = saved.duplicate(true)
+	bad.source.collision.enabled = false
+	forged.append(bad)
+	labels.append("live bulb with disabled collision")
+	bad = saved.duplicate(true)
+	bad.source.resolved_role = Difficulty.new().resolve_role(RootScript.RAW_ROLE, "assisted", RootScript.TIMING_FLOORS)
+	forged.append(bad)
+	labels.append("independently valid role crossed with another scheduler profile")
+	bad = saved.duplicate(true)
+	bad.source.clock_s = _previous_double(float(bad.source.clock_s))
+	forged.append(bad)
+	labels.append("one-bit source/scheduler clock join")
+	bad = saved.duplicate(true)
+	bad.source.mechanism.hero_samples.hero.clock_s = _previous_double(float(bad.source.mechanism.hero_samples.hero.clock_s))
+	forged.append(bad)
+	labels.append("one-bit common current path-sample clock")
+	if pending:
+		bad = saved.duplicate(true)
+		bad.source.mechanism.pending_segments.hero[-1]["to"][0] += 0.125
+		forged.append(bad)
+		labels.append("pending path detached from the actual paired endpoint")
+	for index: int in range(forged.size()):
+		var input: Dictionary = forged[index].duplicate(true)
+		var error: String = _pair_error(forged[index])
+		var rejected: bool = not _source.restore_state(forged[index].source, _bindings(forged[index].hero))
+		if not _expect(not error.is_empty() and rejected and _exact(input, forged[index]) and _exact(before, _observe()), "pure and direct restore reject " + labels[index] + " without mutating the unit; " + error):
+			return false
+	var crossed: Dictionary = saved.duplicate(true)
+	crossed.hero = earlier_hero.duplicate(true)
+	if not _expect(_hero.snapshot_error(earlier_hero).is_empty() and not _pair_error(crossed).is_empty() and _exact(before, _observe()), "independently valid earlier hero cannot replace the moving same-tick path sample"):
+		return false
+	return true
+
+
+func _continue_and_clear(saved: Dictionary, pending: bool) -> void:
+	var saved_clock: float = _scheduler.get_clock()
+	var saved_position: Vector3 = _hero.global_position
+	var saved_hp: float = _hero.hp
+	_game.call("resume_lab")
+	await _tick()
+	if not _expect(not paused and _scheduler.get_clock() > saved_clock and _hero.global_position.x > saved_position.x and _source.state().mechanism.cycle == saved.source.mechanism.cycle, "public resume continues the saved real dash and original shared cycle on a new tick"):
+		return
+	if not await _wait_dash_end(0.75):
+		return
+	if not _expect(_hero.hp == saved_hp and _hits.size() == (1 if pending else 0) and _mechanism.state().hit_ids == ["hero"], "continued pending opportunity resolves once (dash immunity may reject HP); consumed history never re-damages"):
+		return
+	_game.call("open_bench")
+	await _settle_pause()
+	var completed: Dictionary = _hero.snapshot_state()
+	var history: Array = completed.world_actions.history
+	var pending_path: Array = saved.hero.world_actions.pending_dash.path
+	var prefix_preserved: bool = not history.is_empty() and history[-1].kind == "dash" and history[-1].path.size() > pending_path.size()
+	if prefix_preserved:
+		for index: int in range(pending_path.size()):
+			prefix_preserved = prefix_preserved and _exact(pending_path[index], history[-1].path[index])
+	if not _expect(prefix_preserved and _hero.get_world_action_records().size() == saved.hero.world_actions.history.size() + 1, "restored unfinished dash publishes one real completed action preserving its exact original path prefix"):
+		return
+	_game.call("resume_lab")
+	if not await _wait_ready_recovery(1.0):
+		return
+	var toward_source: Vector3 = _source.global_position - _hero.global_position
+	toward_source.y = 0.0
+	if not _expect(_hero.request_dash(toward_source.normalized()), "actual ordinary return dash reaches the fixed low recovery knot"):
+		return
+	if not await _wait_dash_end(0.75):
+		return
+	var direction: Vector3 = _source.global_position - _hero.global_position
+	direction.y = 0.0
+	_hero.shells = 0 # Explicit no-ammo primary condition; natural reload is usable.
+	var hits: int = _hero.slash(direction.normalized())
+	if not _expect(hits == 1 and _source.hp == 0.0 and _source.dead and int(_events.get("source_death", 0)) == 1 and int(_events.get("fired_blast", 0)) == 0 and _hero.hp == saved_hp, "one real ordinary primary severs the restored recovery knot with zero ammo and no additional HP loss"):
+		return
+	_game.call("open_bench")
+	await _settle_pause()
+	var spent: Dictionary = _capture()
+	if not _expect(not spent.is_empty() and _pair_error(spent).is_empty() and spent.source.dead and not spent.source.collision.enabled and _scheduler.reservations().is_empty() and _cue.state().phase == "clear" and not _source.is_in_group("enemies") and _source.visible, "genuine spent bulb retains a valid paused cooldown/lifecycle pair, quiet art and no lease/group/damage authority"):
+		return
+	_expect(not _level.is_completed() and String(_level.current_checkpoint().get("id", "")).is_empty(), "direct unit proof grants no level checkpoint, completion or campaign acceptance")
+
+
+func _wait_phase(phase: String, seconds: float) -> Dictionary:
+	for _i: int in range(_limit(seconds)):
+		var source: Dictionary = _source.state()
+		if source.phase == phase:
+			return source
+		await _tick()
+	_expect(false, "bounded wait failed at phase " + phase)
+	return {}
+
+
+func _at_time(target: float, seconds: float) -> bool:
+	for _i: int in range(_limit(seconds)):
+		if _scheduler.get_clock() >= target:
+			return _expect(_scheduler.get_clock() <= target + 1.0 / float(Engine.physics_ticks_per_second), "actual lock clock reaches the finite dash-start tick without retiming")
+		await _tick()
+	return _expect(false, "bounded lock-clock wait expired")
+
+
+func _wait_dash_end(seconds: float) -> bool:
+	for _i: int in range(_limit(seconds)):
+		if not _hero.get_committed_dash_state().active:
+			return true
+		await _tick()
+	return _expect(false, "unfinished real dash did not complete within the finite bound")
+
+
+func _wait_ready_recovery(seconds: float) -> bool:
+	for _i: int in range(_limit(seconds)):
+		var response: Dictionary = _hero.get_threat_response_state()
+		if _source.state().phase == "recovery" and response.stable and float(response.dash_cooldown_left_s) <= 0.0:
+			return true
+		await _tick()
+	return _expect(false, "actual stopped hero/expired dash cooldown did not reach the held recovery")
+
+
+func _settle_pause() -> void:
+	await process_frame
+	await process_frame
+
+
+func _tick() -> void:
+	if paused:
+		await process_frame
+	else:
+		await _barrier.wait_next()
+
+
+func _ticks(count: int) -> void:
+	for _i: int in range(count):
+		await _tick()
+
+
+func _limit(seconds: float) -> int:
+	return int(ceil(seconds * float(Engine.physics_ticks_per_second))) + 4
+
+
+func _previous_double(value: float) -> float:
+	var bytes := PackedByteArray()
+	bytes.resize(8)
+	bytes.encode_double(0, value)
+	bytes.encode_u64(0, bytes.decode_u64(0) - 1)
+	return bytes.decode_double(0)
+
+
+func _exact(left: Variant, right: Variant) -> bool:
+	if typeof(left) != typeof(right):
+		return false
+	if left is float:
+		var a := PackedByteArray()
+		var b := PackedByteArray()
+		a.resize(8)
+		b.resize(8)
+		a.encode_double(0, left)
+		b.encode_double(0, right)
+		return a == b
+	if left is Dictionary:
+		if left.size() != right.size():
+			return false
+		for key: Variant in left:
+			if not right.has(key) or not _exact(left[key], right[key]):
+				return false
+		return true
+	if left is Array:
+		if left.size() != right.size():
+			return false
+		for index: int in range(left.size()):
+			if not _exact(left[index], right[index]):
+				return false
+		return true
+	return left == right
+
+
+func _expect(condition: bool, label: String) -> bool:
+	_checks += 1
+	if condition:
+		print("PASS: " + label)
+	else:
+		_failures += 1
+		push_error("FAIL: " + label)
+		if is_instance_valid(_source):
+			var source: Dictionary = _source.state()
+			print("DIRECT UNIT DIAGNOSTIC clock=", _scheduler.get_clock(), " phase=", source.phase, " hero=", _hero.global_position, " HP=", _hero.hp, " dash=", _hero.get_committed_dash_state(), " mechanism=", source.mechanism, " framing=", source.framing_error)
+	return condition
+
+
+func _close_room() -> void:
+	if is_instance_valid(_level):
+		_level.exit_level()
+	if is_instance_valid(_scheduler):
+		_expect(_scheduler.reservations().is_empty(), "public old-world exit releases all stationary leases")
+	if is_instance_valid(_game):
+		_game.queue_free()
+	for _i: int in range(4):
+		await process_frame
+	_game = null
+	_level = null
+	_hero = null
+	_source = null
+	_scheduler = null
+	_mechanism = null
+	_cue = null
+	_barrier = null
+
+
+func _finish() -> void:
+	await _close_room()
+	paused = false
+	# Finite wall-time drain permits ordinary one-shot dash/hit audio retirement.
+	await create_timer(0.15, true, false, true).timeout
+	print("Root crescent direct snapshots: %d checks; failures: %d" % [_checks, _failures])
+	quit(0 if _failures == 0 else 1)

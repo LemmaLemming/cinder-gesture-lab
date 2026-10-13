@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "asset_id": "act2_local_giant_foot",
+  "family": "act2_fighting_machine_articulated_limb",
+  "runtime_script": "res://scripts/acts/act2/giant_foot_visual.gd",
+  "readiness": "original_runtime_actual_full_route_native_foot_states_reviewed_final_acceptance_pending",
+  "source": [
+    {
+      "id": "G11",
+      "path": "docs/concept-art/act2/bosses/fighting-tripod-boss.png",
+      "inspected": "Root visually opened selected board; wide planted pad, sliding/riveted ankle, flexible piston. L2 uses one visible limb, no fighting-machine boss/HP/extra feet."
+    },
+    {
+      "id": "T03/E14",
+      "path": "docs/reference-library/act2/research/entities.json",
+      "scope": "Fighting-machine setpiece vocabulary and Weybridge distant collapse; cosmetic geometry is an adaptation."
+    }
+  ],
+  "native_scale": {
+    "pad_world_m": [
+      1.62,
+      0.21,
+      1.36
+    ],
+    "upper_joint_world_y_m": 1.98,
+    "authoritative_circle_radius_m": 1.1,
+    "pixel_style": "Inherited original nearest-filtered oxidised/rubber procedural materials; fixed shared portrait camera, no billboard or scale override."
+  },
+  "pivot": "World ground point at sole; visible root is placed at current immutable circle station after previous opportunity ends. Only one local rig is visible, drawn from actual current mechanism. No collider/source teleport inside an accepted circle cycle.",
+  "collision_occlusion": "No collider/enemy group/HP; published true-circle mechanism/shared timed Hero path owns damage. Actual-mesh overlap uses once-cloned per-instance cutaways, refreshed cylinder triangles; no physics/input/clock/saved-opacity authority. Sole entirely inside radius1.1 circle; thin edges/pins/rivets retain source outline. Current final16 independently inspected/root7 selected, including all four active feet: visible local foot/full patch/dry landing readable without material obstruction. foot-right-active small lower-circle/source-outline overlap remains readable. Not every possible pose.",
+  "animation_states": {
+    "idle": "Raised .95m",
+    "warning": "Lift .55 to .95m by supplied phase progress",
+    "lock": "Hold .95m",
+    "active": "Plant sole instantly at actual active boundary, matching damage footprint",
+    "recovery": "Withdraw from0 to.95m by normalized first.65 fraction",
+    "clocks": "No process/timer/shaderTIME/callback/damage; root supplies actual consumer phase/progress."
+  },
+  "reuse": "Uses frozen owned Scout material/mesh/readability helpers. Same local foot supports isolated/apron/alternating-pockets setpieces; unused L5 full boss remains separate.",
+  "validation": "Owner-run b3fb/shared21 native Heavy371/0 and canonical WEAPON-01 Standard338/0 clean exit0; current16 frames independently reviewed/root7 selected. Four actual true-circle HP-free foot opportunities need no primary on foot; accepted followed proofs preserve dry landing. Six primary actor defeats/four contacts/clear/separate exit/cleanup remain level-owned, not visual authority. Original shared16 geometry/cache/material and shared19 routes/Challenge320/retry221 remain exact historical scopes. Handler prefix127/11 and pose65 separate. Supplemental186/285 is not a new whole-route/art pass. Current narrow derived combined crossing guard SHA256 171680483795c75272d0d7e8b64a85c348d2b4b552acb92a2d3638febe694a2b passes actual Cargo/Longstep Standard287/0 and Assisted Heavy298/0, both headless clean exit0 at shared21. These add mechanical loadout/profile evidence without changing art, geometry, timings, collision, response context or saved schema; the affected fresh-camera371/0, nativeCargo394/0 and exactpostdash144/0 checks are now complete with scoped portrait review. Current Cargo287 covers the actual concurrent crossing response and real-dash readable final Handler approach; Assisted298 covers budget1 serialized counterpart-defeat-before-foot order. Each completes six real ordinary-primary defeats from initial zero ammo/no pickups, four HP-free feet, four earned contacts, once-clear, separate shelter contact/transition and cleanup. TEST ONLY predecessor prefix/unlocks/destination remain explicit. Affected right-foot whole-aggregate fresh-camera restoration371/0 and nativeCargo394/0 with16 frames plus exactpostdash144/0 with1 frame pass. Owner selected checks/hash freeze are complete; exact HANDOFF next and canonical acceptance remains separate. Six later Act2 productions remain unstarted. No human balance/mobile/all-poses claim.",
+  "evidence": {
+    "shared_revision": "campaign-shared-21",
+    "tested_owner_milestone": "b3fb6854b1d24aa989dbab7b17e5bab22bc70514",
+    "scope": "Actual authored dash/ordinary-primary bot: six real primary defeats, four HP-free feet, four earned contacts, once-clear, separate shelter contact/transition and cleanup. Prior prefix/catalogue unlock/profile seeds and TEST ONLY L3 destination do not establish earlier/future gameplay or canonical acceptance.",
+    "summary": "docs/acts/act2/evidence/A2-L2/checks/summary.json",
+    "native_capture_metadata": "captures/act2/final-native/a2-l2-standard-heavy-evidence.json",
+    "portable_metadata": "docs/acts/act2/evidence/A2-L2/final-native/a2-l2-standard-heavy-evidence.json",
+    "metadata_sha256": "818f0ce0db84a0d0b82989a5bb9adb91730f47f2a1592ae506d6fbb17f9e4b3b",
+    "portable_image_index": "docs/acts/act2/evidence/A2-L2/final-native/image-index.json",
+    "portable_image_index_sha256": "8dbaabd1221943b3303bb3ec5809593b589af758ade71105dfccb9d884e29f3c",
+    "metadata_policy": "Raw metadata copied byte for byte with original res://captures links; portable index supplies adjacent PNG links and exact hashes.",
+    "native_resolution": [
+      540,
+      1170
+    ],
+    "native_frame_count": 16,
+    "checks": [
+      {
+        "id": "native_heavy_full_route",
+        "shared_revision": "campaign-shared-21",
+        "tested_runtime_anchor": "b3fb6854b1d24aa989dbab7b17e5bab22bc70514",
+        "checks": 371,
+        "failures": 0,
+        "exit_code": 0,
+        "exit_code_provenance": "root observed exec completion",
+        "scope": "Six real ordinary-primary defeats, four HP-free feet, four contacts, once-clear/contact transition, actual current art native16frames,371/0 clean. TEST ONLY prior prefix/unlocks/profile/L3destination. This b3fb full route precedes the required-guard supplement and does not exercise its injected observer;186/285 separately cover that correction.",
+        "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+        "executed_command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 --log-file .cinder/a2-l2-shared21-final-native-heavy.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=standard --capture-final",
+        "command_provenance": "root exact executed command",
+        "portable_log": "docs/acts/act2/evidence/A2-L2/checks/a2-l2-shared21-final-native-heavy.log",
+        "log_sha256": "2fe1a714fcc4a275f316acd1ccc2f2a62cff3d9c7fcbec1211819218792902cb",
+        "diagnostics": "No script/resource/error/warning lines in retained accepted log."
+      },
+      {
+        "id": "standard_weapon_full_route",
+        "shared_revision": "campaign-shared-21",
+        "tested_runtime_anchor": "b3fb6854b1d24aa989dbab7b17e5bab22bc70514",
+        "checks": 338,
+        "failures": 0,
+        "exit_code": 0,
+        "exit_code_provenance": "root observed exec completion",
+        "scope": "Actual canonical WEAPON-01 full6primarydefeats/4feet/4contacts/onceclear/separatecontact/cleanup, initial0ammo/no pickups/blasts. TEST ONLY priorprefix/unlocks/profile/L3destination; before supplemental required-guard ordering patch, no injected lostguard callback.",
+        "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+        "executed_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-shared21-live-standard.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=standard --profile=standard",
+        "command_provenance": "root exact executed command",
+        "portable_log": "docs/acts/act2/evidence/A2-L2/checks/a2-l2-shared21-live-standard.log",
+        "log_sha256": "441d9a29fc7b22de896693309e2537706f3db5d13ca3f6926afa32c7422b2224",
+        "diagnostics": "No script/resource/error/warning lines in retained accepted log."
+      },
+      {
+        "id": "cargo_longstep_full_route",
+        "shared_revision": "campaign-shared-21",
+        "weybridge_sha256": "171680483795c75272d0d7e8b64a85c348d2b4b552acb92a2d3638febe694a2b",
+        "checks": 287,
+        "failures": 0,
+        "exit_code": 0,
+        "exit_code_provenance": "root observed exec completion",
+        "loadout": "slow_cargo_longstep",
+        "profile": "standard",
+        "scope": "Actual Cargo/Longstep Standard route: six HP defeats/four HP-free foot responses/four contacts/full clear/separate exit/cleanup, zero initial ammo/no pickups/ordinary primary; narrow derived combined crossing presentation and real-dash readable final Handler approach. TEST ONLY predecessor prefix/unlocks/destination. Headless mechanics only; no new native art, fresh right-foot camera restore or canonical L2 acceptance claim.",
+        "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+        "executed_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-cargo-sequence-context-corrected.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=slow_cargo_longstep --profile=standard",
+        "command_provenance": "root exact executed command",
+        "portable_log": "docs/acts/act2/evidence/A2-L2/checks/a2-l2-cargo-sequence-context-corrected.log",
+        "log_sha256": "8bf8e01fa2fd4300f5ce3040083a277e1ac99cb4da8edb11a2232ce806388cb1",
+        "diagnostics": "Owner-reported clean script/resource result and exit0; accepted retained log contains the stated final count."
+      },
+      {
+        "id": "assisted_heavy_full_route",
+        "shared_revision": "campaign-shared-21",
+        "weybridge_sha256": "171680483795c75272d0d7e8b64a85c348d2b4b552acb92a2d3638febe694a2b",
+        "checks": 298,
+        "failures": 0,
+        "exit_code": 0,
+        "exit_code_provenance": "root observed exec completion",
+        "loadout": "heavy",
+        "profile": "assisted",
+        "scope": "Actual Assisted Heavy full route, budget1 defeats actual counterpart before foot; six HP defeats/four HP-free feet/four contacts/clear/separate exit/cleanup. Corrected duplicate-clear fixture expectation only, unchanged route assertions and live-state authority. TEST ONLY prior prefix/unlocks/destination. Headless mechanics only; no new native art, fresh right-foot camera restore or canonical L2 acceptance claim.",
+        "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+        "executed_command": "python3 scripts/dev/dev.py engine --headless --path . --log-file .cinder/a2-l2-assisted-final.log --script tests/acts/act2/a2_l2_live_level_smoke.gd -- --loadout=heavy --profile=assisted",
+        "command_provenance": "root exact executed command",
+        "portable_log": "docs/acts/act2/evidence/A2-L2/checks/a2-l2-assisted-final.log",
+        "log_sha256": "10052a5e9ddfdeaa96eecc253c5be36a3f8eba0266f952712ea303e0f676a5c3",
+        "diagnostics": "Owner-reported clean script/resource result and exit0; accepted retained log contains the stated final count."
+      }
+    ],
+    "source_review": {
+      "boards": [
+        "G06",
+        "G17",
+        "G16",
+        "G11",
+        "G10-v2",
+        "G03"
+      ],
+      "independent_frames_reviewed": 16,
+      "root_frames_reviewed": 7,
+      "root_frames": [
+        "shelter-mix",
+        "tool-active",
+        "tool-lock",
+        "apron-combination",
+        "foot-right-active",
+        "clear",
+        "collapse"
+      ],
+      "result": "No material combat source/player/cue/dry-landing or revised Handler anatomy defect in captured states.",
+      "limitations": [
+        "Individual tentacle strands/beak merge at native scale; rear fifth support often hidden.",
+        "Small right-foot lower-circle/source-outline overlap remains readable.",
+        "Harmless distant tripod heavily cropped behind top HUD/canvas; complete three-leg collapse/artillery cause composition not demonstrated.",
+        "Dense ruin/rubble/timber/artillery composition partly demonstrated."
+      ],
+      "shelter_mix": {
+        "clock_s": 45.283333333332045,
+        "scout": {
+          "phase": "lock",
+          "armed": true,
+          "hp": 30.0,
+          "status": "running"
+        },
+        "handler": {
+          "phase": "warning",
+          "armed": true,
+          "hp": 30.0,
+          "status": "running"
+        },
+        "foot": "empty",
+        "scope": "Two armed mixed phases, not two locks."
+      }
+    },
+    "supplemental_dependency": {
+      "commit": "6c91833fa7f0762467348bb85c4eaae2bd0384fa",
+      "shared_revision": "campaign-shared-21",
+      "evidence": "docs/acts/act2/evidence/scout-callback-custody/index.json",
+      "checks": "Owner-run callback186/0 and affected tracking285/0 clean exit0; original186/7 retained.",
+      "scope": "Separate post-query required-guard supplement. Native371 and Standard338 ran at b3fb before it;186/285 establishes neither full new-art nor whole-route acceptance. Art/timing/collision/schema unchanged.",
+      "canonical_adopted_commit": "8c37b1e0a514fe63fc2525c648e658d5c67334ac",
+      "canonical_response_message_id": "d810feca-0060-428d-bcbc-28c4ab404470",
+      "canonical_adoption_scope": "Exact authored6c91833 common Scout post-query required-guard patch adopted; callback186/0 and affected tracking285/0 scopes preserved separately. No duplicate private/shared fork or unchanged L1/full L2/art rerun claim."
+    },
+    "reuse_preservation": "Original accepted L1 provenance remains separate:40 of42 original runtime hashes match; common Scout actor/exchange have explicit old/first/supplemental hashes. These manifest edits change no runtime resource.",
+    "acceptance": "Affected right-foot whole-aggregate fresh-camera restoration371/0 and nativeCargo394/0 with16 frames plus exactpostdash144/0 with1 frame pass. Owner selected checks/hash freeze are complete; exact HANDOFF next and canonical acceptance remains separate. Six later Act2 productions remain unstarted. Reviewed shared22 adoption is recorded separately from test execution. No all-poses/human balance/mobile/export/release/whole-campaign claim.",
+    "foot_native_frames": [
+      "captures/act2/final-native/a2-l2-standard-heavy-foot-demo-active.png",
+      "captures/act2/final-native/a2-l2-standard-heavy-foot-apron-active.png",
+      "captures/act2/final-native/a2-l2-standard-heavy-foot-left-active.png",
+      "captures/act2/final-native/a2-l2-standard-heavy-foot-right-active.png"
+    ],
+    "current_runtime_validation": {
+      "weybridge_sha256": "171680483795c75272d0d7e8b64a85c348d2b4b552acb92a2d3638febe694a2b",
+      "checks": [
+        "cargo_longstep_full_route",
+        "assisted_heavy_full_route"
+      ],
+      "scope": "Current derived framing guard reads the existing accepted seven-key foot view and actual source leases; no private proof, checkpoint mutation, new save key, generic response-context union filter, art, geometry or timing change. Headless route evidence is distinct from unchanged b3fb native371/16 and Standard338 scopes.",
+      "pending": "Affected right-foot whole-aggregate fresh-camera restoration371/0 and nativeCargo394/0 with16 frames plus exactpostdash144/0 with1 frame pass. Owner selected checks/hash freeze are complete; exact HANDOFF next and canonical acceptance remains separate. Six later Act2 productions remain unstarted."
+    },
+    "shared_adoption": {
+      "shared_revision": "campaign-shared-22",
+      "publication": "4de8b6008741bc9f155c83cbccb60629fac154a2",
+      "preserving_merge": "0076fe0775c42ed54d5a714d7044ee606579c195",
+      "ack_message_id": "5fee52c3-d03a-434b-b506-ba3f9153b204",
+      "scope": "Reviewed unused replay-playback leaf changes only for L2; L2 uses published stationary Lane/circle scheduler and owned Rays, with no replay consumer. Actual consumed scheduler, Lane mechanism, player, camera and save dependencies unchanged from shared21; no replay-based L2 rerun claim. Cargo287/Assisted298 execution retains its recorded shared21 attribution."
+    }
+  },
+  "validation_history": [
+    {
+      "stage": "shared19_original_route_before_current_final_native",
+      "readiness": "original_runtime_imported_isolated_geometry_and_actual_native_L2_foot_opportunities_verified_full_acceptance_pending",
+      "validation": "Owner shared16 import and isolated dynamic mesh/cache/material/circle-fit checks remain recorded. Owner shared19 actual Standard/Heavy routes passed314/0 headless and362/0 native with sixteen 540x1170 frames; Challenge/slow Padded+Reach passed320/0; corrected authored apron pair/death/public retry passed221/0 clean. The route completes four actual true-circle foot opportunities without primary attacks on the foot or swept hits along the followed accepted proofs. Ordinary-primary six-target combat, four contact checkpoints, once-clear and separate shelter transition are level-owned evidence, not HP or attack authority added to this visual. All required profile/loadout/mixed-source/final acceptance is not yet complete; no human balance/mobile/all-poses claim.",
+      "evidence": {
+        "shared_revision": "campaign-shared-19",
+        "scope": "Owner-run actual L2 fixtures. Prior completion/unlock/profile seeds and injected L3 destination are explicitly TEST ONLY, not other-level gameplay or canonical acceptance.",
+        "native_capture_metadata": "captures/act2/live/a2-l2-standard-heavy-evidence.json",
+        "native_resolution": [
+          540,
+          1170
+        ],
+        "native_frame_count": 16,
+        "checks": [
+          {
+            "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+            "log": ".cinder/a2-l2-shared19-live-heavy-closed-response.log",
+            "loadout": "heavy",
+            "profile": "standard",
+            "checks": 314,
+            "failures": 0,
+            "exit_code": 0,
+            "diagnostics": "Clean script/resource/exit result."
+          },
+          {
+            "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+            "log": ".cinder/a2-l2-shared19-live-heavy-native-first.log",
+            "loadout": "heavy",
+            "profile": "standard",
+            "checks": 362,
+            "failures": 0,
+            "exit_code": 0,
+            "diagnostics": "Clean script/resource/exit result; sixteen actual native frames."
+          },
+          {
+            "script": "tests/acts/act2/a2_l2_live_level_smoke.gd",
+            "log": ".cinder/a2-l2-shared19-live-challenge-padded-first.log",
+            "loadout": "slow_padded_reach",
+            "profile": "challenge",
+            "checks": 320,
+            "failures": 0,
+            "exit_code": 0,
+            "diagnostics": "Clean script/resource/exit result."
+          },
+          {
+            "script": "tests/acts/act2/a2_l2_retry_level_smoke.gd",
+            "log": ".cinder/a2-l2-shared19-authored-retry-cleanup.log",
+            "loadout": "heavy",
+            "profile": "standard",
+            "checks": 221,
+            "failures": 0,
+            "exit_code": 0,
+            "diagnostics": "Clean repaired fixture teardown. Real apron Handler/foot paired pause, exact saved-player transport/preflight/quiet restore, atomic malformed refusals, natural source death and public checkpoint retry."
+          }
+        ],
+        "retained_failure_history": {
+          "log": ".cinder/a2-l2-shared19-authored-retry-first.log",
+          "status": "221 behavior checks passed, but fresh test receiver teardown emitted native !is_inside_tree() resource errors. The attached explicit level-exit correction and clean second log supersede only that teardown failure."
+        },
+        "reuse_preservation": "Owner confirmed all forty-two original L1 runtime hashes unchanged. These L2 evidence updates do not change those resources.",
+        "acceptance": "Current tested route/view cells only. Remaining paired/loadout/Assisted/final acceptance is pending. No all-poses, human balance, mobile/export/release or canonical L2 acceptance claim.",
+        "foot_native_frames": [
+          "captures/act2/live/a2-l2-standard-heavy-foot-demo-active.png",
+          "captures/act2/live/a2-l2-standard-heavy-foot-apron-active.png",
+          "captures/act2/live/a2-l2-standard-heavy-foot-left-active.png",
+          "captures/act2/live/a2-l2-standard-heavy-foot-right-active.png"
+        ]
+      },
+      "collision_occlusion": "No collision, enemy/target group or health; published mechanism true-circle cue/timed shared hero path owns damage. Actual mesh/hero overlap derives once-cloned per-instance palette cutaways; posed cylinder triangles refreshed, no physics/input/clock/saved-opacity authority. Pad fits entirely in radius1.1 circle. Thin retaining edges/pins/rivets remain source outline. Owner and source reviewer inspected the sixteen actual 540x1170 L2 frames and found no material hero/cue/dry-landing obstruction. Tight local overlap in foot-right-active remains readable; this is captured-state evidence, not every possible pose.",
+      "asset_records": []
+    },
+    {
+      "stage": "b3fb_native371_standard338_before_current_cargo_assisted_and_shared22_adoption",
+      "readiness": "original_runtime_actual_full_route_native_foot_states_reviewed_final_acceptance_pending",
+      "validation": "Owner-run b3fb/shared21 native Heavy371/0 and canonical WEAPON-01 Standard338/0 clean exit0; current16 frames independently reviewed/root7 selected. Four actual true-circle HP-free foot opportunities need no primary on foot; accepted followed proofs preserve dry landing. Six primary actor defeats/four contacts/clear/separate exit/cleanup remain level-owned, not visual authority. Original shared16 geometry/cache/material and shared19 routes/Challenge320/retry221 remain exact historical scopes. Handler prefix127/11 and pose65 separate. Supplemental186/285 is not a new whole-route/art pass. Remaining final loadout/profile records, final runtime/evidence freeze, exact L2 HANDOFF and canonical acceptance remain root work. No final candidate or shared22 consumption is claimed; later production remains unstarted. No human balance/mobile/all-poses claim."
+    }
+  ],
+  "owner_completion": {
+    "date": "2026-10-09",
+    "runtime_freeze": "6651219faefcbcb1514052e48f33e5d0a70d4446",
+    "weybridge_sha256": "171680483795c75272d0d7e8b64a85c348d2b4b552acb92a2d3638febe694a2b",
+    "status": "OWNER_COMPLETE_READY_FOR_HANDOFF",
+    "canonical_acceptance": "PENDING_INTEGRATION",
+    "checks_summary": "docs/acts/act2/evidence/A2-L2/checks/summary.json",
+    "actual_crossing_restore": "371/0 clean, complete actual route and pure/fresh whole aggregate/camera/input/quiet source refusal",
+    "current_native_cargo": "394/0 clean,16 actual540x1170 frames, scoped peer6/root6 review",
+    "exact_post_dash_native": "144/0 clean,one actual540x1170 earned-prefix tuple, peer/root oneframe review",
+    "current_portrait_index": "docs/acts/act2/evidence/A2-L2/combined-native/image-index.json",
+    "exact_tuple_index": "docs/acts/act2/evidence/A2-L2/crossing-tuple/image-index.json",
+    "limits": "Actual fullroute16 has armedrecoveringScout beside activefeet; ShelterHandlerarmedwarning/Scoutunarmedwarning. Separate exactpostdash frame has bothLOCKarmed. Local outline/circle overlap and prior anatomy/spentprop/HUD/distanttripod limits remain. No everypose/wholeboard/humanbalance/mobile claim."
+  }
+}

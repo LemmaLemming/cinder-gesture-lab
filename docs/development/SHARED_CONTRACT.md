@@ -1,5 +1,9 @@
 # Cinder shared contract
 
+Current revision: **campaign-shared-55** (13 October 2026). [A2-O3 acceptance](ACT2_O3_ACCEPTANCE.md) registers the exact tested f142 scene/local17 contract after43/0 and import0, with reused owner53 scoped evidence. Campaign16/24, Act2 eight/eight. Only O3 registry row/descriptive status, one new Root fixture/genuine UID and one CLI alias are added; other23 rows/route metadata and gameplay/save/controller/equipment interfaces remain exact. New census467 unique UID bytes; preserve-adopt after current frozen jobs close and acknowledge actual merge separately. Historical54 and prior source versions below remain original.
+
+Historical Shared54 record:
+
 Revision: **campaign-shared-54** (13 October2026). Shared54 registers [A1-L4 Selenite Court](ACT1_L4_ACCEPTANCE.md) at exact submitted9f1d6fe0/contentbfc00612 after independent canonical625/0, isolated import0 and necessary primary import0. Only L4 readiness/scene/pin changes; other23 rows and route metadata remain. The descriptive status scalar is corrected to15 and the CLI alias selects the exact tested fixture. Shared runtime/controller/save/equipment interfaces remain unchanged; the admitted Act1 content and genuine Root test UID are preserved exactly. Campaign **15/24**, Act1 **4/8**; the owner proceeds to L5 after canonical ACCEPTED. Current far/DASH/SPENT pixels, full playthrough and performance limits remain explicit. [Independent testing](LEVEL_TESTING_DELEGATION.md) uses fenced scratch/candidate checkouts and the one canonical Godot queue. Integration is first help contact; future B02 native sampling is a separate dependency.
 
 Historical revision53 follows:
