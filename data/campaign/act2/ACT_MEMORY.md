@@ -1,5 +1,9 @@
 # Act 2 durable memory
 
+## Independent registration check under targeted diagnosis — 2026-10-13T06:26:25.824470+00:00
+
+Integration RESPONSEc48fbb59 verifies exactf142/HANDOFFa754, contentfd2/index9530/closingb025/custodyb6 and managed validationfe894b39 onShared54. Necessary isolatedimportCLOSED0clean/2323inputs/466priorUIDsexact plusgenuineRootUID467. LatestactualRootforwardedupdate reportsnative33/1 with2459inputrows/all467UIDsexact andfourObjectDBwarnings: GUIRetrycandidate required source/footprint/Hero/landing outside protectedscreenrectangle. Rootpreservesoriginalfailure/warnings and corrects its TESTfixture's omitted already-passed pre-CP proximity(0,.04,-21.8), addingpassivecheckpointframingdata withunchangedbounds/camera/assertions, thenrerunsnarrowleafonly. Thisupdate is fromactualRootforwardedmessage; the immutablec48file waspublished earlierwhilejoblive. No ownedsource/runtimechange orworker rerun requested. Owner136/28 andalloriginalscopesremainvalid; no provennewruntimefault orhuman/other-act gate. Act2still7/8,published15/24untilcleanindependentclosure/publication. Currentactual54c0c3bad7/ce5bpreservationreceipt9a370/peer308e, allownerhandlesclosed.
+
 ## Shared54 actual merge independently verified — 2026-10-13T06:06:39.933427+00:00
 
 [Bounded actual adoption peer](../../../docs/acts/act2/evidence/shared54-adoption/a2_shared54_actual_adoption_independent_review_20261013.json), SHA308e8a45, verifies exactce5b/parents/retainedancestry, allsixO3resourcefiles+fourUIDsf142unchanged,25namedpublishedcontractsand17incomingactiveUIDs atpub→merge→physical. Zero findings; broad46967/106682 preservationcounts remainRoot-helperobservations, no newengine/import/nativecredit. O3HANDOFFa754 is verified byIntegration and its isolatedregistration/latestCPcheck is beingprepared. StillAct2 7/8 untilcanonicalACCEPTED; allownedjobsclosed andnohumandecision/route/visualrerun gate.
