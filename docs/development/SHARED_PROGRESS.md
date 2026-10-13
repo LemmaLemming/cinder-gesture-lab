@@ -1,5 +1,13 @@
 # Cinder shared progress
 
+## Current status — 13 October 2026
+
+Shared56 is published at `26f59b28007c68872b1a9870db675b5ed2f3c2e4`. The [sampled-circle milestone](#13-october-2026--shared56-sampled-circle-dependency-and-act2-support) records its focused component and portrait evidence. The campaign remains **16/24 accepted**: Act 1 **4/8**, Act 2 **8/8**, and Act 3 **4/8**. Act 2's assigned [Shell persistence support](ACT2_SHARED_SUPPORT.md) has closed its first native suite at 71/0 with clean diagnostics; final source/evidence integration awaits its sealed handoff. Root verified the actual result, and actual Shared56 adoptions for all three workers are independently reconciled. Act 1 and Act 3 continue their final main levels and optional levels independently.
+
+The [Crossed entrance geometry review](CROSSED_ENTRY_GEOMETRY.md) localizes the retained camera refusal to the activation position and permitted shift. Act 1 owns the requested entry-staging correction; the level stays accepted. Root separately [measured collision traversal/validation costs](COLLISION_SIGNATURE_STAGES.md) and preserves the native and host-verifier failure records.
+
+The milestone sections below retain their historical status and test results. Shared56 supersedes the older sampled-circle draft status; it adds no level acceptance. The full fifteen-main/nine-optional desktop objective remains active under [focused acceptance](LEVEL_ACCEPTANCE.md), with mobile export and release outside scope.
+
 ## Shared55 — final Act2 focused integration
 
 The completed Act 2 owner is now assigned [focused shared persistence support](ACT2_SHARED_SUPPORT.md) by direct human request. It prepares actual Shell save, Continue, moving-sample and GUI Retry fixtures in separate owned test paths while Integration finishes the B02 API. Source preparation is active; native execution awaits the exact published interface. Existing Act 2 acceptance remains 8/8.

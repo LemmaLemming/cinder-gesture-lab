@@ -192,7 +192,11 @@ Limits: path samples are not an analytic swept capsule; geometry carries a param
 
 ## Canonical campaign registry
 
-[registry.json](../../data/campaign/registry.json) records all 15 main and 9 optional IDs, sequential main links and optional parent clears, derived from the three canonical research files. Its initial entries used `scene_path = null` and `readiness = unimplemented`. A1-L1 is registered from exact authored commit06628abb, A1-L2 from dcd1098 with production registrationc6a9596, A2-L1 from a96edf with production registrationd629072f, A2-L2 from fd5fd3d with exact content integrationb164dc10 and the separate production registration evidence, and A3-L1 from fb9da07f with registration59d9097c. The remaining19 entries stay unimplemented or in owned development. Act2/3 retain their real preceding-act main prerequisites; isolated prerequisite seeds in registration tests do not complete preceding product levels. Integration alone registers a scene after accepting its exact level commit/API revision. Optional completion stamps have stable once-only reward IDs and no stat growth. The live menu gates routes on accepted, validated scenes and actual progression.
+[registry.json](../../data/campaign/registry.json) records all 15 main and 9 optional IDs, sequential main links and optional parent clears, derived from the three canonical research files. As of Shared56, 16 entries are accepted and 8 remain unfinished: Act 1 has 4/8 accepted, Act 2 has 8/8, and Act 3 has 4/8. [Shared progress](SHARED_PROGRESS.md) records current publication and acceptance evidence.
+
+Historical first-five registration snapshot: initial entries used `scene_path = null` and `readiness = unimplemented`. A1-L1 is registered from exact authored commit06628abb, A1-L2 from dcd1098 with production registrationc6a9596, A2-L1 from a96edf with production registrationd629072f, A2-L2 from fd5fd3d with exact content integrationb164dc10 and the separate production registration evidence, and A3-L1 from fb9da07f with registration59d9097c. At that five-level milestone, the remaining 19 entries were unimplemented or in owned development.
+
+Act2/3 retain their real preceding-act main prerequisites; isolated prerequisite seeds in registration tests do not complete preceding product levels. Integration alone registers a scene after accepting its exact level commit/API revision. Optional completion stamps have stable once-only reward IDs and no stat growth. The live menu gates routes on accepted, validated scenes and actual progression.
 
 ## player-snapshot-1
 

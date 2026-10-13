@@ -3,3 +3,18 @@ docs/development/evidence/A2-L2-registration/logs/*.log -whitespace
 docs/acts/act2/evidence/A2-L2-shared23-adoption/*.log -whitespace
 # Act1's historical evidence is imported byte-for-byte, including source snapshots.
 data/campaign/act1/evidence/A1-L2/** -whitespace
+
+# Exact collision profiler patch/log evidence; preserve native and diff-context whitespace.
+docs/development/evidence/collision-signature-stages/fixture.patch -diff
+docs/development/evidence/collision-signature-stages/instrumentation.patch -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-parse1/raw.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-parse1/wrapper.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-parse2/raw.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-parse2/wrapper.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-profile1/raw.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-profile1/wrapper.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-profile2/raw.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-profile2/wrapper.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-sinkparse1/raw.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-sinkparse1/wrapper.log -diff
+docs/development/evidence/collision-signature-stages/sink.patch -diff
