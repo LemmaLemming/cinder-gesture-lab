@@ -1,6 +1,6 @@
 class_name CinderAct3CrystalmanRuleRoom
 extends CinderLevel
-## First one-slot completed Player capture/replay prototype; focused55/0 verified.
+## Completed-action capture prototype with original finite recovery retained.
 ## No whole-level transport, phase two, production art, exits or registration.
 
 const Gate = preload("res://scripts/combat/replay_capture_gate.gd")
@@ -452,8 +452,10 @@ func receive_tether_attack(request: Dictionary) -> Dictionary:
 
 
 func _finish_at_barrier() -> void:
-	_cancel_consumer("crystalman_low_tether_severed")
-	threat_scheduler.end_encounter("crystalman_finite_rule_clear")
+	# All attacks have ended before the ordinary opening. Release is immediate;
+	# retain the original finite recovery/clock/profile for honest completion
+	# and paired snapshots. This is never a progression waiting condition.
+	# Normal level disposal still cancels/ends the whole native unit.
 	_tether_cue.present("spent", "attack")
 	phase = "spent"
 
@@ -532,6 +534,8 @@ func _build_forecast_points() -> bool:
 
 
 func _camera_framing_points() -> Array:
+	# Main may request one final presentation frame after exit clears context.
+	if not _active or not is_instance_valid(hero) or not is_instance_valid(shared_shell): return []
 	var points: Array = _forecast_points.duplicate()
 	_append_mesh(points, _tether_visual)
 	var marker: MeshInstance3D = _tether_cue.get_node_or_null("RequiredInteractionMarker") as MeshInstance3D
