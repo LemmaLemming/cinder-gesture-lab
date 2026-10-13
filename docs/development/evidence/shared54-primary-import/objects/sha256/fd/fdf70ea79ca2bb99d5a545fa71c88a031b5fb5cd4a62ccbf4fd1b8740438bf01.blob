@@ -1,0 +1,9 @@
+{
+  "classification": "exit lifecycle/runtime",
+  "revision": "767b09e7987637d6a5f7495b84ad130e54ff80da plus owned full-L1 draft",
+  "command": "python3 scripts/dev/dev.py engine --path . --resolution 540x1170 -- --level-scene=res://tests/acts/act1/visual/launch_art_stage.tscn --art-stage=roof --capture",
+  "log": ".cinder/a1-l1-shared5-staged-roof.log",
+  "exit_code": 0,
+  "first_error": "Condition !is_inside_tree(): lane_mechanism.state\u2192_set_phase\u2192cancel\u2192launch_rehearsal._on_exit_level",
+  "diagnosis": "Level parent exits after descendants; root called public cancel on valid but already out-of-tree source, causing global transform access. Root now calls cancel/end_encounter only while descendant inside tree; shared own descendant cleanup remains authoritative. Picture is a staged composition reference, not a clean test pass."
+}

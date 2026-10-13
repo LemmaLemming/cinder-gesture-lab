@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PHASE DIAGNOSTIC { "api_revision": "act1-rush-selenite-1", "source_id": "a1_l2_greybox_rusher", "hp": 20.0, "dead": false, "status": "idle", "phase": "clear", "reservation_id": "", "cycle": 0, "source_position": (0.0, -0.005208, 0.0), "opening_position": (0.0, -0.005208, 0.0), "geometry": {  }, "resolved_role": {  }, "hit_ids": [], "hurt_left_s": 0.0, "last_cancel_reason": "" } admission={ "accepted": false, "reason": "Finite authored response candidates required: return_directions" } source_error=Finite authored response candidates required: return_directions framing= paused=false
+ERROR: actual warning phase appears within the bounded encounter window
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act1/a1_l2_rusher_greybox.gd:243)
+       [1] _wait_phase (res://tests/acts/act1/a1_l2_rusher_greybox.gd:164)
+A1-L2 RUSHER GREYBOX: 5 checks, 1 failures

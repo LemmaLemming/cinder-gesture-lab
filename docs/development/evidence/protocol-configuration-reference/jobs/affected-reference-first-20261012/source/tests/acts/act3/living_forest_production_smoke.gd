@@ -1,0 +1,560 @@
+extends "res://tests/acts/act3/living_forest_route_smoke.gd"
+## TEST ONLY production consumer of the actual Forest and inherited route.
+## Prefix11 and accepted L2/L3 metadata exist only in the in-memory registry.
+## Real entry saves, one natural contact, disk Continue, protected Retry and
+## routed GUI Resume precede the ordinary full route/contact transition.
+## No Hero/source HP, resources, pose, clocks, stats or collision are written.
+## --first-checkpoint-only stops after genuine Save/Continue/Retry; default
+## or --full-route also clears all nine sources and enters a TEST ONLY floor.
+
+const ShellScript = preload("res://scripts/campaign/shell.gd")
+const RegistryScript = preload("res://scripts/campaign/registry.gd")
+const StoreScript = preload("res://scripts/campaign/save_store.gd")
+const NextPath: String = "res://tests/acts/act3/fixtures/living_forest_transition_l3.tscn"
+const DamageBudgetS: float = 20.0
+
+var _shell: CinderCampaignShell
+var _test_root: String = ""
+var _canonical_bytes: String = ""
+var _raw_registry: Dictionary = {}
+var _prefix: Array[String] = []
+var _checkpoint_only: bool = false
+var _production_ready: bool = false
+var _arm_damage_pause: bool = false
+var _damage_pause_accepted: bool = false
+var _damage_events: Array[Dictionary] = []
+var _protected_checkpoint: Dictionary = {}
+var _restore_events: Array[String] = []
+var _watch_restore: bool = false
+var _saved_completed: Dictionary = {}
+var _saved_actions: Array[Dictionary] = []
+var _departure_actor: Dictionary = {}
+var _departure_anchor: Vector2 = Vector2.ZERO
+var _contact_sample: Dictionary = {}
+var _contact_observation: Dictionary = {}
+var _contact_supported: bool = false
+var _transition_done: bool = false
+var _departed_refs: Array = []
+
+
+func _options() -> String:
+	var selected: bool = false
+	for argument: String in OS.get_cmdline_user_args():
+		if selected or argument not in ["--first-checkpoint-only", "--full-route"]:
+			return "unsupported or repeated production selector: " + argument
+		selected = true
+		_checkpoint_only = argument == "--first-checkpoint-only"
+	return ""
+
+
+func _run() -> void:
+	var error: String = _options()
+	if error.is_empty(): error = _select_kit()
+	if error.is_empty(): error = await _prepare()
+	if not _expect(error.is_empty(), "TEST ONLY public registry/session opens the actual Forest production shell", error):
+		await _dispose()
+		_finish()
+		return
+	_route_deadline = _scheduler.get_clock() + RouteBudgetS
+	for index: int in range(1 if _checkpoint_only else EntryIds.size()):
+		if not error.is_empty(): break
+		error = await _travel_entry(index)
+		if error.is_empty(): error = await _checkpoint_pair(index, false)
+		if _checkpoint_only or not error.is_empty(): break
+		error = await _clear_entry(index)
+		if not _expect(error.is_empty(), "production actual " + EntryIds[index] + " clears by the inherited ordinary-primary driver", error): break
+	if error.is_empty() and not _checkpoint_only:
+		error = await _contact_exit()
+		_expect(error.is_empty(), "actual completed Forest contact durably installs only the next TEST ONLY floor", error)
+	if error.is_empty():
+		error = _final_error(1 if _checkpoint_only else EntryIds.size())
+		_expect(error.is_empty(), "selected production scope retains exact saved custody and resources", error)
+	if not error.is_empty():
+		if _failures == 0: _expect(false, "production stops at first meaningful failure", error)
+		print("FIRST MEANINGFUL PRODUCTION FAILURE: ", error, "; ", _diagnostic())
+	await _dispose()
+	_finish()
+
+
+func _prepare_primary_resources() -> void:
+	# Production resources are authoritative. The inherited primary checks
+	# still observe actual HP damage, action publication, timing and cleanup.
+	pass
+
+
+func _prepare() -> String:
+	_test_root = "user://test-act3-forest-production-%d-%d/" % [OS.get_process_id(), Time.get_ticks_usec()]
+	_canonical_bytes = FileAccess.get_file_as_string(RegistryScript.DATA_PATH)
+	var canonical: Variant = JSON.parse_string(_canonical_bytes)
+	if not canonical is Dictionary: return "canonical registry cannot be read"
+	var seed: Dictionary = await _initial_seed()
+	if seed.is_empty(): return "actual paused Forest seed is unavailable"
+	_raw_registry = canonical.duplicate(true)
+	for info: Dictionary in _raw_registry.levels:
+		if info.id in ["A3-L2", "A3-L3"]:
+			info.scene_path = FullPath if info.id == "A3-L2" else NextPath
+			info.readiness = "accepted" # TEST ONLY, never canonical metadata.
+			info.accepted_commit = "a".repeat(40)
+			info.api_revision = RegistryScript.API_REVISION
+	if not await _new_shell(): return "public shell fixture configuration failed"
+	for id: String in _shell.registry.main_route():
+		if id == "A3-L2": break
+		_prefix.append(id)
+	if _prefix.size() != 11 or not _shell.registry.scene_error("A3-L3").is_empty(): return "TEST ONLY prefix11/next scene fails public registry identity"
+	var session: Dictionary = _shell.attempts.state()
+	session.completed_main = _prefix.duplicate() # TEST ONLY predecessor history.
+	session.story = {"kind": "story", "level_id": "A3-L2", "snapshot": seed.duplicate(true), "checkpoint": seed.duplicate(true)}
+	if not _shell.attempts.restore_session(session): return "public initial session rejects actual typed seed: " + _shell.attempts.last_error
+	_shell.menu.continue_story_requested.emit()
+	await _settle_shell()
+	var error: String = _bind_runtime()
+	if not error.is_empty(): return error
+	if not paused or _shell.menu.page_name() != "resume" or not _exact(_shell.capture_campaign_snapshot(), seed): return "initial production Continue differs from actual paused seed: " + _shell.campaign_error
+	_hp_before = _hero.hp
+	_topology = _world_topology()
+	_route_deadline = _scheduler.get_clock() + RouteBudgetS
+	if not _resume_consumed("initial production entry"): return "initial Resume input leaked"
+	# One real routed swipe makes exact anchor/input custody nontrivial.
+	return await _routed_left_dash()
+
+
+func _initial_seed() -> Dictionary:
+	paused = false
+	var preview: Node = MainScene.instantiate()
+	preview.set("level_scene_path", FullPath)
+	root.add_child(preview)
+	for _tick: int in range(12): await _observe_tick()
+	preview.call("open_bench")
+	await _settle_shell()
+	var actor: CinderPlayer = preview.get("player") as CinderPlayer
+	var level: CinderLevel = preview.get("active_level") as CinderLevel
+	var result: Dictionary = {}
+	if is_instance_valid(actor) and is_instance_valid(level) and actor.is_on_floor() and _exact(actor.equipment.snapshot(), _kit) and _exact(actor.stats, _stats):
+		var player: Dictionary = actor.snapshot_state()
+		var local: Dictionary = level.snapshot_state()
+		if not player.is_empty() and not local.is_empty() and local.local_snapshot_version == 1 and local.local.route.entries.is_empty() and local.local.route.deaths.is_empty():
+			var fresh_shell: Dictionary = {"api_revision": ShellScript.SHELL_API, "anchor_normalized": [0.5, 0.5], "input_sequence": 0, "last_input_observation": {}, "camera_focus": Codec.vector3(actor.global_position + Vector3.UP * 0.75), "shake_left_s": 0.0, "difficulty_at_entry": "standard"}
+			result = {"schema_version": 1, "level_id": "A3-L2", "scene_path": FullPath, "paused": true, "equipment_ids": actor.equipment.snapshot(), "player": player, "level": local, "shell": fresh_shell}
+	preview.free()
+	paused = false
+	await _settle_shell()
+	return result
+
+
+func _new_shell() -> bool:
+	_shell = ShellScript.new()
+	_game = _shell
+	if not _shell.configure_runtime(_raw_registry, _test_root + "campaign.json", _test_root + "settings.json", _test_root + "preferences.json"): return false
+	root.add_child(_shell)
+	await _settle_shell()
+	return _shell.campaign_error.is_empty()
+
+
+func _bind_runtime() -> String:
+	_hero = _shell.player
+	_level = _shell.active_level
+	if not is_instance_valid(_hero) or not is_instance_valid(_level) or _level.scene_file_path != FullPath or _level.get_script().resource_path != RuntimePath or _level.shared_shell != _shell or not _level.contract_error().is_empty(): return "actual production Forest/traveller binding differs: " + _shell.campaign_error
+	_scheduler = _level.get("threat_scheduler") as CinderThreatScheduler
+	var mapped: Variant = _level.get("sources")
+	if _scheduler == null or not mapped is Dictionary or not Codec.keys_error(mapped, SourceIds).is_empty(): return "actual typed source map differs"
+	_sources = mapped.duplicate()
+	var scenery: Node = _level.get("scenery") as Node
+	_floor = scenery.get("floor_body") as StaticBody3D if scenery != null else null
+	_exit_cue = _level.get("exit_cue") as CinderInteractionCue
+	if _floor == null or _exit_cue == null or _hero.presentation_id != "act3_traveller" or not _exact(_hero.equipment.snapshot(), _kit) or not _exact(_hero.stats, _stats): return "production floor/art/gear differs"
+	var bindings: Dictionary = _level.call("scheduler_bindings")
+	var owners: Dictionary = {}
+	for id: String in SourceIds:
+		var source: Node3D = _sources[id] as Node3D
+		if source == null or source.get_world_3d() != _hero.get_world_3d() or source.is_in_group("enemies") == bool(source.get("dead")): return "actual living/tombstone source differs: " + id
+		if _is_root(id):
+			var mechanism: CinderLaneMechanism = source.call("get_mechanism")
+			owners[id + "/attack"] = mechanism
+			mechanism.hit_resolved.connect(_on_root_contact.bind(id))
+		else:
+			owners[id] = source
+			source.connect("hit_resolved", _on_stalker_contact.bind(id))
+		_expected_hp[id] = float(source.get("hp"))
+		source.connect("died", _on_death.bind(id))
+	_hero.world_action_executed.connect(_on_action)
+	_hero.fired.connect(func(kind: String) -> void: _event("fired_" + kind))
+	_hero.equipment_changed.connect(func(_id: String) -> void: _event("equipment"))
+	_hero.died.connect(func() -> void: _event("hero_death"))
+	_level.checkpoint_requested.connect(_on_checkpoint)
+	_level.completion_requested.connect(func(_id: String, _completion: String) -> void: _event("completion"))
+	_level.contact_exit_requested.connect(func(_id: String, _exit: String) -> void: _event("exit"))
+	return "" if bindings.get("world_root") == _shell.world and bindings.get("owners") == owners and bindings.get("actors", {}).get("hero") == _hero else "public typed World owner/Hero bindings differ"
+
+
+func _checkpoint_pair(index: int, after_clear: bool) -> String:
+	if after_clear: return "production fixture uses entry checkpoints only"
+	if not _shell.request_pause_deferred(): return "public complete-tick entry pause rejected"
+	await _settle_shell()
+	var unit: Dictionary = _shell.capture_campaign_snapshot()
+	var durable: Dictionary = _shell.attempts.state()
+	if unit.is_empty() or not paused or not _shell.campaign_error.is_empty() or unit.level.progress.checkpoint_id != CheckpointIds[index] or unit.level.local.route.entries.size() != index + 1 or _checkpoints != CheckpointIds.slice(0, index + 1): return "natural production entry checkpoint/pause differs: " + _shell.campaign_error
+	if not _exact(durable.story.snapshot, unit) or not _disk_matches(durable): return "production entry SaveStore/current unit differs"
+	var error: String = _hero.snapshot_error(unit.player)
+	if error.is_empty(): error = _level.snapshot_error_with_player(unit.level, unit.player)
+	if not error.is_empty() or not _exact(unit, _shell.capture_campaign_snapshot()): return "actual paused production entry proof is invalid/mutating: " + error
+	_expect(true, "actual spatial entry " + CheckpointIds[index] + " reaches production exact format2 disk with complete typed actors")
+	if index == 0 and not _production_ready:
+		_protected_checkpoint = durable.story.checkpoint.duplicate(true)
+		if _protected_checkpoint.player.world_actions.pending_dash.is_empty() or _protected_checkpoint.level.local.route.entries.size() != 1 or not _protected_checkpoint.level.local.route.deaths.is_empty() or not _protected_checkpoint.level.local.scheduler.reservations.is_empty(): return "protected first entry lacks the genuine unfinished crossing dash before any lease/death"
+		return await _save_continue_retry()
+	return "" if _resume_consumed("actual entry " + CheckpointIds[index]) else "entry Resume input leaked"
+
+
+func _on_stalker_contact(result: Dictionary, id: String) -> void:
+	super._on_stalker_contact(result, id)
+	if _arm_damage_pause and id == SourceIds[0] and result.get("accepted") == true and float(result.get("hp_damage", 0.0)) > 0.0:
+		_arm_damage_pause = false
+		_damage_events.append(result.duplicate(true))
+		_damage_pause_accepted = _shell.request_pause_deferred()
+
+
+func _save_continue_retry() -> String:
+	if not _resume_consumed("natural contact observation"): return "contact-observation Resume leaked"
+	_arm_damage_pause = true
+	var until: float = _scheduler.get_clock() + DamageBudgetS
+	for _tick: int in range(_frame_limit(DamageBudgetS)):
+		if _damage_pause_accepted or _hero.dead or _scheduler.get_clock() > until: break
+		await _observe_tick()
+	await _settle_shell()
+	var hurt: Dictionary = _shell.capture_campaign_snapshot()
+	if hurt.is_empty() or not paused or not _damage_pause_accepted or _damage_events.size() != 1 or _hero.dead or _hero.hp != _hp_before - float(_damage_events[0].hp_damage): return "one genuine first-source contact did not reach a complete-tick depleted living Save"
+	var durable: Dictionary = _shell.attempts.state()
+	if not _exact(durable.story.snapshot, hurt) or not _exact(durable.story.checkpoint, _protected_checkpoint) or not _disk_matches(durable): return "depleted Save changed protected living checkpoint or exact disk custody"
+	await process_frame
+	await process_frame
+	if not _exact(hurt, _shell.capture_campaign_snapshot()): return "depleted production pause advanced actors/sun/clocks/resources/input/camera"
+	var original: Dictionary = durable.duplicate(true)
+	var encoded: String = ExactJson.stringify(durable)
+	var decoded: Dictionary = ExactJson.parse(encoded)
+	if encoded.is_empty() or not decoded.get("accepted", false) or not _exact(decoded.get("value"), durable) or not _shell.attempts.state_error(durable).is_empty() or not _exact(original, _shell.attempts.state()): return "exact production saved unit prevalidation failed or mutated"
+	_expect(true, "natural contact saves actual depleted HP and complete nine-source clocks while protecting the original living crossing checkpoint")
+	var old: Array = _world_refs()
+	_shell.free()
+	_shell = null
+	_game = null
+	paused = false
+	await _settle_shell()
+	for node: Variant in old:
+		if is_instance_valid(node): return "disk Continue setup retained an old authored world"
+	_restore_events.clear()
+	_watch_restore = true
+	node_added.connect(_observe_restore)
+	if not await _new_shell(): return "fresh shell could not independently load production SaveStore"
+	if not paused or _shell.menu.page_name() != "title" or _shell.active_level != null or not _exact(_shell.attempts.state(), durable): return "fresh production Title/disk state differs from actual depleted saved attempt"
+	_shell.menu.continue_story_requested.emit()
+	await _settle_shell()
+	_watch_restore = false
+	node_added.disconnect(_observe_restore)
+	if not _restore_events.is_empty() or not _shell.campaign_error.is_empty() or _shell.menu.page_name() != "resume" or not _exact(_shell.capture_campaign_snapshot(), hurt): return "actual menu Continue did not silently install exact depleted actor/local/input/camera: " + _shell.campaign_error + str(_restore_events)
+	var error: String = _bind_runtime()
+	if not error.is_empty(): return error
+	if not _disk_matches(_shell.attempts.state()) or not _exact(_shell.attempts.state().story.checkpoint, _protected_checkpoint): return "disk Continue changed durable checkpoint"
+	await process_frame
+	await process_frame
+	if not _exact(hurt, _shell.capture_campaign_snapshot()) or not _restore_events.is_empty(): return "fresh Continue unit changed or emitted contact before explicit Resume"
+	_expect(true, "fresh production disk load and actual menu Continue preserve depleted HP/ammo/reload/gear/native clocks/history/input/camera without refill or replay")
+	old = _world_refs()
+	_restore_events.clear()
+	_watch_restore = true
+	node_added.connect(_observe_restore)
+	_shell.request_retry()
+	await _settle_shell()
+	_watch_restore = false
+	node_added.disconnect(_observe_restore)
+	if not paused or not _restore_events.is_empty() or not _shell.campaign_error.is_empty() or not _exact(_shell.capture_campaign_snapshot(), _protected_checkpoint): return "public Retry failed exact silent protected first-entry install: " + _shell.campaign_error + str(_restore_events)
+	for node: Variant in old:
+		if is_instance_valid(node): return "public Retry retained an old World/Hero/typed source"
+	# Rebase only test observation to the actual restored checkpoint history.
+	_events.clear()
+	_actions.clear()
+	_death_events.clear()
+	_records.clear()
+	_phases.clear()
+	_active_travel.clear()
+	_warnings.clear()
+	_used_warnings.clear()
+	error = _bind_runtime()
+	if not error.is_empty(): return error
+	_actions = _hero.get_world_action_records()
+	_hp_before = _hero.hp
+	_topology = _world_topology()
+	_route_deadline = _scheduler.get_clock() + RouteBudgetS
+	var saved: Dictionary = _protected_checkpoint
+	var sequence: int = int(saved.player.world_actions.sequence)
+	if not _disk_matches(_shell.attempts.state()) or not _exact(_shell.attempts.state().story.checkpoint, saved): return "Retry disk checkpoint differs"
+	if not _resume_consumed("protected first-entry Retry"): return "Retry Resume input leaked"
+	for _tick: int in range(_frame_limit(0.5)):
+		if not _hero.get_committed_dash_state().active: break
+		error = await _tick_safe()
+		if not error.is_empty(): return error
+	var completed: Array[Dictionary] = _hero.get_world_action_records(sequence)
+	if completed.size() != 1 or not _pending_prefix_error(completed[0], saved.player.world_actions.pending_dash).is_empty() or _hero.hp != float(saved.player.resources.hp) or _checkpoints != [CheckpointIds[0]] or not _exact(_shell.attempts.state().story.checkpoint, saved): return "Retry failed one original pending movement or duplicated/refilled protected state"
+	_production_ready = true
+	_expect(true, "public production Retry uses exact protected living resources, frees old typed World and resumes only its unfinished real crossing dash")
+	return ""
+
+
+func _pending_prefix_error(action: Dictionary, pending: Dictionary) -> String:
+	if action.get("kind") != "dash" or action.started_at_s != pending.started_at_s or action.world_origin != Codec.read_vector3(pending.world_origin) or action.direction != Codec.read_vector3(pending.direction) or action.path.size() < pending.path.size(): return "completed pending dash identity differs"
+	for i: int in range(pending.path.size()):
+		if action.path[i].time_s != pending.path[i].time_s or action.path[i].position != Codec.read_vector3(pending.path[i].position): return "completed movement lost an exact saved native sample"
+	return ""
+
+
+func _disk_matches(expected: Dictionary) -> bool:
+	var reader: CinderSaveStore = StoreScript.new(_test_root + "campaign.json")
+	var disk: Dictionary = reader.read_payload()
+	var outer: Variant = JSON.parse_string(FileAccess.get_file_as_string(_test_root + "campaign.json"))
+	return _expect(reader.last_error.is_empty() and not reader.loaded_backup and reader.generation > 0 and outer is Dictionary and outer.get("format_version") == 2 and _exact(disk, expected), "independent production SaveStore reads the exact primary format2 generation", reader.last_error)
+
+
+func _observe_restore(node: Node) -> void:
+	if not _watch_restore: return
+	if node is CinderPlayer:
+		node.fired.connect(func(_kind: String) -> void: _restore_events.append("fired"))
+		node.died.connect(func() -> void: _restore_events.append("hero_death"))
+		node.world_action_executed.connect(func(_record: Dictionary) -> void: _restore_events.append("world_action"))
+	if node is CinderLevel:
+		node.checkpoint_requested.connect(func(_id: String, _checkpoint: String, _kind: String) -> void: _restore_events.append("checkpoint"))
+		node.completion_requested.connect(func(_id: String, _completion: String) -> void: _restore_events.append("completion"))
+		node.contact_exit_requested.connect(func(_id: String, _exit: String) -> void: _restore_events.append("exit"))
+	if node is CinderAct3SunboundStalker or node is CinderAct3RootLatcher:
+		node.died.connect(func(_where: Vector3) -> void: _restore_events.append("source_death"))
+	if node is CinderAct3SunboundStalker:
+		node.hit_resolved.connect(func(_result: Dictionary) -> void: _restore_events.append("contact"))
+	if node is CinderLaneMechanism:
+		node.hit_resolved.connect(func(_id: String, _cycle: int, _result: Dictionary) -> void: _restore_events.append("contact"))
+
+
+func _contact_exit() -> String:
+	if not _level.is_completed() or int(_events.get("completion", 0)) != 1 or (_level.call("state") as Dictionary).exit_state != "available" or not _scheduler.reservations().is_empty(): return "nine genuine defeats did not make one completed available contact exit"
+	if not _shell.request_pause_deferred(): return "completed production pause rejected"
+	await _settle_shell()
+	var completed: Dictionary = _shell.capture_campaign_snapshot()
+	_saved_completed = _level.call("state")
+	_saved_actions = _actions.duplicate(true)
+	var durable: Dictionary = _shell.attempts.state()
+	var prefix: Array[String] = _prefix.duplicate()
+	prefix.append("A3-L2")
+	if completed.is_empty() or durable.completed_main != prefix or prefix.size() != 12 or not durable.completed_optional.is_empty() or not durable.reward_ids.is_empty() or not _exact(durable.story.snapshot, completed) or not _disk_matches(durable): return "actual nine defeats failed durable prefix12 without optional rewards"
+	for id: String in SourceIds:
+		var error: String = _tombstone_error(id)
+		if not error.is_empty(): return error
+	var history: Array[Dictionary] = _hero.get_world_action_records()
+	if not _exact(_actions.slice(maxi(0, _actions.size() - history.size())), history): return "actual completed route action tail differs"
+	_departed_refs = _world_refs()
+	var destination: Vector3 = (_level.get_node("DryThreshold") as Marker3D).global_position
+	_level.contact_exit_requested.connect(_observe_exit)
+	if not _resume_consumed("completed route before actual contact"): return "completed Resume leaked"
+	for _step: int in range(14):
+		var ready: bool = false
+		for _tick: int in range(_frame_limit(1.0)):
+			var response: Dictionary = _hero.get_threat_response_state()
+			if response.stable and float(response.dash_cooldown_left_s) == 0.0:
+				ready = true
+				break
+			await _observe_tick()
+		if not ready: return "actual contact approach lacks ordinary stopped dash readiness"
+		var outgoing: CinderLevel = _level
+		var actor: CinderPlayer = _hero
+		var sequence: int = _last_sequence()
+		if not actor.request_dash(_planar(destination - actor.global_position).normalized()): return "real contact approach dash rejected"
+		var finished: bool = false
+		for _tick: int in range(_frame_limit(float(_stats.dash_duration) + 0.5)):
+			await _observe_tick()
+			await process_frame
+			if not _shell.campaign_error.is_empty(): return "actual contact transition failed: " + _shell.campaign_error
+			if not is_instance_valid(outgoing) or _shell.active_level != outgoing:
+				_transition_done = true
+				break
+			var actions: Array[Dictionary] = actor.get_world_action_records(sequence)
+			if not actions.is_empty():
+				if actions.size() != 1 or actions[0].kind != "dash" or actions[0].blocked or actions[0].collision_shortened: return "actual contact approach shortens/blocks ordinary movement"
+				finished = true
+				break
+		if _transition_done: break
+		if not finished: return "contact approach exceeded finite native dash bound"
+	if not _transition_done: return "fourteen real dashes never contacted the actual completed threshold"
+	await _settle_shell()
+	if not _contact_supported or _contact_sample.is_empty() or int(_events.get("exit", 0)) != 1: return "one actual supported contact sample was not observed before retirement: " + str(_contact_observation)
+	var departure_error: String = _departed_barrier_error()
+	if not departure_error.is_empty(): return departure_error
+	for node: Variant in _departed_refs:
+		if is_instance_valid(node): return "actual contact transition retained old typed source/World"
+	var next: Dictionary = _shell.capture_campaign_snapshot()
+	if not paused or _shell.menu.page_name() != "resume" or next.is_empty() or next.level_id != "A3-L3" or next.scene_path != NextPath or _shell.active_level.shared_shell != _shell: return "next TEST ONLY floor lacks actual fresh paused production binding"
+	if not _exact(next.player.resources, _departure_actor.resources) or not _exact(next.player.clocks.reload_s, _departure_actor.clocks.reload_s) or not _exact(next.equipment_ids, _kit) or not _exact(next.shell.anchor_normalized, [_departure_anchor.x, _departure_anchor.y]): return "actual transition changed carried HP/ammo/reload/gear/release anchor"
+	if next.player.world_actions.clock_s != 0.0 or next.player.world_actions.sequence != 0 or not next.player.world_actions.history.is_empty() or not next.player.world_actions.pending_dash.is_empty() or next.shell.input_sequence != 0 or not next.shell.last_input_observation.is_empty() or next.level.progress.completed: return "next floor inherited old clocks/history/pending input/progress"
+	durable = _shell.attempts.state()
+	if durable.completed_main != prefix or durable.story.level_id != "A3-L3" or not _exact(durable.story.snapshot, next) or not _exact(durable.story.checkpoint, next) or not _disk_matches(durable): return "actual contact advance did not durably keep prefix12 and fresh next checkpoint"
+	await process_frame
+	await process_frame
+	if not _exact(next, _shell.capture_campaign_snapshot()): return "next floor changed while waiting for explicit Resume"
+	_expect(true, "one genuine Forest capsule contact installs fresh TEST ONLY A3-L3 with exact resource/gear/anchor carry, prefix12, new clocks/history and all old typed actors freed")
+	return "" if _resume_consumed("next TEST ONLY floor") else "next Resume leaked"
+
+
+func _observe_exit(_level_id: String, _exit_id: String) -> void:
+	_departure_actor = _hero.snapshot_state()
+	_departure_anchor = _shell.get_aim_anchor_normalized()
+	var state: Dictionary = _level.call("state")
+	_contact_sample = state.contact.duplicate(true)
+	_contact_observation = {"paused": paused, "physics_frame": Engine.is_in_physics_frame(), "snapshot_available": not _departure_actor.is_empty(), "snapshot_error": _hero.last_snapshot_error, "position": _hero.global_position, "resources": {"hp": _hero.hp, "max_hp": _hero.max_hp, "shells": _hero.shells, "max_shells": _hero.max_shells, "dead": _hero.dead}, "equipment": _hero.equipment.snapshot(), "player_clock_s": _hero.get_world_action_clock(), "scheduler_clock_s": _scheduler.get_clock()}
+	if _contact_sample.is_empty(): return
+	var point: Vector3 = Codec.read_vector3(_contact_sample.hero_position)
+	_contact_supported = _level_id == "A3-L2" and _exit_id == "wombflash-dry-threshold" and state.exit_state == "spent" and Rect2(-1.2, -47.65, 2.4, 1.3).has_point(Vector2(point.x, point.z)) and point == _hero.global_position and absf(point.y) <= 0.2 and _floor_hit(point) and _scheduler.reservations().is_empty() and float(_contact_sample.clock_s) == _scheduler.get_clock() and float(_contact_sample.clock_s) == _hero.get_world_action_clock()
+	print("ACTUAL CONTACT SIGNAL BOUNDARY: ", {"paused": _contact_observation.paused, "physics_frame": _contact_observation.physics_frame, "snapshot_available": _contact_observation.snapshot_available, "snapshot_error": _contact_observation.snapshot_error, "sample_clock_s": _contact_sample.clock_s, "scheduler_clock_s": _contact_observation.scheduler_clock_s, "player_clock_s": _contact_observation.player_clock_s, "supported": _contact_supported})
+
+
+## Shell records the outgoing spent unit at its real paused drain, then
+## advance_story publishes the next unit. The public Store preserves that
+## immediately preceding exact generation; the signal itself need not pause.
+func _departed_barrier_error() -> String:
+	var primary: CinderSaveStore = StoreScript.new(_test_root + "campaign.json")
+	var next: Dictionary = primary.read_payload()
+	var reader: CinderSaveStore = StoreScript.new(_test_root + "campaign.json.bak")
+	var prior: Dictionary = reader.read_payload()
+	if not primary.last_error.is_empty() or primary.loaded_backup or next.is_empty() or not reader.last_error.is_empty() or reader.loaded_backup or prior.is_empty() or reader.generation != primary.generation - 1: return "actual outgoing barrier lacks its immediately previous exact production generation"
+	if not prior.get("story") is Dictionary or prior.story.get("level_id") != "A3-L2" or not prior.story.get("snapshot") is Dictionary: return "production previous generation does not retain the actual outgoing Forest"
+	var unit: Dictionary = prior.story.snapshot
+	if unit.get("paused") != true or unit.get("scene_path") != FullPath or unit.level.local.route.exit_state != "spent" or unit.level.progress.contact_exit_id != "wombflash-dry-threshold" or not _exact(unit.level.local.route.contact, _contact_sample): return "paused outgoing production unit differs from the actual spent contact"
+	if unit.level.local.scheduler.clock_s != _contact_observation.scheduler_clock_s or unit.player.world_actions.clock_s != _contact_observation.player_clock_s or Codec.read_vector3(unit.player.motion.position) != _contact_observation.position or not _exact(unit.player.resources, _contact_observation.resources) or not _exact(unit.equipment_ids, _contact_observation.equipment) or not _exact(unit.shell.anchor_normalized, [_departure_anchor.x, _departure_anchor.y]): return "outgoing paused barrier changed actual contact pose/clocks/resources/gear/anchor"
+	if not _departure_actor.is_empty() and not _exact(_departure_actor, unit.player): return "available signal-time player snapshot differs from the outgoing paused barrier"
+	_departure_actor = unit.player.duplicate(true)
+	return ""
+
+
+func _final_error(count: int) -> String:
+	if not _production_ready or _damage_events.size() != 1 or _protected_checkpoint.is_empty(): return "actual Save/Continue/Retry scope incomplete"
+	if _checkpoint_only:
+		var state: Dictionary = _level.call("state")
+		return "" if count == 1 and state.entered.size() == 1 and state.deaths.is_empty() and not state.completed and int(_events.get("exit", 0)) == 0 and _shell.attempts.state().completed_main == _prefix else "checkpoint-only fixture falsely advanced/defeated a source"
+	if count != 6 or not _transition_done or _saved_completed.entered.size() != 6 or _saved_completed.cleared.size() != 9 or _checkpoints != CheckpointIds or not _union_seen or not _watched_observed or _death_events.size() != 9 or int(_events.get("completion", 0)) != 1 or int(_events.get("exit", 0)) != 1: return "actual production full route lacks six entries/nine deaths/mixed union/watched trigger/single completion/contact"
+	for action: Dictionary in _saved_actions:
+		if action.get("kind") not in ["dash", "primary"] or not _exact(action.get("equipment_ids"), _kit): return "actual primary route used blast or changed equipment"
+	return "" if int(_events.get("contact", 0)) == 0 and int(_events.get("fired_blast", 0)) == 0 and _shell.player.hp == _hp_before and int(_shell.get("cores")) == 0 and int(_shell.get("kills")) == 0 else "ordinary route introduced extra damage/heal/blast/unrelated reward"
+
+
+func _world_refs() -> Array:
+	var refs: Array = [_shell.player, _shell.active_level, _shell.world, _scheduler]
+	refs.append_array(_sources.values())
+	for id: String in _sources:
+		refs.append(_cue(id))
+		if _is_root(id): refs.append(_sources[id].call("get_mechanism"))
+	return refs
+
+
+func _routed_left_dash() -> String:
+	var size: Vector2 = root.get_visible_rect().size
+	var start: Vector2 = size * Vector2(0.62, 0.55)
+	var finish: Vector2 = size * Vector2(0.24, 0.55)
+	var before: int = _last_sequence()
+	var down := InputEventMouseButton.new()
+	down.button_index = MOUSE_BUTTON_LEFT
+	down.position = start
+	down.global_position = start
+	down.pressed = true
+	root.push_input(down, true)
+	var drag := InputEventMouseMotion.new()
+	drag.position = finish
+	drag.global_position = finish
+	drag.relative = finish - start
+	drag.button_mask = MOUSE_BUTTON_MASK_LEFT
+	root.push_input(drag, true)
+	var up := down.duplicate() as InputEventMouseButton
+	up.position = finish
+	up.global_position = finish
+	up.pressed = false
+	root.push_input(up, true)
+	for _tick: int in range(_frame_limit(0.5)):
+		if not _hero.get_world_action_records(before).is_empty(): break
+		var error: String = await _tick_safe()
+		if not error.is_empty(): return error
+	var actions: Array[Dictionary] = _hero.get_world_action_records(before)
+	return "" if actions.size() == 1 and actions[0].kind == "dash" and not actions[0].blocked and not actions[0].collision_shortened and _exact(actions[0].equipment_ids, _kit) and _shell.get_aim_anchor_normalized() == finish / size and actions[0].direction.x < -0.9 else "actual routed ordinary swipe did not preserve its release anchor/world dash"
+
+
+func _resume_consumed(label: String) -> bool:
+	var button: Control = _shell.menu.find_child("ResumeButton", true, false) as Control
+	if not paused or not _shell.menu.is_open() or not is_instance_valid(button) or not button.is_visible_in_tree(): return _expect(false, label + ": actual GUI Resume unavailable")
+	var actor: CinderPlayer = _shell.player
+	var before: Dictionary = {"history": actor.get_world_action_records(), "input": _shell.get_input_observation_state(), "clock": actor.get_world_action_clock(), "hp": actor.hp, "shells": actor.shells}
+	var at: Vector2 = button.get_global_rect().get_center()
+	var motion := InputEventMouseMotion.new()
+	motion.position = at
+	motion.global_position = at
+	root.push_input(motion, true)
+	var down := InputEventMouseButton.new()
+	down.button_index = MOUSE_BUTTON_LEFT
+	down.position = at
+	down.global_position = at
+	down.pressed = true
+	root.push_input(down, true)
+	var handled: bool = root.is_input_handled()
+	var up := down.duplicate() as InputEventMouseButton
+	up.pressed = false
+	root.push_input(up, true)
+	return _expect(handled and root.is_input_handled() and not paused and not _shell.menu.is_open() and _exact(actor.get_world_action_records(), before.history) and _exact(_shell.get_input_observation_state(), before.input) and actor.get_world_action_clock() == before.clock and actor.hp == before.hp and actor.shells == before.shells, label + ": actual routed GUI Resume is consumed without input/action/resource change")
+
+
+func _observe_tick() -> void:
+	if paused: await process_frame
+	else:
+		_barrier.waiting = true
+		await _barrier.observed
+
+
+func _settle_shell() -> void:
+	for _frame: int in range(6): await process_frame
+
+
+func _diagnostic() -> String:
+	return str({"paused": paused, "shell_error": _shell.campaign_error if is_instance_valid(_shell) else "missing", "active": _shell.active_level.level_id if is_instance_valid(_shell) and is_instance_valid(_shell.active_level) else "", "production_ready": _production_ready, "contact_damage": _damage_events, "restore_events": _restore_events, "checkpoints": _checkpoints, "events": _events, "contact": _contact_sample, "base": super._diagnostic() if is_instance_valid(_hero) and is_instance_valid(_level) else "old authored world retired"})
+
+
+func _dispose() -> void:
+	_watch_restore = false
+	if node_added.is_connected(_observe_restore): node_added.disconnect(_observe_restore)
+	var refs: Array = [_game, _hero, _level, _scheduler, _old_hero, _old_level, _barrier]
+	refs.append_array(_sources.values())
+	refs.append_array(_departed_refs)
+	if is_instance_valid(_shell):
+		refs.append_array([_shell.player, _shell.active_level, _shell.world])
+		_shell.free()
+	if is_instance_valid(_barrier):
+		_barrier.waiting = false
+		if _barrier.get_parent() == root: root.remove_child(_barrier)
+		_barrier.queue_free()
+	paused = false
+	await _settle_shell()
+	await create_timer(0.15, true, false, true).timeout
+	var clean: bool = true
+	for node: Variant in refs: clean = clean and not is_instance_valid(node)
+	for group: String in ["enemies", "practice_targets", "lab_weapons", "required_cues"]: clean = clean and get_nodes_in_group(group).is_empty()
+	_expect(clean, "production lifecycle releases every old/fresh typed World/actor/cue after finite audio drain")
+	_expect(FileAccess.get_file_as_string(RegistryScript.DATA_PATH) == _canonical_bytes, "TEST ONLY production registry bytes remain unchanged")
+	_cleanup_owned_path(_test_root)
+	_game = null
+	_shell = null
+	_hero = null
+	_level = null
+	_scheduler = null
+	_sources.clear()
+	_barrier = null
+
+
+func _cleanup_owned_path(path: String) -> void:
+	if _test_root.is_empty() or not path.begins_with(_test_root) or not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(path)): return
+	for directory: String in DirAccess.get_directories_at(path): _cleanup_owned_path(path.path_join(directory))
+	for filename: String in DirAccess.get_files_at(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path.path_join(filename)))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+
+func _finish() -> void:
+	print("Living Forest TEST ONLY production: %d checks, %d failures; checkpoint_only=%s; actual Save/Continue/Retry/contact; no canonical acceptance, authoredL3/native gestures/human/art claim." % [_checks, _failures, _checkpoint_only])
+	quit(1 if _failures else 0)

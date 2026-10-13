@@ -1,0 +1,417 @@
+--- a/scripts/environment/scheduler_spore_source_protocol.gd
++++ b/scripts/environment/scheduler_spore_source_protocol.gd
+@@ -4,6 +4,7 @@
+ ## Source-owned codecs validate genuine actor/controller/player units. The
+ ## trusted parent still validates and commits the complete paused aggregate.
+ 
++const BoundaryProfile = preload("res://.cinder/native-boundary-profile/sink.gd")
+ const Exact = preload("res://scripts/campaign/exact_json.gd")
+ const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+ const Route = preload("res://scripts/combat/repulsion_route.gd")
+@@ -364,58 +365,154 @@
+ 
+ 
+ func _binding_error(allow_missing_defeat: bool) -> String:
++	var _bp_started: int = BoundaryProfile.begin("Protocol._binding_error", get_instance_id())
++	var _bp_stage_label: String = "Protocol.native_handles_and_floor_resources"
++	var _bp_stage_started: int = BoundaryProfile.begin(_bp_stage_label)
+ 	if _descriptor.is_empty():
+-		return "Protocol has not been configured"
++		var _bp_result_0: String = "Protocol has not been configured"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_0
+ 	var world: Node3D = _world_node()
+ 	var scheduler: CinderThreatScheduler = _scheduler_node()
+ 	var player: CinderPlayer = _player_node()
+ 	if not _live(world) or not _live(scheduler) or not _live(player) or scheduler.get_world_3d() != world.get_world_3d() or player.get_world_3d() != world.get_world_3d() or not _under(scheduler, world) or not _under(player, world) or not is_instance_valid(_codec) or _codec.get_script() != _codec_script:
+-		return "Retained actual world/controller/player/codec binding changed"
++		var _bp_result_1: String = "Retained actual world/controller/player/codec binding changed"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_1
+ 	var floor_error: String = _floor_handles_error(_environment.floors)
+ 	if not floor_error.is_empty():
+-		return floor_error
++		var _bp_result_2: String = floor_error
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_2
+ 	for id: String in _environment.floors:
+ 		if (_environment.floors[id].collision as CollisionShape3D).shape != _floor_shapes[id]:
+-			return "Retained actual floor shape resource changed"
++			var _bp_result_3: String = "Retained actual floor shape resource changed"
++			BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++			BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++			return _bp_result_3
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	_bp_stage_label = "Protocol.fresh_static_environment"
++	_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)
+ 	var static_environment: Dictionary = Route.static_environment_state(world, _environment.floors, _descriptor.source_environment, Vector3(0.0, _ground_y - float(_descriptor.source_environment.foot_offset), 0.0))
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	_bp_stage_label = "Protocol.world_floor_condition"
++	_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)
+ 	if static_environment.has("error") or not _same_bound_reference(static_environment.get("world_signature"), _world_signature_json, "world") or not _same_bound_reference(static_environment.get("floor_signature"), _floor_signature_json, "floor"):
+-		return "Retained actual static world/floor binding changed"
++		var _bp_result_4: String = "Retained actual static world/floor binding changed"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_4
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	_bp_stage_label = "Protocol.source_handle_and_priority"
++	_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)
+ 	if not _consumer_id.is_empty() and not _live(_consumer_node()):
+-		return "Retained environmental consumer disappeared"
++		var _bp_result_5: String = "Retained environmental consumer disappeared"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_5
+ 	var source: CharacterBody3D = _source_node()
+ 	if source == null:
+-		return "" if allow_missing_defeat else "Retained actual source disappeared"
++		var _bp_result_6: String = "" if allow_missing_defeat else "Retained actual source disappeared"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_6
+ 	if not _live(source) or source.get_world_3d() != world.get_world_3d() or not _under(source, world) or source.get_script() != _source_script:
+-		return "Retained actual source/script/world binding changed"
++		var _bp_result_7: String = "Retained actual source/script/world binding changed"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_7
+ 	if source.process_physics_priority <= scheduler.process_physics_priority or source.process_physics_priority <= player.process_physics_priority:
+-		return "Actual source sampling must remain after retained Scheduler and Player physics"
++		var _bp_result_8: String = "Actual source sampling must remain after retained Scheduler and Player physics"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_8
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	_bp_stage_label = "Protocol.owned_binding_getter"
++	_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)
+ 	var native: Variant = source.call("get_spore_native_bindings")
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	_bp_stage_label = "Protocol.native_configuration_check"
++	_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)
+ 	if not _live(source) or not _live(scheduler) or not _live(player) or not _live(world) or not _valid_object(_codec):
+-		return "Owned binding query released a retained native handle"
++		var _bp_result_9: String = "Owned binding query released a retained native handle"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_9
+ 	if not native is Dictionary or not _keys(native, ["api_revision", "actor_revision", "source_id", "scheduler", "player", "codec", "configuration"]) or native.api_revision != ACTOR_REVISION or native.actor_revision != _descriptor.actor_revision or native.source_id != _descriptor.source_id or not _valid_object(native.scheduler) or not _valid_object(native.player) or not _valid_object(native.codec) or native.scheduler != scheduler or native.player != player or native.codec != _codec or not native.configuration is Dictionary or Exact.stringify(native.configuration) != _configuration_json:
+-		return "Owned immutable source/controller/codec/configuration binding changed"
++		var _bp_result_10: String = "Owned immutable source/controller/codec/configuration binding changed"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_10
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	_bp_stage_label = "Protocol.body_condition"
++	_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)
+ 	var collision: CollisionShape3D = _collision.get_ref() as CollisionShape3D
+ 	if not _live(collision) or collision.get_parent() != source or source.get_node_or_null("BodyCollision") != collision or collision.shape != _shape or not is_instance_valid(_shape) or not _same_bound_reference(_body_properties(source, collision), _native_body_json, "body"):
+-		return "Retained native body/collider/resource/properties changed"
++		var _bp_result_11: String = "Retained native body/collider/resource/properties changed"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_11
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	_bp_stage_label = "Protocol.registration_and_native_motion"
++	_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)
+ 	var owners: PackedInt32Array = source.get_shape_owners()
+ 	if owners.size() != 1 or owners[0] != _shape_owner or source.shape_owner_get_owner(_shape_owner) != collision or source.shape_owner_get_shape_count(_shape_owner) != 1 or source.shape_owner_get_shape(_shape_owner, 0) != _shape or source.shape_owner_get_transform(_shape_owner) != collision.transform or source.is_shape_owner_disabled(_shape_owner) != collision.disabled:
+-		return "Retained actual native shape registration changed"
++		var _bp_result_12: String = "Retained actual native shape registration changed"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_12
+ 	if not _same(_basis(source.global_basis), _basis(Basis.IDENTITY)) or not source.global_position.is_finite() or not source.velocity.is_finite() or not source.get_collision_exceptions().is_empty() or source.get_platform_velocity() != Vector3.ZERO or source.get_platform_angular_velocity() != Vector3.ZERO:
+-		return "Source must retain upright finite fixed-world native motion"
++		var _bp_result_13: String = "Source must retain upright finite fixed-world native motion"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_13
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	_bp_stage_label = "Protocol.owned_response_getter"
++	_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)
+ 	var response: Variant = source.call("get_spore_response_state")
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	_bp_stage_label = "Protocol.response_validation_and_lifecycle"
++	_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)
+ 	if not _live(source) or not _live(scheduler) or not _live(player) or not _live(world) or not _live(collision):
+-		return "Owned response query released a retained native handle"
++		var _bp_result_14: String = "Owned response query released a retained native handle"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_14
+ 	var error: String = _response_error(response, _descriptor.source_id, _consumer_id, float(_descriptor.source_environment.support_radius), float(_descriptor.height))
+ 	if not error.is_empty():
+-		return error
++		var _bp_result_15: String = error
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_15
+ 	if not _same(_vector(response.position), _vector(source.global_position)) or not _same(_vector(response.velocity), _vector(source.velocity)):
+-		return "Owned response changed actual source pose/velocity"
++		var _bp_result_16: String = "Owned response changed actual source pose/velocity"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_16
+ 	if source.collision_layer != (2 if response.alive else 0) or source.collision_mask != (1 if response.alive else 0) or collision.disabled == response.alive:
+-		return "Actual source collision lifecycle differs from its owned alive state"
++		var _bp_result_17: String = "Actual source collision lifecycle differs from its owned alive state"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_17
+ 	if not scheduler.has_method("source_control_state"):
+-		return "Actual Scheduler pure source accessor disappeared"
++		var _bp_result_18: String = "Actual Scheduler pure source accessor disappeared"
++		BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++		BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++		return _bp_result_18
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	_bp_stage_label = "Protocol.source_control_getter"
++	_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)
+ 	var control: Variant = scheduler.call("source_control_state", source)
+-	return _control_error(control, source.get_instance_id())
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	_bp_stage_label = "Protocol.source_control_validation"
++	_bp_stage_started = BoundaryProfile.begin(_bp_stage_label)
++	var _bp_result_19: String = _control_error(control, source.get_instance_id())
++	BoundaryProfile.finish(_bp_stage_label, _bp_stage_started)
++	BoundaryProfile.finish("Protocol._binding_error", _bp_started)
++	return _bp_result_19
+ 
+ 
+ func _context_error(context: Dictionary) -> String:
+@@ -496,6 +593,7 @@
+ 
+ 
+ static func _body_properties(source: CharacterBody3D, collision: CollisionShape3D) -> Dictionary:
++	var _bp_started: int = BoundaryProfile.begin("Protocol.body_properties")
+ 	var shape: Shape3D = collision.shape
+ 	var dimensions: Dictionary = {"kind": shape.get_class(), "margin": shape.margin, "custom_solver_bias": shape.custom_solver_bias}
+ 	if shape is CapsuleShape3D:
+@@ -503,7 +601,9 @@
+ 		dimensions["height"] = shape.height
+ 	elif shape is BoxShape3D:
+ 		dimensions["size"] = _vector(shape.size)
+-	return {"collision_basis": _basis(collision.basis), "collision_position": _vector(collision.position), "shape": dimensions, "safe_margin": source.safe_margin, "priority": source.collision_priority, "up_direction": _vector(source.up_direction), "floor_snap_length": source.floor_snap_length, "motion_mode": source.motion_mode, "axis_locks": [source.axis_lock_linear_x, source.axis_lock_linear_y, source.axis_lock_linear_z, source.axis_lock_angular_x, source.axis_lock_angular_y, source.axis_lock_angular_z], "process_mode": source.process_mode, "physics_priority": source.process_physics_priority}
++	var _bp_result_0: Dictionary = {"collision_basis": _basis(collision.basis), "collision_position": _vector(collision.position), "shape": dimensions, "safe_margin": source.safe_margin, "priority": source.collision_priority, "up_direction": _vector(source.up_direction), "floor_snap_length": source.floor_snap_length, "motion_mode": source.motion_mode, "axis_locks": [source.axis_lock_linear_x, source.axis_lock_linear_y, source.axis_lock_linear_z, source.axis_lock_angular_x, source.axis_lock_angular_y, source.axis_lock_angular_z], "process_mode": source.process_mode, "physics_priority": source.process_physics_priority}
++	BoundaryProfile.finish("Protocol.body_properties", _bp_started)
++	return _bp_result_0
+ 
+ 
+ func _source_node() -> CharacterBody3D:
+@@ -592,14 +692,23 @@
+ ## Internal selection only; actual native trees are STILL derived at each boundary.
+ ## Missing/empty/changed receipt or subclass keeps the ORIGINAL serialization path.
+ func _same_bound_reference(actual: Variant, expected_json: String, kind: String) -> bool:
++	var _bp_started: int = BoundaryProfile.begin("Protocol.compare." + kind, get_instance_id())
+ 	if get_script() != CinderSchedulerSporeSourceProtocol:
+-		return _same_reference(actual, expected_json)
++		var _bp_result_0: bool = _same_reference(actual, expected_json)
++		BoundaryProfile.finish("Protocol.compare." + kind, _bp_started)
++		return _bp_result_0
+ 	var retained: Variant = _comparison_references.get(kind)
+ 	if not retained is Dictionary or not retained.has("value") or not retained.get("json") is String or retained.json.is_empty() or retained.json != expected_json:
+-		return _same_reference(actual, expected_json)
++		var _bp_result_1: bool = _same_reference(actual, expected_json)
++		BoundaryProfile.finish("Protocol.compare." + kind, _bp_started)
++		return _bp_result_1
+ 	if retained.has("bits"):
+-		return _same_bits_reference(actual, retained.bits)
+-	return _same_closed_reference(actual, retained.value)
++		var _bp_result_2: bool = _same_bits_reference(actual, retained.bits)
++		BoundaryProfile.finish("Protocol.compare." + kind, _bp_started)
++		return _bp_result_2
++	var _bp_result_3: bool = _same_closed_reference(actual, retained.value)
++	BoundaryProfile.finish("Protocol.compare." + kind, _bp_started)
++	return _bp_result_3
+ 
+ 
+ ## Compile ONLY an originally admitted private expected tree. These bytes are
+--- a/scripts/combat/repulsion_route.gd
++++ b/scripts/combat/repulsion_route.gd
+@@ -8,6 +8,7 @@
+ ## floor footprint uses its enclosing disc: safe but conservative near corners
+ ## and adjacent floor seams. No field avoidance, no-repeat or fairness proof.
+ 
++const BoundaryProfile = preload("res://.cinder/native-boundary-profile/sink.gd")
+ const Geometry = preload("res://scripts/combat/threat_geometry.gd")
+ const BodySweep = preload("res://scripts/combat/body_sweep.gd")
+ const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+@@ -219,13 +220,20 @@
+ ## body_reference is the immutable measured support_radius/foot_offset from
+ ## binding_state; floor_position selects the authored static feet plane.
+ static func static_environment_state(root: Node3D, floors: Dictionary, body_reference: Dictionary, floor_position: Vector3) -> Dictionary:
++	var _bp_started: int = BoundaryProfile.begin("Route.static_environment_state")
+ 	var world: Dictionary = _collision_signature(root, root)
+ 	if world.has("error"):
+-		return world
++		var _bp_result_0: Dictionary = world
++		BoundaryProfile.finish("Route.static_environment_state", _bp_started)
++		return _bp_result_0
+ 	var plan: Dictionary = _floor_plan(root, floors, root, body_reference, floor_position)
+ 	if plan.has("error"):
+-		return plan
+-	return {"world_signature": world.signature.duplicate(true), "floor_signature": plan.signature.duplicate(true)}
++		var _bp_result_1: Dictionary = plan
++		BoundaryProfile.finish("Route.static_environment_state", _bp_started)
++		return _bp_result_1
++	var _bp_result_2: Dictionary = {"world_signature": world.signature.duplicate(true), "floor_signature": plan.signature.duplicate(true)}
++	BoundaryProfile.finish("Route.static_environment_state", _bp_started)
++	return _bp_result_2
+ 
+ 
+ ## Snapshot transport requires a paused controller boundary, not a motion tick.
+@@ -394,44 +402,61 @@
+ 
+ 
+ static func _floor_plan(owner: Node3D, floors: Variant, root: Node3D, description: Dictionary, at_position: Variant = null) -> Dictionary:
++	var _bp_started: int = BoundaryProfile.begin("Route.floor_plan")
+ 	if not floors is Dictionary or floors.is_empty() or floors.size() > 32:
+-		return {"error": "One to 32 stable authored floor bindings required"}
++		var _bp_result_0: Dictionary = {"error": "One to 32 stable authored floor bindings required"}
++		BoundaryProfile.finish("Route.floor_plan", _bp_started)
++		return _bp_result_0
+ 	var measured_position: Vector3 = owner.global_position if at_position == null else at_position
+ 	var regions: Array = []
+ 	var signatures: Array = []
+ 	var ids: Array = floors.keys()
+ 	for id: Variant in ids:
+ 		if not id is String:
+-			return {"error": "Floor IDs must be stable authored strings"}
++			var _bp_result_1: Dictionary = {"error": "Floor IDs must be stable authored strings"}
++			BoundaryProfile.finish("Route.floor_plan", _bp_started)
++			return _bp_result_1
+ 	ids.sort()
+ 	var used: Dictionary = {}
+ 	var height: float = INF
+ 	for id: Variant in ids:
+ 		if not id is String or not _stable_path(id) or not floors[id] is Dictionary or not floors[id].get("safe_rect") is Rect2:
+-			return {"error": "Stable floor IDs and finite world X/Z safe rectangles required"}
++			var _bp_result_2: Dictionary = {"error": "Stable floor IDs and finite world X/Z safe rectangles required"}
++			BoundaryProfile.finish("Route.floor_plan", _bp_started)
++			return _bp_result_2
+ 		var collision: CollisionShape3D = floors[id].get("collision") as CollisionShape3D
+ 		if not is_instance_valid(collision) or not collision.is_inside_tree() or collision.is_queued_for_deletion() or collision.disabled or not collision.shape is BoxShape3D or not collision.global_basis.is_equal_approx(Basis.IDENTITY) or not collision.get_parent() is StaticBody3D or not _under(collision, root) or used.has(collision.get_instance_id()):
+-			return {"error": "Distinct live unscaled upright static floor box bindings required"}
++			var _bp_result_3: Dictionary = {"error": "Distinct live unscaled upright static floor box bindings required"}
++			BoundaryProfile.finish("Route.floor_plan", _bp_started)
++			return _bp_result_3
+ 		var body: StaticBody3D = collision.get_parent() as StaticBody3D
+ 		if body is AnimatableBody3D or body.get_world_3d() != owner.get_world_3d() or (body.collision_layer & 1) == 0 or body.constant_linear_velocity != Vector3.ZERO or body.constant_angular_velocity != Vector3.ZERO:
+-			return {"error": "Supported floors cannot move or omit scenery collision"}
++			var _bp_result_4: Dictionary = {"error": "Supported floors cannot move or omit scenery collision"}
++			BoundaryProfile.finish("Route.floor_plan", _bp_started)
++			return _bp_result_4
+ 		var count: int = 0
+ 		for shape_owner: int in body.get_shape_owners():
+ 			if not body.is_shape_owner_disabled(shape_owner):
+ 				count += body.shape_owner_get_shape_count(shape_owner)
+ 		if count != 1:
+-			return {"error": "Supported floor must own exactly one enabled box"}
++			var _bp_result_5: Dictionary = {"error": "Supported floor must own exactly one enabled box"}
++			BoundaryProfile.finish("Route.floor_plan", _bp_started)
++			return _bp_result_5
+ 		var size: Vector3 = (collision.shape as BoxShape3D).size
+ 		var rect: Rect2 = floors[id].safe_rect
+ 		var physical := Rect2(Geometry.planar(collision.global_position) - Vector2(size.x, size.z) * 0.5, Vector2(size.x, size.z))
+ 		var top: float = collision.global_position.y + size.y * 0.5
+ 		if not size.is_finite() or minf(size.x, minf(size.y, size.z)) <= EPSILON or not collision.global_position.is_finite() or not rect.position.is_finite() or not rect.size.is_finite() or rect.size.x <= 2.0 * float(description.support_radius) or rect.size.y <= 2.0 * float(description.support_radius) or not physical.encloses(rect) or absf(measured_position.y + float(description.foot_offset) - top) > FEET_TOLERANCE or (is_finite(height) and absf(top - height) > EPSILON):
+-			return {"error": "Authored floor rectangles must fit solid boxes at the measured source feet height"}
++			var _bp_result_6: Dictionary = {"error": "Authored floor rectangles must fit solid boxes at the measured source feet height"}
++			BoundaryProfile.finish("Route.floor_plan", _bp_started)
++			return _bp_result_6
+ 		height = top
+ 		used[collision.get_instance_id()] = true
+ 		regions.append({"collision": collision, "safe_rect": rect, "top": top})
+ 		signatures.append({"floor_id": id, "path": String(root.get_path_to(collision)), "transform": _transform(collision.global_transform), "shape": _shape_data(collision.shape), "layer": body.collision_layer, "mask": body.collision_mask, "safe_rect": [rect.position.x, rect.position.y, rect.size.x, rect.size.y]})
+-	return {"regions": regions, "signature": signatures}
++	var _bp_result_7: Dictionary = {"regions": regions, "signature": signatures}
++	BoundaryProfile.finish("Route.floor_plan", _bp_started)
++	return _bp_result_7
+ 
+ 
+ static func _supported(owner: CharacterBody3D, start: Vector3, finish: Vector3, regions: Array, radius: float, foot_offset: float) -> bool:
+@@ -511,8 +536,11 @@
+ 
+ 
+ static func _collision_signature(owner: Node3D, root: Node3D) -> Dictionary:
++	var _bp_started: int = BoundaryProfile.begin("Route.collision_signature")
+ 	if not is_instance_valid(root) or not root.is_inside_tree() or root.is_queued_for_deletion() or root.get_world_3d() != owner.get_world_3d() or not _under(owner, root):
+-		return {"error": "Actual same-world root containing source and all scenery required"}
++		var _bp_result_0: Dictionary = {"error": "Actual same-world root containing source and all scenery required"}
++		BoundaryProfile.finish("Route.collision_signature", _bp_started)
++		return _bp_result_0
+ 	var pending: Array[Node] = [owner.get_tree().root]
+ 	var colliders: Array = []
+ 	while not pending.is_empty():
+@@ -521,40 +549,58 @@
+ 		if not node is Node3D or (node as Node3D).get_world_3d() != owner.get_world_3d():
+ 			continue
+ 		if node is GridMap or (node is CSGShape3D and (node as CSGShape3D).use_collision):
+-			return {"error": "Generated scenery collision has no supported stable signature"}
++			var _bp_result_1: Dictionary = {"error": "Generated scenery collision has no supported stable signature"}
++			BoundaryProfile.finish("Route.collision_signature", _bp_started)
++			return _bp_result_1
+ 		if not node is PhysicsBody3D or ((node as PhysicsBody3D).collision_layer & 1) == 0:
+ 			continue
+ 		if not node is StaticBody3D or node is AnimatableBody3D or not _under(node, root):
+-			return {"error": "Every scenery blocker must be a fixed static body under world_root"}
++			var _bp_result_2: Dictionary = {"error": "Every scenery blocker must be a fixed static body under world_root"}
++			BoundaryProfile.finish("Route.collision_signature", _bp_started)
++			return _bp_result_2
+ 		var body: StaticBody3D = node as StaticBody3D
+ 		if body.is_queued_for_deletion() or body.constant_linear_velocity != Vector3.ZERO or body.constant_angular_velocity != Vector3.ZERO:
+-			return {"error": "Moving/removed static scenery is unsupported"}
++			var _bp_result_3: Dictionary = {"error": "Moving/removed static scenery is unsupported"}
++			BoundaryProfile.finish("Route.collision_signature", _bp_started)
++			return _bp_result_3
+ 		var path: String = String(root.get_path_to(body))
+ 		if not _stable_path(path):
+-			return {"error": "Scenery requires stable authored collider paths"}
++			var _bp_result_4: Dictionary = {"error": "Scenery requires stable authored collider paths"}
++			BoundaryProfile.finish("Route.collision_signature", _bp_started)
++			return _bp_result_4
+ 		var shapes: Array = []
+ 		for id: int in body.get_shape_owners():
+ 			if body.is_shape_owner_disabled(id):
+ 				continue
+ 			var shape_owner: Object = body.shape_owner_get_owner(id)
+ 			if not shape_owner is Node or not body.is_ancestor_of(shape_owner as Node):
+-				return {"error": "Scenery shape needs a stable authored node owner"}
++				var _bp_result_5: Dictionary = {"error": "Scenery shape needs a stable authored node owner"}
++				BoundaryProfile.finish("Route.collision_signature", _bp_started)
++				return _bp_result_5
+ 			var shape_path: String = String(body.get_path_to(shape_owner as Node))
+ 			if not _stable_path(shape_path):
+-				return {"error": "Scenery shape requires stable authored path"}
++				var _bp_result_6: Dictionary = {"error": "Scenery shape requires stable authored path"}
++				BoundaryProfile.finish("Route.collision_signature", _bp_started)
++				return _bp_result_6
+ 			for index: int in range(body.shape_owner_get_shape_count(id)):
+ 				var data: Dictionary = _shape_data(body.shape_owner_get_shape(id, index))
+ 				if data.is_empty():
+-					return {"error": "Unsupported immutable scenery shape"}
++					var _bp_result_7: Dictionary = {"error": "Unsupported immutable scenery shape"}
++					BoundaryProfile.finish("Route.collision_signature", _bp_started)
++					return _bp_result_7
+ 				shapes.append({"path": shape_path, "index": index, "transform": _transform(body.shape_owner_get_transform(id)), "data": data})
+ 		shapes.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.path < b.path or (a.path == b.path and a.index < b.index))
+ 		colliders.append({"path": path, "transform": _transform(body.global_transform), "layer": body.collision_layer, "mask": body.collision_mask, "priority": body.collision_priority, "shapes": shapes})
+ 		if colliders.size() > 256:
+-			return {"error": "Supported world exceeds 256 scenery colliders"}
++			var _bp_result_8: Dictionary = {"error": "Supported world exceeds 256 scenery colliders"}
++			BoundaryProfile.finish("Route.collision_signature", _bp_started)
++			return _bp_result_8
+ 	colliders.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.path < b.path)
+ 	var signature: Dictionary = {"engine": ProjectSettings.get_setting("physics/3d/physics_engine", "DEFAULT"), "tick_rate": Engine.physics_ticks_per_second, "colliders": colliders}
+ 	var error: String = Codec.value_error(signature)
+-	return {"signature": signature} if error.is_empty() else {"error": error}
++	var _bp_result_9: Dictionary = {"signature": signature} if error.is_empty() else {"error": error}
++	BoundaryProfile.finish("Route.collision_signature", _bp_started)
++	return _bp_result_9
+ 
+ 
+ static func _shape_data(shape: Shape3D) -> Dictionary:

@@ -1,0 +1,1451 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-12T08:27:15.057340+00:00",
+  "scope": "Read-only new source/result/manifest/raw/report custody and focused source review. No engine execution, mutation of owner files, or acceptance. Failed/nonclean results retain actual scopes.",
+  "jobs": [
+    {
+      "label": "a1-c31-approach-shared52-01",
+      "status": "clean bounded pass",
+      "revision": "bdadee4f16343e437c6b04a66599648700fc010e",
+      "shared_runtime_publication": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l3_spore_component.gd",
+        "--",
+        "--approach-proof-boundaries"
+      ],
+      "result_sha256": "135882e1b4e627d693e358b43bd6fd8d3772b227ae11065e07b199c15601a33f",
+      "source_manifest_sha256": "fbac535dece3c1022dd1cc585de282a117ff166a73119beabc1df80197c91a7b",
+      "raw_sha256": "c0667027079f08b88973324ecdc4ba7dfb8f0b428e77b3dba1ea1e5775ff2110",
+      "native_report_sha256": "9fd2296e99fe15d6b442a093de9d64bc78b86252df3dc28fa4c8e632d7f0a5bb",
+      "checks": 135,
+      "failures": 0,
+      "exit_code": 0,
+      "closed_at": "2026-10-12T07:24:39.593448+00:00",
+      "source_count": 725,
+      "prior_uid_count": 456,
+      "joins": {
+        "manifest_hash": true,
+        "revision": true,
+        "shared": true,
+        "raw_hash": true,
+        "report_hash": true,
+        "source_count": true,
+        "sources_exact": true,
+        "report_counters": true,
+        "footer": true,
+        "closed": true,
+        "no_new_uid": true,
+        "no_changed_prior_uid": true,
+        "critical_git_exact": true,
+        "capture_sizes": true
+      },
+      "source_mismatches": [],
+      "critical_sources": [
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "87a432a4d7005340f6d09984464654f80035fdb60e6a3a808eedb1d963cb9a18",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l3_spore_component.gd",
+          "frozen_sha256": "3dd281b5180184329b81850d86a0472ee9e712342238409c795de879255dd737",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "90a4438ac71ccfdd3470c3daf097e437355c7471aa9c88b6c0b0290700a68276",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        }
+      ],
+      "raw_diagnostics": [],
+      "first_failure_scope": {},
+      "fixture_mode": "approach-proof-boundaries",
+      "receipt_stages": [],
+      "captures": [],
+      "focus_tail": [],
+      "scope": null,
+      "no_claims": null,
+      "swipes": 6,
+      "primaries": 0
+    },
+    {
+      "label": "a1-l4-moving-helper-current-01",
+      "status": "clean bounded pass",
+      "revision": "bdadee4f16343e437c6b04a66599648700fc010e",
+      "shared_runtime_publication": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l4_whole_save.gd",
+        "--",
+        "--moving-helper-save"
+      ],
+      "result_sha256": "8e4f5c81648546ca94865870355f22d4444bc629431aca347f7b8af33f2d396b",
+      "source_manifest_sha256": "085baf0173ee11fe6518c9c37b30157051a5090f2f9a930f180d306cdc296d9f",
+      "raw_sha256": "e1e9235562de981d3db23f36f04cbb34096ce9fb0070dc097515718724100cf2",
+      "native_report_sha256": "b32b3f999bead43840747f846d572308f93d7f6c73660b3b5d131e117f776981",
+      "checks": 201,
+      "failures": 0,
+      "exit_code": 0,
+      "closed_at": "2026-10-12T07:28:23.687201+00:00",
+      "source_count": 720,
+      "prior_uid_count": 456,
+      "joins": {
+        "manifest_hash": true,
+        "revision": true,
+        "shared": true,
+        "raw_hash": true,
+        "report_hash": true,
+        "source_count": true,
+        "sources_exact": true,
+        "report_counters": true,
+        "footer": true,
+        "closed": true,
+        "no_new_uid": true,
+        "no_changed_prior_uid": true,
+        "critical_git_exact": true,
+        "capture_sizes": true
+      },
+      "source_mismatches": [],
+      "critical_sources": [
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "87a432a4d7005340f6d09984464654f80035fdb60e6a3a808eedb1d963cb9a18",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_portrait.gd",
+          "frozen_sha256": "8c74c2c7d65340c433adc267eda65c6159aad0c5555df412d979c1471afe744e",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "90a4438ac71ccfdd3470c3daf097e437355c7471aa9c88b6c0b0290700a68276",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        }
+      ],
+      "raw_diagnostics": [],
+      "first_failure_scope": {},
+      "fixture_mode": "moving-helper-save",
+      "receipt_stages": [
+        "pristine entrance",
+        "direct actual candidate quiet restore",
+        "actual entrance warning",
+        "direct actual candidate quiet restore",
+        "TEST actual unfinished helper Save",
+        "direct actual candidate quiet restore",
+        "fresh unfinished helper Resume completed"
+      ],
+      "captures": [],
+      "focus_tail": [],
+      "scope": "TEST metadata/generic predecessors/injured carryover; default is actual entrance Warning Save/format2/pristine constructors/fresh Continue/earlier Retry/quiet cleanup only. Opt-in King intro/helper transport reuses labelled public injuries/placement; the intro selector leaves the King uninjured and observes actual finite movement/fresh Resume/earlier boss-entry Retry. The terminal selector observes real completed intro/stopped helpers, public King defeat, completed/contact format2 transport, exact fresh Title Continue and earlier phase Retry; its actual unavailable A1-L5 exit failure is preserved and is not a successor acceptance. No earned route, production registration, art/kit/balance/performance/mobile acceptance",
+      "no_claims": null,
+      "swipes": null,
+      "primaries": null
+    },
+    {
+      "label": "a1-l4-terminal-save-01",
+      "status": "NONCLEAN/incomplete",
+      "revision": "bdadee4f16343e437c6b04a66599648700fc010e",
+      "shared_runtime_publication": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l4_whole_save.gd",
+        "--",
+        "--terminal-save"
+      ],
+      "result_sha256": "7b5c08ac014534e5a551ee12d61251b299103e7eeff51bf4b272eb37d773b325",
+      "source_manifest_sha256": "48f59aeb1e3b55f86435b1a389d7b1d985d1b796cc6525740bad944a69c90cf4",
+      "raw_sha256": "778ae310f7e5aa30f7785c075ca9b5a48305b346128c522dc2d327036e8abf59",
+      "native_report_sha256": "bc6a6aa775cdc9cf39960ed9d8f07c1c622329edb0e9e064059d78242ae15e03",
+      "checks": 147,
+      "failures": 0,
+      "exit_code": 0,
+      "closed_at": "2026-10-12T07:30:01.108603+00:00",
+      "source_count": 720,
+      "prior_uid_count": 456,
+      "joins": {
+        "manifest_hash": true,
+        "revision": true,
+        "shared": true,
+        "raw_hash": true,
+        "report_hash": true,
+        "source_count": true,
+        "sources_exact": true,
+        "report_counters": true,
+        "footer": true,
+        "closed": true,
+        "no_new_uid": true,
+        "no_changed_prior_uid": true,
+        "critical_git_exact": true,
+        "capture_sizes": true
+      },
+      "source_mismatches": [],
+      "critical_sources": [
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "87a432a4d7005340f6d09984464654f80035fdb60e6a3a808eedb1d963cb9a18",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_portrait.gd",
+          "frozen_sha256": "8c74c2c7d65340c433adc267eda65c6159aad0c5555df412d979c1471afe744e",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "90a4438ac71ccfdd3470c3daf097e437355c7471aa9c88b6c0b0290700a68276",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        }
+      ],
+      "raw_diagnostics": [
+        "SCRIPT ERROR: Invalid access to property or key 'resources' on a base object of type 'Dictionary'."
+      ],
+      "first_failure_scope": {},
+      "fixture_mode": "terminal-save",
+      "receipt_stages": [
+        "pristine entrance",
+        "direct actual candidate quiet restore",
+        "actual entrance warning",
+        "direct actual candidate quiet restore"
+      ],
+      "captures": [],
+      "focus_tail": [],
+      "scope": "TEST metadata/generic predecessors/injured carryover; default is actual entrance Warning Save/format2/pristine constructors/fresh Continue/earlier Retry/quiet cleanup only. Opt-in King intro/helper transport reuses labelled public injuries/placement; the intro selector leaves the King uninjured and observes actual finite movement/fresh Resume/earlier boss-entry Retry. The terminal selector observes real completed intro/stopped helpers, public King defeat, completed/contact format2 transport, exact fresh Title Continue and earlier phase Retry; its actual unavailable A1-L5 exit failure is preserved and is not a successor acceptance. No earned route, production registration, art/kit/balance/performance/mobile acceptance",
+      "no_claims": null,
+      "swipes": null,
+      "primaries": null
+    },
+    {
+      "label": "a1-l4-terminal-save-02",
+      "status": "failed",
+      "revision": "3e24385e9f41d5aa87a30be207448c440a92146c",
+      "shared_runtime_publication": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l4_whole_save.gd",
+        "--",
+        "--terminal-save"
+      ],
+      "result_sha256": "0fece0022ed76e323f303916788be99cae077edacae2c1798c4012485aac52a2",
+      "source_manifest_sha256": "0a8a2c7246a8ee8908a314ed11bde423e178a98fec9c00bc96929541150f767c",
+      "raw_sha256": "7a254e45640e6c88532af5e78da1f49c3b1ebfe7512a0ea7cc8bb30e1fa96486",
+      "native_report_sha256": "d38a13fea9eb9ea4d628e15fdddcdb5d54aa095c4a0990ef9a40510d7e81f269",
+      "checks": 163,
+      "failures": 1,
+      "exit_code": 1,
+      "closed_at": "2026-10-12T07:32:49.168957+00:00",
+      "source_count": 720,
+      "prior_uid_count": 456,
+      "joins": {
+        "manifest_hash": true,
+        "revision": true,
+        "shared": true,
+        "raw_hash": true,
+        "report_hash": true,
+        "source_count": true,
+        "sources_exact": true,
+        "report_counters": true,
+        "footer": true,
+        "closed": true,
+        "no_new_uid": true,
+        "no_changed_prior_uid": true,
+        "critical_git_exact": true,
+        "capture_sizes": true
+      },
+      "source_mismatches": [],
+      "critical_sources": [
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "87a432a4d7005340f6d09984464654f80035fdb60e6a3a808eedb1d963cb9a18",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_portrait.gd",
+          "frozen_sha256": "8c74c2c7d65340c433adc267eda65c6159aad0c5555df412d979c1471afe744e",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "b9d0517c29c77d142b911f97eb05702ec0145b05679bc52feeb802bf7ea4e3d3",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        }
+      ],
+      "raw_diagnostics": [
+        "ERROR: FAIL: canonical campaign operations settle without error: Campaign operation could not commit"
+      ],
+      "first_failure_scope": {
+        "campaign_error": "Campaign operation could not commit",
+        "construction_error": "",
+        "label": "canonical campaign operations settle without error: Campaign operation could not commit",
+        "paused": true
+      },
+      "fixture_mode": "terminal-save",
+      "receipt_stages": [
+        "pristine entrance",
+        "direct actual candidate quiet restore",
+        "actual entrance warning",
+        "direct actual candidate quiet restore",
+        "terminal opt-in actual room3 intro completed",
+        "terminal opt-in protected actual earlier phase checkpoint"
+      ],
+      "captures": [],
+      "focus_tail": [],
+      "scope": "TEST metadata/generic predecessors/injured carryover; default is actual entrance Warning Save/format2/pristine constructors/fresh Continue/earlier Retry/quiet cleanup only. Opt-in King intro/helper transport reuses labelled public injuries/placement; the intro selector leaves the King uninjured and observes actual finite movement/fresh Resume/earlier boss-entry Retry. The terminal selector observes real completed intro/stopped helpers, public King defeat, completed/contact format2 transport, exact fresh Title Continue and earlier phase Retry; its actual unavailable A1-L5 exit failure is preserved and is not a successor acceptance. No earned route, production registration, art/kit/balance/performance/mobile acceptance",
+      "no_claims": null,
+      "swipes": null,
+      "primaries": null
+    },
+    {
+      "label": "a1-l4-terminal-save-03",
+      "status": "failed",
+      "revision": "c22aacb2ef1a453fb8dfe3f75502a8fb8bbe7ae8",
+      "shared_runtime_publication": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l4_whole_save.gd",
+        "--",
+        "--terminal-save"
+      ],
+      "result_sha256": "58aad622883f2626db0b82a97b4a2cb26bc30e5f6f3ecb5d7f8e00d7ee2ec4d0",
+      "source_manifest_sha256": "67f765cfe52e773178ce79ad0a855923f3b47135dbbfd2b8ded62bb9186e6bf7",
+      "raw_sha256": "5246fedcfa0806aaac0f6bcc2f19129bbae7ab1aa4da58729e6f2badfbbe0a4a",
+      "native_report_sha256": "d6dc39f7a3c4bfa94452f309ab935a07f1543a00eca8512c113a6837ca19430f",
+      "checks": 163,
+      "failures": 1,
+      "exit_code": 1,
+      "closed_at": "2026-10-12T07:40:18.612703+00:00",
+      "source_count": 720,
+      "prior_uid_count": 456,
+      "joins": {
+        "manifest_hash": true,
+        "revision": true,
+        "shared": true,
+        "raw_hash": true,
+        "report_hash": true,
+        "source_count": true,
+        "sources_exact": true,
+        "report_counters": true,
+        "footer": true,
+        "closed": true,
+        "no_new_uid": true,
+        "no_changed_prior_uid": true,
+        "critical_git_exact": true,
+        "capture_sizes": true
+      },
+      "source_mismatches": [],
+      "critical_sources": [
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "87a432a4d7005340f6d09984464654f80035fdb60e6a3a808eedb1d963cb9a18",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_portrait.gd",
+          "frozen_sha256": "8c74c2c7d65340c433adc267eda65c6159aad0c5555df412d979c1471afe744e",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "2e54c4ca0c51495568679ff9d9cd0f5be55a945be959fbcaf66af249e7b30c49",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        }
+      ],
+      "raw_diagnostics": [
+        "ERROR: FAIL: canonical campaign operations settle without error: Campaign operation could not commit"
+      ],
+      "first_failure_scope": {
+        "campaign_error": "Campaign operation could not commit",
+        "construction_error": "",
+        "failed_operations": [
+          {
+            "level_id": "A1-L4",
+            "operation": "complete",
+            "resume_after": true
+          }
+        ],
+        "label": "canonical campaign operations settle without error: Campaign operation could not commit",
+        "level_capture_error": "",
+        "level_snapshot_error": "Required source, footprint, player or landing lies outside the protected screen rectangle",
+        "paused": true,
+        "player_snapshot_error": ""
+      },
+      "fixture_mode": "terminal-save",
+      "receipt_stages": [
+        "pristine entrance",
+        "direct actual candidate quiet restore",
+        "actual entrance warning",
+        "direct actual candidate quiet restore",
+        "terminal opt-in actual room3 intro completed",
+        "terminal opt-in protected actual earlier phase checkpoint"
+      ],
+      "captures": [],
+      "focus_tail": [],
+      "scope": "TEST metadata/generic predecessors/injured carryover; default is actual entrance Warning Save/format2/pristine constructors/fresh Continue/earlier Retry/quiet cleanup only. Opt-in King intro/helper transport reuses labelled public injuries/placement; the intro selector leaves the King uninjured and observes actual finite movement/fresh Resume/earlier boss-entry Retry. The terminal selector observes real completed intro/stopped helpers, public King defeat, completed/contact format2 transport, exact fresh Title Continue and earlier phase Retry; its actual unavailable A1-L5 exit failure is preserved and is not a successor acceptance. No earned route, production registration, art/kit/balance/performance/mobile acceptance",
+      "no_claims": null,
+      "swipes": null,
+      "primaries": null
+    },
+    {
+      "label": "a1-l4-terminal-save-04",
+      "status": "clean bounded pass",
+      "revision": "4bcd644dd79cd94862f3b7c25971effd1bfa96df",
+      "shared_runtime_publication": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l4_whole_save.gd",
+        "--",
+        "--terminal-save"
+      ],
+      "result_sha256": "4b6fe57d429821688fb9bcfea55a001e53eeb7dbeb3b815a69f492dd962ef59c",
+      "source_manifest_sha256": "bfa024e52a33b4fbc7f239addf5d38cb5895fdf815be0775c5489cca94b7630e",
+      "raw_sha256": "f0a35f6ed198b07f3ef63009ec6f7393f931216fbd7aa4aa989498c3fe50cb84",
+      "native_report_sha256": "5ae263517d3113d4b7cc454d6af9927c7474aac189255602b54a3d8aa18a0ebe",
+      "checks": 298,
+      "failures": 0,
+      "exit_code": 0,
+      "closed_at": "2026-10-12T07:56:46.631182+00:00",
+      "source_count": 720,
+      "prior_uid_count": 456,
+      "joins": {
+        "manifest_hash": true,
+        "revision": true,
+        "shared": true,
+        "raw_hash": true,
+        "report_hash": true,
+        "source_count": true,
+        "sources_exact": true,
+        "report_counters": true,
+        "footer": true,
+        "closed": true,
+        "no_new_uid": true,
+        "no_changed_prior_uid": true,
+        "critical_git_exact": true,
+        "capture_sizes": true
+      },
+      "source_mismatches": [],
+      "critical_sources": [
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "c6456af9f4d66d5c9d418b779551252806a7b83b71e31163de80cdfd4203fa4b",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_portrait.gd",
+          "frozen_sha256": "71ce09093ec1b83478ba275d83cef8c142630e5a612a9698acd34b8c106acca6",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "ac3a6506a6bd26ee2764ebf28c10d76fe41ecd862ab04d6215a02836426e2cb1",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        }
+      ],
+      "raw_diagnostics": [],
+      "first_failure_scope": {},
+      "fixture_mode": "terminal-save",
+      "receipt_stages": [
+        "pristine entrance",
+        "direct actual candidate quiet restore",
+        "actual entrance warning",
+        "direct actual candidate quiet restore",
+        "terminal opt-in actual room3 intro completed",
+        "terminal opt-in protected actual earlier phase checkpoint",
+        "actual completed available-contact Save",
+        "direct actual candidate quiet restore",
+        "fresh Title Continue completed available-contact",
+        "actual local available-contact Save",
+        "direct actual candidate quiet restore",
+        "fresh Title Continue local available-contact",
+        "actual exterior contact Save before unavailable-next failure",
+        "fresh Title Continue latched exterior contact",
+        "actual earlier phase Retry after terminal contact Continue"
+      ],
+      "captures": [],
+      "focus_tail": [],
+      "scope": "TEST metadata/generic predecessors/injured carryover; default is actual entrance Warning Save/format2/pristine constructors/fresh Continue/earlier Retry/quiet cleanup only. Opt-in King intro/helper transport reuses labelled public injuries/placement; the intro selector leaves the King uninjured and observes actual finite movement/fresh Resume/earlier boss-entry Retry. The terminal selector observes real completed intro/stopped helpers, public King defeat, completed/contact format2 transport, exact fresh Title Continue and earlier phase Retry; its actual unavailable A1-L5 exit failure is preserved and is not a successor acceptance. No earned route, production registration, art/kit/balance/performance/mobile acceptance",
+      "no_claims": null,
+      "swipes": null,
+      "primaries": null
+    },
+    {
+      "label": "a1-l4-whole-portrait-04",
+      "status": "failed",
+      "revision": "af1cb6a5c3d261a766ef3805c80ef93d2de26f4a",
+      "shared_runtime_publication": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l4_whole_portrait.gd",
+        "--",
+        "--representative-only"
+      ],
+      "result_sha256": "f830f2c31b538480c831a5765fee47d20cf52883d3452c509baf2893b4171d9d",
+      "source_manifest_sha256": "484fa07562de740d290239c81e45bb543ec2935208a0cda32dfbb48b53f18ce4",
+      "raw_sha256": "f44cf201bfb524b0a3280df0578fdb400e4123a1dba1d4b3e8641b4cbf2cb6e5",
+      "native_report_sha256": "6ed83a5e1792b15847f6da8cdb034e7d369ded79dc7d80b79836dcb3b7fc23fc",
+      "checks": 42,
+      "failures": 1,
+      "exit_code": 1,
+      "closed_at": "2026-10-12T08:01:03.435308+00:00",
+      "source_count": 720,
+      "prior_uid_count": 456,
+      "joins": {
+        "manifest_hash": true,
+        "revision": true,
+        "shared": true,
+        "raw_hash": true,
+        "report_hash": true,
+        "source_count": true,
+        "sources_exact": true,
+        "report_counters": true,
+        "footer": true,
+        "closed": true,
+        "no_new_uid": true,
+        "no_changed_prior_uid": true,
+        "critical_git_exact": true,
+        "capture_sizes": true
+      },
+      "source_mismatches": [],
+      "critical_sources": [
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "c11e711a94949ee116ab53cea206fa9f5db3d24d6f1565090c9d7c6cc2b9ff52",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_portrait.gd",
+          "frozen_sha256": "71ce09093ec1b83478ba275d83cef8c142630e5a612a9698acd34b8c106acca6",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "ac3a6506a6bd26ee2764ebf28c10d76fe41ecd862ab04d6215a02836426e2cb1",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        }
+      ],
+      "raw_diagnostics": [
+        "ERROR: unexpected native focus/pause/Hero death/alias or court contract failure; no forced resume"
+      ],
+      "first_failure_scope": {
+        "contract_error": "",
+        "label": "unexpected native focus/pause/Hero death/alias or court contract failure; no forced resume",
+        "paused": true
+      },
+      "fixture_mode": null,
+      "receipt_stages": [],
+      "captures": [
+        {
+          "stage": "opening-real-view",
+          "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l4-whole-3985819/01-whole-opening-real-view.png",
+          "sha256": "111b510ef03aa198800ba897048f32b9ab1cd35359e9436cca686e8d2eace5f7",
+          "bytes": 42372,
+          "size": [
+            540,
+            1170
+          ],
+          "correct_size": true,
+          "native_focus": true
+        }
+      ],
+      "focus_tail": [
+        {
+          "action_clock_s": null,
+          "expected_pause": false,
+          "label": "genuine-startup-focus-stable",
+          "native_focus": true,
+          "paused": false,
+          "wall_usec": 3985800,
+          "window_has_focus": true
+        },
+        {
+          "action_clock_s": 0.0,
+          "expected_pause": false,
+          "label": "capture/opening-real-view",
+          "native_focus": true,
+          "paused": false,
+          "wall_usec": 5721552,
+          "window_has_focus": true
+        },
+        {
+          "action_clock_s": 0.0,
+          "expected_pause": false,
+          "label": "window-focus-exited",
+          "native_focus": false,
+          "paused": false,
+          "wall_usec": 5727088,
+          "window_has_focus": false
+        },
+        {
+          "action_clock_s": 0.0,
+          "expected_pause": false,
+          "label": "application-focus-out",
+          "native_focus": false,
+          "paused": false,
+          "wall_usec": 5728148,
+          "window_has_focus": false
+        },
+        {
+          "action_clock_s": 0.0,
+          "expected_pause": false,
+          "label": "whole-portrait-finish",
+          "native_focus": false,
+          "paused": true,
+          "wall_usec": 5739198,
+          "window_has_focus": false
+        }
+      ],
+      "scope": "brief actual Main540x1170 whole-court renderer; actual curtain recognizer response unless explicitly representative-only; later native boundaries/birth/contact reached through labelled TEST public injuries/placements; actual unpaused King step and derived summon observed without source/phase/clock writes",
+      "no_claims": [
+        "earned route/kills/contact",
+        "defeat-all",
+        "full natural playthrough",
+        "Save/Continue/Retry",
+        "registered campaign traversal",
+        "portrait fidelity before root image review",
+        "all-kit balance",
+        "performance",
+        "mobile"
+      ],
+      "swipes": 0,
+      "primaries": 0
+    },
+    {
+      "label": "a1-l4-whole-portrait-05",
+      "status": "failed",
+      "revision": "2436b4766d8c54df8b54645fc29db9bd466893a0",
+      "shared_runtime_publication": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l4_whole_portrait.gd",
+        "--",
+        "--representative-only"
+      ],
+      "result_sha256": "49133435f0513f061d287272cf04832e69f1545580b2a66f0da5ca024e2f2e51",
+      "source_manifest_sha256": "6a16543297ec3a3566ef976878489bae8cc8d3d4b0a7c0cb2a3bba62e108af9e",
+      "raw_sha256": "b0a52d679f16105be8e5150bc24fd1eaa7ff9ccc232376e80cb56b789fc27136",
+      "native_report_sha256": "66669584a3b34712e6f28c023917c12e4999148886774970b088c686c9730a71",
+      "checks": 91,
+      "failures": 1,
+      "exit_code": 1,
+      "closed_at": "2026-10-12T08:09:23.321001+00:00",
+      "source_count": 720,
+      "prior_uid_count": 456,
+      "joins": {
+        "manifest_hash": true,
+        "revision": true,
+        "shared": true,
+        "raw_hash": true,
+        "report_hash": true,
+        "source_count": true,
+        "sources_exact": true,
+        "report_counters": true,
+        "footer": true,
+        "closed": true,
+        "no_new_uid": true,
+        "no_changed_prior_uid": true,
+        "critical_git_exact": true,
+        "capture_sizes": true
+      },
+      "source_mismatches": [],
+      "critical_sources": [
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "6f04c0010b779fa6e267e7dad6ed7e44fc31b1f9e39c3b7e95f90d833067ed80",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_portrait.gd",
+          "frozen_sha256": "71ce09093ec1b83478ba275d83cef8c142630e5a612a9698acd34b8c106acca6",
+          "executed_git_exact": true,
+          "current_matches_frozen": false
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "ac3a6506a6bd26ee2764ebf28c10d76fe41ecd862ab04d6215a02836426e2cb1",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        }
+      ],
+      "raw_diagnostics": [
+        "ERROR: unexpected native focus/pause/Hero death/alias or court contract failure; no forced resume"
+      ],
+      "first_failure_scope": {
+        "contract_error": "",
+        "label": "unexpected native focus/pause/Hero death/alias or court contract failure; no forced resume",
+        "paused": true
+      },
+      "fixture_mode": null,
+      "receipt_stages": [],
+      "captures": [
+        {
+          "stage": "opening-real-view",
+          "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l4-whole-1627218/01-whole-opening-real-view.png",
+          "sha256": "111b510ef03aa198800ba897048f32b9ab1cd35359e9436cca686e8d2eace5f7",
+          "bytes": 42372,
+          "size": [
+            540,
+            1170
+          ],
+          "correct_size": true,
+          "native_focus": true
+        },
+        {
+          "stage": "curtain-native-warning",
+          "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l4-whole-1627218/02-whole-curtain-native-warning.png",
+          "sha256": "867d1d83cbf92508e64f3fb43bbf2c2050aa232e85ccd37b20b405f27385cedd",
+          "bytes": 42629,
+          "size": [
+            540,
+            1170
+          ],
+          "correct_size": true,
+          "native_focus": true
+        },
+        {
+          "stage": "curtain-native-warning-paused-UI",
+          "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l4-whole-1627218/03-whole-curtain-native-warning-paused-UI.png",
+          "sha256": "9c865e17a4aa255b1c9c3da7e9503ec28f13c13a1611478a78f4459b4a3450f8",
+          "bytes": 41114,
+          "size": [
+            540,
+            1170
+          ],
+          "correct_size": true,
+          "native_focus": true
+        },
+        {
+          "stage": "TEST-formation-parallel-warning",
+          "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/captures/l4-whole-1627218/04-whole-TEST-formation-parallel-warning.png",
+          "sha256": "5d7c6dd89d98ffb3eec8d5a28b0b58f8e7eef1e54b0d9786c2a9f495fdded411",
+          "bytes": 47751,
+          "size": [
+            540,
+            1170
+          ],
+          "correct_size": true,
+          "native_focus": true
+        }
+      ],
+      "focus_tail": [
+        {
+          "action_clock_s": 0.15,
+          "expected_pause": false,
+          "label": "after-genuine-GUI-Resume",
+          "native_focus": true,
+          "paused": false,
+          "wall_usec": 3234686,
+          "window_has_focus": true
+        },
+        {
+          "action_clock_s": 0.216666666666667,
+          "expected_pause": false,
+          "label": "capture/TEST-formation-parallel-warning",
+          "native_focus": true,
+          "paused": false,
+          "wall_usec": 3416748,
+          "window_has_focus": true
+        },
+        {
+          "action_clock_s": 4.73333333333332,
+          "expected_pause": false,
+          "label": "window-focus-exited",
+          "native_focus": false,
+          "paused": false,
+          "wall_usec": 9753727,
+          "window_has_focus": false
+        },
+        {
+          "action_clock_s": 4.73333333333332,
+          "expected_pause": false,
+          "label": "application-focus-out",
+          "native_focus": false,
+          "paused": false,
+          "wall_usec": 9754270,
+          "window_has_focus": false
+        },
+        {
+          "action_clock_s": 4.73333333333332,
+          "expected_pause": false,
+          "label": "whole-portrait-finish",
+          "native_focus": false,
+          "paused": true,
+          "wall_usec": 9757954,
+          "window_has_focus": false
+        }
+      ],
+      "scope": "brief actual Main540x1170 whole-court renderer; actual curtain recognizer response unless explicitly representative-only; later native boundaries/birth/contact reached through labelled TEST public injuries/placements; actual unpaused King step and derived summon observed without source/phase/clock writes",
+      "no_claims": [
+        "earned route/kills/contact",
+        "defeat-all",
+        "full natural playthrough",
+        "Save/Continue/Retry",
+        "registered campaign traversal",
+        "portrait fidelity before root image review",
+        "all-kit balance",
+        "performance",
+        "mobile"
+      ],
+      "swipes": 0,
+      "primaries": 0
+    },
+    {
+      "label": "a1-l4-terminal-portrait-01",
+      "status": "failed",
+      "revision": "5b1bc950a7b5b8570c753414a829314ca123da40",
+      "shared_runtime_publication": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+      "command": [
+        "/opt/homebrew/anaconda3/bin/python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_l4_whole_portrait.gd",
+        "--",
+        "--terminal-views-only"
+      ],
+      "result_sha256": "f119969bd644afb0c4de7e772c6318684f1e4731c7eb686aaba9e24710b79eed",
+      "source_manifest_sha256": "80a9b64d5c71a5a9a7c6bf8df748f0fc18ecfbb45776cc2ea5b2ac468f841333",
+      "raw_sha256": "d54b1341b60bfd291c142a034b6a173611a2852e34bfd570d4d8a466286b769d",
+      "native_report_sha256": "f4ed408a2389cc56a2e36df7e99f9954a8d5079f9a83b7439155bb536bf44b30",
+      "checks": 58,
+      "failures": 1,
+      "exit_code": 1,
+      "closed_at": "2026-10-12T08:21:43.630288+00:00",
+      "source_count": 720,
+      "prior_uid_count": 456,
+      "joins": {
+        "manifest_hash": true,
+        "revision": true,
+        "shared": true,
+        "raw_hash": true,
+        "report_hash": true,
+        "source_count": true,
+        "sources_exact": true,
+        "report_counters": true,
+        "footer": true,
+        "closed": true,
+        "no_new_uid": true,
+        "no_changed_prior_uid": true,
+        "critical_git_exact": true,
+        "capture_sizes": true
+      },
+      "source_mismatches": [],
+      "critical_sources": [
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court.gd",
+          "frozen_sha256": "6f04c0010b779fa6e267e7dad6ed7e44fc31b1f9e39c3b7e95f90d833067ed80",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_codec.gd",
+          "frozen_sha256": "2d8b10ded0605dc398c51568fcfb93c8c48b4aa03965fc1220f5f8abd7da8bf7",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_court_layout.gd",
+          "frozen_sha256": "5b0663064eab1e7f1c25c4a5c49baf5174ea8a76d825c72095a2573e4182f076",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/acts/act1/selenite_king.gd",
+          "frozen_sha256": "60753fcadd6fdd8db98e29359f9c4b60002ba511dbd73fb3d38111a5848b841d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/level.gd",
+          "frozen_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "frozen_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/combat/lane_mechanism.gd",
+          "frozen_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "scripts/environment/scheduler_spore_source_protocol.gd",
+          "frozen_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_portrait.gd",
+          "frozen_sha256": "6c2119b74c9240409edd6b713a9dd8ef3a3e2fec533a9f39a0fb6c941ed1efe0",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        },
+        {
+          "path": "tests/acts/act1/a1_l4_whole_save.gd",
+          "frozen_sha256": "ac3a6506a6bd26ee2764ebf28c10d76fe41ecd862ab04d6215a02836426e2cb1",
+          "executed_git_exact": true,
+          "current_matches_frozen": true
+        }
+      ],
+      "raw_diagnostics": [
+        "ERROR: unexpected native focus/pause/Hero death/alias or court contract failure; no forced resume"
+      ],
+      "first_failure_scope": {
+        "contract_error": "",
+        "label": "unexpected native focus/pause/Hero death/alias or court contract failure; no forced resume",
+        "paused": true
+      },
+      "fixture_mode": null,
+      "receipt_stages": [],
+      "captures": [],
+      "focus_tail": [
+        {
+          "action_clock_s": null,
+          "expected_pause": false,
+          "label": "application-focus-in",
+          "native_focus": true,
+          "paused": false,
+          "wall_usec": 2940645,
+          "window_has_focus": true
+        },
+        {
+          "action_clock_s": null,
+          "expected_pause": false,
+          "label": "genuine-startup-focus-stable",
+          "native_focus": true,
+          "paused": false,
+          "wall_usec": 3210692,
+          "window_has_focus": true
+        },
+        {
+          "action_clock_s": 5.24999999999999,
+          "expected_pause": false,
+          "label": "window-focus-exited",
+          "native_focus": false,
+          "paused": false,
+          "wall_usec": 11866317,
+          "window_has_focus": false
+        },
+        {
+          "action_clock_s": 5.24999999999999,
+          "expected_pause": false,
+          "label": "application-focus-out",
+          "native_focus": false,
+          "paused": false,
+          "wall_usec": 11867197,
+          "window_has_focus": false
+        },
+        {
+          "action_clock_s": 5.24999999999999,
+          "expected_pause": false,
+          "label": "whole-portrait-finish",
+          "native_focus": false,
+          "paused": true,
+          "wall_usec": 11872500,
+          "window_has_focus": false
+        }
+      ],
+      "scope": "brief actual Main540x1170 whole-court renderer; actual curtain recognizer response unless explicitly representative-only; later native boundaries/birth/contact reached through labelled TEST public injuries/placements; actual unpaused King step and derived summon observed without source/phase/clock writes",
+      "no_claims": [
+        "earned route/kills/contact",
+        "defeat-all",
+        "full natural playthrough",
+        "Save/Continue/Retry",
+        "registered campaign traversal",
+        "portrait fidelity before root image review",
+        "all-kit balance",
+        "performance",
+        "mobile"
+      ],
+      "swipes": 0,
+      "primaries": 0
+    }
+  ],
+  "errors": [],
+  "source_review": {
+    "current_source_commit": "5b1bc950a7b5b8570c753414a829314ca123da40",
+    "completed_contact_correction_commit": "4bcd644dd79cd94862f3b7c25971effd1bfa96df",
+    "later_cue_boundary_commit": "af1cb6a5c3d261a766ef3805c80ef93d2de26f4a",
+    "later_callback_guard_commit": "2436b4766d8c54df8b54645fc29db9bd466893a0",
+    "observed_behavior": [
+      "Completed far contact is clear/inactive; original Area stays atZ-35 and becomes available only within4.5-unit local approach/full current view",
+      "Quiet restore derives the same local contact state; completed/contact flags and original King/helper records are retained",
+      "Any still-visible contact marker remains in framing points at the local range edge",
+      "Native exit callback requires original Hero, live native bindings, monitoring, overlap, near/full view and visible available contact marker",
+      "Post-contact observer custody preserves legal Shell pause and refuses presentation writes after owner exit/disposal"
+    ],
+    "no_shared_camera_limit_assertion_changes": true,
+    "important_source_scope": "298/0 exercised4bcd644d before later2436b476 callback guard; it is not proof of current guarded callback",
+    "remaining_minimal_checks": [
+      "Current source --terminal-save rerun for live/quiet distant-clear, local-available, once-contact-spent, fresh Continue and earlier Retry",
+      "Three changed actual terminal views: distant-clear, local-available, latched-spent/open; prior14 unchanged portraits reusable",
+      "If claiming legal synchronous observer exit/disposal, one focused actual callback case must preserve no post-disposal write; no full route"
+    ],
+    "concrete_latest_failure": "terminal-portrait01 at5b1bc950 closes58/1 with0captures, empty contract_error, genuine window/application focus-out then normalPause; no changed terminal visual credit",
+    "handoff_readiness": "Not yet: current guard native regression and changed terminal visual evidence remain due before exact HANDOFF. Root production registration is later separate work."
+  }
+}

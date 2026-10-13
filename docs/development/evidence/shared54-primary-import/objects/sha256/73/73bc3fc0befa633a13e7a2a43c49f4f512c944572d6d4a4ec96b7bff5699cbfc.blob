@@ -1,0 +1,303 @@
+#!/usr/bin/env python3
+"""Hand-authored environmental poses; no source image pixels are read to draw.
+
+Reuse the original costume's integer drawing primitives, but construct new
+limb/head/weapon arrangements. Static art has no animation or physics clock.
+"""
+from pathlib import Path
+import hashlib
+import importlib.util
+import json
+import shutil
+import sys
+from PIL import Image, ImageDraw, ImageFont
+
+sys.dont_write_bytecode = True
+ROOT = Path(__file__).resolve().parents[1]
+OLD = ROOT / "assets/acts/act1/grotto/selenites"
+OUT = OLD / "repulsion"
+PRIMITIVES = OLD / "build_selenite_cutouts.py"
+EXPECTED_PRIMITIVES = "676c2a4ae78173e2be63beeea27bdd89c4056a893ce4b122f5d6a347363505af"
+STATES = ("recoil", "retreat", "regroup")
+FACINGS = ("front", "side", "back")
+ROLES = {
+    "swarm": {"entity_id": "C31", "design_id": "A1-E2", "basis_id": "C20", "width": 48,
+              "family": "act1_grotto_selenite_C31_swarm"},
+    "guard": {"entity_id": "C32", "design_id": "A1-E3", "basis_id": "C22", "width": 80,
+              "family": "act1_grotto_selenite_C32_spear_guard"},
+}
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+assert sha(PRIMITIVES) == EXPECTED_PRIMITIVES, "Original primitive source changed"
+spec = importlib.util.spec_from_file_location("original_selenite_primitives", PRIMITIVES)
+old = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(old)  # Defines primitives only; NEVER call old.main().
+
+
+def shoulder(d, point, small):
+    x, y = point
+    if small:
+        old.rect(d, (x - 2, y - 1, x + 2, y + 2), "shade")
+    else:
+        old.poly(d, [(x - 3, y - 2), (x + 2, y - 2), (x + 3, y + 3),
+                     (x - 3, y + 3)], "shade", "ink")
+    old.rect(d, (x - 1, y - 1, x, y + 1), "silver")
+
+
+def carried_spear(d, state):
+    # The same broad triangular theatrical prop, newly carried/tucked/lowered.
+    # These endpoints are picture coordinates, never an attack or reach model.
+    ends = {
+        "recoil": ((52, 72), (68, 36), (73, 20)),
+        "retreat": ((20, 71), (65, 53), (76, 45)),
+        "regroup": ((28, 55), (61, 69), (75, 76)),
+    }
+    tail, neck, tip = ends[state]
+    d.line([tail, neck, tip], fill=old.PALETTE["ink"], width=5)
+    d.line([tail, neck], fill=old.PALETTE["silver"], width=3)
+    d.line([(tail[0], tail[1] - 1), (neck[0], neck[1] - 1)],
+           fill=old.PALETTE["white"], width=1)
+    dx, dy = tip[0] - neck[0], tip[1] - neck[1]
+    ax, ay = -dy, dx
+    denom = max(abs(ax), abs(ay))
+    ax, ay = round(ax * 8 / denom), round(ay * 8 / denom)
+    old.poly(d, [(neck[0] + ax, neck[1] + ay), tip,
+                 (neck[0] - ax, neck[1] - ay), (neck[0] - 2, neck[1] + 2)],
+             "light", "ink")
+    old.poly(d, [neck, tip, (neck[0] - ax + 1, neck[1] - ay + 1)], "white")
+    d.line([neck, tip], fill=old.PALETTE["silver"], width=1)
+    d.line([(neck[0] - 2, neck[1] + 1), (neck[0] + 2, neck[1] - 1)],
+           fill=old.PALETTE["ink"], width=2)
+
+
+def draw_swarm(facing, state):
+    im = Image.new("RGBA", (48, 80), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    base = 24 if facing != "side" else 25
+    # A lean changes pixels inside the retained quad, never the actor origin.
+    cx = base - 2 if state == "recoil" else base
+    cy = {"recoil": 34, "retreat": 31, "regroup": 32}[state]
+    top, bottom = cy + 10, 59 if state == "recoil" else 58
+    lean = {"recoil": 2, "retreat": -2, "regroup": 0}[state]
+    legs = {
+        "recoil": [((cx - 8, 67), (base - 11, 79, -1)),
+                   ((cx + 8, 69), (base + 10, 79, 1))],
+        "retreat": [((cx - 9, 65), (base - 12, 75, -1)),
+                    ((cx + 8, 67), (base + 10, 79, 1))],
+        "regroup": [((cx - 6, 67), (base - 8, 79, -1)),
+                    ((cx + 5, 67), (base + 8, 79, 1))],
+    }[state]
+    for hip, (knee, (fx, fy, direction)) in zip(
+            [(cx - 3 + lean, bottom), (cx + 3 + lean, bottom)], legs):
+        old.limb(d, [hip, knee, (fx, fy - 4)], 4)
+        old.band(d, knee); old.band(d, (fx, fy - 6))
+        old.boot(d, fx, fy, direction)
+    old.torso(d, cx, top, bottom, facing, True, lean)
+    elbows, wrists = {
+        "recoil": ([(cx - 10, 49), (cx + 10, 46)],
+                   [(cx - 7, 40), (cx + 8, 39)]),
+        "retreat": ([(cx - 11, 49), (cx + 10, 45)],
+                    [(cx - 16, 56), (cx + 13, 39)]),
+        "regroup": ([(cx - 10, 52), (cx + 9, 51)],
+                    [(cx - 8, 60), (cx + 10, 57)]),
+    }[state]
+    shoulders = [(cx - 6, top + 1), (cx + 5, top + 1)]
+    for origin, elbow, wrist in zip(shoulders, elbows, wrists):
+        old.limb(d, [origin, elbow, wrist], 4)
+        old.band(d, elbow); shoulder(d, origin, True)
+    old.mask(d, cx + (2 if state == "retreat" else 0), cy, facing, True)
+    for wrist in wrists:
+        old.hand(d, wrist)
+    return im
+
+
+def draw_guard(facing, state):
+    im = Image.new("RGBA", (80, 80), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    base = 40 if facing != "side" else 37
+    cx = base - 2 if state == "recoil" else base
+    cy = {"recoil": 31, "retreat": 29, "regroup": 28}[state]
+    top, bottom = cy + 11, 60
+    lean = {"recoil": 3, "retreat": -2, "regroup": 0}[state]
+    # Carried spear is behind cloth and hands, with an intact visible arrowhead.
+    carried_spear(d, state)
+    legs = {
+        "recoil": [((cx - 10, 68), (base - 13, 79, -1)),
+                   ((cx + 11, 69), (base + 13, 79, 1))],
+        "retreat": [((cx - 10, 65), (base - 13, 75, -1)),
+                    ((cx + 9, 68), (base + 12, 79, 1))],
+        "regroup": [((cx - 7, 68), (base - 10, 79, -1)),
+                    ((cx + 6, 68), (base + 10, 79, 1))],
+    }[state]
+    for hip, (knee, (fx, fy, direction)) in zip(
+            [(cx - 4 + lean, bottom), (cx + 4 + lean, bottom)], legs):
+        old.limb(d, [hip, knee, (fx, fy - 4)], 5)
+        old.band(d, knee); old.band(d, (fx, fy - 6))
+        old.boot(d, fx, fy, direction)
+    old.torso(d, cx, top, bottom, facing, False, lean)
+    elbows, wrists = {
+        "recoil": ([(cx - 13, 47), (55, 55)], [(cx - 9, 38), (58, 56)]),
+        "retreat": ([(cx - 14, 57), (50, 50)], [(31, 66), (53, 58)]),
+        "regroup": ([(cx - 12, 53), (cx + 11, 56)], [(33, 58), (54, 66)]),
+    }[state]
+    shoulders = [(cx - 8, top), (cx + 7, top)]
+    for origin, elbow, wrist in zip(shoulders, elbows, wrists):
+        old.limb(d, [origin, elbow, wrist], 5)
+        old.band(d, elbow); shoulder(d, origin, False)
+    old.mask(d, cx + (3 if facing == "side" else 0) +
+             (2 if state == "retreat" else 0), cy, facing)
+    for wrist in wrists:
+        old.hand(d, wrist)
+    return im
+
+
+def main():
+    OUT.mkdir(parents=True, exist_ok=True)
+    manifest_old = json.loads((OLD.parent / "selenite_manifest.json").read_text())
+    originals = []
+    for asset in manifest_old["assets"]:
+        path = OLD.parent / asset["file"]
+        assert sha(path) == asset["sha256"]
+        originals.append({"path": str(path.relative_to(ROOT)),
+                          "sha256": sha(path), "bytes": path.stat().st_size})
+    assert len(originals) == 30
+    # Confirm the personally inspected old sheet is an exact display of all30.
+    existing_sheet = Image.open(OLD / "selenite_contact_sheet.png").convert("RGB")
+    for role_index, role in enumerate(ROLES):
+        for facing_index, facing in enumerate(FACINGS):
+            for pose_index, pose in enumerate(old.POSES):
+                native = Image.open(OLD / f"{role}_{facing}_{pose}.png").convert("RGBA")
+                expanded = native.resize((native.width * 3, native.height * 3), Image.Resampling.NEAREST)
+                expected = Image.new("RGB", expanded.size, (65, 65, 65))
+                expected.paste(expanded, (0, 0), expanded)
+                left = pose_index * 250 + (250 - expanded.width) // 2
+                upper = (role_index * 3 + facing_index) * 270 + 25
+                assert existing_sheet.crop((left, upper, left + expanded.width,
+                                            upper + expanded.height)).tobytes() == expected.tobytes()
+    assets = []
+    sheet = Image.new("RGB", (3 * 260, 6 * 280), (65, 65, 65))
+    sd = ImageDraw.Draw(sheet)
+    for role_index, (role, meta) in enumerate(ROLES.items()):
+        for facing_index, facing in enumerate(FACINGS):
+            for state_index, state in enumerate(STATES):
+                im = (draw_swarm if role == "swarm" else draw_guard)(facing, state)
+                path = OUT / f"{role}_{facing}_{state}.png"
+                im.save(path)
+                colors = set(im.get_flattened_data()); alpha = {v[3] for v in colors}
+                assert alpha == {0, 255}
+                assert colors <= set(old.PALETTE.values()) | {(0, 0, 0, 0)}
+                bounds = im.getchannel("A").getbbox()
+                assert bounds[0] > 0 and bounds[1] > 0 and bounds[2] < im.width
+                assert bounds[3] == 80
+                assert sha(path) not in {v["sha256"] for v in originals}
+                width = meta["width"]
+                item = {
+                    "id": f"ACT1-{meta['entity_id']}-{facing.upper()}-ENV-{state.upper()}",
+                    "file": path.name, "sha256": sha(path), "bytes": path.stat().st_size,
+                    "entity_id": meta["entity_id"], "design_id": meta["design_id"],
+                    "basis_id": meta["basis_id"], "reuse_family": meta["family"],
+                    "facing": facing, "side_authorship": "authored right-facing; left reflection deferred to existing runtime leaf",
+                    "environmental_pose": state, "native_grid": [width, 80],
+                    "feet_pivot_pixels": [width // 2, 80],
+                    "sprite_offset_centered_pixels": [0, 40], "pixel_size": 0.022,
+                    "full_quad_world": [width * 0.022, 1.76],
+                    "full_quad_from_feet_world": [-width * 0.011, 0.0, width * 0.011, 1.76],
+                    "opaque_bounds_exclusive_pixels": list(bounds),
+                    "opaque_bounds_from_feet_world": [(bounds[0] - width / 2) * 0.022,
+                        (80 - bounds[3]) * 0.022, (bounds[2] - width / 2) * 0.022,
+                        (80 - bounds[1]) * 0.022],
+                    "opaque_pixels": sum(1 for v in im.get_flattened_data() if v[3] == 255),
+                    "collision": "none; existing actor capsule remains authoritative",
+                    "occlusion": "ordinary-depth actor art; full quad must join public camera/art custody before runtime",
+                    "timing": "none; static pose, no duration/clock/phase threshold/root motion",
+                    "readiness": "original_pixels_validated_static_only; not_imported_or_bound_or_spore_portrait_tested",
+                    "source_ids": ["G10", "G25", "F10"],
+                }
+                assets.append(item)
+                x, y = state_index * 260, (role_index * 3 + facing_index) * 280
+                sd.text((x + 8, y + 5), f"{meta['entity_id']} {facing} / {state}", fill=(231, 231, 231))
+                expanded = im.resize((width * 3, 240), Image.Resampling.NEAREST)
+                sheet.paste(expanded, (x + (260 - expanded.width) // 2, y + 29), expanded)
+                sd.text((x + 8, y + 270), "static environmental pose; feet y80", fill=(193, 193, 193))
+    assert len(assets) == 18 and len({a["sha256"] for a in assets}) == 18
+    sheet_path = OUT / "repulsion_contact_sheet.png"
+    sheet.save(sheet_path)
+    refs = []
+    for ref_id, rel, kind, observed in [
+        ("G10", "docs/concept-art/act1/characters/selenite-costumes-and-roles.png", "generated_concept",
+         "upright masked bipeds, pale rib bands, projecting headpieces, small swarm role and broad theatrical spear role"),
+        ("G25", "docs/concept-art/act1/gameplay/02-mushroom-spores-gameplay.png", "generated_gameplay_proposal",
+         "four visibly living retreating swarm figures and a reachable low cluster; illustration count is not encounter population or tuning"),
+        ("F10", "docs/reference-library/act1/film-stills/f10.jpg", "1902_film_frame_reproduction",
+         "upright court-costume silhouettes, rib bands, projecting headpieces and spear points; no authentic palette or frame timestamp claim"),
+    ]:
+        path = ROOT / rel
+        refs.append({"id": ref_id, "path": rel, "sha256": sha(path),
+                     "source_kind": kind, "actual_pixels_personally_inspected": True,
+                     "observed_basis": observed, "pixel_use": "none; no crop, tracing, sampling, extraction or editing"})
+    # Portable inert copy makes authored geometry reviewable without execution.
+    source_copy = OUT / "authored_repulsion_source.py.txt"
+    shutil.copyfile(Path(__file__), source_copy)
+    manifest = {
+        "schema_version": 1, "first_level": "A1-L3", "created_date": "2026-10-09",
+        "scope": "C31/C32 environmental recoil, retreat and regroup presentation extension only",
+        "authorship": "original hand-authored integer polygon/line arrangements using existing costume drawing primitives; no image source pixels used",
+        "generator": {"private_producer_path": ".cinder/build_selenite_repulsion_cutouts.py",
+                      "sha256": sha(Path(__file__)), "inert_portable_source": source_copy.name,
+                      "inert_source_sha256": sha(source_copy), "bytes": source_copy.stat().st_size,
+                      "primitive_basis_path": str(PRIMITIVES.relative_to(ROOT)),
+                      "primitive_basis_sha256": sha(PRIMITIVES),
+                      "existing_generator_main_executed": False},
+        "source_provenance": refs,
+        "canonical_entities_path": "docs/reference-library/act1/research/entities.json",
+        "canonical_entities_sha256": sha(ROOT / "docs/reference-library/act1/research/entities.json"),
+        "palette": old.PALETTE,
+        "palette_role": "same seven grayscale costume materials; game interpretation, not authentic film color",
+        "sampling": "nearest; PNG RGBA; alpha exactly0 or255; no smoothing or dithering",
+        "pose_intent": {
+            "recoil": "living intact actor shields body; guard tucks carried spear",
+            "retreat": "living intact actor takes outward-looking stride; one boot remains planted at native pivot",
+            "regroup": "living intact actor settles to a planted quiet stance; guard spear lowered",
+        },
+        "state_contract": "labels are presentation proposals for reviewed API3 environmental hooks, not attack cue phases; native owner supplies actual state/facing",
+        "gameplay_contract": "no new enemy, damage, immunity, death, stun duration, private clock, movement, turning, velocity, capsule or stats; spores remain harmless living-enemy repulsion",
+        "actor_transform": "same retained feet origin, unit scale, existing billboard binding; no root/body transform authored",
+        "occlusion_contract": "headpieces/entire spear/full native quad must remain in actual public camera/art finite-corner framing; no opaque bounds substitute",
+        "baked_content_exclusions": ["shadow", "cue", "footprint", "field boundary", "particles", "source marker", "hit or death effect"],
+        "existing_original_pose_set": {"count": 30, "all_personally_inspected_in_exact_sheet": True,
+                                       "sheet_path": str((OLD / "selenite_contact_sheet.png").relative_to(ROOT)),
+                                       "sheet_sha256": sha(OLD / "selenite_contact_sheet.png"),
+                                       "exact_native_cells_verified_against_sheet": 30,
+                                       "unchanged_originals": originals},
+        "preview": {"file": sheet_path.name, "sha256": sha(sheet_path),
+                    "bytes": sheet_path.stat().st_size, "grid": [3, 6], "native_nearest_scale": 3,
+                    "role": "static review only, not runtime atlas"},
+        "assets": assets,
+        "validation": {"native_sizes_validated": 18, "unique_pngs": 18,
+                       "hard_alpha_and_seven_gray_palette_validated": 18,
+                       "bottom_planted_boot_y79_validated": 18,
+                       "top_and_lateral_no_frame_clipping_validated": 18,
+                       "old_pose_bytes_verified_before_authoring": 30,
+                       "new_pose_bytes_distinct_from_each_old_pose": 18,
+                       "author_personally_inspected_all_new_contact_sheet_cells": 18,
+                       "static_review_observation": "intact masked bipeds and rib bands read in all orientations; full headpiece and broad carried spear remain in frame; one planted boot in each static pose",
+                       "engine_runs": 0, "resource_import_runs": 0,
+                       "runtime_bindings_changed": 0, "new_pose_portrait_tests": 0},
+        "readiness": "static_authored_pixels_for_owner_review; native_import_runtime_binding_API3_hook_and_spore_portrait_acceptance_pending",
+        "limitations": ["static sheet cannot establish actual footprint/source/Hero/landing visibility",
+                        "no sprite state clock or interpolation policy authored",
+                        "no native API3 execution established by these pixels",
+                        "no full L3 crowd, spore field, route, save, equipment/profile, human balance or performance acceptance"],
+    }
+    (OUT / "repulsion_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    print(json.dumps({"poses": len(assets), "manifest": str((OUT / 'repulsion_manifest.json').relative_to(ROOT)),
+                      "manifest_sha256": sha(OUT / "repulsion_manifest.json"),
+                      "contact_sheet_sha256": sha(sheet_path), "inert_source_sha256": sha(source_copy)}, indent=2))
+
+
+if __name__ == "__main__":
+    main()

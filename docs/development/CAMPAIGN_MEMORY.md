@@ -1,6 +1,6 @@
 # Cinder campaign memory
 
-Current milestone: independently accepted [A2-O2 Clear Air Circuit](ACT2_O2_ACCEPTANCE.md) advances the campaign to **14/24**, Act2 **7/8**; its owner may start O3 after canonical ACCEPTED. Dedicated isolated canonical41/0/import0 complements unchanged original owner257/523/116/322 and brief portraits. A3-L4 is already accepted and L5 continues; A1-L4 remains independently authored. Integration remains first help contact. Shared53 preserves published runtime and changes only O2 registration plus its test/records; configuration-reference optimization remains private untested scratch. Full desktop15-main/9-optional work continues. Earlier milestone paragraphs retain their historical scope.
+Current milestone: independently checked [A1-L4 Selenite Court](ACT1_L4_ACCEPTANCE.md) advances the published campaign to **15/24**, Act1 **4/8**, on Shared54. Isolated canonical625/0 and necessary import0 complement unchanged original mechanics, current373/0 terminal/observer transport and14 inspected portraits. Original failures and current far/DASH/SPENT visual limits remain. Act2-O3 and Act3-L5 continue independently. Integration remains first help contact; L5 sampled-circle support is a separate shared dependency. Shared controller/save/equipment schemas remain unchanged; no equipment or ability allocation. The configuration experiment remains tested and unadopted, and native profiling is diagnostic only. Full fifteen-main/nine-optional desktop work continues; the goal is incomplete.
 
 ## Current desktop milestone — Shared50
 

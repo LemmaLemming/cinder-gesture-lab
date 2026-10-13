@@ -1,0 +1,13 @@
+# Native boundary stage profile
+
+The exact temporary proposal is preserved with its original SOURCE ONLY status. Root separately selected those bytes for native parse0 and one actual native profile21/0, both clean, then restored published Protocol a01 and Route2bdf after closure. No runtime fix or new gameplay acceptance is archived here.
+
+[Closed independent review](closed-review.json) and [decoded interval](decoded-interval.json) retain all8 source counters and aggregate/edge joins. Eight sources each execute368 binding calls:2944 total, with8832 world/floor/body comparisons. The actual interval is8physics/1process/.133333native seconds, wall5439731us. Binding inclusive time4386862us contains fresh-static-environment2562067us, itself containing Route collision-signature2408085us. These buckets overlap; they cannot be summed as exclusive work or interpreted as FPS/gain/cause.
+
+The raw/wrapper streams agree on17 stage records. Actor identities/HP100 are retained. [Paused witness](decoded-paused-witness.json) prints66972 bytes/hashc2d139 for the complete19actor/Player/Scheduler string and a separate675514-byte focused-native hash. String bodies are not emitted; this packet does not reconstruct them or assert same-run before/after equality. Full source/closure provenance remains preserved. Encounter context and later camera containment refusals stay visible; this is not a supported optical save, current-view or campaign proof.
+
+All1514 original frozen rows/lengths/modes/hashes and445 UID identities per job verify. Current inputs differ only in the two intentionally withdrawn instrumented files. Original engine commands, submissions, native/wrapper streams, results, proposals and withdrawal are content-addressed in index.json. Exact bytes already archived in pinned Shared50/runtime/Shared51 banks are referenced, never rewritten.
+
+An instrumentation scope defect is explicitly retained: all recorded RefCounted IDs are negative, but the original sink treats owner<0 as inheritance. No nested binding edge appears in this sample, so observed flat joins remain coherent; generic negative nested-owner suppression is not proven and would be wrong. No original proposal/code/result is retroactively corrected. Ownerless/top-level unselected work is excluded and this is not a full call stack.
+
+The next useful action is narrower observational timing inside collision_signature, separating tree traversal/filtering, descriptors/sorts and Codec.value_error while preserving every original native read and error order. No native find_children equivalence or optimization is established. No additional job was run during preservation.

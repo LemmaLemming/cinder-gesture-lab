@@ -1,0 +1,170 @@
+"""SOURCE-ONLY proposal: Root may freeze/parse/profile after source approval.
+
+Never selects, patches, restores, imports or starts a second queue. Actual jobs
+must use the canonical dev.py lock and owned deadline after lock acquisition.
+"""
+from pathlib import Path
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import subprocess
+import sys
+
+ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
+SCRIPT = 'res://.cinder/native-boundary-profile/profile.gd'
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def uids():
+    rows = []
+    for directory, dirs, files in os.walk(ROOT):
+        p = Path(directory)
+        if p != ROOT and (p / '.gdignore').exists():
+            dirs[:] = []
+            continue
+        dirs[:] = [n for n in dirs if n not in {'.git', '.godot', '.tools', '.cinder', 'exports', 'captures', '__pycache__'}]
+        for name in files:
+            if name.endswith('.uid'):
+                q = p / name
+                rows.append({'path': str(q.relative_to(ROOT)), 'sha256': sha(q), 'uid': q.read_text().strip()})
+    return sorted(rows, key=lambda x: x['path'])
+
+
+def freeze(tag, mode):
+    assert mode in {'parse', 'profile'} and re.fullmatch(r'[a-z0-9-]+', tag)
+    target = HERE / 'jobs' / tag
+    assert not target.exists(), target
+    # Selection is a separate Root action. Refuse original/other candidate bytes.
+    proof = json.loads((HERE / 'statement-proof.json').read_text())
+    for row in proof['sources']:
+        assert sha(ROOT / row['path']) == row['candidate_sha256'], row['path']
+    seeds = [SCRIPT[6:], str((HERE / 'tools.py').relative_to(ROOT)),
+             str((HERE / 'sink.gd').relative_to(ROOT)),
+             '.cinder/a1-l3-stage-diagnostic4.gd', '.cinder/a1-l3-stage-source/campaign.json',
+             'scripts/environment/scheduler_spore_source_protocol.gd', 'scripts/combat/repulsion_route.gd',
+             'scripts/dev/dev.py', 'project.godot', '.cinder/local.json',
+             '.godot/global_script_class_cache.cfg', 'data/campaign/registry.json',
+             'data/design/difficulty_profiles.json', 'data/design/player_equipment.json',
+             'scenes/acts/act1/a1_l3.tscn', 'scripts/acts/act1/mushroom_caverns_full.gd']
+    seeds += [str((HERE / name).relative_to(ROOT)) for name in
+              ['protocol.original.gd', 'route.original.gd', 'protocol.candidate.gd',
+               'route.candidate.gd', 'profile-base-original.gd', 'statement-proof.json',
+               'instrumentation.patch', 'fixture.patch', 'plan.json', 'manifest.json']]
+    seen, todo = set(), seeds[:]
+    while todo:
+        relative = todo.pop()
+        source = ROOT / relative
+        assert source.is_file(), source
+        if relative in seen:
+            continue
+        seen.add(relative)
+        if source.suffix in {'.gd', '.tscn', '.tres', '.json'}:
+            for child in re.findall(r'res://([^\s"\'\)]+)', source.read_text()):
+                if (ROOT / child).is_file():
+                    todo.append(child)
+    uid_rows = uids()
+    seen.update(row['path'] for row in uid_rows)
+    target.mkdir(parents=True)
+    (target / '.gdignore').write_bytes(b'')
+    rows = []
+    for relative in sorted(seen):
+        source = ROOT / relative
+        b = source.read_bytes()
+        q = target / 'source' / relative
+        q.parent.mkdir(parents=True, exist_ok=True)
+        q.write_bytes(b)
+        os.chmod(q, source.stat().st_mode & 0o777)
+        rows.append({'path': relative, 'archived_path': str(q.relative_to(target)), 'bytes': len(b), 'sha256': sha(q), 'mode': source.stat().st_mode & 0o777})
+    value = {'at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'mode': mode,
+             'files': rows, 'uids': uid_rows, 'seeds': seeds,
+             'scope': 'Explicit/literal-resource bounded subset plus active UID bytes, not a complete dynamic/import graph. Actual CP2/GUI Continue/Resume/one TEST placement/Crossed. Temporary inclusive native instrumentation; no optimization/FPS/gain/current-view/save/acceptance claim.'}
+    (target / 'manifest.json').write_text(json.dumps(value, indent=2) + '\n')
+    print(json.dumps({'tag': tag, 'mode': mode, 'files': len(rows), 'uids': len(uid_rows), 'manifest_sha256': sha(target / 'manifest.json')}))
+
+
+def verify(target, manifest):
+    for row in manifest['files']:
+        for path in [ROOT / row['path'], target / row['archived_path']]:
+            assert path.stat().st_size == row['bytes'] and sha(path) == row['sha256'] and path.stat().st_mode & 0o777 == row['mode'], path
+    assert uids() == manifest['uids']
+
+
+def run(tag, mode):
+    target = HERE / 'jobs' / tag
+    mp = target / 'manifest.json'
+    manifest = json.loads(mp.read_text())
+    assert manifest['mode'] == mode
+    verify(target, manifest)
+    log, result = target / 'wrapper.log', target / 'result.json'
+    assert not log.exists() and not result.exists()
+    command = [sys.executable, str(Path(__file__).relative_to(ROOT)), 'engine', tag, mode]
+    started = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    with log.open('xb') as output:
+        child = subprocess.Popen(command, cwd=ROOT, stdout=output, stderr=subprocess.STDOUT)
+        code = child.wait()
+    verify(target, manifest)
+    raw_path = target / 'raw.log'
+    streams = {'wrapper': log.read_text(errors='replace'), 'native': raw_path.read_text(errors='replace') if raw_path.exists() else ''}
+    problems = {}
+    for name, text in streams.items():
+        problems[name] = {
+            'script_parse_compile': len(re.findall(r'SCRIPT ERROR|Parse Error|Compile Error', text)),
+            'errors': len(re.findall(r'(?m)^ERROR:', text)),
+            'warnings': len(re.findall(r'(?m)^WARNING:', text)),
+            'failures': len(re.findall(r'FAIL:', text)),
+            'leak_or_unclaimed': len(re.findall(r'leaked|Orphan StringName|unclaimed', text, re.I)),
+        }
+    footer = re.findall(r'Native boundary profile: (\d+) checks, (\d+) failures;', streams['wrapper'])
+    clean = not any(sum(row.values()) for row in problems.values())
+    success = code == 0 and clean and (mode == 'parse' or bool(footer) and int(footer[-1][1]) == 0)
+    value = {'started_at': started, 'closed_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+             'command': command, 'child_pid': child.pid, 'returncode': code, 'clean': clean,
+             'successful_scope': success, 'mode': mode, 'source_count': len(manifest['files']),
+             'manifest_sha256': sha(mp), 'source_archive_current_exact_at_closure': True,
+             'active_uids_unchanged': True, 'diagnostics': problems, 'footers': footer,
+             'streams': {name: {'path': str(path.relative_to(ROOT)), 'bytes': path.stat().st_size, 'sha256': sha(path)} for name, path in [('wrapper', log), ('native', raw_path)] if path.exists()},
+             'scope': manifest['scope']}
+    result.write_text(json.dumps(value, indent=2) + '\n')
+    print(json.dumps({'tag': tag, 'mode': mode, 'returncode': code, 'clean': clean, 'successful_scope': success, 'footers': footer, 'result_sha256': sha(result)}))
+    sys.exit(0 if success else 1)
+
+
+def engine(tag, mode):
+    target = HERE / 'jobs' / tag
+    spec = importlib.util.spec_from_file_location('native_boundary_cinder_dev', ROOT / 'scripts/dev/dev.py')
+    dev = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = dev
+    spec.loader.exec_module(dev)
+    context = dev.ProjectContext()
+    command = [str(dev.resolve_godot(context)), '--path', str(ROOT), '--headless', '--script', SCRIPT,
+               '--log-file', str(target / 'raw.log')]
+    if mode == 'parse':
+        command += ['--check-only']
+    else:
+        # A profile cannot run until its separately retained actual parse closes.
+        parse = json.loads((HERE / 'jobs' / 'native-boundary-parse1' / 'result.json').read_text())
+        assert parse['mode'] == 'parse' and parse['successful_scope'] is True
+        command += ['--', '--measurement-label=' + tag]
+    (target / 'submission.json').write_text(json.dumps({'engine_command': command, 'mode': mode, 'deadline_s_after_queue_acquisition': 90}, indent=2) + '\n')
+    with dev.godot_lock(context.root) as lock:
+        print('Canonical dev.py queue acquired; owned90s deadline starts now.', flush=True)
+        code = dev.run_validation(command, context, lock, 90, detect_godot_errors=True)
+    sys.exit(code)
+
+
+if __name__ == '__main__':
+    action, tag, mode = sys.argv[1:4]
+    assert action in {'freeze', 'run', 'engine'} and mode in {'parse', 'profile'} and re.fullmatch(r'[a-z0-9-]+', tag)
+    if action == 'freeze':
+        freeze(tag, mode)
+    elif action == 'run':
+        run(tag, mode)
+    else:
+        engine(tag, mode)

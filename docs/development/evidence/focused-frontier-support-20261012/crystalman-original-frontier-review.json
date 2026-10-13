@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-12T08:30:42.620567+00:00",
+  "reviewer": "/root/act3_level_testing",
+  "level_id": "A3-L5",
+  "title": "Crystalman: Compose an Escape",
+  "status": "first one-slot prototype in progress; no successful native component pass yet; not ready for level acceptance",
+  "accepted": false,
+  "independent_engine_runs": 0,
+  "integration_campaign_count": 14,
+  "owner_document_count_qualification": "Owner current records still say campaign13/24 as of garden acceptance; later Integration14/24 does not grant new Act3 acceptance. Act3 remains4/8.",
+  "actual_worker_shared": {
+    "api_revision": "campaign-shared-52",
+    "publication": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+    "adoption_merge": "81f04c9d1b25eae6e4da6d6fdb9a290a01408a49",
+    "ack": "79c6c714-68f7-44d2-a1af-49689191364a"
+  },
+  "shared53": "8cb1da79 available; no worker adoption inferred or source evidence relabeled",
+  "closed_originals": [
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/crystalman-rule-import-native",
+      "closed_at": "2026-10-12T08:06:34.275188+00:00",
+      "exit_code": 0,
+      "source_rows": 528,
+      "source_errors": [],
+      "log_sha256": "42d7277ad707db7f9767ec25e2880be754dccbe42a0bc5156a3d435e97ff4c42",
+      "result_sha256": "28c850c244eb77632bfbc78bb2271a9a5d3fe1a5b3e45002929da6bc1997fced",
+      "freeze_sha256": "f83cf02976a7ec6e6fbac7688d5b1cf5fa71028f2d3e8871508225f19cde6670",
+      "diagnostics": [],
+      "footers": []
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/crystalman-rule-first-native",
+      "closed_at": "2026-10-12T08:08:25.649974+00:00",
+      "exit_code": 0,
+      "source_rows": 530,
+      "source_errors": [],
+      "log_sha256": "718ef40b6e1a54f41583019b21def6711e9bfea13d33ea6e98f573ccf7a7c920",
+      "result_sha256": "74428fd2d79caf61cd835c8816f03ed09edd7df727c014cc6cc393dce44686f3",
+      "freeze_sha256": "7d4f087ffca5d600dada8122f3871f34382fa660c7ca8e709ef67ecea6df0ca2",
+      "diagnostics": [
+        "SCRIPT ERROR: Parse Error: Function \"_sever_with_real_primary()\" is a coroutine, so it must be called with \"await\".",
+        "SCRIPT ERROR: Parse Error: Function \"_sever_with_real_primary()\" is a coroutine, so it must be called with \"await\".",
+        "ERROR: Failed to load script \"res://tests/acts/act3/crystalman_rule_room_smoke.gd\" with error \"Parse error\"."
+      ],
+      "footers": []
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/crystalman-rule-await-corrected-v2-native",
+      "closed_at": "2026-10-12T08:11:46.375368+00:00",
+      "exit_code": 1,
+      "source_rows": 530,
+      "source_errors": [],
+      "log_sha256": "9b05080c0c68c7bd90890f3579387e6b911f3d2a350ebc7b4e7910f7194fb544",
+      "result_sha256": "65fc35d4d8de4ba0b491cb8c0f1483fc2110a39b786cf12c15f1a4727815b1ef",
+      "freeze_sha256": "09f4b4d7405bb2b107ea33481f8eb2e1cfcf3bf47277cbb35fc832e2f2878be8",
+      "diagnostics": [
+        "ERROR: FAIL: actual completed response reaches clear landing without absorbing replay damage"
+      ],
+      "footers": [
+        "Crystalman first one-slot rule room: 16 checks; failures: 1; actual post-actor ticks: 150. No whole-parent transport/art/phase2 acceptance."
+      ]
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/crystalman-rule-landing-diagnostic-native",
+      "closed_at": "2026-10-12T08:16:21.686778+00:00",
+      "exit_code": 1,
+      "source_rows": 530,
+      "source_errors": [],
+      "log_sha256": "6346dedf1e1451c83a68758d0cef1e2a01435e6d0ae6b70cabcd165113d66d64",
+      "result_sha256": "058cf282d28b73d9e85bb67df33f19d010e8052fda0180ffb206c6f06ef66a4a",
+      "freeze_sha256": "46ffb71075fe6c2114726d135c635ef8cca095bb0e38da6fbcbd18f28e70cf98",
+      "diagnostics": [
+        "ERROR: FAIL: actual completed response reaches clear landing without absorbing replay damage"
+      ],
+      "footers": [
+        "Crystalman first one-slot rule room: 16 checks; failures: 1; actual post-actor ticks: 150. No whole-parent transport/art/phase2 acceptance."
+      ]
+    }
+  ],
+  "verification": {
+    "frozen_source_references_checked": 2118,
+    "source_hash_errors": 0,
+    "all_four_logs_hash_exact": true,
+    "critical_frozen_source_pins": {
+      "scripts/acts/act3/crystalman_rule_room.gd": "94451c6f29115d0cbb93c5da022d73dc8d60cf58d764d6dbea06db9bb6640644",
+      "tests/acts/act3/crystalman_rule_room_smoke.gd": "68ff378110c524f73e1b3b209fa008bce6d3febe24c1d8d36f062f27eb673b2d",
+      "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "scripts/combat/replay_capture_gate.gd": "5f4d814f3b3bbb90e3274e1a76a7d082e092be553edf2862e9da480bb0042a2e",
+      "scripts/combat/replay_sequence.gd": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+      "scripts/combat/replay_witness.gd": "5bcc9c58b9ea8c496200d9d313f2d9848baa0700665fa062640270945d829295",
+      "scripts/combat/replay_footprint.gd": "23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b",
+      "scripts/combat/replay_playback.gd": "e4c7ee2e7d511ee294fd795cc389c20b69672e46fff38c8a5f73e4aa6d081304",
+      "scripts/combat/threat_scheduler.gd": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+    }
+  },
+  "closed_native_scope": {
+    "import": "exit0 clean,528 original rows;442 previous UID bytes preserved, two genuine owned UID outputs,444 unique/0 collisions; no gameplay pass credit",
+    "first_run": "exit0 with coroutine-await parse errors at113/167 and no footer; failed before gameplay, no native pass credit",
+    "await_corrected": "16 checks/1 failure at150 post-actor ticks; coroutine correction exactly two awaits; normal cleanup passed; no completed response/tether/second-case credit",
+    "landing_diagnostic": "16 checks/1 failure at150 ticks; only failure operands added, native assertion/tolerance/runtime/input unchanged; observed unfinished real dash, no HP loss"
+  },
+  "capture_replay_custody": [
+    "Actual Main/CinderLevel, one shared Hero/Camera/HUD and sole CaptureGate; actual stable armed one slot.",
+    "Actual completed voluntary dash plus immediate executed primary preserve original geometry/equipment/release aim; optional blast absent in this closed case. Explicit initial TEST zero-ammo supply is disclosed; no HP seed.",
+    "Gate synchronizes at paused stable barrier; full Hero/Gate snapshot and exact prepared Sequence preserved. Same fresh Playback owns projection/preflight/current framing and actual Scheduler lease.",
+    "No-yield unpaused whole proof/admission is immediately repaused; exact actor/Gate checks precede consume_sequence. Both accepted=true and empty reason required. One irreversible FIFO retirement, callback reentry refused.",
+    "Recording Gate canceled after transfer; exact fresh unarmed Playback.bind_projected executes outside all Gate callbacks before next physics tick. Actor hash/clock remains unchanged.",
+    "Actual due lock re-proves complete finite replay and ordinary-primary return before Playback delivery. Shared controller is priority100, Playback110, Gate2000, test barrier3000 with deferred observation. No private actor writes or manual physics stepping.",
+    "Warning preview Pause freezes actual leaf aggregate; actual Resume GUI consumes without combat/capture/tick. This is custom Main preview behavior, not production CampaignShell Save/Retry.",
+    "Normal disposal after the failure releases actor/Gate callback/lease owner/cues/tether groups; late successful spent cleanup remains unexecuted."
+  ],
+  "landing_failure": {
+    "actual_player_clock_s": 2.499999999999996,
+    "actual_scheduler_clock_s": 2.499999999999996,
+    "proof_segment_start_s": 2.316666666666664,
+    "proof_segment_end_s": 2.4966666666666644,
+    "segment_kind": "first_escape_dash",
+    "segment_from": [
+      0,
+      -0.0048437617,
+      -2.9802322e-08
+    ],
+    "segment_to": [
+      0,
+      -0.0048437617,
+      2.7
+    ],
+    "actual_position": [
+      0,
+      -0.0048437617,
+      2.5
+    ],
+    "distance_error": 0.20000005,
+    "actual_hp": 100.0,
+    "original_hp": 100.0,
+    "actual_dash_left_s": 0.013333333333333384,
+    "actual_velocity": [
+      0,
+      0,
+      15
+    ],
+    "actual_grounded": true,
+    "room_phase": "lock",
+    "latest_completed_record": "previous primary sequence2 at0.45; failed escape has not published a completed dash",
+    "proved_fact": "Fixture asserts complete landing at a Scheduler end-clock while actual public Hero says the dash is unfinished. The measured failure is position/completion timing, not replay damage.",
+    "source_join": "ReplayWitness end=start+resolved continuous dash_duration0.18000000000000002. Player moves and decrements remaining duration on actual physics samples, publishing completion only when remaining becomes0. _follow_proof waits Scheduler>=end_s and checks position/HP without checking actual completed action or dash_left0.",
+    "hypothesis_only": "One native tick late dispatch or floating-point arrival at the scheduled start is consistent with0.2m residual/0.013333s remaining. Actual swipe dispatch start, pending dash path and original full proof/lease clocks were not printed, so that mechanism and any shared planner/control mismatch remain unproved.",
+    "minimum_missing_proof": [
+      "Actual Hero/Scheduler clocks immediately before and after real routed swipe, original proof start/end values including bits",
+      "Public committed/pending dash origin/direction/duration/remaining and capture history at the original failure boundary",
+      "Actual completed dash started_at/completed_at/path/landing if obtained by supported observation, joined to the same whole proof/lease timeline/due/current packet",
+      "Current actor/camera/input/capture/Playback/Scheduler state at native observation priority, without changing geometry, HP, or control timing"
+    ],
+    "forbidden_inferences_or_fixes": [
+      "Do not treat enemy MAX_DISPATCH_DELAY_S0.05 as player response-input permission",
+      "Do not extend deadline, loosen0.02 landing tolerance, rewrite path, seed HP, force dash finish or skip native guards",
+      "Do not claim wrong path, replay damage or shared defect from this partial record alone"
+    ]
+  },
+  "ordinary_tether_opening": {
+    "source_contract": "Low external target accepts only real player_direct primary while phase exposed/locked, running Playback and live native lease/current framing. Exposure begins after max(original tether start,native active_until)+TIME_MARGIN and ends at original tether deadline. Shared Player already checks range/cone/scenery LOS. One accepted primary removes target group and normal retirement becomes spent.",
+    "native_status": "unexecuted; first escape assertion stops before active replay, ordinary return, exposure, tether primary, replay event dispatch and second invalid-origin/rearm case. A pure whole witness acceptance is not runtime tether reachability proof.",
+    "needed": "Complete the unchanged genuine ordinary escape/return and executed primary opening, exact event/retirement once-only counts and no blast/death/resource invention; then source-derived phase2/at-most-two sequential slots in appropriate focused fixtures."
+  },
+  "seven_category_gaps": {
+    "mechanics": "First sole Gate capture/projection/custody and fresh lock partially measured. Diagnose actual dash start/completion mismatch; ordinary tether opening, invalid rearm, once-only spent behavior and required phase2 remain unfinished.",
+    "loading": "Rule-room Main loading passes; authored canonical full-level scene/identity/initial state and integration registration do not yet exist.",
+    "transitions": "Production completion/contact/coda/ending flow, exact once-only IDs and fresh paused recipient remain unimplemented/unexecuted. No earned route gate imposed.",
+    "saves": "Whole parent/capture/Scheduler/Playback/native aggregate codec explicitly refuses snapshots. Supported disk Save/Continue and fresh restore are unfinished; leaf snapshots are not whole Save evidence.",
+    "retry": "Preview Pause/Resume measured; supported whole safe-phase checkpoint Retry and story/replay separation remain unfinished.",
+    "cleanup": "Failure disposal passes for first prototype; full authored and successful spent/phase2/restore-candidate disposal/cues/callbacks still need scoped evidence.",
+    "brief_visual": "Native current Camera/HUD containment partially passes headless; no actual new portrait PNG/art inspection yet. Landscape art source draft is unexecuted and not production-ready."
+  },
+  "new_actionable_shared_defects": [],
+  "shared_dependency_status": "No missing shared capture/replay API or shared runtime defect confirmed. Exact dispatch/completion custody is the narrow missing proof for Root to review before any canonical dependency request.",
+  "accepted_L4": "Accepted exact741 and all prior evidence unchanged; no rerun or requalification.",
+  "explicit_limits": "Full route/every enemy/earned exit/full campaign remain untested and are not acceptance gates. Current prototype is not an A3-L5 handoff or acceptance. No mobile/performance/all-kit/human/art-finality claim.",
+  "mutation_scope": "Only this exclusive Root scratch report written. No engine, owner/shared/source/assertion/Git/ledger/run/status changes."
+}

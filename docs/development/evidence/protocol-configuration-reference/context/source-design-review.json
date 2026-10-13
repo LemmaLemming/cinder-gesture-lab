@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_ONLY_DESIGN_PASS_CONDITIONAL_ON_STATED_PATTERN",
+  "scope": "Read-only original configure/_binding_error/Exact contract and existing meaningful native mutation/oracle controls. No runtime/fixture edits, Git, engine or new gain claims. Illustrative source text is a proposal, not a parser/native result.",
+  "source_pins": {
+    "protocol": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/environment/scheduler_spore_source_protocol.gd",
+      "sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+      "bytes": 45116
+    },
+    "exact": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330
+    },
+    "reference_fixture": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/tests/scheduler_spore_reference_smoke.gd",
+      "sha256": "faa5c14f183c6a12b9b83b08135b264f86cbb18489c68877a0e8d0fddedb8116",
+      "bytes": 40508
+    },
+    "native_source_fixture": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/tests/scheduler_spore_source_smoke.gd",
+      "sha256": "c9c6dcbe2d3616f9b391fc2b6603bc381a31630f49db15848570e72713919754",
+      "bytes": 38504
+    }
+  },
+  "critical_boundaries": [
+    {
+      "source": "Protocol74\u201376",
+      "finding": "Original Exact.stringify(native.configuration) validates the full finite closed tree and returns a nonempty wire capped at65536 bytes. Capture a separate deep copy immediately AFTER this original gate, before all subsequent native/callback queries."
+    },
+    {
+      "source": "Protocol96\u2013103",
+      "finding": "The actual owned get_spore_response_state callback occurs before the existing later _configuration copy. A returned Dictionary/Array alias can change here. A late copy must never become the optimization reference for the earlier retained receipt."
+    },
+    {
+      "source": "Protocol121\u2013122",
+      "finding": "Preserve both _configuration_json = configuration_json and _configuration = native.configuration.duplicate(true) at their original positions, even for a callback-mutated return. Do not use the early optimization copy to repair or rebaseline the public/native codec configuration."
+    },
+    {
+      "source": "Protocol391\u2013396",
+      "finding": "Every live _binding_error still calls the actual get_spore_native_bindings hook, rechecks retained handles, verifies original envelope/source/controller/codec identities, and compares its fresh configuration at the same short-circuit point and with the same error string."
+    },
+    {
+      "source": "Protocol371\u2013381,398\u2013431",
+      "finding": "Retain every actual environment/Codec scan, floor/resource identity, native body, physical motion, actual response and controller read before/after the copied-value comparison. Configuration optimization is not a native authority cache."
+    }
+  ],
+  "recommended_minimal_pattern": {
+    "dedicated_field": "var _configuration_reference: Dictionary = {}",
+    "early_private_local": "# Immediately AFTER the original configuration_json nonempty/65536-byte rejection.\n# Do not move or replace the original later _configuration assignment.\nvar captured_configuration: Variant = null\nif get_script() == CinderSchedulerSporeSourceProtocol:\n\tcaptured_configuration = native.configuration.duplicate(true)\n",
+    "successful_staging": "# At successful configure commit, under fresh exact native Script selection.\n# Optimization failure leaves the dedicated cache empty; it does not reject bind.\nif get_script() == CinderSchedulerSporeSourceProtocol and captured_configuration is Dictionary and Exact.stringify(captured_configuration) == configuration_json:\n\t_configuration_reference = {\"json\": configuration_json, \"bits\": _compile_reference_bits(captured_configuration)}\n",
+    "selector": "func _same_configuration_reference(actual: Variant, expected_json: String) -> bool:\n\tif get_script() != CinderSchedulerSporeSourceProtocol:\n\t\treturn Exact.stringify(actual) == expected_json\n\tvar retained: Variant = _configuration_reference\n\tif not retained is Dictionary or not retained.get(\"json\") is String or retained.json.is_empty() or retained.json != expected_json or not retained.has(\"bits\") or typeof(retained.bits) != TYPE_DICTIONARY:\n\t\treturn Exact.stringify(actual) == expected_json\n\treturn _same_bits_reference(actual, retained.bits)\n",
+    "only_original_expression_replacement": "Exact.stringify(native.configuration) != _configuration_json -> not _same_configuration_reference(native.configuration, _configuration_json)",
+    "reason_for_separate_field": "Existing original527 reference fixture checks exactly3 world/floor/body kinds at574; adding a fourth kind changes that private-map contract and subclass dispatch controls unnecessarily. Reuse the existing byte compiler/comparator without changing the existing map or its helper/fallback.",
+    "staging_failure": "If original-wire equality is not obtained, leave the new cache empty and use original serialization. Never reject configure or change diagnostics merely because the optimization cache is unavailable."
+  },
+  "fallback_semantics": {
+    "required": "Exact.stringify(actual) == expected_json literally, including empty/missing/malformed/changed private receipt and subclass cases.",
+    "counterexample": "For an unencodable actual value and expected_json=\"\", the old expression is TRUE because stringify returns an empty String. Existing _same_reference is FALSE due to its extra nonempty guard. Normal configure never earns such a receipt, but private-field/control fallback must preserve the old expression rather than silently changing acceptance.",
+    "shape": "The compiled configuration root is always a Dictionary (including a legitimately empty Dictionary). Missing bits or wrong root type should take the original fallback; do not use bits.is_empty as an authenticity test. Arbitrary same-shaped reflection corruption of private bits is outside the existing private-wire trust model.",
+    "no_new_authentication_claim": "Private data is never exposed or returned. This does not authenticate arbitrary private .set/reflection mutation, and no generic foreign-input validator or caller-approved flag is introduced."
+  },
+  "accepted_set_proof": [
+    "Only a separate deep copy admitted by the ORIGINAL full Exact traversal and65,536-byte encoded configuration limit can compile; reserialization confirms that very copy against the original captured receipt after subsequent callbacks.",
+    "All candidates still have the original Dictionary check before helper invocation. The mirror requires exact native leaf/container types, all String key types before lookup, size/order/value checks and original eight-byte float identity; no tolerance/coercion/numeric shortcut.",
+    "Signed zero/subnormal/adjacent/max-finite bits are preserved. Nonfinite/native objects/StringName/unsafe integer mismatches fail against the finite reference, while typed container metadata and Dictionary ordering are ignored exactly as under original transport.",
+    "Candidate descent is bounded by the finite admitted reference. Equal data necessarily has the same original depth64/entry16384/node262144/safe-int/escaped-byte charges, including repeated alias occurrences; greater shape or a foreign cycle cannot match a finite reference.",
+    "No callback/yield occurs while copying, reserializing or compiling the private closed tree. Actual native current configuration is freshly supplied by the source on every binding check.",
+    "Legitimate Protocol subclasses retain the exact old serialization expression; canonical selection happens before reading the cache. Failure/error/diagnostic ordering outside the expression remains literal."
+  ],
+  "narrow_meaningful_controls": [
+    "Healthy genuine native actor/Player/Scheduler configure and paused whole-unit comparison; new dedicated cache populated only for exact Protocol Script, existing3-kind map remains literal.",
+    "Native source hook returns a retained configuration alias, then its configure-time response hook mutates that returned alias. Compare against the original path and prove the cached early copy/receipt stay original; no new cache from late mutated _configuration, no invented physical HP or clocks.",
+    "A separate genuine current-configuration mutation at each fresh get_spore_native_bindings boundary must still reject before later body/response work. Preserve callback counts, first original error string and exact nonempty native before/after observations.",
+    "Reuse old full Exact differential for keys/scalars StringName, int/float, positive/negative zero, one-bit floats in each triplet coordinate, mixed/typed/native arrays, object/Callable/cycle/alias and oversized String/closed bounds. No hostile expected reference is compiled without original admission.",
+    "Missing cache/bits, wrong root type, malformed/empty/different stored receipt, empty/corrupt private _configuration_json and unrelated expected wire all match the EXACT old expression. Include unencodable actual + empty expected TRUE control separately from invalid-reference authority claims.",
+    "Actual Protocol subclass keeps original fallback; original world/floor/body dispatch order, one-bit resource negatives and all527 reference assertions remain independently valid.",
+    "Directly affected native source208 scope remains appropriate after focused compiler/parity controls. Any actual performance experiment must use the same current workload and original frozen source/log receipts; no unrelated full-route/all-source guard removal."
+  ],
+  "performance_limits": "Earlier2944/eight-frame measurement identifies repeated serialization but does not isolate configuration cost or establish gain from this unimplemented design. All fresh world scans/Codec/native hooks and checks remain. No desktop FPS, responsiveness or measured saving claim.",
+  "findings": [],
+  "writes": "Only .cinder/configuration-reference-design-review.json."
+}

@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "status": "PASS_TWO_SEPARATE_AFFECTED_NATIVE_PACKETS",
+  "scope": "Independent full original source/mode/membership/log/result checks and reference observation byte pairs; no native rerun, no current candidate join during deliberate active baseline, no cost or level credit.",
+  "packets": [
+    {
+      "packet": "affected-source-first-20261012",
+      "sources": 1286,
+      "original_membership_hash_modes_exact": true,
+      "result_sha256": "93769f409cdbb585b5c0774fceb4bd8cccc76e2b0b9352b32bbbb82779fa3e04",
+      "source_sha256": "1bf404bc2c1b50218d177c55832c6e8a0b546b6cd54448a68e4924abb8fbfd29",
+      "raw_sha256": "cb9172fbdbd8d63cea997bf2176fe40d44a2413f795d6bd94a1ba5a0a6473d9f",
+      "wrapper_sha256": "64ae95a7c1a5c79c1043e58d78e99d01fb8642679b192acca607a87bf7add6ee",
+      "candidate_sha256": "80bfe4a32fb1af865d8409ffbe232d4dd54690c3cd3b2d179f49f9f447b48d3c",
+      "counts": [
+        {
+          "checks": 208,
+          "failures": 0
+        }
+      ],
+      "exit_code": 0,
+      "full_scans": {
+        "raw.log": {
+          "script": 0,
+          "error": 0,
+          "warning": 0,
+          "parse_load": 0
+        },
+        "wrapper.log": {
+          "script": 0,
+          "error": 0,
+          "warning": 0,
+          "parse_load": 0
+        }
+      },
+      "reference_native_pairs": [],
+      "current_protocol_join": "Not asserted: Root deliberately selected originala01 for an ACTIVE matched baseline after these closed80bf runs. Frozen originals/closure joins remain authority; no retroactive source drift or baseline credit."
+    },
+    {
+      "packet": "affected-reference-first-20261012",
+      "sources": 1286,
+      "original_membership_hash_modes_exact": true,
+      "result_sha256": "2a7dfff2d8b881a061e792d8b2cac461f0fa6bdb2adb1f203e660f45a4978073",
+      "source_sha256": "691f39dd4b16dc864159e5ad9ab9a565812ff8447f5d7b85f899bafbcced0e9a",
+      "raw_sha256": "a6863c278a2bddc4eb88a1a99ac878a6477c22226bc71be98bc129942e27b051",
+      "wrapper_sha256": "3e71f1fcee2b8c0557acc0f276626d0a3acbdf7997d8e4bf9abf9ca3c3b68c37",
+      "candidate_sha256": "80bfe4a32fb1af865d8409ffbe232d4dd54690c3cd3b2d179f49f9f447b48d3c",
+      "counts": [
+        {
+          "checks": 527,
+          "failures": 0
+        }
+      ],
+      "exit_code": 0,
+      "full_scans": {
+        "raw.log": {
+          "script": 0,
+          "error": 0,
+          "warning": 0,
+          "parse_load": 0
+        },
+        "wrapper.log": {
+          "script": 0,
+          "error": 0,
+          "warning": 0,
+          "parse_load": 0
+        }
+      },
+      "reference_native_pairs": [
+        {
+          "before": "PROTOCOL_REFERENCE_NATIVE_BEFORE",
+          "after": "PROTOCOL_REFERENCE_NATIVE_AFTER",
+          "exact_payload_equal": true,
+          "bytes": 15973,
+          "sha256": "c054a263cadfe6b3e312141817bc7f4c1139ee8beb7bf5a24a7c413111e06e02"
+        },
+        {
+          "before": "PROTOCOL_REFERENCE_BITS_NATIVE_BEFORE",
+          "after": "PROTOCOL_REFERENCE_BITS_NATIVE_AFTER",
+          "exact_payload_equal": true,
+          "bytes": 15973,
+          "sha256": "c054a263cadfe6b3e312141817bc7f4c1139ee8beb7bf5a24a7c413111e06e02"
+        },
+        {
+          "before": "PROTOCOL_REFERENCE_SUBCLASS_BEFORE",
+          "after": "PROTOCOL_REFERENCE_SUBCLASS_AFTER",
+          "exact_payload_equal": true,
+          "bytes": 15938,
+          "sha256": "846ef90488f0c123b3464c017dfcaa4d7377891530f24012444f09c29905f11a"
+        }
+      ],
+      "current_protocol_join": "Not asserted: Root deliberately selected originala01 for an ACTIVE matched baseline after these closed80bf runs. Frozen originals/closure joins remain authority; no retroactive source drift or baseline credit."
+    }
+  ]
+}

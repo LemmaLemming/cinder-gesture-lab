@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-10-12T03:54:09.752940+00:00",
+  "pre_head": "efe5e4121e619e674b951d25c50ec0375dd64144",
+  "publication": "c1d565301827c8e3cf268463fae8124d041abdd3",
+  "merge_commit": "cea8a8e7856a7d81b4228ed84bb5d3c58687f33e",
+  "parents": [
+    "efe5e4121e619e674b951d25c50ec0375dd64144",
+    "c1d565301827c8e3cf268463fae8124d041abdd3"
+  ],
+  "api_revision": "campaign-shared-48",
+  "incoming_request": "054742c7-619d-4b12-b444-e3ee96e86554",
+  "owned_git_rows": 16690,
+  "owned_physical_rows": 16888,
+  "bounded_protected_physical_rows": 11880,
+  "intentional_published_shared_changes_in_old_protection": {
+    "scripts/ui/campaign_menu.gd": {
+      "before": {
+        "sha256": "afdb380e539e4b8f2b88c263a883064d80cd6ecdee477891fcc984e00999e3b7",
+        "bytes": 37348,
+        "mode": 420
+      },
+      "after": {
+        "sha256": "948d2b86a70b033faaa23bd39bfa7d439276fe7a134ea6567fc671b955585dac",
+        "bytes": 40595,
+        "mode": 420
+      },
+      "publication_git": {
+        "mode": "100644",
+        "kind": "blob",
+        "blob": "53f653e680e43c4488d5f4c4e220f04f8119979a"
+      }
+    }
+  },
+  "nonowned_publication_git_rows": 67713,
+  "changed_nonowned_physical_rows": 5649,
+  "prior_active_uids": 416,
+  "current_active_uids": 418,
+  "new_shared_uids": {
+    "scripts/ui/campaign_scenery.gd.uid": {
+      "sha256": "0af7968d8b8bbf7e890d27947d52bf3b535e5b58fb2eff92070cf008333def39",
+      "bytes": 20,
+      "mode": 420
+    },
+    "tests/menu_scenery_smoke.gd.uid": {
+      "sha256": "223d15b8e80075de515bd2e40028a205728b7fd47678ac46ff27297b1a4a063d",
+      "bytes": 20,
+      "mode": 420
+    }
+  },
+  "original_evidence_whitespace": {
+    "unchanged_original_paths": [
+      "docs/development/evidence/shared48-menu-scenery/drafts/scenery-README.md"
+    ],
+    "diagnostics": "docs/development/evidence/shared48-menu-scenery/drafts/scenery-README.md:25: trailing whitespace.\n+Read: `docs/UI_DESIGN_PLAN.md`, GAME_CONCEPT, GAME_STYLE_GUIDELINES, ASSET_REUSE_GUIDE, ACT1/2/3_CONCEPT, all3 selected-art READMEs, Act1/Act3 adaptation notes and Act1 source STYLE_GUIDE. Opened these six selected local concept images: \n",
+    "original_diagnostic_sha256": "9dada187abfa4ae1d8ecbfad47a1ae3ad8ddb31dd0b8cb2e5da9dd802ac1234a",
+    "scope": "One trailing-space notice in the exact published original scenery draft are preserved byte-for-byte. Remaining changed-source strict whitespace check passes. No original is trimmed."
+  },
+  "checks": "Exact prior owned Git/physical modes and bytes; full nonowned publication modes/blobs; changed nonowned actual bytes/modes; bounded ignored/settings/old originals and all prior active UID identities.",
+  "scope": "Actual preserving merge/custody only. Counts are owner-verified; no engine/gameplay/portrait/level-acceptance credit.",
+  "physical_blob_verification": "Canonical Git SHA-1 over literal blob header and exact current bytes; avoids per-file subprocess only. All earlier adoption snapshots/helpers/logs and frozen job originals retained; active ignored helper drafts are excluded explicitly."
+}

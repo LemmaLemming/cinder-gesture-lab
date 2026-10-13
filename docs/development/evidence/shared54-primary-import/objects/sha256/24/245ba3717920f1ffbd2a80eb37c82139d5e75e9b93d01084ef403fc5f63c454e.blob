@@ -1,0 +1,215 @@
+#!/usr/bin/env python3
+"""Original hand-set low gill tufts. No source image pixels are read to draw.
+
+Static decoration only: available, lifted/slack active and fallen spent art.
+This inert source is preserved for review; no native runtime wiring is authored.
+"""
+from pathlib import Path
+import hashlib
+import json
+import sys
+from PIL import Image, ImageDraw
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[4]
+STATES = ("available", "active", "spent")
+PALETTE = {
+    "ink": (20, 20, 20, 255), "coal": (39, 39, 39, 255),
+    "shade": (67, 67, 67, 255), "mid": (105, 105, 105, 255),
+    "silver": (147, 147, 147, 255), "light": (193, 193, 193, 255),
+    "white": (231, 231, 231, 255),
+}
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def poly(d, points, material):
+    d.polygon(points, fill=PALETTE[material])
+    d.line(points + [points[0]], fill=PALETTE["ink"], width=1)
+
+
+def line(d, points, material, width=1):
+    d.line(points, fill=PALETTE[material], width=width)
+
+
+def draw(state):
+    im = Image.new("RGBA", (24, 20), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    # Actual drawn substrate, not a shadow, cue ring or field boundary.
+    poly(d, [(3, 18), (7, 16), (16, 16), (21, 18), (20, 19),
+             (4, 19)], "coal")
+    line(d, [(5, 18), (8, 17), (16, 17), (19, 18)], "shade")
+    if state == "available":
+        # A short pale stalk supports a dense low tuft of irregular gill fans.
+        poly(d, [(10, 12), (13, 12), (14, 18), (10, 18)], "silver")
+        line(d, [(11, 13), (11, 17)], "light")
+        poly(d, [(8, 17), (3, 11), (4, 8), (7, 6), (10, 9),
+                 (11, 12)], "light")
+        line(d, [(5, 9), (7, 7), (9, 10)], "white")
+        line(d, [(5, 11), (8, 15)], "mid")
+        line(d, [(8, 10), (9, 14)], "silver")
+        poly(d, [(11, 16), (8, 8), (10, 4), (13, 4), (16, 7),
+                 (15, 11)], "light")
+        line(d, [(10, 6), (12, 5), (14, 7)], "white")
+        line(d, [(10, 9), (12, 14)], "mid")
+        line(d, [(13, 8), (13, 12)], "silver")
+        poly(d, [(15, 17), (13, 11), (15, 7), (18, 7), (21, 10),
+                 (21, 12), (18, 15)], "light")
+        line(d, [(15, 9), (17, 8), (19, 10)], "white")
+        line(d, [(15, 11), (16, 15)], "mid")
+        line(d, [(19, 12), (17, 15)], "silver")
+        line(d, [(8, 17), (11, 18), (16, 17)], "silver")
+    elif state == "active":
+        # Lifted, slack petals stay connected to the same base. No particles.
+        poly(d, [(10, 12), (13, 12), (14, 18), (10, 18)], "silver")
+        line(d, [(11, 13), (11, 17)], "light")
+        poly(d, [(10, 17), (6, 13), (2, 8), (3, 6), (5, 6),
+                 (8, 11), (11, 13)], "light")
+        line(d, [(3, 8), (5, 8), (7, 11)], "white")
+        line(d, [(5, 11), (9, 15)], "mid")
+        poly(d, [(12, 16), (8, 6), (11, 2), (14, 3), (14, 6),
+                 (12, 10), (14, 15)], "light")
+        line(d, [(10, 5), (11, 3), (13, 4)], "white")
+        line(d, [(10, 7), (12, 13)], "mid")
+        line(d, [(13, 6), (12, 9)], "silver")
+        poly(d, [(15, 17), (15, 13), (16, 9), (19, 5), (21, 6),
+                 (21, 9), (19, 12), (17, 16)], "light")
+        line(d, [(18, 8), (19, 6), (20, 7)], "white")
+        line(d, [(18, 10), (16, 15)], "mid")
+        line(d, [(8, 17), (11, 18), (16, 17)], "silver")
+    else:
+        assert state == "spent"
+        # Fallen gill folds and short stalk remain as a quiet physical remnant.
+        poly(d, [(10, 14), (12, 12), (14, 14), (13, 18),
+                 (10, 18)], "mid")
+        line(d, [(11, 14), (12, 13), (13, 14)], "silver")
+        poly(d, [(3, 16), (4, 13), (7, 12), (10, 13), (12, 16),
+                 (13, 18), (6, 18)], "silver")
+        line(d, [(5, 14), (7, 13), (9, 14)], "light")
+        line(d, [(5, 16), (8, 17), (10, 16)], "shade")
+        line(d, [(7, 14), (9, 16)], "white")
+        poly(d, [(14, 15), (17, 12), (20, 13), (22, 16),
+                 (20, 18), (15, 17)], "silver")
+        line(d, [(17, 14), (19, 14), (20, 15)], "light")
+        line(d, [(16, 16), (19, 17)], "shade")
+        line(d, [(18, 15), (20, 16)], "white")
+    return im
+
+
+def main():
+    refs = []
+    for ident, rel, kind, basis in [
+        ("G10", "docs/concept-art/act1/characters/selenite-costumes-and-roles.png",
+         "generated_costume_concept", "the same moon-white/dusty-silver/black theatrical material family; no cluster or historical spore-object claim"),
+        ("G25", "docs/concept-art/act1/gameplay/02-mushroom-spores-gameplay.png",
+         "generated_gameplay_proposal", "low pale reachable cluster below mushroom cap and visibly living retreating enemies; no runtime/supply/timing proof"),
+        ("F10", "docs/reference-library/act1/film-stills/f10.jpg",
+         "1902_film_frame_reproduction", "theatrical monochrome cloth/shape contrast only; the film frame does not establish mushroom clusters or this interaction"),
+    ]:
+        refs.append({"id": ident, "path": rel, "sha256": sha(ROOT / rel),
+                     "kind": kind, "actual_pixels_personally_inspected": True,
+                     "observed_basis": basis, "pixel_use": "none; no extraction, editing, tracing, cropping or sampling"})
+    requirements = []
+    for rel in ["docs/GAME_STYLE_GUIDELINES.md", "docs/reference-library/act1/STYLE_GUIDE.md",
+                "docs/ASSET_REUSE_GUIDE.md", "docs/ACT1_CONCEPT.md"]:
+        requirements.append({"path": rel, "sha256": sha(ROOT / rel)})
+    provenance = {
+        "schema_version": 1, "created_date": "2026-10-09", "first_level": "A1-L3",
+        "authorship": "original hand-authored integer polygons/lines at native 24x20; source images not read for drawing",
+        "source_provenance": refs, "requirements_read": requirements,
+        "author_source": {"file": "author.py.txt", "sha256": sha(Path(__file__)),
+                          "bytes": Path(__file__).stat().st_size, "kind": "inert original hand-set drawing source"},
+        "reuse_family": "act1_grotto_low_spore_cluster_decoration",
+        "palette_basis": {"path": "assets/acts/act1/grotto/selenite_manifest.json",
+                          "sha256": sha(ROOT / "assets/acts/act1/grotto/selenite_manifest.json"),
+                          "role": "same seven grayscale theatrical materials; no source PNG pixels reused"},
+        "historical_limit": "monochrome is game art direction; the cluster and harmless hit-activated spore rule are game adaptations, not authenticated film props",
+    }
+    provenance_path = HERE / "provenance.json"
+    provenance_path.write_text(json.dumps(provenance, indent=2) + "\n")
+    assets = []
+    sheet = Image.new("RGB", (720, 218), (65, 65, 65))
+    sd = ImageDraw.Draw(sheet)
+    for i, state in enumerate(STATES):
+        im = draw(state)
+        path = HERE / f"cluster_{state}.png"
+        im.save(path)
+        colors = set(im.get_flattened_data())
+        bounds = im.getchannel("A").getbbox()
+        assert im.size == (24, 20) and im.mode == "RGBA"
+        assert {p[3] for p in colors} == {0, 255}
+        assert colors <= set(PALETTE.values()) | {(0, 0, 0, 0)}
+        assert bounds[0] > 0 and bounds[1] > 0 and bounds[2] < 24 and bounds[3] == 20
+        assets.append({
+            "id": f"ACT1-GROTTO-CLUSTER-DECOR-{state.upper()}", "file": path.name,
+            "sha256": sha(path), "bytes": path.stat().st_size,
+            "state": state, "native_grid": [24, 20], "feet_pivot_pixels": [12, 20],
+            "sprite_offset_centered_pixels": [0, 10], "pixel_size_provisional": 0.016,
+            "full_quad_world_provisional": [0.384, 0.32],
+            "full_quad_from_feet_world_provisional": [-0.192, 0.0, 0.192, 0.32],
+            "opaque_bounds_exclusive_pixels": list(bounds),
+            "opaque_bounds_from_feet_world_provisional": [(bounds[0] - 12) * 0.016,
+                (20 - bounds[3]) * 0.016, (bounds[2] - 12) * 0.016,
+                (20 - bounds[1]) * 0.016],
+            "opaque_pixel_count": sum(p[3] == 255 for p in im.get_flattened_data()),
+            "reuse_family": "act1_grotto_low_spore_cluster_decoration",
+            "collision": "none; existing native cluster hit/collision geometry unchanged",
+            "occlusion": "small ordinary-depth decoration; native whole-quad/cue/Hero portrait check pending",
+            "timing": "none; one static native-state-selected drawing, no clock or private field phase",
+            "readiness": "authored_static_unimported_unbound_unplayed",
+        })
+        expanded = im.resize((192, 160), Image.Resampling.NEAREST)
+        sd.text((i * 240 + 12, 9), f"cluster / {state}", fill=(231, 231, 231))
+        sheet.paste(expanded, (i * 240 + 24, 35), expanded)
+        sd.text((i * 240 + 12, 201), "24x20 / same feet pivot", fill=(193, 193, 193))
+    assert len({a["sha256"] for a in assets}) == 3
+    sheet_path = HERE / "cluster_contact_sheet.png"
+    sheet.save(sheet_path)
+    manifest = {
+        "schema_version": 1, "first_level": "A1-L3", "created_date": "2026-10-09",
+        "scope": "unused small cluster decoration only; no runtime/state/collision/cue implementation",
+        "provenance": {"file": provenance_path.name, "sha256": sha(provenance_path)},
+        "author_source": provenance["author_source"], "palette": PALETTE,
+        "sampling": "nearest; native 24x20 RGBA; alpha exactly 0 or255; no smoothing/resampling/dithering in sprite pixels",
+        "native_grid": [24, 20], "feet_pivot_pixels": [12, 20],
+        "sprite_offset_centered_pixels": [0, 10], "pixel_size_provisional": 0.016,
+        "full_quad_world_provisional": [0.384, 0.32],
+        "existing_cluster_framing_box": {"size_world": [0.4, 0.5, 0.4],
+            "aabb_origin_relative_to_cluster": [-0.2, -0.05, -0.2],
+            "upright_world_Y_quad_assumed": True,
+            "prospective_left_right_clearance_world": 0.008,
+            "prospective_top_clearance_world": 0.13,
+            "fit_note": "anticipated upright centered width 0.384 and upward height 0.32 fit the existing 0.4x0.5 XY framing box at unit scale/retained feet origin; actual billboard orientation and full native 3D corners/portrait remain untested"},
+        "state_intent": {"available": "dense low pale gill tufts supported on short stalk",
+                         "active": "connected lifted/slack gill petals; no falling particles or cosmetic phase clock",
+                         "spent": "flattened fallen gill folds and a short substrate/stalk remnant"},
+        "cue_authority": "shared InteractionCue alone supplies available/active/spent cue/ring meaning; these PNGs contain no glow, ring, combat glyph or field boundary",
+        "gameplay_contract": "existing native ordinary-primary reach, finite supplies, hit/collision geometry, field dimensions/clocks and harmless living-enemy repulsion unchanged",
+        "state_selection": "future native owner supplies actual available/active/spent state; no private timing or source/control/state mutation",
+        "preview": {"file": sheet_path.name, "sha256": sha(sheet_path), "bytes": sheet_path.stat().st_size,
+                    "native_nearest_scale": 8, "role": "static review sheet, not a runtime atlas or screenshot"},
+        "assets": assets,
+        "validation": {"native_dimensions": 3, "hard_alpha": 3, "same_palette": 3,
+                       "aligned_canvas_feet_pivot": 3, "bottom_substrate_y19": 3,
+                       "top_lateral_no_frame_clipping": 3, "unique_original_pose_pngs": 3,
+                       "anticipated_math_fit_in_existing_box": True,
+                       "author_personally_viewed_all_three_static_states": "--static-reviewed" in sys.argv,
+                       "engine_runs": 0, "import_runs": 0, "runtime_binding_changes": 0,
+                       "collision_hit_changes": 0, "native_portrait_tests": 0},
+        "readiness": "authored_static_unimported_unbound_unplayed; owner actual pixel review/native import/cue coexistence and portrait integration pending",
+        "limitations": ["math fit is prospective; complete native resource/art/camera custody remains required",
+                        "static drawings cannot prove actual cluster reach, cue/source/Hero visibility or available/active/spent readability in portrait",
+                        "no new field/supply/state/animation clock or mechanic authored",
+                        "no gameplay/fullL3/route/save/profile/balance/performance acceptance"],
+    }
+    (HERE / "cluster_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    print(json.dumps({"sprites": 3, "manifest_sha256": sha(HERE / "cluster_manifest.json"),
+                      "provenance_sha256": sha(provenance_path), "sheet_sha256": sha(sheet_path),
+                      "author_source_sha256": sha(Path(__file__)),
+                      "asset_hashes": {a["file"]: a["sha256"] for a in assets}}, indent=2))
+
+
+if __name__ == "__main__":
+    main()

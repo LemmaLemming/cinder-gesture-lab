@@ -1,0 +1,130 @@
+from pathlib import Path
+import datetime
+import hashlib
+import json
+import stat
+
+ROOT = Path(__file__).resolve().parents[2]
+PACKET = ROOT / '.cinder/shared54-root-import/primary-import-first-20261013'
+DEST = ROOT / 'docs/development/evidence/shared54-primary-import'
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def add(path, role, expected_sha=None, expected_bytes=None, expected_mode=None, source_path=None):
+    data = path.read_bytes()
+    value = digest(data)
+    mode = stat.S_IMODE(path.stat().st_mode)
+    if expected_sha is not None: assert value == expected_sha, path
+    if expected_bytes is not None: assert len(data) == expected_bytes, path
+    if expected_mode is not None: assert mode == int(expected_mode, 8), path
+    target = DEST / 'objects/sha256' / value[:2] / (value + '.blob')
+    if not target.exists():
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+        target.chmod(0o644)
+    assert target.read_bytes() == data and target.stat().st_ino != path.stat().st_ino
+    ref = {'role': role, 'original_absolute_path': str(path), 'source_path': source_path,
+           'sha256': value, 'bytes': len(data), 'original_mode': format(mode, '04o'),
+           'object': str(target.relative_to(DEST)), 'object_mode': '0644'}
+    references.append(ref)
+    objects[value] = {'sha256': value, 'bytes': len(data), 'object': ref['object']}
+    return ref
+
+
+closure = json.loads((PACKET / 'closure.json').read_text())
+before = json.loads((PACKET / 'before.json').read_text())
+after = json.loads((PACKET / 'after.json').read_text())
+frozen = json.loads((PACKET / 'frozen-before-manifest.json').read_text())
+submission = json.loads((PACKET / 'submission.json').read_text())
+assert closure['clean_import_scope'] and closure['actual_terminal_exit'] == 0
+assert closure['owned_child_closed'] and not closure['diagnostic_lines']
+assert closure['prior_uid_count'] == closure['after_active_uid_count'] == 462
+assert closure['after_uid_values_unique'] and closure['all_prior_UID_bytes_modes_unchanged_no_addition']
+assert closure['native_runtime_unchanged'] and closure['protected_settings_ledgers_registry_unchanged']
+assert closure['import_sidecar_deltas_explicitly_qualified']
+assert closure['actual_command'] == ['python3', '-B', 'scripts/dev/dev.py', 'import']
+assert len(before['active_uids']) == len(after['active_uids']) == 462
+assert before['active_uids'] == after['active_uids']
+assert len({value['uid'] for value in before['active_uids']}) == 462
+assert not DEST.exists()
+DEST.mkdir(parents=True)
+(DEST / '.gdignore').write_bytes(b'')
+(DEST / '.gitattributes').write_bytes(b'* -text -diff\n')
+references, objects = [], {}
+for name in ['before.json', 'after.json', 'frozen-before-manifest.json', 'submission.json',
+             'child-submission.json', 'closure.json', 'original-output.log']:
+    pin = closure.get({'before.json': 'before_inventory', 'after.json': 'after_inventory',
+                       'original-output.log': 'original_merged_output'}.get(name, ''), {})
+    add(PACKET / name, 'original-job-record:' + name, pin.get('sha256'), pin.get('bytes'), pin.get('mode'))
+for value in frozen['rows']:
+    add(PACKET / value['frozen_relative'], 'original-frozen-before-source', value['sha256'],
+        value['bytes'], value['mode'], value['path'])
+for value in closure['derived_cache_sidecar_originals']:
+    add(PACKET / value['preserved_relative'], 'actual-derived-after:' + value['classification'],
+        value['sha256'], value['bytes'], value['mode'], value['path'])
+for name in ['run_import.preliminary-source-parse-failure.py', 'preliminary-source-parse-error.json',
+             'proposal.json', 'README.md']:
+    add(ROOT / '.cinder/shared54-root-import' / name, 'later-context-only-no-job-or-native-credit:' + name)
+add(Path(__file__), 'packaging-builder-only-no-native-credit')
+index = {'schema_version': 1, 'created_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+         'job': 'shared54-primary-import', 'cwd': str(ROOT),
+         'root_head_at_submission': submission['expected_head'],
+         'actual_command': closure['actual_command'], 'actual_terminal_exit': closure['actual_terminal_exit'],
+         'started_at': closure['started_at'], 'closed_at': closure['closed_at'],
+         'elapsed_seconds_including_queue': closure['elapsed_seconds_including_queue'],
+         'observed_queue_admission_elapsed_s': closure['observed_queue_admission_elapsed_s'],
+         'owned_child_pid': closure['child_pid'], 'owned_child_closed': closure['owned_child_closed'],
+         'canonical_deadline': submission['deadline_owner'],
+         'engine_path': submission['engine_path'], 'engine_sha256': submission['engine_sha256'],
+         'engine_bytes': submission['engine_bytes'], 'engine_mode': submission['engine_mode'],
+         'dev_sha256': submission['dev_sha256'], 'driver_sha256': submission['driver_sha256'],
+         'diagnostic_lines': closure['diagnostic_lines'],
+         'counts': {key: len(before[key]) for key in ['active_native_files', 'active_uids', 'active_import_sidecars',
+                                                     'protected_settings_ledger_catalogue_registry',
+                                                     'selected_generated_cache', 'ignored_native_boundaries']},
+         'original_frozen_before_rows': len(frozen['rows']),
+         'all_native_UID_settings_ledger_registry_sidecars_unchanged': True,
+         'prior462_UID_bytes_modes_exact_unique_no_additions': True,
+         'derived_after': closure['derived_cache_sidecar_originals'],
+         'references': references, 'unique_objects': list(objects.values()),
+         'archive_UIDs_counted_as_active': False, 'acceptance': False,
+         'scope': 'Original CLOSED0clean canonical primary import only, no new gameplay/registration/portrait/fullroute credit. Exact SHA-size-mode frozen active sources and protected settings/ledgers/registry, real462 UID identities; .gdignore archive banks excluded without UID enumeration. Two actual derived cache changes preserved separately. Literal separate-copy0644 inert CAS; actual engine binary is hash/mode/path pinned and not redistributed.',
+         'limitations': ['Isolated625/0/import0 and owner373/14 original portrait scopes are reused, not rerun.',
+                         'Current distant-clear/DASH/SPENT pixels stay uninspected; original failures/NONCLEAN/canceled/unexecuted scopes retained.',
+                         'Preliminary helper static Python SyntaxError is source-only context, not a failed engine import.',
+                         'Selected derived cache scope is three existing metadata files, not complete dynamic/import/cache closure.',
+                         'Root alone publishes Shared54/canonical ACCEPTED; this archive grants no acceptance.']}
+(DEST / 'index.json').write_text(json.dumps(index, indent=2) + '\n')
+for ref in references:
+    path = DEST / ref['object']
+    data = path.read_bytes()
+    assert digest(data) == ref['sha256'] and len(data) == ref['bytes']
+    assert stat.S_IMODE(path.stat().st_mode) == 0o644
+    assert path.stat().st_ino != Path(ref['original_absolute_path']).stat().st_ino
+verification = {'verified_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                'index_sha256': digest((DEST / 'index.json').read_bytes()),
+                'original_frozen_before_rows': len(frozen['rows']), 'original_references': len(references),
+                'unique_objects': len(objects), 'unique_object_bytes': sum(value['bytes'] for value in objects.values()),
+                'all_selected_original_SHA_size_modes_exact': True, 'all_CAS_bytes_exact_separate_inodes_0644': True,
+                'closed_clean_zero_diagnostics': True, '462_active_UIDs_exact_unique_no_additions': True,
+                'scope': 'Builder independently reread every frozen original, record/manifest/output and literal CAS byte. Custody only; no new native/pixel/acceptance credit.'}
+(DEST / 'verification.json').write_text(json.dumps(verification, indent=2) + '\n')
+(DEST / 'README.md').write_text('''# Shared54 necessary primary import
+
+The single authorized command `python3 -B scripts/dev/dev.py import` is normally CLOSED0clean with zero diagnostics at `2026-10-13T05:20:01.611679+00:00`. Actual child90589 closed after3.362seconds including0.900seconds observed shared queue admission. Canonical `dev.py` owns its300-second post-lock deadline; no queue timeout, foreign process intervention, lock deletion, suite, full route or portrait rerun occurred. [Index](index.json) and [verification](verification.json) preserve literal sources/results/output/custody in separate-copy0644 inert CAS. `.gdignore` was the first artifact and `* -text -diff` preserves original bytes.
+
+The job froze2,445 original input rows:1,666 active native source files,462 unique active UIDs,304 actual active import sidecars,12 protected settings/design/ledger/registry rows, three existing selected derived caches and exact driver/original/assignment context, with overlaps deduplicated. All native/UID/settings/ledger/registry/import-sidecar rows remain exact in SHA/size/mode. No UID was added. Historical UID banks inside49 encountered native `.gdignore` boundaries were excluded without enumeration or counting.
+
+Two selected derived files changed: `.godot/global_script_class_cache.cfg` and `.godot/uid_cache.bin`. Their exact frozen-before and actual-after originals are preserved separately. The third editor metadata input did not change. The predeclared336 possible resource sidecar paths allow natural derived regeneration; actual304 before sidecars stayed unchanged and no new sidecar appeared. Derived cache changes supply no gameplay evidence or active UID count.
+
+Root selected descriptive registry status15 and the `act1_l4_registration` CLI alias before freezing. The actual head was `059733878cc6590c96c36c93e2e3a1282822d140`, devSHA `4af0970db3b29d3525747047093ee1b8ff03816050b0788debdb7fb4f58d4c4a`, registrySHA `9d10499813c60fe6a95522e9773875d427cba8c6b9c4ba2746f036e7d3ab9e3d`, driverSHA `fe9d788fc23f7f5960960b8b32bac4d4168185eaf44b55845dbe41c4f13b2fd1`, and actual GodotSHA `c7cccbf8fb143e34e02fd6521e09be2c2b974f0d5db080b19071c9c570718ccf`. The binary path/mode/size is pinned; its binary is not redistributed.
+
+Isolated625/0 production registration/import0, owner373 terminal and14 inspected portrait evidence retain their original scopes. No new gameplay/registration/portrait/full-route claim is made. Current distant-clear/DASH/SPENT pixels remain uninspected and all old failed/NONCLEAN/canceled/unexecuted evidence remains preserved. The initial helper SyntaxError and its exact preliminary source are context-only; no helper freeze or engine was attempted at that stage. Packaging changes no original source, UID, registry, ledger, setting, worker, canonical mailbox or Git state. Root alone publishes Shared54 and canonical acceptance.
+''')
+print(json.dumps({'archive': str(DEST), 'index_sha256': verification['index_sha256'],
+                  'verification_sha256': digest((DEST / 'verification.json').read_bytes()),
+                  'frozen_before_rows': len(frozen['rows']), 'references': len(references),
+                  'unique_objects': len(objects), 'unique_object_bytes': verification['unique_object_bytes']}, indent=2))

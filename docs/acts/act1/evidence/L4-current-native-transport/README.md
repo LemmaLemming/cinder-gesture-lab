@@ -1,0 +1,22 @@
+# L4 current native transport scopes
+
+This packet preserves six closed Shared52 jobs with their exact executed source revisions. Later parent/callback guards are newer; these results do not all establish the current working-tree source. [Index](index.json) maps each original SHA256/size/mode/path to an inert CAS copy; [verification](verification.json) records the bounded closure. `.gdignore` was created first.
+
+| Job | Original result | Raw log | Whole native report | Retained result |
+|---|---|---|---|---|
+| a1-c31-approach-shared52-01 | [result](objects/sha256/13/135882e1b4e627d693e358b43bd6fd8d3772b227ae11065e07b199c15601a33f.blob) | [log](objects/sha256/c0/c0667027079f08b88973324ecdc4ba7dfb8f0b428e77b3dba1ea1e5775ff2110.blob) | [report](objects/sha256/9f/9fd2296e99fe15d6b442a093de9d64bc78b86252df3dc28fa4c8e632d7f0a5bb.blob) | 135/0 clean;6 native swipes/0 primaries;direct report parsed |
+| a1-l4-moving-helper-current-01 | [result](objects/sha256/8e/8e4f5c81648546ca94865870355f22d4444bc629431aca347f7b8af33f2d396b.blob) | [log](objects/sha256/e1/e1e9235562de981d3db23f36f04cbb34096ce9fb0070dc097515718724100cf2.blob) | [report](objects/sha256/b3/b32b3f999bead43840747f846d572308f93d7f6c73660b3b5d131e117f776981.blob) | 201/0 clean;representative moving-helper transport |
+| a1-l4-terminal-save-01 | [result](objects/sha256/7b/7b5c08ac014534e5a551ee12d61251b299103e7eeff51bf4b272eb37d773b325.blob) | [log](objects/sha256/77/778ae310f7e5aa30f7785c075ca9b5a48305b346128c522dc2d327036e8abf59.blob) | [report](objects/sha256/bc/bc6a6aa775cdc9cf39960ed9d8f07c1c622329edb0e9e064059d78242ae15e03.blob) | 147/0 footer NONCLEAN;fixture resources access ScriptError |
+| a1-l4-terminal-save-02 | [result](objects/sha256/0f/0fece0022ed76e323f303916788be99cae077edacae2c1798c4012485aac52a2.blob) | [log](objects/sha256/7a/7a254e45640e6c88532af5e78da1f49c3b1ebfe7512a0ea7cc8bb30e1fa96486.blob) | [report](objects/sha256/d3/d38a13fea9eb9ea4d628e15fdddcdb5d54aa095c4a0990ef9a40510d7e81f269.blob) | 163/1;generic campaign completion refusal |
+| a1-l4-terminal-save-03 | [result](objects/sha256/58/58aad622883f2626db0b82a97b4a2cb26bc30e5f6f3ecb5d7f8e00d7ee2ec4d0.blob) | [log](objects/sha256/52/5246fedcfa0806aaac0f6bcc2f19129bbae7ab1aa4da58729e6f2badfbbe0a4a.blob) | [report](objects/sha256/d6/d6dc39f7a3c4bfa94452f309ab935a07f1543a00eca8512c113a6837ca19430f.blob) | 163/1;current-view snapshot diagnostic |
+| a1-l4-terminal-save-04 | [result](objects/sha256/4b/4b6fe57d429821688fb9bcfea55a001e53eeb7dbeb3b815a69f492dd962ef59c.blob) | [log](objects/sha256/f0/f0a35f6ed198b07f3ef63009ec6f7393f931216fbd7aa4aa989498c3fe50cb84.blob) | [report](objects/sha256/5a/5ae263517d3113d4b7cc454d6af9927c7474aac189255602b54a3d8aa18a0ebe.blob) | 298/0 clean;representative terminal transport |
+
+The original147/0 terminal footer and exit0 do not override its native ScriptError/backtrace. Both163/1 attempts retain their original failures; the second report adds the actual protected-view error. No corrected result is attributed to those old executed sources.
+
+The298/0 report retains the historical first stage label “actual completed available-contact Save.” Its saved Hero is far at Z−28.2 with the distant contact cue cleared. A separate actual local available-contact Save at Z−33.8 follows, then real exterior contact at Z−35. Fresh Title Continue/earlier phase Retry and the expected unavailable A1-L5 error are preserved; there is no actual A1-L5 transition/registration proof.
+
+The C31 report directly records all six native provider/callback boundaries. Earlier generic null-counter metadata is not repaired or reused here. Moving-helper and terminal fixtures retain TEST predecessors, injured carryover, public injuries and Hero placements. No earned route, natural full playthrough, portrait/art, all gear/profiles, human balance/performance, mobile or formal Integration acceptance is inferred.
+
+The [validator transcript](objects/sha256/72/725e1cd8c188a0789d388d31e001b33157131b257a653adaa4bb9a6366feb867.blob) is a later derived record of three root tool outputs, copied verbatim without new execution. It establishes no allocations, gameplay or player balance.
+
+All results, raw diagnostics/backtraces, whole native JSON, original source manifests and declared source rows remain literal. Packaging-derived report joins and stage explanations are separately labelled. The closure covers the selected originals only; no broad full-graph, ignored artifact, previous-packet or global UID audit was performed.
