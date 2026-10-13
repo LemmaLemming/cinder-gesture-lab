@@ -1,0 +1,18 @@
+{
+  "classification": "scoped static consumer audit finding; no failing engine job claimed",
+  "shared_baseline": "2cba17fcdb89c18600355ddf377281c3b5aef8f0",
+  "api_revision": "campaign-shared-6",
+  "owned_runtime": "scripts/acts/act1/launch_rehearsal.gd",
+  "observation": "Idle/cancelled actual arm source placement was not guarded by authored local prevalidation. Shared idle snapshot branch has no live reservation; shared restore rejects actual position differing from configured lane.from after the owner has already committed scheduler. Static fixed target placement also must match the authored ordinary attack opening.",
+  "fix": "Before scheduler validation, require actual arm direct parent/live/global position ARM_ORIGINS/global basis identity. Before accepting target state require actual stationary target global position TARGET_POSITIONS/global basis identity. No transforms or actor/context mutated during validation.",
+  "targeted_check": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act1/a1_l1_smoke.gd",
+  "affected_consumer": "authored campaign L1 paused aggregate prevalidation/restore; rerun a1_l1_campaign.gd after regression passes",
+  "scope": "No shared source modification or new private mechanism; no broad suites. Phase timing/damage/art geometry unchanged.",
+  "status": "Pure fixed source/target guards implemented; owned opening86/0 on shared6 and current shared8, clean exits/noERROR/WARNING; original same-node recovery covered. Shared6 authored campaign41 passes before and after target placement. Current shared8 campaign rerun pending.",
+  "current_evidence": {
+    "baseline": "43c8f6d16fb12e2c137610948083101ec9beecff",
+    "opening": ".cinder/a1-l1-opening-shared8-test.log",
+    "arm": ".cinder/a1-l1-arm-shared8-test.log",
+    "results": "86/0 and150/0, exit0/noERROR/WARNING"
+  }
+}

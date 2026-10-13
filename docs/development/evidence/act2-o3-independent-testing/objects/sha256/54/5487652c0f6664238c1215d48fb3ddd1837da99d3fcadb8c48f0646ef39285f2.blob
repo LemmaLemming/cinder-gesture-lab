@@ -1,0 +1,732 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "scope": "player_perks_and_temporary_powerups_design_placements",
+    "repeat_policy": "meaningful_variants_only",
+    "introduction_uniqueness": "one_active_introduction_per_concrete_ability_across_all_acts_and_optional_levels",
+    "reservations_block_introductions": true,
+    "names_art_and_numeric_retuning_create_novelty": false,
+    "variant_requires_changed_structural_axis_and_new_player_decision": true,
+    "signature_is_semantic_proof": false,
+    "carryover": "equipped_perk_only_from_prior_planned_or_implemented_introduction",
+    "automatic_reservation_expiry": false,
+    "withdrawal": "planned_only_and_no_active_dependent_carryovers",
+    "fixed_core_exempt": [
+      "swipe_dash",
+      "tap_primary_slash",
+      "nearby_second_tap_blast",
+      "aim_anchor"
+    ],
+    "enemy_reinforcement_outside_scope": true
+  },
+  "revision": 0,
+  "abilities": [
+    {
+      "id": "PERK-01",
+      "family_id": "FAMILY-PERK-01",
+      "kind": "equipped_perk",
+      "name": "Triple Cadence",
+      "source": "data/design/player_equipment.json#PERK-01",
+      "signature_version": 1,
+      "signature": "b67d822456122c74df86b130751056868ae6da68a8276c7111931213df76b69e",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "delta": "<number>",
+          "scope": "ordinal_primary_action",
+          "stat": "damage"
+        },
+        "eligible_origin": "player_direct",
+        "limits": {
+          "advance_on_followup": false,
+          "advance_on_prop_hit": false,
+          "reset_on": [
+            "damage_taken",
+            "encounter_end",
+            "gap_timeout",
+            "primary_miss",
+            "weapon_replacement"
+          ]
+        },
+        "trigger": {
+          "distinct_primary_actions": "<number>",
+          "event": "primary_hit",
+          "max_gap_s": "<number>"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-02",
+      "family_id": "FAMILY-PERK-02",
+      "kind": "equipped_perk",
+      "name": "Last Thread",
+      "source": "data/design/player_equipment.json#PERK-02",
+      "signature_version": 1,
+      "signature": "ebc9bc854dc3669b2a15382491dfb3eb9d32b065086dfe9bd6afd76a1573e31c",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "delta_max": "<number>",
+          "scope": "primary_and_followup",
+          "stat": "damage"
+        },
+        "eligible_origin": "player_direct",
+        "expression": "<number>*clamp((<number>-health_fraction)/<number>,<number>,<number>)",
+        "limits": {
+          "max_bonus_at_health_fraction": "<number>",
+          "self_damage_rewards": false,
+          "snapshot": "current_health_over_effective_max_health"
+        },
+        "trigger": {
+          "event": "attack_begin",
+          "health_fraction_below": "<number>"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-03",
+      "family_id": "FAMILY-PERK-03",
+      "kind": "equipped_perk",
+      "name": "Armoured Stride",
+      "source": "data/design/player_equipment.json#PERK-03",
+      "signature_version": 1,
+      "signature": "37b1bb58d6343e7eef7513bafaaaca21f04ffcbe8d739e1104c91a82c29edb65",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "delta_max": "<number>",
+          "scaling_coefficient": "<number>",
+          "stat": "dash_speed"
+        },
+        "eligible_origin": "player_direct",
+        "expression": "min(<number>,<number>*(gear_armour-<number>)/gear_health_multiplier)",
+        "limits": {
+          "changes_distance": false,
+          "reads_current_health": false,
+          "reads_temporary_armour": false
+        },
+        "trigger": {
+          "event": "dash_begin",
+          "reads": "static_gear_snapshot"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-04",
+      "family_id": "FAMILY-PERK-04",
+      "kind": "equipped_perk",
+      "name": "Counterstep",
+      "source": "data/design/player_equipment.json#PERK-04",
+      "signature_version": 1,
+      "signature": "e9d7714aaa869e1c987aee6973a93debcf44f6b1f25f7c865644edd4f5ccdea5",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "delta": "<number>",
+          "scope": "next_primary_action",
+          "stat": "damage"
+        },
+        "eligible_origin": "player_direct",
+        "limits": {
+          "awards_for_invulnerability_tanking": false,
+          "consumed_on": "primary_action_begin",
+          "cooldown_s": "<number>",
+          "duration_s": "<number>"
+        },
+        "trigger": {
+          "event": "completed_dash",
+          "requires": "dash_begins_inside_locked_threat_footprint_and_ends_outside_before_activation_without_taking_its_hit",
+          "requires_no_threat_collision_even_if_invulnerability_blocks_damage": true
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-05",
+      "family_id": "FAMILY-PERK-05",
+      "kind": "equipped_perk",
+      "name": "Settled Reach",
+      "source": "data/design/player_equipment.json#PERK-05",
+      "signature_version": 1,
+      "signature": "a22ed50d45178db05a94a8849a17a7b505102b3100b74f8a5d7a6d477aaf610b",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "delta": "<number>",
+          "scope": "next_primary_action",
+          "stat": "attack_range"
+        },
+        "eligible_origin": "player_direct",
+        "limits": {
+          "consumed_on": "primary_action_begin",
+          "duration_s": "<number>",
+          "line_of_sight_required": true,
+          "reset_on": [
+            "damage_taken",
+            "dash_begin"
+          ],
+          "uses_per_completed_dash": "<number>"
+        },
+        "trigger": {
+          "event": "stationary_after_dash",
+          "stationary_time_s": "<number>"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-06",
+      "family_id": "FAMILY-PERK-06",
+      "kind": "equipped_perk",
+      "name": "Sweep Economy",
+      "source": "data/design/player_equipment.json#PERK-06",
+      "signature_version": 1,
+      "signature": "25326f1421d0057ea5cc397141d6a9ccbc2e1f972c3fe6565399b67298926a47",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "amount": "<number>",
+          "stat": "reload_credit_s"
+        },
+        "eligible_origin": "player_direct",
+        "limits": {
+          "cooldown_s": "<number>",
+          "maximum_total_reload_credit_per_action_s": "<number>",
+          "no_credit_when_full": true
+        },
+        "trigger": {
+          "distinct_live_enemy_targets_min": "<number>",
+          "event": "primary_hit"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-07",
+      "family_id": "FAMILY-PERK-07",
+      "kind": "equipped_perk",
+      "name": "Empty Chamber",
+      "source": "data/design/player_equipment.json#PERK-07",
+      "signature_version": 1,
+      "signature": "c94144e6b518b3610ed8f9dd0729705a3a801433bbcf698205275f2a66f6ccaf",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "amount": "<number>",
+          "stat": "reload_credit_s"
+        },
+        "eligible_origin": "player_direct",
+        "limits": {
+          "cooldown_s": "<number>",
+          "maximum_total_reload_credit_per_action_s": "<number>",
+          "no_instant_shell_refill": true
+        },
+        "trigger": {
+          "event": "primary_hit",
+          "shells_at_action_begin": "<number>"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-08",
+      "family_id": "FAMILY-PERK-08",
+      "kind": "equipped_perk",
+      "name": "Backtrack",
+      "source": "data/design/player_equipment.json#PERK-08",
+      "signature_version": 1,
+      "signature": "a2fe62770c9b6bd7a61dfc237e569998b6aaf247c269c40df8dc1ee740ca5daa",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "delta": "<number>",
+          "scope": "next_primary_action",
+          "stat": "knockback"
+        },
+        "eligible_origin": "player_direct",
+        "limits": {
+          "boss_displacement": false,
+          "consumed_on": "primary_action_begin",
+          "cooldown_s": "<number>",
+          "duration_s": "<number>"
+        },
+        "trigger": {
+          "direction_dot_max": "<number>",
+          "event": "completed_dash",
+          "previous_dash_gap_s_max": "<number>"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-09",
+      "family_id": "FAMILY-PERK-09",
+      "kind": "equipped_perk",
+      "name": "Followthrough",
+      "source": "data/design/player_equipment.json#PERK-09",
+      "signature_version": 1,
+      "signature": "00bac60dde1792935cb10987a0f6f07208f91f26f4de2692bd7aa156662ea348",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "delta": "<number>",
+          "scope": "qualifying_target",
+          "stat": "knockback"
+        },
+        "eligible_origin": "player_direct",
+        "limits": {
+          "boss_displacement": false,
+          "no_damage_bonus": true
+        },
+        "trigger": {
+          "event": "followup_hit",
+          "max_gap_s": "<number>",
+          "requires": "same_target_as_immediately_preceding_primary"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-10",
+      "family_id": "FAMILY-PERK-10",
+      "kind": "equipped_perk",
+      "name": "Recovery Seam",
+      "source": "data/design/player_equipment.json#PERK-10",
+      "signature_version": 1,
+      "signature": "870e85241e8d4eb010614118716c7cc0af72bcb3b89585f021765877142419e7",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "delta": "<number>",
+          "scope": "qualifying_target",
+          "stat": "damage"
+        },
+        "eligible_origin": "player_direct",
+        "limits": {
+          "cooldown_s": "<number>",
+          "extra_damage_does_not_make_enemy_vulnerable": true
+        },
+        "trigger": {
+          "event": "primary_hit",
+          "target_state": "explicit_recovery"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-11",
+      "family_id": "FAMILY-PERK-11",
+      "kind": "equipped_perk",
+      "name": "Reserve Stitch",
+      "source": "data/design/player_equipment.json#PERK-11",
+      "signature_version": 1,
+      "signature": "4758123b1c4a90f4c5cca4fd7689d01bab9cf5f8d50e04a1758ed0a2bda04d5d",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "delta": "<number>",
+          "scope": "future_hits",
+          "stat": "armour"
+        },
+        "eligible_origin": "accepted_enemy_or_environment_damage",
+        "limits": {
+          "affects_triggering_hit": false,
+          "duration_s": "<number>",
+          "healing_amount": "<number>",
+          "refreshes": false,
+          "uses_per_encounter": "<number>"
+        },
+        "trigger": {
+          "crosses_health_fraction_below": "<number>",
+          "event": "damage_taken",
+          "requires_alive_after_hit": true
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-12",
+      "family_id": "FAMILY-PERK-12",
+      "kind": "equipped_perk",
+      "name": "Release Valve",
+      "source": "data/design/player_equipment.json#PERK-12",
+      "signature_version": 1,
+      "signature": "4281feb9a935fbe48452ad13f36584cc13e31295a0ab1b117caff87f58c77eb7",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "delta": "<number>",
+          "scope": "next_dash",
+          "stat": "dash_speed"
+        },
+        "eligible_origin": "player_direct",
+        "limits": {
+          "consumed_on": "dash_begin",
+          "cooldown_s": "<number>",
+          "duration_refresh_on_miss": false,
+          "duration_s": "<number>"
+        },
+        "trigger": {
+          "event": "primary_miss"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-13",
+      "family_id": "FAMILY-PERK-13",
+      "kind": "equipped_perk",
+      "name": "Precision Feed",
+      "source": "data/design/player_equipment.json#PERK-13",
+      "signature_version": 1,
+      "signature": "2a9f0f491f5d2fffddca2536b7ded2b0682f0357ae869dd5e051bba11b1449e1",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "amount": "<number>",
+          "stat": "reload_credit_s"
+        },
+        "eligible_origin": "player_direct",
+        "limits": {
+          "cooldown_s": "<number>",
+          "maximum_total_reload_credit_per_action_s": "<number>",
+          "no_credit_from_props": true
+        },
+        "trigger": {
+          "distinct_live_enemy_targets_exact": "<number>",
+          "event": "primary_hit"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "PERK-14",
+      "family_id": "FAMILY-PERK-14",
+      "kind": "equipped_perk",
+      "name": "First Opening",
+      "source": "data/design/player_equipment.json#PERK-14",
+      "signature_version": 1,
+      "signature": "b02e9e25f40cd819a7bbf74867dfc1975e5097c59ca11dd26a8681b3e261766d",
+      "signature_mechanics": {
+        "can_trigger_other_effects": false,
+        "count_scope": "once_per_action",
+        "effect": {
+          "delta": "<number>",
+          "scope": "qualifying_target",
+          "stat": "damage"
+        },
+        "eligible_origin": "player_direct",
+        "limits": {
+          "boss_uses_per_phase": "<number>",
+          "generated_hits_eligible": false,
+          "uses_per_enemy": "<number>"
+        },
+        "trigger": {
+          "event": "primary_hit",
+          "requires": "target_has_taken_no_prior_direct_player_hit_this_encounter"
+        }
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "POWER-01",
+      "family_id": "FAMILY-POWER-01",
+      "kind": "temporary_powerup",
+      "name": "Fleet Spark",
+      "source": "data/design/player_equipment.json#POWER-01",
+      "signature_version": 1,
+      "signature": "dfca789e3b22df10ab99cc4ac68991026699d7d257b2a43ab85f76ab394ab305",
+      "signature_mechanics": {
+        "action_modifiers": {},
+        "charges": null,
+        "different_id_repickup": "replace_same_group",
+        "duration_s": "<number>",
+        "eligible_charge_action": "executed_primary",
+        "expires_on": [
+          "death",
+          "encounter_end"
+        ],
+        "modifiers": {
+          "dash_speed": "<number>"
+        },
+        "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+        "shape_override": null,
+        "timer_clock": "active_simulation"
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "POWER-02",
+      "family_id": "FAMILY-POWER-02",
+      "kind": "temporary_powerup",
+      "name": "Long Arc",
+      "source": "data/design/player_equipment.json#POWER-02",
+      "signature_version": 1,
+      "signature": "b3e7c3a9ad584f15cfb5fc4781e9b02d702e0840b79c60207efd34358c85f77f",
+      "signature_mechanics": {
+        "action_modifiers": {},
+        "charges": null,
+        "different_id_repickup": "replace_same_group",
+        "duration_s": "<number>",
+        "eligible_charge_action": "executed_primary",
+        "expires_on": [
+          "death",
+          "encounter_end"
+        ],
+        "modifiers": {
+          "dash_distance": "<number>"
+        },
+        "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+        "shape_override": null,
+        "timer_clock": "active_simulation"
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "POWER-03",
+      "family_id": "FAMILY-POWER-03",
+      "kind": "temporary_powerup",
+      "name": "Keen Spark",
+      "source": "data/design/player_equipment.json#POWER-03",
+      "signature_version": 1,
+      "signature": "5deb5529b31912ea32bd51f2db7b032cb3f219bd8e0b5603747c6bb108e0177a",
+      "signature_mechanics": {
+        "action_modifiers": {},
+        "charges": null,
+        "different_id_repickup": "replace_same_group",
+        "duration_s": "<number>",
+        "eligible_charge_action": "executed_primary",
+        "expires_on": [
+          "death",
+          "encounter_end"
+        ],
+        "modifiers": {
+          "damage": "<number>"
+        },
+        "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+        "shape_override": null,
+        "timer_clock": "active_simulation"
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "POWER-04",
+      "family_id": "FAMILY-POWER-04",
+      "kind": "temporary_powerup",
+      "name": "Quick Spark",
+      "source": "data/design/player_equipment.json#POWER-04",
+      "signature_version": 1,
+      "signature": "b241fa1140a0ad48fc7de90aad5600048db768bba245db614e8ace29fceba687",
+      "signature_mechanics": {
+        "action_modifiers": {},
+        "charges": null,
+        "different_id_repickup": "replace_same_group",
+        "duration_s": "<number>",
+        "eligible_charge_action": "executed_primary",
+        "expires_on": [
+          "death",
+          "encounter_end"
+        ],
+        "modifiers": {
+          "attack_speed": "<number>"
+        },
+        "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+        "shape_override": null,
+        "timer_clock": "active_simulation"
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "POWER-05",
+      "family_id": "FAMILY-POWER-05",
+      "kind": "temporary_powerup",
+      "name": "Guard Spark",
+      "source": "data/design/player_equipment.json#POWER-05",
+      "signature_version": 1,
+      "signature": "99c20ca09163b64d2495e6b4f9d322e16cec89e2a5feffcde2c3f82f2bbf63a3",
+      "signature_mechanics": {
+        "action_modifiers": {},
+        "charges": null,
+        "different_id_repickup": "replace_same_group",
+        "duration_s": "<number>",
+        "eligible_charge_action": "executed_primary",
+        "expires_on": [
+          "death",
+          "encounter_end"
+        ],
+        "modifiers": {
+          "armour": "<number>"
+        },
+        "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+        "shape_override": null,
+        "timer_clock": "active_simulation"
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    },
+    {
+      "id": "POWER-06",
+      "family_id": "FAMILY-POWER-06",
+      "kind": "temporary_powerup",
+      "name": "Orbit Cut",
+      "source": "data/design/player_equipment.json#POWER-06",
+      "signature_version": 1,
+      "signature": "02d2bb2e5cddad695522feceb42fec27f6da862a00d151a88b09c71c380027dc",
+      "signature_mechanics": {
+        "action_modifiers": {
+          "primary": {
+            "damage": "<number>"
+          }
+        },
+        "charges": "<number>",
+        "different_id_repickup": "replace_same_group",
+        "duration_s": null,
+        "eligible_charge_action": "executed_primary",
+        "expires_on": [
+          "death",
+          "encounter_end"
+        ],
+        "modifiers": {},
+        "same_id_repickup": "replace_remaining_duration_or_charges_with_initial_value",
+        "shape_override": "primary_<number>_degrees",
+        "timer_clock": "active_simulation"
+      },
+      "variant_of": null,
+      "changed_axes": [],
+      "player_decision": "",
+      "difference": "",
+      "registered_by": "bootstrap",
+      "registered_revision": 0
+    }
+  ],
+  "uses": [],
+  "history": [],
+  "suggestions": [
+    {
+      "id": "SUGGEST-01",
+      "ability_id": "POWER-02",
+      "level_id": "A1-O1",
+      "status": "unassigned_suggestion",
+      "source": "docs/ACT1_CONCEPT.md",
+      "note": "Optional authoring suggestion only; not reserved, planned or implemented."
+    },
+    {
+      "id": "SUGGEST-02",
+      "ability_id": "POWER-06",
+      "level_id": "A1-O2",
+      "status": "unassigned_suggestion",
+      "source": "docs/ACT1_CONCEPT.md",
+      "note": "Optional authoring suggestion only; not reserved, planned or implemented."
+    }
+  ]
+}

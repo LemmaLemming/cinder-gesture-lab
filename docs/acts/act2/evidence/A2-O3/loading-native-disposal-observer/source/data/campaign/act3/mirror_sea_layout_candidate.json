@@ -1,0 +1,778 @@
+{
+  "schema_version": 1,
+  "level_id": "A3-L3",
+  "status": "proposed_spatial_layout_unimplemented_unexecuted",
+  "runtime_consumer": null,
+  "created_date": "2026-10-09",
+  "stable_id_policy": "The parent plan specifies canonical beat names but no machine source/arrangement IDs. Every new ID here is explicitly proposed; no existing accepted ID is replaced.",
+  "references": [
+    "docs/acts/act3/mirror-sea-parent-plan.md",
+    "docs/ACT3_CONCEPT.md",
+    "docs/reference-library/act3/research/levels.json",
+    "docs/concept-art/act3/ADAPTATION_NOTES.md",
+    "docs/concept-art/act3/environments/03-mirror-sea.png",
+    "docs/concept-art/act3/gameplay/02-mirror-sea-gameplay.png",
+    "data/campaign/act3/a3_l2_encounters.json"
+  ],
+  "authority_limit": "Authoring coordinates only. This file creates no native recipient, entry, HP, generation, lease, cooldown, hit/death history, checkpoint, completion, reward or registry readiness.",
+  "target_first_clear_s": 540,
+  "pacing_policy": "Retain canonical 90/120/120/120/90-second design budgets as unmeasured targets. Six spatial arrangements implement five beats; no countdown, forced wait or padding.",
+  "coordinates": {
+    "space": "world metres; X across shore, Y up, progress toward negative Z",
+    "court_transform": "Identity Basis and translation only. Echo world definition = court translation + local recipe offset + current local own-route/slash recipe.",
+    "precision_limit": "Nominal JSON authoring values are not native measurements or exact saved scalars."
+  },
+  "floor": {
+    "size_world": [
+      14,
+      1,
+      108
+    ],
+    "center_world": [
+      0,
+      -0.5,
+      0
+    ],
+    "top_y": 0,
+    "safe_rect_xz": [
+      -7,
+      -54,
+      14,
+      108
+    ],
+    "continuous": true,
+    "dynamic_collision": false,
+    "required_support": "One permanent native axis-aligned Box floor over the entire route. Decorative water/plates/shelves provide no traversal or collision authority."
+  },
+  "spawn_world": [
+    0,
+    0.1,
+    43
+  ],
+  "inventory": {
+    "stalkers": 2,
+    "echoes": 5,
+    "environmental_mechanisms": 1,
+    "living_enemy_owners": 7,
+    "bosses": 0
+  },
+  "beats": [
+    {
+      "id": "shore-and-doubled-sky",
+      "id_status": "proposed_stable_id",
+      "index": 1,
+      "name": "Shore and doubled sky",
+      "target_s": 90,
+      "concept_elapsed_target_s": 90,
+      "arrangements": [
+        "shore-and-doubled-sky"
+      ]
+    },
+    {
+      "id": "one-real-body",
+      "id_status": "proposed_stable_id",
+      "index": 2,
+      "name": "One real body",
+      "target_s": 120,
+      "concept_elapsed_target_s": 210,
+      "arrangements": [
+        "one-real-body"
+      ]
+    },
+    {
+      "id": "a-useful-ending",
+      "id_status": "proposed_stable_id",
+      "index": 3,
+      "name": "A useful ending",
+      "target_s": 120,
+      "concept_elapsed_target_s": 330,
+      "arrangements": [
+        "useful-ending-west",
+        "useful-ending-east"
+      ]
+    },
+    {
+      "id": "resonant-apron",
+      "id_status": "proposed_stable_id",
+      "index": 4,
+      "name": "Resonant apron",
+      "target_s": 120,
+      "concept_elapsed_target_s": 450,
+      "arrangements": [
+        "resonant-apron"
+      ]
+    },
+    {
+      "id": "shore-falls-silent",
+      "id_status": "proposed_stable_id",
+      "index": 5,
+      "name": "The shore falls silent",
+      "target_s": 90,
+      "concept_elapsed_target_s": 540,
+      "arrangements": [
+        "shore-falls-silent"
+      ]
+    }
+  ],
+  "arrangements": [
+    {
+      "id": "shore-and-doubled-sky",
+      "id_status": "proposed_stable_id",
+      "entry_index": 0,
+      "beat": 1,
+      "canonical_beat_name": "Shore and doubled sky",
+      "entry_z": 39,
+      "court_origin_world": [
+        0,
+        0,
+        34
+      ],
+      "court_rect_xz": [
+        -7,
+        28,
+        14,
+        14
+      ],
+      "source_ids": [
+        "l3-threshold-stalker"
+      ],
+      "decision": "Choose a useful ordinary dash landing after the familiar lunge locks; dry floor remains visibly distinct from water.",
+      "entry_policy": "Future actual capsule spatial crossing of this proposed threshold may earn the next prefix entry. Constructor existence and merely reading this row earn nothing; admission still requires current real response, native proof and visible required union.",
+      "checkpoint_policy": "Candidate section boundary only. No checkpoint ID or protected snapshot is installed or earned by this proposal; the parent must capture a coherent genuinely earned supported unit."
+    },
+    {
+      "id": "one-real-body",
+      "id_status": "proposed_stable_id",
+      "entry_index": 1,
+      "beat": 2,
+      "canonical_beat_name": "One real body",
+      "entry_z": 27,
+      "court_origin_world": [
+        0,
+        0,
+        21
+      ],
+      "court_rect_xz": [
+        -7,
+        16,
+        14,
+        12
+      ],
+      "source_ids": [
+        "l3-first-echo"
+      ],
+      "decision": "Follow the one actual Echo source and its own route; evade, return and hit the fixed grounded knot rather than the hollow reflection.",
+      "entry_policy": "Future actual capsule spatial crossing of this proposed threshold may earn the next prefix entry. Constructor existence and merely reading this row earn nothing; admission still requires current real response, native proof and visible required union.",
+      "checkpoint_policy": "Candidate section boundary only. No checkpoint ID or protected snapshot is installed or earned by this proposal; the parent must capture a coherent genuinely earned supported unit."
+    },
+    {
+      "id": "useful-ending-west",
+      "id_status": "proposed_stable_id",
+      "entry_index": 2,
+      "beat": 3,
+      "canonical_beat_name": "A useful ending",
+      "entry_z": 15,
+      "court_origin_world": [
+        0,
+        0,
+        9
+      ],
+      "court_rect_xz": [
+        -7,
+        4,
+        14,
+        12
+      ],
+      "source_ids": [
+        "l3-useful-west-echo"
+      ],
+      "decision": "Read the west stone and choose a landing that preserves an ordinary return to the actual knot.",
+      "entry_policy": "Future actual capsule spatial crossing of this proposed threshold may earn the next prefix entry. Constructor existence and merely reading this row earn nothing; admission still requires current real response, native proof and visible required union.",
+      "checkpoint_policy": "Candidate section boundary only. No checkpoint ID or protected snapshot is installed or earned by this proposal; the parent must capture a coherent genuinely earned supported unit."
+    },
+    {
+      "id": "useful-ending-east",
+      "id_status": "proposed_stable_id",
+      "entry_index": 3,
+      "beat": 3,
+      "canonical_beat_name": "A useful ending",
+      "entry_z": 2,
+      "court_origin_world": [
+        0,
+        0,
+        -3
+      ],
+      "court_rect_xz": [
+        -7,
+        -10,
+        14,
+        14
+      ],
+      "source_ids": [
+        "l3-useful-east-echo"
+      ],
+      "decision": "Apply the same rule with the stone on the opposite flank; a mirrored arrangement changes the useful landing without changing the Echo timetable.",
+      "entry_policy": "Future actual capsule spatial crossing of this proposed threshold may earn the next prefix entry. Constructor existence and merely reading this row earn nothing; admission still requires current real response, native proof and visible required union.",
+      "checkpoint_policy": "Candidate section boundary only. No checkpoint ID or protected snapshot is installed or earned by this proposal; the parent must capture a coherent genuinely earned supported unit."
+    },
+    {
+      "id": "resonant-apron",
+      "id_status": "proposed_stable_id",
+      "entry_index": 4,
+      "beat": 4,
+      "canonical_beat_name": "Resonant apron",
+      "entry_z": -14,
+      "court_origin_world": [
+        0,
+        0,
+        -21
+      ],
+      "court_rect_xz": [
+        -7,
+        -28,
+        14,
+        18
+      ],
+      "source_ids": [
+        "l3-resonant-echo",
+        "l3-resonant-pulse"
+      ],
+      "decision": "Separate the environmental pulse source from the real Echo. Use their independently proved openings, with Echo acting between pulses.",
+      "entry_policy": "Future actual capsule spatial crossing of this proposed threshold may earn the next prefix entry. Constructor existence and merely reading this row earn nothing; admission still requires current real response, native proof and visible required union.",
+      "checkpoint_policy": "Candidate section boundary only. No checkpoint ID or protected snapshot is installed or earned by this proposal; the parent must capture a coherent genuinely earned supported unit."
+    },
+    {
+      "id": "shore-falls-silent",
+      "id_status": "proposed_stable_id",
+      "entry_index": 5,
+      "beat": 5,
+      "canonical_beat_name": "The shore falls silent",
+      "entry_z": -32,
+      "court_origin_world": [
+        0,
+        0,
+        -38
+      ],
+      "court_rect_xz": [
+        -7,
+        -46,
+        14,
+        18
+      ],
+      "source_ids": [
+        "l3-priority-echo",
+        "l3-priority-stalker"
+      ],
+      "decision": "Choose which living Stalker/Echo target or opening is useful first, subject to real exclusive Echo admission; true clear leaves a quiet contact departure.",
+      "entry_policy": "Future actual capsule spatial crossing of this proposed threshold may earn the next prefix entry. Constructor existence and merely reading this row earn nothing; admission still requires current real response, native proof and visible required union.",
+      "checkpoint_policy": "Candidate section boundary only. No checkpoint ID or protected snapshot is installed or earned by this proposal; the parent must capture a coherent genuinely earned supported unit."
+    }
+  ],
+  "sources": [
+    {
+      "id": "l3-threshold-stalker",
+      "id_status": "proposed_stable_id",
+      "arrangement_id": "shore-and-doubled-sky",
+      "kind": "stalker",
+      "canonical_role_id": "C50",
+      "recipe_ref": "scripts/acts/act3/sunbound_stalker.gd",
+      "position_world": [
+        1.2,
+        0.1,
+        34
+      ],
+      "role_policy": "Reuse the existing Stalker raw role and minimum timing floors; normal grounding/pursuit/lunge/recovery only."
+    },
+    {
+      "id": "l3-first-echo",
+      "id_status": "proposed_stable_id",
+      "arrangement_id": "one-real-body",
+      "kind": "echo",
+      "canonical_role_id": "C52",
+      "recipe_ref": "scripts/acts/act3/mirror_echo.gd",
+      "definition_recipe_ref": "scripts/acts/act3/mirror_echo_rule_room.gd::native_definition",
+      "definition_id": "l3-first-echo/straight-return",
+      "definition_id_status": "proposed_stable_id",
+      "source_epoch_recipe": "A3-L3/l3-first-echo/own-sequence",
+      "source_epoch_status": "proposed_recipe_not_live_custody",
+      "court_translation_world": [
+        0,
+        0,
+        21
+      ],
+      "local_recipe_offset": [
+        0,
+        0,
+        0
+      ],
+      "definition_translation_world": [
+        0,
+        0,
+        21
+      ],
+      "definition_basis": "identity",
+      "own_route_world": [
+        {
+          "position": [
+            0,
+            0,
+            18.5
+          ],
+          "at_s": 0
+        },
+        {
+          "position": [
+            0,
+            0,
+            20.5
+          ],
+          "at_s": 0.3
+        }
+      ],
+      "fixed_knot_world": [
+        0,
+        0,
+        20.5
+      ],
+      "slash_origin_world": [
+        0,
+        0,
+        20.5
+      ],
+      "slash_direction_world": [
+        0,
+        0,
+        1
+      ],
+      "role_and_timing_policy": "Retain the current own two-metre straight route, raw 36 HP role, travel/slash timings, timing floors, measured renderer envelope and profile resolution; no rescale, retime or Player capture.",
+      "lifecycle_policy": "One retained actual owner per proposed ID. Generations/history become authority only through the published supported native lifecycle; no clone or configure-after-admission reset."
+    },
+    {
+      "id": "l3-useful-west-echo",
+      "id_status": "proposed_stable_id",
+      "arrangement_id": "useful-ending-west",
+      "kind": "echo",
+      "canonical_role_id": "C52",
+      "recipe_ref": "scripts/acts/act3/mirror_echo.gd",
+      "definition_recipe_ref": "scripts/acts/act3/mirror_echo_rule_room.gd::native_definition",
+      "definition_id": "l3-useful-west-echo/straight-return",
+      "definition_id_status": "proposed_stable_id",
+      "source_epoch_recipe": "A3-L3/l3-useful-west-echo/own-sequence",
+      "source_epoch_status": "proposed_recipe_not_live_custody",
+      "court_translation_world": [
+        0,
+        0,
+        9
+      ],
+      "local_recipe_offset": [
+        -0.65,
+        0,
+        0
+      ],
+      "definition_translation_world": [
+        -0.65,
+        0,
+        9
+      ],
+      "definition_basis": "identity",
+      "own_route_world": [
+        {
+          "position": [
+            -0.65,
+            0,
+            6.5
+          ],
+          "at_s": 0
+        },
+        {
+          "position": [
+            -0.65,
+            0,
+            8.5
+          ],
+          "at_s": 0.3
+        }
+      ],
+      "fixed_knot_world": [
+        -0.65,
+        0,
+        8.5
+      ],
+      "slash_origin_world": [
+        -0.65,
+        0,
+        8.5
+      ],
+      "slash_direction_world": [
+        0,
+        0,
+        1
+      ],
+      "role_and_timing_policy": "Retain the current own two-metre straight route, raw 36 HP role, travel/slash timings, timing floors, measured renderer envelope and profile resolution; no rescale, retime or Player capture.",
+      "lifecycle_policy": "One retained actual owner per proposed ID. Generations/history become authority only through the published supported native lifecycle; no clone or configure-after-admission reset."
+    },
+    {
+      "id": "l3-useful-east-echo",
+      "id_status": "proposed_stable_id",
+      "arrangement_id": "useful-ending-east",
+      "kind": "echo",
+      "canonical_role_id": "C52",
+      "recipe_ref": "scripts/acts/act3/mirror_echo.gd",
+      "definition_recipe_ref": "scripts/acts/act3/mirror_echo_rule_room.gd::native_definition",
+      "definition_id": "l3-useful-east-echo/straight-return",
+      "definition_id_status": "proposed_stable_id",
+      "source_epoch_recipe": "A3-L3/l3-useful-east-echo/own-sequence",
+      "source_epoch_status": "proposed_recipe_not_live_custody",
+      "court_translation_world": [
+        0,
+        0,
+        -3
+      ],
+      "local_recipe_offset": [
+        0.65,
+        0,
+        0
+      ],
+      "definition_translation_world": [
+        0.65,
+        0,
+        -3
+      ],
+      "definition_basis": "identity",
+      "own_route_world": [
+        {
+          "position": [
+            0.65,
+            0,
+            -5.5
+          ],
+          "at_s": 0
+        },
+        {
+          "position": [
+            0.65,
+            0,
+            -3.5
+          ],
+          "at_s": 0.3
+        }
+      ],
+      "fixed_knot_world": [
+        0.65,
+        0,
+        -3.5
+      ],
+      "slash_origin_world": [
+        0.65,
+        0,
+        -3.5
+      ],
+      "slash_direction_world": [
+        0,
+        0,
+        1
+      ],
+      "role_and_timing_policy": "Retain the current own two-metre straight route, raw 36 HP role, travel/slash timings, timing floors, measured renderer envelope and profile resolution; no rescale, retime or Player capture.",
+      "lifecycle_policy": "One retained actual owner per proposed ID. Generations/history become authority only through the published supported native lifecycle; no clone or configure-after-admission reset."
+    },
+    {
+      "id": "l3-resonant-echo",
+      "id_status": "proposed_stable_id",
+      "arrangement_id": "resonant-apron",
+      "kind": "echo",
+      "canonical_role_id": "C52",
+      "recipe_ref": "scripts/acts/act3/mirror_echo.gd",
+      "definition_recipe_ref": "scripts/acts/act3/mirror_echo_rule_room.gd::native_definition",
+      "definition_id": "l3-resonant-echo/straight-return",
+      "definition_id_status": "proposed_stable_id",
+      "source_epoch_recipe": "A3-L3/l3-resonant-echo/own-sequence",
+      "source_epoch_status": "proposed_recipe_not_live_custody",
+      "court_translation_world": [
+        0,
+        0,
+        -21
+      ],
+      "local_recipe_offset": [
+        0,
+        0,
+        0
+      ],
+      "definition_translation_world": [
+        0,
+        0,
+        -21
+      ],
+      "definition_basis": "identity",
+      "own_route_world": [
+        {
+          "position": [
+            0,
+            0,
+            -23.5
+          ],
+          "at_s": 0
+        },
+        {
+          "position": [
+            0,
+            0,
+            -21.5
+          ],
+          "at_s": 0.3
+        }
+      ],
+      "fixed_knot_world": [
+        0,
+        0,
+        -21.5
+      ],
+      "slash_origin_world": [
+        0,
+        0,
+        -21.5
+      ],
+      "slash_direction_world": [
+        0,
+        0,
+        1
+      ],
+      "role_and_timing_policy": "Retain the current own two-metre straight route, raw 36 HP role, travel/slash timings, timing floors, measured renderer envelope and profile resolution; no rescale, retime or Player capture.",
+      "lifecycle_policy": "One retained actual owner per proposed ID. Generations/history become authority only through the published supported native lifecycle; no clone or configure-after-admission reset."
+    },
+    {
+      "id": "l3-priority-echo",
+      "id_status": "proposed_stable_id",
+      "arrangement_id": "shore-falls-silent",
+      "kind": "echo",
+      "canonical_role_id": "C52",
+      "recipe_ref": "scripts/acts/act3/mirror_echo.gd",
+      "definition_recipe_ref": "scripts/acts/act3/mirror_echo_rule_room.gd::native_definition",
+      "definition_id": "l3-priority-echo/straight-return",
+      "definition_id_status": "proposed_stable_id",
+      "source_epoch_recipe": "A3-L3/l3-priority-echo/own-sequence",
+      "source_epoch_status": "proposed_recipe_not_live_custody",
+      "court_translation_world": [
+        0,
+        0,
+        -38
+      ],
+      "local_recipe_offset": [
+        -1.1,
+        0,
+        0
+      ],
+      "definition_translation_world": [
+        -1.1,
+        0,
+        -38
+      ],
+      "definition_basis": "identity",
+      "own_route_world": [
+        {
+          "position": [
+            -1.1,
+            0,
+            -40.5
+          ],
+          "at_s": 0
+        },
+        {
+          "position": [
+            -1.1,
+            0,
+            -38.5
+          ],
+          "at_s": 0.3
+        }
+      ],
+      "fixed_knot_world": [
+        -1.1,
+        0,
+        -38.5
+      ],
+      "slash_origin_world": [
+        -1.1,
+        0,
+        -38.5
+      ],
+      "slash_direction_world": [
+        0,
+        0,
+        1
+      ],
+      "role_and_timing_policy": "Retain the current own two-metre straight route, raw 36 HP role, travel/slash timings, timing floors, measured renderer envelope and profile resolution; no rescale, retime or Player capture.",
+      "lifecycle_policy": "One retained actual owner per proposed ID. Generations/history become authority only through the published supported native lifecycle; no clone or configure-after-admission reset."
+    },
+    {
+      "id": "l3-priority-stalker",
+      "id_status": "proposed_stable_id",
+      "arrangement_id": "shore-falls-silent",
+      "kind": "stalker",
+      "canonical_role_id": "C50",
+      "recipe_ref": "scripts/acts/act3/sunbound_stalker.gd",
+      "position_world": [
+        1.2,
+        0.1,
+        -38
+      ],
+      "role_policy": "The same existing Stalker role, HP and timing floors; no final health escalation."
+    },
+    {
+      "id": "l3-resonant-pulse",
+      "id_status": "proposed_stable_id",
+      "arrangement_id": "resonant-apron",
+      "kind": "environmental_mechanism",
+      "recipe_ref": "scripts/combat/lane_mechanism.gd",
+      "position_world": [
+        2.6,
+        0,
+        -21
+      ],
+      "geometry": {
+        "kind": "circle",
+        "origin_world": [
+          2.6,
+          0,
+          -21
+        ],
+        "radius_world": 1.15,
+        "damage_area": "filled_disk"
+      },
+      "raw_role_policy": "Retain the current published LaneMechanism defaults; environmental source has no enemy HP or attackable target.",
+      "first_opening_world": [
+        1.9,
+        0,
+        -20.35
+      ],
+      "later_opening_policy": "The actual genuinely completed living Echo knot for the finite mixed proof; whole-parent resolution must later use supported actual Echo history/target policy.",
+      "composition_intent": [
+        "pulse1",
+        "one actual Echo exchange between pulses",
+        "same mechanism pulse 2",
+        "earned finite terminal stage"
+      ],
+      "composition_status": "proposal; finite mixed-room evidence is separate and cannot accept this placement",
+      "cycle_policy": "Preview and start each genuine cycle on the same bound owner; one encounter, no private clock/reset, no simultaneous Echo/pulse leases."
+    }
+  ],
+  "fixed_stones": [
+    {
+      "id": "useful-west-stone",
+      "id_status": "proposed_stable_id",
+      "arrangement_id": "useful-ending-west",
+      "position_world": [
+        -2.95,
+        0.8,
+        8.6
+      ],
+      "size_world": [
+        0.8,
+        1.6,
+        1.2
+      ],
+      "collision_policy": "Proposed permanent native axis-aligned scenery Box, layer 1/mask 0, matching the finite Echo court stone family; no HP/cue/timer."
+    },
+    {
+      "id": "useful-east-stone",
+      "id_status": "proposed_stable_id",
+      "arrangement_id": "useful-ending-east",
+      "position_world": [
+        2.95,
+        0.8,
+        -3.4
+      ],
+      "size_world": [
+        0.8,
+        1.6,
+        1.2
+      ],
+      "collision_policy": "The mirrored fixed stone is an ordinary obstruction. Native route/LOS/dash/landing/return proof must include it."
+    }
+  ],
+  "scenery": {
+    "references": [
+      "G07",
+      "G19"
+    ],
+    "principles": "Broad filled dark mineral strata; muted pale slab faces, sparse branching crystal, still off-floor water, distant island and faint reflection. Shared real warning/fill and grounded source remain strongest.",
+    "render_only_module_candidate": "scripts/acts/act3/mirror_shore_modules.gd",
+    "module_court_centres_z": [
+      34,
+      9,
+      -21,
+      -38
+    ],
+    "module_policy": "Optional future consumer only. Omit whole repeats at courts 21/-3 to avoid crowding adjacent arrangements; actual geometry/occlusion must be reviewed after import. Do not transform a built fixed-placement module.",
+    "raised_terrain_policy": "All raised shelves/spines/crystal full native extents remain outside permanent floor abs(X)<=7, with proposed minimum abs(X)>7.3. Flat interior bedding stays <= Y 0.014, has no collider and must not mask cue/feet pixels.",
+    "shore_witnesses": {
+      "status": "proposed optional quiet placement; no new cast asset",
+      "recipe_ref": "scripts/acts/act3/mirror_shore_witnesses.gd",
+      "anchor_world": [
+        -8.2,
+        0,
+        43
+      ],
+      "support": "Static off-floor dry visual bank at the figures' actual native sole pivots; no walkable platform, collider, HP, interaction or clock.",
+      "viewing_policy": "Voluntary view from the broad west shoulder; no required visit or input. Native crop/feet/depth/occlusion review still required."
+    },
+    "irontick_earthrid": {
+      "status": "proposed parent-specific quiet placement; current 14x22 preview is not a translated drop-in",
+      "lake_center_world": [
+        9.2,
+        -0.031,
+        -21
+      ],
+      "lake_radius_world": 1.6,
+      "earthrid_sole_world": [
+        7.65,
+        0,
+        -19.8
+      ],
+      "support": "Separate static off-floor dry visual bank for Earthrid; whole quiet water/rim/figure bounds outside the permanent floor. No target, damage, collider, cue or pulse clock.",
+      "viewing_policy": "Optional quiet dry-east-shoulder view. Do not require swimming, crossing water or an off-floor dash; current native camera must prove the later composition or dressing must move/omit."
+    },
+    "water_policy": "All water mesh coverage is beyond the floor's side/end border; reflective floor treatment remains dry, filled and foot-readable. No visual water hole overlays the continuous required route."
+  },
+  "scheduler_policy": "One actual fixed-profile encounter spans the level. Retain actual owners/leases/cooldowns/history across entries; end_encounter only at real aggregate cleanup. Echo exchanges remain exclusive; no ring/Echo overlap or fabricated target order.",
+  "topology_and_history": {
+    "constructor_topology": "A table of seven enemy recipes and one mechanism recipe is not living earned topology. Future recipients are explicitly uninstalled until actual entitlement. A paused fresh constructor may materialize only validated saved recipients.",
+    "actual_attempt": "Record genuine earned spatial entry, accepted native cycles, actual primary hit/death receipts and actual contact. Earlier living pursuers/retained dead native owners remain truthful; do not erase their history on departure.",
+    "saved_authority": "Full parent needs published supported idle/ready, same-owner and late terminal lifecycle plus whole Hero/source/Scheduler/mechanism/route validation. No proposed generation or empty placeholder Playback is a saved entitlement.",
+    "camera": "Use actual native source/route/footprint/cue/Hero/landing/return corners and current fixed-angle camera. Candidate math/layout extents grant no current fit, visibility, witness or contact authority."
+  },
+  "contact_exit": {
+    "id": "mirror-sea-dry-threshold",
+    "id_status": "proposed_stable_id",
+    "position_world": [
+      0,
+      0.1,
+      -47
+    ],
+    "rect_xz": [
+      -1.2,
+      -47.65,
+      2.4,
+      1.3
+    ],
+    "completion_id": "mirror-sea-clear",
+    "completion_id_status": "proposed_stable_id",
+    "required": "All six genuinely earned entries, seven genuine defeats, environmental controller in its earned terminal state, no retained threat/pending damage, then actual shared capsule contact once.",
+    "quiet_policy": "Stop further admissions through truthful terminal state; silence is not a timer or hidden final strike. Contact stays distinct from combat taps."
+  },
+  "equipment_and_rewards": {
+    "policy": "Reuse the existing carried canonical 9 clothing/4 weapon types already recorded for L3. Ordinary primary and shared dash suffice; no blast, pickup or supply grant required.",
+    "new_equipment_ids": [],
+    "claim_ids": [],
+    "ability_use_ids": [],
+    "pickups": [],
+    "rewards": [],
+    "permanent_stat_growth": false
+  },
+  "validation_limits": [
+    "JSON structure/inventory/translation/bounds checks only; no native proof or engine result.",
+    "Whole full-parent source lifecycle and persistence remain unimplemented here.",
+    "Native floor/stone/world/source and complete per-kit witness/gesture/ordinary-primary routes remain required.",
+    "Actual portrait source/cue/Hero/landing/return and scenic coexistence, faithful quiet contact, interruption/Continue/Retry/transition/cleanup remain required.",
+    "The 9-minute target is unmeasured; no human, pacing, performance, mobile or finished-art claim."
+  ]
+}

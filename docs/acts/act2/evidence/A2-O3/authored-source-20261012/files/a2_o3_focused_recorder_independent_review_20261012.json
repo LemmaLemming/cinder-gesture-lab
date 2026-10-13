@@ -1,0 +1,251 @@
+{
+  "review_revision": "act2-o3-focused-recorder-static-independent-1",
+  "at_utc": "2026-10-12T09:03:07.184471+00:00",
+  "scope": "Static source comparison only; ast.parse/tokenization/byte comparison did not import or invoke either recorder, launch Godot, mutate Git/worktree or create a manifest.",
+  "original": {
+    "path": "/private/tmp/cinder_a2_o2_focused_record.py",
+    "sha256": "1cd13a1b3d012641b482f2b01cd645f024506908609b0a7cd578a6cc87913638",
+    "expected_sha256": "1cd13a1b3d012641b482f2b01cd645f024506908609b0a7cd578a6cc87913638",
+    "lines": 376
+  },
+  "candidate": {
+    "path": "/private/tmp/cinder_a2_o3_focused_record.py",
+    "sha256": "ef0f37ae15e5b6a8d7feeae18051d3a423de308a9e439ae254f366dac1145292",
+    "expected_sha256": "ef0f37ae15e5b6a8d7feeae18051d3a423de308a9e439ae254f366dac1145292",
+    "lines": 376
+  },
+  "exact_intended_constants": {
+    "PUBLICATION": "8cb1da79ba000d758fe677054782e23f48cb6dfd",
+    "API": "campaign-shared-53",
+    "ASSIGNED_CHECKOUT": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+    "FIXTURES": [
+      "tests/acts/act2/a2_o3_focused_smoke.gd",
+      "tests/acts/act2/a2_o3_loading_side_smoke.gd"
+    ],
+    "OUTPUT_ROOT": "docs/acts/act2/evidence/A2-O3"
+  },
+  "delta_checks": {
+    "reverse_literal_reconstruction_exact": true,
+    "reverse_reconstructed_sha256": "1cd13a1b3d012641b482f2b01cd645f024506908609b0a7cd578a6cc87913638",
+    "normalized_module_AST_exact": true,
+    "function_count": 11,
+    "function_normalized_AST_control_flow": {
+      "digest": true,
+      "write_json": true,
+      "scoped_path": true,
+      "plain": true,
+      "log_counts": true,
+      "class_index": true,
+      "freeze_sources": true,
+      "stop_owned_group": true,
+      "run_queued": true,
+      "load_manifest": true,
+      "main": true
+    },
+    "nine_functions_source_byte_exact": [
+      "digest",
+      "write_json",
+      "scoped_path",
+      "plain",
+      "log_counts",
+      "class_index",
+      "freeze_sources",
+      "stop_owned_group",
+      "run_queued"
+    ],
+    "numeric_constants_exact": true,
+    "numeric_constant_count": 25,
+    "all_numeric_constants": [
+      {
+        "type": "float",
+        "value": 180.0
+      },
+      {
+        "type": "int",
+        "value": 0
+      },
+      {
+        "type": "int",
+        "value": 1
+      },
+      {
+        "type": "int",
+        "value": 1
+      },
+      {
+        "type": "int",
+        "value": 0
+      },
+      {
+        "type": "int",
+        "value": 0
+      },
+      {
+        "type": "int",
+        "value": 1
+      },
+      {
+        "type": "int",
+        "value": 73
+      },
+      {
+        "type": "int",
+        "value": 5
+      },
+      {
+        "type": "int",
+        "value": 5
+      },
+      {
+        "type": "int",
+        "value": 5
+      },
+      {
+        "type": "int",
+        "value": 73
+      },
+      {
+        "type": "int",
+        "value": 2
+      },
+      {
+        "type": "int",
+        "value": 1
+      },
+      {
+        "type": "int",
+        "value": 0
+      },
+      {
+        "type": "int",
+        "value": 0
+      },
+      {
+        "type": "float",
+        "value": 0.2
+      },
+      {
+        "type": "int",
+        "value": 1
+      },
+      {
+        "type": "int",
+        "value": 0
+      },
+      {
+        "type": "int",
+        "value": 0
+      },
+      {
+        "type": "int",
+        "value": 1
+      },
+      {
+        "type": "int",
+        "value": 0
+      },
+      {
+        "type": "int",
+        "value": 0
+      },
+      {
+        "type": "int",
+        "value": 0
+      },
+      {
+        "type": "int",
+        "value": 0
+      }
+    ],
+    "executable_mask_0o111_token_count_old": 2,
+    "executable_mask_0o111_token_count_new": 2,
+    "changed_string_constants": [
+      {
+        "line": 2,
+        "before": "Root-run focused O2 recorder; prepared only, never imported/invoked by author.\nFrom the registered assigned checkout, after all fixture/new resources are frozen:\n  python3 /private/tmp/cinder_a2_o2_focused_record.py --mode engine --manifest /private/tmp/a2_o2_frozen_record_manifest.json --output-dir docs/acts/act2/evidence/A2-O2/focused-native-20261012\nResource import is a separate explicit --mode import with a fresh output directory.\nOnly scripts/dev/dev.py owns Godot queue admission; no source-only Godot arguments.\n",
+        "after": "Root-run focused O3 recorder; prepared only, never imported/invoked by author.\nFrom the registered assigned checkout, after all fixture/new resources are frozen:\n  python3 /private/tmp/cinder_a2_o3_focused_record.py --mode engine --manifest /private/tmp/a2_o3_frozen_record_manifest.json --output-dir docs/acts/act2/evidence/A2-O3/focused-native-20261012\nResource import is a separate explicit --mode import with a fresh output directory.\nOnly scripts/dev/dev.py owns Godot queue admission; no source-only Godot arguments.\n"
+      },
+      {
+        "line": 24,
+        "before": "fc2d1c1776200add9dd1d56e857cbdcc03daac76",
+        "after": "8cb1da79ba000d758fe677054782e23f48cb6dfd"
+      },
+      {
+        "line": 25,
+        "before": "campaign-shared-50",
+        "after": "campaign-shared-53"
+      },
+      {
+        "line": 29,
+        "before": "docs/acts/act2/evidence/A2-O2",
+        "after": "docs/acts/act2/evidence/A2-O3"
+      },
+      {
+        "line": 27,
+        "before": "tests/acts/act2/a2_o2_focused_smoke.gd",
+        "after": "tests/acts/act2/a2_o3_focused_smoke.gd"
+      },
+      {
+        "line": 28,
+        "before": "tests/acts/act2/a2_o2_loading_side_smoke.gd",
+        "after": "tests/acts/act2/a2_o3_loading_side_smoke.gd"
+      },
+      {
+        "line": 225,
+        "before": "Frozen manifest must name exact Shared50 and one of the two planned O2 fixtures",
+        "after": "Frozen manifest must name exact Shared53 and one of the two planned O3 fixtures"
+      },
+      {
+        "line": 268,
+        "before": "Single new-resource import requires both actual frozen O2 fixtures plus all new resources",
+        "after": "Single new-resource import requires both actual frozen O3 fixtures plus all new resources"
+      },
+      {
+        "line": 270,
+        "before": "Root must actually preserve-adopt exact Shared50 before this job",
+        "after": "Root must actually preserve-adopt exact Shared53 before this job"
+      },
+      {
+        "line": 274,
+        "before": "Use a new O2 evidence child directory for every import/native/retry",
+        "after": "Use a new O3 evidence child directory for every import/native/retry"
+      },
+      {
+        "line": 240,
+        "before": "New O2 resource must be an owned resource: ",
+        "after": "New O3 resource must be an owned resource: "
+      },
+      {
+        "line": 278,
+        "before": "a2-o2-",
+        "after": "a2-o3-"
+      }
+    ]
+  },
+  "retained_guards": [
+    "Closed duplicate-key-refusing actual manifest; exact publication/API/fixture and SHA256 pins; owned new-resource prefixes; missing or changed inputs refuse before output/job creation.",
+    "Explicit registered checkout and actual publication ancestry; only fresh lowercase evidence child and raw-log paths; refuses symlink/replacement of original evidence.",
+    "freeze_sources retains literal res:// dependency recursion, actual unique global-class dependency resolution, UID/import presence recording, original bytes/modes and copied recorder/manifest originals.",
+    "Queue admission uses python3 scripts/dev/dev.py only; engine CLI has path/log/headless-or-explicit-graphical/script and manifest args. It adds no source-only Godot CLI paths or lock bypass.",
+    "Started timeout180.0s begins only at ANSI-normalized native Godot banner; queue wait has no timeout. Script failure stops only newly launched private wrapper process group; EOF/thread/child-exit checks remain mandatory.",
+    "Executable bits remain native_mode & 0o111 for originals/generated UID metadata. Source SHA/modes are rechecked after actual job.",
+    "Import is explicit/separate and requires both frozen fixture names and all new resources; generated metadata is retained after job without backfilling originals or inventing a gameplay footer.",
+    "Engine complete requires observed clean exit/banner/full EOF, raw log, zero script/load/native/unexplained/fail/warning diagnostics, no source/mode/UID/import drift, exactly one matching positive-count zero-failure footer per stream, and exact configured count-only/per-check-pass policy.",
+    "Actual command error exit codes and incomplete scopes remain failures; graphical mode supplies no automatic art/pixel acceptance."
+  ],
+  "source_closure_limits": "Inherited resolver is literal resource plus actual global-class/sidecar closure, records unresolved literal references, and cannot claim discovery of arbitrary dynamic loads or full runtime coverage. No new source-closure scope was added or weakened.",
+  "timeouts": {
+    "started_job_limit_s": 180.0,
+    "queue_poll_s": 0.2,
+    "stop_group_TERM_wait_s": 5,
+    "stop_group_KILL_wait_s": 5,
+    "reader_join_s": 5,
+    "queue_wait_timeout": null
+  },
+  "findings": [],
+  "status": "bounded static comparison passed; no concrete new recorder issue",
+  "untested": [
+    "No recorder invocation, actual command/submission, queue operation, source freeze, resource import, native test, UID census or pixels.",
+    "No manifest or future source pins invented. Actual Root-run source/result/error streams remain authoritative."
+  ]
+}

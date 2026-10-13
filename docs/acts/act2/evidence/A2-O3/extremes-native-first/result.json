@@ -1,0 +1,81 @@
+{
+  "assertion_reporting": "count-only",
+  "changed_file_mode_paths": [],
+  "changed_source_paths": [],
+  "exit_code": 1,
+  "footer_by_log": {
+    "raw": [
+      {
+        "checks": 20,
+        "failures": 3,
+        "scope": "scope_complete=false; actual ordinary first Scout + second Handler + final mixed response/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+      }
+    ],
+    "wrapper": [
+      {
+        "checks": 20,
+        "failures": 3,
+        "scope": "scope_complete=false; actual ordinary first Scout + second Handler + final mixed response/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+      }
+    ]
+  },
+  "import_presence_changes": {},
+  "import_qualification": "Unexpected native metadata additions require separate diagnosis/import; originals preserved, never backfilled",
+  "job_watch": {
+    "child_exited": true,
+    "engine_banner_observed": true,
+    "owned_wrapper_pid": 30447,
+    "queue_wait_has_no_timeout": true,
+    "started_job_limit_s": 180.0,
+    "termination": "",
+    "wrapper_stream_complete": true
+  },
+  "log_counts": {
+    "raw": {
+      "assertion_errors": 3,
+      "fail_markers": 3,
+      "native_errors": 3,
+      "parse_or_load_errors": 0,
+      "script_errors": 0,
+      "unexplained_native_errors": 0,
+      "warnings": 0
+    },
+    "wrapper": {
+      "assertion_errors": 3,
+      "fail_markers": 3,
+      "native_errors": 3,
+      "parse_or_load_errors": 0,
+      "script_errors": 0,
+      "unexplained_native_errors": 0,
+      "warnings": 0
+    }
+  },
+  "mode": "engine",
+  "pass_line_counts": {
+    "raw": 0,
+    "wrapper": 0
+  },
+  "raw_sha256": "ce579c1e69f67c3ebbafd8e15924da73872a4aa0282ec7163f363d500405f22b",
+  "raw_wrapper_equal": true,
+  "result_lines": [
+    "ERROR: FAIL A2-O3 focused: bounded actual armed first_scout lock: { \"stage_index\": 0, \"clock_s\": 15.4333333333337, \"defeated_ids\": [], \"pending_defeats\": [], \"checkpoint_requested\": false, \"checkpoint_committed\": false, \"exchanges\": { \"first_scout\": { \"api_revision\": \"act2-ray-exchange-1\", \"actor_id\": \"first_scout\", \"status\": \"cancelled\", \"phase\": \"clear\", \"cycle\": 5, \"remaining_s\": 0.0, \"armed\": false, \"reservation_id\": \"\", \"geometry\": { \"kind\": \"lane\", \"from\": (-0.65, 0.0, -3.0), \"to\": (-0.228157, 0.0, 0.776513), \"radius\": 0.31 }, \"direction\": (0.111011, 0.0, 0.993819), \"source_position\": (-0.65, 0.0, -3.0), \"exchange\": { \"id\": \"threat-5\", \"source_position\": (-0.65, 0.0, -3.0), \"geometry\": { \"kind\": \"lane\", \"from\": (-0.65, 0.0, -3.0), \"to\": (-0.228157, 0.0, 0.776513), \"radius\": 0.31 }, \"opening_position\": (-0.65, 0.0, -3.0), \"start_s\": 13.0166666666669, \"lock_from_s\": 13.4666666666669, \"active_from_s\": 14.5666666666669, \"active_until_s\": 14.7266666666669, \"recovery_until_s\": 16.3266666666669, \"cooldown_until_s\": 16.1666666666669, \"profile_id\": \"standard\", \"world_revision\": 1, \"adapter\": { \"kind\": \"tracking\", \"locked\": true, \"reach\": 3.80000019073486, \"radius\": 0.31, \"lock_s\": 1.1, \"active_s\": 0.16, \"recovery_s\": 1.6, \"attack_interval_s\": 1.6 } }, \"resolved_role\": { \"raw_damage\": 10.0, \"windup_s\": 1.55, \"lock_s\": 1.1, \"active_s\": 0.16, \"recovery_s\": 1.6, \"attack_interval_s\": 1.6, \"max_hp\": 30.0, \"move_speed\": 0.0, \"damage\": 10.0, \"difficulty_schema\": 1, \"difficulty_profile\": \"standard\", \"tuning_status\": \"provisional_unplaytested\", \"raw_role\": { \"raw_damage\": 10.0, \"windup_s\": 1.55, \"lock_s\": 1.1, \"active_s\": 0.16, \"recovery_s\": 1.6, \"attack_interval_s\": 1.6, \"max_hp\": 30.0, \"move_speed\": 0.0 } }, \"hit_consumed\": false, \"last_cancel_reason\": \"required_scout_presentation_unavailable\", \"proof\": {  }, \"proof_available\": false, \"presentation_witness\": {  } }, \"final_scout\": { \"api_revision\": \"act2-ray-exchange-1\", \"actor_id\": \"final_scout\", \"status\": \"idle\", \"phase\": \"clear\", \"cycle\": 0, \"remaining_s\": 0.0, \"armed\": false, \"reservation_id\": \"\", \"geometry\": {  }, \"direction\": (0.0, 0.0, 1.0), \"source_position\": (-0.65, 0.0, -21.2), \"exchange\": {  }, \"resolved_role\": { \"raw_damage\": 10.0, \"windup_s\": 1.55, \"lock_s\": 1.1, \"active_s\": 0.16, \"recovery_s\": 1.6, \"attack_interval_s\": 1.6, \"max_hp\": 30.0, \"move_speed\": 0.0, \"damage\": 10.0, \"difficulty_schema\": 1, \"difficulty_profile\": \"standard\", \"tuning_status\": \"provisional_unplaytested\", \"raw_role\": { \"raw_damage\": 10.0, \"windup_s\": 1.55, \"lock_s\": 1.1, \"active_s\": 0.16, \"recovery_s\": 1.6, \"attack_interval_s\": 1.6, \"max_hp\": 30.0, \"move_speed\": 0.0 } }, \"hit_consumed\": false, \"last_cancel_reason\": \"\", \"proof\": {  }, \"proof_available\": false, \"presentation_witness\": {  } } }, \"tools\": { \"second_handler\": { \"api_revision\": \"lane-mechanism-1\", \"mechanism_id\": \"tool_second_handler\", \"status\": \"idle\", \"phase\": \"clear\", \"remaining_s\": 0.0, \"cycle\": 0, \"reservation_id\": \"\", \"geometry\": { \"kind\": \"lane\", \"from\": (0.65, 0.0, -12.0), \"to\": (0.65, 0.0, -8.2), \"radius\": 0.31 }, \"source_position\": (0.65, 0.0, -12.0), \"opening_position\": (0.65, 0.0, -12.0), \"resolved_role\": {  }, \"hit_ids\": [], \"last_cancel_reason\": \"\", \"proof\": {  }, \"presentation_witness\": {  } }, \"final_handler\": { \"api_revision\": \"lane-mechanism-1\", \"mechanism_id\": \"tool_final_handler\", \"status\": \"idle\", \"phase\": \"clear\", \"remaining_s\": 0.0, \"cycle\": 0, \"reservation_id\": \"\", \"geometry\": { \"kind\": \"lane\", \"from\": (0.65, 0.0, -23.5), \"to\": (0.65, 0.0, -19.7), \"radius\": 0.31 }, \"source_position\": (0.65, 0.0, -23.5), \"opening_position\": (0.65, 0.0, -23.5), \"resolved_role\": {  }, \"hit_ids\": [], \"last_cancel_reason\": \"\", \"proof\": {  }, \"presentation_witness\": {  } } }, \"views\": {  }, \"actors\": { \"first_scout\": { \"hp\": 30.0, \"max_hp\": 30.0, \"phase\": \"idle\", \"progress\": 0.0, \"direction\": (0.111011, 0.0, 0.993819), \"visible\": true, \"armed\": true }, \"second_handler\": { \"hp\": 30.0, \"max_hp\": 30.0, \"phase\": \"idle\", \"progress\": 0.0, \"direction\": (0.0, 0.0, 1.0), \"visible\": false, \"armed\": true }, \"final_scout\": { \"hp\": 30.0, \"max_hp\": 30.0, \"phase\": \"idle\", \"progress\": 0.0, \"direction\": (0.0, 0.0, 1.0), \"visible\": false, \"armed\": true }, \"final_handler\": { \"hp\": 30.0, \"max_hp\": 30.0, \"phase\": \"idle\", \"progress\": 0.0, \"direction\": (0.0, 0.0, 1.0), \"visible\": false, \"armed\": true } }, \"admission_errors\": { \"first_scout\": {  } }, \"exit_open\": false, \"runtime_error\": \"\" }",
+    "ERROR: FAIL A2-O3 focused: native ordinary Scout and Handler component for slow-dash-short-reach",
+    "ERROR: FAIL A2-O3 focused: both existing extrema complete actual ordinary noammo responses/full cadence without pickups",
+    "A2-O3 focused smoke: 20 checks, 3 failures; scope_complete=false; actual ordinary first Scout + second Handler + final mixed response/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+  ],
+  "scope_complete": false,
+  "source_count": 632,
+  "source_sha256": "9579941b26e5b265fb2debd21a65d074e5a731ef0b804e2b30540baf6cb0e07a",
+  "sources_unchanged": true,
+  "summaries": [
+    {
+      "checks": 20,
+      "failures": 3,
+      "scope": "scope_complete=false; actual ordinary first Scout + second Handler + final mixed response/full cooldown/noammo/extremes, labelled recovery injuries/placements/brief portraits. No full route/Shell stamp/side-return/all-kit balance/mobile claim"
+    }
+  ],
+  "test_scope": "Two selected existing complete static loadouts: J1/P2/S2+W03 and J1/P1/S0+W03, actual canonical resolver and source response/ordinary primary/no-ammo/cadence/deliberate world dash, including one final mixed response each. Disclosed later boundary injuries/feet; no all-kit, whole-route, art, balance or performance claim.",
+  "uid_additions_after_job": {},
+  "uid_presence_changes": {},
+  "wrapper_sha256": "ce579c1e69f67c3ebbafd8e15924da73872a4aa0282ec7163f363d500405f22b"
+}

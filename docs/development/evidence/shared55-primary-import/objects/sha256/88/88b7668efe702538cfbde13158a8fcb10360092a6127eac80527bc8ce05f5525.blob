@@ -1,0 +1,87 @@
+{
+  "level_id": "A1-L1",
+  "candidate_baseline": "564559094bc98229c8140cf092771329b333cea0",
+  "api": "campaign-shared-10",
+  "adoption_ack": "db514b4f-d178-4985-bf7b-05bbbac114c3",
+  "runtime_local_version": 3,
+  "source_hashes": {
+    "scenes/acts/act1/a1_l1.tscn": "0a28ccfe900bf57694265d553928fc17ae10c2e7416f615e6210040fd9f3c94b",
+    "scripts/acts/act1/loading_arm_visual.gd": "923ca6836b4ebc1656950d5e466b1851006c6da28f4ff3271c37550d843bcd01",
+    "scripts/acts/act1/rehearsal_target_visual.gd": "3f11bc583091b3261c5a1a39ed8f4baf13c596b7991ad2bdd8d5e121fa44f41c",
+    "scripts/acts/act1/rehearsal_target.gd": "60ef55863eefe6514a23212e61cbd43729301eb42d4868678e7f1f97553b3d26",
+    "scripts/acts/act1/launch_scenery.gd": "373d532e51d37a71b53b23b079ad070bde367a804424c749eef98b094ff58181",
+    "scripts/acts/act1/launch_rehearsal.gd": "5b4b5d54f21752035dbbb0294f0b3fdbf0e66d6c901fce88275ca5f455e48d27",
+    "tests/acts/act1/a1_l1_route.gd": "aa690997a4ab75e04342f946c65880fac76fe4bb9237ad42d06f214c3b158ac7",
+    "tests/acts/act1/a1_l1_portrait.gd": "f63a84c8c0f5330f5aa831daba4095335a058c1f8c5c196a136e7231ae628f9a",
+    "tests/acts/act1/a1_l1_loadouts.gd": "4cbd9a00e405c5d5bcb9d740b45a2979b69a2b299cd6fd3bebdef89adb34a308",
+    "tests/acts/act1/a1_l1_arm_smoke.gd": "b75729f7f1284a2c112c8beeb6ed3a4cb126c4d06e45a5fba03c14f5f95956e4",
+    "tests/acts/act1/a1_l1_campaign.gd": "4d36461f9fcb576548c4f4d8e19f0070915b9f1ae5801c3279a74a69d8776490",
+    "tests/acts/act1/a1_l1_smoke.gd": "a958299041f4a6f5385f827f282bce0b2e407ca2beadcf45a1505a7ff40c8211",
+    "tests/acts/act1/visual/launch_art_stage.tscn": "72b9f424bc9d07f95d96499de0ca40f4adde857725de92dc6f03093a3bb23a01",
+    "tests/acts/act1/visual/launch_art_stage.gd": "1bf31aa40debd84400acc93e0cae2f4d9333fbe4cc2334d6931adec109e6f698"
+  },
+  "checks": [
+    {
+      "name": "opening cue/parked hook",
+      "log": "a1-l1-opening-cue-parked-test.log",
+      "checks": 86,
+      "failures": 0,
+      "exit": 0,
+      "baseline": "campaign-shared-8",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act1/a1_l1_smoke.gd",
+      "log_sha256": "9de7d040b7c6248fa1a818748f01bd25bb6643524413fa0d0a31bb64ba82dd8c"
+    },
+    {
+      "name": "consolidated headless real touch route neutral",
+      "log": "a1-l1-route-consolidated-neutral.log",
+      "checks": 144,
+      "failures": 0,
+      "exit": 0,
+      "baseline": "campaign-shared-8",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act1/a1_l1_route.gd -- --route-kit=neutral",
+      "log_sha256": "c142caae05b15641795752fd0b3d88865a52f04aa4a2b07c8d1851418abc9e25"
+    },
+    {
+      "name": "exact paired warning/mid-dash plus original arm regressions",
+      "log": "a1-l1-arm-shared9-exact-test.log",
+      "checks": 153,
+      "failures": 0,
+      "exit": 0,
+      "baseline": "campaign-shared-9",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act1/a1_l1_arm_smoke.gd",
+      "log_sha256": "88cf8de262f823af051948149846d8ed9d90666978c5977985bfbe1d81283a8f"
+    },
+    {
+      "name": "authored campaign format2 exact Continue/Retry/contact/cleanup",
+      "log": "a1-l1-campaign-shared9-exact-test.log",
+      "checks": 43,
+      "failures": 0,
+      "exit": 0,
+      "baseline": "campaign-shared-9",
+      "command": "python3 scripts/dev/dev.py engine --headless --path . --script tests/acts/act1/a1_l1_campaign.gd",
+      "log_sha256": "99994b51e55fc6c7c017ba8f91fbeaa6363bd6a98d00e511fefb4773d102fbd3"
+    }
+  ],
+  "design_validators": {
+    "ability_validate": "exit0/rev0/20abilities/zero uses",
+    "equipment_validate": "exit0/rev0/36items/zero claims",
+    "numerical_design": "exit0/12clothing/4weapons/6powerups/14perks/10fixtures;256gear/500conditional/7500combined screening only"
+  },
+  "reuse_basis": "shared9 changes only exact transport/save consumer and registered test command; actual authored153/43 rerun covers it. shared10 changes opt-in AshEnemy/spore/repulsion leaves not used by L1. All L1 runtime roots, static bindings, art, target/cue centres, player/controller/input/HUD/camera/stationary scheduler and settings identical across pertinent passes.",
+  "limits": [
+    "Scripted graphical actual renderer/recognizer; native focus=false observed; no human/native-focused/balance/performance/mobile claim",
+    "Arm fixture labels staged positions and finite4kit3profile2source witnesses; not all conditional equipment proof",
+    "Campaign fixture uses explicitly TESTONLY registry/next-level fixture and staged approach; canonical acceptance/integration review pending",
+    "Minor source glyph/workshop ladder cue overlaps; longer-dash sleeve/outer-boot trim retains readable player/contact"
+  ],
+  "post_adoption_preload_parse": {
+    "command": "python3 scripts/dev/dev.py engine --headless --check-only --path . --script tests/acts/act1/a1_l1_route.gd",
+    "baseline": "564559094bc98229c8140cf092771329b333cea0",
+    "api": "campaign-shared-10",
+    "exit": 0,
+    "error_warning_text": false,
+    "log": "a1-l1-shared10-preload-parse.log",
+    "log_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+    "scope": "changed enemy script is a transitive MainScene preload; current owned route and direct preloads parse clean. No gameplay rerun/count/acceptance claim."
+  }
+}
