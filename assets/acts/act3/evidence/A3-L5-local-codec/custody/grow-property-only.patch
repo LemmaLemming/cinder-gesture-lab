@@ -1,0 +1,22 @@
+--- before/tests/acts/act3/fixtures/captured_rule_codec_room.gd
++++ after/tests/acts/act3/fixtures/captured_rule_codec_room.gd
+@@ -821,7 +821,7 @@
+ 	if marker == null or marker.get_parent() != _tether_cue or marker.position != Vector3(0, 0.025, 0) or marker.basis != Basis.IDENTITY or marker.visible != (expected_state != "clear") or not marker.material_override is StandardMaterial3D: return "Actual current required cue mesh recipient/visibility changed"
+ 	if marker.layers != 1 or marker.cast_shadow != GeometryInstance3D.SHADOW_CASTING_SETTING_OFF or marker.transparency != 0.0 or marker.material_overlay != null or marker.visibility_range_begin != 0.0 or marker.visibility_range_end != 0.0: return "Actual required marker render layers/shadow/transparency/range policy changed"
+ 	var material: StandardMaterial3D = marker.material_override as StandardMaterial3D
+-	if material.shading_mode != BaseMaterial3D.SHADING_MODE_UNSHADED or material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA or material.cull_mode != BaseMaterial3D.CULL_DISABLED or material.texture_filter != BaseMaterial3D.TEXTURE_FILTER_NEAREST or material.albedo_texture != null or material.no_depth_test or material.grow_enabled or material.distance_fade_mode != BaseMaterial3D.DISTANCE_FADE_DISABLED: return "Actual ordinary shared marker material/render policy changed"
++	if material.shading_mode != BaseMaterial3D.SHADING_MODE_UNSHADED or material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA or material.cull_mode != BaseMaterial3D.CULL_DISABLED or material.texture_filter != BaseMaterial3D.TEXTURE_FILTER_NEAREST or material.albedo_texture != null or material.no_depth_test or material.grow or material.distance_fade_mode != BaseMaterial3D.DISTANCE_FADE_DISABLED: return "Actual ordinary shared marker material/render policy changed"
+ 	if expected_state != "clear":
+ 		var expected_color := Color(0.88, 0.92, 0.82, 0.85)
+ 		if expected_state == "active": expected_color = Color(1.0, 0.98, 0.87, 1.0)
+--- before/tests/acts/act3/captured_rule_save_codec_smoke.gd
++++ after/tests/acts/act3/captured_rule_save_codec_smoke.gd
+@@ -249,7 +249,7 @@
+ 
+ func _native_marker_receipt(marker: MeshInstance3D) -> PackedByteArray:
+ 	var material: StandardMaterial3D = marker.material_override as StandardMaterial3D
+-	return var_to_bytes([marker.global_transform, marker.visible, marker.layers, marker.cast_shadow, marker.transparency, marker.visibility_range_begin, marker.visibility_range_end, material.albedo_color, material.shading_mode, material.transparency, material.cull_mode, material.texture_filter, material.no_depth_test, material.grow_enabled, material.distance_fade_mode])
++	return var_to_bytes([marker.global_transform, marker.visible, marker.layers, marker.cast_shadow, marker.transparency, marker.visibility_range_begin, marker.visibility_range_end, material.albedo_color, material.shading_mode, material.transparency, material.cull_mode, material.texture_filter, material.no_depth_test, material.grow, material.distance_fade_mode])
+ 
+ func _negative_packets(saved: Dictionary, before: Dictionary, label: String) -> bool:
+ 	var bad: Dictionary = saved.duplicate(true)

@@ -1,0 +1,258 @@
+{
+  "reviewer": "/root/act3_crystal_landscape_draft/codec_public_api_review",
+  "timestamp_utc": "2026-10-13T05:48:08.634512+00:00",
+  "scope": "Independent read-only final source audit of the sealed five-file local captured-rule codec package. Only this report directory is written.",
+  "package": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/a3-l5-captured-codec-plan",
+  "checks": {
+    "ready_sha256": "31296482fd6d80bc76293fd6acf6d1858be95d93dc2f1181381b60f59af00898",
+    "expected_ready_sha256": "31296482fd6d80bc76293fd6acf6d1858be95d93dc2f1181381b60f59af00898",
+    "ready_same": true,
+    "all_five_published_sources_match_manifest": true,
+    "shared_freezes_current": true,
+    "live_function_count": 36,
+    "live_functions_unchanged": true,
+    "live_function_comparison": {
+      "_ready": true,
+      "_build_floor": true,
+      "_wall": true,
+      "_build_tether": true,
+      "_build_recording_frame": true,
+      "_build_slot_markers": true,
+      "_position_slot_markers_for_capture": true,
+      "_position_slot_markers_for_sequence": true,
+      "_update_slot_markers": true,
+      "_box": true,
+      "_on_enter_level": true,
+      "_physics_process": true,
+      "_queue_barrier": true,
+      "_drain_barrier": true,
+      "_arm_at_barrier": true,
+      "_authored": true,
+      "_join_at_barrier": true,
+      "scheduler_context": true,
+      "combat_response": true,
+      "_guard_live_exchange": true,
+      "receive_tether_attack": true,
+      "_finish_at_barrier": true,
+      "_reject_at_barrier": true,
+      "_cancel_consumer": true,
+      "_on_gate_failed": true,
+      "_build_forecast_points": true,
+      "_camera_framing_points": true,
+      "_append_mesh": true,
+      "_append_native_bounds": true,
+      "_append_box": true,
+      "_append_cloud_bounds": true,
+      "state": true,
+      "floor_regions": true,
+      "scheduler_bindings": true,
+      "_update_guidance": true,
+      "_on_exit_level": true
+    },
+    "base_sha256": "915252a26089e7b4ecec92a8046d42555a702af7c1566551b80e67ce39e87a6b",
+    "helper_sha256": "6c3cfc228985e64f5b34f9c25b2b744b92ad6f8f031b68c3a428450a7b9c3bbc",
+    "two_slot_helper_sha256": "35c35fa0a6f60f45eb890c6f044917cd981efea7c64683d74f95db802f792675",
+    "prior_version_ready_sha256": "8594f0a4bb7a1f3485b67c97e6f78709314c2896b438afd08800c8991be0d11c"
+  },
+  "files": [
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/a3-l5-captured-codec-plan/runtime/captured_rule_room_codec.gd",
+      "proposed_resource": "res://tests/acts/act3/fixtures/captured_rule_room_codec.gd",
+      "sha256": "176c4691b7296b4a1939095cb495080d43192b30ddcd52829eace4ab50f6cf0e",
+      "expected_sha256": "176c4691b7296b4a1939095cb495080d43192b30ddcd52829eace4ab50f6cf0e",
+      "bytes": 32378,
+      "same": true
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/a3-l5-captured-codec-plan/runtime/captured_rule_codec_room.gd",
+      "proposed_resource": "res://tests/acts/act3/fixtures/captured_rule_codec_room.gd",
+      "sha256": "6cf3d7ba9ef37536c3b7c3c5f5aa52011a8cf9d43fbdb13b22f705bdf1970010",
+      "expected_sha256": "6cf3d7ba9ef37536c3b7c3c5f5aa52011a8cf9d43fbdb13b22f705bdf1970010",
+      "bytes": 51110,
+      "same": true
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/a3-l5-captured-codec-plan/tests/captured_rule_save_codec_smoke.gd",
+      "proposed_resource": "res://tests/acts/act3/captured_rule_save_codec_smoke.gd",
+      "sha256": "5fac0dd5e61a97b5df2f398b37ac5b0e78ef307372a4888bec20c060561289e5",
+      "expected_sha256": "5fac0dd5e61a97b5df2f398b37ac5b0e78ef307372a4888bec20c060561289e5",
+      "bytes": 29858,
+      "same": true
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/a3-l5-captured-codec-plan/scenes/captured_rule_codec_one.tscn",
+      "proposed_resource": "res://tests/acts/act3/fixtures/captured_rule_codec_one.tscn",
+      "sha256": "fd4951db3a6b3273aa7f8c3ba1f0c05a011a183682a232764f38d742f18deb42",
+      "expected_sha256": "fd4951db3a6b3273aa7f8c3ba1f0c05a011a183682a232764f38d742f18deb42",
+      "bytes": 419,
+      "same": true
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/a3-l5-captured-codec-plan/scenes/captured_rule_codec_two.tscn",
+      "proposed_resource": "res://tests/acts/act3/fixtures/captured_rule_codec_two.tscn",
+      "sha256": "d1d04030902587ac05d7a871275eb1ca489bccac78bfa9bca2a73f2bd8da1a00",
+      "expected_sha256": "d1d04030902587ac05d7a871275eb1ca489bccac78bfa9bca2a73f2bd8da1a00",
+      "bytes": 419,
+      "same": true
+    }
+  ],
+  "shared_freezes": [
+    {
+      "path": "scripts/campaign/level.gd",
+      "live_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+      "freeze_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+      "same": true
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "live_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "freeze_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "same": true
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd",
+      "live_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "freeze_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "same": true
+    },
+    {
+      "path": "scripts/player.gd",
+      "live_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "freeze_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "same": true
+    },
+    {
+      "path": "scripts/game.gd",
+      "live_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "freeze_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "same": true
+    },
+    {
+      "path": "scripts/hud.gd",
+      "live_sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+      "freeze_sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+      "same": true
+    },
+    {
+      "path": "scripts/combat/replay_capture_gate.gd",
+      "live_sha256": "5f4d814f3b3bbb90e3274e1a76a7d082e092be553edf2862e9da480bb0042a2e",
+      "freeze_sha256": "5f4d814f3b3bbb90e3274e1a76a7d082e092be553edf2862e9da480bb0042a2e",
+      "same": true
+    },
+    {
+      "path": "scripts/combat/replay_sequence.gd",
+      "live_sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+      "freeze_sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+      "same": true
+    },
+    {
+      "path": "scripts/combat/action_capture.gd",
+      "live_sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f",
+      "freeze_sha256": "0cd185d0a3b49190e9b3fbe33bcf5f2642f070eb305745cc6b4182f97a8e7d8f",
+      "same": true
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd",
+      "live_sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+      "freeze_sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+      "same": true
+    },
+    {
+      "path": "scripts/combat/replay_playback.gd",
+      "live_sha256": "e4c7ee2e7d511ee294fd795cc389c20b69672e46fff38c8a5f73e4aa6d081304",
+      "freeze_sha256": "e4c7ee2e7d511ee294fd795cc389c20b69672e46fff38c8a5f73e4aa6d081304",
+      "same": true
+    },
+    {
+      "path": "scripts/combat/replay_cursor.gd",
+      "live_sha256": "1cbe648ad391d4363a525751fcc23e71f13292eddcc5da46233289a40a787362",
+      "freeze_sha256": "1cbe648ad391d4363a525751fcc23e71f13292eddcc5da46233289a40a787362",
+      "same": true
+    },
+    {
+      "path": "scripts/combat/replay_witness.gd",
+      "live_sha256": "5bcc9c58b9ea8c496200d9d313f2d9848baa0700665fa062640270945d829295",
+      "freeze_sha256": "5bcc9c58b9ea8c496200d9d313f2d9848baa0700665fa062640270945d829295",
+      "same": true
+    },
+    {
+      "path": "scripts/combat/replay_footprint.gd",
+      "live_sha256": "23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b",
+      "freeze_sha256": "23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b",
+      "same": true
+    },
+    {
+      "path": "scripts/combat/difficulty.gd",
+      "live_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "freeze_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "same": true
+    },
+    {
+      "path": "scripts/cues/interaction_cue.gd",
+      "live_sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2",
+      "freeze_sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2",
+      "same": true
+    },
+    {
+      "path": "scripts/cues/cue_mesh.gd",
+      "live_sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "freeze_sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "same": true
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "priority": "P1",
+      "kind": "fixture-positive-path",
+      "file": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/a3-l5-captured-codec-plan/tests/captured_rule_save_codec_smoke.gd",
+      "line": 303,
+      "title": "Immediate replay-observer Pause precedes the Gate clock observation",
+      "trigger": "The first event_dispatched callback opens the actual pause UI at Playback physics priority110, before the sole Gate priority2000 synchronizes this tick.",
+      "evidence": [
+        "replay_playback.gd:84 sets priority110; replay_capture_gate.gd:36 sets priority2000.",
+        "Gate._physics_process:93\u201395 refuses synchronization while paused.",
+        "Player has already advanced its actual action clock at player.gd:304.",
+        "Gate.snapshot_state calls _capture_pair_error, which passes the actual Player clock into ActionCapture.snapshot_error; action_capture.gd:199 rejects a stale stored clock.",
+        "Fixture later captures the interrupted pending suffix through _sample without an intervening authoritative Gate synchronization."
+      ],
+      "risk": "The active-pending-native-suffix aggregate writer is expected to reject the Gate clock mismatch; no native failure has been executed or inferred as an observed result.",
+      "correction": "Arrange a supported authoritative Gate synchronization before taking the deferred interrupted aggregate, preserving the real Player clock and once-only suffix. Do not repair JSON clocks, retime the replay, or weaken snapshot validation."
+    },
+    {
+      "id": "F2",
+      "priority": "P2",
+      "kind": "current-cue-native-guard",
+      "file": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/a3-l5-captured-codec-plan/runtime/captured_rule_codec_room.gd",
+      "line": 821,
+      "title": "Current ordinary marker material visibility is not authenticated",
+      "trigger": "A current exposed RequiredInteractionMarker retains visible=true and identical mesh bytes while its StandardMaterial3D albedo alpha is zero.",
+      "evidence": [
+        "Native guard checks material type, marker visible, pose, and mesh arrays but does not compare shared state-derived material/color/render policy.",
+        "Framing containment measures geometry only.",
+        "Owned wire records logical cue state/trigger but not marker material state.",
+        "Fresh InteractionCue.present resets the shared marker color during quiet restoration."
+      ],
+      "risk": "A lost required current cue can be accepted by capture and rebuilt with a different visible material while exact local recapture still passes. This is a source-derived guard gap, not an observed native failure.",
+      "correction": "Validate the public marker resource against the actual shared state-derived native material/color/render policy and required visible layer policy; retain future-opening geometry only as a supplement."
+    }
+  ],
+  "confirmed_source_contracts": [
+    "Full outer Player remains outside local wire; Gate validates exact current actor digest and original history.",
+    "Fresh configured generation0 Gate is quietly restored only after actual full Player restoration.",
+    "Whole Scheduler1 restore precedes projected Playback3 restore; actual source remains at the original fixed tether.",
+    "Exact mechanical recapture precedes actual candidate Camera/HUD optics; no new replay admission, bind, proof, damage delivery, or clock repair is used during restore.",
+    "Original FIFO retirement actor hash and actor clock join Gate retirement; Scheduler/Playback preserve their own exact aggregate clock and original deadlines.",
+    "Typed closed nested packet guards precede owned accesses; exact original projection authentication now precedes floor helpers; derived marker mode precedes number-route access.",
+    "Callback observer instrumentation watches Player/Gate/Scheduler/Playback/current damaging cues/ordinary cue, and candidate remains nonplayable until the public optical gate.",
+    "Framing optical installation, canceled/post-consumption missing-custody histories, unconfigured/transient boundaries, and external full-parent floor/Scheduler3 are explicitly unsupported."
+  ],
+  "native_execution": {
+    "engine_jobs": 0,
+    "parse": "unexecuted",
+    "new_codec_mechanics": "unexecuted",
+    "new_codec_candidate_optics": "unexecuted",
+    "inherited_passes": "Root-supplied reference context only; not new codec results."
+  },
+  "decision": "Source package identity/ownership and restore interfaces verified. Correct F1 fixture ordering and F2 native current-cue visibility guard before interpreting focused native results. No full A3-L5, campaign Save/Continue/Retry, art, or acceptance conclusion."
+}

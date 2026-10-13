@@ -1,0 +1,25 @@
+{
+  "created_at": "2026-10-13T06:20:50.424536+00:00",
+  "failed_command": "python3 scripts/dev/dev.py engine --headless --path . --script res://tests/acts/act3/captured_rule_save_codec_smoke.gd",
+  "checkout": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea",
+  "revision": "2e71f645bece4c3079db90cceaf036efcf0f0fdd",
+  "failure_class": "script runtime property",
+  "native_log": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/crystalman-codec-v3-one-first-native/native.log",
+  "native_log_sha256": "d4e13059d533050e93430f0490c26592fa1f09839451d1f1aec9f29c90940978",
+  "original_exit": 1,
+  "original_checks": 187,
+  "original_failures": 1,
+  "original_script_error_count": 174,
+  "first_meaningful_error": "Invalid access to property or key 'grow_enabled' on StandardMaterial3D",
+  "changed_files": [
+    "tests/acts/act3/fixtures/captured_rule_codec_room.gd",
+    "tests/acts/act3/captured_rule_save_codec_smoke.gd"
+  ],
+  "fix": "Replace unsupported material.grow_enabled with documented bool material.grow, preserving false-value guard and exact donor receipt. No runtime mechanic or negative-test relaxation.",
+  "official_sources": [
+    "https://docs.godotengine.org/en/stable/classes/class_basematerial3d.html#class-basematerial3d-property-grow",
+    "https://raw.githubusercontent.com/godotengine/godot/4.7.2-stable/doc/classes/BaseMaterial3D.xml"
+  ],
+  "first_result_reuse": "Original validation aborted before alpha guard; neither quiet snapshot success nor optical marker rejection qualified. Original frozen source and raw log retained.",
+  "retest": "Same capacity1 local-codec fixture only, followed by distinct capacity2 if clean."
+}
