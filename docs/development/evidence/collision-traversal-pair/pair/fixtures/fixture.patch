@@ -1,0 +1,112 @@
+--- collision-signature-profile/profile.gd
++++ collision-traversal-measure/measure.gd
+@@ -1,17 +1,14 @@
+-extends "res://.cinder/collision-signature-profile/stage-current-registry.gd"
+-## PRIVATE temporary finer collision-stage observation over one actual native interval.
++extends "res://.cinder/collision-traversal-measure/stage-current-registry.gd"
++## PRIVATE uninstrumented paired whole-window measurement over one actual native interval.
+ ## SOURCE ONLY: unparsed/unexecuted until Root explicitly selects copies.
+ ## Real original CP2 -> GUI Continue/Resume -> ONE TEST Hero placement -> real
+ ## Crossed activation -> public Pause. No actor/progress/camera/clock setters.
+ ## All normal actor/Scheduler/Player callbacks run; receipts stay outside timing.
+ 
+-const BoundaryProfile = preload("res://.cinder/collision-signature-profile/sink.gd")
+ const NativeProtocol = preload("res://scripts/environment/scheduler_spore_source_protocol.gd")
+ const CostRoute = preload("res://scripts/combat/repulsion_route.gd")
+ var _cost_label: String = "unset"
+-var _cost_events: Array = []
+ var _cost_sources: Array[String] = []
+-var _cost_rows: Array[Dictionary] = []
+ var _cost_packet_error: String = ""
+ var _cost_native_error: String = ""
+ 
+@@ -73,56 +70,32 @@
+ 	var actor_ids: Dictionary = {}
+ 	for id: String in game.active_level.get("sources"):
+ 		actor_ids[id] = str(game.active_level.get("sources")[id].get_instance_id())
+-	var selected_protocol_ids: Array[int] = []
+ 	var exact_protocol_scripts: bool = true
+ 	for id: String in _cost_sources:
+-		selected_protocol_ids.append(protocols[id].get_instance_id())
+ 		exact_protocol_scripts = exact_protocol_scripts and protocols[id].get_script() == NativeProtocol
+-	if not _expect(exact_protocol_scripts, "all8 actual bound Protocols retain the exact shared native Script before profiling"): _finish(); return
+-	BoundaryProfile.reset(selected_protocol_ids)
+-	BoundaryProfile.enabled = true
++	if not _expect(exact_protocol_scripts, "all8 actual bound Protocols retain the exact shared native Script before measurement"): _finish(); return
+ 	var started: int = Time.get_ticks_usec()
+ 	# Real scheduled physics/process callbacks; no manual actor/controller tick.
+ 	await physics_frame
+ 	await process_frame
+ 	var wall_us: int = Time.get_ticks_usec() - started
+-	BoundaryProfile.enabled = false
+-	var profile: Dictionary = BoundaryProfile.state()
+-	var per_source: Dictionary = {}
+-	var per_source_counts: Dictionary = {}
+-	var every_source_measured: bool = true
+-	# Read ALL eight actual retained Protocol counter trees before Pause or any
+-	# native/input/optics witness/whole-packet snapshot writer. No new guard call.
+-	for id: String in _cost_sources:
+-		var measured: Dictionary = BoundaryProfile.source_state(protocols[id].get_instance_id())
+-		per_source[id] = measured
+-		per_source_counts[id] = BoundaryProfile.source_count_state(protocols[id].get_instance_id())
+-		every_source_measured = every_source_measured and not measured.is_empty() and measured.has("Protocol._binding_error")
+-	var every_collision_counted: bool = true
+-	for id: String in _cost_sources:
+-		var counts: Dictionary = per_source_counts[id]
+-		var measured: Dictionary = per_source[id]
+-		every_collision_counted = every_collision_counted and counts.has("visited_nodes") and counts.has("accepted_colliders") and counts.has("extracted_shapes") and measured.has("Route.collision_signature")
+-		if every_collision_counted:
+-			every_collision_counted = counts.visited_nodes.samples == measured["Route.collision_signature"].calls and counts.accepted_colliders.samples == counts.visited_nodes.samples and counts.extracted_shapes.samples == counts.visited_nodes.samples and counts.visited_nodes.min > 0 and counts.accepted_colliders.min >= 0 and counts.extracted_shapes.min >= 0
+-	if not _expect(every_source_measured and every_collision_counted and profile.selected_source_count == 8 and profile.sources.size() == 8 and profile.stack_empty and not profile.stack_fault and not profile.overflow, "all8 genuine Protocol counter and primitive-count trees finish with exact source attribution and balanced stacks before Pause"): _finish(); return
+ 	var actual_ids: Dictionary = {}
+ 	for id: String in game.active_level.get("sources"):
+ 		actual_ids[id] = str(game.active_level.get("sources")[id].get_instance_id())
+-	_trace("collision_signature_profile_interval", {"profile": profile, "per_source": per_source, "per_source_counts": per_source_counts, "wall_us": wall_us, "physics_frames": Engine.get_physics_frames() - frame_before, "process_frames": Engine.get_process_frames() - process_before, "player_elapsed_s": game.player.get_world_action_clock() - clock_before, "scheduler_elapsed_s": scheduler.get_clock() - scheduler_before, "actor_identities_unchanged": actor_ids == actual_ids, "hp_before": hp_before, "scope": "Temporary native statement timing: sequential stages plus inclusive nested methods overlap; activation/setup/paused witnesses excluded; one native await interval, no exclusive sum/FPS/gain/cause claim."})
+-	if not _expect(Engine.get_physics_frames() - frame_before == 8 and Engine.get_process_frames() - process_before == 1 and is_equal_approx(game.player.get_world_action_clock() - clock_before, 8.0 / 60.0) and is_equal_approx(scheduler.get_clock() - scheduler_before, 8.0 / 60.0) and actor_ids == actual_ids and game.player.hp == hp_before and not paused, "real instrumented interval advances eight native physics frames with exact actor/health custody"): _finish(); return
++	_trace("collision_traversal_interval", {"wall_us": wall_us, "physics_frames": Engine.get_physics_frames() - frame_before, "process_frames": Engine.get_process_frames() - process_before, "player_elapsed_s": game.player.get_world_action_clock() - clock_before, "scheduler_elapsed_s": scheduler.get_clock() - scheduler_before, "actor_identities_unchanged": actor_ids == actual_ids, "hp_before": hp_before, "scope": "Uninstrumented whole-window elapsed time; activation/setup/paused witnesses excluded; one native await interval, no sustained FPS or causal gain claim."})
++	if not _expect(Engine.get_physics_frames() - frame_before == 8 and Engine.get_process_frames() - process_before == 1 and is_equal_approx(game.player.get_world_action_clock() - clock_before, 8.0 / 60.0) and is_equal_approx(scheduler.get_clock() - scheduler_before, 8.0 / 60.0) and actor_ids == actual_ids and game.player.hp == hp_before and not paused, "real uninstrumented interval advances eight native physics frames with exact actor/health custody"): _finish(); return
+ 	game.request_pause()
+ 	await _settle()
+ 	# Preserve actual diagnostic/input/optics observations BEFORE snapshot
+-	# writers can reset diagnostic fields; every counter is disabled already.
++	# writers can reset diagnostic fields; all witness work is outside timing.
+ 	var native: String = _cost_native(protocols)
+ 	var packets: String = _cost_packets()
+ 	_expect(paused and not packets.is_empty() and not native.is_empty(), "actual public Pause retains nonempty complete19actor/Player/Scheduler and focused native observation after measurement")
+ 	var native_file: Dictionary = _persist_exact_witness("focused-native.exact.json", native)
+ 	var packet_file: Dictionary = _persist_exact_witness("complete19-packets.exact.json", packets)
+ 	_expect(not native_file.is_empty() and not packet_file.is_empty(), "both actual paused Exact strings are retained as byte-exact files outside the measured interval")
+-	_trace("collision_signature_profile_paused_witness", {"packet_bytes": packets.to_utf8_buffer().size(), "packet_sha256": packets.sha256_text(), "native_bytes": native.to_utf8_buffer().size(), "native_sha256": native.sha256_text(), "native_file": native_file, "packet_file": packet_file, "campaign_error": game.campaign_error, "scope": "Actual complete19actor/Player/Scheduler and focused-native Exact bytes retained and decoded outside timing; Optical Pause refusal is reported, no fitting/Save permission/recovery claim."})
+-	_stage_outcome = "one_instrumented_native_boundary_interval"
++	_trace("collision_traversal_paused_witness", {"packet_bytes": packets.to_utf8_buffer().size(), "packet_sha256": packets.sha256_text(), "native_bytes": native.to_utf8_buffer().size(), "native_sha256": native.sha256_text(), "native_file": native_file, "packet_file": packet_file, "campaign_error": game.campaign_error, "scope": "Actual complete19actor/Player/Scheduler and focused-native Exact bytes retained and decoded outside timing; Optical Pause refusal is reported, no fitting/Save permission/recovery claim."})
++	_stage_outcome = "one_uninstrumented_native_boundary_interval"
+ 	_finish()
+ 
+ 
+@@ -189,15 +162,14 @@
+ func _finish() -> void:
+ 	if _finished: return
+ 	_finished = true
+-	BoundaryProfile.enabled = false
+-	_trace("cost_cleanup_before", {"measurement_label": _cost_label, "outcome": _stage_outcome, "query_count": _cost_rows.size()})
++	_trace("cost_cleanup_before", {"measurement_label": _cost_label, "outcome": _stage_outcome})
+ 	_close_shell()
+ 	paused = false
+ 	await create_timer(0.2, true).timeout
+ 	_cleanup_saves()
+ 	_expect(FileAccess.get_sha256(STAGE_ORIGINAL) == STAGE_ORIGINAL_SHA and FileAccess.get_file_as_string(Registry.DATA_PATH) == _registry_text, "cost probe preserves original CP2 and canonical registry bytes")
+ 	_trace("cost_cleanup_after", {"measurement_label": _cost_label, "outcome": _stage_outcome})
+-	print("Collision signature profile: %d checks, %d failures; label=%s; outcome=%s; inclusive stage observation only, no productionFPS/gain/full-route claim" % [checks, failures, _cost_label, _stage_outcome])
++	print("Collision traversal measurement: %d checks, %d failures; label=%s; outcome=%s; uninstrumented native interval only, no productionFPS/gain/full-route claim" % [checks, failures, _cost_label, _stage_outcome])
+ 	quit(0 if failures == 0 else 1)
+ 
+ 
+@@ -207,7 +179,7 @@
+ 	if not decoded.get("accepted", false) or Exact.stringify(decoded.value) != wire:
+ 		_expect(false, "paused Exact witness decodes and re-encodes without type/bit drift: " + name)
+ 		return {}
+-	var directory: String = "res://.cinder/collision-signature-profile/jobs/" + _cost_label + "/observed"
++	var directory: String = "res://.cinder/collision-traversal-measure/jobs/" + _cost_label + "/observed"
+ 	if DirAccess.make_dir_recursive_absolute(directory) != OK:
+ 		_expect(false, "private observed directory can be created")
+ 		return {}

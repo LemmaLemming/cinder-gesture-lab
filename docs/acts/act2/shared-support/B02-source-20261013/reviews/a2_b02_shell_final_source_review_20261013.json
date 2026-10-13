@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "at_utc": "2026-10-13T08:17:25.977708+00:00",
+  "status": "BOUNDED_SOURCE_ONLY_REVIEW_NO_CONCRETE_STATIC_BLOCKER",
+  "scope": "Both exact current inert Act2 B02 Shell drafts plus direct unchanged Shell/Level/Attempts/Player/codec APIs. No parser, engine, import, native packet audit, production/shared/Git/settings/ledger/mailbox mutation. Native-ready joined publication remains prerequisite.",
+  "pins": {
+    "host": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/drafts/sampled_circle_shell_level.gd.txt",
+      "sha256": "73c83e34d68db8ec7998cab4e8098fc9ba377b98d586315bcdf406e6045f42a3",
+      "bytes": 19629,
+      "lines": 323
+    },
+    "smoke": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/drafts/sampled_circle_shell_smoke.gd.txt",
+      "sha256": "b3ca5f82d1fc0537c3ac7c6cfbcd1b196f72e463b89196f79b687702c15b84e5",
+      "bytes": 28011,
+      "lines": 348
+    },
+    "scene": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/drafts/sampled_circle_shell_level.tscn.txt",
+      "sha256": "1dcc324042e75af5c80f904fafad5c3980971262371ce0e7da25d073a9dadfc2",
+      "bytes": 415,
+      "lines": 12
+    },
+    "host_original": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/history/host-d20e-before-commit-error-propagation.gd.txt",
+      "sha256": "d20e387d37a6012e8c310ce72e9837281a7d0846267505bc98521d4117b48f3f",
+      "bytes": 18949,
+      "lines": 312
+    },
+    "smoke_original": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/history/smoke-c50d-before-optional-leave-fix.gd.txt",
+      "sha256": "c50d3525bc1260b7eec1405c6f7e3264eff4e548614476e80a219155c781c09f",
+      "bytes": 26583,
+      "lines": 334
+    }
+  },
+  "direct_interfaces": [
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/level.gd",
+      "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+      "bytes": 22401,
+      "lines": 505
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/shell.gd",
+      "sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+      "bytes": 45143,
+      "lines": 879
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/attempts.gd",
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "bytes": 18347,
+      "lines": 396
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "lines": 179
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "lines": 247
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "lines": 1006
+    }
+  ],
+  "text_delta": {
+    "host_changed_methods": [
+      "restore_state",
+      "_restore_local_state"
+    ],
+    "host_unchanged_methods": 30,
+    "smoke_changed_methods": [
+      "_run"
+    ],
+    "smoke_unchanged_methods": 22,
+    "all_old_methods_retained": true,
+    "duplicate_top_level_methods": [],
+    "old_assertions_retained": "Diff preserves original expectation calls; _run adds explicit normal Leave, fresh resource and worn-Replay observations. No prior expectation was removed or relaxed."
+  },
+  "host_review": [
+    {
+      "refs": "host:260-301; CinderLevel.restore_state:329-355; Shell._prepare_snapshot:623-637",
+      "finding": "Fresh recipient guard and complete pure preflight precede physical commit. Original Player -> Eye -> one Scheduler -> consumer order is unchanged. Void native hook failures now carry exact native last_snapshot_error in runtime_error and cause the override to return false. Shell disposes that hidden candidate before incumbent retirement/install. This is rejection/cleanup of a partially committed candidate, not a rollback guarantee."
+    },
+    {
+      "refs": "host:278-285",
+      "finding": "Post-super actual local recapture requires nonempty dictionary and exact Exact.stringify equality to already bounded validated snapshot.local. A double empty-string equality cannot pass: saved local is bounded/nonempty by preflight and installed dictionary must be nonempty. No clock tick/reproof/request occurs in the paused comparison."
+    },
+    {
+      "refs": "host:_construct_bindings/_find_common_world/_whole_local_error",
+      "finding": "Actual supplied canonical Shell Hero retained, genuine Eye WeakRefs assigned before ready, common sibling-containing candidate stage used in arena/root/context/bindings. Local closed9 Player-free envelope and staged Hero clock/position plus true Eye source wire remain unchanged. Saved profile/epoch/world stay original; fresh source binding exists before schema4 preflight."
+    },
+    {
+      "refs": "host:test_complete_probe/_progress_error/_on_exit_level",
+      "finding": "Complete means genuine quiet consumer complete/clear/no pending danger. No unsupported end_encounter, source reset or contact exit. Completion/checkpoint progress matches local latches. Normal cleanup blocks owned consumer/Cue notifications and clears real lease; detached fallback skips out-of-tree native calls and preserves consumer own disposal."
+    }
+  ],
+  "smoke_review": [
+    {
+      "refs": "smoke:_run optional completion/Leave/Replay",
+      "finding": "Actual normal leave_side_requested runs after completion/stamp observation and before begin Replay. Requires side_attempt null, paused exact protected Story restored and original optional descendants freed. Matches Attempts.begin_side requirement of no active side attempt."
+    },
+    {
+      "refs": "smoke:_run replay_initial/replay_worn; Player.take_damage:396-414",
+      "finding": "Selected canonical equipment uses public Shell replay. Fresh max resources and pristine CP are compared exactly. Explicit labelled 1HP public TEST injury after real physics changes actual HP/hurt clocks, then public pause and fresh disk Continue must retain entire worn unit, pristine earlier replay CP and protected Story. No private HP/phase/motion/clock assignments or false enemy-hit claim."
+    },
+    {
+      "refs": "smoke:_active_observer_pause/_atomic_rejections/_disk_restore/_click",
+      "finding": "Original genuine synchronous TEST pause/nonempty measured suffix, immutable sample, malformed pure rejection, exact disk Continue, actual single GUI Retry click and strict quiet observer remain. Root native result is not inferred from these source assertions."
+    },
+    {
+      "refs": "smoke:_candidate_disposal_level/_observe_phase_or_cancel",
+      "finding": "Unchanged disposal classification requires exact nearest entered=false/lifecycle_busy=true candidate or expected donor WeakRef. Only presentation/cancel emissions are classified; entered recipient and gameplay action/hurt/gear/progression remain strict."
+    },
+    {
+      "refs": "smoke:_seed_story/_new_shell/_finish",
+      "finding": "Explicit in-memory A2-O3 TEST scene/readiness/prefix uses actual accepted A2-L5 Story tuple and public validation/store; canonical Registry file must remain byte-exact. Whole Shell refs and isolated files are cleaned; unchanged public source/restoration methods and Transform3D encoder remain."
+    }
+  ],
+  "gds_text_checks": {
+    "typed_restore_accept_bool": true,
+    "typed_recaptured_local_dictionary": true,
+    "original_signal_arities_and_public_names_retained": true,
+    "source_getter_dynamically_called_from_native_body": true,
+    "scene_A2_O3_matching_injected_registry": true,
+    "no_new_or_removed_host_or_smoke_methods": true,
+    "parse_status": "Unparsed. Static inspection is not a GDScript compiler/analyzer guarantee."
+  },
+  "findings": [],
+  "limitations": [
+    "Root native02 100/12 result is a separate existing failed API scope; this review does not relabel it or imply sampled API publication/native readiness.",
+    "Current installed Shared55 lacks new selected sampled consumer resources; intended preload paths need exact Root publication/preserving adoption and native import before invocation.",
+    "No actual execution of Shell wrapper, pending suffix save, malformed rejection, Replay resource transport, GUI click or cleanup by this review.",
+    "Fixture native Eye incoming recovery gate and host presentation guard remain component TEST visibility/custody, not production B02 art/HUD/camera/opening/whole boss safety.",
+    "The CLI publication declaration is a syntactic 40-hex check; the Root recorder/owner must authenticate actual publication ancestry and joined frozen source pins externally before launch."
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "status": "INERT_SOURCE_ONLY_UNPARSED_UNEXECUTED",
+  "at": "2026-10-13T09:05:36.592092+00:00",
+  "candidate_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-traversal-filter/repulsion_route.candidate.gd.txt",
+  "candidate_sha256": "b266f93d04d1f04a33bc32cbd64205c73f2985b559327f828e877963d6767d9c",
+  "production_diff": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-traversal-filter/candidate.patch",
+  "production_selection": "None performed; Integration owns any later literal selection/restore.",
+  "scope": "Two-line early type filter in _collision_signature; no tree cache, owner-world cache, subtree pruning, codec/signature changes or other refactor.",
+  "focused_fixture": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-traversal-filter/collision_filter_differential.gd",
+    "executed": false,
+    "how": "Integration freezes the fixture and both original/candidate .gd.txt inputs plus ordinary transitive preloads, then runs this literal ignored path using the canonical dev.py engine queue. Both trusted copies compile after only stripping their single global class_name declaration; no production source selection is required for this differential.",
+    "oracle": "Full nonempty ExactJson.stringify(original result) equals candidate result on the same actual native world; tests require each intended concrete original branch and genuine collider counts.",
+    "cases": [
+      "static baseline",
+      "800 ordinary/scripted Node3D/MeshInstance3D/Area3D nodes with a true scripted StaticBody3D nested under ignored spatial/nonspatial wrappers",
+      "real separate SubViewport World3D containing moving static, GridMap and colliding CSG descendants",
+      "same-world CSG use_collision false/true",
+      "empty same-world GridMap subclass",
+      "same-world layer1 static outside authored root",
+      "same-world CharacterBody3D layer1 refusal and layer2 omission",
+      "AnimatableBody refusal",
+      "fresh StaticBody constant velocity",
+      "actual Box shape mutation changes signature",
+      "unsupported native WorldBoundary shape",
+      "queued StaticBody refusal and actual deletion cleanup"
+    ],
+    "native_getter_limits": "Scripted type subclasses use inherited native getters. The fixture does not replace get_world_3d or simulate arbitrary native side effects. It does not prove enter/exit-world reentrancy, thread misuse or custom engine forks.",
+    "no_claim": "No generated UID, parsed GDScript, native check count/result, timing, performance or gameplay acceptance is claimed."
+  },
+  "required_followup": [
+    "Independent source review and actual focused differential parse/run through canonical queue; retain all real failures.",
+    "Directly affected existing repulsion_route smoke and scheduler_spore_reference/source checks only when Integration selects candidate; existing results are not transferred to unexecuted changed bytes.",
+    "Paired uninstrumented actual Crossed baseline/candidate query timing using sibling-owned collision-traversal-measure harness, exact full actual packets/signatures and stable source/body/world/floor/HP/clocks/native ownership. Record absolute timings, sample counts and the original failures/limitations; do not widen physics-frame timing or optical guards.",
+    "Choose measured improvement from actual paired results. Reuse unchanged evidence; no full route, mobile/export or broad acceptance gate."
+  ],
+  "measurement_owner": "/root/desktop_shared_gap_audit",
+  "all_writes": "Only .cinder/collision-traversal-filter. No production, engine, queue, Git, canonical state or other-owner artifact mutations."
+}

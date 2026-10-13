@@ -1,0 +1,89 @@
+{
+  "status": "SOURCE_SEMANTICS_SOUND_FOR_SUPPORTED_STABLE_NATIVE_TREE; ACTUAL_CORRECTNESS_AND_COST_UNEXECUTED",
+  "at": "2026-10-13T09:05:36.592369+00:00",
+  "baseline_source_sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+  "candidate_source_sha256": "b266f93d04d1f04a33bc32cbd64205c73f2985b559327f828e877963d6767d9c",
+  "production_source_sha256_at_review": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+  "production_still_original_at_review": true,
+  "minimal_diff": {
+    "added_lines": 2,
+    "removed_lines": 0,
+    "inverse_exact": true,
+    "location": "After pending.append_array(node.get_children()), before original Node3D/get_world_3d filter."
+  },
+  "semantics": [
+    "Every original pop and child enumeration remains literal, from the entire SceneTree root. The early continue skips only this node, never its subtree.",
+    "Every GridMap, CSGShape3D and PhysicsBody3D, including GDScript/native subclasses, reaches the unchanged Node3D/native same-world guard and the original branch ordering.",
+    "Nodes outside that type union previously could not enter either generated-collision rejection or PhysicsBody extraction. Omitting their native world lookup leaves their signature/error contribution empty.",
+    "GridMap rejection remains unconditional for same-world GridMaps; CSG still reads use_collision only after the same-world guard. Foreign-world generated/dynamic nodes remain ignored.",
+    "Scenery layers, fixed/static/outside-root checks, queued/velocity checks, paths, complete shape-owner/resource getters, sorts, collider bound and Codec validation remain byte-for-byte unchanged.",
+    "No inference equates 10 accepted scenery colliders with 10 relevant nodes: other PhysicsBody3D layers and generated types still require world filtering. Actual removed lookup count is not derivable from existing visited/accepted counts alone."
+  ],
+  "native_getter_evidence": [
+    {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf/scene/3d/node_3d.h#L224-L225",
+      "support": "Node3D get_world_3d is a nonvirtual const native method."
+    },
+    {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf/scene/3d/node_3d.cpp#L996-L1001",
+      "support": "The native lookup has thread/inside-world guards and resolves the containing viewport world."
+    },
+    {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf/modules/gdscript/gdscript_compiler.cpp#L644-L659",
+      "support": "Statically native-typed calls use ClassDB MethodBind; this source uses typed Node/Node3D and casts, not arbitrary Script-dispatched getter callbacks."
+    }
+  ],
+  "qualification": "Supported stable main-thread tree return/error equivalence, not universal incidental diagnostic equivalence. An irrelevant Node3D queried reentrantly during enter/exit-world or under unsupported thread access can previously emit get_world_3d native diagnostics; removing that call can remove such incidental diagnostics. Custom engine/fork semantics and arbitrary side-effecting getter emulation are not established. All relevant getter calls remain.",
+  "original_measured_input": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-signature-profile/profile2-interval.json",
+    "sha256": "63594010329653e5b26cd8168682bad5e546456b39e032549b0494cdc40aab6e",
+    "scope": "Temporary native statement timing: sequential stages plus inclusive nested methods overlap; activation/setup/paused witnesses excluded; one native await interval, no exclusive sum/FPS/gain/cause claim.",
+    "signature_calls": 2944,
+    "signature_inclusive_us": 2969818,
+    "traversal_inclusive_us": 1297049,
+    "codec_inclusive_us": 1029613,
+    "visited_per_signature": 846,
+    "accepted_colliders_per_signature": 10,
+    "extracted_shapes_per_signature": 10,
+    "qualification": "Prior actual instrumented interval only. These buckets include timer/primitive accounting overhead and nested totals overlap. Traversal includes unavoidable pop/children enumeration; it is not all removable and gives no predicted gain."
+  },
+  "existing_tests_read": [
+    "tests/repulsion_route_smoke.gd",
+    "tests/scheduler_spore_reference_smoke.gd",
+    "tests/scheduler_spore_source_smoke.gd"
+  ],
+  "artifact_rows": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-traversal-filter/repulsion_route.original.gd.txt",
+      "bytes": 36641,
+      "sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-traversal-filter/repulsion_route.candidate.gd.txt",
+      "bytes": 36728,
+      "sha256": "b266f93d04d1f04a33bc32cbd64205c73f2985b559327f828e877963d6767d9c"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-traversal-filter/candidate.patch",
+      "bytes": 489,
+      "sha256": "f7e3702a2e2e586227af1a8e22708453a931dfcaa614d7e3226c90b5f2543502"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-traversal-filter/collision_filter_differential.gd",
+      "bytes": 7664,
+      "sha256": "e70842222bcf896c549bf4b0aae64196ef0334c920c941ce0650a96e035369db"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-traversal-filter/.gdignore",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "execution": {
+    "engine": false,
+    "production_selection": false,
+    "git_mutation": false,
+    "canonical_mutation": false,
+    "new_native_or_performance_result": false
+  }
+}

@@ -1,0 +1,200 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act1/selenite_court.gd" id="1_level"]
+[ext_resource type="Texture2D" path="res://assets/acts/act1/lunar/environment/floor_silver_tile.png" id="2_floor"]
+
+[sub_resource type="BoxShape3D" id="CourtFloorShape"]
+size = Vector3(14, 1, 44)
+
+[sub_resource type="BoxMesh" id="CourtFloorMesh"]
+size = Vector3(14, 1, 44)
+
+[sub_resource type="StandardMaterial3D" id="QuietFloorMaterial"]
+shading_mode = 0
+albedo_color = Color(0.4509804, 0.4509804, 0.4509804, 1)
+texture_filter = 0
+
+[sub_resource type="PlaneMesh" id="SilverFloorPlane"]
+size = Vector2(14, 44)
+
+[sub_resource type="StandardMaterial3D" id="SilverFloorMaterial"]
+shading_mode = 0
+albedo_texture = ExtResource("2_floor")
+texture_filter = 0
+texture_repeat = true
+uv1_scale = Vector3(9.114583333333334, 28.645833333333332, 1)
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+alpha_antialiasing_edge = 0.3
+cull_mode = 2
+
+[sub_resource type="BoxShape3D" id="BossContactShape"]
+size = Vector3(2.4, 1.6, 1.2)
+
+[sub_resource type="BoxShape3D" id="ExitContactShape"]
+size = Vector3(2.4, 1.6, 1.2)
+
+[sub_resource type="BoxMesh" id="QuietSideEdgeMesh"]
+size = Vector3(0.12, 0.04, 44)
+
+[sub_resource type="StandardMaterial3D" id="QuietTrimMaterial"]
+shading_mode = 0
+albedo_color = Color(0.24, 0.24, 0.24, 1)
+texture_filter = 0
+
+[sub_resource type="BoxMesh" id="DoorBackplaneMesh"]
+size = Vector3(2.25, 2.4, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="QuietDoorMaterial"]
+shading_mode = 0
+albedo_color = Color(0.10, 0.10, 0.10, 1)
+texture_filter = 0
+
+[sub_resource type="BoxMesh" id="ThroneSeatMesh"]
+size = Vector3(0.9, 0.18, 0.65)
+
+[sub_resource type="BoxMesh" id="ThroneBackMesh"]
+size = Vector3(0.65, 0.7, 0.08)
+
+[sub_resource type="BoxMesh" id="ThroneArmMesh"]
+size = Vector3(0.10, 0.20, 0.45)
+
+[sub_resource type="StandardMaterial3D" id="QuietThroneMaterial"]
+shading_mode = 0
+albedo_color = Color(0.39, 0.39, 0.39, 1)
+texture_filter = 0
+
+[node name="SeleniteCourt" type="Node3D"]
+script = ExtResource("1_level")
+level_id = "A1-L4"
+spawn_path = NodePath("PlayerSpawn")
+local_snapshot_version = 2
+objective_text = "SELENITE COURT\nREAD THE FAMILIAR SPEAR"
+metadata/scaffold_readiness = "Authored unparsed/unexecuted whole-level scene; parent supplies actors, native mechanisms, strict codec and progression."
+metadata/court_art_todo = "Existing entrance art requires a 14x16 floor; it is intentionally not bound to this 14x44 scene. Whole curtains/curls/crescents/roundel/royal scenery need compatible authored binding and actual portraits. Quiet doors/seat/edges here are scenic placeholders only."
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 0)
+
+[node name="Floor" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.5, -17)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("CourtFloorShape")
+
+[node name="Visual" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("CourtFloorMesh")
+material_override = SubResource("QuietFloorMaterial")
+cast_shadow = 0
+
+[node name="QuietSilverFloorSkin" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.002, -17)
+mesh = SubResource("SilverFloorPlane")
+material_override = SubResource("SilverFloorMaterial")
+cast_shadow = 0
+
+[node name="QuietWestEdge" type="MeshInstance3D" parent="."]
+position = Vector3(-6.85, 0.02, -17)
+mesh = SubResource("QuietSideEdgeMesh")
+material_override = SubResource("QuietTrimMaterial")
+cast_shadow = 0
+metadata/role = "Quiet scenic seam, no collider or cue; floor ends at X=-7."
+
+[node name="QuietEastEdge" type="MeshInstance3D" parent="."]
+position = Vector3(6.85, 0.02, -17)
+mesh = SubResource("QuietSideEdgeMesh")
+material_override = SubResource("QuietTrimMaterial")
+cast_shadow = 0
+metadata/role = "Quiet scenic seam, no collider or cue; floor ends at X=7."
+
+[node name="RoundelMarker" type="Marker3D" parent="."]
+position = Vector3(0, 0, -20)
+metadata/role = "Parent owns the genuine Geometry.circle mechanism, quiet teaching cycle and known impact Cue."
+
+[node name="BossContactMarker" type="Marker3D" parent="."]
+position = Vector3(0, 0, -26)
+
+[node name="BossContactArea" type="Area3D" parent="."]
+position = Vector3(0, 0, -26)
+collision_layer = 0
+collision_mask = 4
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BossContactArea"]
+position = Vector3(0, 0.8, 0)
+shape = SubResource("BossContactShape")
+
+[node name="ExitMarker" type="Marker3D" parent="."]
+position = Vector3(0, 0, -35)
+
+[node name="ExitArea" type="Area3D" parent="."]
+position = Vector3(0, 0, -35)
+collision_layer = 0
+collision_mask = 4
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExitArea"]
+position = Vector3(0, 0.8, 0)
+shape = SubResource("ExitContactShape")
+
+[node name="HelperEntryWest" type="Marker3D" parent="."]
+position = Vector3(-2, 0, -31)
+
+[node name="HelperEntryEast" type="Marker3D" parent="."]
+position = Vector3(2, 0, -31)
+
+[node name="HelperDoorWest" type="Node3D" parent="."]
+position = Vector3(-2, 0, -31.5)
+process_mode = 4
+metadata/role = "Quiet dark entrance backplane only; parent owns the finite visible native helper entry. No collider or interaction."
+
+[node name="QuietBackplane" type="MeshInstance3D" parent="HelperDoorWest"]
+position = Vector3(0, 1.2, 0)
+mesh = SubResource("DoorBackplaneMesh")
+material_override = SubResource("QuietDoorMaterial")
+cast_shadow = 0
+
+[node name="HelperDoorEast" type="Node3D" parent="."]
+position = Vector3(2, 0, -31.5)
+process_mode = 4
+metadata/role = "Quiet dark entrance backplane only; parent owns the finite visible native helper entry. No collider or interaction."
+
+[node name="QuietBackplane" type="MeshInstance3D" parent="HelperDoorEast"]
+position = Vector3(0, 1.2, 0)
+mesh = SubResource("DoorBackplaneMesh")
+material_override = SubResource("QuietDoorMaterial")
+cast_shadow = 0
+
+[node name="CompactSideThrone" type="Node3D" parent="."]
+position = Vector3(-1.25, 0, -30.2)
+process_mode = 4
+metadata/role = "Grounded low side-mounted seat/flat placeholder from G21/F10 vocabulary; no King, collision, cue or phase authority."
+
+[node name="LowSeat" type="MeshInstance3D" parent="CompactSideThrone"]
+position = Vector3(0, 0.09, 0)
+mesh = SubResource("ThroneSeatMesh")
+material_override = SubResource("QuietThroneMaterial")
+cast_shadow = 0
+
+[node name="BackFlat" type="MeshInstance3D" parent="CompactSideThrone"]
+position = Vector3(0, 0.5, -0.22)
+mesh = SubResource("ThroneBackMesh")
+material_override = SubResource("QuietThroneMaterial")
+cast_shadow = 0
+
+[node name="WestArm" type="MeshInstance3D" parent="CompactSideThrone"]
+position = Vector3(-0.42, 0.3, 0)
+mesh = SubResource("ThroneArmMesh")
+material_override = SubResource("QuietThroneMaterial")
+cast_shadow = 0
+
+[node name="EastArm" type="MeshInstance3D" parent="CompactSideThrone"]
+position = Vector3(0.42, 0.3, 0)
+mesh = SubResource("ThroneArmMesh")
+material_override = SubResource("QuietThroneMaterial")
+cast_shadow = 0

@@ -1,0 +1,732 @@
+class_name CinderNativeSampledCircle
+extends Node3D
+## SOURCE-ONLY DRAFT. Intended install: scripts/combat/native_sampled_circle.gd.
+## Child composition for an actual stationary eye CharacterBody3D. The eye
+## owns HP, its binding getter and the Scheduler lease; this node owns only
+## cue/phases, actual sampled paths and one consumed opportunity per Hero/cycle.
+
+signal state_changed(consumer_state: Dictionary)
+signal hit_resolved(hero_id: String, cycle: int, result: Dictionary)
+
+const Geometry = preload("res://scripts/combat/threat_geometry.gd")
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const ExactJson = preload("res://scripts/campaign/exact_json.gd")
+const CueScript = preload("res://scripts/cues/threat_cue.gd")
+const CueMesh = preload("res://scripts/cues/cue_mesh.gd")
+const PlayerScript = preload("res://scripts/player.gd")
+const API_REVISION: String = "native-sampled-circle-consumer-1"
+const SOURCE_API: String = "sampled-circle-source-1"
+const SAMPLE_API: String = "native-hero-ground-sample-1"
+const SOURCE_KEYS: Array[String] = ["api_revision", "source_id", "source_epoch", "generation", "definition", "alive", "opening_position", "hero_id", "hero"]
+const SOURCE_WIRE_KEYS: Array[String] = ["api_revision", "source_id", "source_epoch", "generation", "definition", "alive", "opening_position", "hero_id"]
+const SAMPLE_KEYS: Array[String] = ["api_revision", "source_id", "source_epoch", "generation", "hero_id", "scheduler_clock_s", "hero_action_clock_s", "hero_position", "ground_position", "floor_id"]
+const EXCHANGE_KEYS: Array[String] = ["id", "source_position", "geometry", "opening_position", "start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "profile_id", "world_revision"]
+const CONTEXT_KEYS: Array[String] = ["encounter_id", "world_revision", "recognition_s", "attack_input_margin_s", "escape_directions", "return_directions", "floor_regions", "world_root"]
+const PARTS: Array[String] = ["RequiredFootprintOutline", "RequiredFootprintFill", "RequiredSourceMarker"]
+const MAX_PENDING_SEGMENTS: int = 256
+
+var last_error: String = ""
+var last_snapshot_error: String = ""
+var _bound: bool = false
+var _owner_ref: WeakRef
+var _hero_ref: WeakRef
+var _scheduler_ref: WeakRef
+var _world_ref: WeakRef
+var _cue_ref: WeakRef
+var _owner_script: Script
+var _source_wire: Dictionary = {}
+var _regions: Array = []
+var _part_guards: Dictionary = {}
+var _phase_meshes: Dictionary = {}
+var _cue_fault: bool = false # A revoked native phase cannot heal/rearm in-place.
+var _status: String = "idle"
+var _phase: String = "clear"
+var _cycle: int = 0
+var _exchange: Dictionary = {}
+var _sample: Dictionary = {}
+var _adapter: Dictionary = {}
+var _resolved_role: Dictionary = {}
+var _exchange_encounter_id: String = ""
+var _hero_sample: Dictionary = {}
+var _hit_consumed: bool = false
+var _pending_segments: Array[Dictionary] = []
+var _last_cancel_reason: String = ""
+var _transaction_depth: int = 0
+var _snapshot_busy: bool = false
+var _cancelling: bool = false
+var _presentation_guard: Callable = Callable()
+var _presentation_guard_required: bool = false
+var _presentation_guard_busy: bool = false
+
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+	process_physics_priority = 100
+	var cue := CueScript.new()
+	cue.name = "ThreatCue"
+	add_child(cue)
+	_cue_ref = weakref(cue)
+
+
+func bind(owner: CharacterBody3D, scheduler: CinderThreatScheduler, hero_id: String, hero: CinderPlayer, world_root: Node3D, floor_regions: Array) -> bool:
+	## One-shot native custody. Generation is the bound source incarnation;
+	## finite attacks use cycle and threat-N, then the real original cooldown.
+	if _bound or _transaction_depth > 0 or _snapshot_busy or not is_inside_tree() or not is_node_ready():
+		return _reject("Bind one ready native sampled consumer outside callbacks")
+	if not is_instance_valid(owner) or owner != get_parent() or owner.is_queued_for_deletion() or not owner.is_inside_tree() or owner.get_script() == null or not owner.has_method("get_sampled_circle_binding") or not owner.has_method("take_damage"):
+		return _reject("Actual parent eye HP body must own the native binding and lease")
+	if not is_instance_valid(hero) or hero.get_script() != PlayerScript or not is_instance_valid(scheduler) or not is_instance_valid(world_root) or not _stable_id(hero_id):
+		return _reject("Actual shared Hero, Scheduler and containing world required")
+	for node: Node3D in [owner, hero, scheduler, world_root]:
+		if not node.is_inside_tree() or node.is_queued_for_deletion() or node.get_world_3d() != get_world_3d() or (node != world_root and not world_root.is_ancestor_of(node)):
+			return _reject("Native nodes must share their actual containing World3D root")
+	if scheduler.process_physics_priority >= process_physics_priority or hero.process_physics_priority >= process_physics_priority:
+		return _reject("Consumer samples after actual Scheduler and Hero physics")
+	var cue: CinderThreatCue = _cue_node()
+	if not is_instance_valid(cue) or cue.get_script() != CueScript or not _capture_part_custody(cue):
+		return _reject("Retained native required Cue nodes/materials required")
+	# The actual parent supplies a native method outside CharacterBody3D's
+	# static interface. Bound the call before any consumer reentry and retain
+	# the real physical state across it; no callback may relocate either body.
+	var owner_script: Script = owner.get_script()
+	var owner_transform: Transform3D = owner.global_transform
+	var hero_transform: Transform3D = hero.global_transform
+	var owner_velocity: Vector3 = owner.velocity
+	var hero_velocity: Vector3 = hero.velocity
+	var was_paused: bool = get_tree().paused
+	var diagnostic: String = last_error
+	_transaction_depth += 1
+	var hook: Variant = owner.call("get_sampled_circle_binding")
+	_transaction_depth -= 1
+	if not is_instance_valid(owner) or not is_instance_valid(hero) or owner.is_queued_for_deletion() or hero.is_queued_for_deletion() or not owner.is_inside_tree() or not hero.is_inside_tree() or owner.get_script() != owner_script or hero.get_script() != PlayerScript or owner.global_transform != owner_transform or hero.global_transform != hero_transform or owner.velocity != owner_velocity or hero.velocity != hero_velocity or get_tree().paused != was_paused or last_error != diagnostic:
+		return _reject("Native source binding getter must preserve actual bodies and callback boundary")
+	if not hook is Dictionary or not Codec.keys_error(hook, SOURCE_KEYS).is_empty() or hook.api_revision != SOURCE_API or hook.hero != hero or hook.hero_id != hero_id or not _stable_id(hook.source_id) or not _stable_id(hook.source_epoch) or not Codec.is_integer(hook.generation, 1) or not hook.generation is int or not Geometry.finite_vector(hook.opening_position):
+		return _reject("Exact actual eye/Hero native source hook required")
+	var wire: Dictionary = hook.duplicate()
+	wire.erase("hero")
+	wire.opening_position = Codec.vector3(hook.opening_position)
+	if ExactJson.stringify(wire).is_empty() or not Codec.value_error(wire).is_empty():
+		return _reject("Native immutable source wire must be bounded finite data")
+	_transaction_depth += 1
+	var accepted: bool = scheduler.bind_sampled_circle_source(owner, hero_id, hero, floor_regions, world_root)
+	_transaction_depth -= 1
+	if not accepted:
+		return _reject(scheduler.last_error)
+	_owner_ref = weakref(owner)
+	_hero_ref = weakref(hero)
+	_scheduler_ref = weakref(scheduler)
+	_world_ref = weakref(world_root)
+	_owner_script = owner.get_script()
+	_source_wire = wire.duplicate(true)
+	_regions = floor_regions.duplicate()
+	_bound = true
+	scheduler.reservation_invalidated.connect(_on_invalidated)
+	last_error = ""
+	return true
+
+
+func set_presentation_guard(provider: Callable) -> bool:
+	## Bind once before the first cycle/fresh restore. provider(source_id,state)
+	## is ephemeral parent art custody, has exactly two arguments, and may pause
+	## or cancel synchronously. It is never called by snapshot prevalidation.
+	if not _live_bindings() or _transaction_depth > 0 or _snapshot_busy or _cancelling or _presentation_guard_busy or _presentation_guard_required or _cycle != 0 or _status != "idle" or not provider.is_valid() or provider.get_argument_count() != 2:
+		return _reject("Bind one two-argument parent guard before the first cycle")
+	_presentation_guard = provider
+	_presentation_guard_required = true
+	last_error = ""
+	return true
+
+
+func preview_start(response_context: Dictionary) -> Dictionary:
+	## Pure; diagnostic strings, cycle, phase, cue and lease remain unchanged.
+	var error: String = _start_error(response_context)
+	if not error.is_empty(): return {"accepted": false, "reason": error}
+	return _scheduler_node().preview_sampled_circle(_owner_node(), _source_wire.hero_id, _response(response_context))
+
+
+func start(response_context: Dictionary, preview: Dictionary = {}) -> Dictionary:
+	var error: String = _start_error(response_context)
+	if not error.is_empty(): return _denied(error)
+	var scheduler: CinderThreatScheduler = _scheduler_node()
+	_transaction_depth += 1
+	var answer: Dictionary = scheduler.request_sampled_circle(_owner_node(), _source_wire.hero_id, _response(response_context), preview)
+	if answer.get("accepted", false):
+		var record: Dictionary = scheduler.sampled_circle_reservation_state(String(answer.reservation_id))
+		if record.is_empty() or record.get("source_instance_id") != _owner_node().get_instance_id() or record.get("adapter", {}).get("kind") != "sampled_circle":
+			scheduler.cancel(String(answer.reservation_id), "missing_accepted_sampled_reservation")
+			answer = _denied("Accepted native sampled exchange lost its genuine eye lease")
+		else:
+			_exchange = _exchange_data(record)
+			_sample = record.adapter.sample.duplicate(true)
+			_adapter = record.adapter.duplicate(true)
+			_exchange_encounter_id = response_context.encounter_id
+			var difficulty := Difficulty.new()
+			_resolved_role = difficulty.resolve_role(_source_wire.definition.raw_role, String(record.profile_id), _source_wire.definition.timing_floors)
+			_cycle += 1
+			_hit_consumed = false
+			_pending_segments.clear()
+			_hero_sample = {"position": _hero_node().global_position, "clock_s": scheduler.get_clock()}
+			_status = "running"
+			_last_cancel_reason = ""
+			_set_phase("warning")
+			_damage_boundary_ready()
+	else:
+		last_error = String(answer.get("reason", "Sampled reservation rejected"))
+	_transaction_depth -= 1
+	return answer.duplicate(true)
+
+
+func _start_error(context: Dictionary) -> String:
+	if _transaction_depth > 0 or _snapshot_busy or _cancelling or not _live_bindings() or _status == "running" or get_tree().paused or _cycle >= Codec.MAX_SAFE_INTEGER:
+		return "Start requires idle live unpaused native custody outside callbacks"
+	if not _native_cue_available() or not is_visible_in_tree() or not _owner_node().is_visible_in_tree():
+		return "Required source and retained native Cue must be available"
+	if not Codec.keys_error(context, CONTEXT_KEYS).is_empty() or not _stable_id(context.get("encounter_id")) or context.get("world_root") != _world_node() or not context.get("floor_regions") is Array or context.floor_regions != _regions:
+		return "Exact bound world/floors and finite authored response context required"
+	return ""
+
+
+func _response(context: Dictionary) -> Dictionary:
+	var response: Dictionary = _hero_node().get_threat_response_state()
+	for key: String in CONTEXT_KEYS:
+		if key != "encounter_id": response[key] = context[key]
+	return response
+
+
+func get_cue() -> CinderThreatCue:
+	return _cue_node()
+
+
+func state() -> Dictionary:
+	var scheduler: CinderThreatScheduler = _scheduler_node()
+	var remaining: float = 0.0
+	if _status == "running" and is_instance_valid(scheduler):
+		var key: String = {"warning": "lock_from_s", "lock": "active_from_s", "active": "active_until_s", "recovery": "recovery_until_s"}.get(_phase, "")
+		if not key.is_empty(): remaining = maxf(float(_exchange[key]) - scheduler.get_clock(), 0.0)
+	return {"api_revision": API_REVISION, "source_id": _source_wire.get("source_id", ""), "hero_id": _source_wire.get("hero_id", ""), "status": _status, "phase": _phase, "cycle": _cycle, "remaining_s": remaining, "reservation_id": _exchange.get("id", "") if _status == "running" else "", "geometry": _exchange.get("geometry", {}).duplicate(true), "source_position": _exchange.get("source_position"), "opening_position": _exchange.get("opening_position"), "sample": _sample.duplicate(true), "resolved_role": _resolved_role.duplicate(true), "hit_consumed": _hit_consumed, "pending_segment_count": _pending_segments.size(), "last_cancel_reason": _last_cancel_reason}
+
+
+func cancel(reason: String = "sampled_consumer_cancelled") -> bool:
+	if _snapshot_busy or _cancelling: return false
+	_cancelling = true
+	_transaction_depth += 1
+	var id: String = String(_exchange.get("id", "")) if _status == "running" else ""
+	_status = "cancelled" if _cycle > 0 else "idle"
+	_pending_segments.clear()
+	_last_cancel_reason = reason
+	var scheduler: CinderThreatScheduler = _scheduler_node()
+	if not id.is_empty() and is_instance_valid(scheduler): scheduler.cancel(id, reason)
+	_set_phase("clear")
+	_transaction_depth -= 1
+	_cancelling = false
+	return true
+
+
+func clear(reason: String = "sampled_consumer_cleared") -> bool:
+	return cancel(reason)
+
+
+func _physics_process(_delta: float) -> void:
+	if _status != "running" or _transaction_depth > 0 or _snapshot_busy or get_tree().paused: return
+	_transaction_depth += 1
+	if _damage_boundary_ready():
+		var now: float = _scheduler_node().get_clock()
+		if _stage_segment(now):
+			_set_phase(_phase_at(now, _exchange))
+			if _damage_boundary_ready(): _resolve_pending_segments()
+	_transaction_depth -= 1
+
+
+func _stage_segment(now: float) -> bool:
+	var hero: CinderPlayer = _hero_node()
+	if not is_instance_valid(hero): return false
+	if not hero.dead and not _hit_consumed:
+		if _pending_segments.size() >= MAX_PENDING_SEGMENTS:
+			cancel("pending_path_budget_exceeded")
+			return false
+		_pending_segments.append({"from": _hero_sample.position, "to": hero.global_position, "start_s": _hero_sample.clock_s, "end_s": now})
+	_hero_sample = {"position": hero.global_position, "clock_s": now}
+	return true
+
+
+func _resolve_pending_segments() -> void:
+	if _pending_segments.is_empty() or not _damage_boundary_ready(): return
+	var path: Array[Dictionary] = _pending_segments.duplicate(true)
+	var hero: CinderPlayer = _hero_node()
+	if not is_instance_valid(hero) or hero.dead or _hit_consumed:
+		_pending_segments.clear()
+		return
+	var supported_hit: bool = _active_path_hits(path)
+	# The pure contact reader crosses a native source-getter boundary. A pause
+	# keeps the actual held suffix; invalid source/cue custody clears it through
+	# normal cancellation. Unsupported live floor contact alone is not a lease
+	# failure and cannot stop or retarget the original warning timeline.
+	if not _native_damage_boundary_ready(): return
+	_pending_segments.clear() # Remove the path before any actual hurt callback.
+	if not supported_hit: return
+	_hit_consumed = true # Invulnerability may decline damage; never retry it.
+	var before: float = hero.hp
+	hero.take_damage(float(_resolved_role.damage), Vector3.ZERO)
+	var result := {"opportunity_consumed": true, "accepted": is_instance_valid(hero) and hero.hp < before, "raw_damage": float(_resolved_role.damage), "hp_damage": maxf(before - hero.hp, 0.0) if is_instance_valid(hero) else 0.0, "impulse": Vector3.ZERO}
+	var hurt_ready: bool = _damage_boundary_ready()
+	hit_resolved.emit(_source_wire.hero_id, _cycle, result.duplicate(true))
+	var observer_ready: bool = _damage_boundary_ready()
+	if not hurt_ready or not observer_ready: return
+
+
+func _active_path_hits(path: Array[Dictionary]) -> bool:
+	for segment: Dictionary in path:
+		if maxf(float(segment.start_s), float(_exchange.active_from_s)) > minf(float(segment.end_s), float(_exchange.active_until_s)): continue
+		if not Geometry.timed_path_hits(_exchange.geometry, [segment], float(_exchange.active_from_s), float(_exchange.active_until_s), CinderThreatScheduler.CAPSULE_RADIUS): continue
+		if _scheduler_node().sampled_circle_contact_supported(String(_exchange.id), segment.from, segment.to): return true
+	return false
+
+
+func _damage_boundary_ready() -> bool:
+	if _presentation_guard_busy or not _native_damage_boundary_ready(): return false
+	if not _presentation_guard_required: return true
+	if not _presentation_guard.is_valid() or _presentation_guard.get_argument_count() != 2:
+		cancel("required_parent_presentation_unavailable")
+		return false
+	_presentation_guard_busy = true
+	_transaction_depth += 1
+	var result: Variant = _presentation_guard.call(_source_wire.source_id, state())
+	_transaction_depth -= 1
+	_presentation_guard_busy = false
+	if _status != "running": return false
+	if not _presentation_guard.is_valid() or _presentation_guard.get_argument_count() != 2 or not result is bool or not result:
+		cancel("required_parent_presentation_unavailable")
+		return false
+	# Reader is pure: no Scheduler prune observers occur between parent answer
+	# and this fresh native source/target/world/cue/lease validation.
+	return _native_damage_boundary_ready()
+
+
+func _native_damage_boundary_ready() -> bool:
+	if _status != "running": return false
+	var cue_ok: bool = _native_cue_available()
+	if not cue_ok: _cue_fault = true
+	if not _live_bindings() or not is_visible_in_tree() or not _owner_node().is_visible_in_tree() or not cue_ok:
+		cancel("required_native_source_or_cue_unavailable")
+		return false
+	if get_tree().paused: return false
+	var scheduler: CinderThreatScheduler = _scheduler_node()
+	var record: Dictionary = scheduler.sampled_circle_reservation_state(String(_exchange.id))
+	if _status != "running": return false
+	if record.is_empty():
+		if scheduler.get_clock() > float(_exchange.recovery_until_s):
+			_status = "complete"
+			_pending_segments.clear()
+			_set_phase("clear")
+		else: cancel("sampled_reservation_missing_or_native_custody_changed")
+		return false
+	if record.get("source_instance_id") != _owner_node().get_instance_id() or not _same_exact(_exchange_data(record), _exchange) or record.get("adapter", {}).get("kind") != "sampled_circle" or not _same_exact(record.adapter, _adapter) or not _same_exact(record.adapter.sample, _sample):
+		cancel("committed_sampled_exchange_changed")
+		return false
+	cue_ok = _native_cue_available()
+	if not cue_ok: _cue_fault = true
+	if not _live_bindings() or not cue_ok or not is_visible_in_tree() or not _owner_node().is_visible_in_tree():
+		cancel("required_native_source_or_cue_unavailable")
+		return false
+	return not get_tree().paused
+
+
+func _set_phase(next: String, notify: bool = true) -> void:
+	var changed: bool = _phase != next
+	if next != "clear" and not changed: return # Never repair an existing phase.
+	if next != "clear" and not _native_cue_available():
+		_cue_fault = true
+		cancel("required_native_cue_changed_before_phase")
+		return
+	_phase = next
+	var cue: CinderThreatCue = _cue_node()
+	if is_instance_valid(cue):
+		if next == "clear":
+			cue.clear()
+			_phase_meshes.clear()
+		else:
+			var presentation: Dictionary = _exchange.geometry.duplicate(true)
+			presentation["source_position"] = _exchange.source_position
+			var accepted: bool = cue.present(presentation, next)
+			if _phase == "clear": cue.clear() # Nested Cue callback cancellation.
+			elif not accepted or not _capture_phase_meshes():
+				_cue_fault = true
+				cancel("required_native_cue_changed_during_phase")
+				return
+	if changed and notify and _phase == next and is_inside_tree():
+		state_changed.emit(state())
+		if next != "clear" and _status == "running": _damage_boundary_ready()
+
+
+func _capture_part_custody(cue: CinderThreatCue) -> bool:
+	_part_guards.clear()
+	for part_name: String in PARTS:
+		var value: Variant = cue.get_node_or_null(part_name)
+		if not is_instance_valid(value) or not value is MeshInstance3D: return false
+		var part: MeshInstance3D = value
+		if part.is_queued_for_deletion() or part.get_parent() != cue or not part.material_override is StandardMaterial3D or part.mesh != null or part.visible: return false
+		_part_guards[part_name] = {"node": weakref(part), "material": part.material_override, "material_bytes": _property_bytes(part.material_override, ["albedo_color", "resource_name", "resource_path", "resource_local_to_scene"]), "renderer_bytes": _renderer_bytes(part)}
+	return true
+
+
+func _capture_phase_meshes() -> bool:
+	var captured: Dictionary = {}
+	for part_name: String in PARTS:
+		var part: MeshInstance3D = _part_node(part_name)
+		if not is_instance_valid(part) or not part.mesh is ArrayMesh: return false
+		var expected: ArrayMesh = CueMesh.source_mesh(_phase) if part_name == "RequiredSourceMarker" else CueMesh.geometry_mesh(_exchange.geometry, part_name == "RequiredFootprintFill")
+		var bytes: PackedByteArray = _mesh_bytes(part.mesh)
+		if bytes.is_empty() or bytes != _mesh_bytes(expected): return false
+		captured[part_name] = {"mesh": part.mesh, "bytes": bytes}
+	_phase_meshes = captured
+	return _native_cue_available()
+
+
+func _native_cue_available() -> bool:
+	if _cue_fault: return false
+	var cue: CinderThreatCue = _cue_node()
+	if not is_instance_valid(cue) or cue.get_script() != CueScript or not cue.is_inside_tree() or cue.is_queued_for_deletion() or cue.get_parent() != self or not cue.is_visible_in_tree() or not cue.top_level: return false
+	var shape: Dictionary = {} if _phase == "clear" else _exchange.geometry
+	var current: Dictionary = cue.state()
+	if current.get("phase") != _phase or current.get("geometry") != shape or current.get("source_position") != (null if _phase == "clear" else _exchange.source_position): return false
+	if _phase != "clear" and cue.global_transform != Transform3D(Basis.IDENTITY, _exchange.geometry.origin): return false
+	for part_name: String in PARTS:
+		var part: MeshInstance3D = _part_node(part_name)
+		if not is_instance_valid(part): return false
+		var guard: Dictionary = _part_guards[part_name]
+		if not is_instance_valid(guard.material) or part.material_override != guard.material or _property_bytes(guard.material, ["albedo_color", "resource_name", "resource_path", "resource_local_to_scene"]) != guard.material_bytes or _renderer_bytes(part) != guard.renderer_bytes: return false
+		for index: int in range(part.get_surface_override_material_count()):
+			if part.get_surface_override_material(index) != null: return false
+		var visible: bool = _phase != "clear" and (part_name == "RequiredSourceMarker" or (part_name == "RequiredFootprintOutline" and _phase != "recovery") or (part_name == "RequiredFootprintFill" and _phase == "active"))
+		if part.visible != visible or (visible and not part.is_visible_in_tree()): return false
+		if _phase == "clear":
+			if part.mesh != null: return false
+			continue
+		var expected_position: Vector3 = Vector3.UP * CueScript.FLOOR_OFFSET
+		if part_name == "RequiredFootprintFill": expected_position.y -= 0.004
+		if part_name == "RequiredSourceMarker": expected_position = _exchange.source_position - _exchange.geometry.origin + Vector3.UP * (CueScript.FLOOR_OFFSET + 0.004)
+		if part.transform != Transform3D(Basis.IDENTITY, expected_position) or not _phase_meshes.has(part_name): return false
+		var retained: Dictionary = _phase_meshes[part_name]
+		if not is_instance_valid(retained.mesh) or part.mesh != retained.mesh or not part.mesh is ArrayMesh or _mesh_bytes(part.mesh) != retained.bytes: return false
+		var color: Color = _phase_color(_phase)
+		if part_name == "RequiredFootprintFill": color.a = 0.22
+		if (guard.material as StandardMaterial3D).albedo_color != color: return false
+	return true
+
+
+func _part_node(part_name: String) -> MeshInstance3D:
+	if not _part_guards.has(part_name): return null
+	var value: Variant = (_part_guards[part_name].node as WeakRef).get_ref()
+	var cue: CinderThreatCue = _cue_node()
+	if not is_instance_valid(value) or not value is MeshInstance3D or not is_instance_valid(cue): return null
+	var part: MeshInstance3D = value
+	return part if part.is_inside_tree() and not part.is_queued_for_deletion() and part.get_parent() == cue and cue.get_node_or_null(part_name) == part else null
+
+
+func _live_bindings() -> bool:
+	var owner: CharacterBody3D = _owner_node()
+	var hero: CinderPlayer = _hero_node()
+	var scheduler: CinderThreatScheduler = _scheduler_node()
+	var world: Node3D = _world_node()
+	if not _bound or not is_inside_tree() or not is_node_ready() or is_queued_for_deletion() or not is_instance_valid(owner) or owner != get_parent() or owner.get_script() != _owner_script or not is_instance_valid(hero) or hero.get_script() != PlayerScript or not is_instance_valid(scheduler) or not is_instance_valid(world): return false
+	for node: Node3D in [owner, hero, scheduler, world]:
+		if not node.is_inside_tree() or node.is_queued_for_deletion() or node.get_world_3d() != get_world_3d() or (node != world and not world.is_ancestor_of(node)): return false
+	return scheduler.process_physics_priority < process_physics_priority and hero.process_physics_priority < process_physics_priority and Geometry.finite_vector(hero.global_position)
+
+
+func _owner_node() -> CharacterBody3D:
+	var value: Variant = _owner_ref.get_ref() if _owner_ref != null else null
+	return value if is_instance_valid(value) and value is CharacterBody3D else null
+
+
+func _hero_node() -> CinderPlayer:
+	var value: Variant = _hero_ref.get_ref() if _hero_ref != null else null
+	return value if is_instance_valid(value) and value is CinderPlayer else null
+
+
+func _scheduler_node() -> CinderThreatScheduler:
+	var value: Variant = _scheduler_ref.get_ref() if _scheduler_ref != null else null
+	return value if is_instance_valid(value) and value is CinderThreatScheduler else null
+
+
+func _world_node() -> Node3D:
+	var value: Variant = _world_ref.get_ref() if _world_ref != null else null
+	return value if is_instance_valid(value) and value is Node3D else null
+
+
+func _cue_node() -> CinderThreatCue:
+	var value: Variant = _cue_ref.get_ref() if _cue_ref != null else null
+	return value if is_instance_valid(value) and value is CinderThreatCue else null
+
+
+func _on_invalidated(id: String, reason: String) -> void:
+	if _status == "running" and id == _exchange.get("id") and not _cancelling: cancel(reason)
+
+
+func _exit_tree() -> void:
+	var scheduler: CinderThreatScheduler = _scheduler_node()
+	if is_instance_valid(scheduler):
+		if scheduler.reservation_invalidated.is_connected(_on_invalidated): scheduler.reservation_invalidated.disconnect(_on_invalidated)
+		var owner: CharacterBody3D = _owner_node()
+		if is_instance_valid(owner): scheduler.cancel_owner(owner, "sampled_consumer_removed")
+	if _status == "running":
+		_status = "cancelled"
+		_last_cancel_reason = "sampled_consumer_removed"
+		_pending_segments.clear()
+		_phase = "clear"
+		var cue: CinderThreatCue = _cue_node()
+		if is_instance_valid(cue):
+			var blocked: bool = cue.is_blocking_signals()
+			cue.set_block_signals(true)
+			cue.clear()
+			cue.set_block_signals(blocked)
+		_phase_meshes.clear()
+	_presentation_guard = Callable()
+
+
+func snapshot_state(bindings: Dictionary) -> Dictionary:
+	last_snapshot_error = _snapshot_access_error()
+	if not last_snapshot_error.is_empty(): return {}
+	_snapshot_busy = true
+	var paired: Dictionary = _scheduler_node().snapshot_state(bindings)
+	var snapshot: Dictionary = {}
+	if paired.is_empty(): last_snapshot_error = _scheduler_node().last_snapshot_error
+	else:
+		var source: Dictionary = paired.get("sampled_circle_sources", {}).get(_source_wire.source_id, {})
+		snapshot = {"api_revision": API_REVISION, "schema_version": 1, "source_binding": source.duplicate(true), "status": _status, "phase": _phase, "cycle": _cycle, "clock_s": paired.clock_s, "exchange_encounter_id": _exchange_encounter_id, "exchange": _encode_exchange(_exchange), "sample": _sample.duplicate(true), "adapter": _adapter.duplicate(true), "resolved_role": _resolved_role.duplicate(true), "hero_sample": {} if _hero_sample.is_empty() else {"position": Codec.vector3(_hero_sample.position), "clock_s": _hero_sample.clock_s}, "hit_consumed": _hit_consumed, "pending_segments": _encode_segments(_pending_segments), "last_cancel_reason": _last_cancel_reason}
+		last_snapshot_error = _snapshot_plan_error(snapshot, bindings, paired, true)
+	_snapshot_busy = false
+	return snapshot.duplicate(true) if last_snapshot_error.is_empty() else {}
+
+
+func snapshot_error(snapshot: Dictionary, bindings: Dictionary, staged_scheduler_snapshot: Dictionary = {}) -> String:
+	## Pure paused join. No preview, resampling, parent callbacks or physical
+	## writes. Parent supplies codec-validated staged Hero/source packets first.
+	var error: String = _snapshot_access_error()
+	if not error.is_empty(): return error
+	# Bound foreign packets before recursive comparison or deep copies. Native
+	# bindings intentionally contain Objects and are validated by the Scheduler.
+	if ExactJson.stringify(snapshot).is_empty() or (not staged_scheduler_snapshot.is_empty() and ExactJson.stringify(staged_scheduler_snapshot).is_empty()):
+		return "Native sampled packet exceeds exact closed transport bounds"
+	_snapshot_busy = true
+	var paired: Dictionary = staged_scheduler_snapshot.duplicate(true) if not staged_scheduler_snapshot.is_empty() else _scheduler_node().snapshot_state(bindings)
+	error = _scheduler_node().snapshot_error(paired, bindings) if not paired.is_empty() else _scheduler_node().last_snapshot_error
+	if error.is_empty(): error = _snapshot_plan_error(snapshot, bindings, paired)
+	_snapshot_busy = false
+	return error
+
+
+func restore_state(snapshot: Dictionary, bindings: Dictionary) -> bool:
+	last_snapshot_error = _snapshot_access_error()
+	if not last_snapshot_error.is_empty(): return false
+	if _status != "idle" or _cycle != 0:
+		last_snapshot_error = "Quiet native restore requires a fresh bound consumer recipient"
+		return false
+	_snapshot_busy = true
+	var paired: Dictionary = _scheduler_node().snapshot_state(bindings)
+	last_snapshot_error = _scheduler_node().last_snapshot_error if paired.is_empty() else _snapshot_plan_error(snapshot, bindings, paired, true)
+	if not last_snapshot_error.is_empty():
+		_snapshot_busy = false
+		return false
+	var accepted: Dictionary = snapshot.duplicate(true)
+	_status = accepted.status
+	_phase = "clear" # Fresh native Cue is built only after all true packets commit.
+	_cycle = int(accepted.cycle)
+	_exchange_encounter_id = accepted.exchange_encounter_id
+	_exchange = _decode_exchange(accepted.exchange)
+	_sample = accepted.sample
+	_adapter = accepted.adapter
+	_resolved_role = accepted.resolved_role
+	_hero_sample = {} if accepted.hero_sample.is_empty() else {"position": Codec.read_vector3(accepted.hero_sample.position), "clock_s": float(accepted.hero_sample.clock_s)}
+	_hit_consumed = accepted.hit_consumed
+	_pending_segments.clear()
+	for segment: Dictionary in accepted.pending_segments:
+		_pending_segments.append({"from": Codec.read_vector3(segment.from), "to": Codec.read_vector3(segment.to), "start_s": float(segment.start_s), "end_s": float(segment.end_s)})
+	_last_cancel_reason = accepted.last_cancel_reason
+	var cue: CinderThreatCue = _cue_node()
+	var blocked: bool = cue.is_blocking_signals()
+	cue.set_block_signals(true)
+	_set_phase(accepted.phase, false)
+	cue.set_block_signals(blocked)
+	_snapshot_busy = false
+	return _phase == accepted.phase and _native_cue_available()
+
+
+func _snapshot_access_error() -> String:
+	if not _live_bindings() or not get_tree().paused: return "Native sampled snapshots require whole-parent stable paused custody"
+	if _snapshot_busy or _transaction_depth > 0 or _cancelling or _presentation_guard_busy: return "Native sampled snapshots cannot run inside physics/phase/hurt/guard callbacks"
+	if not _native_cue_available(): return "Native required Cue must be intact before capture/prevalidation/restore"
+	return ""
+
+
+func _snapshot_plan_error(snapshot: Dictionary, bindings: Dictionary, paired: Dictionary, actual_hero: bool = false) -> String:
+	var keys: Array = ["api_revision", "schema_version", "source_binding", "status", "phase", "cycle", "clock_s", "exchange_encounter_id", "exchange", "sample", "adapter", "resolved_role", "hero_sample", "hit_consumed", "pending_segments", "last_cancel_reason"]
+	var error: String = "Native sampled packet exceeds exact closed transport bounds" if ExactJson.stringify(snapshot).is_empty() else Codec.value_error(snapshot)
+	if error.is_empty(): error = Codec.keys_error(snapshot, keys)
+	if not error.is_empty(): return error
+	if snapshot.api_revision != API_REVISION or not snapshot.schema_version is int or snapshot.schema_version != 1 or not snapshot.cycle is int or not Codec.is_integer(snapshot.cycle) or snapshot.status not in ["idle", "running", "cancelled", "complete"] or not snapshot.phase is String or not snapshot.source_binding is Dictionary or not snapshot.exchange is Dictionary or not snapshot.sample is Dictionary or not snapshot.adapter is Dictionary or not snapshot.resolved_role is Dictionary or not snapshot.hero_sample is Dictionary or not snapshot.hit_consumed is bool or not snapshot.pending_segments is Array or snapshot.pending_segments.size() > MAX_PENDING_SEGMENTS or not snapshot.last_cancel_reason is String or not snapshot.exchange_encounter_id is String or not snapshot.clock_s is float:
+		return "Exact native sampled consumer schema required"
+	if not paired.get("sampled_circle_sources") is Dictionary or paired.get("schema_version") != 4 or not _same_exact(snapshot.source_binding, paired.sampled_circle_sources.get(_source_wire.source_id)) or not Codec.keys_error(snapshot.source_binding, SOURCE_WIRE_KEYS).is_empty(): return "Consumer must retain its exact paired native source wire"
+	var immutable: Dictionary = _source_wire.duplicate(true)
+	immutable.alive = snapshot.source_binding.alive
+	if not _same_exact(immutable, snapshot.source_binding) or not _same_exact(snapshot.clock_s, paired.clock_s) or bindings.get("owners", {}).get(_source_wire.source_id) != _owner_node() or bindings.get("actors", {}).get(_source_wire.hero_id) != _hero_node() or bindings.get("world_root") != _world_node(): return "Actual/staged source incarnation, true Hero and shared clock must join"
+	var owned: Dictionary = {}
+	for record: Dictionary in paired.reservations:
+		if record.source_id == _source_wire.source_id:
+			if not owned.is_empty(): return "One physical eye cannot hold multiple consumer exchanges"
+			owned = record
+	if snapshot.status == "idle":
+		for cooldown: Dictionary in paired.cooldowns:
+			if cooldown.source_id == _source_wire.source_id: return "Idle consumer cannot erase a consumed source cooldown"
+		return "Idle consumer cannot retain prior exchange state" if snapshot.cycle != 0 or snapshot.phase != "clear" or not snapshot.exchange.is_empty() or not snapshot.sample.is_empty() or not snapshot.adapter.is_empty() or not snapshot.resolved_role.is_empty() or not snapshot.hero_sample.is_empty() or snapshot.hit_consumed or not snapshot.pending_segments.is_empty() or not snapshot.exchange_encounter_id.is_empty() or not owned.is_empty() else ""
+	if not Codec.is_integer(snapshot.cycle, 1) or not _stable_id(snapshot.exchange_encounter_id) or not Codec.keys_error(snapshot.exchange, EXCHANGE_KEYS).is_empty() or not Codec.keys_error(snapshot.sample, SAMPLE_KEYS).is_empty(): return "Executed cycle requires its finite exact original exchange/sample"
+	var exchange: Dictionary = snapshot.exchange
+	var sample: Dictionary = snapshot.sample
+	if not _same_exact(snapshot.adapter.get("sample"), sample): return "Consumer sample must exactly equal its retained typed adapter receipt"
+	var staged_hero_clock: float = -1.0
+	if not actual_hero and bindings.get("hero_action_clocks") is Dictionary and bindings.hero_action_clocks.has(_source_wire.hero_id):
+		if not bindings.hero_action_clocks[_source_wire.hero_id] is float: return "Validated staged Player action clock must retain exact scalar type"
+		staged_hero_clock = bindings.hero_action_clocks[_source_wire.hero_id]
+	error = _scheduler_node().sampled_circle_exchange_error(_owner_node(), exchange, snapshot.adapter, float(snapshot.clock_s), staged_hero_clock)
+	if not error.is_empty(): return error
+	var original_serial: int = int(exchange.id.substr(7))
+	if original_serial > int(paired.serial) or snapshot.cycle > original_serial: return "Consumer cycle/original reservation cannot exceed the paired Scheduler serial"
+	var difficulty := Difficulty.new()
+	var role: Dictionary = difficulty.resolve_role(_source_wire.definition.raw_role, exchange.profile_id, _source_wire.definition.timing_floors)
+	if role.is_empty() or not _same_exact(snapshot.resolved_role, role): return "Role must resolve from the immutable source recipe/profile"
+	var active: float = float(exchange.start_s) + float(role.windup_s)
+	if snapshot.status == "running":
+		if owned.is_empty() or not snapshot.source_binding.alive or snapshot.exchange_encounter_id != paired.encounter_id or snapshot.phase != _phase_at(float(snapshot.clock_s), _decode_exchange(exchange)) or not snapshot.last_cancel_reason.is_empty() or owned.get("adapter", {}).get("kind") != "sampled_circle" or not _same_exact(owned.adapter, snapshot.adapter): return "Running consumer requires the same native sampled lease and phase"
+		for key: String in EXCHANGE_KEYS:
+			if not _same_exact(exchange[key], owned[key]): return "Consumer exchange must equal its paired Scheduler reservation"
+	else:
+		if snapshot.phase != "clear" or not owned.is_empty() or not snapshot.pending_segments.is_empty(): return "Inactive consumer cannot retain hidden danger or unresolved contacts"
+		if snapshot.status == "cancelled" and snapshot.last_cancel_reason.is_empty(): return "Cancellation requires its original explicit reason"
+		if snapshot.status == "complete" and snapshot.exchange_encounter_id == paired.encounter_id and float(snapshot.clock_s) <= float(exchange.recovery_until_s): return "Completed cycle cannot erase remaining recovery"
+	var genuinely_defeated: bool = snapshot.status == "cancelled" and not snapshot.source_binding.alive and snapshot.last_cancel_reason == "source_defeated"
+	if not genuinely_defeated and snapshot.exchange_encounter_id == paired.encounter_id and float(exchange.cooldown_until_s) > float(snapshot.clock_s):
+		var cooldown_found: bool = false
+		for cooldown: Dictionary in paired.cooldowns:
+			if cooldown.source_id == _source_wire.source_id and _same_exact(cooldown.ready_s, exchange.cooldown_until_s): cooldown_found = true
+		if not cooldown_found: return "Original source cooldown must remain consumed"
+	if not Codec.keys_error(snapshot.hero_sample, ["position", "clock_s"]).is_empty() or not Codec.is_vector3(snapshot.hero_sample.position) or not snapshot.hero_sample.clock_s is float or not Codec.in_range(snapshot.hero_sample.clock_s, float(exchange.start_s), float(exchange.recovery_until_s) + 1.0 / float(Engine.physics_ticks_per_second)): return "Finite completed-physics Hero endpoint required"
+	if snapshot.status == "running":
+		if bindings.has("hero_positions") and not bindings.hero_positions is Dictionary: return "Staged Hero endpoints require a stable dictionary"
+		var position_value: Variant = _hero_node().global_position if actual_hero else bindings.get("hero_positions", {}).get(_source_wire.hero_id, _hero_node().global_position)
+		if not Geometry.finite_vector(position_value) or not _same_exact(snapshot.hero_sample.clock_s, snapshot.clock_s) or Codec.read_vector3(snapshot.hero_sample.position) != position_value: return "Current endpoint must join the same actual/staged saved Hero tick"
+	if snapshot.hit_consumed and float(snapshot.hero_sample.clock_s) < active: return "Opportunity cannot be consumed before the active interval"
+	if not snapshot.pending_segments.is_empty() and (snapshot.status != "running" or snapshot.hit_consumed): return "Held path belongs only to a running unconsumed Hero"
+	var previous: Dictionary = {}
+	for segment: Variant in snapshot.pending_segments:
+		if not segment is Dictionary or not Codec.keys_error(segment, ["from", "to", "start_s", "end_s"]).is_empty() or not Codec.is_vector3(segment.from) or not Codec.is_vector3(segment.to) or not segment.start_s is float or not segment.end_s is float or not Codec.in_range(segment.start_s, float(exchange.start_s), float(snapshot.clock_s)) or not Codec.in_range(segment.end_s, float(segment.start_s), float(snapshot.clock_s)) or float(segment.end_s) - float(segment.start_s) > 1.0 / float(Engine.physics_ticks_per_second) + Geometry.EPSILON: return "Held path must retain bounded actual single-tick segments"
+		if not previous.is_empty() and (not _same_exact(segment.start_s, previous.end_s) or not _same_exact(segment.from, previous.to)): return "Held path must preserve exact contiguous bends"
+		previous = segment
+	if not previous.is_empty() and (not _same_exact(previous.end_s, snapshot.clock_s) or not _same_exact(previous.to, snapshot.hero_sample.position)): return "Held suffix must reach the same current saved endpoint/clock"
+	return ""
+
+
+func _encode_exchange(value: Dictionary) -> Dictionary:
+	if value.is_empty(): return {}
+	var result: Dictionary = value.duplicate(true)
+	result.geometry = {"kind": "circle", "origin": Codec.vector3(value.geometry.origin), "radius": value.geometry.radius}
+	result.source_position = Codec.vector3(value.source_position)
+	result.opening_position = Codec.vector3(value.opening_position)
+	return result
+
+
+func _decode_exchange(value: Dictionary) -> Dictionary:
+	if value.is_empty(): return {}
+	var result: Dictionary = value.duplicate(true)
+	result.geometry = Geometry.circle(Codec.read_vector3(value.geometry.origin), float(value.geometry.radius))
+	result.source_position = Codec.read_vector3(value.source_position)
+	result.opening_position = Codec.read_vector3(value.opening_position)
+	return result
+
+
+func _encode_segments(path: Array[Dictionary]) -> Array:
+	var result: Array = []
+	for segment: Dictionary in path: result.append({"from": Codec.vector3(segment.from), "to": Codec.vector3(segment.to), "start_s": segment.start_s, "end_s": segment.end_s})
+	return result
+
+
+func _exchange_data(record: Dictionary) -> Dictionary:
+	var result: Dictionary = {}
+	for key: String in EXCHANGE_KEYS: result[key] = record[key]
+	return result.duplicate(true)
+
+
+func _phase_at(now: float, exchange: Dictionary) -> String:
+	return "warning" if now < float(exchange.lock_from_s) else ("lock" if now < float(exchange.active_from_s) else ("active" if now <= float(exchange.active_until_s) else "recovery"))
+
+
+static func _mesh_bytes(mesh: ArrayMesh) -> PackedByteArray:
+	if mesh.shadow_mesh != null or mesh.get_blend_shape_count() != 0: return PackedByteArray()
+	for index: int in range(mesh.get_surface_count()):
+		if mesh.surface_get_material(index) != null: return PackedByteArray()
+	return var_to_bytes([mesh.get_surface_count(), mesh.custom_aabb, mesh.blend_shape_mode, mesh.get("_surfaces")])
+
+
+static func _renderer_bytes(node: MeshInstance3D) -> PackedByteArray:
+	return _property_bytes(node, ["mesh", "material_override", "visible", "transform", "position", "rotation", "rotation_degrees", "quaternion", "basis", "scale", "global_transform", "global_position", "global_basis", "global_rotation", "global_rotation_degrees", "global_scale", "name", "owner", "unique_name_in_owner", "process_mode", "process_priority", "process_physics_priority"])
+
+
+static func _property_bytes(object: Object, excluded: Array[String]) -> PackedByteArray:
+	var values: Array = []
+	for info: Dictionary in object.get_property_list():
+		var key: String = String(info.name)
+		if (int(info.usage) & PROPERTY_USAGE_STORAGE) == 0 or key in excluded or key.begins_with("surface_material_override/"): continue
+		var value: Variant = object.get(key)
+		if value is Object and not is_instance_valid(value): return PackedByteArray()
+		values.append([key, ["object", value.get_instance_id()] if value is Object else value])
+	return var_to_bytes(values)
+
+
+static func _phase_color(phase: String) -> Color:
+	match phase:
+		"warning": return Color(1.0, 0.90, 0.63, 0.95)
+		"lock": return Color(1.0, 0.76, 0.35, 1.0)
+		"active": return Color(1.0, 0.43, 0.26, 1.0)
+		"recovery": return Color(0.77, 0.88, 0.90, 0.70)
+	return Color.WHITE
+
+
+static func _same_exact(left: Variant, right: Variant) -> bool:
+	if typeof(left) != typeof(right): return false
+	if left is float:
+		var a := PackedByteArray()
+		var b := PackedByteArray()
+		a.resize(8)
+		b.resize(8)
+		a.encode_double(0, left)
+		b.encode_double(0, right)
+		return a == b
+	if left is Dictionary and right is Dictionary:
+		if left.size() != right.size(): return false
+		for key: Variant in left:
+			if not right.has(key) or not _same_exact(left[key], right[key]): return false
+		return true
+	if left is Array and right is Array:
+		if left.size() != right.size(): return false
+		for index: int in range(left.size()):
+			if not _same_exact(left[index], right[index]): return false
+		return true
+	return typeof(left) == typeof(right) and left == right
+
+
+static func _stable_id(value: Variant) -> bool:
+	if not value is String or value.is_empty() or value.length() > 128: return false
+	var pattern := RegEx.new()
+	pattern.compile("^[A-Za-z0-9_./:-]+$")
+	var matched: RegExMatch = pattern.search(value)
+	return matched != null and matched.get_string() == value
+
+
+func _reject(reason: String) -> bool:
+	last_error = reason
+	return false
+
+
+func _denied(reason: String) -> Dictionary:
+	last_error = reason
+	return {"accepted": false, "reason": reason}
