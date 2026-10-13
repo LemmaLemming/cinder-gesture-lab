@@ -1,0 +1,460 @@
+{
+  "api_revision": "a2-o3-bleached-canal-authored-1",
+  "level_id": "A2-O3",
+  "parent_level_id": "A2-L4",
+  "art_revision": "a2-bleached-canal-1",
+  "status": "Promoted authored source; native import/mechanics/transport/pixels remain unexecuted at this record.",
+  "runtime_path_proposal": "scripts/acts/act2/bleached_canal_kit.gd",
+  "manifest_path_proposal": "assets/acts/act2/bleached_canal_kit_manifest.json",
+  "runtime_draft": {
+    "path": "/private/tmp/a2_o3_kit_draft_20261012.gd",
+    "sha256": "432b8d059ee7541ebae86119939a9c6fe959a7311fce26d1e19c2c61a6aea56e",
+    "lines": 129,
+    "frozen_original": "docs/acts/act2/evidence/A2-O3/authored-source-20261012/files/a2_o3_kit_draft_20261012.gd"
+  },
+  "api": {
+    "build": "static func build(parent: Node3D) -> Dictionary",
+    "returned_keys": [
+      "root",
+      "signs",
+      "canal_prop"
+    ],
+    "signs": "Dictionary of Node3D values keyed first, second, third; no runtime state authority.",
+    "canal_prop": "Node3D QuietCanalMooring, ordinary wood/iron scenery.",
+    "setters": "None. Signs/mooring remain static; host owns actual ContactExit cue and all progression."
+  },
+  "authored_layout": {
+    "provisional_native_unverified": true,
+    "floor_rect_xz": [
+      -3.4,
+      -27.0,
+      6.8,
+      30.6
+    ],
+    "spawn": [
+      0,
+      0.1,
+      2.6
+    ],
+    "exit_position": [
+      0,
+      0,
+      -26.0
+    ],
+    "fixed_wall": {
+      "position": [
+        -1.1,
+        0.225,
+        -10.0
+      ],
+      "size": [
+        1.5,
+        0.45,
+        0.45
+      ],
+      "persistent_base_rect_xz": [
+        -1.85,
+        -10.225,
+        1.5,
+        0.45
+      ],
+      "base_visual_y": 0.013
+    },
+    "courts": [
+      {
+        "id": "first",
+        "visual_rect_xz": [
+          -3.4,
+          -5.8,
+          6.8,
+          9.4
+        ],
+        "surface": "earth"
+      },
+      {
+        "id": "second",
+        "visual_rect_xz": [
+          -3.4,
+          -15.2,
+          6.8,
+          7.2
+        ],
+        "surface": "paving"
+      },
+      {
+        "id": "third",
+        "visual_rect_xz": [
+          -3.4,
+          -25.1,
+          6.8,
+          5.9
+        ],
+        "surface": "earth"
+      }
+    ],
+    "quiet_links": "All gaps between court overlays retain continuous road. No required narrow bridge or water crossing.",
+    "signs": [
+      {
+        "id": "first",
+        "position": [
+          -3.88,
+          0,
+          0.6
+        ],
+        "quiet_numeral": "I"
+      },
+      {
+        "id": "second",
+        "position": [
+          3.88,
+          0,
+          -7.0
+        ],
+        "quiet_numeral": "II"
+      },
+      {
+        "id": "third",
+        "position": [
+          -3.88,
+          0,
+          -18.1
+        ],
+        "quiet_numeral": "III"
+      }
+    ],
+    "mooring_position": [
+      4.18,
+      0,
+      -15.8
+    ],
+    "boundary_contract": "Source host creates visible matched stone Box banks at x\u00b13.65/y.325/z-11.7 size(.5,.65,30.6), end banks (0,.325,3.85)/(0,.325,-27.25) size(6.8,.65,.5), plus the exact kit wall. Body and BoxMesh dimensions match in source; actual native correspondence and cutaway readability remain unverified."
+  },
+  "cutaway_policy": {
+    "root_relative_metadata": "optional_cutaway_paths",
+    "candidate_marker": "weybridge_cutaway_candidate",
+    "registration": "London._box/_weed/_villa/_lamp/_iron_fence/_mark_cutaway unchanged. StandardMaterial3D material_override isolation per eligible mesh; immutable cached meshes/textures reused.",
+    "persistent_opaque": [
+      "ContinuousDryRoad",
+      "Court_first_QuietFloor",
+      "Court_second_QuietFloor",
+      "Court_third_QuietFloor",
+      "ReusedLowVillaWall/PersistentBrickFootprint",
+      "ground/water/edge/backdrop planes"
+    ],
+    "host_obligation": "Apply actual Hero/source/cue/landing protected framing to eligible scenery; metadata by itself does not fade anything. Native current/settled image/landing/collision checks remain pending."
+  },
+  "source": {
+    "confirmed_requirements": [
+      "three familiar arrangements across broad dry pockets",
+      "checkpoint before third arrangement",
+      "three route signs",
+      "one small canal-side scenic prop",
+      "opened contact exit and cosmetic/completion stamp only"
+    ],
+    "records": [
+      "S01",
+      "S02",
+      "T19",
+      "T20",
+      "E22",
+      "E23",
+      "E25"
+    ],
+    "boards": [
+      {
+        "id": "G08",
+        "path": "docs/concept-art/act2/environments/red-weed-london-approaches.png",
+        "sha256": "d8cabb23e296027ed96bfbfd55d1d96ab7634325de572e2ac6630a5a0e832d3d"
+      },
+      {
+        "id": "G16",
+        "path": "docs/concept-art/act2/props/martian-technology.png",
+        "sha256": "d7bb3d36baf62bf424387f436dbc5145fdf6504753d7b45e91815569501b535b"
+      },
+      {
+        "id": "G17",
+        "path": "docs/concept-art/act2/props/victorian-survival-props.png",
+        "sha256": "4fe979367f3eef6374e8758362a679b7b783f8e938aaf21011b9dfed7c0766c3"
+      }
+    ],
+    "primary_urls": [
+      "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2480/book-twothe-earth-under-the-martians-chapter-6-the-work-of-fifteen-days/",
+      "https://etc.usf.edu/lit2go/135/the-war-of-the-worlds/2482/book-twothe-earth-under-the-martians-chapter-8-dead-london/"
+    ],
+    "adaptation": "Compact dry causeway, quiet I/II/III timber signs and one mooring post/ring are game/scenic interpretations; no surveyed literal canal or authenticated named mooring object claim. Generated captions do not introduce spores, pickups, poison, swimming or boats."
+  },
+  "assets": [
+    {
+      "asset_id": "a2-o3-dry-courts",
+      "readiness": "Authored TMP candidate; O3 import, native geometry, collision/art alignment and actual portrait review unexecuted. Existing leaves retain their original accepted L4 scopes.",
+      "native_scale": [
+        1,
+        1,
+        1
+      ],
+      "pivot": "Plane centers at explicit world positions; continuous topY0.005, overlaysY0.008, source-supported collision topY0 belongs to host.",
+      "collision": "None in kit. Host exclusively creates floor, boundaries and fixed wall bodies.",
+      "clock": "None; static deterministic construction, no callbacks/timers/process or shader TIME.",
+      "states": [
+        "static_quiet"
+      ],
+      "reuse": "Recomposed accepted L4 leaf geometry/material families; no parent file change.",
+      "source": [
+        "G08",
+        "E22",
+        "E23"
+      ],
+      "native_geometry": "Existing cached PlaneMesh ground leaves: continuous 6.8 x 30.6m dry visual strip, three measured rect overlays, low outboard water/earth.",
+      "occlusion": "All surfaces remain opaque and excluded from optional cutaway. Actual shared floor cues must render above them.",
+      "limitations": [
+        "Water/earth outside support and quiet end backdrops are scenic only. New placement and boundary visibility need actual portrait review."
+      ]
+    },
+    {
+      "asset_id": "a2-o3-reused-low-villa-wall",
+      "readiness": "Authored TMP candidate; O3 import, native geometry, collision/art alignment and actual portrait review unexecuted. Existing leaves retain their original accepted L4 scopes.",
+      "native_scale": [
+        1,
+        1,
+        1
+      ],
+      "pivot": "Group origin0; exact wall center is an explicit placement, not an actor feet pivot.",
+      "collision": "None in kit. Host exclusively creates floor, boundaries and fixed wall bodies.",
+      "clock": "None; static deterministic construction, no callbacks/timers/process or shader TIME.",
+      "states": [
+        "static_quiet"
+      ],
+      "reuse": "Recomposed accepted L4 leaf geometry/material families; no parent file change.",
+      "source": [
+        "G08",
+        "G17",
+        "accepted L4 low-wall family"
+      ],
+      "native_geometry": "Exact visual Box 1.5 x .45 x .45m centered(-1.1,.225,-10); coping stays inside same envelope; persistent brick plane 1.5 x .45m.",
+      "occlusion": "Body/coping eligible for protective cutaway. Exact opaque ground footprint remains visible to communicate host collider.",
+      "limitations": [
+        "The host must create the same fixed collider once; kit creates none. Coping is a material overlay, not extra collision. Native side-bypass and cue fit untested."
+      ]
+    },
+    {
+      "asset_id": "a2-o3-villa-margins",
+      "readiness": "Authored TMP candidate; O3 import, native geometry, collision/art alignment and actual portrait review unexecuted. Existing leaves retain their original accepted L4 scopes.",
+      "native_scale": [
+        1,
+        1,
+        1
+      ],
+      "pivot": "Local grounded feet/root origin; +Y up, +Z board/display face where applicable.",
+      "collision": "None in kit. Host exclusively creates floor, boundaries and fixed wall bodies.",
+      "clock": "None; static deterministic construction, no callbacks/timers/process or shader TIME.",
+      "states": [
+        "static_quiet"
+      ],
+      "reuse": "Recomposed accepted L4 leaf geometry/material families; no parent file change.",
+      "source": [
+        "G08",
+        "G17",
+        "T20",
+        "E23"
+      ],
+      "native_geometry": "Six unchanged London._villa modules at X +/-4.50 and Z -2.0/-11.2/-22.1; existing door/sash/shutter/brick/chimney or broken timber and creeper.",
+      "placement_scale": [
+        0.65,
+        1,
+        0.65
+      ],
+      "placement_yaw": "Unchanged London leaf: -side*PI/6.",
+      "occlusion": "All eligible architectural leaves registered with isolated overrides; foreground can fade only under host-derived protected context.",
+      "limitations": [
+        "Full facades/chimneys are outboard and may crop at close portrait. Source richness is a placement proposal, not guaranteed native visibility."
+      ]
+    },
+    {
+      "asset_id": "a2-o3-ecology-margins",
+      "readiness": "Authored TMP candidate; O3 import, native geometry, collision/art alignment and actual portrait review unexecuted. Existing leaves retain their original accepted L4 scopes.",
+      "native_scale": [
+        1,
+        1,
+        1
+      ],
+      "pivot": "Local grounded feet/root origin; +Y up, +Z board/display face where applicable.",
+      "collision": "None in kit. Host exclusively creates floor, boundaries and fixed wall bodies.",
+      "clock": "None; static deterministic construction, no callbacks/timers/process or shader TIME.",
+      "states": [
+        "static_quiet"
+      ],
+      "reuse": "Recomposed accepted L4 leaf geometry/material families; no parent file change.",
+      "source": [
+        "G08",
+        "G16",
+        "T19",
+        "T20"
+      ],
+      "native_geometry": "Existing a2-red-weed-bleached, a2-red-weed-sparse, a2-red-weed-dense and villa a2-red-creeper; native geometry/cache unchanged.",
+      "variants": [
+        "bleached",
+        "sparse",
+        "dense",
+        "creeper"
+      ],
+      "placement_scale": "Pale/dense XZ .8,Y1; sparse1; existing villa creeper inherits villa placement. Native family remains scale1.",
+      "occlusion": "Roots outboard; inward fronds use existing optional cutaway. All geometry bounds remain available from returned weed native metadata.",
+      "limitations": [
+        "No bleaching transition, growth, breakage, plant collision or hazard. Fine filaments/pale tips may merge or crop. New native instance bounds and masks unverified."
+      ]
+    },
+    {
+      "asset_id": "a2-o3-quiet-iron-verge",
+      "readiness": "Authored TMP candidate; O3 import, native geometry, collision/art alignment and actual portrait review unexecuted. Existing leaves retain their original accepted L4 scopes.",
+      "native_scale": [
+        1,
+        1,
+        1
+      ],
+      "pivot": "Local grounded feet/root origin; +Y up, +Z board/display face where applicable.",
+      "collision": "None in kit. Host exclusively creates floor, boundaries and fixed wall bodies.",
+      "clock": "None; static deterministic construction, no callbacks/timers/process or shader TIME.",
+      "states": [
+        "static_quiet"
+      ],
+      "reuse": "Recomposed accepted L4 leaf geometry/material families; no parent file change.",
+      "source": [
+        "G08",
+        "G17",
+        "E23"
+      ],
+      "native_geometry": "Two unchanged 2.7m iron fence leaves and four unlit lamp leaves at outboard margins; native geometry unchanged.",
+      "occlusion": "Original per-instance eligible overrides; no light/emission/action cue.",
+      "limitations": [
+        "Tall lamp tops/outboard rails may crop. No new interactive gate or opening mechanism."
+      ]
+    },
+    {
+      "asset_id": "a2-o3-route-signs",
+      "readiness": "Authored TMP candidate; O3 import, native geometry, collision/art alignment and actual portrait review unexecuted. Existing leaves retain their original accepted L4 scopes.",
+      "native_scale": [
+        1,
+        1,
+        1
+      ],
+      "pivot": "Local grounded feet/root origin; +Y up, +Z board/display face where applicable.",
+      "collision": "None in kit. Host exclusively creates floor, boundaries and fixed wall bodies.",
+      "clock": "None; static deterministic construction, no callbacks/timers/process or shader TIME.",
+      "states": [
+        "static_quiet_route_marker"
+      ],
+      "reuse": "New documented signs from reused timber/iron/ash primitive materials; no additional gameplay state.",
+      "source": [
+        "G17"
+      ],
+      "native_geometry": "Three grounded post/board assemblies, quiet I/II/III marks; original BoxMesh/material leaves. Per-sign provisional local bound X +/- .38, Y0..1.06, Z -.0425...0865m.",
+      "variants": [
+        "first:I",
+        "second:II",
+        "third:III"
+      ],
+      "occlusion": "Eligible for protective host cutaway with original isolated overrides; no glow/ring/chevron/contact/available-state grammar.",
+      "limitations": [
+        "Not collection targets, attackable objects or checkpoint/contact cues. Numerals/fasteners need actual pixel review and can be fine at edge cropping."
+      ],
+      "requirement": "A2-O3: three route signs, ACT2_CONCEPT.md optional-level table."
+    },
+    {
+      "asset_id": "a2-o3-canal-mooring",
+      "readiness": "Authored TMP candidate; O3 import, native geometry, collision/art alignment and actual portrait review unexecuted. Existing leaves retain their original accepted L4 scopes.",
+      "native_scale": [
+        1,
+        1,
+        1
+      ],
+      "pivot": "Local grounded feet/root origin; +Y up, +Z board/display face where applicable.",
+      "collision": "None in kit. Host exclusively creates floor, boundaries and fixed wall bodies.",
+      "clock": "None; static deterministic construction, no callbacks/timers/process or shader TIME.",
+      "states": [
+        "static_quiet_mooring"
+      ],
+      "reuse": "Only new scenic interpretation beyond three signs; original parent primitives and materials, no boat/rope/interaction system.",
+      "source": [
+        "G17",
+        "E22"
+      ],
+      "native_geometry": "One small stone-footed timber post/iron strap/vertical ring. Existing cached Heath._torus(.075,.12), 24 rings x5 ring segments, plus existing BoxMesh leaves. Provisional width .34m, top .60m; ring pivots at local(0,.36,.15), rotates X PI/2.",
+      "occlusion": "Registered StandardMaterial3D override isolation; no action or source cue. Fully outboard rootX4.18.",
+      "limitations": [
+        "Small low ring may merge at actual native pixel scale; must not be mistaken for a floor circle. No docking, movement or resource reward."
+      ],
+      "requirement": "A2-O3: one small canal-side scenic prop; mooring is the chosen fictional scenic interpretation."
+    }
+  ],
+  "parent_pins": [
+    {
+      "path": "scripts/acts/act2/london_approaches_kit.gd",
+      "sha256": "9aa9c32e5d2c5804df5dffe7b1fef1098e7c9626e4f349951d0e060680121437",
+      "change": "unchanged read-only leaf reuse"
+    },
+    {
+      "path": "scripts/acts/act2/heath_kit.gd",
+      "sha256": "77768bc24573be2ce25f2255bf8ffa3adbcd363e00bdaf6125692c1cbf0bd4ac",
+      "change": "unchanged read-only leaf reuse"
+    },
+    {
+      "path": "scripts/acts/act2/ruined_house_kit.gd",
+      "sha256": "19c694d6257856605f3b175a288ce611a3da2a9d916a1151ce4600512a7f3505",
+      "change": "unchanged read-only leaf reuse"
+    },
+    {
+      "path": "scripts/acts/act2/weybridge_kit.gd",
+      "sha256": "3b045f0d501a69e76df0a80526371f9742b8cbf782e3d7e51247317c58953db2",
+      "change": "unchanged read-only leaf reuse"
+    },
+    {
+      "path": "scripts/acts/act2/red_weed_visual.gd",
+      "sha256": "20424e1db6b9dd771a649139a44943a762231ee4ae7d8d673b6afeb609b6e9aa",
+      "change": "unchanged read-only leaf reuse"
+    }
+  ],
+  "preparation_pins": [
+    {
+      "path": "docs/acts/act2/evidence/A2-O3/preparation-20261012/files/a2_o3_owner_design_preparation_20261012.md",
+      "sha256": "dc93b31d93c07b91c9637ef7f1f7ababded9e05f76af59b869cacde815024afc",
+      "observed_original_path": "/private/tmp/a2_o3_preparation_20261012/final-frozen-closure/files/a2_o3_owner_design_preparation_20261012.md"
+    },
+    {
+      "path": "docs/acts/act2/evidence/A2-O3/preparation-20261012/files/a2_o3_api_focused_brief_20261012.md",
+      "sha256": "16a1a919959eac2b6f82ae3d11a3c58ce0f79c9d93002e4f0dfe95251f7d3285",
+      "observed_original_path": "/private/tmp/a2_o3_preparation_20261012/final-frozen-closure/files/a2_o3_api_focused_brief_20261012.md"
+    },
+    {
+      "path": "docs/acts/act2/evidence/A2-O3/preparation-20261012/files/a2_o3_source_parent_brief_20261012.md",
+      "sha256": "8f61b27dc84a889f4c3c00058e467047e9f99d4a89734e4705c51660d8e25504",
+      "observed_original_path": "/private/tmp/a2_o3_preparation_20261012/final-frozen-closure/files/a2_o3_source_parent_brief_20261012.md"
+    }
+  ],
+  "readiness": {
+    "realized_in_parent": "Accepted L4 static weed, villa/flood/street furniture and original cached material/mesh families. No accepted parent edited.",
+    "adapted_for_o3": "Compact three-court composition, pale banks, exact reused low-wall footprint, three static quiet signs and one scenic mooring.",
+    "deferred": [
+      "actual import/native geometry and bounds",
+      "actual floor/boundary/wall correspondence",
+      "source/Hero/cue/landing masks and portrait review",
+      "all host progression, mechanics, save/retry/cleanup",
+      "full source-board fidelity, all poses/gear/pacing/balance/full playthrough"
+    ],
+    "no_credit": "This draft establishes no engine, native, art, gameplay, resource, equipment or ability credit."
+  },
+  "validation": {
+    "static": "Direct leaf signatures, material isolation and plane exclusion read from current unchanged parents. JSON parsing and source-link/pin existence checked only.",
+    "native": "Unexecuted; Root owns promotion and focused queued checks.",
+    "authority": "No actor, controller, Collider, HP, contact, resource grant, cue, clock, state/callback or progression system is implemented in kit."
+  },
+  "runtime_path": "scripts/acts/act2/bleached_canal_kit.gd",
+  "manifest_path": "assets/acts/act2/bleached_canal_manifest.json",
+  "authored_resources": {
+    "scripts/acts/act2/bleached_canal.gd": "810ccfd8ab1a58951ea7f53926aa7ba2b689b935d1acf5e8f3019b6a6769a9f1",
+    "scripts/acts/act2/bleached_canal_kit.gd": "432b8d059ee7541ebae86119939a9c6fe959a7311fce26d1e19c2c61a6aea56e",
+    "scenes/acts/act2/a2_o3.tscn": "487091adb72bbcd551b27083d16c26213b02e19538606558ac92da4befb24291",
+    "tests/acts/act2/a2_o3_focused_smoke.gd": "fe14b8e3a119640560b23a3f01577727efcba664fcf034b40cc4e1dbb28f8962",
+    "tests/acts/act2/a2_o3_loading_side_smoke.gd": "eba42be3beebe9ef832e52660379737663145635b7664ce6508fb82100e12f6f"
+  },
+  "art_accepted": false
+}
