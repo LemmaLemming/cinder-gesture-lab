@@ -1,0 +1,92 @@
+{
+  "at": "2026-10-12T08:35:31.362210+00:00",
+  "candidate": {
+    "bytes": 25538,
+    "lines": 442,
+    "path": "/private/tmp/cinder_a2_shared53_preserve_adopt.py",
+    "sha256": "8d632e9dd86a8961062b8f1ac3473157e6534006ea72f5dd39ec636496ab8985"
+  },
+  "checks": {
+    "AST_parse": true,
+    "all_numeric_literals_identical": true,
+    "fresh_output_path_declared": true,
+    "main_control_flow_unchanged_after_explicit_string_normalization": true,
+    "nine_explicit_literal_comment_substitutions_reverse_to_original_bytes": true,
+    "original_octal_executable_mask_0o111_retained": true,
+    "preservation_function_count": 17,
+    "preservation_functions_AST_unchanged": [
+      "digest",
+      "git",
+      "ancestor",
+      "safe_path",
+      "record",
+      "write_json",
+      "status_rows",
+      "refuse_dirty",
+      "indexed",
+      "tree",
+      "blob_records",
+      "add_git_bytes",
+      "physical_inventory",
+      "active_uids",
+      "incoming_delta",
+      "incoming_preflight",
+      "compare_preserved"
+    ],
+    "reverse_reconstructed_sha256": "e66d5280402f7344c394d8d43b6d6235ec2865fd2790bd7d149f1d09912dd9fb"
+  },
+  "exact_constants": {
+    "ASSIGNED_CHECKOUT": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+    "BASE": "ffdf26e0c77bb0a5a33e52aadcf45f1610a56a3f",
+    "GAME_FOLDERS": [
+      "scripts",
+      "scenes",
+      "assets",
+      "data",
+      "tests",
+      "docs",
+      "captures"
+    ],
+    "OUT_NAME": "docs/acts/act2/evidence/shared53-adoption",
+    "OWNED": [
+      "scripts/acts/act2/",
+      "scenes/acts/act2/",
+      "assets/acts/act2/",
+      "data/campaign/act2/",
+      "tests/acts/act2/",
+      "docs/acts/act2/"
+    ],
+    "PUBLICATION": "8cb1da79ba000d758fe677054782e23f48cb6dfd",
+    "SETTINGS": [
+      "project.godot",
+      ".cinder/local.json",
+      ".vscode/settings.json"
+    ],
+    "UID_SUFFIXES": [
+      ".gd.uid",
+      ".gdshader.uid"
+    ]
+  },
+  "findings": [],
+  "guard_order_inspected": [
+    "Explicit --closed-owned-jobs; exact registered checkout/codex branch; clean status including untracked; exact publication and baseline ancestry; duplicate target/output refusal.",
+    "Capture original clean HEAD, six-prefix Git/physical files, archives, .gdignore boundaries, all historical and active UIDs, three settings; split owned and nonowned incoming rows.",
+    "Owned overlap must exist, may not remove; runtime/evidence/UID originals require publication-identical blobs/modes. Only newer committed owner notes may differ. Nonowned incoming_preflight remains byte-exact to Shared52.",
+    "Recheck actual clean HEAD, physical custody and settings before new receipt and single merge. Accept conflicts only within the owned prefixes; restore only captured old HEAD six-prefix rows; refuse remaining conflicts; commit exact publication merge.",
+    "Compare original Git/physical/archive/boundary/UID/settings custody, exact nonowned incoming bytes/modes/deletions, only expected additions, exact two parents and status limited to new receipt; retain failure receipt and no automatic rollback."
+  ],
+  "limits": [
+    "This review validates helper source and retained guards; it does not assert current checkout cleanliness, incoming overlap equality, all-file counts, actual modes/UID uniqueness or merge success.",
+    "Root reports current owned HEAD dadbf52 is clean, owned jobs closed, and accepted O2 overlap publication bytes identical. Those live facts are not re-audited here; the unchanged helper checks them at Root invocation.",
+    "Previous native results retain their original source and scope. No O3 production implementation or acceptance credit is established."
+  ],
+  "original": {
+    "bytes": 25532,
+    "lines": 442,
+    "path": "/private/tmp/cinder_a2_shared52_preserve_adopt.py",
+    "sha256": "e66d5280402f7344c394d8d43b6d6235ec2865fd2790bd7d149f1d09912dd9fb"
+  },
+  "review_revision": "act2-shared53-helper-static-peer-1",
+  "scope": "Source-only comparison of the frozen Shared53 preservation helper to preserved Shared52. No helper import/invocation, subprocess from helper, Git mutation, engine, checkout/settings/old-receipt edit, actual adoption or native acceptance claim.",
+  "status": "bounded static review complete; no concrete new helper issue found"
+}

@@ -1,0 +1,108 @@
+{
+  "review_revision": "act2-o3-loading-candidate-disposal-observer-static-1",
+  "at_utc": "2026-10-12T09:52:15.239174+00:00",
+  "scope": "Bounded frozen TEST observer delta and current CinderLevel lifecycle review only. No engine, recorder, import, Git, active edit or broad historical review.",
+  "original": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/evidence/A2-O3/loading-native-registered-story/source/tests/acts/act2/a2_o3_loading_side_smoke.gd",
+    "sha256": "8e544522aa18f34d1f065dc170ea5e529025b2b76148152891832075f2651a8d",
+    "lines": 382
+  },
+  "candidate": {
+    "path": "/private/tmp/a2_o3_loading_disposal_observer_draft_20261012.gd",
+    "sha256": "2c7dcf7fee098e961bcb86d54327d5977e3c4a0a1adf6a08468b8cb7f5f703d8",
+    "lines": 408
+  },
+  "byte_delta": {
+    "changed_existing_methods": [
+      "_observe_added",
+      "_finish"
+    ],
+    "new_methods": [
+      "_candidate_disposal_level",
+      "_observe_phase_or_cancel"
+    ],
+    "unchanged_existing_method_count": 23,
+    "unchanged_existing_methods": [
+      "_initialize",
+      "_run",
+      "_completed_epoch_rejection",
+      "_later_primary_before_retry",
+      "_mixed_transport",
+      "_check_pending",
+      "_corruptions",
+      "_test_defeat",
+      "_wait_quiet",
+      "_test_contact",
+      "_disk_restore",
+      "_seed_story",
+      "_new_shell",
+      "_click",
+      "_native",
+      "_state",
+      "_live",
+      "_settle",
+      "_same",
+      "_refs",
+      "_refs_freed",
+      "_encode",
+      "_expect"
+    ],
+    "one_added_member": "_disposal_observations:Array[Dictionary]",
+    "finish_change": "Only separate disposal diagnostics print; original setups/actions/footer/exit behavior retained.",
+    "exact_reverse_reconstruction": true,
+    "reverse_sha256": "8e544522aa18f34d1f065dc170ea5e529025b2b76148152891832075f2651a8d",
+    "original_expect_call_lines_identical": true,
+    "expect_call_line_count": 52
+  },
+  "actual_prior_diagnostic": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/evidence/A2-O3/loading-native-title-lifecycle-diagnostic/decoded-phase-observation.json",
+    "sha256": "e81e56a2913ac40d7599509fe3f346bc1a57827a511ff78d14ba75b6f761ecae",
+    "recorded_raw_sha256": "fd00022ffe6d16fa5c9ff8219062a2552560659d01542f1bd385ab7b83c4f5fe",
+    "actual_raw_sha256": "fd00022ffe6d16fa5c9ff8219062a2552560659d01542f1bd385ab7b83c4f5fe",
+    "raw_exact": true,
+    "notification_count": 8,
+    "actual_unique_emitters": 4,
+    "actors_per_emitter": {
+      "254191604014": [
+        "A2-L5:square-scout",
+        "A2-L5:park-scout"
+      ],
+      "345358993105": [
+        "A2-L5:square-scout",
+        "A2-L5:park-scout"
+      ],
+      "436576719907": [
+        "A2-L5:square-scout",
+        "A2-L5:park-scout"
+      ],
+      "527744111980": [
+        "A2-L5:square-scout",
+        "A2-L5:park-scout"
+      ]
+    },
+    "all_exact_candidate_disposal_flags": true,
+    "qualification": "Original8/1 and passive diagnostic remain unchanged; these events demonstrate disposal classification, not quiet-restoration or a new native pass."
+  },
+  "lifecycle_dependency": {
+    "path": "scripts/campaign/level.gd",
+    "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+    "construction": "enter_restore_candidate sets _entered=true before _on_enter_restore_candidate; constructors and restoring/prepared entered recipients are not eligible for this classifier.",
+    "disposal": "exit_level sets _lifecycle_busy=true and _entered=false before _on_exit_level, and clears _restore_candidate after cleanup. is_restore_candidate additionally requires inside-tree and paused.",
+    "installed": "finish_restore_candidate clears candidate flag; ordinary old installed epochs cannot qualify."
+  },
+  "negative_paths_retained": [
+    "Invalid/detached emitter, no nearest level, detached level, noncandidate level, entered=true, lifecycle_busy=false or non-Boolean declared flags return null and append the original event kind.",
+    "Only ray-phase/lane-phase/cue/cancel are routed to disposal accounting; Ray/Lane hit/defeat and Player input/gear/fired/death/action/action-resolved, Actor defeat and Level CP/completion/exit callbacks retain their original strict _events append.",
+    "Original zero-event assertions and full resource/HP/ammo/gear/checkpoint/progress comparisons remain byte-identical; no original damage/hit assertion is removed or reinterpreted.",
+    "Actual setup/injury/GUI/controller/route and snapshots, checkpoint/optional/replay/Story/stamp/exit/Leave/retry behavior are unchanged.",
+    "Classifier reads lifecycle flags only; it writes no flags/native state and calls no emitter state(), position, transform or world getter. get_instance_id is read only after valid inside-tree classification.",
+    "Separate scalar diagnostics retain kind/emitter ID/level ID/flags and supplied scalar values without reconstructing native transforms or repaired snapshots."
+  ],
+  "classification_limit": "This is a lifecycle-scoped separation of presentation/cancel callbacks from genuine nonplayable candidate disposal, not global event suppression or an assertion that all possible disposal payloads are pristine. Actual corrected native result remains Root-owned.",
+  "findings": [],
+  "status": "bounded source delta passed; no concrete observer/API issue found",
+  "untested": [
+    "No Godot parser/native run of this derivative by reviewer; Root queue result is independent.",
+    "No new gameplay, art, transport or full-route credit from static observer review."
+  ]
+}
