@@ -1,0 +1,80 @@
+Godot: --path /Users/howardchen/Documents/ChatGPT/video game idea --headless --script res://tests/sampled_circle_smoke.gd
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+TRACE sampled restore consumer: Sampled source getter mutated native custody phase=clear cue= fault=false
+ERROR: fresh whole-unit commit restores held state through actual interfaces
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _active_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:170)
+       [2] _dispose (res://tests/sampled_circle_smoke.gd:498)
+ERROR: true HP and original sample/phase/suffix/deadlines commit quietly without resampling
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _active_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:171)
+       [2] _dispose (res://tests/sampled_circle_smoke.gd:498)
+ERROR: resume appends the next actual segment then consumes the held opportunity once before real Player hurt
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _active_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:176)
+       [2] _ticks (res://tests/sampled_circle_smoke.gd:491)
+ERROR: continued actual exposure never retries consumed hurt opportunity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _active_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:179)
+       [2] _ticks (res://tests/sampled_circle_smoke.gd:491)
+TRACE moving return setup: clock=2.21666666666666 intended=2.1 state=running/active motion={ "position": (2.7, -0.004922, 0.0), "velocity": (0.0, 0.0, 0.0), "grounded": true, "dash_left_s": 0.0, "queued_dash": (0.0, 0.0, 0.0), "knockback_left_s": 0.0 } error=
+ERROR: a legitimate return dash starts late in the unchanged lock interval after actual cooldown
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _moving_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:242)
+       [2] _ticks (res://tests/sampled_circle_smoke.gd:491)
+ERROR: saved current native Hero is mid-dash and distinct from historical warning sample with an unresolved held suffix
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _moving_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:246)
+TRACE sampled restore consumer: Sampled source getter mutated native custody phase=clear cue= fault=false
+ERROR: quiet moving commit preserves true dash state, original sample and held suffix
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _moving_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:260)
+       [2] _dispose (res://tests/sampled_circle_smoke.gd:498)
+ERROR: resumed return path consumes one actual supported circle contact opportunity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _moving_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:265)
+       [2] _ticks (res://tests/sampled_circle_smoke.gd:491)
+ERROR: continued native exposure neither retries the consumed opportunity nor resamples the warning
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _moving_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:271)
+       [2] _ticks (res://tests/sampled_circle_smoke.gd:491)
+TRACE unsupported active: clock=2.5 deadline=1.5 state=running/recovery hp=100.0 consumed=false position=(0.0, 53.49504, 0.0) reason=
+ERROR: unsupported native active receiver receives no hurt and does not cancel or retarget its lease
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _unsupported_contact_preserves_exchange (res://tests/sampled_circle_smoke.gd:299)
+       [2] _ticks (res://tests/sampled_circle_smoke.gd:491)
+TRACE second cycle: { "accepted": false, "reason": "Warning-start sample supports an actual grounded stopped Hero only" } state=complete/clear reason= fault=false clock=4.23333333333332
+ERROR: explicit next cycle keeps native incarnation and takes one new warning-start sample after real cooldown
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _explicit_finite_cycles_and_cleanup (res://tests/sampled_circle_smoke.gd:334)
+       [2] _ticks (res://tests/sampled_circle_smoke.gd:491)
+ERROR: actual parent removal quietly retires its genuine lease and child danger state
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:505)
+       [1] _explicit_finite_cycles_and_cleanup (res://tests/sampled_circle_smoke.gd:337)
+       [2] _ticks (res://tests/sampled_circle_smoke.gd:491)
+Native sampled circle draft smoke: 100 checks, 12 failures
