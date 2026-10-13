@@ -1,0 +1,44 @@
+--- tests/acts/act3/crystalman_rule_portrait.gd
++++ tests/acts/act3/crystalman_rule_portrait.gd
+@@ -7,7 +7,7 @@
+ const PORTRAIT_DIRECTORY: String = "res://captures/act3/crystalman-rule-room"
+ const PORTRAIT_PHASES: Array[String] = ["warning", "active", "exposed", "spent"]
+ const EXPECTED_SMOKE_SHA: String = "12b6a11b02a9b3f1a7d8f1ec5e44a4febe28a1a9cdd117127b3ebdee313cba17"
+-const EXPECTED_RUNTIME_SHA: String = "473b0a73a3e252d612e6f2394e7072a1b31a15a3c2244e3518d28fc3f18f9ed3"
++const EXPECTED_RUNTIME_SHA: String = "d4bb3e237a75eb16f6c31f40d6ed38795c802e4c440ab2f3c9b29779ecdcaee2"
+ const REQUESTED_SIZE := Vector2i(340, 736)
+ const DRAW_LIMIT: int = 32
+ 
+@@ -84,10 +84,15 @@
+ 	var pixels: Image = root.get_texture().get_image() if _portrait_draw_seen else null
+ 	var after: Dictionary = _portrait_observation(camera, hud)
+ 	var same: bool = paused and _paused_observation_valid(after) and var_to_bytes(after) == before_bytes and Exact.stringify(after.leaf_snapshots) == leaf_wire
+-	var size_ok: bool = pixels != null and pixels.get_size().y == REQUESTED_SIZE.y and pixels.get_size().x in [339, REQUESTED_SIZE.x] and pixels.get_size() == Vector2i(root.get_texture().get_size())
++	var texture_metadata_size: Vector2 = root.get_texture().get_size()
++	# Metadata may describe the logical/stretch target; the original root Image
++	# is the native pixel evidence. Keep actual339/340x736 and window340x736.
++	var size_ok: bool = pixels != null and pixels.get_size().y == REQUESTED_SIZE.y and pixels.get_size().x in [339, REQUESTED_SIZE.x] and root.size == REQUESTED_SIZE
+ 	var directory: String = ProjectSettings.globalize_path(PORTRAIT_DIRECTORY)
+ 	var destination: String = directory.path_join(label + ".png")
+-	var saved: bool = _portrait_draw_seen and size_ok and same and DirAccess.make_dir_recursive_absolute(directory) == OK and pixels.save_png(destination) == OK
++	var mkdir_error: int = DirAccess.make_dir_recursive_absolute(directory) if _portrait_draw_seen and size_ok and same else ERR_INVALID_DATA
++	var png_error: int = pixels.save_png(destination) if mkdir_error == OK else ERR_INVALID_DATA
++	var saved: bool = _portrait_draw_seen and size_ok and same and mkdir_error == OK and png_error == OK
+ 	if saved:
+ 		# A framing failure retains exact frozen diagnostic pixels; no moving
+ 		# the camera, cropping, stretching, repainting or synthetic scene.
+@@ -101,12 +106,12 @@
+ 		observation.close()
+ 		text.store_string(var_to_str(before) + "\n")
+ 		text.close()
+-		var receipt: Dictionary = {"schema_version": 1, "test_only": true, "label": label, "requested_resolution": [REQUESTED_SIZE.x, REQUESTED_SIZE.y], "actual_native_size": [pixels.get_size().x, pixels.get_size().y], "png_sha256": FileAccess.get_sha256(destination), "native_observation_sha256": FileAccess.get_sha256(destination + ".native.bin"), "leaf_transport_sha256": leaf_wire.sha256_text(), "room_phase": live.phase, "generation": live.generation, "joins": live.joins, "tether_hits": live.tether_hits, "player_clock_s": _hero.get_world_action_clock(), "scheduler_clock_s": _scheduler.get_clock(), "whole_current_view_point_count": points.size(), "actual_camera_error": view_error, "unchanged_native_leaf_proof_input_camera_events_floor_kit": same, "render_freeze_without_gameplay_tick": true, "inherited_gui_pause_resume_preceded_capture": true, "actual_post_actor_ticks": _ticks, "smoke_sha256": EXPECTED_SMOKE_SHA, "runtime_sha256": EXPECTED_RUNTIME_SHA, "production_art_or_transport_credit": false}
++		var receipt: Dictionary = {"schema_version": 1, "test_only": true, "label": label, "requested_resolution": [REQUESTED_SIZE.x, REQUESTED_SIZE.y], "actual_native_size": [pixels.get_size().x, pixels.get_size().y], "root_texture_metadata_size": [texture_metadata_size.x, texture_metadata_size.y], "png_sha256": FileAccess.get_sha256(destination), "native_observation_sha256": FileAccess.get_sha256(destination + ".native.bin"), "leaf_transport_sha256": leaf_wire.sha256_text(), "room_phase": live.phase, "generation": live.generation, "joins": live.joins, "tether_hits": live.tether_hits, "player_clock_s": _hero.get_world_action_clock(), "scheduler_clock_s": _scheduler.get_clock(), "whole_current_view_point_count": points.size(), "actual_camera_error": view_error, "unchanged_native_leaf_proof_input_camera_events_floor_kit": same, "render_freeze_without_gameplay_tick": true, "inherited_gui_pause_resume_preceded_capture": true, "actual_post_actor_ticks": _ticks, "smoke_sha256": EXPECTED_SMOKE_SHA, "runtime_sha256": EXPECTED_RUNTIME_SHA, "production_art_or_transport_credit": false}
+ 		record.store_string(JSON.stringify(receipt, "  ") + "\n")
+ 		record.close()
+ 		_portraits[label] = destination
+ 		print("PORTRAIT: " + destination)
+-	print("CRYSTALMAN_DRAW_DIAGNOSTIC: " + JSON.stringify({"label": label, "before": draw_before, "after": _portrait_draw_diagnostic(), "draw_seen": _portrait_draw_seen, "unchanged_native_observation": same, "actual_camera_error": view_error, "image_available": pixels != null, "actual_image_size": str(pixels.get_size()) if pixels != null else "none"}))
++	print("CRYSTALMAN_DRAW_DIAGNOSTIC: " + JSON.stringify({"label": label, "before": draw_before, "after": _portrait_draw_diagnostic(), "draw_seen": _portrait_draw_seen, "unchanged_native_observation": same, "actual_camera_error": view_error, "image_available": pixels != null, "size_policy_ok": size_ok, "root_texture_metadata_size": str(texture_metadata_size), "mkdir_error": mkdir_error, "png_error": png_error, "actual_image_size": str(pixels.get_size()) if pixels != null else "none"}))
+ 	paused = false
+ 	if not _expect(saved, "actual native portrait preserves paused state without a tick: " + label, "size=" + str(pixels.get_size()) if pixels != null else "bounded native draw unavailable"): return false
+ 	return _expect(view_error.is_empty(), "actual current Camera/HUD contains complete Hero/source/footprint/whole-proof landing/tether union: " + label, view_error)

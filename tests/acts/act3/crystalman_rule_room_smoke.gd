@@ -250,7 +250,7 @@ func _drain_original_replay_recovery(original_until_s: float, history: int, even
 			return _expect(false, "spent finite recovery cannot redispatch/recapture/cancel", str(state))
 		# Cursor completes at >=deadline; Scheduler removes its lease at >.
 		# Observe both real conditions, never rewrite or advance either clock.
-		if native_status == "complete" and _scheduler.reservations().is_empty():
+		if native_status == "complete" and _scheduler.get_clock() > original_until_s and _scheduler.reservations().is_empty():
 			return _expect(_scheduler.get_clock() >= original_until_s and state.phase == "spent" and state.cleared and state.tether_hits == 1, "original native replay naturally completes with empty lease and unchanged spent result")
 		if not await _tick(): return false
 	return _expect(false, "finite original replay recovery drains within native test bound")
@@ -333,22 +333,34 @@ func _until(target: float) -> bool:
 	return _expect(false, "actual Scheduler reaches proof deadline", str(target))
 
 
-func _tick() -> bool:
-	if paused or not is_instance_valid(_barrier): return _expect(false, "native tick has an actual live unpaused handle")
-	_barrier.waiting = true
-	_barrier.expired = false
-	_barrier.frames = 0
-	await _barrier.observed
-	_ticks += 1
-	var state: Dictionary = _room.call("state")
-	var fixed: bool = _floor_collision.global_transform == _floor_transform and (_floor_collision.shape as BoxShape3D).size == _floor_size
-	if _barrier.expired or paused or not String(state.configuration_error).is_empty() or _hero.dead or _hero.hp != _hp or _hero.equipment.snapshot() != _kit or not fixed or _blast_seen or _scheduler.get_clock() > LIMIT_S:
-		var resume: Button = _find_resume(_game.get("hud") as Node)
-		var operands: Dictionary = {"barrier_expired": _barrier.expired, "barrier_frames": _barrier.frames, "barrier_waiting": _barrier.waiting, "tree_paused": paused, "configuration_error": String(state.configuration_error), "hero_dead": _hero.dead, "actual_hp": _hero.hp, "original_hp": _hp, "actual_kit": _hero.equipment.snapshot(), "original_kit": _kit, "floor_fixed": fixed, "blast_seen": _blast_seen, "scheduler_clock_s": _scheduler.get_clock(), "player_clock_s": _hero.get_world_action_clock(), "clock_limit_s": LIMIT_S, "room_phase": state.phase, "pause_requested": _game.call("is_pause_requested"), "resume_visible": is_instance_valid(resume) and resume.is_visible_in_tree(), "native_physics_frames": Engine.get_physics_frames(), "native_process_frames": Engine.get_process_frames(), "native_window_has_focus": root.has_focus()}
-		print("READONLY POST-ACTOR FAILURE OPERANDS " + var_to_str(operands))
-		return _expect(false, "actual post-actor room tick keeps Player/kit/permanent floor and bounded scope", str(operands))
-	return true
+func _recover_paused_native_barrier() -> bool:
+	# Graphical derivatives may consume an actual visible GUI Resume. Headless
+	# mechanics retain the original fail-closed unpaused tick requirement.
+	return false
 
+
+func _tick() -> bool:
+	for _attempt: int in range(2):
+		if paused and not await _recover_paused_native_barrier(): return _expect(false, "native tick has an actual live unpaused handle")
+		if not is_instance_valid(_barrier): return _expect(false, "native tick has an actual live unpaused handle")
+		_barrier.waiting = true
+		_barrier.expired = false
+		_barrier.frames = 0
+		await _barrier.observed
+		# A normal application-focus Pause stops physics. Its process-frame
+		# timeout is not a post-actor tick; resume through the real GUI before
+		# retrying the same tick, with all original gameplay guards unchanged.
+		if _barrier.expired and paused and await _recover_paused_native_barrier(): continue
+		if not _barrier.expired and not paused: _ticks += 1
+		var state: Dictionary = _room.call("state")
+		var fixed: bool = _floor_collision.global_transform == _floor_transform and (_floor_collision.shape as BoxShape3D).size == _floor_size
+		if _barrier.expired or paused or not String(state.configuration_error).is_empty() or _hero.dead or _hero.hp != _hp or _hero.equipment.snapshot() != _kit or not fixed or _blast_seen or _scheduler.get_clock() > LIMIT_S:
+			var resume: Button = _find_resume(_game.get("hud") as Node)
+			var operands: Dictionary = {"barrier_expired": _barrier.expired, "barrier_frames": _barrier.frames, "barrier_waiting": _barrier.waiting, "tree_paused": paused, "configuration_error": String(state.configuration_error), "hero_dead": _hero.dead, "actual_hp": _hero.hp, "original_hp": _hp, "actual_kit": _hero.equipment.snapshot(), "original_kit": _kit, "floor_fixed": fixed, "blast_seen": _blast_seen, "scheduler_clock_s": _scheduler.get_clock(), "player_clock_s": _hero.get_world_action_clock(), "clock_limit_s": LIMIT_S, "room_phase": state.phase, "pause_requested": _game.call("is_pause_requested"), "resume_visible": is_instance_valid(resume) and resume.is_visible_in_tree(), "native_physics_frames": Engine.get_physics_frames(), "native_process_frames": Engine.get_process_frames(), "native_window_has_focus": root.has_focus()}
+			print("READONLY POST-ACTOR FAILURE OPERANDS " + var_to_str(operands))
+			return _expect(false, "actual post-actor room tick keeps Player/kit/permanent floor and bounded scope", str(operands))
+		return true
+	return _expect(false, "one actual focus-pause recovery resumes a native post-actor tick")
 
 func _latest_sequence() -> int:
 	var records: Array[Dictionary] = _hero.get_world_action_records()

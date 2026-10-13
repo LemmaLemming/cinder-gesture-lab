@@ -1,0 +1,34 @@
+--- tests/acts/act3/crystalman_rule_room_smoke.gd
++++ tests/acts/act3/crystalman_rule_room_smoke.gd
+@@ -229,6 +229,9 @@
+ 	if not _expect(error.is_empty() and records.size() == 1 and records[0].kind == "primary" and records[0].hits == 0 and _room.call("state").tether_hits == 1 and _room.call("state").cleared and not _blast_seen, "actual ordinary primary severs low environment tether once without fake enemy hits/blast/resource credit", error): return false
+ 	if not _expect(float(records[0].started_at_s) + maxf(float(records[0].cooldown_s), float(records[0].commitment_duration_s)) <= original_deadline, "actual ordinary primary and full recovery fit original tether deadline", str(records[0])): return false
+ 	if not await _wait_phase("spent", 30): return false
++	if not _expect(_room.call("state").cleared and _room.call("state").tether_hits == 1 and not tether.is_in_group("environment_attack_targets"), "tether is spent immediately without waiting for native recovery"): return false
++	var clear_history: int = _latest_sequence()
++	if not await _drain_original_replay_recovery(float(original.lease.recovery_until_s), clear_history, 1): return false
+ 	var state: Dictionary = _room.call("state")
+ 	var original_event: Dictionary = state.sequence.capture_snapshot.slots[0].primary
+ 	if not _expect(_events.size() == 1 and _events[0].kind == "primary" and _events[0].record_sequence == original_event.sequence and _retirements.size() == 1 and _scheduler.reservations().is_empty() and not tether.is_in_group("environment_attack_targets") and _hero.hp == _hp and _hero.equipment.snapshot() == _kit, "one finite exact replay event; spent target and live lease retire without capture recursion"): return false
+@@ -236,6 +239,21 @@
+ 	for _i: int in range(30):
+ 		if not await _tick(): return false
+ 	return _expect(_events.size() == 1 and _retirements.size() == 1 and _latest_sequence() == history and _room.call("state").joins == 1 and _room.call("state").tether_hits == 1, "later native ticks cannot replay, recapture, hit or grant completion again")
++
++
++func _drain_original_replay_recovery(original_until_s: float, history: int, event_count: int) -> bool:
++	# Test-only drain after the already spent tether. No game progression gate.
++	for _i: int in range(600):
++		var state: Dictionary = _room.call("state")
++		var native_status: String = String(state.playback.status)
++		if _events.size() != event_count or _latest_sequence() != history or native_status == "cancelled":
++			return _expect(false, "spent finite recovery cannot redispatch/recapture/cancel", str(state))
++		# Cursor completes at >=deadline; Scheduler removes its lease at >.
++		# Observe both real conditions, never rewrite or advance either clock.
++		if native_status == "complete" and _scheduler.reservations().is_empty():
++			return _expect(_scheduler.get_clock() >= original_until_s and state.phase == "spent" and state.cleared and state.tether_hits == 1, "original native replay naturally completes with empty lease and unchanged spent result")
++		if not await _tick(): return false
++	return _expect(false, "finite original replay recovery drains within native test bound")
+ 
+ 
+ func _pause_resume(label: String) -> bool:

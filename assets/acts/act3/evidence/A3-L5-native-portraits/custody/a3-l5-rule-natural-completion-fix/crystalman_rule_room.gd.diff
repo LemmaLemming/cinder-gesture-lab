@@ -1,0 +1,15 @@
+--- scripts/acts/act3/crystalman_rule_room.gd
++++ scripts/acts/act3/crystalman_rule_room.gd
+@@ -452,8 +452,10 @@
+ 
+ 
+ func _finish_at_barrier() -> void:
+-	_cancel_consumer("crystalman_low_tether_severed")
+-	threat_scheduler.end_encounter("crystalman_finite_rule_clear")
++	# All attacks have ended before the ordinary opening. Release is immediate;
++	# retain the original finite recovery/clock/profile for honest completion
++	# and paired snapshots. This is never a progression waiting condition.
++	# Normal level disposal still cancels/ends the whole native unit.
+ 	_tether_cue.present("spent", "attack")
+ 	phase = "spent"
+ 

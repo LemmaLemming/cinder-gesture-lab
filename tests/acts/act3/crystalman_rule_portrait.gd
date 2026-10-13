@@ -6,13 +6,15 @@ extends "res://tests/acts/act3/crystalman_rule_room_smoke.gd"
 
 const PORTRAIT_DIRECTORY: String = "res://captures/act3/crystalman-rule-room"
 const PORTRAIT_PHASES: Array[String] = ["warning", "active", "exposed", "spent"]
-const EXPECTED_SMOKE_SHA: String = "6ed1f50109d3a0f70c8e110e0d0a23f52c7cb42014820b2bd850f18cadcc79b5"
+const EXPECTED_SMOKE_SHA: String = "d806238b76a045c77fb9be30ef00a1d81ea0812c315506eef827d1505a14cf80"
 const EXPECTED_RUNTIME_SHA: String = "d4bb3e237a75eb16f6c31f40d6ed38795c802e4c440ab2f3c9b29779ecdcaee2"
 const REQUESTED_SIZE := Vector2i(340, 736)
 const DRAW_LIMIT: int = 32
 
 var _portraits: Dictionary = {}
 var _portrait_draw_seen: bool = false
+var _focus_pause_resumes: int = 0
+const FOCUS_PAUSE_RESUME_LIMIT: int = 4
 
 
 func _run() -> void:
@@ -43,6 +45,23 @@ func _pause_resume(label: String) -> bool:
 	# The inherited consumed GUI Resume has returned without another physics
 	# await; the render-only freeze below is separate from public Pause proof.
 	return await _portrait(label)
+
+
+func _recover_paused_native_barrier() -> bool:
+	var hud: GameHUD = _game.get("hud") as GameHUD if is_instance_valid(_game) else null
+	var resume: Button = _find_resume(hud) if is_instance_valid(hud) else null
+	if not paused or root.has_focus() or not is_instance_valid(resume) or not resume.is_visible_in_tree() or _focus_pause_resumes >= FOCUS_PAUSE_RESUME_LIMIT: return false
+	var camera: Camera3D = _game.get("camera") as Camera3D
+	var before: Dictionary = _portrait_observation(camera, hud)
+	if not _expect(_paused_observation_valid(before) and not _hero.dead and not _blast_seen and _scheduler.get_clock() <= LIMIT_S, "actual application-focus Pause retains complete native leaf/floor/resources before GUI recovery"): return false
+	var room_before: PackedByteArray = var_to_bytes(before.room)
+	_focus_pause_resumes += 1
+	print("ACTUAL_FOCUS_PAUSE_RESUME: " + JSON.stringify({"count": _focus_pause_resumes, "phase": before.room.phase, "player_clock_s": before.player_clock_s, "scheduler_clock_s": before.scheduler_clock_s, "barrier_expired": _barrier.expired, "barrier_frames": _barrier.frames}))
+	# Direct base call intentionally does not take a duplicate phase portrait.
+	# Its actual Pause/GUI Resume checks include in-flight Player motion and
+	# Gate/Scheduler/Playback clocks, input, camera and dispatched-event count.
+	if not await super._pause_resume("application focus pause"): return false
+	return _expect(not paused and var_to_bytes(_room.call("state")) == room_before and _floor_collision.global_transform == _floor_transform and (_floor_collision.shape as BoxShape3D).size == _floor_size, "consumed application-focus Resume keeps original proof/phase/permanent floor without a physics tick")
 
 
 func _sever_with_real_primary() -> bool:
