@@ -1,0 +1,29 @@
+Godot: --path /Users/howardchen/Documents/ChatGPT/video game idea --headless --script res://tests/sampled_circle_smoke.gd
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+TRACE sampled restore consumer: Sampled native getter control witness cannot encode current runtime state phase=clear cue= fault=false
+ERROR: fresh whole-unit commit restores held state through actual interfaces
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:498)
+       [1] _active_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:163)
+       [2] _dispose (res://tests/sampled_circle_smoke.gd:491)
+ERROR: true HP and original sample/phase/suffix/deadlines commit quietly without resampling
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:498)
+       [1] _active_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:164)
+       [2] _dispose (res://tests/sampled_circle_smoke.gd:491)
+ERROR: resume appends the next actual segment then consumes the held opportunity once before real Player hurt
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:498)
+       [1] _active_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:169)
+       [2] _ticks (res://tests/sampled_circle_smoke.gd:484)
+ERROR: continued actual exposure never retries consumed hurt opportunity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/sampled_circle_smoke.gd:498)
+       [1] _active_held_suffix_fresh_quiet_restore (res://tests/sampled_circle_smoke.gd:172)
+       [2] _ticks (res://tests/sampled_circle_smoke.gd:484)
+Native sampled circle draft smoke: 17 checks, 4 failures

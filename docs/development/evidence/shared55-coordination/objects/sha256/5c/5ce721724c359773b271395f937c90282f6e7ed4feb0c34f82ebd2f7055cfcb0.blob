@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-13T06:40:39.324955+00:00",
+  "reviewer": "/root/o3_registration_review",
+  "status": "PASS_DURABLE_ARCHIVE_CUSTODY",
+  "index_ref": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/docs/development/evidence/act2-o3-independent-testing/index.json",
+    "bytes": 5233587,
+    "sha256": "57a277f8de9a497f4a494c6e7c67724e5445a7015c15f41c1b5f2dd5bbab00f0",
+    "mode": "0644",
+    "symlink": false
+  },
+  "references_checked": 7281,
+  "frozen_rows_checked": 7241,
+  "unique_objects_checked": 2095,
+  "unique_object_bytes": 62722669,
+  "all_original_CAS_hash_bytes_fullmode_joins_exact": true,
+  "mapping_joins": {
+    "import-01": {
+      "original_source_rows": 2323,
+      "mapped_rows": 2323,
+      "same_runtime_set": true
+    },
+    "registration-01": {
+      "original_source_rows": 2459,
+      "mapped_rows": 2459,
+      "same_runtime_set": true
+    },
+    "registration-02": {
+      "original_source_rows": 2459,
+      "mapped_rows": 2459,
+      "same_runtime_set": true
+    }
+  },
+  "metadata_joins": {
+    "import-01": {
+      "embedded_result_exact": true,
+      "candidate_source_result_job_exact": true,
+      "job_mode_exact": true,
+      "source_rows_exact": true
+    },
+    "registration-01": {
+      "embedded_result_exact": true,
+      "candidate_source_result_job_exact": true,
+      "job_mode_exact": true,
+      "source_rows_exact": true
+    },
+    "registration-02": {
+      "embedded_result_exact": true,
+      "candidate_source_result_job_exact": true,
+      "job_mode_exact": true,
+      "source_rows_exact": true
+    }
+  },
+  "UID_joins": {
+    "import-01": {
+      "count": 466,
+      "original_real_identities_match_bank": true
+    },
+    "registration-01": {
+      "count": 467,
+      "original_real_identities_match_bank": true
+    },
+    "registration-02": {
+      "count": 467,
+      "original_real_identities_match_bank": true
+    }
+  },
+  "selected_cache_paths": {
+    "import-01": [],
+    "registration-01": [
+      ".godot/editor/project_metadata.cfg",
+      ".godot/global_script_class_cache.cfg",
+      ".godot/uid_cache.bin"
+    ],
+    "registration-02": [
+      ".godot/editor/project_metadata.cfg",
+      ".godot/global_script_class_cache.cfg",
+      ".godot/uid_cache.bin"
+    ]
+  },
+  "original_results": [
+    {
+      "label": "import-01",
+      "status": "CLOSED",
+      "exit": 0,
+      "clean": true,
+      "summaries": [],
+      "diagnostics": [],
+      "queue_wait_s": 0.0297512499964796,
+      "elapsed_including_queue_s": 6.98587995802518
+    },
+    {
+      "label": "registration-01",
+      "status": "CLOSED",
+      "exit": 1,
+      "clean": false,
+      "summaries": [
+        {
+          "checks": 33,
+          "failures": 1
+        }
+      ],
+      "diagnostics": [
+        "ERROR: FAIL A2-O3 loading: single actual GUI click settles RetryButton: Restore candidate presentation failed: Required source, footprint, player or landing lies outside the protected screen rectangle",
+        "ERROR: FAIL A2-O3 loading: single actual GUI click settles RetryButton: Restore candidate presentation failed: Required source, footprint, player or landing lies outside the protected screen rectangle",
+        "WARNING: 4 ObjectDB instances were leaked at exit (run with `--verbose` for details)."
+      ],
+      "queue_wait_s": 0.028109333012253046,
+      "elapsed_including_queue_s": 27.359743042034097
+    },
+    {
+      "label": "registration-02",
+      "status": "CLOSED",
+      "exit": 0,
+      "clean": true,
+      "summaries": [
+        {
+          "checks": 43,
+          "failures": 0
+        }
+      ],
+      "diagnostics": [],
+      "queue_wait_s": 157.505672957981,
+      "elapsed_including_queue_s": 194.0149145409814
+    }
+  ],
+  "native_archive_ignore_exists": true,
+  "archive_scope": "Exact original input/path/mode/UID/cache/config/command/log/result across closed import0, original33/1nonclean, corrected43/0clean and bounded source/custody/visual reviews. No original metadata overwritten. Generated caches are the three expressly selected inputs, not complete runtime/dynamic/cachegraph.",
+  "archive_limitations": "No inherited136 rerun or fullroute. Owner53 scopes104/247/136/164/28/sevenpixels reused. Original33/1protected-view failure/fourObjectDB leaks and earlierownerfailures remain. TESTprefix/feet/2gatedinjuries/lethalHero disclosed; one representativeportrait, quietscenic/fullart/allkit/performance/mobile limits remain.",
+  "archive_acceptance_flag": false,
+  "required_findings": [],
+  "primary_source_selection": "Root copy remains live; no primary runtime/act content/registry/index inspection or mutation in this review.",
+  "reviewer_mutations": "Only this scratchJSON/MD written; no archived bytes or original closed records changed.",
+  "qualification": "All7,281 archive references preserve original absolute provenance and fullstat mode.7,241 frozenruntime mappings can reconstruct source bytes/modes; CAS object permissions do not replace recorded runtime modes. Original failed33/1 and4leaks remain separate from corrected43/0. Selected cache scope is not complete dynamic/import/cachegraph. No recursive self-hash or Git persistence of permission bits beyond executable mode is claimed."
+}

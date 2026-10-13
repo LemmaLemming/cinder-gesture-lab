@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-13T07:02:44.592322+00:00",
+  "reviewer": "/root/o3_registration_review/closed01_audit",
+  "status": "PASS_ORIGINAL_COORDINATION_IDENTITY_SCOPE_CHRONOLOGY",
+  "scope": "Read-only exact five retained coordination originals plus the three expressly authorized static canonical notice JSON bodies. No mailbox enumeration/read/ACK outside those three,mailbox mutation,production/Git/index/staging/native/UID changes. Only new peer scratch written.",
+  "publication": "f8b984a2a5371cae3f1deef8aa394bb892f28e78",
+  "required_original_references": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/act2-o3-integration/shared55-notices.json",
+      "bytes": 6246,
+      "sha256": "e5d8afef55b4b46e7338455355d20e51a615612eb730742c9c1f6e5281048309",
+      "mode": "0644"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/act2-o3-integration/shared55-notices-after-dispatch.json",
+      "bytes": 6594,
+      "sha256": "b03a73be032a1248f94910b10fe02f9d2cde2b71501dbbe8e37cd0534c65890b",
+      "mode": "0644"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/act2-o3-integration/shared55-original-chat-dispatch.json",
+      "bytes": 6625,
+      "sha256": "8c030f8f0c2b1ef79a2f9828857d8c4b477a2ed969032d1491166162b1b7ca8b",
+      "mode": "0644"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/act2-o3-integration/run-after-shared55-canonical-before-dispatch.json",
+      "bytes": 276021,
+      "sha256": "e7edac5f14c92a2d20fd252fb6d571fe9cffb3cd7e38b15526a3a1a2605dc96e",
+      "mode": "0644"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/act2-o3-integration/run-after-shared55-dispatch.json",
+      "bytes": 276831,
+      "sha256": "942cdb4db9276b6026e21a3270a6e2f4832d22af82559bc2379c7bb4c77e424b",
+      "mode": "0644"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/integration/messages/735982bc-52cd-4e6a-adf8-de94ac22441d-RESPONSE.json",
+      "bytes": 2187,
+      "sha256": "915ba598018506f561d0df0d024a43e25dee635de8bac385c7fbab813cd1878b",
+      "mode": "0644"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/integration/messages/f6c191b1-eba9-4bd4-aac2-0b9657c79db6-ACCEPTED.json",
+      "bytes": 2175,
+      "sha256": "092afb07b27f63c7c3cec6dff5ee4335e966da06d0133dec6d058873a65e2cff",
+      "mode": "0644"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/integration/messages/6d625447-e82d-48df-88d9-f384bd26057a-RESPONSE.json",
+      "bytes": 2013,
+      "sha256": "21d2fe0db63d4e7c95709f7c4791007181bb5e7b57eb334730c82c2d3a5a5a6f",
+      "mode": "0644"
+    }
+  ],
+  "supplied_hash_joins": {
+    "dispatch": true,
+    "before_metadata": true,
+    "before_run": true,
+    "after_run": true,
+    "after_metadata_to_dispatch": true
+  },
+  "notices": [
+    {
+      "role": "act1",
+      "thread_id": "01a11adf-2ec8-7702-96c6-0fa1e240c332",
+      "registered_worker_id": "01a11adf-2ec8-7702-96c6-0fa1e240c332",
+      "canonical_notice_id": "735982bc-52cd-4e6a-adf8-de94ac22441d",
+      "canonical_type": "RESPONSE",
+      "canonical_level": "A1-L5",
+      "created_at": "2026-10-13T06:50:45.384966+00:00",
+      "dispatch_recorded_at": "2026-10-13T06:55:07.763Z",
+      "raw_hash_matches_metadata": true,
+      "raw_text_equals_metadata": true,
+      "all_identity_joins_exact": true,
+      "tool_result_thread_id": [
+        {
+          "threadId": "01a11adf-2ec8-7702-96c6-0fa1e240c332"
+        }
+      ],
+      "tool_result_is_error": false,
+      "tool_return_matches_registered_recipient": true,
+      "exact_notice_path_hash_in_dispatched_prompt": true,
+      "publication_and_API_match": true,
+      "no_adoption_inferred": true,
+      "raw_notice_fields": {
+        "message_id": "735982bc-52cd-4e6a-adf8-de94ac22441d",
+        "run_id": "cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2",
+        "type": "RESPONSE",
+        "sender": "integration",
+        "recipient": [
+          "act1"
+        ],
+        "worker_id": "01a11adf-2ec8-7702-96c6-0fa1e240c332",
+        "level": "A1-L5",
+        "created_at": "2026-10-13T06:50:45.384966+00:00",
+        "commit": "f8b984a2a5371cae3f1deef8aa394bb892f28e78",
+        "api_revision": "campaign-shared-55",
+        "blocking": false,
+        "acceptance_policy": "focused-desktop-level-1",
+        "evidence": "docs/development/ACT2_O3_ACCEPTANCE.md"
+      }
+    },
+    {
+      "role": "act2",
+      "thread_id": "01a11adf-a56f-77d2-a7bc-45fd94702ab1",
+      "registered_worker_id": "01a11adf-a56f-77d2-a7bc-45fd94702ab1",
+      "canonical_notice_id": "f6c191b1-eba9-4bd4-aac2-0b9657c79db6",
+      "canonical_type": "ACCEPTED",
+      "canonical_level": "A2-O3",
+      "created_at": "2026-10-13T06:50:45.384966+00:00",
+      "dispatch_recorded_at": "2026-10-13T06:55:08.118Z",
+      "raw_hash_matches_metadata": true,
+      "raw_text_equals_metadata": true,
+      "all_identity_joins_exact": true,
+      "tool_result_thread_id": [
+        {
+          "threadId": "01a11adf-a56f-77d2-a7bc-45fd94702ab1"
+        }
+      ],
+      "tool_result_is_error": false,
+      "tool_return_matches_registered_recipient": true,
+      "exact_notice_path_hash_in_dispatched_prompt": true,
+      "publication_and_API_match": true,
+      "no_adoption_inferred": true,
+      "raw_notice_fields": {
+        "message_id": "f6c191b1-eba9-4bd4-aac2-0b9657c79db6",
+        "run_id": "cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2",
+        "type": "ACCEPTED",
+        "sender": "integration",
+        "recipient": [
+          "act2"
+        ],
+        "worker_id": "01a11adf-a56f-77d2-a7bc-45fd94702ab1",
+        "level": "A2-O3",
+        "created_at": "2026-10-13T06:50:45.384966+00:00",
+        "commit": "f8b984a2a5371cae3f1deef8aa394bb892f28e78",
+        "api_revision": "campaign-shared-55",
+        "blocking": false,
+        "acceptance_policy": "focused-desktop-level-1",
+        "evidence": "docs/development/ACT2_O3_ACCEPTANCE.md",
+        "in_reply_to": "a7547576-fae7-4294-9927-747c7cbca3e6",
+        "accepted_commit": "f142bb5152f9733996a91dd1497d4463b7cb5aad"
+      }
+    },
+    {
+      "role": "act3",
+      "thread_id": "01a11ae0-0acf-7d00-a987-321a98de5b66",
+      "registered_worker_id": "01a11ae0-0acf-7d00-a987-321a98de5b66",
+      "canonical_notice_id": "6d625447-e82d-48df-88d9-f384bd26057a",
+      "canonical_type": "RESPONSE",
+      "canonical_level": "A3-L5",
+      "created_at": "2026-10-13T06:50:45.384966+00:00",
+      "dispatch_recorded_at": "2026-10-13T06:55:08.184Z",
+      "raw_hash_matches_metadata": true,
+      "raw_text_equals_metadata": true,
+      "all_identity_joins_exact": true,
+      "tool_result_thread_id": [
+        {
+          "threadId": "01a11ae0-0acf-7d00-a987-321a98de5b66"
+        }
+      ],
+      "tool_result_is_error": false,
+      "tool_return_matches_registered_recipient": true,
+      "exact_notice_path_hash_in_dispatched_prompt": true,
+      "publication_and_API_match": true,
+      "no_adoption_inferred": true,
+      "raw_notice_fields": {
+        "message_id": "6d625447-e82d-48df-88d9-f384bd26057a",
+        "run_id": "cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2",
+        "type": "RESPONSE",
+        "sender": "integration",
+        "recipient": [
+          "act3"
+        ],
+        "worker_id": "01a11ae0-0acf-7d00-a987-321a98de5b66",
+        "level": "A3-L5",
+        "created_at": "2026-10-13T06:50:45.384966+00:00",
+        "commit": "f8b984a2a5371cae3f1deef8aa394bb892f28e78",
+        "api_revision": "campaign-shared-55",
+        "blocking": false,
+        "acceptance_policy": "focused-desktop-level-1",
+        "evidence": "docs/development/ACT2_O3_ACCEPTANCE.md"
+      }
+    }
+  ],
+  "canonical_acceptance_snapshot": {
+    "unique_level_count": 16,
+    "declared_count": 16,
+    "count_matches_16": true,
+    "act2_count": 8,
+    "accepted_levels_unchanged": true,
+    "A2_O3": {
+      "level_id": "A2-O3",
+      "authored_commit": "f142bb5152f9733996a91dd1497d4463b7cb5aad",
+      "authored_content_commit": "fd2a83fd20faa2fd2f727f7567466d0ef41559b9",
+      "native_source_api_revision": "campaign-shared-53",
+      "independent_native_api_revision": "campaign-shared-54",
+      "registration_commit": "f8b984a2a5371cae3f1deef8aa394bb892f28e78",
+      "current_shared_api_revision": "campaign-shared-55",
+      "scene_path": "res://scenes/acts/act2/a2_o3.tscn",
+      "local_snapshot_version": 1,
+      "local_key_count": 17,
+      "accepted_at": "2026-10-13T06:50:45.384966+00:00",
+      "handoff_message_id": "a7547576-fae7-4294-9927-747c7cbca3e6",
+      "acceptance_message_id": "f6c191b1-eba9-4bd4-aac2-0b9657c79db6",
+      "acceptance_policy": "focused-desktop-level-1",
+      "production_registration_checks": 43,
+      "failures": 0,
+      "primary_import_exit": 0,
+      "durable_acceptance": "docs/development/ACT2_O3_ACCEPTANCE.md",
+      "evidence": "docs/development/evidence/act2-o3-independent-testing/index.json",
+      "evidence_sha256": "e46f3cabd0508d6cb07a9f7dab3a34e5846c2a477db08c05dac4eb3da5da63e7",
+      "limitations": "OriginalRoot33/1nonclean/fourObjectDB warnings and ownerfailed scopes preserved; TESTprefix/feet/gatedinjuries/lethalHero disclosed; naturallyabsentpending/fullroute/earnedexit/allpose/allgear/quietsign/mooring/fullart/pacing/performance/mobile untested."
+    }
+  },
+  "before_after_run_deltas": [
+    {
+      "path": "$.execution_resume.latest_reaffirmation",
+      "change": "added",
+      "after": {
+        "at": "2026-10-13T06:55:39.329829+00:00",
+        "source": "Latest direct human instruction: all agents unpause and continue",
+        "actual_registered_chat_dispatch_all_three": true,
+        "original_dispatch_sha256": "8c030f8f0c2b1ef79a2f9828857d8c4b477a2ed969032d1491166162b1b7ca8b",
+        "scope": "Existing owners and assignments resumed; actual Shared55 adoption remains separate pending ACK."
+      }
+    },
+    {
+      "path": "$.shared55_publication.actual_chat_dispatch_at",
+      "change": "added",
+      "after": "2026-10-13T06:55:39.329829+00:00"
+    },
+    {
+      "path": "$.shared55_publication.actual_chat_dispatch_success",
+      "change": "added",
+      "after": true
+    },
+    {
+      "path": "$.shared55_publication.original_chat_dispatch_path",
+      "change": "added",
+      "after": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/act2-o3-integration/shared55-original-chat-dispatch.json"
+    },
+    {
+      "path": "$.shared55_publication.original_chat_dispatch_sha256",
+      "change": "added",
+      "after": "8c030f8f0c2b1ef79a2f9828857d8c4b477a2ed969032d1491166162b1b7ca8b"
+    },
+    {
+      "path": "$.updated_at",
+      "change": "changed",
+      "before": "2026-10-13T06:50:45.384966+00:00",
+      "after": "2026-10-13T06:55:39.329829+00:00"
+    }
+  ],
+  "chronology": {
+    "source_publication_verified_record_at": "2026-10-13T06:49:15.279883+00:00",
+    "notice_registration_and_before_run_at": "2026-10-13T06:50:45.384966+00:00",
+    "actual_tool_dispatch_records": [
+      "2026-10-13T06:55:07.763Z",
+      "2026-10-13T06:55:08.118Z",
+      "2026-10-13T06:55:08.184Z"
+    ],
+    "after_run_receipt_record_at": "2026-10-13T06:55:39.329829+00:00",
+    "chronology_exact": true,
+    "after_metadata_at": "2026-10-13T06:50:45.384966+00:00",
+    "qualification": "After-dispatch metadata retains original notice-registration at=06:50:45.384966;this is not a dispatch timestamp. Actual sends are the separate original tool recorded_at fields06:55:07.763/08.118/08.184;after-run receipt is06:55:39.329829. Retain both snapshots and original timestamps unchanged."
+  },
+  "preservation_checks": {
+    "before_after_metadata_notice_rows_exact": true,
+    "all_prior_notice_metadata_fields_exact_except_actual_dispatch": true,
+    "before_metadata_not_yet_dispatched": true,
+    "worker_registration_and_adoption_objects_exact": true,
+    "exactly_six_run_delta_paths": true,
+    "adoption_claim": "Availability/delivery/reaffirmation only; actual preserving ACK and adoption verification remain separate. No acknowledgement or completed agent work is inferred."
+  },
+  "source_scope_conclusions": [
+    "All notices name exact Shared55 publicationf8b984a2 and canonical16/24,Act2eight/eight;Act2 ACCEPTED reply references actual submittedf142 and HANDOFFa754.",
+    "Owner native53 evidence remains reused;independent registration is43/0 on54;primary import0 is separate and onlyuid_cache.bin change is recorded. No rerun/inherited136/fullroute or goalcompletion claim is added.",
+    "Original33/1nonclean/fourObjectDB warnings and all owner failures remain explicitly preserved. Disclosed TEST source and untested fullroute/earnedexit/art/gear/performance/mobile limits remain.",
+    "Act1L5/Act3L5 continuation and existing sole ownership are retained;B02 remains Root-owned saved unparsed/unexecuted draft. Act2 ends authored expansion and provides scoped follow-up support.",
+    "Publication physical/source counts are consistent retained assertions from original verified publication receipt;this bounded audit did not re-run Git or native source verification."
+  ],
+  "required_findings": [],
+  "packaging_advice": [
+    "Copy all eight referenced original bodies exactly;retain original notices,original tool return JSON/prompt text,before/after metadata and before/after run snapshots.",
+    "Add chronology/adoption qualifications in a separate archive control/receipt;do not rewrite original timestamps,text,paths,hashes or statuses."
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "status": "READ_ONLY_SOURCE_DIAGNOSIS_NO_ENGINE_OR_PRODUCTION_MUTATION",
+  "at": "2026-10-13T08:15:25.558992+00:00",
+  "scope": "Running sampled-circle fresh restoration control/native guard representation; no source/Git/UID/engine/queue/mailbox mutation by this agent.",
+  "inputs": [
+    {
+      "path": ".cinder/sampled-circle-native/ROOT_RECOVERY.json",
+      "bytes": 4360,
+      "sha256": "032b8c6cb665a65e64620dd4b88bb61e8d339bb7be7a3381c5d75ba80ef6f2be"
+    },
+    {
+      "path": ".cinder/sampled-circle-native/native-03/frozen-before/scripts/combat/threat_scheduler.gd",
+      "bytes": 265396,
+      "sha256": "7b07aaee8acaca14396952d64c540d79b91fdd7f69e5d81c103eb7a0fc57fcc2"
+    },
+    {
+      "path": ".cinder/sampled-circle-native/native-03/frozen-before/scripts/combat/native_sampled_circle.gd",
+      "bytes": 45595,
+      "sha256": "1c73cee97e3f5edce6c57793f83c8169afb4aa36749042d1b5620e887340875a"
+    },
+    {
+      "path": ".cinder/sampled-circle-native/native-03/frozen-before/tests/fixtures/sampled_eye_fixture.gd",
+      "bytes": 12426,
+      "sha256": "8ea2ceaa78702fbb68aeda2fadff2a474b30b295af236fcba4d752a7a23b93ae"
+    },
+    {
+      "path": ".cinder/sampled-circle-native/native-03/frozen-before/tests/sampled_circle_smoke.gd",
+      "bytes": 35184,
+      "sha256": "233846c2ade409358cbebb3477f53caae5b10bc964ca37cddfa00bb6d5c17072"
+    },
+    {
+      "path": ".cinder/sampled-circle-native/native-03/original-output.log",
+      "bytes": 5961,
+      "sha256": "2a015a2a4abd0b05bdd7daf0f81d7cfa2df94eb2ded4619b9ad99057678d8662"
+    },
+    {
+      "path": ".cinder/sampled-circle-native/native-04-held-diagnostic/original-output.log",
+      "bytes": 2023,
+      "sha256": "f5f2edc8f4d874ac0aa8bba88828a4938badf3dc796b529507c031caceeae166"
+    }
+  ],
+  "actual_native_evidence": [
+    {
+      "path": ".cinder/sampled-circle-native/native-03/original-output.log",
+      "result": "100 checks / 12 failures. Fresh aggregate pure prevalidation and actual Player/eye/Scheduler commits succeed; consumer capture first rejects Sampled source getter mutated native custody. Native phase clear, Cue error empty, cuefault false."
+    },
+    {
+      "path": ".cinder/sampled-circle-native/native-04-held-diagnostic/original-output.log",
+      "result": "Existing Root native04 targeted diagnostic: 17 checks / 4 failures. Narrowed first rejection is control.is_empty(): Sampled native getter control witness cannot encode current runtime state. This agent did not launch the job."
+    }
+  ],
+  "exact_rejection_path": [
+    "native_sampled_circle.gd restore_state: fresh consumer snapshots actual already-restored Scheduler before any consumer/Cue commit.",
+    "Scheduler.snapshot_state -> _capture_snapshot -> _sampled_capture_sources -> _sampled_entry_state.",
+    "_sampled_entry_state records _sampled_control_wire before source getter; native04 proves its returned String is empty.",
+    "_sampled_control_wire visits sorted committed running reservations via _public_record.",
+    "_public_record duplicates restored record and removes private native weak references/guards/scripts, but retains adapter key type.",
+    "_lunge_preview_wire -> _encode_lunge_preview rejects any Dictionary key which is not String."
+  ],
+  "unsupported_content": {
+    "path": "reservations[0].adapter dictionary key",
+    "expected_type": "String (native admission candidate[\"adapter\"])",
+    "restored_type": "StringName from dot assignment of absent key record.adapter",
+    "creation": "Frozen native03 threat_scheduler.gd line3491 removes adapter from private ordinary record. _snapshot_plan_ordinary reconstructs it without adapter. Frozen line3516 adds adapter with record.adapter = sampled[record.id].",
+    "why_prevalidation_passes": "Fresh recipient control table has no running reservations while pure staged plan is built; reconstructed record is not installed in _reservations during prevalidation. Scheduler commits it only after rechecking actual source while current recipient table remains empty.",
+    "why_dead_restore_passes": "Cancelled defeated-source packet has no retained running lease, so no reconstructed adapter key reaches control encoding.",
+    "why_original_running_capture_passes": "Native admission creates its adapter with candidate[\"adapter\"], retaining String key from the outset.",
+    "evidence_class": "Exact frozen source and exact installed engine commit source semantic derivation; native04 independently proves empty control predicate. A key-type native diagnostic and repaired rerun remain for Integration."
+  },
+  "engine_primary_sources": [
+    {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf/modules/gdscript/gdscript_vm.cpp#L1140-L1151",
+      "supports": "Named assignment operand is StringName and calls Variant.set_named."
+    },
+    {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf/core/variant/variant_setget.cpp#L222-L242",
+      "supports": "Dictionary named setter forwards the StringName member to Dictionary.set."
+    },
+    {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf/core/variant/dictionary.cpp#L188-L195",
+      "supports": "Dictionary.set inserts the validated Variant key into the map."
+    },
+    {
+      "url": "https://github.com/godotengine/godot/blob/ed1daf0bf/core/variant/container_type_validate.h#L46-L49",
+      "supports": "Untyped Dictionary key validation leaves the incoming key unchanged."
+    }
+  ],
+  "proposed_exact_fix": {
+    "file": "scripts/combat/threat_scheduler.gd",
+    "function": "_sampled_snapshot_plan",
+    "before": "record.adapter = sampled[record.id]",
+    "after": "record[\"adapter\"] = sampled[record.id]",
+    "scope": "Repair absent-key representation only. Preserve exact String key rejection, control comparison, body/resource/Script/HP/native World/floor identity/clock checks and final public consumer join.",
+    "do_not": "Do not coerce foreign StringName keys to String in exact codecs, remove control-empty refusal, skip active reservation witness, or substitute cached authority."
+  },
+  "meaningful_regression": [
+    "Existing actual active-held-suffix fresh restore must prevalidate, commit via Player -> eye -> Scheduler -> consumer, retain true HP9, exact sample/deadlines/phase/pending segments, and zero observers while paused.",
+    "Add or retain a check immediately after actual Scheduler restore and before consumer restore: Scheduler.snapshot_state(actual bindings) is nonempty, pure snapshot_error succeeds, and its schema4 running reservation adapter equals the saved adapter. This directly catches control encoding failures before consequent consumer failures.",
+    "In a focused key-type diagnostic, traverse the actual restored _public_record keys with Variant iteration and require String adapter key; this is diagnostic representation evidence, not replacement runtime authority.",
+    "Resume through a real next physics segment and assert exactly one opportunity consumption before Player hurt, then continued exposure causes no retry.",
+    "Keep existing foreign StringName-key, cyclic/Object packet, copied historical sample forgery and actual body/resource/floor/source identity refusal checks unchanged."
+  ],
+  "validation_not_claimed": [
+    "No native execution by this agent",
+    "No actual repaired success claimed",
+    "No full route or mobile/export/release gate added"
+  ]
+}

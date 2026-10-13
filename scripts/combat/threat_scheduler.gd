@@ -71,6 +71,20 @@ var _cycle_busy: bool = false
 var _cycle_restore_capture_owner: WeakRef
 
 
+# SOURCE-ONLY additive draft. No new wire grants authority; genuine parent codecs
+# must validate whole Player/source lifecycle before supplying staged bindings.
+const SAMPLED_SOURCE_API: String = "sampled-circle-source-1"
+const SAMPLED_PREVIEW_API: String = "sampled-circle-preview-1"
+const SAMPLED_SAMPLE_API: String = "native-hero-ground-sample-1"
+const SAMPLED_OWNER_ERROR: String = "Native sampled owners require their typed sampled-circle API"
+const SAMPLED_BINDING_KEYS: Array[String] = ["api_revision", "source_id", "source_epoch", "generation", "definition", "alive", "opening_position", "hero_id", "hero"]
+const SAMPLED_WIRE_KEYS: Array[String] = ["api_revision", "source_id", "source_epoch", "generation", "definition", "alive", "opening_position", "hero_id"]
+const SAMPLED_SAMPLE_KEYS: Array[String] = ["api_revision", "source_id", "source_epoch", "generation", "hero_id", "scheduler_clock_s", "hero_action_clock_s", "hero_position", "ground_position", "floor_id"]
+const SAMPLED_ADAPTER_KEYS: Array[String] = ["kind", "source_epoch", "generation", "definition", "sample", "world_collision_fingerprint", "world_floor_signature"]
+var _sampled_sources: Dictionary = {}
+var _sampled_hook_busy: bool = false
+
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 
@@ -95,7 +109,7 @@ func begin_encounter(profile_id: String, encounter_id: String = "encounter", wor
 
 
 func end_encounter(reason: String = "encounter_end") -> void:
-	if _cycle_busy or not _authored_cycles.is_empty():
+	if _cycle_busy or not _authored_cycles.is_empty() or not _sampled_sources.is_empty():
 		last_error = "Managed authored history requires explicit whole-parent retirement/disposal; encounter reset is refused"
 		return
 	if _snapshot_busy or _request_busy or _transaction_depth > 0 or _boundary_busy:
@@ -123,6 +137,7 @@ func request_attack(owner: Node3D, threat: Dictionary, response: Dictionary, pre
 		last_error = "Scheduler transaction is already in progress"
 		return {"accepted": false, "reason": last_error}
 	if not _cycle_for_owner(owner).is_empty(): return _rejected(MANAGED_ORDINARY_ERROR)
+	if not _sampled_for_owner(owner).is_empty(): return _rejected(SAMPLED_OWNER_ERROR)
 	if not preview.is_empty():
 		# A framing preview grants no lease. Compare/reprove before cleanup so
 		# stale copied data cannot cancel another source to manufacture admission.
@@ -155,6 +170,7 @@ func request_attack(owner: Node3D, threat: Dictionary, response: Dictionary, pre
 
 func _request_attack(owner: Node3D, threat: Dictionary, response: Dictionary, adapter: Dictionary = {}) -> Dictionary:
 	if not _cycle_for_owner(owner).is_empty(): return _rejected(MANAGED_ORDINARY_ERROR)
+	if not _sampled_for_owner(owner).is_empty(): return _rejected(SAMPLED_OWNER_ERROR)
 	_prune()
 	var prepared: Dictionary = _prepare_ordinary_attack(owner, threat, response, adapter)
 	if not prepared.get("accepted", false):
@@ -165,6 +181,8 @@ func _request_attack(owner: Node3D, threat: Dictionary, response: Dictionary, ad
 func _prepare_ordinary_attack(owner: Node3D, threat: Dictionary, response: Dictionary, adapter: Dictionary = {}) -> Dictionary:
 	## Shared pure candidate/proof path. Cleanup and admission live outside it.
 	if not _cycle_for_owner(owner).is_empty(): return {"accepted": false, "reason": MANAGED_ORDINARY_ERROR}
+	if not _sampled_for_owner(owner).is_empty() and adapter.get("kind") != "sampled_circle": return {"accepted": false, "reason": SAMPLED_OWNER_ERROR}
+	if adapter.get("kind") == "sampled_circle" and _sampled_for_owner(owner).is_empty(): return {"accepted": false, "reason": "Typed sampled adapter requires its actual registered native owner"}
 	var error: String = _request_error(owner, threat, response, "", adapter.get("kind") == "tracking")
 	if not error.is_empty():
 		return {"accepted": false, "reason": error}
@@ -209,6 +227,15 @@ func _prepare_ordinary_attack(owner: Node3D, threat: Dictionary, response: Dicti
 
 func _commit_ordinary_attack(owner: Node3D, candidate: Dictionary, proof: Dictionary, response: Dictionary) -> Dictionary:
 	if not _cycle_for_owner(owner).is_empty(): return _rejected(MANAGED_ORDINARY_ERROR)
+	if candidate.get("adapter", {}).get("kind") == "sampled_circle" and _sampled_for_owner(owner).is_empty(): return _rejected("Typed sampled commit requires its actual registered native owner")
+	if not _sampled_for_owner(owner).is_empty():
+		if candidate.get("adapter", {}).get("kind") != "sampled_circle": return _rejected(SAMPLED_OWNER_ERROR)
+		var sampled_error: String = _sampled_entry_error(_sampled_for_owner(owner))
+		if sampled_error.is_empty(): sampled_error = _preview_response_error(owner, response)
+		if sampled_error.is_empty(): sampled_error = _sampled_adapter_error(candidate.adapter, candidate, _sampled_for_owner(owner), _clock)
+		if sampled_error.is_empty() and (not _authored_same(candidate.adapter.sample.hero_position, Codec.vector3((response.actor as CinderPlayer).global_position)) or not _authored_same(candidate.adapter.sample.hero_action_clock_s, (response.actor as CinderPlayer).get_threat_response_state().action_clock_s)): sampled_error = "Actual Hero sample changed inside final commit custody hook"
+		if not sampled_error.is_empty(): return _rejected(sampled_error)
+		if not _cycle_for_owner(owner).is_empty(): return _rejected(MANAGED_ORDINARY_ERROR)
 	candidate = candidate.duplicate(true)
 	_serial += 1
 	var reservation_id: String = "threat-%d" % _serial
@@ -233,6 +260,7 @@ func request_authored_replay(owner: Node3D, sequence_snapshot: Dictionary, respo
 
 
 func _request_authored_replay(owner: Node3D, sequence_snapshot: Dictionary, response: Dictionary, context: Dictionary) -> Dictionary:
+	if not _sampled_for_owner(owner).is_empty(): return _rejected(SAMPLED_OWNER_ERROR)
 	var cycle_error: String = _cycle_admission_error(owner, sequence_snapshot, response, context)
 	if not cycle_error.is_empty(): return _rejected(cycle_error)
 	if not response.get("floor_regions") is Array: return _rejected("Actual authored floor bindings required")
@@ -315,6 +343,7 @@ func request_replay(owner: Node3D, sequence_snapshot: Dictionary, response: Dict
 
 
 func _request_replay(owner: Node3D, sequence_snapshot: Dictionary, response: Dictionary, context: Dictionary) -> Dictionary:
+	if not _sampled_for_owner(owner).is_empty(): return _rejected(SAMPLED_OWNER_ERROR)
 	if not _cycle_for_owner(owner).is_empty(): return _rejected("Managed authored owners cannot bypass their journal with captured replay")
 	var error: String = _replay_context_error(owner, response.get("actor") as CinderPlayer, context)
 	if error.is_empty():
@@ -707,6 +736,7 @@ func request_tracking(owner: Node3D, threat: Dictionary, response: Dictionary) -
 	if _snapshot_busy or _request_busy or _boundary_busy or _cycle_busy or _transaction_depth > 0:
 		return _rejected("Scheduler transaction is already in progress")
 	if not _cycle_for_owner(owner).is_empty(): return _rejected(MANAGED_ORDINARY_ERROR)
+	if not _sampled_for_owner(owner).is_empty(): return _rejected(SAMPLED_OWNER_ERROR)
 	if not threat.get("geometry") is Dictionary or not _tracking_geometry_valid(owner, threat["geometry"]) or not Geometry.finite_vector(threat.get("opening_position")) or (threat["opening_position"] as Vector3).distance_to(owner.global_position) > EPSILON:
 		return _rejected("Tracking requires a finite source-anchored capsule lane")
 	var role: Variant = threat.get("role")
@@ -799,6 +829,7 @@ func request_lunge(owner: CharacterBody3D, threat: Dictionary, response: Diction
 	if _snapshot_busy or _request_busy or _boundary_busy or _cycle_busy or _transaction_depth > 0:
 		return _rejected("Scheduler transaction is already in progress")
 	if not _cycle_for_owner(owner).is_empty(): return _rejected(MANAGED_ORDINARY_ERROR)
+	if not _sampled_for_owner(owner).is_empty(): return _rejected(SAMPLED_OWNER_ERROR)
 	if not preview.is_empty():
 		# Preview grants no lease. Reprove against actual bodies/union/world and
 		# compare all copied data exactly, both before and after ordinary cleanup.
@@ -867,6 +898,7 @@ func preview_lunge(owner: CharacterBody3D, threat: Dictionary, response: Diction
 
 
 func _preview_lunge_current(owner: CharacterBody3D, threat: Dictionary, response: Dictionary) -> Dictionary:
+	if not _sampled_for_owner(owner).is_empty(): return {"accepted": false, "reason": SAMPLED_OWNER_ERROR}
 	var error: String = _preview_retained_error()
 	if error.is_empty():
 		error = _preview_response_error(owner, response)
@@ -900,6 +932,7 @@ func preview_stationary(owner: Node3D, threat: Dictionary, response: Dictionary)
 	if _snapshot_busy or _request_busy or _boundary_busy or _cycle_busy or _transaction_depth > 0:
 		return {"accepted": false, "reason": "Scheduler transaction is already in progress"}
 	if not _cycle_for_owner(owner).is_empty(): return {"accepted": false, "reason": MANAGED_ORDINARY_ERROR}
+	if not _sampled_for_owner(owner).is_empty(): return {"accepted": false, "reason": SAMPLED_OWNER_ERROR}
 	return _preview_stationary_current(owner, threat, response).duplicate(true)
 
 
@@ -1027,6 +1060,8 @@ func _preview_retained_error() -> String:
 			return "Stale retained threat union requires ordinary cleanup before preview"
 		if record.get("adapter", {}).get("kind") == "lunge" and not _lunge_source_valid(owner, record["adapter"]):
 			return "Stale retained lunge source requires ordinary cleanup before preview"
+		if record.get("adapter", {}).get("kind") == "sampled_circle" and not _sampled_record_error(record).is_empty():
+			return "Stale retained sampled source requires ordinary cleanup before preview"
 		if _is_replay(record):
 			return "Exclusive replay occupies preview through recovery"
 		if record.get("adapter", {}).get("kind") == "tracking" and not record["adapter"]["locked"] and _clock >= float(record["active_from_s"]) - EPSILON:
@@ -1259,6 +1294,8 @@ func _prune() -> void:
 			cancel(reservation_id, "stationary_source_moved")
 		elif record.get("adapter", {}).get("kind") == "lunge" and not _lunge_source_valid(owner, record["adapter"]):
 			cancel(reservation_id, "lunge_source_changed")
+		elif record.get("adapter", {}).get("kind") == "sampled_circle" and _clock <= float(record["recovery_until_s"]) and not _sampled_record_error(record).is_empty():
+			cancel(reservation_id, "sampled_contract_changed")
 		elif not _guards_valid(record["_floor_guards"]):
 			cancel(reservation_id, "floor_contract_changed")
 		elif _is_replay(record) and _clock <= float(record.recovery_until_s) and not replay_reservation_error(reservation_id).is_empty():
@@ -1655,6 +1692,20 @@ func restore_state(snapshot: Dictionary, bindings: Dictionary) -> bool:
 		for cycle: Dictionary in plan.authored_cycles.values():
 			last_snapshot_error = _cycle_native_error(cycle, {}, plan.profile.id, plan.world_revision, cycle.entry.stage != "running")
 			if not last_snapshot_error.is_empty(): break
+	if last_snapshot_error.is_empty() and snapshot.get("schema_version") == 4:
+		for source_id: String in _sampled_sources:
+			var actual_sampled: Dictionary = _sampled_entry_state(_sampled_sources[source_id], true)
+			last_snapshot_error = actual_sampled.get("error", "")
+			if not last_snapshot_error.is_empty(): break
+			if not _authored_same(actual_sampled.wire, snapshot.sampled_circle_sources[source_id]):
+				last_snapshot_error = "Apply true sampled source HP/death/cycle before Scheduler commit"
+				break
+	if last_snapshot_error.is_empty() and snapshot.get("schema_version") == 4:
+		for record: Dictionary in plan.reservations.values():
+			if record.get("adapter", {}).get("kind") != "sampled_circle": continue
+			var entry: Dictionary = _sampled_for_owner((record._owner as WeakRef).get_ref())
+			last_snapshot_error = _sampled_adapter_error(record.adapter, record, entry, plan.clock_s)
+			if not last_snapshot_error.is_empty(): break
 	if last_snapshot_error.is_empty():
 		# No callbacks, attack requests, damage, cancellation or retiming here.
 		_encounter_id = plan["encounter_id"]
@@ -1843,6 +1894,13 @@ func _capture_snapshot(bindings: Dictionary) -> Dictionary:
 		if journal.is_empty(): return {}
 		result["schema_version"] = 3
 		result["authored_source_cycles"] = journal
+	if not _sampled_sources.is_empty():
+		var sampled: Dictionary = _sampled_capture_sources(bindings)
+		if sampled.has("error"):
+			last_snapshot_error = sampled.error
+			return {}
+		result["schema_version"] = 4
+		result["sampled_circle_sources"] = sampled.sources
 	return result
 
 
@@ -1856,6 +1914,8 @@ func _binding_id(mapping: Dictionary, node: Object) -> String:
 
 
 func _snapshot_plan(snapshot: Dictionary, bindings: Dictionary) -> Dictionary:
+	if snapshot.get("schema_version") == 4 or snapshot.has("sampled_circle_sources"): return _sampled_snapshot_plan(snapshot, bindings)
+	if not _sampled_sources.is_empty(): return {"error": "Native sampled source custody cannot be stripped or downgraded"}
 	if snapshot.has("authored_source_cycles") or snapshot.get("schema_version") == 3:
 		return _cycle_snapshot_plan(snapshot, bindings)
 	if not _authored_cycles.is_empty():
@@ -2979,6 +3039,7 @@ func _cycle_bindings_native_error(bindings: Dictionary) -> String:
 
 
 func _cycle_fresh_owner_error(owner: Node3D) -> String:
+	if not _sampled_for_owner(owner).is_empty(): return SAMPLED_OWNER_ERROR
 	if _cooldowns.has(owner.get_instance_id()): return "Only a genuinely fresh source can register initial generation one"
 	for record: Dictionary in _reservations.values():
 		if int(record.source_instance_id) == owner.get_instance_id(): return "Initial tracking cannot adopt an already admitted native lease"
@@ -3037,3 +3098,522 @@ func _cycle_restore_recipe_error(cycle: Dictionary) -> String:
 		if not CycleReceipt.snapshot_error(recipe.terminal_receipt).is_empty() or not _authored_same(recipe.terminal_receipt, cycle.entry.terminal_receipts[-1]): return "Prepared terminal recipe differs from the exact original frozen receipt"
 	elif not recipe.terminal_receipt.is_empty(): return "A never-terminal current generation cannot invent a prepared terminal receipt"
 	return ""
+
+
+func bind_sampled_circle_source(owner: CharacterBody3D, hero_id: String, hero: CinderPlayer, floor_regions: Array, world_root: Node3D) -> bool:
+	## Bind once before preview/restore. This allocates no threat/cooldown and
+	## is not an accepted-state token. Keep the same physical owner and receiver.
+	if _sampled_hook_busy or _snapshot_busy or _request_busy or _boundary_busy or _cycle_busy or _transaction_depth > 0: return _sampled_bind_rejected("Scheduler transaction is already in progress")
+	if not _cycle_for_owner(owner).is_empty(): return _sampled_bind_rejected(MANAGED_ORDINARY_ERROR)
+	if not _sampled_for_owner(owner).is_empty(): return _sampled_bind_rejected("Sampled native source bindings are one-shot")
+	if _sampled_sources.size() >= 64: return _sampled_bind_rejected("At most 64 native sampled sources supported")
+	if not _stable_id(hero_id) or not is_instance_valid(hero) or not _sampled_point_bounded(hero.global_position) or hero.get_script() != ReplayPlayer or not is_instance_valid(world_root) or not _sampled_native_node(owner, world_root) or not _sampled_native_node(hero, world_root) or not _under_root(self, world_root): return _sampled_bind_rejected("Actual shared Hero and same-world containing root required")
+	if not _sampled_method_arity(owner, "get_sampled_circle_binding", 0) or not _sampled_method_arity(owner, "take_damage", 2) or owner.get_script() == null: return _sampled_bind_rejected("Actual scripted sampled eye HP/lease owner required")
+	var body: Dictionary = _sampled_body(owner)
+	var hero_body: Dictionary = _sampled_hero_body(hero)
+	var collision: Dictionary = pure_collision_fingerprint(world_root)
+	var floor: Dictionary = authored_floor_signature(world_root, floor_regions)
+	if body.is_empty() or hero_body.is_empty() or collision.is_empty() or not floor.get("accepted", false) or _sampled_floor_identities(floor_regions).is_empty(): return _sampled_bind_rejected("Supported native BOX/CAPSULE source, shared Hero, static floor/world required")
+	var source_script: Script = owner.get_script()
+	if not source_script.has_source_code() or not (hero.get_script() as Script).has_source_code(): return _sampled_bind_rejected("Native sampled source and shared Hero require retained Script code custody")
+	var source_script_code: String = source_script.get_source_code()
+	var hero_script_code: String = (hero.get_script() as Script).get_source_code()
+	var native_world: World3D = world_root.get_world_3d()
+	var control: String = _sampled_control_wire()
+	var hero_before: Dictionary = _sampled_hero_boundary(hero)
+	var source_before := {"hp": owner.get("hp"), "dead": owner.get("dead")}
+	var pose: Array = _transform_data(owner.global_transform)
+	var read_hook: Dictionary = _sampled_read_hook(owner)
+	if read_hook.has("error"): return _sampled_bind_rejected(read_hook.error)
+	var hook_value: Variant = read_hook.value
+	if not _sampled_native_node(owner, world_root) or not _sampled_native_node(hero, world_root): return _sampled_bind_rejected("Actual sampled source getter removed its owner/Hero/world")
+	var error: String = _sampled_hook_error(hook_value, owner, hero_id, hero, true)
+	if not error.is_empty(): return _sampled_bind_rejected(error)
+	var wire: Dictionary = _sampled_hook_wire(hook_value)
+	if _sampled_sources.has(wire.source_id): return _sampled_bind_rejected("Native sampled source ID is already bound")
+	for retained: Dictionary in _sampled_sources.values():
+		var retained_error: String = _sampled_entry_error(retained, true)
+		if not retained_error.is_empty(): return _sampled_bind_rejected(retained_error)
+		if (retained.hero as WeakRef).get_ref() != hero or retained.wire.hero_id != hero_id or (retained.world as WeakRef).get_ref() != world_root or not _authored_same(retained.collision, collision) or not _authored_same(retained.floors, floor.signature) or not _authored_same(retained.floor_identities, _sampled_floor_identities(floor_regions)): return _sampled_bind_rejected("Sampled sources must retain the same actual Hero/world/full floor bindings")
+	# Actual hook is a caller boundary: re-read all native custody before commit.
+	if not _sampled_native_node(owner, world_root) or not _sampled_native_node(hero, world_root) or world_root.get_world_3d() != native_world or get_world_3d() != native_world or owner.get_script() != source_script or source_script.get_source_code() != source_script_code or hero.get_script() != ReplayPlayer or (hero.get_script() as Script).get_source_code() != hero_script_code or not _authored_same(body, _sampled_body(owner)) or not _authored_same(hero_body, _sampled_hero_body(hero)) or not _authored_same(pose, _transform_data(owner.global_transform)) or not _authored_same(collision, pure_collision_fingerprint(world_root)) or not _authored_same(floor.signature, authored_floor_signature(world_root, floor_regions).get("signature")) or control.is_empty() or control != _sampled_control_wire() or not _same_lunge_preview(hero_before, _sampled_hero_boundary(hero)) or not _authored_same(source_before, {"hp": owner.get("hp"), "dead": owner.get("dead")}): return _sampled_bind_rejected("Native sampled binding changed inside its source getter")
+	if not _cycle_for_owner(owner).is_empty(): return _sampled_bind_rejected(MANAGED_ORDINARY_ERROR)
+	for record: Dictionary in _reservations.values():
+		if record.source_instance_id == owner.get_instance_id(): return _sampled_bind_rejected("Cannot adopt an existing ordinary lease as a sampled source")
+	if _cooldowns.has(owner.get_instance_id()): return _sampled_bind_rejected("Cannot adopt existing ordinary cooldown as sampled custody")
+	_sampled_sources[wire.source_id] = {"owner": weakref(owner), "hero": weakref(hero), "world": weakref(world_root), "native_world": native_world, "script": source_script, "source_script_code": source_script_code, "hero_script_code": hero_script_code, "wire": wire.duplicate(true), "body": body, "hero_body": hero_body, "source_transform": pose, "floor_regions": floor_regions.duplicate(), "floor_guards": _floor_guards(floor_regions), "floor_identities": _sampled_floor_identities(floor_regions), "collision": collision, "floors": floor.signature}
+	last_error = ""
+	return true
+
+
+func _sampled_read_hook(owner: CharacterBody3D) -> Dictionary:
+	if _sampled_hook_busy: return {"error": "Native sampled source getter cannot reenter sampled custody"}
+	_sampled_hook_busy = true
+	var value: Variant = owner.call("get_sampled_circle_binding")
+	_sampled_hook_busy = false
+	return {"value": value}
+
+
+func _sampled_bind_rejected(reason: String) -> bool:
+	last_error = reason
+	return false
+
+
+func _sampled_for_owner(owner: Node3D) -> Dictionary:
+	if not is_instance_valid(owner): return {}
+	for entry: Dictionary in _sampled_sources.values():
+		if (entry.owner as WeakRef).get_ref() == owner: return entry
+	return {}
+
+
+func _sampled_native_node(node: Node3D, root: Node3D) -> bool:
+	return is_instance_valid(node) and node.is_inside_tree() and not node.is_queued_for_deletion() and is_instance_valid(root) and root.is_inside_tree() and not root.is_queued_for_deletion() and root.get_world_3d() == get_world_3d() and node.get_world_3d() == get_world_3d() and _under_root(node, root)
+
+
+func _sampled_body(body: CharacterBody3D, allow_unsupported_position: bool = false) -> Dictionary:
+	## Native properties/resources are re-read at every boundary. Position and
+	## HP are separate lifecycle data; actual Hero may move after the sample.
+	if not is_instance_valid(body) or not body.is_inside_tree() or body.is_queued_for_deletion() or body.global_basis != Basis.IDENTITY or not body.global_position.is_finite() or (not allow_unsupported_position and not _sampled_point_bounded(body.global_position)) or not body.velocity.is_finite() or body.axis_lock_linear_x or body.axis_lock_linear_y or body.axis_lock_linear_z or body.collision_mask != 1 or (body.collision_layer & 1) != 0 or not body.get_collision_exceptions().is_empty() or body.get_platform_velocity() != Vector3.ZERO or body.get_platform_angular_velocity() != Vector3.ZERO: return {}
+	var shapes: Array = []
+	for child: Node in body.get_children():
+		if child is CollisionShape3D or child is CollisionPolygon3D: shapes.append(child)
+	if shapes.size() != 1 or not shapes[0] is CollisionShape3D: return {}
+	var collision: CollisionShape3D = shapes[0]
+	if collision.get_script() != null or collision.transform.basis != Basis.IDENTITY or not collision.position.is_finite() or collision.position.x != 0.0 or collision.position.z != 0.0 or not is_instance_valid(collision.shape) or collision.shape.get_script() != null or not (collision.shape is CapsuleShape3D or collision.shape is BoxShape3D): return {}
+	var shape: Dictionary = _shape_data(collision.shape)
+	if shape.is_empty() or PreviewExact.stringify(shape).is_empty(): return {}
+	if collision.shape is BoxShape3D and ((collision.shape as BoxShape3D).size.x <= 0.0 or (collision.shape as BoxShape3D).size.y <= 0.0 or (collision.shape as BoxShape3D).size.z <= 0.0): return {}
+	if collision.shape is CapsuleShape3D and ((collision.shape as CapsuleShape3D).radius <= 0.0 or (collision.shape as CapsuleShape3D).height < 2.0 * (collision.shape as CapsuleShape3D).radius): return {}
+	var count: int = 0
+	for shape_owner: int in body.get_shape_owners():
+		if body.shape_owner_get_owner(shape_owner) != collision or body.is_shape_owner_disabled(shape_owner) != collision.disabled or not _authored_same(_transform_data(body.shape_owner_get_transform(shape_owner)), _transform_data(collision.transform)): return {}
+		for shape_index: int in range(body.shape_owner_get_shape_count(shape_owner)):
+			if body.shape_owner_get_shape(shape_owner, shape_index) != collision.shape: return {}
+			count += 1
+	if count != 1: return {}
+	return {"body_id": str(body.get_instance_id()), "collision_id": str(collision.get_instance_id()), "shape_id": str(collision.shape.get_instance_id()), "shape": shape, "local_transform": _transform_data(collision.transform), "layer": body.collision_layer, "mask": body.collision_mask, "priority": body.collision_priority, "safe_margin": body.safe_margin, "up": Codec.vector3(body.up_direction), "floor_snap": body.floor_snap_length, "motion_mode": body.motion_mode, "floor_max_angle": body.floor_max_angle, "floor_stop_on_slope": body.floor_stop_on_slope, "floor_constant_speed": body.floor_constant_speed, "floor_block_on_wall": body.floor_block_on_wall, "slide_on_ceiling": body.slide_on_ceiling, "max_slides": body.max_slides, "wall_min_slide_angle": body.wall_min_slide_angle, "platform_floor_layers": body.platform_floor_layers, "platform_wall_layers": body.platform_wall_layers, "platform_on_leave": body.platform_on_leave, "locks": [body.axis_lock_linear_x, body.axis_lock_linear_y, body.axis_lock_linear_z, body.axis_lock_angular_x, body.axis_lock_angular_y, body.axis_lock_angular_z]}
+
+
+func _sampled_hero_body(hero: CinderPlayer) -> Dictionary:
+	if not is_instance_valid(hero) or hero.get_script() != ReplayPlayer: return {}
+	var value: Variant = hero.get_node_or_null("BodyCollision")
+	if not is_instance_valid(value) or not value is CollisionShape3D: return {}
+	var collision: CollisionShape3D = value
+	if collision.disabled or not collision.shape is CapsuleShape3D or collision.position != Vector3(0.0, CAPSULE_CENTER_Y, 0.0): return {}
+	var capsule: CapsuleShape3D = collision.shape
+	if not is_equal_approx(capsule.radius, CAPSULE_RADIUS) or not is_equal_approx(capsule.height, CAPSULE_HEIGHT): return {}
+	# Finite later Hero motion outside the contact query domain is a contact
+	# refusal, while the same native capsule/resource custody remains authentic.
+	return _sampled_body(hero, true)
+
+
+func _sampled_floor_identities(regions: Array) -> Array:
+	var result: Array = []
+	var seen: Dictionary = {}
+	for region: Variant in regions:
+		if not region is Dictionary: return []
+		var value: Variant = region.get("collision")
+		if typeof(value) != TYPE_OBJECT or not is_instance_valid(value) or not value is CollisionShape3D or not is_instance_valid(value.shape): return []
+		if seen.has(value.get_instance_id()): return []
+		seen[value.get_instance_id()] = true
+		result.append({"collision": str(value.get_instance_id()), "shape": str(value.shape.get_instance_id()), "body": str(value.get_parent().get_instance_id())})
+	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.collision < b.collision)
+	return result
+
+
+func _sampled_definition_error(value: Variant) -> String:
+	if not value is Dictionary or PreviewExact.stringify(value).is_empty() or not Codec.keys_error(value, ["radius", "raw_role", "timing_floors"]).is_empty() or not value.radius is float or value.radius <= 0.0 or value.radius > 16.0 or not value.raw_role is Dictionary or not value.timing_floors is Dictionary: return "Closed bounded sampled-circle recipe required"
+	if not Codec.keys_error(value.raw_role, ["raw_damage", "windup_s", "lock_s", "active_s", "recovery_s", "attack_interval_s", "max_hp", "move_speed"]).is_empty() or not Codec.keys_error(value.timing_floors, ["windup_s", "lock_s", "recovery_s"]).is_empty() or not value.raw_role.move_speed is float or not _authored_same(value.raw_role.move_speed, 0.0): return "Stationary sampled raw-role/timing recipe required"
+	var difficulty = DifficultyScript.new()
+	return "" if not difficulty.resolve_role(value.raw_role, "standard", value.timing_floors).is_empty() else difficulty.last_error
+
+
+func _sampled_hook_error(value: Variant, owner: CharacterBody3D, hero_id: String, hero: CinderPlayer, allow_dead: bool) -> String:
+	if not value is Dictionary or not Codec.keys_error(value, SAMPLED_BINDING_KEYS).is_empty(): return "Exact native sampled source hook required"
+	for key: Variant in value:
+		if typeof(key) != TYPE_STRING: return "Native sampled source hook keys must be Strings"
+	var closed: Dictionary = value.duplicate() # shallow; hero is genuine native custody
+	closed.erase("hero")
+	closed.erase("opening_position")
+	if PreviewExact.stringify(closed).is_empty() or value.api_revision != SAMPLED_SOURCE_API or not _stable_id(value.source_id) or not _stable_id(value.source_epoch) or not value.generation is int or not Codec.is_integer(value.generation, 1) or not value.alive is bool or value.hero_id != hero_id or value.hero != hero or not Geometry.finite_vector(value.opening_position): return "Native sampled source/epoch/generation/Hero binding differs"
+	var error: String = _sampled_definition_error(value.definition)
+	if not error.is_empty(): return error
+	if not _authored_same(Codec.vector3(value.opening_position), Codec.vector3(owner.global_position)): return "Sampled recovery opening must be the actual fixed eye HP body"
+	var hp: Variant = owner.get("hp")
+	var dead: Variant = owner.get("dead")
+	if not hp is float or not is_finite(hp) or hp < 0.0 or not dead is bool or value.alive != (hp > 0.0 and not dead) or dead != (hp == 0.0) or (not allow_dead and not value.alive): return "Actual source HP/death must match native sampled lifecycle"
+	var collision: CollisionShape3D = owner.get_node_or_null("BodyCollision") as CollisionShape3D
+	if not is_instance_valid(collision) or (value.alive and collision.disabled): return "Living sampled eye requires its actual enabled BodyCollision"
+	return ""
+
+
+func _sampled_hook_wire(value: Dictionary) -> Dictionary:
+	var wire: Dictionary = value.duplicate()
+	wire.erase("hero")
+	wire.opening_position = Codec.vector3(value.opening_position)
+	return wire.duplicate(true)
+
+
+func _sampled_entry_error(entry: Dictionary, allow_dead: bool = false, staged: Dictionary = {}) -> String:
+	return _sampled_entry_state(entry, allow_dead, staged).get("error", "")
+
+
+func _sampled_entry_state(entry: Dictionary, allow_dead: bool = false, staged: Dictionary = {}) -> Dictionary:
+	var owner_value: Variant = (entry.owner as WeakRef).get_ref()
+	var hero_value: Variant = (entry.hero as WeakRef).get_ref()
+	var root_value: Variant = (entry.world as WeakRef).get_ref()
+	if not is_instance_valid(owner_value) or not owner_value is CharacterBody3D or not is_instance_valid(hero_value) or not hero_value is CinderPlayer or not is_instance_valid(root_value) or not root_value is Node3D: return {"error": "Sampled native owner/Hero/world was removed"}
+	var owner: CharacterBody3D = owner_value
+	var hero: CinderPlayer = hero_value
+	var world: Node3D = root_value
+	if not _sampled_native_node(owner, world) or not _sampled_native_node(hero, world) or not _under_root(self, world) or world.get_world_3d() != entry.native_world or get_world_3d() != entry.native_world or owner.get_script() != entry.script or entry.script.get_source_code() != entry.source_script_code or (hero.get_script() as Script).get_source_code() != entry.hero_script_code or not _sampled_method_arity(owner, "get_sampled_circle_binding", 0) or hero.get_script() != ReplayPlayer or not _authored_same(entry.body, _sampled_body(owner)) or not _authored_same(entry.hero_body, _sampled_hero_body(hero)) or not _authored_same(entry.source_transform, _transform_data(owner.global_transform)) or owner.velocity != Vector3.ZERO: return {"error": "Sampled native Script/body/resource/pose/stationarity changed"}
+	if not _guards_valid(entry.floor_guards) or not _authored_same(entry.floor_identities, _sampled_floor_identities(entry.floor_regions)): return {"error": "Sampled retained floor identity changed"}
+	var collision: Dictionary = pure_collision_fingerprint(world)
+	var floor: Dictionary = authored_floor_signature(world, entry.floor_regions)
+	if collision.is_empty() or not _authored_same(entry.collision, collision) or not floor.get("accepted", false) or not _authored_same(entry.floors, floor.signature): return {"error": "Sampled actual world/floor fingerprint changed"}
+	var hero_collision: CollisionShape3D = hero.get_node_or_null("BodyCollision") as CollisionShape3D
+	if not is_instance_valid(hero_collision) or hero_collision.disabled: return {"error": "Actual shared Hero collision was disabled or removed"}
+	var clock: float = _clock
+	var hero_before: Dictionary = _sampled_hero_boundary(hero)
+	var source_before := {"hp": owner.get("hp"), "dead": owner.get("dead")}
+	var control: String = _sampled_control_wire()
+	var read_hook: Dictionary = _sampled_read_hook(owner)
+	if read_hook.has("error"): return read_hook
+	var hook_value: Variant = read_hook.value
+	if not _sampled_native_node(owner, world) or not _sampled_native_node(hero, world): return {"error": "Actual sampled source getter removed its owner/Hero/world"}
+	var error: String = _sampled_hook_error(hook_value, owner, entry.wire.hero_id, hero, true)
+	if not error.is_empty(): return {"error": error}
+	var actual: Dictionary = _sampled_hook_wire(hook_value)
+	# Staging may substitute lifecycle alive only, never mask drift in the
+	# current genuine getter's source identity/incarnation/recipe/Hero/opening.
+	var native_original: Dictionary = entry.wire.duplicate(true)
+	native_original.alive = actual.alive
+	if not _authored_same(native_original, actual): return {"error": "Current native sampled immutable source binding differs before staging"}
+	var compare: Dictionary = actual if staged.is_empty() else staged
+	if not staged.is_empty() and (PreviewExact.stringify(staged).is_empty() or not Codec.keys_error(staged, SAMPLED_WIRE_KEYS).is_empty()): return {"error": "Whole-parent validated staged sampled source must be closed"}
+	var original: Dictionary = entry.wire.duplicate(true)
+	original.alive = compare.get("alive")
+	if not compare.get("alive") is bool or not _authored_same(original, compare) or (not allow_dead and not compare.alive): return {"error": "Sampled immutable source recipe/cycle/Hero or true lifecycle differs"}
+	# A staged lifecycle substitutes only the saved alive flag. It never bypasses
+	# actual Script/body/receiver/resource/world identity or claims earned sample.
+	var after: Dictionary = _sampled_hook_wire(hook_value)
+	# Distinguish correspondence-witness rejection from actual getter mutation;
+	# these remain the same strict predicates at the same native boundary.
+	if control.is_empty(): return {"error": "Sampled native getter control witness cannot encode current runtime state"}
+	if control != _sampled_control_wire(): return {"error": "Sampled native getter changed Scheduler control state"}
+	if not _same_lunge_preview(hero_before, _sampled_hero_boundary(hero)): return {"error": "Sampled native getter changed actual Hero state"}
+	if not _sampled_native_node(owner, world) or not _sampled_native_node(hero, world) or world.get_world_3d() != entry.native_world or get_world_3d() != entry.native_world or owner.get_script() != entry.script or entry.script.get_source_code() != entry.source_script_code or (hero.get_script() as Script).get_source_code() != entry.hero_script_code or hero.get_script() != ReplayPlayer or _clock != clock or not _authored_same(entry.body, _sampled_body(owner)) or not _authored_same(entry.hero_body, _sampled_hero_body(hero)) or not _authored_same(entry.source_transform, _transform_data(owner.global_transform)) or owner.velocity != Vector3.ZERO or not _authored_same(collision, pure_collision_fingerprint(world)) or not _authored_same(entry.floor_identities, _sampled_floor_identities(entry.floor_regions)) or not _authored_same(entry.floors, authored_floor_signature(world, entry.floor_regions).get("signature")) or not _authored_same(after, actual) or control.is_empty() or control != _sampled_control_wire() or not _same_lunge_preview(hero_before, _sampled_hero_boundary(hero)) or not _authored_same(source_before, {"hp": owner.get("hp"), "dead": owner.get("dead")}): return {"error": "Sampled source getter mutated native custody"}
+	return {"wire": actual.duplicate(true)}
+
+
+func preview_sampled_circle(owner: CharacterBody3D, hero_id: String, response: Dictionary) -> Dictionary:
+	if _sampled_hook_busy or _snapshot_busy or _request_busy or _boundary_busy or _cycle_busy or _transaction_depth > 0: return {"accepted": false, "reason": "Scheduler transaction is already in progress"}
+	return _sampled_preview_current(owner, hero_id, response).duplicate(true)
+
+
+func _sampled_preview_current(owner: CharacterBody3D, hero_id: String, response: Dictionary) -> Dictionary:
+	if not _cycle_for_owner(owner).is_empty(): return {"accepted": false, "reason": MANAGED_ORDINARY_ERROR}
+	var entry: Dictionary = _sampled_for_owner(owner)
+	if entry.is_empty() or entry.wire.hero_id != hero_id: return {"accepted": false, "reason": "Bind the actual sampled owner and stable Hero before preview"}
+	var error: String = _sampled_entry_error(entry)
+	if error.is_empty(): error = _preview_retained_error()
+	if error.is_empty(): error = _preview_response_error(owner, response)
+	if not error.is_empty(): return {"accepted": false, "reason": error}
+	var hero: CinderPlayer = (entry.hero as WeakRef).get_ref()
+	var world: Node3D = (entry.world as WeakRef).get_ref()
+	if response.get("actor") != hero or response.get("world_root") != world or not response.get("floor_regions") is Array or not _authored_same(entry.floor_identities, _sampled_floor_identities(response.floor_regions)) or not _authored_same(entry.floors, authored_floor_signature(world, response.floor_regions).get("signature")): return {"accepted": false, "reason": "Exact actual bound Hero/world/floor resources required"}
+	var authored_response: Dictionary = response.duplicate()
+	for key: String in ["actor", "world_root", "floor_regions"]: authored_response.erase(key)
+	if _lunge_preview_wire(authored_response).is_empty(): return {"accepted": false, "reason": "Finite bounded native response required"}
+	var live: Dictionary = hero.get_threat_response_state()
+	if live.get("stable") != true or hero.dead or hero.velocity != Vector3.ZERO or not live.get("motion") is Dictionary or live.motion.grounded != true or not Geometry.finite_number(live.motion.dash_left_s) or live.motion.dash_left_s > 0.0 or live.motion.queued_dash != Vector3.ZERO or not Geometry.finite_number(live.motion.knockback_left_s) or live.motion.knockback_left_s > 0.0: return {"accepted": false, "reason": "Warning-start sample supports an actual grounded stopped Hero only"}
+	# Original response_error + BodySweep zero-motion support + analytic floor/RID
+	# coverage supply genuine ground; arbitrary target coordinates are absent.
+	var support: Dictionary = BodySweep.step(hero, hero.global_transform, Vector3.ZERO, response.floor_regions)
+	if support.has("error") or not _floor_path_supported(hero.global_position, hero.global_position, response.floor_regions): return {"accepted": false, "reason": "Actual sampled Hero lacks supported native solid ground"}
+	var floor_id: String = ""
+	var ground: Vector3 = hero.global_position
+	for region: Dictionary in response.floor_regions:
+		var collision: CollisionShape3D = region.collision
+		var rect: Rect2 = (region.safe_rect as Rect2).grow(-(CAPSULE_RADIUS + SKIN))
+		if rect.has_point(Geometry.planar(hero.global_position)):
+			var path: String = String(world.get_path_to(collision))
+			if floor_id.is_empty() or path < floor_id:
+				floor_id = path
+				ground.y = collision.global_position.y + (collision.shape as BoxShape3D).size.y * 0.5
+	if floor_id.is_empty() or not _stable_id(floor_id): return {"accepted": false, "reason": "A stable actual sampled floor path is required"}
+	var sample := {"api_revision": SAMPLED_SAMPLE_API, "source_id": entry.wire.source_id, "source_epoch": entry.wire.source_epoch, "generation": entry.wire.generation, "hero_id": hero_id, "scheduler_clock_s": _clock, "hero_action_clock_s": live.action_clock_s, "hero_position": Codec.vector3(hero.global_position), "ground_position": Codec.vector3(ground), "floor_id": floor_id}
+	var difficulty = DifficultyScript.new()
+	var role: Dictionary = difficulty.resolve_role(entry.wire.definition.raw_role, String(_profile.get("id", "")), entry.wire.definition.timing_floors)
+	if role.is_empty(): return {"accepted": false, "reason": difficulty.last_error}
+	var threat := {"role": role, "geometry": Geometry.circle(ground, entry.wire.definition.radius), "source_stationary": true, "opening_stationary": true, "opening_position": owner.global_position, "cooldown_remaining_s": 0.0}
+	var adapter := {"kind": "sampled_circle", "source_epoch": entry.wire.source_epoch, "generation": entry.wire.generation, "definition": entry.wire.definition.duplicate(true), "sample": sample, "world_collision_fingerprint": entry.collision.duplicate(true), "world_floor_signature": entry.floors.duplicate(true)}
+	var prepared: Dictionary = _prepare_ordinary_attack(owner, threat, response, adapter)
+	if not prepared.get("accepted", false): return prepared
+	var guard: Dictionary = _preview_guard(owner, threat, response, "BodyCollision")
+	if guard.has("error"): return {"accepted": false, "reason": guard.error}
+	# Guard reads native state after the source hook and proof. Re-read only for
+	# same-call correspondence; retain this exact warning-start receipt.
+	error = _sampled_entry_error(entry)
+	if error.is_empty(): error = _preview_response_error(owner, response)
+	if not error.is_empty() or not _authored_same(sample.hero_position, Codec.vector3(hero.global_position)) or not _authored_same(sample.hero_action_clock_s, hero.get_threat_response_state().action_clock_s) or not _authored_same(sample.scheduler_clock_s, _clock): return {"accepted": false, "reason": error if not error.is_empty() else "Sampled native clock/pose changed during proof"}
+	var result := {"accepted": true, "reason": "", "api_revision": SAMPLED_PREVIEW_API, "candidate": prepared.candidate, "proof": prepared.proof, "guard": guard.guard}
+	return result if not _lunge_preview_wire(result).is_empty() else {"accepted": false, "reason": "Sampled preview exceeds bounded native data"}
+
+
+func request_sampled_circle(owner: CharacterBody3D, hero_id: String, response: Dictionary, preview: Dictionary = {}) -> Dictionary:
+	if _sampled_hook_busy or _snapshot_busy or _request_busy or _boundary_busy or _cycle_busy or _transaction_depth > 0: return _rejected("Scheduler transaction is already in progress")
+	var current: Dictionary = _sampled_preview_current(owner, hero_id, response)
+	if not current.get("accepted", false): return _rejected(current.reason)
+	if not preview.is_empty() and not _same_lunge_preview(preview, current): return _rejected("Sampled preview no longer matches exact warning-start native custody")
+	var before_cleanup: Dictionary = current.duplicate(true)
+	_request_busy = true
+	_transaction_depth += 1
+	_prune()
+	current = _sampled_preview_current(owner, hero_id, response)
+	var answer: Dictionary
+	if not current.get("accepted", false): answer = _rejected(current.reason)
+	elif not _same_lunge_preview(before_cleanup, current): answer = _rejected("Sampled warning-start custody changed during reservation cleanup")
+	else: answer = _commit_ordinary_attack(owner, current.candidate, current.proof, response)
+	_transaction_depth -= 1
+	_request_busy = false
+	return answer
+
+
+func sampled_circle_reservation_state(reservation_id: String) -> Dictionary:
+	## Fresh pure reader. No prune, mutation, diagnostics, callbacks or authority
+	## token. Re-read before and after every external consumer observer/hurt call.
+	if _sampled_hook_busy or not _reservations.has(reservation_id): return {}
+	var record: Dictionary = _reservations[reservation_id]
+	if record.get("adapter", {}).get("kind") != "sampled_circle" or not _sampled_record_error(record).is_empty(): return {}
+	return _public_record(record)
+
+
+func sampled_circle_contact_supported(reservation_id: String, segment_from: Vector3, segment_to: Vector3) -> bool:
+	## Pure contact-domain refusal. The consumer supplies its recorded actual
+	## endpoints; arbitrary caller endpoints gain no historical authority here.
+	## Unsupported current/held motion never cancels, consumes, resets or samples
+	## the authentic lease. Native floor/body/resource loss remains lease-invalid.
+	if _sampled_hook_busy or not is_inside_tree() or get_tree().paused or not _reservations.has(reservation_id) or not _sampled_point_bounded(segment_from) or not _sampled_point_bounded(segment_to): return false
+	var record: Dictionary = _reservations[reservation_id]
+	if record.get("adapter", {}).get("kind") != "sampled_circle" or not _sampled_record_error(record).is_empty(): return false
+	var entry: Dictionary = _sampled_for_owner((record._owner as WeakRef).get_ref())
+	if entry.is_empty(): return false
+	var hero: CinderPlayer = (entry.hero as WeakRef).get_ref()
+	var before: Dictionary = _sampled_hero_boundary(hero)
+	if before.is_empty() or hero.dead or not _sampled_current_hero_ground_error(entry).is_empty(): return false
+	if not _floor_error(entry.floor_regions, segment_from).is_empty() or not _floor_error(entry.floor_regions, segment_to).is_empty() or not _floor_path_supported(segment_from, segment_to, entry.floor_regions): return false
+	# Actual native endpoint body queries join the analytic continuous coverage;
+	# no manual body movement/physics authority or X/Z-only airborne harm.
+	for point: Vector3 in [segment_from, segment_to]:
+		if BodySweep.step(hero, Transform3D(Basis.IDENTITY, point), Vector3.ZERO, entry.floor_regions).has("error"): return false
+	if not _sampled_record_error(record).is_empty(): return false
+	return not get_tree().paused and not hero.dead and _same_lunge_preview(before, _sampled_hero_boundary(hero)) and _sampled_current_hero_ground_error(entry).is_empty()
+
+
+func _sampled_point_bounded(point: Vector3) -> bool:
+	return point.is_finite() and maxf(absf(point.x), maxf(absf(point.y), absf(point.z))) <= BodySweep.MAX_COORDINATE
+
+
+func _sampled_record_error(record: Dictionary) -> String:
+	var entry: Dictionary = _sampled_for_owner((record._owner as WeakRef).get_ref())
+	if entry.is_empty(): return "Sampled source custody was removed"
+	var error: String = _sampled_entry_error(entry)
+	if not error.is_empty(): return error
+	if _clock > float(record.recovery_until_s): return "Sampled original lease expired"
+	# Receiver motion/support is contact-domain data, not lease provenance.
+	# A real dash, airborne pose or unsupported endpoint never retargets/cancels
+	# an otherwise authentic warning/lock/active/recovery exchange.
+	return _sampled_adapter_error(record.adapter, record, entry, _clock)
+
+
+func _sampled_adapter_error(value: Variant, record: Dictionary, entry: Dictionary, clock_s: float, staged_hero_clock_s: float = -1.0, historical: bool = false) -> String:
+	if not value is Dictionary or PreviewExact.stringify(value).is_empty() or not Codec.keys_error(value, SAMPLED_ADAPTER_KEYS).is_empty() or value.kind != "sampled_circle" or value.source_epoch != entry.wire.source_epoch or not _authored_same(value.generation, entry.wire.generation) or not _authored_same(value.definition, entry.wire.definition) or not _authored_same(value.world_collision_fingerprint, entry.collision) or not _authored_same(value.world_floor_signature, entry.floors): return "Exact sampled adapter source/recipe/world differs"
+	var sample: Variant = value.sample
+	if not sample is Dictionary or not Codec.keys_error(sample, SAMPLED_SAMPLE_KEYS).is_empty() or sample.api_revision != SAMPLED_SAMPLE_API or sample.source_id != entry.wire.source_id or sample.source_epoch != value.source_epoch or not _authored_same(sample.generation, value.generation) or sample.hero_id != entry.wire.hero_id or not sample.scheduler_clock_s is float or not Codec.in_range(sample.scheduler_clock_s, 0.0, 1000000000.0) or not sample.hero_action_clock_s is float or not Codec.in_range(sample.hero_action_clock_s, 0.0, 1000000000.0) or not _authored_same(sample.scheduler_clock_s, record.start_s) or not _sampled_vector(sample.hero_position) or not _sampled_vector(sample.ground_position) or not _stable_id(sample.floor_id): return "Exact original Hero warning-start sample required"
+	var hero: CinderPlayer = (entry.hero as WeakRef).get_ref()
+	var hero_clock: float = hero.get_threat_response_state().action_clock_s if staged_hero_clock_s < 0.0 else staged_hero_clock_s
+	if float(sample.hero_action_clock_s) > hero_clock: return "Original sampled Hero clock cannot exceed actual/staged current Player clock"
+	var ground: Vector3 = Codec.read_vector3(sample.ground_position)
+	var position: Vector3 = Codec.read_vector3(sample.hero_position)
+	if ground.x != position.x or ground.z != position.z or absf(position.y + CAPSULE_CENTER_Y - CAPSULE_HEIGHT * 0.5 - ground.y) > FEET_TOLERANCE: return "Sampled point differs from original Hero ground projection"
+	var supported: bool = false
+	for region: Dictionary in entry.floor_regions:
+		var collision: CollisionShape3D = region.collision
+		if String((entry.world as WeakRef).get_ref().get_path_to(collision)) == sample.floor_id and (region.safe_rect as Rect2).grow(-(CAPSULE_RADIUS + SKIN)).has_point(Geometry.planar(position)) and ground.y == Vector3(position.x, collision.global_position.y + (collision.shape as BoxShape3D).size.y * 0.5, position.z).y: supported = true
+	if not supported: return "Historical sampled point no longer belongs to original actual floor"
+	if not _authored_same(Codec.vector3(record.source_position), Codec.vector3(record.opening_position)) or not _authored_same(Codec.vector3(record.source_position), entry.wire.opening_position) or not _same_lunge_preview(record.geometry, Geometry.circle(ground, value.definition.radius)): return "Sampled geometry/source/recovery opening join differs"
+	var difficulty = DifficultyScript.new()
+	var role: Dictionary = difficulty.resolve_role(value.definition.raw_role, record.profile_id, value.definition.timing_floors)
+	if role.is_empty(): return difficulty.last_error
+	var active: float = float(record.start_s) + float(role.windup_s)
+	var expected := {"lock_from_s": active - float(role.lock_s), "active_from_s": active, "active_until_s": active + float(role.active_s), "recovery_until_s": active + float(role.active_s) + float(role.recovery_s), "cooldown_until_s": active + float(role.attack_interval_s)}
+	for key: String in expected:
+		if not _authored_same(record.get(key), expected[key]): return "Sampled deadline differs from original resolved warning-start cycle: " + key
+	if not record.start_s is float or float(record.start_s) > clock_s or (not historical and clock_s > float(record.recovery_until_s)): return "Sampled original lease clock is incoherent"
+	return ""
+
+
+func _sampled_capture_sources(bindings: Dictionary) -> Dictionary:
+	var result: Dictionary = {}
+	for source_id: String in _sampled_sources:
+		var entry: Dictionary = _sampled_sources[source_id]
+		var checked: Dictionary = _sampled_entry_state(entry, true)
+		if checked.has("error"): return checked
+		var owner: CharacterBody3D = (entry.owner as WeakRef).get_ref()
+		var hero: CinderPlayer = (entry.hero as WeakRef).get_ref()
+		if bindings.owners.get(source_id) != owner or bindings.get("actors", {}).get(entry.wire.hero_id) != hero or bindings.world_root != (entry.world as WeakRef).get_ref() or not _authored_same(entry.floor_identities, _sampled_floor_identities(bindings.floors.values())) or not _authored_same(entry.floors, authored_floor_signature(bindings.world_root, bindings.floors.values()).get("signature")): return {"error": "Sampled snapshot must retain actual stable source/Hero/world/full floor mappings"}
+		result[source_id] = checked.wire
+	return {"sources": result}
+
+
+func _sampled_snapshot_plan(snapshot: Dictionary, bindings: Dictionary) -> Dictionary:
+	if not snapshot.get("schema_version") is int or snapshot.schema_version != 4 or not snapshot.get("sampled_circle_sources") is Dictionary or snapshot.sampled_circle_sources.is_empty() or snapshot.sampled_circle_sources.size() > 64 or PreviewExact.stringify(snapshot).is_empty(): return {"error": "Exact conditional Scheduler schema4 and bounded native sampled source bindings required"}
+	if not snapshot.get("reservations") is Array or not snapshot.get("cooldowns") is Array or (snapshot.has("replay_cancellations") and not snapshot.replay_cancellations is Array): return {"error": "Sampled Scheduler tables must retain typed arrays"}
+	snapshot = snapshot.duplicate(true)
+	var error: String = _bindings_error(bindings)
+	if not error.is_empty(): return {"error": error}
+	if snapshot.sampled_circle_sources.size() != _sampled_sources.size(): return {"error": "Whole sampled source custody cannot be omitted or invented"}
+	if bindings.has("sampled_owner_bindings") and not bindings.sampled_owner_bindings is Dictionary: return {"error": "Validated staged sampled lifecycle bindings must be a dictionary"}
+	for source_id: Variant in bindings.get("sampled_owner_bindings", {}):
+		if not source_id is String or not _sampled_sources.has(source_id) or not bindings.sampled_owner_bindings[source_id] is Dictionary or PreviewExact.stringify(bindings.sampled_owner_bindings[source_id]).is_empty(): return {"error": "Staged sampled source must retain actual registered ownership and bounded closed wire"}
+	if bindings.has("hero_action_clocks"):
+		if not bindings.hero_action_clocks is Dictionary: return {"error": "Whole-parent validated Hero action clocks must be a stable map"}
+		for hero_id: Variant in bindings.hero_action_clocks:
+			if not hero_id is String or not bindings.get("actors", {}).has(hero_id) or not bindings.hero_action_clocks[hero_id] is float or not Codec.in_range(bindings.hero_action_clocks[hero_id], 0.0, 1000000000.0): return {"error": "Staged original Player action clock requires actual stable Hero binding"}
+	for source_id: Variant in snapshot.sampled_circle_sources:
+		if not source_id is String or not _sampled_sources.has(source_id) or not snapshot.sampled_circle_sources[source_id] is Dictionary: return {"error": "Sampled source IDs must retain actual registered bindings"}
+		var entry: Dictionary = _sampled_sources[source_id]
+		var staged: Dictionary = bindings.get("sampled_owner_bindings", {}).get(source_id, {})
+		var checked: Dictionary = _sampled_entry_state(entry, true, staged)
+		if checked.has("error"): return checked
+		var actual: Dictionary = checked.wire if staged.is_empty() else staged
+		if not _authored_same(actual, snapshot.sampled_circle_sources[source_id]) or bindings.owners.get(source_id) != (entry.owner as WeakRef).get_ref() or bindings.get("actors", {}).get(entry.wire.hero_id) != (entry.hero as WeakRef).get_ref() or bindings.world_root != (entry.world as WeakRef).get_ref() or not _authored_same(entry.floor_identities, _sampled_floor_identities(bindings.floors.values())) or not _authored_same(entry.floors, authored_floor_signature(bindings.world_root, bindings.floors.values()).get("signature")): return {"error": "Saved sampled source must join actual/staged true lifecycle, Hero and full native floors"}
+	# Old parsers validate old records unchanged. Only remove NEW typed adapters
+	# from a private copy, then add them back after exact sampled validation.
+	var ordinary: Dictionary = snapshot.duplicate(true)
+	ordinary.erase("sampled_circle_sources")
+	var sampled: Dictionary = {}
+	for value: Variant in ordinary.get("reservations", []):
+		if value is Dictionary and value.get("adapter") is Dictionary and value.adapter.get("kind") == "sampled_circle":
+			if not value.get("id") is String or sampled.has(value.id): return {"error": "Sampled adapters require unique typed original reservation IDs"}
+			sampled[value.id] = value.adapter.duplicate(true)
+			value.erase("adapter")
+	var has_authored: bool = false
+	for value: Variant in ordinary.get("reservations", []):
+		if value is Dictionary and _is_authored_replay(value): has_authored = true
+	for value: Variant in ordinary.get("replay_cancellations", []):
+		if value is Dictionary and value.get("kind") == "authored_replay": has_authored = true
+	ordinary.schema_version = 3 if ordinary.has("authored_source_cycles") else (2 if has_authored else 1)
+	var plan: Dictionary = _cycle_snapshot_plan(ordinary, bindings) if ordinary.schema_version == 3 else _snapshot_plan_ordinary(ordinary, bindings)
+	if plan.has("error"): return plan
+	if not snapshot.clock_s is float or not snapshot.serial is int or not snapshot.world_revision is int or not _authored_same(snapshot.profile, _difficulty.profile(snapshot.profile.get("id", ""))) or not _authored_same(snapshot.collision, pure_collision_fingerprint(bindings.world_root)): return {"error": "Sampled Scheduler transport retains exact scalar/profile/collision identity"}
+	for value: Variant in snapshot.cooldowns:
+		if value is Dictionary and _sampled_sources.has(value.get("source_id", "")) and not value.get("ready_s") is float: return {"error": "Native sampled cooldowns retain exact original float types"}
+	for record: Dictionary in plan.reservations.values():
+		var entry: Dictionary = _sampled_for_owner((record._owner as WeakRef).get_ref())
+		if entry.is_empty():
+			if sampled.has(record.id): return {"error": "Sampled adapter cannot bind a foreign ordinary source"}
+			continue
+		if not sampled.has(record.id): return {"error": "Sampled lease cannot be stripped or downgraded to legacy geometry"}
+		if not snapshot.sampled_circle_sources[entry.wire.source_id].alive: return {"error": "Defeated sampled source cannot retain a danger lease"}
+		if float(record.cooldown_until_s) > plan.clock_s and (not plan.cooldowns.has(record.source_instance_id) or not _authored_same(plan.cooldowns[record.source_instance_id].ready_s, record.cooldown_until_s)): return {"error": "Sampled lease retains its exact original source cooldown"}
+		record["adapter"] = sampled[record.id]
+		var original_wire: Dictionary = {}
+		for wire: Dictionary in snapshot.reservations:
+			if wire.id == record.id: original_wire = wire
+		error = _sampled_record_wire_error(original_wire, record, bindings)
+		if not error.is_empty(): return {"error": error}
+		error = _sampled_adapter_error(record.adapter, record, entry, plan.clock_s, bindings.get("hero_action_clocks", {}).get(entry.wire.hero_id, -1.0))
+		if not error.is_empty(): return {"error": error}
+	for id: String in sampled:
+		if not plan.reservations.has(id): return {"error": "Sampled adapter must retain its unique original lease"}
+	return plan
+
+
+func _sampled_vector(value: Variant) -> bool:
+	if not value is Array or value.size() != 3: return false
+	for child: Variant in value:
+		if not child is float or not is_finite(child) or absf(child) > BodySweep.MAX_COORDINATE: return false
+	return _authored_same(value, Codec.vector3(Codec.read_vector3(value)))
+
+
+func _sampled_record_wire_error(wire: Dictionary, decoded: Dictionary, bindings: Dictionary) -> String:
+	for key: String in ["source_position", "opening_position"]:
+		if not _sampled_vector(wire.get(key)) or not _authored_same(wire[key], Codec.vector3(decoded[key])): return "Exact represented sampled source/opening coordinates required"
+	if not _authored_same(wire.geometry, _encode_geometry(decoded.geometry)) or not wire.world_revision is int: return "Exact sampled geometry/native revision transport required"
+	for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
+		if not wire.get(key) is float: return "Exact sampled original deadline scalar required"
+	for unit: Dictionary in wire.floors:
+		if not _authored_same(unit.signature, _floor_signature(bindings.floors[unit.floor_id], bindings.world_root)): return "Exact sampled saved floor descriptor differs"
+	return ""
+
+
+func _sampled_control_wire() -> String:
+	# Detect mutation by a supposedly pure owned getter without authorizing any
+	# cached table. This is bounded same-call correspondence, never a lease token.
+	var records: Array = []
+	var ids: Array = _reservations.keys()
+	ids.sort()
+	for id: String in ids: records.append(_public_record(_reservations[id]))
+	var cooldowns: Array = []
+	ids = _cooldowns.keys()
+	ids.sort()
+	for id: int in ids: cooldowns.append({"id": str(id), "ready_s": _cooldowns[id].ready_s})
+	var sampled_ids: Array = _sampled_sources.keys()
+	sampled_ids.sort()
+	var cycle_ids: Array = _authored_cycles.keys()
+	cycle_ids.sort()
+	return _lunge_preview_wire({"paused": get_tree().paused, "last_error": last_error, "last_snapshot_error": last_snapshot_error, "clock_s": _clock, "encounter_id": _encounter_id, "world_revision": _world_revision, "serial": _serial, "profile": _profile, "reservations": records, "cooldowns": cooldowns, "sampled_sources": sampled_ids, "authored_sources": cycle_ids})
+
+
+func _sampled_method_arity(owner: Object, method_name: String, argument_count: int) -> bool:
+	if not is_instance_valid(owner): return false
+	for method: Dictionary in owner.get_method_list():
+		if String(method.name) == method_name: return method.get("args", []).size() == argument_count
+	return false
+
+
+func _sampled_hero_boundary(hero: CinderPlayer) -> Dictionary:
+	if not is_instance_valid(hero) or hero.get_script() != ReplayPlayer or not hero.is_inside_tree() or hero.is_queued_for_deletion(): return {}
+	var response: Dictionary = hero.get_threat_response_state()
+	response.erase("actor")
+	return {"response": response, "transform": hero.global_transform, "hp": hero.hp, "shells": hero.shells, "dead": hero.dead}
+
+
+func _sampled_current_hero_ground_error(entry: Dictionary) -> String:
+	var value: Variant = (entry.hero as WeakRef).get_ref()
+	if not is_instance_valid(value) or not value is CinderPlayer: return "Actual sampled receiver was removed"
+	var hero: CinderPlayer = value
+	var motion: Dictionary = hero.get_threat_response_state().motion
+	if motion.get("grounded") != true: return "Sampled-circle contacts support a genuinely grounded receiver only"
+	var floor_error: String = _floor_error(entry.floor_regions, hero.global_position)
+	if not floor_error.is_empty(): return floor_error
+	var support: Dictionary = BodySweep.step(hero, hero.global_transform, Vector3.ZERO, entry.floor_regions)
+	return "" if not support.has("error") and _floor_path_supported(hero.global_position, hero.global_position, entry.floor_regions) else "Actual sampled receiver left supported native ground"
+
+
+func sampled_circle_exchange_error(owner: CharacterBody3D, encoded_exchange: Dictionary, adapter: Dictionary, clock_s: float, staged_hero_clock_s: float = -1.0) -> String:
+	## Paused whole-parent transport only. A successful historical validation
+	## allocates nothing and cannot rearm a canceled/expired/dead source. The
+	## caller separately joins this original exchange to its consumer packet.
+	if _sampled_hook_busy or not is_inside_tree() or not get_tree().paused: return "Historical sampled exchanges require a paused whole-parent barrier outside native getters"
+	if not _authored_same(staged_hero_clock_s, -1.0) and not Codec.in_range(staged_hero_clock_s, 0.0, 1000000000.0): return "Staged Hero clock requires exact -1.0 sentinel or finite 0..1000000000 seconds"
+	if PreviewExact.stringify(encoded_exchange).is_empty() or PreviewExact.stringify(adapter).is_empty() or not Codec.keys_error(encoded_exchange, ["id", "source_position", "geometry", "opening_position", "start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s", "profile_id", "world_revision"]).is_empty() or not Codec.in_range(clock_s, 0.0, 1000000000.0): return "Exact bounded historical sampled exchange required"
+	var entry: Dictionary = _sampled_for_owner(owner)
+	if entry.is_empty(): return "Historical sample requires the actual registered native owner"
+	var checked: Dictionary = _sampled_entry_state(entry, true)
+	if checked.has("error"): return checked.error
+	if not encoded_exchange.id is String or not encoded_exchange.id.begins_with("threat-") or not encoded_exchange.id.substr(7).is_valid_int() or not Codec.is_integer(int(encoded_exchange.id.substr(7)), 1) or encoded_exchange.id != "threat-%d" % int(encoded_exchange.id.substr(7)) or not encoded_exchange.profile_id is String or not encoded_exchange.world_revision is int or encoded_exchange.world_revision < 1: return "Original canonical sampled identity/profile/revision required"
+	for key: String in ["source_position", "opening_position"]:
+		if not _sampled_vector(encoded_exchange[key]): return "Exact original sampled source/opening vectors required"
+	for key: String in ["start_s", "lock_from_s", "active_from_s", "active_until_s", "recovery_until_s", "cooldown_until_s"]:
+		if not encoded_exchange[key] is float or not Codec.in_range(encoded_exchange[key], 0.0, 1000000000.0): return "Exact original sampled deadline floats required"
+	if not encoded_exchange.geometry is Dictionary: return "Original sampled circle geometry required"
+	var shape: Dictionary = _decode_geometry(encoded_exchange.geometry)
+	if shape.is_empty() or not _authored_same(encoded_exchange.geometry, _encode_geometry(shape)): return "Historical sampled geometry must preserve its exact represented coordinates"
+	var record: Dictionary = encoded_exchange.duplicate(true)
+	record.source_position = Codec.read_vector3(encoded_exchange.source_position)
+	record.opening_position = Codec.read_vector3(encoded_exchange.opening_position)
+	record.geometry = shape
+	return _sampled_adapter_error(adapter, record, entry, clock_s, staged_hero_clock_s, true)
