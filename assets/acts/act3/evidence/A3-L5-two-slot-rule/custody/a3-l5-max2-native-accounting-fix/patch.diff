@@ -1,0 +1,85 @@
+--- before
++++ after
+@@ -11,6 +11,7 @@
+ var _trace_segment: Dictionary = {}
+ var _trace_proof: Dictionary = {}
+ var _trace_lease: Dictionary = {}
++var _completed_prefix: Array = []
+ 
+ 
+ func _room_path() -> String:
+@@ -37,6 +38,7 @@
+ func _two_slot_ordinary_case() -> bool:
+ 	_expected_slots.clear()
+ 	_opportunities.clear()
++	_completed_prefix.clear()
+ 	if not await _record_combo(Vector3.BACK, 1): return false
+ 	var one: Dictionary = _gate.state().capture
+ 	if not _expect(one.max_slots == 2 and one.allocated == 1 and one.sealed == 1 and one.pending == 0 and _room.call("state").joins == 0 and _scheduler.reservations().is_empty() and _gate.retirement_state().is_empty() and _room.get("playback") == null, "one sealed recording never becomes a partial two-slot lease/retirement/replay"): return false
+@@ -127,6 +129,7 @@
+ func _invalid_second_slot_and_rearm_case() -> bool:
+ 	_expected_slots.clear()
+ 	_opportunities.clear()
++	_completed_prefix.clear()
+ 	if not await _record_combo(Vector3.BACK, 1): return false
+ 	var first: Dictionary = _expected_slots[0].duplicate(true)
+ 	_trace_scope = "invalid_second_completed_capture"
+@@ -152,6 +155,7 @@
+ 	if not await _wait_stable(): return false
+ 	_expected_slots.clear()
+ 	_opportunities.clear()
++	_completed_prefix.clear()
+ 	if not await _record_combo(Vector3.LEFT, 1): return false
+ 	if not await _record_combo(Vector3.BACK, 2): return false
+ 	return await _resolve_two_slots(2, false)
+@@ -217,19 +221,29 @@
+ 			recovered = true
+ 			break
+ 		if not await _tick(): return false
+-	print("READONLY TWO-SLOT OBSERVED PRIMARY RECOVERY " + var_to_str({"recovered": recovered, "player_clock_s": _hero.get_world_action_clock(), "scheduler_clock_s": _scheduler.get_clock(), "actual_primary": primary, "public_response": _hero.get_threat_response_state(), "original_deadline_s": original_deadline, "original_proof": original.proof, "original_lease": original.lease}))
++	# Diagnostic copy: never Variant-serialize a live actor Object/scene graph.
++	# Preserve every other public motion/resource/clock operand exactly.
++	var observed_response: Dictionary = _hero.get_threat_response_state()
++	observed_response.erase("actor")
++	observed_response["actor_instance_id"] = _hero.get_instance_id()
++	print("READONLY TWO-SLOT OBSERVED PRIMARY RECOVERY " + var_to_str({"recovered": recovered, "player_clock_s": _hero.get_world_action_clock(), "scheduler_clock_s": _scheduler.get_clock(), "actual_primary": primary, "public_response": observed_response, "original_deadline_s": original_deadline, "original_proof": original.proof, "original_lease": original.lease}))
+ 	if not _expect(recovered and _hero.get_world_action_clock() <= original_deadline and _latest_sequence() == int(primary.sequence), "actual ordinary primary fully settles before unchanged deadline without extra action, clock freeze or recovery extension"): return false
+ 	var clear_history: int = _latest_sequence()
+ 	if not await _drain_original_replay_recovery(float(original.lease.recovery_until_s), clear_history, 2): return false
+ 	if not await _check_completed_two_slot_leaves(original): return false
+-	var exact_events: bool = _events.size() == 2 and _opportunities.size() == 2
++	var exact_events: bool = _events.size() == 2 and _opportunities.size() == 2 and _completed_prefix.size() == 2
+ 	if exact_events:
+ 		for index: int in range(2):
+ 			var event: Dictionary = _events[index]
+ 			var expected: Dictionary = original_events[index]
+ 			var opportunity: Dictionary = _opportunities[index]
+ 			var scheduled: float = float(original.lease.adapter.timeline_origin_s) + float(expected.at_s)
+-			exact_events = exact_events and event.event_id == expected.event_id and event.slot_id == index + 1 and event.kind == "primary" and event.record_sequence == _expected_slots[index].primary.sequence and opportunity.event_id == expected.event_id and float(opportunity.scheduled_at_s) == scheduled and float(opportunity.dispatch_clock_s) >= scheduled and float(opportunity.dispatch_clock_s) - scheduled <= float(original.proof.dispatch_delay_bound_s) and not opportunity.contact and not opportunity.damage_attempted
++			# Canonical Cursor validator enforces its existing derived-deadline
++			# precision contract. Keep exact original scheduled/dispatch bits and
++			# late bound; do not impose a contradictory raw float >= comparator.
++			var delivered: Dictionary = {"event_id": event.event_id, "scheduled_at_s": event.scheduled_at_s, "dispatch_clock_s": event.dispatch_clock_s}
++			var receipt: Dictionary = {"event_id": opportunity.event_id, "scheduled_at_s": opportunity.scheduled_at_s, "dispatch_clock_s": opportunity.dispatch_clock_s}
++			exact_events = exact_events and event.event_id == expected.event_id and event.slot_id == index + 1 and event.kind == "primary" and event.record_sequence == _expected_slots[index].primary.sequence and opportunity.event_id == expected.event_id and float(opportunity.scheduled_at_s) == scheduled and _wire_exact(delivered, _completed_prefix[index]) and _wire_exact(receipt, _completed_prefix[index]) and float(opportunity.dispatch_clock_s) - scheduled <= float(original.proof.dispatch_delay_bound_s) and not opportunity.contact and not opportunity.damage_attempted
+ 	if not _expect(exact_events and _retirements.size() == 1 and _retirements[0].slot_ids == [1, 2] and _scheduler.reservations().is_empty() and not tether.is_in_group("environment_attack_targets") and _hero.hp == _hp and _hero.equipment.snapshot() == _kit, "both exact once-only events preserve original times/FIFO identity; neither contacts hero; finite consumer retires"): return false
+ 	var history: int = _latest_sequence()
+ 	for _i: int in range(30):
+@@ -256,6 +270,17 @@
+ 	var camera_error: String = _game.call("camera_framing_error", _room.call("camera_framing_points"))
+ 	print("READONLY TWO-SLOT STRICT COMPLETED LEAF JOIN " + var_to_str({"aggregate": aggregate, "original_proof": original.proof, "original_lease": original.lease, "original_timeline": original.sequence.timeline, "quiet_cues": quiet_cues, "camera_error": camera_error}))
+ 	if not _expect(paused and not aggregate.player.is_empty() and not aggregate.gate.is_empty() and not schedule.is_empty() and not terminal.is_empty() and terminal.status == "complete" and terminal.schema_version == 3 and terminal.cursor.armed and terminal.cursor.phase == "complete" and terminal.cursor.next_event_index == 2 and terminal.cursor.executed_events.size() == 2 and terminal.cursor.last_advanced_clock_s == schedule.clock_s and terminal.clock_s == schedule.clock_s and float(schedule.clock_s) > float(original.lease.recovery_until_s) and schedule.reservations.is_empty() and not schedule.has("replay_cancellations") and schedule.profile.id == original.lease.profile_id and terminal.reason.is_empty() and terminal.cancelled_at_s == null and terminal.cancellation.is_empty() and _wire_exact(terminal.sequence, original.sequence) and _wire_exact(terminal.projection, original.projection) and _wire_exact(terminal.opportunities, _opportunities) and _gate.retirement_state().slot_ids == [1, 2] and quiet_cues and not playback.get_apparition().visible and not playback.get_apparition_root().visible and playback.global_position == original.lease.source_position and not _hero.dead and _hero.hp == _hp and _hero.equipment.snapshot() == _kit and camera_error.is_empty() and _room.call("snapshot_state").is_empty() and not _room.last_snapshot_error.is_empty(), "actual completed schema3 leaves retain original profile/full prefix/current native quiet cues without claiming room transport", playback.last_snapshot_error): return false
++	# Correct the observed expectation with the PUBLIC original cursor codec,
++	# whose strict prefix validation uses the same declared deadline precision
++	# as actual advance. Immutable schedule/clock/type/identity stay exact.
++	var cursor_reader := CinderReplayCursor.new()
++	var prefix_error: String = cursor_reader.snapshot_error(terminal.cursor, original.sequence, String(original.sequence.source_epoch), int(original.generation), float(schedule.clock_s))
++	var too_early: Dictionary = terminal.cursor.duplicate(true)
++	too_early.executed_events[0].dispatch_clock_s = float(too_early.executed_events[0].scheduled_at_s) - 2.0 * CinderReplayCursor.TIME_EPSILON_S
++	var altered_schedule: Dictionary = terminal.cursor.duplicate(true)
++	altered_schedule.executed_events[0].scheduled_at_s = float(altered_schedule.executed_events[0].scheduled_at_s) + 0.0001
++	if not _expect(prefix_error.is_empty() and not cursor_reader.snapshot_error(too_early, original.sequence, String(original.sequence.source_epoch), int(original.generation), float(schedule.clock_s)).is_empty() and not cursor_reader.snapshot_error(altered_schedule, original.sequence, String(original.sequence.source_epoch), int(original.generation), float(schedule.clock_s)).is_empty(), "original public cursor accepts native exact prefix and rejects dispatch before declared precision or altered scheduled bits", prefix_error): return false
++	_completed_prefix = terminal.cursor.executed_events.duplicate(true)
+ 	var input_before: PackedByteArray = var_to_bytes(_game.call("get_input_observation_state"))
+ 	var camera: Camera3D = _game.get("camera") as Camera3D
+ 	var camera_before: PackedByteArray = var_to_bytes(camera.global_transform)

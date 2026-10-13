@@ -6,8 +6,8 @@ extends "res://tests/acts/act3/crystalman_rule_room_smoke.gd"
 
 const PORTRAIT_DIRECTORY: String = "res://captures/act3/crystalman-rule-room"
 const PORTRAIT_PHASES: Array[String] = ["warning", "active", "exposed", "spent"]
-const EXPECTED_SMOKE_SHA: String = "d806238b76a045c77fb9be30ef00a1d81ea0812c315506eef827d1505a14cf80"
-const EXPECTED_RUNTIME_SHA: String = "d4bb3e237a75eb16f6c31f40d6ed38795c802e4c440ab2f3c9b29779ecdcaee2"
+const EXPECTED_SMOKE_SHA: String = "6c3cfc228985e64f5b34f9c25b2b744b92ad6f8f031b68c3a428450a7b9c3bbc"
+const EXPECTED_RUNTIME_SHA: String = "915252a26089e7b4ecec92a8046d42555a702af7c1566551b80e67ce39e87a6b"
 const REQUESTED_SIZE := Vector2i(340, 736)
 const DRAW_LIMIT: int = 32
 

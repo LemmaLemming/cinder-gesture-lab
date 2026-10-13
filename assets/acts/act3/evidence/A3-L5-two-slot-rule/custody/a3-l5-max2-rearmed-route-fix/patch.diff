@@ -1,0 +1,26 @@
+--- before
++++ after
+@@ -153,11 +153,21 @@
+ 	if not await _wait_phase("recording", 180): return false
+ 	if not _expect(_gate.state().capture.generation == 2 and _gate.state().capture.allocated == 0 and _hero.global_position.x > 2.0, "visible fresh two-slot generation rearms at actual actor position without rewind"): return false
+ 	if not await _wait_stable(): return false
++	# The rejected attempt leaves the actual Player at the far lateral landing.
++	# Use a genuine unpaired dash back to the original compact capture pocket,
++	# then compose the already proved back/forward pair. Do not turn that wide
++	# reposition route into slot1's replay or rewrite Player/camera/geometry.
++	var reposition_before: int = _latest_sequence()
++	_trace_scope = "rearmed_actual_unpaired_reposition"
++	if not _expect(_swipe(Vector3.LEFT).is_empty(), "fresh rearm permits actual unpaired reposition without allocating a recording"): return false
++	if not await _wait_capture_dash(reposition_before) or not await _wait_stable(): return false
++	var capture_after: Dictionary = _gate.state().capture
++	if not _expect(capture_after.allocated == 0 and capture_after.sealed == 0 and capture_after.has_dash_candidate and absf(_hero.global_position.x) < 0.02 and _room.call("state").joins == 0 and _scheduler.reservations().is_empty() and _gate.retirement_state().is_empty(), "real unpaired reposition reaches the compact pocket with empty two-slot allocation and no forced replay"): return false
+ 	_expected_slots.clear()
+ 	_opportunities.clear()
+ 	_completed_prefix.clear()
+-	if not await _record_combo(Vector3.LEFT, 1): return false
+-	if not await _record_combo(Vector3.BACK, 2): return false
++	if not await _record_combo(Vector3.BACK, 1): return false
++	if not await _record_combo(Vector3.FORWARD, 2): return false
+ 	return await _resolve_two_slots(2, false)
+ 
+ 

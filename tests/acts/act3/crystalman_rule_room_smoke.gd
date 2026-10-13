@@ -70,16 +70,28 @@ func _run() -> void:
 	quit(0 if _failures == 0 else 1)
 
 
+func _room_path() -> String:
+	return RoomPath
+
+
+func _expected_capture_slots() -> int:
+	return 1
+
+
+func _before_response_swipe(_segment: Dictionary, _proof: Dictionary) -> void:
+	pass
+
+
 func _open() -> bool:
 	paused = false
 	_game = MainScene.instantiate()
-	_game.set("level_scene_path", RoomPath)
+	_game.set("level_scene_path", _room_path())
 	root.add_child(_game)
 	_hero = _game.get("player") as CinderPlayer
 	_room = _game.get("active_level") as CinderLevel
 	_scheduler = _room.get("threat_scheduler") as CinderThreatScheduler if _room != null else null
 	_gate = _room.get("capture_gate") as CinderReplayCaptureGate if _room != null else null
-	if not _expect(_hero != null and _room != null and _scheduler != null and _gate != null and _room.scene_file_path == RoomPath and _room.level_id == "A3-L5" and String(_room.get("last_configuration_error")).is_empty(), "actual MainScene enters one owned CinderLevel with the shared Player/camera/HUD"):
+	if not _expect(_hero != null and _room != null and _scheduler != null and _gate != null and _room.scene_file_path == _room_path() and _room.level_id == "A3-L5" and String(_room.get("last_configuration_error")).is_empty(), "actual MainScene enters one owned CinderLevel with the shared Player/camera/HUD"):
 		return false
 	_hero.shells = 0 # Explicit initial TEST ONLY zero-ammo supply; reload stays real.
 	_hp = _hero.hp
@@ -97,7 +109,7 @@ func _open() -> bool:
 	_floor_transform = _floor_collision.global_transform
 	_floor_size = (_floor_collision.shape as BoxShape3D).size
 	if not await _wait_phase("recording", 180): return false
-	return _expect(_gate.state().capture.armed and _gate.state().capture.max_slots == 1 and _gate.state().capture.allocated == 0 and _room.call("snapshot_state").is_empty() and not _room.last_snapshot_error.is_empty(), "one actual stable Gate arms while unfinished whole-parent transport fails explicitly")
+	return _expect(_gate.state().capture.armed and _gate.state().capture.max_slots == _expected_capture_slots() and _gate.state().capture.allocated == 0 and _room.call("snapshot_state").is_empty() and not _room.last_snapshot_error.is_empty(), "one actual stable Gate arms while unfinished whole-parent transport fails explicitly")
 
 
 func _ordinary_case() -> bool:
@@ -172,9 +184,10 @@ func _invalid_origin_and_rearm_case() -> bool:
 func _follow_proof(proof: Dictionary, pause_active: bool) -> bool:
 	var moved: bool = false
 	for segment: Dictionary in proof.path:
-		if segment.kind not in ["first_escape_dash", "tether_positioning_dash"]: continue
+		if segment.kind not in ["first_escape_dash", "second_escape_dash", "tether_positioning_dash"]: continue
 		if not await _until(float(segment.start_s)): return false
 		if not _expect(_hero.global_position.distance_to(segment.from) < 0.02, "real actor begins the proved ordinary dash at its actual source", str(_hero.global_position)): return false
+		_before_response_swipe(segment, proof)
 		var sequence_before: int = _latest_sequence()
 		var original_lease: Dictionary = _room.call("state").lease
 		_trace_response("before_swipe", segment, proof, original_lease, sequence_before)
@@ -186,7 +199,10 @@ func _follow_proof(proof: Dictionary, pause_active: bool) -> bool:
 		# Nominal witness time is not a completed-action publication. Wait the
 		# actual final partial physics tick, without waiting for dash cooldown.
 		var timeline: Dictionary = _room.call("state").sequence.timeline
-		var deadline: float = float(proof.timeline_origin_s) + float(timeline.slots[0].from_s if segment.kind == "first_escape_dash" else timeline.tether_until_s) - _scheduler.TIME_MARGIN
+		var offset: float = float(timeline.tether_until_s)
+		if segment.kind == "first_escape_dash": offset = float(timeline.slots[0].from_s)
+		elif segment.kind == "second_escape_dash": offset = float(timeline.slots[1].from_s)
+		var deadline: float = float(proof.timeline_origin_s) + offset - _scheduler.TIME_MARGIN
 		if not await _complete_response_dash(sequence_before, deadline): return false
 		_trace_response("actual_completed", segment, proof, original_lease, sequence_before)
 		if not (_hero.global_position.distance_to(segment.to) < 0.02 and _hero.hp == _hp):
@@ -250,8 +266,10 @@ func _drain_original_replay_recovery(original_until_s: float, history: int, even
 			return _expect(false, "spent finite recovery cannot redispatch/recapture/cancel", str(state))
 		# Cursor completes at >=deadline; Scheduler removes its lease at >.
 		# Observe both real conditions, never rewrite or advance either clock.
+		# reservations() prunes. Let the real clock pass expiry before that
+		# read; at exact equality the earned cooldown may already be absent.
 		if native_status == "complete" and _scheduler.get_clock() > original_until_s and _scheduler.reservations().is_empty():
-			return _expect(_scheduler.get_clock() >= original_until_s and state.phase == "spent" and state.cleared and state.tether_hits == 1, "original native replay naturally completes with empty lease and unchanged spent result")
+			return _expect(_scheduler.get_clock() > original_until_s and state.phase == "spent" and state.cleared and state.tether_hits == 1, "original native replay naturally completes with empty lease and unchanged spent result")
 		if not await _tick(): return false
 	return _expect(false, "finite original replay recovery drains within native test bound")
 

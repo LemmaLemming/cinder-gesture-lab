@@ -1,7 +1,7 @@
 class_name CinderAct3CrystalmanRuleRoom
 extends CinderLevel
-## Completed-action capture prototype with original finite recovery retained.
-## No whole-level transport, phase two, production art, exits or registration.
+## DRAFT V2, UNEXECUTED two-slot extension; original finite recovery retained.
+## Separate one/two-slot selectors; no campaign phase progression or transport.
 
 const Gate = preload("res://scripts/combat/replay_capture_gate.gd")
 const Sequence = preload("res://scripts/combat/replay_sequence.gd")
@@ -19,7 +19,10 @@ const ENCOUNTER_ID: String = "A3-L5/crystalman-rule"
 const FLOOR_RECT: Rect2 = Rect2(-6.0, -8.0, 12.0, 16.0)
 const TETHER_POSITION: Vector3 = Vector3(-0.7, 0.0, -0.4)
 const REJECTION_DISPLAY_S: float = 0.6
-const TRANSPORT_UNIMPLEMENTED: String = "First one-slot rule room has no whole-parent transport"
+const TRANSPORT_UNIMPLEMENTED: String = "Crystalman rule prototype has no whole-parent transport"
+
+@export_range(1, 2, 1) var capture_slots: int = 1
+const TWO_SLOT_GAP_S: float = 1.0
 
 signal recording_rejected(reason: String)
 signal recording_joined(receipt: Dictionary)
@@ -68,17 +71,26 @@ var _rejections: int = 0
 var _joins: int = 0
 var _tether_hits: int = 0
 var _generation: int = 0
+var _slot_capacity: int = 1
+var _capture_epoch: String = SOURCE_EPOCH
+var _slot_markers: Array[Node3D] = []
+var _slot_marker_materials: Array[StandardMaterial3D] = []
 var _rearm_after_clock_s: float = 0.0
 var _exposure_from_s: float = 0.0
 var _exposure_until_s: float = 0.0
 
 
 func _ready() -> void:
+	_slot_capacity = capture_slots
+	if _slot_capacity not in [1, 2]:
+		last_configuration_error = "Prototype capture capacity must be one or two"
+	_capture_epoch = SOURCE_EPOCH if _slot_capacity == 1 else "A3-L5/two-slot-rule"
 	# Scheduler/Player precede this guard; canonical Playback delivers at110.
 	process_physics_priority = 100
 	_build_floor()
 	_build_tether()
 	_build_recording_frame()
+	_build_slot_markers()
 	threat_scheduler = Scheduler.new()
 	threat_scheduler.name = "CrystalmanRuleScheduler"
 	add_child(threat_scheduler)
@@ -155,6 +167,59 @@ func _build_recording_frame() -> void:
 	_rejection_marker.visible = false
 
 
+func _build_slot_markers() -> void:
+	if _slot_capacity != 2: return
+	# Passive native mesh digits only. No input, collider, target group or clock.
+	for index: int in range(2):
+		var number := Node3D.new()
+		number.name = "NumberedCaptureSlot" + str(index + 1)
+		add_child(number)
+		_slot_markers.append(number)
+		var material := StandardMaterial3D.new()
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		_slot_marker_materials.append(material)
+		var strokes: Array[Dictionary] = []
+		if index == 0:
+			strokes = [{"at": Vector3(0, 0, 0), "size": Vector3(0.055, 0.035, 0.30)}]
+		else:
+			strokes = [{"at": Vector3(0, 0, -0.15), "size": Vector3(0.25, 0.035, 0.055)}, {"at": Vector3(0.10, 0, -0.075), "size": Vector3(0.055, 0.035, 0.15)}, {"at": Vector3(0, 0, 0), "size": Vector3(0.25, 0.035, 0.055)}, {"at": Vector3(-0.10, 0, 0.075), "size": Vector3(0.055, 0.035, 0.15)}, {"at": Vector3(0, 0, 0.15), "size": Vector3(0.25, 0.035, 0.055)}]
+		for stroke: Dictionary in strokes:
+			var visual: MeshInstance3D = _box(number, "DigitStroke", stroke.at, stroke.size, Color(0.36, 0.30, 0.44))
+			visual.material_override = material
+	_position_slot_markers_for_capture()
+
+
+func _position_slot_markers_for_capture() -> void:
+	for index: int in range(_slot_markers.size()):
+		_slot_markers[index].position = Vector3(-0.4 if index == 0 else 0.4, 0.065, 0.60)
+
+
+func _position_slot_markers_for_sequence() -> void:
+	# Label the immutable original route start. This never changes capture data.
+	for index: int in range(_slot_markers.size()):
+		var route: Array = _native_sequence.timeline.slots[index].route
+		_slot_markers[index].global_position = route[0].position + Vector3(0.65, 0.065, 0.15)
+
+
+func _update_slot_markers() -> void:
+	if _slot_markers.is_empty(): return
+	var sealed: int = int(capture_gate.state().capture.sealed) if is_instance_valid(capture_gate) else 0
+	for index: int in range(_slot_markers.size()):
+		var shade := Color(0.36, 0.30, 0.44)
+		if phase in ["recording", "framing"] and index < sealed:
+			shade = Color(0.55, 0.50, 0.62)
+		elif phase in ["warning", "lock", "active", "exposed", "severed"] and not _native_sequence.is_empty():
+			var slot: Dictionary = _native_sequence.timeline.slots[index]
+			var elapsed: float = threat_scheduler.get_clock() - float(_lease.adapter.timeline_origin_s) if not _lease.is_empty() else 0.0
+			if elapsed >= float(slot.end_s): shade = Color(0.23, 0.20, 0.27)
+			elif elapsed >= float(slot.from_s): shade = Color(0.67, 0.61, 0.76)
+			else: shade = Color(0.55, 0.50, 0.62)
+		elif phase in ["spent", "rejected"]:
+			shade = Color(0.23, 0.20, 0.27)
+		_slot_marker_materials[index].albedo_color = shade
+
+
 func _box(parent: Node3D, label: String, point: Vector3, size: Vector3, color: Color) -> MeshInstance3D:
 	var visual := MeshInstance3D.new()
 	visual.name = label
@@ -173,6 +238,7 @@ func _box(parent: Node3D, label: String, point: Vector3, size: Vector3, color: C
 
 
 func _on_enter_level() -> void:
+	if not last_configuration_error.is_empty(): return
 	var profile: String = shared_shell.call("get_difficulty_preference") if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference") else "standard"
 	if not threat_scheduler.begin_encounter(profile, ENCOUNTER_ID, 1):
 		last_configuration_error = threat_scheduler.last_error
@@ -192,7 +258,7 @@ func _physics_process(_delta: float) -> void:
 			_queue_barrier("arm")
 	elif phase in ["recording", "framing"]:
 		var capture: Dictionary = capture_gate.state().capture
-		if int(capture.sealed) == 1 and int(capture.pending) == 0 and hero.get_threat_response_state().stable:
+		if int(capture.allocated) == _slot_capacity and int(capture.sealed) == _slot_capacity and int(capture.pending) == 0 and not capture.has_dash_candidate and hero.get_threat_response_state().stable:
 			_queue_barrier("join")
 	elif not _cleared and is_instance_valid(playback):
 		_guard_live_exchange()
@@ -226,11 +292,11 @@ func _drain_barrier() -> void:
 
 func _arm_at_barrier() -> void:
 	if not _configured:
-		if not capture_gate.configure(OWNER_ID, ACTOR_ID, hero, SOURCE_EPOCH):
+		if not capture_gate.configure(OWNER_ID, ACTOR_ID, hero, _capture_epoch):
 			last_configuration_error = capture_gate.last_error
 			return
 		_configured = true
-	if not capture_gate.arm(1):
+	if not capture_gate.arm(_slot_capacity):
 		last_configuration_error = capture_gate.last_error
 		return
 	_generation = int(capture_gate.state().capture.generation)
@@ -238,14 +304,15 @@ func _arm_at_barrier() -> void:
 	if not floors.get("accepted", false):
 		_reject_at_barrier(String(floors.get("reason", "Unsupported floor")))
 		return
-	_capture_context = {"source_epoch": SOURCE_EPOCH, "generation": _generation, "capture_collision_fingerprint": threat_scheduler.pure_collision_fingerprint(get_parent() as Node3D), "capture_floor_signature": floors.signature}
+	_capture_context = {"source_epoch": _capture_epoch, "generation": _generation, "capture_collision_fingerprint": threat_scheduler.pure_collision_fingerprint(get_parent() as Node3D), "capture_floor_signature": floors.signature}
 	_rejection_marker.visible = false
+	_position_slot_markers_for_capture()
 	phase = "recording"
 
 
 func _authored() -> Dictionary:
 	# Provisional first-room budgets; original resolved action durations remain.
-	return {"recognition_s": 0.25, "warning_s": 1.3, "locked_lead_s": 1.5, "inter_echo_gap_s": 0.0, "final_recovery_s": 3.5, "tether_position": tether.global_position}
+	return {"recognition_s": 0.25, "warning_s": 1.3, "locked_lead_s": 1.5, "inter_echo_gap_s": TWO_SLOT_GAP_S if _slot_capacity == 2 else 0.0, "final_recovery_s": 3.5, "tether_position": tether.global_position}
 
 
 func _join_at_barrier() -> void:
@@ -264,11 +331,12 @@ func _join_at_barrier() -> void:
 		return
 	gate_before = capture_gate.snapshot_state()
 	var reader = Sequence.new()
-	if not reader.restore_state(proposed, SOURCE_EPOCH, _generation):
+	if not reader.restore_state(proposed, _capture_epoch, _generation):
 		_reject_at_barrier(reader.last_snapshot_error)
 		return
 	_sequence = proposed.duplicate(true)
 	_native_sequence = reader.state()
+	_position_slot_markers_for_sequence()
 	_projection = Footprint.plan(threat_scheduler, proposed, get_parent() as Node3D, [_floor], _capture_context)
 	if not _projection.get("accepted", false):
 		_reject_at_barrier(String(_projection.get("reason", "Projection rejected")))
@@ -277,7 +345,7 @@ func _join_at_barrier() -> void:
 	playback.name = "FiniteCapturedApparition" + str(_generation)
 	add_child(playback)
 	playback.global_position = tether.global_position
-	if not playback.configure("crystalman-rule/owner-" + str(_generation), proposed, SOURCE_EPOCH, _generation, "act3_traveller"):
+	if not playback.configure("crystalman-rule/owner-" + str(_generation), proposed, _capture_epoch, _generation, "act3_traveller"):
 		_reject_at_barrier(playback.last_error)
 		return
 	# Shared whole proofs reject paused trees. This synchronous no-yield interval
@@ -356,7 +424,7 @@ func _join_at_barrier() -> void:
 
 
 func scheduler_context() -> Dictionary:
-	return {"world_root": get_parent() as Node3D, "source_epoch": SOURCE_EPOCH, "generation": _generation, "capture_collision_fingerprint": _capture_context.capture_collision_fingerprint}
+	return {"world_root": get_parent() as Node3D, "source_epoch": _capture_epoch, "generation": _generation, "capture_collision_fingerprint": _capture_context.capture_collision_fingerprint}
 
 
 func combat_response() -> Dictionary:
@@ -483,6 +551,7 @@ func _reject_at_barrier(reason: String) -> void:
 	_tether_material.albedo_color = Color(0.33, 0.30, 0.39)
 	_tether_cue.clear()
 	_rejection_marker.visible = true
+	_position_slot_markers_for_capture()
 	phase = "rejected"
 	recording_rejected.emit(reason)
 
@@ -543,6 +612,11 @@ func _camera_framing_points() -> Array:
 	if marker != null and _opening_cue_mesh != null:
 		_append_native_bounds(points, _opening_cue_mesh.get_aabb(), marker.global_transform)
 	for frame: MeshInstance3D in _capture_frame: _append_mesh(points, frame)
+	var number_cloud: Array = []
+	for number_marker: Node3D in _slot_markers:
+		for child: Node in number_marker.get_children():
+			if child is MeshInstance3D: _append_mesh(number_cloud, child as MeshInstance3D)
+	_append_cloud_bounds(points, number_cloud)
 	if is_instance_valid(playback):
 		var art: Sprite3D = playback.get_apparition()
 		if art != null: points.append_array(shared_shell.call("camera_billboard_points", art))
@@ -582,7 +656,7 @@ func _append_cloud_bounds(points: Array, cloud: Array) -> void:
 
 
 func state() -> Dictionary:
-	return {"phase": phase, "configuration_error": last_configuration_error, "camera_error": last_camera_error, "last_rejection": last_rejection, "generation": _generation, "joins": _joins, "rejections": _rejections, "tether_hits": _tether_hits, "cleared": _cleared, "locked": _locked, "capture": capture_gate.state() if is_instance_valid(capture_gate) else {}, "sequence": _sequence.duplicate(true), "projection": _projection.duplicate(true), "proof": _proof.duplicate(true), "lease": _lease.duplicate(true), "join_receipt": _join_receipt.duplicate(true), "last_rejected_capture": _last_rejected_capture.duplicate(true), "exposure_from_s": _exposure_from_s, "exposure_until_s": _exposure_until_s, "playback": playback.state() if is_instance_valid(playback) else {}, "clock_s": threat_scheduler.get_clock()}
+	return {"phase": phase, "capture_slots": _slot_capacity, "configuration_error": last_configuration_error, "camera_error": last_camera_error, "last_rejection": last_rejection, "generation": _generation, "joins": _joins, "rejections": _rejections, "tether_hits": _tether_hits, "cleared": _cleared, "locked": _locked, "capture": capture_gate.state() if is_instance_valid(capture_gate) else {}, "sequence": _sequence.duplicate(true), "projection": _projection.duplicate(true), "proof": _proof.duplicate(true), "lease": _lease.duplicate(true), "join_receipt": _join_receipt.duplicate(true), "last_rejected_capture": _last_rejected_capture.duplicate(true), "exposure_from_s": _exposure_from_s, "exposure_until_s": _exposure_until_s, "playback": playback.state() if is_instance_valid(playback) else {}, "clock_s": threat_scheduler.get_clock()}
 
 
 func floor_regions() -> Array:
@@ -595,11 +669,15 @@ func scheduler_bindings() -> Dictionary:
 
 
 func _update_guidance() -> void:
+	_update_slot_markers()
 	if not last_configuration_error.is_empty(): objective_text = "RULE ROOM UNAVAILABLE"
 	elif phase == "spent": objective_text = "THE LOCAL TETHER IS QUIET\nONE FINITE RECORDING RELEASED"
 	elif phase in ["exposed", "severed"]: objective_text = "THE LOW TETHER IS EXPOSED\nRETURN AND USE YOUR PRIMARY"
 	elif phase == "rejected": objective_text = "THAT RECORDING FADES SAFELY\nCHOOSE A FRESH DASH AND PRIMARY"
 	elif phase in ["warning", "lock", "active"]: objective_text = "THE WORLD REPEATS YOUR ROUTE\nEVADE, THEN RETURN TO THE TETHER"
+	elif _slot_capacity == 2 and phase in ["recording", "framing"]:
+		var sealed: int = int(capture_gate.state().capture.sealed) if is_instance_valid(capture_gate) else 0
+		objective_text = "RECORD %d OF 2\nCOMPLETE A DASH, THEN A PRIMARY" % mini(sealed + 1, 2)
 	else: objective_text = "COMPOSE AN ESCAPE\nCOMPLETE A DASH, THEN A PRIMARY"
 
 
