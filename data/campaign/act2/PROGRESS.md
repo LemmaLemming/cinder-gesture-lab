@@ -1,5 +1,30 @@
 # Act 2 progress
 
+## Act 2 complete — 13 October 2026
+
+All five main and three documented optional Act 2 levels are independently accepted under focused-desktop-level-1. Canonical O3 ACCEPTED `f6c191b1-eba9-4bd4-aac2-0b9657c79db6` accepts submitted `f142bb5152f9733996a91dd1497d4463b7cb5aad` and content seal `fd2a83fd20faa2fd2f727f7567466d0ef41559b9`. Shared55 publishes `f8b984a2a5371cae3f1deef8aa394bb892f28e78`. Act 2 is **8/8**; the campaign reached **16/24** at this publication.
+
+| Level | Accepted content |
+| --- | --- |
+| A2-L1 | Horsell Common |
+| A2-L2 | Weybridge and Shepperton |
+| A2-L3 | Black Smoke and the Ruined House |
+| A2-L4 | Red Weed and the London Approaches |
+| A2-L5 | Dead London and Regent's Park |
+| A2-O1 | Cylinder Perimeter |
+| A2-O2 | Clear Air Circuit |
+| A2-O3 | Bleached Canal |
+
+[Final objective audit](../../../docs/acts/act2/evidence/act-completion-20261013/root-final-verification.json) closes all eight level rows and ten shared design/control/source/save constraints using the original scoped matrix, exact accepted evidence and actual adopted registry. All eight scenes, accepted candidates and evidence references match the publication. The six submitted O3 resources remain byte exact.
+
+Actual Shared55 preserving merge `de8b632437bbfc2cac42f39c88bc50aa9df407fe` has parents `08affa7efaa3f702a66d6f2dcef4d204978d2047` and the exact publication. [Custody receipt](../../../docs/acts/act2/evidence/shared55-adoption/adoption.json), SHA `01dae67ababc41f91fe0e608ec8ab8c0eb8b65301d4fd52cfabf53d41296a184`, closes with zero findings: helper-observed 46,976 owned Git/physical rows, 128,915 historical originals, 417 ignore boundaries, 36,750 prior recursive UID rows and three settings preserved; 4,203 incoming rows exact and 7,794 published owned overlaps retained from the captured owner HEAD. Active identities 466→467 remain unique with all prior identities preserved. [Bounded independent adoption review](../../../docs/acts/act2/evidence/shared55-adoption/a2_shared55_actual_adoption_independent_review_20261013.json), SHA `205a5565d522e1a863941d27a361ffea709411efae4344740af651666cf6a413`, separately verifies parents/ancestry, six O3 resources/four UIDs, 25 named shared contracts/two ledgers, the new Root UID and exact registry/route scope. Broad preservation counts remain helper observations.
+
+[Independent O3 acceptance](../../../docs/development/ACT2_O3_ACCEPTANCE.md) records corrected Root **43/0 clean**, necessary import0 and reused original owner53 mechanics104/selected247/loading136/portraits164 plus affected28 and seven inspected images under their original qualifications. Root33/1 with four ObjectDB warnings, earlier owner failures, canceled/unexecuted scopes and original art-accepted-false metadata remain preserved. Adoption and documentation add no native execution credit.
+
+**Remaining limits:** whole ordinary routes/earned exits where absent, all poses/gear and full art fidelity, quiet-sign/mooring recognition, human balance, pacing and sustained performance remain untested. Full playthroughs are nongates under the direct user policy. No equipment/ability/stat allocation occurs. All owned engine/import/UI/helper jobs are CLOSED.
+
+**Next task:** no remaining required Act 2 construction or focused acceptance work. Retain these accepted levels and their evidence for scoped follow-up support. Integration continues the other acts and full 24-level desktop objective. Stop before mobile export and release work. The historical sections below retain their original pending states, baselines and limits.
+
 ## Independent registration check under targeted diagnosis — 2026-10-13T06:26:25.824470+00:00
 
 Integration RESPONSEc48fbb59 verifies exactf142/HANDOFFa754, contentfd2/index9530/closingb025/custodyb6 and managed validationfe894b39 onShared54. Necessary isolatedimportCLOSED0clean/2323inputs/466priorUIDsexact plusgenuineRootUID467. LatestactualRootforwardedupdate reportsnative33/1 with2459inputrows/all467UIDsexact andfourObjectDBwarnings: GUIRetrycandidate required source/footprint/Hero/landing outside protectedscreenrectangle. Rootpreservesoriginalfailure/warnings and corrects its TESTfixture's omitted already-passed pre-CP proximity(0,.04,-21.8), addingpassivecheckpointframingdata withunchangedbounds/camera/assertions, thenrerunsnarrowleafonly. Thisupdate is fromactualRootforwardedmessage; the immutablec48file waspublished earlierwhilejoblive. No ownedsource/runtimechange orworker rerun requested. Owner136/28 andalloriginalscopesremainvalid; no provennewruntimefault orhuman/other-act gate. Act2still7/8,published15/24untilcleanindependentclosure/publication. Currentactual54c0c3bad7/ce5bpreservationreceipt9a370/peer308e, allownerhandlesclosed.

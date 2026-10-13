@@ -1,0 +1,520 @@
+{
+  "O3_f142_publication_binding": {
+    "Git_rows": 7781,
+    "current_owner_runtime_evidence_overlap_equal_to_target": true,
+    "evidence_rows": 7771,
+    "mode_blob_map_sha256": "25cf2991720e6406c9dd279eae65e7ba3fe9c2151445bc70f55eac2f7d6593c6",
+    "qualification": "Git blob/mode identity only; uses existing Root physical/native custody scopes, no repeated physical packet scan or new native credit.",
+    "resource_UID_pins": [
+      {
+        "blob": "ba323c1141701eb66f3adb0c320c6e8e1e1e6526",
+        "bytes": 72530,
+        "f142_publication_equal": true,
+        "mode": "100644",
+        "path": "scripts/acts/act2/bleached_canal.gd",
+        "sha256": "72beb07a1aa9f8e0de25266de783eb195ee278596fe4506ae4176abfbd0d7f4c"
+      },
+      {
+        "blob": "72697e3c373a9f9117da2b1ad91a8751c9b6585a",
+        "bytes": 7931,
+        "f142_publication_equal": true,
+        "mode": "100644",
+        "path": "scripts/acts/act2/bleached_canal_kit.gd",
+        "sha256": "432b8d059ee7541ebae86119939a9c6fe959a7311fce26d1e19c2c61a6aea56e"
+      },
+      {
+        "blob": "4220cd0ad0df7cd3df031c91354b7742ba39bdc5",
+        "bytes": 371,
+        "f142_publication_equal": true,
+        "mode": "100644",
+        "path": "scenes/acts/act2/a2_o3.tscn",
+        "sha256": "487091adb72bbcd551b27083d16c26213b02e19538606558ac92da4befb24291"
+      },
+      {
+        "blob": "0f9871f53ba670f4e3d65e1fd1849d4728be892a",
+        "bytes": 51163,
+        "f142_publication_equal": true,
+        "mode": "100644",
+        "path": "tests/acts/act2/a2_o3_focused_smoke.gd",
+        "sha256": "98cd7c5313e41ca3e97b70c9ffa98faa5d0699e64db596c82d4fa8eb315b1212"
+      },
+      {
+        "blob": "33d530544778ebe20a3a974c76bf72273b236d19",
+        "bytes": 38429,
+        "f142_publication_equal": true,
+        "mode": "100644",
+        "path": "tests/acts/act2/a2_o3_loading_side_smoke.gd",
+        "sha256": "f0b7d389d568e43e74359200e498f18d0a309235c270174738f3502bdef1148c"
+      },
+      {
+        "blob": "6cfe90334880aeb923f748c79cfa16957bd210cd",
+        "bytes": 22664,
+        "f142_publication_equal": true,
+        "mode": "100644",
+        "path": "assets/acts/act2/bleached_canal_manifest.json",
+        "sha256": "4c1c5dde28f4b687c517caa40949079c2ab4289d550705bdfc701d4de002a752"
+      },
+      {
+        "blob": "81f284fb84f2e812f85d0d694480a9a58b91c0af",
+        "bytes": 20,
+        "f142_publication_equal": true,
+        "identity": "uid://doa6elwq5ga5e",
+        "mode": "100644",
+        "path": "scripts/acts/act2/bleached_canal.gd.uid",
+        "sha256": "d14455ef718f3fea8ac02da0f028e56f0ae153047e58de1f853371cbba451f6a"
+      },
+      {
+        "blob": "9c5b0cd42fb8654f762584560a6249afe58de082",
+        "bytes": 19,
+        "f142_publication_equal": true,
+        "identity": "uid://txn7sl854pbs",
+        "mode": "100644",
+        "path": "scripts/acts/act2/bleached_canal_kit.gd.uid",
+        "sha256": "43337618f8d9a7bf79e0c750030fd9ab5081db08f3b9208837aba6f3d30d32be"
+      },
+      {
+        "blob": "f9fa44960099947aa582a5ec10156e1f9513b211",
+        "bytes": 19,
+        "f142_publication_equal": true,
+        "identity": "uid://jpt4t04m1rq0",
+        "mode": "100644",
+        "path": "tests/acts/act2/a2_o3_focused_smoke.gd.uid",
+        "sha256": "1b9713dcdc078fe34b54329d602d5facc5fb7b4c92913fdb451b92ba49d46700"
+      },
+      {
+        "blob": "241a95d1c70ab3225108ada936de8d67c942c309",
+        "bytes": 20,
+        "f142_publication_equal": true,
+        "identity": "uid://cx4shbl18fvws",
+        "mode": "100644",
+        "path": "tests/acts/act2/a2_o3_loading_side_smoke.gd.uid",
+        "sha256": "aa65552f60035d604859fc3195c36200a394d229838787d0a92f7aaca4af2a09"
+      }
+    ],
+    "six_resources_four_UIDs_and_entire_O3_evidence_tree_equal": true,
+    "source_candidate": "f142bb5152f9733996a91dd1497d4463b7cb5aad"
+  },
+  "all_numeric_masks_constants_control_structure_unchanged": true,
+  "at_utc": "2026-10-13T07:01:11.561818+00:00",
+  "before_HEAD_qualification": "Helper reads exact clean invocationHEAD dynamically after Root seals changes; no hardcoded08affa7e requirement. Root declares all owned jobs closed.",
+  "candidate": {
+    "lines": 442,
+    "path": "/private/tmp/cinder_a2_shared55_preserve_adopt.py",
+    "sha256": "7baf7f7e483348fac6ed8af4e32eea927d015e0a5d2a955ee076d2426a66bddb",
+    "stat_mode": "0o644"
+  },
+  "controlled_diff": "--- frozen54helper\n+++ TMP55helper\n@@ -1,7 +1,7 @@\n #!/usr/bin/env python3\n \"\"\"Prepared Root-run preservation helper. Never imported or invoked by its author.\n From the assigned Act2 checkout, AFTER owned jobs are closed and changes sealed:\n-  python3 /private/tmp/cinder_a2_shared54_preserve_adopt.py --closed-owned-jobs\n+  python3 /private/tmp/cinder_a2_shared55_preserve_adopt.py --closed-owned-jobs\n Only this explicit main invocation may write its new receipt and merge the exact\n published supplement. No Godot/import/helper subprocess or automatic rollback.\n \"\"\"\n@@ -18,13 +18,13 @@\n import sys\n \n ASSIGNED_CHECKOUT = \"/Users/howardchen/.codex/worktrees/campaign-act2/video game idea\"\n-PUBLICATION = \"00635be0456df5ac3e0eacdd9f8b08dbe4223fc4\"\n-BASE = \"8cb1da79ba000d758fe677054782e23f48cb6dfd\"\n+PUBLICATION = \"f8b984a2a5371cae3f1deef8aa394bb892f28e78\"\n+BASE = \"00635be0456df5ac3e0eacdd9f8b08dbe4223fc4\"\n OWNED = (\"scripts/acts/act2/\", \"scenes/acts/act2/\", \"assets/acts/act2/\",\n          \"data/campaign/act2/\", \"tests/acts/act2/\", \"docs/acts/act2/\")\n GAME_FOLDERS = (\"scripts\", \"scenes\", \"assets\", \"data\", \"tests\", \"docs\", \"captures\")\n SETTINGS = (\"project.godot\", \".cinder/local.json\", \".vscode/settings.json\")\n-OUT_NAME = \"docs/acts/act2/evidence/shared54-adoption\"\n+OUT_NAME = \"docs/acts/act2/evidence/shared55-adoption\"\n UID_SUFFIXES = (\".gd.uid\", \".gdshader.uid\")\n UID_PATTERN = re.compile(r\"uid://[a-z0-9]+\")\n \n@@ -282,7 +282,7 @@\n         raise RuntimeError(\"Exact published supplement is unavailable\")\n     old_head = git(root, \"rev-parse\", \"HEAD\").decode().strip()\n     if not ancestor(root, BASE, PUBLICATION) or not ancestor(root, BASE, old_head):\n-        raise RuntimeError(\"Actual HEAD/target lack the required published Shared53 baseline\")\n+        raise RuntimeError(\"Actual HEAD/target lack the required published Shared54 baseline\")\n     if ancestor(root, PUBLICATION, old_head):\n         raise RuntimeError(\"Exact supplement already adopted; refuse duplicate receipt/merge\")\n     output = safe_path(root, OUT_NAME)\n@@ -296,7 +296,7 @@\n     all_incoming = incoming_delta(root, BASE, PUBLICATION)\n     owned_incoming = {name: row for name, row in all_incoming.items() if name.startswith(OWNED)}\n     incoming = {name: row for name, row in all_incoming.items() if not name.startswith(OWNED)}\n-    # Shared54 may contain already accepted Act2 content. Every incoming owned path\n+    # Shared55 may contain already accepted Act2 content. Every incoming owned path\n     # must already exist; immutable evidence/runtime must match exactly. Only\n     # the owner's newer committed notes may differ, and the merge keeps them.\n     for name, row in owned_incoming.items():\n@@ -359,7 +359,7 @@\n                                   cwd=root, stdout=log, stderr=subprocess.STDOUT)\n         if restored.returncode != 0 or git(root, \"diff\", \"--name-only\", \"--diff-filter=U\", \"-z\"):\n             raise RuntimeError(\"Owned preservation resolution failed; original receipt/log retained\")\n-        committed = subprocess.run([\"git\", \"commit\", \"-m\", \"Merge compatible Shared54 publication into Act 2 preserving originals\"],\n+        committed = subprocess.run([\"git\", \"commit\", \"-m\", \"Merge compatible Shared55 publication into Act 2 preserving originals\"],\n                                    cwd=root, stdout=log, stderr=subprocess.STDOUT)\n         if committed.returncode != 0:\n             raise RuntimeError(\"Preserving merge commit failed; original receipt/log retained\")\n@@ -412,7 +412,7 @@\n     if unexpected_status:\n         findings.append(\"unexpected final status outside new receipt\")\n     receipt = {\"at\": datetime.datetime.now(datetime.timezone.utc).isoformat(), \"scope_complete\": not findings,\n-               \"status\": \"exact preserving Shared54 publication adoption\" if not findings else \"post-merge custody verification FAILED\",\n+               \"status\": \"exact preserving Shared55 publication adoption\" if not findings else \"post-merge custody verification FAILED\",\n                \"publication\": PUBLICATION, \"preceding_actual_baseline\": BASE,\n                \"merge\": head, \"parents\": parents, \"captured_actual_before_head\": old_head,\n                \"before_sha256\": record(output / \"before.json\")[\"sha256\"],\n",
+  "eight_literal_substitutions": [
+    {
+      "count": 1,
+      "from": "cinder_a2_shared54_preserve_adopt.py",
+      "to": "cinder_a2_shared55_preserve_adopt.py"
+    },
+    {
+      "count": 1,
+      "from": "PUBLICATION = \"00635be0456df5ac3e0eacdd9f8b08dbe4223fc4\"",
+      "to": "PUBLICATION = \"f8b984a2a5371cae3f1deef8aa394bb892f28e78\""
+    },
+    {
+      "count": 1,
+      "from": "BASE = \"8cb1da79ba000d758fe677054782e23f48cb6dfd\"",
+      "to": "BASE = \"00635be0456df5ac3e0eacdd9f8b08dbe4223fc4\""
+    },
+    {
+      "count": 1,
+      "from": "OUT_NAME = \"docs/acts/act2/evidence/shared54-adoption\"",
+      "to": "OUT_NAME = \"docs/acts/act2/evidence/shared55-adoption\""
+    },
+    {
+      "count": 1,
+      "from": "required published Shared53 baseline",
+      "to": "required published Shared54 baseline"
+    },
+    {
+      "count": 1,
+      "from": "# Shared54 may contain already accepted Act2 content.",
+      "to": "# Shared55 may contain already accepted Act2 content."
+    },
+    {
+      "count": 1,
+      "from": "Merge compatible Shared54 publication into Act 2 preserving originals",
+      "to": "Merge compatible Shared55 publication into Act 2 preserving originals"
+    },
+    {
+      "count": 1,
+      "from": "exact preserving Shared54 publication adoption",
+      "to": "exact preserving Shared55 publication adoption"
+    }
+  ],
+  "evidence_limits": "Original owner53 and Root54/43 native evidence remains original. Shared55 registration/delivery/source comparison grants no new controller/art/all-kit/fullroute/performance/mobile credit and is not worker adoption.",
+  "findings": [],
+  "incoming_delta": {
+    "change_counts": {
+      "A": 11986,
+      "M": 11
+    },
+    "local_settings_overlap_paths": 0,
+    "modified_paths": [
+      {
+        "change": "M",
+        "path": "README.md"
+      },
+      {
+        "change": "M",
+        "path": "data/campaign/act2/ACT_MEMORY.md"
+      },
+      {
+        "change": "M",
+        "path": "data/campaign/act2/PROGRESS.md"
+      },
+      {
+        "change": "M",
+        "path": "data/campaign/act2/levels/A2-O2.md"
+      },
+      {
+        "change": "M",
+        "path": "data/campaign/registry.json"
+      },
+      {
+        "change": "M",
+        "path": "docs/development/CAMPAIGN_MEMORY.md"
+      },
+      {
+        "change": "M",
+        "path": "docs/development/LEVEL_ACCEPTANCE.md"
+      },
+      {
+        "change": "M",
+        "path": "docs/development/LEVEL_TESTING_DELEGATION.md"
+      },
+      {
+        "change": "M",
+        "path": "docs/development/SHARED_CONTRACT.md"
+      },
+      {
+        "change": "M",
+        "path": "docs/development/SHARED_PROGRESS.md"
+      },
+      {
+        "change": "M",
+        "path": "scripts/dev/dev.py"
+      }
+    ],
+    "new_nonarchive_UIDs": [
+      {
+        "blob": "81f284fb84f2e812f85d0d694480a9a58b91c0af",
+        "change": "A",
+        "identity": "uid://doa6elwq5ga5e",
+        "mode": "100644",
+        "path": "scripts/acts/act2/bleached_canal.gd.uid",
+        "sha256": "d14455ef718f3fea8ac02da0f028e56f0ae153047e58de1f853371cbba451f6a"
+      },
+      {
+        "blob": "9c5b0cd42fb8654f762584560a6249afe58de082",
+        "change": "A",
+        "identity": "uid://txn7sl854pbs",
+        "mode": "100644",
+        "path": "scripts/acts/act2/bleached_canal_kit.gd.uid",
+        "sha256": "43337618f8d9a7bf79e0c750030fd9ab5081db08f3b9208837aba6f3d30d32be"
+      },
+      {
+        "blob": "50aab62ef9e2fd64a97e619c68e06199f3f0acc5",
+        "change": "A",
+        "identity": "uid://mnh0olaebkhi",
+        "mode": "100644",
+        "path": "tests/act2_o3_registration_smoke.gd.uid",
+        "sha256": "09982117be27ddc972aca33abc4838580e104e7c560f6f8313e2bc8ec51055e1"
+      },
+      {
+        "blob": "f9fa44960099947aa582a5ec10156e1f9513b211",
+        "change": "A",
+        "identity": "uid://jpt4t04m1rq0",
+        "mode": "100644",
+        "path": "tests/acts/act2/a2_o3_focused_smoke.gd.uid",
+        "sha256": "1b9713dcdc078fe34b54329d602d5facc5fb7b4c92913fdb451b92ba49d46700"
+      },
+      {
+        "blob": "241a95d1c70ab3225108ada936de8d67c942c309",
+        "change": "A",
+        "identity": "uid://cx4shbl18fvws",
+        "mode": "100644",
+        "path": "tests/acts/act2/a2_o3_loading_side_smoke.gd.uid",
+        "sha256": "aa65552f60035d604859fc3195c36200a394d229838787d0a92f7aaca4af2a09"
+      }
+    ],
+    "owned_overlap_paths": 7794,
+    "path_count": 11997
+  },
+  "named_shared25_and_two_ledger_pins": [
+    {
+      "baseline_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "bytes": 38685,
+      "equal": true,
+      "path": "scripts/game.gd",
+      "publication_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    {
+      "baseline_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "equal": true,
+      "path": "scripts/player.gd",
+      "publication_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "baseline_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+      "bytes": 45143,
+      "equal": true,
+      "path": "scripts/campaign/shell.gd",
+      "publication_sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc"
+    },
+    {
+      "baseline_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+      "bytes": 22401,
+      "equal": true,
+      "path": "scripts/campaign/level.gd",
+      "publication_sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d"
+    },
+    {
+      "baseline_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006,
+      "equal": true,
+      "path": "scripts/campaign/registry.gd",
+      "publication_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2"
+    },
+    {
+      "baseline_sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "bytes": 18347,
+      "equal": true,
+      "path": "scripts/campaign/attempts.gd",
+      "publication_sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0"
+    },
+    {
+      "baseline_sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "equal": true,
+      "path": "scripts/campaign/save_store.gd",
+      "publication_sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    {
+      "baseline_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "equal": true,
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "publication_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac"
+    },
+    {
+      "baseline_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "equal": true,
+      "path": "scripts/campaign/exact_json.gd",
+      "publication_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+    },
+    {
+      "baseline_sha256": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1",
+      "bytes": 41162,
+      "equal": true,
+      "path": "scripts/ui/campaign_menu.gd",
+      "publication_sha256": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1"
+    },
+    {
+      "baseline_sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b",
+      "bytes": 10132,
+      "equal": true,
+      "path": "scripts/presentation/camera_framing.gd",
+      "publication_sha256": "daf839d1e35497c88a59d4c1c2af7bb02194418e2c667aceb677242bd642c39b"
+    },
+    {
+      "baseline_sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+      "bytes": 9130,
+      "equal": true,
+      "path": "scripts/equipment.gd",
+      "publication_sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    {
+      "baseline_sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79",
+      "bytes": 209819,
+      "equal": true,
+      "path": "scripts/combat/threat_scheduler.gd",
+      "publication_sha256": "9b11730b4041dfb73a20e97bda0c72854a89af1ab79809fb3d8449fec624ae79"
+    },
+    {
+      "baseline_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+      "bytes": 43768,
+      "equal": true,
+      "path": "scripts/combat/lane_mechanism.gd",
+      "publication_sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d"
+    },
+    {
+      "baseline_sha256": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9",
+      "bytes": 71522,
+      "equal": true,
+      "path": "scripts/combat/smoke_bank.gd",
+      "publication_sha256": "698a70275c438be088fe8abeb7a35083444879364a3acda3ae91194fe4c67ae9"
+    },
+    {
+      "baseline_sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "equal": true,
+      "path": "scripts/combat/threat_geometry.gd",
+      "publication_sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+    },
+    {
+      "baseline_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "bytes": 4882,
+      "equal": true,
+      "path": "scripts/combat/difficulty.gd",
+      "publication_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae"
+    },
+    {
+      "baseline_sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+      "bytes": 63062,
+      "equal": true,
+      "path": "scripts/acts/act2/ray_scout_exchange.gd",
+      "publication_sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2"
+    },
+    {
+      "baseline_sha256": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7",
+      "bytes": 12646,
+      "equal": true,
+      "path": "scripts/acts/act2/ray_scout_actor.gd",
+      "publication_sha256": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7"
+    },
+    {
+      "baseline_sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+      "bytes": 37198,
+      "equal": true,
+      "path": "scripts/cues/threat_cue.gd",
+      "publication_sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a"
+    },
+    {
+      "baseline_sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2",
+      "bytes": 2936,
+      "equal": true,
+      "path": "scripts/cues/interaction_cue.gd",
+      "publication_sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2"
+    },
+    {
+      "baseline_sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d",
+      "bytes": 9589,
+      "equal": true,
+      "path": "scripts/cues/cue_mesh.gd",
+      "publication_sha256": "d63f5dfabbdae2dbd055e24013b0d822bca47ba71a457e1ab0d874e0ef22929d"
+    },
+    {
+      "baseline_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+      "bytes": 32678,
+      "equal": true,
+      "path": "data/design/player_equipment.json",
+      "publication_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    {
+      "baseline_sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+      "bytes": 1313,
+      "equal": true,
+      "path": "data/design/difficulty_profiles.json",
+      "publication_sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c"
+    },
+    {
+      "baseline_sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+      "bytes": 841,
+      "equal": true,
+      "path": "project.godot",
+      "publication_sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f"
+    },
+    {
+      "baseline_sha256": "5487652c0f6664238c1215d48fb3ddd1837da99d3fcadb8c48f0646ef39285f2",
+      "bytes": 23516,
+      "equal": true,
+      "path": "data/design/ability_usage.json",
+      "publication_sha256": "5487652c0f6664238c1215d48fb3ddd1837da99d3fcadb8c48f0646ef39285f2"
+    },
+    {
+      "baseline_sha256": "34d16273e598be2937e2e3e412970adf6aa2064a8780438a40242d2b7285a73d",
+      "bytes": 615,
+      "equal": true,
+      "path": "data/design/equipment_claims.json",
+      "publication_sha256": "34d16273e598be2937e2e3e412970adf6aa2064a8780438a40242d2b7285a73d"
+    }
+  ],
+  "original": {
+    "lines": 442,
+    "path": "/private/tmp/cinder_a2_shared54_preserve_adopt.py",
+    "sha256": "a7299851b7b0e82876dae9e83d36d3dae4b5f63104a97309e629bfd3db83cd9f"
+  },
+  "preservation_guard_summary": [
+    "Exact assigned checkout/codex branch, explicit closed-owned-jobs, fully clean tracked/untracked status; BASE ancestry and exact target/duplicate/output guards retained.",
+    "All six-prefix owned Git/physical originals, historical evidence, all recursive UID/.gdignore boundaries, active identities and three settings dynamically captured and rechecked before mutation.",
+    "Owned publication overlap is partitioned from incoming; runtime/evidence must already match exact target, newer owner notes retain capturedHEAD; no globalours or ledger allocation.",
+    "Nonowned incoming preflight refuses settings, changed old UID/archive/boundary custody, divergent base/target bindings and unindexed overwrites.",
+    "One Root-only no-commit merge accepts only owned conflicts; restore all assigned prefixes from captured cleanHEAD; exact two-parent commit.",
+    "Post-merge checks old originals/countsets, exact incoming Git/physical bytes/modes, real new UID identities/uniqueness, settings, parents and status; findings retain receipts without automatic rollback."
+  ],
+  "publication": {
+    "actual_adoption_not_performed": true,
+    "api_revision": "campaign-shared-55",
+    "base": "00635be0456df5ac3e0eacdd9f8b08dbe4223fc4",
+    "canonical_ACCEPTED": "f6c191b1-eba9-4bd4-aac2-0b9657c79db6",
+    "canonical_message_sha256": "092afb07b27f63c7c3cec6dff5ee4335e966da06d0133dec6d058873a65e2cff",
+    "pub_record_status": "PASS",
+    "target": "f8b984a2a5371cae3f1deef8aa394bb892f28e78"
+  },
+  "read_only_current_HEAD": "08affa7efaa3f702a66d6f2dcef4d204978d2047",
+  "registry_effect": {
+    "after_row": {
+      "accepted_commit": "f142bb5152f9733996a91dd1497d4463b7cb5aad",
+      "act": 2,
+      "api_revision": "campaign-level-1",
+      "id": "A2-O3",
+      "kind": "optional",
+      "name": "Bleached Canal",
+      "parent_level_id": "A2-L4",
+      "readiness": "accepted",
+      "reward_id": "A2-O3-completion-stamp",
+      "reward_policy": "once_only_completion_stamp_no_stat_growth",
+      "scene_path": "res://scenes/acts/act2/a2_o3.tscn",
+      "source": "docs/reference-library/act2/research/levels.json"
+    },
+    "before_row": {
+      "accepted_commit": null,
+      "act": 2,
+      "api_revision": null,
+      "id": "A2-O3",
+      "kind": "optional",
+      "name": "Bleached Canal",
+      "parent_level_id": "A2-L4",
+      "readiness": "unimplemented",
+      "reward_id": "A2-O3-completion-stamp",
+      "reward_policy": "once_only_completion_stamp_no_stat_growth",
+      "scene_path": null,
+      "source": "docs/reference-library/act2/research/levels.json"
+    },
+    "only_changed_level": "A2-O3",
+    "other23_rows_and_route_order_envelope_equal": true,
+    "status_after": "desktop_campaign_integration_16_of_24_accepted",
+    "status_before": "desktop_campaign_integration_15_of_24_accepted"
+  },
+  "reverse_bytes_exact": true,
+  "review_revision": "shared55-literal-preservation-preparation-1",
+  "schema_version": 1,
+  "scope": "TMP-only source/static and exact read-only Git publication comparison. No helper import/invocation, status mutation, checkout edits, merge/adoption, engine/import or whole original physical/archive audit.",
+  "unchanged_17_function_ASTs": [
+    "active_uids",
+    "add_git_bytes",
+    "ancestor",
+    "blob_records",
+    "compare_preserved",
+    "digest",
+    "git",
+    "incoming_delta",
+    "incoming_preflight",
+    "indexed",
+    "physical_inventory",
+    "record",
+    "refuse_dirty",
+    "safe_path",
+    "status_rows",
+    "tree",
+    "write_json"
+  ],
+  "unexecuted": true
+}
