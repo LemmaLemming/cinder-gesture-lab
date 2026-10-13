@@ -1,0 +1,286 @@
+{
+  "schema_version": 1,
+  "label": "a1-l4-whole-native-03",
+  "mode": "native",
+  "command": [
+    "/opt/homebrew/anaconda3/bin/python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--headless",
+    "--path",
+    ".",
+    "--script",
+    "tests/acts/act1/a1_l4_whole_entry.gd"
+  ],
+  "checkout": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+  "revision": "6553ff354883b94cbd73a9d8a7be39ae1820753d",
+  "shared_runtime_publication": "cf423911844d63c458c59e5503f82c8b1e61574b",
+  "started_at": "2026-10-12T03:26:05.247736+00:00",
+  "closed_at": "2026-10-12T03:26:20.703351+00:00",
+  "wall_seconds": 15.45505604200298,
+  "exit_code": 1,
+  "raw_log": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l4-whole-native-03-wrapper.log",
+  "raw_sha256": "4b3b3c505b4f862437a8d7d3a84e1cf8c769892082eb3fb0d41653cfef633112",
+  "source_archive": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l4-whole-native-03-source",
+  "source_manifest_sha256": "eb4f6f85fa5f0c02805c14ac0f95914574433c3bfffcd603ed408f26cb04b214",
+  "frozen_source_files": 662,
+  "post_run_frozen_member_changes": [],
+  "raw_error_warning_lines": [
+    "ERROR: actual complete entry has its stopped endpoint and original deadline court-helper-west"
+  ],
+  "explicit_footer": [
+    "66",
+    "1",
+    "res://.cinder/a1-l4-whole-entry-610002.json"
+  ],
+  "native_report": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-l4-whole-entry-610002.json",
+  "native_report_sha256": "211882826e56a8d2ea347fe2805bc93ca2779bd1b16b91ad340917efc214f154",
+  "report_checks": 66,
+  "report_failures": 1,
+  "first_failure": {
+    "camera": {
+      "accepted": true,
+      "api_revision": "camera-framing-1",
+      "basis": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.585491, -0.810679), Z: (0.0, 0.810679, 0.585491)]",
+      "camera_plane_correction": [
+        0.0,
+        0.026461673900485
+      ],
+      "camera_plane_shift_intervals": [
+        [
+          -0.370666682720184,
+          0.370666444301605
+        ],
+        [
+          0.026461673900485,
+          5.28984880447388
+        ]
+      ],
+      "camera_position": [
+        0.0,
+        18.747522354126,
+        -13.0707626342773
+      ],
+      "depth_range": [
+        21.4051418304443,
+        25.6916656494141
+      ],
+      "desired_focus": [
+        0.0,
+        0.747522294521332,
+        -26.038122177124
+      ],
+      "enabled": true,
+      "focus": [
+        0.0,
+        0.747522294521332,
+        -26.0707626342773
+      ],
+      "numerical_headroom": 0.001,
+      "point_count": 124,
+      "reason": "",
+      "safe_rect": "[P: (0.040741, 0.17265), S: (0.918519, 0.719658)]",
+      "safety_margin": 0.055,
+      "screen_bounds": "[P: (0.1, 0.176239), S: (0.8, 0.375082)]",
+      "shift": [
+        0.0,
+        0.0,
+        -0.0326404571533203
+      ],
+      "shift_distance": 0.0326404571533203,
+      "width": 7.19999980926514
+    },
+    "clock_s": 0.566666666666667,
+    "contract_error": "",
+    "entry_outcomes": {
+      "court-helper-east": {
+        "endpoint": [
+          2.0,
+          -0.00492187542840838,
+          -30.6733436584473
+        ],
+        "outcome": "blocked"
+      },
+      "court-helper-west": {
+        "endpoint": [
+          -2.0,
+          -0.00492187542840838,
+          -30.6733436584473
+        ],
+        "outcome": "blocked"
+      }
+    },
+    "entry_records": {
+      "court-helper-east": {
+        "active": true,
+        "end_s": 0.533333333333333,
+        "from": [
+          2.0,
+          -0.00492187542840838,
+          -31.0
+        ],
+        "speed": 1.4,
+        "start_s": 0.0333333333333333,
+        "to": [
+          2.0,
+          -0.00492187542840838,
+          -30.2999992370605
+        ]
+      },
+      "court-helper-west": {
+        "active": true,
+        "end_s": 0.533333333333333,
+        "from": [
+          -2.0,
+          -0.00492187542840838,
+          -31.0
+        ],
+        "speed": 1.4,
+        "start_s": 0.0333333333333333,
+        "to": [
+          -2.0,
+          -0.00492187542840838,
+          -30.2999992370605
+        ]
+      }
+    },
+    "entry_stop_diagnostics": {
+      "court-helper-east": {
+        "clock_s": 0.566666666666667,
+        "deadline_missed": true,
+        "native_error": "Court entry cannot rebase its clock or catch up delayed/collided motion",
+        "original": {
+          "active": true,
+          "end_s": 0.533333333333333,
+          "from": [
+            2.0,
+            -0.00492187542840838,
+            -31.0
+          ],
+          "speed": 1.4,
+          "start_s": 0.0333333333333333,
+          "to": [
+            2.0,
+            -0.00492187542840838,
+            -30.2999992370605
+          ]
+        },
+        "position": [
+          2.0,
+          -0.00492187542840838,
+          -30.6733436584473
+        ],
+        "velocity": [
+          0.0,
+          0.0,
+          1.39999997615814
+        ],
+        "view_error": ""
+      },
+      "court-helper-west": {
+        "clock_s": 0.566666666666667,
+        "deadline_missed": true,
+        "native_error": "Court entry cannot rebase its clock or catch up delayed/collided motion",
+        "original": {
+          "active": true,
+          "end_s": 0.533333333333333,
+          "from": [
+            -2.0,
+            -0.00492187542840838,
+            -31.0
+          ],
+          "speed": 1.4,
+          "start_s": 0.0333333333333333,
+          "to": [
+            -2.0,
+            -0.00492187542840838,
+            -30.2999992370605
+          ]
+        },
+        "position": [
+          -2.0,
+          -0.00492187542840838,
+          -30.6733436584473
+        ],
+        "velocity": [
+          0.0,
+          0.0,
+          1.39999997615814
+        ],
+        "view_error": ""
+      }
+    },
+    "helper_stage": "done",
+    "label": "actual complete entry has its stopped endpoint and original deadline court-helper-west",
+    "paused": false,
+    "room": 4,
+    "scope": "full_entry"
+  },
+  "captures": [],
+  "focus_receipts": [],
+  "new_art_sidecars_before": {
+    "scripts/acts/act1/selenite_king.gd": {
+      "sha256": "37c77d7254598fcbba4f1769a37d630797183c11da4c9be1d8f190558a12d667",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_king_art.gd": {
+      "sha256": "2254c38cd3603690f3d1b7113f246403b567338ee1d71f2f322ba4e069589426",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_king_greybox.gd": {
+      "sha256": "15bace841fc45efbe6a1d20bb684c38f1def64d5589cc156dc2422280da7ce67",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_court.gd": {
+      "sha256": "cb7962c2271b43a1c08d7ba618b70be1a755d5136e58b8a6ff58bb17a0ecc942",
+      "bytes": 19,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_court_layout.gd": {
+      "sha256": "74ab93d3a59d7896df376e88681637b222059a3021862a15b3a014bf9e580c96",
+      "bytes": 20,
+      "mode": 420
+    },
+    "tests/acts/act1/a1_l4_whole_entry.gd": {
+      "sha256": "9524c711314c0e4096a65ece5eb9b995ccf8f1260826efaedc4e1db53c0a5dfd",
+      "bytes": 20,
+      "mode": 420
+    }
+  },
+  "new_art_sidecars_after": {
+    "scripts/acts/act1/selenite_king.gd": {
+      "sha256": "37c77d7254598fcbba4f1769a37d630797183c11da4c9be1d8f190558a12d667",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_king_art.gd": {
+      "sha256": "2254c38cd3603690f3d1b7113f246403b567338ee1d71f2f322ba4e069589426",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_king_greybox.gd": {
+      "sha256": "15bace841fc45efbe6a1d20bb684c38f1def64d5589cc156dc2422280da7ce67",
+      "bytes": 20,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_court.gd": {
+      "sha256": "cb7962c2271b43a1c08d7ba618b70be1a755d5136e58b8a6ff58bb17a0ecc942",
+      "bytes": 19,
+      "mode": 420
+    },
+    "scripts/acts/act1/selenite_court_layout.gd": {
+      "sha256": "74ab93d3a59d7896df376e88681637b222059a3021862a15b3a014bf9e580c96",
+      "bytes": 20,
+      "mode": 420
+    },
+    "tests/acts/act1/a1_l4_whole_entry.gd": {
+      "sha256": "9524c711314c0e4096a65ece5eb9b995ccf8f1260826efaedc4e1db53c0a5dfd",
+      "bytes": 20,
+      "mode": 420
+    }
+  },
+  "scope": "Bounded original selection and actual process closure only. Import may legitimately change cache members/generate sidecars; never backfill originals. No complete dependency graph, whole Save/Continue/Retry/production art/acceptance, fidelity, human balance or performance claim."
+}

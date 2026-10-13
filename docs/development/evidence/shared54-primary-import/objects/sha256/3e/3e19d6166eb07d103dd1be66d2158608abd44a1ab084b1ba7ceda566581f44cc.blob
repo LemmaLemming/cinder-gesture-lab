@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "asset_id": "UI-MENU-SCENERY-1",
+  "family": "campaign-menu-scenery",
+  "api_revision": "menu-scenery-1",
+  "renderer": "res://scripts/ui/campaign_scenery.gd",
+  "readiness": "implemented; focused paused desktop menu/TEST theme views verified, source paintings remain references",
+  "native_dimensions": {
+    "title": [
+      160,
+      88
+    ],
+    "route_region": [
+      160,
+      360
+    ],
+    "shared_traveller": [
+      48,
+      64
+    ]
+  },
+  "scale": "Integer centred drawing pixels; standard540x1170 menu3x scenery and144x192 existing Title traveller;432x936 desktop resize covered.",
+  "pivot": {
+    "shared_traveller_source_feet": [
+      24,
+      64
+    ],
+    "title_virtual_feet": [
+      80,
+      78
+    ]
+  },
+  "world_footprint": "not_applicable; 2D menu only",
+  "collision": "none",
+  "occlusion": "Scenery below unchanged route connections/nodes; static region-colour header masks above links and below labels; Title keeps shared feet/contact clear.",
+  "states": [
+    "static_title",
+    "static_reached_route",
+    "static_unreached_abstract_route"
+  ],
+  "animation_durations": "not_applicable; no processing/physics/clock/pulse",
+  "palette": {
+    "act1": [
+      "11161c",
+      "252d35",
+      "37414a",
+      "637079",
+      "819096",
+      "1b2229"
+    ],
+    "act2": [
+      "191418",
+      "2c2023",
+      "493035",
+      "73504a",
+      "9b6654",
+      "211b1d"
+    ],
+    "act3": [
+      "171422",
+      "272138",
+      "3d3051",
+      "5a4b6c",
+      "817b57",
+      "211d2c"
+    ]
+  },
+  "sources": [
+    {
+      "path": "docs/concept-art/act1/environments/01-observatory-and-launch.png",
+      "bytes": 3105753,
+      "sha256": "b3b874b4c1bcb7324588b9eb6ddad224e3eb2dcecc0708c26cffc156c2f83282",
+      "readiness": "concept-reference-not-runtime"
+    },
+    {
+      "path": "docs/concept-art/act1/gameplay/01-crater-gardens-gameplay.png",
+      "bytes": 3033792,
+      "sha256": "61f95e88c7647dac9e300937a188ccbf8ea281bae0675059578d5cc0e8390070",
+      "readiness": "concept-reference-not-runtime"
+    },
+    {
+      "path": "docs/concept-art/act2/environments/horsell-common.png",
+      "bytes": 3267759,
+      "sha256": "33a7542ea38a7b5a05e91c5cdb7138e2af0a447b7eacb656b4625755bb3da4f0",
+      "readiness": "concept-reference-not-runtime"
+    },
+    {
+      "path": "docs/concept-art/act2/gameplay/01-horsell-common-gameplay.png",
+      "bytes": 3431455,
+      "sha256": "6cd7fa272c5068a4e473ba261e9dc78291ef68d7207830196ee337bb82948869",
+      "readiness": "concept-reference-not-runtime"
+    },
+    {
+      "path": "docs/concept-art/act3/environments/01-twin-suns.png",
+      "bytes": 2764490,
+      "sha256": "4e864368843a6cafd420dd8ca966643c853bafa82d67250b5d701ac30bc5e612",
+      "readiness": "concept-reference-not-runtime"
+    },
+    {
+      "path": "docs/concept-art/act3/gameplay/01-twin-suns-gameplay.png",
+      "bytes": 2533874,
+      "sha256": "b73510182167dca61fe15746759101c1d19f668da74a288ac8fc389d50572f96",
+      "readiness": "concept-reference-not-runtime"
+    }
+  ],
+  "method": "New authored procedural stepped silhouettes interpreted from locally inspected selected concept references; no copied painting pixels, historical frames or invented source quotations. Shared traveller remains the existing pixel_sprite.gd preview/equipment path.",
+  "reuse": [
+    "Title current-story act",
+    "Journey three act regions"
+  ],
+  "reveal": "Earth for no save/currentA1L1 even after its completion; later Moon only after actual story moves onward. Detailed Act2/3 route silhouettes only after currentstory/completedmain reaches region; future boss/location imagery excluded.",
+  "evidence": "docs/development/evidence/shared48-menu-scenery/index.json",
+  "evidence_sha256": "a2982f0cce3396dd38ad5488ff51840d6b7801f9f4b2342b4dc261dbe3b0e52c",
+  "limits": "Coarse quiet menu silhouettes, not exact source painting fidelity or authored gameplay scenery. Actual A1 Title/three real metadata route regions + four TEST standalone title themes only; no currentA2/A3 gameplay, GUI hit-test, all-kit art, human preference/balance, sustained performance or device claim.",
+  "reviewed_at": "2026-10-12T03:11:54.420443+00:00"
+}

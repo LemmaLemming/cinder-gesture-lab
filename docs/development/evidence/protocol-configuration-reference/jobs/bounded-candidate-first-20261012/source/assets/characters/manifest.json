@@ -1,0 +1,222 @@
+{
+  "schema_version": "2.0.0",
+  "date": "2026-10-08",
+  "family": "shared_astronomer_player",
+  "readiness": "implemented_mechanics_lab_pixel_asset_not_final_campaign_art",
+  "authoring_source": "scripts/pixel_sprite.gd",
+  "export_command": "python3 scripts/dev/dev.py engine --headless --path . --script scripts/art/build_character_assets.gd",
+  "visual_reference": "assets/references/astronaut-turnaround-v1.png",
+  "provenance": "Original deterministic pixel clusters authored for Cinder from the then user-directed astronaut-like helmet and original generated turnaround reference. This records the earlier helmeted lab pass; the latest campaign direction derives headwear from selected act concept art. No stock-image pixels, concept crops, glow backgrounds or irregular generated cells are imported into runtime art.",
+  "native_cell_pixels": [
+    48,
+    64
+  ],
+  "native_sheet_pixels": [
+    1536,
+    384
+  ],
+  "columns": [
+    "front_0",
+    "front_1",
+    "front_2",
+    "front_3",
+    "front_4",
+    "front_5",
+    "front_6",
+    "front_7",
+    "back_0",
+    "back_1",
+    "back_2",
+    "back_3",
+    "back_4",
+    "back_5",
+    "back_6",
+    "back_7",
+    "left_0",
+    "left_1",
+    "left_2",
+    "left_3",
+    "left_4",
+    "left_5",
+    "left_6",
+    "left_7",
+    "right_0",
+    "right_1",
+    "right_2",
+    "right_3",
+    "right_4",
+    "right_5",
+    "right_6",
+    "right_7"
+  ],
+  "rows": [
+    "idle",
+    "dash",
+    "landing",
+    "primary",
+    "blast",
+    "hurt"
+  ],
+  "foot_pivot_pixels": [
+    24,
+    64
+  ],
+  "sprite_offset_pixels": [
+    0,
+    32
+  ],
+  "foot_clearance_world_units": 0.025,
+  "pixel_size_world_units": 0.0225,
+  "maximum_quad_world_size": [
+    1.08,
+    1.44
+  ],
+  "physical_body": {
+    "source": "scenes/player.tscn",
+    "shape": "capsule",
+    "radius_world_units": 0.32,
+    "height_world_units": 1.45,
+    "centre_height_world_units": 0.73,
+    "equipment_changes_collision": false
+  },
+  "palette_role": "Ivory protective panels, cool silver seams, dark navy visor and subdued red trim are original game art direction for this helmeted lab family; helmet and equipment keep one compatible expedition outfit in these sheets.",
+  "role": "Player actor and cosmetic equipment appearance; attack footprint is resolved by the shared player controller.",
+  "occlusion": "Billboard quad uses normal world depth; contact shadow is a separate floor mesh. No foreground fade is part of this asset.",
+  "animation_clock": "Action frames follow controller-owned visual progress from simulation time. Only idle breathing owns a local 1.2-second simulation loop. Cosmetics never resolve or delay damage, movement, cooldowns or queued weapon replacement.",
+  "state_durations_s": {
+    "idle": 1.2,
+    "dash": "resolved_distance / resolved_speed; neutral 0.18",
+    "landing": 0.22,
+    "primary": "0.28 / resolved_attack_speed",
+    "blast": "0.24 / resolved_attack_speed",
+    "hurt": 0.28
+  },
+  "reuse_locations": [
+    "character_test_lab",
+    "future_act_1",
+    "future_act_2",
+    "future_act_3"
+  ],
+  "sheets": [
+    {
+      "id": "PLAYER-ASTRONOMER-W01",
+      "path": "assets/characters/astronomer-weapon-01.png",
+      "weapon_profile_id": "WEAPON-01"
+    },
+    {
+      "id": "PLAYER-ASTRONOMER-W02",
+      "path": "assets/characters/astronomer-weapon-02.png",
+      "weapon_profile_id": "WEAPON-02"
+    },
+    {
+      "id": "PLAYER-ASTRONOMER-W03",
+      "path": "assets/characters/astronomer-weapon-03.png",
+      "weapon_profile_id": "WEAPON-03"
+    },
+    {
+      "id": "PLAYER-ASTRONOMER-W04",
+      "path": "assets/characters/astronomer-weapon-04.png",
+      "weapon_profile_id": "WEAPON-04"
+    }
+  ],
+  "clothing_visuals": {
+    "standard": [
+      "CLOTH-J0",
+      "CLOTH-P0",
+      "CLOTH-S0"
+    ],
+    "static_alternatives": [
+      "CLOTH-J1",
+      "CLOTH-J2",
+      "CLOTH-P1",
+      "CLOTH-P2",
+      "CLOTH-S1",
+      "CLOTH-S2"
+    ],
+    "implementation": "Compatible neck rings, protective panels, reinforced cuffs/knees and boot connections share one48x64 family. Neutral and six static alternatives render from existing IDs. Exports show neutral clothing, while equipment-review includes the whole static subset and a mixed outfit."
+  },
+  "limits": [
+    "Four artwork facings depict exact continuous world aim; artwork never quantizes input.",
+    "Visual settling has separate clocks so added frames never change accepted hit timing, dash length, cooldowns or swap eligibility.",
+    "The blade and short barrel blast remain appearances of one carried weapon profile, not two equipment slots.",
+    "Enemy24x32 arena art remains a coarser prototype while this deliberately authored player production pass retains the same world footprint.",
+    "Physical-phone brightness, finger occlusion, performance, human balance and campaign scenery remain untested."
+  ],
+  "frame_counts": {
+    "idle": 8,
+    "dash": 6,
+    "landing": 6,
+    "primary": 8,
+    "blast": 8,
+    "hurt": 6
+  },
+  "authoritative_phase_durations_s": {
+    "primary": "0.13 / resolved_attack_speed",
+    "blast": "0.10 / resolved_attack_speed",
+    "hurt": 0.16
+  },
+  "helmet": {
+    "fixed_in_this_prototype_asset": true,
+    "campaign_requirement": false,
+    "extra_equipment_slot": false,
+    "stat_bonus": false,
+    "states": "every facing, action and implemented equipment combination in this lab family",
+    "source_native_shell": "rounded stepped silhouette, dark visor/rim, neck seal and rear catches"
+  },
+  "review": {
+    "scope": "Historical helmeted lab-family review; not validation of act presentation variants.",
+    "helmet_compatibility": "passed source sheets and actual portrait inspection; permanent shell stays visible",
+    "mixed_outfit_compatibility": "passed all 13 implemented static item appearances plus one mixed kit across every state and facing",
+    "facing_readability": "front/side dark visor and rim versus rear pale shell/seam; inspected at 270x585 gameplay raster and540x1170 portrait output",
+    "state_coverage": {
+      "poses_per_profile": 168,
+      "reviewed_kit_count": 14,
+      "checked_poses": 2352,
+      "states": [
+        "idle",
+        "dash",
+        "landing",
+        "primary",
+        "blast",
+        "hurt"
+      ],
+      "facings": [
+        "front",
+        "back",
+        "left",
+        "right"
+      ]
+    },
+    "source_review_sheet": "assets/characters/equipment-review.png",
+    "review_index": "assets/characters/equipment-review.json",
+    "turnaround_preview": "docs/character-turnaround-preview.png",
+    "portrait_captures": [
+      "captures/character-lab.png",
+      "captures/character-primary.png",
+      "captures/character-blast.png",
+      "captures/mechanics-lab.png"
+    ],
+    "physical_device": "not_tested"
+  },
+  "campaign_presentation": {
+    "headwear_source": "Selected concept art for each act, coordinated with its owner.",
+    "readiness": "Original procedural act presentations passed73 targeted checks, native gallery review and shared portrait fixture review. Authored-act scenery/encounter, human and device review remain pending. Existing exported sheets in this historical manifest remain helmeted_lab artwork.",
+    "source_record": "assets/characters/presentations/manifest.json",
+    "presentation_ids": [
+      "helmeted_lab",
+      "act1_expedition",
+      "act2_survivor",
+      "act3_traveller"
+    ],
+    "extra_equipment_slot": false,
+    "stat_bonus": false,
+    "shared_invariants": [
+      "one actor/controller/stat/equipment system",
+      "collision body",
+      "feet pivot",
+      "readable action/facing language",
+      "simulation-driven action timing"
+    ]
+  },
+  "identifier_note": "Existing PLAYER-ASTRONOMER-W01..W04 IDs and astronomer-weapon PNG names are retained for stable references; their current lab artwork has a fixed helmet. Existing reference prompts, source sheets and review evidence retain their provenance."
+}

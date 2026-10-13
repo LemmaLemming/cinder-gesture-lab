@@ -1,0 +1,80 @@
+--- a/.cinder/protocol-reference-bits-cost.gd
++++ b/.cinder/native-boundary-profile/profile.gd
+@@ -1,9 +1,11 @@
+ extends "res://.cinder/a1-l3-stage-diagnostic4.gd"
+-## PRIVATE uninstrumented whole-window timing over one actual native interval.
++## PRIVATE temporary stage profile over one actual native interval.
++## SOURCE ONLY: unparsed/unexecuted until Root explicitly selects copies.
+ ## Real original CP2 -> GUI Continue/Resume -> ONE TEST Hero placement -> real
+ ## Crossed activation -> public Pause. No actor/progress/camera/clock setters.
+ ## All normal actor/Scheduler/Player callbacks run; receipts stay outside timing.
+ 
++const BoundaryProfile = preload("res://.cinder/native-boundary-profile/sink.gd")
+ const NativeProtocol = preload("res://scripts/environment/scheduler_spore_source_protocol.gd")
+ const CostRoute = preload("res://scripts/combat/repulsion_route.gd")
+ var _cost_label: String = "unset"
+@@ -68,23 +70,44 @@
+ 	var actor_ids: Dictionary = {}
+ 	for id: String in game.active_level.get("sources"):
+ 		actor_ids[id] = str(game.active_level.get("sources")[id].get_instance_id())
++	var selected_protocol_ids: Array[int] = []
++	var exact_protocol_scripts: bool = true
++	for id: String in _cost_sources:
++		selected_protocol_ids.append(protocols[id].get_instance_id())
++		exact_protocol_scripts = exact_protocol_scripts and protocols[id].get_script() == NativeProtocol
++	if not _expect(exact_protocol_scripts, "all8 actual bound Protocols retain the exact shared native Script before profiling"): _finish(); return
++	BoundaryProfile.reset(selected_protocol_ids)
++	BoundaryProfile.enabled = true
+ 	var started: int = Time.get_ticks_usec()
+ 	# Real scheduled physics/process callbacks; no manual actor/controller tick.
+ 	await physics_frame
+ 	await process_frame
+ 	var wall_us: int = Time.get_ticks_usec() - started
++	BoundaryProfile.enabled = false
++	var profile: Dictionary = BoundaryProfile.state()
++	var per_source: Dictionary = {}
++	var every_source_measured: bool = true
++	# Read ALL eight actual retained Protocol counter trees before Pause or any
++	# native/input/optics witness/whole-packet snapshot writer. No new guard call.
++	for id: String in _cost_sources:
++		var measured: Dictionary = BoundaryProfile.source_state(protocols[id].get_instance_id())
++		per_source[id] = measured
++		every_source_measured = every_source_measured and not measured.is_empty() and measured.has("Protocol._binding_error")
++	if not _expect(every_source_measured and profile.selected_source_count == 8 and profile.stack_empty and not profile.stack_fault and not profile.overflow, "all8 genuine Protocol counter trees finish without stack faults or overflow before Pause"): _finish(); return
+ 	var actual_ids: Dictionary = {}
+ 	for id: String in game.active_level.get("sources"):
+ 		actual_ids[id] = str(game.active_level.get("sources")[id].get_instance_id())
+-	_trace("runtime_bits_interval", {"wall_us": wall_us, "physics_frames": Engine.get_physics_frames() - frame_before, "process_frames": Engine.get_process_frames() - process_before, "player_elapsed_s": game.player.get_world_action_clock() - clock_before, "scheduler_elapsed_s": scheduler.get_clock() - scheduler_before, "actor_identities_unchanged": actor_ids == actual_ids, "hp_before": hp_before, "scope": "Uninstrumented actual whole-window elapsed time; activation/setup/paused witnesses excluded; one native await interval, not sustained production FPS."})
+-	if not _expect(Engine.get_physics_frames() - frame_before == 8 and Engine.get_process_frames() - process_before == 1 and is_equal_approx(game.player.get_world_action_clock() - clock_before, 8.0 / 60.0) and is_equal_approx(scheduler.get_clock() - scheduler_before, 8.0 / 60.0) and actor_ids == actual_ids and game.player.hp == hp_before and not paused, "real uninstrumented interval advances eight native physics frames with exact actor/health custody"): _finish(); return
++	_trace("native_boundary_profile_interval", {"profile": profile, "per_source": per_source, "wall_us": wall_us, "physics_frames": Engine.get_physics_frames() - frame_before, "process_frames": Engine.get_process_frames() - process_before, "player_elapsed_s": game.player.get_world_action_clock() - clock_before, "scheduler_elapsed_s": scheduler.get_clock() - scheduler_before, "actor_identities_unchanged": actor_ids == actual_ids, "hp_before": hp_before, "scope": "Temporary native statement timing: sequential stages plus inclusive nested methods overlap; activation/setup/paused witnesses excluded; one native await interval, no exclusive sum/FPS/gain/cause claim."})
++	if not _expect(Engine.get_physics_frames() - frame_before == 8 and Engine.get_process_frames() - process_before == 1 and is_equal_approx(game.player.get_world_action_clock() - clock_before, 8.0 / 60.0) and is_equal_approx(scheduler.get_clock() - scheduler_before, 8.0 / 60.0) and actor_ids == actual_ids and game.player.hp == hp_before and not paused, "real instrumented interval advances eight native physics frames with exact actor/health custody"): _finish(); return
+ 	game.request_pause()
+ 	await _settle()
++	# Preserve actual diagnostic/input/optics observations BEFORE snapshot
++	# writers can reset diagnostic fields; every counter is disabled already.
++	var native: String = _cost_native(protocols)
+ 	var packets: String = _cost_packets()
+-	var native: String = _cost_native(protocols)
+ 	_expect(paused and not packets.is_empty() and not native.is_empty(), "actual public Pause retains nonempty complete19actor/Player/Scheduler and focused native observation after measurement")
+-	_trace("runtime_bits_paused_witness", {"packet_bytes": packets.to_utf8_buffer().size(), "packet_sha256": packets.sha256_text(), "native_bytes": native.to_utf8_buffer().size(), "native_sha256": native.sha256_text(), "campaign_error": game.campaign_error, "scope": "Optical Pause refusal is reported; no fitting, Save permission or recovery claim."})
+-	_stage_outcome = "one_uninstrumented_native_bits_interval"
++	_trace("native_boundary_profile_paused_witness", {"packet_bytes": packets.to_utf8_buffer().size(), "packet_sha256": packets.sha256_text(), "native_bytes": native.to_utf8_buffer().size(), "native_sha256": native.sha256_text(), "campaign_error": game.campaign_error, "scope": "Optical Pause refusal is reported; no fitting, Save permission or recovery claim."})
++	_stage_outcome = "one_instrumented_native_boundary_interval"
+ 	_finish()
+ 
+ 
+@@ -151,6 +174,7 @@
+ func _finish() -> void:
+ 	if _finished: return
+ 	_finished = true
++	BoundaryProfile.enabled = false
+ 	_trace("cost_cleanup_before", {"measurement_label": _cost_label, "outcome": _stage_outcome, "query_count": _cost_rows.size()})
+ 	_close_shell()
+ 	paused = false
+@@ -158,5 +182,5 @@
+ 	_cleanup_saves()
+ 	_expect(FileAccess.get_sha256(STAGE_ORIGINAL) == STAGE_ORIGINAL_SHA and FileAccess.get_file_as_string(Registry.DATA_PATH) == _registry_text, "cost probe preserves original CP2 and canonical registry bytes")
+ 	_trace("cost_cleanup_after", {"measurement_label": _cost_label, "outcome": _stage_outcome})
+-	print("Native Protocol bits interval: %d checks, %d failures; label=%s; outcome=%s; uninstrumented whole native interval only, no productionFPS/full-route claim" % [checks, failures, _cost_label, _stage_outcome])
++	print("Native boundary profile: %d checks, %d failures; label=%s; outcome=%s; inclusive stage observation only, no productionFPS/gain/full-route claim" % [checks, failures, _cost_label, _stage_outcome])
+ 	quit(0 if failures == 0 else 1)

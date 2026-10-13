@@ -1,0 +1,36 @@
+from pathlib import Path
+import datetime, hashlib, json, re, stat, subprocess, sys, time
+root=Path(__file__).resolve().parent.parent
+label,mode,suite,source_path=sys.argv[1:5]
+args=sys.argv[5:]
+scripts={'save':'tests/acts/act1/a1_l4_whole_save.gd','curtain':'tests/acts/act1/a1_l4_curtain_greybox.gd','king':'tests/acts/act1/a1_l4_king_greybox.gd','entry':'tests/acts/act1/a1_l4_whole_entry.gd','spore':'tests/acts/act1/a1_l3_spore_component.gd'}
+assert mode in ['import','native'] and suite in scripts
+source=root/source_path;manifest_path=source/'manifest.json';manifest=json.loads(manifest_path.read_text());assert manifest['variant']=='spore_approach'
+log=root/'.cinder'/f'{label}-wrapper.log';result_path=root/'.cinder'/f'{label}-result.json'
+assert not log.exists() and not result_path.exists()
+def fp(path):
+ p=root/path
+ if not p.is_file():return None
+ data=p.read_bytes();return {'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data),'mode':stat.S_IMODE(p.stat().st_mode)}
+def changes():
+ return [{'path':r['path'],'observed':fp(r['path'])} for r in manifest['files'] if fp(r['path'])!={k:r[k] for k in ['sha256','bytes','mode']}]
+assert not changes(),'Frozen inputs changed before queueing'
+uids={str(p.relative_to(root)):fp(str(p.relative_to(root))) for p in root.rglob('*.uid') if '.godot' not in p.parts and '.cinder' not in p.parts and 'evidence' not in p.parts and 'history' not in p.parts}
+command=[sys.executable,'scripts/dev/dev.py','import'] if mode=='import' else [sys.executable,'scripts/dev/dev.py','engine','--headless','--path','.', '--script',scripts[suite]]+(['--']+args if args else [])
+started_at=datetime.datetime.now(datetime.timezone.utc).isoformat();started=time.monotonic()
+print(json.dumps({'label':label,'command':command,'frozen_sources':len(manifest['files']),'started_at':started_at}),flush=True)
+with log.open('xb') as stream:
+ child=subprocess.Popen(command,cwd=root,stdout=stream,stderr=subprocess.STDOUT);code=child.wait()
+raw=log.read_bytes();text=raw.decode('utf-8',errors='replace')
+lines=text.splitlines();errors=[s for s in lines if re.match(r'^(?:SCRIPT ERROR|ERROR|WARNING):',s)]
+footers=[s for s in lines if s.startswith('A1-L3 ') and re.search(r'\d+ (?:checks|assertions)',s)]
+match=re.search(r'report=(res://[^;\s]+)',footers[-1]) if footers else None
+evidence=re.search(r'^L3 SPORE STATE EVIDENCE (.+)$',text,re.MULTILINE)
+report_path=root/match[1].removeprefix('res://') if match else (Path(evidence[1]) if evidence else None)
+report=json.loads(report_path.read_text()) if report_path is not None and report_path.is_file() else None
+uid_after={str(p.relative_to(root)):fp(str(p.relative_to(root))) for p in root.rglob('*.uid') if '.godot' not in p.parts and '.cinder' not in p.parts and 'evidence' not in p.parts and 'history' not in p.parts}
+result={'schema_version':1,'label':label,'mode':mode,'suite':suite,'command':command,'checkout':str(root),'revision':manifest['head'],'shared_runtime_publication':manifest['shared_runtime_publication'],'started_at':started_at,'closed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'wall_seconds':time.monotonic()-started,'exit_code':code,'source_archive':str(source),'source_manifest_sha256':hashlib.sha256(manifest_path.read_bytes()).hexdigest(),'frozen_source_files':len(manifest['files']),'post_run_frozen_member_changes':changes(),'raw_log':str(log),'raw_sha256':hashlib.sha256(raw).hexdigest(),'raw_error_warning_lines':errors,'explicit_footer':footers[-1] if footers else None,'native_report':str(report_path) if report else None,'native_report_sha256':hashlib.sha256(report_path.read_bytes()).hexdigest() if report else None,'checks':report.get('checks') if report else None,'failures':report.get('failures') if report else None,'first_failure':report.get('first_failure') if report else None,'prior_active_uids':uids,'new_uids':{p:v for p,v in uid_after.items() if p not in uids},'changed_prior_uids':{p:uid_after.get(p) for p,v in uids.items() if uid_after.get(p)!=v},'scope':'Original bounded source selection and actual process closure, not a complete dependency graph. Import metadata changes separately disclosed. Native assertions only prove executed cases; no route, fidelity, balance, performance or acceptance claim.'}
+result_path.write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps({k:result[k] for k in ['label','exit_code','wall_seconds','frozen_source_files','explicit_footer','checks','failures','first_failure']}),flush=True)
+print(json.dumps({'raw_errors_warnings':errors[:8],'changed_frozen_paths':[r['path'] for r in result['post_run_frozen_member_changes']],'changed_prior_uids':result['changed_prior_uids'],'new_uids':result['new_uids']}),flush=True)
+raise SystemExit(code)

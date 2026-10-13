@@ -1,0 +1,165 @@
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import re
+import stat
+import subprocess
+import sys
+import time
+
+ROOT = Path.cwd()
+EXPECTED_HEAD = "059733878cc6590c96c36c93e2e3a1282822d140"
+EXPECTED_FIXTURE = "82f3ae55c4942d1c0dc4291503d6257eda84d1dc774d3baad98bfafc2bfa9046"
+EXPECTED_REGISTRY = "39b6d3f31f6a03474dcdeeaa7cf2a2238aade203f55c36cf7d2fc6672e01e88f"
+FIXTURE = ".cinder/protocol-reference-bits-cost.gd"
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def write(path, value):
+    with path.open("x") as stream:
+        json.dump(value, stream, indent=2, sort_keys=True)
+        stream.write("\n")
+
+
+def module(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    result = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(result)
+    return result
+
+
+def active_files():
+    for name in ("scripts", "tests", "assets"):
+        for base, dirs, files in os.walk(ROOT / name):
+            if ".gdignore" in files:
+                dirs[:] = []
+                continue
+            for filename in files:
+                yield Path(base) / filename
+
+
+def uid_census():
+    return {str(path.relative_to(ROOT)): {"sha256": digest(path), "identity": path.read_text().strip(),
+            "stat_mode": oct(stat.S_IMODE(path.stat().st_mode))}
+            for path in active_files() if path.suffix == ".uid"}
+
+
+class Tee:
+    def __init__(self, stream, terminal):
+        self.stream, self.terminal = stream, terminal
+
+    def write(self, value):
+        self.stream.write(value)
+        self.stream.flush()
+        self.terminal.write(value)
+        self.terminal.flush()
+
+    def flush(self):
+        self.stream.flush()
+        self.terminal.flush()
+
+
+def main():
+    mode, leaf = sys.argv[1:]
+    assert mode in {"import", "native"}
+    assert re.fullmatch(r"[a-z0-9-]+", leaf)
+    assert subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip() == EXPECTED_HEAD
+    assert digest(ROOT / FIXTURE) == EXPECTED_FIXTURE
+    assert digest(ROOT / "data/campaign/registry.json") == EXPECTED_REGISTRY
+    dev = module("isolated_cinder_dev", ROOT / "scripts/dev/dev.py")
+    original = ROOT / "docs/acts/act2/evidence/A2-O2/source-draft-20261012/cinder_a2_o2_focused_record.py"
+    freezer = module("original_focused_source_freezer", original)
+    context = dev.ProjectContext(ROOT)
+    godot = dev.resolve_godot(context)
+    packet = ROOT / ".cinder/configuration-reference-native" / leaf
+    packet.mkdir(parents=True, exist_ok=False)
+    (packet / ".gdignore").write_bytes(b"")
+    raw = packet / "raw.log"
+    command = [str(godot), "--path", str(ROOT), "--headless", "--log-file", str(raw)]
+    command += ["--import"] if mode == "import" else ["--script", "res://" + FIXTURE]
+    command += ["--", "--measurement-label=" + leaf]
+    timeout = 300.0 if mode == "import" else 90.0
+    before_uids = uid_census()
+    seeds = {"project.godot", ".cinder/local.json", "scripts/dev/dev.py", FIXTURE,
+             "data/campaign/registry.json", str(Path(__file__).relative_to(ROOT)),
+             str(original.relative_to(ROOT))}
+    seeds.update(str(path.relative_to(ROOT)) for path in active_files() if path.suffix in {".gd", ".gdshader", ".uid"})
+    for relative in (".godot/global_script_class_cache.cfg", ".godot/editor/project_metadata.cfg"):
+        if (ROOT / relative).exists():
+            seeds.add(relative)
+    files, modes, uids, imports, unresolved, classes = freezer.freeze_sources(ROOT, packet, seeds)
+    # New recorder uses the real execute mask. The frozen historical recorder
+    # remains exact; no old executable_bits record is rewritten or relabelled.
+    for value in modes.values():
+        value["executable_bits"] = int(value["stat_mode"], 8) & 0o111
+    source = {"schema_version": 1, "at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "cwd": str(ROOT), "head": EXPECTED_HEAD, "protocol_sha256": digest(ROOT / "scripts/environment/scheduler_spore_source_protocol.gd"),
+        "api_revision": "campaign-shared-53 with private untested candidate", "shared_publication": "8cb1da79ba000d758fe677054782e23f48cb6dfd",
+        "mode": mode, "command": command, "timeout_s_after_lock": timeout,
+        "fixture_sha256": EXPECTED_FIXTURE, "registry_sha256": EXPECTED_REGISTRY,
+        "dev_sha256": digest(ROOT / "scripts/dev/dev.py"), "engine_sha256": digest(godot),
+        "driver_sha256": digest(Path(__file__)), "source_freezer_original_sha256": digest(original),
+        "source_count": len(files), "files": files, "file_modes": modes,
+        "uid_presence_before": uids, "import_presence_before": imports,
+        "global_class_dependencies": classes, "unresolved_literal_references": unresolved,
+        "active_uids_before": before_uids, "shared_lock": str(dev.shared_lock_path(ROOT)),
+        "scope": "All active code/UIDs plus explicit/literal/global-class resource closure and actual existing cache/config inputs. Complete declared bounded subset, not full dynamic/import graph. Only unchanged uninstrumented Crossed eight-frame interval on genuine original CP2/GUI Continue/Resume/one TEST Hero relocation; full19actor/Player/Scheduler packet and fresh native input/camera witness recorded. Original current-view refusal is retained; no parent Save, gameplay acceptance, FPS or cause claim. One fresh baseline/candidate pair justified by changed configuration comparator, no repeated four-window campaign sweep."}
+    write(packet / "source.json", source)
+    start = time.monotonic()
+    with (packet / "wrapper.log").open("x") as stream:
+        tee = Tee(stream, sys.stdout)
+        with contextlib.redirect_stdout(tee), contextlib.redirect_stderr(tee):
+            with dev.godot_lock(ROOT) as lock_fd:
+                lock_acquired = time.monotonic()
+                print("Selected Root configuration controls begin after shared lock admission.", flush=True)
+                code = dev.run_validation(command, context, lock_fd, timeout)
+    after_uids = uid_census()
+    additions = {p: v for p, v in after_uids.items() if p not in before_uids}
+    uid_changes = [p for p, value in before_uids.items() if after_uids.get(p) != value]
+    changed = [p for p, h in files.items() if not (ROOT / p).exists() or digest(ROOT / p) != h]
+    mode_changes = [p for p, value in modes.items() if (ROOT / p).exists() and oct(stat.S_IMODE((ROOT / p).stat().st_mode)) != value["stat_mode"]]
+    text = (packet / "wrapper.log").read_text()
+    raw_text = raw.read_text() if raw.exists() else ""
+    counts = {"wrapper": freezer.log_counts(text), "raw": freezer.log_counts(raw_text)}
+    summaries = [{"checks": int(a), "failures": int(b)} for a, b in re.findall(r"Native Protocol bits interval: (\d+) checks, (\d+) failures", raw_text)]
+    metadata_changes = [p for p in changed if p.startswith(".godot/")]
+    substantive_changes = [p for p in changed if p not in metadata_changes]
+    clean_logs = all(all(value == 0 for value in data.values()) for data in counts.values())
+    complete = code == 0 and clean_logs and not substantive_changes and not mode_changes and not uid_changes
+    if mode == "native":
+        complete = complete and len(summaries) == 1 and summaries[0]["failures"] == 0 and not additions
+    else:
+        complete = complete and set(additions).issubset({FIXTURE + ".uid"})
+    generated = {}
+    for relative, value in additions.items():
+        target = packet / "generated-after-job" / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((ROOT / relative).read_bytes())
+        generated[relative] = value
+    result = {"at": datetime.datetime.now(datetime.timezone.utc).isoformat(), "mode": mode,
+        "exit_code": code, "scope_complete": complete, "summaries": summaries,
+        "elapsed_including_queue_s": time.monotonic() - start, "queue_wait_s": lock_acquired - start,
+        "engine_child_closed": True, "canonical_queue_closed": True,
+        "source_sha256": digest(packet / "source.json"), "wrapper_sha256": digest(packet / "wrapper.log"),
+        "raw_sha256": digest(raw) if raw.exists() else None, "log_counts": counts,
+        "changed_source_paths": substantive_changes, "cache_metadata_changes": metadata_changes,
+        "changed_file_mode_paths": mode_changes, "prior_uid_changes": uid_changes,
+        "generated_uid_originals": generated, "active_uid_count_before": len(before_uids),
+        "active_uid_count_after": len(after_uids), "unexecuted_or_failed": not complete,
+        "scope": source["scope"], "acceptance": False}
+    write(packet / "result.json", result)
+    print(json.dumps({"packet": str(packet), "result_sha256": digest(packet / "result.json"),
+                      "exit_code": code, "scope_complete": complete, "summaries": summaries,
+                      "source_count": len(files), "generated_uids": additions}, sort_keys=True), flush=True)
+    return 0 if complete else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

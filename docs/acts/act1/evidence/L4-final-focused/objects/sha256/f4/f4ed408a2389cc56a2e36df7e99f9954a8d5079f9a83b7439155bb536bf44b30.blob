@@ -1,0 +1,1746 @@
+{
+	"action_receipts": [],
+	"actual_GUI_resumes": 0,
+	"actual_primaries": 0,
+	"actual_swipes": 0,
+	"aggregate_api_revision": "act1-court-aggregate-2",
+	"aggregate_schema_version": 2,
+	"captures": [],
+	"cases": [],
+	"checks": 58,
+	"failures": 1,
+	"first_failure": {
+		"camera": {
+			"accepted": true,
+			"api_revision": "camera-framing-1",
+			"basis": "[X: (1.0, 0.0, 0.0), Y: (0.0, 0.585491, -0.810679), Z: (0.0, 0.810679, 0.585491)]",
+			"camera_plane_correction": [
+				0.0,
+				0.0
+			],
+			"camera_plane_shift_intervals": [
+				[
+					-0.370666682720184,
+					0.370666444301605
+				],
+				[
+					-0.675513207912445,
+					6.1650128364563
+				]
+			],
+			"camera_position": [
+				0.0,
+				18.8033351898193,
+				-14.1939334869385
+			],
+			"depth_range": [
+				21.9959297180176,
+				25.2665691375732
+			],
+			"desired_focus": [
+				0.0,
+				0.803334474563599,
+				-27.1939334869385
+			],
+			"enabled": true,
+			"focus": [
+				0.0,
+				0.803334474563599,
+				-27.1939334869385
+			],
+			"numerical_headroom": 0.001,
+			"point_count": 112,
+			"reason": "",
+			"safe_rect": "[P: (0.040741, 0.17265), S: (0.918519, 0.719658)]",
+			"safety_margin": 0.055,
+			"screen_bounds": "[P: (0.1, 0.219541), S: (0.8, 0.273983)]",
+			"shift": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"shift_distance": 0.0,
+			"width": 7.19999980926514
+		},
+		"clock_s": 0.616666666666667,
+		"contract_error": "",
+		"entry_outcomes": {},
+		"entry_records": {},
+		"entry_stop_diagnostics": {},
+		"helper_stage": "unborn",
+		"label": "unexpected native focus/pause/Hero death/alias or court contract failure; no forced resume",
+		"paused": true,
+		"room": 3,
+		"scope": "whole-court-brief-portrait"
+	},
+	"focus_receipts": [
+		{
+			"action_clock_s": null,
+			"expected_pause": false,
+			"label": "window-focus-entered",
+			"native_focus": true,
+			"paused": false,
+			"wall_usec": 2940130,
+			"window_has_focus": true
+		},
+		{
+			"action_clock_s": null,
+			"expected_pause": false,
+			"label": "application-focus-in",
+			"native_focus": true,
+			"paused": false,
+			"wall_usec": 2940645,
+			"window_has_focus": true
+		},
+		{
+			"action_clock_s": null,
+			"expected_pause": false,
+			"label": "genuine-startup-focus-stable",
+			"native_focus": true,
+			"paused": false,
+			"wall_usec": 3210692,
+			"window_has_focus": true
+		},
+		{
+			"action_clock_s": 5.24999999999999,
+			"expected_pause": false,
+			"label": "window-focus-exited",
+			"native_focus": false,
+			"paused": false,
+			"wall_usec": 11866317,
+			"window_has_focus": false
+		},
+		{
+			"action_clock_s": 5.24999999999999,
+			"expected_pause": false,
+			"label": "application-focus-out",
+			"native_focus": false,
+			"paused": false,
+			"wall_usec": 11867197,
+			"window_has_focus": false
+		},
+		{
+			"action_clock_s": 5.24999999999999,
+			"expected_pause": false,
+			"label": "whole-portrait-finish",
+			"native_focus": false,
+			"paused": true,
+			"wall_usec": 11872500,
+			"window_has_focus": false
+		}
+	],
+	"gesture_unit": {},
+	"hit_receipts": [],
+	"input_observations": [],
+	"king_intro_original": {},
+	"labelled_test_setups": [
+		{
+			"kind": "startup_foreground_request",
+			"label": "TEST one supported native foreground request before Main; later focus handling unchanged",
+			"scope": "whole-court-brief-portrait"
+		},
+		{
+			"kind": "explicit_mode",
+			"label": "TEST terminal-only visual regression; earlier unchanged views and gestures are not rerun or claimed",
+			"scope": "whole-court-brief-portrait"
+		},
+		{
+			"after_hp": 0.0,
+			"amount": 24.0,
+			"before_hp": 24.0,
+			"clock_s": 0.0,
+			"impulse": [
+				0,
+				0,
+				0
+			],
+			"kind": "public_actor_damage",
+			"label": "TEST curtain defeat for terminal visual regression",
+			"result": {
+				"accepted": true,
+				"hp_damage": 24.0,
+				"target_alive_before_hit": true,
+				"target_id": 78785808308
+			},
+			"scope": "whole-court-brief-portrait",
+			"source_id": "court-curtain-guard"
+		},
+		{
+			"clock_s": 0.0166666666666667,
+			"from": [
+				0.0,
+				-0.00484376167878509,
+				0.0
+			],
+			"hp": 100.0,
+			"kind": "hero_position",
+			"label": "TEST actual formation approach",
+			"scope": "whole-court-brief-portrait",
+			"to": [
+				0.0,
+				0.100000001490116,
+				-7.0
+			]
+		},
+		{
+			"after_hp": 0.0,
+			"amount": 24.0,
+			"before_hp": 24.0,
+			"clock_s": 0.0166666666666667,
+			"impulse": [
+				0,
+				0,
+				0
+			],
+			"kind": "public_actor_damage",
+			"label": "TEST formation defeat for terminal visual regression",
+			"result": {
+				"accepted": true,
+				"hp_damage": 24.0,
+				"target_alive_before_hit": true,
+				"target_id": 79222015945
+			},
+			"scope": "whole-court-brief-portrait",
+			"source_id": "court-formation-west"
+		},
+		{
+			"after_hp": 0.0,
+			"amount": 24.0,
+			"before_hp": 24.0,
+			"clock_s": 0.0166666666666667,
+			"impulse": [
+				0,
+				0,
+				0
+			],
+			"kind": "public_actor_damage",
+			"label": "TEST formation defeat for terminal visual regression",
+			"result": {
+				"accepted": true,
+				"hp_damage": 24.0,
+				"target_alive_before_hit": true,
+				"target_id": 79641446365
+			},
+			"scope": "whole-court-brief-portrait",
+			"source_id": "court-formation-east"
+		},
+		{
+			"clock_s": 0.0333333333333333,
+			"from": [
+				0.0,
+				-0.00476562976837158,
+				-7.0
+			],
+			"hp": 100.0,
+			"kind": "hero_position",
+			"label": "TEST actual royal approach",
+			"scope": "whole-court-brief-portrait",
+			"to": [
+				0.0,
+				0.100000001490116,
+				-17.0
+			]
+		},
+		{
+			"after_hp": 0.0,
+			"amount": 24.0,
+			"before_hp": 24.0,
+			"clock_s": 0.0,
+			"impulse": [
+				0,
+				0,
+				0
+			],
+			"kind": "public_actor_damage",
+			"label": "TEST approach defeat for terminal visual regression",
+			"result": {
+				"accepted": true,
+				"hp_damage": 24.0,
+				"target_alive_before_hit": true,
+				"target_id": 80060876785
+			},
+			"scope": "whole-court-brief-portrait",
+			"source_id": "court-approach-west"
+		},
+		{
+			"after_hp": 0.0,
+			"amount": 24.0,
+			"before_hp": 24.0,
+			"clock_s": 0.0,
+			"impulse": [
+				0,
+				0,
+				0
+			],
+			"kind": "public_actor_damage",
+			"label": "TEST approach defeat for terminal visual regression",
+			"result": {
+				"accepted": true,
+				"hp_damage": 24.0,
+				"target_alive_before_hit": true,
+				"target_id": 80480307205
+			},
+			"scope": "whole-court-brief-portrait",
+			"source_id": "court-approach-east"
+		},
+		{
+			"clock_s": 0.0166666666666667,
+			"from": [
+				0.0,
+				-0.00476562976837158,
+				-17.0
+			],
+			"hp": 100.0,
+			"kind": "hero_position",
+			"label": "TEST supported local throne approach",
+			"scope": "whole-court-brief-portrait",
+			"to": [
+				0.0,
+				0.100000001490116,
+				-24.5
+			]
+		},
+		{
+			"clock_s": 0.0166666666666667,
+			"from": [
+				0.0,
+				-0.00476562976837158,
+				-24.5
+			],
+			"hp": 100.0,
+			"kind": "hero_position",
+			"label": "TEST actual native boss contact",
+			"scope": "whole-court-brief-portrait",
+			"to": [
+				0.0,
+				0.100000001490116,
+				-26.0
+			]
+		},
+		{
+			"clock_s": 0.616666666666667,
+			"from": [
+				0.0,
+				-0.00476562976837158,
+				-26.0
+			],
+			"hp": 100.0,
+			"kind": "hero_position",
+			"label": "TEST central supported helper view",
+			"scope": "whole-court-brief-portrait",
+			"to": [
+				0.0,
+				0.100000001490116,
+				-28.2000007629395
+			]
+		},
+		{
+			"after_hp": 40.0,
+			"amount": 40.0,
+			"before_hp": 80.0,
+			"clock_s": 0.616666666666667,
+			"impulse": [
+				0,
+				0,
+				0
+			],
+			"kind": "public_actor_damage",
+			"label": "TEST actual half-HP helper threshold",
+			"result": {
+				"accepted": true,
+				"hp_damage": 40.0,
+				"target_alive_before_hit": true,
+				"target_id": 80899737625
+			},
+			"scope": "whole-court-brief-portrait",
+			"source_id": "court-king"
+		}
+	],
+	"native_events": [
+		{
+			"clock_s": 0.0,
+			"id": "court-curtain-guard",
+			"kind": "defeat",
+			"scope": "whole-court-brief-portrait"
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-curtain-guard",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-mushroom-selenite-3",
+				"approach_driving": false,
+				"approach_enabled": false,
+				"cycle": 0,
+				"dead": true,
+				"dormant": false,
+				"entity_id": "C32",
+				"facing": [
+					0.0,
+					0.0,
+					-1.0
+				],
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 0.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "actual_player_damage",
+				"opening_position": [
+					0.0,
+					0.0,
+					-2.0
+				],
+				"phase": "clear",
+				"presentation_status": "authored_C31_C32_pose_pixels",
+				"reservation_id": "",
+				"resolved_role": {},
+				"role_id": "A1-E3",
+				"source_id": "court-curtain-guard",
+				"source_position": [
+					0.0,
+					0.0,
+					-2.0
+				],
+				"spore_support": false,
+				"status": "defeated",
+				"velocity": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-formation-west",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-mushroom-selenite-3",
+				"approach_driving": false,
+				"approach_enabled": false,
+				"cycle": 0,
+				"dead": false,
+				"dormant": false,
+				"entity_id": "C32",
+				"facing": [
+					0.0,
+					0.0,
+					-1.0
+				],
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 24.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "",
+				"opening_position": [
+					-1.20000004768372,
+					0.0,
+					-10.0
+				],
+				"phase": "clear",
+				"presentation_status": "authored_C31_C32_pose_pixels",
+				"reservation_id": "",
+				"resolved_role": {},
+				"role_id": "A1-E3",
+				"source_id": "court-formation-west",
+				"source_position": [
+					-1.20000004768372,
+					0.0,
+					-10.0
+				],
+				"spore_support": false,
+				"status": "idle",
+				"velocity": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-formation-east",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-mushroom-selenite-3",
+				"approach_driving": false,
+				"approach_enabled": false,
+				"cycle": 0,
+				"dead": false,
+				"dormant": false,
+				"entity_id": "C32",
+				"facing": [
+					0.0,
+					0.0,
+					-1.0
+				],
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 24.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "",
+				"opening_position": [
+					1.20000004768372,
+					0.0,
+					-10.0
+				],
+				"phase": "clear",
+				"presentation_status": "authored_C31_C32_pose_pixels",
+				"reservation_id": "",
+				"resolved_role": {},
+				"role_id": "A1-E3",
+				"source_id": "court-formation-east",
+				"source_position": [
+					1.20000004768372,
+					0.0,
+					-10.0
+				],
+				"spore_support": false,
+				"status": "idle",
+				"velocity": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"clock_s": 0.0166666666666667,
+			"id": "court-formation-west",
+			"kind": "defeat",
+			"scope": "whole-court-brief-portrait"
+		},
+		{
+			"clock_s": 0.0166666666666667,
+			"id": "court-formation-west",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-mushroom-selenite-3",
+				"approach_driving": false,
+				"approach_enabled": false,
+				"cycle": 0,
+				"dead": true,
+				"dormant": false,
+				"entity_id": "C32",
+				"facing": [
+					0.0,
+					0.0,
+					-1.0
+				],
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 0.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "actual_player_damage",
+				"opening_position": [
+					-1.20000004768372,
+					-0.00492187542840838,
+					-10.0
+				],
+				"phase": "clear",
+				"presentation_status": "authored_C31_C32_pose_pixels",
+				"reservation_id": "",
+				"resolved_role": {},
+				"role_id": "A1-E3",
+				"source_id": "court-formation-west",
+				"source_position": [
+					-1.20000004768372,
+					-0.00492187542840838,
+					-10.0
+				],
+				"spore_support": false,
+				"status": "defeated",
+				"velocity": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"clock_s": 0.0166666666666667,
+			"id": "court-formation-east",
+			"kind": "defeat",
+			"scope": "whole-court-brief-portrait"
+		},
+		{
+			"clock_s": 0.0166666666666667,
+			"id": "court-formation-east",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-mushroom-selenite-3",
+				"approach_driving": false,
+				"approach_enabled": false,
+				"cycle": 0,
+				"dead": true,
+				"dormant": false,
+				"entity_id": "C32",
+				"facing": [
+					0.0,
+					0.0,
+					-1.0
+				],
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 0.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "actual_player_damage",
+				"opening_position": [
+					1.20000004768372,
+					-0.00492187542840838,
+					-10.0
+				],
+				"phase": "clear",
+				"presentation_status": "authored_C31_C32_pose_pixels",
+				"reservation_id": "",
+				"resolved_role": {},
+				"role_id": "A1-E3",
+				"source_id": "court-formation-east",
+				"source_position": [
+					1.20000004768372,
+					-0.00492187542840838,
+					-10.0
+				],
+				"spore_support": false,
+				"status": "defeated",
+				"velocity": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"clock_s": 0.0666666666666667,
+			"kind": "roundel",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "lane-mechanism-1",
+				"cycle": 1,
+				"geometry": {
+					"kind": "circle",
+					"origin": [
+						0.0,
+						0.0,
+						-20.0
+					],
+					"radius": 1.2
+				},
+				"hit_ids": [],
+				"last_cancel_reason": "",
+				"mechanism_id": "court-roundel",
+				"opening_position": [
+					0.0,
+					0.0,
+					-18.0
+				],
+				"phase": "warning",
+				"remaining_s": 1.1,
+				"reservation_id": "threat-1",
+				"resolved_role": {
+					"active_s": 0.2,
+					"attack_interval_s": 1.8,
+					"damage": 4.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 1.1,
+					"max_hp": 1.0,
+					"move_speed": 0.0,
+					"raw_damage": 4.0,
+					"raw_role": {
+						"active_s": 0.2,
+						"attack_interval_s": 1.8,
+						"lock_s": 1.1,
+						"max_hp": 1.0,
+						"move_speed": 0.0,
+						"raw_damage": 4.0,
+						"recovery_s": 1.6,
+						"windup_s": 2.2
+					},
+					"recovery_s": 1.6,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 2.2
+				},
+				"source_position": [
+					0.0,
+					0.0,
+					-20.0
+				],
+				"status": "running"
+			}
+		},
+		{
+			"clock_s": 1.16666666666667,
+			"kind": "roundel",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "lane-mechanism-1",
+				"cycle": 1,
+				"geometry": {
+					"kind": "circle",
+					"origin": [
+						0.0,
+						0.0,
+						-20.0
+					],
+					"radius": 1.2
+				},
+				"hit_ids": [],
+				"last_cancel_reason": "",
+				"mechanism_id": "court-roundel",
+				"opening_position": [
+					0.0,
+					0.0,
+					-18.0
+				],
+				"phase": "lock",
+				"remaining_s": 1.1,
+				"reservation_id": "threat-1",
+				"resolved_role": {
+					"active_s": 0.2,
+					"attack_interval_s": 1.8,
+					"damage": 4.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 1.1,
+					"max_hp": 1.0,
+					"move_speed": 0.0,
+					"raw_damage": 4.0,
+					"raw_role": {
+						"active_s": 0.2,
+						"attack_interval_s": 1.8,
+						"lock_s": 1.1,
+						"max_hp": 1.0,
+						"move_speed": 0.0,
+						"raw_damage": 4.0,
+						"recovery_s": 1.6,
+						"windup_s": 2.2
+					},
+					"recovery_s": 1.6,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 2.2
+				},
+				"source_position": [
+					0.0,
+					0.0,
+					-20.0
+				],
+				"status": "running"
+			}
+		},
+		{
+			"clock_s": 2.28333333333333,
+			"kind": "roundel",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "lane-mechanism-1",
+				"cycle": 1,
+				"geometry": {
+					"kind": "circle",
+					"origin": [
+						0.0,
+						0.0,
+						-20.0
+					],
+					"radius": 1.2
+				},
+				"hit_ids": [],
+				"last_cancel_reason": "",
+				"mechanism_id": "court-roundel",
+				"opening_position": [
+					0.0,
+					0.0,
+					-18.0
+				],
+				"phase": "active",
+				"remaining_s": 0.183333333333337,
+				"reservation_id": "threat-1",
+				"resolved_role": {
+					"active_s": 0.2,
+					"attack_interval_s": 1.8,
+					"damage": 4.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 1.1,
+					"max_hp": 1.0,
+					"move_speed": 0.0,
+					"raw_damage": 4.0,
+					"raw_role": {
+						"active_s": 0.2,
+						"attack_interval_s": 1.8,
+						"lock_s": 1.1,
+						"max_hp": 1.0,
+						"move_speed": 0.0,
+						"raw_damage": 4.0,
+						"recovery_s": 1.6,
+						"windup_s": 2.2
+					},
+					"recovery_s": 1.6,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 2.2
+				},
+				"source_position": [
+					0.0,
+					0.0,
+					-20.0
+				],
+				"status": "running"
+			}
+		},
+		{
+			"clock_s": 2.48333333333333,
+			"kind": "roundel",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "lane-mechanism-1",
+				"cycle": 1,
+				"geometry": {
+					"kind": "circle",
+					"origin": [
+						0.0,
+						0.0,
+						-20.0
+					],
+					"radius": 1.2
+				},
+				"hit_ids": [],
+				"last_cancel_reason": "",
+				"mechanism_id": "court-roundel",
+				"opening_position": [
+					0.0,
+					0.0,
+					-18.0
+				],
+				"phase": "recovery",
+				"remaining_s": 1.58333333333334,
+				"reservation_id": "threat-1",
+				"resolved_role": {
+					"active_s": 0.2,
+					"attack_interval_s": 1.8,
+					"damage": 4.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 1.1,
+					"max_hp": 1.0,
+					"move_speed": 0.0,
+					"raw_damage": 4.0,
+					"raw_role": {
+						"active_s": 0.2,
+						"attack_interval_s": 1.8,
+						"lock_s": 1.1,
+						"max_hp": 1.0,
+						"move_speed": 0.0,
+						"raw_damage": 4.0,
+						"recovery_s": 1.6,
+						"windup_s": 2.2
+					},
+					"recovery_s": 1.6,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 2.2
+				},
+				"source_position": [
+					0.0,
+					0.0,
+					-20.0
+				],
+				"status": "running"
+			}
+		},
+		{
+			"clock_s": 4.08333333333332,
+			"kind": "roundel",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "lane-mechanism-1",
+				"cycle": 1,
+				"geometry": {
+					"kind": "circle",
+					"origin": [
+						0.0,
+						0.0,
+						-20.0
+					],
+					"radius": 1.2
+				},
+				"hit_ids": [],
+				"last_cancel_reason": "",
+				"mechanism_id": "court-roundel",
+				"opening_position": [
+					0.0,
+					0.0,
+					-18.0
+				],
+				"phase": "clear",
+				"remaining_s": 0.0,
+				"reservation_id": "",
+				"resolved_role": {
+					"active_s": 0.2,
+					"attack_interval_s": 1.8,
+					"damage": 4.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 1.1,
+					"max_hp": 1.0,
+					"move_speed": 0.0,
+					"raw_damage": 4.0,
+					"raw_role": {
+						"active_s": 0.2,
+						"attack_interval_s": 1.8,
+						"lock_s": 1.1,
+						"max_hp": 1.0,
+						"move_speed": 0.0,
+						"raw_damage": 4.0,
+						"recovery_s": 1.6,
+						"windup_s": 2.2
+					},
+					"recovery_s": 1.6,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 2.2
+				},
+				"source_position": [
+					0.0,
+					0.0,
+					-20.0
+				],
+				"status": "complete"
+			}
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-approach-west",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-mushroom-selenite-3",
+				"approach_driving": false,
+				"approach_enabled": false,
+				"cycle": 0,
+				"dead": false,
+				"dormant": false,
+				"entity_id": "C32",
+				"facing": [
+					0.0,
+					0.0,
+					-1.0
+				],
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 24.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "",
+				"opening_position": [
+					-1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"phase": "clear",
+				"presentation_status": "authored_C31_C32_pose_pixels",
+				"reservation_id": "",
+				"resolved_role": {},
+				"role_id": "A1-E3",
+				"source_id": "court-approach-west",
+				"source_position": [
+					-1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"spore_support": false,
+				"status": "idle",
+				"velocity": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-approach-east",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-mushroom-selenite-3",
+				"approach_driving": false,
+				"approach_enabled": false,
+				"cycle": 0,
+				"dead": false,
+				"dormant": false,
+				"entity_id": "C32",
+				"facing": [
+					0.0,
+					0.0,
+					-1.0
+				],
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 24.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "",
+				"opening_position": [
+					1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"phase": "clear",
+				"presentation_status": "authored_C31_C32_pose_pixels",
+				"reservation_id": "",
+				"resolved_role": {},
+				"role_id": "A1-E3",
+				"source_id": "court-approach-east",
+				"source_position": [
+					1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"spore_support": false,
+				"status": "idle",
+				"velocity": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-approach-west",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"active_from_s": 1.85,
+				"active_until_s": 2.05,
+				"api_revision": "act1-mushroom-selenite-3",
+				"approach_driving": false,
+				"approach_enabled": false,
+				"armed": true,
+				"cooldown_until_s": 3.85,
+				"cycle": 1,
+				"dead": false,
+				"dormant": false,
+				"entity_id": "C32",
+				"facing": [
+					0.768221259117126,
+					0.0,
+					0.64018440246582
+				],
+				"geometry": {
+					"from": [
+						-1.20000004768372,
+						0.0,
+						-18.0
+					],
+					"kind": "lane",
+					"radius": 0.38,
+					"to": [
+						0.336442470550537,
+						0.0,
+						-16.7196311950684
+					]
+				},
+				"hit_ids": [],
+				"hp": 24.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "",
+				"lock_from_s": 1.0,
+				"opening_position": [
+					-1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"phase": "warning",
+				"presentation_status": "authored_C31_C32_pose_pixels",
+				"recovery_until_s": 4.45,
+				"reservation_id": "threat-2",
+				"resolved_role": {
+					"active_s": 0.2,
+					"attack_interval_s": 2.0,
+					"damage": 8.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 0.85,
+					"max_hp": 24.0,
+					"move_speed": 0.0,
+					"raw_damage": 8.0,
+					"raw_role": {
+						"active_s": 0.2,
+						"attack_interval_s": 2.0,
+						"lock_s": 0.85,
+						"max_hp": 24.0,
+						"move_speed": 0.0,
+						"raw_damage": 8.0,
+						"recovery_s": 2.4,
+						"windup_s": 1.85
+					},
+					"recovery_s": 2.4,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 1.85
+				},
+				"role_id": "A1-E3",
+				"source_id": "court-approach-west",
+				"source_position": [
+					-1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"spore_support": false,
+				"start_s": 0.0,
+				"status": "running",
+				"velocity": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"clock_s": 0.0,
+			"kind": "roundel",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "lane-mechanism-1",
+				"cycle": 2,
+				"geometry": {
+					"kind": "circle",
+					"origin": [
+						0.0,
+						0.0,
+						-20.0
+					],
+					"radius": 1.2
+				},
+				"hit_ids": [],
+				"last_cancel_reason": "",
+				"mechanism_id": "court-roundel",
+				"opening_position": [
+					0.0,
+					0.0,
+					-18.0
+				],
+				"phase": "warning",
+				"remaining_s": 1.1,
+				"reservation_id": "threat-3",
+				"resolved_role": {
+					"active_s": 0.2,
+					"attack_interval_s": 1.8,
+					"damage": 4.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 1.1,
+					"max_hp": 1.0,
+					"move_speed": 0.0,
+					"raw_damage": 4.0,
+					"raw_role": {
+						"active_s": 0.2,
+						"attack_interval_s": 1.8,
+						"lock_s": 1.1,
+						"max_hp": 1.0,
+						"move_speed": 0.0,
+						"raw_damage": 4.0,
+						"recovery_s": 1.6,
+						"windup_s": 2.2
+					},
+					"recovery_s": 1.6,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 2.2
+				},
+				"source_position": [
+					0.0,
+					0.0,
+					-20.0
+				],
+				"status": "running"
+			}
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-approach-west",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-mushroom-selenite-3",
+				"approach_driving": false,
+				"approach_enabled": false,
+				"cycle": 1,
+				"dead": false,
+				"dormant": false,
+				"entity_id": "C32",
+				"facing": [
+					0.768221259117126,
+					0.0,
+					0.64018440246582
+				],
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 24.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "actual_player_damage",
+				"opening_position": [
+					-1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"phase": "clear",
+				"presentation_status": "authored_C31_C32_pose_pixels",
+				"reservation_id": "",
+				"resolved_role": {
+					"active_s": 0.2,
+					"attack_interval_s": 2.0,
+					"damage": 8.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 0.85,
+					"max_hp": 24.0,
+					"move_speed": 0.0,
+					"raw_damage": 8.0,
+					"raw_role": {
+						"active_s": 0.2,
+						"attack_interval_s": 2.0,
+						"lock_s": 0.85,
+						"max_hp": 24.0,
+						"move_speed": 0.0,
+						"raw_damage": 8.0,
+						"recovery_s": 2.4,
+						"windup_s": 1.85
+					},
+					"recovery_s": 2.4,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 1.85
+				},
+				"role_id": "A1-E3",
+				"source_id": "court-approach-west",
+				"source_position": [
+					-1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"spore_support": false,
+				"status": "idle",
+				"velocity": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-approach-west",
+			"kind": "defeat",
+			"scope": "whole-court-brief-portrait"
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-approach-west",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-mushroom-selenite-3",
+				"approach_driving": false,
+				"approach_enabled": false,
+				"cycle": 1,
+				"dead": true,
+				"dormant": false,
+				"entity_id": "C32",
+				"facing": [
+					0.768221259117126,
+					0.0,
+					0.64018440246582
+				],
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 0.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "actual_player_damage",
+				"opening_position": [
+					-1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"phase": "clear",
+				"presentation_status": "authored_C31_C32_pose_pixels",
+				"reservation_id": "",
+				"resolved_role": {
+					"active_s": 0.2,
+					"attack_interval_s": 2.0,
+					"damage": 8.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 0.85,
+					"max_hp": 24.0,
+					"move_speed": 0.0,
+					"raw_damage": 8.0,
+					"raw_role": {
+						"active_s": 0.2,
+						"attack_interval_s": 2.0,
+						"lock_s": 0.85,
+						"max_hp": 24.0,
+						"move_speed": 0.0,
+						"raw_damage": 8.0,
+						"recovery_s": 2.4,
+						"windup_s": 1.85
+					},
+					"recovery_s": 2.4,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 1.85
+				},
+				"role_id": "A1-E3",
+				"source_id": "court-approach-west",
+				"source_position": [
+					-1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"spore_support": false,
+				"status": "defeated",
+				"velocity": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-approach-east",
+			"kind": "defeat",
+			"scope": "whole-court-brief-portrait"
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-approach-east",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-mushroom-selenite-3",
+				"approach_driving": false,
+				"approach_enabled": false,
+				"cycle": 0,
+				"dead": true,
+				"dormant": false,
+				"entity_id": "C32",
+				"facing": [
+					0.0,
+					0.0,
+					-1.0
+				],
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 0.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "actual_player_damage",
+				"opening_position": [
+					1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"phase": "clear",
+				"presentation_status": "authored_C31_C32_pose_pixels",
+				"reservation_id": "",
+				"resolved_role": {},
+				"role_id": "A1-E3",
+				"source_id": "court-approach-east",
+				"source_position": [
+					1.20000004768372,
+					0.0,
+					-18.0
+				],
+				"spore_support": false,
+				"status": "defeated",
+				"velocity": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		},
+		{
+			"clock_s": 0.0166666666666667,
+			"kind": "roundel",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "lane-mechanism-1",
+				"cycle": 2,
+				"geometry": {
+					"kind": "circle",
+					"origin": [
+						0.0,
+						0.0,
+						-20.0
+					],
+					"radius": 1.2
+				},
+				"hit_ids": [],
+				"last_cancel_reason": "approach_complete",
+				"mechanism_id": "court-roundel",
+				"opening_position": [
+					0.0,
+					0.0,
+					-18.0
+				],
+				"phase": "clear",
+				"remaining_s": 0.0,
+				"reservation_id": "",
+				"resolved_role": {
+					"active_s": 0.2,
+					"attack_interval_s": 1.8,
+					"damage": 4.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 1.1,
+					"max_hp": 1.0,
+					"move_speed": 0.0,
+					"raw_damage": 4.0,
+					"raw_role": {
+						"active_s": 0.2,
+						"attack_interval_s": 1.8,
+						"lock_s": 1.1,
+						"max_hp": 1.0,
+						"move_speed": 0.0,
+						"raw_damage": 4.0,
+						"recovery_s": 1.6,
+						"windup_s": 2.2
+					},
+					"recovery_s": 1.6,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 2.2
+				},
+				"source_position": [
+					0.0,
+					0.0,
+					-20.0
+				],
+				"status": "cancelled"
+			}
+		},
+		{
+			"clock_s": 0.0,
+			"id": "court-king",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-selenite-king-native-1",
+				"cycle": 0,
+				"dead": false,
+				"dormant": false,
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 80.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "",
+				"opening_position": [
+					-1.25,
+					0.00499999988824129,
+					-29.0
+				],
+				"phase": "clear",
+				"reservation_id": "",
+				"resolved_role": {},
+				"role_id": "B01",
+				"source_id": "court-king",
+				"source_position": [
+					-1.25,
+					0.00499999988824129,
+					-29.0
+				],
+				"status": "idle"
+			}
+		},
+		{
+			"clock_s": 0.55,
+			"id": "court-king",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"active_from_s": 2.4,
+				"active_until_s": 2.8,
+				"adapter": {
+					"actual_collided": false,
+					"body_collision_path": "BodyCollision",
+					"body_signature": {
+						"centre": [
+							0.0,
+							0.730000019073486,
+							0.0
+						],
+						"collision_path": "BodyCollision",
+						"custom_solver_bias": 0.0,
+						"height": 1.45000004768372,
+						"layer": 2,
+						"linear_axis_locks": [
+							false,
+							false,
+							false
+						],
+						"margin": 0.0399999991059303,
+						"mask": 1,
+						"radius": 0.319999992847443
+					},
+					"collision_shortened": false,
+					"current_position": [
+						-1.25,
+						-0.00492187589406967,
+						-28.2999992370605
+					],
+					"current_velocity": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"damage_radius": 0.38,
+					"direction": [
+						0.477513462305069,
+						0.0,
+						0.878624439239502
+					],
+					"distance": 1.6,
+					"duration_s": 0.4,
+					"finished": false,
+					"kind": "lunge",
+					"planned_endpoint": [
+						-0.485978424549103,
+						-0.00492187589406967,
+						-26.8941993713379
+					],
+					"speed": 4.0,
+					"start": [
+						-1.25,
+						-0.00492187589406967,
+						-28.2999992370605
+					]
+				},
+				"api_revision": "act1-selenite-king-native-1",
+				"armed": true,
+				"cooldown_until_s": 4.4,
+				"cycle": 1,
+				"dead": false,
+				"dormant": false,
+				"geometry": {
+					"from": [
+						-1.25,
+						-0.00492187589406967,
+						-28.2999992370605
+					],
+					"kind": "lane",
+					"radius": 0.38,
+					"to": [
+						-0.485978424549103,
+						-0.00492187589406967,
+						-26.8941993713379
+					]
+				},
+				"hit_ids": [],
+				"hp": 80.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "",
+				"lock_from_s": 1.55,
+				"opening_position": [
+					-0.485978424549103,
+					-0.00492187589406967,
+					-26.8941993713379
+				],
+				"phase": "warning",
+				"recovery_until_s": 5.2,
+				"reservation_id": "threat-4",
+				"resolved_role": {
+					"active_s": 0.4,
+					"attack_interval_s": 2.0,
+					"damage": 16.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 0.85,
+					"max_hp": 80.0,
+					"move_speed": 4.0,
+					"raw_damage": 16.0,
+					"raw_role": {
+						"active_s": 0.4,
+						"attack_interval_s": 2.0,
+						"lock_s": 0.85,
+						"max_hp": 80.0,
+						"move_speed": 4.0,
+						"raw_damage": 16.0,
+						"recovery_s": 2.4,
+						"windup_s": 1.85
+					},
+					"recovery_s": 2.4,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 1.85
+				},
+				"role_id": "B01",
+				"source_id": "court-king",
+				"source_position": [
+					-1.25,
+					-0.00492187589406967,
+					-28.2999992370605
+				],
+				"start_s": 0.55,
+				"status": "running"
+			}
+		},
+		{
+			"clock_s": 0.616666666666667,
+			"id": "court-king",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-selenite-king-native-1",
+				"cycle": 1,
+				"dead": false,
+				"dormant": false,
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 80.0,
+				"hurt_left_s": 0.0,
+				"last_cancel_reason": "actual_player_damage",
+				"opening_position": [
+					-1.25,
+					-0.00492187589406967,
+					-28.2999992370605
+				],
+				"phase": "clear",
+				"reservation_id": "",
+				"resolved_role": {
+					"active_s": 0.4,
+					"attack_interval_s": 2.0,
+					"damage": 16.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 0.85,
+					"max_hp": 80.0,
+					"move_speed": 4.0,
+					"raw_damage": 16.0,
+					"raw_role": {
+						"active_s": 0.4,
+						"attack_interval_s": 2.0,
+						"lock_s": 0.85,
+						"max_hp": 80.0,
+						"move_speed": 4.0,
+						"raw_damage": 16.0,
+						"recovery_s": 2.4,
+						"windup_s": 1.85
+					},
+					"recovery_s": 2.4,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 1.85
+				},
+				"role_id": "B01",
+				"source_id": "court-king",
+				"source_position": [
+					-1.25,
+					-0.00492187589406967,
+					-28.2999992370605
+				],
+				"status": "idle"
+			}
+		},
+		{
+			"clock_s": 0.616666666666667,
+			"id": "court-king",
+			"kind": "actor",
+			"scope": "whole-court-brief-portrait",
+			"state": {
+				"api_revision": "act1-selenite-king-native-1",
+				"cycle": 1,
+				"dead": false,
+				"dormant": false,
+				"geometry": {},
+				"hit_ids": [],
+				"hp": 40.0,
+				"hurt_left_s": 0.22,
+				"last_cancel_reason": "actual_player_damage",
+				"opening_position": [
+					-1.25,
+					-0.00492187589406967,
+					-28.2999992370605
+				],
+				"phase": "clear",
+				"reservation_id": "",
+				"resolved_role": {
+					"active_s": 0.4,
+					"attack_interval_s": 2.0,
+					"damage": 16.0,
+					"difficulty_profile": "standard",
+					"difficulty_schema": 1,
+					"lock_s": 0.85,
+					"max_hp": 80.0,
+					"move_speed": 4.0,
+					"raw_damage": 16.0,
+					"raw_role": {
+						"active_s": 0.4,
+						"attack_interval_s": 2.0,
+						"lock_s": 0.85,
+						"max_hp": 80.0,
+						"move_speed": 4.0,
+						"raw_damage": 16.0,
+						"recovery_s": 2.4,
+						"windup_s": 1.85
+					},
+					"recovery_s": 2.4,
+					"tuning_status": "provisional_unplaytested",
+					"windup_s": 1.85
+				},
+				"role_id": "B01",
+				"source_id": "court-king",
+				"source_position": [
+					-1.25,
+					-0.00492187589406967,
+					-28.2999992370605
+				],
+				"status": "hurt"
+			}
+		}
+	],
+	"no_claims": [
+		"earned route/kills/contact",
+		"defeat-all",
+		"full natural playthrough",
+		"Save/Continue/Retry",
+		"registered campaign traversal",
+		"portrait fidelity before root image review",
+		"all-kit balance",
+		"performance",
+		"mobile"
+	],
+	"normal_focus_out_preserved": true,
+	"observations": [],
+	"pause_unit": {},
+	"progress_events": [
+		{
+			"boundary_kind": "encounter",
+			"id": "court-after-curtain",
+			"kind": "checkpoint",
+			"level_id": "A1-L4",
+			"scope": "whole-court-brief-portrait"
+		},
+		{
+			"boundary_kind": "encounter",
+			"id": "court-after-formation",
+			"kind": "checkpoint",
+			"level_id": "A1-L4",
+			"scope": "whole-court-brief-portrait"
+		},
+		{
+			"boundary_kind": "encounter",
+			"id": "court-after-approach",
+			"kind": "checkpoint",
+			"level_id": "A1-L4",
+			"scope": "whole-court-brief-portrait"
+		},
+		{
+			"boundary_kind": "boss_phase",
+			"id": "court-boss-entry",
+			"kind": "checkpoint",
+			"level_id": "A1-L4",
+			"scope": "whole-court-brief-portrait"
+		}
+	],
+	"representative_only": true,
+	"scope": "brief actual Main540x1170 whole-court renderer; actual curtain recognizer response unless explicitly representative-only; later native boundaries/birth/contact reached through labelled TEST public injuries/placements; actual unpaused King step and derived summon observed without source/phase/clock writes",
+	"terminal_views_only": true,
+	"wall_elapsed_ms": 9435,
+	"world_revision": 2
+}

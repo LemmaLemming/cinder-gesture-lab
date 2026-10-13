@@ -1,0 +1,381 @@
+{
+  "schema": 1,
+  "path_base": "repository-root",
+  "asset_id": "act1-court-entrance-theatre",
+  "reuse_family": "act1-lunar-painted-court-theatre",
+  "first_level": "A1-L4",
+  "authoring_date": "2026-10-09",
+  "readiness": {
+    "status": "authored-static-wired-unparsed-unimported-unplayed",
+    "static_scope": "New standalone code-authored scenic leaf and provenance record, wired through an inherited owned preview wrapper; JSON, referenced bytes and source consistency checked without Godot.",
+    "native_art_validation": "pending owner integration and directly affected native checks",
+    "portrait_validation": "pending; these exact placements have never been rendered or inspected",
+    "production_level_acceptance": "not established by this asset record"
+  },
+  "source": {
+    "path": "scripts/acts/act1/selenite_court_art.gd",
+    "sha256": "5e87345619d40ae4ff038bfb0a646164ef818df8f5ba4980005ce10da9c694ad",
+    "bytes": 27605,
+    "authorship": "Original manually authored native coarse geometry and grayscale folds/painted ribs; no reference pixels extracted, traced or edited; no new raster assets."
+  },
+  "reviewed_plan": {
+    "path": "data/campaign/act1/levels/A1-L4-art-plan.md",
+    "sha256": "f2109a36d806479cb76bd2730da9b561ea24ea03aeb8dcc834ca05a309146468",
+    "bytes": 11690
+  },
+  "references": [
+    {
+      "path": "docs/concept-art/act1/environments/04-selenite-court.png",
+      "sha256": "cc1bccf751d8dd21c7248287f01e9b02cf1fce33da52f1982bcdc162009e629d",
+      "bytes": 3292749,
+      "id": "G19",
+      "personally_viewed": true,
+      "scope": "Generated planning board: broad theatre courts, curling flats, crescent columns and drapery; schematic mechanics are not production authority."
+    },
+    {
+      "path": "docs/concept-art/act1/props/lunar-grotto-and-court-modular-kit.png",
+      "sha256": "c8b61dc9115e2ed98546c05b65ca79f34e2fe998af191e82bf2b582cf225d53e",
+      "bytes": 2381436,
+      "id": "G15",
+      "personally_viewed": true,
+      "scope": "Generated modular planning board: painted lunar material, curls, stars, shallow radial ornament and gathered curtain."
+    },
+    {
+      "path": "docs/concept-art/act1/bosses/01-selenite-king.png",
+      "sha256": "c9fd452ab3dffc2725fb3c9952250a20e215e1e7534e7260ed89532dba95d46b",
+      "bytes": 3020311,
+      "id": "G21",
+      "personally_viewed": true,
+      "scope": "Generated royal vocabulary only. This leaf contains no King, throne, boss behavior or King costume production."
+    },
+    {
+      "path": "docs/reference-library/act1/film-stills/f10.jpg",
+      "sha256": "2af0136f438c066455ea39d766caa3fcb0c6b68e1954e731d19014af71a28c06",
+      "bytes": 55260,
+      "id": "F10",
+      "personally_viewed": true,
+      "scope": "Film frame: rounded draped opening, upright crescent/curl modules and side-mounted royal area; not a measured floor or motion template."
+    }
+  ],
+  "source_rules": [
+    "docs/ACT1_CONCEPT.md",
+    "docs/GAME_STYLE_GUIDELINES.md",
+    "docs/ASSET_REUSE_GUIDE.md",
+    "docs/reference-library/act1/STYLE_GUIDE.md",
+    "docs/concept-art/act1/ADAPTATION_NOTES.md"
+  ],
+  "reused_patterns": [
+    {
+      "path": "scripts/acts/act1/mushroom_grotto_art.gd",
+      "sha256": "221ceb3f976a219e5e4c8d769e57c6e01aa161ca971936052bc5565acfdcbca1",
+      "bytes": 30942,
+      "scope": "Existing owned material/mesh construction and shallow crescent/curl/drapery vocabulary; no runtime invocation or retained fungal-layout dependency."
+    },
+    {
+      "path": "scripts/acts/act1/lunar_scenery.gd",
+      "sha256": "680bbb3292ea12225e3388d47c7202bb6fed24c9ec0d407b71b83ea72a066340",
+      "bytes": 6751,
+      "scope": "Existing lunar nearest-textured silver floor pattern; no runtime invocation."
+    }
+  ],
+  "existing_texture": {
+    "path": "assets/acts/act1/lunar/environment/floor_silver_tile.png",
+    "sha256": "927971422809f26e5492ec6701a69d7b1ced7d1e6498c7d4736542e5b8831c64",
+    "bytes": 543,
+    "size_px": [
+      64,
+      64
+    ],
+    "native_format": "RGBA PNG",
+    "reuse": "Existing original lunar silver tile, unchanged; the sole preloaded asset."
+  },
+  "interface": {
+    "builder": "static build_geometry_art(level: Node3D, immutable_court_specs: Dictionary = {}) -> Node3D",
+    "specs": "static entrance_specs() -> Dictionary; each call returns a detached exact authored literal with no node aliases",
+    "empty_specs": "selects the exact entrance table; other supplied tables must serialize identically to that table",
+    "attachment": "Builds and retains the complete authored tree/resources off-tree, then attaches CourtArt directly to the actual level and validates after native child-enter notifications; failed binding returns null.",
+    "set_state": "set_exit_open(bool); retained local curtain presentation only, refuses invalid binding",
+    "pure_guard": "binding_error() -> String; empty means exact retained binding; nonempty means fail closed without repair",
+    "bounds": "landmark_world_corners(id) -> Array; eight world AABB corners enclosing every current visible native mesh of that landmark; invalid binding or unknown ID returns [Vector3.INF]"
+  },
+  "entrance_specs": {
+    "revision": 1,
+    "id": "curtain-entrance",
+    "floor_size": [
+      14,
+      16
+    ],
+    "floor_origin": [
+      0,
+      0.002,
+      0
+    ],
+    "curtain_origin": [
+      0,
+      0,
+      -5.3
+    ],
+    "panel_origins": [
+      [
+        -2.85,
+        0,
+        -4.9
+      ],
+      [
+        2.85,
+        0,
+        -4.9
+      ]
+    ],
+    "radial_origin": [
+      -1.55,
+      0.008,
+      -4.6
+    ],
+    "coordinate_status": "Nominal authored world-unit values, converted by native Vector constructors at runtime. Placements are unvalidated composition proposals, not measured optical clearance or physical movement changes."
+  },
+  "preserved_native_support": {
+    "root": "actual identity-frame Node3D level",
+    "spawn_path": "PlayerSpawn",
+    "spawn_origin": [
+      0,
+      0.1,
+      0
+    ],
+    "floor_path": "Floor",
+    "floor_size": [
+      14,
+      1,
+      16
+    ],
+    "floor_origin": [
+      0,
+      -0.5,
+      0
+    ],
+    "floor_top_y": 0,
+    "collision_path": "Floor/CollisionShape3D",
+    "quiet_visual_path": "Floor/QuietFloor",
+    "safe_rect_xz": [
+      -6.5,
+      -7.5,
+      13,
+      15
+    ],
+    "custody": "Validate native static support/spawn/quiet BOX and opaque gray material before build. Retain exact original nodes/resources, native shape owner, child tree, transforms and native property readbacks. Builder changes none of them."
+  },
+  "materials": {
+    "common": "Native StandardMaterial3D, unshaded grayscale, nearest filtering, double-sided, ordinary depth, render_priority 0; shadows off on scenic meshes. No custom shader, next-pass, billboard or cue animation.",
+    "floor": {
+      "texture_repeat": true,
+      "tile_world_period": 1.536,
+      "units_per_texel": 0.024,
+      "uv1_scale": [
+        9.114583333333334,
+        10.416666666666666,
+        1
+      ],
+      "transparency": "ALPHA_SCISSOR",
+      "alpha_scissor_threshold": 0.5,
+      "alpha_antialiasing_mode": "OFF",
+      "alpha_antialiasing_edge": 0.3
+    },
+    "painted_surfaces": "Original static integer-count coarse mesh folds/ribbons/stars/rays with native per-vertex grayscale; no new raster or reference extraction.",
+    "custody": "Exact material and imported texture identity plus complete native STORAGE-property bytes (including color, next_pass, blending, alpha, depth, UV, sampling and renderer settings); mesh identity, AABB and full native surface arrays retained."
+  },
+  "landmarks": [
+    {
+      "id": "floor",
+      "path": "CourtArt/QuietSilverFloorSkin",
+      "native_mesh": "PlaneMesh",
+      "size": [
+        14,
+        16
+      ],
+      "origin": [
+        0,
+        0.002,
+        0
+      ],
+      "pivot": "plane center; identity/unit frame",
+      "state": "always visible",
+      "collision": "none; original BOX remains sole floor support",
+      "occlusion": "low quiet silver surface only; alpha cutouts expose unchanged gray BOX"
+    },
+    {
+      "id": "curling-panels",
+      "path": "CourtArt/CurlingPanels",
+      "children": [
+        "West",
+        "East"
+      ],
+      "origins": [
+        [
+          -2.85,
+          0,
+          -4.9
+        ],
+        [
+          2.85,
+          0,
+          -4.9
+        ]
+      ],
+      "flat_size": [
+        0.78,
+        2.3,
+        0.1
+      ],
+      "flat_center_y": 1.21,
+      "flat_bottom_y": 0.06,
+      "pivot": "ground-base group origin; unit frame",
+      "paint": "pale shallow ribbon curl and five-point star over dark flat, original native triangles",
+      "state": "always visible",
+      "collision": "none",
+      "occlusion": "rear-side modules intended to leave current source and Hero envelope clear; actual warning/dash/return and camera overlap remains unvalidated"
+    },
+    {
+      "id": "entrance-curtain",
+      "path": "CourtArt/EntranceCurtain",
+      "origin": [
+        0,
+        0,
+        -5.3
+      ],
+      "pivot": "ground-centered root; identity/unit frame",
+      "column_centers_x": [
+        -2.24,
+        2.24
+      ],
+      "column_size": [
+        0.24,
+        2.44,
+        0.18
+      ],
+      "base_size": [
+        0.42,
+        0.24,
+        0.28
+      ],
+      "rail_outer_half_width": 2.35,
+      "rail_top_y": 3.14,
+      "state_nodes": [
+        "BlockedDrapery",
+        "OpenGatheredDrapery"
+      ],
+      "fold_mesh_path_suffix": "PaintedFolds",
+      "closed_nominal_width": 3.8592,
+      "open_nominal_center_gap": 2.801,
+      "collision": "none; visually blocked/open does not create or authorize a contact exit",
+      "occlusion": "rear fold backdrop; high rail and drapery may overlap oblique source/head bounds until actual portrait proves otherwise"
+    },
+    {
+      "id": "crescents",
+      "path": "CourtArt/Crescents",
+      "origin": [
+        0,
+        0,
+        -5.3
+      ],
+      "children": [
+        "West",
+        "East"
+      ],
+      "local_origins": [
+        [
+          -2.24,
+          2.75,
+          0.05
+        ],
+        [
+          2.24,
+          2.75,
+          0.05
+        ]
+      ],
+      "native_radius": 0.34,
+      "pivot": "local crescent center; unit frame",
+      "state": "always visible",
+      "collision": "none",
+      "occlusion": "pale rear crowns, never reserved source markers; full mesh corners retained"
+    },
+    {
+      "id": "radial-ornament",
+      "path": "CourtArt/QuietRadialOrnament",
+      "origin": [
+        -1.55,
+        0.008,
+        -4.6
+      ],
+      "max_radius": 0.54,
+      "top_y": 0.01,
+      "pivot": "floor-center group; identity/unit frame",
+      "state": "quiet static muted star and radial rays",
+      "collision": "none",
+      "cue_role": "none; no outline/countdown/fill/pulse, damage radius or activation meaning"
+    }
+  ],
+  "state_authority": {
+    "default": "blocked curtain visible, gathered curtain hidden, exit_open false",
+    "open": "blocked curtain hidden, gathered curtain visible, exit_open true",
+    "setter_scope": "Clockless local visibility only; native wrapper owns roundel, actor, lease, progress and contact predicates. No signals, effects, timers or cosmetic private clocks.",
+    "binding": "Exact required tree paths, children, scripts, transforms, visibility, process-disabled modes, resources and geometry remain required in both supported states; equivalent substitutions fail."
+  },
+  "required_native_readability": {
+    "source": {
+      "id": "court-curtain-guard",
+      "role": "C32",
+      "origin": [
+        0,
+        0,
+        -2
+      ],
+      "art_px": [
+        80,
+        80
+      ],
+      "pixel_size": 0.022,
+      "full_quad": [
+        1.76,
+        1.76
+      ],
+      "feet_pivot_px": [
+        40,
+        80
+      ],
+      "sprite_offset_px": [
+        0,
+        40
+      ]
+    },
+    "Hero": "Use actual native BodyCollision, complete ActorSprite and ContactShadow from Game framing API at current, committed endpoint, safe landing and ordinary-primary position.",
+    "constraints": "Preserve source/full spear/headpiece quad, capsule, actual Cue/full lane, Hero body/feet and reachable landing together. Native dash distance 2.7 unchanged. No camera widening, point filtering, alpha-only proxy or actor reduction. Numeric AABB fit alone cannot establish freedom from scenic occlusion."
+  },
+  "retained_prior_scope": {
+    "native_component": {
+      "result": "152 checks / 0 failures",
+      "source_revision": "88f0b405ddff944aaaa4b4b7dd4ae173710b8868",
+      "original_result_path": "docs/acts/act1/evidence/L4-curtain-component/native02/a1-l4-curtain-native-02-result.json",
+      "scope": "Prior bare-gray one-C32 component: 2 real swipes / 1 ordinary primary, Hero100, C32 24→4, native phases/pause/save refusal/cleanup; does not test this new leaf."
+    },
+    "portrait_failures": [
+      {
+        "result": "46/1",
+        "original_result_path": "docs/acts/act1/evidence/L4-curtain-component/portrait01/a1-l4-curtain-portrait-01-result.json",
+        "scope": "Focus loss; four original images owner-viewed, no complete visual pass."
+      },
+      {
+        "result": "9/1",
+        "original_result_path": "docs/acts/act1/evidence/L4-curtain-component/portrait02/a1-l4-curtain-portrait-02-result.json",
+        "scope": "Focus loss before warning, zero images."
+      }
+    ]
+  },
+  "next_direct_validation": [
+    "Owner integrates this leaf after inherited ready, preserving original gray scene and shared controls; new script parse/UID registration is owner-run work, existing tile bytes are unchanged.",
+    "Direct construction and pure binding negatives: hide/detach required root; mutate retained material; substitute equivalent mesh/material; restore actual original resources; verify native HP/clock/actions/cues unchanged.",
+    "Test blocked→open→blocked scenic setter and all five complete landmark corner getters; parent framing must reject invalid leaf binding.",
+    "Affected native one-C32 admission/ordinary-primary proof and brief representative warning/active/recovery/opening plus curtain states; inspect full source/Hero/feet/landing and actual scenery overlap through the real HUD/focus/public pause-resume contract."
+  ],
+  "future_reuse_limits": "Three linked courts may reuse this independent material/module family. Formation retains the same two C32 identities; final helpers are one finite pair. No formation, roundel mechanism, compact side throne, King art, boss logic, full L4 scene, whole-level saves/transitions or completion is created here. No equipment/ability introduction or balance/performance claim."
+}
