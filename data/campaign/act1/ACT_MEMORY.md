@@ -1,5 +1,13 @@
 # Act 1 — durable memory
 
+## Human-authorized continuation — 2026-10-13T05:07:49.792004+00:00
+
+The human's direct Integration message `01a133a4-5441-7981-971c-eca565729e74` instructs all agents to unpause and continue. This owner verified the actual user message; canonical REQUEST `87b505f3-03fd-4507-a8c3-c5cc64ea9291` revokes the latest pause. Recovery starts from clean saved commit `91302b76dbe03484e194d3effc1a2e62dcb64967` in the same registered Act 1 checkout and branch. The prior pause notes remain historical. No source, UID, original evidence, local settings, equipment or ability allocation changed during the pause; unchanged checks are reused without rerunning them.
+
+L4 HANDOFF `3910bf36-4e9e-451d-bae5-1d95e653c92b` / submitted `9f1d6fe012e4f2859ea2a482a98260c1a226ba4a` / sealed `bfc0061279cc524a528e68fb4c669a163c540a65` remains ready. Owner terminal373/0 and representative portrait evidence keep their original scope. Integration reports closed isolated import0/registration625/0 and primary source PASS; necessary primary import and Shared54 acceptance publication are pending. Published campaign remains14/24, Act 1 remains3/8. No acceptance is inferred from the selected15-row primary candidate.
+
+All own engine/import/portrait/queue handles are closed. Next: support exact L4 publication, then preserve-adopt its actual new baseline and proceed to L5 after canonical ACCEPTED. Read-only L5 planning continues against B02 request `0ef60b92-f0e9-4782-ae54-011544cfb375`; agreed shared sampled-circle support remains a concrete dependency. Latest focused-desktop-level-1 supersedes full-route/defeat-all/earned-exit gates. All eight desktop Act 1 levels remain the unfinished objective; stop before mobile/release. The automatic goal API still reports paused and exposes no resume operation; verified human authorization resumes campaign work without a control bypass or new permission decision.
+
 ## Human-requested pause again — 2026-10-13T01:28:13.589893+00:00
 
 Latest direct human message01a132da says “pause again, tell all agents sorry about that”; verified in Integration chat and canonicalREQUEST354af19f. Current resumed work is saved and all own engine handles are CLOSED. Independent isolatedL4 import0/registration625/0 is clean, but primary15-row selection is unpublished; canonical campaign14/24/Act1 3/8/L4ACCEPTED and Shared54 are still pending. No L5implementation/allocation started. Source/UID recovery matches10bindings/461identities. [Current recovery](PAUSE_RECOVERY_2026-10-13.md). Stop until explicit human resume; full8desktopgoal incomplete.
