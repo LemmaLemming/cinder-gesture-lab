@@ -1,0 +1,100 @@
+READ-ONLY CANDIDATE — not implemented, benchmarked, ownership-released or accepted.
+
+Request: Integration 748ed7be-9c9b-4089-9b84-f72df09c5029,
+measured-spore-placement-call-site-review, explicitly nonblocking.
+Reviewed owned HEAD 5914b9c4ed1e7b9e2c5fd8a54f5dc3881b9f2ff9.
+Owned actor SHA256 ca6f83fa9604f84ce5f75e1813979162a62680659600d71ca317232934885666.
+Shared spore coordinator SHA256 74a9ce841f73b1550a2137f3404092f0ebd6f727126dffc487b11af739025db6.
+Shared native protocol SHA256 c366bfe8c004874f7e50175494e6035d84bd074785989c34351ce9d57bf55e06.
+
+Concrete call chain, with original line references:
+  mushroom_selenite._physics_process 873:
+    _spore_fresh_error -> placement_accepted -> coordinator._binding_error
+  _step_approach 1088:
+    _approach_idle_error(true) -> _spore_fresh_error -> same placement query
+  _movement_error 1103:
+    allows_source_step -> protocol.response_state (fresh protocol checks)
+    then approach_guard.call (external observer boundary)
+  _approach_idle_error(true) 1104:
+    fresh placement query AFTER the actual parent movement/framing guard
+  only if first movement guard rejects: pure disabled-braking plan, second
+    _movement_error (another observer boundary), then full fresh idle check
+  _approach_idle_error(true) 1118:
+    currently repeats the full placement proof even when the first guard
+    succeeded and no subsequent callback, actor movement or native mutation ran.
+  original pose/velocity/facing/Hero/HP/driving equality checks then native
+    move_and_slide 1130. No accepted earlier proof is retained across this move.
+
+Coordinator placement_accepted checks bound fields and all retained protocols.
+Native protocol response getters check native binding before/after their own
+hooks. Those shared checks are outside this candidate and must remain fresh.
+Parent _source_approach_error may replace presentation forecast/request maps,
+read the real world/scenery/art and inspect neighboring bodies. It is an
+observer boundary even when it returns success. Never carry a placement result
+from before approach_guard.call across that call. The existing immediate
+_approach_idle_error at 1104 must stay unconditional and fresh.
+
+RECOMMENDED FIRST CHANGE: eliminate ONLY the duplicate final idle/placement
+query on the success path. When the first movement guard returned empty and the
+immediate full post-observer idle check returned empty, the code between that
+check and the final pose equality checks is only branching on those local
+Strings. There is no callback, await, signal, native motion or source mutation.
+The full final check must still run after either braking planning outcome,
+including a rejected braking plan, and after any second guard invocation.
+
+Suggested minimal diff in scripts/acts/act1/mushroom_selenite.gd:
+
+@@
+     if not boundary_error.is_empty():
+         last_error = boundary_error
+         return
++    var current_error: String = ""
+     if not error.is_empty():
+         # Original disabled-braking planning and second _movement_error
+         # remain byte-for-byte unchanged.
+@@
+         else: error = String(plan.get("error", "Approach braking rejected"))
+-    var current_error: String = _approach_idle_error(true)
++        # This branch may invoke a second parent guard. Recheck its actual
++        # environment/body/art/lifecycle immediately after that boundary.
++        current_error = _approach_idle_error(true)
+     if not current_error.is_empty(): error = current_error
+
+This is synchronous local control-flow reuse, with no token, boolean skip flag,
+stored/frame cache, narrower world scan or shared-method change. It removes one
+whole placement query per successful ordinary approach call in this source
+path. It does not establish the reduction in the reported global 256 calls or
+any FPS/runtime benefit; the same matched query workload must measure that.
+The original source/Player equality checks and native move_and_slide are intact.
+Fresh external entry propose_approach and _prepare_start remain unchanged.
+
+SECOND DISTINCT DUPLICATION, not included in the recommended first diff:
+Physics 873 already proves _spore_fresh_error immediately before the sole
+_step_approach caller. Its entry _approach_idle_error repeats that environmental
+proof without an intervening callback/motion. A later private-helper factoring
+could separate pure local idle/body/art checks from the environmental check at
+that one call site. Do not simply delete the physics proof: if environmental
+custody rejects, the original actor takes its real hurt/gravity/braking branch;
+calling _step_approach then returning instead would change that behavior. Do not
+introduce a public skip-check boolean or reuse consumer.step_source's earlier
+answer: that function can cancel attacks, acquire/move routes, notify observers
+or fail custody, so its returned result is not authority for later motion.
+
+Direct verification proposed AFTER authorized owned change and frozen closure:
+  - Small C31 approach reproduction: successful first parent guard, rejected
+    first guard with real braking guard, and rejected pure braking plan. Retain
+    the exact proposed/actual motion and all post-observer errors.
+  - Existing owned a1_l3_spore_component.gd uses actual approach-enabled grove
+    (a1_l3_spore_grove_component.tscn) and genuine field/retreat/regroup paths.
+  - Existing a1_l3_native_spore_callbacks.gd checks actual cancellation-observer
+    survivor/fatal injury and deferred pause on real native C31 leases. Reuse
+    unchanged evidence if the narrow approach reproduction already establishes
+    all affected observer boundaries; do not rerun unrelated C32/full routes.
+  - For a new explicit hostile approach-guard reproduction, actual callback
+    injury/death/pause/body-resource/field-custody mutation must reject before
+    moving. Returning an empty String is never sufficient to bypass fresh
+    post-observer checks. No production guard/tolerance weakening.
+
+Integration owns the shared performance work. This draft transfers no ownership
+and makes no accepted-L3 change. Root can coordinate the single owned file after
+the relevant frozen jobs close; L4 remains the active development frontier.
