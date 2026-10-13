@@ -1,5 +1,19 @@
 # B02 sampled-circle Shell support
 
+## Current native handoff — 13 October 2026
+
+The focused Shell support suite passed **71 checks, zero failures**, with exit 0 and no engine errors or warnings. Actual Shared56 (`26f59b28`) was preserve-adopted at merge `a7737647`; the actual adoption, interface comparison and native custody reviews are retained. [Final evidence index](evidence/final-handoff-20261013/index.json) pins the installed three TEST sources and two genuine importer-generated UID files, all original import/native inputs and logs, exact typed output payloads and independent reviews. All eight accepted Act 2 levels remain unchanged.
+
+The necessary new-resource import closed clean with **646** frozen inputs and generated only the two owned `.gd.uid` sidecars. The native job used **652** frozen inputs, including separately retained post-import derived metadata; source bytes, modes, UIDs and import metadata stayed unchanged during that job. All 470 previously active UID rows remained exact, and the 472 reviewed tokens are unique. The original native manifest says “Original import648”; this is a descriptive count typo, separately qualified here and in the reviews. The original manifest and `source.json` are preserved byte for byte.
+
+The actual suite covers the supplied Shell Hero, genuine eye HP/lease owner, one Scheduler and native consumer: warning checkpoint, public mid-dash warning save with immutable sample, active observer-held suffix, exact paused format2 disk Continue from a fresh NULL-Player Title, actual GUI Retry to the earlier complete checkpoint, seven malformed packet refusals, protected Story and fresh/worn Replay resources, normal Leave and whole-tree cleanup. Independent scope and custody reviews confirm the result. The scoped suite ran once; no further own native run is required.
+
+TEST arrangements are explicit: the existing A2-O3 logical row is substituted only in memory, a prerequisite prefix initializes protected Story, the active observer synchronously pauses the tree, a public 1HP injury tests worn Replay resources, and probe completion supplies the isolated optional stamp. The held suffix is Continued and then retried; resumed held-path damage settlement is untested. Moving Hero evidence is during warning, and the held active endpoint is stationary. This evidence does not establish authored B02/Act1-L5 acceptance, art, full playthrough, balance, performance or mobile/export behavior. Earlier Root component 103/69/35/17 results retain their separate scopes.
+
+All owned engine/import/helper sessions are closed. Integration remains sole shared production owner and receives this exact narrow support candidate. Historical unexecuted drafts, source findings, Root native failures and their diagnostic limits remain intact. No human decision or development blocker remains for this handoff.
+
+## Historical source preparation
+
 ## Current source handoff — 13 October 2026
 
 The three inert TEST sources are prepared and reviewed, with no concrete static blocker. They remain **unparsed and unexecuted**. [Portable source index](B02-source-20261013/index.json) records all original inputs, exact final drafts, source reviews and corrected historical drafts. Host `73c83e34`, scene `1dcc3240`, smoke `b3ca5f82`; final peer `d8fc5ed4`. The index lists the three intended `tests/acts/act2/shared_support/` paths. No test GDScript/resource has been installed and no UID fabricated. Accepted Act 2 runtime/data/scenes/tests remain unchanged.

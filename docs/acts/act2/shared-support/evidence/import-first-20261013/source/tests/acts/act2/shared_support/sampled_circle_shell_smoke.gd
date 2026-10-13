@@ -1,0 +1,348 @@
+extends SceneTree
+## SOURCE ONLY: UNPARSED/UNEXECUTED. Install only after exact Root native-ready publication.
+## TEST registry path/prefix and synchronous active observer pause are disclosed arrangements.
+## Real Shell Player, genuine native eye receiver, one Scheduler, immutable native sample.
+## No source getter/body/HP surrogate, fabricated pending path or campaign clear.
+const Shell: Script = preload("res://scripts/campaign/shell.gd")
+const Registry: Script = preload("res://scripts/campaign/registry.gd")
+const Attempts: Script = preload("res://scripts/campaign/attempts.gd")
+const Store: Script = preload("res://scripts/campaign/save_store.gd")
+const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
+const Exact: Script = preload("res://scripts/campaign/exact_json.gd")
+const Scheduler: Script = preload("res://scripts/combat/threat_scheduler.gd")
+const Consumer: Script = preload("res://scripts/combat/native_sampled_circle.gd")
+const Eye: Script = preload("res://tests/fixtures/sampled_eye_fixture.gd")
+const Ray: Script = preload("res://scripts/acts/act2/ray_scout_exchange.gd")
+const Lane: Script = preload("res://scripts/combat/lane_mechanism.gd")
+const Interaction: Script = preload("res://scripts/cues/interaction_cue.gd")
+const Threat: Script = preload("res://scripts/cues/threat_cue.gd")
+const MainScene: PackedScene = preload("res://scenes/main.tscn")
+const STORY_PATH: String = "res://scenes/acts/act2/dead_london.tscn"
+const FIXTURE_PATH: String = "res://tests/acts/act2/shared_support/sampled_circle_shell_level.tscn"
+const PREFIX: Array[String] = ["A1-L1","A1-L2","A1-L3","A1-L4","A1-L5","A2-L1","A2-L2","A2-L3","A2-L4"]
+const MAX_TICKS: int = 900
+class NativeTickProbe extends Node:
+	signal tick_finished
+	func _init() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_physics_priority = 120
+	func _physics_process(_delta: float) -> void: tick_finished.emit()
+var _checks: int = 0
+var _failures: int = 0
+var _finished: bool = false
+var _test_root: String
+var _raw: Dictionary
+var _registry_bytes: String
+var _shell: CinderCampaignShell
+var _preview: Node
+var _probe: NativeTickProbe
+var _events: Array[String] = []
+var _disposal_observations: Array[Dictionary] = []
+var _expected_retry_donor: WeakRef
+var _watch: bool = false
+var _old_audio: AudioBusLayout
+var _old_fps: int
+var _snapshots: Array[Dictionary] = []
+var _observer_records: Array[Dictionary] = []
+var _active_pause_armed: bool = false
+var _publication: String = ""
+func _initialize() -> void:
+	_test_root = "user://test-b02-shell-support-%d/" % OS.get_process_id()
+	_old_audio = AudioServer.generate_bus_layout(); _old_fps = Engine.max_fps
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--b02-native-publication="): _publication = argument.trim_prefix("--b02-native-publication=")
+	_run.call_deferred()
+func _run() -> void:
+	root.size = Vector2i(540,1170); root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	_registry_bytes = FileAccess.get_file_as_string(Registry.DATA_PATH)
+	if not _expect(_publication.length() == 40 and _publication.is_valid_hex_number(false),"runner declares exact previously verified native-ready Root publication"): _finish(); return
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--level-scene") or argument in ["--capture","--capture-polish"]:
+			_expect(false,"campaign test must not enter preview-mode arguments"); _finish(); return
+	_probe = NativeTickProbe.new(); root.add_child(_probe); node_added.connect(_observe_added)
+	_raw = JSON.parse_string(_registry_bytes)
+	for row: Dictionary in _raw.levels:
+		if row.id == "A2-O3": row.scene_path = FIXTURE_PATH; row.readiness = "accepted"; row.accepted_commit = "e".repeat(40); row.api_revision = Registry.API_REVISION
+	var registry: CinderCampaignRegistry = Registry.new(_raw)
+	if not _expect(registry.last_error.is_empty() and registry.scene_error("A2-O3").is_empty(),"in-memory TEST scene only; canonical parent/reward/route retained"): _finish(); return
+	if not await _seed_story(registry) or not await _new_shell(): _finish(); return
+	_shell.menu.continue_story_requested.emit(); await _settle()
+	var story: Dictionary = _shell.capture_campaign_snapshot()
+	_shell.menu.optional_requested.emit("A2-O3"); await _settle()
+	if not _expect(_live() and paused and _shell.attempts.active_kind() == "optional","real Shell installs TEST optional paused: "+_shell.campaign_error): _finish(); return
+	var protected: Dictionary = _shell.attempts.story_snapshot()
+	_expect(_same(protected,story),"complete actual protected Story retained")
+	var arena: Dictionary = _shell.active_level.call("test_arena")
+	if not _expect(arena.hero == _shell.player and arena.eye.get_script() == Eye and arena.scheduler.get_script() == Scheduler and arena.consumer.get_script() == Consumer and arena.world_root.is_ancestor_of(_shell.player),"genuine supplied Shell Hero/eye HP owner/Scheduler/consumer in actual containing world"): _finish(); return
+	_shell.menu.resume_requested.emit()
+	for _tick: int in range(12): await _probe.tick_finished
+	var admission: Dictionary = _shell.active_level.call("test_start")
+	if not _expect(admission.get("accepted",false),"actual stopped native warning admission: "+str(admission)): _finish(); return
+	for _tick: int in range(4): await _probe.tick_finished
+	_shell.request_pause(); await _settle()
+	if not _expect(_sampled().phase == "warning" and _shell.active_level.call("test_checkpoint"),"real sampled warning emits coherent TEST checkpoint"): _finish(); return
+	await _settle()
+	var checkpoint: Dictionary = _shell.capture_campaign_snapshot()
+	if not _expect(not checkpoint.is_empty() and _same(_shell.attempts.state().side_attempt.checkpoint,checkpoint),"actual earlier complete warning checkpoint durable"): _finish(); return
+	_capture("warning-checkpoint",checkpoint)
+	_shell.menu.resume_requested.emit()
+	if not _expect(_shell.player.request_dash(Vector3.RIGHT),"actual public Shell Player dash during warning"): _finish(); return
+	for _tick: int in range(2): await _probe.tick_finished
+	_shell.request_pause(); await _settle()
+	var moving: Dictionary = _shell.capture_campaign_snapshot()
+	if not _expect(not moving.is_empty() and moving.player.clocks.dash_left_s > 0.0 and moving.level.local.consumer.phase == "warning","saved actual mid-dash warning unit"): _finish(); return
+	_expect(_same(moving.level.local.consumer.sample,checkpoint.level.local.consumer.sample) and not _same(moving.player.motion.position,moving.level.local.consumer.sample.hero_position),"current saved Hero moves; original native warning sample remains immutable")
+	_capture("moving-warning",moving)
+	if not await _disk_restore(moving,"actual mid-dash warning"): _finish(); return
+	_expect(_same(_shell.attempts.state().side_attempt.checkpoint,checkpoint) and _same(_shell.attempts.story_snapshot(),protected),"disk Continue preserves earlier checkpoint and full Story resources")
+	var consumer: Node = _shell.active_level.call("get_consumer")
+	_active_pause_armed = true
+	consumer.connect("state_changed",_active_observer_pause)
+	_shell.menu.resume_requested.emit()
+	for _tick: int in range(MAX_TICKS):
+		await _probe.tick_finished
+		if not _active_pause_armed: break
+	if not _expect(not _active_pause_armed and paused,"actual native active observer reached and paused"): _finish(); return
+	await _settle()
+	var held: Dictionary = _shell.capture_campaign_snapshot()
+	if not _expect(not held.is_empty() and held.level.local.consumer.phase == "active" and not held.level.local.consumer.pending_segments.is_empty() and not held.level.local.consumer.hit_consumed,"actual active observer-paused nonempty held suffix before hurt"): _finish(); return
+	_expect(_same(held.level.local.consumer.sample,checkpoint.level.local.consumer.sample),"warning sample unchanged through actual dash/lock/active")
+	_capture("active-observer-held",held)
+	if not _atomic_rejections(held): _finish(); return
+	# Re-record the authentic held tuple through the public pause barrier after validation.
+	_shell.request_pause(); await _settle()
+	if not await _disk_restore(held,"actual held active suffix"): _finish(); return
+	_expect(_same(_shell.attempts.state().side_attempt.checkpoint,checkpoint),"active Continue never replaces earlier coherent checkpoint")
+	_shell.request_pause(); await _settle()
+	_expected_retry_donor = weakref(_shell.active_level)
+	var donor_refs: Array = _refs(_shell.active_level)
+	_events.clear(); _watch = true
+	var clicked: bool = await _click("RetryButton")
+	_watch = false; _expected_retry_donor = null
+	if not _expect(clicked and paused and _same(_shell.capture_campaign_snapshot(),checkpoint) and _events.is_empty() and _refs_freed(donor_refs),"actual GUI Retry restores complete earlier warning/Player/resources and retires donor: "+str(_events)): _finish(); return
+	_expect(_same(_shell.attempts.story_snapshot(),protected),"Retry preserves exact protected Story namespace/resources")
+	_capture("actual-GUI-retry-warning",_shell.capture_campaign_snapshot())
+	_shell.menu.resume_requested.emit()
+	for _tick: int in range(MAX_TICKS):
+		await _probe.tick_finished
+		if _sampled().status == "complete": break
+	if not _expect(_sampled().status == "complete" and _sampled().pending_segment_count == 0,"ordinary original recovery expiry becomes complete with no held danger"): _finish(); return
+	var completion_refs: Array = _refs(_shell.active_level)
+	if not _expect(_shell.active_level.call("test_complete_probe"),"TEST persistence probe completes after natural consumer expiry"): _finish(); return
+	await _settle()
+	_expect(_shell.attempts.state().completed_optional.has("A2-O3") and _shell.attempts.state().reward_ids.count("A2-O3-completion-stamp") == 1 and _same(_shell.attempts.story_snapshot(),protected),"TEST optional probe stamp once; Story resources exact, no campaign-clear credit")
+	_shell.menu.leave_side_requested.emit(); await _settle()
+	if not _expect(_shell.attempts.state().side_attempt == null and paused and _same(_shell.capture_campaign_snapshot(),protected) and _refs_freed(completion_refs),"normal completed TEST optional Leave frees managed unit and restores Story before Replay"): _finish(); return
+	var selected: Dictionary = {"jacket":"CLOTH-J0","pants":"CLOTH-P0","shoes":"CLOTH-S0","weapon":"WEAPON-03"}
+	_shell.menu.replay_requested.emit("A2-O3",selected); await _settle()
+	if not _expect(_live() and paused and _shell.attempts.active_kind() == "replay" and _shell.player.equipment.snapshot() == selected,"real completed TEST replay namespace and canonical selected gear"): _finish(); return
+	var replay_initial: Dictionary = _shell.capture_campaign_snapshot()
+	_expect(_shell.player.hp == _shell.player.max_hp and _shell.player.shells == _shell.player.max_shells,"fresh Replay owns full selected-gear resources, separate from original Story")
+	_expect(_same(_shell.attempts.state().side_attempt.checkpoint,replay_initial) and _same(_shell.attempts.story_snapshot(),protected),"fresh replay checkpoint/resources separate from earlier optional and Story")
+	if not await _disk_restore(replay_initial,"fresh TEST replay namespace"): _finish(); return
+	_shell.menu.resume_requested.emit()
+	for _tick: int in range(8): await _probe.tick_finished
+	var replay_hp: float = _shell.player.hp
+	_shell.player.take_damage(1.0,Vector3.ZERO) # Labelled actual public TEST injury; no private HP/resource write.
+	for _tick: int in range(2): await _probe.tick_finished
+	_shell.request_pause(); await _settle()
+	var replay_worn: Dictionary = _shell.capture_campaign_snapshot()
+	if not _expect(not replay_worn.is_empty() and _shell.player.hp < replay_hp and _same(_shell.attempts.state().side_attempt.checkpoint,replay_initial) and _same(_shell.attempts.story_snapshot(),protected),"actual worn Replay resources preserve pristine replay checkpoint and full Story"): _finish(); return
+	_capture("worn-replay-public-injury",replay_worn)
+	if not await _disk_restore(replay_worn,"actual worn Replay resources"): _finish(); return
+	var leave_refs: Array = _refs(_shell.active_level)
+	_shell.menu.leave_side_requested.emit(); await _settle()
+	_expect(paused and _shell.menu.page_name() == "journey" and _same(_shell.capture_campaign_snapshot(),protected) and _refs_freed(leave_refs),"normal Leave restores exact protected Story and frees full sampled world")
+	_shell.menu.continue_story_requested.emit(); await _settle()
+	_expect(paused and _same(_shell.capture_campaign_snapshot(),protected),"Story Continue has original resources and no side/replay motion history")
+	_finish()
+func _active_observer_pause(state: Dictionary) -> void:
+	if not _active_pause_armed or state.get("phase") != "active": return
+	_active_pause_armed = false
+	# Labelled TEST observer arrangement: synchronous pause holds this real tick.
+	# Shell.request_pause alone is deferred during physics; then it records format2.
+	paused = true
+	_observer_records.append({"kind":"TEST synchronous actual SceneTree pause","phase":state.phase,"cycle":state.cycle,"pending_segment_count":state.pending_segment_count,"sample":state.sample.duplicate(true)})
+	_shell.request_pause()
+func _sampled() -> Dictionary:
+	return _shell.active_level.call("get_consumer").call("state") if _live() else {}
+func _capture(label: String,unit: Dictionary) -> void:
+	_snapshots.append({"label":label,"snapshot":unit.duplicate(true)})
+	var envelope: Variant = JSON.parse_string(FileAccess.get_file_as_string(_test_root+"campaign.json"))
+	_expect(envelope is Dictionary and envelope.get("format_version") == Store.FORMAT_VERSION,"real format2 disk envelope for "+label)
+func _physical_signature() -> String:
+	var eye: Node3D = _shell.active_level.call("get_eye")
+	var consumer: Node = _shell.active_level.call("get_consumer")
+	var cue: CinderThreatCue = consumer.call("get_cue")
+	var parts: Array = []
+	for child: Node in cue.get_children():
+		if child is MeshInstance3D:
+			parts.append({"id":str(child.get_instance_id()),"transform":_encode(child.transform),"visible":child.visible,"mesh":str(child.mesh.get_instance_id()) if child.mesh != null else "none","material":str(child.material_override.get_instance_id()) if child.material_override != null else "none"})
+	return Exact.stringify({"eye_id":str(eye.get_instance_id()),"eye_transform":_encode(eye.global_transform),"eye_velocity":_encode(eye.get("velocity")),"hp":eye.get("hp"),"dead":eye.get("dead"),"hero_id":str(_shell.player.get_instance_id()),"hero_transform":_encode(_shell.player.global_transform),"cue_id":str(cue.get_instance_id()),"cue_visible":cue.visible,"parts":parts})
+func _atomic_rejections(saved: Dictionary) -> bool:
+	var wrong: Array[Dictionary] = []
+	var bad: Dictionary = saved.duplicate(true); bad.level.local.consumer.sample.ground_position[0] += 0.125; wrong.append({"label":"retargeted immutable warning sample","unit":bad})
+	bad = saved.duplicate(true); bad.level.local.eye.source_binding.definition.radius += 0.125; wrong.append({"label":"changed original eye recipe","unit":bad})
+	bad = saved.duplicate(true); bad.level.local.consumer.clock_s += 0.000000001; wrong.append({"label":"exact consumer/Scheduler clock mismatch","unit":bad})
+	bad = saved.duplicate(true); bad.level.local.consumer.pending_segments[-1].to[0] += 0.125; wrong.append({"label":"held suffix does not reach real current Hero","unit":bad})
+	bad = saved.duplicate(true); bad.level.local.scheduler.schema_version = 1; bad.level.local.scheduler.erase("sampled_circle_sources"); wrong.append({"label":"bound sampled-source legacy downgrade","unit":bad})
+	bad = saved.duplicate(true); bad.player.world_actions.clock_s = INF; wrong.append({"label":"nonfinite saved Hero staged clock","unit":bad})
+	bad = saved.duplicate(true); bad.level.local.consumer.clock_s = NAN; wrong.append({"label":"nonfinite consumer staged clock","unit":bad})
+	for row: Dictionary in wrong:
+		var before: Dictionary = _shell.capture_campaign_snapshot(); var physical: String = _physical_signature()
+		if not _expect(not physical.is_empty(),"bounded native physical/cue signature encodes before malformed packet"): return false
+		_events.clear(); _watch = true
+		var error: String = _shell.attempts.snapshot_validator.call(row.unit)
+		_watch = false
+		if not _expect(not error.is_empty() and _same(_shell.capture_campaign_snapshot(),before) and _physical_signature() == physical and _events.is_empty(),"malformed whole packet refused before installed body/cue writes: "+row.label+"; "+error+str(_events)): return false
+	return true
+func _record(kind: String) -> void:
+	if _watch: _events.append(kind)
+func _observe_added(node: Node) -> void:
+	# Connect genuine observers at construction, but only record selected quiet windows.
+	if node is CinderPlayer:
+		node.fired.connect(func(_kind: String) -> void: _record("fired")); node.died.connect(func() -> void: _record("death"))
+		node.world_action_executed.connect(func(_r: Dictionary) -> void: _record("action")); node.equipment_changed.connect(func(_id: String) -> void: _record("gear"))
+		node.action_resolved.connect(func(_kind: String,_hits: int,_damage: float) -> void: _record("action-resolved"))
+	if node is CinderLevel:
+		node.checkpoint_requested.connect(func(_l: String,_id: String,_k: String) -> void: _record("CP")); node.completion_requested.connect(func(_l: String,_id: String) -> void: _record("complete")); node.contact_exit_requested.connect(func(_l: String,_id: String) -> void: _record("exit"))
+	if node.get_script() == Consumer:
+		node.connect("state_changed",func(_s: Dictionary) -> void: _observe_phase_or_cancel("sampled-phase",node,_s)); node.connect("hit_resolved",func(_id: String,_c: int,_r: Dictionary) -> void: _record("sampled-hit"))
+	if node.get_script() == Eye:
+		node.connect("damaged",func(_r: Dictionary) -> void: _record("eye-damage")); node.connect("died",func() -> void: _record("eye-death"))
+	if node.get_script() == Ray:
+		node.connect("state_changed",func(_id: String,_s: Dictionary) -> void: _observe_phase_or_cancel("ray-phase",node,_s,_id)); node.connect("hit_resolved",func(_id: String,_r: Dictionary) -> void: _record("ray-hit"))
+	if node.get_script() == Lane:
+		node.connect("state_changed",func(_s: Dictionary) -> void: _observe_phase_or_cancel("lane-phase",node,_s)); node.connect("hit_resolved",func(_id: String,_c: int,_r: Dictionary) -> void: _record("lane-hit"))
+	if node.get_script() == Scheduler: node.connect("reservation_invalidated",func(_id: String,_r: String) -> void: _observe_phase_or_cancel("cancel",node,{"reservation_id":_id,"reason":_r}))
+	if node.get_script() in [Interaction,Threat]: node.connect("state_changed",func(_s: Dictionary) -> void: _observe_phase_or_cancel("cue",node,_s))
+	if node is CinderCampaignShell: node.connect("input_observed",func(_r: Dictionary) -> void: _record("input"))
+
+func _disk_restore(expected: Dictionary,label: String) -> bool:
+	var refs: Array = _refs(_shell); _shell.free(); _shell = null
+	_expect(_refs_freed(refs),"old full native world frees before "+label)
+	if not await _new_shell(): return false
+	_events.clear(); _watch = true
+	_shell.menu.resume_requested.emit(); await _settle(); _watch = false
+	return _expect(_live() and paused and _same(_shell.capture_campaign_snapshot(),expected) and _events.is_empty(),"fresh exact quiet disk Continue "+label+": "+_shell.campaign_error+str(_events))
+
+func _seed_story(registry: CinderCampaignRegistry) -> bool:
+	paused = true; _preview = MainScene.instantiate(); _preview.set("level_scene_path",STORY_PATH); root.add_child(_preview); paused = true
+	await _settle()
+	var hero: CinderPlayer = _preview.get("player") as CinderPlayer; var level: CinderLevel = _preview.get("active_level") as CinderLevel
+	if not _expect(is_instance_valid(hero) and is_instance_valid(level) and level.level_id == "A2-L5","actual accepted pristine A2-L5 Story fixture"): return false
+	var anchor: Vector2 = _preview.call("get_aim_anchor_normalized"); var camera: Camera3D = _preview.get("camera") as Camera3D
+	var snapshot: Dictionary = {"schema_version":1,"level_id":"A2-L5","scene_path":STORY_PATH,"paused":true,"equipment_ids":hero.equipment.snapshot(),"player":hero.snapshot_state(),"level":level.snapshot_state(),"shell":{"api_revision":Shell.SHELL_API,"anchor_normalized":[anchor.x,anchor.y],"input_sequence":0,"last_input_observation":{},"camera_focus":Codec.vector3(camera.global_position-Vector3(0,18,13)),"shake_left_s":0.0,"difficulty_at_entry":"standard"}}
+	var model: CinderCampaignAttempts = Attempts.new(registry); var payload: Dictionary = model.state(); payload.completed_main = PREFIX.duplicate()
+	payload.story = {"kind":"story","level_id":"A2-L5","snapshot":snapshot.duplicate(true),"checkpoint":snapshot.duplicate(true)}
+	var store: CinderSaveStore = Store.new(_test_root+"campaign.json"); store.payload_validator = model.saved_payload_error
+	var okay: bool = not snapshot.player.is_empty() and not snapshot.level.is_empty() and model.state_error(payload).is_empty() and store.write_payload(payload)
+	_expect(okay,"public validated TEST prefix plus actual full Story store: "+model.state_error(payload)+store.last_error)
+	level.exit_level(); _preview.free(); _preview = null
+	return okay
+
+func _new_shell() -> bool:
+	_events.clear(); _watch = true; _shell = Shell.new() as CinderCampaignShell
+	if not _expect(_shell.configure_runtime(_raw,_test_root+"campaign.json",_test_root+"settings.json",_test_root+"preferences.json"),"supported isolated Shell before tree entry"): return false
+	root.add_child(_shell); await _settle(); _watch = false
+	return _expect(paused and _shell.player == null and _shell.menu.page_name() == "title" and _shell.campaign_error.is_empty() and _events.is_empty(),"fresh disk validates at Title quietly: "+_shell.campaign_error+str(_events))
+
+func _click(name: String) -> bool:
+	await _settle(); var button: Button = _shell.menu.find_child(name,true,false) as Button
+	if not _expect(is_instance_valid(button) and button.is_visible_in_tree() and not button.disabled,"actual enabled GUI "+name): return false
+	var presses: Array[String] = []; button.pressed.connect(func() -> void: presses.append(name))
+	var at: Vector2 = button.get_global_rect().get_center()
+	var motion := InputEventMouseMotion.new(); motion.position = at; motion.global_position = at; root.push_input(motion,true)
+	var press := InputEventMouseButton.new(); press.button_index = MOUSE_BUTTON_LEFT; press.position = at; press.global_position = at; press.pressed = true; root.push_input(press,true)
+	var release := press.duplicate() as InputEventMouseButton; release.pressed = false; root.push_input(release,true)
+	await _settle()
+	return _expect(presses == [name] and _shell.campaign_error.is_empty(),"single actual GUI click settles "+name+": "+_shell.campaign_error)
+
+func _candidate_disposal_level(node: Node) -> CinderLevel:
+	# Exact nearest-level lifecycle boundary observed in retained native Title
+	# and Retry failures. Declared flags/expected weak identity are read-only.
+	if not is_instance_valid(node) or not node.is_inside_tree(): return null
+	var ancestor: Node = node.get_parent()
+	while is_instance_valid(ancestor):
+		if ancestor is CinderLevel:
+			var level: CinderLevel = ancestor as CinderLevel
+			if not level.is_inside_tree(): return null
+			var entered: Variant = level.get("_entered")
+			var busy: Variant = level.get("_lifecycle_busy")
+			if not (entered is bool and entered == false and busy is bool and busy == true): return null
+			var donor_match: bool = is_instance_valid(_expected_retry_donor) and _expected_retry_donor.get_ref() == level
+			return level if level.is_restore_candidate() or donor_match else null
+		ancestor = ancestor.get_parent()
+	return null
+
+func _observe_phase_or_cancel(kind: String,node: Node,supplied: Dictionary,signal_id: String = "") -> void:
+	# Only these presentation/retirement notifications can belong to disposal.
+	# Entered/restoring recipients and every gameplay notification stay strict.
+	if not _watch: return
+	var level: CinderLevel = _candidate_disposal_level(node) if kind in ["sampled-phase","ray-phase","lane-phase","cue","cancel"] else null
+	if not is_instance_valid(level): _events.append(kind); return
+	var scalars: Dictionary = {}
+	for key: Variant in supplied:
+		var value: Variant = supplied[key]
+		if value == null or value is String or value is bool or value is int or value is float: scalars[String(key)] = value
+	var donor_match: bool = is_instance_valid(_expected_retry_donor) and _expected_retry_donor.get_ref() == level
+	_disposal_observations.append({"kind":kind,"signal_id":signal_id,"supplied_scalars":scalars,"boundary":"expected_retry_donor" if donor_match else "validation_candidate","donor_match":donor_match,"emitter_inside_tree":true,"emitter_instance_id_decimal":str(node.get_instance_id()),"nearest_level_id":level.level_id,"nearest_level_restore_candidate":level.is_restore_candidate(),"nearest_level_entered":level.get("_entered"),"nearest_level_lifecycle_busy":level.get("_lifecycle_busy")})
+
+func _live() -> bool: return is_instance_valid(_shell) and is_instance_valid(_shell.active_level) and _shell.active_level.level_id == "A2-O3" and _shell.campaign_error.is_empty()
+
+func _settle() -> void:
+	for _frame: int in range(8): await process_frame
+
+func _same(a: Variant,b: Variant) -> bool:
+	var s: String = Exact.stringify(a); return not s.is_empty() and s == Exact.stringify(b)
+
+func _refs(node: Node) -> Array:
+	var out: Array = [weakref(node)]
+	for child: Node in node.get_children(): out.append_array(_refs(child))
+	return out
+
+func _refs_freed(refs: Array) -> bool:
+	for ref: WeakRef in refs:
+		if ref.get_ref() != null: return false
+	return not refs.is_empty()
+
+func _encode(v: Variant) -> Variant:
+	if v is Transform3D: return {"basis":_encode(v.basis),"origin":_encode(v.origin)}
+	if v is Vector3: return [v.x,v.y,v.z]
+	if v is Vector2: return [v.x,v.y]
+	if v is Rect2: return {"diagnostic_native_type":"Rect2","position":_encode(v.position),"size":_encode(v.size)}
+	if v is Basis: return {"x":_encode(v.x),"y":_encode(v.y),"z":_encode(v.z)}
+	if v is int and (v < -9007199254740991 or v > 9007199254740991): return {"diagnostic_native_integer_decimal":str(v)}
+	if v is Dictionary:
+		var d: Dictionary = {}
+		for k: Variant in v: d[String(k)] = _encode(v[k])
+		return d
+	if v is Array:
+		var a: Array = []
+		for x: Variant in v: a.append(_encode(x))
+		return a
+	return v
+
+func _expect(ok: bool,note: String) -> bool:
+	_checks += 1
+	if not ok: _failures += 1; push_error("FAIL B02 Shell support: "+note)
+	return ok
+func _finish() -> void:
+	if _finished: return
+	_finished = true; _watch = false; _active_pause_armed = false; _expected_retry_donor = null
+	if is_instance_valid(_preview): _preview.free()
+	if is_instance_valid(_shell):
+		var refs: Array = _refs(_shell); _shell.free(); _expect(_refs_freed(refs),"complete final Shell descendants freed")
+	if is_instance_valid(_probe): _probe.free()
+	paused = false
+	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == _registry_bytes,"in-memory TEST metadata leaves canonical Registry unchanged")
+	for name: String in ["campaign.json","campaign.json.bak","settings.json","settings.json.bak","preferences.json","preferences.json.bak"]:
+		var path: String = ProjectSettings.globalize_path(_test_root+name)
+		if FileAccess.file_exists(path): DirAccess.remove_absolute(path)
+	AudioServer.set_bus_layout(_old_audio); Engine.max_fps = _old_fps
+	print("B02 Shell actual snapshot artifacts: ",Exact.stringify(_snapshots))
+	print("B02 Shell TEST observer records: ",Exact.stringify(_observer_records))
+	print("B02 Shell exact disposal observations: ",Exact.stringify(_disposal_observations))
+	print("B02 Shell support smoke: %d checks, %d failures; actual warning/moving Hero/active held suffix/format2 quiet Continue/GUI Retry/atomic refusal/protected Story and replay/Leave cleanup. Root publication %s; TEST logical A2-O3/prefix/synchronous observer pause; no authored campaign clear/art/balance/performance credit" % [_checks,_failures,_publication])
+	quit(0 if _failures == 0 else 1)
