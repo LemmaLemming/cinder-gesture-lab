@@ -1,0 +1,59 @@
+extends CinderLevel
+## Main-level floor/layout hypothesis only. No progression or combat acceptance.
+## The single shared Player/camera/input remain the preview shell's authority.
+
+const FLOOR_RECT: Rect2 = Rect2(-7, -24, 14, 44)
+const LANDING_CENTRE: Vector3 = Vector3(0, 0, 14.5)
+const SOLO_SOURCE: Vector3 = Vector3(0, 0.005, 8)
+const ROCK_SOURCE: Vector3 = Vector3(-2.8, 0.005, -1.8)
+const OPEN_SOURCE: Vector3 = Vector3(2.8, 0.005, -1.8)
+const CAMP_CENTRE: Vector3 = Vector3(0, 0, -9.5)
+const FINAL_SOURCE: Vector3 = Vector3(0, 0.005, -16.5)
+const GROTTO_CONTACT: Vector3 = Vector3(0, 0.8, -21.8)
+
+
+func _ready() -> void:
+	# Every scenery collider has a stable path and matching low visible body.
+	# The branch divider is physical scenery, never a hidden progression gate.
+	for spec: Array in [
+		["WestEdge", Vector3(-7, 0.2, -2), Vector3(0.2, 0.4, 44)],
+		["EastEdge", Vector3(7, 0.2, -2), Vector3(0.2, 0.4, 44)],
+		["NorthEdge", Vector3(0, 0.2, -24), Vector3(14, 0.4, 0.2)],
+		["SouthEdge", Vector3(0, 0.2, 20), Vector3(14, 0.4, 0.2)],
+		["ApproachRock", Vector3(0, 0.2, -1.5), Vector3(1.6, 0.4, 7.0)],
+		["RockRouteOuterFlat", Vector3(-5.4, 0.2, -1.5), Vector3(0.8, 0.4, 5.0)],
+	]:
+		var body := StaticBody3D.new()
+		body.name = spec[0]
+		body.position = spec[1]
+		body.collision_layer = 1
+		body.collision_mask = 0
+		var collision := CollisionShape3D.new()
+		collision.name = "CollisionShape3D"
+		var shape := BoxShape3D.new()
+		shape.size = spec[2]
+		collision.shape = shape
+		body.add_child(collision)
+		var mesh := MeshInstance3D.new()
+		mesh.name = "VisibleLowScenery"
+		var box := BoxMesh.new()
+		box.size = spec[2]
+		mesh.mesh = box
+		var material := StandardMaterial3D.new()
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		material.albedo_color = Color(0.18, 0.18, 0.18)
+		mesh.material_override = material
+		body.add_child(mesh)
+		add_child(body)
+
+
+func request_completion(_completion_id: String = "complete") -> bool:
+	return false
+
+
+func request_checkpoint(_checkpoint_id: String, _boundary_kind: String = "encounter") -> bool:
+	return false
+
+
+func request_contact_exit(_exit_id: String, _body: Node3D) -> bool:
+	return false

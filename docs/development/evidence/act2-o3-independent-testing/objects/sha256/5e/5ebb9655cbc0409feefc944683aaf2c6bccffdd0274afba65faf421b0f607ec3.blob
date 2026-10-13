@@ -1,0 +1,346 @@
+extends "res://tests/acts/act1/a1_l1_route.gd"
+## Actual graphical portrait evidence using the SAME genuine route/recognizer.
+## Strict focused default; explicit --scripted-portrait observes native focus
+## without requiring it. Shared focus notifications remain completely intact.
+## NO staged beat or actor position; no teleports, focus hacks or --capture mode.
+## One selected canonical kit per run inherits the base55s always-process bound.
+## Images record the selected graphical mode and actual native-focus state,
+## not human balance, mobile/export,
+## campaign-save/retry/transition or canonical/final art acceptance.
+
+const Codec: GDScript = preload("res://scripts/campaign/snapshot_codec.gd")
+const CaptureRoot: String = "res://captures/act1/full-route"
+const RequiredStages: Array[String] = [
+	"spawn", "first-dash", "hall-primary", "workshop-useful-landing",
+	"roof-warning", "roof-useful-landing", "boarding-warning",
+	"boarding-useful-landing", "final-clear", "hatch-contact",
+]
+const ScriptedPhaseStages: Array[String] = ["roof-lock", "roof-active", "roof-recovery"]
+const StageBeats: Dictionary = {
+	"spawn": 0, "first-dash": 1, "hall-primary": 2,
+	"workshop-useful-landing": 2, "roof-warning": 3,
+	"roof-useful-landing": 3, "boarding-warning": 4,
+	"boarding-useful-landing": 4, "final-clear": 5, "hatch-contact": 5,
+	"roof-lock": 3, "roof-active": 3, "roof-recovery": 3,
+}
+
+var _scripted_portrait: bool = false
+var _native_focus_at_pre_resume: bool = false
+var _native_focus_samples: Array[Dictionary] = []
+var _capture_directory: String = ""
+var _shots: Array[Dictionary] = []
+var _captured_stages: Dictionary = {}
+var _pending_warnings: Array[String] = []
+var _warning_pause_done: bool = false
+var _pause_evidence: Dictionary = {}
+var _portrait_finishing: bool = false
+
+
+func _renderer_check() -> bool:
+	for argument: String in OS.get_cmdline_user_args():
+		if argument == "--scripted-portrait":
+			_scripted_portrait = true
+		elif argument.begins_with("--scripted-portrait="):
+			return _require(false, "use explicit --scripted-portrait without a value")
+		if argument.begins_with("--capture"):
+			return _require(false, "graphical route excludes auto-resume/static --capture modes")
+	print("SCOPE: ", _route_mode(), " actual production gesture route; native_focus_observed=", _has_real_focus(), "; NO TELEPORTS or staged poses. No human balance/canonical acceptance.")
+	return _require(DisplayServer.get_name() != "headless", "selected portrait mode requires an actual graphical renderer: " + _route_mode())
+
+
+func _before_resume() -> bool:
+	print("BINDING DIAGNOSTIC: contract_error=", _level.contract_error(), "; level.hero=", _level.hero, "; actual_actor=", _hero, "; level.effects=", _level.effects, "; shell=", _level.shared_shell, "; world_signal_connected=", _hero.world_action_executed.is_connected(Callable(_level, "_on_world_action")))
+	if not _require(_level.hero == _hero and _level.shared_shell == _game and _level.effects == _game.get("fx") and _hero.world_action_executed.is_connected(Callable(_level, "_on_world_action")), "production level is actually entered and bound to this exact shared actor/effects/shell before any graphical input"):
+		return false
+	# Fresh directory per invocation; never replace historical image/evidence.
+	var run_id: String = "%s-%d-%d-%s" % ["scripted-graphical" if _scripted_portrait else "focused", int(Time.get_unix_time_from_system()), Time.get_ticks_usec(), _route_kit]
+	_capture_directory = CaptureRoot + "/" + run_id
+	if not _require(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(_capture_directory)), "selected graphical route output directory is unique"):
+		return false
+	var error: Error = DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_capture_directory))
+	if not _require(error == OK, "selected graphical route creates its own ignored capture directory"):
+		return false
+	if _scripted_portrait:
+		_native_focus_at_pre_resume = _has_real_focus()
+		print("SCRIPTED GRAPHICAL: normal single initial public resume; native_focus_observed=", _native_focus_at_pre_resume, "; normal shared focus notifications unchanged. Output: ", ProjectSettings.globalize_path(_capture_directory))
+		return _require(paused, "explicit scripted mode begins at the actual paused kit boundary before its single normal public resume")
+	print("WAITING: Focus the actual game window; route resumes only after stable real focus for300ms. Output: ", ProjectSettings.globalize_path(_capture_directory))
+	var deadline_ms: int = Time.get_ticks_msec() + 30000
+	var focused_since_ms: int = -1
+	while Time.get_ticks_msec() < deadline_ms:
+		if _aborted or _finished: return false
+		var now_ms: int = Time.get_ticks_msec()
+		if _has_real_focus():
+			if focused_since_ms < 0: focused_since_ms = now_ms
+			if now_ms - focused_since_ms >= 300:
+				_native_focus_at_pre_resume = _has_real_focus()
+				return _require(paused and _has_real_focus(), "stable actual focus precedes the sole initial public resume")
+		else:
+			focused_since_ms = -1
+		await create_timer(0.05, true).timeout
+	return _require(false, "actual window did not gain stable focus within bounded30s; route stays unresumed")
+
+
+func _before_input(phase: String) -> bool:
+	if not _guard_live("before " + phase):
+		return false
+	# Drain warning evidence before a fresh pointer press. Never interrupt an
+	# in-flight touch with pause/UI, and never introduce an alternate gesture.
+	if phase.ends_with("_press"):
+		if not await _drain_warning_captures(): return false
+	return _guard_live("at dispatch " + phase)
+
+
+func _notice_stage(stage: String) -> void:
+	# Base calls this only on the real shared first-cycle warning signal.
+	# Rendering waits outside that physics callback and outside an active touch.
+	if not _captured_stages.has(stage) and not _pending_warnings.has(stage):
+		_pending_warnings.append(stage)
+
+
+func _capture_stage(stage: String) -> bool:
+	if not await _drain_warning_captures(): return false
+	return await _capture_one(stage)
+
+
+func _drain_warning_captures() -> bool:
+	while not _pending_warnings.is_empty():
+		if _aborted or _finished: return false
+		var stage: String = _pending_warnings.pop_front()
+		if not await _capture_one(stage): return false
+		if stage == "roof-warning" and not _warning_pause_done:
+			if not await _pause_actual_warning(): return false
+			if _scripted_portrait:
+				if not await _observe_roof_cycle(): return false
+	return true
+
+
+func _capture_one(stage: String) -> bool:
+	if _captured_stages.has(stage): return true
+	if not _require(_required_stages().has(stage) and _beat() == int(StageBeats[stage]), "named capture belongs to the actual route stage: " + stage):
+		return false
+	if not _guard_live("before capture " + stage): return false
+	await RenderingServer.frame_post_draw
+	if not _guard_live("at rendered capture " + stage): return false
+	var arms: Dictionary = _level.get("arms")
+	if stage.ends_with("-warning") or ScriptedPhaseStages.has(stage):
+		var arm_id: String = ARM_IDS[1] if stage == "boarding-warning" else ARM_IDS[0]
+		var expected_phase: String = stage.trim_prefix("roof-") if ScriptedPhaseStages.has(stage) else "warning"
+		var arm: CinderLaneMechanism = arms[arm_id] as CinderLaneMechanism
+		var cycle: int = int(arm.state().cycle)
+		var first_cycle_required: bool = ScriptedPhaseStages.has(stage) or (_scripted_portrait and stage == "roof-warning")
+		var cycle_valid: bool = cycle == 1 if first_cycle_required else cycle > 0
+		if not _require(arm.state().phase == expected_phase and arm.get_cue().state().phase == expected_phase and cycle_valid, stage + " image contains the genuinely live shared phase and cue"):
+			return false
+	var image: Image = root.get_texture().get_image()
+	if not _require(image != null and image.get_size() == PortraitSize and root.get_visible_rect().size.is_equal_approx(Vector2(PortraitSize)), stage + " is actual540x1170 renderer pixels"):
+		return false
+	var filename: String = "%02d-%s.png" % [_shots.size() + 1, stage]
+	var path: String = _capture_directory + "/" + filename
+	if not _require(not FileAccess.file_exists(path) and image.save_png(path) == OK, stage + " image saves without replacing any earlier artifact"):
+		return false
+	var arm_states: Dictionary = {}
+	for id: String in ARM_IDS:
+		var arm: CinderLaneMechanism = arms[id] as CinderLaneMechanism
+		arm_states[id] = {"state": arm.state(), "cue": arm.get_cue().state()}
+	var target_states: Dictionary = {}
+	var targets: Dictionary = _level.get("targets")
+	for id: String in targets:
+		var target: PracticeTarget = targets[id] as PracticeTarget
+		target_states[id] = {"position": target.global_position, "hp": target.hp, "active": target.is_in_group("practice_targets")}
+	var input_state: Dictionary = _game.call("get_input_observation_state")
+	_shots.append({
+		"path": path, "absolute_path": ProjectSettings.globalize_path(path),
+		"stage": stage, "staged": false, "scope": _route_mode() + " actual production-route portrait",
+		"kit": _route_kit, "equipment_ids": _hero.equipment.snapshot(),
+		"pixel_size": [image.get_width(), image.get_height()], "native_focus_observed": _has_real_focus(), "native_focus_required": not _scripted_portrait, "paused": paused,
+		"beat_index": _beat(), "actor_position": _hero.global_position, "actor_facing": _hero.facing,
+		"presentation_id": _hero.presentation_id, "action_clock_s": _hero.get_world_action_clock(),
+		"aim_anchor_screen": _game.call("get_aim_anchor"), "input_observation": input_state,
+		"world_action_sequence": _last_sequence(), "actual_world_actions": _hero.get_world_action_records(),
+		"arms": arm_states, "targets": target_states,
+		"hatch_cue": (_level.get("hatch_cue") as CinderInteractionCue).state(),
+		"camera": {"position": _camera.global_position, "basis_right": _camera.global_basis.x, "basis_down": _camera.global_basis.z, "size": _camera.size},
+	})
+	_captured_stages[stage] = true
+	print("CAPTURE: ", _route_mode(), "; native_focus_observed=", _has_real_focus(), "; ", stage, " -> ", ProjectSettings.globalize_path(path))
+	return _require(_write_evidence(), stage + " actual public-state metadata saves")
+
+
+func _pause_actual_warning() -> bool:
+	if not _guard_live("before public warning pause"): return false
+	var roof: CinderLaneMechanism = (_level.get("arms") as Dictionary)[ARM_IDS[0]] as CinderLaneMechanism
+	if not _require(roof.state().phase == "warning", "pause exercise begins during the actual shared roof warning"):
+		return false
+	var native_focus_before_pause: bool = _has_real_focus()
+	_game.call("open_bench")
+	await process_frame
+	if _aborted or _finished: return false
+	if not _require(paused and _focus_policy_allows() and not _hero.dead, "public warning pause reaches the actual paused deferred boundary; native_focus_observed=" + str(_has_real_focus())):
+		return false
+	var actor_before: Dictionary = _hero.snapshot_state()
+	var level_before: Dictionary = _level.snapshot_state()
+	var input_before: Dictionary = _game.call("get_input_observation_state")
+	var position_before: Vector3 = _hero.global_position
+	var actions_before: Array[Dictionary] = _hero.get_world_action_records()
+	var anchor_before: Vector2 = _game.call("get_aim_anchor")
+	var clock_before: float = _hero.get_world_action_clock()
+	if not _require(not actor_before.is_empty() and not level_before.is_empty() and _level.snapshot_error_with_player(level_before, actor_before).is_empty(), "actual warning pause captures a valid paired public actor/level clock snapshot"):
+		return false
+	await create_timer(0.12, true).timeout
+	if _aborted or _finished: return false
+	var frozen: bool = paused and _focus_policy_allows() and not _hero.dead and _hero.get_world_action_clock() == clock_before and _hero.snapshot_state() == actor_before and _level.snapshot_state() == level_before and _game.call("get_input_observation_state") == input_before
+	if not _require(frozen, "actual warning pause freezes exact paired actor/level clocks and public input state"):
+		return false
+	var button: Button = _resume_button(_game.get("hud") as Node)
+	if not _require(button != null and button.is_visible_in_tree(), "real paused shared GUI exposes a visible RESUME button"):
+		return false
+	var point: Vector2 = button.get_global_rect().get_center()
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = point
+	press.global_position = point
+	if not _require(paused and _focus_policy_allows() and not _hero.dead, "actual paused GUI Resume mouse press; native_focus_observed=" + str(_has_real_focus())):
+		return false
+	Input.parse_input_event(press)
+	await process_frame
+	if _aborted or _finished: return false
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.position = point
+	release.global_position = point
+	if not _require(paused and _focus_policy_allows() and not _hero.dead, "actual paused GUI Resume mouse release; native_focus_observed=" + str(_has_real_focus())):
+		return false
+	Input.parse_input_event(release)
+	await process_frame
+	if _aborted or _finished: return false
+	var consumed: bool = not paused and _focus_policy_allows() and not _hero.dead and _hero.global_position.is_equal_approx(position_before) and Codec.same_values(_hero.get_world_action_records(), actions_before) and Codec.same_values(_game.call("get_input_observation_state"), input_before) and (_game.call("get_aim_anchor") as Vector2).is_equal_approx(anchor_before)
+	if not _require(consumed, "real GUI Resume click is consumed without combat actions, movement or anchor changes"):
+		return false
+	_warning_pause_done = true
+	_pause_evidence = {"scope": _route_mode() + " actual first roof warning; public pause and real GUI Resume", "native_focus_before_pause": native_focus_before_pause, "native_focus_after_resume": _has_real_focus(), "paired_actor_snapshot": actor_before, "paired_level_snapshot": level_before, "input_before": input_before, "position_before": position_before, "anchor_before": anchor_before, "clock_before_s": clock_before, "hold_s": 0.12, "paired_state_frozen": frozen, "resume_click_consumed": consumed}
+	return _require(_write_evidence(), "actual warning pause/GUI resume metadata saves")
+
+
+func _resume_button(node: Node) -> Button:
+	if node is Button and (node as Button).is_visible_in_tree() and (node as Button).text.begins_with("RESUME"):
+		return node as Button
+	for child: Node in node.get_children():
+		var found: Button = _resume_button(child)
+		if found != null: return found
+	return null
+
+
+func _has_real_focus() -> bool:
+	return root.has_focus() and DisplayServer.window_is_focused(root.get_window_id())
+
+
+func _focus_policy_allows() -> bool:
+	return _scripted_portrait or _has_real_focus()
+
+
+func _required_stages() -> Array[String]:
+	var stages: Array[String] = []
+	for stage: String in RequiredStages:
+		stages.append(stage)
+		if _scripted_portrait and stage == "roof-warning": stages.append_array(ScriptedPhaseStages)
+	return stages
+
+
+func _observe_roof_cycle() -> bool:
+	# Voluntary test observation at the actual safe side reached by real swipes.
+	# Runtime still permits immediate primary; no phase/clock/actor is forced.
+	var roof: CinderLaneMechanism = (_level.get("arms") as Dictionary)[ARM_IDS[0]] as CinderLaneMechanism
+	var initial: Dictionary = roof.state()
+	var padding: float = CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN
+	if not _require(not Geometry.segment_hits(initial.geometry, _hero.global_position, _hero.global_position, padding), "voluntary phase observation remains at the actual safe side reached by production swipes"):
+		return false
+	var deadline_ms: int = Time.get_ticks_msec() + 6000
+	for phase: String in ["lock", "active", "recovery"]:
+		var observed: bool = false
+		while Time.get_ticks_msec() < deadline_ms:
+			if not _guard_live("voluntary first-cycle " + phase + " observation"): return false
+			var state: Dictionary = roof.state()
+			if not _require(int(state.cycle) == 1 and state.status == "running", "voluntary source observation retains the genuine shared first cycle"):
+				return false
+			if state.phase == phase:
+				if not await _capture_one("roof-" + phase): return false
+				observed = true
+				break
+			await create_timer(0.02, true).timeout
+		if not _require(observed, "actual first-cycle " + phase + " pixels captured within bounded6s"):
+			return false
+	return true
+
+
+func _guard_live(context: String) -> bool:
+	if _aborted or _finished: return false
+	var native_focus: bool = _has_real_focus()
+	var actor_alive: bool = is_instance_valid(_hero) and not _hero.dead
+	_native_focus_samples.append({"context": context, "native_focus_observed": native_focus, "paused": paused, "actor_alive": actor_alive})
+	return _require(_focus_policy_allows() and not paused and is_instance_valid(_game) and actor_alive, _route_mode() + " active simulation " + context + "; native_focus_observed=" + str(native_focus) + "; unexpected pause/death aborts")
+
+
+func _write_evidence() -> bool:
+	if _capture_directory.is_empty(): return true
+	var evidence: Dictionary = {
+		"scope": _route_mode() + " full A1-L1 portrait route from genuine production spawn; NO TELEPORTS or staged beat/positions",
+		"limits": "No human balance, canonical/final art acceptance, all-loadout fairness, campaign save/retry/transition or mobile/export claim",
+		"kit": _route_kit, "required_actual_stages": _required_stages(),
+		"scripted_portrait": _scripted_portrait, "native_focus_required": not _scripted_portrait, "native_focus_at_pre_resume": _native_focus_at_pre_resume, "native_focus_samples": _native_focus_samples,
+		"voluntary_first_cycle_observation": _scripted_portrait, "runtime_compulsory_wait": false,
+		"checks": _checks, "failures": _failures, "aborted": _aborted,
+		"actual_swipes": _dash_count, "actual_primaries": _primary_count,
+		"shots": _shots, "pause": _pause_evidence,
+		"progress_events": _progress_events, "actual_input_observations": _input_observations,
+		"observed_shared_arm_phases": _arm_phases,
+		"actual_world_actions_at_write": _hero.get_world_action_records() if is_instance_valid(_hero) else [],
+		"actual_level_beat_at_write": _beat() if is_instance_valid(_level) else -1,
+		"actual_actor_hp_at_write": _hero.hp if is_instance_valid(_hero) else -1.0, "recorded_initial_hp": _initial_hp, "actual_arm_hit_events": _arm_hits,
+		"actual_level_actor_bound_at_write": is_instance_valid(_level) and is_instance_valid(_hero) and _level.hero == _hero,
+	}
+	var output: FileAccess = FileAccess.open(_capture_directory + "/evidence.json", FileAccess.WRITE)
+	if output == null: return false
+	output.store_string(JSON.stringify(_encode(evidence), "  ") + "\n")
+	output.close()
+	return true
+
+
+func _encode(value: Variant) -> Variant:
+	if value is Vector2: return [value.x, value.y]
+	if value is Vector3: return [value.x, value.y, value.z]
+	if value is Dictionary:
+		var encoded_map: Dictionary = {}
+		for key: Variant in value: encoded_map[String(key)] = _encode(value[key])
+		return encoded_map
+	if value is Array:
+		var encoded_items: Array = []
+		for item: Variant in value: encoded_items.append(_encode(item))
+		return encoded_items
+	return value
+
+
+func _route_mode() -> String:
+	return "SCRIPTED GRAPHICAL" if _scripted_portrait else "FOCUSED AUTOMATED PORTRAIT"
+
+
+func _route_limits() -> String:
+	return "LIMITS: " + _route_mode() + " actual renderer/recognizer evidence; native focus is observed and " + ("not required by explicit scripted mode" if _scripted_portrait else "required by strict focused mode") + "; no shared focus notification override, human balance, canonical/final art acceptance, broader gear-portrait/all-loadout fairness, campaign saves/retry/transition or mobile/export claim."
+
+
+func _finish() -> void:
+	if _finished or _portrait_finishing: return
+	_portrait_finishing = true
+	if not _aborted and _failures == 0:
+		_expect(_shots.size() == _required_stages().size(), "all%d required actual graphical sourcecap stages captured" % _required_stages().size())
+		for stage: String in _required_stages():
+			_expect(_captured_stages.has(stage), "actual route image exists for " + stage)
+		_expect(_warning_pause_done, "one actual shared warning pause resumed through the real GUI")
+	_expect(_write_evidence(), "final " + _route_mode() + " evidence preserves actual captures/native-focus observations and limits")
+	# On focus loss, dispose the live world before inherited exit normalization;
+	# cleanup must never resume a lost-focus actor or continue route simulation.
+	if not _has_real_focus():
+		if is_instance_valid(_level): _level.exit_level()
+		if is_instance_valid(_game): _game.free()
+	await super._finish()

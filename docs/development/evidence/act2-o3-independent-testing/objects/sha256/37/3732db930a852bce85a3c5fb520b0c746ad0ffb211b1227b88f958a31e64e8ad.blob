@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-08",
+  "family": "shared_player_act_presentations",
+  "readiness": "implemented_tested_native_and_shared_portrait_fixtures_authored_act_review_pending",
+  "authoring_sources": [
+    "scripts/pixel_sprite.gd",
+    "scripts/character/player_presentations.gd"
+  ],
+  "provenance": "Original deterministic pixel-cluster artwork authored for Cinder after opening the selected G07/G18 concept images. The references guide silhouette, costume and palette; no reference pixels, concept crops or generated irregular cells are imported. The historical helmeted_lab artwork and its existing exports retain their original provenance.",
+  "api": {
+    "select": "LabSprite.set_presentation(id) -> bool",
+    "current": "LabSprite.presentation_id",
+    "act_mapping": "LabSprite.presentation_for_act(act) -> String",
+    "default": "helmeted_lab",
+    "actor_select": "CinderPlayer.set_presentation(id) -> bool; read-only presentation_id",
+    "preview": "LabSprite.preview_texture(id, loadout) -> Texture2D; null for invalid identity or canonical four-slot gear"
+  },
+  "native_cell_pixels": [
+    48,
+    64
+  ],
+  "foot_pivot_pixels": [
+    24,
+    64
+  ],
+  "sprite_offset_pixels": [
+    0,
+    32
+  ],
+  "pixel_size_world_units": 0.0225,
+  "foot_clearance_world_units": 0.025,
+  "maximum_quad_world_size": [
+    1.08,
+    1.44
+  ],
+  "collision": "The existing scenes/player.tscn capsule is unchanged; artwork is not a collider.",
+  "occlusion": "Nearest-filtered billboard with ordinary world depth and the existing separate floor contact shadow.",
+  "facings": [
+    "front",
+    "back",
+    "left",
+    "right"
+  ],
+  "frame_counts": {
+    "idle": 8,
+    "dash": 6,
+    "landing": 6,
+    "primary": 8,
+    "blast": 8,
+    "hurt": 6
+  },
+  "poses_per_presentation_and_loadout": 168,
+  "animation_clock": "The shared controller retains logical and visual action progress. Only idle breathing retains its existing 1.2 s local simulation loop. Selection rebuilds textures without resetting action/facing/frame/clock. Body pose arrays, weapon poses and exact barrel-tip pixel/world attachment controls are shared with the historical lab renderer.",
+  "equipment": {
+    "slots": [
+      "weapon",
+      "jacket",
+      "pants",
+      "shoes"
+    ],
+    "identity_source": "data/design/player_equipment.json",
+    "implementation": "All 13 currently implemented static IDs retain their canonical identity. Drawn alternatives use reinforced coat shoulders versus stitched seams, trouser pleats versus utility pockets, boot cuff/sole differences and the existing four weapon profiles. Mixed kits use the same attachment and feet conventions.",
+    "headwear_is_equipment": false,
+    "presentation_stat_bonus": false,
+    "new_equipment_types": []
+  },
+  "presentations": [
+    {
+      "id": "helmeted_lab",
+      "act": null,
+      "status": "existing_historical_default_preserved",
+      "source_record": "assets/characters/manifest.json",
+      "silhouette": "Existing round astronaut-like shell, visor, neck seal, protective suit and pack."
+    },
+    {
+      "id": "act1_expedition",
+      "act": 1,
+      "reference_id": "G07",
+      "reference_path": "docs/concept-art/act1/characters/expedition-cast-and-player.png",
+      "reference_sha256": "c3fd7934da3ef53914d304d61d8fd91f310e2fe3e943a17ef615b5b81b4cf751",
+      "inspection": "Opened selected full board: Barbenfouillis expedition and front/side/back pixel studies show broad dark brim and crown, long pale beard/collar, long frock coat, dark boots and the proposed pale umbrella-inspired short blade. Ceremony's pointed hat is a separate study and is not used.",
+      "adaptation": "New smaller human face under a broad stepped brim and crown, directional nose, pale split beard/collar, buttoned waistcoat and flared period-coat tails. All carried gear is translated to neutral grayscale. No helmet shell, visor, life-support pack or chest unit."
+    },
+    {
+      "id": "act2_survivor",
+      "act": 2,
+      "reference_id": "G18",
+      "reference_path": "docs/concept-art/act2/gameplay/01-horsell-common-gameplay.png",
+      "reference_sha256": "6cd7fa272c5068a4e473ba261e9dc78291ef68d7207830196ee337bb82948869",
+      "inspection": "Opened selected portrait: uncovered dark tousled hair, exposed profile, dark long coat with flaring tails, pale diagonal shoulder sash and dark boots, carrying one pale short blade. Scene layout and hostile apparatus remain reference material.",
+      "adaptation": "Uncovered human head with compact tousled dark hair, directional face/ear, tapered dark travel coat, outlined diagonal pale sash, visible cuffs and separate trousers/boots. No astronaut anatomy or new weapon slot."
+    },
+    {
+      "id": "act3_traveller",
+      "act": 3,
+      "reference_id": "G18",
+      "reference_path": "docs/concept-art/act3/gameplay/01-twin-suns-gameplay.png",
+      "reference_sha256": "b73510182167dca61fe15746759101c1d19f668da74a288ac8fc389d50572f96",
+      "inspection": "Opened selected portrait: compact uncovered square dark head/hair, ivory collared travel coat with split tails and darker folds/underlayers, black boots and one short pale blade. White shadows and ray-lane scenery are not extra player mechanics.",
+      "adaptation": "Uncovered short dark hair and human profile above an ivory split travelling coat, dark inner opening, folded collar/lapels, distinct seams and black boot silhouettes. The selected coat supplies the act appearance without changing gear stats."
+    }
+  ],
+  "review": {
+    "source_images_opened": true,
+    "automated_suite": "tests/player_presentation_smoke.gd",
+    "automated_execution": "passed_Godot_4.7.2_73_checks_0_failures",
+    "native_review_sheet": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder Character Lab/player-presentation-review.png; rendered and reviewed by integration",
+    "portrait_gameplay": "Eight 540x1170 shared UI/HUD and fixture captures rendered and reviewed by integration; authored-act encounter/scenery playtesting remains pending.",
+    "campaign_scene_integration": "owned_by_integration; not implied by source artwork",
+    "human_playtesting": "not_performed",
+    "physical_device": "not_tested",
+    "act_poses_checked": 5544,
+    "legal_kits_checked": 11,
+    "historical_default_poses_byte_identical": 168,
+    "capture_paths": [
+      "captures/campaign-title.png",
+      "captures/campaign-journey.png",
+      "captures/campaign-settings.png",
+      "captures/test-campaign-replay.png",
+      "captures/test-shared-preview-paused.png",
+      "captures/test-shared-act1_expedition.png",
+      "captures/test-shared-act2_survivor.png",
+      "captures/test-shared-act3_traveller.png"
+    ]
+  }
+}

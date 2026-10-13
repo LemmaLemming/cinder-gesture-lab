@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/acts/act3/fixtures/garden_mixed_component.gd" id="1"]
+
+[node name="GardenMixedComponent" type="Node3D"]
+script = ExtResource("1")
+level_id = "A3-L4"
+local_snapshot_version = 1
+declared_cell = "echo"
+objective_text = "TEST ONLY / DECLARED MIXED COMPONENT"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 1.25)

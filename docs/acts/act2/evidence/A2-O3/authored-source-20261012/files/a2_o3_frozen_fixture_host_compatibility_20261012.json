@@ -1,0 +1,147 @@
+{
+  "api_revision": "act2-o3-frozen-fixture-host-compatibility-1",
+  "checks": [
+    {
+      "detail": "Both fixtures use actual native actor/Exchange/Lane getters; focused uses public proof getter and Scheduler.get_clock.",
+      "methods": [
+        "get_actor",
+        "get_scheduler",
+        "get_exchange",
+        "get_tool",
+        "get_tool_proof",
+        "floor_bindings",
+        "floor_regions",
+        "encounter_state"
+      ],
+      "result": "SOURCE_COMPATIBLE",
+      "scope": "getters"
+    },
+    {
+      "actor_ids": [
+        "first_scout",
+        "second_handler",
+        "final_scout",
+        "final_handler"
+      ],
+      "detail": "Local tools/views use Handler actor IDs. Public tool/proof getters resolve either actor ID or tool owner ID; fixtures use actor IDs.",
+      "handler_ids": [
+        "second_handler",
+        "final_handler"
+      ],
+      "result": "SOURCE_COMPATIBLE",
+      "scheduler_tool_ids": {
+        "final_handler": "tool_final_handler",
+        "second_handler": "tool_second_handler"
+      },
+      "scope": "actor/tool/view IDs and aliases",
+      "scout_ids": [
+        "first_scout",
+        "final_scout"
+      ]
+    },
+    {
+      "actor_positions": {
+        "final_handler": [
+          0.65,
+          0,
+          -23.5
+        ],
+        "final_scout": [
+          -0.65,
+          0,
+          -21.2
+        ],
+        "first_scout": [
+          -0.65,
+          0,
+          -3
+        ],
+        "second_handler": [
+          0.65,
+          0,
+          -12
+        ]
+      },
+      "checkpoint_id": "bleached-canal-before-final-pocket",
+      "checkpoint_region": [
+        -3.1,
+        -18.9,
+        6.2,
+        1.2
+      ],
+      "completion_id": "bleached-canal-complete",
+      "detail": "Fixture foot setup heights .1/.04 are disclosed TEST placements; X/Z contacts are inside the actual frozen regions. This is a source identity check, not native contact/support proof.",
+      "exit_id": "bleached-canal-return",
+      "exit_region": [
+        -0.65,
+        -26.55,
+        1.3,
+        1.1
+      ],
+      "fixture_contact_xz": {
+        "checkpoint": [
+          0,
+          -18.3
+        ],
+        "exit": [
+          0,
+          -26
+        ]
+      },
+      "result": "SOURCE_COMPATIBLE",
+      "scope": "constants/contact points"
+    },
+    {
+      "detail": "Declared LOCAL_KEYS and actual capture fields match exactly17; all four actor snapshots and two Handler-keyed tool snapshots match fixture access. No schema or proof reconstruction is introduced.",
+      "keys": [
+        "scenic_clock",
+        "profile_id",
+        "world_revision",
+        "stage_index",
+        "defeated_ids",
+        "defeat_times",
+        "pending_defeats",
+        "checkpoint_contact_seen",
+        "checkpoint_requested",
+        "pending_checkpoint",
+        "completion_pending",
+        "exit_requested",
+        "scheduler",
+        "actors",
+        "exchange",
+        "tools",
+        "views"
+      ],
+      "result": "SOURCE_COMPATIBLE",
+      "scope": "local17 capture envelope"
+    }
+  ],
+  "date": "2026-10-12",
+  "engine_jobs": 0,
+  "fixture_edits": 0,
+  "pins": {
+    "focused": {
+      "lines": 548,
+      "path": "/private/tmp/a2_o3_focused_draft_20261012.gd",
+      "sha256": "fe14b8e3a119640560b23a3f01577727efcba664fcf034b40cc4e1dbb28f8962"
+    },
+    "host": {
+      "lines": 1138,
+      "path": "/private/tmp/a2_o3_host_draft_20261012.gd",
+      "sha256": "810ccfd8ab1a58951ea7f53926aa7ba2b689b935d1acf5e8f3019b6a6769a9f1"
+    },
+    "loading": {
+      "lines": 331,
+      "path": "/private/tmp/a2_o3_loading_draft_20261012.gd",
+      "sha256": "eba42be3beebe9ef832e52660379737663145635b7664ce6508fb82100e12f6f"
+    }
+  },
+  "production_writes": 0,
+  "qualifiers": [
+    "Read-only, bounded getters/constants/maps/envelope inspection only.",
+    "Godot parsing/import/runtime/native response/transport/portrait behavior remain unexecuted here.",
+    "No full architecture, campaign, parent-level or all-equipment audit.",
+    "Existing frozen fixtures unchanged; no new human decision required."
+  ],
+  "result": "SOURCE_COMPATIBLE_NO_SEAM_MISMATCH"
+}

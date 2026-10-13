@@ -1,0 +1,9 @@
+# Bleached Canal preparation originals
+
+[Final frozen closure](closure.json) retains eighteen actual preparation files and modes, copied without rewriting their original text. The observed TMP paths describe original preparation. Current copies resolve through each `frozen_relative_path` under this archive. The [source brief](files/a2_o3_source_parent_brief_20261012.md), [API brief](files/a2_o3_api_focused_brief_20261012.md), [owner plan](files/a2_o3_owner_design_preparation_20261012.md), [canonical gate receipt](files/receipt.json) and [primary-text inspection](files/a2_o3_primary_text_inspection_20261012.md) informed the new level.
+
+Preparation preceded formal O2 acceptance. Its original pending-acceptance statements remain historical. [Canonical acceptance](canonical-O2-acceptance.json) now accepts exact dadbf52 and permits O3; actual Shared53 adoption is separately recorded. No source or game check follows from copying these files.
+
+The [first index](files/original-first-index.json) remains incomplete because a live API writer changed its brief after indexing. The [diagnosis](files/first-index-live-writer-diagnosis.json) preserves the old measured hash and explicitly states that old API bytes were not separately frozen. The final closure captures actual current API bytes after the writer terminated with a model-capacity error; no independent peer final seal is claimed. The [original design review](files/a2_o3_design_preparation_review_20261012.md) also carries an old-text/current-hash timing qualification, with a [separate current correction verification](files/a2_o3_design_preparation_correction_verification_20261012.json). These records are unchanged.
+
+Actual owner three-board and peer four-board inspections concern concept pixels only. No O3 parser/import/runtime, geometry/portrait, balance, timing, performance or acceptance result exists at preparation time.

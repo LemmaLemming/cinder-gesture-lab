@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-13T06:29:47.472903+00:00",
+  "reviewer": "/root/o3_registration_review",
+  "policy": "focused-desktop-level-1",
+  "status": "PASS_SOURCE_REVIEW_NATIVE_02_UNREAD_PENDING_ROOT_CLOSURE",
+  "scope": "Independent bounded source review of Root registration leaf and existing committed helpers; immutable Git reads only, no engine/source/worker/registry/index mutations.",
+  "candidate": "90f53bed603b81abc63111263dfb115097d5d9d6",
+  "submitted_six_prefix_seal": "f142bb5152f9733996a91dd1497d4463b7cb5aad",
+  "shared_baseline": "6e5921f70e204120bd1a9ca73756aec51db20617",
+  "refs": [
+    {
+      "path": "tests/act2_o3_registration_smoke.gd",
+      "bytes": 11708,
+      "sha256": "89826799a856dfd85d12eeb1c16d2dcc54fbf2f358e43e05a392b0bfce857cd1",
+      "git_blob": "a6b446c033466d91a27444a7e3162be44f2918f7"
+    },
+    {
+      "path": "tests/acts/act2/a2_o3_loading_side_smoke.gd",
+      "bytes": 38429,
+      "sha256": "f0b7d389d568e43e74359200e498f18d0a309235c270174738f3502bdef1148c",
+      "git_blob": "33d530544778ebe20a3a974c76bf72273b236d19"
+    },
+    {
+      "path": "scripts/campaign/shell.gd",
+      "bytes": 45143,
+      "sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+      "git_blob": "ee07d5ce347b7024745584bd4c8d704e0d47db6e"
+    },
+    {
+      "path": "scripts/campaign/registry.gd",
+      "bytes": 6006,
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "git_blob": "75c10a3f87c1073b1b16c40c121d671756991c4d"
+    },
+    {
+      "path": "data/campaign/registry.json",
+      "bytes": 11625,
+      "sha256": "a9d223b8c5ece08cd41c3b69836b3531031d760f2294edb11b6c76eab1c3b3da",
+      "git_blob": "59374ba3884a69d0020ee8d7d8cf6036ffc67b71"
+    }
+  ],
+  "six_prefixes": [
+    "scenes/acts/act2/",
+    "scripts/acts/act2/",
+    "assets/acts/act2/",
+    "data/campaign/act2/",
+    "tests/acts/act2/",
+    "docs/acts/act2/"
+  ],
+  "six_prefix_delta_from_submitted": "",
+  "shared_shell_equals_baseline": true,
+  "inherited_helper_equals_submitted": true,
+  "reviewed_boundaries": [
+    {
+      "source": "tests/act2_o3_registration_smoke.gd:9",
+      "finding": "Overrides _initialize and _run. Deferred dynamic leaf _run executes once; parent136 suite/order loops/terminal completion are not called."
+    },
+    {
+      "source": "tests/act2_o3_registration_smoke.gd:28",
+      "finding": "Reads actual Registry.DATA_PATH bytes; Registry.new() uses canonical disk. Checks exact submitted commit,24 IDs,parent A2-L4,accepted readiness,scene/API and optional once-only reward policy."
+    },
+    {
+      "source": "tests/act2_o3_registration_smoke.gd:125",
+      "finding": "Overrides _new_shell and calls Shell.configure_runtime({}, isolated user files), so no parent raw-registry injection occurs."
+    },
+    {
+      "source": "tests/acts/act2/a2_o3_loading_side_smoke.gd:303",
+      "finding": "Only prior completed-main PREFIX is TEST history. Actual pristine A2-L5 Player/level/shell whole snapshot is validated by Attempts and SaveStore. This is disclosed representative setup, not earned history."
+    },
+    {
+      "source": "tests/acts/act2/a2_o3_loading_side_smoke.gd:261",
+      "finding": "TEST feet and two10000 public injuries use actor recovery plus stable Hero gate. Checks accepted damage and production defeat callback transaction; no actor/phase/proof/scheduler/encounter/history state setter."
+    },
+    {
+      "source": "tests/act2_o3_registration_smoke.gd:69",
+      "finding": "PreCP Hero21.8 approach is identical to owner original supported loading approach. Eight-frame helper/camera behaviour bounds unchanged; new assertion checks stage2,noCP,zero final cycles. Framing print reads actual values only."
+    },
+    {
+      "source": "tests/act2_o3_registration_smoke.gd:55",
+      "finding": "Native tick advancement, public Pause, old-world destruction and fresh NULL-Player Title precede quiet exact disk Continue. Exact17 local keys and full whole-unit equality are meaningful."
+    },
+    {
+      "source": "tests/act2_o3_registration_smoke.gd:79",
+      "finding": "Retains latest genuine before-final contact checkpoint; verifies stage3,two earlier defeats,zero final cycles and distinction from entrance. Final pocket is not cleared."
+    },
+    {
+      "source": "tests/acts/act2/a2_o3_loading_side_smoke.gd:188",
+      "finding": "Later real routed ScreenTouch first tap checks input sequence,release point,aim direction,world-action sequence and single synchronous ordinary slash. Explicit public lethal Hero injury then makes a different later snapshot."
+    },
+    {
+      "source": "tests/act2_o3_registration_smoke.gd:94",
+      "finding": "Actual GUI Mouse click of enabled RetryButton triggers production operation; exact whole Player/actors/consumers/Scheduler/camera/input/resources checkpoint equality,quiet recipient events and preserved Story/progression/reward state are asserted."
+    },
+    {
+      "source": "tests/acts/act2/a2_o3_loading_side_smoke.gd:348",
+      "finding": "Disposal filtering accepts only known phase/cue/cancel events from nearest nonentered,busy,inside-tree validation candidate or exact expected donor WeakRef. Recipient/gameplay signals remain strict; observed donor flags are asserted."
+    },
+    {
+      "source": "tests/act2_o3_registration_smoke.gd:116",
+      "finding": "Public Leave Side restores exact protected Story with no optional stamp; recursive WeakRefs verify Retry donor,abandoned optional and complete Shell descendants freed through normal disposal; canonical Registry bytes remain exact."
+    }
+  ],
+  "required_source_findings": [],
+  "assignment_attribution": {
+    "observation": "Root integration validation-assignment initially held priorfe894b/995b4f. Root confirmed this is01 assignment, corrected validation-owned assignment before02 and preserves original as assignment-before-focused-fixture-correction.json.02 freeze must attribute90f/898267 explicitly. No live input changed by reviewer.",
+    "native_02_verification": "NOT READ; wait for Root closure."
+  },
+  "closed_prior_evidence": "import-01 and registration-01 delegated for bounded closed-packet review; preserve actual33/1nonclean+fourObjectDB leak failure without relabeling.",
+  "reused_scopes": [
+    "owner136 loading mechanics",
+    "owner104 focused mechanics",
+    "owner247 extremes",
+    "owner164 kit focus",
+    "owner28 single-exit checks",
+    "seven actually inspected original portraits",
+    "independent finalHANDOFF review .cinder/level-testing/act2/o3-final-handoff-review-20261013T060238Z.json"
+  ],
+  "limitations": [
+    "This source review is not native acceptance.",
+    "full playthrough,defeat-all,earned exit and full campaign traversal untested by this leaf",
+    "fully authored art,all legal kits,performance,mobile/export/release remain untested/outside task"
+  ],
+  "writes": [
+    "source-review.json",
+    "source-review.md"
+  ]
+}

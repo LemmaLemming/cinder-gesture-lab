@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+"""Godot executable entry point for the VS Code extension, scoped to this checkout."""
+
+import sys
+from dev import main
+
+raise SystemExit(main(["engine", *sys.argv[1:]]))
