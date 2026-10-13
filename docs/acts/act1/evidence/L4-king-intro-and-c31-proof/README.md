@@ -1,0 +1,21 @@
+# King intro and C31 approach proof originals
+
+Portable exact custody of three closed native jobs at `ffdb2860b02e0401ef1a4110fc618180b2c0041b`, actual Shared50 publication `fc2d1c1776200add9dd1d56e857cbdcc03daac76`. [Exact index and source mappings](index.json) retain commands, original revisions, null fields, raw whitespace and original source-manifest rows. [Verification](verification.json) covers these declared originals and local objects only.
+
+| Job | Native result | Original result | Raw stream | Native report |
+| --- | --- | --- | --- | --- |
+| a1-l4-king-intro-save-01 | 210/0 | [result](objects/sha256/ec/ec57993f78f58c4a6fac32405cfb3344ab30f0ee85d7838f7775615d6ac1884f.blob) | [stream](objects/sha256/b0/b033adda6c4d2fd9801848e11335089c1f9538ee9c3abbe1cfb683fc944e494c.blob) | [report](objects/sha256/5b/5b8d070093b304e50d0f469204f4820d2a09b4537d786368cae97854afef88b4.blob) |
+| a1-l4-king-fallback-01 | 227/0 | [result](objects/sha256/0c/0cea41b2f9d60f9b80b0108097be42c15800b3fe9dc1d1d2f365705ee58bdbe5.blob) | [stream](objects/sha256/1f/1f03970476da05eb097b1209c6b5a765c025b55c8ac53d4127af5808e805f7dc.blob) | [report](objects/sha256/fc/fc572403d56896ad72d2385e127c6d5faa5a1b1318d7dd5458c42cd64c24c72d.blob) |
+| a1-c31-approach-01 | 135/0 (later exact join; original counters null) | [result](objects/sha256/30/30a34dca8add385ef29eb4464d9838ed2b3683a459abb41d525ff24e3db6f914.blob) | [stream](objects/sha256/46/46008b3d24858b706f2f25bdff0aeb579bbfa20a23aabf0e4caaad53f7744c84.blob) | [report](objects/sha256/9f/9fd2296e99fe15d6b442a093de9d64bc78b86252df3dc28fa4c8e632d7f0a5bb.blob) |
+
+The C31 [original report join](objects/sha256/71/715396764c3c19759a4affceb1001dd1e6d718311f954d5b68e6f2d8fc3d0dc6.blob) independently links the literal null-counter result, exact raw stream and original report. Its135/0 is recorded separately as derived evidence; no original metadata field was backfilled.
+
+- **a1-l4-king-intro-save-01:** Representative aggregate2 King finite intro transport: genuine moving source/public deferred Pause/direct quiet fresh candidate/donor close/fresh Title Continue/GUI Resume/original endpoint and record/action history/earlier boss-entry Retry. Generic predecessor metadata, initial injured/zero-ammo resources, public prior-guard injuries and Hero placement are TEST setup. No earned route or production registration.
+- **a1-l4-king-fallback-01:** One B01/Standard neutral component: two genuine recognizer swipes and one ordinary primary, paired warning/unfinished-active transport and fallback lifecycle/callback/retained-body checks, with a separately labelled public lethal injury. No whole-L4, intro, helpers, natural boss defeat or campaign-save proof.
+- **a1-c31-approach-01:** Six separate approach-enabled C31 component worlds: first-provider success plus transaction-rejected ordinary damage; first denial then approved native braking; denied second observer; empty-return public pause, actual capsule mutation and actual field mutation reject before motion. Six genuine swipes/zero primaries, same native tick/body/field/original parent observer; resources restored before normal disposal. No C32, spore release/depletion, full route or performance claim.
+
+All three complete raw logs contain zero ERROR/WARNING/ScriptError lines. Metadata records no post-run frozen-member changes and427 prior UID entries with no changed/new UID; packaging verifies the declared source copies, rather than recomputing a global UID inventory.
+
+No native portraits were produced by these headless scopes. Static PNG/texture/import-cache bytes may be among frozen inputs; their inclusion proves custody rather than optical review. No full route, full campaign, legal-kit/profile matrix, natural King defeat, final art, balance, timing improvement or performance measurement is inferred. TEST predecessor registration/resources/prior actor injuries and Hero placement remain disclosed in the original reports.
+
+Every source row maps its original path/SHA256/byte count/mode to a self-contained inert content object. Unchanged byte content is stored once. No current source, later UID, closure or previous evidence is substituted; original manifests and logs are byte-identical. Godot ignores this packet and blobs have no executable source extension.

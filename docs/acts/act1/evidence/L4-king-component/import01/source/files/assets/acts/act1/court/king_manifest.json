@@ -1,0 +1,196 @@
+{
+  "schema": 1,
+  "path_base": "repository-root",
+  "entity_id": "B01",
+  "gameplay_alias": "A1-B1",
+  "asset_id": "act1-selenite-king-native-costume",
+  "first_level": "A1-L4",
+  "authoring_date": "2026-10-12",
+  "reuse_family": "act1-selenite-royal-theatre",
+  "readiness": {
+    "status": "AUTHORED_UNEXECUTED",
+    "scope": "New original code-authored shallow-mesh presentation only. No Godot parse/import, UID, native actor integration, rendering, gameplay, save or portrait acceptance by this author.",
+    "static_validation": "JSON, referenced bytes and source consistency; numeric-only nominal envelope inspection. This is not native triangulation/resource/tree validation.",
+    "remaining": "Owner imports/parses, integrates the actual B01 actor, runs directly affected native custody/framing checks and brief actual portraits."
+  },
+  "source": {
+    "path": "scripts/acts/act1/selenite_king_art.gd",
+    "sha256": "fd835d6bbda3c98a3be9fb8618599797b5511be35d0e47aa5caf94ddad29d1e2",
+    "bytes": 21955,
+    "authorship": "Original hand-authored native stepped polygons, grayscale ribs/robe/crown/sceptre. No raster generation, concept pixel extraction/tracing, new image generation or C32 pixel reuse."
+  },
+  "references": [
+    {
+      "path": "docs/concept-art/act1/bosses/01-selenite-king.png",
+      "sha256": "c9fd452ab3dffc2725fb3c9952250a20e215e1e7534e7260ed89532dba95d46b",
+      "bytes": 3020311,
+      "id": "G21",
+      "personally_viewed": true,
+      "kind": "generated game adaptation board",
+      "contribution": "Compact star crown, masked royal figure, broad sleeves/split robe, rib bands, star sceptre and theatrical broad gestures. Attack/formation diagrams are game proposals, not measured animation or collision."
+    },
+    {
+      "path": "docs/concept-art/act1/characters/selenite-costumes-and-roles.png",
+      "sha256": "f1545c30c57809aff0c65d29247c171999e983802571fa6289066f3bdad123f5",
+      "bytes": 2012306,
+      "id": "G10",
+      "personally_viewed": true,
+      "kind": "generated costume/role board",
+      "contribution": "Upright masked anatomy, pale torso ribs, projecting headpiece, side/back facing cues and royal robe vocabulary."
+    },
+    {
+      "path": "docs/reference-library/act1/film-stills/f10.jpg",
+      "sha256": "2af0136f438c066455ea39d766caa3fcb0c6b68e1954e731d19014af71a28c06",
+      "bytes": 55260,
+      "id": "F10",
+      "personally_viewed": true,
+      "kind": "1902 black-and-white film frame",
+      "contribution": "Broad theatre staging, upright banded cast and royal area to one side; fine mask/crown details and combat timing cannot be established from this still."
+    }
+  ],
+  "source_rules": [
+    "docs/ACT1_CONCEPT.md",
+    "docs/GAME_STYLE_GUIDELINES.md",
+    "docs/PLAYER_EQUIPMENT_GUIDELINES.md",
+    "data/design/player_equipment.json",
+    "docs/ASSET_REUSE_GUIDE.md",
+    "docs/reference-library/act1/STYLE_GUIDE.md",
+    "docs/concept-art/act1/ADAPTATION_NOTES.md"
+  ],
+  "reused_patterns": [
+    {
+      "path": "scripts/acts/act1/mushroom_selenite_art.gd",
+      "sha256": "7c16b1a7c62e74445837a0f474b8ecd01a3db1cca6beb2e0283c6dc7b0447b10",
+      "bytes": 13314,
+      "scope": "Closed native phase/facing selection and clockless identity feet-frame convention only; this King leaf does not load, invoke or change that C31/C32 leaf or its textures."
+    },
+    {
+      "path": "scripts/acts/act1/selenite_court_art.gd",
+      "sha256": "5e87345619d40ae4ff038bfb0a646164ef818df8f5ba4980005ce10da9c694ad",
+      "bytes": 27605,
+      "scope": "Original coarse native triangle construction and exact material/mesh/tree retention pattern; no runtime dependency or scenery mutation."
+    }
+  ],
+  "native_frame": {
+    "logical_grid": [
+      80,
+      96
+    ],
+    "grid_is_not_a_raster": "Logical drafting coordinates converted to native triangle vertices; no sprite sheet or PNG is created.",
+    "units_per_logical_pixel": 0.022,
+    "feet_pivot_grid": [
+      40,
+      96
+    ],
+    "local_feet_origin": [
+      0,
+      0,
+      0
+    ],
+    "full_reserve": {
+      "position": [
+        -0.88,
+        0,
+        -0.022
+      ],
+      "size": [
+        1.76,
+        2.112,
+        0.044
+      ]
+    },
+    "authored_layer_depth_range": [
+      0,
+      0.018
+    ],
+    "nominal_points_checked": "All 21 authored pose source point sets lie within logical X[0,80], Y[0,96] and the depth reserve; native ArrayMesh triangulation/AABBs remain unexecuted.",
+    "pose_foot_treatment": "Both boots remain exposed with their bottom at logical Y96. The split robe stops above them; no collision, root translation or foot-pivot changes are implied."
+  },
+  "appearance": {
+    "silhouette": "Compact projecting royal star crown, masked face, pale chevron ribs, broad dark split robe and gathered sleeves, short star sceptre, crescent/star embroidery and two separated planted feet.",
+    "front": "Pale mask with dark eye band/bright eye points and frontal chevron ribs.",
+    "side": "Nose/chin profile and single eye, narrower crown/robe plane, forward open hand; only this authored facing supports horizontal reflection.",
+    "back": "Dark rear mask without frontal eyes, rear spine/rib treatment and the same royal garment family.",
+    "palette_tones_0_to_255": [
+      20,
+      39,
+      67,
+      105,
+      147,
+      193,
+      231
+    ],
+    "palette_encoding": "Grayscale native vertex Color scalars tone/255, opacity1. Actual renderer/value appearance is not established statically.",
+    "states": {
+      "idle": "Quiet planted royal stance with short sceptre.",
+      "warning": "Raised open hand and lifted sceptre; no private anticipation clock.",
+      "lock": "Compact held arm/sceptre pose, both feet planted; native Cue owns lock meaning/timing.",
+      "active": "Forward hand/body lean selected only during the actual native active phase; art adds no travel or damage.",
+      "recovery": "Lowered head/body/sceptre and readable feet; no recovery duration defined here.",
+      "summon": "Broad open royal gesture; creates no guard, signal or replacement wave.",
+      "defeat": "Lowered royal pose without gore; native actor owns death, collider retirement and inherited hiding."
+    }
+  },
+  "api": {
+    "constructor": "_init() builds KingArt/PoseCarrier and 21 independent authored ArrayMesh resources before attachment.",
+    "set_pose": "set_pose(phase: String, world_facing: Vector3, camera: Camera3D) -> void",
+    "phase_input": "Closed idle/warning/lock/active/recovery/summon/defeat; clear maps to idle.",
+    "facing_input": "Actual finite nonzero world X/Z facing, selected relative to actual native camera forward/right axes; front/side/back, side-only reflection.",
+    "pure_guard": "binding_error() -> String; empty means retained bindings, nonempty means fail closed without repair.",
+    "pure_bounds": "world_corners(camera: Camera3D) -> Array; eight complete reserved-frame world corners plus eight actual AABB corners for each locally selected mesh (normally16); invalid or unmatched/unbound camera returns [Vector3.INF].",
+    "inspection": [
+      "pose_name() -> String",
+      "facing_name() -> String"
+    ],
+    "initial_camera_absent": "Keep the original front idle and identity PoseCarrier without a private camera. Tree/resource binding can remain valid; world_corners refuses framing until the real viewport camera has been supplied."
+  },
+  "tree": {
+    "owner": "Actual native identity KingPresentation Node3D, itself under the retained actual actor. No actor or KingPresentation rotation is performed.",
+    "root": "KingPresentation/KingArt",
+    "carrier": "KingPresentation/KingArt/PoseCarrier",
+    "mesh_name_rule": "FrontIdle, FrontWarning, FrontLock, FrontActive, FrontRecovery, FrontSummon, FrontDefeat; corresponding Side and Back names.",
+    "authored_mesh_count": 21,
+    "visibility": "One local pose mesh visible. Local root/carrier visibility remains true and guarded. Inherited hiding from the native actor/KingPresentation is valid for dormant/dead snapshots; the actor lifecycle guard owns rejection of a hidden living source.",
+    "processing": "Root/carrier/meshes PROCESS_MODE_DISABLED, no process or physics callbacks.",
+    "retention": "Authored tree/resources/settings are retained off-tree before attachment notifications. First actual owner/world/basis identities are latched once in native _enter_tree; reattachment cannot learn a new owner."
+  },
+  "camera_and_bounds": {
+    "frame": "PoseCarrier local basis = KingArt actual global basis inverse × actual native camera global basis, read back from native transform after the supported pose setter. Root/KingPresentation feet frames remain identity.",
+    "camera_identity": "Exact live native current camera of the same actual viewport/world; no script or proxy camera.",
+    "projection_retention": "Exact native projection matrix, projection mode, size, fov, keep_aspect, near/far, frustum offset, h/v offsets and viewport identity retained from first valid pose.",
+    "basis_retention": "Actual camera basis and supported PoseCarrier local/global basis retained; actual actor translation remains native movement, not a cosmetic offset.",
+    "full_bounds": "Complete 80×96 reserve including blank margins/depth plus all current actual mesh AABBs; no opaque-pixel crop, narrowed proxy, pose-distance filter or private camera policy.",
+    "collision": "None. Parent uses its actual native collision capsule and shared Motion/Geometry proofs, separately from the full costume bounds.",
+    "cue_role": "None. Parent/shared native Cue remains sole lane, countdown, active footprint and reachable-landing authority."
+  },
+  "native_material": {
+    "type": "Per-leaf StandardMaterial3D shared only by this leaf’s pose meshes",
+    "shading": "UNSHADED",
+    "vertex_color_use_as_albedo": true,
+    "albedo_color": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "texture": "none",
+    "texture_filter": "NEAREST",
+    "cull_mode": "DISABLED",
+    "billboard_mode": "DISABLED; actual PoseCarrier supplies the camera basis",
+    "transparency": "opaque native triangles; unused background has no geometry",
+    "no_depth_test": false,
+    "render_priority": 0,
+    "cast_shadow": "OFF",
+    "overlays_next_pass_shader": "none",
+    "custody": "Exact resource identities, full native STORAGE-property bytes, all surface arrays/AABBs, node renderer readbacks and surface override absence. Equivalent substitutions fail even when appearance matches."
+  },
+  "authority_limits": "No CharacterBody, collider, Cue, HUD, controller, camera creation, timers, tweens, cosmetic clocks, signals, effects, HP/stat/weapon/loadout/timing/recovery changes, snapshot codec or progression. Native B01 parent chooses all phases, motion, dormancy/death and helper state. No King combat/full-L4/save/transition/portrait/performance acceptance is supplied by this record.",
+  "next_direct_checks": [
+    "Owner-run native parse/import and actual B01 attachment under KingPresentation.",
+    "Pure native tree/resource/material/hide/detach/substitution/bounds negatives; equivalent material/mesh objects rejected, original restoration leaves native HP/clock/cue/events unchanged.",
+    "Initial camera-absent idle; subsequent real camera binding; camera mismatch/projection/basis invalidation; supported front/side/back pose selection and side reflection.",
+    "Dormant/dead inherited hiding remains codec-valid; locally hidden/detached art remains invalid.",
+    "Brief actual warning/lock/active/recovery/summon/defeat views with complete crown/sceptre/mask/feet, Hero, actual native footprint and safe landing; record overlap honestly."
+  ],
+  "known_limits": "Unparsed/unimported/unrendered at author freeze. Static nominal envelope inspection does not prove native triangulation, projection fit, silhouette readability, facing coverage, equipment compatibility, collision suitability, ordinary attack viability, campaign wire fidelity or human balance. Legacy accepted actor/scenery assets and evidence remain untouched."
+}
