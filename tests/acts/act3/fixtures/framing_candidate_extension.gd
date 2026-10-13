@@ -141,3 +141,7 @@ func check(ok: bool, label: String, reason: String = "") -> bool:
 	return ok
 func result() -> Dictionary:
 	return {"accepted": failures.is_empty(), "checks": checks, "failures": failures.duplicate(), "scope": "real framing current-unit optics/transport only; no full route/art/campaign acceptance"}
+
+static func same(left: Variant, right: Variant) -> bool:
+	var wire: String = Exact.stringify(left)
+	return not wire.is_empty() and wire == Exact.stringify(right)

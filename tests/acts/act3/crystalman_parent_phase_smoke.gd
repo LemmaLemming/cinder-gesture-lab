@@ -5,6 +5,7 @@ extends "res://tests/acts/act3/crystalman_two_slot_rule_room_smoke.gd"
 ## spent successor boundaries below are genuine routed input/native physics.
 ## Reuses exact accepted mechanics helper, never rewrites Hero pose/resources,
 ## extends a deadline, waits original recovery for progression, or filters owner.
+const FramingChecks = preload("res://tests/acts/act3/fixtures/framing_candidate_extension.gd")
 const PARENT_ROOM: String="res://tests/acts/act3/fixtures/crystalman_declared_2.tscn"
 var _outer: CinderLevel
 var _phase_capacity: int=1
@@ -12,6 +13,11 @@ var _phase_ids: Array[int]=[]
 var _cold_candidate: SubViewport
 var _quiet_count: int=0
 var _phase_actor_origin: float=0.0
+var _framing_observer: Node
+var _framing_pause_seen: bool=false
+var _framing_results: Dictionary={1:{"verified":false,"status":"not_reached"},2:{"verified":false,"status":"not_reached"}}
+var _framing_inspected: Dictionary={1:false,2:false}
+const FRAMING_OBSERVATION_PROCESS_LIMIT: int=60
 
 func _room_path() -> String: return PARENT_ROOM
 func _expected_capture_slots() -> int: return _phase_capacity
@@ -36,6 +42,7 @@ func _run() -> void:
 			_expect(route.stage==4 and route.phase_metadata.size()==2 and route.phase_metadata[0].capacity==1 and route.phase_metadata[1].capacity==2 and not is_instance_valid(_outer.get("current_unit")) and route.exit_state=="available","Both genuine local releases retain only exact closed phase receipts and expose plain contact")
 			await _sample_parent("bare-after-two-genuine-releases")
 	await _close_parent()
+	print("READONLY REAL FRAMING RESULTS "+var_to_str(_framing_results))
 	print("Crystalman full-parent phase candidate: %d checks/%d failures/%d native ticks. Three earlier regular deaths were DECLARED TEST setup; no full-route/art acceptance."%[_checks,_failures,_ticks])
 	quit(0 if _failures==0 else 1)
 
@@ -93,7 +100,7 @@ func _pause_resume(label: String) -> bool:
 	var before: Dictionary=_hero.snapshot_state()
 	var input: String=var_to_bytes(_game.call("get_input_observation_state")).hex_encode()
 	_touch(button.get_global_rect().get_center(),91)
-	return _expect(not paused and _wire_exact(before,_hero.snapshot_state()) and input==var_to_bytes(_game.call("get_input_observation_state")).hex_encode(),"Actual Resume is consumed without native gameplay action/clock")
+	return _expect(_resumed_actor_exact(before) and input==var_to_bytes(_game.call("get_input_observation_state")).hex_encode(),"Actual Resume is consumed without native gameplay action/clock")
 
 func _complete_response_dash(sequence_before: int,deadline: float) -> bool:
 	# Only this fixture comparison changes: production clocks/timelines remain
@@ -134,7 +141,18 @@ func _sever_with_real_primary() -> bool:
 	# Snapshot immediately while the genuine original Player commitment can
 	# remain live. Fresh current phase2 Gate may be configured generation0,
 	# never forced armed/rewound or coupled to old recovery expiry.
-	if not await _sample_parent("immediate-successor-%d"%wanted): return false
+	if wanted==4:
+		# The newly revealed shore marker changes the camera union. Observe
+		# ordinary follow before requiring an optical whole-parent snapshot.
+		for frame: int in range(30):
+			var view_error: String=_outer.call("candidate_presentation_error",_game.get("camera"),_game.get("hud"))
+			if view_error.is_empty(): break
+			var union: Dictionary=_outer.call("parent_framing_union",_game.get("camera"))
+			var plan: Dictionary=_game.call("camera_framing_plan",union.points,_hero.global_position+Vector3.UP*0.75)
+			if not _expect(plan.get("accepted",false),"New bare shore union permits ordinary fixed-camera follow",str(plan)): return false
+			if not await _tick(): return false
+		if not _expect(String(_outer.call("candidate_presentation_error",_game.get("camera"),_game.get("hud"))).is_empty(),"Ordinary camera reaches the newly revealed shore before optical save"): return false
+	if not await _sample_parent("successor-%d-after-current-view"%wanted): return false
 	var resume: Button=_find_resume(_game.get("hud"))
 	if not _expect(resume!=null,"Actual immediate successor Resume exists"): return false
 	_touch(resume.get_global_rect().get_center(),91)
@@ -184,9 +202,15 @@ func _sample_parent(label: String) -> bool:
 
 func _close_parent() -> void:
 	paused=true
+	_drop_framing_observer()
 	if is_instance_valid(_cold_candidate): _cold_candidate.queue_free()
+	var child_refs: Array[WeakRef]=[]
+	for node: Node in [_room,_scheduler,_gate]:
+		if is_instance_valid(node): child_refs.append(weakref(node))
 	if is_instance_valid(_outer): _outer.exit_level()
+	_room=null; _scheduler=null; _gate=null
 	await super._close()
+	_expect(child_refs.all(func(ref: WeakRef) -> bool: return ref.get_ref()==null),"Original parent-owned child, Scheduler and Gate are disposed")
 	_outer=null
 
 func _watch_quiet(node: Node) -> void:
@@ -199,3 +223,105 @@ func _quiet0() -> void: _quiet_count+=1
 func _quiet1(_a: Variant) -> void: _quiet_count+=1
 func _quiet2(_a: Variant,_b: Variant) -> void: _quiet_count+=1
 func _quiet3(_a: Variant,_b: Variant,_c: Variant) -> void: _quiet_count+=1
+
+
+## Ordinary _tick above stays byte-for-byte unchanged. This separate observer
+## wait is entered only AFTER its successful real post-actor/deferred boundary
+## has actually revealed framing. No intentional Pause is hidden as a tick pass.
+func _wait_phase(wanted: String, limit: int) -> bool:
+	if wanted != "warning": return await super._wait_phase(wanted, limit)
+	for _i: int in range(limit):
+		var actual: String=String(_room.call("state").phase)
+		if actual == wanted:
+			if not _framing_inspected[_phase_capacity]:
+				_framing_results[_phase_capacity]={"verified":false,"status":"ordinary_route_entered_warning_without_observed_framing"}
+				print("READONLY FRAMING UNVERIFIED capacity%d: normal routed recording entered warning directly; no positive framing snapshot/candidate claim."%_phase_capacity)
+			return true # Existing ordinary warning wait succeeded, not framing.
+		if actual == "framing" and not _framing_inspected[_phase_capacity]:
+			if not await _inspect_real_framing(): return false
+			continue
+		if not await _tick(): return false
+	return _expect(false,"bounded native phase reaches "+wanted,str(_room.call("state")))
+
+func _inspect_real_framing() -> bool:
+	_framing_inspected[_phase_capacity]=true
+	if not _expect(not paused and String(_room.get("phase"))=="framing" and not is_instance_valid(_room.get("playback")),"Actual current unadmitted framing boundary precedes test observer"): return false
+	var original_unit: int=_room.get_instance_id()
+	var input_before: PackedByteArray=var_to_bytes(_game.call("get_input_observation_state"))
+	var latest_before: int=_latest_sequence()
+	_framing_pause_seen=false
+	_drop_framing_observer()
+	_framing_observer=FramingChecks.FramingPauseObserver.new()
+	_framing_observer.set("game",_game)
+	_framing_observer.set("unit",_room)
+	_framing_observer.set("armed",true)
+	_framing_observer.connect("observed",_on_real_framing_pause)
+	root.add_child(_framing_observer)
+	var observed: bool=false
+	for _frame: int in range(FRAMING_OBSERVATION_PROCESS_LIMIT):
+		await process_frame # Normal shared camera/physics; no test camera fit/pose.
+		if not _expect(_framing_native_invariants(original_unit) and input_before==var_to_bytes(_game.call("get_input_observation_state")) and latest_before==_latest_sequence(),"Real framing observation keeps actual Hero/gear/floor/source/input/action history"): _drop_framing_observer(); return false
+		if _framing_pause_seen:
+			observed=true
+			break
+		if paused:
+			# Existing observer sets armed=false BEFORE its public Pause and queues
+			# observed afterward. That concrete request marker distinguishes its
+			# synchronous Pause from unrelated focus/UI pauses while unwinding.
+			if not bool(_framing_observer.get("armed")):
+				await process_frame
+				if _framing_pause_seen:
+					observed=true
+					break
+			_drop_framing_observer()
+			return _expect(false,"Unexpected Pause or missing deferred observer notification is not a fitted framing observation")
+		if String(_room.get("phase")) != "framing":
+			var next: String=String(_room.get("phase"))
+			_drop_framing_observer()
+			if next != "warning": return _expect(false,"Unadmitted framing advances only to the ordinary warning within this real-route case",next)
+			_framing_results[_phase_capacity]={"verified":false,"status":"normal_warning_before_fitted_framing_observer"}
+			print("READONLY FRAMING UNVERIFIED capacity%d: genuine framing seen, but normal admission preceded an observed fitted Pause; no framing candidate claim."%_phase_capacity)
+			return true
+	_drop_framing_observer()
+	if not observed:
+		_framing_results[_phase_capacity]={"verified":false,"status":"actual_framing_observation_timeout"}
+		return _expect(false,"Bounded actual current framing reaches fitted portrait or ordinary warning; no forced fit")
+	# Signal was deferred; one further paused process boundary unwinds observer,
+	# UI and owned callbacks before the extension's public Gate synchronize.
+	await process_frame
+	if not _expect(paused and String(_room.get("phase"))=="framing" and _framing_native_invariants(original_unit),"Real public Pause retains the actual fitted framing recipient after unwind"): return false
+	var report: Dictionary=await FramingChecks.new().run(_outer,_hero,_game,_phase_capacity)
+	_checks+=int(report.checks)-report.failures.size()
+	for failure: String in report.failures: _expect(false,"Actual framing candidate extension",failure)
+	_framing_results[_phase_capacity]={"verified":bool(report.accepted),"status":"actual_framing_candidate_checked","checks":int(report.checks),"failures":report.failures.duplicate()}
+	if not report.accepted: return false
+	# Actual public Resume is consumed. No action record, aim/input publication,
+	# Actor pose/clock, history, source, proof, floor or deadline is rewritten.
+	var actor_before: Dictionary=_hero.snapshot_state()
+	var resume_input: PackedByteArray=var_to_bytes(_game.call("get_input_observation_state"))
+	var resume: Button=_find_resume(_game.get("hud"))
+	if not _expect(resume!=null and resume.is_visible_in_tree(),"Actual framing Resume is visible"): return false
+	_touch(resume.get_global_rect().get_center(),94)
+	return _expect(_resumed_actor_exact(actor_before) and resume_input==var_to_bytes(_game.call("get_input_observation_state")),"Actual framing Resume consumes tap without native action/clock or input publication")
+
+func _on_real_framing_pause() -> void:
+	_framing_pause_seen=true # Deferred observation flag only; no snapshot in callback.
+
+func _drop_framing_observer() -> void:
+	if is_instance_valid(_framing_observer):
+		_framing_observer.set("armed",false)
+		_framing_observer.free()
+	_framing_observer=null
+
+func _framing_native_invariants(unit_id: int) -> bool:
+	if not is_instance_valid(_room) or _room.get_instance_id()!=unit_id or _outer.get("current_unit")!=_room or not is_instance_valid(_floor_collision): return false
+	return not _hero.dead and _hero.hp==_hp and _hero.equipment.snapshot()==_kit and not _blast_seen and _floor_collision.global_transform==_floor_transform and (_floor_collision.shape as BoxShape3D).size==_floor_size and String(_outer.get("last_configuration_error")).is_empty()
+
+func _resumed_actor_exact(before: Dictionary) -> bool:
+	if paused: return false
+	# Player snapshots require Pause. Observe synchronously without a frame,
+	# action or clock advance, then restore the actual resumed state.
+	paused=true
+	var after: Dictionary=_hero.snapshot_state()
+	paused=false
+	return _wire_exact(before,after)

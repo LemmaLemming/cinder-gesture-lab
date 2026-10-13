@@ -18,7 +18,11 @@ func _on_enter_level() -> void:
 		var ids: Array=[1] if capacity==1 else [1,2]
 		_phase_metadata.append({"accepted":true,"reason":"","phase_id":"capture-one" if capacity==1 else "capture-two","capacity":capacity,"generation":1,"sequence_id":"crystalman-rule/sequence-1","completed_at_actor_s":0.0,"completed_at_unit_s":0.0,"retirement_slot_ids":ids,"retirement_sha256":"0".repeat(64),"sequence_sha256":"0".repeat(64),"projection_sha256":"0".repeat(64),"delivered_attack_count":capacity,"tether_hits":1,"disposition":"whole_unit_disposal"})
 	for index: int in range(test_stage+1): _record_entry(index)
-	if test_stage<4: _install_capture(test_stage-1)
+	if test_stage<4:
+		var prior_pause: bool=get_tree().paused
+		get_tree().paused=true # Same fresh construction boundary as production succession.
+		_install_capture(test_stage-1)
+		get_tree().paused=prior_pause
 	else: _exit_state="available"
 	if not scenery.call("present_stage",test_stage): _fail("Declared TEST scenery recipient declined")
 	_update_presentation()

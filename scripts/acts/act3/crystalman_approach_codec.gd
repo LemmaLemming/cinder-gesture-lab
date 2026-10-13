@@ -164,11 +164,11 @@ static func echo_ids(stage: int) -> Array:
 	return [IDS[0]] if stage == 1 else [IDS[0],IDS[2]]
 
 static func native_world(parent) -> Dictionary:
-	var floor: Dictionary = Footprint.floor_signature(parent.get_parent() as Node3D,parent.floor_regions())
-	return {"encounter_id":parent.ENCOUNTER_ID,"profile_id":parent.threat_scheduler.encounter_profile().get("id",""),"world_revision":1,"collision_fingerprint":parent.threat_scheduler.pure_collision_fingerprint(parent.get_parent() as Node3D),"floor_signature":floor.get("signature",[])}
+	var floor: Dictionary = Footprint.floor_signature(parent.actual_world_root(),parent.floor_regions())
+	return {"encounter_id":parent.ENCOUNTER_ID,"profile_id":parent.threat_scheduler.encounter_profile().get("id",""),"world_revision":1,"collision_fingerprint":parent.threat_scheduler.pure_collision_fingerprint(parent.actual_world_root()),"floor_signature":floor.get("signature",[])}
 
 static func echo_context(world: Dictionary,parent,id: String,generation: int) -> Dictionary:
-	return {"world_root":parent.get_parent() as Node3D,"source_id":id,"source_epoch":String(parent._rows[id].source_epoch_recipe),"generation":generation,"world_collision_fingerprint":world.collision_fingerprint.duplicate(true),"world_floor_signature":world.floor_signature.duplicate(true)}
+	return {"world_root":parent.actual_world_root(),"source_id":id,"source_epoch":String(parent._rows[id].source_epoch_recipe),"generation":generation,"world_collision_fingerprint":world.collision_fingerprint.duplicate(true),"world_floor_signature":world.floor_signature.duplicate(true)}
 
 static func same(left: Variant,right: Variant) -> bool:
 	var wire: String = Exact.stringify(left)

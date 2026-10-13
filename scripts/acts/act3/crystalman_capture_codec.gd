@@ -200,7 +200,7 @@ func owned_error(unit: Dictionary, parent, player: Dictionary) -> String:
 		if o.sequence.get("sequence_id") != "crystalman-rule/sequence-" + str(o.generation) or not same(o.sequence.get("authored"), authored(unit.configuration.capacity)): return "Original immutable sequence recipe required"
 		if o.phase == "framing" and (not same(o.sequence.capture_snapshot.get("slots"), cap.get("slots")) or not same(o.sequence.capture_snapshot.get("generation"), cap.get("generation"))): return "Historical exact sealed slots/generation must match current Gate; capture clock may advance"
 		# Authenticate full original mesh/floor bytes before ANY membership helper.
-		var error: String = Footprint.projection_error(o.projection, parent.threat_scheduler, o.sequence, parent.get_parent() as Node3D, parent.floor_regions(), o.capture_context)
+		var error: String = Footprint.projection_error(o.projection, parent.threat_scheduler, o.sequence, parent.actual_world_root(), parent.floor_regions(), o.capture_context)
 		if not error.is_empty(): return "Original projection before view joins: " + error
 		error = proof_error(o.proof, unit)
 		if not error.is_empty(): return error
@@ -325,8 +325,8 @@ static func decode_exchange(exchange: Dictionary, owner: Node3D, actor: CinderPl
 	return result
 
 static func native_world(parent) -> Dictionary:
-	var floor: Dictionary = Footprint.floor_signature(parent.get_parent() as Node3D, parent.floor_regions())
-	return {"profile_id": parent.threat_scheduler.encounter_profile().get("id", ""), "encounter_id": parent.ENCOUNTER_ID, "world_revision": 1, "collision_fingerprint": parent.threat_scheduler.pure_collision_fingerprint(parent.get_parent() as Node3D), "floor_signature": floor.get("signature", [])}
+	var floor: Dictionary = Footprint.floor_signature(parent.actual_world_root(), parent.floor_regions())
+	return {"profile_id": parent.threat_scheduler.encounter_profile().get("id", ""), "encounter_id": parent.ENCOUNTER_ID, "world_revision": 1, "collision_fingerprint": parent.threat_scheduler.pure_collision_fingerprint(parent.actual_world_root()), "floor_signature": floor.get("signature", [])}
 
 func live_presentation_error(parent) -> String:
 	if not is_instance_valid(parent.shared_shell): return "Actual shared native view required"

@@ -340,11 +340,11 @@ func _arm_at_barrier() -> void:
 		last_configuration_error = capture_gate.last_error
 		return
 	_generation = int(capture_gate.state().capture.generation)
-	var floors: Dictionary = Footprint.floor_signature(get_parent() as Node3D, [_floor])
+	var floors: Dictionary = Footprint.floor_signature(actual_world_root(), [_floor])
 	if not floors.get("accepted", false):
 		_reject_at_barrier(String(floors.get("reason", "Unsupported floor")))
 		return
-	_capture_context = {"source_epoch": _capture_epoch, "generation": _generation, "capture_collision_fingerprint": threat_scheduler.pure_collision_fingerprint(get_parent() as Node3D), "capture_floor_signature": floors.signature}
+	_capture_context = {"source_epoch": _capture_epoch, "generation": _generation, "capture_collision_fingerprint": threat_scheduler.pure_collision_fingerprint(actual_world_root()), "capture_floor_signature": floors.signature}
 	_rejection_marker.visible = false
 	_position_slot_markers_for_capture()
 	phase = "recording"
@@ -377,7 +377,7 @@ func _join_at_barrier() -> void:
 	_sequence = proposed.duplicate(true)
 	_native_sequence = reader.state()
 	_position_slot_markers_for_sequence()
-	_projection = Footprint.plan(threat_scheduler, proposed, get_parent() as Node3D, [_floor], _capture_context)
+	_projection = Footprint.plan(threat_scheduler, proposed, actual_world_root(), [_floor], _capture_context)
 	if not _projection.get("accepted", false):
 		_reject_at_barrier(String(_projection.get("reason", "Projection rejected")))
 		return
@@ -475,8 +475,12 @@ func _join_at_barrier() -> void:
 	recording_joined.emit(_join_receipt.duplicate(true))
 
 
+func actual_world_root() -> Node3D:
+	# Keep physical floor custody in the outer level and query the common Hero world.
+	return _external_parent.get_parent() as Node3D if is_instance_valid(_external_parent) else null
+
 func scheduler_context() -> Dictionary:
-	return {"world_root": get_parent() as Node3D, "source_epoch": _capture_epoch, "generation": _generation, "capture_collision_fingerprint": _capture_context.capture_collision_fingerprint}
+	return {"world_root": actual_world_root(), "source_epoch": _capture_epoch, "generation": _generation, "capture_collision_fingerprint": _capture_context.capture_collision_fingerprint}
 
 
 func combat_response() -> Dictionary:
@@ -722,7 +726,7 @@ func floor_regions() -> Array:
 
 func scheduler_bindings() -> Dictionary:
 	var owners: Dictionary = {"captured-owner": playback} if is_instance_valid(playback) else {}
-	return {"world_root": get_parent() as Node3D, "owners": owners, "actors": {ACTOR_ID: hero}, "floors": {"firm-floor": _floor}}
+	return {"world_root": actual_world_root(), "owners": owners, "actors": {ACTOR_ID: hero}, "floors": {"firm-floor": _floor}}
 
 
 func _update_guidance() -> void:

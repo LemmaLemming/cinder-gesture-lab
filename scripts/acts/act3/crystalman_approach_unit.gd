@@ -76,7 +76,7 @@ func _ready() -> void:
 
 func _on_enter_level() -> void:
 	if not last_configuration_error.is_empty(): return
-	_profile = String(shared_shell.call("get_difficulty_preference"))
+	_profile = String(shared_shell.call("get_difficulty_preference")) if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference") else "standard"
 	if not threat_scheduler.begin_encounter(_profile, ENCOUNTER_ID,1): _fail(threat_scheduler.last_error); return
 	_active = true
 	_install_source(ENEMY_IDS[0])
@@ -143,8 +143,13 @@ func _any_held() -> bool:
 		if not threat_scheduler.source_control_state(owner).get("reservations",[]).is_empty(): return true
 	return false
 
+func actual_world_root() -> Node3D:
+	# The outer level owns floor; its parent is the common source/Scheduler/Hero world.
+	var outer: Node3D = get_parent() as Node3D
+	return outer.get_parent() as Node3D if is_instance_valid(outer) else null
+
 func scheduler_bindings() -> Dictionary:
-	return {"world_root":get_parent() as Node3D,"owners":sources.duplicate(),"actors":{"hero":hero},"floors":{FLOOR_ID:_floor}}
+	return {"world_root":actual_world_root(),"owners":sources.duplicate(),"actors":{"hero":hero},"floors":{FLOOR_ID:_floor}}
 
 func floor_regions() -> Array:
 	return [_floor.duplicate()]
@@ -173,7 +178,7 @@ func _retire_source_held(id: String, reason: String, unfinished: bool = false) -
 func runtime_error() -> String:
 	if not last_configuration_error.is_empty(): return last_configuration_error
 	if global_transform != Transform3D.IDENTITY or not is_instance_valid(hero) or not is_instance_valid(shared_shell) or not is_instance_valid(threat_scheduler) or threat_scheduler.get_script() != Scheduler or threat_scheduler.get_parent() != self: return "Exact local regular identity/shared bindings required"
-	var floor: Dictionary = Footprint.floor_signature(get_parent() as Node3D,[_floor])
+	var floor: Dictionary = Footprint.floor_signature(actual_world_root(),[_floor])
 	if not floor.get("accepted",false): return String(floor.get("reason","Actual floor refused"))
 	for id: String in sources:
 		if not is_instance_valid(sources[id]) or sources[id].get_parent() != self or sources[id].get_script() != (Stalker if _rows[id].kind == "stalker" else Echo): return "Original source recipient required: "+id
@@ -213,13 +218,13 @@ func _install_source(id: String, prepare_managed: bool = true) -> bool:
 		_callbacks[id] = callback
 		source.connect("died",callback)
 		return true
-	var signature: Dictionary = Footprint.floor_signature(get_parent() as Node3D, [_floor])
+	var signature: Dictionary = Footprint.floor_signature(actual_world_root(), [_floor])
 	if not signature.get("accepted", false):
 		_fail(String(signature.get("reason", "Actual complete garden floor signature required")))
 		return false
-	var context: Dictionary = {"world_root": get_parent() as Node3D, "source_id": id, "source_epoch": String(row.source_epoch_recipe), "generation": 1, "world_collision_fingerprint": threat_scheduler.pure_collision_fingerprint(get_parent() as Node3D), "world_floor_signature": signature.signature}
+	var context: Dictionary = {"world_root": actual_world_root(), "source_id": id, "source_epoch": String(row.source_epoch_recipe), "generation": 1, "world_collision_fingerprint": threat_scheduler.pure_collision_fingerprint(actual_world_root()), "world_floor_signature": signature.signature}
 	var prepared: Dictionary = {"world_revision": WORLD_REVISION, "collision_fingerprint": context.world_collision_fingerprint, "floor_signature": context.world_floor_signature}
-	if not source.call("configure_source", id, context.source_epoch, 1, native_definition(id), _profile, prepared, threat_scheduler) or not source.call("retain_source_environment", get_parent() as Node3D, [_floor]) or (prepare_managed and (not source.call("enable_authored_cycle_tracking", threat_scheduler, {"hero": hero}, [_floor], context) or not source.call("source_cycles_managed"))):
+	if not source.call("configure_source", id, context.source_epoch, 1, native_definition(id), _profile, prepared, threat_scheduler) or not source.call("retain_source_environment", actual_world_root(), [_floor]) or (prepare_managed and (not source.call("enable_authored_cycle_tracking", threat_scheduler, {"hero": hero}, [_floor], context) or not source.call("source_cycles_managed"))):
 		_fail(id + ": " + String(source.get("source_snapshot_error")) + "; " + String(source.get("last_error")))
 		return false
 	_echo_records[id] = {"context": context, "projection": {}, "lease": {}, "proof": {}, "positions": [], "locked": false, "admissions": []}
@@ -278,7 +283,7 @@ func combat_response(id: String) -> Dictionary:
 	for direction: Vector3 in [Vector3.BACK, Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3(-1, 0, -1).normalized(), Vector3(-1, 0, 1).normalized(), Vector3(1, 0, -1).normalized(), Vector3(1, 0, 1).normalized()]:
 		if not directions.has(direction):
 			directions.append(direction)
-	response.merge({"world_root": get_parent() as Node3D, "world_revision": WORLD_REVISION, "encounter_id": ENCOUNTER_ID, "recognition_s": 0.25, "attack_input_margin_s": 0.06, "escape_directions": directions, "return_directions": directions.duplicate(), "floor_regions": [_floor]}, true)
+	response.merge({"world_root": actual_world_root(), "world_revision": WORLD_REVISION, "encounter_id": ENCOUNTER_ID, "recognition_s": 0.25, "attack_input_margin_s": 0.06, "escape_directions": directions, "return_directions": directions.duplicate(), "floor_regions": [_floor]}, true)
 	return response
 
 func _commit_due_echo(id: String) -> void:
@@ -312,7 +317,7 @@ func _try_echo(id: String) -> void:
 	if not proof.get("accepted", false):
 		last_admission_reason = id + ": " + String(proof.get("reason", "Native Echo witness rejected"))
 		return
-	var projection: Dictionary = Footprint.plan_authored(threat_scheduler, program, get_parent() as Node3D, [_floor], data.context)
+	var projection: Dictionary = Footprint.plan_authored(threat_scheduler, program, actual_world_root(), [_floor], data.context)
 	if not projection.get("accepted", false):
 		last_admission_reason = String(projection.get("reason", "Actual complete Echo projection rejected"))
 		return

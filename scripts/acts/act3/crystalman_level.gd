@@ -174,7 +174,8 @@ func _physics_process(_delta: float) -> void:
 	elif _stage==1 and current_unit.call("all_regular_clear") and _capsule_inside(CAPTURE_POCKET) and _actor_stable_for_capture(): _queue_transition("capture-entry")
 	elif _stage in [2,3] and _phase_observed: _queue_transition("phase-spent")
 	_update_presentation()
-	_dispatch_checkpoint_if_safe()
+	# Let the Shell persist this checkpoint before publishing completion.
+	if _dispatch_checkpoint_if_safe(): return
 	if not _active or get_tree().paused or hero.dead: return
 	if _stage==4 and _pending_checkpoint<0:
 		if not is_completed(): request_completion(COMPLETE_ID)
@@ -270,14 +271,17 @@ func _disconnect_unit(unit: CinderLevel) -> void:
 	if unit.has_signal("tether_severed") and unit.is_connected("tether_severed",_on_tether_severed): unit.disconnect("tether_severed",_on_tether_severed)
 	if unit.has_signal("recording_joined") and unit.is_connected("recording_joined",_on_recording_joined): unit.disconnect("recording_joined",_on_recording_joined)
 
-func _dispatch_checkpoint_if_safe() -> void:
-	if _pending_checkpoint<0 or _transition_queued or _transition_busy or get_tree().paused or is_restore_candidate() or is_completed() or not _actor_stable_for_capture() or not _capsule_inside(FULL_RECT): return
-	if _stage in [0,1] and current_unit.call("has_held_attacks"): return
+func _dispatch_checkpoint_if_safe() -> bool:
+	if _pending_checkpoint<0 or _transition_queued or _transition_busy or get_tree().paused or is_restore_candidate() or is_completed() or not _actor_stable_for_capture() or not _capsule_inside(FULL_RECT): return false
+	if _stage in [0,1] and current_unit.call("has_held_attacks"): return false
 	if _stage in [2,3]:
 		var state: Dictionary = current_unit.call("state")
-		if state.phase!="recording" or state.capture.capture.allocated!=0 or state.capture.capture.has_dash_candidate: return
-	if not candidate_presentation_error(get_viewport().get_camera_3d(),shared_shell.get("hud")).is_empty(): return
-	if request_checkpoint(CHECKPOINTS[_pending_checkpoint],KINDS[_pending_checkpoint]): _pending_checkpoint=-1
+		if state.phase!="recording" or state.capture.capture.allocated!=0 or state.capture.capture.has_dash_candidate: return false
+	if not candidate_presentation_error(get_viewport().get_camera_3d(),shared_shell.get("hud")).is_empty(): return false
+	if request_checkpoint(CHECKPOINTS[_pending_checkpoint],KINDS[_pending_checkpoint]):
+		_pending_checkpoint=-1
+		return true
+	return false
 
 func _finish_exit(generation: int) -> void:
 	if generation!=_exit_generation: return
@@ -316,7 +320,10 @@ func parent_framing_union(camera: Camera3D,current_view: bool = false) -> Dictio
 			points.append_array(group.points)
 		else: points.append_array(current_unit.call("captured_codec_framing_union",camera))
 	if points.is_empty(): points.append_array(shared_shell.call("player_camera_framing_points_for",hero,camera))
-	if _exit_state!="clear":
+	# A distant contact destination must not pull the close following camera
+	# away from the traveller. Its existing world cue remains available;
+	# require it in the protected view within the final four-metre approach.
+	if _exit_state!="clear" and Vector2(hero.global_position.x,hero.global_position.z+11.0).length()<=4.0:
 		var marker: MeshInstance3D = exit_cue.get_node_or_null("RequiredInteractionMarker") as MeshInstance3D
 		if marker==null or marker.mesh==null: return {"error":"Actual current contact marker required","points":[]}
 		for index: int in range(8): points.append(marker.global_transform*marker.mesh.get_aabb().get_endpoint(index))

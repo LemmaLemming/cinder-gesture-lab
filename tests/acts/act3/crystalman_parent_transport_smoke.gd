@@ -41,10 +41,22 @@ func _run() -> void:
 	game=MainScene.instantiate()
 	game.set("level_scene_path",room_path)
 	root.add_child(game)
+	# reset_lab snaps to the Hero before enter_level installs source bounds.
+	# Observe the ordinary shared camera/HUD pass before requesting real Pause.
+	var initial_view_error: String="Initial native view not observed"
+	for frame: int in range(90):
+		var initial_level: CinderLevel=game.get("active_level") as CinderLevel
+		if initial_level!=null:
+			initial_view_error=String(initial_level.call("candidate_presentation_error",game.get("camera"),game.get("hud")))
+			if initial_view_error.is_empty(): break
+		await process_frame
+	if not expect(initial_view_error.is_empty(),"Ordinary shared initial camera/HUD contains the installed native source and Hero",initial_view_error):
+		await close(); quit(1); return
 	game.call("open_bench")
 	level=game.get("active_level") as CinderLevel
 	hero=game.get("player") as CinderPlayer
-	if expect(level!=null and hero!=null and paused and level.level_id=="A3-L5" and String(level.get("last_configuration_error")).is_empty(),"Actual shared portrait Main enters authored production/declared parent"):
+	var entry_receipt: Dictionary={"level_present":level!=null,"hero_present":hero!=null,"tree_paused":paused,"level_id":level.level_id if level!=null else "","configuration_error":String(level.get("last_configuration_error")) if level!=null else "No parent"}
+	if expect(level!=null and hero!=null and paused and level.level_id=="A3-L5" and String(level.get("last_configuration_error")).is_empty(),"Actual shared portrait Main enters authored production/declared parent",JSON.stringify(entry_receipt)):
 		var packet: Dictionary=pair()
 		if expect(not packet.player.is_empty() and not packet.level.is_empty() and level.snapshot_error_with_player(packet.level,packet.player).is_empty(),"Whole current native parent writes/validates",level.last_snapshot_error):
 			var parsed: Dictionary=Exact.parse(Exact.stringify(packet))
@@ -150,7 +162,9 @@ func campaign_transport(packet: Dictionary) -> bool:
 	var state: Dictionary=production.attempts.state()
 	state.completed_main=production.registry.main_route().slice(0,14)
 	state.story={"kind":"story","level_id":"A3-L5","snapshot":seed.duplicate(true),"checkpoint":seed.duplicate(true)}
-	if not expect(production.attempts.state_error(state).is_empty() and production.attempts.restore_session(state),"Explicit TEST predecessor/representative whole checkpoint seed validates",production.attempts.last_error): return false
+	var state_problem: String=production.attempts.state_error(state)
+	if not expect(state_problem.is_empty(),"Explicit TEST predecessor/representative whole checkpoint seed validates",state_problem): return false
+	if not expect(production.attempts.restore_session(state),"Validated TEST seed restores session",production.attempts.last_error): return false
 	production.menu.continue_story_requested.emit()
 	if not await settle("resume"): return false
 	if not expect(same(production.capture_campaign_snapshot(),seed),"Public fresh Continue restores exact complete authored parent/native unit",production.campaign_error): return false
@@ -206,7 +220,9 @@ func quiet3(_a: Variant,_b: Variant,_c: Variant) -> void: quiet+=1
 
 func close() -> void:
 	paused=true
-	if is_instance_valid(production): production.queue_free()
+	if is_instance_valid(production):
+		if is_instance_valid(production.active_level): production.active_level.exit_level()
+		production.queue_free()
 	if is_instance_valid(game):
 		if is_instance_valid(level): level.exit_level()
 		game.queue_free()
