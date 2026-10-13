@@ -1,0 +1,1182 @@
+extends CinderLevel
+## Five authored clearings, one shared Player and native threat/transport seams.
+## Recovery retunes are explicit role data. No private damage/camera/input clock,
+## approach AI, compulsory observation, pickup, heal or new enemy/ability type.
+
+signal native_admission_published(source_id: String, answer: Dictionary)
+
+const Layout = preload("res://scripts/acts/act1/crater_gardens_layout.gd")
+const RusherScript = preload("res://scripts/acts/act1/rush_selenite.gd")
+const Geometry = preload("res://scripts/combat/threat_geometry.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Equipment = preload("res://scripts/equipment.gd")
+const BodySweep = preload("res://scripts/combat/body_sweep.gd")
+const Motion = preload("res://scripts/combat/lunge_motion.gd")
+const SOURCE_IDS: Array[String] = ["solo", "rock", "open", "finale"]
+const SOURCE_POSITIONS: Array[Vector3] = [Layout.SOLO_SOURCE, Layout.ROCK_SOURCE, Layout.OPEN_SOURCE, Layout.FINAL_SOURCE]
+const SOURCE_RECOVERY: Array[float] = [1.8, 3.4, 3.4, 6.2]
+const CIRCLE_IDS: Array[String] = ["landing-impact", "rock-impact", "open-impact", "finale-impact-a", "finale-impact-b"]
+const CIRCLE_ORIGINS: Array[Vector3] = [Layout.LANDING_CENTRE, Vector3(-2.8, 0, -0.2), Vector3(2.8, 0, -0.2), Vector3(-1.05, 0, -15.1), Vector3(1.05, 0, -16.8)]
+const CIRCLE_RADII: Array[float] = [1.2, 1.05, 1.05, 1.05, 1.05]
+const BEATS: Array[String] = ["landing-clearing", "first-selenite", "approaches-rejoined", "celestial-camp", "grotto-opening"]
+const CHECKPOINTS: Array[String] = ["landing-clearing", "first-selenite", "approaches-rejoined", "celestial-camp"]
+const COMPLETION_ID: String = "crater-gardens-clear"
+const EXIT_ID: String = "open-grotto"
+const WORLD_REVISION: int = 1
+const LOCAL_KEYS: Array[String] = ["beat_index", "completed_beats", "chosen_route", "encounter_started", "sources", "circles", "scheduler", "framing", "custody", "sequence"]
+const FRAME_KEYS: Array[String] = ["reservation_id", "landing", "attack_position", "primary_time_s", "response_complete_s"]
+const CUSTODY_KEYS: Array[String] = ["host_id", "host_cycle", "host_reservation_id", "host_start_s", "host_active_until_s", "host_recovery_until_s", "opening_position", "primary_time_s", "response_complete_s", "supported"]
+const OBJECTIVES: Array[String] = [
+	"LANDING · READ THE FLOOR CIRCLE\nSWIPE TO THE NEIGHBOURING CLEAR FLOOR",
+	"FIRST SELENITE · READ ITS LOCKED LANE\nLAND BESIDE THE STOPPED BODY · AIM A PRIMARY",
+	"CHOOSE THE ROCK OR OPEN APPROACH\nFAMILIAR RUSHER · ONE FLOOR IMPACT",
+	"CELESTIAL CAMP · A QUIET SAVE CUE\nSWIPE INTO THE SLEEPING CLEARING",
+	"GROTTO · RUSHER AND STAGGERED IMPACTS\nAIM AN ORDINARY PRIMARY TO STOP THE SEQUENCE",
+	"THE GROTTO IS OPEN\nSWIPE THROUGH THE CONTACT CHEVRON",
+]
+
+var beat_index: int = 0
+var completed_beats: Array[String] = []
+var chosen_route: String = ""
+var encounter_started: bool = false
+var scheduler: CinderThreatScheduler
+var sources: Dictionary = {}
+var circles: Dictionary = {}
+var scenery: Node3D
+var grotto: Area3D
+var grotto_cue: CinderInteractionCue
+var camp_cue: CinderInteractionCue
+var last_admission: Dictionary = {}
+var last_circle_admission: Dictionary = {}
+var last_capture_error: String = ""
+var last_encounter_error: String = ""
+
+var _running: bool = false
+var _changing: bool = false
+var _publishing_progress: bool = false
+var _callback_depth: int = 0
+var _activation_entitlement: String = ""
+var _framing: Dictionary = {}
+var _custody: Dictionary = {}
+var _sequence: Dictionary = {}
+var _forecast_points: Array = []
+var _render_sources: Dictionary = {}
+var _render_circles: Dictionary = {}
+var _source_callbacks: Dictionary = {}
+var _circle_callbacks: Dictionary = {}
+var _puffs: Dictionary = {}
+var _retained_sources: Dictionary = {}
+var _retained_circles: Dictionary = {}
+var _puff_meshes: Dictionary = {}
+var _floor_collision: CollisionShape3D
+var _floor_body: StaticBody3D
+var _floor_shape: BoxShape3D
+var _floor_transform: Transform3D
+var _contact_shape: CollisionShape3D
+var _contact_resource: BoxShape3D
+var _construction_error: String = ""
+var _landing_cancel_guard: bool = false
+
+
+func _ready() -> void:
+	process_physics_priority = 200
+	Layout.build_geometry(self)
+	scenery = Layout.build_scenery(self)
+	_floor_collision = get_node("Floor/CollisionShape3D") as CollisionShape3D
+	_floor_body = _floor_collision.get_parent() as StaticBody3D
+	_floor_shape = _floor_collision.shape as BoxShape3D
+	_floor_transform = _floor_collision.global_transform
+	scheduler = CinderThreatScheduler.new()
+	scheduler.name = "CraterThreatScheduler"
+	add_child(scheduler)
+	for index: int in range(SOURCE_IDS.size()):
+		var id: String = SOURCE_IDS[index]
+		var actor: Act1RushSelenite = RusherScript.new()
+		actor.name = id.capitalize() + "RushSelenite"
+		actor.position = SOURCE_POSITIONS[index]
+		var raw: Dictionary = RusherScript.DEFAULT_RAW_ROLE.duplicate(true)
+		var floors: Dictionary = RusherScript.DEFAULT_TIMING_FLOORS.duplicate(true)
+		raw["recovery_s"] = SOURCE_RECOVERY[index]
+		floors["recovery_s"] = SOURCE_RECOVERY[index]
+		var configured: bool = actor.configure(id, raw, floors, RusherScript.DEFAULT_LUNGE, true)
+		if not configured:
+			_construction_error = "Retained C30 configuration failed: " + actor.last_error
+			actor.free()
+			push_error(_construction_error)
+			return
+		add_child(actor)
+		actor.activation_guard = Callable(self, "_activation_permitted")
+		actor.presentation_guard = Callable(self, "_source_presentation_error").bind(id)
+		sources[id] = actor
+		_retained_sources[id] = actor
+	for index: int in range(CIRCLE_IDS.size()):
+		var id: String = CIRCLE_IDS[index]
+		var impact := CinderLaneMechanism.new()
+		impact.name = id.replace("-", "_").capitalize()
+		impact.position = CIRCLE_ORIGINS[index]
+		var opening: Vector3 = Vector3(2.7, 0.005, 14.5) if index == 0 else SOURCE_POSITIONS[1 if index == 1 else (2 if index == 2 else 3)]
+		var configured: bool = impact.configure(id, Geometry.circle(CIRCLE_ORIGINS[index], CIRCLE_RADII[index]), opening)
+		if not configured:
+			_construction_error = "Stationary circle configuration failed: " + impact.last_error
+			impact.free()
+			push_error(_construction_error)
+			return
+		add_child(impact)
+		circles[id] = impact
+		_retained_circles[id] = impact
+		_puffs[id] = _build_square_puff(impact)
+		_puff_meshes[id] = (_puffs[id] as MeshInstance3D).mesh
+	_build_contact()
+	_apply_beat(false)
+
+
+func _on_enter_level() -> void:
+	_running = true
+	for id: String in SOURCE_IDS:
+		var actor: Act1RushSelenite = sources[id]
+		var bound: bool = actor.bind(scheduler, hero)
+		if not bound:
+			_entry_failed("Retained C30 binding failed: " + actor.last_error)
+			return
+		var callback: Callable = Callable(self, "_on_source_state").bind(id)
+		actor.state_changed.connect(callback)
+		_source_callbacks[id] = callback
+		actor.defeated.connect(_on_source_defeated)
+	for id: String in CIRCLE_IDS:
+		var impact: CinderLaneMechanism = circles[id]
+		var bound: bool = impact.bind(scheduler, {"hero": hero})
+		if not bound:
+			_entry_failed("Stationary circle binding failed: " + impact.last_error)
+			return
+		var callback: Callable = Callable(self, "_on_circle_state").bind(id)
+		impact.state_changed.connect(callback)
+		_circle_callbacks[id] = callback
+	hero.died.connect(_on_hero_died)
+	_refresh_render_state()
+	# Entry is the first genuine broad boundary. No movement or ammo gate follows.
+	encounter_started = _fresh_encounter(_encounter_id(0, ""))
+	_apply_beat()
+
+
+func contract_error() -> String:
+	return _construction_error if not _construction_error.is_empty() else super.contract_error()
+
+
+func _entry_failed(reason: String) -> void:
+	_construction_error = reason
+	last_encounter_error = reason
+	_running = false
+	push_error(reason)
+
+
+func _on_exit_level() -> void:
+	_running = false
+	_activation_entitlement = ""
+	if is_instance_valid(hero) and hero.died.is_connected(_on_hero_died):
+		hero.died.disconnect(_on_hero_died)
+	for id: String in SOURCE_IDS:
+		var actor: Act1RushSelenite = sources.get(id) as Act1RushSelenite
+		if not is_instance_valid(actor): continue
+		if actor.state_changed.is_connected(_source_callbacks.get(id, Callable())):
+			actor.state_changed.disconnect(_source_callbacks[id])
+		if actor.defeated.is_connected(_on_source_defeated): actor.defeated.disconnect(_on_source_defeated)
+		if actor.is_inside_tree(): actor.cancel("crater_level_exit")
+		actor.remove_from_group("enemies")
+		actor.set_physics_process(false)
+	for id: String in CIRCLE_IDS:
+		var impact: CinderLaneMechanism = circles.get(id) as CinderLaneMechanism
+		if not is_instance_valid(impact): continue
+		if impact.state_changed.is_connected(_circle_callbacks.get(id, Callable())):
+			impact.state_changed.disconnect(_circle_callbacks[id])
+		if impact.is_inside_tree() and impact.state().status == "running": impact.cancel("crater_level_exit")
+		impact.set_physics_process(false)
+	if is_instance_valid(scheduler):
+		if scheduler.is_inside_tree(): scheduler.end_encounter("crater_level_exit")
+		scheduler.set_physics_process(false)
+	_forecast_points.clear()
+	_framing.clear()
+	_sequence.clear()
+	set_physics_process(false)
+
+
+func _physics_process(_delta: float) -> void:
+	if not _running or _changing or not is_instance_valid(hero) or hero.dead:
+		return
+	_refresh_render_state()
+	_prune_framing()
+	_apply_beat()
+	if beat_index == 5:
+		if grotto.overlaps_body(hero): request_contact_exit(EXIT_ID, hero)
+		return
+	if beat_index == 0:
+		_landing_tick()
+		return
+	if beat_index == 3:
+		if _camp_contains(hero.global_position): _advance_beat()
+		return
+	var id: String = current_source_id()
+	if beat_index == 2 and id.is_empty():
+		if hero.global_position.z <= 3.8 and absf(hero.global_position.x) >= 1.4:
+			chosen_route = "rock" if hero.global_position.x < 0.0 else "open"
+			_begin_source(chosen_route)
+		return
+	if id.is_empty(): return
+	var actor: Act1RushSelenite = sources[id]
+	if actor.dead:
+		_cancel_companions(id, "rusher_defeated")
+		_advance_beat()
+		return
+	if actor.dormant:
+		if _source_threshold(id): _begin_source(id)
+		return
+	if not encounter_started: return
+	if _render_sources[id].reservation_id.is_empty():
+		_admit_rusher(id)
+	else:
+		_compound_tick(id)
+
+
+func current_source_id() -> String:
+	if beat_index == 1: return "solo"
+	if beat_index == 2: return chosen_route
+	if beat_index == 4: return "finale"
+	return ""
+
+
+func encounter_state() -> Dictionary:
+	# Defensive observation only; actual shared consumers remain authoritative.
+	return {"beat_index": beat_index, "completed_beats": completed_beats.duplicate(), "chosen_route": chosen_route, "encounter_started": encounter_started, "sources": _render_sources.duplicate(true), "circles": _render_circles.duplicate(true), "last_error": last_encounter_error}
+
+
+func _fresh_encounter(id: String) -> bool:
+	if scheduler.has_committed_exchange():
+		last_encounter_error = "A fresh authored boundary cannot discard a live exchange"
+		return false
+	var profile: String = "standard"
+	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
+		profile = String(shared_shell.call("get_difficulty_preference"))
+	# Only this actual new beat may release the previous profile/cooldown epoch.
+	scheduler.end_encounter("fresh_authored_clearing")
+	var accepted: bool = scheduler.begin_encounter(profile, id, WORLD_REVISION)
+	last_encounter_error = "" if accepted else scheduler.last_error
+	return accepted
+
+
+func _begin_source(id: String) -> void:
+	if not _source_threshold(id) or current_source_id() != id or not (sources[id] as Act1RushSelenite).dormant:
+		return
+	_changing = true
+	if _fresh_encounter(_encounter_id(beat_index, chosen_route)):
+		_activation_entitlement = id
+		var accepted: bool = (sources[id] as Act1RushSelenite).activate()
+		_activation_entitlement = "" # Clear after every attempt, including rejection.
+		encounter_started = accepted
+		last_encounter_error = "" if accepted else (sources[id] as Act1RushSelenite).last_error
+	_changing = false
+	_refresh_render_state()
+
+
+func _activation_permitted(id: String) -> bool:
+	# Pure parent custody: armed solely by the successful public begin above.
+	# Cancellation or a clock/profile read cannot grant this transient entitlement.
+	return _running and _changing and _activation_entitlement == id and current_source_id() == id
+
+
+func _source_threshold(id: String) -> bool:
+	if not _running or not is_instance_valid(hero) or hero.dead: return false
+	var index: int = SOURCE_IDS.find(id)
+	if index < 0: return false
+	if id == "finale" and hero.global_position.z > -12.0: return false
+	var difference: Vector3 = hero.global_position - SOURCE_POSITIONS[index]
+	difference.y = 0.0
+	return difference.length() <= 4.5
+
+
+func _landing_tick() -> void:
+	var impact: CinderLaneMechanism = circles["landing-impact"]
+	var state: Dictionary = _render_circles["landing-impact"]
+	if state.status == "running":
+		var presentation_error: String = _landing_presentation_error(state)
+		if not presentation_error.is_empty():
+			_cancel_landing_presentation(presentation_error)
+			return
+	if state.cycle > 0 and state.status == "running" and state.phase == "recovery":
+		# The dangerous interval actually ended. Injury is not a failed lesson;
+		# there is no flawless-dodge, attack, padding or full recovery observation gate.
+		impact.cancel("landing_danger_resolved")
+		_framing.erase("landing-impact")
+		_advance_beat()
+		return
+	if state.status == "running" or not hero.get_threat_response_state().stable:
+		return
+	if not encounter_started:
+		encounter_started = _fresh_encounter(_encounter_id(0, ""))
+		if not encounter_started: return
+	_forecast_points = _circle_points("landing-impact")
+	if not _framing_ready(_camera_framing_points()): return
+	last_circle_admission = impact.start("hero", response_context())
+	if last_circle_admission.get("accepted", false):
+		_framing["landing-impact"] = _native_frame(last_circle_admission)
+		_forecast_points.clear()
+		if not _framing_ready(_camera_framing_points()):
+			impact.cancel("landing_response_not_visible")
+			_framing.erase("landing-impact")
+		else:
+			_publish_native_admission("landing-impact", last_circle_admission)
+	else:
+		last_encounter_error = String(last_circle_admission.get("reason", "Impact admission rejected"))
+
+
+func _admit_rusher(id: String) -> void:
+	var actor: Act1RushSelenite = sources[id]
+	if not hero.get_threat_response_state().stable: return
+	var direction: Vector3 = hero.global_position - actor.global_position
+	direction.y = 0.0
+	if direction.length() < 0.1 or direction.length() > 4.5: return
+	direction = direction.normalized()
+	var preview: Dictionary = actor.preview_lunge(response_context(), direction, _world_root())
+	if not preview.get("accepted", false):
+		last_encounter_error = String(preview.get("reason", "Prospective lunge rejected"))
+		return
+	if not _proof_window(preview.proof, preview.candidate):
+		last_encounter_error = "Prospective ordinary primary must fit the actual stopped rusher recovery"
+		return
+	_forecast_points = _actor_points(id, preview.candidate.opening_position)
+	_forecast_points.append_array(_lane_points(preview.plan.geometry))
+	_forecast_points.append_array(_response_points(preview.proof.landing, preview.proof.attack_position))
+	if not _framing_ready(_camera_framing_points()): return
+	# Correspondence is synchronous and fresh; no saved preview grants a lease.
+	last_admission = actor.start(response_context(), direction, _world_root(), preview)
+	if not last_admission.get("accepted", false):
+		last_encounter_error = String(last_admission.get("reason", "Lunge admission rejected"))
+		return
+	_framing[id] = _native_frame(last_admission)
+	_sequence = {} if _associated_circles(id).is_empty() else {"host_reservation_id": String(last_admission.reservation_id), "next_index": 0}
+	_forecast_points.clear()
+	last_encounter_error = ""
+	_refresh_render_state()
+	if not _framing_ready(_camera_framing_points()):
+		actor.cancel("rusher_response_not_visible")
+	else:
+		_publish_native_admission(id, last_admission)
+
+
+func _compound_tick(id: String) -> void:
+	var actor: Act1RushSelenite = sources[id]
+	var source: Dictionary = _render_sources[id]
+	var associated: Array[String] = _associated_circles(id)
+	if associated.is_empty(): return
+	if _sequence.is_empty() or _sequence.host_reservation_id != source.reservation_id:
+		actor.cancel("compound_sequence_lost_host")
+		return
+	for circle_id: String in associated:
+		var value: Dictionary = _render_circles[circle_id]
+		if value.status == "cancelled" and _custody.get(circle_id, {}).get("host_reservation_id", "") == source.reservation_id:
+			actor.cancel("compound_circle_interrupted")
+			return
+	var index: int = int(_sequence.next_index)
+	if index >= associated.size() or not hero.get_threat_response_state().stable: return
+	var circle_id: String = associated[index]
+	var impact: CinderLaneMechanism = circles[circle_id]
+	if _render_circles[circle_id].status == "running": return
+	# Native scheduler owns budget (Assisted1 / Standard,Challenge2), stagger and
+	# cooldown. No guessed profile timer, extra lease or private clock is used.
+	_forecast_points = _circle_points(circle_id)
+	if not _framing_ready(_camera_framing_points()): return
+	last_circle_admission = impact.start("hero", response_context(), source.opening_position)
+	if not last_circle_admission.get("accepted", false):
+		last_encounter_error = String(last_circle_admission.get("reason", "Compound impact rejected"))
+		return
+	var proof: Dictionary = last_circle_admission.proof
+	var supported: bool = _proof_window(proof, source)
+	_custody[circle_id] = {"host_id": id, "host_cycle": int(source.cycle), "host_reservation_id": String(source.reservation_id), "host_start_s": float(source.start_s), "host_active_until_s": float(source.active_until_s), "host_recovery_until_s": float(source.recovery_until_s), "opening_position": source.opening_position, "primary_time_s": float(proof.primary_time_s), "response_complete_s": float(proof.response_complete_s), "supported": supported}
+	_forecast_points.clear()
+	if not supported:
+		# This candidate was reachable but lacked living-target recovery custody.
+		# Cancel before any physics/damage; keep the genuine failed-cycle history.
+		impact.cancel("compound_response_outside_rusher_recovery")
+		actor.cancel("compound_response_outside_rusher_recovery")
+		last_encounter_error = "Move beside the stopped body for a supported ordinary-primary opening"
+		return
+	_framing[circle_id] = _native_frame(last_circle_admission)
+	_sequence["next_index"] = index + 1
+	_refresh_render_state()
+	if not _framing_ready(_camera_framing_points()):
+		actor.cancel("compound_response_not_visible")
+	else:
+		last_encounter_error = ""
+		_publish_native_admission(circle_id, last_circle_admission)
+
+
+func _publish_native_admission(id: String, answer: Dictionary) -> void:
+	# Publish each actual supported result before a later attempt can replace the
+	# last-result diagnostic. This is observation, never another admission/proof.
+	# Parent capture rejects during callbacks; the caller owns the native lease.
+	_callback_depth += 1
+	native_admission_published.emit(id, answer.duplicate(true))
+	_callback_depth -= 1
+
+
+func _proof_window(proof: Dictionary, host: Dictionary) -> bool:
+	return proof.get("uses_blast") == false and proof.get("uses_invulnerability") == false and Codec.is_number(proof.get("primary_time_s")) and Codec.is_number(proof.get("response_complete_s")) and Codec.is_number(host.get("active_until_s")) and Codec.is_number(host.get("recovery_until_s")) and float(proof.primary_time_s) >= float(host.active_until_s) and float(proof.response_complete_s) < float(host.recovery_until_s)
+
+
+func _native_frame(answer: Dictionary) -> Dictionary:
+	return {"reservation_id": String(answer.reservation_id), "landing": answer.proof.landing, "attack_position": answer.proof.attack_position, "primary_time_s": float(answer.proof.primary_time_s), "response_complete_s": float(answer.proof.response_complete_s)}
+
+
+func _associated_circles(id: String) -> Array[String]:
+	if id == "rock": return ["rock-impact"]
+	if id == "open": return ["open-impact"]
+	if id == "finale": return ["finale-impact-a", "finale-impact-b"]
+	return []
+
+
+func _cancel_companions(id: String, reason: String) -> void:
+	for circle_id: String in _associated_circles(id):
+		var impact: CinderLaneMechanism = circles[circle_id]
+		if impact.is_inside_tree() and impact.state().status == "running": impact.cancel(reason)
+		_framing.erase(circle_id)
+	_sequence.clear()
+	_forecast_points.clear()
+
+
+func _on_source_state(state: Dictionary, id: String) -> void:
+	_render_sources[id] = state.duplicate(true)
+	if not _running: return
+	_callback_depth += 1
+	if state.dead or state.dormant or state.reservation_id.is_empty() or float(state.hurt_left_s) > 0.0:
+		_cancel_companions(id, "rusher_interrupted")
+		_framing.erase(id)
+	_callback_depth -= 1
+
+
+func _on_source_defeated(id: String) -> void:
+	if not _running: return
+	_callback_depth += 1
+	_cancel_companions(id, "rusher_defeated")
+	_framing.erase(id)
+	_callback_depth -= 1
+
+
+func _on_circle_state(state: Dictionary, id: String) -> void:
+	_render_circles[id] = state.duplicate(true)
+	_present_puff(id, state)
+	if state.status != "running": _framing.erase(id)
+	if _running and id == "landing-impact" and state.status == "running" and not _landing_cancel_guard:
+		_callback_depth += 1
+		var presentation_error: String = _landing_presentation_error(state)
+		if not presentation_error.is_empty(): _cancel_landing_presentation(presentation_error)
+		_callback_depth -= 1
+
+
+func _landing_presentation_error(state: Dictionary) -> String:
+	# Native publication follows Cue.present and precedes hit delivery. Observe
+	# actual retained cue/art visibility here; no substitute phase/damage clock.
+	var impact: CinderLaneMechanism = circles["landing-impact"]
+	var cue: CinderThreatCue = impact.get_cue()
+	if not impact.is_visible_in_tree() or not is_instance_valid(cue) or not cue.is_visible_in_tree(): return "Landing source and required native cue must be visible"
+	var presented: Dictionary = cue.state()
+	if presented.phase != state.phase or presented.geometry != state.geometry or presented.source_position != state.source_position: return "Landing must publish its same actual native phase/source/footprint"
+	var required: Array[String] = ["RequiredSourceMarker"]
+	if state.phase != "recovery": required.append("RequiredFootprintOutline")
+	if state.phase == "active": required.append("RequiredFootprintFill")
+	for name: String in required:
+		var mesh: MeshInstance3D = cue.get_node_or_null(name) as MeshInstance3D
+		if not is_instance_valid(mesh) or mesh.is_queued_for_deletion() or mesh.mesh == null or not mesh.is_visible_in_tree(): return "Landing required native cue mesh is unavailable: " + name
+	return _containment_error(_camera_framing_points())
+
+
+func _cancel_landing_presentation(reason: String) -> void:
+	if _landing_cancel_guard: return
+	_landing_cancel_guard = true
+	(circles["landing-impact"] as CinderLaneMechanism).cancel("landing_presentation_unavailable")
+	_landing_cancel_guard = false
+	_framing.erase("landing-impact")
+	_forecast_points.clear()
+	last_encounter_error = reason
+
+
+func _on_hero_died() -> void:
+	if not _running: return
+	_callback_depth += 1
+	_activation_entitlement = ""
+	for id: String in SOURCE_IDS:
+		(sources[id] as Act1RushSelenite).cancel("actual_player_death")
+	for id: String in CIRCLE_IDS:
+		var impact: CinderLaneMechanism = circles[id]
+		if impact.state().status == "running": impact.cancel("actual_player_death")
+	_framing.clear()
+	_sequence.clear()
+	_forecast_points.clear()
+	_callback_depth -= 1
+
+
+func _advance_beat() -> void:
+	if _changing or beat_index >= BEATS.size() or not _beat_clear(): return
+	_changing = true
+	completed_beats.append(BEATS[beat_index])
+	beat_index += 1
+	encounter_started = false
+	_forecast_points.clear()
+	_sequence.clear()
+	_apply_beat()
+	_publishing_progress = true
+	if beat_index < BEATS.size():
+		request_checkpoint(CHECKPOINTS[beat_index - 1], "encounter")
+	else:
+		request_completion(COMPLETION_ID)
+	_publishing_progress = false
+	_changing = false
+
+
+func _beat_clear() -> bool:
+	if not is_instance_valid(hero) or hero.dead: return false
+	if beat_index == 0:
+		var landing: Dictionary = (circles["landing-impact"] as CinderLaneMechanism).state()
+		return landing.cycle > 0 and landing.status == "cancelled" and landing.last_cancel_reason == "landing_danger_resolved"
+	if beat_index == 3: return _camp_contains(hero.global_position)
+	var id: String = current_source_id()
+	return not id.is_empty() and encounter_started and (sources[id] as Act1RushSelenite).dead
+
+
+func _camp_contains(position: Vector3) -> bool:
+	return Rect2(-1.8, -10.5, 3.6, 2.0).has_point(Vector2(position.x, position.z))
+
+
+func request_checkpoint(checkpoint_id: String, boundary_kind: String = "encounter") -> bool:
+	if not _publishing_progress or beat_index < 1 or beat_index > 4 or checkpoint_id != CHECKPOINTS[beat_index - 1] or boundary_kind != "encounter": return false
+	return super.request_checkpoint(checkpoint_id, boundary_kind)
+
+
+func request_completion(completion_id: String = "complete") -> bool:
+	if not _publishing_progress or beat_index != 5 or completion_id != COMPLETION_ID or chosen_route not in ["rock", "open"] or not (sources["solo"] as Act1RushSelenite).dead or not (sources[chosen_route] as Act1RushSelenite).dead or not (sources["finale"] as Act1RushSelenite).dead:
+		return false
+	return super.request_completion(completion_id)
+
+
+func request_contact_exit(exit_id: String, body: Node3D) -> bool:
+	if exit_id != EXIT_ID or beat_index != 5 or body != hero or not is_instance_valid(grotto) or not grotto.overlaps_body(body): return false
+	return super.request_contact_exit(exit_id, body)
+
+
+func _on_grotto_contact(body: Node3D) -> void:
+	request_contact_exit(EXIT_ID, body)
+
+
+func _apply_beat(notify: bool = true) -> void:
+	objective_text = OBJECTIVES[beat_index]
+	if is_instance_valid(camp_cue):
+		_set_interaction(camp_cue, "available" if beat_index == 3 else ("spent" if beat_index >= 4 else "clear"), notify)
+	if is_instance_valid(grotto_cue): _set_interaction(grotto_cue, "available" if beat_index == 5 else "clear", notify)
+
+
+func _set_interaction(cue: CinderInteractionCue, state: String, notify: bool) -> void:
+	var blocked: bool = cue.is_blocking_signals()
+	if not notify: cue.set_block_signals(true)
+	if state == "clear": cue.clear()
+	else: cue.present(state, "contact")
+	if not notify: cue.set_block_signals(blocked)
+
+
+func _build_contact() -> void:
+	grotto = Area3D.new()
+	grotto.name = "OpenGrottoContact"
+	grotto.position = Layout.GROTTO_CONTACT
+	grotto.collision_layer = 0
+	grotto.collision_mask = 4
+	_contact_shape = CollisionShape3D.new()
+	_contact_shape.name = "BroadGrottoContact"
+	_contact_resource = BoxShape3D.new()
+	_contact_resource.size = Vector3(2.8, 1.6, 1.6)
+	_contact_shape.shape = _contact_resource
+	grotto.add_child(_contact_shape)
+	add_child(grotto)
+	grotto.body_entered.connect(_on_grotto_contact)
+	grotto_cue = CinderInteractionCue.new()
+	grotto_cue.name = "GrottoContactCue"
+	grotto_cue.position = Vector3(0, 0, -21.0)
+	add_child(grotto_cue)
+	camp_cue = CinderInteractionCue.new()
+	camp_cue.name = "CelestialCampSaveCue"
+	camp_cue.position = Layout.CAMP_CENTRE
+	add_child(camp_cue)
+
+
+func _build_square_puff(impact: CinderLaneMechanism) -> MeshInstance3D:
+	# One clock-free mesh of four separated square fragments. The centre hole
+	# preserves the required source glyph; the native circle remains authoritative.
+	var vertices := PackedVector3Array()
+	for x: float in [-0.42, 0.42]:
+		for z: float in [-0.42, 0.42]:
+			var a := Vector3(x - 0.13, 0, z - 0.13)
+			var b := Vector3(x + 0.13, 0, z - 0.13)
+			var c := Vector3(x + 0.13, 0, z + 0.13)
+			var d := Vector3(x - 0.13, 0, z + 0.13)
+			vertices.append_array(PackedVector3Array([a, b, c, a, c, d]))
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	var puff := MeshInstance3D.new()
+	puff.name = "SquareImpactFragments"
+	puff.mesh = mesh
+	puff.position.y = 0.13
+	puff.visible = false
+	puff.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	material.albedo_color = Color(1, 1, 0.95, 0.82)
+	puff.material_override = material
+	impact.add_child(puff)
+	return puff
+
+
+func _present_puff(id: String, state: Dictionary) -> void:
+	var puff: MeshInstance3D = _puffs.get(id) as MeshInstance3D
+	if not is_instance_valid(puff): return
+	var pose: Dictionary = _puff_pose(state)
+	puff.visible = pose.visible
+	puff.scale = pose.scale
+
+
+func _puff_pose(state: Dictionary) -> Dictionary:
+	# One pure phase-derived pose is shared by presentation and binding checks.
+	# No art clock, animation state or rotated extent can alter native geometry.
+	var duration: float = float(state.resolved_role.get("active_s", 0.0))
+	var progress: float = clampf(1.0 - float(state.remaining_s) / duration, 0.0, 1.0) if duration > 0.0 else 0.0
+	return {"visible": state.status == "running" and state.phase == "active", "scale": Vector3.ONE * (1.0 + 0.4 * progress)}
+
+
+func _world_root() -> Node3D:
+	# CampaignShell prepares a fresh candidate before installing shell.world.
+	# Custody comes from this actual entered actor/level/scheduler tree, never
+	# the shell's currently installed world or a substituted private world.
+	if not is_instance_valid(hero) or not is_instance_valid(scheduler) or not is_inside_tree(): return null
+	var ancestor: Node = get_parent()
+	while is_instance_valid(ancestor):
+		if ancestor is Node3D:
+			var world: Node3D = ancestor as Node3D
+			if world.is_inside_tree() and not world.is_queued_for_deletion() and world.get_world_3d() == get_world_3d() and hero.get_world_3d() == get_world_3d() and scheduler.get_world_3d() == get_world_3d() and world.is_ancestor_of(hero) and world.is_ancestor_of(scheduler): return world
+		ancestor = ancestor.get_parent()
+	return null
+
+
+func scheduler_bindings() -> Dictionary:
+	var owners: Dictionary = sources.duplicate()
+	for id: String in CIRCLE_IDS: owners[id] = circles[id]
+	return {"world_root": _world_root(), "owners": owners, "floors": {"crater-floor": {"collision": _floor_collision, "safe_rect": Layout.FLOOR_RECT}}}
+
+
+func response_context() -> Dictionary:
+	var directions: Array[Vector3] = [Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK]
+	for x: float in [-1.0, 1.0]:
+		for z: float in [-1.0, 1.0]: directions.append(Vector3(x, 0, z).normalized())
+	for x: float in [-0.6, 0.6, -0.8, 0.8]:
+		var z: float = sqrt(1.0 - x * x)
+		directions.append(Vector3(x, 0, z))
+		directions.append(Vector3(x, 0, -z))
+	var returns: Array[Vector3] = [Vector3(-1, 0, -1).normalized(), Vector3(1, 0, -1).normalized(), Vector3(-1, 0, 1).normalized(), Vector3(1, 0, 1).normalized()]
+	for direction: Vector3 in directions:
+		if not returns.has(direction): returns.append(direction)
+	return {"encounter_id": _encounter_id(beat_index, chosen_route), "world_revision": WORLD_REVISION, "recognition_s": 0.18, "attack_input_margin_s": 0.08, "escape_directions": directions, "return_directions": returns, "floor_regions": [scheduler_bindings().floors["crater-floor"]]}
+
+
+func _encounter_id(beat: int, route: String) -> String:
+	if beat == 0: return "a1_l2_landing"
+	if beat == 1: return "a1_l2_solo"
+	if beat in [2, 3]: return "a1_l2_" + route
+	if beat in [4, 5]: return "a1_l2_finale"
+	return ""
+
+
+func _refresh_render_state() -> void:
+	for id: String in SOURCE_IDS:
+		_render_sources[id] = (sources[id] as Act1RushSelenite).state()
+	for id: String in CIRCLE_IDS:
+		_render_circles[id] = (circles[id] as CinderLaneMechanism).state()
+		_present_puff(id, _render_circles[id])
+
+
+func _prune_framing() -> void:
+	for id: String in _framing.keys():
+		var state: Dictionary = _render_sources[id] if _render_sources.has(id) else _render_circles[id]
+		if state.reservation_id.is_empty() or state.reservation_id != _framing[id].reservation_id: _framing.erase(id)
+
+
+func _source_presentation_error(id: String) -> String:
+	var error: String = (sources[id] as Act1RushSelenite).art_binding_error()
+	if not error.is_empty(): return error
+	return _containment_error(_camera_framing_points())
+
+
+func _framing_ready(points: Array) -> bool:
+	if points.is_empty() or points.size() > 224 or not is_instance_valid(shared_shell): return false
+	var plan: Dictionary = shared_shell.call("camera_framing_plan", points, hero.global_position + Vector3(0, 0.65, 0))
+	last_encounter_error = String(plan.get("reason", "")) if not plan.get("accepted", false) else _containment_error(points)
+	return plan.get("accepted", false) and last_encounter_error.is_empty()
+
+
+func _containment_error(points: Array) -> String:
+	if not is_instance_valid(shared_shell): return "Actual shared camera is required"
+	if points.is_empty() or points.size() > 224: return "Actual required world corners must be complete and bounded to224"
+	return String(shared_shell.call("camera_framing_error", points))
+
+
+func _camera_framing_points() -> Array:
+	# Pure render observation: cached public states avoid scheduler prune/callbacks
+	# inside the camera query. Include actual art/body, full endcaps and proof poses.
+	var points: Array = _forecast_points.duplicate()
+	var id: String = current_source_id()
+	if not id.is_empty() and _render_sources.has(id):
+		var state: Dictionary = _render_sources[id]
+		if not state.dead and not state.dormant and (not state.reservation_id.is_empty() or (is_instance_valid(hero) and hero.global_position.distance_to((sources[id] as Node3D).global_position) <= 5.0)):
+			points.append_array(_actor_points(id, state.opening_position))
+			if state.geometry.get("kind") == "lane": points.append_array(_lane_points(state.geometry))
+			points.append_array(_cue_points((sources[id] as Act1RushSelenite).get_cue()))
+	for circle_id: String in CIRCLE_IDS:
+		if _render_circles.get(circle_id, {}).get("status") == "running":
+			points.append_array(_circle_points(circle_id))
+	for value: Dictionary in _framing.values(): points.append_array(_response_points(value.landing, value.attack_position))
+	if beat_index == 5 and is_instance_valid(grotto):
+		points.append_array(_box_points(AABB(-_contact_resource.size * 0.5, _contact_resource.size), _contact_shape.global_transform))
+		points.append_array(_cue_points(grotto_cue))
+	if not points.is_empty(): points.append_array(_committed_dash_points())
+	return _unique_points(points)
+
+
+func _actor_points(id: String, endpoint: Vector3) -> Array:
+	var actor: Act1RushSelenite = sources[id]
+	var collision: CollisionShape3D = actor.get_node("BodyCollision") as CollisionShape3D
+	var capsule := collision.shape as CapsuleShape3D
+	var points: Array = _box_points(AABB(Vector3(-capsule.radius, -capsule.height * 0.5, -capsule.radius), Vector3(capsule.radius * 2, capsule.height, capsule.radius * 2)), collision.global_transform)
+	var presentation: Node3D = actor.get_node("TemporaryC30Presentation")
+	for node: Node in presentation.find_children("*", "Sprite3D", true, false):
+		var sprite := node as Sprite3D
+		if sprite.is_visible_in_tree():
+			var quad: Array = shared_shell.call("camera_billboard_points", sprite) if is_instance_valid(shared_shell) else []
+			if quad.is_empty(): return [Vector3.INF]
+			points.append_array(quad)
+	for node: Node in presentation.find_children("*", "MeshInstance3D", true, false):
+		var mesh := node as MeshInstance3D
+		if mesh.mesh != null and mesh.is_visible_in_tree(): points.append_array(_box_points(mesh.get_aabb(), mesh.global_transform))
+	var current: Array = points.duplicate()
+	for point: Vector3 in current: points.append(point + endpoint - actor.global_position)
+	return _unique_points(points)
+
+
+func _circle_points(id: String) -> Array:
+	var index: int = CIRCLE_IDS.find(id)
+	var radius: float = CIRCLE_RADII[index]
+	var origin: Vector3 = CIRCLE_ORIGINS[index]
+	var points: Array = _box_points(AABB(Vector3(-radius, 0, -radius), Vector3(radius * 2, 0.08, radius * 2)), Transform3D(Basis.IDENTITY, origin))
+	points.append_array(_cue_points((circles[id] as CinderLaneMechanism).get_cue()))
+	var puff: MeshInstance3D = _puffs[id]
+	# Bound the actual mesh at its externally derived maximum active pose before
+	# it appears. This is presentation extent, never danger or substitute collision.
+	points.append_array(_box_points(puff.get_aabb(), Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 1.4), puff.global_position)))
+	return _unique_points(points)
+
+
+func _cue_points(cue: Node3D) -> Array:
+	var points: Array = []
+	for node: Node in cue.find_children("*", "MeshInstance3D", true, false):
+		var mesh := node as MeshInstance3D
+		if mesh.mesh != null and mesh.is_visible_in_tree(): points.append_array(_box_points(mesh.get_aabb(), mesh.global_transform))
+	return points
+
+
+func _lane_points(shape: Dictionary) -> Array:
+	var points: Array = []
+	for centre: Vector3 in [shape["from"], shape["to"]]:
+		points.append_array(_box_points(AABB(Vector3(-shape.radius, 0, -shape.radius), Vector3(shape.radius * 2, 0.08, shape.radius * 2)), Transform3D(Basis.IDENTITY, centre)))
+	return points
+
+
+func _response_points(landing: Vector3, attack: Vector3) -> Array:
+	if not is_instance_valid(hero) or not is_instance_valid(shared_shell): return [Vector3.INF]
+	var actual: Array = shared_shell.call("player_camera_framing_points")
+	if actual.is_empty(): return [Vector3.INF]
+	var points: Array = []
+	# Translate the complete native art/shadow/body observation, not an invented
+	# capsule silhouette. These future presentation poses certify no collision.
+	for point: Vector3 in actual:
+		points.append(point + landing - hero.global_position)
+		points.append(point + attack - hero.global_position)
+	return _unique_points(points)
+
+
+func _committed_dash_points() -> Array:
+	if not is_instance_valid(hero) or not is_instance_valid(shared_shell): return [Vector3.INF]
+	var state: Dictionary = hero.get_committed_dash_state()
+	if state.is_empty(): return [Vector3.INF]
+	if not state.active: return []
+	# This is the accepted nominal travel budget, not a predicted collision landing.
+	var endpoint: Vector3 = state.origin + state.direction * float(state.distance)
+	var actual: Array = shared_shell.call("player_camera_framing_points")
+	if actual.is_empty(): return [Vector3.INF]
+	var points: Array = []
+	for point: Vector3 in actual: points.append(point + endpoint - hero.global_position)
+	return points
+
+
+func _box_points(bounds: AABB, transform: Transform3D) -> Array:
+	var points: Array = []
+	for x: float in [bounds.position.x, bounds.end.x]:
+		for y: float in [bounds.position.y, bounds.end.y]:
+			for z: float in [bounds.position.z, bounds.end.z]: points.append(transform * Vector3(x, y, z))
+	return points
+
+
+func _unique_points(points: Array) -> Array:
+	var result: Array = []
+	for point: Vector3 in points:
+		if not result.has(point): result.append(point)
+	return result
+
+
+func snapshot_state() -> Dictionary:
+	if _changing or _callback_depth > 0 or not _activation_entitlement.is_empty():
+		last_snapshot_error = "Capture Crater Gardens at the paused complete shared-physics barrier"
+		return {}
+	var snapshot: Dictionary = super.snapshot_state()
+	if snapshot.is_empty():
+		if not last_capture_error.is_empty(): last_snapshot_error = last_capture_error
+		return {}
+	last_snapshot_error = snapshot_error(snapshot)
+	return snapshot if last_snapshot_error.is_empty() else {}
+
+
+func snapshot_error(snapshot: Dictionary) -> String:
+	var error: String = super.snapshot_error(snapshot)
+	return _progress_error(snapshot) if error.is_empty() else error
+
+
+func snapshot_error_with_player(snapshot: Dictionary, saved_player: Dictionary) -> String:
+	var error: String = super.snapshot_error_with_player(snapshot, saved_player)
+	return _progress_error(snapshot) if error.is_empty() else error
+
+
+func restore_state(snapshot: Dictionary) -> bool:
+	last_snapshot_error = snapshot_error(snapshot)
+	if not last_snapshot_error.is_empty(): return false
+	return super.restore_state(snapshot)
+
+
+func _capture_local_state() -> Dictionary:
+	last_capture_error = _runtime_error()
+	if not last_capture_error.is_empty(): return {}
+	var bindings: Dictionary = scheduler_bindings()
+	var paired: Dictionary = scheduler.snapshot_state(bindings)
+	if paired.is_empty():
+		last_capture_error = scheduler.last_snapshot_error
+		return {}
+	var saved_sources: Dictionary = {}
+	for id: String in SOURCE_IDS:
+		var actor: Act1RushSelenite = sources[id]
+		var saved: Dictionary = actor.snapshot_state(paired)
+		if saved.is_empty():
+			last_capture_error = actor.last_snapshot_error
+			return {}
+		saved_sources[id] = saved
+	var saved_circles: Dictionary = {}
+	for id: String in CIRCLE_IDS:
+		var impact: CinderLaneMechanism = circles[id]
+		var saved: Dictionary = impact.snapshot_state(bindings)
+		if saved.is_empty():
+			last_capture_error = impact.last_snapshot_error
+			return {}
+		saved_circles[id] = saved # Preserve complete shared schema1/conditional2.
+	var framing: Dictionary = {}
+	for id: String in _framing:
+		var value: Dictionary = _framing[id]
+		framing[id] = {"reservation_id": value.reservation_id, "landing": Codec.vector3(value.landing), "attack_position": Codec.vector3(value.attack_position), "primary_time_s": value.primary_time_s, "response_complete_s": value.response_complete_s}
+	var custody: Dictionary = {}
+	for id: String in _custody:
+		custody[id] = _custody[id].duplicate(true)
+		custody[id]["opening_position"] = Codec.vector3(_custody[id].opening_position)
+	return {"beat_index": beat_index, "completed_beats": completed_beats.duplicate(), "chosen_route": chosen_route, "encounter_started": encounter_started, "sources": saved_sources, "circles": saved_circles, "scheduler": paired, "framing": framing, "custody": custody, "sequence": _sequence.duplicate(true)}
+
+
+func _local_snapshot_error(state: Dictionary) -> String:
+	return _validate_pair(state, hero.snapshot_state())
+
+
+func _local_snapshot_error_with_player(state: Dictionary, saved_player: Dictionary) -> String:
+	return _validate_pair(state, saved_player)
+
+
+func _validate_pair(state: Dictionary, saved_player: Dictionary) -> String:
+	if _changing or _callback_depth > 0 or not _activation_entitlement.is_empty(): return "Aggregate prevalidation requires a quiet authored boundary"
+	var error: String = Codec.value_error(state)
+	if error.is_empty(): error = Codec.keys_error(state, LOCAL_KEYS)
+	if not error.is_empty(): return error
+	if not Codec.is_integer(state.beat_index, 0, 5) or not state.completed_beats is Array or state.completed_beats.size() != int(state.beat_index) or state.chosen_route not in ["", "rock", "open"] or not state.encounter_started is bool:
+		return "Authored beat, exact completed prefix, route and encounter flag required"
+	for index: int in range(state.completed_beats.size()):
+		if state.completed_beats[index] != BEATS[index]: return "Completed beats cannot be unknown, reordered or repeated"
+	for key: String in ["sources", "circles", "scheduler", "framing", "custody", "sequence"]:
+		if not state[key] is Dictionary: return "Closed aggregate dictionaries required"
+	if not Codec.keys_error(state.sources, SOURCE_IDS).is_empty() or not Codec.keys_error(state.circles, CIRCLE_IDS).is_empty(): return "All four retained actors and five stable impacts are required"
+	error = _runtime_error()
+	if not error.is_empty(): return error
+	error = hero.snapshot_error(saved_player)
+	if not error.is_empty(): return error
+	var bindings: Dictionary = scheduler_bindings()
+	bindings["owner_positions"] = {}
+	bindings["owner_velocities"] = {}
+	bindings["owner_collision_states"] = {}
+	for id: String in SOURCE_IDS:
+		if not state.sources[id] is Dictionary: return "Retained actor transport required"
+		var actor: Act1RushSelenite = sources[id]
+		error = actor.actor_snapshot_error(state.sources[id], state.scheduler, saved_player)
+		if not error.is_empty(): return error
+		var staged: Dictionary = actor.staged_actor_bindings(state.sources[id])
+		if staged.is_empty(): return "Actual retained actor staging failed"
+		# Merge INNER stable-ID maps, never overwrite another retained actor's map.
+		for key: String in ["owner_positions", "owner_velocities", "owner_collision_states"]:
+			for staged_id: String in staged[key]:
+				if bindings[key].has(staged_id): return "Duplicate staged actor identity"
+				bindings[key][staged_id] = staged[key][staged_id]
+	bindings["hero_positions"] = {"hero": Codec.read_vector3(saved_player.motion.position)}
+	error = scheduler.snapshot_error(state.scheduler, bindings)
+	if not error.is_empty(): return error
+	for id: String in CIRCLE_IDS:
+		if not state.circles[id] is Dictionary: return "Whole native impact transport required"
+		error = (circles[id] as CinderLaneMechanism).snapshot_error(state.circles[id], bindings, state.scheduler)
+		if not error.is_empty(): return error
+	error = _composition_error(state)
+	if not error.is_empty(): return error
+	var records: Dictionary = {}
+	for record: Dictionary in state.scheduler.reservations: records[String(record.source_id)] = record
+	if not Codec.keys_error(state.framing, records.keys()).is_empty(): return "Exactly every live reservation needs its same framing witness"
+	for id: String in records:
+		error = _frame_error(state.framing[id], records[id], saved_player)
+		if not error.is_empty(): return error
+	error = _custody_error(state, saved_player)
+	if not error.is_empty(): return error
+	return _sequence_error(state)
+
+
+func _composition_error(state: Dictionary) -> String:
+	var beat: int = int(state.beat_index)
+	var route: String = state.chosen_route
+	var started: bool = state.encounter_started
+	# The broad fork commits a choice before its retained source is close enough
+	# to activate. This selected-but-dormant approach is an ordinary save boundary.
+	if (beat < 2 and not route.is_empty()) or (beat == 2 and started and route.is_empty()) or (beat >= 3 and route.is_empty()) or (beat in [3, 5] and started): return "Route/encounter flags do not match the authored beat"
+	var expected_encounter: String = ""
+	if beat == 0: expected_encounter = _encounter_id(0, "") if started else ""
+	elif beat == 1: expected_encounter = _encounter_id(1, "") if started else _encounter_id(0, "")
+	elif beat in [2, 3]: expected_encounter = _encounter_id(2, route) if beat == 3 or started else _encounter_id(1, "")
+	else: expected_encounter = _encounter_id(4, route) if started or beat == 5 else _encounter_id(2, route)
+	if state.scheduler.encounter_id != expected_encounter or state.scheduler.world_revision != (0 if expected_encounter.is_empty() else WORLD_REVISION): return "Saved encounter/profile must retain its actual authored boundary"
+	for index: int in range(SOURCE_IDS.size()):
+		var id: String = SOURCE_IDS[index]
+		var saved: Dictionary = state.sources[id]
+		var used: bool = (id == "solo" and (beat > 1 or (beat == 1 and started))) or (id in ["rock", "open"] and id == route and (beat > 2 or started)) or (id == "finale" and (beat == 5 or (beat == 4 and started)))
+		var cleared: bool = (id == "solo" and beat > 1) or (id == route and beat > 2) or (id == "finale" and beat == 5)
+		if saved.dormant == used or (cleared and not saved.dead): return "Dormant/live/dead retained set disagrees with real completed beats"
+		if saved.dormant and saved.motion.position != Codec.vector3(SOURCE_POSITIONS[index]): return "Future/unchosen actor must retain its actual dormant source position"
+		var current: bool = (id == "solo" and beat == 1) or (id == route and beat == 2) or (id == "finale" and beat == 4)
+		if not current and not saved.reservation_id.is_empty(): return "Only the current authored rusher may retain a live exchange"
+		if saved.cycle > 0 and saved.role_encounter_id != _encounter_id(1 if id == "solo" else (4 if id == "finale" else 2), id): return "Retained actor role epoch must name its authored clearing"
+	var landing: Dictionary = state.circles["landing-impact"]
+	if beat > 0 and (landing.cycle < 1 or landing.status != "cancelled" or landing.last_cancel_reason != "landing_danger_resolved"): return "Completed landing retains its actual resolved dangerous interval"
+	for id: String in CIRCLE_IDS:
+		var saved: Dictionary = state.circles[id]
+		var allowed: bool = (id == "landing-impact" and beat == 0) or (id == route + "-impact" and beat == 2 and started) or (id.begins_with("finale-impact-") and beat == 4 and started)
+		var future: bool = (id == "landing-impact" and beat == 0 and not started) or (id in ["rock-impact", "open-impact"] and (route.is_empty() or id != route + "-impact" or (beat == 2 and not started))) or (id.begins_with("finale-impact-") and (beat < 4 or (beat == 4 and not started)))
+		if future and saved.status != "idle": return "Future/unchosen impact cannot invent a used cycle"
+		if saved.status == "running" and not allowed: return "Only the current clearing may retain a running impact"
+		if saved.cycle > 0:
+			var expected: String = _encounter_id(0, "") if id == "landing-impact" else (_encounter_id(4, "") if id.begins_with("finale-impact-") else _encounter_id(2, id.trim_suffix("-impact")))
+			if saved.exchange_encounter_id != expected: return "Impact history must preserve its authored encounter epoch"
+	return ""
+
+
+func _custody_error(state: Dictionary, saved_player: Dictionary) -> String:
+	var expected: Array[String] = []
+	for id: String in CIRCLE_IDS:
+		if id != "landing-impact" and state.circles[id].cycle > 0: expected.append(id)
+	if not Codec.keys_error(state.custody, expected).is_empty(): return "Each executed companion impact requires its complete actual rusher custody"
+	for id: String in expected:
+		var value: Variant = state.custody[id]
+		var impact: Dictionary = state.circles[id]
+		var host_id: String = "finale" if id.begins_with("finale-impact-") else id.trim_suffix("-impact")
+		if not value is Dictionary or not Codec.keys_error(value, CUSTODY_KEYS).is_empty() or value.host_id != host_id or not Codec.is_integer(value.host_cycle, 1) or value.host_cycle > state.sources[host_id].cycle or not value.host_reservation_id is String or not value.host_reservation_id.begins_with("threat-") or not Codec.is_vector3(value.opening_position) or not value.supported is bool: return "Invalid closed living-rusher custody record"
+		for key: String in ["host_start_s", "host_active_until_s", "host_recovery_until_s", "primary_time_s", "response_complete_s"]:
+			if not Codec.in_range(value[key], 0.0, 1000000000.0): return "Copied custody clocks must remain finite"
+		var index: int = SOURCE_IDS.find(host_id)
+		var raw: Dictionary = RusherScript.DEFAULT_RAW_ROLE.duplicate(true)
+		var floors: Dictionary = RusherScript.DEFAULT_TIMING_FLOORS.duplicate(true)
+		raw["recovery_s"] = SOURCE_RECOVERY[index]
+		floors["recovery_s"] = SOURCE_RECOVERY[index]
+		var difficulty = Difficulty.new()
+		var role: Dictionary = difficulty.resolve_role(raw, impact.exchange.profile_id, floors)
+		if role.is_empty() or value.host_active_until_s != float(value.host_start_s) + float(role.windup_s) + float(role.active_s) or value.host_recovery_until_s != float(value.host_active_until_s) + float(role.recovery_s) or not _same(value.opening_position, impact.exchange.opening_position): return "Custody must retain exact raw-role recovery arithmetic and accepted physical opening"
+		var supported: bool = float(value.primary_time_s) >= float(value.host_active_until_s) and float(value.response_complete_s) < float(value.host_recovery_until_s)
+		if value.supported != supported: return "Custody cannot reclassify an unsupported ordinary-primary response"
+		if not supported and (impact.status != "cancelled" or impact.last_cancel_reason != "compound_response_outside_rusher_recovery"): return "Unsupported target-window cycle must be explicitly cancelled before danger"
+		if impact.status == "running":
+			var host: Dictionary = state.sources[host_id]
+			if host.dead or host.dormant or host.reservation_id != value.host_reservation_id or host.cycle != value.host_cycle: return "Running circle requires its same alive attackable actual rusher lease"
+			var reservation: Dictionary = _saved_reservation(state.scheduler, host_id)
+			if reservation.is_empty() or not _accepted_lunge_opening(value.opening_position, reservation) or reservation.start_s != value.host_start_s or reservation.active_until_s != value.host_active_until_s or reservation.recovery_until_s != value.host_recovery_until_s: return "Running impact requires its exact accepted native opening and paired rusher recovery"
+			if not _same(state.framing.get(id, {}).get("primary_time_s"), value.primary_time_s) or not _same(state.framing.get(id, {}).get("response_complete_s"), value.response_complete_s): return "Running circle framing must retain the same proved target window"
+			if reservation.adapter.finished:
+				var equipment = Equipment.new()
+				if not equipment.restore(saved_player.equipment): return "Canonical saved equipment required for the actual stopped target"
+				var attack: Vector3 = Codec.read_vector3(state.framing[id].attack_position)
+				if attack.distance_to(Codec.read_vector3(reservation.opening_position)) > float(equipment.resolved_stats().primary_range): return "Companion response must reach its actual living stopped target with ordinary primary"
+	return ""
+
+
+func _accepted_lunge_opening(accepted: Variant, reservation: Dictionary) -> bool:
+	var adapter: Dictionary = reservation.get("adapter", {})
+	if adapter.get("kind") != "lunge" or not Codec.is_vector3(accepted) or not Codec.is_vector3(adapter.get("planned_endpoint")) or not adapter.get("finished") is bool:
+		return false
+	# Circle identity remains the exact immutable opening accepted at admission.
+	# The native scheduler deliberately publishes actual readback once stopped.
+	# Its existing physical endpoint bound never applies to copied IDs or clocks.
+	if not adapter.finished: return _same(accepted, adapter.planned_endpoint)
+	if not _same(reservation.opening_position, adapter.current_position) or Codec.read_vector3(adapter.current_position).distance_to(Codec.read_vector3(adapter.planned_endpoint)) > Motion.ENDPOINT_TOLERANCE:
+		return false
+	return _same(accepted, adapter.planned_endpoint) or _same(accepted, reservation.opening_position)
+
+
+func _frame_error(frame: Variant, record: Dictionary, saved_player: Dictionary) -> String:
+	if not frame is Dictionary or not Codec.keys_error(frame, FRAME_KEYS).is_empty() or frame.reservation_id != record.id or not Codec.is_vector3(frame.landing) or not Codec.is_vector3(frame.attack_position) or not Codec.is_number(frame.primary_time_s) or not Codec.is_number(frame.response_complete_s): return "Live admission requires its exact closed response/framing witness"
+	if float(frame.primary_time_s) < float(record.active_until_s) or float(frame.response_complete_s) < float(frame.primary_time_s) or float(frame.response_complete_s) >= float(record.recovery_until_s): return "Ordinary response witness must finish inside the actual recovery"
+	var landing: Vector3 = Codec.read_vector3(frame.landing)
+	var attack: Vector3 = Codec.read_vector3(frame.attack_position)
+	if Codec.vector3(landing) != frame.landing or Codec.vector3(attack) != frame.attack_position or not Codec.in_range(landing.y + 0.005, -0.001, 0.015) or not Codec.in_range(attack.y + 0.005, -0.001, 0.015): return "Response framing must retain exact supported native floor positions"
+	var safe: Rect2 = Layout.FLOOR_RECT.grow(-(CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN))
+	if not safe.has_point(Vector2(landing.x, landing.z)) or not safe.has_point(Vector2(attack.x, attack.z)): return "Response poses must remain on the authored continuous floor"
+	var equipment = Equipment.new()
+	if not equipment.restore(saved_player.equipment): return "Canonical saved equipment required for ordinary-primary reach"
+	var adapter: Dictionary = record.get("adapter", {})
+	var opening_guard: float = Motion.ENDPOINT_TOLERANCE if adapter.get("kind") == "lunge" and not adapter.get("finished", false) else 0.0
+	if attack.distance_to(Codec.read_vector3(record.opening_position)) > float(equipment.resolved_stats().primary_range) - opening_guard: return "Response pose must reach the actual physical stopped opening with ordinary primary"
+	# The actual retained Player capsule measures each saved virtual pose against
+	# real static scenery; a rectangle alone cannot authenticate the fork divider.
+	var floors: Array = [scheduler_bindings().floors["crater-floor"]]
+	for pose: Vector3 in [landing, attack]:
+		var measured: Dictionary = BodySweep.sweep(hero, Transform3D(Basis.IDENTITY, pose), Vector3.ZERO, floors)
+		if measured.has("error"): return "Saved response pose lacks actual scenery/floor clearance: " + String(measured.error)
+	var shape: Dictionary = record.geometry
+	var native: Dictionary = Geometry.circle(Codec.read_vector3(shape.origin), float(shape.radius)) if shape.kind == "circle" else Geometry.lane(Codec.read_vector3(shape["from"]), Codec.read_vector3(shape["to"]), float(shape.radius))
+	if Geometry.segment_hits(native, landing, landing, CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN): return "Safe response landing must lie outside the complete committed footprint"
+	return ""
+
+
+func _sequence_error(state: Dictionary) -> String:
+	var id: String = "solo" if state.beat_index == 1 else (state.chosen_route if state.beat_index == 2 else ("finale" if state.beat_index == 4 else ""))
+	var active: bool = not id.is_empty() and not state.sources[id].reservation_id.is_empty()
+	var associated: Array[String] = _associated_circles(id)
+	if not active or associated.is_empty(): return "Inactive/solo source cannot retain a companion cursor" if not state.sequence.is_empty() else ""
+	if not Codec.keys_error(state.sequence, ["host_reservation_id", "next_index"]).is_empty() or state.sequence.host_reservation_id != state.sources[id].reservation_id or not Codec.is_integer(state.sequence.next_index, 0, associated.size()): return "Compound sequence must retain its current host and bounded cursor"
+	for index: int in range(associated.size()):
+		var custody: Dictionary = state.custody.get(associated[index], {})
+		var admitted: bool = not custody.is_empty() and custody.host_reservation_id == state.sequence.host_reservation_id and custody.supported
+		if admitted != (index < int(state.sequence.next_index)): return "Companion cursor must match the actual ordered accepted cycle prefix"
+	return ""
+
+
+func _saved_reservation(paired: Dictionary, id: String) -> Dictionary:
+	for record: Dictionary in paired.reservations:
+		if record.source_id == id: return record
+	return {}
+
+
+func _runtime_error() -> String:
+	if not is_instance_valid(scheduler) or scheduler.get_parent() != self or not scheduler.is_inside_tree() or scheduler.is_queued_for_deletion() or not is_instance_valid(_world_root()) or not _world_root().is_ancestor_of(self) or not _world_root().is_ancestor_of(hero): return "Actual shared world, scheduler and single Player bindings required"
+	if global_transform != Transform3D.IDENTITY or not is_instance_valid(scenery) or scenery.get_parent() != self or not scenery.is_inside_tree() or scenery.is_queued_for_deletion(): return "Retained lunar scenery and identity world floor frame required"
+	if not is_instance_valid(_floor_collision) or _floor_collision.is_queued_for_deletion() or _floor_collision != get_node_or_null("Floor/CollisionShape3D") or not is_instance_valid(_floor_body) or _floor_body.is_queued_for_deletion() or _floor_collision.get_parent() != _floor_body or _floor_collision.shape != _floor_shape or _floor_collision.disabled or _floor_collision.global_transform != _floor_transform or _floor_shape.size != Vector3(14, 1, 44) or _floor_body.collision_layer != 1 or _floor_body.collision_mask != 0: return "Actual retained14x44 floor binding changed"
+	if not is_instance_valid(grotto) or grotto.get_parent() != self or not grotto.is_inside_tree() or grotto.is_queued_for_deletion() or grotto.position != Layout.GROTTO_CONTACT or grotto.basis != Basis.IDENTITY or grotto.collision_layer != 0 or grotto.collision_mask != 4 or not grotto.monitoring or not is_instance_valid(_contact_shape) or _contact_shape.is_queued_for_deletion() or _contact_shape.get_parent() != grotto or _contact_shape.shape != _contact_resource or _contact_shape.disabled or _contact_shape.transform != Transform3D.IDENTITY or _contact_resource.size != Vector3(2.8, 1.6, 1.6): return "Actual reachable grotto contact must retain its authored native geometry"
+	for cue: CinderInteractionCue in [camp_cue, grotto_cue]:
+		if not is_instance_valid(cue) or cue.get_parent() != self or not cue.is_inside_tree() or cue.is_queued_for_deletion() or cue.basis != Basis.IDENTITY: return "Required camp/contact cue binding missing"
+	if camp_cue.position != Layout.CAMP_CENTRE or grotto_cue.position != Vector3(0, 0, -21.0): return "Required camp/contact cue placement changed"
+	for id: String in SOURCE_IDS:
+		var actor: Act1RushSelenite = sources.get(id) as Act1RushSelenite
+		if not is_instance_valid(actor) or actor != _retained_sources.get(id) or actor.get_parent() != self or not actor.is_inside_tree() or actor.is_queued_for_deletion() or not actor.art_binding_error().is_empty(): return "Retained native rusher/costume binding changed: " + id
+		if actor.dormant and actor.global_position != SOURCE_POSITIONS[SOURCE_IDS.find(id)]: return "Actual future/unchosen dormant source placement changed: " + id
+	for index: int in range(CIRCLE_IDS.size()):
+		var id: String = CIRCLE_IDS[index]
+		var impact: CinderLaneMechanism = circles.get(id) as CinderLaneMechanism
+		var puff: MeshInstance3D = _puffs.get(id) as MeshInstance3D
+		if not is_instance_valid(impact) or impact != _retained_circles.get(id) or impact.get_parent() != self or not impact.is_inside_tree() or impact.is_queued_for_deletion() or impact.global_position != CIRCLE_ORIGINS[index] or impact.global_basis != Basis.IDENTITY or not is_instance_valid(puff) or not puff.is_inside_tree() or puff.is_queued_for_deletion() or puff.get_parent() != impact or puff.is_set_as_top_level() or puff.mesh != _puff_meshes.get(id) or puff.position != Vector3(0, 0.13, 0): return "Retained stationary circle/puff binding changed: " + id
+		var pose: Dictionary = _puff_pose(impact.state())
+		if puff.basis != Basis.IDENTITY.scaled(pose.scale) or puff.visible != pose.visible: return "Retained puff must use its exact unrotated native phase-derived scale/visibility: " + id
+	return ""
+
+
+func _progress_error(snapshot: Dictionary) -> String:
+	var local: Dictionary = snapshot.local
+	var beat: int = int(local.beat_index)
+	var progress: Dictionary = snapshot.progress
+	if progress.completed != (beat == 5) or progress.completion_id != (COMPLETION_ID if beat == 5 else ""): return "Completion must match all five genuine authored beats"
+	if progress.contact_exit_id not in (["", EXIT_ID] if beat == 5 else [""]): return "Only the completed actual grotto contact may carry an exit"
+	var count: int = mini(beat, CHECKPOINTS.size())
+	if progress.checkpoint_ids.size() != count: return "Exactly the four ordered nonfinal checkpoint boundaries are permitted"
+	for index: int in range(count):
+		if progress.checkpoint_ids.get(CHECKPOINTS[index]) != "encounter": return "Checkpoint history cannot invent or reorder a boundary"
+	if progress.checkpoint_id != ("" if count == 0 else CHECKPOINTS[count - 1]) or progress.checkpoint_kind != ("" if count == 0 else "encounter"): return "Current checkpoint must retain the exact completed beat boundary"
+	return ""
+
+
+func _restore_local_state(state: Dictionary) -> void:
+	# Whole actor/player/scheduler/mechanism/progress unit was prevalidated; the
+	# shell already restored Player. No yield, activation, heal or new admission.
+	var restored: bool
+	for id: String in SOURCE_IDS:
+		restored = (sources[id] as Act1RushSelenite).restore_actor_state(state.sources[id])
+		if not restored:
+			push_error("Prevalidated retained C30 physical commit failed: " + id)
+			return
+	var bindings: Dictionary = scheduler_bindings()
+	restored = scheduler.restore_state(state.scheduler, bindings)
+	if not restored:
+		push_error("Prevalidated actual scheduler commit failed: " + scheduler.last_snapshot_error)
+		return
+	for id: String in SOURCE_IDS:
+		restored = (sources[id] as Act1RushSelenite).restore_exchange_state(state.sources[id])
+		if not restored:
+			push_error("Prevalidated retained C30 exchange commit failed: " + id)
+			return
+	for id: String in CIRCLE_IDS:
+		restored = (circles[id] as CinderLaneMechanism).restore_state(state.circles[id], bindings)
+		if not restored:
+			push_error("Prevalidated complete native circle commit failed: " + id)
+			return
+	beat_index = int(state.beat_index)
+	completed_beats.assign(state.completed_beats)
+	chosen_route = state.chosen_route
+	encounter_started = state.encounter_started
+	_framing.clear()
+	for id: String in state.framing:
+		_framing[id] = state.framing[id].duplicate(true)
+		_framing[id]["landing"] = Codec.read_vector3(state.framing[id].landing)
+		_framing[id]["attack_position"] = Codec.read_vector3(state.framing[id].attack_position)
+	_custody.clear()
+	for id: String in state.custody:
+		_custody[id] = state.custody[id].duplicate(true)
+		_custody[id]["opening_position"] = Codec.read_vector3(state.custody[id].opening_position)
+	_sequence = state.sequence.duplicate(true)
+	_forecast_points.clear()
+	_activation_entitlement = ""
+	last_admission.clear()
+	last_circle_admission.clear()
+	last_encounter_error = ""
+	_refresh_render_state()
+	_apply_beat(false)
+
+
+func _same(left: Variant, right: Variant) -> bool:
+	var encoded: String = Exact.stringify(left)
+	return not encoded.is_empty() and encoded == Exact.stringify(right)

@@ -1,0 +1,67 @@
+extends RefCounted
+## PRIVATE temporary observation only. No Node/Object/Callable/current values.
+## Timings are inclusive; parent and child buckets overlap.
+static var enabled: bool = false
+static var _selected: Array[int] = []
+static var _stack: Array = []
+static var _methods: Dictionary = {}
+static var _sources: Dictionary = {}
+static var _edges: Dictionary = {}
+static var _stack_fault: bool = false
+static var _overflow: bool = false
+
+static func reset(source_ids: Array[int]) -> void:
+	enabled = false
+	_selected = source_ids.duplicate()
+	_stack.clear()
+	_methods.clear()
+	_sources.clear()
+	_edges.clear()
+	_stack_fault = false
+	_overflow = source_ids.size() != 8
+
+static func begin(label: String, source_id: int = -1) -> int:
+	if not enabled:
+		return 0
+	var owner: int = source_id
+	if owner < 0 and not _stack.is_empty():
+		owner = _stack.back()[1]
+	# Even unselected owners retain a stack frame so their children cannot be
+	# misattributed to an enclosing selected owner. IDs are observation only.
+	_stack.append([label, owner])
+	return Time.get_ticks_usec()
+
+static func finish(label: String, started: int) -> void:
+	if started == 0:
+		return
+	var elapsed: int = Time.get_ticks_usec() - started
+	if _stack.is_empty() or _stack.back()[0] != label:
+		_stack_fault = true
+		return
+	var owner: int = _stack.back()[1]
+	var parent: String = _stack[_stack.size() - 2][0] if _stack.size() > 1 else "unobserved_caller"
+	_stack.pop_back()
+	if not _selected.has(owner):
+		return
+	var key: String = str(owner)
+	if not _sources.has(key):
+		_sources[key] = {}
+	_record(_methods, label, elapsed)
+	_record(_sources[key], label, elapsed)
+	_record(_edges, parent + " -> " + label, elapsed)
+
+static func _record(rows: Dictionary, label: String, elapsed: int) -> void:
+	if not rows.has(label):
+		if rows.size() >= 128:
+			_overflow = true
+			return
+		rows[label] = {"calls": 0, "inclusive_us": 0, "max_us": 0}
+	rows[label].calls += 1
+	rows[label].inclusive_us += elapsed
+	rows[label].max_us = maxi(rows[label].max_us, elapsed)
+
+static func source_state(source_id: int) -> Dictionary:
+	return (_sources.get(str(source_id), {}) as Dictionary).duplicate(true)
+
+static func state() -> Dictionary:
+	return {"methods": _methods.duplicate(true), "sources": _sources.duplicate(true), "nearest_instrumented_edges": _edges.duplicate(true), "stack_empty": _stack.is_empty(), "stack_fault": _stack_fault, "overflow": _overflow, "selected_source_count": _selected.size()}

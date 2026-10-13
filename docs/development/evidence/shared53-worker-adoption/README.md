@@ -1,0 +1,9 @@
+# Shared53 worker adoption and frontier
+
+All three original act workers have actual Shared53 ACKs for publication `8cb1da79ba000d758fe677054782e23f48cb6dfd`. [The narrow audit](audit.json) verifies registered identities/run, original ACK/receipt hashes, exact two-parent merges/current ancestry, and ten named source files across publication, merge, current HEAD, index and physical bytes. The authoritative named source copies here come from the immutable publication; they are fresh custody proofs, not historical prejob archives.
+
+Broader preservation/history/settings/UID counts remain owner-reported. No huge banks were swept. Adoption provides no engine, native, performance, pixel or level acceptance credit; prior results retain their original execution baselines. See [the index](index.json) for exact artifacts and origins.
+
+Act1 REQUEST `cc2ab825` is answered by Root RESPONSE `6b4aefd7`. The actual owner [closure ACK](coordination/focus-closure-ACK.json) `3dbea2f1` reports all graphical jobs closed and asks Root to release the native/UI launch hold. No new portrait is planned before the terminal native closure/handoff. This heartbeat did not re-audit those native closures and establishes no OS focus-out cause; normal Pause/failures remain. Current far/spent marker pixels stay explicitly uninspected, with representative unchanged near/actor views reused. The changed2436 terminal/callback check and exact L4 handoff remain owner work.
+
+Canonical O2 ACCEPTED `7677c894` authorizes the original Act2 owner to implement O3. Act3's Crystalman L5 remains active with phase2/full-level/art/wholeSave/Retry unfinished. No new shared API blocker or new HANDOFF appears in the bounded post08:30 snapshot. All assignments/confirmation and queue custody remain unchanged. Root alone reconciles actual53 aliases and releases its hold; this pack makes no canonical edits. Full routes, all-enemy defeats and earned exits are not acceptance gates.

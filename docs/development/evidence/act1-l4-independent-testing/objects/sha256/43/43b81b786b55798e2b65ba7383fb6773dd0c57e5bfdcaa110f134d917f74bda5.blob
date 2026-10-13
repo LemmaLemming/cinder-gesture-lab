@@ -1,0 +1,204 @@
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import re
+import stat
+import subprocess
+import sys
+import time
+
+ROOT = Path(__file__).resolve().parents[3]
+PRIMARY = Path('/Users/howardchen/Documents/ChatGPT/video game idea')
+ASSIGNMENT = PRIMARY / '.cinder/act1-l4-integration/native-assignment.json'
+SELECTION = PRIMARY / '.cinder/act1-l4-integration/owned-selection.json'
+CANDIDATE = PRIMARY / '.cinder/act1-l4-integration/registration-candidate.json'
+EXPECTED_HEAD = 'f604f367b11d490afccd70e9a79ed65bf08a2a15'
+EXPECTED_FIXTURE = '8192aa43914b9055be9c5d4d85ed0350ed31113f6039b80f78a233011e3102ab'
+EXPECTED_REGISTRY = '44a56d5c29ea412d010f1e6fed4dbb11634884f1ce2dbf61378c13b9a7f03448'
+SUBMITTED = '9f1d6fe012e4f2859ea2a482a98260c1a226ba4a'
+SHARED = '8cb1da79ba000d758fe677054782e23f48cb6dfd'
+FIXTURE = 'tests/act1_l4_registration_smoke.gd'
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def write(path, value):
+    with path.open('x') as stream:
+        json.dump(value, stream, indent=2, sort_keys=True)
+        stream.write('\n')
+
+
+def module(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    result = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(result)
+    return result
+
+
+def active_files():
+    for name in ('scripts', 'tests', 'assets'):
+        for base, dirs, files in os.walk(ROOT / name):
+            if '.gdignore' in files:
+                dirs[:] = []
+                continue
+            for filename in files:
+                yield Path(base) / filename
+
+
+def uid_census():
+    return {str(path.relative_to(ROOT)): {'sha256': digest(path), 'identity': path.read_text().strip(),
+            'bytes': path.stat().st_size, 'stat_mode': oct(stat.S_IMODE(path.stat().st_mode))}
+            for path in active_files() if path.suffix == '.uid'}
+
+
+def selected_owned_errors(selection):
+    errors = []
+    for row in selection['artifacts']:
+        path = ROOT / row['path']
+        if not path.is_file():
+            errors.append({'path': row['path'], 'error': 'missing'})
+        elif digest(path) != row['sha256'] or path.stat().st_size != row['bytes'] or stat.S_IMODE(path.stat().st_mode) != int(row['stat_mode'], 8):
+            errors.append({'path': row['path'], 'error': 'SHA/size/mode mismatch'})
+    return errors
+
+
+class Tee:
+    def __init__(self, stream, terminal):
+        self.stream, self.terminal = stream, terminal
+
+    def write(self, value):
+        self.stream.write(value)
+        self.stream.flush()
+        self.terminal.write(value)
+        self.terminal.flush()
+
+    def flush(self):
+        self.stream.flush()
+        self.terminal.flush()
+
+
+def main():
+    mode, leaf = sys.argv[1:]
+    assert mode in {'import', 'native'}
+    assert re.fullmatch(r'[a-z0-9-]+', leaf)
+    assignment = json.loads(ASSIGNMENT.read_bytes())
+    selection = json.loads(SELECTION.read_bytes())
+    candidate = json.loads(CANDIDATE.read_bytes())
+    assert assignment['validation_checkout'] == str(ROOT) and assignment['candidate'] == EXPECTED_HEAD
+    assert assignment['fixture_sha256'] == EXPECTED_FIXTURE and assignment['registry_sha256'] == EXPECTED_REGISTRY
+    assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip() == EXPECTED_HEAD
+    assert digest(ROOT / FIXTURE) == EXPECTED_FIXTURE
+    assert digest(ROOT / 'data/campaign/registry.json') == EXPECTED_REGISTRY
+    assert candidate['candidate'] == EXPECTED_HEAD and candidate['other23_rows_and_route_metadata_exact']
+    assert selection['submitted_commit'] == SUBMITTED and selection['shared_baseline'] == SHARED
+    assert selection['rows'] == 21222 and selection['bytes'] == 852927378
+    assert not selected_owned_errors(selection)
+    dev = module('isolated_cinder_dev', ROOT / 'scripts/dev/dev.py')
+    original = ROOT / 'docs/acts/act2/evidence/A2-O2/source-draft-20261012/cinder_a2_o2_focused_record.py'
+    freezer = module('original_focused_source_freezer', original)
+    context = dev.ProjectContext(ROOT)
+    godot = dev.resolve_godot(context)
+    packet = ROOT / '.cinder/level-testing/act1' / leaf
+    packet.mkdir(parents=True, exist_ok=False)
+    (packet / '.gdignore').write_bytes(b'')
+    raw = packet / 'raw.log'
+    command = [str(godot), '--path', str(ROOT), '--headless', '--log-file', str(raw)]
+    command += ['--import'] if mode == 'import' else ['--script', 'res://' + FIXTURE, '--', '--expected-commit=' + SUBMITTED]
+    timeout = 300.0 if mode == 'import' else 180.0
+    before_uids = uid_census()
+    assert len(before_uids) == (461 if mode == 'import' else 462)
+    if mode == 'native':
+        prior = json.loads((ROOT / '.cinder/level-testing/act1/a1-l4-import-01/result.json').read_bytes())
+        assert prior['scope_complete'] and prior['exit_code'] == 0
+    seeds = {'project.godot', '.cinder/local.json', 'scripts/dev/dev.py', FIXTURE,
+             'data/campaign/registry.json', str(Path(__file__).relative_to(ROOT)),
+             str(original.relative_to(ROOT))}
+    seeds.update(str(path.relative_to(ROOT)) for path in active_files() if path.suffix in {'.gd', '.gdshader', '.uid'})
+    for relative in ('.godot/global_script_class_cache.cfg', '.godot/editor/project_metadata.cfg', '.godot/uid_cache.bin', '.godot/imported/.gdignore'):
+        if (ROOT / relative).exists(): seeds.add(relative)
+    files, modes, uids, imports, unresolved, classes = freezer.freeze_sources(ROOT, packet, seeds)
+    for value in modes.values():
+        value['executable_bits'] = int(value['stat_mode'], 8) & 0o111
+    frozen_external = []
+    for path in (ASSIGNMENT, SELECTION, CANDIDATE):
+        target = packet / 'custody' / path.name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(path.read_bytes())
+        frozen_external.append({'original': str(path), 'sha256': digest(path), 'bytes': path.stat().st_size,
+                                'original_stat_mode': oct(stat.S_IMODE(path.stat().st_mode)), 'frozen_relative': str(target.relative_to(packet))})
+    source = {'schema_version': 1, 'at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'cwd': str(ROOT), 'head': EXPECTED_HEAD, 'submitted_content_commit': SUBMITTED,
+        'content_seal': 'bfc0061279cc524a528e68fb4c669a163c540a65',
+        'api_revision': 'campaign-shared-53', 'shared_publication': SHARED,
+        'mode': mode, 'command': command, 'timeout_s_after_lock': timeout,
+        'fixture_sha256': EXPECTED_FIXTURE, 'registry_sha256': EXPECTED_REGISTRY,
+        'dev_sha256': digest(ROOT / 'scripts/dev/dev.py'), 'engine_sha256': digest(godot),
+        'engine_stat_mode': oct(stat.S_IMODE(godot.stat().st_mode)),
+        'driver_sha256': digest(Path(__file__)), 'source_freezer_original_sha256': digest(original),
+        'source_count': len(files), 'files': files, 'file_modes': modes,
+        'uid_presence_before': uids, 'import_presence_before': imports,
+        'global_class_dependencies': classes, 'unresolved_literal_references': unresolved,
+        'active_uids_before': before_uids, 'shared_lock': str(dev.shared_lock_path(ROOT)),
+        'external_custody': frozen_external, 'whole_owned_selection_before': {'rows': selection['rows'], 'bytes': selection['bytes'], 'all_sha_size_modes_exact': True},
+        'canonical_registry_other23_and_routes_exact': True,
+        'scope': 'All active code/UIDs plus explicit/literal/global-class resource closure and actual existing cache/config inputs. Declared bounded subset, not full dynamic/import graph. Exact21222-row owned selection independently compared SHA/size/mode. Only canonical production L4 unlock/entry/one native dash/warning Save/fresh disk Continue/pristine Retry/normal cleanup. TEST prefix3 metadata; untouched actual native pristine Player/local/camera. Owner373/old mechanics/14 portraits reused; no terminal/route/portrait rerun or acceptance.'}
+    write(packet / 'source.json', source)
+    start = time.monotonic()
+    with (packet / 'wrapper.log').open('x') as stream:
+        tee = Tee(stream, sys.stdout)
+        with contextlib.redirect_stdout(tee), contextlib.redirect_stderr(tee):
+            with dev.godot_lock(ROOT) as lock_fd:
+                lock_acquired = time.monotonic()
+                print('Selected isolated validation begins after shared lock admission.', flush=True)
+                code = dev.run_validation(command, context, lock_fd, timeout)
+    after_uids = uid_census()
+    additions = {p: v for p, v in after_uids.items() if p not in before_uids}
+    uid_changes = [p for p, value in before_uids.items() if after_uids.get(p) != value]
+    changed = [p for p, h in files.items() if not (ROOT / p).exists() or digest(ROOT / p) != h]
+    mode_changes = [p for p, value in modes.items() if (ROOT / p).exists() and oct(stat.S_IMODE((ROOT / p).stat().st_mode)) != value['stat_mode']]
+    owned_errors = selected_owned_errors(selection)
+    text = (packet / 'wrapper.log').read_text()
+    raw_text = raw.read_text() if raw.exists() else ''
+    counts = {'wrapper': freezer.log_counts(text), 'raw': freezer.log_counts(raw_text)}
+    summaries = [{'checks': int(a), 'failures': int(b)} for a, b in re.findall(r'Production Act1 L4 registration: (\d+) checks, (\d+) failures;', raw_text)]
+    metadata_changes = [p for p in changed if p.startswith('.godot/')]
+    substantive_changes = [p for p in changed if p not in metadata_changes]
+    clean_logs = all(all(value == 0 for value in data.values()) for data in counts.values())
+    complete = code == 0 and clean_logs and not substantive_changes and not mode_changes and not uid_changes and not owned_errors
+    if mode == 'native':
+        complete = complete and len(summaries) == 1 and summaries[0]['failures'] == 0 and not additions
+    else:
+        complete = complete and set(additions) == {FIXTURE + '.uid'} and len(after_uids) == 462
+    generated = {}
+    for relative, value in additions.items():
+        target = packet / 'generated-after-job' / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((ROOT / relative).read_bytes())
+        target.chmod(stat.S_IMODE((ROOT / relative).stat().st_mode))
+        generated[relative] = value
+    result = {'at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'mode': mode,
+        'exit_code': code, 'scope_complete': complete, 'summaries': summaries,
+        'elapsed_including_queue_s': time.monotonic() - start, 'queue_wait_s': lock_acquired - start,
+        'engine_child_closed': True, 'canonical_queue_closed': True,
+        'source_sha256': digest(packet / 'source.json'), 'wrapper_sha256': digest(packet / 'wrapper.log'),
+        'raw_sha256': digest(raw) if raw.exists() else None, 'log_counts': counts,
+        'changed_source_paths': substantive_changes, 'cache_metadata_changes': metadata_changes,
+        'changed_file_mode_paths': mode_changes, 'prior_uid_changes': uid_changes,
+        'generated_uid_originals': generated, 'active_uid_count_before': len(before_uids),
+        'active_uid_count_after': len(after_uids), 'whole_owned_selection_after_errors': owned_errors,
+        'unexecuted_or_failed': not complete, 'scope': source['scope'], 'acceptance': False}
+    write(packet / 'result.json', result)
+    print(json.dumps({'packet': str(packet), 'result_sha256': digest(packet / 'result.json'),
+                      'exit_code': code, 'scope_complete': complete, 'summaries': summaries,
+                      'source_count': len(files), 'generated_uids': additions}, sort_keys=True), flush=True)
+    return 0 if complete else 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

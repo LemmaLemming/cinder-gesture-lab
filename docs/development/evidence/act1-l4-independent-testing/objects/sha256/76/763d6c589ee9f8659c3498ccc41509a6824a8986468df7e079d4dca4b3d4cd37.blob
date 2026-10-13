@@ -1,0 +1,134 @@
+import datetime
+import hashlib
+import json
+from pathlib import Path
+import re
+import stat
+
+ROOT = Path(__file__).resolve().parents[3]
+PRIMARY = Path('/Users/howardchen/Documents/ChatGPT/video game idea')
+DEST = ROOT / 'docs/development/evidence/act1-l4-independent-testing'
+PACKETS = ['a1-l4-import-01', 'a1-l4-registration-01']
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def add(path, role, job, expected=None, expected_mode=None):
+    data = path.read_bytes()
+    digest = sha(data)
+    mode = stat.S_IMODE(path.stat().st_mode)
+    if expected is not None: assert digest == expected, path
+    if expected_mode is not None: assert mode == int(expected_mode, 8), path
+    target = DEST / 'objects/sha256' / digest[:2] / (digest + '.blob')
+    if not target.exists():
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+        target.chmod(0o644)
+    assert target.read_bytes() == data
+    assert target.stat().st_ino != path.stat().st_ino
+    ref = {'job': job, 'role': role, 'original_absolute_path': str(path),
+           'sha256': digest, 'bytes': len(data), 'original_mode': oct(mode),
+           'object': str(target.relative_to(DEST)), 'object_mode': '0o644'}
+    references.append(ref)
+    objects[digest] = {'sha256': digest, 'bytes': len(data), 'object': ref['object']}
+    return ref
+
+
+assert not DEST.exists()
+DEST.mkdir(parents=True)
+(DEST / '.gdignore').write_bytes(b'')  # First archive file; all contents inert.
+(DEST / '.gitattributes').write_bytes(b'* -text -diff\n')
+references, objects, jobs = [], {}, []
+for label in PACKETS:
+    packet = ROOT / '.cinder/level-testing/act1' / label
+    result = json.loads((packet / 'result.json').read_bytes())
+    source = json.loads((packet / 'source.json').read_bytes())
+    assert result['scope_complete'] and result['exit_code'] == 0
+    assert result['engine_child_closed'] and result['canonical_queue_closed']
+    assert not result['changed_source_paths'] and not result['cache_metadata_changes']
+    assert not result['changed_file_mode_paths'] and not result['prior_uid_changes']
+    assert not result['whole_owned_selection_after_errors']
+    result_ref = add(packet / 'result.json', 'original-result', label)
+    source_ref = add(packet / 'source.json', 'original-source-manifest', label, result['source_sha256'])
+    wrapper_ref = add(packet / 'wrapper.log', 'original-wrapper-log', label, result['wrapper_sha256'])
+    raw_ref = add(packet / 'raw.log', 'original-native-raw-log', label, result['raw_sha256'])
+    for relative, digest in source['files'].items():
+        add(packet / 'source' / relative, 'original-frozen-source:' + relative, label,
+            digest, source['file_modes'][relative]['stat_mode'])
+    for row in source['external_custody']:
+        add(packet / row['frozen_relative'], 'original-frozen-custody:' + Path(row['original']).name,
+            label, row['sha256'])
+    for relative, pin in result['generated_uid_originals'].items():
+        add(packet / 'generated-after-job' / relative, 'genuine-generated-UID:' + relative,
+            label, pin['sha256'], pin['stat_mode'])
+    raw = (packet / 'raw.log').read_text()
+    pass_count = len(re.findall(r'^PASS:', raw, re.M))
+    fail_count = len(re.findall(r'^\s*ERROR: FAIL:', raw, re.M))
+    if source['mode'] == 'native':
+        assert result['summaries'] == [{'checks': 625, 'failures': 0}]
+        assert pass_count == 625 and fail_count == 0
+        assert len(re.findall(r'^Production Act1 L4 registration: 625 checks, 0 failures;', raw, re.M)) == 1
+    jobs.append({'job': label, 'mode': source['mode'], 'candidate': source['head'],
+                 'submitted_commit': source['submitted_content_commit'], 'content_seal': source['content_seal'],
+                 'shared_publication': source['shared_publication'], 'api_revision': source['api_revision'],
+                 'command': source['command'], 'engine_sha256': source['engine_sha256'],
+                 'engine_stat_mode': source['engine_stat_mode'],
+                 'fixture_sha256': source['fixture_sha256'], 'registry_sha256': source['registry_sha256'],
+                 'source_rows': source['source_count'], 'elapsed_including_queue_s': result['elapsed_including_queue_s'],
+                 'queue_wait_s': result['queue_wait_s'], 'deadline_after_queue_s': source['timeout_s_after_lock'],
+                 'closed_at': result['at'], 'exit_code': result['exit_code'], 'scope_complete': result['scope_complete'],
+                 'summaries': result['summaries'], 'per_check_PASS_lines': pass_count,
+                 'active_uid_count_before': result['active_uid_count_before'], 'active_uid_count_after': result['active_uid_count_after'],
+                 'generated_uid_originals': result['generated_uid_originals'],
+                 'original_result': result_ref, 'original_source': source_ref, 'original_wrapper': wrapper_ref, 'original_raw': raw_ref,
+                 'scope': source['scope']})
+
+for name in ['a1-l4-handoff-review-20261012-0947.json', 'a1-l4-registration-draft-static-review-20261013.json']:
+    add(PRIMARY / '.cinder/level-testing/act1' / name, 'prior-independent-read-only-review', 'context-only-no-new-engine-credit')
+add(Path(__file__), 'packaging-builder-source', 'context-only-no-new-engine-credit')
+index = {'schema_version': 1, 'created_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+         'policy': 'focused-desktop-level-1', 'validation_checkout': str(ROOT),
+         'jobs': jobs, 'original_source_rows': sum(j['source_rows'] for j in jobs),
+         'references': references, 'unique_objects': list(objects.values()),
+         'preserved_whole_owned_custody': {'rows': 21222, 'bytes': 852927378,
+                                         'scope': 'Root original selection manifest frozen in both jobs; every selected actual checkout path independently SHA/size/mode compared before and after each job. Whole historical banks are hash referenced, not redundantly copied into this native archive.'},
+         'limitations': ['TEST prefix3 campaign metadata; source-pristine local/Player/camera capture',
+                         'No earned route/defeat-all/all-kit/full-campaign/balance/performance/mobile claim',
+                         'No new terminal373 or portrait sequence run; previous owner evidence retains exact original scopes',
+                         'Distant-clear/DASH/current SPENT pixels remain uninspected',
+                         'Actual engine binary SHA/mode/path pinned; binary itself is not redistributed',
+                         'Bounded active/explicit/literal/global-class/cache/config closure is not complete dynamic/import graph',
+                         'Earlier failed/NONCLEAN/canceled/unexecuted evidence and accepted levels remain untouched'],
+         'acceptance': False,
+         'scope': 'Exact separate-copy0644 inert CAS preserves original two CLOSED clean job sources/modes/results/raw/wrapper/custody and genuine import-created UID. No source, registry, canonical, owner or Git mutation. Root independently decides registration/acceptance.'}
+(DEST / 'index.json').write_text(json.dumps(index, indent=2, sort_keys=True) + '\n')
+for ref in references:
+    actual = (DEST / ref['object']).read_bytes()
+    assert sha(actual) == ref['sha256'] and len(actual) == ref['bytes']
+    assert (DEST / ref['object']).stat().st_ino != Path(ref['original_absolute_path']).stat().st_ino
+verification = {'verified_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                'index_sha256': sha((DEST / 'index.json').read_bytes()),
+                'original_references': len(references), 'original_source_rows': index['original_source_rows'],
+                'unique_objects': len(objects), 'unique_object_bytes': sum(x['bytes'] for x in objects.values()),
+                'all_original_SHA_size_modes_exact': True, 'all_CAS_bytes_exact_separate_inodes': True,
+                'all_original_manifest_rows_exact': True, 'native625_per_check_lines_match_footer': True,
+                'scope': 'Builder reread every selected original source/manifest/result/raw/custody and literal separate-copy CAS byte. Packaging does not add native/pixel/acceptance credit.'}
+(DEST / 'verification.json').write_text(json.dumps(verification, indent=2, sort_keys=True) + '\n')
+(DEST / 'README.md').write_text('''# Act 1 L4 independent focused testing
+
+Two exact isolated jobs are normally CLOSED clean: import0 and production registration625/0. The candidate is `f604f367b11d490afccd70e9a79ed65bf08a2a15`, submitted HANDOFF `9f1d6fe012e4f2859ea2a482a98260c1a226ba4a`, content seal `bfc0061279cc524a528e68fb4c669a163c540a65`, actual Shared53 `8cb1da79ba000d758fe677054782e23f48cb6dfd`. [Index](index.json) binds the original sources/results/commands/raw/wrapper/custody/UID to literal separate-copy0644 inert CAS; [verification](verification.json) states its bounded custody checks. `.gdignore` was the first artifact, and `* -text -diff` keeps original bytes inert.
+
+Import retained461 prior active UID bytes and created only genuine `tests/act1_l4_registration_smoke.gd.uid`: `uid://cxpqe8wrdc7in`, SHA256 `e951bbec9053815a015a7849d93fd0fdfd93844d86945dc29569f63b269f5564`. Native retained all462. Both jobs have zero raw/wrapper diagnostics, no selected source/mode/cache drift and no whole-owned selection mismatch. The21,222 owned rows/852,927,378 bytes were independently checked SHA/size/mode before and after both jobs. Their original manifest is preserved as a hash-reference object; historical banks are not recopied here.
+
+The625-check native leaf uses every real Shell's canonical `configure_runtime({})`, verifies the exact proposed registry row and locked Journey prerequisite/unavailable A1-L5, captures untouched actual pristine L4 with explicit TEST predecessor prefix3, consumes real GUI Continue/Resume, executes one physical entrance dash, observes native warning, publicly pauses to format2, reconstructs via fresh disk Continue, retries the exact earlier pristine checkpoint and normally disposes every retained descendant/group. Its many cleanup assertions are literal per-node weak-reference checks. Source preparation/whole-ownership custody and import counts are not additional gameplay checks.
+
+This isolated candidate proposes only the A1-L4 accepted row while preserving the other23 rows/route metadata. Primary canonical registration and acceptance remain Root's separate work. No earned route, terminal373 repeat or new portrait run occurred. Owner terminal/mechanics and original14 inspected portraits remain at their original scope. Distant-clear/DASH and current SPENT-marker pixels remain uninspected; full-playthrough/defeat-all/all-kit/full-campaign/balance/performance/mobile are untested. All old failures/NONCLEAN/canceled/unexecuted evidence and earlier accepted levels stay untouched.
+
+Declared closure includes all active code/UIDs, explicit/literal/global-class resources and existing cache/config inputs, not a complete dynamic/import graph. The actual engine binary SHA/mode/path is recorded, but its binary is not redistributed. Packaging grants no new native, pixel or acceptance credit and changes no original, owner, canonical registry, shared source, setting or Git state.
+''')
+print(json.dumps({'archive': str(DEST), 'index_sha256': verification['index_sha256'],
+                  'verification_sha256': sha((DEST / 'verification.json').read_bytes()),
+                  'source_rows': index['original_source_rows'], 'references': len(references),
+                  'unique_objects': len(objects), 'unique_object_bytes': verification['unique_object_bytes']}, indent=2))
