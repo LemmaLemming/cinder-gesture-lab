@@ -14,7 +14,7 @@ const WatchdogMs: int = 75000
 var game: Node
 var owner: CinderLevel
 var hero: CinderPlayer
-var body: StaticBody3D
+var body: CharacterBody3D
 var nose: Node3D
 var scheduler: CinderThreatScheduler
 var checks: int = 0
@@ -42,7 +42,7 @@ func _run() -> void:
 	hero = game.get("player") as CinderPlayer
 	if not _expect(owner != null and owner.get_script() == Fixture and hero != null and owner.hero == hero and game.get("world") is Node3D and game.get("camera") is Camera3D and game.get("hud") is GameHUD, "actual shared Main enters disclosed TEST CinderLevel with one native Hero/camera/HUD"):
 		await _finish(); return
-	body = owner.get("body") as StaticBody3D
+	body = owner.get("body") as CharacterBody3D
 	nose = owner.get("nose") as Node3D
 	scheduler = owner.get("scheduler") as CinderThreatScheduler
 	if not _expect(owner.get("setup_error") == "" and body != null and nose != null and scheduler != null, "actual owning-level eye/nose/Scheduler native bindings succeed: " + String(owner.get("setup_error"))):
@@ -164,6 +164,14 @@ func _native_registration_negatives() -> bool:
 	await process_frame
 	var unit: Dictionary = _unit()
 	if not _expect(not unit.body.is_empty(), "native idle eye supports actual paired paused transport before fault injection"): return false
+	if not _expect(unit.body.schema_version == 1 and unit.scheduler.schema_version == 1 and not unit.body.has("source_binding") and not unit.body.has("velocity") and body.call("get_sampled_circle_binding").is_empty() and body.velocity == Vector3.ZERO, "unconfigured genuine Character eye preserves the exact unsampled base packet without sampled ownership"): return false
+	var original_margin: float = body.safe_margin
+	body.safe_margin = original_margin + 0.001
+	if not _expect(body.call("get_native_bindings").is_empty() and body.call("snapshot_error", unit.body, unit.scheduler, unit.player) != "", "actual Character eye native margin mutation rejects without silently repairing properties"): return false
+	body.safe_margin = original_margin
+	body.velocity = Vector3.RIGHT
+	if not _expect(body.call("get_native_bindings").is_empty() and body.call("snapshot_error", unit.body, unit.scheduler, unit.player) != "", "actual Character eye velocity mutation rejects without moving or repairing the authored receiver"): return false
+	body.velocity = Vector3.ZERO
 	var collision: CollisionShape3D = body.call("get_collision") as CollisionShape3D
 	var box: Shape3D = collision.shape
 	var owner_id: int = body.shape_find_owner(0)
