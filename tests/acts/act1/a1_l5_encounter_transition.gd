@@ -24,6 +24,9 @@ var primary_receipts: Array[Dictionary] = []
 var witnessed_final_pair: bool = false
 var drive_diagnostics: Array[Dictionary] = []
 var first_primary_only: bool = false
+var later_phase_transport_only: bool = false
+var later_phase_transport_checked: bool = false
+var later_store_root: String = ""
 
 
 func _initialize() -> void:
@@ -34,6 +37,9 @@ func _initialize() -> void:
 func _run() -> void:
 	root.size = Vector2i(540, 1170)
 	first_primary_only = OS.get_cmdline_user_args().has("--first-primary-only")
+	later_phase_transport_only = OS.get_cmdline_user_args().has("--later-phase-transport-only")
+	if first_primary_only and later_phase_transport_only:
+		_expect(false, "focused first-primary and later-phase selections are mutually exclusive"); await _finish(); return
 	for argument: String in OS.get_cmdline_user_args():
 		if argument.begins_with("--level-scene") or argument in ["--capture", "--capture-polish"]:
 			_expect(false, "actual Shell encounter cannot enter preview mode"); await _finish(); return
@@ -73,7 +79,12 @@ func _run() -> void:
 		receipts.append({"stage": "first-primary-only actual genuine recovery primary; later phases/final/hatch/successor unexecuted", "eye_hp": eye.get("hp"), "clock_s": _scheduler().get_clock()})
 		await _finish(); return
 	if not await _drive_to_hp(160.0, "blink") or not await _phase_checkpoint("moon-phase-2", "sneeze", 160.0): await _finish(); return
+	if later_phase_transport_only:
+		if not await _wait(func() -> bool: return moon.get("nose").state().status == "running" and moon.get("nose").state().phase == "warning", "actual first post-CP2 Sneeze warning", 12.0) or not await _capture_real_window("sneeze preparing", true): await _finish(); return
+		if not _expect(later_phase_transport_checked and primary_receipts.size() == 4 and eye.get("hp") == 160.0 and eye.get("phase") == 2 and moon.get("stage") == "sneeze" and phase_observers.size() == 1 and moon.current_checkpoint().id == "moon-phase-2", "focused later transport retains the real four-hit CP2 donor; CP3/final/hatch/successor are unexecuted"): await _finish(); return
+		await _finish(); return
 	if not await _drive_to_hp(80.0, "sneeze") or not await _phase_checkpoint("moon-phase-3", "final", 80.0): await _finish(); return
+	if not _expect(later_phase_transport_checked, "one genuine CP2/first Sneeze fresh Continue/earlier GUI Retry audit completed before later phases"): await _finish(); return
 	if not await _drive_to_hp(0.0, "final"): await _finish(); return
 	hp_boundaries.append(0.0)
 	if not _expect(phase_observers.size() == 2 and phase_observers[0].phase == 2 and phase_observers[0].hp == 160.0 and phase_observers[1].phase == 3 and phase_observers[1].hp == 80.0 and hp_boundaries == [240.0, 160.0, 80.0, 0.0] and primary_receipts.size() == 12 and witnessed_final_pair, "actual ordinary primary reaches original240/160/80/0; two committed phase observers and real staggered final pair"): await _finish(); return
@@ -215,12 +226,76 @@ func _capture_real_window(label: String, preparing: bool) -> bool:
 	var wire: String = Exact.stringify(saved)
 	await create_timer(0.04, true).timeout
 	if not _expect(Exact.stringify(game.capture_campaign_snapshot()) == wire, "paused original native sample/deadlines/HP/phase/clock freeze: " + label): return false
+	if label == "sneeze preparing" and not later_phase_transport_checked:
+		if not await _later_phase_transport(saved): return false
 	for record: Dictionary in saved.level.local.scheduler.reservations:
 		if record.source_id not in [Layout.EYE_ID, Layout.NOSE_ID]: continue
 		plans[record.id] = {"source_id": record.source_id, "proof": saved.level.local.framing[record.source_id].proof.duplicate(true)}
 		if preparing: warning_captures[record.id] = true
 	receipts.append({"stage": label, "exact_snapshot": wire})
 	return await _click(game, "ResumeButton")
+
+
+func _later_phase_transport(saved: Dictionary) -> bool:
+	# CP2 is earned by the existing four actual ordinary hits. This later Nose
+	# packet and its earlier checkpoint are read unchanged from the real donor.
+	var earlier: Dictionary = game.attempts.state().story.checkpoint
+	var earlier_wire: String = Exact.stringify(earlier)
+	var saved_wire: String = Exact.stringify(saved)
+	if not _closed(earlier) or not _expect(earlier.level.local.stage == "sneeze" and earlier.level.local.eye.hp == 160.0 and earlier.level.progress.checkpoint_id == "moon-phase-2" and earlier.level.progress.checkpoint_ids == {"capsule-ready": "encounter", "moon-phase-2": "boss_phase"} and saved.level.local.stage == "sneeze" and saved.level.local.eye.hp == 160.0 and saved.level.local.nose.status == "running" and saved.level.local.nose.phase in ["warning", "lock"] and saved_wire != earlier_wire and _durable(game), "distinct genuine post-CP2 preparing packet retains the actual earlier phase2 checkpoint without fabricated HP/history"): return false
+	var donor: Dictionary = _donor()
+	if not _direct_candidate(earlier) or not _expect(_donor() == donor, "existing idle-recipient quiet Player/local/Scheduler/sample/HP/history commit audits real CP2 without changing donor"): return false
+	# A disposable byte-exact copy uses the same production Store/Shell. It is
+	# a child directory, so original donor files stay byte-exact across Retry.
+	later_store_root = test_root + "later-phase-transport/"
+	if not _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(later_store_root)) == OK, "disposable actual later transport save directory is available"): return false
+	for name: String in ["campaign.json", "settings.json", "preferences.json"]:
+		var source: String = test_root + name
+		if not FileAccess.file_exists(source): continue
+		if not _expect(DirAccess.copy_absolute(ProjectSettings.globalize_path(source), ProjectSettings.globalize_path(later_store_root + name)) == OK and FileAccess.get_file_as_bytes(source) == FileAccess.get_file_as_bytes(later_store_root + name), "actual later transport copy retains exact original file bytes: " + name): return false
+	fresh = Shell.new()
+	if not _expect(fresh.configure_runtime(raw, later_store_root + "campaign.json", later_store_root + "settings.json", later_store_root + "preferences.json"), "disposable recipient uses existing production Shell with copied exact save/settings/preferences"):
+		fresh.free(); fresh = null; return false
+	_begin_watch("later fresh Title validation observations", null, null, true)
+	root.add_child(fresh)
+	if not await _settle(): return false
+	if not _expect(paused and fresh.player == null and fresh.active_level == null and fresh.menu.page_name() == "title" and fresh.campaign_error.is_empty() and _same(fresh.attempts.state(), game.attempts.state()) and events.is_empty() and _donor() == donor, "actual fresh Title validates the exact later whole Story/checkpoint copy quietly while donor remains unchanged"): return false
+	_begin_watch("later fresh GUI Continue recipient observations", null, null, true)
+	if not await _click(fresh, "ContinueStoryButton"): return false
+	var store = Store.new(later_store_root + "campaign.json")
+	store.payload_validator = fresh.attempts.saved_payload_error
+	if not _expect(paused and _same(fresh.capture_campaign_snapshot(), saved) and _ids(fresh.active_level, fresh.player) != _ids(game.active_level, game.player) and Exact.stringify(fresh.attempts.state().story.checkpoint) == earlier_wire and _same(store.read_payload(), fresh.attempts.state()) and events.is_empty() and _donor() == donor, "fresh actual disk GUI Continue restores the exact later Player/local/native unit and earlier CP2 with no new-recipient callbacks or donor changes") or not _bindings(fresh): return false
+	receipts.append({"stage": "genuine later CP2 fresh GUI Continue", "exact_later_snapshot": saved_wire, "exact_earlier_checkpoint": earlier_wire, "quiet_callbacks": events.duplicate(true)})
+	# Continue's resume page has no Retry button. Public Pause exposes the real
+	# control while simulation remains paused; no source tick is permitted.
+	fresh.request_pause()
+	if not await _settle() or not _expect(paused and fresh.menu.page_name() == "pause" and fresh.campaign_error.is_empty() and Exact.stringify(fresh.capture_campaign_snapshot()) == saved_wire and Exact.stringify(fresh.attempts.state().story.checkpoint) == earlier_wire and events.is_empty() and _donor() == donor, "recipient public Pause exposes Retry without changing exact later native clocks/resources or earlier CP2"): return false
+	var old_ids: Dictionary = _ids(fresh.active_level, fresh.player)
+	var retired_refs: Array[WeakRef] = _refs(fresh.world)
+	_begin_watch("later actual GUI Retry new recipient observations", null, null, true)
+	if not await _click(fresh, "RetryButton"): return false
+	if not _expect(paused and fresh.menu.page_name() == "resume" and Exact.stringify(fresh.capture_campaign_snapshot()) == earlier_wire and _ids(fresh.active_level, fresh.player) != old_ids and _freed(retired_refs) and _same(store.read_payload(), fresh.attempts.state()) and events.is_empty() and _donor() == donor, "actual GUI Retry restores the exact earlier CP2 whole checkpoint quietly, retires later recipient and preserves the continuing donor") or not _bindings(fresh): return false
+	receipts.append({"stage": "genuine later packet actual GUI Retry to CP2", "exact_checkpoint": earlier_wire, "new_recipient_observations": events.duplicate(true)})
+	_end_watch("normal later transport recipient retirement")
+	var refs: Array[WeakRef] = _refs(fresh)
+	fresh.free(); fresh = null
+	if not _expect(_freed(refs) and _donor() == donor, "normal fresh recipient disposal frees original native descendants without donor/disk/UI/input changes"): return false
+	if not _remove_later_store(): return false
+	later_phase_transport_checked = true
+	return true
+
+
+func _remove_later_store() -> bool:
+	if later_store_root.is_empty(): return true
+	var directory := DirAccess.open(later_store_root)
+	var removed: bool = directory != null
+	if directory != null:
+		for name: String in directory.get_files():
+			if DirAccess.remove_absolute(ProjectSettings.globalize_path(later_store_root + name)) != OK: removed = false
+	if DirAccess.remove_absolute(ProjectSettings.globalize_path(later_store_root)) != OK: removed = false
+	if not _expect(removed, "disposable later transport Store/settings/preferences/backup files retire normally"): return false
+	later_store_root = ""
+	return true
 
 
 func _request_real_escape(records: Array[Dictionary]) -> bool:
@@ -381,11 +456,12 @@ func _finish() -> void:
 	await create_timer(0.5, true).timeout; await process_frame
 	_expect(_freed(refs) and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "normal final Shell/successor/native-node/cue cleanup releases all descendants/groups")
 	_expect(FileAccess.get_file_as_bytes(Registry.DATA_PATH) == registry_bytes, "focused TEST prefix/metadata never change canonical campaign registration")
+	_remove_later_store()
 	var report: String = "res://.cinder/a1-l5-encounter-transition-%d.json" % Time.get_ticks_usec()
 	var file := FileAccess.open(report, FileAccess.WRITE)
 	if file == null: _expect(false, "focused encounter report is writable")
 	else:
-		file.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "setups": setups, "receipts": receipts, "circle_cycles": circle_cycles, "dash_requests": dash_requests, "drive_diagnostics": drive_diagnostics, "first_primary_only": first_primary_only, "execution_selection": "First actual genuine recovery primary only; later phase/final/hatch/successor paths unexecuted" if first_primary_only else "Original twelve ordinary hits, two phase checkpoints, final pair, hatch and actual successor", "hp_boundaries": hp_boundaries, "phase_observers": phase_observers, "primary_receipts": primary_receipts, "hatch_entries": hatch_entries, "terminal_observers": terminal_observers, "observations": observations, "wall_ms": Time.get_ticks_msec() - started_ms, "scope": "First-primary-only diagnostic: actual TEST return/capsule entry, native Blink sample/dash/recovery/pure transport, one ordinary primary240-to220 and normal cleanup. Later HP phases/final pair/hatch/escape/successor remain unexecuted. No earned route, private opening or new gameplay gate." if first_primary_only else "Actual production Moon parent/native source grammar/ordinary Player primary HP240-160-80-0/deferred phase checkpoints/pure paused snapshots/fixed warning sample/real staggered final/retained native hatch first contact/original shared-clock .75s escape/actual shared A2-L1 transition/normal cleanup. Isolated TEST L5 registration/four unearned predecessor IDs, public rusher injury and supported same-floor Hero placements; recovery-only low-rim placements are not earned return movement. No private state/provider/eye-HP/sample/clock/checkpoint seed, extra gameplay actor/controller/camera, blast/ammo requirement or resource refill. Not an earned route, full-playthrough acceptance gate, gesture/art/all-kit/balance/mobile proof."}, "\t")); file.close()
+		file.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "setups": setups, "receipts": receipts, "circle_cycles": circle_cycles, "dash_requests": dash_requests, "drive_diagnostics": drive_diagnostics, "first_primary_only": first_primary_only, "later_phase_transport_only": later_phase_transport_only, "later_phase_transport_checked": later_phase_transport_checked, "execution_selection": "Four actual ordinary hits to genuine CP2, first Sneeze packet fresh Continue/earlier GUI Retry and normal cleanup; CP3/final/hatch/successor unexecuted" if later_phase_transport_only else "First actual genuine recovery primary only; later phase/final/hatch/successor paths unexecuted" if first_primary_only else "Original twelve ordinary hits, two phase checkpoints, one CP2/first-Sneeze fresh Continue/earlier GUI Retry audit, final pair, hatch and actual successor", "hp_boundaries": hp_boundaries, "phase_observers": phase_observers, "primary_receipts": primary_receipts, "hatch_entries": hatch_entries, "terminal_observers": terminal_observers, "observations": observations, "wall_ms": Time.get_ticks_msec() - started_ms, "scope": "Focused genuine later transport only: existing isolated TEST production L5 return/capsule/boss entry, four real ordinary Player primaries240-to160, deferred earned CP2, actual first post-CP2 Sneeze warning/lock Pause, exact CP2 fresh idle-recipient quiet Player then level commit, byte-exact copied format2 Store, real fresh Title GUI Continue, supported paused GUI Retry to the earlier CP2 and normal cleanup. Original donor native clock/sample/HP/history/Shell/UI/input/original disk remain unchanged during audit. CP3/final/hatch/escape/successor/full-route/art/all-kit/balance/mobile unexecuted." if later_phase_transport_only else "First-primary-only diagnostic: actual TEST return/capsule entry, native Blink sample/dash/recovery/pure transport, one ordinary primary240-to220 and normal cleanup. Later HP phases/final pair/hatch/escape/successor remain unexecuted. No earned route, private opening or new gameplay gate." if first_primary_only else "Actual production Moon parent/native source grammar/ordinary Player primary HP240-160-80-0/deferred phase checkpoints/one CP2 exact quiet fresh commit and first-Sneeze disk Continue/earlier GUI Retry audit/pure paused snapshots/fixed warning sample/real staggered final/retained native hatch first contact/original shared-clock .75s escape/actual shared A2-L1 transition/normal cleanup. Isolated TEST L5 registration/four unearned predecessor IDs, public rusher injury and supported same-floor Hero placements; recovery-only low-rim placements are not earned return movement. No private state/provider/eye-HP/sample/clock/checkpoint seed, extra gameplay actor/controller/camera, blast/ammo requirement or resource refill. Not an earned route, full-playthrough acceptance gate, gesture/art/all-kit/balance/mobile proof."}, "\t")); file.close()
 	var directory := DirAccess.open(test_root)
 	if directory != null:
 		for name: String in directory.get_files(): DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root + name))
