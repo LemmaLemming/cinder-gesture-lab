@@ -59,6 +59,7 @@ SUITES = {
     "campaign_registration": "tests/campaign_registration_smoke.gd",
     "act1_l2_registration": "tests/act1_l2_registration_smoke.gd",
     "act1_l4_registration": "tests/act1_l4_registration_smoke.gd",
+    "act1_l5_registration": "tests/act1_l5_registration_smoke.gd",
     "act1_l2_challenge": "tests/act1_l2_challenge_smoke.gd",
     "act1_l2_challenge_admission": "tests/act1_l2_challenge_admission_smoke.gd",
     "act2_registration": "tests/act2_registration_smoke.gd",
