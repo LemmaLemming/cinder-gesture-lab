@@ -352,11 +352,27 @@ func _can_tick() -> bool:
 func _trace(label: String, fields: Dictionary = {}) -> void:
 	var row: Dictionary = {"event": label, "elapsed_wall_us": Time.get_ticks_usec() - _started_us}
 	for key: String in fields: row[key] = fields[key]
-	var wire: String = Exact.stringify(row)
+	var wire: String = Exact.stringify(_diagnostic_json_keys(row))
 	if wire.is_empty():
 		_observer_error = "diagnostic row was not representable without losing native details: " + label
 		print("CP2_ADMISSION_DIAGNOSTIC_UNENCODABLE: ", label)
 	else: print("CP2_ADMISSION_DIAGNOSTIC: ", wire)
+
+
+func _diagnostic_json_keys(value: Variant) -> Variant:
+	# Diagnostic field maps may contain native StringName keys introduced by
+	# dictionary dot assignment. Preserve values/bits and normalize ONLY map
+	# keys; the recorded context rows still retain each actual key/type.
+	if value is Dictionary:
+		var result: Dictionary = {}
+		for key: Variant in value:
+			result[String(key)] = _diagnostic_json_keys(value[key])
+		return result
+	if value is Array:
+		var result: Array = []
+		for item: Variant in value: result.append(_diagnostic_json_keys(item))
+		return result
+	return value
 
 
 func _expect(condition: bool, message: String) -> bool:
