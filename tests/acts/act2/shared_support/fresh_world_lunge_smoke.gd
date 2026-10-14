@@ -65,6 +65,7 @@ var _raw: Dictionary
 var _registry_bytes: String = ""
 var _test_root: String
 var _publication: String = ""
+var _checkpoint_only: bool = false
 var _checks: int = 0
 var _failures: int = 0
 var _scope_complete: bool = false
@@ -88,6 +89,7 @@ func _initialize() -> void:
 	_old_audio = AudioServer.generate_bus_layout(); _old_fps = Engine.max_fps
 	for argument: String in OS.get_cmdline_user_args():
 		if argument.begins_with("--fresh-world-publication="): _publication = argument.trim_prefix("--fresh-world-publication=")
+		elif argument == "--checkpoint-only-diagnostic": _checkpoint_only = true
 	_run.call_deferred()
 
 func _run() -> void:
@@ -123,8 +125,20 @@ func _run() -> void:
 	await _settle() # checkpoint transaction legitimately may auto-resume
 	_shell.request_pause(); await _settle()
 	var checkpoint: Dictionary = _shell.attempts.state().story.checkpoint.duplicate(true)
-	if not _expect(not checkpoint.is_empty() and _same(_shell.capture_campaign_snapshot(), checkpoint) and checkpoint.level.local.source.accepted_lunges == 0 and checkpoint.level.local.scheduler.reservations.is_empty(), "real complete earlier checkpoint is durable and lease-free"): _finish(); return
+	var checkpoint_live: Dictionary = _shell.capture_campaign_snapshot()
+	var checkpoint_leases: Variant = checkpoint.get("level", {}).get("local", {}).get("scheduler", {}).get("reservations")
+	var checkpoint_components: Dictionary = {"nonempty": not checkpoint.is_empty(), "full_tuple_exact": _same(checkpoint_live, checkpoint), "zero_accepted_lunges": checkpoint.get("level", {}).get("local", {}).get("source", {}).get("accepted_lunges", -1) == 0, "empty_leases": checkpoint_leases is Array and checkpoint_leases.is_empty()}
+	var checkpoint_okay: bool = true
+	for condition: String in checkpoint_components:
+		if not _expect(checkpoint_components[condition], "real complete earlier checkpoint condition: " + condition): checkpoint_okay = false
+	if not checkpoint_okay or _checkpoint_only:
+		var checkpoint_diagnostic: Dictionary = {"checkpoint": checkpoint, "live": checkpoint_live, "attempts": _shell.attempts.state(), "components": checkpoint_components, "status": {"paused": paused, "page": _shell.menu.page_name(), "campaign_error": _shell.campaign_error, "draining": _shell.get("_draining"), "drain_queued": _shell.get("_drain_queued"), "registration_pending": _shell.get("_registration_pending"), "registration_inflight": _shell.get("_registration_inflight"), "failed_operations": _shell.get("_failed_operations")}, "transport": _shell.active_level.call("transport_diagnostics"), "source_control": _encode(_shell.active_level.call("test_lunge_state")), "actual_camera": _camera_signature()}
+		var diagnostic_text: String = Exact.stringify(checkpoint_diagnostic)
+		_expect(not diagnostic_text.is_empty(), "official exact full checkpoint/live/attempt status diagnostic encodes")
+		print("Fresh-world checkpoint comparison diagnostic: ", diagnostic_text)
+	if not checkpoint_okay: _finish(); return
 	_capture("genuine-idle-checkpoint", checkpoint)
+	if _checkpoint_only: _finish(); return # incomplete2, no lunge/full-suite credit
 	_shell.menu.resume_requested.emit()
 	# A genuine ordinary primary points AWAY from source; no motion/range seed.
 	# It changes actual retained history without moving the admission geometry.
@@ -542,5 +556,5 @@ func _finish() -> void:
 	print("Fresh-world native preparation observations: ", Exact.stringify(_preparation))
 	print("Fresh-world native disposal observations: ", Exact.stringify(_disposals))
 	print("Fresh-world actual TEST bridge receipts: ", Exact.stringify(_bridge.receipts))
-	print("Fresh-world native lunge smoke: %d checks, %d failures; scope_complete=%s; publication=%s; published57 observing TEST adapter/controller/loading/format2/Retry/atomic/candidate cleanup scope only; no art/campaign/Act3 repair/performance credit" % [_checks, _failures, str(_scope_complete), _publication])
+	print("Fresh-world native lunge smoke: %d checks, %d failures; scope_complete=%s; publication=%s; checkpoint_only=%s; published57 observing TEST adapter/controller/loading/format2/Retry/atomic/candidate cleanup scope only; no art/campaign/Act3 repair/performance credit" % [_checks, _failures, str(_scope_complete), _publication, str(_checkpoint_only)])
 	quit(2 if not _scope_complete and _failures == 0 else (0 if _scope_complete and _failures == 0 else 1))
