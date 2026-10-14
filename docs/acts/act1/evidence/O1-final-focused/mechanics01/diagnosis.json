@@ -1,0 +1,46 @@
+{
+  "command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--headless",
+    "--path",
+    ".",
+    "--script",
+    "tests/acts/act1/a1_o1_mechanics.gd"
+  ],
+  "checkout": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+  "revision": "0bb54cde24c9a549d2ec1cfbaee47bd0e76fa4df",
+  "api_revision": "campaign-shared-59",
+  "category": "fixture pause-order setup assertion; no production change",
+  "first_error": {
+    "diagnostic": {
+      "camera_error": "",
+      "capture_error": "",
+      "collected_ids": [],
+      "contract_error": "",
+      "elapsed_ms": 463,
+      "encounter_error": "",
+      "hero_hp": 100.0,
+      "hero_position": [
+        0.0,
+        -0.00484376167878509,
+        5.0
+      ],
+      "paused": false,
+      "snapshot_error": "",
+      "stage": "circuit"
+    },
+    "label": "O1 has one actual shared Player at its authored reachable spawn"
+  },
+  "raw_log": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics01.log",
+  "raw_log_sha256": "168003a71cc20d493dc5022d13051d4d7fd49a457711ff985e9ddc4702421ce8",
+  "native_report": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics-31175-1711362.json",
+  "native_report_sha256": "8c1541fb3f48b51054a5ec01c3b9e328b0dd18b2b12b425e9311935d907e6132",
+  "source_archive": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics01-source",
+  "source_manifest_sha256": "70d52a3135c6b2f718eb51dc131a2ee74a383fbabd70e76d43b1f410e32d072e",
+  "result": "3/1 exit1 with normal cleanup,913 frozeninputs/524 UIDs exact; native component aliases not assigned before early spawn refusal",
+  "cause": "Actual Main.reset_lab sets tree.paused=false synchronously in ready; pre-add pause is overwritten. Two yielded process frames allowed ordinary native floor settling, making exact pristine spawn false.",
+  "correction": "Only owned fixture pauses immediately after synchronous Main construction and before any yield. All exact spawn/clock/identity/proof/cue/cleanup assertions remain. Production files unchanged.",
+  "recorded_at": "2026-10-14T07:06:11.515143+00:00"
+}

@@ -1,0 +1,742 @@
+{
+  "schema_version": 1,
+  "kind": "bounded-a1-o1-lifecycle49-evidence-review",
+  "reviewed_at": "2026-10-14T08:19:43.602709+00:00",
+  "scope": "One read-only evidence pass; named source/UID joins and original log/report/closure. No engine rerun, acceptance, worker or production edits, broad 915-source/525-UID census, visual inspection, or arbitrary playthrough gate.",
+  "canonical_update": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/act1/messages/54124460-1cc3-4fa4-996a-41732805f22d-UPDATE.json",
+    "sha256": "6f2b9055565d9bc4085d029ea5d47207e36d89b6d802d97cde08ab7aa2734c7d",
+    "bytes": 1755
+  },
+  "result": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02.json",
+    "sha256": "faeee9197799faf91645189b284175b4379f5affdaa3cef6f9ac4cedc691647a",
+    "bytes": 1788
+  },
+  "raw_log": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02.log",
+    "sha256": "f27ddb4e1462ac4c6a6f2b56486ae9694e09990e4d051854a56bfcdfeefb9859",
+    "bytes": 215
+  },
+  "native_report": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign-79846-772192.json",
+    "sha256": "407b5120f0dd4c395945df284c26f199d0f1891b66c294d8bce44af6682b6f96",
+    "bytes": 604620
+  },
+  "frozen_source_manifest": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/manifest.json",
+    "sha256": "7fd8533aeec136f69011662a32b69ae70522954f35f9094f101ea76e5400b4cd",
+    "bytes": 179549
+  },
+  "identity": {
+    "worker_id": "01a11adf-2ec8-7702-96c6-0fa1e240c332",
+    "run_id": "cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2",
+    "level_id": "A1-O1",
+    "checkout": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea",
+    "branch": "codex/campaign-act1",
+    "tested_content_revision": "b37d6afff871dbf277ff73374b7aa0568e870625",
+    "api_revision": "campaign-shared-59",
+    "manifest_publication": "5b8c960c4ace13232a5d96e45077dc6bf64ae374",
+    "observed_worker_head": "96aed79a4cd091dcde00bb694a5140f34c0d76de"
+  },
+  "independently_verified_joins": {
+    "update_receipt_sha": true,
+    "update_native_report_sha": true,
+    "receipt_native_report_sha": true,
+    "receipt_original_raw_sha": true,
+    "receipt_original_manifest_sha": true,
+    "manifest_exact_revision_api": true,
+    "actual_report_counts_footer_match": true,
+    "entire_original_log_clean": true,
+    "receipt_terminal_exit": true
+  },
+  "terminal_job_evidence": {
+    "read_thread_id": "01a11adf-2ec8-7702-96c6-0fa1e240c332",
+    "turn_id": "01a1395a-4f50-7300-8be0-108365236d13",
+    "command_execution_id": "exec-96052204-0842-4880-b87e-fdd78046207b",
+    "app_command_status": "completed",
+    "app_command_exit_code": 0,
+    "app_command_duration_ms": 52036,
+    "captured_output_includes_queued_dev_pid": 79843,
+    "output_includes_terminal_underlying_exit": 0,
+    "receipt_started_at": "2026-10-14T07:50:54.749748+00:00",
+    "receipt_closed_at": "2026-10-14T07:51:43.802646+00:00",
+    "receipt_wall_seconds": 49.05291287507862,
+    "native_report_elapsed_ms": 47128,
+    "qualification": "App command is authoritatively terminal and output joins this same dev command/915 inputs/525 UIDs/49-check footer/receipt. This review did not poll or restart a live job. An attempted current PID inventory was sandbox-unavailable (ps operation not permitted); no absence/all-worker-process claim or escalation is needed for this recorded terminal job."
+  },
+  "named_tested_sources_and_uids": [
+    {
+      "path": "tests/acts/act1/a1_o1_campaign.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/tests/acts/act1/a1_o1_campaign.gd",
+      "sha256": "37b7df85460f1d11c8d8da0dfd5fdb1511c8b2307542f6a33ed548ba27fccc50",
+      "bytes": 43654,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/salvage_circuit.gd",
+      "sha256": "66f8b88b120cd466c8d6df23911f7c823a90df0594f388eb44cc1c4b4fd36776",
+      "bytes": 52710,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit_codec.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/salvage_circuit_codec.gd",
+      "sha256": "0e7e3432388af3a7cae8af6a706f811ff098c6d980f2f3a8a29c486f28d4418f",
+      "bytes": 19811,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit_layout.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/salvage_circuit_layout.gd",
+      "sha256": "6a395b291698d7f1218aca81e34b53578dea3c5c772ce8b70d5afd9ccac43aec",
+      "bytes": 4585,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit_part.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/salvage_circuit_part.gd",
+      "sha256": "b5aeac382585365d2a2772bb81e64d643f844c107ebaa7e7cd559ec9032cc4e4",
+      "bytes": 7329,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit_scenery.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/salvage_circuit_scenery.gd",
+      "sha256": "d12a2500bbc9dbe8aa2fc78224b09bddd49f075aa135ce84e71796e2017e45b6",
+      "bytes": 6249,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/acts/act1/rush_selenite.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/rush_selenite.gd",
+      "sha256": "5a46be35dd1dce4958bf235ced2c4e63cd442a412d340b0744c3922f479d4c92",
+      "bytes": 50071,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/acts/act1/rush_selenite_art.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/rush_selenite_art.gd",
+      "sha256": "195c9de893c985a94a326ca7e3847f3de3a06185263a76588d9db37909c0d7c9",
+      "bytes": 7843,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scenes/acts/act1/a1_o1.tscn",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scenes/acts/act1/a1_o1.tscn",
+      "sha256": "f8e78a67fd38a0099e50ae78971044ec396bd78c05ba24bc28fd17ad39659130",
+      "bytes": 1150,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/campaign/shell.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/campaign/shell.gd",
+      "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+      "bytes": 70657,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/campaign/level.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/campaign/level.gd",
+      "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+      "bytes": 23949,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/campaign/attempts.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/campaign/attempts.gd",
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "bytes": 18347,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/campaign/registry.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/campaign/registry.gd",
+      "sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+      "bytes": 6006,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/campaign/save_store.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/player.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/game.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/game.gd",
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "bytes": 38685,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/combat/lane_mechanism.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/combat/lane_mechanism.gd",
+      "sha256": "bcf6558d4ae57c4bf8714ae6fe6b1896b3c7c0be3b6a8a9f3178451653bd031d",
+      "bytes": 43768,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/combat/threat_scheduler.gd",
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "bytes": 266033,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "data/campaign/registry.json",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/data/campaign/registry.json",
+      "sha256": "2989570e4943b175d9664958b92092a5d9da9c4d2b4c8be4ee3b47dfae1ad84b",
+      "bytes": 11792,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true
+    },
+    {
+      "path": "tests/acts/act1/a1_o1_campaign.gd.uid",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/tests/acts/act1/a1_o1_campaign.gd.uid",
+      "sha256": "dc6d3d44d802d7713f30763be2ad2dacdf58c8c957f1c4e49f87a3d702169a4d",
+      "bytes": 20,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true,
+      "genuine_tested_uid_text": "uid://cgyqg4jbrd1um"
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit.gd.uid",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/salvage_circuit.gd.uid",
+      "sha256": "ed0eb844679ac1eb4791d9871d81d02c1e90c2f25d7aaabfeaaac0059834d09e",
+      "bytes": 19,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true,
+      "genuine_tested_uid_text": "uid://uf0vhccgwad1"
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit_codec.gd.uid",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/salvage_circuit_codec.gd.uid",
+      "sha256": "08345276349fa01334534dd545296f6f43f682ce33cae836642d4460390ebd11",
+      "bytes": 20,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true,
+      "genuine_tested_uid_text": "uid://di66npol5bghl"
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit_layout.gd.uid",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/salvage_circuit_layout.gd.uid",
+      "sha256": "3d66056b7f6cee12a3b734573df84413df8a99d486e51156371a6a002f5ac1ad",
+      "bytes": 20,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true,
+      "genuine_tested_uid_text": "uid://dwafvjpi72o5o"
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit_part.gd.uid",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/salvage_circuit_part.gd.uid",
+      "sha256": "3d17e17f18d3af1080b04eb1e993b1f564220973e04332216238756373526827",
+      "bytes": 20,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true,
+      "genuine_tested_uid_text": "uid://djm7akkh4j4sj"
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit_scenery.gd.uid",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/salvage_circuit_scenery.gd.uid",
+      "sha256": "79a6a7ff7f483ecc223e5cafc9d14426126a59b3650d12e5e9ebb57743f81be0",
+      "bytes": 20,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true,
+      "genuine_tested_uid_text": "uid://cdp6y37x3glon"
+    },
+    {
+      "path": "scripts/acts/act1/rush_selenite.gd.uid",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/rush_selenite.gd.uid",
+      "sha256": "dd3143c57523045abfb26b62cfdc3eeb4d944d43e359e7e22640593f2136358d",
+      "bytes": 21,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true,
+      "genuine_tested_uid_text": "uid://dy1c30rush8v6q"
+    },
+    {
+      "path": "scripts/acts/act1/rush_selenite_art.gd.uid",
+      "tested_archive_path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign02-source/scripts/acts/act1/rush_selenite_art.gd.uid",
+      "sha256": "cfa2daa5b4da5d424b665cc508b552a4ff154261c0abba08c51306988f22ef0e",
+      "bytes": 20,
+      "archive_matches_manifest": true,
+      "content_commit_and_current_worker_match_tested": true,
+      "genuine_tested_uid_text": "uid://c30rushart6m2"
+    }
+  ],
+  "exact_packet_joins": {
+    "partial_continue_wire_equal": true,
+    "final_warning_continue_wire_equal": true,
+    "entrance_is_partial_earlier_checkpoint": true,
+    "prefinal_is_final_warning_earlier_checkpoint": true,
+    "retry_returns_exact_prefinal_wire": true,
+    "two_continue_and_retry_selected_callback_lists_empty": true,
+    "genuine_completed_return_one_stamp": true,
+    "completed_return_preserves_test_main_prefix": true,
+    "completed_return_story_matches_exact_story_receipt": true,
+    "real_primary_receipt_once_20hp_final": true
+  },
+  "selected_packet_observations": [
+    {
+      "receipt_index": 0,
+      "label": "actual optional entrance",
+      "exact_wire_sha256": "39c5b91d4dea8bc3af524bea6948e100996f3eef2cd8de70390990a0331f2fa0",
+      "level_id": "A1-O1",
+      "local_stage": "circuit",
+      "collected_ids": [],
+      "checkpoint_id": "",
+      "completed": false,
+      "final_started": false,
+      "final_defeated": false,
+      "final_source_dormant": true,
+      "scheduler_clock_s": 0.0,
+      "scheduler_reservation_count": 0
+    },
+    {
+      "receipt_index": 1,
+      "label": "actual partial contact live C30-impact Save",
+      "exact_wire_sha256": "48fca10398d09ba354ff2aa49d617f6913a48968a39093958dc3d2ee3f1142ab",
+      "level_id": "A1-O1",
+      "local_stage": "circuit",
+      "collected_ids": [
+        "nose-cap"
+      ],
+      "checkpoint_id": "",
+      "completed": false,
+      "final_started": false,
+      "final_defeated": false,
+      "final_source_dormant": true,
+      "scheduler_clock_s": 1.0833333333333344,
+      "scheduler_reservation_count": 2
+    },
+    {
+      "receipt_index": 2,
+      "label": "fresh public active-side disk Continue",
+      "exact_wire_sha256": "48fca10398d09ba354ff2aa49d617f6913a48968a39093958dc3d2ee3f1142ab",
+      "level_id": "A1-O1",
+      "local_stage": "circuit",
+      "collected_ids": [
+        "nose-cap"
+      ],
+      "checkpoint_id": "",
+      "completed": false,
+      "final_started": false,
+      "final_defeated": false,
+      "final_source_dormant": true,
+      "scheduler_clock_s": 1.0833333333333344,
+      "scheduler_reservation_count": 2
+    },
+    {
+      "receipt_index": 3,
+      "label": "actual pre-final checkpoint",
+      "exact_wire_sha256": "ec14db48e2b2c82de46736881759e02800e8d487f3b333be7da9d73305ce1f0a",
+      "level_id": "A1-O1",
+      "local_stage": "final",
+      "collected_ids": [
+        "nose-cap",
+        "hatch-disc",
+        "rivet-band"
+      ],
+      "checkpoint_id": "salvage-parts-ready",
+      "completed": false,
+      "final_started": false,
+      "final_defeated": false,
+      "final_source_dormant": true,
+      "scheduler_clock_s": 1.2333333333333338,
+      "scheduler_reservation_count": 0
+    },
+    {
+      "receipt_index": 4,
+      "label": "actual final warning Save",
+      "exact_wire_sha256": "0809a402c23cc23975a75a5bc914ef769b7f048e374a25b61ff5f1d7228bb132",
+      "level_id": "A1-O1",
+      "local_stage": "final",
+      "collected_ids": [
+        "nose-cap",
+        "hatch-disc",
+        "rivet-band"
+      ],
+      "checkpoint_id": "salvage-parts-ready",
+      "completed": false,
+      "final_started": true,
+      "final_defeated": false,
+      "final_source_dormant": false,
+      "scheduler_clock_s": 0.2333333333333333,
+      "scheduler_reservation_count": 1
+    },
+    {
+      "receipt_index": 5,
+      "label": "fresh public active-side disk Continue",
+      "exact_wire_sha256": "0809a402c23cc23975a75a5bc914ef769b7f048e374a25b61ff5f1d7228bb132",
+      "level_id": "A1-O1",
+      "local_stage": "final",
+      "collected_ids": [
+        "nose-cap",
+        "hatch-disc",
+        "rivet-band"
+      ],
+      "checkpoint_id": "salvage-parts-ready",
+      "completed": false,
+      "final_started": true,
+      "final_defeated": false,
+      "final_source_dormant": false,
+      "scheduler_clock_s": 0.2333333333333333,
+      "scheduler_reservation_count": 1
+    },
+    {
+      "receipt_index": 6,
+      "label": "actual public earlier pre-final Retry",
+      "exact_wire_sha256": "ec14db48e2b2c82de46736881759e02800e8d487f3b333be7da9d73305ce1f0a",
+      "level_id": "A1-O1",
+      "local_stage": "final",
+      "collected_ids": [
+        "nose-cap",
+        "hatch-disc",
+        "rivet-band"
+      ],
+      "checkpoint_id": "salvage-parts-ready",
+      "completed": false,
+      "final_started": false,
+      "final_defeated": false,
+      "final_source_dormant": true,
+      "scheduler_clock_s": 1.2333333333333338,
+      "scheduler_reservation_count": 0
+    },
+    {
+      "receipt_index": 9,
+      "label": "actual repaired hatch before contact",
+      "exact_wire_sha256": "bae767afcb553640168bfbc253fc5d248280ff1545870a4e660749aafc16e646",
+      "level_id": "A1-O1",
+      "local_stage": "hatch",
+      "collected_ids": [
+        "nose-cap",
+        "hatch-disc",
+        "rivet-band"
+      ],
+      "checkpoint_id": "salvage-parts-ready",
+      "completed": false,
+      "final_started": true,
+      "final_defeated": true,
+      "final_source_dormant": false,
+      "scheduler_clock_s": 2.4333333333333296,
+      "scheduler_reservation_count": 0
+    }
+  ],
+  "completed_session_reuse_reference": {
+    "original_report_receipt_index": 10,
+    "label": "actual completed optional protected-story return",
+    "exact_attempts_sha256": "2df0773bfbcd3a0fa22f907ae0df5502ef96c8f72966f33806299eee34efb79a",
+    "exact_attempts_bytes": 61018,
+    "exact_story_sha256": "2f395f403b93125d96f671e0beba11c456b744680d831c557db08e76e66b5071",
+    "qualification": "Exact strings already exist in actual executed original report. Root may extract bytes later without rerunning; no completed packet was written or modified by this review."
+  },
+  "original_evidence_preserved": [
+    {
+      "label": "a1-o1-mechanics01",
+      "receipt": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics01.json",
+        "sha256": "adaca68d23171a6e7d1ab0f5708f80d0ec40f1e8a5928748f26bc5d28826bc62",
+        "bytes": 2336
+      },
+      "raw_log": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics01.log",
+        "sha256": "168003a71cc20d493dc5022d13051d4d7fd49a457711ff985e9ddc4702421ce8",
+        "bytes": 473
+      },
+      "native_report": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics-31175-1711362.json",
+        "sha256": "8c1541fb3f48b51054a5ec01c3b9e328b0dd18b2b12b425e9311935d907e6132",
+        "bytes": 1189
+      },
+      "source_manifest": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics01-source/manifest.json",
+        "sha256": "70d52a3135c6b2f718eb51dc131a2ee74a383fbabd70e76d43b1f410e32d072e",
+        "bytes": 179172
+      },
+      "exit_code": 1,
+      "counts": [
+        3,
+        1
+      ],
+      "independent_joins": {
+        "raw_exact": true,
+        "native_report_exact": true,
+        "manifest_exact": true,
+        "original_footer_retained": true
+      },
+      "original_diagnosis": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics01-diagnosis.json",
+        "sha256": "8e6e7b50383adcaf13b6adf0324d88383b2aaef8304fa659485375a499b9236c",
+        "bytes": 2174
+      },
+      "first_failure_label": "O1 has one actual shared Player at its authored reachable spawn",
+      "selected_first_failure_diagnostic": {
+        "capture_error": "",
+        "encounter_error": "",
+        "hero_position": [
+          0.0,
+          -0.00484376167878509,
+          5.0
+        ],
+        "paused": false,
+        "stage": "circuit"
+      }
+    },
+    {
+      "label": "a1-o1-campaign01",
+      "receipt": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign01.json",
+        "sha256": "71aaf8dcf3ab36513c3f557310df56384ae6a8284d247de5c0334aa360350998",
+        "bytes": 7647
+      },
+      "raw_log": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign01.log",
+        "sha256": "39f9dca5e73695e915ec239ce6d807050ef83d82a6572a430a0b8aa38829e327",
+        "bytes": 6528
+      },
+      "native_report": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign-52467-1179454.json",
+        "sha256": "32848d8a5eaab7c4cac674f128e74e639e7ea12b9437ff68724f6931eb27f7aa",
+        "bytes": 259973
+      },
+      "source_manifest": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign01-source/manifest.json",
+        "sha256": "2dd881615a651dfb51429b2c1522d2f969804f82df9f93a0ffd05908e99b1777",
+        "bytes": 179549
+      },
+      "exit_code": 1,
+      "counts": [
+        26,
+        1
+      ],
+      "independent_joins": {
+        "raw_exact": true,
+        "native_report_exact": true,
+        "manifest_exact": true,
+        "original_footer_retained": true
+      },
+      "original_diagnosis": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-campaign01-diagnosis.json",
+        "sha256": "387a37bfb812436b7ca46cdbfe635fb9ddd0dfff2a5d114cbbc67aa34ef9cecf",
+        "bytes": 7347
+      },
+      "first_failure_label": "first actual Shell error during public Pause: after actual checkpoint drain: Snapshot has missing or unsupported fields",
+      "selected_first_failure_diagnostic": {
+        "operation": "public Pause: after actual checkpoint drain",
+        "campaign_error": "Snapshot has missing or unsupported fields",
+        "capture_error": "Required source, footprint, player or landing lies outside the protected screen rectangle",
+        "encounter_error": "Actual complete salvage source/footprint/response is not visible",
+        "hero_position": [
+          2.0,
+          -0.00466796942055225,
+          0.0
+        ],
+        "paused": true
+      }
+    },
+    {
+      "label": "a1-o1-mechanics02",
+      "receipt": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics02.json",
+        "sha256": "df8d6674e0e1e14e5f7c2ade65401e95ddeaf7230004573212b76d1d8633934b",
+        "bytes": 1795
+      },
+      "raw_log": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics02.log",
+        "sha256": "38d7a3a876811f6427bdb93677cb095bc0da6b304215d477d10ad25d68da6939",
+        "bytes": 168
+      },
+      "native_report": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics-37511-765666.json",
+        "sha256": "fee0dd3a826b7d7ae31e696e5c55b03e5dba54a3acc27daa5eab2257e76f5ba8",
+        "bytes": 42416
+      },
+      "source_manifest": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/.cinder/a1-o1-mechanics02-source/manifest.json",
+        "sha256": "90503ad71255088c860a92c1a574013051323498f5403fad44d5e2f8d68d46a9",
+        "bytes": 179172
+      },
+      "exit_code": 0,
+      "counts": [
+        28,
+        0
+      ],
+      "independent_joins": {
+        "raw_exact": true,
+        "native_report_exact": true,
+        "manifest_exact": true,
+        "original_footer_retained": true
+      },
+      "first_failure_label": null
+    }
+  ],
+  "bounded_durable_original_joins": {
+    "index": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O1-final-focused/index.json",
+      "sha256": "3b625f9d87f63bfb45fd4c6a21c71dea73d2334dbd64b073c156b9543ec40ef4",
+      "bytes": 8766
+    },
+    "rows": [
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/mechanics01/receipt.json",
+        "sha256": "adaca68d23171a6e7d1ab0f5708f80d0ec40f1e8a5928748f26bc5d28826bc62",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/mechanics01/raw.log",
+        "sha256": "168003a71cc20d493dc5022d13051d4d7fd49a457711ff985e9ddc4702421ce8",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/mechanics01/source-manifest.json",
+        "sha256": "70d52a3135c6b2f718eb51dc131a2ee74a383fbabd70e76d43b1f410e32d072e",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/mechanics01/native-report.json",
+        "sha256": "8c1541fb3f48b51054a5ec01c3b9e328b0dd18b2b12b425e9311935d907e6132",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/mechanics02/receipt.json",
+        "sha256": "df8d6674e0e1e14e5f7c2ade65401e95ddeaf7230004573212b76d1d8633934b",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/mechanics02/raw.log",
+        "sha256": "38d7a3a876811f6427bdb93677cb095bc0da6b304215d477d10ad25d68da6939",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/mechanics02/source-manifest.json",
+        "sha256": "90503ad71255088c860a92c1a574013051323498f5403fad44d5e2f8d68d46a9",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/mechanics02/native-report.json",
+        "sha256": "fee0dd3a826b7d7ae31e696e5c55b03e5dba54a3acc27daa5eab2257e76f5ba8",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/campaign01/receipt.json",
+        "sha256": "71aaf8dcf3ab36513c3f557310df56384ae6a8284d247de5c0334aa360350998",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/campaign01/raw.log",
+        "sha256": "39f9dca5e73695e915ec239ce6d807050ef83d82a6572a430a0b8aa38829e327",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/campaign01/source-manifest.json",
+        "sha256": "2dd881615a651dfb51429b2c1522d2f969804f82df9f93a0ffd05908e99b1777",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/campaign01/native-report.json",
+        "sha256": "32848d8a5eaab7c4cac674f128e74e639e7ea12b9437ff68724f6931eb27f7aa",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/campaign02/receipt.json",
+        "sha256": "faeee9197799faf91645189b284175b4379f5affdaa3cef6f9ac4cedc691647a",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/campaign02/raw.log",
+        "sha256": "f27ddb4e1462ac4c6a6f2b56486ae9694e09990e4d051854a56bfcdfeefb9859",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/campaign02/source-manifest.json",
+        "sha256": "7fd8533aeec136f69011662a32b69ae70522954f35f9094f101ea76e5400b4cd",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/campaign02/native-report.json",
+        "sha256": "407b5120f0dd4c395945df284c26f199d0f1891b66c294d8bce44af6682b6f96",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/mechanics01/diagnosis.json",
+        "sha256": "8e6e7b50383adcaf13b6adf0324d88383b2aaef8304fa659485375a499b9236c",
+        "byte_exact_original_and_index": true
+      },
+      {
+        "path": "docs/acts/act1/evidence/O1-final-focused/campaign01/diagnosis.json",
+        "sha256": "387a37bfb812436b7ca46cdbfe635fb9ddd0dfff2a5d114cbbc67aa34ef9cecf",
+        "byte_exact_original_and_index": true
+      }
+    ]
+  },
+  "owner_reported_scope_retained": {
+    "49_native_assertions": "Independently joined original footer/report/tested fixture pins and actual terminal app command. Assertions themselves were executed by owner; this audit does not claim independent native re-execution or re-proof of all49 semantics.",
+    "whole_bank_915_unchanged_525_uids_unique": "Manifest lists915 and wrapper reports all915 source/525 UID custody unchanged. This audit independently hashes only the listed29 source/UID members; no full archive, post-run source-membership or525-UID census.",
+    "native_distinct_identities_no_callback": "Two Continue and one Retry callback lists are literally empty and exact packet joins are verified. The full distinct-native-identity and retired-donor assertion semantics remain owner tested, with original174 observations retained.",
+    "original_failure_causes": "Original3/1 pause-order and26/1 framing/off-tree diagnosis preserved. Corrected49/0 provides executed affected-flow evidence; this audit adds no new live diagnosis."
+  },
+  "actual_canonical_row": {
+    "id": "A1-O1",
+    "act": 1,
+    "kind": "optional",
+    "name": "Salvage Circuit",
+    "source": "docs/reference-library/act1/research/levels.json",
+    "parent_level_id": "A1-L2",
+    "scene_path": null,
+    "readiness": "unimplemented",
+    "accepted_commit": null,
+    "api_revision": null,
+    "reward_id": "A1-O1-completion-stamp",
+    "reward_policy": "once_only_completion_stamp_no_stat_growth"
+  },
+  "handoff_gaps": [
+    "Canonical A1-O1 remains unimplemented/unaccepted with null scene/content/API. Formal exact seven-category handoff and brief actual authored portrait inspection remain; no acceptance inferred from49/0.",
+    "Lifecycle evidence uses TEST optional readiness row and prior[L1,L2] prefix plus TEST same-floor contacts; Root must independently register the actual canonical row using pinned submitted content, while reusing unchanged owner lifecycle evidence.",
+    "Old inert Root registration draft was prepared before owner public exit-before-free correction; before promotion, call active_level.exit_level while actual children remain treebound before each direct Shell.free (second recipient and final cleanup). Do not execute the stale draft cleanup or repeat owner lifecycle solely for this source adjustment.",
+    "Actual first completion/one-stamp and replay Leave are present in49/0; no second completed replay, six permutations, all-loadout runtime balance, GUI gesture, full route/defeat-all or mobile result is claimed. These are qualifications, not new acceptance gates."
+  ],
+  "verdict": "Selected lifecycle49/0 is coherently joined to clean raw log, original native report, tested named source/UID pins, and authoritatively terminal queued app command. Original3/1 and26/1 failures remain. Level stays unaccepted pending owner portrait/formal handoff and Root canonical registration."
+}
