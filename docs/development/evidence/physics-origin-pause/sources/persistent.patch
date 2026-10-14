@@ -1,0 +1,24 @@
+--- sealed-private/restore_candidate_physics_boundary_smoke.gd
++++ persistent/restore_candidate_physics_boundary_smoke.gd
+@@ -1,9 +1,7 @@
+ extends "res://tests/restore_candidate_physics_smoke.gd"
+-## PRIVATE UNSELECTED regression. Reuses the original native floor fixture.
+-## No engine result yet; original Shell is expected to fail the first Pause.
++## Focused native regression for physics-origin public Pause registration.
++## Reuses the native floor fixture; checks additional-wait cancellation/cleanup.
+ const CoreTest = preload("res://tests/restore_candidate_physics_smoke.gd")
+-const ORIGINAL_SHELL_SHA: String = "29c73f78ebf1d48545539aa3a8ffc506773b402fc2a8f075be24d14de36eed31"
+-const CONDITIONAL_SHELL_SHA: String = "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f"
+ 
+ class BoundaryShell extends CoreTest.ObservedShell:
+ 	const BoundaryExact = preload("res://scripts/campaign/exact_json.gd")
+@@ -64,9 +62,6 @@
+ 	old_fps = Engine.max_fps
+ 	_cleanup()
+ 	Fixture.reset_observers()
+-	var shell_sha: String = FileAccess.get_sha256("res://scripts/campaign/shell.gd")
+-	if not _guard(shell_sha in [ORIGINAL_SHELL_SHA, CONDITIONAL_SHELL_SHA] and FileAccess.get_sha256("res://tests/restore_candidate_physics_smoke.gd") == "85e2500c9afc61a509b40371fd582566548b0de12502792e1bc9e890ae929b2d" and FileAccess.get_sha256(FIXTURE_PATH.trim_suffix(".tscn") + ".gd") == "12137f333fa74e496650791993b11aba9c64bcb024f9bdd0312b20898b90c94f", "exact original/candidate Shell and unchanged core/fixture pins"):
+-		_finish(); return
+ 	raw = JSON.parse_string(FileAccess.get_file_as_string(Registry.DATA_PATH))
+ 	for row: Dictionary in raw.levels:
+ 		if row.id == "A1-L1":

@@ -1,0 +1,153 @@
+{
+  "status": "READ_ONLY_RECOMMENDATION_NO_COORDINATION_MUTATION",
+  "run_json_sha256_at_audit": "54f6f3e726c4659a55b6b923f0ce151431121693cd6daecf7b05c1eedc63d8e7",
+  "publication": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+  "finding": "Verified adoption, incomplete duplicated-current-alias reconciliation. Both workers already have Shared57 api_revision/reviewed_baseline/adopted_head/current ACK and named verification, but older worker_* and checkout/ACK-head/time aliases plus ACK list remain stale. No failed adoption is evidenced.",
+  "why_reconciled_summary_is_overbroad": "Current SHARED_PROGRESS.md:5 and integration responses e3a36fb8/46b877e1 say aliases reconciled; the recorded update demonstrably covered only one alias family. The audit establishes the partial result, not the exact previous updater code path.",
+  "fixes": {
+    "act2": {
+      "replace_current_aliases": {
+        "worker_baseline": {
+          "before": "26f59b28007c68872b1a9870db675b5ed2f3c2e4",
+          "after": "75e547f4de684e53e450ed9a8ad4fac149bee8b2"
+        },
+        "worker_api_revision": {
+          "before": "campaign-shared-56",
+          "after": "campaign-shared-57"
+        },
+        "adopted_checkout_head": {
+          "before": "a7737647d2056852ce536aeab6f07f78542da2ab",
+          "after": "694d5fb911435fc895f4cd8a0dd68e2ea00d742e"
+        },
+        "adoption_ack_head": {
+          "before": "a7737647d2056852ce536aeab6f07f78542da2ab",
+          "after": "694d5fb911435fc895f4cd8a0dd68e2ea00d742e"
+        },
+        "adopted_at": {
+          "before": "2026-10-13T08:43:31.267375+00:00",
+          "after": "2026-10-14T02:28:07.586694+00:00"
+        }
+      },
+      "append_ack_if_absent": "ad2a8ee5-46f4-4b0f-8124-164e24bde438",
+      "already_correct_leave_unchanged": {
+        "api_revision": "campaign-shared-57",
+        "reviewed_baseline": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+        "adopted_head": "694d5fb911435fc895f4cd8a0dd68e2ea00d742e",
+        "shared_update_ack_message_id": "ad2a8ee5-46f4-4b0f-8124-164e24bde438",
+        "adoption_verified_at": "2026-10-14T02:31:26.785973+00:00",
+        "shared_update_available": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+        "shared_update_api_available": "campaign-shared-57"
+      },
+      "preserve_shared57_named_adoption_verification": true,
+      "receipt_completion_time": "2026-10-14T02:28:07.586694+00:00",
+      "adopted_at_semantics": "Use the immutable ACK creation timestamp as the adoption-record timestamp; the receipt keeps its separately measured completion timestamp."
+    },
+    "act3": {
+      "replace_current_aliases": {
+        "worker_baseline": {
+          "before": "26f59b28007c68872b1a9870db675b5ed2f3c2e4",
+          "after": "75e547f4de684e53e450ed9a8ad4fac149bee8b2"
+        },
+        "worker_api_revision": {
+          "before": "campaign-shared-56",
+          "after": "campaign-shared-57"
+        },
+        "adopted_checkout_head": {
+          "before": "6125b7bc13af92cbd2ea6de805b903875ed00b4c",
+          "after": "cb4b654992c6f2cfa49b503bf99791ebacb3927a"
+        },
+        "adoption_ack_head": {
+          "before": "6125b7bc13af92cbd2ea6de805b903875ed00b4c",
+          "after": "cb4b654992c6f2cfa49b503bf99791ebacb3927a"
+        },
+        "adopted_at": {
+          "before": "2026-10-13T08:42:35.612256+00:00",
+          "after": "2026-10-14T02:32:10.401535+00:00"
+        }
+      },
+      "append_ack_if_absent": "fa385768-7db0-4063-b577-73fd272fe7dd",
+      "already_correct_leave_unchanged": {
+        "api_revision": "campaign-shared-57",
+        "reviewed_baseline": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+        "adopted_head": "cb4b654992c6f2cfa49b503bf99791ebacb3927a",
+        "shared_update_ack_message_id": "fa385768-7db0-4063-b577-73fd272fe7dd",
+        "adoption_verified_at": "2026-10-14T02:35:54.143734+00:00",
+        "shared_update_available": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+        "shared_update_api_available": "campaign-shared-57"
+      },
+      "preserve_shared57_named_adoption_verification": true,
+      "receipt_completion_time": "2026-10-14T02:31:34.306915+00:00",
+      "adopted_at_semantics": "Use the immutable ACK creation timestamp as the adoption-record timestamp; the receipt keeps its separately measured completion timestamp."
+    }
+  },
+  "preservation_instructions": [
+    "Root should reread run.json and apply only these named changes in one atomic replacement; retain concurrent updates and all identity/confirmation/checkout/branch/owned-path/port fields.",
+    "Before replacing aliases, preserve their exact observed values under a new historical_pre_shared57_reconciliation_aliases record if absent. This is a mixed pre-repair snapshot, not reconstructed pre-publication state. Never overwrite existing history.",
+    "Retain all shared56 and earlier verification/history fields verbatim, append current ACK IDs without removing or reordering existing acknowledgements, and keep already-correct Shared57 verification hashes/timestamps.",
+    "Do not change Act1 actual-adoption fields: its verified Shared57 ACK is still pending in the inspected durable index.",
+    "Update only the current integration status paragraph to Act2/Act3 adoption verified and Act1 pending when reconciling; historical publication-time pending statements remain original."
+  ],
+  "evidence": [
+    {
+      "path": "docs/development/evidence/shared57-worker-adoption/act2-ack.json",
+      "sha256": "255d252d3645107b29c242268ddbfe4c2f7f625aff7fa81d378374b60df48751"
+    },
+    {
+      "path": "docs/development/evidence/shared57-worker-adoption/act2-original-receipt.json",
+      "sha256": "2ad045b620f79c7deb6cae049a95a0aca595e2e763701f05d1b45b106ccfb592"
+    },
+    {
+      "path": "docs/development/evidence/shared57-worker-adoption/act2-verification.json",
+      "sha256": "cf9f07190f0eb1de74a0d7bc7f2a771fea33a06219b3b7bc62ec1d1f53e85041"
+    },
+    {
+      "path": "docs/development/evidence/shared57-worker-adoption/act3-ack.json",
+      "sha256": "f401d5a35f0a41aeb774c3ca4f6b5a933f1cb516e072b9f77263bbc88f7f8e6a"
+    },
+    {
+      "path": "docs/development/evidence/shared57-worker-adoption/act3-original-receipt.json",
+      "sha256": "d1c4394e736f5716c6cc629320c6d5d539744e1c6fa6315b4ae2fb53c4cc6093"
+    },
+    {
+      "path": "docs/development/evidence/shared57-worker-adoption/act3-verification.json",
+      "sha256": "673bc79437b9a83239cef9925b200d85690dc82eccf0c59f0d2072a9b97941a9"
+    }
+  ],
+  "queue": {
+    "original_requests": [
+      {
+        "path": ".cinder/agent-chat/cinder-campaign/act1/messages/4d7a4ef7-a68f-4666-ba47-90e25e942e61-REQUEST.json",
+        "sha256": "21b89e5bc30fd49e28cb420a7322fe319aba78144381bcf75dcfd8342ab0ceeb",
+        "message_id": "4d7a4ef7-a68f-4666-ba47-90e25e942e61"
+      },
+      {
+        "path": ".cinder/agent-chat/cinder-campaign/act1/messages/8ebf0c6a-842e-44ea-a188-cff34d25962f-REQUEST.json",
+        "sha256": "4df758a835a5f692d280756812d217df9a05ebc1a539c672b0e3423427c39a55",
+        "message_id": "8ebf0c6a-842e-44ea-a188-cff34d25962f"
+      }
+    ],
+    "later_evidence": [
+      {
+        "path": ".cinder/agent-chat/cinder-campaign/act1/messages/f9808fcf-8aad-4a49-a0f5-cb5381bb72a2-RESPONSE.json",
+        "sha256": "0291d12a5fab1cd74e953b505f56f6a2cfd643fafcc433071b3dda003bf50e12",
+        "message_id": "f9808fcf-8aad-4a49-a0f5-cb5381bb72a2"
+      },
+      {
+        "path": ".cinder/agent-chat/cinder-campaign/integration/messages/db0eab9f-1c8d-4b01-b680-fda53b5e1dc5-RESPONSE.json",
+        "sha256": "9c1171e44c6ce013713474b1d09d1f2adccfc945f6786875f5a18c78457881db",
+        "message_id": "db0eab9f-1c8d-4b01-b680-fda53b5e1dc5"
+      },
+      {
+        "path": ".cinder/agent-chat/cinder-campaign/act3/messages/4d659c58-c99f-4f24-90dc-79f222c17c9d-UPDATE.json",
+        "sha256": "3fa737a10b1061f9cb9e3df0f22618f728deb864b9e32ab56523b78fff89fc62",
+        "message_id": "4d659c58-c99f-4f24-90dc-79f222c17c9d"
+      }
+    ],
+    "first_request_status": "Act1 f9808fcf explicitly closes its queued session14861/native04 at132/0 clean after402s; request4d7a4ef7 no longer blocks that job.",
+    "second_request_status": "Its observed Act3 holder90389 later completed/released: Act3 update4d659c58 retains1455/0 and says no new engines since queue release. Root subsequently closed corrected Shell/persistence/import and published Shared57. Those historical holder PIDs are not current blocker evidence.",
+    "remaining_actionable_gap": "No canonical reply to Act1 request8ebf0c6a appears among the exact ID references inspected. Its own import07/session20408 was last reported queued; these mailbox records do not establish its present closure or success. No live process/lock/job probe was run by this audit.",
+    "smallest_response": "Respond to Act1 in reply to8ebf0c6a, also closing4d7a4ef7: the named Act3 holder released, Root short checks/import closed and Shared57 was published. Ask the owner to inspect/poll its existing import07 handle20408 and retain its actual closure, then preserve-adopt Shared57 after that frozen job closes. If it is still waiting, report its current actual queue holder/elapsed/progress using the existing handle. Do not infer import success, kill a process, remove a lock, or enqueue a duplicate job.",
+    "new_gameplay_failure_claim": false
+  },
+  "scope": "Six exact archived ACK/receipt/verification hashes/modes and canonical ACK joins; existing adoption reviews supply Git/source preservation evidence. No repeated Git/source/UID census, engine/job/process execution, act mutation or external messaging."
+}

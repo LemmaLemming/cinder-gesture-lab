@@ -1,5 +1,7 @@
 # Fresh-world restore readiness
 
+Shared58 adds the compatible [physics-origin Pause boundary repair](PHYSICS_ORIGIN_PAUSE.md). It preserves this contract, the original elapsed-time bound and all final packet/native custody checks; the additional signal is needed only when the first signal retains the preparation counter. Earlier results below retain their original Shared57 scope.
+
 Shared57 adds `level-restore-registration-1` to Shell and Level. Opted-in levels prepare their actual isolated world and native floor while paused before entering synchronous restore. Default-false levels retain the previous constructor behavior. Save formats, Player/Level snapshot schemas, Store/Attempts callbacks and native collision guards remain unchanged.
 
 ## Confirmed problem
