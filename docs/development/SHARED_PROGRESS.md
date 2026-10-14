@@ -1,6 +1,8 @@
 # Cinder shared progress
 
-## Current status — 14 October 2026, Shared58 and Living Moon acceptance
+## Current status — 14 October 2026, Shared58 and final main-level acceptance
+
+[A3-L5 Crystalman is accepted](ACT3_L5_ACCEPTANCE.md) at exact content `83a6efa2509b5c7f5e408f3ecb4324f53d1e496d`. Root’s final canonical loading check passes 18/0 clean, with targeted parser/import checks. The owner’s passed mechanics, authentic saved-session 99/0 and inspected portrait 85/0 are reused within their original scopes. No full route or repeated boss test was required. Act3 may begin O1 immediately, then O2/O3 in sequence.
 
 [A1-L5 The Living Moon is accepted](ACT1_L5_ACCEPTANCE.md) at exact content `8f81768a221644264d8fa76c3710d9b7e4dcb79e`. Root's canonical check closes832/0 clean, with necessary import0 and focused parser checks. Existing owner119/80/71/132 mechanics and transport evidence and four actually inspected204 portraits are reused with their original attribution. The canonical L5 row preserves L4→L5→A2-L1 progression; every other row is unchanged. Act1 may proceed immediately to O1, then O2/O3 sequentially. No new shared runtime API or playthrough gate is introduced.
 
@@ -10,13 +12,13 @@ The separate [fresh native discovery experiment](NATIVE_DISCOVERY_EXPERIMENT.md)
 
 The [physics-origin Pause repair](PHYSICS_ORIGIN_PAUSE.md) resolves an independently reproduced save refusal: the first process signal retained the preparation counter. Original native6/1 is preserved; the nine-line fix passes paired23/0, persistent22/0, directly affected core96/0 and startup21/0, with clean import. No deadline, snapshot or final validation predicate was relaxed. [Original logs and source manifests](evidence/physics-origin-pause/index.json) retain every phase and the genuine new test UID.
 
-Act 2's full native-lunge persistence regression is [independently verified](evidence/shared58-authored-dependency-reviews/act2-native-review.md) closed810/0, exit0 and complete scope; the checkpoint-only153/0 deliberately remains exit2/incomplete. Its compact source handoff remains separate. The [next source-only performance review](ACT2_SHARED_SUPPORT.md) is assigned and delivered to the same worker, with separate support paths and no production edits or engine rerun.
+Act 2's full native-lunge persistence regression is [independently verified](evidence/shared58-authored-dependency-reviews/act2-native-review.md) closed810/0, exit0 and complete scope; the checkpoint-only153/0 deliberately remains exit2/incomplete. Its compact source handoff remains separate. The [source-only performance review](ACT2_SHARED_SUPPORT.md) found that two individually matching measurement pairs could disagree across pairs. Agent 02 is preparing the assigned four-file equality guard and focused host checks in its own support files. Integration applies the reviewed patch; this work does not gate either act.
 
-Act 3's authentic saved-session suffix closes99/0 clean and has passed [bounded independent review](evidence/shared58-authored-dependency-reviews/index.json): fresh Retry identities, exact warning state, actual GUI Resume/Pause and cleanup. Its graphical check closes85/0; Integration inspected the original portrait and found Hero/source/warning together with flanking safe floor and clear HUD. These close the saved-warning dependencies; final L5 handoff and canonical acceptance remain separate. Original1078/1 and71/1 are retained with their original scope. The exact compatible Shell pair leaves archived saved bytes unchanged.
+Act 3's authentic saved-session suffix closes99/0 clean and has passed [bounded independent review](evidence/shared58-authored-dependency-reviews/index.json): fresh Retry identities, exact warning state, actual GUI Resume/Pause and cleanup. Its graphical check closes85/0; Integration inspected the original portrait and found Hero/source/warning together with flanking safe floor and clear HUD. These close the saved-warning dependencies; the final L5 handoff and canonical registration are now accepted. Original1078/1 and71/1 are retained with their original scope. The exact compatible Shell pair leaves archived saved bytes unchanged.
 
 Act 1's later-checkpoint transport independently passes80/0 clean: genuine phase-two checkpoint, later Sneeze disk Continue, earlier GUI Retry, complete state and donor/disk preservation, retired-world cleanup. Its subsequent selector/reporting-only correction retains the exercised branch unchanged, without new native credit. The final handoff and four paused portraits have now passed Integration review; scenic cropping, capsule occlusion and untested full-playthrough limitations remain recorded in the acceptance.
 
-Campaign now has **17/24** accepted: Act1 5/8, Act2 8/8 and Act3 4/8. Act3's exact L5 handoff has arrived and its canonical integration is next. The full desktop goal remains active; original failed/canceled/unexecuted evidence and untested full-playthrough limitations remain.
+Campaign now has **18/24** accepted: Act1 5/8, Act2 8/8 and Act3 5/8. All fifteen main levels are accepted; the six remaining levels are Act1 and Act3 optional levels. The full desktop goal remains active; original failed/canceled/unexecuted evidence and untested full-playthrough limitations remain.
 
 ## Current status — 14 October 2026, Shared57
 

@@ -1,5 +1,7 @@
 # Cinder shared contract
 
+A3-L5 is independently [accepted](ACT3_L5_ACCEPTANCE.md) at owned content `83a6efa2509b5c7f5e408f3ecb4324f53d1e496d`. Canonical loading passes 18/0 clean and retains the A3-L4 prerequisite and terminal null successor. Runtime API58 is unchanged; campaign18/24, with Act1 and Act3 released to optional levels independently.
+
 Current shared runtime revision: **campaign-shared-58**. The [physics-origin Pause repair](PHYSICS_ORIGIN_PAUSE.md) allows one additional process signal when the first arrives before the Engine counter advances, preserving the original deadline and final state/registration guards. Actual original6/1, paired23/0, persistent22/0, core96/0, startup21/0 and import0 are recorded. Save schemas and the [Shared57 fresh-world contract](FRESH_WORLD_RESTORE.md) remain compatible. Workers adopt after frozen jobs close and acknowledge their actual merge; availability does not establish adoption. Campaign acceptance is now **17/24**.
 
 [A1-L5 acceptance](ACT1_L5_ACCEPTANCE.md) adds the sealed Living Moon scene and its existing local1/eye2/Scheduler4 content to the canonical registry. Root832/0 verifies progression, actual Shell entry, Save/fresh Continue/earlier Retry and cleanup. Only the L5 row and descriptive count change; other23 rows and shared interfaces remain unchanged. The same Act1 owner continues O1 next without another act or human gate. The integration publication commit is a content update, with no new shared runtime API revision.
@@ -30,7 +32,7 @@ Shell side finish/abandon restores the complete protected story and shows Journe
 
 ## Current level acceptance
 
-Direct user instruction on 9 October 2026 supersedes agent-completed playthrough gates. [Focused desktop acceptance](LEVEL_ACCEPTANCE.md) requires focused automated mechanics/loading/transitions/saves/Retry/cleanup checks and brief visual inspections. A full route, every enemy defeated, an earned exit or a completed campaign playthrough is unnecessary before acceptance and the next sequential level. Record untested full-playthrough behavior and retain original failures with their scope. All 16 currently accepted levels retain acceptance; Integration reviews pending levels independently and remains first help contact.
+Direct user instruction on 9 October 2026 supersedes agent-completed playthrough gates. [Focused desktop acceptance](LEVEL_ACCEPTANCE.md) requires focused automated mechanics/loading/transitions/saves/Retry/cleanup checks and brief visual inspections. A full route, every enemy defeated, an earned exit or a completed campaign playthrough is unnecessary before acceptance and the next sequential level. Record untested full-playthrough behavior and retain original failures with their scope. All 18 currently accepted levels retain acceptance; Integration reviews pending levels independently and remains first help contact.
 
 ## Idle menu notifications
 
