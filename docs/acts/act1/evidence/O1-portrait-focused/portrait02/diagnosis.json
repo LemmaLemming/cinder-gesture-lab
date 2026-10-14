@@ -1,0 +1,18 @@
+{
+  "classification": "owned portrait fixture diagnostic serialization error; no gameplay/source/save error",
+  "receipt": ".cinder/a1-o1-portrait02.json",
+  "native_report": ".cinder/a1-o1-saved-portrait-34917-1492203.json",
+  "revision": "2c8c53c5fb6cbad5249a0807aa48d3bca0c30df5",
+  "actual_result": "32/2 engine1;0PNG;920 frozen inputs/526UID unchanged; original failed result preserved",
+  "isolated_facts": {
+    "whole_packet_exact": true,
+    "actual_and_original_packet_sha256": "39c5b91d4dea8bc3af524bea6948e100996f3eef2cd8de70390990a0331f2fa0",
+    "native_wire_bytes": 0,
+    "ui_wire_bytes": 0,
+    "camera_wire_bytes": 1016,
+    "input_wire_bytes": 274
+  },
+  "cause": "Native/UI signatures uniquely passed raw rows to strict ExactJson, after dot-assigned dictionary keys. ExactJson only accepts String keys; fully recursive portable conversion already used for camera/input closes StringName keys and native values without changing values or bits. Independent source review concurs.",
+  "fix": "Wrap the complete native/UI diagnostic rows in the existing recursive _portable before Exact.stringify. All exact packet/nonempty/native/body/cue/clock/camera/input/UI/recipient-callback/containment/PNG/cleanup assertions retained. No production change.",
+  "next_check": "Only same affected paused portrait fixture; no importer/combat/campaign rerun."
+}

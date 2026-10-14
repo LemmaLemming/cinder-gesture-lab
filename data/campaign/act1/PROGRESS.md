@@ -1,5 +1,11 @@
 # Act 1 — current progress
 
+## O1 focused evidence complete; independent acceptance pending — 14 October 2026
+
+Current runtime content remains b37d6aff on tested Shared59, with authored campaign02 **49/0 CLEAN**. Corrected paused portrait03 at96aed79a closes **74/0 CLEAN**, three genuine540×1170 original saved views personally inspected, all920 frozen inputs/all526 UID bytes exact. [Portrait observations and limits](../../../docs/acts/act1/O1_PORTRAIT_REVIEW.md): capsule partly masks ground hatch chevron; idle entrance source/HUD overlap and distant scenery outside representative crops remain disclosed. Live warning source/Hero/lane/impact and damaged→open hatch distinction read. Original portrait01/02 each32/2 with0shots remain failed, diagnosed strict fixture signature encoding; production unchanged. Necessary import03 engine0 is NONCLEAN for editor shutdown scan warning. All own jobs closed; no extra fight/import/broad rerun. Shared60 compatible publication received, preserving adoption next; actual49/28/74 evidence retains Shared59 attribution.
+
+Seven-category O1 handoff now being sealed for integration. Act1 remains5/8 accepted, O1 current, O2/O3 sequential after independent acceptance. No human permission, registration or other-act gate. Full8 desktop goal remains active; mobile/release excluded. Historical entries below retain their original states/results and do not override this current paragraph.
+
 ## Authored O1 lifecycle passes49/0 — 14 October2026
 
 Actualb37d6aff/Shared59 campaign02 closes49/0 engine0 CLEAN, native47.128s/wall49.053s, all915 frozen inputs/all525 UID bytes unchanged. Receipt `.cinder/a1-o1-campaign02.json` SHAfaeee9197799faf91645189b284175b4379f5affdaa3cef6f9ac4cedc691647a; originalnative report SHA407b5120f0dd4c395945df284c26f199d0f1891b66c294d8bce44af6682b6f96. ProductionpublicShell/Store/Attempts/menu signals verify O1optionalentry, actualpartialC30+impactSave/freshdistinctquietContinue, originalthree-contactprefinaldormantcheckpoint, lateractualfinalwarningSave/freshContinue/earlierRetry, realnativeescape+20HP primary againststoppedfinalrecovery, actualrepairedhatchcontact/existingonce-stamp/exactprotectedL2Storyreturn, freshoptionalReplayandLeave, normalcleanup andunchangedcanonicalRegistrybytes. Original26/1 noncleanand3/1 failed remainliteral. Earlier28/0 retainsits exactgrayboxscope.
