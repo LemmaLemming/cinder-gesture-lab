@@ -1,0 +1,9 @@
+# Native-discovery timing runner — source-only review
+
+The pinned runner configuration and unchanged witness predicates check out. One acceptance gap remains: [tools.py line 341](</Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/tools.py:341>) compares only two complete-packet files, while [the plan line 24](</Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-native-discovery-timing-plan.md:24>) requires all four files to match across both pairs. Two matching pairs can represent different trajectories. Root must add an explicit host-only four-file byte-equality check before interpreting timings; the existing fixture and decoder can stay unchanged.
+
+Only Route A2bdf→B985a changes; both Protocol variants remain a01 and the helper remains 5c2. Fresh paths, inherited child configuration, canonical queue-before-90s runtime bound, unchanged 85s returning-loop watchdog, strict Exact decoder/reencoder/file joins, ordered witnesses and both per-pair camera flags are retained. Named actual parser/native prerequisites match the pinned 118/0 result and equal 860-entry source receipts. This checks named metadata endpoints, not the 860-file physical bank.
+
+Root's fixed A1→B1→B2→A2 selection/order remains an explicit execution obligation in the plan, outside the per-tag runner. The plan's 2dc/24,701-byte runner description is original codec provenance; the reviewed adapter is bb52/28,466 bytes and must be identified when frozen.
+
+Readiness remains unselected. No helper, engine, import, preparation, source-selection or timing run was performed. No speedup, gameplay, level acceptance or whole-native equality is claimed. This review does not gate either Act1/Act3 L5. The three peer receipts and exact four reviewed target copies are retained with the concise review.

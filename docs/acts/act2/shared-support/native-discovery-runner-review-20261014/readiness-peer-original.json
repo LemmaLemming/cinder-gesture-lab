@@ -1,0 +1,250 @@
+{
+  "created_utc": "2026-10-14T05:34:42.220517+00:00",
+  "current_named_input_pins": {
+    ".cinder/spore-fusion-measure-prep/inputs/scripts/campaign/codec_exact_reference.gd": {
+      "actual_sha256": "5c2e387254cc68edc636a5ff614cec707e110da50ba4a4588ce45274f70c29aa",
+      "bytes": 4235,
+      "expected_sha256": "5c2e387254cc68edc636a5ff614cec707e110da50ba4a4588ce45274f70c29aa",
+      "matches": true
+    },
+    ".cinder/spore-fusion-measure-prep/variants/baseline/protocol.gd.txt": {
+      "actual_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+      "bytes": 45116,
+      "expected_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+      "matches": true
+    },
+    ".cinder/spore-fusion-measure-prep/variants/baseline/route.gd.txt": {
+      "actual_sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+      "bytes": 36641,
+      "expected_sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+      "matches": true
+    },
+    ".cinder/spore-native-discovery-prep/discovery_differential.gd": {
+      "actual_sha256": "42aab771a3bfdeb0ecd1576d35c6753d56c4f4949647d63f0e86c8a8b8051e15",
+      "bytes": 15665,
+      "expected_sha256": "42aab771a3bfdeb0ecd1576d35c6753d56c4f4949647d63f0e86c8a8b8051e15",
+      "matches": true
+    },
+    ".cinder/spore-native-discovery-prep/manifest.json": {
+      "actual_sha256": "98ce36e31faf7deeed7a7a37c2cdf94cb85c10117be0094ab2a7760343703832",
+      "bytes": 2975,
+      "expected_sha256": "98ce36e31faf7deeed7a7a37c2cdf94cb85c10117be0094ab2a7760343703832",
+      "matches": true
+    },
+    ".cinder/spore-native-discovery-prep/repulsion_route.candidate.gd.txt": {
+      "actual_sha256": "985a474fa65670dfac21e1dc3869d40d448119d896ca5a4a92c0a36ad2a51dad",
+      "bytes": 38725,
+      "expected_sha256": "985a474fa65670dfac21e1dc3869d40d448119d896ca5a4a92c0a36ad2a51dad",
+      "matches": true
+    },
+    ".cinder/spore-native-discovery-prep/repulsion_route.original.gd.txt": {
+      "actual_sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+      "bytes": 36641,
+      "expected_sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+      "matches": true
+    },
+    "scripts/campaign/codec_exact_reference.gd": {
+      "actual_sha256": "5c2e387254cc68edc636a5ff614cec707e110da50ba4a4588ce45274f70c29aa",
+      "bytes": 4235,
+      "expected_sha256": "5c2e387254cc68edc636a5ff614cec707e110da50ba4a4588ce45274f70c29aa",
+      "matches": true
+    },
+    "scripts/combat/repulsion_route.gd": {
+      "actual_sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+      "bytes": 36641,
+      "expected_sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+      "matches": true
+    },
+    "scripts/environment/scheduler_spore_source_protocol.gd": {
+      "actual_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+      "bytes": 45116,
+      "expected_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+      "matches": true
+    }
+  },
+  "line_findings": [
+    {
+      "end_line": 37,
+      "finding": "Native mode changes only candidate Route to985a and reuses baseline Protocola01. Candidate Protocol path is the baseline protocol file; historical fused protocol is not part of this mode.",
+      "line": 27
+    },
+    {
+      "end_line": 84,
+      "finding": "check_readiness default requires true Root selection; explicit false argument verifies named return0/error-free result fields and retains diagnostics exactly rather than stripping them.",
+      "line": 75
+    },
+    {
+      "end_line": 107,
+      "finding": "Checks pinned raw/engine/source receipts, rejects error/leak markers, checks860 metadata-row count, exact named current discovery pins, two equal source receipts, exact118/0 native footer and one parser plus one native phase.",
+      "line": 85
+    },
+    {
+      "end_line": 117,
+      "finding": "prepare calls default selection gate before mutation/preparation, then verifies actual helper/current baseline Route+Protocol and candidate files. Current root_selected_for_timing=false remains unmodified.",
+      "line": 112
+    },
+    {
+      "end_line": 374,
+      "finding": "readiness-check action calls check_readiness(False) and prints no preparation/engine run. This reviewer reproduced its predicates manually, never invoked it.",
+      "line": 373
+    }
+  ],
+  "mode": "SOURCE ONLY, read-only named endpoints and selected current pins; no tools/helper invocation, preparation, timing selection, engine, import or source mutations",
+  "named_receipts": [
+    {
+      "actual_result_diagnostics_present": false,
+      "before_after_receipt_bytes_identical": true,
+      "closed_at": "2026-10-14T04:23:48.641564+00:00",
+      "closure_qualification": "Named result records normal return0 and ordered closed_at; no new process/group survey or stronger unrecorded lifecycle evidence inferred.",
+      "diagnostics_get_default_is_empty": true,
+      "engine": {
+        "bad_log_markers": false,
+        "bytes": 73,
+        "path": ".cinder/spore-native-discovery-prep/discovery-parse/engine.log",
+        "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+        "truncation_markers": false
+      },
+      "engine_elapsed_seconds": 0.4973506670212373,
+      "engine_timeout_seconds": 90,
+      "observed_native_footer": [],
+      "phase": "discovery-parse",
+      "queue_acquired_at": "2026-10-14T04:23:48.076664+00:00",
+      "raw": {
+        "bad_log_markers": false,
+        "bytes": 133,
+        "path": ".cinder/spore-native-discovery-prep/discovery-parse/raw.log",
+        "sha256": "b2695fec926945979072b8281cf54fbed59162fbbe93fa0c7518f1660ea8454d",
+        "truncation_markers": false
+      },
+      "required_fields_exact": {
+        "changed_inputs": true,
+        "phase": true,
+        "returncode": true,
+        "selected_inputs": true
+      },
+      "required_footer_exact": true,
+      "result_path": ".cinder/spore-native-discovery-prep/discovery-parse/result.json",
+      "result_sha256": "6de6e16e167ba5ab8c6a0feb3e77c2d630543d8e43f9dc494d9d2a7fe3f61464",
+      "retained_diagnostics": [],
+      "returncode": 0,
+      "root_diagnostic_qualification": "",
+      "source_receipts": [
+        {
+          "named_discovery_input_rows_exact": {
+            ".cinder/spore-native-discovery-prep/discovery_differential.gd": true,
+            ".cinder/spore-native-discovery-prep/manifest.json": true,
+            ".cinder/spore-native-discovery-prep/repulsion_route.candidate.gd.txt": true,
+            ".cinder/spore-native-discovery-prep/repulsion_route.original.gd.txt": true
+          },
+          "path": ".cinder/spore-native-discovery-prep/discovery-parse/source-before.json",
+          "rows_recorded": 860,
+          "sha256": "ba5afa8b4d73b3cb32dbdad1119709326ffa05a5b2144242456bba387573d6d0"
+        },
+        {
+          "named_discovery_input_rows_exact": {
+            ".cinder/spore-native-discovery-prep/discovery_differential.gd": true,
+            ".cinder/spore-native-discovery-prep/manifest.json": true,
+            ".cinder/spore-native-discovery-prep/repulsion_route.candidate.gd.txt": true,
+            ".cinder/spore-native-discovery-prep/repulsion_route.original.gd.txt": true
+          },
+          "path": ".cinder/spore-native-discovery-prep/discovery-parse/source-after.json",
+          "rows_recorded": 860,
+          "sha256": "ba5afa8b4d73b3cb32dbdad1119709326ffa05a5b2144242456bba387573d6d0"
+        }
+      ],
+      "submitted_at": "2026-10-14T04:23:48.055891+00:00"
+    },
+    {
+      "actual_result_diagnostics_present": false,
+      "before_after_receipt_bytes_identical": true,
+      "closed_at": "2026-10-14T04:28:30.879942+00:00",
+      "closure_qualification": "Named result records normal return0 and ordered closed_at; no new process/group survey or stronger unrecorded lifecycle evidence inferred.",
+      "diagnostics_get_default_is_empty": true,
+      "engine": {
+        "bad_log_markers": false,
+        "bytes": 193,
+        "path": ".cinder/spore-native-discovery-prep/discovery-native/engine.log",
+        "sha256": "2e0e37db267285f5fbe09158cd9a88fa4aca4650340b228050d88ca7004bc1f2",
+        "truncation_markers": false
+      },
+      "engine_elapsed_seconds": 0.7589155830210075,
+      "engine_timeout_seconds": 90,
+      "observed_native_footer": [
+        [
+          "118",
+          "0"
+        ]
+      ],
+      "phase": "discovery-native",
+      "queue_acquired_at": "2026-10-14T04:28:29.814500+00:00",
+      "raw": {
+        "bad_log_markers": false,
+        "bytes": 302,
+        "path": ".cinder/spore-native-discovery-prep/discovery-native/raw.log",
+        "sha256": "c2c1cdb146f7386105a22f395539be0fc3a11c28b2a2077dc05d43d43b076799",
+        "truncation_markers": false
+      },
+      "required_fields_exact": {
+        "changed_inputs": true,
+        "phase": true,
+        "returncode": true,
+        "selected_inputs": true
+      },
+      "required_footer_exact": true,
+      "result_path": ".cinder/spore-native-discovery-prep/discovery-native/result.json",
+      "result_sha256": "b3449750037ed1c3ebed57b6ded560cda3db7ee8f96ee2d129fa56308e819691",
+      "retained_diagnostics": [],
+      "returncode": 0,
+      "root_diagnostic_qualification": "",
+      "source_receipts": [
+        {
+          "named_discovery_input_rows_exact": {
+            ".cinder/spore-native-discovery-prep/discovery_differential.gd": true,
+            ".cinder/spore-native-discovery-prep/manifest.json": true,
+            ".cinder/spore-native-discovery-prep/repulsion_route.candidate.gd.txt": true,
+            ".cinder/spore-native-discovery-prep/repulsion_route.original.gd.txt": true
+          },
+          "path": ".cinder/spore-native-discovery-prep/discovery-native/source-before.json",
+          "rows_recorded": 860,
+          "sha256": "ba5afa8b4d73b3cb32dbdad1119709326ffa05a5b2144242456bba387573d6d0"
+        },
+        {
+          "named_discovery_input_rows_exact": {
+            ".cinder/spore-native-discovery-prep/discovery_differential.gd": true,
+            ".cinder/spore-native-discovery-prep/manifest.json": true,
+            ".cinder/spore-native-discovery-prep/repulsion_route.candidate.gd.txt": true,
+            ".cinder/spore-native-discovery-prep/repulsion_route.original.gd.txt": true
+          },
+          "path": ".cinder/spore-native-discovery-prep/discovery-native/source-after.json",
+          "rows_recorded": 860,
+          "sha256": "ba5afa8b4d73b3cb32dbdad1119709326ffa05a5b2144242456bba387573d6d0"
+        }
+      ],
+      "submitted_at": "2026-10-14T04:24:08.553051+00:00"
+    }
+  ],
+  "parser_native_source_receipt_bytes_identical": true,
+  "qualifications": [
+    "860 is the receipt metadata row count. No860 physical source bank census, UID census or unrelated artifact audit was performed.",
+    "Empty retained_diagnostics matches result.get(diagnostics,[]) and clean original logs; no actual diagnostic was truncated or removed. Result diagnostics key is absent, not rewritten into an empty array.",
+    "The original discovery manifest remains an initial inert/unexecuted source-preparation record; the separately closed parser/native receipts support later signature correctness only and do not rewrite that provenance.",
+    "Closed118/0 establishes the named untyped discovery differential signature checks only. No timing, speedup, whole-game equivalence, arbitrary observer/deep-resource proof, gameplay, campaign or performance credit.",
+    "check_readiness(False) itself compares baseline Protocol/helper declarations and snapshot rows; prepare separately checks current production/helper bytes. This review independently confirmed the named current bytes without preparing."
+  ],
+  "readiness": {
+    "candidate_protocol_sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+    "candidate_route_sha256": "985a474fa65670dfac21e1dc3869d40d448119d896ca5a4a92c0a36ad2a51dad",
+    "helper_sha256": "5c2e387254cc68edc636a5ff614cec707e110da50ba4a4588ce45274f70c29aa",
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/native-discovery-readiness.json",
+    "root_selected_for_timing": false,
+    "sha256": "025dabbc420d78935636e9c2af812b40925ad0b923eb9288e2f70a94ac152844"
+  },
+  "record": "act2-native-discovery-readiness-source-only-review",
+  "request": "635340aa",
+  "tools": {
+    "mode_qualification": "Native-discovery behavior is conditional on CINDER_SPORE_MEASURE_MODE=native-discovery; default remains historical fusion mode. No environment/helper execution occurred.",
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/tools.py",
+    "sha256": "bb52fe6d053734a7aa965b96a95ef504f7ec2f6240d920dac88c424f9d213874"
+  },
+  "verdict": "Native-discovery evidence-only check_readiness(False) predicates are satisfied by named exact receipts/pins. prepare default remains intentionally gated by false root selection; this review grants no timing authority."
+}

@@ -1,0 +1,88 @@
+{
+  "record": "bounded-independent-native-discovery-runner-source-review",
+  "created_utc": "2026-10-14T05:38:31.552630+00:00",
+  "assignment": "635340aa-aeb5-4308-a8bf-fb11a9fe261e",
+  "status": "source configuration/witness predicates sound; explicit all-four packet acceptance gate still required",
+  "reviewed_inputs": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/tools.py",
+      "sha256": "bb52fe6d053734a7aa965b96a95ef504f7ec2f6240d920dac88c424f9d213874",
+      "bytes": 28466,
+      "owned_copy": "tools.bb52.reviewed.py.txt"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/tools-native-discovery.patch.txt",
+      "sha256": "59fa153d42a9df31c2563cd05a7772c77147397c3b7395737d9a3c9240ca452f",
+      "bytes": 15751,
+      "owned_copy": "tools-native-discovery.patch.original.txt"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/native-discovery-readiness.json",
+      "sha256": "025dabbc420d78935636e9c2af812b40925ad0b923eb9288e2f70a94ac152844",
+      "bytes": 3841,
+      "owned_copy": "native-discovery-readiness.original.json"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-native-discovery-timing-plan.md",
+      "sha256": "a5366910b19fc0265d386acbfce05e840a48f5297d5e1af50073562f901404b6",
+      "bytes": 8210,
+      "owned_copy": "timing-plan.original.md"
+    }
+  ],
+  "root_selected_for_timing": false,
+  "findings": [
+    {
+      "priority": 2,
+      "title": "Require all four actual complete-packet files to match across the two pairs",
+      "file": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/tools.py",
+      "line_start": 332,
+      "line_end": 341,
+      "requirement_file": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-native-discovery-timing-plan.md",
+      "requirement_line": 24,
+      "evidence": "compare checks only the two supplied packet paths at341. CLI compare receives onlytwo tags at372. Two successful calls forA1/B1 andA2/B2 permit different complete-packet trajectories betweenpairs; the frozenrunner/patch hasno all-four-file predicate.",
+      "minimal_resolution": "Before interpreting any timings, Root must make one explicit host-only exact-byte equality check over all four actual complete19-packets.exact.json files after each original result/hash/closure join. A small separate Root execution gate is sufficient; no fixture, decoder, normalization or evidence framework change is needed.",
+      "scope": "Acceptance of the proposed timing experiment only; no level/campaign gate or measuredfailure/speedup."
+    }
+  ],
+  "verified_source_scope": {
+    "Route_only_difference": "A2bdfd3ea/B985a474f; both Protocol pins a01b5481 and helper5c2e3872 unchanged. verify159..171 gives Protocol the immutable branch in native mode.",
+    "fresh_paths": "native-discovery BANK/PAIR/inputs/readiness/comparison files are separate; literal HERE/jobs witness root stays unchanged; new discovery- tags required.",
+    "child_configuration": "CINDER_SPORE_MEASURE_MODE is inherited by same __file__ child in run; no parent-only monkey patch.",
+    "deadlines": "engine317..329 acquires canonical Godot lock before90-second ownedvalidation. Unchanged measure.gd returning-loop watchdog85s; no engine invocation in thisreview.",
+    "decoder_witnesses": "Strict decode_exact/observed_dictionary/exact_same/clock_bits/events/witnesses and inherited witness/camera predicates text/AST unchanged versus preserved2dc636dd; patch59fa exactly matches old\u2192bb52. Official GDS Exact parse/re-stringify plus actual filebyte/hash joins remain.",
+    "camera_flags": "camera_start_equal and camera_end_equal explicitly emitted for eachpair357..359; pose/focus exclusions retain other mechanical/native/input/resource/start projections and ordered events. No extra settling or snapping.",
+    "prerequisite": "Only named actual discovery parser/native result/raw/engine/source-before/source-after endpoints verified: return0,860 selected,changed[], equal source-receipt bytes ba5afa8b, exactsingle118/0footer, clean/untruncated logs and no stripped actualdiagnostics. Candidate/original/helper/Protocol/fourdiscoverypins match. No860physicalbank census."
+  },
+  "execution_obligations": [
+    {
+      "file": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-native-discovery-timing-plan.md",
+      "line": 18,
+      "requirement": "Root alone selects/restores between CLOSED jobs, parses A/B once, then runs exactly A1/B1/B2/A2 freshprocesses and stops on unmatched/prerequisite/closure; per-tag runner itself does not automate selection/order. Keep four samples, no sample-driven repeats."
+    },
+    {
+      "file": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-native-discovery-timing-plan.md",
+      "line": 5,
+      "qualification": "Plan runner2dc636dd/24,701 bytes is original codec provenance, preserved separately. Actual reviewed adapter is bb52fe6d/28,466 bytes; qualify the actual selected/frozen runner in Root execution notes."
+    }
+  ],
+  "peer_receipts": [
+    {
+      "path": "configuration-peer-original.json",
+      "sha256": "79a2c04fb60eb9153562ee2970afe54918a1ebc924f7e543a0c23657115ad5a8"
+    },
+    {
+      "path": "comparator-witness-peer-original.json",
+      "sha256": "66dc76c0de7624b2a6d50ab0e3233ec61a799a9041e40ff04dacff7702e8881c"
+    },
+    {
+      "path": "readiness-peer-original.json",
+      "sha256": "ae7cba574bf6d4f47cda26e195a2e969521002458d0324ab1ff3383a7f3f7b5e"
+    }
+  ],
+  "limits": [
+    "Source-only/read-only review of named targets and necessary references; no helper import/invocation, prepare, source selection, engine, import, new fixture or benchmark execution.",
+    "Readiness remains false; production/timing selection and explicit four-file gate remain Root owned.",
+    "No performance benefit, timing sample, arbitrary whole-native equality, gameplay, acceptance, art, campaign or mobile credit.",
+    "This support review does not gate Act1/Act3 L5 acceptance."
+  ]
+}
