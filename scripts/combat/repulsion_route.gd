@@ -513,11 +513,8 @@ static func _sweep(owner: CharacterBody3D, from: Transform3D, motion: Vector3, r
 static func _collision_signature(owner: Node3D, root: Node3D) -> Dictionary:
 	if not is_instance_valid(root) or not root.is_inside_tree() or root.is_queued_for_deletion() or root.get_world_3d() != owner.get_world_3d() or not _under(owner, root):
 		return {"error": "Actual same-world root containing source and all scenery required"}
-	var pending: Array[Node] = [owner.get_tree().root]
 	var colliders: Array = []
-	while not pending.is_empty():
-		var node: Node = pending.pop_back()
-		pending.append_array(node.get_children())
+	for node: Node in _collision_candidates(owner.get_tree().root):
 		if not node is Node3D or (node as Node3D).get_world_3d() != owner.get_world_3d():
 			continue
 		if node is GridMap or (node is CSGShape3D and (node as CSGShape3D).use_collision):
@@ -555,6 +552,64 @@ static func _collision_signature(owner: Node3D, root: Node3D) -> Dictionary:
 	var signature: Dictionary = {"engine": ProjectSettings.get_setting("physics/3d/physics_engine", "DEFAULT"), "tick_rate": Engine.physics_ticks_per_second, "colliders": colliders}
 	var error: String = Codec.value_error(signature)
 	return {"signature": signature} if error.is_empty() else {"error": error}
+
+
+static func _collision_candidates(search_root: Node) -> Array[Node]:
+	# EXPERIMENT: fresh native enumeration, no stored membership or geometry.
+	# Empty type avoids find_children's Script metadata fallback on nonmatches.
+	# Native recursion/materialization is intentionally an experimental limit.
+	var nodes: Array[Node] = search_root.find_children("*", "", true, false)
+	nodes.push_front(search_root)
+	var ordered: Array = []
+	for node: Node in nodes:
+		if not (node is PhysicsBody3D or node is GridMap or node is CSGShape3D):
+			continue
+		var indices: Array[int] = []
+		var cursor: Node = node
+		var included: bool = true
+		while cursor != search_root:
+			var parent: Node = cursor.get_parent()
+			if parent == null:
+				return _collision_candidates_original(search_root)
+			var count: int = parent.get_child_count(false)
+			if count == 0:
+				included = false
+				break
+			var first: Node = parent.get_child(0, false)
+			var start: int = first.get_index(true)
+			var index: int = cursor.get_index(true)
+			if index < start or index >= start + count:
+				included = false
+				break
+			if parent.get_child(index - start, false) != cursor:
+				return _collision_candidates_original(search_root)
+			indices.push_front(index)
+			cursor = parent
+		if included:
+			ordered.append({"node": node, "indices": indices})
+	ordered.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var left: Array = a.indices
+		var right: Array = b.indices
+		for index: int in range(mini(left.size(), right.size())):
+			if left[index] != right[index]:
+				return left[index] > right[index]
+		return left.size() < right.size())
+	var candidates: Array[Node] = []
+	for row: Dictionary in ordered:
+		candidates.append(row.node)
+	return candidates
+
+
+static func _collision_candidates_original(search_root: Node) -> Array[Node]:
+	# Only an unexpected ancestry/edge mismatch falls back; never truncate.
+	var pending: Array[Node] = [search_root]
+	var candidates: Array[Node] = []
+	while not pending.is_empty():
+		var node: Node = pending.pop_back()
+		pending.append_array(node.get_children())
+		if node is PhysicsBody3D or node is GridMap or node is CSGShape3D:
+			candidates.append(node)
+	return candidates
 
 
 static func _shape_data(shape: Shape3D) -> Dictionary:

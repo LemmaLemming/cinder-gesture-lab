@@ -1,0 +1,211 @@
+#!/usr/bin/env python3
+"""Focused synthetic source checks; never invokes the runner/module/engine.
+Only selected actual function definitions are AST-extracted and compiled into
+local stdlib/sandbox bindings. Synthetic records are not native receipts.
+"""
+import argparse
+import ast
+import datetime
+import hashlib
+import json as host_json
+from pathlib import Path
+import tempfile
+import types
+
+HERE = Path(__file__).resolve().parent
+CLONE_SHA = "ed71b62c6e25a906b42547221419c72922d8028a1b22b3ade063dbccad91c1bd"
+ORIGINAL_SHA = "bb52fe6d053734a7aa965b96a95ef504f7ec2f6240d920dac88c424f9d213874"
+TAGS = [("discovery-a1", "baseline"), ("discovery-b1", "candidate"),
+        ("discovery-b2", "candidate"), ("discovery-a2", "baseline")]
+EXTRACT = ["sha", "row", "require_four_packet_equality", "compare"]
+PRESERVE = ["decode_exact", "observed_dictionary", "exact_same", "clock_bits",
+            "events", "witnesses", "run", "engine"]
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+def functions(path):
+    text = path.read_text()
+    tree = ast.parse(text, filename=str(path))
+    return text, {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
+
+def dump(path, value):
+    path.write_text(host_json.dumps(value, indent=2, sort_keys=True) + "\n")
+
+class DownstreamReached(Exception):
+    pass
+
+class TimingReached(Exception):
+    pass
+
+def bindings(case_root, nodes):
+    fixture = case_root / "native-discovery-support"
+    state = {"decoder_calls": 0, "timing_reads": 0}
+    class Interval(dict):
+        def __getitem__(self, key):
+            if key == "wall_us":
+                state["timing_reads"] += 1
+                raise TimingReached("Synthetic timing spy reached: no timing ratio authorized")
+            return super().__getitem__(key)
+    def loads(text):
+        value = host_json.loads(text)
+        if isinstance(value, dict) and isinstance(value.get("interval"), dict):
+            value["interval"] = Interval(value["interval"])
+        return value
+    def decode_spy(_path):
+        state["decoder_calls"] += 1
+        raise DownstreamReached("Unchanged downstream decoder reached after four-file gate")
+    namespace = {"Path": Path, "hashlib": hashlib,
+                 "json": types.SimpleNamespace(loads=loads),
+                 "ROOT": case_root, "HERE": fixture, "BANK": fixture,
+                 "PAIR": fixture / "pair.json", "NATIVE_DISCOVERY": True,
+                 "decode_exact": decode_spy}
+    module = ast.Module(body=[nodes[name] for name in EXTRACT], type_ignores=[])
+    exec(compile(ast.fix_missing_locations(module), "<actual-frozen-selected-functions>", "exec"), namespace)
+    return namespace, state
+
+def fixture(case_root, nodes, packets):
+    namespace, state = bindings(case_root, nodes)
+    bank = namespace["HERE"]
+    bank.mkdir()
+    dump(namespace["PAIR"], {"synthetic": True, "scope": "record shapes only"})
+    pair_sha = namespace["sha"](namespace["PAIR"])
+    for tag, variant in TAGS:
+        target = bank / "jobs" / tag
+        observed = target / "observed"
+        observed.mkdir(parents=True)
+        (observed / "complete19-packets.exact.json").write_bytes(packets[tag])
+        (observed / "focused-native.exact.json").write_bytes(b"SYNTHETIC_NOT_NATIVE_FOCUSED_WITNESS\n")
+        (target / "raw.log").write_bytes(b"SYNTHETIC_NOT_GODOT_RAW\n")
+        (target / "wrapper.log").write_bytes(b"SYNTHETIC_NOT_GODOT_WRAPPER\n")
+        dump(target / "manifest.json", {"synthetic": True, "tag": tag, "variant": variant})
+        closed = {
+            "synthetic_not_native_receipt": True,
+            "successful_scope": True, "mode": "measure", "variant": variant,
+            "pair_sha256": pair_sha, "returncode": 0,
+            "source_and_uids_exact_at_closure": True, "closure_error": "",
+            "evidence_error": "", "unexpected_diagnostics": [],
+            "manifest_sha256": namespace["sha"](target / "manifest.json"),
+            "streams": [namespace["row"](target / name) for name in ["wrapper.log", "raw.log"]],
+            "witnesses": {
+                "native": namespace["row"](observed / "focused-native.exact.json"),
+                "packets": namespace["row"](observed / "complete19-packets.exact.json")},
+            "interval": {"physics_frames": 8, "process_frames": 1,
+                "player_elapsed_s": 8/60, "scheduler_elapsed_s": 8/60,
+                "hp_before": 100.0, "hp": 100.0, "hero_position": [0.0, 0.0, 0.0],
+                "room_stage": "active", "beat_index": 2, "wall_us": 1.0},
+        }
+        dump(target / "result.json", closed)
+    return namespace, state
+
+def reject_before_downstream(namespace, state, baseline="discovery-a1", candidate="discovery-b1"):
+    try:
+        namespace["compare"](baseline, candidate)
+    except (AssertionError, FileNotFoundError, KeyError) as exc:
+        assert state == {"decoder_calls": 0, "timing_reads": 0}, state
+        assert not list(namespace["BANK"].glob("comparison-*.json"))
+        return {"refusal_type": type(exc).__name__, "message": str(exc),
+                "decoder_calls": 0, "timing_reads": 0}
+    raise AssertionError("Invalid synthetic gate input reached downstream or was accepted")
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--clone", type=Path, default=HERE / "tools.four-packet-gate.proposed.py.txt")
+    parser.add_argument("--original", type=Path, default=HERE / "tools.bb52fe6d.original.py.txt")
+    args = parser.parse_args()
+    assert digest(args.clone.read_bytes()) == CLONE_SHA, "Frozen clone differs"
+    assert digest(args.original.read_bytes()) == ORIGINAL_SHA, "Original bb52 differs"
+    clone_text, nodes = functions(args.clone)
+    original_text, originals = functions(args.original)
+    preserved = {}
+    for name in PRESERVE:
+        a, b = nodes[name], originals[name]
+        ast_equal = ast.dump(a, include_attributes=False) == ast.dump(b, include_attributes=False)
+        source_equal = ast.get_source_segment(clone_text, a) == ast.get_source_segment(original_text, b)
+        preserved[name] = {"AST_equal": ast_equal, "literal_function_source_equal": source_equal}
+        assert ast_equal and source_equal, name
+    # AST extraction, not module import: no ROOT/HERE/environment initialization,
+    # uids(), prepare(), CLI, native decode/witness or engine functions execute.
+    run_base = HERE / "synthetic-check-runs"
+    run_base.mkdir(exist_ok=True)
+    run = Path(tempfile.mkdtemp(prefix="source-only-", dir=run_base))
+    cases = []
+    identical = {tag: b"SYNTHETIC_IDENTICAL_COMPLETE19_BYTES_NOT_NATIVE\n" for tag, _ in TAGS}
+    def execute(name, packets, body):
+        case = run / name
+        case.mkdir()
+        try:
+            namespace, state = fixture(case, nodes, packets)
+            detail = body(namespace, state)
+            result = {"name": name, "passed": True, "detail": detail}
+        except BaseException as exc:
+            result = {"name": name, "passed": False, "error_type": type(exc).__name__, "error": repr(exc)}
+        cases.append(result)
+        dump(case / "source-check-result.json", result)
+    def positive(namespace, state):
+        namespace["require_four_packet_equality"]()
+        try:
+            namespace["compare"]("discovery-a1", "discovery-b1")
+        except DownstreamReached:
+            assert state == {"decoder_calls": 1, "timing_reads": 0}
+            return {"four_file_predicate_accepted": True,
+                    "compare_reached_unchanged_decoder_after_gate": True,
+                    "native_decode_performed": False, "timing_reads": 0}
+        raise AssertionError("Valid synthetic gate did not reach downstream decoder spy")
+    execute("four-identical-accept", identical, positive)
+    split = {tag: (b"SYNTHETIC_PAIR_ONE\n" if tag.endswith("1") else b"SYNTHETIC_PAIR_TWO\n") for tag, _ in TAGS}
+    def paired_difference(namespace, state):
+        bank = namespace["HERE"] / "jobs"
+        packet = lambda tag: (bank / tag / "observed/complete19-packets.exact.json").read_bytes()
+        assert packet("discovery-a1") == packet("discovery-b1")
+        assert packet("discovery-a2") == packet("discovery-b2")
+        assert packet("discovery-a1") != packet("discovery-a2")
+        first = reject_before_downstream(namespace, state)
+        second = reject_before_downstream(namespace, state, "discovery-a2", "discovery-b2")
+        return {"each_pair_bytes_equal": True, "cross_pair_bytes_differ": True,
+                "A1_B1_refusal": first, "A2_B2_refusal": second}
+    execute("two-equal-pairs-different-reject", split, paired_difference)
+    def packet_hash(namespace, state):
+        # Off-pair B2 corruption leaves the selected A1/B1 pair intact.
+        p = namespace["HERE"] / "jobs/discovery-b2/observed/complete19-packets.exact.json"
+        p.write_bytes(b"SYNTHETIC_CHANGED_AFTER_RECORD\n")
+        return reject_before_downstream(namespace, state)
+    execute("offpair-packet-hash-refuse", identical, packet_hash)
+    def manifest_hash(namespace, state):
+        p = namespace["HERE"] / "jobs/discovery-b2/manifest.json"
+        p.write_text('{"synthetic":true,"changed_after_record":true}\n')
+        return reject_before_downstream(namespace, state)
+    execute("offpair-manifest-hash-refuse", identical, manifest_hash)
+    def closure_failure(namespace, state):
+        p = namespace["HERE"] / "jobs/discovery-b2/result.json"
+        closed = host_json.loads(p.read_text())
+        closed["source_and_uids_exact_at_closure"] = False
+        dump(p, closed)
+        return reject_before_downstream(namespace, state)
+    execute("offpair-closure-refuse", identical, closure_failure)
+    def missing_file(namespace, state):
+        (namespace["HERE"] / "jobs/discovery-a2/observed/complete19-packets.exact.json").unlink()
+        return reject_before_downstream(namespace, state)
+    execute("offpair-missing-file-refuse", identical, missing_file)
+    failures = [case for case in cases if not case["passed"]]
+    record = {
+        "record": "four-packet-gate-focused-synthetic-source-checks",
+        "created_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "synthetic_only": True, "clone_sha256": CLONE_SHA, "original_sha256": ORIGINAL_SHA,
+        "test_script_sha256": digest(Path(__file__).read_bytes()),
+        "extracted_actual_functions": EXTRACT, "preserved_decoder_witness_functions": preserved,
+        "cases": cases, "case_count": len(cases), "failure_count": len(failures),
+        "sandbox": str(run), "all_synthetic_inputs_and_failures_retained": True,
+        "limitations": [
+            "No runner CLI/module-top-level/environment/Root/native/engine/import/source selection executes.",
+            "Only the four-file acceptance predicate and before-downstream rejection ordering are exercised with synthetic record-shaped files.",
+            "Decoder is a local reachability spy; real decoder/witness/run/engine functions are preserved by exact AST/source equality and never executed.",
+            "No native receipt validity, complete19 payload semantics, timing ratio, speedup, campaign or gameplay evidence."]
+    }
+    dump(run / "source-check-summary.json", record)
+    print(host_json.dumps({"summary": str(run / "source-check-summary.json"),
+          "case_count": len(cases), "failure_count": len(failures), "synthetic_only": True}, indent=2))
+    return 1 if failures else 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())

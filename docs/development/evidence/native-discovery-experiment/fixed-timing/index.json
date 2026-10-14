@@ -1,0 +1,784 @@
+{
+  "packaged_at": "2026-10-14T06:26:00.462549+00:00",
+  "status": "completed fixed native-discovery timing evidence; no new run or adoption recommendation",
+  "executed_runner_sha256": "ed71b62c6e25a906b42547221419c72922d8028a1b22b3ade063dbccad91c1bd",
+  "pair_sha256": "84f05a7781151897c022a3e6c1861b2599b6a107ef23488a934a5413cb0337a2",
+  "sample_order": [
+    "discovery-a1",
+    "discovery-b1",
+    "discovery-b2",
+    "discovery-a2"
+  ],
+  "jobs": [
+    {
+      "tag": "discovery-a-parse",
+      "variant": "baseline",
+      "mode": "parse",
+      "closed_at": "2026-10-14T06:06:43.440805+00:00",
+      "returncode": 0,
+      "clean_process": true,
+      "footers": [],
+      "selected_inputs_recorded": 869,
+      "source_and_uids_exact_at_closure": true
+    },
+    {
+      "tag": "discovery-b-parse",
+      "variant": "candidate",
+      "mode": "parse",
+      "closed_at": "2026-10-14T06:07:34.460444+00:00",
+      "returncode": 0,
+      "clean_process": true,
+      "footers": [],
+      "selected_inputs_recorded": 869,
+      "source_and_uids_exact_at_closure": true
+    },
+    {
+      "tag": "discovery-a1",
+      "variant": "baseline",
+      "mode": "measure",
+      "closed_at": "2026-10-14T06:09:12.060775+00:00",
+      "returncode": 0,
+      "clean_process": true,
+      "footers": [
+        [
+          "25",
+          "0"
+        ]
+      ],
+      "selected_inputs_recorded": 869,
+      "source_and_uids_exact_at_closure": true,
+      "interval": {
+        "actor_identities_unchanged": true,
+        "beat_index": 2,
+        "campaign_error": "",
+        "dead": false,
+        "encounter_error": "Authored encounter context and fixed normalized world direction required",
+        "engine_pid": 52018,
+        "hero_position": [
+          0.0,
+          -0.00484376167878509,
+          -10.3999996185303
+        ],
+        "hp": 100.0,
+        "hp_before": 100.0,
+        "paused": false,
+        "physics_frame_index": 60,
+        "physics_frames": 8,
+        "player_clock_bits": "060000000000f03f",
+        "player_clock_s": 1.0,
+        "player_elapsed_s": 0.133333333333334,
+        "process_frame_index": 25,
+        "process_frames": 1,
+        "room_stage": "active",
+        "scheduler_clock_bits": "ffffffffffffcf3f",
+        "scheduler_clock_s": 0.25,
+        "scheduler_elapsed_s": 0.133333333333333,
+        "scope": "Uninstrumented whole-window elapsed time; activation/setup/paused witnesses excluded; one native await interval, no sustained FPS or causal gain claim.",
+        "shells": 2,
+        "stage": "spore_fusion_interval",
+        "ticks_started": 1,
+        "wall_us": 6646306
+      },
+      "witness_qualification": "Actual Exact file bytes/hash joined to trace; exact named19 actor packets/native sources,8 Crossed references, paused active boundary, clock bits and pose/velocity joins. Saved logical grounded and native floor contact remain distinct. No arbitrary Script-state or optical Save claim.",
+      "grounded_schema_differences": [
+        {
+          "source_id": "breathing-1",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        },
+        {
+          "source_id": "breathing-2",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        },
+        {
+          "source_id": "breathing-3",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        }
+      ]
+    },
+    {
+      "tag": "discovery-b1",
+      "variant": "candidate",
+      "mode": "measure",
+      "closed_at": "2026-10-14T06:11:24.651975+00:00",
+      "returncode": 0,
+      "clean_process": true,
+      "footers": [
+        [
+          "25",
+          "0"
+        ]
+      ],
+      "selected_inputs_recorded": 869,
+      "source_and_uids_exact_at_closure": true,
+      "interval": {
+        "actor_identities_unchanged": true,
+        "beat_index": 2,
+        "campaign_error": "",
+        "dead": false,
+        "encounter_error": "Authored encounter context and fixed normalized world direction required",
+        "engine_pid": 56372,
+        "hero_position": [
+          0.0,
+          -0.00484376167878509,
+          -10.3999996185303
+        ],
+        "hp": 100.0,
+        "hp_before": 100.0,
+        "paused": false,
+        "physics_frame_index": 60,
+        "physics_frames": 8,
+        "player_clock_bits": "060000000000f03f",
+        "player_clock_s": 1.0,
+        "player_elapsed_s": 0.133333333333334,
+        "process_frame_index": 25,
+        "process_frames": 1,
+        "room_stage": "active",
+        "scheduler_clock_bits": "ffffffffffffcf3f",
+        "scheduler_clock_s": 0.25,
+        "scheduler_elapsed_s": 0.133333333333333,
+        "scope": "Uninstrumented whole-window elapsed time; activation/setup/paused witnesses excluded; one native await interval, no sustained FPS or causal gain claim.",
+        "shells": 2,
+        "stage": "spore_fusion_interval",
+        "ticks_started": 1,
+        "wall_us": 5391400
+      },
+      "witness_qualification": "Actual Exact file bytes/hash joined to trace; exact named19 actor packets/native sources,8 Crossed references, paused active boundary, clock bits and pose/velocity joins. Saved logical grounded and native floor contact remain distinct. No arbitrary Script-state or optical Save claim.",
+      "grounded_schema_differences": [
+        {
+          "source_id": "breathing-1",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        },
+        {
+          "source_id": "breathing-2",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        },
+        {
+          "source_id": "breathing-3",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        }
+      ]
+    },
+    {
+      "tag": "discovery-b2",
+      "variant": "candidate",
+      "mode": "measure",
+      "closed_at": "2026-10-14T06:13:07.690424+00:00",
+      "returncode": 0,
+      "clean_process": true,
+      "footers": [
+        [
+          "25",
+          "0"
+        ]
+      ],
+      "selected_inputs_recorded": 869,
+      "source_and_uids_exact_at_closure": true,
+      "interval": {
+        "actor_identities_unchanged": true,
+        "beat_index": 2,
+        "campaign_error": "",
+        "dead": false,
+        "encounter_error": "Authored encounter context and fixed normalized world direction required",
+        "engine_pid": 58938,
+        "hero_position": [
+          0.0,
+          -0.00484376167878509,
+          -10.3999996185303
+        ],
+        "hp": 100.0,
+        "hp_before": 100.0,
+        "paused": false,
+        "physics_frame_index": 61,
+        "physics_frames": 8,
+        "player_clock_bits": "060000000000f03f",
+        "player_clock_s": 1.0,
+        "player_elapsed_s": 0.133333333333334,
+        "process_frame_index": 25,
+        "process_frames": 1,
+        "room_stage": "active",
+        "scheduler_clock_bits": "ffffffffffffcf3f",
+        "scheduler_clock_s": 0.25,
+        "scheduler_elapsed_s": 0.133333333333333,
+        "scope": "Uninstrumented whole-window elapsed time; activation/setup/paused witnesses excluded; one native await interval, no sustained FPS or causal gain claim.",
+        "shells": 2,
+        "stage": "spore_fusion_interval",
+        "ticks_started": 1,
+        "wall_us": 5183684
+      },
+      "witness_qualification": "Actual Exact file bytes/hash joined to trace; exact named19 actor packets/native sources,8 Crossed references, paused active boundary, clock bits and pose/velocity joins. Saved logical grounded and native floor contact remain distinct. No arbitrary Script-state or optical Save claim.",
+      "grounded_schema_differences": [
+        {
+          "source_id": "breathing-1",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        },
+        {
+          "source_id": "breathing-2",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        },
+        {
+          "source_id": "breathing-3",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        }
+      ]
+    },
+    {
+      "tag": "discovery-a2",
+      "variant": "baseline",
+      "mode": "measure",
+      "closed_at": "2026-10-14T06:15:26.075214+00:00",
+      "returncode": 0,
+      "clean_process": true,
+      "footers": [
+        [
+          "25",
+          "0"
+        ]
+      ],
+      "selected_inputs_recorded": 869,
+      "source_and_uids_exact_at_closure": true,
+      "interval": {
+        "actor_identities_unchanged": true,
+        "beat_index": 2,
+        "campaign_error": "",
+        "dead": false,
+        "encounter_error": "Authored encounter context and fixed normalized world direction required",
+        "engine_pid": 72593,
+        "hero_position": [
+          0.0,
+          -0.00484376167878509,
+          -10.3999996185303
+        ],
+        "hp": 100.0,
+        "hp_before": 100.0,
+        "paused": false,
+        "physics_frame_index": 61,
+        "physics_frames": 8,
+        "player_clock_bits": "060000000000f03f",
+        "player_clock_s": 1.0,
+        "player_elapsed_s": 0.133333333333334,
+        "process_frame_index": 25,
+        "process_frames": 1,
+        "room_stage": "active",
+        "scheduler_clock_bits": "ffffffffffffcf3f",
+        "scheduler_clock_s": 0.25,
+        "scheduler_elapsed_s": 0.133333333333333,
+        "scope": "Uninstrumented whole-window elapsed time; activation/setup/paused witnesses excluded; one native await interval, no sustained FPS or causal gain claim.",
+        "shells": 2,
+        "stage": "spore_fusion_interval",
+        "ticks_started": 1,
+        "wall_us": 6280333
+      },
+      "witness_qualification": "Actual Exact file bytes/hash joined to trace; exact named19 actor packets/native sources,8 Crossed references, paused active boundary, clock bits and pose/velocity joins. Saved logical grounded and native floor contact remain distinct. No arbitrary Script-state or optical Save claim.",
+      "grounded_schema_differences": [
+        {
+          "source_id": "breathing-1",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        },
+        {
+          "source_id": "breathing-2",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        },
+        {
+          "source_id": "breathing-3",
+          "packet_logical_grounded": true,
+          "native_is_on_floor": false,
+          "native_collision_disabled": true,
+          "packet_dormant": false
+        }
+      ]
+    }
+  ],
+  "comparisons": [
+    {
+      "camera_start_equal": true,
+      "camera_end_equal": false,
+      "whole_native_equality_claimed": false,
+      "matched_native_nonidentity_projection": false,
+      "ordered_running_events_equal": true,
+      "baseline": "discovery-a1",
+      "candidate": "discovery-b1",
+      "baseline_wall_us": 6646306,
+      "candidate_wall_us": 5391400,
+      "single_pair_relative_change_percent": -18.881255241633475,
+      "complete19_packet_bytes_equal": true,
+      "pair_source_rule": "Only selected Route differs; Protocol/helper and all other frozen inputs/active UIDs are identical.",
+      "scope": "One same-fixture uninstrumented pair; native instance identities differ and native packets are not asserted identical. Camera differences are explicit; no whole-native equality, sustained FPS, repeatability, causal codec gain or camera/Save repair claim."
+    },
+    {
+      "camera_start_equal": true,
+      "camera_end_equal": false,
+      "whole_native_equality_claimed": false,
+      "matched_native_nonidentity_projection": false,
+      "ordered_running_events_equal": true,
+      "baseline": "discovery-a2",
+      "candidate": "discovery-b2",
+      "baseline_wall_us": 6280333,
+      "candidate_wall_us": 5183684,
+      "single_pair_relative_change_percent": -17.46163778258255,
+      "complete19_packet_bytes_equal": true,
+      "pair_source_rule": "Only selected Route differs; Protocol/helper and all other frozen inputs/active UIDs are identical.",
+      "scope": "One same-fixture uninstrumented pair; native instance identities differ and native packets are not asserted identical. Camera differences are explicit; no whole-native equality, sustained FPS, repeatability, causal codec gain or camera/Save repair claim."
+    }
+  ],
+  "original_118_correctness_reference": {
+    "path": "docs/development/evidence/native-discovery-experiment/index.json",
+    "sha256": "58a556db01baf5a5b7b81c8c8086a9571a320de58c160470a2103ffa536624ec",
+    "scope": "Existing immutable 118/0 native differential and clean parser; 860 selected inputs unchanged, original source/log/manifest index. Not new timing or authored-level acceptance."
+  },
+  "retained_originals": [
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a-parse/manifest.json",
+      "sha256": "0a67b9db620897632c686bae483fac0e1330be65867cc0268dfb42ef36ef08eb",
+      "bytes": 100926,
+      "role": "original exact selected-input job manifest; referenced, not recopied"
+    },
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b-parse/manifest.json",
+      "sha256": "0ba026cd076fad71ffb42d2f37233f1c25b0d52c8775bf469fcd9e1597aa51ba",
+      "bytes": 100927,
+      "role": "original exact selected-input job manifest; referenced, not recopied"
+    },
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a1/manifest.json",
+      "sha256": "6423cc29dd20af5e3a0c08d080eb4368274de15d66ac4f7a068489cfce3fd4bf",
+      "bytes": 100923,
+      "role": "original exact selected-input job manifest; referenced, not recopied"
+    },
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a1/observed/focused-native.exact.json",
+      "bytes": 734237,
+      "sha256": "05ca915e32e3000d833a88b74e506912692473ee1318d5694b9e388c7cd5dba0",
+      "mode": 420,
+      "role": "original large focused native witness; reference bytes/hash are from closed result, not a new rehash/census"
+    },
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b1/manifest.json",
+      "sha256": "4176bc4a99a8da64982480730cfe1d7aceef5fc93f53d5bb1c7331edc8b57945",
+      "bytes": 100924,
+      "role": "original exact selected-input job manifest; referenced, not recopied"
+    },
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b1/observed/focused-native.exact.json",
+      "bytes": 734237,
+      "sha256": "afdfc228e55564f1d7339c25ff46aa57491c38f1168671ab8becea95d4b7a941",
+      "mode": 420,
+      "role": "original large focused native witness; reference bytes/hash are from closed result, not a new rehash/census"
+    },
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b2/manifest.json",
+      "sha256": "92f0f4ae3a9326e1d67bfce9eefcefa5d4bc8f8a19af0f356895fc89ebab436e",
+      "bytes": 100924,
+      "role": "original exact selected-input job manifest; referenced, not recopied"
+    },
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b2/observed/focused-native.exact.json",
+      "bytes": 734237,
+      "sha256": "0d6e4f7949f816af79482f8695300ecd44226fd4ea952d93e47d491e1adcdf9b",
+      "mode": 420,
+      "role": "original large focused native witness; reference bytes/hash are from closed result, not a new rehash/census"
+    },
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a2/manifest.json",
+      "sha256": "ce489fbdf6a46a2485f5e6be87b0db5932b5149d8f7c33381343477aa14da9d0",
+      "bytes": 100923,
+      "role": "original exact selected-input job manifest; referenced, not recopied"
+    },
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a2/observed/focused-native.exact.json",
+      "bytes": 734237,
+      "sha256": "1e752184a4986f58c3c2963ad89117cc5b9b1725c5ac143039734af2575f7a53",
+      "mode": 420,
+      "role": "original large focused native witness; reference bytes/hash are from closed result, not a new rehash/census"
+    },
+    {
+      "path": ".cinder/spore-fusion-measure-prep/native-discovery/inputs/",
+      "role": "original bounded 869-input bank retained locally; files and hashes indexed by exact copied records/pair.json; no bank recensus or copy",
+      "file_entries_recorded": 869,
+      "uid_entries_recorded": 513,
+      "scope": "Explicit/literal/global-class-cache bounded resources and all active UID bytes; one fresh discovery source bank, only Route differs; Protocol/helper identical. Not a complete dynamic/import graph."
+    }
+  ],
+  "limits": [
+    "Four fresh-process eight-physics-frame/one-process-interval whole-window observations in fixed A1-B1-B2-A2 order, not sustained FPS, repeatability, isolated discovery cost or causal proof.",
+    "Both paired comparisons: camera_start_equal=true, camera_end_equal=false; matched_native_nonidentity_projection=false and whole_native_equality_claimed=false. Ordinary camera processing remained enabled; no snapping, extra settling or output normalization.",
+    "All four exact complete19/Player/Scheduler packet files have the same bytes and SHA256; ordered running events match. Fresh-process native instance IDs are retained and differ.",
+    "Each run retains encounter_error=Authored encounter context and fixed normalized world direction required. This inherited diagnostic is unresolved; clean process/25 checks do not imply authored encounter-context acceptance.",
+    "Logical grounded=true differs from native is_on_floor=false for breathing-1/2/3 (native collision disabled=true, packet dormant=false); these are retained distinct schema meanings, not repaired or normalized.",
+    "Native recursion/full materialization has different stack/memory/resource behavior. Ancestry fallback does not establish stack/OOM, arbitrary native-extension observer or deep-recursion parity.",
+    "Portable subset includes exact small executed sources, logs/results, packet bytes and metadata; omitted local native bodies/input banks mean it is not a self-contained reproduction or whole-native proof.",
+    "Historical source-only timing-plan runner hashes and root-selection engine_executed=false are original preparation records. Actual executed runner is ed71b62c6e25a906b42547221419c72922d8028a1b22b3ade063dbccad91c1bd; the host synthetic gate check supplies no native credit.",
+    "Older codec fusion and withdrawn early-type-filter timings remain separate historical evidence and are not these discovery comparisons. No production selection or adoption recommendation is made here."
+  ],
+  "items": [
+    {
+      "path": "records/pair.json",
+      "bytes": 339265,
+      "sha256": "84f05a7781151897c022a3e6c1861b2599b6a107ef23488a934a5413cb0337a2",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/native-discovery/pair.json"
+    },
+    {
+      "path": "sources/executed-tools.py.txt",
+      "bytes": 29973,
+      "sha256": "ed71b62c6e25a906b42547221419c72922d8028a1b22b3ade063dbccad91c1bd",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/tools.py"
+    },
+    {
+      "path": "sources/measure.gd.txt",
+      "bytes": 18558,
+      "sha256": "25bfd1a8ccb0e95c6c31e301c2c0e6c7ecf7392bc4281da968c071aa6dcd21cc",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/measure.gd"
+    },
+    {
+      "path": "sources/stage-current-registry.gd.txt",
+      "bytes": 29867,
+      "sha256": "c79d64a53d84f6532a3cc1337d80c942170f2ecb8434a168860e12bc79994799",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/stage-current-registry.gd"
+    },
+    {
+      "path": "sources/repulsion_route.candidate.gd.txt",
+      "bytes": 38725,
+      "sha256": "985a474fa65670dfac21e1dc3869d40d448119d896ca5a4a92c0a36ad2a51dad",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/native-discovery/candidate-route.gd.txt"
+    },
+    {
+      "path": "sources/unchanged-protocol.gd.txt",
+      "bytes": 45116,
+      "sha256": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/native-discovery/candidate-protocol.gd.txt"
+    },
+    {
+      "path": "records/selected-readiness.json",
+      "bytes": 4179,
+      "sha256": "cedb0beb47fb8eadbf99f2c00b16dc5eb0ac56cdbf829178b34c5957c4fb0129",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/native-discovery-readiness.json"
+    },
+    {
+      "path": "records/source-only-timing-plan.md",
+      "bytes": 8210,
+      "sha256": "a5366910b19fc0265d386acbfce05e840a48f5297d5e1af50073562f901404b6",
+      "mode": 420,
+      "original_path": ".cinder/spore-native-discovery-timing-plan.md"
+    },
+    {
+      "path": "records/root-selection.json",
+      "bytes": 553,
+      "sha256": "2187919382f5d6e2ebd28ccc82a8c13b2c55a7654878e2b2790e016d19ce619d",
+      "mode": 420,
+      "original_path": ".cinder/spore-native-discovery-execution/root-selection.json"
+    },
+    {
+      "path": "records/selected-variant.json",
+      "bytes": 153,
+      "sha256": "1a0e352fc2d01fcd925210312ec5b1513a6cb61921115acd5e66792a464eb331",
+      "mode": 420,
+      "original_path": ".cinder/spore-native-discovery-execution/selected-variant.json"
+    },
+    {
+      "path": "records/tools-four-packet-gate.patch.txt",
+      "bytes": 2652,
+      "sha256": "bef87744ea41a20794f3599c5b436f932b82f847f4db7c653fed6ada39bd9a4d",
+      "mode": 420,
+      "original_path": ".cinder/spore-native-discovery-execution/tools-four-packet-gate.patch.txt"
+    },
+    {
+      "path": "records/actual-source-check-invocation.json",
+      "bytes": 1787,
+      "sha256": "86698a386ef0419e1a4c675e4c853ba4699c1104e333d8de56f5b35fe02041e0",
+      "mode": 420,
+      "original_path": ".cinder/spore-native-discovery-execution/actual-source-check-invocation.json"
+    },
+    {
+      "path": "records/source-check.stdout.txt",
+      "bytes": 278,
+      "sha256": "c8f7a5419fe7a4fd28b681ad3195f0bd300965ce015b3491b43bda71b6a95bc6",
+      "mode": 420,
+      "original_path": ".cinder/spore-native-discovery-execution/source-check.stdout.txt"
+    },
+    {
+      "path": "records/source-check.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": 420,
+      "original_path": ".cinder/spore-native-discovery-execution/source-check.stderr.txt"
+    },
+    {
+      "path": "jobs/discovery-a-parse/result.json",
+      "bytes": 1235,
+      "sha256": "203e1ee91e9987c68f92e07490d1812528dacd446b6343db1296df55f6e1e635",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a-parse/result.json"
+    },
+    {
+      "path": "jobs/discovery-a-parse/raw.log",
+      "bytes": 73,
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a-parse/raw.log"
+    },
+    {
+      "path": "jobs/discovery-a-parse/wrapper.log",
+      "bytes": 127,
+      "sha256": "afa187b03a1c64cc10c123aa5c72613ead35cfa857f558c6d8b8508b89d43987",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a-parse/wrapper.log"
+    },
+    {
+      "path": "jobs/discovery-a-parse/submission.json",
+      "bytes": 497,
+      "sha256": "3e3d6a05951ebd6f67d43b041198988f44e7c2d9e21a582d5542e4ffdb0f5e0f",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a-parse/submission.json"
+    },
+    {
+      "path": "jobs/discovery-b-parse/result.json",
+      "bytes": 1236,
+      "sha256": "bd8628c5ed1ba33e55dd661ee17346714880c2c95f4676a0639a8b527b4fe505",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b-parse/result.json"
+    },
+    {
+      "path": "jobs/discovery-b-parse/raw.log",
+      "bytes": 73,
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b-parse/raw.log"
+    },
+    {
+      "path": "jobs/discovery-b-parse/wrapper.log",
+      "bytes": 127,
+      "sha256": "afa187b03a1c64cc10c123aa5c72613ead35cfa857f558c6d8b8508b89d43987",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b-parse/wrapper.log"
+    },
+    {
+      "path": "jobs/discovery-b-parse/submission.json",
+      "bytes": 497,
+      "sha256": "63b0cdf7f28bab411c45b038a55572d2703459b460e90f6b59f1b3c355afdaae",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b-parse/submission.json"
+    },
+    {
+      "path": "jobs/discovery-a1/result.json",
+      "bytes": 3784,
+      "sha256": "c1677a8181322646af103224f0c8c625c7d0d6f35795c9ffa3fc01bf07552cc0",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a1/result.json"
+    },
+    {
+      "path": "jobs/discovery-a1/raw.log",
+      "bytes": 12503,
+      "sha256": "f453a993be1cf15b1623d39d2932f9befee97419f2953e45533dfe6e54d6f035",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a1/raw.log"
+    },
+    {
+      "path": "jobs/discovery-a1/wrapper.log",
+      "bytes": 12557,
+      "sha256": "0997b9649ac2db06547e4db45113357d3c75323e8614270a6310da8bf7537505",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a1/wrapper.log"
+    },
+    {
+      "path": "jobs/discovery-a1/submission.json",
+      "bytes": 522,
+      "sha256": "37e91c7bd7b2b677002497042874011d08a59f6226030f5dbf39f35638907d51",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a1/submission.json"
+    },
+    {
+      "path": "packets/discovery-a1.exact.json",
+      "bytes": 66972,
+      "sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a1/observed/complete19-packets.exact.json"
+    },
+    {
+      "path": "jobs/discovery-b1/result.json",
+      "bytes": 3785,
+      "sha256": "5e3d6b4c2586fdd52ec94cbf6dc27e3588f46c5e83d8b650967c4d6aac4b7e93",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b1/result.json"
+    },
+    {
+      "path": "jobs/discovery-b1/raw.log",
+      "bytes": 12503,
+      "sha256": "ea4677bf28efbb140845378238d2464198f4fd4d669a08dfa64fcf1ba94ac669",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b1/raw.log"
+    },
+    {
+      "path": "jobs/discovery-b1/wrapper.log",
+      "bytes": 12557,
+      "sha256": "7e00a255f36a2defd2d84931b085b23719a7b13da5247fa34eff0794c3e9f7ee",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b1/wrapper.log"
+    },
+    {
+      "path": "jobs/discovery-b1/submission.json",
+      "bytes": 522,
+      "sha256": "a49a2e2c33f0d0f3b6e318e36b1eb94765e3d569f59b43c9ee5b4717adbc60ed",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b1/submission.json"
+    },
+    {
+      "path": "packets/discovery-b1.exact.json",
+      "bytes": 66972,
+      "sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b1/observed/complete19-packets.exact.json"
+    },
+    {
+      "path": "jobs/discovery-b2/result.json",
+      "bytes": 3785,
+      "sha256": "786154cb03994a064e743e9964acd27bc406c9d41a7d130158a9a25fb68c6f58",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b2/result.json"
+    },
+    {
+      "path": "jobs/discovery-b2/raw.log",
+      "bytes": 12503,
+      "sha256": "f9876dd29c31571d92d4a412b2e24c109bc5f72c5ba74843c3d012e86e5be1ed",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b2/raw.log"
+    },
+    {
+      "path": "jobs/discovery-b2/wrapper.log",
+      "bytes": 12557,
+      "sha256": "321e5cedb20bcfcb9d9358597e1e2b27c383857b09368c5a4d44e8ba26cbd2cf",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b2/wrapper.log"
+    },
+    {
+      "path": "jobs/discovery-b2/submission.json",
+      "bytes": 522,
+      "sha256": "55029e27f3b8f4ab6cbe027f19f3b201a68257ce41d37f0888fe3a3c82c75e5f",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b2/submission.json"
+    },
+    {
+      "path": "packets/discovery-b2.exact.json",
+      "bytes": 66972,
+      "sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-b2/observed/complete19-packets.exact.json"
+    },
+    {
+      "path": "jobs/discovery-a2/result.json",
+      "bytes": 3784,
+      "sha256": "e5bbcec4b5eb671d0f898f01687e3951ea9a17a40f0d50f03878edc3f4a406da",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a2/result.json"
+    },
+    {
+      "path": "jobs/discovery-a2/raw.log",
+      "bytes": 12503,
+      "sha256": "b18bb42b891d7b95e276ca7fe72c799506ef90c36780b7a9e835c6d882fa633e",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a2/raw.log"
+    },
+    {
+      "path": "jobs/discovery-a2/wrapper.log",
+      "bytes": 12557,
+      "sha256": "9c41c7da303f7c49473d6d274bebe4370ab34106b60dda11e911b1a012d5c1a4",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a2/wrapper.log"
+    },
+    {
+      "path": "jobs/discovery-a2/submission.json",
+      "bytes": 522,
+      "sha256": "4e0e4a9ff331066eb3b24bf66357dca5bf9f28446ec8b522f8378f8f5103073e",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a2/submission.json"
+    },
+    {
+      "path": "packets/discovery-a2.exact.json",
+      "bytes": 66972,
+      "sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a2/observed/complete19-packets.exact.json"
+    },
+    {
+      "path": "comparisons/comparison-discovery-a1-discovery-b1.json",
+      "bytes": 815,
+      "sha256": "02a5d17a8d0fa0e9ebf3f6ea3be11d6548b41da6255a208e3998497f449150a5",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/native-discovery/comparison-discovery-a1-discovery-b1.json"
+    },
+    {
+      "path": "comparisons/discovery-a1-discovery-b1-comparison.log",
+      "bytes": 787,
+      "sha256": "e56232356fb40d445e1b35b113ded1360c4ef860e093374fee85f1d88cdf4e95",
+      "mode": 420,
+      "original_path": ".cinder/spore-native-discovery-execution/discovery-a1-discovery-b1-comparison.log"
+    },
+    {
+      "path": "comparisons/comparison-discovery-a2-discovery-b2.json",
+      "bytes": 814,
+      "sha256": "935e24dcbe5a396cae1379abdef2937b64658936feb498e15bd119e33d5fbf68",
+      "mode": 420,
+      "original_path": ".cinder/spore-fusion-measure-prep/native-discovery/comparison-discovery-a2-discovery-b2.json"
+    },
+    {
+      "path": "comparisons/discovery-a2-discovery-b2-comparison.log",
+      "bytes": 786,
+      "sha256": "7e1686fbd1914904539fb84595dd1f8c42df3b2799ebf25982693135ce27d48c",
+      "mode": 420,
+      "original_path": ".cinder/spore-native-discovery-execution/discovery-a2-discovery-b2-comparison.log"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2638,
+      "sha256": "8f8b2d4f9cdc0f480250500509e39287a805dcfbeef9abfaa0aef492220edf11",
+      "mode": 420,
+      "original_path": null
+    },
+    {
+      "path": "records/independent-decision-review.md",
+      "bytes": 7917,
+      "sha256": "3f42e614c7a8876c763e60121ccabfcfb77cc796fb6e122b525957b78296bc58",
+      "mode": 420,
+      "original_path": ".cinder/spore-native-discovery-execution/independent-decision-review.md"
+    }
+  ],
+  "supporting_review_qualification": "Independent decision review is preserved as its original author’s source/evidence assessment. Packaging adds no validation or adoption recommendation; subsequent production selection/result wording remains Root responsibility."
+}

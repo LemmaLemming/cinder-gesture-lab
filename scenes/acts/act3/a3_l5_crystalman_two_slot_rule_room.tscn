@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act3/crystalman_rule_room.gd" id="1"]
+
+[node name="CrystalmanTwoCompletedCapturesRuleRoom" type="Node3D"]
+script = ExtResource("1")
+level_id = "A3-L5"
+local_snapshot_version = 1
+objective_text = "COMPOSE TWO ROUTES"
+capture_slots = 2
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, -2.7)

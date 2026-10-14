@@ -1,0 +1,177 @@
+{
+  "record": "four-packet gate executed synthetic source-check independent final peer",
+  "date": "2026-10-14",
+  "status": "EXECUTED_SYNTHETIC6_ZERO_FAILURES_VERIFIED",
+  "invocation": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/actual-source-check-invocation.json",
+    "sha256": "86698a386ef0419e1a4c675e4c853ba4699c1104e333d8de56f5b35fe02041e0",
+    "bytes": 1787
+  },
+  "summary": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/synthetic-check-runs/source-only-cf1_2v0t/source-check-summary.json",
+    "sha256": "fabe856b8deb0f787ff7c02179c06f65d4eabdc7195fb23700cdda1e8489158a",
+    "bytes": 4391
+  },
+  "check_script": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/check_four_packet_gate.py.txt",
+    "sha256": "cf66b5a0e12ada64532fda09f4958fd5594dd7ab1eafe55df7632cdf8bc9a305",
+    "bytes": 11461
+  },
+  "frozen_proposal": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/tools.four-packet-gate.proposed.py.txt",
+    "sha256": "ed71b62c6e25a906b42547221419c72922d8028a1b22b3ade063dbccad91c1bd",
+    "bytes": 29973
+  },
+  "patch": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/tools-four-packet-gate.patch.txt",
+    "sha256": "bef87744ea41a20794f3599c5b436f932b82f847f4db7c653fed6ada39bd9a4d",
+    "bytes": 2652
+  },
+  "preserved_original": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/tools.bb52fe6d.original.py.txt",
+    "sha256": "bb52fe6d053734a7aa965b96a95ef504f7ec2f6240d920dac88c424f9d213874",
+    "bytes": 28466
+  },
+  "stdout": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/source-check.stdout.txt",
+    "sha256": "c8f7a5419fe7a4fd28b681ad3195f0bd300965ce015b3491b43bda71b6a95bc6",
+    "bytes": 278
+  },
+  "stderr": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/source-check.stderr.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "actual_closure": {
+    "started_utc": "2026-10-14T05:59:45.292306+00:00",
+    "closed_utc": "2026-10-14T05:59:45.417784+00:00",
+    "returncode": 0,
+    "case_count": 6,
+    "failure_count": 0,
+    "invocation_stdout_summary_hashes_join": true
+  },
+  "cases": [
+    {
+      "name": "four-identical-accept",
+      "passed": true,
+      "result": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/synthetic-check-runs/source-only-cf1_2v0t/four-identical-accept/source-check-result.json",
+        "sha256": "32270ab2d7d6eca25c82d5fe88d3d53c315f28da06b1593983cc99df101e08dd",
+        "bytes": 235
+      },
+      "detail": {
+        "compare_reached_unchanged_decoder_after_gate": true,
+        "four_file_predicate_accepted": true,
+        "native_decode_performed": false,
+        "timing_reads": 0
+      }
+    },
+    {
+      "name": "two-equal-pairs-different-reject",
+      "passed": true,
+      "result": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/synthetic-check-runs/source-only-cf1_2v0t/two-equal-pairs-different-reject/source-check-result.json",
+        "sha256": "51d5c4e2325a628b3dd31c3a2829d663277a95f863efb52c74c23a0892426b01",
+        "bytes": 581
+      },
+      "detail": {
+        "A1_B1_refusal": {
+          "decoder_calls": 0,
+          "message": "All four genuine discovery complete-packet files must be byte-identical",
+          "refusal_type": "AssertionError",
+          "timing_reads": 0
+        },
+        "A2_B2_refusal": {
+          "decoder_calls": 0,
+          "message": "All four genuine discovery complete-packet files must be byte-identical",
+          "refusal_type": "AssertionError",
+          "timing_reads": 0
+        },
+        "cross_pair_bytes_differ": true,
+        "each_pair_bytes_equal": true
+      }
+    },
+    {
+      "name": "offpair-packet-hash-refuse",
+      "passed": true,
+      "result": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/synthetic-check-runs/source-only-cf1_2v0t/offpair-packet-hash-refuse/source-check-result.json",
+        "sha256": "9b580d6875d4a48dbf9bb089a6e0a80e27b486056cd7fa8f6efe4237a9d132ea",
+        "bytes": 264
+      },
+      "detail": {
+        "decoder_calls": 0,
+        "message": "native-discovery-support/jobs/discovery-b2/observed/complete19-packets.exact.json",
+        "refusal_type": "AssertionError",
+        "timing_reads": 0
+      }
+    },
+    {
+      "name": "offpair-manifest-hash-refuse",
+      "passed": true,
+      "result": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/synthetic-check-runs/source-only-cf1_2v0t/offpair-manifest-hash-refuse/source-check-result.json",
+        "sha256": "8236383de3403eff52892eca53429eadfff940af4599b8f41b86e2fd338fbd67",
+        "bytes": 185
+      },
+      "detail": {
+        "decoder_calls": 0,
+        "message": "",
+        "refusal_type": "AssertionError",
+        "timing_reads": 0
+      }
+    },
+    {
+      "name": "offpair-closure-refuse",
+      "passed": true,
+      "result": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/synthetic-check-runs/source-only-cf1_2v0t/offpair-closure-refuse/source-check-result.json",
+        "sha256": "978f4968c8b41b9398e35d099a3d8893df6e2663236b13412f2c04bc84c6253a",
+        "bytes": 179
+      },
+      "detail": {
+        "decoder_calls": 0,
+        "message": "",
+        "refusal_type": "AssertionError",
+        "timing_reads": 0
+      }
+    },
+    {
+      "name": "offpair-missing-file-refuse",
+      "passed": true,
+      "result": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/synthetic-check-runs/source-only-cf1_2v0t/offpair-missing-file-refuse/source-check-result.json",
+        "sha256": "1f6eedaeb7bcc1ddd77fdcc1520c0dc086fdcf1df5f32df4f42dca8c96900266",
+        "bytes": 501
+      },
+      "detail": {
+        "decoder_calls": 0,
+        "message": "[Errno 2] No such file or directory: '/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/synthetic-check-runs/source-only-cf1_2v0t/offpair-missing-file-refuse/native-discovery-support/jobs/discovery-a2/observed/complete19-packets.exact.json'",
+        "refusal_type": "FileNotFoundError",
+        "timing_reads": 0
+      }
+    }
+  ],
+  "verified_scope": [
+    "Mandatory equal-within-pair but different-across-pairs case refuses both canonical compare calls before any decoder invocation or timing read.",
+    "Four identical synthetic packets pass the new gate and reach exactly the local downstream decoder spy; actual native decode is not performed.",
+    "Off-pair packet hash, manifest hash, source/UID closure and deliberately missing packet cases refuse before downstream interpretation and produce no comparison output.",
+    "Executed definitions are AST-extracted sha/row/require_four_packet_equality/compare from the exact frozen proposal, with sandbox bindings. Module globals, CLI/environment, readiness, selection, runner and engine are not executed.",
+    "Eight retained decoder/witness/run/engine functions match the original source and AST; executed summary records that preservation independently of their nonexecution.",
+    "All six original per-case results match the executed summary; synthetic records and files are visibly labeled synthetic rather than native.",
+    "Four named Root source hashes match the recorded before/after maps and current read-only source bytes. No Root files were changed by this review."
+  ],
+  "named_root_hashes": {
+    ".cinder/spore-fusion-measure-prep/tools.py": "bb52fe6d053734a7aa965b96a95ef504f7ec2f6240d920dac88c424f9d213874",
+    ".cinder/spore-fusion-measure-prep/native-discovery-readiness.json": "025dabbc420d78935636e9c2af812b40925ad0b923eb9288e2f70a94ac152844",
+    ".cinder/spore-fusion-measure-prep/measure.gd": "25bfd1a8ccb0e95c6c31e301c2c0e6c7ecf7392bc4281da968c071aa6dcd21cc",
+    ".cinder/spore-native-discovery-timing-plan.md": "a5366910b19fc0265d386acbfce05e840a48f5297d5e1af50073562f901404b6"
+  },
+  "findings": [],
+  "limits": [
+    "The local decoder is a reachability spy; this is not native Exact payload validation, real closed-receipt certification, gameplay correctness or timing comparison.",
+    "Synthetic missing-file case intentionally retains the absent file and its recorded refusal; no missing original was backfilled.",
+    "Reviewer read the closed invocation/results and source only; did not rerun checks, import or invoke runner, execute engine or select production sources.",
+    "No performance/speedup, campaign acceptance, whole-native equality or new broad evidence framework claim."
+  ]
+}
