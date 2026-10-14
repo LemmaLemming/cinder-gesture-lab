@@ -27,6 +27,9 @@ var _test_pending_guard: String = ""
 var _test_pending_error: String = ""
 var _test_selected_row_error: String = ""
 var _test_outer_prepared: bool = false
+var _test_guard_trace: Array[Dictionary] = []
+var _test_guard_calls: Array[Dictionary] = []
+var _test_trace_scope: int = 0
 
 func test_attach_observer(observer: Callable) -> bool:
 	if is_inside_tree() or not observer.is_valid(): return false
@@ -35,6 +38,9 @@ func test_attach_observer(observer: Callable) -> bool:
 
 func test_adapter_errors() -> Array[String]:
 	return _test_errors.duplicate() # retained actual observations, never normalized
+
+func test_registration_guard_trace() -> Array[Dictionary]:
+	return _test_guard_trace.duplicate(true) # original returned wires/timing observations
 
 func test_settled() -> bool:
 	return not _draining and not _drain_queued and not _registration_inflight and not _registration_pending and _operations.is_empty() and _test_current.is_empty()
@@ -105,9 +111,13 @@ func _perform(operation: Dictionary) -> bool:
 	return _test_outer_prepared if kind == "pending_cancel" else true
 
 func _prepare_registration(extra: Array = [], install_snapshot: Dictionary = {}, fresh_candidate: Dictionary = {}) -> bool:
+	_test_trace_scope += 1; _test_guard_calls = []
+	_test_trace_marker("prepare_entry", {"kind": String(_test_current.get("kind", "production")), "extra_packets": extra.size(), "has_installation": not install_snapshot.is_empty(), "has_fresh_candidate": not fresh_candidate.is_empty(), "timing_scope": "override entry, not inaccessible internal started time"})
 	_test_install_wire = TestExact.stringify(install_snapshot) if not install_snapshot.is_empty() else ""
 	_test_row_counts = {}; _test_rows = []
-	return await super._prepare_registration(extra, install_snapshot, fresh_candidate)
+	var prepared: bool = await super._prepare_registration(extra, install_snapshot, fresh_candidate)
+	_test_trace_marker("prepare_outcome", {"actual_return": prepared, "campaign_error": campaign_error, "timing_scope": "after actual super outcome, not internal wait duration"})
+	return prepared
 
 func _registration_row(candidate: Dictionary, wire: String) -> Dictionary:
 	var row: Dictionary = super._registration_row(candidate, wire)
@@ -134,6 +144,7 @@ func _registration_row(candidate: Dictionary, wire: String) -> Dictionary:
 		elif kind.begins_with("pending_") and not _test_pending_scheduled:
 			_test_pending_scheduled = true
 			_test_pending_callback.call_deferred()
+	_test_trace_marker("row_return", {"candidate_id": meta.candidate_id, "purpose": purpose, "returned_row_index": _test_rows.size(), "timing_scope": "after actual row/callback work; last row_return in this scope is its last observed row, not internal wait start"})
 	return row
 
 func _registration_row_error(row: Dictionary) -> String:
@@ -198,6 +209,38 @@ func _test_pending_callback() -> void:
 					if is_instance_valid(container): container.free() # isolated original only
 					break
 		"pending_reentry": pass # actual nested String refusal already captured
+
+func _registration_donor_guard() -> String:
+	var call: Dictionary = {"kind": "donor", "sequence": _test_guard_calls.size() + 1, "returned": false}
+	_test_guard_calls.append(call)
+	var before: Dictionary = _test_trace_state()
+	var wire: String = super._registration_donor_guard()
+	call.returned = true
+	_test_guard_trace.append({"scope": _test_trace_scope, "phase": "actual_donor_guard_return", "call_sequence": call.sequence, "before": before, "after": _test_trace_state(), "wire": wire})
+	return wire
+
+func _registration_disk_guard() -> String:
+	var call: Dictionary = {"kind": "disk", "sequence": _test_guard_calls.size() + 1, "returned": false}
+	_test_guard_calls.append(call)
+	var before: Dictionary = _test_trace_state()
+	var wire: String = super._registration_disk_guard()
+	call.returned = true
+	_test_guard_trace.append({"scope": _test_trace_scope, "phase": "actual_disk_guard_return", "call_sequence": call.sequence, "before": before, "after": _test_trace_state(), "wire": wire})
+	return wire
+
+func _fail(error: String) -> bool:
+	var counts: Dictionary = {"donor": 0, "disk": 0}
+	for observed: Dictionary in _test_guard_calls: counts[observed.kind] += 1
+	_test_trace_marker("actual_fail_before_super", {"error": error, "registration_epoch": _registration_epoch, "registration_cancelled": _registration_cancelled, "draining": _draining, "drain_queued": _drain_queued, "operations": _operations.duplicate(true), "failed_operations": _failed_operations.duplicate(true), "previous_actual_guard_calls": _test_guard_calls.duplicate(true), "later_guard_observation": {"donor": "observed" if counts.donor > 1 else "unobserved", "disk": "observed" if counts.disk > 1 else "unobserved"}, "qualification": "unobserved means no later actual call occurred in this scope; this custody failure reaches _fail after original candidate cleanup; fail/entry/row marker times are not the internal predicate time or started timestamp; no copied short-circuit predicate or invented guard value"})
+	return super._fail(error)
+
+func _test_trace_state() -> Dictionary:
+	var inside: bool = is_inside_tree()
+	var tree: SceneTree = get_tree() if inside else null
+	return {"monotonic_ms": Time.get_ticks_msec(), "process_frame": Engine.get_process_frames(), "physics_frame": Engine.get_physics_frames(), "inside_tree": inside, "tree_paused": tree.paused if tree != null else null, "registration_inflight": _registration_inflight, "registration_pending": _registration_pending}
+
+func _test_trace_marker(phase: String, facts: Dictionary) -> void:
+	_test_guard_trace.append({"scope": _test_trace_scope, "phase": phase, "state": _test_trace_state(), "facts": facts})
 
 func _test_observe(stage: String, meta: Dictionary) -> void:
 	if meta.is_empty() or meta.packet.is_empty() or not test_observer.is_valid(): return

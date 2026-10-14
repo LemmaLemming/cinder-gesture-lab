@@ -1,0 +1,105 @@
+{
+  "record": "act2-shared57-passive-guard-diagnostic-source-only",
+  "created_utc": "2026-10-14T03:38:01.656265+00:00",
+  "status": "FROZEN_UNEXECUTED_SOURCE_DELTA_ONLY",
+  "scope": "Two inert TEST scripts; Root owns installation/parser/queued native run and shared repair.",
+  "runtime_publication": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+  "shared_api": "campaign-shared-57",
+  "reported_adoption": "694d5fb9 (Root-reported; no adoption audit in this record)",
+  "root_direction": "4d74f4f0-f827-4a1e-83f0-8ad57592a268; doc commit b3fa1d1a is not a new runtime adoption",
+  "selected_inputs": [
+    {
+      "path": ".cinder/fresh-world-shell-support/execution-20261014/fresh_world_lunge_observing_shell.gd.txt",
+      "sha256": "9453fff7f12bb2147fe101ffbf4d697fa908148ba96f78f07ecd3a7901735871",
+      "bytes": 18299,
+      "mode": "0o644"
+    },
+    {
+      "path": ".cinder/fresh-world-shell-support/execution-20261014/fresh_world_lunge_smoke.gd.txt",
+      "sha256": "518ff9ea1efad5614f58c423bdae8274958273cd24a0db48a43f26ab0eb350b6",
+      "bytes": 48586,
+      "mode": "0o644"
+    },
+    {
+      "path": ".cinder/fresh-world-shell-support/execution-20261014/history/fresh_world_lunge_observing_shell.eaf10c56.original.gd.txt",
+      "sha256": "eaf10c569ce5aee3ac4c99655fe53db573121cf6293882d2006cd74135a8a42e",
+      "bytes": 14560,
+      "mode": "0o644"
+    },
+    {
+      "path": ".cinder/fresh-world-shell-support/execution-20261014/history/fresh_world_lunge_smoke.0731c6fa.original.gd.txt",
+      "sha256": "0731c6fa8a5d9648d962df8e11a064f9482cfcea29944ebad0a8861e7dace10d",
+      "bytes": 48512,
+      "mode": "0o644"
+    }
+  ],
+  "changed_test_script_paths": [
+    "tests/acts/act2/shared_support/fresh_world_lunge_observing_shell.gd",
+    "tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd"
+  ],
+  "existing_uid_inputs": [
+    {
+      "path": "tests/acts/act2/shared_support/fresh_world_lunge_level.gd.uid",
+      "sha256": "55fa569548e7731ce8c52afa17bef11330bda46029c858513dc909549edf1487",
+      "bytes": 19,
+      "mode": "0o644",
+      "token": "uid://0kgmcjhk8hoo"
+    },
+    {
+      "path": "tests/acts/act2/shared_support/fresh_world_lunge_observing_shell.gd.uid",
+      "sha256": "bbd20c977d3aee7edc16b8f7cba013b1ef867c12b1f0c9345e5dac972a92815a",
+      "bytes": 20,
+      "mode": "0o644",
+      "token": "uid://bn1akh1kl0ew8"
+    },
+    {
+      "path": "tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd.uid",
+      "sha256": "018011f0096fcc5837549a672bbd5ebc73e1b756f202600a2c06cce1a93d8f24",
+      "bytes": 20,
+      "mode": "0o644",
+      "token": "uid://co6jbixgcvut3"
+    }
+  ],
+  "delta": {
+    "observer_changed_original_methods": [
+      "_prepare_registration",
+      "_registration_row"
+    ],
+    "observer_added_methods": [
+      "test_registration_guard_trace",
+      "_registration_donor_guard",
+      "_registration_disk_guard",
+      "_fail",
+      "_test_trace_state",
+      "_test_trace_marker"
+    ],
+    "observer_new_fields": [
+      "retained actual guard trace",
+      "actual guard-call sequence",
+      "diagnostic preparation scope counter"
+    ],
+    "smoke_change": "One additional retained trace field in existing official Exact checkpoint/live/Attempts diagnostic; all checkpoint component assertions and control flow unchanged."
+  },
+  "source_checks": {
+    "corresponding_super_called_once_per_guard_and_fail_override": true,
+    "no_extra_donor_capture_or_snapshot_getter": true,
+    "actual_returned_wires_retained_without_normalization": true,
+    "original_checkpoint_assertions_byte_exact_after_removing_added_trace_field": true,
+    "original_history_bytes_hash_match": true,
+    "three_existing_uid_inputs_physically_present": true
+  },
+  "timing_qualifications": [
+    "Guard strings are actual returned super values; before/after frame and monotonic ms are observed, not copied algorithm operands.",
+    "Compound custody OR short-circuits. A missing later guard call is unobserved, never presumed equal or called.",
+    "The custody _fail path occurs after original registration-scope cleanup. Its timestamp/state are postcleanup and cannot reconstruct the earlier predicate time.",
+    "Preparation entry/last returned-row/outcome markers are diagnostic scope times, not the inaccessible internal started timestamp.",
+    "Outer elapsed time does not establish the >2000 operand. If remaining early predicates are ambiguous, Root must supply narrow production reason diagnostics.",
+    "No timeout, guard, floor/camera/clock/input state, latches or shared algorithm changed."
+  ],
+  "limits": [
+    "No parser/compiler/import/engine/helper invocation by this author.",
+    "No diagnosis of the 42/1 or 46/1 failing operand from source markers alone.",
+    "No repeated Shell71, accepted level, campaign, art or performance validation."
+  ],
+  "findings": []
+}
