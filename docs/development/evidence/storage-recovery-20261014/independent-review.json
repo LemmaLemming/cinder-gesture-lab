@@ -1,0 +1,424 @@
+{
+  "schema": "cinder-storage-recovery-independent-review-v1",
+  "at": "2026-10-14T03:33:12.933200+00:00",
+  "status": "PASS",
+  "scope": "Read-only verification of the pinned manifest of 264 targets, 12 retained counterparts, 23 closure receipts and 2 action phases. Only this review file written; no clone, engine, worker, Git or cleanup actions.",
+  "manifest_sha256": "369b0d4b09cd9cbed48d3179ca3c2c3853cd47b10eb7510e14a591b4ea655d82",
+  "plan_sha256": "424c69d3e65830fbead702b326d9dac0acbb80bf9864d2f44dc77dae72e67284",
+  "manifest_head_record": "bf098e3c7c5143d6becc780c0b11f49bb803fe33",
+  "inputs": {
+    "manifest.json": {
+      "bytes": 206870,
+      "sha256": "369b0d4b09cd9cbed48d3179ca3c2c3853cd47b10eb7510e14a591b4ea655d82"
+    },
+    "prepare.py": {
+      "bytes": 2254,
+      "sha256": "44b9b49859a8c0ea53837f3df95bb5e7e08d5b294a46b32409ac3e98700f6208"
+    },
+    "clone.py": {
+      "bytes": 3393,
+      "sha256": "fef073bc3111d64735b5788c7fa49ec415dac9b92a05aa5bcb7923af4837bbca"
+    },
+    "pilot-actions.jsonl": {
+      "bytes": 13603,
+      "sha256": "b5cb51c83019eeb188f01f85ddd0aad25d9e9af86c951869ccaaab2208fef50f"
+    },
+    "remainder-actions.jsonl": {
+      "bytes": 151877,
+      "sha256": "06baaa65a43b84cab8ec0815f27740df1cb81690cc4006dc78b7abdd6f7adb53"
+    },
+    "pilot-result.json": {
+      "bytes": 569,
+      "sha256": "377b7a57513f871f1a1303830b6ae527d21b7ea627d119fd6e535cae04412309"
+    },
+    "remainder-result.json": {
+      "bytes": 575,
+      "sha256": "52975ba86ca711c92e34aeaed6e67ab55f06457b4c1a5a064e5d6d36ae7fcf88"
+    }
+  },
+  "results": {
+    "unique_manifest_targets": 264,
+    "unique_action_paths": 264,
+    "exact_manifest_action_membership": true,
+    "current_target_byte_hash_size_mode_mtime_device_uid_gid_verified": 264,
+    "current_target_xattrs_match_recorded_before_xattrs": 264,
+    "original_inode_matches_manifest": 264,
+    "replacement_inode_matches_action_after": 264,
+    "replacement_inode_differs_from_original_and_sources": 264,
+    "unique_replacement_inodes": 264,
+    "all_target_regular_nonsymlink_nlink_one_flags_zero": true,
+    "retained_sources_original_byte_hash_size_mode_mtime_device_uid_gid_inode_verified": 12,
+    "retained_sources_regular_nonsymlink_nlink_one_flags_zero": true,
+    "closure_file_hashes_and_closed_states_verified": 23,
+    "matching_residual_clone_temporary_files": [],
+    "bounded_parent_directories_checked": 23,
+    "current_target_logical_bytes": 261196012,
+    "current_target_allocated_block_sum_bytes": 261685248,
+    "input_receipts_unchanged_during_review": true,
+    "verification_seconds": 1.844
+  },
+  "retained_sources": [
+    {
+      "group": "R1",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/forest-bark-albedo-v1.png",
+      "sha256": "3c775c520421ebb696448c93ab76a4e7c5ad96e2e2edefaaf4d613c1b0d9a8e5",
+      "bytes": 3050390,
+      "mode": 420,
+      "mtime_ns": 1791878298783065417,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495902,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    },
+    {
+      "group": "R2",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/dreamsinter-observer.png",
+      "sha256": "27e62f87cab2d937f49c5afe94585caf8ba794d09694c5d03ca0fe9c3a7d289d",
+      "bytes": 1481980,
+      "mode": 420,
+      "mtime_ns": 1791878298774303423,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495897,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    },
+    {
+      "group": "R3",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/mirror-shore-witnesses-v1.png",
+      "sha256": "eecd39d9efe3c7039023887813be460fe3f7ab07caccc69627c96f431f4743f5",
+      "bytes": 1115858,
+      "mode": 420,
+      "mtime_ns": 1791878298803981833,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495921,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    },
+    {
+      "group": "R4",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/compassion-companions.png",
+      "sha256": "c2ae1c3c24b12a2c31baec14aed2733eba976c8d006dd86a5e4ffdb7068987bb",
+      "bytes": 1060840,
+      "mode": 420,
+      "mtime_ns": 1791878298767683813,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495895,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    },
+    {
+      "group": "R5",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/root-latcher-atlas.png",
+      "sha256": "05bac37c0e5d03a0238651179e32106bd562ff5999bde36dcb83d3207a0bf810",
+      "bytes": 898823,
+      "mode": 420,
+      "mtime_ns": 1791878298807937766,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495926,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    },
+    {
+      "group": "R6",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/twin-suns-violet-tree.png",
+      "sha256": "5889d94dd035926cdc4c7d575975e4c63af7ddb04f3d308a3f762c1b4a573a38",
+      "bytes": 672657,
+      "mode": 420,
+      "mtime_ns": 1791878298852003609,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495960,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    },
+    {
+      "group": "R7",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/sunbound-stalker-alppain-back.png",
+      "sha256": "7c2a8297720f14ffbc7cacbe15f072ef7d2e4f9ea5effa9c64048a9eea79f03f",
+      "bytes": 634535,
+      "mode": 420,
+      "mtime_ns": 1791878298816458175,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495941,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    },
+    {
+      "group": "R8",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/sunbound-stalker-alppain-readable.png",
+      "sha256": "1453c08eb9a48f6131391a82a548b45d3e90c4d36e3cdba36dcf8966b539c132",
+      "bytes": 627238,
+      "mode": 420,
+      "mtime_ns": 1791878298821942155,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495943,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    },
+    {
+      "group": "R9",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/sunbound-stalker-branchspell.png",
+      "sha256": "4b26a05de4d86848bb8d1d40d6567097bcc85f9b083d07c2ded110ac5836dcaa",
+      "bytes": 597048,
+      "mode": 420,
+      "mtime_ns": 1791878298843571950,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495953,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    },
+    {
+      "group": "R10",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/sunbound-stalker-branchspell-back.png",
+      "sha256": "52b11bd57dabbf3980b831291d48f9492cd186550219d257317dc62174ca0fa1",
+      "bytes": 591566,
+      "mode": 420,
+      "mtime_ns": 1791878298839742851,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495951,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    },
+    {
+      "group": "R11",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/sunbound-stalker-alppain-recovery.png",
+      "sha256": "c8214b1bcebe8b34877309f70f16630b028dfec520a811efdc6b27b0943d21d6",
+      "bytes": 571145,
+      "mode": 420,
+      "mtime_ns": 1791878298833873911,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495947,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    },
+    {
+      "group": "R12",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/assets/acts/act3/sunbound-stalker-recovery.png",
+      "sha256": "8aab2d8763885d4f198b2c346658987145bf585a7b72f31703b32207602c59ac",
+      "bytes": 570466,
+      "mode": 420,
+      "mtime_ns": 1791878298848874096,
+      "uid": 501,
+      "gid": 20,
+      "inode": 51495957,
+      "device": 16777233,
+      "nlink": 1,
+      "current_xattrs": {
+        "com.apple.provenance": "010200bca7da50c1eeeb6d"
+      }
+    }
+  ],
+  "closure_receipts": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/closure.json",
+      "sha256": "c9d0424ca3c59b1e071bfa0e3fb0d5f2854cf16374c73bbf7ca266b08644d33a",
+      "closed_at": "2026-10-13T08:00:56.074134+00:00",
+      "original_exit": 1
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-03/closure.json",
+      "sha256": "ba6d7c15c05e4da34172a240ec88f50cec5db2e92bed1e9bf42bb39a26fe7f8b",
+      "closed_at": "2026-10-13T08:06:54.356645+00:00",
+      "original_exit": 1
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-05-held-restore/closure.json",
+      "sha256": "73dfe054217ef5bb2ed15ca5ac3a60fb61d9e1f7e0099c156c57afd7d277feb7",
+      "closed_at": "2026-10-13T08:16:52.921766+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-04-held-diagnostic/closure.json",
+      "sha256": "b48ccd6cca8e58ad925fca16f788d2d1895398dd21a9a9768b31ca9e0ea2b279",
+      "closed_at": "2026-10-13T08:12:27.438753+00:00",
+      "original_exit": 1
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-01/closure.json",
+      "sha256": "fc21180d6f863a3961890c551c7d8d09f576a8987acdcf188312660ef780b9a0",
+      "closed_at": "2026-10-13T07:56:49.417845+00:00",
+      "original_exit": 1
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/import-01/closure.json",
+      "sha256": "031428e00ddd87ff667a48294d9531e5a7f535c318f17eea31351cca4b16d0ab",
+      "closed_at": "2026-10-13T07:55:19.643590+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-06-full/closure.json",
+      "sha256": "c0119fb8d8cf2801d3db86c17ac4f0237441c8fd8207012cce8a75b36b392213",
+      "closed_at": "2026-10-13T08:23:08.106345+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/configuration-reference-native/controls-first-20261012/result.json",
+      "sha256": "df8e34b14db2b4e2240363a6d6a7955c5167c0d5f0055f28839fa75b9f5b1182",
+      "closed_at": "2026-10-12T08:29:41.239232+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/configuration-reference-native/bounded-candidate-first-20261012/result.json",
+      "sha256": "b0afbddf3235e3ec2a555bbae99be7ce78a3037c28e145f90f78c2daeac53b41",
+      "closed_at": "2026-10-12T08:40:28.166259+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/configuration-reference-native/affected-source-first-20261012/result.json",
+      "sha256": "93769f409cdbb585b5c0774fceb4bd8cccc76e2b0b9352b32bbbb82779fa3e04",
+      "closed_at": "2026-10-12T08:31:51.288319+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/configuration-reference-native/affected-reference-first-20261012/result.json",
+      "sha256": "2a7dfff2d8b881a061e792d8b2cac461f0fa6bdb2adb1f203e660f45a4978073",
+      "closed_at": "2026-10-12T08:33:54.159086+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/configuration-reference-native/bounded-baseline-first-20261012/result.json",
+      "sha256": "1c0dac423b1c571fab843f38ac680e4c92df8dac62176eb905ff6de0a6a96a3f",
+      "closed_at": "2026-10-12T08:38:34.333773+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/fresh-world-floor-review/jobs/campaign-shell-native-01/result.json",
+      "sha256": "10efd2dff70513978313bcb329521ba490c44554c4074cb7f8dfacb8449051bf",
+      "closed_at": "2026-10-14T01:42:30.195094+00:00",
+      "original_exit": 1
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/fresh-world-floor-review/jobs/campaign-persistence-native-02/result.json",
+      "sha256": "b42fc6f04ecb8e1a86353a19277baa5f3bec5d653165ba9f48e8340a5c001cec",
+      "closed_at": "2026-10-14T02:12:28.201506+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/fresh-world-floor-review/jobs/restore-legacy-parse-01/result.json",
+      "sha256": "f654624374c564ff93d2e36ee963fd8f9522fdeb9dbd8ddf6ff4ce275727b536",
+      "closed_at": "2026-10-14T01:35:32.310051+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/fresh-world-floor-review/jobs/physics-core-native-01/result.json",
+      "sha256": "f810a60c94c584ca5ea33c74e68dfb547c4f0ba79d8da13a6f77dca6f6fb8ba1",
+      "closed_at": "2026-10-14T01:39:04.703552+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/fresh-world-floor-review/jobs/campaign-shell-native-02/result.json",
+      "sha256": "0f42d7dd2b60e6208a222b5bfd7351e37655f5510e801feb0fa971e787524328",
+      "closed_at": "2026-10-14T02:11:30.402337+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/fresh-world-floor-review/jobs/campaign-persistence-native-01/result.json",
+      "sha256": "ee5f256473a8bd3477d0332f8937f97cf413bbef34fb50a9bfd78c658c881bc7",
+      "closed_at": "2026-10-14T02:11:35.935160+00:00",
+      "original_exit": 1
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/fresh-world-floor-review/jobs/physics-startup-native-01/result.json",
+      "sha256": "68df47e8d01b3b4b9df3d56c1fc0ac9fafa2aa32c4c48112e33a9d0d8990f1e5",
+      "closed_at": "2026-10-14T01:40:34.881896+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/fresh-world-floor-review/jobs/restore-legacy-native-01/result.json",
+      "sha256": "54644b187247e9e325bb5834505ceb0df4e1b9cb8b50c95b6c4449429a28c19d",
+      "closed_at": "2026-10-14T01:41:26.310794+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/fresh-world-floor-review/jobs/physics-core-parse-01/result.json",
+      "sha256": "7fd790eb9fae97e5761b2a4f56133b7ecf90136e7b765120c0f9996e13e0601c",
+      "closed_at": "2026-10-14T01:37:30.012560+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/shared54-root-import/primary-import-first-20261013/closure.json",
+      "sha256": "0e4ae9979f097268148650a26c273b628bed643144a50e7d3dbc5fdbf69e98da",
+      "closed_at": "2026-10-13T05:20:01.611679+00:00",
+      "original_exit": 0
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/shared55-root-import/primary-import-first-20261013/closure.json",
+      "sha256": "f5533b755e13318519b6b8a2b48c3aad3800fbce4ad798a015fb9f91e4fc5520",
+      "closed_at": "2026-10-13T06:39:02.132153+00:00",
+      "original_exit": 0
+    }
+  ],
+  "phase_free_space": [
+    {
+      "phase": "pilot",
+      "completed": 22,
+      "started_at": "2026-10-14T03:31:19.966403+00:00",
+      "closed_at": "2026-10-14T03:31:20.796252+00:00",
+      "free_before": 1250648064,
+      "free_after": 1289719808,
+      "observed_free_change_bytes": 39071744
+    },
+    {
+      "phase": "remainder",
+      "completed": 242,
+      "started_at": "2026-10-14T03:31:28.301882+00:00",
+      "closed_at": "2026-10-14T03:31:34.201488+00:00",
+      "free_before": 1289506816,
+      "free_after": 1451360256,
+      "observed_free_change_bytes": 161853440
+    }
+  ],
+  "free_space_qualification": {
+    "phase_observed_changes_sum_bytes": 200925184,
+    "first_before_to_last_after_observed_bytes": 200712192,
+    "claim": "Observed volume-wide changes only; concurrent activity and APFS shared/snapshot extents prevent exact exclusive or causal reclaimed-byte attribution. Per-file st_blocks is not exclusive storage."
+  },
+  "metadata_limitations": [
+    "Target xattrs are independently compared with the original-before values recorded in action receipts. The initial manifest does not contain xattrs, so the action capture itself is executor evidence rather than an independent pre-operation xattr observation.",
+    "Retained-source xattrs are observed and recorded now; no original source xattrs were recorded in the manifest, so historical xattr invariance cannot be independently established. Bytes/mode/mtime/device/uid/gid/inode invariance is independently established for all 12.",
+    "Atime is not claimed preserved: review reads can advance it. No global filesystem write audit or unrelated directory census was performed."
+  ]
+}
