@@ -48,7 +48,7 @@ func _run() -> void:
 	var registry := Registry.new()
 	var accepted: Dictionary = registry.entry("A1-L4")
 	var future: Dictionary = registry.entry("A1-L5")
-	if not _expect(registry.last_error.is_empty() and registry.ids().size() == 24 and accepted.get("readiness") == "accepted" and accepted.get("accepted_commit") == _expected_commit and accepted.get("scene_path") == L4_SCENE and accepted.get("previous_main_id") == "A1-L3" and accepted.get("next_main_id") == "A1-L5" and accepted.get("api_revision") == Registry.API_REVISION and registry.entry("A1-L3").get("readiness") == "accepted" and future.get("readiness") != "accepted" and future.get("scene_path") == null and registry.scene_error("A1-L4").is_empty(), "canonical registry exposes exact authored L4, accepted L3 prerequisite and unavailable L5: " + registry.last_error): _finish(); return
+	if not _expect(registry.last_error.is_empty() and registry.ids().size() == 24 and accepted.get("readiness") == "accepted" and accepted.get("accepted_commit") == _expected_commit and accepted.get("scene_path") == L4_SCENE and accepted.get("previous_main_id") == "A1-L3" and accepted.get("next_main_id") == "A1-L5" and accepted.get("api_revision") == Registry.API_REVISION and registry.entry("A1-L3").get("readiness") == "accepted" and future.get("previous_main_id") == "A1-L4" and (future.get("readiness") != "accepted" or registry.scene_error("A1-L5").is_empty()) and registry.scene_error("A1-L4").is_empty(), "canonical registry exposes exact authored L4, accepted L3 prerequisite and valid L5 successor: " + registry.last_error): _finish(); return
 	game = _new_shell()
 	await _settle()
 	if not _title_valid("isolated first launch"): _finish(); return
@@ -72,7 +72,7 @@ func _run() -> void:
 	await _click(_find("Node_A1_L4") as Control)
 	action = _find("LevelCardAction") as Button
 	node = _find("Node_A1_L4") as Button
-	if not _expect(node != null and node.get_meta("campaign_state") == "current" and action != null and not action.disabled and action.text == "Continue Story" and (_find("Node_A1_L5") as Button).get_meta("campaign_state") == "locked", "TEST prefix3 exposes actual L4 Continue and retains unavailable L5 behind L4"): _finish(); return
+	if not _expect(node != null and node.get_meta("campaign_state") == "current" and action != null and not action.disabled and action.text == "Continue Story" and (_find("Node_A1_L5") as Button).get_meta("campaign_state") == "locked", "TEST prefix3 exposes actual L4 Continue and retains progression-locked L5 behind L4"): _finish(); return
 	_l4_restore_epoch += 1
 	_watching_restore = true
 	_restore_events.clear()

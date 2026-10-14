@@ -1,6 +1,8 @@
 # Cinder shared progress
 
-## Current status — 14 October 2026, Shared58
+## Current status — 14 October 2026, Shared58 and Living Moon acceptance
+
+[A1-L5 The Living Moon is accepted](ACT1_L5_ACCEPTANCE.md) at exact content `8f81768a221644264d8fa76c3710d9b7e4dcb79e`. Root's canonical check closes832/0 clean, with necessary import0 and focused parser checks. Existing owner119/80/71/132 mechanics and transport evidence and four actually inspected204 portraits are reused with their original attribution. The canonical L5 row preserves L4→L5→A2-L1 progression; every other row is unchanged. Act1 may proceed immediately to O1, then O2/O3 sequentially. No new shared runtime API or playthrough gate is introduced.
 
 Shared58 is committed at `6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e`. All three actual worker notices were delivered. [Bounded independent adoption verification](evidence/shared58-worker-adoption/index.json) confirms Act1 merge `38334161`, Act2 merge `473b4c56` and Act3 merge `59037456`; their current canonical aliases are reconciled. The [independent publication review](evidence/physics-origin-pause/publication-review.json) confirms the exact nine-line change and original/candidate test scopes. These are adoption and review records, not new gameplay runs.
 
@@ -12,9 +14,9 @@ Act 2's full native-lunge persistence regression is [independently verified](evi
 
 Act 3's authentic saved-session suffix closes99/0 clean and has passed [bounded independent review](evidence/shared58-authored-dependency-reviews/index.json): fresh Retry identities, exact warning state, actual GUI Resume/Pause and cleanup. Its graphical check closes85/0; Integration inspected the original portrait and found Hero/source/warning together with flanking safe floor and clear HUD. These close the saved-warning dependencies; final L5 handoff and canonical acceptance remain separate. Original1078/1 and71/1 are retained with their original scope. The exact compatible Shell pair leaves archived saved bytes unchanged.
 
-Act 1's later-checkpoint transport independently passes80/0 clean: genuine phase-two checkpoint, later Sneeze disk Continue, earlier GUI Retry, complete state and donor/disk preservation, retired-world cleanup. Its current fixture has a subsequent selector/reporting-only correction; the exercised branch is source-reviewed unchanged, not a new native run. The owner now reports four paused portraits and204/0, with scenic cropping and capsule occlusion limits recorded; Integration's final visual/handoff review remains. It need not wait for Act 3 or shared support acceptance.
+Act 1's later-checkpoint transport independently passes80/0 clean: genuine phase-two checkpoint, later Sneeze disk Continue, earlier GUI Retry, complete state and donor/disk preservation, retired-world cleanup. Its subsequent selector/reporting-only correction retains the exercised branch unchanged, without new native credit. The final handoff and four paused portraits have now passed Integration review; scenic cropping, capsule occlusion and untested full-playthrough limitations remain recorded in the acceptance.
 
-Campaign remains **16/24**: Act1 4/8, Act2 8/8 and Act3 4/8. The full desktop goal remains active; original failed/canceled/unexecuted evidence and untested full-playthrough limitations remain.
+Campaign now has **17/24** accepted: Act1 5/8, Act2 8/8 and Act3 4/8. Act3's exact L5 handoff has arrived and its canonical integration is next. The full desktop goal remains active; original failed/canceled/unexecuted evidence and untested full-playthrough limitations remain.
 
 ## Current status — 14 October 2026, Shared57
 
