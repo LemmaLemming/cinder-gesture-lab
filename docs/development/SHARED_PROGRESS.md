@@ -1,6 +1,8 @@
 # Cinder shared progress
 
-## Current status — 14 October 2026, Shared59 and final main-level acceptance
+## Current status — 14 October 2026, Shared60 and final main-level acceptance
+
+Shared60 removes two unnecessary recursive copies from the successful scalar-engine static-environment return. All fresh native/getter/callback boundaries remain, with the original full copies for container-valued settings. [Ownership and mutation controls](STATIC_ENVIRONMENT_OWNERSHIP.md) pass110/0 and the affected source suite208/0, clean. The first111/1 evidence-writing failure is retained; its repair losslessly tags native int64 resource IDs only in diagnostics. Production snapshot encoders and bounds are unchanged. This reduces allocation operations, with no measured speed/FPS claim or campaign acceptance added.
 
 All three actual Shared59 adoptions are [independently verified](evidence/shared59-worker-adoption/index.json): Act1 `46fcbfd7`, Act2 `024eec6e` and Act3 `7c30d90b`. Named Route/Protocol/Shell/Level/registry pins match publication, merge, current Git/index and physical files. Broad preservation counts retain owner attribution. All duplicated current baseline/head/API aliases now match these receipts; exact prior values are preserved. This changes coordination records, with no new native or level-acceptance credit. Model-capacity interruptions were addressed by resuming the existing Act1/Act3 chats.
 

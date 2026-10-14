@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: native ownership evidence exceeds its closed two-MiB diagnostic bound
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/scheduler_spore_source_smoke.gd:667)
+       [1] _write_ownership_evidence (res://.cinder/shared59-runtime-cost-next/static_environment_ownership.gd:290)
+       [2] _finish_ownership (res://.cinder/shared59-runtime-cost-next/static_environment_ownership.gd:274)
+       [3] _dispose (res://tests/scheduler_spore_source_smoke.gd:647)
+Static environment ownership differential: 111 checks, 1 failures; no timing or campaign acceptance credit

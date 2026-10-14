@@ -1,0 +1,7 @@
+{
+  "scope": "Host-only proposal verification, no engine/parser/native execution",
+  "failure": "AssertionError: candidate.patch",
+  "cause": "Strict whole-patch trailing-whitespace check treated unchanged blank unified-diff context prefixes as changed-source whitespace. No production file was edited.",
+  "correction": "Check only added patch lines and authored Markdown; preserve the original valid diff context bytes.",
+  "recorded_at_utc": "2026-10-14T07:18:13.578723+00:00"
+}
