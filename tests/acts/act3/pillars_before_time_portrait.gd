@@ -7,6 +7,7 @@ extends "res://tests/acts/act3/pillars_before_time_optional_shell.gd"
 var draw_seen: bool = false
 var portrait_path: String = ""
 var provenance: Dictionary = {}
+var prop_update: Dictionary = {}
 
 func _run() -> void:
 	create_timer(90.0, true).timeout.connect(func() -> void:
@@ -20,9 +21,14 @@ func _run() -> void:
 	if not _expect(DisplayServer.get_name() != "headless", "portrait requires actual native graphical renderer"):
 		await _finish(); return
 	var args: PackedStringArray = OS.get_cmdline_user_args()
-	if not _expect(args.size() == 1 and args[0].begins_with("--archive=res://captures/act3/pillars-before-time/"), "one explicit owned genuine warning archive is required"):
+	if not _expect(args.size() in [1, 2] and args[0].begins_with("--archive=res://captures/act3/pillars-before-time/"), "one explicit owned genuine warning archive is required"):
 		await _finish(); return
 	archive_path = args[0].trim_prefix("--archive=")
+	if args.size() == 2:
+		var values: PackedStringArray = args[1].trim_prefix("--prop-presentation=").split(":")
+		if not _expect(args[1].begins_with("--prop-presentation=") and values.size() == 2 and values[0].length() == 64 and values[1].length() == 64 and values[0] != values[1], "explicit old:new visual prop source hashes govern one presentation-only update"):
+			await _finish(); return
+		prop_update = {"path": "res://scripts/acts/act3/temporal_marker_prop.gd", "old_sha256": values[0], "new_sha256": values[1], "scope": "collected teeth/cap transforms only; fixed bounds/contact/collision/snapshot/control and full original gameplay packet unchanged"}
 	var decoded: Dictionary = Exact.parse(FileAccess.get_file_as_string(archive_path.path_join("manifest.json")))
 	if not _expect(decoded.get("accepted", false) and decoded.get("value") is Dictionary, "original warning manifest parses with native exact transport"):
 		await _finish(); return
@@ -30,7 +36,11 @@ func _run() -> void:
 	if not _expect(provenance.get("kind") == "a3-o1-genuine-warning-session-1" and provenance.get("test_only") == true and provenance.get("source_pins") is Dictionary and provenance.get("files") is Dictionary, "original TEST native warning provenance identifies its source/file scope"):
 		await _finish(); return
 	for path: String in provenance.source_pins:
-		if not _expect(FileAccess.get_sha256(path) == provenance.source_pins[path], "current scoped source retains original warning authority: " + path):
+		var current: String = FileAccess.get_sha256(path)
+		var same: bool = current == provenance.source_pins[path]
+		if not prop_update.is_empty() and path == prop_update.path:
+			same = provenance.source_pins[path] == prop_update.old_sha256 and current == prop_update.new_sha256
+		if not _expect(same, "current scoped source retains original warning authority or exact declared visual-only prop update: " + path):
 			await _finish(); return
 	raw = _original_packet("registry.native.json")
 	expected_session = _original_packet("session.native.json")
@@ -95,10 +105,18 @@ func _portrait() -> bool:
 	portrait_path = folder.path_join("01-authentic-held-warning.png")
 	if not _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder)) == OK and pixels.save_png(portrait_path) == OK, "original native portrait pixels saved unchanged"):
 		return false
-	var receipt: Dictionary = {"schema_version": 1, "test_only": true, "archive": archive_path, "archive_manifest_sha256": FileAccess.get_sha256(archive_path.path_join("manifest.json")), "reader_sha256": FileAccess.get_sha256("res://tests/acts/act3/pillars_before_time_portrait.gd"), "png_sha256": FileAccess.get_sha256(portrait_path), "actual_size": [pixels.get_size().x, pixels.get_size().y], "actual_native_ids": _native_ids(), "held_receipt": _held_receipt(), "whole_pair_exact_wire_sha256": wire.sha256_text(), "paused_without_tick": true, "whole_pair_input_camera_hud_events_unchanged": unchanged, "native_optical_error": problem, "menu_test_only_exclusion": {"visible_before": menu_visibility, "visible_during": false, "visible_restored": production.menu.visible}, "scope": "one authentic saved warning; no active/lateral/full-route/pacing/human balance claim"}
+	# Resource IDs may use signed high bits. Preserve exact decimal text in
+	# evidence metadata; do not widen campaign ExactJson numeric contracts.
+	var native: Dictionary = _native_ids()
+	var native_text: Dictionary = {}
+	for key: String in native: native_text[key] = str(native[key])
+	var receipt: Dictionary = {"schema_version": 1, "test_only": true, "archive": archive_path, "archive_manifest_sha256": FileAccess.get_sha256(archive_path.path_join("manifest.json")), "reader_sha256": FileAccess.get_sha256("res://tests/acts/act3/pillars_before_time_portrait.gd"), "png_sha256": FileAccess.get_sha256(portrait_path), "actual_size": [pixels.get_size().x, pixels.get_size().y], "actual_native_ids_decimal_text": native_text, "declared_prop_presentation_update": prop_update, "held_receipt": _held_receipt(), "whole_pair_exact_wire_sha256": wire.sha256_text(), "paused_without_tick": true, "whole_pair_input_camera_hud_events_unchanged": unchanged, "native_optical_error": problem, "menu_test_only_exclusion": {"visible_before": menu_visibility, "visible_during": false, "visible_restored": production.menu.visible}, "scope": "one authentic saved warning; no active/lateral/full-route/pacing/human balance claim"}
 	var file: FileAccess = FileAccess.open(portrait_path + ".json", FileAccess.WRITE)
 	if not _expect(file != null, "native portrait receipt opens"): return false
-	file.store_string(Exact.stringify(receipt) + "\n")
+	var receipt_wire: String = Exact.stringify(receipt)
+	if not _expect(not receipt_wire.is_empty(), "complete finite portrait receipt preserves native identity text"):
+		file.close(); return false
+	file.store_string(receipt_wire + "\n")
 	file.close()
 	print("O1 PORTRAIT: ", ProjectSettings.globalize_path(portrait_path))
 	return true

@@ -337,6 +337,7 @@ func _seed_story(registry: CinderCampaignRegistry) -> bool:
 	preview = MainScene.instantiate()
 	preview.set("level_scene_path", STORY_PATH)
 	root.add_child(preview)
+	preview.call("open_bench") # Main construction resumes; restore the actual public paused boundary before any frame.
 	var actor: CinderPlayer = preview.get("player") as CinderPlayer
 	var level: CinderLevel = preview.get("active_level") as CinderLevel
 	var camera: Camera3D = preview.get("camera") as Camera3D
@@ -546,7 +547,8 @@ func _native_ids() -> Dictionary:
 func _distinct(previous: Dictionary) -> bool:
 	var current: Dictionary = _native_ids()
 	for key: String in previous:
-		if not _expect(current.has(key) and int(current[key]) > 0 and current[key] != previous[key], "fresh independent actual native identity: " + key): return false
+		var detail: Dictionary = {"current": current.get(key), "previous": previous[key], "has_current": current.has(key), "current_zero": int(current.get(key, 0)) == 0, "previous_zero": int(previous[key]) == 0, "current_positive": int(current.get(key, 0)) > 0, "unequal": current.get(key) != previous[key], "current_instance_valid": is_instance_id_valid(int(current.get(key, 0)))}
+		if not _expect(current.has(key) and int(current[key]) != 0 and is_instance_id_valid(int(current[key])) and current[key] != previous[key], "fresh independent actual native identity: " + key, str(detail)): return false
 	return true
 
 func _world_container() -> Node:

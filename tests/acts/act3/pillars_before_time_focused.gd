@@ -13,17 +13,23 @@ const NW: String = "o1-northwest-marker"
 
 class PostActorBarrier extends Node:
 	signal observed(boundary: String)
+	signal presentation_observed(boundary: String)
+	var presentation_waiting: bool = false
+	var presentation_expiration: int = 0
 	var waiting: bool = false
 	var expiration: int = 0
 	func _ready() -> void:
 		process_mode = Node.PROCESS_MODE_ALWAYS
 		process_physics_priority = 1000
+		process_priority = 1000
 	func _physics_process(_delta: float) -> void:
 		if not get_tree().paused:
 			_wake("post_actor_physics")
 	func _process(_delta: float) -> void:
 		if waiting and Engine.get_process_frames() >= expiration:
 			_wake("expired_process_bound")
+		if presentation_waiting:
+			_wake_presentation("expired_presentation_bound" if Engine.get_process_frames() >= presentation_expiration else ("unexpected_paused_process" if get_tree().paused else "post_presentation_process"))
 	func _notification(what: int) -> void:
 		if what == NOTIFICATION_PAUSED and waiting:
 			_wake.bind("paused_notification").call_deferred()
@@ -31,6 +37,11 @@ class PostActorBarrier extends Node:
 		if waiting:
 			waiting = false
 			observed.emit(boundary)
+
+	func _wake_presentation(boundary: String) -> void:
+		if presentation_waiting:
+			presentation_waiting = false
+			presentation_observed.emit(boundary)
 
 var _game: Node
 var _level: CinderLevel
@@ -223,6 +234,16 @@ func _awakening_error(state: Dictionary) -> String:
 	return ""
 
 func _capture_boundary(count: int) -> bool:
+	# The physics observer resumes before Main's ordinary HUD/camera process.
+	# Observe its real completed presentation before requesting a public pause.
+	if not _expect(not paused and is_instance_valid(_barrier) and _game.process_priority < _barrier.process_priority, "native presentation observer follows actual Main/HUD/camera process"): return false
+	_barrier.presentation_waiting = true
+	_barrier.presentation_expiration = Engine.get_process_frames() + 120
+	var presentation: String = await _barrier.presentation_observed
+	if _finishing: return false
+	var current: Dictionary = _level.call("state")
+	var awake_error: String = _awakening_error(current)
+	if not _expect(presentation == "post_presentation_process" and not paused and not _hero.dead and _hero.hp > 0.0 and _hero.equipment.snapshot() == _kit and current.collections.size() == count and current.configuration_error.is_empty() and awake_error.is_empty(), "real post-presentation boundary preserves live Hero/kit/current contact receipt", str({"boundary":presentation, "paused":paused, "hero":_hero.get_threat_response_state(), "state":current, "awake_error":awake_error})): return false
 	_game.call("open_bench")
 	await process_frame
 	var pair: Dictionary = {"player":_hero.snapshot_state(), "level":_level.snapshot_state()}
@@ -308,6 +329,7 @@ func _dispose() -> void:
 		_game.queue_free()
 	if is_instance_valid(_barrier):
 		if _barrier.waiting: _barrier._wake("fixture_disposal")
+		if _barrier.presentation_waiting: _barrier._wake_presentation("fixture_disposal")
 		refs.append(weakref(_barrier))
 		root.remove_child(_barrier)
 		_barrier.queue_free()

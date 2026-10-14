@@ -31,7 +31,7 @@ const SOURCE_WAKE_RADIUS: float = 4.5
 const EXIT_POSITION: Vector3 = Vector3(0, 0, -9)
 const EXIT_RECT: Rect2 = Rect2(-1.2, -9.65, 2.4, 1.3)
 const FLOOR_RECT: Rect2 = Rect2(-7, -11, 14, 22)
-const PROP_VIEW_DISTANCE: float = 4.5
+const PROP_VIEW_DISTANCE: float = 2.7
 
 ## Stable public recipients, including genuinely defeated source nodes.
 var sources: Dictionary = {}

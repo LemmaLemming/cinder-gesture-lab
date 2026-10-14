@@ -16,6 +16,8 @@ var _exit_seal: bool = false
 var _cap: MeshInstance3D
 var _inlay: MeshInstance3D
 var _pieces: Array[MeshInstance3D] = []
+var _teeth: Array[MeshInstance3D] = []
+var _standing_teeth: Dictionary = {}
 var _authored: Dictionary = {}
 
 
@@ -31,8 +33,10 @@ func build(index: int, exit_seal: bool = false) -> bool:
 	_piece("GroundedStoneFoot", base, Vector3(0, 0.035, 0), STONE)
 	# Two low broken uprights echo the tall reference pillars without hiding
 	# the traveller's torso or impersonating an attack footprint.
-	_box("WestTooth", Vector3(0.16, 0.39, 0.18), Vector3(-0.27, 0.245, -0.12), EDGE)
-	_box("EastTooth", Vector3(0.16, 0.31, 0.18), Vector3(0.27, 0.205, -0.12), EDGE)
+	_teeth.append(_box("WestTooth", Vector3(0.16, 0.39, 0.18), Vector3(-0.27, 0.245, -0.12), EDGE))
+	_teeth.append(_box("EastTooth", Vector3(0.16, 0.31, 0.18), Vector3(0.27, 0.205, -0.12), EDGE))
+	for tooth: MeshInstance3D in _teeth:
+		_standing_teeth[tooth.get_instance_id()] = tooth.transform
 	_cap = _box("UnsettledCap", Vector3(0.67, 0.09, 0.20), Vector3(0, 0.57, -0.12), INLAY)
 	_inlay = _box("SettledInlay", Vector3(0.39, 0.025, 0.30), Vector3(0, 0.087, 0.13), SPENT)
 	# Quiet engraved notches identify the three props without a second HUD.
@@ -49,7 +53,15 @@ func set_collected(value: bool) -> bool:
 	if _collected == value:
 		return true
 	_collected = value
-	_cap.position.y = 0.13 if value else 0.57
+	_cap.position.y = 0.095 if value else 0.57
+	# The authentic contact portrait showed raised spent teeth hiding boots.
+	# Settled mirages become a low engraving; available silhouette is retained.
+	for tooth: MeshInstance3D in _teeth:
+		tooth.transform = _standing_teeth[tooth.get_instance_id()]
+		if value:
+			tooth.scale.y = 0.15
+			tooth.position.y = 0.07 + tooth.mesh.get_aabb().size.y * 0.15 * 0.5
+		_remember_piece(tooth)
 	_cap.material_override = _material(SPENT if value else INLAY)
 	_inlay.material_override = _material(INLAY if value else SPENT)
 	_remember_piece(_cap)
