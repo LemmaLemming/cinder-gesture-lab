@@ -5,6 +5,11 @@ const Shell = preload("res://scripts/campaign/shell.gd")
 const Registry = preload("res://scripts/campaign/registry.gd")
 const Exact = preload("res://scripts/campaign/exact_json.gd")
 const TEST_ROOT: String = "user://test-campaign-registration/"
+const REQUIRED_ACCEPTED_IDS: Array[String] = [
+	"A1-L1", "A1-L2", "A1-L3", "A1-L4", "A1-L5",
+	"A2-L1", "A2-L2", "A2-L3", "A2-L4", "A2-L5", "A2-O1", "A2-O2", "A2-O3",
+	"A3-L1", "A3-L2", "A3-L3", "A3-L4", "A3-L5",
+]
 var checks: int = 0
 var failures: int = 0
 var game: CinderCampaignShell
@@ -26,10 +31,15 @@ func _run() -> void:
 	_expect(registry.last_error.is_empty() and registry.ids().size() == 24, "actual production registry retains all canonical level identities")
 	_expect(registry.entry("A1-L1").accepted_commit == "06628abb3f38020f1b958562a367811173e556de" and registry.scene_error("A1-L1").is_empty(), "accepted exact authored A1-L1 scene validates through the production registry")
 	var available: Array[String] = []
+	var accepted: Array[String] = []
 	for id: String in registry.ids():
+		if registry.entry(id).get("readiness") == "accepted":
+			accepted.append(id)
 		if registry.is_playable(id):
 			available.append(id)
-	_expect(available == ["A1-L1", "A1-L2", "A2-L1", "A2-L2", "A3-L1"], "only independently accepted scenes are playable; all remaining scenes stay unavailable")
+	_expect(available == accepted, "exactly the canonical accepted scenes are playable; unaccepted scenes remain unavailable")
+	for id: String in REQUIRED_ACCEPTED_IDS:
+		_expect(accepted.has(id), "previously accepted campaign level remains accepted: " + id)
 	game = _new_shell()
 	await _settle()
 	_expect(paused and game.menu.page_name() == "title" and game.active_level == null, "actual campaign begins at paused Title without inventing a live actor")
@@ -38,9 +48,16 @@ func _run() -> void:
 	await _capture("title")
 	await _click(_find("JourneyButton") as Control)
 	_expect(game.menu.page_name() == "journey" and paused, "actual Journey GUI click stays paused")
-	_expect((_find("Node_A1_L1") as Button).get_meta("campaign_state") == "available" and (_find("Node_A1_L2") as Button).get_meta("campaign_state") == "locked" and registry.entry("A1-L2").readiness == "unimplemented", "winding Journey exposes accepted opening while next level stays progression-locked and unimplemented")
+	_expect((_find("Node_A1_L1") as Button).get_meta("campaign_state") == "available" and (_find("Node_A1_L2") as Button).get_meta("campaign_state") == "locked" and registry.entry("A1-L2").readiness == "accepted", "winding Journey exposes accepted opening while accepted next level stays progression-locked")
 	_expect(not (_find("LevelCardAction") as Button).disabled, "selected accepted opening has an enabled Journey action")
 	await _capture("journey")
+	if "--metadata-only" in OS.get_cmdline_user_args():
+		_expect(game.active_level == null and game.player == null and game.attempts.state().completed_main.is_empty(), "metadata-only scope leaves the story and level simulation untouched")
+		var shell_ref: WeakRef = weakref(game)
+		game.free()
+		_expect(shell_ref.get_ref() == null, "metadata-only shell is disposed through normal cleanup")
+		_finish()
+		return
 	await _click(_find("LevelCardAction") as Control)
 	_expect(game.campaign_error.is_empty() and game.active_level != null and game.active_level.level_id == "A1-L1", "Journey action loads actual authored opening through shared shell: " + game.campaign_error)
 	if game.active_level == null:

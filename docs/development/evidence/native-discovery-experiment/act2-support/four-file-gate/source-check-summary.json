@@ -1,0 +1,130 @@
+{
+  "all_synthetic_inputs_and_failures_retained": true,
+  "case_count": 6,
+  "cases": [
+    {
+      "detail": {
+        "compare_reached_unchanged_decoder_after_gate": true,
+        "four_file_predicate_accepted": true,
+        "native_decode_performed": false,
+        "timing_reads": 0
+      },
+      "name": "four-identical-accept",
+      "passed": true
+    },
+    {
+      "detail": {
+        "A1_B1_refusal": {
+          "decoder_calls": 0,
+          "message": "All four genuine discovery complete-packet files must be byte-identical",
+          "refusal_type": "AssertionError",
+          "timing_reads": 0
+        },
+        "A2_B2_refusal": {
+          "decoder_calls": 0,
+          "message": "All four genuine discovery complete-packet files must be byte-identical",
+          "refusal_type": "AssertionError",
+          "timing_reads": 0
+        },
+        "cross_pair_bytes_differ": true,
+        "each_pair_bytes_equal": true
+      },
+      "name": "two-equal-pairs-different-reject",
+      "passed": true
+    },
+    {
+      "detail": {
+        "decoder_calls": 0,
+        "message": "native-discovery-support/jobs/discovery-b2/observed/complete19-packets.exact.json",
+        "refusal_type": "AssertionError",
+        "timing_reads": 0
+      },
+      "name": "offpair-packet-hash-refuse",
+      "passed": true
+    },
+    {
+      "detail": {
+        "decoder_calls": 0,
+        "message": "",
+        "refusal_type": "AssertionError",
+        "timing_reads": 0
+      },
+      "name": "offpair-manifest-hash-refuse",
+      "passed": true
+    },
+    {
+      "detail": {
+        "decoder_calls": 0,
+        "message": "",
+        "refusal_type": "AssertionError",
+        "timing_reads": 0
+      },
+      "name": "offpair-closure-refuse",
+      "passed": true
+    },
+    {
+      "detail": {
+        "decoder_calls": 0,
+        "message": "[Errno 2] No such file or directory: '/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/synthetic-check-runs/source-only-cf1_2v0t/offpair-missing-file-refuse/native-discovery-support/jobs/discovery-a2/observed/complete19-packets.exact.json'",
+        "refusal_type": "FileNotFoundError",
+        "timing_reads": 0
+      },
+      "name": "offpair-missing-file-refuse",
+      "passed": true
+    }
+  ],
+  "clone_sha256": "ed71b62c6e25a906b42547221419c72922d8028a1b22b3ade063dbccad91c1bd",
+  "created_utc": "2026-10-14T05:59:45.400960+00:00",
+  "extracted_actual_functions": [
+    "sha",
+    "row",
+    "require_four_packet_equality",
+    "compare"
+  ],
+  "failure_count": 0,
+  "limitations": [
+    "No runner CLI/module-top-level/environment/Root/native/engine/import/source selection executes.",
+    "Only the four-file acceptance predicate and before-downstream rejection ordering are exercised with synthetic record-shaped files.",
+    "Decoder is a local reachability spy; real decoder/witness/run/engine functions are preserved by exact AST/source equality and never executed.",
+    "No native receipt validity, complete19 payload semantics, timing ratio, speedup, campaign or gameplay evidence."
+  ],
+  "original_sha256": "bb52fe6d053734a7aa965b96a95ef504f7ec2f6240d920dac88c424f9d213874",
+  "preserved_decoder_witness_functions": {
+    "clock_bits": {
+      "AST_equal": true,
+      "literal_function_source_equal": true
+    },
+    "decode_exact": {
+      "AST_equal": true,
+      "literal_function_source_equal": true
+    },
+    "engine": {
+      "AST_equal": true,
+      "literal_function_source_equal": true
+    },
+    "events": {
+      "AST_equal": true,
+      "literal_function_source_equal": true
+    },
+    "exact_same": {
+      "AST_equal": true,
+      "literal_function_source_equal": true
+    },
+    "observed_dictionary": {
+      "AST_equal": true,
+      "literal_function_source_equal": true
+    },
+    "run": {
+      "AST_equal": true,
+      "literal_function_source_equal": true
+    },
+    "witnesses": {
+      "AST_equal": true,
+      "literal_function_source_equal": true
+    }
+  },
+  "record": "four-packet-gate-focused-synthetic-source-checks",
+  "sandbox": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/four-packet-gate-20261014/synthetic-check-runs/source-only-cf1_2v0t",
+  "synthetic_only": true,
+  "test_script_sha256": "cf66b5a0e12ada64532fda09f4958fd5594dd7ab1eafe55df7632cdf8bc9a305"
+}

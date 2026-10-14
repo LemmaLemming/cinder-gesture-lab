@@ -671,6 +671,14 @@ func _framing_context_binding_error(shell: Node, framed_player: CinderPlayer, fr
 	if not is_instance_valid(level) or level.hero != framed_player or framed_player != _hero or level.effects != _effects or framed_player.fx != _effects or level.shared_shell != shell or _scheduler.get_parent() != level:
 		return "Actual configured Hero/effects/Scheduler and owning level Shell required; donor/proxy context refused"
 	var world: Node3D = level.get_parent() as Node3D
+	# Crystalman owns an encounter unit inside its full CinderLevel. Every
+	# intervening level must retain the exact configured actor/effects/Shell;
+	# the actual native World still owns Hero, effects and current camera.
+	while world is CinderLevel:
+		var outer: CinderLevel = world as CinderLevel
+		if outer.hero != framed_player or outer.effects != _effects or outer.shared_shell != shell or not outer.is_inside_tree() or not outer.is_node_ready() or outer.is_queued_for_deletion() or outer.get_tree() != get_tree() or outer.get_viewport() != get_viewport() or outer.get_world_3d() != get_world_3d():
+			return "Nested owning levels must retain the exact native Hero/effects/Shell/world"
+		world = outer.get_parent() as Node3D
 	if not is_instance_valid(world) or framed_player.get_parent() != world or _effects.get_parent() != world or framing_camera.get_parent() != world:
 		return "Actual original level/Hero/effects/current camera world siblings required"
 	for node: Node in [level, shell, world, framed_player, _effects, _scheduler, _art, _cue, framing_camera]:
