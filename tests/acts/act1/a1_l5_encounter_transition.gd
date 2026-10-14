@@ -22,6 +22,8 @@ var terminal_observers: Array[Dictionary] = []
 var hatch_entries: Array[Dictionary] = []
 var primary_receipts: Array[Dictionary] = []
 var witnessed_final_pair: bool = false
+var drive_diagnostics: Array[Dictionary] = []
+var first_primary_only: bool = false
 
 
 func _initialize() -> void:
@@ -31,6 +33,7 @@ func _initialize() -> void:
 
 func _run() -> void:
 	root.size = Vector2i(540, 1170)
+	first_primary_only = OS.get_cmdline_user_args().has("--first-primary-only")
 	for argument: String in OS.get_cmdline_user_args():
 		if argument.begins_with("--level-scene") or argument in ["--capture", "--capture-polish"]:
 			_expect(false, "actual Shell encounter cannot enter preview mode"); await _finish(); return
@@ -64,6 +67,11 @@ func _run() -> void:
 	if not _expect(game.player.equipment.snapshot() == Equipment.STARTER and float(game.player.equipment.resolved_stats().primary_damage) == 20.0, "actual unchanged starter primary provides four ordinary20HP hits per original80HP phase interval"): await _finish(); return
 	if not await _enter_actual_boss(): await _finish(); return
 	hp_boundaries.append(240.0)
+	if first_primary_only:
+		if not await _drive_to_hp(220.0, "blink"): await _finish(); return
+		if not _expect(primary_receipts.size() == 1 and eye.get("hp") == 220.0 and eye.get("phase") == 1 and moon.get("stage") == "blink" and phase_observers.is_empty() and moon.current_checkpoint().id == "capsule-ready", "first-primary-only diagnostic observes one real recovery hit240-to220 without claiming later phase/exit coverage"): await _finish(); return
+		receipts.append({"stage": "first-primary-only actual genuine recovery primary; later phases/final/hatch/successor unexecuted", "eye_hp": eye.get("hp"), "clock_s": _scheduler().get_clock()})
+		await _finish(); return
 	if not await _drive_to_hp(160.0, "blink") or not await _phase_checkpoint("moon-phase-2", "sneeze", 160.0): await _finish(); return
 	if not await _drive_to_hp(80.0, "sneeze") or not await _phase_checkpoint("moon-phase-3", "final", 80.0): await _finish(); return
 	if not await _drive_to_hp(0.0, "final"): await _finish(); return
@@ -91,6 +99,7 @@ func _enter_actual_boss() -> bool:
 
 func _drive_to_hp(target_hp: float, expected_stage: String) -> bool:
 	var end: int = Time.get_ticks_msec() + 30000
+	var excluded_capture_wall_ms: int = 0
 	while not finishing and not aborted and Time.get_ticks_msec() < end:
 		if not _live() or game.player.dead: return _expect(false, "actual living Hero/production parent lost during " + expected_stage)
 		var eye: CharacterBody3D = eye_ref.get_ref() as CharacterBody3D
@@ -108,14 +117,27 @@ func _drive_to_hp(target_hp: float, expected_stage: String) -> bool:
 		for record: Dictionary in records:
 			if not warning_captures.has(record.id) and record.state in ["warning", "lock"]: uncaptured = true
 		if uncaptured:
+			var preparing_started_ms: int = Time.get_ticks_msec()
 			if not await _capture_real_window(expected_stage + " preparing", true): return false
+			var preparing_wall_ms: int = Time.get_ticks_msec() - preparing_started_ms
+			end += preparing_wall_ms; excluded_capture_wall_ms += preparing_wall_ms
+			var preparing_diagnostic: Dictionary = _drive_observation("after preparing capture/GUI Resume", expected_stage, end)
+			preparing_diagnostic["capture_wall_ms"] = preparing_wall_ms; preparing_diagnostic["excluded_capture_wall_ms"] = excluded_capture_wall_ms
+			drive_diagnostics.append(preparing_diagnostic)
 			continue
 		if not _request_real_escape(records): return false
 		if _all_active_intervals_ended(records) and _genuine_recovery(records):
 			var response: Dictionary = game.player.get_threat_response_state()
 			if response.stable and response.primary_cooldown_left_s == 0.0 and response.dash_cooldown_left_s == 0.0:
 				if not recovery_captures.has(expected_stage):
+					drive_diagnostics.append(_drive_observation("before genuine recovery capture", expected_stage, end))
+					var recovery_started_ms: int = Time.get_ticks_msec()
 					if not await _capture_real_window(expected_stage + " genuine recovery", false): return false
+					var recovery_wall_ms: int = Time.get_ticks_msec() - recovery_started_ms
+					end += recovery_wall_ms; excluded_capture_wall_ms += recovery_wall_ms
+					var recovery_diagnostic: Dictionary = _drive_observation("after genuine recovery capture/GUI Resume", expected_stage, end)
+					recovery_diagnostic["capture_wall_ms"] = recovery_wall_ms; recovery_diagnostic["excluded_capture_wall_ms"] = excluded_capture_wall_ms
+					drive_diagnostics.append(recovery_diagnostic)
 					recovery_captures[expected_stage] = true
 					continue
 				if not _place_at_actual_low_rim(): return false
@@ -126,6 +148,7 @@ func _drive_to_hp(target_hp: float, expected_stage: String) -> bool:
 				var before_hp: float = eye.get("hp")
 				var history_size: int = game.player.get_world_action_records().size()
 				var shells_before: int = game.player.shells
+				drive_diagnostics.append(_drive_observation("before actual ordinary primary", expected_stage, end))
 				var result: int = game.player.slash((eye.global_position - game.player.global_position).normalized())
 				var history: Array[Dictionary] = game.player.get_world_action_records()
 				var action: Dictionary = history.back() if not history.is_empty() else {}
@@ -133,7 +156,35 @@ func _drive_to_hp(target_hp: float, expected_stage: String) -> bool:
 				primary_receipts.append({"phase": expected_stage, "before_hp": before_hp, "after_hp": eye.get("hp"), "clock_s": _scheduler().get_clock(), "action": _encode(action), "sources": _encode(records)})
 				if not _eye_registration_intact(): return false
 		await probe.tick_finished
-	return _expect(false, "bounded real recovery/ordinary-primary observation: " + expected_stage)
+	var timeout_diagnostic: Dictionary = _drive_observation("phase observation wall deadline", expected_stage, end)
+	timeout_diagnostic["excluded_capture_wall_ms"] = excluded_capture_wall_ms
+	drive_diagnostics.append(timeout_diagnostic)
+	var observation_result: bool = _expect(false, "bounded real recovery/ordinary-primary observation: " + expected_stage)
+	first_failure["drive_diagnostic"] = timeout_diagnostic
+	return observation_result
+
+
+func _drive_observation(label: String, expected_stage: String, deadline_ms: int) -> Dictionary:
+	# Primitive public live observations only; no provider call or opening latch.
+	var row: Dictionary = {"label": label, "expected_stage": expected_stage, "wall_elapsed_ms": Time.get_ticks_msec() - started_ms, "observation_wall_ms_left": deadline_ms - Time.get_ticks_msec(), "paused": paused}
+	if not _live(): return row
+	var response: Dictionary = game.player.get_threat_response_state().duplicate(true)
+	response.erase("actor"); response.erase("stats")
+	row["clock_s"] = _scheduler().get_clock(); row["stage"] = moon.get("stage")
+	row["hero_response"] = _encode(response); row["hero_hp"] = game.player.hp
+	row["eye_hp"] = eye_ref.get_ref().get("hp"); row["eye_last_error"] = eye_ref.get_ref().get("last_error")
+	var records: Array[Dictionary] = _boss_records()
+	row["all_active_intervals_ended"] = _all_active_intervals_ended(records)
+	row["genuine_recovery_predicate"] = _genuine_recovery(records)
+	var sources: Array[Dictionary] = []
+	for record: Dictionary in records:
+		var source: Node3D = moon.get("blink") if record.source_id == Layout.EYE_ID else moon.get("nose")
+		var state: Dictionary = source.call("state")
+		var cue: CinderThreatCue = source.call("get_cue")
+		var cue_state: Dictionary = cue.state() if is_instance_valid(cue) else {}
+		sources.append({"source_id": record.source_id, "reservation_id": record.id, "status": state.status, "phase": state.phase, "record_state": record.state, "armed": record.armed, "opening_position": _encode(state.get("opening_position")), "record_opening_position": _encode(record.opening_position), "lock_from_s": record.lock_from_s, "active_from_s": record.active_from_s, "active_until_s": record.active_until_s, "recovery_until_s": record.recovery_until_s, "cue_phase": cue_state.get("phase"), "cue_source_visible": cue_state.get("source_visible"), "cue_visible_in_tree": is_instance_valid(cue) and cue.is_visible_in_tree()})
+	row["sources"] = sources
+	return row
 
 
 func _boss_records() -> Array[Dictionary]:
@@ -332,7 +383,7 @@ func _finish() -> void:
 	var file := FileAccess.open(report, FileAccess.WRITE)
 	if file == null: _expect(false, "focused encounter report is writable")
 	else:
-		file.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "setups": setups, "receipts": receipts, "circle_cycles": circle_cycles, "dash_requests": dash_requests, "hp_boundaries": hp_boundaries, "phase_observers": phase_observers, "primary_receipts": primary_receipts, "hatch_entries": hatch_entries, "terminal_observers": terminal_observers, "observations": observations, "wall_ms": Time.get_ticks_msec() - started_ms, "scope": "Actual production Moon parent/native source grammar/ordinary Player primary HP240-160-80-0/deferred phase checkpoints/pure paused snapshots/fixed warning sample/real staggered final/retained native hatch first contact/original shared-clock .75s escape/actual shared A2-L1 transition/normal cleanup. Isolated TEST L5 registration/four unearned predecessor IDs, public rusher injury and supported same-floor Hero placements; recovery-only low-rim placements are not earned return movement. No private state/provider/eye-HP/sample/clock/checkpoint seed, extra gameplay actor/controller/camera, blast/ammo requirement or resource refill. Not an earned route, full-playthrough acceptance gate, gesture/art/all-kit/balance/mobile proof."}, "\t")); file.close()
+		file.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "setups": setups, "receipts": receipts, "circle_cycles": circle_cycles, "dash_requests": dash_requests, "drive_diagnostics": drive_diagnostics, "first_primary_only": first_primary_only, "execution_selection": "First actual genuine recovery primary only; later phase/final/hatch/successor paths unexecuted" if first_primary_only else "Original twelve ordinary hits, two phase checkpoints, final pair, hatch and actual successor", "hp_boundaries": hp_boundaries, "phase_observers": phase_observers, "primary_receipts": primary_receipts, "hatch_entries": hatch_entries, "terminal_observers": terminal_observers, "observations": observations, "wall_ms": Time.get_ticks_msec() - started_ms, "scope": "First-primary-only diagnostic: actual TEST return/capsule entry, native Blink sample/dash/recovery/pure transport, one ordinary primary240-to220 and normal cleanup. Later HP phases/final pair/hatch/escape/successor remain unexecuted. No earned route, private opening or new gameplay gate." if first_primary_only else "Actual production Moon parent/native source grammar/ordinary Player primary HP240-160-80-0/deferred phase checkpoints/pure paused snapshots/fixed warning sample/real staggered final/retained native hatch first contact/original shared-clock .75s escape/actual shared A2-L1 transition/normal cleanup. Isolated TEST L5 registration/four unearned predecessor IDs, public rusher injury and supported same-floor Hero placements; recovery-only low-rim placements are not earned return movement. No private state/provider/eye-HP/sample/clock/checkpoint seed, extra gameplay actor/controller/camera, blast/ammo requirement or resource refill. Not an earned route, full-playthrough acceptance gate, gesture/art/all-kit/balance/mobile proof."}, "\t")); file.close()
 	var directory := DirAccess.open(test_root)
 	if directory != null:
 		for name: String in directory.get_files(): DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root + name))

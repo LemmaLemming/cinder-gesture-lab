@@ -1,5 +1,12 @@
 # Focused production Moon encounter and transition
 
+## Focused recovery-to-hit budget correction — 14 October 2026
+
+Original native01 remains37/1 on original251ebc98. Its actual failure backtrace returns from genuine recovery capture/GUI Resume into the expired phase wall deadline before low-rim placement/slash. The exact recovery packet atclock5.8333 retains2.5833s recovery, living/stopped/grounded Hero and zero primary/dash cooldowns. The new fixture excludes only measured successful transport-capture/Resume wall cost from the existing30s observation budget and records each excluded cost; the absolute180s watchdog and all game/source deadlines/guards/assertions remain unchanged. Primitive live Scheduler/Hero/source/cue/opening diagnostics record post-Resume conditions without invoking/fabricating an eligibility provider.
+
+Current source SHA256 `c427fe7592a36e3522fe603ee5eb13669109f43f4110bb29369bc683d0e5ccb9` is promoted but not yet parsed/executed. Optional `--first-primary-only` establishes exactly one actual public ordinary recovery hit240→220 and normal cleanup; its report explicitly leaves later phases/final/hatch/successor unexecuted. The default preserves all twelve ordinary hits, both phase checkpoints, final pair and original hatch/escape/accepted A2-L1 transition. Next command uses `.cinder/a1-l5-encounter57-run.py --first-primary-only a1-l5-encounter-native02-first-primary native tests/acts/act1/a1_l5_encounter_transition.gd`. It parses/executes through the canonical queue without a needless import/new resource/UID pass. Existing Shared56/57 failures and original recorder sources remain intact.
+
+
 Source-only handoff. Intended owned destination: `tests/acts/act1/a1_l5_encounter_transition.gd`. The script extends the now owned `tests/acts/act1/a1_l5_shell_transport.gd` for actual Shell/store/TEST-prefix setup, GUI pause/resume, native observers and cleanup helpers. It does not run the base transport suite or construct an extra encounter Player/controller/camera. The production Shell's ordinary transactional successor construction remains its normal transition path.
 
 No active source, engine job, Git, canonical mailbox or UID operation was performed. Lexical/preload/inheritance-path checks pass; Godot parsing and execution remain untested. Root imports/promotes this one script and owns all actual results. The existing default Shell71/0 clean result is separate evidence and cannot be credited to this new fixture.
