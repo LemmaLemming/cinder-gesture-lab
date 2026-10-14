@@ -1,0 +1,123 @@
+Godot: --path /Users/howardchen/Documents/ChatGPT/video game idea --headless --script res://tests/world_action_smoke.gd
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: rejected zero-direction request publishes no movement
+PASS: accepted dash publishes only when physics finishes
+PASS: collision-shortened dash publishes exactly once
+PASS: completed dash has versioned direct-player identity and ordered sequence
+PASS: dash samples actual world start and collision-shortened landing
+PASS: wall contact records actual short travel without extending dash distance
+PASS: movement carries its original resolved stats and equipment IDs
+PASS: resolved route contains ordered actual physics samples with matching endpoints
+PASS: recorded path does not pass through blocking scenery
+PASS: cooldown admits another dash at the wall
+PASS: fully blocked but completed dash still publishes its truthful landing
+PASS: continuous first dash is accepted
+PASS: buffered request is not an executed/completed movement record
+PASS: two chained dashes publish once per actual completion
+PASS: completed records preserve exact continuous and buffered directions
+PASS: chain records are ordered and second route begins at actual first landing
+PASS: chained paths retain distinct simulation intervals and samples
+PASS: signal mutation cannot alter internally retained records
+PASS: accessor protects nested paths and stat snapshots from caller mutation
+PASS: sequence cursor returns only subsequently published records
+PASS: direction0 preserves accepted primary/blast and existing fired events
+PASS: direction0 records exact aim without artwork quantization
+PASS: direction0 records actual floor source and action order
+PASS: direction0 resolves independent primary/blast cones
+PASS: direction0 declares the same scenery/height/source-disk policy as hits
+PASS: direction0 separates immediate damage from logical commitment clocks
+PASS: direction0 excludes screen input and retains four-slot direct-player provenance
+PASS: direction0 preserves the legacy hit summary
+PASS: direction1 preserves accepted primary/blast and existing fired events
+PASS: direction1 records exact aim without artwork quantization
+PASS: direction1 records actual floor source and action order
+PASS: direction1 resolves independent primary/blast cones
+PASS: direction1 declares the same scenery/height/source-disk policy as hits
+PASS: direction1 separates immediate damage from logical commitment clocks
+PASS: direction1 excludes screen input and retains four-slot direct-player provenance
+PASS: direction1 preserves the legacy hit summary
+PASS: direction2 preserves accepted primary/blast and existing fired events
+PASS: direction2 records exact aim without artwork quantization
+PASS: direction2 records actual floor source and action order
+PASS: direction2 resolves independent primary/blast cones
+PASS: direction2 declares the same scenery/height/source-disk policy as hits
+PASS: direction2 separates immediate damage from logical commitment clocks
+PASS: direction2 excludes screen input and retains four-slot direct-player provenance
+PASS: direction2 preserves the legacy hit summary
+PASS: direction3 preserves accepted primary/blast and existing fired events
+PASS: direction3 records exact aim without artwork quantization
+PASS: direction3 records actual floor source and action order
+PASS: direction3 resolves independent primary/blast cones
+PASS: direction3 declares the same scenery/height/source-disk policy as hits
+PASS: direction3 separates immediate damage from logical commitment clocks
+PASS: direction3 excludes screen input and retains four-slot direct-player provenance
+PASS: direction3 preserves the legacy hit summary
+PASS: direction4 preserves accepted primary/blast and existing fired events
+PASS: direction4 records exact aim without artwork quantization
+PASS: direction4 records actual floor source and action order
+PASS: direction4 resolves independent primary/blast cones
+PASS: direction4 declares the same scenery/height/source-disk policy as hits
+PASS: direction4 separates immediate damage from logical commitment clocks
+PASS: direction4 excludes screen input and retains four-slot direct-player provenance
+PASS: direction4 preserves the legacy hit summary
+PASS: direction5 preserves accepted primary/blast and existing fired events
+PASS: direction5 records exact aim without artwork quantization
+PASS: direction5 records actual floor source and action order
+PASS: direction5 resolves independent primary/blast cones
+PASS: direction5 declares the same scenery/height/source-disk policy as hits
+PASS: direction5 separates immediate damage from logical commitment clocks
+PASS: direction5 excludes screen input and retains four-slot direct-player provenance
+PASS: direction5 preserves the legacy hit summary
+PASS: direction6 preserves accepted primary/blast and existing fired events
+PASS: direction6 records exact aim without artwork quantization
+PASS: direction6 records actual floor source and action order
+PASS: direction6 resolves independent primary/blast cones
+PASS: direction6 declares the same scenery/height/source-disk policy as hits
+PASS: direction6 separates immediate damage from logical commitment clocks
+PASS: direction6 excludes screen input and retains four-slot direct-player provenance
+PASS: direction6 preserves the legacy hit summary
+PASS: direction7 preserves accepted primary/blast and existing fired events
+PASS: direction7 records exact aim without artwork quantization
+PASS: direction7 records actual floor source and action order
+PASS: direction7 resolves independent primary/blast cones
+PASS: direction7 declares the same scenery/height/source-disk policy as hits
+PASS: direction7 separates immediate damage from logical commitment clocks
+PASS: direction7 excludes screen input and retains four-slot direct-player provenance
+PASS: direction7 preserves the legacy hit summary
+PASS: direction8 preserves accepted primary/blast and existing fired events
+PASS: direction8 records exact aim without artwork quantization
+PASS: direction8 records actual floor source and action order
+PASS: direction8 resolves independent primary/blast cones
+PASS: direction8 declares the same scenery/height/source-disk policy as hits
+PASS: direction8 separates immediate damage from logical commitment clocks
+PASS: direction8 excludes screen input and retains four-slot direct-player provenance
+PASS: direction8 preserves the legacy hit summary
+PASS: direction9 preserves accepted primary/blast and existing fired events
+PASS: direction9 records exact aim without artwork quantization
+PASS: direction9 records actual floor source and action order
+PASS: direction9 resolves independent primary/blast cones
+PASS: direction9 declares the same scenery/height/source-disk policy as hits
+PASS: direction9 separates immediate damage from logical commitment clocks
+PASS: direction9 excludes screen input and retains four-slot direct-player provenance
+PASS: direction9 preserves the legacy hit summary
+PASS: accepted primary still deals damage immediately
+PASS: cooldown-rejected primary emits no world action
+PASS: accepted blast still deals immediate damage and spends one shell
+PASS: cooldown-rejected blast emits no world action
+PASS: empty follow-up ammo emits no attack or replacement primary
+PASS: executed primary is recorded even when its target rejects damage
+PASS: zero attack vector records retained facing
+PASS: history is finite with monotonic sequences after older records roll off
+PASS: idle weapon replacement is available before accepted action
+PASS: records capture the actually selected weapon's resolved geometry and timing
+PASS: later equipment changes cannot rewrite an executed action
+PASS: legacy action_resolved callback cannot publish a nested blast before its initiating primary
+PASS: nested actions retain their actual independent world directions
+PASS: pause freezes simulation clock, path movement and incomplete publication
+PASS: resume finishes one path without counting paused wall time
+PASS: cancelled recording publishes no invented completion and does not modify motion
+PASS: death discards unfinished movement without completion or later clock advance
+PASS: dead-player requests publish no actions
+PASS: fresh reset instance starts without stale history or fabricated movement
+World action smoke: 119 checks, 0 failures

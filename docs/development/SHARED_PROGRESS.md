@@ -10,6 +10,8 @@ All three [actual preserving A1-O1 content adoptions](evidence/a1-o1-content-ado
 
 Agent02 is **inactive by verified direct human instruction to conserve usage**. Its eight accepted levels and completed source help remain. The delivered A3 registration source review at `089ff365` informed Root's post-Continue whole-Story metadata/disk/quiet checks. The later Challenge-coverage task was declined and is unexecuted, with no audit or test credit; do not redispatch until the human explicitly resumes that worker. Agent01/03 capacity recovery uses the human-authorized GPT-6.1 Sol switch while retaining identities/checkouts/branches/ownership.
 
+[The compact legacy-log supplement](evidence/desktop-legacy-logs/README.md) now preserves the exact existing settings182/effects60/world-actions119/scheduler65/presentation73 local logs and their diagnostics. These printed footers lack independently retained historical source/closure receipts in this selection; no backfilled source, fresh execution, sustained-FPS or acceptance credit is claimed. The [A3-O1 publication closure](evidence/act3-o1-publication-closure/index.json) verifies all418 committed paths and preserves original staging/log-whitespace qualifications.
+
 Shared60 runtime behavior is unchanged. Current README/UI/Character Lab/opening-availability wording now follows implemented campaign scope. Two credits comments are corrected with all executable settings text unchanged; no settings behavior or new settings test is claimed. Historical progress snapshots below retain their actual counts and scopes.
 
 ## Current status — 14 October 2026, Shared60 and A1-O1 acceptance
