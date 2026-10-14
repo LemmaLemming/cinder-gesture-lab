@@ -1,0 +1,18 @@
+# Pure-codec microbenchmark draft
+
+Inert preparation only: the99-line fixture is unparsed and unexecuted. No engine, production, Git, UID, frame or world changes were made. `INPUT.json` pins the actual first-pair original25/0 receipt and734237B focused-native witness (SHA1e752184…). The14573B input is the literal Exact tagged subtree at `references.crossed-1.descriptor.source_environment.world_signature`. The original host Exact reader confirms it is bit-identical to the same record's actual `fresh_environment.world_signature`:10colliders/10shapes. No value, int/float bit, geometry or native substitute was synthesized. At execution the unchanged Godot Exact reader must admit and literally re-encode this input.
+
+One process compares A: unchanged `Codec.value_error` followed by unchanged `Protocol._same_bits_reference`; B: `Fusion.checked_match`. Both use the same admitted immutable value and originally compiled mirror, compiled outside measurement. The Protocol compile/comparison methods are literally identical in both pinned original/candidate Protocol files; either exact Protocol SHA is accepted. The helper/Exact/Codec file SHAs are pinned in the fixture.16calls per method warm both implementations before the retained timing batches. Eight batches of128calls alternate AB/BA. Only the repeated pure calls, result consumption and identical loop/count overhead fall in each timestamp window. Warmup samples are discarded; reads, parsing, compilation, Exact reserialization, mirror byte checks, printing and cleanup are outside retained timing.
+
+Each batch must produce128 matches and0errors for both paths. Literal one-call result equality is checked before timing; the captured value and compiled mirror are checked after every batch, and inputs/source bytes again at closure. No cached validation/result is used. This tests the admitted equal-world path only; existing1022/0 correctness evidence owns malformed/mismatch coverage. The fixture requests at most eight short pairs, refuses incomplete/over20s batch work, and the minimal canonical runner owns a30s deadline after queue acquisition. A slow/hung call can overrun the between-batch check; the runner remains the external bound.
+
+After Root's current native job closes, run sequentially from the repository root:
+
+```sh
+python3 -B .cinder/spore-codec-microbench-prep/run.py parse > .cinder/spore-codec-microbench-prep/parse.log 2>&1
+python3 -B .cinder/spore-codec-microbench-prep/run.py native > .cinder/spore-codec-microbench-prep/native.log 2>&1
+```
+
+Stop on parse failure; keep exact original logs, exit status, actual footer and all `SPORE_CODEC_MICROBENCH` batch rows. The private folder is ignored and explicitly loaded: no new UID/import or production selection is required. Root should retain existing477 UID/source custody through its normal job receipts. Only the already-known exact CA startup diagnostic may be qualified separately; any parse/test/mutation/bound failure prevents timing acceptance. No result currently exists.
+
+Report individual AB/BA batch times and a median/aggregate only after the actual rows exist. Same-process alternation reduces process/order variability; host load, dispatch and allocation variation remain. This can identify the pure validation/comparison cost on one genuine captured admitted world value. It excludes fresh world traversal, native getters/guards, compilation amortization, optical behavior and running frames. It establishes no authority repair, full workload/FPS gain, or general timing guarantee. The actual native first pair5.213036s→4.506252s and reverse fused02's11.193512s are separate owner-reported workload observations with camera/host variation, not this draft's results.
