@@ -1,5 +1,14 @@
 # L5 focused portrait source proposal
 
+## Current focused L5 follow-up — 14 October 2026
+
+The goal is ACTIVE and this chat remains the sole registered Act1 owner. No current ownership, human permission, storage or held-engine-lock blocker was observed in the status snapshot. Act1 remains4/8 accepted; L5 is unaccepted and its three optional levels follow independent L5 acceptance. Long shared engine queue/run intervals and slow native progression plus fixture observation failures have delayed acceptance; original test failures remain explicit.
+
+Shared57 is now actually adopted at `24aa68f3a2627747e78c6642961488e0b89463a9` with exact c201a8c7/75e547f4 parents. `.cinder/a1-shared57-adoption.json` records preserved owned content/settings/originals and all487 prior UIDs plus five genuine published identities=492 unique. Canonical ACK 20fcae4d-a832-4cc0-ae3c-b162707a9cdd records this owner result; independent Integration reconciliation remains separate. Existing native evidence retains its actual Shared56 scope; adoption grants no new gameplay/acceptance result.
+
+The portrait fixture now only widens real-time observation windows for lock4→8s, active2→8s and recovery2→4s. Actual original42/1 failed at sourceclock4.2833 before original lock4.45, which justifies this bounded observation correction. Source/native attack deadlines, camera guards, assertions and global45s watchdog are unchanged. Prepared/current source SHA256 `f537707f9329bb8a51cbd9f9841ef595c1a3d1f0bb4e467dc55b24841fdc3263`; the correction is NOT YET EXECUTED. Use the new `.cinder/a1-l5-production57-run.py` recorder for its affected run; the original56 recorder/results remain intact. Encounter37/1 still needs live recovery/primary-condition diagnosis; its cause is unproved.
+
+
 Prepared source only. No Godot process, parser, runtime check, UID generation, Git operation or assigned-checkout write occurred. Root must promote under its owned test path after the current frozen job closes, run through the shared queue, preserve failures/cancellations, and personally inspect the actual PNGs. Source SHA256: `c72c95fc904b0e27905d4ce1a04f80d08637b72ad2b68ad753ec011a8ba32430`.
 
 Suggested queued command after necessary new-script import:

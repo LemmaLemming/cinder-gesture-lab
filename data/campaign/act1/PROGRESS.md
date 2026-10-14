@@ -1,5 +1,14 @@
 # Act 1 — current progress
 
+## Current focused L5 follow-up — 14 October 2026
+
+The goal is ACTIVE and this chat remains the sole registered Act1 owner. No current ownership, human permission, storage or held-engine-lock blocker was observed in the status snapshot. Act1 remains4/8 accepted; L5 is unaccepted and its three optional levels follow independent L5 acceptance. Long shared engine queue/run intervals and slow native progression plus fixture observation failures have delayed acceptance; original test failures remain explicit.
+
+Shared57 is now actually adopted at `24aa68f3a2627747e78c6642961488e0b89463a9` with exact c201a8c7/75e547f4 parents. `.cinder/a1-shared57-adoption.json` records preserved owned content/settings/originals and all487 prior UIDs plus five genuine published identities=492 unique. Canonical ACK 20fcae4d-a832-4cc0-ae3c-b162707a9cdd records this owner result; independent Integration reconciliation remains separate. Existing native evidence retains its actual Shared56 scope; adoption grants no new gameplay/acceptance result.
+
+The portrait fixture now only widens real-time observation windows for lock4→8s, active2→8s and recovery2→4s. Actual original42/1 failed at sourceclock4.2833 before original lock4.45, which justifies this bounded observation correction. Source/native attack deadlines, camera guards, assertions and global45s watchdog are unchanged. Prepared/current source SHA256 `f537707f9329bb8a51cbd9f9841ef595c1a3d1f0bb4e467dc55b24841fdc3263`; the correction is NOT YET EXECUTED. Use the new `.cinder/a1-l5-production57-run.py` recorder for its affected run; the original56 recorder/results remain intact. Encounter37/1 still needs live recovery/primary-condition diagnosis; its cause is unproved.
+
+
 ## First actual production mechanics and portrait checks — 14 October 2026
 
 Import07 closed0 clean after1649 seconds of queue/run, preserving855 frozen inputs/all485 prior UID bytes and creating two genuine test UIDs=487. Source-only encounter review251ebc98 then promotes the target-HP/checkpoint pause ordering, post-parent probe priority3000 and honest actual dash timing/origin measurements; all original game conditions remain. Actual encounter-native01 closes37/1 after genuine first warning/dash/recovery paired capture, with no primary attempted before its30-second phase wall watchdog. `.cinder/a1-l5-encounter-native01-diagnosis.json` preserves exact original command/error/log/receipt/partial scopes. No phase2/terminal or gameplay-defect claim follows yet.
