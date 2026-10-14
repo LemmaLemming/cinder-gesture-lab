@@ -1,0 +1,213 @@
+{
+  "report": "Initial bounded Shared57 concrete observing bridge source review",
+  "created_at_utc": "2026-10-14T02:53:50.340919+00:00",
+  "author": "/root/b02_native_join",
+  "scope": "Complete pinned 247-line observing adapter 33430fc5 and mapped smoke delta c6cc5c30 from previously reviewed final inert be9662fe. Exact Shared57 private call chain read only for signatures/lifecycle, raw row error/outer bool, pending callbacks, packet roles and original cleanup assertions. No accepted suite/source-bank/history audit.",
+  "verdict": "Concrete mapping is source-supported. One positive public installation-pool error reporting gap requires a minimal test-only getter/settle assertion repair. Shared57 production code correctly transfers installation out of the pool; no shared runtime defect observed. This report pins the initial candidate before the repair, with no parser/native acceptance.",
+  "candidate_pins": [
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/fresh_world_lunge_observing_shell.gd.txt",
+      "sha256": "33430fc5cac7230f9ffbb732fb6a3a821776011f0730227663897d39ad19628d",
+      "bytes": 14432,
+      "lines": 247
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/fresh_world_lunge_smoke.gd.txt",
+      "sha256": "c6cc5c30487700dacd4eddbc187d0951e2668bc8355d4c58a8a1b971d2aeaa44",
+      "bytes": 46592,
+      "lines": 546
+    }
+  ],
+  "candidate_custody": "Exact bytes read and hashed before finding; Root instructed author to preserve these originals before the minimum repair. The paths are authoring locations and this report does not claim later mutable bytes retain these pins.",
+  "published_refs": {
+    "commit": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+    "actual_adoption_merge_previously_verified": "694d5fb911435fc895f4cd8a0dd68e2ea00d742e",
+    "shell_git_sha256": "29c73f78ebf1d48545539aa3a8ffc506773b402fc2a8f075be24d14de36eed31",
+    "level_git_sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+    "registration_component": "level-restore-registration-1",
+    "eight_exact_overrides": [
+      {
+        "method": "_perform",
+        "signature": "func _perform(operation: Dictionary) -> bool:",
+        "override_exact_match_observed": true
+      },
+      {
+        "method": "_prepare_registration",
+        "signature": "func _prepare_registration(extra: Array = [], install_snapshot: Dictionary = {}, fresh_candidate: Dictionary = {}) -> bool:",
+        "override_exact_match_observed": true
+      },
+      {
+        "method": "_registration_row",
+        "signature": "func _registration_row(candidate: Dictionary, wire: String) -> Dictionary:",
+        "override_exact_match_observed": true
+      },
+      {
+        "method": "_registration_row_error",
+        "signature": "func _registration_row_error(row: Dictionary) -> String:",
+        "override_exact_match_observed": true
+      },
+      {
+        "method": "_enter_registered_candidate",
+        "signature": "func _enter_registered_candidate(snapshot: Dictionary, row: Dictionary) -> Dictionary:",
+        "override_exact_match_observed": true
+      },
+      {
+        "method": "_prepare_snapshot",
+        "signature": "func _prepare_snapshot(snapshot: Dictionary) -> Dictionary:",
+        "override_exact_match_observed": true
+      },
+      {
+        "method": "_snapshot_problem",
+        "signature": "func _snapshot_problem(snapshot: Dictionary) -> String:",
+        "override_exact_match_observed": true
+      },
+      {
+        "method": "_reject_registration_row",
+        "signature": "func _reject_registration_row(row: Dictionary) -> void:",
+        "override_exact_match_observed": true
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "FW-BRIDGE-01",
+      "priority": "P2",
+      "title": "Public Continue/Retry pool-error observations are not checked before reset",
+      "adapter_lines": [
+        161,
+        167,
+        60
+      ],
+      "smoke_lines": [
+        39,
+        46,
+        186,
+        193
+      ],
+      "evidence": "Observing _prepare_snapshot calls genuine super, observes quiet committed installation and appends _test_errors when actual committed candidate is still in a registered/legacy validation pool. Public Continue and GUI Retry use inherited _perform with empty _test_current. settle_operation reports only settled/campaign_error; smoke _settle tests only those existing success fields. The next TEST _perform resets _test_errors, so that measured positive-flow adapter error can be silently discarded.",
+      "impact": "The fixture cannot claim mechanically asserted exclusive installation for its positive public Continue/Retry flows even though it already measures membership. This is a fixture observation/assertion gap, not demonstrated production breakage.",
+      "minimal_test_only_repair": "Expose retained actual adapter errors through a read-only observing-shell getter, include those actual errors in every settled receipt, and require an empty Array in smoke _settle before subsequent TEST reset; alternatively pass/check actual committed membership at observation. Keep String/bool validator dispatch and original super mechanics unchanged.",
+      "communicated_to_root_and_writer_early": true,
+      "root_assigned_bounded_repair": true
+    }
+  ],
+  "positive_source_findings": [
+    {
+      "topic": "Actual subclass and exact published source",
+      "evidence": "Mapped smoke instantiates ObservingShell.new before configure_runtime/tree entry, verifies exact Script identity and attaches observer before inherited _ready. Capability gate compares actual Shell29c73f78, Level27fdab66, final host04355d9f and scene7ef85ead SHA256 plus exact registration component/bridge API. CLI publication equals exact75e; runner independently verifies ancestry and freezes inputs. No base Shell set_script retrofit or forged public API."
+    },
+    {
+      "topic": "Original drain ownership",
+      "adapter_lines": [
+        39,
+        55,
+        104,
+        107
+      ],
+      "published_shell_lines": [
+        177,
+        240,
+        1095,
+        1102
+      ],
+      "evidence": "TEST tickets enqueue through inherited _enqueue and original _drain/_commit_drain. Non-TEST operations return await super._perform unchanged. All eight override signatures exactly match the publication, including three-argument preparation with fresh_candidate. No shared latch or accepted-state field is assigned by the adapter. Actual preparation is awaited outside synchronous validators; TEST metadata never authorize row/native acceptance."
+    },
+    {
+      "topic": "Raw bad row and real outer bool",
+      "adapter_lines": [
+        70,
+        73,
+        109,
+        142
+      ],
+      "published_shell_lines": [
+        1027,
+        1028,
+        1187,
+        1197
+      ],
+      "evidence": "Super _registration_row captures exact immutable custody before the healthy raw observer and candidate-only fault callback. Callback receives actual row.floor_guard and actual original native floor ID/RID at the explicitly named post-super-return point. Override _registration_row_error returns the exact genuine String and records the selected row error before inherited rejection/free. Genuine whole-scope preparation bool is retained: one poisoned unused row can be rejected while outer preparation correctly returns true. Mapped smoke accepts actual bool type and demands nonempty real row_error, no adapter errors and zero entry/validator/commit counts; it does not fabricate a whole-scope false."
+    },
+    {
+      "topic": "Healthy observer ordering and real post-entry faults",
+      "adapter_lines": [
+        144,
+        159
+      ],
+      "published_shell_lines": [
+        1059,
+        1077
+      ],
+      "evidence": "Actual native super row guard and complete exact wire precede FIRST registered observation. Genuine super constructor returns before entered observation; only then isolated validate_once floor faults run before remaining real synchronous validator work. Repeated callback native mutation occurs after actual first acceptance, and second actual validator returns the fresh error. No failed raw candidate gets a positive registered/entered/committed label."
+    },
+    {
+      "topic": "Real paused pending callbacks",
+      "adapter_lines": [
+        181,
+        197
+      ],
+      "published_shell_lines": [
+        1088,
+        1102,
+        1172,
+        1180,
+        1246,
+        1251
+      ],
+      "evidence": "A deferred callback is scheduled during original raw-row creation, then reads actual _registration_pending and _registration_inflight plus actual paused state. Missed phase records an adapter error. Donor guard calls actual smoke atomic capture. Real synchronous _snapshot_problem call sees the native inflight guard and supplies its actual nonempty reentry String. Scope cancellation invokes original helper, disposal frees only the original selected candidate container, and the cancellation TEST returns actual outer false so inherited drain clears its original cancellation flag. No fake pause/error/count or manual physics step."
+    },
+    {
+      "topic": "Original reference custody and zero-entry refusal",
+      "adapter_lines": [
+        116,
+        120,
+        173,
+        179,
+        244,
+        247
+      ],
+      "evidence": "Original candidate subtree WeakRefs are captured from the actual container before raw fault. Original level transport diagnostics are read before inherited rejection/free; metadata do not own mechanical acceptance. Final raw smoke retains its separately captured private original subtree references, positive construction/nonempty bridge references and both freed sets. Metadata totals reflect actual live diagnostics or pre-rejection saved diagnostics. Actual row poison occurs before any restore constructor/commit/validator."
+    },
+    {
+      "topic": "Complete packets, role separation and fresh validators",
+      "adapter_lines": [
+        104,
+        116,
+        169,
+        171,
+        226,
+        236
+      ],
+      "published_shell_lines": [
+        740,
+        780,
+        1156,
+        1167,
+        1199,
+        1227
+      ],
+      "evidence": "Rows are actual super rows; diagnostic wire parse reconstructs the complete packet, not level-ID cache. Per-wire purpose labels follow the actual validation-first/separate-install creation order. Every _snapshot_problem calls synchronous super once; repeated pristine construction reuse is accepted while validation is rerun. Original installation is removed from registered pool before quiet Player→Level commit; observer sees committed only after actual _prepare_snapshot succeeds. Actual pool membership includes candidate and original bindings/legacy retained candidates. Finding above concerns surfacing measured positive errors, not these shared mechanics."
+    }
+  ],
+  "limitations": {
+    "source_only": true,
+    "parser_or_method_runtime_availability_checked": false,
+    "native_lunge_admission_wall_capture_floor_readiness_pending_controls_passed": false,
+    "scope_complete_claimed": false,
+    "public_optical_or_campaign_acceptance_claimed": false,
+    "original_inert_and_mapped_candidates_separate": true,
+    "no_other_act_or_existing_suite_execution": true
+  },
+  "execution": {
+    "engine": false,
+    "parser": false,
+    "import": false,
+    "installation": false,
+    "Git_or_shared_source_mutation": false,
+    "assigned_test_draft_mutation": false,
+    "queue_lock_touched": false,
+    "human_decision_required": false,
+    "file_written": "/private/tmp/a2_fresh_world_shared57_bridge_initial_review_20261014.json"
+  },
+  "next_scope": "Only read-only getter / settled-receipt adapter_errors / smoke _settle guard changes and exact other-function preservation in the final derivative. No broader source review or engine."
+}

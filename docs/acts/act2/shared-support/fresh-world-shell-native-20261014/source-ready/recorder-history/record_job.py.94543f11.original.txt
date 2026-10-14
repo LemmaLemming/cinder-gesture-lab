@@ -1,0 +1,380 @@
+#!/usr/bin/env python3
+"""Bounded recorder for Root-invoked queued Godot jobs; Python stdlib only.
+No engine work occurs until this helper is invoked without --plan.
+"""
+from __future__ import annotations
+import argparse
+import base64
+import datetime as dt
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import signal
+import stat
+import subprocess
+import sys
+import threading
+import time
+
+OWN_ROOT = Path(__file__).resolve().parent
+FIXTURE = "tests/acts/act2/shared_support/fresh_world_lunge_"
+FIXTURE_PATHS = [FIXTURE + "level.gd", FIXTURE + "level.tscn", FIXTURE + "smoke.gd"]
+OWNED_UIDS = {FIXTURE + "level.gd.uid", FIXTURE + "smoke.gd.uid"}
+SEEDS = FIXTURE_PATHS + [
+    "project.godot", ".cinder/local.json", ".vscode/settings.json",
+    ".godot/global_script_class_cache.cfg", ".godot/uid_cache.bin",
+    ".godot/editor/project_metadata.cfg", "scripts/dev/dev.py",
+    "scripts/campaign/shell.gd", "scripts/campaign/level.gd",
+    "scripts/campaign/attempts.gd", "scripts/campaign/save_store.gd",
+    "scripts/campaign/registry.gd", "scripts/campaign/exact_json.gd",
+    "scripts/campaign/snapshot_codec.gd", "scripts/combat/threat_scheduler.gd",
+    "scripts/player.gd", "scenes/player.tscn", "scenes/main.tscn",
+    "scripts/pixel_sprite.gd", "scripts/character/player_presentations.gd",
+    "scripts/equipment.gd", "data/design/player_equipment.json",
+    "data/design/difficulty_profiles.json", "data/campaign/registry.json",
+]
+MANDATORY = set(FIXTURE_PATHS + ["project.godot", "scripts/dev/dev.py",
+    "scripts/campaign/shell.gd", "scripts/campaign/level.gd", "scripts/player.gd"])
+UID_ROOTS = ("scripts", "tests", "scenes", "shaders")
+CACHE_PATHS = {".godot/global_script_class_cache.cfg", ".godot/uid_cache.bin",
+               ".godot/editor/project_metadata.cfg"}
+RESOURCE_LITERAL = re.compile(r"""["'](res://[^"'\n\r]+)["']""")
+TOKEN = re.compile(r"\b[A-Za-z_][A-Za-z_0-9]*\b")
+TEXT_SUFFIXES = {".gd", ".tscn", ".tres", ".gdshader", ".godot", ".import"}
+# Registry JSON and metadata/cache CFG are frozen as inputs, not traversal
+# roots: the TEST replaces one selected registry row in memory. Cached global
+# classes are followed only when referenced by source, not by cache listing.
+ERROR_PATTERNS = {
+    "script_errors": re.compile(r"SCRIPT ERROR:"),
+    "parse_or_load_errors": re.compile(r"Parse Error:|Parser Error:|Failed to load|Error loading|Cannot load|Failed loading", re.I),
+    "assertion_errors": re.compile(r"Assertion failed|AssertionError|assertion error", re.I),
+    "native_errors": re.compile(r"^\s*ERROR:"),
+    "fail_markers": re.compile(r"^\s*FAIL:"),
+    "warnings": re.compile(r"^\s*WARNING:"),
+}
+FOOTER = re.compile(r"(?P<checks>\d+) checks,\s*(?P<failures>\d+) failures")
+MAX_FILES = 600
+MAX_TOTAL_BYTES = 128 * 1024 * 1024
+MAX_FILE_BYTES = 32 * 1024 * 1024
+
+def utc():
+    return dt.datetime.now(dt.timezone.utc).isoformat()
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+def write_json(path, value):
+    with path.open("x", encoding="utf-8") as out:
+        json.dump(value, out, indent=2, sort_keys=True)
+        out.write("\n")
+
+def safe_path(root, relative):
+    if not relative or relative.startswith("/") or ".." in Path(relative).parts:
+        raise ValueError("Only closed checkout-relative paths are permitted: " + relative)
+    value = (root / relative).resolve()
+    value.relative_to(root)
+    return value
+
+def git_value(root, *args):
+    p = subprocess.run(["git", *args], cwd=root, capture_output=True, timeout=15, check=False)
+    return {"exit_code": p.returncode, "stdout": p.stdout.decode("utf-8", "replace").strip(),
+            "stderr": p.stderr.decode("utf-8", "replace").strip()}
+
+def class_paths(root):
+    p = root / ".godot/global_script_class_cache.cfg"
+    if not p.is_file(): return {}
+    text = p.read_text(encoding="utf-8", errors="replace")
+    return {name: path[6:] for name, path in re.findall(
+        r'"class":\s*&?"([^"\n]+)"[^}]*?"path":\s*"(res://[^"\n]+)"', text, re.S)}
+
+def selected_paths(root, extra):
+    # Literal closure plus referenced global classes. No folder copying,
+    # captures/history-bank census or unrelated act traversal.
+    classes = class_paths(root)
+    todo = [(p, "explicit active seed") for p in SEEDS + extra]
+    found, reasons, missing_refs = set(), {}, set()
+    while todo:
+        rel, reason = todo.pop()
+        p = safe_path(root, rel)
+        reasons.setdefault(rel, set()).add(reason)
+        if rel in found: continue
+        found.add(rel)
+        if len(found) > MAX_FILES: raise RuntimeError("Scoped closure exceeds file limit")
+        if not p.is_file(): continue
+        if p.suffix == ".gd": todo.append((rel + ".uid", "UID of " + rel))
+        if not rel.endswith(".import") and (root / (rel + ".import")).is_file():
+            todo.append((rel + ".import", "import metadata of " + rel))
+        if p.suffix not in TEXT_SUFFIXES: continue
+        text = p.read_text(encoding="utf-8", errors="replace")
+        for uri in RESOURCE_LITERAL.findall(text):
+            target = uri[6:]
+            if target.startswith(("captures/", "docs/", ".cinder/")): continue
+            target_path = safe_path(root, target)
+            if target_path.is_file(): todo.append((target, "literal resource from " + rel))
+            elif not target_path.is_dir(): missing_refs.add((rel, uri))
+        if p.suffix == ".gd":
+            code = RESOURCE_LITERAL.sub("", text)
+            code = "\n".join(line.split("#", 1)[0] for line in code.splitlines())
+            for token in set(TOKEN.findall(code)) & classes.keys():
+                todo.append((classes[token], "cached class " + token + " from " + rel))
+    return sorted(found), {p: sorted(r) for p, r in reasons.items()}, sorted(missing_refs)
+
+def file_row(root, relative, copy_root=None):
+    p = safe_path(root, relative)
+    if not p.is_file(): return {"present": False}
+    before = p.stat()
+    if before.st_size > MAX_FILE_BYTES: raise RuntimeError("Oversized scoped input: " + relative)
+    data = p.read_bytes()
+    after = p.stat()
+    if (before.st_ino, before.st_size, before.st_mtime_ns, before.st_mode) != (after.st_ino, after.st_size, after.st_mtime_ns, after.st_mode):
+        raise RuntimeError("Input changed while recording: " + relative)
+    row = {"present": True, "sha256": sha(data), "bytes": len(data),
+           "stat_mode": oct(stat.S_IMODE(after.st_mode)), "executable_bits": after.st_mode & 0o111}
+    if copy_root is not None:
+        destination = copy_root / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        with destination.open("xb") as out: out.write(data)
+        os.chmod(destination, stat.S_IMODE(after.st_mode))
+        row["copy"] = str(destination.relative_to(copy_root.parent))
+    return row
+
+def inventory(root, paths, copy_root=None):
+    rows = {p: file_row(root, p) for p in paths}
+    total = sum(r.get("bytes", 0) for r in rows.values())
+    if total > MAX_TOTAL_BYTES: raise RuntimeError("Scoped bytes exceed limit")
+    if copy_root is not None:
+        for p, original in rows.items():
+            copied = file_row(root, p, copy_root)
+            if (copied.get("sha256"), copied.get("stat_mode")) != (original.get("sha256"), original.get("stat_mode")):
+                raise RuntimeError("Input changed during freeze: " + p)
+            rows[p] = copied
+    return {"recorded_utc": utc(), "rows": rows, "count": len(rows), "bytes": total}
+
+def uid_inventory(root):
+    rows = {}
+    for namespace in UID_ROOTS:
+        base = root / namespace
+        if not base.is_dir(): continue
+        for p in base.rglob("*.uid"):
+            if not p.is_file(): continue
+            rel = p.relative_to(root).as_posix()
+            row = file_row(root, rel)
+            data = p.read_bytes()
+            if sha(data) != row["sha256"]: raise RuntimeError("UID changed while recording: " + rel)
+            if len(data) > 4096: raise RuntimeError("Unexpected oversized UID: " + rel)
+            row["original_bytes_base64"] = base64.b64encode(data).decode("ascii")
+            rows[rel] = row
+    return {"recorded_utc": utc(), "scope": list(UID_ROOTS),
+            "qualification": "Physical UID metadata in these namespaces only; no assets/docs/history census.",
+            "rows": rows}
+
+def delta(before, after):
+    result = {}
+    for p in sorted(set(before) | set(after)):
+        b, a = before.get(p, {"present": False}), after.get(p, {"present": False})
+        if (b.get("present"), b.get("sha256"), b.get("stat_mode")) != (a.get("present"), a.get("sha256"), a.get("stat_mode")):
+            result[p] = {"before": b, "after": a}
+    return result
+
+def analyze_log(path):
+    if not path.is_file():
+        return {"present": False, "counts": {}, "first_meaningful_error": None, "footers": []}
+    data = path.read_bytes()
+    lines = data.decode("utf-8", "replace").splitlines()
+    counts = {k: sum(bool(r.search(line)) for line in lines) for k, r in ERROR_PATTERNS.items()}
+    first = None
+    for i, line in enumerate(lines):
+        if any(r.search(line) for k, r in ERROR_PATTERNS.items() if k != "warnings"):
+            first = {"line": i + 1, "text": line, "context": lines[max(0, i - 1):i + 6]}
+            break
+    footers = [{"line": i + 1, "text": line, "checks": int(m.group("checks")), "failures": int(m.group("failures"))}
+               for i, line in enumerate(lines) if (m := FOOTER.search(line))]
+    return {"present": True, "sha256": sha(data), "bytes": len(data), "counts": counts,
+            "first_meaningful_error": first, "footers": footers,
+            "engine_banner_observed": any("Godot Engine v" in line for line in lines),
+            "queue_wait_observed": any("Waiting for the shared Godot session" in line for line in lines)}
+
+def group_exists(group):
+    try: os.killpg(group, 0); return True
+    except ProcessLookupError: return False
+
+def stop_owned_group(process, watch):
+    # Only the newly created start_new_session wrapper group is signalled.
+    group = process.pid
+    if group == os.getpgrp(): raise RuntimeError("Refusing recorder-group signal")
+    watch["termination"] = "SIGTERM own newly created wrapper process group"
+    try: os.killpg(group, signal.SIGTERM)
+    except ProcessLookupError: pass
+    deadline = time.monotonic() + 5.0
+    while group_exists(group) and time.monotonic() < deadline: time.sleep(0.1)
+    if group_exists(group):
+        watch["termination"] += "; SIGKILL same owned group after 5s grace"
+        try: os.killpg(group, signal.SIGKILL)
+        except ProcessLookupError: pass
+    try: process.wait(timeout=5)
+    except subprocess.TimeoutExpired: watch["wrapper_wait_after_stop_timed_out"] = True
+
+def run_owned(command, cwd, wrapper_log, timeout):
+    watch = {"deadline_s": timeout, "deadline_includes_queue_wait": True,
+             "termination": "", "interrupted": False, "reader_error": ""}
+    process = subprocess.Popen(command, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                               start_new_session=True)
+    watch["wrapper_pid"] = process.pid
+    watch["owned_process_group"] = process.pid
+    began = time.monotonic()
+    def pump():
+        try:
+            with wrapper_log.open("xb") as out:
+                while True:
+                    chunk = process.stdout.read1(65536)
+                    if not chunk: break
+                    out.write(chunk)
+                    out.flush()
+                    sys.stdout.buffer.write(chunk)
+                    sys.stdout.buffer.flush()
+        except Exception as exc:
+            watch["reader_error"] = repr(exc)
+    reader = threading.Thread(target=pump, daemon=True)
+    reader.start()
+    try:
+        while process.poll() is None:
+            if time.monotonic() - began >= timeout:
+                watch["timed_out"] = True
+                stop_owned_group(process, watch)
+                break
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        watch["interrupted"] = True
+        stop_owned_group(process, watch)
+    finally:
+        reader.join(timeout=5)
+        if not reader.is_alive(): process.stdout.close()
+    watch["elapsed_s"] = time.monotonic() - began
+    watch["wrapper_exited"] = process.poll() is not None
+    watch["wrapper_stream_complete"] = not reader.is_alive() and not watch["reader_error"]
+    watch["owned_group_gone"] = not group_exists(process.pid)
+    watch["exit_code"] = process.returncode
+    return watch
+
+def arguments():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--kind", required=True, choices=["parser", "import", "native"])
+    p.add_argument("--label", required=True)
+    p.add_argument("--cwd", required=True)
+    p.add_argument("--script", default=FIXTURE + "smoke.gd")
+    p.add_argument("--source", action="append", default=[])
+    p.add_argument("--expect-head")
+    p.add_argument("--timeout", type=float)
+    p.add_argument("--plan", action="store_true", help="Read-only plan; never invoke dev.py")
+    p.add_argument("test_args", nargs=argparse.REMAINDER)
+    return p.parse_args()
+
+def main():
+    a = arguments()
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,79}", a.label):
+        raise ValueError("Closed unique job label required")
+    root = Path(a.cwd).resolve()
+    if not (root / "project.godot").is_file(): raise ValueError("Cinder checkout required")
+    if OWN_ROOT != root / ".cinder/fresh-world-shell-support/execution-20261014/jobs":
+        raise ValueError("Writes are restricted to the assigned jobs directory")
+    script = a.script.removeprefix("res://")
+    safe_path(root, script)
+    if not script.startswith("tests/acts/act2/shared_support/") or not script.endswith(".gd"):
+        raise ValueError("Only assigned support scripts may be run")
+    if a.kind != "native" and a.test_args: raise ValueError("Only native accepts test arguments")
+    timeout = a.timeout if a.timeout is not None else (600.0 if a.kind == "native" else 300.0)
+    if not 1.0 <= timeout <= (600.0 if a.kind == "native" else 300.0):
+        raise ValueError("Deadline must stay within assigned bounds")
+    job = OWN_ROOT / a.label
+    raw = job / "raw.log"
+    command = [sys.executable, "scripts/dev/dev.py", "engine", "--headless", "--path", ".",
+               "--log-file", str(raw)]
+    if a.kind == "import":
+        command += ["--editor", "--import", "--quit"]
+    else:
+        if a.kind == "parser": command += ["--check-only"]
+        command += ["--script", "res://" + script]
+    if a.test_args:
+        tails = a.test_args[1:] if a.test_args[0] == "--" else a.test_args
+        command += ["--", *tails]
+    paths, reasons, missing_refs = selected_paths(root, [script, Path(__file__).resolve().relative_to(root).as_posix(), *a.source])
+    revision = {"HEAD": git_value(root, "rev-parse", "HEAD"),
+                "branch": git_value(root, "branch", "--show-current")}
+    missing = sorted(p for p in MANDATORY | {script} if not (root / p).is_file())
+    if a.plan:
+        print(json.dumps({"plan_only": True, "command": command, "cwd": str(root),
+              "revision": revision, "deadline_s": timeout, "input_count": len(paths),
+              "inputs": paths, "missing_mandatory": missing,
+              "unresolved_literal_refs": missing_refs}, indent=2))
+        return 0
+    if missing: raise ValueError("Required fixture/runtime inputs absent: " + ", ".join(missing))
+    if a.expect_head and revision["HEAD"]["stdout"] != a.expect_head:
+        raise ValueError("Observed HEAD differs from required revision")
+    job.mkdir(exist_ok=False)
+    before = inventory(root, paths, job / "source-before")
+    uids_before = uid_inventory(root)
+    source = {"record": "fresh-world-support-job-source", "created_utc": utc(), "kind": a.kind,
+              "command": command, "cwd": str(root), "revision": revision, "deadline_s": timeout,
+              "selection": "Literal active runtime/fixture closure, referenced cached classes, associated UIDs/import targets and bounded metadata seeds.",
+              "direct_hero_import_qualification": "Current Hero/FX/menu branch is procedural; imported external resources are included only when actually referenced by this closure.",
+              "reasons": reasons, "unresolved_literal_refs": missing_refs, "inventory": before,
+              "recorder_sha256": sha(Path(__file__).read_bytes())}
+    write_json(job / "source.json", source)
+    write_json(job / "uid-before.json", uids_before)
+    started = utc()
+    def interrupted(*_): raise KeyboardInterrupt()
+    signal.signal(signal.SIGTERM, interrupted)
+    watch = run_owned(command, root, job / "wrapper.log", timeout)
+    finished = utc()
+    write_json(job / "job-watch.json", {"command": command, "cwd": str(root), "started_utc": started, "finished_utc": finished, "revision": revision, "job_watch": watch})
+    after_paths, after_reasons, after_missing = selected_paths(root, [script, Path(__file__).resolve().relative_to(root).as_posix(), *a.source])
+    after = inventory(root, sorted(set(paths) | set(after_paths)))
+    changes = delta(before["rows"], after["rows"])
+    for rel, row in changes.items():
+        if row["after"].get("present"):
+            row["after"] = file_row(root, rel, job / "source-after-changes")
+    uids_after = uid_inventory(root)
+    uid_changes = delta(uids_before["rows"], uids_after["rows"])
+    allowed = {p: v for p, v in uid_changes.items() if a.kind == "import" and p in OWNED_UIDS
+               and not v["before"].get("present") and v["after"].get("present")}
+    unexpected = {p: v for p, v in uid_changes.items() if p not in allowed}
+    write_json(job / "source-after.json", {"inventory": after, "reasons": after_reasons,
+                                         "unresolved_literal_refs": after_missing})
+    write_json(job / "uid-after.json", uids_after)
+    write_json(job / "changes.json", {"source": changes, "uid": uid_changes,
+               "generated_new_owned_uids_on_import": allowed, "unexpected_uid_changes": unexpected})
+    logs = {"raw": analyze_log(raw), "wrapper": analyze_log(job / "wrapper.log")}
+    footers = logs["raw"].get("footers", []) or logs["wrapper"].get("footers", [])
+    clean = all(v == 0 for log in logs.values() for v in log.get("counts", {}).values())
+    closed = watch["wrapper_exited"] and watch["wrapper_stream_complete"] and watch["owned_group_gone"]
+    footer_ok = a.kind != "native" or bool(footers) and all(f["failures"] == 0 and f["checks"] > 0 for f in footers)
+    runtime_ok = not {p: v for p, v in changes.items() if p not in CACHE_PATHS and p not in allowed}
+    satisfactory = watch["exit_code"] == 0 and not watch.get("timed_out") and not watch["interrupted"] and closed and clean and logs["raw"].get("present", False) and any(log.get("engine_banner_observed", False) for log in logs.values()) and footer_ok and runtime_ok and not unexpected
+    result = {"record": "fresh-world-support-job-result", "kind": a.kind, "command": command,
+              "cwd": str(root), "started_utc": started, "finished_utc": finished,
+              "revision_before": revision,
+              "revision_after": {"HEAD": git_value(root, "rev-parse", "HEAD"),
+                                 "branch": git_value(root, "branch", "--show-current")},
+              "job_watch": watch, "logs": logs,
+              "first_meaningful_error": logs["raw"].get("first_meaningful_error") or logs["wrapper"].get("first_meaningful_error"),
+              "check_footers": footers, "original_source_sha256": sha((job / "source.json").read_bytes()),
+              "changed_input_paths": list(changes),
+              "generated_new_owned_uid_paths_on_import": list(allowed),
+              "unexpected_uid_change_paths": list(unexpected),
+              "raw_wrapper_equal": raw.is_file() and sha(raw.read_bytes()) == sha((job / "wrapper.log").read_bytes()),
+              "recorder_assessment_ok": satisfactory,
+              "closure_limits": "Only this newly created dev.py wrapper group and captured pipe are observed. Queue timeout is not a gameplay failure. No other process/lock is signalled. Incomplete stream or remaining group is unclosed, never a pass. No native saved-unit semantics, publication, optical, art, performance or unrelated historical-bank proof."}
+    write_json(job / "result.json", result)
+    print(json.dumps({"job_directory": str(job), "wrapper_exit": watch["exit_code"],
+                     "recorder_assessment_ok": satisfactory,
+                     "first_meaningful_error": result["first_meaningful_error"],
+                     "footers": footers}, indent=2))
+    return 0 if satisfactory else (124 if watch.get("timed_out") else 130 if watch["interrupted"] else 1)
+
+if __name__ == "__main__":
+    try: raise SystemExit(main())
+    except (OSError, ValueError, RuntimeError) as exc:
+        print("Recorder refusal/error: " + str(exc), file=sys.stderr)
+        raise SystemExit(2)
