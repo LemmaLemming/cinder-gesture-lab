@@ -177,6 +177,12 @@ func _collect_part(id: String) -> void:
 	if stage != "circuit" or collected_ids.has(id) or hero.dead or get_tree().paused or not (_part_contacts[id] as Area3D).overlaps_body(hero): return
 	var part: Node3D = parts[id]; var cue: CinderInteractionCue = part.call("get_cue")
 	if cue.state().state != "available" or not _framing_ready(_part_points(id)): return
+	if collected_ids.size() + 1 == Layout.PART_IDS.size():
+		# The last actual contact may publish the dormant-final checkpoint before
+		# the next camera update. Require the complete current reserve first.
+		var required: Array = _camera_framing_points(false)
+		required.append_array(_source_points(Layout.FINAL_SOURCE_ID, final_rusher.global_position))
+		if not _framing_ready(_unique(required)): return
 	_collecting_id = id; collected_ids.append(id) # Consume before all observers.
 	part.call("set_state", "active"); cue.present("active", "contact")
 	_callback_depth += 1; part_collected.emit(id, collected_ids.duplicate()); _callback_depth -= 1
@@ -218,6 +224,9 @@ func _settle_progress() -> void:
 func _begin_final() -> void:
 	if not checkpoint_published or final_started or _parts_ready_pending or get_tree().paused: return
 	if scheduler.has_committed_exchange(): return
+	# A possible future camera plan never authorizes revealing a currently
+	# clipped native source. The dormant sprite is already in this actual union.
+	if not _framing_ready(_camera_framing_points(false)): return
 	# This is a real new boundary; cancelled circuit history is kept in packets.
 	scheduler.end_encounter("salvage_final_boundary")
 	if not scheduler.begin_encounter(_selected_profile(), FINAL_EPOCH, WORLD_REVISION): last_encounter_error = scheduler.last_error; return
@@ -426,7 +435,10 @@ func _camera_framing_points(include_forecast: bool = true) -> Array:
 		if frame.is_empty() and _pending_start.get("source_id", "") == record.source_id: frame = _pending_start
 		if not frame.is_empty(): points.append_array(_response_points(frame.proof.landing, frame.proof.attack_position))
 	for id: String in Layout.PART_IDS:
-		if hero.global_position.distance_to((parts[id] as Node3D).global_position) <= LOOKAHEAD: points.append_array(_part_points(id))
+		# Spent parts remain rendered/cued, but have no remaining interaction.
+		if (not collected_ids.has(id) or _collecting_id == id) and hero.global_position.distance_to((parts[id] as Node3D).global_position) <= LOOKAHEAD: points.append_array(_part_points(id))
+	if is_instance_valid(final_rusher) and final_rusher.dormant and not final_rusher.dead and hero.global_position.distance_to(final_rusher.global_position) <= LOOKAHEAD:
+		points.append_array(_source_points(Layout.FINAL_SOURCE_ID, final_rusher.global_position))
 	if hero.global_position.distance_to(Layout.HATCH_POSITION) <= LOOKAHEAD or stage in ["hatch", "departed"]: points.append_array(_hatch_points())
 	var actor: Act1RushSelenite = circuit if stage == "circuit" else final_rusher
 	if is_instance_valid(actor) and not actor.dead and not actor.dormant and hero.global_position.distance_to(actor.global_position) <= LOOKAHEAD: points.append_array(_source_points(String(actor.name), actor.global_position))
@@ -451,7 +463,11 @@ func _source_points(id: String, opening: Vector3) -> Array:
 	if _actual_camera() == null or _actual_camera().global_basis != (shared_shell.get("camera") as Camera3D).global_basis: return [Vector3.INF]
 	var points: Array = _box_points(collision.shape.get_debug_mesh().get_aabb(), collision.global_transform)
 	for node: Node in actor.get_art().find_children("*", "Sprite3D", true, false):
-		if node.is_visible_in_tree(): points.append_array(shared_shell.call("camera_billboard_points", node))
+		# Native C30's one retained sprite stays locally visible beneath its
+		# dormant hidden parent. Reserve its actual full quad without revealing it.
+		var quad: Array = shared_shell.call("camera_billboard_points", node)
+		if quad.is_empty(): return [Vector3.INF]
+		points.append_array(quad)
 	var future: Array = points.duplicate()
 	for point: Vector3 in future: points.append(point + opening - actor.global_position)
 	return _bounds_points(points)
@@ -554,20 +570,27 @@ func _on_exit_level() -> void:
 	_frames.clear(); _forecast.clear(); _pending_start.clear(); _activation_entitlement = ""
 	if is_instance_valid(hero) and hero.died.is_connected(_on_hero_died): hero.died.disconnect(_on_hero_died)
 	for actor: Act1RushSelenite in sources.values():
+		if not is_instance_valid(actor): continue
 		if actor.state_changed.is_connected(_on_source_state): actor.state_changed.disconnect(_on_source_state)
 		if actor.defeated.is_connected(_on_source_defeated): actor.defeated.disconnect(_on_source_defeated)
-		actor.cancel("salvage_level_exit"); actor.remove_from_group("enemies"); actor.set_physics_process(false)
+		# Public in-tree exit preserves normal native cancellation. The removal
+		# fallback must not query/publish children whose viewport already exited.
+		if actor.is_inside_tree(): actor.cancel("salvage_level_exit")
+		actor.remove_from_group("enemies"); actor.set_physics_process(false)
 	if is_instance_valid(impact):
 		if impact.state_changed.is_connected(_on_source_state): impact.state_changed.disconnect(_on_source_state)
-		if impact.state().status == "running": impact.cancel("salvage_level_exit")
+		if impact.is_inside_tree() and impact.state().status == "running": impact.cancel("salvage_level_exit")
 		impact.set_physics_process(false)
 	for id: String in Layout.PART_IDS:
 		var area: Area3D = _part_contacts.get(id) as Area3D; var callback: Callable = _part_callbacks.get(id, Callable())
 		if is_instance_valid(area) and area.body_entered.is_connected(callback): area.body_entered.disconnect(callback)
-		if parts.has(id): (parts[id].call("get_cue") as CinderInteractionCue).clear()
+		var cue: CinderInteractionCue = _part_cues.get(id) as CinderInteractionCue
+		if is_instance_valid(cue) and cue.is_inside_tree(): cue.clear()
 	if is_instance_valid(hatch) and hatch.body_entered.is_connected(_hatch_contact): hatch.body_entered.disconnect(_hatch_contact)
-	if is_instance_valid(hatch_cue): hatch_cue.clear()
-	if is_instance_valid(scheduler): scheduler.end_encounter("salvage_level_exit"); scheduler.set_physics_process(false)
+	if is_instance_valid(hatch_cue) and hatch_cue.is_inside_tree(): hatch_cue.clear()
+	if is_instance_valid(scheduler):
+		if scheduler.is_inside_tree(): scheduler.end_encounter("salvage_level_exit")
+		scheduler.set_physics_process(false)
 	set_physics_process(false)
 
 

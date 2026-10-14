@@ -218,6 +218,8 @@ func _reopen_side(saved: Dictionary, label: String) -> bool:
 	var backup: String = FileAccess.get_file_as_string(test_root + "campaign.json.bak")
 	var refs: Array[WeakRef] = _refs(game)
 	operation = "normal donor Shell disposal: " + label
+	# Public level cleanup while every native child still has its actual tree.
+	game.active_level.exit_level()
 	game.free(); game = null
 	await process_frame
 	if not _expect(_freed(refs), "normal closed donor Shell frees its native descendants before independent disk recipient: " + label): return false
@@ -558,7 +560,9 @@ func _finish() -> void:
 		var level: CinderLevel = preview.get("active_level") as CinderLevel
 		if level != null: level.exit_level()
 		refs.append_array(_refs(preview)); preview.free(); preview = null
-	if is_instance_valid(game): refs.append_array(_refs(game)); game.free(); game = null
+	if is_instance_valid(game):
+		if is_instance_valid(game.active_level): game.active_level.exit_level()
+		refs.append_array(_refs(game)); game.free(); game = null
 	paused = false
 	await create_timer(0.5, true).timeout
 	await process_frame
