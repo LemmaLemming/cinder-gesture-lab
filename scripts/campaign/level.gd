@@ -13,6 +13,7 @@ signal checkpoint_requested(level_id: String, checkpoint_id: String, boundary_ki
 const API_REVISION: String = "campaign-level-1"
 const RESTORE_CANDIDATE_API_REVISION: String = "level-restore-candidate-1"
 const RESTORE_PRESENTATION_API_REVISION: String = "level-restore-presentation-1"
+const RESTORE_REGISTRATION_API_REVISION: String = "level-restore-registration-1"
 const PRESENTATION_HUD_SCRIPT = preload("res://scripts/hud.gd")
 const SNAPSHOT_SCHEMA_VERSION: int = 1
 const CHECKPOINT_KINDS: Array[String] = ["encounter", "boss_phase"]
@@ -109,6 +110,24 @@ func enter_level(player: CinderPlayer, shared_effects: PixelEffects, shell: Node
 
 ## Fresh paused construction precedes PURE saved-state validation. This builds
 ## only immutable native bindings; ordinary quiet restore applies saved state.
+## Additive opt-in; pure and callable before tree entry. Opted levels require
+## immutable query floors in _ready, before the Shell registration frame.
+## Legacy levels keep the original per-submission constructor lifecycle.
+func restore_candidate_physics_registration_required() -> bool:
+	return false
+
+## Pure native lifecycle guard used only by opted operation-scoped custody.
+## This is not a proof that rays hit: ordinary strict validators still run.
+func restore_candidate_registration_error(player: CinderPlayer, shared_effects: PixelEffects, shell: Node, constructed: bool) -> String:
+	if not is_inside_tree() or not is_node_ready() or is_queued_for_deletion() or not get_tree().paused or _lifecycle_busy or _state_hook_busy() or _dispatching or not is_instance_valid(player) or not is_instance_valid(shared_effects) or not is_instance_valid(shell):
+		return "Fresh paused registration lifecycle required"
+	if player.get_world_3d() != get_world_3d() or shared_effects.get_tree() != get_tree(): return "Registered Player/effects must retain the actual candidate world/tree"
+	if constructed:
+		if not _entered or not _restore_candidate or _restore_candidate_ready or hero != player or effects != shared_effects or shared_shell != shell: return "Only uncommitted exact restore construction may be reused for validation"
+	elif _entered or _restore_candidate or _restore_candidate_ready:
+		return "Raw registration must precede the sole restore entry"
+	return ""
+
 func enter_restore_candidate(player: CinderPlayer, shared_effects: PixelEffects, shell: Node, snapshot: Dictionary, saved_player: Dictionary) -> bool:
 	last_snapshot_error = ""
 	if not is_inside_tree() or not get_tree().paused or _entered or _lifecycle_busy or _state_hook_busy() or not is_instance_valid(player) or not is_instance_valid(shared_effects):

@@ -1,0 +1,98 @@
+{
+  "selected_at": "2026-10-14T01:28:09.477097+00:00",
+  "purpose": "local parser/native candidate only; no API publication",
+  "seal": {
+    "status": "INERT_SOURCE_ONLY_SEAL_2",
+    "runtime_selected": false,
+    "engine_or_parser_run": false,
+    "files": {
+      "shell.original.gd.txt": {
+        "sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+        "bytes": 45143
+      },
+      "shell.candidate.gd.txt": {
+        "sha256": "90c5aad7763c96b30398b55281ec93ccb480aa5ec470173abd29b1c42274a3b2",
+        "bytes": 69956
+      },
+      "shell.patch": {
+        "sha256": "0ab2ef58ad3e0fbce0b28bf7f46903540100186b289ec4c52b35564a37053190",
+        "bytes": 38019
+      },
+      "level.original.gd.txt": {
+        "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+        "bytes": 22401
+      },
+      "level.candidate.gd.txt": {
+        "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+        "bytes": 23949
+      },
+      "level.patch": {
+        "sha256": "97f3c239bfd1ce46cb69f0d0ad20e692736d16ab2a53f476884c6aac6d880cd1",
+        "bytes": 2571
+      }
+    },
+    "changed_methods": {
+      "shell": {
+        "added": [
+          "_snapshot_problem_unlocked",
+          "_registration_packets",
+          "_registration_disk_guard",
+          "_registration_donor_guard",
+          "_registration_floor_guard",
+          "_registration_row",
+          "_registration_row_error",
+          "_reject_registration_row",
+          "_enter_registered_candidate",
+          "_dispose_registration_scope",
+          "_cancel_registration_preparation",
+          "_prepare_registration",
+          "_prepare_registration_unlocked",
+          "_registered_install_candidate",
+          "_finish_startup_load",
+          "_startup_registration_required",
+          "_startup_registration_required_unlocked",
+          "_registration_fresh_guard"
+        ],
+        "changed": [
+          "_ready",
+          "_enqueue",
+          "_commit_drain",
+          "_perform",
+          "_load_active",
+          "_leave_side",
+          "_record_live",
+          "_prepare",
+          "_prepare_snapshot",
+          "_settings_requested",
+          "_difficulty_requested",
+          "_process",
+          "_exit_tree",
+          "_fail",
+          "_snapshot_problem"
+        ]
+      },
+      "level": {
+        "added": [
+          "restore_candidate_physics_registration_required",
+          "restore_candidate_registration_error"
+        ],
+        "changed": [
+          "enter_level"
+        ]
+      }
+    },
+    "unchanged_dependencies": {
+      "scripts/campaign/attempts.gd": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "scripts/campaign/save_store.gd": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0"
+    },
+    "selection_files": [
+      "shell.candidate.gd.txt",
+      "level.candidate.gd.txt"
+    ],
+    "non_selection_fragment": "registration_helpers.gd.txt is superseded initial draft fragment; do not select it."
+  },
+  "production_files": [
+    "scripts/campaign/shell.gd",
+    "scripts/campaign/level.gd"
+  ]
+}

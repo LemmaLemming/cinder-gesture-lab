@@ -1,0 +1,140 @@
+docs/acts/act2/shared-support/evidence/import-first-20261013/source/scripts/acts/act2/bleached_canal.gd:1139: new blank line at EOF.
+docs/acts/act2/shared-support/evidence/shell-native-first-20261013/source/scripts/acts/act2/bleached_canal.gd:1139: new blank line at EOF.
+docs/development/evidence/collision-traversal-pair/candidate/candidate.patch:4: space before tab in indent.
++ 	while not pending.is_empty():
+docs/development/evidence/collision-traversal-pair/candidate/candidate.patch:5: space before tab in indent.
++ 		var node: Node = pending.pop_back()
+docs/development/evidence/collision-traversal-pair/candidate/candidate.patch:6: space before tab in indent.
++ 		pending.append_array(node.get_children())
+docs/development/evidence/collision-traversal-pair/candidate/candidate.patch:9: space before tab in indent.
++ 		if not node is Node3D or (node as Node3D).get_world_3d() != owner.get_world_3d():
+docs/development/evidence/collision-traversal-pair/candidate/candidate.patch:10: space before tab in indent.
++ 			continue
+docs/development/evidence/collision-traversal-pair/candidate/candidate.patch:11: space before tab in indent.
++ 		if node is GridMap or (node is CSGShape3D and (node as CSGShape3D).use_collision):
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:12: trailing whitespace.
++ 
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:22: trailing whitespace.
++ 
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:24: space before tab in indent.
++ 	var actor_ids: Dictionary = {}
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:25: space before tab in indent.
++ 	for id: String in game.active_level.get("sources"):
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:26: space before tab in indent.
++ 		actor_ids[id] = str(game.active_level.get("sources")[id].get_instance_id())
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:28: space before tab in indent.
++ 	var exact_protocol_scripts: bool = true
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:29: space before tab in indent.
++ 	for id: String in _cost_sources:
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:31: space before tab in indent.
++ 		exact_protocol_scripts = exact_protocol_scripts and protocols[id].get_script() == NativeProtocol
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:36: space before tab in indent.
++ 	var started: int = Time.get_ticks_usec()
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:37: space before tab in indent.
++ 	# Real scheduled physics/process callbacks; no manual actor/controller tick.
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:38: space before tab in indent.
++ 	await physics_frame
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:39: space before tab in indent.
++ 	await process_frame
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:40: space before tab in indent.
++ 	var wall_us: int = Time.get_ticks_usec() - started
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:61: space before tab in indent.
++ 	var actual_ids: Dictionary = {}
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:62: space before tab in indent.
++ 	for id: String in game.active_level.get("sources"):
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:63: space before tab in indent.
++ 		actual_ids[id] = str(game.active_level.get("sources")[id].get_instance_id())
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:68: space before tab in indent.
++ 	game.request_pause()
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:69: space before tab in indent.
++ 	await _settle()
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:70: space before tab in indent.
++ 	# Preserve actual diagnostic/input/optics observations BEFORE snapshot
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:73: space before tab in indent.
++ 	var native: String = _cost_native(protocols)
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:74: space before tab in indent.
++ 	var packets: String = _cost_packets()
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:75: space before tab in indent.
++ 	_expect(paused and not packets.is_empty() and not native.is_empty(), "actual public Pause retains nonempty complete19actor/Player/Scheduler and focused native observation after measurement")
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:76: space before tab in indent.
++ 	var native_file: Dictionary = _persist_exact_witness("focused-native.exact.json", native)
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:77: space before tab in indent.
++ 	var packet_file: Dictionary = _persist_exact_witness("complete19-packets.exact.json", packets)
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:78: space before tab in indent.
++ 	_expect(not native_file.is_empty() and not packet_file.is_empty(), "both actual paused Exact strings are retained as byte-exact files outside the measured interval")
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:83: space before tab in indent.
++ 	_finish()
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:84: trailing whitespace.
++ 
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:85: trailing whitespace.
++ 
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:88: space before tab in indent.
++ 	if _finished: return
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:89: space before tab in indent.
++ 	_finished = true
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:93: space before tab in indent.
++ 	_close_shell()
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:94: space before tab in indent.
++ 	paused = false
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:95: space before tab in indent.
++ 	await create_timer(0.2, true).timeout
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:96: space before tab in indent.
++ 	_cleanup_saves()
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:97: space before tab in indent.
++ 	_expect(FileAccess.get_sha256(STAGE_ORIGINAL) == STAGE_ORIGINAL_SHA and FileAccess.get_file_as_string(Registry.DATA_PATH) == _registry_text, "cost probe preserves original CP2 and canonical registry bytes")
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:98: space before tab in indent.
++ 	_trace("cost_cleanup_after", {"measurement_label": _cost_label, "outcome": _stage_outcome})
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:101: space before tab in indent.
++ 	quit(0 if failures == 0 else 1)
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:102: trailing whitespace.
++ 
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:103: trailing whitespace.
++ 
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:105: space before tab in indent.
++ 	if not decoded.get("accepted", false) or Exact.stringify(decoded.value) != wire:
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:106: space before tab in indent.
++ 		_expect(false, "paused Exact witness decodes and re-encodes without type/bit drift: " + name)
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:107: space before tab in indent.
++ 		return {}
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:110: space before tab in indent.
++ 	if DirAccess.make_dir_recursive_absolute(directory) != OK:
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:111: space before tab in indent.
++ 		_expect(false, "private observed directory can be created")
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch:112: space before tab in indent.
++ 		return {}
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-parse/raw.log:2: new blank line at EOF.
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-parse/wrapper.log:4: new blank line at EOF.
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-window/raw.log:7: trailing whitespace.
++PASS: TEST ONLY in-memory exact L3 metadata preserves all other current registry entries: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-window/raw.log:9: trailing whitespace.
++PASS: actual checked SaveStore reads original generation8 without a synthetic reconstructed seed: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-window/raw.log:12: trailing whitespace.
++PASS: real production Title has no duplicate live world for original CP2 direct-query measurement: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-window/raw.log:14: trailing whitespace.
++PASS: actual Full CP2 owns one shared Hero/effects and nineteen original native actors at real paused Resume: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-window/wrapper.log:8: trailing whitespace.
++PASS: TEST ONLY in-memory exact L3 metadata preserves all other current registry entries: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-window/wrapper.log:10: trailing whitespace.
++PASS: actual checked SaveStore reads original generation8 without a synthetic reconstructed seed: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-window/wrapper.log:13: trailing whitespace.
++PASS: real production Title has no duplicate live world for original CP2 direct-query measurement: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-window/wrapper.log:15: trailing whitespace.
++PASS: actual Full CP2 owns one shared Hero/effects and nineteen original native actors at real paused Resume: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-parse/raw.log:2: new blank line at EOF.
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-parse/wrapper.log:4: new blank line at EOF.
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-window/raw.log:7: trailing whitespace.
++PASS: TEST ONLY in-memory exact L3 metadata preserves all other current registry entries: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-window/raw.log:9: trailing whitespace.
++PASS: actual checked SaveStore reads original generation8 without a synthetic reconstructed seed: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-window/raw.log:12: trailing whitespace.
++PASS: real production Title has no duplicate live world for original CP2 direct-query measurement: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-window/raw.log:14: trailing whitespace.
++PASS: actual Full CP2 owns one shared Hero/effects and nineteen original native actors at real paused Resume: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-window/wrapper.log:9: trailing whitespace.
++PASS: TEST ONLY in-memory exact L3 metadata preserves all other current registry entries: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-window/wrapper.log:11: trailing whitespace.
++PASS: actual checked SaveStore reads original generation8 without a synthetic reconstructed seed: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-window/wrapper.log:14: trailing whitespace.
++PASS: real production Title has no duplicate live world for original CP2 direct-query measurement: 
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-window/wrapper.log:16: trailing whitespace.
++PASS: actual Full CP2 owns one shared Hero/effects and nineteen original native actors at real paused Resume: 

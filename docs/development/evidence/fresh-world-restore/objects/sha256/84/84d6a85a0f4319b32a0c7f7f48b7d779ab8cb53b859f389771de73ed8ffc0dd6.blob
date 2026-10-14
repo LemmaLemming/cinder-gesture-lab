@@ -1,0 +1,152 @@
+"""Frozen, bounded focused jobs through the canonical Godot queue only."""
+from pathlib import Path
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import subprocess
+import sys
+
+ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
+
+
+def sha(p):
+    digest = hashlib.sha256()
+    with p.open('rb') as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def row(p):
+    return {'path': str(p.relative_to(ROOT)), 'sha256': sha(p),
+            'bytes': p.stat().st_size, 'mode': p.stat().st_mode & 0o777}
+
+
+def uids():
+    result = []
+    for directory, dirs, files in os.walk(ROOT):
+        folder = Path(directory)
+        if folder != ROOT and (folder / '.gdignore').exists():
+            dirs[:] = []
+            continue
+        dirs[:] = [name for name in dirs if name not in
+                   {'.git', '.godot', '.tools', '.cinder', 'exports', 'captures', '__pycache__'}]
+        result.extend(row(folder / name) for name in files if name.endswith('.uid'))
+    return sorted(result, key=lambda item: item['path'])
+
+
+def dev_module():
+    spec = importlib.util.spec_from_file_location('fresh_world_cinder_dev', ROOT / 'scripts/dev/dev.py')
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def freeze(tag, script, mode):
+    assert re.fullmatch('[a-z0-9-]+', tag) and mode in {'parse', 'native'}
+    assert script.startswith('tests/') and script.endswith('.gd')
+    target = HERE / 'jobs' / tag
+    assert not target.exists()
+    target.mkdir(parents=True)
+    seeds = [script, str(Path(__file__).relative_to(ROOT)), 'scripts/dev/dev.py',
+             'project.godot', '.cinder/local.json', '.godot/global_script_class_cache.cfg',
+             'data/campaign/registry.json', 'data/design/player_equipment.json',
+             'data/design/difficulty_profiles.json']
+    todo, seen = list(seeds), set()
+    while todo:
+        name = todo.pop()
+        if name in seen:
+            continue
+        p = ROOT / name
+        assert p.is_file(), name
+        seen.add(name)
+        if p.suffix in {'.gd', '.tscn', '.tres', '.json', '.cfg'}:
+            for dependency in re.findall(r'res://([^\s"\'\)]+)', p.read_text()):
+                if (ROOT / dependency).is_file():
+                    todo.append(dependency)
+    uid_rows = uids()
+    seen.update(item['path'] for item in uid_rows)
+    inputs = []
+    for name in sorted(seen):
+        p = ROOT / name
+        archived = target / 'inputs' / name
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(['/bin/cp', '-c', '-p', str(p), str(archived)], check=True)
+        inputs.append(row(p))
+    dev = dev_module()
+    context = dev.ProjectContext()
+    engine = dev.resolve_godot(context).resolve()
+    manifest = {'tag': tag, 'script': script, 'mode': mode,
+                'created_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                'inputs': inputs, 'uids': uid_rows, 'engine': row(engine),
+                'scope': 'Literal resource references, global class cache, named runtime data and active UIDs. Not a complete dynamic/import graph.'}
+    (target / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    print(json.dumps({'frozen': tag, 'sources': len(inputs), 'uids': len(uid_rows),
+                      'manifest_sha256': sha(target / 'manifest.json')}))
+
+
+def verify(target, manifest):
+    for record in manifest['inputs']:
+        assert row(ROOT / record['path']) == record, record['path']
+        archived = target / 'inputs' / record['path']
+        assert archived.stat().st_size == record['bytes'] and sha(archived) == record['sha256'], str(archived)
+    assert row(ROOT / manifest['engine']['path']) == manifest['engine']
+    assert uids() == manifest['uids'], 'Active UID inventory changed'
+
+
+def run(tag):
+    target = HERE / 'jobs' / tag
+    manifest = json.loads((target / 'manifest.json').read_text())
+    log = target / 'raw.log'
+    assert not log.exists() and not (target / 'result.json').exists()
+    verify(target, manifest)
+    dev = dev_module()
+    context = dev.ProjectContext()
+    command = [str(dev.resolve_godot(context)), '--path', str(ROOT), '--headless',
+               '--script', 'res://' + manifest['script'],
+               '--log-file', str(target / 'engine.log')]
+    if manifest['mode'] == 'parse':
+        command.append('--check-only')
+    code, error = None, ''
+    with log.open('x', buffering=1) as output:
+        with contextlib.redirect_stdout(output), contextlib.redirect_stderr(output):
+            try:
+                with dev.godot_lock(context.root) as lock:
+                    verify(target, manifest)
+                    print('Canonical queue acquired; own 120-second deadline starts now.', flush=True)
+                    code = dev.run_validation(command, context, lock, 120, detect_godot_errors=True)
+            except Exception as exc:
+                error = repr(exc)
+                print(error, flush=True)
+    closure_error = ''
+    try:
+        verify(target, manifest)
+    except Exception as exc:
+        closure_error = repr(exc)
+    text = log.read_text()
+    diagnostics = re.findall(r'(?m)^ERROR:|^WARNING:|SCRIPT ERROR|Parse Error|Compile Error|FAIL:|leaked|Orphan StringName|unclaimed', text)
+    result = {'tag': tag, 'mode': manifest['mode'], 'command': command,
+              'closed_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              'returncode': code, 'exception': error, 'closure_error': closure_error,
+              'sources_and_uids_exact': not closure_error, 'diagnostics': diagnostics,
+              'manifest_sha256': sha(target / 'manifest.json'), 'log': row(log),
+              'clean_process': code == 0 and not error and not closure_error and not diagnostics,
+              'scope': 'Inspect actual native footer/assertions separately; clean_process alone is not test acceptance.'}
+    (target / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
+    print(json.dumps(result))
+    return 0 if result['clean_process'] else 1
+
+
+if __name__ == '__main__':
+    if sys.argv[1] == 'freeze':
+        freeze(*sys.argv[2:5])
+    elif sys.argv[1] == 'run':
+        sys.exit(run(sys.argv[2]))
+    else:
+        raise SystemExit('freeze TAG tests/SCRIPT.gd parse|native; run TAG')

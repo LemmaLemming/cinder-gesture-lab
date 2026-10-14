@@ -1,0 +1,112 @@
+{
+  "closed_at": "2026-10-13T09:28:00.046776+00:00",
+  "variant": "candidate",
+  "mode": "measure",
+  "returncode": 0,
+  "command": [
+    "/opt/homebrew/anaconda3/bin/python3",
+    "-B",
+    ".cinder/collision-traversal-measure/tools.py",
+    "engine",
+    "candidate-window"
+  ],
+  "wrapper_pid": 96884,
+  "successful_scope": true,
+  "source_and_uids_exact_at_closure": true,
+  "closure_error": "",
+  "evidence_error": "",
+  "diagnostics": [],
+  "footers": [
+    [
+      "24",
+      "0"
+    ]
+  ],
+  "manifest_sha256": "e800d25aa75d013751096261ff267d20f0e2237bbdf03b24370aef3ee29193ff",
+  "pair_sha256": "7010bf9cb3be205a0961e67268ddadf4a850c49982c6d6f05777b9f9aed2f4b3",
+  "source_count": 787,
+  "streams": [
+    {
+      "path": ".cinder/collision-traversal-measure/jobs/candidate-window/wrapper.log",
+      "bytes": 12560,
+      "sha256": "a22ccd163043296531896fc26796de0c5cdac6a764516b59f1878d589abb6700",
+      "mode": 420
+    },
+    {
+      "path": ".cinder/collision-traversal-measure/jobs/candidate-window/raw.log",
+      "bytes": 12457,
+      "sha256": "14aa9486adb769edd4d6a5b840835f1e0c087417cf1f14edff0fa33aab012878",
+      "mode": 420
+    }
+  ],
+  "witnesses": {
+    "native": {
+      "path": ".cinder/collision-traversal-measure/jobs/candidate-window/observed/focused-native.exact.json",
+      "bytes": 675514,
+      "sha256": "b43b81ab21e7b603130a48b9610d3636cbf49a79a36e07e0b25ef54addab2875",
+      "mode": 420
+    },
+    "packets": {
+      "path": ".cinder/collision-traversal-measure/jobs/candidate-window/observed/complete19-packets.exact.json",
+      "bytes": 66972,
+      "sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "mode": 420
+    },
+    "grounded_schema_differences": [
+      {
+        "source_id": "breathing-1",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      },
+      {
+        "source_id": "breathing-2",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      },
+      {
+        "source_id": "breathing-3",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      }
+    ],
+    "qualified_scope": "Actual Exact file bytes/hash joined to trace; exact named19 actor packets/native sources,8 Crossed references, paused active boundary, clock bits and pose/velocity joins. Saved logical grounded and native floor contact remain distinct. No arbitrary Script-state or optical Save claim."
+  },
+  "interval": {
+    "actor_identities_unchanged": true,
+    "beat_index": 2,
+    "campaign_error": "",
+    "dead": false,
+    "encounter_error": "Authored encounter context and fixed normalized world direction required",
+    "engine_pid": 7878,
+    "hero_position": [
+      0.0,
+      -0.00484376167878509,
+      -10.3999996185303
+    ],
+    "hp": 100.0,
+    "hp_before": 100.0,
+    "paused": false,
+    "physics_frame_index": 60,
+    "physics_frames": 8,
+    "player_clock_bits": "060000000000f03f",
+    "player_clock_s": 1.0,
+    "player_elapsed_s": 0.133333333333334,
+    "process_frame_index": 25,
+    "process_frames": 1,
+    "room_stage": "active",
+    "scheduler_clock_bits": "ffffffffffffcf3f",
+    "scheduler_clock_s": 0.25,
+    "scheduler_elapsed_s": 0.133333333333333,
+    "scope": "Uninstrumented whole-window elapsed time; activation/setup/paused witnesses excluded; one native await interval, no sustained FPS or causal gain claim.",
+    "shells": 2,
+    "stage": "collision_traversal_interval",
+    "ticks_started": 1,
+    "wall_us": 7150250
+  }
+}

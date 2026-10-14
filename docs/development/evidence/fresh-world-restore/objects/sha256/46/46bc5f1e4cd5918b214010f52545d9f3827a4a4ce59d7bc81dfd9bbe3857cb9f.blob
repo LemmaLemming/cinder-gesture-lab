@@ -1,0 +1,50 @@
+"""One canonical queued import, preserving existing source and UID custody."""
+from pathlib import Path
+import contextlib, datetime, importlib.util, json, re, sys
+ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location('targeted', HERE/'run_targeted.py')
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+assert not (HERE/'jobs/uid-import-01').exists()
+for name in ['campaign-shell-native-02','campaign-persistence-native-02']:
+    result = json.loads((HERE/'jobs'/name/'result.json').read_text())
+    assert result['clean_process'] and result['sources_and_uids_exact'], name
+out = HERE/'jobs/uid-import-01'
+out.mkdir()
+manifest = json.loads((HERE/'jobs/campaign-shell-native-02/manifest.json').read_text())
+paths = [x['path'] for x in manifest['inputs'] if not x['path'].startswith('.godot/')]
+paths += [str(Path(__file__).relative_to(ROOT)), 'tests/campaign_persistence_smoke.gd', 'tests/fixtures/restore_candidate_physics_level.gd', 'tests/fixtures/restore_candidate_physics_level.tscn', 'tests/restore_candidate_physics_smoke.gd', 'tests/restore_candidate_physics_startup_retry_smoke.gd']
+source_before = [m.row(ROOT/p) for p in sorted(set(paths))]
+uid_before = m.uids()
+expected = {'tests/fixtures/restore_candidate_physics_level.gd.uid','tests/restore_candidate_physics_smoke.gd.uid','tests/restore_candidate_physics_startup_retry_smoke.gd.uid'}
+assert not expected & {x['path'] for x in uid_before}
+dev=m.dev_module();ctx=dev.ProjectContext()
+engine=m.row(dev.resolve_godot(ctx).resolve())
+freeze={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'sources':source_before,'uids':uid_before,'engine':engine,'expected_new_uids':sorted(expected),'scope':'Current literal graph source paths plus runner; import-generated global class cache excluded from unchanged-source claim.'}
+(out/'before.json').write_text(json.dumps(freeze,indent=2)+'\n')
+raw=out/'raw.log'
+code=None;error=''
+command=[str(dev.resolve_godot(ctx)), '--path',str(ROOT),'--headless','--import','--log-file',str(out/'engine.log')]
+with raw.open('x',buffering=1) as f,contextlib.redirect_stdout(f),contextlib.redirect_stderr(f):
+    try:
+        with dev.godot_lock(ctx.root) as lock:
+            assert [m.row(ROOT/p) for p in sorted(set(paths))]==source_before
+            assert m.uids()==uid_before
+            assert m.row(dev.resolve_godot(ctx).resolve())==engine
+            print('Canonical queue acquired; own import deadline starts now.',flush=True)
+            code=dev.run_validation(command,ctx,lock,dev.IMPORT_TIMEOUT,detect_godot_errors=True)
+    except Exception as exc:
+        error=repr(exc); print(error,flush=True)
+source_after=[m.row(ROOT/p) for p in sorted(set(paths))]
+uid_after=m.uids(); old={r['path']:r for r in uid_before};new={r['path']:r for r in uid_after}
+existing_exact=all(new.get(p)==r for p,r in old.items())
+additions=sorted(set(new)-set(old))
+uid_texts=[(ROOT/p).read_text() for p in new]
+unique=len(set(uid_texts))==len(uid_texts)
+diagnostics=re.findall(r'(?m)^ERROR:|^WARNING:|SCRIPT ERROR|Parse Error|Compile Error|FAIL:|leaked|Orphan StringName|unclaimed',raw.read_text())
+result={'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'command':command,'returncode':code,'exception':error,'before_sha256':m.sha(out/'before.json'),'sources_exact':source_after==source_before,'prior_uids_exact':existing_exact,'prior_uid_count':len(old),'uid_count':len(new),'new_uid_paths':additions,'new_uids':[dict(new[p],text=(ROOT/p).read_text()) for p in additions],'unique_uids':unique,'diagnostics':diagnostics,'log':m.row(raw),'engine_log':m.row(out/'engine.log') if (out/'engine.log').exists() else None,'clean':code==0 and not error and source_before==source_after and existing_exact and set(additions)==expected and unique and not diagnostics}
+(out/'after.json').write_text(json.dumps({'sources':source_after,'uids':uid_after},indent=2)+'\n')
+(out/'result.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps(result))
+sys.exit(0 if result['clean'] else 1)

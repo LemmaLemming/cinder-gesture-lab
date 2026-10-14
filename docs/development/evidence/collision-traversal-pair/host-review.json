@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "status": "PASS_HOST_REVIEW; CANDIDATE_WITHDRAWN_NO_PERFORMANCE_BENEFIT_DEMONSTRATED",
+  "reviewed_at": "2026-10-13T09:36:10.644284+00:00",
+  "native_execution_added": false,
+  "pair_sha256": "7010bf9cb3be205a0961e67268ddadf4a850c49982c6d6f05777b9f9aed2f4b3",
+  "jobs": [
+    {
+      "job": "baseline-parse",
+      "closed_at": "2026-10-13T09:17:25.664315+00:00",
+      "result_sha256": "864642820210c4a3e3b166feaee1245add075ef431a0d7463a68bc74c6de47fc",
+      "manifest_sha256": "41a94ecc1dcafebb9f190ebc18406d4738b93cced3817c4182e6600f703214b6",
+      "returncode": 0,
+      "checks": null,
+      "failures": null,
+      "original_source_and_uid_closure_recorded": true,
+      "retained_outputs_joined": true
+    },
+    {
+      "job": "baseline-window",
+      "closed_at": "2026-10-13T09:18:46.925953+00:00",
+      "result_sha256": "e58a11e213480e44d72b6dded76f2d871076616557ca9b7c5abc6497d9feb1e3",
+      "manifest_sha256": "c3d902979213577b4d862822daedef8603a88e876dd257c80081087026ee1ebf",
+      "returncode": 0,
+      "checks": 24,
+      "failures": 0,
+      "original_source_and_uid_closure_recorded": true,
+      "retained_outputs_joined": true
+    },
+    {
+      "job": "candidate-parse",
+      "closed_at": "2026-10-13T09:20:03.427928+00:00",
+      "result_sha256": "d35b3ce87147fae8e6fe3082215841489a6159efdf74a6c5c766e0f19eb3aad5",
+      "manifest_sha256": "439b901069961acdec935fba8d1f485b4c69bad18c9c7f32e7637ed0f21fe4f0",
+      "returncode": 0,
+      "checks": null,
+      "failures": null,
+      "original_source_and_uid_closure_recorded": true,
+      "retained_outputs_joined": true
+    },
+    {
+      "job": "candidate-window",
+      "closed_at": "2026-10-13T09:28:00.046776+00:00",
+      "result_sha256": "883e7e0be42b89f7764affae0356dc7cfb02a4b6444eec13751c1ee0ebb86025",
+      "manifest_sha256": "e800d25aa75d013751096261ff267d20f0e2237bbdf03b24370aef3ee29193ff",
+      "returncode": 0,
+      "checks": 24,
+      "failures": 0,
+      "original_source_and_uid_closure_recorded": true,
+      "retained_outputs_joined": true
+    }
+  ],
+  "baseline_wall_us": 5619508,
+  "candidate_wall_us": 7150250,
+  "single_pair_relative_change_percent": 27.239786828313072,
+  "complete19_player_scheduler_packet_bytes_equal": true,
+  "packet_sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+  "pair_frozen_file_bytes_hash_modes_verified": 787,
+  "pair_frozen_uid_manifest_joins": 470,
+  "differential_actual_checks": 44,
+  "differential_actual_failures": 0,
+  "differential_frozen_file_bytes_hash_modes_verified": 483,
+  "differential_uid_count_recorded": 470,
+  "engine_binary_rehashed_without_execution": {
+    "path": ".tools/Godot.app/Contents/MacOS/Godot",
+    "bytes": 351312912,
+    "sha256": "c7cccbf8fb143e34e02fd6521e09be2c2b974f0d5db080b19071c9c570718ccf",
+    "mode": 493
+  },
+  "source_review": {
+    "no_internal_profile_instrumentation": true,
+    "only_two_outer_timestamps_around_native_await_pair": true,
+    "native_witness_before_packet_snapshot": true,
+    "two_line_candidate_inverse_exact": true
+  },
+  "independent_decoder": {
+    "path": "docs/development/evidence/collision-signature-stages/host-review/verify_profile2.py",
+    "sha256": "627a97861a201a05d3b69f03f869f32cafab66bddd32331e72e264d4d78ffc9d"
+  },
+  "grounded_schema_differences_preserved": {
+    "baseline-window": [
+      {
+        "source_id": "breathing-1",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      },
+      {
+        "source_id": "breathing-2",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      },
+      {
+        "source_id": "breathing-3",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      }
+    ],
+    "candidate-window": [
+      {
+        "source_id": "breathing-1",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      },
+      {
+        "source_id": "breathing-2",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      },
+      {
+        "source_id": "breathing-3",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      }
+    ]
+  },
+  "restored_route_sha256_at_review": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+  "original_protocol_sha256_at_review": "a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5",
+  "initial_host_attempt": "Stopped on incorrect expected differential footer literal after pair/source/witness joins. Correct actual footer is Collision traversal exact differential: 44 checks, 0 failures. Corrected host literal only; no native rerun or original evidence modification.",
+  "qualification": "One baseline then one candidate execution; candidate higher wall time in this pair. No repeatability, causal regression/speedup, sustained FPS, camera/Save repair or campaign acceptance claim. Recorded closures and retained banks independently joined; current whole source tree not asserted equal to historical closures. Full banks remain local."
+}

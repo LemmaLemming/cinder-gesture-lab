@@ -1,0 +1,72 @@
+{
+  "schema": "cinder-storage-recovery-independent-final-review-v1",
+  "at": "2026-10-13T09:56:53.430431+00:00",
+  "status": "PASS",
+  "scope": "Host-only verification of the exact 965 manifest target paths and eight retained counterparts; no clone, engine, import, index or commit actions performed by reviewer. Only this review JSON written.",
+  "manifest": {
+    "path": ".cinder/immutable-archive-clone-audit/eligible-eight-groups.json",
+    "sha256": "88ebe84704fea998500f30641d13e6f91027b79900e8b75b42667f00d992c14c",
+    "original_git_head": "bdd4fa39ebe26e6c491bfd2e47fc646c455e727e"
+  },
+  "head_observed_before": "bdd4fa39ebe26e6c491bfd2e47fc646c455e727e",
+  "head_observed_after": "bdd4fa39ebe26e6c491bfd2e47fc646c455e727e",
+  "inputs": {
+    "batch2-result.json": {
+      "bytes": 641,
+      "sha256": "2a5fcf067db2628b55fa22ad3b6eb879f67617ea457b6757e3e947be0179afc3"
+    },
+    "batch2-actions.jsonl": {
+      "bytes": 366368,
+      "sha256": "551e89d814655fb4ab14d4ba14ce459179a4d3fffaabbcb59b8ad91e62c9d0e3"
+    },
+    "batch2-first-result.json": {
+      "bytes": 713,
+      "sha256": "d6dbefb5d86c4585a39e80b8f7d23d5c316388ca4947be920ac90b022978187f"
+    },
+    "batch2-first-actions.jsonl": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "clone_verified_archives-original-os-xattr.py": {
+      "bytes": 3451,
+      "sha256": "bdd6d83e113a47b80e4c7613dc77c97472dd87a4a9d31a67e1f12a6437d8aa3d"
+    },
+    "clone_verified_archives.py": {
+      "bytes": 3744,
+      "sha256": "193206270259511fbd76747473c6b1a3077d1f5148e0ef3b81a6d8a5130c5db3"
+    }
+  },
+  "independent_results": {
+    "action_rows": 965,
+    "unique_manifest_targets": 965,
+    "exact_action_manifest_path_membership": true,
+    "current_sha256_length_fullmode_mtime_device_and_action_after_inode_matches": 965,
+    "action_before_inode_matches_original_manifest": 965,
+    "literal_current_git_blob_oid_matches_original_committed_membership": 965,
+    "target_replacement_inode_differs_from_original_inode": 965,
+    "unique_current_target_inodes_nlink_one": 965,
+    "retained_counterparts_exact_original_sha_length_fullmode_mtime_inode_device_git_oid": 8,
+    "target_counterpart_hardlinks": 0,
+    "matching_residual_clone_temporary_files": 0,
+    "physical_fullmode_counts": {
+      "0o644": 881,
+      "0o664": 84
+    },
+    "first_failed_attempt_recorded_actions": 0,
+    "first_failure_precedes_clone_creation_in_original_script": true,
+    "verification_seconds": 3.501
+  },
+  "metadata_limitations": [
+    "Owner and xattr preservation is executor-asserted for all 965 rows; pre-operation owner/xattr values are not included in receipts, so historical preservation cannot be independently proven from those receipts. Corrected executor uses /usr/bin/xattr and restores the captured original xattrs.",
+    "Atime preservation is not independently claimed: verification reads may advance atime, and action receipts record no atime values. Exact mtime_ns preservation is independently verified.",
+    "Unchanged counterpart means unchanged bytes, fullmode, mtime, inode and device; reads may advance atime.",
+    "No global filesystem write audit was performed; reviewed executor destinations are manifest targets, sibling temporary clones and storage recovery receipts."
+  ],
+  "free_space": {
+    "receipt_free_before": 2627293184,
+    "receipt_free_after": 4326252544,
+    "receipt_observed_volume_increase_bytes": 1698959360,
+    "arithmetic_verified": true,
+    "causal_scope": "Observed volume-wide free-space change only; concurrent activity prevents assigning the entire increase exclusively to this clone batch."
+  }
+}

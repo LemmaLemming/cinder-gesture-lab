@@ -1,0 +1,42 @@
+# Inert paused fresh-world registration draft — seal 2
+
+Status: source-only proposal for Root selection and targeted validation. No engine, parser, production source, worker source, save schema, acceptance status or Git state was changed by this drafting task. Select only `shell.candidate.gd.txt` and `level.candidate.gd.txt`; hashes and exact baseline files are in `manifest.json`. `registration_helpers.gd.txt` is a superseded initial fragment and is not a selection dependency.
+
+## Confirmed trigger and boundary
+
+Act3 confirmation `4b859caa-7a2d-4877-8bef-bef8344aeeaa` observed empty immediate native floor rays in a new own-World3D candidate, then correct same-floor-RID rays after one paused process frame. A distinct fresh candidate entered restore successfully only after that registration frame. This confirms the preparation seam, not complete Shell correctness or level acceptance. The original 804/1 failure remains evidence.
+
+The new additive Level API is `level-restore-registration-1`. `restore_candidate_physics_registration_required() -> bool` defaults to false and must be pure and callable before tree entry. An opted level must create immutable query floors during `_ready`; floors first created or changed inside its restore-entry hook are rejected. No Scheduler ray, floor geometry, native RID or mechanical validator is relaxed. Non-opted levels retain their original synchronous startup and per-submission validation-candidate lifetime.
+
+## Deliberate opted-in lifetime contract
+
+Within one paused Shell operation, an exact full saved packet may retain an uncommitted native constructor for repeated synchronous validation callbacks. The key is bounded lossless full-packet text, never level ID or an accepted-result flag. The same original seven constructor nodes, native World3D, authored/canonical Scripts, pristine Player state and floor bindings remain required. Every callback reruns Player, whole local-with-saved-Player and Shell validation; validation results are not cached.
+
+Validation and installation use distinct fresh worlds. The installation candidate leaves every pool before quiet Player/Level commits. Retry and Leave Replay callbacks therefore retain only the separate uncommitted validation constructor. A rejected, committed or installed candidate is never recycled. A changed exact packet that was not prepared fails closed; preparation must occur outside the synchronous callback.
+
+Registration is serialized behind the existing deferred paused operation drain. A separate inflight latch covers disposal, capability calls, `_ready`, donor/fresh capture and the single awaited process frame. Synchronous nested validation or operation execution refuses. Retry, Leave Replay or Quit requests cancel the inflight generation and enqueue their replacement. Cancellation, disposal or epoch loss invalidates the scope. Menu/HUD input and settings/difficulty changes cannot commit during the wait; startup retains the loading/drain latch until the original load finishes or preparation fails.
+
+The source bounds packet discovery to 16 distinct wires / 32 MiB and floor traversal to 4096 nodes. Normal current-state + extra target + primary + backup contains at most 13 packet positions; the install constructor is a second native instance, not a new wire. It waits one process frame and refuses if the resumed wait exceeded 2000 ms, pause was lost or the frame count did not advance. This post-resumption bound does not supply a wall-clock timer if the engine stops delivering frames entirely; Root's process-bound queue job remains the external timeout.
+
+## Existing entry points
+
+- Startup structurally decodes checksum-valid primary and backup only to discover raw constructors, then calls the original synchronous `attempts.load_saved`. All original primary/backup and side-recovery semantics remain authoritative. Candidate-specific row loss poisons that exact row; an unused backup or recoverably bad side cannot globally veto a valid primary. Donor, disk or epoch loss aborts the whole operation.
+- Continue, Retry and Leave Replay prepare both the exact install packet and pristine validation constructors before the original synchronous restore/Attempts callbacks.
+- Begin, ordinary exit, side entry and replay restart preserve their original captured packet and ordinary candidate. A capture-only before/after observation checks that candidate's actual whole local/Player state, camera/HUD framing, native identities, Scripts and bindings across the wait. It never refits, restores, normalizes or replaces the saved packet.
+- Pause, checkpoint, completion, Journey and Quit capture the same live packet, prepare needed constructors outside callbacks, then use the original Attempts/SaveStore transaction. Old primary and temp-file semantic validation remain enabled.
+- `SaveStore`, `Attempts`, snapshot codecs and Scheduler sources are unchanged. Public snapshot validators still return String/bool synchronously. The async helper is private: `_prepare_registration(extra: Array = [], install_snapshot: Dictionary = {}, fresh_candidate: Dictionary = {}) -> bool`.
+
+The donor observation uses the supported `snapshot_state_for_presentation(camera, hud)` path; this API is mechanically pure by contract but writes diagnostics. The draft explicitly preserves preexisting `last_snapshot_error` and `last_camera_framing_error`, records the capture result/refusal, and compares actual camera/input, Player, level and Attempts state across registration. It does not restore or repair donor gameplay state.
+
+## Required focused validation
+
+Root selects and parses the sealed pair before any runtime claim. Core tests should use a tiny actual native floor and public queued Shell operations; Act3/Agent02 retain the full native-lunge regression independently.
+
+1. Native rays empty immediately, same actual floor RID after paused frame, one restore-entry call, complete validation repeated for the identical full packet; no clocks, resources, input or geometry advancement.
+2. Independent pristine validation and exclusive installation worlds; quiet commit never recycled; repeated Store old-primary/temp and protected-story/checkpoint callbacks still validate. Continue, Retry and Leave Replay preserve exact saved state and clean up all retained worlds.
+3. Full-packet mismatch, raw constructor refusal with empty diagnostic, wrong scene type, new floor inside hook, native-node substitution/reparenting or Script replacement, reentry, cancellation, pause loss and delayed frame fail closed without donor/disk mutation.
+4. Valid primary plus unused bad backup succeeds; bad primary plus valid backup follows existing recovery; malformed side can be dropped while protected story remains valid. Candidate-specific bad rows cannot change original load ordering or recovery policy.
+5. Ordinary fresh candidate mutated/freed during the registration wait refuses before Attempts/disk/install; unchanged candidate keeps the original captured packet. Startup Menu/HUD events remain queued and drain after loading.
+6. Existing non-opted restore-candidate deletion/rejection negatives remain unchanged. Only directly affected shared suites and changed Act3 tests are required; no accepted-level reruns or full-playthrough gate.
+
+Full Shell behavior is untested at this source-only handoff. No performance, sustained FPS, campaign completion or level-acceptance conclusion follows from the single paused registration observation.

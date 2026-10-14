@@ -1,0 +1,118 @@
+extends "res://scripts/campaign/level.gd"
+## TEST ONLY native floor registration recipient.
+## The floor exists in the scene before the restore hook; no hook repairs it.
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const LOCAL_API: String = "test-only-restore-physics-1"
+
+static var created: Array[WeakRef] = []
+static var destroyed_ids: Array[int] = []
+static var entry_events: Array[Dictionary] = []
+static var commit_ids: Array[int] = []
+static var raw_ready_observer: Callable
+static var entry_observer: Callable
+static var reject_next_entry: bool = false
+
+var marker: int = 0
+var clock_s: float = 0.0
+var normal_entries: int = 0
+var restore_entries: int = 0
+var quiet_commits: int = 0
+var constructor_marker: int = -1
+var constructor_floor_rid: RID
+var constructor_world: World3D
+var floor_body: StaticBody3D
+var floor_collision: CollisionShape3D
+var floor_shape: BoxShape3D
+
+func _ready() -> void:
+	floor_body = get_node("Floor") as StaticBody3D
+	floor_collision = get_node("Floor/Collision") as CollisionShape3D
+	floor_shape = floor_collision.shape as BoxShape3D
+	created.append(weakref(self))
+	if raw_ready_observer.is_valid(): raw_ready_observer.call(self)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE: destroyed_ids.append(get_instance_id())
+
+func restore_candidate_construction_required() -> bool:
+	return true
+
+func restore_candidate_physics_registration_required() -> bool:
+	# Pure, including the off-tree Script capability probe.
+	return true
+
+func _on_enter_level() -> void:
+	normal_entries += 1
+
+func _on_enter_restore_candidate(local: Dictionary, _saved_player: Dictionary) -> String:
+	restore_entries += 1
+	var error: String = _closed_error(local)
+	var ray_error: String = _floor_error(true) if error.is_empty() else error
+	entry_events.append({"id": get_instance_id(), "marker": local.get("marker", -1), "frame": Engine.get_process_frames(), "floor_rid": str(floor_body.get_rid()), "world": str(get_world_3d().space), "native_error": ray_error, "candidate": is_restore_candidate()})
+	if not is_restore_candidate() or normal_entries != 0 or restore_entries != 1:
+		return "One fresh paused native restore entry required"
+	if not ray_error.is_empty(): return ray_error
+	constructor_marker = local.marker
+	constructor_floor_rid = floor_body.get_rid()
+	constructor_world = get_world_3d()
+	if entry_observer.is_valid(): entry_observer.call(self)
+	if reject_next_entry:
+		reject_next_entry = false
+		return "TEST ONLY explicit constructor rejection"
+	return ""
+
+func advance_marker() -> bool:
+	if get_tree().paused or is_restore_candidate() or marker != 0: return false
+	marker = 1
+	return true
+
+func _physics_process(delta: float) -> void:
+	if is_instance_valid(hero): clock_s += delta
+
+func _capture_local_state() -> Dictionary:
+	return {"api_revision": LOCAL_API, "marker": marker, "clock_s": clock_s}
+
+func _closed_error(state: Dictionary) -> String:
+	var error: String = Codec.keys_error(state, ["api_revision", "marker", "clock_s"])
+	if not error.is_empty(): return error
+	if state.api_revision != LOCAL_API or not state.marker is int or state.marker not in [0, 1] or not state.clock_s is float or not Codec.in_range(state.clock_s, 0.0, 1000.0):
+		return "Closed TEST ONLY native marker/clock required"
+	return ""
+
+func _floor_error(require_ray: bool) -> String:
+	if not is_instance_valid(floor_body) or not is_instance_valid(floor_collision) or not is_instance_valid(floor_shape) or floor_body.get_parent() != self or floor_collision.get_parent() != floor_body or floor_collision.shape != floor_shape or floor_shape.size != Vector3(8, 1, 8) or floor_collision.disabled or floor_body.collision_layer != 1 or floor_body.collision_mask != 0 or floor_collision.transform != Transform3D.IDENTITY or floor_body.transform != Transform3D(Basis.IDENTITY, Vector3(0, -0.5, 0)) or floor_body.get_world_3d() != get_world_3d():
+		return "Retained actual TEST ONLY floor node/shape/world required"
+	if not require_ray: return ""
+	var query := PhysicsRayQueryParameters3D.create(Vector3(0, 0.2, 0), Vector3(0, -0.2, 0), 1)
+	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
+	return "" if not hit.is_empty() and hit.rid == floor_body.get_rid() else "Native ray must hit the exact bound floor RID at restore entry"
+
+func _local_snapshot_error(state: Dictionary) -> String:
+	# Pure: real native lookup on EVERY invocation, no accepted-result receipt.
+	var error: String = _closed_error(state)
+	if not error.is_empty(): return error
+	if is_restore_candidate() and state.marker != constructor_marker:
+		return "Saved marker requires its own exact constructor packet"
+	return _floor_error(is_restore_candidate())
+
+func _local_snapshot_error_with_player(state: Dictionary, _saved_player: Dictionary) -> String:
+	return _local_snapshot_error(state)
+
+func _restore_local_state(state: Dictionary) -> void:
+	marker = state.marker
+	clock_s = state.clock_s
+	quiet_commits += 1
+	commit_ids.append(get_instance_id())
+
+func authority_wire() -> String:
+	return var_to_bytes([Exact.stringify(_capture_local_state()), Exact.stringify(hero.snapshot_state()), hero.global_transform, hero.velocity, hero.get_world_action_clock(), hero.get_world_action_records(), floor_body.get_instance_id(), floor_body.get_rid(), floor_collision.get_instance_id(), floor_shape.get_instance_id(), floor_body.global_transform, floor_collision.global_transform, floor_shape.size, floor_collision.disabled, floor_body.collision_layer, floor_body.collision_mask, normal_entries, restore_entries, quiet_commits]).hex_encode()
+
+static func reset_observers() -> void:
+	created.clear()
+	destroyed_ids.clear()
+	entry_events.clear()
+	commit_ids.clear()
+	raw_ready_observer = Callable()
+	entry_observer = Callable()
+	reject_next_entry = false
