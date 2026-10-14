@@ -1,10 +1,10 @@
 extends SceneTree
-## INERT Shared57 adapter derivative: no parse/import/native/Act3-repair credit.
+## Focused Shared58 TEST adapter; original Shared57 failures remain preserved.
 ## Exact baseline be9662fe38cbe32ae63d96424e978ac0409c70b0f80504a4c92b9e6e5723512c.
-## Published Shell29c73f78 / Level27fdab66; owner adoption/execution separate.
+## Published Shellf8df3b79 / Level27fdab66; owner adoption/execution separate.
 ## Planned TEST path tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd.
 ## Logical A1-L1 substitution only; actual Shell Hero and native ordinary lunge.
-## ONE TEST bridge maps exact published75e547f4 via observing Shell subclass.
+## ONE TEST bridge maps exact published6d5b8b45 via observing Shell subclass.
 ## No sync validator await, PhysicsServer step, saved-result cache or pose seed.
 const Shell = preload("res://scripts/campaign/shell.gd")
 const ObservingShell = preload("res://tests/acts/act2/shared_support/fresh_world_lunge_observing_shell.gd")
@@ -22,13 +22,13 @@ const MAX_FRAMES: int = 240
 class FreshPreparationBridge:
 	extends RefCounted
 	const API: String = "fresh-world-shell-test-bridge-1"
-	const PUBLICATION: String = "75e547f4de684e53e450ed9a8ad4fac149bee8b2"
+	const PUBLICATION: String = "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e"
 	var receipts: Array[Dictionary] = []
 	func dispatch(operation: String, payload: Dictionary = {}) -> Dictionary:
 		if operation == "capabilities":
-			var pins: bool = FileAccess.get_sha256("res://scripts/campaign/shell.gd") == "29c73f78ebf1d48545539aa3a8ffc506773b402fc2a8f075be24d14de36eed31" and FileAccess.get_sha256("res://scripts/campaign/level.gd") == "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1" and FileAccess.get_sha256("res://tests/acts/act2/shared_support/fresh_world_lunge_level.gd") == "04355d9f3dca7e16bd0fde1533f3d43e115997b4c2f396658f7afc1be2b98d2d" and FileAccess.get_sha256("res://tests/acts/act2/shared_support/fresh_world_lunge_level.tscn") == "7ef85ead7ea1160bcee724cca1078c8a2b86e709e9ae91dedd72479eaea41b05"
+			var pins: bool = FileAccess.get_sha256("res://scripts/campaign/shell.gd") == "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f" and FileAccess.get_sha256("res://scripts/campaign/level.gd") == "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1" and FileAccess.get_sha256("res://tests/acts/act2/shared_support/fresh_world_lunge_level.gd") == "04355d9f3dca7e16bd0fde1533f3d43e115997b4c2f396658f7afc1be2b98d2d" and FileAccess.get_sha256("res://tests/acts/act2/shared_support/fresh_world_lunge_level.tscn") == "7ef85ead7ea1160bcee724cca1078c8a2b86e709e9ae91dedd72479eaea41b05"
 			pins = pins and CinderLevel.RESTORE_REGISTRATION_API_REVISION == "level-restore-registration-1" and ObservingShell.TEST_BRIDGE_API == API
-			return {"api_revision": API, "performed": pins, "registration_observer": pins, "isolated_validation": pins, "pending_control": pins, "reason": "Exact published source/host pins required" if not pins else "Published57 TEST adapter source present"}
+			return {"api_revision": API, "performed": pins, "registration_observer": pins, "isolated_validation": pins, "pending_control": pins, "reason": "Exact published source/host pins required" if not pins else "Published58 TEST adapter source present"}
 		var shell: CinderCampaignShell = payload.get("shell") as CinderCampaignShell
 		if not is_instance_valid(shell) or shell.get_script() != ObservingShell:
 			return {"api_revision": API, "performed": false, "reason": "Actual observing Shell subclass required; no set_script retrofit"}
@@ -121,9 +121,12 @@ func _run() -> void:
 	_shell.menu.resume_requested.emit()
 	if not await _until_stable(): _finish(); return
 	_shell.request_pause(); await _settle()
+	if not _expect_actual_operation_success("first public physics-origin pause"): _finish(); return
 	if not _expect(_shell.active_level.call("test_checkpoint"), "public host requests actual pristine idle checkpoint"): _finish(); return
 	await _settle() # checkpoint transaction legitimately may auto-resume
+	if not _expect_actual_operation_success("public idle checkpoint transaction"): _finish(); return
 	_shell.request_pause(); await _settle()
+	if not _expect_actual_operation_success("final checkpoint pause before full tuple"): _finish(); return
 	var checkpoint: Dictionary = _shell.attempts.state().story.checkpoint.duplicate(true)
 	var checkpoint_live: Dictionary = _shell.capture_campaign_snapshot()
 	var checkpoint_leases: Variant = checkpoint.get("level", {}).get("local", {}).get("scheduler", {}).get("reservations")
@@ -200,6 +203,13 @@ func _new_shell() -> bool:
 	if not _expect(_bridge_result(attached), "actual observing subclass attaches raw/registered/entered/committed receipts BEFORE startup load"): return false
 	_events.clear(); _watch = true; root.add_child(_shell); await _settle(); _watch = false
 	return _expect(paused and _shell.player == null and _shell.menu.page_name() == "title" and _shell.campaign_error.is_empty() and _events.is_empty(), "fresh Title validates full saved packets with NULL installed Hero: " + _shell.campaign_error + str(_events))
+
+func _expect_actual_operation_success(label: String) -> bool:
+	var failed: Variant = _shell.get("_failed_operations")
+	var okay: bool = _shell.campaign_error.is_empty() and failed is Array and failed.is_empty()
+	if not _expect(okay, label + " has empty actual campaign_error and failed_operations"):
+		print("Fresh-world actual operation refusal diagnostic: ", Exact.stringify({"operation": label, "campaign_error": _shell.campaign_error, "failed_operations": failed, "registration_guard_trace": _shell.call("test_registration_guard_trace")}))
+	return okay
 
 func _settle() -> void:
 	for _frame: int in range(8): await process_frame
@@ -556,5 +566,5 @@ func _finish() -> void:
 	print("Fresh-world native preparation observations: ", Exact.stringify(_preparation))
 	print("Fresh-world native disposal observations: ", Exact.stringify(_disposals))
 	print("Fresh-world actual TEST bridge receipts: ", Exact.stringify(_bridge.receipts))
-	print("Fresh-world native lunge smoke: %d checks, %d failures; scope_complete=%s; publication=%s; checkpoint_only=%s; published57 observing TEST adapter/controller/loading/format2/Retry/atomic/candidate cleanup scope only; no art/campaign/Act3 repair/performance credit" % [_checks, _failures, str(_scope_complete), _publication, str(_checkpoint_only)])
+	print("Fresh-world native lunge smoke: %d checks, %d failures; scope_complete=%s; publication=%s; checkpoint_only=%s; published58 observing TEST adapter/controller/loading/format2/Retry/atomic/candidate cleanup scope only; no art/campaign/Act3 repair/performance credit" % [_checks, _failures, str(_scope_complete), _publication, str(_checkpoint_only)])
 	quit(2 if not _scope_complete and _failures == 0 else (0 if _scope_complete and _failures == 0 else 1))

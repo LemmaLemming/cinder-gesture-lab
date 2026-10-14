@@ -1,0 +1,49 @@
+{
+  "record": "Shared58 early operation refusal TEST smoke delta independent review",
+  "date": "2026-10-14",
+  "status": "SOURCE_ONLY_NO_CONCRETE_FINDING",
+  "old_smoke": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/fresh_world_lunge_smoke.gd.txt",
+    "sha256": "518ff9ea1efad5614f58c423bdae8274958273cd24a0db48a43f26ab0eb350b6",
+    "bytes": 48586,
+    "lines": 560,
+    "mode": "0o644"
+  },
+  "new_smoke": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd",
+    "sha256": "23b006f8ddb9ae64eeb0d92c2c56600ae357970f626669e6c63ef61e2394428c",
+    "bytes": 49441,
+    "lines": 570,
+    "mode": "0o644"
+  },
+  "actual_shared58_shell": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/shell.gd",
+    "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+    "bytes": 70657,
+    "lines": 1318,
+    "mode": "0o644"
+  },
+  "delta_scope": {
+    "changed_top_level_methods": [
+      "_run",
+      "_finish"
+    ],
+    "added_method": "_expect_actual_operation_success",
+    "all_other_top_level_method_texts_exact": true,
+    "metadata_changes": "Shared58 publication, exact Shell SHA and truthful headers/footer; Level/host/scene pins unchanged"
+  },
+  "confirmed_behavior": [
+    "All three operation-success checks follow the existing settle call and precede the next checkpoint mutation or final full capture.",
+    "Each check requires empty actual campaign_error and actual Array failed_operations; no result/error normalization.",
+    "The failure diagnostic reads retained actual guard trace and existing error/failed-operation state; no added donor, Player, level or campaign snapshot capture.",
+    "Original exact full checkpoint comparison, nonempty, zero admitted lunges and empty native lease assertions are unchanged.",
+    "Original physics/control/proof/negative/cleanup helpers and incomplete checkpoint-only outcome policy remain unchanged.",
+    "Checkpoint-only adds three observations; zero failures still exits incomplete2 and does not claim the full lunge suite."
+  ],
+  "findings": [],
+  "limits": [
+    "Only the installed smoke delta against frozen518f and exact current Shell SHA were reviewed.",
+    "No parser, engine, helper invocation, source edit, adoption inventory or evidence-bank reread.",
+    "No native49-check result, Shared58 behavioral pass or whole-suite acceptance is claimed."
+  ]
+}

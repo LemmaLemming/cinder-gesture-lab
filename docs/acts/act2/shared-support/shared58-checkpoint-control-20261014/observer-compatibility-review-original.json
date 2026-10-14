@@ -1,0 +1,49 @@
+{
+  "record": "Shared57 to58 frozen passive TEST observer compatibility source review",
+  "date": "2026-10-14",
+  "status": "SOURCE_ONLY_NO_CONCRETE_INTERFACE_BLOCKER",
+  "inputs": {
+    "old_shell": {
+      "revision": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+      "path": "scripts/campaign/shell.gd",
+      "sha256": "29c73f78ebf1d48545539aa3a8ffc506773b402fc2a8f075be24d14de36eed31",
+      "bytes": 70063
+    },
+    "new_shell": {
+      "revision": "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e",
+      "path": "scripts/campaign/shell.gd",
+      "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+      "bytes": 70657
+    },
+    "frozen_observer": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/fresh_world_lunge_observing_shell.gd.txt",
+      "sha256": "9453fff7f12bb2147fe101ffbf4d697fa908148ba96f78f07ecd3a7901735871",
+      "bytes": 18299,
+      "lines": 293
+    }
+  },
+  "delta": {
+    "added_lines": 9,
+    "removed_lines": 0,
+    "reverse_single_block_reconstructs_shared57": true,
+    "scope": "_prepare_registration_unlocked only; signatures and existing code preserved"
+  },
+  "compatibility": [
+    "The original internal started timestamp and process frame are retained; total2000ms predicate is not reset.",
+    "Exactly one additional process signal is possible, only when still in-tree/current epoch/not-cancelled and the counter equals the original frame.",
+    "The early additional-wait branch refuses actual lost pause or exceeded original elapsed bound before another await.",
+    "registration_pending remains true and registration_inflight remains owned by the original wrapper across the additional await.",
+    "Original postwait cancellation/in-tree/epoch checks and full disk/donor/Attempts/fresh-candidate/native row guards remain unchanged.",
+    "Frozen observer super calls and guard-return call sequence remain exact; no extra guard query, accepted result cache or semantic validator is added.",
+    "Row markers still precede all postwait guard comparisons; outcome marker remains after the single super preparation call.",
+    "Deferred pending reentry/cancel/disposal observer remains within the pending/inflight phase; sync reentry refusal and isolated candidate custody are not bypassed."
+  ],
+  "interpretation_qualification": "After Shared58, absent later disk/donor calls may follow the new early pause/time rejection or an original earlier compound operand. Shared57-only unique line1181 attribution must not be reused. Both custody-failure call sites dispose the original registration scope before _fail; observer times still do not expose the internal predicate instant or started timestamp.",
+  "findings": [],
+  "limits": [
+    "Read-only exact Git Shell blobs plus frozen observer source only.",
+    "No evidence-bank read, native/parser/engine/helper execution, adoption or source mutation.",
+    "Frozen Shared57 headers and historical source/results keep their original attribution; this is compatibility review, not execution at58.",
+    "No actual failure operand, paused-frame success or performance inference."
+  ]
+}

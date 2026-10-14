@@ -1,0 +1,179 @@
+{
+  "record": "a2-shared58-bounded-runtime-interface-review",
+  "date": "2026-10-14",
+  "author": "/root/b02_native_join",
+  "scope": "Immutable Shared57→58 named runtime/interface delta and exact four owned inert fixture pins only; no adoption, engine, parser, import or evidence/source-bank audit.",
+  "baseline": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+  "publication": "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e",
+  "canonical_response": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/integration/messages/69206f88-4b4e-432b-b0cc-5b90b7e9d365-RESPONSE.json",
+    "sha256": "0ad4efed1438d64b26ba10089abf63ecc3cbc16847b95321425f4947f03043ef",
+    "bytes": 1452
+  },
+  "runtime_pins": [
+    {
+      "ref": "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e",
+      "resource": "scripts/campaign/shell.gd",
+      "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+      "bytes": 70657,
+      "lines": 1318,
+      "git_mode": "100644",
+      "git_blob": "3eaab8960613d0dd44ea430ee34298f4cc0319b5"
+    },
+    {
+      "ref": "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e",
+      "resource": "scripts/campaign/level.gd",
+      "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+      "bytes": 23949,
+      "lines": 524,
+      "git_mode": "100644",
+      "git_blob": "26190244365b603d6019ae7ace50ac394485cf71"
+    },
+    {
+      "ref": "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e",
+      "resource": "scripts/dev/dev.py",
+      "sha256": "27bae2d12920e52d5144600318cf179ef30ae6222f7b33ffaf80250f5ef35a8d",
+      "bytes": 29599,
+      "lines": 592,
+      "git_mode": "100755",
+      "git_blob": "d8c55db196f9de19c4998e8c3e5820f4dd6cb17b"
+    }
+  ],
+  "named_runtime_resource_delta": [
+    "M\tscripts/campaign/shell.gd",
+    "A\ttests/restore_candidate_physics_boundary_smoke.gd",
+    "A\ttests/restore_candidate_physics_boundary_smoke.gd.uid"
+  ],
+  "named_new_resources": [
+    {
+      "ref": "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e",
+      "resource": "tests/restore_candidate_physics_boundary_smoke.gd",
+      "sha256": "754a2a44161ce364cdcab05c35cc1659c4c0167ac35a349f95f88e7ed70130ee",
+      "bytes": 9159,
+      "lines": 143,
+      "git_mode": "100644",
+      "git_blob": "1d9904181c805ca746aeaeec82c4b1966760972a"
+    },
+    {
+      "ref": "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e",
+      "resource": "tests/restore_candidate_physics_boundary_smoke.gd.uid",
+      "sha256": "4ef38111b1f30188a53493b3bd5154e70134aad89997933aa215e719caae40e3",
+      "bytes": 20,
+      "lines": 1,
+      "git_mode": "100644",
+      "git_blob": "b1e3849ee44b184759fdcfd6fce0765f1883c849",
+      "uid": "uid://di0tl4i3t6142"
+    }
+  ],
+  "delta_proof": {
+    "shell_added_lines": 9,
+    "added_block_sha256": "ee78ec5d8f42c3a29c43cb1499d08ffc942282f2fec0d7682804a7f06e09696f",
+    "exact_removal_reconstructs_shared57_shell": true,
+    "level_and_dev_bytes_unchanged": true,
+    "no_shared_signature_or_level_registration_revision_change": true,
+    "full_semantic_validator_bodies_unchanged": true
+  },
+  "source_semantics": [
+    {
+      "fact": "started=Time.get_ticks_msec() and frame=Engine.get_process_frames() remain the original anchors immediately before the first actual await. The additional signal does not reset either anchor or create a new deadline.",
+      "shared58_lines": [
+        1173,
+        1186
+      ]
+    },
+    {
+      "fact": "Only exact same process counter after the first signal, while inside-tree/current epoch/not canceled, permits one additional process_frame signal. A lower or already advanced counter does not take that branch; no loop or arbitrary retry is introduced.",
+      "shared58_lines": [
+        1176,
+        1186
+      ]
+    },
+    {
+      "fact": "Before the optional second wait, lost pause or elapsed>2000 clears pending, disposes registration scope and returns the same actual failure. The final full compound guards retain the original total elapsed anchor.",
+      "shared58_lines": [
+        1180,
+        1192
+      ]
+    },
+    {
+      "fact": "Pending remains true and inflight remains owned by the unchanged outer preparation across the additional wait. After either wait path, missing tree/epoch change/cancellation still disposes and returns false before registration-ready or candidate entry.",
+      "shared58_lines": [
+        1186,
+        1197
+      ]
+    },
+    {
+      "fact": "Final guard order remains paused tree, advanced process counter, original elapsed>2000, exact disk String, exact donor String, exact Attempts String. Full fresh candidate guard and native floor/row processing remain after it. There is no extra disk/donor guard call or semantic validator invocation in the new block.",
+      "shared58_lines": [
+        1190,
+        1200
+      ]
+    }
+  ],
+  "selected_owned_inert_pins": {
+    "observer": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/fresh_world_lunge_observing_shell.gd.txt",
+      "sha256": "9453fff7f12bb2147fe101ffbf4d697fa908148ba96f78f07ecd3a7901735871",
+      "bytes": 18299
+    },
+    "smoke": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/fresh_world_lunge_smoke.gd.txt",
+      "sha256": "518ff9ea1efad5614f58c423bdae8274958273cd24a0db48a43f26ab0eb350b6",
+      "bytes": 48586
+    },
+    "host": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/preparation-20261013/drafts/fresh_world_lunge_level.gd.txt",
+      "sha256": "04355d9f3dca7e16bd0fde1533f3d43e115997b4c2f396658f7afc1be2b98d2d",
+      "bytes": 31283
+    },
+    "scene": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/preparation-20261013/drafts/fresh_world_lunge_level.tscn.txt",
+      "sha256": "7ef85ead7ea1160bcee724cca1078c8a2b86e709e9ae91dedd72479eaea41b05",
+      "bytes": 421
+    }
+  },
+  "compatibility": {
+    "observer9453": "All inherited signatures and actual super guard call-once/return-exact-String behavior remain valid. Extra wait supplies no extra guard returns or row events; scope/row bracketing remains conservative. Pending callbacks still observe actual native pending/inflight and may cancel/dispose/reenter during the additional wait.",
+    "host0435_scene7ef": "Unchanged Level API and constructor/entry/floor/native Scheduler interface preserve these exact sources; no new host/scene seam is required by this shared delta.",
+    "smoke518f_lifecycle": "Bounded settle and actual native/preparation assertions accommodate the additional signal. Full packet validation, original independent WeakRefs, raw faults, native source/Scheduler lifecycle, distinct installation and callbacks remain inherited unchanged.",
+    "test_pin_update_required": {
+      "file": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/fresh_world_lunge_smoke.gd.txt",
+      "lines": [
+        4,
+        25,
+        29,
+        99
+      ],
+      "reason": "Original TEST capabilities correctly require Shared57 publication and ShellSHA29c73f78. Against Shared58 they refuse until a bounded Root-owned derivative updates exact publication and Shell digest plus descriptive attribution.",
+      "new_publication": "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e",
+      "new_shell_sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+      "retained_level_host_scene_pins": true,
+      "reviewer_edited": false
+    },
+    "root_direct_control_assertion": "Canonical direction requires actual campaign_error empty and failed_operations empty before full tuple comparison in the smallest checkpoint control. This is a pending Root-owned TEST derivative; no new fixture delta was reviewed here."
+  },
+  "interpretation_qualification": {
+    "same_error_now_two_sites": true,
+    "fact": "Shared57 generic compound call-site inference applies only to original57 evidence. Shared58 also emits the same error before the second wait on lost pause/internal elapsed. Missing later guards remain UNOBSERVED and cannot select either site or a precise operand from outer/fail timestamps.",
+    "decoder": "43ed433c compares only actual observed same-scope String pairs and makes no timer/frame/predicate claim; no helper change is required for this source addition."
+  },
+  "independent_source_peer": {
+    "path": "/private/tmp/a2_fresh_world_shared58_observer_compatibility_source_review_20261014.json",
+    "sha256": "db3c524161960b8d6fd171af99e02099bf08a68953cc7f077af2dbf22dea7967",
+    "bytes": 3187
+  },
+  "findings": [
+    {
+      "kind": "required TEST publication pin update",
+      "severity": "execution prerequisite",
+      "status": "Root-owned bounded derivative required; not a production defect"
+    }
+  ],
+  "verdict": "No concrete shared runtime/interface or observer lifecycle blocker found in the bounded static delta; preserve-adoption and actual affected native execution remain separate.",
+  "limits": [
+    "No native result verified or credited by this review. Canonical response reported tiny paired23/0/selected22/0/core96/0/startup21/0; original evidence was not re-audited here.",
+    "No Act3 cause attribution follows from this repair.",
+    "No accepted-level, prior Shell71 or whole campaign rerun.",
+    "No actual adoption/merge/UID cache change by reviewer."
+  ]
+}
