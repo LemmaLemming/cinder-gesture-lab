@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: exact existing paths resolve to actual cached Script resources before construction
+PASS: before instances, SAME cached production Actor/Route and unchanged Protocol have exact current pins
+PASS: Root supplies the exact pinned original Route text, without reconstructed bytes
+PASS: isolated child starts without another observer metadata owner
+PASS: exact two original prepare call sites each occur once in their production method
+PASS: only passive hooks are inserted AFTER original calls; every guard, return and prepare call remains byte exact
+PASS: same cached Route compiles original pinned baseline in memory, with unchanged disk and resource identity
+PASS: same cached Actor compiles both exact passive observer insertions before any game instance
+CP2_ADMISSION_DIAGNOSTIC: {"api_revision":"exact-json-1","schema_version":1,"value":["dictionary",[["actor_disk",["string","a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932"]],["actor_memory_observed",["string","d3d511657002f503f19dbc774dd5400db2fb68a31877619f1d0eebfda1c4e03a"]],["actor_memory_original",["string","a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932"]],["actor_resource_id",["string","-9223371983738108458"]],["elapsed_wall_us",["integer","207244"]],["event",["string","dynamic_resource_pins"]],["parse_only",["boolean",true]],["protocol",["string","a01b5481e3d06f64f65973fff075c4cbe622e4a1129c1646ee228c103b8523b5"]],["route_disk",["string","985a474fa65670dfac21e1dc3869d40d448119d896ca5a4a92c0a36ad2a51dad"]],["route_memory_baseline",["string","2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a"]],["route_resource_id",["string","-9223371985550047706"]]]]}
+PASS: after synchronous Shell free, original cached Actor source reloads with exact identity/hash
+PASS: after synchronous Shell free, original cached current Route source reloads with exact identity/hash
+PASS: observer metadata is removed and original production Actor/Route/Protocol disk bytes remain exact
+PASS: all actual diagnostic rows are losslessly representable: 
+CP2 native admission diagnostic: 12 checks, 0 failures; scope_complete=true; outcome=dynamic_observers_compiled_without_instances_or_save_seed; parse_observers_only=true; native_physics_process_await_pairs=0/16; finite passive window only, catch-up tail separately recorded; no full-route/performance/campaign acceptance claim.
