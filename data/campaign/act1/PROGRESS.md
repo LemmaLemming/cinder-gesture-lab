@@ -1,5 +1,7 @@
 # Act 1 — current progress
 
+Current O2 functional source is authored at the owned host/scene/first mechanics fixture; first import and focused native check are next. Full aggregate transport remains deliberately refused pending implementation. O1 remains accepted, Act1 6/8, O3 follows O2 acceptance. No new runtime, save or portrait result is implied.
+
 ## O1 accepted and adopted; O2 source preparation begins — 14 October 2026
 
 Canonical ACCEPTED2a6a13b3 independently registers O1 at55c9994c, Root22/0 clean/import+parser0/177 selected inputs exact, reusing original authored49/0 and paused74/0 with all original failed/nonclean/visual/full-playthrough limits. Act1 **6/8**, campaign **19/24**. Actual preserving adoption **922db94a** (parentsa41ea5cd/55c9994c), ACKf3107f83, Shared60. Receipt SHA37fb94b8e651e468b2d953ace146dfc13db4cf5a473e994854f6693caaff1265: six owned Git trees/thirteen named physical files/three settings/184 incoming blobs exact; sole new genuine Root registration-testUID retained, no previous Git UID changes. No engine/import rerun for adoption.
