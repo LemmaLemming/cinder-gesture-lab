@@ -54,6 +54,9 @@ func _run() -> void:
 	game = MainScene.instantiate()
 	game.set("level_scene_path", LEVEL_PATH)
 	root.add_child(game)
+	# Main.reset_lab unpauses during synchronous ready. Re-latch here before
+	# yielding any process/physics frame; retain exact pristine spawn/clock checks.
+	paused = true
 	await process_frame
 	await process_frame
 	level = game.get("active_level") as CinderLevel
