@@ -1,0 +1,11 @@
+# Fresh native collision discovery experiment
+
+The measured shared frame-cost bottleneck includes repeated traversal of the scene tree while constructing fresh collision signatures. An isolated alternative now passes **118 native correctness checks**, with a clean parser and unchanged selected inputs. [Original sources, logs and manifests](evidence/native-discovery-experiment/index.json) preserve the actual run. Production Route and Protocol remain unchanged; no performance benefit is established.
+
+The candidate uses a fresh untyped native `find_children` call, filters native collision classes, excludes internal ancestor edges and restores the original reverse-sibling traversal order. It retains no membership or geometry between calls. All downstream collider, shape, world, property, sorting and codec checks remain literal, including the existing 256-collider limit.
+
+The differential compares exact native instance order and complete signatures against the original implementation on the same live world. Cases include scripted subclasses, ordinary and internal descendants, internal shape owners, foreign worlds, generated and moving scenery, ignored layers, reparenting, shape mutations, deletion, error precedence, 256 supported colliders and refusal at 257. These are real native nodes and shapes; they do not constitute an authored level test or a speed measurement.
+
+Native recursion and full materialization can consume resources before the original iterative traversal would return. The fallback handles an observed ancestry inconsistency after enumeration, not stack exhaustion, out-of-memory or arbitrary native-extension observers. Those limits remain explicit; the candidate is experimental.
+
+The next step is a bounded original/candidate comparison using the existing eight-physics-frame Crossed timing fixture, retaining complete nineteen-actor/Player/Scheduler packet equality and native witnesses. Use fixed A–B–B–A order and report start/end camera differences separately. Previous inconsistent codec timings remain separate evidence; they supply no benefit claim for this discovery candidate. Only a measured, reviewed improvement with the required semantic checks would justify production selection.

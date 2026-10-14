@@ -1,0 +1,24 @@
+{
+  "classification": "environment: graphical startup focus unavailable",
+  "original_result": ".cinder/a1-l5-saved-portrait-production03.json",
+  "result_sha256": "ffdcf7021a1038af027ba8881bcbbbf89cd463833075b74eaaff09d4c2b2034e",
+  "tested_revision": "84e8dbd804f8baaec0268ba618668675416740d4",
+  "api_revision": "campaign-shared-57",
+  "first_failure": {
+    "campaign_error": "Shell absent",
+    "label": "genuine startup focus stable200ms required",
+    "operation": "setup",
+    "paused": false
+  },
+  "checks": 4,
+  "failures": 1,
+  "captures": 0,
+  "frozen_inputs_unchanged": 865,
+  "all_prior_active_uids_unchanged": 493,
+  "computer_use_observation": {
+    "tool": "mcp__cua_repl.js",
+    "call": "await cua.getApp(\"Godot\")",
+    "actual_result": "The Mac is locked and automatic unlock could not unlock it. Ask the user to unlock the Mac manually before continuing."
+  },
+  "next_action": "Wait for actual manual unlock before another graphical attempt. No gameplay/guard relaxation or forced focus/resume. Preserve-adopt available Shared58 while waiting; prior119/80 remain valid by explicit Integration response."
+}

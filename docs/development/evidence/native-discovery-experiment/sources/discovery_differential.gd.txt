@@ -1,0 +1,346 @@
+extends SceneTree
+## SOURCE ONLY: Integration freezes and runs through the canonical dev.py queue.
+## Optional native recursion experiment; no production source is selected.
+## Both trusted retained Route copies are compiled without only class_name,
+## avoiding global-class duplication. No production source is selected.
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const BASE: String = "res://.cinder/spore-native-discovery-prep/"
+var original: GDScript
+var candidate: GDScript
+const ORIGINAL_SHA: String = "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a"
+const CANDIDATE_SHA: String = "985a474fa65670dfac21e1dc3869d40d448119d896ca5a4a92c0a36ad2a51dad"
+var checks: int = 0
+var failures: int = 0
+
+
+class DecorativeSubclass extends Node3D:
+	pass
+
+
+class StaticSubclass extends StaticBody3D:
+	pass
+
+
+class GridSubclass extends GridMap:
+	pass
+
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+
+func _run() -> void:
+	original = _trusted_script("repulsion_route.original.gd.txt")
+	candidate = _trusted_script("repulsion_route.candidate.gd.txt")
+	if original == null or candidate == null:
+		_finish()
+		return
+	paused = true
+	_order_cases()
+	var world := Node3D.new()
+	world.name = "FilterDifferentialWorld"
+	root.add_child(world)
+	_box(world, "Floor")
+	var original_empty: Dictionary = _pair(world, "plain native static body", "", 1)
+	var wrapper := DecorativeSubclass.new()
+	wrapper.name = "DecorativeWrapper"
+	world.add_child(wrapper)
+	var nonspatial := Node.new()
+	nonspatial.name = "NonspatialWrapper"
+	wrapper.add_child(nonspatial)
+	_box(nonspatial, "NestedSubclass", true)
+	for index: int in range(800):
+		var decoration: Node3D
+		match index % 3:
+			0: decoration = DecorativeSubclass.new()
+			1: decoration = MeshInstance3D.new()
+			_: decoration = Area3D.new()
+		decoration.name = "Decoration%d" % index
+		wrapper.add_child(decoration)
+	var decorated: Dictionary = _pair(world, "800 ignored nodes retain nested subclass collider", "", 2)
+	_expect(not original_empty.is_empty() and decorated.get("signature", {}).get("colliders", []).size() == 2, "child enumeration survives both ignored spatial and nonspatial wrappers")
+
+	var foreign := SubViewport.new()
+	foreign.name = "ForeignWorldViewport"
+	foreign.size = Vector2i(16, 16)
+	foreign.own_world_3d = true
+	root.add_child(foreign)
+	var foreign_root := Node3D.new()
+	foreign_root.name = "ForeignRoot"
+	foreign.add_child(foreign_root)
+	var moving_foreign := _box(foreign_root, "ForeignMovingBody")
+	moving_foreign.constant_linear_velocity = Vector3.RIGHT
+	var foreign_grid := GridSubclass.new()
+	foreign_grid.name = "ForeignGrid"
+	foreign_root.add_child(foreign_grid)
+	var foreign_csg := CSGBox3D.new()
+	foreign_csg.name = "ForeignCSG"
+	foreign_csg.use_collision = true
+	foreign_root.add_child(foreign_csg)
+	_expect(foreign_root.get_world_3d() != world.get_world_3d(), "foreign-world refusal control uses an actual distinct World3D")
+	_pair(world, "foreign relevant descendants remain ignored by same-world guard", "", 2)
+	foreign.free()
+
+	var csg := CSGBox3D.new()
+	csg.name = "NativeCSG"
+	world.add_child(csg)
+	csg.use_collision = false
+	_pair(world, "same-world CSG without collision", "", 2)
+	csg.use_collision = true
+	_pair(world, "same-world CSG collision still rejects", "Generated scenery collision has no supported stable signature")
+	csg.free()
+	var grid := GridSubclass.new()
+	grid.name = "NativeGridSubclass"
+	world.add_child(grid)
+	_pair(world, "same-world empty GridMap subclass still rejects", "Generated scenery collision has no supported stable signature")
+	grid.free()
+
+	var external := _box(root, "OutsideAuthoredRoot")
+	_pair(world, "full SceneTree still discovers same-world external body", "Every scenery blocker must be a fixed static body under world_root")
+	external.free()
+	var dynamic := CharacterBody3D.new()
+	dynamic.name = "DynamicScenery"
+	dynamic.collision_layer = 1
+	world.add_child(dynamic)
+	_pair(world, "same-world dynamic scenery still rejects", "Every scenery blocker must be a fixed static body under world_root")
+	dynamic.collision_layer = 2
+	_pair(world, "non-scenery body still respects layer filtering", "", 2)
+	dynamic.free()
+	var animated := AnimatableBody3D.new()
+	animated.name = "AnimatedScenery"
+	animated.collision_layer = 1
+	world.add_child(animated)
+	_pair(world, "same-world AnimatableBody still rejects", "Every scenery blocker must be a fixed static body under world_root")
+	animated.free()
+
+	var floor_body: StaticBody3D = world.get_node("Floor")
+	floor_body.constant_linear_velocity = Vector3.RIGHT
+	_pair(world, "actual static velocity getter remains effective", "Moving/removed static scenery is unsupported")
+	floor_body.constant_linear_velocity = Vector3.ZERO
+	var shape: BoxShape3D = (floor_body.get_node("Collision") as CollisionShape3D).shape
+	var old_size: Vector3 = shape.size
+	shape.size = Vector3(3.0, 1.0, 2.0)
+	var mutated: Dictionary = _pair(world, "actual shape getter remains fresh", "", 2)
+	_expect(Exact.stringify(mutated) != Exact.stringify(decorated), "genuine shape mutation cannot return a retained earlier signature")
+	shape.size = old_size
+	var unsupported := _box(world, "UnsupportedShape")
+	(unsupported.get_node("Collision") as CollisionShape3D).shape = WorldBoundaryShape3D.new()
+	_pair(world, "unsupported relevant shape still rejects", "Unsupported immutable scenery shape")
+	unsupported.free()
+	var removed := _box(world, "QueuedScenery")
+	removed.queue_free()
+	_pair(world, "queued relevant body still rejects before shape reads", "Moving/removed static scenery is unsupported")
+	await process_frame
+	_pair(world, "cleaned SceneTree returns the original decorated signature", "", 2)
+	world.free()
+	await process_frame
+	_signature_cases()
+	_limit_cases()
+	await process_frame
+	_finish()
+
+
+func _order(search_root: Node, label: String, expected: Array = []) -> void:
+	# Literal original discovery prefix plus native-class projection only.
+	# The separate full original Route below remains the signature/error oracle.
+	var pending: Array[Node] = [search_root]
+	var original_ids: Array[int] = []
+	while not pending.is_empty():
+		var node: Node = pending.pop_back()
+		pending.append_array(node.get_children())
+		if node is PhysicsBody3D or node is GridMap or node is CSGShape3D:
+			original_ids.append(node.get_instance_id())
+	var actual: Array = candidate.call("_collision_candidates", search_root)
+	var actual_ids: Array[int] = []
+	for node: Node in actual:
+		actual_ids.append(node.get_instance_id())
+	_expect(actual_ids == original_ids, label + " preserves exact native candidate IDs and preorder")
+	if not expected.is_empty():
+		var expected_ids: Array[int] = []
+		for node: Node in expected:
+			expected_ids.append(node.get_instance_id())
+		_expect(original_ids == expected_ids, label + " exercises the explicitly authored original order")
+
+
+func _order_cases() -> void:
+	var search_root: StaticBody3D = _box(root, "CandidateSearchRoot", true)
+	var left := Node3D.new()
+	left.name = "Left"
+	search_root.add_child(left)
+	var left_a: StaticBody3D = _box(left, "A")
+	var left_b: StaticBody3D = _box(left, "B", true)
+	var middle: StaticBody3D = _box(search_root, "Middle")
+	var middle_grid := GridSubclass.new()
+	middle_grid.name = "MiddleGrid"
+	middle.add_child(middle_grid)
+	var right := Node.new()
+	right.name = "Right"
+	search_root.add_child(right)
+	var right_parent: StaticBody3D = _box(right, "Parent")
+	var right_child := CSGBox3D.new()
+	right_child.name = "CSGChild"
+	right_child.use_collision = false
+	right_parent.add_child(right_child)
+	var front := StaticBody3D.new()
+	front.name = "InternalFront"
+	search_root.add_child(front, false, Node.INTERNAL_MODE_FRONT)
+	var front_child: StaticBody3D = _box(front, "OrdinaryDescendant")
+	front_child.constant_linear_velocity = Vector3.RIGHT
+	var back := Node3D.new()
+	back.name = "InternalBack"
+	search_root.add_child(back, false, Node.INTERNAL_MODE_BACK)
+	var hidden_csg := CSGBox3D.new()
+	hidden_csg.name = "OrdinaryCSGDescendant"
+	hidden_csg.use_collision = true
+	back.add_child(hidden_csg)
+	var hidden_branch := Node.new()
+	hidden_branch.name = "NestedInternal"
+	right.add_child(hidden_branch, false, Node.INTERNAL_MODE_FRONT)
+	_box(hidden_branch, "HiddenUnderOrdinaryBranch")
+	_order(search_root, "root candidate, nested subclasses, internal FRONT/BACK ancestry", [search_root, right_parent, right_child, middle, middle_grid, left_b, left_a])
+	_order(front, "explicit internal search root is itself included", [front, front_child])
+	_expect(left_a.owner == null and left_b.owner == null and right_parent.owner == null, "ownerless candidates genuinely exercise owned=false")
+	search_root.move_child(left, -1)
+	_order(search_root, "fresh sibling reorder", [search_root, left_b, left_a, right_parent, right_child, middle, middle_grid])
+	search_root.free()
+
+
+func _signature_cases() -> void:
+	var world := Node3D.new()
+	world.name = "SignatureCases"
+	root.add_child(world)
+	var visible: StaticBody3D = _box(world, "Visible")
+	var internal_shape := CollisionShape3D.new()
+	internal_shape.name = "InternalOwnedShape"
+	internal_shape.shape = SphereShape3D.new()
+	visible.add_child(internal_shape, false, Node.INTERNAL_MODE_BACK)
+	var hidden := Node3D.new()
+	hidden.name = "HiddenAncestor"
+	world.add_child(hidden, false, Node.INTERNAL_MODE_FRONT)
+	var hidden_grid := GridMap.new()
+	hidden_grid.name = "HiddenGrid"
+	hidden.add_child(hidden_grid)
+	var initial: Dictionary = _pair(world, "internal body ancestry is pruned but internal shape owner remains", "", 1)
+	_expect(_first_shape_count(initial) == 2, "ordinary StaticBody retains both actual shape owners including internal CollisionShape")
+
+	var parent_body: StaticBody3D = _box(world, "UnsupportedParent")
+	(parent_body.get_node("Collision") as CollisionShape3D).shape = WorldBoundaryShape3D.new()
+	var child_grid := GridMap.new()
+	child_grid.name = "RejectedChild"
+	parent_body.add_child(child_grid)
+	_pair(world, "parent shape failure precedes generated-collision child", "Unsupported immutable scenery shape")
+	parent_body.free()
+	var moving: StaticBody3D = _box(world, "MovingLeft")
+	moving.constant_linear_velocity = Vector3.RIGHT
+	var grid := GridMap.new()
+	grid.name = "GeneratedRight"
+	world.add_child(grid)
+	_pair(world, "later sibling generated failure wins", "Generated scenery collision has no supported stable signature")
+	world.move_child(moving, -1)
+	_pair(world, "reordered later sibling moving failure wins", "Moving/removed static scenery is unsupported")
+	moving.free()
+	grid.free()
+
+	visible.collision_layer = 0
+	_pair(world, "fresh layer-zero candidate is discovered but omitted by original property guard", "", 0)
+	visible.collision_layer = 1
+	internal_shape.disabled = true
+	var disabled: Dictionary = _pair(world, "fresh disabled shape owner is omitted", "", 1)
+	_expect(_first_shape_count(disabled) == 1, "disable changed actual shape-owner enumeration")
+	internal_shape.disabled = false
+	var box: BoxShape3D = (visible.get_node("Collision") as CollisionShape3D).shape
+	box.size = Vector3(5, 2, 3)
+	visible.position = Vector3(2, 0, 1)
+	var changed: Dictionary = _pair(world, "fresh shape and transform mutation", "", 1)
+	_expect(Exact.stringify(initial) != Exact.stringify(changed), "changed native properties cannot reuse earlier signature")
+	visible.reparent(root)
+	_pair(world, "fresh same-world reparent outside authored root", "Every scenery blocker must be a fixed static body under world_root")
+	_expect(visible.get_parent() == root and box.size == Vector3(5, 2, 3) and not internal_shape.disabled, "both queries preserve actual mutated hierarchy, shape and disabled state")
+	visible.reparent(world)
+	_pair(world, "fresh reparent back restores valid membership", "", 1)
+	world.free()
+
+
+func _limit_cases() -> void:
+	var world := Node3D.new()
+	world.name = "LimitCases"
+	root.add_child(world)
+	# This earlier child is deliberately reached only after all later bodies.
+	var late_grid := GridMap.new()
+	late_grid.name = "LastVisitedGenerated"
+	world.add_child(late_grid)
+	for index: int in range(256):
+		_box(world, "Body%03d" % index)
+	# Remove it from the whole SceneTree for the exact 256 success case.
+	world.remove_child(late_grid)
+	_pair(world, "exactly 256 accepted colliders remains supported", "", 256)
+	var extra: StaticBody3D = _box(world, "Body256")
+	_pair(world, "257 accepted colliders preserves original production bound", "Supported world exceeds 256 scenery colliders")
+	world.add_child(late_grid)
+	world.move_child(late_grid, 0)
+	_pair(world, "257th accepted collider precedes later generated offender", "Supported world exceeds 256 scenery colliders")
+	world.move_child(late_grid, -1)
+	_pair(world, "generated offender precedes 257th accepted collider", "Generated scenery collision has no supported stable signature")
+	_expect(extra.get_parent() == world and world.get_child_count(false) == 258, "queries preserve all 257 actual bodies and competing offender")
+	world.free()
+
+
+func _first_shape_count(result: Dictionary) -> int:
+	var colliders: Array = result.get("signature", {}).get("colliders", [])
+	return colliders[0].get("shapes", []).size() if colliders.size() == 1 else -1
+
+
+func _trusted_script(filename: String) -> GDScript:
+	var expected: String = ORIGINAL_SHA if filename == "repulsion_route.original.gd.txt" else CANDIDATE_SHA
+	var hash_ok: bool = FileAccess.get_sha256(BASE + filename) == expected
+	_expect(hash_ok, "trusted full Route file matches its sealed source hash")
+	if not hash_ok: return null
+	var text: String = FileAccess.get_file_as_string(BASE + filename)
+	var declaration: String = "class_name CinderRepulsionRoute\n"
+	_expect(text.begins_with(declaration), "retained Route starts with its exact one-line class declaration")
+	if not text.begins_with(declaration): return null
+	var script := GDScript.new()
+	script.source_code = text.substr(declaration.length())
+	var error: Error = script.reload()
+	_expect(error == OK, "trusted retained Route compiles after only removal of global class registration")
+	return script if error == OK else null
+
+
+func _pair(world: Node3D, label: String, expected_error: String, collider_count: int = -1) -> Dictionary:
+	_order(root, label)
+	var left: Dictionary = original.call("_collision_signature", world, world)
+	var right: Dictionary = candidate.call("_collision_signature", world, world)
+	var left_wire: String = Exact.stringify(left)
+	var right_wire: String = Exact.stringify(right)
+	_expect(not left_wire.is_empty() and not right_wire.is_empty() and left_wire == right_wire, label + " retains full exact original result/error")
+	_expect(left.get("error", "") == expected_error and (left.has("signature") if expected_error.is_empty() else not left.has("signature")), label + " exercises its concrete original branch")
+	if collider_count >= 0:
+		_expect(left.get("signature", {}).get("colliders", []).size() == collider_count, label + " retains each genuine scenery collider")
+	return left
+
+
+func _box(parent: Node, name: String, scripted: bool = false) -> StaticBody3D:
+	var body: StaticBody3D = StaticSubclass.new() if scripted else StaticBody3D.new()
+	body.name = name
+	body.collision_layer = 1
+	body.collision_mask = 0
+	var collision := CollisionShape3D.new()
+	collision.name = "Collision"
+	var box := BoxShape3D.new()
+	box.size = Vector3(2.0, 1.0, 2.0)
+	collision.shape = box
+	body.add_child(collision)
+	parent.add_child(body)
+	return body
+
+
+func _expect(ok: bool, label: String) -> void:
+	checks += 1
+	if not ok:
+		failures += 1
+		push_error(label)
+
+
+func _finish() -> void:
+	print("Untyped native discovery exact differential: %d checks, %d failures; signatures only, no performance or gameplay credit" % [checks, failures])
+	quit(0 if failures == 0 else 1)

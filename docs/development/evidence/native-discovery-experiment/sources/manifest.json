@@ -1,0 +1,69 @@
+{
+  "status": "INERT_SOURCE_ONLY_UNPARSED_UNEXECUTED",
+  "date": "2026-10-14",
+  "files": {
+    "README.md": {
+      "bytes": 4722,
+      "sha256": "4d5e17293bb810f33ef9505421e7e60eafb8c807f789233d5ab9fdce6f21c690"
+    },
+    "candidate.patch": {
+      "bytes": 3435,
+      "sha256": "1cd210bf8c14f7991c646983a4dce34dcd6265d91e9329e30270def4e2192968"
+    },
+    "collector.gd.txt": {
+      "bytes": 2182,
+      "sha256": "3e34be8775b2c705a01cbce336ef5ce7bded8a5266ea2a7b2dd50a0485f114e5"
+    },
+    "discovery_differential.gd": {
+      "bytes": 15665,
+      "sha256": "42aab771a3bfdeb0ecd1576d35c6753d56c4f4949647d63f0e86c8a8b8051e15"
+    },
+    "repulsion_route.candidate.gd.txt": {
+      "bytes": 38725,
+      "sha256": "985a474fa65670dfac21e1dc3869d40d448119d896ca5a4a92c0a36ad2a51dad"
+    },
+    "repulsion_route.original.gd.txt": {
+      "bytes": 36641,
+      "sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a"
+    }
+  },
+  "original_production": {
+    "path": "scripts/combat/repulsion_route.gd",
+    "sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+    "unchanged": true
+  },
+  "source_checks": {
+    "inverse_exact": true,
+    "downstream_guard_suffix_literal_equal": true,
+    "downstream_guard_suffix_sha256": "d74182c2978ee06275b29921eb5d127c462cd4c27b6a032f951bbc7c9a7473f5",
+    "existing_256_collider_limit_unchanged": true,
+    "added_visit_or_depth_limit": false,
+    "fixture_source_hash_pins_match": true
+  },
+  "fixture_starting_source": {
+    "path": ".cinder/collision-traversal-filter/collision_filter_differential.gd",
+    "sha256": "e70842222bcf896c549bf4b0aae64196ef0334c920c941ce0650a96e035369db",
+    "prior_native_results_not_transferred": true
+  },
+  "native_claims": {
+    "parsed": false,
+    "executed": false,
+    "performance_measured": false,
+    "production_selected": false
+  },
+  "limitations": [
+    "Optional experiment: native recursive traversal/full materialization differs from original iterative/early-return resource behavior.",
+    "Fallback handles unexpected ancestry/edge inconsistency only after native return, not stack exhaustion/OOM/wrong-thread failure.",
+    "No forced inconsistent-ancestry test, arbitrary ScriptExtension/native observer proof, or runtime outcome."
+  ],
+  "write_scope": ".cinder/spore-native-discovery-prep",
+  "source_peer_review": {
+    "agent": "/root/sampled_restore_diagnosis",
+    "status": "No concrete parser/API defect identified by source inspection; engine parser unexecuted.",
+    "findings": [
+      "Authored native candidate orders and reverse-sibling first-error/256-vs-257 expectations agree with original iterative prefix.",
+      "Potential secondary index errors on failed internal-shape expectations were repaired by _first_shape_count returning -1 unless exactly one collider exists.",
+      "Ordinary native/GDScript cases only; no arbitrary ScriptExtension/mid-query observer or deep-resource parity claim."
+    ]
+  }
+}
