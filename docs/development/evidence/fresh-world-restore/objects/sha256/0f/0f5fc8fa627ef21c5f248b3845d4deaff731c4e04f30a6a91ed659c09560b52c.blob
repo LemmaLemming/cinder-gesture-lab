@@ -1,0 +1,13 @@
+{
+  "status": "INERT_SOURCE_ONLY_SEAL_3",
+  "base_shell_sha256": "90c5aad7763c96b30398b55281ec93ccb480aa5ec470173abd29b1c42274a3b2",
+  "candidate_shell_sha256": "29c73f78ebf1d48545539aa3a8ffc506773b402fc2a8f075be24d14de36eed31",
+  "candidate_shell_bytes": 70063,
+  "level_candidate": "../level.candidate.gd.txt",
+  "level_candidate_sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+  "delta_patch": "from-seal2.patch",
+  "delta_patch_sha256": "ddd930f07cd97d210c90e112edd414918945be08d55acf71813d496fd1165601",
+  "changed_method": "_finish_startup_load",
+  "change": "Clear startup-owned cancellation after cleanup and before queue dispatch so subsequent independent operation failures are not silently dropped.",
+  "validation": "Source-only exact inverse check passed; runtime and parser not run. Seal2 candidates/manifest, production, and queued frozen inputs untouched."
+}

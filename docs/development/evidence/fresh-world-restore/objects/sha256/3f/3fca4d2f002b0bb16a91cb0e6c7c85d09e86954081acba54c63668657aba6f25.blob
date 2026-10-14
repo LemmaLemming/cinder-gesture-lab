@@ -1,0 +1,27 @@
+{
+  "schema": "cinder-startup-retry-cancellation-regression-draft-v1",
+  "sealed_at": "2026-10-14T01:33:44.492110+00:00",
+  "status": "DRAFT_UNINSTALLED_UNPARSED_UNEXECUTED",
+  "source": {
+    "draft_path": ".cinder/fresh-world-floor-review/root-tests/tests/restore_candidate_physics_startup_retry_smoke.gd",
+    "proposed_path": "tests/restore_candidate_physics_startup_retry_smoke.gd",
+    "sha256": "ba1d1f73f616640231060c9ba856dc65e008a534e0682e7b1e5f0ac52e51a896",
+    "bytes": 7795,
+    "mode": "0o644"
+  },
+  "existing_core_fixture_dependency": {
+    "manifest": ".cinder/fresh-world-floor-review/root-tests/TEST_DRAFT_MANIFEST.json",
+    "sha256": "9a6d4566f12b2ff0e1ff6ae562e5472b5d188d80f9a05436a39f300cd23a3552",
+    "unchanged": true
+  },
+  "plan": {
+    "path": ".cinder/fresh-world-floor-review/root-tests/STARTUP_RETRY_PLAN.md",
+    "sha256": "717f5b324562c6b064a5e2cb8cf327b305ff73f7d9c3d867c5bfffab0becb560"
+  },
+  "writer_source_reference": {
+    "seal": "drafts/seal3",
+    "shell_sha256": "29c73f78ebf1d48545539aa3a8ffc506773b402fc2a8f075be24d14de36eed31"
+  },
+  "case": "Actual fresh startup raw-ready callback emits public Retry during paused registration. Canceled load leaves Attempts empty; that later Retry must expose and retain its own failure, preserve donor NULL and original save bytes, and dispose raw worlds. Recovery reloads untouched original file in a new Shell and uses public Continue. No Attempt/readiness seed or existing failed-operation bypass.",
+  "validation": "Read-only source/call-interface review only. Root owns production selection, installation and queued parser/native execution."
+}

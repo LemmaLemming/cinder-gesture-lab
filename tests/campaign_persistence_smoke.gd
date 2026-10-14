@@ -40,6 +40,13 @@ func _run() -> void:
 			info["readiness"] = "accepted"
 			info["accepted_commit"] = "a".repeat(40)
 			info["api_revision"] = "campaign-level-1"
+		elif id == "A1-L3":
+			# Keep the missing-next-scene boundary private to this test even
+			# after the production campaign has accepted the real third level.
+			info["scene_path"] = null
+			info["readiness"] = "unimplemented"
+			info["accepted_commit"] = null
+			info["api_revision"] = null
 	_expect(registry.configure(raw) and registry.is_playable("A1-L1") and registry.is_playable("A1-O1"), "test-only accepted fixtures validate root, spawn and matching scene identity")
 	invalid = raw.duplicate(true)
 	invalid["levels"][0]["scene_path"] = "res://tests/fixtures/campaign/a1_l2.tscn"

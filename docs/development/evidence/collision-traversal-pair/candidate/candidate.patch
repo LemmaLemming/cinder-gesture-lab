@@ -1,0 +1,11 @@
+--- a/scripts/combat/repulsion_route.gd
++++ b/scripts/combat/repulsion_route.gd
+@@ -518,6 +518,8 @@
+ 	while not pending.is_empty():
+ 		var node: Node = pending.pop_back()
+ 		pending.append_array(node.get_children())
++		if not (node is GridMap or node is CSGShape3D or node is PhysicsBody3D):
++			continue
+ 		if not node is Node3D or (node as Node3D).get_world_3d() != owner.get_world_3d():
+ 			continue
+ 		if node is GridMap or (node is CSGShape3D and (node as CSGShape3D).use_collision):

@@ -1,6 +1,8 @@
 # Cinder shared contract
 
-Current revision: **campaign-shared-55** (13 October 2026). [A2-O3 acceptance](ACT2_O3_ACCEPTANCE.md) registers the exact tested f142 scene/local17 contract after43/0 and import0, with reused owner53 scoped evidence. Campaign16/24, Act2 eight/eight. Only O3 registry row/descriptive status, one new Root fixture/genuine UID and one CLI alias are added; other23 rows/route metadata and gameplay/save/controller/equipment interfaces remain exact. New census467 unique UID bytes; preserve-adopt after current frozen jobs close and acknowledge actual merge separately. Historical54 and prior source versions below remain original.
+Current published revision: **campaign-shared-57**. The [fresh-world restore contract](FRESH_WORLD_RESTORE.md) adds pure Level opt-in `level-restore-registration-1`, paused native registration, exact-packet constructor custody with fresh validation on every callback, separate installation and cancellation cleanup. Focused core96/0, startup21/0, legacy71/0, Shell55/0, persistence45/0 and necessary import0 are clean; original failed/nonclean results remain recorded. No save schema or gameplay guard changes. Workers adopt after frozen jobs close and acknowledge their actual merge; availability does not establish adoption. Campaign acceptance remains **16/24**. Prior Shared56 runtime `26f59b28007c68872b1a9870db675b5ed2f3c2e4` and its [sampled-circle API](SAMPLED_CIRCLE_API.md) remain in the history.
+
+Historical Shared55 record: [A2-O3 acceptance](ACT2_O3_ACCEPTANCE.md) registers the exact tested f142 scene/local17 contract after43/0 and import0, with reused owner53 scoped evidence. Campaign16/24, Act2 eight/eight. Only O3 registry row/descriptive status, one new Root fixture/genuine UID and one CLI alias are added; other23 rows/route metadata and gameplay/save/controller/equipment interfaces remain exact. New census467 unique UID bytes; preserve-adopt after current frozen jobs close and acknowledge actual merge separately. Historical54 and prior source versions below remain original.
 
 Historical Shared54 record:
 
@@ -26,7 +28,7 @@ Shell side finish/abandon restores the complete protected story and shows Journe
 
 ## Current level acceptance
 
-Direct user instruction on 9 October 2026 supersedes agent-completed playthrough gates. [Focused desktop acceptance](LEVEL_ACCEPTANCE.md) requires focused automated mechanics/loading/transitions/saves/Retry/cleanup checks and brief visual inspections. A full route, every enemy defeated, an earned exit or a completed campaign playthrough is unnecessary before acceptance and the next sequential level. Record untested full-playthrough behavior and retain original failures with their scope. Existing8 accepted levels remain accepted; Integration reviews pending levels independently and remains first help contact.
+Direct user instruction on 9 October 2026 supersedes agent-completed playthrough gates. [Focused desktop acceptance](LEVEL_ACCEPTANCE.md) requires focused automated mechanics/loading/transitions/saves/Retry/cleanup checks and brief visual inspections. A full route, every enemy defeated, an earned exit or a completed campaign playthrough is unnecessary before acceptance and the next sequential level. Record untested full-playthrough behavior and retain original failures with their scope. All 16 currently accepted levels retain acceptance; Integration reviews pending levels independently and remains first help contact.
 
 ## Idle menu notifications
 
@@ -192,7 +194,11 @@ Limits: path samples are not an analytic swept capsule; geometry carries a param
 
 ## Canonical campaign registry
 
-[registry.json](../../data/campaign/registry.json) records all 15 main and 9 optional IDs, sequential main links and optional parent clears, derived from the three canonical research files. Its initial entries used `scene_path = null` and `readiness = unimplemented`. A1-L1 is registered from exact authored commit06628abb, A1-L2 from dcd1098 with production registrationc6a9596, A2-L1 from a96edf with production registrationd629072f, A2-L2 from fd5fd3d with exact content integrationb164dc10 and the separate production registration evidence, and A3-L1 from fb9da07f with registration59d9097c. The remaining19 entries stay unimplemented or in owned development. Act2/3 retain their real preceding-act main prerequisites; isolated prerequisite seeds in registration tests do not complete preceding product levels. Integration alone registers a scene after accepting its exact level commit/API revision. Optional completion stamps have stable once-only reward IDs and no stat growth. The live menu gates routes on accepted, validated scenes and actual progression.
+[registry.json](../../data/campaign/registry.json) records all 15 main and 9 optional IDs, sequential main links and optional parent clears, derived from the three canonical research files. As of Shared56, 16 entries are accepted and 8 remain unfinished: Act 1 has 4/8 accepted, Act 2 has 8/8, and Act 3 has 4/8. [Shared progress](SHARED_PROGRESS.md) records current publication and acceptance evidence.
+
+Historical first-five registration snapshot: initial entries used `scene_path = null` and `readiness = unimplemented`. A1-L1 is registered from exact authored commit06628abb, A1-L2 from dcd1098 with production registrationc6a9596, A2-L1 from a96edf with production registrationd629072f, A2-L2 from fd5fd3d with exact content integrationb164dc10 and the separate production registration evidence, and A3-L1 from fb9da07f with registration59d9097c. At that five-level milestone, the remaining 19 entries were unimplemented or in owned development.
+
+Act2/3 retain their real preceding-act main prerequisites; isolated prerequisite seeds in registration tests do not complete preceding product levels. Integration alone registers a scene after accepting its exact level commit/API revision. Optional completion stamps have stable once-only reward IDs and no stat growth. The live menu gates routes on accepted, validated scenes and actual progression.
 
 ## player-snapshot-1
 

@@ -1,5 +1,26 @@
 # Cinder shared progress
 
+## Current status — 14 October 2026, Shared57
+
+Shared57 resolves the shared fresh-world preparation seam with [additive paused registration](FRESH_WORLD_RESTORE.md). Actual core96/0, startup21/0, legacy restore71/0, corrected Shell55/0 and persistence45/0 close clean. Necessary queued import preserves all472 prior UID bytes and adds exactly three genuine identities,475 unique. Store, Attempts, save schemas and actual floor/RID guards remain unchanged. The original nonclean parse, Shell55/1 and persistence45/4 are retained with their source attribution; only synthetic missing-A1-L3 setup changes in the two old fixtures.
+
+Act2 delivered native-lunge test preparation at `bc8a799d`; independent review verifies64 owned-document paths and63 indexed artifacts. Its real donor-contract and cancellation findings informed the shared fix. The core startup regression now passes21/0, while the owner's native-lunge bridge and native execution remain separate. Exact publication/adoption and the bounded adapter directions release that next step without human approval. Act3 applies its pure Level opt-in and tests only affected public transport after preserving adoption; its own camera fixes remain independent. Root remains the first help contact.
+
+The campaign remains **16/24 accepted**: Act1 **4/8**, Act2 **8/8**, Act3 **4/8**. Worker identities, checkouts, branches and ownership remain. Full routes, defeating every enemy and reaching the exit are not acceptance or next-level gates. Existing passed equipment/accepted-level evidence is reused. Shared57 supplies no full native-lunge, authored optical, full-playthrough or sustained performance claim. The full desktop campaign goal remains active; mobile/export/release work is outside scope.
+
+
+## Previous status — 13 October 2026
+
+Shared56 is published at `26f59b28007c68872b1a9870db675b5ed2f3c2e4`. The [sampled-circle milestone](#13-october-2026--shared56-sampled-circle-dependency-and-act2-support) records its focused component and portrait evidence. The campaign remains **16/24 accepted**: Act 1 **4/8**, Act 2 **8/8**, and Act 3 **4/8**. Act 2's assigned [Shell persistence support](ACT2_SHARED_SUPPORT.md) has closed its first native suite at 71/0 with clean diagnostics; its sealed handoff `279024d6` has passed independent source/evidence review and its exact scoped test and evidence paths are installed in Integration. Root verified the actual result, and actual Shared56 adoptions for all three workers are independently reconciled. Act 1 and Act 3 continue their final main levels and optional levels independently.
+
+The [Crossed entrance geometry review](CROSSED_ENTRY_GEOMETRY.md) localizes the retained camera refusal to the activation position and permitted shift. Act 1 owns the requested entry-staging correction; the level stays accepted. Root separately [measured collision traversal/validation costs](COLLISION_SIGNATURE_STAGES.md) and preserves the native and host-verifier failure records. Its narrow type-filter candidate passed focused correctness checks, but the single uninstrumented comparison supplied no performance benefit; the exact published runtime is restored. Act 2 has completed its historical callsite review and now independently reviews Act 1's camera-entry proposal.
+
+The shared support supplement is committed at `bdd4fa39ebe26e6c491bfd2e47fc646c455e727e`; all three worker notices were delivered. Shared runtime and API56 remain unchanged. A disk-space failure in Act 3 temporarily held new heavy jobs. [Exact copy-on-write deduplication](evidence/storage-recovery-20261013/index.json) preserves 1,005 closed evidence paths and their contents; observed free space is now about 4 GiB, and bounded targeted work has resumed.
+
+Act 3's separate 804/1 fresh-world floor-restore failure is under Integration ownership. Source review confirms the shared Shell also constructs and enters candidates synchronously; the owner's exact native diagnostic now confirms empty floor rays before one paused process frame and matching bound-floor RIDs afterward. A distinct delayed candidate accepts its sole restore entry. [The shared fix and scoped test assignment](FRESH_WORLD_RESTORE.md) remain in preparation; complete Shell flows are not yet verified. Existing analytic and native floor checks remain unchanged.
+
+The milestone sections below retain their historical status and test results. Shared56 supersedes the older sampled-circle draft status; it adds no level acceptance. The full fifteen-main/nine-optional desktop objective remains active under [focused acceptance](LEVEL_ACCEPTANCE.md), with mobile export and release outside scope.
+
 ## Shared55 — final Act2 focused integration
 
 The completed Act 2 owner is now assigned [focused shared persistence support](ACT2_SHARED_SUPPORT.md) by direct human request. It prepares actual Shell save, Continue, moving-sample and GUI Retry fixtures in separate owned test paths while Integration finishes the B02 API. Source preparation is active; native execution awaits the exact published interface. Existing Act 2 acceptance remains 8/8.

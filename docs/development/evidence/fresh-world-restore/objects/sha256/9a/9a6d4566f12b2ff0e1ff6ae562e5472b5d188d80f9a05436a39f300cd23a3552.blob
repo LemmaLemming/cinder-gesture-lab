@@ -1,0 +1,40 @@
+{
+  "schema": "cinder-core-restore-registration-test-drafts-v1",
+  "sealed_at": "2026-10-14T01:28:20.899629+00:00",
+  "status": "DRAFT_UNINSTALLED_UNPARSED_UNEXECUTED",
+  "sources": [
+    {
+      "draft_path": ".cinder/fresh-world-floor-review/root-tests/tests/fixtures/restore_candidate_physics_level.gd",
+      "proposed_path": "tests/fixtures/restore_candidate_physics_level.gd",
+      "sha256": "5f3feec647f5f39e16d7bd60dc7a688545c67cd06b47f11d0b49bf5244da3206",
+      "bytes": 5865,
+      "mode": "0o644"
+    },
+    {
+      "draft_path": ".cinder/fresh-world-floor-review/root-tests/tests/fixtures/restore_candidate_physics_level.tscn",
+      "proposed_path": "tests/fixtures/restore_candidate_physics_level.tscn",
+      "sha256": "c84cfa4a2a998b45dea7667991bff70b7a958a45d56d324e7b59ff2721b61067",
+      "bytes": 675,
+      "mode": "0o644"
+    },
+    {
+      "draft_path": ".cinder/fresh-world-floor-review/root-tests/tests/restore_candidate_physics_smoke.gd",
+      "proposed_path": "tests/restore_candidate_physics_smoke.gd",
+      "sha256": "1705c8dd1ba24ea47e0ea3be4473a2a5269ca9cc17887fae4a5a0da373cc579b",
+      "bytes": 17990,
+      "mode": "0o644"
+    }
+  ],
+  "plan": {
+    "path": ".cinder/fresh-world-floor-review/root-tests/PLAN.md",
+    "sha256": "cb8c5938f9a2bce88425b18d2bb13984312a553451fd7dee4ea3e64869a2d045"
+  },
+  "writer_api_reference": {
+    "level_capability": "restore_candidate_physics_registration_required() -> bool",
+    "shell_preparation": "_prepare_registration(extra:Array=[], install_snapshot:Dictionary={}, fresh_candidate:Dictionary={}) -> bool",
+    "source_seal2_shell_sha256": "90c5aad7763c96b30398b55281ec93ccb480aa5ec470173abd29b1c42274a3b2",
+    "source_seal2_level_sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1"
+  },
+  "scope": "Tiny actual scene-owned StaticBody3D floor; pure opt-in; actual ray/RID at sole restore entry; earned exact packet Continue/Retry; pristine validation versus install custody; Retry repeated native validation mutation/refusal with unchanged donor/Attempts/disk; constructor rejection/reentry; startup queue/drain latch; public Retry cancellation and Shell deletion cleanup; valid-primary/bad-unused-backup and malformed-primary/valid-backup controls. Existing legacy suite and Agent2 full native-lunge regression remain separate.",
+  "validation": "Host-only source and call-interface review; no Godot parser, native process, import, UID generation, Git or production installation performed. Root selects and queues checks."
+}

@@ -35,6 +35,14 @@ var _validation_candidates: Dictionary = {}
 var _failed_operations: Array[Dictionary] = []
 var _old_auto_quit: bool = true
 var _resume_after_drain: bool = false
+var _registered_snapshots: Dictionary = {}
+var _registration_epoch: int = 0
+var _registration_ready: bool = false
+var _registration_pending: bool = false
+var _registration_inflight: bool = false
+var _registration_cancelled: bool = false
+var _registration_error: String = ""
+var _snapshot_validation_busy: bool = false
 
 ## Test harnesses may inject accepted fixture metadata and isolated user paths
 ## before entering the tree. This never edits the canonical campaign registry.
@@ -99,14 +107,22 @@ func _ready() -> void:
 	_old_auto_quit = get_tree().auto_accept_quit
 	get_tree().auto_accept_quit = false
 	if FileAccess.file_exists(_save_path) or FileAccess.file_exists(_save_path + ".bak"):
-		if not attempts.load_saved():
-			campaign_error = attempts.last_error
+		_draining = true
+		if _startup_registration_required():
+			# Latch before yielding; always-mode Menu/HUD events only queue work.
+			_draining = true
+			_finish_startup_load.call_deferred()
 		else:
-			campaign_error = attempts.last_warning
+			if not attempts.load_saved(): campaign_error = attempts.last_error
+			else: campaign_error = attempts.last_warning
+			_draining = false
 	_dispose_validation_candidates()
 	menu.show_title()
 	if not campaign_error.is_empty():
 		menu.show_error(campaign_error)
+	if not _draining and not _operations.is_empty():
+		_drain_queued = true
+		_drain.call_deferred()
 
 func get_difficulty_preference() -> String:
 	return _difficulty_preference
@@ -161,6 +177,8 @@ func resume_campaign() -> void:
 func _enqueue(kind: String, data: Dictionary = {}) -> void:
 	if _preview_mode:
 		return
+	if _registration_inflight and kind in ["retry", "leave_side", "quit"]:
+		_cancel_registration_preparation()
 	if kind == "retry" or kind == "leave_side":
 		_failed_operations.clear()
 	elif not _failed_operations.is_empty():
@@ -204,7 +222,13 @@ func _commit_drain() -> void:
 	campaign_error = ""
 	while not _operations.is_empty():
 		var operation: Dictionary = _operations.pop_front()
-		if not _perform(operation):
+		var performed: bool = await _perform(operation)
+		if not is_inside_tree(): return
+		_dispose_registration_scope()
+		if not performed and _registration_cancelled:
+			_registration_cancelled = false
+			continue
+		if not performed:
 			_failed_operations = [operation]
 			_failed_operations.append_array(_operations)
 			_operations.clear()
@@ -227,6 +251,7 @@ func retry_pending_operations() -> void:
 	_drain.call_deferred()
 
 func _perform(operation: Dictionary) -> bool:
+	if _registration_inflight: return _fail("Campaign operation cannot reenter registration preparation")
 	_resume_after_drain = operation.get("resume_after", false)
 	match operation.operation:
 		"begin":
@@ -237,6 +262,9 @@ func _perform(operation: Dictionary) -> bool:
 			if snapshot.is_empty():
 				_dispose(candidate)
 				return false
+			if not await _prepare_registration([snapshot], {}, candidate):
+				_dispose(candidate)
+				return false
 			if not attempts.begin_story(snapshot):
 				_dispose(candidate)
 				return _fail(attempts.last_error if not attempts.last_error.is_empty() else campaign_error)
@@ -244,19 +272,19 @@ func _perform(operation: Dictionary) -> bool:
 			menu.show_resume("story")
 		"continue":
 			if attempts.state().side_attempt != null:
-				return _leave_side(true)
-			return _load_active()
+				return await _leave_side(true)
+			return await _load_active()
 		"load_active":
-			return _load_active()
+			return await _load_active()
 		"pause", "journey":
-			if is_instance_valid(active_level) and not _record_live(false):
+			if is_instance_valid(active_level) and not await _record_live(false):
 				return false
 			menu.show_journey() if operation.operation == "journey" else menu.show_pause()
 		"checkpoint":
 			# A request can precede actual death later in the same native tick.
 			# Persist that fatal active unit, retaining the last living Retry unit.
 			var living: bool = is_instance_valid(player) and not player.dead
-			if operation.level_id != active_level.level_id or not _record_live(living):
+			if operation.level_id != active_level.level_id or not await _record_live(living):
 				return false
 			if living:
 				menu.show_resume(attempts.active_kind())
@@ -265,15 +293,17 @@ func _perform(operation: Dictionary) -> bool:
 				menu.show_pause()
 		"complete":
 			var snapshot: Dictionary = capture_campaign_snapshot()
-			if operation.level_id != active_level.level_id or snapshot.is_empty() or not attempts.complete_active(snapshot):
+			if operation.level_id != active_level.level_id or snapshot.is_empty(): return false
+			if not await _prepare_registration([snapshot]): return false
+			if not attempts.complete_active(snapshot):
 				return _fail(attempts.last_error)
 			# Completion records progress. Contact exit remains an authored event.
 			menu.show_resume(attempts.active_kind())
 		"exit":
-			if operation.level_id != active_level.level_id or not _record_live(false):
+			if operation.level_id != active_level.level_id or not await _record_live(false):
 				return false
 			if attempts.state().side_attempt != null:
-				return _leave_side()
+				return await _leave_side()
 			var next_id: String = registry.next_main(active_level.level_id)
 			if next_id.is_empty():
 				menu.show_journey()
@@ -287,6 +317,9 @@ func _perform(operation: Dictionary) -> bool:
 			if snapshot.is_empty():
 				_dispose(candidate)
 				return false
+			if not await _prepare_registration([snapshot], {}, candidate):
+				_dispose(candidate)
+				return false
 			if not attempts.advance_story(snapshot):
 				_dispose(candidate)
 				return _fail(attempts.last_error)
@@ -296,6 +329,7 @@ func _perform(operation: Dictionary) -> bool:
 			var active: Variant = attempts.state().story if attempts.state().side_attempt == null else attempts.state().side_attempt
 			if active == null:
 				return _fail("No checkpoint to retry")
+			if not await _prepare_registration([active.checkpoint], active.checkpoint): return false
 			var candidate: Dictionary = _prepare_snapshot(active.checkpoint)
 			if candidate.is_empty():
 				return false
@@ -305,9 +339,9 @@ func _perform(operation: Dictionary) -> bool:
 			_install(candidate, active.checkpoint.shell)
 			menu.show_resume(attempts.active_kind())
 		"side":
-			if not is_instance_valid(active_level) and not _load_active():
+			if not is_instance_valid(active_level) and not await _load_active():
 				return false
-			if not _record_live(false):
+			if not await _record_live(false):
 				return false
 			var loadout: Dictionary = operation.get("loadout", player.equipment.snapshot())
 			var candidate: Dictionary = _prepare(operation.level_id, loadout)
@@ -317,13 +351,16 @@ func _perform(operation: Dictionary) -> bool:
 			if snapshot.is_empty():
 				_dispose(candidate)
 				return false
+			if not await _prepare_registration([snapshot], {}, candidate):
+				_dispose(candidate)
+				return false
 			if not attempts.begin_side(operation.kind, operation.level_id, snapshot):
 				_dispose(candidate)
 				return _fail(attempts.last_error)
 			_install(candidate, snapshot.shell)
 			menu.show_resume(operation.kind)
 		"leave_side":
-			return _leave_side()
+			return await _leave_side()
 		"restart_replay":
 			var candidate: Dictionary = _prepare(operation.level_id, operation.loadout)
 			if candidate.is_empty():
@@ -332,13 +369,16 @@ func _perform(operation: Dictionary) -> bool:
 			if snapshot.is_empty():
 				_dispose(candidate)
 				return false
+			if not await _prepare_registration([snapshot], {}, candidate):
+				_dispose(candidate)
+				return false
 			if not attempts.restart_replay(snapshot):
 				_dispose(candidate)
 				return _fail(attempts.last_error)
 			_install(candidate, snapshot.shell)
 			menu.show_resume("replay")
 		"quit":
-			if is_instance_valid(active_level) and not _record_live(false):
+			if is_instance_valid(active_level) and not await _record_live(false):
 				return false
 			get_tree().quit()
 	return true
@@ -347,6 +387,7 @@ func _load_active() -> bool:
 	var snapshot: Dictionary = attempts.active_snapshot()
 	if snapshot.is_empty():
 		return _fail("Begin the story first.")
+	if not await _prepare_registration([snapshot], snapshot): return false
 	var candidate: Dictionary = _prepare_snapshot(snapshot)
 	if candidate.is_empty():
 		return false
@@ -356,15 +397,16 @@ func _load_active() -> bool:
 	# contact event that the restored level correctly suppresses.
 	if not String(snapshot.level.progress.get("contact_exit_id", "")).is_empty():
 		if attempts.state().side_attempt != null:
-			return _leave_side()
+			return await _leave_side()
 		var next_id: String = registry.next_main(snapshot.level_id)
 		if next_id.is_empty() or registry.is_playable(next_id):
-			return _perform({"operation": "exit", "level_id": snapshot.level_id})
+			return await _perform({"operation": "exit", "level_id": snapshot.level_id})
 	menu.show_resume(attempts.active_kind())
 	return true
 
 func _leave_side(continue_story: bool = false) -> bool:
 	var preserved: Dictionary = attempts.story_snapshot()
+	if not await _prepare_registration([preserved], preserved): return false
 	var candidate: Dictionary = _prepare_snapshot(preserved)
 	if candidate.is_empty():
 		return false
@@ -387,6 +429,7 @@ func _record_live(checkpoint: bool) -> bool:
 	var snapshot: Dictionary = capture_campaign_snapshot()
 	if snapshot.is_empty():
 		return false
+	if not await _prepare_registration([snapshot]): return false
 	return attempts.record_snapshot(snapshot, checkpoint) or _fail(attempts.last_error)
 
 func capture_campaign_snapshot() -> Dictionary:
@@ -535,7 +578,7 @@ func _fresh_capture_points_wire(points: Array) -> String:
 		encoded.append(Codec.vector3(value))
 	return FreshCaptureExact.stringify(encoded)
 
-func _prepare(id: String, loadout: Dictionary, carried_resources: Dictionary = {}, restore_snapshot: Dictionary = {}) -> Dictionary:
+func _prepare(id: String, loadout: Dictionary, carried_resources: Dictionary = {}, restore_snapshot: Dictionary = {}, raw_restore: bool = false) -> Dictionary:
 	if not restore_snapshot.is_empty() and (not get_tree().paused or not carried_resources.is_empty() or not restore_snapshot.get("level") is Dictionary or not restore_snapshot.get("player") is Dictionary):
 		_fail("Restore candidate construction requires paused whole saved units and no carried-resource seed")
 		return {}
@@ -572,7 +615,13 @@ func _prepare(id: String, loadout: Dictionary, carried_resources: Dictionary = {
 	stage_camera.transform = camera.transform
 	stage.add_child(stage_camera)
 	stage_camera.current = true
-	var level: CinderLevel = (load(registry.entry(id).scene_path) as PackedScene).instantiate() as CinderLevel
+	var level_node: Node = (load(registry.entry(id).scene_path) as PackedScene).instantiate()
+	if not level_node is CinderLevel:
+		level_node.free()
+		container.free()
+		_fail("Accepted scene must instantiate a CinderLevel")
+		return {}
+	var level: CinderLevel = level_node as CinderLevel
 	stage.add_child(level)
 	var staged_fx: PixelEffects = EffectsScript.new()
 	stage.add_child(staged_fx)
@@ -590,6 +639,16 @@ func _prepare(id: String, loadout: Dictionary, carried_resources: Dictionary = {
 	actor.hp = actor.max_hp
 	actor.shells = actor.max_shells
 	var candidate: Dictionary = {"container": container, "viewport": viewport, "stage": stage, "camera": stage_camera, "level": level, "player": actor, "fx": staged_fx}
+	if raw_restore:
+		if restore_snapshot.is_empty():
+			_dispose(candidate)
+			_fail("Raw registration requires an exact restore packet")
+			return {}
+		return candidate
+	if not restore_snapshot.is_empty() and level.restore_candidate_physics_registration_required():
+		_dispose(candidate)
+		_fail("Opted fresh World3D requires operation-scoped paused registration before restore entry")
+		return {}
 	if restore_snapshot.is_empty():
 		level.enter_level(actor, staged_fx, self)
 	elif not level.enter_restore_candidate(actor, staged_fx, self, restore_snapshot.level, restore_snapshot.player):
@@ -615,10 +674,15 @@ func _prepare_snapshot(snapshot: Dictionary) -> Dictionary:
 		return {}
 	# Fresh pure validation owns the exact constructed candidate. Never rebuild
 	# it through ordinary entry or reuse an ID-only stale construction.
-	var candidate: Dictionary = _validation_candidates.get(snapshot.level_id, {})
-	_validation_candidates.erase(snapshot.level_id)
-	if candidate.is_empty():
-		candidate = _prepare(snapshot.level_id, snapshot.equipment_ids, {}, snapshot)
+	var candidate: Dictionary
+	var wire: String = FreshCaptureExact.stringify(snapshot)
+	if _registered_snapshots.has(wire):
+		candidate = _registered_install_candidate(snapshot)
+	else:
+		candidate = _validation_candidates.get(snapshot.level_id, {})
+		_validation_candidates.erase(snapshot.level_id)
+		if candidate.is_empty():
+			candidate = _prepare(snapshot.level_id, snapshot.equipment_ids, {}, snapshot)
 	if candidate.is_empty():
 		return {}
 	# Prevalidation completed for every component before either commit hook.
@@ -673,11 +737,11 @@ func _candidate_presentation_error(candidate: Dictionary, shell_state: Dictionar
 	if is_instance_valid(hud_viewport): hud_viewport.free()
 	return error
 
-func _snapshot_problem(snapshot: Dictionary) -> String:
+func _snapshot_problem_unlocked(snapshot: Dictionary) -> String:
 	if not get_tree().paused:
 		return "Aggregate validation requires a paused candidate boundary"
-	# Every submitted whole snapshot owns a new construction. Invalid identity
-	# or gear must also discard a previous hidden validation candidate.
+	# Legacy submissions retain fresh construction/destruction. Only opted
+	# exact packets may retain uncommitted construction within this operation.
 	_dispose_validation_candidates()
 	var error: String = Codec.value_error(snapshot)
 	if not error.is_empty():
@@ -690,7 +754,13 @@ func _snapshot_problem(snapshot: Dictionary) -> String:
 	if not Codec.same_values(snapshot.equipment_ids, snapshot.player.get("equipment")):
 		return "Actor gear differs from aggregate equipment"
 	var candidate: Dictionary = {}
-	if is_instance_valid(active_level) and active_level.level_id == id and active_level.scene_file_path == snapshot.scene_path and not active_level.restore_candidate_construction_required():
+	var registered_row: Dictionary = {}
+	var wire: String = FreshCaptureExact.stringify(snapshot)
+	if _registered_snapshots.has(wire):
+		registered_row = _registered_snapshots[wire].validation
+		candidate = _enter_registered_candidate(snapshot, registered_row)
+		if candidate.is_empty(): return _registration_error
+	elif is_instance_valid(active_level) and active_level.level_id == id and active_level.scene_file_path == snapshot.scene_path and not active_level.restore_candidate_construction_required() and not active_level.restore_candidate_physics_registration_required():
 		candidate = {"player": player, "level": active_level}
 	else:
 		candidate = _prepare(id, snapshot.equipment_ids, {}, snapshot)
@@ -704,6 +774,9 @@ func _snapshot_problem(snapshot: Dictionary) -> String:
 		error = candidate.level.snapshot_error_with_player(snapshot.level, snapshot.player)
 	if error.is_empty():
 		error = _shell_state_error(snapshot.shell, snapshot.player)
+	if not registered_row.is_empty():
+		if error.is_empty(): error = _registration_row_error(registered_row)
+		if not error.is_empty(): _reject_registration_row(registered_row)
 	return error
 
 func _install(candidate: Dictionary, shell_state: Dictionary) -> void:
@@ -798,6 +871,9 @@ func _restore_shell_state(state: Dictionary) -> void:
 	camera.global_position = _camera_focus + CAMERA_OFFSET
 
 func _settings_requested(changes: Dictionary) -> void:
+	if _draining or _drain_queued:
+		menu.acknowledge_settings(false, "Finish the pending campaign operation first")
+		return
 	var accepted: bool = settings.update(changes)
 	if accepted:
 		settings.apply_runtime()
@@ -805,6 +881,9 @@ func _settings_requested(changes: Dictionary) -> void:
 	menu.acknowledge_settings(accepted, settings.last_error if not accepted else "")
 
 func _difficulty_requested(profile_id: String) -> void:
+	if _draining or _drain_queued:
+		menu.set_difficulty_preference(_difficulty_preference)
+		return
 	var candidate: Dictionary = {"schema_version": 1, "profile_id": profile_id}
 	if not _preferences_error(candidate).is_empty() or not _preferences_store.write_payload(candidate):
 		menu.set_difficulty_preference(_difficulty_preference)
@@ -826,7 +905,7 @@ func _process(delta: float) -> void:
 	if _preview_mode:
 		super._process(delta)
 		return
-	if not is_instance_valid(player):
+	if not is_instance_valid(player) or _registration_inflight:
 		return
 	_shake = maxf(_shake - delta, 0.0)
 	# Frame against the HUD this frame renders, including newly wrapped text.
@@ -867,6 +946,10 @@ func _notification(what: int) -> void:
 
 func _exit_tree() -> void:
 	if not _preview_mode:
+		_registration_epoch += 1
+		_registration_cancelled = true
+		_registration_pending = false
+		_dispose_registration_scope()
 		_dispose_validation_candidates()
 		if is_instance_valid(active_level):
 			active_level.exit_level()
@@ -877,3 +960,350 @@ func _exit_tree() -> void:
 func _fail(error: String) -> bool:
 	campaign_error = error if not error.is_empty() else "Campaign operation could not commit"
 	return false
+
+## Opted-in registration is construction custody only. Every semantic callback
+## runs the unchanged complete validators against these actual native nodes.
+func _registration_packets(session: Dictionary) -> Array[Dictionary]:
+	var packets: Array[Dictionary] = []
+	for kind: String in ["story", "side_attempt"]:
+		var attempt: Variant = session.get(kind)
+		if not attempt is Dictionary: continue
+		for slot: String in ["snapshot", "checkpoint"]:
+			if attempt.get(slot) is Dictionary: packets.append(attempt[slot])
+	return packets
+
+func _registration_disk_guard() -> String:
+	var rows: Array = []
+	for path: String in [_save_path, _save_path + ".bak"]:
+		var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+		if file == null:
+			rows.append([path, false])
+			continue
+		var size: int = file.get_length()
+		file.close()
+		rows.append([path, size, FileAccess.get_sha256(path) if size <= Store.MAX_FILE_BYTES else "oversized-refused"])
+	return FreshCaptureExact.stringify(rows)
+
+func _registration_donor_guard() -> String:
+	var rows: Array = [_shell_state(), attempts.state(), str(active_level.get_instance_id()) if is_instance_valid(active_level) else "", str(player.get_instance_id()) if is_instance_valid(player) else ""]
+	if is_instance_valid(player): rows.append(player.snapshot_state())
+	if is_instance_valid(active_level):
+		# Observe through the actual shared capture API, including a retained
+		# refusal. An unavailable donor capture is not accepted saved state.
+		var snapshot_diagnostic: String = active_level.last_snapshot_error
+		var framing_diagnostic: String = active_level.last_camera_framing_error
+		rows.append(active_level.snapshot_state_for_presentation(camera, hud))
+		rows.append(active_level.last_snapshot_error)
+		rows.append([snapshot_diagnostic, framing_diagnostic])
+		# Capture is mechanically pure but its shared API writes diagnostics.
+		# Preserve those existing diagnostics; never repair gameplay/native data.
+		active_level.last_snapshot_error = snapshot_diagnostic
+		active_level.last_camera_framing_error = framing_diagnostic
+	# Native camera/input are not allowed to drift during registration staging.
+	rows.append(var_to_bytes([camera.global_transform, get_input_observation_state()]).hex_encode())
+	return FreshCaptureExact.stringify(rows)
+
+func _registration_floor_guard(candidate: Dictionary) -> String:
+	var rows: Array = []
+	var pending: Array[Node] = [candidate.stage]
+	var seen: int = 0
+	while not pending.is_empty():
+		var node: Node = pending.pop_back()
+		seen += 1
+		if seen > 4096: return ""
+		pending.append_array(node.get_children())
+		if not node is StaticBody3D: continue
+		var body: StaticBody3D = node as StaticBody3D
+		if (body.collision_layer & 1) == 0: continue
+		var shapes: Array = []
+		for child: Node in body.get_children():
+			if child is CollisionShape3D:
+				var collision: CollisionShape3D = child as CollisionShape3D
+				var shape: Shape3D = collision.shape
+				shapes.append([str(collision.get_instance_id()), collision.transform, collision.disabled, str(shape.get_instance_id()) if is_instance_valid(shape) else "", (shape as BoxShape3D).size if shape is BoxShape3D else Vector3.ZERO])
+		rows.append([str(body.get_instance_id()), str(body.get_rid()), str(body.get_world_3d().get_instance_id()), body.global_transform, body.collision_layer, body.collision_mask, body.constant_linear_velocity, body.constant_angular_velocity, shapes])
+	return var_to_bytes(rows).hex_encode()
+
+func _registration_row(candidate: Dictionary, wire: String) -> Dictionary:
+	return {"candidate": candidate, "bindings": candidate.duplicate(), "wire": wire, "epoch": _registration_epoch, "entered": false, "rejected": false, "world": candidate.stage.get_world_3d(), "level_script": candidate.level.get_script(), "player_script": candidate.player.get_script(), "fx_script": candidate.fx.get_script(), "player_wire": FreshCaptureExact.stringify(candidate.player.snapshot_state()), "floor_guard": _registration_floor_guard(candidate)}
+
+func _registration_row_error(row: Dictionary) -> String:
+	if row.is_empty() or row.get("rejected", true) or row.get("epoch") != _registration_epoch or not _registration_ready or not is_inside_tree() or not get_tree().paused:
+		return "Exact current paused registration custody required"
+	var candidate: Dictionary = row.candidate
+	if not Codec.keys_error(candidate, ["container", "viewport", "stage", "camera", "level", "player", "fx"]).is_empty(): return "Original registered candidate hierarchy required"
+	for key: String in candidate:
+		var node: Variant = candidate[key]
+		if node != row.bindings.get(key): return "Registered original native constructor identity changed"
+		if not is_instance_valid(node) or not node is Node or not node.is_inside_tree() or not node.is_node_ready() or node.is_queued_for_deletion() or node.get_tree() != get_tree(): return "Registered candidate lost a ready native binding"
+	if not candidate.container is SubViewportContainer or not candidate.viewport is SubViewport or not candidate.stage is Node3D or not candidate.camera is Camera3D or not candidate.level is CinderLevel or not candidate.player is CinderPlayer or not candidate.fx is PixelEffects: return "Original typed registered native constructor required"
+	if candidate.container.get_parent() != self or candidate.container.visible or candidate.viewport.get_parent() != candidate.container or not candidate.viewport.own_world_3d or candidate.stage.get_parent() != candidate.viewport or candidate.level.get_parent() != candidate.stage or candidate.player.get_parent() != candidate.stage or candidate.fx.get_parent() != candidate.stage or candidate.camera.get_parent() != candidate.stage: return "Registered candidate native ownership changed"
+	if candidate.container.get_script() != null or candidate.viewport.get_script() != null or candidate.stage.get_script() != null or candidate.camera.get_script() != null: return "Registered native containers cannot be replaced by Scripts"
+	if candidate.stage.get_world_3d() != row.world or candidate.level.get_world_3d() != row.world or candidate.player.get_world_3d() != row.world or candidate.level == active_level or candidate.player == player: return "Registered fresh World3D or donor separation changed"
+	if candidate.level.get_script() != row.level_script or candidate.player.get_script() != row.player_script or candidate.fx.get_script() != row.fx_script or not candidate.level.restore_candidate_physics_registration_required(): return "Registered authored/canonical Scripts changed"
+	if row.player_wire.is_empty() or FreshCaptureExact.stringify(candidate.player.snapshot_state()) != row.player_wire or row.floor_guard.is_empty() or _registration_floor_guard(candidate) != row.floor_guard: return "Registered pristine Player or immutable floor bindings changed"
+	return candidate.level.restore_candidate_registration_error(candidate.player, candidate.fx, self, row.entered)
+
+func _reject_registration_row(row: Dictionary) -> void:
+	if row.is_empty() or row.get("rejected", false): return
+	row.rejected = true
+	var candidate: Dictionary = row.get("bindings", row.get("candidate", {}))
+	row.candidate = {}
+	row.bindings = {}
+	if not candidate.is_empty():
+		_dispose(candidate)
+		# Even a reparented original stays owned; never dispose a substitution.
+		for original: Variant in candidate.values():
+			if is_instance_valid(original): original.free()
+
+func _enter_registered_candidate(snapshot: Dictionary, row: Dictionary) -> Dictionary:
+	_registration_error = _registration_row_error(row)
+	if _registration_error.is_empty() and row.wire != FreshCaptureExact.stringify(snapshot): _registration_error = "Registered construction requires the exact full saved packet"
+	if not _registration_error.is_empty():
+		_reject_registration_row(row)
+		return {}
+	var candidate: Dictionary = row.candidate
+	if not row.entered:
+		# Set before invoking trusted authored code; nested validation is refused.
+		row.entered = true
+		if not candidate.level.enter_restore_candidate(candidate.player, candidate.fx, self, snapshot.level, snapshot.player):
+			_registration_error = candidate.level.last_snapshot_error if not candidate.level.last_snapshot_error.is_empty() else "Restore candidate construction returned false"
+		else:
+			# This opt-in cannot add or alter floor bodies inside its constructor.
+			_registration_error = _registration_row_error(row)
+	if not _registration_error.is_empty():
+		_reject_registration_row(row)
+		return {}
+	return candidate
+
+func _dispose_registration_scope() -> void:
+	_registration_ready = false
+	var previous: Dictionary = _registered_snapshots
+	_registered_snapshots = {}
+	for entry: Dictionary in previous.values():
+		for role: String in ["validation", "installation"]:
+			var row: Dictionary = entry.get(role, {})
+			if not row.is_empty(): _reject_registration_row(row)
+
+func _cancel_registration_preparation() -> void:
+	if not _registration_inflight: return
+	_registration_epoch += 1
+	_registration_cancelled = true
+	_registration_pending = false
+	_dispose_registration_scope()
+
+func _prepare_registration(extra: Array = [], install_snapshot: Dictionary = {}, fresh_candidate: Dictionary = {}) -> bool:
+	if _registration_inflight or _snapshot_validation_busy or not _draining or not is_inside_tree() or not get_tree().paused:
+		return _fail("Registration preparation requires the exclusive paused operation")
+	# Covers every callback, including disposal, capability, _ready and capture.
+	_registration_inflight = true
+	var prepared: bool = await _prepare_registration_unlocked(extra, install_snapshot, fresh_candidate)
+	_registration_inflight = false
+	return prepared
+
+func _prepare_registration_unlocked(extra: Array, install_snapshot: Dictionary, fresh_candidate: Dictionary) -> bool:
+	_dispose_registration_scope()
+	_registration_epoch += 1
+	_registration_cancelled = false
+	var epoch: int = _registration_epoch
+	var disk_before: String = ""
+	var donor_before: String = ""
+	var attempt_before: String = ""
+	var fresh_before: String = ""
+	var packets: Array[Dictionary] = _registration_packets(attempts.state())
+	for packet: Variant in extra:
+		if packet is Dictionary: packets.append(packet)
+	# Discovery is bounded codec/checksum parsing ONLY. Original Store/Attempts
+	# semantic callbacks still decide primary/backup/side acceptance afterwards.
+	var discovery: CinderSaveStore = Store.new(_save_path)
+	for path: String in [_save_path, _save_path + ".bak"]:
+		var envelope: Dictionary = discovery._read_file(path)
+		if not envelope.is_empty(): packets.append_array(_registration_packets(envelope.payload))
+	var wires: Dictionary = {}
+	var bytes: int = 0
+	var install_wire: String = FreshCaptureExact.stringify(install_snapshot) if not install_snapshot.is_empty() else ""
+	for snapshot: Dictionary in packets:
+		var wire: String = FreshCaptureExact.stringify(snapshot)
+		if wire.is_empty() or wires.has(wire): continue
+		wires[wire] = true
+		bytes += wire.to_utf8_buffer().size()
+		if wires.size() > 16 or bytes > 32 * 1024 * 1024:
+			_dispose_registration_scope()
+			return _fail("Registration packet discovery exceeds bounded operation scope")
+		if not snapshot.get("level_id") is String or not snapshot.get("equipment_ids") is Dictionary or not snapshot.get("level") is Dictionary or not snapshot.get("player") is Dictionary: continue
+		var id: String = snapshot.level_id
+		if not registry.scene_error(id).is_empty() or snapshot.get("scene_path") != registry.entry(id).get("scene_path"): continue
+		# Pure capability can be queried before entering a tree. Legacy levels
+		# never enter the pool and keep the existing per-submission destruction.
+		var probe: Node = (load(registry.entry(id).scene_path) as PackedScene).instantiate()
+		var opted: bool = probe is CinderLevel and (probe as CinderLevel).restore_candidate_physics_registration_required()
+		if is_instance_valid(probe): probe.free()
+		if epoch != _registration_epoch or _registration_cancelled: return false
+		if not opted: continue
+		if donor_before.is_empty():
+			disk_before = _registration_disk_guard()
+			donor_before = _registration_donor_guard()
+			attempt_before = FreshCaptureExact.stringify(attempts.state())
+			if not fresh_candidate.is_empty(): fresh_before = _registration_fresh_guard(fresh_candidate, extra[0])
+			if epoch != _registration_epoch or _registration_cancelled: return false
+		var prior_error: String = campaign_error
+		var raw: Dictionary = _prepare(id, snapshot.equipment_ids, {}, snapshot, true)
+		campaign_error = prior_error
+		if epoch != _registration_epoch or _registration_cancelled:
+			if not raw.is_empty(): _dispose(raw)
+			return false
+		if raw.is_empty(): continue # Ordinary semantic callback still rejects it.
+		var entry: Dictionary = {"validation": _registration_row(raw, wire), "installation": {}}
+		_registered_snapshots[wire] = entry
+		if wire == install_wire:
+			var installation: Dictionary = _prepare(id, snapshot.equipment_ids, {}, snapshot, true)
+			campaign_error = prior_error
+			if epoch != _registration_epoch or _registration_cancelled:
+				if not installation.is_empty(): _dispose(installation)
+				return false
+			if installation.is_empty():
+				_dispose_registration_scope()
+				return _fail("Distinct raw install candidate could not be constructed")
+			entry.installation = _registration_row(installation, wire)
+	if _registered_snapshots.is_empty(): return true
+	if donor_before.is_empty() or attempt_before.is_empty() or (not fresh_candidate.is_empty() and fresh_before.is_empty()):
+		_dispose_registration_scope()
+		return _fail("Bounded paused donor/attempt custody unavailable")
+	_registration_pending = true
+	var started: int = Time.get_ticks_msec()
+	var frame: int = Engine.get_process_frames()
+	var tree: SceneTree = get_tree()
+	await tree.process_frame
+	_registration_pending = false
+	if not is_inside_tree() or epoch != _registration_epoch or _registration_cancelled:
+		_dispose_registration_scope()
+		return false
+	if not tree.paused or Engine.get_process_frames() <= frame or Time.get_ticks_msec() - started > 2000 or _registration_disk_guard() != disk_before or _registration_donor_guard() != donor_before or FreshCaptureExact.stringify(attempts.state()) != attempt_before:
+		_dispose_registration_scope()
+		return _fail("Paused registration frame lost bounded donor/disk/native custody")
+	if not fresh_candidate.is_empty() and _registration_fresh_guard(fresh_candidate, extra[0]) != fresh_before:
+		_dispose_registration_scope()
+		return _fail("Fresh entry candidate changed during paused registration")
+	_registration_ready = true
+	for entry: Dictionary in _registered_snapshots.values():
+		for role: String in ["validation", "installation"]:
+			var row: Dictionary = entry[role]
+			if row.is_empty(): continue
+			var error: String = _registration_row_error(row)
+			# Unused backup or recoverably bad side rows cannot veto a valid
+			# primary. Original semantic callbacks reject only a selected row.
+			if not error.is_empty(): _reject_registration_row(row)
+	if epoch != _registration_epoch or _registration_cancelled: return false
+	return true
+
+func _registered_install_candidate(snapshot: Dictionary) -> Dictionary:
+	var wire: String = FreshCaptureExact.stringify(snapshot)
+	var entry: Dictionary = _registered_snapshots.get(wire, {})
+	if entry.is_empty(): return {}
+	var row: Dictionary = entry.get("installation", {})
+	if row.is_empty():
+		_fail("Exact opted restore target requires its own prepared install candidate")
+		return {}
+	if _snapshot_validation_busy:
+		_fail("Registered install validation cannot reenter a validator")
+		return {}
+	_snapshot_validation_busy = true
+	var candidate: Dictionary = _enter_registered_candidate(snapshot, row)
+	var error: String = _registration_error
+	if not candidate.is_empty():
+		error = candidate.player.snapshot_error(snapshot.player)
+		if error.is_empty(): error = candidate.level.snapshot_error_with_player(snapshot.level, snapshot.player)
+		if error.is_empty(): error = _shell_state_error(snapshot.shell, snapshot.player)
+		if error.is_empty(): error = _registration_row_error(row)
+	_snapshot_validation_busy = false
+	if not error.is_empty() or candidate.is_empty():
+		_reject_registration_row(row)
+		_fail(error)
+		return {}
+	# Transfer before quiet commit. Later synchronous Retry/Store callbacks
+	# retain only the separate pristine validation instance, never this one.
+	entry.installation = {}
+	row.candidate = {}
+	return candidate
+
+func _finish_startup_load() -> void:
+	var prepared: bool = await _prepare_registration()
+	if not is_inside_tree(): return
+	if prepared:
+		if not attempts.load_saved(): campaign_error = attempts.last_error
+		else: campaign_error = attempts.last_warning
+	_dispose_validation_candidates()
+	_dispose_registration_scope()
+	# Startup owns this cancellation; queued operations start a new outcome.
+	_registration_cancelled = false
+	_draining = false
+	menu.show_title()
+	if not campaign_error.is_empty(): menu.show_error(campaign_error)
+	if not _operations.is_empty():
+		_drain_queued = true
+		_drain.call_deferred()
+
+func _snapshot_problem(snapshot: Dictionary) -> String:
+	if _snapshot_validation_busy or _registration_inflight: return "Whole saved validation cannot reenter registration/validation"
+	_snapshot_validation_busy = true
+	var error: String = _snapshot_problem_unlocked(snapshot)
+	_snapshot_validation_busy = false
+	return error
+
+
+func _startup_registration_required() -> bool:
+	# Capability hooks are pure, but reentrant callbacks still fail closed.
+	_registration_inflight = true
+	var required: bool = _startup_registration_required_unlocked()
+	_registration_inflight = false
+	return required
+
+func _startup_registration_required_unlocked() -> bool:
+	var discovery: CinderSaveStore = Store.new(_save_path)
+	for path: String in [_save_path, _save_path + ".bak"]:
+		var envelope: Dictionary = discovery._read_file(path)
+		if envelope.is_empty(): continue
+		for snapshot: Dictionary in _registration_packets(envelope.payload):
+			if not snapshot.get("level_id") is String or not registry.scene_error(snapshot.level_id).is_empty(): continue
+			var probe: Node = (load(registry.entry(snapshot.level_id).scene_path) as PackedScene).instantiate()
+			var opted: bool = probe is CinderLevel and (probe as CinderLevel).restore_candidate_physics_registration_required()
+			if is_instance_valid(probe): probe.free()
+			if opted: return true
+	return false
+
+func _registration_fresh_guard(candidate: Dictionary, snapshot: Dictionary) -> String:
+	# Pure re-observation: never refit, restore, normalize or replace the packet.
+	if not _fresh_capture_binding_error(candidate).is_empty(): return ""
+	var original_bindings: Dictionary = candidate.duplicate()
+	var original_scripts: Array = [candidate.level.get_script(), candidate.player.get_script(), candidate.fx.get_script()]
+	if FreshCaptureExact.stringify(candidate.player.snapshot_state()) != FreshCaptureExact.stringify(snapshot.player): return ""
+	var pixels: Vector2 = hud.get_viewport().get_visible_rect().size
+	if not pixels.is_finite() or pixels.x < 1.0 or pixels.y < 1.0 or pixels.x > 16384.0 or pixels.y > 16384.0 or Vector2(Vector2i(pixels)) != pixels: return ""
+	var view := SubViewport.new()
+	view.size = Vector2i(pixels)
+	view.disable_3d = true
+	view.handle_input_locally = false
+	view.gui_disable_input = true
+	view.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	add_child(view)
+	var actual_hud: GameHUD = HUDScript.new()
+	actual_hud.visible = false
+	view.add_child(actual_hud)
+	actual_hud.set_campaign_mode()
+	actual_hud.hide_overlay()
+	actual_hud.update_status(candidate.player.hp, candidate.player.max_hp, candidate.player.shells, candidate.player.max_shells, 0, candidate.level.objective_text)
+	var local: Dictionary = candidate.level.snapshot_state_for_presentation(candidate.camera, actual_hud)
+	var safe: String = _fresh_capture_hud_wire(actual_hud)
+	var points: Array = candidate.level.camera_framing_points()
+	var framing_error: String = candidate.level.last_camera_framing_error
+	var mandatory: Array = player_camera_framing_points_for(candidate.player, candidate.camera)
+	if framing_error.is_empty(): framing_error = camera_framing_error_for_context(points if not points.is_empty() else mandatory, candidate.player, candidate.camera, actual_hud)
+	view.free()
+	if not _fresh_capture_binding_error(candidate).is_empty(): return ""
+	for key: String in original_bindings:
+		if candidate[key] != original_bindings[key]: return ""
+	if [candidate.level.get_script(), candidate.player.get_script(), candidate.fx.get_script()] != original_scripts: return ""
+	if not framing_error.is_empty() or local.is_empty() or FreshCaptureExact.stringify(local) != FreshCaptureExact.stringify(snapshot.level) or safe.is_empty(): return ""
+	var identities: Array = []
+	for key: String in ["container", "viewport", "stage", "camera", "level", "player", "fx"]: identities.append(str(candidate[key].get_instance_id()))
+	return var_to_bytes([identities, candidate.camera.global_transform, candidate.camera.projection, candidate.camera.size, candidate.camera.keep_aspect, candidate.camera.current, candidate.viewport.size, candidate.stage.get_world_3d().get_instance_id(), _registration_floor_guard(candidate), safe, points, mandatory, FreshCaptureExact.stringify(local), FreshCaptureExact.stringify(candidate.player.snapshot_state())]).hex_encode()
