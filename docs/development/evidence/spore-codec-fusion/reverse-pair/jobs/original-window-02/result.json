@@ -1,0 +1,115 @@
+{
+  "closed_at": "2026-10-14T03:11:57.856267+00:00",
+  "variant": "baseline",
+  "mode": "measure",
+  "returncode": 0,
+  "command": [
+    "/opt/homebrew/anaconda3/bin/python3",
+    "-B",
+    ".cinder/spore-fusion-measure-prep/tools.py",
+    "engine",
+    "original-window-02"
+  ],
+  "wrapper_pid": 79816,
+  "successful_scope": true,
+  "source_and_uids_exact_at_closure": true,
+  "closure_error": "",
+  "evidence_error": "",
+  "diagnostics": [],
+  "unexpected_diagnostics": [],
+  "clean_process": true,
+  "known_host_ca_blocks": 0,
+  "footers": [
+    [
+      "25",
+      "0"
+    ]
+  ],
+  "manifest_sha256": "9ca4a48ee3b009f1ac7204e906495f41961d8608a41eecd1976cd741cdf495d6",
+  "pair_sha256": "6850c901e50dea16c5036056ce98f63475d84e93518d8d3fb7b0e0ad7565322e",
+  "source_count": 796,
+  "streams": [
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/original-window-02/wrapper.log",
+      "bytes": 12593,
+      "sha256": "b586b2fbe3a3e83ac8a3ab00972a86b5b06c9a9ebba616a86525f37949c4ee48",
+      "mode": 420
+    },
+    {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/original-window-02/raw.log",
+      "bytes": 12539,
+      "sha256": "8b9a884021181e1bd7327bb3d6fb4b440e92a60e7f3ca846ca1e20b0ac774d0d",
+      "mode": 420
+    }
+  ],
+  "witnesses": {
+    "native": {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/original-window-02/observed/focused-native.exact.json",
+      "bytes": 734237,
+      "sha256": "dd89e893997c2d4f62cacc123eb1fd22a92f958298c18777b92b7f7f8856a26c",
+      "mode": 420
+    },
+    "packets": {
+      "path": ".cinder/spore-fusion-measure-prep/jobs/original-window-02/observed/complete19-packets.exact.json",
+      "bytes": 66972,
+      "sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "mode": 420
+    },
+    "grounded_schema_differences": [
+      {
+        "source_id": "breathing-1",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      },
+      {
+        "source_id": "breathing-2",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      },
+      {
+        "source_id": "breathing-3",
+        "packet_logical_grounded": true,
+        "native_is_on_floor": false,
+        "native_collision_disabled": true,
+        "packet_dormant": false
+      }
+    ],
+    "qualified_scope": "Actual Exact file bytes/hash joined to trace; exact named19 actor packets/native sources,8 Crossed references, paused active boundary, clock bits and pose/velocity joins. Saved logical grounded and native floor contact remain distinct. No arbitrary Script-state or optical Save claim."
+  },
+  "interval": {
+    "actor_identities_unchanged": true,
+    "beat_index": 2,
+    "campaign_error": "",
+    "dead": false,
+    "encounter_error": "Authored encounter context and fixed normalized world direction required",
+    "engine_pid": 79819,
+    "hero_position": [
+      0.0,
+      -0.00484376167878509,
+      -10.3999996185303
+    ],
+    "hp": 100.0,
+    "hp_before": 100.0,
+    "paused": false,
+    "physics_frame_index": 60,
+    "physics_frames": 8,
+    "player_clock_bits": "060000000000f03f",
+    "player_clock_s": 1.0,
+    "player_elapsed_s": 0.133333333333334,
+    "process_frame_index": 25,
+    "process_frames": 1,
+    "room_stage": "active",
+    "scheduler_clock_bits": "ffffffffffffcf3f",
+    "scheduler_clock_s": 0.25,
+    "scheduler_elapsed_s": 0.133333333333333,
+    "scope": "Uninstrumented whole-window elapsed time; activation/setup/paused witnesses excluded; one native await interval, no sustained FPS or causal gain claim.",
+    "shells": 2,
+    "stage": "spore_fusion_interval",
+    "ticks_started": 1,
+    "wall_us": 5524103
+  }
+}
