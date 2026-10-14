@@ -1,5 +1,12 @@
 # Act 1 — durable memory
 
+## Actual first production Blink recovery primary — 14 October 2026
+
+The smallest affected native03-first-primary check closes40/0, engine0, clean on1c64542f/Shared57, after54.686s, with all862 frozen inputs/all492UID bytes exact. It reaches the genuine native sampled-circle recovery, performs one actual public ordinary primary atclock6.9 for240→220HP, preserves original stationary eye/Box/source/sample, spends no blast ammo, and completes normal Shell/probe/node/group/registry cleanup. Receipt SHA256 a2b813ff3505b06ab94452b64a891d8f33226aa063ed145702cee877d1271156; original native02 callback cleanup failure remains exit254/nofooter/no completed count.
+
+Measured preparing capture/Resume12142ms and genuine recovery capture/Resume16737ms consume28879ms of wall time. These measured operations substantiate the old30s budget diagnosis. The corrected capture accounting and oneprocessframe cleanup unwind are both now exercised by the clean result. This is first-primary-only evidence: later phase checkpoints/final pair/defeat/hatch/escape/A2-L1 transition remain unexecuted. The default original focused encounter check is currently queued/running through original handle69180/dev59912 on the same frozen revision, never restarted/bypassed. CurrentL5 unaccepted; Act1 four/eight; goalACTIVE.
+
+
 ## First-primary diagnostic cleanup correction — 14 October 2026
 
 Actual native02-first-primary on085bff3d/Shared57 reached the selector completion branch after the real one-hit assertions, then failed at `probe.free()` while resuming from that same probe's physics signal. The raw stack supplies partial branch evidence only; no footer/native report or completed check count exists, so no clean primary/cleanup pass is claimed. The existing finishing flag prevented the watchdog from completing after the script exception. The owner identified exact child40843/parent40838/command, closed only that failed child with SIGINT through the original job, and retained exit254/265.056s/raw errors/receipt. All862 frozen inputs and492 active UID bytes remain unchanged; all own handles closed.
