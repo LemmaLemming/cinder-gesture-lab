@@ -1,11 +1,14 @@
 extends "res://tests/acts/act1/a1_l5_shell_transport.gd"
-## SOURCE ONLY: four genuine119 paused units; normal fresh Shell GUI Continue.
+## Four genuine119 paused units; fresh production Shell saved selection.
+## --paused-art-only records focus passively and selects public Continue signal;
+## actual paused viewport evidence only, no GUI-click/interactive input claim.
 ## No native state/HP/phase/sample/cue/camera/clock write or fight replay.
 ## Only the menu CanvasLayer is temporarily hidden for paused-world PNGs.
 
 const PacketPath: String = "res://tests/acts/act1/fixtures/a1_l5_saved_portrait_units.json"
 const PacketSha: String = "2daa482db269374b4360d1abc4d89ff618f6f08c1bc222bea49e139913a6dd0e"
 const SourceReportSha: String = "e28d0032529186ecd317f49120d33317d799ca43a8c137a5149a479542a10321"
+const Shared58ShellSha: String = "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f"
 const PortraitSize := Vector2i(540, 1170)
 const WholeMs: int = 100000
 const PerViewMs: int = 20000
@@ -20,6 +23,7 @@ class FocusObserver extends Node:
 		elif what == NOTIFICATION_APPLICATION_RESUMED: receive.call("application-resumed")
 
 var source_hashes: Dictionary = {}
+var paused_art_only: bool = false
 var focus_observer: Node
 var focus_armed: bool = false
 var focus_rows: Array[Dictionary] = []
@@ -31,6 +35,7 @@ var menu_visible_before: bool = false
 
 
 func _run() -> void:
+	paused_art_only = "--paused-art-only" in OS.get_cmdline_user_args()
 	root.size = PortraitSize
 	test_root = "user://test-act1-moon-saved-portrait-%d-%d/" % [OS.get_process_id(), Time.get_ticks_usec()]
 	registry_bytes = FileAccess.get_file_as_bytes(Registry.DATA_PATH)
@@ -43,12 +48,16 @@ func _run() -> void:
 	focus_observer = observer; root.add_child(observer)
 	root.focus_entered.connect(_record_focus.bind("window-focus-entered"))
 	root.focus_exited.connect(_record_focus.bind("window-focus-exited"))
-	if not await _startup_focus(): await _finish(); return
-	focus_armed = true
+	if not paused_art_only and not await _startup_focus(): await _finish(); return
+	focus_armed = not paused_art_only
+	if paused_art_only: _record_focus("paused-art-startup-observation")
 	if not _expect(FileAccess.get_sha256(PacketPath) == PacketSha, "literal selected genuine119 bundle unchanged"): await _finish(); return
 	var document: Variant = JSON.parse_string(FileAccess.get_file_as_string(PacketPath))
 	if not _expect(document is Dictionary and document.get("api_revision") == "act1-l5-saved-portrait-1" and document.get("source_report_sha256") == SourceReportSha and document.get("source_checks") == 119 and document.get("source_failures") == 0 and document.get("frames") is Array and document.frames.size() == 4 and document.get("source_sha256") is Dictionary, "exact four-view provenance required"): await _finish(); return
-	source_hashes = document.source_sha256
+	source_hashes = document.source_sha256.duplicate(true)
+	# Producer bundle/snapshot/checkpoint strings stay literal Shared57 evidence.
+	# Only this consumer pin follows the published compatible Shared58 Shell fix.
+	source_hashes["res://scripts/campaign/shell.gd"] = Shared58ShellSha
 	if not _source_guard(): await _finish(); return
 	var registry_doc: Variant = JSON.parse_string(registry_bytes.get_string_from_utf8())
 	if not _expect(registry_doc is Dictionary and registry_doc.get("levels") is Array, "canonical registry readable"): await _finish(); return
@@ -99,6 +108,10 @@ func _continue_gui() -> bool:
 	if not _focused(): return false
 	var button: Button = game.menu.find_child("ContinueStoryButton", true, false) as Button
 	if not _expect(button != null and button.is_visible_in_tree() and not button.disabled, "actual enabled Continue Story button"): return false
+	if paused_art_only:
+		game.menu.continue_story_requested.emit()
+		if not await _settle(): return false
+		return _expect(paused and game.campaign_error.is_empty() and is_instance_valid(game.active_level), "public Continue signal selects real saved unit; no GUI-click/input credit")
 	var pressed: Array[String] = []
 	button.pressed.connect(func() -> void: pressed.append("ContinueStoryButton"), CONNECT_ONE_SHOT)
 	var point: Vector2 = button.get_global_rect().get_center()
@@ -130,6 +143,9 @@ func _capture_view(row: Dictionary) -> bool:
 	var picture: Image = root.get_texture().get_image() if valid else null
 	var path: String = capture_dir.path_join("%02d-%s.png" % [shots.size() + 1, row.label])
 	var saved_png: bool = picture != null and picture.get_size() == PortraitSize and picture.save_png(path) == OK
+	if saved_png:
+		var decoded_png: Image = Image.load_from_file(path)
+		saved_png = decoded_png != null and not decoded_png.is_empty() and decoded_png.get_size() == PortraitSize
 	_restore_menu()
 	if not valid: return false
 	if not _expect(saved_png and game.menu.visible == ui.menu_visible and game.menu.page_name() == ui.menu_page and game.hud.visible == ui.hud_visible and Exact.stringify(game.capture_campaign_snapshot()) == before and _physical(level, game.player) == physical_before and _camera_wire() == camera_before and Exact.stringify(_portable(game.get_input_observation_state())) == input_before, "actual540x1170 PNG and exact native/camera/input/UI restored"): return false
@@ -169,6 +185,7 @@ func _source_guard() -> bool:
 
 func _focused() -> bool:
 	if aborted or finishing: return false
+	if paused_art_only: return true # Focus observation remains passive; production handling is untouched.
 	if root.has_focus() and DisplayServer.window_is_focused(root.get_window_id()): return true
 	_expect(false, "genuine native focus loss cancels; no foreground request/resume"); aborted = true; _finish.call_deferred(); return false
 
@@ -219,7 +236,7 @@ func _finish() -> void:
 	var file := FileAccess.open(report, FileAccess.WRITE)
 	if file == null: _expect(false, "saved portrait report writable")
 	else:
-		file.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "source_report_sha256": SourceReportSha, "packet_bundle_sha256": PacketSha, "captures": shots, "focus_events": focus_rows, "setups": setups, "observations": observations, "wall_ms": Time.get_ticks_msec() - started_ms, "scope": "Four genuine119 units restored through actual fresh Shell GUI Continue and isolated TEST prefix/store. Paused-world portrait inspection; only menu hidden for PNG, full exact native/physical/camera/input/UI preservation. No fight replay, private state/HP/sample/clock/camera write, forced focus/resume/audio masking or new gameplay/gesture/route/balance/acceptance credit. Actual PNG personal optical review remains required."}, "\t")); file.close()
+		file.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "source_report_sha256": SourceReportSha, "packet_bundle_sha256": PacketSha, "captures": shots, "focus_events": focus_rows, "fixture_mode": "paused-art-only" if paused_art_only else "focus-qualified-GUI", "Continue_selection": "public menu signal, no GUI/input credit" if paused_art_only else "actual GUI click", "setups": setups, "observations": observations, "wall_ms": Time.get_ticks_msec() - started_ms, "scope": "Four genuine119 units restored through actual fresh Shell and isolated TEST prefix/store. Explicit paused-art-only selects public Continue signal and passively records focus; it supplies no GUI-click/interactive input credit. Default retains original focus-qualified GUI path. Paused-world portrait inspection; only menu hidden for PNG, full exact native/physical/camera/input/UI preservation. No fight replay, private state/HP/sample/clock/camera write, forced focus/resume/audio masking or new gameplay/gesture/route/balance/acceptance credit. Actual PNG personal optical review remains required."}, "\t")); file.close()
 	var directory := DirAccess.open(test_root)
 	if directory != null:
 		for name: String in directory.get_files(): DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root + name))
