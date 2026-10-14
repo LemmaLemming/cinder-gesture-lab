@@ -1,0 +1,239 @@
+#!/usr/bin/env python3
+"""Derivative inspection of one closed official checkpoint diagnostic; no engine."""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import math
+from pathlib import Path
+import re
+import struct
+import sys
+
+PREFIX = "Fresh-world checkpoint comparison diagnostic: "
+API = "exact-json-1"
+MAX_BYTES = 8 * 1024 * 1024
+MAX_DEPTH = 64
+MAX_ENTRIES = 16384
+MAX_NODES = 262144
+MAX_INTEGER = 9007199254740991
+
+
+def sha256(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"Duplicate JSON object key: {key!r}")
+        result[key] = value
+    return result
+
+
+def load_json(text: str):
+    def nonfinite(value):
+        raise ValueError(f"Nonfinite JSON constant refused: {value}")
+    return json.loads(text, object_pairs_hook=unique_object, parse_constant=nonfinite)
+
+
+def exact_envelope(wire: str):
+    if len(wire.encode("utf-8")) > MAX_BYTES:
+        raise ValueError("Official Exact byte limit exceeded")
+    envelope = load_json(wire)
+    if not isinstance(envelope, dict) or set(envelope) != {"api_revision", "schema_version", "value"}:
+        raise ValueError("Closed official Exact envelope required")
+    if envelope["api_revision"] != API or type(envelope["schema_version"]) is not int or envelope["schema_version"] != 1:
+        raise ValueError("Official exact-json-1 schema1 required")
+    budget = [MAX_NODES]
+
+    def decode(tagged, depth=0):
+        budget[0] -= 1
+        if budget[0] < 0 or depth > MAX_DEPTH:
+            raise ValueError("Official Exact node/depth limit exceeded")
+        if not isinstance(tagged, list) or not tagged or type(tagged[0]) is not str:
+            raise ValueError("Closed Exact tagged value required")
+        tag = tagged[0]
+        if tag == "null" and len(tagged) == 1:
+            return None
+        if len(tagged) != 2:
+            raise ValueError("Closed Exact tagged arity required")
+        value = tagged[1]
+        if tag == "string" and type(value) is str:
+            return value
+        if tag == "boolean" and type(value) is bool:
+            return value
+        if tag == "integer" and type(value) is str and re.fullmatch(r"-?(0|[1-9][0-9]*)", value):
+            integer = int(value)
+            if str(integer) == value and abs(integer) <= MAX_INTEGER:
+                return integer
+        if tag == "float64" and type(value) is str and re.fullmatch(r"[0-9a-f]{16}", value):
+            number = struct.unpack("<d", bytes.fromhex(value))[0]
+            if math.isfinite(number):
+                return number
+        if tag == "array" and isinstance(value, list) and len(value) <= MAX_ENTRIES:
+            return [decode(item, depth + 1) for item in value]
+        if tag == "dictionary" and isinstance(value, list) and len(value) <= MAX_ENTRIES:
+            result = {}
+            for pair in value:
+                if not isinstance(pair, list) or len(pair) != 2 or type(pair[0]) is not str or pair[0] in result:
+                    raise ValueError("Unique String keys in Exact dictionary required")
+                result[pair[0]] = decode(pair[1], depth + 1)
+            return result
+        raise ValueError(f"Invalid/unsupported/nonfinite Exact tag: {tag!r}")
+
+    return envelope, decode(envelope["value"])
+
+
+def encoded_differences(before, after, path=()):
+    """Compare original tags, including float bits and native scalar types."""
+    if before == after:
+        return []
+    if before[0] != after[0] or before[0] not in {"array", "dictionary"}:
+        return [{"path": list(path), "before_present": True, "after_present": True,
+                 "before_encoded": before, "after_encoded": after}]
+    if before[0] == "dictionary":
+        left, right = dict(before[1]), dict(after[1])
+        keys = sorted(left.keys() | right.keys())
+    else:
+        left, right = dict(enumerate(before[1])), dict(enumerate(after[1]))
+        keys = sorted(left.keys() | right.keys())
+    result = []
+    for key in keys:
+        if key not in left or key not in right:
+            row = {"path": list(path + (key,)), "before_present": key in left, "after_present": key in right}
+            if key in left:
+                row["before_encoded"] = left[key]
+            if key in right:
+                row["after_encoded"] = right[key]
+            result.append(row)
+        else:
+            result.extend(encoded_differences(left[key], right[key], path + (key,)))
+    # Preserve original encoded dictionary ordering even if key/value maps agree.
+    if not result and before != after:
+        result.append({"path": list(path), "before_present": True, "after_present": True,
+                       "before_encoded": before, "after_encoded": after,
+                       "qualification": "Original encoded ordering differs"})
+    return result
+
+
+def guard_comparison(events, kind):
+    calls = [{"trace_index": index, **event} for index, event in events
+             if event.get("phase") == f"actual_{kind}_guard_return"]
+    for call in calls:
+        if type(call.get("wire")) is not str or type(call.get("call_sequence")) is not int:
+            raise ValueError("Actual returned String/call sequence required")
+    output = {"actual_returns": calls, "before_status": "OBSERVED" if calls else "UNOBSERVED",
+              "after_status": "UNOBSERVED", "comparison": "UNOBSERVED"}
+    if calls:
+        output["before_wire"] = calls[0]["wire"]
+    if len(calls) < 2:
+        return output
+    if len(calls) != 2:
+        output.update(after_status="MULTIPLE_ACTUAL_RETURNS", comparison="UNRESOLVED_PAIR")
+        return output
+    rows = [index for index, event in events if event.get("phase") == "row_return"]
+    if not rows or not calls[0]["trace_index"] < min(rows) or not calls[1]["trace_index"] > max(rows):
+        output.update(after_status="ACTUAL_RETURN_PRESENT", comparison="UNRESOLVED_PHASE",
+                      qualification="Both returns retained; before/after preparation roles are not established by observed row order")
+        return output
+    first, second = calls
+    equal = first["wire"] == second["wire"]
+    output.update(after_status="OBSERVED", after_wire=second["wire"], comparison="EQUAL" if equal else "UNEQUAL",
+                  wire_equal=equal, before_wire_sha256_utf8=sha256(first["wire"].encode("utf-8")),
+                  after_wire_sha256_utf8=sha256(second["wire"].encode("utf-8")),
+                  qualification="Two actual same-scope returns bracket observed row work; no elapsed/frame/predicate inference")
+    if equal:
+        return output
+    try:
+        left, _ = exact_envelope(first["wire"])
+        right, _ = exact_envelope(second["wire"])
+    except ValueError as error:
+        output["encoded_wire_decode_error"] = str(error)
+        return output
+    output["full_exact_encoded_value_differences"] = encoded_differences(left["value"], right["value"])
+    if kind == "donor":
+        output["full_exact_encoded_donor_row_differences"] = []
+        if left["value"][0] == right["value"][0] == "array":
+            la, ra = left["value"][1], right["value"][1]
+            for index in range(max(len(la), len(ra))):
+                if index < len(la) and index < len(ra) and la[index] == ra[index]:
+                    continue
+                row = {"row_index": index, "before_present": index < len(la), "after_present": index < len(ra)}
+                if index < len(la):
+                    row["before_full_encoded_row"] = la[index]
+                if index < len(ra):
+                    row["after_full_encoded_row"] = ra[index]
+                output["full_exact_encoded_donor_row_differences"].append(row)
+        else:
+            output["donor_row_qualification"] = "Original donor values are not both arrays; full encoded value differences retained"
+    return output
+
+
+def summarize_scopes(trace):
+    if not isinstance(trace, list):
+        raise ValueError("Actual registration_guard_trace Array required")
+    groups = {}
+    for index, event in enumerate(trace):
+        if not isinstance(event, dict) or type(event.get("scope")) is not int or type(event.get("phase")) is not str:
+            raise ValueError("Actual scoped phase event required")
+        groups.setdefault(event["scope"], []).append((index, event))
+    return [{"scope": scope, "actual_events_in_original_order": [{"trace_index": i, **event} for i, event in events],
+             "disk": guard_comparison(events, "disk"), "donor": guard_comparison(events, "donor")}
+            for scope, events in groups.items()]
+
+
+def inspect_closed(raw_path: Path, result_path: Path):
+    # Check closure before reading any run bytes. A failed closed job is still evidence.
+    result_bytes = result_path.read_bytes()
+    result = load_json(result_bytes.decode("utf-8"))
+    watch = result.get("job_watch", {})
+    if not all(watch.get(key) is True for key in ["wrapper_exited", "wrapper_stream_complete", "owned_group_gone"]):
+        raise ValueError("Closed original result/stream/owned-group record required")
+    if type(watch.get("exit_code")) is not int or watch.get("reader_error") or watch.get("termination"):
+        raise ValueError("Complete untruncated closure record required")
+    raw_bytes = raw_path.read_bytes()
+    raw_pin = result.get("logs", {}).get("raw", {})
+    if raw_pin.get("sha256") != sha256(raw_bytes) or raw_pin.get("bytes") != len(raw_bytes):
+        raise ValueError("Raw bytes do not match original closed result pin")
+    lines = [line for line in raw_bytes.decode("utf-8").splitlines() if line.startswith(PREFIX)]
+    if len(lines) != 1:
+        raise ValueError("Exactly one official checkpoint comparison line required")
+    envelope, diagnostic = exact_envelope(lines[0][len(PREFIX):])
+    if not isinstance(diagnostic, dict) or "registration_guard_trace" not in diagnostic:
+        raise ValueError("Official checkpoint diagnostic with actual guard trace required")
+    return {"record": "derivative-closed-checkpoint-guard-inspection", "qualification":
+            "Decoded JSON is derivative inspection only. Original raw and returned guard Strings remain exact. Missing after calls are UNOBSERVED; no timer/frame/predicate inference, guard retake or runtime capture.",
+            "original_raw": {"path": str(raw_path), "sha256": sha256(raw_bytes), "bytes": len(raw_bytes)},
+            "original_closed_result": {"path": str(result_path), "sha256": sha256(result_bytes),
+                                       "job_watch": watch, "check_footers": result.get("check_footers", [])},
+            "original_checkpoint_line_sha256_utf8_no_LF": sha256(lines[0].encode("utf-8")),
+            "official_envelope_api": envelope["api_revision"], "decoded_diagnostic": diagnostic,
+            "scopes": summarize_scopes(diagnostic["registration_guard_trace"]),
+            "native_pass_or_rejecting_predicate_claimed": False}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--raw", type=Path, required=True)
+    parser.add_argument("--result", type=Path)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    if args.output.exists() or args.output.resolve() in {args.raw.resolve(), (args.result or args.raw.parent / "result.json").resolve()}:
+        raise ValueError("New derivative output required; never overwrite original evidence")
+    report = inspect_closed(args.raw, args.result or args.raw.parent / "result.json")
+    encoded = (json.dumps(report, indent=2, ensure_ascii=False, allow_nan=False) + "\n").encode("utf-8")
+    with args.output.open("xb") as file:
+        file.write(encoded)
+    print(json.dumps({"derivative": str(args.output), "sha256": sha256(encoded), "bytes": len(encoded),
+                      "scopes": len(report["scopes"]), "native_pass_claimed": False}))
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (ValueError, OSError, KeyError, TypeError, struct.error) as error:
+        print(f"Refused diagnostic decode: {error}", file=sys.stderr)
+        raise SystemExit(2)

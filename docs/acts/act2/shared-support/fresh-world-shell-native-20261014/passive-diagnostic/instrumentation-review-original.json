@@ -1,0 +1,175 @@
+{
+  "report": "Bounded passive Shared57 guard instrumentation delta review",
+  "created_at_utc": "2026-10-14T03:41:02.611413+00:00",
+  "author": "/root/b02_native_join",
+  "scope": "Only observer eaf10c56→9453fff7 and diagnostic smoke0731c6fa→518ff9ea changed lines, inherited guard signatures and original compound check order. No full fixture, selected112/source closure, bank, accepted suite or failure re-audit.",
+  "verdict": "No new substantive finding in this static delta. Instrumentation preserves actual super results and only records TEST diagnostic data. Source review does not supply parser/native execution or determine the rejecting predicate.",
+  "pins": {
+    "original_observer": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/history/fresh_world_lunge_observing_shell.eaf10c56.original.gd.txt",
+      "sha256": "eaf10c569ce5aee3ac4c99655fe53db573121cf6293882d2006cd74135a8a42e",
+      "bytes": 14560,
+      "lines": 250
+    },
+    "original_diagnostic_smoke": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/history/fresh_world_lunge_smoke.0731c6fa.original.gd.txt",
+      "sha256": "0731c6fa8a5d9648d962df8e11a064f9482cfcea29944ebad0a8861e7dace10d",
+      "bytes": 48512,
+      "lines": 560
+    },
+    "instrumented_observer": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/fresh_world_lunge_observing_shell.gd.txt",
+      "sha256": "9453fff7f12bb2147fe101ffbf4d697fa908148ba96f78f07ecd3a7901735871",
+      "bytes": 18299,
+      "lines": 293
+    },
+    "instrumented_diagnostic_smoke": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/fresh_world_lunge_smoke.gd.txt",
+      "sha256": "518ff9ea1efad5614f58c423bdae8274958273cd24a0db48a43f26ab0eb350b6",
+      "bytes": 48586,
+      "lines": 560
+    },
+    "unchanged_original46_1_review": {
+      "path": "/private/tmp/a2_fresh_world_checkpoint_diagnostic_guard_review_20261014.json",
+      "sha256": "34347faec4babdbcfece2285271634eadbab7f331b8e805a1c30ec286102c167"
+    }
+  },
+  "delta": {
+    "changed_existing_observer_functions": [
+      "_prepare_registration",
+      "_registration_row"
+    ],
+    "added_observer_functions": [
+      "_fail",
+      "_registration_disk_guard",
+      "_registration_donor_guard",
+      "_test_trace_marker",
+      "_test_trace_state",
+      "test_registration_guard_trace"
+    ],
+    "existing_observer_function_bodies_exact_other_than_changed": 19,
+    "other_observer_change": "Three private TEST observation fields: guard trace Array, actual call Array, trace scope int. No production fields added/changed.",
+    "smoke_changed_functions": [
+      "_run"
+    ],
+    "smoke_exact_other_change_count": 1,
+    "smoke_change": "Add read-only test_registration_guard_trace result to existing checkpoint diagnostic Dictionary. Existing captures, components, exact encoding, assertion and exit flow unchanged."
+  },
+  "exact_inherited_signatures": [
+    {
+      "method": "_registration_donor_guard",
+      "signature": "func _registration_donor_guard() -> String:",
+      "exact": true
+    },
+    {
+      "method": "_registration_disk_guard",
+      "signature": "func _registration_disk_guard() -> String:",
+      "exact": true
+    },
+    {
+      "method": "_fail",
+      "signature": "func _fail(error: String) -> bool:",
+      "exact": true
+    },
+    {
+      "method": "_prepare_registration",
+      "signature": "func _prepare_registration(extra: Array = [], install_snapshot: Dictionary = {}, fresh_candidate: Dictionary = {}) -> bool:",
+      "exact": true
+    },
+    {
+      "method": "_registration_row",
+      "signature": "func _registration_row(candidate: Dictionary, wire: String) -> Dictionary:",
+      "exact": true
+    }
+  ],
+  "checks": [
+    {
+      "topic": "Actual donor/disk guards called once",
+      "new_lines": [
+        211,
+        227
+      ],
+      "evidence": "Each override records a TEST call object and real time/frame/tree state; invokes its exact super guard ONCE; appends the actual returned wire and post-call state; returns that same local String unchanged. No copied guard body, predicate or extra snapshot/disk capture is introduced."
+    },
+    {
+      "topic": "Original failure semantics",
+      "new_lines": [
+        229,
+        234
+      ],
+      "evidence": "_fail records only TEST metadata (actual error, state, existing operation queues and previous actual calls), then calls and returns super._fail(error) ONCE unchanged. It does not set campaign_error, draining, failed operations, generation, paused state or any other shared field itself."
+    },
+    {
+      "topic": "Original preparation and row returns",
+      "new_lines": [
+        112,
+        122,
+        145
+      ],
+      "evidence": "Preparation calls/awaits exact three-argument super once and returns its actual bool; marker timestamps are at wrapper entry/outcome. Existing row construction/callback/native fault code unchanged; one marker follows its actual original work immediately before returning its actual row."
+    },
+    {
+      "topic": "Read-only physical/state markers",
+      "new_lines": [
+        236,
+        242
+      ],
+      "evidence": "_test_trace_state reads Time ticks, Engine process/physics frames, inside-tree, actual tree.paused and native inflight/pending flags. It performs no model capture, no physics step, no clock/position/camera/latch write. Marker appends only private TEST dictionaries."
+    },
+    {
+      "topic": "Skipped observation truthfulness",
+      "new_lines": [
+        212,
+        217,
+        222,
+        227,
+        230,
+        233
+      ],
+      "evidence": "Actual call entry and returned flags/wires remain separate. If fewer than two actual calls of a kind occurred in that trace scope, later observation is unobserved; no expected wire or equality is fabricated. The call-count label denotes a later actual call, not independently the private predicate role; correlate the recorded call sequence and phase markers with original source order. Empty returned String remains distinct from no call."
+    },
+    {
+      "topic": "No private time/frame inference",
+      "new_lines": [
+        114,
+        120,
+        145,
+        233
+      ],
+      "evidence": "Entry explicitly not inaccessible internal started time; outcome not internal wait duration; row marker not internal wait start; _fail marker qualified after original cleanup and not internal predicate time. No two-second threshold or copied short-circuit predicate is computed by this instrumentation."
+    }
+  ],
+  "source_order_limit": {
+    "published_commit": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+    "shared_shell_sha256": "29c73f78ebf1d48545539aa3a8ffc506773b402fc2a8f075be24d14de36eed31",
+    "line": 1181,
+    "order": [
+      "not tree.paused",
+      "Engine process frames <= private frame",
+      "actual wait elapsed >2000",
+      "actual disk wire differs",
+      "actual donor wire differs",
+      "direct Attempts wire differs"
+    ],
+    "no_after_guard_calls": "With complete correctly scoped trace and that exact error, early tree/frame/elapsed terms are the remaining set. Missing later calls do not prove donor/disk drift or which early term failed.",
+    "time_markers": "Wrapper/row/_fail intervals must keep their actual scope. Native private started/frame values are neither exposed nor synthesized here."
+  },
+  "hypotheses_and_observations": {
+    "physics_origin_deferred_drain": "Integration supplied an unproven hypothesis that upcoming process_frame can precede Engine process-frame-count increment when pause starts from physics-origin callbacks; process-origin Begin differs. Preserve as hypothesis pending actual diagnostic result.",
+    "earlier_pause_error_before_later_checkpoint_mutation": "Existing _settle compares settlement and adapter errors but does not assert no failed operations/campaign error; instrumentation leaves that behavior unchanged to preserve the actual first pause refusal. Current original46/1 showed that refusal before the subsequent live checkpoint request.",
+    "new_instrumented_result_available": false,
+    "actual_rejecting_predicate_confirmed": false
+  },
+  "findings": [],
+  "reviewer_actions": {
+    "engine": false,
+    "parser_or_native_job": false,
+    "source_or_Git_write": false,
+    "shared_copy_or_predicate_copy": false,
+    "tolerance_or_guard_change": false,
+    "original_failure_rewrite": false,
+    "human_decision_required": false,
+    "new_file": "/private/tmp/a2_fresh_world_passive_guard_instrumentation_review_20261014.json"
+  },
+  "next_owner_work": "Root can install exactly these two assigned TEST files and run the already authorized focused parser and single checkpoint diagnostic through the canonical queue. This review introduces no human approval gate or native pass credit."
+}

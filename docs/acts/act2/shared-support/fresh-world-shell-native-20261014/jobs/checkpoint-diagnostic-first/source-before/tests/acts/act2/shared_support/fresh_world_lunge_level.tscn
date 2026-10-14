@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/acts/act2/shared_support/fresh_world_lunge_level.gd" id="1_level"]
+
+[node name="FreshWorldLungeShellSupport" type="Node3D"]
+script = ExtResource("1_level")
+level_id = "A1-L1"
+objective_text = "TEST / FRESH WORLD NATIVE LUNGE"
+local_snapshot_version = 1
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(-2.5, 0.02, 0)

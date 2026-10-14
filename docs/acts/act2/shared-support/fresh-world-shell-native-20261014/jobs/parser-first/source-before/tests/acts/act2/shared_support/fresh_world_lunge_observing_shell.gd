@@ -1,0 +1,250 @@
+extends "res://scripts/campaign/shell.gd"
+## INERT TEST adapter over EXACT published Shared57, not shared authority.
+## Planned tests/acts/act2/shared_support/fresh_world_lunge_observing_shell.gd.
+## Super signatures/operation drain unchanged; no parser/native execution yet.
+## Ephemeral TEST tickets/receipts never authorize candidate or saved acceptance.
+const TEST_BRIDGE_API: String = "fresh-world-shell-test-bridge-1"
+const TEST_OPERATION: String = "TEST-fresh-world-probe"
+const TestExact = preload("res://scripts/campaign/exact_json.gd")
+var test_observer: Callable
+var _test_ticket: int = 0
+var _test_jobs: Dictionary = {}
+var _test_answers: Dictionary = {}
+var _test_current: Dictionary = {}
+var _test_rows: Array[Dictionary] = []
+var _test_refs: Array = []
+var _test_created: int = 0
+var _test_validator_calls: int = 0
+var _test_errors: Array[String] = []
+var _test_install_wire: String = ""
+var _test_row_counts: Dictionary = {}
+var _test_target_wire: String = ""
+var _test_fault_applied: bool = false
+var _test_pending_scheduled: bool = false
+var _test_pending_ran: bool = false
+var _test_pending_paused: bool = false
+var _test_pending_guard: String = ""
+var _test_pending_error: String = ""
+var _test_selected_row_error: String = ""
+var _test_outer_prepared: bool = false
+
+func test_attach_observer(observer: Callable) -> bool:
+	if is_inside_tree() or not observer.is_valid(): return false
+	test_observer = observer
+	return true
+
+func test_adapter_errors() -> Array[String]:
+	return _test_errors.duplicate() # retained actual observations, never normalized
+
+func test_settled() -> bool:
+	return not _draining and not _drain_queued and not _registration_inflight and not _registration_pending and _operations.is_empty() and _test_current.is_empty()
+
+func test_queue_operation(kind: String, payload: Dictionary) -> Dictionary:
+	if not is_inside_tree() or not get_tree().paused or not test_settled() or not _failed_operations.is_empty():
+		return {"api_revision": TEST_BRIDGE_API, "performed": false, "reason": "TEST operation requires original settled paused Shell drain"}
+	_test_ticket += 1
+	var ticket: int = _test_ticket
+	_test_jobs[ticket] = {"kind": kind, "payload": payload.duplicate(true)}
+	_enqueue(TEST_OPERATION, {"test_ticket": ticket}) # original pause/input/drain ownership
+	for _frame: int in range(240):
+		await get_tree().process_frame
+		if _test_answers.has(ticket) and test_settled():
+			var answer: Dictionary = _test_answers[ticket]
+			_test_answers.erase(ticket)
+			return answer
+	return {"api_revision": TEST_BRIDGE_API, "performed": false, "reason": "Bounded actual TEST operation did not settle"}
+
+func _perform(operation: Dictionary) -> bool:
+	if operation.get("operation") != TEST_OPERATION: return await super._perform(operation)
+	var ticket: int = int(operation.get("test_ticket", -1))
+	if not _test_jobs.has(ticket): return _fail("Unknown TEST operation ticket")
+	_test_current = _test_jobs[ticket]
+	_test_jobs.erase(ticket)
+	_test_refs = []; _test_created = 0; _test_validator_calls = 0; _test_errors = []
+	_test_fault_applied = false; _test_pending_scheduled = false; _test_pending_ran = false
+	_test_pending_paused = false; _test_pending_guard = ""; _test_pending_error = ""
+	_test_selected_row_error = ""; _test_outer_prepared = false
+	var kind: String = _test_current.kind
+	var payload: Dictionary = _test_current.payload
+	var packet: Dictionary = payload.get("packet", {})
+	_test_target_wire = TestExact.stringify(packet) if not packet.is_empty() else ""
+	var errors: Array[String] = []
+	var extra: Array = payload.get("packets", [packet])
+	_test_outer_prepared = await _prepare_registration(extra, {}, {})
+	if kind == "prepare_raw_with_fault":
+		# Keep the ACTUAL outer bool. Row poisoning may leave whole discovery true.
+		pass
+	elif kind in ["pending_cancel", "pending_reentry", "pending_disposal"]:
+		pass # real deferred callback owns this negative, never a fake result
+	elif _test_outer_prepared:
+		if kind == "validate_distinct_packets":
+			for complete: Dictionary in extra: errors.append(_snapshot_problem(complete))
+		elif kind == "validate_then_mutate_then_revalidate":
+			errors.append(_snapshot_problem(packet))
+			if errors[0].is_empty():
+				var row: Dictionary = _registered_snapshots.get(_test_target_wire, {}).get("validation", {})
+				var candidate: Dictionary = row.get("candidate", {})
+				if not candidate.is_empty() and payload.get("fault_callback") is Callable:
+					(payload.fault_callback as Callable).call(payload.get("fault", ""), candidate)
+				else: _test_errors.append("Actual entered validation candidate/fault callback missing")
+			errors.append(_snapshot_problem(packet))
+		else:
+			errors.append(_snapshot_problem(packet))
+	else:
+		# Real outer preparation failure is recorded separately from String validators.
+		_test_errors.append(campaign_error if not campaign_error.is_empty() else "Actual outer preparation returned false")
+	var counts: Dictionary = _test_actual_counts()
+	var membership: bool = _test_installed_in_pool()
+	var row_receipts: Array[Dictionary] = _test_row_receipts()
+	_dispose_registration_scope() # original candidate retirement; original drain repeats safely
+	var answer: Dictionary = {"api_revision": TEST_BRIDGE_API, "performed": true, "operation": kind, "outer_preparation_result": _test_outer_prepared, "row_error": _test_selected_row_error, "validation_errors": errors, "validation_error": errors[0] if not errors.is_empty() else "", "synchronous_validator_calls": _test_validator_calls, "created_candidate_count": _test_created, "candidate_refs": _test_refs.duplicate(), "restore_entries": counts.restore_entries, "quiet_commits": counts.quiet_commits, "validated_complete_packets": errors.size(), "installation_in_validation_pool": membership, "rejected_or_committed_reused": counts.reused, "pending_paused": _test_pending_ran and _test_pending_paused, "donor_guard_during_wait": _test_pending_guard, "validation_during_pending_error": _test_pending_error, "adapter_errors": _test_errors.duplicate(), "rows": row_receipts}
+	_test_answers[ticket] = answer
+	_test_current = {}; _test_target_wire = ""; _test_rows = []
+	# TEST execution success is distinct from native preparation/validation result.
+	# Scope cancellation returns the actual false so ORIGINAL drain clears its flag.
+	return _test_outer_prepared if kind == "pending_cancel" else true
+
+func _prepare_registration(extra: Array = [], install_snapshot: Dictionary = {}, fresh_candidate: Dictionary = {}) -> bool:
+	_test_install_wire = TestExact.stringify(install_snapshot) if not install_snapshot.is_empty() else ""
+	_test_row_counts = {}; _test_rows = []
+	return await super._prepare_registration(extra, install_snapshot, fresh_candidate)
+
+func _registration_row(candidate: Dictionary, wire: String) -> Dictionary:
+	var row: Dictionary = super._registration_row(candidate, wire)
+	var count: int = int(_test_row_counts.get(wire, 0))
+	_test_row_counts[wire] = count + 1
+	var purpose: String = "installation" if wire == _test_install_wire and count == 1 else "validation"
+	var parsed: Dictionary = TestExact.parse(wire)
+	var packet: Dictionary = parsed.get("value", {}) if parsed.get("accepted") == true else {}
+	var meta: Dictionary = {"row": row, "original": candidate.duplicate(), "wire": wire, "packet": packet, "purpose": purpose, "candidate_id": str(candidate.level.get_instance_id()), "entry_observed": false, "rejected": false, "row_error": "", "last_counts": {"restore_entries": 0, "quiet_commits": 0}}
+	_test_rows.append(meta)
+	if not _test_current.is_empty():
+		_test_created += 1
+		_test_refs.append_array(_test_collect_refs(candidate.container))
+	_test_observe("raw", meta)
+	if not _test_current.is_empty() and purpose == "validation" and wire == _test_target_wire:
+		var kind: String = _test_current.kind
+		if kind == "prepare_raw_with_fault" and not _test_fault_applied:
+			_test_fault_applied = true
+			var callback: Callable = _test_current.payload.get("fault_callback", Callable())
+			if callback.is_valid():
+				var floor: StaticBody3D = candidate.level.call("get_floor")
+				callback.call(candidate, {"immutable_floor_custody_captured": not String(row.floor_guard).is_empty(), "injection_point": "Shared57 _registration_row after exact super custody return and healthy raw observer", "floor_guard": row.floor_guard, "floor_instance_id": str(floor.get_instance_id()), "floor_rid": str(floor.get_rid())})
+			else: _test_errors.append("Raw fault callback missing")
+		elif kind.begins_with("pending_") and not _test_pending_scheduled:
+			_test_pending_scheduled = true
+			_test_pending_callback.call_deferred()
+	return row
+
+func _registration_row_error(row: Dictionary) -> String:
+	var error: String = super._registration_row_error(row)
+	var meta: Dictionary = _test_find_meta(row)
+	if not meta.is_empty() and not error.is_empty():
+		meta.row_error = error
+		if meta.wire == _test_target_wire and meta.purpose == "validation" and _test_selected_row_error.is_empty(): _test_selected_row_error = error
+	return error
+
+func _enter_registered_candidate(snapshot: Dictionary, row: Dictionary) -> Dictionary:
+	var first: bool = not row.get("entered", false)
+	var meta: Dictionary = _test_find_meta(row)
+	# Actual native guard and complete wire precede only the FIRST constructor.
+	var guard: String = super._registration_row_error(row)
+	if first and guard.is_empty() and row.get("wire") == TestExact.stringify(snapshot): _test_observe("registered", meta)
+	var candidate: Dictionary = super._enter_registered_candidate(snapshot, row)
+	if not candidate.is_empty() and first:
+		if not meta.is_empty(): meta.entry_observed = true
+		_test_observe("entered", meta)
+		if not _test_current.is_empty() and _test_current.kind == "validate_once" and not _test_fault_applied and not String(_test_current.payload.get("fault", "")).is_empty() and not meta.is_empty() and meta.wire == _test_target_wire and meta.purpose == "validation":
+			_test_fault_applied = true
+			var callback: Callable = _test_current.payload.get("fault_callback", Callable())
+			if callback.is_valid(): callback.call(_test_current.payload.fault, candidate)
+			else: _test_errors.append("Post-entry validator fault callback missing")
+	return candidate
+
+func _prepare_snapshot(snapshot: Dictionary) -> Dictionary:
+	var candidate: Dictionary = super._prepare_snapshot(snapshot)
+	if not candidate.is_empty():
+		var meta: Dictionary = _test_find_candidate(candidate)
+		_test_observe("committed", meta)
+		if _test_candidate_in_pool(candidate): _test_errors.append("Actual committed installation candidate remains in validation pool")
+	return candidate
+
+func _snapshot_problem(snapshot: Dictionary) -> String:
+	if not _test_current.is_empty(): _test_validator_calls += 1
+	return super._snapshot_problem(snapshot) # synchronous String, never awaited
+
+func _reject_registration_row(row: Dictionary) -> void:
+	var meta: Dictionary = _test_find_meta(row)
+	if not meta.is_empty():
+		var level: Variant = meta.original.get("level")
+		if is_instance_valid(level): meta.last_counts = level.call("transport_diagnostics")
+		meta.rejected = true
+	super._reject_registration_row(row)
+
+func _test_pending_callback() -> void:
+	if _test_current.is_empty(): return
+	_test_pending_ran = _registration_pending and _registration_inflight
+	_test_pending_paused = get_tree().paused
+	var guard: Callable = _test_current.payload.get("pending_guard", Callable())
+	_test_pending_guard = guard.call() if guard.is_valid() else ""
+	if not _test_pending_ran: _test_errors.append("Deferred observer missed actual native preparation pending phase"); return
+	_test_pending_error = _snapshot_problem(_test_current.payload.packet)
+	match String(_test_current.kind):
+		"pending_cancel": _cancel_registration_preparation() # original scope-only helper
+		"pending_disposal":
+			for meta: Dictionary in _test_rows:
+				if meta.wire == _test_target_wire and meta.purpose == "validation":
+					var container: Variant = meta.original.get("container")
+					if is_instance_valid(container): container.free() # isolated original only
+					break
+		"pending_reentry": pass # actual nested String refusal already captured
+
+func _test_observe(stage: String, meta: Dictionary) -> void:
+	if meta.is_empty() or meta.packet.is_empty() or not test_observer.is_valid(): return
+	var candidate: Dictionary = meta.original
+	for node: Variant in candidate.values():
+		if not is_instance_valid(node): return
+	test_observer.call(stage, candidate, meta.packet, meta.purpose)
+
+func _test_find_meta(row: Dictionary) -> Dictionary:
+	for meta: Dictionary in _test_rows:
+		if meta.row == row: return meta
+	return {}
+
+func _test_find_candidate(candidate: Dictionary) -> Dictionary:
+	for meta: Dictionary in _test_rows:
+		if meta.original.get("level") == candidate.get("level"): return meta
+	return {}
+
+func _test_actual_counts() -> Dictionary:
+	var entries: int = 0; var commits: int = 0; var reused: bool = false
+	for meta: Dictionary in _test_rows:
+		var d: Dictionary = meta.last_counts
+		var level: Variant = meta.original.get("level")
+		if is_instance_valid(level): d = level.call("transport_diagnostics")
+		entries += int(d.get("restore_entries", 0)); commits += int(d.get("quiet_commits", 0))
+		if int(d.get("restore_entries", 0)) > 1 or (meta.rejected and int(d.get("quiet_commits", 0)) > 0): reused = true
+	return {"restore_entries": entries, "quiet_commits": commits, "reused": reused}
+
+func _test_candidate_in_pool(candidate: Dictionary) -> bool:
+	for entry: Dictionary in _registered_snapshots.values():
+		for role: String in ["validation", "installation"]:
+			var row: Dictionary = entry.get(role, {})
+			if row.get("candidate", {}).get("level") == candidate.get("level") or row.get("bindings", {}).get("level") == candidate.get("level"): return true
+	for retained: Dictionary in _validation_candidates.values():
+		if retained.get("level") == candidate.get("level"): return true
+	return false
+
+func _test_installed_in_pool() -> bool:
+	return _test_candidate_in_pool({"level": active_level}) if is_instance_valid(active_level) else false
+
+func _test_row_receipts() -> Array[Dictionary]:
+	var receipts: Array[Dictionary] = []
+	for meta: Dictionary in _test_rows:
+		receipts.append({"candidate_id": meta.candidate_id, "packet_sha256": String(meta.wire).sha256_text(), "purpose": meta.purpose, "entry_observed": meta.entry_observed, "rejected": meta.rejected, "row_error": meta.row_error})
+	return receipts
+
+func _test_collect_refs(node: Node) -> Array:
+	var refs: Array = [weakref(node)]
+	for child: Node in node.get_children(): refs.append_array(_test_collect_refs(child))
+	return refs

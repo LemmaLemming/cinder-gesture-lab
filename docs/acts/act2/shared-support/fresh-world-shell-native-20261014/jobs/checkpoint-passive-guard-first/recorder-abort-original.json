@@ -1,0 +1,35 @@
+{
+  "record": "original-recorder-abort-plus-separate-read-only-process-observation",
+  "observed_utc": "2026-10-14T03:53:12.413166+00:00",
+  "tool_session_id": 56755,
+  "tool_exit_code": 2,
+  "original_tool_output": "Recorder refusal/error: [Errno 1] Operation not permitted",
+  "original_helper_sha256": "a618df4cc93ab4df41870832248f2c5d1c6eb2c28c3fd9c47c12896bf4a09bc2",
+  "job_file_names": [
+    "source-before",
+    "source.json",
+    "uid-before.json",
+    "wrapper.log"
+  ],
+  "wrapper_sha256": "ccea70b299d998014e49f83a7cc7c2622c4849c43954b78ba52a5ced255d9552",
+  "wrapper_bytes": 49,
+  "wrapper_text": "Waiting for the shared Godot session to close\u2026\n",
+  "raw_exists": false,
+  "result_exists": false,
+  "job_watch_exists": false,
+  "read_only_process_observation": [
+    {
+      "command": "ps -p 43098 -o pid,ppid,pgid,user,state,etime,command",
+      "exit_code": 1,
+      "output": "  PID  PPID  PGID USER STAT ELAPSED COMMAND\n",
+      "qualification": "Root earlier identified this as queued own wrapper; absence now does not reconstruct original group/stream watch."
+    },
+    {
+      "command": "pgrep -fl '[s]cripts/dev/dev.py.*checkpoint-passive-guard-first|[r]ecord_job.py.*checkpoint-passive-guard-first|[f]resh_world_lunge_smoke.gd'",
+      "exit_code": 1,
+      "output": "",
+      "qualification": "No matching commands in separate observed survey; no process signalled by these reads."
+    }
+  ],
+  "assessment": "No engine banner/raw/footer or guard trace observed. Original recorder aborted without final source/UID/owned-group/stream result; no native gameplay failure or pass and no fabricated formal closure. Record is separate evidence, not a rebuilt job-watch."
+}

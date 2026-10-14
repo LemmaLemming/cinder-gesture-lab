@@ -1,0 +1,136 @@
+{
+  "record": "Shared57 Act3 archived portrait startup versus Act2 checkpoint source origin comparison",
+  "date": "2026-10-14",
+  "status": "SOURCE_ONLY_ORIGINS_CONFIRMED_FAILED_OPERAND_UNOBSERVED",
+  "frozen_act3_inputs": [
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/crystalman-c50-public-shared57-saved-portrait-native/sources/scripts/campaign/shell.gd",
+      "sha256": "29c73f78ebf1d48545539aa3a8ffc506773b402fc2a8f075be24d14de36eed31",
+      "bytes": 70063
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/crystalman-c50-public-shared57-saved-portrait-native/sources/scripts/game.gd",
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "bytes": 38685
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/crystalman-c50-public-shared57-saved-portrait-native/sources/tests/acts/act3/crystalman_parent_transport_smoke.gd",
+      "sha256": "3344ec10095f9d760521fa834b8ebdefee78c05950e77212e975605a86485608",
+      "bytes": 17653
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/crystalman-c50-public-shared57-saved-portrait-native/sources/tests/acts/act3/crystalman_regular_priority_smoke.gd",
+      "sha256": "cd8491fae4d6eb8f71b79b1131a13b09626472bba7180b4ff5904b447a1d1c31",
+      "bytes": 66656
+    }
+  ],
+  "act2_original_checkpoint_source": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/history/fresh_world_lunge_smoke.0731c6fa.original.gd.txt",
+    "sha256": "0731c6fa8a5d9648d962df8e11a064f9482cfcea29944ebad0a8861e7dace10d",
+    "bytes": 48512
+  },
+  "assigned_shared_shell": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/shell.gd",
+    "sha256": "29c73f78ebf1d48545539aa3a8ffc506773b402fc2a8f075be24d14de36eed31",
+    "bytes": 70063
+  },
+  "source_facts": [
+    {
+      "file": "tests/acts/act3/crystalman_regular_priority_smoke.gd",
+      "lines": [
+        85,
+        100
+      ],
+      "fact": "The exact saved-portrait selector sets paused true and dispatches directly to the archive reader. It does not enter ordinary open_regular/Main combat setup."
+    },
+    {
+      "file": "tests/acts/act3/crystalman_regular_priority_smoke.gd",
+      "lines": [
+        776,
+        805
+      ],
+      "fact": "The selected path writes the exact archived session into isolated Store, constructs the public Shell through _c50_new_shell, awaits startup, and only afterward requests Continue."
+    },
+    {
+      "file": "tests/acts/act3/crystalman_regular_priority_smoke.gd",
+      "lines": [
+        530,
+        536,
+        553
+      ],
+      "fact": "The branch instantiates ProductionShell directly and requires no Main donor/Player/level/Scheduler from a live recreation."
+    },
+    {
+      "file": "tests/acts/act3/crystalman_parent_transport_smoke.gd",
+      "lines": [
+        258,
+        263
+      ],
+      "fact": "The inherited public startup barrier reads error/status after process frames and requires exact expected Attempts state before Continue."
+    },
+    {
+      "file": "scripts/campaign/shell.gd",
+      "lines": [
+        109,
+        114,
+        1229,
+        1238
+      ],
+      "fact": "Existing disk plus opt-in capability makes Shell._ready latch draining and defer _finish_startup_load; that awaits _prepare_registration with default empty arguments before attempts.load_saved."
+    },
+    {
+      "file": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/history/fresh_world_lunge_smoke.0731c6fa.original.gd.txt",
+      "lines": [
+        117,
+        126
+      ],
+      "fact": "The checkpoint fixture starts an actual installed Story Hero, resumes to stable support, then uses public request_pause, public host checkpoint, and another public pause."
+    },
+    {
+      "file": "scripts/campaign/shell.gd",
+      "lines": [
+        130,
+        134,
+        177,
+        217,
+        219,
+        225,
+        428,
+        433
+      ],
+      "fact": "Public Pause uses _enqueue then deferred _drain/_commit_drain/_perform/_record_live. _record_live captures the actual installed donor and passes that complete snapshot as extra to preparation."
+    },
+    {
+      "file": "scripts/campaign/shell.gd",
+      "lines": [
+        987,
+        1004
+      ],
+      "fact": "The common donor guard adds complete Player and native level capture rows only if those installed objects are valid; it always retains native camera/input bytes. Title startup and installed-donor pause therefore have different captured row content."
+    },
+    {
+      "file": "scripts/campaign/shell.gd",
+      "lines": [
+        904,
+        913,
+        936,
+        943
+      ],
+      "fact": "Nonpreview Shell processing returns while Player is absent or registration is inflight; idle Title focus notifications do not request pause without an active level. The selected nonpreview path does not call Game._ready/preview reset."
+    },
+    {
+      "file": "scripts/campaign/shell.gd",
+      "lines": [
+        1171,
+        1183
+      ],
+      "fact": "Both origins execute the same paused-frame custody predicate. After the actual process_frame await, OR order is tree paused, process frame advanced, internal elapsed bound, disk string, donor string, Attempts string. Later comparisons short-circuit if an earlier operand fails."
+    }
+  ],
+  "limits": [
+    "No raw log, result, archive payload or native bank was opened; sibling owns the separate closed-packet comparison.",
+    "Source equality and branch origins do not establish the actual failing operand, equality of skipped guards, elapsed time or a camera/native fault.",
+    "No new native execution, parser, edits, helper invocation or runtime repair claim.",
+    "No startup, Continue, checkpoint or portrait acceptance credit is added by this review."
+  ]
+}

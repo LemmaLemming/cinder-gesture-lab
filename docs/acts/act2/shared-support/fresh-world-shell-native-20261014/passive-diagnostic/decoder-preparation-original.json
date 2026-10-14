@@ -1,0 +1,115 @@
+{
+  "record": "a2-fresh-world-closed-guard-decoder-preparation",
+  "date": "2026-10-14",
+  "author": "/root/b02_native_join",
+  "scope": "New inert stdlib Python helper only; initial helper preserved and two canonical refusal branches repaired. No selected engine input changed.",
+  "helper": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/decode_closed_guard_diagnostic.py",
+    "sha256": "43ed433cf6f86f83e1146620d6267376cc450b5e91b77e2dfedfa6859411211b",
+    "bytes": 12145,
+    "lines": 239,
+    "mode": "0o644"
+  },
+  "original_preserved": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/history/decode_closed_guard_diagnostic.2a6ba48c.original.py",
+    "sha256": "2a6ba48c1745dfedc7bc7610e44251f902ced2519b6671490517240e015709d2",
+    "bytes": 12122,
+    "lines": 239,
+    "mode": "0o644"
+  },
+  "official_direct_dependency": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/exact_json.gd",
+    "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+    "bytes": 9330,
+    "lines": 247,
+    "mode": "0o644"
+  },
+  "selected_runtime_baseline": {
+    "shared57": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+    "queued_passive_guard_source_commit": "904f82bd",
+    "qualification": "Root-supplied source baseline; no running diagnostic bytes read or helper invocation against that job."
+  },
+  "actual_delta": [
+    {
+      "finding": "Initial integer regex accepted negative-zero decimal text.",
+      "repair": "Require str(integer) == original value as well as supported range.",
+      "official_source_lines": [
+        111,
+        117
+      ]
+    },
+    {
+      "finding": "Initial float regex accepted uppercase hexadecimal.",
+      "repair": "Accept exactly sixteen lowercase hexadecimal characters.",
+      "official_source_lines": [
+        118,
+        126
+      ]
+    }
+  ],
+  "helper_contract": {
+    "invocation_owner": "Root invokes only after job closure.",
+    "cli_arguments": {
+      "--raw": "Exact original closed raw.log path",
+      "--result": "Exact original closed result.json; defaults to raw.log parent/result.json",
+      "--output": "A new derivative JSON path, never an existing original or derivative"
+    },
+    "closure_before_raw_read": [
+      "wrapper_exited is true",
+      "wrapper_stream_complete is true",
+      "owned_group_gone is true",
+      "exit_code is an integer",
+      "reader_error and termination are absent/empty"
+    ],
+    "raw_join": "Actual SHA256 and byte length must equal original result.logs.raw pin before parsing exactly one official checkpoint diagnostic line.",
+    "official_line_prefix": "Fresh-world checkpoint comparison diagnostic: ",
+    "tag_decode": "Closed exact-json-1/schema1 envelope; typed arity/payloads; finite little-endian float64; canonical bounded integers; logical node/depth/entry limits; unique String dictionary keys.",
+    "json_refusals": [
+      "duplicate JSON keys",
+      "nonfinite JSON constants",
+      "nonfinite typed floats",
+      "unsupported or wrong-type tags"
+    ],
+    "guard_custody": "Every actual returned String and event/state/call sequence is retained in original scope and trace order. Only exactly two same-scope returns bracketing actual row_return work obtain before/after comparison roles.",
+    "missing_or_ambiguous_calls": "No later return remains UNOBSERVED with no invented after wire or equality. Multiple or unbracketed returns remain unresolved with all actual events retained.",
+    "comparison": "Original returned guard Strings compared exactly. On inequality, full original tagged value differences and complete differing donor rows are retained; float bits and typed scalar identity are preserved.",
+    "output": "New derivative JSON written exclusively; original result/raw/helper history remain unchanged. Decode success is not native acceptance.",
+    "inference_limits": [
+      "No guard retake",
+      "No runtime capture",
+      "No elapsed/frame/private predicate inference",
+      "No copied timer threshold or game predicate",
+      "No rejecting term selected from absent later calls",
+      "No new engine/parser/import/install"
+    ]
+  },
+  "verification": {
+    "syntax": "ast.parse passed; no py_compile cache artifact.",
+    "function_loading": "runpy.run_path with non-main run name only; CLI main not invoked.",
+    "synthetic_checks_count": 13,
+    "synthetic_checks": [
+      "reject integer negative zero",
+      "reject uppercase float hexadecimal",
+      "reject nonfinite typed float",
+      "reject boolean integer payload",
+      "reject duplicate typed dictionary keys",
+      "reject duplicate JSON envelope keys",
+      "reject nonfinite JSON constants",
+      "accept canonical integer zero",
+      "accept canonical finite float",
+      "preserve positive/negative float zero bit difference",
+      "retain genuine bracketed mismatch full original donor row",
+      "missing after is UNOBSERVED with no invented wire or equality",
+      "unbracketed roles remain unresolved"
+    ],
+    "actual_native_packets_read": false,
+    "cli_or_engine_invoked": false,
+    "independent_peer": "/root/scout_api_review found the two original canonical refusal gaps and no additional substantive closure/pair blocker; final exact two-line delta receipt is separate."
+  },
+  "limitations": [
+    "This derivative helper inspects the selected official diagnostic envelope/tag shape; it is not a replacement for the Godot Exact parser or runtime guard validation.",
+    "No actual queued passive diagnostic has been decoded by this author.",
+    "A failed closed job is valid diagnostic evidence; neither wrapper exit nor helper success implies a native test pass."
+  ],
+  "status": "Helper frozen for Root closed-log invocation; independent final delta receipt supplied separately."
+}

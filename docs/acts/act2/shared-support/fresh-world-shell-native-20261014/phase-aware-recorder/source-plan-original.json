@@ -1,0 +1,121 @@
+{
+  "created_utc": "2026-10-14T04:01:59.213030+00:00",
+  "derivative": {
+    "bytes": 30491,
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/record_job_after_queue.py.txt",
+    "sha256": "d33cb845959dade43faa572dde71049af61bbf5248de95198119068ad00c8d99"
+  },
+  "dev_api": {
+    "actual_calls": [
+      "dev.ProjectContext(root=assigned_checkout)",
+      "dev.resolve_godot(context)",
+      "with dev.godot_lock(context.root) as lock_fd",
+      "dev.run_validation(command, context, lock_fd, engine_timeout, detect_godot_errors=True)"
+    ],
+    "assigned_path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/dev/dev.py",
+    "both_sha256": "27bae2d12920e52d5144600318cf179ef30ae6222f7b33ffaf80250f5ef35a8d",
+    "canonical_path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/dev/dev.py",
+    "direct_command_qualification": "source.json records resolved native command; queue-worker-plan.json records the distinct owned Python worker command/context. This is the canonical queue/API path, not an invented claim that dev.py engine CLI ran nested under a lock.",
+    "functions": {
+      "ProjectContext.__init__": {
+        "end_line": 207,
+        "line": 180,
+        "source_sha256": "c8b5b7bf75f161f7973beba125ab1048d2b19881125c519a1c043e971b24e9a6"
+      },
+      "godot_lock": {
+        "end_line": 299,
+        "line": 280,
+        "source_sha256": "ed89ad23368673ec450347c9d7c87b76ee0f14ffd49e0d5a4de9dc2dfd076be5"
+      },
+      "resolve_godot": {
+        "end_line": 264,
+        "line": 247,
+        "source_sha256": "403ffbe2e454ee282d3209bb4f0191e5dfac850bca0bc7f3535ac80e6d7b36ee"
+      },
+      "run_validation": {
+        "end_line": 386,
+        "line": 323,
+        "source_sha256": "70255340b1bc768e3c883d2fb36a0c2dd176167aa8e9ee3d132598770b365911"
+      },
+      "shared_lock_path": {
+        "end_line": 277,
+        "line": 267,
+        "source_sha256": "2c1004314fa61ad61187c3bc262345df792ef1a050a35fd220024ecc5026f78d"
+      },
+      "stop_validation": {
+        "end_line": 320,
+        "line": 312,
+        "source_sha256": "96cc4702c4e09538c88d2c925f1a700fec529052c41bb5621eba440c2826310f"
+      }
+    },
+    "semantics": [
+      "ProjectContext reads assigned local settings and retains its actual canonical root/environment.",
+      "shared_lock_path derives the shared lock from common Git identity; godot_lock waits using existing flock, marks its fd inheritable, yields it and closes only its own fd. No LOCK_UN/deletion/bypass.",
+      "run_validation spawns native child with context cwd/environment and passed lock fd, creates the output reader and THEN measures timeout. It retains SCRIPT_FAILURE detection with detect_godot_errors=True, uses its own stop_validation and drains output.",
+      "There is no nested dev.py engine while the wrapper holds the lock; the wrapper invokes these same canonical APIs directly. Imported module bytecode writing is disabled."
+    ]
+  },
+  "limitations": [
+    "No new engine/native/helper-run proof.",
+    "Canonical function returns may be validation detector/timeout codes; no invented native exit code when that function did not return normal child wait.",
+    "An exception before queue-worker import/phase journal can still leave only parent lifecycle evidence; always preserve incomplete artifacts and caller stderr.",
+    "A persistent permission error may prevent owned stop/probe; recorded uncertainty cannot authorize a competing launch."
+  ],
+  "original_recorder": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/record_job.py",
+    "sha256": "a618df4cc93ab4df41870832248f2c5d1c6eb2c28c3fd9c47c12896bf4a09bc2",
+    "unchanged_expected_a618": true
+  },
+  "phases": {
+    "closure": "Uncertain group or incomplete pipe/worker remains unclosed. No present-day PID/whole-machine closure claim. Canonical validation code is distinguished from a detector/timeout synthetic code; actual raw/pipe originals retain separate byte hashes.",
+    "durability": "Append-only phase-watch.jsonl records start/acquisition/call/return/exception/final with fsync. PermissionError from stop/probe is captured as uncertainty; no foreign retry, new lock manipulation or pass. job-watch.json remains the standard completed watch record before after-inventory.",
+    "engine_limit_default_s": 600.0,
+    "prelaunch": "Under the acquired real lock, recheck canonical dev bytes, every frozen selected input and scoped UID metadata. Refuse changes before any native launch.",
+    "queue_watch": "Own worker SIGALRM timer interrupts canonical blocking queue wait. No foreign process is signalled. On actual acquisition the timer is canceled and queue-acquired.json plus append-only phase event is written.",
+    "queue_watch_default_s": 1800.0,
+    "queue_watch_max_s": 3600.0,
+    "runtime": "Actual canonical run_validation owns the post-spawn runtime deadline. Parent observes queue-acquired monotonic timestamp and allows only an extra20s margin before signalling its own newly created worker group if stuck."
+  },
+  "preserved_recorder_behavior": [
+    "Same fixture/source closure and metadata schema mechanics, source-before originals, post-run inventory/deltas, UID bytes and three import-only new UID allowance.",
+    "Same raw/wrapper originals, errors/warnings/first meaningful error/footers, before/after Git records and strict native assessment. No extra test cases or weakened UID/test criteria.",
+    "Promoted derivative becomes the selected recorder input in place of old recorder, normally retaining112 selected current input rows; do not claim a count until actual record. Existing a618 and prior job artifacts remain untouched."
+  ],
+  "prior_attempt": {
+    "file_presence": {
+      "job-watch.json": false,
+      "raw.log": false,
+      "result.json": false,
+      "source.json": true,
+      "uid-before.json": true,
+      "wrapper.log": true
+    },
+    "original_command": [
+      "/opt/homebrew/anaconda3/bin/python3",
+      "scripts/dev/dev.py",
+      "engine",
+      "--headless",
+      "--path",
+      ".",
+      "--log-file",
+      "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/checkpoint-passive-guard-first/raw.log",
+      "--script",
+      "res://tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd",
+      "--",
+      "--fresh-world-publication=75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+      "--checkpoint-only-diagnostic"
+    ],
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/checkpoint-passive-guard-first",
+    "qualification": "No raw/result/job-watch exists in this prior bank. Do not infer formal watchdog/group/stream closure or native execution from absent records. Root owns preserving its independent survey and queue-only lifecycle exception classification. Derivative does not automatically resubmit.",
+    "root_reported": "Tool handle56755 closed exit2 with Operation not permitted after ~600s. Root independently found no known wrapper43098, no exact own diagnostic command and no Godot native process; no overlap.",
+    "source_sha256": "5fb285fb1a69a611f5c9f9a6660e3749649516bf2cfdb21eb3daf32542e7955b",
+    "wrapper_bytes": 49,
+    "wrapper_sha256": "ccea70b299d998014e49f83a7cc7c2622c4849c43954b78ba52a5ced255d9552"
+  },
+  "record": "inert-phase-aware-canonical-queue-recorder-source-plan",
+  "root_invocation_after_review_and_promotion": [
+    "python3 .cinder/fresh-world-shell-support/execution-20261014/jobs/record_job_after_queue.py --kind native --label checkpoint-passive-guard-afterqueue --cwd . --expect-head 904f82bd621b56ce880b4081534f9dc762ad1110 --queue-timeout 1800 -- --fresh-world-publication=75e547f4de684e53e450ed9a8ad4fac149bee8b2 --checkpoint-only-diagnostic"
+  ],
+  "status": "INERT .py.txt SOURCE ONLY; no execution, import, installation or engine",
+  "validation_performed": "Python ast.parse on written inert derivative only. No derivative --plan/compile/promotion/module invocation by this child; Root performs bounded review/py_compile/promotion and same smallest diagnostic. No new parser/import of runtime source."
+}

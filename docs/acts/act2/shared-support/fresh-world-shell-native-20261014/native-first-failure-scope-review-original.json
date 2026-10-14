@@ -1,0 +1,436 @@
+{
+  "report": "Preserved first native failure, closure and bounded observation-scope review",
+  "created_at_utc": "2026-10-14T03:19:48.152820+00:00",
+  "author": "/root/b02_native_join",
+  "verdict": "Actual native-first is closed failed42/1 exit1, scope_complete=false. Its first failure is the composite earlier checkpoint/live aggregate assertion before any retained-lunge capture. Logs demonstrate no shared saved-lunge floor failure. Root is preparing the minimal actual tuple diagnostic; camera drift remains a source-supported hypothesis only.",
+  "scope": "Closed result/source/after/UID metadata, original raw/wrapper/watch closure and only already present encoded observation lines, plus three targeted frozen call-chain sources. No new trace reconstruction, missing tuple manufacture, engine/rerun/source edit or full bank audit.",
+  "original_pins": {
+    "result.json": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/result.json",
+      "sha256": "3d8269ee92ba0e34df87df289a1a1f5b3b079cf45fc79eb667583229049cdddd",
+      "bytes": 6584
+    },
+    "source.json": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/source.json",
+      "sha256": "f78c488cdf9fefc9da726493ed76d2aef2b2f896c06b40243b152aa3764c6883",
+      "bytes": 61364
+    },
+    "source-after.json": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/source-after.json",
+      "sha256": "ea9fcc2490a43c33edc5f1847f3129d925ceebf109b8492bbdc74fe328f2c747",
+      "bytes": 52593
+    },
+    "changes.json": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/changes.json",
+      "sha256": "0e928ff0365033838ecb5a64eacfc36aad690c17efbebdebf22ad4639faf5630",
+      "bytes": 108
+    },
+    "job-watch.json": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/job-watch.json",
+      "sha256": "e3e6b22e764cb04c756b326ef8dd8254e24caf712fae63872adcc79fd808fe6e",
+      "bytes": 1288
+    },
+    "uid-before.json": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/uid-before.json",
+      "sha256": "9838b2b488ee070a5fbddd725497310fe2936f0ab95e89bcf2802c309acc623f",
+      "bytes": 144416
+    },
+    "uid-after.json": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/uid-after.json",
+      "sha256": "4b90dc7177cb2fc1a4939f44562efaf4810475dfc5c3d0728503e22ef3cf9eea",
+      "bytes": 144416
+    },
+    "raw.log": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/raw.log",
+      "sha256": "1bfc3b1223a413fd20c29704efab0a63c5295ff5c6d3727b663f060565801914",
+      "bytes": 46144
+    },
+    "wrapper.log": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/wrapper.log",
+      "sha256": "4264ef3fa609d5e614f057d32fe8ec00e68050cf100cdaa0e43c8f06c9b4f4e4",
+      "bytes": 46193
+    }
+  },
+  "command": [
+    "/opt/homebrew/anaconda3/bin/python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--headless",
+    "--path",
+    ".",
+    "--log-file",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/raw.log",
+    "--script",
+    "res://tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd",
+    "--",
+    "--fresh-world-publication=75e547f4de684e53e450ed9a8ad4fac149bee8b2"
+  ],
+  "cwd": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+  "source_revision_before": {
+    "HEAD": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "d51588cc7c47b335fdf1c493afe5cca9cea08ac0"
+    },
+    "branch": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "codex/campaign-act2"
+    }
+  },
+  "source_revision_after": {
+    "HEAD": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "d51588cc7c47b335fdf1c493afe5cca9cea08ac0"
+    },
+    "branch": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "codex/campaign-act2"
+    }
+  },
+  "started_utc": "2026-10-14T03:02:07.608753+00:00",
+  "finished_utc": "2026-10-14T03:09:12.197361+00:00",
+  "closure": {
+    "job_watch": {
+      "deadline_includes_queue_wait": true,
+      "deadline_s": 600.0,
+      "elapsed_s": 424.63653266697656,
+      "exit_code": 1,
+      "interrupted": false,
+      "owned_group_gone": true,
+      "owned_process_group": 57225,
+      "reader_error": "",
+      "termination": "",
+      "wrapper_exited": true,
+      "wrapper_pid": 57225,
+      "wrapper_stream_complete": true
+    },
+    "result_watch_command_revision_consistent": true,
+    "capture_stream_and_owned_group_closed_reported": true,
+    "live_process_census_or_signal_by_reviewer": false,
+    "raw_wrapper_exact_relation": "wrapper.log equals original UTF-8 queue-wait line plus raw.log byte-for-byte; originals remain distinct.",
+    "queue_wait_is_failure": false,
+    "failure_not_timeout_or_interruption": true
+  },
+  "failure": {
+    "classification": "Owned fixture aggregate/checkpoint assertion; cause not yet localized.",
+    "first_meaningful_error": {
+      "context": [
+        "",
+        "ERROR: FAIL fresh-world native lunge: real complete earlier checkpoint is durable and lease-free",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd:526)",
+        "       [1] _run (res://tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd:126)",
+        "       [2] _settle (res://tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd:194)"
+      ],
+      "line": 3,
+      "text": "ERROR: FAIL fresh-world native lunge: real complete earlier checkpoint is durable and lease-free"
+    },
+    "footer": {
+      "checks": 42,
+      "failures": 1,
+      "line": 13,
+      "text": "Fresh-world native lunge smoke: 42 checks, 1 failures; scope_complete=false; publication=75e547f4de684e53e450ed9a8ad4fac149bee8b2; published57 observing TEST adapter/controller/loading/format2/Retry/atomic/candidate cleanup scope only; no art/campaign/Act3 repair/performance credit"
+    },
+    "actual_exit_code": 1,
+    "recorder_assessment_ok": false,
+    "diagnostic_counts": {
+      "assertion_errors": 0,
+      "fail_markers": 0,
+      "native_errors": 1,
+      "parse_or_load_errors": 0,
+      "script_errors": 0,
+      "warnings": 0
+    },
+    "preserved_failed_result_not_passed": true,
+    "interpretation": "Godot native_errors1 is this owned _expect push_error. No parse/load/script error or warning was captured. The four conjuncts are checkpoint nonempty, complete live capture equality, zero accepted lunges, and empty native reservations. The log does not identify which conjunct failed."
+  },
+  "input_closure": {
+    "selected_before_count": 112,
+    "selected_after_count": 112,
+    "selected_before_present": 112,
+    "selected_after_present": 112,
+    "before_bytes": 1493127,
+    "after_bytes": 1493127,
+    "all112_before_after_metadata_equal": true,
+    "changed_paths": [],
+    "unresolved_literal_refs": [],
+    "uid_scope": [
+      "scripts",
+      "tests",
+      "scenes",
+      "shaders"
+    ],
+    "uid_before_rows": 474,
+    "uid_after_rows": 474,
+    "uid_metadata_rows_equal": true,
+    "full_campaign_assets_docs_history_census": false,
+    "full112_source_bank_physically_rehashed": false,
+    "only_frozen_source_copies_rehashed_for_call_chain": [
+      {
+        "input_path": "tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd",
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/source-before/tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd",
+        "sha256": "6fa71ac085ed73f67148857117c856c34c36df102e42634dc0a05c4feebdd8e9",
+        "bytes": 46775
+      },
+      {
+        "input_path": "scripts/campaign/shell.gd",
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/source-before/scripts/campaign/shell.gd",
+        "sha256": "29c73f78ebf1d48545539aa3a8ffc506773b402fc2a8f075be24d14de36eed31",
+        "bytes": 70063
+      },
+      {
+        "input_path": "scripts/game.gd",
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/native-first/source-before/scripts/game.gd",
+        "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+        "bytes": 38685
+      }
+    ]
+  },
+  "existing_observations": {
+    "original_encoded_lines": {
+      "Fresh-world actual full units: ": {
+        "sha256_utf8_no_LF": "20a9c13c796d2240a99e838a736c48e9679ad2ec41d65bfd9ad236543ef1080f",
+        "bytes_no_LF": 102,
+        "array_items": 0,
+        "original_encoded_line_preserved": true
+      },
+      "Fresh-world native preparation observations: ": {
+        "sha256_utf8_no_LF": "c3a0f07e53fca6054142df6ed04479681d340e73fc849fd4f4aa959ffab9821a",
+        "bytes_no_LF": 44990,
+        "array_items": 5,
+        "original_encoded_line_preserved": true
+      },
+      "Fresh-world native disposal observations: ": {
+        "sha256_utf8_no_LF": "c44073e5556e5b85e66d853b2b2fa9026367b03d4dc11c1d023ab506d4d1d756",
+        "bytes_no_LF": 113,
+        "array_items": 0,
+        "original_encoded_line_preserved": true
+      },
+      "Fresh-world actual TEST bridge receipts: ": {
+        "sha256_utf8_no_LF": "f5b70a3979ca20c7bc70fb724ace063bac5be9c52f7e63bea9145c18239d8bbc",
+        "bytes_no_LF": 112,
+        "array_items": 0,
+        "original_encoded_line_preserved": true
+      }
+    },
+    "actual_preparation_item_count": 5,
+    "stage_counts": {
+      "raw": 3,
+      "registered": 1,
+      "entered": 1
+    },
+    "purpose_counts": {
+      "validation": 5
+    },
+    "unique_candidate_ids": 3,
+    "tagged_scope_rows_from_existing_line_only": [
+      {
+        "candidate_id_tag": [
+          "string",
+          "85748353150"
+        ],
+        "stage_tag": [
+          "string",
+          "raw"
+        ],
+        "purpose_tag": [
+          "string",
+          "validation"
+        ],
+        "restore_entries_tag": [
+          "integer",
+          "0"
+        ],
+        "quiet_commits_tag": [
+          "integer",
+          "0"
+        ],
+        "accepted_lunges_tag": [
+          "integer",
+          "0"
+        ],
+        "observation_scope_tag": [
+          "string",
+          "current-source-only"
+        ]
+      },
+      {
+        "candidate_id_tag": [
+          "string",
+          "85748353150"
+        ],
+        "stage_tag": [
+          "string",
+          "registered"
+        ],
+        "purpose_tag": [
+          "string",
+          "validation"
+        ],
+        "restore_entries_tag": [
+          "integer",
+          "0"
+        ],
+        "quiet_commits_tag": [
+          "integer",
+          "0"
+        ],
+        "accepted_lunges_tag": [
+          "integer",
+          "0"
+        ],
+        "observation_scope_tag": [
+          "string",
+          "current-source-only"
+        ]
+      },
+      {
+        "candidate_id_tag": [
+          "string",
+          "85748353150"
+        ],
+        "stage_tag": [
+          "string",
+          "entered"
+        ],
+        "purpose_tag": [
+          "string",
+          "validation"
+        ],
+        "restore_entries_tag": [
+          "integer",
+          "1"
+        ],
+        "quiet_commits_tag": [
+          "integer",
+          "0"
+        ],
+        "accepted_lunges_tag": [
+          "integer",
+          "0"
+        ],
+        "observation_scope_tag": [
+          "string",
+          "current-source-only"
+        ]
+      },
+      {
+        "candidate_id_tag": [
+          "string",
+          "126064002797"
+        ],
+        "stage_tag": [
+          "string",
+          "raw"
+        ],
+        "purpose_tag": [
+          "string",
+          "validation"
+        ],
+        "restore_entries_tag": [
+          "integer",
+          "0"
+        ],
+        "quiet_commits_tag": [
+          "integer",
+          "0"
+        ],
+        "accepted_lunges_tag": [
+          "integer",
+          "0"
+        ],
+        "observation_scope_tag": [
+          "string",
+          "current-source-only"
+        ]
+      },
+      {
+        "candidate_id_tag": [
+          "string",
+          "153494751707"
+        ],
+        "stage_tag": [
+          "string",
+          "raw"
+        ],
+        "purpose_tag": [
+          "string",
+          "validation"
+        ],
+        "restore_entries_tag": [
+          "integer",
+          "0"
+        ],
+        "quiet_commits_tag": [
+          "integer",
+          "0"
+        ],
+        "accepted_lunges_tag": [
+          "integer",
+          "0"
+        ],
+        "observation_scope_tag": [
+          "string",
+          "current-source-only"
+        ]
+      }
+    ],
+    "scope": "Three raw, one registered and one entered observation; all validation/current-source-only, all accepted_lunges0 and quiet_commits0. No committed installation observation. These early idle constructor observations cannot establish retained native-lunge restore, disk Continue, GUI Retry, negative row/pending controls or full scope.",
+    "parent_count_qualification": "Earlier parent reference to32 observations was corrected as unverified. The actual existing encoded line contains5. No separate32-observation Root artifact exists or was fabricated."
+  },
+  "missing_tuple_limit": {
+    "checkpoint_and_live_full_tuple_diff_present": false,
+    "full_units_array_empty": true,
+    "first_capture_line": 127,
+    "first_ordinary_lunge_admission_line": 140,
+    "failure_line": 126,
+    "later_scope_reached": false,
+    "cannot_infer_actual_changed_component_or_number": true
+  },
+  "source_hypothesis": {
+    "status": "Plausible camera-follow drift only; not a native diagnosis.",
+    "frozen_smoke_source_sha256": "6fa71ac085ed73f67148857117c856c34c36df102e42634dc0a05c4feebdd8e9",
+    "smoke_sequence_lines": [
+      119,
+      126
+    ],
+    "sequence": "Resume→actual stable Hero→public pause/settle→genuine checkpoint→eight-frame settle→public pause/eight-frame settle→compare current complete capture with earlier Story checkpoint. No diagnostic captures either tuple before the failure.",
+    "shell_source_sha256": "29c73f78ebf1d48545539aa3a8ffc506773b402fc2a8f075be24d14de36eed31",
+    "shell_fields_line": 837,
+    "shell_process_lines": [
+      904,
+      919
+    ],
+    "shell_evidence": "camera_focus is part of the complete serialized Shell tuple. _process returns for absent Player or registration_inflight, then updates shake/status/camera; this body has no paused guard.",
+    "game_source_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+    "game_update_camera_lines": [
+      471,
+      497
+    ],
+    "game_evidence": "Outside explicit snap, actual _camera_focus lerps toward Player position+UP*.75 using frame delta and writes real camera position. These statements support a possible comparison-time presentation difference, but cannot prove the current failure leg or tuple difference.",
+    "minimal_next_evidence": "Preserve the same actual checkpoint and the single actual live capture used by this assertion, encode both through official ExactJson with individual leg/error diagnostics before deciding any change. Keep originalfailed42/1 intact; no tolerance, state seed or guard weakening follows from this hypothesis."
+  },
+  "no_credit": {
+    "whole_suite_pass": false,
+    "shared_floor_defect": false,
+    "retained_lunge_roundtrip": false,
+    "fresh_disk_Continue": false,
+    "earlier_GUI_Retry": false,
+    "native_pending_or_raw_bad_row_assertions": false,
+    "campaign_art_optical_performance_acceptance": false
+  },
+  "reviewer_actions": {
+    "engine": false,
+    "parser_import_or_native_rerun": false,
+    "source_or_Git_edit": false,
+    "queue_lock_process_touch": false,
+    "new_native_trace_artifact": false,
+    "actual_checkpoint_live_tuple_diff_invented": false,
+    "human_decision_required": false,
+    "new_file": "/private/tmp/a2_fresh_world_native_first_failure_scope_review_20261014.json"
+  }
+}
