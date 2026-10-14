@@ -6,6 +6,10 @@ Shared56 is published at `26f59b28007c68872b1a9870db675b5ed2f3c2e4`. The [sample
 
 The [Crossed entrance geometry review](CROSSED_ENTRY_GEOMETRY.md) localizes the retained camera refusal to the activation position and permitted shift. Act 1 owns the requested entry-staging correction; the level stays accepted. Root separately [measured collision traversal/validation costs](COLLISION_SIGNATURE_STAGES.md) and preserves the native and host-verifier failure records. Its narrow type-filter candidate passed focused correctness checks, but the single uninstrumented comparison supplied no performance benefit; the exact published runtime is restored. Act 2 has completed its historical callsite review and now independently reviews Act 1's camera-entry proposal.
 
+The shared support supplement is committed at `bdd4fa39ebe26e6c491bfd2e47fc646c455e727e`; all three worker notices were delivered. Shared runtime and API56 remain unchanged. A disk-space failure in Act 3 temporarily held new heavy jobs. [Exact copy-on-write deduplication](evidence/storage-recovery-20261013/index.json) preserves 1,005 closed evidence paths and their contents; observed free space is now about 4 GiB, and bounded targeted work has resumed.
+
+Act 3's separate 804/1 fresh-world floor-restore failure is under Integration ownership. Source review confirms the shared Shell also constructs and enters candidates synchronously; the owner's exact native diagnostic now confirms empty floor rays before one paused process frame and matching bound-floor RIDs afterward. A distinct delayed candidate accepts its sole restore entry. [The shared fix and scoped test assignment](FRESH_WORLD_RESTORE.md) remain in preparation; complete Shell flows are not yet verified. Existing analytic and native floor checks remain unchanged.
+
 The milestone sections below retain their historical status and test results. Shared56 supersedes the older sampled-circle draft status; it adds no level acceptance. The full fifteen-main/nine-optional desktop objective remains active under [focused acceptance](LEVEL_ACCEPTANCE.md), with mobile export and release outside scope.
 
 ## Shared55 — final Act2 focused integration
