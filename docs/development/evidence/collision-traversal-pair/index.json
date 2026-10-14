@@ -1,0 +1,332 @@
+{
+  "schema_version": 1,
+  "status": "PASS_HOST_REVIEW; CANDIDATE_WITHDRAWN_NO_PERFORMANCE_BENEFIT_DEMONSTRATED",
+  "reviewed_at": "2026-10-13T09:36:10.644284+00:00",
+  "pair_manifest_sha256": "7010bf9cb3be205a0961e67268ddadf4a850c49982c6d6f05777b9f9aed2f4b3",
+  "results": {
+    "baseline": {
+      "checks": 24,
+      "failures": 0,
+      "wall_us": 5619508
+    },
+    "candidate": {
+      "checks": 24,
+      "failures": 0,
+      "wall_us": 7150250
+    },
+    "differential": {
+      "checks": 44,
+      "failures": 0
+    },
+    "relative_change_percent_single_pair": 27.239786828313072,
+    "complete19_player_scheduler_packet_bytes_equal": true
+  },
+  "original_route_sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+  "withdrawn_candidate_route_sha256": "b266f93d04d1f04a33bc32cbd64205c73f2985b559327f828e877963d6767d9c",
+  "local_bank_dependencies": [
+    {
+      "path": ".cinder/collision-traversal-measure/inputs/",
+      "manifest": "pair/pair.json",
+      "files": 787,
+      "bundled": false
+    },
+    {
+      "path": ".cinder/collision-traversal-filter/jobs/differential1/source/",
+      "manifest": "candidate/jobs/differential1/manifest.json",
+      "files": 483,
+      "bundled": false
+    }
+  ],
+  "prior_failed_canceled_evidence": "../collision-signature-stages/index.json and unchanged existing records",
+  "scope": "Original outputs, manifests, witnesses and narrow fixtures only; full banks and engine omitted. One pair does not establish causal/repeatable performance effects. No benefit demonstrated; candidate withdrawn. No engine/runtime/acceptance/Git/canonical changes by this review.",
+  "artifacts": [
+    {
+      "path": "pair/pair.json",
+      "original_path": ".cinder/collision-traversal-measure/pair.json",
+      "sha256": "7010bf9cb3be205a0961e67268ddadf4a850c49982c6d6f05777b9f9aed2f4b3",
+      "bytes": 301945
+    },
+    {
+      "path": "pair/comparison.json",
+      "original_path": ".cinder/collision-traversal-measure/comparison.json",
+      "sha256": "9f20dda97802318da657bc8cafd2d059a93dcb5a2ae608d7f3da4a9c49dcf61e",
+      "bytes": 564
+    },
+    {
+      "path": "pair/ROOT_RECOVERY.json",
+      "original_path": ".cinder/collision-traversal-measure/ROOT_RECOVERY.json",
+      "sha256": "a53968dfd9e24363cdb32b32cb6b6a388611891f5be0dc25a7b640f09e1019d4",
+      "bytes": 1412
+    },
+    {
+      "path": "pair/jobs/baseline-parse/manifest.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-parse/manifest.json",
+      "sha256": "41a94ecc1dcafebb9f190ebc18406d4738b93cced3817c4182e6600f703214b6",
+      "bytes": 92076
+    },
+    {
+      "path": "pair/jobs/baseline-parse/raw.log",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-parse/raw.log",
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "bytes": 73
+    },
+    {
+      "path": "pair/jobs/baseline-parse/result.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-parse/result.json",
+      "sha256": "864642820210c4a3e3b166feaee1245add075ef431a0d7463a68bc74c6de47fc",
+      "bytes": 1146
+    },
+    {
+      "path": "pair/jobs/baseline-parse/submission.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-parse/submission.json",
+      "sha256": "791a0a3fb30dc1d5418d67db4b13420109004c3eacd42fd88c591d7375eaefc3",
+      "bytes": 498
+    },
+    {
+      "path": "pair/jobs/baseline-parse/wrapper.log",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-parse/wrapper.log",
+      "sha256": "dbfab9084886d1b7baa4e6cc5b62528638f07f82b0e7c87cfa462d0f32937122",
+      "bytes": 176
+    },
+    {
+      "path": "pair/jobs/baseline-window/manifest.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-window/manifest.json",
+      "sha256": "c3d902979213577b4d862822daedef8603a88e876dd257c80081087026ee1ebf",
+      "bytes": 92079
+    },
+    {
+      "path": "pair/jobs/baseline-window/observed/complete19-packets.exact.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-window/observed/complete19-packets.exact.json",
+      "sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "bytes": 66972
+    },
+    {
+      "path": "pair/jobs/baseline-window/observed/focused-native.exact.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-window/observed/focused-native.exact.json",
+      "sha256": "abe51c880db0d111cdda4cec7fbd5ff3e036e4bb592817813a064c9093427d62",
+      "bytes": 675514
+    },
+    {
+      "path": "pair/jobs/baseline-window/raw.log",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-window/raw.log",
+      "sha256": "10dc22f4ba797830217fae764548b2c55a9347b59173f7f935107390f47733a7",
+      "bytes": 12468
+    },
+    {
+      "path": "pair/jobs/baseline-window/result.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-window/result.json",
+      "sha256": "e58a11e213480e44d72b6dded76f2d871076616557ca9b7c5abc6497d9feb1e3",
+      "bytes": 3730
+    },
+    {
+      "path": "pair/jobs/baseline-window/submission.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-window/submission.json",
+      "sha256": "23d79845b1b54ffa4f874c4b106f042aeaecd9d87ab5fdf8325f54ccd13edf16",
+      "bytes": 532
+    },
+    {
+      "path": "pair/jobs/baseline-window/wrapper.log",
+      "original_path": ".cinder/collision-traversal-measure/jobs/baseline-window/wrapper.log",
+      "sha256": "b438cef01d6295db289e15b2110782bcf395fb782b667b2864464db376003f8b",
+      "bytes": 12522
+    },
+    {
+      "path": "pair/jobs/candidate-parse/manifest.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-parse/manifest.json",
+      "sha256": "439b901069961acdec935fba8d1f485b4c69bad18c9c7f32e7637ed0f21fe4f0",
+      "bytes": 92078
+    },
+    {
+      "path": "pair/jobs/candidate-parse/raw.log",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-parse/raw.log",
+      "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "bytes": 73
+    },
+    {
+      "path": "pair/jobs/candidate-parse/result.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-parse/result.json",
+      "sha256": "d35b3ce87147fae8e6fe3082215841489a6159efdf74a6c5c766e0f19eb3aad5",
+      "bytes": 1150
+    },
+    {
+      "path": "pair/jobs/candidate-parse/submission.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-parse/submission.json",
+      "sha256": "56733bb80f166e16090d29446eb2551e0da24878ca1abc03f9bf026211305234",
+      "bytes": 499
+    },
+    {
+      "path": "pair/jobs/candidate-parse/wrapper.log",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-parse/wrapper.log",
+      "sha256": "dbfab9084886d1b7baa4e6cc5b62528638f07f82b0e7c87cfa462d0f32937122",
+      "bytes": 176
+    },
+    {
+      "path": "pair/jobs/candidate-window/manifest.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-window/manifest.json",
+      "sha256": "e800d25aa75d013751096261ff267d20f0e2237bbdf03b24370aef3ee29193ff",
+      "bytes": 92081
+    },
+    {
+      "path": "pair/jobs/candidate-window/observed/complete19-packets.exact.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-window/observed/complete19-packets.exact.json",
+      "sha256": "c2d139a2ba4371af7fff50b94e4a0317787e1de5601709c04787965d9120e568",
+      "bytes": 66972
+    },
+    {
+      "path": "pair/jobs/candidate-window/observed/focused-native.exact.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-window/observed/focused-native.exact.json",
+      "sha256": "b43b81ab21e7b603130a48b9610d3636cbf49a79a36e07e0b25ef54addab2875",
+      "bytes": 675514
+    },
+    {
+      "path": "pair/jobs/candidate-window/raw.log",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-window/raw.log",
+      "sha256": "14aa9486adb769edd4d6a5b840835f1e0c087417cf1f14edff0fa33aab012878",
+      "bytes": 12457
+    },
+    {
+      "path": "pair/jobs/candidate-window/result.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-window/result.json",
+      "sha256": "883e7e0be42b89f7764affae0356dc7cfb02a4b6444eec13751c1ee0ebb86025",
+      "bytes": 3735
+    },
+    {
+      "path": "pair/jobs/candidate-window/submission.json",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-window/submission.json",
+      "sha256": "d5e7202af729530ae726967a81ba9a736de50b136daec516c5b5676dd7059ae3",
+      "bytes": 534
+    },
+    {
+      "path": "pair/jobs/candidate-window/wrapper.log",
+      "original_path": ".cinder/collision-traversal-measure/jobs/candidate-window/wrapper.log",
+      "sha256": "a22ccd163043296531896fc26796de0c5cdac6a764516b59f1878d589abb6700",
+      "bytes": 12560
+    },
+    {
+      "path": "pair/fixtures/measure.gd",
+      "original_path": ".cinder/collision-traversal-measure/inputs/.cinder/collision-traversal-measure/measure.gd",
+      "sha256": "2062c288e6576365362d3fa10583ae1f3a2c17c83a3528288ce05a15c5260cb6",
+      "bytes": 14436
+    },
+    {
+      "path": "pair/fixtures/stage-current-registry.gd",
+      "original_path": ".cinder/collision-traversal-measure/inputs/.cinder/collision-traversal-measure/stage-current-registry.gd",
+      "sha256": "c79d64a53d84f6532a3cc1337d80c942170f2ecb8434a168860e12bc79994799",
+      "bytes": 29867
+    },
+    {
+      "path": "pair/fixtures/tools.py",
+      "original_path": ".cinder/collision-traversal-measure/inputs/.cinder/collision-traversal-measure/tools.py",
+      "sha256": "a7297103654de280c48a9eaae1369e2d9fd8f15facd7e236ba5f4962d69c4122",
+      "bytes": 19705
+    },
+    {
+      "path": "pair/fixtures/README.md",
+      "original_path": ".cinder/collision-traversal-measure/inputs/.cinder/collision-traversal-measure/README.md",
+      "sha256": "42e12905b1e49c0f1f9f2d254f173329661381143927a5c5cc4824abf2aa1878",
+      "bytes": 4687
+    },
+    {
+      "path": "pair/fixtures/fixture.patch",
+      "original_path": ".cinder/collision-traversal-measure/inputs/.cinder/collision-traversal-measure/fixture.patch",
+      "sha256": "228c101180dbf5f35777390f69d2eb0a38ae6c6c01ed8ae2329fda40811669ea",
+      "bytes": 10412
+    },
+    {
+      "path": "pair/fixtures/original-cp2-campaign.json",
+      "original_path": ".cinder/collision-traversal-measure/inputs/.cinder/a1-l3-stage-source/campaign.json",
+      "sha256": "c1f4eb2333f61248998844dd7a13ecdb4cf2505448f7ab787cf984a78083c4ef",
+      "bytes": 271077
+    },
+    {
+      "path": "candidate/repulsion_route.original.gd.txt",
+      "original_path": ".cinder/collision-traversal-measure/inputs/scripts/combat/repulsion_route.gd",
+      "sha256": "2bdfd3ea6997beceb0d5d26eb27e8520214872b0e81e1d7f8039afbf6d53b30a",
+      "bytes": 36641
+    },
+    {
+      "path": "candidate/repulsion_route.candidate.gd.txt",
+      "original_path": ".cinder/collision-traversal-measure/candidate-route.gd.txt",
+      "sha256": "b266f93d04d1f04a33bc32cbd64205c73f2985b559327f828e877963d6767d9c",
+      "bytes": 36728
+    },
+    {
+      "path": "candidate/candidate.patch",
+      "original_path": ".cinder/collision-traversal-filter/candidate.patch",
+      "sha256": "f7e3702a2e2e586227af1a8e22708453a931dfcaa614d7e3226c90b5f2543502",
+      "bytes": 489
+    },
+    {
+      "path": "candidate/review.json",
+      "original_path": ".cinder/collision-traversal-filter/review.json",
+      "sha256": "f51739ee4829adefebc8d380f1d40918f53d17edd205792a3c95b8128eadb26b",
+      "bytes": 5721
+    },
+    {
+      "path": "candidate/plan.json",
+      "original_path": ".cinder/collision-traversal-filter/plan.json",
+      "sha256": "8ef175dfae8004f2b63175698ebd75e58bb4e8f09aa3f80a624bb06738c64a21",
+      "bytes": 3697
+    },
+    {
+      "path": "candidate/differential1-independent-addendum.json",
+      "original_path": ".cinder/collision-traversal-filter/differential1-independent-addendum.json",
+      "sha256": "3ba21ce8fae44e248f0de6047d5dae739becf6efba2d372602114c00ee2574b0",
+      "bytes": 4648
+    },
+    {
+      "path": "candidate/jobs/differential1/manifest.json",
+      "original_path": ".cinder/collision-traversal-filter/jobs/differential1/manifest.json",
+      "sha256": "ee85af21ccdc01ee30990ad8f10a8ac1ddabfe3dfba2aff7e05f573d7d587898",
+      "bytes": 239975
+    },
+    {
+      "path": "candidate/jobs/differential1/result.json",
+      "original_path": ".cinder/collision-traversal-filter/jobs/differential1/result.json",
+      "sha256": "1d451fc5b0c752930c7d709ad62fcebf47fbb0f6fbb57c20166866fe8738a485",
+      "bytes": 701
+    },
+    {
+      "path": "candidate/jobs/differential1/raw.log",
+      "original_path": ".cinder/collision-traversal-filter/jobs/differential1/raw.log",
+      "sha256": "9f89816a7d28063ce051e85a588da7197e3a125f13ae391c4688a60782a29e63",
+      "bytes": 187
+    },
+    {
+      "path": "candidate/jobs/differential1/wrapper.log",
+      "original_path": ".cinder/collision-traversal-filter/jobs/differential1/wrapper.log",
+      "sha256": "0dd026dbf522c59cd2d9d2354fd58f746c7324de805f951a2a89e8d4cad0117c",
+      "bytes": 244
+    },
+    {
+      "path": "candidate/fixtures/collision_filter_differential.gd",
+      "original_path": ".cinder/collision-traversal-filter/jobs/differential1/source/.cinder/collision-traversal-filter/collision_filter_differential.gd",
+      "sha256": "e70842222bcf896c549bf4b0aae64196ef0334c920c941ce0650a96e035369db",
+      "bytes": 7664
+    },
+    {
+      "path": "candidate/fixtures/collision-traversal-checks.py",
+      "original_path": ".cinder/collision-traversal-filter/jobs/differential1/source/.cinder/collision-traversal-checks.py",
+      "sha256": "41df96354c7abfa54a73a88cfc8fcbbfc44d9c79ae94cedd9405c8bf0c3df3d2",
+      "bytes": 4996
+    },
+    {
+      "path": ".gdignore",
+      "original_path": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "host-review.json",
+      "original_path": null,
+      "sha256": "4d595deee75aa2cb6f4a18890d034f0d504d659fbec17825a4ae848c4826bd1a",
+      "bytes": 5513
+    },
+    {
+      "path": "README.md",
+      "original_path": null,
+      "sha256": "040236c00a2ffa85ec478e5005b6fda4f733994a19f66ac8b17304ee17c2d09a",
+      "bytes": 2551
+    }
+  ]
+}

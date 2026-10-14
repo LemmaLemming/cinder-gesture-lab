@@ -1,0 +1,251 @@
+{
+  "schema": "a2-b02-native02-read-only-join-diagnosis-1",
+  "created_at": "2026-10-13T08:09:23.515307+00:00",
+  "scope": "Frozen native-02 fresh held whole-unit persistence join only; no engine/job/queue/lock/source/settings writes. Closed job observed, not accepted or published API.",
+  "inputs": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/scripts/combat/threat_scheduler.gd",
+      "bytes": 265396,
+      "sha256": "7b07aaee8acaca14396952d64c540d79b91fdd7f69e5d81c103eb7a0fc57fcc2"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/scripts/combat/native_sampled_circle.gd",
+      "bytes": 45595,
+      "sha256": "1c73cee97e3f5edce6c57793f83c8169afb4aa36749042d1b5620e887340875a"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/tests/fixtures/sampled_eye_fixture.gd",
+      "bytes": 11840,
+      "sha256": "03e9cb197852a4d5e25b374366dda6e1c05053e7f52610ce84aad1677823f83f"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/tests/sampled_circle_smoke.gd",
+      "bytes": 34367,
+      "sha256": "3eb64cf24e93262149f61ee58aeb5c2786e5e62fbdae9d599371c8cef584477b"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/frozen-before/scripts/cues/threat_cue.gd",
+      "bytes": 37198,
+      "sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/original-output.log",
+      "bytes": 5169,
+      "sha256": "207fee202dc43c054b38d85ad16f5219055754c1e9a986f2590f6b556ba56b32"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-circle-native/native-02/closure.json",
+      "bytes": 3704,
+      "sha256": "c9d0424ca3c59b1e071bfa0e3fb0d5f2854cf16374c73bbf7ca266b08644d33a"
+    }
+  ],
+  "native_observation": {
+    "closure_exists": true,
+    "owned_child_closed": true,
+    "actual_terminal_exit": 1,
+    "native_checks": 100,
+    "native_failures": 12,
+    "clean_native_scope": false,
+    "closed_at": "2026-10-13T08:00:56.074134+00:00",
+    "all_recorded_deltas_empty": true,
+    "original_log_matches_closure": true,
+    "acceptance": false
+  },
+  "observed_fresh_held": {
+    "passed_preconditions": [
+      {
+        "source": "tests/sampled_circle_smoke.gd",
+        "lines": [
+          155,
+          157,
+          165,
+          168,
+          207
+        ],
+        "meaning": "Native log has no failure for real paused active unresolved suffix, complete packet, pure fresh aggregate prevalidation, forged original sample refusal, and malformed-packet no-write/quiet checks. This is an inference from the complete 100-check/12-failure log and executed straight-line branches, not a separate pass footer."
+      }
+    ],
+    "first_failure": {
+      "source": "tests/sampled_circle_smoke.gd",
+      "line": 170,
+      "log_line": 4,
+      "expression": "World.restore_aggregate(fresh, packet)",
+      "meaning": "Whole-unit bool false; log does not expose a leg or actual last_snapshot_error."
+    },
+    "subsequent_failures": [
+      {
+        "source": "tests/sampled_circle_smoke.gd",
+        "line": 171,
+        "log_line": 10
+      },
+      {
+        "source": "tests/sampled_circle_smoke.gd",
+        "line": 176,
+        "log_line": 16
+      },
+      {
+        "source": "tests/sampled_circle_smoke.gd",
+        "line": 179,
+        "log_line": 22
+      }
+    ],
+    "qualification": "The later conjunct/once-hit assertions can cascade from the failed restore; they are not independent proof of a contact/once-consumption defect."
+  },
+  "join_trace": [
+    {
+      "source": "tests/fixtures/sampled_eye_fixture.gd",
+      "lines": [
+        191,
+        208
+      ],
+      "stage": "pure aggregate",
+      "fields": [
+        "packet.player.motion.position",
+        "packet.player.world_actions.clock_s",
+        "packet.eye.position",
+        "packet.eye.velocity",
+        "packet.eye.source_binding"
+      ],
+      "bindings": [
+        "hero_positions.hero",
+        "hero_action_clocks.hero",
+        "owner_positions.moon-eye",
+        "owner_velocities.moon-eye",
+        "sampled_owner_bindings.moon-eye"
+      ],
+      "finding": "Actual Player and actual eye packet validators run before staged substitutions. Actual owners/actors/world/floor maps remain genuine bound nodes."
+    },
+    {
+      "source": "tests/fixtures/sampled_eye_fixture.gd",
+      "lines": [
+        211,
+        219
+      ],
+      "stage": "actual commit",
+      "sequence": [
+        "aggregate_error",
+        "arena.hero.restore_state(packet.player)",
+        "arena.eye.restore_state(packet.eye)",
+        "arena.scheduler.restore_state(packet.scheduler, bindings(arena))",
+        "arena.consumer.restore_state(packet.consumer, bindings(arena))"
+      ],
+      "finding": "Staging is removed for actual commit after physical Player and eye setters; false short-circuits before later legs. No leg/error diagnostic is retained."
+    },
+    {
+      "source": "scripts/player.gd",
+      "lines": [
+        616,
+        704
+      ],
+      "stage": "actual Player",
+      "finding": "restore_state revalidates, restores actual global transform/floor contact, HP/motion/dash clocks, and _world_action_clock from packet.world_actions.clock_s; it returns a bool and last_snapshot_error."
+    },
+    {
+      "source": "tests/fixtures/sampled_eye_fixture.gd",
+      "lines": [
+        117,
+        128
+      ],
+      "stage": "actual eye",
+      "finding": "Actual HP/death/position/velocity/BodyCollision/group state is applied quietly. Immutable binding hook retains genuine _hero_ref and fixed source identity; alive derives from true HP/death."
+    },
+    {
+      "source": "scripts/combat/threat_scheduler.gd",
+      "lines": [
+        3465,
+        3526
+      ],
+      "stage": "Scheduler pure plan",
+      "finding": "Schema4 plan stages source alive only against immutable registered ownership; _sampled_adapter_error receives staged hero_action_clocks.hero during pure validation (3522)."
+    },
+    {
+      "source": "scripts/combat/threat_scheduler.gd",
+      "lines": [
+        1662,
+        1721
+      ],
+      "stage": "Scheduler actual commit",
+      "finding": "The plan re-runs with actual bindings. Actual sampled source wire is re-read and matched (1697\u20131701); each typed adapter is checked with actual Player action clock (1707 / 3430); accepted _clock and reservations are assigned only after those checks (1711\u20131719)."
+    },
+    {
+      "source": "scripts/combat/native_sampled_circle.gd",
+      "lines": [
+        524,
+        557
+      ],
+      "stage": "consumer actual commit",
+      "finding": "Requires fresh idle/cycle0, captures actual already-restored Scheduler, then runs _snapshot_plan_error(..., actual_hero=true). Only then applies original sample/adapter/exchange/pending segments and builds actual Cue while blocking Cue signals."
+    },
+    {
+      "source": "scripts/combat/native_sampled_circle.gd",
+      "lines": [
+        574,
+        629
+      ],
+      "stage": "consumer join constraints",
+      "fields": [
+        "source_binding",
+        "clock_s",
+        "exchange_encounter_id",
+        "phase",
+        "exchange",
+        "adapter.sample",
+        "hero_sample.position",
+        "hero_sample.clock_s",
+        "pending_segments"
+      ],
+      "finding": "Matches paired schema4 native source, immutable incarnation/recipe, actual owners/actors/world, same original lease/phase/fields, historical sample and actual saved Hero endpoint. At621, actual endpoint+clock must match; at627\u2013629 pending suffix must be exact contiguous and reach that endpoint."
+    }
+  ],
+  "diagnosis": {
+    "confidence": "Exact failing method not localized by available native output.",
+    "confirmed_source_issue": "Test-only restore_aggregate collapses all actual setter results to one bool without recording which genuine leg failed; native-02 provides no actual per-component last_snapshot_error at that failure.",
+    "not_established": [
+      "No demonstrated staged/native identity mismatch at a particular method.",
+      "No demonstrated Scheduler restore defect or consumer Cue restore defect.",
+      "No demonstrated independent once-hit failure after a successful held restore."
+    ],
+    "next_root_owned_diagnostic": {
+      "path": "tests/fixtures/sampled_eye_fixture.gd::restore_aggregate",
+      "preserve": [
+        "same validation order",
+        "same Hero\u2192eye\u2192Scheduler\u2192consumer order",
+        "same input packets",
+        "same native custody checks",
+        "same assertion behavior",
+        "paused no-yield whole-parent barrier"
+      ],
+      "record_each_return": [
+        "aggregate_error(fresh, packet)",
+        "hero.restore_state return + hero.last_snapshot_error",
+        "eye.restore_state return + eye.last_snapshot_error",
+        "scheduler.restore_state return + scheduler.last_snapshot_error",
+        "consumer.restore_state return + consumer.last_snapshot_error + consumer.last_error"
+      ],
+      "on_failure_record_actual_values": [
+        "hero.global_position",
+        "hero.get_threat_response_state().action_clock_s",
+        "eye.hp / eye.dead",
+        "scheduler.get_clock()",
+        "consumer.state().status / phase / last_cancel_reason",
+        "consumer.get_cue().last_error"
+      ],
+      "qualification": "Root is sole shared writer and owns any further focused native diagnostic run. This report does not run an engine or propose relaxing snapshot validation."
+    }
+  },
+  "other_failures_scope": {
+    "moving_return_fixture": "241 request expression combines phase==lock and request_dash; log cannot say whether request_dash was called. _ticks waits physics_frame then process_frame, so observation timing must be logged before classifying a native API defect. Downstream245/259/264/270 are qualified; no source fix proposed.",
+    "unsupported_receiver": "297 status+phase+sample+hit+HP conjunction is not localized by native output; separate genuine contact query refusals292\u2013294 have no failure in closed log.",
+    "second_cycle_cleanup": "331 combines accepted answer/cycle/sample fields; 334 depends on that second-cycle setup. Native log does not record start reason or consumer status; report does not infer an unrelated lifecycle fix."
+  },
+  "unperformed": [
+    "No native rerun, Shell/disk/GUI Retry/portrait/route acceptance.",
+    "No edits to Root drafts, production source, fixtures, settings, ledgers, registry, lock or queue.",
+    "No current running-source comparison used to relabel frozen02 evidence."
+  ]
+}

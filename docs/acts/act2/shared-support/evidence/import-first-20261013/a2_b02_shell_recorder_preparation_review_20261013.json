@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-13T08:42:39.834709+00:00",
+  "status": "PREPARED_ONLY_UNINVOKED_UNIMPORTED; no assigned-checkout install or actual adoption claim",
+  "original_helper": {
+    "path": "/private/tmp/cinder_a2_o3_focused_record.py",
+    "sha256": "ef0f37ae15e5b6a8d7feeae18051d3a423de308a9e439ae254f366dac1145292",
+    "bytes": 21403,
+    "lines": 376
+  },
+  "derivative": {
+    "path": "/private/tmp/cinder_a2_b02_shell_record.py",
+    "sha256": "9f95f152ea2a111923d8b9ce504062e47e69510ca4c2c9d91db91f9249a3eefd",
+    "bytes": 21440,
+    "lines": 375
+  },
+  "literal_edits": [
+    {
+      "before": "Root-run focused O3 recorder; prepared only, never imported/invoked by author.",
+      "after": "Root-run focused B02 Shell recorder; prepared only, never imported/invoked by author.",
+      "occurrences": 1
+    },
+    {
+      "before": "python3 /private/tmp/cinder_a2_o3_focused_record.py --mode engine --manifest /private/tmp/a2_o3_frozen_record_manifest.json --output-dir docs/acts/act2/evidence/A2-O3/focused-native-20261012",
+      "after": "python3 /private/tmp/cinder_a2_b02_shell_record.py --mode engine --manifest /private/tmp/a2_b02_shell_frozen_record_manifest.json --output-dir docs/acts/act2/shared-support/evidence/shell-native-first",
+      "occurrences": 1
+    },
+    {
+      "before": "PUBLICATION = \"8cb1da79ba000d758fe677054782e23f48cb6dfd\"",
+      "after": "PUBLICATION = \"26f59b28007c68872b1a9870db675b5ed2f3c2e4\"",
+      "occurrences": 1
+    },
+    {
+      "before": "API = \"campaign-shared-53\"",
+      "after": "API = \"campaign-shared-56\"",
+      "occurrences": 1
+    },
+    {
+      "before": "FIXTURES = (\"tests/acts/act2/a2_o3_focused_smoke.gd\",\n            \"tests/acts/act2/a2_o3_loading_side_smoke.gd\")",
+      "after": "FIXTURES = (\"tests/acts/act2/shared_support/sampled_circle_shell_smoke.gd\",)",
+      "occurrences": 1
+    },
+    {
+      "before": "OUTPUT_ROOT = \"docs/acts/act2/evidence/A2-O3\"",
+      "after": "OUTPUT_ROOT = \"docs/acts/act2/shared-support/evidence\"",
+      "occurrences": 1
+    },
+    {
+      "before": "Frozen manifest must name exact Shared53 and one of the two planned O3 fixtures",
+      "after": "Frozen manifest must name exact Shared56 and the sole planned B02 Shell smoke fixture",
+      "occurrences": 1
+    },
+    {
+      "before": "New O3 resource must be an owned resource: ",
+      "after": "New B02 Shell resource must be an owned resource: ",
+      "occurrences": 1
+    },
+    {
+      "before": "Single new-resource import requires both actual frozen O3 fixtures plus all new resources",
+      "after": "Single new-resource import requires the actual frozen B02 Shell smoke fixture plus all declared new resources",
+      "occurrences": 1
+    },
+    {
+      "before": "Root must actually preserve-adopt exact Shared53 before this job",
+      "after": "Root must actually preserve-adopt exact Shared56 before this job",
+      "occurrences": 1
+    },
+    {
+      "before": "Use a new O3 evidence child directory for every import/native/retry",
+      "after": "Use a new B02 Shell evidence child directory for every import/native/retry",
+      "occurrences": 1
+    },
+    {
+      "before": "(\"a2-o3-\" + \"-\".join(parts) + \".log\")",
+      "after": "(\"a2-b02-shell-\" + \"-\".join(parts) + \".log\")",
+      "occurrences": 1
+    }
+  ],
+  "static_review": {
+    "python_ast_parse": true,
+    "function_logic_and_signatures_exact_after_only_named_label_normalization": true,
+    "functions_checked": [
+      "digest",
+      "write_json",
+      "scoped_path",
+      "plain",
+      "log_counts",
+      "class_index",
+      "freeze_sources",
+      "stop_owned_group",
+      "run_queued",
+      "load_manifest",
+      "main"
+    ],
+    "numeric_limits_and_masks_exact": true,
+    "sole_fixture": "tests/acts/act2/shared_support/sampled_circle_shell_smoke.gd",
+    "publication": "26f59b28007c68872b1a9870db675b5ed2f3c2e4",
+    "api_revision": "campaign-shared-56",
+    "output_root": "docs/acts/act2/shared-support/evidence",
+    "raw_log_prefix": "a2-b02-shell-",
+    "import_gate": "Same set(FIXTURES) subset-of-pins and new_resources expression, now sole actual Smoke; every declared new resource must also have exact pins and actual original bytes.",
+    "new_resources": "Three exact assigned TEST resources may be declared; no fabricated UID permitted.",
+    "preparation_check_history": "First AST comparison refused because reviewer normalized full raw-prefix expression but missed its parsed string literal. Derivative itself already matched exact12-edit plan. Corrected reviewer normalization explicitly maps a2-b02-shell- to a2-o3-; final full per-function AST comparison passes. No helper import/invocation or native check occurred."
+  },
+  "retained_safeties": [
+    "registered assigned checkout equality",
+    "exact schema/publication/API/fixture + original SHA256 pins",
+    "publication must actually be ancestor of owner HEAD before queue",
+    "fresh evidence child/raw path only; no overwrite",
+    "original helper/manifest/full referenced+globalclass sources/modes/UID/import metadata freeze before queue",
+    "ambiguous global class refusal",
+    "only scripts/dev/dev.py queue ownership",
+    "no queue timeout; 180s bounded started-engine watchdog begins at Godot banner",
+    "script failure stops only owned private process group; wait/reap own child",
+    "separate explicit import scope with genuine generated UID custody",
+    "native raw+wrapper exact matching sole positive footer and assertion reporting",
+    "native errors/warnings/failed checks/source-mode/UID/import drift prevent complete scope",
+    "original incomplete/failed output and generated metadata preserved"
+  ],
+  "published_dependency_observation": [
+    {
+      "path": "scripts/combat/native_sampled_circle.gd",
+      "bytes": 45564,
+      "sha256": "27e212c6ae3fce94e980a59617f22732bc69300958404712be55aa82be35aa6f",
+      "source": "exact Shared56 Git object, not a local-adoption claim"
+    },
+    {
+      "path": "scripts/combat/native_sampled_circle.gd.uid",
+      "bytes": 20,
+      "sha256": "c4661e41198524a974c521f1dacc8ba1639d89670c448771b84df1ed852ae826",
+      "source": "exact Shared56 Git object, not a local-adoption claim",
+      "identity": "uid://ckmjpvpki27a4"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd",
+      "bytes": 266033,
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "source": "exact Shared56 Git object, not a local-adoption claim"
+    },
+    {
+      "path": "scripts/combat/threat_scheduler.gd.uid",
+      "bytes": 18,
+      "sha256": "54a051d030eef72dfce3f58a9073b3bce0f469720124e948c251f22a064e974d",
+      "source": "exact Shared56 Git object, not a local-adoption claim",
+      "identity": "uid://pphhqoh63p0"
+    },
+    {
+      "path": "tests/fixtures/sampled_eye_fixture.gd",
+      "bytes": 12398,
+      "sha256": "0841e7acb21c6c49c8854cd51c4596d61d8adfd98cbc2033b2200b957d7e91d9",
+      "source": "exact Shared56 Git object, not a local-adoption claim"
+    },
+    {
+      "path": "tests/fixtures/sampled_eye_fixture.gd.uid",
+      "bytes": 20,
+      "sha256": "c5b1cf173cb7e2c341433418a175b3858c28328400636dffa8acfd999e1cfa59",
+      "source": "exact Shared56 Git object, not a local-adoption claim",
+      "identity": "uid://d02v8rv1bs53r"
+    },
+    {
+      "path": "scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "source": "exact Shared56 Git object, not a local-adoption claim"
+    },
+    {
+      "path": "scripts/campaign/level.gd",
+      "bytes": 22401,
+      "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+      "source": "exact Shared56 Git object, not a local-adoption claim"
+    },
+    {
+      "path": "scripts/campaign/shell.gd",
+      "bytes": 45143,
+      "sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+      "source": "exact Shared56 Git object, not a local-adoption claim"
+    },
+    {
+      "path": "scripts/cues/threat_cue.gd",
+      "bytes": 37198,
+      "sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+      "source": "exact Shared56 Git object, not a local-adoption claim"
+    },
+    {
+      "path": "project.godot",
+      "bytes": 841,
+      "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+      "source": "exact Shared56 Git object, not a local-adoption claim"
+    },
+    {
+      "path": "scripts/dev/dev.py",
+      "bytes": 29417,
+      "sha256": "275fc57b0c6d5c49a8962a3d45fe0f4d45f54619ad87c137a1cf2a8113c87eb7",
+      "source": "exact Shared56 Git object, not a local-adoption claim"
+    }
+  ],
+  "inert_owned_resource_observation": [
+    {
+      "intended_path": "tests/acts/act2/shared_support/sampled_circle_shell_smoke.gd",
+      "inert_original": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/drafts/sampled_circle_shell_smoke.gd.txt",
+      "bytes": 28011,
+      "sha256": "b3ca5f82d1fc0537c3ac7c6cfbcd1b196f72e463b89196f79b687702c15b84e5",
+      "still_inert": true
+    },
+    {
+      "intended_path": "tests/acts/act2/shared_support/sampled_circle_shell_level.gd",
+      "inert_original": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/drafts/sampled_circle_shell_level.gd.txt",
+      "bytes": 19629,
+      "sha256": "73c83e34d68db8ec7998cab4e8098fc9ba377b98d586315bcdf406e6045f42a3",
+      "still_inert": true
+    },
+    {
+      "intended_path": "tests/acts/act2/shared_support/sampled_circle_shell_level.tscn",
+      "inert_original": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/drafts/sampled_circle_shell_level.tscn.txt",
+      "bytes": 415,
+      "sha256": "1dcc324042e75af5c80f904fafad5c3980971262371ce0e7da25d073a9dadfc2",
+      "still_inert": true
+    }
+  ],
+  "required_root_manifest_before_execution": {
+    "not_created_by_this_task": true,
+    "after_conditions": [
+      "Root actual preserve-adoption of exact56 with frozen jobs closed",
+      "Root compares final installed3 TEST bytes against reviewed inert originals and current56 interfaces",
+      "necessary explicit queue import yields genuine native UID files; preserve all prior UID bytes/modes and failed/nonclean/incomplete originals",
+      "then freeze actual selected sources/configuration/cache and define exact footer/test scope"
+    ],
+    "explicit_component_pin_seeds": [
+      "tests/acts/act2/shared_support/sampled_circle_shell_smoke.gd",
+      "tests/acts/act2/shared_support/sampled_circle_shell_level.gd",
+      "tests/acts/act2/shared_support/sampled_circle_shell_level.tscn",
+      "tests/fixtures/sampled_eye_fixture.gd",
+      "scripts/combat/native_sampled_circle.gd",
+      "scripts/combat/threat_scheduler.gd",
+      "scripts/player.gd",
+      "scripts/campaign/level.gd",
+      "scripts/campaign/shell.gd",
+      "project.godot",
+      "scripts/dev/dev.py",
+      ".cinder/local.json"
+    ],
+    "native_cache_settings_pins_to_take_from_actual_checkout": [
+      ".godot/global_script_class_cache.cfg",
+      ".godot/uid_cache.bin",
+      ".godot/editor/project_metadata.cfg"
+    ],
+    "dependency_freeze_behavior": "Existing recorder walks literal res:// references and uniquely mapped actual global GDScript class tokens recursively; freezes actual .gd.uid/.gdshader.uid and present .import sidecars, hashes and original stat/executable bits. Class cache/settings/UID binary cache require explicit component pin seeds if their native unchanged custody is needed; they are not silently added by freeze_sources.",
+    "import_cache_qualification": "If Root pins a derived binary UID cache for import, expected genuine import changes still count as changed_source_paths and cannot earn clean recorder scope. Keep that original honest and classify separately; post-import native manifest should pin actual cache bytes. This preparation does not change import/delta acceptance logic."
+  },
+  "not_performed": [
+    "No recorder import or invocation",
+    "No Godot engine/import/test job",
+    "No merge/adoption",
+    "No source copy/install into assigned checkout",
+    "No shared production/settings/ledger/registry/UID/class-cache mutation",
+    "No frozen manifest fabricated",
+    "No native/pass/portrait/campaign acceptance credit"
+  ]
+}

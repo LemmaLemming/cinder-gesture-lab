@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-signature-profile/tools.py", line 310, in <module>
+    engine(tag, mode)
+    ~~~~~~^^^^^^^^^^^
+  File "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-signature-profile/tools.py", line 292, in engine
+    prior = json.loads((HERE / 'jobs' / 'collision-signature-sinkparse1' / 'result.json').read_text())
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/anaconda3/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/anaconda3/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/collision-signature-profile/jobs/collision-signature-sinkparse1/result.json'

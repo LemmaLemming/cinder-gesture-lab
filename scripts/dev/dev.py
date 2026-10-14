@@ -117,6 +117,8 @@ SUITES = {
     "authored_echo_clearance": "tests/authored_echo_clearance_smoke.gd",
     "hud_health_rounding": "tests/hud_health_rounding_smoke.gd",
     "restore_candidate": "tests/restore_candidate_smoke.gd",
+    "restore_candidate_physics": "tests/restore_candidate_physics_smoke.gd",
+    "restore_candidate_physics_startup_retry": "tests/restore_candidate_physics_startup_retry_smoke.gd",
     "spore_field": "tests/spore_field_smoke.gd",
     "spore_repulsion": "tests/spore_repulsion_smoke.gd",
     "scheduler_spore_source": "tests/scheduler_spore_source_smoke.gd",

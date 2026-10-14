@@ -1,0 +1,140 @@
+{
+  "schema": "cinder-fresh-world-restore-latest-evidence-index-v1",
+  "created_at": "2026-10-14T02:19:19.707942+00:00",
+  "indices": [
+    {
+      "path": "INDEX.json",
+      "sha256": "76a110e5273ae6e13b57e796bc378042cac4a1a5b8a8112f8450ca78b1e82e38"
+    },
+    {
+      "path": "supplements/01-remaining-closures/INDEX.json",
+      "sha256": "550c72fa3e4d3e50b772ec17b61fe9edd8859930f68c7af4e08fe44b70002472"
+    }
+  ],
+  "closed_focused_jobs": 9,
+  "closed_import_jobs": 1,
+  "closed_jobs_total": 10,
+  "jobs": [
+    {
+      "tag": "campaign-shell-native-01",
+      "classification": "CLOSED_NATIVE_NONPASS",
+      "counts": [
+        {
+          "checks": 55,
+          "failures": 1,
+          "actual_footer": "Campaign shell smoke: 55 checks, 1 failures (TEST ONLY live fixtures)"
+        }
+      ],
+      "source_inventory_count": 786,
+      "uid_count": 472
+    },
+    {
+      "tag": "physics-core-native-01",
+      "classification": "CLOSED_NATIVE_PASS",
+      "counts": [
+        {
+          "checks": 96,
+          "failures": 0,
+          "actual_footer": "Restore candidate physics smoke: 96 checks, 0 failures (TEST ONLY core paused native floor)"
+        }
+      ],
+      "source_inventory_count": 785,
+      "uid_count": 472
+    },
+    {
+      "tag": "physics-core-parse-01",
+      "classification": "CLOSED_PARSE_CLEAN",
+      "counts": [],
+      "source_inventory_count": 785,
+      "uid_count": 472
+    },
+    {
+      "tag": "physics-startup-native-01",
+      "classification": "CLOSED_NATIVE_PASS",
+      "counts": [
+        {
+          "checks": 21,
+          "failures": 0,
+          "actual_footer": "Restore candidate startup Retry smoke: 21 checks, 0 failures (TEST ONLY canceled-load operation boundary)"
+        }
+      ],
+      "source_inventory_count": 785,
+      "uid_count": 472
+    },
+    {
+      "tag": "restore-legacy-native-01",
+      "classification": "CLOSED_NATIVE_PASS",
+      "counts": [
+        {
+          "checks": 71,
+          "failures": 0,
+          "actual_footer": "Restore candidate smoke: 71 checks, 0 failures (TEST ONLY native constructor/Shell paths)"
+        }
+      ],
+      "source_inventory_count": 785,
+      "uid_count": 472
+    },
+    {
+      "tag": "restore-legacy-parse-01",
+      "classification": "CLOSED_PARSE_NONCLEAN",
+      "counts": [],
+      "source_inventory_count": 785,
+      "uid_count": 472
+    },
+    {
+      "tag": "campaign-shell-native-02",
+      "classification": "CLOSED_NATIVE_PASS",
+      "counts": [
+        {
+          "checks": 55,
+          "failures": 0,
+          "actual_footer": "Campaign shell smoke: 55 checks, 0 failures (TEST ONLY live fixtures)"
+        }
+      ],
+      "source_inventory_count": 786,
+      "uid_count": 472
+    },
+    {
+      "tag": "campaign-persistence-native-01",
+      "classification": "CLOSED_NATIVE_NONPASS",
+      "counts": [
+        {
+          "checks": 45,
+          "failures": 4,
+          "actual_footer": "Campaign persistence smoke: 45 checks, 4 failures"
+        }
+      ],
+      "source_inventory_count": 784,
+      "uid_count": 472
+    },
+    {
+      "tag": "campaign-persistence-native-02",
+      "classification": "CLOSED_NATIVE_PASS",
+      "counts": [
+        {
+          "checks": 45,
+          "failures": 0,
+          "actual_footer": "Campaign persistence smoke: 45 checks, 0 failures"
+        }
+      ],
+      "source_inventory_count": 784,
+      "uid_count": 472
+    },
+    {
+      "tag": "uid-import-01",
+      "classification": "CLOSED_IMPORT_CLEAN",
+      "counts": [],
+      "source_inventory_count": 791,
+      "uid_count": 475
+    }
+  ],
+  "final_uid_scope": {
+    "import": "uid-import-01",
+    "prior_unchanged": 472,
+    "genuine_additions": 3,
+    "final_unique": 475
+  },
+  "pending_root_jobs_excluded": [],
+  "unexecuted_external_scope": "Act2 native-lunge/Shell inert bridge handoff, not executed/adopted here.",
+  "scope": "Actual per-job closures retain original nonclean/failure attribution; no aggregate distinct-check count, whole-campaign/optical/mobile acceptance or complete portable reproduction inferred."
+}

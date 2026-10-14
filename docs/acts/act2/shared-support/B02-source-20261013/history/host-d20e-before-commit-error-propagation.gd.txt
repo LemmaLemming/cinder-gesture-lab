@@ -1,0 +1,312 @@
+extends CinderLevel
+## SOURCE ONLY: TEST optional/Replay wrapper for the new native sampled circle.
+## Intended path: tests/acts/act2/shared_support/sampled_circle_shell_level.gd.
+## A2-O3 is an isolated injected TEST registry row, never production O3 or B02.
+## Shell supplies the only Hero. Root must publish/select the joined API first.
+## No parser, native, format2, art, camera or full-route acceptance is claimed.
+
+const PlayerScript = preload("res://scripts/player.gd")
+const SchedulerScript = preload("res://scripts/combat/threat_scheduler.gd")
+const EyeScript = preload("res://tests/fixtures/sampled_eye_fixture.gd")
+const ConsumerScript = preload("res://scripts/combat/native_sampled_circle.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const ENCOUNTER_ID: String = "B02-sampled-shell-support"
+const WORLD_REVISION: int = 1
+const HERO_ID: String = "hero"
+const SOURCE_ID: String = "moon-eye"
+const FLOOR_ID: String = "main-floor"
+const CHECKPOINT_ID: String = "sampled-circle-warning-checkpoint"
+const COMPLETION_ID: String = "sampled-circle-test-probe-complete"
+const FLOOR_RECT: Rect2 = Rect2(-10.0, -10.0, 20.0, 20.0)
+const LOCAL_KEYS: Array[String] = ["version", "encounter_id", "world_revision", "profile_id", "checkpoint_requested", "completed_probe", "eye", "scheduler", "consumer"]
+
+var runtime_error: String = ""
+var _profile_id: String = "standard"
+var _checkpoint_requested: bool = false
+var _completed_probe: bool = false
+var _bound: bool = false
+var _floor: StaticBody3D
+var _support: CollisionShape3D
+var _scheduler: CinderThreatScheduler
+var _eye: CharacterBody3D
+var _consumer: Node3D
+var _world_ref: WeakRef
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+	process_physics_priority = 110
+	# Scene owns PlayerSpawn. Construction is identical for fresh recipients.
+	_floor = StaticBody3D.new()
+	_floor.name = "Floor"
+	_floor.collision_layer = 1
+	_floor.collision_mask = 0
+	_floor.position = Vector3(0.0, -0.5, 0.0)
+	_support = CollisionShape3D.new()
+	_support.name = "Support"
+	var shape := BoxShape3D.new()
+	shape.size = Vector3(20.0, 1.0, 20.0)
+	_support.shape = shape
+	_floor.add_child(_support)
+	add_child(_floor)
+
+func restore_candidate_construction_required() -> bool:
+	# Even an installed donor must not become its own sampled restore recipient.
+	return true
+
+func _on_enter_level() -> void:
+	var selected: String = "standard"
+	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
+		selected = String(shared_shell.call("get_difficulty_preference"))
+	_construct_bindings(selected)
+
+func _on_enter_restore_candidate(local: Dictionary, saved_player: Dictionary) -> String:
+	# Only a closed immutable construction descriptor is read. Saved HP, motion,
+	# samples, clocks and cues are not applied while validating the candidate.
+	if Exact.stringify(local).is_empty() or not Codec.keys_error(local, LOCAL_KEYS).is_empty():
+		return "Bounded closed TEST sampled local descriptor required"
+	if local.get("version") != 1 or local.get("encounter_id") != ENCOUNTER_ID or local.get("world_revision") != WORLD_REVISION or local.get("profile_id") not in ["assisted", "standard", "challenge"]:
+		return "TEST sampled encounter/profile/world descriptor differs"
+	var error: String = hero.snapshot_error(saved_player)
+	if not error.is_empty(): return error
+	_construct_bindings(String(local.profile_id))
+	return runtime_error
+
+func _construct_bindings(profile_id: String) -> void:
+	if _bound or is_instance_valid(_scheduler) or is_instance_valid(_eye):
+		runtime_error = "Construct one actual sampled recipient only"
+		return
+	if profile_id not in ["assisted", "standard", "challenge"] or not _node_live(hero) or hero.get_script() != PlayerScript:
+		runtime_error = "Actual supplied canonical Shell Hero/profile required"
+		return
+	_profile_id = profile_id
+	_scheduler = SchedulerScript.new() as CinderThreatScheduler
+	_scheduler.name = "SampledScheduler"
+	add_child(_scheduler)
+	if not _scheduler.begin_encounter(_profile_id, ENCOUNTER_ID, WORLD_REVISION):
+		runtime_error = _scheduler.last_error
+		return
+	# Use the genuine Root fixture instance, NOT create(), which makes a Hero.
+	# These two original fixture WeakRefs are assigned before _ready/add_child,
+	# exactly as its factory does, but point at the supplied actual Shell Hero.
+	_eye = EyeScript.new() as CharacterBody3D
+	_eye.name = "Eye"
+	_eye.position = EyeScript.SOURCE_POSITION
+	_eye.set("_hero_ref", weakref(hero))
+	_eye.set("_scheduler_ref", weakref(_scheduler))
+	add_child(_eye)
+	_consumer = _eye.call("consumer_node") as Node3D
+	var world: Node3D = _find_common_world()
+	if not _node_live(_consumer) or not _node_live(world):
+		runtime_error = "Actual ready Eye consumer and common candidate stage required"
+		return
+	_world_ref = weakref(world)
+	if not bool(_consumer.call("bind", _eye, _scheduler, HERO_ID, hero, world, [_region()])):
+		runtime_error = String(_consumer.get("last_error"))
+		return
+	if not bool(_consumer.call("set_presentation_guard", _parent_presentation_guard)):
+		runtime_error = String(_consumer.get("last_error"))
+		return
+	_bound = true
+	if not hero.died.is_connected(_on_hero_died): hero.died.connect(_on_hero_died)
+
+func _find_common_world() -> Node3D:
+	# A hidden candidate's Hero and level are siblings. Installed Shell.world
+	# still names the donor during construction; level self cannot contain Hero.
+	var at: Node = self
+	while is_instance_valid(at):
+		if at is Node3D and _node_live(hero) and _node_live(_scheduler) and _node_live(_eye) and _node_live(_floor) and at.is_ancestor_of(hero) and at.is_ancestor_of(_scheduler) and at.is_ancestor_of(_eye) and at.is_ancestor_of(_floor):
+			return at as Node3D
+		at = at.get_parent()
+	return null
+
+func _world_node() -> Node3D:
+	var value: Variant = _world_ref.get_ref() if _world_ref != null else null
+	return value if _node_live(value) and value is Node3D else null
+
+func _region() -> Dictionary:
+	return {"collision": _support, "safe_rect": FLOOR_RECT}
+
+func _bindings() -> Dictionary:
+	return {"world_root": _world_node(), "owners": {SOURCE_ID: _eye}, "floors": {FLOOR_ID: _region()}, "actors": {HERO_ID: hero}}
+
+func _context() -> Dictionary:
+	return {"encounter_id": ENCOUNTER_ID, "world_revision": WORLD_REVISION, "recognition_s": 0.12, "attack_input_margin_s": 0.02, "escape_directions": [Vector3.RIGHT, Vector3.BACK, Vector3.FORWARD], "return_directions": [Vector3.RIGHT, Vector3.BACK, Vector3.FORWARD], "floor_regions": [_region()], "world_root": _world_node()}
+
+func get_eye() -> CharacterBody3D:
+	return _eye if _node_live(_eye) else null
+
+func get_scheduler() -> CinderThreatScheduler:
+	return _scheduler if _node_live(_scheduler) else null
+
+func get_consumer() -> Node3D:
+	return _consumer if _node_live(_consumer) else null
+
+func test_arena() -> Dictionary:
+	# Native fixture helpers can use this genuine topology without another Hero.
+	return {"root": _world_node(), "world_root": _world_node(), "hero": hero, "eye": get_eye(), "scheduler": get_scheduler(), "consumer": get_consumer(), "region": _region(), "bound": _bound, "guarded": _bound}
+
+func test_start() -> Dictionary:
+	if not _test_action_ready() or _completed_probe:
+		return {"accepted": false, "reason": "Living installed TEST sampled boundary required"}
+	var preview: Dictionary = _consumer.call("preview_start", _context())
+	if not preview.get("accepted", false): return preview
+	return _consumer.call("start", _context(), preview)
+
+func test_checkpoint() -> bool:
+	if not _test_action_ready(true) or _checkpoint_requested or _completed_probe: return false
+	var state: Dictionary = _consumer.call("state")
+	if state.get("status") != "running" or state.get("phase") != "warning": return false
+	_checkpoint_requested = true
+	if request_checkpoint(CHECKPOINT_ID): return true
+	_checkpoint_requested = false
+	return false
+
+func test_complete_probe() -> bool:
+	# TEST-only completion demonstrates real optional/replay resources. It is
+	# not B02 defeat, canonical O3 completion or a full route. No source reset.
+	if not _test_action_ready(true) or _completed_probe: return false
+	var state: Dictionary = _consumer.call("state")
+	if state.get("status") != "complete" or state.get("phase") != "clear" or int(state.get("pending_segment_count", -1)) != 0: return false
+	# Bound managed history cannot be reset with end_encounter. Leave disposes
+	# the complete original unit; the completed save retains its native epoch.
+	_completed_probe = true
+	if request_completion(COMPLETION_ID): return true
+	runtime_error = "Unexpected TEST completion refusal after genuine quiet expiry"
+	return false
+
+func _test_action_ready(allow_paused: bool = false) -> bool:
+	return _bound and runtime_error.is_empty() and _entered and not _lifecycle_busy and not _state_hook_busy() and not _dispatching and not is_restore_candidate() and (allow_paused or not get_tree().paused) and _node_live(hero) and not hero.dead and _runtime_binding_error().is_empty()
+
+func _parent_presentation_guard(source_id: String, state: Dictionary) -> bool:
+	# This fixture claims native visibility/custody, not production eye artwork
+	# or future optical fit. Shared Cue enforces its exact native phase buffers.
+	return _bound and source_id == SOURCE_ID and _entered and runtime_error.is_empty() and _node_live(hero) and hero.is_visible_in_tree() and _node_live(_eye) and bool(_eye.call("parent_presentation_guard", source_id, state))
+
+func _runtime_binding_error() -> String:
+	if not _bound or not _node_live(hero) or hero.get_script() != PlayerScript or not _node_live(_world_node()) or _find_common_world() != _world_node(): return "Actual bound Shell Hero/common stage lost"
+	if not _node_live(_scheduler) or _scheduler.get_script() != SchedulerScript or _scheduler.get_parent() != self or _scheduler.transform != Transform3D.IDENTITY: return "Original Scheduler recipient changed"
+	if not _node_live(_eye) or _eye.get_script() != EyeScript or _eye.get_parent() != self or _eye.global_position != EyeScript.SOURCE_POSITION or _eye.basis != Basis.IDENTITY: return "Original fixed Eye recipient changed"
+	if not _node_live(_consumer) or _consumer.get_script() != ConsumerScript or _consumer.get_parent() != _eye: return "Original Eye-owned native consumer changed"
+	if not _node_live(_floor) or _floor.get_parent() != self or _floor.position != Vector3(0.0, -0.5, 0.0) or _floor.basis != Basis.IDENTITY or _floor.collision_layer != 1 or _floor.collision_mask != 0: return "Original native floor body changed"
+	if not _node_live(_support) or _support.get_parent() != _floor or _support.disabled or _support.transform != Transform3D.IDENTITY or not _support.shape is BoxShape3D or _support.shape.size != Vector3(20.0, 1.0, 20.0): return "Original named native floor shape changed"
+	return ""
+
+func _capture_local_state() -> Dictionary:
+	if not get_tree().paused or not runtime_error.is_empty(): return {}
+	var error: String = _runtime_binding_error()
+	if not error.is_empty(): return {}
+	var bindings: Dictionary = _bindings()
+	var eye_packet: Dictionary = _eye.call("snapshot_state")
+	var scheduler_packet: Dictionary = _scheduler.snapshot_state(bindings)
+	var consumer_packet: Dictionary = _consumer.call("snapshot_state", bindings)
+	if eye_packet.is_empty() or scheduler_packet.is_empty() or consumer_packet.is_empty(): return {}
+	return {"version": 1, "encounter_id": ENCOUNTER_ID, "world_revision": WORLD_REVISION, "profile_id": _profile_id, "checkpoint_requested": _checkpoint_requested, "completed_probe": _completed_probe, "eye": eye_packet, "scheduler": scheduler_packet, "consumer": consumer_packet}
+
+func _local_snapshot_error(state: Dictionary) -> String:
+	var player: Dictionary = hero.snapshot_state() if _node_live(hero) else {}
+	return _whole_local_error(state, player)
+
+func _local_snapshot_error_with_player(state: Dictionary, saved_player: Dictionary) -> String:
+	return _whole_local_error(state, saved_player)
+
+func _whole_local_error(state: Dictionary, saved_player: Dictionary) -> String:
+	if not get_tree().paused or not runtime_error.is_empty(): return "Paused quiet TEST sampled barrier required"
+	var error: String = _runtime_binding_error()
+	if not error.is_empty(): return error
+	# Reject foreign cycles, Objects and oversized trees BEFORE any deep copy.
+	if Exact.stringify(state).is_empty() or Exact.stringify(saved_player).is_empty(): return "Complete bounded exact Player-free local/Player packets required"
+	error = Codec.keys_error(state, LOCAL_KEYS)
+	if not error.is_empty(): return error
+	if not state.version is int or state.version != 1 or not state.encounter_id is String or state.encounter_id != ENCOUNTER_ID or not state.world_revision is int or state.world_revision != WORLD_REVISION or not state.profile_id is String or state.profile_id != _profile_id or state.profile_id not in ["assisted", "standard", "challenge"] or not state.checkpoint_requested is bool or not state.completed_probe is bool: return "Fixed sampled TEST envelope/profile/latches required"
+	for key: String in ["eye", "scheduler", "consumer"]:
+		if not state[key] is Dictionary or state[key].is_empty(): return "Complete native TEST packet missing " + key
+	error = hero.snapshot_error(saved_player)
+	if error.is_empty(): error = String(_eye.call("snapshot_error", state.eye))
+	if not error.is_empty(): return error
+	# This genuine fixture never disables its body on death. Permit no saved
+	# collider change that staged eight-key source wire cannot independently join.
+	if state.eye.get("collision_disabled") != false: return "Authored Eye collision remains enabled in every genuine fixture packet"
+	var staged: Dictionary = _bindings()
+	staged["hero_positions"] = {HERO_ID: Codec.read_vector3(saved_player.motion.position)}
+	staged["hero_action_clocks"] = {HERO_ID: saved_player.world_actions.clock_s}
+	staged["owner_positions"] = {SOURCE_ID: Codec.read_vector3(state.eye.position)}
+	staged["owner_velocities"] = {SOURCE_ID: Codec.read_vector3(state.eye.velocity)}
+	staged["sampled_owner_bindings"] = {SOURCE_ID: state.eye.source_binding.duplicate(true)}
+	error = _scheduler.snapshot_error(state.scheduler, staged)
+	if error.is_empty(): error = String(_consumer.call("snapshot_error", state.consumer, staged, state.scheduler))
+	if not error.is_empty(): return error
+	if state.scheduler.get("schema_version") != 4 or state.scheduler.get("world_revision") != WORLD_REVISION: return "Native sampled schema4/world must survive whole Shell transport"
+	if state.scheduler.get("encounter_id") != ENCOUNTER_ID or state.scheduler.get("profile",{}).get("id") != state.profile_id:
+		return "Original sampled epoch/profile must remain fixed through managed retirement"
+	if state.completed_probe and (not state.scheduler.get("reservations", []).is_empty() or state.consumer.get("status") != "complete" or state.consumer.get("phase") != "clear"):
+		return "TEST completion needs actual quiet complete with original epoch/history retained"
+	if state.consumer.get("source_binding") != state.eye.source_binding: return "Eye true HP/death wire must exactly join consumer source"
+	return ""
+
+func _progress_error(snapshot: Dictionary) -> String:
+	var state: Dictionary = snapshot.local
+	var progress: Dictionary = snapshot.progress
+	if progress.completed != state.completed_probe or progress.completion_id != (COMPLETION_ID if state.completed_probe else "") or progress.contact_exit_id != "": return "TEST completion/contact metadata differs from actual local latch"
+	var expected: Dictionary = {}
+	if state.checkpoint_requested: expected[CHECKPOINT_ID] = "encounter"
+	if progress.checkpoint_ids != expected or progress.checkpoint_id != (CHECKPOINT_ID if state.checkpoint_requested else "") or progress.checkpoint_kind != ("encounter" if state.checkpoint_requested else ""): return "TEST warning checkpoint metadata differs from actual local latch"
+	return ""
+
+func snapshot_error(snapshot: Dictionary) -> String:
+	var error: String = super.snapshot_error(snapshot)
+	return _progress_error(snapshot) if error.is_empty() else error
+
+func snapshot_error_with_player(snapshot: Dictionary, saved_player: Dictionary) -> String:
+	var error: String = super.snapshot_error_with_player(snapshot, saved_player)
+	return _progress_error(snapshot) if error.is_empty() else error
+
+func restore_state(snapshot: Dictionary) -> bool:
+	# Reject before any true Eye physical write if consumer is not a fresh bound
+	# recipient. Actual Player->level order is checked by native joined readers.
+	last_snapshot_error = snapshot_error(snapshot)
+	if not last_snapshot_error.is_empty(): return false
+	var fresh: Dictionary = _consumer.call("state")
+	if fresh.get("status") != "idle" or fresh.get("phase") != "clear" or int(fresh.get("cycle",-1)) != 0:
+		last_snapshot_error = "Quiet whole level commit requires a fresh bound sampled recipient"
+		return false
+	return super.restore_state(snapshot)
+
+func _restore_local_state(state: Dictionary) -> void:
+	# Public Shell already committed its real Player. Pure entire preflight ran
+	# before these ordered writes; no preview/start/reproof/resampling/events.
+	if not bool(_eye.call("restore_state", state.eye)):
+		runtime_error = "Unexpected validated Eye commit refusal"; return
+	var actual: Dictionary = _bindings()
+	if not _scheduler.restore_state(state.scheduler, actual):
+		runtime_error = "Unexpected validated Scheduler commit refusal"; return
+	if not bool(_consumer.call("restore_state", state.consumer, actual)):
+		runtime_error = "Unexpected validated native consumer commit refusal"; return
+	_profile_id = state.profile_id
+	_checkpoint_requested = state.checkpoint_requested
+	_completed_probe = state.completed_probe
+
+func _on_hero_died() -> void:
+	if _entered and not _state_hook_busy() and _node_live(_consumer):
+		_consumer.call("cancel", "hero_defeated")
+
+func _on_exit_level() -> void:
+	if is_instance_valid(hero) and hero.died.is_connected(_on_hero_died): hero.died.disconnect(_on_hero_died)
+	# Normal disposal has native nodes in tree; direct detached fallback must
+	# leave native consumers to their idempotent own retirement, not query worlds.
+	if _node_live(_consumer):
+		var blocked: bool = _consumer.is_blocking_signals()
+		var cue: Node = _consumer.call("get_cue")
+		var cue_blocked: bool = cue.is_blocking_signals() if is_instance_valid(cue) else false
+		_consumer.set_block_signals(true)
+		if is_instance_valid(cue): cue.set_block_signals(true)
+		_consumer.call("clear", "test_level_exit")
+		if is_instance_valid(cue): cue.set_block_signals(cue_blocked)
+		_consumer.set_block_signals(blocked)
+	# No managed-source encounter reset: native whole-unit destruction retires
+	# remaining registration/history after the real lease was quietly cleared.
+	_bound = false
+	_world_ref = null
+
+static func _node_live(value: Variant) -> bool:
+	return is_instance_valid(value) and value is Node and value.is_inside_tree() and value.is_node_ready() and not value.is_queued_for_deletion()

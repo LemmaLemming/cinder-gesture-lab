@@ -1,0 +1,121 @@
+{
+  "record": "a2-b02-shell-smoke-source-review-20261013",
+  "created_utc": "2026-10-13T08:06:31.359686+00:00",
+  "mode": "Read-only source review of inert text; no engine/import/parser/native execution or source edits",
+  "reviewed_source": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/drafts/sampled_circle_shell_smoke.gd.txt",
+    "sha256": "c50d3525bc1260b7eec1405c6f7e3264eff4e548614476e80a219155c781c09f",
+    "bytes": 26583,
+    "lines": 334
+  },
+  "retained_original": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/history/smoke-f826-before-transform-fix.gd.txt",
+    "sha256": "f8269ae50239c86b84bd3b3a93ac1038d0f59973b644440e137ff257cc1945c0",
+    "bytes": 26372
+  },
+  "consulted_contracts": [
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/shell.gd",
+      "sha256": "8961f232a99d4d81f0c4f10d66716f7aa82fb147e3c484d6c353c78b5b46f6bc",
+      "bytes": 45143
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/attempts.gd",
+      "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+      "bytes": 18347
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/level.gd",
+      "sha256": "1989a4170b68329afd6f49c5698b23aa96722883698ccacf32f905619539010d",
+      "bytes": 22401
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/save_store.gd",
+      "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+      "bytes": 7310
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/player.gd",
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "bytes": 48906
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/scripts/cues/threat_cue.gd",
+      "sha256": "c8a7abbbd4c021ec92c45e1e57fc966873110231b781dba00bd1ff3d63f5cc5a",
+      "bytes": 37198
+    },
+    {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/tests/acts/act2/a2_o3_loading_side_smoke.gd",
+      "sha256": "f0b7d389d568e43e74359200e498f18d0a309235c270174738f3502bdef1148c",
+      "bytes": 38429
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/sampled-threat-api-implementation/consumer/native_sampled_circle.gd.txt",
+      "sha256": "1c73cee97e3f5edce6c57793f83c8169afb4aa36749042d1b5620e887340875a",
+      "bytes": 45595,
+      "scope": "SOURCE ONLY mutable draft; no atomic native publication inference"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B02-SHELL-SRC-01",
+      "priority": 1,
+      "status": "corrected in c50d source only; original failure retained; unparsed/unexecuted",
+      "original_sha256": "f8269ae50239c86b84bd3b3a93ac1038d0f59973b644440e137ff257cc1945c0",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/history/smoke-f826-before-transform-fix.gd.txt",
+      "original_lines": [
+        160,
+        181,
+        296
+      ],
+      "issue": "_physical_signature encoded Transform3D through _encode with no Transform3D branch, so Exact.stringify rejected the wire and returned empty; comparing two empty strings could falsely prove no body/cue writes.",
+      "source_fix_verified": "Exact retained-original/current diff adds Transform3D basis/origin wire at current line297 and explicit physical signature nonempty assertion at current line180 before every malformed validator call. No native or parser credit."
+    },
+    {
+      "id": "B02-SHELL-SRC-02",
+      "priority": 1,
+      "status": "open in reviewed c50d",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/B02-shell-support/drafts/sampled_circle_shell_smoke.gd.txt",
+      "lines": [
+        131,
+        135
+      ],
+      "issue": "Replay requested while completed optional side attempt remains active. test_complete_probe and complete_active record completion/stamp but do not leave the optional namespace. Attempts.begin_side rejects side_attempt != null, so actual Shell Replay request cannot succeed.",
+      "evidence": "scripts/campaign/attempts.gd begin_side requires a protected story and no active side attempt; scripts/campaign/shell.gd side operation calls begin_side before installation. Accepted O3 completion/contact return precedes Replay.",
+      "required_change": "After TEST completion settles, invoke public menu.leave_side_requested and await settle, verify exact protected Story/Journey and sampled donor descendants freed, then invoke replay_requested. A valid TEST contact_exit can instead perform the return if explicitly supplied by the host."
+    }
+  ],
+  "positive_source_observations": [
+    "Raw registry substitution affects only the chosen existing A2-O3 row in memory and preserves canonical parent/reward/route. configure_runtime receives isolated user paths before Shell tree entry. Explicit preview-mode args are refused.",
+    "Seed uses actual MainScene/Player/accepted A2-L5 local capture with disclosed completed prefix and real SaveStore write. Preview is retired before genuine Shell. Fresh Title and actual optional select preserve complete Story.",
+    "test_arena checks supplied Shell player identity and original Eye/Scheduler/Consumer scripts plus containing world ancestor. Host construction implementation remains a separate dependency under review.",
+    "NativeTickProbe PROCESS_MODE_ALWAYS priority120 observes after consumer priority100. Public Pause plus eight process_frames precedes warning checkpoint/capture. Earlier warning checkpoint is requested through TEST CinderLevel and proved equal to side_attempt.checkpoint.",
+    "Moving warning uses actual Player.request_dash, two actual native observations, public Pause, complete snapshot and exact quiet fresh disk Continue. Mid-dash remaining clock is positive; current Hero motion differs from immutable original consumer.sample.",
+    "Active observer arrangement explicitly sets real SceneTree paused synchronously inside state_changed, then calls Shell.request_pause; settled later capture records naturally staged nonempty suffix before hurt. It does not set phase/sample/path/clock.",
+    "Malformed copied variants include immutable ground sample, source recipe, exact clock, suffix current endpoint, sampled legacy downgrade and nonfinite clocks. Actual attempts.snapshot_validator performs Shell pure aggregate construction/preflight; installed aggregate and direct physical signature compare before/after. Subsequent public Pause clears/settles normal Shell diagnostics rather than editing them.",
+    "Actual RetryButton click routes motion/press/release through root.push_input and requires exactly one pressed signal. Earlier complete living warning checkpoint restores exactly; exact donor WeakRef classification protects only original retirement flags and entire donor descendants are checked freed.",
+    "node_added observers connect genuine Player, eye, consumer, Scheduler, cues, level and Shell signals. Events are recorded only selected quiet windows; all gameplay events remain strict. Nonplayable disposal exemption requires nearest exact level in-tree with entered=false, lifecycle_busy=true and restore_candidate or exact expected Retry donor identity.",
+    "Natural expiry to complete and no pending danger is exercised by waiting actual ticks rather than clocks/phase edits. TEST probe completion is explicitly disclaimed as authored campaign clear.",
+    "Replay fresh namespace selected gear and pristine checkpoint/Continue are compared to entire unchanged Story. Normal Replay Leave restores Story and frees sampled subtree; final Shell entire descendants are checked freed. Canonical Registry bytes are verified unchanged and isolated saves cleaned."
+  ],
+  "coverage_limits_and_dependencies": [
+    "The runtime publication SHA argument proves only a correctly shaped declaration. Runner must independently verify exact published commit, actual preserve-adoption, raw sources/modes/UIDs/cache/settings and frozen job custody before queuing this script.",
+    "Fixture host must provide get_eye/get_scheduler/get_consumer/test_arena/test_start/test_checkpoint/test_complete_probe, exact closed local.eye/scheduler/consumer, fresh restore_candidate_construction_required=true, staged validated saved Player joins and quiet actual Player->eye->Scheduler->consumer order. Those bodies are not certified by this smoke-only review.",
+    "Direct physical signature records mesh/material identities, native transforms/visibility and true eye/Player fields. It does not directly serialize in-place ArrayMesh buffers or all material properties. Current SOURCE ONLY consumer.snapshot_state invokes _native_cue_available which checks actual buffers/renderer/material phase bytes/albedo, so successful complete aggregate comparison supplies an additional indirect cue integrity guard. Optional explicit byte/albedo capture would make direct proof clearer, not an independently demonstrated blocker.",
+    "Replay scope currently covers fresh selected gear/pristine resource tuple and pristine disk Continue/Leave, not worn Replay resource changes or Replay Retry. Explicit fresh hp==max_hp/shells==max_shells assertion or bounded genuine resource variation would strengthen the stated resource scope; otherwise report the narrower observed scope.",
+    "Active held suffix is captured, persisted and freshly Continued then GUI-retried. The suffix is not resumed to consume/damage in this Shell suite. Saved moving Hero is mid-dash during warning, whereas the later held active sample can be stationary outside the circle. Do not claim moving-active contact settlement or held-suffix hurt proof from these assertions.",
+    "No full route, portrait/art/balance/performance/campaign acceptance credit. Completion/replay metadata and logical A2-O3 identity are TEST-only arrangements in isolated paths.",
+    "No obvious additional GDScript text-level field/signal mismatch was found against existing local contracts. This is not a parser or native readiness confirmation; current open Replay flow issue must be fixed before promotion."
+  ],
+  "native_jobs_started": 0,
+  "imports_started": 0,
+  "parser_claim": false,
+  "writes": [
+    "/private/tmp/a2_b02_shell_smoke_source_review_20261013.json"
+  ]
+}

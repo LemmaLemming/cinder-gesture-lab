@@ -3,3 +3,33 @@ docs/development/evidence/A2-L2-registration/logs/*.log -whitespace
 docs/acts/act2/evidence/A2-L2-shared23-adoption/*.log -whitespace
 # Act1's historical evidence is imported byte-for-byte, including source snapshots.
 data/campaign/act1/evidence/A1-L2/** -whitespace
+
+# Exact collision profiler patch/log evidence; preserve native and diff-context whitespace.
+docs/development/evidence/collision-signature-stages/fixture.patch -diff
+docs/development/evidence/collision-signature-stages/instrumentation.patch -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-parse1/raw.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-parse1/wrapper.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-parse2/raw.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-parse2/wrapper.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-profile1/raw.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-profile1/wrapper.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-profile2/raw.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-profile2/wrapper.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-sinkparse1/raw.log -diff
+docs/development/evidence/collision-signature-stages/jobs/collision-signature-sinkparse1/wrapper.log -diff
+docs/development/evidence/collision-signature-stages/sink.patch -diff
+
+# Exact archived support sources, raw logs and unified patches retain original whitespace.
+docs/acts/act2/shared-support/evidence/import-first-20261013/source/scripts/acts/act2/bleached_canal.gd -diff
+docs/acts/act2/shared-support/evidence/shell-native-first-20261013/source/scripts/acts/act2/bleached_canal.gd -diff
+docs/development/evidence/collision-traversal-pair/candidate/candidate.patch -diff
+docs/development/evidence/collision-traversal-pair/pair/fixtures/fixture.patch -diff
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-parse/raw.log -diff
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-parse/wrapper.log -diff
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-window/raw.log -diff
+docs/development/evidence/collision-traversal-pair/pair/jobs/baseline-window/wrapper.log -diff
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-parse/raw.log -diff
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-parse/wrapper.log -diff
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-window/raw.log -diff
+docs/development/evidence/collision-traversal-pair/pair/jobs/candidate-window/wrapper.log -diff
+docs/development/evidence/act2-shell-support-integration/publication-original-whitespace-check.txt -diff

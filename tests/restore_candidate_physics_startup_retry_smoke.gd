@@ -1,0 +1,157 @@
+extends SceneTree
+## Canceled startup must not swallow a later queued Retry failure.
+## Real earned disk save and public Menu actions. No Attempts/readiness seed.
+const Shell = preload("res://scripts/campaign/shell.gd")
+const Registry = preload("res://scripts/campaign/registry.gd")
+const Fixture = preload("res://tests/fixtures/restore_candidate_physics_level.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const FIXTURE_PATH: String = "res://tests/fixtures/restore_candidate_physics_level.tscn"
+const TEST_ROOT: String = "user://test-restore-physics-startup-retry/"
+
+var game: CinderCampaignShell
+var raw: Dictionary = {}
+var earned: Dictionary = {}
+var original_disk: Dictionary = {}
+var canceled_ids: Array[int] = []
+var startup_retry_observed: bool = false
+var checks: int = 0
+var failures: int = 0
+var old_fps: int = 0
+
+func _initialize() -> void:
+	_run.call_deferred()
+
+func _run() -> void:
+	old_fps = Engine.max_fps
+	_cleanup()
+	Fixture.reset_observers()
+	raw = JSON.parse_string(FileAccess.get_file_as_string(Registry.DATA_PATH))
+	for row: Dictionary in raw.levels:
+		if row.id == "A1-L1":
+			row.scene_path = FIXTURE_PATH
+			row.readiness = "accepted"
+			row.accepted_commit = "a".repeat(40)
+			row.api_revision = Registry.API_REVISION
+	_new_shell()
+	await _settle()
+	game.menu.begin_story_requested.emit()
+	await _settle()
+	if not _guard(game.campaign_error.is_empty() and is_instance_valid(game.active_level), "public Begin creates the native fixture"):
+		_finish(); return
+	game.menu.resume_requested.emit()
+	await create_timer(0.08).timeout
+	var level: Variant = game.active_level
+	if not _guard(not paused and level.advance_marker(), "actual running donor earns a changed marker"):
+		_finish(); return
+	game.player.take_damage(7.0, Vector3.ZERO)
+	game.request_pause()
+	await _settle()
+	if not _guard(game.campaign_error.is_empty(), "public Pause writes original earned save: " + game.campaign_error):
+		_finish(); return
+	earned = game.attempts.active_snapshot()
+	_expect(not earned.is_empty() and earned.level.local.marker == 1 and earned.level.local.clock_s > 0.0, "later real packet contains earned state")
+	original_disk = _disk_receipt()
+	game.free()
+
+	# Deferred callback runs after raw-world assembly has latched its actual
+	# process-frame wait. Retry is a real public event, not a private flag edit.
+	Fixture.raw_ready_observer = _on_startup_raw_ready
+	_new_shell()
+	await _settle()
+	Fixture.raw_ready_observer = Callable()
+	_expect(startup_retry_observed and not canceled_ids.is_empty(), "fresh startup receives Retry inside the actual registration wait")
+	_expect(paused and game.active_level == null and game.player == null and game.attempts.active_snapshot().is_empty(), "canceled load never invents an active donor or loaded Attempts")
+	_expect(not game.campaign_error.is_empty(), "queued Retry with unloaded Attempts reports its own failure")
+	_expect(game._failed_operations.size() == 1 and game._failed_operations[0].operation == "retry", "later Retry failure is retained rather than swallowed as startup's old cancellation")
+	_expect(game._operations.is_empty() and not game._draining and not game._drain_queued, "failure finishes draining and remains available for explicit recovery")
+	var status: Label = game.menu.find_child("MenuStatus", true, false) as Label
+	_expect(game.menu.is_open() and status != null and not status.text.is_empty() and game.menu.find_child("RetryPendingOperationButton", true, false) != null, "failed queued Retry is visible through actual Menu status and Retry Pending control")
+	_expect(_same(original_disk, _disk_receipt()), "startup cancellation and failed Retry preserve original primary/backup bytes")
+	for id: int in canceled_ids:
+		_expect(id in Fixture.destroyed_ids and not _has_entry(id) and id not in Fixture.commit_ids, "canceled startup raw world is disposed without entry or quiet commit")
+	_expect(_live_fixture_count() == 0, "canceled startup retains no hidden native recipient")
+
+	# Explicitly close the failed Shell and reload the same untouched file.
+	# Public Continue then consumes the original loaded story normally.
+	game.free()
+	_new_shell()
+	await _settle()
+	if not _guard(game.campaign_error.is_empty() and game.active_level == null and _same(game.attempts.active_snapshot(), earned), "fresh ordinary disk reload recovers the exact original earned story"):
+		_finish(); return
+	game.menu.continue_story_requested.emit()
+	await _settle()
+	if not _guard(game.campaign_error.is_empty() and is_instance_valid(game.active_level), "public Continue succeeds after original disk reload"):
+		_finish(); return
+	level = game.active_level
+	_expect(_same(game.capture_campaign_snapshot(), earned) and _same(original_disk, _disk_receipt()), "recovery installs exact saved Player/local/Shell state without rewriting the file")
+	_expect(level.normal_entries == 0 and level.restore_entries == 1 and level.quiet_commits == 1 and not level.is_restore_candidate() and level._floor_error(true).is_empty(), "recovery has sole native floor entry, quiet commit and finished recipient")
+	_expect(_live_fixture_count() == 1, "recovery cleanup retains only the installed world")
+	_finish()
+
+func _on_startup_raw_ready(_level: Variant) -> void:
+	Fixture.raw_ready_observer = Callable()
+	_request_retry_during_startup.call_deferred()
+
+func _request_retry_during_startup() -> void:
+	startup_retry_observed = true
+	_expect(game._registration_pending and game._draining and paused and game.active_level == null, "observed real startup registration is pending with drain latch and no donor")
+	for ref: WeakRef in Fixture.created:
+		var level: Variant = ref.get_ref()
+		if is_instance_valid(level): canceled_ids.append(level.get_instance_id())
+	game.menu.retry_requested.emit()
+	_expect(paused and game.active_level == null and _same(original_disk, _disk_receipt()), "Retry queueing itself preserves startup donor-null and original file")
+
+func _new_shell() -> void:
+	game = Shell.new()
+	game.configure_runtime(raw, TEST_ROOT + "campaign.json", TEST_ROOT + "settings.json", TEST_ROOT + "preferences.json")
+	root.add_child(game)
+
+func _settle() -> void:
+	for _index: int in range(24): await process_frame
+
+func _disk_receipt() -> Dictionary:
+	var result: Dictionary = {}
+	for name: String in ["campaign.json", "campaign.json.bak"]:
+		var path: String = TEST_ROOT + name
+		result[name] = FileAccess.get_file_as_bytes(path).hex_encode() if FileAccess.file_exists(path) else "ABSENT"
+	return result
+
+func _same(left: Variant, right: Variant) -> bool:
+	var wire: String = Exact.stringify(left)
+	return not wire.is_empty() and wire == Exact.stringify(right)
+
+func _has_entry(id: int) -> bool:
+	for row: Dictionary in Fixture.entry_events:
+		if row.id == id: return true
+	return false
+
+func _live_fixture_count() -> int:
+	var count: int = 0
+	for ref: WeakRef in Fixture.created:
+		if is_instance_valid(ref.get_ref()): count += 1
+	return count
+
+func _guard(ok: bool, note: String) -> bool:
+	_expect(ok, note)
+	return ok
+
+func _expect(ok: bool, note: String) -> void:
+	checks += 1
+	if not ok:
+		failures += 1
+		push_error("FAIL: " + note)
+
+func _cleanup() -> void:
+	for name: String in ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_ROOT + name))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_ROOT))
+
+func _finish() -> void:
+	Fixture.raw_ready_observer = Callable()
+	Fixture.entry_observer = Callable()
+	if is_instance_valid(game): game.free()
+	paused = false
+	Engine.max_fps = old_fps
+	_cleanup()
+	print("Restore candidate startup Retry smoke: %d checks, %d failures (TEST ONLY canceled-load operation boundary)" % [checks, failures])
+	quit(1 if failures else 0)

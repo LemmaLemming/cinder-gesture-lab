@@ -27,6 +27,13 @@ func _run() -> void:
 			info.readiness = "accepted"
 			info.accepted_commit = "a".repeat(40)
 			info.api_revision = Registry.API_REVISION
+		elif info.id == "A1-L3":
+			# This fixture later tests publication of a missing next scene.
+			# Real campaign acceptance must not change that synthetic boundary.
+			info.scene_path = null
+			info.readiness = "unimplemented"
+			info.accepted_commit = null
+			info.api_revision = null
 	if "--focus-notifications-only" in OS.get_cmdline_user_args():
 		await _test_focus_notifications()
 		_finish()
