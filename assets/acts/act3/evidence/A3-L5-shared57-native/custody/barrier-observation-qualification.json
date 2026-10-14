@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "scope": "Source-only closed-failure barrier counter qualification",
+  "original_api_revision": "campaign-shared-57",
+  "original_baseline": "75e547f4de684e53e450ed9a8ad4fac149bee8b2",
+  "runs": [
+    {
+      "original_directory": ".cinder/crystalman-c50-public-shared57-parse",
+      "raw_log_sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+      "scope_note": "Closed clean --check-only parse, exit 0. No runtime, public C50 flow or PNG credit."
+    },
+    {
+      "original_directory": ".cinder/crystalman-c50-public-shared57-portraits-native",
+      "raw_log_sha256": "62e07258f48198285e92aa8a0b13384835d8c88b84145792a6c74e2b166d79de",
+      "counter_qualification": {
+        "original_footer_name": "native ticks",
+        "qualified_name": "barrier observations",
+        "observations": 73,
+        "checks": 84,
+        "failures": 1,
+        "physics_tick_credit": false
+      },
+      "scope_note": "Closed failed graphical run 84/1 with 73 barrier observations. Original footer native ticks label retained verbatim, but expiry can increment the counter without physics. Offered-lock-g1 only; no C50 public flow or PNG credit."
+    },
+    {
+      "original_directory": ".cinder/crystalman-c50-public-shared57-graphics-diagnostic",
+      "raw_log_sha256": "778d46c89a999e1a340bdf67b459dba3d70079308202622c159eaad3ada1689f",
+      "counter_qualification": {
+        "original_footer_name": "native ticks",
+        "qualified_name": "barrier observations",
+        "observations": 32,
+        "checks": 38,
+        "failures": 1,
+        "physics_tick_credit": false
+      },
+      "scope_note": "Closed failed graphical diagnostic 38/1 with 32 barrier observations. Actual paused=true, window_focus=false, display_focused=false, barrier_expired=true at 120 process frames. No C50 public flow or PNG credit."
+    }
+  ],
+  "diagnostic_raw_log_sha256": "778d46c89a999e1a340bdf67b459dba3d70079308202622c159eaad3ada1689f",
+  "diagnostic_original_result_sha256": "4cb21e88f547861a47b9f4b4001f21b32e2f2cc3075fee36a31f9312cf78b097",
+  "diagnostic_original_frozen_script_sha256": "c06a83cd3e972ad1ce018b2c8a8c1c781f637c76824ca3f1a317d142326404c6",
+  "diagnostic_detail_exact_decoded": {
+    "paused": true,
+    "barrier_expired": true,
+    "barrier_frames": 120,
+    "dead": false,
+    "hp": 100.0,
+    "baseline_hp": 100.0,
+    "kit_exact": true,
+    "floor_exact": true,
+    "clock_s": 0.51666666666667,
+    "baseline_epoch": 0.0,
+    "parent_error": "",
+    "unit_error": "",
+    "blast_seen": false,
+    "window_visible": true,
+    "window_focus": false,
+    "display_focused": false,
+    "drawn_frames": 122
+  },
+  "counter_code_observation": "PriorityBarrier._process expires after 120 frames and defers observed; tick awaits observed then increments ticks before checking expired/paused. A failed expiry is therefore an observation without verified native physics advance.",
+  "limits": [
+    "Staging only; retain these three originals and append the next explicitly closed run before final publication. No live job read or publication performed.",
+    "The clean --check-only parse establishes source parse only; no native behavior or public transport credit.",
+    "Two graphical originals remain failures: 84/1 and 38/1. Their 73 and 32 counters are barrier observations, not certified native physics ticks; preserve original native ticks footer text unchanged.",
+    "Diagnostic records paused=true, focus=false, expired=true at 120 process frames; expiry wakes the barrier and increments ticks without a physics advance.",
+    "Only the earlier offered-lock-g1 exact sample was copied. No C50 public warning flow, Continue/Save/fresh Continue/Retry/GUI success or PNG credit from these failed runs.",
+    "Earlier focused priority1455, equipment, art and source packets retain their own original scope; same-byte dedup grants no new execution or acceptance credit.",
+    "No gesture/full-route/exit/art/level acceptance, new engine work or equipment/ability allocation inferred."
+  ]
+}

@@ -11,8 +11,8 @@ const REQUESTED_SIZE := Vector2i(340, 736)
 const DRAW_LIMIT: int = 32
 const PRODUCED_FROM_ACT3_PARENT_HEAD: String = "43ee893da25c9c8656966c0b828bfbbe1355afed"
 const SOURCE_PINS: Dictionary = {
-	"res://tests/acts/act3/crystalman_parent_transport_smoke.gd": "b351eccd1bc8e3ca4cd63add748e2d8d25c668c644787c90de45bc2c03ed4d02",
-	"res://scripts/acts/act3/crystalman_level.gd": "0355063927a56ba7da2e072ccd6cf1dd38888b4483b2b7e434762f8bc4b2d314",
+	"res://tests/acts/act3/crystalman_parent_transport_smoke.gd": "3344ec10095f9d760521fa834b8ebdefee78c05950e77212e975605a86485608",
+	"res://scripts/acts/act3/crystalman_level.gd": "456095c10d1fd0058c8db7ae2ef900efe6a52e40f35e8534b947067ca6fabde1",
 	"res://scripts/acts/act3/crystalman_parent_codec.gd": "bf105854b232edfac48f27b714e8d4dbeea40b9db7bc7871d75a3a70ba183efd",
 	"res://scripts/acts/act3/crystalman_scenery.gd": "cdc14f7aa71cdb2a1daec81551ca3b9ec2086831c5e63cb29826bfe89fd462c5",
 	"res://scripts/acts/act3/crystalman_landscape_scenery.gd": "77a2b1a0eabadf32d7a44e6f905a2309e28a6d5de6580fcf6225c9d1d562a62b",

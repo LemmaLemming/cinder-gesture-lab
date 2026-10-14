@@ -10,6 +10,7 @@ const Registry=preload("res://scripts/campaign/registry.gd")
 const Exact=preload("res://scripts/campaign/exact_json.gd")
 const Value=preload("res://scripts/campaign/snapshot_codec.gd")
 const Store=preload("res://scripts/campaign/save_store.gd")
+const TransportAttempts=preload("res://scripts/campaign/attempts.gd")
 const ROOM: String="res://scenes/acts/act3/a3_l5_crystalman.tscn"
 const TEST_PREFIX: String="res://tests/acts/act3/fixtures/crystalman_declared_"
 var game: Node
@@ -162,17 +163,20 @@ func campaign_transport(packet: Dictionary) -> bool:
 			row.accepted_commit="f".repeat(40)
 			row.api_revision=Registry.API_REVISION
 	isolated="user://test-crystalman-parent-%d-%d/"%[OS.get_process_id(),Time.get_ticks_usec()]
+	# TEST metadata is structurally checked before Store seed. Actual Shell
+	# startup now owns native async registration and synchronous full validation.
+	var detached=TransportAttempts.new(Registry.new(raw))
+	var state: Dictionary=detached.state()
+	state.completed_main=detached.registry.main_route().slice(0,14)
+	state.story={"kind":"story","level_id":"A3-L5","snapshot":seed.duplicate(true),"checkpoint":seed.duplicate(true)}
+	var state_problem: String=detached.state_error(state)
+	if not expect(state_problem.is_empty(),"Explicit TEST predecessor/representative whole checkpoint structure validates",state_problem): return false
+	var writer=Store.new(isolated+"campaign.json")
+	if not expect(writer.write_payload(state),"Standalone structural TEST seed uses native exact Store; real Shell startup supplies native validation",writer.last_error): return false
 	production=ProductionShell.new()
 	if not expect(production.configure_runtime(raw,isolated+"campaign.json",isolated+"settings.json",isolated+"preferences.json"),"Public Shell uses in-memory TEST row and isolated disk",production.campaign_error): return false
 	root.add_child(production)
-	paused=true
-	for _i: int in range(3): await process_frame
-	var state: Dictionary=production.attempts.state()
-	state.completed_main=production.registry.main_route().slice(0,14)
-	state.story={"kind":"story","level_id":"A3-L5","snapshot":seed.duplicate(true),"checkpoint":seed.duplicate(true)}
-	var state_problem: String=production.attempts.state_error(state)
-	if not expect(state_problem.is_empty(),"Explicit TEST predecessor/representative whole checkpoint seed validates",state_problem): return false
-	if not expect(production.attempts.restore_session(state),"Validated TEST seed restores session",production.attempts.last_error): return false
+	if not await _await_seeded_startup(state): return false
 	production.menu.continue_story_requested.emit()
 	if not await settle("resume"): return false
 	if not expect(same(production.capture_campaign_snapshot(),seed),"Public fresh Continue restores exact complete authored parent/native unit",production.campaign_error): return false
@@ -248,3 +252,12 @@ func expect(ok: bool,label: String,detail: String="") -> bool:
 static func same(a: Variant,b: Variant) -> bool:
 	var wire: String=Exact.stringify(a)
 	return not wire.is_empty() and wire==Exact.stringify(b)
+
+
+## Public-state startup barrier: title alone can precede opted async disk load.
+func _await_seeded_startup(expected: Dictionary) -> bool:
+	for _i: int in range(60):
+		await process_frame
+		if not production.campaign_error.is_empty(): return expect(false,"Public startup native registration/load",production.campaign_error)
+		if paused and not production.is_pause_requested() and production.menu.page_name()=="title" and same(production.attempts.state(),expected): return expect(true,"Exact complete public startup session settles before Continue")
+	return expect(false,"Bounded exact public startup session settles; title alone is insufficient",str(production.attempts.state()))

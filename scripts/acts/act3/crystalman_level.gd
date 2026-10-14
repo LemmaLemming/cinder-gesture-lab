@@ -418,6 +418,10 @@ func _snapshot_envelope_error(snapshot: Dictionary) -> String:
 func restore_candidate_construction_required() -> bool:
 	return true
 
+# Published registration opt-in; immutable native query floor is ready first.
+func restore_candidate_physics_registration_required() -> bool:
+	return true
+
 func _on_enter_restore_candidate(local: Dictionary,player: Dictionary) -> String:
 	_active=false
 	var error: String=_codec.header_error(local,self,player)
