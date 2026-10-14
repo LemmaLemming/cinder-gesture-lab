@@ -9,3 +9,9 @@ Necessary new-script import and graphical execution remain unexecuted. Run only 
 ## Actual required import
 
 Queued import08 closes0 clean on c785c771 / Shared57 in3.721s, preserving all864 frozen inputs and492 prior UID bytes. One genuine test UID gives493 unique IDs. Receipt `.cinder/a1-l5-saved-portrait-import08.json`. This establishes import custody, not graphical parsing, PNGs or acceptance; the four-view graphical check is next.
+
+## Actual saved-portrait startup cancellation — 14 October 2026
+
+The required new-test import08 closes0 clean (864 frozen inputs/492 prior UIDs unchanged, one genuine UID gives493). Committed graphical production03 on84e8dbd8/Shared57 parses and closes4/1, engine1, in10.012s, with normal cleanup, all865 frozen inputs/all493 UID bytes exact and zero captures. Its only failure is genuine startup focus unavailable; native report records zero focus events. Computer-use subsequently reports the Mac is locked and cannot be automatically unlocked. This is an external display/focus condition, not a new encounter assertion or portrait pass; the user has been asked to unlock manually. Original result/log/report and `.cinder/a1-l5-saved-portrait-production03-diagnosis.json` remain literal.
+
+Do not repeat the unchanged graphical attempt before actual unlock. The four genuine119 packets and all21 used-source pins remain exact. Integration publishes Shared58/6d5b8b45 with a small physics-origin Pause fix and explicitly preserves119/80 evidence; current frozen job is closed, so preserving adoption can proceed while awaiting the display. All eight Act1 levels remain the objective; L5 unaccepted, Act1 four/eight. Only remaining brief portraits/exact handoff and internal acceptance precede O1/O2/O3.
