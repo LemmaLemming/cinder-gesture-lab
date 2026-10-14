@@ -1,0 +1,570 @@
+extends SceneTree
+## Focused Shared58 TEST adapter; original Shared57 failures remain preserved.
+## Exact baseline be9662fe38cbe32ae63d96424e978ac0409c70b0f80504a4c92b9e6e5723512c.
+## Published Shellf8df3b79 / Level27fdab66; owner adoption/execution separate.
+## Planned TEST path tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd.
+## Logical A1-L1 substitution only; actual Shell Hero and native ordinary lunge.
+## ONE TEST bridge maps exact published6d5b8b45 via observing Shell subclass.
+## No sync validator await, PhysicsServer step, saved-result cache or pose seed.
+const Shell = preload("res://scripts/campaign/shell.gd")
+const ObservingShell = preload("res://tests/acts/act2/shared_support/fresh_world_lunge_observing_shell.gd")
+const Registry = preload("res://scripts/campaign/registry.gd")
+const Store = preload("res://scripts/campaign/save_store.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const PlayerScript = preload("res://scripts/player.gd")
+const SchedulerScript = preload("res://scripts/combat/threat_scheduler.gd")
+const HostScript = preload("res://tests/acts/act2/shared_support/fresh_world_lunge_level.gd")
+const FIXTURE_PATH: String = "res://tests/acts/act2/shared_support/fresh_world_lunge_level.tscn"
+const MAX_TICKS: int = 240
+const MAX_FRAMES: int = 240
+
+class FreshPreparationBridge:
+	extends RefCounted
+	const API: String = "fresh-world-shell-test-bridge-1"
+	const PUBLICATION: String = "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e"
+	var receipts: Array[Dictionary] = []
+	func dispatch(operation: String, payload: Dictionary = {}) -> Dictionary:
+		if operation == "capabilities":
+			var pins: bool = FileAccess.get_sha256("res://scripts/campaign/shell.gd") == "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f" and FileAccess.get_sha256("res://scripts/campaign/level.gd") == "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1" and FileAccess.get_sha256("res://tests/acts/act2/shared_support/fresh_world_lunge_level.gd") == "04355d9f3dca7e16bd0fde1533f3d43e115997b4c2f396658f7afc1be2b98d2d" and FileAccess.get_sha256("res://tests/acts/act2/shared_support/fresh_world_lunge_level.tscn") == "7ef85ead7ea1160bcee724cca1078c8a2b86e709e9ae91dedd72479eaea41b05"
+			pins = pins and CinderLevel.RESTORE_REGISTRATION_API_REVISION == "level-restore-registration-1" and ObservingShell.TEST_BRIDGE_API == API
+			return {"api_revision": API, "performed": pins, "registration_observer": pins, "isolated_validation": pins, "pending_control": pins, "reason": "Exact published source/host pins required" if not pins else "Published58 TEST adapter source present"}
+		var shell: CinderCampaignShell = payload.get("shell") as CinderCampaignShell
+		if not is_instance_valid(shell) or shell.get_script() != ObservingShell:
+			return {"api_revision": API, "performed": false, "reason": "Actual observing Shell subclass required; no set_script retrofit"}
+		if operation == "attach_observer":
+			return {"api_revision": API, "performed": shell.call("test_attach_observer", payload.get("observer", Callable()))}
+		if operation == "settle_operation":
+			for _frame: int in range(int(payload.get("max_frames", 240))):
+				if not is_instance_valid(shell) or not shell.is_inside_tree(): break
+				if shell.call("test_settled"):
+					return {"api_revision": API, "performed": true, "settled": true, "campaign_error": shell.campaign_error, "adapter_errors": shell.call("test_adapter_errors")}
+				await shell.get_tree().process_frame
+			return {"api_revision": API, "performed": false, "settled": false, "reason": "Bounded original operation drain did not settle"}
+		if operation not in ["prepare_raw_with_fault", "validate_once", "validate_distinct_packets", "validate_then_mutate_then_revalidate", "pending_cancel", "pending_reentry", "pending_disposal"]:
+			return {"api_revision": API, "performed": false, "reason": "Unknown explicit TEST bridge operation"}
+		var answer: Dictionary = await shell.call("test_queue_operation", operation, payload)
+		# Diagnostic receipt only; original WeakRefs remain separate live test data.
+		var receipt: Dictionary = answer.duplicate(true)
+		receipt.erase("candidate_refs")
+		receipts.append(receipt)
+		return answer
+
+class NativeTickProbe:
+	extends Node
+	signal tick_finished
+	func _init() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_physics_priority = 120
+	func _physics_process(_delta: float) -> void: tick_finished.emit()
+
+var _bridge: FreshPreparationBridge = FreshPreparationBridge.new()
+var _shell: CinderCampaignShell
+var _probe: NativeTickProbe
+var _raw: Dictionary
+var _registry_bytes: String = ""
+var _test_root: String
+var _publication: String = ""
+var _checkpoint_only: bool = false
+var _checks: int = 0
+var _failures: int = 0
+var _scope_complete: bool = false
+var _finished: bool = false
+var _watch: bool = false
+var _events: Array[String] = []
+var _disposals: Array[Dictionary] = []
+var _expected_donor: WeakRef
+var _units: Array[Dictionary] = []
+var _preparation: Array[Dictionary] = []
+var _raw_signatures: Dictionary = {} # observation only, never validation authority
+var _raw_fault_candidate_id: String = ""
+var _raw_fault_refs: Array = [] # original independent WeakRefs; never supplied to bridge
+var _candidate_wires: Dictionary = {} # diagnostic identity -> COMPLETE packet
+var _fault_nodes: Array[Node] = []
+var _old_audio: AudioBusLayout
+var _old_fps: int
+
+func _initialize() -> void:
+	_test_root = "user://test-fresh-world-lunge-%d/" % OS.get_process_id()
+	_old_audio = AudioServer.generate_bus_layout(); _old_fps = Engine.max_fps
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--fresh-world-publication="): _publication = argument.trim_prefix("--fresh-world-publication=")
+		elif argument == "--checkpoint-only-diagnostic": _checkpoint_only = true
+	_run.call_deferred()
+
+func _run() -> void:
+	root.size = Vector2i(540, 1170); root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	_registry_bytes = FileAccess.get_file_as_string(Registry.DATA_PATH)
+	if not _expect(_publication == FreshPreparationBridge.PUBLICATION, "runner pins an independently verified native-ready publication"): _finish(); return
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--level-scene") or argument in ["--capture", "--capture-polish"]:
+			_expect(false, "normal Shell test excludes preview/auto-quit arguments"); _finish(); return
+	var capability: Dictionary = await _bridge.dispatch("capabilities")
+	if not _bridge_result(capability) or capability.get("registration_observer") != true or capability.get("isolated_validation") != true or capability.get("pending_control") != true:
+		print("INCOMPLETE fresh-world native lunge: ", capability.get("reason", "required Root-only bridge capabilities absent"))
+		_finish(); return
+	_raw = JSON.parse_string(_registry_bytes)
+	if not _expect(_raw.get("levels") is Array, "canonical Registry data read without mutation"): _finish(); return
+	for row: Dictionary in _raw.levels:
+		if row.id == "A1-L1":
+			row.scene_path = FIXTURE_PATH; row.readiness = "accepted"
+			row.accepted_commit = "e".repeat(40); row.api_revision = Registry.API_REVISION
+	var registry: CinderCampaignRegistry = Registry.new(_raw)
+	if not _expect(registry.last_error.is_empty() and registry.scene_error("A1-L1").is_empty(), "in-memory A1-L1 TEST scene; unchanged canonical route/controls/gear"): _finish(); return
+	_probe = NativeTickProbe.new(); root.add_child(_probe); node_added.connect(_observe_added)
+	if not await _new_shell(): _finish(); return
+	_shell.menu.begin_story_requested.emit(); await _settle()
+	if not _expect(_live() and paused and _shell.attempts.active_kind() == "story", "actual New Story installs TEST native host paused: " + _shell.campaign_error): _finish(); return
+	var initial_arena: Dictionary = _shell.active_level.call("test_arena")
+	if not _expect(initial_arena.hero == _shell.player and _shell.player.get_script() == PlayerScript and initial_arena.scheduler.get_script() == SchedulerScript and initial_arena.world_root.is_ancestor_of(_shell.player) and initial_arena.world_root.is_ancestor_of(initial_arena.source), "one genuine supplied shared Shell Hero/native source/Scheduler under actual common world"): _finish(); return
+	_shell.menu.resume_requested.emit()
+	if not await _until_stable(): _finish(); return
+	_shell.request_pause(); await _settle()
+	if not _expect_actual_operation_success("first public physics-origin pause"): _finish(); return
+	if not _expect(_shell.active_level.call("test_checkpoint"), "public host requests actual pristine idle checkpoint"): _finish(); return
+	await _settle() # checkpoint transaction legitimately may auto-resume
+	if not _expect_actual_operation_success("public idle checkpoint transaction"): _finish(); return
+	_shell.request_pause(); await _settle()
+	if not _expect_actual_operation_success("final checkpoint pause before full tuple"): _finish(); return
+	var checkpoint: Dictionary = _shell.attempts.state().story.checkpoint.duplicate(true)
+	var checkpoint_live: Dictionary = _shell.capture_campaign_snapshot()
+	var checkpoint_leases: Variant = checkpoint.get("level", {}).get("local", {}).get("scheduler", {}).get("reservations")
+	var checkpoint_components: Dictionary = {"nonempty": not checkpoint.is_empty(), "full_tuple_exact": _same(checkpoint_live, checkpoint), "zero_accepted_lunges": checkpoint.get("level", {}).get("local", {}).get("source", {}).get("accepted_lunges", -1) == 0, "empty_leases": checkpoint_leases is Array and checkpoint_leases.is_empty()}
+	var checkpoint_okay: bool = true
+	for condition: String in checkpoint_components:
+		if not _expect(checkpoint_components[condition], "real complete earlier checkpoint condition: " + condition): checkpoint_okay = false
+	if not checkpoint_okay or _checkpoint_only:
+		var checkpoint_diagnostic: Dictionary = {"checkpoint": checkpoint, "live": checkpoint_live, "attempts": _shell.attempts.state(), "components": checkpoint_components, "status": {"paused": paused, "page": _shell.menu.page_name(), "campaign_error": _shell.campaign_error, "draining": _shell.get("_draining"), "drain_queued": _shell.get("_drain_queued"), "registration_pending": _shell.get("_registration_pending"), "registration_inflight": _shell.get("_registration_inflight"), "failed_operations": _shell.get("_failed_operations")}, "transport": _shell.active_level.call("transport_diagnostics"), "source_control": _encode(_shell.active_level.call("test_lunge_state")), "actual_camera": _camera_signature(), "registration_guard_trace": _shell.call("test_registration_guard_trace")}
+		var diagnostic_text: String = Exact.stringify(checkpoint_diagnostic)
+		_expect(not diagnostic_text.is_empty(), "official exact full checkpoint/live/attempt status diagnostic encodes")
+		print("Fresh-world checkpoint comparison diagnostic: ", diagnostic_text)
+	if not checkpoint_okay: _finish(); return
+	_capture("genuine-idle-checkpoint", checkpoint)
+	if _checkpoint_only: _finish(); return # incomplete2, no lunge/full-suite credit
+	_shell.menu.resume_requested.emit()
+	# A genuine ordinary primary points AWAY from source; no motion/range seed.
+	# It changes actual retained history without moving the admission geometry.
+	var observed: Array[Dictionary] = []
+	_shell.player.world_action_executed.connect(func(record: Dictionary) -> void: observed.append(record.duplicate(true)))
+	_shell.player.slash(Vector3.BACK)
+	if not await _until_stable() or not _expect(observed.size() == 1 and observed[0].kind == "primary" and _shell.active_level.call("get_source").get("hp") == 12.0, "real completed public primary receipt; source HP untouched"): _finish(); return
+	var hp: float = _shell.player.hp
+	_shell.player.take_damage(1.0, Vector3.ZERO) # explicit TEST public injury, no HP assignment
+	if not _expect(_shell.player.hp == hp - 1.0, "actual public TEST injury creates distinct saved resources"): _finish(); return
+	var hurt_until: float = _shell.player.get_threat_response_state().action_clock_s + float(_shell.player.equipment.resolved_stats().hurt_invulnerability)
+	if not await _until_stable(hurt_until): _finish(); return
+	var admitted: Dictionary = _shell.active_level.call("test_start")
+	if not _expect(admitted.get("accepted") == true, "actual ordinary native lunge admission: " + str(admitted)): _finish(); return
+	var control: Dictionary = _shell.active_level.call("test_lunge_state")
+	if not _expect(control.get("reservations", []).size() == 1, "one persistent source owns the real native lunge lease"): _finish(); return
+	var original: Dictionary = control.reservations[0].duplicate(true)
+	_shell.request_pause(); await _settle()
+	var warning: Dictionary = _shell.capture_campaign_snapshot()
+	if not _expect(not warning.is_empty() and _reservation().get("state") == "warning" and warning.level.local.source.accepted_lunges == 1 and not _same(warning.player.resources, checkpoint.player.resources) and not _same(warning.player.world_actions, checkpoint.player.world_actions), "real warning differs from same-level earlier resources/history"): _finish(); return
+	_capture("actual-native-warning", warning)
+	_shell.menu.resume_requested.emit()
+	if not await _until_unfinished(original): _finish(); return
+	_shell.request_pause(); await _settle()
+	var moving: Dictionary = _shell.capture_campaign_snapshot()
+	if not _expect(not moving.is_empty() and moving.level.local.scheduler.reservations.size() == 1, "actual paused whole unfinished native lunge packet captured"): _finish(); return
+	var adapter: Dictionary = moving.level.local.scheduler.reservations[0].adapter
+	if not _expect(adapter.kind == "lunge" and not adapter.finished and adapter.collision_shortened and adapter.current_position != adapter.start and moving.level.local.source.velocity != [0.0, 0.0, 0.0] and moving.level.local.source.native_clock_s == moving.level.local.scheduler.clock_s, "real collision-shortened unfinished source motion and exact native clock join"): _finish(); return
+	_expect(_same(_shell.attempts.state().story.checkpoint, checkpoint), "later warning/motion never replaces earlier living checkpoint")
+	_capture("actual-unfinished-lunge", moving)
+	if not await _disk_restore(moving): _finish(); return
+	_expect(_same(_shell.attempts.state().story.checkpoint, checkpoint), "fresh disk Continue retains protected earlier full checkpoint")
+	if not await _raw_preparation_refusal(moving) or not await _refusal_cases(moving) or not await _packet_custody_cases(checkpoint, moving): _finish(); return
+	if not await _pending_cases(moving): _finish(); return
+	_shell.request_pause(); await _settle()
+	_expected_donor = weakref(_shell.active_level)
+	var old_refs: Array = _refs(_shell.world)
+	var old_ids: Dictionary = _native_ids()
+	_events.clear(); _watch = true
+	var clicked: bool = await _click("RetryButton")
+	_watch = false; _expected_donor = null
+	if not _expect(clicked and _live() and paused and _same(_shell.capture_campaign_snapshot(), checkpoint) and _events.is_empty() and _refs_freed(old_refs) and _ids_distinct(_native_ids(), old_ids), "actual GUI Retry restores exact earlier resources/history and frees full donor world: " + str(_events)): _finish(); return
+	_expect(_shell.active_level.call("test_lunge_state").reservations.is_empty() and _shell.active_level.call("transport_diagnostics").quiet_commits == 1, "earlier Retry uses one fresh Player/source/Scheduler quiet commit")
+	_capture("actual-GUI-earlier-Retry", _shell.capture_campaign_snapshot())
+	var installed: int = 0
+	for observation: Dictionary in _preparation:
+		if observation.stage == "committed" and observation.purpose == "installation": installed += 1
+	if not _expect(installed >= 2, "actual disk Continue and GUI Retry each observed raw registration before sole native entry/commit"): _finish(); return
+	_scope_complete = _failures == 0
+	_finish()
+
+func _bridge_result(result: Dictionary) -> bool:
+	return result.get("api_revision") == FreshPreparationBridge.API and result.get("performed") == true
+
+func _new_shell() -> bool:
+	_shell = ObservingShell.new() as CinderCampaignShell
+	if not _expect(_shell.configure_runtime(_raw, _test_root + "campaign.json", _test_root + "settings.json", _test_root + "preferences.json"), "supported isolated Shell setup before entry"): return false
+	var attached: Dictionary = await _bridge.dispatch("attach_observer", {"shell": _shell, "observer": _observe_preparation})
+	if not _expect(_bridge_result(attached), "actual observing subclass attaches raw/registered/entered/committed receipts BEFORE startup load"): return false
+	_events.clear(); _watch = true; root.add_child(_shell); await _settle(); _watch = false
+	return _expect(paused and _shell.player == null and _shell.menu.page_name() == "title" and _shell.campaign_error.is_empty() and _events.is_empty(), "fresh Title validates full saved packets with NULL installed Hero: " + _shell.campaign_error + str(_events))
+
+func _expect_actual_operation_success(label: String) -> bool:
+	var failed: Variant = _shell.get("_failed_operations")
+	var okay: bool = _shell.campaign_error.is_empty() and failed is Array and failed.is_empty()
+	if not _expect(okay, label + " has empty actual campaign_error and failed_operations"):
+		print("Fresh-world actual operation refusal diagnostic: ", Exact.stringify({"operation": label, "campaign_error": _shell.campaign_error, "failed_operations": failed, "registration_guard_trace": _shell.call("test_registration_guard_trace")}))
+	return okay
+
+func _settle() -> void:
+	for _frame: int in range(8): await process_frame
+	# One explicit bridge query, outside validators, prevents fixed-frame readiness assumptions.
+	var settled: Dictionary = await _bridge.dispatch("settle_operation", {"shell": _shell, "max_frames": MAX_FRAMES})
+	_expect(_bridge_result(settled) and settled.get("settled") == true and settled.get("adapter_errors") is Array and settled.adapter_errors.is_empty(), "actual paused operation settles with no retained adapter errors: " + str(settled.get("adapter_errors")))
+
+func _until_stable(earliest_clock: float = -1.0) -> bool:
+	for _tick: int in range(MAX_TICKS):
+		await _probe.tick_finished
+		var response: Dictionary = _shell.player.get_threat_response_state()
+		if response.get("stable") == true and response.get("motion", {}).get("grounded") == true and response.get("primary_cooldown_left_s", -1.0) == 0.0 and float(response.get("action_clock_s", -1.0)) >= earliest_clock and not _shell.player.action_in_progress(): return true
+	return _expect(false, "bounded actual grounded stable native Player recovery")
+
+func _until_unfinished(original: Dictionary) -> bool:
+	for _tick: int in range(MAX_TICKS):
+		await _probe.tick_finished
+		var r: Dictionary = _reservation()
+		if r.is_empty(): return _expect(false, "original native lunge disappeared before unfinished capture")
+		var a: Dictionary = r.get("adapter", {})
+		if r.state == "active" and a.kind == "lunge" and not a.finished and a.current_position != a.start:
+			return _expect(r.id == original.id and r.active_from_s == original.active_from_s and r.active_until_s == original.active_until_s and r.recovery_until_s == original.recovery_until_s, "unchanged original lease/deadlines at genuine unfinished motion")
+	return _expect(false, "bounded real unfinished native active motion reached")
+
+func _reservation() -> Dictionary:
+	if not _live(): return {}
+	var control: Dictionary = _shell.active_level.call("test_lunge_state")
+	return control.reservations[0] if control.get("reservations", []).size() == 1 else {}
+
+func _disk_restore(expected: Dictionary) -> bool:
+	var refs: Array = _refs(_shell); var prior: Dictionary = _native_ids()
+	_shell.free(); _shell = null
+	if not _expect(_refs_freed(refs), "whole old Shell/Hero/source/floor/native bodies disposed before disk restore"): return false
+	if not await _new_shell(): return false
+	_events.clear(); _watch = true
+	_shell.menu.continue_story_requested.emit(); await _settle(); _watch = false
+	return _expect(_live() and paused and _same(_shell.capture_campaign_snapshot(), expected) and _events.is_empty() and _ids_distinct(_native_ids(), prior), "fresh quiet format2 Continue exact complete tuple/resources/history/native identities: " + _shell.campaign_error + str(_events))
+
+func _capture(label: String, unit: Dictionary) -> void:
+	var text: String = Exact.stringify(unit)
+	var parsed: Dictionary = Exact.parse(text)
+	_expect(not text.is_empty() and parsed.get("accepted") == true and _same(parsed.get("value"), unit), "official exact native full tuple roundtrip: " + label)
+	var envelope: Variant = JSON.parse_string(FileAccess.get_file_as_string(_test_root + "campaign.json"))
+	_expect(envelope is Dictionary and envelope.get("format_version") == Store.FORMAT_VERSION, "real format2 disk envelope: " + label)
+	_units.append({"label": label, "unit": unit.duplicate(true)})
+
+func _observe_preparation(stage: String, candidate: Dictionary, packet: Dictionary, purpose: String) -> void:
+	# Pure TEST observation supplied by the ONE Root bridge, never a shared guard.
+	var level: CinderLevel = candidate.get("level") as CinderLevel
+	var hero: CinderPlayer = candidate.get("player") as CinderPlayer
+	var world: Node3D = candidate.get("stage") as Node3D
+	if not _expect(_node_live(level) and _node_live(hero) and _node_live(world) and level.get_script() == HostScript and hero.get_script() == PlayerScript and world.is_ancestor_of(level) and world.is_ancestor_of(hero) and hero.get_world_3d() == level.get_world_3d(), "genuine raw containing world and exact native recipients: " + stage): return
+	var wire: String = Exact.stringify(packet)
+	var identity: String = str(level.get_instance_id())
+	if not _expect(not wire.is_empty(), "preparation is bound to COMPLETE exact packet, not level ID"): return
+	if _candidate_wires.has(identity): _expect(_candidate_wires[identity] == wire, "one pristine construction never borrows another full packet")
+	else: _candidate_wires[identity] = wire
+	var arena: Dictionary = level.call("test_arena_for_player", hero)
+	var signature: String = _arena_signature(arena)
+	var diagnostics: Dictionary = level.call("transport_diagnostics")
+	var floor: Dictionary = level.call("get_floor_diagnostics", packet)
+	_expect(not signature.is_empty() and arena.world_root == world and arena.root == world and paused, "nonempty native physical signature in actual paused candidate world")
+	if stage == "raw":
+		_expect(diagnostics.restore_entries == 0 and diagnostics.quiet_commits == 0 and diagnostics.accepted_lunges == 0 and diagnostics.source_clock_s == 0.0, "raw native geometry exists before sole sync entry; no clock/HP/source seed")
+		_raw_signatures[identity] = signature
+	elif stage == "registered":
+		_expect(arena.floor.get_rid().is_valid() and arena.source.get_rid().is_valid() and level.get_world_3d().space.is_valid(), "prepared genuine floor/source/World3D RIDs are valid")
+		_expect(_raw_signatures.has(identity) and _raw_signatures[identity] == signature and diagnostics.restore_entries == 0 and diagnostics.quiet_commits == 0, "native registration leaves actual pristine bodies/resources/clocks unchanged before entry")
+		var expected_count: int = 2 if not packet.level.local.scheduler.reservations.is_empty() else 1
+		_expect(floor.get("error", "").is_empty() and floor.get("rays", []).size() == expected_count, "actual saved endpoint probes, or explicitly idle source probe")
+		for ray: Dictionary in floor.get("rays", []): _expect(ray.empty == false and ray.matches_floor_rid == true, "prepared native endpoint hits exact original floor RID")
+	elif stage == "entered":
+		_expect(diagnostics.restore_entries == 1 and diagnostics.quiet_commits == 0 and diagnostics.constructor_pristine and diagnostics.saved_player_checked_before_binding, "one sync construction validates complete staged Player/source before native binding")
+	elif stage == "committed":
+		_expect(purpose == "installation" and diagnostics.restore_entries == 1 and diagnostics.quiet_commits == 1 and diagnostics.player_committed_before_local and _same(hero.snapshot_state(), packet.player) and _same(level.snapshot_state(), packet.level), "exclusive install recipient quietly commits Player then original source then Scheduler once")
+	_preparation.append({"stage": stage, "purpose": purpose, "candidate_id": identity, "packet_level": packet.level_id, "physical": _diagnostic_signature(arena), "transport": diagnostics, "floor": floor})
+
+func _raw_preparation_refusal(saved: Dictionary) -> bool:
+	var before: String = _atomic_signature()
+	if not _expect(not before.is_empty(), "nonempty donor/model/disk/input/native/camera guard before raw preparation refusal"): return false
+	var first_observation: int = _preparation.size()
+	_raw_fault_candidate_id = ""
+	_raw_fault_refs.clear() # before the one new operation, never after capture
+	_events.clear(); _watch = true
+	var answer: Dictionary = await _bridge.dispatch("prepare_raw_with_fault", {"shell": _shell, "packet": saved, "fault_callback": _fault_raw_support, "observer": _observe_preparation})
+	_watch = false
+	var raw_seen: bool = false
+	var entered: bool = false
+	for index: int in range(first_observation, _preparation.size()):
+		var observed: Dictionary = _preparation[index]
+		if observed.candidate_id != _raw_fault_candidate_id: continue
+		if observed.stage == "raw": raw_seen = true
+		if observed.stage in ["registered", "entered", "committed"]: entered = true
+	return _expect(_bridge_result(answer) and answer.get("outer_preparation_result") is bool and answer.get("row_error") is String and not answer.row_error.is_empty() and answer.get("adapter_errors", []).is_empty() and raw_seen and not entered and answer.get("restore_entries") == 0 and answer.get("quiet_commits") == 0 and answer.get("synchronous_validator_calls") == 0 and answer.get("created_candidate_count") is int and answer.created_candidate_count > 0 and answer.get("candidate_refs") is Array and not answer.candidate_refs.is_empty() and _refs_freed(_raw_fault_refs) and _atomic_signature() == before and _events.is_empty() and _bridge_refs_freed(answer), "real bad raw row guard rejects before entry/validation; actual outer preparation bool retained; candidates freed and exact donor/camera/callback silence preserved")
+
+func _fault_raw_support(candidate: Dictionary, custody: Dictionary) -> void:
+	# Separate TEST raw-preparation fault: AFTER intact raw observation AND
+	# actual Root immutable floor custody capture at the named injection point.
+	# The unresolved bridge supplies read-only custody diagnostics, not authority.
+	# No preparation success or restore constructor/validator has occurred.
+	var level: CinderLevel = candidate.get("level") as CinderLevel
+	var hero: CinderPlayer = candidate.get("player") as CinderPlayer
+	if not _expect(_node_live(level) and _node_live(hero) and level != _shell.active_level and hero != _shell.player and paused, "raw support fault belongs only to isolated actual candidate"): return
+	var identity: String = str(level.get_instance_id())
+	var signature: String = _arena_signature(level.call("test_arena_for_player", hero))
+	var diagnostics: Dictionary = level.call("transport_diagnostics")
+	if not _expect(_raw_signatures.has(identity) and not signature.is_empty() and _raw_signatures[identity] == signature and diagnostics.normal_entries == 0 and diagnostics.restore_entries == 0 and diagnostics.quiet_commits == 0, "intact raw signature captured with zero entries before deliberate support corruption"): return
+	var support: CollisionShape3D = level.call("get_support")
+	var floor: StaticBody3D = level.call("get_floor")
+	if not _expect(_node_live(support) and _node_live(floor) and not support.disabled, "actual original raw support is enabled before fault"): return
+	if not _expect(custody.get("immutable_floor_custody_captured") == true and custody.get("injection_point") is String and not custody.injection_point.is_empty() and custody.get("floor_guard") is String and not custody.floor_guard.is_empty() and custody.get("floor_instance_id") == str(floor.get_instance_id()) and custody.get("floor_rid") == str(floor.get_rid()), "future mapped bridge names actual post-custody injection point and original native floor"): return
+	var container: SubViewportContainer = candidate.get("container") as SubViewportContainer
+	var viewport: SubViewport = candidate.get("viewport") as SubViewport
+	var stage: Node3D = candidate.get("stage") as Node3D
+	if not _expect(_node_live(container) and _node_live(viewport) and _node_live(stage) and container.get_parent() == _shell and viewport.get_parent() == container and viewport.own_world_3d and stage.get_parent() == viewport and level.get_parent() == stage and hero.get_parent() == stage and not container.is_ancestor_of(_shell.player) and not container.is_ancestor_of(_shell.world) and _raw_fault_refs.is_empty(), "capture one original isolated candidate container/viewport/stage subtree, never donor"): return
+	_raw_fault_refs = _refs(container)
+	if not _expect(not _raw_fault_refs.is_empty(), "independent original candidate subtree WeakRefs captured before support fault"): return
+	_raw_fault_candidate_id = identity
+	support.disabled = true # candidate-only native mutation; no fabricated ray answer
+
+func _refusal_cases(saved: Dictionary) -> bool:
+	var cases: Array[Dictionary] = []
+	var bad: Dictionary = saved.duplicate(true); bad.level.local.source.native_clock_s += 0.000000001; cases.append({"name": "source/Scheduler exact clock mismatch", "packet": bad})
+	bad = saved.duplicate(true); bad.level.local.scheduler.reservations[0].adapter.current_position[0] += 0.125; cases.append({"name": "native adapter/source pose mismatch", "packet": bad})
+	bad = saved.duplicate(true); bad.player.world_actions.clock_s = INF; cases.append({"name": "nonfinite complete saved Player", "packet": bad})
+	bad = saved.duplicate(true); bad.level.local.source.collision.enabled = false; cases.append({"name": "alive source disabled collision tuple", "packet": bad})
+	for fault: String in ["missing_floor", "disabled_floor", "wrong_world_floor", "foreign_floor"]: cases.append({"name": fault, "packet": saved, "fault": fault})
+	for row: Dictionary in cases:
+		var before: String = _atomic_signature()
+		if not _expect(not before.is_empty(), "nonempty complete donor/model/disk/input/physical guard before refusal"): return false
+		_events.clear(); _watch = true
+		var answer: Dictionary = await _bridge.dispatch("validate_once", {"shell": _shell, "packet": row.packet, "fault": row.get("fault", ""), "fault_callback": _fault_candidate, "observer": _observe_preparation})
+		_watch = false
+		_cleanup_fault_nodes()
+		if not _expect(_bridge_result(answer) and answer.get("adapter_errors", []).is_empty() and answer.get("validation_error") is String and not answer.validation_error.is_empty() and _atomic_signature() == before and _events.is_empty() and _bridge_refs_freed(answer), "actual malformed/preparation refusal protects donor/model/disk/native resources/clocks/input: " + row.name + "; " + str(answer.get("validation_error"))): return false
+	return true
+
+func _packet_custody_cases(earlier: Dictionary, later: Dictionary) -> bool:
+	var before: String = _atomic_signature()
+	if not _expect(not before.is_empty() and earlier.level_id == later.level_id and not _same(earlier, later), "same logical level has two distinct complete resources/history/lunge packets"): return false
+	var paired: Dictionary = await _bridge.dispatch("validate_distinct_packets", {"shell": _shell, "packets": [earlier, later], "observer": _observe_preparation})
+	if not _expect(_bridge_result(paired) and paired.get("adapter_errors", []).is_empty() and paired.get("validation_errors") == ["", ""] and paired.get("validated_complete_packets") == 2 and paired.get("installation_in_validation_pool") == false and _atomic_signature() == before and _bridge_refs_freed(paired), "complete packet custody separates genuine validation constructions and installed donor"): return false
+	_events.clear(); _watch = true
+	var repeated: Dictionary = await _bridge.dispatch("validate_then_mutate_then_revalidate", {"shell": _shell, "packet": later, "fault": "disabled_floor", "fault_callback": _fault_candidate, "observer": _observe_preparation})
+	_watch = false
+	# SAME packet may reuse its pristine construction; the second full validator
+	# must actually reject native mutation. No required new candidate per call.
+	var errors: Variant = repeated.get("validation_errors")
+	var okay: bool = errors is Array and errors.size() == 2 and errors[0] is String and errors[0] == "" and errors[1] is String and not errors[1].is_empty()
+	_cleanup_fault_nodes()
+	return _expect(_bridge_result(repeated) and repeated.get("adapter_errors", []).is_empty() and repeated.get("synchronous_validator_calls") == 2 and okay and _atomic_signature() == before and _events.is_empty() and _bridge_refs_freed(repeated), "fresh full validation after repeated-callback native mutation; no accepted-result cache/rejected reuse")
+
+func _pending_cases(packet: Dictionary) -> bool:
+	var before: String = _atomic_signature()
+	if not _expect(not before.is_empty(), "nonempty donor/native/camera guard before pending controls"): return false
+	for operation: String in ["pending_cancel", "pending_reentry", "pending_disposal"]:
+		_events.clear(); _watch = true
+		var result: Dictionary = await _bridge.dispatch(operation, {"shell": _shell, "packet": packet, "observer": _observe_preparation, "pending_guard": _atomic_signature})
+		_watch = false
+		if not _expect(_bridge_result(result) and result.get("adapter_errors", []).is_empty() and result.get("pending_paused") == true and result.get("donor_guard_during_wait") == before and result.get("validation_during_pending_error") is String and not result.validation_during_pending_error.is_empty() and result.get("rejected_or_committed_reused") == false and result.get("installation_in_validation_pool") == false and _atomic_signature() == before and _events.is_empty() and _bridge_refs_freed(result), "actual operation latch rejects reentry/cancels/disposes only candidates: " + operation): return false
+	return true
+
+func _fault_candidate(fault: String, candidate: Dictionary) -> void:
+	# Labelled TEST validator fault AFTER intact registered observation and
+	# successful sole constructor entry, BEFORE the real synchronous callback.
+	# Raw preparation refusal is the separate _fault_raw_support case.
+	var level: CinderLevel = candidate.get("level") as CinderLevel
+	var hero: CinderPlayer = candidate.get("player") as CinderPlayer
+	if not _expect(_node_live(level) and _node_live(hero) and level != _shell.active_level and hero != _shell.player and level.is_restore_candidate() and paused, "fault targets isolated actual candidate, never installed donor"): return
+	var diagnostics: Dictionary = level.call("transport_diagnostics")
+	if not _expect(diagnostics.normal_entries == 0 and diagnostics.restore_entries == 1 and diagnostics.quiet_commits == 0 and diagnostics.constructor_pristine and diagnostics.saved_player_checked_before_binding, "validator fault follows successful sole pristine construction, never raw preparation/commit"): return
+	var floor: StaticBody3D = level.call("get_floor")
+	var support: CollisionShape3D = level.call("get_support")
+	if not _expect(_node_live(floor) and _node_live(support), "original native floor/support exists before deliberate TEST corruption"): return
+	match fault:
+		"missing_floor": floor.get_parent().remove_child(floor); floor.free()
+		"disabled_floor": support.disabled = true
+		"wrong_world_floor":
+			var viewport := SubViewport.new(); viewport.own_world_3d = true
+			root.add_child(viewport); _fault_nodes.append(viewport)
+			var foreign := Node3D.new(); viewport.add_child(foreign)
+			floor.reparent(foreign)
+			_expect(floor.get_world_3d() != hero.get_world_3d(), "actual original floor moved into distinct native World3D")
+		"foreign_floor":
+			var foreign := StaticBody3D.new(); foreign.name = "TESTForeignMaskOneFloor"
+			foreign.collision_layer = 1; foreign.collision_mask = 0
+			foreign.position = Vector3(0.0, -0.4, 0.0)
+			var collision := CollisionShape3D.new(); var box := BoxShape3D.new()
+			box.size = Vector3(20.0, 1.0, 20.0); collision.shape = box
+			foreign.add_child(collision); candidate.stage.add_child(foreign)
+			_expect(foreign.get_rid() != floor.get_rid(), "actual foreign mask-1 native body cannot substitute original floor RID")
+		_: _expect(false, "unknown TEST candidate corruption label refused")
+
+func _atomic_signature() -> String:
+	if not _installed() or not paused: return ""
+	var unit: Dictionary = _shell.capture_campaign_snapshot()
+	var physical: Dictionary = _diagnostic_signature(_shell.active_level.call("test_arena"))
+	var camera: Dictionary = _camera_signature()
+	if unit.is_empty() or physical.is_empty() or Exact.stringify(physical).is_empty() or camera.is_empty() or Exact.stringify(camera).is_empty(): return ""
+	return Exact.stringify({"unit": unit, "attempts": _shell.attempts.state(), "disk": _disk_bytes(), "physical": physical, "camera": camera, "input": unit.shell.duplicate(true)})
+
+func _camera_signature() -> Dictionary:
+	# Diagnostics only: actual installed native Camera3D, no camera/pose writes.
+	var camera: Camera3D = _shell.camera
+	if not _node_live(camera) or not _node_live(_shell.player) or camera.get_world_3d() != _shell.player.get_world_3d(): return {}
+	var viewport: Viewport = camera.get_viewport()
+	if viewport.get_camera_3d() != camera or not camera.get_camera_rid().is_valid(): return {}
+	var matrix: Projection = camera.get_camera_projection()
+	var rect: Rect2 = viewport.get_visible_rect()
+	return {"camera_id": str(camera.get_instance_id()), "camera_rid": str(camera.get_camera_rid()), "world_id": str(camera.get_world_3d().get_instance_id()), "world_space": str(camera.get_world_3d().space), "viewport_id": str(viewport.get_instance_id()), "viewport_rect": {"position": _encode(rect.position), "size": _encode(rect.size)}, "global_transform": _encode(camera.global_transform), "camera_transform": _encode(camera.get_camera_transform()), "projection": camera.projection, "keep_aspect": camera.keep_aspect, "size": camera.size, "fov": camera.fov, "near": camera.near, "far": camera.far, "frustum_offset": _encode(camera.frustum_offset), "h_offset": camera.h_offset, "v_offset": camera.v_offset, "current": camera.current, "cull_mask": _encode(camera.cull_mask), "doppler_tracking": camera.doppler_tracking, "projection_matrix": {"x": _encode(matrix.x), "y": _encode(matrix.y), "z": _encode(matrix.z), "w": _encode(matrix.w)}}
+
+func _arena_signature(arena: Dictionary) -> String: return Exact.stringify(_diagnostic_signature(arena))
+
+func _diagnostic_signature(arena: Dictionary) -> Dictionary:
+	for key: String in ["root", "hero", "source", "scheduler", "floor", "support"]:
+		if not _node_live(arena.get(key)): return {}
+	var source: CharacterBody3D = arena.source
+	var hero: CinderPlayer = arena.hero
+	var floor: StaticBody3D = arena.floor
+	var support: CollisionShape3D = arena.support
+	var capsule: CollisionShape3D = source.get_node_or_null("BodyCollision") as CollisionShape3D
+	if not _node_live(capsule) or not capsule.shape is CapsuleShape3D or not support.shape is BoxShape3D: return {}
+	var hero_packet: Dictionary = hero.snapshot_state()
+	if hero_packet.is_empty(): return {}
+	var source_shape: CapsuleShape3D = capsule.shape as CapsuleShape3D
+	var floor_shape: BoxShape3D = support.shape as BoxShape3D
+	return {"world": str(source.get_world_3d().get_instance_id()), "space": str(source.get_world_3d().space), "root": str(arena.root.get_instance_id()), "hero_id": str(hero.get_instance_id()), "hero": hero_packet, "hero_transform": _encode(hero.global_transform), "hero_velocity": Codec.vector3(hero.velocity), "source_id": str(source.get_instance_id()), "source_transform": _encode(source.global_transform), "source_velocity": Codec.vector3(source.velocity), "hp": source.get("hp"), "dead": source.get("dead"), "damage_calls": source.get("damage_calls"), "death_count": source.get("death_count"), "accepted_lunges": source.get("accepted_lunges"), "source_layer": source.collision_layer, "source_mask": source.collision_mask, "source_shape_id": str(capsule.shape.get_instance_id()), "source_shape": [source_shape.radius, source_shape.height, source_shape.margin], "source_collision": _encode(capsule.transform), "source_enabled": not capsule.disabled, "scheduler_id": str(arena.scheduler.get_instance_id()), "scheduler_clock": arena.scheduler.get_clock(), "control": _encode(arena.scheduler.source_control_state(source)), "floor_id": str(floor.get_instance_id()), "floor_rid": str(floor.get_rid()), "floor_transform": _encode(floor.global_transform), "floor_layer": floor.collision_layer, "floor_mask": floor.collision_mask, "floor_shape_id": str(support.shape.get_instance_id()), "floor_size": Codec.vector3(floor_shape.size), "floor_collision": _encode(support.transform), "floor_enabled": not support.disabled}
+
+func _disk_bytes() -> Dictionary:
+	var out: Dictionary = {}
+	for name: String in ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]:
+		var path: String = _test_root + name
+		out[name] = FileAccess.get_file_as_bytes(path).hex_encode() if FileAccess.file_exists(path) else null
+	return out
+
+func _native_ids() -> Dictionary:
+	if not _installed(): return {}
+	var d: Dictionary = _shell.active_level.call("transport_diagnostics")
+	return {"hero": str(_shell.player.get_instance_id()), "source": d.source_instance_id, "scheduler": d.scheduler_instance_id, "floor": d.floor_instance_id, "floor_shape": d.floor_shape_instance_id, "world": d.world_instance_id}
+
+func _ids_distinct(a: Dictionary, b: Dictionary) -> bool:
+	if a.is_empty() or b.is_empty() or a.keys() != b.keys(): return false
+	for key: String in a:
+		if a[key] == b[key]: return false
+	return true
+
+func _bridge_refs_freed(result: Dictionary) -> bool:
+	var refs: Variant = result.get("candidate_refs")
+	var count: Variant = result.get("created_candidate_count")
+	if not refs is Array or not count is int or count < 0: return false
+	# A malformed full packet may fail before native construction. Zero is
+	# legitimate only with an explicitly observed zero construction count.
+	return (refs.is_empty() and count == 0) or (not refs.is_empty() and count > 0 and _refs_freed(refs))
+
+func _cleanup_fault_nodes() -> void:
+	for node: Node in _fault_nodes:
+		if is_instance_valid(node): node.free()
+	_fault_nodes.clear()
+
+func _click(name: String) -> bool:
+	await _settle()
+	var button: Button = _shell.menu.find_child(name, true, false) as Button
+	if not _expect(is_instance_valid(button) and button.is_visible_in_tree() and not button.disabled, "actual enabled GUI " + name): return false
+	var ancestor: Node = button.get_parent()
+	while is_instance_valid(ancestor):
+		if ancestor is ScrollContainer: (ancestor as ScrollContainer).ensure_control_visible(button)
+		ancestor = ancestor.get_parent()
+	await process_frame
+	var at: Vector2 = button.get_global_rect().get_center()
+	ancestor = button.get_parent()
+	while is_instance_valid(ancestor):
+		if ancestor is Control and (ancestor as Control).clip_contents and not (ancestor as Control).get_global_rect().has_point(at): return _expect(false, "GUI centre lies within each actual clip ancestor")
+		ancestor = ancestor.get_parent()
+	if not _expect(root.get_visible_rect().has_point(at), "real GUI centre inside current viewport"): return false
+	var presses: Array[String] = []; button.pressed.connect(func() -> void: presses.append(name))
+	var motion := InputEventMouseMotion.new(); motion.position = at; motion.global_position = at; root.push_input(motion, true)
+	var press := InputEventMouseButton.new(); press.button_index = MOUSE_BUTTON_LEFT; press.position = at; press.global_position = at; press.pressed = true; root.push_input(press, true)
+	var release := press.duplicate() as InputEventMouseButton; release.pressed = false; root.push_input(release, true)
+	await _settle()
+	return _expect(presses == [name] and _shell.campaign_error.is_empty(), "single genuine GUI press " + name + ": " + _shell.campaign_error)
+
+func _observe_added(node: Node) -> void:
+	if node is CinderPlayer:
+		node.fired.connect(func(_kind: String) -> void: _record("fired")); node.died.connect(func() -> void: _record("death"))
+		node.world_action_executed.connect(func(_recorded: Dictionary) -> void: _record("world-action"))
+		node.action_resolved.connect(func(_kind: String, _hits: int, _damage: float) -> void: _record("primary-resolution"))
+	if node is CinderLevel:
+		node.checkpoint_requested.connect(func(_l: String, _id: String, _kind: String) -> void: _record("checkpoint"))
+		node.completion_requested.connect(func(_l: String, _id: String) -> void: _record("completion"))
+		node.contact_exit_requested.connect(func(_l: String, _id: String) -> void: _record("exit"))
+	if node.get_script() == SchedulerScript:
+		node.connect("reservation_invalidated", func(id: String, reason: String) -> void: _observe_cancel(node, id, reason))
+	if node is CinderCampaignShell: node.input_observed.connect(func(_r: Dictionary) -> void: _record("input"))
+
+func _observe_cancel(emitter: Node, id: String, reason: String) -> void:
+	if not _watch: return
+	var at: Node = emitter.get_parent()
+	while is_instance_valid(at) and not at is CinderLevel: at = at.get_parent()
+	var donor: bool = at is CinderLevel and _expected_donor != null and _expected_donor.get_ref() == at
+	if at is CinderLevel and at.is_inside_tree() and at.get("_entered") == false and at.get("_lifecycle_busy") == true and (at.is_restore_candidate() or donor):
+		_disposals.append({"boundary": "expected-donor" if donor else "validation-candidate", "level_id": at.level_id, "emitter": str(emitter.get_instance_id()), "id": id, "reason": reason, "entered": false, "busy": true, "restore_candidate": at.is_restore_candidate(), "donor": donor})
+	else: _events.append("native-cancel")
+
+func _record(kind: String) -> void:
+	if _watch: _events.append(kind)
+func _installed() -> bool: return is_instance_valid(_shell) and _node_live(_shell.active_level) and _node_live(_shell.player) and _shell.active_level.level_id == "A1-L1"
+func _live() -> bool: return _installed() and _shell.campaign_error.is_empty()
+func _node_live(value: Variant) -> bool: return value is Node and is_instance_valid(value) and value.is_inside_tree() and not value.is_queued_for_deletion()
+func _same(a: Variant, b: Variant) -> bool:
+	var encoded: String = Exact.stringify(a); return not encoded.is_empty() and encoded == Exact.stringify(b)
+func _refs(node: Node) -> Array:
+	var out: Array = [weakref(node)]
+	for child: Node in node.get_children(): out.append_array(_refs(child))
+	return out
+func _refs_freed(refs: Array) -> bool:
+	if refs.is_empty(): return false
+	for ref: Variant in refs:
+		if not ref is WeakRef or ref.get_ref() != null: return false
+	return true
+func _encode(value: Variant) -> Variant:
+	if value is Transform3D: return {"basis": _encode(value.basis), "origin": _encode(value.origin)}
+	if value is Basis: return {"x": _encode(value.x), "y": _encode(value.y), "z": _encode(value.z)}
+	if value is Vector3: return Codec.vector3(value)
+	if value is Vector2: return [value.x, value.y]
+	if value is Vector4: return [value.x, value.y, value.z, value.w]
+	if value is int and (value < -9007199254740991 or value > 9007199254740991): return {"diagnostic_native_integer_decimal": str(value)}
+	if value is Dictionary:
+		var out: Dictionary = {}
+		for key: Variant in value: out[String(key)] = _encode(value[key])
+		return out
+	if value is Array:
+		var out: Array = []
+		for item: Variant in value: out.append(_encode(item))
+		return out
+	return value
+func _expect(okay: bool, note: String) -> bool:
+	_checks += 1
+	if not okay: _failures += 1; push_error("FAIL fresh-world native lunge: " + note)
+	return okay
+func _finish() -> void:
+	if _finished: return
+	_finished = true; _watch = false; _expected_donor = null
+	if is_instance_valid(_shell):
+		var refs: Array = _refs(_shell); _shell.free(); _expect(_refs_freed(refs), "final full Shell/native world cleanup")
+	_cleanup_fault_nodes()
+	if is_instance_valid(_probe): _probe.free()
+	paused = false
+	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == _registry_bytes, "canonical Registry remains byte-exact")
+	for name: String in ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]:
+		var path: String = ProjectSettings.globalize_path(_test_root + name)
+		if FileAccess.file_exists(path): DirAccess.remove_absolute(path)
+	AudioServer.set_bus_layout(_old_audio); Engine.max_fps = _old_fps
+	print("Fresh-world actual full units: ", Exact.stringify(_units))
+	print("Fresh-world native preparation observations: ", Exact.stringify(_preparation))
+	print("Fresh-world native disposal observations: ", Exact.stringify(_disposals))
+	print("Fresh-world actual TEST bridge receipts: ", Exact.stringify(_bridge.receipts))
+	print("Fresh-world native lunge smoke: %d checks, %d failures; scope_complete=%s; publication=%s; checkpoint_only=%s; published58 observing TEST adapter/controller/loading/format2/Retry/atomic/candidate cleanup scope only; no art/campaign/Act3 repair/performance credit" % [_checks, _failures, str(_scope_complete), _publication, str(_checkpoint_only)])
+	quit(2 if not _scope_complete and _failures == 0 else (0 if _scope_complete and _failures == 0 else 1))

@@ -1,0 +1,287 @@
+{
+  "record": "a2-actual-Shared58-preserving-adoption-independent-peer",
+  "date": "2026-10-14",
+  "author": "/root/b02_native_join",
+  "verdict": "PASS: exact merge parents, prior owned Git preservation, explicitly scoped physical UID preservation, named settings and publication joins confirmed.",
+  "scope": "Immutable old→merge ownership comparison plus the recorded selected physical UID/settings/named resource rows. Later legitimate owned TEST/docs edits remain separate. No historical bank copy, broad physical artifact audit, engine or adoption invocation.",
+  "old_HEAD": "5f0f4981e878472c5c9a09bd1f4b0e8f00ad6bb8",
+  "publication": "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e",
+  "actual_merge": "473b4c56cb3c76e563919af1b4005c5667cde2f8",
+  "actual_parents": [
+    "5f0f4981e878472c5c9a09bd1f4b0e8f00ad6bb8",
+    "6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e"
+  ],
+  "observed_HEAD": "d9174f6de0e21a8d5a775857de1a1f58019dcf81",
+  "merge_is_current_ancestor": true,
+  "later_git_deltas": [
+    "A\tdocs/acts/act2/shared-support/shared58-checkpoint-control-20261014/.gdignore",
+    "A\tdocs/acts/act2/shared-support/shared58-checkpoint-control-20261014/adoption-ACK-original.json",
+    "A\tdocs/acts/act2/shared-support/shared58-checkpoint-control-20261014/adoption-before-compact.json",
+    "A\tdocs/acts/act2/shared-support/shared58-checkpoint-control-20261014/adoption-receipt.json",
+    "A\tdocs/acts/act2/shared-support/shared58-checkpoint-control-20261014/integration-publication-direction-original.json",
+    "A\tdocs/acts/act2/shared-support/shared58-checkpoint-control-20261014/observer-compatibility-review-original.json",
+    "A\tdocs/acts/act2/shared-support/shared58-checkpoint-control-20261014/runtime-interface-review-original.json",
+    "A\tdocs/acts/act2/shared-support/shared58-checkpoint-control-20261014/smoke-delta-review-original.json",
+    "A\tdocs/acts/act2/shared-support/shared58-checkpoint-control-20261014/smoke23b0.source.gd.txt",
+    "A\tdocs/acts/act2/shared-support/shared58-checkpoint-control-20261014/smoke518f.original.gd.txt",
+    "M\ttests/acts/act2/shared_support/fresh_world_lunge_smoke.gd"
+  ],
+  "qualified_comparison": "Owned preservation compares old ref to exact merge, not later legitimate owned TEST/docs changes. No queued parser result inspected.",
+  "physical_UID_check": {
+    "namespaces": [
+      "scripts",
+      "tests",
+      "scenes",
+      "shaders"
+    ],
+    "prior_count": 474,
+    "current_count": 475,
+    "changed_or_missing": [],
+    "sole_addition": {
+      "tests/restore_candidate_physics_boundary_smoke.gd.uid": {
+        "sha256": "4ef38111b1f30188a53493b3bd5154e70134aad89997933aa215e719caae40e3",
+        "bytes": 20,
+        "mode": 420
+      }
+    },
+    "new_UID_token": "uid://di0tl4i3t6142",
+    "token_selected_namespace_copies": [
+      "tests/restore_candidate_physics_boundary_smoke.gd.uid"
+    ],
+    "excluded": "assets/docs/.cinder/history and .godot caches; no all-project UID claim"
+  },
+  "named_settings": [
+    {
+      "resource": ".cinder/local.json",
+      "before_and_current": {
+        "sha256": "ed8fe4cd36125237c06f2cdcf0ab4d495ebf7d4d710c8749d05dd621fe24ded7",
+        "bytes": 200,
+        "mode": 420
+      },
+      "exact": true
+    },
+    {
+      "resource": ".cinder/cinder.code-workspace",
+      "before_and_current": {
+        "sha256": "36b25320637ad62cad53ff82d3da84b3966b3d67ec1d1b1c1401ee35d287c6c3",
+        "bytes": 886,
+        "mode": 420
+      },
+      "exact": true
+    },
+    {
+      "resource": "project.godot",
+      "before_and_current": {
+        "sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+        "bytes": 841,
+        "mode": 420
+      },
+      "exact": true
+    },
+    {
+      "resource": ".vscode/settings.json",
+      "before_and_current": {
+        "sha256": "6cf3d0d84029a62872c7c0b090a0388c8c0280d1d6d9335b2553e8f11f37d381",
+        "bytes": 571,
+        "mode": 420
+      },
+      "exact": true
+    },
+    {
+      "resource": "data/design/ability_usage.json",
+      "before_and_current": {
+        "sha256": "5487652c0f6664238c1215d48fb3ddd1837da99d3fcadb8c48f0646ef39285f2",
+        "bytes": 23516,
+        "mode": 420
+      },
+      "exact": true
+    }
+  ],
+  "named_publication_merge_physical": [
+    {
+      "resource": "scripts/campaign/shell.gd",
+      "publication": {
+        "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+        "bytes": 70657,
+        "git_mode": "100644",
+        "git_blob": "3eaab8960613d0dd44ea430ee34298f4cc0319b5",
+        "executable_bits": 0
+      },
+      "merge": {
+        "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+        "bytes": 70657,
+        "git_mode": "100644",
+        "git_blob": "3eaab8960613d0dd44ea430ee34298f4cc0319b5",
+        "executable_bits": 0
+      },
+      "current_physical": {
+        "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+        "bytes": 70657,
+        "mode": 420
+      },
+      "exact": true
+    },
+    {
+      "resource": "scripts/campaign/level.gd",
+      "publication": {
+        "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+        "bytes": 23949,
+        "git_mode": "100644",
+        "git_blob": "26190244365b603d6019ae7ace50ac394485cf71",
+        "executable_bits": 0
+      },
+      "merge": {
+        "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+        "bytes": 23949,
+        "git_mode": "100644",
+        "git_blob": "26190244365b603d6019ae7ace50ac394485cf71",
+        "executable_bits": 0
+      },
+      "current_physical": {
+        "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+        "bytes": 23949,
+        "mode": 420
+      },
+      "exact": true
+    },
+    {
+      "resource": "scripts/dev/dev.py",
+      "publication": {
+        "sha256": "27bae2d12920e52d5144600318cf179ef30ae6222f7b33ffaf80250f5ef35a8d",
+        "bytes": 29599,
+        "git_mode": "100755",
+        "git_blob": "d8c55db196f9de19c4998e8c3e5820f4dd6cb17b",
+        "executable_bits": 73
+      },
+      "merge": {
+        "sha256": "27bae2d12920e52d5144600318cf179ef30ae6222f7b33ffaf80250f5ef35a8d",
+        "bytes": 29599,
+        "git_mode": "100755",
+        "git_blob": "d8c55db196f9de19c4998e8c3e5820f4dd6cb17b",
+        "executable_bits": 73
+      },
+      "current_physical": {
+        "sha256": "27bae2d12920e52d5144600318cf179ef30ae6222f7b33ffaf80250f5ef35a8d",
+        "bytes": 29599,
+        "mode": 493
+      },
+      "exact": true
+    },
+    {
+      "resource": "tests/restore_candidate_physics_boundary_smoke.gd",
+      "publication": {
+        "sha256": "754a2a44161ce364cdcab05c35cc1659c4c0167ac35a349f95f88e7ed70130ee",
+        "bytes": 9159,
+        "git_mode": "100644",
+        "git_blob": "1d9904181c805ca746aeaeec82c4b1966760972a",
+        "executable_bits": 0
+      },
+      "merge": {
+        "sha256": "754a2a44161ce364cdcab05c35cc1659c4c0167ac35a349f95f88e7ed70130ee",
+        "bytes": 9159,
+        "git_mode": "100644",
+        "git_blob": "1d9904181c805ca746aeaeec82c4b1966760972a",
+        "executable_bits": 0
+      },
+      "current_physical": {
+        "sha256": "754a2a44161ce364cdcab05c35cc1659c4c0167ac35a349f95f88e7ed70130ee",
+        "bytes": 9159,
+        "mode": 420
+      },
+      "exact": true
+    },
+    {
+      "resource": "tests/restore_candidate_physics_boundary_smoke.gd.uid",
+      "publication": {
+        "sha256": "4ef38111b1f30188a53493b3bd5154e70134aad89997933aa215e719caae40e3",
+        "bytes": 20,
+        "git_mode": "100644",
+        "git_blob": "b1e3849ee44b184759fdcfd6fce0765f1883c849",
+        "executable_bits": 0
+      },
+      "merge": {
+        "sha256": "4ef38111b1f30188a53493b3bd5154e70134aad89997933aa215e719caae40e3",
+        "bytes": 20,
+        "git_mode": "100644",
+        "git_blob": "b1e3849ee44b184759fdcfd6fce0765f1883c849",
+        "executable_bits": 0
+      },
+      "current_physical": {
+        "sha256": "4ef38111b1f30188a53493b3bd5154e70134aad89997933aa215e719caae40e3",
+        "bytes": 20,
+        "mode": 420
+      },
+      "exact": true
+    }
+  ],
+  "receipt_pins": {
+    "adoption-before-compact.json": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/shared58/adoption-before-compact.json",
+      "sha256": "4f0305b529f0ba8f8c4e2aa2968629a2b9febcce1fb338bea453214209710971",
+      "bytes": 87472
+    },
+    "adoption-receipt.json": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/shared58/adoption-receipt.json",
+      "sha256": "8a53983ff855f5b526fe7beff11c121277c98cf9cb0c619f5fb3223de408d496",
+      "bytes": 2251
+    }
+  },
+  "engine_or_adoption_invoked": false,
+  "owned_git_preservation": {
+    "review_path": "/private/tmp/a2_shared58_owned_git_rows_independent_review_20261014.json",
+    "review_sha256": "54055b836da2f1d33bca7fc5f0c30cf1496274e50bb7ec1666a111e7d6de2c50",
+    "reviewer": "/root/scout_api_review",
+    "old_revision": "5f0f4981e878472c5c9a09bd1f4b0e8f00ad6bb8",
+    "merge_revision": "473b4c56cb3c76e563919af1b4005c5667cde2f8",
+    "prefixes": [
+      "assets/acts/act2/",
+      "data/campaign/act2/",
+      "docs/acts/act2/",
+      "scenes/acts/act2/",
+      "scripts/acts/act2/",
+      "tests/acts/act2/"
+    ],
+    "row_count": 49360,
+    "prefix_counts": {
+      "assets/acts/act2/": 13,
+      "data/campaign/act2/": 17,
+      "docs/acts/act2/": 49070,
+      "scenes/acts/act2/": 9,
+      "scripts/acts/act2/": 95,
+      "tests/acts/act2/": 156
+    },
+    "exact_path_blob_mode_maps_equal": true,
+    "added_paths": 0,
+    "removed_paths": 0,
+    "changed_blob_or_mode_paths": 0,
+    "recorded_digest": "616916db046b9abc1d481cb45556a018b9f7a07d1cc6b5466660f7848da97699",
+    "independently_reproduced_digest": "616916db046b9abc1d481cb45556a018b9f7a07d1cc6b5466660f7848da97699",
+    "digest_serialization": {
+      "shape": "{path:{mode:GitModeString,oid:BlobObjectID}}",
+      "order": "sort_keys=True",
+      "separators": [
+        ",",
+        ":"
+      ],
+      "encoding": "UTF-8",
+      "trailing_newline": false,
+      "include_type": false
+    },
+    "raw_git_tree_sha256_before": "685e6c442be92047c30357d0c5b0a17afff91602c066a1326205981bdb948101",
+    "raw_git_tree_sha256_merge": "685e6c442be92047c30357d0c5b0a17afff91602c066a1326205981bdb948101",
+    "whole_row_duplicate_saved": false
+  },
+  "receipt_claims_qualification": {
+    "no_conflicts": "Original owner receipt reports conflicts=[]; exact committed merge/parents and named resource joins verified, no merge rerun.",
+    "engine_runs_zero": "Receipt describes adoption before later queued parser; this read-only peer ran no engine or adoption and supplies no parser/native credit.",
+    "genuine_new_UID": "The sole added UID exactly matches the published Root boundary test resource and UID pin; no new import or historical UID-generation audit.",
+    "preservation_scope": "49,360 prior owned rows are Git blob/mode rows. Physical preservation checked only474 prior UID rows,5 named settings and5 named publication resources—not every historical owned file."
+  },
+  "findings": [],
+  "limits": [
+    "No actual parser or queued native log/result read.",
+    "No all-project/docs/assets/history UID census or .godot cache claim.",
+    "No accepted content, visual, runtime or campaign acceptance is added by this adoption peer.",
+    "Current HEAD d917 is an observation of later owned TEST/docs work; immutable473b merge is the ownership preservation boundary."
+  ]
+}

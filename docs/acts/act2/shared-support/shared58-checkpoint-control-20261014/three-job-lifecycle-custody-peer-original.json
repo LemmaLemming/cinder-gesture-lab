@@ -1,0 +1,399 @@
+{
+  "created_utc": "2026-10-14T05:20:38.318943+00:00",
+  "cross_job_scoped475_UID_metadata_exact": true,
+  "cross_job_selected112_metadata_exact": true,
+  "intentional_control_static_join": {
+    "behavior": "Checkpoint-only flag calls _finish before lunge/full suite. _finish prints scope_complete=false and quit2 when no failures and incomplete. This matches original153/0 footer and canonical normal return2.",
+    "frozen_smoke_sha256": "23b006f8ddb9ae64eeb0d92c2c56600ae357970f626669e6c63ef61e2394428c",
+    "lines": [
+      144,
+      569,
+      570
+    ]
+  },
+  "jobs": [
+    {
+      "artifact_hashes": {
+        "changes.json": "0e928ff0365033838ecb5a64eacfc36aad690c17efbebdebf22ad4639faf5630",
+        "job-watch.json": "41a51d2e367d9baaeae0b455228ded6698c4bdc8548d1181380a77bf1287870f",
+        "phase-watch.jsonl": "cc8db8d2d1552131f1e1540fbb8cddb5beebb5925a3db67a39e4ae53bad4f4d3",
+        "queue-acquired.json": "158287007f1fb5913ee616ea802bd253598827543ebdd457c82b7a6a22226e6e",
+        "queue-worker-plan.json": "785b918c9036797861aff3d61e93cf1d8506b6dcac6119ef6aeba1f7a988e083",
+        "raw.log": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+        "result.json": "92198391dd8aadfa88b534fecc4e7f0baca922771d964330ec86166804ab046c",
+        "source-after.json": "c8c30e85b2f4d4620b1e47dccceb688059d27a0a5f7e1bc5ab7fd2be7be40300",
+        "source.json": "85abd6dfa0055a37ec4f8e305b61ae0321d1f7aa31bcb92e091c4390df798a3f",
+        "uid-after.json": "c1c0d15375cda3dcab296a0d770e361c21844415c50bfe244b171df3e4628f62",
+        "uid-before.json": "25b2d3da811b8ef19646e99a73abd6a3547f2d3348176d9a61763183355b5e88",
+        "wrapper.log": "d6c164082f151ead3f14e4f6befcdda6ceaf5f2aa4f1057d8afe98ae8ad6c89e"
+      },
+      "classification": "Parser exit0 only; no native assertions or semantics",
+      "command": [
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+        "--headless",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/shared58-checkpoint-parser-first/raw.log",
+        "--check-only",
+        "--script",
+        "res://tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd"
+      ],
+      "cwd": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+      "finished_utc": "2026-10-14T04:28:31.385824+00:00",
+      "head_before_after_exact": true,
+      "lifecycle": {
+        "deadline_includes_queue_wait": false,
+        "detect_godot_errors_true": true,
+        "engine_deadline_s": 300.0,
+        "exit_code": 0,
+        "interrupted": false,
+        "lifecycle_errors": [],
+        "normal_validation_return_matches_exit": true,
+        "ordered_actual_acquire_then_validation": true,
+        "owned_process_group": 50018,
+        "phase_error_events": [],
+        "queue_acquisition_exact": true,
+        "queue_deadline_s": 1800.0,
+        "queue_wait_s": 33.76667641696986,
+        "reader_error": "",
+        "recorded_group_gone": true,
+        "recorded_stream_complete": true,
+        "recorded_wrapper_exited": true,
+        "termination": "",
+        "validation_call_command_exact": true,
+        "watch_result_exact": true,
+        "worker_final_stage": "returned-from-validation"
+      },
+      "logs": {
+        "first_meaningful_error_recorded": null,
+        "footers": [],
+        "queue_prefix_bytes": 49,
+        "raw": {
+          "bytes": 73,
+          "counts": {
+            "assertion_errors": 0,
+            "fail_markers": 0,
+            "native_errors": 0,
+            "parse_or_load_errors": 0,
+            "script_errors": 0,
+            "warnings": 0
+          },
+          "matches_result_hash_count": true,
+          "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e"
+        },
+        "raw_wrapper_equal": false,
+        "recorder_assessment_ok": true,
+        "wrapper": {
+          "bytes": 122,
+          "counts": {
+            "assertion_errors": 0,
+            "fail_markers": 0,
+            "native_errors": 0,
+            "parse_or_load_errors": 0,
+            "script_errors": 0,
+            "warnings": 0
+          },
+          "matches_result_hash_count": true,
+          "sha256": "d6c164082f151ead3f14e4f6befcdda6ceaf5f2aa4f1057d8afe98ae8ad6c89e"
+        },
+        "wrapper_exactly_queue49_plus_raw": true
+      },
+      "name": "shared58-checkpoint-parser-first",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/shared58-checkpoint-parser-first",
+      "scope_complete_qualification": "scope_complete is read from the original native footer; result.json has no separate normalized scope_complete field. No original artifact rewritten.",
+      "source": {
+        "all_change_tables_empty": true,
+        "before_after_changed_paths": [],
+        "bytes": 1509658,
+        "copy_errors": [],
+        "count": 112,
+        "original_source_hash_matches_result": true,
+        "pinned_sources_exact": true,
+        "verified_copy_hash_bytes_mode_count": 112
+      },
+      "started_utc": "2026-10-14T04:27:56.777483+00:00",
+      "uid": {
+        "after_count": 475,
+        "before_count": 475,
+        "changed_paths": [],
+        "original_byte_validation_errors": [],
+        "scope": [
+          "scripts",
+          "tests",
+          "scenes",
+          "shaders"
+        ],
+        "scope_before_after_exact": true
+      }
+    },
+    {
+      "artifact_hashes": {
+        "changes.json": "0e928ff0365033838ecb5a64eacfc36aad690c17efbebdebf22ad4639faf5630",
+        "job-watch.json": "8f1bfa1fab3ec592dc69329ccaffeef4584afb8e031e01f82283ca3b50c5bb74",
+        "phase-watch.jsonl": "f76e80861b6e2fcd6731a4697f2d0b42e392f509c5a8ccba3132e538cc2c5f38",
+        "queue-acquired.json": "c8f91a0db97a20561a838b90bed6f80f885b1c4cc5e6631920b97b74550760f7",
+        "queue-worker-plan.json": "dff1f4783f8166381589ce5a28363447d467e6e770d0abf6e4c01ec97138b2a9",
+        "raw.log": "4a57c7ccaba49b6899db48e6eaaaf907d13e8650372a180e13430599847db369",
+        "result.json": "095ac403c711051be174a28928d32117fc5c7cd753a65d54f7241a075891c62a",
+        "source-after.json": "1ade0bdadba0443e27f4fc6992ca2bc03a5a87288f33edea2e55b608a5d8384c",
+        "source.json": "5dd31060987b6dcde6bd92170616746a39329b33b7f7e0658c67172a9734ee27",
+        "uid-after.json": "a16fb4ac3f78eb701ac3fb66a735c4fbee6ff7610ea3d2957aa58470a68d1d29",
+        "uid-before.json": "2bac5eb8563d432bb547336cffcf8822d18022948a1d84e0fec44b273b95feae",
+        "wrapper.log": "aaa49a69abc0f03d80112e497154912bf1e22d7fdb8e2fac6c69f584cd766527"
+      },
+      "classification": "Intentional checkpoint-only incomplete exit2:153/0, scope_complete=false; not full-suite pass",
+      "command": [
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+        "--headless",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/shared58-checkpoint-control-first/raw.log",
+        "--script",
+        "res://tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd",
+        "--",
+        "--fresh-world-publication=6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e",
+        "--checkpoint-only-diagnostic"
+      ],
+      "cwd": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+      "finished_utc": "2026-10-14T04:31:32.069777+00:00",
+      "head_before_after_exact": true,
+      "lifecycle": {
+        "deadline_includes_queue_wait": false,
+        "detect_godot_errors_true": true,
+        "engine_deadline_s": 600.0,
+        "exit_code": 2,
+        "interrupted": false,
+        "lifecycle_errors": [],
+        "normal_validation_return_matches_exit": true,
+        "ordered_actual_acquire_then_validation": true,
+        "owned_process_group": 55030,
+        "phase_error_events": [],
+        "queue_acquisition_exact": true,
+        "queue_deadline_s": 1800.0,
+        "queue_wait_s": 18.43045145808719,
+        "reader_error": "",
+        "recorded_group_gone": true,
+        "recorded_stream_complete": true,
+        "recorded_wrapper_exited": true,
+        "termination": "",
+        "validation_call_command_exact": true,
+        "watch_result_exact": true,
+        "worker_final_stage": "returned-from-validation"
+      },
+      "logs": {
+        "first_meaningful_error_recorded": null,
+        "footers": [
+          {
+            "checks": 153,
+            "failures": 0,
+            "line": 8,
+            "scope_complete": false,
+            "text": "Fresh-world native lunge smoke: 153 checks, 0 failures; scope_complete=false; publication=6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e; checkpoint_only=true; published58 observing TEST adapter/controller/loading/format2/Retry/atomic/candidate cleanup scope only; no art/campaign/Act3 repair/performance credit"
+          }
+        ],
+        "queue_prefix_bytes": 49,
+        "raw": {
+          "bytes": 478905,
+          "counts": {
+            "assertion_errors": 0,
+            "fail_markers": 0,
+            "native_errors": 0,
+            "parse_or_load_errors": 0,
+            "script_errors": 0,
+            "warnings": 0
+          },
+          "matches_result_hash_count": true,
+          "sha256": "4a57c7ccaba49b6899db48e6eaaaf907d13e8650372a180e13430599847db369"
+        },
+        "raw_wrapper_equal": false,
+        "recorder_assessment_ok": false,
+        "wrapper": {
+          "bytes": 478954,
+          "counts": {
+            "assertion_errors": 0,
+            "fail_markers": 0,
+            "native_errors": 0,
+            "parse_or_load_errors": 0,
+            "script_errors": 0,
+            "warnings": 0
+          },
+          "matches_result_hash_count": true,
+          "sha256": "aaa49a69abc0f03d80112e497154912bf1e22d7fdb8e2fac6c69f584cd766527"
+        },
+        "wrapper_exactly_queue49_plus_raw": true
+      },
+      "name": "shared58-checkpoint-control-first",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/shared58-checkpoint-control-first",
+      "scope_complete_qualification": "scope_complete is read from the original native footer; result.json has no separate normalized scope_complete field. No original artifact rewritten.",
+      "source": {
+        "all_change_tables_empty": true,
+        "before_after_changed_paths": [],
+        "bytes": 1509658,
+        "copy_errors": [],
+        "count": 112,
+        "original_source_hash_matches_result": true,
+        "pinned_sources_exact": true,
+        "verified_copy_hash_bytes_mode_count": 112
+      },
+      "started_utc": "2026-10-14T04:31:09.383657+00:00",
+      "uid": {
+        "after_count": 475,
+        "before_count": 475,
+        "changed_paths": [],
+        "original_byte_validation_errors": [],
+        "scope": [
+          "scripts",
+          "tests",
+          "scenes",
+          "shaders"
+        ],
+        "scope_before_after_exact": true
+      }
+    },
+    {
+      "artifact_hashes": {
+        "changes.json": "0e928ff0365033838ecb5a64eacfc36aad690c17efbebdebf22ad4639faf5630",
+        "job-watch.json": "0ccf49ea97e2488f6e955780dae3645c76a1910882b3a3c504a0b5195e4ccfa6",
+        "phase-watch.jsonl": "e804fde6ce074f0ab9fb898765a91b659a0bf07f7ff12ba834bc4068f75a4649",
+        "queue-acquired.json": "3ecff45e14f5a11cf19f3b49cbb07568bbc355704ec969e27a58c4355f93ae3f",
+        "queue-worker-plan.json": "29206fcd4ce5a475eba1eb8b70862073bfdb0f9e346155f862d1dabdf72fbe88",
+        "raw.log": "b03f02763066ab5ae981f027143475803d5ce1bd228cb5b99d4833dabdb0a453",
+        "result.json": "e657726e63ea9ac57daad97685f374b2525032fbef30dd475c1da551298b6b12",
+        "source-after.json": "66b1c2449f73e08bc0b51b05635bfc12a838a1a85c0115815175eb4b3cdf2940",
+        "source.json": "9fe510773dd31090a17dfd6551f54107fb17f37cf90b02834b1729a20baec6f5",
+        "uid-after.json": "ec8a3782749ec835665bdec5377522b1a06eb5f88b9b9f0b27db52b0d92c82af",
+        "uid-before.json": "fe67534c958f73fe13f1612a2a3ac429b58dc0ba016c189d319d91083fa61ae8",
+        "wrapper.log": "b03f02763066ab5ae981f027143475803d5ce1bd228cb5b99d4833dabdb0a453"
+      },
+      "classification": "Full native fixture scope exit0:810/0, scope_complete=true; lifecycle/custody review only",
+      "command": [
+        "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+        "--headless",
+        "--path",
+        ".",
+        "--log-file",
+        "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/shared58-native-lunge-first/raw.log",
+        "--script",
+        "res://tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd",
+        "--",
+        "--fresh-world-publication=6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e"
+      ],
+      "cwd": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea",
+      "finished_utc": "2026-10-14T04:34:25.153509+00:00",
+      "head_before_after_exact": true,
+      "lifecycle": {
+        "deadline_includes_queue_wait": false,
+        "detect_godot_errors_true": true,
+        "engine_deadline_s": 600.0,
+        "exit_code": 0,
+        "interrupted": false,
+        "lifecycle_errors": [],
+        "normal_validation_return_matches_exit": true,
+        "ordered_actual_acquire_then_validation": true,
+        "owned_process_group": 58436,
+        "phase_error_events": [],
+        "queue_acquisition_exact": true,
+        "queue_deadline_s": 1800.0,
+        "queue_wait_s": 0.026842375053092837,
+        "reader_error": "",
+        "recorded_group_gone": true,
+        "recorded_stream_complete": true,
+        "recorded_wrapper_exited": true,
+        "termination": "",
+        "validation_call_command_exact": true,
+        "watch_result_exact": true,
+        "worker_final_stage": "returned-from-validation"
+      },
+      "logs": {
+        "first_meaningful_error_recorded": null,
+        "footers": [
+          {
+            "checks": 810,
+            "failures": 0,
+            "line": 7,
+            "scope_complete": true,
+            "text": "Fresh-world native lunge smoke: 810 checks, 0 failures; scope_complete=true; publication=6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e; checkpoint_only=false; published58 observing TEST adapter/controller/loading/format2/Retry/atomic/candidate cleanup scope only; no art/campaign/Act3 repair/performance credit"
+          }
+        ],
+        "queue_prefix_bytes": 0,
+        "raw": {
+          "bytes": 1865278,
+          "counts": {
+            "assertion_errors": 0,
+            "fail_markers": 0,
+            "native_errors": 0,
+            "parse_or_load_errors": 0,
+            "script_errors": 0,
+            "warnings": 0
+          },
+          "matches_result_hash_count": true,
+          "sha256": "b03f02763066ab5ae981f027143475803d5ce1bd228cb5b99d4833dabdb0a453"
+        },
+        "raw_wrapper_equal": true,
+        "recorder_assessment_ok": true,
+        "wrapper": {
+          "bytes": 1865278,
+          "counts": {
+            "assertion_errors": 0,
+            "fail_markers": 0,
+            "native_errors": 0,
+            "parse_or_load_errors": 0,
+            "script_errors": 0,
+            "warnings": 0
+          },
+          "matches_result_hash_count": true,
+          "sha256": "b03f02763066ab5ae981f027143475803d5ce1bd228cb5b99d4833dabdb0a453"
+        },
+        "wrapper_exactly_queue49_plus_raw": false
+      },
+      "name": "shared58-native-lunge-first",
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/execution-20261014/jobs/shared58-native-lunge-first",
+      "scope_complete_qualification": "scope_complete is read from the original native footer; result.json has no separate normalized scope_complete field. No original artifact rewritten.",
+      "source": {
+        "all_change_tables_empty": true,
+        "before_after_changed_paths": [],
+        "bytes": 1509658,
+        "copy_errors": [],
+        "count": 112,
+        "original_source_hash_matches_result": true,
+        "pinned_sources_exact": true,
+        "verified_copy_hash_bytes_mode_count": 112
+      },
+      "started_utc": "2026-10-14T04:34:02.438101+00:00",
+      "uid": {
+        "after_count": 475,
+        "before_count": 475,
+        "changed_paths": [],
+        "original_byte_validation_errors": [],
+        "scope": [
+          "scripts",
+          "tests",
+          "scenes",
+          "shaders"
+        ],
+        "scope_before_after_exact": true
+      }
+    }
+  ],
+  "mode": "Bounded read-only three frozen job banks; no engine/current process survey/source or artifact writes",
+  "qualifications": [
+    "Owned stream/group closure is recorded by the completed runner and journals, not a present-day PID or whole-machine survey.",
+    "475 physical UID metadata rows cover scripts/tests/scenes/shaders only, not all assets/docs/history UID tokens. No native/parser UID generation credited.",
+    "This is log/source/lifecycle/custody review; exact native case/state semantics require the separate scoped owner review. No publication attribution is inferred merely from the command argument.",
+    "Footer declares TEST adapter/controller/loading/format2/Retry/atomic/candidate cleanup scope only. No art, optical, performance, campaign/fullroute, Act3 repair or inherited unrelated suite credit.",
+    "Original earlier failed/canceled/unexecuted/aborted banks were not opened, changed, discarded or converted to passes by this new result."
+  ],
+  "record": "act2-shared58-three-job-lifecycle-custody-review",
+  "recorded_HEAD": "d9174f6de0e21a8d5a775857de1a1f58019dcf81",
+  "source_pins": {
+    ".cinder/fresh-world-shell-support/execution-20261014/jobs/record_job.py": "d33cb845959dade43faa572dde71049af61bbf5248de95198119068ad00c8d99",
+    "scripts/campaign/level.gd": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+    "scripts/campaign/shell.gd": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+    "scripts/dev/dev.py": "27bae2d12920e52d5144600318cf179ef30ae6222f7b33ffaf80250f5ef35a8d",
+    "tests/acts/act2/shared_support/fresh_world_lunge_observing_shell.gd": "9453fff7f12bb2147fe101ffbf4d697fa908148ba96f78f07ecd3a7901735871",
+    "tests/acts/act2/shared_support/fresh_world_lunge_smoke.gd": "23b006f8ddb9ae64eeb0d92c2c56600ae357970f626669e6c63ef61e2394428c"
+  },
+  "verdict": "All three jobs have consistent recorded actual queue\u2192canonical validation\u2192normal return\u2192stream/group closure and unchanged selected112/scoped475 UID custody. Parser0 and full810/0 exit0 are distinct from intentional incomplete control153/0 exit2."
+}
