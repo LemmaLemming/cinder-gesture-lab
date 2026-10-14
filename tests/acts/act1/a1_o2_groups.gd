@@ -22,6 +22,11 @@ var last_dormant: Dictionary = {}
 var source_keys: Dictionary = {}
 var last_group_key: String = ""
 var exit_area: Area3D
+var native_units: Array[Dictionary] = []
+var entry_profile_id: String = ""
+var profile_observations: Array[Dictionary] = []
+var checkpoint_capture_pending: bool = false
+var checkpoint_capture_done: bool = false
 
 
 func _initialize() -> void:
@@ -70,9 +75,11 @@ func _run() -> void:
 		# Hero position can help the real next current-view admission; no local
 		# stage, source placement, activation, checkpoint or camera is supplied.
 		if group < 2:
+			if group == 1 and not await _checkpoint_capture_barrier(): await _finish(); return
 			if not await _place(Vector3(0, hero.global_position.y, .5), "TEST neutral next-group Hero position"): await _finish(); return
 	if not await _wait(func() -> bool: return level.call("bloom_state").room_stage == "hatch", "actual final clear settles into incomplete contact hatch", 8.0): await _finish(); return
 	if not _expect(not level.is_completed() and completion_rows.is_empty() and exit_rows.is_empty() and checkpoints.size() == 1 and activations.size() == 4 and _carryover() and level.current_checkpoint() == {"id": Bloom.CHECKPOINT_ID, "kind": "encounter"}, "all genuine defeats leave hatch incomplete and retain exactly the actual pre-final checkpoint request"): await _finish(); return
+	if not await _capture_hatch_unit(): await _finish(); return
 	for id: String in Bloom.SOURCE_IDS:
 		if not _expect((sources[id] as Act1MushroomSelenite).dead and activation_counts[id] == 1, "actual source activates and is genuinely defeated once: " + id): await _finish(); return
 	if not await _place(Vector3(Bloom.EXIT.x, hero.global_position.y, Bloom.EXIT.z), "TEST repaired actual contact approach; no earned exit route"): await _finish(); return
@@ -85,7 +92,9 @@ func _run() -> void:
 
 func _group_boundary(index: int) -> bool:
 	var state: Dictionary = level.call("bloom_state")
-	var expected_fields: Array[String] = ["bloom-near"] if index == 0 else Bloom.FIELD_IDS.duplicate()
+	var expected_fields: Array[String] = []
+	if index == 0: expected_fields.append("bloom-near")
+	else: expected_fields.assign(Bloom.FIELD_IDS)
 	if not _expect(state.completed_beats == Bloom.BEAT_IDS.slice(0, index) and state.installed_fields == expected_fields and state.installed_consumers == Bloom.CONSUMER_IDS.slice(0, index + 1) and state.checkpoint_published == (index == 2), "exact genuine completed/installation/checkpoint prefixes at group " + str(index)): return false
 	for field_id: String in expected_fields:
 		var actual := (level.get("_fields") as Dictionary)[field_id] as CinderSporeField
@@ -108,7 +117,7 @@ func _group_boundary(index: int) -> bool:
 		if not _expect(actor.dormant == (group > index) and actor.dead == (group < index) and (group <= index or actor.hp == source_hp[id]), "native prior/current/future actor lifecycle agrees with real group prefix: " + id): return false
 	if index == 2:
 		if not _expect(checkpoints.size() == 1 and checkpoints[0].level_id == Bloom.LEVEL_ID and checkpoints[0].checkpoint_id == Bloom.CHECKPOINT_ID and checkpoints[0].kind == "encounter" and checkpoints[0].current_checkpoint == {"id": Bloom.CHECKPOINT_ID, "kind": "encounter"} and checkpoints[0].host.beat_index == 2 and checkpoints[0].host.room_stage == "approach" and checkpoints[0].host.completed_beats == Bloom.BEAT_IDS.slice(0, 2) and checkpoints[0].host.checkpoint_published and checkpoints[0].dormant_ids == Bloom.group_ids(2), "genuine pre-final checkpoint callback precedes every final activation and retains exact canonical progress"): return false
-	return _expect(_carryover() and _healthy(), "original spent field stamps persist across new native bindings")
+	return _remember_profile(index) and _expect(_carryover() and _healthy(), "original spent field stamps persist across new native bindings")
 
 
 func _deplete(id: String) -> bool:
@@ -281,6 +290,11 @@ func _checkpoint(level_id: String, id: String, kind: String) -> void:
 		if (sources[source_id] as Act1MushroomSelenite).dormant: dormant.append(source_id)
 	var row: Dictionary = {"level_id": level_id, "checkpoint_id": id, "kind": kind, "current_checkpoint": level.current_checkpoint(), "host": _portable(level.call("bloom_state")), "dormant_ids": dormant, "fields": _field_states(), "scope": "actual request/current_checkpoint only; no Shell/save/captured checkpoint packet"}
 	checkpoints.append(row); progress_events.append({"kind": "checkpoint", "id": id})
+	# Only public pause in this real callback. Capture waits for publication to
+	# return; no native snapshot is queried during the emitting transaction.
+	checkpoint_capture_pending = true
+	game.call("open_bench")
+	_capture_checkpoint_unit.call_deferred()
 
 
 func _completed(level_id: String, id: String) -> void:
@@ -303,6 +317,80 @@ func _diagnostic() -> Dictionary:
 	var value: Dictionary = super._diagnostic()
 	value["fields"] = _field_states(); value["spent_stamps"] = spent_stamps; value["activation_counts"] = activation_counts
 	return value
+
+
+func _remember_profile(group: int) -> bool:
+	var profile: Dictionary = scheduler.encounter_profile()
+	var getter: bool = game.has_method("get_difficulty_preference")
+	if not _expect(profile.get("id") is String and profile.id in ["assisted", "standard", "challenge"], "actual active Scheduler supplies the observed Main entry difficulty"): return false
+	if entry_profile_id.is_empty(): entry_profile_id = profile.id
+	var actual: String = String(game.call("get_difficulty_preference")) if getter else profile.id
+	profile_observations.append({"group": group, "native_profile": profile.duplicate(true), "getter_present": getter, "observed_difficulty": actual})
+	return _expect(actual == entry_profile_id and profile.id == entry_profile_id, "Main difficulty getter when present agrees with actual unchanged entry profile")
+
+
+func _checkpoint_capture_barrier() -> bool:
+	var end: float = hero.get_world_action_clock() + 8.0
+	while not finishing and not checkpoint_capture_done:
+		if paused and not checkpoint_capture_pending: return _expect(false, "unrelated pause interrupted actual checkpoint capture barrier")
+		if hero.get_world_action_clock() > end: return _expect(false, "actual pre-final checkpoint capture barrier expired")
+		await process_frame
+	return not finishing and checkpoint_capture_done
+
+
+func _capture_checkpoint_unit() -> void:
+	if finishing: return
+	# call_deferred has left CinderLevel dispatch and the parent's publication.
+	await process_frame
+	if finishing: return
+	if not _expect(checkpoint_capture_pending and paused and level.call("bloom_state").beat_index == 2 and level.call("bloom_state").room_stage == "approach" and Bloom.group_ids(2).all(func(id: String) -> bool: return (sources[id] as Act1MushroomSelenite).dormant), "public checkpoint pause retains the actual pre-final dormant recipients outside publication"):
+		await _finish(); return
+	if not _capture_native_unit("actual pre-final checkpoint"):
+		await _finish(); return
+	checkpoint_capture_done = true; checkpoint_capture_pending = false
+	game.call("resume_lab")
+	if not _expect(not paused, "actual pre-final capture resumes the unchanged Main donor normally"): await _finish()
+
+
+func _capture_hatch_unit() -> bool:
+	# Let actual unpaused Main render its new hatch objective/contact provider.
+	# These are natural frames, with no camera/HUD write or fitted replacement.
+	await process_frame; await process_frame
+	game.call("open_bench") # Outside every source/contact/progression callback.
+	await process_frame
+	if not _expect(paused and level.call("bloom_state").room_stage == "hatch" and not level.is_completed(), "public paused barrier retains the genuine incomplete hatch before actual contact"): return false
+	var accepted: bool = _capture_native_unit("actual incomplete hatch before contact")
+	if accepted:
+		game.call("resume_lab")
+		accepted = _expect(not paused, "actual incomplete-hatch capture resumes the unchanged Main donor normally")
+	return accepted
+
+
+func _capture_native_unit(label: String) -> bool:
+	var observation: Dictionary = game.call("get_input_observation_state")
+	var anchor: Vector2 = game.call("get_aim_anchor_normalized")
+	var pixel_anchor: Vector2 = game.call("get_aim_anchor")
+	var focus: Variant = game.get("_camera_focus") # Native read only; never refit.
+	var shake: Variant = game.get("_shake")
+	var getter: bool = game.has_method("get_difficulty_preference")
+	var difficulty: String = String(game.call("get_difficulty_preference")) if getter else entry_profile_id
+	if not _expect(paused and focus is Vector3 and focus.is_finite() and shake is float and is_finite(shake) and difficulty == entry_profile_id and difficulty in ["assisted", "standard", "challenge"] and observation.get("schema_version") == 1 and observation.get("sequence") is int and observation.get("anchor_normalized") == anchor and observation.get("last_observation") is Dictionary, label + " retains actual Main input/aim/native focus/shake and observed entry difficulty"): return false
+	var player: Dictionary = hero.snapshot_state()
+	var native_level: Dictionary = level.snapshot_state()
+	if not _expect(not player.is_empty() and not native_level.is_empty() and hero.snapshot_error(player).is_empty() and level.snapshot_error_with_player(native_level, player).is_empty() and _same(player, hero.snapshot_state()), label + " captures and prevalidates the complete original paused Player/native level pair"): return false
+	var last: Dictionary = observation.last_observation.duplicate(true)
+	if not last.is_empty():
+		last["screen_position_normalized"] = [last.screen_position_normalized.x, last.screen_position_normalized.y]
+		last["anchor_normalized"] = [last.anchor_normalized.x, last.anchor_normalized.y]
+		last["direction"] = Codec.vector3(last.direction)
+	var shell: Dictionary = {"api_revision": "campaign-shell-1", "anchor_normalized": [anchor.x, anchor.y], "input_sequence": observation.sequence, "last_input_observation": last, "camera_focus": Codec.vector3(focus), "shake_left_s": shake, "difficulty_at_entry": difficulty}
+	var unit: Dictionary = {"schema_version": 1, "level_id": level.level_id, "scene_path": level.scene_file_path, "paused": true, "equipment_ids": hero.equipment.snapshot(), "player": player, "level": native_level, "shell": shell}
+	var exact: String = Exact.stringify(unit)
+	if not _expect(not exact.is_empty() and _same(_portable(observation), _portable(game.call("get_input_observation_state"))) and anchor == game.call("get_aim_anchor_normalized") and pixel_anchor == game.call("get_aim_anchor") and focus == game.get("_camera_focus") and shake == game.get("_shake"), label + " exports exact native packets without changing Main input, aim, focus or shake"): return false
+	var camera := game.get("camera") as Camera3D
+	var receipt: Dictionary = {"label": label, "exact_snapshot": exact, "snapshot_sha256": exact.sha256_text(), "exact_player": Exact.stringify(player), "exact_level": Exact.stringify(native_level), "main_input": _portable(observation), "normalized_aim_anchor": _portable(anchor), "pixel_aim_anchor": _portable(pixel_anchor), "native_camera_focus": _portable(focus), "native_shake_left_s": shake, "actual_camera_frame": _portable(camera.global_transform), "difficulty_getter_present": getter, "difficulty_source": "public getter and actual Scheduler entry profile" if getter else "actual Scheduler entry profile observed during active groups; Main has no preference getter", "profile_observations": profile_observations.duplicate(true), "scope": "genuine paused Main native unit in observed Shell envelope; no Shell Save, Attempts, Store, Continue or persistence credit"}
+	native_units.append(receipt); receipts.append(receipt.duplicate(true))
+	return true
 
 
 func _watchdog() -> void:
@@ -335,7 +423,7 @@ func _finish() -> void:
 		if ref.get_ref() != null: freed = false
 	_expect(freed and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("environment_attack_targets").is_empty() and get_nodes_in_group("required_cues").is_empty(), "normal group-world teardown frees descendant/floor weakrefs and native groups")
 	Engine.max_fps = old_fps; AudioServer.set_bus_layout(old_audio)
-	var evidence: Dictionary = {"checks": checks, "failures": failures, "first_failure": first_failure, "elapsed_ms": Time.get_ticks_msec() - started_ms, "setups": setups, "actions": _portable(actions), "finite_receipts": receipts, "primary_receipts": primary_rows, "activation_counts": activation_counts, "source_rows": source_rows, "group_rows": group_rows, "field_activations": _portable(activations), "checkpoints": checkpoints, "completion": completion_rows, "exit": exit_rows, "enemy_hits": hits, "admissions": admissions, "scope": "Production Main oneHero/three actual source groups; disclosed measured same-floor TEST Hero poses, no earned movement/GUI/recognizer. Original near then far genuinely depleted by ordinary hits; same native handles/supplies/deadlines and monotonic independent Field clocks through permanent disjoint consumers; ordinary-primary actual HP-loss clears after depletion; real CP request/current_checkpoint only (no save packet/Shell); incomplete hatch then actual contact completion/exit once/public reentry refusal; normal cleanup. No transported snapshots/Continue/Retry/protectedStory/rewards/full-route/all-kit/balance/portrait/performance claim."}
+	var evidence: Dictionary = {"checks": checks, "failures": failures, "first_failure": first_failure, "elapsed_ms": Time.get_ticks_msec() - started_ms, "setups": setups, "actions": _portable(actions), "finite_receipts": receipts, "primary_receipts": primary_rows, "activation_counts": activation_counts, "source_rows": source_rows, "group_rows": group_rows, "field_activations": _portable(activations), "native_units": native_units, "checkpoints": checkpoints, "completion": completion_rows, "exit": exit_rows, "enemy_hits": hits, "admissions": admissions, "scope": "Production Main oneHero/three actual source groups; disclosed measured same-floor TEST Hero poses, no earned movement/GUI/recognizer. Original near then far genuinely depleted by ordinary hits; same native handles/supplies/deadlines and monotonic independent Field clocks through permanent disjoint consumers; ordinary-primary actual HP-loss clears after depletion; real CP request/current_checkpoint plus genuine paused pre-final and incomplete-hatch Main native units with actual input/camera/difficulty readback (no Shell Save/Attempts/Store credit); incomplete hatch then actual contact completion/exit once/public reentry refusal; normal cleanup. Exported native packets are genuine Main units for a later independent Shell consumer; no executed Continue/Retry/protectedStory/rewards/full-route/all-kit/balance/portrait/performance claim."}
 	var exact: String = Exact.stringify(evidence)
 	_expect(not exact.is_empty(), "complete group observations preserve exact finite scalar transport")
 	evidence["checks"] = checks; evidence["failures"] = failures; evidence["exact_observations"] = exact
