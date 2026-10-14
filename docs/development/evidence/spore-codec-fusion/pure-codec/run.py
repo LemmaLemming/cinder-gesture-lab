@@ -1,0 +1,17 @@
+"""Root-selected private parser/native microbenchmark, canonical queue,30s bound."""
+from pathlib import Path
+import importlib.util, sys
+root = Path(__file__).resolve().parents[2]
+assert sys.argv[1:] in [['parse'], ['native']]
+spec = importlib.util.spec_from_file_location('spore_codec_microbench_dev', root / 'scripts/dev/dev.py')
+dev = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = dev
+spec.loader.exec_module(dev)
+context = dev.ProjectContext()
+command = [str(dev.resolve_godot(context)), '--path', str(root), '--headless', '--log-file', str(Path(__file__).parent / (sys.argv[1] + '-engine.log')), '--script',
+           'res://.cinder/spore-codec-microbench-prep/microbench.gd']
+if sys.argv[1] == 'parse': command.append('--check-only')
+with dev.godot_lock(context.root) as lock:
+    print('Canonical queue acquired; owned30s deadline starts now.', flush=True)
+    code = dev.run_validation(command, context, lock, 30, detect_godot_errors=True)
+sys.exit(code)

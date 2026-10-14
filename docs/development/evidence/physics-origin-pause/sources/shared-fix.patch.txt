@@ -1,0 +1,18 @@
+--- a/scripts/campaign/shell.gd
++++ b/scripts/campaign/shell.gd
+@@ -1174,6 +1174,15 @@
+ 	var frame: int = Engine.get_process_frames()
+ 	var tree: SceneTree = get_tree()
+ 	await tree.process_frame
++	# A physics-deferred drain can see this iteration's process signal before
++	# the Engine process counter advances. Allow only one additional signal.
++	# Keep the original total wait bound; full authored guards run once below.
++	if is_inside_tree() and epoch == _registration_epoch and not _registration_cancelled and Engine.get_process_frames() == frame:
++		if not tree.paused or Time.get_ticks_msec() - started > 2000:
++			_registration_pending = false
++			_dispose_registration_scope()
++			return _fail("Paused registration frame lost bounded donor/disk/native custody")
++		await tree.process_frame
+ 	_registration_pending = false
+ 	if not is_inside_tree() or epoch != _registration_epoch or _registration_cancelled:
+ 		_dispose_registration_scope()

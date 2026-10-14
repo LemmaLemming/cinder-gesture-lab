@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: FAIL: first physics-origin Pause commits, with no failed operation: Paused registration frame lost bounded donor/disk/native custody
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/restore_candidate_physics_smoke.gd:315)
+       [1] _guard (res://tests/restore_candidate_physics_smoke.gd:308)
+       [2] _run (res://.cinder/shared57-physics-boundary-test/restore_candidate_physics_boundary_smoke.gd:87)
+       [3] _physics_pause (res://.cinder/shared57-physics-boundary-test/restore_candidate_physics_boundary_smoke.gd:129)
+       [4] _settle (res://tests/restore_candidate_physics_smoke.gd:277)
+Physics-origin registration boundary witnesses: [{"mode":"positive","request":{"earned":true,"in_physics":true,"physics_frame":68,"process_frame":50,"ready":true,"ticks":3},"signals":[{"anchor_frame":50,"inflight":true,"paused":true,"pending":true,"physics_frame":68,"process_frame":50,"ticks_msec":2272}]}]
+Restore candidate physics boundary smoke: 6 checks, 1 failures; tiny actual native floor/physics-origin Pause/additional-wait lifecycle only; no lunge/campaign/performance claim
