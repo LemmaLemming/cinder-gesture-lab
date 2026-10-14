@@ -9,6 +9,7 @@ const PacketPath: String = "res://tests/acts/act1/fixtures/a1_l5_saved_portrait_
 const PacketSha: String = "2daa482db269374b4360d1abc4d89ff618f6f08c1bc222bea49e139913a6dd0e"
 const SourceReportSha: String = "e28d0032529186ecd317f49120d33317d799ca43a8c137a5149a479542a10321"
 const Shared58ShellSha: String = "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f"
+const CurrentSceneMetadataSha: String = "8a60db6ad82a34a372c012ad74aa6d05a54f2d7706cddd5e0f7338d7d1197b8d"
 const PortraitSize := Vector2i(540, 1170)
 const WholeMs: int = 100000
 const PerViewMs: int = 20000
@@ -58,6 +59,8 @@ func _run() -> void:
 	# Producer bundle/snapshot/checkpoint strings stay literal Shared57 evidence.
 	# Only this consumer pin follows the published compatible Shared58 Shell fix.
 	source_hashes["res://scripts/campaign/shell.gd"] = Shared58ShellSha
+	# Only descriptive scene metadata changed after the actual204 portrait run.
+	source_hashes[ScenePath] = CurrentSceneMetadataSha
 	if not _source_guard(): await _finish(); return
 	var registry_doc: Variant = JSON.parse_string(registry_bytes.get_string_from_utf8())
 	if not _expect(registry_doc is Dictionary and registry_doc.get("levels") is Array, "canonical registry readable"): await _finish(); return
