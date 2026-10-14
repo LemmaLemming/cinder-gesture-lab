@@ -1,0 +1,51 @@
+{
+  "created_utc": "2026-10-14T02:01:19.241055+00:00",
+  "initial_folder_check": {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "--",
+      "docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/README.md",
+      "docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/final-inert-source",
+      "docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/index.json"
+    ],
+    "exit_code": 2,
+    "source_index_sha256": "3af833decd3eb7391759e68cbf60ef320b1f020c89bd285dd5fb4cf8b592d13c",
+    "qualification": "Initial tool output was truncated. One unchanged-source replay was captured for complete diagnostic text; this is a static text check, not parser/native evidence."
+  },
+  "unchanged_source_capture": {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "--",
+      "docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/README.md",
+      "docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/final-inert-source",
+      "docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/index.json"
+    ],
+    "exit_code": 2,
+    "log": "diff-context-whitespace-capture.log",
+    "sha256": "25e139b7b3b598401617d7dea0ab6c09848beaa4d066236010f6ce5d32c9fddf"
+  },
+  "diagnosis": "Only archived unified-diff context lines triggered space-before-tab/trailing-context whitespace checks. Their required leading diff-context spaces and original tab indentation are preserved byte-exact; no source defect or failed native assertion is inferred.",
+  "focused_authored_text_check": {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "--",
+      "docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/README.md",
+      "docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/final-inert-source/fresh_world_lunge_smoke.gd.txt",
+      "docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/final-inert-source/smoke-plan.md",
+      "docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/index.json"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "scope": "README, selected final inert smoke and plan, and index authored text clean. No parser/import/engine/native test."
+}

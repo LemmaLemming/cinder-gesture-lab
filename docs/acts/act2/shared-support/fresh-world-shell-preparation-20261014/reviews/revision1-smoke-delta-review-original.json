@@ -1,0 +1,193 @@
+{
+  "report": "Bounded delta review of fresh-world inert smoke revision 1",
+  "created_at_utc": "2026-10-14T01:55:55.682467+00:00",
+  "author": "/root/b02_native_join",
+  "scope": "Only smoke e4c6baa7 and plan 0a6e0fb2 delta from archived smoke 3b5ef530 / plan 0424cb3b. Targeted read of already pinned host transport_diagnostics and ExactJson stringify supported the changed helpers. No new whole-input freeze/history/native audit.",
+  "verdict": "The three original coverage findings are structurally addressed. One concrete cleanup assertion gap in the new raw-preparation failure path remains; authoring repair is pending. This revision is source-only and cannot be credited runnable or passed.",
+  "source_originals": {
+    "archived_original_smoke": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/preparation/drafts/fresh_world_lunge_smoke.gd.txt",
+      "sha256": "3b5ef5305cf72147627d20cccf2ffef6d03549ca41451dbddc96fdc8d81da5da",
+      "bytes": 36755,
+      "lines": 461,
+      "mode_octal": "0o644",
+      "executable_bits_octal": "0o0",
+      "mtime_ns": 1791941758344707147
+    },
+    "archived_original_plan": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/preparation/smoke-plan.md",
+      "sha256": "0424cb3bb3cd2b436e63861f72978eb61962651d6695b08607e018ee553e8ba7",
+      "bytes": 13788,
+      "lines": 72,
+      "mode_octal": "0o644",
+      "executable_bits_octal": "0o0",
+      "mtime_ns": 1791941758345372811
+    },
+    "archived_revision1_smoke": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/selected-inert-source/fresh_world_lunge_smoke.gd.txt",
+      "sha256": "e4c6baa72dc59b5cd7324d6ccfcd6113e1d238e16d236b34c61dcf87432b55eb",
+      "bytes": 42756,
+      "lines": 518,
+      "mode_octal": "0o644",
+      "executable_bits_octal": "0o0",
+      "mtime_ns": 1791942732811983755
+    },
+    "archived_revision1_plan": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/docs/acts/act2/shared-support/fresh-world-shell-preparation-20261014/selected-inert-source/smoke-plan.md",
+      "sha256": "0a6e0fb2577764ec28dbd74c72e4d0f52cc42adf0eec13388d165d86dcb3f871",
+      "bytes": 16409,
+      "lines": 75,
+      "mode_octal": "0o644",
+      "executable_bits_octal": "0o0",
+      "mtime_ns": 1791942732813212043
+    },
+    "unchanged_original_review": {
+      "path": "/private/tmp/a2_fresh_world_lunge_smoke_source_review_20261014.json",
+      "sha256": "c3fd4da166061c7a99a9f347316909f0556e162d9bdeee19ab8f269d038b438e",
+      "bytes": 17940,
+      "lines": 247,
+      "mode_octal": "0o644",
+      "executable_bits_octal": "0o0",
+      "mtime_ns": 1791942659752547292
+    }
+  },
+  "textual_delta": {
+    "method": "Text-only top-level function block comparison, not a GDScript parser or compile.",
+    "changed_existing_functions": [
+      "_atomic_signature",
+      "_encode",
+      "_fault_candidate",
+      "_pending_cases",
+      "_run"
+    ],
+    "added_functions": [
+      "_camera_signature",
+      "_fault_raw_support",
+      "_raw_preparation_refusal"
+    ],
+    "removed_functions": [],
+    "unchanged_function_count": 31,
+    "unchanged_functions": [
+      "_arena_signature",
+      "_bridge_refs_freed",
+      "_bridge_result",
+      "_capture",
+      "_cleanup_fault_nodes",
+      "_click",
+      "_diagnostic_signature",
+      "_disk_bytes",
+      "_disk_restore",
+      "_expect",
+      "_finish",
+      "_ids_distinct",
+      "_initialize",
+      "_installed",
+      "_live",
+      "_native_ids",
+      "_new_shell",
+      "_node_live",
+      "_observe_added",
+      "_observe_cancel",
+      "_observe_preparation",
+      "_packet_custody_cases",
+      "_record",
+      "_refs",
+      "_refs_freed",
+      "_refusal_cases",
+      "_reservation",
+      "_same",
+      "_settle",
+      "_until_stable",
+      "_until_unfinished"
+    ],
+    "other_change": "One diagnostic String field _raw_fault_candidate_id initialized empty; original _run adds the isolated raw failure case before existing refusals."
+  },
+  "original_finding_resolution": [
+    {
+      "id": "FW-SMOKE-01",
+      "status": "addressed in source",
+      "new_lines": [
+        314,
+        321
+      ],
+      "evidence": "Nonempty complete atomic donor guard is required. EACH pending await clears _events, sets _watch true for dispatch, resets it false afterwards and requires _events.is_empty(). Existing exact native lifecycle retirement classification is unchanged. The bridge must settle the actual operation and cleanup before returning; no passed callback-silence result is claimed."
+    },
+    {
+      "id": "FW-SMOKE-02",
+      "status": "addressed in source",
+      "new_lines": [
+        355,
+        371,
+        481,
+        496
+      ],
+      "evidence": "Atomic guard includes nonempty actual installed camera diagnostics. Camera must be live, in the actual Player World3D, current in its actual Viewport and have a valid camera RID. Identity/world/space/viewport/rect, actual global and offset camera transforms, projection settings and full native projection-matrix columns are recorded. Transform3D/Basis/Vector3 and added Vector2/Vector4 branches recursively close unsupported native leaves into exact JSON data. Scalars retain actual types; nonfinite/unsupported values make Exact.stringify empty and atomic guard refuse. No camera writes or saved-authority/cache use occur.",
+      "limitations": "Actual method availability and native readings remain unparsed/unexecuted; this is source shape and encoding review, not projection/optical acceptance."
+    },
+    {
+      "id": "FW-SMOKE-03",
+      "status": "separate preparation-error source path added; cleanup gap below remains",
+      "new_lines": [
+        246,
+        280,
+        324,
+        332
+      ],
+      "evidence": "prepare_raw_with_fault is a fixture-only unbound bridge operation. Healthy raw signature and original support/floor are checked with zero normal/restore entries and commits. Read-only custody fields require nonempty named actual injection point, captured flag and captured floor guard, matching original floor identity/RID. Only then original support is disabled. The faulted candidate identity is tracked separately so other valid prepared rows do not cause a false failure. That identity must have a raw observation and must not have registered/entered/committed success observations. Actual preparation String error, zero constructor/commit/validator metrics, full donor camera/native/disk guard and quiet callbacks are required. Existing floor fault callback now explicitly requires successful sole construction before real synchronous validator mutation.",
+      "mapping_obligation": "Future Root implementation mapping must document its real post-immutable-custody/pre-entry injection point and return actual observations/errors; the smoke does not invoke or invent a shared/public runtime hook."
+    }
+  ],
+  "findings": [
+    {
+      "id": "FW-DELTA-01",
+      "priority": "P2",
+      "title": "Known raw candidate can take generic zero-candidate cleanup branch",
+      "file": "fresh_world_lunge_smoke.gd.txt",
+      "lines": [
+        261,
+        408,
+        414
+      ],
+      "evidence": "The new raw path proves an actual candidate was observed and faulted, but its final cleanup assertion delegates only to _bridge_refs_freed. That unchanged generic helper accepts an empty candidate_refs Array plus created_candidate_count == 0, a valid case only for malformed header refusal before native construction. It has no independent WeakRefs of the known faulted raw subtree.",
+      "impact": "The new raw-preparation test can accept a logically inconsistent zero-construction cleanup record and fail to detect a retained actual corrupted candidate/world. This is a gap in the newly added cleanup assertion, not a shared implementation defect.",
+      "minimal_inert_repair": "Require positive observed construction count and nonempty original bridge candidate refs specifically for the raw case, capture actual raw arena-root/subtree WeakRefs at the successful fault callback, and require those refs freed after dispatch. Preserve the generic zero branch for legitimate header-only malformed failures. Do not synthesize counts or disposal references.",
+      "communicated_early_to_root_and_writer": true,
+      "repair_pending": true
+    }
+  ],
+  "plan_truthfulness": {
+    "exact_revision1_smoke_hash_and_518_lines": true,
+    "original_3b5_0424_custody_separate": true,
+    "postconstruction_validator_faults_distinguished_from_raw_preparation_failure": true,
+    "actual_camera_full_input_focus_shake_preservation_scope": true,
+    "one_unbound_bridge_explicit": true,
+    "not_installed_parsed_imported_executed": true,
+    "first_root_candidate_historical_findings_not_current_runtime_claim": true,
+    "startup_cancel_regression_remains_root_separate": true
+  },
+  "preserved_contracts": {
+    "shared_String_bool_validators_remain_synchronous": true,
+    "no_forced_physics_step_fake_floor_or_ray_answer": true,
+    "complete_packet_authority_unchanged": true,
+    "same_exact_packet_pristine_construction_reuse_allowed": true,
+    "fresh_full_validation_every_callback_no_result_cache": true,
+    "exclusive_install_outside_validation_pool": true,
+    "actual_Shell_Hero_native_saved_lunge_disk_Continue_GUI_Retry_spine_unchanged": true,
+    "error_footer_and_incomplete_exit_contract_unchanged": true
+  },
+  "execution_and_boundaries": {
+    "engine": false,
+    "parser": false,
+    "import": false,
+    "install": false,
+    "production_or_assigned_checkout_edits": false,
+    "original_review_modified": false,
+    "runtime_bridge_bound": false,
+    "runtime_pass_or_scope_complete_claimed": false,
+    "human_decision_required": false,
+    "files_written": [
+      "/private/tmp/a2_fresh_world_lunge_smoke_delta_review_20261014.json"
+    ]
+  },
+  "next_scope": "Only review the positive raw construction count/nonempty bridge refs and independently captured actual raw subtree WeakRef cleanup in the final derivative; no broader re-audit."
+}

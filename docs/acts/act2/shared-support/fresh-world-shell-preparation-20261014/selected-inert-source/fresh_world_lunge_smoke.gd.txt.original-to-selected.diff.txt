@@ -1,0 +1,119 @@
+--- original/drafts/fresh_world_lunge_smoke.gd.txt
++++ selected-inert-source/fresh_world_lunge_smoke.gd.txt
+@@ -57,6 +57,7 @@
+ var _units: Array[Dictionary] = []
+ var _preparation: Array[Dictionary] = []
+ var _raw_signatures: Dictionary = {} # observation only, never validation authority
++var _raw_fault_candidate_id: String = ""
+ var _candidate_wires: Dictionary = {} # diagnostic identity -> COMPLETE packet
+ var _fault_nodes: Array[Node] = []
+ var _old_audio: AudioBusLayout
+@@ -136,7 +137,7 @@
+ 	_capture("actual-unfinished-lunge", moving)
+ 	if not await _disk_restore(moving): _finish(); return
+ 	_expect(_same(_shell.attempts.state().story.checkpoint, checkpoint), "fresh disk Continue retains protected earlier full checkpoint")
+-	if not await _refusal_cases(moving) or not await _packet_custody_cases(checkpoint, moving): _finish(); return
++	if not await _raw_preparation_refusal(moving) or not await _refusal_cases(moving) or not await _packet_custody_cases(checkpoint, moving): _finish(); return
+ 	if not await _pending_cases(moving): _finish(); return
+ 	_shell.request_pause(); await _settle()
+ 	_expected_donor = weakref(_shell.active_level)
+@@ -242,6 +243,42 @@
+ 		_expect(purpose == "installation" and diagnostics.restore_entries == 1 and diagnostics.quiet_commits == 1 and diagnostics.player_committed_before_local and _same(hero.snapshot_state(), packet.player) and _same(level.snapshot_state(), packet.level), "exclusive install recipient quietly commits Player then original source then Scheduler once")
+ 	_preparation.append({"stage": stage, "purpose": purpose, "candidate_id": identity, "packet_level": packet.level_id, "physical": _diagnostic_signature(arena), "transport": diagnostics, "floor": floor})
+ 
++func _raw_preparation_refusal(saved: Dictionary) -> bool:
++	var before: String = _atomic_signature()
++	if not _expect(not before.is_empty(), "nonempty donor/model/disk/input/native/camera guard before raw preparation refusal"): return false
++	var first_observation: int = _preparation.size()
++	_raw_fault_candidate_id = ""
++	_events.clear(); _watch = true
++	var answer: Dictionary = await _bridge.dispatch("prepare_raw_with_fault", {"shell": _shell, "packet": saved, "fault_callback": _fault_raw_support, "observer": _observe_preparation})
++	_watch = false
++	var raw_seen: bool = false
++	var entered: bool = false
++	for index: int in range(first_observation, _preparation.size()):
++		var observed: Dictionary = _preparation[index]
++		if observed.candidate_id != _raw_fault_candidate_id: continue
++		if observed.stage == "raw": raw_seen = true
++		if observed.stage in ["registered", "entered", "committed"]: entered = true
++	return _expect(_bridge_result(answer) and answer.get("preparation_error") is String and not answer.preparation_error.is_empty() and raw_seen and not entered and answer.get("restore_entries") == 0 and answer.get("quiet_commits") == 0 and answer.get("synchronous_validator_calls") == 0 and _atomic_signature() == before and _events.is_empty() and _bridge_refs_freed(answer), "real raw support preparation refuses before entry/validation, frees only candidates and preserves exact donor plus camera/callback silence")
++
++func _fault_raw_support(candidate: Dictionary, custody: Dictionary) -> void:
++	# Separate TEST raw-preparation fault: AFTER intact raw observation AND
++	# actual Root immutable floor custody capture at the named injection point.
++	# The unresolved bridge supplies read-only custody diagnostics, not authority.
++	# No preparation success or restore constructor/validator has occurred.
++	var level: CinderLevel = candidate.get("level") as CinderLevel
++	var hero: CinderPlayer = candidate.get("player") as CinderPlayer
++	if not _expect(_node_live(level) and _node_live(hero) and level != _shell.active_level and hero != _shell.player and paused, "raw support fault belongs only to isolated actual candidate"): return
++	var identity: String = str(level.get_instance_id())
++	var signature: String = _arena_signature(level.call("test_arena_for_player", hero))
++	var diagnostics: Dictionary = level.call("transport_diagnostics")
++	if not _expect(_raw_signatures.has(identity) and not signature.is_empty() and _raw_signatures[identity] == signature and diagnostics.normal_entries == 0 and diagnostics.restore_entries == 0 and diagnostics.quiet_commits == 0, "intact raw signature captured with zero entries before deliberate support corruption"): return
++	var support: CollisionShape3D = level.call("get_support")
++	var floor: StaticBody3D = level.call("get_floor")
++	if not _expect(_node_live(support) and _node_live(floor) and not support.disabled, "actual original raw support is enabled before fault"): return
++	if not _expect(custody.get("immutable_floor_custody_captured") == true and custody.get("injection_point") is String and not custody.injection_point.is_empty() and custody.get("floor_guard") is String and not custody.floor_guard.is_empty() and custody.get("floor_instance_id") == str(floor.get_instance_id()) and custody.get("floor_rid") == str(floor.get_rid()), "future mapped bridge names actual post-custody injection point and original native floor"): return
++	_raw_fault_candidate_id = identity
++	support.disabled = true # candidate-only native mutation; no fabricated ray answer
++
+ func _refusal_cases(saved: Dictionary) -> bool:
+ 	var cases: Array[Dictionary] = []
+ 	var bad: Dictionary = saved.duplicate(true); bad.level.local.source.native_clock_s += 0.000000001; cases.append({"name": "source/Scheduler exact clock mismatch", "packet": bad})
+@@ -276,16 +313,23 @@
+ 
+ func _pending_cases(packet: Dictionary) -> bool:
+ 	var before: String = _atomic_signature()
++	if not _expect(not before.is_empty(), "nonempty donor/native/camera guard before pending controls"): return false
+ 	for operation: String in ["pending_cancel", "pending_reentry", "pending_disposal"]:
++		_events.clear(); _watch = true
+ 		var result: Dictionary = await _bridge.dispatch(operation, {"shell": _shell, "packet": packet, "observer": _observe_preparation, "pending_guard": _atomic_signature})
+-		if not _expect(_bridge_result(result) and result.get("pending_paused") == true and result.get("donor_guard_during_wait") == before and result.get("validation_during_pending_error") is String and not result.validation_during_pending_error.is_empty() and result.get("rejected_or_committed_reused") == false and result.get("installation_in_validation_pool") == false and _atomic_signature() == before and _bridge_refs_freed(result), "actual operation latch rejects reentry/cancels/disposes only candidates: " + operation): return false
++		_watch = false
++		if not _expect(_bridge_result(result) and result.get("pending_paused") == true and result.get("donor_guard_during_wait") == before and result.get("validation_during_pending_error") is String and not result.validation_during_pending_error.is_empty() and result.get("rejected_or_committed_reused") == false and result.get("installation_in_validation_pool") == false and _atomic_signature() == before and _events.is_empty() and _bridge_refs_freed(result), "actual operation latch rejects reentry/cancels/disposes only candidates: " + operation): return false
+ 	return true
+ 
+ func _fault_candidate(fault: String, candidate: Dictionary) -> void:
+-	# Labelled TEST corruption of ONLY the genuine raw/registered candidate.
++	# Labelled TEST validator fault AFTER intact registered observation and
++	# successful sole constructor entry, BEFORE the real synchronous callback.
++	# Raw preparation refusal is the separate _fault_raw_support case.
+ 	var level: CinderLevel = candidate.get("level") as CinderLevel
+ 	var hero: CinderPlayer = candidate.get("player") as CinderPlayer
+ 	if not _expect(_node_live(level) and _node_live(hero) and level != _shell.active_level and hero != _shell.player and level.is_restore_candidate() and paused, "fault targets isolated actual candidate, never installed donor"): return
++	var diagnostics: Dictionary = level.call("transport_diagnostics")
++	if not _expect(diagnostics.normal_entries == 0 and diagnostics.restore_entries == 1 and diagnostics.quiet_commits == 0 and diagnostics.constructor_pristine and diagnostics.saved_player_checked_before_binding, "validator fault follows successful sole pristine construction, never raw preparation/commit"): return
+ 	var floor: StaticBody3D = level.call("get_floor")
+ 	var support: CollisionShape3D = level.call("get_support")
+ 	if not _expect(_node_live(floor) and _node_live(support), "original native floor/support exists before deliberate TEST corruption"): return
+@@ -312,8 +356,19 @@
+ 	if not _installed() or not paused: return ""
+ 	var unit: Dictionary = _shell.capture_campaign_snapshot()
+ 	var physical: Dictionary = _diagnostic_signature(_shell.active_level.call("test_arena"))
+-	if unit.is_empty() or Exact.stringify(physical).is_empty() or physical.is_empty(): return ""
+-	return Exact.stringify({"unit": unit, "attempts": _shell.attempts.state(), "disk": _disk_bytes(), "physical": physical, "input": unit.shell.duplicate(true)})
++	var camera: Dictionary = _camera_signature()
++	if unit.is_empty() or physical.is_empty() or Exact.stringify(physical).is_empty() or camera.is_empty() or Exact.stringify(camera).is_empty(): return ""
++	return Exact.stringify({"unit": unit, "attempts": _shell.attempts.state(), "disk": _disk_bytes(), "physical": physical, "camera": camera, "input": unit.shell.duplicate(true)})
++
++func _camera_signature() -> Dictionary:
++	# Diagnostics only: actual installed native Camera3D, no camera/pose writes.
++	var camera: Camera3D = _shell.camera
++	if not _node_live(camera) or not _node_live(_shell.player) or camera.get_world_3d() != _shell.player.get_world_3d(): return {}
++	var viewport: Viewport = camera.get_viewport()
++	if viewport.get_camera_3d() != camera or not camera.get_camera_rid().is_valid(): return {}
++	var matrix: Projection = camera.get_camera_projection()
++	var rect: Rect2 = viewport.get_visible_rect()
++	return {"camera_id": str(camera.get_instance_id()), "camera_rid": str(camera.get_camera_rid()), "world_id": str(camera.get_world_3d().get_instance_id()), "world_space": str(camera.get_world_3d().space), "viewport_id": str(viewport.get_instance_id()), "viewport_rect": {"position": _encode(rect.position), "size": _encode(rect.size)}, "global_transform": _encode(camera.global_transform), "camera_transform": _encode(camera.get_camera_transform()), "projection": camera.projection, "keep_aspect": camera.keep_aspect, "size": camera.size, "fov": camera.fov, "near": camera.near, "far": camera.far, "frustum_offset": _encode(camera.frustum_offset), "h_offset": camera.h_offset, "v_offset": camera.v_offset, "current": camera.current, "cull_mask": _encode(camera.cull_mask), "doppler_tracking": camera.doppler_tracking, "projection_matrix": {"x": _encode(matrix.x), "y": _encode(matrix.y), "z": _encode(matrix.z), "w": _encode(matrix.w)}}
+ 
+ func _arena_signature(arena: Dictionary) -> String: return Exact.stringify(_diagnostic_signature(arena))
+ 
+@@ -427,6 +482,8 @@
+ 	if value is Transform3D: return {"basis": _encode(value.basis), "origin": _encode(value.origin)}
+ 	if value is Basis: return {"x": _encode(value.x), "y": _encode(value.y), "z": _encode(value.z)}
+ 	if value is Vector3: return Codec.vector3(value)
++	if value is Vector2: return [value.x, value.y]
++	if value is Vector4: return [value.x, value.y, value.z, value.w]
+ 	if value is int and (value < -9007199254740991 or value > 9007199254740991): return {"diagnostic_native_integer_decimal": str(value)}
+ 	if value is Dictionary:
+ 		var out: Dictionary = {}

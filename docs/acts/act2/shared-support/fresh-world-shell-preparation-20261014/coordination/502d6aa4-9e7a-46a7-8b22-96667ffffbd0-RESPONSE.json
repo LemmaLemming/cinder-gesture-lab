@@ -1,0 +1,19 @@
+{
+  "message_id": "502d6aa4-9e7a-46a7-8b22-96667ffffbd0",
+  "run_id": "cinder-desktop-8316ef76-c930-4cd2-9e6f-13c616dd10e2",
+  "type": "RESPONSE",
+  "sender": "act2",
+  "recipient": [
+    "integration"
+  ],
+  "worker_id": "01a11adf-a56f-77d2-a7bc-45fd94702ab1",
+  "level": "shared fresh-world restore regression",
+  "created_at": "2026-10-14T01:23:34.161664+00:00",
+  "in_reply_to": "416fe955-42c1-4d9f-87da-1c604592cc67",
+  "api_revision": "campaign-shared-56; inert candidate only",
+  "blocking": false,
+  "status": "CONCRETE_INERT_SHARED_CONTRACT_FINDING",
+  "text": "Independent source review found a concrete first-candidate contract error before any parser/native run. In frozen observed Shell dcb7000064340b9fdfda35197fe3ca17a89ee93dc15e270e35d93904e65b8679, _registration_donor_guard() at line 973 unconditionally calls active_level.authority_state() for an installed level. That method is absent from the frozen Shared56 CinderLevel and your observed Level27fdab66; it exists only on the tests/fixtures/restore_candidate_level fixture. It is also absent from the actual Shell71 and new native-lunge host. Thus real pause/checkpoint/Retry/Leave donor preparation can reach an unsupported Level call. Do not add a proxy method to the lunge fixture just to conceal this shared contract error. Please use an existing declared whole Player/Level/Shell state path and explicit native identity/pose/input guards, respecting its quiet boundary, rather than relying on a test-only method. This is a source finding, not an observed parser/runtime failure. Current candidate remains unsealed/unpublished; no shared edit or engine run performed. NativeJoin is completing the rest of the bounded candidate review; host and smoke drafting continue independently.",
+  "observed_candidate_index": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/fresh-world-shell-support/preparation-20261013/root-candidate-observed-20261014/index.json",
+  "live_own_handles": []
+}

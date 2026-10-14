@@ -1,0 +1,40 @@
+--- revision1/fresh_world_lunge_smoke.gd.txt
++++ final-inert-source/fresh_world_lunge_smoke.gd.txt
+@@ -58,6 +58,7 @@
+ var _preparation: Array[Dictionary] = []
+ var _raw_signatures: Dictionary = {} # observation only, never validation authority
+ var _raw_fault_candidate_id: String = ""
++var _raw_fault_refs: Array = [] # original independent WeakRefs; never supplied to bridge
+ var _candidate_wires: Dictionary = {} # diagnostic identity -> COMPLETE packet
+ var _fault_nodes: Array[Node] = []
+ var _old_audio: AudioBusLayout
+@@ -248,6 +249,7 @@
+ 	if not _expect(not before.is_empty(), "nonempty donor/model/disk/input/native/camera guard before raw preparation refusal"): return false
+ 	var first_observation: int = _preparation.size()
+ 	_raw_fault_candidate_id = ""
++	_raw_fault_refs.clear() # before the one new operation, never after capture
+ 	_events.clear(); _watch = true
+ 	var answer: Dictionary = await _bridge.dispatch("prepare_raw_with_fault", {"shell": _shell, "packet": saved, "fault_callback": _fault_raw_support, "observer": _observe_preparation})
+ 	_watch = false
+@@ -258,7 +260,7 @@
+ 		if observed.candidate_id != _raw_fault_candidate_id: continue
+ 		if observed.stage == "raw": raw_seen = true
+ 		if observed.stage in ["registered", "entered", "committed"]: entered = true
+-	return _expect(_bridge_result(answer) and answer.get("preparation_error") is String and not answer.preparation_error.is_empty() and raw_seen and not entered and answer.get("restore_entries") == 0 and answer.get("quiet_commits") == 0 and answer.get("synchronous_validator_calls") == 0 and _atomic_signature() == before and _events.is_empty() and _bridge_refs_freed(answer), "real raw support preparation refuses before entry/validation, frees only candidates and preserves exact donor plus camera/callback silence")
++	return _expect(_bridge_result(answer) and answer.get("preparation_error") is String and not answer.preparation_error.is_empty() and raw_seen and not entered and answer.get("restore_entries") == 0 and answer.get("quiet_commits") == 0 and answer.get("synchronous_validator_calls") == 0 and answer.get("created_candidate_count") is int and answer.created_candidate_count > 0 and answer.get("candidate_refs") is Array and not answer.candidate_refs.is_empty() and _refs_freed(_raw_fault_refs) and _atomic_signature() == before and _events.is_empty() and _bridge_refs_freed(answer), "real raw support preparation refuses before entry/validation, frees only candidates and preserves exact donor plus camera/callback silence")
+ 
+ func _fault_raw_support(candidate: Dictionary, custody: Dictionary) -> void:
+ 	# Separate TEST raw-preparation fault: AFTER intact raw observation AND
+@@ -276,6 +278,12 @@
+ 	var floor: StaticBody3D = level.call("get_floor")
+ 	if not _expect(_node_live(support) and _node_live(floor) and not support.disabled, "actual original raw support is enabled before fault"): return
+ 	if not _expect(custody.get("immutable_floor_custody_captured") == true and custody.get("injection_point") is String and not custody.injection_point.is_empty() and custody.get("floor_guard") is String and not custody.floor_guard.is_empty() and custody.get("floor_instance_id") == str(floor.get_instance_id()) and custody.get("floor_rid") == str(floor.get_rid()), "future mapped bridge names actual post-custody injection point and original native floor"): return
++	var container: SubViewportContainer = candidate.get("container") as SubViewportContainer
++	var viewport: SubViewport = candidate.get("viewport") as SubViewport
++	var stage: Node3D = candidate.get("stage") as Node3D
++	if not _expect(_node_live(container) and _node_live(viewport) and _node_live(stage) and container.get_parent() == _shell and viewport.get_parent() == container and viewport.own_world_3d and stage.get_parent() == viewport and level.get_parent() == stage and hero.get_parent() == stage and not container.is_ancestor_of(_shell.player) and not container.is_ancestor_of(_shell.world) and _raw_fault_refs.is_empty(), "capture one original isolated candidate container/viewport/stage subtree, never donor"): return
++	_raw_fault_refs = _refs(container)
++	if not _expect(not _raw_fault_refs.is_empty(), "independent original candidate subtree WeakRefs captured before support fault"): return
+ 	_raw_fault_candidate_id = identity
+ 	support.disabled = true # candidate-only native mutation; no fabricated ray answer
+ 
