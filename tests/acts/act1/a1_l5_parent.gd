@@ -1,7 +1,8 @@
 extends SceneTree
 ## Focused production-L5 loading, native ownership, paused complete capture,
-## malformed refusal and normal cleanup. No earned route, fresh Shell Continue,
-## GUI Retry, boss completion, gesture, full-art or balance credit.
+## malformed refusal, fresh actual Main paired restore and normal cleanup.
+## No earned route, campaign Shell disk Continue/GUI Retry, boss completion,
+## gesture, full-art or balance credit.
 const MainScene = preload("res://scenes/main.tscn")
 const LevelScript = preload("res://scripts/acts/act1/living_moon.gd")
 const Exact = preload("res://scripts/campaign/exact_json.gd")
@@ -68,6 +69,36 @@ func _run() -> void:
 	malformed = saved.duplicate(true); malformed.progress.checkpoint_ids["capsule-ready"] = "encounter"
 	_expect(not level.snapshot_error_with_player(malformed, player).is_empty(), "unearned return checkpoint is refused")
 	_expect(Exact.stringify(level.snapshot_state()) == before and Exact.stringify(hero.snapshot_state()) == Exact.stringify(player), "all malformed validators leave actual state unchanged")
+	# Disclosed fresh normal-entry recipient composition. This is mechanical
+	# Player -> full native parent commit, not disk Continue or GUI Retry.
+	var donor: WeakRef = weakref(game)
+	game.queue_free()
+	for index: int in 4: await process_frame
+	if not _expect(not is_instance_valid(donor.get_ref()), "original Main is disposed before fresh native recipient construction"):
+		await _finish(); return
+	game = MainScene.instantiate()
+	game.set("level_scene_path", "res://scenes/acts/act1/a1_l5.tscn")
+	root.add_child(game)
+	level = game.get("active_level") as CinderLevel
+	hero = game.get("player") as CinderPlayer
+	if not _expect(level != null and level.contract_error().is_empty() and level.get("blink").state().cycle == 0, "fresh actual production recipient starts with idle cycle-zero native Blink"):
+		await _finish(); return
+	if not _expect(game.call("request_pause_deferred") == true, "fresh Main accepts the public deferred paused commit barrier"):
+		await _finish(); return
+	for index: int in 8:
+		await process_frame
+		if paused: break
+	if not _expect(paused, "fresh Main reaches its actual paused shell boundary before Player commit"):
+		await _finish(); return
+	if not _expect(hero.restore_state(player), "fresh actual shared Player restores the complete original paused packet: " + hero.last_snapshot_error):
+		await _finish(); return
+	if not _expect(level.snapshot_error_with_player(saved, player).is_empty(), "fresh native whole-parent prevalidation accepts original paired state"):
+		await _finish(); return
+	if not _expect(level.restore_state(saved), "fresh native parent commits eye before Scheduler and original source exchanges: " + level.last_snapshot_error):
+		await _finish(); return
+	_expect(Exact.stringify(hero.snapshot_state()) == Exact.stringify(player), "fresh paired commit does not heal, refresh or retime the shared Player")
+	var actual: Dictionary = level.get("scheduler").snapshot_state(level.call("scheduler_bindings"))
+	_expect(not actual.is_empty() and Exact.stringify(actual) == Exact.stringify(saved.local.scheduler), "fresh genuine Scheduler restores exact original schema4/clock/lease/cooldown/sample-source data")
 	await _finish()
 
 
@@ -107,6 +138,6 @@ func _finish() -> void:
 	_expect(retained == 0, "normal Main disposal removes all actual level/native descendants")
 	var report: String = ProjectSettings.globalize_path("res://.cinder/l5-parent-native-" + str(Time.get_ticks_usec()) + ".json")
 	var stream := FileAccess.open(report, FileAccess.WRITE)
-	if stream != null: stream.store_string(JSON.stringify({"checks": checks, "failures": failures, "scope": "actual L5 loading/native return admission/pause/whole capture/malformed refusal/cleanup only; no campaign Save/Continue/Retry, boss/hatch transition, full route or art acceptance"}, "\t")); stream.close()
+	if stream != null: stream.store_string(JSON.stringify({"checks": checks, "failures": failures, "scope": "actual L5 loading/native return admission/pause/whole capture/malformed refusal/fresh actual Main Player-parent schema4 restore/cleanup; no campaign Shell disk Save/Continue/GUI Retry, boss/hatch transition, full route or art acceptance"}, "\t")); stream.close()
 	print("L5 parent native component: ", checks, "/", failures, "; report=", report)
 	quit(0 if failures == 0 else 1)
