@@ -1,0 +1,551 @@
+#!/usr/bin/env python3
+"""Focused A3-O1 short registration via the canonical queue; inert until invoked.
+
+Only the explicit roots and their literal resource references are snapshotted.
+No global UID, class-name, dynamic-load, import or evidence-bank census is made.
+"""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import sys
+import time
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+PHASES = ("selected-import", "registration-parse", "registration-native")
+SCRIPT = "tests/act3_o1_registration_smoke.gd"
+SCRIPT_URI = "res://" + SCRIPT
+SCRIPT_UID = SCRIPT + ".uid"
+TIMEOUT_SECONDS = 180
+SEEDS = (
+    SCRIPT,
+    "tests/acts/act3/pillars_before_time_optional_shell.gd",
+    "scenes/acts/act3/a3_o1_pillars_before_time.tscn",
+    "scenes/acts/act3/a3_l2_living_forest.tscn",
+    "scripts/campaign/shell.gd",
+    "scripts/player.gd",
+    "scripts/campaign/level.gd",
+    "scripts/campaign/registry.gd",
+    "data/campaign/registry.json",
+    "project.godot",
+    "scripts/dev/dev.py",
+    str(Path(__file__).resolve().relative_to(ROOT)),
+    "scripts/campaign/exact_json.gd",
+)
+TRAVERSED_SUFFIXES = {".gd", ".tscn", ".tres", ".gdshader", ".godot"}
+RESOURCE_SUFFIXES = {
+    ".gd", ".tscn", ".tres", ".res", ".scn", ".gdshader", ".json",
+    ".png", ".jpg", ".jpeg", ".webp", ".svg", ".wav", ".ogg", ".mp3",
+    ".ttf", ".otf", ".glb", ".gltf", ".obj", ".mesh", ".material",
+}
+LITERAL_RESOURCE = re.compile(r'''["'](res://[^"'\r\n]+)["']''')
+REPORT_ENV = "CINDER_A3_O1_SHORT_REGISTRATION_REPORT"
+EXACT_PATH = "scripts/campaign/exact_json.gd"
+EXACT_SOURCE_SHA = "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc"
+SCRIPT_TEMPLATE_SHA = "56cc737e973bc92a0fbc3f4707fea6543c88d6d3c541d02f156f6f852395e121"
+CONTENT_LINE = re.compile(r'(?m)^const ACCEPTED_CONTENT: String = "([0-9a-f]{40})"$')
+REPORT_LINE = re.compile(r"(?m)^Retained SHORT registration report: (.+) sha256=([0-9a-f]{64})$")
+NATIVE_FOOTER = re.compile(r"(?m)^A3-O1 SHORT canonical registration: ([0-9]+) checks/([0-9]+) failures, short_scope_complete=(true|false); actual row/parent/unlock/entry/coherent protected Story\+initial disk/entrance Retry/early Leave/disk/normal cleanup\.")
+REPORT_SOURCE_PATHS = (
+    "tests/acts/act3/pillars_before_time_optional_shell.gd",
+    "scripts/acts/act3/pillars_before_time.gd",
+    "scenes/acts/act3/a3_o1_pillars_before_time.tscn",
+    "scripts/campaign/shell.gd",
+    "scripts/campaign/level.gd",
+    "scripts/campaign/registry.gd",
+    "scripts/campaign/attempts.gd",
+    "scripts/campaign/save_store.gd",
+    EXACT_PATH,
+    "data/campaign/registry.json",
+)
+SCOPE = (
+    "Explicit promoted registration/helper/O1/L2/Shell/Player/Level/registry/"
+    "Exact/project/dev/runner roots and recursive literal res:// file references "
+    "in GD/scene/resource/shader/project text. Existing named script UID sidecars "
+    "are checked; the selected new script UID is tracked separately. JSON files "
+    "are hash leaves: registry advertisements do not expand into the whole campaign. "
+    "Supported line comments, generated .cinder paths, non-file/template paths and "
+    "directory literals are excluded. No implicit class-name resolution, dynamic/"
+    "resource-directory loads, global UID/import graph or evidence-bank census. "
+    "The selected-import phase is a queued whole-project editor import and may "
+    "change global engine metadata outside this named source subset. The selected "
+    "script alone may gain its absent named UID during import. A native Exact JSON "
+    "report is retained raw and a bounded primitive-only decoder validates its "
+    "assertion rows/first failure/complete flag/source observations against the "
+    "literal footer and dev validation exit. No user arguments, completed-session "
+    "export or replay execution. Final owner completion/replay evidence must be "
+    "reviewed and explicitly reused separately by Root acceptance. No route, "
+    "mechanics, visual, GUI, performance or acceptance credit from this runner."
+)
+
+
+
+def timestamp():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+
+def digest_file(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def uncomment(line, suffix):
+    """Remove GD/project comments without interpreting code or resolving names."""
+    quote = None
+    escaped = False
+    for index, char in enumerate(line):
+        if escaped:
+            escaped = False
+            continue
+        if char == "\\" and quote is not None:
+            escaped = True
+        elif quote is not None:
+            if char == quote:
+                quote = None
+        elif char in {"'", '"'}:
+            quote = char
+        elif char == "#" and suffix in {".gd", ".godot"}:
+            return line[:index]
+        elif char == ";" and suffix == ".godot":
+            return line[:index]
+        elif char == "/" and suffix == ".gdshader" and line[index:index + 2] == "//":
+            return line[:index]
+    return line
+
+
+def selected_snapshot():
+    selected = set(SEEDS)
+    edges = []
+    missing = []
+    pending = list(SEEDS)
+    inspected = set()
+    while pending:
+        relative = pending.pop()
+        path = ROOT / relative
+        if not path.is_file():
+            missing.append(relative)
+            continue
+        if relative in inspected or path.suffix not in TRAVERSED_SUFFIXES:
+            continue
+        inspected.add(relative)
+        text = path.read_text(encoding="utf-8")
+        if path.suffix in {".gd", ".godot", ".gdshader"}:
+            text = "\n".join(uncomment(line, path.suffix) for line in text.splitlines())
+        for uri in sorted(set(LITERAL_RESOURCE.findall(text))):
+            target = uri.removeprefix("res://")
+            candidate = ROOT / target
+            if target.startswith((".cinder/", "docs/development/evidence/")):
+                continue
+            if "%" in target or not target or candidate.suffix not in RESOURCE_SUFFIXES:
+                continue
+            if candidate.is_absolute() and candidate.resolve().is_relative_to(ROOT):
+                target = str(candidate.resolve().relative_to(ROOT))
+            else:
+                raise ValueError("Literal resource is outside Root: " + uri)
+            edges.append({"from": relative, "uri": uri, "path": target})
+            if target not in selected:
+                selected.add(target)
+                pending.append(target)
+
+    # Do not manufacture or resolve UIDs. Hash genuine sidecars by source name.
+    uid_paths = []
+    for relative in sorted(selected):
+        if (ROOT / relative).suffix in {".gd", ".gdshader"}:
+            uid = relative + ".uid"
+            uid_paths.append(uid)
+            selected.add(uid)
+            if not (ROOT / uid).is_file() and uid != SCRIPT_UID:
+                missing.append(uid)
+    # Track optional configuration as a hash only, never copy local settings.
+    if (ROOT / ".cinder/local.json").is_file():
+        selected.add(".cinder/local.json")
+    files = {relative: digest_file(ROOT / relative)
+             for relative in sorted(selected) if (ROOT / relative).is_file()}
+    return {
+        "files": files,
+        "missing_required": sorted(set(missing)),
+        "literal_edges": sorted(edges, key=lambda edge: (edge["from"], edge["path"])),
+        "named_uid_paths": sorted(uid_paths),
+        "selected_script_uid": {
+            "path": SCRIPT_UID,
+            "exists": SCRIPT_UID in files,
+            "sha256": files.get(SCRIPT_UID),
+        },
+        "qualification": SCOPE,
+    }
+
+
+def compare(before, after):
+    a, b = before["files"], after["files"]
+    return {
+        "changed": [path for path in sorted(a.keys() & b.keys()) if a[path] != b[path]],
+        "added": sorted(b.keys() - a.keys()),
+        "removed": sorted(a.keys() - b.keys()),
+        "missing_required_after": after["missing_required"],
+        "literal_edges_changed": before["literal_edges"] != after["literal_edges"],
+    }
+
+
+def unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("Duplicate wire object key: " + key)
+        result[key] = value
+    return result
+
+
+def reject_constant(value):
+    raise ValueError("Nonfinite JSON wire constant: " + value)
+
+
+def decode_exact_report(raw):
+    """Subset of the pinned Exact codec: no float/native/state decoding.
+
+    Report fields contain only null, boolean, string, safe canonical integer,
+    arrays and dictionaries. Reject other kinds rather than coerce state.
+    Raw wire byte/depth/node/entry budgets and closed tags are validated first.
+    """
+    if len(raw) > 8 * 1024 * 1024:
+        raise ValueError("Exact report exceeds pinned MAX_BYTES")
+    text = raw.decode("utf-8", errors="strict")
+    depth = nodes = 0
+    commas = []
+    in_string = in_scalar = False
+    index = 0
+    while index < len(text):
+        char = text[index]
+        if in_string:
+            if char == "\\":
+                if text[index:index + 6] == "\\u0000":
+                    raise ValueError("Exact wire cannot contain a native NUL escape")
+                index += 2
+                continue
+            if char == '"': in_string = False
+            index += 1
+            continue
+        if char == '"':
+            in_string = True; in_scalar = False; nodes += 1
+        elif char in "[{":
+            commas.append(0); in_scalar = False; nodes += 1
+            if len(commas) > 64 * 3 + 4:
+                raise ValueError("Exact report exceeds raw depth budget")
+        elif char in "]}":
+            if commas: commas.pop()
+            in_scalar = False
+        elif char == ",":
+            if commas:
+                commas[-1] += 1
+                if commas[-1] >= 16384:
+                    raise ValueError("Exact report exceeds raw entry budget")
+            in_scalar = False
+        elif char in ": \t\n\r":
+            in_scalar = False
+        elif not in_scalar:
+            in_scalar = True; nodes += 1
+        if nodes > 262144 * 5 + 16:
+            raise ValueError("Exact report exceeds raw node budget")
+        index += 1
+    envelope = json.loads(text, object_pairs_hook=unique_object, parse_constant=reject_constant)
+    if (type(envelope) is not dict or set(envelope) != {"api_revision", "schema_version", "value"}
+            or envelope["api_revision"] != "exact-json-1"
+            or type(envelope["schema_version"]) is not int or envelope["schema_version"] != 1):
+        raise ValueError("Unsupported closed Exact report envelope")
+    remaining = [262144]
+
+    def decode(node, depth=0):
+        remaining[0] -= 1
+        if depth > 64 or remaining[0] < 0 or type(node) is not list or not node or type(node[0]) is not str:
+            raise ValueError("Invalid Exact report node/depth/node budget")
+        kind = node[0]
+        if kind == "null":
+            if len(node) != 1: raise ValueError("Null tag has extra fields")
+            return None
+        if len(node) != 2: raise ValueError("Exact tag must have two fields")
+        value = node[1]
+        if kind == "boolean" and type(value) is bool: return value
+        if kind == "string" and type(value) is str: return value
+        if kind == "integer":
+            if (type(value) is not str or not re.fullmatch(r"0|-?[1-9][0-9]*", value)
+                    or len(value) > (17 if value.startswith("-") else 16)):
+                raise ValueError("Exact integer requires canonical bounded decimal")
+            number = int(value)
+            if abs(number) > 9007199254740991:
+                raise ValueError("Exact integer outside supported range")
+            return number
+        if kind == "array":
+            if type(value) is not list or len(value) > 16384:
+                raise ValueError("Invalid bounded Exact array")
+            return [decode(child, depth + 1) for child in value]
+        if kind == "dictionary":
+            if type(value) is not list or len(value) > 16384:
+                raise ValueError("Invalid bounded Exact dictionary")
+            result = {}
+            for entry in value:
+                if type(entry) is not list or len(entry) != 2 or type(entry[0]) is not str or entry[0] in result:
+                    raise ValueError("Exact dictionary requires unique string entries")
+                result[entry[0]] = decode(entry[1], depth + 1)
+            return result
+        raise ValueError("Unsupported or mistyped Exact report tag: " + kind)
+
+    result = decode(envelope["value"])
+    if type(result) is not dict: raise ValueError("Exact report root is not a dictionary")
+    return result
+
+
+def selected_content(submitted):
+    if submitted["files"].get(EXACT_PATH) != EXACT_SOURCE_SHA:
+        raise ValueError("Minimal report decoder requires the exact reviewed Exact source pin")
+    text = (ROOT / SCRIPT).read_text(encoding="utf-8")
+    matches = list(CONTENT_LINE.finditer(text))
+    if len(matches) != 1:
+        raise ValueError("Promoted fixture requires one exact selected ACCEPTED_CONTENT commit")
+    normalized = CONTENT_LINE.sub('const ACCEPTED_CONTENT: String = "PENDING_EXACT_OWNER_CONTENT_COMMIT"', text)
+    if hashlib.sha256(normalized.encode("utf-8")).hexdigest() != SCRIPT_TEMPLATE_SHA:
+        raise ValueError("Promoted fixture differs from the Root-corrected short-reuse template beyond its content pin")
+    return matches[0].group(1)
+
+
+def validate_native_report(raw, log_text, expected_path, baseline, accepted_content):
+    report = decode_exact_report(raw)
+    report_sha = hashlib.sha256(raw).hexdigest()
+    report_lines = REPORT_LINE.findall(log_text)
+    footers = NATIVE_FOOTER.findall(log_text)
+    if report_lines != [(str(expected_path), report_sha)]:
+        raise ValueError("Native retained-report path/hash does not exactly join the owned output")
+    checks, failures = report.get("checks"), report.get("failures")
+    complete, success = report.get("short_scope_complete"), report.get("success")
+    if (type(report.get("schema_version")) is not int or report["schema_version"] != 1
+            or report.get("kind") != "a3-o1-short-canonical-registration"
+            or report.get("accepted_content") != accepted_content
+            or type(checks) is not int or checks <= 0
+            or type(failures) is not int or failures < 0
+            or type(complete) is not bool or type(success) is not bool
+            or success != (failures == 0 and complete)):
+        raise ValueError("Native short report has invalid exact identity/count/completion fields")
+    if footers != [(str(checks), str(failures), str(complete).lower())]:
+        raise ValueError("Native footer does not exactly join retained report counts/completion")
+    rows = report.get("report")
+    if type(rows) is not list or len(rows) != checks:
+        raise ValueError("Retained assertions do not match the check count")
+    failed = []
+    for ordinal, row in enumerate(rows, 1):
+        if (type(row) is not dict or set(row) != {"check", "ok", "label", "detail"}
+                or type(row["check"]) is not int or row["check"] != ordinal
+                or type(row["ok"]) is not bool or type(row["label"]) is not str
+                or type(row["detail"]) is not str):
+            raise ValueError("Invalid retained assertion row")
+        if not row["ok"]: failed.append(row)
+    if len(failed) != failures or report.get("first_failure") != (failed[0] if failed else {}):
+        raise ValueError("Native first failure or retained failed-row count is inconsistent")
+    reuse = report.get("completion_replay")
+    if (type(reuse) is not dict or reuse.get("executed_here") is not False
+            or reuse.get("completion_session_export_required") is not False
+            or type(reuse.get("required_before_root_selection")) is not str
+            or not reuse["required_before_root_selection"]):
+        raise ValueError("Short report cannot claim completion/replay execution or demand session export")
+    named = {"res://" + path: baseline["files"][path] for path in REPORT_SOURCE_PATHS}
+    expected_keys = set(named) | {"fixture"}
+    for side in ("source_before", "source_after"):
+        observed = report.get(side)
+        if type(observed) is not dict or set(observed) != expected_keys:
+            raise ValueError("Native source observations are not the exact named subset")
+        for uri, sha in named.items():
+            row = observed[uri]
+            if type(row) is not dict or row.get("present") is not True or row.get("sha256") != sha:
+                raise ValueError("Native named source observation does not join queue baseline: " + uri)
+        fixture = observed["fixture"]
+        if (type(fixture) is not dict or fixture.get("path") != SCRIPT_URI
+                or fixture.get("sha256") != baseline["files"][SCRIPT]):
+            raise ValueError("Native actual executing fixture does not join selected Root script")
+    initial = report.get("initial_closed_packet_disk")
+    if complete and (type(initial) is not dict or initial.get("independent_initial_disk_equal") is not True
+            or any(type(initial.get(key)) is not str or not re.fullmatch(r"[0-9a-f]{64}", initial[key])
+                   for key in ("story_sha256", "session_sha256"))
+            or any(type(initial.get(key)) is not int or initial[key] <= 0 for key in ("story_bytes", "session_bytes"))):
+        raise ValueError("Complete native report lacks the closed initial Story/session/disk observation")
+    return {
+        "path": str(expected_path), "sha256": report_sha, "bytes": len(raw),
+        "codec_source_path": EXACT_PATH, "codec_source_sha256": EXACT_SOURCE_SHA,
+        "decoder_scope": "bounded primitive report subset; no float64/native/campaign-state decoding",
+        "checks": checks, "failures": failures, "short_scope_complete": complete,
+        "success": success, "first_failure": report["first_failure"],
+        "retained_assertion_rows": len(rows), "footer_and_named_source_join": True,
+        "completion_replay_executed_here": False,
+    }
+
+
+class Tee:
+    def __init__(self, original, log):
+        self.original, self.log = original, log
+
+    def write(self, value):
+        self.log.write(value)
+        return self.original.write(value)
+
+    def flush(self):
+        self.log.flush()
+        self.original.flush()
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=PHASES)
+    args = parser.parse_args()
+    suffix = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    out = HERE / (args.phase + "-" + suffix + "-" + uuid.uuid4().hex[:8])
+    out.mkdir(exist_ok=False)
+
+    def save(name, value):
+        (out / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+
+    result = {
+        "schema_version": 1,
+        "phase": args.phase,
+        "output_directory": str(out),
+        "submitted_at": timestamp(),
+        "engine_timeout_seconds_after_queue": TIMEOUT_SECONDS,
+        "qualification": SCOPE,
+        "queue_acquired": False,
+        "engine_started_via_dev": False,
+        "native_report_requested_path": str(out / "native-report.exact.json"),
+        "environment_scope": "Report destination supplied only to this owned child via ProjectContext environ; no os.environ or shared configuration mutation",
+        "short_template_sha256_before_exact_content_pin": SCRIPT_TEMPLATE_SHA,
+        "codec_source_sha256": EXACT_SOURCE_SHA,
+        "lifecycle_contract": (
+            "Canonical dev.godot_lock inherits its lock descriptor to the child. "
+            "Only dev.run_validation performs bounded owned-child termination, "
+            "error detection and wait. This dev API uses a direct child and does "
+            "not establish or signal a separate process group. This runner never "
+            "signals another job, deletes a lock, or bypasses the queue."
+        ),
+    }
+    save("command.json", {"constructed": False, "reason": "Preflight has not yet completed"})
+    save("queue.json", {"queued": False, "acquired": False, "engine_deadline_starts_after_acquisition": True})
+    save("lifecycle.json", result)
+    print("Unique registration output:", out, flush=True)
+    code = 2
+    baseline = None
+    with (out / "raw.log").open("w", encoding="utf-8") as log, \
+            contextlib.redirect_stdout(Tee(sys.stdout, log)), \
+            contextlib.redirect_stderr(Tee(sys.stderr, log)):
+        try:
+            submitted = selected_snapshot()
+            baseline = submitted
+            save("source-submitted.json", submitted)
+            save("source-before.json", submitted)
+            if submitted["missing_required"]:
+                raise FileNotFoundError("Required promoted/named inputs missing: " + ", ".join(submitted["missing_required"]))
+            accepted_content = selected_content(submitted)
+            result["accepted_content"] = accepted_content
+            if args.phase != "selected-import" and not submitted["selected_script_uid"]["exists"]:
+                raise FileNotFoundError("Run the queued selected-import phase first; selected script UID is absent")
+            result["preflight_passed_at"] = timestamp()
+            spec = importlib.util.spec_from_file_location("a3_o1_registration_dev", ROOT / "scripts/dev/dev.py")
+            dev = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = dev
+            spec.loader.exec_module(dev)
+            child_environ = dict(os.environ)
+            child_environ.pop(REPORT_ENV, None)
+            if args.phase == "registration-native":
+                child_environ[REPORT_ENV] = str(out / "native-report.exact.json")
+            context = dev.ProjectContext(root=ROOT, environ=child_environ)
+            command = [str(dev.resolve_godot(context)), "--path", str(ROOT), "--headless", "--log-file", str(out / "engine.log"), "--script", SCRIPT_URI]
+            if args.phase == "registration-parse":
+                command.append("--check-only")
+            elif args.phase == "selected-import":
+                command = [str(dev.resolve_godot(context)), "--path", str(ROOT), "--headless", "--editor", "--import", "--log-file", str(out / "engine.log")]
+            result["command"] = command
+            save("command.json", command)
+            result["queued_at"] = timestamp()
+            save("queue.json", {"queued_at": result["queued_at"], "acquired": False, "engine_deadline_starts_after_acquisition": True})
+            save("lifecycle.json", result)
+            with dev.godot_lock(context.root) as lock:
+                result["queue_acquired"] = True
+                result["queue_acquired_at"] = timestamp()
+                save("queue.json", {"queued_at": result["queued_at"], "acquired": True, "acquired_at": result["queue_acquired_at"], "engine_deadline_starts_after_acquisition": True})
+                baseline = selected_snapshot()
+                save("source-before.json", baseline)
+                queue_delta = compare(submitted, baseline)
+                result["queue_source_delta"] = queue_delta
+                if any(queue_delta[key] for key in queue_delta):
+                    raise ValueError("Named inputs changed while queued; refusing engine start")
+                result["engine_started_via_dev"] = True
+                result["validation_started_at"] = timestamp()
+                save("lifecycle.json", result)
+                print("Canonical queue acquired; owned validation deadline starts now.", flush=True)
+                started = time.monotonic()
+                code = dev.run_validation(command, context, lock, TIMEOUT_SECONDS, detect_godot_errors=True)
+                result["validation_elapsed_seconds"] = time.monotonic() - started
+                result["dev_validation_returncode"] = code
+                result["validation_closed_at"] = timestamp()
+                log.flush()
+                if args.phase == "registration-native":
+                    native_path = out / "native-report.exact.json"
+                    result["native_report_present"] = native_path.is_file()
+                    if native_path.is_file():
+                        raw_report = native_path.read_bytes()
+                        result["native_report_raw"] = {"path": str(native_path), "sha256": hashlib.sha256(raw_report).hexdigest(), "bytes": len(raw_report)}
+                        result["native_report"] = validate_native_report(raw_report, (out / "raw.log").read_text(encoding="utf-8"), native_path, baseline, accepted_content)
+                    if code == 0 and (not native_path.is_file() or result["native_report"]["success"] is not True):
+                        raise ValueError("Clean native exit lacks a completed zero-failure exact short report")
+                    result["native_clean_exit_report_join"] = code == 0 and result.get("native_report", {}).get("success") is True
+
+        except KeyboardInterrupt:
+            code = 130
+            result["runner_error"] = "KeyboardInterrupt; owned child closure delegated to dev.run_validation"
+            print(result["runner_error"], flush=True)
+        except Exception as error:
+            if code == 0:
+                code = 1
+            result["runner_error"] = repr(error)
+            print("Runner error:", repr(error), flush=True)
+        finally:
+            try:
+                after = selected_snapshot()
+                save("source-after.json", after)
+                if baseline is not None:
+                    delta = compare(baseline, after)
+                    result["source_delta"] = delta
+                    allowed_additions = [SCRIPT_UID] if args.phase == "selected-import" else []
+                    unchanged = (not delta["changed"] and not delta["removed"] and
+                                 not delta["missing_required_after"] and not delta["literal_edges_changed"] and
+                                 all(path in allowed_additions for path in delta["added"]))
+                    result["selected_source_subset_stable"] = unchanged
+                    result["selected_source_count_before"] = len(baseline["files"])
+                    result["selected_source_count_after"] = len(after["files"])
+                    result["selected_script_uid_before"] = baseline["selected_script_uid"]
+                    result["selected_script_uid_after"] = after["selected_script_uid"]
+                    if code == 0 and (not unchanged or not after["selected_script_uid"]["exists"]):
+                        code = 1
+                        result["runner_error"] = "Validation returned clean, but the named source subset/selected UID did not satisfy closure checks"
+            except Exception as error:
+                result["after_snapshot_error"] = repr(error)
+                if code == 0:
+                    code = 1
+            result["returncode"] = code
+            result["closed_at"] = timestamp()
+            save("result.json", result)
+            save("lifecycle.json", result)
+            print("Registration wrapper closed:", code, "; records:", out, flush=True)
+    # Index only this unique run's known records after raw.log is closed.
+    records = ("command.json", "queue.json", "lifecycle.json", "source-submitted.json",
+               "source-before.json", "source-after.json", "raw.log", "engine.log",
+               "native-report.exact.json", "result.json")
+    index = {"schema_version": 1, "phase": args.phase, "returncode": code,
+             "scope": "known records in this unique output only; no evidence-bank census",
+             "records": {name: {"sha256": digest_file(out / name), "bytes": (out / name).stat().st_size}
+                         for name in records if (out / name).is_file()}}
+    save("evidence-index.json", index)
+    print("Registration evidence index:", out / "evidence-index.json", "sha256=" + digest_file(out / "evidence-index.json"), flush=True)
+    return code
+
+
+if __name__ == "__main__":
+    sys.exit(main())

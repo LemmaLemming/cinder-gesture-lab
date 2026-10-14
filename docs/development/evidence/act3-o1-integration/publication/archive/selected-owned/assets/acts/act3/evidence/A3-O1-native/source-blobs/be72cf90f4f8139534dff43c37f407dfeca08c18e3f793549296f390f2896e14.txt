@@ -1,0 +1,103 @@
+{
+  "level_id": "A3-O1",
+  "parent": "A3-L1",
+  "prototype_sources": [
+    "o1-central-stalker"
+  ],
+  "floor_size": [
+    14,
+    1,
+    22
+  ],
+  "spawn": [
+    0,
+    0.1,
+    8
+  ],
+  "exit_position": [
+    0,
+    0,
+    -9
+  ],
+  "collection_order": "any",
+  "kill_gate": false,
+  "markers": {
+    "o1-southwest-marker": {
+      "position": [
+        -3,
+        0,
+        4
+      ],
+      "contact_rect": [
+        -4.2,
+        2.8,
+        2.4,
+        2.4
+      ]
+    },
+    "o1-east-marker": {
+      "position": [
+        3,
+        0,
+        0
+      ],
+      "contact_rect": [
+        1.8,
+        -1.2,
+        2.4,
+        2.4
+      ]
+    },
+    "o1-northwest-marker": {
+      "position": [
+        -3,
+        0,
+        -5
+      ],
+      "contact_rect": [
+        -4.2,
+        -6.2,
+        2.4,
+        2.4
+      ]
+    }
+  },
+  "source_positions": {
+    "o1-central-stalker": [
+      0,
+      0.1,
+      -1
+    ]
+  },
+  "stalker_raw_role": {
+    "id": "A3-E1",
+    "raw_damage": 12.0,
+    "max_hp": 36.0,
+    "windup_s": 1.35,
+    "lock_s": 0.45,
+    "active_s": 0.3,
+    "recovery_s": 2.0,
+    "attack_interval_s": 3.7,
+    "move_speed": 2.8,
+    "provisional_unplaytested": true
+  },
+  "minimum_timing_floors": {
+    "windup_s": 1.35,
+    "lock_s": 0.45,
+    "recovery_s": 2.0
+  },
+  "rule_scope": "first small-room one familiar source prototype; no timing/damage/HP/collision changes",
+  "decision": "Choose any marker order to leave a useful flank under the next scenic Sun choice",
+  "equipment": {
+    "baseline_ids": [
+      "CLOTH-J0",
+      "CLOTH-P0",
+      "CLOTH-S0",
+      "WEAPON-01"
+    ],
+    "required_pickups": [],
+    "required_blast_ammo": 0,
+    "creation_claims": [],
+    "ability_introductions": []
+  }
+}

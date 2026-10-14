@@ -1,5 +1,17 @@
 # Cinder shared progress
 
+## Current status — 14 October 2026, A3-O1 acceptance
+
+[A3-O1 Pillars Before Their Time is independently accepted](ACT3_O1_ACCEPTANCE.md) at exact content `3ece87b82f5b91023bdae94da013933ab9c4fd3b`. Root canonical **46/0** closes clean in14.61s, with clean import/parser and170 selected inputs unchanged. Reused owner351/0 mechanics,125/0 held Save/Retry,214/0 actual completion/replay and57/0 corrected portrait retain their original source/command attribution. Root personally inspected original and corrected paused images; partial floor overlap, remote crop and untested moving/full-playthrough limits remain. Parent A3-L1, unchanged L1→L2 and once-only optional stamp remain; every other23 Registry row is unchanged. Act3 proceeds to O2, then O3 sequentially.
+
+Campaign **20/24**: Act1 6/8, Act2 8/8, Act3 6/8. All fifteen main levels and five optional levels are accepted. Remaining A1-O2/O3 and A3-O2/O3 proceed independently. No repeated owner route, completion export or cross-act gate was required. The full desktop goal remains active.
+
+All three [actual preserving A1-O1 content adoptions](evidence/a1-o1-content-adoption/index.json) are boundedly verified: Act1 `922db94a`, Act2 `4ff83975`, Act3 `a648d341`. Seven named file joins per owner and exact identities/receipts/parents/ancestry pass; broader custody is owner-reported, and the older Act3 pending observation is retained. Current canonical aliases are reconciled. This supplies no new gameplay credit.
+
+Agent02 is **inactive by verified direct human instruction to conserve usage**. Its eight accepted levels and completed source help remain. The delivered A3 registration source review at `089ff365` informed Root's post-Continue whole-Story metadata/disk/quiet checks. The later Challenge-coverage task was declined and is unexecuted, with no audit or test credit; do not redispatch until the human explicitly resumes that worker. Agent01/03 capacity recovery uses the human-authorized GPT-6.1 Sol switch while retaining identities/checkouts/branches/ownership.
+
+Shared60 runtime behavior is unchanged. Current README/UI/Character Lab/opening-availability wording now follows implemented campaign scope. Two credits comments are corrected with all executable settings text unchanged; no settings behavior or new settings test is claimed. Historical progress snapshots below retain their actual counts and scopes.
+
 ## Current status — 14 October 2026, Shared60 and A1-O1 acceptance
 
 [A1-O1 Salvage Circuit is independently accepted](ACT1_O1_ACCEPTANCE.md): exact curated handoff, reused authored49/0 and inspected74/0, plus new canonical22/0 clean in15.28s. Its parent A1-L2, optional once-only stamp and protected Story separation remain; every other row is unchanged. Necessary import/parser pass, with only the named new test UID. Act1 proceeds to O2 now. Campaign **19/24**; Act1 6/8, Act2 8/8, Act3 5/8.

@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Condition "!is_inside_tree()" is true. Returning: Transform3D()
+   at: get_global_transform (scene/3d/node_3d.cpp:649)
+   GDScript backtrace (most recent call first):
+       [0] spawn_position (res://scripts/campaign/level.gd:91)
+       [1] contract_error (res://scripts/acts/act3/pillars_before_time.gd:143)
+       [2] load_level_scene (res://scripts/game.gd:155)
+       [3] _open (res://tests/acts/act3/pillars_before_time_focused.gd:84)
+       [4] _run (res://tests/acts/act3/pillars_before_time_focused.gd:64)
+ERROR: public Main selects actual O1: Pillars requires its canonical identity, floor transform and grounded spawn
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/acts/act3/pillars_before_time_focused.gd:269)
+       [1] _open (res://tests/acts/act3/pillars_before_time_focused.gd:84)
+       [2] _run (res://tests/acts/act3/pillars_before_time_focused.gd:64)
+Pillars focused mechanics: 3 checks; failures: 1; post-actor ticks: 0

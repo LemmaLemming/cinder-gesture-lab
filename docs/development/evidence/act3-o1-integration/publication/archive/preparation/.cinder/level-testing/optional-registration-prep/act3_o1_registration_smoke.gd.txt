@@ -1,0 +1,138 @@
+extends "res://tests/acts/act3/pillars_before_time_optional_shell.gd"
+## INERT PREPARATION, UNPARSED/UNEXECUTED. Root promotes after exact handoff.
+## Overrides owner _run; no held-phase/marker/route/GUI fixture is repeated.
+## Actual canonical metadata; TEST predecessor prefix11 only via real Story seed.
+## Actual owner completed-return packet is hash-pinned, not fabricated progress.
+## Public menu signals are API evidence; no earned route or GUI input claim.
+
+const ACCEPTED_CONTENT: String = "PENDING_EXACT_OWNER_CONTENT_COMMIT"
+const ReplayEquipment = preload("res://scripts/equipment.gd")
+var _registration_done: bool = false
+
+func _initialize() -> void:
+	isolated = "user://test-a3-o1-canonical-%d-%d/" % [OS.get_process_id(), Time.get_ticks_usec()]
+	old_audio = AudioServer.generate_bus_layout()
+	old_fps = Engine.max_fps
+	_run.call_deferred()
+
+func _run() -> void:
+	create_timer(120.0, true).timeout.connect(func() -> void:
+		if not finished:
+			_expect(false, "bounded canonical O1 registration watchdog")
+			_finish.call_deferred())
+	root.size = Vector2i(340, 736)
+	root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	node_added.connect(_watch_node)
+	canonical_bytes = FileAccess.get_file_as_string(Registry.DATA_PATH)
+	var canonical: CinderCampaignRegistry = Registry.new()
+	var row: Dictionary = canonical.entry("A3-O1")
+	if not _expect(ACCEPTED_CONTENT.length() == 40 and canonical.last_error.is_empty() and canonical.ids().size() == 24 and row.get("readiness") == "accepted" and row.get("accepted_commit") == ACCEPTED_CONTENT and row.get("scene_path") == OPTIONAL_PATH and row.get("api_revision") == Registry.API_REVISION and canonical.scene_error("A3-O1").is_empty(), "actual canonical submitted O1 content/scene/API validates"):
+		await _finish(); return
+	if not _expect(row.get("parent_level_id") == "A3-L1" and canonical.entry("A3-L1").get("readiness") == "accepted" and not canonical.is_unlocked("A3-O1", []) and not canonical.is_unlocked("A3-O1", ["A2-L5"]) and canonical.is_unlocked("A3-O1", ["A3-L1"]), "accepted canonical A3-L1 alone unlocks O1"):
+		await _finish(); return
+	if not _expect(row.get("reward_id") == "A3-O1-completion-stamp" and row.get("reward_policy") == "once_only_completion_stamp_no_stat_growth" and canonical.next_main("A3-L1") == "A3-L2", "once-only optional stamp stays outside unchanged main route"):
+		await _finish(); return
+	# Real accepted-L2 donor supplies actual complete initial Story; prefix11 TEST.
+	if not await _seed_story(canonical) or not await _new_shell(expected_session): await _finish(); return
+	production.menu.continue_story_requested.emit()
+	if not await _wait_installed(STORY_ID, "resume", protected) or not _installed(protected): await _finish(); return
+	var prior_refs: Array[WeakRef] = []
+	_collect_refs(_world_container(), prior_refs)
+	var before: Dictionary = _core_ids()
+	production.menu.optional_requested.emit("A3-O1")
+	if not await _wait_installed("A3-O1", "resume", {}, before): await _finish(); return
+	var entrance: Dictionary = production.capture_campaign_snapshot()
+	if not _installed(entrance) or not await _released(prior_refs, "canonical optional entry retires whole Story world"): await _finish(); return
+	var pristine: Dictionary = production.active_level.call("state")
+	if not _expect(production.active_level.get_script() == O1 and pristine.collections.is_empty() and not production.active_level.is_completed() and production.player.get_world_action_records().is_empty() and production.attempts.active_kind() == "optional" and _same(production.attempts.story_snapshot(), protected) and _same(production.attempts.state().side_attempt.checkpoint, entrance), "canonical pristine optional entry retains protected Story and actual entrance checkpoint"):
+		await _finish(); return
+	if not _expect(not production.active_level.request_contact_exit(O1.EXIT_ID, production.player) and _same(production.capture_campaign_snapshot(), entrance), "premature real exit refuses without changing initial unit"):
+		await _finish(); return
+	# Only entrance Retry here; owner's actual first/second marker Retry is reused.
+	prior_refs.clear(); _collect_refs(_world_container(), prior_refs)
+	before = _native_ids()
+	receiver_events.clear()
+	production.menu.retry_requested.emit()
+	if not await _wait_installed("A3-O1", "resume", entrance, before) or not _installed(entrance) or not _distinct(before) or not _quiet_selected() or not await _released(prior_refs, "canonical entrance Retry frees retired native world"):
+		await _finish(); return
+	prior_refs.clear(); _collect_refs(_world_container(), prior_refs)
+	before = _core_ids()
+	production.menu.leave_side_requested.emit()
+	if not await _wait_installed(STORY_ID, "journey", protected, before) or not _installed(protected) or not await _released(prior_refs, "canonical abandon frees optional native world"):
+		await _finish(); return
+	var returned: Dictionary = production.attempts.state()
+	if not _expect(returned.side_attempt == null and returned.completed_main == expected_session.completed_main and returned.completed_optional.is_empty() and returned.reward_ids.is_empty() and returned.unlocked_equipment == expected_session.unlocked_equipment and _same(returned.story, expected_session.story), "early return protects Story/main/equipment and grants no completion/stamp") or not _disk(returned):
+		await _finish(); return
+	if not await _completed_replay_boundary(canonical): await _finish(); return
+	_registration_done = true
+	await _finish()
+
+func _new_shell(expected: Dictionary) -> bool:
+	receiver_events.clear(); watched.clear()
+	production = Shell.new()
+	if not _expect(production.configure_runtime({}, isolated + "campaign.json", isolated + "settings.json", isolated + "preferences.json"), "actual canonical Shell uses no substitute readiness registry", production.campaign_error): return false
+	root.add_child(production)
+	for _frame: int in range(FRAME_LIMIT):
+		await process_frame
+		if not _valid_shell(): return false
+		if paused and not production.is_pause_requested() and production.menu.page_name() == "title" and production.player == null and production.active_level == null and _same(production.attempts.state(), expected):
+			return _expect(true, "exact entire expected canonical startup session settles at Title")
+	return _expect(false, "bounded canonical exact Title startup session", production.campaign_error)
+
+func _completed_replay_boundary(canonical: CinderCampaignRegistry) -> bool:
+	var path: String = ""
+	var digest: String = ""
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--completed-session="): path = argument.trim_prefix("--completed-session=")
+		if argument.begins_with("--completed-sha256="): digest = argument.trim_prefix("--completed-sha256=")
+	if not _expect(not path.is_empty() and digest.length() == 64 and FileAccess.get_sha256(path) == digest, "actual owner's completed-return session is explicitly hash pinned"): return false
+	var decoded: Dictionary = Exact.parse(FileAccess.get_file_as_string(path))
+	if not _expect(decoded.get("accepted", false) and decoded.get("value") is Dictionary, "complete finite owner completed-return session parses exactly"): return false
+	var submitted: Dictionary = decoded.value
+	var model: CinderCampaignAttempts = Attempts.new(canonical)
+	if not _expect(model.state_error(submitted).is_empty() and submitted.side_attempt == null and submitted.completed_main == expected_session.completed_main and submitted.completed_optional == ["A3-O1"] and submitted.reward_ids == ["A3-O1-completion-stamp"] and submitted.story.level_id == STORY_ID and submitted.unlocked_equipment == expected_session.unlocked_equipment, "genuine owner return carries one stamp and unchanged main/equipment boundary"): return false
+	if not await _dispose_shell(): return false
+	var writer: CinderSaveStore = Store.new(isolated + "campaign.json")
+	writer.payload_validator = model.saved_payload_error
+	if not _expect(writer.write_payload(submitted), "actual owner complete session enters isolated exact Store", writer.last_error): return false
+	protected = submitted.story.snapshot.duplicate(true)
+	if not await _new_shell(submitted): return false
+	production.menu.continue_story_requested.emit()
+	if not await _wait_installed(STORY_ID, "resume", protected) or not _installed(protected): return false
+	production.menu.replay_requested.emit("A3-O1", ReplayEquipment.STARTER)
+	if not await _wait_installed("A3-O1", "resume"): return false
+	var replay: Dictionary = production.capture_campaign_snapshot()
+	if not _installed(replay): return false
+	var state: Dictionary = production.attempts.state()
+	var local: Dictionary = production.active_level.call("state")
+	if not _expect(state.side_attempt.kind == "replay" and local.collections.is_empty() and not production.active_level.is_completed() and state.completed_optional == submitted.completed_optional and state.reward_ids == submitted.reward_ids and _same(state.story, submitted.story), "fresh canonical optional Replay preserves exactly one genuine existing stamp"): return false
+	var refs: Array[WeakRef] = []
+	_collect_refs(_world_container(), refs)
+	var before: Dictionary = _core_ids()
+	production.menu.leave_side_requested.emit()
+	if not await _wait_installed(STORY_ID, "journey", protected, before) or not _installed(protected) or not await _released(refs, "canonical Replay Leave frees optional native world"): return false
+	state = production.attempts.state()
+	return _expect(state.side_attempt == null and state.completed_main == submitted.completed_main and state.completed_optional == submitted.completed_optional and state.reward_ids == submitted.reward_ids and state.unlocked_equipment == submitted.unlocked_equipment and _same(state.story, submitted.story), "canonical replay return retains exact one stamp and protected main/equipment/Story boundaries") and _disk(state)
+
+func _finish() -> void:
+	if finished: return
+	finished = true
+	await _dispose_shell()
+	if is_instance_valid(preview):
+		var refs: Array[WeakRef] = []
+		_collect_refs(preview, refs)
+		var donor: CinderLevel = preview.get("active_level") as CinderLevel
+		if donor != null: donor.exit_level()
+		preview.queue_free(); preview = null
+		await _released(refs, "remaining real Story seed donor cleanup")
+	if node_added.is_connected(_watch_node): node_added.disconnect(_watch_node)
+	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == canonical_bytes, "canonical registry remains byte exact")
+	for name: String in ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]:
+		var path: String = isolated + name
+		if FileAccess.file_exists(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(isolated))
+	AudioServer.set_bus_layout(old_audio); Engine.max_fps = old_fps
+	paused = false
+	print("A3-O1 canonical registration: %d checks/%d failures, complete=%s; actual row/parent/entry/entrance Retry/early Leave/reused hash-pinned completed session/Replay one-stamp retention/protected Story/cleanup. TEST prefix11; no inherited native held/marker/completion execution, earned route, GUI, portrait or broad balance credit." % [checks, failures, str(_registration_done)])
+	quit(0 if failures == 0 and _registration_done else 1)
