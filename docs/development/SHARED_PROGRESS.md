@@ -1,5 +1,15 @@
 # Cinder shared progress
 
+## Current status — 14 October 2026, Shared58
+
+The [physics-origin Pause repair](PHYSICS_ORIGIN_PAUSE.md) resolves an independently reproduced save refusal: the first process signal retained the preparation counter. Original native6/1 is preserved; the nine-line fix passes paired23/0, persistent22/0, directly affected core96/0 and startup21/0, with clean import. No deadline, snapshot or final validation predicate was relaxed. [Original logs and source manifests](evidence/physics-origin-pause/index.json) retain every phase and the genuine new test UID.
+
+Act 2 continues its smallest authored checkpoint control and pending native-lunge persistence checks after adoption. Act 3 retains the actual1078/1 Retry observation and71/1 standalone saved-warning startup failure; its test-only fresh-instance wait and authentic saved-session suffix have passed source review. Their original shared error operands remain unproven until their own focused results arrive. Integration provides the exact old-to-new Shell archive compatibility pair without changing saved bytes.
+
+Act 1's later-checkpoint transport independently passes80/0 clean: genuine phase-two checkpoint, later Sneeze disk Continue, earlier GUI Retry, complete state and donor/disk preservation, retired-world cleanup. Its current fixture has a subsequent selector/reporting-only correction; the exercised branch is source-reviewed unchanged, not a new native run. Representative remaining portraits and an exact L5 handoff remain. It need not wait for Act 3 or shared support acceptance.
+
+Campaign remains **16/24**: Act1 4/8, Act2 8/8 and Act3 4/8. The full desktop goal remains active; original failed/canceled/unexecuted evidence and untested full-playthrough limitations remain.
+
 ## Current status — 14 October 2026, Shared57
 
 Actual preserving Shared57 adoption is now independently verified for all three workers: Act1 merge `24aa68f3`, Act2 `694d5fb9` and Act3 `cb4b6549`. [Act2/Act3 originals and bounded verification](evidence/shared57-worker-adoption/index.json), followed by the [Act1 supplement](evidence/shared57-worker-adoption/act1-supplement/index.json), preserve exact parents, prior owned Git trees and named publication→merge→physical runtime/test/UID joins. Broad physical-bank/UID custody retains its owner scope. All current canonical aliases are reconciled. Act2 has installed its test bridge and now diagnoses an actual checkpoint failure, while Acts1 and3 continue focused L5 checks. No additional native or acceptance credit follows from adoption.
