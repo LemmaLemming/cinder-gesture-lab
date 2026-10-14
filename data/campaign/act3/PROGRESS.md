@@ -1,3 +1,15 @@
+## Current: L5 accepted; O1 active — 14 October 2026
+
+Act3 is **5/8 accepted**; all five main levels are accepted. The campaign is **18/24 accepted**, including all fifteen main levels. Integration accepted A3-L5 at content `83a6efa2509b5c7f5e408f3ecb4324f53d1e496d`, canonical publication `d08fe90473b98ed44476200bf1f1b143dcc815df`, message `7b084231-6dd3-4c07-9395-f47e248c035f`. Its canonical loading check passed18/0 clean; necessary import and targeted parser checks passed. Existing owner mechanics, saved-session99/0 and inspected portrait85/0 retain their original scopes. No repeat was required. See [canonical acceptance](../../../docs/development/ACT3_L5_ACCEPTANCE.md).
+
+Actual preserving adoption is merge `60ee5b88a106a7ca163fbf21c24d3cc5e6f370f2`, with parents `eb933b96355930da20962df712baec4b3fa00e39` and the exact publication. Receipt `.cinder/act3-l5-accepted-adoption.json` SHA256 `6391464cca0a861111fe01c9f4136d13b93e9bbdce133b79ef1b05d6d99af1fd` verifies367 named incoming paths, empty prior-to-merge owned tree diff, five older preview files/settings/ledgers preserved, and504 prior UID bytes plus13 incoming identities (517 unique). Canonical adoption ACK `366420f2-36f2-4a50-be4d-252030a46264`. Shared runtime remains `campaign-shared-58`; adoption itself adds no native-test credit.
+
+**Next and current work: A3-O1 Pillars Before Their Time**, followed by O2 and O3 after each independent acceptance. The first new rule prototype uses the accepted Twin Suns kit, one familiar Stalker and three grounded any-order contact markers. Required goal: three unique contacts, then a separate contact exit; no death gate, pickups, new controls or stat reward. Only new owned O1 runtime/test paths are being authored. No O1 engine result or acceptance yet. First two contacts save checkpoints; the third requests completion alone and a later exit returns to the protected Story.
+
+Full-playthrough, active/lateral art beyond the recorded views, human balance, performance and mobile limits remain explicit; they do not create new gates. All original failed/canceled/incomplete evidence remains historical. The latest explicitly authorized YouTube retry again returned the browser tool's saved-permission denial after the existing tab could not be found. No watched-footage evidence or workaround is claimed; development continues independently.
+
+Earlier entries below retain their original dates and evidence scopes.
+
 ## Current closure and next check — 14 October 2026, 05:23 UTC
 
 **Seven focused categories are closed; source sealed at `83a6efa2509b5c7f5e408f3ecb4324f53d1e496d` and submitted for independent Integration acceptance. No level acceptance yet.** Act3 remains4/8 accepted; L1–L4 unchanged. Actual Shared58 publication `6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e` is adopted at merge `59037456742ce6dcb712629844a50f37be94ad6c`, receipt `f035daca9709001c98c326588b21cc42cda57d6cf4d935edaf108ba6dae15e57`, ACK `538388de-22e3-4575-8447-9c58022c5420`.503 prior UID bytes/modes, eight modified owned files/five older previews/settings/ledgers remain;504 unique after one published UID. Adoption grants no native credit.
