@@ -1,0 +1,311 @@
+extends "res://tests/scheduler_spore_reference_smoke.gd"
+## Focused TEST ONLY ownership differential. Overrides the inherited runner;
+## neither the 527 reference checks nor the 208 source checks run here.
+## Both full sealed Route copies compile in memory after only class_name removal.
+## Uses one actual native source/Player/Scheduler world, without timing claims.
+
+const OWNERSHIP_BASE: String = "res://.cinder/shared59-runtime-cost-next/"
+const ORIGINAL_ROUTE_SHA: String = "985a474fa65670dfac21e1dc3869d40d448119d896ca5a4a92c0a36ad2a51dad"
+const CANDIDATE_ROUTE_SHA: String = "0bf3e2bd4d815ee39025863e71c07e3de0f35e701cee47087f3e3582a51353e7"
+const ENGINE_SETTING: String = "physics/3d/physics_engine"
+
+var _original_route: GDScript
+var _candidate_route: GDScript
+var _ownership_world: Dictionary = {}
+var _ownership_context: Dictionary = {}
+var _ownership_descriptor: Dictionary = {}
+var _ownership_events: Array = []
+var _ownership_records: Array = []
+var _ownership_baseline: Dictionary = {}
+var _setting_captured: bool = false
+var _setting_existed: bool = false
+var _original_engine_setting: Variant
+var _ownership_finishing: bool = false
+var _receipt_encoding_error: String = ""
+
+
+func _initialize() -> void:
+	var watchdog: SceneTreeTimer = create_timer(60.0, true)
+	watchdog.timeout.connect(func() -> void:
+		_expect(false, "focused ownership fixture exceeded its bounded returning-loop deadline")
+		_finish_ownership.call_deferred())
+	_run.call_deferred()
+
+
+func _run() -> void:
+	_original_route = _load_owned_route("repulsion_route.original.gd.txt", ORIGINAL_ROUTE_SHA)
+	_candidate_route = _load_owned_route("repulsion_route.candidate.gd.txt", CANDIDATE_ROUTE_SHA)
+	if _original_route == null or _candidate_route == null:
+		await _finish_ownership()
+		return
+	_setting_existed = ProjectSettings.has_setting(ENGINE_SETTING)
+	_original_engine_setting = ProjectSettings.get_setting(ENGINE_SETTING, "DEFAULT")
+	_setting_captured = true
+	_ownership_world = await _reference_world()
+	if not _ownership_world.ready:
+		await _finish_ownership()
+		return
+	paused = true
+	var w: Dictionary = _ownership_world
+	_ownership_context = _context(w)
+	_expect(not _ownership_context.sources["native-source"].is_empty(), "genuine complete paused actor/Player/Scheduler unit captures")
+	if _ownership_context.sources["native-source"].is_empty():
+		await _finish_ownership()
+		return
+	_ownership_descriptor = w.protocol.binding_state()
+	w.scheduler.reservation_invalidated.connect(func(id: String, reason: String) -> void: _ownership_events.append(["reservation_invalidated", id, reason]))
+	w.source.hit_resolved.connect(func(value: Dictionary) -> void: _ownership_events.append(["hit_resolved", value.duplicate(true)]))
+	w.source.state_changed.connect(func() -> void: _ownership_events.append(["source_state_changed"]))
+	w.scheduler.last_error = "ownership-request-diagnostic"
+	w.scheduler.last_snapshot_error = "ownership-snapshot-diagnostic"
+	w.protocol.last_error = "ownership-protocol-diagnostic"
+	_ownership_baseline = _native_receipt(w, _ownership_context)
+	_expect(not _original_engine_setting is Array and not _original_engine_setting is Dictionary, "current native engine value exercises the fresh-tree scalar branch")
+	var initial: Dictionary = _ownership_pair("initial actual scalar-engine world")
+	if initial.is_empty():
+		await _finish_ownership()
+		return
+	var initial_wire: String = Exact.stringify(initial)
+	_expect(not initial_wire.is_empty() and initial.world_signature.colliders.size() == 2 and initial.floor_signature.size() == 1, "exact initial packet contains both actual scenery colliders and its registered floor")
+	_returned_tree_isolation(initial, initial_wire)
+	_native_dimension_controls(initial_wire)
+	_engine_fallback_control("array")
+	_engine_fallback_control("dictionary")
+	_error_controls()
+	_restore_engine_setting()
+	var final: Dictionary = _ownership_pair("final restored native world")
+	_expect(not final.is_empty() and Exact.stringify(final) == initial_wire, "all test-only native/configuration mutations restore the complete initial signature")
+	_expect(_native_receipt(w, _ownership_context) == _ownership_baseline and _ownership_events.is_empty(), "full native receipt, resources, clocks, diagnostics and observed callbacks remain original")
+	_expect(w.protocol.binding_error().is_empty() and w.protocol.unit_error(_ownership_context.sources["native-source"], _pair(_ownership_context)).is_empty(), "original complete Protocol live and saved-unit validation recover without relaxed guards")
+	await _finish_ownership()
+
+
+func _load_owned_route(filename: String, expected: String) -> GDScript:
+	var path: String = OWNERSHIP_BASE + filename
+	var pinned: bool = FileAccess.get_sha256(path) == expected
+	_expect(pinned, filename + " retains its full sealed runtime source hash")
+	if not pinned:
+		return null
+	var text: String = FileAccess.get_file_as_string(path)
+	var declaration: String = "class_name CinderRepulsionRoute\n"
+	_expect(text.begins_with(declaration), filename + " starts with the exact global class declaration")
+	if not text.begins_with(declaration):
+		return null
+	var script := GDScript.new()
+	script.source_code = text.substr(declaration.length())
+	var result: Error = script.reload()
+	_expect(result == OK, filename + " compiles in memory after only global class registration removal")
+	_ownership_records.append({"kind": "compiled_route", "filename": filename, "full_source_sha256": expected, "compiled_body_sha256": script.source_code.sha256_text(), "removed_prefix": declaration, "reload_error": int(result)})
+	return script if result == OK else null
+
+
+func _ownership_pair(label: String, floor_override: Variant = null, expected_error: String = "") -> Dictionary:
+	var w: Dictionary = _ownership_world
+	var floors: Dictionary = {"ground": w.floor}
+	if floor_override != null:
+		floors = floor_override as Dictionary
+	var position := Vector3(0.0, w.source.global_position.y, 0.0)
+	var before: Dictionary = _native_receipt(w, _ownership_context)
+	var original: Dictionary = _original_route.call("static_environment_state", w.root, floors, _ownership_descriptor.source_environment, position)
+	var candidate: Dictionary = _candidate_route.call("static_environment_state", w.root, floors, _ownership_descriptor.source_environment, position)
+	var original_wire: String = Exact.stringify(original)
+	var candidate_wire: String = Exact.stringify(candidate)
+	var after: Dictionary = _native_receipt(w, _ownership_context)
+	_expect(not original_wire.is_empty() and original_wire == candidate_wire, label + " preserves the complete exact original result/error")
+	_expect(original.get("error", "") == expected_error and candidate.get("error", "") == expected_error, label + " exercises the concrete expected success/refusal branch")
+	_expect(before == after and _ownership_events.is_empty(), label + " is pure for actual native state, clocks, resources, diagnostics and observed callbacks")
+	_ownership_records.append({"kind": "actual_pair", "label": label, "expected_error": expected_error, "original_result": original_wire, "candidate_result": candidate_wire, "native_before": _encode_ownership_receipt(before), "native_after": _encode_ownership_receipt(after), "events": _ownership_events.duplicate(true)})
+	if not expected_error.is_empty() or original.has("error") or candidate.has("error"):
+		return {}
+	return candidate
+
+
+func _returned_tree_isolation(previous: Dictionary, previous_wire: String) -> void:
+	var second: Dictionary = _ownership_pair("second independent scalar-engine result")
+	if second.is_empty():
+		return
+	var index: int = -1
+	for row: int in range(second.world_signature.colliders.size()):
+		if second.world_signature.colliders[row].path == "ReferenceScenery":
+			index = row
+	_expect(index >= 0, "isolation control locates the actual named nonfloor collider")
+	if index < 0:
+		return
+	second.world_signature.colliders[index].shapes[0].data.size[0] += 1.0
+	second.world_signature.colliders[index].transform[0][0] += 1.0
+	second.floor_signature[0].shape.size[0] += 1.0
+	second.floor_signature[0].safe_rect[0] += 1.0
+	_expect(Exact.stringify(second) != previous_wire, "control mutates genuine nested returned collider/transform/floor arrays")
+	_expect(Exact.stringify(previous) == previous_wire, "mutating the second nested result cannot alter the earlier exact packet")
+	_expect(_native_receipt(_ownership_world, _ownership_context) == _ownership_baseline, "returned-tree mutations cannot alter actual shapes, motion, resources, clocks or retained descriptor")
+	var third: Dictionary = _ownership_pair("fresh result after returned-tree mutations")
+	_expect(not third.is_empty() and Exact.stringify(third) == previous_wire, "a later fresh acquisition recovers the exact original native signature without caller alias contamination")
+	_expect(_ownership_world.protocol.binding_error().is_empty(), "returned-tree mutations do not damage the original complete native binding")
+	_ownership_records.append({"kind": "returned_tree_control", "mutated_returned_result": Exact.stringify(second), "retained_previous_result": Exact.stringify(previous), "fresh_result": Exact.stringify(third)})
+
+
+func _native_dimension_controls(initial_wire: String) -> void:
+	var w: Dictionary = _ownership_world
+	for kind: String in ["wall", "floor"]:
+		var shape: BoxShape3D = w.scenery_collision.shape if kind == "wall" else w.floor.collision.shape
+		var previous: Vector3 = shape.size
+		var changed := Vector3(_next_native_float(previous.x), previous.y, previous.z)
+		shape.size = changed
+		_expect(shape.size == changed and shape.size != previous, kind + " control retains an actual one-bit native dimension change")
+		var result: Dictionary = _ownership_pair("fresh actual " + kind + " dimension mutation")
+		_expect(not result.is_empty() and Exact.stringify(result) != initial_wire, kind + " native mutation freshly changes the exact signature in both variants")
+		_expect(not w.protocol.binding_error().is_empty(), kind + " actual mutation still fails the original retained native world/floor guard")
+		shape.size = previous
+		var repaired: Dictionary = _ownership_pair("restored actual " + kind + " dimension")
+		_expect(not repaired.is_empty() and Exact.stringify(repaired) == initial_wire and w.protocol.binding_error().is_empty(), kind + " recovers only after restoring the injected native dimension")
+		_expect(_native_receipt(w, _ownership_context) == _ownership_baseline, kind + " control returns native identity, HP, clocks, resources and diagnostics to their exact initial values")
+
+
+func _engine_fallback_control(kind: String) -> void:
+	var shared: Array = ["shared-input", -0.0, 1, 1.0]
+	var supplied: Variant = [shared, {"again": shared}] if kind == "array" else {"first": shared, "again": shared}
+	ProjectSettings.set_setting(ENGINE_SETTING, supplied)
+	var settings_wire: String = Exact.stringify(ProjectSettings.get_setting(ENGINE_SETTING, "DEFAULT"))
+	_expect(not settings_wire.is_empty() and settings_wire == Exact.stringify(supplied), kind + " control installs its actual nested JSON setting; no physics-engine support claim")
+	var original: Dictionary = _ownership_pair(kind + " engine container original-copy fallback")
+	if original.is_empty():
+		_restore_engine_setting()
+		return
+	_expect(not _ownership_world.protocol.binding_error().is_empty(), kind + " changed current setting still fails the original retained world reference")
+	var retained_wire: String = Exact.stringify(original)
+	var returned: Dictionary = _ownership_pair(kind + " engine container independent result")
+	if returned.is_empty():
+		_restore_engine_setting()
+		return
+	if kind == "array":
+		returned.world_signature.engine[0][0] = "caller-only"
+		returned.world_signature.engine[1].again[1] = 2.0
+	else:
+		returned.world_signature.engine.first[0] = "caller-only"
+		returned.world_signature.engine.again[1] = 2.0
+	_expect(Exact.stringify(ProjectSettings.get_setting(ENGINE_SETTING, "DEFAULT")) == settings_wire and Exact.stringify(original) == retained_wire, kind + " returned nested engine mutations cannot alter actual settings or earlier result")
+	var fresh: Dictionary = _ownership_pair(kind + " engine container after returned mutations")
+	_expect(not fresh.is_empty() and Exact.stringify(fresh) == retained_wire, kind + " later native acquisition retains original detached container values")
+	shared[0] = "changed-setting"
+	ProjectSettings.set_setting(ENGINE_SETTING, supplied)
+	_expect(Exact.stringify(ProjectSettings.get_setting(ENGINE_SETTING, "DEFAULT")) != settings_wire, kind + " input-alias control changes the actual current setting through its native setter")
+	_expect(Exact.stringify(original) == retained_wire and Exact.stringify(fresh) == retained_wire, kind + " a later actual setting change cannot mutate previous complete results")
+	var changed: Dictionary = _ownership_pair(kind + " engine container after actual setting change")
+	_expect(not changed.is_empty() and Exact.stringify(changed) != retained_wire, kind + " both variants freshly observe the changed current setting")
+	_ownership_records.append({"kind": "engine_fallback_control", "engine_container": kind, "supplied_alias_tree": Exact.stringify(supplied), "retained_original": retained_wire, "mutated_returned": Exact.stringify(returned), "fresh_before_setting_change": Exact.stringify(fresh), "fresh_after_setting_change": Exact.stringify(changed)})
+	_restore_engine_setting()
+	_expect(ProjectSettings.has_setting(ENGINE_SETTING) == _setting_existed and Exact.stringify(ProjectSettings.get_setting(ENGINE_SETTING, "DEFAULT")) == Exact.stringify(_original_engine_setting), kind + " control restores exact original setting presence and value without saving project settings")
+	_expect(_ownership_world.protocol.binding_error().is_empty(), kind + " temporary fallback setting leaves the actual original Protocol binding recovered")
+
+
+func _error_controls() -> void:
+	_ownership_pair("invalid empty floor binding", {}, "One to 32 stable authored floor bindings required")
+	var body := StaticBody3D.new()
+	body.name = "UnsupportedOwnershipScenery"
+	body.collision_layer = 1
+	body.collision_mask = 0
+	var collision := CollisionShape3D.new()
+	collision.name = "UnsupportedShape"
+	collision.shape = WorldBoundaryShape3D.new()
+	body.add_child(collision)
+	_ownership_world.root.add_child(body)
+	_ownership_pair("actual unsupported current scenery shape", null, "Unsupported immutable scenery shape")
+	_ownership_pair("unsupported scenery precedes invalid floor error", {}, "Unsupported immutable scenery shape")
+	body.free()
+	_expect(_ownership_world.protocol.binding_error().is_empty(), "normal disposal of the test-only unsupported body recovers original native binding")
+
+
+func _restore_engine_setting() -> void:
+	if _setting_captured:
+		ProjectSettings.set_setting(ENGINE_SETTING, _original_engine_setting if _setting_existed else null)
+
+
+func _encode_ownership_receipt(value: Variant) -> Variant:
+	match typeof(value):
+		TYPE_NIL, TYPE_BOOL, TYPE_FLOAT, TYPE_STRING:
+			return value
+		TYPE_INT:
+			# Native RefCounted resource IDs exceed Exact's JSON-safe int domain.
+			# Preserve their complete signed64 value as a diagnostic decimal tag;
+			# native comparison receipts above still retain the original integers.
+			if value < -Exact.MAX_INTEGER or value > Exact.MAX_INTEGER:
+				return {"native_type": "int64", "decimal": str(value)}
+			return value
+		TYPE_VECTOR3:
+			return {"native_type": "Vector3", "value": Value.vector3(value)}
+		TYPE_VECTOR2:
+			return {"native_type": "Vector2", "value": [value.x, value.y]}
+		TYPE_BASIS:
+			return {"native_type": "Basis", "value": [Value.vector3(value.x), Value.vector3(value.y), Value.vector3(value.z)]}
+		TYPE_TRANSFORM3D:
+			return {"native_type": "Transform3D", "basis": [Value.vector3(value.basis.x), Value.vector3(value.basis.y), Value.vector3(value.basis.z)], "origin": Value.vector3(value.origin)}
+		TYPE_ARRAY:
+			var items: Array = []
+			for item: Variant in value:
+				items.append(_encode_ownership_receipt(item))
+			return items
+		TYPE_DICTIONARY:
+			var items: Dictionary = {}
+			for key: Variant in value:
+				if not key is String:
+					_receipt_encoding_error = "Unsupported native receipt key"
+					return null
+				items[key] = _encode_ownership_receipt(value[key])
+			return items
+	_receipt_encoding_error = "Unsupported native receipt type: " + type_string(typeof(value))
+	return null
+
+
+func _finish_ownership() -> void:
+	if _ownership_finishing:
+		return
+	_ownership_finishing = true
+	_restore_engine_setting()
+	if not _ownership_world.is_empty():
+		var w: Dictionary = _ownership_world
+		var refs: Array[WeakRef] = []
+		for node: Node in [w.viewport, w.root, w.source, w.hero, w.scheduler, w.consumer, w.first, w.second, w.source.get_node_or_null("NativeCue"), w.get("scenery_collision")]:
+			if is_instance_valid(node):
+				refs.append(weakref(node))
+		var retained_protocol: CinderSchedulerSporeSourceProtocol = w.protocol
+		var prior_control: Dictionary = w.scheduler.source_control_state(w.source)
+		var reservation_count: int = prior_control.get("reservations", []).size()
+		await _dispose(w)
+		var released: bool = true
+		for ref: WeakRef in refs:
+			released = released and ref.get_ref() == null
+		_expect(released, "normal viewport disposal releases actual source, Player, Scheduler, consumer, fields, native cue and scenery")
+		_expect(not retained_protocol.binding_error().is_empty(), "retained Protocol refuses the disposed native world rather than authorizing stale handles")
+		_ownership_records.append({"kind": "cleanup", "scope": "Native nodes and idle bindings; no active route lease was acquired", "native_weak_handles": refs.size(), "all_released": released, "source_reservations_before_disposal": reservation_count, "post_dispose_binding_error": retained_protocol.binding_error()})
+	_expect(_receipt_encoding_error.is_empty(), "all actual native receipts use the declared exact diagnostic encoding")
+	_write_ownership_evidence()
+	paused = false
+	_original_route = null
+	_candidate_route = null
+	_ownership_world = {}
+	print("Static environment ownership differential: %d checks, %d failures; no timing or campaign acceptance credit" % [checks, failures])
+	quit(0 if failures == 0 else 1)
+
+
+func _write_ownership_evidence() -> void:
+	var path: String = OS.get_environment("CINDER_STATIC_ENVIRONMENT_EVIDENCE")
+	if path.is_empty():
+		path = OWNERSHIP_BASE + "focused-evidence.json"
+	var payload: Dictionary = {"scope": "Actual same-world native static-environment ownership differential only; no timing, admitted combat, full route or level acceptance", "checks": checks, "failures": failures, "original_route_sha256": ORIGINAL_ROUTE_SHA, "candidate_route_sha256": CANDIDATE_ROUTE_SHA, "global_class_prefix_removal_only": true, "setting_restored": not _setting_captured or (ProjectSettings.has_setting(ENGINE_SETTING) == _setting_existed and Exact.stringify(ProjectSettings.get_setting(ENGINE_SETTING, "DEFAULT")) == Exact.stringify(_original_engine_setting)), "diagnostic_native_encoding": "Explicit native type tags with exact scalar/float arrays and decimal int64 tags outside Exact's JSON-safe integer domain; not production snapshot authority", "records": _ownership_records}
+	var encoded: String = Exact.stringify(payload)
+	if encoded.is_empty():
+		# Report the unchanged original encoder's refusal, not an invented size.
+		var budget: Array[int] = [Exact.MAX_NODES, Exact.MAX_BYTES]
+		var refusal: Dictionary = Exact._encode(payload, 0, budget)
+		_expect(false, "native ownership evidence refused by unchanged Exact encoding: " + String(refusal.get("reason", "Final escaped Exact JSON byte limit")))
+		return
+	if encoded.to_utf8_buffer().size() > 2097152:
+		_expect(false, "native ownership evidence is %d bytes and exceeds its unchanged closed two-MiB diagnostic bound" % encoded.to_utf8_buffer().size())
+		return
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		_expect(false, "cannot persist native ownership evidence at the assigned private path")
+		return
+	file.store_string(encoded + "\n")
+	file.close()
+	print("Ownership evidence: " + path + " sha256=" + FileAccess.get_sha256(path))

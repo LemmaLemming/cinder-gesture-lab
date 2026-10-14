@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_DIAGNOSIS_AND_LOGGING_ONLY_REPAIR_UNPARSED_UNEXECUTED",
+  "prepared_at_utc": "2026-10-14T07:56:48.570883+00:00",
+  "original_native_result": {
+    "checks": 111,
+    "failures": 1,
+    "runner_exit": 1,
+    "source_closure_unchanged": true,
+    "original_payload_written": false,
+    "actual_failed_id_not_retained": true
+  },
+  "sufficient_source_cause": {
+    "native_receipt_source": "tests/scheduler_spore_reference_smoke.gd:_native_receipt includes body/floor/scenery Shape3D.get_instance_id integers",
+    "old_logging_encoder": "All TYPE_INT values were forwarded unchanged",
+    "original_exact_refusal": "Integer exceeds the supported snapshot range",
+    "unchanged_exact_integer_limit": 9007199254740991,
+    "size_claim_unproven": "The old OR branch conflated an empty Exact serialization with an actually greater-than-two-MiB payload. Its message is not proof of size, depth or node-budget excess.",
+    "actual_prior_native_shape_id_examples": [
+      "-9223371071913194019",
+      "-9223371071493764167",
+      "-9223371071074333656"
+    ],
+    "prior_witness_path": ".cinder/spore-fusion-measure-prep/jobs/discovery-a1/observed/focused-native.exact.json",
+    "prior_witness_sha256": "05ca915e32e3000d833a88b74e506912692473ee1318d5694b9e388c7cd5dba0",
+    "prior_witness_bytes": 734237,
+    "qualification": "The examples are earlier actual4.7 native instances, not recovered values from failed ownership-native01. The first failure emitted no payload, so its exact first refusal value/order is unavailable. The same receipt source/type domain is incompatible with the unchanged Exact safe-int gate."
+  },
+  "correction": {
+    "native_int64_representation": {
+      "native_type": "int64",
+      "decimal": "canonical complete signed64 decimal text"
+    },
+    "lossless": true,
+    "native_in_memory_receipts_unchanged": true,
+    "all_comparison_control_cleanup_assertions_literal": true,
+    "float64_bits_and_other_native_tags_unchanged": true,
+    "full_records_retained": true,
+    "runner_unchanged": true,
+    "exact_bounds_unchanged": true,
+    "two_mib_limit_unchanged": true,
+    "failure_diagnostics_split": true,
+    "no_new_mechanical_tests": true
+  },
+  "original_fixture_sha256": "687104c6e164f890e64c0c1f89a4bc1c21bf3c7a3148b7a05dcdac2d7099f393",
+  "repaired_fixture_sha256": "2b911aefb5ec48f03b90f199cc6a59db154affd89ce657aa4cb2a66c63c68941",
+  "correction_patch_sha256": "08ceadcb07b6da3e7bd1f5385a2b7b9a42cecb6cf3e31e192b2aaebe3ad1b2fc",
+  "runner_sha256": "354b9ae75041849d78b53b706ac3844d1e276852be275d5fe69ab440bc78c136",
+  "retry_commands": [
+    [
+      "python3",
+      ".cinder/shared59-runtime-cost-next/run_ownership.py",
+      "parse",
+      "ownership-parse02"
+    ],
+    [
+      "python3",
+      ".cinder/shared59-runtime-cost-next/run_ownership.py",
+      "native",
+      "ownership-native02"
+    ]
+  ]
+}
