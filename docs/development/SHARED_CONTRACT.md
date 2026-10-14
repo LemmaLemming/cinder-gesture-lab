@@ -1,6 +1,8 @@
 # Cinder shared contract
 
-Current revision: **campaign-shared-55** (13 October 2026). [A2-O3 acceptance](ACT2_O3_ACCEPTANCE.md) registers the exact tested f142 scene/local17 contract after43/0 and import0, with reused owner53 scoped evidence. Campaign16/24, Act2 eight/eight. Only O3 registry row/descriptive status, one new Root fixture/genuine UID and one CLI alias are added; other23 rows/route metadata and gameplay/save/controller/equipment interfaces remain exact. New census467 unique UID bytes; preserve-adopt after current frozen jobs close and acknowledge actual merge separately. Historical54 and prior source versions below remain original.
+Current published revision: **campaign-shared-57**. The [fresh-world restore contract](FRESH_WORLD_RESTORE.md) adds pure Level opt-in `level-restore-registration-1`, paused native registration, exact-packet constructor custody with fresh validation on every callback, separate installation and cancellation cleanup. Focused core96/0, startup21/0, legacy71/0, Shell55/0, persistence45/0 and necessary import0 are clean; original failed/nonclean results remain recorded. No save schema or gameplay guard changes. Workers adopt after frozen jobs close and acknowledge their actual merge; availability does not establish adoption. Campaign acceptance remains **16/24**. Prior Shared56 runtime `26f59b28007c68872b1a9870db675b5ed2f3c2e4` and its [sampled-circle API](SAMPLED_CIRCLE_API.md) remain in the history.
+
+Historical Shared55 record: [A2-O3 acceptance](ACT2_O3_ACCEPTANCE.md) registers the exact tested f142 scene/local17 contract after43/0 and import0, with reused owner53 scoped evidence. Campaign16/24, Act2 eight/eight. Only O3 registry row/descriptive status, one new Root fixture/genuine UID and one CLI alias are added; other23 rows/route metadata and gameplay/save/controller/equipment interfaces remain exact. New census467 unique UID bytes; preserve-adopt after current frozen jobs close and acknowledge actual merge separately. Historical54 and prior source versions below remain original.
 
 Historical Shared54 record:
 
@@ -26,7 +28,7 @@ Shell side finish/abandon restores the complete protected story and shows Journe
 
 ## Current level acceptance
 
-Direct user instruction on 9 October 2026 supersedes agent-completed playthrough gates. [Focused desktop acceptance](LEVEL_ACCEPTANCE.md) requires focused automated mechanics/loading/transitions/saves/Retry/cleanup checks and brief visual inspections. A full route, every enemy defeated, an earned exit or a completed campaign playthrough is unnecessary before acceptance and the next sequential level. Record untested full-playthrough behavior and retain original failures with their scope. Existing8 accepted levels remain accepted; Integration reviews pending levels independently and remains first help contact.
+Direct user instruction on 9 October 2026 supersedes agent-completed playthrough gates. [Focused desktop acceptance](LEVEL_ACCEPTANCE.md) requires focused automated mechanics/loading/transitions/saves/Retry/cleanup checks and brief visual inspections. A full route, every enemy defeated, an earned exit or a completed campaign playthrough is unnecessary before acceptance and the next sequential level. Record untested full-playthrough behavior and retain original failures with their scope. All 16 currently accepted levels retain acceptance; Integration reviews pending levels independently and remains first help contact.
 
 ## Idle menu notifications
 
