@@ -225,7 +225,12 @@ static func static_environment_state(root: Node3D, floors: Dictionary, body_refe
 	var plan: Dictionary = _floor_plan(root, floors, root, body_reference, floor_position)
 	if plan.has("error"):
 		return plan
-	return {"world_signature": world.signature.duplicate(true), "floor_signature": plan.signature.duplicate(true)}
+	# Both signatures are freshly constructed and unexposed within this call.
+	# ProjectSettings is the sole possible foreign container origin; keep the
+	# original defensive copies for that case at the original return boundary.
+	if world.signature.engine is Array or world.signature.engine is Dictionary:
+		return {"world_signature": world.signature.duplicate(true), "floor_signature": plan.signature.duplicate(true)}
+	return {"world_signature": world.signature, "floor_signature": plan.signature}
 
 
 ## Snapshot transport requires a paused controller boundary, not a motion tick.

@@ -1,0 +1,38 @@
+--- a/static_environment_ownership.gd
++++ b/static_environment_ownership.gd
+@@ -222,7 +222,14 @@
+ 
+ func _encode_ownership_receipt(value: Variant) -> Variant:
+ 	match typeof(value):
+-		TYPE_NIL, TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING:
++		TYPE_NIL, TYPE_BOOL, TYPE_FLOAT, TYPE_STRING:
++			return value
++		TYPE_INT:
++			# Native RefCounted resource IDs exceed Exact's JSON-safe int domain.
++			# Preserve their complete signed64 value as a diagnostic decimal tag;
++			# native comparison receipts above still retain the original integers.
++			if value < -Exact.MAX_INTEGER or value > Exact.MAX_INTEGER:
++				return {"native_type": "int64", "decimal": str(value)}
+ 			return value
+ 		TYPE_VECTOR3:
+ 			return {"native_type": "Vector3", "value": Value.vector3(value)}
+@@ -284,10 +291,16 @@
+ 	var path: String = OS.get_environment("CINDER_STATIC_ENVIRONMENT_EVIDENCE")
+ 	if path.is_empty():
+ 		path = OWNERSHIP_BASE + "focused-evidence.json"
+-	var payload: Dictionary = {"scope": "Actual same-world native static-environment ownership differential only; no timing, admitted combat, full route or level acceptance", "checks": checks, "failures": failures, "original_route_sha256": ORIGINAL_ROUTE_SHA, "candidate_route_sha256": CANDIDATE_ROUTE_SHA, "global_class_prefix_removal_only": true, "setting_restored": not _setting_captured or (ProjectSettings.has_setting(ENGINE_SETTING) == _setting_existed and Exact.stringify(ProjectSettings.get_setting(ENGINE_SETTING, "DEFAULT")) == Exact.stringify(_original_engine_setting)), "diagnostic_native_encoding": "Explicit native type tags with exact scalar/float arrays; not production snapshot authority", "records": _ownership_records}
++	var payload: Dictionary = {"scope": "Actual same-world native static-environment ownership differential only; no timing, admitted combat, full route or level acceptance", "checks": checks, "failures": failures, "original_route_sha256": ORIGINAL_ROUTE_SHA, "candidate_route_sha256": CANDIDATE_ROUTE_SHA, "global_class_prefix_removal_only": true, "setting_restored": not _setting_captured or (ProjectSettings.has_setting(ENGINE_SETTING) == _setting_existed and Exact.stringify(ProjectSettings.get_setting(ENGINE_SETTING, "DEFAULT")) == Exact.stringify(_original_engine_setting)), "diagnostic_native_encoding": "Explicit native type tags with exact scalar/float arrays and decimal int64 tags outside Exact's JSON-safe integer domain; not production snapshot authority", "records": _ownership_records}
+ 	var encoded: String = Exact.stringify(payload)
+-	if encoded.is_empty() or encoded.to_utf8_buffer().size() > 2097152:
+-		_expect(false, "native ownership evidence exceeds its closed two-MiB diagnostic bound")
++	if encoded.is_empty():
++		# Report the unchanged original encoder's refusal, not an invented size.
++		var budget: Array[int] = [Exact.MAX_NODES, Exact.MAX_BYTES]
++		var refusal: Dictionary = Exact._encode(payload, 0, budget)
++		_expect(false, "native ownership evidence refused by unchanged Exact encoding: " + String(refusal.get("reason", "Final escaped Exact JSON byte limit")))
++		return
++	if encoded.to_utf8_buffer().size() > 2097152:
++		_expect(false, "native ownership evidence is %d bytes and exceeds its unchanged closed two-MiB diagnostic bound" % encoded.to_utf8_buffer().size())
+ 		return
+ 	var file := FileAccess.open(path, FileAccess.WRITE)
+ 	if file == null:

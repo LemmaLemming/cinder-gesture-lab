@@ -1,0 +1,515 @@
+{
+  "record": "closed-native-operand-and-finite-window-interpretation",
+  "created_utc": "2026-10-14T07:26:22.563623+00:00",
+  "actual_source_commit": "7ae120703a4604241c33a0163c93045324bc7c28",
+  "fixture_sha256": "f3982b0a541846ba0b010a85ec409ba06751babcaa53e7efb9d77ee502d1e2de",
+  "job": "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/admission-diagnostic-20261014/jobs/native-logger-corrected",
+  "result_sha256": "6bf4d98edb30b3f15f211cd2a751350349e68e5094a7a4d5afe029218ddda7b5",
+  "raw_sha256": "58ec94263664d73149902454cf2fe3c2b36b70a284465fcbe5838668209b2400",
+  "raw_bytes": 295862,
+  "actual_native_returncode": 2,
+  "footers": [
+    {
+      "checks": 94,
+      "failures": 0,
+      "line": 108,
+      "text": "CP2 native admission diagnostic: 94 checks, 0 failures; scope_complete=false; outcome=bounded_not_observed; parse_observers_only=false; native_physics_process_await_pairs=8/16; finite passive window only, catch-up tail separately recorded; no full-route/performance/campaign acceptance claim."
+    }
+  ],
+  "scope_complete": false,
+  "closed": true,
+  "source_changes": {},
+  "uid_changes": {},
+  "raw_wrapper_equal": true,
+  "refusal_count_captured": 4,
+  "first_actual_refusals": [
+    {
+      "raw_line": 32,
+      "source_id": "crossed-1",
+      "source_instance_id": 970142518980,
+      "actual_caller": "preview_start",
+      "stack": [
+        {
+          "function": "preview_start",
+          "line": 478,
+          "source": "res://scripts/acts/act1/mushroom_selenite.gd"
+        },
+        {
+          "function": "_admit",
+          "line": 385,
+          "source": "res://scripts/acts/act1/mushroom_caverns_route.gd"
+        },
+        {
+          "function": "_physics_process",
+          "line": 213,
+          "source": "res://scripts/acts/act1/mushroom_caverns.gd"
+        },
+        {
+          "function": "_physics_process",
+          "line": 170,
+          "source": "res://scripts/acts/act1/mushroom_caverns_route.gd"
+        }
+      ],
+      "reason": "Authored encounter context and fixed normalized world direction required",
+      "actual_context_keys_and_types": [
+        [
+          "attack_input_margin_s",
+          "String",
+          "float"
+        ],
+        [
+          "encounter_id",
+          "String",
+          "String"
+        ],
+        [
+          "escape_directions",
+          "String",
+          "Array"
+        ],
+        [
+          "floor_regions",
+          "String",
+          "Array"
+        ],
+        [
+          "recognition_s",
+          "String",
+          "float"
+        ],
+        [
+          "return_directions",
+          "String",
+          "Array"
+        ],
+        [
+          "world_revision",
+          "String",
+          "int"
+        ],
+        [
+          "world_root",
+          "String",
+          "Object"
+        ]
+      ],
+      "actual_encounter_id": "a1_l3_crossed",
+      "keys_guard_satisfied": true,
+      "stable_id_guard_satisfied": true,
+      "direction_finite": true,
+      "actual_direction": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_direction_length": 0.0,
+      "direction_raw_bits": {
+        "x": "0000000000000000",
+        "y": "0000000000000000",
+        "z": "0000000000000000",
+        "length": "0000000000000000"
+      },
+      "actual_heading": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "actual_source_position": [
+        -2.4000000953674316,
+        -0.004921875894069672,
+        -12.800000190734863
+      ],
+      "actual_public_target": [
+        0.0,
+        -0.004843761678785086,
+        -10.399999618530273
+      ],
+      "approach_enabled": true,
+      "derived_planar_target_distance": 3.3941130217401483,
+      "derived_heading_gap_double": 1.8477591030387492,
+      "epsilon_source": 1e-05,
+      "failed_operand": "abs(direction.length()-1)>Motion.EPSILON",
+      "preserved_passed_arguments": true
+    },
+    {
+      "raw_line": 33,
+      "source_id": "crossed-2",
+      "source_instance_id": 970561948424,
+      "actual_caller": "preview_start",
+      "stack": [
+        {
+          "function": "preview_start",
+          "line": 478,
+          "source": "res://scripts/acts/act1/mushroom_selenite.gd"
+        },
+        {
+          "function": "_admit",
+          "line": 385,
+          "source": "res://scripts/acts/act1/mushroom_caverns_route.gd"
+        },
+        {
+          "function": "_physics_process",
+          "line": 213,
+          "source": "res://scripts/acts/act1/mushroom_caverns.gd"
+        },
+        {
+          "function": "_physics_process",
+          "line": 170,
+          "source": "res://scripts/acts/act1/mushroom_caverns_route.gd"
+        }
+      ],
+      "reason": "Authored encounter context and fixed normalized world direction required",
+      "actual_context_keys_and_types": [
+        [
+          "attack_input_margin_s",
+          "String",
+          "float"
+        ],
+        [
+          "encounter_id",
+          "String",
+          "String"
+        ],
+        [
+          "escape_directions",
+          "String",
+          "Array"
+        ],
+        [
+          "floor_regions",
+          "String",
+          "Array"
+        ],
+        [
+          "recognition_s",
+          "String",
+          "float"
+        ],
+        [
+          "return_directions",
+          "String",
+          "Array"
+        ],
+        [
+          "world_revision",
+          "String",
+          "int"
+        ],
+        [
+          "world_root",
+          "String",
+          "Object"
+        ]
+      ],
+      "actual_encounter_id": "a1_l3_crossed",
+      "keys_guard_satisfied": true,
+      "stable_id_guard_satisfied": true,
+      "direction_finite": true,
+      "actual_direction": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_direction_length": 0.0,
+      "direction_raw_bits": {
+        "x": "0000000000000000",
+        "y": "0000000000000000",
+        "z": "0000000000000000",
+        "length": "0000000000000000"
+      },
+      "actual_heading": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "actual_source_position": [
+        2.4000000953674316,
+        -0.004921875894069672,
+        -12.800000190734863
+      ],
+      "actual_public_target": [
+        0.0,
+        -0.004843761678785086,
+        -10.399999618530273
+      ],
+      "approach_enabled": true,
+      "derived_planar_target_distance": 3.3941130217401483,
+      "derived_heading_gap_double": 1.8477591030387492,
+      "epsilon_source": 1e-05,
+      "failed_operand": "abs(direction.length()-1)>Motion.EPSILON",
+      "preserved_passed_arguments": true
+    },
+    {
+      "raw_line": 34,
+      "source_id": "crossed-3",
+      "source_instance_id": 970981378362,
+      "actual_caller": "preview_start",
+      "stack": [
+        {
+          "function": "preview_start",
+          "line": 478,
+          "source": "res://scripts/acts/act1/mushroom_selenite.gd"
+        },
+        {
+          "function": "_admit",
+          "line": 385,
+          "source": "res://scripts/acts/act1/mushroom_caverns_route.gd"
+        },
+        {
+          "function": "_physics_process",
+          "line": 213,
+          "source": "res://scripts/acts/act1/mushroom_caverns.gd"
+        },
+        {
+          "function": "_physics_process",
+          "line": 170,
+          "source": "res://scripts/acts/act1/mushroom_caverns_route.gd"
+        }
+      ],
+      "reason": "Authored encounter context and fixed normalized world direction required",
+      "actual_context_keys_and_types": [
+        [
+          "attack_input_margin_s",
+          "String",
+          "float"
+        ],
+        [
+          "encounter_id",
+          "String",
+          "String"
+        ],
+        [
+          "escape_directions",
+          "String",
+          "Array"
+        ],
+        [
+          "floor_regions",
+          "String",
+          "Array"
+        ],
+        [
+          "recognition_s",
+          "String",
+          "float"
+        ],
+        [
+          "return_directions",
+          "String",
+          "Array"
+        ],
+        [
+          "world_revision",
+          "String",
+          "int"
+        ],
+        [
+          "world_root",
+          "String",
+          "Object"
+        ]
+      ],
+      "actual_encounter_id": "a1_l3_crossed",
+      "keys_guard_satisfied": true,
+      "stable_id_guard_satisfied": true,
+      "direction_finite": true,
+      "actual_direction": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_direction_length": 0.0,
+      "direction_raw_bits": {
+        "x": "0000000000000000",
+        "y": "0000000000000000",
+        "z": "0000000000000000",
+        "length": "0000000000000000"
+      },
+      "actual_heading": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "actual_source_position": [
+        -0.800000011920929,
+        -0.005156251136213541,
+        -13.600000381469727
+      ],
+      "actual_public_target": [
+        0.0,
+        -0.004843761678785086,
+        -10.399999618530273
+      ],
+      "approach_enabled": true,
+      "derived_planar_target_distance": 3.2984852435453713,
+      "derived_heading_gap_double": 1.985015119791707,
+      "epsilon_source": 1e-05,
+      "failed_operand": "abs(direction.length()-1)>Motion.EPSILON",
+      "preserved_passed_arguments": true
+    },
+    {
+      "raw_line": 35,
+      "source_id": "crossed-4",
+      "source_instance_id": 971400808372,
+      "actual_caller": "preview_start",
+      "stack": [
+        {
+          "function": "preview_start",
+          "line": 478,
+          "source": "res://scripts/acts/act1/mushroom_selenite.gd"
+        },
+        {
+          "function": "_admit",
+          "line": 385,
+          "source": "res://scripts/acts/act1/mushroom_caverns_route.gd"
+        },
+        {
+          "function": "_physics_process",
+          "line": 213,
+          "source": "res://scripts/acts/act1/mushroom_caverns.gd"
+        },
+        {
+          "function": "_physics_process",
+          "line": 170,
+          "source": "res://scripts/acts/act1/mushroom_caverns_route.gd"
+        }
+      ],
+      "reason": "Authored encounter context and fixed normalized world direction required",
+      "actual_context_keys_and_types": [
+        [
+          "attack_input_margin_s",
+          "String",
+          "float"
+        ],
+        [
+          "encounter_id",
+          "String",
+          "String"
+        ],
+        [
+          "escape_directions",
+          "String",
+          "Array"
+        ],
+        [
+          "floor_regions",
+          "String",
+          "Array"
+        ],
+        [
+          "recognition_s",
+          "String",
+          "float"
+        ],
+        [
+          "return_directions",
+          "String",
+          "Array"
+        ],
+        [
+          "world_revision",
+          "String",
+          "int"
+        ],
+        [
+          "world_root",
+          "String",
+          "Object"
+        ]
+      ],
+      "actual_encounter_id": "a1_l3_crossed",
+      "keys_guard_satisfied": true,
+      "stable_id_guard_satisfied": true,
+      "direction_finite": true,
+      "actual_direction": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_direction_length": 0.0,
+      "direction_raw_bits": {
+        "x": "0000000000000000",
+        "y": "0000000000000000",
+        "z": "0000000000000000",
+        "length": "0000000000000000"
+      },
+      "actual_heading": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "actual_source_position": [
+        0.800000011920929,
+        -0.005260417703539133,
+        -13.600000381469727
+      ],
+      "actual_public_target": [
+        0.0,
+        -0.004843761678785086,
+        -10.399999618530273
+      ],
+      "approach_enabled": true,
+      "derived_planar_target_distance": 3.2984852435453713,
+      "derived_heading_gap_double": 1.985015119791707,
+      "epsilon_source": 1e-05,
+      "failed_operand": "abs(direction.length()-1)>Motion.EPSILON",
+      "preserved_passed_arguments": true
+    }
+  ],
+  "boundary_raw_line": 36,
+  "observed_window_delta": {
+    "hero_clock_s": 0.999999999999998,
+    "physics_frames": 60,
+    "process_frames": 7,
+    "scheduler_clock_s": 1.0000000000000013,
+    "wall_us": 37859670
+  },
+  "outcome_raw_line": 39,
+  "bounded_outcome": "bounded_not_observed",
+  "prepare_counts": {
+    "crossed-1": {
+      "accepted_prepare": 0,
+      "preview_start": 60,
+      "rejected_prepare": 60,
+      "start": 0
+    },
+    "crossed-2": {
+      "accepted_prepare": 0,
+      "preview_start": 60,
+      "rejected_prepare": 60,
+      "start": 0
+    },
+    "crossed-3": {
+      "accepted_prepare": 0,
+      "preview_start": 60,
+      "rejected_prepare": 60,
+      "start": 0
+    },
+    "crossed-4": {
+      "accepted_prepare": 0,
+      "preview_start": 60,
+      "rejected_prepare": 60,
+      "start": 0
+    }
+  },
+  "actual_admission": {},
+  "tail_publications": [],
+  "catchup_tail": {
+    "hero_clock_s": 0.04999999999999982,
+    "physics_frames": 2,
+    "process_frames": 0,
+    "scheduler_clock_s": 0.04999999999999982,
+    "wall_us": 1953036
+  },
+  "conclusion": "Actual normalized-direction predicate rejects zero from approach heading mismatch; valid authored key set/encounter ID. No final admission observed inside this finite window, nor recorded tail. Four60 rejectedprepare counts include all reasons, not proof each of240 rejects has same named cause. This does not prove permanent refusal/full gameplay defect. No production fix justified by this bounded evidence.",
+  "prior_actual_failures_retained": [
+    "initial source-plan exact devpin mismatch before engine (Shared59 suite map additions only)",
+    "initial parser class/resource typing error",
+    "first native94/2 logger transport failure"
+  ],
+  "limits": [
+    "No performance, whole-route, optical Save/art/campaign credit.",
+    "Instrumented isolated child observed hooks; production disk guard conditions/returns/call counts preserved, cached resources restored and live-tree disposal assertions passed.",
+    "Strict key normalization corrected only new diagnostic field serialization; no production Exact encoder relaxation."
+  ]
+}

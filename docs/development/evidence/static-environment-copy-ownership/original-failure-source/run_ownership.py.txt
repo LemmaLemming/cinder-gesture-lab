@@ -1,0 +1,146 @@
+"""Proposal: one bounded parser/native ownership job through the canonical queue.
+
+No imports, production selection, timing comparison or input-bank copies.
+Freezes hashes of a bounded literal-resource subset, with explicit scope limits.
+Run only after Root reviews the prepared source; this file is not auto-executed.
+"""
+from pathlib import Path
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import sys
+import time
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+if len(sys.argv) != 3 or sys.argv[1] not in {"parse", "native"} or not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", sys.argv[2]):
+    raise SystemExit("Pass parse|native and a fresh lowercase job name")
+phase, job = sys.argv[1:]
+OUT = HERE / job
+OUT.mkdir(exist_ok=False)
+spec = importlib.util.spec_from_file_location("ownership_dev", ROOT / "scripts/dev/dev.py")
+dev = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = dev
+spec.loader.exec_module(dev)
+environment = dict(os.environ)
+environment["CINDER_STATIC_ENVIRONMENT_EVIDENCE"] = str(OUT / "native-evidence.json")
+context = dev.ProjectContext(ROOT, environment)
+
+
+def utc():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+
+def save(name, value):
+    (OUT / name).write_text(json.dumps(value, indent=2) + "\n")
+
+
+def selected_paths():
+    # Follow only actual literal file references from these explicit seeds.
+    # This does not enumerate the source/UID bank or prove dynamic/import closure.
+    seeds = [
+        HERE / "static_environment_ownership.gd", Path(__file__), HERE / "manifest.json",
+        HERE / "repulsion_route.original.gd.txt", HERE / "repulsion_route.candidate.gd.txt",
+        ROOT / "project.godot", ROOT / "scripts/dev/dev.py", ROOT / ".cinder/local.json",
+        ROOT / "tests/scheduler_spore_reference_smoke.gd", ROOT / "tests/scheduler_spore_source_smoke.gd",
+        ROOT / "scripts/combat/repulsion_route.gd", ROOT / "scripts/environment/scheduler_spore_source_protocol.gd",
+        ROOT / "scripts/environment/spore_repulsion.gd", ROOT / "scripts/campaign/snapshot_codec.gd",
+    ]
+    paths, unresolved = set(), set()
+    pending = list(seeds)
+    total = 0
+    while pending:
+        path = pending.pop().resolve()
+        if path in paths:
+            continue
+        if not path.is_relative_to(ROOT):
+            raise RuntimeError("Literal source selection escaped project root")
+        paths.add(path)
+        if len(paths) > 1024:
+            raise RuntimeError("Literal source selection exceeds its 1024-file bound")
+        if not path.is_file():
+            unresolved.add(str(path.relative_to(ROOT)))
+            continue
+        data = path.read_bytes()
+        total += len(data)
+        if total > 64 * 1024 * 1024:
+            raise RuntimeError("Literal source selection exceeds its 64-MiB bound")
+        if path.suffix in {".gd", ".gdshader", ".tscn", ".tres"}:
+            pending.append(Path(str(path) + ".uid"))
+        if path.suffix in {".gd", ".gdshader", ".tscn", ".tres", ".godot"} or path.name.endswith(".gd.txt"):
+            text = data.decode("utf-8")
+            for reference in re.findall(r'''res://([^"'\n\r]+)''', text):
+                target = ROOT / reference
+                if target.is_file():
+                    pending.append(target)
+                else:
+                    unresolved.add(reference)
+    # Named derived metadata is observed, not regenerated or treated as closure.
+    paths.update({ROOT / ".godot/global_script_class_cache.cfg", ROOT / ".godot/uid_cache.bin"})
+    return sorted(paths), sorted(unresolved)
+
+
+def snapshot(paths):
+    return {
+        str(p.relative_to(ROOT)): {"exists": p.is_file(), **({"bytes": p.stat().st_size, "sha256": hashlib.sha256(p.read_bytes()).hexdigest()} if p.is_file() else {})}
+        for p in paths
+    }
+
+
+class Tee:
+    def __init__(self, original, log):
+        self.original, self.log = original, log
+
+    def write(self, value):
+        self.log.write(value)
+        return self.original.write(value)
+
+    def flush(self):
+        self.log.flush()
+        self.original.flush()
+
+
+script = "res://.cinder/shared59-runtime-cost-next/static_environment_ownership.gd"
+command = [str(dev.resolve_godot(context)), "--path", str(ROOT), "--headless", "--log-file", str(OUT / "engine.log"), "--script", script]
+if phase == "parse":
+    command.append("--check-only")
+paths, unresolved = selected_paths()
+before = snapshot(paths)
+save("source-before.json", before)
+scope = {"kind": "bounded explicit and literal-resource source subset", "not_proven": ["complete dynamic dependencies", "global class closure", "import/resource graph", "whole active UID roster"], "unresolved_literals": unresolved, "selected_count": len(paths), "bank_copies": 0, "imports_requested": False}
+save("selection-scope.json", scope)
+result = {"phase": phase, "job": job, "command": command, "submitted_at": utc(), "engine_timeout_seconds_after_queue_acquisition": 90, "fixture_returning_loop_watchdog_seconds": 60, "native_output_environment": {"CINDER_STATIC_ENVIRONMENT_EVIDENCE": environment["CINDER_STATIC_ENVIRONMENT_EVIDENCE"]}}
+save("lifecycle.json", result)
+code = 2
+with (OUT / "raw.log").open("w") as log, contextlib.redirect_stdout(Tee(sys.stdout, log)), contextlib.redirect_stderr(Tee(sys.stderr, log)):
+    try:
+        with dev.godot_lock(context.root) as lock:
+            result["queue_acquired_at"] = utc()
+            save("lifecycle.json", result)
+            if snapshot(paths) != before:
+                raise RuntimeError("Named selected inputs changed while queued; no engine launched")
+            print("Canonical queue acquired; only this owned subprocess receives the 90-second deadline.", flush=True)
+            started = time.monotonic()
+            code = dev.run_validation(command, context, lock, 90, detect_godot_errors=True)
+            result["engine_elapsed_seconds"] = time.monotonic() - started
+    except Exception as error:
+        result["runner_error"] = repr(error)
+        print("Runner error:", repr(error), flush=True)
+    finally:
+        after = snapshot(paths)
+        save("source-after.json", after)
+        changed = [name for name in sorted(before.keys() | after.keys()) if before.get(name) != after.get(name)]
+        result.update(returncode=code, closed_at=utc(), selected_inputs=len(paths), changed_named_inputs=changed)
+        evidence = OUT / "native-evidence.json"
+        if evidence.is_file():
+            result["native_evidence"] = {"path": str(evidence), "bytes": evidence.stat().st_size, "sha256": hashlib.sha256(evidence.read_bytes()).hexdigest()}
+        if code == 0 and changed:
+            result["runner_exit_override"] = "Named source/UID/derived inputs changed at closure"
+            code = 3
+        result["runner_exit_code"] = code
+        save("result.json", result)
+sys.exit(code)

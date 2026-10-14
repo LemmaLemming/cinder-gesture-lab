@@ -1,0 +1,113 @@
+{
+  "actual_closed_scope": true,
+  "assessment_ok": false,
+  "command": [
+    "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+    "--headless",
+    "--path",
+    ".",
+    "--log-file",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/admission-diagnostic-20261014/jobs/parser-first/raw.log",
+    "--script",
+    "res://tests/acts/act2/shared_support/cp2_native_admission_smoke.gd",
+    "--",
+    "--parse-observers-only"
+  ],
+  "footers": [],
+  "job_watch": {
+    "deadline_includes_queue_wait": false,
+    "elapsed_s": 1.040970665984787,
+    "engine_deadline_s": 90,
+    "exit_code": 1,
+    "interrupted": false,
+    "lifecycle_errors": [],
+    "owned_group_gone": true,
+    "owned_process_group": 38217,
+    "queue_acquired": true,
+    "queue_acquisition": {
+      "canonical_dev_sha256": "d1ca9e8c368064c9086574dd4a9aaab62c33894619b95e9233b7fd5d232b915f",
+      "lock_fd": 3,
+      "monotonic_s": 551346.675443166,
+      "queue_wait_s": 0.08184466604143381,
+      "utc": "2026-10-14T07:07:09.368175+00:00"
+    },
+    "queue_deadline_s": 1800,
+    "reader_error": "",
+    "termination": "",
+    "worker_command": [
+      "/opt/homebrew/anaconda3/bin/python3",
+      "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/admission-diagnostic-20261014/phase_recorder_shared59.py",
+      "--canonical-worker",
+      "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/admission-diagnostic-20261014/jobs/parser-first/queue-worker-plan.json"
+    ],
+    "wrapper_exited": true,
+    "wrapper_pid": 38217,
+    "wrapper_stream_complete": true
+  },
+  "kind": "parser",
+  "logs": {
+    "raw": {
+      "bytes": 1623,
+      "counts": {
+        "assertion_errors": 0,
+        "fail_markers": 0,
+        "native_errors": 0,
+        "parse_or_load_errors": 7,
+        "script_errors": 7,
+        "warnings": 0
+      },
+      "engine_banner_observed": true,
+      "first_meaningful_error": {
+        "context": [
+          "",
+          "SCRIPT ERROR: Parse Error: Cannot find member \"source_code\" in base \"Act1MushroomSelenite\".",
+          "   at: GDScript::reload (res://tests/acts/act2/shared_support/cp2_native_admission_smoke.gd:147)",
+          "SCRIPT ERROR: Parse Error: Cannot find member \"source_code\" in base \"CinderRepulsionRoute\".",
+          "   at: GDScript::reload (res://tests/acts/act2/shared_support/cp2_native_admission_smoke.gd:148)",
+          "SCRIPT ERROR: Parse Error: Cannot call non-static function \"get_instance_id()\" on the class \"Act1MushroomSelenite\" directly. Make an instance instead.",
+          "   at: GDScript::reload (res://tests/acts/act2/shared_support/cp2_native_admission_smoke.gd:149)"
+        ],
+        "line": 3,
+        "text": "SCRIPT ERROR: Parse Error: Cannot find member \"source_code\" in base \"Act1MushroomSelenite\"."
+      },
+      "footers": [],
+      "present": true,
+      "queue_wait_observed": false,
+      "sha256": "d4ac1d30f4b4bfbc78dc782f593e31a766671a83f6521db6731063bb9826e31b"
+    },
+    "wrapper": {
+      "bytes": 1754,
+      "counts": {
+        "assertion_errors": 0,
+        "fail_markers": 0,
+        "native_errors": 0,
+        "parse_or_load_errors": 7,
+        "script_errors": 7,
+        "warnings": 0
+      },
+      "engine_banner_observed": true,
+      "first_meaningful_error": {
+        "context": [
+          "",
+          "SCRIPT ERROR: Parse Error: Cannot find member \"source_code\" in base \"Act1MushroomSelenite\".",
+          "Cinder dev: Godot reported a script or project-resource error; validation failed.",
+          "          at: GDScript::reload (res://tests/acts/act2/shared_support/cp2_native_admission_smoke.gd:147)",
+          "SCRIPT ERROR: Parse Error: Cannot find member \"source_code\" in base \"CinderRepulsionRoute\".",
+          "          at: GDScript::reload (res://tests/acts/act2/shared_support/cp2_native_admission_smoke.gd:148)",
+          "SCRIPT ERROR: Parse Error: Cannot call non-static function \"get_instance_id()\" on the class \"Act1MushroomSelenite\" directly. Make an instance instead."
+        ],
+        "line": 3,
+        "text": "SCRIPT ERROR: Parse Error: Cannot find member \"source_code\" in base \"Act1MushroomSelenite\"."
+      },
+      "footers": [],
+      "present": true,
+      "queue_wait_observed": false,
+      "sha256": "d71412e5c411ca9779b17b9fd233d684f35080d8dddfcb84434c1f02d7a12df1"
+    }
+  },
+  "record": "focused-admission-job-result",
+  "scope": "Parser-mode dynamic compile/identity checks or finite native admission diagnostic only; no timing or whole-route claim.",
+  "source_bank_copied": false,
+  "source_changes": {},
+  "uid_changes": {}
+}

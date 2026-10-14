@@ -1,0 +1,6 @@
+{
+  "scope": "Host-only packaging validation; no engine/runtime/source changes",
+  "original_failure": "KeyError: '.cinder/static-environment-copy-production/selection.json'",
+  "cause": "Assumed production physical-selection metadata was included in the queued source map; the actual442-entry map omits that file.",
+  "correction": "Preserve/copy the selection metadata exactly but explicitly label it outside frozen source closure. Runner/Route pins and all442 recorded before/after entries still match."
+}

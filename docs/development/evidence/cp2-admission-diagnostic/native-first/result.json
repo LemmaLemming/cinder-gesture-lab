@@ -1,0 +1,132 @@
+{
+  "actual_closed_scope": true,
+  "assessment_ok": false,
+  "command": [
+    "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+    "--headless",
+    "--path",
+    ".",
+    "--log-file",
+    "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/admission-diagnostic-20261014/jobs/native-first/raw.log",
+    "--script",
+    "res://tests/acts/act2/shared_support/cp2_native_admission_smoke.gd"
+  ],
+  "footers": [
+    {
+      "checks": 94,
+      "failures": 2,
+      "line": 117,
+      "text": "CP2 native admission diagnostic: 94 checks, 2 failures; scope_complete=false; outcome=bounded_not_observed; parse_observers_only=false; native_physics_process_await_pairs=8/16; finite passive window only, catch-up tail separately recorded; no full-route/performance/campaign acceptance claim."
+    }
+  ],
+  "job_watch": {
+    "deadline_includes_queue_wait": false,
+    "elapsed_s": 62.05794845800847,
+    "engine_deadline_s": 90,
+    "exit_code": 1,
+    "interrupted": false,
+    "lifecycle_errors": [],
+    "owned_group_gone": true,
+    "owned_process_group": 43902,
+    "queue_acquired": true,
+    "queue_acquisition": {
+      "canonical_dev_sha256": "d1ca9e8c368064c9086574dd4a9aaab62c33894619b95e9233b7fd5d232b915f",
+      "lock_fd": 3,
+      "monotonic_s": 551638.118405958,
+      "queue_wait_s": 0.026237625046633184,
+      "utc": "2026-10-14T07:12:00.834904+00:00"
+    },
+    "queue_deadline_s": 1800,
+    "reader_error": "",
+    "termination": "",
+    "worker_command": [
+      "/opt/homebrew/anaconda3/bin/python3",
+      "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/admission-diagnostic-20261014/phase_recorder_shared59.py",
+      "--canonical-worker",
+      "/Users/howardchen/.codex/worktrees/campaign-act2/video game idea/.cinder/native-discovery-support/admission-diagnostic-20261014/jobs/native-first/queue-worker-plan.json"
+    ],
+    "wrapper_exited": true,
+    "wrapper_pid": 43902,
+    "wrapper_stream_complete": true
+  },
+  "kind": "native",
+  "logs": {
+    "raw": {
+      "bytes": 10779,
+      "counts": {
+        "assertion_errors": 0,
+        "fail_markers": 0,
+        "native_errors": 2,
+        "parse_or_load_errors": 0,
+        "script_errors": 0,
+        "warnings": 0
+      },
+      "engine_banner_observed": true,
+      "first_meaningful_error": {
+        "context": [
+          "PASS: public Shell pause closes the returning native observation",
+          "ERROR: FAIL: passive prepare/publication observations preserve actual correspondence: diagnostic row was not representable without losing native details: passive_window_closed",
+          "   at: push_error (core/variant/variant_utility.cpp:1023)",
+          "   GDScript backtrace (most recent call first):",
+          "       [0] _expect (res://tests/acts/act2/shared_support/cp2_native_admission_smoke.gd:367)",
+          "       [1] _run (res://tests/acts/act2/shared_support/cp2_native_admission_smoke.gd:140)",
+          "       [2] _settle (res://tests/act1_l2_registration_smoke.gd:597)"
+        ],
+        "line": 38,
+        "text": "ERROR: FAIL: passive prepare/publication observations preserve actual correspondence: diagnostic row was not representable without losing native details: passive_window_closed"
+      },
+      "footers": [
+        {
+          "checks": 94,
+          "failures": 2,
+          "line": 117,
+          "text": "CP2 native admission diagnostic: 94 checks, 2 failures; scope_complete=false; outcome=bounded_not_observed; parse_observers_only=false; native_physics_process_await_pairs=8/16; finite passive window only, catch-up tail separately recorded; no full-route/performance/campaign acceptance claim."
+        }
+      ],
+      "present": true,
+      "queue_wait_observed": false,
+      "sha256": "27091f853625c3b506dee0966797ea0a0b3544bc798e8b96b470220ac0c2c946"
+    },
+    "wrapper": {
+      "bytes": 10779,
+      "counts": {
+        "assertion_errors": 0,
+        "fail_markers": 0,
+        "native_errors": 2,
+        "parse_or_load_errors": 0,
+        "script_errors": 0,
+        "warnings": 0
+      },
+      "engine_banner_observed": true,
+      "first_meaningful_error": {
+        "context": [
+          "PASS: public Shell pause closes the returning native observation",
+          "ERROR: FAIL: passive prepare/publication observations preserve actual correspondence: diagnostic row was not representable without losing native details: passive_window_closed",
+          "   at: push_error (core/variant/variant_utility.cpp:1023)",
+          "   GDScript backtrace (most recent call first):",
+          "       [0] _expect (res://tests/acts/act2/shared_support/cp2_native_admission_smoke.gd:367)",
+          "       [1] _run (res://tests/acts/act2/shared_support/cp2_native_admission_smoke.gd:140)",
+          "       [2] _settle (res://tests/act1_l2_registration_smoke.gd:597)"
+        ],
+        "line": 38,
+        "text": "ERROR: FAIL: passive prepare/publication observations preserve actual correspondence: diagnostic row was not representable without losing native details: passive_window_closed"
+      },
+      "footers": [
+        {
+          "checks": 94,
+          "failures": 2,
+          "line": 117,
+          "text": "CP2 native admission diagnostic: 94 checks, 2 failures; scope_complete=false; outcome=bounded_not_observed; parse_observers_only=false; native_physics_process_await_pairs=8/16; finite passive window only, catch-up tail separately recorded; no full-route/performance/campaign acceptance claim."
+        }
+      ],
+      "present": true,
+      "queue_wait_observed": false,
+      "sha256": "27091f853625c3b506dee0966797ea0a0b3544bc798e8b96b470220ac0c2c946"
+    }
+  },
+  "record": "focused-admission-job-result",
+  "scope": "Parser-mode dynamic compile/identity checks or finite native admission diagnostic only; no timing or whole-route claim.",
+  "source_bank_copied": false,
+  "source_changes": {},
+  "uid_changes": {}
+}
