@@ -133,6 +133,7 @@ func _capture_view(row: Dictionary, view: int) -> bool:
 	if not _expect(paused and not points.is_empty() and game.active_level.last_camera_framing_error.is_empty() and game.camera_framing_error(points).is_empty(), "actual saved Camera/HUD contains complete native required union"): return false
 	var before: String = Exact.stringify(game.capture_campaign_snapshot()); var native: String = _native_wire()
 	var camera: String = _camera_wire(); var input: String = Exact.stringify(_portable(game.get_input_observation_state())); var ui: String = _ui_wire()
+	setups.append({"kind": "pre-PNG exact signature diagnostic", "packet_matches": before == row.exact_snapshot, "actual_packet": before if before != row.exact_snapshot else "exact original", "original_packet_sha256": row.exact_snapshot.sha256_text(), "actual_packet_sha256": before.sha256_text(), "native_wire_bytes": native.length(), "camera_wire_bytes": camera.length(), "input_wire_bytes": input.length(), "ui_wire_bytes": ui.length()})
 	if not _expect(before == row.exact_snapshot and not native.is_empty() and not camera.is_empty() and not input.is_empty() and not ui.is_empty(), "full exact packet/native/camera/input/UI before PNG"): return false
 	hidden_menu = game.menu; menu_visible_before = hidden_menu.visible; hidden_menu.visible = false
 	await RenderingServer.frame_post_draw
@@ -188,7 +189,9 @@ func _ui_wire() -> String:
 			if node is Label: value.text = node.text
 			if node is Button: value.disabled = node.disabled
 			rows[String(node.get_path())] = value
-	return Exact.stringify(rows)
+	var wire: String = Exact.stringify(rows)
+	if wire.is_empty(): setups.append({"kind": "UI signature encoding refusal diagnostic", "rows": rows})
+	return wire
 
 
 func _portable(value: Variant) -> Variant:
