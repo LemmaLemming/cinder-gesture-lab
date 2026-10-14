@@ -1,5 +1,12 @@
 # Focused production Moon encounter and transition
 
+## Actual later conditional Save/Continue/Retry — 14 October 2026
+
+Native06-later-transport closes80/0, engine0, clean on a3f24a45/Shared57, with all862 frozen inputs/all492UID bytes unchanged. Its687.686s queue/run interval includes78.125s native report time. Four genuine ordinary hits earn CP2; existing fresh idle-candidate quiet commit audits its complete unit. The distinct first Sneeze packet then restores through a real fresh Title disk GUI Continue and actual GUI Retry to earlier CP2, preserving exact HP/phase/history/Player/Scheduler/native units, zero recipient callbacks, original donor identities/state/UI/input/disk and normal cleanup. Receipt SHA256 7d973ab4a7794e4cc84c88dd75540cce51a42faecd6d6610d9fec3f68bdc0462. This selector supplies later transport, not CP3/final/hatch/transition/visual coverage; those mechanics/terminal categories retain separate unchanged parent119/0 evidence.
+
+A reviewed selector-only refinement preserves every executed later helper/guard body and selected branch, adding `later_phase_transport_only` to its capture condition (true in the80/0 run), removing the unconditional extra audit/assertion from default and restoring default's original report scope. Current fixture SHA256347572471b590e1a7dc18a5f28aa303106f65707606238bb738dd5601eeb5f00. This avoids a combined untested transport+full-sequence run under the same180s watchdog; no budget widening or extra rerun is needed. Production runtime/parent9056b211 remains byte-identical to119/0. The three original production02 PNGs are now personally reviewed in `.cinder/a1-l5-production02-personal-review.json`, retaining31/1 focus-cancel and paused-overlay/partialcapsule/facecrop/no-later-view limits. All own handles CLOSED; remaining work is brief missing representative portraits and independent L5 handoff/acceptance, then O1/O2/O3.
+
+
 ## Later checkpoint transport fixture addition — 14 October 2026
 
 The production parent correction now passes default native05 at119/0, engine0, clean on742d2cf7, covering both registered final sources with actual stagger, all12 ordinary hits/both checkpoints/death, real hatch contact/original0.75s escape/actual accepted A2-L1 transition and normal cleanup; all862 frozen inputs/all492UID bytes remain unchanged. This is a focused supported TEST arrangement with public rusher injury/same-floor placements, not an earned route or optical/all-kit/balance claim.
