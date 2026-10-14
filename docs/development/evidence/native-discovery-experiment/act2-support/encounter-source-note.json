@@ -1,0 +1,163 @@
+{
+  "record": "a2-bounded-encounter-diagnostic-source-note",
+  "date": "2026-10-14",
+  "author": "/root/b02_native_join",
+  "status": "Exact source rejection branch identified; sampled operand/source/caller and later gameplay outcome remain unresolved.",
+  "request": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/integration/messages/ff2ad1d8-7694-4b50-b2ec-5175579805b3-REQUEST.json",
+    "sha256": "fe24870af0a6778720d81cedd15589cc30a095fec49617bb63efa00217e20bb8"
+  },
+  "scope": "Current six named canonical source files joined byte-exact to the same six frozen native-discovery inputs; one necessary keys_error helper read. No job/raw/witness re-audit, peer audit, probe, engine or source/bank edit.",
+  "source_pins": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act1/mushroom_selenite.gd",
+      "sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+      "bytes": 104912,
+      "lines": 1733,
+      "frozen_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/native-discovery/inputs/scripts/acts/act1/mushroom_selenite.gd",
+      "frozen_sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932",
+      "current_frozen_bytes_equal": true
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act1/mushroom_caverns.gd",
+      "sha256": "55b30d6d639bf4a468e27189ef4703039b630e4c96fcc88564b1f7e5d912ecd4",
+      "bytes": 45159,
+      "lines": 775,
+      "frozen_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/native-discovery/inputs/scripts/acts/act1/mushroom_caverns.gd",
+      "frozen_sha256": "55b30d6d639bf4a468e27189ef4703039b630e4c96fcc88564b1f7e5d912ecd4",
+      "current_frozen_bytes_equal": true
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act1/mushroom_caverns_route.gd",
+      "sha256": "3784a019bfd5dec6e49b18e64e73ca00b7fd21dc6497258b9f948154762b18bb",
+      "bytes": 38959,
+      "lines": 679,
+      "frozen_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/native-discovery/inputs/scripts/acts/act1/mushroom_caverns_route.gd",
+      "frozen_sha256": "3784a019bfd5dec6e49b18e64e73ca00b7fd21dc6497258b9f948154762b18bb",
+      "current_frozen_bytes_equal": true
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act1/mushroom_caverns_full.gd",
+      "sha256": "e6669c37647542b6225dbcfabd4e2ec99a4085bf77e3d8ef1b757fdf176956d5",
+      "bytes": 57959,
+      "lines": 872,
+      "frozen_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/native-discovery/inputs/scripts/acts/act1/mushroom_caverns_full.gd",
+      "frozen_sha256": "e6669c37647542b6225dbcfabd4e2ec99a4085bf77e3d8ef1b757fdf176956d5",
+      "current_frozen_bytes_equal": true
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/stage-current-registry.gd",
+      "sha256": "c79d64a53d84f6532a3cc1337d80c942170f2ecb8434a168860e12bc79994799",
+      "bytes": 29867,
+      "lines": 446,
+      "frozen_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/native-discovery/inputs/.cinder/spore-fusion-measure-prep/stage-current-registry.gd",
+      "frozen_sha256": "c79d64a53d84f6532a3cc1337d80c942170f2ecb8434a168860e12bc79994799",
+      "current_frozen_bytes_equal": true
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/measure.gd",
+      "sha256": "25bfd1a8ccb0e95c6c31e301c2c0e6c7ecf7392bc4281da968c071aa6dcd21cc",
+      "bytes": 18558,
+      "lines": 250,
+      "frozen_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/spore-fusion-measure-prep/native-discovery/inputs/.cinder/spore-fusion-measure-prep/measure.gd",
+      "frozen_sha256": "25bfd1a8ccb0e95c6c31e301c2c0e6c7ecf7392bc4281da968c071aa6dcd21cc",
+      "current_frozen_bytes_equal": true
+    }
+  ],
+  "keys_helper": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/campaign/snapshot_codec.gd",
+    "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+    "lines": [
+      35,
+      41
+    ]
+  },
+  "guard": {
+    "file": "scripts/acts/act1/mushroom_selenite.gd",
+    "lines": [
+      525,
+      531
+    ],
+    "exact_return_reason": "Authored encounter context and fixed normalized world direction required",
+    "preceding_gate": "526–527 first requires live bindings, idle stopped activated/unpaused actor, no transaction/snapshot/cancel/hurt/lease, visible and bounded cycle. This different first-gate reason precedes the named reason.",
+    "rejecting_OR_at528": [
+      "Codec.keys_error(context, CONTEXT_KEYS) nonempty",
+      "encounter_id fails String/nonempty/<=128/regex stable ID predicate at1657–1663",
+      "direction is not finite",
+      "abs(direction.y)>Motion.EPSILON",
+      "abs(direction.length()-1)>Motion.EPSILON"
+    ],
+    "context_keys_at51": [
+      "encounter_id",
+      "world_revision",
+      "recognition_s",
+      "attack_input_margin_s",
+      "escape_directions",
+      "return_directions",
+      "floor_regions",
+      "world_root"
+    ],
+    "exact_scope": "Keys guard checks size/presence; this message does not identify which OR operand failed. Same-world root and spore/body/lifecycle/art/presentation guards and Scheduler preview/request follow only after this guard succeeds."
+  },
+  "direction_possibilities": {
+    "lines": [
+      513,
+      522
+    ],
+    "fact": "_target_direction returns ZERO for nonfinite target/delta or planar length<=EPSILON. With approach enabled, it returns retained facing only when target direction is within EPSILON of facing, otherwise ZERO. Thus this same message can occur with a correct authored context solely because the actual heading was not aligned; admission does not snap facing.",
+    "normal_route_opt_in": "mushroom_caverns_route66 enables swarm approach; actor configuration146–149 admits it only for ROLE_SWARM. Actual approach physics may update facing at1132 and clears actor.last_error at1139, but source alone does not establish that this happened in the samples."
+  },
+  "setter_paths": [
+    {
+      "file": "scripts/acts/act1/mushroom_caverns_route.gd",
+      "lines": [
+        376,
+        394
+      ],
+      "fact": "Active-room preliminary actor.preview_start uses current Hero position and fresh role response_context. Rejected preview copies reason into last_encounter_error at387 and returns before inherited admission."
+    },
+    {
+      "file": "scripts/acts/act1/mushroom_caverns.gd",
+      "lines": [
+        217,
+        259
+      ],
+      "fact": "Inherited preview failure copies reason at228; later actor.start failure copies reason at259. Successful start is independently guarded before final publication."
+    },
+    {
+      "file": "scripts/acts/act1/mushroom_selenite.gd",
+      "lines": [
+        473,
+        483,
+        1666,
+        1668
+      ],
+      "fact": "preview_start returns the structured rejection without assigning actor.last_error. start sends it through _denied, which assigns actor.last_error. Parent encounter_error does not identify which caller/source produced it."
+    }
+  ],
+  "latching_and_downstream": [
+    "Level last_encounter_error starts empty at base22. Preview rejection returns from that admission attempt, before native Scheduler request/lease/cycle publication; it does not itself stop _running or push an engine error.",
+    "Route physics151–169 remains active and may re-enter the inherited attempt loop on later eligible ticks. Base physics181–214 filters preparation, Hero stability, per-actor state and0.1–4.5m distance. It has no blanket last_encounter_error.is_empty gate. Retention does not prove a new rejection every tick.",
+    "Base281 clears the level diagnostic only after successful admission and all final custody/framing checks. Route191 overwrites it with quiet lifecycle result at room start; base612/full679 framing-ready overwrites with plan/containment result and can clear it without a successful attack. Route360 writes field error only when nonempty, so successful field sync alone does not clear it.",
+    "Other setters may overwrite the same property. Entry failure161–166 is a separate fatal path that sets construction error, stops running and pushes error; missing retained sources route139–146 stops running; contact failure full382–385 freezes a candidate. A nonempty trace field alone does not select these behaviors.",
+    "Fresh response_context(base391–411) constructs the exact eight keys; route encounter ID114–115 derives the room ID. Its source shape does not prove the actual passed values/direction at the rejected call."
+  ],
+  "measurement_reporting": {
+    "trace": "stage-current-registry369 reads retained last_encounter_error into JSON encounter_error; _short392–393 retains at most256 chars. Trace observation neither sets nor clears the diagnostic.",
+    "activation_and_window": "Stage177–185 accepts beat2/active, and _can_tick315–316 tests campaign/Hero/pause state rather than parent encounter_error. measure59–109 measures the ordinary8-physics/1-process interval and then retains paused witnesses; its interval acceptance does not require this diagnostic empty.",
+    "focused_witness": "measure139–167 diagnostics separately retain campaign, Scheduler, actor.last_error/last_snapshot_error and Protocol errors, but omit parent last_encounter_error. Empty native Protocol/Scheduler diagnostics do not establish that actor admission succeeded."
+  },
+  "Main_supplied_closed_observations_not_redecoded_here": {
+    "onset": "Main reports all four named jobs empty through raw26 wait_room.process_await_before/approach, first reason at27 process_await_after/active, retained at30 activation_after and35 measured interval. This reported onset is current pre-interval transition evidence, not merely a diagnostic carried unchanged from restored CP2.",
+    "window": "Main reports8physics/1process,+.133333s,HP100, Crossed8 actors cycle0/empty reservation/deadfalse/dormantfalse/approach_drivingfalse and empty running-events; Protocol/Scheduler errors empty. Paused optical campaign/source errors are separate.",
+    "classification": "A current pre-window admission refusal was observed, with a retained diagnostic during a short advancing window and no admitted attack history/events. This does not prove it resolved benignly, that it reoccurred each tick, or that sustained gameplay is defective."
+  },
+  "source_cannot_establish": [
+    "Which composite context/direction operand, actor identity, or preliminary/base/start caller actually rejected.",
+    "Actual target/facing/direction values or internal setter timestamp between trace observations.",
+    "Whether the diagnostic was later cleared by optics, successful admission, another setter or approach update.",
+    "Subsequent attack/recovery behavior, sustained combat health, optical Save acceptance or candidate-caused timing benefit."
+  ],
+  "ownership": "Main owns exact closed log/witness interpretation and the single canonical report. No thread/mailbox message was sent by this source reviewer.",
+  "no_changes": "Read-only Root source and six named frozen counterparts; only this one original concise own JSON is written. No copied source or packet."
+}

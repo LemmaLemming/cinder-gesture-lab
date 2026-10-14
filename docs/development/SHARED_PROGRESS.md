@@ -1,6 +1,8 @@
 # Cinder shared progress
 
-## Current status — 14 October 2026, Shared58 and final main-level acceptance
+## Current status — 14 October 2026, Shared59 and final main-level acceptance
+
+Shared59 selects the reviewed fresh collision-discovery implementation after **208/0** clean directly affected production checks. The fixed four-sample experiment passed25/0 per sample, with all four whole packets byte-identical and17.46–18.88% lower wall time in the two opposite-order pairs. [Exact evidence and limits](NATIVE_DISCOVERY_EXPERIMENT.md) preserve end-camera mismatch, severe remaining cost and the quiet pre-admission workload. Agent02 completed its guard patch and source diagnosis and now owns a focused test of the actual rejection operands and bounded recovery. No extra full-route or timing run is assigned.
 
 Registration metadata now follows the accepted registry while retaining an explicit floor of all fifteen main levels and three Act2 optional levels. The narrow `--metadata-only` production fixture passes **29/0**, including actual Title/Journey input, progression locks, no story mutation and normal shell cleanup. Both changed test parsers pass. [Exact targeted evidence](evidence/registration-metadata-20261014/index.json) records the run; accepted-level mechanics/save/Retry and visuals were not repeated. README now reports18/24 accurately.
 
@@ -12,7 +14,7 @@ Act3's preserving adoption of `d08fe904` at merge `60ee5b88` is independently ve
 
 Shared58 is committed at `6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e`. All three actual worker notices were delivered. [Bounded independent adoption verification](evidence/shared58-worker-adoption/index.json) confirms Act1 merge `38334161`, Act2 merge `473b4c56` and Act3 merge `59037456`; their current canonical aliases are reconciled. The [independent publication review](evidence/physics-origin-pause/publication-review.json) confirms the exact nine-line change and original/candidate test scopes. These are adoption and review records, not new gameplay runs.
 
-The separate [fresh native discovery experiment](NATIVE_DISCOVERY_EXPERIMENT.md) passes118/0 isolated correctness checks. Production Route/Protocol remain unchanged; a bounded timing comparison is still needed before any performance claim or selection.
+The original [fresh native discovery experiment](NATIVE_DISCOVERY_EXPERIMENT.md) passed118/0 isolated correctness checks. The later fixed timing comparison and production208 result above justify selecting only Route; Protocol remains unchanged. Original failed and unselected codec/type-filter experiments remain separate.
 
 The [physics-origin Pause repair](PHYSICS_ORIGIN_PAUSE.md) resolves an independently reproduced save refusal: the first process signal retained the preparation counter. Original native6/1 is preserved; the nine-line fix passes paired23/0, persistent22/0, directly affected core96/0 and startup21/0, with clean import. No deadline, snapshot or final validation predicate was relaxed. [Original logs and source manifests](evidence/physics-origin-pause/index.json) retain every phase and the genuine new test UID.
 
