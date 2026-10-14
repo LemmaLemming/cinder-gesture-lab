@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "status": "BOUNDED_PASS_ALL_THREE_ACTUAL_SHARED60_ACKS",
+  "publication": "075a44f36937126484f8b59445fd3bd50bbaae24",
+  "api_revision": "campaign-shared-60",
+  "reviews": [
+    {
+      "role": "act1",
+      "status": "BOUNDED_PASS",
+      "review_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/shared60-worker-adoption-review/act1-review.json",
+      "review_sha256": "9ec9e6edbc9fcb2e1fa8b67fb8953f821e39cdc8967219707acd594ac84406b2",
+      "ack_sha256": "9cbb04195e24c30b8df034cabbd3fedf8f26ced3c917b9f9fd4cebb64510a7dd",
+      "receipt_sha256": "a1db09186750390a87fa1cb1acc71a0f0fc9467e9194cfbc88073ee13c3b2581",
+      "merge": "f61819a4c05b5797504e5afc7afee1bebcd0a291",
+      "current_HEAD": "a41ea5cd3d01aeb41cc320a721db95ecded95e06",
+      "all_checked_conditions_pass": true
+    },
+    {
+      "role": "act2",
+      "status": "BOUNDED_PASS",
+      "review_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/shared60-worker-adoption-review/act2-review.json",
+      "review_sha256": "240552c13ee166fbd3c73887b1c448e67ed95d0e11c69ff57d96ad8ac1152ac1",
+      "ack_sha256": "c487c41e0bdb04725b51e22e096efd91d3f64cb365721a8c278221598d139c4a",
+      "receipt_sha256": "342c8970699503b0f3658b8b5b24aa4e61e04fdef539507a771e67f00a7eff14",
+      "merge": "2d1efc87000ef7b89adce08d0c335d41804175f2",
+      "current_HEAD": "2d1efc87000ef7b89adce08d0c335d41804175f2",
+      "all_checked_conditions_pass": true
+    },
+    {
+      "role": "act3",
+      "status": "BOUNDED_PASS",
+      "review_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/shared60-worker-adoption-review/act3-review.json",
+      "review_sha256": "14179bb8b425eb7d9c6f2274289e2f4edf0b30f520ec7dea0d05442a95a5de27",
+      "ack_sha256": "494a971a1aa6c0bc5c7a062738c8a56dd6d6c27fe1d08f079165c82ed573ff05",
+      "receipt_sha256": "124d5243f8293c2144a6f104dff193e15a80e8149998cc472068c3a7bae35bdc",
+      "merge": "8d1d3112b03524bde99e426e41748e01698718c3",
+      "current_HEAD": "cc32c2bac126a629c00fb2ab21e02f5005ae3f22",
+      "all_checked_conditions_pass": true
+    }
+  ],
+  "historical_only": [
+    "act1-pending.json",
+    "act2-initial-invalid-prefix-review.json",
+    "act3-initial-invalid-prefix-review.json"
+  ],
+  "host_correction": "Initial two reports had a wrongly constructed expected data/campaign/acts prefix. Raw reports remain; literal canonical data/campaign/actN checks are corrected without repeating named Git/file reads. No worker drift occurred.",
+  "scope": "One bounded pass over all three actual ACKs received by completion. Five named files per worker, exact metadata/parents/ancestry, no bank/UID/engine/worker/canonical mutation. Root alone reconciles aliases.",
+  "files": {
+    "act1-ack.json": {
+      "sha256": "9cbb04195e24c30b8df034cabbd3fedf8f26ced3c917b9f9fd4cebb64510a7dd",
+      "bytes": 1598
+    },
+    "act1-notice.json": {
+      "sha256": "38ea65f9d02dad2423f03e9c284f8869400cfe12244fa8dc04907e3fb085ab7e",
+      "bytes": 2246
+    },
+    "act2-initial-invalid-prefix-review.json": {
+      "sha256": "b5af81ad7f904ee63a35156371fbe58769ff2a500a0cf0c8a27ee87e4eb6ea5c",
+      "bytes": 14497
+    },
+    "act2-receipt.json": {
+      "sha256": "342c8970699503b0f3658b8b5b24aa4e61e04fdef539507a771e67f00a7eff14",
+      "bytes": 4317
+    },
+    "act2-notice.json": {
+      "sha256": "1be9d61ebfd9ee44eee8395b0b9e245e867fac2314a64e7b5deace79de3ed716",
+      "bytes": 2316
+    },
+    "act3-receipt.json": {
+      "sha256": "124d5243f8293c2144a6f104dff193e15a80e8149998cc472068c3a7bae35bdc",
+      "bytes": 1356
+    },
+    "act3-review.json": {
+      "sha256": "14179bb8b425eb7d9c6f2274289e2f4edf0b30f520ec7dea0d05442a95a5de27",
+      "bytes": 12603
+    },
+    "act3-initial-invalid-prefix-review.json": {
+      "sha256": "25bfc1a4f5e6423b9dba953cd2b69a1a662ffef07e627d8b719cceeabb51eb21",
+      "bytes": 12160
+    },
+    "act1-receipt.json": {
+      "sha256": "a1db09186750390a87fa1cb1acc71a0f0fc9467e9194cfbc88073ee13c3b2581",
+      "bytes": 34014
+    },
+    "act1-review.json": {
+      "sha256": "9ec9e6edbc9fcb2e1fa8b67fb8953f821e39cdc8967219707acd594ac84406b2",
+      "bytes": 12728
+    },
+    "act3-ack.json": {
+      "sha256": "494a971a1aa6c0bc5c7a062738c8a56dd6d6c27fe1d08f079165c82ed573ff05",
+      "bytes": 1450
+    },
+    "act2-ack.json": {
+      "sha256": "c487c41e0bdb04725b51e22e096efd91d3f64cb365721a8c278221598d139c4a",
+      "bytes": 1641
+    },
+    "act1-pending.json": {
+      "sha256": "facebd8c5d18e751d34ba6166a7c2b139609c65fb55fe8619b346ede1a01a661",
+      "bytes": 912
+    },
+    "act2-review.json": {
+      "sha256": "240552c13ee166fbd3c73887b1c448e67ed95d0e11c69ff57d96ad8ac1152ac1",
+      "bytes": 14939
+    },
+    "act3-notice.json": {
+      "sha256": "8c280f7d599e9bc559b598996fda4865540577d1a63002bf62ded2ffb280aed6",
+      "bytes": 2246
+    }
+  }
+}
