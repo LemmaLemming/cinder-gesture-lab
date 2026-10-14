@@ -62,7 +62,7 @@ func _run() -> void:
 	var registry := Registry.new()
 	var accepted: Dictionary = registry.entry("A1-L3")
 	var future: Dictionary = registry.entry("A1-L4")
-	if not _expect(registry.last_error.is_empty() and registry.ids().size() == 24 and accepted.get("readiness") == "accepted" and accepted.get("accepted_commit") == _expected_commit and accepted.get("scene_path") == L3_SCENE and accepted.get("previous_main_id") == "A1-L2" and accepted.get("api_revision") == "campaign-level-1" and registry.entry("A1-L2").get("readiness") == "accepted" and future.get("readiness") != "accepted" and future.get("scene_path") == null and registry.scene_error("A1-L3").is_empty(), "canonical registry exposes exact Full L3, accepted L2 prerequisite and unavailable L4: " + registry.last_error): _finish(); return
+	if not _expect(registry.last_error.is_empty() and registry.ids().size() == 24 and accepted.get("readiness") == "accepted" and accepted.get("accepted_commit") == _expected_commit and accepted.get("scene_path") == L3_SCENE and accepted.get("previous_main_id") == "A1-L2" and accepted.get("api_revision") == "campaign-level-1" and registry.entry("A1-L2").get("readiness") == "accepted" and future.get("previous_main_id") == "A1-L3" and (future.get("readiness") != "accepted" or registry.scene_error("A1-L4").is_empty()) and registry.scene_error("A1-L3").is_empty(), "canonical registry exposes exact Full L3, accepted L2 prerequisite and valid L4 successor: " + registry.last_error): _finish(); return
 	game = _new_shell()
 	await _settle()
 	if not _title_valid("isolated first launch"): _finish(); return
