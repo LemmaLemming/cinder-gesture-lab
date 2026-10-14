@@ -1,5 +1,12 @@
 # Act 1 — durable memory
 
+## Actual phases and defeated eye; final-pair failure — 14 October 2026
+
+The unchanged default native04-full closes101/1, engine1, on1c64542f/Shared57 after502.632s queue/run (native report101.515s). All862 frozen inputs/all492UID bytes remain exact; normal cleanup completes without native warnings. It performs all12 public ordinary20HP primaries through genuine source recovery, reaches240→160→80→0, publishes both real durable phase checkpoints, and observes genuine eye defeat with zero remaining eye lease/cooldown. These are scoped positive observations within a failed overall check, not a level/terminal pass. Original raw error/report/footer/receipt SHA256 8da124a31e63f0da7c107adad15b2ca558caf2756db1db452be07db85d5668d6 retained.
+
+First failure is the unchanged final-pair assertion: `witnessed_final_pair` remainsfalse. Actual finalBlink cycle2/threat4 enterswarning→lock then cancels `required_parent_presentation_unavailable` as Nose2/threat5 begins warning. Nose then completes its actual source grammar and four ordinary hits defeat the eye. The fixture exits before hatch/contact/escape/A2-L1; those scopes remain unexecuted. Diagnose the actual combined presentation/camera/callback joins; retain all source/footprint/landing/guard limits and do not weaken the pair assertion. All own engine/preview handles CLOSED.
+
+
 ## Actual first production Blink recovery primary — 14 October 2026
 
 The smallest affected native03-first-primary check closes40/0, engine0, clean on1c64542f/Shared57, after54.686s, with all862 frozen inputs/all492UID bytes exact. It reaches the genuine native sampled-circle recovery, performs one actual public ordinary primary atclock6.9 for240→220HP, preserves original stationary eye/Box/source/sample, spends no blast ammo, and completes normal Shell/probe/node/group/registry cleanup. Receipt SHA256 a2b813ff3505b06ab94452b64a891d8f33226aa063ed145702cee877d1271156; original native02 callback cleanup failure remains exit254/nofooter/no completed count.
