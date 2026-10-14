@@ -1,5 +1,12 @@
 # Focused production Moon encounter and transition
 
+## First-primary diagnostic cleanup correction — 14 October 2026
+
+Actual native02-first-primary on085bff3d/Shared57 reached the selector completion branch after the real one-hit assertions, then failed at `probe.free()` while resuming from that same probe's physics signal. The raw stack supplies partial branch evidence only; no footer/native report or completed check count exists, so no clean primary/cleanup pass is claimed. The existing finishing flag prevented the watchdog from completing after the script exception. The owner identified exact child40843/parent40838/command, closed only that failed child with SIGINT through the original job, and retained exit254/265.056s/raw errors/receipt. All862 frozen inputs and492 active UID bytes remain unchanged; all own handles closed.
+
+The focused fixture now waits one ordinary process frame immediately after setting finishing/pause, before any node free, to unwind the physics probe emitter. Normal Shell disposal, complete WeakRefs/group/registry assertions,0.5s audio retirement and all gameplay/budget conditions remain unchanged. Current source SHA256 f203ff278430699d56e4f640fefce0e353403f45067a0a7b338394a51c611ecd. Rerun only the same smallest first-primary selector, then default phase/contact coverage if it closes clean. Original37/1 and incomplete native02 stay retained.
+
+
 ## Focused recovery-to-hit budget correction — 14 October 2026
 
 Original native01 remains37/1 on original251ebc98. Its actual failure backtrace returns from genuine recovery capture/GUI Resume into the expired phase wall deadline before low-rim placement/slash. The exact recovery packet atclock5.8333 retains2.5833s recovery, living/stopped/grounded Hero and zero primary/dash cooldowns. The new fixture excludes only measured successful transport-capture/Resume wall cost from the existing30s observation budget and records each excluded cost; the absolute180s watchdog and all game/source deadlines/guards/assertions remain unchanged. Primitive live Scheduler/Hero/source/cue/opening diagnostics record post-Resume conditions without invoking/fabricating an eligibility provider.

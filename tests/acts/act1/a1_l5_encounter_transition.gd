@@ -369,6 +369,8 @@ func _watchdog() -> void:
 func _finish() -> void:
 	if finishing: return
 	finishing = true; paused = true; _end_watch("normal encounter final cleanup")
+	# The test may resume from probe.tick_finished; retire outside its emitter callback.
+	await process_frame
 	if is_instance_valid(game) and not candidate.is_empty(): game._dispose(candidate); candidate = {}
 	var refs: Array[WeakRef] = []
 	for shell: CinderCampaignShell in [fresh, game]:
