@@ -1,0 +1,103 @@
+extends RefCounted
+## INERT SOURCE DRAFT. Not parsed or executed in Godot.
+## Candidate target: scripts/campaign/codec_exact_reference.gd.
+## Pure joint SnapshotCodec validation + exact admitted bit-mirror comparison.
+## No native handle, getter, Callable, retained current value or proof cache.
+
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+
+
+static func checked_match(candidate: Variant, mirror: Variant) -> Dictionary:
+	var matched: Array[bool] = [true]
+	var error: String = _walk(candidate, mirror, 0, matched)
+	return {"error": error, "matches": error.is_empty() and matched[0]}
+
+
+## Error traversal follows Codec.value_error's candidate order exactly.
+## An equality mismatch MUST NOT hide a later Codec error. Once mismatched,
+## use the unchanged Codec on remaining subtrees; do not compare them again.
+static func _walk(candidate: Variant, mirror: Variant, depth: int, matched: Array[bool]) -> String:
+	if depth > Codec.MAX_DEPTH:
+		return "Snapshot nesting exceeds 32 levels"
+	if not matched[0]:
+		return Codec.value_error(candidate, depth)
+	if typeof(mirror) == TYPE_PACKED_BYTE_ARRAY:
+		if mirror.size() == 8 and typeof(candidate) == TYPE_FLOAT:
+			if not is_finite(candidate):
+				return "Snapshot numbers must be finite"
+			var bytes := PackedByteArray()
+			bytes.resize(8)
+			bytes.encode_double(0, candidate)
+			matched[0] = bytes == mirror
+			return ""
+		if mirror.size() == 24 and typeof(candidate) == TYPE_ARRAY and candidate.size() == 3 and typeof(candidate[0]) == TYPE_FLOAT and typeof(candidate[1]) == TYPE_FLOAT and typeof(candidate[2]) == TYPE_FLOAT:
+			# Codec visits all three float children at depth + 1. Retain that
+			# depth refusal, even though this fast branch packs one vector.
+			if depth + 1 > Codec.MAX_DEPTH:
+				return "Snapshot nesting exceeds 32 levels"
+			var bytes := PackedByteArray()
+			bytes.resize(24)
+			for index: int in range(3):
+				if not is_finite(candidate[index]):
+					return "Snapshot numbers must be finite"
+				bytes.encode_double(index * 8, candidate[index])
+			matched[0] = bytes == mirror
+			return ""
+		matched[0] = false
+		return Codec.value_error(candidate, depth)
+	if typeof(candidate) != typeof(mirror):
+		matched[0] = false
+		return Codec.value_error(candidate, depth)
+	match typeof(candidate):
+		TYPE_NIL:
+			return ""
+		TYPE_BOOL:
+			matched[0] = candidate == mirror
+			return ""
+		TYPE_STRING:
+			matched[0] = candidate.length() == mirror.length() and candidate == mirror
+			return ""
+		TYPE_INT:
+			if candidate < -Codec.MAX_SAFE_INTEGER or candidate > Codec.MAX_SAFE_INTEGER:
+				return "Snapshot integer exceeds exact JSON range"
+			matched[0] = candidate == mirror
+			return ""
+		TYPE_ARRAY:
+			if candidate.size() > Codec.MAX_CONTAINER_ENTRIES:
+				return "Snapshot array is too large"
+			if candidate.size() != mirror.size():
+				matched[0] = false
+				return Codec.value_error(candidate, depth)
+			for index: int in range(candidate.size()):
+				var error: String = _walk(candidate[index], mirror[index], depth + 1, matched)
+				if not error.is_empty():
+					return error
+			return ""
+		TYPE_DICTIONARY:
+			if candidate.size() > Codec.MAX_CONTAINER_ENTRIES:
+				return "Snapshot dictionary is too large"
+			if candidate.size() != mirror.size():
+				matched[0] = false
+				return Codec.value_error(candidate, depth)
+			# Genuine configure-time mirrors have String keys. A corrupt
+			# private mirror cannot introduce a StringName alias match.
+			for key: Variant in mirror:
+				if typeof(key) != TYPE_STRING:
+					matched[0] = false
+					return Codec.value_error(candidate, depth)
+			# Do not pre-scan candidate keys: Codec checks each key then its
+			# value, preserving the first error in candidate insertion order.
+			for key: Variant in candidate:
+				if not key is String:
+					return "Snapshot dictionary keys must be strings"
+				if not mirror.has(key):
+					matched[0] = false
+				var error: String = _walk(candidate[key], mirror.get(key), depth + 1, matched)
+				if not error.is_empty():
+					return error
+			return ""
+		_:
+			# Raw float/object/packed/container types are not a valid compiled
+			# mirror leaf. Still obtain the original candidate Codec result.
+			matched[0] = false
+			return Codec.value_error(candidate, depth)

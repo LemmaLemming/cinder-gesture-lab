@@ -1,0 +1,58 @@
+{
+  "root_selected_for_timing": true,
+  "candidate_route_sha256": "871ee704b4ce43c262362d95689ae434fcb37c276e7b36ab0bf9196ec2c7119c",
+  "candidate_protocol_sha256": "2a624f1c3d63b262b622a9f2767a1f481ad76f2637292eb826512fe83edb1607",
+  "helper_sha256": "5c2e387254cc68edc636a5ff614cec707e110da50ba4a4588ce45274f70c29aa",
+  "required_import_closed": true,
+  "closed_correctness_results": [
+    {
+      "path": ".cinder/spore-fusion-candidate/jobs/fusion-differential-native-01/result.json",
+      "sha256": "5e34a450972a8a7576687e0fdfe8cc1f7a95b01f27926880d1c49e980b2685d7",
+      "raw_log": {
+        "path": ".cinder/spore-fusion-candidate/jobs/fusion-differential-native-01/raw.log",
+        "sha256": "f34ee22282f390a91dde3d0bc55444b9214c56df6ae98d3447fbdded26a5e690",
+        "bytes": 428,
+        "mode": 420
+      },
+      "retained_diagnostics": [
+        "ERROR:"
+      ],
+      "root_diagnostic_qualification": "Root explicitly qualified the exact known macOS CA startup diagnostic; actual 1022/0 pure differential footer and exit0 retained. No clean-process or native authority claim.",
+      "required_result_fields": {
+        "sources_and_uids_exact": true,
+        "clean_process": false
+      },
+      "required_footer": "Spore codec/exact fusion smoke: 1022 checks, 0 failures (pure value/receipt oracles only; no native authority or timing)"
+    },
+    {
+      "path": ".cinder/spore-fusion-candidate/jobs/uid-import-01/result.json",
+      "sha256": "3373820c8a63beb6c5baf19eedea1eee370891f3bc3e518f5821cf1613ba72be",
+      "raw_log": {
+        "path": ".cinder/spore-fusion-candidate/jobs/uid-import-01/raw.log",
+        "sha256": "f479556ed28a40887be0df52202034f6aeb40c278e90b249011b140072108794",
+        "bytes": 2310,
+        "mode": 420
+      },
+      "retained_diagnostics": [
+        "ERROR:",
+        "ERROR:",
+        "ERROR:"
+      ],
+      "root_diagnostic_qualification": "Root explicitly qualified the known macOS CA startup diagnostic and sandbox host editor-settings save errors; actual exit0, unchanged sources/475 prior UIDs and two genuine additions/477 unique retained. No clean import-process claim.",
+      "required_result_fields": {
+        "sources_exact": true,
+        "prior_uids_exact": true,
+        "prior_uid_count": 475,
+        "uid_count": 477,
+        "unique_uids": true,
+        "clean": false,
+        "new_uid_paths": [
+          "scripts/campaign/codec_exact_reference.gd.uid",
+          "tests/spore_codec_exact_fusion_smoke.gd.uid"
+        ]
+      },
+      "required_footer": ""
+    }
+  ],
+  "scope": "Actual prerequisites only. Root must copy this template to CORRECTNESS-CLOSED.json and set root_selected_for_timing=true when selecting the pair. No preparation/native timing has run."
+}
