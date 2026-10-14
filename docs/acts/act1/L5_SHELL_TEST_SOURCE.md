@@ -1,5 +1,25 @@
 # A1-L5 whole Shell transport draft
 
+## Current evidence and readiness — 14 October 2026
+
+Shared57 is actually adopted at24aa68f3; L5 remains unaccepted and Act1 remains4/8. Latest default native04 on1c64542f closes101/1 with all862 frozen inputs/all492UID bytes unchanged. It performs twelve genuine ordinary20HP recovery hits240→160→80→0, publishes both durable phase checkpoints and observes eye defeat with no remaining eye lease/cooldown. Normal cleanup succeeds. The failed unchanged final-pair assertion is retained: Blink2 cancels `required_parent_presentation_unavailable` before Nose2 warning commits, so no simultaneous pair was observed and hatch/escape/A2-L1 remain unexecuted. See `.cinder/a1-l5-encounter-native04-full.json` and its literal report/log. Source diagnosis and affected validation are in progress; no visibility/source/landing guard or pair assertion is relaxed.
+
+The earlier clean40/0 proves only the first Blink primary and cleanup; the132/0 loading/persistence/Retry result and four inspected portrait images retain their original scopes. Original failed/canceled/unexecuted checks below remain preserved. Scene metadata now describes execution truthfully; it grants no acceptance. Full playthrough, earned route, sustained performance and mobile work remain untested/outside this acceptance scope.
+
+
+## First-primary evidence snapshot — 14 October 2026
+
+Shared57 is actually adopted at `24aa68f3a2627747e78c6642961488e0b89463a9` (publication `75e547f4de684e53e450ed9a8ad4fac149bee8b2`, ACK `20fcae4d-a832-4cc0-ae3c-b162707a9cdd`). L5 remains unaccepted; Act1 remains4/8. The promoted actual Shell fixture executed71/0 default and132/0 first-Blink/moving-Hero checks clean on Shared56, after original66/1 approach failures. Necessary import06/import07 already executed. Current optional approach uses z−6.3; the older draft z−4.7/queued/no-execution wording below records preparation history. Shared57 default-false adoption alone requires no unchanged rerun.
+
+Actual native03-first-primary on `1c64542f` / current fixture `f203ff27` closes **40/0, engine0, clean** (`.cinder/a1-l5-encounter-native03-first-primary.json`, receipt SHA256 `a2b813ff3505b06ab94452b64a891d8f33226aa063ed145702cee877d1271156`). It proves one actual ordinary recovery hit240→220 and normal cleanup, preserving all862 frozen inputs/all492 UID bytes. It supplies no later-phase/final/hatch/escape/successor result. Production later phases/contact/transition remain separate. The previously proposed source/consumer-map defect was withdrawn; no map fix is required.
+
+> Dated observations below are preserved verbatim as revision snapshots. Their queued/unexecuted and then-current status wording is historical; the current summary above controls current readiness and next work.
+
+
+## Historical source proposal and preparation notes
+
+The retained draft below describes its original preparation/version scope. Assertions of unexecuted source, queued jobs or old geometry are not current status.
+
 Source-only handoff. Stage file: `a1_l5_shell_transport.gd`; intended owned destination: `tests/acts/act1/a1_l5_shell_transport.gd`. No additional fixture, shared-source change, UID or registry edit is required by this draft. The owner promoted/imported this source and ran its actual default mode: 71 checks/0 failures, engine0, clean (`.cinder/a1-l5-shell-native01.json`). The optional first-Blink/moving-Hero selector now closes132/0 clean (`.cinder/a1-l5-shell-native04-approach.json`), after the two original66/1 approach failures retained in native02/03. Original source-only bracket/string, duplicate-function, whitespace and preload-path checks retain their narrower scope.
 
 The draft was written against the production L5 after Shared56 adoption and the parent revision reported as072a4009be2751ad59283868948dd1b23a5ac9cf. A proposed source/consumer-map concern was withdrawn after root rechecked the exact owned parent: `_source(Layout.EYE_ID)` already returns Blink, while the independent lease-owner map retains the actual eye. No runtime mapping change is required. This test never calls `eye.get_cue()` or treats the child consumer as the lease owner: native owner maps use the real eye, while Blink cue/state are read separately from its actual child.

@@ -1,5 +1,21 @@
 # L5 focused portrait source proposal
 
+## Current evidence and readiness — 14 October 2026
+
+Shared57 is actually adopted at24aa68f3; L5 remains unaccepted and Act1 remains4/8. Latest default native04 on1c64542f closes101/1 with all862 frozen inputs/all492UID bytes unchanged. It performs twelve genuine ordinary20HP recovery hits240→160→80→0, publishes both durable phase checkpoints and observes eye defeat with no remaining eye lease/cooldown. Normal cleanup succeeds. The failed unchanged final-pair assertion is retained: Blink2 cancels `required_parent_presentation_unavailable` before Nose2 warning commits, so no simultaneous pair was observed and hatch/escape/A2-L1 remain unexecuted. See `.cinder/a1-l5-encounter-native04-full.json` and its literal report/log. Source diagnosis and affected validation are in progress; no visibility/source/landing guard or pair assertion is relaxed.
+
+The earlier clean40/0 proves only the first Blink primary and cleanup; the132/0 loading/persistence/Retry result and four inspected portrait images retain their original scopes. Original failed/canceled/unexecuted checks below remain preserved. Scene metadata now describes execution truthfully; it grants no acceptance. Full playthrough, earned route, sustained performance and mobile work remain untested/outside this acceptance scope.
+
+
+## First-primary evidence snapshot — 14 October 2026
+
+Shared57 is actually adopted at `24aa68f3a2627747e78c6642961488e0b89463a9` (publication `75e547f4de684e53e450ed9a8ad4fac149bee8b2`, ACK `20fcae4d-a832-4cc0-ae3c-b162707a9cdd`). L5 remains unaccepted; Act1 remains4/8. Original production portrait42/1 retains its four personally inspected capsule/first-warning images and observation failure. The corrected portrait source `f537707f…` actually executed as31/1 on Shared57; native focus loss at3.6167 canceled before its later lock/active/recovery windows were exercised. Its three PNGs are not yet personally inspected; no corrected-window or new visual pass is claimed.
+
+The production scene, CharacterBody eye/native sampled consumer, hatch X−2.75 and complete capsule-beat preview are implemented and have focused actual results. Current test observation budgets are8s lock/8s active/4s recovery under the original45s watchdog; native deadlines/guards remain unchanged. Do not repeat the same focus cancellation without changed conditions. Headless first-primary40/0 is separate evidence and does not supply this portrait fixture’s missing views/gesture assertions.
+
+> Dated observations below are preserved verbatim as revision snapshots. Their queued/unexecuted and then-current status wording is historical; the current summary above controls current readiness and next work.
+
+
 ## Actual corrected portrait rerun — 14 October 2026
 
 `.cinder/a1-l5-portrait-production02.json` on exact eacce200/Shared57 closes31/1, engine1, after13.202s. The first actual failure is native window focus loss at sourceclock3.6167/stageblink, before lock/active/recovery and before the corrected observation windows are exercised. Classification: environment cancellation; no forced focus/resume, no timing-fix pass or new gameplay defect inferred. It produced three literal540×1170 PNGs (paused capsule, unpaused closed capsule, first Blink warning); these remain captured but not newly personally inspected, and the previous four-image personal review retains its original56 scope. All862 frozen inputs and492 active UID bytes remain unchanged. Raw command/log/source freeze/native report and failure retained; receipt SHA256 dda01b8520267cbed9806dd05cf2463596164f194aea8566432319eb59edb346. All own handles now CLOSED. Continue the headless encounter diagnosis while graphical focus is unstable; do not repeat the same canceled graphical check without changed conditions.
@@ -13,6 +29,10 @@ Shared57 is now actually adopted at `24aa68f3a2627747e78c6642961488e0b89463a9` w
 
 The portrait fixture now only widens real-time observation windows for lock4→8s, active2→8s and recovery2→4s. Actual original42/1 failed at sourceclock4.2833 before original lock4.45, which justifies this bounded observation correction. Source/native attack deadlines, camera guards, assertions and global45s watchdog are unchanged. Prepared/current source SHA256 `f537707f9329bb8a51cbd9f9841ef595c1a3d1f0bb4e467dc55b24841fdc3263`; the correction is NOT YET EXECUTED. Use the new `.cinder/a1-l5-production57-run.py` recorder for its affected run; the original56 recorder/results remain intact. Encounter37/1 still needs live recovery/primary-condition diagnosis; its cause is unproved.
 
+
+## Historical source proposal and preparation notes
+
+The retained draft below describes its original preparation/version scope. Assertions of unexecuted source, queued jobs or old geometry are not current status.
 
 Prepared source only. No Godot process, parser, runtime check, UID generation, Git operation or assigned-checkout write occurred. Root must promote under its owned test path after the current frozen job closes, run through the shared queue, preserve failures/cancellations, and personally inspect the actual PNGs. Source SHA256: `c72c95fc904b0e27905d4ce1a04f80d08637b72ad2b68ad753ec011a8ba32430`.
 

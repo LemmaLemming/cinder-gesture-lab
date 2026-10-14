@@ -1,5 +1,21 @@
 # Focused production Moon encounter and transition
 
+## Current evidence and readiness — 14 October 2026
+
+Shared57 is actually adopted at24aa68f3; L5 remains unaccepted and Act1 remains4/8. Latest default native04 on1c64542f closes101/1 with all862 frozen inputs/all492UID bytes unchanged. It performs twelve genuine ordinary20HP recovery hits240→160→80→0, publishes both durable phase checkpoints and observes eye defeat with no remaining eye lease/cooldown. Normal cleanup succeeds. The failed unchanged final-pair assertion is retained: Blink2 cancels `required_parent_presentation_unavailable` before Nose2 warning commits, so no simultaneous pair was observed and hatch/escape/A2-L1 remain unexecuted. See `.cinder/a1-l5-encounter-native04-full.json` and its literal report/log. Source diagnosis and affected validation are in progress; no visibility/source/landing guard or pair assertion is relaxed.
+
+The earlier clean40/0 proves only the first Blink primary and cleanup; the132/0 loading/persistence/Retry result and four inspected portrait images retain their original scopes. Original failed/canceled/unexecuted checks below remain preserved. Scene metadata now describes execution truthfully; it grants no acceptance. Full playthrough, earned route, sustained performance and mobile work remain untested/outside this acceptance scope.
+
+
+## First-primary evidence snapshot — 14 October 2026
+
+Shared57 is actually adopted at `24aa68f3a2627747e78c6642961488e0b89463a9` (publication `75e547f4de684e53e450ed9a8ad4fac149bee8b2`, ACK `20fcae4d-a832-4cc0-ae3c-b162707a9cdd`). L5 remains unaccepted; Act1 remains4/8. Actual native03-first-primary on `1c64542f` / current fixture `f203ff27` closes **40/0, engine0, clean** (`.cinder/a1-l5-encounter-native03-first-primary.json`, receipt SHA256 `a2b813ff3505b06ab94452b64a891d8f33226aa063ed145702cee877d1271156`). It proves one actual ordinary recovery hit240→220 and normal cleanup, preserving all862 frozen inputs/all492 UID bytes. It supplies no later-phase/final/hatch/escape/successor result. Original37/1 and native02-first-primary remain failed/incomplete: native02 reached the one-hit branch then failed freeing its active probe, produced no footer/report/completed count, and closed via its own SIGINT with exit254 after265.056s. The one-process-frame cleanup correction preserves gameplay conditions; native03 is its scoped result.
+
+The default phase/hatch/actual A2-L1 transition source remains unexecuted in those later scopes;40/0 belongs only to `--first-primary-only`. Import07 and prior capsule transport132/0 are actual, not queued proposals. No source/consumer-map fix is required: `_source(Layout.EYE_ID)` already returns Blink. Inherited `request_pause_deferred` reaches the actual Shell pause barrier and queued `request_pause`; `resume_lab` delegates to `resume_campaign`, while supplying no GUI-click credit. Historical instructions below are not a new import/retest checklist.
+
+> Dated observations below are preserved verbatim as revision snapshots. Their queued/unexecuted and then-current status wording is historical; the current summary above controls current readiness and next work.
+
+
 ## First-primary diagnostic cleanup correction — 14 October 2026
 
 Actual native02-first-primary on085bff3d/Shared57 reached the selector completion branch after the real one-hit assertions, then failed at `probe.free()` while resuming from that same probe's physics signal. The raw stack supplies partial branch evidence only; no footer/native report or completed check count exists, so no clean primary/cleanup pass is claimed. The existing finishing flag prevented the watchdog from completing after the script exception. The owner identified exact child40843/parent40838/command, closed only that failed child with SIGINT through the original job, and retained exit254/265.056s/raw errors/receipt. All862 frozen inputs and492 active UID bytes remain unchanged; all own handles closed.
@@ -13,6 +29,10 @@ Original native01 remains37/1 on original251ebc98. Its actual failure backtrace 
 
 Current source SHA256 `c427fe7592a36e3522fe603ee5eb13669109f43f4110bb29369bc683d0e5ccb9` is promoted but not yet parsed/executed. Optional `--first-primary-only` establishes exactly one actual public ordinary recovery hit240→220 and normal cleanup; its report explicitly leaves later phases/final/hatch/successor unexecuted. The default preserves all twelve ordinary hits, both phase checkpoints, final pair and original hatch/escape/accepted A2-L1 transition. Next command uses `.cinder/a1-l5-encounter57-run.py --first-primary-only a1-l5-encounter-native02-first-primary native tests/acts/act1/a1_l5_encounter_transition.gd`. It parses/executes through the canonical queue without a needless import/new resource/UID pass. Existing Shared56/57 failures and original recorder sources remain intact.
 
+
+## Historical source proposal and preparation notes
+
+The retained draft below describes its original preparation/version scope. Assertions of unexecuted source, queued jobs or old geometry are not current status.
 
 Source-only handoff. Intended owned destination: `tests/acts/act1/a1_l5_encounter_transition.gd`. The script extends the now owned `tests/acts/act1/a1_l5_shell_transport.gd` for actual Shell/store/TEST-prefix setup, GUI pause/resume, native observers and cleanup helpers. It does not run the base transport suite or construct an extra encounter Player/controller/camera. The production Shell's ordinary transactional successor construction remains its normal transition path.
 
