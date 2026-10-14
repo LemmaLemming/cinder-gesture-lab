@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "level_id": "A1-O2",
+  "purpose": "Reuse binding record, not a new equipment type or asset family",
+  "readiness": "Reused accepted L3 source and authored native art are wired; first O2 native mechanics43/0 passed. O2 optical portrait and later-group composition remain untested. Original asset manifests retain their historical readiness statements.",
+  "new_bitmap_or_mesh_family": false,
+  "sources": [
+    {
+      "path": "assets/acts/act1/grotto/environment_manifest.json",
+      "sha256": "fcafea9c192e6049212bdcc8e8cd64767011e274dcd9646c0b687f1152dd346a",
+      "bytes": 31967
+    },
+    {
+      "path": "assets/acts/act1/grotto/selenite_manifest.json",
+      "sha256": "7bdb6be1ec4eac9bf90004caaad913028d5fa1ceed0cfdef981914355ae98634",
+      "bytes": 52713
+    },
+    {
+      "path": "assets/acts/act1/grotto/spore-clusters/cluster_manifest.json",
+      "sha256": "eb097ff3ed51d3b67daff61ce4647ffe148668ed0c273231a8dd04ed5674ceb5",
+      "bytes": 9058
+    },
+    {
+      "path": "assets/acts/act1/grotto/selenites/repulsion/repulsion_manifest.json",
+      "sha256": "d7a71abfb00ebf279ac1e42c88600934b5a04dd463f0cf2c3953d98b6d5e1f86",
+      "bytes": 41160
+    }
+  ],
+  "runtime_inputs": [
+    {
+      "path": "scripts/acts/act1/spore_bloom.gd",
+      "sha256": "4d0bdf7f6228fcbfe5956ae7c049e10c30e9a3bd5044a4e93849a80ca04b7a33",
+      "bytes": 36927
+    },
+    {
+      "path": "scripts/acts/act1/spore_bloom_layout.gd",
+      "sha256": "8ab4c6d15be162eab164c3135a1c8bd6fadd78e53e7ce5e1241252f0624205e4",
+      "bytes": 10987
+    },
+    {
+      "path": "scripts/acts/act1/mushroom_caverns.gd",
+      "sha256": "55b30d6d639bf4a468e27189ef4703039b630e4c96fcc88564b1f7e5d912ecd4",
+      "bytes": 45159
+    },
+    {
+      "path": "scripts/acts/act1/mushroom_caverns_layout.gd",
+      "sha256": "122712bf081527534fa2e0b3e8544e478d905fb4d51d616347c4e364c8bd4846",
+      "bytes": 9642
+    },
+    {
+      "path": "scripts/acts/act1/mushroom_grotto_art.gd",
+      "sha256": "221ceb3f976a219e5e4c8d769e57c6e01aa161ca971936052bc5565acfdcbca1",
+      "bytes": 30942
+    },
+    {
+      "path": "scripts/acts/act1/mushroom_selenite_art.gd",
+      "sha256": "7c16b1a7c62e74445837a0f474b8ecd01a3db1cca6beb2e0283c6dc7b0447b10",
+      "bytes": 13314
+    },
+    {
+      "path": "scripts/acts/act1/mushroom_cluster_art.gd",
+      "sha256": "94cd197a5187c6822aac765cc47da4fc35e42d47159073fab7a6b6a4e3f9f202",
+      "bytes": 11353
+    },
+    {
+      "path": "scripts/cues/interaction_cue.gd",
+      "sha256": "2dcd082ea187250e227829957a04f1eb56e255b648aaabcf977b95a28cf2ffc2",
+      "bytes": 2936
+    }
+  ],
+  "reuse": [
+    {
+      "id": "O2-grotto-world",
+      "family": "act1_mushroom_grotto_theatre",
+      "source": "assets/acts/act1/grotto/environment_manifest.json",
+      "native_scale": "Original 14x72 world; five original grounded stalks and retained scenery/floor",
+      "pivot": "Existing authored world feet/origins, unchanged",
+      "collision": "Original Base floor, perimeter and Box stalk resources remain authoritative; no art collider added",
+      "occlusion": "Existing ordinary depth, complete stalk surfaces cover their physical Box shoulders; opaque caps/scenery may occlude and need O2 portrait review",
+      "states": "Static clockless scenery; inherited remote court drapery stays in original state",
+      "readiness": "Native floor/scenery custody checked during first O2 exercise; actual O2 portrait/remote composition untested"
+    },
+    {
+      "id": "O2-required-native-cast",
+      "family": "act1_grotto_selenite_C31_swarm + C32_spear_guard",
+      "source": "assets/acts/act1/grotto/selenite_manifest.json",
+      "extension_source": "assets/acts/act1/grotto/selenites/repulsion/repulsion_manifest.json",
+      "native_scale": "C31 48x80 and C32 80x80 RGBA; nearest at0.022m/pixel, native sprite offset(0,40)",
+      "pivot": "Feet bottom-center at(24,80)/(40,80); actual Actor origin remains feet",
+      "collision": "Original native radius0.32/height1.45 capsule; cosmetic pose never changes body or damage timing",
+      "occlusion": "Ordinary depth; complete billboard/headpiece/spear and native body/shadow corners retained in actual current/forecast framing",
+      "states": "Standing/warning/lock/active/recovery and clockless native recoil/retreat/hold/regroup selection; actual source/facing owns selection",
+      "readiness": "Nine roles built pristine; first two genuine C31 activate and repel/regroup in43/0. Later C31/C32 and actual O2 silhouettes remain untested"
+    },
+    {
+      "id": "O2-original-low-clusters",
+      "family": "act1_grotto_low_spore_cluster_decoration",
+      "source": "assets/acts/act1/grotto/spore-clusters/cluster_manifest.json",
+      "native_scale": "24x20 RGBA hard alpha at0.016m/pixel; full quad0.384x0.32m",
+      "pivot": "(12,20), centered sprite offset(0,10); original native anchor positions remain authoritative",
+      "collision": "Decoration adds none; original native environment attack target/Field determines reach, consumption and harmless repulsion",
+      "occlusion": "Ordinary depth; actual complete billboard quad and native cue marker are included, never opaque-bounds substitution",
+      "states": "available/active/spent from actual retained Cluster.get_cue_state; no cosmetic field clock",
+      "placement": "bloom-near(-.4,0,1.4), bloom-far(.4,0,-1.4), each original cluster-left/right at(-.35,.8,-.25)/(.35,.8,.25); same near/far handles persist across later consumers",
+      "readiness": "First original near supply and both spent cues verified43/0; far/shared-consumer carryover and actual O2 portrait untested"
+    },
+    {
+      "id": "O2-contact-exit",
+      "family": "shared_interaction_cue_contact",
+      "source": "scripts/cues/interaction_cue.gd",
+      "native_scale": "Not applicable; native generated contact marker and1.6x1.3x.9m Area at(0,.65,3.8)",
+      "pivot": "Cue at ground(0,0,3.8); actual Area center unchanged",
+      "collision": "Native Area layer0/mask4 detects actual Hero contact; no damage or attack target",
+      "occlusion": "Distinct native contact glyph; requires actual current-view containment before completion/exit",
+      "states": "hidden until final clear, available at hatch/departed until normal disposal",
+      "readiness": "Source authored and pure guarded; final progress/contact and O2 portrait untested"
+    }
+  ],
+  "observed_reference_addendum": {
+    "actual_images": [
+      {
+        "path": "docs/concept-art/act1/characters/selenite-costumes-and-roles.png",
+        "sha256": "f1545c30c57809aff0c65d29247c171999e983802571fa6289066f3bdad123f5",
+        "bytes": 2012306
+      },
+      {
+        "path": "assets/acts/act1/grotto/selenites/selenite_contact_sheet.png",
+        "sha256": "41d6740f51cc03becdcea4f7df5a125bd5e1bf2233122826811500c33eaaf972",
+        "bytes": 51113
+      }
+    ],
+    "observations": "Owner opened actual selected costume board and original runtime contact sheet. Upright masked faces, pale rib bands, projecting headpieces and broad spear remain visible. Runtime states keep one planted feet pivot and distinct warning/locked/active poses. The board also contains a King and clinging visitor, which add no O2 enemy or mechanic. Contact sheet is source art, not an O2 runtime portrait."
+  }
+}
