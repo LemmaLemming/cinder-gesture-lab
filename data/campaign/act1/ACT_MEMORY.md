@@ -1,5 +1,7 @@
 # Act 1 — durable memory
 
+Current O2 whole native aggregate source04023e2a is integrated after scoped Root/independent source review, awaiting parser and affected Shell/group checks. Original functional43/0 remains narrowly attributed; O2 has no save/Retry/later-group/portrait pass yet. Act1 6/8 accepted; no human/registration/shared blocker.
+
 Current O2 first mechanics passed43/0 clean at8b6aa2c5/Shared60: real finite near-field primary hits, no refresh, harmless retreat/regroup and cleanup. All924 inputs/531 UIDs stayed exact. O2 whole save/restore, later groups and brief portrait remain; Act1 6/8 accepted, O3 follows O2 acceptance. Evidence is in O2-mechanics-focused/mechanics01.
 
 Current O2 functional source is authored at the owned host/scene/first mechanics fixture; first import and focused native check are next. Full aggregate transport remains deliberately refused pending implementation. O1 remains accepted, Act1 6/8, O3 follows O2 acceptance. No new runtime, save or portrait result is implied.
