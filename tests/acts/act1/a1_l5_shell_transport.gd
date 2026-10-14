@@ -247,7 +247,9 @@ func _representative_blink() -> bool:
 	var answer: Dictionary = rusher.call("take_damage", hp_before, Vector3.ZERO)
 	setups.append({"kind": "TEST public native return-rusher lethal injury, not earned combat", "source_id": Layout.RUSHER_ID, "amount": hp_before, "answer": _encode(answer), "clock_s": _scheduler().get_clock()})
 	if not _expect(answer.get("accepted") == true and rusher.get("dead") == true, "actual public rusher injury commits real defeat/cleanup"): return false
-	if not await _place(-4.7): return false
+	# Closer than the minimum threshold, still before the boss boundary:
+	# the full capsule preview must fit the existing vertical focus limit.
+	if not await _place(-6.3): return false
 	if not await _wait(func() -> bool: return game.active_level.current_checkpoint().id == "capsule-ready", "authored blocked-capsule boundary publishes its real checkpoint", 10.0, true) or not await _settle(): return false
 	var earlier: Dictionary = game.attempts.state().story.checkpoint
 	var earlier_wire: String = Exact.stringify(earlier)
@@ -557,6 +559,15 @@ func _expect(ok: bool, label: String) -> bool:
 				first_failure["stage"] = game.active_level.get("stage")
 				first_failure["eye_error"] = game.active_level.get("eye").get("last_snapshot_error") if game.active_level.get_script() == LevelScript else "TEST Replay"
 				first_failure["blink_error"] = game.active_level.get("blink").get("last_snapshot_error") if game.active_level.get_script() == LevelScript else "TEST Replay"
+				if game.active_level.get_script() == LevelScript:
+					var points: Array = game.active_level.call("_capsule_preview_points")
+					first_failure["last_encounter_error"] = game.active_level.get("last_encounter_error")
+					first_failure["runtime_error"] = game.active_level.call("_runtime_error")
+					first_failure["hero_position"] = Codec.vector3(game.player.global_position)
+					first_failure["camera_position"] = Codec.vector3(game.camera.global_position)
+					first_failure["capsule_preview_points"] = _encode(points)
+					first_failure["capsule_framing_plan"] = _encode(game.camera_framing_plan(points, game.player.global_position + Vector3.UP * 0.65))
+					first_failure["capsule_current_view_error"] = game.camera_framing_error(points)
 	return ok
 
 

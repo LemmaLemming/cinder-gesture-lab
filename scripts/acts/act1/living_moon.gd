@@ -564,7 +564,7 @@ func _camera_framing_points() -> Array:
 	if not _running or not is_instance_valid(hero): return []
 	var points: Array = _hero_points()
 	if stage == "return" and not rusher.dead: points.append_array(_source_points(Layout.RUSHER_ID, _rusher_state().opening_position))
-	if stage == "return" and rusher.dead and impact_demonstrated and hero.global_position.z <= Layout.CAPSULE_CHECKPOINT_POSITION.z + 3.0: points.append_array(_capsule_preview_points())
+	if stage == "capsule" or (stage == "return" and rusher.dead and impact_demonstrated and hero.global_position.z <= Layout.CAPSULE_CHECKPOINT_POSITION.z + 3.0): points.append_array(_capsule_preview_points())
 	if stage in ["blink", "sneeze", "final"] or (stage == "capsule" and hero.global_position.distance_to(eye.global_position) <= LOOKAHEAD): points.append_array(_boss_points())
 	for record: Dictionary in _live_records():
 		points.append_array(_source_points(record.source_id, record.opening_position))
