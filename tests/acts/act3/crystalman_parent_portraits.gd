@@ -11,12 +11,12 @@ const REQUESTED_SIZE := Vector2i(340, 736)
 const DRAW_LIMIT: int = 32
 const PRODUCED_FROM_ACT3_PARENT_HEAD: String = "43ee893da25c9c8656966c0b828bfbbe1355afed"
 const SOURCE_PINS: Dictionary = {
-	"res://tests/acts/act3/crystalman_parent_transport_smoke.gd": "c2d396e74ece69c3436939e18ea8ccf1ef89906cbd9d324782a570fd81ed9ab7",
-	"res://scripts/acts/act3/crystalman_level.gd": "8fc75cc68bdd073169648e972b71a2850d057bd144b5657c75354dff5a661608",
+	"res://tests/acts/act3/crystalman_parent_transport_smoke.gd": "b351eccd1bc8e3ca4cd63add748e2d8d25c668c644787c90de45bc2c03ed4d02",
+	"res://scripts/acts/act3/crystalman_level.gd": "0355063927a56ba7da2e072ccd6cf1dd38888b4483b2b7e434762f8bc4b2d314",
 	"res://scripts/acts/act3/crystalman_parent_codec.gd": "bf105854b232edfac48f27b714e8d4dbeea40b9db7bc7871d75a3a70ba183efd",
 	"res://scripts/acts/act3/crystalman_scenery.gd": "cdc14f7aa71cdb2a1daec81551ca3b9ec2086831c5e63cb29826bfe89fd462c5",
 	"res://scripts/acts/act3/crystalman_landscape_scenery.gd": "77a2b1a0eabadf32d7a44e6f905a2309e28a6d5de6580fcf6225c9d1d562a62b",
-	"res://scripts/acts/act3/crystalman_approach_unit.gd": "a3e9fd99f15231ca21ffabefb4ce65d146fb6f359b85bb6bfe0c4998fd5ff9f5",
+	"res://scripts/acts/act3/crystalman_approach_unit.gd": "86051949735eb429f1aeafd29e07660b72571f86431622156f5e625c11482a79",
 	"res://scripts/acts/act3/crystalman_approach_codec.gd": "da4c4624fb5111d9b75667b7f3903cb9ad5b09a2b9322703292413e5f122186b",
 	"res://data/campaign/act3/crystalman_layout.json": "26831d7447e217a57ed173090c82d88c3a437368c6abfda930de3e99fbc0d7c6",
 	"res://scenes/acts/act3/a3_l5_crystalman.tscn": "887b4332fab4a506c0f697171cd4c40d0fe85a7ef35b1b948e4c6b89fee6a790",

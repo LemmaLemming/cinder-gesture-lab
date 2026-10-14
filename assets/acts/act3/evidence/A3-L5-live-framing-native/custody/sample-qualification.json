@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "kind": "source-only exact sample qualification",
+  "original_directory": ".cinder/crystalman-parent-regular-live-framing-native",
+  "original_result_sha256": "8ce73ceceea163c3dd97469b03bd372ad471e13669ac5b6a991afa8b03725f65",
+  "original_raw_log_sha256": "90d151bcfc7d38ac9bbfcef3cc3d2fcb6aa6249a25977fb59b0a3a1d56fd2f5c",
+  "decoding": "Existing exact-json-1 tagged values; float64 decoded little-endian with struct.unpack. Original samples remain unchanged.",
+  "unique_archived_sample_count": 7,
+  "native_sample_footer_label_count": 8,
+  "duplicate_footer_label": "native-active-l5-offered-echo",
+  "all_original_sample_files": [
+    {
+      "original_filename": "native-active-l5-offered-echo.json",
+      "bytes": 410481,
+      "sha256": "2f769f68c5bc89a311d301e22ded58b1ca3bdfd1623c626c4694a9346685a24a"
+    },
+    {
+      "original_filename": "offered-lock-g1.json",
+      "bytes": 264178,
+      "sha256": "69e3c46f838f1ee71d8bee3bbe995098078c58a3610961dbbb10c8321ef66a56"
+    },
+    {
+      "original_filename": "offered-lock-g2.json",
+      "bytes": 405063,
+      "sha256": "72e65395cac6945471df6c14bfd411a1a955d74f0c74b713a089e8529a1c8f48"
+    },
+    {
+      "original_filename": "offered-real-death-retained-journal.json",
+      "bytes": 614445,
+      "sha256": "bdf19d1dfafb7dc9ee30e398196b0296ec63c8a97e4277477072a01f35f1bf6b"
+    },
+    {
+      "original_filename": "priority-C50-active-physical-source-whole-journal.json",
+      "bytes": 706857,
+      "sha256": "07e894f8f577f0a151480c85989b41836289639cc7f7cdbf4d1c71d671359828"
+    },
+    {
+      "original_filename": "priority-C50-warning-whole-journal.json",
+      "bytes": 718862,
+      "sha256": "85362582579692830579219b551c9ac52d11c9b65691a43a435181d2b99c36fd"
+    },
+    {
+      "original_filename": "priority-entry-all-three-original-bindings.json",
+      "bytes": 714257,
+      "sha256": "0b3df97bbd63cee2b236d44e9cbd10b63cd3815cd7aa437f26a6eab7d4deca49"
+    }
+  ],
+  "decoded_C50_samples": [
+    {
+      "original_filename": "priority-C50-warning-whole-journal.json",
+      "original_path": ".cinder/crystalman-parent-regular-live-framing-native/samples/priority-C50-warning-whole-journal.json",
+      "sha256": "85362582579692830579219b551c9ac52d11c9b65691a43a435181d2b99c36fd",
+      "bytes": 718862,
+      "original_exact_json_api_revision": "exact-json-1",
+      "actor_path": "value -> level.local.current_unit.state.sources.l5-plain-stalker.actor",
+      "actor_api_revision": "act3-stalker-snapshot-3",
+      "phase": "warning",
+      "reservation_id": "threat-3",
+      "last_cancel_reason": "",
+      "clock_s": 11.616666666666823,
+      "pair_keys": [
+        "level",
+        "player"
+      ],
+      "shell_camera_metadata_present": false
+    },
+    {
+      "original_filename": "priority-C50-active-physical-source-whole-journal.json",
+      "original_path": ".cinder/crystalman-parent-regular-live-framing-native/samples/priority-C50-active-physical-source-whole-journal.json",
+      "sha256": "07e894f8f577f0a151480c85989b41836289639cc7f7cdbf4d1c71d671359828",
+      "bytes": 706857,
+      "original_exact_json_api_revision": "exact-json-1",
+      "actor_path": "value -> level.local.current_unit.state.sources.l5-plain-stalker.actor",
+      "actor_api_revision": "act3-stalker-snapshot-3",
+      "phase": "active",
+      "reservation_id": "threat-3",
+      "last_cancel_reason": "",
+      "clock_s": 13.000000000000226,
+      "pair_keys": [
+        "level",
+        "player"
+      ],
+      "shell_camera_metadata_present": false
+    }
+  ],
+  "root_reported_restore_scope": "Fresh strict whole warning and genuine active restored; real C50 ordinary primary and recovery passed.",
+  "qualification": "1436 checks / 1 failure / 1299 native ticks; exit 1. The C50 active-named sample contains genuine active state with threat-3 reservation and no cancellation. Root reports next l5-plain-echo lock timed out at 480 ticks with blank last_admission_reason.",
+  "limits": [
+    "Genuine C50 active state and isolated fresh strict restore only; no public Shell mid-C50 Continue credit.",
+    "No public Shell mid-C50 Continue or optical-authority credit: original samples contain level/player pair only.",
+    "Later l5-plain-echo lock timeout remains failed; no C52 public credit, level acceptance, full-route, art or balance claim.",
+    "No engine executed or input/UID bytes changed by this custody operation."
+  ]
+}

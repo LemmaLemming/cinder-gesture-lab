@@ -309,16 +309,18 @@ func _update_presentation(quiet: bool = false) -> void:
 
 func _camera_framing_points() -> Array:
 	if not _active or not is_instance_valid(hero): return []
-	var union: Dictionary = parent_framing_union(get_viewport().get_camera_3d())
+	# A live pending Echo forecast lets the ordinary shared camera settle
+	# before admission. Paused writers and candidate optics stay committed-only.
+	var union: Dictionary = parent_framing_union(get_viewport().get_camera_3d(),false,not get_tree().paused and not is_restore_candidate())
 	last_camera_framing_error=String(union.error)
 	return union.points if last_camera_framing_error.is_empty() else []
 
-func parent_framing_union(camera: Camera3D,current_view: bool = false) -> Dictionary:
+func parent_framing_union(camera: Camera3D,current_view: bool = false,include_pending: bool = false) -> Dictionary:
 	var points: Array = []
 	if not is_instance_valid(hero) or not is_instance_valid(shared_shell) or not is_instance_valid(camera): return {"error":"Actual Hero/Shell/Camera required","points":[]}
 	if is_instance_valid(current_unit):
 		if _stage in [0,1]:
-			var group: Dictionary = current_unit.call("camera_framing_union","",[],current_view,false,{},camera)
+			var group: Dictionary = current_unit.call("camera_framing_union","",[],current_view,include_pending,{},camera)
 			if not String(group.error).is_empty(): return group
 			points.append_array(group.points)
 		else: points.append_array(current_unit.call("captured_codec_framing_union",camera))

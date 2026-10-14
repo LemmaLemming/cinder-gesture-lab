@@ -174,7 +174,16 @@ func genuine_priority() -> bool:
 func next_echo_lock(id: String,limit: int) -> Dictionary:
 	if paused: game.call("resume_lab")
 	var source: Node3D=regular.get("sources")[id]
+	var last_observed: PackedByteArray=PackedByteArray()
+	var observation_count: int=0
 	for _i: int in range(limit):
+		if id==PLAIN:
+			var observed: Dictionary=echo_lock_observation(source)
+			var key: PackedByteArray=var_to_bytes([observed.phase,observed.status,observed.generation,observed.leases,observed.admission_reason,observed.camera_error])
+			if key!=last_observed and observation_count<16:
+				print("C52 admission observation: "+str(observed))
+				observation_count+=1
+			last_observed=key
 		var control: Dictionary=scheduler.source_control_state(source)
 		if control.reservations.size()==1:
 			var lease: Dictionary=control.reservations[0]
@@ -187,8 +196,15 @@ func next_echo_lock(id: String,limit: int) -> Dictionary:
 				observed_echo_leases[String(lease.id)]=true
 				return {"proof":proof,"lease":lease.duplicate(true),"source_id":id}
 		if not await tick(): return {}
-	expect(false,"Finite actual source lock reaches "+id,String(regular.get("last_admission_reason")))
+	expect(false,"Finite actual source lock reaches "+id,str(echo_lock_observation(source)))
 	return {}
+
+func echo_lock_observation(source: Node3D) -> Dictionary:
+	var leases: Array=[]
+	for lease: Dictionary in scheduler.source_control_state(source).get("reservations",[]):
+		leases.append({"id":lease.get("id"),"state":lease.get("state"),"locked":lease.get("adapter",{}).get("locked"),"lock_from_s":lease.get("lock_from_s")})
+	var other: Dictionary=stalker.call("state") if is_instance_valid(stalker) else {}
+	return {"clock_s":scheduler.get_clock(),"phase":source.call("source_phase"),"status":source.call("state").get("status"),"generation":source.call("get_authored_cycle_generation"),"leases":leases,"admission_reason":regular.get("last_admission_reason"),"camera_error":regular.get("last_camera_error"),"hero_position":hero.global_position,"grounded":hero.is_on_floor(),"stable":hero.get_threat_response_state().get("stable"),"stalker_phase":other.get("phase"),"stalker_lease":other.get("reservation_id"),"stalker_cancel":other.get("last_cancel_reason"),"recent_invalidations":invalidations.slice(maxi(0,invalidations.size()-8))}
 
 func follow_echo(source: Node3D,locked: Dictionary) -> bool:
 	if paused: game.call("resume_lab")
@@ -217,10 +233,14 @@ func follow_stalker(warning: Dictionary) -> bool:
 		if not expect(hero.global_position.distance_to(segment.to)<0.02,"Actual original C50 native dash reaches proved supported landing"): return false
 		if segment.kind=="escape_dash":
 			if not await until(float(lease.active_from_s)+0.03): return false
+			var active: Dictionary=stalker.call("state")
+			var actual_lease: Dictionary=scheduler.reservation_state(String(lease.id))
+			if not expect(active.phase=="active" and active.reservation_id==lease.id and actual_lease.get("state")=="active" and String(active.last_cancel_reason).is_empty(),"Actual original C50 lease is still active before whole-state sampling",str({"source":active,"lease":actual_lease,"invalidations":invalidations})): return false
 			if not await sample_parent("priority-C50-active-physical-source-whole-journal"): return false
 			game.call("resume_lab")
 	if not await until(float(warning.proof.primary_time_s)): return false
-	if not expect(hero.global_position.distance_to(warning.proof.attack_position)<0.02 and stalker.call("state").phase=="recovery","Actual C50 ordinary recovery opening remains reachable"): return false
+	var recovery: Dictionary=stalker.call("state")
+	if not expect(hero.global_position.distance_to(warning.proof.attack_position)<0.02 and recovery.phase=="recovery" and recovery.reservation_id==lease.id and String(recovery.last_cancel_reason).is_empty(),"Actual original C50 ordinary recovery opening remains reachable",str({"actual_position":hero.global_position,"attack_position":warning.proof.attack_position,"source":recovery,"invalidations":invalidations})): return false
 	if not ordinary_primary(stalker,STALKER): return false
 	return await recover_primary()
 

@@ -597,7 +597,14 @@ func camera_framing_union(candidate_id: String = "", candidate_points: Array = [
 		if not held and id not in current_ids:
 			continue # Remote inactive history cannot force a whole-level camera.
 		if _rows[id].kind == "stalker":
-			bounds = source.call("camera_framing_points_for_context", shared_shell, hero, camera, {}, {}, current_view) if held else source.call("current_render_framing_points_for_context", shared_shell, hero, camera)
+			# The live Stalker checks this union inside its native physics
+			# transaction. Its existing live bounds helper supports that call;
+			# quiet restore/context queries deliberately reject transactions.
+			var live_context: bool = framing_camera == null and not get_tree().paused and not is_restore_candidate() and shared_shell.get("player") == hero and shared_shell.get("camera") == camera
+			if held and live_context:
+				bounds = source.call("camera_framing_points", shared_shell, {}, {}, current_view)
+			else:
+				bounds = source.call("camera_framing_points_for_context", shared_shell, hero, camera, {}, {}, current_view) if held else source.call("current_render_framing_points_for_context", shared_shell, hero, camera)
 		else:
 			bounds = _echo_bounds(id, {}, camera) if held else _echo_current_bounds(id)
 		if not String(bounds.get("error", "Complete native source corners required")).is_empty():

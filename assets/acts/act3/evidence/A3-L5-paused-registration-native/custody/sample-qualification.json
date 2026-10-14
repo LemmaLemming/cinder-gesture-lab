@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "kind": "source-only exact sample qualification",
+  "original_directory": ".cinder/crystalman-parent-regular-paused-registration-native",
+  "original_result_sha256": "52493133b6f2a018a2515257318414b474449cc81c47a993a8535080f8955348",
+  "original_raw_log_sha256": "c51f8c4dccc464f5f8d7518a9c6e02d7bab2521f375cd58cc16803b596a13cf9",
+  "decoding": "Existing exact-json-1 tagged values; float64 decoded little-endian with struct.unpack. Original samples remain unchanged.",
+  "unique_archived_sample_count": 7,
+  "native_sample_footer_label_count": 8,
+  "duplicate_footer_label": "native-active-l5-offered-echo",
+  "all_original_sample_files": [
+    {
+      "original_filename": "native-active-l5-offered-echo.json",
+      "bytes": 410481,
+      "sha256": "2f769f68c5bc89a311d301e22ded58b1ca3bdfd1623c626c4694a9346685a24a"
+    },
+    {
+      "original_filename": "offered-lock-g1.json",
+      "bytes": 264178,
+      "sha256": "69e3c46f838f1ee71d8bee3bbe995098078c58a3610961dbbb10c8321ef66a56"
+    },
+    {
+      "original_filename": "offered-lock-g2.json",
+      "bytes": 405063,
+      "sha256": "72e65395cac6945471df6c14bfd411a1a955d74f0c74b713a089e8529a1c8f48"
+    },
+    {
+      "original_filename": "offered-real-death-retained-journal.json",
+      "bytes": 614445,
+      "sha256": "bdf19d1dfafb7dc9ee30e398196b0296ec63c8a97e4277477072a01f35f1bf6b"
+    },
+    {
+      "original_filename": "priority-C50-active-physical-source-whole-journal.json",
+      "bytes": 703437,
+      "sha256": "fc789846cf388dd4e0e089358c7c455bbd330b1a1a0f6a80f2b72ef9a6c59413"
+    },
+    {
+      "original_filename": "priority-C50-warning-whole-journal.json",
+      "bytes": 718862,
+      "sha256": "85362582579692830579219b551c9ac52d11c9b65691a43a435181d2b99c36fd"
+    },
+    {
+      "original_filename": "priority-entry-all-three-original-bindings.json",
+      "bytes": 714257,
+      "sha256": "0b3df97bbd63cee2b236d44e9cbd10b63cd3815cd7aa437f26a6eab7d4deca49"
+    }
+  ],
+  "decoded_C50_samples": [
+    {
+      "original_filename": "priority-C50-warning-whole-journal.json",
+      "original_path": ".cinder/crystalman-parent-regular-paused-registration-native/samples/priority-C50-warning-whole-journal.json",
+      "sha256": "85362582579692830579219b551c9ac52d11c9b65691a43a435181d2b99c36fd",
+      "bytes": 718862,
+      "original_exact_json_api_revision": "exact-json-1",
+      "actor_path": "value -> level.local.current_unit.state.sources.l5-plain-stalker.actor",
+      "actor_api_revision": "act3-stalker-snapshot-3",
+      "phase": "warning",
+      "reservation_id": "threat-3",
+      "last_cancel_reason": "",
+      "clock_s": 11.616666666666823,
+      "pair_keys": [
+        "level",
+        "player"
+      ],
+      "shell_camera_metadata_present": false
+    },
+    {
+      "original_filename": "priority-C50-active-physical-source-whole-journal.json",
+      "original_path": ".cinder/crystalman-parent-regular-paused-registration-native/samples/priority-C50-active-physical-source-whole-journal.json",
+      "sha256": "fc789846cf388dd4e0e089358c7c455bbd330b1a1a0f6a80f2b72ef9a6c59413",
+      "bytes": 703437,
+      "original_exact_json_api_revision": "exact-json-1",
+      "actor_path": "value -> level.local.current_unit.state.sources.l5-plain-stalker.actor",
+      "actor_api_revision": "act3-stalker-snapshot-3",
+      "phase": "approach",
+      "reservation_id": "",
+      "last_cancel_reason": "required_view_unsafe: l5-plain-stalker: Ready retained Stalker and actual configured render context required",
+      "clock_s": 13.000000000000226,
+      "pair_keys": [
+        "level",
+        "player"
+      ],
+      "shell_camera_metadata_present": false
+    }
+  ],
+  "root_reported_restore_scope": "Whole warning restored; later active-named sample restored the actual canceled approach state.",
+  "qualification": "934 checks / 1 failure / 800 native ticks; exit 1. The active-named filename is historical labeling, not genuine C50 active state or active restore evidence. Ordinary recovery opening failed.",
+  "limits": [
+    "No genuine C50 active restore credit.",
+    "No public Shell mid-C50 Continue or optical-authority credit: original samples contain level/player pair only.",
+    "No ordinary recovery opening success, level acceptance, full-route, art or balance claim.",
+    "No engine executed or input/UID bytes changed by this custody operation."
+  ]
+}
