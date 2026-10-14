@@ -881,7 +881,8 @@ func _pure_saved_preflight(local: Dictionary, saved_player: Dictionary) -> Strin
 	if error.is_empty(): error = _scheduler_structure_error(local.scheduler)
 	if not error.is_empty(): return error
 	var plan: Dictionary = BloomCodec.construction_plan(local)
-	var current: Array[String] = Bloom.group_ids(local.beat_index) if local.room_stage == "active" else []
+	var current: Array[String] = []
+	if local.room_stage == "active": current = Bloom.group_ids(local.beat_index)
 	if local.room_stage == "active":
 		if local.scheduler.encounter_id != Bloom.epoch_id(local.beat_index) or local.scheduler.world_revision != WORLD_REVISION or not local.scheduler.profile.get("id") is String: return "Current active O2 native epoch/world/profile required"
 		var profile: Dictionary = DifficultyData.new().profile(local.scheduler.profile.id)

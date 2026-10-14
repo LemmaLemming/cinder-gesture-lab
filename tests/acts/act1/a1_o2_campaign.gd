@@ -44,6 +44,7 @@ var started_ms: int = 0
 var finishing: bool = false
 var operation: String = "source setup"
 var observations: Array[Dictionary] = []
+var operation_wait_overruns: Array[Dictionary] = []
 var receipts: Array[Dictionary] = []
 var setups: Array[Dictionary] = []
 var protected_story: Dictionary = {}
@@ -457,23 +458,31 @@ func _same(left: Variant, right: Variant) -> bool:
 
 func _await_operation(predicate: Callable, label: String, seconds: float) -> bool:
 	var deadline: int = Time.get_ticks_msec() + int(seconds * 1000.0)
-	while not finishing and Time.get_ticks_msec() <= deadline:
+	while not finishing:
 		if not _operation_healthy(): return false
 		if predicate.call() == true:
-			# Observe a completed deferred frame; never call private Shell drain.
+			if Time.get_ticks_msec() > deadline:
+				operation_wait_overruns.append({"kind": "operation", "label": label, "late_ms": Time.get_ticks_msec() - deadline, "scope": "completed synchronous operation observed after async waiting deadline; no latency/performance pass"})
+			# Observe the real completed state before applying an asynchronous wait
+			# deadline. Native synchronous validation cannot be interrupted by it.
 			await process_frame
 			return _operation_healthy() and predicate.call() == true
+		if Time.get_ticks_msec() > deadline: break
 		await process_frame
 	return _expect(false, "bounded actual Shell operation failed: " + label)
 
 
 func _wait_live(predicate: Callable, label: String, seconds: float, allow_authored_pause: bool = false) -> bool:
 	var deadline: int = Time.get_ticks_msec() + int(seconds * 1000.0)
-	while not finishing and Time.get_ticks_msec() <= deadline:
+	while not finishing:
 		if not _operation_healthy(): return false
-		if predicate.call() == true: return true
+		if predicate.call() == true:
+			if Time.get_ticks_msec() > deadline:
+				operation_wait_overruns.append({"kind": "live", "label": label, "late_ms": Time.get_ticks_msec() - deadline, "scope": "completed native observation after async waiting deadline; no latency/performance pass"})
+			return true
 		if not is_instance_valid(game.player) or game.player.dead: return _expect(false, "actual living shared Player lost: " + label)
 		if paused and not allow_authored_pause: return _expect(false, "actual native pause interrupted live observation; no forced Resume/focus: " + label)
+		if Time.get_ticks_msec() > deadline: break
 		await process_frame
 	return _expect(false, "bounded actual native observation failed: " + label)
 
@@ -633,7 +642,7 @@ func _finish() -> void:
 	var report := FileAccess.open(report_path, FileAccess.WRITE)
 	if report == null: _expect(false, "unique actual O2 campaign report is writable")
 	else:
-		report.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "elapsed_ms": Time.get_ticks_msec() - started_ms, "setups": setups, "receipts": receipts, "observations": observations, "exact_receipts": exact_receipts, "exact_observations": exact_observations, "scope": "Production Shell at540x1170 with O2-only in-memory TEST registry override, isolated stores and disclosed completed[L1,L2,L3] unlock prefix plus actual pristine native L3 protected Story. Public Optional/paused Save/independent disk Title active-side Continue/Resume/Pause/Leave; actual pause RetryButton public pressed signal to earlier original entrance. Real first approach and native C31 lunge, one ordinary primary to original near anchor, real partial native retreat with whole Field1/Actor3-or4/Scheduler1/Consumer2/Route1/proof packets. Fresh distinct installed recipient exactness and zero callbacks scoped only to its real IDs; donor/candidate callbacks retained separately. Normal public exit/Shell teardown and canonical registry byte preservation and isolated settings/runtime restoration. No OS click/recognizer/earned traversal, later groups/pre-final checkpoint/final contact/completion/stamp/replay/all-kit/full-route/portrait/performance/mobile credit."}, "\t")); report.close()
+		report.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "elapsed_ms": Time.get_ticks_msec() - started_ms, "operation_wait_overruns": operation_wait_overruns, "setups": setups, "receipts": receipts, "observations": observations, "exact_receipts": exact_receipts, "exact_observations": exact_observations, "scope": "Production Shell at540x1170 with O2-only in-memory TEST registry override, isolated stores and disclosed completed[L1,L2,L3] unlock prefix plus actual pristine native L3 protected Story. Public Optional/paused Save/independent disk Title active-side Continue/Resume/Pause/Leave; actual pause RetryButton public pressed signal to earlier original entrance. Real first approach and native C31 lunge, one ordinary primary to original near anchor, real partial native retreat with whole Field1/Actor3-or4/Scheduler1/Consumer2/Route1/proof packets. Fresh distinct installed recipient exactness and zero callbacks scoped only to its real IDs; donor/candidate callbacks retained separately. Normal public exit/Shell teardown and canonical registry byte preservation and isolated settings/runtime restoration. No OS click/recognizer/earned traversal, later groups/pre-final checkpoint/final contact/completion/stamp/replay/all-kit/full-route/portrait/performance/mobile credit."}, "\t")); report.close()
 	if node_added.is_connected(_observe_added): node_added.disconnect(_observe_added)
 	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
 	print("A1-O2 CAMPAIGN: %d checks, %d failures; report=%s" % [checks, failures, report_path])
