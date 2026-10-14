@@ -1,0 +1,36 @@
+--- a/.cinder/spore-fusion-measure-prep/tools.py
++++ b/.cinder/spore-fusion-measure-prep/tools.py
+@@ -329,6 +329,23 @@
+         return dev.run_validation(command, context, lock, 90, detect_godot_errors=True)
+ 
+ 
++def require_four_packet_equality():
++    expected = [('discovery-a1', 'baseline'), ('discovery-b1', 'candidate'),
++                ('discovery-b2', 'candidate'), ('discovery-a2', 'baseline')]
++    packets = []; pair_sha = sha(PAIR)
++    for tag, variant in expected:
++        target = HERE / 'jobs' / tag; closed = json.loads((target / 'result.json').read_text())
++        assert closed['successful_scope'] is True and closed['mode'] == 'measure' and closed['variant'] == variant and closed['pair_sha256'] == pair_sha
++        assert closed['returncode'] == 0 and closed['source_and_uids_exact_at_closure'] is True and not closed['closure_error'] and not closed['evidence_error'] and not closed['unexpected_diagnostics']
++        assert sha(target / 'manifest.json') == closed['manifest_sha256']
++        for record in closed['streams'] + [closed['witnesses']['native'], closed['witnesses']['packets']]:
++            assert row(ROOT / record['path']) == record, record['path']
++        packet = target / 'observed/complete19-packets.exact.json'
++        assert row(packet) == closed['witnesses']['packets'], str(packet)
++        packets.append(packet.read_bytes())
++    assert all(packet == packets[0] for packet in packets[1:]), 'All four genuine discovery complete-packet files must be byte-identical'
++
++
+ def compare(baseline_tag, candidate_tag):
+     a = HERE / 'jobs' / baseline_tag; b = HERE / 'jobs' / candidate_tag
+     x = json.loads((a / 'result.json').read_text()); y = json.loads((b / 'result.json').read_text())
+@@ -338,6 +355,9 @@
+         assert sha(target / 'manifest.json') == closed['manifest_sha256']
+         for record in closed['streams'] + [closed['witnesses']['native'], closed['witnesses']['packets']]:
+             assert row(ROOT / record['path']) == record, record['path']
++    if NATIVE_DISCOVERY:
++        assert (baseline_tag, candidate_tag) in {('discovery-a1', 'discovery-b1'), ('discovery-a2', 'discovery-b2')}, 'Fixed discovery pairs required'
++        require_four_packet_equality()
+     assert (a / 'observed/complete19-packets.exact.json').read_bytes() == (b / 'observed/complete19-packets.exact.json').read_bytes(), 'Actual complete19/Player/Scheduler packets differ'
+     for field in ['physics_frames', 'process_frames', 'player_elapsed_s', 'scheduler_elapsed_s', 'hp_before', 'hp', 'hero_position', 'room_stage', 'beat_index']:
+         assert x['interval'][field] == y['interval'][field], field
