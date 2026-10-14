@@ -77,10 +77,10 @@ func build(body: StaticBody3D) -> bool:
 	for side: float in [-1.0,1.0]:
 		for z: float in [33.0,29.0,24.0,19.0,14.0]:
 			var before: int = _kit.get_child_count()
-			_kit.call("_rock_spine",Vector3(side*6.7,0,z),0.7,side,_kit)
+			_kit.call("_rock_spine",Vector3(side*3.2,0,z),0.7,side,_kit)
 			_retain(_kit.get_child(before) as MeshInstance3D)
 			var contour := PackedVector2Array([Vector2(-0.8,-1.0),Vector2(0.5,-0.8),Vector2(0.8,0.55),Vector2(-0.45,1.1)])
-			var scarlet: MeshInstance3D = _kit.call("_floor_polygon",contour,Vector3(side*4.9,0.008,z),Color("523742"))
+			var scarlet: MeshInstance3D = _kit.call("_floor_polygon",contour,Vector3(side*2.8,0.008,z),Color("523742"))
 			_retain(scarlet)
 		var sea: MeshInstance3D = _kit.call("_box",Vector3(3.0,0.018,24.0),Vector3(side*8.0,-0.15,25.0),Color("30343d"))
 		_retain(sea)

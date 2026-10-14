@@ -170,7 +170,10 @@ func _physics_process(_delta: float) -> void:
 	if not _active or _transition_busy or not is_instance_valid(hero) or hero.dead: return
 	if not parent_native_error().is_empty(): _fail(parent_native_error()); return
 	if _stage==0 and current_unit.call("source_dead","l5-offered-echo") and _capsule_inside(Rect2(-6,-14,12,36)):
-		if current_unit.call("advance_to_plain"): _stage=1; _record_entry(1)
+		if current_unit.call("advance_to_plain"):
+			_stage=1
+			if not scenery.call("present_stage",_stage): _fail("Original priority scenery stage declined"); return
+			_record_entry(1)
 	elif _stage==1 and current_unit.call("all_regular_clear") and _capsule_inside(CAPTURE_POCKET) and _actor_stable_for_capture(): _queue_transition("capture-entry")
 	elif _stage in [2,3] and _phase_observed: _queue_transition("phase-spent")
 	_update_presentation()

@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SCRIPT ERROR: Invalid call. Nonexistent function 'get_difficulty_preference (via call)' in base 'Node (game.gd)'.
+          at: CinderAct3CrystalmanApproachUnit._on_enter_level (res://scripts/acts/act3/crystalman_approach_unit.gd:79)
+          GDScript backtrace (most recent call first):
+              [0] _on_enter_level (res://scripts/acts/act3/crystalman_approach_unit.gd:79)
+              [1] enter_level (res://scripts/campaign/level.gd:106)
+              [2] _on_enter_level (res://scripts/acts/act3/crystalman_level.gd:164)
+              [3] enter_level (res://scripts/campaign/level.gd:106)
+              [4] reset_lab (res://scripts/game.gd:237)
+              [5] _ready (res://scripts/game.gd:83)
+              [6] _run (res://tests/acts/act3/crystalman_parent_transport_smoke.gd:43)
+ERROR: Whole current native parent writes/validates: Actual entered parent/Hero/presentation bindings required
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] expect (res://tests/acts/act3/crystalman_parent_transport_smoke.gd:222)
+       [1] _run (res://tests/acts/act3/crystalman_parent_transport_smoke.gd:49)
+Crystalman full-parent focused source candidate: stage0 2 checks/1 failures. Later selectors declare prior history; no route-clear/art acceptance.

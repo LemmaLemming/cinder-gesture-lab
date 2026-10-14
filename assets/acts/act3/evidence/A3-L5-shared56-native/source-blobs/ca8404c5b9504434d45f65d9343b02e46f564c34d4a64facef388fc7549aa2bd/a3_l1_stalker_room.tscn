@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act3/stalker_room.gd" id="1"]
+
+[node name="TwinSunsStalkerRuleRoom" type="Node3D"]
+script = ExtResource("1")
+level_id = "A3-L1"
+local_snapshot_version = 4
+objective_text = "Bait the short lane; return to its low flank"
+prototype_room = true
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 1.6)
+
+[node name="StalkerRuleSource" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, -0.5)

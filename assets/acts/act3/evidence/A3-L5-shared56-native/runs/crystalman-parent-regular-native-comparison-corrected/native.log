@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Actual original retained lock witness matches current native lease without re-proving or retiming: { "locked": true, "lease_native_exact": false, "clock": 3.34999999999999, "lock": 1.2, "proof_clock": 1.2, "proof_origin": 0.1, "lease_origin": 0.1 }
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] expect (res://tests/acts/act3/crystalman_parent_transport_smoke.gd:238)
+       [1] next_echo_lock (res://tests/acts/act3/crystalman_regular_priority_smoke.gd:185)
+       [2] genuine_offered_death (res://tests/acts/act3/crystalman_regular_priority_smoke.gd:117)
+       [3] recover_primary (res://tests/acts/act3/crystalman_regular_priority_smoke.gd:237)
+       [4] tick (res://tests/acts/act3/crystalman_regular_priority_smoke.gd:269)
+       [5] _wake (res://tests/acts/act3/crystalman_regular_priority_smoke.gd:32)
+Crystalman regular priority source candidate: 234 checks/1 failures/201 native ticks/samples["offered-lock-g1", "native-active-l5-offered-echo"]. Representative initial position/prior story only; actual offered native death/journal and current priority actions. No gesture/full-route/exit/art acceptance.

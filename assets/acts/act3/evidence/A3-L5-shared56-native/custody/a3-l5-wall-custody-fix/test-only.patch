@@ -1,0 +1,85 @@
+--- a/tests/acts/act3/crystalman_equipment_wall_smoke.gd
++++ b/tests/acts/act3/crystalman_equipment_wall_smoke.gd
+@@ -14,6 +14,9 @@
+ var _selected_case: String = ""
+ var _selected_kit: Dictionary = {}
+ var _wall_outcome: String = "not_requested"
++var _wall_recorded_gate: Dictionary = {}
++var _wall_recorded_slot: Dictionary = {}
++var _wall_recorded_wire: String = ""
+ 
+ func _run() -> void:
+ 	var args: PackedStringArray = OS.get_cmdline_user_args()
+@@ -26,8 +29,12 @@
+ 	root.content_scale_size=root.size
+ 	root.content_scale_mode=Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+ 	if await _open():
+-		if _selected_case=="--wall-heavy": await _wall_case()
+-		else: await _one_slot_case()
++		var completed: Variant
++		if _selected_case=="--wall-heavy": completed=await _wall_case()
++		else: completed=await _one_slot_case()
++		_expect(completed is bool and completed,"Selected coroutine completes with explicit true",JSON.stringify({"case":_selected_case,"return_type":typeof(completed),"wall_outcome":_wall_outcome}))
++		if _selected_case=="--wall-heavy":
++			_expect(_wall_outcome in ["exact_native_admission","exact_visible_rejection_and_rearm"],"Wall case reaches an explicit terminal outcome",_wall_outcome)
+ 	await _close_parent()
+ 	print("Crystalman carried-kit/wall DRAFT: %s, %d checks/%d failures/%d native ticks; wall outcome %s. Declared earlier history, one-slot scope; no full route/art/Save/Retry acceptance." % [_selected_case,_checks,_failures,_ticks,_wall_outcome])
+ 	quit(0 if _failures==0 else 1)
+@@ -142,22 +149,53 @@
+ 	actions=_hero.get_world_action_records(before)
+ 	if not _expect(actions.size()==2 and actions[1].kind=="primary" and actions[1].world_origin==actions[0].landing and actions[1].equipment_ids==_kit and _game.call("get_aim_anchor_normalized")==release, "Executed original primary keeps actual shortened landing/shape/kit and retained aim"): return false
+ 	_first_primary=Player.encode_world_action_record(actions[1],_hero.get_world_action_clock())
++	# _tap returned after the actual publication callbacks. Observe the genuine
++	# complete Gate NOW, before a tick may prepare/reject and cancel its samples.
++	if not _observe_wall_pair(): return false
+ 	for _i: int in range(240):
+ 		var state: Dictionary=_room.call("state")
+ 		if state.phase=="warning":
+ 			_wall_outcome="exact_native_admission"
+ 			return await _resolve_selected_one()
+ 		if state.phase=="rejected":
+-			var raw: Dictionary=state.last_rejected_capture
++			# Runtime last_rejected_capture documents failed preparation only. Use
++			# the already authenticated original pending/slot observation instead.
+ 			var marker: MeshInstance3D=_room.get_node_or_null("VisibleRejectedRecording") as MeshInstance3D
+-			if not _expect(not String(state.last_rejection).is_empty() and raw.slots.size()==1 and _wire_exact(raw.slots[0].dash,_first_dash) and _wire_exact(raw.slots[0].primary,_first_primary) and marker!=null and marker.is_visible_in_tree() and _room.objective_text.contains("FADES SAFELY") and state.joins==0 and _scheduler.reservations().is_empty() and _gate.retirement_state().is_empty() and _events.is_empty(), "Actual supported rejection preserves original wall-shortened path/shape and visible safe rearm cue"): return false
++			var reason: Variant=state.get("last_rejection")
++			if not _expect(reason is String and not reason.is_empty() and _wall_observation_unchanged() and marker!=null and marker.is_visible_in_tree() and _room.objective_text.contains("FADES SAFELY") and state.joins==0 and _scheduler.reservations().is_empty() and _gate.retirement_state().is_empty() and _events.is_empty(), "Actual supported rejection keeps authenticated original wall path/shape custody and visible safe rearm cue",JSON.stringify({"reason":reason,"last_rejected_capture_keys":state.get("last_rejected_capture",{}).keys(),"observed_slot_id":_wall_recorded_slot.get("slot_id")})): return false
+ 			var rejection_generation: int=int(state.generation)
+ 			if not await _wait_phase("recording",180): return false
+-			if not _expect(int(_room.call("state").generation)==rejection_generation+1 and _gate.state().capture.allocated==0 and _gate.state().capture.sealed==0 and boundary.global_transform==original_transform, "Fresh empty generation rearms without wall/actor/proof rewrites"): return false
++			if not _expect(int(_room.call("state").generation)==rejection_generation+1 and _gate.state().capture.allocated==0 and _gate.state().capture.sealed==0 and boundary.global_transform==original_transform and _wall_observation_unchanged(), "Fresh empty generation rearms without wall/actor/proof rewrites or losing original test custody"): return false
+ 			var escape_before: int=_latest_sequence()
+ 			if not _expect(_swipe(Vector3.LEFT).is_empty(), "Untrapped actual Player can leave the same fixed edge by ordinary swipe"): return false
+ 			if not await _wait_capture_dash(escape_before) or not await _wait_stable(): return false
+ 			_wall_outcome="exact_visible_rejection_and_rearm"
+-			return _expect(_hero.hp==_hp and _hero.equipment.snapshot()==_kit and boundary.global_transform==original_transform and _gate.state().capture.allocated==0 and _gate.state().capture.sealed==0 and _outer.call("parent_owned_state").stage==2, "Safe ordinary departure preserves floor/kit/HP and produces no partial replay")
++			return _expect(_hero.hp==_hp and _hero.equipment.snapshot()==_kit and boundary.global_transform==original_transform and _gate.state().capture.allocated==0 and _gate.state().capture.sealed==0 and _outer.call("parent_owned_state").stage==2 and _wall_observation_unchanged(), "Safe ordinary departure preserves floor/kit/HP/original custody and produces no partial replay")
+ 		if not await _tick(): return false
+ 	return _expect(false,"Wall-shortened capture reaches ordinary admission or explicit supported rejection")
++
++
++func _observe_wall_pair() -> bool:
++	var previous_pause: bool=paused
++	paused=true # TEST ONLY synchronous observation; no UI/input/await/tick.
++	var actor_before: Dictionary=_hero.snapshot_state()
++	var input_before: PackedByteArray=var_to_bytes(_game.call("get_input_observation_state"))
++	var gate: Dictionary=_gate.snapshot_state() # Getter only; publication already synchronized the Gate.
++	var error: String=_gate.last_snapshot_error
++	if error.is_empty() and not gate.is_empty(): error=_gate.snapshot_error(gate,actor_before)
++	var actor_same: bool=_wire_exact(actor_before,_hero.snapshot_state())
++	var input_same: bool=input_before==var_to_bytes(_game.call("get_input_observation_state"))
++	paused=previous_pause # Restore EXACT actual prior pause state before assertions.
++	if not _expect(error.is_empty() and not gate.is_empty() and actor_same and input_same,"Public complete Gate/actual Player observation is valid and changes no Actor/input/tick",error): return false
++	if not _expect(gate.get("api_revision")==_gate.API_REVISION and gate.get("schema_version") is int and gate.schema_version==1 and gate.get("capture") is Dictionary and gate.get("prepared_sequence") is Dictionary and gate.prepared_sequence.is_empty() and gate.get("consumed_sequence") is Dictionary and gate.consumed_sequence.is_empty() and gate.get("retirement") is Dictionary and gate.retirement.is_empty(),"Typed original unadmitted Gate envelope required",JSON.stringify({"gate_keys":gate.keys()})): return false
++	var capture: Dictionary=gate.capture
++	if not _expect(capture.get("slots") is Array and capture.get("pending") is Array and capture.slots.size()+capture.pending.size()==1 and capture.get("allocated")==1 and capture.get("max_slots")==1 and capture.get("armed")==true,"Exactly one actual pending or sealed original wall pair required",JSON.stringify({"capture_keys":capture.keys(),"slots_type":typeof(capture.get("slots")),"pending_type":typeof(capture.get("pending"))})): return false
++	var observed: Variant=capture.pending[0] if capture.pending.size()==1 else capture.slots[0]
++	if not _expect(observed is Dictionary and observed.get("slot_id")==1 and observed.get("dash") is Dictionary and observed.get("primary") is Dictionary and observed.get("blast") is Dictionary and observed.blast.is_empty() and _wire_exact(observed.dash,_first_dash) and _wire_exact(observed.primary,_first_primary),"Actual captured pending/slot dash+primary exactly match executed shortened geometry/gear/shape",JSON.stringify({"observed_type":typeof(observed),"slot_id":observed.get("slot_id") if observed is Dictionary else null})): return false
++	_wall_recorded_gate=gate.duplicate(true)
++	_wall_recorded_slot=observed.duplicate(true)
++	_wall_recorded_wire=Exact.stringify(_wall_recorded_gate)
++	return _expect(not _wall_recorded_wire.is_empty(),"Whole original wall observation has exact immutable test custody")
++
++func _wall_observation_unchanged() -> bool:
++	return not _wall_recorded_wire.is_empty() and Exact.stringify(_wall_recorded_gate)==_wall_recorded_wire and _wall_recorded_slot.get("dash") is Dictionary and _wall_recorded_slot.get("primary") is Dictionary and _wire_exact(_wall_recorded_slot.dash,_first_dash) and _wire_exact(_wall_recorded_slot.primary,_first_primary)

@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-13T08:01:59.274401+00:00",
+  "failed_run": ".cinder/crystalman-parent-initial-view-observed-native",
+  "raw_sha256": "5888e189b6fab7a474ddb354c0622051597814c6f52d5a13db3eece6d3b2a406",
+  "result": "23checks/0assertion failures, exit0 NONCLEAN one ERROR; not accepted as clean",
+  "first_error": "Real retained owner control required during CinderLevel._exit_tree ->Approach._on_exit_level",
+  "authoritative_cause": "Fixture close queued whole production shell before calling active_level.exit_level; automatic child _exit_tree occurs after Scheduler/source leave tree. Pure source_control_state intentionally returns empty for detached/queued owners.",
+  "fix": "Use existing public production.active_level.exit_level while bindings are live, then queue_free shell, exactly as existing donor Game closure does. No shared/runtime control-state guard or assertion change.",
+  "retest": "Same initial parent transport fixture only, explicit diagnostics inspected in addition to footer/exit."
+}

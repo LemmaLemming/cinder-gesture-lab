@@ -48,6 +48,7 @@ var invalidations: Array[Dictionary]=[]
 var offered_live_id: int=0
 var offered_journal_after_death: Dictionary={}
 var baseline_epoch: float=0.0
+var observed_echo_leases: Dictionary={}
 
 func _run() -> void:
 	room_path=PRIORITY_ROOM
@@ -72,6 +73,17 @@ func open_regular() -> bool:
 	game=MainScene.instantiate()
 	game.set("level_scene_path",room_path)
 	root.add_child(game)
+	# Match the current base transport startup: reset_lab snaps before entry
+	# installs source bounds. Let the ordinary shared camera/HUD pass settle
+	# before requesting real Pause; no Player/source/camera pose is rewritten.
+	var initial_view_error: String="Initial native view not observed"
+	for frame: int in range(90):
+		var initial_level: CinderLevel=game.get("active_level") as CinderLevel
+		if initial_level!=null:
+			initial_view_error=String(initial_level.call("candidate_presentation_error",game.get("camera"),game.get("hud")))
+			if initial_view_error.is_empty(): break
+		await process_frame
+	if not expect(initial_view_error.is_empty(),"Ordinary shared initial camera/HUD contains the actual offered source and Hero",initial_view_error): return false
 	game.call("open_bench")
 	level=game.get("active_level") as CinderLevel
 	hero=game.get("player") as CinderPlayer
@@ -166,14 +178,13 @@ func next_echo_lock(id: String,limit: int) -> Dictionary:
 		var control: Dictionary=scheduler.source_control_state(source)
 		if control.reservations.size()==1:
 			var lease: Dictionary=control.reservations[0]
-			if lease.adapter.get("kind")=="authored_replay" and lease.adapter.get("locked")==true:
-				var binding: Dictionary=source.call("get_authored_echo_binding")
-				var world: Dictionary=source.call("prepared_world")
-				var context: Dictionary={"world_root":level,"source_id":binding.source_id,"source_epoch":binding.source_epoch,"generation":binding.generation,"world_collision_fingerprint":world.collision_fingerprint,"world_floor_signature":world.floor_signature}
-				# Public PURE same-tick lock witness, not a new admission/retiming.
-				# Original commit sets lock_from_s to its exact observed clock.
-				var proof: Dictionary=Witness.new().prove_authored(scheduler,source,source.call("source_program"),regular.call("combat_response",id),context,true,String(lease.id))
-				if not expect(scheduler.get_clock()==float(lease.lock_from_s) and proof.get("accepted",false) and proof.get("at_lock",false) and proof.timeline_origin_s==lease.adapter.timeline_origin_s and proof.evaluated_at_s==lease.lock_from_s,"Actual original lock clock/context yields public ordinary no-retiming witness",str(proof)): return {}
+			if lease.adapter.get("kind")=="authored_replay" and lease.adapter.get("locked")==true and not observed_echo_leases.has(String(lease.id)):
+				var committed: Dictionary=regular.call("current_echo_commit",id)
+				var proof: Dictionary=committed.get("proof",{})
+				# Observe the actual retained commit result: armed exchanges cannot
+				# legally be re-proved. Keep the original clock/lease/deadlines exact.
+				if not expect(committed.get("locked",false) and var_to_bytes(committed.get("lease",{}))==var_to_bytes(lease) and scheduler.get_clock()==float(lease.lock_from_s) and proof.get("accepted",false) and proof.get("at_lock",false) and proof.timeline_origin_s==lease.adapter.timeline_origin_s and proof.evaluated_at_s==lease.lock_from_s,"Actual original retained lock witness matches current native lease without re-proving or retiming",str({"locked":committed.get("locked",false),"lease_native_exact":var_to_bytes(committed.get("lease",{}))==var_to_bytes(lease),"clock":scheduler.get_clock(),"lock":lease.lock_from_s,"proof_clock":proof.get("evaluated_at_s"),"proof_origin":proof.get("timeline_origin_s"),"lease_origin":lease.adapter.timeline_origin_s})): return {}
+				observed_echo_leases[String(lease.id)]=true
 				return {"proof":proof,"lease":lease.duplicate(true),"source_id":id}
 		if not await tick(): return {}
 	expect(false,"Finite actual source lock reaches "+id,String(regular.get("last_admission_reason")))
@@ -266,6 +277,12 @@ func sample_parent(label: String) -> bool:
 	if not expect(paused and not saved.player.is_empty() and not saved.level.is_empty() and level.snapshot_error_with_player(saved.level,saved.player).is_empty(),"Complete current regular/parent native writer: "+label,level.last_snapshot_error): return false
 	var parsed: Dictionary=Exact.parse(Exact.stringify(saved))
 	if not expect(parsed.get("accepted",false) and same(parsed.value,saved),"Whole exact native JSON preserves all managed/ordinary branches: "+label): return false
+	var sample_directory: String=ProjectSettings.globalize_path("res://captures/act3/crystalman-priority")
+	if not expect(DirAccess.make_dir_recursive_absolute(sample_directory)==OK,"Native priority sample directory available"): return false
+	var sample_file: FileAccess=FileAccess.open(sample_directory.path_join(label+".json"),FileAccess.WRITE)
+	if not expect(sample_file!=null,"Exact actual current parent sample opens"): return false
+	sample_file.store_string(Exact.stringify(saved)); sample_file.close()
+	print("Crystalman priority sample: "+label+" at native "+str(scheduler.get_clock())+"s")
 	if not await fresh_candidate(saved): return false
 	samples.append(label)
 	return true

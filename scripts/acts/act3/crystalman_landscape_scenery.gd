@@ -10,7 +10,7 @@ const VIOLET := Color("61516f")
 const SULPHUR := Color("92966e")
 const IVORY := Color("b3b09a")
 const FACE_ORIGIN := Vector3(0, 0.25, -6.8)
-const CODA_ORIGIN := Vector3(0, 0, -16.0) # Provisional layout, never a spawn.
+const CODA_ORIGIN := Vector3(0, 0, -8.9) # Tower foot remains beyond the permanent floor at z=-14.
 const FAMILIES: Array[String] = ["presence", "flora", "roots", "spines", "coda"]
 
 var _kit: Node3D
@@ -39,7 +39,7 @@ func build() -> bool:
 	_build_presence()
 	for side: float in [-1.0, 1.0]:
 		for index: int in range(3):
-			var at := Vector3(side * 8.4, 0, -4.8 + float(index) * 2.4)
+			var at := Vector3(side * 3.25, 0, -4.8 + float(index) * 2.4)
 			var before: int = _kit.get_child_count()
 			_kit.call("_rock_spine", at, 0.75 + float(index % 2) * 0.25, side, _kit)
 			_retain(_kit.get_child(before) as MeshInstance3D, "spines", -1)
@@ -171,7 +171,7 @@ func _crystal(at: Vector3, side: float, index: int) -> void:
 func _build_coda() -> void:
 	# Distant sea framing, not the playable surface. Root must place this
 	# behind/outside its actual plain firm-floor exit in the authored layout.
-	_box("DistantStillSea", Vector3(24, 0.018, 4), CODA_ORIGIN + Vector3(0, -0.06, -7.0), Color("28303a"), "coda", -1)
+	_box("DistantStillSea", Vector3(24, 0.018, 3.8), CODA_ORIGIN + Vector3(0, -0.06, -7.0), Color("28303a"), "coda", -1)
 	_box("PlainTower", Vector3(0.84, 2.65, 0.58), CODA_ORIGIN + Vector3(2.15, 1.325, -5.6), BLACK, "coda", -1)
 	_box("TowerQuietFoot", Vector3(1.2, 0.12, 0.9), CODA_ORIGIN + Vector3(2.15, 0.06, -5.6), Color("302936"), "coda", -1)
 	for row: int in range(3):

@@ -88,7 +88,15 @@ func fresh_candidate(saved: Dictionary) -> bool:
 	var camera: Camera3D=receiver.get("camera") as Camera3D
 	var hud: GameHUD=receiver.get("hud") as GameHUD
 	candidate.exit_level()
-	var ok: bool=candidate.enter_restore_candidate(actor,receiver.get("fx"),receiver,saved.level,saved.player)
+	# A new own-world floor is not natively queryable until registration has
+	# crossed a paused process boundary. Keep construction/validation strict;
+	# this wait gives no simulation/input permission and makes no saved writes.
+	var fresh_floor: CollisionShape3D=candidate.get("floor_collision") as CollisionShape3D
+	var fresh_before: PackedByteArray=var_to_bytes([actor.snapshot_state(),receiver.call("get_input_observation_state"),fresh_floor.global_transform,(fresh_floor.shape as BoxShape3D).size,fresh_floor.disabled])
+	await process_frame
+	var fresh_after: PackedByteArray=var_to_bytes([actor.snapshot_state(),receiver.call("get_input_observation_state"),fresh_floor.global_transform,(fresh_floor.shape as BoxShape3D).size,fresh_floor.disabled])
+	var ok: bool=expect(paused and fresh_before==fresh_after,"Paused new-world registration preserves complete Actor/input/floor before single restore entry")
+	if ok: ok=candidate.enter_restore_candidate(actor,receiver.get("fx"),receiver,saved.level,saved.player)
 	watch(candidate); watch(actor)
 	var observed: int=quiet
 	ok=expect(ok and candidate.is_restore_candidate() and actor.get_world_3d()!=hero.get_world_3d(),"Fresh native candidate construction has distinct world/Player/floor",candidate.last_snapshot_error) and ok

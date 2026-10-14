@@ -620,6 +620,13 @@ func camera_framing_union(candidate_id: String = "", candidate_points: Array = [
 	return {"error": "", "points": points}
 
 
+func current_echo_commit(id: String) -> Dictionary:
+	# Defensive observation of the genuine Scheduler commit result. Re-proving
+	# after arming is forbidden; this never admits, retimes or mutates a lease.
+	if not _echo_records.has(id): return {}
+	var data: Dictionary = _echo_records[id]
+	return {"locked":data.locked,"lease":data.lease.duplicate(true),"proof":data.proof.duplicate(true)}
+
 func regular_owned_state() -> Dictionary:
 	var view: Dictionary = {}
 	for id: String in _echo_records:

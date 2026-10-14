@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-13T07:35:16.752374+00:00",
+  "command": "python3 scripts/dev/dev.py engine --headless --path . --script res://tests/acts/act3/crystalman_parent_transport_smoke.gd",
+  "revision": "2c69525c28f61973a8271c5a1ff26c39f94904a5",
+  "failed_run": ".cinder/crystalman-parent-initial-first-native",
+  "raw_sha256": "0e570d2b7b2b9e7f97ee3988f4cd96bb73a352c2ae44e945a1d7f4bae743aa80",
+  "first_error": "Nonexistent get_difficulty_preference in Node game.gd from approach._on_enter_level79",
+  "classification": "script API call against supported standalone preview recipient",
+  "actual_sources": {
+    "scripts/game.gd": "standalone preview, no difficulty preference getter",
+    "scripts/campaign/shell.gd:111": "campaign public getter exists and is retained"
+  },
+  "changed_source": "scripts/acts/act3/crystalman_approach_unit.gd",
+  "original_sha256": "5502b980423d1c6f99d73623b03ce526bd1bfa5735658248dfb5c02fec78297f",
+  "corrected_sha256": "2b4dbd73d4a731ce6eb614cd0ed88bf8435c539714456dceb8b1748fbb1c00aa",
+  "fix": "Only conditional getter call with same valid shell+has_method guard as accepted L4 and capture preview; Standard for standalone preview, actual preference for campaign. No private data access, no schema/mechanics/assertion change.",
+  "retest": "Same initial parent transport fixture only. No new resource or import needed."
+}
