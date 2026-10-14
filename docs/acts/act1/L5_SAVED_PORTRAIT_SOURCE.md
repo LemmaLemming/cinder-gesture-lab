@@ -5,3 +5,7 @@ Source prepared 14 October 2026. The owned `a1_l5_saved_portrait.gd` restores fo
 The actual paused menu CanvasLayer is hidden only for each540x1170 PNG. Exact whole-unit, native physical, camera, input and restored UI equality is checked before/during/after capture. Native focus loss cancels normally; bounded100s whole/20s per-view wall observation is not a gameplay timing change. Normal descendant/cue/group and isolated Store cleanup remains, with existing audio handling unsuppressed. The report key `focus_events` is the only source review correction to the staged fixture, preserving recorder visibility of actual focus events.
 
 Necessary new-script import and graphical execution remain unexecuted. Run only `python3 scripts/dev/dev.py import`, then `python3 scripts/dev/dev.py engine --path . --script tests/acts/act1/a1_l5_saved_portrait.gd -- --portrait` through the shared queue and `.cinder/a1-l5-saved-portrait57-run.py` recorder. No unchanged boss/persistence rerun is required. Actual PNG personal inspection remains due. These views establish no new gameplay, earned route, full-flight, all-kit balance, sustained performance or mobile evidence.
+
+## Actual required import
+
+Queued import08 closes0 clean on c785c771 / Shared57 in3.721s, preserving all864 frozen inputs and492 prior UID bytes. One genuine test UID gives493 unique IDs. Receipt `.cinder/a1-l5-saved-portrait-import08.json`. This establishes import custody, not graphical parsing, PNGs or acceptance; the four-view graphical check is next.
