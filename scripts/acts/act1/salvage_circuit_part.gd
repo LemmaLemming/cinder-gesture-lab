@@ -1,6 +1,6 @@
 class_name Act1SalvageCircuitPart
 extends Node3D
-## SOURCE ONLY GREYBOX: one stationary contact collectible; neutral low Box.
+## SOURCE ONLY: one stationary contact collectible from the finless capsule kit.
 ## Parent owns real eligibility, collected IDs, cue notifications and cleanup.
 ## No body-entered callback, attack receiver, inventory, reward or private timer.
 
@@ -8,6 +8,7 @@ const IDS: Array[String] = ["nose-cap", "rivet-band", "hatch-disc"]
 const STATES: Array[String] = ["available", "active", "spent"]
 const CONTACT_SIZE: Vector3 = Vector3(0.9, 1.2, 0.9)
 const CONTACT_OFFSET: Vector3 = Vector3(0, 0.6, 0)
+const METAL_TEXTURE = preload("res://assets/acts/act1/launch/riveted_plate.png")
 
 var _part_id: String = ""
 var _state: String = "available"
@@ -97,13 +98,70 @@ func world_corners() -> Array[Vector3]:
 
 
 func _build_fragment() -> void:
-	# Neutral contact placeholder; authored three-fragment meshes remain staged.
-	var mesh := BoxMesh.new()
-	mesh.size = Vector3(0.5, 0.25, 0.5)
-	_mesh("GreyboxContactPart", mesh, Vector3(0, 0.125, 0), Color("939393"))
+	if _part_id == "nose-cap":
+		# Same three rounded nose sections/radius order/-Z axis as the existing
+		# finless L5 capsule, at 0.45 cosmetic scale and local Z centre -1.795.
+		for section: Vector4 in [Vector4(-1.55, 0.84, 0.66, 0.42), Vector4(-1.91, 0.66, 0.34, 0.34), Vector4(-2.16, 0.34, 0.07, 0.18)]:
+			var mesh := CylinderMesh.new()
+			mesh.top_radius = section.z * 0.45
+			mesh.bottom_radius = section.y * 0.45
+			mesh.height = section.w * 0.45
+			mesh.radial_segments = 16
+			mesh.rings = 1
+			_mesh("RoundedBulletNoseSection", mesh, Vector3(0, 0, (section.x + 1.795) * 0.45), Color("c1c1c1"))
+			(_meshes.back() as MeshInstance3D).rotation.x = -PI * 0.5
+	elif _part_id == "rivet-band":
+		var mesh := TorusMesh.new()
+		mesh.inner_radius = 0.27
+		mesh.outer_radius = 0.38
+		mesh.rings = 16
+		mesh.ring_segments = 6
+		_mesh("RecoveredRivetBand", mesh, Vector3(0, 0.11, 0), Color("939393"), true)
+	else:
+		var mesh := CylinderMesh.new()
+		mesh.bottom_radius = 0.38
+		mesh.top_radius = 0.38
+		mesh.height = 0.10
+		mesh.radial_segments = 16
+		_mesh("RoundHatchDisc", mesh, Vector3(0, 0.05, 0), Color("939393"), true)
+		var porthole := CylinderMesh.new()
+		porthole.bottom_radius = 0.14
+		porthole.top_radius = 0.14
+		porthole.height = 0.012
+		porthole.radial_segments = 16
+		_mesh("DarkPortholeInset", porthole, Vector3(0, 0.108, 0), Color("272727"))
+	for index: int in range(8):
+		var rivet := SphereMesh.new()
+		rivet.radius = 0.025
+		rivet.height = 0.05
+		rivet.radial_segments = 8
+		rivet.rings = 4
+		var angle: float = TAU * index / 8.0
+		var origin: Vector3
+		if _part_id == "nose-cap":
+			# Rivets follow the rear round rim in the same X/Y plane as the
+			# capsule bands; the complete fragment is grounded below.
+			origin = Vector3(cos(angle) * 0.31, sin(angle) * 0.31, 0.20475)
+		else:
+			var y: float = 0.17 if _part_id == "rivet-band" else 0.12
+			origin = Vector3(cos(angle) * 0.31, y, sin(angle) * 0.31)
+		_mesh("FragmentRivet%d" % index, rivet, origin, Color("c1c1c1"))
+	if _part_id in ["nose-cap", "rivet-band"]: _ground_fragment()
 
 
-func _mesh(label: String, geometry: Mesh, origin: Vector3, color: Color) -> void:
+func _ground_fragment() -> void:
+	# Native generated mesh AABBs and each actual cosmetic local transform,
+	# not a guessed torus thickness or a private clock/body/camera offset.
+	var minimum_y: float = INF
+	for mesh: MeshInstance3D in _meshes:
+		for point: Vector3 in _box_points(mesh.get_aabb(), mesh.transform):
+			if not point.is_finite(): return
+			minimum_y = minf(minimum_y, point.y)
+	if is_finite(minimum_y): _art.position.y = -minimum_y
+
+
+
+func _mesh(label: String, geometry: Mesh, origin: Vector3, color: Color, metal: bool = false) -> void:
 	var visual := MeshInstance3D.new()
 	visual.name = label
 	visual.mesh = geometry
@@ -114,6 +172,7 @@ func _mesh(label: String, geometry: Mesh, origin: Vector3, color: Color) -> void
 	material.albedo_color = color
 	material.roughness = 0.9
 	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	if metal: material.albedo_texture = METAL_TEXTURE
 	visual.material_override = material
 	_art.add_child(visual)
 	_meshes.append(visual)

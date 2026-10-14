@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-10-14T06:25:02.814761+00:00",
+  "reviewer": "/root/l5_handoff_prep",
+  "status": "bounded source audit complete; all parsing/native/optical behavior unexecuted",
+  "scope": "Authored O1 variant compared against separated greybox leaf package. No active writes, engine, parent/codec edits, broader campaign audit, new route/view/test/approval gate.",
+  "files": [
+    {
+      "path": "scripts/acts/act1/salvage_circuit_layout.gd",
+      "greybox_sha256": "6a395b291698d7f1218aca81e34b53578dea3c5c772ce8b70d5afd9ccac43aec",
+      "authored_sha256": "6a395b291698d7f1218aca81e34b53578dea3c5c772ce8b70d5afd9ccac43aec",
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit_part.gd",
+      "greybox_sha256": "cff83b246bafe6401690ff035e0018d9d0db633e2cea26855d949384baa16fa7",
+      "authored_sha256": "f6f19819f221ad120548f1948aab54c6e5c7df98307660d3ae77e00a2b9b72ec",
+      "byte_identical": false
+    },
+    {
+      "path": "scripts/acts/act1/salvage_circuit_scenery.gd",
+      "greybox_sha256": "05eece9042a39b484d1701e0117c46f11893b82cc1fa50263103652aa3fb4da1",
+      "authored_sha256": "d12a2500bbc9dbe8aa2fc78224b09bddd49f075aa135ce84e71796e2017e45b6",
+      "byte_identical": false
+    },
+    {
+      "path": "scenes/acts/act1/a1_o1.tscn",
+      "greybox_sha256": "f8e78a67fd38a0099e50ae78971044ec396bd78c05ba24bc28fd17ad39659130",
+      "authored_sha256": "f8e78a67fd38a0099e50ae78971044ec396bd78c05ba24bc28fd17ad39659130",
+      "byte_identical": true
+    }
+  ],
+  "source_notes": {
+    "path": "files/docs/acts/act1/SALVAGE_CIRCUIT_SOURCE.md",
+    "sha256": "85666eb046ad5dd459a6e6b5aa45a55c950a28635319e3e3223211dcaf47c446"
+  },
+  "immutable_joins": {
+    "layout_and_scene_byte_identical": true,
+    "part_function_bodies_exact": {
+      "configure": true,
+      "set_state": true,
+      "presentation_state": true,
+      "get_cue": true,
+      "contact_area": true,
+      "contact_collision": true,
+      "contact_corners": true,
+      "cue_corners": true,
+      "world_corners": true,
+      "_box_points": true,
+      "_complete_world_aabb": true
+    },
+    "contact_ids": [
+      "nose-cap",
+      "rivet-band",
+      "hatch-disc"
+    ],
+    "part_positions": {
+      "nose-cap": [
+        -2,
+        0,
+        0
+      ],
+      "rivet-band": [
+        2,
+        0,
+        0
+      ],
+      "hatch-disc": [
+        0,
+        0,
+        -2.7
+      ]
+    },
+    "native_contacts": {
+      "part_box": [
+        0.9,
+        1.2,
+        0.9
+      ],
+      "part_offset": [
+        0,
+        0.6,
+        0
+      ],
+      "hatch_box": [
+        1.6,
+        1.3,
+        0.9
+      ],
+      "hatch_position": [
+        0,
+        0.65,
+        3.8
+      ],
+      "collision_layer": 0,
+      "player_mask": 4,
+      "floor_box": [
+        14,
+        1,
+        16
+      ],
+      "floor_centre": [
+        0,
+        -0.5,
+        0
+      ],
+      "spawn": [
+        0,
+        0.1,
+        5
+      ]
+    },
+    "source_ids": [
+      "salvage-circuit-rusher",
+      "salvage-final-rusher",
+      "salvage-circuit-impact"
+    ],
+    "accepted_existing_reuse_pin_changes": [],
+    "scope_qualification": "Fresh instantiation has fresh native identities normally. Within a leaf lifetime, presentation setters retain existing Area/shape/MeshInstance/material/capsule resources; only visible state and existing hatch-hinge transform change. Shared cue mesh changes are the parent-controlled existing cue semantics, not authored leaf callbacks."
+  },
+  "point_budget_and_camera": [
+    "Part world_corners includes every currently visible fragment mesh AABB, native retained contact and visible actual cue, then returns8 conservative world-AABB corners; contact_corners/ cue_corners remain independent.",
+    "Capsule adapter consumes all corners from unchanged L5 renderer and visible damage seams before conservative world-AABB8; no mesh/rivet/cue is omitted. Nonfinite input refuses with Vector3.INF.",
+    "Three complete part unions plus capsule use32 points. This does not prove the parent total <=224; parent source/footprint/Hero/landing/hatch points remain separate. No parent review performed.",
+    "Scenery camera binder delegates to actual L5 capsule same-world/current-viewport guard. Billboard bounds use the retained actual camera basis; no camera/clocks mutate. Whole floor/flats bounds are scenic catalog only, not mandatory local framing."
+  ],
+  "semantics_and_provenance": [
+    "Available/active parts retain body presentation; spent hides it. No attack receiver, body callback, reward/inventory or timer. Parent controls actual contact collection and shared contact cue notification after recording stable ID.",
+    "Damaged hatch = existing closed door + two dark latch seams; repaired = hide seams + existing open-hatch pose. Real stationary Area/cue/eligibility remain parent-owned. No assembly/flight/cord/clinger step is introduced.",
+    "Exact G17/ENV02 and G14 board pixels were viewed in the source-preparation turn. G17 inset supplies finless separated-shell vocabulary; G14 supplies capsule/rivets/circular hatch. Contemporary generated references remain references, not runtime atlas or1902 provenance.",
+    "Authoring reuses accepted L2 cutout settings/quiet tile and unchanged L5 capsule/riveted texture. Only part/scenery runtime files differ between variants; layout/scene/physical contacts/IDs are exact."
+  ],
+  "likely_visual_issues_unverified": [
+    {
+      "id": "nose-axis",
+      "observation": "Authored nose-cap is one tapered CylinderMesh on Y at y.26, not the accepted capsule\u2019s rounded multi-section nose along Z. G17/G14 show the shell front lying along its long axis. This is a simplified fragment pose, not exact renderer extraction.",
+      "implication": "It may read as an upright cone rather than a recovered bullet nose in the planned portrait. No new mechanic or source/contact drift; no visual defect is claimed from source alone."
+    },
+    {
+      "id": "band-floor-offset",
+      "observation": "Torus band center y.11 with inner/outer radii.27/.38 and no support mesh. Under the conventional torus section implied by those radii, a small floor gap is plausible; actual native mesh AABB has not been measured.",
+      "implication": "Grounded contact read is unverified. Record this in the already planned art inspection; no separate view/route gate is requested."
+    },
+    {
+      "id": "scenic-occlusion",
+      "observation": "Outer billboard flats sit x\u00b17.2 with full quad width2.304, so their inner reserve reaches x\u00b16.048; capsule at z2 reaches the real hatch approach and the angled open door extends beyond its closed pose.",
+      "implication": "Central part/source arrangement is separate from the flats, but outer landing/capsule/Hero occlusion is still possible with the real camera. Shared contact cue and required native bounds remain; pixels/occlusion are unexecuted."
+    }
+  ],
+  "primary_api_references": [
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_torusmesh.html",
+      "inspected": "inner_radius and outer_radius definitions; source-only grounding hypothesis, not actual native AABB proof"
+    },
+    {
+      "url": "https://docs.godotengine.org/en/stable/classes/class_cylindermesh.html",
+      "inspected": "top/bottom radii and full height; supports describing authored tapered cylinder rather than rounded extracted nose"
+    }
+  ],
+  "limits": [
+    "No Godot parsing/import/native callback/floor/camera/containment/cleanup result.",
+    "No portrait rendering/art acceptance, human balance, full route/all-kit or mobile/performance result.",
+    "No source-only acceptance or extra gate; Root decides art promotion after its small greybox native result."
+  ],
+  "audit_writes": [
+    "audit/source-audit.json",
+    "audit/SOURCE_AUDIT.md"
+  ]
+}
