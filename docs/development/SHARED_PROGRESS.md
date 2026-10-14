@@ -2,6 +2,8 @@
 
 ## Current status — 14 October 2026, Shared58
 
+Shared58 is committed at `6d5b8b45e0147e50fb75e8e27a1e6facb72dac3e`. All three actual worker notices were delivered. [Bounded independent adoption verification](evidence/shared58-worker-adoption/index.json) confirms Act2 merge `473b4c56` and Act3 merge `59037456`; Act1 ACK remains pending. The [independent publication review](evidence/physics-origin-pause/publication-review.json) confirms the exact nine-line change and original/candidate test scopes. These are adoption and review records, not new gameplay runs.
+
 The [physics-origin Pause repair](PHYSICS_ORIGIN_PAUSE.md) resolves an independently reproduced save refusal: the first process signal retained the preparation counter. Original native6/1 is preserved; the nine-line fix passes paired23/0, persistent22/0, directly affected core96/0 and startup21/0, with clean import. No deadline, snapshot or final validation predicate was relaxed. [Original logs and source manifests](evidence/physics-origin-pause/index.json) retain every phase and the genuine new test UID.
 
 Act 2 continues its smallest authored checkpoint control and pending native-lunge persistence checks after adoption. Act 3 retains the actual1078/1 Retry observation and71/1 standalone saved-warning startup failure; its test-only fresh-instance wait and authentic saved-session suffix have passed source review. Their original shared error operands remain unproven until their own focused results arrive. Integration provides the exact old-to-new Shell archive compatibility pair without changing saved bytes.
