@@ -160,7 +160,7 @@ func _native_wire() -> String:
 	for id: String in Layout.PART_IDS:
 		var part: Node3D = (game.active_level.get("parts") as Dictionary)[id]
 		rows.parts[id] = {"state": part.call("presentation_state"), "contact": _portable(part.call("contact_area").global_transform), "cue": _cue(part.call("get_cue"))}
-	rows.hatch_cue = _cue(game.active_level.get("hatch_cue")); return Exact.stringify(rows)
+	rows.hatch_cue = _cue(game.active_level.get("hatch_cue")); return Exact.stringify(_portable(rows))
 
 
 func _body(actor: CharacterBody3D) -> Dictionary:
@@ -189,7 +189,7 @@ func _ui_wire() -> String:
 			if node is Label: value.text = node.text
 			if node is Button: value.disabled = node.disabled
 			rows[String(node.get_path())] = value
-	var wire: String = Exact.stringify(rows)
+	var wire: String = Exact.stringify(_portable(rows))
 	if wire.is_empty(): setups.append({"kind": "UI signature encoding refusal diagnostic", "rows": rows})
 	return wire
 
