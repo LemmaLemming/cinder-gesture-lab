@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "kind": "bounded-act3-o1-corrected-portrait57-delta-review",
+  "reviewed_at": "2026-10-14T09:09:36.493043+00:00",
+  "scope": "Corrected portrait and exact two-source delta only. Original56 review preserved unchanged;351/125/214 controls were not revisited. Read-only exact closed result/raw/terminal/snapshot/image joins and actual view_image inspection; no engine, recensus, bank duplication, source/UID/worker edits or acceptance.",
+  "original56_review": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/level-testing/optional-registration-prep/act3-o1-transitions-portrait-review.json",
+    "sha256": "4405a69ace43d0209dd18f5c4bba98a126be86047075a3650bcd41c6b8c865da",
+    "bytes": 16042
+  },
+  "corrected57_result": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/o1-runs/final-paused-portrait-02/result.json",
+    "sha256": "e6f2baf66961c33964dbb36da55fe545df2f98be0401fa8fbeb8ff229a42d9c3",
+    "bytes": 625
+  },
+  "corrected57_raw_log": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/o1-runs/final-paused-portrait-02/native.log",
+    "sha256": "080fa33ca4e68c4a27bd37f42f2f67da225c7b820b4a9ceda2dca6d2fbb08995",
+    "bytes": 447
+  },
+  "corrected57_command": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/o1-runs/final-paused-portrait-02/command.json",
+    "sha256": "fc85a71a00e58210b72a62791b4e6c44e4b056b0d33c9586182298e84166e996",
+    "bytes": 504
+  },
+  "corrected57_source_map": {
+    "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/o1-runs/final-paused-portrait-02/sources.json",
+    "sha256": "0ed4a1e587a74b291fdaecab4a5f130f7715a97f0b677547e4ed7fa38d9913cc",
+    "bytes": 1380
+  },
+  "actual_checks": [
+    57,
+    0
+  ],
+  "closed_at": "2026-10-14T08:59:28.761262+00:00",
+  "actual_exit_code": 0,
+  "literal_footer": "O1 paused portrait: 57 checks/0 failures; scope_complete=true; actual original-warning Side Resume/optics/pixels/whole cleanup only.",
+  "selected_source_changes_during_run": [],
+  "terminal_app_command": {
+    "thread_id": "01a11ae0-0acf-7d00-a987-321a98de5b66",
+    "turn_id": "01a1397d-7ef5-7d32-9529-b69a1653ab0e",
+    "command_execution_id": "exec-64bf6933-22f6-485a-8b01-81dc7c8d8e58",
+    "status": "completed",
+    "exit_code": 0,
+    "duration_ms": 9413,
+    "output_join": "Same final-paused-portrait-02 graphical reader, original held archive and exact old:new prop hash arguments; corrected PNG path,57/0 footer, closed result and rawSHA080fa33c. No live process wait/poll."
+  },
+  "two_changed_source_snapshots_and_current": [
+    {
+      "path": "scripts/acts/act3/temporal_marker_prop.gd",
+      "original_tested56_snapshot": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/o1-runs/final-paused-portrait-01/changed-sources/scripts/acts/act3/temporal_marker_prop.gd",
+        "sha256": "19506a2a61c488b25e5dcc4b4ddac50de10374f274344593e09558239da9561b",
+        "bytes": 4789
+      },
+      "corrected_tested57_snapshot": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/o1-runs/final-paused-portrait-02/changed-sources/scripts/acts/act3/temporal_marker_prop.gd",
+        "sha256": "39b6bacbb00b936874b5cfea745dad6505852beec7865b24826c8caf74b54638",
+        "bytes": 5377
+      },
+      "current_worker": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/scripts/acts/act3/temporal_marker_prop.gd",
+        "sha256": "39b6bacbb00b936874b5cfea745dad6505852beec7865b24826c8caf74b54638",
+        "bytes": 5377
+      },
+      "corrected_snapshot_matches_current": true,
+      "exact_unified_source_delta": "--- original56/scripts/acts/act3/temporal_marker_prop.gd\n+++ corrected57/scripts/acts/act3/temporal_marker_prop.gd\n@@ -16,6 +16,8 @@\n var _cap: MeshInstance3D\n var _inlay: MeshInstance3D\n var _pieces: Array[MeshInstance3D] = []\n+var _teeth: Array[MeshInstance3D] = []\n+var _standing_teeth: Dictionary = {}\n var _authored: Dictionary = {}\n \n \n@@ -31,8 +33,10 @@\n \t_piece(\"GroundedStoneFoot\", base, Vector3(0, 0.035, 0), STONE)\n \t# Two low broken uprights echo the tall reference pillars without hiding\n \t# the traveller's torso or impersonating an attack footprint.\n-\t_box(\"WestTooth\", Vector3(0.16, 0.39, 0.18), Vector3(-0.27, 0.245, -0.12), EDGE)\n-\t_box(\"EastTooth\", Vector3(0.16, 0.31, 0.18), Vector3(0.27, 0.205, -0.12), EDGE)\n+\t_teeth.append(_box(\"WestTooth\", Vector3(0.16, 0.39, 0.18), Vector3(-0.27, 0.245, -0.12), EDGE))\n+\t_teeth.append(_box(\"EastTooth\", Vector3(0.16, 0.31, 0.18), Vector3(0.27, 0.205, -0.12), EDGE))\n+\tfor tooth: MeshInstance3D in _teeth:\n+\t\t_standing_teeth[tooth.get_instance_id()] = tooth.transform\n \t_cap = _box(\"UnsettledCap\", Vector3(0.67, 0.09, 0.20), Vector3(0, 0.57, -0.12), INLAY)\n \t_inlay = _box(\"SettledInlay\", Vector3(0.39, 0.025, 0.30), Vector3(0, 0.087, 0.13), SPENT)\n \t# Quiet engraved notches identify the three props without a second HUD.\n@@ -49,7 +53,15 @@\n \tif _collected == value:\n \t\treturn true\n \t_collected = value\n-\t_cap.position.y = 0.13 if value else 0.57\n+\t_cap.position.y = 0.095 if value else 0.57\n+\t# The authentic contact portrait showed raised spent teeth hiding boots.\n+\t# Settled mirages become a low engraving; available silhouette is retained.\n+\tfor tooth: MeshInstance3D in _teeth:\n+\t\ttooth.transform = _standing_teeth[tooth.get_instance_id()]\n+\t\tif value:\n+\t\t\ttooth.scale.y = 0.15\n+\t\t\ttooth.position.y = 0.07 + tooth.mesh.get_aabb().size.y * 0.15 * 0.5\n+\t\t_remember_piece(tooth)\n \t_cap.material_override = _material(SPENT if value else INLAY)\n \t_inlay.material_override = _material(INLAY if value else SPENT)\n \t_remember_piece(_cap)\n"
+    },
+    {
+      "path": "tests/acts/act3/pillars_before_time_portrait.gd",
+      "original_tested56_snapshot": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/o1-runs/final-paused-portrait-01/changed-sources/tests/acts/act3/pillars_before_time_portrait.gd",
+        "sha256": "b1dcfc26171d301edda68be14e81b8650ce3bca9864fee4306c2ce883f0ee0b1",
+        "bytes": 10768
+      },
+      "corrected_tested57_snapshot": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/.cinder/o1-runs/final-paused-portrait-02/changed-sources/tests/acts/act3/pillars_before_time_portrait.gd",
+        "sha256": "4905c00b5f46b3b213af70ec1f926127e03eca629e075c0a747f6f44bf31e30b",
+        "bytes": 11777
+      },
+      "current_worker": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/tests/acts/act3/pillars_before_time_portrait.gd",
+        "sha256": "4905c00b5f46b3b213af70ec1f926127e03eca629e075c0a747f6f44bf31e30b",
+        "bytes": 11777
+      },
+      "corrected_snapshot_matches_current": true,
+      "exact_unified_source_delta": "--- original56/tests/acts/act3/pillars_before_time_portrait.gd\n+++ corrected57/tests/acts/act3/pillars_before_time_portrait.gd\n@@ -7,6 +7,7 @@\n var draw_seen: bool = false\n var portrait_path: String = \"\"\n var provenance: Dictionary = {}\n+var prop_update: Dictionary = {}\n \n func _run() -> void:\n \tcreate_timer(90.0, true).timeout.connect(func() -> void:\n@@ -20,9 +21,14 @@\n \tif not _expect(DisplayServer.get_name() != \"headless\", \"portrait requires actual native graphical renderer\"):\n \t\tawait _finish(); return\n \tvar args: PackedStringArray = OS.get_cmdline_user_args()\n-\tif not _expect(args.size() == 1 and args[0].begins_with(\"--archive=res://captures/act3/pillars-before-time/\"), \"one explicit owned genuine warning archive is required\"):\n+\tif not _expect(args.size() in [1, 2] and args[0].begins_with(\"--archive=res://captures/act3/pillars-before-time/\"), \"one explicit owned genuine warning archive is required\"):\n \t\tawait _finish(); return\n \tarchive_path = args[0].trim_prefix(\"--archive=\")\n+\tif args.size() == 2:\n+\t\tvar values: PackedStringArray = args[1].trim_prefix(\"--prop-presentation=\").split(\":\")\n+\t\tif not _expect(args[1].begins_with(\"--prop-presentation=\") and values.size() == 2 and values[0].length() == 64 and values[1].length() == 64 and values[0] != values[1], \"explicit old:new visual prop source hashes govern one presentation-only update\"):\n+\t\t\tawait _finish(); return\n+\t\tprop_update = {\"path\": \"res://scripts/acts/act3/temporal_marker_prop.gd\", \"old_sha256\": values[0], \"new_sha256\": values[1], \"scope\": \"collected teeth/cap transforms only; fixed bounds/contact/collision/snapshot/control and full original gameplay packet unchanged\"}\n \tvar decoded: Dictionary = Exact.parse(FileAccess.get_file_as_string(archive_path.path_join(\"manifest.json\")))\n \tif not _expect(decoded.get(\"accepted\", false) and decoded.get(\"value\") is Dictionary, \"original warning manifest parses with native exact transport\"):\n \t\tawait _finish(); return\n@@ -30,7 +36,11 @@\n \tif not _expect(provenance.get(\"kind\") == \"a3-o1-genuine-warning-session-1\" and provenance.get(\"test_only\") == true and provenance.get(\"source_pins\") is Dictionary and provenance.get(\"files\") is Dictionary, \"original TEST native warning provenance identifies its source/file scope\"):\n \t\tawait _finish(); return\n \tfor path: String in provenance.source_pins:\n-\t\tif not _expect(FileAccess.get_sha256(path) == provenance.source_pins[path], \"current scoped source retains original warning authority: \" + path):\n+\t\tvar current: String = FileAccess.get_sha256(path)\n+\t\tvar same: bool = current == provenance.source_pins[path]\n+\t\tif not prop_update.is_empty() and path == prop_update.path:\n+\t\t\tsame = provenance.source_pins[path] == prop_update.old_sha256 and current == prop_update.new_sha256\n+\t\tif not _expect(same, \"current scoped source retains original warning authority or exact declared visual-only prop update: \" + path):\n \t\t\tawait _finish(); return\n \traw = _original_packet(\"registry.native.json\")\n \texpected_session = _original_packet(\"session.native.json\")\n@@ -100,7 +110,7 @@\n \tvar native: Dictionary = _native_ids()\n \tvar native_text: Dictionary = {}\n \tfor key: String in native: native_text[key] = str(native[key])\n-\tvar receipt: Dictionary = {\"schema_version\": 1, \"test_only\": true, \"archive\": archive_path, \"archive_manifest_sha256\": FileAccess.get_sha256(archive_path.path_join(\"manifest.json\")), \"reader_sha256\": FileAccess.get_sha256(\"res://tests/acts/act3/pillars_before_time_portrait.gd\"), \"png_sha256\": FileAccess.get_sha256(portrait_path), \"actual_size\": [pixels.get_size().x, pixels.get_size().y], \"actual_native_ids_decimal_text\": native_text, \"held_receipt\": _held_receipt(), \"whole_pair_exact_wire_sha256\": wire.sha256_text(), \"paused_without_tick\": true, \"whole_pair_input_camera_hud_events_unchanged\": unchanged, \"native_optical_error\": problem, \"menu_test_only_exclusion\": {\"visible_before\": menu_visibility, \"visible_during\": false, \"visible_restored\": production.menu.visible}, \"scope\": \"one authentic saved warning; no active/lateral/full-route/pacing/human balance claim\"}\n+\tvar receipt: Dictionary = {\"schema_version\": 1, \"test_only\": true, \"archive\": archive_path, \"archive_manifest_sha256\": FileAccess.get_sha256(archive_path.path_join(\"manifest.json\")), \"reader_sha256\": FileAccess.get_sha256(\"res://tests/acts/act3/pillars_before_time_portrait.gd\"), \"png_sha256\": FileAccess.get_sha256(portrait_path), \"actual_size\": [pixels.get_size().x, pixels.get_size().y], \"actual_native_ids_decimal_text\": native_text, \"declared_prop_presentation_update\": prop_update, \"held_receipt\": _held_receipt(), \"whole_pair_exact_wire_sha256\": wire.sha256_text(), \"paused_without_tick\": true, \"whole_pair_input_camera_hud_events_unchanged\": unchanged, \"native_optical_error\": problem, \"menu_test_only_exclusion\": {\"visible_before\": menu_visibility, \"visible_during\": false, \"visible_restored\": production.menu.visible}, \"scope\": \"one authentic saved warning; no active/lateral/full-route/pacing/human balance claim\"}\n \tvar file: FileAccess = FileAccess.open(portrait_path + \".json\", FileAccess.WRITE)\n \tif not _expect(file != null, \"native portrait receipt opens\"): return false\n \tvar receipt_wire: String = Exact.stringify(receipt)\n"
+    }
+  ],
+  "delta_classification": {
+    "prop": "Visual presentation change: retain same two teeth nodes/mesh sizes, record initial standing transforms, reduce collected teeth vertical scale to0.15 and move bottoms to0.07 above foot, lower collected capY0.13\u21920.095. _remember_piece updates the retained expected visual transforms. Available/standing transforms restore from originals. No new nodes/collision/process/signals/damage, contact region, level progression/snapshot schema, player/stat/control or Scheduler change appears in this exact diff. Fixed LOW_BOUND/HIGH_BOUND and available silhouette are unchanged. This is source-scope classification plus executed same-packet portrait, not a broad gameplay audit.",
+    "reader": "Adds optional explicit --prop-presentation=old:new hash pair and records that declared visual update in native receipt. Only temporal_marker_prop source hash may differ from original held manifest under that exact old/new pair; other original source pins still required. Original packet/file checks, paused exact full packet/input/currentCamera/HUD/event invariants, menu restoration and normal cleanup remain. This is a declared provenance exception for reviewed visual-only delta; source classification itself is not established by the CLI string.",
+    "selected_map_change_scope": "Exactly these two hashes changed between the two original eight-member selected maps. No other map members were independently rehashed or broadened into a global graph."
+  },
+  "actual_corrected_png": {
+    "image": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/captures/act3/pillars-before-time/portrait-8686-6890494/01-authentic-held-warning.png",
+      "sha256": "b3d3c616ec11fa69ef39b47927229e248a8f5ee21300469d8ee22e057c9ed656",
+      "bytes": 47665
+    },
+    "native_receipt": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/captures/act3/pillars-before-time/portrait-8686-6890494/01-authentic-held-warning.png.json",
+      "sha256": "706aae52744e42604cfc17ce0f321a9775d8e7510535c931da1e5a7f6da12081",
+      "bytes": 2597
+    },
+    "dimensions": [
+      340,
+      736
+    ],
+    "original_held_manifest": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/captures/act3/pillars-before-time/optional-held-71618-10007810/manifest.json",
+      "sha256": "8262e3fd7c82ebf90f889999b1f89fb6f388ea5289c0cc311d2a1afd78d40130",
+      "bytes": 5498
+    },
+    "original_held_packet": {
+      "path": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea/captures/act3/pillars-before-time/optional-held-71618-10007810/held.native.json",
+      "sha256": "2de8d2d6d62bb2131b30a7f43a484b3b3c26983aee36c26878a84ef9591411ad",
+      "bytes": 40862
+    },
+    "independent_joins": {
+      "requested_actual_png_sha": true,
+      "actual_dimensions_match_receipt": true,
+      "original_archive_manifest_unchanged": true,
+      "original_whole_held_packet_not_rewritten": true,
+      "original_warning_receipt_equal": true,
+      "exact_declared_old_new_source_pair": true,
+      "literal_corrected_reader_sha": true,
+      "paused_full_packet_input_camera_hud_events_invariant": true,
+      "only_menu_overlay_exclusion_restored": true,
+      "command_explicit_prop_hash_pair": true
+    },
+    "view_image_inspected": true,
+    "visible_delta": "Collected marker reads lower and flatter beneath traveller, with raised foreground teeth reduced to a low foot/inlay; the coat/marker intersection is reduced compared with original56 frame. Hero and nearby purple Stalker stay distinct; complete yellow warning, scarlet/violet floor, suns and readableHUD/control text remain.",
+    "retained_limits": [
+      "Some contact-position overlap remains at the Hero feet/low marker; this frame does not show a fully separate spent prop from every approach.",
+      "Remote upper-right source is still cropped; other pockets/available marker/exit states are outside the sampled current warning.",
+      "One paused frontal warning gives no new active/recovery/lateral/back/motion/pacing/all-kit/mobile claim. Menu overlay exclusion is disclosed; HUD remains."
+    ]
+  },
+  "original56_scope_preserved": "Original56 PNG/review/source hashes retain original tall spent-marker overlap observation and original source scope. This separate57 delta supplies current-source rendering evidence; it does not overwrite original56 or claim original mechanics/transport used new presentation bytes.",
+  "handoff_boundary": "Root should inspect this same corrected original PNG, join final formal-handoff source bytes to corrected57 snapshots and record retained limits before canonical registration. Current-source matches are observations until final pins; no acceptance is performed here.",
+  "verdict": "Corrected portrait57/0 clean and terminal; actual corrected PNG/native receipt join exact original held packet and explicitly declared visual-only two-source delta. Both changed tested snapshots compared with current. Original56 retained; no control rerun or acceptance."
+}

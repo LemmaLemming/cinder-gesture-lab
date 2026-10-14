@@ -1,0 +1,38 @@
+{
+  "observed_at": "2026-10-14T08:05:28.597169+00:00",
+  "scope": "Owner-recorded actual tool outputs from three independent read-only required canonical/numerical validators; no Godot/runtime/human balance credit. No equipment or ability allocation in O1.",
+  "results": [
+    {
+      "command": "python3 scripts/dev/dev.py ability validate",
+      "exit_code": 0,
+      "result": {
+        "ok": true,
+        "revision": 0,
+        "registered_count": 20,
+        "use_count": 0,
+        "active_use_count": 0,
+        "unregistered_ids": [],
+        "semantic_review_required": true
+      }
+    },
+    {
+      "command": "python3 scripts/dev/dev.py equipment validate",
+      "exit_code": 0,
+      "result": {
+        "ok": true,
+        "revision": 0,
+        "ability_usage_revision": 0,
+        "item_count": 36,
+        "catalogue_duplicate_types": [],
+        "claim_count": 0,
+        "active_claim_count": 0,
+        "semantic_review_required": true
+      }
+    },
+    {
+      "command": "python3 scripts/design/validate_equipment.py",
+      "exit_code": 0,
+      "result": "PASS12clothing/4weapons/6powerups/14perk definitions;10numericfixtures;256gear loadouts/500conditional subsets/7500combined states. Numerical screening only; event timing/ammo/area/human balance remain outside scope."
+    }
+  ]
+}
