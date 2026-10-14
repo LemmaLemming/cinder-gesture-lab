@@ -1,5 +1,5 @@
 extends "res://scripts/acts/act3/twin_suns.gd"
-## A3-O1 small-room rule: three real grounded contacts in any chosen order.
+## Authored A3-O1: three broad familiar pockets, contact order chosen freely.
 ## Existing Sun/Stalker/Scheduler mechanics remain independent of collection.
 ## Every save retains the complete native sources, clock and progress unit.
 
@@ -11,8 +11,8 @@ const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const ENCOUNTER_DATA: String = "res://data/campaign/act3/a3_o1_encounters.json"
 const ENCOUNTER_ID: String = "A3-O1/pillars"
 const WORLD_REVISION: int = 1
-const LOCAL_VERSION: int = 1
-const ROUTE_API: String = "act3-pillars-before-time-1"
+const LOCAL_VERSION: int = 2
+const ROUTE_API: String = "act3-pillars-before-time-2"
 const COMPLETION_ID: String = "three-mirages-collected"
 const EXIT_ID: String = "pillars-return-threshold"
 const CHECKPOINT_IDS: Array[String] = ["mirage-one-collected", "mirage-two-collected"]
@@ -21,8 +21,13 @@ const MARKERS: Dictionary = {
 	"o1-east-marker": {"position": Vector3(3, 0, 0), "contact_rect": Rect2(1.8, -1.2, 2.4, 2.4)},
 	"o1-northwest-marker": {"position": Vector3(-3, 0, -5), "contact_rect": Rect2(-4.2, -6.2, 2.4, 2.4)},
 }
-const SOURCE_IDS: Array[String] = ["o1-central-stalker"]
-const SOURCE_POSITIONS: Dictionary = {"o1-central-stalker": Vector3(0, 0.1, -1)}
+const SOURCE_IDS: Array[String] = ["o1-southwest-stalker", "o1-central-stalker", "o1-northwest-stalker"]
+const SOURCE_POSITIONS: Dictionary = {
+	"o1-southwest-stalker": Vector3(0, 0.1, 3),
+	"o1-central-stalker": Vector3(0, 0.1, -1),
+	"o1-northwest-stalker": Vector3(0, 0.1, -5.5),
+}
+const SOURCE_WAKE_RADIUS: float = 4.5
 const EXIT_POSITION: Vector3 = Vector3(0, 0, -9)
 const EXIT_RECT: Rect2 = Rect2(-1.2, -9.65, 2.4, 1.3)
 const FLOOR_RECT: Rect2 = Rect2(-7, -11, 14, 22)
@@ -38,6 +43,8 @@ var exit_prop: Node3D
 var _floor_region: Dictionary = {}
 var _authoring: Dictionary = {}
 var _collections: Array[Dictionary] = []
+var _awakenings: Dictionary = {}
+var _scenery_additions: Array[Node3D] = []
 var _exit_state: String = "clear"
 var _contact: Dictionary = {}
 var _configuration_error: String = ""
@@ -69,6 +76,7 @@ func _ready() -> void:
 	_configuration_error = _authoring_error()
 	if not _configuration_error.is_empty():
 		return
+	_build_authored_scenery()
 	for source_id: String in SOURCE_IDS:
 		var source: CinderAct3SunboundStalker = StalkerScript.new()
 		source.name = source_id.replace("-", "_")
@@ -107,7 +115,7 @@ func _ready() -> void:
 
 
 func _authoring_error() -> String:
-	if _authoring.get("level_id") != "A3-O1" or _authoring.get("prototype_sources") != SOURCE_IDS or not _authoring.get("markers") is Dictionary or not _authoring.get("source_positions") is Dictionary:
+	if _authoring.get("level_id") != "A3-O1" or _authoring.get("source_ids") != SOURCE_IDS or not _authoring.get("markers") is Dictionary or not _authoring.get("source_positions") is Dictionary:
 		return "Pillars requires its closed canonical room identities"
 	if not Codec.keys_error(_authoring.markers, MARKERS.keys()).is_empty() or not Codec.keys_error(_authoring.source_positions, SOURCE_IDS).is_empty():
 		return "Pillars authoring must retain every stable marker/source identity"
@@ -120,8 +128,16 @@ func _authoring_error() -> String:
 			return "Pillars authored source position differs: " + source_id
 	if not Codec.same_values(_authoring.get("stalker_raw_role"), StalkerScript.DEFAULT_ROLE) or not Codec.same_values(_authoring.get("minimum_timing_floors"), StalkerScript.DEFAULT_FLOORS):
 		return "Pillars must reuse the unchanged familiar Stalker role/timing"
-	if _authoring.get("floor_size") != [14, 1, 22] or _authoring.get("exit_position") != [0, 0, -9] or _authoring.get("spawn") != [0, 0.1, 8] or _authoring.get("kill_gate") != false or _authoring.get("collection_order") != "any":
-		return "Pillars floor/spawn/exit/contact rule differs from its authored room"
+	if not Codec.is_vector3(_authoring.get("floor_size")) or Codec.read_vector3(_authoring.floor_size) != Vector3(14, 1, 22):
+		return "Pillars authored floor_size differs from its exact native room"
+	if not Codec.is_vector3(_authoring.get("spawn")) or Codec.read_vector3(_authoring.spawn) != Vector3(0, 0.1, 8):
+		return "Pillars authored spawn differs from its exact native marker"
+	if not Codec.is_vector3(_authoring.get("exit_position")) or Codec.read_vector3(_authoring.exit_position) != EXIT_POSITION:
+		return "Pillars authored exit_position differs from its exact native seal"
+	if not Codec.is_number(_authoring.get("source_wake_radius")) or float(_authoring.source_wake_radius) != SOURCE_WAKE_RADIUS:
+		return "Pillars authored proximity radius differs from its native rule"
+	if _authoring.get("kill_gate") != false or _authoring.get("collection_order") != "any":
+		return "Pillars requires any collection order and no kill gate"
 	return ""
 
 
@@ -140,9 +156,36 @@ func contract_error() -> String:
 	var error: String = super.contract_error()
 	if not error.is_empty():
 		return error
-	if level_id != "A3-O1" or position != Vector3.ZERO or basis != Basis.IDENTITY or spawn_position() != Vector3(0, 0.1, 8):
+	if level_id != "A3-O1" or position != Vector3.ZERO or basis != Basis.IDENTITY or (get_node(spawn_path) as Marker3D).position != Vector3(0, 0.1, 8):
 		return "Pillars requires its canonical identity, floor transform and grounded spawn"
-	return _configuration_error
+	if not _configuration_error.is_empty():
+		return _configuration_error
+	return _home_marker_error()
+
+
+func _home_marker_error() -> String:
+	var homes: Node3D = get_node_or_null("EncounterHomes") as Node3D
+	if not is_instance_valid(homes) or homes.is_queued_for_deletion() or homes.get_parent() != self or homes.position != Vector3.ZERO or homes.basis != Basis.IDENTITY:
+		return "Pillars requires its immutable authored home root"
+	for source_id: String in SOURCE_IDS:
+		var marker: Marker3D = get_node_or_null("EncounterHomes/" + source_id.replace("-", "_")) as Marker3D
+		if not is_instance_valid(marker) or marker.is_queued_for_deletion() or marker.get_parent() != homes or marker.position != SOURCE_POSITIONS[source_id] or marker.basis != Basis.IDENTITY:
+			return "Pillars requires its exact immutable authored home: " + source_id
+	return ""
+
+
+func _build_authored_scenery() -> void:
+	# Reuse parent procedural modules; never edit accepted scenery or collision.
+	# Flat strata distinguish three pockets without drawing a new danger cue.
+	var first_child: int = scenery.get_child_count()
+	for index: int in range(3):
+		scenery.call("_flat_shelf_strata", [4.0, 0.0, -5.0][index], index)
+	scenery.call("_pillars", Vector3(8.4, 0, 4.3), 2)
+	scenery.call("_pillars", Vector3(-9.4, 0, -5.8), 3)
+	scenery.call("_low_tree", Vector3(-8.3, 0, 6.3), "OptionalSouthwestTree", false)
+	scenery.call("_low_tree", Vector3(8.4, 0, -3.4), "OptionalEastTree", false)
+	for index: int in range(first_child, scenery.get_child_count()):
+		_scenery_additions.append(scenery.get_child(index) as Node3D)
 
 
 func _configure_sources(profile: String) -> String:
@@ -155,7 +198,7 @@ func _configure_sources(profile: String) -> String:
 		if not source.configure(source_id, hero, effects, threat_scheduler, combat_response.bind(source_id), _authoring.stalker_raw_role, _authoring.minimum_timing_floors):
 			return "Pillars source configuration failed: " + source_id + ": " + source.last_error
 		source.set_sun_visual(sun_state)
-		source.set_physics_process(true)
+		source.set_physics_process(false) # All real sources exist; proximity admits their first tick.
 	return ""
 
 
@@ -213,6 +256,7 @@ func _physics_process(_delta: float) -> void:
 	_update_presentation()
 	if hero.dead:
 		return
+	_awaken_nearby_sources()
 	if _collect_contact():
 		return # One collection boundary per tick; third never saves a checkpoint.
 	if not is_completed() or _exit_state == "spent":
@@ -227,20 +271,38 @@ func _physics_process(_delta: float) -> void:
 
 
 func _notification(what: int) -> void:
-	# A real fatal synchronous pause can skip Level30 after Scheduler/source20.
-	# Shell commits only after the paused notifications' deferred settlements.
-	if what == NOTIFICATION_PAUSED and _active and is_instance_valid(hero) and hero.dead:
+	# Pause may interrupt Level30 or follow an ordinary hit before that tick.
+	# Settle only already sampled Sun/proximity; never advance or admit attacks.
+	if what == NOTIFICATION_PAUSED and _active and is_instance_valid(hero):
 		_settle_paused_sun.bind(_exit_dispatch_generation).call_deferred()
 
 
 func _settle_paused_sun(generation: int) -> void:
-	if generation != _exit_dispatch_generation or not _active or not is_inside_tree() or is_queued_for_deletion() or not get_tree().paused or not is_instance_valid(hero) or not hero.dead or not is_instance_valid(threat_scheduler) or not _configuration_error.is_empty():
+	if generation != _exit_dispatch_generation or not _active or not is_inside_tree() or is_queued_for_deletion() or not get_tree().paused or not is_instance_valid(hero) or is_restore_candidate() or not is_instance_valid(threat_scheduler) or not _configuration_error.is_empty():
 		return
 	# Only settle presentation at the already advanced native clock. Never
 	# collect, admit, request progression or advance either clock while paused.
 	_sync_sun_from_clock()
 	scenery.call("follow_landmarks", hero.global_position)
+	if not hero.dead:
+		_awaken_nearby_sources()
 	_update_presentation(true)
+
+
+func _source_is_near(source_id: String, at: Vector3) -> bool:
+	var home: Vector3 = SOURCE_POSITIONS[source_id]
+	return at.is_finite() and absf(at.y) <= 0.2 and FLOOR_RECT.has_point(Vector2(at.x, at.z)) and Vector2(at.x - home.x, at.z - home.z).length() <= SOURCE_WAKE_RADIUS
+
+
+func _awaken_nearby_sources() -> void:
+	for source_id: String in SOURCE_IDS:
+		var source: CinderAct3SunboundStalker = sources[source_id]
+		if _awakenings.has(source_id) or source.dead or not _source_is_near(source_id, hero.global_position):
+			continue
+		_awakenings[source_id] = {"clock_s": threat_scheduler.get_clock(), "hero_position": Codec.vector3(hero.global_position)}
+		# Level30 runs after actor20. First processing starts next native tick;
+		# a contact checkpoint can coherently save the just-awakened recipient.
+		source.set_physics_process(true)
 
 
 func _sync_sun_from_clock() -> void:
@@ -330,20 +392,24 @@ func state() -> Dictionary:
 	var collected: Array[String] = []
 	var marker_states: Dictionary = {}
 	var source_states: Dictionary = {}
+	var awake: Array[String] = []
 	for collection: Dictionary in _collections:
 		collected.append(collection.id)
 	for marker_id: String in MARKERS:
 		marker_states[marker_id] = "spent" if collected.has(marker_id) else "available"
-	for source_id: String in sources:
+	for source_id: String in SOURCE_IDS:
+		if _awakenings.has(source_id):
+			awake.append(source_id)
 		if is_instance_valid(sources[source_id]):
 			source_states[source_id] = sources[source_id].state()
-	return {"api_revision": ROUTE_API, "configuration_error": _configuration_error, "collected": collected, "collections": _collections.duplicate(true), "marker_states": marker_states, "exit_state": _exit_state, "contact": _contact.duplicate(true), "completed": is_completed(), "checkpoint": current_checkpoint(), "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else 0.0, "sun_state": sun_state, "sun_stage": sun_stage, "source_states": source_states}
+	return {"api_revision": ROUTE_API, "configuration_error": _configuration_error, "collected": collected, "collections": _collections.duplicate(true), "awake": awake, "awakenings": _awakenings.duplicate(true), "marker_states": marker_states, "exit_state": _exit_state, "contact": _contact.duplicate(true), "completed": is_completed(), "checkpoint": current_checkpoint(), "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else 0.0, "sun_state": sun_state, "sun_stage": sun_stage, "source_states": source_states}
 
 
 func _update_presentation(quiet: bool = false) -> void:
 	for source_id: String in sources:
 		if is_instance_valid(sources[source_id]):
 			sources[source_id].set_sun_visual(sun_state)
+			sources[source_id].set_physics_process(_awakenings.has(source_id) and not sources[source_id].dead)
 	for marker_id: String in marker_cues:
 		var cue: CinderInteractionCue = marker_cues[marker_id]
 		var blocked: bool = cue.is_blocking_signals()
@@ -392,10 +458,20 @@ func camera_framing_union(candidate_id: String = "", candidate_points: Array = [
 	for source_id: String in SOURCE_IDS:
 		if source_id == candidate_id:
 			continue
-		var group: Dictionary = sources[source_id].camera_framing_points(shared_shell, {}, {}, current_view)
+		var source: CinderAct3SunboundStalker = sources[source_id]
+		var group: Dictionary = source.camera_framing_points(shared_shell, {}, {}, current_view)
 		if not String(group.error).is_empty():
 			return group
 		points.append_array(group.points)
+		# Match the paused current-view validator for nearby idle bodies. Held
+		# sources already supply complete current/committed art and cues above;
+		# their own guard runs inside a transaction, so do not use the context
+		# helper there. The prospective candidate was excluded before this loop.
+		if String(source.state().reservation_id).is_empty() and source.global_position.distance_to(hero.global_position) <= PROP_VIEW_DISTANCE:
+			var current: Dictionary = source.current_render_framing_points_for_context(shared_shell, hero, get_viewport().get_camera_3d())
+			if not String(current.error).is_empty():
+				return current
+			points.append_array(current.points)
 	var contacts: Dictionary = _contact_framing_points()
 	if not String(contacts.error).is_empty():
 		return contacts
@@ -412,7 +488,7 @@ func _contact_framing_points() -> Dictionary:
 		if not String(group.error).is_empty():
 			return group
 		points.append_array(group.points)
-	if hero.global_position.distance_to(EXIT_POSITION) <= PROP_VIEW_DISTANCE:
+	if _exit_state != "clear" and hero.global_position.distance_to(EXIT_POSITION) <= PROP_VIEW_DISTANCE:
 		var group: Dictionary = _prop_cue_bounds(exit_prop, exit_cue, EXIT_RECT, _exit_state)
 		if not String(group.error).is_empty():
 			return group
@@ -515,7 +591,7 @@ func _capture_local_state() -> Dictionary:
 	var actors: Dictionary = {}
 	for source_id: String in SOURCE_IDS:
 		actors[source_id] = sources[source_id].snapshot_state()
-	return {"api_revision": ROUTE_API, "schema_version": 1, "scenery": super._capture_local_state(), "scheduler": threat_scheduler.snapshot_state(scheduler_bindings()), "sources": actors, "route": {"collections": _collections.duplicate(true), "exit_state": _exit_state, "contact": _contact.duplicate(true)}}
+	return {"api_revision": ROUTE_API, "schema_version": 1, "scenery": super._capture_local_state(), "scheduler": threat_scheduler.snapshot_state(scheduler_bindings()), "sources": actors, "route": {"collections": _collections.duplicate(true), "awakenings": _awakenings.duplicate(true), "exit_state": _exit_state, "contact": _contact.duplicate(true)}}
 
 
 func _runtime_error() -> String:
@@ -525,6 +601,14 @@ func _runtime_error() -> String:
 		return "Pillars requires its live reused scenery/floor"
 	if not is_instance_valid(threat_scheduler) or threat_scheduler.is_queued_for_deletion() or threat_scheduler.get_parent() != self:
 		return "Pillars requires its stable actual Scheduler"
+	var homes_error: String = _home_marker_error()
+	if not homes_error.is_empty():
+		return homes_error
+	if _scenery_additions.is_empty():
+		return "Pillars requires its authored parent-kit pocket arrangements"
+	for piece: Node3D in _scenery_additions:
+		if not is_instance_valid(piece) or piece.is_queued_for_deletion() or not piece.is_inside_tree() or piece.get_parent() != scenery:
+			return "Pillars requires its retained noncolliding pocket scenery"
 	var solid: CollisionShape3D = _floor_region.get("collision") as CollisionShape3D
 	var body: StaticBody3D = solid.get_parent() as StaticBody3D if is_instance_valid(solid) else null
 	if not is_instance_valid(solid) or not solid.is_inside_tree() or solid.is_queued_for_deletion() or solid.disabled or not solid.shape is BoxShape3D or (solid.shape as BoxShape3D).size != Vector3(14, 1, 22) or solid.position != Vector3.ZERO or solid.basis != Basis.IDENTITY or not is_instance_valid(body) or body.position != Vector3(0, -0.5, 0) or body.basis != Basis.IDENTITY or body.collision_layer != 1 or body.collision_mask != 0 or _floor_region.safe_rect != FLOOR_RECT or position != Vector3.ZERO or basis != Basis.IDENTITY:
@@ -598,8 +682,11 @@ func _paired_local_error(local: Dictionary, expected_hero: Vector3, expected_dea
 
 func _route_local_error(local: Dictionary, expected_hero: Vector3, expected_dead: bool) -> String:
 	var route: Dictionary = local.route
-	if not Codec.keys_error(route, ["collections", "exit_state", "contact"]).is_empty() or not route.get("collections") is Array or route.collections.size() > MARKERS.size() or not route.get("exit_state") is String or not route.get("contact") is Dictionary:
+	if not Codec.keys_error(route, ["collections", "awakenings", "exit_state", "contact"]).is_empty() or not route.get("collections") is Array or route.collections.size() > MARKERS.size() or not route.get("awakenings") is Dictionary or not route.get("exit_state") is String or not route.get("contact") is Dictionary:
 		return "Finite closed Pillars collection/contact history required"
+	var waking_error: String = _awakening_error(local, expected_hero, expected_dead)
+	if not waking_error.is_empty():
+		return waking_error
 	var seen: Array[String] = []
 	var previous_clock: float = -1.0
 	for record: Variant in route.collections:
@@ -630,6 +717,33 @@ func _route_local_error(local: Dictionary, expected_hero: Vector3, expected_dead
 			return "Current exit sample differs from its paired Hero"
 	elif not route.contact.is_empty():
 		return "Unused exit cannot manufacture a contact receipt"
+	return ""
+
+
+func _awakening_error(local: Dictionary, expected_hero: Vector3, expected_dead: bool) -> String:
+	var histories: Dictionary = local.route.awakenings
+	if histories.size() > SOURCE_IDS.size():
+		return "Pillars awakening history exceeds its three retained sources"
+	for id: Variant in histories:
+		if not id is String or not SOURCE_IDS.has(id):
+			return "Unknown Pillars awakening source identity"
+	for source_id: String in SOURCE_IDS:
+		var actor: Dictionary = local.sources[source_id]
+		if histories.has(source_id):
+			var record: Variant = histories[source_id]
+			if not record is Dictionary or not Codec.keys_error(record, ["clock_s", "hero_position"]).is_empty() or not Codec.in_range(record.get("clock_s"), 0, float(local.scheduler.clock_s)) or not Codec.is_vector3(record.get("hero_position")) or not _source_is_near(source_id, Codec.read_vector3(record.hero_position)):
+				return "Each awakening requires its real finite grounded proximity sample"
+			if float(record.clock_s) == float(local.scheduler.clock_s) and Codec.read_vector3(record.hero_position) != expected_hero:
+				return "Current awakening sample differs from its paired Hero"
+		else:
+			if int(actor.cycle) != 0 or not String(actor.reservation_id).is_empty() or Codec.read_vector3(actor.position) != SOURCE_POSITIONS[source_id] or actor.phase not in ["idle", "defeated"]:
+				return "Dormant source cannot move, start a cycle or retain an attack lease"
+			# Ordinary hits remain real and optional. They can change native HP,
+			# death or pending impulse before a living Level30 proximity sample.
+			if float(actor.hp) == float(actor.max_hp) and Codec.read_vector3(actor.velocity) != Vector3.ZERO:
+				return "Untouched dormant source cannot manufacture pending motion"
+			if not expected_dead and not actor.dead and _source_is_near(source_id, expected_hero):
+				return "Living current proximity cannot omit its awakening boundary"
 	return ""
 
 
@@ -675,6 +789,7 @@ func _restore_local_state(local: Dictionary) -> void:
 	var scheduler_applied: bool = threat_scheduler.restore_state(local.scheduler, scheduler_bindings())
 	assert(scheduler_applied, "Prevalidated Pillars Scheduler commit failed")
 	super._restore_local_state(local.scenery)
+	_awakenings = local.route.awakenings.duplicate(true)
 	_collections.clear()
 	for record: Dictionary in local.route.collections:
 		_collections.append(record.duplicate(true))
@@ -688,7 +803,7 @@ func _restore_local_state(local: Dictionary) -> void:
 		source.set_sun_visual(sun_state)
 		var refreshed: bool = source.refresh_presentation()
 		assert(refreshed, "Prevalidated Pillars source presentation commit failed: " + source_id)
-		source.set_physics_process(not source.dead)
+		source.set_physics_process(_awakenings.has(source_id) and not source.dead)
 	_update_presentation(true)
 
 

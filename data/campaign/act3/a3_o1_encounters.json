@@ -1,9 +1,6 @@
 {
   "level_id": "A3-O1",
   "parent": "A3-L1",
-  "prototype_sources": [
-    "o1-central-stalker"
-  ],
   "floor_size": [
     14,
     1,
@@ -63,10 +60,20 @@
     }
   },
   "source_positions": {
+    "o1-southwest-stalker": [
+      0,
+      0.1,
+      3
+    ],
     "o1-central-stalker": [
       0,
       0.1,
       -1
+    ],
+    "o1-northwest-stalker": [
+      0,
+      0.1,
+      -5.5
     ]
   },
   "stalker_raw_role": {
@@ -86,7 +93,7 @@
     "lock_s": 0.45,
     "recovery_s": 2.0
   },
-  "rule_scope": "first small-room one familiar source prototype; no timing/damage/HP/collision changes",
+  "rule_scope": "authored three broad parent-kit pockets; actual proximity awakening retained; no source timing/damage/HP/collision changes",
   "decision": "Choose any marker order to leave a useful flank under the next scenic Sun choice",
   "equipment": {
     "baseline_ids": [
@@ -99,5 +106,151 @@
     "required_blast_ammo": 0,
     "creation_claims": [],
     "ability_introductions": []
-  }
+  },
+  "source_ids": [
+    "o1-southwest-stalker",
+    "o1-central-stalker",
+    "o1-northwest-stalker"
+  ],
+  "source_wake_radius": 4.5,
+  "local_snapshot_version": 2,
+  "runtime_api": "act3-pillars-before-time-2",
+  "awakening": {
+    "trigger": "first genuine grounded planar proximity to immutable home",
+    "once_per_source": true,
+    "nodes_configured_at_entry": true,
+    "dormant_nodes_retained": true,
+    "death_required_for_collection": false,
+    "snapshot_history_fields": [
+      "clock_s",
+      "hero_position"
+    ],
+    "physics_activation": "after source20 / level30; next native source tick",
+    "pause_settlement": "already sampled proximity/Sun only; no clock/damage/attack admission"
+  },
+  "pockets": [
+    {
+      "id": "southwest",
+      "marker_id": "o1-southwest-marker",
+      "source_id": "o1-southwest-stalker",
+      "decision": "Choose southwest first for one local familiar source and a broad southern return floor"
+    },
+    {
+      "id": "east",
+      "marker_id": "o1-east-marker",
+      "source_id": "o1-central-stalker",
+      "decision": "Use a known Sun preview in the middle approach; already awake sources remain pressure rather than respawning"
+    },
+    {
+      "id": "northwest",
+      "marker_id": "o1-northwest-marker",
+      "source_id": "o1-northwest-stalker",
+      "decision": "A brief familiar northern arrangement leaves lateral and southern return floor before the separate return seal"
+    }
+  ],
+  "scenery_modules": [
+    {
+      "family": "twin-suns-flat-strata",
+      "source": "res://scripts/acts/act3/twin_suns_scenery.gd::_flat_shelf_strata",
+      "courses_z": [
+        4,
+        0,
+        -5
+      ],
+      "indices": [
+        0,
+        1,
+        2
+      ],
+      "readiness": "implemented parent scene-native module; new O1 placements await actual portrait review",
+      "native_scale": "world units; flat 5\u20137mm visual layers",
+      "pivot": "floor course center; mesh-local vertices",
+      "collision_role": "none; existing floor/walls unchanged",
+      "occlusion_role": "ground-only filled patches, no danger outlines",
+      "animation_states": [
+        "static"
+      ],
+      "reuse_family": "scarlet/violet shelf sediment"
+    },
+    {
+      "family": "twin-suns-edge-pillars",
+      "source": "res://scripts/acts/act3/twin_suns_scenery.gd::_pillars",
+      "instances": [
+        {
+          "position": [
+            8.4,
+            0,
+            4.3
+          ],
+          "count": 2
+        },
+        {
+          "position": [
+            -9.4,
+            0,
+            -5.8
+          ],
+          "count": 3
+        }
+      ],
+      "readiness": "implemented parent scene-native geometry; new O1 placement visual review pending",
+      "native_scale": "world units; parent 1.3/2.1/2.9m heights",
+      "pivot": "ground base of each pillar",
+      "collision_role": "none; beyond playable X boundary",
+      "occlusion_role": "edge skyline, no foreground contact target",
+      "animation_states": [
+        "static"
+      ],
+      "reuse_family": "G05/G18 pale pillars"
+    },
+    {
+      "family": "twin-suns-low-trees",
+      "source": "res://scripts/acts/act3/twin_suns_scenery.gd::_low_tree",
+      "instances": [
+        {
+          "position": [
+            -8.3,
+            0,
+            6.3
+          ],
+          "label": "OptionalSouthwestTree",
+          "colliding": false
+        },
+        {
+          "position": [
+            8.4,
+            0,
+            -3.4
+          ],
+          "label": "OptionalEastTree",
+          "colliding": false
+        }
+      ],
+      "readiness": "parent native grounded cutout/procedural fallback and decorative white cast; new O1 placement visual review pending",
+      "native_scale": "parent tree root-pivot and 1.6m alpha-bound convention unchanged",
+      "pivot": "ground/root tips",
+      "collision_role": "none; raised tree geometry beyond floor X boundary",
+      "occlusion_role": "edge scenery; flat white cast remains decorative",
+      "animation_states": [
+        "static",
+        "scenic Sun palette states"
+      ],
+      "reuse_family": "G05 violet low tree and white shadow"
+    },
+    {
+      "family": "o1-temporal-marker",
+      "source": "res://scripts/acts/act3/temporal_marker_prop.gd",
+      "readiness": "new scene-native prop owned by Root; O1 portrait review pending",
+      "native_scale": "world units, fixed <=0.64m height and +/-0.72m floor extent",
+      "pivot": "floor/feet origin",
+      "collision_role": "none; wrapper owns grounded contact rectangles",
+      "occlusion_role": "low prop below torso; shared contact cue retains authority",
+      "animation_states": [
+        "available raised cap",
+        "collected low inlay",
+        "closed/open return seal"
+      ],
+      "reuse_family": "G05 stone rings/G18 pale pillars"
+    }
+  ]
 }

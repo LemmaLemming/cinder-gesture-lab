@@ -4,8 +4,9 @@ extends SceneTree
 ## actual accepted A3-L2 opening packet. No preceding campaign clear is claimed.
 ## Direct public request_dash calls are native controller evidence, not gestures.
 ## No Hero placement, HP/ammo/history/collection/phase/lease/profile assignment.
-## Completion/third marker/contact exit/replay/portraits/full route are untested
-## here; the separate owned mechanics/portrait fixtures supply their own scope.
+## Default held mode does not test CP2/completion/contact return/replay.
+## Explicit --completion-return drives those real production boundaries separately.
+## Both modes make no portrait, human-input, balance or campaign-playthrough claim.
 
 const Shell = preload("res://scripts/campaign/shell.gd")
 const Registry = preload("res://scripts/campaign/registry.gd")
@@ -14,14 +15,15 @@ const Store = preload("res://scripts/campaign/save_store.gd")
 const Exact = preload("res://scripts/campaign/exact_json.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const Game = preload("res://scripts/game.gd")
+const BodySweep = preload("res://scripts/combat/body_sweep.gd")
 const MainScene: PackedScene = preload("res://scenes/main.tscn")
 const O1 = preload("res://scripts/acts/act3/pillars_before_time.gd")
 const STORY_ID: String = "A3-L2"
 const STORY_PATH: String = "res://scenes/acts/act3/a3_l2_living_forest.tscn"
 const OPTIONAL_PATH: String = "res://scenes/acts/act3/a3_o1_pillars_before_time.tscn"
 const MARKER: String = "o1-southwest-marker"
-const SOURCE: String = "o1-central-stalker"
-const ADOPTED_BASELINE: String = "60ee5b88a106a7ca163fbf21c24d3cc5e6f370f2"
+const SOURCE: String = "o1-southwest-stalker"
+const ADOPTED_BASELINE: String = "8d1d3112b03524bde99e426e41748e01698718c3"
 const ARCHIVE_PINS: Array[String] = [
 	"res://tests/acts/act3/pillars_before_time_optional_shell.gd",
 	"res://scripts/acts/act3/pillars_before_time.gd", "res://scenes/acts/act3/a3_o1_pillars_before_time.tscn",
@@ -48,6 +50,8 @@ var protected: Dictionary
 var checkpoint: Dictionary
 var held: Dictionary
 var archive_path: String = ""
+var completion_return: bool = false
+var contact_receipts: Dictionary = {}
 var receiver_events: Array[Dictionary] = []
 var watched: Dictionary = {}
 var first_collection: bool = false
@@ -71,6 +75,10 @@ func _run() -> void:
 	root.content_scale_size = root.size
 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
 	if not _expect(DisplayServer.get_name() == "headless", "this lean transport fixture is explicit headless; no portrait claim"):
+		await _finish(); return
+	var arguments: PackedStringArray = OS.get_cmdline_user_args()
+	completion_return = arguments == PackedStringArray(["--completion-return"])
+	if not _expect(arguments.is_empty() or completion_return, "explicit default held transport or --completion-return selector only"):
 		await _finish(); return
 	node_added.connect(_watch_node)
 	canonical_bytes = FileAccess.get_file_as_string(Registry.DATA_PATH)
@@ -107,7 +115,11 @@ func _run() -> void:
 		await _finish(); return
 	if not _expect(not production.active_level.request_contact_exit(O1.EXIT_ID, production.player) and _same(production.capture_campaign_snapshot(), entrance), "premature exit refuses atomically before native collection"):
 		await _finish(); return
-	production.menu.resume_requested.emit()
+	if completion_return:
+		scope_complete = await _completion_return(entrance)
+		await _finish()
+		return
+	if not await _resume_after_layout(): await _finish(); return
 	if not await _collect_first_marker(): await _finish(); return
 	if not await _wait_held_stalker(): await _finish(); return
 	production.request_pause()
@@ -155,6 +167,170 @@ func _run() -> void:
 	if not _installed(protected): await _finish(); return
 	scope_complete = true
 	await _finish()
+
+## Separate real production completion branch. It never replays the held-save
+## setup and does not credit the default branch with CP2/completion/exit/replay.
+func _completion_return(_entrance: Dictionary) -> bool:
+	var stats: PackedByteArray = var_to_bytes(production.player.stats)
+	var unlocks: Array = production.attempts.state().unlocked_equipment.duplicate()
+	var gear: Dictionary = production.player.equipment.snapshot()
+	if not _expect(is_equal_approx(float(production.player.stats.dash_distance), 2.7), "completion route uses actual unchanged neutral 2.7m static kit"): return false
+	_bind_contact_observation()
+	if not await _resume_after_layout(): return false
+	# Qualified prototype cardinal route: east then southwest, no completion yet.
+	if not await _route_commands("FFFFFFDBBBB") or not await _count_checkpoint(1, ["o1-east-marker"]): return false
+	if not await _route_commands("LLB") or not await _count_checkpoint(2, ["o1-east-marker", MARKER]): return false
+	var latest: Dictionary = production.attempts.state().side_attempt.checkpoint.duplicate(true)
+	if not await _advance_native_time(): return false
+	production.request_pause()
+	if not await _wait_pause(): return false
+	var changed: Dictionary = production.capture_campaign_snapshot()
+	if not _expect(not _same(changed, latest) and _same(production.attempts.state().side_attempt.checkpoint, latest), "genuine later active time differs from protected CP2; Pause does not replace it"): return false
+	if not _disk(production.attempts.state()): return false
+	var retired: Array[WeakRef] = []
+	_collect_refs(_world_container(), retired)
+	var previous: Dictionary = _native_ids()
+	receiver_events.clear()
+	production.menu.retry_requested.emit()
+	if not await _wait_installed("A3-O1", "resume", latest, previous): return false
+	if not _installed(latest) or not _distinct(previous) or not _quiet_selected() or not await _released(retired, "CP2 Retry retires every old actual source/floor/world binding"): return false
+	if not _expect(_same(production.attempts.state().side_attempt.snapshot, latest) and _same(production.attempts.state().side_attempt.checkpoint, latest) and _same(production.attempts.story_snapshot(), protected), "public latest Retry restores full CP2 exact unit and protected Story"): return false
+	if not _disk(production.attempts.state()) or not await _gui_resume(latest): return false
+	_bind_contact_observation() # Retry installed a genuinely new level recipient.
+	if not await _resume_after_layout(): return false
+	if not await _route_commands("FFF"): return false
+	if not await _completed_optional(latest, stats, unlocks): return false
+	if not await _real_contact_return("RFF", "optional", latest): return false
+	var completed_session: Dictionary = production.attempts.state()
+	var story_refs: Array[WeakRef] = []
+	_collect_refs(_world_container(), story_refs)
+	var old_story: Dictionary = _core_ids()
+	production.menu.replay_requested.emit("A3-O1", gear.duplicate(true))
+	if not await _wait_installed("A3-O1", "resume", {}, old_story): return false
+	var replay_entrance: Dictionary = production.capture_campaign_snapshot()
+	if not _installed(replay_entrance) or not await _released(story_refs, "public replay entry retires restored Story world"): return false
+	if not _expect(production.attempts.active_kind() == "replay" and production.active_level.call("state").collections.is_empty() and not production.active_level.is_completed() and production.player.equipment.snapshot() == gear and _same(production.attempts.story_snapshot(), protected) and _same(production.attempts.state().completed_optional, completed_session.completed_optional) and _same(production.attempts.state().reward_ids, completed_session.reward_ids), "public replay starts actual fresh isolated optional unit with existing one-time stamp"): return false
+	_bind_contact_observation()
+	if not await _resume_after_layout(): return false
+	# Replay is earned through the same finite real contacts; no progress seed.
+	if not await _route_commands("FFFFFFDBBBB") or not await _count_checkpoint(1, ["o1-east-marker"]): return false
+	if not await _route_commands("LLB") or not await _count_checkpoint(2, ["o1-east-marker", MARKER]): return false
+	var replay_checkpoint: Dictionary = production.attempts.state().side_attempt.checkpoint.duplicate(true)
+	if not await _route_commands("FFF"): return false
+	if not await _completed_optional(replay_checkpoint, stats, unlocks): return false
+	if not await _real_contact_return("RFF", "replay", replay_checkpoint): return false
+	return _expect(_same(production.attempts.state().completed_main, expected_session.completed_main) and _same(production.attempts.state().completed_optional, completed_session.completed_optional) and _same(production.attempts.state().reward_ids, completed_session.reward_ids) and _same(production.attempts.state().unlocked_equipment, unlocks) and _same(production.attempts.state().story, expected_session.story), "real replay completion/contact return deduplicates stamp and preserves complete Story/main/static availability") and _disk(production.attempts.state())
+
+func _resume_after_layout() -> bool:
+	if not _expect(paused and _valid_shell(), "public live Resume starts at actual paused boundary"): return false
+	var before: String = Exact.stringify(production.capture_campaign_snapshot())
+	var actor: CinderPlayer = production.player
+	var mechanical: PackedByteArray = var_to_bytes([actor.get_world_action_records(), production.get_input_observation_state(), actor.get_world_action_clock(), actor.hp, actor.shells])
+	await process_frame # One paused layout/operation boundary; no gameplay tick.
+	if not _expect(paused and before == Exact.stringify(production.capture_campaign_snapshot()), "paused public layout preserves complete native packet before Resume"): return false
+	production.menu.resume_requested.emit()
+	return _expect(not paused and not production.menu.is_open() and mechanical == var_to_bytes([actor.get_world_action_records(), production.get_input_observation_state(), actor.get_world_action_clock(), actor.hp, actor.shells]), "actual public Resume follows layout without new input/action/resource/clock")
+
+func _count_checkpoint(count: int, expected_order: Array) -> bool:
+	for _frame: int in range(FRAME_LIMIT):
+		await process_frame
+		if not _valid_shell() or production.player.dead: return false
+		var side: Variant = production.attempts.state().side_attempt
+		if side == null or side.checkpoint.level.progress.checkpoint_id != O1.CHECKPOINT_IDS[count - 1]: continue
+		var receipts: Array = side.checkpoint.level.local.route.collections
+		var actual: Array = []
+		for receipt: Dictionary in receipts: actual.append(receipt.id)
+		return _expect(actual == expected_order and receipts.size() == count and side.checkpoint.level.progress.checkpoint_ids.size() == count and not side.checkpoint.level.progress.completed and _same(production.attempts.story_snapshot(), protected), "real unique native contacts durably record checkpoint count " + str(count))
+	return _expect(false, "bounded actual collection checkpoint count " + str(count))
+
+func _advance_native_time() -> bool:
+	var clock: float = production.player.get_world_action_clock()
+	for _frame: int in range(FRAME_LIMIT):
+		await process_frame
+		if not _valid_shell() or production.player.dead: return false
+		if not paused and production.player.get_world_action_clock() > clock + 0.02: return true
+	return _expect(false, "bounded genuine post-checkpoint active time")
+
+func _route_commands(path: String, contact_return: bool = false) -> bool:
+	var directions: Dictionary = {"L": Vector3.LEFT, "R": Vector3.RIGHT, "F": Vector3.FORWARD, "B": Vector3.BACK, "D": Vector3(1, 0, -0.5).normalized()}
+	for index: int in range(path.length()):
+		if not await _route_dash(directions[path.substr(index, 1)], contact_return and index == path.length() - 1): return false
+	return true
+
+func _route_dash(direction: Vector3, may_return: bool) -> bool:
+	for _frame: int in range(LIVE_FRAME_LIMIT):
+		await process_frame
+		if not _valid_shell() or production.player.dead: return false
+		if paused: continue # Real successful checkpoint/completion automatic-resume drain.
+		var ready: Dictionary = production.player.get_threat_response_state()
+		if not ready.get("stable", false) or float(ready.dash_cooldown_left_s) != 0.0 or production.player.action_in_progress(): continue
+		var actor: CinderPlayer = production.player
+		var start: Vector3 = actor.global_position
+		var motion: Vector3 = direction * float(actor.stats.dash_distance)
+		var bindings: Dictionary = production.active_level.call("scheduler_bindings")
+		var swept: Dictionary = BodySweep.sweep(actor, actor.global_transform, motion, bindings.floors.values())
+		if not _expect(not swept.has("error") and not swept.get("collided", true) and (swept.end as Vector3).distance_to(start + motion) <= 0.005, "actual body/floor preflight supports production contact-route dash", str(swept)): return false
+		var sequence: int = _sequence()
+		if not _expect(actor.request_dash(direction), "ordinary public controller accepts production contact dash"): return false
+		for _tick: int in range(FRAME_LIMIT):
+			await process_frame
+			if not _valid_shell(): return false
+			if production.active_level.level_id != "A3-O1":
+				return _expect(may_return and production.active_level.level_id == STORY_ID and not contact_receipts.is_empty(), "real contact transaction may replace in-flight exit dash; no completed-dash credit claimed")
+			if production.player != actor or actor.dead: return _expect(false, "native contact route keeps original living Hero until authored exit")
+			var records: Array[Dictionary] = actor.get_world_action_records(sequence)
+			if records.size() == 1 and not actor.action_in_progress():
+				return _expect(records[0].kind == "dash" and not records[0].blocked and records[0].world_origin == start and (records[0].landing as Vector3).distance_to(start + motion) <= 0.005 and records[0].landing == actor.global_position and not CinderPlayer.encode_world_action_record(records[0], actor.get_world_action_clock()).is_empty(), "genuine completed controller dash retains actual travel/landing/native action record")
+		return _expect(false, "bounded production native dash/contact transition")
+	return _expect(false, "bounded native production route readiness/auto-resume")
+
+func _completed_optional(latest: Dictionary, stats: PackedByteArray, unlocks: Array) -> bool:
+	production.request_pause()
+	if not await _wait_pause(): return false
+	var snapshot: Dictionary = production.capture_campaign_snapshot()
+	var state: Dictionary = production.attempts.state()
+	var stamp: String = production.registry.entry("A3-O1").reward_id
+	var owner: String = str(production.active_level.get_instance_id())
+	if not _expect(production.active_level.is_completed() and snapshot.level.local.route.collections.size() == O1.MARKERS.size() and snapshot.level.progress.contact_exit_id.is_empty() and _same(state.side_attempt.checkpoint, latest) and state.completed_optional == ["A3-O1"] and state.reward_ids == [stamp] and state.completed_main == expected_session.completed_main and _same(state.unlocked_equipment, unlocks) and var_to_bytes(production.player.stats) == stats and _same(state.story, expected_session.story) and _owner_events(owner, "completion_requested") == 1, "third genuine native contact records exactly one production clear/stamp with CP2/static stats/Story retained"): return false
+	var before: String = Exact.stringify(snapshot)
+	var events_before: PackedByteArray = var_to_bytes(receiver_events)
+	if not _expect(not production.active_level.request_completion(O1.COMPLETION_ID) and before == Exact.stringify(production.capture_campaign_snapshot()) and _same(production.attempts.state(), state) and events_before == var_to_bytes(receiver_events), "duplicate real completion refuses without packet/model/event mutation"): return false
+	return _installed(snapshot) and _disk(state)
+
+func _bind_contact_observation() -> void:
+	var level: CinderLevel = production.active_level
+	level.contact_exit_requested.connect(_observe_contact.bind(weakref(level)))
+
+func _observe_contact(id: String, exit_id: String, owner: WeakRef) -> void:
+	var level: Node = owner.get_ref() as Node
+	if not _expect(level != null and id == "A3-O1" and exit_id == O1.EXIT_ID, "actual production contact event carries canonical optional identity"): return
+	var state: Dictionary = level.call("state")
+	contact_receipts[str(level.get_instance_id())] = {"exit_id": exit_id, "contact": state.contact.duplicate(true), "collections": state.collections.duplicate(true)}
+
+func _owner_events(owner: String, kind: String) -> int:
+	var count: int = 0
+	for event: Dictionary in receiver_events:
+		if event.owner == owner and event.kind == kind: count += 1
+	return count
+
+func _real_contact_return(path: String, kind: String, latest: Dictionary) -> bool:
+	var owner: String = str(production.active_level.get_instance_id())
+	var old_refs: Array[WeakRef] = []
+	_collect_refs(_world_container(), old_refs)
+	var previous: Dictionary = _core_ids()
+	if not await _resume_after_layout(): return false
+	if not await _route_commands(path, true): return false
+	if not await _wait_installed(STORY_ID, "journey", protected, previous): return false
+	if not _installed(protected) or not await _released(old_refs, "real optional/replay contact return retires all original native sources/floor/cues"): return false
+	if not _expect(contact_receipts.has(owner) and _owner_events(owner, "contact_exit_requested") == 1 and production.attempts.active_kind() == "story" and production.attempts.state().side_attempt == null and _same(production.attempts.state().story, expected_session.story), "one real grounded contact returns protected Story/Journey without duplicate exit"): return false
+	# The real exit writes the complete latched side packet immediately before
+	# leave_side writes returned Story. Inspect that original format2 backup.
+	var reader = Store.new(isolated + "campaign.json.bak")
+	var previous_session: Dictionary = reader.read_payload()
+	var recorded: Dictionary = contact_receipts[owner]
+	var side: Variant = previous_session.get("side_attempt")
+	if not _expect(reader.last_error.is_empty() and not reader.loaded_backup and side != null and side.kind == kind and side.level_id == "A3-O1" and side.snapshot.level.progress.contact_exit_id == O1.EXIT_ID and side.snapshot.level.progress.completed and _same(side.snapshot.level.local.route.contact, recorded.contact) and _same(side.snapshot.level.local.route.collections, recorded.collections) and _same(side.checkpoint, latest) and _same(previous_session.story, expected_session.story), "independent original backup retains real native latched contact/clear/CP2 and whole protected Story", reader.last_error): return false
+	return _disk(production.attempts.state())
 
 func _seed_story(registry: CinderCampaignRegistry) -> bool:
 	paused = true
@@ -330,7 +506,7 @@ func _archive_held(entrance: Dictionary, receipt: Dictionary) -> bool:
 		var digest: String = FileAccess.get_sha256(source_path)
 		if not _expect(digest.length() == 64, "scoped original source pin exists: " + source_path): return false
 		pins[source_path] = digest
-	var manifest: Dictionary = {"schema_version": 1, "kind": "a3-o1-genuine-warning-session-1", "test_only": true, "adopted_baseline_commit": ADOPTED_BASELINE, "new_o1_sources_uncommitted_at_preparation": true, "pins_scope": "listed authored/direct transport sources; native runner input manifest remains independent authority", "fixture_sha256": FileAccess.get_sha256(ARCHIVE_PINS[0]), "source_pins": pins, "files": files, "held_receipt": receipt, "test_context": "TEST prefix11/O1 readiness; actual accepted A3-L2 initial Story, first native dash-contact checkpoint, original held warning; no collection/HP/history/lease seeds", "public_flow_validation": "pending; actual native runner closure is authoritative", "portrait_validation": "unexecuted; archive creates no pixels"}
+	var manifest: Dictionary = {"schema_version": 1, "kind": "a3-o1-genuine-warning-session-1", "test_only": true, "adopted_baseline_commit": ADOPTED_BASELINE, "git_provenance": "Exact native runner HEAD/dirty/input manifest governs execution; listed source_pins freeze the actual bytes", "pins_scope": "listed authored/direct transport sources; native runner input manifest remains independent authority", "fixture_sha256": FileAccess.get_sha256(ARCHIVE_PINS[0]), "source_pins": pins, "files": files, "held_receipt": receipt, "test_context": "TEST prefix11/O1 readiness; actual accepted A3-L2 initial Story, first native dash-contact checkpoint, original held warning; no collection/HP/history/lease seeds", "public_flow_validation": "pending; actual native runner closure is authoritative", "portrait_validation": "unexecuted; archive creates no pixels"}
 	var wire: String = Exact.stringify(manifest)
 	var file: FileAccess = FileAccess.open(archive_path.path_join("manifest.json"), FileAccess.WRITE)
 	if not _expect(not wire.is_empty() and file != null, "complete finite original warning provenance manifest opens"): return false
@@ -356,7 +532,10 @@ func _native_ids() -> Dictionary:
 	var result: Dictionary = _core_ids()
 	var level: CinderLevel = production.active_level
 	result.scheduler = (level.get("threat_scheduler") as Node).get_instance_id()
-	result.source = (level.get("sources")[SOURCE] as Node).get_instance_id()
+	var sources: Dictionary = level.get("sources")
+	result.source = (sources[SOURCE] as Node).get_instance_id() # Retained selected-source alias for portrait consumers.
+	for id: String in sources:
+		result["source/" + id] = (sources[id] as Node).get_instance_id()
 	result.exit_cue = (level.get("exit_cue") as Node).get_instance_id()
 	var floor: Dictionary = level.call("scheduler_bindings").floors["shelf-floor"]
 	var collision: CollisionShape3D = floor.collision
@@ -453,5 +632,6 @@ func _finish() -> void:
 		if FileAccess.file_exists(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	AudioServer.set_bus_layout(old_audio)
 	Engine.max_fps = old_fps
-	print("O1 optional Shell: %d checks/%d failures; scope_complete=%s; native first-marker checkpoint, authentic held Pause/format2 Save/new disk Side Resume/Retry/consumed GUI/early Journey protected Story/full cleanup. TEST prefix11/readiness only; no second/third marker/completion/contact-return/replay/portrait/full-route/fairness credit." % [checks, failures, str(scope_complete)])
+	var scope: String = "real CP1/CP2 latest Retry, third completion/stamp once, native contact/protected Story Journey, public real replay/stamp dedup; no held-warning/disk-relaunch/portrait/fairness credit" if completion_return else "native first-marker checkpoint, authentic held Pause/format2 Save/new disk Side Resume/Retry/consumed GUI/early Journey protected Story; no CP2/completion/contact-return/replay/portrait/fairness credit"
+	print("O1 optional Shell: %d checks/%d failures; scope_complete=%s; selector=%s; %s; TEST prefix11/readiness only, actual direct controller inputs, complete normal cleanup." % [checks, failures, str(scope_complete), "completion-return" if completion_return else "held-transport", scope])
 	quit(0 if failures == 0 and scope_complete else 1)

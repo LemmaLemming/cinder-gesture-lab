@@ -44,6 +44,7 @@ var _completions: Array[String] = []
 var _exits: Array[String] = []
 var _actions: Array[Dictionary] = []
 var _saved_counts: Dictionary = {}
+var _observed_awakenings: Dictionary = {}
 var _early_seen: bool = false
 var _ticks: int = 0
 var _checks: int = 0
@@ -70,12 +71,13 @@ func _run() -> void:
 	await _finish()
 
 func _open(case_index: int) -> bool:
-	_expected = [EAST, SW, NW] if case_index == 0 else [NW, EAST, SW]
+	_expected.assign([EAST, SW, NW] if case_index == 0 else [NW, EAST, SW])
 	_checkpoints.clear()
 	_completions.clear()
 	_exits.clear()
 	_actions.clear()
 	_saved_counts.clear()
+	_observed_awakenings.clear()
 	_early_seen = false
 	_game = MainScene.instantiate()
 	root.add_child(_game)
@@ -86,12 +88,15 @@ func _open(case_index: int) -> bool:
 	_level = _game.get("active_level") as CinderLevel
 	_hero = _game.get("player") as CinderPlayer
 	_scheduler = _level.get("threat_scheduler") as CinderThreatScheduler if _level != null else null
-	if not _expect(_level != null and _hero != null and _scheduler != null and _level.level_id == "A3-O1" and _level.scene_file_path == ROOM and _level.local_snapshot_version == 1 and _level.contract_error().is_empty(), "native O1/local1 binds one actual shared Hero/Scheduler"): return false
+	if not _expect(_level != null and _hero != null and _scheduler != null and _level.level_id == "A3-O1" and _level.scene_file_path == ROOM and _level.local_snapshot_version == O1.LOCAL_VERSION and _level.contract_error().is_empty(), "native final O1/current local version binds one actual shared Hero/Scheduler", str({"level_valid":is_instance_valid(_level), "hero_valid":is_instance_valid(_hero), "scheduler_valid":is_instance_valid(_scheduler), "level_id":_level.level_id if _level != null else "<null>", "scene_file_path":_level.scene_file_path if _level != null else "<null>", "local_snapshot_version":_level.local_snapshot_version if _level != null else -1, "contract_error":_level.contract_error() if _level != null else "<null>", "configuration_error":(_level.call("state") as Dictionary).get("configuration_error", "<missing>") if _level != null and _level.has_method("state") else "<unavailable>"})): return false
 	_kit = _hero.equipment.snapshot()
 	if not _expect(_hero.global_position == Vector3(0, 0.1, 8) and _hero.hp == _hero.max_hp and not _hero.dead and _scheduler.get_clock() == 0.0 and _scheduler.reservations().is_empty() and _hero.get_world_action_records().is_empty() and is_equal_approx(float(_hero.equipment.resolved_stats().dash_distance), 2.7), "unchanged neutral-kit spawn and clock0 contain no previous action/lease"): return false
 	var bindings: Dictionary = _level.call("scheduler_bindings")
 	var sources: Dictionary = _level.get("sources")
-	if not _expect(bindings.world_root == _level and bindings.owners.size() == 1 and bindings.owners.get(O1.SOURCE_IDS[0]) == sources[O1.SOURCE_IDS[0]] and bindings.floors.size() == 1 and bindings.floors["shelf-floor"].safe_rect == O1.FLOOR_RECT and sources[O1.SOURCE_IDS[0]].hp == sources[O1.SOURCE_IDS[0]].max_hp, "one real familiar Stalker joins the actual permanent floor"): return false
+	if not _expect(bindings.world_root == _level and O1.SOURCE_IDS.size() == 3 and Codec.keys_error(bindings.owners, O1.SOURCE_IDS).is_empty() and Codec.keys_error(sources, O1.SOURCE_IDS).is_empty() and bindings.floors.size() == 1 and bindings.floors["shelf-floor"].safe_rect == O1.FLOOR_RECT, "all three final familiar Stalkers join the actual permanent floor"): return false
+	for id: String in O1.SOURCE_IDS:
+		var source: CinderAct3SunboundStalker = sources[id]
+		if not _expect(bindings.owners[id] == source and source.get_parent() == _level and source.hp == source.max_hp and not source.dead and source.is_in_group("enemies") and source.global_position == O1.SOURCE_POSITIONS[id], "fresh immutable living source recipient: " + id): return false
 	_level.checkpoint_requested.connect(_on_checkpoint)
 	_level.completion_requested.connect(_on_completion)
 	_level.contact_exit_requested.connect(_on_exit)
@@ -100,6 +105,7 @@ func _open(case_index: int) -> bool:
 	_barrier.name = "O1TestPostActorBarrier"
 	root.add_child(_barrier)
 	for _frame: int in range(4): await process_frame
+	if not _expect((_level.call("state") as Dictionary).awake.is_empty() and (_level.call("state") as Dictionary).awakenings.is_empty(), "fresh final topology declares no earned awakening history"): return false
 	_game.call("resume_lab")
 	for _index: int in range(8):
 		if _hero.is_on_floor(): break
@@ -141,7 +147,14 @@ func _route(case_index: int) -> bool:
 			for _frame: int in range(4): await process_frame
 			state = _level.call("state")
 			if not _expect(_exits == [O1.EXIT_ID] and state.exit_state == "spent" and not state.contact.is_empty() and O1.EXIT_RECT.has_point(_xz(Codec.read_vector3(state.contact.hero_position))) and absf(Codec.read_vector3(state.contact.hero_position).y) <= 0.2, "later real grounded threshold dispatches canonical exit once"): return false
-	return _expect(_checkpoints == O1.CHECKPOINT_IDS and _completions == [O1.COMPLETION_ID] and _exits == [O1.EXIT_ID] and _saved_counts.size() == 3 and _hero.hp > 0.0 and not _hero.dead and _hero.equipment.snapshot() == _kit and _actions.size() > 0 and (_level.get("sources") as Dictionary)[O1.SOURCE_IDS[0]].hp > 0.0, "contacts complete without kill gate, third checkpoint or duplicate progression", str({"hp":_hero.hp, "actions":_actions.size()}))
+	return _expect(_checkpoints == O1.CHECKPOINT_IDS and _completions == [O1.COMPLETION_ID] and _exits == [O1.EXIT_ID] and _saved_counts.size() == 3 and _hero.hp > 0.0 and not _hero.dead and _hero.equipment.snapshot() == _kit and _actions.size() > 0 and _all_sources_alive(), "contacts complete without kill gate, third checkpoint or duplicate progression", str({"hp":_hero.hp, "actions":_actions.size(), "observed_awake":_observed_awakenings.keys()}))
+
+func _all_sources_alive() -> bool:
+	var sources: Dictionary = _level.get("sources")
+	for id: String in O1.SOURCE_IDS:
+		var source: CinderAct3SunboundStalker = sources[id]
+		if source.dead or source.hp <= 0.0: return false
+	return true
 
 func _dash(direction: Vector3) -> bool:
 	for _index: int in range(90):
@@ -176,6 +189,8 @@ func _tick() -> bool:
 	if boundary != "post_actor_physics" or paused or _ticks > 4800 or _hero.dead or _hero.hp <= 0.0 or _hero.equipment.snapshot() != _kit or state.configuration_error != "" or not _level.contract_error().is_empty():
 		return _expect(false, "bounded post-actor route retains real live world/HP/kit", str({"boundary":boundary, "paused":paused, "ticks":_ticks, "hero":_hero.get_threat_response_state(), "state":state}))
 	if _hero.is_on_floor() and O1.EXIT_RECT.has_point(_xz(_hero.global_position)) and absf(_hero.global_position.y) <= 0.2 and not _level.is_completed(): _early_seen = true
+	var awake_error: String = _awakening_error(state)
+	if not awake_error.is_empty(): return _expect(false, "native proximity awakening history remains genuine and retained", awake_error + "; " + str(state))
 	if state.collections.size() > _expected.size(): return _expect(false, "no extra marker receipt")
 	for index: int in range(state.collections.size()):
 		var receipt: Dictionary = state.collections[index]
@@ -184,11 +199,35 @@ func _tick() -> bool:
 			return _expect(false, "receipt preserves chosen order and actual grounded contact region", str(state))
 	return true
 
+
+func _awakening_error(state: Dictionary) -> String:
+	var history: Dictionary = state.awakenings
+	var canonical: Array[String] = []
+	for id: String in O1.SOURCE_IDS:
+		if not history.has(id):
+			if _observed_awakenings.has(id): return "earned awakening disappeared: " + id
+			var dormant: Dictionary = state.source_states[id]
+			if dormant.phase != "idle" or int(dormant.cycle) != 0 or not String(dormant.reservation_id).is_empty() or dormant.position != O1.SOURCE_POSITIONS[id]: return "unawakened native source acted/moved: " + id
+			continue
+		canonical.append(id)
+		var receipt: Dictionary = history[id]
+		if not Codec.keys_error(receipt, ["clock_s", "hero_position"]).is_empty() or not Codec.is_number(receipt.clock_s) or not Codec.is_vector3(receipt.hero_position): return "finite closed native awakening required: " + id
+		var point: Vector3 = Codec.read_vector3(receipt.hero_position)
+		if float(receipt.clock_s) < 0.0 or float(receipt.clock_s) > _scheduler.get_clock() or absf(point.y) > 0.2 or not O1.FLOOR_RECT.has_point(_xz(point)) or _xz(point).distance_to(_xz(O1.SOURCE_POSITIONS[id])) > O1.SOURCE_WAKE_RADIUS: return "awakening lacks actual near-home floor/clock receipt: " + id
+		if _observed_awakenings.has(id):
+			if not _exact(_observed_awakenings[id], receipt): return "earned awakening was replaced: " + id
+		else:
+			if not _hero.is_on_floor() or float(receipt.clock_s) != _scheduler.get_clock() or not _exact(receipt.hero_position, Codec.vector3(_hero.global_position)): return "first observed awakening differs from actual same-tick Hero/clock: " + id
+			_observed_awakenings[id] = receipt.duplicate(true)
+	if history.size() != canonical.size() or state.awake != canonical: return "actual awake identities/order differ from retained receipt keys"
+	return ""
+
 func _capture_boundary(count: int) -> bool:
 	_game.call("open_bench")
 	await process_frame
 	var pair: Dictionary = {"player":_hero.snapshot_state(), "level":_level.snapshot_state()}
-	if not _expect(paused and not pair.player.is_empty() and not pair.level.is_empty() and _hero.snapshot_error(pair.player).is_empty() and _level.snapshot_error_with_player(pair.level, pair.player).is_empty(), "count boundary captures/prevalidates whole actual source/Sun/Scheduler/Hero pair", _hero.last_snapshot_error + "; " + _level.last_snapshot_error): return false
+	if not _expect(paused and not pair.player.is_empty() and not pair.level.is_empty() and _hero.snapshot_error(pair.player).is_empty() and _level.snapshot_error_with_player(pair.level, pair.player).is_empty(), "count boundary captures/prevalidates whole actual source/Sun/Scheduler/Hero pair", _capture_failure_detail(pair)): return false
+	if not _expect(Codec.keys_error(pair.level.local.sources, O1.SOURCE_IDS).is_empty() and _exact(pair.level.local.route.awakenings, _observed_awakenings) and _exact(pair.level.local.route.awakenings, (_level.call("state") as Dictionary).awakenings), "whole boundary retains all three native sources and actual once-only awakening receipts"): return false
 	var encoded: String = ExactJson.stringify(pair)
 	var decoded: Dictionary = ExactJson.parse(encoded)
 	if not _expect(not encoded.is_empty() and decoded.get("accepted", false) and _exact(pair, decoded.get("value")), "native ExactJson preserves whole boundary unit"): return false
@@ -201,6 +240,46 @@ func _capture_boundary(count: int) -> bool:
 	print("Pillars mechanics: exact boundary ", count, "; actual hp=", _hero.hp)
 	_game.call("resume_lab")
 	return _expect(not paused, "public Main resumes unchanged boundary")
+
+
+## Pure failure-only measurements of the actual context, without raw points.
+func _capture_failure_detail(pair: Dictionary) -> String:
+	var errors: String = _hero.last_snapshot_error + "; " + _level.last_snapshot_error
+	if not pair.player.is_empty() and not pair.level.is_empty(): return errors
+	var camera: Camera3D = _game.get("camera") as Camera3D
+	var hud: GameHUD = _game.get("hud") as GameHUD
+	if not is_instance_valid(camera) or not is_instance_valid(hud): return errors + "; missing actual Camera/HUD"
+	var hero_points: Array = _game.call("player_camera_framing_points_for", _hero, camera)
+	var required: Array = hero_points.duplicate()
+	var groups: Dictionary = {}
+	for id: String in O1.SOURCE_IDS:
+		var source: CinderAct3SunboundStalker = (_level.get("sources") as Dictionary)[id]
+		var state: Dictionary = source.state()
+		var held: Dictionary = source.camera_framing_points_for_context(_game, _hero, camera, {}, {}, true)
+		var current: Dictionary = source.current_render_framing_points_for_context(_game, _hero, camera)
+		var current_required: bool = source.global_position.distance_to(_hero.global_position) <= O1.PROP_VIEW_DISTANCE or not String(state.reservation_id).is_empty()
+		required.append_array(held.points)
+		if current_required: required.append_array(current.points)
+		groups[id] = {"phase":state.phase, "position":source.global_position, "lease_id":state.reservation_id, "current_required":current_required, "held":_framing_group_detail(held, hero_points, camera, hud), "current":_framing_group_detail(current, hero_points, camera, hud)}
+	var route: Dictionary = _level.call("state")
+	for id: String in O1.MARKERS:
+		if _hero.global_position.distance_to(O1.MARKERS[id].position) > O1.PROP_VIEW_DISTANCE: continue
+		var group: Dictionary = _level.call("_prop_cue_bounds", (_level.get("marker_props") as Dictionary)[id], (_level.get("marker_cues") as Dictionary)[id], O1.MARKERS[id].contact_rect, route.marker_states[id])
+		required.append_array(group.points)
+		groups[id] = _framing_group_detail(group, hero_points, camera, hud)
+	if _hero.global_position.distance_to(O1.EXIT_POSITION) <= O1.PROP_VIEW_DISTANCE:
+		var group: Dictionary = _level.call("_prop_cue_bounds", _level.get("exit_prop"), _level.get("exit_cue"), O1.EXIT_RECT, route.exit_state)
+		required.append_array(group.points)
+		groups[O1.EXIT_ID] = _framing_group_detail(group, hero_points, camera, hud)
+	var live: Dictionary = _level.call("camera_framing_union", "", [], true)
+	return errors + "; " + str({"paused":paused, "hero_position":_hero.global_position, "camera_position":camera.global_position, "protected_rect":hud.combat_safe_rect(), "hero":_framing_group_detail({"error":"", "points":hero_points}, [], camera, hud), "groups":groups, "candidate_union":_framing_group_detail({"error":"", "points":required}, [], camera, hud), "normal_live_union":_framing_group_detail(live, hero_points, camera, hud)})
+
+func _framing_group_detail(group: Dictionary, hero_points: Array, camera: Camera3D, hud: GameHUD) -> Dictionary:
+	var points: Array = group.get("points", [])
+	var joined: Array = hero_points.duplicate()
+	joined.append_array(points)
+	var plan: Dictionary = _game.call("camera_framing_plan_for_context", joined, _hero.global_position, _hero, camera, hud)
+	return {"construction_error":group.get("error", "<missing>"), "point_count":points.size(), "with_hero_count":joined.size(), "current_error":String(_game.call("camera_framing_error_for_context", joined, _hero, camera, hud)), "plan_accepted":plan.get("accepted", false), "plan_error":plan.get("reason", "")}
 
 func _on_checkpoint(id: String, checkpoint: String, kind: String) -> void:
 	_expect(id == "A3-O1" and kind == "encounter", "canonical checkpoint identity/kind")
