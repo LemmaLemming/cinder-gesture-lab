@@ -346,7 +346,7 @@ func _source_guard(id: String, state: Dictionary) -> bool:
 		if frame.has("reservation_id") and frame.reservation_id != record.id: return false
 		if frame.proof.response_complete_s > record.recovery_until_s or frame.proof.primary_time_s < record.active_until_s: return false
 	if id in [Layout.EYE_ID, Layout.NOSE_ID] and (eye.get("dead") or not _same(_moon_art.call("pose_state"), _expected_pose())): return false
-	return _framing_error(_camera_framing_points()).is_empty()
+	return _framing_error(_camera_framing_points(false)).is_empty()
 
 
 func _expected_pose() -> Dictionary:
@@ -560,7 +560,7 @@ func _response_points(landing: Vector3, attack: Vector3) -> Array:
 	return result
 
 
-func _camera_framing_points() -> Array:
+func _camera_framing_points(include_forecast: bool = true) -> Array:
 	if not _running or not is_instance_valid(hero): return []
 	var points: Array = _hero_points()
 	if stage == "return" and not rusher.dead: points.append_array(_source_points(Layout.RUSHER_ID, _rusher_state().opening_position))
@@ -574,7 +574,7 @@ func _camera_framing_points() -> Array:
 		var frame: Dictionary = _frames.get(record.source_id, {})
 		if frame.is_empty() and _pending_start.get("source_id", "") == record.source_id: frame = _pending_start
 		if not frame.is_empty(): points.append_array(_response_points(frame.proof.landing, frame.proof.attack_position))
-	if not _forecast.is_empty() and hero.global_transform == _forecast_hero: points.append_array(_forecast)
+	if include_forecast and not _forecast.is_empty() and hero.global_transform == _forecast_hero: points.append_array(_forecast)
 	if stage in ["hatch", "escape", "departed"] and (hero.global_position.distance_to(Layout.HATCH_POSITION) <= LOOKAHEAD or _hatch_cue.state().visible):
 		points.append_array(_bounds_points(_capsule.call("world_corners")))
 		points.append_array(_box_points(AABB(-Layout.HATCH_CONTACT_SIZE * 0.5, Layout.HATCH_CONTACT_SIZE), _hatch_collision.global_transform))
