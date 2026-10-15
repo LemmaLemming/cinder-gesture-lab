@@ -224,5 +224,86 @@
         }
       ]
     }
-  ]
+  ],
+  "difficulty_arrangements": {
+    "schema_version": 1,
+    "unit_ids": [
+      "l2-threshold-stalker",
+      "l2-promise-root",
+      "l2-trunk-root",
+      "l2-priority-root",
+      "l2-priority-stalker",
+      "l2-watched-root",
+      "l2-watched-stalker",
+      "l2-slit-root",
+      "l2-slit-stalker"
+    ],
+    "recipes": [
+      {
+        "recipe_id": "A3-L2/assisted-canonical@v1",
+        "profile": "assisted",
+        "order": [
+          "l2-threshold-stalker",
+          "l2-promise-root",
+          "l2-trunk-root",
+          "l2-priority-root",
+          "l2-priority-stalker",
+          "l2-watched-root",
+          "l2-watched-stalker",
+          "l2-slit-root",
+          "l2-slit-stalker"
+        ]
+      },
+      {
+        "recipe_id": "A3-L2/standard-canonical@v1",
+        "profile": "standard",
+        "order": [
+          "l2-threshold-stalker",
+          "l2-promise-root",
+          "l2-trunk-root",
+          "l2-priority-root",
+          "l2-priority-stalker",
+          "l2-watched-root",
+          "l2-watched-stalker",
+          "l2-slit-root",
+          "l2-slit-stalker"
+        ]
+      },
+      {
+        "recipe_id": "A3-L2/challenge-canonical-legacy@v1",
+        "profile": "challenge",
+        "order": [
+          "l2-threshold-stalker",
+          "l2-promise-root",
+          "l2-trunk-root",
+          "l2-priority-root",
+          "l2-priority-stalker",
+          "l2-watched-root",
+          "l2-watched-stalker",
+          "l2-slit-root",
+          "l2-slit-stalker"
+        ]
+      },
+      {
+        "recipe_id": "A3-L2/challenge-two-root-priority@v2",
+        "profile": "challenge",
+        "order": [
+          "l2-threshold-stalker",
+          "l2-promise-root",
+          "l2-priority-stalker",
+          "l2-priority-root",
+          "l2-trunk-root",
+          "l2-watched-root",
+          "l2-watched-stalker",
+          "l2-slit-root",
+          "l2-slit-stalker"
+        ]
+      }
+    ],
+    "current": {
+      "assisted": "A3-L2/assisted-canonical@v1",
+      "standard": "A3-L2/standard-canonical@v1",
+      "challenge": "A3-L2/challenge-two-root-priority@v2"
+    }
+  }
 }
