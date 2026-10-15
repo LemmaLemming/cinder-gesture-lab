@@ -1,5 +1,13 @@
 # Cinder shared progress
 
+## Current coordination — 15 October 2026
+
+Campaign remains **20/24** and the desktop goal is active. Act3's preserving A3-O1 publication merge `aea69b3e` is [independently verified](evidence/act3-o1-content-adoption/index.json): exact registered identity/parents/receipt/ancestry and six named publication→merge→HEAD/index/physical files. Its original wrong Protocol-path collector exit1 is preserved separately from the corrected source-only receipt; no remerge, engine or new acceptance. Current aliases are reconciled; broader custody/UID counts remain owner-reported. Act3 proceeds with O2. Act1's compatible adoption remains deferred to its safe job boundary; Agent02 remains human-inactive.
+
+[A1-O2's early campaign02 review](evidence/act1-o2-early-review/REVIEW.md) verifies clean33/0, original81.69s command/report/source joins and six exact wire receipts for entrance/live-field Save, fresh Continue, earlier Retry, protected Story and cleanup. Reuse requires unchanged relevant pins or a supported delta. The report provides aggregate33 and six receipts, with no separate complete-scope flag or33 retained assertion rows. Later groups, final Shell flows, visuals and exact handoff remain separate; O2 is not accepted here. The original23/1 typed-array/timeout diagnosis and928/533 broader custody remain owner-attributed. No shared/API defect, repeated test or new gate was introduced.
+
+The authorized public GitHub default branch was verified at `7693ff316ae9113a65d84473ef5d367f317426c9` after the normal53-commit fast-forward. GitHub accepted it with six archivedJSON size warnings; original files/history remain. This is source upload, not desktop24 completion or release. Four unrelated untracked experiments were excluded. Later coordination evidence does not alter runtime or add gameplay credit.
+
 ## Current status — 14 October 2026, A3-O1 acceptance
 
 [A3-O1 Pillars Before Their Time is independently accepted](ACT3_O1_ACCEPTANCE.md) at exact content `3ece87b82f5b91023bdae94da013933ab9c4fd3b`. Root canonical **46/0** closes clean in14.61s, with clean import/parser and170 selected inputs unchanged. Reused owner351/0 mechanics,125/0 held Save/Retry,214/0 actual completion/replay and57/0 corrected portrait retain their original source/command attribution. Root personally inspected original and corrected paused images; partial floor overlap, remote crop and untested moving/full-playthrough limits remain. Parent A3-L1, unchanged L1→L2 and once-only optional stamp remain; every other23 Registry row is unchanged. Act3 proceeds to O2, then O3 sequentially.
