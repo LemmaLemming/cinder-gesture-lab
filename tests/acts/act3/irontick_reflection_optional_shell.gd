@@ -290,3 +290,17 @@ func _finish() -> void:
 	Engine.max_fps = old_fps
 	print("O3 prototype Optional Shell: %d checks/%d failures; scope_complete=%s; actual Echo warning/Pause/format2 Save/fresh disk Side Resume/entrance Retry/GUI Resume/early protected Story Journey/normal cleanup. TEST prefix13/readiness only; no stage CP/clear, completion/stamp, contact return, Replay, final arrangement, portrait or earned-route credit." % [checks, failures, str(scope_complete)])
 	quit(0 if failures == 0 and scope_complete else 1)
+
+func _dispose_shell() -> bool:
+	# Follow the public level lifecycle while the complete native world and its
+	# held owners are still in the tree, as in the accepted focused Main fixture.
+	# Queue-free alone exits children before Shell._exit_tree can call this hook.
+	var retired: bool = true
+	if is_instance_valid(production) and is_instance_valid(production.active_level) and production.active_level.is_inside_tree():
+		var level: CinderLevel = production.active_level
+		var scheduler: CinderThreatScheduler = level.get("threat_scheduler") as CinderThreatScheduler
+		level.exit_level()
+		if scheduler != null:
+			retired = _expect(scheduler.reservations().is_empty(), "public level exit retires actual held owners before whole Shell disposal")
+	var disposed: bool = await super._dispose_shell()
+	return retired and disposed
