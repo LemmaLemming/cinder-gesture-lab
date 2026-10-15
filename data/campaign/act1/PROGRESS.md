@@ -1,5 +1,15 @@
 # Act 1 — current progress
 
+## Act 1 desktop scope complete — 15 October 2026
+
+All **eight Act 1 levels are independently accepted and integrated**: five main levels and Salvage Circuit, Spore Bloom and Royal Rehearsal. The canonical campaign is 23/24; remaining shared work and A3-O3 belong to Integration and the Act3 owner.
+
+Royal Rehearsal acceptance **d797b5fd** records publication **7a89805cffc3b475d956925ae310d6622d7976ed**, authored content **3569663dd7a57d40f39cabfe92b1cef5c4c84873**, and Root's actual **33/0 complete, clean** registration check. Original owner mechanics, transport, checkpoint, completion/replay and two inspected portraits retain their original scopes and failures. Actual preserving adoption **cb20fc4c5e9226002949e742be15cb1d0f6422ed** includes Shared64 and preserves the six owned Git trees and all 183 original selected handoff/manifest Git and physical entries at the adoption boundary. Subsequent closeout changes only current records and asset-provenance text; runtime, scenes and fixtures stay exact.
+
+[Final completion record](../../../docs/acts/act1/ACT1_COMPLETION.md) and [requirement evidence map](../../../docs/acts/act1/evidence/ACT1-completion/requirement-map.md) preserve acceptance, source/API attribution, actual receipts and limits. Required design validators passed without new allocations. Original failed/incomplete tests and visually deficient captures remain retained. Full-playthrough, touch, all-kit/preset/moving optics, balance and FPS limits remain explicit; no mobile/export/release claim is made.
+
+No further Act1 level authoring or validation is required under the focused acceptance policy. All own engine jobs and previews are closed. Context, checkout, branch, ownership and original evidence are retained; Integration remains first help contact. No human permission or unlock action is pending.
+
 ## Current O3 owner completion — 15 October 2026
 
 A1-O3 Royal Rehearsal is implemented and owner-tested at **9f4a2fc2** on actually adopted **Shared62**. Focused checks: authored mechanics45/0; entry44/0; genuine pre-final checkpoint78/0; Standard75/0; Challenge75/0; Retry33/0; contact Story return32/0; replay29/0. Final local bell/framing correction is covered by new portrait18/0, entry44/0 and Challenge75/0 using the original checkpoint. Both final540×1170portraits were personally inspected: player clear beside bell, native guards/footprint/nearby safe floor readable. Exact evidence and limitations: docs/acts/act1/O3_FOCUSED_HANDOFF.md and evidence/O3-campaign/index.json.
