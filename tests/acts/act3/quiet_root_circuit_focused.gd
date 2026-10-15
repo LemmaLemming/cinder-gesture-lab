@@ -245,6 +245,8 @@ func _open_root() -> bool:
 	return _expect(not paused and _hero.is_on_floor(), "ordinary native Hero settles on the continuous floor")
 
 func _warning() -> Dictionary:
+	# Observe newly enabled sources before choosing any approach input.
+	if not await _tick(): return {}
 	# Only real ordinary dashes approach the next fixed court. A concurrent
 	# native proof from a different Hero point is never treated as executable.
 	var approaches: int = 0
@@ -352,7 +354,7 @@ func _tick() -> bool:
 	_ticks += 1
 	if _finishing: return false
 	var state: Dictionary = _level.call("state")
-	return _expect(boundary == "post_actor_physics" and not paused and _ticks <= 4800 and not _hero.dead and _hero.hp == _starting_hp and _hero.equipment.snapshot() == _kit and state.configuration_error.is_empty() and _root_source.global_position == QRC.SOURCE_POSITIONS[_selected_root_id], "bounded native court tick preserves full Hero HP/kit/fixed selected source",str({"boundary":boundary,"paused":paused,"clock":_scheduler.get_clock(),"source":_root_source.state(),"configuration_error":state.configuration_error}))
+	return _expect(boundary == "post_actor_physics" and not paused and _ticks <= 4800 and not _hero.dead and _hero.hp == _starting_hp and _hero.equipment.snapshot() == _kit and state.configuration_error.is_empty() and _root_source.global_position == QRC.SOURCE_POSITIONS[_selected_root_id], "bounded native court tick preserves full Hero HP/kit/fixed selected source",str({"boundary":boundary,"paused":paused,"clock":_scheduler.get_clock(),"ticks":_ticks,"hero_hp":_hero.hp,"starting_hp":_starting_hp,"hero_dead":_hero.dead,"actual_kit":_hero.equipment.snapshot(),"expected_kit":_kit,"actual_selected_position":_root_source.global_position,"expected_selected_position":QRC.SOURCE_POSITIONS[_selected_root_id],"source":_root_source.state(),"configuration_error":state.configuration_error}))
 
 func _presentation() -> bool:
 	_barrier.presentation_waiting = true

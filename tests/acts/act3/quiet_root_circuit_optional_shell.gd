@@ -214,7 +214,7 @@ func _o2_tick() -> bool:
 		if boundary == "paused_notification": continue
 		_o2_ticks += 1
 		var state: Dictionary = _o2_level.call("state")
-		return _expect(boundary == "post_actor_physics" and not paused and _o2_ticks <= 6000 and production.active_level == _o2_level and production.player == _o2_hero and not _o2_hero.dead and _o2_hero.hp == _o2_hp and _o2_hero.equipment.snapshot() == _o2_kit and state.configuration_error.is_empty() and (_o2_level.get("sources") as Dictionary)[_o2_selected].global_position == QRC.SOURCE_POSITIONS[_o2_selected], "bounded real post-actor Optional tick preserves native full HP/kit/fixed Root", str({"boundary": boundary, "clock_s": _o2_scheduler.get_clock(), "hero": _o2_hero.global_position, "state": state}))
+		return _expect(boundary == "post_actor_physics" and not paused and _o2_ticks <= 6000 and production.active_level == _o2_level and production.player == _o2_hero and not _o2_hero.dead and _o2_hero.hp == _o2_hp and _o2_hero.equipment.snapshot() == _o2_kit and state.configuration_error.is_empty() and (_o2_level.get("sources") as Dictionary)[_o2_selected].global_position == QRC.SOURCE_POSITIONS[_o2_selected], "bounded real post-actor Optional tick preserves native full HP/kit/fixed Root", str({"boundary": boundary, "clock_s": _o2_scheduler.get_clock(), "ticks": _o2_ticks, "hero": _o2_hero.global_position, "hero_hp": _o2_hero.hp, "starting_hp": _o2_hp, "hero_dead": _o2_hero.dead, "actual_kit": _o2_hero.equipment.snapshot(), "expected_kit": _o2_kit, "actual_selected_position": (_o2_level.get("sources") as Dictionary)[_o2_selected].global_position, "expected_selected_position": QRC.SOURCE_POSITIONS[_o2_selected], "state": state}))
 	return _expect(false, "bounded automatic Shell court transaction resumes actual native ticking")
 
 func _o2_presentation() -> bool:
@@ -234,6 +234,8 @@ func _o2_presentation() -> bool:
 func _o2_warning(id: String) -> Dictionary:
 	var driver: RefCounted = _o2_driver(id)
 	var source: CinderAct3RootLatcher = (_o2_level.get("sources") as Dictionary)[id] as CinderAct3RootLatcher
+	# Let the newly enabled court issue its actual warning before any approach.
+	if not await _o2_tick(): return {}
 	var approaches: int = 0
 	for _index: int in range(480):
 		if finished or not _valid_shell(): return {}
