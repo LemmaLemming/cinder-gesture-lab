@@ -15,6 +15,7 @@ var hatch: Dictionary = {}
 var original_attempts: Dictionary = {}
 var source_reports: Array[Dictionary] = []
 var observation_overruns: Array[Dictionary] = []
+var pause_registration_barriers: Array[Dictionary] = []
 var terminal_before_ids: Dictionary = {}
 
 
@@ -189,6 +190,25 @@ func _load_hatch(label: String, before: Dictionary) -> bool:
 	return true
 
 
+func _pause(label: String) -> bool:
+	operation = "public Pause: " + label
+	var generation_before: int = _save_generation()
+	var requested_ms: int = Time.get_ticks_msec()
+	game.request_pause()
+	# Public Pause defers its drain. Native registration constructs every raw
+	# candidate synchronously, then requires one process signal (or one extra
+	# same-counter signal). Observe those actual paused signals before starting
+	# the asynchronous completion wait, so an expired observer cannot free the
+	# Shell before its registration continuation runs. Preserve the full cost.
+	for signal_index: int in range(2):
+		await process_frame
+		if not _operation_healthy(): return false
+		if not _expect(paused, "public Pause retains paused custody during registration signal %d: " % (signal_index + 1) + label): return false
+	pause_registration_barriers.append({"label": label, "actual_process_signals": 2, "request_to_barrier_wall_ms": Time.get_ticks_msec() - requested_ms, "scope": "actual paused registration observation; full synchronous cost retained, no latency/performance pass"})
+	if not await _await_operation(func() -> bool: return paused and game.menu.page_name() == "pause" and _save_generation() > generation_before, "deferred public Pause commits a new whole-unit Save generation", 8.0): return false
+	return _expect(game.campaign_error.is_empty() and _durable(), "normal public Pause persists actual native unit: " + label)
+
+
 func _retry_prefinal() -> bool:
 	var button := game.menu.find_child("RetryButton", true, false) as Button
 	if not _expect(button != null and button.is_visible_in_tree() and not button.disabled and game.menu.page_name() == "pause", "actual production pause Menu exposes enabled RetryButton"): return false
@@ -289,7 +309,7 @@ func _finish() -> void:
 	var output := FileAccess.open(report_path, FileAccess.WRITE)
 	if output == null: _expect(false, "unique terminal report is writable")
 	else:
-		output.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "elapsed_ms": Time.get_ticks_msec() - started_ms, "source_reports": source_reports, "setups": setups, "receipts": receipts, "observations": observations, "exact_receipts": exact_receipts, "exact_observations": exact_observations, "synchronous_observation_overruns": observation_overruns, "scope": "Actual production Shell Title/active-side Continue of genuine successful Main O2 hatch packet; actual RetryButton pressed signal to original genuine pre-final checkpoint; exact all9 native source/Field1/Coordinator2 packets, original spent supplies, whole protected L3 Story, distinct quiet installed recipient IDs/callbacks. Public Attempts/Store assembles unchanged source-report Session as TEST setup, no earned traversal/group replay or native packet manufacture. Same original hatch Session reloaded; public Resume/Pause and measured disclosed same-floor Hero contact pose, real Area/deferred completion/exit, existing once-only optional stamp and exact protected Story return, actual pristine Replay/Leave. Normal in-tree cleanup, unique isolated stores and canonical Registry preservation. No OS click/recognizer/full-route/all-kit/balance/portrait/performance/mobile claim."}, "\t"))
+		output.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "elapsed_ms": Time.get_ticks_msec() - started_ms, "source_reports": source_reports, "setups": setups, "receipts": receipts, "observations": observations, "exact_receipts": exact_receipts, "exact_observations": exact_observations, "synchronous_observation_overruns": observation_overruns, "pause_registration_barriers": pause_registration_barriers, "scope": "Actual production Shell Title/active-side Continue of genuine successful Main O2 hatch packet; actual RetryButton pressed signal to original genuine pre-final checkpoint; exact all9 native source/Field1/Coordinator2 packets, original spent supplies, whole protected L3 Story, distinct quiet installed recipient IDs/callbacks. Public Attempts/Store assembles unchanged source-report Session as TEST setup, no earned traversal/group replay or native packet manufacture. Same original hatch Session reloaded; public Resume/Pause and measured disclosed same-floor Hero contact pose, real Area/deferred completion/exit, existing once-only optional stamp and exact protected Story return, actual pristine Replay/Leave. Normal in-tree cleanup, unique isolated stores and canonical Registry preservation. No OS click/recognizer/full-route/all-kit/balance/portrait/performance/mobile claim."}, "\t"))
 		output.close()
 	if node_added.is_connected(_observe_added): node_added.disconnect(_observe_added)
 	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
