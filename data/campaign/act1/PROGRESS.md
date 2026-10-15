@@ -4,7 +4,7 @@
 
 Royal Rehearsal first focused mechanics check passes **45/0 clean** at0d33c0c2/Shared62, using production Main, actual bell overlap/deferred activation, six original finite C32s, native warning→lock→active→recovery, ordinary dashes/primary, original cooldown and cleanup. All22 named physical inputs stayed exact. Necessary import0 and four generated script identities are retained. Original44/1 remains failed; only the fixture Rect2 diagnostic conversion changed before the affected retest. Evidence: docs/acts/act1/evidence/O3-greybox/index.json.
 
-The functional prototype is validated; owned full native aggregate Save/Continue/Retry and small authored bell/marker art are now being implemented. Later arrangements, completion/contact/stamp/Story/replay and actual portrait are unexecuted. No full-route/all-kit/performance claim. Act1 remains **7/8 accepted**, campaign21/24; O3 is not yet handed off. All own engine jobs are closed, registration is correct, and no human permission/unlock gate exists.
+Authored bell/marker and full native aggregate source are implemented at5381f4c2, followed by necessary import0 and directly affected mechanics45/0 clean at8a032fa5 (25 named inputs unchanged). Whole transport, later arrangements, completion/contact/stamp/Story/replay and actual portrait remain unexecuted; the production campaign fixture is now being prepared for its entry case. No full-route/all-kit/performance claim. Act1 remains **7/8 accepted**, campaign21/24; O3 is not yet handed off. Completed evidence jobs are closed; current validation uses the shared queue. Registration is correct, and no human permission/unlock gate exists.
 
 ## Current accepted O2 and O3 kickoff — 2026-10-15T05:42:45.276481+00:00
 
