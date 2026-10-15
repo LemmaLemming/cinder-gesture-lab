@@ -25,10 +25,10 @@ func _run() -> void:
 		await _finish(); return
 	archive_path = args[0].trim_prefix("--archive=")
 	var decoded: Dictionary = Exact.parse(FileAccess.get_file_as_string(archive_path.path_join("manifest.json")))
-	if not _expect(decoded.get("accepted", false) and decoded.get("value") is Dictionary, "original warning manifest parses with native exact transport"):
+	if not _expect(decoded.get("accepted", false) and decoded.get("value") is Dictionary, "original final-layout warning manifest parses with native exact transport"):
 		await _finish(); return
 	provenance = decoded.value
-	if not _expect(provenance.get("kind") == "a3-o3-genuine-warning-session-1" and provenance.get("test_only") == true and provenance.get("source_pins") is Dictionary and provenance.get("files") is Dictionary, "original TEST native warning provenance identifies its source/file scope"):
+	if not _expect(provenance.get("kind") == "a3-o3-final-session-2" and provenance.get("archive_kind") == "held-warning" and provenance.get("test_only") == true and provenance.get("source_pins") is Dictionary and provenance.get("files") is Dictionary, "original TEST native warning provenance identifies its source/file scope"):
 		await _finish(); return
 	for path: String in provenance.source_pins:
 		var current: String = FileAccess.get_sha256(path)
@@ -42,7 +42,7 @@ func _run() -> void:
 	protected = _original_packet("story.native.json")
 	var original_entrance: Dictionary = _original_packet("entrance.native.json")
 	var original_start: Dictionary = _original_packet("start-session.native.json")
-	if failures > 0 or not _expect(not raw.is_empty() and not expected_session.is_empty() and not held.is_empty() and _same(expected_session.side_attempt.snapshot, held) and _same(expected_session.side_attempt.checkpoint, checkpoint) and _same(expected_session.story.snapshot, protected) and _same(expected_session.story, original_start.story) and _same(original_entrance, checkpoint) and original_start.side_attempt == null and protected.level_id == O3_STORY_ID and protected.scene_path == O3_STORY_PATH and protected.level.level_id == O3_STORY_ID, "complete original warning session matches independently archived native packets"):
+	if failures > 0 or not _expect(not raw.is_empty() and not expected_session.is_empty() and not held.is_empty() and _same(expected_session.side_attempt.snapshot, held) and _same(expected_session.side_attempt.checkpoint, checkpoint) and _same(expected_session.story.snapshot, protected) and _same(expected_session.story, original_start.story) and _same(original_entrance, checkpoint) and original_start.side_attempt == null and protected.level_id == O3_STORY_ID and protected.scene_path == O3_STORY_PATH and protected.level.level_id == O3_STORY_ID and held.level.local_snapshot_version == 2 and held.level.local.sources.size() == 4 and held.level.local.scheduler.authored_source_cycles.sources.size() == 3, "complete original warning session matches independently archived native packets"):
 		await _finish(); return
 	var registry = Registry.new(raw)
 	var detached = Attempts.new(registry)
@@ -72,7 +72,11 @@ func _original_packet(filename: String) -> Dictionary:
 	return packet
 
 func _portrait() -> bool:
-	await process_frame # Native UI layout only; gameplay remains paused.
+	# Lightweight native frames let queued public focus/Pause registration
+	# finish before expensive whole-pair capture inside its unchanged bound.
+	for _settle: int in range(8):
+		await process_frame
+		if not _valid_shell() or not paused: return false
 	var view: SubViewport = production.world.get_parent() as SubViewport
 	var container: SubViewportContainer = view.get_parent() as SubViewportContainer
 	if not _expect(paused and not production.is_pause_requested() and container.is_visible_in_tree() and view.own_world_3d and view.get_camera_3d() == production.camera and production.hud.visible and production.menu.visible, "actual installed native World/Camera/Hero/HUD and paused Menu are visible"):
@@ -95,9 +99,11 @@ func _portrait() -> bool:
 	if RenderingServer.frame_post_draw.is_connected(_on_draw): RenderingServer.frame_post_draw.disconnect(_on_draw)
 	var pixels: Image = root.get_texture().get_image() if draw_seen else null
 	var problem: String = String(production.active_level.call("candidate_presentation_error", production.camera, production.hud))
-	var unchanged: bool = paused and not production.is_pause_requested() and not wire.is_empty() and wire == Exact.stringify(production.capture_campaign_snapshot()) and input == var_to_bytes(production.get_input_observation_state()) and optics == var_to_bytes(_optics_record()) and events == var_to_bytes(receiver_events)
+	var overlay_hidden_during_draw: bool = not production.menu.visible
+	var unchanged: bool = production.campaign_error.is_empty() and overlay_hidden_during_draw and paused and not production.is_pause_requested() and not wire.is_empty() and wire == Exact.stringify(production.capture_campaign_snapshot()) and input == var_to_bytes(production.get_input_observation_state()) and optics == var_to_bytes(_optics_record()) and events == var_to_bytes(receiver_events)
+	var diagnostic: Dictionary = {"draw_seen":draw_seen,"menu_hidden_during_draw":overlay_hidden_during_draw,"pixels_size":str(pixels.get_size()) if pixels != null else "null","paused":paused,"pause_pending":production.is_pause_requested(),"wire_nonempty":not wire.is_empty(),"wire_equal":wire == Exact.stringify(production.capture_campaign_snapshot()),"input_equal":input == var_to_bytes(production.get_input_observation_state()),"optics_equal":optics == var_to_bytes(_optics_record()),"events_equal":events == var_to_bytes(receiver_events),"candidate_error":problem,"shell_error":production.campaign_error,"level_error":production.active_level.last_snapshot_error}
 	production.menu.visible = menu_visibility # Restore before every failure return.
-	if not _expect(draw_seen and pixels != null and pixels.get_size().x == 340 and pixels.get_size().y == 736 and unchanged and production.menu.visible == menu_visibility and problem.is_empty(), "native paused portrait preserves full packet/input/current Camera/HUD/events and restores Menu", problem):
+	if not _expect(draw_seen and pixels != null and pixels.get_size().x == 340 and pixels.get_size().y == 736 and unchanged and production.menu.visible == menu_visibility and problem.is_empty(), "native paused portrait preserves full packet/input/current Camera/HUD/events and restores Menu", str(diagnostic)):
 		return false
 	var folder: String = "res://captures/act3/irontick-reflection/portrait-%d-%d" % [OS.get_process_id(), Time.get_ticks_usec()]
 	portrait_path = folder.path_join("01-authentic-held-warning.png")

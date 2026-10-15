@@ -1,358 +1,427 @@
 extends "res://tests/acts/act3/pillars_before_time_focused.gd"
-## One finite managed Echo + independently due native pulse. Reuses only O1's
-## post-actor observer, exact comparisons, public cleanup and watchdog helpers.
-## Actual controller dash/slash only: no HP/ammo/clock/pose/history writes.
-## No Optional transport, fresh candidate, route, defeat-all or art claim.
+## TEMP ONLY final O3 derivative; unparsed/unexecuted. Registered prototype
+## stays frozen. Reuses only accepted observer/exact/disposal helpers.
+## First court proves actual generation1→2/ordinary death/CP1. Optional jobs
+## reuse EchoDriver with genuine CP archives for later changed courts/exit.
 
 const O3_ROOM: String = "res://scenes/acts/act3/a3_o3_irontick_reflection.tscn"
-const ECHO_ID: String = "o3-first-echo"
-const PULSE_ID: String = "o3-first-pulse"
-const FLOOR: Rect2 = Rect2(-7, -11, 14, 22)
-const POINT_EPS: float = 0.005
-const TIME_EPS: float = 0.000001
-const DEADLINES: Array[String] = ["start_s","lock_from_s","active_from_s","active_until_s","recovery_until_s","cooldown_until_s"]
-const DASHES: Array[String] = ["escape_dash","first_escape_dash","second_escape_dash","positioning_dash","tether_positioning_dash"]
+const ECHO_IDS: Array[String] = ["o3-first-echo","o3-rearranged-echo","o3-final-echo"]
+const STALKER_ID: String = "o3-final-stalker"
+const STAGE_IDS: Array[String] = ["first-reflection","rearranged-endpoint","final-resonant-apron"]
+const CHECKPOINT_IDS: Array[String] = ["first-reflection-cleared","rearranged-endpoint-cleared"]
 
-var _echo: Node3D
-var _pulse: CinderLaneMechanism
-var _reflection: Node3D
-var _starting_hp: float
-var _starting_shells: int
-var _stats: Dictionary = {}
+class EchoDriver extends RefCounted:
+	## No Shell model, pause, archive, source preparation or runtime state edits.
+	## tick/presentation callbacks await actual native completed boundaries;
+	## Optional's tick callback also drains its real CP/complete pause operations.
+	const BodySweep = preload("res://scripts/combat/body_sweep.gd")
+	const EchoIds: Array[String] = ["o3-first-echo","o3-rearranged-echo","o3-final-echo"]
+	const StageIds: Array[String] = ["first-reflection","rearranged-endpoint","final-resonant-apron"]
+	const CheckpointIds: Array[String] = ["first-reflection-cleared","rearranged-endpoint-cleared"]
+	const PointEps: float = 0.005
+	const TimeEps: float = 0.000001
+	const Deadlines: Array[String] = ["start_s","lock_from_s","active_from_s","active_until_s","recovery_until_s","cooldown_until_s"]
+	const DashKinds: Array[String] = ["escape_dash","first_escape_dash","positioning_dash","tether_positioning_dash"]
+	var _hero: CinderPlayer
+	var _level: CinderLevel
+	var _scheduler: CinderThreatScheduler
+	var _source: Node3D
+	var _source_id: String
+	var _stage_index: int = -1
+	var _kit: Dictionary
+	var _stats: Dictionary
+	var _starting_hp: float
+	var _starting_ammo: int
+	var _starting_clock: float
+	var _starting_blasts: int
+	var _fixed: Transform3D
+	var _source_instance: int
+	var _ticks: int = 0
+	var _actions: Callable
+	var _fired: Callable
+	var _native_tick: Callable
+	var _presentation: Callable
+	var _assert: Callable
+	var _boundary: Dictionary = {}
+	var _held_lease: Dictionary = {}
+
+	func configure(actual_hero: CinderPlayer, actual_level: CinderLevel, actual_scheduler: CinderThreatScheduler, source_id: String, held_kit: Dictionary, action_records: Callable, fired_kinds: Callable, tick_callback: Callable, presentation_callback: Callable, assertion_callback: Callable) -> void:
+		_hero = actual_hero
+		_level = actual_level
+		_scheduler = actual_scheduler
+		_source_id = source_id
+		_stage_index = EchoIds.find(source_id)
+		_source = (actual_level.get("sources") as Dictionary).get(source_id) as Node3D
+		_kit = held_kit.duplicate(true)
+		_stats = actual_hero.equipment.resolved_stats().duplicate(true)
+		_starting_hp = actual_hero.hp
+		_starting_ammo = actual_hero.shells
+		_starting_clock = actual_scheduler.get_clock()
+		_actions = action_records
+		_fired = fired_kinds
+		_native_tick = tick_callback
+		_presentation = presentation_callback
+		_assert = assertion_callback
+		_starting_blasts = (fired_kinds.call() as Array).count("blast")
+		_fixed = _source.global_transform if is_instance_valid(_source) else Transform3D.IDENTITY
+		_source_instance = _source.get_instance_id() if is_instance_valid(_source) else 0
+
+	func _expect(ok: bool, label: String, detail: String = "") -> bool:
+		return bool(_assert.call(ok,label,detail))
+
+	func _tick() -> bool:
+		if not bool(await _native_tick.call()): return false
+		_ticks += 1
+		if not _held_lease.is_empty():
+			var held: Dictionary = _scheduler.replay_reservation_state(String(_held_lease.id))
+			for key: String in Deadlines:
+				if not _expect(not held.is_empty() and _same(held[key],_held_lease[key]),"actual held own replay retains original native "+key): return false
+			for opportunity: Dictionary in (_source.call("state") as Dictionary).get("opportunities",[]):
+				if not _expect(not opportunity.contact and not opportunity.damage_attempted,"actual selected response consumes no contact hidden by dash immunity"): return false
+		return _expect(_ticks <= 1800 and _scheduler.get_clock()-_starting_clock <= 30.0 and _level.hero == _hero and _hero.hp == _starting_hp and not _hero.dead and _hero.shells == _starting_ammo and _same(_hero.equipment.snapshot(),_kit) and _same(_hero.equipment.resolved_stats(),_stats) and is_instance_valid(_source) and _source.get_instance_id() == _source_instance and _source.global_transform == _fixed and String(_source.call("source_native_error")).is_empty() and (_fired.call() as Array).count("blast") == _starting_blasts, "bounded native Echo driver preserves actual recipient/fixed knot/HP/ammo/kit and ordinary-only controls",str(describe()))
+
+	func describe() -> Dictionary:
+		return {"source_id":_source_id,"stage_index":_stage_index,"clock_s":_scheduler.get_clock() if is_instance_valid(_scheduler) else -1.0,"driver_ticks":_ticks,"phase":_source.call("source_phase") if is_instance_valid(_source) else "<missing>","generation":_source.call("get_authored_cycle_generation") if is_instance_valid(_source) else -1,"hp":_source.get("hp") if is_instance_valid(_source) else -1.0,"actions":(_actions.call() as Array).size()}
+
+	func last_boundary() -> Dictionary:
+		return _boundary.duplicate(true)
+
+	func clear_current_stage(require_generation_two: bool = false) -> bool:
+		var state: Dictionary = _level.call("state")
+		if not _expect(_stage_index >= 0 and state.route.active_stage == _stage_index and is_instance_valid(_source) and _source.call("source_cycles_managed") and not _source.get("dead") and _source.get("hp") == 36.0 and _source.call("get_authored_cycle_generation") == 1, "driver observes the genuinely current living native36HP stage source before any approach",str(state)): return false
+		print("O3 DRIVER: current ",_source_id,"; ",describe())
+		if (await _warning()).is_empty(): return false
+		if not await _follow_warning_to_primary(): return false
+		var first_hits: Array = _source.call("source_hit_receipts")
+		if not _expect(_source.get("hp") == maxf(0.0,36.0-float(_stats.primary_damage)) and _source.get("source_hits") == 1 and first_hits.size() == 1 and first_hits[0].generation == 1 and not _source.get("dead"), "first ordinary recovery hit preserves actual generation1 partial HP/history"): return false
+		if require_generation_two:
+			if not await _generation_two(first_hits): return false
+			if (await _warning()).is_empty(): return false
+			if not await _follow_warning_to_primary(): return false
+		else:
+			# Native recovery/complete is a legitimate ordinary window. Respect
+			# real cooldown; if the parent already rearmed, follow its new proof.
+			var hit: bool = false
+			for _index: int in range(600):
+				var phase: String = String(_source.call("source_phase"))
+				if phase in ["recovery","complete"] and float(_hero.get_threat_response_state().primary_cooldown_left_s) == 0.0:
+					hit = _primary()
+					break
+				if (_source.call("state") as Dictionary).status == "running" and phase == "warning":
+					hit = await _follow_warning_to_primary()
+					break
+				if not await _tick(): return false
+			if not _expect(hit,"bounded later-stage ordinary follow-up executes through an actual native opening"): return false
+		var hits: Array = _source.call("source_hit_receipts")
+		if not _expect(_source.get("dead") and _source.get("hp") == 0.0 and _source.get("source_hits") == 2 and hits.size() == 2 and _same(hits[0],first_hits[0]) and hits[1].generation == (2 if require_generation_two else int(_source.call("get_authored_cycle_generation"))) and not _source.is_in_group("enemies"), "two genuine ordinary transactions retire the same real endpoint without HP/history reset",str(describe())): return false
+		return await await_boundary(_stage_index+1)
+
+	func _generation_two(first_hits: Array) -> bool:
+		var first_terminal: Dictionary = {}
+		for _index: int in range(900):
+			var playback: Dictionary = _source.call("state")
+			var receipts: Array = playback.lifecycle.terminal_receipts
+			if first_terminal.is_empty() and not receipts.is_empty():
+				first_terminal = receipts[0].duplicate(true)
+				if not _expect(first_terminal.generation == 1 and first_terminal.outcome == "complete", "native first generation seals its true complete terminal before rearm",str(first_terminal)): return false
+			if int(_source.call("get_authored_cycle_generation")) == 2:
+				return _expect(not first_terminal.is_empty() and receipts.size() == 1 and _same(receipts[0],first_terminal) and _same(_source.call("source_hit_receipts"),first_hits) and _source.get("hp") == maxf(0.0,36.0-float(_stats.primary_damage)) and not _source.get("dead") and _source.get_instance_id() == _source_instance and playback.status in ["cycle_ready","running"], "actual parent prepares generation2 only after native terminal/cooldown, retaining source/HP/hit/terminal history",str(describe()))
+			if not _expect(not _source.get("dead") and int(_source.call("get_authored_cycle_generation")) == 1 and _same(_source.call("source_hit_receipts"),first_hits), "waiting for real rearm fabricates no source generation/death/hit"): return false
+			if not await _tick(): return false
+		return _expect(false,"bounded actual parent generation1→2 rearm",str(describe()))
+
+	func _warning() -> Dictionary:
+		var approaches: int = 0
+		for index: int in range(600):
+			# Observe newly current and newly admitted sources before approaching.
+			var playback: Dictionary = _source.call("state")
+			if playback.status == "running":
+				var lease: Dictionary = _scheduler.replay_reservation_state(String(playback.reservation_id))
+				if _expect(not lease.is_empty() and not lease.adapter.locked and not playback.cursor.armed and _source.call("source_phase") == "warning" and _scheduler.get_clock() < float(lease.lock_from_s), "new real source admission is observed during its own unarmed warning",str(describe())): return lease
+				return {}
+			if not _expect(playback.status == "cycle_ready", "actual selected source remains ready until native admission",str(describe())): return {}
+			if not _hero.is_on_floor() or not _hero.get_threat_response_state().get("stable",false):
+				if not await _tick(): return {}
+				continue
+			if index > 0 and index%16 == 0 and float(_hero.get_threat_response_state().dash_cooldown_left_s) == 0.0 and _hero.global_position.distance_to(_source.global_position) > float(_stats.primary_range):
+				if not _expect(approaches < 4,"bounded fixed-stone approach uses at most four actual dashes",str(describe())): return {}
+				if not await approach(): return {}
+				approaches += 1
+			else:
+				if not await _tick(): return {}
+		return {}
+
+	func approach() -> bool:
+		if not _expect(_hero.is_on_floor() and _hero.get_threat_response_state().get("stable",false) and (_source.call("state") as Dictionary).status == "cycle_ready", "actual floor/current-source observation precedes approach preflight"): return false
+		var from: Transform3D = _hero.global_transform
+		var toward: Vector3 = _source.global_position-from.origin
+		toward.y = 0.0
+		if not _expect(not toward.is_zero_approx(),"actual fixed endpoint provides a nonzero approach bearing"): return false
+		var distance: float = float(_stats.dash_distance)
+		var floors: Array = (_level.call("scheduler_bindings") as Dictionary).floors.values()
+		var direct: Dictionary = BodySweep.sweep(_hero,from,toward.normalized()*distance,floors)
+		if _full_sweep(direct,from.origin+toward.normalized()*distance): return await _dash(toward.normalized())
+		for side: Vector3 in [Vector3.RIGHT,Vector3.LEFT]:
+			var lateral: Dictionary = BodySweep.sweep(_hero,from,side*distance,floors)
+			if not _full_sweep(lateral,from.origin+side*distance): continue
+			var next_from: Transform3D = from
+			next_from.origin = lateral.end # Pure virtual sweep input, never Hero pose.
+			var next_toward: Vector3 = _source.global_position-next_from.origin
+			next_toward.y = 0.0
+			if next_toward.is_zero_approx(): continue
+			var next: Dictionary = BodySweep.sweep(_hero,next_from,next_toward.normalized()*distance,floors)
+			if not _full_sweep(next,next_from.origin+next_toward.normalized()*distance): continue
+			print("O3 DRIVER: fixed stone blocks direct full dash; actual lateral ",side,"; source=",_source_id)
+			return await _dash(side)
+		return _expect(false,"actual body/floor supports a full direct or fixed-stone lateral approach",str(direct))
+
+	func _follow_warning_to_primary() -> bool:
+		var lease: Dictionary = {}
+		var proof: Dictionary = {}
+		for _index: int in range(240):
+			var state: Dictionary = _level.call("state")
+			var data: Dictionary = state.echo_records[_source_id]
+			if data.locked:
+				lease = _scheduler.replay_reservation_state(String((_source.call("state") as Dictionary).reservation_id))
+				proof = data.proof
+				break
+			if not _expect((_source.call("state") as Dictionary).status == "running", "actual admitted warning retains its original native lease until due lock"): return false
+			if not await _tick(): return false
+		if not _expect(not lease.is_empty() and lease.adapter.locked and proof.get("accepted",false) and proof.get("uses_blast") == false and proof.get("uses_invulnerability") == false and proof.get("path") is Array and not proof.path.is_empty() and proof.path.size() <= 10, "actual due lock supplies a finite ordinary-only current stage/stone/danger-union proof",str(describe())): return false
+		_held_lease = lease.duplicate(true)
+		var first: bool = true
+		var escaped: bool = false
+		var last_end: float = -1.0
+		var previous: Dictionary = {}
+		for segment: Dictionary in proof.path:
+			if not _expect(segment.get("from") is Vector3 and segment.get("to") is Vector3 and segment.from.is_finite() and segment.to.is_finite() and is_finite(float(segment.start_s)) and is_finite(float(segment.end_s)) and float(segment.end_s) >= float(segment.start_s), "actual own-route witness retains finite physical positions/deadlines"): return false
+			if not previous.is_empty() and not _expect(absf(float(previous.end_s)-float(segment.start_s)) <= TimeEps and previous.to.distance_to(segment.from) <= PointEps,"actual selected own-route path remains continuous"): return false
+			previous = segment
+			var scheduled: float = maxf(float(segment.start_s),last_end)
+			if first and segment.kind == "recognition_and_ready":
+				if not _expect(segment.from == segment.to and _hero.global_position.distance_to(segment.from) <= PointEps and _scheduler.get_clock() < float(segment.end_s), "only unchanged first passive recognition may be joined before its original end"): return false
+				scheduled = maxf(scheduled,_scheduler.get_clock())
+			first = false
+			if segment.kind in ["ordinary_primary","ordinary_primary_full_recovery"]: break
+			if DashKinds.has(String(segment.kind)):
+				if not await _until(scheduled): return false
+				if not await _dash((segment.to-segment.from).normalized(),segment,scheduled,lease): return false
+				last_end = float((_actions.call() as Array).back().completed_at_s)
+				escaped = escaped or segment.kind in ["escape_dash","first_escape_dash"]
+			else:
+				if not _expect(segment.from == segment.to and _hero.global_position.distance_to(segment.from) <= PointEps, "actual passive segment preserves its native stationary point"): return false
+				if not await _until(float(segment.end_s),segment.from): return false
+		if not await _until(float(proof.primary_time_s)): return false
+		if not _expect(escaped and _source.call("source_phase") == "recovery" and _hero.global_position.distance_to(proof.attack_position) <= PointEps and _hero.is_on_floor() and float(proof.response_complete_s) < float(lease.recovery_until_s), "full actual selected response reaches its ordinary native recovery opening"): return false
+		var hit: bool = _primary()
+		_held_lease.clear()
+		return hit
+
+	func _primary() -> bool:
+		var before: float = float(_source.get("hp"))
+		var count: int = (_actions.call() as Array).size()
+		var hits_before: int = int(_source.get("source_hits"))
+		var generation: int = int(_source.call("get_authored_cycle_generation"))
+		var phase: String = String(_source.call("source_phase"))
+		if not _expect(phase in ["recovery","complete"] and float(_hero.get_threat_response_state().primary_cooldown_left_s) == 0.0 and _hero.is_on_floor(), "actual ordinary primary respects native phase/cooldown/floor"): return false
+		var toward: Vector3 = _source.global_position-_hero.global_position
+		toward.y = 0.0
+		var hits: int = _hero.slash(toward.normalized())
+		var actions: Array = _actions.call()
+		var receipts: Array = _source.call("source_hit_receipts")
+		var damage: float = float(_stats.primary_damage)
+		return _expect(hits >= 1 and actions.size() == count+1 and actions.back().kind == "primary" and actions.back().hits == hits and actions.back().damage == damage and _source.get("hp") == maxf(0.0,before-damage) and int(_source.get("source_hits")) == hits_before+1 and receipts.size() == hits_before+1 and receipts.back().generation == generation and receipts.back().phase == phase and receipts.back().hp_before == before and receipts.back().hp_after == maxf(0.0,before-damage) and receipts.back().hp_damage == minf(before,damage), "one actual controller primary reaches the real target through a genuine native hit receipt",str(describe()))
+
+	func _dash(direction: Vector3, segment: Dictionary = {}, scheduled: float = -1.0, lease: Dictionary = {}) -> bool:
+		direction.y = 0.0
+		direction = direction.normalized()
+		var response: Dictionary = _hero.get_threat_response_state()
+		var from: Vector3 = _hero.global_position
+		var distance: float = float(_stats.dash_distance)
+		var sweep: Dictionary = BodySweep.sweep(_hero,_hero.global_transform,direction*distance,(_level.call("scheduler_bindings") as Dictionary).floors.values())
+		if not _expect(_hero.is_on_floor() and response.stable and float(response.dash_cooldown_left_s) == 0.0 and response.motion.queued_dash == Vector3.ZERO and not direction.is_zero_approx() and _full_sweep(sweep,from+direction*distance) and (segment.is_empty() or from.distance_to(segment.from) <= PointEps), "actual grounded capsule/full-floor sweep supports the whole unbuffered ordinary dash",str(sweep)): return false
+		var count: int = (_actions.call() as Array).size()
+		var requested: float = _hero.get_world_action_clock()
+		if not _expect(_hero.request_dash(direction), "public controller accepts full actual stage response/approach dash"): return false
+		for _index: int in range(60):
+			if not await _tick(): return false
+			var actions: Array = _actions.call()
+			if actions.size() <= count: continue
+			var action: Dictionary = actions.back()
+			var start: float = float(action.started_at_s)
+			var finish: float = float(action.completed_at_s)
+			var duration: float = float(ceili(float(_stats.dash_duration)/_tick_s()))*_tick_s()
+			var safe: bool = true
+			if not segment.is_empty(): safe = finish < float(lease.active_from_s) if segment.kind in ["escape_dash","first_escape_dash"] else start >= float(lease.active_until_s) and finish < float(lease.recovery_until_s)
+			return _expect(actions.size() == count+1 and action.kind == "dash" and not action.blocked and not action.collision_shortened and not action.movement_damage and action.world_origin == from and action.landing == _hero.global_position and action.landing.distance_to(from+direction*distance) <= PointEps and absf(float(action.distance)-distance) <= PointEps and _hero.is_on_floor() and _same(action.equipment_ids,_kit) and _same(action.resolved_stats,_stats) and not CinderPlayer.encode_world_action_record(action,_hero.get_world_action_clock()).is_empty() and _same(start,requested) and absf(finish-start-duration) <= TimeEps and absf(_scheduler.get_clock()-finish) <= TimeEps and (segment.is_empty() or (action.landing.distance_to(segment.to) <= PointEps and start >= scheduled-TimeEps and start <= scheduled+_tick_s()+TimeEps and safe)), "actual dash separately bounds request tick/native duration and preserves full fixed-stone landing/safe deadline",str({"source":_source_id,"scheduled":scheduled,"request":requested,"start":start,"finish":finish,"native_duration":duration,"safe":safe}))
+		return _expect(false,"bounded actual native dash completion")
+
+	func _until(target: float, held: Variant = null) -> bool:
+		if not _expect(is_finite(target),"finite actual witness deadline"): return false
+		for _index: int in range(600):
+			if held is Vector3 and not _expect(_hero.global_position.distance_to(held) <= PointEps,"actual passive proof position stays unchanged"): return false
+			if _scheduler.get_clock() >= target: return _expect(_scheduler.get_clock() <= target+_tick_s()+TimeEps,"actual action follows its first available native proof tick")
+			if not await _tick(): return false
+		return _expect(false,"bounded native proof deadline")
+
+	func await_boundary(expected_stage: int) -> bool:
+		for _index: int in range(120):
+			var state: Dictionary = _level.call("state")
+			if int(state.route.active_stage) == expected_stage:
+				var checkpoint: Dictionary = _level.current_checkpoint()
+				var coherent: bool = state.route.deaths.has(_source_id) and _source.get("dead") and _source.get("hp") == 0.0 and not _source.is_in_group("enemies") and state.route.clears.size() == expected_stage
+				if expected_stage < StageIds.size():
+					var next: Node3D = (_level.get("sources") as Dictionary)[EchoIds[expected_stage]]
+					coherent = coherent and checkpoint.id == CheckpointIds[expected_stage-1] and checkpoint.kind == "encounter" and not _level.is_completed() and not next.get("dead") and next.get("hp") == 36.0 and next.call("get_authored_cycle_generation") == 1 and (next.call("state") as Dictionary).status in ["cycle_ready","running"]
+				else:
+					var stalker: Node3D = (_level.get("sources") as Dictionary)["o3-final-stalker"]
+					coherent = coherent and checkpoint.id == CheckpointIds[1] and _level.is_completed() and not stalker.get("dead") and float(stalker.get("hp")) > 0.0 and stalker.is_in_group("enemies")
+				_boundary = {"clock_s":_scheduler.get_clock(),"state":state.duplicate(true),"checkpoint":checkpoint.duplicate(true)}
+				if not _expect(coherent,"genuine source retirement produces coherent next-stage CP1/CP2 or third completion without a kill-all gate",str(_boundary)): return false
+				return bool(await _presentation.call())
+			if not await _tick(): return false
+		return _expect(false,"bounded actual authored stage boundary",str(describe()))
+
+	func _full_sweep(sweep: Dictionary, endpoint: Vector3) -> bool:
+		return not sweep.has("error") and not sweep.get("collided",true) and sweep.get("end") is Vector3 and sweep.end.distance_to(endpoint) <= PointEps
+
+	func _tick_s() -> float:
+		return 1.0/float(Engine.physics_ticks_per_second)
+
+	func _same(a: Variant, b: Variant) -> bool:
+		if typeof(a) != typeof(b): return false
+		if a is float: return var_to_bytes(a) == var_to_bytes(b)
+		if a is Dictionary:
+			if a.size() != b.size(): return false
+			for key: Variant in a:
+				if not b.has(key) or not _same(a[key],b[key]): return false
+			return true
+		if a is Array:
+			if a.size() != b.size(): return false
+			for index: int in range(a.size()):
+				if not _same(a[index],b[index]): return false
+			return true
+		return a == b
+
+
+var _driver: EchoDriver
+var _hp: float
+var _ammo: int
 var _fired: Array[String] = []
-var _events: Dictionary = {}
-var _phases: Dictionary = {}
-var _pulse_phases: Dictionary = {}
-var _echo_lease: Dictionary = {}
-var _pulse_lease: Dictionary = {}
-var _holding_echo: bool = false
-var _real_transform: Transform3D
-var _render_origin: Vector3
-var _render_travel: float = 0.0
-var _stage: String = "initializing"
-
+var _stage: String = "initializing final first-court fixture"
 
 func _run() -> void:
-	create_timer(600.0, true, false, true).timeout.connect(_watchdog)
-	if not _expect(OS.get_cmdline_user_args().is_empty(), "bounded prototype accepts no selectors"):
-		await _finish()
-		return
-	if await _open_o3():
-		if await _warning():
-			if await _paused_pair("unarmed warning", true):
-				if await _lock():
-					if await _follow_armed():
-						if await _terminal():
-							await _paused_pair("surviving terminal", false)
+	create_timer(600.0,true,false,true).timeout.connect(_watchdog)
+	if _expect(OS.get_cmdline_user_args().is_empty(),"final focused first-court case accepts no selectors"):
+		if await _open_final():
+			_stage = "actual first generation1→2 clear"
+			_driver = EchoDriver.new()
+			_driver.configure(_hero,_level,_scheduler,ECHO_IDS[0],_kit,_action_records,_fired_kinds,_tick,_presentation_boundary,_expect)
+			if await _driver.clear_current_stage(true):
+				await _cp1_pair()
 	await _finish()
 
-
-func _open_o3() -> bool:
-	_milestone("opening actual Main/O3")
+func _open_final() -> bool:
 	_game = MainScene.instantiate()
 	root.add_child(_game)
 	_game.call("open_bench")
-	if not _expect(paused and _game.call("is_lab_level") and get_nodes_in_group("enemies").is_empty(), "actual Main starts at its enemy-free paused lab"): return false
-	if not _expect(_game.call("load_level_scene", O3_ROOM), "public Main loads owned O3 prototype", String(_game.get("level_load_error"))): return false
+	if not _expect(paused and _game.call("is_lab_level"),"actual paused Main lab precedes final O3 fresh load"): return false
+	if not _expect(_game.call("load_level_scene",O3_ROOM),"public Main loads final authored O3",String(_game.get("level_load_error"))): return false
 	_game.call("open_bench")
 	_level = _game.get("active_level") as CinderLevel
 	_hero = _game.get("player") as CinderPlayer
-	if not _expect(_level != null and _hero != null and _level.level_id == "A3-O3" and _level.scene_file_path == O3_ROOM and _level.contract_error().is_empty(), "native O3 identity and one actual shared Hero bind"): return false
-	_scheduler = _level.get("threat_scheduler") as CinderThreatScheduler
-	_echo = _level.get("echo") as Node3D
-	_pulse = _level.get("mechanism") as CinderLaneMechanism
-	_reflection = _level.get_node_or_null("HarmlessOutlinedReflection") as Node3D
-	if not _expect(_scheduler != null and _echo != null and _pulse != null and _reflection != null and String(_level.call("runtime_error")).is_empty(), "actual managed Echo/pulse/reflection/Scheduler configure", String(_level.call("runtime_error"))): return false
-	_starting_hp = _hero.hp
-	_starting_shells = _hero.shells
+	_scheduler = _level.get("threat_scheduler") as CinderThreatScheduler if _level != null else null
+	if not _expect(_level != null and _hero != null and _scheduler != null and _level.level_id == "A3-O3" and _level.local_snapshot_version == 2 and _level.scene_file_path == O3_ROOM and _level.contract_error().is_empty(),"actual final local2 O3/Hero/Scheduler bind"): return false
+	var state: Dictionary = _level.call("state")
+	var sources: Dictionary = _level.get("sources")
+	var ids: Array = ECHO_IDS.duplicate()
+	ids.append(STALKER_ID)
+	if not _expect(state.api_revision == "act3-irontick-reflection-2" and state.route.active_stage == 0 and state.route.clears.is_empty() and state.route.deaths.is_empty() and Codec.keys_error(sources,ids).is_empty() and _hero.global_position == Vector3(0,0.1,8) and _hero.hp == _hero.max_hp and _scheduler.get_clock() == 0.0 and _scheduler.reservations().is_empty(),"final fresh topology retains three actual managed recipients plus familiar living Stalker without earned stage history",str(state)): return false
+	for id: String in ECHO_IDS:
+		var source: Node3D = sources[id]
+		if not _expect(source.call("source_cycles_managed") and (source.call("state") as Dictionary).status == "cycle_ready" and source.call("get_authored_cycle_generation") == 1 and source.get("hp") == 36.0 and not source.get("dead"),"actual final managed ready recipient: "+id): return false
+	_hp = _hero.hp
+	_ammo = _hero.shells
 	_kit = _hero.equipment.snapshot()
-	_stats = _hero.equipment.resolved_stats()
-	_real_transform = _echo.global_transform
-	var playback: Dictionary = _echo.call("state")
-	var bindings: Dictionary = _level.call("scheduler_bindings")
-	if not _expect(_hero.global_position == Vector3(0,0.1,8) and _hero.presentation_id == "act3_traveller" and _hero.hp == _hero.max_hp and not _hero.dead and _scheduler.get_clock() == 0.0 and _scheduler.encounter_profile().get("id") == "standard" and _scheduler.reservations().is_empty() and _hero.get_world_action_records().is_empty() and _echo.global_position == Vector3(0,0,6) and _echo.get("hp") == 36.0 and _echo.get("max_hp") == 36.0 and not _echo.get("dead") and _echo.call("source_cycles_managed") and playback.status == "cycle_ready" and _echo.call("get_authored_cycle_generation") == 1 and _pulse.state().cycle == 0 and Codec.keys_error(bindings.owners,[ECHO_ID,PULSE_ID]).is_empty() and bindings.owners[ECHO_ID] == _echo and bindings.owners[PULSE_ID] == _pulse and bindings.actors == {"hero":_hero} and bindings.floors.size() == 1 and bindings.floors["firm-shore"].safe_rect == FLOOR, "fresh native ready journal/36HP knot/idle pulse share exact Hero and14x22 floor"): return false
-	var collision: CollisionShape3D = bindings.floors["firm-shore"].collision
-	var body: StaticBody3D = collision.get_parent() as StaticBody3D
-	var signature: Dictionary = _scheduler.authored_floor_signature(bindings.world_root,bindings.floors.values())
-	if not _expect(body != null and body.collision_layer == 1 and body.collision_mask == 0 and collision.shape is BoxShape3D and not collision.disabled and (collision.shape as BoxShape3D).size == Vector3(14,1,22) and body.global_position == Vector3(0,-0.5,0) and signature.get("accepted",false) and signature.signature.size() == 1 and _harmless(_reflection) and _echo.is_in_group("enemies") and _echo.has_method("take_damage") and get_nodes_in_group("enemies").size() == 1, "actual stable shore and real HP endpoint remain distinct from the harmless non-target image",str(signature)): return false
-	var definition: Dictionary = _level.call("native_definition")
-	if not _expect(_exact(definition,_echo.call("source_definition")) and definition.route.size() == 2 and definition.route[0].position == Vector3(0,0,4) and definition.route[0].at_s == 0.0 and definition.route[1].position == Vector3(0,0,6) and definition.route[1].at_s == 0.30 and definition.slash.world_origin == Vector3(0,0,6) and definition.slash.commitment_duration_s == 0.18 and definition.raw_role.max_hp == 36.0 and definition.raw_role.raw_damage == 18.0, "actual Echo uses its unchanged finite own route/slash/role rather than any Player recording"): return false
-	_level.checkpoint_requested.connect(func(_id: String, value: String, _kind: String) -> void: _checkpoints.append(value))
-	_level.completion_requested.connect(func(_id: String, value: String) -> void: _completions.append(value))
-	_level.contact_exit_requested.connect(func(_id: String, value: String) -> void: _exits.append(value))
 	_hero.world_action_executed.connect(_on_action)
 	_hero.fired.connect(func(kind: String) -> void: _fired.append(kind))
-	_echo.connect("event_dispatched",func(_native_event: Dictionary,_receipt: Dictionary) -> void: _event("dispatch"))
-	_echo.connect("source_hit_resolved",func(_result: Dictionary) -> void: _event("ordinary_hit"))
-	_echo.connect("source_defeated",func(_result: Dictionary) -> void: _event("defeat"))
-	_echo.connect("state_changed",func(_state: Dictionary) -> void: _event("echo_state"))
-	_pulse.state_changed.connect(func(_state: Dictionary) -> void: _event("pulse_state"))
-	_pulse.hit_resolved.connect(func(_id: String,_cycle: int,_result: Dictionary) -> void: _event("pulse_contact"))
+	_level.checkpoint_requested.connect(func(_id: String,value: String,_kind: String) -> void: _checkpoints.append(value))
+	_level.completion_requested.connect(func(_id: String,value: String) -> void: _completions.append(value))
+	_level.contact_exit_requested.connect(func(_id: String,value: String) -> void: _exits.append(value))
 	_barrier = PostActorBarrier.new()
-	_barrier.name = "O3FocusedPostActorBarrier"
+	_barrier.name = "O3FinalFocusedObserver"
 	root.add_child(_barrier)
 	for _frame: int in range(4): await process_frame
 	_game.call("resume_lab")
 	for _index: int in range(12):
 		if _hero.is_on_floor(): break
 		if not await _tick(): return false
-	return _expect(_hero.is_on_floor() and _hero.get_threat_response_state().stable, "actual floor registration settles before any native body sweep/action")
-
-
-func _harmless(node: Node) -> bool:
-	if node is CollisionObject3D or node is CollisionShape3D or not node.get_groups().is_empty() or node.has_method("take_damage"): return false
-	for property: Dictionary in node.get_property_list():
-		if property.name in ["hp","max_hp","dead"]: return false
-	for child: Node in node.get_children():
-		if not _harmless(child): return false
-	return true
-
-
-func _warning() -> bool:
-	_milestone("awaiting genuine warning")
-	for _index: int in range(180):
-		var playback: Dictionary = _echo.call("state")
-		if playback.status == "running":
-			var lease: Dictionary = _scheduler.replay_reservation_state(String(playback.reservation_id))
-			return _expect(not lease.is_empty() and lease.adapter.kind == "authored_replay" and not lease.adapter.locked and not playback.cursor.armed and _echo.call("source_phase") == "warning" and _scheduler.get_clock() < float(lease.lock_from_s) and playback.lifecycle.terminal_receipts.is_empty() and _actions.is_empty(), "first genuine managed warning retains its own native program/unarmed lease without Player recordings")
-		if not _expect(playback.status == "cycle_ready", "first source remains ready until real admission",str(playback)): return false
-		if not await _tick(): return false
-	return _expect(false,"bounded genuine unarmed warning admission",str(_level.call("state")))
-
-
-func _lock() -> bool:
-	_milestone("awaiting actual due lock")
-	for _index: int in range(240):
-		var state: Dictionary = _level.call("state")
-		if state.echo_record.locked:
-			var playback: Dictionary = _echo.call("state")
-			_echo_lease = _scheduler.replay_reservation_state(String(playback.reservation_id))
-			_holding_echo = true
-			var proof: Dictionary = state.echo_record.proof
-			return _expect(not _echo_lease.is_empty() and _echo_lease.adapter.locked and playback.cursor.armed and proof.get("accepted",false) and proof.get("uses_blast") == false and proof.get("uses_invulnerability") == false and _echo.call("get_authored_cycle_generation") == 1, "actual due lock reproves the native own route and ordinary escape-return against the independent danger union",str(state))
-		if not _expect((_echo.call("state") as Dictionary).status == "running", "held warning survives until its actual due commit"): return false
-		if not await _tick(): return false
-	return _expect(false,"bounded genuine due lock",str(_level.call("state")))
-
-
-func _follow_armed() -> bool:
-	var proof: Dictionary = (_level.call("state") as Dictionary).echo_record.proof
-	if not _expect(proof.get("path") is Array and not proof.path.is_empty() and proof.path.size() <= 10 and proof.get("attack_position") is Vector3 and is_finite(float(proof.get("primary_time_s",INF))), "real armed witness exposes finite public positions/deadlines"): return false
-	var first: bool = true
-	var escaped: bool = false
-	var last_end_s: float = -1.0
-	var previous: Dictionary = {}
-	for segment: Dictionary in proof.path:
-		_milestone("native response/"+String(segment.kind))
-		if not _expect(segment.get("from") is Vector3 and segment.get("to") is Vector3 and segment.from.is_finite() and segment.to.is_finite() and is_finite(float(segment.start_s)) and is_finite(float(segment.end_s)) and float(segment.end_s) >= float(segment.start_s), "native path segment retains finite positions/times"): return false
-		if not previous.is_empty() and not _expect(absf(float(previous.end_s)-float(segment.start_s)) <= TIME_EPS and previous.to.distance_to(segment.from) <= POINT_EPS, "actual accepted own path remains continuous"): return false
-		previous = segment
-		var scheduled_s: float = maxf(float(segment.start_s),last_end_s)
-		if first and segment.kind == "recognition_and_ready":
-			if not _expect(segment.from == segment.to and _hero.global_position.distance_to(segment.from) <= POINT_EPS and _scheduler.get_clock() < float(segment.end_s), "held pair joins only unchanged first recognition before its original end"): return false
-			scheduled_s = maxf(scheduled_s,_scheduler.get_clock())
-		first = false
-		if segment.kind in ["ordinary_primary","ordinary_primary_full_recovery"]: break
-		if DASHES.has(String(segment.kind)):
-			if not await _until_o3(scheduled_s): return false
-			if not await _dash_o3(segment,scheduled_s): return false
-			last_end_s = float(_actions.back().completed_at_s)
-			escaped = escaped or segment.kind in ["escape_dash","first_escape_dash"]
-		else:
-			if not _expect(segment.from == segment.to and _hero.global_position.distance_to(segment.from) <= POINT_EPS, "passive witness waits at its actual unchanged world point"): return false
-			if not await _until_o3(float(segment.end_s),segment.from): return false
-	if not await _until_o3(float(proof.primary_time_s)): return false
-	var hp_before: float = float(_echo.get("hp"))
-	var damage: float = float(_stats.primary_damage)
-	if not _expect(escaped and _echo.call("source_phase") == "recovery" and _hero.is_on_floor() and _hero.global_position.distance_to(proof.attack_position) <= POINT_EPS and float(proof.response_complete_s) < float(_echo_lease.recovery_until_s) and float(_hero.get_threat_response_state().primary_cooldown_left_s) == 0.0 and hp_before == 36.0 and damage > 0.0 and damage < hp_before, "real selected response reaches the same ordinary 36HP native recovery opening without blast"): return false
-	var count: int = _actions.size()
-	var direction: Vector3 = _echo.global_position-_hero.global_position
-	direction.y = 0.0
-	var hits: int = _hero.slash(direction.normalized())
-	_holding_echo = false
-	return _expect(hits == 1 and _actions.size() == count+1 and _actions.back().kind == "primary" and _actions.back().hits == 1 and _actions.back().damage == damage and _echo.get("hp") == hp_before-damage and not _echo.get("dead") and _echo.get("source_hits") == 1 and _events.get("ordinary_hit",0) == 1 and not _fired.has("blast") and _render_travel > 0.1 and _phases.has("warning") and _phases.has("lock") and _phases.has("active") and _phases.has("recovery"), "one actual public ordinary primary damages only the real surviving endpoint after native own-route travel")
-
-
-func _dash_o3(segment: Dictionary, scheduled_s: float) -> bool:
-	var response: Dictionary = _hero.get_threat_response_state()
-	var from: Vector3 = _hero.global_position
-	var direction: Vector3 = segment.to-segment.from
-	direction.y = 0.0
-	direction = direction.normalized()
-	var distance: float = float(_stats.dash_distance)
-	var bindings: Dictionary = _level.call("scheduler_bindings")
-	var sweep: Dictionary = BodySweep.sweep(_hero,_hero.global_transform,direction*distance,bindings.floors.values())
-	if not _expect(response.stable and float(response.dash_cooldown_left_s) == 0.0 and response.motion.queued_dash == Vector3.ZERO and from.distance_to(segment.from) <= POINT_EPS and not sweep.has("error") and not sweep.get("collided",true) and sweep.get("end") is Vector3 and sweep.end.distance_to(from+direction*distance) <= POINT_EPS, "actual grounded body/floor sweep admits the full unbuffered native response dash",str(sweep)): return false
-	var count: int = _actions.size()
-	var requested_s: float = _hero.get_world_action_clock()
-	if not _expect(_hero.request_dash(direction), "public controller accepts the actual witness dash"): return false
-	for _index: int in range(60):
-		if not await _tick(): return false
-		if _actions.size() <= count: continue
-		var action: Dictionary = _actions.back()
-		var start_s: float = float(action.started_at_s)
-		var end_s: float = float(action.completed_at_s)
-		var native_duration_s: float = float(ceili(float(_stats.dash_duration)/_tick_seconds()))*_tick_seconds()
-		var safe: bool = end_s < float(_echo_lease.active_from_s) if segment.kind in ["escape_dash","first_escape_dash"] else start_s >= float(_echo_lease.active_until_s) and end_s < float(_echo_lease.recovery_until_s)
-		return _expect(_actions.size() == count+1 and action.kind == "dash" and not action.blocked and not action.collision_shortened and not action.movement_damage and action.world_origin == from and action.landing == _hero.global_position and action.landing.distance_to(segment.to) <= POINT_EPS and absf(float(action.distance)-distance) <= POINT_EPS and _hero.is_on_floor() and _exact(action.equipment_ids,_kit) and _exact(action.resolved_stats,_stats) and not CinderPlayer.encode_world_action_record(action,_hero.get_world_action_clock()).is_empty() and _exact(start_s,requested_s) and start_s >= scheduled_s-TIME_EPS and start_s <= scheduled_s+_tick_seconds()+TIME_EPS and absf(end_s-start_s-native_duration_s) <= TIME_EPS and absf(_scheduler.get_clock()-end_s) <= TIME_EPS and safe, "actual dash independently preserves request tick, native duration, full landing and unchanged safe window",str({"kind":segment.kind,"planned_start":segment.start_s,"planned_end":segment.end_s,"scheduled":scheduled_s,"requested":requested_s,"actual_start":start_s,"actual_end":end_s,"native_duration":native_duration_s,"safe":safe}))
-	return _expect(false,"bounded actual dash completion")
-
-
-func _until_o3(target_s: float, point: Variant = null) -> bool:
-	if not _expect(is_finite(target_s), "finite authoritative witness deadline"): return false
-	for _index: int in range(600):
-		if point is Vector3 and not _expect(_hero.global_position.distance_to(point) <= POINT_EPS, "native passive path retains its original position"): return false
-		if _scheduler.get_clock() >= target_s:
-			return _expect(_scheduler.get_clock() <= target_s+_tick_seconds()+TIME_EPS,"action follows its first available native proof tick",str({"target":target_s,"actual":_scheduler.get_clock()}))
-		if not await _tick(): return false
-	return _expect(false,"bounded native witness deadline")
-
-
-func _terminal() -> bool:
-	_milestone("awaiting genuine finite terminals")
-	for _index: int in range(900):
-		if _echo.call("source_phase") == "complete" and _pulse.state().status == "complete":
-			var receipt: Dictionary = _echo.call("get_authored_cycle_terminal_receipt")
-			var clean: bool = not receipt.is_empty() and receipt.generation == 1 and receipt.exchange.id == _echo_lease.id and receipt.opportunities.size() == 1
-			for opportunity: Dictionary in receipt.get("opportunities",[]): clean = clean and not opportunity.contact and not opportunity.damage_attempted
-			return _expect(clean and (_echo.call("state") as Dictionary).lifecycle.terminal_receipts.size() == 1 and _events.get("dispatch",0) == 1 and _events.get("defeat",0) == 0 and _events.get("pulse_contact",0) == 0 and not _pulse_lease.is_empty() and float(_pulse_lease.start_s) >= 0.65 and _pulse.state().cycle == 1 and _pulse.get_cue().state().phase == "clear" and _scheduler.reservations().is_empty() and _pulse_phases.has("warning") and _pulse_phases.has("lock") and _pulse_phases.has("active") and _pulse_phases.has("recovery") and _hero.hp == _starting_hp and not _echo.get("dead"), "one finite managed terminal and independent due pulse retain actual contact-free history, surviving HP and clear leases/cues")
-		if not await _tick(): return false
-	return _expect(false,"bounded own Echo and independent pulse reach genuine terminals",str(_level.call("state")))
-
-
-func _paused_pair(label: String, restore_identical: bool) -> bool:
-	_milestone("paused pair/"+label)
-	if not await _presentation_o3(): return false
-	if not _expect(_game.call("request_pause_deferred"), "public complete-tick pause at "+label): return false
-	for _frame: int in range(4): await process_frame
-	if not _expect(paused and not _game.call("is_pause_requested"), "native pause request completes before aggregate access"): return false
-	var before: Dictionary = _observation_o3()
-	for _frame: int in range(5): await process_frame
-	if not _expect(_exact(before,_observation_o3()), "paused Hero/Source/Playback/pulse/Scheduler/current view clocks and custody freeze exactly"): return false
-	var camera: Camera3D = _game.get("camera") as Camera3D
-	var hud: GameHUD = _game.get("hud") as GameHUD
-	var pair: Dictionary = {"player":_hero.snapshot_state(),"level":_level.snapshot_state_for_presentation(camera,hud)}
-	if not _expect(not pair.player.is_empty() and not pair.level.is_empty() and _hero.snapshot_error(pair.player).is_empty() and _level.snapshot_error_with_player(pair.level,pair.player).is_empty() and _exact(pair.level,_level.snapshot_state()), "whole actual typed managed source/playback/pulse/Scheduler/Hero pair captures and validates at "+label,_hero.last_snapshot_error+"; "+_level.last_snapshot_error): return false
-	var local: Dictionary = pair.level.local
-	if not _expect(local.scheduler.schema_version == 3 and local.echo.actor.schema_version == 2 and local.echo.playback.api_revision == "authored-echo-playback-2" and local.echo.actor.clock_s == local.scheduler.clock_s and local.echo.playback.clock_s == local.scheduler.clock_s and local.pulse.mechanism.clock_s == local.scheduler.clock_s and pair.player.world_actions.clock_s == local.scheduler.clock_s and local.pulse.eligible_at_s == 0.65 and not pair.level.progress.completed and pair.level.progress.checkpoint_ids.is_empty(), "native typed aggregate retains independent due rule and exact shared clocks without checkpoint/progress fabrication"): return false
-	var wire: String = ExactJson.stringify(pair)
-	var read: Dictionary = ExactJson.parse(wire)
-	if not _expect(not wire.is_empty() and read.get("accepted",false) and read.get("value") is Dictionary and _exact(pair,read.value) and _level.snapshot_error_with_player(read.value.level,read.value.player).is_empty(), "ExactJson preserves every native whole-pair type/float/history at "+label): return false
-	for kind: String in ["source-clock","pulse-due","scheduler-clock","source-hp","generation-type","missing-pulse","floor","unknown","progress"]:
-		var bad: Dictionary = pair.level.duplicate(true)
-		match kind:
-			"source-clock": bad.local.echo.actor.clock_s += 0.00000001
-			"pulse-due": bad.local.pulse.eligible_at_s += 0.01
-			"scheduler-clock": bad.local.scheduler.clock_s += 0.00000001
-			"source-hp": bad.local.echo.actor.hp = -0.1
-			"generation-type": bad.local.echo.actor.generation = float(bad.local.echo.actor.generation)
-			"missing-pulse": bad.local.erase("pulse")
-			"floor": bad.local.world.floor_signature[0].safe_rect[2] = 13.5
-			"unknown": bad.local["foreign"] = true
-			"progress": bad.progress.completed = true
-		var observation: Dictionary = _observation_o3()
-		var error: String = _level.snapshot_error_with_player(bad,pair.player)
-		if not _expect(not error.is_empty() and not _level.restore_state(bad) and _exact(observation,_observation_o3()) and _exact(pair.player,_hero.snapshot_state()) and _exact(pair.level,_level.snapshot_state()), "malformed "+kind+" rejects through pure/restore paths atomically",error): return false
-	var foreign := Camera3D.new()
-	foreign.name = "O3ForeignUnselectedCamera"
-	(_level.get_parent() as Node3D).add_child(foreign)
-	var rejected: Dictionary = _level.snapshot_state_for_presentation(foreign,hud)
-	var optical_error: String = _level.last_snapshot_error
-	foreign.free()
-	if not _expect(rejected.is_empty() and not optical_error.is_empty() and _exact(before,_observation_o3()) and camera.get_viewport().get_camera_3d() == camera and _exact(pair.level,_level.snapshot_state_for_presentation(camera,hud)), "actual foreign noncurrent native camera rejects without a donor alias or state mutation",optical_error): return false
-	if restore_identical:
-		# Diagnostic proof/projection/lease caches are rebuilt from native wire;
-		# they cannot authenticate a response after restore. Exact authoritative
-		# pair/native state, positions, lock and every observed event remain fixed.
-		var observation: Dictionary = _observation_o3(true)
-		if not _expect(_hero.restore_state(read.value.player) and _level.restore_state(read.value.level) and _exact(observation,_observation_o3(true)) and _exact(pair.player,_hero.snapshot_state()) and _exact(pair.level,_level.snapshot_state()), "same actual pair restores quietly Hero→source physical→Scheduler→Playback→pulse without new earning",_level.last_snapshot_error): return false
-	_game.call("resume_lab")
-	return _expect(not paused,"public resume retains the same actual "+label+" unit")
-
-
-func _presentation_o3() -> bool:
-	_barrier.presentation_waiting = true
-	_barrier.presentation_expiration = Engine.get_process_frames()+120
-	var boundary: String = await _barrier.presentation_observed
-	if _finishing: return false
-	return _expect(boundary == "post_presentation_process" and not paused and _hero.hp == _starting_hp and not _hero.dead, "actual post-Main Camera/HUD process precedes native capture pause",boundary)
-
+	return _expect(_hero.is_on_floor() and _hero.get_threat_response_state().stable,"actual floor registration precedes final driver approach/sweeps")
 
 func _tick() -> bool:
 	if _finishing: return false
-	if not is_instance_valid(_barrier) or paused: return _expect(false,"live unpaused actual post-actor observer required")
+	if not is_instance_valid(_barrier) or paused: return _expect(false,"actual final focused tick requires live unpaused observer")
 	_barrier.waiting = true
 	_barrier.expiration = Engine.get_process_frames()+120
 	var boundary: String = await _barrier.observed
 	_ticks += 1
 	if _finishing: return false
-	var state: Dictionary = _level.call("state")
-	var error: String = String(_level.call("runtime_error"))
-	if not _expect(boundary == "post_actor_physics" and not paused and _ticks <= 1800 and _scheduler.get_clock() <= 30.0 and error.is_empty() and not _hero.dead and _hero.hp == _starting_hp and _hero.shells == _starting_shells and _exact(_hero.equipment.snapshot(),_kit) and _exact(_hero.equipment.resolved_stats(),_stats) and _echo.global_transform == _real_transform and String(_echo.call("source_native_error")).is_empty() and not _fired.has("blast") and _events.get("pulse_contact",0) == 0 and _checkpoints.is_empty() and _completions.is_empty() and _exits.is_empty(), "bounded native tick retains actual fixed endpoint/HP/kit/ammo and ordinary-only no-contact/no-progress scope",str({"boundary":boundary,"clock":_scheduler.get_clock(),"error":error,"state":state})): return false
-	var phase: String = String(_echo.call("source_phase"))
-	if not _phases.has(phase): print("O3 PHASE: Echo ",phase,"; clock=",_scheduler.get_clock(),"; actions=",_actions.size())
-	_phases[phase] = true
-	if phase == "cancelled": return _expect(false,"genuine managed Echo must not cancel during its accepted response",str(state))
-	var renderer: Node3D = _echo.call("get_enemy_apparition") as Node3D
-	if phase == "active" and renderer != null:
-		if _render_travel == 0.0 and not _phases.has("active-origin"):
-			_render_origin = renderer.global_position
-			_phases["active-origin"] = true
-		_render_travel = maxf(_render_travel,renderer.global_position.distance_to(_render_origin))
-	var pulse: Dictionary = _pulse.state()
-	if not _pulse_phases.has(String(pulse.phase)): print("O3 PHASE: pulse ",pulse.phase,"; clock=",_scheduler.get_clock(),"; cycle=",pulse.cycle)
-	_pulse_phases[String(pulse.phase)] = true
-	if pulse.status == "cancelled": return _expect(false,"independent native pulse must not cancel during the actual accepted exchange",str(pulse))
-	if pulse.status == "running":
-		var lease: Dictionary = _scheduler.reservation_state(String(pulse.reservation_id))
-		if _pulse_lease.is_empty():
-			_pulse_lease = lease.duplicate(true)
-			if not _expect(not lease.is_empty() and pulse.cycle == 1 and float(lease.start_s) >= 0.65 and lease.source_instance_id == _pulse.get_instance_id() and lease.source_position == Vector3(0.7,0,6.65) and lease.opening_position == _echo.global_position and lease.geometry.kind == "circle" and lease.geometry.origin == Vector3(0.7,0,6.65) and lease.geometry.radius == 1.15 and state.pulse_record.proof.get("accepted",false) and state.pulse_record.proof.get("uses_blast") == false and state.pulse_record.proof.get("uses_invulnerability") == false, "independently due native pulse admits through its actual preview/proof and immutable rule",str(state)): return false
-		for key: String in DEADLINES:
-			if not _expect(not lease.is_empty() and _exact(lease[key],_pulse_lease[key]),"held pulse keeps original native "+key): return false
-	if _holding_echo:
-		var lease: Dictionary = _scheduler.replay_reservation_state(String(_echo_lease.id))
-		for key: String in DEADLINES:
-			if not _expect(not lease.is_empty() and _exact(lease[key],_echo_lease[key]),"armed own replay keeps original native "+key): return false
+	return _expect(boundary == "post_actor_physics" and not paused and _ticks <= 1800 and _scheduler.get_clock() <= 30.0 and _hero.hp == _hp and not _hero.dead and _hero.shells == _ammo and _exact(_hero.equipment.snapshot(),_kit) and String(_level.call("runtime_error")).is_empty() and not _fired.has("blast") and _completions.is_empty() and _exits.is_empty(),"bounded actual final first-court ticks preserve Hero/kit/ammo/clock and no later route completion",str(_level.call("state")))
+
+func _presentation_boundary() -> bool:
+	_barrier.presentation_waiting = true
+	_barrier.presentation_expiration = Engine.get_process_frames()+120
+	var boundary: String = await _barrier.presentation_observed
+	if _finishing: return false
+	return _expect(boundary == "post_presentation_process" and not paused,"actual Main Camera/HUD process precedes final CP capture",boundary)
+
+func _action_records() -> Array:
+	return _hero.get_world_action_records()
+
+func _fired_kinds() -> Array:
+	return _fired
+
+func _cp1_pair() -> bool:
+	_stage = "coherent actual final CP1 pair"
+	if not await _presentation_boundary(): return false
+	if not _expect(_game.call("request_pause_deferred"),"public completed-tick CP1 pause requested"): return false
+	for _frame: int in range(4): await process_frame
+	var pair: Dictionary = {"player":_hero.snapshot_state(),"level":_level.snapshot_state_for_presentation(_game.get("camera") as Camera3D,_game.get("hud") as GameHUD)}
+	if not _expect(paused and not _game.call("is_pause_requested") and not pair.player.is_empty() and not pair.level.is_empty() and _hero.snapshot_error(pair.player).is_empty() and _level.snapshot_error_with_player(pair.level,pair.player).is_empty(),"complete final3journal CP1 pair captures/prevalidates through actual public Camera/HUD",_level.last_snapshot_error): return false
+	var local: Dictionary = pair.level.local
+	var first: Dictionary = local.sources[ECHO_IDS[0]]
+	if not _expect(local.route.active_stage == 1 and local.route.clears.size() == 1 and local.route.deaths.has(ECHO_IDS[0]) and local.scheduler.schema_version == 3 and local.scheduler.authored_source_cycles.sources.size() == 3 and first.actor.hp == 0.0 and not first.actor.alive and first.actor.source_hits == 2 and first.actor.generation == 2 and _checkpoints == [CHECKPOINT_IDS[0]] and pair.level.progress.checkpoint_id == CHECKPOINT_IDS[0] and pair.level.progress.checkpoint_ids == {CHECKPOINT_IDS[0]:"encounter"} and not pair.level.progress.completed,"actual CP1 retains generation2 death and all three managed journals while activating the next native stage"): return false
+	for id: String in ECHO_IDS:
+		var source: Dictionary = local.sources[id]
+		if not _expect(source.actor.schema_version == 2 and source.playback.api_revision == "authored-echo-playback-2" and source.actor.clock_s == local.scheduler.clock_s and source.playback.clock_s == local.scheduler.clock_s and pair.player.world_actions.clock_s == local.scheduler.clock_s,"complete actual source/playback/Scheduler/Hero native clock join: "+id): return false
+	var wire: String = ExactJson.stringify(pair)
+	var parsed: Dictionary = ExactJson.parse(wire)
+	if not _expect(not wire.is_empty() and parsed.get("accepted",false) and _exact(pair,parsed.get("value")) and _level.snapshot_error_with_player(parsed.value.level,parsed.value.player).is_empty(),"actual final CP1 ExactJson retains complete native types/float bits/history"): return false
+	# Only new final-route/journal joins. The prototype's nine generic negative
+	# cases and pulse/own-route rule evidence remain preserved, not rerun here.
+	for label: String in ["future-stage","missing-source","missing-journal","future-checkpoint"]:
+		var bad: Dictionary = pair.level.duplicate(true)
+		match label:
+			"future-stage": bad.local.route.active_stage = 2
+			"missing-source": bad.local.sources.erase(ECHO_IDS[2])
+			"missing-journal": bad.local.scheduler.authored_source_cycles.sources.pop_back()
+			"future-checkpoint": bad.progress.checkpoint_ids[CHECKPOINT_IDS[1]] = "encounter"
+		var before: Dictionary = {"player":_hero.snapshot_state(),"level":_level.snapshot_state()}
+		var events: Array = [_checkpoints.duplicate(),_completions.duplicate(),_exits.duplicate(),_actions.size()]
+		var error: String = _level.snapshot_error_with_player(bad,pair.player)
+		if not _expect(not error.is_empty() and not _level.restore_state(bad) and _exact(before,{"player":_hero.snapshot_state(),"level":_level.snapshot_state()}) and _exact(events,[_checkpoints,_completions,_exits,_actions.size()]),"new final "+label+" rejects atomically without earning history",error): return false
 	return true
-
-
-func _observation_o3(quiet_derived: bool = false) -> Dictionary:
-	var camera: Camera3D = _game.get("camera") as Camera3D
-	var body: CollisionShape3D = _hero.get_node("BodyCollision") as CollisionShape3D
-	var renderer: Node3D = _echo.call("get_enemy_apparition") as Node3D
-	var state: Dictionary = _level.call("state")
-	if quiet_derived:
-		for key: String in ["proof","projection","lease"]: state.echo_record.erase(key)
-		state.pulse_record.erase("proof")
-	return {"level":state,"hero_transform":_hero.global_transform,"hero_velocity":_hero.velocity,"hero_clock":_hero.get_world_action_clock(),"hero_body":body.disabled,"hp":_hero.hp,"ammo":_hero.shells,"kit":_hero.equipment.snapshot(),"actions":_hero.get_world_action_records(),"source":_echo.call("get_source_state"),"playback":_echo.call("state"),"source_transform":_echo.global_transform,"renderer_transform":renderer.global_transform if renderer != null else Transform3D.IDENTITY,"pulse":_pulse.state(),"cue":_pulse.get_cue().state(),"clock":_scheduler.get_clock(),"leases":_scheduler.reservations(),"camera_id":camera.get_instance_id(),"camera_transform":camera.global_transform,"camera_size":camera.size,"input":_game.call("get_input_observation_state"),"events":_events.duplicate(),"fired":_fired.duplicate(),"progress":[_checkpoints.duplicate(),_completions.duplicate(),_exits.duplicate()]}
-
-
-func _event(kind: String) -> void:
-	_events[kind] = int(_events.get(kind,0))+1
-
-
-func _tick_seconds() -> float:
-	return 1.0/float(Engine.physics_ticks_per_second)
-
-
-func _milestone(stage: String) -> void:
-	_stage = stage
-	print("O3 MILESTONE: ",stage,"; clock=",_scheduler.get_clock() if is_instance_valid(_scheduler) else -1.0,"; post_actor_ticks=",_ticks,"; actions=",_actions.size())
-
 
 func _watchdog() -> void:
 	if not _done and not _finishing:
-		print("O3 WATCHDOG: ",{"stage":_stage,"paused":paused,"clock_s":_scheduler.get_clock() if is_instance_valid(_scheduler) else -1.0,"post_actor_ticks":_ticks,"echo_phase":_echo.call("source_phase") if is_instance_valid(_echo) else "<missing>","action_count":_actions.size(),"pulse":_pulse.state() if is_instance_valid(_pulse) else {},"runtime_error":_level.call("runtime_error") if is_instance_valid(_level) else "<missing>"})
-		_expect(false, "finite native process-time fixture watchdog expired")
+		print("O3 FINAL WATCHDOG: ",_stage,"; ",_driver.describe() if _driver != null else {})
+		_expect(false,"finite600s native final first-court watchdog expired")
 		_finish.call_deferred()
-
 
 func _finish() -> void:
 	if _finishing: return
 	_finishing = true
-	_holding_echo = false
 	await _dispose()
 	_done = true
-	print("Irontick reflection focused: ",_checks," checks; failures: ",_failures,"; native post-actor ticks: ",_ticks,". One managed prototype cycle/independent pulse/ordinary recovery/same-pair exact pause transport only; no fresh Optional transport, route, defeat-all, gear matrix or portrait acceptance.")
+	print("Irontick final focused: ",_checks," checks; failures: ",_failures,"; native ticks: ",_ticks,". Actual first generation1→2/ordinary death/CP1/all3journals only; later stone/stage/CP2/completion/contact via separate Optional jobs. No route/all-kit/portrait acceptance.")
 	quit(0 if _failures == 0 else 1)

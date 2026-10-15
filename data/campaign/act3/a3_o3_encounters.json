@@ -1,9 +1,24 @@
 {
   "level_id": "A3-O3",
-  "prototype": true,
+  "prototype": false,
   "encounter_id": "A3-O3/irontick-reflection",
-  "echo_id": "o3-first-echo",
-  "pulse_id": "o3-first-pulse",
+  "stage_ids": [
+    "first-reflection",
+    "rearranged-endpoint",
+    "final-resonant-apron"
+  ],
+  "source_ids": [
+    "o3-first-echo",
+    "o3-rearranged-echo",
+    "o3-final-echo",
+    "o3-final-stalker"
+  ],
+  "checkpoint_ids": [
+    "first-reflection-cleared",
+    "rearranged-endpoint-cleared"
+  ],
+  "completion_id": "three-reflections-cleared",
+  "exit_id": "irontick-return-threshold",
   "floor_size": [
     14,
     1,
@@ -14,22 +29,70 @@
     0.1,
     8
   ],
-  "echo_own_route": [
-    [
+  "source_positions": {
+    "o3-first-echo": [
+      0,
+      0,
+      6
+    ],
+    "o3-rearranged-echo": [
+      0.6,
+      0,
+      -0.4
+    ],
+    "o3-final-echo": [
+      0,
+      0,
+      -4.5
+    ],
+    "o3-final-stalker": [
+      1.8,
+      0.1,
+      -5.6
+    ]
+  },
+  "route_starts": {
+    "o3-first-echo": [
       0,
       0,
       4
     ],
-    [
+    "o3-rearranged-echo": [
+      -0.6,
+      0,
+      1
+    ],
+    "o3-final-echo": [
       0,
       0,
-      6
+      -6.5
     ]
-  ],
-  "fixed_endpoint": [
-    0,
-    0,
-    6
+  },
+  "stones": [
+    {
+      "position": [
+        -1.9,
+        0.8,
+        0.3
+      ],
+      "size": [
+        0.8,
+        1.6,
+        1.2
+      ]
+    },
+    {
+      "position": [
+        2.9,
+        0.8,
+        -1.4
+      ],
+      "size": [
+        0.8,
+        1.6,
+        1.2
+      ]
+    }
   ],
   "pulse_origin": [
     0.7,
@@ -43,10 +106,68 @@
     0,
     6
   ],
-  "echo_cycles": 1,
-  "pulse_cycles": 1,
-  "pulse_damage_area": "filled_disk",
-  "mechanics": "Original managed MirrorEcho36HP/18damage own route, original role/timings; independent native Lane preview preserves complete held responses and budgets. No Player recordings, pickups, blast requirement, new controls or equipment.",
-  "progress": "First court prototype only; no checkpoint/completion/reward/contact. Final three-court authoring follows native rule qualification.",
-  "art_reuse": "Accepted dry shore and native filled porcelain Endpoint; parent-family open harmless outline is non-damageable scenery. No new enemy or Earthrid boss."
+  "exit_position": [
+    0,
+    0,
+    -9
+  ],
+  "rearm": "Only current-stage same living Echo; actual original terminal/cooldown and public prepare_next_authored_cycle preserve HP and contiguous history.",
+  "clear": "Each required Echo genuine death; Stalker is not a defeat gate. Already-held first pulse retires before CP; unadmitted pulse never forced.",
+  "presentation": "Parent shore/porcelain/harmless outlines; 3 flat stage pips and small non-target shell ribs. Source-only until native portrait review.",
+  "equipment": "Existing shared controls, native roles/timings/36HP Echo and36HP Stalker; no pickups or required blast/new type/ability.",
+  "asset_records": [
+    {
+      "id": "o3-rearranged-return-stones",
+      "source": "Original procedural parent-family box stones; reuse scripts/acts/act3/mirror_echo_rule_room.gd fixed-shore-stone and mirror_sea_level.gd fixed matching shore stones; G07/G19 paintings are inspected reference only.",
+      "readiness": "source-only final arrangement; no native collision/proof/portrait qualification yet",
+      "native_scale": "world units; each0.8x1.6x1.2; centers[-1.9,.8,.3] and[2.9,.8,-1.4]",
+      "pivot": "Box center; base rests at floorY0",
+      "collision_role": "Visible actual StaticBody3D layer1/mask0 box; included in permanent native world collision fingerprint before source configuration",
+      "occlusion_role": "Opaque ordinary-depth grounded mineral; body/floor/LOS proof must reject blocked motion or attacks; complete current-stage native mesh bounds retained",
+      "animation_states": [
+        "static"
+      ],
+      "reuse_family": "Mirror Sea dry mineral/shore fixed-base geometry; no new interaction or equipment"
+    },
+    {
+      "id": "o3-three-flat-stage-pips",
+      "source": "Original procedural low BoxMesh pips using accepted parent mineral/ordinary-depth material vocabulary; no imported painting raster",
+      "readiness": "source-only; actual portrait readability/occlusion unverified",
+      "native_scale": "World units;0.11x0.018x0.14,0.22spacing; three per stage near real endpoint",
+      "pivot": "Box center at endpointY+.015, local floor-aligned row",
+      "collision_role": "None; MeshInstance3D only, no hit/contact group or damage",
+      "occlusion_role": "Low opaque depth-tested decoration; current-stage full native corners enter framing; never a combat footprint or trigger",
+      "animation_states": [
+        "uncollected muted",
+        "actual clear-prefix pale"
+      ],
+      "reuse_family": "Restrained Act3 static mineral state marks; derived from actual route history only"
+    },
+    {
+      "id": "o3-small-shell-scenery",
+      "source": "Original procedural five low BoxMesh ribs, parent muted mineral palette; canonical optional shell-like token presentation only",
+      "readiness": "source-only; current contact portrait unverified",
+      "native_scale": "World units; each0.035x0.045x0.30;0.055xspacing and0.20radian rib fan at exit[0,0,-9]",
+      "pivot": "Rib center at native floorY.03; fixed threshold-relative placement",
+      "collision_role": "None; no pickup, farming, stat reward, HP or new input; shared once-only optional stamp remains separate",
+      "occlusion_role": "Opaque ordinary-depth low scenic form; real available/active/spent contact cue supplies action language and actual native bounds",
+      "animation_states": [
+        "static"
+      ],
+      "reuse_family": "Mirror Sea quiet shell/mineral shoreline scenery"
+    },
+    {
+      "id": "o3-harmless-outlined-reflections",
+      "source": "Parent mirror_echo_rule_room.gd eight-piece open procedural porcelain silhouette repeated by source-local route anchor",
+      "readiness": "Original family reused; final placements source-only/portrait unverified",
+      "native_scale": "World units; original eight BoxMesh dimensions; root position routeStart+[-1.4,.02,.4]",
+      "pivot": "Floor/feet-relative root; original mesh offsets retained",
+      "collision_role": "None; no CollisionObject, enemies group, take_damage callback or resource state",
+      "occlusion_role": "Muted opaque ordinary-depth open silhouette; complete current/held native corners framed with real source; cannot own threat cues or HP",
+      "animation_states": [
+        "static harmless outline"
+      ],
+      "reuse_family": "Existing Mirror Sea harmless reflection, distinct from filled real36HP endpoint"
+    }
+  ]
 }
