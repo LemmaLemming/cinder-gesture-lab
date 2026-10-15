@@ -1,0 +1,8 @@
+{
+  "classification": "test-script runtime typed-array conversion; original incomplete run, not a passing final case",
+  "original_head": "6a7ffc0920481589007141c2f124471a1a62da88",
+  "first_error": "Trying to assign an array of type Array to a variable of type Array[String] at a1_o3_campaign.gd:173",
+  "result": "complete=false,36 checks passed,0 assertion failures,ScriptError; wrapper exit1",
+  "fix": "Initialize expected:Array[String]=[] and assign identical ternary orders using typed Array.assign(). No assertion, production source, timeout or expected order changed.",
+  "retest": "Only affected final case; prior entry44/checkpoint78/authored45 retain unchanged production source applicability."
+}

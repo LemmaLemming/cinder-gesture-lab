@@ -170,7 +170,8 @@ func _run_final() -> bool:
 	var rows: Array[Dictionary] = _current_admissions(2)
 	var first: Dictionary = rows[0]; var second: Dictionary = rows[1]
 	var recipe: Dictionary = _host().recipes.staggered
-	var expected: Array[String] = ["rehearsal-final-rear", "rehearsal-final-front"] if profile == "challenge" else ["rehearsal-final-front", "rehearsal-final-rear"]
+	var expected: Array[String] = []
+	expected.assign(["rehearsal-final-rear", "rehearsal-final-front"] if profile == "challenge" else ["rehearsal-final-front", "rehearsal-final-rear"])
 	var original: Dictionary = first.answer.reservation
 	var earliest: float = float(original.lock_from_s if profile == "challenge" else original.active_until_s)
 	var leading: Dictionary = second.source_states[expected[0]]

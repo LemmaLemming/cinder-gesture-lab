@@ -1,0 +1,29 @@
+{
+  "phase": "campaign",
+  "command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--headless",
+    "--path",
+    ".",
+    "--script",
+    "tests/acts/act1/a1_o3_campaign.gd",
+    "--",
+    "--case=final",
+    "--profile=standard",
+    "--source-report=res://.cinder/a1-o3-campaign-75417-1011215.json"
+  ],
+  "exit_code": 1,
+  "wall_seconds": 83.17271216699919,
+  "head": "6a7ffc0920481589007141c2f124471a1a62da88",
+  "head_unchanged": true,
+  "named_sources": 26,
+  "changed_named_sources": [],
+  "raw_errors": [
+    "SCRIPT ERROR: Trying to assign an array of type \"Array\" to a variable of type \"Array[String]\"."
+  ],
+  "raw_log_sha256": "4e4700a7447fcc6ba7da19164017f670aa2ccf0081ce7e28846b6cf2e656ecf7",
+  "process_state": "direct dev.py wrapper closed",
+  "scope": "Named physical source observations plus original raw log. No full dependency, UID census, art, balance or performance claim. Native assertion/report result must be inspected separately."
+}
