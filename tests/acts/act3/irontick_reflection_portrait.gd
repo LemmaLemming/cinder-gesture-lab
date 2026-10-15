@@ -1,6 +1,7 @@
 extends "res://tests/acts/act3/irontick_reflection_optional_shell.gd"
 ## Paused-only native graphical reader of the original held-warning archive.
-## Public Shell startup/Side Resume, exact archived packets and actual optics.
+## Public Shell startup/Side Resume of the actual L3-protected Story archive,
+## exact archived packets and actual optics; never reconstruct or patch an L2 donor.
 ## TEST-only Menu CanvasLayer exclusion; no simulation/input/actor writes.
 ## One representative frame; no active/lateral/full-route or pacing claim.
 
@@ -41,7 +42,7 @@ func _run() -> void:
 	protected = _original_packet("story.native.json")
 	var original_entrance: Dictionary = _original_packet("entrance.native.json")
 	var original_start: Dictionary = _original_packet("start-session.native.json")
-	if failures > 0 or not _expect(not raw.is_empty() and not expected_session.is_empty() and not held.is_empty() and _same(expected_session.side_attempt.snapshot, held) and _same(expected_session.side_attempt.checkpoint, checkpoint) and _same(expected_session.story.snapshot, protected) and _same(expected_session.story, original_start.story) and _same(original_entrance, checkpoint) and original_start.side_attempt == null, "complete original warning session matches independently archived native packets"):
+	if failures > 0 or not _expect(not raw.is_empty() and not expected_session.is_empty() and not held.is_empty() and _same(expected_session.side_attempt.snapshot, held) and _same(expected_session.side_attempt.checkpoint, checkpoint) and _same(expected_session.story.snapshot, protected) and _same(expected_session.story, original_start.story) and _same(original_entrance, checkpoint) and original_start.side_attempt == null and protected.level_id == O3_STORY_ID and protected.scene_path == O3_STORY_PATH and protected.level.level_id == O3_STORY_ID, "complete original warning session matches independently archived native packets"):
 		await _finish(); return
 	var registry = Registry.new(raw)
 	var detached = Attempts.new(registry)

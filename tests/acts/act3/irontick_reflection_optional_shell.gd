@@ -1,11 +1,13 @@
 extends "res://tests/acts/act3/pillars_before_time_optional_shell.gd"
 ## O3 one-Echo/pulse prototype public Optional transport. Reuse only the unchanged
 ## accepted O1 generic Shell/ExactJson/GUI/quiet/identity/cleanup helpers.
-## TEST ONLY O3 accepted metadata + prefix13; actual accepted A3-L2 Story packet.
+## TEST ONLY O3 accepted metadata + prefix13; actual accepted A3-L3 Story packet.
 ## No Hero/resource/clock/history/death/lease/progress writes or court CP seed.
 ## This prototype proves no court clear, completion/stamp, contact return, replay,
 ## final three-court arrangement, portrait, earned route or human-input result.
 
+const O3_STORY_ID: String = "A3-L3"
+const O3_STORY_PATH: String = "res://scenes/acts/act3/a3_l3_mirror_sea.tscn"
 const O3_PATH: String = "res://scenes/acts/act3/a3_o3_irontick_reflection.tscn"
 const O3_ECHO: String = "o3-first-echo"
 const O3_PULSE: String = "o3-first-pulse"
@@ -23,6 +25,15 @@ const O3_PINS: Array[String] = [
 	"res://scripts/acts/act3/mirror_echo_codec.gd",
 	"res://scripts/acts/act3/mirror_echo_spent_marker.gd",
 	"res://scripts/acts/act3/mirror_sea_scenery.gd",
+	"res://scripts/acts/act3/mirror_sea_level.gd",
+	"res://scripts/acts/act3/mirror_sea_codec.gd",
+	"res://scripts/acts/act3/mirror_sea_vignettes.gd",
+	"res://scripts/acts/act3/mirror_shore_modules.gd",
+	"res://scripts/acts/act3/mirror_shore_witnesses.gd",
+	"res://scripts/acts/act3/mirror_irontick_scenery.gd",
+	"res://scripts/acts/act3/sunbound_stalker.gd",
+	"res://data/campaign/act3/mirror_sea_layout_candidate.json",
+	"res://scenes/acts/act3/a3_l3_mirror_sea.tscn",
 	"res://scripts/acts/act3/twin_suns_scenery.gd",
 	"res://assets/acts/act3/mirror_shore.gdshader",
 	"res://scripts/combat/replay_playback.gd",
@@ -81,10 +92,10 @@ func _run() -> void:
 	if not _expect(registry.last_error.is_empty() and registry.scene_error("A3-O3").is_empty() and registry.entry("A3-O3").parent_level_id == "A3-L3", "isolated O3 metadata keeps canonical parent/reward/route links", registry.last_error):
 		await _finish(); return
 	node_added.connect(_watch_node)
-	print("O3 TEST ONLY prefix13/readiness; real native accepted A3-L2 older Story checkpoint, actual initial managed Echo warning, no fabricated court clear/CP/resources/history or earned-route claim.")
+	print("O3 TEST ONLY prefix13/readiness; real native accepted A3-L3 opening Story checkpoint, actual initial managed Echo warning, no fabricated court clear/CP/resources/history or earned-route claim.")
 	if not await _seed_story(registry) or not await _new_shell(expected_session): await _finish(); return
 	production.menu.continue_story_requested.emit()
-	if not await _wait_installed(STORY_ID, "resume", protected): await _finish(); return
+	if not await _wait_installed(O3_STORY_ID, "resume", protected): await _finish(); return
 	if not _installed(protected) or not _quiet_selected(): await _finish(); return
 	var old_story_refs: Array[WeakRef] = []
 	_collect_refs(_world_container(), old_story_refs)
@@ -130,7 +141,7 @@ func _run() -> void:
 	_collect_refs(_world_container(), old_refs)
 	var before_leave: Dictionary = _core_ids()
 	production.menu.leave_side_requested.emit()
-	if not await _wait_installed(STORY_ID, "journey", protected, before_leave): await _finish(); return
+	if not await _wait_installed(O3_STORY_ID, "journey", protected, before_leave): await _finish(); return
 	if not _installed(protected) or not await _released(old_refs, "early Leave Side retires complete optional Echo world"): await _finish(); return
 	var returned: Dictionary = production.attempts.state()
 	if not _expect(returned.side_attempt == null and returned.completed_main == expected_session.completed_main and returned.completed_optional.is_empty() and returned.reward_ids.is_empty() and _same(returned.story, expected_session.story), "early Leave returns Journey with complete older Story/checkpoint and no optional reward or route advance"):
@@ -140,17 +151,40 @@ func _run() -> void:
 	await _finish()
 
 func _seed_story(registry: CinderCampaignRegistry) -> bool:
-	# Parent constructs/captures the actual accepted L2 opening and normally
-	# retires it. Only detached TEST predecessor metadata changes afterward.
-	if not await super._seed_story(registry): return false
-	var packet_before: String = Exact.stringify(protected)
-	expected_session.completed_main = registry.main_route().slice(0, 13)
+	paused = true
+	preview = MainScene.instantiate()
+	preview.set("level_scene_path", O3_STORY_PATH)
+	root.add_child(preview)
+	preview.call("open_bench") # Main construction resumes; restore the actual public paused boundary before any frame.
+	var actor: CinderPlayer = preview.get("player") as CinderPlayer
+	var level: CinderLevel = preview.get("active_level") as CinderLevel
+	var camera: Camera3D = preview.get("camera") as Camera3D
+	if not _expect(actor != null and level != null and camera != null and level.level_id == O3_STORY_ID and String(preview.get("level_load_error")).is_empty(), "actual accepted L3 Main opening constructs the protected Story donor"):
+		return false
+	await process_frame # Native ready/layout only; gameplay remains paused.
+	var actor_state: Dictionary = actor.snapshot_state()
+	var local_state: Dictionary = level.snapshot_state()
+	var input: Dictionary = preview.call("get_input_observation_state")
+	if not _expect(paused and not actor_state.is_empty() and not local_state.is_empty() and actor.get_world_action_records().is_empty() and input.sequence == 0 and input.last_observation.is_empty(), "actual paused initial actor/local/input writers contain no fabricated gameplay", actor.last_snapshot_error + "; " + level.last_snapshot_error):
+		return false
+	var anchor: Vector2 = input.anchor_normalized
+	var fresh_shell: Dictionary = {"api_revision": Shell.SHELL_API, "anchor_normalized": [anchor.x, anchor.y], "input_sequence": input.sequence, "last_input_observation": {}, "camera_focus": Codec.vector3(camera.global_position - Game.CAMERA_OFFSET), "shake_left_s": 0.0, "difficulty_at_entry": "standard"}
+	protected = {"schema_version": 1, "level_id": O3_STORY_ID, "scene_path": O3_STORY_PATH, "paused": true, "equipment_ids": actor.equipment.snapshot(), "player": actor_state, "level": local_state, "shell": fresh_shell}
 	var detached = Attempts.new(registry)
-	var error: String = detached.state_error(expected_session)
+	expected_session = detached.state()
+	expected_session.completed_main = registry.main_route().slice(0, 13) # TEST ONLY predecessor completions.
+	expected_session.story = {"kind": "story", "level_id": O3_STORY_ID, "snapshot": protected.duplicate(true), "checkpoint": protected.duplicate(true)}
+	var problem: String = detached.state_error(expected_session)
 	var writer = Store.new(isolated + "campaign.json")
-	writer.payload_validator = detached.saved_payload_error
-	if not _expect(error.is_empty() and expected_session.completed_main[-1] == "A3-L3" and packet_before == Exact.stringify(protected) and _same(expected_session.story.snapshot, protected) and _same(expected_session.story.checkpoint, protected) and writer.write_payload(expected_session), "validated detached TEST prefix13 preserves genuine older A3-L2 Story/actor/local/input/camera packet byte-exact", error + "; " + writer.last_error): return false
-	return _disk(expected_session)
+	writer.payload_validator = detached.saved_payload_error # Structural model, never a live Shell validator.
+	if not _expect(problem.is_empty() and expected_session.completed_main[-1] == O3_STORY_ID and writer.write_payload(expected_session), "detached structural Attempts/format2 Store seed TEST prefix13 plus actual complete accepted L3 opening packet", problem + "; " + writer.last_error):
+		return false
+	var refs: Array[WeakRef] = []
+	_collect_refs(preview, refs)
+	level.exit_level()
+	preview.queue_free()
+	preview = null
+	return await _released(refs, "seed donor normal whole-tree retirement") and _disk(expected_session)
 
 func _wait_echo_warning() -> bool:
 	for _frame: int in range(LIVE_FRAME_LIMIT):
@@ -215,7 +249,7 @@ func _archive_held(entrance: Dictionary, receipt: Dictionary) -> bool:
 		var digest: String = FileAccess.get_sha256(path)
 		if not _expect(digest.length() == 64, "listed original O3 source pin exists: " + path): return false
 		pins[path] = digest
-	var manifest: Dictionary = {"schema_version": 1, "kind": "a3-o3-genuine-warning-session-1", "test_only": true, "adopted_baseline_commit": O3_ADOPTED, "shared_api": "campaign-shared-62", "shared_publication": "e4405c678603e5e7c0e09de49285cad752f5b812", "git_provenance": "Exact native runner HEAD/dirty/input manifest governs execution; listed source_pins freeze actual bytes", "pins_scope": "listed authored/direct transport sources; native runner input manifest is independent authority", "fixture_sha256": FileAccess.get_sha256(O3_PINS[0]), "source_pins": pins, "files": files, "held_receipt": receipt, "test_context": "TEST prefix13/O3 readiness; unchanged actual accepted A3-L2 older Story opening; genuine first Echo warning, entrance Retry; no court checkpoint/death/resource/history/clock/lease seed", "public_flow_validation": "pending; actual native runner closure is authoritative", "portrait_validation": "unexecuted; archive creates no pixels"}
+	var manifest: Dictionary = {"schema_version": 1, "kind": "a3-o3-genuine-warning-session-1", "test_only": true, "adopted_baseline_commit": O3_ADOPTED, "shared_api": "campaign-shared-62", "shared_publication": "e4405c678603e5e7c0e09de49285cad752f5b812", "git_provenance": "Exact native runner HEAD/dirty/input manifest governs execution; listed source_pins freeze actual bytes", "pins_scope": "listed authored/direct transport sources; native runner input manifest is independent authority", "fixture_sha256": FileAccess.get_sha256(O3_PINS[0]), "source_pins": pins, "files": files, "held_receipt": receipt, "test_context": "TEST prefix13/O3 readiness; actual accepted A3-L3 opening Story; genuine first Echo warning, entrance Retry; no court checkpoint/death/resource/history/clock/lease seed", "public_flow_validation": "pending; actual native runner closure is authoritative", "portrait_validation": "unexecuted; archive creates no pixels"}
 	var wire: String = Exact.stringify(manifest)
 	var file: FileAccess = FileAccess.open(archive_path.path_join("manifest.json"), FileAccess.WRITE)
 	if not _expect(not wire.is_empty() and file != null, "finite original O3 warning provenance manifest opens"): return false
