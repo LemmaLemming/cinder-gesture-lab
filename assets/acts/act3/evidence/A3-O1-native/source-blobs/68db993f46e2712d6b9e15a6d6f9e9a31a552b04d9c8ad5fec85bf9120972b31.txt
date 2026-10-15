@@ -1,0 +1,668 @@
+extends "res://scripts/acts/act3/twin_suns.gd"
+## A3-O1 small-room rule: three real grounded contacts in any chosen order.
+## Existing Sun/Stalker/Scheduler mechanics remain independent of collection.
+## Every save retains the complete native sources, clock and progress unit.
+
+const StalkerScript = preload("res://scripts/acts/act3/sunbound_stalker.gd")
+const SchedulerScript = preload("res://scripts/combat/threat_scheduler.gd")
+const InteractionCue = preload("res://scripts/cues/interaction_cue.gd")
+const MarkerProp = preload("res://scripts/acts/act3/temporal_marker_prop.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const ENCOUNTER_DATA: String = "res://data/campaign/act3/a3_o1_encounters.json"
+const ENCOUNTER_ID: String = "A3-O1/pillars"
+const WORLD_REVISION: int = 1
+const LOCAL_VERSION: int = 1
+const ROUTE_API: String = "act3-pillars-before-time-1"
+const COMPLETION_ID: String = "three-mirages-collected"
+const EXIT_ID: String = "pillars-return-threshold"
+const CHECKPOINT_IDS: Array[String] = ["mirage-one-collected", "mirage-two-collected"]
+const MARKERS: Dictionary = {
+	"o1-southwest-marker": {"position": Vector3(-3, 0, 4), "contact_rect": Rect2(-4.2, 2.8, 2.4, 2.4)},
+	"o1-east-marker": {"position": Vector3(3, 0, 0), "contact_rect": Rect2(1.8, -1.2, 2.4, 2.4)},
+	"o1-northwest-marker": {"position": Vector3(-3, 0, -5), "contact_rect": Rect2(-4.2, -6.2, 2.4, 2.4)},
+}
+const SOURCE_IDS: Array[String] = ["o1-central-stalker"]
+const SOURCE_POSITIONS: Dictionary = {"o1-central-stalker": Vector3(0, 0.1, -1)}
+const EXIT_POSITION: Vector3 = Vector3(0, 0, -9)
+const EXIT_RECT: Rect2 = Rect2(-1.2, -9.65, 2.4, 1.3)
+const FLOOR_RECT: Rect2 = Rect2(-7, -11, 14, 22)
+const PROP_VIEW_DISTANCE: float = 4.5
+
+## Stable public recipients, including genuinely defeated source nodes.
+var sources: Dictionary = {}
+var threat_scheduler: CinderThreatScheduler
+var marker_cues: Dictionary = {}
+var marker_props: Dictionary = {}
+var exit_cue: CinderInteractionCue
+var exit_prop: Node3D
+var _floor_region: Dictionary = {}
+var _authoring: Dictionary = {}
+var _collections: Array[Dictionary] = []
+var _exit_state: String = "clear"
+var _contact: Dictionary = {}
+var _configuration_error: String = ""
+var _exit_dispatch_generation: int = 0
+var _exit_dispatch_queued: bool = false
+
+
+func _ready() -> void:
+	prototype_room = true
+	clear_rule_pockets = true
+	local_snapshot_version = LOCAL_VERSION
+	super._ready()
+	# Hero and Scheduler sample before Stalker20; contacts finish at30.
+	process_physics_priority = 30
+	threat_scheduler = SchedulerScript.new()
+	threat_scheduler.name = "PillarsThreatScheduler"
+	add_child(threat_scheduler)
+	var body: StaticBody3D = scenery.get("floor_body") as StaticBody3D
+	var solid: CollisionShape3D = body.get_node_or_null("Solid") as CollisionShape3D if is_instance_valid(body) else null
+	if not is_instance_valid(solid) or not solid.shape is BoxShape3D or (solid.shape as BoxShape3D).size != Vector3(14, 1, 22):
+		_configuration_error = "Pillars requires its actual continuous small-room floor"
+		return
+	_floor_region = {"collision": solid, "safe_rect": FLOOR_RECT}
+	var authored: Variant = JSON.parse_string(FileAccess.get_file_as_string(ENCOUNTER_DATA))
+	if not authored is Dictionary:
+		_configuration_error = "Pillars requires its authored geometry and unchanged Stalker role"
+		return
+	_authoring = authored.duplicate(true)
+	_configuration_error = _authoring_error()
+	if not _configuration_error.is_empty():
+		return
+	for source_id: String in SOURCE_IDS:
+		var source: CinderAct3SunboundStalker = StalkerScript.new()
+		source.name = source_id.replace("-", "_")
+		add_child(source)
+		source.position = SOURCE_POSITIONS[source_id]
+		source.set_physics_process(false)
+		sources[source_id] = source
+	var index: int = 0
+	for marker_id: String in MARKERS:
+		var prop: Node3D = MarkerProp.new()
+		prop.name = marker_id.replace("-", "_")
+		add_child(prop)
+		prop.position = MARKERS[marker_id].position
+		if not prop.call("build", index):
+			_configuration_error = "Pillars marker prop construction failed: " + marker_id
+			return
+		marker_props[marker_id] = prop
+		var cue: CinderInteractionCue = InteractionCue.new()
+		cue.name = marker_id.replace("-", "_") + "_contact"
+		add_child(cue)
+		cue.position = MARKERS[marker_id].position
+		marker_cues[marker_id] = cue
+		index += 1
+	exit_prop = MarkerProp.new()
+	exit_prop.name = "ReturnSeal"
+	add_child(exit_prop)
+	exit_prop.position = EXIT_POSITION
+	if not exit_prop.call("build", 3, true):
+		_configuration_error = "Pillars exit seal construction failed"
+		return
+	exit_cue = InteractionCue.new()
+	exit_cue.name = "PillarsReturnContactCue"
+	add_child(exit_cue)
+	exit_cue.position = EXIT_POSITION
+	_update_presentation()
+
+
+func _authoring_error() -> String:
+	if _authoring.get("level_id") != "A3-O1" or _authoring.get("prototype_sources") != SOURCE_IDS or not _authoring.get("markers") is Dictionary or not _authoring.get("source_positions") is Dictionary:
+		return "Pillars requires its closed canonical room identities"
+	if not Codec.keys_error(_authoring.markers, MARKERS.keys()).is_empty() or not Codec.keys_error(_authoring.source_positions, SOURCE_IDS).is_empty():
+		return "Pillars authoring must retain every stable marker/source identity"
+	for marker_id: String in MARKERS:
+		var definition: Variant = _authoring.markers[marker_id]
+		if not definition is Dictionary or not Codec.keys_error(definition, ["position", "contact_rect"]).is_empty() or not Codec.is_vector3(definition.get("position")) or Codec.read_vector3(definition.position) != MARKERS[marker_id].position or definition.get("contact_rect") != [MARKERS[marker_id].contact_rect.position.x, MARKERS[marker_id].contact_rect.position.y, MARKERS[marker_id].contact_rect.size.x, MARKERS[marker_id].contact_rect.size.y]:
+			return "Pillars authored grounded contact region differs: " + marker_id
+	for source_id: String in SOURCE_IDS:
+		if not Codec.is_vector3(_authoring.source_positions[source_id]) or Codec.read_vector3(_authoring.source_positions[source_id]) != SOURCE_POSITIONS[source_id]:
+			return "Pillars authored source position differs: " + source_id
+	if not Codec.same_values(_authoring.get("stalker_raw_role"), StalkerScript.DEFAULT_ROLE) or not Codec.same_values(_authoring.get("minimum_timing_floors"), StalkerScript.DEFAULT_FLOORS):
+		return "Pillars must reuse the unchanged familiar Stalker role/timing"
+	if _authoring.get("floor_size") != [14, 1, 22] or _authoring.get("exit_position") != [0, 0, -9] or _authoring.get("spawn") != [0, 0.1, 8] or _authoring.get("kill_gate") != false or _authoring.get("collection_order") != "any":
+		return "Pillars floor/spawn/exit/contact rule differs from its authored room"
+	return ""
+
+
+func contract_error() -> String:
+	var error: String = super.contract_error()
+	if not error.is_empty():
+		return error
+	if level_id != "A3-O1" or position != Vector3.ZERO or basis != Basis.IDENTITY or spawn_position() != Vector3(0, 0.1, 8):
+		return "Pillars requires its canonical identity, floor transform and grounded spawn"
+	return _configuration_error
+
+
+func _configure_sources(profile: String) -> String:
+	if not _configuration_error.is_empty():
+		return _configuration_error
+	if not threat_scheduler.begin_encounter(profile, ENCOUNTER_ID, WORLD_REVISION):
+		return threat_scheduler.last_error
+	for source_id: String in SOURCE_IDS:
+		var source: CinderAct3SunboundStalker = sources[source_id]
+		if not source.configure(source_id, hero, effects, threat_scheduler, combat_response.bind(source_id), _authoring.stalker_raw_role, _authoring.minimum_timing_floors):
+			return "Pillars source configuration failed: " + source_id + ": " + source.last_error
+		source.set_sun_visual(sun_state)
+		source.set_physics_process(true)
+	return ""
+
+
+func _on_enter_level() -> void:
+	super._on_enter_level()
+	var profile: String = "standard"
+	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
+		profile = shared_shell.call("get_difficulty_preference")
+	_configuration_error = _configure_sources(profile)
+	_update_presentation()
+
+
+func restore_candidate_construction_required() -> bool:
+	return true
+
+
+func restore_candidate_physics_registration_required() -> bool:
+	return true
+
+
+func _on_enter_restore_candidate(local: Dictionary, saved_player: Dictionary) -> String:
+	# Immutable floor is already ready before the native registration frame.
+	# Construct exact real recipients while paused; saved state applies later.
+	if not local.get("scheduler") is Dictionary or not local.scheduler.get("profile") is Dictionary or not local.scheduler.profile.get("id") is String:
+		return "Pillars restore construction requires its saved difficulty identity"
+	_configuration_error = _configure_sources(local.scheduler.profile.id)
+	if not _configuration_error.is_empty():
+		return _configuration_error
+	_active = true
+	return _local_snapshot_error_with_player(local, saved_player)
+
+
+func _on_exit_level() -> void:
+	_exit_dispatch_generation += 1
+	_exit_dispatch_queued = false
+	for source_id: String in sources:
+		if is_instance_valid(sources[source_id]):
+			sources[source_id].set_physics_process(false)
+	for marker_id: String in marker_cues:
+		if is_instance_valid(marker_cues[marker_id]):
+			marker_cues[marker_id].clear()
+	if is_instance_valid(exit_cue):
+		exit_cue.clear()
+	if is_instance_valid(threat_scheduler):
+		threat_scheduler.end_encounter("pillars_level_exit")
+	super._on_exit_level()
+
+
+func _physics_process(_delta: float) -> void:
+	if not _active or not is_instance_valid(hero) or not _configuration_error.is_empty():
+		return
+	# One Sun clock derived from the actual Scheduler; finish even a fatal tick.
+	_sync_sun_from_clock()
+	scenery.call("follow_landmarks", hero.global_position)
+	_update_presentation()
+	if hero.dead:
+		return
+	if _collect_contact():
+		return # One collection boundary per tick; third never saves a checkpoint.
+	if not is_completed() or _exit_state == "spent":
+		return
+	if _exit_state == "available" and _at_region(hero.global_position, EXIT_RECT):
+		_contact = {"clock_s": threat_scheduler.get_clock(), "hero_position": Codec.vector3(hero.global_position)}
+		_exit_state = "active"
+		_update_presentation()
+	if _exit_state == "active" and not _exit_dispatch_queued:
+		_exit_dispatch_queued = true
+		_dispatch_contact_exit.bind(_exit_dispatch_generation).call_deferred()
+
+
+func _sync_sun_from_clock() -> void:
+	var clock: float = threat_scheduler.get_clock()
+	sun_state = int(floorf(clock / SUN_PERIOD_S)) % 2
+	sun_elapsed_s = fposmod(clock, SUN_PERIOD_S)
+	sun_stage = "stable" if sun_elapsed_s < SUN_STABLE_S else ("preview" if sun_elapsed_s < SUN_STABLE_S + SUN_PREVIEW_S else "lock")
+	beat_index = _collections.size()
+	_update_sun_scenery()
+
+
+func _has_collection(marker_id: String) -> bool:
+	for collection: Dictionary in _collections:
+		if collection.id == marker_id:
+			return true
+	return false
+
+
+func _collect_contact() -> bool:
+	if _collections.size() == MARKERS.size():
+		return false
+	for marker_id: String in MARKERS:
+		if _has_collection(marker_id) or not _at_region(hero.global_position, MARKERS[marker_id].contact_rect):
+			continue
+		_collections.append({"id": marker_id, "clock_s": threat_scheduler.get_clock(), "hero_position": Codec.vector3(hero.global_position)})
+		beat_index = _collections.size()
+		if _collections.size() == MARKERS.size():
+			_exit_state = "available"
+		_update_presentation()
+		var accepted: bool = request_checkpoint(CHECKPOINT_IDS[_collections.size() - 1], "encounter") if _collections.size() < MARKERS.size() else request_completion(COMPLETION_ID)
+		if not accepted:
+			_configuration_error = "Pillars genuine collection progression request rejected"
+			_update_guidance()
+		return true
+	return false
+
+
+func _at_region(at: Vector3, region: Rect2) -> bool:
+	return at.is_finite() and absf(at.y) <= 0.2 and region.has_point(Vector2(at.x, at.z))
+
+
+func _dispatch_contact_exit(generation: int) -> void:
+	if generation != _exit_dispatch_generation:
+		return
+	_exit_dispatch_queued = false
+	if not _active or not is_instance_valid(hero) or hero.dead or not is_completed() or _exit_state != "active":
+		return
+	_exit_state = "spent"
+	_update_presentation()
+	if not request_contact_exit(EXIT_ID, hero):
+		_exit_state = "available"
+		_contact.clear()
+		_update_presentation()
+
+
+func combat_response(source_id: String) -> Dictionary:
+	if not is_instance_valid(hero) or not sources.has(source_id) or _floor_region.is_empty():
+		return {}
+	var source: CinderAct3SunboundStalker = sources[source_id]
+	var response: Dictionary = hero.get_threat_response_state()
+	var directions: Array[Vector3] = []
+	var toward: Vector3 = hero.global_position - source.global_position
+	toward.y = 0.0
+	if toward.length_squared() > 0.0001:
+		var right: Vector3 = Vector3.UP.cross(toward.normalized())
+		var near_side: Vector3 = right if int(source.state().get("sun_visual", sun_state)) == 0 else -right
+		directions.append_array([near_side, -near_side])
+	directions.append_array([Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK])
+	for x: float in [-1.0, 1.0]:
+		for z: float in [-1.0, 1.0]:
+			directions.append(Vector3(x, 0.0, z).normalized())
+	response["world_root"] = get_parent() as Node3D
+	response["world_revision"] = WORLD_REVISION
+	response["recognition_s"] = 0.25
+	response["attack_input_margin_s"] = 0.06
+	response["escape_directions"] = directions
+	response["return_directions"] = directions.duplicate()
+	response["floor_regions"] = [_floor_region]
+	return response
+
+
+func scheduler_bindings() -> Dictionary:
+	return {"world_root": self, "owners": sources.duplicate(), "floors": {"shelf-floor": _floor_region}}
+
+
+func state() -> Dictionary:
+	var collected: Array[String] = []
+	var marker_states: Dictionary = {}
+	var source_states: Dictionary = {}
+	for collection: Dictionary in _collections:
+		collected.append(collection.id)
+	for marker_id: String in MARKERS:
+		marker_states[marker_id] = "spent" if collected.has(marker_id) else "available"
+	for source_id: String in sources:
+		if is_instance_valid(sources[source_id]):
+			source_states[source_id] = sources[source_id].state()
+	return {"api_revision": ROUTE_API, "configuration_error": _configuration_error, "collected": collected, "collections": _collections.duplicate(true), "marker_states": marker_states, "exit_state": _exit_state, "contact": _contact.duplicate(true), "completed": is_completed(), "checkpoint": current_checkpoint(), "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else 0.0, "sun_state": sun_state, "sun_stage": sun_stage, "source_states": source_states}
+
+
+func _update_presentation(quiet: bool = false) -> void:
+	for source_id: String in sources:
+		if is_instance_valid(sources[source_id]):
+			sources[source_id].set_sun_visual(sun_state)
+	for marker_id: String in marker_cues:
+		var cue: CinderInteractionCue = marker_cues[marker_id]
+		var blocked: bool = cue.is_blocking_signals()
+		if quiet:
+			cue.set_block_signals(true)
+		cue.present("spent" if _has_collection(marker_id) else "available", "contact")
+		if quiet:
+			cue.set_block_signals(blocked)
+		marker_props[marker_id].call("set_collected", _has_collection(marker_id))
+	if is_instance_valid(exit_cue):
+		var blocked: bool = exit_cue.is_blocking_signals()
+		if quiet:
+			exit_cue.set_block_signals(true)
+		if _exit_state == "clear":
+			exit_cue.clear()
+		else:
+			exit_cue.present(_exit_state, "contact")
+		if quiet:
+			exit_cue.set_block_signals(blocked)
+	if is_instance_valid(exit_prop):
+		exit_prop.call("set_collected", _exit_state != "clear")
+	_update_guidance()
+
+
+func _update_guidance() -> void:
+	objective_text = "PILLARS UNAVAILABLE\n" + _configuration_error if not _configuration_error.is_empty() else ("THREE MIRAGES SETTLED\nCONTACT THE NORTH RETURN SEAL" if _collections.size() == MARKERS.size() else "PILLARS BEFORE THEIR TIME\nCONTACT %d/3 — CHOOSE THE NEXT FLANK" % _collections.size())
+
+
+func _camera_framing_points() -> Array:
+	if not _active:
+		return []
+	var result: Dictionary = camera_framing_union()
+	last_camera_framing_error = String(result.error)
+	return result.points if last_camera_framing_error.is_empty() else []
+
+
+func camera_framing_union(candidate_id: String = "", candidate_points: Array = [], current_view: bool = false) -> Dictionary:
+	if not is_instance_valid(shared_shell) or not is_instance_valid(hero) or not _configuration_error.is_empty():
+		return _bounds_error("Configured Pillars and actual shared Shell/Hero required")
+	if not candidate_id.is_empty():
+		if not sources.has(candidate_id) or candidate_points.is_empty() or not String(sources[candidate_id].state().reservation_id).is_empty():
+			return _bounds_error("Prospective corners replace only their unleased actual source")
+	elif not candidate_points.is_empty():
+		return _bounds_error("Prospective source identity required")
+	var points: Array = candidate_points.duplicate()
+	for source_id: String in SOURCE_IDS:
+		if source_id == candidate_id:
+			continue
+		var group: Dictionary = sources[source_id].camera_framing_points(shared_shell, {}, {}, current_view)
+		if not String(group.error).is_empty():
+			return group
+		points.append_array(group.points)
+	var contacts: Dictionary = _contact_framing_points()
+	if not String(contacts.error).is_empty():
+		return contacts
+	points.append_array(contacts.points)
+	return _checked_bounds(points)
+
+
+func _contact_framing_points() -> Dictionary:
+	var points: Array = []
+	for marker_id: String in MARKERS:
+		if hero.global_position.distance_to(MARKERS[marker_id].position) > PROP_VIEW_DISTANCE:
+			continue
+		var group: Dictionary = _prop_cue_bounds(marker_props[marker_id], marker_cues[marker_id], MARKERS[marker_id].contact_rect, "spent" if _has_collection(marker_id) else "available")
+		if not String(group.error).is_empty():
+			return group
+		points.append_array(group.points)
+	if hero.global_position.distance_to(EXIT_POSITION) <= PROP_VIEW_DISTANCE:
+		var group: Dictionary = _prop_cue_bounds(exit_prop, exit_cue, EXIT_RECT, _exit_state)
+		if not String(group.error).is_empty():
+			return group
+		points.append_array(group.points)
+	return _checked_bounds(points)
+
+
+func _prop_cue_bounds(prop: Node3D, cue: CinderInteractionCue, region: Rect2, expected_state: String) -> Dictionary:
+	if not is_instance_valid(prop) or not is_instance_valid(cue) or prop.is_queued_for_deletion() or cue.is_queued_for_deletion() or not prop.is_visible_in_tree() or not prop.call("runtime_error").is_empty():
+		return _bounds_error("Actual retained grounded prop/contact cue required")
+	var view: Dictionary = cue.state()
+	if view.state != expected_state or (expected_state != "clear" and (view.trigger != "contact" or not view.required or not view.visible)):
+		return _bounds_error("Actual contact presentation must match the owned marker state")
+	var points: Array = prop.call("framing_points")
+	if points.is_empty():
+		return _bounds_error("Actual grounded prop bounds required")
+	if expected_state == "clear":
+		return _checked_bounds(points)
+	var mesh: MeshInstance3D = cue.get_node_or_null("RequiredInteractionMarker") as MeshInstance3D
+	if not is_instance_valid(mesh) or not mesh.is_visible_in_tree() or not mesh.mesh is ArrayMesh or not mesh.material_override is StandardMaterial3D or mesh.material_overlay != null:
+		return _bounds_error("Actual visible fixed contact mesh/material required")
+	var material: StandardMaterial3D = mesh.material_override as StandardMaterial3D
+	if material.billboard_mode != BaseMaterial3D.BILLBOARD_DISABLED or material.get_flag(BaseMaterial3D.FLAG_FIXED_SIZE) or material.grow:
+		return _bounds_error("Contact marker bounds cannot use displaced/camera-dependent geometry")
+	var box: AABB = mesh.mesh.get_aabb()
+	for x: float in [box.position.x, box.end.x]:
+		for y: float in [box.position.y, box.end.y]:
+			for z: float in [box.position.z, box.end.z]:
+				points.append(mesh.global_transform * Vector3(x, y, z))
+	for x: float in [region.position.x, region.end.x]:
+		for y: float in [0.0, 0.05]:
+			for z: float in [region.position.y, region.end.y]:
+				points.append(Vector3(x, y, z))
+	return _checked_bounds(points)
+
+
+func _checked_bounds(points: Array) -> Dictionary:
+	if points.size() > 224:
+		return _bounds_error("Complete native Pillars union exceeds224corners")
+	for point: Variant in points:
+		if not point is Vector3 or not point.is_finite() or maxf(absf(point.x), maxf(absf(point.y), absf(point.z))) > 1024:
+			return _bounds_error("Complete finite native world corners required")
+	return {"error": "", "points": points.duplicate()}
+
+
+func _bounds_error(error: String) -> Dictionary:
+	return {"error": error, "points": []}
+
+
+## This optical check uses the actual configured recipient/Hero/native Camera
+## and canonical HUD; neither accepted plans nor donor aliases substitute.
+func candidate_presentation_error(camera: Camera3D, hud: GameHUD) -> String:
+	if not is_instance_valid(shared_shell) or not is_instance_valid(hero) or not is_instance_valid(camera) or not is_instance_valid(hud):
+		return "Actual configured Hero/Camera/HUD/Shell required"
+	var points: Array = shared_shell.call("player_camera_framing_points_for", hero, camera)
+	if points.is_empty():
+		return "Actual Hero/current context camera bounds required"
+	for source_id: String in SOURCE_IDS:
+		var source: CinderAct3SunboundStalker = sources[source_id]
+		var held: Dictionary = source.camera_framing_points_for_context(shared_shell, hero, camera, {}, {}, true)
+		if not String(held.error).is_empty():
+			return source_id + ": " + String(held.error)
+		points.append_array(held.points)
+		if source.global_position.distance_to(hero.global_position) <= PROP_VIEW_DISTANCE or not String(source.state().reservation_id).is_empty():
+			var current: Dictionary = source.current_render_framing_points_for_context(shared_shell, hero, camera)
+			if not String(current.error).is_empty():
+				return source_id + ": " + String(current.error)
+			points.append_array(current.points)
+	var contacts: Dictionary = _contact_framing_points()
+	if not String(contacts.error).is_empty():
+		return String(contacts.error)
+	points.append_array(contacts.points)
+	var checked: Dictionary = _checked_bounds(points)
+	if not String(checked.error).is_empty():
+		return String(checked.error)
+	return String(shared_shell.call("camera_framing_error_for_context", checked.points, hero, camera, hud))
+
+
+func snapshot_state() -> Dictionary:
+	return _capture_checked(get_viewport().get_camera_3d(), shared_shell.get("hud") as GameHUD if is_instance_valid(shared_shell) else null)
+
+
+func snapshot_state_for_presentation(camera: Camera3D, hud: GameHUD) -> Dictionary:
+	return _capture_checked(camera, hud)
+
+
+func _capture_checked(camera: Camera3D, hud: GameHUD) -> Dictionary:
+	var saved: Dictionary = super.snapshot_state()
+	if saved.is_empty():
+		return saved
+	last_snapshot_error = _route_progress_error(saved)
+	if last_snapshot_error.is_empty():
+		last_snapshot_error = candidate_presentation_error(camera, hud)
+	return saved if last_snapshot_error.is_empty() else {}
+
+
+func _capture_local_state() -> Dictionary:
+	if not _runtime_error().is_empty():
+		return {}
+	var actors: Dictionary = {}
+	for source_id: String in SOURCE_IDS:
+		actors[source_id] = sources[source_id].snapshot_state()
+	return {"api_revision": ROUTE_API, "schema_version": 1, "scenery": super._capture_local_state(), "scheduler": threat_scheduler.snapshot_state(scheduler_bindings()), "sources": actors, "route": {"collections": _collections.duplicate(true), "exit_state": _exit_state, "contact": _contact.duplicate(true)}}
+
+
+func _runtime_error() -> String:
+	if not _configuration_error.is_empty():
+		return _configuration_error
+	if not is_instance_valid(scenery) or scenery.is_queued_for_deletion() or not scenery.call("runtime_error").is_empty():
+		return "Pillars requires its live reused scenery/floor"
+	if not is_instance_valid(threat_scheduler) or threat_scheduler.is_queued_for_deletion() or threat_scheduler.get_parent() != self:
+		return "Pillars requires its stable actual Scheduler"
+	var solid: CollisionShape3D = _floor_region.get("collision") as CollisionShape3D
+	var body: StaticBody3D = solid.get_parent() as StaticBody3D if is_instance_valid(solid) else null
+	if not is_instance_valid(solid) or not solid.is_inside_tree() or solid.is_queued_for_deletion() or solid.disabled or not solid.shape is BoxShape3D or (solid.shape as BoxShape3D).size != Vector3(14, 1, 22) or solid.position != Vector3.ZERO or solid.basis != Basis.IDENTITY or not is_instance_valid(body) or body.position != Vector3(0, -0.5, 0) or body.basis != Basis.IDENTITY or body.collision_layer != 1 or body.collision_mask != 0 or _floor_region.safe_rect != FLOOR_RECT or position != Vector3.ZERO or basis != Basis.IDENTITY:
+		return "Pillars immutable registered floor cannot move/change/retire"
+	if not Codec.keys_error(sources, SOURCE_IDS).is_empty() or not Codec.keys_error(marker_cues, MARKERS.keys()).is_empty() or not Codec.keys_error(marker_props, MARKERS.keys()).is_empty():
+		return "Pillars requires every exact retained source/contact binding"
+	for source_id: String in SOURCE_IDS:
+		if not is_instance_valid(sources[source_id]) or not sources[source_id] is CinderAct3SunboundStalker or sources[source_id].is_queued_for_deletion() or not sources[source_id].is_inside_tree() or sources[source_id].get_parent() != self:
+			return "Pillars retains living and defeated native sources: " + source_id
+	for marker_id: String in MARKERS:
+		var error: String = _contact_runtime_error(marker_props[marker_id], marker_cues[marker_id], MARKERS[marker_id].position)
+		if not error.is_empty():
+			return marker_id + ": " + error
+	return _contact_runtime_error(exit_prop, exit_cue, EXIT_POSITION)
+
+
+func _contact_runtime_error(prop: Node3D, cue: CinderInteractionCue, at: Vector3) -> String:
+	if not is_instance_valid(prop) or not is_instance_valid(cue) or prop.is_queued_for_deletion() or cue.is_queued_for_deletion() or not prop.is_inside_tree() or not cue.is_inside_tree() or prop.get_parent() != self or cue.get_parent() != self or prop.position != at or cue.position != at or prop.basis != Basis.IDENTITY or cue.basis != Basis.IDENTITY or not prop.call("runtime_error").is_empty():
+		return "Live immutable grounded prop/contact cue required"
+	var marker: MeshInstance3D = cue.get_node_or_null("RequiredInteractionMarker") as MeshInstance3D
+	return "" if is_instance_valid(marker) and marker.is_inside_tree() and not marker.is_queued_for_deletion() and marker.material_override is StandardMaterial3D else "Actual contact cue mesh/material required"
+
+
+func _local_snapshot_error(local: Dictionary) -> String:
+	return _paired_local_error(local, hero.global_position, hero.dead) if is_instance_valid(hero) else "Paired live Hero required"
+
+
+func _local_snapshot_error_with_player(local: Dictionary, saved_player: Dictionary) -> String:
+	if not saved_player.get("motion") is Dictionary or not Codec.is_vector3(saved_player.motion.get("position")) or not saved_player.get("resources") is Dictionary or not saved_player.resources.get("dead") is bool:
+		return "Validated saved Hero position/lifecycle required"
+	return _paired_local_error(local, Codec.read_vector3(saved_player.motion.position), saved_player.resources.dead)
+
+
+func _paired_local_error(local: Dictionary, expected_hero: Vector3, expected_dead: bool) -> String:
+	var error: String = _runtime_error()
+	if not error.is_empty():
+		return error
+	if not Codec.keys_error(local, ["api_revision", "schema_version", "scenery", "scheduler", "sources", "route"]).is_empty() or local.get("api_revision") != ROUTE_API or not Codec.is_integer(local.get("schema_version"), 1, 1) or not local.get("scenery") is Dictionary or not local.get("scheduler") is Dictionary or not local.get("sources") is Dictionary or not local.get("route") is Dictionary:
+		return "Complete versioned Pillars scenery/Scheduler/source/contact unit required"
+	error = super._local_snapshot_error(local.scenery)
+	if not error.is_empty():
+		return error
+	if not Codec.is_number(local.scheduler.get("clock_s")) or float(local.scheduler.clock_s) < 0 or local.scenery.sun_state != int(floorf(float(local.scheduler.clock_s) / SUN_PERIOD_S)) % 2 or float(local.scenery.sun_elapsed_s) != fposmod(float(local.scheduler.clock_s), SUN_PERIOD_S):
+		return "Pillars Sun state/time must match the exact continuous Scheduler clock"
+	if not Codec.keys_error(local.sources, SOURCE_IDS).is_empty():
+		return "Exactly every stable native source required, including dead nodes"
+	var bindings: Dictionary = scheduler_bindings()
+	bindings["owner_positions"] = {}
+	bindings["owner_velocities"] = {}
+	bindings["owner_collision_states"] = {}
+	for source_id: String in SOURCE_IDS:
+		var actor: Variant = local.sources[source_id]
+		if not actor is Dictionary or not Codec.is_vector3(actor.get("position")) or not Codec.is_vector3(actor.get("velocity")):
+			return "Complete finite staged native source pose/motion required"
+		error = sources[source_id].snapshot_error(actor, local.scheduler)
+		if not error.is_empty():
+			return source_id + ": " + error
+		bindings.owner_positions[source_id] = Codec.read_vector3(actor.position)
+		bindings.owner_velocities[source_id] = Codec.read_vector3(actor.velocity)
+		if not actor.dead and not String(actor.reservation_id).is_empty():
+			bindings.owner_collision_states[source_id] = {"collision_path": "BodyCollision", "enabled": true, "layer": 2, "mask": 1}
+		if float(actor.previous.clock_s) == float(local.scheduler.clock_s) and Codec.read_vector3(actor.previous.hero_position) != expected_hero:
+			return "Current native source sample differs from its paired Hero"
+	error = threat_scheduler.snapshot_error(local.scheduler, bindings)
+	if not error.is_empty():
+		return error
+	if local.scheduler.encounter_id != ENCOUNTER_ID or local.scheduler.world_revision != WORLD_REVISION:
+		return "Pillars retains its exact continuous authored encounter"
+	return _route_local_error(local, expected_hero, expected_dead)
+
+
+func _route_local_error(local: Dictionary, expected_hero: Vector3, expected_dead: bool) -> String:
+	var route: Dictionary = local.route
+	if not Codec.keys_error(route, ["collections", "exit_state", "contact"]).is_empty() or not route.get("collections") is Array or route.collections.size() > MARKERS.size() or not route.get("exit_state") is String or not route.get("contact") is Dictionary:
+		return "Finite closed Pillars collection/contact history required"
+	var seen: Array[String] = []
+	var previous_clock: float = -1.0
+	for record: Variant in route.collections:
+		if not record is Dictionary or not Codec.keys_error(record, ["id", "clock_s", "hero_position"]).is_empty() or not record.get("id") is String or not MARKERS.has(record.id) or seen.has(record.id) or not Codec.in_range(record.get("clock_s"), 0, float(local.scheduler.clock_s)) or float(record.clock_s) <= previous_clock or not Codec.is_vector3(record.get("hero_position")):
+			return "Distinct canonical markers in real arbitrary chronological order required"
+		var at: Vector3 = Codec.read_vector3(record.hero_position)
+		if not _at_region(at, MARKERS[record.id].contact_rect) or not FLOOR_RECT.has_point(Vector2(at.x, at.z)):
+			return "Collection sample must be actual grounded contact on permanent floor"
+		if float(record.clock_s) == float(local.scheduler.clock_s) and at != expected_hero:
+			return "Current collection sample differs from its paired Hero"
+		seen.append(record.id)
+		previous_clock = float(record.clock_s)
+	if int(local.scenery.beat_index) != seen.size():
+		return "Pillars presentation must match actual distinct collections"
+	if not expected_dead:
+		for marker_id: String in MARKERS:
+			if not seen.has(marker_id) and _at_region(expected_hero, MARKERS[marker_id].contact_rect):
+				return "Live current marker contact cannot omit its collection boundary"
+	if seen.size() < MARKERS.size():
+		if route.exit_state != "clear" or not route.contact.is_empty():
+			return "Exit remains unavailable until all three genuine distinct contacts"
+	elif route.exit_state not in ["available", "active", "spent"]:
+		return "Collected room requires its available/active/spent contact exit"
+	if route.exit_state in ["active", "spent"]:
+		if not Codec.keys_error(route.contact, ["clock_s", "hero_position"]).is_empty() or not Codec.in_range(route.contact.get("clock_s"), previous_clock, float(local.scheduler.clock_s)) or float(route.contact.clock_s) <= previous_clock or not Codec.is_vector3(route.contact.get("hero_position")) or not _at_region(Codec.read_vector3(route.contact.hero_position), EXIT_RECT):
+			return "Actual exit contact must occur after the third collection on floor"
+		if float(route.contact.clock_s) == float(local.scheduler.clock_s) and Codec.read_vector3(route.contact.hero_position) != expected_hero:
+			return "Current exit sample differs from its paired Hero"
+	elif not route.contact.is_empty():
+		return "Unused exit cannot manufacture a contact receipt"
+	return ""
+
+
+func _snapshot_envelope_error(snapshot: Dictionary) -> String:
+	var error: String = super._snapshot_envelope_error(snapshot)
+	if not error.is_empty():
+		return error
+	if not Codec.keys_error(snapshot, ["api_revision", "schema_version", "level_id", "scene_path", "local_snapshot_version", "progress", "local"]).is_empty():
+		return "Closed Pillars snapshot envelope required"
+	return _route_progress_error(snapshot)
+
+
+func _route_progress_error(snapshot: Dictionary) -> String:
+	var local: Dictionary = snapshot.local
+	var progress: Dictionary = snapshot.progress
+	if not local.get("route") is Dictionary or not local.route.get("collections") is Array or not local.route.get("exit_state") is String or not Codec.keys_error(progress, ["completed", "completion_id", "contact_exit_id", "checkpoint_id", "checkpoint_kind", "checkpoint_ids"]).is_empty():
+		return "Complete Pillars progress and collection unit required"
+	var count: int = local.route.collections.size()
+	if count > MARKERS.size() or progress.completed != (count == MARKERS.size()) or progress.completion_id != (COMPLETION_ID if count == MARKERS.size() else ""):
+		return "Completion is exactly three distinct collections, independent of source deaths"
+	var expected_ids: Array[String] = []
+	for index: int in range(mini(count, CHECKPOINT_IDS.size())):
+		expected_ids.append(CHECKPOINT_IDS[index])
+	if not Codec.keys_error(progress.checkpoint_ids, expected_ids).is_empty():
+		return "Only the first two distinct collections create checkpoints"
+	for checkpoint_id: String in expected_ids:
+		if progress.checkpoint_ids[checkpoint_id] != "encounter":
+			return "Pillars collected checkpoints are encounter boundaries"
+	var latest: String = expected_ids[-1] if not expected_ids.is_empty() else ""
+	if progress.checkpoint_id != latest or progress.checkpoint_kind != ("encounter" if not latest.is_empty() else ""):
+		return "Current checkpoint must be the latest first/second collection"
+	if progress.contact_exit_id != (EXIT_ID if local.route.exit_state == "spent" else ""):
+		return "Contact-exit progress must match the real spent return seal"
+	return ""
+
+
+func _restore_local_state(local: Dictionary) -> void:
+	# Whole unit prevalidated. No yields, admission, hit, resource refresh or
+	# progression notifications while physical sources precede Scheduler.
+	for source_id: String in SOURCE_IDS:
+		var applied: bool = sources[source_id].apply_validated_state(local.sources[source_id])
+		assert(applied, "Prevalidated Pillars physical source commit failed: " + source_id)
+	var scheduler_applied: bool = threat_scheduler.restore_state(local.scheduler, scheduler_bindings())
+	assert(scheduler_applied, "Prevalidated Pillars Scheduler commit failed")
+	super._restore_local_state(local.scenery)
+	_collections.clear()
+	for record: Dictionary in local.route.collections:
+		_collections.append(record.duplicate(true))
+	_exit_state = local.route.exit_state
+	_contact = local.route.contact.duplicate(true)
+	_exit_dispatch_generation += 1
+	_exit_dispatch_queued = false
+	_active = true
+	for source_id: String in SOURCE_IDS:
+		var source: CinderAct3SunboundStalker = sources[source_id]
+		source.set_sun_visual(sun_state)
+		var refreshed: bool = source.refresh_presentation()
+		assert(refreshed, "Prevalidated Pillars source presentation commit failed: " + source_id)
+		source.set_physics_process(not source.dead)
+	_update_presentation(true)
+
+
+func _restore_candidate_presentation_error(camera: Camera3D, hud: GameHUD) -> String:
+	return candidate_presentation_error(camera, hud)

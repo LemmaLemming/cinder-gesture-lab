@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "status": "INERT_PREPARED_NOT_EXECUTED",
+  "prepared_at_utc": "2026-10-14T09:19:41.830686+00:00",
+  "runner": {
+    "path": ".cinder/a3-o1-registration-native/run.py",
+    "sha256": "f32d561f62c3b6b48383679b5713dcbfab8f30f8caa8cfe2fb7575f498436892",
+    "bytes": 27994
+  },
+  "reused_runner": {
+    "path": ".cinder/a1-o1-registration-native/run.py",
+    "sha256": "15765cf2574b0d34f049c07e68ed2fe6f0d0703077c3d6ec6e3bc3684f182cf4"
+  },
+  "promoted_template": {
+    "path": ".cinder/level-testing/optional-registration-prep/act3_o1_registration_short_reuse.gd.txt",
+    "sha256": "96cc384cdaa0bbc0e2c1186b06ab788816cf4414cb317f46e9cb824f785a86f3",
+    "normalization": "Only replace selected 40-lowercase-hex ACCEPTED_CONTENT with the exact original placeholder; all other promoted source bytes must match Root-corrected template."
+  },
+  "exact_decoder_source": {
+    "path": "scripts/campaign/exact_json.gd",
+    "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+    "scope": "Bounded primitive-report Exact envelope/tags only. Reject float64/native/state values; preserve raw bytes. No ordinary JSON state assumption."
+  },
+  "commands": [
+    "python3 .cinder/a3-o1-registration-native/run.py selected-import",
+    "python3 .cinder/a3-o1-registration-native/run.py registration-parse",
+    "python3 .cinder/a3-o1-registration-native/run.py registration-native"
+  ],
+  "qualification": "All three phases use the canonical dev queue,180-second deadline only after queue acquisition,dev direct-child closure/error detection. No separate process-group/PID ownership claim. Unique output directories preserve originals. Selected-import is whole-project editor import; source proof is only explicit roots/literal resource refs/named UID subset,not global import/UID closure.",
+  "report_join": "Unique child-only output/native-report.exact.json environment path; raw exact bytes+SHA/printed path/printed SHA/row counts/first failure/complete flag/literal footer/named source observations must join clean dev validation returncode0 and stable selected source closure.",
+  "selection_preconditions": [
+    "Root exact owner content+helper/O1/source promotion and accepted canonical registry first; missing named files refuse before engine.",
+    "New selected script UID may be absent before import; only selected-import may add that named UID. Other phases require it present.",
+    "Root must independently review and map actual original owner completion/replay evidence outside this fixture before acceptance. Runner never requests completed-session wire or route/replay rerun."
+  ],
+  "operations_not_performed": [
+    "engine",
+    "parser",
+    "import",
+    "test",
+    "Git",
+    "census",
+    "Root production edit",
+    "worker edit"
+  ],
+  "acceptance_credit": false
+}

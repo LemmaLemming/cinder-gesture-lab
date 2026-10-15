@@ -160,8 +160,8 @@ func cosmetic_policy() -> Dictionary:
 	}
 
 
-## Credits are data for a future menu, not evidence that a menu or campaign
-## art integration exists. Reference material retains its individual records.
+## The desktop campaign menu consumes these credits. The entries do not alone
+## prove campaign art readiness; reference material keeps individual records.
 static func credits() -> Array[Dictionary]:
 	return [
 		{"id": "engine", "title": "Godot Engine", "credit": "Godot Engine contributors", "role": "Engine, MIT license", "source": "https://godotengine.org/license/"},
