@@ -55,6 +55,7 @@ SUITES = {
     "effects_settings": "tests/effects_settings_smoke.gd",
     "practice_target": "tests/practice_target_smoke.gd",
     "threat_snapshot": "tests/threat_snapshot_smoke.gd",
+    "encounter_arrangement": "tests/encounter_arrangement_smoke.gd",
     "campaign_shell": "tests/campaign_shell_smoke.gd",
     "campaign_registration": "tests/campaign_registration_smoke.gd",
     "act1_l2_registration": "tests/act1_l2_registration_smoke.gd",

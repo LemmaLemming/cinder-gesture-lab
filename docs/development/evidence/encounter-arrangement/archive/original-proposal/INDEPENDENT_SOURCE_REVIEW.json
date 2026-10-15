@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/runtime_cost_reduction/runtime_guard_boundary_review",
+  "scope": "One bounded actual-source read-only contract/type/assertion review. No parser/engine/test execution or edits.",
+  "sources": [
+    {
+      "path": "encounter_arrangement.gd.txt",
+      "sha256": "078a1ff0535209761fdb692f5b9440e5766f56adcb0d39bb0373722f1b2daca6",
+      "bytes": 7313
+    },
+    {
+      "path": "encounter_arrangement_smoke.gd.txt",
+      "sha256": "a1815800a94d7d8f30c4916c2a45300872460bcb44e9035d8095fde07fbd7759",
+      "bytes": 11931
+    }
+  ],
+  "findings": [],
+  "observations": [
+    "Definitions and descriptors validate string key types before Codec.keys_error; validated flat shapes exclude cyclic/foreign values before defensive copies.",
+    "Recipe IDs are globally unique; every current profile points to a retained recipe of the same profile.",
+    "Restore validates saved retained recipe/profile/order independently of current mapping or preference.",
+    "Tampered/removed historical recipe assertions target refusal while their updated definitions remain valid.",
+    "Complete is set only after the normal assertion path, while every assertion row and first false row are retained."
+  ],
+  "verdict": "No concrete contract, type or assertion defect found by source inspection; no parser/native correctness claim."
+}

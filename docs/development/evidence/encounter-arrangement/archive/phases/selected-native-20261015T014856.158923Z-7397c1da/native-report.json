@@ -1,0 +1,204 @@
+{
+	"checks": 37,
+	"complete": true,
+	"failures": 0,
+	"first_failure": {},
+	"rows": [
+		{
+			"check": 1,
+			"label": "fresh Challenge resolves only its authored complete permutation",
+			"ok": true
+		},
+		{
+			"check": 2,
+			"label": "the three fresh profiles select authored existing-unit orders without altering units",
+			"ok": true
+		},
+		{
+			"check": 3,
+			"label": "constructor and fresh selections never mutate caller definitions",
+			"ok": true
+		},
+		{
+			"check": 4,
+			"label": "new mapping/preference affects fresh selection while restore preserves the exact historical recipe/order",
+			"ok": true
+		},
+		{
+			"check": 5,
+			"label": "restoration leaves caller saved descriptor byte-exact",
+			"ok": true
+		},
+		{
+			"check": 6,
+			"label": "same historical recipe ID with tampered complete order rejects its original descriptor",
+			"ok": true
+		},
+		{
+			"check": 7,
+			"label": "missing retained historical recipe refuses instead of substituting the current recipe",
+			"ok": true
+		},
+		{
+			"check": 8,
+			"label": "ordinary JSON integral schema roundtrip preserves owned recipe/profile/order",
+			"ok": true
+		},
+		{
+			"check": 9,
+			"label": "restore preserves the caller's accepted integral schema representation without coercion",
+			"ok": true
+		},
+		{
+			"check": 10,
+			"label": "constructor input, definition output, selection output and restored output mutations cannot alias retained authority or caller saves",
+			"ok": true
+		},
+		{
+			"check": 11,
+			"label": "invalid definition refuses fresh selection: duplicate existing unit definitions",
+			"ok": true
+		},
+		{
+			"check": 12,
+			"label": "invalid definition refuses fresh selection: duplicate permutation unit",
+			"ok": true
+		},
+		{
+			"check": 13,
+			"label": "invalid definition refuses fresh selection: foreign permutation unit",
+			"ok": true
+		},
+		{
+			"check": 14,
+			"label": "invalid definition refuses fresh selection: missing permutation unit",
+			"ok": true
+		},
+		{
+			"check": 15,
+			"label": "invalid definition refuses fresh selection: duplicate immutable recipe ID",
+			"ok": true
+		},
+		{
+			"check": 16,
+			"label": "invalid definition refuses fresh selection: unversioned recipe identity",
+			"ok": true
+		},
+		{
+			"check": 17,
+			"label": "invalid definition refuses fresh selection: unknown current recipe",
+			"ok": true
+		},
+		{
+			"check": 18,
+			"label": "invalid definition refuses fresh selection: cross-profile current mapping",
+			"ok": true
+		},
+		{
+			"check": 19,
+			"label": "invalid definition refuses fresh selection: missing profile mapping",
+			"ok": true
+		},
+		{
+			"check": 20,
+			"label": "invalid definition refuses fresh selection: unsupported definition authority field",
+			"ok": true
+		},
+		{
+			"check": 21,
+			"label": "invalid definition refuses fresh selection: non-JSON packed order type",
+			"ok": true
+		},
+		{
+			"check": 22,
+			"label": "invalid saved descriptor refuses without mutation: unknown saved recipe",
+			"ok": true
+		},
+		{
+			"check": 23,
+			"label": "invalid saved descriptor refuses without mutation: saved profile differs from retained recipe",
+			"ok": true
+		},
+		{
+			"check": 24,
+			"label": "invalid saved descriptor refuses without mutation: unknown saved profile",
+			"ok": true
+		},
+		{
+			"check": 25,
+			"label": "invalid saved descriptor refuses without mutation: duplicate saved unit",
+			"ok": true
+		},
+		{
+			"check": 26,
+			"label": "invalid saved descriptor refuses without mutation: foreign saved unit",
+			"ok": true
+		},
+		{
+			"check": 27,
+			"label": "invalid saved descriptor refuses without mutation: missing saved unit",
+			"ok": true
+		},
+		{
+			"check": 28,
+			"label": "invalid saved descriptor refuses without mutation: other complete permutation under old recipe ID",
+			"ok": true
+		},
+		{
+			"check": 29,
+			"label": "invalid saved descriptor refuses without mutation: malformed saved order type",
+			"ok": true
+		},
+		{
+			"check": 30,
+			"label": "invalid saved descriptor refuses without mutation: missing descriptor field",
+			"ok": true
+		},
+		{
+			"check": 31,
+			"label": "invalid saved descriptor refuses without mutation: unsupported descriptor authority field",
+			"ok": true
+		},
+		{
+			"check": 32,
+			"label": "invalid saved descriptor refuses without mutation: malformed or unsupported saved schema true",
+			"ok": true
+		},
+		{
+			"check": 33,
+			"label": "invalid saved descriptor refuses without mutation: malformed or unsupported saved schema 1",
+			"ok": true
+		},
+		{
+			"check": 34,
+			"label": "invalid saved descriptor refuses without mutation: malformed or unsupported saved schema 1.5",
+			"ok": true
+		},
+		{
+			"check": 35,
+			"label": "invalid saved descriptor refuses without mutation: malformed or unsupported saved schema 2",
+			"ok": true
+		},
+		{
+			"check": 36,
+			"label": "unknown fresh profile never falls back to another arrangement",
+			"ok": true
+		},
+		{
+			"check": 37,
+			"label": "failed/successful validation and restore never mutate supplied definitions or saved descriptor",
+			"ok": true
+		}
+	],
+	"schema_version": 1,
+	"scope": "pure owner-authored versioned existing-unit permutation metadata, retained historical restore and defensive copies only; no native runtime consumer, player-decision validation or accepted Challenge coverage",
+	"source_observations_after": {
+		"res://scripts/combat/encounter_arrangement.gd": "583f95c27e39b1009d5c0bd805bda2512b789aea22764c969f1388a9f1cec4de",
+		"res://tests/encounter_arrangement_smoke.gd": "0bded22fe00bd1026f87ab1a7a5289ced86d9ec2c1aab149d6393f8fbfab5b01"
+	},
+	"source_observations_before": {
+		"res://scripts/combat/encounter_arrangement.gd": "583f95c27e39b1009d5c0bd805bda2512b789aea22764c969f1388a9f1cec4de",
+		"res://tests/encounter_arrangement_smoke.gd": "0bded22fe00bd1026f87ab1a7a5289ced86d9ec2c1aab149d6393f8fbfab5b01"
+	},
+	"success": true
+}
