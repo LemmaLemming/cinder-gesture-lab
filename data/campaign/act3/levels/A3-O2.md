@@ -1,3 +1,9 @@
+## O2 final mechanics passed; Optional entry fixture corrected — 15 October 2026
+
+At cea2efe9, final-mechanics-04 passes 1053 checks/0 failures,897 native ticks, exit0/diagnostics0; raw SHA256 53b3e57eab320c74c04be4dc9c3587c4d353713c8c15f2ff1b7e45841de85d15. Real four ordinary Root kills earn three courts and CP1/CP2; final Stalker remains alive. Whole typed pairs/quiet restore/cleanup pass. No final transport or portrait credit yet.
+
+Final-held-transport-01 closes 33/1, no SCRIPT errors, raw 6c4b447a67bd5be33023383c708cb07d08bc95e0e16e35cc38de140b9e72bd90. First approach was attempted at Hero(0,.093333,8), before the native fresh spawn settled; BodySweep correctly refused standing-height envelope. Optional fixture now observes up to eight unchanged native ticks until is_on_floor, matching the passing focused entry. No pose, gravity, sweep tolerance, runtime or action change. Rerun only affected Optional transport; original failed result retained.
+
 ## O2 passive recognition fixture correction — 15 October 2026
 
 Final-mechanics-03 at d733a76c closed 256/1,192 ticks, no SCRIPT errors; raw SHA256 0bb7a04d6b974b4cfa63acfa9da83f222a790cbe56a2bf6f058fcaed59f566b9. Diagnostic-only final-passive-timing-diagnostic-01 also closed 256/1,192 ticks, raw e2e2c0798511e36b1ab1c7ec27eb103be8647cec253e4668cdf3588633bbc270. Both originals remain in .cinder/o2-runs/. Its exact failure is the first recognition_and_ready:start at 3.2s while actual Scheduler/Hero clocks are 3.25s, unchanged Hero origin (.267295,-.004844,4.128699). Held-pair post-presentation/Pause observation consumed three native ticks inside this passive interval; no executed action deadline had expired.

@@ -236,6 +236,12 @@ func _o2_warning(id: String) -> Dictionary:
 	var source: CinderAct3RootLatcher = (_o2_level.get("sources") as Dictionary)[id] as CinderAct3RootLatcher
 	# Let the newly enabled court issue its actual warning before any approach.
 	if not await _o2_tick(): return {}
+	# Fresh Shell entry starts above the floor; let ordinary gravity settle it
+	# exactly as the focused Main fixture does before asking for a body sweep.
+	for _settle: int in range(8):
+		if _o2_hero.is_on_floor(): break
+		if not await _o2_tick(): return {}
+	if not _expect(_o2_hero.is_on_floor(), "native Optional Hero settles on continuous floor before approach"): return {}
 	var approaches: int = 0
 	for _index: int in range(480):
 		if finished or not _valid_shell(): return {}
