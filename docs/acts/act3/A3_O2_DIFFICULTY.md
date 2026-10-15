@@ -1,0 +1,20 @@
+# A3-O2 difficulty amendment — approved, not yet implemented
+
+Original [O2 acceptance](../../development/ACT3_O2_ACCEPTANCE.md) and the [eight-level closeout](ACT3_COMPLETION.md) remain complete. Integration's separate RESPONSE `afb39042` approves the exact private proposal `1ab5a745` on Shared65. No new shared-system or other-level ownership is granted.
+
+Fresh Challenge will swap only `o2-final-east-root` X/Z `(1.2,-6)` with `o2-final-stalker` X/Z `(0,-4.5)`. Root Y remains0; Stalker Y remains0.1. The west Root, all source/court identities, four Root clear gates, optional final Stalker, low bases, floor, Sun clocks, rewards, controls, HP, roles, footprints and timings stay as accepted. The hypothesised new decision is forward fixed-knot priority with mobile rear/right pressure; actual joint admission, escape/return, reach and visual readability remain untested.
+
+The published pure arrangement helper will select an immutable source-slot map before native configuration. A saved descriptor/profile must select the same map before a fresh candidate configures any source. `SOURCE_POSITIONS` remains the canonical old-save reference. Preserve literal old inner `act3-quiet-root-circuit-2`/schema1 with six keys, outer local2/world1 and old Challenge layout; fresh inner API3/schema2 adds exactly one closed arrangement descriptor. Removing a retained recipe, changing its profile/order or mismatching native origins must refuse atomically.
+
+Before promotion, preserve authentic old Challenge entrance and first-Root held whole native units, unchanged checkpoint/Story, raw format2 primary/backup/generation, source/UID hashes and all five original origins. Never relabel Standard or prototype captures. The only new test is `tests/acts/act3/quiet_root_circuit_arrangement_smoke.gd`; literal fixtures belong in `tests/acts/act3/fixtures/a3_o2_arrangement_legacy/`. Producers and consumers use the canonical Godot queue. Component final-court evidence is explicitly separate from earned parent history; current whole Save/Continue/Retry checks use genuine entry/held parent packets.
+
+Changed checks will cover closed recipes, old-save exact recapture, new whole Save/disk Continue under another preference, Retry/cleanup, actual ordinary response and meaningful short-reach/slow-dash/weak-primary samples, plus one brief changed portrait. No new full route, all-kill, all-kit or second Replay gate. No new equipment/ability/reward allocation; existing canonical neutral and selected extreme kits keep their IDs. Live design catalogue queries during the exact proposal found36 existing items/no claims, ability revision0/20 available/0 uses. Required catalogue, ability and numerical validators will be recorded before related completion; no unused catalogue content is implemented by this amendment.
+
+## Current custody
+
+Runtime and encounter JSON are unchanged at the beginning of the amendment. Native jobs: none yet. A source-only candidate and producer are being prepared separately; producer closure is required before reader promotion. Original source hashes:
+
+- `scripts/acts/act3/quiet_root_circuit.gd`: `ea7a70bed821a174c023b875ef4cfbc22a42119924489790815feb41c90823cb`.
+- `data/campaign/act3/a3_o2_encounters.json`: `07eb0dd3b7eb0d65ee49734a09e5c8fd9b245a0bdb7a5dd01958dc8400a2ec22`.
+
+Current reviewed baseline: Shared65 publication `ec61231bdd4317bbe0a817d012f542c8d92a7e63`, actual preserving adoption `18b07006ea514ad9db20fd6a48a4baccfdd30970`. No import, test, portrait or gameplay pass is claimed by this planning record.

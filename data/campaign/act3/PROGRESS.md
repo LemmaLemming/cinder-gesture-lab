@@ -1,3 +1,11 @@
+## Separate approved O2 difficulty amendment — 15 October 2026
+
+The original eight-level Act 3 objective remains complete and accepted. Integration RESPONSE `afb39042-38e3-4123-8a32-eab9105ea283` separately approves the private proposal `1ab5a7455e7726ddd9d0bb01b2ca2b367172de5440b49db988c474b5c669ef2a`: fresh Challenge exchanges only the final east Root and Stalker's ground slots, retaining native heights and all existing mechanics. New player decision: prioritise a forward fixed knot while retaining a landing/return pocket against mobile rear/right pressure. This is approved work, not an implemented or playtested result.
+
+Actual Shared65 publication `ec61231bdd4317bbe0a817d012f542c8d92a7e63` was adopted at the closed boundary through `18b07006ea514ad9db20fd6a48a4baccfdd30970`, receipt `.cinder/act3-shared65-adoption-after.json` SHA `607c9864a3e630af3ca26cdab2dc12df0cde3a23e843061337ae302c6f88b8f2`, ACK `05640740-09bd-470f-b824-71f2d6b9f353`. All 608 incoming Git/index rows, 18,754 prior owned rows and 204 named physical pins were checked; no Act 3 incoming content or shared native kernel changed. Original O3 acceptance, closeout, source pins and failed results retain their earlier scopes.
+
+Next: capture genuine old Challenge entrance and first-Root held whole units/raw Store files before promoting any reader change. The proposed runtime remains source-only in `/private/tmp`. Literal old API2/schema1 six-key saves, including old Challenge, must retain their layout and representation; new API3/schema2 may add only a closed arrangement. Only targeted new recipe/legacy/persistence/ordinary-response and brief changed-view checks are authorised; existing accepted route/contact/reward/registration evidence is reused. No equipment, ability or reward allocation. No source or native result is claimed yet; original production runtime and encounter data are unchanged.
+
 ## Act 3 complete — 15 October 2026
 
 All five main levels and O1, O2 and O3 are implemented, integrated and independently accepted under `focused-desktop-level-1`. Act 3 is **8/8 accepted**; the campaign registry is **24/24 accepted**. The [Act 3 completion record](../../../docs/acts/act3/ACT3_COMPLETION.md) lists all eight levels and their retained evidence.
