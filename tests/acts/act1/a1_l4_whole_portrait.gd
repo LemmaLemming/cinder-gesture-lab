@@ -65,7 +65,7 @@ func _run() -> void:
 		await _finish(); return
 	print("A1-L4 WHOLE PORTRAIT SETUP: later public injuries and Hero placements are labelled TEST; native parent boundaries/contact/birth only; representative_only=", representative_only, "; no earned-route/full-playthrough/Save/fidelity claim")
 	if not _open(): await _finish(); return
-	if not _require(CourtCodec.API_REVISION == "act1-court-aggregate-2" and CourtCodec.SCHEMA_VERSION == 2 and CourtCodec.WORLD_REVISION == 2 and level.get("king_intro") == {"stage": "unborn", "record": {}, "outcome": {}}, "new court source exposes the actual untouched King introduction under aggregate2/world2"):
+	if not _require(CourtCodec.API_REVISION == "act1-court-aggregate-3" and CourtCodec.SCHEMA_VERSION == 3 and CourtCodec.LEGACY_SCHEMA_VERSION == 2 and CourtCodec.WORLD_REVISION == 2 and level.get("king_intro") == {"stage": "unborn", "record": {}, "outcome": {}}, "current court retains the untouched King introduction and legacy2 reader under aggregate3/world2"):
 		await _finish(); return
 	art = level.get_node_or_null("WholeCourtArt") as Node3D
 	if not _require(is_instance_valid(art) and art.get_script().resource_path == ArtScriptPath and String(art.call("binding_error")).is_empty() and art.call("presentation_state") == {"stage": "curtain", "helpers_open": false, "exterior_state": "closed"}, "actual whole leaf retains its own native resources and default scenic state"):

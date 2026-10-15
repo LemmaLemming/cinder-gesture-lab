@@ -1,0 +1,60 @@
+{
+  "kind": "bounded-read-only-a1-l4-difficulty-review",
+  "observed_at": "2026-10-15T05:23:12.380899+00:00",
+  "primary_head": "5e76a6f3405abe438ed77131b606b919993e0842",
+  "files_observed_at_review_close": {
+    "scripts/acts/act1/selenite_court.gd": {
+      "sha256": "271aea1dd8aa9d8eeeef52e129adc1e9d60c0d6d2b616f1bf9d7637e05b17110",
+      "bytes": 77553
+    },
+    "scripts/acts/act1/selenite_court_layout.gd": {
+      "sha256": "c39fe4256c1ca739d797fb150dd80c04d7207e588a6f15c1da708c1fbd6c79c6",
+      "bytes": 9366
+    },
+    "scripts/acts/act1/selenite_court_codec.gd": {
+      "sha256": "4f11b13a7bf5f148ec675347f3446c4721a680c0051e2b070e0214cf8a8287e4",
+      "bytes": 40940
+    },
+    "tests/acts/act1/a1_l4_difficulty_arrangement.gd": {
+      "sha256": "aecd315e124e20b6e8be26bab735b2d84e3c8f6e209a6641333c1dc19f194b83",
+      "bytes": 20092
+    },
+    "tests/acts/act1/fixtures/a1_l4_difficulty_legacy_packets.json": {
+      "sha256": "c16eca025e5b5c0ba5584a39965d8d0842804302f3fe103b65400290c52ec1fb",
+      "bytes": 104403
+    }
+  },
+  "original_report": {
+    "path": "docs/acts/act1/evidence/L4-final-focused/objects/sha256/cd/cdb00092764599060d63997eba15101dbec2a884f9b3a6806897777905f7cd05.blob",
+    "bytes": 718166,
+    "sha256_actual": "cdb00092764599060d63997eba15101dbec2a884f9b3a6806897777905f7cd05",
+    "sha256_join": true
+  },
+  "opaque_legacy_receipt_joins": [
+    {
+      "receipt_index": 0,
+      "stage": "pristine entrance",
+      "sha256_actual": "573ffbdbdee0bc540caf24958330b90c6558eb0c20082ec84b4303eb8f1e0420",
+      "sha256_join": true,
+      "original_report_string_equal": true
+    },
+    {
+      "receipt_index": 2,
+      "stage": "actual entrance warning",
+      "sha256_actual": "564e979e7a31646752c6724def533c34c3f43ad4a09f45564f45e35e79751212",
+      "sha256_join": true,
+      "original_report_string_equal": true
+    },
+    {
+      "receipt_index": 5,
+      "stage": "terminal opt-in protected actual earlier phase checkpoint",
+      "sha256_actual": "8d63d7524a990c8b285ee781bb4aa775786e4c49748f270441d1e51be9b3c7d5",
+      "sha256_join": true,
+      "original_report_string_equal": true
+    }
+  ],
+  "engine_executed": false,
+  "production_or_worker_edits": false,
+  "review_sha256": "73853b9fa7a4f7196a5af1e5c33486f9025dda13e6ea6fe4b2e8769485ffedd1",
+  "qualification": "Bounded current source reasoning only; no runtime or full dependency/UID/bank coverage."
+}

@@ -15,7 +15,7 @@ const L4_GUARD: String = "res://scripts/acts/act1/mushroom_selenite.gd"
 const L4_KING: String = "res://scripts/acts/act1/selenite_king.gd"
 const L4_PREFIX: Array[String] = ["A1-L1", "A1-L2", "A1-L3"]
 const L4_SOURCES: Array[String] = ["court-curtain-guard", "court-formation-west", "court-formation-east", "court-approach-west", "court-approach-east", "court-king", "court-helper-west", "court-helper-east"]
-const L4_KEYS: Array[String] = ["api_revision", "schema_version", "world_revision", "room", "formation", "awaiting_room", "roundel_demonstrated", "helpers_once", "helper_stage", "king_intro", "entry_records", "entry_outcomes", "actors", "scheduler", "roundel", "framing"]
+const L4_KEYS: Array[String] = ["api_revision", "schema_version", "world_revision", "room", "formation", "awaiting_room", "roundel_demonstrated", "helpers_once", "helper_stage", "king_intro", "entry_records", "entry_outcomes", "actors", "scheduler", "roundel", "framing", "approach_arrangement"]
 var _l4_option_error: String = ""
 var _l4_restore_epoch: int = 0
 
@@ -157,7 +157,7 @@ func _initial_local(snapshot: Dictionary) -> bool:
 	if snapshot.is_empty() or snapshot.get("local_snapshot_version") != 2: return false
 	var local: Dictionary = snapshot.get("local", {})
 	var progress: Dictionary = snapshot.get("progress", {})
-	if not Codec.keys_error(local, L4_KEYS).is_empty() or local.api_revision != "act1-court-aggregate-2" or local.schema_version != 2 or local.world_revision != 2 or local.room != 0 or local.formation != "parallel" or local.awaiting_room != -1 or local.roundel_demonstrated or local.helpers_once or local.helper_stage != "unborn" or local.king_intro != {"stage": "unborn", "record": {}, "outcome": {}} or not local.entry_records.is_empty() or not local.entry_outcomes.is_empty() or local.scheduler.clock_s != 0.0 or not local.scheduler.reservations.is_empty() or not local.framing.is_empty() or not Codec.keys_error(local.actors, L4_SOURCES).is_empty() or progress.get("completed") != false or not progress.get("checkpoint_ids", {"invalid": true}).is_empty() or progress.get("contact_exit_id") != "": return false
+	if not Codec.keys_error(local, L4_KEYS).is_empty() or local.api_revision != "act1-court-aggregate-3" or local.schema_version != 3 or not local.approach_arrangement is Dictionary or not local.approach_arrangement.is_empty() or local.world_revision != 2 or local.room != 0 or local.formation != "parallel" or local.awaiting_room != -1 or local.roundel_demonstrated or local.helpers_once or local.helper_stage != "unborn" or local.king_intro != {"stage": "unborn", "record": {}, "outcome": {}} or not local.entry_records.is_empty() or not local.entry_outcomes.is_empty() or local.scheduler.clock_s != 0.0 or not local.scheduler.reservations.is_empty() or not local.framing.is_empty() or not Codec.keys_error(local.actors, L4_SOURCES).is_empty() or progress.get("completed") != false or not progress.get("checkpoint_ids", {"invalid": true}).is_empty() or progress.get("contact_exit_id") != "": return false
 	for id: String in L4_SOURCES:
 		var actor: Dictionary = local.actors[id]
 		if actor.dead or actor.hp != actor.configuration.raw_role.max_hp or actor.cycle != 0 or actor.reservation_id != "" or actor.dormant != (id != "court-curtain-guard"): return false
