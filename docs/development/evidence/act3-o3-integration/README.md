@@ -1,0 +1,7 @@
+# A3-O3 independent integration evidence
+
+All six original Root phases are closed. Native registration passes137/0 with137 actual rows, five original opaque Exact receipts and no raw diagnostics. Import supplies the one new test UID; the first parser refusal is a prequeue wrapper-source drift, retained without an engine launch. The reviewed wrapper is resealed and its later parser/native succeed. No owner long scenario is rerun.
+
+Original phase metadata/logs/reports are copied byte-for-byte. Source blobs are deduplicated once under `source-blobs/`; `original_to_portable` in index.json maps every original artifact path to its physical portable location. Original phase indices and retained-source references remain unchanged historical metadata, so resolve their original phase-relative blob names through that mapping. This is a bounded named-source archive, not a self-contained project or complete UID/resource census.
+
+The owner's22-run/184-file pack remains at assets/acts/act3/evidence/A3-O3-native. Original Shared62 results and Shared64 preserving adoption remain distinct. The acceptance evidence map is a pre-native draft with an explicit pending field; the actual closed Root results here supersede only that pending field. Original failures/diagnostics retain their original scope. Initial warning pixels alone are inspected; no full playthrough, CP1/CP2 pixel review, all-kit, FPS or mobile credit.
