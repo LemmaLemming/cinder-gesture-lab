@@ -60,6 +60,7 @@ SUITES = {
     "campaign_registration": "tests/campaign_registration_smoke.gd",
     "act1_l2_registration": "tests/act1_l2_registration_smoke.gd",
     "act1_l4_registration": "tests/act1_l4_registration_smoke.gd",
+    "act1_l4_difficulty": "tests/acts/act1/a1_l4_difficulty_arrangement.gd",
     "act1_l5_registration": "tests/act1_l5_registration_smoke.gd",
     "act1_o1_registration": "tests/act1_o1_registration_smoke.gd",
     "act1_o2_registration": "tests/act1_o2_registration_smoke.gd",

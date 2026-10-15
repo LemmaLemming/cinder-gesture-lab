@@ -75,6 +75,31 @@ const ROUND_EL_RADIUS: float = 1.2
 const ROUND_EL_QUIET_CYCLES: int = 1
 const ROUND_EL_GUARD_SOURCE_IDS: Array[String] = ["court-approach-west", "court-approach-east"]
 
+# The recipe owns actual admission eligibility as well as order. Its version
+# must change if either changes. The first quiet circle and other teaching
+# beats retain their reference behavior. Assisted retains that reference order
+# with the existing one-threat budget and resolved role assistance.
+const Arrangement = preload("res://scripts/combat/encounter_arrangement.gd")
+const APPROACH_CHALLENGE_RECIPE: String = "a1-l4-approach-circle-commit@v1"
+const APPROACH_ARRANGEMENTS: Dictionary = {
+	"schema_version": 1,
+	"unit_ids": ["court-approach-west", "court-approach-east", "court-roundel"],
+	"recipes": [
+		{"recipe_id": "a1-l4-approach-assisted-reference@v1", "profile": "assisted", "order": ["court-approach-west", "court-approach-east", "court-roundel"]},
+		{"recipe_id": "a1-l4-approach-reference@v1", "profile": "standard", "order": ["court-approach-west", "court-approach-east", "court-roundel"]},
+		{"recipe_id": APPROACH_CHALLENGE_RECIPE, "profile": "challenge", "order": ["court-roundel", "court-approach-west", "court-approach-east"]}
+	],
+	"current": {"assisted": "a1-l4-approach-assisted-reference@v1", "standard": "a1-l4-approach-reference@v1", "challenge": APPROACH_CHALLENGE_RECIPE}
+}
+
+
+static func fresh_approach_arrangement(profile: String) -> Dictionary:
+	return Arrangement.new(APPROACH_ARRANGEMENTS).select_fresh(profile)
+
+
+static func approach_arrangement_error(saved: Variant) -> String:
+	return Arrangement.new(APPROACH_ARRANGEMENTS).saved_error(saved)
+
 const BOSS_CONTACT_POSITION: Vector3 = Vector3(0, 0, -26)
 const EXIT_POSITION: Vector3 = Vector3(0, 0, -35)
 const CONTACT_BOX_SIZE: Vector3 = Vector3(2.4, 1.6, 1.2)

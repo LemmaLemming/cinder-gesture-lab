@@ -1,5 +1,5 @@
 extends CinderLevel
-## Whole L4 authored gameplay. Unregistered; whole persistence checks remain due.
+## Whole accepted L4 with retained authored approach policies.
 ## One real Hero and shared Scheduler. No private input/camera/HUD/save system.
 
 const Layout = preload("res://scripts/acts/act1/selenite_court_layout.gd")
@@ -61,6 +61,8 @@ var _contact_pins: Dictionary = {}
 var _whole_art: Node3D
 var _art_stage_key: String = ""
 var _exterior_open: bool = false
+var _uses_arrangement_receipt: bool = true
+var _approach_arrangement: Dictionary = {}
 
 
 func _ready() -> void:
@@ -130,6 +132,9 @@ func _begin_room(next: int) -> void:
 	if room == 3: king_intro = {"stage": "settling", "record": {}, "outcome": {}}
 	var profile: String = String(shared_shell.call("get_difficulty_preference")) if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference") else "standard"
 	if not scheduler.begin_encounter(profile, _encounter_id(), WORLD_REVISION): _construction_error = scheduler.last_error; return
+	if room == 2 and _roundel_demonstrated and _uses_arrangement_receipt:
+		_approach_arrangement = Layout.fresh_approach_arrangement(String(scheduler.encounter_profile().get("id", "")))
+		if _approach_arrangement.is_empty(): _construction_error = "Fresh combined approach recipe unavailable"; return
 	_frames.clear(); _forecast.clear()
 	for id: String in ([] if room == 2 and not _roundel_demonstrated else Layout.ROOM_SOURCE_IDS[room]):
 		_fresh_entitlement = id
@@ -196,10 +201,39 @@ func _physics_process(_delta: float) -> void:
 		_refresh_objective()
 		return
 	if not hero.get_threat_response_state().stable: return
-	# Known helper thrusts get admission priority before the continuing King.
-	for id: String in _current_ids(): _admit_actor(id)
-	if room == 2: _admit_roundel()
+	if room == 2: _admit_approach()
+	else:
+		# Known helper thrusts get priority before the continuing King.
+		for id: String in _current_ids(): _admit_actor(id)
 	_refresh_objective()
+
+
+func _admit_approach() -> void:
+	if not _uses_arrangement_receipt:
+		# Exact original schema2 dispatch, including its same-tick fallback.
+		for id: String in _current_ids(): _admit_actor(id)
+		_admit_roundel()
+		return
+	var error: String = Layout.approach_arrangement_error(_approach_arrangement)
+	if not error.is_empty(): _construction_error = error; return
+	var anchored: bool = _approach_arrangement.recipe_id == Layout.APPROACH_CHALLENGE_RECIPE
+	for id: String in _approach_arrangement.order:
+		if id == Layout.ROUND_EL_ID: _admit_roundel()
+		elif not anchored or _approach_roundel_committed(): _admit_actor(id)
+
+
+func _approach_roundel_committed() -> bool:
+	# Eligibility only: existing admission still proves its native full union,
+	# ordinary attack/reachable landing, framing, budget and timing. No lease,
+	# clock, actor phase or damage is created/retimed by this policy.
+	var state: Dictionary = roundel.state()
+	if state.get("status") != "running" or String(state.get("reservation_id", "")).is_empty(): return false
+	var control: Dictionary = scheduler.source_control_state(roundel)
+	if control.get("outside_transaction") != true or control.get("source_instance_id") != roundel.get_instance_id() or control.get("encounter_id") != "court-approach" or control.get("clock_s") != scheduler.get_clock(): return false
+	for record: Dictionary in control.get("reservations", []):
+		if record.get("id") == state.reservation_id and record.get("source_instance_id") == roundel.get_instance_id():
+			return record.get("profile_id") == _approach_arrangement.profile and scheduler.get_clock() >= float(record.lock_from_s) and scheduler.get_clock() <= float(record.recovery_until_s)
+	return false
 
 
 func _parallel_demonstrated() -> bool:
@@ -244,6 +278,7 @@ func _admit_actor(id: String) -> void:
 	if preview.get("accepted") != true: return
 	var proof: Dictionary = preview.proof
 	if proof.get("uses_blast") != false or proof.get("uses_invulnerability") != false or not Codec.is_number(proof.get("primary_time_s")) or not Codec.is_number(proof.get("response_complete_s")) or float(proof.primary_time_s) < float(preview.candidate.active_until_s) or float(proof.response_complete_s) >= float(preview.candidate.recovery_until_s): return
+	if room == 2 and _uses_arrangement_receipt and _approach_arrangement.get("recipe_id") == Layout.APPROACH_CHALLENGE_RECIPE and not _retained_responses_avoid(preview.candidate): return
 	_forecast = _actor_points(id, preview.candidate.opening_position) + _geometry_points(preview.candidate.geometry) + _response_points(proof.landing, proof.attack_position)
 	_forecast_frames = {"source": actor.global_transform, "hero": hero.global_transform, "id": id}
 	if not _framing_ready(): return
@@ -268,10 +303,27 @@ func _admit_actor(id: String) -> void:
 	if not presentation_error().is_empty(): actor.call("cancel", "court_current_view_lost"); _frames.erase(id)
 
 
+func _retained_responses_avoid(candidate: Dictionary) -> bool:
+	# The native preview proves the new response against current dangers.
+	# Also preserve every existing original response against this later danger;
+	# whole Save validates those same retained witnesses without replacing them.
+	for id: String in _frames:
+		var owner: Node3D = roundel if id == Layout.ROUND_EL_ID else sources[id]
+		var control: Dictionary = scheduler.source_control_state(owner)
+		if control.get("outside_transaction") != true or control.get("clock_s") != scheduler.get_clock(): return false
+		for record: Dictionary in control.get("reservations", []):
+			if record.id != _frames[id].reservation_id: continue
+			var path: Array[Dictionary] = []
+			for segment: Dictionary in _frames[id].proof.path: path.append(segment)
+			if Geometry.timed_path_hits(candidate.geometry, path, candidate.active_from_s, candidate.active_until_s, CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN): return false
+	return true
+
+
 func _admit_roundel() -> void:
 	if hero.global_position.distance_to(Layout.ROUND_EL_POSITION) > 4.5 or not hero.get_threat_response_state().stable: return
 	var preview: Dictionary = roundel.preview_start("hero", response_context())
 	if preview.get("accepted") != true: return
+	if room == 2 and _uses_arrangement_receipt and _approach_arrangement.get("recipe_id") == Layout.APPROACH_CHALLENGE_RECIPE and not _retained_responses_avoid(preview.candidate): return
 	_forecast = _geometry_points(preview.candidate.geometry) + _response_points(preview.proof.landing, preview.proof.attack_position)
 	_forecast_frames = {"source": roundel.global_transform, "hero": hero.global_transform, "id": Layout.ROUND_EL_ID}
 	if not _framing_ready(): return
@@ -792,6 +844,10 @@ func _native_runtime_error() -> String:
 	if not _construction_error.is_empty(): return _construction_error
 	if not _quiet_commit_error.is_empty(): return _quiet_commit_error
 	if not _running or not is_instance_valid(hero) or not is_instance_valid(shared_shell) or not is_instance_valid(scheduler) or scheduler.get_parent() != self or not is_instance_valid(roundel) or roundel.get_parent() != self: return "Actual entered court native bindings required"
+	if not _approach_arrangement.is_empty():
+		if not _uses_arrangement_receipt: return "Legacy court cannot acquire a new approach receipt"
+		var arrangement_error: String = Layout.approach_arrangement_error(_approach_arrangement)
+		if not arrangement_error.is_empty(): return arrangement_error
 	var error: String = _floor_error()
 	if not error.is_empty(): return error
 	if not is_instance_valid(_whole_art) or _whole_art.get_parent() != self or get_node_or_null("WholeCourtArt") != _whole_art: return "Retain actual authored whole court art"
@@ -879,7 +935,9 @@ func _capture_local_state() -> Dictionary:
 	for record: Dictionary in paired.reservations:
 		if not _frames.has(record.source_id) or _frames[record.source_id].reservation_id != record.id: _capture_error = "Actual live lease lost its original response witness"; return {}
 		frames[record.source_id] = _frames[record.source_id].duplicate(true)
-	return {"api_revision": CourtCodec.API_REVISION, "schema_version": CourtCodec.SCHEMA_VERSION, "world_revision": WORLD_REVISION, "room": room, "formation": formation, "awaiting_room": _awaiting_room, "roundel_demonstrated": _roundel_demonstrated, "helpers_once": _helpers_once, "helper_stage": helper_stage, "king_intro": _encode_native(king_intro), "entry_records": _encode_native(_entry_records), "entry_outcomes": _encode_native(_entry_outcomes), "actors": actors, "scheduler": paired, "roundel": lane, "framing": _encode_native(frames)}
+	var saved: Dictionary = {"api_revision": CourtCodec.API_REVISION if _uses_arrangement_receipt else CourtCodec.LEGACY_API_REVISION, "schema_version": CourtCodec.SCHEMA_VERSION if _uses_arrangement_receipt else CourtCodec.LEGACY_SCHEMA_VERSION, "world_revision": WORLD_REVISION, "room": room, "formation": formation, "awaiting_room": _awaiting_room, "roundel_demonstrated": _roundel_demonstrated, "helpers_once": _helpers_once, "helper_stage": helper_stage, "king_intro": _encode_native(king_intro), "entry_records": _encode_native(_entry_records), "entry_outcomes": _encode_native(_entry_outcomes), "actors": actors, "scheduler": paired, "roundel": lane, "framing": _encode_native(frames)}
+	if _uses_arrangement_receipt: saved["approach_arrangement"] = _approach_arrangement.duplicate(true)
+	return saved
 
 
 func _local_snapshot_error(state: Dictionary) -> String:
@@ -1029,6 +1087,8 @@ func _restore_local_state(state: Dictionary) -> void:
 		if sources[id].call("restore_exchange_state", state.actors[id]) != true:
 			_fail_quiet_commit(id + ": " + String(sources[id].get("last_snapshot_error"))); return
 	if not roundel.restore_state(state.roundel, scheduler_bindings()): _fail_quiet_commit(roundel.last_snapshot_error); return
+	_uses_arrangement_receipt = state.schema_version == CourtCodec.SCHEMA_VERSION
+	_approach_arrangement = state.get("approach_arrangement", {}).duplicate(true)
 	room = state.room; formation = state.formation; _awaiting_room = state.awaiting_room
 	_roundel_demonstrated = state.roundel_demonstrated; _helpers_once = state.helpers_once; helper_stage = state.helper_stage
 	king_intro = _decode_native(state.king_intro)
