@@ -1,0 +1,11 @@
+--- sealed-original-4987408b
++++ corrected-91a5cd16
+@@ -172 +172,7 @@
+-		if record.phase == "retreat" and record.route is Dictionary and not record.route.is_empty() and record.route.elapsed_s > 0.0: partial_route = true
++		if record.get("phase", "") != "retreat": continue
++		# Serialized Consumer records retain the whole original Route1 envelope;
++		# live consumer.source_state() below deliberately exposes flat state.
++		var transport: Variant = record.get("route")
++		if not transport is Dictionary or transport.get("api_revision") != "repulsion-route-1" or not transport.get("schema_version") is int or transport.schema_version != 1 or not transport.get("route") is Dictionary: continue
++		var saved_route: Dictionary = transport.route
++		if saved_route.get("elapsed_s") is float and saved_route.elapsed_s > 0.0: partial_route = true

@@ -1,0 +1,71 @@
+{
+  "status": "SOURCE_ONLY_UNPARSED_UNEXECUTED",
+  "reported_baseline_revision": "b41d7e0a",
+  "intended_destination": "tests/acts/act1/a1_o2_terminal.gd",
+  "reuse_existing_fixture_uid": true,
+  "files": {
+    "a1_o2_terminal.gd": {
+      "sha256": "8dc148dd19f9a4fb0c02ba07e6d1075df524efb1b57183bb6bd2883a9d72e76d",
+      "bytes": 34413
+    },
+    "BASELINE.gd": {
+      "sha256": "8b962b52ccc2792f0e4997bd0d3a9e77aef95a32ef591fbe35c78493f5a228f2",
+      "bytes": 25405
+    },
+    "FROM_BASELINE.patch": {
+      "sha256": "70f8676de8936e840bc3db4a6ca685b65d6de0910219a34a6275a15e2e28f725",
+      "bytes": 25322
+    },
+    "SOURCE_PINS.json": {
+      "sha256": "3195f13b5dde047d6558d2db2dd2cdf0c0bc45f46ae3e936df14ad2970d6856d",
+      "bytes": 5233
+    },
+    "SOURCE.md": {
+      "sha256": "731ec24f82fbf6074de1f04d648b4404f8e96d8e88d08e968b75c53d77f16025",
+      "bytes": 7457
+    },
+    "build_cases.py": {
+      "sha256": "84586dde741c713c43a3b6d336ead027ca58f645131f464bd484a0445711b70b",
+      "bytes": 19734
+    }
+  },
+  "source_consistency": {
+    "byte_identical_core_functions": [
+      "_initialize",
+      "_unique_receipt",
+      "_read_exact_dictionary",
+      "_read_unit",
+      "_terminal_shape",
+      "_configure_test_registry",
+      "_assemble_hatch_session",
+      "_pause",
+      "_retry_prefinal",
+      "_place_contact_while_paused",
+      "_story_returned",
+      "_completed_state",
+      "_progress_kinds",
+      "_await_operation",
+      "_watchdog"
+    ],
+    "unique_functions": 24,
+    "whole_watchdog_ms": 120000,
+    "final_pause_wait_s": 8.0,
+    "final_story_wait_s": 16.0,
+    "final_replay_and_leave_wait_s": 12.0,
+    "registration_scope_observation_budgets": {
+      "completion": 3,
+      "replay_from_title": 3,
+      "replay_leave": 1
+    },
+    "maximum_actual_process_signals_per_scope": 2,
+    "native_state_assignments_added": []
+  },
+  "required_cases": [
+    "retry",
+    "completion",
+    "replay"
+  ],
+  "replay_requires_genuine_successful_completion_report": true,
+  "actual_case_execution_results": [],
+  "active_checkout_engine_git_mailbox_actions": []
+}

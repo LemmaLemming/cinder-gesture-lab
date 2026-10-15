@@ -1,0 +1,123 @@
+extends "res://tests/acts/act1/a1_o2_campaign.gd"
+## INERT Root-only canonical registration proposal. UNPARSED/UNEXECUTED.
+## Submitted f04a9359; native content8b3f05e3/Shared60 attribution stays separate.
+## Reuses owner C33 helpers, not its _run or original first-group simulation.
+## Actual canonical row only. Disclosed TEST main prefix from real L3 donor.
+## Root acceptance separately reuses owner42 completion and45 Replay evidence.
+## No completed-session export, group/contact/completion/Replay execution here.
+
+const ACCEPTED_CONTENT: String = "f04a935925dc54a7d7d07e6d36a8c374e5ab4c85"
+var _root_expected_disk: Dictionary = {}
+var _root_registration_complete: bool = false
+var _root_rows: Array[Dictionary] = []
+var _root_source_before: Dictionary = {}
+var _root_initial_packet: Dictionary = {}
+
+func _initialize() -> void:
+	started_ms = Time.get_ticks_msec()
+	test_root = "user://test-a1-o2-canonical-%d-%d/" % [OS.get_process_id(), Time.get_ticks_usec()]
+	report_path = OS.get_environment("CINDER_A1_O2_REGISTRATION_REPORT")
+	if report_path.is_empty():
+		report_path = ProjectSettings.globalize_path("res://.cinder/a1-o2-registration-%d-%d.json" % [OS.get_process_id(), Time.get_ticks_usec()])
+	old_fps = Engine.max_fps; old_audio = AudioServer.generate_bus_layout()
+	registry_bytes = FileAccess.get_file_as_bytes(Registry.DATA_PATH)
+	_root_source_before = _root_source_observation()
+	process_frame.connect(_watchdog); node_added.connect(_observe_added)
+	_run.call_deferred()
+
+func _run() -> void:
+	root.size = Vector2i(540, 1170)
+	if not _expect(OS.get_cmdline_user_args().is_empty(), "canonical short scope exposes no completed-session/Replay/silent-skip selector"): await _finish(); return
+	var canonical: CinderCampaignRegistry = Registry.new()
+	var row: Dictionary = canonical.entry(Bloom.LEVEL_ID)
+	if not _expect(canonical.last_error.is_empty() and canonical.ids().size() == 24 and row.get("readiness") == "accepted" and row.get("accepted_commit") == ACCEPTED_CONTENT and row.get("scene_path") == O2_PATH and row.get("api_revision") == Registry.API_REVISION and canonical.scene_error(Bloom.LEVEL_ID).is_empty(), "actual canonical exact submitted O2 content/scene/API validates"): await _finish(); return
+	if not _expect(row.get("parent_level_id") == "A1-L3" and canonical.entry("A1-L3").get("readiness") == "accepted" and not canonical.is_unlocked(Bloom.LEVEL_ID, []) and not canonical.is_unlocked(Bloom.LEVEL_ID, ["A1-L1", "A1-L2"]) and canonical.is_unlocked(Bloom.LEVEL_ID, PREFIX), "actual accepted L3 parent governs canonical optional unlock"): await _finish(); return
+	if not _expect(row.get("reward_id") == REWARD_ID and row.get("reward_policy") == "once_only_completion_stamp_no_stat_growth" and canonical.next_main("A1-L3") == "A1-L4", "existing optional stamp policy and unchanged L3 main successor remain exact"): await _finish(); return
+	if not await _seed_story(canonical): await _finish(); return
+	var reader: CinderSaveStore = Store.new(test_root + "campaign.json")
+	_root_expected_disk = reader.read_payload()
+	var model: CinderCampaignAttempts = Attempts.new(canonical)
+	if not _expect(not _root_expected_disk.is_empty() and reader.last_error.is_empty() and model.state_error(_root_expected_disk).is_empty() and _root_expected_disk.side_attempt == null and _root_expected_disk.completed_main == PREFIX and _root_expected_disk.completed_optional.is_empty() and _root_expected_disk.reward_ids.is_empty() and _root_expected_disk.story.level_id == "A1-L3" and _closed(_root_expected_disk.story.snapshot) and _same(_root_expected_disk.story.snapshot, _root_expected_disk.story.checkpoint), "complete initial closed native L3 Story/disk session is coherent; only disclosed TEST prefix arranged"): await _finish(); return
+	protected_story = _root_expected_disk.story.duplicate(true)
+	unlocked_before = _root_expected_disk.unlocked_equipment.duplicate()
+	_root_initial_packet = {"story_sha256": Exact.stringify(protected_story).sha256_text(), "session_sha256": Exact.stringify(_root_expected_disk).sha256_text()}
+	if not await _new_shell(): await _finish(); return
+	operation = "canonical public Continue protected L3"
+	game.menu.continue_story_requested.emit()
+	if not await _await_operation(func() -> bool: return _live("A1-L3") and paused and game.menu.page_name() == "resume", "canonical actual protected Story installs", 12.0): await _finish(); return
+	var protected_unit: Dictionary = game.capture_campaign_snapshot()
+	if not _expect(_closed(protected_unit) and _same(protected_unit, protected_story.snapshot) and _same(game.attempts.state().story, protected_story) and _recipient_callbacks().is_empty() and _durable(), "actual initial protected native/model/wholeStory/disk and quiet recipient agree"): await _finish(); return
+	var donor_refs: Array[WeakRef] = _refs(game.world.get_parent().get_parent())
+	operation = "canonical public Optional entry"
+	game.menu.optional_requested.emit(Bloom.LEVEL_ID)
+	if not await _await_operation(func() -> bool: return _live(Bloom.LEVEL_ID) and paused and game.menu.page_name() == "resume" and game.attempts.active_kind() == "optional", "canonical actual optional enters", 12.0): await _finish(); return
+	entrance = game.capture_campaign_snapshot()
+	if not _expect(_pristine(entrance) and game.active_level.get_script() == BloomScript and _bindings() and _freed(donor_refs) and _same(game.attempts.state().story, protected_story) and _same(game.attempts.state().side_attempt.checkpoint, entrance) and _durable(), "canonical pristine O2 entrance retires Story donor and retains exact protected packet/checkpoint"): await _finish(); return
+	if not _expect(not game.active_level.request_completion(Bloom.COMPLETION_ID) and not game.active_level.request_contact_exit(Bloom.EXIT_ID, game.player) and _same(game.capture_campaign_snapshot(), entrance), "guarded unearned completion/contact exit refuse without initial-unit mutation"): await _finish(); return
+	# OwnerC33 covers rich partial disk Continue; owner34 covers latest checkpoint.
+	# Only the canonical entrance Retry is executed by this short fixture.
+	donor_refs = _refs(game.world.get_parent().get_parent())
+	var before: Dictionary = _ids()
+	if not await _pause("canonical entrance Retry button exposure") or not await _retry_entrance(): await _finish(); return
+	if not _expect(_freed(donor_refs) and _all_new(before, _ids()) and _recipient_callbacks().is_empty() and _same(game.capture_campaign_snapshot(), entrance), "canonical entrance Retry retires the whole donor container with distinct current native identities"): await _finish(); return
+	donor_refs = _refs(game.world.get_parent().get_parent())
+	operation = "canonical public early Leave"
+	game.menu.leave_side_requested.emit()
+	if not await _await_operation(func() -> bool: return _live("A1-L3") and paused and game.menu.page_name() == "journey" and game.attempts.active_kind() == "story", "canonical early Leave restores protected Story", 12.0): await _finish(); return
+	if not _expect(_freed(donor_refs) and _same(game.capture_campaign_snapshot(), protected_unit) and _same(game.attempts.state().story, protected_story) and game.attempts.state().side_attempt == null and game.attempts.state().completed_main == PREFIX and game.attempts.state().completed_optional.is_empty() and game.attempts.state().reward_ids.is_empty() and game.attempts.state().unlocked_equipment == unlocked_before and _durable(), "canonical uncompleted Leave grants no reward/growth and preserves exact complete Story/main/equipment/disk"): await _finish(); return
+	_root_registration_complete = true
+	await _finish()
+
+func _new_shell() -> bool:
+	operation = "actual canonical isolated disk Title"
+	game = Shell.new() as CinderCampaignShell
+	if not _expect(game.configure_runtime({}, test_root + "campaign.json", test_root + "settings.json", test_root + "preferences.json"), "actual canonical Shell uses no TEST readiness registry"): return false
+	root.add_child(game)
+	return await _await_operation(func() -> bool: return paused and game.player == null and game.active_level == null and game.menu.page_name() == "title" and _same(game.attempts.state(), _root_expected_disk), "complete expected canonical startup session settles at actual Title", 12.0)
+
+func _expect(ok: bool, label: String) -> bool:
+	checks += 1
+	var row: Dictionary = {"check": checks, "ok": ok, "label": label, "operation": operation}
+	_root_rows.append(row)
+	if not ok:
+		failures += 1
+		if first_failure.is_empty(): first_failure = row.duplicate(true)
+		print("FAIL A1-O2 canonical registration: " + label)
+	return ok
+
+func _root_source_observation() -> Dictionary:
+	var result: Dictionary = {}
+	for path: String in [get_script().resource_path, "res://tests/acts/act1/a1_o2_campaign.gd", "res://scripts/acts/act1/spore_bloom.gd", O2_PATH, STORY_PATH, "res://scripts/campaign/shell.gd", Registry.DATA_PATH]:
+		result[path] = FileAccess.get_sha256(path)
+	return result
+
+func _finish() -> void:
+	if finishing: return
+	finishing = true; paused = true; operation = "normal canonical registration cleanup"
+	var refs: Array[WeakRef] = []
+	if is_instance_valid(preview):
+		var donor: CinderLevel = preview.get("active_level") as CinderLevel
+		if donor != null: donor.exit_level()
+		refs.append_array(_refs(preview)); preview.free(); preview = null
+	if is_instance_valid(game):
+		if is_instance_valid(game.active_level): game.active_level.exit_level()
+		refs.append_array(_refs(game)); game.free(); game = null
+	paused = false; await create_timer(0.5, true).timeout; await process_frame
+	_expect(refs.is_empty() or _freed(refs), "normal canonical descendants free")
+	_expect(get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("environment_attack_targets").is_empty() and get_nodes_in_group("required_cues").is_empty(), "normal canonical source/cluster/cue groups retire")
+	_expect(FileAccess.get_file_as_bytes(Registry.DATA_PATH) == registry_bytes, "canonical registry bytes remain exact")
+	for name: String in ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]:
+		var path: String = test_root + name
+		if FileAccess.file_exists(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root))
+	Engine.max_fps = old_fps; AudioServer.set_bus_layout(old_audio)
+	if node_added.is_connected(_observe_added): node_added.disconnect(_observe_added)
+	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
+	var payload: Dictionary = {"schema_version": 1, "accepted_content": ACCEPTED_CONTENT, "checks": checks, "failures": failures, "first_failure": first_failure, "rows": _root_rows, "operation_wait_overruns": operation_wait_overruns, "elapsed_ms": Time.get_ticks_msec() - started_ms, "complete": _root_registration_complete, "success": _root_registration_complete and failures == 0, "initial_closed_packet": _root_initial_packet, "source_before": _root_source_before, "source_after": _root_source_observation(), "completion_replay_executed_here": false, "scope": "Actual canonical metadata/parent/unlock/closed protected Story/disk/pristine optional entry/entrance Retry/early Leave/disk/normal cleanup only. TEST completed prefix; public API/Button signals. Reuse verified owner42 completion and45 Replay separately at Root acceptance. No inherited groups/partial transport/contact/completion/Replay/GUI/portrait/full-route/FPS credit."}
+	var output := FileAccess.open(report_path, FileAccess.WRITE)
+	if output == null: _expect(false, "unique Root registration report is writable")
+	else:
+		output.store_string(JSON.stringify(payload, "\t") + "\n"); output.close()
+		print("CINDER_A1_O2_REGISTRATION_REPORT path=" + report_path + " sha256=" + FileAccess.get_sha256(report_path))
+	print("A1-O2 canonical registration: %d checks/%d failures; complete=%s; short scope only" % [checks, failures, str(_root_registration_complete)])
+	quit(0 if _root_registration_complete and failures == 0 else 1)

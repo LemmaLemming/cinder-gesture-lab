@@ -1,5 +1,11 @@
 # Cinder shared progress
 
+## A1-O2 accepted — 15 October2026
+
+[Spore Bloom](ACT1_O2_ACCEPTANCE.md) is independently accepted at exact submittedf04a9359 after Root canonical30/0 clean, selectedimport/parser0, and reviewed owner43/33/245/64/34/42/45 evidence within original source scopes. All151 selected content/evidence paths plus the original manifest join. Root personally inspected both original540x1170 paused images; sparseentrance/remote/latergroup/hatch/moving limits remain. Original23/1,29/1,43/1 stay failed. Material63.917scontact-to-Story/112.320swall/21.608sRetry observation remain performance limitations. [Portable Root evidence](evidence/act1-o2-integration/index.json) retains30 true rows, exact wholeStory/session/disk Continue receipt and allthree CLOSED0 phases. No route/contact/Replay suite was repeated solely for integration.
+
+Campaign21/24: Act1 seven/eight, Act2 eight/eight, Act3 six/eight; all15main plus6optional. Act1 proceeds to O3 Royal Rehearsal independently. ParentA1-L3, unchangedL3→L4 and once-only existing stamp remain; other23 Registry rows are exact, stale descriptive18 corrected21. Shared61 is additive/unused; source-confirmed authored difficulty completion remains separate and unfinished. Both active act owners supplied exact accepted-primary difficulty scopes while preserving current O2/O3/commonactor/capturehelper custody. Agent02 remains human-inactive. Desktop goal stays active; stop before mobile/release.
+
 ## Shared61 availability and storage recovery — 15 October2026
 
 [Pure authored arrangement metadata](ENCOUNTER_ARRANGEMENT.md) passes37/0 clean after necessary queued import/parser0, with retained rows/report/source joins. Import adds only two UIDs within the11 named-file observation; no global resource/UID census. The original alias-anchor/missing-seal preflight2 and two ENOSPC preparation failures remain. [Portable evidence](evidence/encounter-arrangement/index.json) separates proposals and execution. There is no gameplay consumer, new acceptance, whole-level migration, portrait or performance claim.
