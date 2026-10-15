@@ -1,0 +1,71 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act1/royal_rehearsal.gd" id="1_level"]
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(14, 1, 16)
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+size = Vector3(14, 1, 16)
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.28, 0.28, 0.28, 1)
+roughness = 1.0
+
+[sub_resource type="BoxShape3D" id="BellContactShape"]
+size = Vector3(1.1, 1.6, 1.1)
+
+[sub_resource type="BoxShape3D" id="ExitContactShape"]
+size = Vector3(2.4, 1.6, 1.2)
+
+[node name="RoyalRehearsal" type="Node3D"]
+script = ExtResource("1_level")
+level_id = "A1-O3"
+spawn_path = NodePath("PlayerSpawn")
+local_snapshot_version = 1
+objective_text = "ROYAL REHEARSAL\nCONTACT THE PRACTICE BELL"
+metadata/readiness = "Owner focused mechanics, whole-state Save/Continue, Retry, contact return and Replay pass; independent Integration acceptance pending."
+metadata/art_status = "Reused CourtArt entrance plus clockless rehearsal bell and quiet station markers. Owner portrait evidence and limitations are recorded in docs/acts/act1/O3_RUNTIME_ART.md. Contact cues use shared runtime cues."
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 0)
+
+[node name="Floor" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("FloorShape")
+
+[node name="QuietFloor" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("FloorMesh")
+material_override = SubResource("FloorMaterial")
+cast_shadow = 0
+
+[node name="BellMarker" type="Marker3D" parent="."]
+position = Vector3(-2.4, 0, 0)
+
+[node name="BellArea" type="Area3D" parent="."]
+position = Vector3(-2.4, 0, 0)
+collision_layer = 0
+collision_mask = 4
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BellArea"]
+position = Vector3(0, 0.8, 0)
+shape = SubResource("BellContactShape")
+
+[node name="ExitMarker" type="Marker3D" parent="."]
+position = Vector3(0, 0, -4.6)
+
+[node name="ExitArea" type="Area3D" parent="."]
+position = Vector3(0, 0, -4.6)
+collision_layer = 0
+collision_mask = 4
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExitArea"]
+position = Vector3(0, 0.8, 0)
+shape = SubResource("ExitContactShape")

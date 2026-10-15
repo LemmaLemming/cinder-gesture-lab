@@ -1,0 +1,243 @@
+{
+  "level_id": "A1-O3",
+  "status": "reuse decisions and planned small additions; O3 native/visual validation pending",
+  "reference_inspection": [
+    {
+      "id": "G07",
+      "path": "docs/concept-art/act1/characters/expedition-cast-and-player.png",
+      "sha256": "c3fd7934da3ef53914d304d61d8fd91f310e2fe3e943a17ef615b5b81b4cf751",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "kind": "concept reference; not runtime assets",
+      "root_visual_inspection": "opened actual image on 15 October 2026",
+      "manifest_reference_ids": [
+        "F01",
+        "F02",
+        "F07",
+        "A13"
+      ],
+      "object_ids": [
+        "O01",
+        "O02",
+        "O03",
+        "O19",
+        "O20"
+      ]
+    },
+    {
+      "id": "G10",
+      "path": "docs/concept-art/act1/characters/selenite-costumes-and-roles.png",
+      "sha256": "f1545c30c57809aff0c65d29247c171999e983802571fa6289066f3bdad123f5",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "kind": "concept reference; not runtime assets",
+      "root_visual_inspection": "opened actual image on 15 October 2026",
+      "manifest_reference_ids": [
+        "F10",
+        "F12"
+      ],
+      "object_ids": [
+        "O49",
+        "O50",
+        "O51",
+        "O52",
+        "O61"
+      ]
+    },
+    {
+      "id": "G12",
+      "path": "docs/concept-art/act1/mood/grotto-curiosity-and-royal-menace.png",
+      "sha256": "fb10c6c2bdb26005f87deac7cd59bbc2573dd83df7c92e7248bc6515e0e839e9",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "kind": "concept reference; not runtime assets",
+      "root_visual_inspection": "opened actual image on 15 October 2026",
+      "manifest_reference_ids": [
+        "F09",
+        "F10"
+      ],
+      "object_ids": [
+        "O43",
+        "O44",
+        "O45",
+        "O48",
+        "O49",
+        "O52",
+        "O53",
+        "O54",
+        "O55",
+        "O56",
+        "O57"
+      ]
+    },
+    {
+      "id": "G15",
+      "path": "docs/concept-art/act1/props/lunar-grotto-and-court-modular-kit.png",
+      "sha256": "c8b61dc9115e2ed98546c05b65ca79f34e2fe998af191e82bf2b582cf225d53e",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "kind": "concept reference; not runtime assets",
+      "root_visual_inspection": "opened actual image on 15 October 2026",
+      "manifest_reference_ids": [
+        "F07",
+        "F09",
+        "F10",
+        "F11"
+      ],
+      "object_ids": [
+        "O34",
+        "O35",
+        "O43",
+        "O44",
+        "O45",
+        "O46",
+        "O47",
+        "O48",
+        "O54",
+        "O55",
+        "O56",
+        "O57",
+        "O58"
+      ]
+    },
+    {
+      "id": "G19",
+      "path": "docs/concept-art/act1/environments/04-selenite-court.png",
+      "sha256": "cc1bccf751d8dd21c7248287f01e9b02cf1fce33da52f1982bcdc162009e629d",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "kind": "concept reference; not runtime assets",
+      "root_visual_inspection": "opened actual image on 15 October 2026",
+      "manifest_reference_ids": [
+        "O49",
+        "O51",
+        "O52",
+        "O53",
+        "O54",
+        "O55",
+        "O56",
+        "O57"
+      ],
+      "object_ids": []
+    }
+  ],
+  "assets": [
+    {
+      "id": "A1-O3-court-floor-and-scenery",
+      "family": "accepted court entrance theatre",
+      "sources": [
+        {
+          "path": "scripts/acts/act1/selenite_court_art.gd",
+          "sha256": "5e87345619d40ae4ff038bfb0a646164ef818df8f5ba4980005ce10da9c694ad"
+        },
+        {
+          "path": "assets/acts/act1/lunar/environment/floor_silver_tile.png",
+          "sha256": "927971422809f26e5492ec6701a69d7b1ced7d1e6498c7d4736542e5b8831c64"
+        }
+      ],
+      "native_dimensions": "64x64 floor tile; code-authored curtain/flats/crescents/radial mesh",
+      "world_scale": "14x16m floor, tile repeat1.536m; exact existing entrance specs",
+      "pivot": "floor feet at y0; scenery existing authored anchors",
+      "collision": "existing14x1x16 native support BOX; scenic meshes no collision",
+      "occlusion": "edge scenery, current portrait review required",
+      "states": [
+        "blocked curtain",
+        "open gathered curtain",
+        "quiet ornament"
+      ],
+      "animation": "clockless state poses; no action timing",
+      "readiness": "existing implementation reused unchanged; O3 binding/portrait pending"
+    },
+    {
+      "id": "A1-O3-guard",
+      "family": "shared Act1 C32/A1-E3 spear guard",
+      "sources": [
+        {
+          "path": "scripts/acts/act1/mushroom_selenite.gd",
+          "sha256": "a351ad0d46441887043ac24e31ec2e69a8279092b4bf3d8b839c7a99fb158932"
+        },
+        {
+          "path": "scripts/acts/act1/mushroom_selenite_art.gd",
+          "sha256": "7c16b1a7c62e74445837a0f474b8ecd01a3db1cca6beb2e0283c6dc7b0447b10"
+        }
+      ],
+      "native_dimensions": "80x80 RGBA guard family, PIXEL_SIZE0.022; existing native collision",
+      "pivot": "original feet, sprite offset(0,40)",
+      "states": [
+        "dormant",
+        "idle",
+        "warning",
+        "lock",
+        "active",
+        "recovery",
+        "hurt",
+        "dead"
+      ],
+      "animation": "existing native simulation-driven art; no changed motion/hit clocks",
+      "collision": "original native body and thrust footprint; art supplies no authority",
+      "occlusion": "same warning/source/landing containment required per real admission",
+      "reuse": "six unique finite guard instances over three exercises",
+      "readiness": "accepted native implementation; new arrangement still untested"
+    },
+    {
+      "id": "A1-O3-traveller",
+      "family": "shared selected Act1 expedition presentation",
+      "sources": [
+        {
+          "path": "scripts/character/player_presentations.gd",
+          "sha256": "046b716e4030926ac89788bc4fb33ca893c9cf4ba20cdbd8284954d15dfc3f01"
+        }
+      ],
+      "native_dimensions": "unchanged shared procedural presentation",
+      "pivot": "shared feet/body/controller",
+      "states": "existing action/facing and compatible carried equipment states",
+      "animation": "unchanged shared simulation-owned presentation",
+      "collision": "unchanged shared Player body",
+      "occlusion": "must remain readable beside bell and guard warnings",
+      "readiness": "existing shared implementation; new O3 portrait pending"
+    },
+    {
+      "id": "A1-O3-practice-bell",
+      "family": "small optional court addition; G19panel8",
+      "sources": [],
+      "native_dimensions": "planned code-authored stepped bell and stand; not bitmap extraction",
+      "world_scale": "proposed approx1.0m wide,1.5m tall,0.4m deep, to inspect at portrait scale",
+      "pivot": "stand feet at bell anchor(-2.4,0,0)",
+      "collision": "scenic mesh no blocking collider; actual shared-grammar contact Area is authoritative",
+      "occlusion": "keep open floor and Hero feet visible",
+      "states": [
+        "available",
+        "active",
+        "spent"
+      ],
+      "animation": "planned static poses plus existing shared contact cue, no private cosmetic clock",
+      "readiness": "planned, not authored/imported/viewed"
+    },
+    {
+      "id": "A1-O3-formation-markers",
+      "family": "small optional court addition; G19panel8/G15quiet ornament",
+      "sources": [],
+      "native_dimensions": "planned low-contrast code-authored floor discs",
+      "world_scale": "proposed0.4m radius per station, verify below warning contrast",
+      "pivot": "native ground plane at each guard station",
+      "collision": "none; no admission or progression authority",
+      "occlusion": "flat non-actionable markings; no glow/countdown/pulse",
+      "states": [
+        "quiet current stations"
+      ],
+      "animation": "none",
+      "readiness": "planned, not authored/imported/viewed"
+    }
+  ],
+  "limits": "No new enemy, equipment, powerup, damage effect or full kit. Concept boards inform shapes only. Required actual O3 portraits, gameplay and whole transport remain unexecuted."
+}
