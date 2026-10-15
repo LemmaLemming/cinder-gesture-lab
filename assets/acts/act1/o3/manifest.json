@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "level_id": "A1-O3",
+  "reuse_family": "Act1 Selenite Court small Royal Rehearsal additions",
+  "implementation": {
+    "path": "scripts/acts/act1/royal_rehearsal_art.gd",
+    "sha256": "747c1e6d9b866ff4cf69d7d6f43a17c634e655ea9deadb23849c58328ff31b2e",
+    "api_revision": "act1-rehearsal-art-1",
+    "kind": "original code-authored ArrayMesh geometry; no extracted concept pixels"
+  },
+  "readiness": "source-authored, unparsed, unexecuted and not inspected in the actual portrait; host wiring and owner validation pending",
+  "reference_inspection": [
+    {
+      "id": "G19",
+      "path": "docs/concept-art/act1/environments/04-selenite-court.png",
+      "sha256": "cc1bccf751d8dd21c7248287f01e9b02cf1fce33da52f1982bcdc162009e629d",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "inspected": "actual pixels opened 15 October 2026 by art author",
+      "application": "panel8 small two-post wooden stand and hanging flared bell, quiet roundels; panel5 warning ornament excluded"
+    },
+    {
+      "id": "G15",
+      "path": "docs/concept-art/act1/props/lunar-grotto-and-court-modular-kit.png",
+      "sha256": "c8b61dc9115e2ed98546c05b65ca79f34e2fe998af191e82bf2b582cf225d53e",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "inspected": "actual pixels opened 15 October 2026 by art author",
+      "application": "quiet radial star ornament and restrained pale/dark theatre materials; no new stage-puff effect"
+    }
+  ],
+  "assets": [
+    {
+      "id": "A1-O3-practice-bell",
+      "native_dimensions": "not applicable: code-authored mesh, no bitmap/atlas",
+      "world_scale_m": {
+        "width": 1.0,
+        "height": 1.5,
+        "depth": 0.4
+      },
+      "pivot": "stand feet at Layout.BELL_POSITION=(-2.4,0,0)",
+      "collision": "none; host BellArea and shared contact cue retain their authority",
+      "occlusion": "solid stand posts and bell; open foot-level gap; actual near-bell portrait and Hero-feet overlap still require inspection",
+      "states": {
+        "available": "upright pale flared bell and centered clapper",
+        "active": "static10-degree lean and offset clapper, no swing clock",
+        "spent": "upright muted bell with broad dark felt band"
+      },
+      "animation": "none; host applies instantaneous deterministic static poses; no audio/signal/timer",
+      "rendering": "opaque depth-tested unshaded vertex-colour meshes; no shadow casting, glow or cue outline"
+    },
+    {
+      "id": "A1-O3-formation-markers",
+      "native_dimensions": "not applicable: code-authored mesh, no bitmap/atlas",
+      "world_scale_m": {
+        "radius": 0.4,
+        "thickness": 0.002
+      },
+      "pivot": "each Layout source authored ground position, y offset0.012",
+      "collision": "none; no source, attack, contact or progression authority",
+      "occlusion": "flat low-contrast disc beneath current station; actual overlap against warning artwork not yet inspected",
+      "states": [
+        "quiet visible current pair",
+        "hidden other pairs/all hidden on completion when host requests"
+      ],
+      "animation": "none; no countdown, segmented rim, active fill or pulse",
+      "rendering": "24-sided disc with smaller five-point star, grayscale0.31\u20130.40; depth tested"
+    }
+  ],
+  "reused_unchanged": [
+    "scripts/acts/act1/selenite_court_art.gd",
+    "scripts/acts/act1/mushroom_selenite.gd",
+    "scripts/acts/act1/mushroom_selenite_art.gd",
+    "scripts/character/player_presentations.gd"
+  ],
+  "bounds": "landmark_world_corners reads every current visible native mesh AABB and transform, then returns eight conservative world-enclosure corners; hidden marker returns[]; invalid binding returns[Vector3.INF]",
+  "validation": "No engine, import, parser, gameplay or portrait run performed by this art author. Reuse of greybox45/0 is mechanics scope only and does not validate new art.",
+  "framing_budget": "Bell actual geometry is inside same-anchor native BellArea BOX; host must verify native containment before sharing its existing eight corners. Quiet markers are decoration outside required interaction union. Preserve 224 limit and every existing required bound."
+}
