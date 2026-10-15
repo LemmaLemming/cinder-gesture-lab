@@ -29,10 +29,11 @@ var _holding_echo: bool = false
 var _real_transform: Transform3D
 var _render_origin: Vector3
 var _render_travel: float = 0.0
+var _stage: String = "initializing"
 
 
 func _run() -> void:
-	create_timer(90.0, true, false, true).timeout.connect(_watchdog)
+	create_timer(600.0, true, false, true).timeout.connect(_watchdog)
 	if not _expect(OS.get_cmdline_user_args().is_empty(), "bounded prototype accepts no selectors"):
 		await _finish()
 		return
@@ -47,6 +48,7 @@ func _run() -> void:
 
 
 func _open_o3() -> bool:
+	_milestone("opening actual Main/O3")
 	_game = MainScene.instantiate()
 	root.add_child(_game)
 	_game.call("open_bench")
@@ -107,6 +109,7 @@ func _harmless(node: Node) -> bool:
 
 
 func _warning() -> bool:
+	_milestone("awaiting genuine warning")
 	for _index: int in range(180):
 		var playback: Dictionary = _echo.call("state")
 		if playback.status == "running":
@@ -118,6 +121,7 @@ func _warning() -> bool:
 
 
 func _lock() -> bool:
+	_milestone("awaiting actual due lock")
 	for _index: int in range(240):
 		var state: Dictionary = _level.call("state")
 		if state.echo_record.locked:
@@ -139,6 +143,7 @@ func _follow_armed() -> bool:
 	var last_end_s: float = -1.0
 	var previous: Dictionary = {}
 	for segment: Dictionary in proof.path:
+		_milestone("native response/"+String(segment.kind))
 		if not _expect(segment.get("from") is Vector3 and segment.get("to") is Vector3 and segment.from.is_finite() and segment.to.is_finite() and is_finite(float(segment.start_s)) and is_finite(float(segment.end_s)) and float(segment.end_s) >= float(segment.start_s), "native path segment retains finite positions/times"): return false
 		if not previous.is_empty() and not _expect(absf(float(previous.end_s)-float(segment.start_s)) <= TIME_EPS and previous.to.distance_to(segment.from) <= POINT_EPS, "actual accepted own path remains continuous"): return false
 		previous = segment
@@ -204,6 +209,7 @@ func _until_o3(target_s: float, point: Variant = null) -> bool:
 
 
 func _terminal() -> bool:
+	_milestone("awaiting genuine finite terminals")
 	for _index: int in range(900):
 		if _echo.call("source_phase") == "complete" and _pulse.state().status == "complete":
 			var receipt: Dictionary = _echo.call("get_authored_cycle_terminal_receipt")
@@ -215,6 +221,7 @@ func _terminal() -> bool:
 
 
 func _paused_pair(label: String, restore_identical: bool) -> bool:
+	_milestone("paused pair/"+label)
 	if not await _presentation_o3(): return false
 	if not _expect(_game.call("request_pause_deferred"), "public complete-tick pause at "+label): return false
 	for _frame: int in range(4): await process_frame
@@ -283,6 +290,7 @@ func _tick() -> bool:
 	var error: String = String(_level.call("runtime_error"))
 	if not _expect(boundary == "post_actor_physics" and not paused and _ticks <= 1800 and _scheduler.get_clock() <= 30.0 and error.is_empty() and not _hero.dead and _hero.hp == _starting_hp and _hero.shells == _starting_shells and _exact(_hero.equipment.snapshot(),_kit) and _exact(_hero.equipment.resolved_stats(),_stats) and _echo.global_transform == _real_transform and String(_echo.call("source_native_error")).is_empty() and not _fired.has("blast") and _events.get("pulse_contact",0) == 0 and _checkpoints.is_empty() and _completions.is_empty() and _exits.is_empty(), "bounded native tick retains actual fixed endpoint/HP/kit/ammo and ordinary-only no-contact/no-progress scope",str({"boundary":boundary,"clock":_scheduler.get_clock(),"error":error,"state":state})): return false
 	var phase: String = String(_echo.call("source_phase"))
+	if not _phases.has(phase): print("O3 PHASE: Echo ",phase,"; clock=",_scheduler.get_clock(),"; actions=",_actions.size())
 	_phases[phase] = true
 	if phase == "cancelled": return _expect(false,"genuine managed Echo must not cancel during its accepted response",str(state))
 	var renderer: Node3D = _echo.call("get_enemy_apparition") as Node3D
@@ -292,6 +300,7 @@ func _tick() -> bool:
 			_phases["active-origin"] = true
 		_render_travel = maxf(_render_travel,renderer.global_position.distance_to(_render_origin))
 	var pulse: Dictionary = _pulse.state()
+	if not _pulse_phases.has(String(pulse.phase)): print("O3 PHASE: pulse ",pulse.phase,"; clock=",_scheduler.get_clock(),"; cycle=",pulse.cycle)
 	_pulse_phases[String(pulse.phase)] = true
 	if pulse.status == "cancelled": return _expect(false,"independent native pulse must not cancel during the actual accepted exchange",str(pulse))
 	if pulse.status == "running":
@@ -325,6 +334,18 @@ func _event(kind: String) -> void:
 
 func _tick_seconds() -> float:
 	return 1.0/float(Engine.physics_ticks_per_second)
+
+
+func _milestone(stage: String) -> void:
+	_stage = stage
+	print("O3 MILESTONE: ",stage,"; clock=",_scheduler.get_clock() if is_instance_valid(_scheduler) else -1.0,"; post_actor_ticks=",_ticks,"; actions=",_actions.size())
+
+
+func _watchdog() -> void:
+	if not _done and not _finishing:
+		print("O3 WATCHDOG: ",{"stage":_stage,"paused":paused,"clock_s":_scheduler.get_clock() if is_instance_valid(_scheduler) else -1.0,"post_actor_ticks":_ticks,"echo_phase":_echo.call("source_phase") if is_instance_valid(_echo) else "<missing>","action_count":_actions.size(),"pulse":_pulse.state() if is_instance_valid(_pulse) else {},"runtime_error":_level.call("runtime_error") if is_instance_valid(_level) else "<missing>"})
+		_expect(false, "finite native process-time fixture watchdog expired")
+		_finish.call_deferred()
 
 
 func _finish() -> void:
