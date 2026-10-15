@@ -1,3 +1,11 @@
+## O2 seven focused categories complete; independent handoff ready — 15 October 2026
+
+Act3 remains6/8 accepted, current canonical campaign21/24. Final mechanics04 PASS1053/0 at cea2efe9; final held-transport02 PASS365/0, completion-return01 PASS2129/0 and paused portrait01 PASS64/0 at7ab4765e. All exit0/diagnostics0, frozen selected sources/HEAD and normal cleanup. Native runtime remains ea7a70be. Both exact checkpoints, complete native Save/fresh Side Resume/Retry/consumed GUI, later contact/protected Story/public Replay/stamp dedup are exercised through production interfaces. TEST prefix12/readiness and direct public controller inputs are disclosed, no human full-playthrough claim.
+
+Actual340x736 PNG6c4dee83 and receipt0e856a6b preserve original warning archive029a6cb6 and strict whole packet/input/optics/events. Root and independent reader inspected visible boots/feet, filled Root/gold crescent, broad lateral floor, red bases/organic trunks and unobstructed HUD. Static warning only. All original failures remain failed with causal fixes documented. Canonical ability/equipment/numerical validations pass; no allocations. Encounter JSON readiness prose describes authoring-time pending checks; this current record and handoff supply completed evidence without rewriting the archived source pins.
+
+Handoff docs/acts/act3/A3_O2_FOCUSED_HANDOFF.md maps all seven categories and limits. Portable assets/acts/act3/evidence/A3-O2-native/index.json SHA256 e931c42c01d8e83f54218786068dbe3d9e07af23832541cad3805fc9af1e197d retains15closedruns/31blobs/113files. All own native/Git handles closed. Integration review is next; O3 read-only design/API preparation is complete, implementation after O2 ACCEPTED. Shared62 availability has been read but not adopted during frozen O2 execution; Shared61 remains actual baseline. No new acceptance gate or human decision.
+
 ## O2 final mechanics passed; Optional entry fixture corrected — 15 October 2026
 
 At cea2efe9, final-mechanics-04 passes 1053 checks/0 failures,897 native ticks, exit0/diagnostics0; raw SHA256 53b3e57eab320c74c04be4dc9c3587c4d353713c8c15f2ff1b7e45841de85d15. Real four ordinary Root kills earn three courts and CP1/CP2; final Stalker remains alive. Whole typed pairs/quiet restore/cleanup pass. No final transport or portrait credit yet.
