@@ -1114,10 +1114,13 @@ func _refresh_visuals(quiet: bool = false) -> bool:
 			_apparition.set_loadout_visual(pose.equipment_ids.weapon, pose.equipment_ids.jacket, pose.equipment_ids.pants, pose.equipment_ids.shoes)
 			_apparition.set_action(pose.action, float(pose.progress))
 	_route_mesh.visible = _status == "running" # Optional harmless route ornament.
-	_failure_marker.visible = _status == "cancelled"
-	if _failure_marker.visible:
-		_failure_marker.global_position = global_position + Vector3.UP * 0.04
-		_failure_marker.mesh = CueMesh.source_mesh("active")
+	# Whole-world removal can invalidate a lease after visual children exit.
+	# Keep terminal cleanup/notifications, but never position a detached marker.
+	if is_instance_valid(_failure_marker):
+		_failure_marker.visible = _status == "cancelled" and is_inside_tree() and _failure_marker.is_inside_tree()
+		if _failure_marker.visible:
+			_failure_marker.global_position = global_position + Vector3.UP * 0.04
+			_failure_marker.mesh = CueMesh.source_mesh("active")
 	var events: Array[Dictionary] = _events()
 	var start: int = 0 if quiet or _pending_delivery.is_empty() else int(_pending_delivery.visual_next_cue)
 	for index: int in range(start, _cues.size()):
