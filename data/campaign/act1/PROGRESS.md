@@ -1,5 +1,7 @@
 # Act 1 — current progress
 
+Current O2 groups01 passed245/0 clean: same original finite fields across all three groups, ordinary defeats after depletion, real pre-final CP and contact/reentry/cleanup; genuine CP/hatch native units retained. Existing first43/0 and campaign33/0 remain. Terminal Shell flow and brief portraits are next; both reviewed fixtures are authored, unexecuted. Act1 6/8 accepted, campaign20/24; compatible A3 registration adoption waits for this chain to close.
+
 Current O2 first mechanics43/0 and affected campaign02 transport33/0 are clean. Actual entrance/partial Field Save, distinct disk Continue, earlier RetryButton wiring, protected Story/Leave and cleanup passed; exact928 inputs/533 UIDs remain. Later groups, multi-consumer/terminal flow and brief portrait remain. Act1 6/8; canonical A3-O1 acceptance now makes campaign20/24. Compatible publication de750e7e is received, not adopted while this O2 source/portrait chain is retained.
 
 Current O2 campaign01 is preserved23/1 NONCLEAN: runtime typed-array branch and a fixture observer deadline ordering fault are diagnosed and narrowly corrected. First mechanics43/0 remains original evidence; aggregate acceptance is pending the same focused retest. All928 frozen inputs/533 UIDs stayed exact. Act1 remains6/8 accepted, no external permission/registration blocker.
