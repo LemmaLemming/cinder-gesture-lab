@@ -4,11 +4,11 @@
   "reuse_family": "Act1 Selenite Court small Royal Rehearsal additions",
   "implementation": {
     "path": "scripts/acts/act1/royal_rehearsal_art.gd",
-    "sha256": "91f4562366b2b75952068d9f41b40142c9c64897587396d53c9be063472d29aa",
+    "sha256": "bb174d69fc45fc3eeccbee949048a77082016c041560cbeeb5cacef56925636f",
     "api_revision": "act1-rehearsal-art-1",
     "kind": "original code-authored ArrayMesh geometry; no extracted concept pixels"
   },
-  "readiness": "Revised source after actual portrait occlusion failure; current z=-0.30 art offset is unparsed/unexecuted and awaits owner portrait inspection. Original native18/0 does not establish visual acceptance.",
+  "readiness": "Source revised after two actual contact-center portrait failures; current x=-1.0 art offset is unparsed/unexecuted and awaits owner native/portrait validation with actual Box+art union. Both prior native18/0 results remain native-only evidence, not visual acceptance.",
   "reference_inspection": [
     {
       "id": "G19",
@@ -42,9 +42,9 @@
         "height": 1.5,
         "depth": 0.4
       },
-      "pivot": "stand feet at Layout.BELL_POSITION + BELL_ART_OFFSET = (-2.4,0,-0.30); native contact anchor remains (-2.4,0,0)",
+      "pivot": "stand feet at Layout.BELL_POSITION + BELL_ART_OFFSET = (-3.4,0,0); native contact anchor remains (-2.4,0,0)",
       "collision": "none; host BellArea and shared contact cue retain their authority",
-      "occlusion": "Original centered stand obscured the actual contact-center Hero torso/feet. All stand/bell geometry moved north0.30m within original BellArea; depth-test ordering and actual portrait readability of this correction remain to be verified.",
+      "occlusion": "Original centered stand and north0.30m revision both obscured the actual contact-center Hero. Entire stand/bell now sits1.0m left of contact; actual player billboard clearance and portrait readability remain to be verified.",
       "states": {
         "available": "upright pale flared bell and centered clapper",
         "active": "static10-degree lean and offset clapper, no swing clock",
@@ -78,19 +78,68 @@
     "scripts/character/player_presentations.gd"
   ],
   "bounds": "landmark_world_corners still reads every current visible native mesh AABB and transform, including the authored bell offset, then returns eight conservative world-enclosure corners; hidden marker returns[]; invalid binding returns[Vector3.INF]",
-  "validation": "Art author inspected the original actual540x1170 first-warning image and confirmed occlusion. Parent reports original native portrait18/0; retained as native-only evidence with visual failure. No engine/import/parse/portrait rerun performed by this art author after offset correction.",
-  "framing_budget": "All bell geometry remains inside original native BellArea BOX. Source-computed offset extent relative to contact feet is x[-0.50,0.50],y[0,1.50],z[-0.50,-0.10], inside native x/z[-0.55,0.55],y[0,1.60]. Host must still verify actual eight native mesh corners before sharing existing contact corners; no224-limit or required-bound change.",
+  "validation": "Art author inspected both actual540x1170 first-warning images and confirmed continued occlusion. Parent reports both native portrait18/0 passes; both remain visual failures. No engine/import/parse/portrait rerun performed by this art author for current side-offset revision.",
+  "framing_budget": "Host owner must replace existing eight BellBox points with eight corners of a conservative union of actual native BellArea BOX and all actual current visible bell mesh bounds. Bell geometry now lies outside native contact BOX; do not retain old containment assertion or omit art. Native BOX/cues remain unchanged; no required-point count increase or224-limit relaxation.",
   "occlusion_correction": {
-    "original_art_sha256": "747c1e6d9b866ff4cf69d7d6f43a17c634e655ea9deadb23849c58328ff31b2e",
-    "inspected_image": ".cinder/captures/o3-18947-1267551/02-first-warning.png",
-    "image_sha256": "047ec9072d855677cb600c0e8f064cb78fcacc131d0a32daf5b6cf6c26d32af3",
-    "dimensions": [
-      540,
-      1170
-    ],
-    "finding": "bell/stand occludes Hero torso and feet at contact center",
-    "original_native_result": "parent-reported18 passed0 failed, visual failure retained",
-    "change": "translate entire PracticeBell art group by (0,0,-0.30); dimensions, poses, markers, colliders, native contact anchor, API and framing budget unchanged",
-    "current_validation": "source-only bounds arithmetic; native and actual portrait correction unexecuted"
-  }
+    "prior_art_sha256": "91f4562366b2b75952068d9f41b40142c9c64897587396d53c9be063472d29aa",
+    "change": "translate entire PracticeBell art group to offset(-1.0,0,0), world feet pivot(-3.4,0,0)",
+    "unchanged": "mesh dimensions/materials/states, markers, native contact BOX and anchor, collisionless authority, art API and224 point limit",
+    "host_dependency": "real eight-corner conservative actual Box+art union replaces original eight BellBox framing points; host owner implements separately",
+    "source_extent_relative_to_contact_feet": {
+      "min": [
+        -1.5,
+        0,
+        -0.2
+      ],
+      "max": [
+        -0.5,
+        1.5,
+        0.2
+      ]
+    },
+    "source_union_extent_relative_to_contact_feet": {
+      "min": [
+        -1.5,
+        0,
+        -0.55
+      ],
+      "max": [
+        0.55,
+        1.6,
+        0.55
+      ]
+    },
+    "current_validation": "unparsed/unexecuted source-only correction; no portrait acceptance"
+  },
+  "occlusion_history": [
+    {
+      "original_art_sha256": "747c1e6d9b866ff4cf69d7d6f43a17c634e655ea9deadb23849c58328ff31b2e",
+      "inspected_image": ".cinder/captures/o3-18947-1267551/02-first-warning.png",
+      "image_sha256": "047ec9072d855677cb600c0e8f064cb78fcacc131d0a32daf5b6cf6c26d32af3",
+      "dimensions": [
+        540,
+        1170
+      ],
+      "finding": "bell/stand occludes Hero torso and feet at contact center",
+      "original_native_result": "parent-reported18 passed0 failed, visual failure retained",
+      "change": "translate entire PracticeBell art group by (0,0,-0.30); dimensions, poses, markers, colliders, native contact anchor, API and framing budget unchanged",
+      "current_validation": "Historical source correction subsequently ran in the second native18/0 portrait; second actual image still fails occlusion. Its former source-only status remains historical."
+    },
+    {
+      "art_sha256": "91f4562366b2b75952068d9f41b40142c9c64897587396d53c9be063472d29aa",
+      "offset": [
+        0,
+        0,
+        -0.3
+      ],
+      "inspected_image": ".cinder/captures/o3-29114-1402847/02-first-warning.png",
+      "image_sha256": "ae2df8ce0587769ed1505ff2d37f8fce04b49963a00d71342446fabbf5649d8c",
+      "dimensions": [
+        540,
+        1170
+      ],
+      "finding": "north0.30m shift still covers Hero face/torso because actual billboard projection overlaps the bell",
+      "native_result": "parent-reported18 passed0 failed; visual failure retained"
+    }
+  ]
 }

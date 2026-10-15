@@ -553,11 +553,10 @@ func _contact_points(area: Area3D, cue: CinderInteractionCue) -> Array:
 	var collision := area.get_node_or_null("CollisionShape3D") as CollisionShape3D
 	if collision == null or not collision.shape is BoxShape3D or collision.disabled: return [Vector3.INF]
 	var shape := collision.shape as BoxShape3D
-	if area == _bell_area and not _bell_art_enclosure_error(collision, shape).is_empty(): return [Vector3.INF]
-	# The actual bell's complete mesh is inside this retained contact BOX. These
-	# original eight corners conservatively bound both, without dropping points
-	# from the native source/cue/response union or widening the contact volume.
-	var points: Array = _box_points(AABB(-shape.size * 0.5, shape.size), collision.global_transform)
+	# One eight-corner world enclosure retains the unchanged contact BOX and all
+	# actual bell art bounds. Every other cue/source/response point stays intact.
+	var points: Array = _bell_frame_points(collision, shape) if area == _bell_area else _box_points(AABB(-shape.size * 0.5, shape.size), collision.global_transform)
+	if points.has(Vector3.INF): return points
 	for node: Node in cue.find_children("*", "MeshInstance3D", true, false):
 		var mesh := node as MeshInstance3D
 		if mesh.mesh != null and mesh.is_visible_in_tree(): points.append_array(_box_points(mesh.get_aabb(), mesh.global_transform))
@@ -1101,17 +1100,26 @@ func _rehearsal_art_state_error() -> String:
 	return "" if _same(_rehearsal_art.call("presentation_state"), expected) else "Actual clockless bell/marker pose differs from owned progress"
 
 
-func _bell_art_enclosure_error(collision: CollisionShape3D, shape: BoxShape3D) -> String:
-	if not is_instance_valid(_rehearsal_art) or collision != _contact_pins[_bell_area.name].collision or shape != _contact_pins[_bell_area.name].shape: return "Actual bell art and retained native contact box required"
+func _bell_frame_points(collision: CollisionShape3D, shape: BoxShape3D) -> Array:
+	if not _contact_error().is_empty() or not _rehearsal_art_state_error().is_empty(): return [Vector3.INF]
+	if collision != _contact_pins[_bell_area.name].collision or shape != _contact_pins[_bell_area.name].shape: return [Vector3.INF]
 	var corners: Variant = _rehearsal_art.call("landmark_world_corners", "bell")
-	if not corners is Array or corners.size() != 8: return "Actual complete eight-corner bell mesh enclosure required"
-	var inverse: Transform3D = collision.global_transform.affine_inverse()
-	var half: Vector3 = shape.size * 0.5
-	for value: Variant in corners:
-		if not value is Vector3 or not value.is_finite(): return "Actual finite bell mesh bounds required"
-		var point: Vector3 = inverse * value
-		if absf(point.x) > half.x or absf(point.y) > half.y or absf(point.z) > half.z: return "Actual bell mesh escaped its retained contact-box enclosure"
-	return ""
+	if not corners is Array or corners.size() != 8: return [Vector3.INF]
+	var actual_points: Array = _box_points(AABB(-shape.size * 0.5, shape.size), collision.global_transform)
+	actual_points.append_array(corners)
+	for value: Variant in actual_points:
+		if not value is Vector3 or not value.is_finite(): return [Vector3.INF]
+	# Derive the complete world union from current retained native geometry;
+	# these are framing bounds only, never a replacement contact/collision shape.
+	var bounds := AABB(actual_points[0], Vector3.ZERO)
+	for point: Vector3 in actual_points: bounds = bounds.expand(point)
+	if not bounds.position.is_finite() or not bounds.end.is_finite() or not bounds.size.is_finite() or bounds.size.x <= 0.0 or bounds.size.y <= 0.0 or bounds.size.z <= 0.0: return [Vector3.INF]
+	for point: Vector3 in actual_points:
+		if point.x < bounds.position.x or point.y < bounds.position.y or point.z < bounds.position.z or point.x > bounds.end.x or point.y > bounds.end.y or point.z > bounds.end.z: return [Vector3.INF]
+	var enclosure: Array = _box_points(bounds, Transform3D.IDENTITY)
+	for point: Vector3 in enclosure:
+		if not point.is_finite(): return [Vector3.INF]
+	return enclosure
 
 
 func _same(left: Variant, right: Variant) -> bool:
