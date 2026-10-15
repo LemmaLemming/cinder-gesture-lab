@@ -62,11 +62,20 @@ class NativeRootResponse extends RefCounted:
 		var escaped: bool = false
 		var returned: bool = false
 		var last_dash_end_s: float = -1.0
+		var first_segment: bool = true
 		for segment: Dictionary in proof.path:
 			# The native controller finishes a dash on a real physics boundary.
 			# Later actions cannot start before that measured completion.
 			var scheduled_start_s: float = maxf(float(segment.start_s), last_dash_end_s)
-			if not await _until(scheduled_start_s): return false
+			if first_segment and segment.kind == "recognition_and_ready":
+				# Capturing/restoring the genuine held pair can consume part of
+				# this stationary interval. Join it only at the unchanged origin,
+				# before its original end; all action deadlines remain unchanged.
+				var now_s: float = _scheduler.get_clock()
+				if not _expect(segment.from == segment.to and _hero.global_position.distance_to(segment.from) <= 0.02 and now_s < float(segment.end_s), "held observation joins only the first unchanged passive recognition interval", str({"now_s":now_s,"start_s":segment.start_s,"end_s":segment.end_s,"hero_position":_hero.global_position,"origin":segment.from})): return false
+				scheduled_start_s = maxf(scheduled_start_s,now_s)
+			first_segment = false
+			if not await _until(scheduled_start_s, String(segment.kind)+":start"): return false
 			if segment.kind in ["escape_dash","positioning_dash"]:
 				if not _expect(_hero.global_position.distance_to(segment.from) <= 0.02, "native witness dash begins at its actual recorded world point"): return false
 				var direction: Vector3 = segment.to-segment.from
@@ -99,7 +108,7 @@ class NativeRootResponse extends RefCounted:
 				var body: CollisionShape3D = _root_source.get_node("BodyCollision") as CollisionShape3D
 				var state: Dictionary = _level.call("state")
 				return _expect(state.deaths.has(_selected_root_id) and Codec.read_vector3(state.deaths[_selected_root_id].source_position) == _root_source.global_position and body.disabled and _root_source.collision_layer == 0 and _root_source.collision_mask == 0 and not _root_source.is_in_group("enemies") and _mechanism.state().phase == "clear" and _hero.hp == _starting_hp and _hero.equipment.snapshot() == _kit, "real required Root death/spent body/lease/cue settles without a test-written boundary",str(state))
-			elif not await _until(float(segment.end_s)): return false
+			elif not await _until(float(segment.end_s), String(segment.kind)+":end"): return false
 		return _expect(false, "actual native witness includes one ordinary primary")
 
 	func approach() -> bool:
@@ -151,9 +160,9 @@ class NativeRootResponse extends RefCounted:
 				return _expect(actions.size() == count+1 and action.kind == "dash" and not action.blocked and not action.collision_shortened and action.world_origin == from and action.landing == _hero.global_position and action.landing.distance_to(from+motion) <= 0.005 and action.equipment_ids == _kit and not CinderPlayer.encode_world_action_record(action,_hero.get_world_action_clock()).is_empty() and _hero.is_on_floor(), "one genuine completed native dash preserves distance/history/kit/supported landing")
 		return _expect(false, "bounded ordinary native dash completion")
 
-	func _until(target: float) -> bool:
+	func _until(target: float, phase: String = "") -> bool:
 		for _index: int in range(480):
-			if _scheduler.get_clock()+EPS >= target: return _expect(_scheduler.get_clock() <= target+_tick_s()+EPS, "native witness time stays within one physics tick")
+			if _scheduler.get_clock()+EPS >= target: return _expect(_scheduler.get_clock() <= target+_tick_s()+EPS, "native witness time stays within one physics tick", str({"phase":phase,"target_s":target,"scheduler_clock_s":_scheduler.get_clock(),"hero_clock_s":_hero.get_world_action_clock(),"tick_s":_tick_s(),"late_s":_scheduler.get_clock()-target,"source_id":_selected_root_id,"hero_position":_hero.global_position}))
 			if not await _tick(): return false
 		return _expect(false, "bounded actual witness time")
 
