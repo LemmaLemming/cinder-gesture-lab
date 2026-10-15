@@ -1,5 +1,11 @@
 # Act 1 — durable memory
 
+## Current exact O2 submission and capacity recovery — 2026-10-15T02:31:52.780712+00:00
+
+Canonical HANDOFF **3bc7e2b1-fdda-404b-a9cb-a971fdb54b49** was sent for exact submitted commit **f04a935925dc54a7d7d07e6d36a8c374e5ab4c85**. All 151 selected manifest members join submitted Git blobs and current bytes; manifest SHA e5ac3aa4d5ffe49fc62b7866f12e89bdcd9f17bcefeafa7cdc702ac0a92cdb24. Independent O2 acceptance is pending; Act1 remains 6/8, campaign20/24. O3 content starts after acceptance; only factual parent/native/art API preparation proceeds meanwhile.
+
+All own engine handles are closed. Integration's temporary shared disk hold is respected. Disk capacity is now over29GiB free, observed source-only; await Integration's explicit coordination update before launching any new engine/import/capture/bank job. The interrupted owner-memory write changed neither file: both matched sealed f04a9359 exactly. Two redundant closed failed native reports were byte-verified against committed terminal01/terminal02 portable native.json files, then removed only from raw .cinder paths; all original bytes remain in the selected handoff. Relocation receipt: .cinder/closed-owner-census-archive/failed-terminal-native-relocation.json. Previous lossless census archives/indexes and all current source banks/settings/receipts/locks remain. No human permission or unlock gate exists.
+
 ## Current sealed handoff and actual adoption — 2026-10-15T01:49:37.247889+00:00
 
 O2 owner checks are complete and sealed for independent Integration review: mechanics 43/0, campaign 33/0, groups 245/0, portraits 64/0, final Retry 34/0, contact completion 42/0 and replay/Leave 45/0. Root inspected both original PNGs. Original failed 23/1, 29/1 and 43/1 results and the measured 63.917s contact-to-Story cost remain explicit. The focused handoff and exact submission manifest retain source attribution and limitations. Independent acceptance is pending: Act1 remains 6/8, campaign 20/24. O3 follows O2 acceptance.
