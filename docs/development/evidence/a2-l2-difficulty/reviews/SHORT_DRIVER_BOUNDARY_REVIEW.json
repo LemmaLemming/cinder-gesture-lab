@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-15T09:24:13.095954+00:00",
+  "scope": "Bounded independent source/host review only of real short625/1 and cited same-source neutral816 cleanup context. No source edits, engine, queue, rerun, new test or acceptance credit.",
+  "proven_production_defect": null,
+  "selected_short_failure": {
+    "path": ".cinder/a2-l2-difficulty-20261015/run-pair-challenge-short-20261015T091618.418015Z-a77303dc",
+    "report_sha256": "856d7d14018c07ddae5e0ca32b9329e8e4393f9def2f8c21bda3b251d36ee557",
+    "index_sha256": "d40a43f4473767339fec219d9b6818fde2dbde9a6d6c68d7512f3ae9303d1858",
+    "result_sha256": "dd8eb995381d140c5d0bd1939cb7e2e94d0b0f0fdd942f127fc29e71b83fb490",
+    "raw_sha256": "e53e737ff3e894dc21d518382149902839da7edfa392f470e6170d417a662574",
+    "indexed_files_hashes_sizes_verified": 123,
+    "named_source_maps_and_native_joins": 110,
+    "checks": 625,
+    "failures": 1,
+    "first_failure": {
+      "check": 621,
+      "detail": "",
+      "label": "actual native movement/commitment retains Hero HP without fabricated progression",
+      "ok": false
+    },
+    "complete": false,
+    "success": false,
+    "canonical_return": 1,
+    "wrapper_return": 2,
+    "host_errors": [
+      "ERROR: Condition \"ret != noErr\" is true. Returning: \"\""
+    ],
+    "warnings": [],
+    "target_hits": {
+      "shelter_handler": {
+        "hp_before": 30.0,
+        "hp_after": 6.0,
+        "clock_s": 2.83333333333333,
+        "proof_owner": "shelter_handler"
+      }
+    },
+    "Hero_HP": 90.0,
+    "failure_clock_s": 5.11666666666665,
+    "dash_left_s": 0.0133333333333334,
+    "velocity": [
+      10.6066045761108,
+      0.0,
+      10.6065988540649
+    ],
+    "driver_observations": [
+      {
+        "clock_s": 0.316666666666667,
+        "key": "tool_shelter_handler:1:threat-1",
+        "physics_frame": 20,
+        "process_frame": 6,
+        "reason": "follow_start",
+        "segment_end_s": null,
+        "segment_kind": "",
+        "segment_start_s": null,
+        "source_id": "tool_shelter_handler"
+      },
+      {
+        "clock_s": 3.99999999999999,
+        "key": "shelter_scout:2:threat-3",
+        "physics_frame": 241,
+        "process_frame": 431,
+        "reason": "follow_start",
+        "segment_end_s": null,
+        "segment_kind": "",
+        "segment_start_s": null,
+        "source_id": "shelter_scout"
+      },
+      {
+        "clock_s": 4.63333333333332,
+        "key": "shelter_scout:2:threat-3",
+        "physics_frame": 279,
+        "process_frame": 521,
+        "reason": "newer_response_plan",
+        "segment_end_s": 5.44099999999999,
+        "segment_kind": "positioning_dash",
+        "segment_start_s": 5.26099999999999,
+        "source_id": "shelter_scout"
+      },
+      {
+        "clock_s": 4.64999999999999,
+        "key": "tool_shelter_handler:2:threat-4",
+        "physics_frame": 280,
+        "process_frame": 523,
+        "reason": "follow_start",
+        "segment_end_s": null,
+        "segment_kind": "",
+        "segment_start_s": null,
+        "source_id": "tool_shelter_handler"
+      }
+    ]
+  },
+  "retained_source_pins": {
+    "tests/act2_l2_arrangement_pair.gd": {
+      "sha256": "2cd082cf946757b90d419b6dcfe95be7ed9c80b7ccead9343c83f623d0b1da8d",
+      "retained_blob": ".cinder/a2-l2-difficulty-20261015/run-pair-challenge-short-20261015T091618.418015Z-a77303dc/source-blobs/2cd082cf946757b90d419b6dcfe95be7ed9c80b7ccead9343c83f623d0b1da8d.txt"
+    },
+    "scripts/player.gd": {
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "retained_blob": ".cinder/a2-l2-difficulty-20261015/run-pair-challenge-short-20261015T091618.418015Z-a77303dc/source-blobs/8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743.txt"
+    },
+    "scripts/acts/act2/weybridge.gd": {
+      "sha256": "767430baacc6b6a32547e1ec87e81b9fe48ad24e53939c18876fa63317d85145",
+      "retained_blob": ".cinder/a2-l2-difficulty-20261015/run-pair-challenge-short-20261015T091618.418015Z-a77303dc/source-blobs/767430baacc6b6a32547e1ec87e81b9fe48ad24e53939c18876fa63317d85145.txt"
+    },
+    "scripts/acts/act2/ray_scout_exchange.gd": {
+      "sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+      "retained_blob": ".cinder/a2-l2-difficulty-20261015/run-pair-challenge-short-20261015T091618.418015Z-a77303dc/source-blobs/6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2.txt"
+    },
+    "scripts/combat/threat_scheduler.gd": {
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "retained_blob": ".cinder/a2-l2-difficulty-20261015/run-pair-challenge-short-20261015T091618.418015Z-a77303dc/source-blobs/c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d.txt"
+    },
+    "scripts/combat/threat_geometry.gd": {
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "retained_blob": ".cinder/a2-l2-difficulty-20261015/run-pair-challenge-short-20261015T091618.418015Z-a77303dc/source-blobs/c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09.txt"
+    },
+    "scripts/combat/body_sweep.gd": {
+      "sha256": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9",
+      "retained_blob": ".cinder/a2-l2-difficulty-20261015/run-pair-challenge-short-20261015T091618.418015Z-a77303dc/source-blobs/bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9.txt"
+    }
+  },
+  "source_facts": {
+    "request_dash": "player228-239 calls _start_dash;241-269 stores the command's current _world_action_clock in record/path, sets dash_left/cooldown, and does not move the body.",
+    "next_player_physics": "player271-318 sets scaled dash velocity, decrements dash_left, performs move_and_slide, advances action_clock and appends actual sampled position/time. The next callback integrates motion over the interval anchored at the recorded command clock, not an independently proven extra full-frame delay.",
+    "native_order": "Scout configure requires earlier physics Hero and Scheduler; Scout priority100, Weybridge parent110, fixture EndTick300. Deferred observer resumes after those callbacks; process_frame may span catch-up ticks.",
+    "timed_damage": "Ray _resolve_segment388-406 joins the previous measured Hero sample to current position and clips through Geometry.timed_path_hits99-112 to the actual active interval. A clear final position does not erase an overlapping earlier active boundary.",
+    "shared_proof": "Scheduler1423-1488 builds continuous segments at exact recognition+commitment+cooldown times and checks them against the retained union with CAPSULE_RADIUS+SKIN. It does not claim success for a path shifted late by a legal driver tolerance."
+  },
+  "host_geometry_diagnostic": {
+    "scope": "Host binary64 straight-line projection of retained report values; not native engine/vector32 execution or a reproduced hit proof.",
+    "Scout_active_from_s": 5.09999999999999,
+    "planned_dash_start_s": 4.93999999999999,
+    "planned_dash_end_s": 5.11999999999999,
+    "inferred_actual_request_clock_s": 4.949999999999983,
+    "planned_distance_to_Scout_lane_at_activation_m": 0.7425379406017342,
+    "inferred_late_start_distance_at_activation_m": 0.5938943321753327,
+    "actual_observed_final_position_distance_m": 0.8416359886172026,
+    "actual_logical_hit_threshold_m": 0.63,
+    "proof_clearance_threshold_m": 0.64
+  },
+  "review_of_proposed_test_only_change": {
+    "recommendation": "Reasonable narrow native-controller driver correction, subject to actual native checks; no shared proof/actor/geometry/stat/timing amendment established.",
+    "dash_wait_policy": "Select latest observed native boundary at or before segment.start_s. A source-level form is waiting while clock+sample_s<=segment.start_s+EPS, then retaining commandclock<=segment.start_s+EPS. Do not change ordinary-primary wait.",
+    "reason_for_refinement": "The proposed clock+sample>=start condition can fire a whole tick early for exactly aligned starts. Strict next-boundary comparison keeps aligned starts on time and selects4.933333 for fractional4.94.",
+    "upper_bound": "Tighten old start+one-sample late allowance to start+EPS in BOTH _follow dash gate and _dash_current, including repeated readiness boundary checks. No stale plan or late command acceptance.",
+    "preserve": [
+      "Actual stable Hero, nonzero native owner, actual cooldown and public request_dash result",
+      "Current source/cycle/reservation/armed ownership and later-plan replacement checks",
+      "All noHP-loss, actual ordinary target HP-loss, phase chronology and actual armed nonrecovery union assertions",
+      "All existing native/wall/watchdog/episode bounds, geometry, stats, positions, role and lock/recovery deadlines",
+      "Already-hit competitor remains live and unsuppressed; do not bypass its real escape plan",
+      "Original147/1 and625/1 raw/report/source evidence"
+    ],
+    "passive_notes": "Retain plan/source/key, segment planned start/end, scheduler+Hero action clock, physics frame, actual readiness/cooldown and signed request-clock-minus-planned-start at the accepted public command. Actual next path sample/completion remains native evidence.",
+    "qualification": "Boundary rounding can request up to one sample earlier than a fractional continuous proof start; report it explicitly as native legal action schedule. A pass proves actual selected-kit opportunity under this test setup, not exact execution of the continuous proof trajectory, all reaction margins, shared-kernel correctness or fullroute."
+  },
+  "same_source_neutral_cleanup_context": {
+    "path": ".cinder/a2-l2-difficulty-20261015/run-pair-challenge-neutral-20261015T091517.315998Z-f3642130",
+    "report_sha256": "b7761429e896253dd42123e373f30708b69702955f81702c27a1ecee7810f208",
+    "checks": 816,
+    "failures": 0,
+    "complete": true,
+    "classification": "closed0/no ObjectDB warning, retains hostCA error; not error-free clean",
+    "raw_errors": [
+      "ERROR: Condition \"ret != noErr\" is true. Returning: \"\""
+    ],
+    "raw_warnings": [],
+    "source_sha256": "2cd082cf946757b90d419b6dcfe95be7ed9c80b7ccead9343c83f623d0b1da8d"
+  },
+  "untested": "Corrected boundary policy, short recovery/hit completion, slow case and brief real portraits remain unexecuted in this review. Root chooses and executes targeted cases separately; no acceptance gate added."
+}

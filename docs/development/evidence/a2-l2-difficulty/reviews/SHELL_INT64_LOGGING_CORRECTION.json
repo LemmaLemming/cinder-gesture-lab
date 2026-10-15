@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-15T08:29:08.365968+00:00",
+  "kind": "PRIVATE test-only logging correction; unexecuted",
+  "original": {
+    "path": ".cinder/a2-l2-difficulty-20261015/candidate/act2_l2_arrangement_shell-before-int64-logging.gd.txt",
+    "sha256": "30e595a8aa8fcdf7989c4884dd15c47baf9729a2add6392ce2c0d78ce64f4fb7"
+  },
+  "corrected": {
+    "path": ".cinder/a2-l2-difficulty-20261015/candidate/act2_l2_arrangement_shell.gd.txt",
+    "sha256": "71910432874b0f0d1f3454854c1b75af2c15413fd7221b54bb66fbcb30d6d0a4"
+  },
+  "patch": {
+    "path": ".cinder/a2-l2-difficulty-20261015/candidate/SHELL_INT64_LOGGING.patch",
+    "sha256": "b3783afca2eda920011db39e206794178f9741e803ab7b8fe87b1f2b8d0b5649"
+  },
+  "cause": "Snapshot Exact codec permits integers only within +/-2^53-1; legitimate signed64 native World3D IDs may exceed that. Exact.stringify(nativeIDs) could return empty despite correct native runtime predicates.",
+  "change": "Only _record report transport: each actual int becomes its canonical decimalString; one assertion verifies actual-int type/nonempty23keys. Complete native validity/uniqueness/per-recipient distinctness predicates and all gameplay/session/disk/control assertions are unchanged.",
+  "independent_review": "runtime_guard_boundary_review inspected _record-only change and unchanged native-int guards; original30e595 source preserved.",
+  "no_engine_parser_import_promotion": true,
+  "old_readiness": "SHELL_DRAFT_READINESS.json and ADDITIONAL_FIXTURES_REVIEW.json remain exact historical source-only records for original30e595; this test-only correction supersedes their report-transport selection only."
+}

@@ -1,0 +1,58 @@
+--- short625-failed
++++ legal-sampled-boundary
+@@ -254,6 +254,16 @@
+ func _driver_note(reason: String, plan: Dictionary, segment: Dictionary = {}) -> void:
+ 	driver_observations.append({"reason": reason, "clock_s": scheduler.get_clock(), "source_id": plan.get("source_id", ""), "key": plan.get("key", ""), "segment_kind": segment.get("kind", ""), "segment_start_s": segment.get("start_s"), "segment_end_s": segment.get("end_s"), "physics_frame": Engine.get_physics_frames(), "process_frame": Engine.get_process_frames()})
+ 
++func _before_dispatch(segment: Dictionary) -> bool:
++	var clock: float = scheduler.get_clock()
++	var planned: float = segment.start_s
++	if segment.kind in ["escape_dash", "positioning_dash"]:
++		# Public request is issued on the latest available native boundary at
++		# or before a fractional planned start. Exact-grid starts stay on time.
++		# This is legal sampled input, not exact continuous proof execution.
++		return clock + 1.0 / float(Engine.physics_ticks_per_second) <= planned + EPS
++	return clock + EPS < planned # Primary damage is immediate at its call.
++
+ func _follow(plan: Dictionary) -> bool:
+ 	_driver_note("follow_start", plan)
+ 	var role: Dictionary = roles.tool if Sequence.HANDLERS.has(plan.actor_id) else roles.ray
+@@ -262,7 +272,7 @@
+ 	if not _expect(Codec.same_values(plan.resolved_role, role) and is_equal_approx(float(plan.reservation.active_from_s) - float(plan.reservation.lock_from_s), float(role.lock_s)) and float(role.lock_s) >= 1.1 - EPS, "actual armed response retains canonical role and original lock window: " + plan.actor_id): return false
+ 	for segment: Dictionary in plan.proof.path:
+ 		if segment.kind not in ["escape_dash", "positioning_dash", "ordinary_primary"]: continue
+-		while _live() and float(scheduler.get_clock()) + EPS < float(segment.start_s):
++		while _live() and _before_dispatch(segment):
+ 			if not _current(plan): _driver_note("source_no_longer_current", plan, segment); return true
+ 			if _replaced(plan): _driver_note("newer_response_plan", plan, segment); return true
+ 			if not await _step(): return false
+@@ -285,8 +295,7 @@
+ 				if float(actors[id].get("hp")) < float(before[id]):
+ 					hits[id] = {"hp_before": before[id], "hp_after": actors[id].get("hp"), "proof_owner": plan.actor_id, "clock_s": scheduler.get_clock(), "before_observation": pre_action}
+ 			return true
+-		var sample_s: float = 1.0 / float(Engine.physics_ticks_per_second)
+-		if float(scheduler.get_clock()) > float(segment.start_s) + sample_s + EPS: _driver_note("sample_window_already_passed", plan, segment); return true
++		if float(scheduler.get_clock()) > float(segment.start_s) + EPS: _driver_note("sample_window_already_passed", plan, segment); return true
+ 		var direction: Vector3 = segment.to - segment.from
+ 		direction.y = 0.0
+ 		if not await _dash(direction.normalized(), plan, segment): return false
+@@ -294,7 +303,7 @@
+ 	return true
+ 
+ func _dash_current(plan: Dictionary, segment: Dictionary) -> bool:
+-	return _current(plan) and not _replaced(plan) and float(scheduler.get_clock()) <= float(segment.start_s) + 1.0 / float(Engine.physics_ticks_per_second) + EPS
++	return _current(plan) and not _replaced(plan) and float(scheduler.get_clock()) <= float(segment.start_s) + EPS
+ 
+ func _dash(direction: Vector3, plan: Dictionary = {}, segment: Dictionary = {}) -> bool:
+ 	abandon_dash = false
+@@ -308,6 +317,10 @@
+ 	if not _expect(ready, "real public dash awaits actual stable Hero and cooldown"): return false
+ 	if not plan.is_empty() and not _dash_current(plan, segment): _driver_note("dash_boundary_no_longer_current", plan, segment); abandon_dash = true; return true
+ 	var before: int = actions.size()
++	if not plan.is_empty():
++		_driver_note("public_dash_request_at_sampled_boundary", plan, segment)
++		driver_observations[-1]["request_minus_planned_s"] = float(scheduler.get_clock()) - float(segment.start_s)
++		driver_observations[-1]["actual_request_origin"] = _plain(hero.global_position)
+ 	if not _expect(hero.request_dash(direction), "actual shared request_dash accepts the observed direction"): return false
+ 	for _tick: int in range(180):
+ 		for action: Dictionary in actions.slice(before):

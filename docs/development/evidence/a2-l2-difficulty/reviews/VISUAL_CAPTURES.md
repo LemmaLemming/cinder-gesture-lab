@@ -1,0 +1,16 @@
+# Actual graphical705 captures — failed run, Root optical review pending
+
+Native report SHA673aeb07f459e2806ae76a8b7fce454292bf796593fa6c72430b955044981393.757/1 is FAILED/incomplete with one intended targethit. Eight original540×1170 labels represent7 distinct PNG byte images; warning labels share one actual frame. All hashes/chunkCRCs and Exact observed source/clock contexts join. These metadata checks do not replace optical inspection.
+
+| Capture | Native clock s | HeroHP | Scout / Handler phase | Armed leases | Original image |
+| --- | ---: | ---: | --- | --- | --- |
+| shelter_handler-warning | 0.433333 | 100 | warning / warning | Scout=False; Handler=True | [shelter_handler-warning](</Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/final-neutral-portrait-retry-20261015/challenge-neutral-shelter_handler-warning.png>) |
+| shelter_scout-warning | 0.433333 | 100 | warning / warning | Scout=False; Handler=True | [shelter_scout-warning](</Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/final-neutral-portrait-retry-20261015/challenge-neutral-shelter_scout-warning.png>) |
+| shelter_scout-lock | 0.850000 | 100 | lock / warning | Scout=True; Handler=True | [shelter_scout-lock](</Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/final-neutral-portrait-retry-20261015/challenge-neutral-shelter_scout-lock.png>) |
+| shelter_handler-lock | 1.516667 | 100 | lock / lock | Scout=True; Handler=True | [shelter_handler-lock](</Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/final-neutral-portrait-retry-20261015/challenge-neutral-shelter_handler-lock.png>) |
+| shelter_scout-active | 1.966667 | 100 | active / lock | Scout=True; Handler=True | [shelter_scout-active](</Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/final-neutral-portrait-retry-20261015/challenge-neutral-shelter_scout-active.png>) |
+| shelter_scout-recovery | 2.116667 | 100 | recovery / lock | Scout=True; Handler=True | [shelter_scout-recovery](</Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/final-neutral-portrait-retry-20261015/challenge-neutral-shelter_scout-recovery.png>) |
+| shelter_handler-active | 2.616667 | 100 | recovery / active | Scout=True; Handler=True | [shelter_handler-active](</Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/final-neutral-portrait-retry-20261015/challenge-neutral-shelter_handler-active.png>) |
+| shelter_handler-recovery | 2.816667 | 100 | recovery / recovery | Scout=True; Handler=True | [shelter_handler-recovery](</Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/final-neutral-portrait-retry-20261015/challenge-neutral-shelter_handler-recovery.png>) |
+
+Suggested compact representatives: both-lock1.516667 (shelter_handler-lock), Scoutactive/Handlerlock1.966667 (shelter_scout-active), Handleractive/Scoutrecovery2.616667 (shelter_handler-active); warning0.433333 is provisionalunarmedScout plus armedHandler, not a botharmed proof. Full source/lease/geometry/actorposition/observationSHA contexts are in GRAPHICAL_705_ADDENDUM.json. Root chooses representative images after actual optical inspection.

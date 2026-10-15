@@ -1,6 +1,6 @@
 # Desktop difficulty coverage
 
-Current review: 15 October 2026; runtime `campaign-shared-64`. Level acceptance and difficulty coverage are separate:24/24 levels are accepted under [focused acceptance](LEVEL_ACCEPTANCE.md). This record does not reopen their unchanged acceptance or require full routes, every enemy, earned exits or all-kit playthroughs.
+Current review: 15 October 2026; runtime `campaign-shared-65`. Level acceptance and difficulty coverage are separate:24/24 levels are accepted under [focused acceptance](LEVEL_ACCEPTANCE.md). This record does not reopen their unchanged acceptance or require full routes, every enemy, earned exits or all-kit playthroughs.
 
 | Level | Completed authored policy and evidence |
 | --- | --- |
@@ -8,9 +8,10 @@ Current review: 15 October 2026; runtime `campaign-shared-64`. Level acceptance 
 | A1-L4 | Court admission order/gate change; [scope and original evidence](ACT1_L4_DIFFICULTY.md). |
 | A3-L2 | Forest mixed-role ground-slot exchange; [scope and original evidence](ACT3_L2_DIFFICULTY.md). |
 | A1-O3 | Final rehearsal unlike-source order/first-admission gate; [scope and original evidence](ACT1_O3_ACCEPTANCE.md). |
+| A2-L2 | Final shelter near-Handler/rear-Scout ground-slot exchange; [native/legacy/Shell/visual evidence and failed graphical driver scope](ACT2_L2_DIFFICULTY.md). |
 | A1-L1 | Five current controls-teaching beats retain their authored order and geometry. Each has a [specific source-backed rationale](../../data/campaign/act1/levels/A1-L1.md#challenge-teaching-exceptions--15-october-2026); [independent source/link review](evidence/a1-l1-difficulty-policy/index.json). This is a bounded retention policy, not a new Challenge encounter. |
 
-Four authored consumers and one bounded retention policy cover five of the24 accepted levels. Remaining19 accepted-level policies or justified exceptions: `A1-L3`, `A1-L5`, `A1-O1`, `A1-O2`, `A2-L1`, `A2-L2`, `A2-L3`, `A2-L4`, `A2-L5`, `A2-O1`, `A2-O2`, `A2-O3`, `A3-L1`, `A3-L3`, `A3-L4`, `A3-L5`, `A3-O1`, `A3-O2`, `A3-O3`. A2-L2 has passing pure32/0, legacy202/0, Shell125/0 and focused short802/0/slow1108/0 checks. Its graphical neutral case remains757/1 with actual HP loss, under investigation; no completion credit follows. Act1 owns the scoped A1-O2 amendment. Neither receives completed coverage credit yet. [A3-O3 is independently accepted](ACT3_O3_ACCEPTANCE.md); its distinct difficulty policy remains unfinished.
+Five authored consumers and one bounded retention policy cover six of24 accepted levels. Remaining18 policies or justified exceptions: `A1-L3`, `A1-L5`, `A1-O1`, `A1-O2`, `A2-L1`, `A2-L3`, `A2-L4`, `A2-L5`, `A2-O1`, `A2-O2`, `A2-O3`, `A3-L1`, `A3-L3`, `A3-L4`, `A3-L5`, `A3-O1`, `A3-O2`, `A3-O3`. Act1 owns its scoped A1-O2 amendment; A2-O3 preparation and Act3 proposals remain separate unfinished work. [A3-O3 is independently accepted](ACT3_O3_ACCEPTANCE.md); its difficulty policy remains unfinished.
 
 Fresh policies must produce a concrete different landing, target or route decision. Profile labels, renamed sources and numerical retunes alone do not establish an authored arrangement. Specific retention exceptions require a source-backed reason for the actual existing exercises; they grant no exemption to future content or other encounters. No new equipment, abilities or rewards are allocated by this review.
 

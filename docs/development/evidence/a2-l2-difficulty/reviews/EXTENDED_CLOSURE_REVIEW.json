@@ -1,0 +1,403 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-15T09:15:14.773965+00:00",
+  "scope": "Independent host/source review of six already CLOSED extended import/parser/Shell phases only; no engine, queue, production/worker/Git mutation or acceptance.",
+  "defects": [],
+  "closed_phases": [
+    {
+      "path": ".cinder/a2-l2-difficulty-20261015/import-pure-20261015T083245.743035Z-c2b16f91",
+      "phase": "import",
+      "test": "pure",
+      "closed": true,
+      "canonical_return": 0,
+      "wrapper_return": 0,
+      "indexed_files_hashes_sizes_verified": 120,
+      "before_queue_retained_blobs_verified": 108,
+      "observations": 110,
+      "seal_before_atlock_equal": true,
+      "after_close_equal": true,
+      "source_delta": {
+        "tests/act2_l2_arrangement_pair.gd.uid": {
+          "before": null,
+          "after": "8ded07036477196054edc9013a767c0ac0d4c30b867047253386990ef7556885"
+        },
+        "tests/act2_l2_arrangement_shell.gd.uid": {
+          "before": null,
+          "after": "4f704c6f7b537ea9a01c4de31dec2548e69f10cb40d526b7d320d2c800a2569d"
+        }
+      },
+      "queue_acquired_released": true,
+      "timeout_seconds_after_acquisition": 180,
+      "classification": "closed0 with retained host diagnostics",
+      "raw_error_lines": [
+        "ERROR: Condition \"ret != noErr\" is true. Returning: \"\"",
+        "ERROR: Cannot save file '/Users/howardchen/Library/Application Support/Godot/editor_settings-4.7.tres'.",
+        "ERROR: Error saving editor settings to /Users/howardchen/Library/Application Support/Godot/editor_settings-4.7.tres"
+      ],
+      "raw_warning_lines": [],
+      "wall_s_including_queue": 534.7256184999969,
+      "hashes": {
+        "index.json": "2c45dbb24266578f7b816c1d2eb45b5aea00af363510a2b8ceeae4ab3840103a",
+        "result.json": "8d4b61de2a2ea78fbe283bb1f201bd2ef42c22c406fe9ff3b12458b40b76a160",
+        "queue.json": "e4ecaeb024de5eb880c7e4f5bde060c506f8be654ef993673681a76769321af4",
+        "lifecycle.json": "79253e4ea617ddc85495cf77274f122c7efec106687548721dc78ce4027c3f5a",
+        "command.json": "60e4e781e7d421da6a4c9f9143824fb8275193b63a5fec23b6b7c7996418e6f4",
+        "raw.log": "d6bd158f1bf54925c2c0d58472c0c6fc58326559d68805f105d7bae9b1236f36",
+        "engine.log": "6e25863aa89e6ca2681c7f87c0d5b11049774413dc42047b9af0205f5b6a67fb",
+        "seal-used.json": "6253cdc8827a2e76b1cfbfa50278f6a46ab1c6ddab45b6ef6f501f05c6f1d1fc",
+        "sources-before-queue.json": "7bb90a4fe34ad33a719d4f253123d4667ac2c198148735ceb5eaed09e8c6cddf",
+        "sources-at-lock.json": "7bb90a4fe34ad33a719d4f253123d4667ac2c198148735ceb5eaed09e8c6cddf",
+        "sources-after-child.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-at-runner-close.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "source-retention.json": "3666d1cba1ce84c3ca7f38aa713f9601f6ac645488ec9c20587ea24857cc1480"
+      }
+    },
+    {
+      "path": ".cinder/a2-l2-difficulty-20261015/parse-shell-20261015T084548.200391Z-56216cf4",
+      "phase": "parse",
+      "test": "shell",
+      "closed": true,
+      "canonical_return": 0,
+      "wrapper_return": 0,
+      "indexed_files_hashes_sizes_verified": 122,
+      "before_queue_retained_blobs_verified": 110,
+      "observations": 110,
+      "seal_before_atlock_equal": true,
+      "after_close_equal": true,
+      "source_delta": {},
+      "queue_acquired_released": true,
+      "timeout_seconds_after_acquisition": 180,
+      "classification": "closed0 clean",
+      "raw_error_lines": [],
+      "raw_warning_lines": [],
+      "wall_s_including_queue": 1113.9700717080013,
+      "hashes": {
+        "index.json": "1f8b42d6d8a597372e70bfd58f4f94033a5c08a5ad976cc946641b0bc9bb6725",
+        "result.json": "37b5897b86b723deb2a928fbeb84e0e1f45db9d9683596d1b99616d0172b60ed",
+        "queue.json": "86397ab6dc743061b4dc02a1eae3c0893efdd475e00664c146eea4ca54429879",
+        "lifecycle.json": "19694d9bd2f8af48a99fe78e1929e7448755e3c8198494959d3b8bfeb97846f0",
+        "command.json": "2f5a159acd807f926884b9917b74c9921689722119649954d03e54a2b06fb6a8",
+        "raw.log": "24b704d934d1f368e451800f3a0d65f649c84a85d20293c64160bb5a287c30ee",
+        "engine.log": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+        "seal-used.json": "48f92b8d81620af96136acfa4b3e1fce072557b778b2b43ea46b1ed7e4145a8c",
+        "sources-before-queue.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-at-lock.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-after-child.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-at-runner-close.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "source-retention.json": "9c9511a474a21cf7a72744fde458dc3a8ca3ae4019a9fe9cbb6a8f778e1a1fc8"
+      }
+    },
+    {
+      "path": ".cinder/a2-l2-difficulty-20261015/parse-pair-challenge-neutral-20261015T090422.289329Z-2ee81e66",
+      "phase": "parse",
+      "test": "pair",
+      "closed": true,
+      "canonical_return": 0,
+      "wrapper_return": 0,
+      "indexed_files_hashes_sizes_verified": 122,
+      "before_queue_retained_blobs_verified": 110,
+      "observations": 110,
+      "seal_before_atlock_equal": true,
+      "after_close_equal": true,
+      "source_delta": {},
+      "queue_acquired_released": true,
+      "timeout_seconds_after_acquisition": 180,
+      "classification": "closed0 clean",
+      "raw_error_lines": [],
+      "raw_warning_lines": [],
+      "wall_s_including_queue": 29.2642451669999,
+      "hashes": {
+        "index.json": "28f075a92e6c4839801323d4fb85458435bd45f51b3a9a909417b92ded48605a",
+        "result.json": "b0aa44481aa54fe9731f0f79b5a4c6144833373384023d36c286d04fa17606c7",
+        "queue.json": "6c54983f4953a27429a1836cf19cb452a8ef68c236c76d26cc7326479003515d",
+        "lifecycle.json": "48c42b3e30bf825713641f7aeae5d8309809ea275abf7ae67842d56fe83afeda",
+        "command.json": "4cc9c6ea51e039351b9aabb8bdb54d5ab998eac62c7ae64d061164b290464539",
+        "raw.log": "24b704d934d1f368e451800f3a0d65f649c84a85d20293c64160bb5a287c30ee",
+        "engine.log": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+        "seal-used.json": "48f92b8d81620af96136acfa4b3e1fce072557b778b2b43ea46b1ed7e4145a8c",
+        "sources-before-queue.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-at-lock.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-after-child.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-at-runner-close.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "source-retention.json": "9c9511a474a21cf7a72744fde458dc3a8ca3ae4019a9fe9cbb6a8f778e1a1fc8"
+      }
+    },
+    {
+      "path": ".cinder/a2-l2-difficulty-20261015/parse-child-l3-20261015T090451.629168Z-e81ab222",
+      "phase": "parse",
+      "test": "child-l3",
+      "closed": true,
+      "canonical_return": 0,
+      "wrapper_return": 0,
+      "indexed_files_hashes_sizes_verified": 122,
+      "before_queue_retained_blobs_verified": 110,
+      "observations": 110,
+      "seal_before_atlock_equal": true,
+      "after_close_equal": true,
+      "source_delta": {},
+      "queue_acquired_released": true,
+      "timeout_seconds_after_acquisition": 180,
+      "classification": "closed0 clean",
+      "raw_error_lines": [],
+      "raw_warning_lines": [],
+      "wall_s_including_queue": 0.8295295829993847,
+      "hashes": {
+        "index.json": "0fee6358ac08685161dffed6e13ff0a541e9c786dd39c2f97dd685d5b90a4960",
+        "result.json": "1d9743fb22935e54c6e713375550d63ae08fb781d493788d99e994c8314fdc74",
+        "queue.json": "a417255fd1e38598b7a1aee1d266314a0e9a6a683d6d6db79c79a1ade9f569dc",
+        "lifecycle.json": "47f705b4f57731ea55cde1dc4beea9c90218bd7f43870267d44cc9f7a096b0b5",
+        "command.json": "5803adad782153334efe94d714d7a90cf7e6128c3e931381b0debd12713236e0",
+        "raw.log": "27dd39a0dd876deb834b2bf061fc979a7b329e46954849f4d8e395b11da9cb57",
+        "engine.log": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+        "seal-used.json": "48f92b8d81620af96136acfa4b3e1fce072557b778b2b43ea46b1ed7e4145a8c",
+        "sources-before-queue.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-at-lock.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-after-child.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-at-runner-close.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "source-retention.json": "9c9511a474a21cf7a72744fde458dc3a8ca3ae4019a9fe9cbb6a8f778e1a1fc8"
+      }
+    },
+    {
+      "path": ".cinder/a2-l2-difficulty-20261015/parse-child-l4-20261015T090452.512097Z-a14edf56",
+      "phase": "parse",
+      "test": "child-l4",
+      "closed": true,
+      "canonical_return": 0,
+      "wrapper_return": 0,
+      "indexed_files_hashes_sizes_verified": 122,
+      "before_queue_retained_blobs_verified": 110,
+      "observations": 110,
+      "seal_before_atlock_equal": true,
+      "after_close_equal": true,
+      "source_delta": {},
+      "queue_acquired_released": true,
+      "timeout_seconds_after_acquisition": 180,
+      "classification": "closed0 clean",
+      "raw_error_lines": [],
+      "raw_warning_lines": [],
+      "wall_s_including_queue": 0.8750765420008975,
+      "hashes": {
+        "index.json": "7558f5027b38aea937326a1948ee5a61e5a174ec7d90f79bae0cc28e1f18f8ed",
+        "result.json": "09e4c8365d5d06ef479a430d9656ddb763e6b6afe4ae9d8529af9778b8239e95",
+        "queue.json": "ce6c7a7608be5dc0c526592f2f373b081cdffd8406abb2867b559d284d1b6380",
+        "lifecycle.json": "a39f1ed64c4f342ad3169372437a913ac6be3c2745da16379b6124dcbab4a1d5",
+        "command.json": "7c400b2aed925ed6f05ff0fc11cd942830324effdc974034fd1c7eada234d768",
+        "raw.log": "27dd39a0dd876deb834b2bf061fc979a7b329e46954849f4d8e395b11da9cb57",
+        "engine.log": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+        "seal-used.json": "48f92b8d81620af96136acfa4b3e1fce072557b778b2b43ea46b1ed7e4145a8c",
+        "sources-before-queue.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-at-lock.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-after-child.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-at-runner-close.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "source-retention.json": "9c9511a474a21cf7a72744fde458dc3a8ca3ae4019a9fe9cbb6a8f778e1a1fc8"
+      }
+    },
+    {
+      "path": ".cinder/a2-l2-difficulty-20261015/run-shell-20261015T090614.073551Z-a71f7c18",
+      "phase": "run",
+      "test": "shell",
+      "closed": true,
+      "canonical_return": 0,
+      "wrapper_return": 0,
+      "indexed_files_hashes_sizes_verified": 123,
+      "before_queue_retained_blobs_verified": 110,
+      "observations": 110,
+      "seal_before_atlock_equal": true,
+      "after_close_equal": true,
+      "source_delta": {},
+      "queue_acquired_released": true,
+      "timeout_seconds_after_acquisition": 180,
+      "classification": "closed0 clean",
+      "raw_error_lines": [],
+      "raw_warning_lines": [],
+      "wall_s_including_queue": 10.710575917000824,
+      "hashes": {
+        "index.json": "b8068b211439a498b8d66f1f91d239a9763224dbbdd8198544828f90fd3e73c4",
+        "result.json": "10501e97cb0c3a2bcad2503bd65c1cf2441cbb5da37dc266b902579e93607e06",
+        "queue.json": "f61b76e848d3b68972817d0e3bd11df71071d22030c3b3671c92add55c326996",
+        "lifecycle.json": "108e3ea4bbdec2f631478304bd8de13e4cea51df08a2eba7cc63b9db7123ebb4",
+        "command.json": "b52102b276f2d627f14c4d29f2a1368941d52aa035a2ee104f43c603d91d697e",
+        "raw.log": "b161ff61718b18e6a8f56617794cb62563241a4f730f6654adba474bc7da6491",
+        "engine.log": "24ad3c4987a41bfaee9f2d43587f9af844a8ee91f4d78b50afb5b35d4f3a5d15",
+        "seal-used.json": "48f92b8d81620af96136acfa4b3e1fce072557b778b2b43ea46b1ed7e4145a8c",
+        "sources-before-queue.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-at-lock.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-after-child.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "sources-at-runner-close.json": "e473d1aa21b1fe4f2d741290d102a7164d9835a9fb89395732cc9775ac1cc4a3",
+        "source-retention.json": "9c9511a474a21cf7a72744fde458dc3a8ca3ae4019a9fe9cbb6a8f778e1a1fc8"
+      }
+    }
+  ],
+  "shell": {
+    "report": ".cinder/a2-l2-difficulty-20261015/run-shell-20261015T090614.073551Z-a71f7c18/native-report.json",
+    "sha256": "35380f837d004944d27ba45dfbc9c632a1602fb24087436a4880ca3e53356caf",
+    "bytes": 2556161,
+    "actual_rows": 125,
+    "false_rows": 0,
+    "first_failure": {},
+    "complete": true,
+    "success": true,
+    "actual_native_footer_path_sha_count_and_result_join": true,
+    "native_subset25_before_after_joins_frozen110": true,
+    "whole_Exact_receipts_checked": 5,
+    "Exact_comparison": "Full original wire string equalities and decoded typed trees with scalar tags/float64 bits retained; no normalization or rewriting of observations.",
+    "full_Pause_changes_only_Story_snapshot": true,
+    "same_entire_entrance_checkpoint_all_five": true,
+    "newer_preference_and_fresh_disk_Continue_preserve_full_W_session_raw_primary_backup": true,
+    "Retry_full_E_session_restored": true,
+    "Store_format2_checksum_bytes_rawhash_and_backup_rotation_checked": true,
+    "Store_generations": [
+      1,
+      2,
+      2,
+      2,
+      3
+    ],
+    "current_preferences": [
+      "standard",
+      "standard",
+      "assisted",
+      "assisted",
+      "assisted"
+    ],
+    "saved_profile_recipe_all_five": "challenge / A2-L2/challenge-near-handler@v2",
+    "native_decimal_ints_per_receipt": 23,
+    "same_ids_first_three_each_id_new_on_fresh_Continue_and_Retry": true,
+    "meaning": "Actual unmodified canonical Shell with opposite current preferences restores selected new18 saved Challenge entry/first native unarmed Scout warning; public Pause full persistence, independent disk Continue, entrance Retry and normal whole-tree/cue/Store cleanup. Selected actor/tool native positions asserted, no live latepair behavior credited.",
+    "receipt_summaries": [
+      {
+        "stage": "initial public Continue exact entrance",
+        "snapshot_sha256": "6e0024182bf6e5ab8d15ddf6900bc3af6d48f5ee4275034b73746d984d1ce189",
+        "session_sha256": "e4f4f0309482e1669f753073e43355ddace764138f79deb6d17ba003e39ef1d1",
+        "checkpoint_sha256": "6e0024182bf6e5ab8d15ddf6900bc3af6d48f5ee4275034b73746d984d1ce189",
+        "generation": 1,
+        "primary_sha256": "f33d59dfb7a8ced518d8ad5ac2fc4d82c2dcdeba89b1a1d4a58b07798a3840d1",
+        "backup_sha256": null
+      },
+      {
+        "stage": "actual public Pause first-warning Save",
+        "snapshot_sha256": "845d489e564c1d1b138c2d30afe0f877cce53979d4c32d145a1b28bfa216b72c",
+        "session_sha256": "999da130fb0373838106be4e2a01f17ccd1309faa424e98950401dff1717b477",
+        "checkpoint_sha256": "6e0024182bf6e5ab8d15ddf6900bc3af6d48f5ee4275034b73746d984d1ce189",
+        "generation": 2,
+        "primary_sha256": "66b4221759d0f5adb66184728df875d8c123bc105b6300760eca302d55ed0fb3",
+        "backup_sha256": "f33d59dfb7a8ced518d8ad5ac2fc4d82c2dcdeba89b1a1d4a58b07798a3840d1"
+      },
+      {
+        "stage": "public newer Assisted preference preserves Challenge warning",
+        "snapshot_sha256": "845d489e564c1d1b138c2d30afe0f877cce53979d4c32d145a1b28bfa216b72c",
+        "session_sha256": "999da130fb0373838106be4e2a01f17ccd1309faa424e98950401dff1717b477",
+        "checkpoint_sha256": "6e0024182bf6e5ab8d15ddf6900bc3af6d48f5ee4275034b73746d984d1ce189",
+        "generation": 2,
+        "primary_sha256": "66b4221759d0f5adb66184728df875d8c123bc105b6300760eca302d55ed0fb3",
+        "backup_sha256": "f33d59dfb7a8ced518d8ad5ac2fc4d82c2dcdeba89b1a1d4a58b07798a3840d1"
+      },
+      {
+        "stage": "fresh independent public disk Continue exact warning",
+        "snapshot_sha256": "845d489e564c1d1b138c2d30afe0f877cce53979d4c32d145a1b28bfa216b72c",
+        "session_sha256": "999da130fb0373838106be4e2a01f17ccd1309faa424e98950401dff1717b477",
+        "checkpoint_sha256": "6e0024182bf6e5ab8d15ddf6900bc3af6d48f5ee4275034b73746d984d1ce189",
+        "generation": 2,
+        "primary_sha256": "66b4221759d0f5adb66184728df875d8c123bc105b6300760eca302d55ed0fb3",
+        "backup_sha256": "f33d59dfb7a8ced518d8ad5ac2fc4d82c2dcdeba89b1a1d4a58b07798a3840d1"
+      },
+      {
+        "stage": "actual public Retry exact entrance checkpoint",
+        "snapshot_sha256": "6e0024182bf6e5ab8d15ddf6900bc3af6d48f5ee4275034b73746d984d1ce189",
+        "session_sha256": "e4f4f0309482e1669f753073e43355ddace764138f79deb6d17ba003e39ef1d1",
+        "checkpoint_sha256": "6e0024182bf6e5ab8d15ddf6900bc3af6d48f5ee4275034b73746d984d1ce189",
+        "generation": 3,
+        "primary_sha256": "9e12afda3829cfce1a89c60998f395661e3c490ae0d1516f6883e8720179c110",
+        "backup_sha256": "66b4221759d0f5adb66184728df875d8c123bc105b6300760eca302d55ed0fb3"
+      }
+    ],
+    "test_context": "Disclosed TEST prefix6/pre-tree Challenge preference and initial outerShell metadata around actual native E only. Unmodified production Shell executes actual stage0 first-warning PauseSave, newer Assisted preference, independent diskContinue and entranceRetry. No relocation, forced stage/history/HP/clocks/phase/lease/savedpacket edits.",
+    "limitations": "No public A2L1\u2192L2 fresh transition, earned checkpoint, defeat/contact/foot/lateShelter/clear/fullroute, allkit, GUI pointer-routing, portrait, humanbalance or performance credit. Initial genuine paused constructor E has no settled-floor claim. Initial outerShell metadata and predecessor prefix are disclosed TEST setup, not played progress.",
+    "normal_cleanup_assertion_checks": [
+      6,
+      41,
+      42,
+      120,
+      122,
+      123,
+      125
+    ]
+  },
+  "original_failure_preserved": {
+    "path": ".cinder/a2-l2-difficulty-20261015/parse-pure-20261015T080635.544725Z-8d35dae0",
+    "index_sha256": "d44fde554b077e5755e64582b87da994b6f86c9ec4a851593ea316c7cee33e61",
+    "raw_sha256": "7d77f761cbc0b075432885cad9320f2a5d37e9fdffdd4d3c47ec713b7f74216b",
+    "result_sha256": "88fcb117afa3d6ce85395a683658b7dbc4fbe80b59f703f532759dc2f75d8982",
+    "canonical_return": 1,
+    "wrapper_return": 2,
+    "original_error_lines": [
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"selector\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"resolver\" variable because the value doesn't have a set type.",
+      "SCRIPT ERROR: Parse Error: Cannot infer the type of \"selector\" variable because the value doesn't have a set type."
+    ],
+    "native_Godot_parser_executed": true,
+    "gameplay_body_executed": false,
+    "fix_record_sha256": "6f46816810d291fdf95490c30ef63d0b25153dcee476eb456acddc0565a4f060",
+    "original_source_sha256": "a7887651d7c0c2fe6b8d7701a02deec1cd70229e897944247da95842b721579b",
+    "current_source_sha256": "767430baacc6b6a32547e1ec87e81b9fe48ad24e53939c18876fa63317d85145",
+    "change": "Three local inference := declarations become dynamic = assignments, matching existing Script.new usage; no constructor, schema, geometry, timing, guard, state or test logic change.",
+    "metadata_qualification": "Original native_executed=false meant no gameplay body; native Godot parser did execute. Original metadata bytes retained separately; source fix unchanged."
+  },
+  "reused_prior_checks": {
+    "record": ".cinder/a2-l2-difficulty-20261015/FIRST_BATCH_CLOSURE_REVIEW.json",
+    "record_sha256": "5f08258bd15c284329b010c12c07688d0ce0dc11d4220ff76953b4d489502b44",
+    "qualification": "Root prior bounded review reused, not rerun/re-audited here. Pure32/0 complete retains host CA diagnostic; legacy202/0 complete4 units clean. Original import host diagnostics and failed parse unchanged."
+  },
+  "current_small_named_pins": {
+    "scripts/acts/act2/weybridge.gd": {
+      "sealed": "767430baacc6b6a32547e1ec87e81b9fe48ad24e53939c18876fa63317d85145",
+      "current": "767430baacc6b6a32547e1ec87e81b9fe48ad24e53939c18876fa63317d85145"
+    },
+    "data/campaign/act2/a2_l2_difficulty_arrangements.json": {
+      "sealed": "400bfd256283204afda35f310c2a4d0432989d84ebdad8328b29c98a137a9d50",
+      "current": "400bfd256283204afda35f310c2a4d0432989d84ebdad8328b29c98a137a9d50"
+    },
+    "tests/act2_l2_arrangement_shell.gd": {
+      "sealed": "9af725d4752dca05e2dbc8e1cbd25d268b16906bf5556698981be904a4b7cbdf",
+      "current": "9af725d4752dca05e2dbc8e1cbd25d268b16906bf5556698981be904a4b7cbdf"
+    },
+    "tests/act2_l2_arrangement_pair.gd": {
+      "sealed": "71b7f9962b0c2925931e90e615eac2704c0128af68277624a5a7d21f648b601b",
+      "current": "faf7e5e9f183c0cbcdebdc1a1b16a588cffeba565da7775c4fa07d568b1b8ee6"
+    },
+    "scripts/acts/act2/ruined_house.gd": {
+      "sealed": "728358c5e5864066bcc5eb4821f4e55a39561f9763962478e7338a5dea69baef",
+      "current": "728358c5e5864066bcc5eb4821f4e55a39561f9763962478e7338a5dea69baef"
+    },
+    "scripts/acts/act2/london_approaches.gd": {
+      "sealed": "f8edbdf3a34a5dc3bf424471958c8a19d803cae764e73e256ea30c55c03b1ad0",
+      "current": "f8edbdf3a34a5dc3bf424471958c8a19d803cae764e73e256ea30c55c03b1ad0"
+    },
+    ".cinder/a2-l2-difficulty-20261015/run.py": {
+      "sealed": "198f23a2376f6082f5e61a24f471c4de41e6c28ddb76e97ea3662fc88becbf00",
+      "current": "198f23a2376f6082f5e61a24f471c4de41e6c28ddb76e97ea3662fc88becbf00"
+    },
+    ".cinder/a2-l2-difficulty-20261015/run_extended.py": {
+      "sealed": "fc6f80018556ae68112c0b730196bdc8e8131426aab83b8a2c8dc9a950e2ede9",
+      "current": "fc6f80018556ae68112c0b730196bdc8e8131426aab83b8a2c8dc9a950e2ede9"
+    }
+  },
+  "later_pair_delta_qualification": "Root explicitly changed pair test after closed original jobs for a separate passive diagnostic. That later delta does not rewrite any selected110 result/source evidence. Pair native reports/cause not evaluated in this closure pass.",
+  "not_claimed": [
+    "Pair gameplay/noHit/hits/phases/armedunion or cause attribution from Shell",
+    "Fifth authored consumer or acceptance",
+    "Fresh A2L1-to-L2 transition, earned checkpoint, fullroute/all enemies/exit/campaignclear",
+    "Portrait, allkit, balance or performance",
+    "Whole dependency/globalUID/bank closure"
+  ],
+  "public_wrapper_preparation": {
+    "record": ".cinder/a2-l2-difficulty-20261015/PUBLIC_REPRO_WRAPPER_PREP.json",
+    "sha256": "f5ba62e52640b5acf84855b6041a2794b523ffafac3b48b7aa7aca6854f1f055",
+    "draft": ".cinder/a2-l2-difficulty-20261015/weybridge_arrangement.py.txt",
+    "draft_sha256": "b0717886754b83d0edbc00c0daa20287069d27454acf13980a57fa07d75bd23a",
+    "not_promoted_executed": true
+  },
+  "host_review_probe": {
+    "initial_in_memory_current_pin_requirement_refused": "Pair source had the newly authorized post-closure Root diagnostic delta. No output was written by the first probe; revised review qualifies that delta separately and retains sealed evidence unchanged."
+  }
+}

@@ -10,6 +10,13 @@ const Mechanism: Script = preload("res://scripts/combat/lane_mechanism.gd")
 const FootVisual: Script = preload("res://scripts/acts/act2/giant_foot_visual.gd")
 const ExactJson: Script = preload("res://scripts/campaign/exact_json.gd")
 const AdmissionEquipment: Script = preload("res://scripts/equipment.gd")
+const L2Arrangement: Script = preload("res://scripts/combat/encounter_arrangement.gd")
+const L2Difficulty: Script = preload("res://scripts/combat/difficulty.gd")
+const L2_ARRANGEMENT_PATH: String = "res://data/campaign/act2/a2_l2_difficulty_arrangements.json"
+const L2_ARRANGEMENT_API: String = "act2-weybridge-level-2"
+const L2_SOURCE_IDS: Array[String] = ["village_scout", "yard_handler", "apron_handler", "crossing_scout", "shelter_scout", "shelter_handler"]
+const L2_CANONICAL_RECIPES: Dictionary = {"assisted": "A2-L2/assisted-canonical@v1", "standard": "A2-L2/standard-canonical@v1", "challenge": "A2-L2/challenge-canonical-legacy@v1"}
+const L2_CHALLENGE_RECIPE: String = "A2-L2/challenge-near-handler@v2"
 const CROSSING_EPOCH: String = "A2-L2-weybridge"
 const SHELTER_EXIT: Rect2 = Rect2(-2.7, -38.8, 5.4, 1.3)
 const CROSSING_FLOORS: Array[Dictionary] = [
@@ -36,6 +43,115 @@ var _opening_cues: Dictionary = {}
 var _foot_visual: Node3D
 var _contact_seen: String = ""
 var _collapse_started_s: float = 0.0
+# Immutable per-construction metadata. Never native admission or saved progress.
+var _l2_definition: Dictionary = {}
+var _l2_arrangement_descriptor: Dictionary = {}
+var _l2_selected_positions: Dictionary = {}
+var _l2_legacy_capture: bool = false
+var _l2_construction_started: bool = false
+
+static func arrangement_definition_error(definition: Variant) -> String:
+	var error: String = L2Arrangement.definition_error(definition)
+	if not error.is_empty(): return error
+	if definition.unit_ids != L2_SOURCE_IDS or definition.recipes.size() != 4:
+		return "Weybridge requires its six original units and four retained recipes"
+	var expected: Dictionary = {}
+	for profile: String in L2_CANONICAL_RECIPES:
+		expected[L2_CANONICAL_RECIPES[profile]] = {"recipe_id": L2_CANONICAL_RECIPES[profile], "profile": profile, "order": L2_SOURCE_IDS.duplicate()}
+	var challenge: Array = L2_SOURCE_IDS.duplicate()
+	challenge[4] = "shelter_handler"
+	challenge[5] = "shelter_scout"
+	expected[L2_CHALLENGE_RECIPE] = {"recipe_id": L2_CHALLENGE_RECIPE, "profile": "challenge", "order": challenge}
+	for recipe: Dictionary in definition.recipes:
+		if not expected.has(recipe.recipe_id) or not Codec.same_values(recipe, expected[recipe.recipe_id]):
+			return "Weybridge retained recipe contents cannot be repurposed"
+	return ""
+
+static func arrangement_layout(descriptor: Variant, definition: Variant) -> Dictionary:
+	var error: String = arrangement_definition_error(definition)
+	if not error.is_empty(): return {"error": error}
+	var selector = L2Arrangement.new(definition)
+	error = selector.saved_error(descriptor)
+	if not error.is_empty(): return {"error": error}
+	var positions: Dictionary = {}
+	for index: int in range(L2_SOURCE_IDS.size()):
+		var actor_id: String = descriptor.order[index]
+		var slot: Vector3 = CrossingSequence.ACTORS[L2_SOURCE_IDS[index]]
+		# Select a ground slot BEFORE configure, retaining each recipient's height.
+		slot.y = (CrossingSequence.ACTORS[actor_id] as Vector3).y
+		positions[actor_id] = slot
+	return {"error": "", "descriptor": selector.restore(descriptor), "positions": positions, "profile_id": descriptor.profile}
+
+static func _l2_local_envelope_error(local: Variant) -> String:
+	var error: String = Codec.value_error(local)
+	if not error.is_empty(): return error
+	if not local is Dictionary: return "Weybridge local state must be a dictionary"
+	var current: bool = local.has("api_revision") or local.has("schema_version") or local.has("arrangement")
+	var keys: Array = CROSSING_LOCAL_KEYS.duplicate()
+	if current:
+		keys.append_array(["api_revision", "schema_version", "arrangement"])
+	error = Codec.keys_error(local, keys)
+	if not error.is_empty(): return error
+	if current and (local.api_revision != L2_ARRANGEMENT_API or not Codec.is_integer(local.schema_version, 2, 2)):
+		return "Unsupported Weybridge inner arrangement API/schema"
+	return ""
+
+# Pure construction receipt only: never accepts actor HP/geometry/progress.
+# Every original full Player/Level/native validator still runs before commit.
+static func arrangement_constructor(local: Variant, definition: Variant) -> Dictionary:
+	var error: String = _l2_local_envelope_error(local)
+	if not error.is_empty(): return {"error": error}
+	if not local.profile_id is String or not L2_CANONICAL_RECIPES.has(local.profile_id) or not local.sequence is Dictionary or not local.scheduler is Dictionary:
+		return {"error": "Weybridge construction requires saved local profile and sequence/Scheduler dictionaries"}
+	var sequence = CrossingSequence.new()
+	error = sequence.snapshot_error(local.sequence)
+	if not error.is_empty(): return {"error": error}
+	var saved_scheduler: Dictionary = local.scheduler
+	if not saved_scheduler.get("profile") is Dictionary or not Codec.is_integer(saved_scheduler.get("world_revision"), WORLD_REVISION, WORLD_REVISION):
+		return {"error": "Weybridge construction requires the saved Scheduler profile/world revision"}
+	var resolver = L2Difficulty.new()
+	var canonical: Dictionary = resolver.profile(local.profile_id)
+	if canonical.is_empty(): return {"error": "Unknown saved Weybridge difficulty profile"}
+	if int(local.sequence.stage_index) == 11:
+		# Genuine earned clear ends the Scheduler epoch and clears its profile.
+		# Complete native/history validation follows; this receipt grants no clear.
+		if not saved_scheduler.profile.is_empty() or saved_scheduler.get("encounter_id") != "" or not saved_scheduler.get("reservations") is Array or not saved_scheduler.reservations.is_empty():
+			return {"error": "Cleared Weybridge constructor must retain its original empty Scheduler epoch"}
+	elif saved_scheduler.get("encounter_id") != CROSSING_EPOCH or ExactJson.stringify(saved_scheduler.profile) != ExactJson.stringify(canonical):
+		return {"error": "Weybridge saved live Scheduler profile/epoch differs from its canonical local profile"}
+	var legacy: bool = not local.has("arrangement")
+	var descriptor: Variant = local.get("arrangement")
+	if legacy:
+		descriptor = {"schema_version": 1, "profile": local.profile_id, "recipe_id": L2_CANONICAL_RECIPES[local.profile_id], "order": L2_SOURCE_IDS.duplicate()}
+	var selected: Dictionary = arrangement_layout(descriptor, definition)
+	if not String(selected.error).is_empty(): return selected
+	if selected.profile_id != local.profile_id:
+		return {"error": "Weybridge retained arrangement and saved local profiles differ"}
+	selected["legacy"] = legacy
+	return selected
+
+func _l2_load_definition() -> Variant:
+	return JSON.parse_string(FileAccess.get_file_as_string(L2_ARRANGEMENT_PATH))
+
+func restore_candidate_construction_required() -> bool:
+	# Children preserve their original constructor/capture/codec lifecycle.
+	return true if level_id == "A2-L2" else super.restore_candidate_construction_required()
+
+func _on_enter_restore_candidate(local: Dictionary, saved_player: Dictionary) -> String:
+	if level_id != "A2-L2": return super._on_enter_restore_candidate(local, saved_player)
+	var definition: Variant = _l2_load_definition()
+	var selected: Dictionary = arrangement_constructor(local, definition)
+	if not String(selected.error).is_empty(): return selected.error
+	_l2_construct(selected, definition)
+	return runtime_error
+
+func _l2_binding_error(local: Dictionary) -> String:
+	if not _l2_construction_started or _l2_definition.is_empty(): return "Weybridge native arrangement construction is absent"
+	var selected: Dictionary = arrangement_constructor(local, _l2_definition)
+	if not String(selected.error).is_empty(): return selected.error
+	if selected.legacy != _l2_legacy_capture or selected.profile_id != _profile_id or selected.positions != _l2_selected_positions or ExactJson.stringify(selected.descriptor) != ExactJson.stringify(_l2_arrangement_descriptor):
+		return "Weybridge saved layout differs from the immutable constructed native bindings"
+	return ""
 
 func _ready() -> void:
 	_art_preview = false
@@ -51,6 +167,27 @@ func _ready() -> void:
 func _on_enter_level() -> void:
 	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
 		_profile_id = shared_shell.call("get_difficulty_preference")
+	var definition: Variant = _l2_load_definition()
+	var error: String = arrangement_definition_error(definition)
+	if not error.is_empty(): runtime_error = error; return
+	var selector = L2Arrangement.new(definition)
+	var descriptor: Dictionary = selector.select_fresh(_profile_id)
+	if descriptor.is_empty(): runtime_error = selector.last_error; return
+	var selected: Dictionary = arrangement_layout(descriptor, definition)
+	if not String(selected.error).is_empty(): runtime_error = selected.error; return
+	selected["legacy"] = false
+	_l2_construct(selected, definition)
+
+func _l2_construct(selected: Dictionary, definition: Dictionary) -> void:
+	if _l2_construction_started or is_instance_valid(_scheduler) or not _actors.is_empty() or not _mechanisms.is_empty():
+		runtime_error = "Weybridge native recipients can only be configured once"
+		return
+	_l2_construction_started = true
+	_l2_definition = definition.duplicate(true)
+	_l2_arrangement_descriptor = selected.descriptor.duplicate(true)
+	_l2_selected_positions = selected.positions.duplicate(true)
+	_l2_legacy_capture = selected.legacy
+	_profile_id = selected.profile_id
 	_scheduler = Scheduler.new()
 	_scheduler.name = "WeybridgeThreatScheduler"
 	add_child(_scheduler)
@@ -61,7 +198,7 @@ func _on_enter_level() -> void:
 		var is_handler: bool = CrossingSequence.HANDLERS.has(id)
 		var actor: Node3D = (HandlerActor.new() if is_handler else WeybridgeScoutActor.new()) as Node3D
 		actor.name = ("Handler_" if is_handler else "Scout_") + id
-		actor.position = CrossingSequence.ACTORS[id]
+		actor.position = _l2_selected_positions[id]
 		add_child(actor)
 		if not actor.call("configure", hero, effects, id):
 			runtime_error = "Cannot bind L2 actor " + id
@@ -627,17 +764,23 @@ func encounter_state() -> Dictionary:
 
 func _capture_local_state() -> Dictionary:
 	if not get_tree().paused or _defeat_flush_queued or not _pending_defeats.is_empty(): return {"error": "L2 capture requires deferred paused commit barrier"}
+	if not runtime_error.is_empty() or not _l2_construction_started or not is_instance_valid(_scheduler): return {"error": "L2 capture requires complete healthy native layout construction"}
 	var bindings: Dictionary = _scheduler_bindings()
 	var handlers: Dictionary = {}
 	for id: String in CrossingSequence.HANDLERS: handlers[id] = _actors[id].call("snapshot_state")
 	var mechanisms: Dictionary = {}
 	for id: String in _mechanisms: mechanisms[id] = _mechanisms[id].call("snapshot_state", bindings)
-	return {"sequence": _crossing.call("snapshot_state"), "scheduler": _scheduler.call("snapshot_state", bindings), "rays": _exchange.call("snapshot_state", bindings), "handlers": handlers, "mechanisms": mechanisms, "views": _views.duplicate(true), "profile_id": _profile_id, "scenic_clock": _scenic_clock, "witness_started_s": _witness_started_s, "collapse_started_s": _collapse_started_s, "last_action_sequence": _last_action_sequence, "contact_seen": _contact_seen, "pending_checkpoints": _pending_checkpoints.duplicate(), "completion_pending": _completion_pending, "exit_requested": _exit_requested}
+	var result: Dictionary = {"sequence": _crossing.call("snapshot_state"), "scheduler": _scheduler.call("snapshot_state", bindings), "rays": _exchange.call("snapshot_state", bindings), "handlers": handlers, "mechanisms": mechanisms, "views": _views.duplicate(true), "profile_id": _profile_id, "scenic_clock": _scenic_clock, "witness_started_s": _witness_started_s, "collapse_started_s": _collapse_started_s, "last_action_sequence": _last_action_sequence, "contact_seen": _contact_seen, "pending_checkpoints": _pending_checkpoints.duplicate(), "completion_pending": _completion_pending, "exit_requested": _exit_requested}
+	if not _l2_legacy_capture:
+		result["api_revision"] = L2_ARRANGEMENT_API
+		result["schema_version"] = 2
+		result["arrangement"] = _l2_arrangement_descriptor.duplicate(true)
+	return result
 
 func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary) -> String:
 	if not get_tree().paused or _defeat_flush_queued or not _pending_defeats.is_empty() or not runtime_error.is_empty(): return "L2 snapshot requires paused healthy committed unit"
 	if _floors.size() != CROSSING_FLOORS.size() or not is_instance_valid(_kit.get("root")) or not is_instance_valid(_kit.get("collapse")) or not is_instance_valid(_foot_visual) or not is_instance_valid(_exit_cue): return "Missing required owned L2 scenery/ground/source"
-	var error: String = Codec.keys_error(state, CROSSING_LOCAL_KEYS)
+	var error: String = _l2_local_envelope_error(state)
 	if not error.is_empty(): return error
 	for key: String in ["sequence", "scheduler", "rays", "handlers", "mechanisms", "views"]:
 		if not state[key] is Dictionary: return "L2 requires paired dictionary " + key
@@ -652,6 +795,8 @@ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary)
 	if not error.is_empty(): return error
 	if state.scheduler.world_revision != WORLD_REVISION or (beat != "clear" and (state.scheduler.encounter_id != CROSSING_EPOCH or state.scheduler.profile.id != state.profile_id)) or (beat == "clear" and (not state.scheduler.encounter_id.is_empty() or not state.scheduler.reservations.is_empty())):
 		return "L2 scheduler epoch/profile differs from objective"
+	error = _l2_binding_error(state)
+	if not error.is_empty(): return error
 	error = _exchange.call("snapshot_error", state.rays, bindings, state.scheduler)
 	if not error.is_empty(): return error
 	if not Codec.keys_error(state.handlers, CrossingSequence.HANDLERS).is_empty() or not Codec.keys_error(state.mechanisms, _mechanisms.keys()).is_empty(): return "L2 requires every actual Handler/mechanism"
@@ -666,6 +811,7 @@ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary)
 		var actor: Dictionary = state.handlers[id] if CrossingSequence.HANDLERS.has(id) else state.rays.actors[id]
 		error = _actors[id].call("snapshot_error", actor)
 		if not error.is_empty(): return error
+		if Codec.read_vector3(actor.root_position) != to_global(_l2_selected_positions[id]): return "L2 saved actor root differs from the immutable selected native slot"
 		if CrossingSequence.HANDLERS.has(id):
 			if float(actor.max_hp) != float(TOOL_ROLE.max_hp) or actor.direction != [0.0, 0.0, 1.0] or float(actor.body_yaw) != 0.0: return "L2 fixed Handler must retain canonical HP/direction/yaw"
 			var tool: Dictionary = state.mechanisms.get("tool_" + id, {})

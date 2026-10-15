@@ -1,0 +1,84 @@
+--- original147failure
++++ passive-diagnostics
+@@ -56,6 +56,9 @@
+ var hits: Dictionary = {}
+ var plans: Array[Dictionary] = []
+ var used: Dictionary = {}
++# Passive driver diagnostics; no native guards, deadlines or decisions change.
++var driver_observations: Array[Dictionary] = []
++var step_clocks: Array[Dictionary] = []
+ var phases: Dictionary = {}
+ var last_receipts: Dictionary = {}
+ var captures: Dictionary = {}
+@@ -240,7 +243,11 @@
+ 	var newer: Dictionary = _latest_plan()
+ 	return not newer.is_empty() and newer.key != plan.key and float(newer.reservation.lock_from_s) > float(plan.reservation.lock_from_s)
+ 
++func _driver_note(reason: String, plan: Dictionary, segment: Dictionary = {}) -> void:
++	driver_observations.append({"reason": reason, "clock_s": scheduler.get_clock(), "source_id": plan.get("source_id", ""), "key": plan.get("key", ""), "segment_kind": segment.get("kind", ""), "segment_start_s": segment.get("start_s"), "segment_end_s": segment.get("end_s"), "physics_frame": Engine.get_physics_frames(), "process_frame": Engine.get_process_frames()})
++
+ func _follow(plan: Dictionary) -> bool:
++	_driver_note("follow_start", plan)
+ 	var role: Dictionary = roles.tool if Sequence.HANDLERS.has(plan.actor_id) else roles.ray
+ 	var owner: Node = (level.get("_mechanisms") as Dictionary)[plan.source_id] if Sequence.HANDLERS.has(plan.actor_id) else actors[plan.actor_id]
+ 	if not _expect(is_instance_valid(owner) and owner.get_instance_id() != 0 and plan.reservation.source_instance_id == owner.get_instance_id(), "actual armed lease belongs to the real configured source: " + plan.actor_id): return false
+@@ -248,10 +255,12 @@
+ 	for segment: Dictionary in plan.proof.path:
+ 		if segment.kind not in ["escape_dash", "positioning_dash", "ordinary_primary"]: continue
+ 		while _live() and float(scheduler.get_clock()) + EPS < float(segment.start_s):
+-			if not _current(plan) or _replaced(plan): return true
++			if not _current(plan): _driver_note("source_no_longer_current", plan, segment); return true
++			if _replaced(plan): _driver_note("newer_response_plan", plan, segment); return true
+ 			if not await _step(): return false
+ 		if not _live(): return false
+-		if not _current(plan) or _replaced(plan): return true
++		if not _current(plan): _driver_note("source_no_longer_current", plan, segment); return true
++		if _replaced(plan): _driver_note("newer_response_plan", plan, segment); return true
+ 		if segment.kind == "ordinary_primary":
+ 			if hits.has(plan.actor_id): return true # Never repeat an already demonstrated target hit.
+ 			var state: Dictionary = _state().exchanges[plan.actor_id]
+@@ -269,7 +278,7 @@
+ 					hits[id] = {"hp_before": before[id], "hp_after": actors[id].get("hp"), "proof_owner": plan.actor_id, "clock_s": scheduler.get_clock(), "before_observation": pre_action}
+ 			return true
+ 		var sample_s: float = 1.0 / float(Engine.physics_ticks_per_second)
+-		if float(scheduler.get_clock()) > float(segment.start_s) + sample_s + EPS: return true
++		if float(scheduler.get_clock()) > float(segment.start_s) + sample_s + EPS: _driver_note("sample_window_already_passed", plan, segment); return true
+ 		var direction: Vector3 = segment.to - segment.from
+ 		direction.y = 0.0
+ 		if not await _dash(direction.normalized(), plan, segment): return false
+@@ -284,12 +293,12 @@
+ 	var ready: bool = false
+ 	for _tick: int in range(180):
+ 		if not _live(): return false
+-		if not plan.is_empty() and not _dash_current(plan, segment): abandon_dash = true; return true
++		if not plan.is_empty() and not _dash_current(plan, segment): _driver_note("dash_boundary_no_longer_current", plan, segment); abandon_dash = true; return true
+ 		var response: Dictionary = hero.get_threat_response_state()
+ 		if response.stable and float(response.dash_cooldown_left_s) <= EPS: ready = true; break
+ 		if not await _step(): return false
+ 	if not _expect(ready, "real public dash awaits actual stable Hero and cooldown"): return false
+-	if not plan.is_empty() and not _dash_current(plan, segment): abandon_dash = true; return true
++	if not plan.is_empty() and not _dash_current(plan, segment): _driver_note("dash_boundary_no_longer_current", plan, segment); abandon_dash = true; return true
+ 	var before: int = actions.size()
+ 	if not _expect(hero.request_dash(direction), "actual shared request_dash accepts the observed direction"): return false
+ 	for _tick: int in range(180):
+@@ -347,8 +356,11 @@
+ func _step() -> bool:
+ 	if not _live(): diagnostic = _observe(); return _expect(false, "healthy bounded Main/native parent loop", str(diagnostic))
+ 	if not _expect(not paused, "native simulation remains publicly resumed; unexpected pause is retained"): return false
++	var clock_before: float = scheduler.get_clock()
++	var frame_before: int = Engine.get_physics_frames()
+ 	await barrier.settled
+ 	await process_frame
++	step_clocks.append({"before_s": clock_before, "after_s": scheduler.get_clock(), "before_physics_frame": frame_before, "after_physics_frame": Engine.get_physics_frames()})
+ 	if not _live(): diagnostic = _observe(); return _expect(false, "healthy native end-of-tick observation", str(diagnostic))
+ 	var actual: Dictionary = _state()
+ 	var held: Array = scheduler.reservations()
+@@ -471,7 +483,7 @@
+ 	_expect(source_before == source_after, "explicit observed source bytes remain unchanged")
+ 	var encoded_actions: Array = []
+ 	for action: Dictionary in actions: encoded_actions.append(_plain(action))
+-	var report: Dictionary = {"schema_version": 1, "TEST_context": TEST_CONTEXT, "profile": selected_profile, "kit_name": selected_kit, "equipment_ids": kit, "resolved_stats": stats, "checks": rows.size(), "failures": failures, "rows": rows, "first_failure": first_failure, "complete": complete, "success": complete and failures == 0, "target_hits": hits, "phases": phases, "held_union_observation": union_seen, "actual_proof_plans": plans, "last_actual_source_receipts": last_receipts, "completed_world_actions": encoded_actions, "progression_events": progression_events, "captures": captures, "final_or_failed_observation": diagnostic, "source_before": source_before, "source_after": source_after, "scope": "Single selected case; TEST initial stage/position/kit/zero-ammo only. Native parent loop/Scheduler/camera/ordinary proofs/dashes/HP loss. No full route, source suppression, earned history, valid snapshot, campaign Save/Continue/Retry, gesture, all-kit, balance or performance claim. Optional real frozen portraits are observation-only, not packet evidence."}
++	var report: Dictionary = {"schema_version": 1, "TEST_context": TEST_CONTEXT, "profile": selected_profile, "kit_name": selected_kit, "equipment_ids": kit, "resolved_stats": stats, "checks": rows.size(), "failures": failures, "rows": rows, "first_failure": first_failure, "complete": complete, "success": complete and failures == 0, "target_hits": hits, "phases": phases, "held_union_observation": union_seen, "actual_proof_plans": plans, "driver_observations": driver_observations, "step_clocks": step_clocks, "last_actual_source_receipts": last_receipts, "completed_world_actions": encoded_actions, "progression_events": progression_events, "captures": captures, "final_or_failed_observation": diagnostic, "source_before": source_before, "source_after": source_after, "scope": "Single selected case; TEST initial stage/position/kit/zero-ammo only. Native parent loop/Scheduler/camera/ordinary proofs/dashes/HP loss. No full route, source suppression, earned history, valid snapshot, campaign Save/Continue/Retry, gesture, all-kit, balance or performance claim. Optional real frozen portraits are observation-only, not packet evidence."}
+ 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(report_path).get_base_dir())
+ 	var file := FileAccess.open(report_path, FileAccess.WRITE)
+ 	if file == null: print("A2-L2 pair report destination failed"); quit(2); return
