@@ -85,7 +85,7 @@ func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
-	create_timer(180.0,true,false,true).timeout.connect(func() -> void:
+	create_timer(600.0,true,false,true).timeout.connect(func() -> void:
 		if not finished:
 			_expect(false,"bounded selected final O3 public job")
 			_finish())

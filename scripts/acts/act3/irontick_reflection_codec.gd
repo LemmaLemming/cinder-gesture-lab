@@ -3,6 +3,7 @@ extends RefCounted
 ## retain complete physical/history custody under one whole Scheduler3.
 const Value = preload("res://scripts/campaign/snapshot_codec.gd")
 const Exact = preload("res://scripts/combat/authored_enemy_sequence.gd")
+const ExactJson = preload("res://scripts/campaign/exact_json.gd")
 const Receipt = preload("res://scripts/combat/authored_echo_terminal_receipt.gd")
 const Difficulty = preload("res://scripts/combat/difficulty.gd")
 const Footprint = preload("res://scripts/combat/replay_footprint.gd")
@@ -44,7 +45,7 @@ func capture(parent, player: Dictionary) -> Dictionary:
 
 func record_error(local: Dictionary, parent, player: Dictionary, paired: bool = true) -> String:
 	var error: String=_access_error(parent)
-	if error.is_empty(): error=Receipt.transport_error(local)
+	if error.is_empty(): error=_aggregate_transport_error(local)
 	if error.is_empty(): error=Receipt.transport_error(player)
 	if error.is_empty(): error=parent.hero.snapshot_error(player)
 	if not error.is_empty(): return error
@@ -215,7 +216,7 @@ func restore_local(local: Dictionary, parent, player: Dictionary) -> bool:
 	return true
 
 func progress_error(local: Dictionary, progress: Dictionary, parent) -> String:
-	var error: String=Receipt.transport_error(local)
+	var error: String=_aggregate_transport_error(local)
 	if error.is_empty(): error=Receipt.transport_error(progress)
 	if not error.is_empty(): return error
 	if not local.get("route") is Dictionary or not Value.is_integer(local.route.get("active_stage"),0,parent.STAGE_IDS.size()): return "Typed stage route required for progression"
@@ -230,3 +231,9 @@ func progress_error(local: Dictionary, progress: Dictionary, parent) -> String:
 func _access_error(parent) -> String:
 	if typeof(parent)!=TYPE_OBJECT or not is_instance_valid(parent) or not parent is CinderLevel or parent.get_script()==null or parent.get_script().resource_path!=PARENT or not parent.is_inside_tree() or not parent.is_node_ready() or parent.is_queued_for_deletion() or not parent.get_tree().paused: return "Actual paused original O3 native parent required"
 	return parent.runtime_error()
+
+func _aggregate_transport_error(local: Dictionary) -> String:
+	# This is a complete parent aggregate, not a single terminal receipt.
+	# Native source, Playback and Scheduler journal validators retain their
+	# original one-MiB limits. Whole campaign packets use canonical ExactJson.
+	return "Whole O3 aggregate exceeds canonical exact transport bounds" if ExactJson.stringify(local).is_empty() else ""

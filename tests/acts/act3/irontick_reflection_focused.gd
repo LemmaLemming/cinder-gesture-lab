@@ -1,6 +1,6 @@
 extends "res://tests/acts/act3/pillars_before_time_focused.gd"
-## TEMP ONLY final O3 derivative; unparsed/unexecuted. Registered prototype
-## stays frozen. Reuses only accepted observer/exact/disposal helpers.
+## Final O3 focused fixture. Reuses accepted observer/exact/disposal helpers.
+## Each original run records its exact source and native result independently.
 ## First court proves actual generation1→2/ordinary death/CP1. Optional jobs
 ## reuse EchoDriver with genuine CP archives for later changed courts/exit.
 
@@ -395,22 +395,35 @@ func _cp1_pair() -> bool:
 		var source: Dictionary = local.sources[id]
 		if not _expect(source.actor.schema_version == 2 and source.playback.api_revision == "authored-echo-playback-2" and source.actor.clock_s == local.scheduler.clock_s and source.playback.clock_s == local.scheduler.clock_s and pair.player.world_actions.clock_s == local.scheduler.clock_s,"complete actual source/playback/Scheduler/Hero native clock join: "+id): return false
 	var wire: String = ExactJson.stringify(pair)
+	var sizes: Dictionary = {"local":_exact_wire_bytes(local),"player":_exact_wire_bytes(pair.player),"pair":wire.to_utf8_buffer().size(),"sources":{},"journal":_exact_wire_bytes(local.scheduler.authored_source_cycles),"journal_sources":{}}
+	for id: String in ECHO_IDS:
+		sizes.sources[id] = _exact_wire_bytes(local.sources[id])
+	for entry: Dictionary in local.scheduler.authored_source_cycles.sources:
+		sizes.journal_sources[entry.source_id] = _exact_wire_bytes(entry)
+	print("O3 CP1 EXACT JSON BYTES: ",sizes)
 	var parsed: Dictionary = ExactJson.parse(wire)
 	if not _expect(not wire.is_empty() and parsed.get("accepted",false) and _exact(pair,parsed.get("value")) and _level.snapshot_error_with_player(parsed.value.level,parsed.value.player).is_empty(),"actual final CP1 ExactJson retains complete native types/float bits/history"): return false
-	# Only new final-route/journal joins. The prototype's nine generic negative
-	# cases and pulse/own-route rule evidence remain preserved, not rerun here.
-	for label: String in ["future-stage","missing-source","missing-journal","future-checkpoint"]:
+	# New final-route/journal joins and changed whole-aggregate preflight only.
+	# Prototype generic negatives and pulse/own-route evidence remain preserved.
+	for label: String in ["future-stage","missing-source","missing-journal","future-checkpoint","nonfinite-aggregate","oversize-aggregate"]:
 		var bad: Dictionary = pair.level.duplicate(true)
 		match label:
 			"future-stage": bad.local.route.active_stage = 2
 			"missing-source": bad.local.sources.erase(ECHO_IDS[2])
 			"missing-journal": bad.local.scheduler.authored_source_cycles.sources.pop_back()
 			"future-checkpoint": bad.progress.checkpoint_ids[CHECKPOINT_IDS[1]] = "encounter"
+			"nonfinite-aggregate": bad.local.pulse.retry_at_s = NAN
+			"oversize-aggregate": bad.local.world.data_sha256 = "x".repeat(ExactJson.MAX_BYTES+1)
+		if label in ["nonfinite-aggregate","oversize-aggregate"] and not _expect(ExactJson.stringify(bad.local).is_empty(),"canonical exact transport refuses malformed whole "+label): return false
 		var before: Dictionary = {"player":_hero.snapshot_state(),"level":_level.snapshot_state()}
 		var events: Array = [_checkpoints.duplicate(),_completions.duplicate(),_exits.duplicate(),_actions.size()]
 		var error: String = _level.snapshot_error_with_player(bad,pair.player)
+		if label == "oversize-aggregate" and not _expect(error == "Whole O3 aggregate exceeds canonical exact transport bounds","oversize existing string is refused by whole-aggregate preflight before semantic field checks",error): return false
 		if not _expect(not error.is_empty() and not _level.restore_state(bad) and _exact(before,{"player":_hero.snapshot_state(),"level":_level.snapshot_state()}) and _exact(events,[_checkpoints,_completions,_exits,_actions.size()]),"new final "+label+" rejects atomically without earning history",error): return false
 	return true
+
+func _exact_wire_bytes(value: Variant) -> int:
+	return ExactJson.stringify(value).to_utf8_buffer().size()
 
 func _watchdog() -> void:
 	if not _done and not _finishing:
