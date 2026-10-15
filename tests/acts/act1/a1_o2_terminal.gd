@@ -1,6 +1,8 @@
 extends "res://tests/acts/act1/a1_o2_campaign.gd"
-## SOURCE ONLY. Requires two genuine SUCCESSFUL report paths supplied at run:
-## --groups-report=... --campaign-report=... . No report or packet is invented.
+## SOURCE ONLY. Explicit --terminal-case=retry|completion|replay and genuine
+## --groups-report=... --campaign-report=... are required. Replay also requires
+## --completion-report=<genuine successful completion-case report>. No invented
+## packets, completion flags, stamp, proof, clock or cross-process ID comparison.
 ## Public Attempts/Store assembles their unchanged native CP/hatch and protected
 ## Story into an isolated TEST side Session; this is not earned traversal.
 
@@ -8,6 +10,7 @@ const TerminalSweep = preload("res://scripts/combat/body_sweep.gd")
 const PREFINAL_LABEL: String = "actual pre-final checkpoint"
 const HATCH_LABEL: String = "actual incomplete hatch before contact"
 const CAMPAIGN_ENTRANCE_LABEL: String = "actual pristine optional entrance"
+const COMPLETION_LABEL: String = "actual terminal contact completion and protected Story return"
 const TERMINAL_WATCHDOG_MS: int = 120000
 
 var prefinal: Dictionary = {}
@@ -16,7 +19,10 @@ var original_attempts: Dictionary = {}
 var source_reports: Array[Dictionary] = []
 var observation_overruns: Array[Dictionary] = []
 var pause_registration_barriers: Array[Dictionary] = []
-var terminal_before_ids: Dictionary = {}
+var terminal_case: String = ""
+var original_report_sha256: Dictionary = {}
+var completed_session: Dictionary = {}
+var registration_observation_barriers: Array[Dictionary] = []
 
 
 func _initialize() -> void:
@@ -34,15 +40,19 @@ func _run() -> void:
 	root.size = Vector2i(540, 1170)
 	var groups_path: String = ""
 	var campaign_path: String = ""
+	var completion_path: String = ""
 	var seen: Dictionary = {}
 	for argument: String in OS.get_cmdline_user_args():
 		var key: String = argument.get_slice("=", 0)
-		if key not in ["--groups-report", "--campaign-report"] or seen.has(key) or argument.find("=") < 0:
-			_expect(false, "terminal requires two unique named actual source-report paths and no preview/unknown flags"); await _finish(); return
+		if key not in ["--terminal-case", "--groups-report", "--campaign-report", "--completion-report"] or seen.has(key) or argument.find("=") < 0:
+			_expect(false, "terminal requires unique named case/source-report paths and no preview/unknown flags"); await _finish(); return
 		seen[key] = true
-		if key == "--groups-report": groups_path = argument.trim_prefix("--groups-report=")
-		else: campaign_path = argument.trim_prefix("--campaign-report=")
-	if not _expect(not groups_path.is_empty() and not campaign_path.is_empty(), "both actual successful report CLI paths are required; missing reports are not synthesized"):
+		match key:
+			"--terminal-case": terminal_case = argument.trim_prefix("--terminal-case=")
+			"--groups-report": groups_path = argument.trim_prefix("--groups-report=")
+			"--campaign-report": campaign_path = argument.trim_prefix("--campaign-report=")
+			"--completion-report": completion_path = argument.trim_prefix("--completion-report=")
+	if not _expect(terminal_case in ["retry", "completion", "replay"] and not groups_path.is_empty() and not campaign_path.is_empty() and ((terminal_case == "replay" and not completion_path.is_empty()) or (terminal_case != "replay" and completion_path.is_empty())), "explicit terminal case and both original successful reports required; only replay requires a genuine successful completion report"):
 		await _finish(); return
 	var groups: Dictionary = _read_report(groups_path, "groups")
 	var campaign: Dictionary = _read_report(campaign_path, "campaign")
@@ -56,42 +66,114 @@ func _run() -> void:
 		await _finish(); return
 	unlocked_before = original_attempts.unlocked_equipment.duplicate()
 	if not _configure_test_registry(): await _finish(); return
-	if not _assemble_hatch_session("first original hatch Session") or not await _new_shell() or not await _load_hatch("first original hatch Title Continue", {}):
+	if terminal_case == "replay":
+		if not _restore_completed_session(completion_path) or not await _new_shell(): await _finish(); return
+		if not _expect(_same(game.attempts.state(), completed_session) and _completed_state(game.attempts.state()) and _durable(), "fresh actual disk Title preserves the complete original successful completion Session without manufacturing a stamp"):
+			await _finish(); return
+		await _run_replay()
+		return
+	if not _assemble_hatch_session(terminal_case + " case original hatch Session; no earlier case replay") or not await _new_shell() or not await _load_hatch(terminal_case + " case original hatch Title Continue"):
 		await _finish(); return
-	if not await _pause("actual hatch RetryButton page") or not await _retry_prefinal(): await _finish(); return
-	# Discard only through normal public in-tree cleanup. Reassemble from the
-	# SAME original report packets, without clearing groups a second time.
-	terminal_before_ids = _ids()
-	if not await _dispose_current_shell("pre-final Retry donor before original hatch reload"):
-		await _finish(); return
-	if not _assemble_hatch_session("same original hatch Session reloaded, no group replay") or not await _new_shell() or not await _load_hatch("second original hatch Title Continue", terminal_before_ids):
-		await _finish(); return
+	if terminal_case == "retry":
+		if not await _pause("actual hatch RetryButton page") or not await _retry_prefinal(): await _finish(); return
+		await _finish()
+		return
+	await _run_completion()
+
+
+func _run_completion() -> void:
+	# Preserve actual native recovery and public Save coverage. The original
+	# hatch is stable but retains a real .0833s primary cooldown; never seed it.
 	if not await _resume("genuine terminal contact") or not await _wait_live(_primary_ready, "actual healthy hatch Hero settles naturally", 4.0):
 		await _finish(); return
 	if not await _pause("settled hatch before disclosed TEST contact pose"):
 		await _finish(); return
 	var terminal_level_id: String = str(game.active_level.get_instance_id())
 	var terminal_refs: Array[WeakRef] = _refs(game.world)
+	var contact_requested_ms: int = Time.get_ticks_msec()
 	if not _place_contact_while_paused() or not await _resume("actual real Area contact"):
 		await _finish(); return
 	operation = "real deferred native hatch contact completion and protected Story return"
+	# Both publications must be the actual installed O2's original signals.
+	# A predicate-first observation retains any synchronous wall overrun.
+	if not await _await_operation(func() -> bool: return _progress_kinds(terminal_level_id) == ["completion", "exit"], "actual target O2 publishes genuine completion then exit", 16.0):
+		await _finish(); return
+	if not await _observe_paused_registration("actual contact completion/exit/Story installation", 3, contact_requested_ms, func() -> bool: return _story_returned()): await _finish(); return
 	if not await _await_operation(func() -> bool: return _story_returned(), "real native Area contact records completion/exit/stamp and restores protected Story", 16.0):
 		await _finish(); return
 	var completed: Dictionary = game.attempts.state()
 	if not _expect(_freed(terminal_refs) and _completed_state(completed) and _progress_kinds(terminal_level_id) == ["completion", "exit"] and _same(game.capture_campaign_snapshot(), protected_story.snapshot) and _durable(), "actual contact emits one genuine completion then exit, frees O2, records one existing stamp without main/equipment growth and restores exact protected Story"):
 		await _finish(); return
-	receipts.append({"label": "actual terminal contact completion and protected Story return", "exact_attempts": Exact.stringify(completed), "exact_snapshot": Exact.stringify(game.capture_campaign_snapshot()), "native_progress": _progress_kinds(terminal_level_id), "original_hatch_snapshot_sha256": Exact.stringify(hatch).sha256_text()})
-	operation = "public completed optional Replay"
+	receipts.append({"label": COMPLETION_LABEL, "terminal_case": terminal_case, "process_id": OS.get_process_id(), "exact_attempts": Exact.stringify(completed), "exact_snapshot": Exact.stringify(game.capture_campaign_snapshot()), "exact_protected_story": Exact.stringify(completed.story), "native_progress": _progress_kinds(terminal_level_id), "original_hatch_snapshot_sha256": Exact.stringify(hatch).sha256_text(), "source_report_sha256": original_report_sha256.duplicate(true)})
+	await _finish()
+
+
+func _observe_paused_registration(label: String, maximum_scopes: int, requested_ms: int, done: Callable) -> bool:
+	# Source-derived public operations have these bounded native registrations:
+	# contact3: complete, exit/live record, protected Story installation;
+	# Title Replay3: load active Story, live record, fresh side installation;
+	# Replay Leave1: protected Story installation. Each registration permits one
+	# process signal plus one same-counter fallback. Signals are observation
+	# budget only, never claimed as private phase transitions or mutation rights.
+	var observed_ms: int = Time.get_ticks_msec()
+	var signals: Array[Dictionary] = []
+	if not _expect(maximum_scopes in [1, 3], "source-pinned finite native registration observation budget"): return false
+	if not _operation_healthy() or not _expect(paused, "public Shell operation retains paused custody before registration observation: " + label): return false
+	for scope_budget: int in range(maximum_scopes):
+		if done.call() == true: break
+		for signal_budget: int in range(2):
+			if done.call() == true: break
+			await process_frame
+			if not _operation_healthy(): return false
+			if not _expect(paused, "actual paused custody during registration observation %d/%d: " % [scope_budget + 1, signal_budget + 1] + label): return false
+			signals.append({"scope_budget": scope_budget + 1, "signal_budget": signal_budget + 1, "elapsed_from_public_request_ms": Time.get_ticks_msec() - requested_ms, "actual_final_predicate": done.call() == true})
+	registration_observation_barriers.append({"label": label, "source_derived_maximum_registration_scopes": maximum_scopes, "maximum_process_signals_per_scope": 2, "actual_process_signals": signals.size(), "signals": signals, "request_to_barrier_observation_start_wall_ms": observed_ms - requested_ms, "barrier_observation_wall_ms": Time.get_ticks_msec() - observed_ms, "request_to_barrier_wall_ms": Time.get_ticks_msec() - requested_ms, "scope": "actual bounded paused process-signal observation of source-pinned public operation; native validators/2s registration custody and120s fixture watchdog unchanged; full synchronous cost retained, no latency/performance pass"})
+	return true
+
+
+func _restore_completed_session(path: String) -> bool:
+	var report: Dictionary = _read_report(path, "completion")
+	if report.is_empty(): return false
+	if not _expect(report.get("terminal_case") == "completion" and _same(report.get("source_report_sha256"), original_report_sha256), "only a genuine successful completion-case report from identical original groups/campaign byte hashes can supply Replay"):
+		return false
+	var row: Dictionary = _unique_receipt(report.receipts, COMPLETION_LABEL)
+	completed_session = _read_exact_dictionary(row.get("exact_attempts"), "original successful completion exact Attempts")
+	var returned: Dictionary = _read_exact_dictionary(row.get("exact_snapshot"), "original successful completion exact protected Story snapshot")
+	var registry: CinderCampaignRegistry = Registry.new(raw)
+	var model: CinderCampaignAttempts = Attempts.new(registry)
+	if not _expect(not completed_session.is_empty() and model.state_error(completed_session).is_empty() and _completed_state(completed_session) and row.get("terminal_case") == "completion" and row.get("native_progress") == ["completion", "exit"] and row.get("original_hatch_snapshot_sha256") == Exact.stringify(hatch).sha256_text() and _same(row.get("source_report_sha256"), original_report_sha256) and row.get("exact_protected_story") == Exact.stringify(protected_story) and _same(returned, protected_story.snapshot), "original completed receipt preserves exact whole protected Story/PREFIX/unlocked equipment, one actual stamp, no side attempt, genuine hatch SHA and original report provenance"):
+		return false
+	if not _expect(model.restore_session(completed_session) and _same(model.state(), completed_session), "public Attempts restores the original successful completed Session without sanitization or manufactured completion"):
+		return false
+	var store: CinderSaveStore = Store.new(test_root + "campaign.json")
+	store.payload_validator = model.saved_payload_error
+	if not _expect(store.write_payload(completed_session), "public validated isolated Store persists the unchanged genuine completed Session for fresh Title Replay"):
+		return false
+	setups.append({"kind": "TEST original genuine successful completion Session loaded unchanged through public Attempts/Store; no earned completion replay or stamp manufacture", "source_report": path, "source_report_sha256": FileAccess.get_sha256(path), "exact_attempts_sha256": Exact.stringify(completed_session).sha256_text(), "original_hatch_snapshot_sha256": Exact.stringify(hatch).sha256_text()})
+	return true
+
+
+func _run_replay() -> void:
+	# Public Replay from Title is supported: Shell's side operation first loads
+	# protected Story when no level is live, then normally records it and enters
+	# a fresh Replay. No private load/registration/candidate entry is invoked.
+	operation = "public completed optional Replay from fresh Title"
+	var replay_requested_ms: int = Time.get_ticks_msec()
 	game.menu.replay_requested.emit(Bloom.LEVEL_ID, Equipment.STARTER)
+	if not await _observe_paused_registration("public Title Replay load/record/fresh side", 3, replay_requested_ms, func() -> bool: return _live(Bloom.LEVEL_ID) and paused and game.attempts.active_kind() == "replay" and game.menu.page_name() == "resume"):
+		await _finish(); return
 	if not await _await_operation(func() -> bool: return _live(Bloom.LEVEL_ID) and paused and game.attempts.active_kind() == "replay" and game.menu.page_name() == "resume", "public Replay installs a pristine isolated O2", 12.0):
 		await _finish(); return
 	var replay: Dictionary = game.capture_campaign_snapshot()
 	if not _expect(_pristine(replay) and _bindings() and game.player.hp == game.player.max_hp and game.player.shells == game.player.max_shells and game.attempts.state().completed_optional == [Bloom.LEVEL_ID] and game.attempts.state().reward_ids == [REWARD_ID] and _same(game.attempts.state().story, protected_story) and _durable(), "actual pristine Replay keeps only the existing stamp and protected Story, with no borrowed terminal state"):
 		await _finish(); return
-	receipts.append({"label": "actual pristine completed-optional Replay", "exact_snapshot": Exact.stringify(replay), "exact_attempts": Exact.stringify(game.attempts.state()), "native_identities": _ids()})
+	receipts.append({"label": "actual pristine completed-optional Replay", "exact_snapshot": Exact.stringify(replay), "exact_attempts": Exact.stringify(game.attempts.state()), "native_identities": _ids(), "process_id": OS.get_process_id()})
 	var replay_refs: Array[WeakRef] = _refs(game.world)
 	operation = "public Replay Leave"
+	var leave_requested_ms: int = Time.get_ticks_msec()
 	game.menu.leave_side_requested.emit()
+	if not await _observe_paused_registration("public Replay Leave protected Story installation", 1, leave_requested_ms, func() -> bool: return _story_returned()):
+		await _finish(); return
 	if not await _await_operation(func() -> bool: return _story_returned(), "public Replay Leave restores original Story", 12.0):
 		await _finish(); return
 	_expect(_freed(replay_refs) and _completed_state(game.attempts.state()) and _same(game.capture_campaign_snapshot(), protected_story.snapshot) and _durable(), "normal pristine Replay Leave frees its world and retains one stamp and exact protected Story")
@@ -104,6 +186,7 @@ func _read_report(path: String, kind: String) -> Dictionary:
 	if not _expect(not content.is_empty() and parsed is Dictionary and Codec.is_number(parsed.get("checks")) and parsed.checks > 0 and parsed.get("failures", -1) == 0 and parsed.get("native_units" if kind == "groups" else "receipts") is Array and parsed.get("first_failure") is Dictionary and parsed.first_failure.is_empty(), "actual " + kind + " report is present and successful; original failures cannot be relabeled"):
 		return {}
 	source_reports.append({"kind": kind, "path": path, "sha256": FileAccess.get_sha256(path), "checks": parsed.checks, "failures": parsed.failures, "scope": parsed.get("scope", ""), "elapsed_ms": parsed.get("elapsed_ms")})
+	if kind in ["groups", "campaign"]: original_report_sha256[kind] = FileAccess.get_sha256(path)
 	return parsed
 
 
@@ -177,16 +260,15 @@ func _assemble_hatch_session(label: String) -> bool:
 	return true
 
 
-func _load_hatch(label: String, before: Dictionary) -> bool:
+func _load_hatch(label: String) -> bool:
 	operation = label
+	if not _expect(paused and game.active_level == null and game.player == null and game.menu.page_name() == "title", "fresh actual disk Title has no installed Hero/level before this case's independent original hatch Continue"): return false
 	game.menu.resume_requested.emit()
 	if not await _await_operation(func() -> bool: return _live(Bloom.LEVEL_ID) and paused and game.menu.page_name() == "resume" and game.attempts.active_kind() == "optional", "actual Title active-side Continue installs original hatch", 12.0): return false
 	var captured: Dictionary = game.capture_campaign_snapshot()
 	var callbacks: Array[Dictionary] = _recipient_callbacks()
-	var distinct: bool = true
-	if not before.is_empty(): distinct = _all_new(before, _ids())
-	if not _expect(_terminal_shape(captured, false) and _same(captured, hatch) and distinct and callbacks.is_empty() and _bindings() and _same(game.attempts.state().side_attempt.checkpoint, prefinal) and _same(game.attempts.state().story, protected_story) and _durable(), "actual current installed hatch preserves all nine dead packets, two spent fields, three consumers and exact Story/CP with zero recipient callbacks: " + label): return false
-	receipts.append({"label": label, "exact_snapshot": Exact.stringify(captured), "exact_attempts": Exact.stringify(game.attempts.state()), "native_identities": _ids(), "new_installed_recipient_callbacks": callbacks, "compared_prior_ids": before.duplicate(true)})
+	if not _expect(_terminal_shape(captured, false) and _same(captured, hatch) and callbacks.is_empty() and _bindings() and _same(game.attempts.state().side_attempt.checkpoint, prefinal) and _same(game.attempts.state().story, protected_story) and _durable(), "actual current installed hatch preserves all nine dead packets, two spent fields, three consumers and exact Story/CP with zero recipient callbacks: " + label): return false
+	receipts.append({"label": label, "exact_snapshot": Exact.stringify(captured), "exact_attempts": Exact.stringify(game.attempts.state()), "native_identities": _ids(), "new_installed_recipient_callbacks": callbacks, "process_id": OS.get_process_id(), "fresh_title_no_installed_hero_or_level": true})
 	return true
 
 
@@ -222,15 +304,6 @@ func _retry_prefinal() -> bool:
 	if not _expect(_terminal_shape(captured, true) and _same(captured, prefinal) and _all_new(before, _ids()) and _freed(refs) and callbacks.is_empty() and _bindings() and _same(game.attempts.state().story, protected_story) and _same(game.attempts.state().side_attempt.checkpoint, prefinal) and _durable(), "actual Retry frees hatch donor and quietly restores original dead-prefix/final-dormant/two-consumer native checkpoint without refreshing spent fields"): return false
 	receipts.append({"label": "actual RetryButton restores original pre-final checkpoint", "exact_snapshot": Exact.stringify(captured), "exact_attempts": Exact.stringify(game.attempts.state()), "before_identities": before, "native_identities": _ids(), "new_installed_recipient_callbacks": callbacks, "scope": "actual Button pressed signal wiring; no OS click or input recognizer claim"})
 	return true
-
-
-func _dispose_current_shell(label: String) -> bool:
-	operation = label
-	var refs: Array[WeakRef] = _refs(game)
-	if is_instance_valid(game.active_level): game.active_level.exit_level()
-	game.free(); game = null
-	await process_frame
-	return _expect(_freed(refs), "normal public in-tree level exit and Shell disposal release donor descendants: " + label)
 
 
 func _place_contact_while_paused() -> bool:
@@ -309,9 +382,18 @@ func _finish() -> void:
 	var output := FileAccess.open(report_path, FileAccess.WRITE)
 	if output == null: _expect(false, "unique terminal report is writable")
 	else:
-		output.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "elapsed_ms": Time.get_ticks_msec() - started_ms, "source_reports": source_reports, "setups": setups, "receipts": receipts, "observations": observations, "exact_receipts": exact_receipts, "exact_observations": exact_observations, "synchronous_observation_overruns": observation_overruns, "pause_registration_barriers": pause_registration_barriers, "scope": "Actual production Shell Title/active-side Continue of genuine successful Main O2 hatch packet; actual RetryButton pressed signal to original genuine pre-final checkpoint; exact all9 native source/Field1/Coordinator2 packets, original spent supplies, whole protected L3 Story, distinct quiet installed recipient IDs/callbacks. Public Attempts/Store assembles unchanged source-report Session as TEST setup, no earned traversal/group replay or native packet manufacture. Same original hatch Session reloaded; public Resume/Pause and measured disclosed same-floor Hero contact pose, real Area/deferred completion/exit, existing once-only optional stamp and exact protected Story return, actual pristine Replay/Leave. Normal in-tree cleanup, unique isolated stores and canonical Registry preservation. No OS click/recognizer/full-route/all-kit/balance/portrait/performance/mobile claim."}, "\t"))
+		output.store_string(JSON.stringify({"checks": checks, "failures": failures, "first_failure": first_failure, "elapsed_ms": Time.get_ticks_msec() - started_ms, "terminal_case": terminal_case, "process_id": OS.get_process_id(), "source_report_sha256": original_report_sha256, "isolated_store_path": test_root + "campaign.json", "isolated_store_absolute_path": ProjectSettings.globalize_path(test_root + "campaign.json"), "source_reports": source_reports, "setups": setups, "receipts": receipts, "observations": observations, "exact_receipts": exact_receipts, "exact_observations": exact_observations, "synchronous_observation_overruns": observation_overruns, "pause_registration_barriers": pause_registration_barriers, "registration_observation_barriers": registration_observation_barriers, "scope": _case_scope()}, "\t"))
 		output.close()
 	if node_added.is_connected(_observe_added): node_added.disconnect(_observe_added)
 	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
 	print("A1-O2 TERMINAL: %d checks, %d failures; report=%s" % [checks, failures, report_path])
 	quit(1 if failures > 0 else 0)
+
+
+func _case_scope() -> String:
+	var shared: String = "Explicit isolated terminal case; original exact genuine groups/campaign packets and protected Story, O2-only in-memory TEST Registry metadata, public validated Attempts/Store, original120s watchdog and unchanged native guards, full wall costs and original failures retained, normal in-tree level/Shell/group cleanup and canonical Registry preservation. No cross-process object-ID inequality, OS click/recognizer, earned traversal/group replay, full-route/all-kit/balance/portrait/performance/mobile claim. "
+	match terminal_case:
+		"retry": return shared + "Retry case only: actual fresh Title active-side Continue of original dead9/two-spent-field/three-consumer hatch, exact quiet installed recipient/current native ownership; actual public Pause Save and production RetryButton pressed signal to original dead5/final4-dormant/two-consumer pre-final checkpoint, same-process distinct identities and donor cleanup. No completion/stamp/Replay acceptance from this case."
+		"completion": return shared + "Completion case only: same original incomplete hatch from an independent fresh Title, actual Resume and natural primary readiness, public Pause Save, measured disclosed same-floor Hero-position-only contact setup, public Resume, genuine Area/deferred completion then exit, bounded paused observation of three native registration scopes, once-only existing stamp/no equipment or main growth, exact protected Story return and complete original exact Attempts receipt. No prior Retry loop or Replay acceptance from this case."
+		"replay": return shared + "Replay case only: successful completion-case report must match both original producer report hashes, original hatch SHA and exact completed Attempts/whole protected Story/PREFIX/unlocked IDs/one stamp/no side. Unchanged exact Session through public Attempts/Store to fresh Title, public Replay normally loads/records protected Story before pristine O2 creation, then public Leave preserves stamp and exact Story and frees Replay. No manufactured completion or rerun of contact/Retry."
+	return shared + "Invalid/missing case; no terminal case acceptance."
