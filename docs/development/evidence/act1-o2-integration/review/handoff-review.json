@@ -1,0 +1,659 @@
+{
+  "schema_version": 1,
+  "status": "BOUNDED_SOURCE_REPORT_HANDOFF_REVIEW_NO_LEVEL_ACCEPTANCE",
+  "recorded_at_utc": "2026-10-15T02:40:00.890405+00:00",
+  "canonical_handoff": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/agent-chat/cinder-campaign/act1/messages/3bc7e2b1-fdda-404b-a9cb-a971fdb54b49-HANDOFF.json",
+    "sha256": "ae23001fca68de515dc7d6824c96a8d7ea91fb8e54a178dcfb72426dfd75aa6a",
+    "bytes": 4006
+  },
+  "source_joins": "selected151-source-joins.json",
+  "early_C33_reuse": {
+    "review": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/docs/development/evidence/act1-o2-early-review/campaign02-review.json",
+      "sha256": "32d00d6f881299c3297287a8cf34ab80c4b72ffacc78782cff9dd6b5e0a62e86",
+      "bytes": 24375
+    },
+    "original_scope_unchanged": true,
+    "host_sha256": "1976638017db8722e26d6db24008ac01062ad04ee00363f31603cbb8fe909a6a",
+    "helper_sha256": "ef687e4e54bb99115b128f99ec199bd98aa2d49aac8c48a7c911f2f84be0cb71",
+    "no_second33_engine_or928_533_census": true
+  },
+  "focused_summaries": {
+    "mechanics43": {
+      "index": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-mechanics-focused/mechanics01/index.json",
+        "sha256": "9bf53f5a779c7ff6567aaefeb48b1b68e9db3c58020a47d4bbe654bac2a451ba",
+        "bytes": 2686
+      },
+      "actual_command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_o2_mechanics.gd"
+      ],
+      "actual_exit_code": 0,
+      "checks": 43,
+      "failures": 0,
+      "native_elapsed_ms": 37645,
+      "wall_seconds": 39.13473508297466,
+      "closed_at": "2026-10-14T09:18:20.362929+00:00",
+      "actual_footer": [
+        "A1-O2 MECHANICS: 43 checks, 0 failures; report=res://.cinder/a1-o2-mechanics-41740-878903.json"
+      ],
+      "actual_first_failure": {},
+      "actual_raw_diagnostics": [],
+      "artifacts_joined_selected151": {
+        "receipt.json": {
+          "path": "docs/acts/act1/evidence/O2-mechanics-focused/mechanics01/receipt.json",
+          "sha256": "18147c76a279e09902904659c9ad4d29186202c5aab05a20e213ebb1d7aeb7bf",
+          "bytes": 1795
+        },
+        "native.json": {
+          "path": "docs/acts/act1/evidence/O2-mechanics-focused/mechanics01/native.json",
+          "sha256": "616b1952ce0cccd54a79ec702be3009732335d1e129927b795cb863e04f2cc40",
+          "bytes": 647879
+        },
+        "engine.log": {
+          "path": "docs/acts/act1/evidence/O2-mechanics-focused/mechanics01/engine.log",
+          "sha256": "8fbca191ce0115b85261b8b7401b1ccfee965751850ad6debf0af19bda397bba",
+          "bytes": 168
+        },
+        "original-source-manifest.json": {
+          "path": "docs/acts/act1/evidence/O2-mechanics-focused/mechanics01/original-source-manifest.json",
+          "sha256": "89653de03f4f1b89d060456c8b18a474641fbe1463338ce9c6dc3abd071590dd",
+          "bytes": 181341
+        },
+        "import01-receipt.json": {
+          "path": "docs/acts/act1/evidence/O2-mechanics-focused/mechanics01/import01-receipt.json",
+          "sha256": "a3cd4fad3fb1007f91b0c3dddaf47631b4d5cce2f57295282022b80e6045c40c",
+          "bytes": 2138
+        },
+        "import01-engine.log": {
+          "path": "docs/acts/act1/evidence/O2-mechanics-focused/mechanics01/import01-engine.log",
+          "sha256": "100f4ca97be853feaaed6c34d162c00a0fa65b556fa5b258a6129b9f298293ec",
+          "bytes": 1703
+        }
+      },
+      "original_tested_revision": "8b6aa2c5006cc0802a4183a7589f534019c3fd38",
+      "tested_host_sha256": "4d0bdf7f6228fcbfe5956ae7c049e10c30e9a3bd5044a4e93849a80ca04b7a33",
+      "executed_test_sha256": "8e0727d3eb085303766ed77bbced44b6edd02ffcdf06d46ba4b614cc6066897b",
+      "named_original_map_members": {
+        "scenes/acts/act1/a1_o2.tscn": {
+          "path": "scenes/acts/act1/a1_o2.tscn",
+          "sha256": "4f0a4ea909b0ba84887f35bf650623867830be05301c1b31a744adf3f8fa7f8a",
+          "bytes": 402,
+          "mode": 420
+        },
+        "scripts/acts/act1/spore_bloom.gd": {
+          "path": "scripts/acts/act1/spore_bloom.gd",
+          "sha256": "4d0bdf7f6228fcbfe5956ae7c049e10c30e9a3bd5044a4e93849a80ca04b7a33",
+          "bytes": 36927,
+          "mode": 420
+        },
+        "scripts/campaign/attempts.gd": {
+          "path": "scripts/campaign/attempts.gd",
+          "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+          "bytes": 18347,
+          "mode": 420
+        },
+        "scripts/campaign/exact_json.gd": {
+          "path": "scripts/campaign/exact_json.gd",
+          "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+          "bytes": 9330,
+          "mode": 420
+        },
+        "scripts/campaign/save_store.gd": {
+          "path": "scripts/campaign/save_store.gd",
+          "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+          "bytes": 7310,
+          "mode": 420
+        },
+        "scripts/campaign/shell.gd": {
+          "path": "scripts/campaign/shell.gd",
+          "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+          "bytes": 70657,
+          "mode": 420
+        },
+        "tests/acts/act1/a1_o2_mechanics.gd": {
+          "path": "tests/acts/act1/a1_o2_mechanics.gd",
+          "sha256": "8e0727d3eb085303766ed77bbced44b6edd02ffcdf06d46ba4b614cc6066897b",
+          "bytes": 27702,
+          "mode": 420
+        }
+      },
+      "broader_bank_UID_count_owner_reported": {
+        "frozen": 924,
+        "uids": 531,
+        "independent_census": false
+      },
+      "scope": "Production Main O2 at540x1170; pristine oneHero/nine dormant native roles/accepted72m floor; disclosed TEST Hero same-floor positioning then actual approach activation; public ordinary primaries only, genuine finite release/active+thinning no-refresh geometry+Field error (native interaction return not surfaced), harmless native retreat/hold/regroup/none and actual second supply expiry; public exit and weakref/group/settings cleanup. Releasing cooldown refusal is not Field no-refresh credit. No GUI/recognizer/earned traversal, group clears/later consumers/shared-field carryover/checkpoint/save/Continue/Retry/route/all-kit/portrait/performance credit."
+    },
+    "groups245": {
+      "index": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/groups01/index.json",
+        "sha256": "a8fd8ebd9479d86d8ed1f275aa343f23743fb9c44ac84052e9a214fe88ca6c3c",
+        "bytes": 2692
+      },
+      "actual_command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--headless",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_o2_groups.gd"
+      ],
+      "actual_exit_code": 0,
+      "checks": 245,
+      "failures": 0,
+      "native_elapsed_ms": 143383,
+      "wall_seconds": 145.06726554199122,
+      "closed_at": "2026-10-14T09:56:32.165661+00:00",
+      "actual_footer": [
+        "A1-O2 GROUPS: 245 checks, 0 failures; report=res://.cinder/a1-o2-groups-38324-859397.json"
+      ],
+      "actual_first_failure": {},
+      "actual_raw_diagnostics": [],
+      "artifacts_joined_selected151": {
+        "receipt.json": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/groups01/receipt.json",
+          "sha256": "32446c1daa36c265f0fecef6ebe2e441c16a47563b81c1305b927f8069cf3515",
+          "bytes": 1777
+        },
+        "native.json": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/groups01/native.json",
+          "sha256": "726ba709eab75de92e15faffbb11e7299a10d2cf5367ad5f26791e6a04a7c5ec",
+          "bytes": 5558503
+        },
+        "engine.log": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/groups01/engine.log",
+          "sha256": "52d1f3cea6a598a56acb3cc15197c3dc9682efb688155654e0eb62c373f14f06",
+          "bytes": 163
+        },
+        "original-source-manifest.json": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/groups01/original-source-manifest.json",
+          "sha256": "2acf703353e2f156f426bea9336fc8fab33cdf3f835147f82f9e3fe06eb131b9",
+          "bytes": 182092
+        }
+      },
+      "original_tested_revision": "3e5ec518a65422ceccd4eaf16d142bbdd25bce92",
+      "tested_host_sha256": "1976638017db8722e26d6db24008ac01062ad04ee00363f31603cbb8fe909a6a",
+      "executed_test_sha256": "6ca87c15e8f8cb6f45ec11898c434ff99cc93c259a1100773c5799e61e176bc6",
+      "named_original_map_members": {
+        "scenes/acts/act1/a1_o2.tscn": {
+          "path": "scenes/acts/act1/a1_o2.tscn",
+          "sha256": "4f0a4ea909b0ba84887f35bf650623867830be05301c1b31a744adf3f8fa7f8a",
+          "bytes": 402,
+          "mode": 420
+        },
+        "scripts/acts/act1/spore_bloom.gd": {
+          "path": "scripts/acts/act1/spore_bloom.gd",
+          "sha256": "1976638017db8722e26d6db24008ac01062ad04ee00363f31603cbb8fe909a6a",
+          "bytes": 100514,
+          "mode": 420
+        },
+        "scripts/campaign/attempts.gd": {
+          "path": "scripts/campaign/attempts.gd",
+          "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+          "bytes": 18347,
+          "mode": 420
+        },
+        "scripts/campaign/exact_json.gd": {
+          "path": "scripts/campaign/exact_json.gd",
+          "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+          "bytes": 9330,
+          "mode": 420
+        },
+        "scripts/campaign/save_store.gd": {
+          "path": "scripts/campaign/save_store.gd",
+          "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+          "bytes": 7310,
+          "mode": 420
+        },
+        "scripts/campaign/shell.gd": {
+          "path": "scripts/campaign/shell.gd",
+          "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+          "bytes": 70657,
+          "mode": 420
+        },
+        "tests/acts/act1/a1_o2_groups.gd": {
+          "path": "tests/acts/act1/a1_o2_groups.gd",
+          "sha256": "6ca87c15e8f8cb6f45ec11898c434ff99cc93c259a1100773c5799e61e176bc6",
+          "bytes": 35290,
+          "mode": 420
+        },
+        "tests/acts/act1/a1_o2_mechanics.gd": {
+          "path": "tests/acts/act1/a1_o2_mechanics.gd",
+          "sha256": "8e0727d3eb085303766ed77bbced44b6edd02ffcdf06d46ba4b614cc6066897b",
+          "bytes": 27702,
+          "mode": 420
+        }
+      },
+      "broader_bank_UID_count_owner_reported": {
+        "frozen": 928,
+        "uids": 533,
+        "independent_census": false
+      },
+      "scope": "Production Main oneHero/three actual source groups; disclosed measured same-floor TEST Hero poses, no earned movement/GUI/recognizer. Original near then far genuinely depleted by ordinary hits; same native handles/supplies/deadlines and monotonic independent Field clocks through permanent disjoint consumers; ordinary-primary actual HP-loss clears after depletion; real CP request/current_checkpoint plus genuine paused pre-final and incomplete-hatch Main native units with actual input/camera/difficulty readback (no Shell Save/Attempts/Store credit); incomplete hatch then actual contact completion/exit once/public reentry refusal; normal cleanup. Exported native packets are genuine Main units for a later independent Shell consumer; no executed Continue/Retry/protectedStory/rewards/full-route/all-kit/balance/portrait/performance claim.",
+      "meaningful_actual_mechanics": {
+        "nine_actual_activation_counts": {
+          "bloom-final-east": 1,
+          "bloom-final-guard": 1,
+          "bloom-final-rear": 1,
+          "bloom-final-west": 1,
+          "bloom-first-east": 1,
+          "bloom-first-west": 1,
+          "bloom-pair-east": 1,
+          "bloom-pair-rear": 1,
+          "bloom-pair-west": 1
+        },
+        "all_nine_once": true,
+        "real_world_actions": 14,
+        "ordinary_primary_receipts": 10,
+        "actual_field_activations": 4,
+        "enemy_hits": 0,
+        "genuine_Main_only_units": [
+          {
+            "label": "actual pre-final checkpoint",
+            "snapshot_sha256": "89362ffe46810d719700fb664aaebde20678b27ec3ce30789fc27a0327ee2c6d",
+            "bytes": 168956,
+            "difficulty_source": "actual Scheduler entry profile observed during active groups; Main has no preference getter",
+            "no_packet_float_normalization": true
+          },
+          {
+            "label": "actual incomplete hatch before contact",
+            "snapshot_sha256": "51213ec9589e61f541b22c4a9d9ff0b59534312a40b5a1c1ee0723b4fa9e3333",
+            "bytes": 259012,
+            "difficulty_source": "actual Scheduler entry profile observed during active groups; Main has no preference getter",
+            "no_packet_float_normalization": true
+          }
+        ],
+        "exact_observation_sha256": "b42943616379fd4ee3cdc9cf03e71dbd839f25e9b87cb9da657c9b430f3e42ca",
+        "exact_observation_bytes": 2588309,
+        "source_basis": "Actual nine retained actors and distinct2/3/4 groups, two permanent finite field handles/two supplies each, real four releases/ten ordinary HP-loss primaries after depletion, no Hero damage/ammo/pickup; current source getters/collision/reach/cone/LOS/Scheduler/native guards remain actual. Disclosed Hero pose only; producer units not originally Shell saves."
+      }
+    },
+    "portrait64": {
+      "index": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/saved-portrait01/index.json",
+        "sha256": "1067166567465c0a8c5b20a8b4ee68bf318edb9c29671f81a9c636ae17988eed",
+        "bytes": 7329
+      },
+      "actual_command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "engine",
+        "--path",
+        ".",
+        "--script",
+        "tests/acts/act1/a1_o2_saved_portrait.gd",
+        "--",
+        "--source-report=res://.cinder/a1-o2-campaign-25258-1028998.json",
+        "--source-report-sha256=b3638e7836dadc64368e7afef410b5546883e15a9ccdc58a32cac5af1657abed",
+        "--source-recorder=res://.cinder/a1-o2-campaign02.json",
+        "--source-recorder-sha256=0d7e548857a4673a15d9426a70dede212c3edd326b351b7d6c8324ec9d544558",
+        "--source-pins=res://tests/acts/act1/fixtures/a1_o2_saved_portrait_sources.json",
+        "--source-pins-sha256=97ea87824c8c34d4cc7bd803963f16ec32dbb4960716bbd0df0d489e3bac10d2",
+        "--entrance-label=actual pristine optional entrance",
+        "--partial-label=actual first near-field partial Save"
+      ],
+      "actual_exit_code": 0,
+      "checks": 64,
+      "failures": 0,
+      "native_elapsed_ms": 21504,
+      "wall_seconds": 24.090934208012186,
+      "closed_at": "2026-10-15T01:23:56.316817+00:00",
+      "actual_footer": [
+        "A1-O2 SAVED PORTRAIT: 64 checks, 0 failures; 2 shots; report=res://.cinder/a1-o2-saved-portrait-87749-1949980.json"
+      ],
+      "actual_first_failure": {},
+      "actual_raw_diagnostics": [],
+      "artifacts_joined_selected151": {
+        "receipt.json": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/saved-portrait01/receipt.json",
+          "sha256": "8932ba3533a660c424b650715bc7898a68f61a84c84439eb5690dd8e0ee637b9",
+          "bytes": 2501
+        },
+        "native.json": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/saved-portrait01/native.json",
+          "sha256": "d4b1e5a8c859abcbc18578b6cdd3f5e10e04e08d9f403bc2c3a0513e46261c70",
+          "bytes": 1058350
+        },
+        "engine.log": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/saved-portrait01/engine.log",
+          "sha256": "55606f4d7d930332b08938ea6dc4bcae0dbe127226e75917f499cccb7b73f0b9",
+          "bytes": 265
+        },
+        "original-source-manifest.json": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/saved-portrait01/original-source-manifest.json",
+          "sha256": "4c26ca6fdc6fbe82c4619bf86b36a7760eba05d411f8ac0e9ddc7a84f4a7ee1d",
+          "bytes": 183498
+        },
+        "original-runtime-pins.json": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/saved-portrait01/original-runtime-pins.json",
+          "sha256": "97ea87824c8c34d4cc7bd803963f16ec32dbb4960716bbd0df0d489e3bac10d2",
+          "bytes": 25764
+        },
+        "01-entrance.png": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/saved-portrait01/01-entrance.png",
+          "sha256": "52b0bce53f02c1c9f9ced73f9610e5d628151a9eb3466b0c2a98e7c54f1d808e",
+          "bytes": 41417
+        },
+        "02-live-near-field.png": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/saved-portrait01/02-live-near-field.png",
+          "sha256": "e2e7bb72ce2fa1bc508929a30698787886a5e2359843bba308c942287b1038d6",
+          "bytes": 44489
+        },
+        "selected-source-bank.tar.gz": {
+          "path": "docs/acts/act1/evidence/O2-native-focused/saved-portrait01/selected-source-bank.tar.gz",
+          "sha256": "37e9fa81532d3a496f6a25ba1da816384ac1d15c8406a49330dd63c2fbc8f822",
+          "bytes": 776872
+        }
+      },
+      "original_tested_revision": "b41d7e0a46ce77263ed944190874fec7e13cb602",
+      "tested_host_sha256": "1976638017db8722e26d6db24008ac01062ad04ee00363f31603cbb8fe909a6a",
+      "executed_test_sha256": "5af4801677c54e2f9db5eef69132030a1c22e87892cece7123b68fcd6abb2992",
+      "named_original_map_members": {
+        "scenes/acts/act1/a1_o2.tscn": {
+          "path": "scenes/acts/act1/a1_o2.tscn",
+          "sha256": "4f0a4ea909b0ba84887f35bf650623867830be05301c1b31a744adf3f8fa7f8a",
+          "bytes": 402,
+          "mode": 420
+        },
+        "scripts/acts/act1/spore_bloom.gd": {
+          "path": "scripts/acts/act1/spore_bloom.gd",
+          "sha256": "1976638017db8722e26d6db24008ac01062ad04ee00363f31603cbb8fe909a6a",
+          "bytes": 100514,
+          "mode": 420
+        },
+        "scripts/campaign/attempts.gd": {
+          "path": "scripts/campaign/attempts.gd",
+          "sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+          "bytes": 18347,
+          "mode": 420
+        },
+        "scripts/campaign/exact_json.gd": {
+          "path": "scripts/campaign/exact_json.gd",
+          "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+          "bytes": 9330,
+          "mode": 420
+        },
+        "scripts/campaign/save_store.gd": {
+          "path": "scripts/campaign/save_store.gd",
+          "sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+          "bytes": 7310,
+          "mode": 420
+        },
+        "scripts/campaign/shell.gd": {
+          "path": "scripts/campaign/shell.gd",
+          "sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+          "bytes": 70657,
+          "mode": 420
+        },
+        "tests/acts/act1/a1_o2_groups.gd": {
+          "path": "tests/acts/act1/a1_o2_groups.gd",
+          "sha256": "6ca87c15e8f8cb6f45ec11898c434ff99cc93c259a1100773c5799e61e176bc6",
+          "bytes": 35290,
+          "mode": 420
+        },
+        "tests/acts/act1/a1_o2_mechanics.gd": {
+          "path": "tests/acts/act1/a1_o2_mechanics.gd",
+          "sha256": "8e0727d3eb085303766ed77bbced44b6edd02ffcdf06d46ba4b614cc6066897b",
+          "bytes": 27702,
+          "mode": 420
+        },
+        "tests/acts/act1/a1_o2_saved_portrait.gd": {
+          "path": "tests/acts/act1/a1_o2_saved_portrait.gd",
+          "sha256": "5af4801677c54e2f9db5eef69132030a1c22e87892cece7123b68fcd6abb2992",
+          "bytes": 31739,
+          "mode": 420
+        }
+      },
+      "broader_bank_UID_count_owner_reported": {
+        "frozen": 935,
+        "uids": 535,
+        "independent_census": false
+      },
+      "scope": "Original clean64/0 graphical saved-portrait fixture only. Two authentic campaign02 whole Attempts from original receipt indices0/3 were installed unchanged through public Shell/Attempts/format2 Store. Paused UI settlement, full original unit/Attempt/native/camera/input/UI invariance, actual540x1170 root viewport PNGs with only Menu temporarily hidden, zero callbacks attributed solely to exact installed recipients, passive focus, normal public in-tree exit/disposal and unique-store cleanup are the original fixture assertions. This preservation action runs no engine or image-generation/editing operation.",
+      "pictures": [
+        {
+          "file": "docs/acts/act1/evidence/O2-native-focused/saved-portrait01/01-entrance.png",
+          "sha256": "52b0bce53f02c1c9f9ced73f9610e5d628151a9eb3466b0c2a98e7c54f1d808e",
+          "dimensions": [
+            540,
+            1170
+          ],
+          "personally_visually_inspected_by_this_reviewer": false
+        },
+        {
+          "file": "docs/acts/act1/evidence/O2-native-focused/saved-portrait01/02-live-near-field.png",
+          "sha256": "e2e7bb72ce2fa1bc508929a30698787886a5e2359843bba308c942287b1038d6",
+          "dimensions": [
+            540,
+            1170
+          ],
+          "personally_visually_inspected_by_this_reviewer": false
+        }
+      ],
+      "visual_scope": "Actual graphical64/0 saved-state transport and PNG provenance only; Root later optical inspection separate. Original producer C33 receipt0/3 and menu-only exclusion/body/input/camera/packet invariance; not later groups or moving fight pixels."
+    }
+  },
+  "original_failed_results": {
+    "campaign01": {
+      "diagnosis": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/campaign01/diagnosis.json",
+        "sha256": "589c92ca87873588d8aa1a5da511b72cf9d8760b411ee0b2cbbc53526725f5d9",
+        "bytes": 2458
+      },
+      "receipt": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/campaign01/receipt.json",
+        "sha256": "5fce1b48f42ef00d63ccf92fe0793c6b20e32fbd8f3dd26a5fd861312e5828fb",
+        "bytes": 56927
+      },
+      "native": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/campaign01/native.json",
+        "sha256": "0fed98aa6669f87e18a5a2cc4a35da02cb8ff294e14901c6e64ebae37e46d925",
+        "bytes": 3230998
+      },
+      "engine_log": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/campaign01/engine.log",
+        "sha256": "582439b46c9b6f952d8474e0c616cfd6aed33676584e66612491cdbc74a0d47e",
+        "bytes": 46208
+      },
+      "checks": 23,
+      "failures": 1,
+      "actual_exit_code": 1,
+      "classification": [
+        "owned source runtime type error, missed by check-only parser",
+        "fixture observer deadline ordering after a completed synchronous Save"
+      ],
+      "not_relabelled": true,
+      "diagnosis_keys": [
+        "recorded_at",
+        "failed_command",
+        "revision",
+        "checks",
+        "failures",
+        "script_error_lines",
+        "first_script_error",
+        "assertion_failure",
+        "original_test_store_generation",
+        "prior_receipt_generation",
+        "actual_assertion_diagnostic",
+        "classification",
+        "fixes",
+        "selected_retest",
+        "files",
+        "changed_source"
+      ]
+    },
+    "terminal01": {
+      "diagnosis": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/terminal01/diagnosis.json",
+        "sha256": "cb603292c7c0ae2f7cebb3a93cdd89d1366688e9ec854e228ccf6f109b36a92c",
+        "bytes": 57254
+      },
+      "receipt": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/terminal01/receipt.json",
+        "sha256": "5b219ebc99ea90c1448c34091bc5c64e490990526186fc1b0d462389ec1c9ec2",
+        "bytes": 55638
+      },
+      "native": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/terminal01/native.json",
+        "sha256": "29b1bc5543097a7f0f6908a6c5a0c1ef88c7f9f4c477386ef888058605ed4896",
+        "bytes": 2132904
+      },
+      "engine_log": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/terminal01/engine.log",
+        "sha256": "a7f78118e7a449ac59d9c46a22f2e29c7e2aacf91f32e9d8526830b31bc68169",
+        "bytes": 733
+      },
+      "checks": 29,
+      "failures": 1,
+      "actual_exit_code": 1,
+      "classification": "Fixture observer timeout during legitimate deferred paused registration; no shared runtime fault proven by this run.",
+      "not_relabelled": true,
+      "diagnosis_keys": [
+        "recorded_at",
+        "status",
+        "revision",
+        "api_revision",
+        "failed_command",
+        "checks",
+        "failures",
+        "exit_code",
+        "native_elapsed_ms",
+        "wall_seconds",
+        "first_failure",
+        "original_raw_error_warning_lines",
+        "classification",
+        "diagnosis",
+        "failed_store",
+        "scope",
+        "selected_retest"
+      ]
+    },
+    "terminal02": {
+      "diagnosis": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/terminal02/diagnosis.json",
+        "sha256": "35e1fb475d50c08dec85580be027155b454bff3ff71b4f280032c6d1056a18c3",
+        "bytes": 60165
+      },
+      "receipt": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/terminal02/receipt.json",
+        "sha256": "add935c16c4683152cc6fa1c9324765fdcd08b4bee2cb0c291202d029b06a75e",
+        "bytes": 55380
+      },
+      "native": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/terminal02/native.json",
+        "sha256": "c087482e1aa973cdb35c53e4533bf0cf15cd3f0ef6f86c4817da81d6058c0919",
+        "bytes": 5854769
+      },
+      "engine_log": {
+        "path": "/Users/howardchen/.codex/worktrees/campaign-act1/video game idea/docs/acts/act1/evidence/O2-native-focused/terminal02/engine.log",
+        "sha256": "89257d12613f11cb15082881dfa222ee7dd7aa0dfcf3e3fb51c6d7024f87afc5",
+        "bytes": 464
+      },
+      "checks": 43,
+      "failures": 1,
+      "actual_exit_code": 1,
+      "classification": "Original overall 120-second fixture watchdog failure during the second public Pause; no native contract/capture/encounter or teardown error appears in the retained output.",
+      "not_relabelled": true,
+      "diagnosis_keys": [
+        "recorded_at",
+        "status",
+        "revision",
+        "api_revision",
+        "failed_command",
+        "checks",
+        "failures",
+        "exit_code",
+        "native_elapsed_ms",
+        "wall_seconds",
+        "first_failure",
+        "original_raw_error_warning_lines",
+        "classification",
+        "observed_receipts_before_failure",
+        "original_synchronous_observation_overruns",
+        "original_pause_registration_barriers",
+        "original_timers_retained",
+        "diagnosis",
+        "failed_store",
+        "scope"
+      ]
+    }
+  },
+  "remaining_terminal_detail": "terminal-review.json from bounded independent source reviewer; no shared/API defect found in42/45/34",
+  "material_cost": {
+    "contact_to_Story_ms": 63917,
+    "completion_case_wall_seconds": 112.31980725005269,
+    "Retry_synchronous_observation_ms": 21608,
+    "Retry_waiting_limit_seconds": 16.0,
+    "scope": "Retained observed functional costs/overrun, no latency or FPS acceptance"
+  },
+  "seven_categories": {
+    "mechanics": "M43 older first-field scope retained at4d0bdf7f/8b6aa2c5; G245 current host197 genuine three-group/full finite carryover/ordinary attack/contact producer",
+    "loading": "C33 production Shell and exact real L3 Story; G245 Main; owner terminal fresh public Title/Continue",
+    "transitions": "Owner42 actual Area/deferred completion/exit/one stamp/exact Story;45 genuine completed Session pristine Replay/Leave, no repeated group/contact credit",
+    "saves": "C33 actual pristine/partial Field Actor Scheduler Consumer Route packets Save/fresh disk Continue; terminal uses genuine Main producer through validated public Attempts/Store",
+    "retry": "C33 entrance public RetryButton wiring;34 original pre-final checkpoint restoration and donor/recipient checks",
+    "cleanup": "Original whole-tree public exit/WeakRefs/groups/settings passes across native cases/portrait",
+    "brief_visuals": "P64 two original540x1170 PNG/packet/source provenance joined; Root actual optical inspection remains separate here"
+  },
+  "qualifications": [
+    "No full route/new engine/import or bank/global dependency/UID census; source/report verification only.",
+    "Original M43 tested host differs from later typed-array-corrected197 host; original narrow source attribution not rewritten. Later G245/C33/terminal/portrait share197.",
+    "Historical static SOURCE ONLY headers do not invalidate actual executed original command/receipt/source evidence.",
+    "Standard starter only and same arrangement for other presets; authored Challenge gap remains separate completion work and adds no focused acceptance gate.",
+    "151 selected paths exclude broad Act1 history/shared registry/ledger/settings mutations. Broader935/936/535 and compact214 archive claims remain owner-reported beyond explicitly named joins.",
+    "No visual, all-kit/balance/pacing/performance/FPS/mobile/export/release or acceptance claim from this reviewer."
+  ],
+  "defects_demonstrated": [],
+  "host_preparation_observations": [
+    "A requested campaign01/index.json read was absent because the retained failure bundle declares diagnosis/receipt/native/log/store/manifest rather than an index; declared evidence was then joined correctly.",
+    "One report summary accidentally included large exact_observations text; subsequent outputs were narrowed to lengths/hashes and no packet was normalized or edited."
+  ],
+  "Root_registration_proposal": {
+    "path": "act1_o2_registration_smoke.gd.txt",
+    "status": "INERT_UNPARSED_UNEXECUTED",
+    "accepted_commit": "f04a935925dc54a7d7d07e6d36a8c374e5ab4c85",
+    "native_source_attribution": "8b3f05e3c66ed2f94d04e00e425d6a533dcb958a",
+    "scope": "Actual canonical row/parent/unlock/closed Story+disk/entry/entrance Retry/early Leave/cleanup only; owner42/45 completion/replay independently reused outside fixture.",
+    "owner_source_paths_to_integrate": [
+      "scenes/acts/act1/a1_o2.tscn",
+      "scripts/acts/act1/spore_bloom.gd",
+      "scripts/acts/act1/spore_bloom.gd.uid",
+      "scripts/acts/act1/spore_bloom_codec.gd",
+      "scripts/acts/act1/spore_bloom_codec.gd.uid",
+      "scripts/acts/act1/spore_bloom_layout.gd",
+      "scripts/acts/act1/spore_bloom_layout.gd.uid",
+      "tests/acts/act1/a1_o2_campaign.gd",
+      "tests/acts/act1/a1_o2_campaign.gd.uid",
+      "tests/acts/act1/a1_o2_groups.gd",
+      "tests/acts/act1/a1_o2_groups.gd.uid",
+      "tests/acts/act1/a1_o2_mechanics.gd",
+      "tests/acts/act1/a1_o2_mechanics.gd.uid",
+      "tests/acts/act1/a1_o2_saved_portrait.gd",
+      "tests/acts/act1/a1_o2_saved_portrait.gd.uid",
+      "tests/acts/act1/a1_o2_terminal.gd",
+      "tests/acts/act1/a1_o2_terminal.gd.uid",
+      "tests/acts/act1/fixtures/a1_o2_saved_portrait_sources.json"
+    ],
+    "other23_registry_rows_preservation": "Root separately verifies candidate changes only A1-O2 metadata; this reviewer does not alter/register it."
+  },
+  "operations_not_performed": [
+    "engine",
+    "tests/import",
+    "source/worker production edit",
+    "worker chat read/wake",
+    "canonical messages/run writes",
+    "census",
+    "acceptance"
+  ]
+}

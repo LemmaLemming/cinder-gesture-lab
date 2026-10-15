@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-15T02:36:23.618871+00:00",
+  "review": "bounded terminal source and existing closed evidence only",
+  "submitted_commit": "f04a935925dc54a7d7d07e6d36a8c374e5ab4c85",
+  "runtime_commit": "8b3f05e3c66ed2f94d04e00e425d6a533dcb958a",
+  "api_revision": "campaign-shared-60",
+  "terminal_source_sha256": "8dc148dd19f9a4fb0c02ba07e6d1075df524efb1b57183bb6bd2883a9d72e76d",
+  "terminal_uid": "uid://dtrdvxlrsh7v1",
+  "bundles": {
+    "terminal-completion01": {
+      "checks": 42,
+      "failures": 0,
+      "native_elapsed_ms": 110687,
+      "wall_seconds": 112.31980725005269,
+      "closed_at": "2026-10-15T01:36:39.093111+00:00",
+      "files": {
+        "receipt.json": {
+          "sha256": "a471257734147c27ab620906d7f62168850861f03f1283a248471e17fac6f2e8",
+          "bytes": 2053
+        },
+        "native.json": {
+          "sha256": "f94245088dcfd4816f625a4f50c278da1e809f4a846ecb5c0ba87af6da50dcc6",
+          "bytes": 2915947
+        },
+        "engine.log": {
+          "sha256": "5f5ad249435316414637f473d11a78efc0c2c2a71dcf30827f464ecdc9f4ac5d",
+          "bytes": 166
+        },
+        "original-source-manifest.json": {
+          "sha256": "69be83e9c3c9169879c8c22ce15a1174d8cb06988fd02cbcbfb46eb036fbe391",
+          "bytes": 183510
+        },
+        "original-runtime-selection-pins.json": {
+          "sha256": "97ea87824c8c34d4cc7bd803963f16ec32dbb4960716bbd0df0d489e3bac10d2",
+          "bytes": 25764
+        },
+        "selected-source-bank.tar.gz": {
+          "sha256": "af176c33839aa72a3b061918ab7550c90998afab7cdb01dec6fc1e3f4ff40418",
+          "bytes": 1313555
+        },
+        "selected-source-index.json": {
+          "sha256": "f0a3590121bde7f70aa63fdd26dab954167d50494b80dbffbee70b3d187a8784",
+          "bytes": 64644
+        }
+      },
+      "reported_frozen_source_files": 935,
+      "reported_active_uid_count": 535,
+      "pause_registration_barriers": [
+        {
+          "actual_process_signals": 2,
+          "label": "settled hatch before disclosed TEST contact pose",
+          "request_to_barrier_wall_ms": 22386,
+          "scope": "actual paused registration observation; full synchronous cost retained, no latency/performance pass"
+        }
+      ],
+      "registration_observation_barriers": [
+        {
+          "actual_process_signals": 3,
+          "barrier_observation_wall_ms": 53942,
+          "label": "actual contact completion/exit/Story installation",
+          "maximum_process_signals_per_scope": 2,
+          "request_to_barrier_observation_start_wall_ms": 9975,
+          "request_to_barrier_wall_ms": 63917,
+          "scope": "actual bounded paused process-signal observation of source-pinned public operation; native validators/2s registration custody and120s fixture watchdog unchanged; full synchronous cost retained, no latency/performance pass",
+          "signals": [
+            {
+              "actual_final_predicate": false,
+              "elapsed_from_public_request_ms": 34113,
+              "scope_budget": 1,
+              "signal_budget": 1
+            },
+            {
+              "actual_final_predicate": false,
+              "elapsed_from_public_request_ms": 53296,
+              "scope_budget": 1,
+              "signal_budget": 2
+            },
+            {
+              "actual_final_predicate": true,
+              "elapsed_from_public_request_ms": 63917,
+              "scope_budget": 2,
+              "signal_budget": 1
+            }
+          ],
+          "source_derived_maximum_registration_scopes": 3
+        }
+      ],
+      "synchronous_observation_overruns": []
+    },
+    "terminal-replay01": {
+      "checks": 45,
+      "failures": 0,
+      "native_elapsed_ms": 23227,
+      "wall_seconds": 25.10838412505109,
+      "closed_at": "2026-10-15T01:38:05.352199+00:00",
+      "files": {
+        "receipt.json": {
+          "sha256": "b640778b882a9a414af48fab0c0d9bcee8df95d4a3af416cdbb47d1a86285f79",
+          "bytes": 2112
+        },
+        "native.json": {
+          "sha256": "452015d6e59bd18f12fe24c53e1d08afb43c2f3df95421035f487e45789510dd",
+          "bytes": 652445
+        },
+        "engine.log": {
+          "sha256": "611499b09a07b74c09b5e5b1f1d35493586b44aee53ecbeb8de42643431d2c51",
+          "bytes": 167
+        },
+        "original-source-manifest.json": {
+          "sha256": "25e26330737f537d660023ebf759914296495c01b63c65ac88390e4aef946f82",
+          "bytes": 183707
+        },
+        "original-runtime-selection-pins.json": {
+          "sha256": "97ea87824c8c34d4cc7bd803963f16ec32dbb4960716bbd0df0d489e3bac10d2",
+          "bytes": 25764
+        },
+        "selected-source-bank.tar.gz": {
+          "sha256": "e6cc560dd007bafeeaa13b476feb89257e77c2230de08f52d3b3c3fa3a2ea924",
+          "bytes": 1415240
+        },
+        "selected-source-index.json": {
+          "sha256": "be008f8dc2013e4cb382611f2822feb618fe513ddbab61cfe4f2c22d86e3b522",
+          "bytes": 64915
+        }
+      },
+      "reported_frozen_source_files": 936,
+      "reported_active_uid_count": 535,
+      "pause_registration_barriers": [],
+      "registration_observation_barriers": [
+        {
+          "actual_process_signals": 2,
+          "barrier_observation_wall_ms": 11995,
+          "label": "public Title Replay load/record/fresh side",
+          "maximum_process_signals_per_scope": 2,
+          "request_to_barrier_observation_start_wall_ms": 0,
+          "request_to_barrier_wall_ms": 11995,
+          "scope": "actual bounded paused process-signal observation of source-pinned public operation; native validators/2s registration custody and120s fixture watchdog unchanged; full synchronous cost retained, no latency/performance pass",
+          "signals": [
+            {
+              "actual_final_predicate": false,
+              "elapsed_from_public_request_ms": 7264,
+              "scope_budget": 1,
+              "signal_budget": 1
+            },
+            {
+              "actual_final_predicate": true,
+              "elapsed_from_public_request_ms": 11995,
+              "scope_budget": 1,
+              "signal_budget": 2
+            }
+          ],
+          "source_derived_maximum_registration_scopes": 3
+        },
+        {
+          "actual_process_signals": 2,
+          "barrier_observation_wall_ms": 6580,
+          "label": "public Replay Leave protected Story installation",
+          "maximum_process_signals_per_scope": 2,
+          "request_to_barrier_observation_start_wall_ms": 0,
+          "request_to_barrier_wall_ms": 6580,
+          "scope": "actual bounded paused process-signal observation of source-pinned public operation; native validators/2s registration custody and120s fixture watchdog unchanged; full synchronous cost retained, no latency/performance pass",
+          "signals": [
+            {
+              "actual_final_predicate": false,
+              "elapsed_from_public_request_ms": 603,
+              "scope_budget": 1,
+              "signal_budget": 1
+            },
+            {
+              "actual_final_predicate": true,
+              "elapsed_from_public_request_ms": 6580,
+              "scope_budget": 1,
+              "signal_budget": 2
+            }
+          ],
+          "source_derived_maximum_registration_scopes": 1
+        }
+      ],
+      "synchronous_observation_overruns": []
+    },
+    "terminal-retry01": {
+      "checks": 34,
+      "failures": 0,
+      "native_elapsed_ms": 69483,
+      "wall_seconds": 71.09131649998017,
+      "closed_at": "2026-10-15T01:40:39.392822+00:00",
+      "files": {
+        "receipt.json": {
+          "sha256": "2aac9afb042376cc4238265ae52ae4518599437acc61175111c4fa2812906386",
+          "bytes": 2034
+        },
+        "native.json": {
+          "sha256": "0ca626cf87f9dc0244485debff6f3fb5a992e4dd447752f497ebcdd964b73e72",
+          "bytes": 3722941
+        },
+        "engine.log": {
+          "sha256": "a41b02ebb2fb9d6f18d1728cd23dd87571acd27699ddc8de759b38dbb7cbc9d5",
+          "bytes": 167
+        },
+        "original-source-manifest.json": {
+          "sha256": "69be83e9c3c9169879c8c22ce15a1174d8cb06988fd02cbcbfb46eb036fbe391",
+          "bytes": 183510
+        },
+        "original-runtime-selection-pins.json": {
+          "sha256": "97ea87824c8c34d4cc7bd803963f16ec32dbb4960716bbd0df0d489e3bac10d2",
+          "bytes": 25764
+        },
+        "selected-source-bank.tar.gz": {
+          "sha256": "cd63921d34de9a8de6427b7659776b54d1fdba34eb03e825e5a576f274523548",
+          "bytes": 1313561
+        },
+        "selected-source-index.json": {
+          "sha256": "7150db41240e57d8ef99eec7f969234c2078ce7590ad841c3fde21e523865abf",
+          "bytes": 64619
+        }
+      },
+      "reported_frozen_source_files": 935,
+      "reported_active_uid_count": 535,
+      "pause_registration_barriers": [
+        {
+          "actual_process_signals": 2,
+          "label": "actual hatch RetryButton page",
+          "request_to_barrier_wall_ms": 21703,
+          "scope": "actual paused registration observation; full synchronous cost retained, no latency/performance pass"
+        }
+      ],
+      "registration_observation_barriers": [],
+      "synchronous_observation_overruns": [
+        {
+          "label": "real GUI-to-Shell Retry installs original earlier pre-final unit",
+          "observed_wall_ms": 21608,
+          "operation": "actual RetryButton signal restores original genuine pre-final checkpoint",
+          "scope": "completed actual synchronous operation observed after deadline; no total wall-time performance pass",
+          "waiting_limit_s": 16.0
+        }
+      ]
+    }
+  },
+  "checks": {
+    "count": 158,
+    "failed": []
+  },
+  "source_scope": {
+    "completion_lines": "84-108,309-317,320-332",
+    "replay_lines": "134-180",
+    "retry_lines": "263-305",
+    "source_reader_lines": "183-232,235-260",
+    "observer_corrections_lines": "111-131,275-291,335-356",
+    "cleanup_lines": "359-390",
+    "meaning": "Public validated Attempts/Store loads unchanged retained native G245/C33 packets into independent isolated TEST Sessions. Completion uses measured disclosed Hero-position-only contact and genuine Area/deferred signals. Replay consumes exact successful completion report; Retry uses actual production Button pressed wiring. No private native validator, source packets, clock or completion mutation."
+  },
+  "limitations": [
+    "Inherited campaign helper semantics are assigned to parent C33 source review; not re-audited here.",
+    "Selected named archive members only; no214/935-or936/535 bank census or dynamic resource graph proof.",
+    "Recorded all-terminal cleanup/Registry preservation checks and clean explicit footers establish executed test scope; no new engine/import/tests or visual inspection.",
+    "Original terminal01 29/1 and terminal02 43/1 failures remain untouched; these later isolated successful cases do not relabel them.",
+    "Material completion contact-to-Story63.917s, Retry synchronous21.608s overrun, completion112.320s whole wall preserved; no latency/FPS/performance acceptance.",
+    "No earned traversal, OS clicks/recognizer, full-route/all-kit/balance/mobile claim or acceptance decision."
+  ]
+}

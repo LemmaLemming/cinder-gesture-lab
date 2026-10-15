@@ -1,0 +1,1723 @@
+{
+  "recorded_at": "2026-10-15T01:19:20.408163+00:00",
+  "status": "ORIGINAL_NONCLEAN_FAILURE_PRESERVED",
+  "revision": "149a162b09f7f5b74864420f377e79851a0cd657",
+  "api_revision": "campaign-shared-60",
+  "failed_command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--headless",
+    "--path",
+    ".",
+    "--script",
+    "tests/acts/act1/a1_o2_terminal.gd",
+    "--",
+    "--groups-report=res://.cinder/a1-o2-groups-38324-859397.json",
+    "--campaign-report=res://.cinder/a1-o2-campaign-25258-1028998.json"
+  ],
+  "checks": 29,
+  "failures": 1,
+  "exit_code": 1,
+  "native_elapsed_ms": 32748,
+  "wall_seconds": 34.918615874950774,
+  "first_failure": {
+    "diagnostic": {
+      "active_kind": "optional",
+      "campaign_error": "",
+      "capture_error": "",
+      "contract_error": "",
+      "elapsed_ms": 32319,
+      "encounter_error": "",
+      "hero_hp": 100.0,
+      "hero_position": [
+        0.0,
+        -0.00484376167878509,
+        -1.78366470336914
+      ],
+      "level_id": "A1-O2",
+      "menu": "resume",
+      "native_state": {
+        "field": {
+          "activation_s": 3.68333333333333,
+          "api_revision": "spore-field-1",
+          "bound": true,
+          "clock_s": 17.466666666667,
+          "deadline_s": 6.68333333333332,
+          "generation": 2,
+          "instance_id": "bloom-near",
+          "phase": "spent",
+          "remaining_clusters": 0,
+          "spent_ids": [
+            "cluster-right",
+            "cluster-left"
+          ]
+        },
+        "host": {
+          "beat_index": 3,
+          "checkpoint_published": true,
+          "completed_beats": [
+            "first-breathing",
+            "paired-mushrooms",
+            "final-mixed"
+          ],
+          "installed_consumers": [
+            "bloom-first-spores",
+            "bloom-paired-spores",
+            "bloom-final-spores"
+          ],
+          "installed_fields": [
+            "bloom-near",
+            "bloom-far"
+          ],
+          "last_error": "",
+          "room_stage": "hatch",
+          "save_supported": true,
+          "sources": {
+            "bloom-final-east": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 0,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                2.20000004768372,
+                -0.00484375096857548,
+                -0.699999988079071
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-final-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-final-east"
+              },
+              "reservation_id": "",
+              "resolved_role": {},
+              "role_id": "A1-E2",
+              "source_id": "bloom-final-east",
+              "source_position": [
+                2.20000004768372,
+                -0.00484375096857548,
+                -0.699999988079071
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bloom-final-guard": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": false,
+              "cycle": 1,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C32",
+              "facing": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                0.0,
+                -0.00416418816894293,
+                -2.78366470336914
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-final-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-final-guard"
+              },
+              "reservation_id": "",
+              "resolved_role": {
+                "active_s": 0.2,
+                "attack_interval_s": 2.0,
+                "damage": 8.0,
+                "difficulty_profile": "standard",
+                "difficulty_schema": 1,
+                "lock_s": 0.85,
+                "max_hp": 24.0,
+                "move_speed": 0.0,
+                "raw_damage": 8.0,
+                "raw_role": {
+                  "active_s": 0.2,
+                  "attack_interval_s": 2.0,
+                  "lock_s": 0.85,
+                  "max_hp": 24.0,
+                  "move_speed": 0.0,
+                  "raw_damage": 8.0,
+                  "recovery_s": 2.4,
+                  "windup_s": 1.85
+                },
+                "recovery_s": 2.4,
+                "tuning_status": "provisional_unplaytested",
+                "windup_s": 1.85
+              },
+              "role_id": "A1-E3",
+              "source_id": "bloom-final-guard",
+              "source_position": [
+                0.0,
+                -0.00416418816894293,
+                -2.78366470336914
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bloom-final-rear": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 0,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                0.0,
+                -0.00492187589406967,
+                -3.59999990463257
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-final-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-final-rear"
+              },
+              "reservation_id": "",
+              "resolved_role": {},
+              "role_id": "A1-E2",
+              "source_id": "bloom-final-rear",
+              "source_position": [
+                0.0,
+                -0.00492187589406967,
+                -3.59999990463257
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bloom-final-west": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 0,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                -2.20000004768372,
+                -0.00484375096857548,
+                -0.699999988079071
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-final-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-final-west"
+              },
+              "reservation_id": "",
+              "resolved_role": {},
+              "role_id": "A1-E2",
+              "source_id": "bloom-final-west",
+              "source_position": [
+                -2.20000004768372,
+                -0.00484375096857548,
+                -0.699999988079071
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bloom-first-east": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 1,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.362357795238495,
+                0.0,
+                0.932039082050323
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                1.47676420211792,
+                -0.00492187589406967,
+                0.952198266983032
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-first-spores",
+                "direction": [
+                  1.0,
+                  0.0,
+                  0.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-first-east"
+              },
+              "reservation_id": "",
+              "resolved_role": {
+                "active_s": 0.4,
+                "attack_interval_s": 2.0,
+                "damage": 6.0,
+                "difficulty_profile": "standard",
+                "difficulty_schema": 1,
+                "lock_s": 0.85,
+                "max_hp": 16.0,
+                "move_speed": 4.0,
+                "raw_damage": 6.0,
+                "raw_role": {
+                  "active_s": 0.4,
+                  "attack_interval_s": 2.0,
+                  "lock_s": 0.85,
+                  "max_hp": 16.0,
+                  "move_speed": 4.0,
+                  "raw_damage": 6.0,
+                  "recovery_s": 1.8,
+                  "windup_s": 1.85
+                },
+                "recovery_s": 1.8,
+                "tuning_status": "provisional_unplaytested",
+                "windup_s": 1.85
+              },
+              "role_id": "A1-E2",
+              "source_id": "bloom-first-east",
+              "source_position": [
+                1.47676420211792,
+                -0.00492187589406967,
+                0.952198266983032
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bloom-first-west": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 2,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.572161734104156,
+                0.0,
+                0.820140898227692
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                -2.01075148582458,
+                -0.00492187589406967,
+                0.342829406261444
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-first-spores",
+                "direction": [
+                  -1.0,
+                  0.0,
+                  0.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-first-west"
+              },
+              "reservation_id": "",
+              "resolved_role": {
+                "active_s": 0.4,
+                "attack_interval_s": 2.0,
+                "damage": 6.0,
+                "difficulty_profile": "standard",
+                "difficulty_schema": 1,
+                "lock_s": 0.85,
+                "max_hp": 16.0,
+                "move_speed": 4.0,
+                "raw_damage": 6.0,
+                "raw_role": {
+                  "active_s": 0.4,
+                  "attack_interval_s": 2.0,
+                  "lock_s": 0.85,
+                  "max_hp": 16.0,
+                  "move_speed": 4.0,
+                  "raw_damage": 6.0,
+                  "recovery_s": 1.8,
+                  "windup_s": 1.85
+                },
+                "recovery_s": 1.8,
+                "tuning_status": "provisional_unplaytested",
+                "windup_s": 1.85
+              },
+              "role_id": "A1-E2",
+              "source_id": "bloom-first-west",
+              "source_position": [
+                -2.01075148582458,
+                -0.00492187589406967,
+                0.342829406261444
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bloom-pair-east": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 0,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                -0.935285806655884,
+                0.0,
+                0.353893458843231
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                2.16671776771545,
+                -0.00492187589406967,
+                -1.71036398410797
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-paired-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-pair-east"
+              },
+              "reservation_id": "",
+              "resolved_role": {},
+              "role_id": "A1-E2",
+              "source_id": "bloom-pair-east",
+              "source_position": [
+                2.16671776771545,
+                -0.00492187589406967,
+                -1.71036398410797
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bloom-pair-rear": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 0,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.634048700332642,
+                0.0,
+                0.773293197154999
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                0.0163938030600548,
+                -0.00492187589406967,
+                -2.9745466709137
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-paired-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-pair-rear"
+              },
+              "reservation_id": "",
+              "resolved_role": {},
+              "role_id": "A1-E2",
+              "source_id": "bloom-pair-rear",
+              "source_position": [
+                0.0163938030600548,
+                -0.00492187589406967,
+                -2.9745466709137
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "bloom-pair-west": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 1,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                -0.955336451530457,
+                0.0,
+                0.295520186424255
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                -1.5279883146286,
+                -0.00492187589406967,
+                -1.31236112117767
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-paired-spores",
+                "direction": [
+                  -1.0,
+                  0.0,
+                  0.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-pair-west"
+              },
+              "reservation_id": "",
+              "resolved_role": {
+                "active_s": 0.4,
+                "attack_interval_s": 2.0,
+                "damage": 6.0,
+                "difficulty_profile": "standard",
+                "difficulty_schema": 1,
+                "lock_s": 0.85,
+                "max_hp": 16.0,
+                "move_speed": 4.0,
+                "raw_damage": 6.0,
+                "raw_role": {
+                  "active_s": 0.4,
+                  "attack_interval_s": 2.0,
+                  "lock_s": 0.85,
+                  "max_hp": 16.0,
+                  "move_speed": 4.0,
+                  "raw_damage": 6.0,
+                  "recovery_s": 1.8,
+                  "windup_s": 1.85
+                },
+                "recovery_s": 1.8,
+                "tuning_status": "provisional_unplaytested",
+                "windup_s": 1.85
+              },
+              "role_id": "A1-E2",
+              "source_id": "bloom-pair-west",
+              "source_position": [
+                -1.5279883146286,
+                -0.00492187589406967,
+                -1.31236112117767
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "player": {
+          "action_clock_s": 17.6333333333336,
+          "actor": {
+            "instance_id": "965864328020",
+            "native_class": "CharacterBody3D"
+          },
+          "commitment_remaining_s": 0.0,
+          "dash_cooldown_left_s": 0.0,
+          "equipment_ids": {
+            "jacket": "CLOTH-J0",
+            "pants": "CLOTH-P0",
+            "shoes": "CLOTH-S0",
+            "weapon": "WEAPON-01"
+          },
+          "motion": {
+            "dash_left_s": 0.0,
+            "grounded": true,
+            "knockback_left_s": 0.0,
+            "position": [
+              0.0,
+              -0.00484376167878509,
+              -1.78366470336914
+            ],
+            "queued_dash": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "pending_weapon_id": "",
+          "primary_commitment_s": 0.13,
+          "primary_cooldown_left_s": 0.0833333333333334,
+          "stable": true,
+          "stats": {
+            "armour": 1.0,
+            "capped_stats": [],
+            "damage_reduction": 0.0,
+            "dash_cooldown": 0.34,
+            "dash_distance": 2.7,
+            "dash_duration": 0.18,
+            "dash_invulnerability": 0.12,
+            "dash_speed": 15.0,
+            "effective_health": 100.0,
+            "followup_cone_min_dot": 0.5,
+            "followup_cooldown": 0.45,
+            "followup_damage": 42.0,
+            "followup_range": 3.1,
+            "gear_multipliers": {
+              "armour": 1.0,
+              "attack_range": 1.0,
+              "attack_speed": 1.0,
+              "damage": 1.0,
+              "dash_distance": 1.0,
+              "dash_speed": 1.0,
+              "max_health": 1.0
+            },
+            "hurt_invulnerability": 0.8,
+            "max_health": 100.0,
+            "primary_cadence_estimate": 0.3,
+            "primary_cone_min_dot": 0.05,
+            "primary_cooldown": 0.3,
+            "primary_damage": 20.0,
+            "primary_hit_reload_credit": 0.45,
+            "primary_range": 2.0,
+            "raw_gear_multipliers": {
+              "armour": 1.0,
+              "attack_range": 1.0,
+              "attack_speed": 1.0,
+              "damage": 1.0,
+              "dash_distance": 1.0,
+              "dash_speed": 1.0,
+              "max_health": 1.0
+            },
+            "shell_capacity": 2,
+            "shell_reload": 1.15,
+            "total_multipliers": {
+              "armour": 1.0,
+              "attack_range": 1.0,
+              "attack_speed": 1.0,
+              "damage": 1.0,
+              "dash_distance": 1.0,
+              "dash_speed": 1.0,
+              "max_health": 1.0
+            },
+            "weapon_id": "WEAPON-01",
+            "weapon_name": "Balanced Edge"
+          }
+        },
+        "player_hp": 100.0,
+        "scheduler_clock": 1.65,
+        "sources": {
+          "bloom-final-east": {
+            "consumer": {},
+            "presentation": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 0,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                2.20000004768372,
+                -0.00484375096857548,
+                -0.699999988079071
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-final-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-final-east"
+              },
+              "reservation_id": "",
+              "resolved_role": {},
+              "role_id": "A1-E2",
+              "source_id": "bloom-final-east",
+              "source_position": [
+                2.20000004768372,
+                -0.00484375096857548,
+                -0.699999988079071
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "repulsion": {
+              "alive": false,
+              "api_revision": "scheduler-spore-actor-1",
+              "body_collision_path": "BodyCollision",
+              "consumer_id": "bloom-final-spores",
+              "direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "episode_id": "",
+              "facing": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "grounded": true,
+              "height": 1.45000004768372,
+              "hurt_remaining_s": 0.0,
+              "outside_transaction": true,
+              "phase": "none",
+              "position": [
+                2.20000004768372,
+                -0.00484375096857548,
+                -0.699999988079071
+              ],
+              "progress": 0.0,
+              "source_id": "bloom-final-east",
+              "support_radius": 0.329999992847443,
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "bloom-final-guard": {
+            "consumer": {},
+            "presentation": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": false,
+              "cycle": 1,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C32",
+              "facing": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                0.0,
+                -0.00416418816894293,
+                -2.78366470336914
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-final-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-final-guard"
+              },
+              "reservation_id": "",
+              "resolved_role": {
+                "active_s": 0.2,
+                "attack_interval_s": 2.0,
+                "damage": 8.0,
+                "difficulty_profile": "standard",
+                "difficulty_schema": 1,
+                "lock_s": 0.85,
+                "max_hp": 24.0,
+                "move_speed": 0.0,
+                "raw_damage": 8.0,
+                "raw_role": {
+                  "active_s": 0.2,
+                  "attack_interval_s": 2.0,
+                  "lock_s": 0.85,
+                  "max_hp": 24.0,
+                  "move_speed": 0.0,
+                  "raw_damage": 8.0,
+                  "recovery_s": 2.4,
+                  "windup_s": 1.85
+                },
+                "recovery_s": 2.4,
+                "tuning_status": "provisional_unplaytested",
+                "windup_s": 1.85
+              },
+              "role_id": "A1-E3",
+              "source_id": "bloom-final-guard",
+              "source_position": [
+                0.0,
+                -0.00416418816894293,
+                -2.78366470336914
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "repulsion": {
+              "alive": false,
+              "api_revision": "scheduler-spore-actor-1",
+              "body_collision_path": "BodyCollision",
+              "consumer_id": "bloom-final-spores",
+              "direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "episode_id": "",
+              "facing": [
+                0.0,
+                0.0,
+                1.0
+              ],
+              "grounded": true,
+              "height": 1.45000004768372,
+              "hurt_remaining_s": 0.0,
+              "outside_transaction": true,
+              "phase": "none",
+              "position": [
+                0.0,
+                -0.00416418816894293,
+                -2.78366470336914
+              ],
+              "progress": 0.0,
+              "source_id": "bloom-final-guard",
+              "support_radius": 0.329999992847443,
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "bloom-final-rear": {
+            "consumer": {},
+            "presentation": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 0,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                0.0,
+                -0.00492187589406967,
+                -3.59999990463257
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-final-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-final-rear"
+              },
+              "reservation_id": "",
+              "resolved_role": {},
+              "role_id": "A1-E2",
+              "source_id": "bloom-final-rear",
+              "source_position": [
+                0.0,
+                -0.00492187589406967,
+                -3.59999990463257
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "repulsion": {
+              "alive": false,
+              "api_revision": "scheduler-spore-actor-1",
+              "body_collision_path": "BodyCollision",
+              "consumer_id": "bloom-final-spores",
+              "direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "episode_id": "",
+              "facing": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "grounded": true,
+              "height": 1.45000004768372,
+              "hurt_remaining_s": 0.0,
+              "outside_transaction": true,
+              "phase": "none",
+              "position": [
+                0.0,
+                -0.00492187589406967,
+                -3.59999990463257
+              ],
+              "progress": 0.0,
+              "source_id": "bloom-final-rear",
+              "support_radius": 0.329999992847443,
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "bloom-final-west": {
+            "consumer": {},
+            "presentation": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 0,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                -2.20000004768372,
+                -0.00484375096857548,
+                -0.699999988079071
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-final-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-final-west"
+              },
+              "reservation_id": "",
+              "resolved_role": {},
+              "role_id": "A1-E2",
+              "source_id": "bloom-final-west",
+              "source_position": [
+                -2.20000004768372,
+                -0.00484375096857548,
+                -0.699999988079071
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "repulsion": {
+              "alive": false,
+              "api_revision": "scheduler-spore-actor-1",
+              "body_collision_path": "BodyCollision",
+              "consumer_id": "bloom-final-spores",
+              "direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "episode_id": "",
+              "facing": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "grounded": true,
+              "height": 1.45000004768372,
+              "hurt_remaining_s": 0.0,
+              "outside_transaction": true,
+              "phase": "none",
+              "position": [
+                -2.20000004768372,
+                -0.00484375096857548,
+                -0.699999988079071
+              ],
+              "progress": 0.0,
+              "source_id": "bloom-final-west",
+              "support_radius": 0.329999992847443,
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "bloom-first-east": {
+            "consumer": {},
+            "presentation": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 1,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.362357795238495,
+                0.0,
+                0.932039082050323
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                1.47676420211792,
+                -0.00492187589406967,
+                0.952198266983032
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-first-spores",
+                "direction": [
+                  1.0,
+                  0.0,
+                  0.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-first-east"
+              },
+              "reservation_id": "",
+              "resolved_role": {
+                "active_s": 0.4,
+                "attack_interval_s": 2.0,
+                "damage": 6.0,
+                "difficulty_profile": "standard",
+                "difficulty_schema": 1,
+                "lock_s": 0.85,
+                "max_hp": 16.0,
+                "move_speed": 4.0,
+                "raw_damage": 6.0,
+                "raw_role": {
+                  "active_s": 0.4,
+                  "attack_interval_s": 2.0,
+                  "lock_s": 0.85,
+                  "max_hp": 16.0,
+                  "move_speed": 4.0,
+                  "raw_damage": 6.0,
+                  "recovery_s": 1.8,
+                  "windup_s": 1.85
+                },
+                "recovery_s": 1.8,
+                "tuning_status": "provisional_unplaytested",
+                "windup_s": 1.85
+              },
+              "role_id": "A1-E2",
+              "source_id": "bloom-first-east",
+              "source_position": [
+                1.47676420211792,
+                -0.00492187589406967,
+                0.952198266983032
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "repulsion": {
+              "alive": false,
+              "api_revision": "scheduler-spore-actor-1",
+              "body_collision_path": "BodyCollision",
+              "consumer_id": "bloom-first-spores",
+              "direction": [
+                1.0,
+                0.0,
+                0.0
+              ],
+              "episode_id": "",
+              "facing": [
+                0.362357795238495,
+                0.0,
+                0.932039082050323
+              ],
+              "grounded": true,
+              "height": 1.45000004768372,
+              "hurt_remaining_s": 0.0,
+              "outside_transaction": true,
+              "phase": "none",
+              "position": [
+                1.47676420211792,
+                -0.00492187589406967,
+                0.952198266983032
+              ],
+              "progress": 0.0,
+              "source_id": "bloom-first-east",
+              "support_radius": 0.329999992847443,
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "bloom-first-west": {
+            "consumer": {},
+            "presentation": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 2,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.572161734104156,
+                0.0,
+                0.820140898227692
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                -2.01075148582458,
+                -0.00492187589406967,
+                0.342829406261444
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-first-spores",
+                "direction": [
+                  -1.0,
+                  0.0,
+                  0.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-first-west"
+              },
+              "reservation_id": "",
+              "resolved_role": {
+                "active_s": 0.4,
+                "attack_interval_s": 2.0,
+                "damage": 6.0,
+                "difficulty_profile": "standard",
+                "difficulty_schema": 1,
+                "lock_s": 0.85,
+                "max_hp": 16.0,
+                "move_speed": 4.0,
+                "raw_damage": 6.0,
+                "raw_role": {
+                  "active_s": 0.4,
+                  "attack_interval_s": 2.0,
+                  "lock_s": 0.85,
+                  "max_hp": 16.0,
+                  "move_speed": 4.0,
+                  "raw_damage": 6.0,
+                  "recovery_s": 1.8,
+                  "windup_s": 1.85
+                },
+                "recovery_s": 1.8,
+                "tuning_status": "provisional_unplaytested",
+                "windup_s": 1.85
+              },
+              "role_id": "A1-E2",
+              "source_id": "bloom-first-west",
+              "source_position": [
+                -2.01075148582458,
+                -0.00492187589406967,
+                0.342829406261444
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "repulsion": {
+              "alive": false,
+              "api_revision": "scheduler-spore-actor-1",
+              "body_collision_path": "BodyCollision",
+              "consumer_id": "bloom-first-spores",
+              "direction": [
+                -1.0,
+                0.0,
+                0.0
+              ],
+              "episode_id": "",
+              "facing": [
+                0.572161734104156,
+                0.0,
+                0.820140898227692
+              ],
+              "grounded": true,
+              "height": 1.45000004768372,
+              "hurt_remaining_s": 0.0,
+              "outside_transaction": true,
+              "phase": "none",
+              "position": [
+                -2.01075148582458,
+                -0.00492187589406967,
+                0.342829406261444
+              ],
+              "progress": 0.0,
+              "source_id": "bloom-first-west",
+              "support_radius": 0.329999992847443,
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "bloom-pair-east": {
+            "consumer": {},
+            "presentation": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 0,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                -0.935285806655884,
+                0.0,
+                0.353893458843231
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                2.16671776771545,
+                -0.00492187589406967,
+                -1.71036398410797
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-paired-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-pair-east"
+              },
+              "reservation_id": "",
+              "resolved_role": {},
+              "role_id": "A1-E2",
+              "source_id": "bloom-pair-east",
+              "source_position": [
+                2.16671776771545,
+                -0.00492187589406967,
+                -1.71036398410797
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "repulsion": {
+              "alive": false,
+              "api_revision": "scheduler-spore-actor-1",
+              "body_collision_path": "BodyCollision",
+              "consumer_id": "bloom-paired-spores",
+              "direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "episode_id": "",
+              "facing": [
+                -0.935285806655884,
+                0.0,
+                0.353893458843231
+              ],
+              "grounded": true,
+              "height": 1.45000004768372,
+              "hurt_remaining_s": 0.0,
+              "outside_transaction": true,
+              "phase": "none",
+              "position": [
+                2.16671776771545,
+                -0.00492187589406967,
+                -1.71036398410797
+              ],
+              "progress": 0.0,
+              "source_id": "bloom-pair-east",
+              "support_radius": 0.329999992847443,
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "bloom-pair-rear": {
+            "consumer": {},
+            "presentation": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 0,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                0.634048700332642,
+                0.0,
+                0.773293197154999
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                0.0163938030600548,
+                -0.00492187589406967,
+                -2.9745466709137
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-paired-spores",
+                "direction": [
+                  0.0,
+                  0.0,
+                  -1.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-pair-rear"
+              },
+              "reservation_id": "",
+              "resolved_role": {},
+              "role_id": "A1-E2",
+              "source_id": "bloom-pair-rear",
+              "source_position": [
+                0.0163938030600548,
+                -0.00492187589406967,
+                -2.9745466709137
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "repulsion": {
+              "alive": false,
+              "api_revision": "scheduler-spore-actor-1",
+              "body_collision_path": "BodyCollision",
+              "consumer_id": "bloom-paired-spores",
+              "direction": [
+                0.0,
+                0.0,
+                -1.0
+              ],
+              "episode_id": "",
+              "facing": [
+                0.634048700332642,
+                0.0,
+                0.773293197154999
+              ],
+              "grounded": true,
+              "height": 1.45000004768372,
+              "hurt_remaining_s": 0.0,
+              "outside_transaction": true,
+              "phase": "none",
+              "position": [
+                0.0163938030600548,
+                -0.00492187589406967,
+                -2.9745466709137
+              ],
+              "progress": 0.0,
+              "source_id": "bloom-pair-rear",
+              "support_radius": 0.329999992847443,
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "bloom-pair-west": {
+            "consumer": {},
+            "presentation": {
+              "api_revision": "act1-mushroom-selenite-3",
+              "approach_driving": false,
+              "approach_enabled": true,
+              "cycle": 1,
+              "dead": true,
+              "dormant": false,
+              "entity_id": "C31",
+              "facing": [
+                -0.955336451530457,
+                0.0,
+                0.295520186424255
+              ],
+              "geometry": {},
+              "hit_ids": [],
+              "hp": 0.0,
+              "hurt_left_s": 0.0,
+              "last_cancel_reason": "actual_player_damage",
+              "opening_position": [
+                -1.5279883146286,
+                -0.00492187589406967,
+                -1.31236112117767
+              ],
+              "phase": "clear",
+              "presentation_status": "authored_C31_C32_pose_pixels",
+              "repulsion": {
+                "api_revision": "scheduler-spore-actor-1",
+                "consumer_id": "bloom-paired-spores",
+                "direction": [
+                  -1.0,
+                  0.0,
+                  0.0
+                ],
+                "episode_id": "",
+                "phase": "none",
+                "progress": 0.0,
+                "source_id": "bloom-pair-west"
+              },
+              "reservation_id": "",
+              "resolved_role": {
+                "active_s": 0.4,
+                "attack_interval_s": 2.0,
+                "damage": 6.0,
+                "difficulty_profile": "standard",
+                "difficulty_schema": 1,
+                "lock_s": 0.85,
+                "max_hp": 16.0,
+                "move_speed": 4.0,
+                "raw_damage": 6.0,
+                "raw_role": {
+                  "active_s": 0.4,
+                  "attack_interval_s": 2.0,
+                  "lock_s": 0.85,
+                  "max_hp": 16.0,
+                  "move_speed": 4.0,
+                  "raw_damage": 6.0,
+                  "recovery_s": 1.8,
+                  "windup_s": 1.85
+                },
+                "recovery_s": 1.8,
+                "tuning_status": "provisional_unplaytested",
+                "windup_s": 1.85
+              },
+              "role_id": "A1-E2",
+              "source_id": "bloom-pair-west",
+              "source_position": [
+                -1.5279883146286,
+                -0.00492187589406967,
+                -1.31236112117767
+              ],
+              "spore_support": true,
+              "status": "defeated",
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "repulsion": {
+              "alive": false,
+              "api_revision": "scheduler-spore-actor-1",
+              "body_collision_path": "BodyCollision",
+              "consumer_id": "bloom-paired-spores",
+              "direction": [
+                -1.0,
+                0.0,
+                0.0
+              ],
+              "episode_id": "",
+              "facing": [
+                -0.955336451530457,
+                0.0,
+                0.295520186424255
+              ],
+              "grounded": true,
+              "height": 1.45000004768372,
+              "hurt_remaining_s": 0.0,
+              "outside_transaction": true,
+              "phase": "none",
+              "position": [
+                -1.5279883146286,
+                -0.00492187589406967,
+                -1.31236112117767
+              ],
+              "progress": 0.0,
+              "source_id": "bloom-pair-west",
+              "support_radius": 0.329999992847443,
+              "velocity": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      },
+      "operation": "public Pause: actual hatch RetryButton page",
+      "paused": true,
+      "snapshot_error": ""
+    },
+    "label": "bounded waiting operation did not complete: deferred public Pause commits a new whole-unit Save generation"
+  },
+  "original_raw_error_warning_lines": [
+    "ERROR: bounded waiting operation did not complete: deferred public Pause commits a new whole-unit Save generation",
+    "ERROR: Resumed function '_prepare_registration_unlocked()' after await, but class instance is gone. At script: res://scripts/campaign/shell.gd:1176"
+  ],
+  "classification": "Fixture observer timeout during legitimate deferred paused registration; no shared runtime fault proven by this run.",
+  "diagnosis": [
+    "The first actual production Title active-side Continue of the genuine incomplete-hatch unit passed the fixture whole-unit/binding/quiet-recipient/protected-Story assertions.",
+    "The next public request_pause enqueued a deferred Shell drain. Native Story/checkpoint/hatch raw candidate construction ran synchronously before the registration coroutine first awaited tree.process_frame at original Shell line1176.",
+    "The fixture had started its eight-second page/generation observer before deferred preparation. At the first yielded registration signal the fixture observed menu resume and generation1 with no campaign, contract, capture or snapshot errors, then timed out before the registration continuation resumed.",
+    "Fixture teardown freed the still-pending Shell, producing the separately retained resume-after-free engine error. The original run remains nonclean 29/1; this error is not erased or relabeled.",
+    "Source-reviewed narrow correction is a terminal-only public Pause observer barrier of two actual paused process signals, with health/paused checks and full barrier-wall recording, followed by the unchanged eight-second page/generation/no-error/durable predicate. The 120-second overall watchdog and every native validation/registration guard stay unchanged. This evidence records diagnosis, not a successful retest."
+  ],
+  "failed_store": {
+    "original_path": "/Users/howardchen/Library/Application Support/Godot/app_userdata/Cinder/test-act1-o2-terminal-57367-1041553/campaign.json",
+    "path_provenance": "Neither original recorder nor native report serializes a Store path. The unique retained user-store directory matches the native report PID57367 and fixture initialization naming; generation1 payload_json is byte-identical to the original first-hatch receipt exact_attempts. This derivation is explicit rather than attributed to a nonexistent report path field.",
+    "generation": 1,
+    "payload_json_matches_original_receipt_exact_attempts": true,
+    "receipt_label": "first original hatch Title Continue",
+    "backup_present": false,
+    "sha256": "9728b80156f58f47a837c14faeeaddfd18d84b1ea2e5079bd2b360216f824b86",
+    "bytes": 633392
+  },
+  "scope": "Original focused terminal01 failure only. No successful Retry, final native Shell contact/completion/exit/stamp, protected Story return or Replay/Leave result is claimed. Main groups 245/0 and campaign02 33/0 retain their separate original evidence. No shared Shell/host/fixture mutation, engine execution, Git, mailbox or top-level memory edit performed by this preservation action.",
+  "selected_retest": "Root owns a narrow terminal-only observer correction and repeat of this same fixture; no broad suite requested."
+}

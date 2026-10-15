@@ -583,7 +583,13 @@ func _fresh_continue(saved: Dictionary) -> bool:
 
 
 func _closed(saved: Dictionary) -> bool:
-	return _expect(not saved.is_empty() and saved.get("level") is Dictionary and saved.level.get("local") is Dictionary and Codec.keys_error(saved.level.local, LocalKeys).is_empty() and Codec.keys_error(saved.level.local.actors, SourceIds).is_empty() and Codec.keys_error(saved.level.local.king_intro, ["stage", "record", "outcome"]).is_empty() and saved.level.local.api_revision == "act1-court-aggregate-2" and saved.level.local.schema_version == 2 and saved.level.local.world_revision == 2 and not Exact.stringify(saved).is_empty(), "capture is exact closed whole court/Player/Shell transport")
+	if saved.is_empty() or not saved.get("level") is Dictionary or not saved.level.get("local") is Dictionary:
+		return _expect(false, "whole court/Player/Shell unit exists")
+	var local: Dictionary = saved.level.local
+	var keys: Array = LocalKeys.duplicate()
+	if local.get("schema_version") == 3: keys.append("approach_arrangement")
+	var version: bool = local.get("schema_version") is int and (local.schema_version == 2 and local.get("api_revision") == "act1-court-aggregate-2" or local.schema_version == 3 and local.get("api_revision") == "act1-court-aggregate-3" and local.get("approach_arrangement") is Dictionary)
+	return _expect(version and Codec.keys_error(local, keys).is_empty() and Codec.keys_error(local.actors, SourceIds).is_empty() and Codec.keys_error(local.king_intro, ["stage", "record", "outcome"]).is_empty() and local.world_revision == 2 and not Exact.stringify(saved).is_empty(), "capture is exact current3 or retained legacy2 whole court/Player/Shell transport")
 
 
 func _native(actor: CharacterBody3D, id: String) -> Dictionary:

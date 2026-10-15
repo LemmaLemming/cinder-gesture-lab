@@ -9,8 +9,10 @@ const Exact = preload("res://scripts/campaign/exact_json.gd")
 const Layout = preload("res://scripts/acts/act1/selenite_court_layout.gd")
 const Motion = preload("res://scripts/combat/lunge_motion.gd")
 const BodySweep = preload("res://scripts/combat/body_sweep.gd")
-const API_REVISION: String = "act1-court-aggregate-2"
-const SCHEMA_VERSION: int = 2
+const API_REVISION: String = "act1-court-aggregate-3"
+const SCHEMA_VERSION: int = 3
+const LEGACY_API_REVISION: String = "act1-court-aggregate-2"
+const LEGACY_SCHEMA_VERSION: int = 2
 const WORLD_REVISION: int = 2
 const SOURCE_IDS: Array[String] = ["court-curtain-guard", "court-formation-west", "court-formation-east", "court-approach-west", "court-approach-east", "court-king", "court-helper-west", "court-helper-east"]
 const HELPER_IDS: Array[String] = ["court-helper-west", "court-helper-east"]
@@ -31,10 +33,14 @@ static func envelope_error(value: Variant) -> String:
 	if not error.is_empty(): return error
 	if not value is Dictionary: return "Court aggregate must be a closed Dictionary"
 	var saved: Dictionary = value
-	error = Codec.keys_error(saved, LOCAL_KEYS)
+	var keys: Array = LOCAL_KEYS.duplicate()
+	var current: bool = saved.get("schema_version") is int and saved.schema_version == SCHEMA_VERSION
+	if current: keys.append("approach_arrangement")
+	error = Codec.keys_error(saved, keys)
 	if not error.is_empty(): return error
-	if saved.api_revision != API_REVISION or not saved.schema_version is int or saved.schema_version != SCHEMA_VERSION or not saved.world_revision is int or saved.world_revision != WORLD_REVISION:
+	if not saved.schema_version is int or (saved.schema_version != SCHEMA_VERSION and saved.schema_version != LEGACY_SCHEMA_VERSION) or saved.api_revision != (API_REVISION if current else LEGACY_API_REVISION) or not saved.world_revision is int or saved.world_revision != WORLD_REVISION:
 		return "Unsupported exact court aggregate revision"
+	if current and not saved.approach_arrangement is Dictionary: return "Closed owned approach arrangement required"
 	if not saved.room is int or saved.room < 0 or saved.room > 4 or not saved.awaiting_room is int or saved.awaiting_room not in [-1, 1, 2, 3]:
 		return "Bounded current room and awaiting boundary required"
 	if not saved.formation is String or saved.formation not in ["parallel", "inward"] or not saved.helper_stage is String or saved.helper_stage not in ["unborn", "settling", "entering", "done"] or not saved.roundel_demonstrated is bool or not saved.helpers_once is bool:
@@ -80,7 +86,26 @@ static func metadata_error(saved: Dictionary) -> String:
 		error = _entry_error(saved)
 		if not error.is_empty(): return error
 	error = _king_intro_error(saved)
-	return _epoch_error(saved, exposed) if error.is_empty() else error
+	if error.is_empty(): error = _epoch_error(saved, exposed)
+	return _approach_arrangement_error(saved) if error.is_empty() else error
+
+
+static func _approach_arrangement_error(saved: Dictionary) -> String:
+	# A legacy unit stays literal schema2 throughout that restored attempt.
+	if saved.schema_version == LEGACY_SCHEMA_VERSION: return ""
+	var selected: Dictionary = saved.approach_arrangement
+	var combined: bool = saved.room > 2 or saved.room == 2 and saved.roundel_demonstrated
+	if not combined:
+		return "" if selected.is_empty() else "Approach recipe cannot precede its fresh combined boundary"
+	var error: String = Layout.approach_arrangement_error(selected)
+	if not error.is_empty(): return error
+	if saved.scheduler.encounter_id == "court-approach" and saved.scheduler.profile.get("id") != selected.profile:
+		return "Saved approach recipe differs from its actual fixed Scheduler profile"
+	for id: String in Layout.ROUND_EL_GUARD_SOURCE_IDS:
+		var actor: Dictionary = saved.actors[id]
+		if not String(actor.profile_id).is_empty() and actor.profile_id != selected.profile:
+			return "Retained approach actor differs from its saved recipe profile"
+	return ""
 
 
 ## Inputs are detached JSON-only READY-TIME fingerprints and encoded positions,

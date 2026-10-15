@@ -1,0 +1,64 @@
+{
+  "recorded_at": "2026-10-14T09:45:42.240964+00:00",
+  "failed_command": [
+    "python3",
+    "scripts/dev/dev.py",
+    "engine",
+    "--headless",
+    "--path",
+    ".",
+    "--script",
+    "tests/acts/act1/a1_o2_campaign.gd"
+  ],
+  "revision": "322290b1bc617d949aaa2cdb3e27c000501bbde5",
+  "checks": 23,
+  "failures": 1,
+  "script_error_lines": 39,
+  "first_script_error": "Array runtime type assignment in O2 _pure_saved_preflight line884 generic empty ternary branch",
+  "assertion_failure": "bounded actual Shell operation failed: deferred public Pause commits a new whole-unit Save generation",
+  "original_test_store_generation": 5,
+  "prior_receipt_generation": 4,
+  "actual_assertion_diagnostic": {
+    "operation": "public Pause: real partial active-field Save",
+    "menu": "pause",
+    "campaign_error": "",
+    "snapshot_error": "",
+    "capture_error": "",
+    "elapsed_ms": 55680
+  },
+  "classification": [
+    "owned source runtime type error, missed by check-only parser",
+    "fixture observer deadline ordering after a completed synchronous Save"
+  ],
+  "fixes": [
+    "Explicit typed empty initialization then active-branch assignment; closed prefixes and all native validators unchanged",
+    "Observe completed predicate before asynchronous deadline; retain original wait values and120s overall watchdog, record every synchronous overrun without performance credit"
+  ],
+  "selected_retest": "Same O2 campaign fixture only; no broad suite/import/research/art rerun",
+  "files": {
+    "original-final-test-store.json": {
+      "sha256": "454048e36358ac9dc41938e5a3e1c1373d6aec23f4a9c5670f4d439ce6a574cb",
+      "bytes": 316487
+    },
+    "original-source-manifest.json": {
+      "sha256": "ff96122314910a64789d6f7d56da8bc362bd8584df16f709bfe2e9759d76f18c",
+      "bytes": 182092
+    },
+    "native.json": {
+      "sha256": "0fed98aa6669f87e18a5a2cc4a35da02cb8ff294e14901c6e64ebae37e46d925",
+      "bytes": 3230998
+    },
+    "engine.log": {
+      "sha256": "582439b46c9b6f952d8474e0c616cfd6aed33676584e66612491cdbc74a0d47e",
+      "bytes": 46208
+    },
+    "receipt.json": {
+      "sha256": "5fce1b48f42ef00d63ccf92fe0793c6b20e32fbd8f3dd26a5fd861312e5828fb",
+      "bytes": 56927
+    }
+  },
+  "changed_source": {
+    "scripts/acts/act1/spore_bloom.gd": "1976638017db8722e26d6db24008ac01062ad04ee00363f31603cbb8fe909a6a",
+    "tests/acts/act1/a1_o2_campaign.gd": "ef687e4e54bb99115b128f99ec199bd98aa2d49aac8c48a7c911f2f84be0cb71"
+  }
+}
