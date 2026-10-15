@@ -77,7 +77,7 @@ func _capture(label: String) -> bool:
 	var points: Array = level.camera_framing_points()
 	if not _expect(paused and not points.is_empty() and level.last_camera_framing_error.is_empty() and String(game.call("camera_framing_error", points)).is_empty(), label + ": actual required source/footprint/Hero/response union contained"): return false
 	var before: String = _wire()
-	if not _expect(not before.is_empty(), label + ": exact original whole level/player/camera/input unit captured"): return false
+	if not _expect(not before.is_empty(), label + ": exact whole level/Player plus observed camera/input state captured"): return false
 	var hud: GameHUD = game.get("hud")
 	hud.hide_overlay()
 	await RenderingServer.frame_post_draw
