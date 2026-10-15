@@ -1,0 +1,2557 @@
+{
+  "audit_type": "bounded read-only audit of original captured replay leaf and one initial retry-directory snapshot",
+  "created_at": "2026-10-15T07:33:54.409972+00:00",
+  "original_run": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/echo-teardown-20261015/run-captured-20261015T072521-6cda98c3",
+  "original_result": "FAILED;406 total assertions,395 passes,11 failures; preserved without relabeling",
+  "checks": {
+    "raw_pass_plus_fail_equals_footer_checks": true,
+    "raw_assertion_fail_count_matches_footer": true,
+    "raw_footer_exact": true,
+    "engine_footer_exact": true,
+    "engine_and_raw_assertion_rows_identical": true,
+    "indexed_after_closed": true,
+    "all10_indexed_artifact_hash_size_entries_match": true,
+    "recorded_result_failed_and_closed": true,
+    "lifecycle_recorded_closed_with_failure": true,
+    "63_named_source_snapshots_and_seal_identical": true,
+    "recorded_no_source_delta": true,
+    "actual_test_source_matches_original_seal": true,
+    "direct_write_failure_count5": true,
+    "dependent_roundtrip_failure_count5": true,
+    "empty_bundle_cascade_count1": true
+  },
+  "all_audit_consistency_checks_pass": true,
+  "assertion_counts": {
+    "checks": 406,
+    "passes": 395,
+    "failures": 11
+  },
+  "classification_counts": {
+    "direct_failed_temporary_save_writes": 5,
+    "dependent_failed_disk_roundtrips": 5,
+    "downstream_empty_bundle_assertion": 1
+  },
+  "failures": [
+    {
+      "raw_line": 269,
+      "assertion_text": "death writes a real isolated exact format2 save: Cannot open temporary save",
+      "scenario": "death",
+      "classification": "direct operational temporary-save write failure",
+      "concrete_dependency": "SaveStore.write_payload returns false with last_error Cannot open temporary save at _save_pair:783.",
+      "raw_backtrace_block": [
+        "ERROR: FAIL: death writes a real isolated exact format2 save: Cannot open temporary save",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/replay_playback_smoke.gd:1042)",
+        "       [1] _save_pair (res://tests/replay_playback_smoke.gd:783)",
+        "       [2] _callback_boundaries (res://tests/replay_playback_smoke.gd:461)"
+      ]
+    },
+    {
+      "raw_line": 275,
+      "assertion_text": "death disk roundtrip preserves exact pending unit clocks/types/receipts",
+      "scenario": "death",
+      "classification": "dependent disk-roundtrip failure after failed save write",
+      "concrete_dependency": "The paired Store read cannot return the original payload after the same scenario write failed; _save_pair:785 records this real failed assertion.",
+      "raw_backtrace_block": [
+        "ERROR: FAIL: death disk roundtrip preserves exact pending unit clocks/types/receipts",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/replay_playback_smoke.gd:1042)",
+        "       [1] _save_pair (res://tests/replay_playback_smoke.gd:785)",
+        "       [2] _callback_boundaries (res://tests/replay_playback_smoke.gd:461)"
+      ]
+    },
+    {
+      "raw_line": 291,
+      "assertion_text": "warning writes a real isolated exact format2 save: Cannot open temporary save",
+      "scenario": "warning",
+      "classification": "direct operational temporary-save write failure",
+      "concrete_dependency": "SaveStore.write_payload returns false with last_error Cannot open temporary save at _save_pair:783.",
+      "raw_backtrace_block": [
+        "ERROR: FAIL: warning writes a real isolated exact format2 save: Cannot open temporary save",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/replay_playback_smoke.gd:1042)",
+        "       [1] _save_pair (res://tests/replay_playback_smoke.gd:783)",
+        "       [2] _held_phase_restore (res://tests/replay_playback_smoke.gd:500)"
+      ]
+    },
+    {
+      "raw_line": 297,
+      "assertion_text": "warning disk roundtrip preserves exact pending unit clocks/types/receipts",
+      "scenario": "warning",
+      "classification": "dependent disk-roundtrip failure after failed save write",
+      "concrete_dependency": "The paired Store read cannot return the original payload after the same scenario write failed; _save_pair:785 records this real failed assertion.",
+      "raw_backtrace_block": [
+        "ERROR: FAIL: warning disk roundtrip preserves exact pending unit clocks/types/receipts",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/replay_playback_smoke.gd:1042)",
+        "       [1] _save_pair (res://tests/replay_playback_smoke.gd:785)",
+        "       [2] _held_phase_restore (res://tests/replay_playback_smoke.gd:500)"
+      ]
+    },
+    {
+      "raw_line": 315,
+      "assertion_text": "lock writes a real isolated exact format2 save: Cannot open temporary save",
+      "scenario": "lock",
+      "classification": "direct operational temporary-save write failure",
+      "concrete_dependency": "SaveStore.write_payload returns false with last_error Cannot open temporary save at _save_pair:783.",
+      "raw_backtrace_block": [
+        "ERROR: FAIL: lock writes a real isolated exact format2 save: Cannot open temporary save",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/replay_playback_smoke.gd:1042)",
+        "       [1] _save_pair (res://tests/replay_playback_smoke.gd:783)",
+        "       [2] _held_phase_restore (res://tests/replay_playback_smoke.gd:500)"
+      ]
+    },
+    {
+      "raw_line": 321,
+      "assertion_text": "lock disk roundtrip preserves exact pending unit clocks/types/receipts",
+      "scenario": "lock",
+      "classification": "dependent disk-roundtrip failure after failed save write",
+      "concrete_dependency": "The paired Store read cannot return the original payload after the same scenario write failed; _save_pair:785 records this real failed assertion.",
+      "raw_backtrace_block": [
+        "ERROR: FAIL: lock disk roundtrip preserves exact pending unit clocks/types/receipts",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/replay_playback_smoke.gd:1042)",
+        "       [1] _save_pair (res://tests/replay_playback_smoke.gd:785)",
+        "       [2] _held_phase_restore (res://tests/replay_playback_smoke.gd:500)"
+      ]
+    },
+    {
+      "raw_line": 338,
+      "assertion_text": "cue-dash writes a real isolated exact format2 save: Cannot open temporary save",
+      "scenario": "cue-dash",
+      "classification": "direct operational temporary-save write failure",
+      "concrete_dependency": "SaveStore.write_payload returns false with last_error Cannot open temporary save at _save_pair:783.",
+      "raw_backtrace_block": [
+        "ERROR: FAIL: cue-dash writes a real isolated exact format2 save: Cannot open temporary save",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/replay_playback_smoke.gd:1042)",
+        "       [1] _save_pair (res://tests/replay_playback_smoke.gd:783)",
+        "       [2] _pending_fresh_restore (res://tests/replay_playback_smoke.gd:551)"
+      ]
+    },
+    {
+      "raw_line": 344,
+      "assertion_text": "cue-dash disk roundtrip preserves exact pending unit clocks/types/receipts",
+      "scenario": "cue-dash",
+      "classification": "dependent disk-roundtrip failure after failed save write",
+      "concrete_dependency": "The paired Store read cannot return the original payload after the same scenario write failed; _save_pair:785 records this real failed assertion.",
+      "raw_backtrace_block": [
+        "ERROR: FAIL: cue-dash disk roundtrip preserves exact pending unit clocks/types/receipts",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/replay_playback_smoke.gd:1042)",
+        "       [1] _save_pair (res://tests/replay_playback_smoke.gd:785)",
+        "       [2] _pending_fresh_restore (res://tests/replay_playback_smoke.gd:551)"
+      ]
+    },
+    {
+      "raw_line": 377,
+      "assertion_text": "expired-drain writes a real isolated exact format2 save: Cannot open temporary save",
+      "scenario": "expired-drain",
+      "classification": "direct operational temporary-save write failure",
+      "concrete_dependency": "SaveStore.write_payload returns false with last_error Cannot open temporary save at _save_pair:783.",
+      "raw_backtrace_block": [
+        "ERROR: FAIL: expired-drain writes a real isolated exact format2 save: Cannot open temporary save",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/replay_playback_smoke.gd:1042)",
+        "       [1] _save_pair (res://tests/replay_playback_smoke.gd:783)",
+        "       [2] _pending_expiry (res://tests/replay_playback_smoke.gd:657)"
+      ]
+    },
+    {
+      "raw_line": 383,
+      "assertion_text": "expired-drain disk roundtrip preserves exact pending unit clocks/types/receipts",
+      "scenario": "expired-drain",
+      "classification": "dependent disk-roundtrip failure after failed save write",
+      "concrete_dependency": "The paired Store read cannot return the original payload after the same scenario write failed; _save_pair:785 records this real failed assertion.",
+      "raw_backtrace_block": [
+        "ERROR: FAIL: expired-drain disk roundtrip preserves exact pending unit clocks/types/receipts",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/replay_playback_smoke.gd:1042)",
+        "       [1] _save_pair (res://tests/replay_playback_smoke.gd:785)",
+        "       [2] _pending_expiry (res://tests/replay_playback_smoke.gd:657)"
+      ]
+    },
+    {
+      "raw_line": 389,
+      "assertion_text": "unpaused drain miss freezes its exact stage/receipt with retained scheduler cancellation cooldown",
+      "scenario": "expired-drain",
+      "classification": "downstream empty-bundle structural assertion cascade",
+      "concrete_dependency": "_save_pair:788 returns playback={} when loaded has no playback after failed write/read; _pending_expiry:658 then checks schema2/cancellation/pending damage stage on that empty playback. It does not independently demonstrate a runtime cancellation defect.",
+      "raw_backtrace_block": [
+        "ERROR: FAIL: unpaused drain miss freezes its exact stage/receipt with retained scheduler cancellation cooldown",
+        "   at: push_error (core/variant/variant_utility.cpp:1023)",
+        "   GDScript backtrace (most recent call first):",
+        "       [0] _expect (res://tests/replay_playback_smoke.gd:1042)",
+        "       [1] _pending_expiry (res://tests/replay_playback_smoke.gd:658)"
+      ]
+    }
+  ],
+  "nonassertion_diagnostics": [
+    {
+      "raw_line": 4,
+      "text": "ERROR: Condition \"ret != noErr\" is true. Returning: \"\"",
+      "context": [
+        "   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)",
+        "PASS: actual capture arms at a stable paused shared-player boundary",
+        "PASS: fixture freezes actual collision-resolved completed combinations"
+      ],
+      "classification": "separate engine macOS certificate diagnostic; excluded from 11 assertion failures; no proof it caused Store failure"
+    }
+  ],
+  "raw_footer": "Replay playback smoke: 406 checks, 11 failures",
+  "raw_log_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/echo-teardown-20261015/run-captured-20261015T072521-6cda98c3/raw.log",
+  "raw_log_sha256": "7a190d0ab61abf43af204d0404caca678fcbc85dd71ee42f70c3431bb96eb6e9",
+  "engine_log_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/echo-teardown-20261015/run-captured-20261015T072521-6cda98c3/engine.log",
+  "engine_log_sha256": "601827ca2e09a21f333a5e570d5179c90d214ae3faecb7dc72aaa2538954270b",
+  "command": {
+    "argv": [
+      "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+      "--path",
+      "/Users/howardchen/Documents/ChatGPT/video game idea",
+      "--log-file",
+      "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/echo-teardown-20261015/run-captured-20261015T072521-6cda98c3/engine.log",
+      "--headless",
+      "--script",
+      "res://tests/replay_playback_smoke.gd"
+    ],
+    "cwd": "/Users/howardchen/Documents/ChatGPT/video game idea",
+    "env": {
+      "CINDER_FOREST_ARRANGEMENT_SOURCES": "[\".cinder/echo-teardown-20261015/run.py\", \"project.godot\", \"scenes/main.tscn\", \"scripts/acts/act3/mirror_echo.gd\", \"scripts/acts/act3/mirror_echo.gd.uid\", \"scripts/acts/act3/mirror_echo_codec.gd\", \"scripts/acts/act3/mirror_echo_codec.gd.uid\", \"scripts/acts/act3/mirror_echo_codec2.gd\", \"scripts/acts/act3/mirror_echo_codec2.gd.uid\", \"scripts/acts/act3/mirror_echo_rule_room.gd\", \"scripts/acts/act3/mirror_echo_rule_room.gd.uid\", \"scripts/acts/act3/mirror_echo_spent_marker.gd\", \"scripts/acts/act3/mirror_echo_spent_marker.gd.uid\", \"scripts/acts/act3/mirror_sea_scenery.gd\", \"scripts/acts/act3/mirror_sea_scenery.gd.uid\", \"scripts/campaign/exact_json.gd\", \"scripts/campaign/exact_json.gd.uid\", \"scripts/campaign/level.gd\", \"scripts/campaign/level.gd.uid\", \"scripts/campaign/shell.gd\", \"scripts/campaign/shell.gd.uid\", \"scripts/campaign/snapshot_codec.gd\", \"scripts/campaign/snapshot_codec.gd.uid\", \"scripts/combat/authored_echo_cycle_journal.gd\", \"scripts/combat/authored_echo_cycle_journal.gd.uid\", \"scripts/combat/authored_echo_renderer.gd\", \"scripts/combat/authored_echo_renderer.gd.uid\", \"scripts/combat/authored_echo_terminal_receipt.gd\", \"scripts/combat/authored_echo_terminal_receipt.gd.uid\", \"scripts/combat/authored_enemy_sequence.gd\", \"scripts/combat/authored_enemy_sequence.gd.uid\", \"scripts/combat/replay_cursor.gd\", \"scripts/combat/replay_cursor.gd.uid\", \"scripts/combat/replay_footprint.gd\", \"scripts/combat/replay_footprint.gd.uid\", \"scripts/combat/replay_playback.gd\", \"scripts/combat/replay_playback.gd.uid\", \"scripts/combat/replay_program.gd\", \"scripts/combat/replay_program.gd.uid\", \"scripts/combat/replay_sequence.gd\", \"scripts/combat/replay_sequence.gd.uid\", \"scripts/combat/replay_witness.gd\", \"scripts/combat/replay_witness.gd.uid\", \"scripts/combat/threat_scheduler.gd\", \"scripts/combat/threat_scheduler.gd.uid\", \"scripts/cues/threat_cue.gd\", \"scripts/cues/threat_cue.gd.uid\", \"scripts/dev/dev.py\", \"scripts/game.gd\", \"scripts/game.gd.uid\", \"scripts/hud.gd\", \"scripts/hud.gd.uid\", \"scripts/player.gd\", \"scripts/player.gd.uid\", \"tests/acts/act3/mirror_echo_lifecycle_fixture.gd\", \"tests/acts/act3/mirror_echo_lifecycle_fixture.gd.uid\", \"tests/acts/act3/mirror_echo_lifecycle_fixture.tscn\", \"tests/acts/act3/mirror_echo_lifecycle_smoke.gd\", \"tests/acts/act3/mirror_echo_lifecycle_smoke.gd.uid\", \"tests/replay_playback_smoke.gd\", \"tests/replay_playback_smoke.gd.uid\", \"tests/replay_playback_teardown_smoke.gd\", \"tests/replay_playback_teardown_smoke.gd.uid\"]"
+    },
+    "timeout_after_queue_s": 180
+  },
+  "queue": {
+    "acquired": "2026-10-15T07:26:51.158877+00:00",
+    "lock": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/locks/godot.lock"
+  },
+  "result": {
+    "started": "2026-10-15T07:25:21.415591+00:00",
+    "phase": "run",
+    "test": "captured",
+    "engine_started": true,
+    "returned": true,
+    "dev_return_code": 1,
+    "delta": {
+      "changed": [],
+      "added": []
+    },
+    "passed": false,
+    "closed": true,
+    "closed_at": "2026-10-15T07:28:20.743936+00:00",
+    "runner_return_code": 1,
+    "wall_s_including_queue": 179.3263454579992
+  },
+  "lifecycle": {
+    "state": "CLOSED",
+    "engine_started": true,
+    "validation_returned": true,
+    "code": 1,
+    "custody": "0 confirms canonical direct child waited0; nonzero may be detectederror/timeout; no processgroup claim"
+  },
+  "artifact_index_checks": [
+    {
+      "file": "sources-before-queue.json",
+      "bytes": 6889,
+      "sha256": "75bc070c36f6006fe51422d5d5924c2ca095b87f8408541938f241791ea71725",
+      "expected": {
+        "sha256": "75bc070c36f6006fe51422d5d5924c2ca095b87f8408541938f241791ea71725",
+        "bytes": 6889
+      },
+      "matches": true
+    },
+    {
+      "file": "result.json",
+      "bytes": 377,
+      "sha256": "d3a8cb65ba6b1ae50e7d561eb36ad6b2126f0f607b68dd7bc80202bb7bbadd8c",
+      "expected": {
+        "sha256": "d3a8cb65ba6b1ae50e7d561eb36ad6b2126f0f607b68dd7bc80202bb7bbadd8c",
+        "bytes": 377
+      },
+      "matches": true
+    },
+    {
+      "file": "sources-after-child.json",
+      "bytes": 6889,
+      "sha256": "75bc070c36f6006fe51422d5d5924c2ca095b87f8408541938f241791ea71725",
+      "expected": {
+        "sha256": "75bc070c36f6006fe51422d5d5924c2ca095b87f8408541938f241791ea71725",
+        "bytes": 6889
+      },
+      "matches": true
+    },
+    {
+      "file": "lifecycle.json",
+      "bytes": 213,
+      "sha256": "ec120abd1f971b969f65ea42e4e96185a626d89e6d9de0d733dab15886689552",
+      "expected": {
+        "sha256": "ec120abd1f971b969f65ea42e4e96185a626d89e6d9de0d733dab15886689552",
+        "bytes": 213
+      },
+      "matches": true
+    },
+    {
+      "file": "seal-used.json",
+      "bytes": 7206,
+      "sha256": "e8bdb60613d4729876dfa31915542e42e788a836ec39b58185971c4b3e14cd13",
+      "expected": {
+        "sha256": "e8bdb60613d4729876dfa31915542e42e788a836ec39b58185971c4b3e14cd13",
+        "bytes": 7206
+      },
+      "matches": true
+    },
+    {
+      "file": "sources-at-lock.json",
+      "bytes": 6889,
+      "sha256": "75bc070c36f6006fe51422d5d5924c2ca095b87f8408541938f241791ea71725",
+      "expected": {
+        "sha256": "75bc070c36f6006fe51422d5d5924c2ca095b87f8408541938f241791ea71725",
+        "bytes": 6889
+      },
+      "matches": true
+    },
+    {
+      "file": "raw.log",
+      "bytes": 35053,
+      "sha256": "7a190d0ab61abf43af204d0404caca678fcbc85dd71ee42f70c3431bb96eb6e9",
+      "expected": {
+        "sha256": "7a190d0ab61abf43af204d0404caca678fcbc85dd71ee42f70c3431bb96eb6e9",
+        "bytes": 35053
+      },
+      "matches": true
+    },
+    {
+      "file": "command.json",
+      "bytes": 3182,
+      "sha256": "e9d66d263b9f10f13541b04bbf195daae99d1c6a115e0a8c37007d2575cb6601",
+      "expected": {
+        "sha256": "e9d66d263b9f10f13541b04bbf195daae99d1c6a115e0a8c37007d2575cb6601",
+        "bytes": 3182
+      },
+      "matches": true
+    },
+    {
+      "file": "queue.json",
+      "bytes": 143,
+      "sha256": "1b733a664a36b2042cf0dabb6036f8e61cced48814350df8a9c6dd9007606b0c",
+      "expected": {
+        "sha256": "1b733a664a36b2042cf0dabb6036f8e61cced48814350df8a9c6dd9007606b0c",
+        "bytes": 143
+      },
+      "matches": true
+    },
+    {
+      "file": "engine.log",
+      "bytes": 35004,
+      "sha256": "601827ca2e09a21f333a5e570d5179c90d214ae3faecb7dc72aaa2538954270b",
+      "expected": {
+        "sha256": "601827ca2e09a21f333a5e570d5179c90d214ae3faecb7dc72aaa2538954270b",
+        "bytes": 35004
+      },
+      "matches": true
+    }
+  ],
+  "source_attribution": {
+    "source_file": "/Users/howardchen/Documents/ChatGPT/video game idea/tests/replay_playback_smoke.gd",
+    "actual_sha256": "576ac5738bae1f868575bcdcff280eeb707df184049fc0f23800803482c13c83",
+    "sealed_sha256": "576ac5738bae1f868575bcdcff280eeb707df184049fc0f23800803482c13c83",
+    "playback_sha256_from_seal_only": "fc19603cc1797e174f2e790aaeb7e5a1eaff935ff67214923fe84ec1a437d861",
+    "named_source_count": 63,
+    "source_snapshots_identical": true,
+    "scope": "Only the unchanged named leaf source was read and physically hashed. The63source metadata snapshots were compared; this audit did not reread all63sources or review the production Playback delta."
+  },
+  "save_failure_diagnosis": {
+    "observed": "Each of five _save_pair calls captures a nonempty coherent actor/scheduler/playback unit, then Store.write_payload fails with Cannot open temporary save. _save_pair uses user://test-replay-pending-<pid>-<label>.json at source781.",
+    "permission_interpretation": "The task supplies a Store permission diagnosis, consistent with user:// writes outside the sandbox writable project/tmp roots. The retained log gives Cannot open temporary save without an explicit errno; this audit does not claim an independently observed EACCES.",
+    "scope": "These remain genuine failed Store/write/roundtrip assertions. They do not constitute a passing persistence test or an independently isolated Playback mechanics regression."
+  },
+  "source_excerpts_establishing_skips_and_cascade": [
+    {
+      "start": 458,
+      "end": 465,
+      "lines": [
+        {
+          "line": 458,
+          "text": "\t\telif boundary == \"death\":"
+        },
+        {
+          "line": 459,
+          "text": "\t\t\t_expect(paused and arena.player.dead and playback.state().status == \"cancelled\" and calls.is_empty(), \"actual death observer terminates remaining echo/hit/event callbacks immediately\")"
+        },
+        {
+          "line": 460,
+          "text": "\t\t\tawait process_frame"
+        },
+        {
+          "line": 461,
+          "text": "\t\t\tvar death_bundle: Dictionary = _save_pair(arena, playback, \"death\")"
+        },
+        {
+          "line": 462,
+          "text": "\t\t\tvar dead_fresh: Dictionary = _fresh_pair(arena, installed, death_bundle)"
+        },
+        {
+          "line": 463,
+          "text": "\t\t\tif not dead_fresh.is_empty():"
+        },
+        {
+          "line": 464,
+          "text": "\t\t\t\tpaused = false"
+        },
+        {
+          "line": 465,
+          "text": "\t\t\t\t_expect(dead_fresh.player.dead and dead_fresh.player.hp == 0.0 and dead_fresh.playback.state().cursor.next_event_index == 2 and not dead_fresh.playback.advance().accepted, \"quiet fresh fatal aggregate retains death and consumed prefix without damage/event reexecution\")"
+        }
+      ]
+    },
+    {
+      "start": 498,
+      "end": 527,
+      "lines": [
+        {
+          "line": 498,
+          "text": "\t\t_expect(paused and held[0] and states.is_empty(), \"held first \" + phase + \" cue stops before the final playback state callback\")"
+        },
+        {
+          "line": 499,
+          "text": "\t\tawait process_frame"
+        },
+        {
+          "line": 500,
+          "text": "\t\tvar bundle: Dictionary = _save_pair(arena, installed.playback, phase)"
+        },
+        {
+          "line": 501,
+          "text": "\t\tif bundle.playback.is_empty():"
+        },
+        {
+          "line": 502,
+          "text": "\t\t\tawait _dispose(arena)"
+        },
+        {
+          "line": 503,
+          "text": "\t\t\tcontinue"
+        },
+        {
+          "line": 504,
+          "text": "\t\tvar pending: Dictionary = bundle.playback.pending_delivery"
+        },
+        {
+          "line": 505,
+          "text": "\t\t_expect(pending.events.is_empty() and pending.visual_next_cue == 1 and pending.cue_phases == ([\"warning\", \"clear\"] if phase == \"warning\" else [\"lock\", \"warning\"]), \"partial \" + phase + \" retains the exact presented prefix and untouched suffix\")"
+        },
+        {
+          "line": 506,
+          "text": "\t\t_expect(not installed.playback.get_apparition().visible and bundle.playback.schema_version == 2, \"pose-empty \" + phase + \" retains required cues without inventing an active apparition\")"
+        },
+        {
+          "line": 507,
+          "text": "\t\tvar fresh: Dictionary = _fresh_pair(arena, installed, bundle)"
+        },
+        {
+          "line": 508,
+          "text": "\t\tif fresh.is_empty():"
+        },
+        {
+          "line": 509,
+          "text": "\t\t\tawait _dispose(arena)"
+        },
+        {
+          "line": 510,
+          "text": "\t\t\tcontinue"
+        },
+        {
+          "line": 511,
+          "text": "\t\tvar fresh_states: Array[String] = []"
+        },
+        {
+          "line": 512,
+          "text": "\t\tfresh.playback.state_changed.connect(func(value: Dictionary) -> void: fresh_states.append(value.status))"
+        },
+        {
+          "line": 513,
+          "text": "\t\t_expect(fresh.playback.get_cues()[0].state().phase == phase and fresh.playback.get_cues()[1].state().phase == (\"clear\" if phase == \"warning\" else \"warning\"), \"quiet fresh restore preserves a genuinely partial \" + phase + \" refresh\")"
+        },
+        {
+          "line": 514,
+          "text": "\t\tvar frozen: Dictionary = fresh.playback.state()"
+        },
+        {
+          "line": 515,
+          "text": "\t\tvar forged: Dictionary = bundle.playback.duplicate(true)"
+        },
+        {
+          "line": 516,
+          "text": "\t\tforged.pending_delivery.cue_phases[1] = phase"
+        },
+        {
+          "line": 517,
+          "text": "\t\t_expect(not fresh.playback.restore_state(forged, fresh.scheduler, bundle.scheduler, fresh.bindings, {\"hero\": fresh.player}) and fresh.playback.state() == frozen, \"forged unpresented \" + phase + \" suffix rejects atomically\")"
+        },
+        {
+          "line": 518,
+          "text": "\t\tpaused = false"
+        },
+        {
+          "line": 519,
+          "text": "\t\tfresh.playback.advance()"
+        },
+        {
+          "line": 520,
+          "text": "\t\t_expect(fresh_states == [\"running\"] and fresh.playback.state().get(\"pending_delivery\", {}).is_empty(), \"first resume finishes \" + phase + \" presentation and publishes its state exactly once\")"
+        },
+        {
+          "line": 521,
+          "text": "\t\tfresh.playback.advance()"
+        },
+        {
+          "line": 522,
+          "text": "\t\t_expect(fresh_states.size() == 2, \"subsequent explicit advance may publish a new state but does not repeat an interrupted callback slice\")"
+        },
+        {
+          "line": 523,
+          "text": "\t\tpaused = true"
+        },
+        {
+          "line": 524,
+          "text": "\t\tawait process_frame"
+        },
+        {
+          "line": 525,
+          "text": "\t\tvar drained: Dictionary = fresh.playback.snapshot_state(fresh.scheduler.snapshot_state(fresh.bindings), fresh.bindings)"
+        },
+        {
+          "line": 526,
+          "text": "\t\t_expect(drained.get(\"schema_version\") == 1 and not drained.has(\"pending_delivery\"), \"fully drained \" + phase + \" returns the exact ordinary schema1 shape\")"
+        },
+        {
+          "line": 527,
+          "text": "\t\tawait _dispose(arena)"
+        }
+      ]
+    },
+    {
+      "start": 551,
+      "end": 610,
+      "lines": [
+        {
+          "line": 551,
+          "text": "\tvar bundle: Dictionary = _save_pair(arena, playback, \"cue-dash\")"
+        },
+        {
+          "line": 552,
+          "text": "\tif bundle.playback.is_empty():"
+        },
+        {
+          "line": 553,
+          "text": "\t\tawait _dispose(arena)"
+        },
+        {
+          "line": 554,
+          "text": "\t\treturn"
+        },
+        {
+          "line": 555,
+          "text": "\t_expect(bundle.playback.opportunities[0].contact == false and bundle.playback.opportunities[1].contact and not bundle.playback.opportunities[1].damage_attempted and arena.player.get_committed_dash_state().active, \"held cue stores original independently aimed blast contact and an actual unfinished player dash\")"
+        },
+        {
+          "line": 556,
+          "text": "\t_pending_negatives(arena, playback, bundle)"
+        },
+        {
+          "line": 557,
+          "text": "\tvar fresh: Dictionary = _fresh_pair(arena, installed, bundle)"
+        },
+        {
+          "line": 558,
+          "text": "\tif fresh.is_empty():"
+        },
+        {
+          "line": 559,
+          "text": "\t\tawait _dispose(arena)"
+        },
+        {
+          "line": 560,
+          "text": "\t\treturn"
+        },
+        {
+          "line": 561,
+          "text": "\tvar calls: Array[String] = []"
+        },
+        {
+          "line": 562,
+          "text": "\tvar event_pause: Array[bool] = [false]"
+        },
+        {
+          "line": 563,
+          "text": "\tfresh.playback.event_dispatched.connect(func(value: Dictionary, _opportunity: Dictionary) -> void:"
+        },
+        {
+          "line": 564,
+          "text": "\t\tcalls.append(value.kind)"
+        },
+        {
+          "line": 565,
+          "text": "\t\tif not event_pause[0]:"
+        },
+        {
+          "line": 566,
+          "text": "\t\t\tevent_pause[0] = true"
+        },
+        {
+          "line": 567,
+          "text": "\t\t\tpaused = true"
+        },
+        {
+          "line": 568,
+          "text": "\t)"
+        },
+        {
+          "line": 569,
+          "text": "\tvar original_receipts: Array = bundle.playback.opportunities.duplicate(true)"
+        },
+        {
+          "line": 570,
+          "text": "\tvar hp: float = fresh.player.hp"
+        },
+        {
+          "line": 571,
+          "text": "\tvar before: Vector3 = fresh.player.global_position"
+        },
+        {
+          "line": 572,
+          "text": "\tawait _resume_tick(fresh.playback)"
+        },
+        {
+          "line": 573,
+          "text": "\t_expect(paused and calls == [\"primary\"] and fresh.player.global_position != before and fresh.player.get_committed_dash_state().active, \"next real physics tick moves the restored unfinished dash before the held first event callback: \" + fresh.playback.state().status + \"/\" + fresh.playback.state().reason + \" calls=\" + str(calls))"
+        },
+        {
+          "line": 574,
+          "text": "\tawait process_frame"
+        },
+        {
+          "line": 575,
+          "text": "\tvar event_bundle: Dictionary = _save_pair(fresh, fresh.playback, \"event-dash\")"
+        },
+        {
+          "line": 576,
+          "text": "\t_expect(event_bundle.playback.get(\"pending_delivery\", {}).get(\"events\", []) == [{\"event_index\": 1, \"stage\": \"present\"}] and fresh.playback.state().visual_pose.action == \"primary\" and fresh.playback.state().visual_pose.direction == Vector3.RIGHT, \"popped first event leaves the last actually presented primary, not the consumed left blast\")"
+        },
+        {
+          "line": 577,
+          "text": "\tvar next_installed: Dictionary = installed.duplicate()"
+        },
+        {
+          "line": 578,
+          "text": "\tnext_installed.playback = fresh.playback"
+        },
+        {
+          "line": 579,
+          "text": "\tvar second: Dictionary = _fresh_pair(fresh, next_installed, event_bundle)"
+        },
+        {
+          "line": 580,
+          "text": "\tif second.is_empty():"
+        },
+        {
+          "line": 581,
+          "text": "\t\tawait _dispose(arena)"
+        },
+        {
+          "line": 582,
+          "text": "\t\treturn"
+        },
+        {
+          "line": 583,
+          "text": "\tvar final_calls: Array[String] = []"
+        },
+        {
+          "line": 584,
+          "text": "\tvar active_pause: Array[bool] = [false]"
+        },
+        {
+          "line": 585,
+          "text": "\tsecond.playback.get_cues()[1].state_changed.connect(func(value: Dictionary) -> void:"
+        },
+        {
+          "line": 586,
+          "text": "\t\tif value.phase == \"active\" and not active_pause[0]:"
+        },
+        {
+          "line": 587,
+          "text": "\t\t\tactive_pause[0] = true"
+        },
+        {
+          "line": 588,
+          "text": "\t\t\tpaused = true"
+        },
+        {
+          "line": 589,
+          "text": "\t)"
+        },
+        {
+          "line": 590,
+          "text": "\tsecond.playback.event_dispatched.connect(func(value: Dictionary, _opportunity: Dictionary) -> void: final_calls.append(value.kind))"
+        },
+        {
+          "line": 591,
+          "text": "\tawait _resume_tick(second.playback)"
+        },
+        {
+          "line": 592,
+          "text": "\t_expect(paused and second.player.global_position.x > event.record.world_origin.x + float(event.record.geometry.origin_disk_radius), \"second real resume tick moves the current hero outside the saved left blast and origin disk\")"
+        },
+        {
+          "line": 593,
+          "text": "\tawait process_frame"
+        },
+        {
+          "line": 594,
+          "text": "\tvar third_bundle: Dictionary = _save_pair(second, second.playback, \"blast-dash\")"
+        },
+        {
+          "line": 595,
+          "text": "\t_expect(third_bundle.playback.opportunities[1].contact and not third_bundle.playback.opportunities[1].damage_attempted and third_bundle.playback.pending_delivery.events == [{\"event_index\": 1, \"stage\": \"damage\"}], \"repeated held cue pause retains original contact without a fabricated later contact sample\")"
+        },
+        {
+          "line": 596,
+          "text": "\tvar native_before: Dictionary = _native_presentation(second.playback)"
+        },
+        {
+          "line": 597,
+          "text": "\t_expect(second.playback.restore_state(third_bundle.playback, second.scheduler, third_bundle.scheduler, second.bindings, {\"hero\": second.player}) and _native_presentation(second.playback) == native_before and final_calls.is_empty(), \"idempotent repeated-pause quiet restore preserves actual native blast pixels/pose/gear and no event callback\")"
+        },
+        {
+          "line": 598,
+          "text": "\tpaused = false"
+        },
+        {
+          "line": 599,
+          "text": "\tsecond.playback.advance() # Same original aggregate clock, no new movement."
+        },
+        {
+          "line": 600,
+          "text": "\tvar delivered: Dictionary = second.playback.state()"
+        },
+        {
+          "line": 601,
+          "text": "\t_expect(final_calls == [\"blast\"] and delivered.opportunities[1].contact and delivered.opportunities[1].damage_attempted and second.player.hp == hp, \"original contact receives one truthful damage opportunity; actual restored dash invulnerability prevents HP loss\")"
+        },
+        {
+          "line": 602,
+          "text": "\tfor index: int in range(2):"
+        },
+        {
+          "line": 603,
+          "text": "\t\t_expect(delivered.opportunities[index].scheduled_at_s == original_receipts[index].scheduled_at_s and delivered.opportunities[index].dispatch_clock_s == original_receipts[index].dispatch_clock_s, \"repeated pause/fresh restore retains original event \" + str(index) + \" clocks exactly\")"
+        },
+        {
+          "line": 604,
+          "text": "\tsecond.playback.advance()"
+        },
+        {
+          "line": 605,
+          "text": "\t_expect(final_calls == [\"blast\"] and second.player.hp == hp, \"equal-clock advance cannot repeat the transferred event notification or HP opportunity\")"
+        },
+        {
+          "line": 606,
+          "text": "\tpaused = true"
+        },
+        {
+          "line": 607,
+          "text": "\tawait process_frame"
+        },
+        {
+          "line": 608,
+          "text": "\tvar drained: Dictionary = second.playback.snapshot_state(second.scheduler.snapshot_state(second.bindings), second.bindings)"
+        },
+        {
+          "line": 609,
+          "text": "\t_expect(drained.get(\"schema_version\") == 1 and not drained.has(\"pending_delivery\"), \"actual repeated-pause delivery drains to exact legacy schema1\")"
+        },
+        {
+          "line": 610,
+          "text": "\tawait _dispose(arena)"
+        }
+      ]
+    },
+    {
+      "start": 655,
+      "end": 662,
+      "lines": [
+        {
+          "line": 655,
+          "text": "\t\t\t_expect(installed.playback.state().status == \"cancelled\" and installed.playback.state().cursor.next_event_index == 1 and arena.player.hp == hp and calls.is_empty(), mode + \" cannot mark an undelivered final suffix complete or deliver delayed damage\")"
+        },
+        {
+          "line": 656,
+          "text": "\t\t\tif mode == \"drain-late\":"
+        },
+        {
+          "line": 657,
+          "text": "\t\t\t\tvar bundle: Dictionary = _save_pair(arena, installed.playback, \"expired-drain\")"
+        },
+        {
+          "line": 658,
+          "text": "\t\t\t\t_expect(bundle.playback.get(\"schema_version\") == 2 and not bundle.playback.cancellation.is_empty() and bundle.playback.pending_delivery.events == [{\"event_index\": 0, \"stage\": \"damage\"}], \"unpaused drain miss freezes its exact stage/receipt with retained scheduler cancellation cooldown\")"
+        },
+        {
+          "line": 659,
+          "text": "\t\t\telse:"
+        },
+        {
+          "line": 660,
+          "text": "\t\t\t\tvar bindings: Dictionary = _bindings(arena, installed.playback)"
+        },
+        {
+          "line": 661,
+          "text": "\t\t\t\tvar schedule: Dictionary = arena.scheduler.snapshot_state(bindings)"
+        },
+        {
+          "line": 662,
+          "text": "\t\t\t\t_expect(installed.playback.snapshot_state(schedule, bindings).is_empty() and not installed.playback.last_snapshot_error.is_empty(), \"expired scheduler lease without cancellation provenance fails closed for fresh terminal transport\")"
+        }
+      ]
+    },
+    {
+      "start": 773,
+      "end": 788,
+      "lines": [
+        {
+          "line": 773,
+          "text": "func _save_pair(arena: Dictionary, playback: Node3D, label: String) -> Dictionary:"
+        },
+        {
+          "line": 774,
+          "text": "\tvar bindings: Dictionary = _bindings(arena, playback)"
+        },
+        {
+          "line": 775,
+          "text": "\tvar schedule: Dictionary = arena.scheduler.snapshot_state(bindings)"
+        },
+        {
+          "line": 776,
+          "text": "\tvar saved: Dictionary = playback.snapshot_state(schedule, bindings)"
+        },
+        {
+          "line": 777,
+          "text": "\t_expect(not schedule.is_empty() and not saved.is_empty(), label + \" captures exact coherent actor/scheduler/playback unit: \" + playback.last_snapshot_error)"
+        },
+        {
+          "line": 778,
+          "text": "\tif saved.is_empty():"
+        },
+        {
+          "line": 779,
+          "text": "\t\treturn {\"actor\": {}, \"scheduler\": schedule, \"playback\": saved}"
+        },
+        {
+          "line": 780,
+          "text": "\tvar payload: Dictionary = {\"actor\": arena.player.snapshot_state(), \"scheduler\": schedule, \"playback\": saved}"
+        },
+        {
+          "line": 781,
+          "text": "\tvar path: String = \"user://test-replay-pending-%d-%s.json\" % [OS.get_process_id(), label]"
+        },
+        {
+          "line": 782,
+          "text": "\tvar store = SaveStore.new(path)"
+        },
+        {
+          "line": 783,
+          "text": "\t_expect(store.write_payload(payload), label + \" writes a real isolated exact format2 save: \" + store.last_error)"
+        },
+        {
+          "line": 784,
+          "text": "\tvar loaded: Dictionary = store.read_payload()"
+        },
+        {
+          "line": 785,
+          "text": "\t_expect(ExactJson.stringify(loaded) == ExactJson.stringify(payload), label + \" disk roundtrip preserves exact pending unit clocks/types/receipts\")"
+        },
+        {
+          "line": 786,
+          "text": "\tfor suffix: String in [\"\", \".bak\"]:"
+        },
+        {
+          "line": 787,
+          "text": "\t\tDirAccess.remove_absolute(ProjectSettings.globalize_path(path + suffix))"
+        },
+        {
+          "line": 788,
+          "text": "\treturn loaded if loaded.has(\"playback\") else {\"actor\": {}, \"scheduler\": schedule, \"playback\": {}}"
+        }
+      ]
+    },
+    {
+      "start": 799,
+      "end": 801,
+      "lines": [
+        {
+          "line": 799,
+          "text": "func _fresh_pair(arena: Dictionary, installed: Dictionary, bundle: Dictionary) -> Dictionary:"
+        },
+        {
+          "line": 800,
+          "text": "\tif bundle.get(\"playback\", {}).is_empty():"
+        },
+        {
+          "line": 801,
+          "text": "\t\treturn {}"
+        }
+      ]
+    }
+  ],
+  "untested_from_this_original_run": [
+    {
+      "scenario": "death",
+      "source": "_callback_boundaries:461-465; _fresh_pair:799-801",
+      "remaining": "Fresh fatal aggregate restore retaining death and consumed prefix without damage/event reexecution. Empty saved playback makes _fresh_pair return immediately."
+    },
+    {
+      "scenario": "warning and lock",
+      "source": "_held_phase_restore:500-526",
+      "remaining": "Disk-backed partial cue prefix/suffix fields, pose-empty schema2, quiet fresh actual cue/pixel restoration, forged suffix rejection, exactly-once resumed presentation and return to drained schema1. Empty playback triggers dispose/continue before these assertions."
+    },
+    {
+      "scenario": "cue-dash",
+      "source": "_pending_fresh_restore:551-609",
+      "remaining": "Saved pending independently aimed blast contact with unfinished dash; _pending_negatives adversarial restore cases; quiet fresh restore; first and second actual resumed dash ticks; event-dash and blast-dash disk roundtrips; repeated-pause native pixels/pose/gear; truthful retained contact under dash invulnerability; immutable clocks; no duplicate event; drained schema1. Empty first save triggers return before the chain."
+    },
+    {
+      "scenario": "expired-drain",
+      "source": "_pending_expiry:657-658",
+      "remaining": "Successful disk transport and restored exact canceled pending schema2/damage stage/cooldown provenance. Its observed in-memory canceled/no-damage check passes before the save; the subsequent schema assertion receives the empty save result."
+    }
+  ],
+  "skipped_pending_negative_assertion_source_lines": [
+    {
+      "source_line": 861,
+      "text": "_expect(not playback.restore_state(forged, arena.scheduler, bundle.scheduler, bindings, {\"hero\": arena.player}) and playback.state() == frozen, \"malformed pending \" + variant + \" rejects before any receipt/cue/actor mutation\")"
+    }
+  ],
+  "retained_positive_scope": "395 actual PASS rows remain evidence for their exact wording, including in-memory capture/admission/lock/playback, callback termination, near-grace actual resume, drain-late no-delayed-damage, expired lease refusal, renderer loss and clear/hidden/missing authority refusal. They are not summed into an overall pass; guarded disk restore branches above were skipped.",
+  "all_actual_pass_rows": [
+    {
+      "raw_line": 6,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 7,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 8,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 9,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 10,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 11,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 12,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 13,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 14,
+      "text": "preview retains all exact ordered absolute samples and original instantaneous cone data without a visibility claim"
+    },
+    {
+      "raw_line": 15,
+      "text": "apparition uses shared act3 cosmetic artwork and has no physical collider"
+    },
+    {
+      "raw_line": 16,
+      "text": "native preview is a defensive nested copy"
+    },
+    {
+      "raw_line": 17,
+      "text": "unarmed warning is harmless and has no moving ghost"
+    },
+    {
+      "raw_line": 18,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 19,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 20,
+      "text": "consumer arms only from the real freshly committed full-lead lease"
+    },
+    {
+      "raw_line": 21,
+      "text": "actual scheduler-driven dash playback is harmless even with the live hero on its path"
+    },
+    {
+      "raw_line": 22,
+      "text": "only the nonblocking render root follows the exact original world route while shared sprite feet offset and lease source stay fixed"
+    },
+    {
+      "raw_line": 23,
+      "text": "real ordinary-primary replay resolves its canonical damage once against a live body"
+    },
+    {
+      "raw_line": 24,
+      "text": "prefix and opportunity commit before nested callbacks and equal-clock calls cannot duplicate damage"
+    },
+    {
+      "raw_line": 25,
+      "text": "actual take_damage callback cannot nest a second delivery before the outer event signal"
+    },
+    {
+      "raw_line": 26,
+      "text": "even paused callback capture rejects until the explicit deferred transaction barrier"
+    },
+    {
+      "raw_line": 27,
+      "text": "replay consumes no blast ammo and publishes no player action/capture recursion"
+    },
+    {
+      "raw_line": 28,
+      "text": "contact opportunity is retained before the damage callback"
+    },
+    {
+      "raw_line": 29,
+      "text": "attack source uses original world origin and static weapon while preserving the common cosmetic feet pivot"
+    },
+    {
+      "raw_line": 30,
+      "text": "cosmetic shared slow slash continues beyond logical commitment without another damage event"
+    },
+    {
+      "raw_line": 31,
+      "text": "paused actor/scheduler/playback boundary yields a strict paired snapshot: "
+    },
+    {
+      "raw_line": 32,
+      "text": "wall time under pause advances neither scheduler, cursor, opportunity nor damage"
+    },
+    {
+      "raw_line": 33,
+      "text": "full recovery ends without another ghost or attack"
+    },
+    {
+      "raw_line": 34,
+      "text": "retained completed owner follows later aggregate clocks without redelivery and remains snapshot coherent"
+    },
+    {
+      "raw_line": 35,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 36,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 37,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 38,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 39,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 40,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 41,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 42,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 43,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 44,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 45,
+      "text": "fixture contains an actual independently aimed optional blast rather than a derived slash aim"
+    },
+    {
+      "raw_line": 46,
+      "text": "equal-time actual primary/blast batch latches the complete two-event prefix before either callback"
+    },
+    {
+      "raw_line": 47,
+      "text": "live geometry uses each independent recorded cone; missed primary and contacted blast both consume opportunities"
+    },
+    {
+      "raw_line": 48,
+      "text": "nested callbacks cannot replay either event from an already latched batch"
+    },
+    {
+      "raw_line": 49,
+      "text": "inter-echo gap has no ghost or fabricated travel between separate absolute origins"
+    },
+    {
+      "raw_line": 50,
+      "text": "second sequential apparition retains its own legal static equipment"
+    },
+    {
+      "raw_line": 51,
+      "text": "at most two captured combinations complete with no third slot, ammo use or proc"
+    },
+    {
+      "raw_line": 52,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 53,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 54,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 55,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 56,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 57,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 58,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 59,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 60,
+      "text": "preexisting wall-shortened actual landing including its original Y remains untouched"
+    },
+    {
+      "raw_line": 61,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 62,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 63,
+      "text": "actual scenery LOS blocks the original canonical cone without retrying that spent event"
+    },
+    {
+      "raw_line": 64,
+      "text": "moving out of LOS shelter afterward cannot reopen a consumed opportunity"
+    },
+    {
+      "raw_line": 65,
+      "text": "origin disk accepts an actual target behind the direction within the canonical radius"
+    },
+    {
+      "raw_line": 66,
+      "text": "outside origin disk an actual target behind the cone misses"
+    },
+    {
+      "raw_line": 67,
+      "text": "live target above canonical vertical range misses"
+    },
+    {
+      "raw_line": 68,
+      "text": "live target beyond canonical radial reach misses"
+    },
+    {
+      "raw_line": 69,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 70,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 71,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 72,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 73,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 74,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 75,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 76,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 77,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 78,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 79,
+      "text": "actual hurt invulnerability can reject HP damage but still consumes its contacted canonical opportunity"
+    },
+    {
+      "raw_line": 80,
+      "text": "invulnerable target receives no retry after its spent event"
+    },
+    {
+      "raw_line": 81,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 82,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 83,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 84,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 85,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 86,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 87,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 88,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 89,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 90,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 91,
+      "text": ".05 grace plus only half canonical epsilon accepts a real canonical event once"
+    },
+    {
+      "raw_line": 92,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 93,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 94,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 95,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 96,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 97,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 98,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 99,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 100,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 101,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 102,
+      "text": "just beyond .05+canonical epsilon rejects the whole batch before any prefix, opportunity or HP mutation"
+    },
+    {
+      "raw_line": 103,
+      "text": "late delivery visibly cancels the exact lease"
+    },
+    {
+      "raw_line": 104,
+      "text": "canceled checkpoint retains exact cancellation identity and conservative source cooldown: "
+    },
+    {
+      "raw_line": 105,
+      "text": "forged cancellation reason cannot authorize skipped attacks"
+    },
+    {
+      "raw_line": 106,
+      "text": "paired exact tagged JSON preserves every finite scalar bit and native type"
+    },
+    {
+      "raw_line": 107,
+      "text": "paired exact tagged JSON preserves every finite scalar bit and native type"
+    },
+    {
+      "raw_line": 108,
+      "text": "fresh canceled pair prevalidates exact tombstone and frozen prefix without rearming"
+    },
+    {
+      "raw_line": 109,
+      "text": "paired exact tagged JSON preserves every finite scalar bit and native type"
+    },
+    {
+      "raw_line": 110,
+      "text": "paired exact tagged JSON preserves every finite scalar bit and native type"
+    },
+    {
+      "raw_line": 111,
+      "text": "paired exact tagged JSON preserves every finite scalar bit and native type"
+    },
+    {
+      "raw_line": 112,
+      "text": "paired exact tagged JSON preserves every finite scalar bit and native type"
+    },
+    {
+      "raw_line": 113,
+      "text": "fresh actor/scheduler/playback canceled restore commits only retained cancellation history"
+    },
+    {
+      "raw_line": 114,
+      "text": "restored canceled sequence delivers no skipped attack, HP loss or callback"
+    },
+    {
+      "raw_line": 115,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 116,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 117,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 118,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 119,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 120,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 121,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 122,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 123,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 124,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 125,
+      "text": "unannounced live collision mutation fails visibly before event-prefix or damage delivery"
+    },
+    {
+      "raw_line": 126,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 127,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 128,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 129,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 130,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 131,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 132,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 133,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 134,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 135,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 136,
+      "text": "one overdue earlier event rejects ALL due events including an exactly timely second slot before any prefix"
+    },
+    {
+      "raw_line": 137,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 138,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 139,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 140,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 141,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 142,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 143,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 144,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 145,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 146,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 147,
+      "text": "paired exact tagged JSON preserves every finite scalar bit and native type"
+    },
+    {
+      "raw_line": 148,
+      "text": "paired exact tagged JSON preserves every finite scalar bit and native type"
+    },
+    {
+      "raw_line": 149,
+      "text": "paired exact tagged JSON preserves every finite scalar bit and native type"
+    },
+    {
+      "raw_line": 150,
+      "text": "actual paused mid-route aggregate encodes to finite JSON without consuming a future attack"
+    },
+    {
+      "raw_line": 151,
+      "text": "invalid paired source_epoch rejects atomically"
+    },
+    {
+      "raw_line": 152,
+      "text": "invalid paired generation rejects atomically"
+    },
+    {
+      "raw_line": 153,
+      "text": "invalid paired hero_id rejects atomically"
+    },
+    {
+      "raw_line": 154,
+      "text": "invalid paired reservation_id rejects atomically"
+    },
+    {
+      "raw_line": 155,
+      "text": "invalid paired clock_s rejects atomically"
+    },
+    {
+      "raw_line": 156,
+      "text": "retimed immutable arm origin rejects atomically"
+    },
+    {
+      "raw_line": 157,
+      "text": "one-bit paired aggregate clock mutation rejects without generic tolerance"
+    },
+    {
+      "raw_line": 158,
+      "text": "one-bit immutable event timeline mutation rejects without transport tolerance"
+    },
+    {
+      "raw_line": 159,
+      "text": "malformed nonnumeric cursor clock rejects atomically without conversion or callback"
+    },
+    {
+      "raw_line": 160,
+      "text": "malformed nonnumeric cursor clock rejects atomically without conversion or callback"
+    },
+    {
+      "raw_line": 161,
+      "text": "malformed nonnumeric cursor clock rejects atomically without conversion or callback"
+    },
+    {
+      "raw_line": 162,
+      "text": "malformed nonnumeric cursor clock rejects atomically without conversion or callback"
+    },
+    {
+      "raw_line": 163,
+      "text": "whole staged paired state prevalidates before any fresh actor/scheduler/playback commit"
+    },
+    {
+      "raw_line": 164,
+      "text": "consumer commit cannot substitute for actual actor then scheduler restore"
+    },
+    {
+      "raw_line": 165,
+      "text": "fresh actor then exact saved scheduler lease commit without reproof/rearm"
+    },
+    {
+      "raw_line": 166,
+      "text": "quiet fresh playback restore recreates identical world pose and emits no cue/damage/action events"
+    },
+    {
+      "raw_line": 167,
+      "text": "paired playback carries no duplicate player HP/ammo/action state"
+    },
+    {
+      "raw_line": 168,
+      "text": "restored mid-route continuation consumes the missed primary once before the actual delayed blast"
+    },
+    {
+      "raw_line": 169,
+      "text": "paired exact tagged JSON preserves every finite scalar bit and native type"
+    },
+    {
+      "raw_line": 170,
+      "text": "paired exact tagged JSON preserves every finite scalar bit and native type"
+    },
+    {
+      "raw_line": 171,
+      "text": "idempotent paused restore after consumed damage remains quiet"
+    },
+    {
+      "raw_line": 172,
+      "text": "equal-clock continuation after restored primary prefix cannot redeliver its opportunity"
+    },
+    {
+      "raw_line": 173,
+      "text": "restored pending actual blast preserves its original spacing and independent aim, dispatching once"
+    },
+    {
+      "raw_line": 174,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 175,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 176,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 177,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 178,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 179,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 180,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 181,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 182,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 183,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 184,
+      "text": "held cue pause stops the exact callback remainder without losing its consumed canonical batch"
+    },
+    {
+      "raw_line": 185,
+      "text": "held cue pause exposes exact conditional pending schema2 instead of pretending all callbacks finished"
+    },
+    {
+      "raw_line": 186,
+      "text": "same-clock resume drains held cue suffix once without republishing its delivered prefix0"
+    },
+    {
+      "raw_line": 187,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 188,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 189,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 190,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 191,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 192,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 193,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 194,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 195,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 196,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 197,
+      "text": "held event pause stops the exact callback remainder without losing its consumed canonical batch"
+    },
+    {
+      "raw_line": 198,
+      "text": "held event pause exposes exact conditional pending schema2 instead of pretending all callbacks finished"
+    },
+    {
+      "raw_line": 199,
+      "text": "same-clock resume drains held event suffix once without republishing its delivered prefix1"
+    },
+    {
+      "raw_line": 200,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 201,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 202,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 203,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 204,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 205,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 206,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 207,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 208,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 209,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 210,
+      "text": "held hurt pause stops the exact callback remainder without losing its consumed canonical batch"
+    },
+    {
+      "raw_line": 211,
+      "text": "held hurt pause exposes exact conditional pending schema2 instead of pretending all callbacks finished"
+    },
+    {
+      "raw_line": 212,
+      "text": "same-clock resume drains held hurt suffix once without republishing its delivered prefix0"
+    },
+    {
+      "raw_line": 213,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 214,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 215,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 216,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 217,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 218,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 219,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 220,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 221,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 222,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 223,
+      "text": "required cue hide during active observer cancels before any damage/event and retains exact cooldown provenance"
+    },
+    {
+      "raw_line": 224,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 225,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 226,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 227,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 228,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 229,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 230,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 231,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 232,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 233,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 234,
+      "text": "required cue outline during active observer cancels before any damage/event and retains exact cooldown provenance"
+    },
+    {
+      "raw_line": 235,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 236,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 237,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 238,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 239,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 240,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 241,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 242,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 243,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 244,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 245,
+      "text": "required cue fill during active observer cancels before any damage/event and retains exact cooldown provenance"
+    },
+    {
+      "raw_line": 246,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 247,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 248,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 249,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 250,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 251,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 252,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 253,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 254,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 255,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 256,
+      "text": "required cue clear during active observer cancels before any damage/event and retains exact cooldown provenance"
+    },
+    {
+      "raw_line": 257,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 258,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 259,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 260,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 261,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 262,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 263,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 264,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 265,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 266,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 267,
+      "text": "actual death observer terminates remaining echo/hit/event callbacks immediately"
+    },
+    {
+      "raw_line": 268,
+      "text": "death captures exact coherent actor/scheduler/playback unit: "
+    },
+    {
+      "raw_line": 281,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 282,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 283,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 284,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 285,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 286,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 287,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 288,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 289,
+      "text": "held first warning cue stops before the final playback state callback"
+    },
+    {
+      "raw_line": 290,
+      "text": "warning captures exact coherent actor/scheduler/playback unit: "
+    },
+    {
+      "raw_line": 303,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 304,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 305,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 306,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 307,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 308,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 309,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 310,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 311,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 312,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 313,
+      "text": "held first lock cue stops before the final playback state callback"
+    },
+    {
+      "raw_line": 314,
+      "text": "lock captures exact coherent actor/scheduler/playback unit: "
+    },
+    {
+      "raw_line": 327,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 328,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 329,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 330,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 331,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 332,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 333,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 334,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 335,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 336,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 337,
+      "text": "cue-dash captures exact coherent actor/scheduler/playback unit: "
+    },
+    {
+      "raw_line": 350,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 351,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 352,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 353,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 354,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 355,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 356,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 357,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 358,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 359,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 360,
+      "text": "near-grace holds a consumed final event before its actual damage attempt"
+    },
+    {
+      "raw_line": 361,
+      "text": "bounded later-priority fixture delivers on exactly one real resumed physics tick"
+    },
+    {
+      "raw_line": 362,
+      "text": "valid near-grace contact survives one normal resumed physics tick without recharging original scheduled admission: running/ calls=[\"primary\"]"
+    },
+    {
+      "raw_line": 363,
+      "text": "near-grace resume retains exact original contact clocks"
+    },
+    {
+      "raw_line": 364,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 365,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 366,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 367,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 368,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 369,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 370,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 371,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 372,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 373,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 374,
+      "text": "drain-late holds a consumed final event before its actual damage attempt"
+    },
+    {
+      "raw_line": 375,
+      "text": "drain-late cannot mark an undelivered final suffix complete or deliver delayed damage"
+    },
+    {
+      "raw_line": 376,
+      "text": "expired-drain captures exact coherent actor/scheduler/playback unit: "
+    },
+    {
+      "raw_line": 394,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 395,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 396,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 397,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 398,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 399,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 400,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 401,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 402,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 403,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 404,
+      "text": "lease-expired holds a consumed final event before its actual damage attempt"
+    },
+    {
+      "raw_line": 405,
+      "text": "lease-expired cannot mark an undelivered final suffix complete or deliver delayed damage"
+    },
+    {
+      "raw_line": 406,
+      "text": "expired scheduler lease without cancellation provenance fails closed for fresh terminal transport"
+    },
+    {
+      "raw_line": 407,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 408,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 409,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 410,
+      "text": "real exclusive preview admits focused renderer-removal regression"
+    },
+    {
+      "raw_line": 411,
+      "text": "queued child loss in an unpresented clear suffix cancels before next cue presentation"
+    },
+    {
+      "raw_line": 412,
+      "text": "actual freed renderer child is safely hidden without Cue.clear dereference"
+    },
+    {
+      "raw_line": 413,
+      "text": "broken renderer cleanup/resume performs no extra cue callback, attack or damage"
+    },
+    {
+      "raw_line": 414,
+      "text": "broken transient renderer retains a valid canceled historical receipt without future damage authority"
+    },
+    {
+      "raw_line": 415,
+      "text": "fresh paused whole pending aggregate prevalidates without actor/scheduler mutation"
+    },
+    {
+      "raw_line": 416,
+      "text": "fresh real actor then scheduler then pending playback restore is quiet: "
+    },
+    {
+      "raw_line": 417,
+      "text": "quiet canceled restore discards transient pose and clears all damaging cues"
+    },
+    {
+      "raw_line": 418,
+      "text": "fresh pending unit preserves exact actor motion/capture and lease/receipt clock identity"
+    },
+    {
+      "raw_line": 419,
+      "text": "old actor/scheduler/playback are retired after exact fresh aggregate commit"
+    },
+    {
+      "raw_line": 420,
+      "text": "intact quiet fresh canceled restore never repairs a broken source into an active threat"
+    },
+    {
+      "raw_line": 421,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 422,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 423,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 424,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 425,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 426,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 427,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 428,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 429,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 430,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 431,
+      "text": "clear begins with an actual accepted held pending contact"
+    },
+    {
+      "raw_line": 432,
+      "text": "paused writer purely rejects actual clear cue authority without healing/mutation/callback"
+    },
+    {
+      "raw_line": 433,
+      "text": "existing reader cannot use a saved active phase to heal externally clear damage authority"
+    },
+    {
+      "raw_line": 434,
+      "text": "actual resume after clear cancels without delivering the held contact"
+    },
+    {
+      "raw_line": 435,
+      "text": "canceled clear preserves immutable undelivered receipt/cooldown rather than granting active authority"
+    },
+    {
+      "raw_line": 436,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 437,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 438,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 439,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 440,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 441,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 442,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 443,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 444,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 445,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 446,
+      "text": "hidden begins with an actual accepted held pending contact"
+    },
+    {
+      "raw_line": 447,
+      "text": "paused writer purely rejects actual hidden cue authority without healing/mutation/callback"
+    },
+    {
+      "raw_line": 448,
+      "text": "existing reader cannot use a saved active phase to heal externally hidden damage authority"
+    },
+    {
+      "raw_line": 449,
+      "text": "actual resume after hidden cancels without delivering the held contact"
+    },
+    {
+      "raw_line": 450,
+      "text": "canceled hidden preserves immutable undelivered receipt/cooldown rather than granting active authority"
+    },
+    {
+      "raw_line": 451,
+      "text": "actual capture arms at a stable paused shared-player boundary"
+    },
+    {
+      "raw_line": 452,
+      "text": "fixture freezes actual collision-resolved completed combinations"
+    },
+    {
+      "raw_line": 453,
+      "text": "actual canonical capture seals an immutable one/two-slot sequence: "
+    },
+    {
+      "raw_line": 454,
+      "text": "fresh physical consumer configures from exact immutable captured records"
+    },
+    {
+      "raw_line": 455,
+      "text": "actual scheduler admits one exclusive whole replay witness: "
+    },
+    {
+      "raw_line": 456,
+      "text": "parent transfers every sealed slot exactly once before exposing playback bind"
+    },
+    {
+      "raw_line": 457,
+      "text": "one-player consumer rejects duplicate alias bindings"
+    },
+    {
+      "raw_line": 458,
+      "text": "unarmed lease binds exactly its proved actual shared player"
+    },
+    {
+      "raw_line": 459,
+      "text": "actual lock receives a fresh complete whole-sequence proof: "
+    },
+    {
+      "raw_line": 460,
+      "text": "consumer synchronizes exact actual lock without request, reproof or retiming: "
+    },
+    {
+      "raw_line": 461,
+      "text": "missing begins with an actual accepted held pending contact"
+    },
+    {
+      "raw_line": 462,
+      "text": "paused writer purely rejects actual missing cue authority without healing/mutation/callback"
+    },
+    {
+      "raw_line": 463,
+      "text": "existing reader cannot use a saved active phase to heal externally missing damage authority"
+    },
+    {
+      "raw_line": 464,
+      "text": "actual resume after missing cancels without delivering the held contact"
+    },
+    {
+      "raw_line": 465,
+      "text": "canceled missing preserves immutable undelivered receipt/cooldown rather than granting active authority"
+    }
+  ],
+  "retry_initial_observation": {
+    "run": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/echo-teardown-20261015/run-captured-20261015T072958-0bb567b6",
+    "status": "PENDING queued at single initial inspection; not re-polled",
+    "queue_snapshot": {
+      "queued": "2026-10-15T07:29:58.203880+00:00",
+      "acquired": false,
+      "lock": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/locks/godot.lock"
+    },
+    "raw_snapshot": "Waiting for the shared Godot session to close\u2026\n",
+    "raw_bytes_observed": 49,
+    "files_observed": [
+      "sources-before-queue.json",
+      "seal-used.json",
+      "raw.log",
+      "command.json",
+      "queue.json"
+    ],
+    "terminal_result_or_lifecycle_observed": false,
+    "engine_started_not_established": true,
+    "retry_test_result": "untested/pending; no pass/fail or closure claim"
+  },
+  "closure_limit": "Recorded wrapper CLOSED/returned with code1 and complete assertion footer. Lifecycle custody text explicitly gives no process-group claim for nonzero return; no independent process/descendant census performed.",
+  "not_performed": [
+    "No engine start or engine polling",
+    "No queue/lock mutation",
+    "No Git operation",
+    "No canonical/source/evidence-original edits",
+    "No production Playback delta or new37test review"
+  ],
+  "conclusion": "Original result is failed and preserved, with5operational write failures,5dependent roundtrip failures and1empty-bundle assertion cascade concretely traced to unchanged leaf source. Persistence/fresh-resume branches listed remain untested in that run. Retry was pending at the single permitted observation."
+}

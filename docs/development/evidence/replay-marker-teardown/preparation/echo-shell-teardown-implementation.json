@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "prepared_at": "2026-10-15T07:10:52.346611+00:00",
+  "author": "/root/act3_level_testing",
+  "authorization": "Root follow-up explicitly permits only Playback plus new focused shared test/UID; no engine",
+  "status": "Implemented, statically reviewed; native parse/runtime UNEXECUTED, Root owns freeze/queue/validation/publication",
+  "request_id": "e78e9038-83c7-4674-bbc2-f118e4627241",
+  "runtime": {
+    "path": "scripts/combat/replay_playback.gd",
+    "before_sha256": "e4c7ee2e7d511ee294fd795cc389c20b69672e46fff38c8a5f73e4aa6d081304",
+    "after_sha256": "fc19603cc1797e174f2e790aaeb7e5a1eaff935ff67214923fe84ec1a437d861",
+    "target_function": "_refresh_visuals",
+    "guard_lines": [
+      1117,
+      1123
+    ],
+    "scope": "Only failure-marker validity/visibility/global-position safety; cancellation sealing, once-only terminal emissions, quiet cue clearing unchanged"
+  },
+  "test": {
+    "path": "tests/replay_playback_teardown_smoke.gd",
+    "sha256": "15f13485318a7cde804a744802e0166af3bb360f34b677d27f060bbd9d2dea73",
+    "bytes": 8606,
+    "uid": "Absent; no UID invented/generated. Root necessary import can generate genuine UID.",
+    "native_command": [
+      "python3",
+      "scripts/dev/dev.py",
+      "engine",
+      "--headless",
+      "--path",
+      ".",
+      "--script",
+      "res://tests/replay_playback_teardown_smoke.gd"
+    ],
+    "cases": [
+      "Real managed Echo admission/lock/public pause; remove original failure-marker child; real Scheduler cancellation after child tree exit",
+      "Fresh real managed Echo admission/lock/public pause; attached-marker cancellation control retains original visible placement"
+    ],
+    "checks": "Genuine terminal/tombstone/cooldown/clock provenance; actual callback reason/state counts once; quiet native cues, unchanged Hero snapshot/source HP/body/action history; no redelivery on paused frames; detached node free without repair and whole-world cleanup groups",
+    "reuse": "Accepted tests/acts/act3/mirror_echo_lifecycle_smoke.gd; no owner/Echo/O3 source edits. Inherited initial TEST zero-ammo seed precedes actual admission.",
+    "limits": "No abrupt whole-Shell, WM Quit, new O3 gameplay, route, Save or acceptance credit"
+  },
+  "expected_red": {
+    "actual_original_raw_sha256": "0accb52e68827d49a2c7c513fed62c517fb81e1ddc524a87e9f46289456c188a",
+    "actual_original_result": "143/0 assertions and native0 with production get_global_transform ERROR; nonclean retained",
+    "new_test_red": "Source inspection only: old unguarded code marks detached marker visible and accesses global transform, so strict diagnostic wrapper plus explicit concealed-marker assertion should fail. No native red rerun performed; no source swapping during any frozen job."
+  },
+  "static_checks": {
+    "runtime_git_diff_check_exit": 0,
+    "both_files_trailing_whitespace_errors": [],
+    "literal_inherited_fixture_exists": true,
+    "native_syntax_not_validated": true
+  },
+  "diff": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/level-testing/act3/echo-shell-teardown-shared.patch",
+    "sha256": "71a69e6baf3a2f9bcba341ba67cb5f5108dfd1123667da8b2a8530318c80a816"
+  },
+  "public_quit": "Unchanged. Shell._notification routes WM close to queued quit; quit saves then tree.quit without explicit active_level.exit_level first. Existing guard repairs detached marker safety, but does not establish WM-quit native coverage. Optional explicit exit only after successful live save would require its own bounded process cell.",
+  "review_files": [
+    "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/level-testing/act3/echo-shell-teardown-triage.md",
+    "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/level-testing/act3/echo-shell-teardown-triage.json"
+  ],
+  "engine_jobs_started_by_agent": 0,
+  "git_index_or_settings_or_owner_edits": false
+}
