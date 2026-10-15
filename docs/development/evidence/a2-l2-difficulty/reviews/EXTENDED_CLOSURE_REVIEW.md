@@ -1,0 +1,7 @@
+Six selected extended phases join exact indexed bytes, canonical queued closure and110 named-source observations. Four parsers and Shell are clean0. Import closes0 with3 retained host CA/editor-settings permission diagnostics; it is not clean. Only2 new testUIDs appear at import; all selected later110 maps are stable.
+
+Shell125/0 has actual sequential boolean rows, emptyfirstfailure, complete=true and native report SHA35380f837d004944d27ba45dfbc9c632a1602fb24087436a4880ca3e53356caf. Five full Exact receipts retain scalar tags/floatbits; full Story.snapshot-only Pause, unchanged entrance checkpoint, complete warning persistence across newerAssisted preference/independent diskContinue and original whole entrance session on Retry join raw format2 checksums/backup/generations1,2,2,2,3. The23 same native identities before freshContinue and each independently new identity after Continue/Retry join actual assertions. Normal publicexit/tree/cue/Store cleanup passes.
+
+Original3 Script.new inference errors and faileda788 source remain, with exact declaration-only correction767. Pure32 and legacy202 use Root's earlier review; no rerun. Current pair source has Root's later authorized diagnostic delta, recorded separately; sealed originals are unchanged.
+
+TEST prefix6/outerShell metadata are disclosed. Scope is entry/first unarmedwarning/transport, not latepair opportunity, fullroute, fresh predecessor transition, earnedcheckpoint, portrait, allkit, balance, performance or fifthconsumer credit. Public reproduction draft remains private/unexecuted.

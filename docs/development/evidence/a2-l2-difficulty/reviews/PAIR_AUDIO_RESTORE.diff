@@ -1,0 +1,34 @@
+--- verbose837-nonclean
++++ fixture-audio-restore
+@@ -68,9 +68,15 @@
+ var deadline_clock: float = 0.0
+ var deadline_wall: int = 0
+ var abandon_dash: bool = false
++var original_audio: AudioBusLayout
++var original_fps: int = 0
++var original_bus_names: Array[String] = []
+ var diagnostic: Dictionary = {}
+ 
+ func _initialize() -> void:
++	original_audio = AudioServer.generate_bus_layout()
++	original_fps = Engine.max_fps
++	for index: int in AudioServer.bus_count: original_bus_names.append(AudioServer.get_bus_name(index))
+ 	report_path = OS.get_environment("CINDER_A2_L2_ARRANGEMENT_PAIR_REPORT")
+ 	portrait_dir = OS.get_environment("CINDER_A2_L2_ARRANGEMENT_PAIR_PORTRAITS")
+ 	var supplied: Variant = JSON.parse_string(OS.get_environment("CINDER_A2_L2_ARRANGEMENT_PAIR_SOURCES"))
+@@ -478,6 +484,15 @@
+ 		game.free()
+ 	game = null; hero = null; level = null; scheduler = null
+ 	await process_frame
++	# Restore test-created global Effects bus after normal native tree disposal.
++	# Allow the audio mixer to release its stopped stream/playback before exit.
++	AudioServer.set_bus_layout(original_audio)
++	original_audio = null
++	Engine.max_fps = original_fps
++	await create_timer(0.1, true).timeout
++	var final_bus_names: Array[String] = []
++	for index: int in AudioServer.bus_count: final_bus_names.append(AudioServer.get_bus_name(index))
++	_expect(final_bus_names == original_bus_names, "fixture restores original global audio buses after native tree disposal")
+ 	var freed: bool = true
+ 	for ref: WeakRef in refs: freed = freed and ref.get_ref() == null
+ 	_expect(freed and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "normal Main/native source/cue tree cleanup")

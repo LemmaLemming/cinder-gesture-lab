@@ -1,0 +1,13 @@
+--- passive835-nonclean
++++ fixture-local-release
+@@ -110,8 +110,10 @@
+ 	if not _expect(catalogue.restore(kit) and catalogue.acceptance_errors().is_empty(), "actual canonical resolver accepts the selected carried example"):
+ 		await _finish(); return
+ 	stats = catalogue.resolved_stats()
++	catalogue = null # Fixture-local RefCounted is no longer needed across coroutine exit.
+ 	var resolver := Difficulty.new()
+ 	roles = {"ray": resolver.resolve_role(Ray.RAW_ROLE, selected_profile, Ray.TIMING_FLOORS), "tool": resolver.resolve_role(Parent.TOOL_ROLE, selected_profile, Parent.TOOL_FLOORS)}
++	resolver = null # Keep only resolved values before the first await.
+ 	if not _expect(not roles.ray.is_empty() and not roles.tool.is_empty(), "actual selected roles resolve without timing or stat retuning") or not await _open():
+ 		await _finish(); return
+ 	deadline_clock = float(scheduler.get_clock()) + 65.0

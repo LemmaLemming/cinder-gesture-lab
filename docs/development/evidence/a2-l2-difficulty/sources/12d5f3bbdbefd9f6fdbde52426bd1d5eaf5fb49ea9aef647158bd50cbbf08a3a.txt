@@ -1,0 +1,7 @@
+extends "res://scripts/game.gd"
+## Explicit TEST caller preference, selected before this real Main enters tree.
+## Canonical Weybridge scene, original parent/sequence, actors and scheduling are untouched.
+var legacy_test_profile: String = "standard"
+
+func get_difficulty_preference() -> String:
+	return legacy_test_profile

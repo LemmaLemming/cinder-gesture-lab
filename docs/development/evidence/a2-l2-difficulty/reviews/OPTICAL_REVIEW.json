@@ -1,0 +1,412 @@
+{
+  "schema_version": 1,
+  "kind": "independent-brief-actual-a2-l2-graphical705-optical-review",
+  "reviewed_at_utc": "2026-10-15T09:51:10.633671+00:00",
+  "scope": "Three existing original540x1170 images opened at original detail. Host-only hash/context/source-join inspection; no new engine, capture, route or acceptance decision.",
+  "input_records": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/publication-prepare/VISUAL_CAPTURES.md",
+      "sha256": "d789efdf8f554e62bfc8a62704556c39dab24ea6a44ae83aa31d5a85d2eccfa3"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/publication-prepare/GRAPHICAL_705_ADDENDUM.json",
+      "sha256": "55835fde19d6309d9d156febd167356a9f1f0a8e3dc8db3818945f04cbe1856f"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/publication-prepare/REUSE_SOURCE_JOIN.json",
+      "sha256": "d1bcd2b69c1745951d67a74f9780188005b871275aedca128f88189b0e02940f"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/publication-prepare/REUSE_PAIR_SOURCE.diff",
+      "sha256": "83149bedda304001fce38bd5fbe0966bf0922fe9b5cc80bdaf6ab3566be9e40c"
+    }
+  ],
+  "graphical_run": {
+    "directory": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/run-pair-challenge-neutral-20261015T093452.844350Z-705383f6",
+    "native_report_sha256": "673aeb07f459e2806ae76a8b7fce454292bf796593fa6c72430b955044981393",
+    "checks": 757,
+    "actual_rows": 757,
+    "actual_true_rows": 756,
+    "failures": 1,
+    "complete": false,
+    "success": false,
+    "canonical_return": 1,
+    "wrapper_return": 2,
+    "status": "FAILED/incomplete; not relabeled by optical review",
+    "first_failure": {
+      "check": 753,
+      "detail": "",
+      "label": "actual native movement/commitment retains Hero HP without fabricated progression",
+      "ok": false
+    },
+    "original_source_maps110_before_lock_after_close_exact": true,
+    "later_driver_failure_qualification": {
+      "plan_key": "shelter_scout:3:threat-5",
+      "source": "shelter_scout",
+      "planned_escape_start_s": 7.81666666666665,
+      "planned_escape_end_s": 7.99666666666664,
+      "missed_step": {
+        "after_physics_frame": 492,
+        "after_s": 7.91666666666664,
+        "before_physics_frame": 484,
+        "before_s": 7.78333333333331
+      },
+      "recorded_refusal_note": {
+        "clock_s": 7.91666666666664,
+        "key": "shelter_scout:3:threat-5",
+        "physics_frame": 492,
+        "process_frame": 488,
+        "reason": "sample_window_already_passed",
+        "segment_end_s": 7.99666666666664,
+        "segment_kind": "escape_dash",
+        "segment_start_s": 7.81666666666665,
+        "source_id": "shelter_scout"
+      },
+      "actual_request_for_this_plan": false,
+      "actual_completed_dash_after_planned_start": false,
+      "last_completed_dash": {
+        "kind": "dash",
+        "started_at_s": 6.16666666666665,
+        "completed_at_s": 6.34999999999998
+      },
+      "failure_Hero_clock_s": 8.71666666666668,
+      "failure_Hero_HP": 90.0,
+      "actual_Hero_remains_exact_plan_origin": true,
+      "actual_committed_active_window": [
+        8.61666666666665,
+        8.77666666666665
+      ],
+      "same_committed_geometry_as_plan": true,
+      "conclusion": "Driver demonstrably observed past the required boundary, refused the escape and never executed it; later stationary danger occurred during that same Scout active interval. This run cannot demonstrate an unsupported production proof/geometry or retrospective cause of the original147/625 failures.",
+      "timing_qualification": "Per-render/process continuation misses native dispatch boundaries under catchup; no dispatch tolerance/clock/noHit assertion is relaxed. No driver edit/rerun requested here."
+    }
+  },
+  "images": [
+    {
+      "label": "shelter_handler-lock",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/final-neutral-portrait-retry-20261015/challenge-neutral-shelter_handler-lock.png",
+      "sha256": "35f345f7aa54337c78b1bb43717a64aaede9056b0d6611cd57fe1b24cf00f03c",
+      "bytes": 59634,
+      "width": 540,
+      "height": 1170,
+      "chunk_CRCs_verified": 11,
+      "opened_with": "tools.view_image original detail; actual original pixels, no crop or edited derivative",
+      "observed_native_exact_sha256": "634a485923203ecdfb531591933f5b4f3d758c8b3fd09a723a842f6ab2a0552e",
+      "native_context": {
+        "scheduler_clock_s": 1.5166666666666662,
+        "Hero_action_clock_s": 1.5166666666666662,
+        "Hero_HP": 100.0,
+        "Hero_position": [
+          -1.4254202842712402,
+          -0.004947917070239782,
+          -32.474544525146484
+        ],
+        "beat": "shelter_pair",
+        "active_ids": [
+          "shelter_scout",
+          "shelter_handler"
+        ],
+        "source_context": {
+          "shelter_scout": {
+            "status": "running",
+            "phase": "lock",
+            "reservation_id": "threat-1",
+            "lease_owner_instance_id": 111333609253,
+            "armed": true,
+            "lease_state": "lock",
+            "actual_source_position": [
+              0.6499999761581421,
+              0.0,
+              -35.20000076293945
+            ],
+            "HP": 30.0,
+            "geometry": {
+              "from": [
+                0.6499999761581421,
+                0.0,
+                -35.20000076293945
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.10829979181289673,
+                0.0,
+                -31.476428985595703
+              ]
+            }
+          },
+          "shelter_handler": {
+            "status": "running",
+            "phase": "lock",
+            "reservation_id": "threat-2",
+            "lease_owner_instance_id": 121215390056,
+            "armed": true,
+            "lease_state": "lock",
+            "actual_source_position": [
+              -0.6000000238418579,
+              0.0,
+              -33.0
+            ],
+            "HP": 30.0,
+            "geometry": {
+              "from": [
+                -0.6000000238418579,
+                0.0,
+                -33.0
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.6000000238418579,
+                0.0,
+                -29.200000762939453
+              ]
+            }
+          }
+        }
+      },
+      "actual_test_context": "TEST stage_index10 and initial Hero(-.3,0,-31.8) before first physics; all6 actual actor HP unchanged, prior4 alive/dormant, no fake defeated/contact/clock/history and no valid packet/earned route/Save/Continue/Retry claim. Actual Main/parent loop/Scheduler/camera/proofs and direct dash/ordinary slash only; initial zero ammo, no blast.",
+      "pixel_observations": {
+        "readable": "Hero stands left of the nearer Handler; Hero head, torso/weapon silhouette and lower-foot/shadow anchor remain visible. Rear Scout and nearer Handler are distinguishable. Two amber lane outlines and their rounded endpoints remain inside the open street, below the objective banner and above the controls banner.",
+        "visible_limit": "Hero and nearer Handler touch/partly overlap at the shoulder/leg edges. Thin pale amber lane lines have weaker contrast against light brick joints, especially where two cues cross or pass under source bodies. No whole actor or lane endpoint is clipped."
+      }
+    },
+    {
+      "label": "shelter_scout-active",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/final-neutral-portrait-retry-20261015/challenge-neutral-shelter_scout-active.png",
+      "sha256": "8356bd65502d2b3c63895dc6ef5f4fe8bcd589d2ce764e133173eedb60dc8971",
+      "bytes": 61425,
+      "width": 540,
+      "height": 1170,
+      "chunk_CRCs_verified": 11,
+      "opened_with": "tools.view_image original detail; actual original pixels, no crop or edited derivative",
+      "observed_native_exact_sha256": "6da0b62b6fbec8f81ba5c3e09e9024411faf0da71ccf814eddb9b5d84b414b16",
+      "native_context": {
+        "scheduler_clock_s": 1.9666666666666646,
+        "Hero_action_clock_s": 1.9666666666666646,
+        "Hero_HP": 100.0,
+        "Hero_position": [
+          -1.4254202842712402,
+          -0.004947917070239782,
+          -32.474544525146484
+        ],
+        "beat": "shelter_pair",
+        "active_ids": [
+          "shelter_scout",
+          "shelter_handler"
+        ],
+        "source_context": {
+          "shelter_scout": {
+            "status": "running",
+            "phase": "active",
+            "reservation_id": "threat-1",
+            "lease_owner_instance_id": 111333609253,
+            "armed": true,
+            "lease_state": "active",
+            "actual_source_position": [
+              0.6499999761581421,
+              0.0,
+              -35.20000076293945
+            ],
+            "HP": 30.0,
+            "geometry": {
+              "from": [
+                0.6499999761581421,
+                0.0,
+                -35.20000076293945
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.10829979181289673,
+                0.0,
+                -31.476428985595703
+              ]
+            }
+          },
+          "shelter_handler": {
+            "status": "running",
+            "phase": "lock",
+            "reservation_id": "threat-2",
+            "lease_owner_instance_id": 121215390056,
+            "armed": true,
+            "lease_state": "lock",
+            "actual_source_position": [
+              -0.6000000238418579,
+              0.0,
+              -33.0
+            ],
+            "HP": 30.0,
+            "geometry": {
+              "from": [
+                -0.6000000238418579,
+                0.0,
+                -33.0
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.6000000238418579,
+                0.0,
+                -29.200000762939453
+              ]
+            }
+          }
+        }
+      },
+      "actual_test_context": "TEST stage_index10 and initial Hero(-.3,0,-31.8) before first physics; all6 actual actor HP unchanged, prior4 alive/dormant, no fake defeated/contact/clock/history and no valid packet/earned route/Save/Continue/Retry claim. Actual Main/parent loop/Scheduler/camera/proofs and direct dash/ordinary slash only; initial zero ammo, no blast.",
+      "pixel_observations": {
+        "readable": "Scout active lane is a translucent red strip with a distinct red boundary. The Handler lane stays amber, making simultaneous active-versus-lock footprint states distinguishable. Hero is visibly left of both danger strips; both source bodies, Hero lower anchor and the floor around the strips remain visible.",
+        "visible_limit": "Hero and nearer Handler silhouettes remain close/partly overlapping. Amber outline is less prominent than the red active fill; static visibility does not measure reaction time or prove execution of a safe landing."
+      }
+    },
+    {
+      "label": "shelter_handler-active",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/final-neutral-portrait-retry-20261015/challenge-neutral-shelter_handler-active.png",
+      "sha256": "f9e8e0fe3a5125f6a70608c89615e2e75a4c5dc1c54e798b345a3c9257e1087c",
+      "bytes": 53816,
+      "width": 540,
+      "height": 1170,
+      "chunk_CRCs_verified": 10,
+      "opened_with": "tools.view_image original detail; actual original pixels, no crop or edited derivative",
+      "observed_native_exact_sha256": "ca3d67bd2cd5db9785ac1a503330c6366ed4bba0625d72db8069f904d0babf9d",
+      "native_context": {
+        "scheduler_clock_s": 2.6166666666666623,
+        "Hero_action_clock_s": 2.6166666666666623,
+        "Hero_HP": 100.0,
+        "Hero_position": [
+          0.4837687909603119,
+          -0.004947917070239782,
+          -34.38373565673828
+        ],
+        "beat": "shelter_pair",
+        "active_ids": [
+          "shelter_scout",
+          "shelter_handler"
+        ],
+        "source_context": {
+          "shelter_scout": {
+            "status": "running",
+            "phase": "recovery",
+            "reservation_id": "threat-1",
+            "lease_owner_instance_id": 111333609253,
+            "armed": true,
+            "lease_state": "recovery",
+            "actual_source_position": [
+              0.6499999761581421,
+              0.0,
+              -35.20000076293945
+            ],
+            "HP": 10.0,
+            "geometry": {
+              "from": [
+                0.6499999761581421,
+                0.0,
+                -35.20000076293945
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.10829979181289673,
+                0.0,
+                -31.476428985595703
+              ]
+            }
+          },
+          "shelter_handler": {
+            "status": "running",
+            "phase": "active",
+            "reservation_id": "threat-2",
+            "lease_owner_instance_id": 121215390056,
+            "armed": true,
+            "lease_state": "active",
+            "actual_source_position": [
+              -0.6000000238418579,
+              0.0,
+              -33.0
+            ],
+            "HP": 30.0,
+            "geometry": {
+              "from": [
+                -0.6000000238418579,
+                0.0,
+                -33.0
+              ],
+              "kind": "lane",
+              "radius": 0.31,
+              "to": [
+                -0.6000000238418579,
+                0.0,
+                -29.200000762939453
+              ]
+            }
+          }
+        }
+      },
+      "actual_test_context": "TEST stage_index10 and initial Hero(-.3,0,-31.8) before first physics; all6 actual actor HP unchanged, prior4 alive/dormant, no fake defeated/contact/clock/history and no valid packet/earned route/Save/Continue/Retry claim. Actual Main/parent loop/Scheduler/camera/proofs and direct dash/ordinary slash only; initial zero ammo, no blast.",
+      "pixel_observations": {
+        "readable": "Active Handler is the lower source with a straight red lane and full rounded endpoint visible. Hero is above/right of it and retains visible torso, legs/lower anchor; HP/ammo/objective/control text remains legible.",
+        "visible_limit": "Recovering Scout noticeably overlaps Hero head/upper-body area, reducing clean actor separation at close range. Its remaining body/legs and Hero lower anchor can still be distinguished; the active Handler source/lane are not hidden. This is a concrete bounded occlusion/readability limit, not proof that the whole view fails."
+      }
+    }
+  ],
+  "overall_observation": "The inspected moments show Hero, both sources, their relevant lane footprints/endpoints, nearby supporting street and readable HUD inside the portrait. No full actor/Hero clipping, disappearing active footprint, floor void or HUD covering the engagement was observed in these three samples.",
+  "concrete_readability_limits": [
+    "Partial actor/Hero overlap in the first two images; more noticeable recovering-Scout/Hero upper-body overlap in Handler-active reduces immediate actor separation. Hero feet/lower anchor and active Handler/lane remain visible.",
+    "Thin amber lock outlines have lower contrast against the light brick grid and cue/source overlap than the red active fill. They remain traceable in the inspected frames.",
+    "Most of the view is repeated grey brick street with sparse village-edge scenery. This limits scene richness/local landmark variety; it does not hide the engagement in these samples."
+  ],
+  "limits_not_proved_by_stills": [
+    "Continuous moving-camera containment, exact reaction-time readability, input-to-safe-landing execution and collision safety are not proved by these stills.",
+    "Native phases/armed source identities come from retained caption context, not pixel-only identification.",
+    "The captures are disclosed TEST stage_index10/initial Hero placement before physics, no earlier earned route or valid save packet.",
+    "Only three of eight original labeled captures were opened by this reviewer. Warning-label images were not opened here; their metadata says both labels share one frame with Scout initially unarmed, so they are not a both-armed proof.",
+    "No full route, both-target hit completion, all-kit, balance/pacing, FPS or campaign-clear credit."
+  ],
+  "source_reuse": {
+    "old_neutral_run": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/run-pair-challenge-neutral-20261015T091517.315998Z-f3642130",
+    "new_graphical_run": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l2-difficulty-20261015/run-pair-challenge-neutral-20261015T093452.844350Z-705383f6",
+    "named_common_inputs": 109,
+    "named_common_unchanged": 107,
+    "named_common_changed": {
+      "data/campaign/registry.json": {
+        "old": "48a32cafabb410777b18e8a7878227b6f6a062cf442a76e195cb49f40a4b4bb5",
+        "new": "80e17c829c43d75dd824d40e1a1606d43c2ced1dc979961b98ca5cb2a4d06bfe"
+      },
+      "tests/act2_l2_arrangement_pair.gd": {
+        "old": "2cd082cf946757b90d419b6dcfe95be7ed9c80b7ccead9343c83f623d0b1da8d",
+        "new": "ba8d438a690e0ed17dc7de2568a8d80af7f672e4470a524739a3221a4cc6f4ca"
+      }
+    },
+    "old_only_runner": [
+      ".cinder/a2-l2-difficulty-20261015/run_verbose.py"
+    ],
+    "new_only_runner": [
+      ".cinder/a2-l2-difficulty-20261015/run_extended.py"
+    ],
+    "production_pins_identical": {
+      "scripts/acts/act2/weybridge.gd": "767430baacc6b6a32547e1ec87e81b9fe48ad24e53939c18876fa63317d85145",
+      "data/campaign/act2/a2_l2_difficulty_arrangements.json": "400bfd256283204afda35f310c2a4d0432989d84ebdad8328b29c98a137a9d50",
+      "scripts/acts/act2/weybridge_sequence.gd": "d28de78224f6985c377a13f9a4d9874ac2766aeb9bc744efe9640ce05f8f7dfc",
+      "scripts/acts/act2/ray_scout_exchange.gd": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+      "scripts/acts/act2/salvage_handler_actor.gd": "42457249e8a30e2d28ad0d03017d16e2f5158092ad3531e528ccf6beb3f70d96",
+      "scripts/acts/act2/weybridge_scout_actor.gd": "7e90bfc541c467162a5a0b0afd6891e8aa6dda9835a4da05362e9301eed78916",
+      "scripts/player.gd": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+      "scripts/game.gd": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+      "scripts/combat/threat_scheduler.gd": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "scripts/combat/threat_geometry.gd": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "scripts/combat/body_sweep.gd": "bddf3956d85c656fedea6bbce952ceb494c76867cdba895ff089abeb4c31eab9",
+      "scenes/acts/act2/a2_l2.tscn": "34d8bb88e77dfecc11419fdd22aa92c1eae9732bfa5e965d04c8520b34cbdb6a"
+    },
+    "qualification": "Neutral816 is reusable for unchanged production geometry/lifecycle/mechanics, while the pair harness changed sampled dispatch/wait, tighter late limits and passive notes. Runner difference is verbose-only per retained source review. A3-O3 Registry row alone changed; A2-L2 and all other rows/main route are unchanged per retained data comparison. Therefore neutral816 is not an exact current-harness or continuous-proof-execution rerun. This optical review does not independently reexecute mechanics."
+  },
+  "recommendation": "Use these three existing pictures for bounded brief visual evidence with the listed limitations. Keep757/1 FAILED and preserve its missed-dispatch evidence. No repeat of an unchanged route/capture is needed for this brief optical scope. Root independently selects final amendment evidence; this review awards no fifth-consumer or new level acceptance.",
+  "execution": {
+    "new_engine": false,
+    "new_capture": false,
+    "runtime_or_test_edits": false,
+    "tracked_or_Git_or_mailbox_edits": false,
+    "publication": false,
+    "private_review_outputs_only": true
+  }
+}

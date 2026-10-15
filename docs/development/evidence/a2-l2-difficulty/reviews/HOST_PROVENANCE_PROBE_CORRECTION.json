@@ -1,0 +1,6 @@
+{
+  "original_host_probe": "KeyError: armed while indexing encoded Scheduler reservation; probe aborted before writing any provenance/results/manifest.",
+  "cause": "Actual saved Scheduler reservation encodes adapter.locked; armed belongs to native source_control_state observation and is not a top-level saved reservation field.",
+  "correction": "Inspect exact encoded adapter.locked boolean tags, preserving all native counters, original packets and guards; no native rerun/source change.",
+  "original_native_outcome_unchanged": "71/0 complete true,4 complete packets, actual terminal0."
+}
