@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "status": "INERT_PROPOSED_UNPARSED_UNEXECUTED_UNUSED",
+  "prepared_at_utc": "2026-10-15T01:37:43.264389+00:00",
+  "promotion_owner": "Root only",
+  "proposed_promoted_paths": [
+    "scripts/combat/encounter_arrangement.gd",
+    "tests/encounter_arrangement_smoke.gd"
+  ],
+  "records": [
+    {
+      "path": "encounter_arrangement.gd.txt",
+      "sha256": "078a1ff0535209761fdb692f5b9440e5766f56adcb0d39bb0373722f1b2daca6",
+      "bytes": 7313
+    },
+    {
+      "path": "encounter_arrangement_smoke.gd.txt",
+      "sha256": "a1815800a94d7d8f30c4916c2a45300872460bcb44e9035d8095fde07fbd7759",
+      "bytes": 11931
+    },
+    {
+      "path": "API_NOTE.md",
+      "sha256": "71fefce7b7a5346b0bddc51c47e480e535faf130854df17b5ea8a8236263c647",
+      "bytes": 4656
+    },
+    {
+      "path": "INDEPENDENT_SOURCE_REVIEW.json",
+      "sha256": "980a2743b4697b3b5614bca1f41d6d7b82e08a72038cd5e649d95bee5cf793b8",
+      "bytes": 1364
+    }
+  ],
+  "consulted_named_source_pins": [
+    {
+      "path": "scripts/combat/difficulty.gd",
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "bytes": 4882
+    },
+    {
+      "path": "scripts/campaign/snapshot_codec.gd",
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350
+    },
+    {
+      "path": "scripts/campaign/exact_json.gd",
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330
+    },
+    {
+      "path": "data/design/difficulty_profiles.json",
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+      "bytes": 1313
+    }
+  ],
+  "report_contract": {
+    "environment": "CINDER_ENCOUNTER_ARRANGEMENT_REPORT",
+    "wire": "plain JSON primitive report, no native/state floats",
+    "rows": "{check:int,ok:bool,label:String}",
+    "complete": "true only at normal test end; no success from zero partial checks",
+    "footer": "Encounter arrangement smoke: <N> checks/<F> failures; complete=<true|false>; pure metadata only",
+    "report_line": "CINDER_ENCOUNTER_ARRANGEMENT_REPORT path=<absolute> sha256=<hex>",
+    "source_observations": "before/after exact helper/test res:// URI toSHA maps, no native IDs"
+  },
+  "boundaries": [
+    "trusted immutable versioned authored complete existing-unit permutations only",
+    "current-profile mapping for fresh selections only",
+    "historical saved recipe/profile/order validation independent of current mapping/preference",
+    "strict key/type/schema/profile/ID/permutation validation and defensive input/output copies",
+    "no native source/geometry/stats/timing/lease/safety authority or consumer",
+    "semantic player decision/actual consumer/legacy whole-level codec remain owners responsibilities",
+    "unused helper does not close stated19 accepted-level Challenge arrangement gap"
+  ],
+  "operations_not_performed": [
+    "engine",
+    "parser",
+    "import",
+    "tests",
+    "production edit",
+    "worker edit/chat",
+    "ledger edit",
+    "acceptance",
+    "bank/UID census"
+  ],
+  "preparation_observation": "Initial read attempted noncanonical scripts/difficulty.gd and found it absent; consulted actual scripts/combat/difficulty.gd instead. No behavioral result follows from this host-only path lookup.",
+  "independent_review": "INDEPENDENT_SOURCE_REVIEW.json; source-only, not parser/native evidence"
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "original_failures": [
+    {
+      "stage": "Initial inventory read using heredoc",
+      "exit_code": 1,
+      "diagnostic": "zsh:1: can't create temp file for here document: no space left on device"
+    },
+    {
+      "stage": "First pack mkdir attempt",
+      "exit_code": 1,
+      "diagnostic": "OSError: [Errno 28] No space left on device: requested publication-prep directory"
+    }
+  ],
+  "resolution": "Root reports reclaim of7.87MB verified completed A3-O1 duplicate storage after all220 files matched durable physical and HEAD blobs. This helper performed no deletion/compression and continued independent read-only verification before retry.",
+  "qualification": "Host preparation failures are separate from original Root preflight2 and actual native37."
+}

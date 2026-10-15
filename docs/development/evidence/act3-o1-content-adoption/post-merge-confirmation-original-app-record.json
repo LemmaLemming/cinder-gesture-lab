@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "kind": "read-only-original-application-command-record",
+  "qualification": "Original command is data and was not executed by this review. Original status/exit/output are retained; only this JSON evidence copy was created.",
+  "original_application_record": {
+    "thread_id": "01a11ae0-0acf-7d00-a987-321a98de5b66",
+    "turn_id": "01a1397d-7ef5-7d32-9529-b69a1653ab0e",
+    "type": "commandExecution",
+    "id": "exec-3086a311-d275-4104-b6a7-115260ee96be",
+    "command": "/bin/zsh -lc \"git rev-parse HEAD; git show -s --format=%P HEAD; rg --files scripts | rg 'world_state_protocol|repulsion_route'; git status --short\"",
+    "cwd": "/Users/howardchen/.codex/worktrees/campaign-act3/video game idea",
+    "status": "completed",
+    "exitCode": 0,
+    "durationMs": 2575,
+    "output": {
+      "text": "aea69b3ea47b435894c0340b3436b2da8f523c89\n3ece87b82f5b91023bdae94da013933ab9c4fd3b de750e7eec4a70114637834ffe02a25952e40c1e\nscripts/combat/repulsion_route.gd.uid\nscripts/combat/repulsion_route.gd\n?? scenes/acts/act3/a3_l3_shore_modules_preview.tscn\n?? scripts/acts/act3/mirror_shore_modules_preview.gd\n?? scripts/acts/act3/mirror_shore_modules_preview.gd.uid\n?? tests/acts/act3/mirror_shore_modules_portraits.gd\n?? tests/acts/act3/mirror_shore_modules_portraits.gd.uid\n",
+      "truncated": false
+    }
+  }
+}
