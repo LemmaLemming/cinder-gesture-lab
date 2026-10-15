@@ -1,0 +1,187 @@
+{
+  "level_id": "A3-O2",
+  "parent": "A3-L2",
+  "prototype": false,
+  "court_ids": [
+    "first-root-court",
+    "rearranged-root-court",
+    "final-source-choice"
+  ],
+  "source_ids": [
+    "o2-first-root",
+    "o2-second-root",
+    "o2-final-west-root",
+    "o2-final-east-root",
+    "o2-final-stalker"
+  ],
+  "floor_size": [
+    14,
+    1,
+    22
+  ],
+  "spawn": [
+    0,
+    0.1,
+    8
+  ],
+  "base_position": [
+    -1.2,
+    0,
+    4
+  ],
+  "exit_position": [
+    0,
+    0,
+    -9
+  ],
+  "root_role": {
+    "raw_damage": 10.0,
+    "max_hp": 20.0,
+    "windup_s": 2.2,
+    "lock_s": 1.1,
+    "active_s": 0.2,
+    "recovery_s": 1.8,
+    "attack_interval_s": 4.0,
+    "move_speed": 0.0
+  },
+  "root_timing_floors": {
+    "windup_s": 2.2,
+    "lock_s": 1.1,
+    "recovery_s": 1.8
+  },
+  "equipment": {
+    "baseline_ids": [
+      "CLOTH-J0",
+      "CLOTH-P0",
+      "CLOTH-S0",
+      "WEAPON-01"
+    ],
+    "required_pickups": [],
+    "required_blast_ammo": 0,
+    "creation_claims": [],
+    "ability_introductions": []
+  },
+  "difficulty": "shared preset roles and Scheduler apply to the same authored layout; no alternate routes or timing retunes",
+  "reuse": {
+    "source": "accepted garden_root_latcher.gd explicit-native-camera adapter over original C51 actor/schema2",
+    "mechanics": "original fixed crescent, ordinary recovery knot, shared LaneMechanism/Scheduler/gesture controller",
+    "scenery": "accepted living_forest_scenery.gd roomtrue with existing low fixed-base utility",
+    "art": "original Root atlas/four stills/pivots/materials; forest leaf floor/bark/suns and noncolliding distant trunks",
+    "readiness": "accepted parent source/art/scenery kit and one-court prototype mechanics/transport; final five-source placement/paired/court/portrait checks pending"
+  },
+  "scope": "authored three-court arrangement after prototype pass; canonical 3-5min target unmeasured, no countdown/compulsory wait; shared presets use same layout and existing role/Scheduler settings",
+  "source_positions": {
+    "o2-first-root": [
+      0,
+      0,
+      4
+    ],
+    "o2-second-root": [
+      1.4,
+      0,
+      -1
+    ],
+    "o2-final-west-root": [
+      -1.2,
+      0,
+      -6
+    ],
+    "o2-final-east-root": [
+      1.2,
+      0,
+      -6
+    ],
+    "o2-final-stalker": [
+      0,
+      0.1,
+      -4.5
+    ]
+  },
+  "source_kinds": {
+    "o2-first-root": "root",
+    "o2-second-root": "root",
+    "o2-final-west-root": "root",
+    "o2-final-east-root": "root",
+    "o2-final-stalker": "stalker"
+  },
+  "source_courts": {
+    "o2-first-root": 0,
+    "o2-second-root": 1,
+    "o2-final-west-root": 2,
+    "o2-final-east-root": 2,
+    "o2-final-stalker": 2
+  },
+  "second_base_position": [
+    0,
+    0,
+    -1.7
+  ],
+  "local_snapshot_version": 2,
+  "runtime_api": "act3-quiet-root-circuit-2",
+  "stalker_role": {
+    "id": "A3-E1",
+    "raw_damage": 12.0,
+    "max_hp": 36.0,
+    "windup_s": 1.35,
+    "lock_s": 0.45,
+    "active_s": 0.3,
+    "recovery_s": 2.0,
+    "attack_interval_s": 3.7,
+    "move_speed": 2.8,
+    "provisional_unplaytested": true
+  },
+  "stalker_timing_floors": {
+    "windup_s": 1.35,
+    "lock_s": 0.45,
+    "recovery_s": 2.0
+  },
+  "progression": {
+    "required_root_deaths": [
+      1,
+      1,
+      2
+    ],
+    "final_stalker_defeat_required": false,
+    "checkpoint_ids": [
+      "first-root-court-cleared",
+      "rearranged-root-court-cleared"
+    ],
+    "checkpoint_order": "genuine Root death group -> clear receipt/next-source activation -> CP -> return native tick",
+    "third_clear": "completion only; no CP3",
+    "exit": "later genuine grounded contact",
+    "all_sources_retained": true,
+    "new_source_physics": "next native tick after Level130 activation",
+    "dormant_stalker_hits": "actual optional damage/pending impulse/death retained; no movement/cycle/lease before entry"
+  },
+  "route_glyphs": {
+    "source": "quiet_root_circuit.gd::_build_route_glyphs",
+    "family": "new flat leaf/stone court notches; original Root spent atlas remains completion dressing",
+    "readiness": "scene-native implementation; new placement/portrait checks pending",
+    "positions": [
+      [
+        3.8,
+        0.014,
+        4
+      ],
+      [
+        -3.8,
+        0.014,
+        -1
+      ],
+      [
+        3.8,
+        0.014,
+        -6
+      ]
+    ],
+    "native_scale": "world units; each notch .09x.012x.27; floor origin",
+    "pivot": "court floor/feet plane",
+    "collision_role": "none",
+    "occlusion_role": "flat .026m maximum height; no raised foreground",
+    "states": [
+      "uncleared dark leaf",
+      "cleared desaturated stone"
+    ],
+    "interaction_authority": "none; no circle/outline/arrow/pulse/danger fill/contact cue"
+  }
+}
