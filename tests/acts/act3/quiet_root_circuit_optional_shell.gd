@@ -257,7 +257,7 @@ func _o2_warning(id: String) -> Dictionary:
 		toward.y = 0
 		if state.mechanism.status != "running" and toward.length() > 2.8 and approaches < 3:
 			approaches += 1
-			if not await driver.call("dash", toward.normalized()): return {}
+			if not await driver.call("approach"): return {}
 		elif not await _o2_tick(): return {}
 	_expect(false, "bounded current-point Root warning in actual Optional Shell", str({"id": id, "hero": _o2_hero.global_position, "source": source.state()}))
 	return {}

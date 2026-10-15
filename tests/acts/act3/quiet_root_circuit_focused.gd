@@ -102,6 +102,35 @@ class NativeRootResponse extends RefCounted:
 			elif not await _until(float(segment.end_s)): return false
 		return _expect(false, "actual native witness includes one ordinary primary")
 
+	func approach() -> bool:
+		# Fixed visible-base detour only: one real lateral dash, with its
+		# following sourceward dash independently swept from that native end.
+		# No collision result is shortened or turned into an input/pose repair.
+		var distance: float = float(_hero.get_threat_response_state().stats.dash_distance)
+		var from: Transform3D = _hero.global_transform
+		var toward: Vector3 = _root_source.global_position-from.origin
+		toward.y = 0
+		if not _expect(toward.length_squared() > 0.0,"nonzero actual fixed-source approach bearing"): return false
+		var floors: Array = (_level.call("scheduler_bindings") as Dictionary).floors.values()
+		var direct: Dictionary = BodySweep.sweep(_hero,from,toward.normalized()*distance,floors)
+		if _complete_sweep(direct,from.origin+toward.normalized()*distance): return await dash(toward.normalized())
+		for side: Vector3 in [Vector3.RIGHT,Vector3.LEFT]:
+			var lateral: Dictionary = BodySweep.sweep(_hero,from,side*distance,floors)
+			if not _complete_sweep(lateral,from.origin+side*distance): continue
+			var next_from: Transform3D = from
+			next_from.origin = lateral.end
+			var next_toward: Vector3 = _root_source.global_position-next_from.origin
+			next_toward.y = 0
+			if next_toward.length_squared() == 0.0: continue
+			var next: Dictionary = BodySweep.sweep(_hero,next_from,next_toward.normalized()*distance,floors)
+			if not _complete_sweep(next,next_from.origin+next_toward.normalized()*distance): continue
+			print("Quiet Root approach: native base blocks direct path; actual lateral ",side," from ",from.origin," to ",lateral.end,"; following full sweep to ",next.end)
+			return await dash(side)
+		return _expect(false,"bounded actual full-distance base detour exists",str({"hero":from.origin,"source":_root_source.global_position,"direct_error":direct.get("error",""),"direct_collided":direct.get("collided",true),"direct_end":direct.get("end"),"direct_normal":direct.get("normal")}))
+
+	func _complete_sweep(sweep: Dictionary, endpoint: Vector3) -> bool:
+		return not sweep.has("error") and not sweep.get("collided",true) and sweep.get("end") is Vector3 and (sweep.end as Vector3).distance_to(endpoint) <= 0.005
+
 	func dash(direction: Vector3) -> bool:
 		for _index: int in range(90):
 			var ready: Dictionary = _hero.get_threat_response_state()
@@ -240,7 +269,7 @@ func _warning() -> Dictionary:
 		toward.y = 0
 		if state.mechanism.status != "running" and toward.length() > 2.8 and approaches < 3:
 			approaches += 1
-			if not await _dash_native(toward.normalized()): return {}
+			if not await _approach_native(): return {}
 		elif not await _tick(): return {}
 	_expect(false, "bounded real selected Root warning from current Hero point", str({"id":_selected_root_id,"hero":_hero.global_position,"source":_root_source.state(),"level":_level.call("state")}))
 	return {}
@@ -285,6 +314,10 @@ func _follow(proof: Dictionary, record: Dictionary) -> bool:
 func _dash_native(direction: Vector3) -> bool:
 	var driver: NativeRootResponse = _root_driver()
 	return await driver.dash(direction)
+
+func _approach_native() -> bool:
+	var driver: NativeRootResponse = _root_driver()
+	return await driver.approach()
 
 func _checkpoint_map(cleared: int) -> Dictionary:
 	var result: Dictionary = {}

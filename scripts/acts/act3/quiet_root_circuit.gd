@@ -595,7 +595,7 @@ func _route_error(local: Dictionary,expected_hero: Vector3,_expected_dead: bool)
 			if not death is Dictionary or not Codec.keys_error(death,["clock_s","source_position"]).is_empty() or not Codec.in_range(death.get("clock_s"),0,float(local.scheduler.clock_s)) or not Codec.is_vector3(death.get("source_position")) or Codec.read_vector3(death.source_position)!=Codec.read_vector3(actor.position): return "Actual dead source pose/clock receipt required"
 		if not entered:
 			if SOURCE_KINDS[id]=="root":
-				if actor.dead or float(actor.hp)!=float(actor.max_hp) or int(actor.mechanism.cycle)!=0 or actor.mechanism.status!="idle" or actor.mechanism.phase!="clear" or not String(actor.mechanism.reservation_id).is_empty(): return "Unentered Root must remain untouched, idle and unleased"
+				if actor.dead or float(actor.hp)!=float(actor.max_hp) or int(actor.mechanism.cycle)!=0 or actor.mechanism.status!="idle" or actor.mechanism.phase!="clear" or not actor.mechanism.exchange.is_empty(): return "Unentered Root must remain untouched, idle and unleased"
 			else:
 				# An optional ordinary hit can reach a dormant C50. Preserve it;
 				# no motion/cycle/lease may run before final court activation.
