@@ -1,5 +1,5 @@
 extends "res://tests/acts/act3/irontick_reflection_optional_shell.gd"
-## Paused-only native graphical reader of the original held-warning archive.
+## Paused-only native graphical reader of an original held-warning or earned CP1 archive.
 ## Public Shell startup/Side Resume of the actual L3-protected Story archive,
 ## exact archived packets and actual optics; never reconstruct or patch an L2 donor.
 ## TEST-only Menu CanvasLayer exclusion; no simulation/input/actor writes.
@@ -8,9 +8,10 @@ extends "res://tests/acts/act3/irontick_reflection_optional_shell.gd"
 var draw_seen: bool = false
 var portrait_path: String = ""
 var provenance: Dictionary = {}
+var portrait_archive_kind: String = ""
 
 func _run() -> void:
-	create_timer(90.0, true).timeout.connect(func() -> void:
+	create_timer(600.0, true).timeout.connect(func() -> void:
 		if not finished:
 			_expect(false, "bounded paused O3 portrait watchdog")
 			_finish())
@@ -21,19 +22,20 @@ func _run() -> void:
 	if not _expect(DisplayServer.get_name() != "headless", "portrait requires actual native graphical renderer"):
 		await _finish(); return
 	var args: PackedStringArray = OS.get_cmdline_user_args()
-	if not _expect(args.size() == 1 and args[0].begins_with("--archive=res://captures/act3/irontick-reflection/"), "one explicit owned genuine warning archive is required"):
+	if not _expect(args.size() == 1 and args[0].begins_with("--archive=res://captures/act3/irontick-reflection/"), "one explicit owned original held-warning or CP1 archive is required"):
 		await _finish(); return
 	archive_path = args[0].trim_prefix("--archive=")
 	var decoded: Dictionary = Exact.parse(FileAccess.get_file_as_string(archive_path.path_join("manifest.json")))
-	if not _expect(decoded.get("accepted", false) and decoded.get("value") is Dictionary, "original final-layout warning manifest parses with native exact transport"):
+	if not _expect(decoded.get("accepted", false) and decoded.get("value") is Dictionary, "original final-layout archive manifest parses with native exact transport"):
 		await _finish(); return
 	provenance = decoded.value
-	if not _expect(provenance.get("kind") == "a3-o3-final-session-2" and provenance.get("archive_kind") == "held-warning" and provenance.get("test_only") == true and provenance.get("source_pins") is Dictionary and provenance.get("files") is Dictionary, "original TEST native warning provenance identifies its source/file scope"):
+	portrait_archive_kind = String(provenance.get("archive_kind", ""))
+	if not _expect(provenance.get("kind") == "a3-o3-final-session-2" and portrait_archive_kind in ["held-warning", "cp1"] and provenance.get("test_only") == true and provenance.get("source_pins") is Dictionary and provenance.get("files") is Dictionary, "original TEST native provenance identifies its held-warning or earned CP1 source/file scope"):
 		await _finish(); return
 	for path: String in provenance.source_pins:
 		var current: String = FileAccess.get_sha256(path)
 		var same: bool = current == provenance.source_pins[path]
-		if not _expect(same, "current scoped source retains original warning authority: " + path):
+		if not _expect(same, "current scoped source retains original archive authority: " + path):
 			await _finish(); return
 	raw = _original_packet("registry.native.json")
 	expected_session = _original_packet("session.native.json")
@@ -42,8 +44,16 @@ func _run() -> void:
 	protected = _original_packet("story.native.json")
 	var original_entrance: Dictionary = _original_packet("entrance.native.json")
 	var original_start: Dictionary = _original_packet("start-session.native.json")
-	if failures > 0 or not _expect(not raw.is_empty() and not expected_session.is_empty() and not held.is_empty() and _same(expected_session.side_attempt.snapshot, held) and _same(expected_session.side_attempt.checkpoint, checkpoint) and _same(expected_session.story.snapshot, protected) and _same(expected_session.story, original_start.story) and _same(original_entrance, checkpoint) and original_start.side_attempt == null and protected.level_id == O3_STORY_ID and protected.scene_path == O3_STORY_PATH and protected.level.level_id == O3_STORY_ID and held.level.local_snapshot_version == 2 and held.level.local.sources.size() == 4 and held.level.local.scheduler.authored_source_cycles.sources.size() == 3, "complete original warning session matches independently archived native packets"):
+	if failures > 0 or not _expect(not raw.is_empty() and not expected_session.is_empty() and not held.is_empty() and expected_session.side_attempt != null and expected_session.side_attempt.kind == "optional" and expected_session.side_attempt.level_id == "A3-O3" and _same(expected_session.side_attempt.snapshot, held) and _same(expected_session.side_attempt.checkpoint, checkpoint) and _same(expected_session.story.snapshot, protected) and _same(expected_session.story, original_start.story) and original_start.side_attempt == null and protected.level_id == O3_STORY_ID and protected.scene_path == O3_STORY_PATH and protected.level.level_id == O3_STORY_ID and held.level.local_snapshot_version == 2 and held.level.local.sources.size() == 4 and held.level.local.scheduler.authored_source_cycles.sources.size() == 3, "complete original session matches independently archived native packets"):
 		await _finish(); return
+	if not _pristine_original_entrance(original_entrance): await _finish(); return
+	if portrait_archive_kind == "held-warning":
+		if not _expect(_same(original_entrance, checkpoint) and held.level.local.route.active_stage == 0 and held.level.local.route.clears.is_empty() and held.level.local.route.deaths.is_empty() and held.level.progress.checkpoint_ids.is_empty() and not held.level.progress.completed and provenance.get("held_receipt") is Dictionary and not provenance.held_receipt.is_empty(), "original held warning remains before any clear with its pristine entrance checkpoint"):
+			await _finish(); return
+	else:
+		if not _cp1_original_packet(checkpoint) or not _cp1_original_packet(held): await _finish(); return
+		if not _expect(not _same(original_entrance, checkpoint) and _same(held.level.local.route.clears, checkpoint.level.local.route.clears) and _same(held.level.local.route.deaths, checkpoint.level.local.route.deaths) and provenance.get("held_receipt") is Dictionary and provenance.held_receipt.is_empty(), "original CP1 retains the actual first clear/death prefix and makes no held-warning claim"):
+			await _finish(); return
 	var registry = Registry.new(raw)
 	var detached = Attempts.new(registry)
 	var writer = Store.new(isolated + "campaign.json")
@@ -56,11 +66,32 @@ func _run() -> void:
 	production.menu.resume_requested.emit() # Public Title Side Resume; stays paused.
 	if not await _wait_installed("A3-O3", "resume", held): await _finish(); return
 	if not _installed(held) or not _quiet_selected() or not _disk(expected_session): await _finish(); return
-	if not _expect(_same(_held_receipt(), provenance.held_receipt), "fresh native recipient carries the original genuine warning lease/phase/cycle/clock"):
+	if not _expect(_same(production.attempts.active_snapshot(), held) and _same(production.attempts.state().side_attempt.checkpoint, checkpoint), "fresh actual whole session and current checkpoint join the unchanged archive"):
 		await _finish(); return
+	if portrait_archive_kind == "held-warning":
+		if not _expect(_same(_held_receipt(), provenance.held_receipt), "fresh native recipient carries the original genuine warning lease/phase/cycle/clock"):
+			await _finish(); return
+	else:
+		var actual: Dictionary = production.capture_campaign_snapshot()
+		if not _cp1_original_packet(actual) or not _expect(_same(actual, held) and _same(production.active_level.call("state").route, held.level.local.route), "fresh CP1 recipient preserves the original actual whole packet/clear/death route"):
+			await _finish(); return
 	if not await _portrait(): await _finish(); return
 	scope_complete = true
 	await _finish()
+
+func _pristine_original_entrance(packet: Dictionary) -> bool:
+	var local: Dictionary = packet.level.local
+	var progress: Dictionary = packet.level.progress
+	return _expect(packet.level_id == "A3-O3" and packet.scene_path == O3_PATH and packet.level.local_snapshot_version == 2 and local.sources.size() == 4 and local.scheduler.authored_source_cycles.sources.size() == 3 and local.route.active_stage == 0 and local.route.clears.is_empty() and local.route.deaths.is_empty() and local.route.exit_state == "clear" and local.route.contact.is_empty() and not progress.completed and progress.checkpoint_id.is_empty() and progress.checkpoint_kind.is_empty() and progress.checkpoint_ids.is_empty() and progress.completion_id.is_empty() and progress.contact_exit_id.is_empty(), "original entry packet remains pristine before real stage progression")
+
+func _cp1_original_packet(packet: Dictionary) -> bool:
+	var local: Dictionary = packet.level.local
+	var progress: Dictionary = packet.level.progress
+	if not _expect(packet.level_id == "A3-O3" and packet.scene_path == O3_PATH and packet.level.local_snapshot_version == 2 and local.sources.size() == 4 and local.scheduler.authored_source_cycles.sources.size() == 3 and local.route.active_stage == 1 and local.route.clears.size() == 1 and local.route.clears[0].stage_id == O3.STAGE_IDS[0] and local.route.deaths.size() == 1 and local.route.deaths.has(O3_ECHO) and local.route.exit_state == "clear" and local.route.contact.is_empty() and not progress.completed and progress.checkpoint_id == O3.CHECKPOINT_IDS[0] and progress.checkpoint_kind == "encounter" and _same(progress.checkpoint_ids, {O3.CHECKPOINT_IDS[0]: "encounter"}) and progress.completion_id.is_empty() and progress.contact_exit_id.is_empty(), "original CP1 whole packet contains exactly one earned first-stage clear/death/checkpoint and all three journals"):
+		return false
+	var first: Dictionary = local.sources[O3_ECHO].actor
+	var death: Dictionary = local.route.deaths[O3_ECHO]
+	return _expect(local.sources[O3_ECHO].kind == "echo" and first.source_id == O3_ECHO and first.alive == false and first.hp == 0.0 and first.source_hits > 0 and not first.hit_receipts.is_empty() and _same(first.defeated_at_s, death.clock_s) and _same(first.physical.position, death.source_position), "original first native Echo defeat receipt joins its actual actor hit/death history")
 
 func _original_packet(filename: String) -> Dictionary:
 	var path: String = archive_path.path_join(filename)
@@ -106,7 +137,7 @@ func _portrait() -> bool:
 	if not _expect(draw_seen and pixels != null and pixels.get_size().x == 340 and pixels.get_size().y == 736 and unchanged and production.menu.visible == menu_visibility and problem.is_empty(), "native paused portrait preserves full packet/input/current Camera/HUD/events and restores Menu", str(diagnostic)):
 		return false
 	var folder: String = "res://captures/act3/irontick-reflection/portrait-%d-%d" % [OS.get_process_id(), Time.get_ticks_usec()]
-	portrait_path = folder.path_join("01-authentic-held-warning.png")
+	portrait_path = folder.path_join("01-authentic-held-warning.png" if portrait_archive_kind == "held-warning" else "01-authentic-cp1.png")
 	if not _expect(DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder)) == OK and pixels.save_png(portrait_path) == OK, "original native portrait pixels saved unchanged"):
 		return false
 	# Resource IDs may use signed high bits. Preserve exact decimal text in
@@ -114,7 +145,12 @@ func _portrait() -> bool:
 	var native: Dictionary = _native_ids()
 	var native_text: Dictionary = {}
 	for key: String in native: native_text[key] = str(native[key])
-	var receipt: Dictionary = {"schema_version": 1, "test_only": true, "archive": archive_path, "archive_manifest_sha256": FileAccess.get_sha256(archive_path.path_join("manifest.json")), "reader_sha256": FileAccess.get_sha256("res://tests/acts/act3/irontick_reflection_portrait.gd"), "png_sha256": FileAccess.get_sha256(portrait_path), "actual_size": [pixels.get_size().x, pixels.get_size().y], "actual_native_ids_decimal_text": native_text, "held_receipt": _held_receipt(), "whole_pair_exact_wire_sha256": wire.sha256_text(), "paused_without_tick": true, "whole_pair_input_camera_hud_events_unchanged": unchanged, "native_optical_error": problem, "menu_test_only_exclusion": {"visible_before": menu_visibility, "visible_during": false, "visible_restored": production.menu.visible}, "scope": "one authentic saved warning; no active/lateral/full-route/pacing/human balance claim"}
+	var receipt: Dictionary = {"schema_version": 1, "test_only": true, "archive": archive_path, "archive_manifest_sha256": FileAccess.get_sha256(archive_path.path_join("manifest.json")), "reader_sha256": FileAccess.get_sha256("res://tests/acts/act3/irontick_reflection_portrait.gd"), "png_sha256": FileAccess.get_sha256(portrait_path), "actual_size": [pixels.get_size().x, pixels.get_size().y], "actual_native_ids_decimal_text": native_text, "archive_kind": portrait_archive_kind, "whole_pair_exact_wire_sha256": wire.sha256_text(), "paused_without_tick": true, "whole_pair_input_camera_hud_events_unchanged": unchanged, "native_optical_error": problem, "menu_test_only_exclusion": {"visible_before": menu_visibility, "visible_during": false, "visible_restored": production.menu.visible}, "scope": "one authentic saved " + ("warning" if portrait_archive_kind == "held-warning" else "earned CP1") + "; no active/lateral/full-route/pacing/human balance claim"}
+	if portrait_archive_kind == "held-warning": receipt.held_receipt = _held_receipt()
+	else:
+		receipt.checkpoint_exact_wire_sha256 = Exact.stringify(checkpoint).sha256_text()
+		receipt.checkpoint_progress = checkpoint.level.progress.duplicate(true)
+		receipt.checkpoint_route_exact_wire_sha256 = Exact.stringify(checkpoint.level.local.route).sha256_text()
 	var file: FileAccess = FileAccess.open(portrait_path + ".json", FileAccess.WRITE)
 	if not _expect(file != null, "native portrait receipt opens"): return false
 	var receipt_wire: String = Exact.stringify(receipt)
@@ -154,5 +190,5 @@ func _finish() -> void:
 	AudioServer.set_bus_layout(old_audio)
 	Engine.max_fps = old_fps
 	paused = false
-	print("O3 paused portrait: %d checks/%d failures; scope_complete=%s; actual original-warning Side Resume/optics/pixels/whole cleanup only." % [checks, failures, str(scope_complete)])
+	print("O3 paused portrait: %d checks/%d failures; scope_complete=%s; actual original-archive Side Resume/optics/pixels/whole cleanup only." % [checks, failures, str(scope_complete)])
 	quit(0 if failures == 0 and scope_complete else 1)

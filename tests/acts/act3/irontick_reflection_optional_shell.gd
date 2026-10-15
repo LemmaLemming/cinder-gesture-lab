@@ -214,6 +214,13 @@ func _expect(ok: bool, label: String, detail: String = "") -> bool:
 	checks += 1
 	if not ok:
 		failures += 1
+		if is_instance_valid(production):
+			var context: Dictionary={"selector":_selector,"native_ticks":_native_ticks,"shell_error":production.campaign_error,"camera_plan":production.get_camera_framing_state()}
+			if is_instance_valid(production.player): context.hero_position=str(production.player.global_position)
+			if is_instance_valid(production.camera): context.camera_transform=str(production.camera.global_transform)
+			if is_instance_valid(production.hud): context.protected_rectangle=str(production.hud.combat_safe_rect())
+			if is_instance_valid(production.active_level) and production.active_level.has_method("capture_route"): context.route=production.active_level.call("capture_route")
+			print("O3 FAILURE CONTEXT: ",context)
 		push_error("FAIL O3 optional Shell: " + label + ("; " + detail if not detail.is_empty() else ""))
 	return ok
 

@@ -5,6 +5,7 @@ extends CinderLevel
 const Shore = preload("res://scripts/acts/act3/mirror_sea_scenery.gd")
 const StalkerSource = preload("res://scripts/acts/act3/sunbound_stalker.gd")
 const InteractionCue = preload("res://scripts/cues/interaction_cue.gd")
+const InteractionMesh = preload("res://scripts/cues/cue_mesh.gd")
 const EchoSource = preload("res://scripts/acts/act3/mirror_echo.gd")
 const Scheduler = preload("res://scripts/combat/threat_scheduler.gd")
 const Mechanism = preload("res://scripts/combat/lane_mechanism.gd")
@@ -91,6 +92,7 @@ var _exit_state: String = "clear"
 var _contact: Dictionary = {}
 var _exit_generation: int = 0
 var _exit_queued: bool = false
+var _prospective_exit_mesh: ArrayMesh
 var _pulse_record: Dictionary = {"proof":{},"positions":[]}
 var _pending_view: Dictionary = {}
 var _codec = UnitCodec.new()
@@ -119,6 +121,7 @@ func _ready() -> void:
 	_pulse_marker.mesh=mesh; _pulse_marker.position.y=0.06; _pulse_marker.material_override=_material(Color("787184")); mechanism.add_child(_pulse_marker)
 	_observer=ViewObserver.new(); _observer.name="IrontickBeforeConsumers"; _observer.observe=_guard_before_consumers; add_child(_observer)
 	exit_cue=InteractionCue.new(); exit_cue.name="IrontickReturnContactCue"; exit_cue.position=EXIT_POSITION; add_child(exit_cue)
+	_prospective_exit_mesh=InteractionMesh.interaction_mesh("available","contact")
 	_build_stage_art()
 	last_configuration_error=_authoring_error()
 
@@ -227,7 +230,10 @@ func pulse_response() -> Dictionary:
 func _physics_process(_delta: float) -> void:
 	if not _active or get_tree().paused or not is_instance_valid(hero) or hero.dead or not last_configuration_error.is_empty(): return
 	_present()
+	var waiting_for_clear: bool=_active_stage<STAGE_IDS.size() and _deaths.has(ECHO_IDS[_active_stage])
+	if waiting_for_clear: _pending_view.clear() # Unadmitted old-stage forecasts cannot delay the earned transition.
 	if _advance_stage(): return
+	if waiting_for_clear: return # Held sources keep their native ticks; no new first-stage pulse while framing.
 	if _active_stage<STAGE_IDS.size() and hero.is_on_floor() and hero.get_threat_response_state().get("stable",false):
 		_step_echo(ECHO_IDS[_active_stage])
 		var now: float=threat_scheduler.get_clock()
@@ -397,10 +403,52 @@ func camera_framing_union(candidate_id: String = "", candidate_points: Array = [
 		for x: float in [EXIT_RECT.position.x,EXIT_RECT.end.x]:
 			for z: float in [EXIT_RECT.position.y,EXIT_RECT.end.y]: raw.append(Vector3(x,0.035,z))
 		_enclose(points,raw)
+	# Planning may anticipate a real earned transition while capture/current
+	# guards retain the unchanged current stage. Keep all current/held groups.
+	var next_stage: int=_transition_stage() if include_pending else -1
+	if next_stage>=0:
+		var error: String=_append_prospective_stage_bounds(points,next_stage,camera)
+		if not error.is_empty(): return {"error":error,"points":[]}
 	if points.is_empty() or points.size()>224: return {"error":"Complete native union exceeds bounded224 corners","points":[]}
 	for point: Variant in points:
 		if not point is Vector3 or not point.is_finite(): return {"error":"Finite native corners required","points":[]}
 	return {"error":"","points":points}
+
+func _append_prospective_stage_bounds(points: Array, stage: int, camera: Camera3D) -> String:
+	if stage<STAGE_IDS.size():
+		var id: String=ECHO_IDS[stage]
+		var art: Dictionary=sources[id].call("framing_points")
+		var source_error: String=String(art.get("error","Native next-stage Echo bounds required"))
+		if not source_error.is_empty(): return source_error
+		var raw: Array=art.points.duplicate()
+		for child: Node in reflections[id].get_children():
+			if child is MeshInstance3D: _append_mesh(raw,child)
+		_enclose(points,raw)
+		if stage==1:
+			for stone: MeshInstance3D in _stones:
+				var bounds: Array=[]; _append_mesh(bounds,stone); _enclose(points,bounds)
+		for index: int in range(_pips.size()):
+			if floori(float(index)/3.0)==stage:
+				var bounds: Array=[]; _append_mesh(bounds,_pips[index]); _enclose(points,bounds)
+		if stage==2:
+			var stalker: CinderAct3SunboundStalker=sources[STALKER_ID]
+			if String(stalker.state().reservation_id).is_empty() and stalker.global_position.distance_to(hero.global_position)<=PROP_VIEW_DISTANCE:
+				var group: Dictionary=stalker.current_render_framing_points_for_context(shared_shell,hero,camera)
+				if not String(group.error).is_empty(): return String(group.error)
+				_enclose(points,group.points)
+	elif hero.global_position.distance_to(EXIT_POSITION)<=PROP_VIEW_DISTANCE:
+		# Prospective contact geometry only: the actual marker remains hidden,
+		# with no mesh/state/visibility change until genuine completion.
+		var marker: MeshInstance3D=exit_cue.get_node_or_null("RequiredInteractionMarker") as MeshInstance3D
+		if not is_instance_valid(marker) or not is_instance_valid(_prospective_exit_mesh): return "Native prospective contact recipe/actual marker transform required"
+		var raw: Array=[]
+		var bounds: AABB=_prospective_exit_mesh.get_aabb()
+		for corner: int in range(8): raw.append(marker.global_transform*bounds.get_endpoint(corner))
+		for view: MeshInstance3D in _shell_views: _append_mesh(raw,view)
+		for x: float in [EXIT_RECT.position.x,EXIT_RECT.end.x]:
+			for z: float in [EXIT_RECT.position.y,EXIT_RECT.end.y]: raw.append(Vector3(x,0.035,z))
+		_enclose(points,raw)
+	return ""
 
 func _camera_framing_points() -> Array:
 	if not _active: return []
@@ -627,14 +675,27 @@ func _on_stalker_died(where: Vector3, id: String) -> void:
 	if not _active or _deaths.has(id) or not sources[id].get("dead") or where!=sources[id].global_position: return
 	_deaths[id]={"clock_s":threat_scheduler.get_clock(),"source_position":Value.vector3(where)}
 
-func _advance_stage() -> bool:
-	if _active_stage>=STAGE_IDS.size() or not hero.is_on_floor() or not _deaths.has(ECHO_IDS[_active_stage]): return false
+func _transition_stage() -> int:
+	if not _active or get_tree().paused or _active_stage>=STAGE_IDS.size() or not is_instance_valid(hero) or hero.dead or not hero.is_on_floor(): return -1
+	var id: String=ECHO_IDS[_active_stage]
+	if not _deaths.has(id) or not sources[id].get("dead"): return -1
 	# Retire only a genuinely existing first-pulse exchange. A refused or
 	# unadmitted environmental cycle is never forced as a progression wait.
-	if _active_stage==0 and not threat_scheduler.source_control_state(mechanism).get("reservations",[]).is_empty(): return false
+	if _active_stage==0 and not threat_scheduler.source_control_state(mechanism).get("reservations",[]).is_empty(): return -1
+	return _active_stage+1
+
+func _advance_stage() -> bool:
+	if _transition_stage()<0: return false
+	# A future fit is not authority. Main fits this complete anticipated union
+	# normally; commit progress only once the actual Camera contains it.
+	var anticipated: Dictionary=framing_union(null,true)
+	last_camera_error=String(anticipated.error)
+	if last_camera_error.is_empty(): last_camera_error=String(shared_shell.call("camera_framing_error",anticipated.points))
+	if not last_camera_error.is_empty(): return false
 	var index: int=_active_stage
 	_clears.append({"stage_id":STAGE_IDS[index],"clock_s":threat_scheduler.get_clock(),"hero_position":Value.vector3(hero.global_position)})
 	_active_stage+=1
+	_pending_view.clear() # Past-stage unadmitted forecasts have no next-stage authority.
 	if _active_stage==STAGE_IDS.size(): _exit_state="available"
 	_present()
 	var accepted: bool=request_checkpoint(CHECKPOINT_IDS[index],"encounter") if index<CHECKPOINT_IDS.size() else request_completion(COMPLETION_ID)
