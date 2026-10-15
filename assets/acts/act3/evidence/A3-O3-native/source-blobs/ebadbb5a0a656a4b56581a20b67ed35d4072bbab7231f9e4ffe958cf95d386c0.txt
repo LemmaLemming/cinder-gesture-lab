@@ -1,0 +1,58 @@
+from pathlib import Path
+import datetime, hashlib, json, re, subprocess, sys
+
+root = Path.cwd()
+name, mode, *args = sys.argv[1:]
+assert re.fullmatch(r"[a-z0-9-]+", name)
+out = root / ".cinder" / "o3-runs" / name
+out.mkdir(parents=True, exist_ok=False)
+new_paths = [".cinder/run_o3_focused.py", "scripts/acts/act3/irontick_reflection.gd", "scripts/acts/act3/irontick_reflection_codec.gd", "scenes/acts/act3/a3_o3_irontick_reflection.tscn", "data/campaign/act3/a3_o3_encounters.json", "tests/acts/act3/irontick_reflection_focused.gd", "tests/acts/act3/irontick_reflection_optional_shell.gd", "tests/acts/act3/irontick_reflection_portrait.gd"]
+new_paths.append("tests/acts/act3/irontick_reflection_portrait_diagnostic.gd")
+new_paths.append("tests/acts/act3/irontick_reflection_host.gd")
+new_paths += [p + ".uid" for p in list(new_paths) if p.endswith(".gd")]
+def git(*parts):
+    return subprocess.check_output(["git", *parts], text=True).strip()
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+# Accepted files are retained by this exact Git revision. Archive only new
+# or modified source files; this is a scoped record, not a standalone bank.
+head = git("rev-parse", "HEAD")
+changed = git("diff", "--name-only", "HEAD", "--", "scripts", "scenes", "tests", "data", "assets", "project.godot").splitlines()
+selected = sorted(set(new_paths + changed))
+sources = {}
+for name in selected:
+    source = root / name
+    if not source.is_file(): continue
+    sources[name] = digest(source)
+    dest = out / "changed-sources" / name
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_bytes(source.read_bytes())
+manifest = {"head": head, "shared_api": "campaign-shared-62", "started_at": datetime.datetime.now(datetime.timezone.utc).isoformat(), "source_scope": "Existing accepted files by exact Git revision; archived selected new/modified O3 files only. Not a complete independent project archive.", "selected_sources": sources, "tracked_source_diff_sha256": hashlib.sha256(git("diff", "HEAD", "--", "scripts", "scenes", "tests", "data", "assets", "project.godot").encode()).hexdigest()}
+(out / "sources.json").write_text(json.dumps(manifest, indent=2) + "\n")
+if mode == "import":
+    assert not args
+    command = ["python3", "scripts/dev/dev.py", "import"]
+else:
+    assert mode.startswith("res://tests/acts/act3/") and Path(mode.removeprefix("res://")).is_file()
+    graphics = "--graphics" in args
+    parse = "--parse-only" in args
+    args = [a for a in args if a not in ["--graphics", "--parse-only"]]
+    command = ["python3", "scripts/dev/dev.py", "engine"] + ([] if graphics else ["--headless"]) + ["--path", "."] + (["--check-only"] if parse else []) + ["--script", mode] + (["--", *args] if args else [])
+(out / "command.json").write_text(json.dumps({"argv": command, "cwd": str(root)}, indent=2) + "\n")
+print("Queued O3 focused command; evidence " + str(out), flush=True)
+diagnostics, footers = [], []
+with (out / "native.log").open("w") as log:
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+    for line in process.stdout:
+        log.write(line); log.flush()
+        if line.startswith(("SCRIPT ERROR:", "ERROR:", "WARNING:")):
+            diagnostics.append(line.rstrip())
+            if len(diagnostics) <= 12: print(line.rstrip(), flush=True)
+        elif any(word in line for word in ["O3 ", "Irontick ", "ECHO ", "CHECKPOINT", "FAIL:", "CAPTURE:", "[dev]", "Waiting for"]):
+            footers.append(line.rstrip()); print(line.rstrip(), flush=True)
+    code = process.wait()
+after_changed = [name for name, sha in sources.items() if not (root/name).is_file() or digest(root/name) != sha]
+result = {"closed_at": datetime.datetime.now(datetime.timezone.utc).isoformat(), "actual_exit_code": code, "diagnostics": diagnostics, "selected_source_changes_during_run": after_changed, "head_after": git("rev-parse", "HEAD"), "native_log_sha256": digest(out/"native.log"), "footers": footers}
+(out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+print(json.dumps({"actual_exit_code": code, "diagnostic_count": len(diagnostics), "first_diagnostic": diagnostics[0][:280] if diagnostics else None, "selected_source_changes_during_run": after_changed, "head_after": result["head_after"], "native_log_sha256": result["native_log_sha256"], "footers": footers}), flush=True)
+sys.exit(code if code else (1 if diagnostics or after_changed or result["head_after"] != head else 0))
