@@ -1,5 +1,11 @@
 # Act 1 — current progress
 
+## Current O3 functional prototype — 2026-10-15T06:09:41.552074+00:00
+
+Royal Rehearsal first focused mechanics check passes **45/0 clean** at0d33c0c2/Shared62, using production Main, actual bell overlap/deferred activation, six original finite C32s, native warning→lock→active→recovery, ordinary dashes/primary, original cooldown and cleanup. All22 named physical inputs stayed exact. Necessary import0 and four generated script identities are retained. Original44/1 remains failed; only the fixture Rect2 diagnostic conversion changed before the affected retest. Evidence: docs/acts/act1/evidence/O3-greybox/index.json.
+
+The functional prototype is validated; owned full native aggregate Save/Continue/Retry and small authored bell/marker art are now being implemented. Later arrangements, completion/contact/stamp/Story/replay and actual portrait are unexecuted. No full-route/all-kit/performance claim. Act1 remains **7/8 accepted**, campaign21/24; O3 is not yet handed off. All own engine jobs are closed, registration is correct, and no human permission/unlock gate exists.
+
 ## Current accepted O2 and O3 kickoff — 2026-10-15T05:42:45.276481+00:00
 
 A1-O2 Spore Bloom is independently ACCEPTED (787c30fd), publication5e76a6f3: canonical30/0 clean plus import/parser0 and reviewed owner43/33/245/64/34/42/45 with two inspected portraits. Act1 **7/8**, campaign **21/24**. Original failed23/1,29/1,43/1, material63.917s contact-to-Story cost and optical/full-playthrough/all-kit/preset limits remain. Original f04a9359 handoff content and manifest are preserved.

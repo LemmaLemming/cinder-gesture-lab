@@ -1,6 +1,6 @@
 # A1-O3 Royal Rehearsal — kickoff
 
-Status: design and source preparation, not implemented or tested. Parent A1-L4. Final Act1 level after independent A1-O2 acceptance 787c30fd at publication 5e76a6f3. Act1 is 7/8 accepted; campaign 21/24. Shared62 is actually adopted at 33f2ddc9.
+Status: functional bell/first-pair prototype now validated45/0 at0d33c0c2; complete persistence, authored bell/markers and later focused checks remain in progress. Parent A1-L4. Final Act1 level after independent A1-O2 acceptance 787c30fd at publication 5e76a6f3. Act1 is 7/8 accepted; campaign 21/24. Shared62 is actually adopted at 33f2ddc9.
 
 ## Authored objective and player decision
 
@@ -25,7 +25,7 @@ Use CinderThreatScheduler and existing mushroom_selenite.gd C32 configure/bind/a
 
 The first two exercises teach their fixed authored geometry on all profiles. Assisted retains the shared one-threat budget and native assistance. Standard uses clearly staggered commitments: offer the second source after the first reaches recovery (or is defeated), with no arbitrary timer or pause. The next opportunity is governed by existing native cooldowns and the actual finite source state.
 
-For the final Challenge exercise, the rear guard leads; the front guard becomes eligible once that actual rear thrust locks, while its original recovery is still available. This asks the player to choose a gap that can reach the rear recovery while accounting for a new foreground threat. Standard final starts with the front guard and offers the rear guard at recovery, introducing the depth change more gently. Native union safety, current framing and retained-response checks may defer or refuse every request. No timing, damage, HP or travel values change. If this proposed overlap cannot retain a normal-dash/ordinary-primary solution, revise placement or eligibility before acceptance.
+For the final Challenge exercise, the rear guard leads; the front guard becomes eligible once that actual rear thrust locks, while its original recovery is still available. This asks the player to choose a gap that can reach the rear recovery while accounting for a new foreground threat. Standard final starts with the front guard and offers the rear guard at recovery, introducing the depth change more gently. Native union safety, current framing and retained-response checks may defer or refuse every request. Lock is the earliest eligibility boundary; when native safety or actual framing delays the front guard beyond that rear recovery, allow a safe sequential fallback. Do not force overlap or impose an upper bound that strands the next source. The intended overlapping Challenge decision still needs a native final-exercise observation. No timing, damage, HP or travel values change. If this proposed overlap cannot retain a normal-dash/ordinary-primary solution, revise placement or eligibility before acceptance.
 
 Persist a versioned complete recipe descriptor selected from the actual fresh Scheduler profile. Restore the saved recipe/profile without consulting changed preferences. Retain historical executable recipe semantics. This is proposed O3 policy, not new gameplay evidence or a claim that helper metadata alone implements difficulty.
 
