@@ -1,5 +1,13 @@
 # Act 1 — durable memory
 
+## Current accepted O2 and O3 kickoff — 2026-10-15T05:42:45.276481+00:00
+
+A1-O2 Spore Bloom is independently ACCEPTED (787c30fd), publication5e76a6f3: canonical30/0 clean plus import/parser0 and reviewed owner43/33/245/64/34/42/45 with two inspected portraits. Act1 **7/8**, campaign **21/24**. Original failed23/1,29/1,43/1, material63.917s contact-to-Story cost and optical/full-playthrough/all-kit/preset limits remain. Original f04a9359 handoff content and manifest are preserved.
+
+Actual preserving merge e1d915e5 adopted O2 plus Shared61; ACKa0559f83. Actual merge33f2ddc9 adopted the complete verified Shared62 Court amendment, with only the eight authorized act paths changed. Old Court aggregate2 retains literal restoration; new aggregate3 requires the compatible reader. Durable receipts are in docs/acts/act1/evidence/O2-acceptance-adoption. No engine/import/UID-census rerun for adoption; no gameplay credit inferred.
+
+A1-O3 Royal Rehearsal is now current: three finite guard formations started by contact bell, pre-final checkpoint, existing once-only stamp. Kickoff, actual concept inspection, canonical equipment/ability queries and research are recorded in docs/acts/act1/O3_KICKOFF.md and linked sources. O3 is not yet implemented/tested. All own jobs are closed; storage hold was released by d70a2f9d. Ownership is registered; no human unlock or permission decision is pending.
+
 ## Current exact O2 submission and capacity recovery — 2026-10-15T02:31:52.780712+00:00
 
 Canonical HANDOFF **3bc7e2b1-fdda-404b-a9cb-a971fdb54b49** was sent for exact submitted commit **f04a935925dc54a7d7d07e6d36a8c374e5ab4c85**. All 151 selected manifest members join submitted Git blobs and current bytes; manifest SHA e5ac3aa4d5ffe49fc62b7866f12e89bdcd9f17bcefeafa7cdc702ac0a92cdb24. Independent O2 acceptance is pending; Act1 remains 6/8, campaign20/24. O3 content starts after acceptance; only factual parent/native/art API preparation proceeds meanwhile.
