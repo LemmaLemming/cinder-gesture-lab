@@ -1,5 +1,11 @@
 # Act 1 — current progress
 
+## Current focused completion and handoff — 2026-10-15T01:44:08.488491+00:00
+
+O2's focused owner checks are complete: first mechanics **43/0**, campaign **33/0**, groups **245/0**, saved portraits **64/0**, final checkpoint Retry **34/0**, actual contact completion **42/0**, and pristine replay/Leave **45/0**. The three terminal cases ran at exact source 8b3f05e3 / Shared60 with no raw errors or input/UID changes. Root personally inspected both original portrait images. [Consolidated exact results](../../../docs/acts/act1/O2_FOCUSED_RESULTS.json) retain the separate source revisions and original failed 23/1, 29/1 and 43/1 runs. The completion case exposes a material synchronous cost: 63.917 seconds from contact request to protected Story return, with no latency/FPS acceptance claimed.
+
+All own engine handles are closed. Exact portable evidence is sealed, compatible A3-O1 adoption and final handoff are next. Integration's independent acceptance remains pending: Act1 is still 6/8 and the campaign20/24. O3 follows O2 acceptance. No human permission, registration or unlock gate exists. Primary-only difficulty coordination ACK cc5be1d2 allows six already accepted root/layout/codec paths in Integration's checkout, excludes this worker's checkout and current O2/O3/Base/native dependencies, and adds no current-level gate.
+
 ## Current portrait result and scoped terminal cases — 2026-10-15T01:33:29.028116+00:00
 
 The brief saved portrait check is complete: **64/0 clean**, two actual 540×1170 rendered views, 24.091 seconds wall time at b41d7e0a / Shared60. Root personally inspected both original PNGs. All 214 selected producer/current runtime pins, all 935 frozen job inputs and 535 active UID bytes stayed exact. The active first exercise shows the Hero, masked rib-banded Selenites, the low available cluster, active field boundary, warning source/footprint and open landing floor together. The quiet entrance is sparse; remote scenery, later groups, hatch, moving animation, all legal kits, human pacing and sustained performance remain outside these two views.
