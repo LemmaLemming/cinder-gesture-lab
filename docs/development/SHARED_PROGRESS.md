@@ -1,5 +1,11 @@
 # Cinder shared progress
 
+## A1-O3 accepted — 15 October2026
+
+[Royal Rehearsal](ACT1_O3_ACCEPTANCE.md) is independently accepted at submitted3569663/latest tested9f4a2fc2. Exact182 submitted members are reviewed;181 curated copies preserve broad owner chronology. Root canonical33/0 clean verifies default Registry, entire protected L4 Story/session/disk, public Optional/Save/fresh Continue/entrance Retry/early Leave and native cleanup. Necessary import/parser0 and72namedpins are [portable](evidence/act1-o3-integration/index.json); import host diagnostics remain qualified. Owner45/78/75/75/44/33/32/29/18 results keep their original Shared62/source scopes and original failures. Both actual final540×1170portraits are independently readable; visually deficient originals remain. Contact8.791s/replay7.799s and full-playthrough/kit/motion/FPS limits remain explicit. Other23Registryrows, L4 parent/mainL4→L5 and no-growth stamp remain exact.
+
+Campaign23/24: Act1eight/eight, Act2eight/eight, Act3seven/eight; onlyA3-O3 remains for level acceptance. Act1's final Challenge has a real rear-first/original-lock policy and saved recipe custody, so four distinct consumers now exist and19accepted policies/source-backed exceptions remain unfinished. Shared64 runtime is unchanged by this content registration. The same Act3 owner proceeds independently; no other-act/human/fullroute gate. Agent02 remains human-inactive; desktop shared-system goal remains active.
+
 ## Shared64 terminal marker cleanup — 15 October2026
 
 [The narrow Playback repair](REPLAY_MARKER_TEARDOWN.md) resolves the reported primitive: cancellation never positions an already detached failure marker. Native terminal seal/reason/clock/cooldown/notifications and normal live marker rendering remain unchanged. The new actual managed-source regression passes37/0 with complete rows; the directly affected captured-player suite passes475/0 clean after scoped access to process-specific temporary Store files. Its original406/11 denied-write/round-trip/cascade result remains failed. The owner original143/0/native0 production error stays nonclean. Necessary import/parsers0 and the new genuine UID are retained; host diagnostics remain qualified. [Portable exact evidence](evidence/replay-marker-teardown/index.json) makes no whole-Shell/WM Quit/freed-marker/O3/performance claim.
