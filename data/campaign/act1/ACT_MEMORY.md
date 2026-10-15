@@ -1,5 +1,11 @@
 # Act 1 — durable memory
 
+## Current sealed handoff and actual adoption — 2026-10-15T01:49:37.247889+00:00
+
+O2 owner checks are complete and sealed for independent Integration review: mechanics 43/0, campaign 33/0, groups 245/0, portraits 64/0, final Retry 34/0, contact completion 42/0 and replay/Leave 45/0. Root inspected both original PNGs. Original failed 23/1, 29/1 and 43/1 results and the measured 63.917s contact-to-Story cost remain explicit. The focused handoff and exact submission manifest retain source attribution and limitations. Independent acceptance is pending: Act1 remains 6/8, campaign 20/24. O3 follows O2 acceptance.
+
+Compatible A3-O1 publication de750e7e is actually preserving-adopted at 8df106ad0e83bc4973a60db6a2eef6606896adb8, ACK b8acbc5b, receipt SHA bed5b52e95c01e6883b0c2e932634d4b0da3feef241fd37cf6946bd664edb3f0. All 6 owned Git trees, 32 named files, 3 settings and 418 incoming blobs/modes match. Six new genuine active UID values plus 535 retained known values imply 541; no new physical census is claimed. No engine/import/accepted-level rerun was needed. API 60/runtime and Act1 sources remain, while original 214 portrait pins keep their historical Registry hash. All own jobs are closed; no human permission, registration or unlock gate exists.
+
 ## Current focused completion and handoff — 2026-10-15T01:44:08.488491+00:00
 
 O2's focused owner checks are complete: first mechanics **43/0**, campaign **33/0**, groups **245/0**, saved portraits **64/0**, final checkpoint Retry **34/0**, actual contact completion **42/0**, and pristine replay/Leave **45/0**. The three terminal cases ran at exact source 8b3f05e3 / Shared60 with no raw errors or input/UID changes. Root personally inspected both original portrait images. [Consolidated exact results](../../../docs/acts/act1/O2_FOCUSED_RESULTS.json) retain the separate source revisions and original failed 23/1, 29/1 and 43/1 runs. The completion case exposes a material synchronous cost: 63.917 seconds from contact request to protected Story return, with no latency/FPS acceptance claimed.
