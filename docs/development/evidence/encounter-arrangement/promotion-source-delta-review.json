@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "scope": "Exact two source pairs only, no native rerun",
+  "records": [
+    {
+      "path": "scripts/combat/encounter_arrangement.gd",
+      "original_sha256": "078a1ff0535209761fdb692f5b9440e5766f56adcb0d39bb0373722f1b2daca6",
+      "promoted_sha256": "583f95c27e39b1009d5c0bd805bda2512b789aea22764c969f1388a9f1cec4de",
+      "executable_lines_equal": true,
+      "exact_unified_diff": "--- original/encounter_arrangement.gd.txt\n+++ promoted/scripts/combat/encounter_arrangement.gd\n@@ -1,6 +1,6 @@\n class_name CinderEncounterArrangement\n extends RefCounted\n-## INERT PROPOSAL. Root alone may promote; no runtime consumer exists here.\n+## Pure shared metadata helper; act consumers integrate it explicitly.\n ## Pure authored permutation metadata, with no native/source/safety authority.\n ## Select only at a fresh encounter/profile boundary. Restore never remaps.\n \n"
+    },
+    {
+      "path": "tests/encounter_arrangement_smoke.gd",
+      "original_sha256": "a1815800a94d7d8f30c4916c2a45300872460bcb44e9035d8095fde07fbd7759",
+      "promoted_sha256": "0bded22fe00bd1026f87ab1a7a5289ced86d9ec2c1aab149d6393f8fbfab5b01",
+      "executable_lines_equal": true,
+      "exact_unified_diff": "--- original/encounter_arrangement_smoke.gd.txt\n+++ promoted/tests/encounter_arrangement_smoke.gd\n@@ -1,5 +1,5 @@\n extends SceneTree\n-## INERT PROPOSAL. Pure metadata cases; no native encounter or acceptance credit.\n+## Pure metadata checks; execution is recorded separately from preparation.\n const Arrangement = preload(\"res://scripts/combat/encounter_arrangement.gd\")\n const Codec = preload(\"res://scripts/campaign/snapshot_codec.gd\")\n const Exact = preload(\"res://scripts/campaign/exact_json.gd\")\n"
+    }
+  ]
+}

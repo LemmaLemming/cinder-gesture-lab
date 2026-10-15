@@ -1,5 +1,15 @@
 # Cinder shared progress
 
+## Shared61 availability and storage recovery — 15 October2026
+
+[Pure authored arrangement metadata](ENCOUNTER_ARRANGEMENT.md) passes37/0 clean after necessary queued import/parser0, with retained rows/report/source joins. Import adds only two UIDs within the11 named-file observation; no global resource/UID census. The original alias-anchor/missing-seal preflight2 and two ENOSPC preparation failures remain. [Portable evidence](evidence/encounter-arrangement/index.json) separates proposals and execution. There is no gameplay consumer, new acceptance, whole-level migration, portrait or performance claim.
+
+[The212-source audit](evidence/difficulty-completion-gap/REPORT.md) confirms unfinished authored difficulty arrangements at the20-level baseline: A1-L2 has a real Challenge selector,19 accepted levels share Standard/Challenge content; four private unfinished optionals were not audited. Assisted numeric/budget effects are real. A captured-player replay policy exception needs explicit reconciliation. The helper alone does not close this requirement. Act1 named primary-only ACKcc5be1d2 permits reviewed accepted-root/layout/codec work; current O2/O3 and pinned Base/native sources stay excluded. Other ownership remains separate; Agent02 remains human-inactive. Standard-focused acceptances remain valid, with no new full-route gate.
+
+Storage writes are recovered. Root removed only completed ignored integration duplicates after exact physical and HEAD equality:220files/5,289,015bytes, then7,854files/227,214,512bytes. The latter observed free-space rise was137,060,352→309,387,264bytes; a subsequent~30GiB increase is externally unattributed. A1.09MB write/read/fsync probe passed and both active workers received the temporary new-launch hold release through canonical responses and actual chats. [Exact recovery records](evidence/storage-recovery-20261015/) preserve scope; no worker file, held lock or foreign process was touched.
+
+Act1 exact Spore Bloom HANDOFF3bc7e2b1 atf04a9359 is under independent focused review; clean43/33/245/64/34/42/45 remain owner scopes until reviewed. Its63.917s contact-to-Story cost is a material limitation. Compatible de750 adoption8df106ad is received, with independent reconciliation pending. Act3 resumes current O2 targeted diagnostics; original510/1 and224/1 remain failed. Campaign20/24; desktop goal active.
+
 ## Current coordination — 15 October 2026
 
 Campaign remains **20/24** and the desktop goal is active. Act3's preserving A3-O1 publication merge `aea69b3e` is [independently verified](evidence/act3-o1-content-adoption/index.json): exact registered identity/parents/receipt/ancestry and six named publication→merge→HEAD/index/physical files. Its original wrong Protocol-path collector exit1 is preserved separately from the corrected source-only receipt; no remerge, engine or new acceptance. Current aliases are reconciled; broader custody/UID counts remain owner-reported. Act3 proceeds with O2. Act1's compatible adoption remains deferred to its safe job boundary; Agent02 remains human-inactive.
