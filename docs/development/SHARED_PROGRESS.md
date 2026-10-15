@@ -1,5 +1,14 @@
 # Cinder shared progress
 
+## A3-O2 accepted — 15 October2026
+
+[The Quiet Root Circuit](ACT3_O2_ACCEPTANCE.md) is independently accepted at exact155df560 after Root canonical55/0 clean and selectedimport/parser0. Root reuses independently reviewed original owner1053/365/2129/64 results within their native/transport/completion/portrait scopes, retaining all15run/113file evidence and eight original failures. Root55 actual rows and whole initial Story/session/disk/source joins are [portable](evidence/act3-o2-integration/index.json); no long owner suite was repeated. Root personally inspected the original340×736 second-Root warning. Other23 Registry rows, parentL2/mainL2→L3 and once-only no-growth stamp remain unchanged. Actor/common helper sources are unchanged; all Root jobs closed.
+
+Campaign22/24: Act1 seven/eight, Act2 eight/eight, Act3 seven/eight. All15main+7optional accepted; only A1-O3 and A3-O3 remain. The same owners proceed independently under focused acceptance. Authored difficulty remains separate: two distinct Challenge consumers at this22-level baseline,20 further policies/exceptions unfinished. The Living Forest role-slot candidate is still inert; genuine newly executed oldAPI1 packets are prepared before any candidate migration, without historical replay credit.
+
+Worker1/3 continuation delivery recovered and actual active turns were observed; the app goal tool again reportsactive without a Root lifecycle reset. Their older startup/capacity/loading records below remain historical. Exact public upload of Shared62 a7fa6cff was explicitly approved by the user after automatic review's first rejection; push34896/remote63356/visibility73396 closed0 and prove public exacta7fa/defaultcodex/gesture-prototype. No broader subsequent-payload publication approval is inferred.
+
+
 ## Shared62 Court authored policy — 15 October2026
 
 [The Court amendment](ACT1_L4_DIFFICULTY.md) implements an actual Challenge decision after the quiet demo: guards wait for the real circle lock, and reciprocal timed-path filtering preserves every retained original response before later guard or circle admission. Native timing, geometry, proofs and Save validation remain intact. Local aggregate3 retains complete versioned recipes; genuine old aggregate2 attempts stay literal and use original dispatch. Standard68/0, original-packet legacy100/0, final actual-renderer Challenge79/0 and Assisted68/0 are clean within their documented source scopes. Final Challenge independently resumes Continue into another real circle cycle and Saves coherently. Root inspected one540×1170 combined portrait. Original ScriptError/45/1/47/1 outputs remain failed; [portable evidence](evidence/act1-l4-difficulty/index.json) preserves all15 closed queue phases, exact final51 selected sources and independent review corrections. No full-route, all-kit, performance or new-level acceptance credit.

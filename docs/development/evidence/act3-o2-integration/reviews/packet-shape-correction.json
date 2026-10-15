@@ -1,0 +1,14 @@
+{
+  "corrects_only": "packet-optical-review.json/checks/protected_story_equal_session_and_start",
+  "original_host_record_retained": true,
+  "cause": "Host compared a campaign snapshot against its Attempts Session wrapper rather than snapshot/checkpoint members.",
+  "original_sha256": "e25daa30291446abe6062513ec2d6fe981a864829ef15d4f8164f6537d332f0d",
+  "checks": {
+    "story_snapshot_equals_both_attempt_snapshot_and_checkpoint": true,
+    "session_story_attempt_equals_start_story_attempt": true,
+    "side_attempt_snapshot_equals_real_held_packet": true,
+    "side_attempt_checkpoint_equals_real_cp1_packet": true
+  },
+  "native_or_artifact_changes": false,
+  "result": "All packet-optical checks pass with this correctly shaped Story join. The initial host false predicate is not a gameplay/save failure."
+}
