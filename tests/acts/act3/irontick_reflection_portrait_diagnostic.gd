@@ -1,7 +1,11 @@
 extends "res://tests/acts/act3/irontick_reflection_portrait.gd"
 ## Diagnostic-only reader: original producer/runtime/reader pins stay unchanged.
 func _portrait() -> bool:
-	await process_frame # Native UI layout only; gameplay remains paused.
+	# Yield lightweight native frames before expensive whole-pair assertions so
+	# queued public focus/Pause registration can finish inside its own bound.
+	for _settle: int in range(8):
+		await process_frame
+		if not _valid_shell() or not paused: return false
 	var view: SubViewport = production.world.get_parent() as SubViewport
 	var container: SubViewportContainer = view.get_parent() as SubViewportContainer
 	if not _expect(paused and not production.is_pause_requested() and container.is_visible_in_tree() and view.own_world_3d and view.get_camera_3d() == production.camera and production.hud.visible and production.menu.visible, "actual installed native World/Camera/Hero/HUD and paused Menu are visible"):
@@ -25,8 +29,9 @@ func _portrait() -> bool:
 	if RenderingServer.frame_post_draw.is_connected(_on_draw): RenderingServer.frame_post_draw.disconnect(_on_draw)
 	var pixels: Image = root.get_texture().get_image() if draw_seen else null
 	var problem: String = String(production.active_level.call("candidate_presentation_error", production.camera, production.hud))
-	var unchanged: bool = paused and not production.is_pause_requested() and not wire.is_empty() and wire == Exact.stringify(production.capture_campaign_snapshot()) and input == var_to_bytes(production.get_input_observation_state()) and optics == var_to_bytes(_optics_record()) and events == var_to_bytes(receiver_events)
-	var diagnostic: Dictionary = {"draw_seen":draw_seen,"pixels_size":str(pixels.get_size()) if pixels != null else "null","paused":paused,"pause_pending":production.is_pause_requested(),"wire_nonempty":not wire.is_empty(),"wire_equal":wire == Exact.stringify(production.capture_campaign_snapshot()),"input_equal":input == var_to_bytes(production.get_input_observation_state()),"optics_equal":optics == var_to_bytes(_optics_record()),"events_equal":events == var_to_bytes(receiver_events),"candidate_error":problem,"shell_error":production.campaign_error,"level_error":production.active_level.last_snapshot_error}
+	var overlay_hidden_during_draw: bool = not production.menu.visible
+	var unchanged: bool = production.campaign_error.is_empty() and overlay_hidden_during_draw and paused and not production.is_pause_requested() and not wire.is_empty() and wire == Exact.stringify(production.capture_campaign_snapshot()) and input == var_to_bytes(production.get_input_observation_state()) and optics == var_to_bytes(_optics_record()) and events == var_to_bytes(receiver_events)
+	var diagnostic: Dictionary = {"draw_seen":draw_seen,"menu_hidden_during_draw":overlay_hidden_during_draw,"pixels_size":str(pixels.get_size()) if pixels != null else "null","paused":paused,"pause_pending":production.is_pause_requested(),"wire_nonempty":not wire.is_empty(),"wire_equal":wire == Exact.stringify(production.capture_campaign_snapshot()),"input_equal":input == var_to_bytes(production.get_input_observation_state()),"optics_equal":optics == var_to_bytes(_optics_record()),"events_equal":events == var_to_bytes(receiver_events),"candidate_error":problem,"shell_error":production.campaign_error,"level_error":production.active_level.last_snapshot_error}
 	print("O3 PORTRAIT DIAGNOSTIC: ",str(diagnostic))
 	if not diagnostic.optics_equal: print("O3 OPTICS BEFORE: ",str(optics_before),"\nO3 OPTICS AFTER: ",str(_optics_record()))
 	if pixels != null:
