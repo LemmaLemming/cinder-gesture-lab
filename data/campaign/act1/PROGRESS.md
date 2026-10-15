@@ -1,10 +1,12 @@
 # Act 1 — current progress
 
-## Current O3 functional prototype — 2026-10-15T06:09:41.552074+00:00
+## Current O3 owner completion — 15 October 2026
 
-Royal Rehearsal first focused mechanics check passes **45/0 clean** at0d33c0c2/Shared62, using production Main, actual bell overlap/deferred activation, six original finite C32s, native warning→lock→active→recovery, ordinary dashes/primary, original cooldown and cleanup. All22 named physical inputs stayed exact. Necessary import0 and four generated script identities are retained. Original44/1 remains failed; only the fixture Rect2 diagnostic conversion changed before the affected retest. Evidence: docs/acts/act1/evidence/O3-greybox/index.json.
+A1-O3 Royal Rehearsal is implemented and owner-tested at **9f4a2fc2** on actually adopted **Shared62**. Focused checks: authored mechanics45/0; entry44/0; genuine pre-final checkpoint78/0; Standard75/0; Challenge75/0; Retry33/0; contact Story return32/0; replay29/0. Final local bell/framing correction is covered by new portrait18/0, entry44/0 and Challenge75/0 using the original checkpoint. Both final540×1170portraits were personally inspected: player clear beside bell, native guards/footprint/nearby safe floor readable. Exact evidence and limitations: docs/acts/act1/O3_FOCUSED_HANDOFF.md and evidence/O3-campaign/index.json.
 
-Authored bell/marker and full native aggregate source are implemented at5381f4c2, followed by necessary import0 and directly affected mechanics45/0 clean at8a032fa5 (25 named inputs unchanged). Whole transport, later arrangements, completion/contact/stamp/Story/replay and actual portrait remain unexecuted; the production campaign fixture is now being prepared for its entry case. No full-route/all-kit/performance claim. Act1 remains **7/8 accepted**, campaign21/24; O3 is not yet handed off. Completed evidence jobs are closed; current validation uses the shared queue. Registration is correct, and no human permission/unlock gate exists.
+Original greybox44/1, Standard incomplete36/0 ScriptError and two native18/0 but visually deficient portraits remain preserved. No failure is relabeled. TEST Hero placements/public signals/readiness prefix, multi-second registration cost, untested full-playthrough/touch/all-kit/preset/balance/performance remain explicit. Required three canonical design validators passed; no new equipment/ability allocation.
+
+Independent Integration acceptance is pending; Act1 **7/8 accepted**, campaign **22/24** in current canonical SharedProgress. All own engine jobs/previews are closed. Ownership is correctly registered; no human permission or unlock decision is pending. Next step is exact handoff and independent O3 registration/acceptance; no new level authoring remains after O3.
 
 ## Current accepted O2 and O3 kickoff — 2026-10-15T05:42:45.276481+00:00
 

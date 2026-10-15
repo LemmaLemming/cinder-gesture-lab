@@ -1,5 +1,7 @@
 # A1-O3 Royal Rehearsal — kickoff
 
+Current status: owner focused implementation/validation is complete at9f4a2fc2; [focused handoff](O3_FOCUSED_HANDOFF.md) records final scope and original failures. Independent Integration acceptance remains pending. Kickoff proposals and source-only observations below retain their dated history.
+
 Status: functional bell/first-pair prototype now validated45/0 at0d33c0c2; complete persistence, authored bell/markers and later focused checks remain in progress. Parent A1-L4. Final Act1 level after independent A1-O2 acceptance 787c30fd at publication 5e76a6f3. Act1 is 7/8 accepted; campaign 21/24. Shared62 is actually adopted at 33f2ddc9.
 
 ## Authored objective and player decision

@@ -1,5 +1,7 @@
 # Royal Rehearsal runtime art
 
+Current owner validation: final side placement at **9f4a2fc2** passes actual portrait **18/0**, entry/Save/Continue **44/0** and final Challenge **75/0**, including the original pre-delta checkpoint. Root personally inspected both original540×1170images: player face, body and feet are clear beside the bell; both guards, warning footprint and nearby safe floor remain readable. [Original reports](evidence/O3-campaign/index.json) and [visual review](evidence/O3-campaign/portrait03-review.json) retain the two earlier visual failures. Independent Integration acceptance is pending. The source-author statements below preserve their historical scope.
+
 Source authored 15 October 2026 after the corrected greybox’s owner-reported **45 passed, 0 failed** result. This record covers only the small bell and station-marker addition. The initial source freeze was unparsed and unexecuted. A later owner-reported portrait run passed **18 native checks, 0 failed**, but inspection of its actual first-warning image found a visual failure: the centered bell/stand obscured the Hero torso and feet. The later north-offset revision also passed 18 native checks but still obscured the Hero in its actual portrait. Both visual failures remain recorded below. The current side-offset correction is **source-only, unparsed and unexecuted** pending a focused owner rerun; neither prior native pass establishes visual acceptance.
 
 ## Source and inspected references
