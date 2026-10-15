@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "level_id": "A1-O3",
+  "reuse_family": "Act1 Selenite Court small Royal Rehearsal additions",
+  "implementation": {
+    "path": "scripts/acts/act1/royal_rehearsal_art.gd",
+    "sha256": "bb174d69fc45fc3eeccbee949048a77082016c041560cbeeb5cacef56925636f",
+    "api_revision": "act1-rehearsal-art-1",
+    "kind": "original code-authored ArrayMesh geometry; no extracted concept pixels"
+  },
+  "readiness": "owner focused native validation complete at9f4a2fc2: portrait03 18/0 with both original540x1170images personally inspected; entry03 44/0 and Challenge02 75/0. Independent Integration acceptance pending.",
+  "reference_inspection": [
+    {
+      "id": "G19",
+      "path": "docs/concept-art/act1/environments/04-selenite-court.png",
+      "sha256": "cc1bccf751d8dd21c7248287f01e9b02cf1fce33da52f1982bcdc162009e629d",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "inspected": "actual pixels opened 15 October 2026 by art author",
+      "application": "panel8 small two-post wooden stand and hanging flared bell, quiet roundels; panel5 warning ornament excluded"
+    },
+    {
+      "id": "G15",
+      "path": "docs/concept-art/act1/props/lunar-grotto-and-court-modular-kit.png",
+      "sha256": "c8b61dc9115e2ed98546c05b65ca79f34e2fe998af191e82bf2b582cf225d53e",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "inspected": "actual pixels opened 15 October 2026 by art author",
+      "application": "quiet radial star ornament and restrained pale/dark theatre materials; no new stage-puff effect"
+    }
+  ],
+  "assets": [
+    {
+      "id": "A1-O3-practice-bell",
+      "native_dimensions": "not applicable: code-authored mesh, no bitmap/atlas",
+      "world_scale_m": {
+        "width": 1.0,
+        "height": 1.5,
+        "depth": 0.4
+      },
+      "pivot": "stand feet at Layout.BELL_POSITION + BELL_ART_OFFSET = (-3.4,0,0); native contact anchor remains (-2.4,0,0)",
+      "collision": "none; host BellArea and shared contact cue retain their authority",
+      "occlusion": "Original centered stand and north0.30m revision both obscured the actual contact-center Hero. Entire stand/bell now sits1.0m left of contact; actual player billboard clearance and portrait readability remain to be verified.",
+      "states": {
+        "available": "upright pale flared bell and centered clapper",
+        "active": "static10-degree lean and offset clapper, no swing clock",
+        "spent": "upright muted bell with broad dark felt band"
+      },
+      "animation": "none; host applies instantaneous deterministic static poses; no audio/signal/timer",
+      "rendering": "opaque depth-tested unshaded vertex-colour meshes; no shadow casting, glow or cue outline"
+    },
+    {
+      "id": "A1-O3-formation-markers",
+      "native_dimensions": "not applicable: code-authored mesh, no bitmap/atlas",
+      "world_scale_m": {
+        "radius": 0.4,
+        "thickness": 0.002
+      },
+      "pivot": "each Layout source authored ground position, y offset0.012",
+      "collision": "none; no source, attack, contact or progression authority",
+      "occlusion": "flat low-contrast disc beneath current station; actual overlap against warning artwork not yet inspected",
+      "states": [
+        "quiet visible current pair",
+        "hidden other pairs/all hidden on completion when host requests"
+      ],
+      "animation": "none; no countdown, segmented rim, active fill or pulse",
+      "rendering": "24-sided disc with smaller five-point star, grayscale0.31\u20130.40; depth tested"
+    }
+  ],
+  "reused_unchanged": [
+    "scripts/acts/act1/selenite_court_art.gd",
+    "scripts/acts/act1/mushroom_selenite.gd",
+    "scripts/acts/act1/mushroom_selenite_art.gd",
+    "scripts/character/player_presentations.gd"
+  ],
+  "bounds": "landmark_world_corners still reads every current visible native mesh AABB and transform, including the authored bell offset, then returns eight conservative world-enclosure corners; hidden marker returns[]; invalid binding returns[Vector3.INF]",
+  "validation": "Art author inspected both actual540x1170 first-warning images and confirmed continued occlusion. Parent reports both native portrait18/0 passes; both remain visual failures. No engine/import/parse/portrait rerun performed by this art author for current side-offset revision.",
+  "framing_budget": "Host owner must replace existing eight BellBox points with eight corners of a conservative union of actual native BellArea BOX and all actual current visible bell mesh bounds. Bell geometry now lies outside native contact BOX; do not retain old containment assertion or omit art. Native BOX/cues remain unchanged; no required-point count increase or224-limit relaxation.",
+  "occlusion_correction": {
+    "prior_art_sha256": "91f4562366b2b75952068d9f41b40142c9c64897587396d53c9be063472d29aa",
+    "change": "translate entire PracticeBell art group to offset(-1.0,0,0), world feet pivot(-3.4,0,0)",
+    "unchanged": "mesh dimensions/materials/states, markers, native contact BOX and anchor, collisionless authority, art API and224 point limit",
+    "host_dependency": "real eight-corner conservative actual Box+art union replaces original eight BellBox framing points; host owner implements separately",
+    "source_extent_relative_to_contact_feet": {
+      "min": [
+        -1.5,
+        0,
+        -0.2
+      ],
+      "max": [
+        -0.5,
+        1.5,
+        0.2
+      ]
+    },
+    "source_union_extent_relative_to_contact_feet": {
+      "min": [
+        -1.5,
+        0,
+        -0.55
+      ],
+      "max": [
+        0.55,
+        1.6,
+        0.55
+      ]
+    },
+    "current_validation": "unparsed/unexecuted source-only correction; no portrait acceptance"
+  },
+  "occlusion_history": [
+    {
+      "original_art_sha256": "747c1e6d9b866ff4cf69d7d6f43a17c634e655ea9deadb23849c58328ff31b2e",
+      "inspected_image": ".cinder/captures/o3-18947-1267551/02-first-warning.png",
+      "image_sha256": "047ec9072d855677cb600c0e8f064cb78fcacc131d0a32daf5b6cf6c26d32af3",
+      "dimensions": [
+        540,
+        1170
+      ],
+      "finding": "bell/stand occludes Hero torso and feet at contact center",
+      "original_native_result": "parent-reported18 passed0 failed, visual failure retained",
+      "change": "translate entire PracticeBell art group by (0,0,-0.30); dimensions, poses, markers, colliders, native contact anchor, API and framing budget unchanged",
+      "current_validation": "Historical source correction subsequently ran in the second native18/0 portrait; second actual image still fails occlusion. Its former source-only status remains historical."
+    },
+    {
+      "art_sha256": "91f4562366b2b75952068d9f41b40142c9c64897587396d53c9be063472d29aa",
+      "offset": [
+        0,
+        0,
+        -0.3
+      ],
+      "inspected_image": ".cinder/captures/o3-29114-1402847/02-first-warning.png",
+      "image_sha256": "ae2df8ce0587769ed1505ff2d37f8fce04b49963a00d71342446fabbf5649d8c",
+      "dimensions": [
+        540,
+        1170
+      ],
+      "finding": "north0.30m shift still covers Hero face/torso because actual billboard projection overlaps the bell",
+      "native_result": "parent-reported18 passed0 failed; visual failure retained"
+    }
+  ],
+  "owner_validation": {
+    "tested_head": "9f4a2fc2d7f36b8ae561cf180e0941e5c192bf7d",
+    "evidence": "docs/acts/act1/evidence/O3-campaign/index.json",
+    "visual_review": "docs/acts/act1/evidence/O3-campaign/portrait03-review.json",
+    "history": "Original centered and north0.30 placements each passed native18/0 but obscured player in actualpixels; bothoriginalreports/images retained. Finalsideoffset clears player in inspectedviews.",
+    "limit": "Available/active pixels inspected; spent pose/binding exercised by genuine completion state, no spent portrait. No moving/allkit/allpreset/fullroute/FPS claim.",
+    "final_framing": "Eight actual worldAABB corners enclose unchangedBox and visiblebellgeometry; allothernativebounds and224limit retained."
+  }
+}

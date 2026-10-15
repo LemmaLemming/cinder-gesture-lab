@@ -1,0 +1,380 @@
+extends "res://tests/acts/act3/living_forest_route_smoke.gd"
+## Changed-court native checks only. TEST stable Hero placement activates the
+## real sequential entries; earlier sources remain alive and retain authority.
+## No actor/clock/phase/lease/stat/geometry assignment, no route or exit claim.
+
+class ProfileMain:
+	extends "res://scripts/game.gd"
+	var selected_profile: String = "standard"
+	var background_pause_events: Array[int] = []
+	func _notification(what: int) -> void:
+		if what in [NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT]: background_pause_events.append(what)
+		super._notification(what)
+	func get_difficulty_preference() -> String:
+		return selected_profile
+
+var selected_profile: String = "challenge"
+var selected_court: String = "trunk"
+var selected_kit: String = "neutral"
+var selected_sun: String = "0"
+var preserve_safe_path: bool = false
+var _safe_warning_continuations: Array[Dictionary] = []
+var _seen_safe_continuations: Dictionary = {}
+var output: String = ""
+var portrait_dir: String = ""
+var rows: Array[Dictionary] = []
+var complete: bool = false
+var first_failure: Dictionary = {}
+var receipts: Array[Dictionary] = []
+var captures: Dictionary = {}
+var source_before: Dictionary = {}
+var _finishing: bool = false
+var _source_names: Array[String] = []
+var _targets: Array[String] = []
+var _target_hits: Dictionary = {}
+var _court_union: bool = false
+var _setup: Dictionary = {}
+var _public_resumes: Array[Dictionary] = []
+var _failure_probe: Dictionary = {}
+
+func _initialize() -> void:
+	output = OS.get_environment("CINDER_FOREST_ARRANGEMENT_OUTPUT")
+	portrait_dir = OS.get_environment("CINDER_FOREST_ARRANGEMENT_PORTRAITS")
+	var names: Variant = JSON.parse_string(OS.get_environment("CINDER_FOREST_ARRANGEMENT_SOURCES"))
+	if names is Array:
+		for name: Variant in names:
+			if name is String: _source_names.append(name)
+	source_before = _sources_observation()
+	_barrier = PostActorBarrier.new()
+	_barrier.name = "TestOnlyChangedCourtEndTick"
+	root.add_child(_barrier)
+	_run.call_deferred()
+
+func _run() -> void:
+	create_timer(150.0, true).timeout.connect(func() -> void:
+		if not _finishing: _expect(false, "changed-court native watchdog"); _finish())
+	root.size = Vector2i(540, 1170)
+	root.content_scale_size = Vector2i(540, 1170)
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	var seen: Dictionary = {}
+	for arg: String in OS.get_cmdline_user_args():
+		var key: String = arg.get_slice("=", 0)
+		if seen.has(key): _expect(false, "no repeated selector: " + key)
+		seen[key] = true
+		if arg.begins_with("--profile="): selected_profile = arg.trim_prefix("--profile=")
+		elif arg.begins_with("--court="): selected_court = arg.trim_prefix("--court=")
+		elif arg.begins_with("--kit="): selected_kit = arg.trim_prefix("--kit=")
+		elif arg.begins_with("--sun="): selected_sun = arg.trim_prefix("--sun=")
+		elif arg == "--preserve-safe-path": preserve_safe_path = true
+		else: _expect(false, "closed focused selector: " + arg)
+	if not _expect(_failures == 0 and selected_profile in ["assisted", "standard", "challenge"] and selected_court in ["trunk", "priority"] and (selected_profile == "challenge" or selected_court == "trunk") and selected_kit in ["neutral", "short", "weak", "slow"] and selected_sun in ["0", "1"] and not output.is_empty() and not _source_names.is_empty(), "closed profile/court/actual legal kit and fixed named observation scope"):
+		await _end(); return
+	var catalogue = EquipmentScript.new()
+	_kit = {"jacket": "CLOTH-J0", "pants": "CLOTH-P0", "shoes": "CLOTH-S0", "weapon": "WEAPON-01"}
+	if selected_kit == "short": _kit.weapon = "WEAPON-03"
+	elif selected_kit == "weak": _kit.weapon = "WEAPON-02"; _kit.shoes = "CLOTH-S1"
+	elif selected_kit == "slow": _kit.pants = "CLOTH-P2"; _kit.shoes = "CLOTH-S2"
+	if not _expect(catalogue.restore(_kit) and catalogue.acceptance_errors().is_empty(), "actual implemented canonical equipment model accepts selected carried IDs"):
+		await _end(); return
+	_stats = catalogue.resolved_stats()
+	var reason: String = await _prepare()
+	if not _expect(reason.is_empty(), "actual canonical Main scene constructs nine native sources with selected fresh profile", reason): await _end(); return
+	_route_deadline = _scheduler.get_clock() + 75.0
+	if not _expect(_scheduler.encounter_profile().id == selected_profile and _level.snapshot_state().local.arrangement.profile == selected_profile, "actual immutable scheduler and retained descriptor consume the selected profile"):
+		await _end(); return
+	var parent_script = load(RuntimePath)
+	var descriptor: Dictionary = _level.snapshot_state().local.arrangement
+	var definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/campaign/act3/a3_l2_encounters.json")).difficulty_arrangements
+	var layout: Dictionary = parent_script.arrangement_layout(descriptor, definition)
+	if not _expect(layout.get("error", "").is_empty(), "trusted retained arrangement resolves before actor configuration"):
+		await _end(); return
+	# Native fixed positions and native mechanism configurations, not markers,
+	# establish actual arrangement consumption before any source can tick.
+	var selected_starts: Dictionary = _level.get("_selected_starts")
+	var selected_entries: Dictionary = _level.get("_selected_entries")
+	if not _expect(selected_starts.size() == 9 and selected_entries.size() == 9 and selected_starts == layout.starts and selected_entries == layout.entries, "real runtime maps equal the independently resolved retained source-slot recipe"):
+		await _end(); return
+	for id: String in SourceIds:
+		var source: Node3D = _sources[id]
+		if not _expect(source.global_position == _level.to_global(selected_starts[id]) and not source.is_physics_processing(), "unconfigured selection became actual dormant native position once: " + id): await _end(); return
+		if _is_root(id):
+			var mechanism: CinderLaneMechanism = source.call("get_mechanism")
+			if not _expect(source.get("_fixed_position") == source.global_position and mechanism.state().geometry.origin == source.global_position, "Root immutable native configure pins the selected origin: " + id): await _end(); return
+	_game.call("resume_lab")
+	for _tick: int in range(40):
+		reason = await _tick_safe()
+		if not reason.is_empty() or _hero.get_threat_response_state().stable: break
+	if not _expect(reason.is_empty() and _hero.get_threat_response_state().stable, "genuine floor and shared Hero settle before disclosed representative placement", reason): await _end(); return
+	if selected_sun == "1":
+		for _tick: int in range(_frame_limit(20.0)):
+			reason = await _tick_safe()
+			if not reason.is_empty() or (int(_level.get("sun_state")) == 1 and _level.get("sun_stage") == "stable"): break
+		if not _expect(reason.is_empty() and int(_level.get("sun_state")) == 1 and _level.call("state").entries.is_empty() and _scheduler.reservations().is_empty(), "native clock reaches the other genuine sun before any entry or threat; no scenic clock assignment", reason): await _end(); return
+	_game.call("open_bench")
+	_hero.global_position = Vector3(0.0, _hero.global_position.y, 10.5 if selected_court == "trunk" else -1.5)
+	_setup = {"TEST_stable_hero_position": _hero.global_position, "prior_sources_alive": true, "profile": selected_profile, "court": selected_court, "natural_sun_at_court": int(_level.get("sun_state")), "kit": _kit.duplicate(true)}
+	_targets.assign(["l2-priority-stalker"] if selected_profile == "challenge" and selected_court == "trunk" else (["l2-trunk-root", "l2-priority-root"] if selected_profile == "challenge" else ["l2-trunk-root"]))
+	_game.call("resume_lab")
+	var wanted: int = 3 if selected_court == "trunk" else 4
+	for _tick: int in range(10):
+		reason = await _tick_safe()
+		if not reason.is_empty() or _level.call("state").entries.size() == wanted: break
+	if not _expect(reason.is_empty() and _level.call("state").entries.size() == wanted, "real native ticks create ordered spatial entries and checkpoints without forged history", reason): await _end(); return
+	for id: String in SourceIds:
+		if not _expect(_sources[id].is_physics_processing() == (int(selected_entries[id]) < wanted), "actual activation consumes selected entry rather than original marker slot: " + id): await _end(); return
+	_group_ids.clear()
+	for id: String in SourceIds:
+		if _sources[id].is_physics_processing(): _group_ids.append(id)
+	_group_deadline = _scheduler.get_clock() + 35.0
+	reason = await _exercise()
+	if not _expect(reason.is_empty(), "ordinary native escape/recovery primary hits the changed court targets without blast or received contact", reason): await _end(); return
+	if selected_profile == "challenge" and selected_court == "priority":
+		if not _expect(_court_union, "two actual Roots admit a held union without suppressing either source"):
+			await _end(); return
+	_game.call("open_bench")
+	var saved: Dictionary = {"player": _hero.snapshot_state(), "level": _level.snapshot_state()}
+	if not _expect(not saved.player.is_empty() and not saved.level.is_empty() and _level.snapshot_error_with_player(saved.level, saved.player).is_empty(), "partial new native aggregate closes with retained arrangement and paired Hero"):
+		print("PAIR_ERROR ", _hero.last_snapshot_error, "; ", _level.last_snapshot_error); await _end(); return
+	receipts.append({"stage": "actual changed-court ordinary actions", "exact_pair": ExactJson.stringify(saved), "target_hits": _target_hits.duplicate(true), "held_union": _court_union})
+	complete = true
+	await _end()
+
+func _exercise() -> String:
+	for _episode: int in range(12):
+		var warning: Dictionary = await _next_warning()
+		if warning.is_empty(): return "no genuine fresh warning in bounded unchanged interval; " + _diagnostic()
+		_source_id = warning.id
+		_current = warning.record.duplicate(true)
+		var reason: String = _proof_error(warning)
+		if not reason.is_empty(): return reason
+		for segment: Dictionary in warning.proof.path:
+			if segment.kind in ["escape_dash", "positioning_dash"]:
+				reason = await _at_time(float(segment.start_s))
+				if reason.is_empty(): reason = await _dash(segment)
+			elif segment.kind == "ordinary_primary":
+				var acted_id: String = _source_id
+				reason = await _primary(segment, warning.proof)
+				if reason.is_empty() and _targets.has(acted_id): _target_hits[acted_id] = int(_target_hits.get(acted_id, 0)) + 1
+			else: reason = await _hold(segment)
+			if not reason.is_empty(): break
+		if reason == Replan: continue
+		if not reason.is_empty(): return reason
+		var all_hit: bool = true
+		for id: String in _targets: all_hit = all_hit and _target_hits.has(id)
+		if all_hit: return ""
+	return "changed-court target opportunity not completed within12 real proof/replan episodes"
+
+func _tick_safe() -> String:
+	if paused and is_instance_valid(_game) and is_instance_valid(_hero) and not _hero.dead:
+		var clock: float = _scheduler.get_clock()
+		var hero_clock: float = _hero.get_world_action_clock()
+		var prior_input: Dictionary = _game.call("get_input_observation_state")
+		_game.call("resume_lab") # Explicit public resume after observed application pause; no clock/deadline adjustment.
+		if paused or _scheduler.get_clock() != clock or _hero.get_world_action_clock() != hero_clock or _game.call("get_input_observation_state") != prior_input: return "public resume changed saved clocks/input or failed to resume"
+		_public_resumes.append({"clock_s": clock, "hero_clock_s": hero_clock, "observed_background_notifications": _game.get("background_pause_events").duplicate()})
+	var reason: String = await super._tick_safe()
+	if not reason.is_empty(): return reason
+	if _targets.size() == 2 and _level.call("_source_running", _targets[0]) and _level.call("_source_running", _targets[1]): _court_union = true
+	if not portrait_dir.is_empty() and not _targets.is_empty():
+		for id: String in _targets:
+			var actual: Dictionary = _sources[id].call("state")
+			if actual.phase in ["warning", "lock", "active", "recovery"]:
+				var key: String = selected_court + "-" + id + "-" + String(actual.phase)
+				if not captures.has(key):
+					reason = await _portrait(key)
+					if not reason.is_empty(): return reason
+	return ""
+
+func _portrait(key: String) -> String:
+	if DisplayServer.get_name() == "headless": return "actual renderer required for requested brief portrait"
+	var old_paused: bool = paused
+	paused = true # Disclosed complete native boundary freeze for the raster only.
+	var before: Dictionary = {"player": _hero.snapshot_state(), "level": _level.snapshot_state()}
+	if before.player.is_empty() or before.level.is_empty(): return "brief portrait requires actual complete native pair"
+	await process_frame
+	await RenderingServer.frame_post_draw
+	var image: Image = root.get_texture().get_image()
+	var path: String = portrait_dir.path_join(key + ".png")
+	var code: int = image.save_png(path)
+	var unchanged: bool = ExactJson.stringify(before) == ExactJson.stringify({"player": _hero.snapshot_state(), "level": _level.snapshot_state()})
+	var note: Dictionary = {"png": path, "sha256": FileAccess.get_sha256(path), "dimensions": [image.get_width(), image.get_height()], "native_pair_exact": ExactJson.stringify(before), "unchanged_native_pair": unchanged}
+	var f: FileAccess = FileAccess.open(path + ".json", FileAccess.WRITE)
+	if f != null: f.store_string(JSON.stringify(note, "  ") + "\n"); f.close()
+	captures[key] = note
+	paused = old_paused
+	return "" if code == OK and unchanged else "actual portrait write or paused native pair stability failed"
+
+func _pending() -> Dictionary:
+	var next: Dictionary = super._pending()
+	if not preserve_safe_path or next.is_empty() or _current.is_empty() or not _current_live(): return next
+	var observed: Dictionary = _warnings.get(String(_current.id), {})
+	if not observed.get("proof") is Dictionary or not observed.proof.get("path") is Array: return next
+	var path: Array[Dictionary] = []
+	for segment: Variant in observed.proof.path:
+		if not segment is Dictionary: return next
+		path.append(segment.duplicate(true))
+	if path.is_empty(): return next
+	var now: float = _scheduler.get_clock()
+	var path_end: float = float(path[-1].end_s)
+	if now < float(path[0].start_s) - TimeEpsilon or now > path_end + TimeEpsilon: return next
+	var aligned: bool = false
+	for segment: Dictionary in path:
+		if now < float(segment.start_s) - TimeEpsilon or now > float(segment.end_s) + TimeEpsilon: continue
+		var duration: float = float(segment.end_s) - float(segment.start_s)
+		var expected: Vector3 = segment.to if duration <= TimeEpsilon else (segment.from as Vector3).lerp(segment.to, clampf((now - float(segment.start_s)) / duration, 0.0, 1.0))
+		aligned = _hero.global_position.distance_to(expected) <= PointTolerance
+		if aligned: break
+	if not aligned: return next
+	var held_observations: Array[Dictionary] = []
+	for record: Dictionary in _scheduler.reservations():
+		var begin: float = maxf(now, float(record.active_from_s))
+		var end: float = float(record.active_until_s)
+		# The retained response grants no waiting/movement permission after
+		# its endpoint. Every current danger must finish within that horizon.
+		if end > path_end + TimeEpsilon: return next
+		if begin <= end + TimeEpsilon and Geometry.timed_path_hits(record.geometry, path, begin, end, CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN): return next
+		# Match the existing navigation guard's fixed-tick envelope: actual
+		# actions can start on the next tick and finish up to two ticks late.
+		# If any future hazard overlaps a segment's allowed occupancy window,
+		# require its entire spatial sweep clear, including stationary holds.
+		for segment: Dictionary in path:
+			var earliest: float = maxf(now, float(segment.start_s))
+			var latest: float = float(segment.end_s) + 2.0 * _tick_s()
+			if earliest <= minf(latest, end) + TimeEpsilon and latest >= begin - TimeEpsilon and Geometry.segment_hits(record.geometry, segment.from, segment.to, CinderThreatScheduler.CAPSULE_RADIUS + CinderThreatScheduler.SKIN): return next
+		held_observations.append({"id": record.id, "source_id": _source_for_record(record), "active_from_s": record.active_from_s, "active_until_s": record.active_until_s, "geometry": _native_plain(record.geometry)})
+	# A different player decision: keep the already chosen STILL-LIVE
+	# commitment only after checking its entire remaining path against every
+	# real future timed footprint. No source, permission or deadline is changed.
+	var observation: String = ExactJson.stringify({"path": _native_plain(path), "held": held_observations})
+	if observation.is_empty(): return next
+	var key: String = String(_current.id) + ":" + String(next.record.id)
+	if not _seen_safe_continuations.has(key):
+		_seen_safe_continuations[key] = true
+		_safe_warning_continuations.append({"clock_s": now, "original_path_end_s": path_end, "live_current_fixed_record_exact": ExactJson.stringify(_native_plain(_fixed_record(_current))), "live_current_reservation_id": _current.id, "deferred_new_warning_id": next.record.id, "exact_remaining_path_and_held_observation": observation, "all_future_held_paths_clear": true})
+	# Do not consume/complete the later warning. It remains eligible while
+	# warning; this deferral lasts only as long as the original live path.
+
+	return {}
+
+func _native_plain(value: Variant) -> Variant:
+	if value is Vector3: return Codec.vector3(value)
+	if value is Vector2: return [value.x, value.y]
+	if value is Dictionary:
+		var result: Dictionary = {}
+		for key: Variant in value: result[key] = _native_plain(value[key])
+		return result
+	if value is Array:
+		var result: Array = []
+		for entry: Variant in value: result.append(_native_plain(entry))
+		return result
+	return value
+
+func _root_approach_candidate() -> Dictionary:
+	# Approach only the changed court; earlier sources still retain native
+	# authority and remain in _pending and every union/proof safety check.
+	var observed: Array[String] = _group_ids.duplicate()
+	_group_ids.assign(_targets)
+	var result: Dictionary = super._root_approach_candidate()
+	_group_ids.assign(observed)
+	return result
+
+func _prepare_primary_resources() -> void:
+	# Preserve actual earned reload/ammo after the one disclosed initial depletion.
+	pass
+
+func _sources_observation() -> Dictionary:
+	var result: Dictionary = {}
+	for name: String in _source_names: result[name] = FileAccess.get_sha256("res://" + name) if FileAccess.file_exists("res://" + name) else null
+	return result
+
+func _expect(ok: bool, label: String, detail: String = "") -> bool:
+	_checks += 1
+	var row: Dictionary = {"n": _checks, "ok": ok, "label": label, "detail": detail}
+	rows.append(row)
+	if not ok:
+		_failures += 1
+		if first_failure.is_empty(): first_failure = row.duplicate(true)
+		push_error("FAIL: " + label + "; " + detail)
+	else: print("PASS: " + label)
+	return ok
+
+func _end() -> void:
+	if _finishing: return
+	_finishing = true
+	if not complete and is_instance_valid(_hero) and is_instance_valid(_level) and is_instance_valid(_scheduler):
+		_game.call("open_bench") # Freeze this completed failure boundary before native snapshot diagnostics.
+		var pair: Dictionary = {"player": _hero.snapshot_state(), "level": _level.snapshot_state()}
+		_failure_probe = {"diagnostic": _diagnostic(), "exact_pair_if_valid": ExactJson.stringify(pair) if not pair.player.is_empty() and not pair.level.is_empty() else "", "player_snapshot_error": _hero.last_snapshot_error, "level_snapshot_error": _level.last_snapshot_error, "native_observation_exact": ExactJson.stringify(_native_plain({"state": _level.call("state"), "held": _scheduler.reservations(), "observer_expected_hp": _expected_hp, "observer_targets_hit": _target_hits, "observer_current_record": _current}))}
+	await _dispose()
+	_finish()
+
+func _finish() -> void:
+	if not _finishing:
+		_end.call_deferred(); return
+	var report: Dictionary = {"checks": _checks, "failures": _failures, "rows": rows, "first_failure": first_failure, "complete": complete, "success": complete and _failures == 0, "setup": _setup, "explicit_public_resumes": _public_resumes, "profile": selected_profile, "court": selected_court, "selected_natural_sun": selected_sun, "kit": _kit, "receipts": receipts, "captures": captures, "failure_probe": _failure_probe, "preserve_safe_path": preserve_safe_path, "safe_warning_continuations": _safe_warning_continuations, "source_before": source_before, "source_after": _sources_observation(), "scope": "Changed court ordinary actions/native placement only; disclosed stable Hero and initial zero ammo. Earlier sources alive/authoritative. No route/allclear/exit/ShellCampaignAttempts/legacy/FPS/balance claim."}
+	if not output.is_empty():
+		var f: FileAccess = FileAccess.open(output, FileAccess.WRITE)
+		if f != null: f.store_string(JSON.stringify(report, "  ") + "\n"); f.close()
+	print("FOREST_CHANGED_COURT ", _checks, "/", _failures, " complete=", complete, " report=", output, " sha256=", FileAccess.get_sha256(output))
+	quit(0 if complete and _failures == 0 else 1)
+
+func _prepare() -> String:
+	paused = false
+	_game = MainScene.instantiate()
+	_game.set_script(ProfileMain)
+	_game.set("selected_profile", selected_profile)
+	root.add_child(_game)
+	var lab_hero: CinderPlayer = _game.get("player") as CinderPlayer
+	_old_hero = lab_hero
+	_old_level = _game.get("active_level")
+	if lab_hero == null or not _game.call("is_lab_level") or not get_nodes_in_group("enemies").is_empty(): return "actual enemy-free lab is unavailable"
+	_game.call("open_bench")
+	for slot: String in Slots:
+		if not lab_hero.equip_item(String(_kit[slot])): return "public equip failed: " + slot
+	if not paused or not _game.call("load_level_scene", FullPath): return "actual paused full-scene carryover failed"
+	_hero = _game.get("player") as CinderPlayer
+	_level = _game.get("active_level") as CinderLevel
+	if _hero == null or _level == null or _hero == lab_hero or _level.scene_file_path != FullPath or _level.get_script().resource_path != RuntimePath or not _level.contract_error().is_empty(): return "fresh actual full forest did not enter: " + (_level.contract_error() if _level != null else "missing level")
+	_scheduler = _level.get("threat_scheduler") as CinderThreatScheduler
+	var public_sources: Variant = _level.get("sources")
+	if _scheduler == null or not public_sources is Dictionary or not Codec.keys_error(public_sources, SourceIds).is_empty(): return "public nine-source map/Scheduler differs"
+	_sources = public_sources.duplicate()
+	var scenery: Node = _level.get("scenery") as Node
+	_floor = scenery.get("floor_body") as StaticBody3D if scenery != null else null
+	_exit_cue = _level.get("exit_cue") as CinderInteractionCue
+	if _floor == null or _exit_cue == null or _hero.presentation_id != "act3_traveller" or not _exact(_hero.equipment.snapshot(), _kit) or not _exact(_hero.stats, _stats): return "actual shared traveller/floor/cue/carried kit differs"
+	var solid: CollisionShape3D = _floor.get_node_or_null("Solid") as CollisionShape3D
+	if solid == null or not solid.shape is BoxShape3D or (solid.shape as BoxShape3D).size != Vector3(14, 1, 108): return "actual continuous14×108 box floor differs"
+	var owners: Dictionary = {}
+	for id: String in SourceIds:
+		var source: Node3D = _sources[id] as Node3D
+		if source == null or not source.has_method("state") or not source.is_in_group("enemies") or source.get_world_3d() != _hero.get_world_3d() or source.is_physics_processing(): return "actual configured dormant source differs: " + id
+		if _is_root(id):
+			if not source is CinderAct3RootLatcher: return "actual Root type differs: " + id
+			var mechanism: CinderLaneMechanism = source.call("get_mechanism")
+			owners[id + "/attack"] = mechanism
+			mechanism.hit_resolved.connect(_on_root_contact.bind(id))
+		else:
+			if not source is CinderAct3SunboundStalker: return "actual Stalker type differs: " + id
+			owners[id] = source
+			source.connect("hit_resolved", _on_stalker_contact.bind(id))
+		_expected_hp[id] = float((source.call("state") as Dictionary).hp)
+		source.connect("died", _on_death.bind(id))
+	_hero.world_action_executed.connect(_on_action)
+	_hero.fired.connect(func(kind: String) -> void: _event("fired_" + kind))
+	_hero.equipment_changed.connect(func(_id: String) -> void: _event("equipment"))
+	_hero.died.connect(func() -> void: _event("hero_death"))
+	_level.checkpoint_requested.connect(_on_checkpoint)
+	_level.completion_requested.connect(func(_id: String, _completion: String) -> void: _event("completion"))
+	_level.contact_exit_requested.connect(func(_id: String, _exit: String) -> void: _event("exit"))
+	_game.call("open_bench")
+	_hero.shells = 0 # Public depleted-ammo fixture; natural reload/credit unchanged.
+	_hp_before = _hero.hp
+	_topology = _world_topology()
+	await process_frame
+	await process_frame
+	var state: Dictionary = _level.call("state")
+	var bindings: Dictionary = _level.call("scheduler_bindings")
+	if not paused or _hero.get_world_action_clock() != 0.0 or _scheduler.get_clock() != 0.0 or state.get("api_revision") != "act3-living-forest-level-2" or not String(state.get("configuration_error", "")).is_empty() or not state.entered.is_empty() or not state.cleared.is_empty() or _hero.shells != 0: return "paused setup advanced route history/clock or failed configuration"
+	return "" if bindings.get("owners") == owners and bindings.get("actors", {}).get("hero") == _hero and bindings.get("floors", {}).get("forest-floor", {}).get("collision") == solid else "typed public scheduler owner/floor/Hero bindings differ"
+

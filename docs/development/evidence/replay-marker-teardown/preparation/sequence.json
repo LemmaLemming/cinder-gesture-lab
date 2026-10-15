@@ -1,0 +1,80 @@
+{
+  "steps": [
+    {
+      "command": [
+        "python3",
+        ".cinder/echo-teardown-20261015/run.py",
+        "seal",
+        "--test",
+        "teardown",
+        "--seal",
+        ".cinder/echo-teardown-20261015/after-import.json"
+      ],
+      "started": "2026-10-15T07:20:18.084027+00:00",
+      "state": "CLOSED",
+      "code": 0,
+      "closed_at": "2026-10-15T07:20:18.133776+00:00"
+    },
+    {
+      "command": [
+        "python3",
+        ".cinder/echo-teardown-20261015/run.py",
+        "parse",
+        "--test",
+        "teardown",
+        "--seal",
+        ".cinder/echo-teardown-20261015/after-import.json"
+      ],
+      "started": "2026-10-15T07:20:18.134086+00:00",
+      "state": "CLOSED",
+      "code": 0,
+      "closed_at": "2026-10-15T07:24:33.474254+00:00"
+    },
+    {
+      "command": [
+        "python3",
+        ".cinder/echo-teardown-20261015/run.py",
+        "parse",
+        "--test",
+        "captured",
+        "--seal",
+        ".cinder/echo-teardown-20261015/after-import.json"
+      ],
+      "started": "2026-10-15T07:24:33.474900+00:00",
+      "state": "CLOSED",
+      "code": 0,
+      "closed_at": "2026-10-15T07:24:35.254052+00:00"
+    },
+    {
+      "command": [
+        "python3",
+        ".cinder/echo-teardown-20261015/run.py",
+        "run",
+        "--test",
+        "teardown",
+        "--seal",
+        ".cinder/echo-teardown-20261015/after-import.json"
+      ],
+      "started": "2026-10-15T07:24:35.254468+00:00",
+      "state": "CLOSED",
+      "code": 0,
+      "closed_at": "2026-10-15T07:25:21.364303+00:00"
+    },
+    {
+      "command": [
+        "python3",
+        ".cinder/echo-teardown-20261015/run.py",
+        "run",
+        "--test",
+        "captured",
+        "--seal",
+        ".cinder/echo-teardown-20261015/after-import.json"
+      ],
+      "started": "2026-10-15T07:25:21.365087+00:00",
+      "state": "CLOSED",
+      "code": 1,
+      "closed_at": "2026-10-15T07:28:20.754380+00:00"
+    }
+  ],
+  "remaining_unexecuted": []
+}
