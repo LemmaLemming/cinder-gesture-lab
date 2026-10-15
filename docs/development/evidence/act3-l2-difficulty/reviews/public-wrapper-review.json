@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-15T07:10:53.281845+00:00",
+  "kind": "host-only-public-wrapper-equivalence-review",
+  "all_checks_pass": true,
+  "checks": {
+    "Python_AST_and_compile_valid_without_execution": true,
+    "normalized_execution_AST_exact": true,
+    "host_only_root_matches": true,
+    "host_seal79_named_pins": true,
+    "only_wrapper_identity_differs_from_actual_private_run": true,
+    "all78_common_host_pins_match_actual_weak_run": true,
+    "public_wrapper_exact_self_pin": true,
+    "all_host_sealed_current_named_bytes_match": true,
+    "private_wrapper_current_matches_executed_run": true,
+    "canonical_queue_direct_child180_after_queue_retained": true
+  },
+  "public_wrapper": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/dev/forest_arrangement.py",
+    "sha256": "413fa7e9494043ab61212baf290e2a10c10a5fcf8f4f4d8b3c63217addf73b5b"
+  },
+  "private_wrapper": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a3-l2-difficulty-20261015/run.py",
+    "sha256": "f6d079f6bb17306719014a21a3f6f510093ee9246b360eb02d557b29d9989311"
+  },
+  "host_only_seal": {
+    "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a3-l2-difficulty-20261015/public-wrapper-host-only-seal.json",
+    "sha256": "6c3edeee1a32525ac19a75f4fb958210afbc743ac8c74443aece57dae007e65d"
+  },
+  "allowed_header_path_differences": [
+    "Public shebang/module docstring.",
+    "Private ROOT=Path.cwd(), HERE=private wrapper directory; public ROOT is script-relative repository root and HERE=.cinder/living-forest-arrangement with output directory creation.",
+    "Dynamic own-wrapper source pin identifies the corresponding wrapper path."
+  ],
+  "comparison": "After removing only module docstring, ROOT/HERE assignments and HERE.mkdir, complete Python execution AST is identical. No function/command/queue/child/timeout/source/delta/row/portrait/result/index logic changed.",
+  "validation_scope": "Host-only AST parse+in-memory compile, self/common seal hashes and fixed named-byte observations. Public wrapper imported/executed no module code in this review; no engine or fresh public-wrapper native result is claimed. Private actual native run remains its original exact evidence."
+}

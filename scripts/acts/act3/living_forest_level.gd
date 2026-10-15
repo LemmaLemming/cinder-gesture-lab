@@ -9,9 +9,13 @@ const RootScript = preload("res://scripts/acts/act3/root_latcher.gd")
 const SchedulerScript = preload("res://scripts/combat/threat_scheduler.gd")
 const InteractionCue = preload("res://scripts/cues/interaction_cue.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Arrangement = preload("res://scripts/combat/encounter_arrangement.gd")
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
 const ENCOUNTER_DATA: String = "res://data/campaign/act3/a3_l2_encounters.json"
 const ENCOUNTER_ID: String = "A3-L2/full-route"
-const ROUTE_API: String = "act3-living-forest-level-1"
+const LEGACY_ROUTE_API: String = "act3-living-forest-level-1"
+const ROUTE_API: String = "act3-living-forest-level-2"
 const LOCAL_VERSION: int = 1
 const WORLD_REVISION: int = 1
 const COMPLETION_ID: String = "living-forest-clear"
@@ -24,6 +28,10 @@ const SOURCE_IDS: Array[String] = ["l2-threshold-stalker", "l2-promise-root", "l
 const SOURCE_KINDS: Dictionary = {"l2-threshold-stalker": "stalker", "l2-promise-root": "root", "l2-trunk-root": "root", "l2-priority-root": "root", "l2-priority-stalker": "stalker", "l2-watched-root": "root", "l2-watched-stalker": "stalker", "l2-slit-root": "root", "l2-slit-stalker": "stalker"}
 const SOURCE_ENTRIES: Dictionary = {"l2-threshold-stalker": 0, "l2-promise-root": 1, "l2-trunk-root": 2, "l2-priority-root": 3, "l2-priority-stalker": 3, "l2-watched-root": 4, "l2-watched-stalker": 4, "l2-slit-root": 5, "l2-slit-stalker": 5}
 const SOURCE_POSITIONS: Dictionary = {"l2-threshold-stalker": Vector3(1.2, 0.1, 34), "l2-promise-root": Vector3(0, 0, 22), "l2-trunk-root": Vector3(1.1, 0, 8), "l2-priority-root": Vector3(1.2, 0, -4.5), "l2-priority-stalker": Vector3(-1.3, 0.1, -4), "l2-watched-root": Vector3(-1.2, 0, -20), "l2-watched-stalker": Vector3(1.3, 0.1, -19.5), "l2-slit-root": Vector3(1.2, 0, -36.5), "l2-slit-stalker": Vector3(-1.3, 0.1, -36)}
+const LEGACY_RECIPE_IDS: Dictionary = {"assisted": "A3-L2/assisted-canonical@v1", "standard": "A3-L2/standard-canonical@v1", "challenge": "A3-L2/challenge-canonical-legacy@v1"}
+const CHALLENGE_RECIPE: String = "A3-L2/challenge-two-root-priority@v2"
+const LEGACY_LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "scenery", "scheduler", "sources", "route"]
+const ARRANGEMENT_LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "scenery", "scheduler", "sources", "route", "arrangement"]
 
 ## Public stable live nodes remain owned after death; Root keeps spent art.
 var sources: Dictionary = {}
@@ -41,6 +49,78 @@ var _contact: Dictionary = {}
 var _death_callbacks: Dictionary = {}
 var _exit_dispatch_queued: bool = false
 var _exit_dispatch_generation: int = 0
+var _arrangement_descriptor: Dictionary = {}
+var _selected_entries: Dictionary = {}
+var _selected_starts: Dictionary = {}
+var _legacy_capture: bool = false
+var _sources_configured: bool = false
+
+
+## Pure authored metadata. Native placement/admission remains the consumer's job.
+static func arrangement_definition_error(definition: Variant) -> String:
+	var error: String = Arrangement.definition_error(definition)
+	if not error.is_empty(): return error
+	if definition.unit_ids != SOURCE_IDS or definition.recipes.size() != 4:
+		return "Living Forest requires its nine original units and four retained recipes"
+	var expected: Dictionary = {}
+	for profile: String in LEGACY_RECIPE_IDS:
+		expected[LEGACY_RECIPE_IDS[profile]] = {"recipe_id": LEGACY_RECIPE_IDS[profile], "profile": profile, "order": SOURCE_IDS.duplicate()}
+	var challenge: Array = SOURCE_IDS.duplicate()
+	challenge[2] = "l2-priority-stalker"
+	challenge[4] = "l2-trunk-root"
+	expected[CHALLENGE_RECIPE] = {"recipe_id": CHALLENGE_RECIPE, "profile": "challenge", "order": challenge}
+	for recipe: Dictionary in definition.recipes:
+		if not expected.has(recipe.recipe_id) or not Codec.same_values(recipe, expected[recipe.recipe_id]):
+			return "Living Forest retained recipe content cannot be repurposed"
+	return ""
+
+
+static func arrangement_layout(descriptor: Variant, definition: Variant) -> Dictionary:
+	var error: String = arrangement_definition_error(definition)
+	if not error.is_empty(): return {"error": error}
+	var selector := Arrangement.new(definition)
+	error = selector.saved_error(descriptor)
+	if not error.is_empty(): return {"error": error}
+	var entries: Dictionary = {}
+	var starts: Dictionary = {}
+	for index: int in range(SOURCE_IDS.size()):
+		var slot: String = SOURCE_IDS[index]
+		var source_id: String = descriptor.order[index]
+		var slot_position: Vector3 = SOURCE_POSITIONS[slot]
+		# Exchange ground slots, never the native Root0/Stalker0.1 height.
+		slot_position.y = (SOURCE_POSITIONS[source_id] as Vector3).y
+		entries[source_id] = SOURCE_ENTRIES[slot]
+		starts[source_id] = slot_position
+	return {"error": "", "descriptor": selector.restore(descriptor), "entries": entries, "starts": starts}
+
+
+## Closed construction receipt only; this does not validate actors or history.
+## The existing complete pure validators run after entitled native construction.
+static func arrangement_constructor(local: Variant, definition: Variant) -> Dictionary:
+	var error: String = Codec.value_error(local)
+	if not error.is_empty(): return {"error": error}
+	if not local is Dictionary: return {"error": "Living Forest local unit must be a dictionary"}
+	var legacy: bool = local.get("api_revision") == LEGACY_ROUTE_API and Codec.is_integer(local.get("schema_version"), 1, 1)
+	var current: bool = local.get("api_revision") == ROUTE_API and Codec.is_integer(local.get("schema_version"), 2, 2)
+	if not legacy and not current: return {"error": "Unsupported Living Forest inner API/schema"}
+	if not Codec.keys_error(local, LEGACY_LOCAL_KEYS if legacy else ARRANGEMENT_LOCAL_KEYS).is_empty() or not local.get("scenery") is Dictionary or not local.get("scheduler") is Dictionary or not local.get("sources") is Dictionary or not local.get("route") is Dictionary:
+		return {"error": "Living Forest requires its closed complete versioned local unit"}
+	var profile: Variant = local.scheduler.get("profile")
+	if not profile is Dictionary or not profile.get("id") is String:
+		return {"error": "Living Forest construction requires the saved Scheduler profile"}
+	var resolver := Difficulty.new()
+	var canonical: Dictionary = resolver.profile(profile.id)
+	if canonical.is_empty() or Exact.stringify(profile) != Exact.stringify(canonical):
+		return {"error": "Living Forest saved construction profile differs from the canonical profile"}
+	var descriptor: Variant = local.get("arrangement")
+	if legacy:
+		descriptor = {"schema_version": 1, "profile": profile.id, "recipe_id": LEGACY_RECIPE_IDS[profile.id], "order": SOURCE_IDS.duplicate()}
+	var selected: Dictionary = arrangement_layout(descriptor, definition)
+	if not String(selected.error).is_empty(): return selected
+	if selected.descriptor.profile != profile.id:
+		return {"error": "Living Forest arrangement and saved Scheduler profiles differ"}
+	selected["legacy"] = legacy
+	return selected
 
 
 func _ready() -> void:
@@ -122,7 +202,7 @@ func _authoring_error(size: Vector3) -> String:
 			seen.append(definition.id)
 	if seen != SOURCE_IDS or not _authoring.get("contact_exit") is Dictionary or _authoring.contact_exit.get("id") != EXIT_ID or _authoring.contact_exit.get("completion_id") != COMPLETION_ID or not Codec.is_vector3(_authoring.contact_exit.get("position")) or Codec.read_vector3(_authoring.contact_exit.position) != Vector3(0, 0.1, -47) or _authoring.get("ability_use_ids") != [] or _authoring.get("claim_ids") != []:
 		return "Living Forest requires its original roster/contact and no new allocations"
-	return ""
+	return arrangement_definition_error(_authoring.get("difficulty_arrangements"))
 
 
 func contract_error() -> String:
@@ -138,10 +218,45 @@ func _on_enter_level() -> void:
 	var profile: String = "standard"
 	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
 		profile = String(shared_shell.call("get_difficulty_preference"))
-	if not threat_scheduler.begin_encounter(profile, ENCOUNTER_ID, WORLD_REVISION):
-		_configuration_error = threat_scheduler.last_error
-		_update_presentation()
-		return
+	var selector := Arrangement.new(_authoring.difficulty_arrangements)
+	var descriptor: Dictionary = selector.select_fresh(profile)
+	_configuration_error = selector.last_error if descriptor.is_empty() else _configure_sources(descriptor, false)
+	_update_presentation()
+
+
+func restore_candidate_construction_required() -> bool:
+	# The saved recipe can differ from the active donor's immutable bindings.
+	return true
+
+
+func _on_enter_restore_candidate(local: Dictionary, _saved_player: Dictionary) -> String:
+	var selected: Dictionary = arrangement_constructor(local, _authoring.get("difficulty_arrangements"))
+	if not String(selected.error).is_empty(): return String(selected.error)
+	_configuration_error = _configure_sources(selected.descriptor, selected.legacy)
+	if not _configuration_error.is_empty(): return _configuration_error
+	# Only native bindings/quiet scenery are constructed here. Player and every
+	# typed actor/Scheduler/mechanism/history still prevalidate before commit.
+	super._on_enter_level()
+	_update_presentation(true)
+	return ""
+
+
+func _configure_sources(descriptor: Dictionary, legacy: bool) -> String:
+	if _sources_configured: return "Living Forest native sources can only be configured once"
+	var selected: Dictionary = arrangement_layout(descriptor, _authoring.get("difficulty_arrangements"))
+	if not String(selected.error).is_empty(): return String(selected.error)
+	_arrangement_descriptor = selected.descriptor.duplicate(true)
+	_selected_entries = selected.entries.duplicate(true)
+	_selected_starts = selected.starts.duplicate(true)
+	_legacy_capture = legacy
+	# Preserve marker→global semantics; markers remain unchanged reference
+	# anchors. Every source is positioned before its sole native configure.
+	for source_id: String in SOURCE_IDS:
+		sources[source_id].global_position = to_global(_selected_starts[source_id])
+		sources[source_id].set_physics_process(false)
+	if not threat_scheduler.begin_encounter(_arrangement_descriptor.profile, ENCOUNTER_ID, WORLD_REVISION):
+		return threat_scheduler.last_error
+	_sources_configured = true
 	for source_id: String in SOURCE_IDS:
 		var source: Node3D = sources[source_id]
 		var configured: bool
@@ -150,13 +265,11 @@ func _on_enter_level() -> void:
 		else:
 			configured = source.call("configure", source_id, hero, effects, threat_scheduler, combat_response.bind(source_id), root_framing_guard.bind(source_id))
 		if not configured:
-			_configuration_error = "Living Forest source configuration failed: " + source_id + ": " + String(source.get("last_error"))
-			_update_presentation()
-			return
+			return "Living Forest source configuration failed: " + source_id + ": " + String(source.get("last_error"))
 		var callback: Callable = _on_source_died.bind(source_id)
 		_death_callbacks[source_id] = callback
 		source.connect("died", callback)
-	_update_presentation()
+	return ""
 
 
 func _on_exit_level() -> void:
@@ -219,7 +332,7 @@ func _advance_entry() -> bool:
 		sun_stage = "preview"
 		_last_sun_view = ""
 	for source_id: String in SOURCE_IDS:
-		if int(SOURCE_ENTRIES[source_id]) == index:
+		if int(_selected_entries[source_id]) == index:
 			sources[source_id].set_physics_process(not bool(sources[source_id].get("dead")))
 	# Already sampled consumers finish before the shell's deferred checkpoint.
 	# New visible configured sources cannot warn until the next actual tick.
@@ -323,7 +436,7 @@ func _camera_framing_points() -> Array:
 	# with the held union. Never retain or allocate this ephemeral camera input.
 	if not get_tree().paused and is_instance_valid(hero) and not hero.dead:
 		for source_id: String in SOURCE_IDS:
-			if SOURCE_KINDS[source_id] != "root" or int(SOURCE_ENTRIES[source_id]) >= _entries.size() or _source_running(source_id) or bool(sources[source_id].get("dead")):
+			if SOURCE_KINDS[source_id] != "root" or int(_selected_entries[source_id]) >= _entries.size() or _source_running(source_id) or bool(sources[source_id].get("dead")):
 				continue
 			var preview: Dictionary = _root_preview(source_id)
 			if not preview.get("accepted", false):
@@ -537,12 +650,12 @@ func state() -> Dictionary:
 	for index: int in range(_entries.size()):
 		var complete: bool = true
 		for source_id: String in SOURCE_IDS:
-			if int(SOURCE_ENTRIES[source_id]) == index and not _deaths.has(source_id):
+			if int(_selected_entries[source_id]) == index and not _deaths.has(source_id):
 				complete = false
 		if not complete:
 			break
 		prefix += 1
-	return {"api_revision": ROUTE_API, "configuration_error": _configuration_error, "entered": entered, "cleared": cleared, "cleared_prefix": prefix, "entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "watched_preview": _watched_preview.duplicate(true), "beat": beat_index + 1, "sun_state": sun_state, "sun_elapsed_s": sun_elapsed_s, "sun_stage": sun_stage, "exit_state": _exit_state, "contact": _contact.duplicate(true), "completed": is_completed(), "checkpoint": current_checkpoint(), "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else 0.0, "source_states": actual}
+	return {"api_revision": LEGACY_ROUTE_API if _legacy_capture else ROUTE_API, "configuration_error": _configuration_error, "arrangement": _arrangement_descriptor.duplicate(true), "selected_entries": _selected_entries.duplicate(true), "selected_starts": _selected_starts.duplicate(true), "entered": entered, "cleared": cleared, "cleared_prefix": prefix, "entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "watched_preview": _watched_preview.duplicate(true), "beat": beat_index + 1, "sun_state": sun_state, "sun_elapsed_s": sun_elapsed_s, "sun_stage": sun_stage, "exit_state": _exit_state, "contact": _contact.duplicate(true), "completed": is_completed(), "checkpoint": current_checkpoint(), "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else 0.0, "source_states": actual}
 
 
 func _update_presentation(silent: bool = false) -> void:
@@ -577,6 +690,10 @@ func _update_guidance() -> void:
 	elif _entries.size() == 1:
 		var first: Dictionary = sources["l2-threshold-stalker"].call("state")
 		objective_text = "VAST TRUNKS\nFOLLOW THE NEXT OPEN COURT" if first.dead else ("SINGLE CREST: ITS RIGHT FLANK\nDASH CLEAR; TAP LOW RECOVERY" if int(first.effective_sun) == 0 else "FORKED CREST: ITS LEFT FLANK\nDASH CLEAR; TAP LOW RECOVERY")
+	elif _arrangement_descriptor.get("recipe_id") == CHALLENGE_RECIPE and _entries.size() == 3:
+		objective_text = "TWO LIVING COURTS\nREAD THE CREST; KEEP THE TRUNK SIDE OPEN"
+	elif _arrangement_descriptor.get("recipe_id") == CHALLENGE_RECIPE and _entries.size() == 4:
+		objective_text = "TWO ROOTS\nCOMMIT ONE OUTWARD; RETURN TO A KNOT"
 	elif _entries.size() in [2, 3]:
 		objective_text = BEAT_LABELS[beat_index].to_upper() + "\nDASH OUTSIDE THE ROOTS; RETURN TO LOW KNOT"
 	else:
@@ -593,6 +710,13 @@ func _runtime_error() -> String:
 		return error
 	if not is_instance_valid(threat_scheduler) or not is_instance_valid(exit_cue) or threat_scheduler.is_queued_for_deletion() or exit_cue.is_queued_for_deletion() or not is_ancestor_of(threat_scheduler) or not is_ancestor_of(exit_cue) or not Codec.keys_error(sources, SOURCE_IDS).is_empty():
 		return "Living Forest requires its shared scheduler, cue and nine retained sources"
+	var selected: Dictionary = arrangement_layout(_arrangement_descriptor, _authoring.get("difficulty_arrangements"))
+	if not _sources_configured or not String(selected.error).is_empty():
+		return "Living Forest requires its validated immutable source-slot selection"
+	if _selected_entries != selected.entries or _selected_starts != selected.starts or threat_scheduler.encounter_profile().get("id") != _arrangement_descriptor.profile:
+		return "Living Forest selected starts/entries/profile differ from the retained recipe"
+	if _legacy_capture and _arrangement_descriptor.recipe_id != LEGACY_RECIPE_IDS[_arrangement_descriptor.profile]:
+		return "Legacy Living Forest capture must retain its canonical arrangement"
 	var floor_collision: Variant = _floor_region.get("collision")
 	if not is_instance_valid(floor_collision) or floor_collision.get_parent() != scenery.get("floor_body") or floor_collision != scenery.get("floor_body").get_node_or_null("Solid"):
 		return "Living Forest requires its original actual floor binding"
@@ -604,6 +728,8 @@ func _runtime_error() -> String:
 		var marker: Marker3D = get_node_or_null(_source_marker_path(source_id)) as Marker3D
 		if not is_instance_valid(source) or source.is_queued_for_deletion() or not source.is_inside_tree() or not is_ancestor_of(source) or not is_instance_valid(marker) or marker.is_queued_for_deletion() or marker.position != SOURCE_POSITIONS[source_id]:
 			return "Living Forest requires each stable source/marker: " + source_id
+		if SOURCE_KINDS[source_id] == "root" and source.global_position != to_global(_selected_starts[source_id]):
+			return "Living Forest fixed Root differs from its selected native start: " + source_id
 		if (SOURCE_KINDS[source_id] == "stalker" and not source is CinderAct3SunboundStalker) or (SOURCE_KINDS[source_id] == "root" and not source is CinderAct3RootLatcher):
 			return "Living Forest source type differs: " + source_id
 		if SOURCE_KINDS[source_id] == "root":
@@ -626,7 +752,9 @@ func _capture_local_state() -> Dictionary:
 	for source_id: String in SOURCE_IDS:
 		var saved: Dictionary = sources[source_id].call("snapshot_state") if SOURCE_KINDS[source_id] == "stalker" else sources[source_id].call("snapshot_state", bindings)
 		actors[source_id] = {"kind": SOURCE_KINDS[source_id], "actor": saved}
-	return {"api_revision": ROUTE_API, "schema_version": 1, "scenery": super._capture_local_state(), "scheduler": threat_scheduler.snapshot_state(bindings), "sources": actors, "route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "watched_preview": _watched_preview.duplicate(true), "exit_state": _exit_state, "contact": _contact.duplicate(true)}}
+	var local: Dictionary = {"api_revision": LEGACY_ROUTE_API if _legacy_capture else ROUTE_API, "schema_version": 1 if _legacy_capture else 2, "scenery": super._capture_local_state(), "scheduler": threat_scheduler.snapshot_state(bindings), "sources": actors, "route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "watched_preview": _watched_preview.duplicate(true), "exit_state": _exit_state, "contact": _contact.duplicate(true)}}
+	if not _legacy_capture: local["arrangement"] = _arrangement_descriptor.duplicate(true)
+	return local
 
 
 func _local_snapshot_error(local: Dictionary) -> String:
@@ -645,8 +773,10 @@ func _paired_local_error(local: Dictionary, expected_hero: Vector3, expected_dea
 	var error: String = _runtime_error()
 	if not error.is_empty():
 		return error
-	if not Codec.keys_error(local, ["api_revision", "schema_version", "scenery", "scheduler", "sources", "route"]).is_empty() or local.get("api_revision") != ROUTE_API or not Codec.is_integer(local.get("schema_version"), 1, 1) or not local.get("scenery") is Dictionary or not local.get("scheduler") is Dictionary or not local.get("sources") is Dictionary or not local.get("route") is Dictionary:
-		return "Living Forest requires its complete versioned typed route unit"
+	var selected: Dictionary = arrangement_constructor(local, _authoring.get("difficulty_arrangements"))
+	if not String(selected.error).is_empty(): return String(selected.error)
+	if selected.legacy != _legacy_capture or Exact.stringify(selected.descriptor) != Exact.stringify(_arrangement_descriptor) or selected.entries != _selected_entries or selected.starts != _selected_starts:
+		return "Living Forest saved arrangement differs from its constructed immutable bindings"
 	error = super._local_snapshot_error(local.scenery)
 	if not error.is_empty():
 		return error
@@ -723,7 +853,7 @@ func _route_local_error(local: Dictionary, expected_hero: Vector3, expected_dead
 	var latest_death_clock: float = 0.0
 	for source_id: String in SOURCE_IDS:
 		var saved: Dictionary = local.sources[source_id].actor
-		var entry_index: int = int(SOURCE_ENTRIES[source_id])
+		var entry_index: int = int(_selected_entries[source_id])
 		var entered: bool = entry_index < route.entries.size()
 		if bool(saved.dead) != route.deaths.has(source_id):
 			return "Living Forest death history must match actual typed tombstones"
@@ -737,7 +867,7 @@ func _route_local_error(local: Dictionary, expected_hero: Vector3, expected_dead
 		if not entered:
 			var cycle: int = int(saved.cycle) if SOURCE_KINDS[source_id] == "stalker" else int(saved.mechanism.cycle)
 			var leased: bool = not String(saved.reservation_id).is_empty() if SOURCE_KINDS[source_id] == "stalker" else saved.mechanism.status == "running"
-			if bool(saved.dead) or float(saved.hp) != float(saved.max_hp) or cycle != 0 or leased or Codec.read_vector3(saved.position) != (get_node(_source_marker_path(source_id)) as Marker3D).global_position:
+			if bool(saved.dead) or float(saved.hp) != float(saved.max_hp) or cycle != 0 or leased or Codec.read_vector3(saved.position) != to_global(_selected_starts[source_id]):
 				return "Living Forest unentered source must remain untouched, fixed and unleased"
 	var cleared: bool = route.entries.size() == ENTRY_IDS.size() and route.deaths.size() == SOURCE_IDS.size()
 	if not cleared and (route.exit_state != "clear" or not route.contact.is_empty()):
@@ -830,5 +960,5 @@ func _restore_local_state(local: Dictionary) -> void:
 			source.call("set_sun_visual", sun_state)
 			var refreshed: bool = source.call("refresh_presentation")
 			assert(refreshed, "Prevalidated Stalker presentation commit failed: " + source_id)
-		source.set_physics_process(int(SOURCE_ENTRIES[source_id]) < _entries.size() and not bool(source.get("dead")))
+		source.set_physics_process(int(_selected_entries[source_id]) < _entries.size() and not bool(source.get("dead")))
 	_update_presentation(true)
