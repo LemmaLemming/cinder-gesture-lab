@@ -332,6 +332,8 @@ func _count_native_sources(node: Node) -> int:
 func _portable(value: Variant) -> Variant:
 	if value is Vector3: return Codec.vector3(value)
 	if value is Vector2: return [value.x, value.y]
+	# Preserve native rectangle coordinates; never parse rounded display text.
+	if value is Rect2: return {"native_type": "Rect2", "position": _portable(value.position), "size": _portable(value.size)}
 	if value is Basis: return {"x": _portable(value.x), "y": _portable(value.y), "z": _portable(value.z)}
 	if value is Transform3D: return {"basis": _portable(value.basis), "origin": _portable(value.origin)}
 	if value is StringName: return String(value)
