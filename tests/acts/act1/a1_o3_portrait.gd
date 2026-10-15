@@ -54,12 +54,16 @@ func _run() -> void:
 	var contact: Vector3 = Layout.BELL_POSITION + Vector3(0, 0.005, 0)
 	hero.global_position = contact; hero.velocity = Vector3.ZERO
 	setups.append({"kind": "TEST same-floor Hero position and zero velocity", "position": _portable(contact), "scope": "No earned navigation or gesture credit"})
-	if not await _wait(_live_warning, "actual bell contact and published native warning", 15.0): await _finish(); return
+	if not await _wait(func() -> bool: return _live_warning() and _hud_matches_objective(), "actual bell contact, published native warning and naturally updated HUD", 15.0): await _finish(); return
 	if not await _pause(): await _finish(); return
-	if not _expect(_live_warning() and level.call("rehearsal_state").exercise_index == 0, "representative first-pair original warning survives public pause"): await _finish(); return
+	if not _expect(_live_warning() and _hud_matches_objective() and level.call("rehearsal_state").exercise_index == 0, "representative first-pair original warning and current objective survive public pause"): await _finish(); return
 	if not await _capture("02-first-warning"): await _finish(); return
 	complete = true
 	await _finish()
+
+func _hud_matches_objective() -> bool:
+	var label := (game.get("hud") as GameHUD).find_child("ObjectiveLabel", true, false) as Label
+	return label != null and label.text == level.objective_text.to_upper()
 
 func _live_warning() -> bool:
 	if admissions.is_empty() or not is_instance_valid(level): return false
@@ -97,7 +101,7 @@ func _wire() -> String:
 	var local: Dictionary = level.snapshot_state()
 	if local.is_empty(): return ""
 	var camera: Camera3D = game.get("camera")
-	return Exact.stringify(_portable({"level": local, "player": hero.snapshot_state(), "host": level.call("rehearsal_state"), "camera": {"frame": camera.global_transform, "size": camera.size, "framing": game.call("get_camera_framing_state")}, "input": game.call("get_input_observation_state"), "scheduler_clock": scheduler.get_clock()}))
+	return Exact.stringify(_portable({"level": local, "player": hero.snapshot_state(), "host": level.call("rehearsal_state"), "camera": {"frame": camera.global_transform, "size": camera.size, "framing": game.call("get_camera_framing_state")}, "input": game.call("get_input_observation_state"), "scheduler_clock": scheduler.get_clock(), "objective": {"level": level.objective_text, "actual_hud": ((game.get("hud") as GameHUD).find_child("ObjectiveLabel", true, false) as Label).text}}))
 
 func _wait(predicate: Callable, label: String, seconds: float) -> bool:
 	var deadline: int = Time.get_ticks_msec() + int(seconds * 1000)

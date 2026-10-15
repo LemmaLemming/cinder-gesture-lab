@@ -7,6 +7,8 @@ extends Node3D
 const Layout = preload("res://scripts/acts/act1/royal_rehearsal_layout.gd")
 const BELL_STATES: Array[String] = ["available", "active", "spent"]
 const API_REVISION: String = "act1-rehearsal-art-1"
+# Keep the centered contact approach in front of the opaque scenic stand.
+const BELL_ART_OFFSET: Vector3 = Vector3(0, 0, -0.30)
 
 var _level: Node3D
 var _script: Script
@@ -45,7 +47,7 @@ func _init() -> void:
 
 
 func _build() -> void:
-	var bell := _group(self, "PracticeBell", Layout.BELL_POSITION)
+	var bell := _group(self, "PracticeBell", Layout.BELL_POSITION + BELL_ART_OFFSET)
 	_landmarks["bell"] = bell
 	var vertices := PackedVector3Array()
 	var colors := PackedColorArray()

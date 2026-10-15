@@ -4,11 +4,11 @@
   "reuse_family": "Act1 Selenite Court small Royal Rehearsal additions",
   "implementation": {
     "path": "scripts/acts/act1/royal_rehearsal_art.gd",
-    "sha256": "747c1e6d9b866ff4cf69d7d6f43a17c634e655ea9deadb23849c58328ff31b2e",
+    "sha256": "91f4562366b2b75952068d9f41b40142c9c64897587396d53c9be063472d29aa",
     "api_revision": "act1-rehearsal-art-1",
     "kind": "original code-authored ArrayMesh geometry; no extracted concept pixels"
   },
-  "readiness": "source-authored, unparsed, unexecuted and not inspected in the actual portrait; host wiring and owner validation pending",
+  "readiness": "Revised source after actual portrait occlusion failure; current z=-0.30 art offset is unparsed/unexecuted and awaits owner portrait inspection. Original native18/0 does not establish visual acceptance.",
   "reference_inspection": [
     {
       "id": "G19",
@@ -42,9 +42,9 @@
         "height": 1.5,
         "depth": 0.4
       },
-      "pivot": "stand feet at Layout.BELL_POSITION=(-2.4,0,0)",
+      "pivot": "stand feet at Layout.BELL_POSITION + BELL_ART_OFFSET = (-2.4,0,-0.30); native contact anchor remains (-2.4,0,0)",
       "collision": "none; host BellArea and shared contact cue retain their authority",
-      "occlusion": "solid stand posts and bell; open foot-level gap; actual near-bell portrait and Hero-feet overlap still require inspection",
+      "occlusion": "Original centered stand obscured the actual contact-center Hero torso/feet. All stand/bell geometry moved north0.30m within original BellArea; depth-test ordering and actual portrait readability of this correction remain to be verified.",
       "states": {
         "available": "upright pale flared bell and centered clapper",
         "active": "static10-degree lean and offset clapper, no swing clock",
@@ -77,7 +77,20 @@
     "scripts/acts/act1/mushroom_selenite_art.gd",
     "scripts/character/player_presentations.gd"
   ],
-  "bounds": "landmark_world_corners reads every current visible native mesh AABB and transform, then returns eight conservative world-enclosure corners; hidden marker returns[]; invalid binding returns[Vector3.INF]",
-  "validation": "No engine, import, parser, gameplay or portrait run performed by this art author. Reuse of greybox45/0 is mechanics scope only and does not validate new art.",
-  "framing_budget": "Bell actual geometry is inside same-anchor native BellArea BOX; host must verify native containment before sharing its existing eight corners. Quiet markers are decoration outside required interaction union. Preserve 224 limit and every existing required bound."
+  "bounds": "landmark_world_corners still reads every current visible native mesh AABB and transform, including the authored bell offset, then returns eight conservative world-enclosure corners; hidden marker returns[]; invalid binding returns[Vector3.INF]",
+  "validation": "Art author inspected the original actual540x1170 first-warning image and confirmed occlusion. Parent reports original native portrait18/0; retained as native-only evidence with visual failure. No engine/import/parse/portrait rerun performed by this art author after offset correction.",
+  "framing_budget": "All bell geometry remains inside original native BellArea BOX. Source-computed offset extent relative to contact feet is x[-0.50,0.50],y[0,1.50],z[-0.50,-0.10], inside native x/z[-0.55,0.55],y[0,1.60]. Host must still verify actual eight native mesh corners before sharing existing contact corners; no224-limit or required-bound change.",
+  "occlusion_correction": {
+    "original_art_sha256": "747c1e6d9b866ff4cf69d7d6f43a17c634e655ea9deadb23849c58328ff31b2e",
+    "inspected_image": ".cinder/captures/o3-18947-1267551/02-first-warning.png",
+    "image_sha256": "047ec9072d855677cb600c0e8f064cb78fcacc131d0a32daf5b6cf6c26d32af3",
+    "dimensions": [
+      540,
+      1170
+    ],
+    "finding": "bell/stand occludes Hero torso and feet at contact center",
+    "original_native_result": "parent-reported18 passed0 failed, visual failure retained",
+    "change": "translate entire PracticeBell art group by (0,0,-0.30); dimensions, poses, markers, colliders, native contact anchor, API and framing budget unchanged",
+    "current_validation": "source-only bounds arithmetic; native and actual portrait correction unexecuted"
+  }
 }
