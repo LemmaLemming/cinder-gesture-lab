@@ -1,3 +1,11 @@
+## Separate O2 original Challenge fixtures sealed — 16 October 2026
+
+Corrected original producer02 at frozen `2b7833b4b3aa6859250120750ada08a6b090f121` closed **293 actual checks/0 failures**,31 native ticks,scope complete,native/wrapper0,diagnostics0,unchanged selected sources/HEAD. Raw log SHA `be65f18325296b12a85f070193f0cc474042acbe1a7362f10b22c5a07af1f2a3`. The authentic original Challenge entrance and first-Root held warning include whole units/sessions, unchanged entrance checkpoint/protected Story, raw format2 primary/backup/preferences and all five original native source origins. No primary, injury, court clear or synthetic history was introduced; genuine approach dash events are recorded.
+
+All18 indexed artifacts plus the original manifest are retained under `tests/acts/act3/fixtures/a3_o2_arrangement_legacy/`. Manifest SHA `a4dd684ee42fed0a9566d1fd3a8df2f1eacf31c31a727b290f5a26ecb49f97db`; every artifact size/hash is verified against that native manifest. Original production runtime `ea7a70be` and encounter data `07eb0dd3` remain unchanged at this seal. Import0/genuine UID and failed producer01 **184/1** retain their distinct original scopes and bytes. Host-only decoder/receipt-write errors are recorded without rewriting artifacts or rerunning native production.
+
+This milestone permits the separately approved reader/recipe implementation next. It grants no new-reader, save-compatibility, final-court response or portrait pass. Original eight-level acceptance remains complete; the narrow difficulty amendment is still under qualification on actual Shared65.
+
 # A3-O2 difficulty amendment — approved, not yet implemented
 
 Original [O2 acceptance](../../development/ACT3_O2_ACCEPTANCE.md) and the [eight-level closeout](ACT3_COMPLETION.md) remain complete. Integration's separate RESPONSE `afb39042` approves the exact private proposal `1ab5a745` on Shared65. No new shared-system or other-level ownership is granted.
