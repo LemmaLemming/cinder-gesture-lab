@@ -1,0 +1,1242 @@
+{
+  "schema_version": 1,
+  "actual_original_jobs": 17,
+  "original_clean_passes": 7,
+  "original_failed_or_incomplete": 10,
+  "phases": [
+    {
+      "original_run": "legacy-producer01",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "e6669c37647542b6225dbcfabd4e2ec99a4085bf77e3d8ef1b757fdf176956d5",
+        "actual_false_rows": 1,
+        "closed_state": "closed",
+        "exit_code": 1,
+        "first_false_row": {
+          "elapsed_ms": 37432,
+          "index": 60,
+          "label": "bounded actual native observation failed: first genuine Crossed native admission",
+          "operation": "public Resume: genuine old-format Crossed Challenge boundary",
+          "passed": false
+        },
+        "footer_joins_counts": true,
+        "native_assertion_rows": 100,
+        "native_complete": false,
+        "native_credit": false,
+        "native_sha256": "db8b99a617252e0bbf71aa04389ad3e33b6cb74659909cec55d05e72cbe727ad",
+        "native_source_subset_entries": 38,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": false,
+        "raw_diagnostic_count": 1,
+        "raw_diagnostics": [
+          "ERROR: bounded actual native observation failed: first genuine Crossed native admission"
+        ],
+        "raw_sha256": "f675398105442434dd40778382da3bd1a2132b2c63b61a3991fc00c2c991453f",
+        "receipt_sha256": "8fc150c7a8b2af3414faec799787793d7d46f4fdc4672aa8387851227486ae7c",
+        "run": "legacy-producer01",
+        "scope_note": "No admission within original24s bound; exact cause unlatched.",
+        "selected_source_count": 99,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "b46fa6ee3ee123f9b8343da322696e58a8d9a97f2144e5f9ce68c0baedfd8cbd",
+        "success": false
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer01/receipt.json",
+          "sha256": "8fc150c7a8b2af3414faec799787793d7d46f4fdc4672aa8387851227486ae7c",
+          "bytes": 34592,
+          "portable_cas_path": "blobs/sha256/8fc150c7a8b2af3414faec799787793d7d46f4fdc4672aa8387851227486ae7c.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer01/raw.log",
+          "sha256": "f675398105442434dd40778382da3bd1a2132b2c63b61a3991fc00c2c991453f",
+          "bytes": 582,
+          "portable_cas_path": "blobs/sha256/f675398105442434dd40778382da3bd1a2132b2c63b61a3991fc00c2c991453f.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer01/native.json",
+          "sha256": "db8b99a617252e0bbf71aa04389ad3e33b6cb74659909cec55d05e72cbe727ad",
+          "bytes": 1852599,
+          "portable_cas_path": "blobs/sha256/db8b99a617252e0bbf71aa04389ad3e33b6cb74659909cec55d05e72cbe727ad.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer01/source-pre.json",
+          "sha256": "b46fa6ee3ee123f9b8343da322696e58a8d9a97f2144e5f9ce68c0baedfd8cbd",
+          "bytes": 31405,
+          "portable_cas_path": "blobs/sha256/b46fa6ee3ee123f9b8343da322696e58a8d9a97f2144e5f9ce68c0baedfd8cbd.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer01/source-post.json",
+          "sha256": "b46fa6ee3ee123f9b8343da322696e58a8d9a97f2144e5f9ce68c0baedfd8cbd",
+          "bytes": 31405,
+          "portable_cas_path": "blobs/sha256/b46fa6ee3ee123f9b8343da322696e58a8d9a97f2144e5f9ce68c0baedfd8cbd.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer01/archive-verification.json",
+          "sha256": "db99cd8f9a4f799c930eab204d804a0705c7b07cd1297fc138957384703c0ead",
+          "bytes": 36699,
+          "portable_cas_path": "blobs/sha256/db99cd8f9a4f799c930eab204d804a0705c7b07cd1297fc138957384703c0ead.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "legacy-producer02",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "e6669c37647542b6225dbcfabd4e2ec99a4085bf77e3d8ef1b757fdf176956d5",
+        "actual_false_rows": 0,
+        "closed_state": "closed",
+        "exit_code": 0,
+        "first_false_row": null,
+        "footer_joins_counts": true,
+        "native_assertion_rows": 105,
+        "native_complete": true,
+        "native_credit": true,
+        "native_sha256": "cbe45ff196a16088210f78795970da42bd91e18fe4bd4c6c6a35e42dcb24bf10",
+        "native_source_subset_entries": 38,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": true,
+        "raw_diagnostic_count": 0,
+        "raw_diagnostics": [],
+        "raw_sha256": "425f6f22049dbf99da47b918362177eb375245e3d2618abe020b3e5c11ab5f56",
+        "receipt_sha256": "fb342a8da2423416c55c7554430234e02a132563a77ff26d1df014e24ceccb3e",
+        "run": "legacy-producer02",
+        "scope_note": "Genuine old Challenge first1; both candidates eligible.",
+        "selected_source_count": 99,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "5cf66a5508ddf939d8b38009fe0cf9d2dc2c6ede13867b5618e34ac3dc193fc6",
+        "success": true
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer02/receipt.json",
+          "sha256": "fb342a8da2423416c55c7554430234e02a132563a77ff26d1df014e24ceccb3e",
+          "bytes": 2766,
+          "portable_cas_path": "blobs/sha256/fb342a8da2423416c55c7554430234e02a132563a77ff26d1df014e24ceccb3e.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer02/raw.log",
+          "sha256": "425f6f22049dbf99da47b918362177eb375245e3d2618abe020b3e5c11ab5f56",
+          "bytes": 187,
+          "portable_cas_path": "blobs/sha256/425f6f22049dbf99da47b918362177eb375245e3d2618abe020b3e5c11ab5f56.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer02/native.json",
+          "sha256": "cbe45ff196a16088210f78795970da42bd91e18fe4bd4c6c6a35e42dcb24bf10",
+          "bytes": 3788786,
+          "portable_cas_path": "blobs/sha256/cbe45ff196a16088210f78795970da42bd91e18fe4bd4c6c6a35e42dcb24bf10.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer02/source-pre.json",
+          "sha256": "5cf66a5508ddf939d8b38009fe0cf9d2dc2c6ede13867b5618e34ac3dc193fc6",
+          "bytes": 31405,
+          "portable_cas_path": "blobs/sha256/5cf66a5508ddf939d8b38009fe0cf9d2dc2c6ede13867b5618e34ac3dc193fc6.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer02/source-post.json",
+          "sha256": "5cf66a5508ddf939d8b38009fe0cf9d2dc2c6ede13867b5618e34ac3dc193fc6",
+          "bytes": 31405,
+          "portable_cas_path": "blobs/sha256/5cf66a5508ddf939d8b38009fe0cf9d2dc2c6ede13867b5618e34ac3dc193fc6.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-producer02/archive-verification.json",
+          "sha256": "e90159448c5cc7ccbb841309f53cc334999c19ee99b50139eb10fe7e285682e9",
+          "bytes": 36572,
+          "portable_cas_path": "blobs/sha256/e90159448c5cc7ccbb841309f53cc334999c19ee99b50139eb10fe7e285682e9.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "fresh-producer01",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "f553e725070e4a9eaf2b00397505d0d19fb8995f232885f89df60c5cc341aed8",
+        "actual_false_rows": 1,
+        "closed_state": "closed",
+        "exit_code": 1,
+        "first_false_row": {
+          "elapsed_ms": 5445,
+          "index": 67,
+          "label": "focused room-entry Hero pose has actual capsule support and scenery clearance",
+          "operation": "fresh actual disk Title",
+          "passed": false
+        },
+        "footer_joins_counts": true,
+        "native_assertion_rows": 109,
+        "native_complete": false,
+        "native_credit": false,
+        "native_sha256": "7556fcbc565c5e46acd988040261795dd25d3eadabee1393af3e0c723f2fbf7d",
+        "native_source_subset_entries": 40,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": false,
+        "raw_diagnostic_count": 1,
+        "raw_diagnostics": [
+          "ERROR: focused room-entry Hero pose has actual capsule support and scenery clearance"
+        ],
+        "raw_sha256": "3536986c1b606b9b04a2b06b89b43c6abb9965e2ae33e4a671c48054009b872b",
+        "receipt_sha256": "9360799b0e30285431702e7be4a0157da04da6c2211d00d80c093a93255a7d3a",
+        "run": "fresh-producer01",
+        "scope_note": "Unsupported prephysics TEST placement; source spawn had not settled.",
+        "selected_source_count": 97,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "ff29394fd87449bc3ba04c548961aa807dceaecebb76fde1aed13f26d6c270d0",
+        "success": false
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer01/receipt.json",
+          "sha256": "9360799b0e30285431702e7be4a0157da04da6c2211d00d80c093a93255a7d3a",
+          "bytes": 23709,
+          "portable_cas_path": "blobs/sha256/9360799b0e30285431702e7be4a0157da04da6c2211d00d80c093a93255a7d3a.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer01/raw.log",
+          "sha256": "3536986c1b606b9b04a2b06b89b43c6abb9965e2ae33e4a671c48054009b872b",
+          "bytes": 741,
+          "portable_cas_path": "blobs/sha256/3536986c1b606b9b04a2b06b89b43c6abb9965e2ae33e4a671c48054009b872b.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer01/native.json",
+          "sha256": "7556fcbc565c5e46acd988040261795dd25d3eadabee1393af3e0c723f2fbf7d",
+          "bytes": 994822,
+          "portable_cas_path": "blobs/sha256/7556fcbc565c5e46acd988040261795dd25d3eadabee1393af3e0c723f2fbf7d.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer01/source-pre.json",
+          "sha256": "ff29394fd87449bc3ba04c548961aa807dceaecebb76fde1aed13f26d6c270d0",
+          "bytes": 30569,
+          "portable_cas_path": "blobs/sha256/ff29394fd87449bc3ba04c548961aa807dceaecebb76fde1aed13f26d6c270d0.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer01/source-post.json",
+          "sha256": "ff29394fd87449bc3ba04c548961aa807dceaecebb76fde1aed13f26d6c270d0",
+          "bytes": 30569,
+          "portable_cas_path": "blobs/sha256/ff29394fd87449bc3ba04c548961aa807dceaecebb76fde1aed13f26d6c270d0.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer01/archive-verification.json",
+          "sha256": "c382daff495f4e26d97abdf7b1b378b599da9888a6d5dc6fa4784c3d2823e09a",
+          "bytes": 35433,
+          "portable_cas_path": "blobs/sha256/c382daff495f4e26d97abdf7b1b378b599da9888a6d5dc6fa4784c3d2823e09a.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "fresh-producer02",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "f553e725070e4a9eaf2b00397505d0d19fb8995f232885f89df60c5cc341aed8",
+        "actual_false_rows": 0,
+        "closed_state": "closed",
+        "exit_code": 0,
+        "first_false_row": null,
+        "footer_joins_counts": true,
+        "native_assertion_rows": 201,
+        "native_complete": true,
+        "native_credit": true,
+        "native_sha256": "3aa4485a292b862a79fec36c32fc5c674b00ce123a1d977dd7f482fd05ca2add",
+        "native_source_subset_entries": 40,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": true,
+        "raw_diagnostic_count": 0,
+        "raw_diagnostics": [],
+        "raw_sha256": "7e40f1414c3043ff63078d11cb98f159cd984fa5c336c1bcd84c8a2faef86601",
+        "receipt_sha256": "22ba17d69efb20ebf368a80d8df6b36960b6a23072c4c3876ab870826f114a60",
+        "run": "fresh-producer02",
+        "scope_note": "Genuine new Challenge first3; both candidates eligible.",
+        "selected_source_count": 97,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "0d4ee8dcf36c6ed70f1a7b23dbc4599af684ae47466c4f28b2ef75ba90338d99",
+        "success": true
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer02/receipt.json",
+          "sha256": "22ba17d69efb20ebf368a80d8df6b36960b6a23072c4c3876ab870826f114a60",
+          "bytes": 2376,
+          "portable_cas_path": "blobs/sha256/22ba17d69efb20ebf368a80d8df6b36960b6a23072c4c3876ab870826f114a60.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer02/raw.log",
+          "sha256": "7e40f1414c3043ff63078d11cb98f159cd984fa5c336c1bcd84c8a2faef86601",
+          "bytes": 187,
+          "portable_cas_path": "blobs/sha256/7e40f1414c3043ff63078d11cb98f159cd984fa5c336c1bcd84c8a2faef86601.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer02/native.json",
+          "sha256": "3aa4485a292b862a79fec36c32fc5c674b00ce123a1d977dd7f482fd05ca2add",
+          "bytes": 6336582,
+          "portable_cas_path": "blobs/sha256/3aa4485a292b862a79fec36c32fc5c674b00ce123a1d977dd7f482fd05ca2add.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer02/source-pre.json",
+          "sha256": "0d4ee8dcf36c6ed70f1a7b23dbc4599af684ae47466c4f28b2ef75ba90338d99",
+          "bytes": 30569,
+          "portable_cas_path": "blobs/sha256/0d4ee8dcf36c6ed70f1a7b23dbc4599af684ae47466c4f28b2ef75ba90338d99.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer02/source-post.json",
+          "sha256": "0d4ee8dcf36c6ed70f1a7b23dbc4599af684ae47466c4f28b2ef75ba90338d99",
+          "bytes": 30569,
+          "portable_cas_path": "blobs/sha256/0d4ee8dcf36c6ed70f1a7b23dbc4599af684ae47466c4f28b2ef75ba90338d99.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/fresh-producer02/archive-verification.json",
+          "sha256": "a7a56559fbc03ca0e4dc1e13ae277b2037754a9dd8b72f99371dc34f7b6b8167",
+          "bytes": 35517,
+          "portable_cas_path": "blobs/sha256/a7a56559fbc03ca0e4dc1e13ae277b2037754a9dd8b72f99371dc34f7b6b8167.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "new-transport-standard01",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "f553e725070e4a9eaf2b00397505d0d19fb8995f232885f89df60c5cc341aed8",
+        "actual_false_rows": 0,
+        "closed_state": "closed",
+        "exit_code": 0,
+        "first_false_row": null,
+        "footer_joins_counts": true,
+        "native_assertion_rows": 349,
+        "native_complete": true,
+        "native_credit": false,
+        "native_sha256": "70c27c5099fb768c24d9c058dababa914419391ae830b09c42c9eb780dc2e56c",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": false,
+        "raw_diagnostic_count": 19,
+        "raw_diagnostics": [
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null."
+        ],
+        "raw_sha256": "721927996cfe243ffdb54a5e666128dc2c92a4d39fc432a778375d042d5d19a1",
+        "receipt_sha256": "97795daed3c6c00aa243d74a9d444bf8df74aaf46b3367d4c966e353c6f4c81b",
+        "run": "new-transport-standard01",
+        "scope_note": "349/0 assertions, but19 raw cleanup errors; remains failed.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "d2eae590c7ae41c2fc684ba0eecb60121423c5be54047292d243f2a42affd50a",
+        "success": true
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard01/receipt.json",
+          "sha256": "97795daed3c6c00aa243d74a9d444bf8df74aaf46b3367d4c966e353c6f4c81b",
+          "bytes": 4937,
+          "portable_cas_path": "blobs/sha256/97795daed3c6c00aa243d74a9d444bf8df74aaf46b3367d4c966e353c6f4c81b.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard01/raw.log",
+          "sha256": "721927996cfe243ffdb54a5e666128dc2c92a4d39fc432a778375d042d5d19a1",
+          "bytes": 15254,
+          "portable_cas_path": "blobs/sha256/721927996cfe243ffdb54a5e666128dc2c92a4d39fc432a778375d042d5d19a1.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard01/native.json",
+          "sha256": "70c27c5099fb768c24d9c058dababa914419391ae830b09c42c9eb780dc2e56c",
+          "bytes": 6475556,
+          "portable_cas_path": "blobs/sha256/70c27c5099fb768c24d9c058dababa914419391ae830b09c42c9eb780dc2e56c.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard01/source-pre.json",
+          "sha256": "d2eae590c7ae41c2fc684ba0eecb60121423c5be54047292d243f2a42affd50a",
+          "bytes": 30955,
+          "portable_cas_path": "blobs/sha256/d2eae590c7ae41c2fc684ba0eecb60121423c5be54047292d243f2a42affd50a.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard01/source-post.json",
+          "sha256": "d2eae590c7ae41c2fc684ba0eecb60121423c5be54047292d243f2a42affd50a",
+          "bytes": 30955,
+          "portable_cas_path": "blobs/sha256/d2eae590c7ae41c2fc684ba0eecb60121423c5be54047292d243f2a42affd50a.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard01/archive-verification.json",
+          "sha256": "1bb2247a4404f9ef6bbeef1163ebfc82691883995dbc04125d8350fb13fc7cbd",
+          "bytes": 38497,
+          "portable_cas_path": "blobs/sha256/1bb2247a4404f9ef6bbeef1163ebfc82691883995dbc04125d8350fb13fc7cbd.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "new-transport-standard02",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "f29eba14c37ebefae624714358de0b8f9418cdefdfeba7e4d37422effc18432a",
+        "actual_false_rows": 0,
+        "closed_state": "closed",
+        "exit_code": 0,
+        "first_false_row": null,
+        "footer_joins_counts": true,
+        "native_assertion_rows": 349,
+        "native_complete": true,
+        "native_credit": true,
+        "native_sha256": "a01170d11e22631fc72050b81c081adaf9ba6bb781f7b99747dbe1770bc3985d",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": true,
+        "raw_diagnostic_count": 0,
+        "raw_diagnostics": [],
+        "raw_sha256": "7a11308fe5c77e8fe3f35303f3b086dd24fa27db35a0e99101966f7772bacdf9",
+        "receipt_sha256": "fe647be4b482826902799abaeb4d311d433d43cb81c794fe448859cf54a9e1ba",
+        "run": "new-transport-standard02",
+        "scope_note": "Exact Continue/opposite preference/earlier Retry; Standard first1. Earlier Full teardown source.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "79b06abd93a7682635ac4818b07c309eb78427c987cac7a5a737565449b8714e",
+        "success": true
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard02/receipt.json",
+          "sha256": "fe647be4b482826902799abaeb4d311d433d43cb81c794fe448859cf54a9e1ba",
+          "bytes": 3117,
+          "portable_cas_path": "blobs/sha256/fe647be4b482826902799abaeb4d311d433d43cb81c794fe448859cf54a9e1ba.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard02/raw.log",
+          "sha256": "7a11308fe5c77e8fe3f35303f3b086dd24fa27db35a0e99101966f7772bacdf9",
+          "bytes": 187,
+          "portable_cas_path": "blobs/sha256/7a11308fe5c77e8fe3f35303f3b086dd24fa27db35a0e99101966f7772bacdf9.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard02/native.json",
+          "sha256": "a01170d11e22631fc72050b81c081adaf9ba6bb781f7b99747dbe1770bc3985d",
+          "bytes": 6475663,
+          "portable_cas_path": "blobs/sha256/a01170d11e22631fc72050b81c081adaf9ba6bb781f7b99747dbe1770bc3985d.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard02/source-pre.json",
+          "sha256": "79b06abd93a7682635ac4818b07c309eb78427c987cac7a5a737565449b8714e",
+          "bytes": 30955,
+          "portable_cas_path": "blobs/sha256/79b06abd93a7682635ac4818b07c309eb78427c987cac7a5a737565449b8714e.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard02/source-post.json",
+          "sha256": "79b06abd93a7682635ac4818b07c309eb78427c987cac7a5a737565449b8714e",
+          "bytes": 30955,
+          "portable_cas_path": "blobs/sha256/79b06abd93a7682635ac4818b07c309eb78427c987cac7a5a737565449b8714e.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-standard02/archive-verification.json",
+          "sha256": "3c17a4092340d5301d02d96b09c4921f33492b8ab3e338eb80d46d05910189de",
+          "bytes": 36675,
+          "portable_cas_path": "blobs/sha256/3c17a4092340d5301d02d96b09c4921f33492b8ab3e338eb80d46d05910189de.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "legacy-transport01",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "f29eba14c37ebefae624714358de0b8f9418cdefdfeba7e4d37422effc18432a",
+        "actual_false_rows": 1,
+        "closed_state": "closed",
+        "exit_code": 1,
+        "first_false_row": {
+          "elapsed_ms": 24918,
+          "index": 174,
+          "label": "actual malformed format fails before native binding/recipient/field construction or callbacks; normal disposal preserves installed donor and disk",
+          "operation": "public fresh disk Title Continue actual active Crossed Save",
+          "passed": false
+        },
+        "footer_joins_counts": true,
+        "native_assertion_rows": 217,
+        "native_complete": false,
+        "native_credit": false,
+        "native_sha256": "51e0c00b90426fd10c1dade815ba2b0cd749e79e6c6c38996f3ec233d8775edd",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": false,
+        "raw_diagnostic_count": 20,
+        "raw_diagnostics": [
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: Cannot determine if connected to 'state_changed': the provided callable is null.",
+          "ERROR: actual malformed format fails before native binding/recipient/field construction or callbacks; normal disposal preserves installed donor and disk"
+        ],
+        "raw_sha256": "dedd3c0a662fd5425e966c39bf371a5b70794a9cfd93f3df06256f9add3d272c",
+        "receipt_sha256": "189701cb1a66b65f94705c0bf3ff7df62375218f43cf895a03fad08c60b3d1cd",
+        "run": "legacy-transport01",
+        "scope_note": "217/1 plus19 cleanup errors; original refusal unlatched.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "88441df47a104595f2f421e17086b390ec0219908844fb23f76ae59719fa0397",
+        "success": false
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport01/receipt.json",
+          "sha256": "189701cb1a66b65f94705c0bf3ff7df62375218f43cf895a03fad08c60b3d1cd",
+          "bytes": 33908,
+          "portable_cas_path": "blobs/sha256/189701cb1a66b65f94705c0bf3ff7df62375218f43cf895a03fad08c60b3d1cd.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport01/raw.log",
+          "sha256": "dedd3c0a662fd5425e966c39bf371a5b70794a9cfd93f3df06256f9add3d272c",
+          "bytes": 15896,
+          "portable_cas_path": "blobs/sha256/dedd3c0a662fd5425e966c39bf371a5b70794a9cfd93f3df06256f9add3d272c.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport01/native.json",
+          "sha256": "51e0c00b90426fd10c1dade815ba2b0cd749e79e6c6c38996f3ec233d8775edd",
+          "bytes": 1821614,
+          "portable_cas_path": "blobs/sha256/51e0c00b90426fd10c1dade815ba2b0cd749e79e6c6c38996f3ec233d8775edd.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport01/source-pre.json",
+          "sha256": "88441df47a104595f2f421e17086b390ec0219908844fb23f76ae59719fa0397",
+          "bytes": 30957,
+          "portable_cas_path": "blobs/sha256/88441df47a104595f2f421e17086b390ec0219908844fb23f76ae59719fa0397.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport01/source-post.json",
+          "sha256": "88441df47a104595f2f421e17086b390ec0219908844fb23f76ae59719fa0397",
+          "bytes": 30957,
+          "portable_cas_path": "blobs/sha256/88441df47a104595f2f421e17086b390ec0219908844fb23f76ae59719fa0397.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport01/archive-verification.json",
+          "sha256": "4d10d649e64a5aa942be96bfbc002fa212bf235b16c7bb71020cc1519de5272e",
+          "bytes": 38567,
+          "portable_cas_path": "blobs/sha256/4d10d649e64a5aa942be96bfbc002fa212bf235b16c7bb71020cc1519de5272e.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "legacy-transport02",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "cd4ded947e8f902b16bc2aa0ecb178e835e07f9643654252a4abd20abac7191c",
+        "closed_state": "closed",
+        "exit_code": 0,
+        "native_assertion_rows": null,
+        "native_complete": false,
+        "native_credit": false,
+        "original_passed_clean": false,
+        "qualification": "Original parser-only missing-await failure, canonical exit0; no unique native footer/report or gameplay pass.",
+        "raw_diagnostic_count": 2,
+        "raw_diagnostics": [
+          "SCRIPT ERROR: Parse Error: Function \"_metadata_constructor_negative()\" is a coroutine, so it must be called with \"await\".",
+          "ERROR: Failed to load script \"res://tests/acts/act1/a1_l3_difficulty.gd\" with error \"Parse error\"."
+        ],
+        "raw_sha256": "ceb31e51fe4a569d02111ae08887275548904bd007d0f3be9b9d91fdfde4603d",
+        "receipt_sha256": "247cb2680874ca76296fb6b90889a98315f58aa848255c2d03842a3115b432f5",
+        "run": "legacy-transport02",
+        "scope_note": "Parser-only missing await; no native footer or gameplay credit.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "89491312fa106e8990381d5f773e296f80ea5d86ff59a7acf01d7f064f0d4a86"
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport02/receipt.json",
+          "sha256": "247cb2680874ca76296fb6b90889a98315f58aa848255c2d03842a3115b432f5",
+          "bytes": 2796,
+          "portable_cas_path": "blobs/sha256/247cb2680874ca76296fb6b90889a98315f58aa848255c2d03842a3115b432f5.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport02/raw.log",
+          "sha256": "ceb31e51fe4a569d02111ae08887275548904bd007d0f3be9b9d91fdfde4603d",
+          "bytes": 436,
+          "portable_cas_path": "blobs/sha256/ceb31e51fe4a569d02111ae08887275548904bd007d0f3be9b9d91fdfde4603d.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport02/source-pre.json",
+          "sha256": "89491312fa106e8990381d5f773e296f80ea5d86ff59a7acf01d7f064f0d4a86",
+          "bytes": 30957,
+          "portable_cas_path": "blobs/sha256/89491312fa106e8990381d5f773e296f80ea5d86ff59a7acf01d7f064f0d4a86.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport02/source-post.json",
+          "sha256": "89491312fa106e8990381d5f773e296f80ea5d86ff59a7acf01d7f064f0d4a86",
+          "bytes": 30957,
+          "portable_cas_path": "blobs/sha256/89491312fa106e8990381d5f773e296f80ea5d86ff59a7acf01d7f064f0d4a86.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport02/archive-verification.json",
+          "sha256": "58765b528e462324f491ee711a864707cc98c583406e018a65a71e6f6e4018ce",
+          "bytes": 36287,
+          "portable_cas_path": "blobs/sha256/58765b528e462324f491ee711a864707cc98c583406e018a65a71e6f6e4018ce.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "legacy-transport03",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "cd4ded947e8f902b16bc2aa0ecb178e835e07f9643654252a4abd20abac7191c",
+        "actual_false_rows": 1,
+        "closed_state": "closed",
+        "exit_code": 1,
+        "first_false_row": {
+          "elapsed_ms": 24543,
+          "index": 174,
+          "label": "actual malformed format fails before native binding/recipient/field construction or callbacks; normal disposal preserves installed donor and disk",
+          "operation": "public fresh disk Title Continue actual active Crossed Save",
+          "passed": false
+        },
+        "footer_joins_counts": true,
+        "native_assertion_rows": 217,
+        "native_complete": false,
+        "native_credit": false,
+        "native_sha256": "dc7677efd64bb05d734b30cd8249850b626a5e14b9654ba9beba3dba54756a8d",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": false,
+        "raw_diagnostic_count": 1,
+        "raw_diagnostics": [
+          "ERROR: actual malformed format fails before native binding/recipient/field construction or callbacks; normal disposal preserves installed donor and disk"
+        ],
+        "raw_sha256": "149245937912a42a125d58d3e3c167521c5a7cd7cb308a33fc62d6d58f460d12",
+        "receipt_sha256": "d1a9537d59b88290a9decd8800cbeac93633cabb6845054e02cf4caf6431fc09",
+        "run": "legacy-transport03",
+        "scope_note": "Measured StringName-key refusal; clean teardown but intended-metadata assertion failed.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "f7515230da7453f3d4fb9b1ac44f8e80e026ce23f6bd5c3ea8145fdff64ba4e7",
+        "success": false
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport03/receipt.json",
+          "sha256": "d1a9537d59b88290a9decd8800cbeac93633cabb6845054e02cf4caf6431fc09",
+          "bytes": 32102,
+          "portable_cas_path": "blobs/sha256/d1a9537d59b88290a9decd8800cbeac93633cabb6845054e02cf4caf6431fc09.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport03/raw.log",
+          "sha256": "149245937912a42a125d58d3e3c167521c5a7cd7cb308a33fc62d6d58f460d12",
+          "bytes": 669,
+          "portable_cas_path": "blobs/sha256/149245937912a42a125d58d3e3c167521c5a7cd7cb308a33fc62d6d58f460d12.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport03/native.json",
+          "sha256": "dc7677efd64bb05d734b30cd8249850b626a5e14b9654ba9beba3dba54756a8d",
+          "bytes": 1822106,
+          "portable_cas_path": "blobs/sha256/dc7677efd64bb05d734b30cd8249850b626a5e14b9654ba9beba3dba54756a8d.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport03/source-pre.json",
+          "sha256": "f7515230da7453f3d4fb9b1ac44f8e80e026ce23f6bd5c3ea8145fdff64ba4e7",
+          "bytes": 30957,
+          "portable_cas_path": "blobs/sha256/f7515230da7453f3d4fb9b1ac44f8e80e026ce23f6bd5c3ea8145fdff64ba4e7.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport03/source-post.json",
+          "sha256": "f7515230da7453f3d4fb9b1ac44f8e80e026ce23f6bd5c3ea8145fdff64ba4e7",
+          "bytes": 30957,
+          "portable_cas_path": "blobs/sha256/f7515230da7453f3d4fb9b1ac44f8e80e026ce23f6bd5c3ea8145fdff64ba4e7.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport03/archive-verification.json",
+          "sha256": "7e9ead1dbba0a7dce32b7d2d9d77c822802c4ca84de94d8ea08f7fa64966cad1",
+          "bytes": 36825,
+          "portable_cas_path": "blobs/sha256/7e9ead1dbba0a7dce32b7d2d9d77c822802c4ca84de94d8ea08f7fa64966cad1.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "legacy-transport04",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "cd4ded947e8f902b16bc2aa0ecb178e835e07f9643654252a4abd20abac7191c",
+        "actual_false_rows": 0,
+        "closed_state": "closed",
+        "exit_code": 0,
+        "first_false_row": null,
+        "footer_joins_counts": true,
+        "native_assertion_rows": 235,
+        "native_complete": true,
+        "native_credit": true,
+        "native_sha256": "7636fdc0f5afd675a43d99316beba5d173cf885ee77a95f9457890c954d6dd45",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": true,
+        "raw_diagnostic_count": 0,
+        "raw_diagnostics": [],
+        "raw_sha256": "38313af608857aab679e5504ac17e9474144af55aed743792c0dab8deacc409f",
+        "receipt_sha256": "bd604f2944b3b0c73b6f9eecbff58085d0680065ad54bf31d9e143c9f72ffede",
+        "run": "legacy-transport04",
+        "scope_note": "Exact literal old attempt/Save/Retry; Challenge still first1.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "e50e86333a4e66d3dbd5d951ce167946aa41313750e8102c37f89d89718f911b",
+        "success": true
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport04/receipt.json",
+          "sha256": "bd604f2944b3b0c73b6f9eecbff58085d0680065ad54bf31d9e143c9f72ffede",
+          "bytes": 3117,
+          "portable_cas_path": "blobs/sha256/bd604f2944b3b0c73b6f9eecbff58085d0680065ad54bf31d9e143c9f72ffede.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport04/raw.log",
+          "sha256": "38313af608857aab679e5504ac17e9474144af55aed743792c0dab8deacc409f",
+          "bytes": 187,
+          "portable_cas_path": "blobs/sha256/38313af608857aab679e5504ac17e9474144af55aed743792c0dab8deacc409f.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport04/native.json",
+          "sha256": "7636fdc0f5afd675a43d99316beba5d173cf885ee77a95f9457890c954d6dd45",
+          "bytes": 6443544,
+          "portable_cas_path": "blobs/sha256/7636fdc0f5afd675a43d99316beba5d173cf885ee77a95f9457890c954d6dd45.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport04/source-pre.json",
+          "sha256": "e50e86333a4e66d3dbd5d951ce167946aa41313750e8102c37f89d89718f911b",
+          "bytes": 30957,
+          "portable_cas_path": "blobs/sha256/e50e86333a4e66d3dbd5d951ce167946aa41313750e8102c37f89d89718f911b.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport04/source-post.json",
+          "sha256": "e50e86333a4e66d3dbd5d951ce167946aa41313750e8102c37f89d89718f911b",
+          "bytes": 30957,
+          "portable_cas_path": "blobs/sha256/e50e86333a4e66d3dbd5d951ce167946aa41313750e8102c37f89d89718f911b.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/legacy-transport04/archive-verification.json",
+          "sha256": "95921c211103d5b04a0560c3a3c2bca2e8dfccff2a7b0376bbe7ecbcc3a7b21a",
+          "bytes": 36730,
+          "portable_cas_path": "blobs/sha256/95921c211103d5b04a0560c3a3c2bca2e8dfccff2a7b0376bbe7ecbcc3a7b21a.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "new-transport-assisted01",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "cd4ded947e8f902b16bc2aa0ecb178e835e07f9643654252a4abd20abac7191c",
+        "actual_false_rows": 0,
+        "closed_state": "closed",
+        "exit_code": 0,
+        "first_false_row": null,
+        "footer_joins_counts": true,
+        "native_assertion_rows": 350,
+        "native_complete": true,
+        "native_credit": true,
+        "native_sha256": "843b87f52e66349f8e6d0a8f468bdd95b8925de4fa478def5e36e77137724629",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": true,
+        "raw_diagnostic_count": 0,
+        "raw_diagnostics": [],
+        "raw_sha256": "eaac8cf8a8319a1a37619698762c8cc6a81b5f85be29a4339d83654417415798",
+        "receipt_sha256": "5f6aeac269f522023f6357980efbd1fdebc42d2a0f9857d8facb0e6c56b0840b",
+        "run": "new-transport-assisted01",
+        "scope_note": "Final new-format rejection cleanup; Assisted Retry first1.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "cc0cae6ac7eeb2a96ea6dc97a4ed5af18df754dfa93e1c14d592438b5d949163",
+        "success": true
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-assisted01/receipt.json",
+          "sha256": "5f6aeac269f522023f6357980efbd1fdebc42d2a0f9857d8facb0e6c56b0840b",
+          "bytes": 3115,
+          "portable_cas_path": "blobs/sha256/5f6aeac269f522023f6357980efbd1fdebc42d2a0f9857d8facb0e6c56b0840b.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-assisted01/raw.log",
+          "sha256": "eaac8cf8a8319a1a37619698762c8cc6a81b5f85be29a4339d83654417415798",
+          "bytes": 186,
+          "portable_cas_path": "blobs/sha256/eaac8cf8a8319a1a37619698762c8cc6a81b5f85be29a4339d83654417415798.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-assisted01/native.json",
+          "sha256": "843b87f52e66349f8e6d0a8f468bdd95b8925de4fa478def5e36e77137724629",
+          "bytes": 6476512,
+          "portable_cas_path": "blobs/sha256/843b87f52e66349f8e6d0a8f468bdd95b8925de4fa478def5e36e77137724629.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-assisted01/source-pre.json",
+          "sha256": "cc0cae6ac7eeb2a96ea6dc97a4ed5af18df754dfa93e1c14d592438b5d949163",
+          "bytes": 30955,
+          "portable_cas_path": "blobs/sha256/cc0cae6ac7eeb2a96ea6dc97a4ed5af18df754dfa93e1c14d592438b5d949163.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-assisted01/source-post.json",
+          "sha256": "cc0cae6ac7eeb2a96ea6dc97a4ed5af18df754dfa93e1c14d592438b5d949163",
+          "bytes": 30955,
+          "portable_cas_path": "blobs/sha256/cc0cae6ac7eeb2a96ea6dc97a4ed5af18df754dfa93e1c14d592438b5d949163.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/new-transport-assisted01/archive-verification.json",
+          "sha256": "20579f81ae36e9101674c936afe7ed3811538215d6fca8d5fc30e7944d49d11f",
+          "bytes": 36739,
+          "portable_cas_path": "blobs/sha256/20579f81ae36e9101674c936afe7ed3811538215d6fca8d5fc30e7944d49d11f.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "ordinary01",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "cd4ded947e8f902b16bc2aa0ecb178e835e07f9643654252a4abd20abac7191c",
+        "actual_false_rows": 1,
+        "closed_state": "closed",
+        "exit_code": 1,
+        "first_false_row": {
+          "elapsed_ms": 99163,
+          "index": 284,
+          "label": "actual positioning input is a ready full native dash on the original proof segment",
+          "operation": "public Resume: actual changed Crossed ordinary exchange",
+          "passed": false
+        },
+        "footer_joins_counts": true,
+        "native_assertion_rows": 327,
+        "native_complete": false,
+        "native_credit": false,
+        "native_sha256": "bfe8defc566fe58189a245181a18642f594dd6a72328a9b2e60bd7c0cb2799c4",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": false,
+        "raw_diagnostic_count": 1,
+        "raw_diagnostics": [
+          "ERROR: actual positioning input is a ready full native dash on the original proof segment"
+        ],
+        "raw_sha256": "eab55822c623766096e5fde62b84d45d0dd45f513a2392424929835d47f4ddd9",
+        "receipt_sha256": "8171d58f4e8b1d69697c65a0739b9dac0a220f11c6884be6e5f8e141ece401ff",
+        "run": "ordinary01",
+        "scope_note": "Full escape; overstrict nominal primary-time assertion.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "cc0cae6ac7eeb2a96ea6dc97a4ed5af18df754dfa93e1c14d592438b5d949163",
+        "success": false
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary01/receipt.json",
+          "sha256": "8171d58f4e8b1d69697c65a0739b9dac0a220f11c6884be6e5f8e141ece401ff",
+          "bytes": 32085,
+          "portable_cas_path": "blobs/sha256/8171d58f4e8b1d69697c65a0739b9dac0a220f11c6884be6e5f8e141ece401ff.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary01/raw.log",
+          "sha256": "eab55822c623766096e5fde62b84d45d0dd45f513a2392424929835d47f4ddd9",
+          "bytes": 831,
+          "portable_cas_path": "blobs/sha256/eab55822c623766096e5fde62b84d45d0dd45f513a2392424929835d47f4ddd9.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary01/native.json",
+          "sha256": "bfe8defc566fe58189a245181a18642f594dd6a72328a9b2e60bd7c0cb2799c4",
+          "bytes": 1916427,
+          "portable_cas_path": "blobs/sha256/bfe8defc566fe58189a245181a18642f594dd6a72328a9b2e60bd7c0cb2799c4.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary01/source-pre.json",
+          "sha256": "cc0cae6ac7eeb2a96ea6dc97a4ed5af18df754dfa93e1c14d592438b5d949163",
+          "bytes": 30955,
+          "portable_cas_path": "blobs/sha256/cc0cae6ac7eeb2a96ea6dc97a4ed5af18df754dfa93e1c14d592438b5d949163.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary01/source-post.json",
+          "sha256": "cc0cae6ac7eeb2a96ea6dc97a4ed5af18df754dfa93e1c14d592438b5d949163",
+          "bytes": 30955,
+          "portable_cas_path": "blobs/sha256/cc0cae6ac7eeb2a96ea6dc97a4ed5af18df754dfa93e1c14d592438b5d949163.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary01/archive-verification.json",
+          "sha256": "c0393410c3039ca4c26c825167f1baf7a9d6f1a7036b6f26a9ba3d211a643256",
+          "bytes": 36596,
+          "portable_cas_path": "blobs/sha256/c0393410c3039ca4c26c825167f1baf7a9d6f1a7036b6f26a9ba3d211a643256.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "ordinary02",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "cd4ded947e8f902b16bc2aa0ecb178e835e07f9643654252a4abd20abac7191c",
+        "actual_false_rows": 1,
+        "closed_state": "closed",
+        "exit_code": 1,
+        "first_false_row": {
+          "elapsed_ms": 108767,
+          "index": 293,
+          "label": "actual requested C31 loses native primary HP immediately; ammo/HP/supply are unchanged and no native hit event consumed invulnerability",
+          "operation": "public Resume: actual changed Crossed ordinary exchange",
+          "passed": false
+        },
+        "footer_joins_counts": true,
+        "native_assertion_rows": 336,
+        "native_complete": false,
+        "native_credit": false,
+        "native_sha256": "f93f50ef0daafa742d1033bf68ee736edec4330c9d0ee8c28867b6b458ca6c51",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": false,
+        "raw_diagnostic_count": 1,
+        "raw_diagnostics": [
+          "ERROR: actual requested C31 loses native primary HP immediately; ammo/HP/supply are unchanged and no native hit event consumed invulnerability"
+        ],
+        "raw_sha256": "e6174a3771d3f7adef60f71bff298672eef39ceeb76bc887c7eea88773a3a738",
+        "receipt_sha256": "bdf346601f1227633bfd17be1b80c17b92f346227b6d00d9203ca526834cc410",
+        "run": "ordinary02",
+        "scope_note": "Real ordinary kill16\u21920, but slash also released one existing cluster.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "1c1fa932c25254e2767af848a39bd4f519aef9900f7934717e41ab2cb0982af4",
+        "success": false
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary02/receipt.json",
+          "sha256": "bdf346601f1227633bfd17be1b80c17b92f346227b6d00d9203ca526834cc410",
+          "bytes": 32854,
+          "portable_cas_path": "blobs/sha256/bdf346601f1227633bfd17be1b80c17b92f346227b6d00d9203ca526834cc410.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary02/raw.log",
+          "sha256": "e6174a3771d3f7adef60f71bff298672eef39ceeb76bc887c7eea88773a3a738",
+          "bytes": 883,
+          "portable_cas_path": "blobs/sha256/e6174a3771d3f7adef60f71bff298672eef39ceeb76bc887c7eea88773a3a738.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary02/native.json",
+          "sha256": "f93f50ef0daafa742d1033bf68ee736edec4330c9d0ee8c28867b6b458ca6c51",
+          "bytes": 1957960,
+          "portable_cas_path": "blobs/sha256/f93f50ef0daafa742d1033bf68ee736edec4330c9d0ee8c28867b6b458ca6c51.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary02/source-pre.json",
+          "sha256": "1c1fa932c25254e2767af848a39bd4f519aef9900f7934717e41ab2cb0982af4",
+          "bytes": 30955,
+          "portable_cas_path": "blobs/sha256/1c1fa932c25254e2767af848a39bd4f519aef9900f7934717e41ab2cb0982af4.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary02/source-post.json",
+          "sha256": "1c1fa932c25254e2767af848a39bd4f519aef9900f7934717e41ab2cb0982af4",
+          "bytes": 30955,
+          "portable_cas_path": "blobs/sha256/1c1fa932c25254e2767af848a39bd4f519aef9900f7934717e41ab2cb0982af4.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary02/archive-verification.json",
+          "sha256": "716a3500e9cb93802aed5621a976ecb4440823617d3bd5f0587b4e4365c887e1",
+          "bytes": 36702,
+          "portable_cas_path": "blobs/sha256/716a3500e9cb93802aed5621a976ecb4440823617d3bd5f0587b4e4365c887e1.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "ordinary03",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "cd4ded947e8f902b16bc2aa0ecb178e835e07f9643654252a4abd20abac7191c",
+        "actual_false_rows": 1,
+        "closed_state": "closed",
+        "exit_code": 1,
+        "first_false_row": {
+          "elapsed_ms": 100084,
+          "index": 280,
+          "label": "bounded actual native observation failed: same actual C31 cycle active then recovery",
+          "operation": "public Resume: actual changed Crossed ordinary exchange",
+          "passed": false
+        },
+        "footer_joins_counts": true,
+        "native_assertion_rows": 323,
+        "native_complete": false,
+        "native_credit": false,
+        "native_sha256": "c537fc557262b28e06716db3a53d49c6897a56b13c4888ba5f36e9e8fcce670f",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": false,
+        "raw_diagnostic_count": 1,
+        "raw_diagnostics": [
+          "ERROR: bounded actual native observation failed: same actual C31 cycle active then recovery"
+        ],
+        "raw_sha256": "7496a745725282bceb2d39b59e97fd1b4c2aa75a9500370106f0c84c68fe08ce",
+        "receipt_sha256": "9c763287eefadfbe2bb48af758dec8a21a7b262bd73bccb5cd30ad5d0c34f9d3",
+        "run": "ordinary03",
+        "scope_note": "Combined-phase60s wall observation expired while original source remained active.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "4027d205200efe43251cc9d1500b352ebaa51b3c3e05ab0705265e3550eed3c4",
+        "success": false
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary03/receipt.json",
+          "sha256": "9c763287eefadfbe2bb48af758dec8a21a7b262bd73bccb5cd30ad5d0c34f9d3",
+          "bytes": 32088,
+          "portable_cas_path": "blobs/sha256/9c763287eefadfbe2bb48af758dec8a21a7b262bd73bccb5cd30ad5d0c34f9d3.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary03/raw.log",
+          "sha256": "7496a745725282bceb2d39b59e97fd1b4c2aa75a9500370106f0c84c68fe08ce",
+          "bytes": 586,
+          "portable_cas_path": "blobs/sha256/7496a745725282bceb2d39b59e97fd1b4c2aa75a9500370106f0c84c68fe08ce.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary03/native.json",
+          "sha256": "c537fc557262b28e06716db3a53d49c6897a56b13c4888ba5f36e9e8fcce670f",
+          "bytes": 1908070,
+          "portable_cas_path": "blobs/sha256/c537fc557262b28e06716db3a53d49c6897a56b13c4888ba5f36e9e8fcce670f.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary03/source-pre.json",
+          "sha256": "4027d205200efe43251cc9d1500b352ebaa51b3c3e05ab0705265e3550eed3c4",
+          "bytes": 30956,
+          "portable_cas_path": "blobs/sha256/4027d205200efe43251cc9d1500b352ebaa51b3c3e05ab0705265e3550eed3c4.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary03/source-post.json",
+          "sha256": "4027d205200efe43251cc9d1500b352ebaa51b3c3e05ab0705265e3550eed3c4",
+          "bytes": 30956,
+          "portable_cas_path": "blobs/sha256/4027d205200efe43251cc9d1500b352ebaa51b3c3e05ab0705265e3550eed3c4.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary03/archive-verification.json",
+          "sha256": "d9f8c883106ec2f3a50c853a632cb7c5fba5ec60ae7516c58976eb7b5eec160b",
+          "bytes": 36603,
+          "portable_cas_path": "blobs/sha256/d9f8c883106ec2f3a50c853a632cb7c5fba5ec60ae7516c58976eb7b5eec160b.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "ordinary04",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "cd4ded947e8f902b16bc2aa0ecb178e835e07f9643654252a4abd20abac7191c",
+        "actual_false_rows": 0,
+        "closed_state": "closed",
+        "exit_code": 0,
+        "first_false_row": null,
+        "footer_joins_counts": true,
+        "native_assertion_rows": 340,
+        "native_complete": true,
+        "native_credit": true,
+        "native_sha256": "32d7d7c345b718fd90ef44ca23a5cec10f015c3d8ec39c46938ccfa6c50702fe",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": true,
+        "raw_diagnostic_count": 0,
+        "raw_diagnostics": [],
+        "raw_sha256": "e7ca13221827af6317ec9fc24826aa3de1775b27988d67d8a4c58e48c90e573b",
+        "receipt_sha256": "7297a718e168fe3f33b50ba6d664a66d7edbc96913c57f95ef1e9b406c42c29e",
+        "run": "ordinary04",
+        "scope_note": "Two full dashes, enemy-only angled primary; no damage/ammo/supply/contact.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "2d2b827bfb2d978af4392fc403178d21c4ea765a73b374de89be092d17e01c23",
+        "success": true
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary04/receipt.json",
+          "sha256": "7297a718e168fe3f33b50ba6d664a66d7edbc96913c57f95ef1e9b406c42c29e",
+          "bytes": 3036,
+          "portable_cas_path": "blobs/sha256/7297a718e168fe3f33b50ba6d664a66d7edbc96913c57f95ef1e9b406c42c29e.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary04/raw.log",
+          "sha256": "e7ca13221827af6317ec9fc24826aa3de1775b27988d67d8a4c58e48c90e573b",
+          "bytes": 187,
+          "portable_cas_path": "blobs/sha256/e7ca13221827af6317ec9fc24826aa3de1775b27988d67d8a4c58e48c90e573b.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary04/native.json",
+          "sha256": "32d7d7c345b718fd90ef44ca23a5cec10f015c3d8ec39c46938ccfa6c50702fe",
+          "bytes": 1935530,
+          "portable_cas_path": "blobs/sha256/32d7d7c345b718fd90ef44ca23a5cec10f015c3d8ec39c46938ccfa6c50702fe.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary04/source-pre.json",
+          "sha256": "2d2b827bfb2d978af4392fc403178d21c4ea765a73b374de89be092d17e01c23",
+          "bytes": 30956,
+          "portable_cas_path": "blobs/sha256/2d2b827bfb2d978af4392fc403178d21c4ea765a73b374de89be092d17e01c23.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary04/source-post.json",
+          "sha256": "2d2b827bfb2d978af4392fc403178d21c4ea765a73b374de89be092d17e01c23",
+          "bytes": 30956,
+          "portable_cas_path": "blobs/sha256/2d2b827bfb2d978af4392fc403178d21c4ea765a73b374de89be092d17e01c23.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/ordinary04/archive-verification.json",
+          "sha256": "e7344cfc1b9b8dcace64b02fef2a0daddaf18d677d1e3c7723703066924bd9f6",
+          "bytes": 36403,
+          "portable_cas_path": "blobs/sha256/e7344cfc1b9b8dcace64b02fef2a0daddaf18d677d1e3c7723703066924bd9f6.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "portrait01",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "cd4ded947e8f902b16bc2aa0ecb178e835e07f9643654252a4abd20abac7191c",
+        "actual_false_rows": 1,
+        "closed_state": "closed",
+        "exit_code": 1,
+        "first_false_row": {
+          "elapsed_ms": 27649,
+          "index": 254,
+          "label": "bounded waiting operation did not complete: fresh independent actual inner-first saved Crossed Continue",
+          "operation": "fresh actual disk Title",
+          "passed": false
+        },
+        "footer_joins_counts": true,
+        "native_assertion_rows": 297,
+        "native_complete": false,
+        "native_credit": false,
+        "native_sha256": "1d4d826a5931c5899c72f75e21d4b3a883aa225705fe5c12e5eb48015c504697",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": false,
+        "raw_diagnostic_count": 1,
+        "raw_diagnostics": [
+          "ERROR: bounded waiting operation did not complete: fresh independent actual inner-first saved Crossed Continue"
+        ],
+        "raw_sha256": "9ff04344490e0dcb926489b7ca4f4274ef26e0a41af579b432e93e0b7548c303",
+        "receipt_sha256": "62fa37eac6285278f757ffc409f9a0112fc12ce05ffcdafcb039665372a5e702",
+        "run": "portrait01",
+        "scope_note": "Expected Resume page; actual normal focus handler selected Pause.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "2d2b827bfb2d978af4392fc403178d21c4ea765a73b374de89be092d17e01c23",
+        "success": false
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait01/receipt.json",
+          "sha256": "62fa37eac6285278f757ffc409f9a0112fc12ce05ffcdafcb039665372a5e702",
+          "bytes": 31947,
+          "portable_cas_path": "blobs/sha256/62fa37eac6285278f757ffc409f9a0112fc12ce05ffcdafcb039665372a5e702.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait01/raw.log",
+          "sha256": "9ff04344490e0dcb926489b7ca4f4274ef26e0a41af579b432e93e0b7548c303",
+          "bytes": 688,
+          "portable_cas_path": "blobs/sha256/9ff04344490e0dcb926489b7ca4f4274ef26e0a41af579b432e93e0b7548c303.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait01/native.json",
+          "sha256": "1d4d826a5931c5899c72f75e21d4b3a883aa225705fe5c12e5eb48015c504697",
+          "bytes": 97130,
+          "portable_cas_path": "blobs/sha256/1d4d826a5931c5899c72f75e21d4b3a883aa225705fe5c12e5eb48015c504697.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait01/source-pre.json",
+          "sha256": "2d2b827bfb2d978af4392fc403178d21c4ea765a73b374de89be092d17e01c23",
+          "bytes": 30956,
+          "portable_cas_path": "blobs/sha256/2d2b827bfb2d978af4392fc403178d21c4ea765a73b374de89be092d17e01c23.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait01/source-post.json",
+          "sha256": "2d2b827bfb2d978af4392fc403178d21c4ea765a73b374de89be092d17e01c23",
+          "bytes": 30956,
+          "portable_cas_path": "blobs/sha256/2d2b827bfb2d978af4392fc403178d21c4ea765a73b374de89be092d17e01c23.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait01/archive-verification.json",
+          "sha256": "2386d3eb4bbfb6398cebfe72e1fc51cf9791375c7ff0d6b993041993c1cf0a00",
+          "bytes": 36467,
+          "portable_cas_path": "blobs/sha256/2386d3eb4bbfb6398cebfe72e1fc51cf9791375c7ff0d6b993041993c1cf0a00.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    },
+    {
+      "original_run": "portrait02",
+      "actual_reviewed_scope": {
+        "Full_source_sha256": "cd4ded947e8f902b16bc2aa0ecb178e835e07f9643654252a4abd20abac7191c",
+        "actual_false_rows": 0,
+        "closed_state": "closed",
+        "exit_code": 0,
+        "first_false_row": null,
+        "footer_joins_counts": true,
+        "native_assertion_rows": 304,
+        "native_complete": true,
+        "native_credit": true,
+        "native_sha256": "7a8a19191d6cfed51a402e3e55fcba556cb24384451c13e0c46e4436be41dc99",
+        "native_source_subset_entries": 41,
+        "native_source_subset_joins_pre_bank": true,
+        "original_passed_clean": true,
+        "raw_diagnostic_count": 0,
+        "raw_diagnostics": [],
+        "raw_sha256": "c413cb2e7e40c8dc0197143ee649b738207b01cf6986ac5edb8abd0667592120",
+        "receipt_sha256": "1b7128e3e2a5aace85accfb1e77c187b2fc6023fdb49da39fea4d07d8ac5911f",
+        "run": "portrait02",
+        "scope_note": "One personally inspected native portrait; exact nonempty state across draw.",
+        "selected_source_count": 98,
+        "source_pre_post_byte_equal": true,
+        "source_pre_post_manifest_sha256": "a0eec36d8a64db0071520487273f7a2f37fee66f9ad2432dc91841c195b4f6d5",
+        "success": true
+      },
+      "original_artifacts": {
+        "receipt.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait02/receipt.json",
+          "sha256": "1b7128e3e2a5aace85accfb1e77c187b2fc6023fdb49da39fea4d07d8ac5911f",
+          "bytes": 3017,
+          "portable_cas_path": "blobs/sha256/1b7128e3e2a5aace85accfb1e77c187b2fc6023fdb49da39fea4d07d8ac5911f.bin"
+        },
+        "raw.log": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait02/raw.log",
+          "sha256": "c413cb2e7e40c8dc0197143ee649b738207b01cf6986ac5edb8abd0667592120",
+          "bytes": 264,
+          "portable_cas_path": "blobs/sha256/c413cb2e7e40c8dc0197143ee649b738207b01cf6986ac5edb8abd0667592120.bin"
+        },
+        "native.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait02/native.json",
+          "sha256": "7a8a19191d6cfed51a402e3e55fcba556cb24384451c13e0c46e4436be41dc99",
+          "bytes": 4269331,
+          "portable_cas_path": "blobs/sha256/7a8a19191d6cfed51a402e3e55fcba556cb24384451c13e0c46e4436be41dc99.bin"
+        },
+        "source-pre.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait02/source-pre.json",
+          "sha256": "a0eec36d8a64db0071520487273f7a2f37fee66f9ad2432dc91841c195b4f6d5",
+          "bytes": 30956,
+          "portable_cas_path": "blobs/sha256/a0eec36d8a64db0071520487273f7a2f37fee66f9ad2432dc91841c195b4f6d5.bin"
+        },
+        "source-post.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait02/source-post.json",
+          "sha256": "a0eec36d8a64db0071520487273f7a2f37fee66f9ad2432dc91841c195b4f6d5",
+          "bytes": 30956,
+          "portable_cas_path": "blobs/sha256/a0eec36d8a64db0071520487273f7a2f37fee66f9ad2432dc91841c195b4f6d5.bin"
+        },
+        "archive-verification.json": {
+          "original_path": "docs/acts/act1/evidence/A1-L3-difficulty/portrait02/archive-verification.json",
+          "sha256": "c0c7d3acc9ae6b60f4751b50274ae4988040b632cdc6f93e404f01ecabf2d59c",
+          "bytes": 37062,
+          "portable_cas_path": "blobs/sha256/c0c7d3acc9ae6b60f4751b50274ae4988040b632cdc6f93e404f01ecabf2d59c.bin"
+        }
+      },
+      "scope": "Actual original report/footer/receipt/source joins were independently reviewed earlier; this pack relocates exact bytes only, no rerun or new native claim"
+    }
+  ],
+  "import01": "Additional original4 artifact records retained through logical map; not relabeled as one of17 native job cases"
+}

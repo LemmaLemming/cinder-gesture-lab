@@ -1,0 +1,9 @@
+{
+  "failed_run": "ordinary01",
+  "checks": 327,
+  "failures": 1,
+  "measured": "Full2.7000000477m actual escape, no shortening/blocking/movement damage. Actual stable grounded Hero at retained landing with zero dash/primary cooldown and commitment; HP100, shells2, no native contact events, empty guard_error. Warning/lock/active/recovery observed on original source3 cycle.",
+  "diagnosis": "The recorded operands satisfy all positioning prerequisites except the nominal primary-time comparison. Exact Scheduler clock at the failed assertion was not latched and is not inferred as a measurement. The helper overconstrained a real ordinary opening to completion before nominal proof primary_time.",
+  "test_correction": "Keep original proof/clock/phase/native guards/timing immutable. Retain exact spatial endpoints and original start times as lower bounds; escape must still complete before original active_from. Positioning must complete before original recovery_until minus full actual primary cooldown/commitment budget; actual primary and final commitment must strictly finish before the same original recovery end. Record all operands before future assertions and all timing offsets.",
+  "claim_limit": "Actual legal ordinary opening within original native recovery; no exact execution of nominal certified timeline. No production/native timing change."
+}

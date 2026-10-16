@@ -17,6 +17,8 @@ const SEGMENT_KEYS: Array[String] = ["from", "to", "start_s", "end_s", "kind"]
 const ACCEPTED_FRAME_KEYS: Array[String] = ["reservation_id", "landing", "attack_position", "primary_time_s", "response_complete_s", "action_escape"]
 
 var _aggregate: RefCounted = RouteCodec.new()
+var _uses_crossed_arrangement: bool = true
+var _crossed_arrangement: Dictionary = {}
 var _constructor_open: bool = false
 var _constructor_entitlements: Dictionary = {}
 var _candidate_plan: Dictionary = {}
@@ -74,6 +76,36 @@ func _ready() -> void:
 	native_admission_published.connect(_record_native_admission) # Before external gameplay subscriptions.
 
 
+func _component_configuration_error() -> String:
+	var error: String = super._component_configuration_error()
+	return RouteCodec.arrangement_configuration_error() if error.is_empty() else error
+
+
+func _on_authored_room_begun(profile: String) -> String:
+	if beat_index != 2 or not _uses_crossed_arrangement: return ""
+	if not _crossed_arrangement.is_empty(): return "Crossed priority was already selected for this attempt"
+	_crossed_arrangement = RouteCodec.fresh_crossed_arrangement(profile)
+	return "Fresh Crossed native profile has no retained priority recipe" if _crossed_arrangement.is_empty() else ""
+
+
+func admission_source_ids() -> Array[String]:
+	if beat_index != 2 or room_stage != "active" or not _uses_crossed_arrangement:
+		return current_source_ids()
+	var error: String = RouteCodec.crossed_arrangement_error(_crossed_arrangement)
+	if error.is_empty() and _crossed_arrangement.profile != scheduler.encounter_profile().get("id"):
+		error = "Retain actual Crossed native profile with its selected priority recipe"
+	if not error.is_empty():
+		last_encounter_error = error
+		return []
+	var result: Array[String] = []
+	result.assign(_crossed_arrangement.order)
+	return result
+
+
+func crossed_arrangement_state() -> Dictionary:
+	return {"authored_snapshot_version": RouteCodec.AUTHORED_VERSION if _uses_crossed_arrangement else RouteCodec.LEGACY_AUTHORED_VERSION, "crossed_arrangement": _crossed_arrangement.duplicate(true)}
+
+
 func _native_route_snapshot_enabled() -> bool:
 	return true # Only this subclass; both old scaffold refusal overrides stay false.
 
@@ -113,6 +145,12 @@ func _pin_entry_resources() -> String:
 func _on_enter_restore_candidate(local: Dictionary, saved_player: Dictionary) -> String:
 	# Entire tree remains paused. Do not call ordinary entry or replay an epoch.
 	if not is_restore_candidate() or not _fields.is_empty() or not _consumers.is_empty() or not _protocols.is_empty(): return "Fresh actual candidate without prior installed topology required"
+	var metadata_error: String = _aggregate.call("metadata_error", local)
+	if not metadata_error.is_empty(): return metadata_error
+	# Actors have identical once-configured definitions in either format. Bind
+	# saved metadata before native restore-recipient construction, not relocation.
+	_uses_crossed_arrangement = local.authored_snapshot_version == RouteCodec.AUTHORED_VERSION
+	_crossed_arrangement = local.get("crossed_arrangement", {}).duplicate(true)
 	_running = true
 	for id: String in NORMAL_SOURCE_IDS:
 		var retained: Variant = sources.get(id)
@@ -454,7 +492,8 @@ func _capture_local_state() -> Dictionary:
 	if not error.is_empty():
 		_capture_error = error
 		return {}
-	var metadata: Dictionary = {"beat_index": beat_index, "completed_beats": completed_beats.duplicate(), "room_stage": room_stage, "framing": _accepted_frames.duplicate(true)}
+	var metadata: Dictionary = {"authored_snapshot_version": RouteCodec.AUTHORED_VERSION if _uses_crossed_arrangement else RouteCodec.LEGACY_AUTHORED_VERSION, "beat_index": beat_index, "completed_beats": completed_beats.duplicate(), "room_stage": room_stage, "framing": _accepted_frames.duplicate(true)}
+	if _uses_crossed_arrangement: metadata["crossed_arrangement"] = _crossed_arrangement.duplicate(true)
 	var local: Dictionary = _aggregate.call("capture_state", metadata, hero.snapshot_state(), _aggregate_bindings(), _authored_definitions())
 	_capture_error = String(_aggregate.get("last_error"))
 	return local
@@ -818,6 +857,8 @@ func _restore_local_state(state: Dictionary) -> void:
 		_quiet_commit = false
 		_freeze_failed_candidate()
 		return
+	_uses_crossed_arrangement = state.authored_snapshot_version == RouteCodec.AUTHORED_VERSION
+	_crossed_arrangement = state.get("crossed_arrangement", {}).duplicate(true)
 	beat_index = state.beat_index
 	completed_beats.assign(state.completed_beats)
 	room_stage = state.room_stage
@@ -865,6 +906,13 @@ func _same(left: Variant, right: Variant) -> bool:
 
 
 func _on_exit_level() -> void:
+	# A rejected candidate may fail in Level before this subclass's entry hook.
+	# Base normal cleanup queries each handle; prepare only absent unconnected
+	# references here, without binding/configuring actors or touching live ones.
+	for id: String in NORMAL_SOURCE_IDS:
+		var callback: Variant = _source_callbacks.get(id)
+		if not callback is Callable or not callback.is_valid():
+			_source_callbacks[id] = Callable(self, "_on_source_state").bind(id)
 	_constructor_open = false
 	_constructor_entitlements.clear()
 	_accepted_frames.clear()
