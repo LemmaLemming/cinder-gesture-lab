@@ -1,5 +1,9 @@
 # Cinder shared progress
 
+## Shared74 Act1 preserving adoption —16 October2026
+
+[Bounded review](evidence/shared74-act1-worker-adoption/index.json) verifies exact ACKc53a57d6/receipt64d75b3f, merge8104eb1a from aa761468+9d9aebd0, observed ancestry, six preserved owned Git subtrees and four named shared runtime files. [Current aliases](evidence/shared74-act1-alias-reconciliation.json) are reconciled with an explicit exception: the worker retains unaccepted L5 trial89dc while canonical d25a repair remains Integration-only. This is no worker L5 runtime-repair adoption or Root trial adoption. Broad82/595/122915 custody counts remain owner-attributed. Current O1 scope869/ac197 is source-only specific retention proposal; no repeat or coverage. Current difficulty summaries are corrected to12 authored+2 bounded retention/14covered, ten remain, runtime74. No engine, gameplay change or public upload.
+
 ## Current coordination checkpoint —16 October2026
 
 [The checkpoint](INTEGRATION_CHECKPOINT_2026_10_16.md) records Shared74’s clean59/51 repair and local113/30 performance evidence, with original failures retained. Act1’s real60/1 stopping request is resolved and ACKed: only a positive source-backed per-exercise O1 retention proposal follows, without a retry or new credit. Act3 reports3047/0 comparison and815/0 defeated-helper persistence; brief portrait/handoff and Root review remain. Root’s A2O1 original-writer retry40/1 retains its actual tracking_lock_unproved refusal and proves corrected TEST cleanup; no pre-final/final unit or candidate promotion. All Root jobs closed. Original24 levels/difficulty14/24 remain; ten policies and measured-cost engineering work remain. Agent02 inactive/untouched; Root first help contact. No public upload/mobile/export/release.
