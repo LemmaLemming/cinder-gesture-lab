@@ -1,5 +1,9 @@
 # Cinder shared progress
 
+## Current contract reconciled —16 October2026
+
+[Bounded source audit and Root decision](evidence/desktop-completion-source-audit/README.md) correct current contract counts to all24 original accepted levels and16/24 difficulty policies, and mark obsolete consumer/capture/presentation frontiers as historical. AGENTS now distinguishes the original Character Lab from the accepted campaign while preserving concept/readiness limits. Exact reviewed source preconditions and original proposals remain retained. This is documentation only: no new engine run, runtime API, coverage or goal-completion claim. Eight policies and runtime-cost work remain. Root’s separate A2-O1 candidate is unaccepted; Agent02 remains inactive/untouched.
+
 ## Shared74 Act3 preserving adoption —16 October2026
 
 [Bounded adoption review](evidence/shared74-act3-worker-adoption/REVIEW.md) verifies actual70f85746 parentsfb49d7ac+9d9aebd0, ACK158f40f1/receipt37e0e261/authority39ddad02, laterd7c4a55d ancestry, six preserved owned Git subtrees at the merge and seven named nonowned shared runtime files through publication/merge/observed/physical states. Later owned TEST/evidence/notes changes remain separate. [Current aliases](evidence/shared74-act3-alias-reconciliation.json) preserve the exact prior mixed Shared73/Shared71-marker values, then distinguish actual ACK commit70f from later observedd7. Broad20105/2117/44 custody counts remain owner-attributed. No engine, API, gameplay, coverage or public-upload change; original Shared73/74 evidence attribution stays literal. Current16/24 policy coverage and all24 original content acceptances remain.
