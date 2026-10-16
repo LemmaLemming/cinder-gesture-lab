@@ -1,0 +1,11 @@
+# Shared72 publication review
+
+No Act1 or L5 dependency blocker was found in the exact publication delta from Shared71 `dd2fc8d9dac82dd235e384b4aa5dfad1093d71d6` to Shared72 `d37734b0543c0203edfc7495c539a543a4bffc69`. Shared71 is an ancestor; the immediate publication parent is documentation commit `270d6f475aaa9d8cb0d18fba0d303ee27e863900`. Canonical response `004c5b5d-f06e-417d-ae5a-d5440b2a5bca` names that exact commit.
+
+The delta has **430 paths: 423 additions and 7 modifications**. Categories are 397 Act2 L1 evidence files, 24 Act2 tests/fixtures, one Horsell runtime, one recipe, one policy note and six shared status/design documents. All six incoming Act1 trees are exactly unchanged. The changed-path intersection with the 115 named BACK source/input-bank paths is empty. There is no shared controller, Scheduler, camera, Shell, project/settings, registry, equipment or ability-catalogue change.
+
+The sole runtime change is `scripts/acts/act2/horsell_common.gd`; its recipe/tests/evidence remain Act2-specific. A2-L1 is the existing later main-level destination, but no L5 implementation or shared transport dependency changes. No adoption engine/import, old/new producer, CP2 rerun or historical evidence repinning is required. Canonical response explicitly preserves historical evidence and distinguishes availability from actual adoption. Its earlier BACK-scope wording does not restart the now-failed trial or resolve the pending specific retention request.
+
+A minor documentation inconsistency remains: published `docs/DIFFICULTY_DESIGN.md:3` says ten authored plus one retention policy, 13 remaining. Shared72 coverage/contract correctly report eleven authored plus one retention, 12 remaining. This is not an adoption or runtime blocker and does not justify gameplay repetition.
+
+Proceed with the preserving adoption at the closed boundary, retaining the owner's actual current six trees, local settings and frozen evidence, then record the actual receipt/ACK. The prior Shared71 receipt uses that pattern. Incoming-tree equality does not authorize replacing later local L5 work with publication versions. This review performed no merge, engine job, Git mutation or worktree edit and is not itself an adoption receipt.
