@@ -1,0 +1,74 @@
+extends "res://.cinder/spore-fusion-measure-prep/measure.gd"
+## SOURCE ONLY current physical runtime diagnostic; no engine/parser/native credit.
+## Inherits original genuine CP2/GUI/one TEST relocation/eight native ticks and all checks.
+## Extra probes are AFTER public Pause, outside interval, not production call counts or FPS.
+## No guard/body/geometry/clock/history/camera changes and no failed fixture repair.
+var _current_query_phase_complete: bool = false
+
+func _cost_native(protocols: Dictionary) -> String:
+	var before: String = super._cost_native(protocols)
+	var consumer: Node = (game.active_level.get("_consumers") as Dictionary).get("crossed") as Node
+	if not _expect(paused and not before.is_empty() and protocols.size() == 8 and is_instance_valid(consumer), "current cost probes require original complete paused native witness and actual Crossed Consumer"):
+		return ""
+	var failure_before: String = Exact.stringify(consumer.get("_failures"))
+	if not _expect(not failure_before.is_empty(), "actual Consumer diagnostic tree is transportable before pure probes"): return ""
+	var frame_before: int = Engine.get_physics_frames()
+	var process_before: int = Engine.get_process_frames()
+	var clock_before: String = _clock_bits((game.active_level.get("scheduler") as CinderThreatScheduler).get_clock())
+	var player_clock_before: String = _clock_bits(game.player.get_world_action_clock())
+	var events_before: int = _running_events.size()
+	var samples: Array[Dictionary] = []
+	_running_watch = true
+	for repetition: int in range(3):
+		for id: String in _cost_sources:
+			var started: int = Time.get_ticks_usec()
+			var result: String = protocols[id].binding_error()
+			var ended: int = Time.get_ticks_usec()
+			samples.append({"api": "Protocol.binding_error", "source_id": id, "repetition": repetition, "start_us": started, "finish_us": ended, "inclusive_us": ended-started, "returned_error": result, "full_valid_binding": result.is_empty(), "scope": "separate_paused_query"})
+		var started: int = Time.get_ticks_usec()
+		var accepted: bool = consumer.call("placement_accepted")
+		var ended: int = Time.get_ticks_usec()
+		samples.append({"api": "Consumer.placement_accepted", "repetition": repetition, "start_us": started, "finish_us": ended, "inclusive_us": ended-started, "accepted": accepted, "scope": "public_query_may_early_return_on_retained_failures"})
+		started = Time.get_ticks_usec()
+		var error: String = consumer.call("_binding_error")
+		ended = Time.get_ticks_usec()
+		samples.append({"api": "Consumer._binding_error", "repetition": repetition, "start_us": started, "finish_us": ended, "inclusive_us": ended-started, "returned_error": error, "full_valid_binding": error.is_empty(), "scope": "separate_internal_diagnostic_not_public_permission"})
+	_running_watch = false
+	var events_after: int = _running_events.size()
+	var failure_after: String = Exact.stringify(consumer.get("_failures"))
+	var after: String = super._cost_native(protocols)
+	var stable: bool = paused and before == after and failure_before == failure_after and frame_before == Engine.get_physics_frames() and process_before == Engine.get_process_frames() and clock_before == _clock_bits((game.active_level.get("scheduler") as CinderThreatScheduler).get_clock()) and player_clock_before == _clock_bits(game.player.get_world_action_clock()) and events_before == events_after and not _running_overflow
+	_current_query_phase_complete = samples.size() == 30 and not after.is_empty() and stable
+	_expect(_current_query_phase_complete, "thirty actual separate paused queries preserve native/diagnostic/event/clock/frame state")
+	var before_file: Dictionary = _persist_exact_witness("query-before-focused-native.exact.json", before)
+	_expect(not before_file.is_empty(), "literal before-query native witness retained independently")
+	var report: Dictionary = {"kind": "current73-crossed-cost", "query_phase_complete": _current_query_phase_complete, "samples": samples, "source_ids": _cost_sources.duplicate(), "native_before_sha256": before.sha256_text(), "native_after_sha256": after.sha256_text(), "native_before_file": before_file, "native_bytes": before.to_utf8_buffer().size(), "native_equal": before == after, "consumer_failure_before_exact": failure_before, "consumer_failure_after_exact": failure_after, "query_callback_event_delta": events_after-events_before, "query_frame_delta": Engine.get_physics_frames()-frame_before, "query_process_delta": Engine.get_process_frames()-process_before, "scheduler_clock_bits": clock_before, "player_clock_bits": player_clock_before, "engine": Engine.get_version_info(), "display_driver": DisplayServer.get_name(), "limits": "Inherited one-window timing is advancing actual Crossed, historically quiet/no admitted attack and clipped optics. Pure probes are independent paused observations; no nested call count, additive whole-frame attribution, FPS, production encounter fairness or causal speedup. Refusals and early public placement return are preserved."}
+	print("CURRENT73_BINDING_PROFILE_JSON ", JSON.stringify(report))
+	return after
+
+func _persist_exact_witness(name: String, wire: String) -> Dictionary:
+	if wire.is_empty(): return {}
+	var decoded: Dictionary = Exact.parse(wire)
+	if not decoded.get("accepted", false) or Exact.stringify(decoded.value) != wire:
+		_expect(false, "paused Exact witness decodes and re-encodes without type/bit drift: " + name)
+		return {}
+	var directory: String = "res://.cinder/runtime-cost-current73-20261016/runs/" + _cost_label + "/observed"
+	if DirAccess.make_dir_recursive_absolute(directory) != OK:
+		_expect(false, "private observed directory can be created")
+		return {}
+	var path: String = directory + "/" + name
+	if FileAccess.file_exists(path):
+		_expect(false, "actual witness output does not replace existing evidence: " + name)
+		return {}
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		_expect(false, "actual paused witness file opens successfully: " + name)
+		return {}
+	file.store_string(wire)
+	file.flush()
+	var write_error: Error = file.get_error()
+	file.close()
+	if not _expect(write_error == OK and FileAccess.get_file_as_string(path) == wire and FileAccess.get_sha256(path) == wire.sha256_text(), "actual paused witness file retains the literal Exact bytes/hash: " + name):
+		return {}
+	return {"path": path, "bytes": wire.to_utf8_buffer().size(), "sha256": wire.sha256_text(), "exact_decoded_and_reencoded": true}
+

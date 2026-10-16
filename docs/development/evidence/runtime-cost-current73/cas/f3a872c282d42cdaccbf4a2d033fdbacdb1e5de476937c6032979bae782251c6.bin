@@ -1,0 +1,19 @@
+# Additive current73 host runner successor
+
+Use run_v2.py + SOURCE_INPUTS_v2.json + seal_v2.json. V1's14 original files remain byte/mode exact at their original locations and have exact frozen-v1 copies; V1_FROZEN.json maps them. V1 readiness d61e2e3c remains historical, not overwritten. Its tests did not launch Godot.
+
+Root correctly found two pre-execution defects: result initializer dereferenced empty sealed.source_scope before the protected load; dev module import lacked sys.modules registration needed by dataclasses. V2 sets source_scope only after validated seal load, registers the module before exec, temporarily disables bytecode writes and restores that flag even on exec failure; failed exec restores prior module registration.
+
+Additional bounded closure corrections: missing/malformed seal and source/launch failures create CLOSED/incomplete host records; at-close read refusal is captured without claiming equality; closure write failure emits explicit host failure. No filesystem writer can guarantee a durable result when its output filesystem itself refuses writes. The first host-v2 simulation passed11/0 but revealed Python return-in-finally warnings; that exact runner/report and warning correction remain. The successor moved only that return outside finally. Final11/0 host-only simulations have zero actual dev imports/resolver/queue/engine calls.
+
+The actual selected dev API is called with detect_godot_errors=False. Non124 results are source-derived child.wait statuses, but no independent native terminal observation exists;124 remains ambiguous native124 versus synthesized timeout, native_exit_code=null. Raw diagnostics remain and host clean/functional status is distinct. No mocked outcome in host-unit-v2[-final] is native evidence.
+
+The fixed native source/resource/config/UID observations are copied unchanged from v1, not reread/repinned. Only the unused host runner observation switches run.py→run_v2.py; the future seal names the successor spec itself. Child scripts, contexts, guards,30paused probes and180s after-queue bound are unchanged. The old9056 Moon note is historical/excluded; Root reports d25 WIP now live, but this successor neither observes nor selects it.
+
+Root future commands after its source review and exact existing crossed draft selection:
+
+    python3 .cinder/runtime-cost-current73-20261016/run_v2.py seal
+    python3 .cinder/runtime-cost-current73-20261016/run_v2.py run authored
+    python3 .cinder/runtime-cost-current73-20261016/run_v2.py run crossed
+
+No command above, actual seal/preflight, Godot parser/import/native, Git, worker query/contact or public/runtime write occurred. Existing two-context PLAN remains methodological background; commands above select only the additive successor. Four unrelated experiments and Agent02 remain untouched.

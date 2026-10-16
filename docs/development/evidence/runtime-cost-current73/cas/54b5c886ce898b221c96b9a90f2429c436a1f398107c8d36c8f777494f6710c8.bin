@@ -1,0 +1,111 @@
+from pathlib import Path
+import contextlib,hashlib,io,json,sys,types
+BASE=Path(__file__).resolve().parent
+SOURCE=BASE/'run_v2.py'
+OUT=BASE/'host-unit-v2'
+if OUT.exists():raise ValueError('preserve prior host-only units')
+OUT.mkdir()
+def require(v,s):
+ if not v:raise ValueError(s)
+def sha(b):return hashlib.sha256(b).hexdigest()
+def namespace():
+ n={'__file__':str(SOURCE.resolve()),'__name__':'private_current73_host_only_unit'}
+ exec(compile(SOURCE.read_text(),str(SOURCE),'exec'),n)
+ return n
+rows=[]
+def record(name,passed,detail):
+ rows.append({'name':name,'accepted':bool(passed),'detail':detail})
+ require(passed,name)
+def fixture(name,seal='valid',drift=False,validate='0',close_fault=False,resolve_fault=False,lock_drift=False):
+ root=OUT/name/'mock-root';here=root/'private-capsule';here.mkdir(parents=True)
+ n=namespace();n['ROOT']=root;n['HERE']=here
+ (root/'input.txt').write_text('named host-only fixture\n')
+ engine=root/'NOT_A_REAL_ENGINE.bin';engine.write_bytes(b'HOST UNIT; never executed')
+ before=n['observation'](root/'input.txt')
+ if seal!='missing':
+  value={'source_scope':'HOST UNIT synthetic source observations, NO NATIVE CREDIT','paths':['input.txt'],'sources':{'input.txt':before},'engine_path':str(engine),'engine':n['observation'](engine)}
+  if seal=='malformed':value['paths']=42
+  (here/'seal_v2.json').write_text(json.dumps(value))
+ if drift:(root/'input.txt').write_text('changed only private host unit\n')
+ calls={'devmodule':0,'resolver':0,'fake_validation':0,'real_engine_launches':0}
+ class MockDev:
+  @staticmethod
+  def ProjectContext(path):return types.SimpleNamespace(root=path,environ={})
+  @staticmethod
+  def resolve_godot(context):
+   calls['resolver']+=1
+   if resolve_fault:raise OSError('HOST UNIT resolver failure; no actual resolver used')
+   return engine
+  @staticmethod
+  @contextlib.contextmanager
+  def godot_lock(path):
+   if lock_drift:(root/'input.txt').write_text('host-only while-waiting drift\n')
+   yield 99
+  @staticmethod
+  def run_validation(command,context,fd,timeout,detect_godot_errors):
+   calls['fake_validation']+=1
+   require(timeout==180 and detect_godot_errors is False,'validation API flags changed')
+   if validate=='raises':raise OSError('HOST UNIT mock Popen/launch refusal; NO child')
+   if validate=='124':
+    print('Cinder dev: validation timed out after 180s; stopping its owned subprocess.')
+    return 124
+   return 0
+ def fake_module():
+  calls['devmodule']+=1
+  return MockDev
+ n['devmodule']=fake_module
+ original_observe=n['observe'];observation_count=[0]
+ if close_fault:
+  def broken_close(paths):
+   observation_count[0]+=1
+   if observation_count[0]==4:raise OSError('HOST UNIT at-close read refusal')
+   return original_observe(paths)
+  n['observe']=broken_close
+ stream=io.StringIO()
+ with contextlib.redirect_stdout(stream):code=n['run']('authored')
+ dirs=list((here/'runs').iterdir());require(len(dirs)==1,'exact one host-only output')
+ target=dirs[0];result=json.loads((target/'result.json').read_bytes());index=json.loads((target/'index.json').read_bytes())
+ require(result['status']=='CLOSED' and result['functional_complete'] is False and code==2,'host-only failed phase not CLOSED2/incomplete')
+ require(sha((target/'result.json').read_bytes())==index['result']['sha256'],'closure index joins actual result')
+ require(calls['real_engine_launches']==0,'real engine forbidden')
+ (target/'HOST_ONLY_SIMULATION.json').write_text(json.dumps({'native_credit':False,'real_engine_launches':0,'mock_calls':calls,'purpose':name},indent=2)+'\n')
+ return result,calls
+d,c=fixture('missing-seal',seal='missing')
+record('missing-seal closes without dev import',not d['engine_attempted'] and not d['seal_loaded'] and c['devmodule']==0 and d['named_sources_equal_at_close'] is None,{'exception':d['exception']})
+d,c=fixture('malformed-seal',seal='malformed')
+record('malformed seal closes before module/resolver',c['devmodule']==0 and not d['seal_loaded'],{'exception':d['exception']})
+d,c=fixture('prequeue-input-drift',drift=True)
+record('prepared input drift closes before module',c['devmodule']==0 and d['named_sources_equal_at_close'] is False,{'exception':d['exception']})
+d,c=fixture('mock-resolver-failure',resolve_fault=True)
+record('mock resolver failure closes without queue/native',c['resolver']==1 and c['fake_validation']==0 and not d['engine_attempted'],{'exception':d['exception']})
+d,c=fixture('mock-atlock-drift',lock_drift=True)
+record('atlock source drift closes without native',c['fake_validation']==0 and not d['engine_attempted'] and d['named_sources_equal_at_close'] is False,{'exception':d['exception']})
+d,c=fixture('mock-launch-refusal',validate='raises')
+record('mock launch refusal retains closed raw/source custody',c['fake_validation']==1 and 'native_exit_code' not in d and d['named_sources_equal_at_close'] is True,{'exception':d['exception']})
+d,c=fixture('mock-timeout124',validate='124')
+record('mock124 is qualified without invented native exit',d['owned_validation_return']==124 and d['native_exit_code'] is None and d['native_exit_independently_observed'] is False and d['timeout_or_ambiguous_native124'] is True,{'return_qualification':d['return_qualification']})
+d,c=fixture('mock-zero-missing-profile')
+record('mock API0 without actual profile stays incomplete',d['owned_validation_return']==0 and d['functional_complete'] is False,{'exception':d['exception']})
+d,c=fixture('mock-close-read-fault',close_fault=True)
+record('atclose read refusal still writes CLOSED result/index',d['closure_errors'] and d['named_sources_equal_at_close'] is None,{'closure_errors':d['closure_errors']})
+# Verify actual import mechanism only against an isolated dataclass dummy module,
+# never canonical dev, resolver, queue or Godot.
+module_name='cinder_current73_dev_v2';sentinel=object();old=sys.modules.get(module_name,sentinel);flag=sys.dont_write_bytecode
+try:
+ dummy=OUT/'module-import-fixture';(dummy/'scripts/dev').mkdir(parents=True)
+ f=dummy/'scripts/dev/dev.py'
+ f.write_text('from __future__ import annotations\nfrom dataclasses import dataclass\nimport sys\nif __name__ not in sys.modules: raise RuntimeError("module was not registered")\nif not sys.dont_write_bytecode: raise RuntimeError("bytecode was not disabled")\n@dataclass\nclass Probe:\n value: int\n')
+ n=namespace();n['ROOT']=dummy;mod=n['devmodule']()
+ record('dataclass dummy import registered and bytecode flag restored',mod.Probe(7).value==7 and sys.modules[module_name] is mod and sys.dont_write_bytecode==flag and not (f.parent/'__pycache__').exists(),{'scope':'isolated dummy module only; no actual dev/resolver/engine imported'})
+ previous=sys.modules[module_name]
+ f.write_text('import sys\nif not sys.dont_write_bytecode: raise RuntimeError("flag missing")\nraise RuntimeError("HOST UNIT deliberate module exec failure")\n')
+ try:n['devmodule']();raise ValueError('expected dummy import failure')
+ except RuntimeError as e:require('HOST UNIT' in str(e),'unexpected dummy error')
+ record('failed exec restores previous sys.modules and bytecode flag',sys.modules[module_name] is previous and sys.dont_write_bytecode==flag and not (f.parent/'__pycache__').exists(),{'scope':'isolated dummy module failure'})
+finally:
+ if old is sentinel:sys.modules.pop(module_name,None)
+ else:sys.modules[module_name]=old
+ sys.dont_write_bytecode=flag
+report={'schema':1,'kind':'host-only-current73-runner-v2-unit-controls','runner_sha256':sha(SOURCE.read_bytes()),'checks':len(rows),'failures':sum(not r['accepted'] for r in rows),'rows':rows,'complete':True,'success':True,'native_or_godot_credit':False,'actual_Godot_resolver_calls':0,'actual_dev_module_imports':0,'actual_queue_lock_calls':0,'engine_launches':0,'limits':['All run-validation outcomes above are private host simulations, never native timing/evidence.','No current runtime/source/UID repinning or full benchmark/parser/import execution.']}
+(BASE/'HOST_UNIT_REVIEW_v2.json').write_text(json.dumps(report,indent=2)+'\n')
+print(json.dumps({'host_checks':len(rows),'failures':0,'complete':True,'native_credit':False,'review_sha256':sha((BASE/'HOST_UNIT_REVIEW_v2.json').read_bytes())},indent=2))

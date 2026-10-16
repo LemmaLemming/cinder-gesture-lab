@@ -1,0 +1,9 @@
+{
+  "kind": "host-only-pre-execution-successor-correction",
+  "native_runs": 0,
+  "initial_runner_sha256": "d6606437185a86b7bc43ca325c5f1ad15a1eb52c73ff22b7952aabdcac308f40",
+  "initial_host_review_sha256": "d7a92330780c26289910f6844467c0f192ec10cc028a94fd6f6ab39d88b27b33",
+  "initial_host_check_result": "11/0 host simulations; repeated Python SyntaxWarning from return inside finally, no native engine",
+  "correction": "Move failure return outside finally, preserving closure-write failure status and return2; no measurement/selector/input/runtime change.",
+  "final_host_review_pending": "HOST_UNIT_REVIEW_v2_final.json"
+}

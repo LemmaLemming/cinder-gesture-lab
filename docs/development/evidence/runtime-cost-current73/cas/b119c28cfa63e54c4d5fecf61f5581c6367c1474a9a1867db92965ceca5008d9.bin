@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "kind": "host-only-label-contract-controls",
+  "actual_native_fixture_sha256": "25bfd1a8ccb0e95c6c31e301c2c0e6c7ecf7392bc4281da968c071aa6dcd21cc",
+  "literal_native_regex": "^[a-z0-9-]+$",
+  "controls": [
+    {
+      "label": "crossed-20261016t070736023220z-4d45eb3a",
+      "expected": true,
+      "matches": true
+    },
+    {
+      "label": "crossed-20260101t000000000000z-4d45eb3a",
+      "expected": true,
+      "matches": true
+    },
+    {
+      "label": "crossed-20261231t235959999999z-4d45eb3a",
+      "expected": true,
+      "matches": true
+    },
+    {
+      "label": "crossed-20261016T070736.023220Z-4d45eb3a",
+      "expected": false,
+      "matches": false
+    },
+    {
+      "label": "crossed-20261016t070736.023220z-4d45eb3a",
+      "expected": false,
+      "matches": false
+    },
+    {
+      "label": "crossed-20261016T070736023220Z-4d45eb3a",
+      "expected": false,
+      "matches": false
+    },
+    {
+      "label": "crossed-unsafe/path",
+      "expected": false,
+      "matches": false
+    }
+  ],
+  "complete": true,
+  "failures": 0,
+  "Godot_or_parser_or_queue_calls": 0,
+  "no_native_measurement": true
+}

@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""PRIVATE SOURCE ONLY until Root selection. Two explicit queued current measurement selectors."""
+from pathlib import Path
+import argparse,contextlib,datetime,hashlib,importlib.util,json,os,re,stat,sys,uuid
+ROOT=Path(__file__).resolve().parents[2]
+HERE=Path(__file__).resolve().parent
+SCRIPTS={"authored":"tests/authored_echo_performance_smoke.gd","crossed":str(HERE.relative_to(ROOT)/"crossed_current.gd")}
+TIMEOUT=180
+def require(ok,message):
+ if not ok:raise ValueError(message)
+def sha(data):return hashlib.sha256(data).hexdigest()
+def load(path):return json.loads(path.read_bytes())
+def save(path,value):
+ require(not path.exists(),"preserve existing "+str(path))
+ path.parent.mkdir(parents=True,exist_ok=True)
+ path.write_text(json.dumps(value,indent=2,ensure_ascii=False)+"\n")
+def observation(path):
+ if not path.is_file():return {"present":False}
+ b=path.read_bytes()
+ return {"present":True,"sha256":sha(b),"bytes":len(b),"mode":format(stat.S_IMODE(path.stat().st_mode),"04o")}
+def observe(paths):return {p:observation(ROOT/p) for p in paths}
+def devmodule():
+ name="cinder_current73_dev_v2"
+ spec=importlib.util.spec_from_file_location(name,ROOT/"scripts/dev/dev.py")
+ require(spec is not None and spec.loader is not None,"actual dev module loader unavailable")
+ dev=importlib.util.module_from_spec(spec)
+ absent=object();previous=sys.modules.get(name,absent)
+ old_dont_write_bytecode=sys.dont_write_bytecode
+ sys.modules[name]=dev
+ sys.dont_write_bytecode=True
+ try:
+  spec.loader.exec_module(dev)
+ except BaseException:
+  if previous is absent:sys.modules.pop(name,None)
+  else:sys.modules[name]=previous
+  raise
+ finally:
+  sys.dont_write_bytecode=old_dont_write_bytecode
+ return dev
+def seal():
+ require(observation(HERE/"crossed_current.gd")==observation(HERE/"crossed_current.gd.txt"),"Root must select exact private draft as crossed_current.gd first")
+ named=load(HERE/"SOURCE_INPUTS_v3.json")
+ paths=sorted(set(named["fixed_paths"]+[SCRIPTS["crossed"],SCRIPTS["crossed"]+".uid",str(Path(__file__).relative_to(ROOT)),str((HERE/"SOURCE_INPUTS_v3.json").relative_to(ROOT))]))
+ current=observe(paths)
+ for p,record in named["current_source_observations"].items():
+  expected={k:v for k,v in record.items() if k!="path"}
+  require(current[p]==expected,"prepared named source drift before seal; Root must review an explicit spec successor: "+p)
+ for p in named["required_present_paths"]:
+  require(current[p]["present"],"missing required named input "+p)
+ require(not current[SCRIPTS["crossed"]+".uid"]["present"],"no import/new private UID requested")
+ dev=devmodule();context=dev.ProjectContext(ROOT);engine=dev.resolve_godot(context)
+ value={"schema":1,"created_at_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"source_scope":named["scope"],"paths":paths,"sources":current,"engine_path":str(engine),"engine":observation(engine),"selectors":SCRIPTS,"deadline_after_queue_s":TIMEOUT,"native_jobs_executed":False}
+ save(HERE/"seal_v3.json",value)
+ print(json.dumps({"seal_sha256":sha((HERE/"seal_v3.json").read_bytes()),"named_inputs":len(paths),"engine_executed":False}))
+def run(selector):
+ stamp=datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dt%H%M%S%fz")+"-"+uuid.uuid4().hex[:8]
+ label=selector+"-"+stamp;out=HERE/"runs"/label
+ out.mkdir(parents=True,exist_ok=False)
+ paths=[];baseline={};sealed={};seal_loaded=False;closure_write_failed=False
+ result={"schema":1,"selector":selector,"label":label,"status":"PREFLIGHT","engine_attempted":False,"deadline_after_queue_s":TIMEOUT}
+ try:
+  require(re.fullmatch(r"^[a-z0-9-]+$",label) is not None,"generated label violates unchanged native fixture contract before queue")
+  sealed=load(HERE/"seal_v3.json")
+  require(isinstance(sealed,dict) and isinstance(sealed.get("source_scope"),str) and isinstance(sealed.get("paths"),list) and all(isinstance(p,str) for p in sealed["paths"]) and isinstance(sealed.get("sources"),dict),"malformed selected seal")
+  paths=sealed["paths"];baseline=sealed["sources"]
+  require(set(paths)==set(baseline),"seal path/source key mismatch")
+  result["source_scope"]=sealed["source_scope"];seal_loaded=True
+  before=observe(paths);save(out/"source-before.json",before)
+  require(before==baseline,"named inputs changed since seal; no historical repin")
+  dev=devmodule();context=dev.ProjectContext(ROOT);engine=dev.resolve_godot(context)
+  require(str(engine)==sealed["engine_path"] and observation(engine)==sealed["engine"],"selected engine bytes changed")
+  command=[str(engine),"--headless","--path",str(ROOT),"--log-file",str(out/"engine.log"),"--script","res://"+SCRIPTS[selector]]
+  if selector=="crossed":command+=["--","--measurement-label="+label]
+  save(out/"command.json",{"argv":command,"canonical_queue":"dev.godot_lock / dev.run_validation","timeout_after_queue_s":TIMEOUT})
+  save(out/"queue-wait.json",{"at_utc":datetime.datetime.now(datetime.timezone.utc).isoformat()})
+  with (out/"raw.log").open("x") as log,contextlib.redirect_stdout(log),contextlib.redirect_stderr(log):
+   with dev.godot_lock(context.root) as lock:
+    atlock=observe(paths);save(out/"source-at-lock.json",atlock)
+    require(atlock==baseline,"named source drift while waiting")
+    require(observation(engine)==sealed["engine"],"engine bytes changed while waiting")
+    retained=[]
+    for relative,entry in atlock.items():
+     if not entry["present"]:continue
+     data=(ROOT/relative).read_bytes()
+     require(sha(data)==entry["sha256"] and len(data)==entry["bytes"],"at-lock retention drift")
+     target=out/"source-blobs"/(entry["sha256"]+".bin")
+     if not target.exists():target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+     require(sha(target.read_bytes())==entry["sha256"],"retained bytes mismatch")
+     retained.append({"original_path":relative,"portable_relative_path":str(target.relative_to(out)),**entry})
+    save(out/"source-retention.json",{"scope":sealed["source_scope"],"files":retained})
+    save(out/"queue-acquired.json",{"at_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"timeout_starts_after_this":True})
+    result["engine_attempted"]=True
+    # Preserve CA/other diagnostics. Reject them separately, without misreporting a zero child as clean.
+    code=dev.run_validation(command,context,lock,TIMEOUT,detect_godot_errors=False)
+    result["owned_validation_return"]=code
+    result["native_exit_code"]=code if code!=124 else None
+    result["return_qualification"]="With this pinned dev.run_validation and detect_godot_errors=False, non124 returns come from child.wait;124 is ambiguous native124 versus synthesized timeout. No independent child terminal record exists."
+    result["native_exit_independently_observed"]=False
+    result["timeout_or_ambiguous_native124"]=code==124
+    after=observe(paths);save(out/"source-after-child.json",after)
+    require(after==baseline,"named source drift during child")
+  raw=(out/"raw.log").read_text(errors="replace")
+  diagnostics=[x for x in raw.splitlines() if re.search(r"SCRIPT ERROR|Parse Error|ERROR:|WARNING:|ObjectDB instances leaked",x)]
+  result["diagnostic_lines"]=diagnostics;result["clean"]=not diagnostics
+  require(code==0,"owned validation did not close0")
+  require(not re.search(r"SCRIPT ERROR|Parse Error|FAIL:",raw),"actual script/assertion failure")
+  if selector=="authored":
+   matches=re.findall(r"^AUTHORED_ECHO_PROFILE_JSON (.+)$",raw,re.M)
+   require(len(matches)==1,"one actual authored report required");report=json.loads(matches[0])
+   footer=re.findall(r"^Authored echo performance smoke: (\d+) checks, (\d+) failures;",raw,re.M)
+   require(len(footer)==1 and int(footer[0][1])==0,"actual authored footer failed/missing")
+   samples=report["advance_samples"];auto=[s for s in samples if s["automatic_native_tick"]]
+   require(auto and all(s["accepted"] and s["finish_us"]-s["start_us"]==s["inclusive_us"] for s in samples),"actual advance samples invalid")
+   require(report["automatic_native_advances"]==len(auto) and report["required_native_visuals"]==1,"actual workload/visual count changed")
+   require(len(report["separate_fixed_clock_guard_probes"])==15,"fixed separate probe set changed")
+   actions=[s["kind"] for s in report["actual_world_actions"]]
+   require(actions.count("dash")==2 and actions.count("primary")==1 and "blast" not in actions,"actual native actions incomplete")
+   require(all(p in report["native_phases_observed"] for p in ["warning","active","recovery"]),"required native phases missing")
+  else:
+   matches=re.findall(r"^CURRENT73_BINDING_PROFILE_JSON (.+)$",raw,re.M)
+   require(len(matches)==1,"one actual binding report required");report=json.loads(matches[0])
+   require(report["query_phase_complete"] is True and len(report["samples"])==30 and report["native_equal"] is True,"binding query custody incomplete")
+   require(all(x["finish_us"]-x["start_us"]==x["inclusive_us"] for x in report["samples"]),"binding timer mismatch")
+   traces=[json.loads(x) for x in re.findall(r"^A1_L3_STAGE (.+)$",raw,re.M)]
+   intervals=[x for x in traces if x["stage"]=="spore_fusion_interval"]
+   require(len(intervals)==1 and intervals[0]["physics_frames"]==8 and intervals[0]["process_frames"]==1,"actual single interval incomplete")
+   footer=re.findall(r"^Spore fusion measurement: (\d+) checks, (\d+) failures; label=([^;]+); outcome=([^;]+);",raw,re.M)
+   require(len(footer)==1 and int(footer[0][1])==0 and footer[0][2]==label and footer[0][3]=="one_uninstrumented_native_boundary_interval","actual crossed footer/cleanup incomplete")
+   result["actual_interval"]=intervals[0]
+   for key in ["native_before_file"]:
+    f=report[key];p=ROOT/f["path"].removeprefix("res://");require(p.is_file() and sha(p.read_bytes())==f["sha256"] and len(p.read_bytes())==f["bytes"],"original witness file/hash missing")
+   result["placement_scope"]="False public placement samples may be early returns on retained failure state; internal diagnostic binding samples remain separate, never a permission."
+  save(out/"actual-profile-derived.json",report)
+  result["actual_footer"]=footer[0];result["report_json_sha256"]=sha(matches[0].encode())
+  result["functional_complete"]=True;result["status"]="CLOSED"
+ except BaseException as exc:
+  result["status"]="CLOSED";result["functional_complete"]=False;result["exception"]=type(exc).__name__+": "+str(exc)
+ finally:
+  result["status"]="CLOSED";result["seal_loaded"]=seal_loaded
+  closure_errors=[]
+  try:
+   final=observe(paths)
+  except BaseException as exc:
+   final={"observation_error":type(exc).__name__+": "+str(exc)}
+   closure_errors.append("source-at-close: "+final["observation_error"])
+  result["named_sources_equal_at_close"]=(final==baseline) if seal_loaded and not closure_errors else None
+  result["closure_errors"]=closure_errors
+  result["files"]=[]
+  try:
+   save(out/"source-at-close.json",final)
+   # Explicit originals only; source pool and witness references remain separately indexed.
+   for name in ["source-before.json","source-at-lock.json","source-after-child.json","source-at-close.json","source-retention.json","command.json","queue-wait.json","queue-acquired.json","raw.log","engine.log","actual-profile-derived.json"]:
+    p=out/name
+    if p.is_file():
+     try:result["files"].append({"path":name,**observation(p)})
+     except BaseException as exc:closure_errors.append(name+": "+type(exc).__name__+": "+str(exc))
+   if closure_errors:result["functional_complete"]=False
+   save(out/"result.json",result)
+   save(out/"index.json",{"schema":1,"result":{"path":"result.json",**observation(out/"result.json")},"files":result["files"],"limits":"Named subset and actual raw/closure only. No global UID/import closure, FPS, causal gain or inherited encounter/camera repair. Native diagnostics are not erased by zero exit. dev API return is qualified; no independent native terminal observation."})
+  except BaseException as exc:
+   print(json.dumps({"status":"CLOSED_HOST_CLOSURE_WRITE_FAILURE","output":str(out),"engine_attempted":result["engine_attempted"],"exception":type(exc).__name__+": "+str(exc)}))
+   closure_write_failed=True
+ if closure_write_failed:return 2
+ print(json.dumps({"output":str(out),"result":str(out/"result.json"),"functional_complete":result.get("functional_complete"),"clean":result.get("clean"),"named_sources_equal_at_close":result["named_sources_equal_at_close"]}))
+ return 0 if result.get("functional_complete") and result["named_sources_equal_at_close"] and result.get("clean") else 2
+def main():
+ p=argparse.ArgumentParser();p.add_argument("phase",choices=["seal","run"]);p.add_argument("selector",nargs="?",choices=["crossed"]);a=p.parse_args()
+ if a.phase=="seal":require(a.selector is None,"seal takes no selector");seal();return 0
+ require(a.selector is not None,"explicit run selector required");return run(a.selector)
+if __name__=="__main__":raise SystemExit(main())

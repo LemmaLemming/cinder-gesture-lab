@@ -1,0 +1,21 @@
+# Shared73 runtime cost measurements
+
+Measured 16 October 2026 at the exact selected Shared73 source cohorts. The later [Shared74 Living Moon cleanup](LIVING_MOON_FORECAST_CLEANUP.md) is separate and makes no performance claim. Both Root engineering requests remain **OPEN**: Act 1 `f8d3b120-e7b0-429c-8516-d90ee447f947` and Act 3 `c936b6fb-c078-4de6-8f5d-32d88e8fd873`.
+
+| Targeted measurement | Actual result | Observed cost |
+| --- | --- | --- |
+| Existing authored Echo fixture | 113/0, complete and clean | 72 automatic advances: literal fixture p50 **43.860ms**, p95 **45.494ms**, max **83.681ms**; 3.204829s inclusive advance time. Actual window: **3.741296s wall / 1.2s native time**. |
+| Crossed window, corrected host label | 30/0, complete and clean | One **eight-physics/one-process** interval: **5.060956s wall / 0.133333s native time**. All eight Crossed actors remain at cycle0/HP16, with no Scheduler reservations or running events. |
+| Separate paused Crossed binding reads | Included in the 30/0 measurement | 24 Protocol reads: median **1.404ms**, p95 **1.496ms**, max **1.742ms**. Three eight-source sums: 11.872/11.213/11.192ms. Public placement returns true three times, median **11.387ms**; separate internal binding reads return empty error three times, median **11.379ms**. |
+
+The authored context contains one native Box, two completed dashes and one actual primary, with warning/lock/active/recovery observed. It does not represent a sixteen-source production scene or rendered frame rate. Its fifteen separate fixed-clock guard probes are pure observations; their durations are not dynamic call counts and cannot be added to explain an advance.
+
+The Crossed fixture uses the genuine retained CP2 packet, public Continue/Resume and one disclosed TEST Hero placement. Existing encounter-context and optical Pause refusals remain in its traces. The camera changes during native following; exact camera equality is claimed only across the paused query phase. All19 native actors and the complete Player/Scheduler packet are retained; a 734,237-byte focused witness is identical before and after queries, with no query callbacks or frame/clock advances. These quiet-window measurements do not establish admitted combat, a successful optical save or a camera repair.
+
+The first Crossed attempt remains **2 checks / 2 failures, not started**. The host generated uppercase/dotted label characters rejected by the unchanged native `^[a-z0-9-]+$` contract. Only the host label generator and its independent seal changed. No seed, measured interval or binding sample existed in that failed run; the passing authored fixture was not repeated.
+
+[Portable originals and source reviews](evidence/runtime-cost-current73/index.json) preserve all three original closed jobs, exact raw/engine logs, original source donors, seals, reports, queue records, typed witnesses and explicit absences. Each run retains258 fixed observations; no broad import/UID census or unchanged suite was run. Source modes are distinguished from retained blob modes, and historical embedded paths are resolved through the relocation map without rewriting original bytes.
+
+These are material current runtime costs. They establish no sustained FPS, causal historical speedup, mobile performance or new 60FPS acceptance gate. A bounded retained-source callgraph audit identifies repeated transport/validation work, while preserving every real native getter, callback, world and catalogue boundary. One **inert, untested** two-field source-reader projection is recorded as a possible next experiment: it could avoid decoding an entire detached plan when only source ID and tether position are read. No production code is changed and no benefit is claimed. Any experiment needs meaningful equivalence/error-order controls and a measured benefit before adoption; prior withdrawn plan-reuse and unrelated untracked codec experiments remain unadopted.
+
+Root continues this engineering work independently. It does not reopen the24 original level acceptances, gate the workers’ acknowledged focused amendments or require full routes/all-kit playthroughs. No public upload, mobile export or release work accompanies this local evidence publication.

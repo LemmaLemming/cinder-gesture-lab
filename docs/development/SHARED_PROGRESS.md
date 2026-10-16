@@ -1,5 +1,9 @@
 # Cinder shared progress
 
+## Measured runtime-cost record —16 October2026
+
+[Shared73 measurements](RUNTIME_COST_SHARED73.md) now retain the current authored113/0 and Crossed30/0 clean jobs, plus the original failed2/2 host-label run. Authored automatic p50 is43.860ms; Crossed’s quiet eight-physics/one-process window takes5.060956s wall for0.133333s native. Separate binding probes retain exact native state and callbacks, with existing encounter/optical refusals explicit. These are material costs, not FPS or causal speedup evidence. Both engineering requests remain OPEN; one source-only two-field projection proposal is inert/unexecuted. No production change or new runtime API accompanies this evidence checkpoint; current runtime remains Shared74. Original24 levels/difficulty14/24 and worker scopes remain.
+
 ## Shared74 Living Moon rejected-forecast cleanup —16 October2026
 
 [The presentation repair](LIVING_MOON_FORECAST_CLEANUP.md) clears rejected unpublished camera requirements while keeping feasible preframing and the original containment gate. Exact owner ACK1bff94bf authorizes only this narrow Root edit. All76 other original method bodies, native guards/geometry/timing/controls/HP and saved formats remain. Canonical source9056 becomes d25a; Codec2fafe and the separately accepted Blink-first policy stay unchanged.

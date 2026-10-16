@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: FAIL: explicit safe private job label is supplied
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://.cinder/spore-fusion-measure-prep/stage-current-registry.gd:430)
+       [1] _initialize (res://.cinder/spore-fusion-measure-prep/measure.gd:30)
+A1_L3_STAGE {"engine_pid":13555,"message":"explicit safe private job label is supplied","paused":false,"physics_frame_index":0,"process_frame_index":0,"stage":"assertion_failure","ticks_started":0,"wall_us":130}
+A1_L3_STAGE {"engine_pid":13555,"measurement_label":"crossed-20261016T070736.023220Z-4d45eb3a","paused":true,"physics_frame_index":1,"process_frame_index":0,"stage":"cost_setup","ticks_started":0,"wall_us":492}
+A1_L3_STAGE {"engine_pid":13555,"measurement_label":"crossed-20261016T070736.023220Z-4d45eb3a","outcome":"not_started","paused":true,"physics_frame_index":1,"process_frame_index":0,"stage":"cost_cleanup_before","ticks_started":0,"wall_us":517}
+ERROR: FAIL: cost probe preserves original CP2 and canonical registry bytes
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://.cinder/spore-fusion-measure-prep/stage-current-registry.gd:430)
+       [1] _finish (res://.cinder/spore-fusion-measure-prep/measure.gd:181)
+A1_L3_STAGE {"engine_pid":13555,"message":"cost probe preserves original CP2 and canonical registry bytes","paused":false,"physics_frame_index":12,"process_frame_index":13,"stage":"assertion_failure","ticks_started":0,"wall_us":79395}
+A1_L3_STAGE {"engine_pid":13555,"measurement_label":"crossed-20261016T070736.023220Z-4d45eb3a","outcome":"not_started","paused":false,"physics_frame_index":12,"process_frame_index":13,"stage":"cost_cleanup_after","ticks_started":0,"wall_us":79419}
+Spore fusion measurement: 2 checks, 2 failures; label=crossed-20261016T070736.023220Z-4d45eb3a; outcome=not_started; uninstrumented native interval only, no productionFPS/gain/full-route claim

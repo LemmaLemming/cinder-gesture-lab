@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "kind": "host-only-current73-runner-v2-unit-controls",
+  "runner_sha256": "d6606437185a86b7bc43ca325c5f1ad15a1eb52c73ff22b7952aabdcac308f40",
+  "checks": 11,
+  "failures": 0,
+  "rows": [
+    {
+      "name": "missing-seal closes without dev import",
+      "accepted": true,
+      "detail": {
+        "exception": "FileNotFoundError: [Errno 2] No such file or directory: '/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/runtime-cost-current73-20261016/host-unit-v2/missing-seal/mock-root/private-capsule/seal_v2.json'"
+      }
+    },
+    {
+      "name": "malformed seal closes before module/resolver",
+      "accepted": true,
+      "detail": {
+        "exception": "ValueError: malformed selected seal"
+      }
+    },
+    {
+      "name": "prepared input drift closes before module",
+      "accepted": true,
+      "detail": {
+        "exception": "ValueError: named inputs changed since seal; no historical repin"
+      }
+    },
+    {
+      "name": "mock resolver failure closes without queue/native",
+      "accepted": true,
+      "detail": {
+        "exception": "OSError: HOST UNIT resolver failure; no actual resolver used"
+      }
+    },
+    {
+      "name": "atlock source drift closes without native",
+      "accepted": true,
+      "detail": {
+        "exception": "ValueError: named source drift while waiting"
+      }
+    },
+    {
+      "name": "mock launch refusal retains closed raw/source custody",
+      "accepted": true,
+      "detail": {
+        "exception": "OSError: HOST UNIT mock Popen/launch refusal; NO child"
+      }
+    },
+    {
+      "name": "mock124 is qualified without invented native exit",
+      "accepted": true,
+      "detail": {
+        "return_qualification": "With this pinned dev.run_validation and detect_godot_errors=False, non124 returns come from child.wait;124 is ambiguous native124 versus synthesized timeout. No independent child terminal record exists."
+      }
+    },
+    {
+      "name": "mock API0 without actual profile stays incomplete",
+      "accepted": true,
+      "detail": {
+        "exception": "ValueError: one actual authored report required"
+      }
+    },
+    {
+      "name": "atclose read refusal still writes CLOSED result/index",
+      "accepted": true,
+      "detail": {
+        "closure_errors": [
+          "source-at-close: OSError: HOST UNIT at-close read refusal"
+        ]
+      }
+    },
+    {
+      "name": "dataclass dummy import registered and bytecode flag restored",
+      "accepted": true,
+      "detail": {
+        "scope": "isolated dummy module only; no actual dev/resolver/engine imported"
+      }
+    },
+    {
+      "name": "failed exec restores previous sys.modules and bytecode flag",
+      "accepted": true,
+      "detail": {
+        "scope": "isolated dummy module failure"
+      }
+    }
+  ],
+  "complete": true,
+  "success": true,
+  "native_or_godot_credit": false,
+  "actual_Godot_resolver_calls": 0,
+  "actual_dev_module_imports": 0,
+  "actual_queue_lock_calls": 0,
+  "engine_launches": 0,
+  "limits": [
+    "All run-validation outcomes above are private host simulations, never native timing/evidence.",
+    "No current runtime/source/UID repinning or full benchmark/parser/import execution."
+  ]
+}

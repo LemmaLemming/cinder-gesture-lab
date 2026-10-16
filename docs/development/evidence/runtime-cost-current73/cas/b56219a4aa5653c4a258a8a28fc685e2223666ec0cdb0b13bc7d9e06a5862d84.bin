@@ -1,0 +1,44 @@
+--- executed-run_v2.py
++++ run_v3.py
+@@ -39,8 +39,8 @@
+  return dev
+ def seal():
+  require(observation(HERE/"crossed_current.gd")==observation(HERE/"crossed_current.gd.txt"),"Root must select exact private draft as crossed_current.gd first")
+- named=load(HERE/"SOURCE_INPUTS_v2.json")
+- paths=sorted(set(named["fixed_paths"]+[SCRIPTS["crossed"],SCRIPTS["crossed"]+".uid",str(Path(__file__).relative_to(ROOT)),str((HERE/"SOURCE_INPUTS_v2.json").relative_to(ROOT))]))
++ named=load(HERE/"SOURCE_INPUTS_v3.json")
++ paths=sorted(set(named["fixed_paths"]+[SCRIPTS["crossed"],SCRIPTS["crossed"]+".uid",str(Path(__file__).relative_to(ROOT)),str((HERE/"SOURCE_INPUTS_v3.json").relative_to(ROOT))]))
+  current=observe(paths)
+  for p,record in named["current_source_observations"].items():
+   expected={k:v for k,v in record.items() if k!="path"}
+@@ -50,16 +50,17 @@
+  require(not current[SCRIPTS["crossed"]+".uid"]["present"],"no import/new private UID requested")
+  dev=devmodule();context=dev.ProjectContext(ROOT);engine=dev.resolve_godot(context)
+  value={"schema":1,"created_at_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),"source_scope":named["scope"],"paths":paths,"sources":current,"engine_path":str(engine),"engine":observation(engine),"selectors":SCRIPTS,"deadline_after_queue_s":TIMEOUT,"native_jobs_executed":False}
+- save(HERE/"seal_v2.json",value)
+- print(json.dumps({"seal_sha256":sha((HERE/"seal_v2.json").read_bytes()),"named_inputs":len(paths),"engine_executed":False}))
++ save(HERE/"seal_v3.json",value)
++ print(json.dumps({"seal_sha256":sha((HERE/"seal_v3.json").read_bytes()),"named_inputs":len(paths),"engine_executed":False}))
+ def run(selector):
+- stamp=datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")+"-"+uuid.uuid4().hex[:8]
++ stamp=datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dt%H%M%S%fz")+"-"+uuid.uuid4().hex[:8]
+  label=selector+"-"+stamp;out=HERE/"runs"/label
+  out.mkdir(parents=True,exist_ok=False)
+  paths=[];baseline={};sealed={};seal_loaded=False;closure_write_failed=False
+  result={"schema":1,"selector":selector,"label":label,"status":"PREFLIGHT","engine_attempted":False,"deadline_after_queue_s":TIMEOUT}
+  try:
+-  sealed=load(HERE/"seal_v2.json")
++  require(re.fullmatch(r"^[a-z0-9-]+$",label) is not None,"generated label violates unchanged native fixture contract before queue")
++  sealed=load(HERE/"seal_v3.json")
+   require(isinstance(sealed,dict) and isinstance(sealed.get("source_scope"),str) and isinstance(sealed.get("paths"),list) and all(isinstance(p,str) for p in sealed["paths"]) and isinstance(sealed.get("sources"),dict),"malformed selected seal")
+   paths=sealed["paths"];baseline=sealed["sources"]
+   require(set(paths)==set(baseline),"seal path/source key mismatch")
+@@ -163,7 +164,7 @@
+  print(json.dumps({"output":str(out),"result":str(out/"result.json"),"functional_complete":result.get("functional_complete"),"clean":result.get("clean"),"named_sources_equal_at_close":result["named_sources_equal_at_close"]}))
+  return 0 if result.get("functional_complete") and result["named_sources_equal_at_close"] and result.get("clean") else 2
+ def main():
+- p=argparse.ArgumentParser();p.add_argument("phase",choices=["seal","run"]);p.add_argument("selector",nargs="?",choices=sorted(SCRIPTS));a=p.parse_args()
++ p=argparse.ArgumentParser();p.add_argument("phase",choices=["seal","run"]);p.add_argument("selector",nargs="?",choices=["crossed"]);a=p.parse_args()
+  if a.phase=="seal":require(a.selector is None,"seal takes no selector");seal();return 0
+  require(a.selector is not None,"explicit run selector required");return run(a.selector)
+ if __name__=="__main__":raise SystemExit(main())

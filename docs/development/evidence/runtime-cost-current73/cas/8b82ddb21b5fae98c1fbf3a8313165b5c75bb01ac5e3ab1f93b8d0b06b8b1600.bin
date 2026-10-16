@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "status": "READ_ONLY_SOURCE_AUDIT_AND_INERT_PROPOSAL_NOT_EXECUTED",
+  "source_scope": "Eight exact retained authored job input donors; not current live repin, global dependency closure, dynamic call counter or whole-world census.",
+  "source_pins": [
+    {
+      "logical_path": "scripts/combat/replay_playback.gd",
+      "original_retained_path": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/53af575a415f0a8365c71eb92b54c03847a52eb694369afc413d191958ee7cd1.bin",
+      "sha256": "53af575a415f0a8365c71eb92b54c03847a52eb694369afc413d191958ee7cd1",
+      "bytes": 141870
+    },
+    {
+      "logical_path": "scripts/combat/threat_scheduler.gd",
+      "original_retained_path": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d.bin",
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "bytes": 266033
+    },
+    {
+      "logical_path": "scripts/combat/replay_cursor.gd",
+      "original_retained_path": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/1cbe648ad391d4363a525751fcc23e71f13292eddcc5da46233289a40a787362.bin",
+      "sha256": "1cbe648ad391d4363a525751fcc23e71f13292eddcc5da46233289a40a787362",
+      "bytes": 19854
+    },
+    {
+      "logical_path": "scripts/combat/replay_program.gd",
+      "original_retained_path": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9.bin",
+      "sha256": "0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9",
+      "bytes": 4180
+    },
+    {
+      "logical_path": "scripts/combat/authored_enemy_sequence.gd",
+      "original_retained_path": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3.bin",
+      "sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3",
+      "bytes": 37426
+    },
+    {
+      "logical_path": "scripts/combat/authored_echo_renderer.gd",
+      "original_retained_path": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/52dcf5b261574171b32d9c3c15da9279b467a697f81dbae17abd2b2b3c62014d.bin",
+      "sha256": "52dcf5b261574171b32d9c3c15da9279b467a697f81dbae17abd2b2b3c62014d",
+      "bytes": 22148
+    },
+    {
+      "logical_path": "scripts/combat/replay_footprint.gd",
+      "original_retained_path": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b.bin",
+      "sha256": "23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b",
+      "bytes": 34512
+    },
+    {
+      "logical_path": "scripts/combat/replay_witness.gd",
+      "original_retained_path": ".cinder/runtime-cost-current73-20261016/runs/authored-20261016T070619.721343Z-46d36e29/source-blobs/5bcc9c58b9ea8c496200d9d313f2d9848baa0700665fa062640270945d829295.bin",
+      "sha256": "5bcc9c58b9ea8c496200d9d313f2d9848baa0700665fa062640270945d829295",
+      "bytes": 23615
+    }
+  ],
+  "actual_measurement": {
+    "reference": "AUTHORED_ACTUAL_REVIEW.json",
+    "automatic_advance_samples": 72,
+    "automatic_median_us": 43860,
+    "p95_us": 45494,
+    "maximum_us": 83681,
+    "inclusive_automatic_us": 3204829,
+    "wall_us": 3741296,
+    "simulated_s": 1.2,
+    "separate_pure_probes_are_not_dynamic_call_counts": true
+  },
+  "callgraph": [
+    {
+      "source": "replay_playback.gd",
+      "lines": "240-342",
+      "facts": "Automatic advance checks fresh collision, full reservation error, lease state, a delivery guard, fresh Cursor restore and due event prefix; commits once-only cursor/pending state before draining callbacks."
+    },
+    {
+      "source": "replay_playback.gd",
+      "lines": "349-425,1142-1236",
+      "facts": "Each event presentation/damage/event signal and final state signal is followed by its own guard; renderer/cue presentation also rechecks. These callback/native boundaries remain mandatory."
+    },
+    {
+      "source": "threat_scheduler.gd",
+      "lines": "463-492",
+      "facts": "Each successful authored reservation error traverses context/cycle/source error then stationary floor handles, another fresh collision signature and cooldown, with original error precedence."
+    },
+    {
+      "source": "threat_scheduler.gd",
+      "lines": "573-611",
+      "facts": "Source error validates closed context/sequence, constructs fresh exact Program/Authored reader, materializes reader.state(), invokes the actual source getter, rechecks native identity, freshly computes floor/collision and tail rechecks catalogue/wire/binding."
+    },
+    {
+      "source": "replay_program.gd",
+      "lines": "63-93",
+      "facts": "Source-only factory creates a fresh exact Authored reader; state() delegates to its defensive native decoding copy. No external reader alias escapes before Scheduler's source getter."
+    },
+    {
+      "source": "authored_enemy_sequence.gd",
+      "lines": "62-81,174-225",
+      "facts": "state() duplicates the complete validated wire and converts all definition/timeline vectors; source guard retains immutable private copy and resets same-call validation sink before native getter. Catalogue equivalence is freshly read in the later binding tail."
+    },
+    {
+      "source": "replay_cursor.gd",
+      "lines": "110-194",
+      "facts": "Restore validates a fresh Program inside snapshot_error and again for retained plan. This is structurally repeated pure work, but public virtual validation and prior withdrawn plan-reuse experiment preclude simply removing it."
+    }
+  ],
+  "interpretation": "The inclusive advance interval contains repeated complete pure transport/derivation and fresh world, renderer and cue validation. The source graph supports repeated guard work, not a runtime count or attribution percentage. Standalone paused probes cannot be multiplied into a dynamic advance cost.",
+  "candidate": {
+    "name": "Fresh source-reader two-field projection",
+    "exact_patch": "SOURCE_GUARD_PROJECTION_PROPOSAL.patch.txt",
+    "patch_sha256": "3d9b02271589f55b221e20a887cbfa636337b3067644f450c825bcaa68c5d3d9",
+    "production_edits": false,
+    "engine_or_parser_execution": false,
+    "changes": [
+      {
+        "path": "scripts/combat/threat_scheduler.gd",
+        "before_sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+        "inert_after_sha256": "ce3790dce502e17799057f73e967ea76ca9b62cce21fbd63fa418e446075dcc2",
+        "before_bytes": 266033,
+        "inert_after_bytes": 266059
+      },
+      {
+        "path": "scripts/combat/replay_program.gd",
+        "before_sha256": "0336b295650bd31ef5c4973e37dd0c48fd204e032a17ca07a7a6ac81062b69e9",
+        "inert_after_sha256": "44681f6bd2c273ba5ee8d24451075fd328d1a9c1a0be136fd6089ca31065473e",
+        "before_bytes": 4180,
+        "inert_after_bytes": 4551
+      },
+      {
+        "path": "scripts/combat/authored_enemy_sequence.gd",
+        "before_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3",
+        "inert_after_sha256": "325a21ccd1be68e4347e8415474d4bcbd1a9b8313a5a0dd8104d08d5a4b9cdb9",
+        "before_bytes": 37426,
+        "inert_after_bytes": 37844
+      }
+    ],
+    "removed_work": "One detached complete state() deep copy and conversion of unrelated route/action/timeline vectors per successful source-error call, replaced by fresh source_id plus the exact same Codec.read_vector3 of authored.tether_position. Number of actual dynamic calls is unmeasured.",
+    "preserved": "Full fresh immutable snapshot validation, original wire bounds, two role/catalogue resolves and later fresh catalogue check, actual source getter once at its original position, native post-getter identity checks, fresh floor/collision, staged definition/fallback path, all native guards, callback guards, time/clock/error ordering and complete binding validation.",
+    "proof": "The local ReplayProgram is constructed exact and its factory checks exact Script before constructing an exact Authored reader. The validated wire is privately duplicated; no callback/getter/yield occurs before reading identity. Scheduler only reads plan.source_id and plan.authored.tether_position. Those values retain original string/native Vector3 conversion; no mutable dictionary/array escapes. Exact-script fallback calls the original state() for legitimate subclass behavior. This projection grants no accepted flag or cached authority.",
+    "limits": "Source proof only. No speed, FPS, causal attribution or acceptance credit. If unexpected internal state or subclass behavior differs under meaningful controls, withdraw the projection."
+  },
+  "smallest_regression_plan": [
+    "Root may inspect/promote only after separate approval of this inert proposal. Parse directly affected scripts through canonical queue.",
+    "Run original and candidate compiled donors in the same actual native world; compare compact fields with original state() source_id/tether_position exactly across original entrance/profile/native extremes and nested input/output alias mutation; verify full state() itself remains unchanged.",
+    "Keep existing focused authored source-guard valid/failure/error-precedence controls and native getter mutation/freed-owner/script change/staged definition/catalogue mutation/floor-collision mutation controls; actual getter count/order must remain identical.",
+    "Use unchanged oneBox113 route fixture once per exact source with retained raw profile/native/callback evidence. Compare automatic advance distributions and complete functional invariants; do not add full routes or infer dynamic call counts from pure probes.",
+    "Only if a reproducible benefit exists, run the directly affected shared focused suite; no global bank rerun or new FPS gate."
+  ],
+  "rejected_or_excluded": [
+    "No guard elision across actual getters, renderer/cue hooks, damage, event/state signal, frame or physics boundary.",
+    "No membership/frame/TTL cache or accepted native receipt.",
+    "No renewed Cursor plan-reuse experiment: prior clean correctness did not establish benefit and was withdrawn.",
+    "No exact codec fusion/type filter/numeric replacement experiment; unrelated untracked experiments untouched.",
+    "No current baseline request is closed by measurement or this unused proposal. Both performance requests remain engineering-open."
+  ]
+}
