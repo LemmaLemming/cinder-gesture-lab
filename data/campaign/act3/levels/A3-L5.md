@@ -1,3 +1,7 @@
+## Withdrawn L5 fixtures archived as exact inert text —16 October 2026
+
+Both candidate fixtures reference constructor APIs removed by the exact runtime withdrawal. Their unchanged bytes are now under docs/acts/act3/evidence/A3-L5-policy/withdrawn-fixtures/*.gd.txt; active test paths are retired with the candidate. Original execution paths, Git97c, all failed source versions and full native evidence remain literal. This is source retirement, not a repair, rerun or passing-check claim. No additional engine work or hypothesis qualification follows. Original8/all24 accepted content and17policies remain unchanged.
+
 ## L5 single hypothesis stopped; accepted runtime restored —16 October 2026
 
 The only authorized west-inset comparison is CLOSED FAILED568/57 at97c88504/Shared74:396 observed native ticks, zero completed cases, canonical arm only. Exact rawlogce602a8d and12,907,720B native partialtracef98d9871 remain literal. A sufficient TEST contract error is source-proved: ordinary C50 leases do not publish replay-only response_actor_instance_id, but the fixture requires it. Its discovery loop continued after failure:55 identity assertions, then actual consumed C50 contact/12HP loss at6.6s and one incomplete-case assertion. The contact is not erased; this failed driver establishes no production guard defect, changed-layout safety, equivalence or novelty. The changed cell/classifier did not execute.
