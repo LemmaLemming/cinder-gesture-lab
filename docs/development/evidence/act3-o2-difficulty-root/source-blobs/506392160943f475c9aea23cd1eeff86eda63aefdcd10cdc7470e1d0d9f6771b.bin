@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "kind": "source-only-self-review",
+  "ready_for_root_seal": true,
+  "engine_executed": false,
+  "seal_executed": false,
+  "reviewed_files": [
+    "run.py",
+    "INPUT_SPEC.json",
+    "README.md",
+    "tests/act3_o2_registration_smoke.gd",
+    "scripts/dev/dev.py"
+  ],
+  "checks": {
+    "python_ast_syntax": "pass; parsed source without importing or executing wrapper",
+    "named_source_pins": "138 exact current SHA256 matches; no census",
+    "promoted_cohort": "28 owned receipt rows included with matching pins",
+    "native_source_map": "exact SHORT_SOURCE_PATHS plus Registry.DATA_PATH and special executing fixture object",
+    "native_schema": "actual report/check/ok, sequential counters, empty first_failure, true success/short_scope_complete, exact actual footer and printed report SHA/path",
+    "opaque_initial_disk": "read-only original Story/session UTF8 byte/SHA validation; no packet decoder or factory",
+    "canonical_execution": "single exact alias/suite_paths; godot_lock then run_validation; child180s/native120s; no execution performed",
+    "custody": "before queue, at lock, after child and close; named source blobs retained; unique outputs indexed after raw closes",
+    "failure_and_diagnostics": "preflight/interruption/timeout/script/report failures remain nonpassing; partial outputs retained; API status explicitly distinct from OS terminal proof; Root must independently inspect diagnostics",
+    "scope": "no full Save/Continue, held/completion/Replay, component, portrait or campaign playthrough credit; reuse separately reviewed owner evidence"
+  },
+  "limitations": [
+    "Source-only review is not native execution or runtime success.",
+    "READINESS freezes run.py, INPUT_SPEC.json, README.md and this SELF_REVIEW; READINESS itself is captured and compared by the subsequent explicit original seal, avoiding a circular self-hash.",
+    "Zero API return and wrapper passed do not independently classify raw diagnostics as clean. Root must review raw.log, engine.log, result diagnostics and closed evidence index.",
+    "Named subset is intentionally not a full dependency/import/UID graph."
+  ]
+}
