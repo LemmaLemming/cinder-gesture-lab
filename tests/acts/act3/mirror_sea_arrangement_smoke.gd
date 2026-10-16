@@ -869,6 +869,10 @@ func _ec_spawn(changed: bool, combined: bool, restore_only: bool) -> Dictionary:
 	var kit: Dictionary = {"jacket": "CLOTH-J0", "pants": "CLOTH-P2" if combined else "CLOTH-P0", "shoes": "CLOTH-S2" if combined else "CLOTH-S0", "weapon": "WEAPON-03" if combined else "WEAPON-01"}
 	if lab == null or not paused: return {"error": "Actual paused Lab required for public initial equipment selection"}
 	for slot: String in EC_SLOTS:
+		# A separate paused donor world can contain a living enemy. Keep the
+		# actual neutral recipient's already-equipped item without requesting
+		# a clothing change; real combined-kit changes still use the public API.
+		if lab.equipment.snapshot().get(slot) == kit[slot]: continue
 		if not lab.equip_item(String(kit[slot])): return {"error": "Public initial equipment refused: " + slot}
 	var packed: Dictionary = _ec_make_scene(changed, restore_only)
 	if not String(packed.error).is_empty(): return packed
@@ -1075,7 +1079,9 @@ func _ec_dispose_all() -> String:
 		var level: CinderLevel = main.get("active_level") as CinderLevel
 		var hero: CinderPlayer = main.get("player") as CinderPlayer
 		var scheduler: CinderThreatScheduler = level.get("threat_scheduler") as CinderThreatScheduler if level != null else null
-		var source: Node3D = (level.get("sources") as Dictionary).get(EC_ID) as Node3D if level != null else null
+		var sources_value: Variant = level.get("sources") if level != null else null
+		var source: Node3D = null
+		if sources_value is Dictionary: source = sources_value.get(EC_ID) as Node3D
 		var current: String = await _ec_dispose_one({"main": main, "level": level, "hero": hero, "scheduler": scheduler, "source": source})
 		if error.is_empty(): error = current
 	_ec_native_handles.clear()
