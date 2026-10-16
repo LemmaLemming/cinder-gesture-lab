@@ -507,16 +507,29 @@ func _portrait_case() -> bool:
 	var label: Label=game.hud.find_child("ObjectiveLabel",true,false) as Label
 	var points: Array=game.active_level.camera_framing_points()
 	if not _expect(label!=null and label.text==game.active_level.objective_text and not points.is_empty() and game.camera_framing_error(points).is_empty(),"actual current HUD and camera contain genuine final source/footprint/response union"): return false
-	var before: String=_portrait_wire(); var visible_before: bool=game.menu.visible
+	var values: Dictionary=_portrait_values()
+	var inherited_encoded: Variant=_encode(values)
+	var budget: Array[int]=[Exact.MAX_NODES,Exact.MAX_BYTES]
+	var inherited_result: Dictionary=Exact._encode(inherited_encoded,0,budget)
+	var unsupported: Array[Dictionary]=[]
+	_portrait_unencoded(inherited_encoded,"$",unsupported)
+	receipts.append({"label":"portrait original encoder diagnosis at current paused state","accepted":inherited_result.accepted,"reason":inherited_result.get("reason",""),"remaining_budget":budget.duplicate(),"unsupported_native_values":unsupported,"retrospective_limit":"Original portrait02 aggregate was not retained; current measured rejection does not reconstruct its missing values."})
+	var before: String=_portrait_wire(values); var visible_before: bool=game.menu.visible
+	if not _expect(_portrait_wire_valid(before),"complete typed exact portrait witness is nonempty and decodes before draw"): return false
 	game.menu.visible=false
 	await RenderingServer.frame_post_draw
-	var stable: bool=_expect(paused and _portrait_wire()==before,"menu-only hiding retains exact native/Attempts/camera/input/HUD across actual draw")
+	var after_draw: String=_portrait_wire(_portrait_values())
+	var stable: bool=_expect(paused and _portrait_wire_valid(after_draw) and after_draw==before,"menu-only hiding retains nonempty exact native/Attempts/camera/input/HUD across actual draw")
 	var picture: Image=root.get_texture().get_image() if stable else null
 	var path: String="res://.cinder/a1-o2-difficulty-final-%d-%d.png" % [OS.get_process_id(),Time.get_ticks_usec()]
 	var written: bool=picture!=null and picture.get_size()==Vector2i(540,1170) and picture.save_png(path)==OK
 	game.menu.visible=visible_before
-	if not _expect(written and _portrait_wire()==before and game.menu.visible==visible_before,"actual540x1170 final PNG preserves saved native state and restores menu"): return false
-	shots.append({"path":ProjectSettings.globalize_path(path),"sha256":FileAccess.get_sha256(path),"source_snapshot_sha256":Exact.stringify(input_snapshot).sha256_text(),"before_after_exact":before,"personal_review":"pending; native containment alone is not visual acceptance"})
+	var restored: String=_portrait_wire(_portrait_values())
+	if not _expect(written and _portrait_wire_valid(restored) and restored==before and game.menu.visible==visible_before,"actual540x1170 final PNG preserves nonempty exact saved native state and restores menu"): return false
+	var saved_receipt: Dictionary=receipts.filter(func(row: Dictionary)->bool:return row.get("label")=="actual Challenge guard safe landing portrait Save").back()
+	var pictured_snapshot: String=Exact.stringify(values.snapshot)
+	if not _expect(not pictured_snapshot.is_empty() and pictured_snapshot==saved_receipt.exact_snapshot,"pictured snapshot is exactly the actual post-dash paused Save receipt"): return false
+	shots.append({"path":ProjectSettings.globalize_path(path),"sha256":FileAccess.get_sha256(path),"source_snapshot_sha256":Exact.stringify(input_snapshot).sha256_text(),"pictured_snapshot_sha256":pictured_snapshot.sha256_text(),"before_after_exact":before,"after_draw_exact":after_draw,"after_menu_restore_exact":restored,"exact_witness_sha256":before.sha256_text(),"personal_review":"pending; native containment alone is not visual acceptance"})
 	return true
 
 func _portrait_escape() -> bool:
@@ -553,11 +566,39 @@ func _portrait_escape() -> bool:
 	return _record_unit("actual Challenge guard safe landing portrait Save")
 
 
-func _portrait_wire() -> String:
+func _portrait_values() -> Dictionary:
 	var actor_states: Dictionary={}
 	for id: String in Bloom.SOURCE_IDS: actor_states[id]={"body":_source(id).pure_presentation_state(),"cue":_source(id).get_cue().state(),"environment":_source(id).get_spore_response_state()}
 	var objective: Label=game.hud.find_child("ObjectiveLabel",true,false) as Label
-	return Exact.stringify(_encode({"snapshot":game.capture_campaign_snapshot(),"attempts":game.attempts.state(),"native":actor_states,"camera":game.camera.global_transform,"camera_size":game.camera.size,"framing":game.get_camera_framing_state(),"input":game.get_input_observation_state(),"hud":objective.text if objective!=null else ""}))
+	return {"snapshot":game.capture_campaign_snapshot(),"attempts":game.attempts.state(),"native":actor_states,"camera":game.camera.global_transform,"camera_size":game.camera.size,"framing":game.get_camera_framing_state(),"input":game.get_input_observation_state(),"hud":objective.text if objective!=null else ""}
+
+func _portrait_wire(values: Dictionary) -> String:
+	return Exact.stringify(_portrait_encode(values))
+
+func _portrait_wire_valid(wire: String) -> bool:
+	if wire.is_empty(): return false
+	var decoded: Dictionary=Exact.parse(wire)
+	return decoded.accepted and decoded.value is Dictionary and decoded.value.size()==8 and Exact.stringify(decoded.value)==wire
+
+func _portrait_encode(value: Variant) -> Variant:
+	# Fixture-only complete native value encoding; shared transport stays closed.
+	if value is Rect2: return {"native_type":"Rect2","position":_encode(value.position),"size":_encode(value.size)}
+	if value is Dictionary:
+		var encoded: Dictionary={}
+		for key: Variant in value: encoded[String(key)]=_portrait_encode(value[key])
+		return encoded
+	if value is Array:
+		var encoded: Array=[]
+		for child: Variant in value: encoded.append(_portrait_encode(child))
+		return encoded
+	return _encode(value)
+
+func _portrait_unencoded(value: Variant, path: String, rows: Array[Dictionary]) -> void:
+	if value is Dictionary:
+		for key: Variant in value: _portrait_unencoded(value[key],path+"."+String(key),rows)
+	elif value is Array:
+		for index: int in value.size(): _portrait_unencoded(value[index],path+"["+str(index)+"]",rows)
+	elif typeof(value) not in [TYPE_NIL,TYPE_BOOL,TYPE_INT,TYPE_FLOAT,TYPE_STRING]: rows.append({"path":path,"native_type":type_string(typeof(value))})
 
 func _finite_native_samples() -> Dictionary:
 	var rows: Dictionary={}
