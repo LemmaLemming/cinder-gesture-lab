@@ -255,12 +255,12 @@ func _hp_portrait() -> bool:
 	var visibility_observations: Array = [_hp_ui_state()]
 	var hidden_during_draw: bool = _hp_all_hidden(visibility_observations[0])
 	RenderingServer.frame_post_draw.connect(_hp_on_draw)
-	for _frame: int in range(120):
-		await process_frame
-		var actual: Array[Dictionary] = _hp_ui_state()
-		visibility_observations.append(actual)
-		hidden_during_draw = hidden_during_draw and _hp_all_hidden(actual)
-		if _hp_draw_seen or _hc_done or _hc_finishing: break
+	# TEST ONLY direct GPU draw while paused, not a physics/process step.
+	# Official RenderingServer.force_draw redraws all viewports; zero frame_step.
+	RenderingServer.force_draw(false,0.0)
+	var actual: Array[Dictionary] = _hp_ui_state()
+	visibility_observations.append(actual)
+	hidden_during_draw = hidden_during_draw and _hp_all_hidden(actual)
 	if RenderingServer.frame_post_draw.is_connected(_hp_on_draw): RenderingServer.frame_post_draw.disconnect(_hp_on_draw)
 	var picture: Image = root.get_texture().get_image() if _hp_draw_seen and not _hc_finishing else null
 	hidden_during_draw = hidden_during_draw and _hp_all_hidden(_hp_draw_ui)

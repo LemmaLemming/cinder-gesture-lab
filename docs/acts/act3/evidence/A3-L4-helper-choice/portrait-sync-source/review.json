@@ -1,0 +1,11 @@
+{
+  "source_sha256": "13bb02c7181a7f3c2dc6ef5bcad548f611f4664e91dd22f29cafe2c927264b92",
+  "base_sha256": "994c3ec50992c0a42e9e91c4ad60730f9199bb4814a4f490e70b161e73c18a01",
+  "scope": "Only bounded await loop replaced by one actual native RenderingServer.force_draw(false,0.0). No awaits from actual callback connection through image read/UI restoration. Four nonempty typed witnesses, actual callback/hidden UI/image/unchanged assertion remain byte-identical. Official main-thread redraw API confirmed; no gameplay/source/Shell/clock/camera writes.",
+  "reference": "https://docs.godotengine.org/en/stable/classes/class_renderingserver.html#class-renderingserver-method-force-draw",
+  "original_failed_runs": [
+    "portrait-01",
+    "portrait-02"
+  ],
+  "source_review": "Exact13bb/0ab3 reviewed independently clear; native draw remains unexecuted at promotion."
+}

@@ -1,0 +1,21 @@
+{
+  "scope": "PRIVATE one synchronous GPU draw delta only",
+  "base_sha256": "994c3ec50992c0a42e9e91c4ad60730f9199bb4814a4f490e70b161e73c18a01",
+  "candidate_sha256": "13bb02c7181a7f3c2dc6ef5bcad548f611f4664e91dd22f29cafe2c927264b92",
+  "patch_sha256": "0ab3201b19d47c54dcbb1db0644a6bb5cab2cca316e9278ac1591823fce5fa0c",
+  "exact_delta": "replace only six-line120process-await loop with one synchronous RenderingServer.force_draw(false,0.0) and same actualUI observation",
+  "force_draw_calls": 1,
+  "no_await_between_connect_image_read_and_UI_restore": true,
+  "original_assertion_byte_exact": true,
+  "four_witness_guards_unchanged": true,
+  "failure_diagnostics_unchanged": true,
+  "engine_runs": 0,
+  "owned_writes": false,
+  "not_executed": [
+    "GDScript parser",
+    "actual synchronous redraw/frame_post_draw/image read",
+    "native witness/UI custody"
+  ],
+  "readme_sha256": "fa9ccff37347f1c54e2303eee9bf0192e7a0b677dbc90e1e8f4dffade1c09267",
+  "independent_source_review": "seal_audit bounded delta review clear for13bb02c7/0ab3201b; docs independently verified; no actual render/pass claim"
+}
