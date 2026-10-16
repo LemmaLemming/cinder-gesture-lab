@@ -1,0 +1,3 @@
+# Brief saved-warning visual scope
+
+Exact unchanged canonical queued runner. Root reviewed/copied only the TEST visual scope split: graphical actual public warningSave and changedpreference then briefdraw/cleanup before disposal; full freshTitleContinue/Retry remain separate headless38/0. Initial graphicalContinue can observe either actual idle paused resume or pause, with immediate exactwholeentry/policy checks. No gamefocus bypass, original180operation/32draw/dimensions/wholeinputCameraHUDcallback/nativeoptical guards unchanged. Allruntime and headlessbehavior unchanged. Previousfailedruns remainretained; no cause or pass inferred. Existing sixUIDs fixed; no import or unrelatedcomponentrerun. Root choosesseal/parseShell/one graphicalbriefcheck only.

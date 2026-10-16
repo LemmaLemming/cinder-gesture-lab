@@ -1,0 +1,16 @@
+--- before/captured_replay_policy_smoke.gd.txt
++++ after/captured_replay_policy_smoke.gd.txt
+@@ -172,6 +172,13 @@
+ 	wrong.erase("captured_policy")
+ 	var before: String = ExactJson.stringify({"actor": hero.snapshot_state(), "scheduler": scheduler.snapshot_state(fresh.bindings), "playback": owner.snapshot_state(bundle.scheduler, fresh.bindings)})
+ 	_expect(not owner.restore_state(wrong, scheduler, bundle.scheduler, fresh.bindings, {"hero": hero}) and not before.is_empty() and ExactJson.stringify({"actor": hero.snapshot_state(), "scheduler": scheduler.snapshot_state(fresh.bindings), "playback": owner.snapshot_state(bundle.scheduler, fresh.bindings)}) == before, "Missing-policy downgrade refuses atomically on exact whole native unit")
++	# Use the ACTUAL native writer schema. This common nonprojected owner
++	# usually writes1/2; projected phase/Shell additional test covers3.0.
++	for field: String in ["schema_version", "generation"]:
++		wrong = bundle.playback.duplicate(true)
++		wrong[field] = float(wrong[field]) # TEST input forgery only, never live state.
++		var error: String = owner.snapshot_error(wrong, scheduler, bundle.scheduler, fresh.bindings, {"hero": hero})
++		_expect(not error.is_empty() and not owner.restore_state(wrong, scheduler, bundle.scheduler, fresh.bindings, {"hero": hero}) and not before.is_empty() and quiet.is_empty() and ExactJson.stringify({"actor": hero.snapshot_state(), "scheduler": scheduler.snapshot_state(fresh.bindings), "playback": owner.snapshot_state(bundle.scheduler, fresh.bindings)}) == before, "New captured-policy " + field + " float alias refuses on exact whole native unit without callbacks: " + error)
+ 	installed.playback.free()
+ 	arena.scheduler.end_encounter(); arena.scheduler.free(); arena.player.free()
+ 	return fresh

@@ -1,0 +1,381 @@
+{
+  "review": "captured-assisted-policy",
+  "created_at": "2026-10-15T08:29:25.974295+00:00",
+  "result": "Confirmed policy gap in captured Crystalman; authored Echo assistance already resolved upstream. Additive fresh-only policy feasible but needs shared Playback/codec implementation.",
+  "scope": "Read-only named-source trace. No engine, tests, worker messages, Git, production edits, broad dependency/evidence census or acceptance changes.",
+  "facts": [
+    {
+      "id": "policy",
+      "result": "Documented Assisted raw damage is0.70 once before armour; total pre-hit windup is1.35 and recovery1.35 in canonical catalogue. No hidden damage category.",
+      "anchors": [
+        {
+          "path": "docs/DIFFICULTY_DESIGN.md",
+          "line": 43,
+          "through": 55
+        },
+        {
+          "path": "data/design/difficulty_profiles.json",
+          "line": 6
+        },
+        {
+          "path": "scripts/combat/difficulty.gd",
+          "line": 84,
+          "through": 94
+        }
+      ]
+    },
+    {
+      "id": "player-record",
+      "result": "Player captures producer equipment-resolved primary/followup damage, plus original equipment/stats. Canonical world-record validation requires the original damage, geometry, commitment and cooldown; no encounter profile enters that calculation.",
+      "anchors": [
+        {
+          "path": "scripts/player.gd",
+          "line": 350,
+          "through": 365
+        },
+        {
+          "path": "scripts/player.gd",
+          "line": 378,
+          "through": 390
+        },
+        {
+          "path": "scripts/player.gd",
+          "line": 507,
+          "through": 525
+        },
+        {
+          "path": "scripts/player.gd",
+          "line": 942,
+          "through": 952
+        },
+        {
+          "path": "scripts/equipment.gd",
+          "line": 190,
+          "through": 194
+        }
+      ]
+    },
+    {
+      "id": "unchanged-custody",
+      "result": "Gate drains actual bound Player history; Capture encodes then duplicates exact original actions into slots; Gate constructs Sequence from actual complete capture; Sequence copies each original attack record and preserves route-relative timing/order/duration.",
+      "anchors": [
+        {
+          "path": "scripts/combat/replay_capture_gate.gd",
+          "line": 98,
+          "through": 128
+        },
+        {
+          "path": "scripts/combat/action_capture.gd",
+          "line": 38,
+          "through": 75
+        },
+        {
+          "path": "scripts/combat/replay_capture_gate.gd",
+          "line": 138,
+          "through": 159
+        },
+        {
+          "path": "scripts/combat/replay_capture_gate.gd",
+          "line": 409,
+          "through": 420
+        },
+        {
+          "path": "scripts/combat/replay_sequence.gd",
+          "line": 125,
+          "through": 151
+        }
+      ]
+    },
+    {
+      "id": "captured-no-scale",
+      "result": "Captured configure validates Sequence and installs its unchanged native plan. Scheduler validates/proves that plan and copies it unchanged into the replay lease; profile_id is descriptive/binding state here, not damage resolution. Cursor emits a defensive copy; Playback recovers original plan event and dispatches its raw record.damage directly. Hero only checks invulnerability/death and applies current recipient equipment armour. Thus captured Assisted0.70 is absent along this actual path, not already upstream.",
+      "anchors": [
+        {
+          "path": "scripts/acts/act3/crystalman_capture_phase.gd",
+          "line": 367,
+          "through": 388
+        },
+        {
+          "path": "scripts/combat/replay_playback.gd",
+          "line": 102,
+          "through": 109
+        },
+        {
+          "path": "scripts/combat/threat_scheduler.gd",
+          "line": 345,
+          "through": 377
+        },
+        {
+          "path": "scripts/combat/replay_cursor.gd",
+          "line": 78,
+          "through": 90
+        },
+        {
+          "path": "scripts/combat/replay_playback.gd",
+          "line": 310,
+          "through": 331
+        },
+        {
+          "path": "scripts/combat/replay_playback.gd",
+          "line": 346,
+          "through": 358
+        },
+        {
+          "path": "scripts/player.gd",
+          "line": 396,
+          "through": 403
+        },
+        {
+          "path": "scripts/equipment.gd",
+          "line": 125,
+          "through": 126
+        }
+      ]
+    },
+    {
+      "id": "outer-no-scale",
+      "result": "Crystalman _authored always returns recognition0.25, warning1.3, locked lead1.5, inter-slot gap1.0 only for two slots, final recovery3.5. Codec independently requires that exact original recipe. Scheduler deadlines derive directly from Sequence; no multiplier is applied at admission or lock. Assisted total outer windup remains2.8 and recovery3.5.",
+      "anchors": [
+        {
+          "path": "scripts/acts/act3/crystalman_capture_phase.gd",
+          "line": 353,
+          "through": 355
+        },
+        {
+          "path": "scripts/acts/act3/crystalman_capture_codec.gd",
+          "line": 197,
+          "through": 200
+        },
+        {
+          "path": "scripts/acts/act3/crystalman_capture_codec.gd",
+          "line": 287,
+          "through": 288
+        },
+        {
+          "path": "scripts/combat/replay_sequence.gd",
+          "line": 131,
+          "through": 151
+        },
+        {
+          "path": "scripts/combat/threat_scheduler.gd",
+          "line": 408,
+          "through": 432
+        }
+      ]
+    },
+    {
+      "id": "budget",
+      "result": "Captured replay requires one exclusive reservation across preparing/active/recovery; two captured slots are sequential parts of that one replay. This is stricter than both canonical threat budgets and is already consistent with Assisted cap1. Raising or lowering profile budget does not create a captured arrangement variant.",
+      "anchors": [
+        {
+          "path": "scripts/combat/threat_scheduler.gd",
+          "line": 435,
+          "through": 443
+        },
+        {
+          "path": "scripts/combat/replay_witness.gd",
+          "line": 37,
+          "through": 53
+        },
+        {
+          "path": "scripts/combat/replay_sequence.gd",
+          "line": 146,
+          "through": 151
+        },
+        {
+          "path": "scripts/combat/threat_scheduler.gd",
+          "line": 2031,
+          "through": 2037
+        }
+      ]
+    },
+    {
+      "id": "enemy-authored",
+      "result": "Actual enemy-authored Echo programme resolves raw_role with canonical saved profile before creating its timeline. Record damage is resolved.damage; warning is resolved total windup minus resolved lock, and recovery is resolved.recovery. Validation independently recomputes the exact programme from raw definition. Managed cycle tracking requires this same authored programme. Shared Playback delivery must not scale it again.",
+      "anchors": [
+        {
+          "path": "scripts/combat/authored_enemy_sequence.gd",
+          "line": 37,
+          "through": 56
+        },
+        {
+          "path": "scripts/combat/authored_enemy_sequence.gd",
+          "line": 138,
+          "through": 157
+        },
+        {
+          "path": "scripts/combat/authored_enemy_sequence.gd",
+          "line": 530,
+          "through": 556
+        },
+        {
+          "path": "scripts/combat/replay_program.gd",
+          "line": 23,
+          "through": 38
+        },
+        {
+          "path": "scripts/combat/replay_playback.gd",
+          "line": 116,
+          "through": 129
+        },
+        {
+          "path": "scripts/combat/replay_playback.gd",
+          "line": 950,
+          "through": 960
+        },
+        {
+          "path": "scripts/combat/replay_playback.gd",
+          "line": 1386,
+          "through": 1405
+        },
+        {
+          "path": "scripts/combat/threat_scheduler.gd",
+          "line": 262,
+          "through": 291
+        }
+      ]
+    },
+    {
+      "id": "profile-lifetime",
+      "result": "Fresh phase begins Scheduler from Shell preference once. begin_encounter refuses live retune. Restore begins fresh Scheduler using saved unit.world.profile_id; codec requires canonical exact full Scheduler profile and original world, and Playback exchange joins that profile. Shell preference changes persist separately for next fresh boundary.",
+      "anchors": [
+        {
+          "path": "scripts/acts/act3/crystalman_capture_phase.gd",
+          "line": 266,
+          "through": 276
+        },
+        {
+          "path": "scripts/combat/threat_scheduler.gd",
+          "line": 92,
+          "through": 108
+        },
+        {
+          "path": "scripts/acts/act3/crystalman_capture_phase.gd",
+          "line": 829,
+          "through": 843
+        },
+        {
+          "path": "scripts/acts/act3/crystalman_capture_codec.gd",
+          "line": 52,
+          "through": 64
+        },
+        {
+          "path": "scripts/acts/act3/crystalman_capture_codec.gd",
+          "line": 99,
+          "through": 114
+        },
+        {
+          "path": "scripts/combat/replay_playback.gd",
+          "line": 584,
+          "through": 592
+        },
+        {
+          "path": "scripts/campaign/shell.gd",
+          "line": 883,
+          "through": 898
+        }
+      ]
+    },
+    {
+      "id": "legacy-closure",
+      "result": "Current local captured API2/schema2 has closed keys, exact immutable configuration and fixed recipe, including pre-admission settling/recording/framing. Projected Playback API1/schema3 is also closed and rejects changed sequence/configuration; pending suffix persists stage present/damage/notify. A new field or changed policy in-place is incompatible. Legacy settling/recording must also retain old delivery/time policy when they later join.",
+      "anchors": [
+        {
+          "path": "scripts/acts/act3/crystalman_capture_codec.gd",
+          "line": 14,
+          "through": 20
+        },
+        {
+          "path": "scripts/acts/act3/crystalman_capture_codec.gd",
+          "line": 52,
+          "through": 96
+        },
+        {
+          "path": "scripts/acts/act3/crystalman_capture_codec.gd",
+          "line": 163,
+          "through": 200
+        },
+        {
+          "path": "scripts/combat/replay_playback.gd",
+          "line": 505,
+          "through": 520
+        },
+        {
+          "path": "scripts/combat/replay_playback.gd",
+          "line": 533,
+          "through": 567
+        },
+        {
+          "path": "scripts/combat/replay_playback.gd",
+          "line": 654,
+          "through": 690
+        },
+        {
+          "path": "scripts/acts/act3/crystalman_capture_phase.gd",
+          "line": 915
+        }
+      ]
+    },
+    {
+      "id": "test-scope",
+      "result": "Existing captured Playback test configures Standard and asserts full original damage. Crystalman one/two-slot tests chiefly assert no contact plus exact FIFO/timing; no explicit Assisted damage assertion in these named leaves. Authored Playback leaf uses Standard; scheduler pure profile test checks0.70/1.35/noncompounding but is not a captured contact test. Source review only; no new native execution.",
+      "anchors": [
+        {
+          "path": "tests/replay_playback_smoke.gd",
+          "line": 100,
+          "through": 105
+        },
+        {
+          "path": "tests/replay_playback_smoke.gd",
+          "line": 930,
+          "through": 940
+        },
+        {
+          "path": "tests/acts/act3/crystalman_two_slot_rule_room_smoke.gd",
+          "line": 257
+        },
+        {
+          "path": "tests/authored_echo_playback_smoke.gd",
+          "line": 313
+        },
+        {
+          "path": "tests/threat_scheduler_smoke.gd",
+          "line": 29,
+          "through": 47
+        }
+      ]
+    }
+  ],
+  "proposal": {
+    "status": "Feasible additive design proposal, not implemented or native-validated.",
+    "scope": "Only newly entered Crystalman captured phases opt in; generic existing captured consumers and authored Echo APIs remain legacy/unchanged.",
+    "phase_policy": "Select once on fresh _on_enter_level from actual canonical Scheduler profile; persist a new explicit phase-policy/API branch from gen0 onward. Old captured API2 always constructs original policy even if saved profile is Assisted and no Playback existed yet. New saved branch uses saved policy/profile regardless of current preference.",
+    "delivery": "Add an explicit opt-in captured Playback constructor/identity with a closed retained delivery policy. Validate captured reader provenance and saved policy against actual lease and frozen Scheduler profile at bind/restore/live guards. Old configure/API retains factor1; new Assisted passes original record.damage*0.70 to Hero.take_damage; Standard/Challenge factor1. Enemy-authored already-resolved damage never enters this branch. Do not mutate record, cursor, Sequence, projection, opportunities or original event signal bytes.",
+    "outer": "For new policy only, deterministically resolve total outer windup=(reference warning1.3+locked lead1.5)*profile.windup_multiplier subject to original validated floor; keep lock1.5 and use warning=resolved total-lock. Nominal Assisted total3.78/warning2.28/lock1.5, recovery3.5*1.35=4.725; recognition0.25/gap1.0/capacity1then2/record durations and relative offsets remain original. Decimal examples are arithmetic proposal, not measured Godot values. Same deterministic expressions in writer and pure validator; do not independently round constants.",
+    "compatibility": "Keep literal old API2 closed schema/configuration (including BASE_SHA marker) and old Playback API1 projection/pending branches. Add distinct explicit new captured phase and Playback API/schema branches, never infer upgrade from profile_id, missing field defaults, current preference or changed source bytes. Parent local can dispatch complete entitled nested child APIs; preserve old whole pair exact recapture and closed spent metadata. The parent currently checks actual same CapturePhase script and delegates native state; changing only _authored cannot work.",
+    "scheduler": "No new simultaneous source budget/geometry or managed authored-cycle semantics are needed for this narrowly scoped policy. Existing sequence/world/profile lease remains; new delivery policy must cross-check its profile with actual frozen lease and parent-selected configuration, and remain immutable after history. Current APIs have no policy constructor, so shared Playback kernel support plus captured codec dispatch is necessary.",
+    "saved_suffix": "Retain stage marker authority: pending damage applies policy once when damage actually attempts; pending notify does not redeliver, and already-cancelled/complete prefixes never gain authority. Old pending damage stays original full recorded damage, even after update. Dispose complete failed restore candidates atomically.",
+    "forbidden_shortcuts": [
+      "Multiplying all Playback damage by profile multiplier",
+      "Rewriting recorded Player damage/resolved_stats or saved action bytes",
+      "Applying profile anew at every join/rearm or from current menu preference",
+      "Multiplying warning alone instead of total windup",
+      "Changing recorded route/order/durations, two-slot gap/capacity, grace, damage contact, armour, actor stats or safety proof",
+      "Silently loosening old schema closure, changing BASE_SHA for old configuration, or migrating/reencoding old saved payloads"
+    ]
+  },
+  "targeted_validation_proposed_only": [
+    "New fresh Assisted one-slot actual contacted primary and optional blast: original record remains exact; HP loss equals (record damage*0.70)/current recipient armour. Include non1 armour to catch double reduction; avoid invulnerability masking.",
+    "New fresh Standard and Challenge controls preserve reference damage/time; actual enemy-authored Assisted Echo contact remains raw enemy damage*0.70/armour once, never0.49.",
+    "For capacities1and2, new policy actual admission/lock/delivery/tether recovery joins deterministic outer recipe; captured route, original event order, relative spacings, commitment/cooldown and gap unchanged; proof/framing naturally valid.",
+    "Literal old API2 whole pair (including Assisted) for gen0/recording and active/pending-damage: quiet fresh restore, original exact recapture, opposite current preference; later join/delivery remains old policy. Do not manufacture legacy packet from modified candidate.",
+    "New whole pair Save/Store reread/fresh Continue/opposite preference/Retry and cleanup retain policy plus original record wires; correct callback stage once-only continuation. Selected changed-level scope only.",
+    "Unknown policy, forged multiplier/profile/API/type, added old-schema field, attempted old/new downgrade or substituted sequence/geometry must refuse atomically with whole Player/local/disk unchanged. No source gate weakening."
+  ],
+  "limits": [
+    "No gameplay/balance/portrait/performance or runtime proof claimed.",
+    "No new exception to Assisted damage justified by exact-capture preservation; that preservation covers recorded data, not downstream enemy delivery factor.",
+    "The existing exclusive replay/capacity design is a concrete concurrency exception; whole A3-L5 regular approach and authored Challenge arrangement remain separate work.",
+    "A3-O3 owner and frozen work remain independent."
+  ]
+}

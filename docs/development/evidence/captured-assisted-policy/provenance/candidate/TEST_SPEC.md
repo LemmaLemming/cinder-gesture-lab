@@ -1,0 +1,31 @@
+# Private captured-policy candidate validation
+
+No candidate Godot import, parser or native execution has occurred. The only actual native result represented here is Root's **unchanged original-policy producer**, report SHAe800f65baae059d99deace39ee88da8bc0a6227b3577fa451763c45d557b73c1,150/0 and6 packets. The12 literal fixture files are exact byte copies with source hash/size and raw format2 envelope joins. They are new executions of original API2, under explicitly declared TEST prior regular history, not recovered historical saves. Original producer files/frozen inputs were not edited.
+
+## New common captured policy test draft
+
+`tests/captured_replay_policy_smoke.gd.txt` maps to a NEW test of that name. It uses existing actual public Player recording helpers and a new Sequence wrapping the untouched actual capture, not a patched legacy record. It explicitly equips canonical CLOTH-J1 at a public paused safe boundary to create non1 recipient armour **after recording**, demonstrating that delivery uses producer raw damage and current recipient armour. TEST contact placement is disclosed. Actual native Scheduler/Witness and original shared Player/Playback scripts remain intact.
+
+Three fresh profiles test actual one-primary contact, original record/Sequence identity, canonical full frozen profile, defensive policy getter and repeated equal-clock consumption. Assisted alone tests actual cue-before-damage, hurt-before-notify and event-after-notify pauses; a nested advance must refuse in the callback, then actual Store/fresh Hero-first→Scheduler→Playback quiet restore must exactly recapture the whole unit and drain only the original suffix. Native Vector3 records are canonically encoded before Exact comparison; native diagnostic states are not mistakenly stringified as JSON. Missing-policy downgrade checks the whole current native snapshots unchanged.
+
+HP alone cannot count a hidden duplicate `take_damage` call while normal hurt invulnerability remains live. This test exercises the exact pending stage, attempt bit, event cardinality and HP, while source review verifies the single stage-damage call after committing notify. It does not fabricate invulnerability/HP or replace the exact shared Player to overclaim a direct method-call counter.
+
+## Literal original phase test draft
+
+`tests/acts/act3/crystalman_captured_legacy_policy.gd.txt` uses all six genuine original API2 packets and literal raw Store bytes, including now genuinely supported gen0. It copies raw Store bytes to an isolated user file and invokes the real format2 reader; there is no reencoding/migration or fake campaign envelope. Its new TEST Main preference is explicitly opposite the saved profile.
+
+The existing declared-stage2 parent supplies the actual fixed54m production floor. Its unused fresh phase is normally disposed; a new actual production CapturePhase is installed as a **phase-only TEST Main recipient**. Parent route/history is inactive and unclaimed. Original `prepare_parent_restore` builds the exact native phase candidate, independently authenticates saved policy mode/profile before once-configure, then actual Player-first→phase commit must be quiet and recapture the exact original pair. Finish the phase candidate and resume. Old gen0/recording must arm/record/join the original API1 Playback with full raw/fixed1.3 warning/3.5 recovery. Warning fixture resumes its actual old owner. The recorder naturally remains at the original attack origin; choosing no evasion yields one native contact with no Hero pose assignment. Assisted old units must receive fullD/current armour, not0.70D/current armour. Stop after that one event; no tether or boss defeat.
+
+This is complete native phase compatibility, **not** whole-parent optics, Shell/CampaignAttempts/Continue/Retry, checkpoint earning, full route or balance credit. Root should review the explicit TEST Main active-level binding before execution. Actual new profile/phase whole-parent save and retry checks remain below.
+
+## Required additional scoped cases before policy acceptance
+
+- Actual new phase3 gen0/recording/warning/lock/active save+fresh restore with opposite current preference, capacities1and2. Full current phase, Hero and policy recapture exactly; original records/order/durations/gap/geometry remain fixed. No full route/tether requirement.
+- Actual unchanged whole parent local1 delegates new phase3 and old phase2 correctly; focused Shell save/disk Continue/entrance Retry/cleanup, preserving protected Story/session data. Reuse unchanged accepted evidence. The phase-only fixture never claims these flows.
+- Genuine actual enemy-authored Assisted Echo contact yields raw enemyD*0.70/current armour exactly once. Use a fresh actual authored factory selected Assisted **before** configure/managed tracking, not live retuning the existing Standard-only test arena. Legacy/authored/managed class source must never enter `configure_captured_policy`.
+- Atomic rejection matrix: phase3 missing/unknown/extra policy; API2 with added policy; schema int→float; raw multiplier/outer budget/full profile/capacity/tether forgeries; Playback1/2 mode or policy mismatch; already configured recipient downgrade; geometry/order/duration/entry corruption. Compare exact whole Player/phase/Scheduler/leaf and raw Store bytes before/after refusal. Constructor failures discard complete fresh candidates normally.
+- Original unfinished gen0/recording and old warning packets remain exact on failed/accepted restore, then future joins use legacy mode. New gen0 retains new policy before any Sequence exists. Public preference change only affects next genuine fresh encounter; no join/rearm retune.
+- Stage-damage pause resumes one intended attempt; stage-notify pause never redelivers; event pause never repeats notification. Preserve all original pending/late/cancelled failures; no delay/grace/clock or guard changes.
+- Brief portrait inspection of new Assisted outer timing/cues when queued native scope is ready. No full route, all enemies, exit, campaign beat, export, human approval or FPS gate.
+
+Root owns all actual queue handles, test promotion, UID import and acceptance. Source ownership ACK covers only the exact Phase+Codec pair; shared Playback belongs to Root. A3-O3 and A2-L2 frozen work remain independent.

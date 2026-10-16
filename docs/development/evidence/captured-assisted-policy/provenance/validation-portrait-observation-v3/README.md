@@ -1,0 +1,3 @@
+# Portrait operand observations only
+
+Unchanged exact canonical queued runner eaf3ee11; new same-function TEST Shell diagnostic reads all original portrait-conjunction operands independently and saves failed-only pixels separately, without changing32frames,340x736 expectation, nativeoptics, wholepacket/input/camera/HUD/callback equality or menu restoration. Root reviewed exact private diff and copied only this test; production unchanged. Original graphic15/1 and36/1 remain failed, causes unobserved; samev2 headless38/0 functional result remains separate. Root chooses only seal, targeted Shell parser and one native Shell portrait here. SixUIDs already generated/fixed; no import or othercomponentrerun needed. No pass/focuscause/visualacceptance inferred from diagnostics.

@@ -1,0 +1,56 @@
+{
+  "kind": "independent-private-runner-amendment-static-review",
+  "reviewer": "/root/act1_o2_registration_prepare/captured_producer_runner_review",
+  "created_at": "2026-10-15T08:50:32.578221+00:00",
+  "disposition": "SOURCE_ONLY_PASS_NO_NEW_EXECUTION_BLOCKER",
+  "runner": {
+    "sha256": "1e2860495ce220a3c266a196ae397e2723eb411fd725bbb86fbf69f514af4905",
+    "bytes": 15170
+  },
+  "preserved_original": {
+    "sha256": "4a447f194fbaee79b4ac0f4e248a799d8e47dc92ebf774de89f42f8c2e53e23d",
+    "bytes": 12449
+  },
+  "prior_report": {
+    "path": ".cinder/captured-assisted-policy-audit-20261015/producer-prepare/runner-independent-review.json",
+    "sha256": "817cc641c1a2ca87231730fe69af09c906822c269b997980e4669008da90ab7f"
+  },
+  "verified_repairs": [
+    {
+      "lines": "88\u201390, 165\u2013194",
+      "finding": "Explicit require() now guards all prior assert report/packet/footer/Store joins. AST contains zero Assert nodes; checks survive Python optimization."
+    },
+    {
+      "lines": "116\u2013132, 197\u2013214",
+      "finding": "Manifest, exact promotion, missing UID and API preflight checks now run inside result/CLOSED finalization. Initial missing/stale preflight observations are saved before refusals. This is conditional on normal filesystem writes succeeding; no code can guarantee disk output under a failing disk."
+    },
+    {
+      "lines": "133, 152, 156",
+      "finding": "Before-queue, acquired-lock and after-child maps are persisted before checking against seal."
+    },
+    {
+      "lines": "149\u2013159",
+      "finding": "Acquired-lock context release timestamp now records in a finally; inherited-child lock ownership behavior remains canonical."
+    },
+    {
+      "lines": "201\u2013213",
+      "finding": "Closing source/UID map is saved and checked; closing drift forces passed false and nonzero code if necessary."
+    },
+    {
+      "lines": "178\u2013179",
+      "finding": "Optional gen0 omissions now require exact profile membership, nonempty reason, false payload_exported, and one retained refusal per missing optional packet."
+    },
+    {
+      "lines": "161, 195, 202",
+      "finding": "Successful canonical child terminal/zero explicitly required. Generic ERROR/WARNING remains a separately classified raw/engine-log scope. CLOSED is clearly runner closure, not a substitute for child terminal."
+    }
+  ],
+  "remaining_limits": [
+    "No engine, parser, runner, queue, promotion, save/restore, timeout or interruption behavior was executed; this is source-only review.",
+    "Runtime before/at-lock/after seal still covers the same promoted text, prepared text, private runner, manifest, named sources and UID sidecars. No recursive dependency/global UID/frozen-bank census.",
+    "Canonical validation exceptions other than KeyboardInterrupt may leave owned_child_terminal false; acceptance requires true plus canonical zero. Do not infer OS process startup solely from pre-Popen engine_started flag.",
+    "Python runner checks file/Store identities but inner captured profile/phase/schema semantics require separate producer GDScript review.",
+    "Refresh PREPARATION artifact pins before presenting the amended runner as a frozen final preparation set; this review pins amended runner directly."
+  ],
+  "preparation_runner_artifact_matches_current": false
+}

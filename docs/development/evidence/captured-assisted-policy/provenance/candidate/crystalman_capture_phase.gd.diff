@@ -1,0 +1,88 @@
+--- scripts/acts/act3/crystalman_capture_phase.gd
++++ scripts/acts/act3/crystalman_capture_phase.gd (PRIVATE CANDIDATE)
+@@ -7,6 +7,7 @@
+ const FrameArt = preload("res://scripts/acts/act3/crystalman_recorded_frame_art.gd")
+ const LocalValue = preload("res://scripts/campaign/snapshot_codec.gd")
+ const LocalDifficulty = preload("res://scripts/combat/difficulty.gd")
++const CapturedPolicy = preload("res://scripts/combat/captured_replay_policy.gd")
+ const Gate = preload("res://scripts/combat/replay_capture_gate.gd")
+ const Sequence = preload("res://scripts/combat/replay_sequence.gd")
+ const Scheduler = preload("res://scripts/combat/threat_scheduler.gd")
+@@ -83,6 +84,9 @@
+ var _tether_hits: int = 0
+ var _generation: int = 0
+ var _slot_capacity: int = 1
++# Empty is EXPLICIT retained legacy mode. Fresh enter always selects new policy;
++# restore selects saved API2(empty) or independently validated API3 before bind.
++var _captured_policy: Dictionary = {}
+ var _capture_epoch: String = SOURCE_EPOCH
+ var _slot_markers: Array[Node3D] = []
+ var _slot_marker_materials: Array[StandardMaterial3D] = []
+@@ -269,6 +273,10 @@
+ 	if not threat_scheduler.begin_encounter(profile, ENCOUNTER_ID, 1):
+ 		last_configuration_error = threat_scheduler.last_error
+ 		return
++	_captured_policy = CapturedPolicy.resolve(threat_scheduler.encounter_profile(), _slot_capacity, tether.global_position)
++	if _captured_policy.is_empty():
++		last_configuration_error = "Fresh canonical captured policy could not resolve"
++		return
+ 	_active = true
+ 	# Parent constructs this fresh unit at a paused boundary. Configure gen0 now
+ 	# so interrupted settling has a complete genuine Gate recipient, no arm.
+@@ -350,8 +358,12 @@
+ 	phase = "recording"
+ 
+ 
++func captured_codec_policy() -> Dictionary:
++	return _captured_policy.duplicate(true)
++
+ func _authored() -> Dictionary:
+-	# Provisional first-room budgets; original resolved action durations remain.
++	if not _captured_policy.is_empty(): return CapturedPolicy.authored(_captured_policy)
++	# Retained API2 recipe, including unfinished legacy recordings after restore.
+ 	return {"recognition_s": 0.25, "warning_s": 1.3, "locked_lead_s": 1.5, "inter_echo_gap_s": TWO_SLOT_GAP_S if _slot_capacity == 2 else 0.0, "final_recovery_s": 3.5, "tether_position": tether.global_position}
+ 
+ 
+@@ -385,7 +397,8 @@
+ 	playback.name = "FiniteCapturedApparition" + str(_generation)
+ 	add_child(playback)
+ 	playback.global_position = tether.global_position
+-	if not playback.configure("crystalman-rule/owner-" + str(_generation), proposed, _capture_epoch, _generation, "act3_traveller"):
++	var configured_owner: bool = playback.configure("crystalman-rule/owner-" + str(_generation), proposed, _capture_epoch, _generation, "act3_traveller") if _captured_policy.is_empty() else playback.configure_captured_policy("crystalman-rule/owner-" + str(_generation), proposed, _capture_epoch, _generation, _captured_policy, "act3_traveller")
++	if not configured_owner:
+ 		_reject_at_barrier(playback.last_error)
+ 		return
+ 	# Shared whole proofs reject paused trees. This synchronous no-yield interval
+@@ -828,6 +841,11 @@
+ 
+ func _on_enter_restore_candidate(local: Dictionary, player: Dictionary) -> String:
+ 	_active = false
++	# Authenticate saved API/policy/full canonical profile BEFORE either native
++	# Scheduler or Gate is configured once. This pure check never reads _authored.
++	var selection_error: String = _local_codec.policy_header_error(local, self)
++	if not selection_error.is_empty(): return selection_error
++	_captured_policy = local.policy.duplicate(true) if local.get("api_revision") == LocalCodec.POLICY_API else {}
+ 	# Native floor/tether/cues/Gate/Scheduler were built by _ready, inert while paused.
+ 	if not local.get("world") is Dictionary or not local.world.get("profile_id") is String or LocalDifficulty.new().profile(local.world.profile_id).is_empty(): return "Validated canonical immutable constructor profile required"
+ 	if not threat_scheduler.begin_encounter(local.world.profile_id, ENCOUNTER_ID, 1): return threat_scheduler.last_error
+@@ -840,7 +858,8 @@
+ 		playback.name = "FiniteCapturedApparition" + str(recipe.generation)
+ 		add_child(playback)
+ 		playback.global_position = tether.global_position
+-		if not playback.configure(recipe.playback_id, recipe.sequence, recipe.source_epoch, recipe.generation, "act3_traveller"): return playback.last_error
++		var configured_owner: bool = playback.configure(recipe.playback_id, recipe.sequence, recipe.source_epoch, recipe.generation, "act3_traveller") if _captured_policy.is_empty() else playback.configure_captured_policy(recipe.playback_id, recipe.sequence, recipe.source_epoch, recipe.generation, _captured_policy, "act3_traveller")
++		if not configured_owner: return playback.last_error
+ 	elif recipe.has_frame_art:
+ 		var frame_error: String = _install_framing_art(recipe.frame_recipe)
+ 		if not frame_error.is_empty(): return frame_error
+@@ -868,6 +887,10 @@
+ 	if global_transform != Transform3D.IDENTITY or capture_slots != _slot_capacity or _capture_epoch != (SOURCE_EPOCH if _slot_capacity == 1 else "A3-L5/two-slot-rule"): return "Actual immutable selected native room configuration changed"
+ 	if hero.dead or not is_instance_valid(capture_gate) or capture_gate.get_script() != Gate or not is_instance_valid(threat_scheduler) or threat_scheduler.get_script() != Scheduler: return "Live shared Hero and original ready leaf recipients required"
+ 	if is_instance_valid(playback) and playback.get_script() != Playback: return "Original captured Playback script required"
++	if not _captured_policy.is_empty():
++		var policy_error: String = CapturedPolicy.error(_captured_policy, threat_scheduler.encounter_profile(), _slot_capacity, TETHER_POSITION)
++		if not policy_error.is_empty(): return policy_error
++	if is_instance_valid(playback) and not _same(playback.get_captured_policy(), _captured_policy): return "Actual captured Playback mode differs from retained phase policy"
+ 	if not is_instance_valid(tether) or not tether.is_node_ready() or tether.global_transform != Transform3D(Basis.IDENTITY, TETHER_POSITION) or tether.get_parent() != self or not tether is LowTether or tether.custodian == null or tether.custodian.get_ref() != self: return "Actual fixed low tether pose/native owner binding changed"
+ 	var floor_error: String = _external_floor_error()
+ 	if not floor_error.is_empty(): return floor_error

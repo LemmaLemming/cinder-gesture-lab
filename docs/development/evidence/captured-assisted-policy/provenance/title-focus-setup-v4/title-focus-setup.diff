@@ -1,0 +1,29 @@
+--- Root-09104afb
++++ PRIVATE-title-focus-v4
+@@ -173,8 +173,25 @@
+ 		await process_frame
+ 		if not _production.campaign_error.is_empty(): return _expect(false, "Fresh native registration startup", _production.campaign_error)
+ 		if paused and _shell_operation_idle() and _production.menu.page_name() == "title" and _production.active_level == null and _production.player == null and _same(_production.attempts.state(), expected):
+-			return _disk_equals(expected)
++			if not _disk_equals(expected): return false
++			if _portrait: return await _focus_graphical_title(expected)
++			return true
+ 	return _expect(false, "Finite fresh whole-session Title startup; title alone is insufficient")
++
++func _focus_graphical_title(expected: Dictionary) -> bool:
++	# Owned graphical test setup at the real idle Title ONLY. Let the actual
++	# Window focus notifications settle before public Continue creates a unit.
++	# Do not suppress production notifications or assign pause/gameplay state.
++	var session_before: String = Exact.stringify(_production.attempts.state())
++	var disk_before: Dictionary = _disk()
++	var before: Dictionary = {"window_has_focus": root.has_focus(), "tree_paused": paused, "page": _production.menu.page_name(), "idle": _shell_operation_idle(), "active_level_null": _production.active_level == null, "player_null": _production.player == null, "session_matches_expected": _same(_production.attempts.state(), expected)}
++	root.grab_focus()
++	for _frame: int in range(2):
++		await process_frame
++		if _finishing or not is_instance_valid(_production): return false
++	var after: Dictionary = {"window_has_focus": root.has_focus(), "tree_paused": paused, "page": _production.menu.page_name(), "idle": _shell_operation_idle(), "active_level_null": _production.active_level == null, "player_null": _production.player == null, "session_matches_expected": _same(_production.attempts.state(), expected), "session_unchanged": Exact.stringify(_production.attempts.state()) == session_before, "campaign_disk_unchanged": _disk() == disk_before, "campaign_error": _production.campaign_error}
++	var stable: bool = before.tree_paused and before.page == "title" and before.idle and before.active_level_null and before.player_null and before.session_matches_expected and after.window_has_focus and after.tree_paused and after.page == "title" and after.idle and after.active_level_null and after.player_null and after.session_matches_expected and after.session_unchanged and after.campaign_disk_unchanged and String(after.campaign_error).is_empty()
++	return _expect(stable, "Owned graphical Window focus settles for two paused frames at exact idle no-active Title before public Continue", JSON.stringify({"before": before, "after": after, "paused_process_frames": 2, "setup_only": true, "production_focus_notifications_preserved": true}))
+ 
+ func _bind_current() -> void:
+ 	_game = _production

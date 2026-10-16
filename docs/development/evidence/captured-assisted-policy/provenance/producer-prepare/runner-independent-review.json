@@ -1,0 +1,153 @@
+{
+  "kind": "independent-prepared-runner-static-review",
+  "reviewer": "/root/act1_o2_registration_prepare/captured_producer_runner_review",
+  "created_at": "2026-10-15T08:47:56.648674+00:00",
+  "scope": "Read-only runner, source-inputs.json, PREPARATION.json and canonical dev.py queue/run_validation behavior. No producer GDScript semantics reviewed, engine/process launched, promotion, production/Git/mail/ledger/frozen-job changes.",
+  "disposition": "SMALL_PRIVATE_RUNNER_HARDENING_RECOMMENDED_BEFORE_EXECUTION",
+  "named_inputs_before": {
+    ".cinder/captured-assisted-policy-audit-20261015/producer-prepare/run_producer.py": {
+      "bytes": 12449,
+      "sha256": "4a447f194fbaee79b4ac0f4e248a799d8e47dc92ebf774de89f42f8c2e53e23d"
+    },
+    ".cinder/captured-assisted-policy-audit-20261015/producer-prepare/source-inputs.json": {
+      "bytes": 9942,
+      "sha256": "667ab8bf626211085db8bb0503c4fc40800264f8bf2fb57016071f15bb7e4e2a"
+    },
+    ".cinder/captured-assisted-policy-audit-20261015/producer-prepare/PREPARATION.json": {
+      "bytes": 1824,
+      "sha256": "d07084df5ee07da5ad7f6290b5ec1b96738ae437973acb466be102826a0b67c5"
+    },
+    "scripts/dev/dev.py": {
+      "bytes": 30147,
+      "sha256": "585febb8214f0be367c0525295953faad80a5ab644bde757346ea41feac0571d"
+    }
+  },
+  "preparation_verification": {
+    "manifest_files": 43,
+    "manifest_size_sha_issues": [],
+    "preparation_artifacts_checked": 6,
+    "all_six_size_sha_match": true,
+    "runner_files_count": 49,
+    "runtime_source_and_uid_names": 86,
+    "current_missing": "Only the two deliberately unpromoted private .gd files and their .uid files. They must be promoted before running."
+  },
+  "positive_findings": [
+    {
+      "id": "complete-runtime-named-seal",
+      "runner_lines": "14\u201363, 109\u2013117, 130, 147, 151, 164\u2013165",
+      "finding": "NAMES includes promoted producer.gd/profile_main.gd, their .gd.txt bytes, run_producer.py, source-inputs.json, all 43 named original sources, and one .uid for every named .gd. Exact promotion equality is enforced before sealing. The same 86-name SHA map is checked before queue, at acquired lock and after owned child. Native source_before/source_after must equal it."
+    },
+    {
+      "id": "uid-caveat",
+      "runner_lines": "115\u2013117, 122, 151, 165",
+      "finding": "Only the two new private UID sidecars may be absent. None is an exact sealed value, so appearance during the run fails the after-child comparison and native-source map join. Existing UID hashes are newly sealed at launch; they are not independent historical UID pins. No editor/import process is requested."
+    },
+    {
+      "id": "canonical-queue",
+      "runner_lines": "131\u2013149",
+      "dev_lines": "275\u2013307, 331\u2013354",
+      "finding": "The imported, pinned canonical dev.py determines the repository-common lock path. Runner acquires its godot_lock, rechecks sources while held and passes the same locked descriptor to run_validation. No lock deletion/bypass, extra engine or other-worker termination is present."
+    },
+    {
+      "id": "bounded-owned-child",
+      "runner_lines": "149\u2013155",
+      "dev_lines": "320\u2013328, 354\u2013394",
+      "finding": "Validation starts its deadline after its own Popen and reader startup, after queue acquisition. Queue wait is not charged to 180 seconds. Timeout/script-error/KeyboardInterrupt cleanup targets only the Popen child created by run_validation. Cleanup can add up to roughly eleven seconds. Zero is actual child.wait() return; nonzero can be synthetic 124/1, and runner explicitly labels that distinction."
+    },
+    {
+      "id": "report-joins-when-assertions-enabled",
+      "runner_lines": "156\u2013187, 199",
+      "finding": "Checks contiguous rows, zero failures, literal success/complete, native before/after named pins, exact required Assisted/Standard recording/warning pair set, optional gen0 only, packet file SHA/size, format-2 Store payload/hash, API2 metadata, a single literal native-report path/SHA line and a single exact footer. Unique output directory prevents stale local report reuse. Evidence index is written after raw-log close and hashes output members except itself."
+    }
+  ],
+  "findings": [
+    {
+      "id": "python-optimization-disables-all-report-acceptance-assertions",
+      "priority": "P1",
+      "anchors": [
+        "run_producer.py:159\u2013186",
+        "run_producer.py:187\u2013188"
+      ],
+      "failure": "All native-report, packet, footer and Store acceptance predicates use assert. Running python -O or inheriting PYTHONOPTIMIZE removes them; passed=True/code=0 can then follow a canonical child zero even if the report says incomplete, fails source joins or omits required packet pairs. Runtime source checks remain explicit, but the report verification guarantee disappears.",
+      "minimum_action": "Refuse sys.flags.optimize != 0 before any output/engine launch, or replace each assert with an explicit require/ValueError. Root should preserve the reviewed runner hash and use an unoptimized interpreter."
+    },
+    {
+      "id": "preflight-failures-escape-closure",
+      "priority": "P2",
+      "anchors": [
+        "run_producer.py:100\u2013121",
+        "run_producer.py:128\u2013129",
+        "run_producer.py:194\u2013199"
+      ],
+      "failure": "Output directory is created before manifest/promotion/UID/API checks, but those checks are outside try/finally. Any expected stale-pin or unpromoted-file refusal leaves a native-* directory without result.json/raw.log/CLOSED/evidence-index. This cannot create false passed evidence, but the supposed attempted-run closure ledger is incomplete.",
+      "minimum_action": "Either complete all read-only preflight checks before creating output, or initialize a preflight result and wrap these checks in the same closure machinery. A refused preflight is not an engine run."
+    },
+    {
+      "id": "failed-before-and-at-lock-observations-not-saved",
+      "priority": "P2",
+      "anchors": [
+        "run_producer.py:130",
+        "run_producer.py:147",
+        "run_producer.py:151"
+      ],
+      "failure": "Before-queue and at-lock snapshot comparisons occur before saving those observed maps. On a real drift, result names the first changed path but the mismatched observation is absent. After-child correctly saves its map before comparing.",
+      "minimum_action": "Save each observed map before check_sources, as already done after child. Do not overwrite sealed-inputs or accept drift."
+    },
+    {
+      "id": "clean-log-credit-is-narrower-than-validation-zero",
+      "priority": "P2",
+      "anchors": [
+        "dev.py:148\u2013152",
+        "dev.py:386\u2013390",
+        "run_producer.py:154\u2013186"
+      ],
+      "failure": "Canonical detector catches Script Error, Parse Error, failed script load/compile and Failed loading resource. A generic ERROR/WARNING is not itself a failure, and runner checks report/footer only; it does not scan engine.log or raw.log for other diagnostics. Success therefore cannot by itself substantiate a clean-console/zero-warning claim. There is no standalone check-only/import phase.",
+      "minimum_action": "Root should inspect and classify raw.log and engine.log after run, preserve any platform or runtime diagnostics and limit parser credit to this producer launch. No broad suite or import is required solely for this review."
+    },
+    {
+      "id": "start-and-close-labels-do-not-prove-child-terminal-on-exceptions",
+      "priority": "P3",
+      "anchors": [
+        "run_producer.py:148\u2013150",
+        "run_producer.py:189\u2013197",
+        "dev.py:336\u2013340",
+        "dev.py:370\u2013394"
+      ],
+      "failure": "engine_started=True is written before Popen succeeds. Unexpected non-KeyboardInterrupt exceptions from canonical validation do not have a general owned-child cleanup finally in dev.py. Runner can be closed with owned_child_terminal=False; inherited lock correctly remains held if a child survives. Do not interpret closed alone or engine_started alone as OS lifecycle proof.",
+      "minimum_action": "For acceptance require owned_child_terminal=True and engine_return_code==0 as well as passed/code0. If false, investigate only this owned job and retain custody; never delete the lock or kill another worker."
+    },
+    {
+      "id": "runner-enforces-file-joins-not-inner-packet-semantics",
+      "priority": "P3",
+      "anchors": [
+        "run_producer.py:172\u2013181"
+      ],
+      "failure": "The runner verifies exact-wire SHA/bytes and Store envelope identity, then trusts packet summary fields for profile/stage/API/schema. It does not independently decode the exact wire and compare its inner captured profile/phase/schema or campaign history. Native producer assertions must supply those semantic checks; this review intentionally did not inspect that GDScript.",
+      "minimum_action": "Join this review with the separate producer-semantics review; do not attribute independent inner-wire validation to the Python runner."
+    }
+  ],
+  "untested": [
+    "No actual promotion, queue wait, Godot parsing, UID generation, producer packet creation, save/restore, timeout, interruption or error-dispatch execution occurred.",
+    "No recursive dependency/global UID/frozen-bank census.",
+    "No producer GDScript or live source gameplay semantics were audited in this bounded task."
+  ],
+  "named_inputs_after": {
+    ".cinder/captured-assisted-policy-audit-20261015/producer-prepare/run_producer.py": {
+      "bytes": 12449,
+      "sha256": "4a447f194fbaee79b4ac0f4e248a799d8e47dc92ebf774de89f42f8c2e53e23d"
+    },
+    ".cinder/captured-assisted-policy-audit-20261015/producer-prepare/source-inputs.json": {
+      "bytes": 9942,
+      "sha256": "667ab8bf626211085db8bb0503c4fc40800264f8bf2fb57016071f15bb7e4e2a"
+    },
+    ".cinder/captured-assisted-policy-audit-20261015/producer-prepare/PREPARATION.json": {
+      "bytes": 1824,
+      "sha256": "d07084df5ee07da5ad7f6290b5ec1b96738ae437973acb466be102826a0b67c5"
+    },
+    "scripts/dev/dev.py": {
+      "bytes": 30147,
+      "sha256": "585febb8214f0be367c0525295953faad80a5ab644bde757346ea41feac0571d"
+    }
+  },
+  "named_inputs_stable": true
+}
