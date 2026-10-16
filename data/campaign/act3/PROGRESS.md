@@ -1,3 +1,9 @@
+## Separate O2 automatic review rejection preserved; assertions unchanged — 16 October 2026
+
+Automatic approval review rejected the proposed removal of fixture simultaneity/first-lease timing assertions because it lacked verified justification and appeared to weaken checks based on agent claims. That rejected script did not run: HEAD remained `f702be26`, tracked sources clean, original simultaneity assertion/stop window intact. No indirect replacement/pass bypass is authorised or attempted.
+
+Unaffected final-runtime literal old transport recheck closed **485/0**,clean at `f702be26`,runtime `b4c6238a`; raw `7a6781ecdc55e3e4312ba09bd50bb376a861ca1ca8bd02eb5d12ea70c9380471`. The next diagnostic preserves the original assertion and failure count exactly, then observes at most120 additional real native ticks after that recorded failure to determine whether C50 later obtains an actual armed lease. It stops at real pressure or a concrete HP/native guard failure, changes no pass condition/clock/action/source/camera, and remains FAILED regardless. This produces direct evidence for any later expectation review; earlier stricter failed scopes remain failed. Original eight-level completion is unaffected.
+
 ## Separate O2 central approach also rejected; public framing diagnostic next — 16 October 2026
 
 Central neutral01 at `f4862817` closed **865/1**,269 ticks,scope incomplete,native/wrapper1; raw `aaaec4ecc6eefa3156c84170a0ee373cb704909af72b86b6a42627e984c2b790`. Actual Root response/full HP passed, but C50 remained cycle0 with the same prospective union fit refusal. No mixed pressure or camera pass is claimed for either declared approach.

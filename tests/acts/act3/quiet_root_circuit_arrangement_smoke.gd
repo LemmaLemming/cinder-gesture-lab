@@ -1028,7 +1028,9 @@ func _component_case(selector: String) -> bool:
 		if not other_root_held: break
 		if not await _component_tick(): return false
 	print("O2 COMPONENT POST-HIT PRESSURE: clock_s=",_component_scheduler.get_clock(),"; hero=",_component_hero.global_position,"; observed=",_component_pressure,"; C50=",_component_stalker.state())
-	if not _expect(not _component_pressure.is_empty() and _component_pressure.get("mixed_held",false) and _component_stalker.is_physics_processing() and not _component_stalker.dead and _component_stalker.hp > 0.0 and _component_stalker.is_in_group("enemies") and not String(_component_stalker.state().last_cancel_reason).begins_with("required_view_unsafe"),"living eligible optional Stalker produced a real native cycle/lease pressure observation without render-guard cancellation",str({"actual_pressure":_component_pressure,"current":_component_stalker.state(),"held_samples":_component_held_samples})): return false
+	if not _expect(not _component_pressure.is_empty() and _component_pressure.get("mixed_held",false) and _component_stalker.is_physics_processing() and not _component_stalker.dead and _component_stalker.hp > 0.0 and _component_stalker.is_in_group("enemies") and not String(_component_stalker.state().last_cancel_reason).begins_with("required_view_unsafe"),"living eligible optional Stalker produced a real native cycle/lease pressure observation without render-guard cancellation",str({"actual_pressure":_component_pressure,"current":_component_stalker.state(),"held_samples":_component_held_samples})):
+		await _component_after_failure_pressure_diagnostic()
+		return false # Original assertion/failure remains authoritative.
 	return _component_integrity("completed ordinary component opportunity")
 
 func _component_make_scene() -> Dictionary:
@@ -1372,3 +1374,12 @@ func _component_probe_framing(actual: Dictionary) -> void:
 	var safe: Rect2 = hud.combat_safe_rect()
 	var viewport_size: Vector2 = Vector2(camera.get_viewport().size)
 	print("O2 COMPONENT VIEW PROBE: ",{"clock_s":_component_scheduler.get_clock(),"hero":_component_hero.global_position,"source":actual.position,"direction":actual.facing,"camera_width":camera.size,"viewport":viewport_size,"hud_safe_rect":safe,"available_axes_before_margin":Vector2(camera.size*safe.size.x,camera.size*viewport_size.y/viewport_size.x*safe.size.y),"spans":spans,"public_plan":_component_main.call("camera_framing_plan",union.points,_component_hero.global_position+Vector3.UP*.75),"actual_proof":preview.proof,"retained_owners":_component_held_samples})
+
+## Runs ONLY after recording the original failed simultaneity assertion.
+## Its real native observations never convert that failure/scope to a pass.
+func _component_after_failure_pressure_diagnostic() -> void:
+	print("O2 AFTER-FAILURE DIAGNOSTIC: original failed assertion/count retained; starting clock_s=",_component_scheduler.get_clock())
+	for _sample: int in range(120):
+		if not _component_pressure.is_empty(): break
+		if not await _component_tick(): break
+	print("O2 AFTER-FAILURE PRESSURE: ",{"clock_s":_component_scheduler.get_clock(),"actual_pressure":_component_pressure,"hero_hp":_component_hero.hp,"kit":_component_hero.equipment.snapshot(),"actual_stalker":_component_stalker.state(),"retained_original_failures":failures,"accepted_original_scope":false})
