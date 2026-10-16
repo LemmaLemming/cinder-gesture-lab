@@ -1,5 +1,5 @@
 extends "res://tests/acts/act1/a1_l5_encounter_transition.gd"
-## Private draft: legacy-producer only; unparsed/unexecuted until owner queues it.
+## Separate private fresh-writer draft; unparsed/unexecuted. Original producer untouched.
 ## Same real parent, eight ordinary primaries and native CP2/CP3. TEST prefix,
 ## public Rusher injury and supported Hero placement are explicitly disclosed.
 ## No source HP/phase/clock/lease/profile/forecast/history assignment.
@@ -8,6 +8,10 @@ const LEGACY_HOST_SHA: String = "9056b2111d3e709fca592a38ac58ad1a181a0b182512849
 const LEGACY_CODEC_SHA: String = "2fafe8b39f64f791804b3546898c6d54f7063985dc0a65222c6ab69313fcc1df"
 const LEGACY_HOST_PATH: String = "res://scripts/acts/act1/living_moon.gd"
 const LEGACY_CODEC_PATH: String = "res://scripts/acts/act1/living_moon_codec.gd"
+const FRESH_HOST_SHA: String = "89dc49fe6e37c05679d1f4592c9873f01f1c4ea92720d2ec0209624985be7e7f"
+const FRESH_CODEC_SHA: String = "25bca033d4ce0e1f04abdeb08fb1645887e72246bb978ee7d1d5ae46a4ba73b9"
+const RECIPE_PATH: String = "res://data/campaign/act1/a1_l5_difficulty_arrangements.json"
+const RECIPE_SHA: String = "06b65a15b5f56791291d2614346b0973be0d09f91c2466dad8f0ecf20f4463c9"
 
 class BeforeParentProbe extends Node:
 	signal before_parent
@@ -18,6 +22,9 @@ class BeforeParentProbe extends Node:
 		before_parent.emit()
 
 var difficulty_case: String = ""
+var producer_profile: String = "challenge"
+var selector_test_roots: Array[String] = []
+var selector_parent_root: String = ""
 var difficulty_complete: bool = false
 var assertion_rows: Array[Dictionary] = []
 var branches: Dictionary = {}
@@ -46,11 +53,16 @@ func _run() -> void:
 		if argument.begins_with("--case="): difficulty_case = argument.trim_prefix("--case=")
 		elif argument.begins_with("--level-scene") or argument in ["--capture", "--capture-polish", "--first-primary-only", "--later-phase-transport-only"]:
 			_expect(false, "difficulty producer cannot combine preview or inherited alternate selectors"); await _finish(); return
-	if not _expect(difficulty_case == "legacy-producer", "only explicitly selected legacy-producer is implemented"):
+	if not _expect(difficulty_case in ["legacy-producer", "fresh-producer", "selectors"], "explicit legacy-producer, fresh-producer or selectors case required"):
 		await _finish(); return
 	source_pre = _source_pins()
-	if not _expect(source_pre[LEGACY_HOST_PATH] == LEGACY_HOST_SHA and source_pre[LEGACY_CODEC_PATH] == LEGACY_CODEC_SHA, "genuine old host9056/codec2fafe must remain installed before legacy production"):
-		await _finish(); return
+	if difficulty_case == "legacy-producer":
+		# Preserve the original old-writer gate; this case cannot run on new code.
+		if not _expect(source_pre[LEGACY_HOST_PATH] == LEGACY_HOST_SHA and source_pre[LEGACY_CODEC_PATH] == LEGACY_CODEC_SHA, "genuine old host9056/codec2fafe must remain installed before legacy production"):
+			await _finish(); return
+	else:
+		if not _expect(source_pre[LEGACY_HOST_PATH] == FRESH_HOST_SHA and source_pre[LEGACY_CODEC_PATH] == FRESH_CODEC_SHA and source_pre[RECIPE_PATH] == RECIPE_SHA, "fresh cases require the exact separately promoted host89dc/codec25bc/recipe06b65"):
+			await _finish(); return
 	var parsed: Variant = JSON.parse_string(registry_bytes.get_string_from_utf8())
 	if not _expect(parsed is Dictionary and parsed.get("levels") is Array, "actual registry supplies isolated TEST L5 metadata"):
 		await _finish(); return
@@ -63,6 +75,9 @@ func _run() -> void:
 	if not _expect(registry.last_error.is_empty() and registry.scene_error(Layout.LEVEL_ID).is_empty(), "only owned L5 receives isolated TEST registration; no canonical metadata changes"):
 		await _finish(); return
 	probe = NativeTickProbe.new(); probe.process_physics_priority = 3000; root.add_child(probe)
+	if difficulty_case == "selectors":
+		await _run_selectors(registry)
+		await _finish(); return
 	before_parent_probe = BeforeParentProbe.new(); root.add_child(before_parent_probe)
 	before_parent_probe.before_parent.connect(_observe_before_parent)
 	probe.tick_finished.connect(_observe_after_parent)
@@ -78,7 +93,7 @@ func _run() -> void:
 	eye.connect("defeated", _defeat_observer)
 	moon.checkpoint_requested.connect(_checkpoint_archive_pause)
 	var initial: Dictionary = game.capture_campaign_snapshot()
-	if not _legacy_unit(initial) or not _expect(initial.level.local.stage == "return" and initial.level.local.eye.hp == 240.0 and initial.level.local.scheduler.clock_s == 0.0 and initial.level.local.blink.cycle == 0 and initial.level.progress.checkpoint_ids.is_empty() and game.attempts.state().completed_main == Prefix, "actual Challenge-born pristine Story contains no fabricated Moon progress"):
+	if not _producer_unit(initial) or not _expect(initial.level.local.stage == "return" and initial.level.local.eye.hp == 240.0 and initial.level.local.scheduler.clock_s == 0.0 and initial.level.local.blink.cycle == 0 and initial.level.progress.checkpoint_ids.is_empty() and game.attempts.state().completed_main == Prefix, "actual Challenge-born pristine Story contains no fabricated Moon progress"):
 		await _finish(); return
 	if not _expect(game.player.equipment.snapshot() == Equipment.STARTER and float(game.player.equipment.resolved_stats().primary_damage) == 20.0, "unchanged neutral kit has actual ordinary20 damage") or not _archive_branch("entry", "", 240.0, 0): await _finish(); return
 	if not await _enter_actual_boss(): await _finish(); return
@@ -91,15 +106,20 @@ func _run() -> void:
 	if not _expect(branch_order == ["entry", "cp2", "cp3"] and primary_receipts.size() == 8 and moon.get("sneeze_demonstrated") == true and first_final_admission.is_empty(), "complete CP3 follows eight real hits and genuine Sneeze demonstration before first final admission"):
 		await _finish(); return
 	if not await _click(game, "ResumeButton"): await _finish(); return
-	if not await _wait(func() -> bool: return not first_final_admission.is_empty(), "first actual legacy final admission", 12.0, true) or not await _pause(): await _finish(); return
+	if not await _wait(func() -> bool: return not first_final_admission.is_empty(), "first actual " + difficulty_case + " final admission", 12.0, true) or not await _pause(): await _finish(); return
 	var final_unit: Dictionary = game.capture_campaign_snapshot()
-	if not _legacy_unit(final_unit): await _finish(); return
+	if not _producer_unit(final_unit): await _finish(); return
 	var leases: Array = final_unit.level.local.scheduler.reservations
-	if not _expect(first_final_admission.source_ids == [Layout.EYE_ID] and leases.size() == 1 and leases[0].source_id == Layout.EYE_ID and final_unit.level.local.blink.status == "running" and final_unit.level.local.blink.phase in ["warning", "lock"] and final_unit.level.local.nose.status != "running" and final_unit.level.local.next_attack == "sneeze", "real old Challenge first final source is Blink, saved before a Nose follower"):
+	var fresh_writer: bool = difficulty_case == "fresh-producer"
+	var first_id: String = Layout.NOSE_ID if fresh_writer else Layout.EYE_ID
+	var first_packet: Dictionary = final_unit.level.local.nose if fresh_writer else final_unit.level.local.blink
+	var follower_packet: Dictionary = final_unit.level.local.blink if fresh_writer else final_unit.level.local.nose
+	var follower_attack: String = "blink" if fresh_writer else "sneeze"
+	if not _expect(first_final_admission.source_ids == [first_id] and leases.size() == 1 and leases[0].source_id == first_id and first_packet.status == "running" and first_packet.phase in ["warning", "lock"] and follower_packet.status != "running" and final_unit.level.local.next_attack == follower_attack, "actual " + difficulty_case + " first final source follows retained policy before its follower"):
 		await _finish(); return
 	if not _expect(not first_final_admission.preselection.is_empty() and first_final_admission.preselection.clock_s == first_final_admission.clock_s and first_final_admission.preselection.pure, "same native tick records pure preselection without fixture forecast injection; existing parent forecast is reported literally"):
 		await _finish(); return
-	if not _archive_branch("first-final-blink", "moon-phase-3", 80.0, 8): await _finish(); return
+	if not _archive_branch("first-final-sneeze" if fresh_writer else "first-final-blink", "moon-phase-3", 80.0, 8): await _finish(); return
 	if not _expect(hp_boundaries == [240.0, 160.0, 80.0] and phase_observers.size() == 2 and phase_observers[0].phase == 2 and phase_observers[1].phase == 3 and primary_receipts.size() == 8 and terminal_observers.is_empty(), "producer stops after original eight primaries/two checkpoints/first final Save; no defeat or exit claim"):
 		await _finish(); return
 	difficulty_complete = true
@@ -111,27 +131,27 @@ func _seed_actual_pristine_story(registry: CinderCampaignRegistry) -> bool:
 	# before the real entry begin_encounter, never relabel a Standard packet.
 	game = _new_shell()
 	if game == null or not await _settle(): return false
-	game.menu.difficulty_preference_requested.emit("challenge")
-	if not _expect(game.get_difficulty_preference() == "challenge" and game.active_level == null and game.player == null, "public Title preference selects Challenge before any fresh L5 entry"):
+	game.menu.difficulty_preference_requested.emit(producer_profile)
+	if not _expect(game.get_difficulty_preference() == producer_profile and game.active_level == null and game.player == null, "public Title preference selects " + producer_profile + " before any fresh L5 entry"):
 		return false
-	setups.append({"kind": "public Title difficulty preference before fresh entry", "profile_id": "challenge", "interactive_gesture_claim": false})
+	setups.append({"kind": "public Title difficulty preference before fresh entry", "profile_id": producer_profile, "interactive_gesture_claim": false})
 	candidate = game._prepare(Layout.LEVEL_ID, Equipment.STARTER)
-	if not _expect(not candidate.is_empty(), "actual shared Shell constructs the fresh Challenge production entrance"): return false
+	if not _expect(not candidate.is_empty(), "actual shared Shell constructs the fresh " + producer_profile + " production entrance"): return false
 	var pristine: Dictionary = game._capture_fresh_candidate(candidate, game._fresh_shell_state())
-	if not _legacy_unit(pristine): return false
+	if not _producer_unit(pristine): return false
 	var model := Attempts.new(registry)
 	var payload: Dictionary = model.state()
 	payload.completed_main = Prefix.duplicate()
 	payload.story = {"kind": "story", "level_id": Layout.LEVEL_ID, "snapshot": pristine.duplicate(true), "checkpoint": pristine.duplicate(true)}
 	var store := Store.new(test_root + "campaign.json")
 	store.payload_validator = model.saved_payload_error
-	if not _expect(model.state_error(payload).is_empty() and store.write_payload(payload), "public validated Store preserves genuine Challenge birth plus disclosed TEST predecessor prefix: " + model.last_error + store.last_error): return false
+	if not _expect(model.state_error(payload).is_empty() and store.write_payload(payload), "public validated Store preserves genuine " + producer_profile + " birth plus disclosed TEST predecessor prefix: " + model.last_error + store.last_error): return false
 	setups.append({"kind": "TEST sequential predecessor prefix, not earned playthrough", "completed_main": Prefix.duplicate(), "candidate_scene": ScenePath, "canonical_registry_changed": false})
-	operation = "explicit Challenge seed candidate disposal"
+	operation = "explicit " + producer_profile + " seed candidate disposal"
 	game._dispose(candidate); candidate = {}
 	var refs: Array[WeakRef] = _refs(game)
 	game.free(); game = null
-	return _expect(_freed(refs), "fresh Challenge seed candidate and Shell dispose normally before actual Title Continue")
+	return _expect(_freed(refs), "fresh " + producer_profile + " seed candidate and Shell dispose normally before actual Title Continue")
 
 
 func _checkpoint_archive_pause(id: String, checkpoint: String, kind: String) -> void:
@@ -145,7 +165,7 @@ func _checkpoint_archive_pause(id: String, checkpoint: String, kind: String) -> 
 func _phase_checkpoint(id: String, expected_stage: String, hp: float) -> bool:
 	if not await _wait(func() -> bool: return moon.current_checkpoint().id == id and moon.get("stage") == expected_stage, "actual deferred native boundary " + id, 8.0, true) or not await _pause(): return false
 	var saved: Dictionary = game.attempts.state().story.checkpoint
-	if not _legacy_unit(saved) or not _expect(saved.level.local.eye.hp == hp and saved.level.local.stage == expected_stage and saved.level.progress.checkpoint_id == id and saved.level.progress.checkpoint_kind == "boss_phase" and saved.level.local.pending_phase == 0 and saved.level.local.scheduler.reservations.is_empty() and _durable(game), "native settled phase checkpoint remains complete and durable before further gameplay"):
+	if not _producer_unit(saved) or not _expect(saved.level.local.eye.hp == hp and saved.level.local.stage == expected_stage and saved.level.progress.checkpoint_id == id and saved.level.progress.checkpoint_kind == "boss_phase" and saved.level.local.pending_phase == 0 and saved.level.local.scheduler.reservations.is_empty() and _durable(game), "native settled phase checkpoint remains complete and durable before further gameplay"):
 		return false
 	hp_boundaries.append(hp)
 	receipts.append({"stage": "actual " + id, "exact_snapshot": Exact.stringify(saved)})
@@ -176,6 +196,46 @@ func _shell_idle() -> bool:
 	return is_instance_valid(game) and not game.get("_draining") and not game.get("_drain_queued") and not game.get("_registration_inflight") and not game.get("_pause_request_pending") and game.get("_operations").is_empty() and game.get("_failed_operations").is_empty()
 
 
+func _producer_unit(saved: Dictionary) -> bool:
+	if difficulty_case == "legacy-producer": return _legacy_unit(saved)
+	if not _closed(saved): return false
+	var attack: String = "sneeze" if producer_profile == "challenge" else "blink"
+	var descriptor: Dictionary = {"profile_id": producer_profile, "recipe_id": "A1-L5/final-" + attack + "-leads@v1", "initial_attack": attack}
+	return _expect(saved.level.local.size() == 17 and saved.level.local.api_revision == "act1-living-moon-level-2" and saved.level.local.schema_version == 2 and saved.level.local.world_revision == 1 and saved.level.local.has("final_arrangement") and _same(saved.level.local.final_arrangement, descriptor) and saved.level.local.scheduler.profile.id == producer_profile and saved.shell.difficulty_at_entry == producer_profile, "actual new17 closed descriptor and native/Shell entry profile remain exact: " + producer_profile)
+
+
+func _run_selectors(registry: CinderCampaignRegistry) -> void:
+	# Only real pristine entries. No CP3/HP/history packet is fabricated and no
+	# attack or final-phase behavior is credited by an entry selector assertion.
+	selector_parent_root = test_root
+	for profile: String in ["standard", "assisted"]:
+		producer_profile = profile
+		test_root = selector_parent_root + profile + "/"
+		selector_test_roots.append(test_root)
+		if not await _seed_actual_pristine_story(registry): return
+		game = _new_shell()
+		if game == null or not await _settle() or not await _click(game, "ContinueStoryButton") or not _bindings(game): return
+		moon = game.active_level
+		var saved: Dictionary = game.capture_campaign_snapshot()
+		if not _producer_unit(saved): return
+		if not _expect(saved.level.local.stage == "return" and saved.level.local.eye.hp == 240.0 and saved.level.local.scheduler.clock_s == 0.0 and saved.level.local.scheduler.reservations.is_empty() and saved.level.local.blink.cycle == 0 and saved.level.local.nose.cycle == 0 and saved.level.progress.checkpoint_ids.is_empty() and saved.level.local.final_arrangement.initial_attack == "blink", "real fresh " + profile + " entry retains Blink selector without executing boss phases"): return
+		if not _archive_branch(profile + "-entry", "", 240.0, 0): return
+		var refs: Array[WeakRef] = _refs(game)
+		game.free(); game = null; moon = null
+		if not _expect(_freed(refs) and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "normal " + profile + " pristine recipient retirement before next selector"): return
+	test_root = selector_parent_root
+	if not _expect(branch_order == ["standard-entry", "assisted-entry"] and primary_receipts.is_empty() and phase_observers.is_empty() and first_final_admission.is_empty(), "selectors cover only two actual entry descriptors; no final-phase/ordinary-response credit"): return
+	difficulty_complete = true
+
+
+func _case_scope() -> String:
+	if difficulty_case == "selectors":
+		return "Two genuine new17 Standard/Assisted production L5 entries from their public pre-entry preferences, exact native/Shell profile and closed Blink-first descriptor, pristine local/source/clock state, full literal Store/Attempts/current/checkpoint archive and normal cleanup. Disclosed TEST predecessor prefix only; no phase progression, CP3 fabrication, attack, final admission, route/ordinary-response/portrait/balance/performance claim."
+	var format_label: String = "old16" if difficulty_case == "legacy-producer" else "new17"
+	var leader: String = "Blink" if difficulty_case == "legacy-producer" else "Sneeze"
+	return "Actual " + format_label + " Challenge born at real entry, disclosed TEST prefix/public Rusher injury/supported Hero approach placements, eight actual ordinary20-damage primaries and native Sneeze demonstration/CP2/CP3. Separate literal whole current/checkpoint/Attempts/raw original Store branches archived at CP2 BEFORE CP3, then first actual final " + leader + " Save. Pure native preselection diagnostics are observations, not both-eligibility or difficulty-novelty claims. No source HP/phase/clock/lease/profile seed, CP2 transplantation, manufactured history, earned route, final response comparison, boss defeat/hatch/transition, gesture/portrait/all-kit/balance/performance claim. Exact selected runtime source pins remain retained."
+
+
 func _legacy_unit(saved: Dictionary) -> bool:
 	if not _closed(saved): return false
 	return _expect(saved.level.local.size() == 16 and saved.level.local.api_revision == "act1-living-moon-level-1" and saved.level.local.schema_version == 1 and not saved.level.local.has("final_arrangement") and saved.level.local.scheduler.profile.id == "challenge" and saved.shell.difficulty_at_entry == "challenge", "literal old16 omission and actual Challenge entry/native profile remain exact")
@@ -186,8 +246,10 @@ func _archive_branch(label: String, checkpoint_id: String, hp: float, hit_count:
 	var current: Dictionary = game.capture_campaign_snapshot()
 	var attempts: Dictionary = game.attempts.state()
 	var checkpoint: Dictionary = attempts.story.checkpoint
-	if not _legacy_unit(current) or not _legacy_unit(checkpoint): return false
+	if not _producer_unit(current) or not _producer_unit(checkpoint): return false
 	if not _expect(current.level.local.eye.hp == hp and checkpoint.level.local.eye.hp == hp and checkpoint.level.progress.checkpoint_id == checkpoint_id and primary_receipts.size() == hit_count and _same(attempts.story.snapshot, current) and _durable(game), "whole live current/checkpoint/Attempts/raw Store agree before branch archive: " + label): return false
+	if difficulty_case != "legacy-producer":
+		if not _expect(_same(game.active_level.call("final_arrangement_state"), {"schema_version": 2, "final_arrangement": current.level.local.final_arrangement}), "actual installed writer policy matches complete fresh snapshot: " + label): return false
 	var current_wire: String = Exact.stringify(current)
 	var checkpoint_wire: String = Exact.stringify(checkpoint)
 	var attempts_wire: String = Exact.stringify(attempts)
@@ -211,7 +273,7 @@ func _archive_branch(label: String, checkpoint_id: String, hp: float, hit_count:
 		var write_error: Error = copy.get_error(); copy.close()
 		if not _expect(write_error == OK and FileAccess.get_file_as_bytes(copy_path) == original_bytes and FileAccess.get_sha256(copy_path) == FileAccess.get_sha256(original_path), "archived original bytes/hash remain exact: " + label + "/" + name): return false
 		disk_files[name] = {"path": copy_path, "bytes": original_bytes.size(), "sha256": FileAccess.get_sha256(original_path), "hex": original_bytes.hex_encode()}
-	var row: Dictionary = {"label": label, "current_exact": current_wire, "current_sha256": current_wire.sha256_text(), "checkpoint_exact": checkpoint_wire, "checkpoint_sha256": checkpoint_wire.sha256_text(), "attempts_exact": attempts_wire, "attempts_sha256": attempts_wire.sha256_text(), "raw_store": disk_files["campaign.json"], "all_original_disk_files": disk_files, "generation": envelope.generation, "primary_count": hit_count, "profile_id": "challenge", "local_schema": 1, "checkpoint_id": checkpoint_id, "clock_s": current.level.local.scheduler.clock_s, "scope": "Complete literal contemporaneous branch. Future CP2 Retry loads this CP2 branch separately; no transplantation into CP3."}
+	var row: Dictionary = {"label": label, "current_exact": current_wire, "current_sha256": current_wire.sha256_text(), "checkpoint_exact": checkpoint_wire, "checkpoint_sha256": checkpoint_wire.sha256_text(), "attempts_exact": attempts_wire, "attempts_sha256": attempts_wire.sha256_text(), "raw_store": disk_files["campaign.json"], "all_original_disk_files": disk_files, "generation": envelope.generation, "primary_count": hit_count, "profile_id": current.level.local.scheduler.profile.id, "local_schema": current.level.local.schema_version, "checkpoint_id": checkpoint_id, "clock_s": current.level.local.scheduler.clock_s, "scope": "Complete literal contemporaneous branch. Future CP2 Retry loads this CP2 branch separately; no transplantation into CP3."}
 	if not _expect(FileAccess.get_file_as_bytes(test_root + "campaign.json") == raw_store and Exact.stringify(game.capture_campaign_snapshot()) == current_wire and Exact.stringify(game.attempts.state()) == attempts_wire, "read-only archive leaves actual current/Attempts/original disk unchanged: " + label): return false
 	row["source_pre"] = source_pre.duplicate(true)
 	var branch_json: String = JSON.stringify(row, "\t")
@@ -265,6 +327,7 @@ func _source_pins() -> Dictionary:
 	var result: Dictionary = {}
 	for path: String in [LEGACY_HOST_PATH, LEGACY_CODEC_PATH, "res://scripts/acts/act1/living_moon_layout.gd", "res://scripts/acts/act1/living_moon_body.gd", "res://scripts/acts/act1/living_moon_nose.gd", "res://tests/acts/act1/a1_l5_encounter_transition.gd", "res://tests/acts/act1/a1_l5_shell_transport.gd", ScenePath]:
 		result[path] = FileAccess.get_sha256(path)
+	result[RECIPE_PATH] = FileAccess.get_sha256(RECIPE_PATH) if FileAccess.file_exists(RECIPE_PATH) else "<absent>"
 	return result
 
 
@@ -275,7 +338,7 @@ func _expect(ok: bool, label: String) -> bool:
 
 func _finish() -> void:
 	if finishing: return
-	finishing = true; paused = true; _end_watch("normal legacy producer cleanup")
+	finishing = true; paused = true; _end_watch("normal " + difficulty_case + " cleanup")
 	# Unwind any native probe emitter before normal node disposal.
 	await process_frame
 	if is_instance_valid(game) and not candidate.is_empty(): game._dispose(candidate); candidate = {}
@@ -290,14 +353,18 @@ func _finish() -> void:
 	_expect(_freed(refs) and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "normal producer Shell/native-source/cue/probe cleanup releases every descendant and group")
 	_expect(FileAccess.get_file_as_bytes(Registry.DATA_PATH) == registry_bytes, "TEST prefix and registration never modify canonical registry bytes")
 	source_post = _source_pins()
-	_expect(not source_pre.is_empty() and source_post == source_pre, "old writer and all named inherited inputs remain byte-identical through production")
-	var directory := DirAccess.open(test_root)
+	_expect(not source_pre.is_empty() and source_post == source_pre, "selected writer and all named inherited inputs remain byte-identical through the case")
 	var removed: bool = true
-	if directory != null:
+	var cleanup_roots: Array[String] = selector_test_roots.duplicate()
+	if not cleanup_roots.has(test_root): cleanup_roots.append(test_root)
+	if not selector_parent_root.is_empty() and not cleanup_roots.has(selector_parent_root): cleanup_roots.append(selector_parent_root)
+	for owned_root: String in cleanup_roots:
+		var directory := DirAccess.open(owned_root)
+		if directory == null: continue
 		for name: String in directory.get_files():
-			if DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root.path_join(name))) != OK: removed = false
-		if DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root)) != OK: removed = false
-	_expect(removed, "disposable live Store retires after literal complete branches are independently archived")
+			if DirAccess.remove_absolute(ProjectSettings.globalize_path(owned_root.path_join(name))) != OK: removed = false
+		if DirAccess.remove_absolute(ProjectSettings.globalize_path(owned_root)) != OK: removed = false
+	_expect(removed, "disposable live Stores retire after literal complete branches are independently archived")
 	Engine.max_fps = old_fps; AudioServer.set_bus_layout(old_audio)
 	if node_added.is_connected(_observe_added): node_added.disconnect(_observe_added)
 	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
@@ -307,7 +374,7 @@ func _finish() -> void:
 		_expect(false, "difficulty native report is writable")
 	else:
 		var complete: bool = difficulty_complete and failures == 0 and not aborted
-		var body: Dictionary = {"case": difficulty_case, "checks": checks, "failures": failures, "success": complete, "complete": complete, "assertions": assertion_rows, "first_failure": first_failure, "branches": branches, "branch_order": branch_order, "artifact_root": artifact_root, "source_pre": source_pre, "source_post": source_post, "setups": setups, "receipts": receipts, "primary_receipts": primary_receipts, "phase_observers": phase_observers, "hp_boundaries": hp_boundaries, "checkpoint_pause_requests": checkpoint_pause_requests, "first_final_admission": first_final_admission, "selection_observation_count": selection_observation_count, "selection_rows_retained_last32": selection_rows, "circle_cycles": circle_cycles, "dash_requests": dash_requests, "drive_diagnostics": drive_diagnostics, "observations": observations, "wall_ms": Time.get_ticks_msec() - started_ms, "scope": "Actual old16 Challenge born at real entry, disclosed TEST prefix/public Rusher injury/supported Hero approach placements, eight actual ordinary20-damage primaries and native Sneeze demonstration/CP2/CP3. Separate literal whole current/checkpoint/Attempts/raw original Store branches archived at CP2 BEFORE CP3, then first actual final Blink Save. Pure native preselection diagnostics are observations, not both-eligibility or difficulty-novelty claims. No source HP/phase/clock/lease/profile seed, CP2 transplantation, manufactured v2, earned route, final response comparison, boss defeat/hatch/transition, gesture/portrait/all-kit/balance/performance claim. Runtime remains old source pins."}
+		var body: Dictionary = {"case": difficulty_case, "checks": checks, "failures": failures, "success": complete, "complete": complete, "assertions": assertion_rows, "first_failure": first_failure, "branches": branches, "branch_order": branch_order, "artifact_root": artifact_root, "source_pre": source_pre, "source_post": source_post, "setups": setups, "receipts": receipts, "primary_receipts": primary_receipts, "phase_observers": phase_observers, "hp_boundaries": hp_boundaries, "checkpoint_pause_requests": checkpoint_pause_requests, "first_final_admission": first_final_admission, "selection_observation_count": selection_observation_count, "selection_rows_retained_last32": selection_rows, "circle_cycles": circle_cycles, "dash_requests": dash_requests, "drive_diagnostics": drive_diagnostics, "observations": observations, "wall_ms": Time.get_ticks_msec() - started_ms, "scope": _case_scope()}
 		file.store_string(JSON.stringify(body, "\t")); file.flush()
 		var report_error: Error = file.get_error(); file.close()
 		if report_error != OK: _expect(false, "difficulty report write closes successfully")

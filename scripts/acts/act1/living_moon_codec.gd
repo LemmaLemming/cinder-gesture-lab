@@ -10,10 +10,17 @@ extends RefCounted
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
 const Exact = preload("res://scripts/campaign/exact_json.gd")
 const Layout = preload("res://scripts/acts/act1/living_moon_layout.gd")
-const API_REVISION: String = "act1-living-moon-level-1"
-const SCHEMA_VERSION: int = 1
+const API_REVISION: String = "act1-living-moon-level-2"
+const SCHEMA_VERSION: int = 2
+const LEGACY_API_REVISION: String = "act1-living-moon-level-1"
+const LEGACY_SCHEMA_VERSION: int = 1
 const WORLD_REVISION: int = 1
-const LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "world_revision", "stage", "impact_demonstrated", "sneeze_demonstrated", "next_attack", "pending_phase", "escape", "actors", "eye", "scheduler", "impact", "nose", "blink", "framing"]
+const LEGACY_LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "world_revision", "stage", "impact_demonstrated", "sneeze_demonstrated", "next_attack", "pending_phase", "escape", "actors", "eye", "scheduler", "impact", "nose", "blink", "framing"]
+const LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "world_revision", "stage", "impact_demonstrated", "sneeze_demonstrated", "next_attack", "pending_phase", "escape", "actors", "eye", "scheduler", "impact", "nose", "blink", "framing", "final_arrangement"]
+const FINAL_ARRANGEMENTS_PATH: String = "res://data/campaign/act1/a1_l5_difficulty_arrangements.json"
+const FINAL_PROFILES: Array[String] = ["assisted", "standard", "challenge"]
+const FINAL_ARRANGEMENT_KEYS: Array[String] = ["profile_id", "recipe_id", "initial_attack"]
+static var _final_definition: Variant = JSON.parse_string(FileAccess.get_file_as_string(FINAL_ARRANGEMENTS_PATH))
 const STAGES: Array[String] = ["return", "capsule", "blink", "sneeze", "final", "hatch", "escape", "departed"]
 const SOURCE_IDS: Array[String] = ["moon-return-impact", "moon-return-rusher", "moon-eye", "moon-nose"]
 const ESCAPE_KEYS: Array[String] = ["started", "from_s", "until_s", "finished", "contact_position"]
@@ -26,9 +33,12 @@ static func envelope_error(value: Variant) -> String:
 	if Exact.stringify(value).is_empty(): return "L5 requires complete exact typed closed transport"
 	if not value is Dictionary: return "L5 local state must be a closed Dictionary"
 	var saved: Dictionary = value
-	var error: String = Codec.keys_error(saved, LOCAL_KEYS)
+	var legacy: bool = saved.get("api_revision") == LEGACY_API_REVISION and saved.get("schema_version") is int and saved.schema_version == LEGACY_SCHEMA_VERSION
+	var current: bool = saved.get("api_revision") == API_REVISION and saved.get("schema_version") is int and saved.schema_version == SCHEMA_VERSION
+	if not legacy and not current: return "Unsupported exact L5 metadata revision"
+	var error: String = Codec.keys_error(saved, LEGACY_LOCAL_KEYS if legacy else LOCAL_KEYS)
 	if not error.is_empty(): return error
-	if saved.api_revision != API_REVISION or not saved.schema_version is int or saved.schema_version != SCHEMA_VERSION or not saved.world_revision is int or saved.world_revision != WORLD_REVISION:
+	if not saved.world_revision is int or saved.world_revision != WORLD_REVISION:
 		return "Unsupported exact L5 metadata revision"
 	if not saved.stage is String or saved.stage not in STAGES or not saved.next_attack is String or saved.next_attack not in ["blink", "sneeze"] or not saved.pending_phase is int or saved.pending_phase not in [0, 2, 3]:
 		return "Closed L5 stage, next attack and deferred phase required"
@@ -44,8 +54,51 @@ static func envelope_error(value: Variant) -> String:
 	if not saved.blink.get("source_binding") is Dictionary or saved.blink.source_binding.get("source_id") != Layout.EYE_ID: return "Blink retains the actual eye's complete native source binding"
 	if saved.scheduler.get("api_revision") != "scheduler-snapshot-1" or not saved.scheduler.get("schema_version") is int or saved.scheduler.schema_version != 4 or not saved.scheduler.get("world_revision") is int or saved.scheduler.world_revision != WORLD_REVISION or not saved.scheduler.get("clock_s") is float or not Codec.in_range(saved.scheduler.clock_s, 0.0, 1000000000.0) or not saved.scheduler.get("reservations") is Array:
 		return "L5 retains complete native schema-4 Scheduler and its original float clock"
+	if not saved.scheduler.get("profile") is Dictionary or not saved.scheduler.profile.get("id") is String or saved.scheduler.profile.id not in FINAL_PROFILES:
+		return "L5 retains its actual entry-resolved native Scheduler profile"
+	if current:
+		error = final_arrangement_error(saved.final_arrangement)
+		if not error.is_empty(): return error
+		if saved.final_arrangement.profile_id != saved.scheduler.profile.id:
+			return "Final arrangement differs from the saved native entry profile"
 	error = _escape_error(saved)
 	return _framing_error(saved) if error.is_empty() else error
+
+
+## This table selects only the first phase-three attack. It changes no source
+## definition, timing, geometry or later accepted-start alternation.
+static func arrangement_configuration_error() -> String:
+	if not _final_definition is Dictionary or not Codec.keys_error(_final_definition, ["schema_version", "level_id", "arrangements"]).is_empty():
+		return "Closed L5 final arrangement definitions required"
+	if not Codec.is_integer(_final_definition.schema_version, 1, 1) or _final_definition.level_id != "A1-L5" or not _final_definition.arrangements is Array or _final_definition.arrangements.size() != FINAL_PROFILES.size():
+		return "Exact L5 final arrangement table required"
+	var seen: Array[String] = []
+	for value: Variant in _final_definition.arrangements:
+		if not value is Dictionary or not Codec.keys_error(value, FINAL_ARRANGEMENT_KEYS).is_empty(): return "Closed final arrangement row required"
+		if not value.profile_id is String or value.profile_id not in FINAL_PROFILES or seen.has(value.profile_id): return "Each native profile requires one final arrangement"
+		var attack: String = "sneeze" if value.profile_id == "challenge" else "blink"
+		var recipe: String = "A1-L5/final-" + attack + "-leads@v1"
+		if not value.recipe_id is String or value.recipe_id != recipe or not value.initial_attack is String or value.initial_attack != attack:
+			return "Final arrangement must retain the authorized initial leader"
+		seen.append(value.profile_id)
+	return ""
+
+
+static func fresh_final_arrangement(profile_id: String) -> Dictionary:
+	if not arrangement_configuration_error().is_empty(): return {}
+	for value: Dictionary in _final_definition.arrangements:
+		if value.profile_id == profile_id: return value.duplicate(true)
+	return {}
+
+
+static func final_arrangement_error(value: Variant) -> String:
+	if not value is Dictionary or not Codec.keys_error(value, FINAL_ARRANGEMENT_KEYS).is_empty(): return "Closed final arrangement descriptor required"
+	for key: String in FINAL_ARRANGEMENT_KEYS:
+		if not value[key] is String: return "Final arrangement descriptor retains exact strings"
+	var error: String = arrangement_configuration_error()
+	if not error.is_empty(): return error
+	var expected: Dictionary = fresh_final_arrangement(value.profile_id)
+	return "" if not expected.is_empty() and _same(value, expected) else "Unknown or inconsistent final arrangement descriptor"
 
 
 ## Metadata coherence only. A copied wire cannot establish native provenance.

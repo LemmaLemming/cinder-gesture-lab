@@ -1,0 +1,13 @@
+{
+  "classification": "local Git whitespace diagnostic; no engine launch",
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "exit_code": 2,
+  "first_error": "docs/acts/act1/evidence/A1-L5-difficulty/audits/runtime-v1.patch:14: trailing whitespace.",
+  "cause": "Literal unified-diff context lines include their required leading space before blank/tab-indented original lines. Copied patch evidence is byte-exact; production source has not failed whitespace validation.",
+  "resolution": "Keep literal patch evidence unchanged; check every other staged path including all changed runtime, fixture, data and records with the literal patch file excluded."
+}

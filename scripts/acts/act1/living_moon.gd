@@ -58,6 +58,13 @@ var _pending_start: Dictionary = {}
 var _capture_camera: Camera3D
 var _capture_hud: GameHUD
 var _retained: Dictionary = {}
+# Installed only after a successful fresh native begin or whole quiet commit.
+# Zero is an uncommitted recipient, never a writable authored format.
+var _writer_schema_version: int = 0
+var _final_arrangement: Dictionary = {}
+# Candidate-only intent, separate from installed authority. Pure validators
+# compare this detached receipt; they never select or install a policy.
+var _staged_restore_policy: Dictionary = {}
 
 
 func _ready() -> void:
@@ -122,14 +129,32 @@ func _on_enter_level() -> void:
 	_construction_error = _bind_level()
 	if not _construction_error.is_empty(): _running = false; return
 	var profile: String = String(shared_shell.call("get_difficulty_preference")) if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference") else "standard"
-	if not scheduler.begin_encounter(profile, ENCOUNTER_ID, WORLD_REVISION): _construction_error = scheduler.last_error; _running = false
+	if not scheduler.begin_encounter(profile, ENCOUNTER_ID, WORLD_REVISION):
+		_construction_error = scheduler.last_error; _running = false; return
+	var selected: Dictionary = MoonCodec.fresh_final_arrangement(String(scheduler.encounter_profile().get("id", "")))
+	if selected.is_empty():
+		_construction_error = "Fresh Moon requires its actual entry-profile final arrangement"; _running = false; return
+	_writer_schema_version = MoonCodec.SCHEMA_VERSION
+	_final_arrangement = selected
 	_refresh_objective()
 
 
-func _on_enter_restore_candidate(_local: Dictionary, _saved_player: Dictionary) -> String:
-	# All recipients have one immutable topology, including fresh cycle-zero Blink.
-	# No preview, attack, checkpoint or encounter reset is run during construction.
+func _on_enter_restore_candidate(local: Dictionary, _saved_player: Dictionary) -> String:
+	# Stage validated metadata before native binding, without installing policy.
+	# All recipients retain one immutable topology and fresh cycle-zero Blink;
+	# no preview, attack, checkpoint or encounter reset runs in construction.
+	var error: String = MoonCodec.metadata_error(local)
+	if not error.is_empty(): return error
+	_staged_restore_policy = _saved_policy(local)
 	return _bind_level()
+
+
+func final_arrangement_state() -> Dictionary:
+	return {"schema_version": _writer_schema_version, "final_arrangement": _final_arrangement.duplicate(true)}
+
+
+static func _saved_policy(local: Dictionary) -> Dictionary:
+	return {"schema_version": local.schema_version, "profile_id": local.scheduler.profile.id, "final_arrangement": (local.final_arrangement as Dictionary).duplicate(true) if local.schema_version == MoonCodec.SCHEMA_VERSION else {}}
 
 
 func restore_candidate_construction_required() -> bool:
@@ -280,7 +305,10 @@ func _settle_phase() -> void:
 	var target: int = pending_phase
 	blink.cancel("moon_phase_boundary"); nose.call("cancel", "moon_phase_boundary")
 	_frames.clear(); _forecast.clear(); _pending_start.clear()
-	stage = "sneeze" if target == 2 else "final"; next_attack = "sneeze" if target == 2 else "blink"
+	stage = "sneeze" if target == 2 else "final"
+	# Only the genuine phase-three transition reads the retained initial leader.
+	# Legacy attempts remain Blink-first, including saved prefinal Challenge.
+	next_attack = "sneeze" if target == 2 else (String(_final_arrangement.initial_attack) if _writer_schema_version == MoonCodec.SCHEMA_VERSION else "blink")
 	pending_phase = 0; _sync_art()
 	_publishing = true; request_checkpoint("moon-phase-2" if target == 2 else "moon-phase-3", "boss_phase"); _publishing = false
 
@@ -651,7 +679,12 @@ func _capture_local_state() -> Dictionary:
 	for record: Dictionary in paired.reservations:
 		if not _frames.has(record.source_id) or _frames[record.source_id].reservation_id != record.id: _capture_error = "Live native lease lost original response witness"; return {}
 		frames[record.source_id] = _encode(_frames[record.source_id])
-	return {"api_revision": MoonCodec.API_REVISION, "schema_version": MoonCodec.SCHEMA_VERSION, "world_revision": WORLD_REVISION, "stage": stage, "impact_demonstrated": impact_demonstrated, "sneeze_demonstrated": sneeze_demonstrated, "next_attack": next_attack, "pending_phase": pending_phase, "escape": escape.duplicate(true), "actors": {Layout.RUSHER_ID: rush_packet}, "eye": eye_packet, "scheduler": paired, "impact": impact_packet, "nose": nose_packet, "blink": blink_packet, "framing": frames}
+	if _writer_schema_version not in [MoonCodec.LEGACY_SCHEMA_VERSION, MoonCodec.SCHEMA_VERSION]:
+		_capture_error = "Moon capture requires a committed authored format"; return {}
+	var current: bool = _writer_schema_version == MoonCodec.SCHEMA_VERSION
+	var result: Dictionary = {"api_revision": MoonCodec.API_REVISION if current else MoonCodec.LEGACY_API_REVISION, "schema_version": _writer_schema_version, "world_revision": WORLD_REVISION, "stage": stage, "impact_demonstrated": impact_demonstrated, "sneeze_demonstrated": sneeze_demonstrated, "next_attack": next_attack, "pending_phase": pending_phase, "escape": escape.duplicate(true), "actors": {Layout.RUSHER_ID: rush_packet}, "eye": eye_packet, "scheduler": paired, "impact": impact_packet, "nose": nose_packet, "blink": blink_packet, "framing": frames}
+	if current: result["final_arrangement"] = _final_arrangement.duplicate(true)
+	return result
 
 
 func _local_snapshot_error(state: Dictionary) -> String:
@@ -662,6 +695,8 @@ func _local_snapshot_error(state: Dictionary) -> String:
 func _local_snapshot_error_with_player(state: Dictionary, saved_player: Dictionary) -> String:
 	var error: String = _runtime_error()
 	if error.is_empty(): error = MoonCodec.metadata_error(state)
+	if error.is_empty() and not _staged_restore_policy.is_empty() and not _same(_staged_restore_policy, _saved_policy(state)):
+		error = "Saved Moon policy differs from the staged restore candidate"
 	if error.is_empty(): error = hero.snapshot_error(saved_player)
 	if error.is_empty(): error = String(eye.call("snapshot_error", state.eye, state.scheduler, saved_player))
 	if error.is_empty(): error = rusher.actor_snapshot_error(state.actors[Layout.RUSHER_ID], state.scheduler, saved_player)
@@ -781,6 +816,12 @@ func _restore_local_state(local: Dictionary) -> void:
 	_frames = _decode(local.framing); _forecast.clear(); _pending_start.clear()
 	var blocked: bool = _hatch_cue.is_blocking_signals(); _hatch_cue.set_block_signals(true)
 	_sync_art(); _hatch_cue.set_block_signals(blocked)
+	if not _construction_error.is_empty(): _fail_quiet(_construction_error); return
+	# Every original paired native commit has succeeded. Only now does staged
+	# intent become the installed writer policy; failed/live validation is pure.
+	_writer_schema_version = local.schema_version
+	_final_arrangement = (local.final_arrangement as Dictionary).duplicate(true) if _writer_schema_version == MoonCodec.SCHEMA_VERSION else {}
+	_staged_restore_policy.clear()
 	_quiet_commit = false; _refresh_objective()
 
 
