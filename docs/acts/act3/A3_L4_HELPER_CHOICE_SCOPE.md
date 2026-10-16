@@ -1,0 +1,25 @@
+# Garden helper-choice qualification scope
+
+Canonical RESPONSE `e5ebaf52-95be-4b66-8715-6ad4bf0b11f6` acknowledges ONE test-only qualification of the [retained L4 proposal](A3_L4_DIFFICULTY_PROPOSAL.md), original SHA8af2d8af. This is an additional policy qualification, not original level acceptance or a harder-layout claim. All eight Act3 levels and all24 campaign content levels remain accepted; the additional L3 amendment is independently accepted in Shared73.
+
+The documentation-only checkpoint `bfac20b47501fcb4a3ef4b5ae29cb19359acc9a4` is actually adopted at `bd8766a00cb31f3cfbebc41afe8e8dec1df25eee`, parents e20f0c3a/checkpoint. ACK `ab6a85db-c3af-43fc-a915-d25fa5456fe4`, receipt `.cinder/act3-shared73-bfac-adoption-after.json` SHA47700561f49b45c0fae381fb24a5ed4319f94a861675ef6cf0978883731a65b3. Independent custody review confirms48 incoming publication paths,20088 prior owned rows,1531 current named pins,44 CLOSED results and five previews exact. No runtime change or adoption execution credit.
+
+## Required correction to the old component
+
+The original mixed component starts Core only when a caller invokes `try_core`; its physics loop does not pump Core. Its old helper-removal driver consequently leaves Core artificially quiet during helper approach. That unchanged fixture cannot qualify the proposed choice.
+
+A distinct TEST adapter must observe and retain the canonical parent's post-actor native admission policy throughout every helper approach, wait and return: actual `next_kind`, `retry_at_s` and stable-Hero gates; LEFT→RIGHT→FORWARD→BACK scan for one fixed kind; accepted-only native advancement; one pending forecast followed by ordinary camera motion. Keep the native phase1 teaching, phase2 common budget, current/prospective view, proof, floor and autonomous helper. Record literal refusals. No forced first source, overlap requirement, Core suppression, wait for artificial quiet, admitted-state injection or production edit.
+
+Pure unadmitted camera forecasts are distinct from actual Core/Lane pending segments, leases, locks and native history. The canonical parent excludes only its transient unadmitted forecast from its saved framing union and clears transient candidate presentation after successful native restore. A TEST codec must apply that distinction consistently and preserve the real donor before/after observation; it must not erase a native obligation or mutate the donor to force capture. Unsupported boundaries are refused.
+
+## Bounded cases and evidence
+
+The named test is `tests/acts/act3/garden_helper_choice_smoke.gd`, with only necessary declared TEST adapter/codec/resources. Initial source drafts remain private until reviewed. Production parent/codec/layout/Core/tether/scene, native guards/timing/floor/camera/controller/input/art/rewards and Root PRIMARY Phase/Codec stay byte-identical. No descriptor, migration or old-writer producer is needed. New resources use exact paths, without invented/copied UIDs or an import job.
+
+Use separate focused selectors for comparison, genuine held-helper transport and genuine helper-dead transport. Two same-start neutral Challenge cases genuinely earn60→30 through ordinary tether recovery attacks, then compare continued tether progress while helper survives against ordinary helper recovery defeat followed by a useful actual tether approach/primary. Add one existing J0/P2/S2/W03 closer/slower sample. Observe actual target/source HP, completed actions/landings, native admissions/refusals, optional pressure and normal cleanup. Never force an extra return if the existing position is already useful. If the useful choice cannot be established, preserve the failure and return to Integration without altering production.
+
+Save actual whole Player+TEST-component held/dead units through public paused Store/session/Continue, with saved Challenge retained under opposite future preference, fresh distinct native recipients, strict quietness and no respawn. Retry remains the original clock0 TEST checkpoint, distinct from earned MAIN phase2 checkpoint5. Do not manufacture canonical earlier route, helper death or target state. Capture one brief actual dead-branch portrait only where needed, using nonempty native/input/optics/render witnesses. No unrelated Echo/default Standard suite, broad replay, route/all-kit/other-act/human gate.
+
+The original four catalogue/claims/ability/profile inputs still match canonical bytes and the original Shared72 query witnesses after this checkpoint. Reuse the seven original query/validator receipts at their actual50a11b43/Shared72 source; no repinning, new item/grant/claim/reservation/ability use. Refresh only genuinely changed inputs or required completion checks.
+
+At this scope milestone the new tests, native comparison, transport and any new portrait remain unimplemented/unexecuted. Later records will state actual promoted sources and results. Preserve every original failure and actual source attribution. Root is first help contact; stop before public upload, mobile/export/release.

@@ -1,0 +1,57 @@
+from pathlib import Path
+import datetime,hashlib,json,re,subprocess,sys
+R=Path.cwd();assert str(R)=='/Users/howardchen/.codex/worktrees/campaign-act3/video game idea'
+name,*args=sys.argv[1:];assert re.fullmatch('[a-z0-9-]+',name)
+assert not any(a in ['import','--parse-only','--produce-legacy'] for a in args)
+graphics=True
+expected_args={'archive','manifest-sha256','origin-run','origin-result-sha256','origin-log-sha256'}
+assert len(args)==5 and all(a.startswith('--') and '=' in a for a in args)
+assert {a[2:].split('=',1)[0] for a in args}==expected_args
+def git(*a):return subprocess.check_output(['git','--no-optional-locks',*a],cwd=R).decode().strip()
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def now():return datetime.datetime.now(datetime.timezone.utc).isoformat()
+assert git('branch','--show-current')=='codex/campaign-act3';head=git('rev-parse','HEAD');assert not git('status','--short','--untracked-files=no')
+assert subprocess.run(['git','merge-base','--is-ancestor','9d9aebd025098c60bb87e41a4d9453b52f60266a',head],cwd=R).returncode==0
+out=R/'.cinder/l4-helper-choice-runs'/name;out.mkdir(parents=True,exist_ok=False)
+fixture='tests/acts/act3/garden_helper_choice_portrait.gd'
+selected={'.cinder/run_l4_helper_choice_portrait.py','scripts/dev/dev.py','project.godot',fixture,
+ 'scripts/acts/act3/false_paradise_level.gd','scripts/acts/act3/false_paradise_codec.gd','scripts/acts/act3/garden_root_network.gd','scripts/acts/act3/garden_root_tether.gd','scripts/acts/act3/garden_root_latcher.gd','scripts/acts/act3/root_latcher.gd','scripts/acts/act3/false_paradise_scenery.gd','scripts/acts/act3/garden_sun_art.gd','scripts/acts/act3/mirror_echo.gd','scripts/acts/act3/mirror_echo_codec2.gd','scripts/acts/act3/crystalman_capture_phase.gd','scripts/acts/act3/crystalman_capture_codec.gd',
+ 'scenes/acts/act3/a3_l4_false_paradise.tscn','data/campaign/act3/false_paradise_layout_candidate.json','data/design/player_equipment.json','data/design/equipment_claims.json','data/design/ability_usage.json','data/design/difficulty_profiles.json',
+ 'scripts/campaign/level.gd','scripts/campaign/shell.gd','scripts/campaign/registry.gd','scripts/campaign/attempts.gd','scripts/campaign/save_store.gd','scripts/campaign/exact_json.gd','scripts/campaign/snapshot_codec.gd','data/campaign/registry.json',
+ 'scripts/combat/threat_scheduler.gd','scripts/combat/lane_mechanism.gd','scripts/combat/body_sweep.gd','scripts/combat/threat_geometry.gd','scripts/combat/difficulty.gd','scripts/combat/replay_playback.gd','scripts/combat/authored_enemy_sequence.gd','scripts/combat/replay_witness.gd','scripts/combat/replay_footprint.gd',
+ 'scripts/game.gd','scripts/player.gd','scripts/equipment.gd','scripts/hud.gd','scripts/effects.gd','scripts/settings/game_settings.gd','scripts/ui/campaign_menu.gd','scripts/ui/campaign_scenery.gd','scripts/presentation/camera_framing.gd','scripts/character/player_presentations.gd','scripts/pixel_sprite.gd','scenes/main.tscn','scenes/player.tscn'}
+selected.update(p.relative_to(R).as_posix() for p in (R/'tests/acts/act3/fixtures').glob('garden_helper_choice*') if p.is_file())
+queue=list(selected)
+while queue:
+ rel=queue.pop();p=R/rel
+ if p.is_file() and p.suffix in ['.gd','.tscn']:
+  for ref in re.findall(r'res://[^\"\s)]+',p.read_text()):
+   dep=ref.removeprefix('res://')
+   if (R/dep).is_file() and dep not in selected:selected.add(dep);queue.append(dep)
+existing_uids={p+'.uid' for p in selected if p.endswith('.gd') and (R/(p+'.uid')).is_file()};selected|=existing_uids
+assert all((R/p).is_file() for p in selected)
+possible_new_uids={p+'.uid' for p in selected if p.endswith('.gd') and ('garden_helper_choice' in p) and not (R/(p+'.uid')).exists()}
+sources={p:sha(R/p) for p in sorted(selected)}
+protected={'scripts/acts/act3/false_paradise_level.gd':'f6c05af22b291da550fd05d94061bdfddbeb9869a48f40e2110473715e6a84dd','scripts/acts/act3/false_paradise_codec.gd':'5d49e2a69d7f3b6b345df00f226cbad69adf722f2cf73c3d2f9e6736297b386d','scripts/acts/act3/garden_root_network.gd':'14b3b731f9950c619bb4a6fe541c81dd1ebd6fabb64aa7c9da298a820ee1adbc','scripts/acts/act3/garden_root_tether.gd':'4431b10289f5ced8fbb2e5196b423ae284c93acffc6340b6a8ef54c4e65564f0','data/campaign/act3/false_paradise_layout_candidate.json':'993bcf40aa967308c8779eae7803a063fe1bc3170788288fa734236c20b7df89','scenes/acts/act3/a3_l4_false_paradise.tscn':'215c89c3a3e66364f21d78c391cd3444aec51460367501fe97bda30431cbaf2f'}
+for p,d in protected.items():assert sources[p]==d,('Protected production changed',p)
+for p,d in sources.items():
+ target=out/'source-blobs'/f'{d}.bin';target.parent.mkdir(parents=True,exist_ok=True)
+ if not target.exists():target.write_bytes((R/p).read_bytes())
+manifest={'head':head,'shared_api':'campaign-shared-74','actual_adopted_checkpoint':'9d9aebd025098c60bb87e41a4d9453b52f60266a','started_at':now(),'selected_sources':sources,'possible_native_generated_new_uid_paths':sorted(possible_new_uids),'scope':'Explicit new TEST/direct dependency/settings/source observations, not global resource/UID/projectbank census. Production unchanged; no import/oldwriterproducer/unrelatedsuite.'};(out/'sources.json').write_text(json.dumps(manifest,indent=2)+'\n')
+command=['python3','scripts/dev/dev.py','engine']+([] if graphics else ['--headless'])+['--path','.','--script','res://'+fixture,'--',*args]
+(out/'command.json').write_text(json.dumps({'argv':command,'cwd':str(R)},indent=2)+'\n');print('Queued L4 helper choice command; evidence '+str(out),flush=True)
+diagnostics=[];footers=[]
+with (out/'native.log').open('w') as log:
+ process=subprocess.Popen(command,cwd=R,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1)
+ for line in process.stdout:
+  log.write(line);log.flush()
+  if line.startswith(('SCRIPT ERROR:','ERROR:','WARNING:')):
+   diagnostics.append(line.rstrip())
+   if len(diagnostics)<=12:print(line.rstrip(),flush=True)
+  elif any(x in line for x in ['Garden helper saved portrait:','GARDEN_HELPER_SAVED_DEAD_PORTRAIT','GARDEN_HELPER_FAILED_DRAW_DIAGNOSTIC','GARDEN_HELPER_FAILED_DRAW_FILES','L4 HELPER','L4 CHOICE','FAIL:','TEST ONLY garden','Garden helper choice:','CAPTURE:','[dev]','Waiting for']):
+   footers.append(line.rstrip());print(line.rstrip(),flush=True)
+ code=process.wait()
+changed=[p for p,d in sources.items() if not (R/p).is_file() or sha(R/p)!=d];added={p:sha(R/p) for p in possible_new_uids if (R/p).is_file()}
+result={'closed_at':now(),'actual_exit_code':code,'diagnostics':diagnostics,'selected_source_changes_during_run':changed,'actual_new_uid_observations':added,'head_after':git('rev-parse','HEAD'),'native_log_sha256':sha(out/'native.log'),'footers':footers};(out/'result.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps({'actual_exit_code':code,'diagnostic_count':len(diagnostics),'first_diagnostic':diagnostics[0][:260] if diagnostics else None,'selected_source_changes_during_run':changed,'head_after':result['head_after'],'native_log_sha256':result['native_log_sha256'],'summary_footers':footers[-12:],'new_uid_observations':added}),flush=True)
+sys.exit(code if code else (1 if diagnostics or changed or result['head_after']!=head else 0))
