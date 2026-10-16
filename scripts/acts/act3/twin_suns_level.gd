@@ -9,11 +9,19 @@ const StalkerScript = preload("res://scripts/acts/act3/sunbound_stalker.gd")
 const SchedulerScript = preload("res://scripts/combat/threat_scheduler.gd")
 const InteractionCue = preload("res://scripts/cues/interaction_cue.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Arrangement = preload("res://scripts/combat/encounter_arrangement.gd")
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
 const ENCOUNTER_DATA: String = "res://data/campaign/act3/a3_l1_encounters.json"
 const ENCOUNTER_ID: String = "A3-L1/full-route"
 const WORLD_REVISION: int = 1
 const LOCAL_VERSION: int = 5
-const ROUTE_API: String = "act3-twin-suns-level-1"
+const LEGACY_ROUTE_API: String = "act3-twin-suns-level-1"
+const ROUTE_API: String = "act3-twin-suns-level-2"
+const LEGACY_LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "scenery", "scheduler", "sources", "route"]
+const ARRANGEMENT_LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "scenery", "scheduler", "sources", "route", "arrangement"]
+const LEGACY_RECIPE_IDS: Dictionary = {"assisted":"A3-L1/assisted-canonical@v1", "standard":"A3-L1/standard-canonical@v1", "challenge":"A3-L1/challenge-canonical-legacy@v1"}
+const CHALLENGE_RECIPE: String = "A3-L1/challenge-crossing-depth@v2"
+const SOURCE_POSITIONS: Dictionary = {"l1-flank-stalker":Vector3(1.6,0.1,25), "l1-approach-stalker":Vector3(-1.8,0.1,3), "l1-crossing-west":Vector3(-2.2,0.1,-14), "l1-crossing-east":Vector3(2.2,0.1,-17), "l1-departure-stalker":Vector3(1.2,0.1,-35)}
 const COMPLETION_ID: String = "twin-suns-clear"
 const EXIT_ID: String = "poolingdred-threshold"
 const SOURCE_IDS: Array[String] = ["l1-flank-stalker", "l1-approach-stalker", "l1-crossing-west", "l1-crossing-east", "l1-departure-stalker"]
@@ -47,6 +55,77 @@ var _exit_dispatch_queued: bool = false
 var _exit_dispatch_generation: int = 0
 var _configuration_error: String = ""
 var _death_callbacks: Dictionary = {}
+var _arrangement_descriptor: Dictionary = {}
+var _selected_positions: Dictionary = {}
+var _legacy_capture: bool = false
+var _sources_configured: bool = false
+
+
+## Pure metadata selects depth assignments only, with no native safety authority.
+static func arrangement_definition() -> Dictionary:
+	var recipes: Array = []
+	for profile: String in Arrangement.PROFILE_IDS:
+		recipes.append({"recipe_id":LEGACY_RECIPE_IDS[profile], "profile":profile, "order":SOURCE_IDS.duplicate()})
+	var crossing: Array = SOURCE_IDS.duplicate()
+	crossing[2] = "l1-crossing-east"
+	crossing[3] = "l1-crossing-west"
+	recipes.append({"recipe_id":CHALLENGE_RECIPE, "profile":"challenge", "order":crossing})
+	return {"schema_version":1, "unit_ids":SOURCE_IDS.duplicate(), "recipes":recipes, "current":{"assisted":LEGACY_RECIPE_IDS.assisted, "standard":LEGACY_RECIPE_IDS.standard, "challenge":CHALLENGE_RECIPE}}
+
+
+static func arrangement_layout(descriptor: Variant) -> Dictionary:
+	var selector := Arrangement.new(arrangement_definition())
+	var error: String = selector.saved_error(descriptor)
+	if not error.is_empty(): return {"error":error}
+	var starts: Dictionary = {}
+	for index: int in range(SOURCE_IDS.size()):
+		var slot: String = SOURCE_IDS[index]
+		var id: String = descriptor.order[index]
+		if SOURCE_POCKETS[id] != SOURCE_POCKETS[slot]: return {"error":"Twin Suns recipes cannot exchange pocket entitlement"}
+		# Whole identical-actor swaps leave the physical arrangement unchanged.
+		# Keep each recipient X/nativeY; only its canonical depth slot is chosen.
+		var at: Vector3 = SOURCE_POSITIONS[id]
+		at.z = (SOURCE_POSITIONS[slot] as Vector3).z
+		starts[id] = at
+	return {"error":"", "descriptor":selector.restore(descriptor), "starts":starts}
+
+
+## Preflight closed saved constructor inputs before native once-configuration.
+## Full source/Scheduler/paired Hero/route/progress checks follow construction.
+static func arrangement_constructor(local: Variant) -> Dictionary:
+	var error: String = Codec.value_error(local)
+	if not error.is_empty(): return {"error":error}
+	if not local is Dictionary: return {"error":"Twin Suns local unit must be a dictionary"}
+	var legacy: bool = local.get("api_revision") == LEGACY_ROUTE_API and Codec.is_integer(local.get("schema_version"),1,1)
+	var current: bool = local.get("api_revision") == ROUTE_API and Codec.is_integer(local.get("schema_version"),2,2)
+	if not legacy and not current: return {"error":"Unsupported Twin Suns inner API/schema"}
+	if not Codec.keys_error(local,LEGACY_LOCAL_KEYS if legacy else ARRANGEMENT_LOCAL_KEYS).is_empty() or not local.get("scenery") is Dictionary or not local.get("scheduler") is Dictionary or not local.get("sources") is Dictionary or not local.get("route") is Dictionary:
+		return {"error":"Closed complete Twin Suns arrangement/native unit required"}
+	var profile: Variant = local.scheduler.get("profile")
+	if not profile is Dictionary or not profile.get("id") is String: return {"error":"Saved canonical Scheduler profile required for Twin Suns construction"}
+	var resolver := Difficulty.new()
+	var canonical: Dictionary = resolver.profile(profile.id)
+	if canonical.is_empty() or not Codec.same_values(profile,canonical): return {"error":"Saved Twin Suns construction profile differs from the canonical profile"}
+	var descriptor: Variant = local.get("arrangement")
+	if legacy: descriptor = {"schema_version":1, "profile":profile.id, "recipe_id":LEGACY_RECIPE_IDS[profile.id], "order":SOURCE_IDS.duplicate()}
+	var selected: Dictionary = arrangement_layout(descriptor)
+	if not String(selected.error).is_empty(): return selected
+	if selected.descriptor.profile != profile.id: return {"error":"Twin Suns saved recipe and Scheduler profiles differ"}
+	if not Codec.keys_error(local.sources,SOURCE_IDS).is_empty() or not local.route.get("entries") is Array or local.route.entries.size() > POCKET_IDS.size(): return {"error":"All five native Twin Suns sources and bounded entry entitlement required"}
+	for id: String in SOURCE_IDS:
+		var actor: Variant = local.sources[id]
+		if not actor is Dictionary or actor.get("stable_id") != id or not Codec.is_vector3(actor.get("position")) or not actor.get("resolved_role") is Dictionary or actor.resolved_role.get("difficulty_profile") != profile.id:
+			return {"error":"Twin Suns construction requires every native identity/position/saved profile"}
+		# Entered actors retain their actual moved poses, including tombstones.
+		# Only dormant actors must still be at the selected immutable origin.
+		if int(SOURCE_POCKETS[id]) >= local.route.entries.size() and Codec.read_vector3(actor.position) != selected.starts[id]:
+			return {"error":"Dormant Twin Suns source differs from its retained recipe: "+id}
+	selected["legacy"] = legacy
+	return selected
+
+
+func selected_source_positions() -> Dictionary:
+	return _selected_positions.duplicate(true)
 
 
 func _ready() -> void:
@@ -129,26 +208,51 @@ func contract_error() -> String:
 
 func _on_enter_level() -> void:
 	super._on_enter_level()
-	if not _configuration_error.is_empty():
-		_update_guidance()
-		return
 	var profile: String = "standard"
 	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
 		profile = shared_shell.call("get_difficulty_preference")
-	if not threat_scheduler.begin_encounter(profile, ENCOUNTER_ID, WORLD_REVISION):
-		_configuration_error = threat_scheduler.last_error
-		_update_guidance()
-		return
+	var selector := Arrangement.new(arrangement_definition())
+	var descriptor: Dictionary = selector.select_fresh(profile)
+	_configuration_error = selector.last_error if descriptor.is_empty() else _configure_sources(descriptor,false)
+	_update_presentation()
+
+
+func _configure_sources(descriptor: Dictionary, legacy: bool) -> String:
+	if not _configuration_error.is_empty(): return _configuration_error
+	if _sources_configured: return "Twin Suns native sources may only be configured once"
+	var selected: Dictionary = arrangement_layout(descriptor)
+	if not String(selected.error).is_empty(): return String(selected.error)
+	if legacy and selected.descriptor.recipe_id != LEGACY_RECIPE_IDS[selected.descriptor.profile]: return "Legacy Twin Suns requires canonical source depths"
+	_arrangement_descriptor = selected.descriptor.duplicate(true)
+	_selected_positions = selected.starts.duplicate(true)
+	_legacy_capture = legacy
+	# Bind saved/fresh immutable homes before every real source's sole configure.
+	for id: String in SOURCE_IDS:
+		sources[id].global_position = _selected_positions[id]
+		sources[id].set_physics_process(false)
+	if not threat_scheduler.begin_encounter(_arrangement_descriptor.profile,ENCOUNTER_ID,WORLD_REVISION): return threat_scheduler.last_error
+	_sources_configured = true
 	for source_id: String in SOURCE_IDS:
 		var source: CinderAct3SunboundStalker = sources[source_id]
 		if not source.configure(source_id, hero, effects, threat_scheduler, combat_response.bind(source_id), _authoring.stalker_raw_role, _authoring.minimum_timing_floors):
-			_configuration_error = "Twin Suns source configuration failed: " + source_id + ": " + source.last_error
-			_update_guidance()
-			return
+			return "Twin Suns source configuration failed: " + source_id + ": " + source.last_error
 		var callback: Callable = _on_source_died.bind(source_id)
 		_death_callbacks[source_id] = callback
 		source.died.connect(callback)
-	_update_presentation()
+	return ""
+
+
+func restore_candidate_construction_required() -> bool:
+	return true
+
+
+func _on_enter_restore_candidate(local: Dictionary, player: Dictionary) -> String:
+	var selected: Dictionary = arrangement_constructor(local)
+	if not String(selected.error).is_empty(): return String(selected.error)
+	_configuration_error = _configure_sources(selected.descriptor,selected.legacy)
+	if not _configuration_error.is_empty(): return _configuration_error
+	super._on_enter_level()
+	return _local_snapshot_error_with_player(local,player)
 
 
 func _on_exit_level() -> void:
@@ -450,7 +554,9 @@ func _capture_local_state() -> Dictionary:
 	var source_states: Dictionary = {}
 	for source_id: String in SOURCE_IDS:
 		source_states[source_id] = sources[source_id].snapshot_state()
-	return {"api_revision": ROUTE_API, "schema_version": 1, "scenery": super._capture_local_state(), "scheduler": threat_scheduler.snapshot_state(scheduler_bindings()), "sources": source_states, "route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "exit_state": _exit_state, "contact": _contact.duplicate(true)}}
+	var local: Dictionary = {"api_revision": LEGACY_ROUTE_API if _legacy_capture else ROUTE_API, "schema_version": 1 if _legacy_capture else 2, "scenery": super._capture_local_state(), "scheduler": threat_scheduler.snapshot_state(scheduler_bindings()), "sources": source_states, "route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "exit_state": _exit_state, "contact": _contact.duplicate(true)}}
+	if not _legacy_capture: local["arrangement"] = _arrangement_descriptor.duplicate(true)
+	return local
 
 
 func _runtime_error() -> String:
@@ -462,10 +568,14 @@ func _runtime_error() -> String:
 		return "Twin Suns requires its live scheduler and contact cue"
 	if not Codec.keys_error(sources, SOURCE_IDS).is_empty():
 		return "Twin Suns requires exactly five stable source bindings"
+	var selected: Dictionary = arrangement_layout(_arrangement_descriptor)
+	if not _sources_configured or not String(selected.error).is_empty(): return "Validated immutable Twin Suns constructor arrangement required"
+	if _selected_positions != selected.starts or threat_scheduler.encounter_profile().get("id") != _arrangement_descriptor.profile: return "Twin Suns native starts/profile differ from the retained recipe"
+	if _legacy_capture and _arrangement_descriptor.recipe_id != LEGACY_RECIPE_IDS[_arrangement_descriptor.profile]: return "Legacy Twin Suns capture requires canonical depths"
 	for source_id: String in SOURCE_IDS:
 		var source_marker: Marker3D = get_node_or_null(SOURCE_MARKERS[source_id]) as Marker3D
-		if not is_instance_valid(source_marker) or source_marker.is_queued_for_deletion():
-			return "Twin Suns requires all five authored source markers"
+		if not is_instance_valid(source_marker) or source_marker.is_queued_for_deletion() or source_marker.global_position != SOURCE_POSITIONS[source_id]:
+			return "Twin Suns requires all five unchanged canonical source markers"
 		if not is_instance_valid(sources[source_id]):
 			return "Twin Suns requires all five retained source nodes"
 		var source: CinderAct3SunboundStalker = sources[source_id]
@@ -503,8 +613,9 @@ func _paired_local_error(local: Dictionary, expected_hero: Vector3, expected_her
 	var error: String = _runtime_error()
 	if not error.is_empty():
 		return error
-	if not Codec.keys_error(local, ["api_revision", "schema_version", "scenery", "scheduler", "sources", "route"]).is_empty() or local.get("api_revision") != ROUTE_API or not Codec.is_integer(local.get("schema_version"), 1, 1) or not local.get("scenery") is Dictionary or not local.get("scheduler") is Dictionary or not local.get("sources") is Dictionary or not local.get("route") is Dictionary:
-		return "Twin Suns requires its complete versioned route/source/scheduler/scenery unit"
+	var selected: Dictionary = arrangement_constructor(local)
+	if not String(selected.error).is_empty(): return String(selected.error)
+	if selected.legacy != _legacy_capture or not Codec.same_values(selected.descriptor,_arrangement_descriptor) or selected.starts != _selected_positions: return "Saved Twin Suns arrangement differs from constructed immutable native bindings"
 	error = super._local_snapshot_error(local.scenery)
 	if not error.is_empty():
 		return error
@@ -574,8 +685,7 @@ func _route_local_error(local: Dictionary, expected_hero: Vector3, expected_hero
 			if not death is Dictionary or not Codec.keys_error(death, ["clock_s", "source_position"]).is_empty() or not Codec.in_range(death.get("clock_s"), 0.0, float(local.scheduler.clock_s)) or not Codec.is_vector3(death.get("source_position")) or Codec.read_vector3(death.source_position) != Codec.read_vector3(saved.position):
 				return "Twin Suns death record must retain the actual dead source pose"
 		if int(SOURCE_POCKETS[source_id]) >= route.entries.size():
-			var marker: Marker3D = get_node(SOURCE_MARKERS[source_id]) as Marker3D
-			if not String(saved.reservation_id).is_empty() or int(saved.cycle) != 0 or Codec.read_vector3(saved.position) != marker.global_position:
+			if not String(saved.reservation_id).is_empty() or int(saved.cycle) != 0 or Codec.read_vector3(saved.position) != _selected_positions[source_id]:
 				return "Twin Suns unentered source cannot move or retain an attack lease"
 	var all_clear: bool = route.deaths.size() == 5 and route.entries.size() == 4
 	if not all_clear:
