@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_ONLY_READY_COMPONENT_SUCCESSOR_V2",
+  "frozen_files": {
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v2/run.py": "a8072018dc298f31ab248b0234eeeb0ba774015f1b96f3bc24f54d2c963c5096",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v2/INPUT_SPEC.json": "d03f4120a59efbb08c3e0f42932d6ecec989bb69a4a37a8eb137efcfbf54d294",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v2/SOURCE_INPUTS.json": "3586655c0bdd23494dcb01ca8b97a9679d575342c3616ddc3bd185ab78f0a781",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v2/README.md": "34a1ab3ef5cf80d6724eed50d53a865b01a762dea1747228d7c67bf1f5482499"
+  },
+  "expected_named_inputs": 136,
+  "absent_uid_count": 0,
+  "runner_byte_identical_to": {
+    "path": ".cinder/a2-l1-difficulty-20261016/validation-successor-v1/run.py",
+    "sha256": "a8072018dc298f31ab248b0234eeeb0ba774015f1b96f3bc24f54d2c963c5096"
+  },
+  "corrected_component_sha256": "2b66663ab562e2f3267ddf06a5a96dd00da76e71112bf1088190c77f3b338344",
+  "fix_receipt_sha256": "635185d0e8b6cc07dfefa50604fb7675a314d90a8d7f3d340cdfde1dfd5b5d45",
+  "prior_failed_phase": {
+    "path": ".cinder/a2-l1-difficulty-20261016/validation-successor-v1/run-native-pair-20261016T053202.305090Z-3936fff9",
+    "result_sha256": "922a2d61113a2fde4e7a95b498c33a517b6360d1a7cfc6afc4f18b1e51a09384",
+    "index_sha256": "c36a8cb28d555141f17bc7fd1f6c1230761a195db9bf5413380e552ccca98942",
+    "native_report_sha256": "79f44be7a5078c8b30b3d3f06cfbd9aa8f49635cc39d2bf9806a75f454e91d54",
+    "closed": true,
+    "runner_return_code": 2,
+    "checks": 28,
+    "failures": 1,
+    "complete": false,
+    "success": false,
+    "first_failure": {
+      "case": "old-left",
+      "check": 26,
+      "label": "actual first native selected owner arms its unchanged 3.8/.31 lane and ordinary response proof",
+      "native_clock_s": 0.733333333333334,
+      "note": "actual first native selected owner arms its unchanged 3.8/.31 lane and ordinary response proof",
+      "ok": false
+    },
+    "raw_diagnostics": [
+      "ERROR: Condition \"ret != noErr\" is true. Returning: \"\"",
+      "ERROR: A2-L1 component: actual first native selected owner arms its unchanged 3.8/.31 lane and ordinary response proof"
+    ],
+    "qualification": "FAILED/incomplete, CA/noErr diagnostic also retained; not clean and no combat pass"
+  },
+  "reused_outcomes": {
+    "pure": {
+      "checks": 92,
+      "failures": 0
+    },
+    "legacy": {
+      "checks": 241,
+      "failures": 0
+    },
+    "shell": {
+      "checks": 117,
+      "failures": 0
+    },
+    "provenance": "Root supplied reviewed actual outcomes; unchanged leaf hashes verified against original capsule. No reruns or expanded claims."
+  },
+  "authorized_execution": {
+    "phases": [
+      "seal",
+      "native"
+    ],
+    "leaf": "pair",
+    "selectors": [
+      "--component-compare-left",
+      "--component-short-slow-right",
+      "--component-portrait"
+    ],
+    "forbidden": [
+      "import",
+      "pure",
+      "legacy",
+      "shell",
+      "standalone parser",
+      "default suites"
+    ],
+    "qualification": "Root authority restriction; copied runner intentionally retains original CLI capabilities. Only these commands authorized."
+  },
+  "self_review": "Only component SHA differs among v1 source pins; all seven genuine UIDs and production/other leaves verified unchanged. Original v1 capsule5 and closed failure result/index plus new exact fixreceipt added. Runner byte-identical; Python AST syntax-only, no engine/module execution. All native report/kind/source/footer/selector joins remain strict.",
+  "scope": "Additive component-only successor v2. Original v1 CLOSED2 actual28/1 incomplete first-armed geometry composite failure retained with CA/noErr raw diagnostic; not clean, no combat pass. Root geometry fix changes only fixture comparison to native endpoint is_equal_approx policy (see exact receipt). Production/other leaves/all seven genuine UIDs unchanged. Reuse Root-reviewed pure92/legacy241/Shell117; no repeats. Root executes only new host seal and component compare-left/short-slow-right/graphical portrait as needed; no import/parser/default or broader native scope."
+}

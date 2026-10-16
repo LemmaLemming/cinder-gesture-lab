@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_ONLY_READY_COMPONENT_SUCCESSOR",
+  "frozen_files": {
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v1/run.py": "a8072018dc298f31ab248b0234eeeb0ba774015f1b96f3bc24f54d2c963c5096",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v1/INPUT_SPEC.json": "c60cf0671fdf684ec753d1cd99980878399697b11f60b677f0419317d64fb42e",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v1/SOURCE_INPUTS.json": "ef783d4b6d38cddc1a8698839891f2c974c2f2cdc1856deb8392a80e722c282b",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v1/README.md": "c3d9d79fdca34f947017da3eb34c48b440b2cfc75d3a442d40f5995a24404dbc"
+  },
+  "expected_named_inputs": 128,
+  "absent_uid_count": 0,
+  "runner_byte_identical_to": {
+    "path": ".cinder/a2-l1-difficulty-20261016/validation-prepare/run.py",
+    "sha256": "a8072018dc298f31ab248b0234eeeb0ba774015f1b96f3bc24f54d2c963c5096"
+  },
+  "corrected_component_sha256": "3a25f41177e8768e3022302328f28fa7eac8609c37874848732b256c49d37815",
+  "fix_receipt_sha256": "c190fa20dff144e1aee0e1621d140dc1bb32f3372912729916d89a574794d472",
+  "prior_failed_phase": {
+    "path": ".cinder/a2-l1-difficulty-20261016/validation-prepare/run-native-pair-20261016T052716.604040Z-11b40f76",
+    "result_sha256": "cf74472974ea1127e37e036e6676fa942a09cfc7ebca55dba94050ec495a8d43",
+    "index_sha256": "218de5c4937cbe745becf2e2c4e681a1df1eb66392ef02a3bad7437b4a0fa24c",
+    "closed": true,
+    "runner_return_code": 2,
+    "native_report_present": false
+  },
+  "reused_outcomes": {
+    "pure": {
+      "checks": 92,
+      "failures": 0
+    },
+    "legacy": {
+      "checks": 241,
+      "failures": 0
+    },
+    "shell": {
+      "checks": 117,
+      "failures": 0
+    },
+    "provenance": "Root supplied reviewed actual outcomes; unchanged leaf hashes verified against original capsule. No reruns or expanded claims."
+  },
+  "authorized_execution": {
+    "phases": [
+      "seal",
+      "native"
+    ],
+    "leaf": "pair",
+    "selectors": [
+      "--component-compare-left",
+      "--component-short-slow-right",
+      "--component-portrait"
+    ],
+    "forbidden": [
+      "import",
+      "pure",
+      "legacy",
+      "shell",
+      "standalone parser",
+      "default suites"
+    ],
+    "qualification": "Root authority restriction; copied runner intentionally retains original CLI capabilities. Only these commands authorized."
+  },
+  "self_review": "Only corrected component differs among original named sources; seven actual generated UID hashes replace genuine absent observations. Root fix receipt and original immutable capsule/closed failure result+index pinned. Native maps/kind/footer/pathSHA unchanged; runner copied unchanged, Python syntax AST checked without execution. No engine launched.",
+  "scope": "Additive component-only successor after CLOSED2 parse refusal at OldComponent.resource_path/CurrentComponent.resource_path. Root replaced only those two expressions with identical literal res:// references. All seven genuine UIDs already imported and pinned. Original failed phase/raw and original capsule preserved, no native report inferred. Reuse unchanged pure92/legacy241/Shell117 as Root-reviewed existing results; do not repeat them. Root executes only new host seal then three component modes. No import/parser/default/broad child/native or new gameplay scope."
+}

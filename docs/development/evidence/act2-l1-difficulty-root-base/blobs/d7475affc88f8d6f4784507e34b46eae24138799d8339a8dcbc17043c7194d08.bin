@@ -1,0 +1,20 @@
+--- original-private-candidate
++++ root-successor
+@@ -12,7 +12,7 @@
+ const Geometry: Script = preload("res://scripts/combat/threat_geometry.gd")
+ const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
+ const SharedGame: Script = preload("res://scripts/game.gd")
+-# Private candidate only; Root owns any later promotion/native qualification.
++# Retain the authored layout independently of later menu preferences.
+ const L1Arrangement: Script = preload("res://scripts/combat/encounter_arrangement.gd")
+ const L1Difficulty: Script = preload("res://scripts/combat/difficulty.gd")
+ const L1Exact: Script = preload("res://scripts/campaign/exact_json.gd")
+@@ -169,7 +169,7 @@
+ 		# only a constructor receipt, never permission to fabricate that clear.
+ 		if not paired.profile.is_empty() or paired.get("encounter_id") != "" or not paired.get("reservations") is Array or not paired.reservations.is_empty():
+ 			return {"error": "Cleared Horsell constructor must retain its original empty Scheduler epoch"}
+-	elif paired.get("encounter_id") != ENCOUNTER_ID or L1Exact.stringify(paired.profile) != L1Exact.stringify(canonical):
++	elif paired.get("encounter_id") != ENCOUNTER_ID or not Codec.same_values(paired.profile, canonical):
+ 		return {"error": "Horsell saved live Scheduler profile/epoch differs from its canonical local profile"}
+ 	var legacy: bool = not local.has("arrangement")
+ 	var descriptor: Variant = local.get("arrangement")

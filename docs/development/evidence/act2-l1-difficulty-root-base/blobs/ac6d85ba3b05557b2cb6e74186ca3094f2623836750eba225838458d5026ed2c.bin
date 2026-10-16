@@ -1,0 +1,40 @@
+--- first-private-draft
++++ selected-private-draft
+@@ -2,7 +2,7 @@
+ ## PRIVATE DRAFT / UNEXECUTED. Four genuine original Horsell17-key units.
+ ## These are not CampaignAttempts, campaign prefixes or canonical MAIN sessions.
+ ## TEST Main overrides only current preference. Its ordinary preview is disposed;
+-## a fresh canonical L2 candidate uses the real public paused-construction API.
++## a fresh canonical L1 candidate uses the real public paused-construction API.
+ ## No actor state, native geometry, clock, HP or saved unit is rewritten to pass.
+ 
+ const MainScene = preload("res://scenes/main.tscn")
+@@ -216,7 +216,13 @@
+ 	var refs: Array[WeakRef] = []
+ 	if is_instance_valid(game):
+ 		_collect(game, refs)
+-		if is_instance_valid(level): level.exit_level()
++		if is_instance_valid(level):
++			var owners: Dictionary = (level.get("_actors") as Dictionary).duplicate()
++			level.exit_level()
++			var retired: bool = true
++			for actor: Node3D in owners.values():
++				retired = retired and scheduler.source_control_state(actor).get("reservations", [1]).is_empty() and actor.call("is_armed") == false
++			if not _expect(retired, "public exit retires every actual saved-profile owner lease and arm binding"): return false
+ 		game.get("fx").clear()
+ 		game.free()
+ 	game = null; hero = null; level = null; scheduler = null
+@@ -255,8 +261,11 @@
+ 	if is_instance_valid(game): await _dispose()
+ 	var dir := DirAccess.open(test_root)
+ 	if dir != null:
+-		for name: String in dir.get_files(): DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root + name))
+-	DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root))
++		for name: String in dir.get_files():
++			_expect(DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root + name)) == OK, "owned unique Store file removed normally: " + name)
++		dir = null
++		_expect(DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root)) == OK, "owned unique Store directory removed normally")
++	_expect(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(test_root)), "owned unique Store directory absent after cleanup")
+ 	paused = false
+ 	var source_after: Dictionary = _sources()
+ 	_expect(source_after == source_before, "explicit named sources and literal fixtures remain unchanged")

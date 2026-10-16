@@ -1,0 +1,270 @@
+"""Private original-Horsell producer runner; prepared, never self-promoting.
+
+Root reviews/promotes the exact private .gd.txt first. One explicit phase and
+one canonical queued direct child at most; no editor import or automatic run.
+"""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import sys
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+TIMEOUT = 180
+SPEC_PATH = HERE / "SOURCE_INPUTS.json"
+ENV_OUTPUT = "CINDER_A2_L1_ORIGINAL_OUTPUT"
+ENV_SOURCES = "CINDER_A2_L1_ORIGINAL_SOURCES"
+REPORT_PREFIX = "CINDER_A2_L1_ORIGINAL_REPORT"
+SCOPE = "New original17-key Horsell writer at fixed named current shared baseline; no historical payload/campaign/route/visual/acceptance/consumer credit."
+WARNING_KEYS = ("source_valid", "source_ready", "native_id_nonzero", "actor_bound_armed", "exchange_running", "phase_warning", "exchange_unarmed", "lease_found", "lease_owner_exact", "lease_profile_exact", "lease_unarmed", "outside_transaction", "hero_floor", "hero_stable", "within_range")
+
+
+def require(ok, message):
+    if not ok:
+        raise ValueError(message)
+
+
+def now():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def read_json(path):
+    def nonfinite(value):
+        raise ValueError("Nonfinite report scalar: " + value)
+    return json.loads(path.read_text(), parse_constant=nonfinite)
+
+
+def save(path, value):
+    temporary = path.with_name(path.name + ".tmp")
+    with temporary.open("xb") as stream:
+        stream.write((json.dumps(value, indent=2, allow_nan=False) + "\n").encode())
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, path)
+
+
+class Tee:
+    def __init__(self, original, log):
+        self.original, self.log = original, log
+    def write(self, text):
+        self.log.write(text)
+        return self.original.write(text)
+    def flush(self):
+        self.log.flush()
+        self.original.flush()
+
+
+def snapshot(spec, out, label):
+    names = sorted(set(spec["expected"]) | set(spec["self_files"]))
+    blobs = out / "source-blobs"
+    blobs.mkdir(exist_ok=True)
+    observed, retained = {}, {}
+    for name in names:
+        source = ROOT / name
+        if not source.is_file():
+            observed[name] = None
+            continue
+        data = source.read_bytes()
+        digest = hashlib.sha256(data).hexdigest()
+        observed[name] = digest
+        destination = blobs / (digest + ".bin")
+        if not destination.exists():
+            with destination.open("xb") as stream:
+                stream.write(data)
+        require(sha(destination) == digest, "Retained source bytes differ: " + name)
+        retained[name] = {"sha256": digest, "bytes": len(data), "blob": str(destination.relative_to(out))}
+    save(out / (label + ".json"), observed)
+    save(out / (label + "-retention.json"), retained)
+    return observed
+
+
+def prepared(spec, observed):
+    for name, expected in spec["expected"].items():
+        require(observed[name] == expected, "Fixed original source/config/fixture/UID differs: " + name)
+    for name, expected in spec["original_guards"].items():
+        require(observed[name] == expected, "Refuse migrated Horsell/sequence/scene: " + name)
+    require((ROOT / spec["producer_script"]).read_bytes() == (ROOT / spec["producer_draft"]).read_bytes(), "Root must promote only exact private producer text before sealing")
+    ready = read_json(HERE / "READINESS.json")
+    for name, expected in ready["frozen_files"].items():
+        require(observed[name] == expected, "Prepared capsule changed: " + name)
+    require(all(observed[name] is not None for name in spec["self_files"]), "Complete prepared capsule required")
+
+
+def exact(sealed, current):
+    require(sealed == current, "Fixed named source/UID drift: " + repr([name for name in sorted(set(sealed) | set(current)) if sealed.get(name) != current.get(name)]))
+
+
+def successful_seal(path):
+    require(path.parent.parent == HERE and path.name == "seal.json", "Use this runner's actual unique closed seal")
+    terminal = read_json(path.parent / "result.json")
+    index = read_json(path.parent / "evidence-index.json")
+    require(terminal.get("closed") is True and terminal.get("passed") is True and type(terminal.get("runner_return_code")) is int and terminal["runner_return_code"] == 0, "Seal must join a CLOSED0/passed original phase")
+    require(index.get("created_after_raw_close") is True and index["files"]["seal.json"]["sha256"] == sha(path) and index["files"]["result.json"]["sha256"] == sha(path.parent / "result.json"), "Seal/result must join its original post-close index")
+    seal = read_json(path)
+    require(seal.get("sealed") is True and seal.get("source_phase") == str(path.parent), "Explicit successful original source seal required")
+    return seal
+
+
+def native_observation(spec, out, raw, sealed):
+    observation = {"validation_errors": []}
+    errors = observation["validation_errors"]
+    path = out / "native-report.json"
+    if not path.is_file():
+        errors.append("Native report absent; partial raw/engine output retained")
+        return observation
+    observation["native_report"] = {"path": str(path), "sha256": sha(path), "bytes": path.stat().st_size}
+    try:
+        report = read_json(path)
+        require(type(report.get("schema_version")) is int and report["schema_version"] == 1 and report.get("kind") == "new-original-a2-l1-17-key-producer", "Actual report schema/kind differs")
+        rows = report["rows"]
+        require(isinstance(rows, list) and all(isinstance(row, dict) and type(row.get("ok")) is bool and type(row.get("check")) is int for row in rows), "Actual native row/boolean/ordinal types required")
+        false_rows = [row for row in rows if row["ok"] is False]
+        observation.update({"checks": report.get("checks"), "failures": report.get("failures"), "actual_rows": len(rows), "actual_false_rows": len(false_rows), "complete": report.get("complete"), "success": report.get("success"), "first_failure": report.get("first_failure"), "packets_observed": report.get("packets")})
+        require(type(report["checks"]) is int and report["checks"] == len(rows) > 0 and [row["check"] for row in rows] == list(range(1, len(rows) + 1)), "Actual consecutive row count must join native counter")
+        require(type(report["failures"]) is int and report["failures"] == len(false_rows), "Actual failure count must join false rows")
+        require(report["first_failure"] == (false_rows[0] if false_rows else {}), "Actual first failure must equal first false row or empty object")
+        expected_sources = {"res://" + name: value for name, value in sealed.items()}
+        require(report["source_before"] == report["source_after"] == expected_sources, "Native source/UID before/after must join exact fixed seal")
+        require(re.findall(r"^" + REPORT_PREFIX + r" path=(.+) sha256=([0-9a-f]{64})$", raw, re.MULTILINE) == [(str(path), sha(path))], "One literal report path/SHA must join exact native bytes")
+        require(re.findall(r"^A2-L1 original17-key producer: (\d+) checks/(\d+) failures; complete=(true|false); packets=(\d+)$", raw, re.MULTILINE) == [(str(report["checks"]), str(report["failures"]), "true" if report["complete"] is True else "false", str(len(report["packets"])))], "One literal footer must join actual counters/completion/packets")
+        packets = report["packets"]
+        require(isinstance(packets, list), "Actual packet array required")
+        file_joins = []
+        profile_ids = {}
+        for packet in packets:
+            require(packet["profile"] in ("standard", "challenge") and packet["stage"] in ("entrance", "arrival-warning"), "Only original named profile/stage packets allowed")
+            wire_path, store_path = out / packet["exact_file"], out / packet["store_file"]
+            stem = packet["profile"] + "-" + packet["stage"]
+            require(wire_path.parent == store_path.parent == out and wire_path.name == stem + ".exact.json" and store_path.name == stem + ".store.json" and not wire_path.is_symlink() and not store_path.is_symlink(), "Original packets must be actual direct unique-output files")
+            require(sha(wire_path) == packet["exact_sha256"] and wire_path.stat().st_size == packet["exact_bytes"] and sha(store_path) == packet["store_sha256"] and store_path.stat().st_size == packet["store_bytes"], "Actual original wire/rawStore hashes and byte lengths must join")
+            envelope, wire = read_json(store_path), wire_path.read_text()
+            require(type(envelope["format_version"]) is int and envelope["format_version"] == 2 and type(envelope["generation"]) is int and envelope["generation"] == packet["store_generation"] == 1, "Original raw format2 generation1 required")
+            require(envelope["payload_json"] == wire and envelope["sha256"] == packet["store_checksum"] == hashlib.sha256(wire.encode()).hexdigest(), "Original Store payload/checksum must equal opaque Exact wire without decoding/reencoding")
+            require(packet["outer_api_revision"] == "campaign-level-1" and type(packet["outer_schema_version"]) is int and packet["outer_schema_version"] == 1 and type(packet["outer_local_snapshot_version"]) is int and packet["outer_local_snapshot_version"] == 2 and type(packet["sequence_schema"]) is int and packet["sequence_schema"] == 1, "Original native outer local2/sequence1 identity required")
+            require(packet["original_local_key_count"] == len(packet["original_local_keys"]) == 17 and set(packet["original_local_keys"]) == set(spec["original_local_keys"]), "Exact original closed17-key local branch required")
+            require(packet["actual_scheduler_profile"] == packet["profile"] and packet["main_scene"] == "res://scenes/main.tscn" and packet["level_scene"] == "res://scenes/acts/act2/a2_l1.tscn" and packet["level_script"] == "res://scripts/acts/act2/horsell_common.gd", "Actual original scene/root/profile metadata required")
+            identities = packet["native_identities_decimal"]
+            expected_ids = {"main", "player", "level", "scheduler", "exchange", "arrival", "road_east", "road_west", "common_left", "common_right", "departure_a", "departure_b"}
+            require(isinstance(identities, dict) and set(identities) == expected_ids and all(isinstance(value, str) and re.fullmatch(r"[1-9][0-9]*", value) for value in identities.values()) and len(set(identities.values())) == 12, "Actual twelve nonzero unique named native IDs must retain decimal strings")
+            if packet["profile"] in profile_ids:
+                require(profile_ids[packet["profile"]] == identities, "Same-profile entrance/warning must retain same native identities")
+            profile_ids[packet["profile"]] = identities
+            require(isinstance(packet["configured_native_roots_exact"], str) and bool(packet["configured_native_roots_exact"]) and packet["fired_kinds"] == [] and packet["completed_action_kinds"] == [], "Actual native root receipt and no attack/gesture reports required")
+            if packet["stage"] == "arrival-warning":
+                require(all(packet["warning_predicates"].get(key) is True for key in WARNING_KEYS), "Each actual warning/source/owner/lease/stability predicate must independently pass")
+            else:
+                require(packet["warning_predicates"] == {}, "Entrance must not claim actual warning")
+            file_joins.append({"profile": packet["profile"], "stage": packet["stage"], "wire_sha256": sha(wire_path), "store_sha256": sha(store_path), "opaque_Exact_unchanged": True})
+        observation["actual_file_joins"] = file_joins
+        require(report["actual_progress_signals"] == [], "Original producer must earn no checkpoint/completion")
+        require(report["failures"] == 0 and report["complete"] is True and report["success"] is True, "Zero failures/positive complete/success required, never just zero exit")
+        require(len(packets) == 4 and {(packet["profile"], packet["stage"]) for packet in packets} == {(profile, stage) for profile in ("standard", "challenge") for stage in ("entrance", "arrival-warning")}, "Exactly four actual original units required")
+        require(set(profile_ids["standard"]) == set(profile_ids["challenge"]) and all(profile_ids["standard"][key] != profile_ids["challenge"][key] for key in profile_ids["standard"]), "Independent profiles require actual different native recipients")
+    except Exception as exc:
+        errors.append(str(exc))
+    return observation
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=("seal", "parse", "native"))
+    parser.add_argument("--seal", type=Path)
+    args = parser.parse_args()
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    out = HERE / (args.phase + "-" + stamp + "-" + uuid.uuid4().hex[:8])
+    out.mkdir(exist_ok=False)
+    result = {"phase": args.phase, "started_at": now(), "output": str(out), "closed": False, "passed": False, "engine_launch_attempted": False, "owned_validation_returned": False, "canonical_validation_return_code": None, "scope": SCOPE}
+    queue = {"queued": False, "acquired": False}
+    save(out / "result.json", result); save(out / "queue.json", queue)
+    code, spec, sealed = 2, None, None
+    print("Original Horsell producer output:", out, flush=True)
+    with (out / "raw.log").open("w") as log, contextlib.redirect_stdout(Tee(sys.stdout, log)), contextlib.redirect_stderr(Tee(sys.stderr, log)):
+        try:
+            require((args.phase == "seal") == (args.seal is None), "Seal takes no prior seal; parse/native requires explicit --seal")
+            spec = read_json(SPEC_PATH)
+            observed = snapshot(spec, out, "preflight-observed-inputs")
+            prepared(spec, observed)
+            if args.phase == "seal":
+                sealed = observed
+                save(out / "seal.json", {"sealed": True, "created_at": now(), "source_phase": str(out), "names": sealed, "scope": SCOPE})
+                result["passed"] = True; code = 0
+            else:
+                seal_path = args.seal.resolve()
+                seal = successful_seal(seal_path)
+                sealed = seal["names"]
+                exact(sealed, observed)
+                save(out / "selected-seal.json", {"path": str(seal_path), "sha256": sha(seal_path), "seal": seal})
+                before = snapshot(spec, out, "sources-before-queue"); exact(sealed, before)
+                loader = importlib.util.spec_from_file_location("cinder_a2_l1_original_producer_dev", ROOT / "scripts/dev/dev.py")
+                require(loader is not None and loader.loader is not None, "Canonical dev loader required")
+                dev = importlib.util.module_from_spec(loader); sys.modules[loader.name] = dev
+                policy = sys.dont_write_bytecode
+                try:
+                    sys.dont_write_bytecode = True; loader.loader.exec_module(dev)
+                finally:
+                    sys.dont_write_bytecode = policy
+                child_env = {key: value for key, value in os.environ.items() if key not in (ENV_OUTPUT, ENV_SOURCES)}
+                if args.phase == "native":
+                    child_env[ENV_OUTPUT] = str(out)
+                    child_env[ENV_SOURCES] = json.dumps(["res://" + name for name in sorted(sealed)])
+                context = dev.ProjectContext(root=ROOT, environ=child_env)
+                command = [str(dev.resolve_godot(context)), "--path", str(ROOT), "--headless", "--log-file", str(out / "engine.log")]
+                if args.phase == "parse": command.append("--check-only")
+                command += ["--script", "res://" + spec["producer_script"]]
+                timeout = 120 if args.phase == "parse" else TIMEOUT
+                save(out / "command.json", {"argv": command, "cwd": str(ROOT), "timeout_seconds_after_acquisition": timeout, "child_environment_overrides": {key: child_env[key] for key in (ENV_OUTPUT, ENV_SOURCES) if key in child_env}, "permission_scope": "Only owned output/source list. No shared environment mutation, user Store/graphical self-escalation or automatic promotion/import."})
+                queue.update({"queued": True, "queued_at": now(), "lock_path": str(dev.shared_lock_path(ROOT)), "timeout_seconds_after_acquisition": timeout}); save(out / "queue.json", queue)
+                try:
+                    with dev.godot_lock(ROOT) as lock_fd:
+                        queue.update({"acquired": True, "acquired_at": now()}); save(out / "queue.json", queue)
+                        at_lock = snapshot(spec, out, "sources-at-lock"); exact(sealed, at_lock)
+                        result.update({"engine_launch_attempted": True, "engine_launch_attempted_at": now()}); save(out / "result.json", result)
+                        returned = dev.run_validation(command, context, lock_fd, timeout, detect_godot_errors=True)
+                        result.update({"owned_validation_returned": True, "owned_validation_returned_at": now(), "canonical_validation_return_code": returned, "terminal_scope": "Canonical dev wait returned; nonzero can be synthetic script-error/timeout, no separate OS exit exposed. A launch-attempt flag alone does not prove native start; only canonical dev stops its own direct child."}); save(out / "result.json", result)
+                        after = snapshot(spec, out, "sources-after-child"); exact(sealed, after)
+                finally:
+                    if queue["acquired"]:
+                        queue["lock_context_released_at"] = now(); save(out / "queue.json", queue)
+                log.flush()
+                if args.phase == "native":
+                    observation = native_observation(spec, out, (out / "raw.log").read_text(), sealed)
+                    result["native_observation"] = observation; save(out / "native-observation.json", observation)
+                    require(not observation["validation_errors"], "Native report/source/footer/wire joins failed; original partial artifacts retained")
+                require(returned == 0 and result["owned_validation_returned"], "Canonical owned validation must return zero")
+                result["passed"] = True; code = 0
+        except KeyboardInterrupt:
+            result.update({"interrupted": True, "error": "Interrupted; canonical dev owns only its direct child cleanup."}); code = 130
+        except Exception as exc:
+            result["error"] = str(exc)
+            print("Original Horsell producer failure:", exc, flush=True)
+        finally:
+            if spec is not None:
+                try:
+                    closed = snapshot(spec, out, "sources-at-runner-close")
+                    if sealed is not None: exact(sealed, closed)
+                except Exception as exc:
+                    result["close_custody_error"] = str(exc); result["passed"] = False
+                    if code == 0: code = 2
+            log.flush()
+            result["raw_diagnostic_lines"] = [line for line in (out / "raw.log").read_text().splitlines() if re.search(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName", line, re.IGNORECASE)]
+            result["diagnostic_qualification"] = "Zero return never labels host/editor/audio/native diagnostics clean; actual raw/engine files retained."
+            result.update({"closed": True, "closed_at": now(), "runner_return_code": code})
+            save(out / "result.json", result); save(out / "queue.json", queue)
+            print("Original Horsell producer runner CLOSED code=" + str(code), flush=True)
+    save(out / "evidence-index.json", {"created_after_raw_close": True, "scope": SCOPE, "files": {str(path.relative_to(out)): {"sha256": sha(path), "bytes": path.stat().st_size} for path in sorted(out.rglob("*")) if path.is_file()}})
+    return code
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

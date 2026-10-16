@@ -1,0 +1,13 @@
+--- original-private-pure-c7cb44fc
++++ successor-private-pure-material-profile-tamper
+@@ -121,8 +121,8 @@
+ 			_expect(not Parent._l1_arrangement_constructor(bad, definition).error.is_empty(), "malformed inner schema type refuses")
+ 			bad = new20.duplicate(true); bad.profile_id = "assisted"
+ 			_expect(not Parent._l1_arrangement_constructor(bad, definition).error.is_empty(), "local/Scheduler profile mismatch refuses")
+-			bad = new20.duplicate(true); bad.scheduler.profile.raw_damage_multiplier += 0.000000000001
+-			_expect(not Parent._l1_arrangement_constructor(bad, definition).error.is_empty(), "canonical saved profile tamper refuses")
++			bad = new20.duplicate(true); bad.scheduler.profile.raw_damage_multiplier += 0.01
++			_expect(not Parent._l1_arrangement_constructor(bad, definition).error.is_empty(), "material outside-tolerance canonical saved profile tamper refuses")
+ 			bad = new20.duplicate(true); bad.scheduler.encounter_id = "foreign-epoch"
+ 			_expect(not Parent._l1_arrangement_constructor(bad, definition).error.is_empty(), "foreign saved epoch refuses")
+ 			_expect(Exact.stringify(original) == bits and Exact.stringify(parsed.value) == wire, "whole genuine old wire remains exact after pure/refusal calls")

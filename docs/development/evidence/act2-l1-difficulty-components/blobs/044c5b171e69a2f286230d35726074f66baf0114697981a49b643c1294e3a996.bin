@@ -1,0 +1,20 @@
+--- tests/act2_l1_arrangement_component.gd@3a25f411
++++ .cinder/a2-l1-difficulty-20261016/component-decision-review/geometry-fix/act2_l1_arrangement_component.gd.txt
+@@ -195,7 +195,16 @@
+ 				return {}
+ 		if state.status == "running" and state.armed and state.proof_available:
+ 			var lease: Dictionary = _scheduler.reservation_state(state.reservation_id)
+-			if not _expect(not lease.is_empty() and lease.source_instance_id == _actors[_selected].get_instance_id() and lease.armed and lease.profile_id == "challenge" and state.proof.get("accepted",false) and not state.proof.get("uses_blast",true) and not state.proof.get("uses_invulnerability",true) and state.geometry == Geometry.lane(state.source_position,state.source_position+state.direction*3.8,0.31),"actual first native selected owner arms its unchanged 3.8/.31 lane and ordinary response proof"): return {}
++			var geometry: Dictionary = state.geometry
++			var expected_endpoint: Vector3 = state.source_position+state.direction*3.8
++			# Native direction is re-normalized from the committed lane endpoints.
++			# Keep the live shape/lease exact; compare the independently rebuilt
++			# endpoint with the same Vector3 policy as the native saved validator.
++			var geometry_matches: bool = geometry == lease.get("geometry",{}) and geometry.kind == "lane" and geometry["from"] == state.source_position and geometry.radius == 0.31 and (geometry["to"] as Vector3).is_equal_approx(expected_endpoint)
++			var armed_matches: bool = not lease.is_empty() and lease.source_instance_id == _actors[_selected].get_instance_id() and lease.armed and lease.profile_id == "challenge" and state.proof.get("accepted",false) and not state.proof.get("uses_blast",true) and not state.proof.get("uses_invulnerability",true) and geometry_matches
++			# Preserve actual predicate operands before an assertion can return.
++			_case_receipt["first_armed_check"] = {"state":state.duplicate(true),"reservation":lease.duplicate(true),"selected_owner_id":_actors[_selected].get_instance_id(),"expected_source":state.source_position,"reported_direction":state.direction,"expected_reach":3.8,"expected_radius":0.31,"expected_endpoint":expected_endpoint,"geometry_equals_lease":geometry == lease.get("geometry",{}),"kind_is_lane":geometry.kind == "lane","from_equals_source":geometry["from"] == state.source_position,"radius_equals_original":geometry.radius == 0.31,"endpoint_equals_reconstruction":geometry["to"] == expected_endpoint,"endpoint_is_equal_approx":(geometry["to"] as Vector3).is_equal_approx(expected_endpoint),"geometry_matches":geometry_matches,"armed_matches":armed_matches}
++			if not _expect(armed_matches,"actual first native selected owner arms its unchanged 3.8/.31 lane and ordinary response proof"): return {}
+ 			return {"id":_selected,"cycle":state.cycle,"proof":state.proof.duplicate(true),"state":state,"reservation":lease}
+ 		await _step()
+ 	_case_receipt["native_refusal"] = {"state":_driver.call("state",_selected),"level":_level.call("encounter_state"),"clock_s":_clock(),"invalidations":_invalidations.duplicate(true)}
