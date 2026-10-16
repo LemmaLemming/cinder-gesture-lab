@@ -1,5 +1,15 @@
 # Act 1 — current progress
 
+## A1-O1 read-only impact-pocket proposal; L5 retention submitted — 16 October 2026
+
+The single [Salvage Circuit difficulty proposal](../../../docs/acts/act1/A1_O1_DIFFICULTY_PROPOSAL.md) moves only the circuit companion impact center from north `(0,0,-2.4)` to east rivet pocket `(2,0,0)` for fresh Challenge, with literal old13/whole-attempt geometry retained and proposed closed new14 construction. It is **source-only, unimplemented and untested**. The concrete collection/landing distinction must survive the documented actual-route/equivalence falsifier; center distance alone earns no credit. Canonical grid/ability reads exit0, revision0/20 available/no allocations; POWER-02 stays unassigned. Runtime/art/layout/test files remain unchanged; exact Integration ACK is required before implementation.
+
+L5's canonical Blink-first retention rationale was committed at `438fd107` and submitted as REQUEST `86747a06` for Integration review; both86/1 failed trials and original evidence remain. Actual Shared72 adoption is `accab10c`, ACK `3fb87248`. Coverage stays12/24 pending Integration decisions. Original Act1 eight/all24 and L3 acceptance remain complete; all own jobs are closed, no human permission/unlock/full-route/all-kit/other-act gate or new original goal.
+
+Root separately owns canonical L5 transactional hard-rejected/invalid forecast cleanup under REQUEST `b26b3879`, ACK `1bff94bf`; feasible preframing/native guards/Blink-first and this owner trial remain. Exact historical cancellation cause is unproved. No worker runtime or engine work follows that handoff.
+
+> Older entries retain their original dates and evidence scopes; this section controls the current proposal status.
+
 ## Canonical L5 retention decision and actual Shared72 adoption — 16 October 2026
 
 Integration RESPONSE `93776400`, ACK `723fe44a-e607-46d7-bb81-f5f211982c89`, resolves REQUEST4338: retain accepted canonical Blink-first L5 at `d37734b0` (host9056/Codec2fafe). The source-only [specific exercise retention record](../../../docs/acts/act1/A1_L5_RETENTION_POLICY.md) is submitted for Integration review; coverage stays12/24 until that review. The owner dual reader/Sneeze-first runtime remains unaccepted and recoverable in this branch/history. Both actual86/1 failures and original168/172/77/79/79 scopes remain; no third direction, further engine comparison or historical repin. Original Act1 eight/all24 and L3 acceptance remain complete; all own jobs are closed.
