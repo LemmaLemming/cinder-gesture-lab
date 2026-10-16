@@ -1,0 +1,7 @@
+# Mirror Sea proposal authority provenance
+
+The original proposal and evidence retain their submitted bytes. Integration's exact implementation authority is RESPONSE `8b4a71a2-779a-443c-aeb4-692419705893`, [frozen here](evidence/A3-L3-arrangement-authority/implementation-scope.json), SHA `46129bc7745e5b8e69dfcfeadc558c58fded8b74ba517fa6fa16d36e610fa081`. Its bounded scope now supersedes earlier read-only status without changing any historical result.
+
+The submitted proposal's bb08 authority copy is the historical pre-dispatch version, SHA `b90688e86b427b56bff10222a615a5f24b53263df377160313fb10c51b087316` (1,362 bytes). The subsequently observed canonical bb08 is SHA `f083a394d2570ea6d391c3cbe7334dbe208b8c0b98d75f2e91370c58e233d2a2` (1,423 bytes). Its `actual_chat_dispatch` changed from false to true and `dispatch_recorded_at` was added as `2026-10-16T04:40:27.479965+00:00`; the scope, response and all other values are identical. [Exact later bytes and field comparison](evidence/A3-L3-arrangement-authority/provenance.json) are separate from the original pack.
+
+Earlier statements that both authority copies were current-byte exact apply to the earlier observation and must not be read as a current canonical-byte claim for bb08. The f88 copy was byte-exact at Integration review. Neither original is rewritten, and the proposal's seven query/validator receipts and18-source witness keep actual Shared69/70f8b759 attribution. This addendum records provenance and permission; it creates no new gameplay, visual or acceptance evidence.

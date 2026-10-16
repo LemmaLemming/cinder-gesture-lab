@@ -12,7 +12,8 @@ const Difficulty = preload("res://scripts/combat/difficulty.gd")
 const Stalker = preload("res://scripts/acts/act3/sunbound_stalker.gd")
 const Echo = preload("res://scripts/acts/act3/mirror_echo.gd")
 const Mechanism = preload("res://scripts/combat/lane_mechanism.gd")
-const API: String = "act3-mirror-sea-snapshot-1"
+const LEGACY_API: String = "act3-mirror-sea-snapshot-1"
+const API: String = "act3-mirror-sea-snapshot-2"
 const PARENT_PATH: String = "res://scripts/acts/act3/mirror_sea_level.gd"
 const LAYOUT_PATH: String = "res://data/campaign/act3/mirror_sea_layout_candidate.json"
 const ENCOUNTER_ID: String = "A3-L3/mirror-sea-shore"
@@ -31,12 +32,13 @@ const ENTRY_SOURCES: Array = [["l3-threshold-stalker"], ["l3-first-echo"], ["l3-
 const STALKERS: Array[String] = ["l3-threshold-stalker", "l3-priority-stalker"]
 const ECHOES: Array[String] = ["l3-first-echo", "l3-useful-west-echo", "l3-useful-east-echo", RESONANT_ID, "l3-priority-echo"]
 const LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "world", "scheduler", "sources", "route", "ring", "view"]
+const ARRANGEMENT_LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "world", "scheduler", "sources", "route", "ring", "view", "arrangement"]
 const ROUTE_KEYS: Array[String] = ["entries", "deaths", "pending_checkpoint_boundaries", "exit_state", "contact"]
 const RING_KEYS: Array[String] = ["stage", "history", "exchanges", "between_receipt", "mechanism"]
 const WORLD_KEYS: Array[String] = ["layout_sha256", "encounter_id", "world_revision", "profile_id", "collision_fingerprint", "floor_signature"]
 const MAX_RING_HISTORY: int = 4096
 const MAX_VIEW_POSITIONS: int = 12
-const REQUIRED_HOOKS: Array[String] = ["mirror_sea_codec_owned_state", "mirror_sea_codec_checkpoint_ids", "mirror_sea_codec_apply_owned_state", "mirror_sea_codec_framing_union"]
+const REQUIRED_HOOKS: Array[String] = ["mirror_sea_codec_owned_state", "mirror_sea_codec_checkpoint_ids", "mirror_sea_codec_apply_owned_state", "mirror_sea_codec_framing_union", "mirror_sea_codec_arrangement_state", "mirror_sea_codec_arrangement_error"]
 var last_error: String = ""
 
 
@@ -82,7 +84,12 @@ func capture(parent, player: Dictionary, framing_camera: Camera3D = null, framin
 		else:
 			last_error = "Unknown retained source cannot be omitted: " + id
 			return {}
-	var local: Dictionary = {"api_revision": API, "schema_version": 1, "world": native_world(parent), "scheduler": scheduler, "sources": sources, "route": owned.route.duplicate(true), "ring": owned.ring.duplicate(true), "view": owned.view.duplicate(true)}
+	var selected: Dictionary = parent.call("mirror_sea_codec_arrangement_state")
+	if not String(selected.get("error", "Actual selected arrangement state required")).is_empty():
+		last_error = String(selected.get("error", "Actual selected arrangement state required"))
+		return {}
+	var local: Dictionary = {"api_revision": LEGACY_API if selected.legacy else API, "schema_version": 1 if selected.legacy else 2, "world": native_world(parent), "scheduler": scheduler, "sources": sources, "route": owned.route.duplicate(true), "ring": owned.ring.duplicate(true), "view": owned.view.duplicate(true)}
+	if not selected.legacy: local["arrangement"] = selected.descriptor.duplicate(true)
 	local.ring["mechanism"] = parent.mechanism.snapshot_state(bindings) if is_instance_valid(parent.mechanism) else {}
 	last_error = record_error(local, parent, player)
 	return local.duplicate(true) if last_error.is_empty() else {}
@@ -97,7 +104,10 @@ func constructor_recipe(local: Dictionary, parent, player: Dictionary) -> Dictio
 	var entitled: Array[String] = entitled_sources(local.route.entries.size())
 	var actors: Array[String] = entitled.duplicate()
 	actors.erase(PULSE_ID)
-	return {"accepted": true, "error": "", "recipe": {"api_revision": "act3-mirror-sea-constructor-1", "profile_id": local.world.profile_id, "source_ids": actors, "mechanism_entitled": entitled.has(PULSE_ID), "world": local.world.duplicate(true)}}
+	var legacy: bool = local.api_revision == LEGACY_API
+	var recipe: Dictionary = {"api_revision": "act3-mirror-sea-constructor-1" if legacy else "act3-mirror-sea-constructor-2", "profile_id": local.world.profile_id, "source_ids": actors, "mechanism_entitled": entitled.has(PULSE_ID), "world": local.world.duplicate(true)}
+	if not legacy: recipe["arrangement"] = local.arrangement.duplicate(true)
+	return {"accepted": true, "error": "", "recipe": recipe}
 
 
 func envelope_error(local: Dictionary, parent, player: Dictionary) -> String:
@@ -110,8 +120,8 @@ func envelope_error(local: Dictionary, parent, player: Dictionary) -> String:
 		error = parent.hero.snapshot_error(player)
 	if not error.is_empty():
 		return error
-	if not Value.keys_error(local, LOCAL_KEYS).is_empty() or local.get("api_revision") != API or not local.get("schema_version") is int or local.schema_version != 1:
-		return "Closed Mirror Sea parent snapshot1 required"
+	error = String(parent.call("mirror_sea_codec_arrangement_error", local))
+	if not error.is_empty(): return error
 	for key: String in ["world", "scheduler", "sources", "route", "ring", "view"]:
 		if not local[key] is Dictionary:
 			return "Complete typed Mirror Sea local units required"

@@ -1,0 +1,25 @@
+{
+  "recorded_at": "2026-10-16T05:14:15.127167+00:00",
+  "reviewer": "/root/act3_full_runtime_review",
+  "reviewed_draft_sha256": {
+    "east_component.gd": "5fc6d9cdb1d0b732474893cdaf2d512038c8dfd138012b2b9c0c5d3c29098fcb",
+    "component-fragment.gd": "8170bbd359734bd5027b92146881cf41887cf34a8691d136639ee1552b179ea8",
+    "portrait-fragment.gd": "93c07800b8bf76963b2029363bf48194ecf0b956d5c91c82637c3a8e9032ef7b"
+  },
+  "conclusion": "Bounded independent source pass complete; no further concrete blocker found after donor witness correction.",
+  "correction": "Require a nonempty actual donor context and nonempty player/source/scheduler/playback native fields before var_to_bytes; encoded empty dictionaries are not native witnesses.",
+  "verified_source_findings": [
+    "Main creates a separate own_world_3d SubViewport for every native recipient.",
+    "Full native-floor preflight and public prepare followed by Hero, source physical, Scheduler, Playback order matches accepted codec.",
+    "Wrong-recipient rejection is specifically attributed to actual immutable source/definition/cycle/profile/world binding failure.",
+    "Restore-only component remains paused, is disposed, and refuses canonical parent capture/progress."
+  ],
+  "unexecuted": [
+    "GDScript parse/import and all engine/native runs",
+    "Component comparison and actual useful difference",
+    "Distinct-world native transport/cross-recipe execution",
+    "Partial post-Scheduler failure/discard branch unless a genuine failure reaches it",
+    "Portrait capture and actual pixel inspection"
+  ],
+  "scope": "Private source-only peer review. No native, candidate-optics, portrait, parent-route/save or acceptance result."
+}

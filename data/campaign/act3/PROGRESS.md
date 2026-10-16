@@ -1,3 +1,9 @@
+## Integration Shared73 L3 amendment acceptance —16 October2026
+
+Original Act3 eight/all24 content acceptances remain complete. Exact submitted29d074bf L3 difficulty amendment is independently accepted after reviewed owner159/aggregate1/214/356/47/48 evidence, personally inspected actual c8ba portrait and Root canonical24/0 complete/clean short registration. Whole east Echo definition moves +1X only for fresh Challenge; original whole-attempt API1/schema1 exact8 remains canonical, new API2/schema2 exact9 retains saved construction before configure. Native guards/other sources/controls/rewards and Root PRIMARY Phase/Codec stay. Original owner failures and Root sandbox10/1 Save-directory denial remain; no route/all-kit/human gate or new allocation. [Integration scope and portable originals](../../../docs/development/ACT3_L3_DIFFICULTY.md).
+
+Actual Shared72 adoption ACKe1854ce8 and scope ACKb9d18c6b preserve current owner/checkout/branch; Shared73 availability is separate from actual future adoption. Latest authorized worker scope is ONE read-only A3-L4 policy proposal under RESPONSE5e465b8a; no runtime/layout/art/item implementation before exact acknowledgement. Root remains first help contact. Historical pending statements below retain their actual earlier source/date.
+
 ## Separate O2 arrangement owner qualification complete — 16 October 2026
 
 The approved additional O2 Challenge exchange is implemented and its selected checks are complete; independent Integration review/publication is pending. Original Act3 **8/8 accepted** remains complete. Final exercised commit `379b264e23a2ed358b80f84405a0f325c3c9ce0d`, actual Shared65. Runtime SHA `b4c6238a6a37a45dca84f5b093a1b4fe4f6c54331f6121a5d7b08e8eed39ee0e`, test `c0ebf1934a3788dd2f694b94f427d82bde60eab110c5ac17e2cc56d5e2b7450d`, encounter `9d1d5bff20485227d8fae7e5ba6a6dd6e4ae19f1cc625d2ed4e92f4247e8dbd9`; sealing/records do not change these bytes.

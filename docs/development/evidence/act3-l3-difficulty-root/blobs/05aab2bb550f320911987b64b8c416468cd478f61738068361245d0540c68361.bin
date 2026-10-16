@@ -1,0 +1,34 @@
+from pathlib import Path
+import datetime,hashlib,json,os,stat,subprocess
+ROOT=Path.cwd(); HERE=Path(__file__).resolve().parent
+review=json.loads((HERE.parent/'review/REVIEW.json').read_text()); proposal=review['promotion_proposal']; commit=review['submitted_commit']
+assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()=='3e321322c5993cb0a5abf1a61f0fbb9cc3f8b3b8'
+assert not (HERE/'ROOT_PROMOTION.json').exists()
+selected=proposal['exact_live_runtime_and_test_paths']+proposal['exact_original_literal_paths']+proposal['owned_docs']+proposal['evidence_roots']
+raw=subprocess.check_output(['git','ls-tree','-r','-z',commit,'--',*selected]); entries={}
+for row in raw.split(b'\0'):
+ if not row:continue
+ meta,name=row.split(b'\t',1);mode,kind,oid=meta.decode().split(); assert kind=='blob' and mode=='100644'; entries[name.decode()]={'git_oid':oid,'mode':'0644'}
+assert len(entries)==674,len(entries)
+proc=subprocess.Popen(['git','cat-file','--batch'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+def blob(oid):
+ proc.stdin.write((oid+'\n').encode());proc.stdin.flush();head=proc.stdout.readline().split();assert head[1]==b'blob';v=proc.stdout.read(int(head[2])); assert proc.stdout.read(1)==b'\n';return v
+for name,rec in entries.items():
+ v=blob(rec['git_oid']);rec.update(sha256=hashlib.sha256(v).hexdigest(),bytes=len(v))
+ rec['_bytes']=v
+for rec in review['exact_handoff_field_paths'].values():
+ if rec['path'] in entries: assert entries[rec['path']]['sha256']==rec['sha256']
+fixture=HERE.parent/'registration-prepare/act3_l3_registration_smoke.gd.txt'; fv=fixture.read_bytes();assert hashlib.sha256(fv).hexdigest()=='d5103fb823c5410d3dbb9741e28a4e6a5d18414b186808154a8958e5ab27288d'
+entries['tests/act3_l3_registration_smoke.gd']={'sha256':hashlib.sha256(fv).hexdigest(),'bytes':len(fv),'mode':'0644','_bytes':fv,'source':str(fixture.relative_to(ROOT))}
+before={}
+for name,rec in entries.items():
+ p=ROOT/name
+ if p.exists():
+  assert p.is_file() and not p.is_symlink();old=p.read_bytes();digest=hashlib.sha256(old).hexdigest();save=HERE/'preimages'/name;save.parent.mkdir(parents=True,exist_ok=True);assert not save.exists();save.write_bytes(old);os.chmod(save,stat.S_IMODE(p.stat().st_mode));before[name]={'sha256':digest,'bytes':len(old),'mode':format(stat.S_IMODE(p.stat().st_mode),'04o'),'blob':str(save.relative_to(ROOT))}
+ else:before[name]=None
+ # atomic single path replacement; frozen exact set, no foreign checkout changes
+ p.parent.mkdir(parents=True,exist_ok=True);tmp=p.with_name(p.name+'.a3-l3-promotion-tmp');assert not tmp.exists();tmp.write_bytes(rec.pop('_bytes'));os.chmod(tmp,0o644);os.replace(tmp,p)
+ assert hashlib.sha256(p.read_bytes()).hexdigest()==rec['sha256']
+proc.stdin.close();proc.wait();assert proc.returncode==0
+out={'schema_version':1,'kind':'Root exact A3-L3 handoff promotion plus reviewed short-registration test','created_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'submitted_commit':commit,'Root_before_commit':'3e321322c5993cb0a5abf1a61f0fbb9cc3f8b3b8','owner_handoff':review['canonical_handoff'],'independent_review_sha256':hashlib.sha256((HERE.parent/'review/REVIEW.json').read_bytes()).hexdigest(),'before':before,'promoted':entries,'paths':len(entries),'source_engine_status':'UNEXECUTED: no import/parser/native run in promotion','excluded':'No shared source/controller/settings/native actor/PRIMARY/registry/base layout/scene change, no worker checkout edit; ACT_MEMORY/PROGRESS not overwritten; four unrelated experiments preserved.'}
+(HERE/'ROOT_PROMOTION.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps({'paths':len(entries),'receipt':str((HERE/'ROOT_PROMOTION.json').relative_to(ROOT)),'sha256':hashlib.sha256((HERE/'ROOT_PROMOTION.json').read_bytes()).hexdigest()}))

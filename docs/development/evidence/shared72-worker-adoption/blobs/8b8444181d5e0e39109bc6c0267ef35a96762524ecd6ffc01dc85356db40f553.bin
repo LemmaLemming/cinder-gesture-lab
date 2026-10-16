@@ -1,0 +1,144 @@
+from pathlib import Path
+import datetime,hashlib,json,os,stat,subprocess
+ROOT=Path('/Users/howardchen/Documents/ChatGPT/video game idea')
+OUT=ROOT/'.cinder/worker-monitor-20261016-shared72-close/adoption-review'
+PUB='d37734b0543c0203edfc7495c539a543a4bffc69'
+PREFIXES=['scenes/acts/{act}','scripts/acts/{act}','assets/acts/{act}','data/campaign/{act}','tests/acts/{act}','docs/acts/{act}']
+CORE=['README.md','docs/DIFFICULTY_DESIGN.md','scripts/acts/act2/horsell_common.gd','data/campaign/act2/a2_l1_difficulty_arrangements.json','docs/development/ACT2_L1_DIFFICULTY.md','docs/development/CAMPAIGN_MEMORY.md','docs/development/DIFFICULTY_COVERAGE.md','docs/development/SHARED_CONTRACT.md','docs/development/SHARED_PROGRESS.md']
+for leaf in ['component','legacy','pure','shell']:
+ CORE += ['tests/act2_l1_arrangement_'+leaf+'.gd','tests/act2_l1_arrangement_'+leaf+'.gd.uid']
+for leaf in ['declared_common_current','declared_common_old','horsell_common_old']:
+ CORE += ['tests/acts/act2/fixtures/a2_l1_arrangement_reference/'+leaf+'.gd','tests/acts/act2/fixtures/a2_l1_arrangement_reference/'+leaf+'.gd.uid']
+for leaf in ['PROVENANCE.json','producer-native-report.json','challenge-arrival-warning.exact.json','challenge-arrival-warning.store.json','challenge-entrance.exact.json','challenge-entrance.store.json','standard-arrival-warning.exact.json','standard-arrival-warning.store.json','standard-entrance.exact.json','standard-entrance.store.json']:
+ CORE += ['tests/acts/act2/fixtures/a2_l1_difficulty_legacy/'+leaf]
+for bank in ['act2-l1-difficulty-root-base','act2-l1-difficulty-components','act2-l1-difficulty-retry']:
+ CORE += ['docs/development/evidence/'+bank+'/index.json','docs/development/evidence/'+bank+'/PUBLIC_COPY_MANIFEST.json']
+def require(v,s):
+ if not v:raise ValueError(s)
+def sha(b):return hashlib.sha256(b).hexdigest()
+def read(p):
+ b=Path(p).read_bytes()
+ return {'path':str(p),'sha256':sha(b),'bytes':len(b)},json.loads(b)
+def git(w,*args):
+ p=subprocess.run(['git','-C',str(w),*args],capture_output=True)
+ require(p.returncode==0,'git read failed '+str(args)+': '+p.stderr.decode(errors='replace'))
+ return p.stdout
+def txt(w,*args):return git(w,*args).decode().strip()
+def trees(w,ref,paths):
+ result={}
+ for line in git(w,'ls-tree','-z',ref,'--',*paths).split(b'\0'):
+  if not line:continue
+  meta,name=line.split(b'\t',1);mode,kind,oid=meta.decode().split()
+  result[name.decode()]={'mode':mode,'kind':kind,'oid':oid}
+ require(set(result)==set(paths),'missing selected tree paths at '+ref)
+ return result
+def index(w,paths):
+ result={}
+ for line in git(w,'ls-files','--stage','-z','--',*paths).split(b'\0'):
+  if not line:continue
+  meta,name=line.split(b'\t',1);mode,oid,stage=meta.decode().split()
+  require(stage=='0','unmerged selected index')
+  result[name.decode()]={'mode':mode,'kind':'blob','oid':oid}
+ require(set(result)==set(paths),'missing selected index')
+ return result
+def pin_rows(w,refs,paths):
+ maps={k:trees(w,v,paths) for k,v in refs.items()};maps['index']=index(w,paths)
+ unique={v['oid'] for m in maps.values() for v in m.values()}
+ blobs={o:git(w,'cat-file','blob',o) for o in unique}
+ rows=[]
+ for path in paths:
+  p=w/path;st=p.stat();require(stat.S_ISREG(st.st_mode),'not regular '+path);physical=p.read_bytes()
+  observations={k:{'sha256':sha(blobs[m[path]['oid']]),'bytes':len(blobs[m[path]['oid']]),'mode':m[path]['mode'],'blob':m[path]['oid']} for k,m in maps.items()}
+  observations['physical']={'sha256':sha(physical),'bytes':len(physical),'mode':format(stat.S_IFREG|stat.S_IMODE(st.st_mode),'o')}
+  base=observations[next(iter(refs))]
+  equal=all((v['sha256'],v['bytes'],v['mode'])==(base['sha256'],base['bytes'],base['mode']) for v in observations.values())
+  rows.append({'path':path,'all_named_stages_equal':equal,'observations':observations})
+ return rows
+CONFIG={
+'act1':{'id':'01a11adf-2ec8-7702-96c6-0fa1e240c332','ack':'3fb87248-1886-4936-b776-9d98cbd41453','extra':'723fe44a-e607-46d7-bb81-f5f211982c89','notice':'004c5b5d-f06e-417d-ae5a-d5440b2a5bca','merge':'accab10cf11d9db8e07f8319cf1445abf08a7f55','receipt_sha':'d1e46d8c04585172a56b31b038ef6d5b43be1cd18dd66bb98ccd2a0e08e2732c','samples':['scripts/acts/act1/living_moon.gd','scripts/acts/act1/living_moon_codec.gd','scripts/acts/act1/living_moon_layout.gd','scripts/acts/act1/living_moon_body.gd','scripts/acts/act1/living_moon_nose.gd']},
+'act3':{'id':'01a11ae0-0acf-7d00-a987-321a98de5b66','ack':'e1854ce8-cc8d-43a4-9543-2ca4561899aa','extra':'b9d18c6b-d02a-4038-8cb3-e16ebab8dde6','notice':'b0ddc1aa-82d2-4bc1-8cd0-6616243e60d5','merge':'50a11b433fc0bab644516805961165ead7a11f42','receipt_sha':'0362b1e3842c150f676c969b15f0a14ab6c8f080eb8300617746f96e9bab3b9f','samples':['scripts/acts/act3/mirror_sea_level.gd','scripts/acts/act3/mirror_sea_codec.gd','data/campaign/act3/a3_l3_difficulty.json','scripts/acts/act3/crystalman_capture_phase.gd','scripts/acts/act3/crystalman_capture_codec.gd']}}
+run_info,run=read(ROOT/'.cinder/agent-chat/cinder-campaign/run.json')
+reports={}
+for act,c in CONFIG.items():
+ w=Path('/Users/howardchen/.codex/worktrees/campaign-'+act+'/video game idea')
+ ack_info,ack=read(ROOT/('.cinder/agent-chat/cinder-campaign/'+act+'/messages/'+c['ack']+'-ACK.json'))
+ extra_info,extra=read(ROOT/('.cinder/agent-chat/cinder-campaign/'+act+'/messages/'+c['extra']+'-ACK.json'))
+ notice_info,notice=read(ROOT/('.cinder/agent-chat/cinder-campaign/integration/messages/'+c['notice']+'-RESPONSE.json'))
+ receipt_info,receipt=read(ack['receipt']);worker=run['workers'][act]
+ require(worker['worker_id']==c['id']==ack['worker_id']==extra['worker_id']==notice['worker_id'],'identity mismatch')
+ require(Path(worker['checkout'])==w and worker['branch']=='codex/campaign-'+act,'assigned custody mismatch')
+ require(txt(w,'rev-parse','--show-toplevel')==str(w),'wrong checkout')
+ branch=txt(w,'branch','--show-current');head=txt(w,'rev-parse','HEAD');require(branch==worker['branch'],'branch changed')
+ require(ack['in_reply_to']==notice['message_id'] and notice['commit']==PUB,'notice join')
+ require(receipt_info['sha256']==c['receipt_sha']==ack['receipt_sha256'],'receipt hash mismatch')
+ if 'receipt_sha256' in extra:require(extra['receipt_sha256']==receipt_info['sha256'],'additional ACK receipt mismatch')
+ require(receipt['publication']==PUB and ack['api_revision']==receipt['api_revision']=='campaign-shared-72','publication/API mismatch')
+ merge=c['merge'];parents=txt(w,'show','-s','--format=%P',merge).split()
+ require(parents==ack['parents']==receipt['parents'] and len(parents)==2 and parents[1]==PUB,'actual merge parents mismatch')
+ require((ack.get('merge') or ack.get('actual_adoption_merge'))==merge,'ACK actual merge mismatch')
+ require((receipt.get('merge') or receipt.get('actual_merge'))==merge,'receipt actual merge mismatch')
+ ancestry={}
+ for label,ancestor in [('publication',PUB),('actual_merge',merge)]:
+  p=subprocess.run(['git','-C',str(w),'merge-base','--is-ancestor',ancestor,head],capture_output=True)
+  ancestry[label]={'ancestor':ancestor,'head':head,'exit_code':p.returncode};require(p.returncode==0,'ancestry failure')
+ paths=[p.format(act=act) for p in PREFIXES]
+ require(set(p.rstrip('/') for p in worker['owned_paths'])==set(paths),'owned prefixes mismatch')
+ own_trees=[]
+ for path in paths:
+  before=txt(w,'rev-parse',parents[0]+':'+path);merged=txt(w,'rev-parse',merge+':'+path);current=txt(w,'rev-parse',head+':'+path)
+  require(before==merged,'owned tree changed at merge '+path)
+  if act=='act1':require(receipt['owned_trees_preserved'][path]==merged,'receipt owned tree mismatch')
+  own_trees.append({'path':path,'first_parent_tree':before,'merge_tree':merged,'current_head_tree':current,'merge_preserved':True,'current_same_as_merge':current==merged})
+ rows=pin_rows(w,{'publication':PUB,'merge':merge,'head':head},CORE)
+ require(all(r['all_named_stages_equal'] for r in rows),'named incoming pin mismatch')
+ receipt_selected=[]
+ if act=='act3':
+  for row in rows:
+   rec=receipt['complete_exact_incoming'].get(row['path']);require(rec is not None,'selected path not in Act3 receipt '+row['path']);obs=row['observations']['publication']
+   require((rec['sha256'],rec['bytes'],format(stat.S_IFREG|rec['mode'],'o'))==(obs['sha256'],obs['bytes'],obs['mode']),'selected receipt mismatch')
+   receipt_selected.append(row['path'])
+ else:
+  for path,rec in receipt['published_new_uids'].items():
+   require(path in CORE,'unlisted named new UID');row=next(r for r in rows if r['path']==path);obs=row['observations']['publication']
+   require((rec['sha256'],rec['bytes'],format(stat.S_IFREG|rec['mode'],'o'))==(obs['sha256'],obs['bytes'],obs['mode']),'new UID receipt mismatch')
+   receipt_selected.append(path)
+ uidrows=[]
+ for row in rows:
+  if not row['path'].endswith('.uid'):continue
+  b=(w/row['path']).read_bytes();value=b.decode().strip();require(value.startswith('uid://') and len(value)>6,'invalid named UID text')
+  uidrows.append({'path':row['path'],'text':value,'sha256':sha(b),'bytes':len(b)})
+ require(len(uidrows)==7 and len({x['text'] for x in uidrows})==7,'named new UID set mismatch')
+ owned_samples=pin_rows(w,{'first_parent':parents[0],'merge':merge,'head':head},c['samples'])
+ require(all(r['all_named_stages_equal'] for r in owned_samples),'named retained owned source changed')
+ if act=='act3':
+  for row in owned_samples[-2:]:
+   require(sha(git(w,'show',PUB+':'+row['path']))==row['observations']['physical']['sha256'],'Root PRIMARY mismatch')
+ later=txt(w,'diff','--name-only',merge,head,'--',*paths).splitlines()
+ later_commits=txt(w,'log','--format=%H %s',merge+'..'+head).splitlines()
+ aliases={k:worker.get(k) for k in ['worker_baseline','shared_update_available','worker_api_revision','api_revision','adopted_head','shared_update_ack_message_id']}
+ require(head==txt(w,'rev-parse','HEAD'),'worker HEAD moved during bounded pass')
+ require(sha(Path(ack['receipt']).read_bytes())==receipt_info['sha256'],'receipt changed during read')
+ reports[act]={
+ 'schema':1,'kind':'bounded-shared72-actual-adoption-review','at_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+ 'worker':{'worker_id':c['id'],'checkout':str(w),'branch':branch,'assigned_owned_paths':worker['owned_paths'],'reviewed_head':head,'head_stable_during_pass':True},
+ 'publication':PUB,'actual_adoption_merge':merge,'actual_parents':parents,'ancestry':ancestry,
+ 'original_inputs':{'ack':ack_info,'additional_same_adoption_ack':extra_info,'notice':notice_info,'receipt':receipt_info,'canonical_run_snapshot':run_info},
+ 'ack_notice_identity_receipt_parent_joins_verified':True,'owned_git_tree_preservation':own_trees,
+ 'named_incoming_path_count':len(rows),'named_incoming_stage_order':['publication','merge','head','index','physical'],'named_incoming_pins':rows,
+ 'selected_receipt_records_verified':receipt_selected,'seven_named_published_uid_texts':uidrows,'retained_owned_source_samples':owned_samples,
+ 'later_owned_committed_changes':{'commits':later_commits,'paths':later,'scope':'Act1 later retention documentation/evidence commit is distinct from adoption. No current-all-owned preservation claim.' if act=='act1' else 'No later committed changes at reviewed HEAD. Live uncommitted docs/proposals are outside this named-source review.'},
+ 'canonical_alias_snapshot_for_root_reconciliation_only':aliases,
+ 'owner_reported_not_recounted':({'nonowned_publication_rows_verified':receipt['nonowned_publication_rows_verified'],'named_physical_preserved':len(receipt['named_physical_preserved']),'prior_active_uid_preserved_count':receipt['prior_active_uids_preserved_count'],'active_uid_count_after':receipt['active_uid_count_after'],'closed_latest_job':receipt['closed_latest_job']} if act=='act1' else {'incoming_path_count':receipt['incoming_path_count'],'prior_owned_count':receipt['prior_owned_count'],'named_physical_pin_count':receipt['named_physical_pin_count'],'closed_run_group_counts':{k:len(v) for k,v in receipt['closed_runs'].items()},'untracked_preserved':receipt['untracked_preserved']}),
+ 'findings':[],'limits':['Read-only source/receipt/adoption verification; no engine, import, parser, tests, worker messages or native acceptance credit.','Only the explicit incoming paths, seven new UID texts, five retained owned source samples and six immutable owned subtree OIDs were independently compared. Broad receipt row/file/job counts remain owner-reported.','No global UID/resource/evidence census; no physical whole-tree or historical native at-lock reconstruction claim.','Canonical run.json aliases were observed only; Root alone reconciles them. Agent02 was not accessed.']}
+OUT.mkdir(parents=True,exist_ok=True)
+for act,value in reports.items():
+ p=OUT/(act.upper()+'_REVIEW.json');b=(json.dumps(value,indent=2,ensure_ascii=False)+'\n').encode();require(not p.exists(),'preserve existing review '+str(p))
+ tmp=p.with_suffix('.json.tmp');tmp.write_bytes(b);os.replace(tmp,p)
+lines=['# Shared72 actual adoption review','','No adoption blocker found. Both actual receipt hashes, worker identities/assigned custody, exact merge parents (publication as second parent), retained current ancestry and '+str(len(CORE))+' named incoming publication → merge → HEAD/index/physical pins per worker agree.','','- Act1 ACK '+CONFIG['act1']['ack']+'; actual merge '+CONFIG['act1']['merge']+'; current HEAD '+reports['act1']['worker']['reviewed_head']+'.','- Act3 ACK '+CONFIG['act3']['ack']+'; actual merge/current HEAD '+CONFIG['act3']['merge']+'.','','Six owned Git subtree IDs per worker were independently preserved across the adoption merge without enumerating their banks. Five retained owned runtime/data samples per worker also agree through current HEAD/index/physical bytes; the two sampled Act3 Root PRIMARY sources match publication. All seven named new UID sidecars agree and have seven distinct UID texts; this is not global UID closure.','','Act1 later commit 438fd1074892596afd42bef2358c5c72faf98213 adds retention documentation/evidence and changes Memory/Progress. These later changes are separate from the preserving merge. No current-all-owned-unchanged claim is made. Broader receipt counts (121734 nonowned rows/585 old UIDs for Act1; 430 incoming/20074 old owned rows/1501 named physical pins for Act3) remain owner-reported.','','Canonical run aliases still reflected Shared71 at the captured snapshot; actual Shared72 ACKs/merges above are independently verified. Root alone reconciles aliases. No engine, tests, native acceptance credit, worker contact/check-out writes or Agent02 access occurred.']
+md=OUT/'REVIEW.md';require(not md.exists(),'preserve existing markdown');md.write_text('\n'.join(lines)+'\n')
+files=[]
+for name in ['ACT1_REVIEW.json','ACT3_REVIEW.json','REVIEW.md','verify_adoptions.py']:
+ p=OUT/name;b=p.read_bytes();files.append({'path':str(p.relative_to(ROOT)),'sha256':sha(b),'bytes':len(b),'mode':format(stat.S_IMODE(p.stat().st_mode),'04o')})
+idx={'schema':1,'kind':'Shared72 bounded adoption review index','publication':PUB,'files':files,'findings':[],'native_credit':False,'agent02_accessed':False}
+p=OUT/'index.json';require(not p.exists(),'preserve existing index');p.write_text(json.dumps(idx,indent=2)+'\n')
+print(json.dumps({'directory':str(OUT),'index_sha256':sha(p.read_bytes()),'files':files,'named_incoming_pins_per_worker':len(CORE),'findings':[]},indent=2))

@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "kind": "retained-query-program-and-structured-result-locations",
+  "not_a_new_worker_query": true,
+  "raw_per_command_stdout_stderr_separately_retained": false,
+  "executed_program": {
+    "original_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/worker-monitor-20261016-shared72-close/adoption-review/history/initial-verify_adoptions.py",
+    "portable_relative_path": "blobs/8b8444181d5e0e39109bc6c0267ef35a96762524ecd6ffc01dc85356db40f553.bin",
+    "scope": "Byte-exact actually executed verifier. Current verifier successor was only a host prose correction and was not reexecuted."
+  },
+  "retained_query_families": [
+    {
+      "argv_suffix": [
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "result": "worker.checkout"
+    },
+    {
+      "argv_suffix": [
+        "branch",
+        "--show-current"
+      ],
+      "result": "worker.branch"
+    },
+    {
+      "argv_suffix": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "result": "worker.reviewed_head and head_stable_during_pass"
+    },
+    {
+      "argv_suffix": [
+        "show",
+        "-s",
+        "--format=%P",
+        "ACTUAL_MERGE"
+      ],
+      "result": "actual_parents"
+    },
+    {
+      "argv_suffix": [
+        "merge-base",
+        "--is-ancestor",
+        "PUBLICATION_OR_MERGE",
+        "CAPTURED_HEAD"
+      ],
+      "result": "ancestry.* (exact refs and actual exit0)"
+    },
+    {
+      "argv_suffix": [
+        "rev-parse",
+        "PRIOR_OR_MERGE_OR_HEAD:EXACT_OWNED_PREFIX"
+      ],
+      "result": "owned_git_tree_preservation (six direct immutable subtree IDs; no file enumeration)"
+    },
+    {
+      "argv_suffix": [
+        "ls-tree",
+        "-z",
+        "PUBLICATION_OR_MERGE_OR_HEAD",
+        "--",
+        "EXPLICIT_PATHS"
+      ],
+      "result": "named_incoming_pins[*].observations.*.mode/blob; selected path set recorded in each report"
+    },
+    {
+      "argv_suffix": [
+        "ls-files",
+        "--stage",
+        "-z",
+        "--",
+        "EXPLICIT_PATHS"
+      ],
+      "result": "named_incoming_pins[*].observations.index.mode/blob"
+    },
+    {
+      "argv_suffix": [
+        "cat-file",
+        "blob",
+        "EXACT_SELECTED_OID"
+      ],
+      "result": "named_incoming_pins[*].observations.*.sha256/bytes"
+    },
+    {
+      "argv_suffix": [
+        "diff",
+        "--name-only",
+        "MERGE",
+        "CAPTURED_HEAD",
+        "--",
+        "SIX_OWNED_PREFIXES"
+      ],
+      "result": "later_owned_committed_changes.paths"
+    },
+    {
+      "argv_suffix": [
+        "log",
+        "--format=%H %s",
+        "MERGE..CAPTURED_HEAD"
+      ],
+      "result": "later_owned_committed_changes.commits"
+    },
+    {
+      "argv_suffix": [
+        "show",
+        "PUBLICATION:EXACT_ROOT_PRIMARY_PATH"
+      ],
+      "result": "Act3 retained_owned_source_samples last two; original program enforced publication byte equality"
+    }
+  ],
+  "limits": "Query descriptions above are derived host navigation metadata for the retained executed program and its actual structured observations. They are not newly captured command logs or reconstructed stdout."
+}

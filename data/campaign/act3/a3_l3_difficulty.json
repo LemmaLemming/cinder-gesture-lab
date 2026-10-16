@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "unit_ids": [
+    "l3-threshold-stalker",
+    "l3-first-echo",
+    "l3-useful-west-echo",
+    "l3-useful-east-echo",
+    "l3-resonant-echo",
+    "l3-resonant-pulse",
+    "l3-priority-echo",
+    "l3-priority-stalker"
+  ],
+  "recipes": [
+    {
+      "recipe_id": "A3-L3/assisted-canonical@v1",
+      "profile": "assisted",
+      "order": [
+        "l3-threshold-stalker",
+        "l3-first-echo",
+        "l3-useful-west-echo",
+        "l3-useful-east-echo",
+        "l3-resonant-echo",
+        "l3-resonant-pulse",
+        "l3-priority-echo",
+        "l3-priority-stalker"
+      ]
+    },
+    {
+      "recipe_id": "A3-L3/standard-canonical@v1",
+      "profile": "standard",
+      "order": [
+        "l3-threshold-stalker",
+        "l3-first-echo",
+        "l3-useful-west-echo",
+        "l3-useful-east-echo",
+        "l3-resonant-echo",
+        "l3-resonant-pulse",
+        "l3-priority-echo",
+        "l3-priority-stalker"
+      ]
+    },
+    {
+      "recipe_id": "A3-L3/challenge-canonical-legacy@v1",
+      "profile": "challenge",
+      "order": [
+        "l3-threshold-stalker",
+        "l3-first-echo",
+        "l3-useful-west-echo",
+        "l3-useful-east-echo",
+        "l3-resonant-echo",
+        "l3-resonant-pulse",
+        "l3-priority-echo",
+        "l3-priority-stalker"
+      ]
+    },
+    {
+      "recipe_id": "A3-L3/challenge-east-stone-inset@v2",
+      "profile": "challenge",
+      "order": [
+        "l3-threshold-stalker",
+        "l3-first-echo",
+        "l3-useful-west-echo",
+        "l3-useful-east-echo",
+        "l3-resonant-echo",
+        "l3-resonant-pulse",
+        "l3-priority-echo",
+        "l3-priority-stalker"
+      ]
+    }
+  ],
+  "current": {
+    "assisted": "A3-L3/assisted-canonical@v1",
+    "standard": "A3-L3/standard-canonical@v1",
+    "challenge": "A3-L3/challenge-east-stone-inset@v2"
+  }
+}

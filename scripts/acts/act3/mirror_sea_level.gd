@@ -18,7 +18,17 @@ const ContactCue = preload("res://scripts/cues/interaction_cue.gd")
 const Value = preload("res://scripts/campaign/snapshot_codec.gd")
 const ParentCodec = preload("res://scripts/acts/act3/mirror_sea_codec.gd")
 const Vignettes = preload("res://scripts/acts/act3/mirror_sea_vignettes.gd")
-const API: String = "act3-mirror-sea-parent-1"
+const Arrangement = preload("res://scripts/combat/encounter_arrangement.gd")
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Receipt = preload("res://scripts/combat/authored_echo_terminal_receipt.gd")
+const LEGACY_API: String = "act3-mirror-sea-parent-1"
+const API: String = "act3-mirror-sea-parent-2"
+const ARRANGEMENT_PATH: String = "res://data/campaign/act3/a3_l3_difficulty.json"
+const BASE_LAYOUT_SHA256: String = "4cbba73342e4f8658dfe67e838de7dfa4e4802b91ef192f6802cf0a68c3e1a2a"
+const LEGACY_RECIPE_IDS: Dictionary = {"assisted": "A3-L3/assisted-canonical@v1", "standard": "A3-L3/standard-canonical@v1", "challenge": "A3-L3/challenge-canonical-legacy@v1"}
+const CHALLENGE_RECIPE: String = "A3-L3/challenge-east-stone-inset@v2"
+const ARRANGEMENT_SOURCE_IDS: Array[String] = ["l3-threshold-stalker", "l3-first-echo", "l3-useful-west-echo", "l3-useful-east-echo", "l3-resonant-echo", "l3-resonant-pulse", "l3-priority-echo", "l3-priority-stalker"]
+const EAST_ID: String = "l3-useful-east-echo"
 const LAYOUT: String = "res://data/campaign/act3/mirror_sea_layout_candidate.json"
 const ENCOUNTER_ID: String = "A3-L3/mirror-sea-shore"
 const WORLD_REVISION: int = 1
@@ -63,6 +73,10 @@ var last_admission_reason: String = ""
 var last_camera_error: String = ""
 var _active: bool = false
 var _profile: String = "standard"
+var _arrangement_definition: Dictionary = {}
+var _arrangement_descriptor: Dictionary = {}
+var _arrangement_selected: bool = false
+var _legacy_capture: bool = false
 var _layout: Dictionary = {}
 var _rows: Dictionary = {}
 var _floor: Dictionary = {}
@@ -97,6 +111,142 @@ var _owned_capture_camera: Camera3D
 var _owned_capture_hud: GameHUD
 
 
+## Pure finite authored metadata. Identical order is deliberate: the owned
+## recipe supplies one translation, never a fake permutation or saved geometry.
+static func arrangement_definition_error(definition: Variant) -> String:
+	var error: String = Arrangement.definition_error(definition)
+	if not error.is_empty(): return error
+	if definition.unit_ids != ARRANGEMENT_SOURCE_IDS or definition.recipes.size() != 4:
+		return "Mirror Sea requires its eight original source IDs and four retained recipes"
+	var expected: Dictionary = {}
+	for profile: String in LEGACY_RECIPE_IDS:
+		expected[LEGACY_RECIPE_IDS[profile]] = {"recipe_id": LEGACY_RECIPE_IDS[profile], "profile": profile, "order": ARRANGEMENT_SOURCE_IDS.duplicate()}
+	expected[CHALLENGE_RECIPE] = {"recipe_id": CHALLENGE_RECIPE, "profile": "challenge", "order": ARRANGEMENT_SOURCE_IDS.duplicate()}
+	for recipe: Dictionary in definition.recipes:
+		if not expected.has(recipe.recipe_id) or not Authored.exact_equal(recipe, expected[recipe.recipe_id]):
+			return "Mirror Sea retained recipes cannot be repurposed"
+	var current: Dictionary = {"assisted": LEGACY_RECIPE_IDS.assisted, "standard": LEGACY_RECIPE_IDS.standard, "challenge": CHALLENGE_RECIPE}
+	return "" if Authored.exact_equal(definition.current, current) else "Mirror Sea fresh mapping must retain the acknowledged finite recipes"
+
+
+static func arrangement_layout(descriptor: Variant, definition: Variant) -> Dictionary:
+	var error: String = arrangement_definition_error(definition)
+	if not error.is_empty(): return {"error": error}
+	var selector := Arrangement.new(definition)
+	error = selector.saved_error(descriptor)
+	if not error.is_empty(): return {"error": error}
+	return {"error": "", "descriptor": selector.restore(descriptor), "east_offset_x": 1.0 if descriptor.recipe_id == CHALLENGE_RECIPE else 0.0}
+
+
+## First-stage immutable selection only. It earns no source, lease, route,
+## native validity or saved-state commit. Full envelope/native proof follows.
+static func arrangement_constructor(local: Variant, definition: Variant) -> Dictionary:
+	var error: String = Receipt.transport_error(local)
+	if not error.is_empty(): return {"error": error}
+	if not local is Dictionary: return {"error": "Mirror Sea local unit must be a dictionary"}
+	var legacy: bool = local.get("api_revision") == ParentCodec.LEGACY_API and typeof(local.get("schema_version")) == TYPE_INT and local.schema_version == 1
+	var current: bool = local.get("api_revision") == ParentCodec.API and typeof(local.get("schema_version")) == TYPE_INT and local.schema_version == 2
+	if not legacy and not current: return {"error": "Unsupported Mirror Sea inner API/schema"}
+	if not Value.keys_error(local, ParentCodec.LOCAL_KEYS if legacy else ParentCodec.ARRANGEMENT_LOCAL_KEYS).is_empty():
+		return {"error": "Closed literal8-key or arrangement9-key Mirror Sea local required"}
+	for key: String in ["world", "scheduler", "sources", "route", "ring", "view"]:
+		if not local[key] is Dictionary: return {"error": "Complete typed Mirror Sea local units required"}
+	var world: Dictionary = local.world
+	if not Value.keys_error(world, ParentCodec.WORLD_KEYS).is_empty() or world.get("layout_sha256") != BASE_LAYOUT_SHA256 or world.get("encounter_id") != ENCOUNTER_ID or typeof(world.get("world_revision")) != TYPE_INT or world.world_revision != WORLD_REVISION or not world.get("profile_id") is String or not world.get("collision_fingerprint") is Dictionary or not world.get("floor_signature") is Array:
+		return {"error": "Canonical base-layout/world/profile constructor boundary required"}
+	var canonical: Dictionary = Difficulty.new().profile(world.profile_id)
+	if canonical.is_empty() or not local.scheduler.get("profile") is Dictionary or not Authored.exact_equal(local.scheduler.profile, canonical) or local.scheduler.get("encounter_id") != ENCOUNTER_ID or not Authored.exact_equal(local.scheduler.get("world_revision"), WORLD_REVISION):
+		return {"error": "Saved construction profile must exactly match its canonical Scheduler/world"}
+	var descriptor: Variant = local.get("arrangement")
+	if legacy:
+		descriptor = {"schema_version": 1, "profile": world.profile_id, "recipe_id": LEGACY_RECIPE_IDS[world.profile_id], "order": ARRANGEMENT_SOURCE_IDS.duplicate()}
+	var selected: Dictionary = arrangement_layout(descriptor, definition)
+	if not String(selected.error).is_empty(): return selected
+	if selected.descriptor.profile != world.profile_id:
+		return {"error": "Saved arrangement and canonical Scheduler/world profiles differ"}
+	if not legacy and selected.descriptor.recipe_id != definition.current[world.profile_id]:
+		return {"error": "New Mirror Sea format requires its explicitly allowed profile recipe"}
+	selected["legacy"] = legacy
+	return selected
+
+
+static func arrangement_rows(descriptor: Variant, definition: Variant, canonical_rows: Dictionary) -> Dictionary:
+	var selected: Dictionary = arrangement_layout(descriptor, definition)
+	if not String(selected.error).is_empty(): return selected
+	var error: String = Receipt.transport_error(canonical_rows)
+	if not error.is_empty() or not Value.keys_error(canonical_rows, ARRANGEMENT_SOURCE_IDS).is_empty():
+		return {"error": "Complete original authored row map required"}
+	var rows: Dictionary = canonical_rows.duplicate(true)
+	if selected.east_offset_x != 0.0:
+		var east: Dictionary = rows[EAST_ID]
+		for key: String in ["local_recipe_offset", "definition_translation_world", "fixed_knot_world", "slash_origin_world"]:
+			if not Value.is_vector3(east.get(key)): return {"error": "Canonical east translation vector required"}
+			var point: Array = east[key].duplicate()
+			point[0] = float(point[0]) + selected.east_offset_x
+			east[key] = point
+		if not east.get("own_route_world") is Array or east.own_route_world.size() != 2:
+			return {"error": "Canonical two-point east route required"}
+		for route_point: Dictionary in east.own_route_world:
+			if not Value.is_vector3(route_point.get("position")): return {"error": "Canonical route point required"}
+			var point: Array = route_point.position.duplicate()
+			point[0] = float(point[0]) + selected.east_offset_x
+			route_point.position = point
+	return {"error": "", "rows": rows}
+
+
+func _canonical_row_map() -> Dictionary:
+	var rows: Dictionary = {}
+	for row: Dictionary in _layout.sources:
+		rows[String(row.id)] = row.duplicate(true)
+	return rows
+
+
+func _select_arrangement(descriptor: Dictionary, legacy: bool) -> String:
+	if _arrangement_selected or not sources.is_empty() or not _echo_records.is_empty() or is_instance_valid(mechanism) or not _entries.is_empty() or _active:
+		return "Select one immutable recipe on a fresh source-free Mirror Sea recipient"
+	var selected: Dictionary = arrangement_rows(descriptor, _arrangement_definition, _canonical_row_map())
+	if not String(selected.error).is_empty(): return String(selected.error)
+	if legacy and descriptor.recipe_id != LEGACY_RECIPE_IDS.get(descriptor.profile):
+		return "Literal old Mirror Sea requires its profile's canonical legacy recipe"
+	if not legacy and descriptor.recipe_id != _arrangement_definition.current.get(descriptor.profile):
+		return "New Mirror Sea requires its explicitly allowed fresh profile recipe"
+	_arrangement_descriptor = descriptor.duplicate(true)
+	_legacy_capture = legacy
+	_profile = String(descriptor.profile)
+	_rows = selected.rows.duplicate(true)
+	_arrangement_selected = true
+	return ""
+
+
+## Finite construction/capture/preflight guard. Ordinary live motion does not
+## rederive or reselect rows; every actual source keeps its native definition.
+func _selected_arrangement_error() -> String:
+	if not _arrangement_selected or _arrangement_descriptor.get("profile") != _profile:
+		return "Actual immutable Mirror Sea arrangement/profile required"
+	var error: String = _layout_error()
+	if not error.is_empty(): return error
+	var selected: Dictionary = arrangement_rows(_arrangement_descriptor, _arrangement_definition, _canonical_row_map())
+	if not String(selected.error).is_empty(): return String(selected.error)
+	var expected_id: String = String(LEGACY_RECIPE_IDS.get(_profile, "")) if _legacy_capture else String(_arrangement_definition.current.get(_profile, ""))
+	if _arrangement_descriptor.recipe_id != expected_id or not Authored.exact_equal(_rows, selected.rows):
+		return "Actual immutable selected row map differs from its retained recipe"
+	return ""
+
+
+func mirror_sea_codec_arrangement_state() -> Dictionary:
+	return {"error": _selected_arrangement_error(), "legacy": _legacy_capture, "descriptor": _arrangement_descriptor.duplicate(true)}
+
+
+func mirror_sea_codec_arrangement_error(local: Dictionary) -> String:
+	var error: String = _selected_arrangement_error()
+	if not error.is_empty(): return error
+	var selected: Dictionary = arrangement_constructor(local, _arrangement_definition)
+	if not String(selected.error).is_empty(): return String(selected.error)
+	if selected.legacy != _legacy_capture or not Authored.exact_equal(selected.descriptor, _arrangement_descriptor):
+		return "Saved Mirror Sea arrangement differs from this recipient's immutable selection"
+	return ""
+
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	process_physics_priority = 130 # Hero/Scheduler -> guard/locks90 -> Mech100/Playback110 -> route.
@@ -115,6 +265,13 @@ func _ready() -> void:
 		last_configuration_error = "Authored Mirror Sea layout unavailable"
 		return
 	_layout = parsed
+	if FileAccess.get_sha256(LAYOUT) != BASE_LAYOUT_SHA256:
+		last_configuration_error = "Original canonical Mirror Sea layout bytes required"
+		return
+	var arrangement_data: Variant = JSON.parse_string(FileAccess.get_file_as_string(ARRANGEMENT_PATH))
+	last_configuration_error = arrangement_definition_error(arrangement_data)
+	if not last_configuration_error.is_empty(): return
+	_arrangement_definition = arrangement_data.duplicate(true)
 	last_configuration_error = _layout_error()
 	if not last_configuration_error.is_empty():
 		return
@@ -254,7 +411,13 @@ func _on_enter_level() -> void:
 	if not is_instance_valid(shared_shell) or not shared_shell.has_method("camera_framing_plan") or not shared_shell.has_method("camera_framing_error"):
 		_fail("Actual shared shell and native presentation services required")
 		return
-	_profile = String(shared_shell.call("get_difficulty_preference")) if shared_shell.has_method("get_difficulty_preference") else "standard"
+	var profile: String = String(shared_shell.call("get_difficulty_preference")) if shared_shell.has_method("get_difficulty_preference") else "standard"
+	var selector := Arrangement.new(_arrangement_definition)
+	var descriptor: Dictionary = selector.select_fresh(profile)
+	var selection_error: String = selector.last_error if descriptor.is_empty() else _select_arrangement(descriptor, false)
+	if not selection_error.is_empty():
+		_fail(selection_error)
+		return
 	if not threat_scheduler.begin_encounter(_profile, ENCOUNTER_ID, WORLD_REVISION):
 		_fail(threat_scheduler.last_error)
 		return
@@ -408,6 +571,10 @@ func _previous_entry_clear(index: int) -> bool:
 
 
 func _install_source(id: String, prepare_managed: bool = true) -> bool:
+	var selection_error: String = _selected_arrangement_error()
+	if not selection_error.is_empty():
+		_fail(selection_error)
+		return false
 	if sources.has(id) or (id == PULSE_ID and is_instance_valid(mechanism)):
 		_fail("Spatial entry cannot configure a duplicate owner: " + id)
 		return false
@@ -1030,6 +1197,8 @@ func runtime_error() -> String:
 	error = _vignette_root_error()
 	if not error.is_empty():
 		return error
+	if _active and (not _arrangement_selected or _arrangement_descriptor.get("profile") != _profile or threat_scheduler.encounter_profile().get("id") != _profile):
+		return "Actual active Mirror Sea profile must retain its selected arrangement"
 	for id: String in _stones:
 		var spec: Dictionary = _stones[id]
 		var body: StaticBody3D = spec.body
@@ -1082,7 +1251,7 @@ func state() -> Dictionary:
 			actual[id] = {"kind": _rows[id].kind, "installed": true, "source": sources[id].call("get_source_state") if _rows[id].kind == "echo" else sources[id].call("state"), "playback": sources[id].call("state") if _rows[id].kind == "echo" else {}}
 		else:
 			actual[id] = {"kind": _rows[id].kind, "installed": false}
-	return {"api_revision": API, "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else -1.0, "configuration_error": last_configuration_error, "admission_reason": last_admission_reason, "camera_error": last_camera_error, "route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "pending_checkpoint_boundaries": _pending_boundaries.duplicate(true)}, "sources": actual, "ring": {"installed": is_instance_valid(mechanism), "stage": _ring_stage, "history": _ring_history.duplicate(true), "mechanism": mechanism.state() if is_instance_valid(mechanism) else {}, "proofs": _pulse_proofs.duplicate(true), "exchanges": _pulse_exchanges.duplicate(true), "between_receipt": _between_receipt.duplicate(true)}, "echo_records": _echo_records.duplicate(true), "completed": is_completed(), "exit_state": _exit_state, "contact": _contact.duplicate(true), "persistence_supported": true, "checkpoint_dispatch_supported": true}
+	return {"api_revision": LEGACY_API if _legacy_capture else API, "arrangement": _arrangement_descriptor.duplicate(true), "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else -1.0, "configuration_error": last_configuration_error, "admission_reason": last_admission_reason, "camera_error": last_camera_error, "route": {"entries": _entries.duplicate(true), "deaths": _deaths.duplicate(true), "pending_checkpoint_boundaries": _pending_boundaries.duplicate(true)}, "sources": actual, "ring": {"installed": is_instance_valid(mechanism), "stage": _ring_stage, "history": _ring_history.duplicate(true), "mechanism": mechanism.state() if is_instance_valid(mechanism) else {}, "proofs": _pulse_proofs.duplicate(true), "exchanges": _pulse_exchanges.duplicate(true), "between_receipt": _between_receipt.duplicate(true)}, "echo_records": _echo_records.duplicate(true), "completed": is_completed(), "exit_state": _exit_state, "contact": _contact.duplicate(true), "persistence_supported": true, "checkpoint_dispatch_supported": true}
 
 
 func snapshot_state() -> Dictionary:
@@ -1182,9 +1351,10 @@ func restore_candidate_construction_required() -> bool:
 
 func _on_enter_restore_candidate(local: Dictionary, saved_player: Dictionary) -> String:
 	_active = false
-	if not local.get("world") is Dictionary or not local.world.get("profile_id") is String:
-		return "Complete canonical saved world/profile recipe required"
-	_profile = local.world.profile_id
+	var selected: Dictionary = arrangement_constructor(local, _arrangement_definition)
+	if not String(selected.error).is_empty(): return String(selected.error)
+	var selection_error: String = _select_arrangement(selected.descriptor, selected.legacy)
+	if not selection_error.is_empty(): return selection_error
 	if not threat_scheduler.begin_encounter(_profile, ENCOUNTER_ID, WORLD_REVISION):
 		return threat_scheduler.last_error
 	var recipe: Dictionary = _parent_codec.constructor_recipe(local, self, saved_player)
