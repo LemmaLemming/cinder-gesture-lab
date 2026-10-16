@@ -204,7 +204,7 @@ func _physics_process(delta: float) -> void:
 	# Authored first-room policy limits preparing sources; the shared Scheduler
 	# still owns profile budgets, overlap proofs, cooldown and all phase clocks.
 	if preparing > 0 or not hero.get_threat_response_state().stable: return
-	for id: String in current_source_ids():
+	for id: String in admission_source_ids():
 		var actor: Act1MushroomSelenite = sources[id]
 		var state: Dictionary = _render_sources[id]
 		if state.dead or state.dormant or not state.reservation_id.is_empty() or float(state.hurt_left_s) > 0.0: continue
@@ -212,6 +212,11 @@ func _physics_process(delta: float) -> void:
 		if distance < 0.1 or distance > 4.5: continue
 		_admit(id, delta)
 		if not _render_sources[id].reservation_id.is_empty(): break
+
+
+func admission_source_ids() -> Array[String]:
+	# Priority is separate from canonical membership, preparation and topology.
+	return current_source_ids()
 
 
 func _admit(id: String, delta: float) -> void:

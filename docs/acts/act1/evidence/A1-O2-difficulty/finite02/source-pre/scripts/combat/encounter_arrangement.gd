@@ -1,0 +1,158 @@
+class_name CinderEncounterArrangement
+extends RefCounted
+## Pure shared metadata helper; act consumers integrate it explicitly.
+## Pure authored permutation metadata, with no native/source/safety authority.
+## Select only at a fresh encounter/profile boundary. Restore never remaps.
+
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const SCHEMA_VERSION: int = 1
+const PROFILE_IDS: Array[String] = ["assisted", "standard", "challenge"]
+const DEFINITION_KEYS: Array[String] = ["schema_version", "unit_ids", "recipes", "current"]
+const RECIPE_KEYS: Array[String] = ["recipe_id", "profile", "order"]
+const DESCRIPTOR_KEYS: Array[String] = ["schema_version", "profile", "recipe_id", "order"]
+
+var last_error: String = ""
+var _configuration_error: String = ""
+var _definition: Dictionary = {}
+var _units: Array = []
+var _recipes: Dictionary = {}
+var _current: Dictionary = {}
+
+
+func _init(definition: Variant) -> void:
+	# Validate closed flat shapes before copying, excluding foreign/cyclic values.
+	_configuration_error = definition_error(definition)
+	last_error = _configuration_error
+	if not _configuration_error.is_empty(): return
+	_definition = definition.duplicate(true)
+	_units = _definition.unit_ids.duplicate()
+	_current = _definition.current.duplicate(true)
+	for recipe: Dictionary in _definition.recipes:
+		_recipes[recipe.recipe_id] = recipe.duplicate(true)
+
+
+func definition() -> Dictionary:
+	return _definition.duplicate(true)
+
+
+func select_fresh(profile: Variant) -> Dictionary:
+	last_error = _configuration_error
+	if not last_error.is_empty(): return {}
+	last_error = _profile_error(profile)
+	if not last_error.is_empty(): return {}
+	var recipe: Dictionary = _recipes[_current[profile]]
+	return {
+		"schema_version": SCHEMA_VERSION,
+		"profile": profile,
+		"recipe_id": recipe.recipe_id,
+		"order": recipe.order.duplicate()
+	}
+
+
+func saved_error(descriptor: Variant) -> String:
+	if not _configuration_error.is_empty(): return _configuration_error
+	if not descriptor is Dictionary: return "Arrangement descriptor must be a dictionary"
+	var problem: String = _keys_error(descriptor, DESCRIPTOR_KEYS)
+	if not problem.is_empty(): return "Arrangement descriptor: " + problem
+	if not Codec.is_integer(descriptor.schema_version, SCHEMA_VERSION, SCHEMA_VERSION):
+		return "Unsupported arrangement descriptor schema"
+	problem = _profile_error(descriptor.profile)
+	if not problem.is_empty(): return problem
+	if not descriptor.recipe_id is String or not _recipes.has(descriptor.recipe_id):
+		return "Unknown retained arrangement recipe"
+	problem = _order_error(descriptor.order, _units)
+	if not problem.is_empty(): return problem
+	var retained: Dictionary = _recipes[descriptor.recipe_id]
+	if descriptor.profile != retained.profile:
+		return "Saved arrangement profile differs from its retained recipe"
+	if descriptor.order != retained.order:
+		return "Saved arrangement order differs from its retained immutable recipe"
+	# Deliberately no access to _current, mutable preference or native world.
+	return ""
+
+
+func restore(descriptor: Variant) -> Dictionary:
+	last_error = saved_error(descriptor)
+	if not last_error.is_empty(): return {}
+	# Integral schema1 decoded as1.0 is accepted without rewriting that input.
+	# All owned order/profile/recipe values remain the exact retained values.
+	return descriptor.duplicate(true)
+
+
+static func definition_error(definition: Variant) -> String:
+	if not definition is Dictionary: return "Arrangement definition must be a dictionary"
+	var problem: String = _keys_error(definition, DEFINITION_KEYS)
+	if not problem.is_empty(): return "Arrangement definition: " + problem
+	if not Codec.is_integer(definition.schema_version, SCHEMA_VERSION, SCHEMA_VERSION):
+		return "Unsupported arrangement definition schema"
+	problem = _units_error(definition.unit_ids)
+	if not problem.is_empty(): return problem
+	if not definition.recipes is Array or definition.recipes.is_empty() or definition.recipes.size() > Codec.MAX_CONTAINER_ENTRIES:
+		return "Arrangement requires a bounded nonempty retained recipe array"
+	var known: Dictionary = {}
+	for candidate: Variant in definition.recipes:
+		if not candidate is Dictionary: return "Arrangement recipe must be a dictionary"
+		problem = _keys_error(candidate, RECIPE_KEYS)
+		if not problem.is_empty(): return "Arrangement recipe: " + problem
+		if not _versioned_recipe_id(candidate.recipe_id):
+			return "Recipe ID requires a nonempty stable name and canonical @vN version"
+		if known.has(candidate.recipe_id): return "Duplicate retained arrangement recipe ID"
+		problem = _profile_error(candidate.profile)
+		if not problem.is_empty(): return problem
+		problem = _order_error(candidate.order, definition.unit_ids)
+		if not problem.is_empty(): return problem
+		known[candidate.recipe_id] = candidate
+	if not definition.current is Dictionary: return "Current arrangement mapping must be a dictionary"
+	problem = _keys_error(definition.current, PROFILE_IDS)
+	if not problem.is_empty(): return "Current arrangement mapping: " + problem
+	for profile: String in PROFILE_IDS:
+		var recipe_id: Variant = definition.current[profile]
+		if not recipe_id is String or not known.has(recipe_id):
+			return "Current arrangement mapping names an unknown retained recipe"
+		if known[recipe_id].profile != profile:
+			return "Current arrangement mapping differs from the retained recipe profile"
+	return ""
+
+
+static func _keys_error(value: Dictionary, required: Array) -> String:
+	for key: Variant in value:
+		if not key is String: return "Arrangement dictionary keys must be strings"
+	return Codec.keys_error(value, required)
+
+
+static func _profile_error(profile: Variant) -> String:
+	return "" if profile is String and profile in PROFILE_IDS else "Unknown arrangement profile"
+
+
+static func _units_error(unit_ids: Variant) -> String:
+	if not unit_ids is Array or unit_ids.is_empty() or unit_ids.size() > Codec.MAX_CONTAINER_ENTRIES:
+		return "Arrangement requires a bounded nonempty existing-unit array"
+	var seen: Dictionary = {}
+	for unit: Variant in unit_ids:
+		if not unit is String or unit.is_empty(): return "Existing arrangement unit IDs must be nonempty strings"
+		if seen.has(unit): return "Duplicate existing arrangement unit ID"
+		seen[unit] = true
+	return ""
+
+
+static func _order_error(order: Variant, unit_ids: Array) -> String:
+	if not order is Array or order.size() != unit_ids.size():
+		return "Arrangement order must be a complete existing-unit permutation"
+	var allowed: Dictionary = {}
+	for unit: String in unit_ids: allowed[unit] = true
+	var seen: Dictionary = {}
+	for unit: Variant in order:
+		if not unit is String or not allowed.has(unit): return "Arrangement order contains a foreign or malformed unit ID"
+		if seen.has(unit): return "Arrangement order repeats an existing unit ID"
+		seen[unit] = true
+	return ""
+
+
+static func _versioned_recipe_id(value: Variant) -> bool:
+	if not value is String: return false
+	var pieces: PackedStringArray = value.split("@v", true)
+	if pieces.size() != 2 or pieces[0].is_empty() or pieces[0] != pieces[0].strip_edges(): return false
+	var version: String = pieces[1]
+	if version.is_empty() or version.length() > 16 or not version.is_valid_int(): return false
+	var number: int = version.to_int()
+	return number > 0 and number <= Codec.MAX_SAFE_INTEGER and str(number) == version

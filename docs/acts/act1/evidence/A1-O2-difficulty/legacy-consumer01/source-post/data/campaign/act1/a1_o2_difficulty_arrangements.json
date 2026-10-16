@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "unit_ids": [
+    "bloom-final-west",
+    "bloom-final-east",
+    "bloom-final-rear",
+    "bloom-final-guard"
+  ],
+  "recipes": [
+    {
+      "recipe_id": "a1-o2-final-assisted-swarm-first@v1",
+      "profile": "assisted",
+      "order": [
+        "bloom-final-west",
+        "bloom-final-east",
+        "bloom-final-rear",
+        "bloom-final-guard"
+      ]
+    },
+    {
+      "recipe_id": "a1-o2-final-standard-swarm-first@v1",
+      "profile": "standard",
+      "order": [
+        "bloom-final-west",
+        "bloom-final-east",
+        "bloom-final-rear",
+        "bloom-final-guard"
+      ]
+    },
+    {
+      "recipe_id": "a1-o2-final-challenge-spear-first@v1",
+      "profile": "challenge",
+      "order": [
+        "bloom-final-guard",
+        "bloom-final-west",
+        "bloom-final-east",
+        "bloom-final-rear"
+      ]
+    }
+  ],
+  "current": {
+    "assisted": "a1-o2-final-assisted-swarm-first@v1",
+    "standard": "a1-o2-final-standard-swarm-first@v1",
+    "challenge": "a1-o2-final-challenge-spear-first@v1"
+  }
+}

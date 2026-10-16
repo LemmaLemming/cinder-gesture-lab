@@ -1,0 +1,70 @@
+{
+  "recorded_at": "2026-10-15T09:47:01.193971+00:00",
+  "scope": "Actual tool-returned exit/results from required design validators in this amendment. No new allocation; no gameplay/balance credit. Not an independent raw PTY transcript.",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "ability",
+        "validate"
+      ],
+      "exit_code": 0,
+      "result": {
+        "ok": true,
+        "revision": 0,
+        "registered_count": 20,
+        "use_count": 0,
+        "active_use_count": 0,
+        "unregistered_ids": [],
+        "semantic_review_required": true
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/dev/dev.py",
+        "equipment",
+        "validate"
+      ],
+      "exit_code": 0,
+      "result": {
+        "ok": true,
+        "revision": 0,
+        "ability_usage_revision": 0,
+        "item_count": 36,
+        "claim_count": 0,
+        "active_claim_count": 0,
+        "catalogue_duplicate_types": [],
+        "semantic_review_required": true
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/design/validate_equipment.py"
+      ],
+      "exit_code": 0,
+      "result": "PASS:12 clothing,4 weapons,6 powerups,14 perk definitions;10 numeric fixtures;256 gear loadouts,500 conditional subsets,7500 combined states across15 legal powerup combinations. Structural/numeric screening only, no balance or event-timing claim."
+    }
+  ],
+  "new_script_import": {
+    "command": [
+      "python3",
+      "scripts/dev/dev.py",
+      "import"
+    ],
+    "purpose": "one required discovery/import for new scoped test script",
+    "native_session": 38507,
+    "exit_code": 0,
+    "tool_returned_diagnostics": [],
+    "new_uid": "uid://2a7ev0no7wcv",
+    "uid_path": "tests/acts/act1/a1_o2_difficulty.gd.uid",
+    "scope": "Tool-returned command and terminal completion observed; no separately captured raw import log or full-resource validation claim."
+  },
+  "matching_design_data_sha256": {
+    "data/design/player_equipment.json": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+    "data/design/difficulty_profiles.json": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+    "scripts/design/validate_equipment.py": "e392351fc5bcce0c51fddc7b860d03cb53f52f3bce483a4448aea5ab860bbcd7"
+  }
+}

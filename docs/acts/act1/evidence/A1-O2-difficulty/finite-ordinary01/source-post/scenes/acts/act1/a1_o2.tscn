@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act1/spore_bloom.gd" id="1_level"]
+
+[node name="SporeBloom" type="Node3D"]
+script = ExtResource("1_level")
+level_id = "A1-O2"
+local_snapshot_version = 1
+objective_text = "FIRST BREATHING ROOM\nHIT A LOW CLUSTER OR KEEP ITS SUPPLY"
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 5)

@@ -32,6 +32,8 @@ const SEGMENT_KEYS: Array[String] = ["from", "to", "start_s", "end_s", "kind"]
 const FRAME_KEYS: Array[String] = ["reservation_id", "landing", "attack_position", "primary_time_s", "response_complete_s", "action_escape"]
 const ACCEPTED_FRAME_KEYS: Array[String] = ["reservation_id", "landing", "attack_position", "primary_time_s", "response_complete_s", "action_escape"]
 
+var _uses_final_arrangement: bool = true
+var _final_arrangement: Dictionary = {}
 var _constructor_open: bool = false
 var _constructor_entitlements: Dictionary = {}
 var _publication_open: bool = false
@@ -108,7 +110,8 @@ func _ready() -> void:
 
 
 func _component_configuration_error() -> String:
-	return Bloom.definition_error() if initial_greybox_room == 0 else "O2 begins at its actual first entrance"
+	var error: String = Bloom.definition_error() if initial_greybox_room == 0 else "O2 begins at its actual first entrance"
+	return BloomCodec.arrangement_configuration_error() if error.is_empty() else error
 
 
 func _all_source_ids() -> Array[String]:
@@ -121,6 +124,20 @@ func _source_spec(id: String) -> Dictionary:
 
 func current_source_ids() -> Array[String]:
 	return Bloom.group_ids(beat_index)
+
+
+func admission_source_ids() -> Array[String]:
+	if beat_index != 2 or room_stage != "active" or not _uses_final_arrangement:
+		return current_source_ids()
+	var error: String = BloomCodec.final_arrangement_error(_final_arrangement)
+	if error.is_empty() and _final_arrangement.profile != scheduler.encounter_profile().get("id"):
+		error = "Retain the actual final encounter profile with its priority recipe"
+	if not error.is_empty():
+		last_encounter_error = error
+		return []
+	var result: Array[String] = []
+	result.assign(_final_arrangement.order)
+	return result
 
 
 func _encounter_id() -> String:
@@ -252,6 +269,12 @@ func _begin_group() -> void:
 		_changing = false
 		_entry_failed(scheduler.last_error)
 		return
+	if beat_index == 2 and _uses_final_arrangement:
+		_final_arrangement = BloomCodec.fresh_final_arrangement(String(scheduler.encounter_profile().get("id", "")))
+		if _final_arrangement.is_empty():
+			_changing = false
+			_entry_failed("Fresh final native profile has no retained priority recipe")
+			return
 	room_stage = "preparing_environment" # Never a serializable boundary.
 	for id: String in current_source_ids():
 		_activation_entitlement = id
@@ -721,7 +744,7 @@ func _apply_bloom_presentation() -> void:
 
 
 func bloom_state() -> Dictionary:
-	return {"beat_index": beat_index, "completed_beats": completed_beats.duplicate(), "room_stage": room_stage, "checkpoint_published": checkpoint_published, "sources": _render_sources.duplicate(true), "installed_fields": _fields.keys(), "installed_consumers": _consumers.keys(), "last_error": last_encounter_error, "save_supported": true}
+	return {"beat_index": beat_index, "completed_beats": completed_beats.duplicate(), "room_stage": room_stage, "checkpoint_published": checkpoint_published, "sources": _render_sources.duplicate(true), "installed_fields": _fields.keys(), "installed_consumers": _consumers.keys(), "last_error": last_encounter_error, "save_supported": true, "uses_final_arrangement": _uses_final_arrangement, "final_arrangement": _final_arrangement.duplicate(true)}
 
 
 func snapshot_state() -> Dictionary:
@@ -1069,7 +1092,8 @@ func _capture_local_state() -> Dictionary:
 	for index: int in range(count):
 		activated.append_array(Bloom.group_ids(index))
 		installed.append(Bloom.consumer_id(index))
-	var local: Dictionary = {"api_revision": BloomCodec.API_REVISION, "schema_version": BloomCodec.SCHEMA_VERSION, "world_revision": WORLD_REVISION, "beat_index": beat_index, "room_stage": room_stage, "completed_beats": completed_beats.duplicate(), "activated_source_ids": activated, "installed_consumers": installed, "checkpoint_published": checkpoint_published, "sources": {}, "fields": {}, "consumers": {}, "scheduler": control, "framing": _accepted_frames.duplicate(true)}
+	var local: Dictionary = {"api_revision": BloomCodec.API_REVISION if _uses_final_arrangement else BloomCodec.LEGACY_API_REVISION, "schema_version": BloomCodec.SCHEMA_VERSION if _uses_final_arrangement else BloomCodec.LEGACY_SCHEMA_VERSION, "world_revision": WORLD_REVISION, "beat_index": beat_index, "room_stage": room_stage, "completed_beats": completed_beats.duplicate(), "activated_source_ids": activated, "installed_consumers": installed, "checkpoint_published": checkpoint_published, "sources": {}, "fields": {}, "consumers": {}, "scheduler": control, "framing": _accepted_frames.duplicate(true)}
+	if _uses_final_arrangement: local["final_arrangement"] = _final_arrangement.duplicate(true)
 	var pair: Dictionary = {"controllers": {Bloom.CONTROLLER_ID: control}, "players": {Bloom.PLAYER_ID: player}}
 	for id: String in Bloom.SOURCE_IDS:
 		var consumer_id: String = Bloom.consumer_id(Bloom.source_group(id))
@@ -1184,6 +1208,8 @@ func _restore_local_state(local: Dictionary) -> void:
 		if not (_consumers[id] as CinderSporeRepulsion).restore_state(local.consumers[id], _consumer_context(local, player, id)):
 			_commit_failed("Consumer " + id, _consumers[id].last_error)
 			return
+	_uses_final_arrangement = local.schema_version == BloomCodec.SCHEMA_VERSION
+	_final_arrangement = local.get("final_arrangement", {}).duplicate(true)
 	beat_index = local.beat_index
 	room_stage = local.room_stage
 	completed_beats.assign(local.completed_beats)

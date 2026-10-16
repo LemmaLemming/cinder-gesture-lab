@@ -1,0 +1,215 @@
+--- a/tests/acts/act1/a1_o2_difficulty.gd
++++ b/tests/acts/act1/a1_o2_difficulty.gd
+@@ -12,7 +12,7 @@
+ 	"scripts/campaign/shell.gd", "scripts/campaign/level.gd", "scripts/campaign/attempts.gd", "scripts/campaign/save_store.gd",
+ 	"data/campaign/act1/a1_o2_difficulty_arrangements.json", "data/design/difficulty_profiles.json", "data/design/player_equipment.json"
+ ]
+-const CASE_LIMITS: Dictionary = {"source-default":30000, "new-prefix":180000, "admission":120000, "finite":180000, "continue-retry":150000, "legacy-consumer":150000, "portrait":90000}
++const CASE_LIMITS: Dictionary = {"source-default":30000, "new-prefix":180000, "admission":120000, "finite":180000, "finite-step":180000, "finite-ordinary":180000, "continue-retry":150000, "legacy-consumer":150000, "portrait":90000}
+ class AdmissionProbe extends Node:
+ 	var inspect: Callable
+ 	func _physics_process(delta: float) -> void:
+@@ -30,6 +30,7 @@
+ var input_receipt: Dictionary = {}
+ var input_snapshot: Dictionary = {}
+ var input_session: Dictionary = {}
++var finite_admission_provenance: Dictionary = {}
+ var pending_attack: Dictionary = {}
+ var checkpoint_seen: bool = false
+ var action_rows: Array[Dictionary] = []
+@@ -59,7 +60,7 @@
+ 	if not _read_input() or not _write_original_session(): await _finish(); return
+ 	match difficulty_case:
+ 		"admission": scope_complete = await _admission_case()
+-		"finite": scope_complete = await _finite_case()
++		"finite", "finite-step", "finite-ordinary": scope_complete = await _finite_case()
+ 		"continue-retry", "legacy-consumer": scope_complete = await _transport_case()
+ 		"portrait": scope_complete = await _portrait_case()
+ 	await _finish()
+@@ -111,7 +112,7 @@
+ func _record_unit(label: String) -> bool:
+ 	var unit: Dictionary = game.capture_campaign_snapshot()
+ 	if not _expect(paused and not unit.is_empty() and _durable() and _same(game.attempts.state().side_attempt.snapshot,unit) and _same(game.attempts.state().story,protected_story),"actual paused whole-unit Save and protected Story agree: "+label): return false
+-	receipts.append({"label":label,"exact_snapshot":Exact.stringify(unit),"snapshot_sha256":Exact.stringify(unit).sha256_text(),"exact_player":Exact.stringify(unit.player),"exact_level":Exact.stringify(unit.level),"exact_attempts":Exact.stringify(game.attempts.state()),"saved_envelope_json":FileAccess.get_file_as_string(test_root+"campaign.json"),"native_identities":_ids(),"first_admission":first_admission.duplicate(true)})
++	receipts.append({"label":label,"exact_snapshot":Exact.stringify(unit),"snapshot_sha256":Exact.stringify(unit).sha256_text(),"exact_player":Exact.stringify(unit.player),"exact_level":Exact.stringify(unit.level),"exact_attempts":Exact.stringify(game.attempts.state()),"saved_envelope_json":FileAccess.get_file_as_string(test_root+"campaign.json"),"native_identities":_ids(),"first_admission":first_admission.duplicate(true),"original_admission":finite_admission_provenance.duplicate(true)})
+ 	return true
+ 
+ func _arm_probe() -> void:
+@@ -383,12 +384,113 @@
+ 	return true
+ 
+ func _finite_case() -> bool:
+-	if not _expect(input_snapshot.level.local.room_stage=="active" and input_snapshot.level.local.final_arrangement.profile=="challenge" and input_receipt.get("first_admission",{}).get("source_id")=="bloom-final-guard" and input_receipt.first_admission.get("both_eligible_same_tick")==true,"finite case consumes genuine new Challenge guard-first final admission"): return false
+-	if not await _load_original("standard") or not await _resume("genuine final finite supplies"): return false
+-	if not await _finite_final_case(): return false
+-	if not await _wait_live(func()->bool:return game.camera_framing_error(game.active_level.camera_framing_points()).is_empty(),"actual current optical union after final ordinary strike",8.0): return false
+-	if not await _pause("actual both-fields-spent ordinary opportunity Save"): return false
+-	return _record_unit("actual Challenge final both fields exhausted ordinary opportunity")
++	var local: Dictionary=input_snapshot.level.local
++	var far_spent: Array=local.fields["bloom-far"].spent_ids
++	var near_spent: Array=local.fields["bloom-near"].spent_ids
++	var expected_label: String=""; var expected_case: String=""
++	var field_id: String=""; var cluster_id: String=""
++	if difficulty_case=="finite":
++		expected_label="actual challenge final admission Save"; expected_case="admission"
++		if not _expect(far_spent.is_empty() and near_spent.is_empty(),"first finite slice retains both original supplies"): return false
++	elif difficulty_case=="finite-step":
++		if far_spent==["cluster-right"] and near_spent.is_empty():
++			expected_label="actual finite first release and active-refresh refusal Save"; expected_case="finite"; field_id="bloom-far"; cluster_id="cluster-left"
++		elif far_spent==["cluster-right","cluster-left"] and near_spent.is_empty():
++			expected_label="actual finite far second release Save"; expected_case="finite-step"; field_id="bloom-near"; cluster_id="cluster-left"
++		elif far_spent==["cluster-right","cluster-left"] and near_spent==["cluster-left"]:
++			expected_label="actual finite near first release Save"; expected_case="finite-step"; field_id="bloom-near"; cluster_id="cluster-right"
++	elif difficulty_case=="finite-ordinary":
++		expected_label="actual finite near second release Save"; expected_case="finite-step"
++		if not _expect(far_spent==["cluster-right","cluster-left"] and near_spent==["cluster-left","cluster-right"],"ordinary slice consumes all four actually spent original anchors"): return false
++	var source_report: Dictionary=JSON.parse_string(FileAccess.get_file_as_string(String(options["--source-report"])))
++	if not _expect(not expected_label.is_empty() and source_report.get("case")==expected_case and input_receipt.get("label")==expected_label and local.beat_index==2 and local.room_stage=="active" and local.final_arrangement.profile=="challenge" and local.fields["bloom-far"].generation==far_spent.size() and local.fields["bloom-near"].generation==near_spent.size(),"finite slice consumes its exact successful named predecessor and original native supply prefix"): return false
++	if not _finite_original_admission(): return false
++	if not await _load_original("standard") or not await _resume("genuine final finite slice: "+difficulty_case): return false
++	var label: String=""
++	if difficulty_case=="finite":
++		if not await _finite_first_release(): return false
++		label="actual finite first release and active-refresh refusal Save"
++	else:
++		if not await _finite_native_wait(_finite_expired_ready,"original native deadlines, source recovery and primary readiness"): return false
++		if difficulty_case=="finite-ordinary":
++			var fields: Dictionary=game.active_level.get("_fields")
++			if not _expect(fields["bloom-far"].state().remaining_clusters==0 and fields["bloom-near"].state().remaining_clusters==0,"both original fields are genuinely exhausted before ordinary opportunity"): return false
++			var target: Act1MushroomSelenite=_source("bloom-final-guard")
++			if not _expect(not target.dead and not target.dormant,"actual final guard remains for ordinary opportunity"): return false
++			var before: Dictionary=_supplies()
++			if not await _public_attack(target,false): return false
++			if not _expect(_same(before,_supplies()),"actual ordinary hit after both supplies spent preserves original field custody and deadlines"): return false
++			label="actual Challenge final both fields exhausted ordinary opportunity"
++		else:
++			if not await _finite_release_one(field_id,cluster_id): return false
++			label="actual finite far second release Save" if field_id=="bloom-far" else ("actual finite near first release Save" if cluster_id=="cluster-left" else "actual finite near second release Save")
++	if not await _wait_live(func()->bool:return game.camera_framing_error(game.active_level.camera_framing_points()).is_empty(),"actual current optical union before finite slice Save",8.0): return false
++	if not await _pause(label): return false
++	if difficulty_case!="finite-ordinary":
++		var saved_field: CinderSporeField=(game.active_level.get("_fields") as Dictionary)["bloom-far" if difficulty_case=="finite" else field_id]
++		var saved_field_state: Dictionary=saved_field.state()
++		if not _expect(saved_field_state.phase in ["releasing","active","thinning"] and saved_field_state.clock_s<float(saved_field_state.deadline_s),"slice publishes the actual original still-active field lifetime"): return false
++	return _record_unit(label)
++
++func _finite_original_admission() -> bool:
++	var origin: Dictionary={"path":String(options["--source-report"]),"sha256":String(options["--source-sha256"]),"receipt_label":"actual challenge final admission Save"} if difficulty_case=="finite" else input_receipt.get("original_admission",{})
++	if not _expect(origin.get("path") is String and origin.get("sha256") is String and String(origin.sha256).length()==64 and FileAccess.get_sha256(origin.path)==origin.sha256 and origin.get("receipt_label")=="actual challenge final admission Save","original admission ancestor retains its literal report SHA and exact receipt label"): return false
++	var report: Variant=JSON.parse_string(FileAccess.get_file_as_string(origin.path))
++	if not _expect(report is Dictionary and report.get("case")=="admission" and report.get("requested_profile")=="challenge" and report.get("scope_complete")==true and report.get("success")==true and report.get("failures")==0 and report.get("first_failure")=={} and report.get("receipts") is Array,"original ancestor is a complete successful actual Challenge admission case"): return false
++	var receipt: Dictionary=_unique_receipt(report.receipts,origin.receipt_label)
++	var proof: Dictionary=receipt.get("first_admission",{})
++	if not _expect(proof.get("source_id")=="bloom-final-guard" and proof.get("both_eligible_same_tick")==true and _same(proof,report.get("first_admission")),"ancestor contains actual guard-first same-tick native evidence without relabeling a new event"): return false
++	for path: String in RUNTIME_PINS:
++		if not _expect(report.get("source_sha256",{}).get(path)==producer_sources[path],"original admission runtime remains exact: "+path): return false
++	finite_admission_provenance={"path":origin.path,"sha256":origin.sha256,"receipt_label":origin.receipt_label,"case":"admission","actual_first_admission":proof.duplicate(true)}
++	source_reports.append({"path":origin.path,"sha256":origin.sha256,"receipt_label":origin.receipt_label,"purpose":"original native admission ancestor; no new admission asserted"})
++	return true
++
++func _finite_release_one(field_id: String, cluster_id: String) -> bool:
++	var field: CinderSporeField=(game.active_level.get("_fields") as Dictionary)[field_id]
++	var cluster: Node3D=field.get_node(cluster_id) as Node3D
++	if not await _place_attack(cluster,true): return false
++	var before: Dictionary=field.state()
++	if not _expect(before.phase=="available" and cluster_id not in before.spent_ids and (before.deadline_s==null or before.clock_s>=before.deadline_s),"next original anchor is available only after genuine native expiry"): return false
++	if not await _public_attack(cluster,true): return false
++	var after: Dictionary=field.state()
++	var expected_spent: Array=before.spent_ids.duplicate(); expected_spent.append(cluster_id)
++	if not _expect(after.generation==before.generation+1 and after.spent_ids==expected_spent and after.deadline_s==after.activation_s+Bloom.FIELD_DURATION_S and (before.deadline_s==null or after.activation_s>=before.deadline_s),"one isolated ordinary primary spends exactly the next original anchor without retiming"): return false
++	receipts.append({"label":"one actual remaining finite release","field_id":field_id,"before":before,"after":after})
++	return true
++
++func _finite_expired_ready() -> bool:
++	for field: CinderSporeField in (game.active_level.get("_fields") as Dictionary).values():
++		var actual: Dictionary=field.state()
++		if actual.deadline_s!=null and actual.clock_s<float(actual.deadline_s): return false
++		if actual.phase!=("spent" if actual.generation==2 else "available"): return false
++	return _ready_primary() and _finite_reactions_idle()
++
++func _finite_wait_sample() -> Dictionary:
++	var fields: Dictionary={}
++	for id: String in game.active_level.get("_fields"):
++		fields[id]=(game.active_level.get("_fields") as Dictionary)[id].state()
++	return {"wall_ms":Time.get_ticks_msec()-started_ms,"physics_frame":Engine.get_physics_frames(),"player":game.player.get_threat_response_state(),"fields":fields}
++
++func _finite_native_wait(predicate: Callable, label: String, field: CinderSporeField=null, original: Dictionary={}) -> bool:
++	# The finite case's unchanged 180s wall watchdog bounds resource use. Mechanical
++	# completion uses actual native clocks; a wall deadline is not an FPS assertion.
++	var before: Dictionary=_finite_wait_sample(); var supply: Dictionary=_supplies()
++	while not finishing:
++		if not _operation_healthy(): return false
++		if paused or not is_instance_valid(game.player) or game.player.dead:
++			return _expect(false,"finite native observation lost unpaused living Player: "+label)
++		if not _same(supply,_supplies()): return _expect(false,"finite native observation changed original supply/custody: "+label)
++		if field!=null:
++			var actual: Dictionary=field.state()
++			if not _finite_markers_equal(original,actual) or actual.deadline_s==null or actual.clock_s>=float(original.deadline_s):
++				receipts.append({"label":"finite native deadline failure: "+label,"before":_encode(before),"after":_encode(_finite_wait_sample()),"original":original})
++				return _expect(false,"required finite observation missed the unchanged original native field deadline: "+label)
++		if predicate.call()==true:
++			receipts.append({"label":"actual finite native observation: "+label,"before":_encode(before),"after":_encode(_finite_wait_sample()),"original_deadline":original.get("deadline_s"),"wall_budget_scope":"unchanged case watchdog; no real-time performance claim"})
++			return true
++		await process_frame
++	return false
+ 
+ func _portrait_case() -> bool:
+ 	if not _expect(DisplayServer.get_name()!="headless" and input_snapshot.level.local.room_stage=="active" and input_snapshot.level.local.final_arrangement.profile=="challenge","graphical case consumes actual API2 Challenge final unit"): return false
+@@ -489,7 +591,7 @@
+ # Requires _place_attack/_public_attack contracts agreed with test owner. The latter
+ # accepts an actual zero-hit primary whose cluster interaction is refused; it checks
+ # unrelated fields and HP itself. Caller owns report completion, cleanup and watchdog.
+-func _finite_final_case() -> bool:
++func _finite_first_release() -> bool:
+ 	var fields: Dictionary = game.active_level.get("_fields")
+ 	var far := fields.get("bloom-far") as CinderSporeField
+ 	var near := fields.get("bloom-near") as CinderSporeField
+@@ -507,9 +609,9 @@
+ 	receipts.append({"label": "fresh final first far release", "before": before, "after": released, "near": near.state()})
+ 	# Do this before waiting for the whole retreat, which may consume the live deadline.
+ 	var observed_retreat: Dictionary = {}
+-	if not await _wait_live(func() -> bool:
++	if not await _finite_native_wait(func() -> bool:
+ 		if observed_retreat.is_empty(): observed_retreat.merge(_finite_retreat_row(consumer, far))
+-		return _ready_primary(), "actual primary cooldown before active refresh attempt", 1.5): return false
++		return _ready_primary(), "actual primary cooldown before active refresh attempt", far, released): return false
+ 	if not await _place_attack(left, true): return false
+ 	var live: Dictionary = far.state()
+ 	if not _expect(live.phase in ["releasing", "active", "thinning"] and live.clock_s < live.deadline_s and live.spent_ids == ["cluster-right"], "unspent sibling attempt occurs within original actual deadline"): return false
+@@ -519,33 +621,11 @@
+ 	receipts.append({"label": "actual active-field refresh refusal", "before": live, "after": refused})
+ 	# A pure source/consumer observation must witness actual outward motion, not pixels.
+ 	if observed_retreat.is_empty():
+-		if not await _wait_live(func() -> bool:
++		if not await _finite_native_wait(func() -> bool:
+ 			observed_retreat.merge(_finite_retreat_row(consumer, far))
+-			return not observed_retreat.is_empty(), "actual final native outward retreat with original route", 3.0): return false
++			return not observed_retreat.is_empty(), "actual final native outward retreat with original route", far, released): return false
+ 	receipts.append({"label": "actual outward native final retreat with no source reservation", "observation": observed_retreat})
+-	for original: CinderSporeField in [far, near]:
+-		for cluster_id: String in Bloom.CLUSTER_IDS:
+-			if cluster_id in original.state().spent_ids: continue
+-			if not await _wait_live(func() -> bool: return original.state().phase == "available" and _ready_primary() and _finite_reactions_idle(), "actual original field expiry and native recovery", 8.0): return false
+-			var cluster := original.get_node(cluster_id) as Node3D
+-			if not await _place_attack(cluster, true): return false
+-			var prior: Dictionary = original.state()
+-			if not await _public_attack(cluster, true): return false
+-			var after: Dictionary = original.state()
+-			if not _expect(after.generation == prior.generation + 1 and after.spent_ids.back() == cluster_id and after.deadline_s == after.activation_s + Bloom.FIELD_DURATION_S and (prior.deadline_s == null or after.activation_s >= prior.deadline_s), "ordinary primary spends next original anchor only after real expiry"): return false
+-			receipts.append({"label": "remaining original finite supply", "field_id": after.instance_id, "before": prior, "after": after})
+-		if not await _wait_live(func() -> bool: return original.state().phase == "spent" and _finite_reactions_idle(), "actual final original lifetime and native reactions finish", 8.0): return false
+-	if not _expect((game.active_level.get("_fields") as Dictionary).get("bloom-far") == far and (game.active_level.get("_fields") as Dictionary).get("bloom-near") == near and far.state().generation == 2 and near.state().generation == 2 and far.state().remaining_clusters == 0 and near.state().remaining_clusters == 0, "both original fields are genuinely exhausted with unchanged custody"): return false
+-	var target: Act1MushroomSelenite = _source("bloom-final-guard")
+-	if target.dead:
+-		for id: String in Bloom.group_ids(2):
+-			if not _source(id).dead: target = _source(id); break
+-	if not _expect(not target.dead and not target.dormant, "one living actual final recipient remains for ordinary opportunity"): return false
+-	if not await _wait_live(_ready_primary, "actual ordinary readiness after full depletion", 5.0): return false
+-	var far_spent: Dictionary = far.state()
+-	var near_spent: Dictionary = near.state()
+-	if not await _place_attack(target, false) or not await _public_attack(target, false): return false
+-	return _expect(_finite_markers_equal(far_spent, far.state()) and _finite_markers_equal(near_spent, near.state()), "actual ordinary hit after both supplies spent leaves original supply/deadlines unchanged")
++	return true
+ 
+ 
+ func _finite_markers_equal(a: Dictionary, b: Dictionary) -> bool:

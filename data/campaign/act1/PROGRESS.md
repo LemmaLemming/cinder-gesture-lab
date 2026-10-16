@@ -1,5 +1,13 @@
 # Act 1 — current progress
 
+## Separate O2 authored-difficulty amendment — 15 October 2026
+
+The original eight-level Act1 desktop objective remains complete and accepted. Integration RESPONSE `43ff532e-cd38-4289-9d3f-15e91add9df7` separately scopes **A1-O2 final-mixed Challenge guard-first** plus one default admission-priority hook in the common Act1 Base. Existing checkout/branch/sole ownership and Shared64 runtime are retained. L3/L5/O1 remain proposals; Agent02 stays inactive. Integration remains first help contact.
+
+The documentation-only five-beat L1 retention exception is committed at `78f3205c77e341cf263ae58f46964242df0ec8ea` and independently accepted as `f08e3b01` at Root doc-only publication `75343a11` after handoff `10ae5d29-ec0e-4134-8098-f8d23110f678`; it adds no native or gameplay result. The [O2 amendment record](../../../docs/acts/act1/A1_O2_DIFFICULTY.md) tracks the separate implementation, literal legacy-save custody, focused changed-behavior checks and untested limits. Canonical equipment/ability queries remain revision0 with no allocations; existing neutral/short/weak profiles are reused and POWER-06 remains an unassigned suggestion.
+
+Current amendment status: **owner implementation and focused checks complete; exact handoff preparation**. Genuine old producer45/0; Base24/0; API2 checkpoint81/0; Standard70/0 west-first vsChallenge70/0 guard-first with both eligible; new transport80/0; legacy transport57/0; finite release/refusal113/0, remaining charges101/0 each and exhausted-field ordinary102/0; representative real-recognizer portrait73/0 personally inspected. All twenty original run logs/native/source banks and seventeen literal old wires are sealed under the [O2 amendment record](../../../docs/acts/act1/A1_O2_DIFFICULTY.md). Original failed41/1,34/1,71/1,75/1,32/3, two finite75/1, far97/1 and visually deficient65/0 portrait remain preserved. Runtime/field/codec guards were unchanged during fixture corrections; actual native sample observations support the corrected Save boundary while the original far rejection remains inferred. All own engine jobs/previews closed. Tests retain Shared64/source attribution; Shared65/all24 acceptance ec61231b is available for a preserving CLOSED-boundary adoption. Original eight-level goal complete, sole ownership registered, no human permission/unlock/full-route gate. Integration independently reviews this separate amendment.
+
 ## Act 1 desktop scope complete — 15 October 2026
 
 All **eight Act 1 levels are independently accepted and integrated**: five main levels and Salvage Circuit, Spore Bloom and Royal Rehearsal. The canonical campaign is 23/24; remaining shared work and A3-O3 belong to Integration and the Act3 owner.
