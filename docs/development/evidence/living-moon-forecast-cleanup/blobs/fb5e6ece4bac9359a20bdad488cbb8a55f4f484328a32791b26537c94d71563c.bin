@@ -1,0 +1,53 @@
+--- scripts/acts/act1/living_moon.gd@9056b211
++++ .cinder/l5-presentation-forecast-repair-20261016/living_moon.gd.txt
+@@ -242,6 +242,9 @@
+ 
+ 
+ func _prepare_forecast(id: String, preview: Dictionary) -> bool:
++	# Each prospective attempt replaces the previous unpublished proposal.
++	# Invalid previews must not leave stale camera requirements behind.
++	_forecast.clear(); _pending_start.clear()
+ 	if not preview.get("accepted", false): last_encounter_error = String(preview.get("reason", "Prospective native attack refused")); return false
+ 	var candidate: Dictionary = preview.get("candidate", {})
+ 	var proof: Dictionary = preview.get("proof", {})
+@@ -252,7 +255,16 @@
+ 	_forecast.append_array(_geometry_points(candidate.geometry)); _forecast.append_array(_response_points(proof.landing, proof.attack_position))
+ 	_forecast_hero = hero.global_transform
+ 	_pending_start = {"source_id": id, "proof": proof.duplicate(true)}
+-	if not _framing_ready(_camera_framing_points()): _pending_start.clear(); return false
++	var framing: Dictionary = _framing_status(_camera_framing_points())
++	last_encounter_error = String(framing.error)
++	if not framing.plan_accepted:
++		_forecast.clear(); _pending_start.clear()
++		return false
++	if not last_encounter_error.is_empty():
++		# A feasible plan may still need normal camera preframing. Keep only
++		# those forecast points; current containment still gates admission.
++		_pending_start.clear()
++		return false
+ 	return true
+ 
+ 
+@@ -582,10 +594,19 @@
+ 	return _unique(points)
+ 
+ 
++func _framing_status(points: Array) -> Dictionary:
++	# One pure plan/current-view observation shared by preflight and guards.
++	# Planner rejection differs from a feasible plan awaiting actual framing.
++	if points.is_empty() or points.has(Vector3.INF) or points.size() > 224 or not is_instance_valid(shared_shell):
++		return {"plan_accepted": false, "error": "Complete actual bounded framing points required"}
++	var plan: Dictionary = shared_shell.call("camera_framing_plan", points, hero.global_position + Vector3.UP * 0.65)
++	if not plan.get("accepted", false):
++		return {"plan_accepted": false, "error": String(plan.get("reason", "Native framing plan refused"))}
++	return {"plan_accepted": true, "error": String(shared_shell.call("camera_framing_error", points))}
++
++
+ func _framing_error(points: Array) -> String:
+-	if points.is_empty() or points.has(Vector3.INF) or points.size() > 224 or not is_instance_valid(shared_shell): return "Complete actual bounded framing points required"
+-	var plan: Dictionary = shared_shell.call("camera_framing_plan", points, hero.global_position + Vector3.UP * 0.65)
+-	return String(plan.get("reason", "Native framing plan refused")) if not plan.get("accepted", false) else String(shared_shell.call("camera_framing_error", points))
++	return String(_framing_status(points).error)
+ 
+ 
+ func _framing_ready(points: Array) -> bool:

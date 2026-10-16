@@ -1,0 +1,7 @@
+# Living Moon forecast rollback portrait addendum
+
+[index.json](index.json) records exactly two CLOSED originals: portrait host seal and clean native51/0 complete. [original-paths.json](original-paths.json) maps original raw/report/index/result/queue/capsules/leaf/visual records/PNG/typedStore bytes into deduplicated CAS with exact original hash/size/mode. [source-observation-aliases.json](source-observation-aliases.json) preserves119-input original custody and genuine UID absence without repin. No missing seal native artifacts are invented.
+
+Actual540x1170PNG joins Root personal visual review; native typed pair52636bytes and whole/native/input/optics/render portrait pair138940bytes are byte-identical before/after. Actual original owned Store bytes are retained before verified scoped cleanup, UI/FPS/audio restored. Source-free original119 packet attribution remains pinned in [HISTORICAL_INPUT_REFERENCE.json](HISTORICAL_INPUT_REFERENCE.json), already in CAS; no owner bank duplication.
+
+Root describes grounded Hero/feet and low eye/lunar face/HUD readability in committed idle/recovery context; no active attack footprint is shown. Packaging adds no firsthand optical claim. Synthetic hard-preflight rollback only: no soft/invalid/headless replay, source start/native accepted proof/gameplay/GUI/historical cancellation-cause/route or portraitcombat acceptance. Earlier headless59/0 and failed12/2 evidence remain immutable in their separate pack.
