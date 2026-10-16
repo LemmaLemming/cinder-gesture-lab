@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "kind": "a3-o2-private-registration-readiness",
+  "ready_for_root_seal": true,
+  "engine_executed": false,
+  "frozen_files": {
+    ".cinder/act3-o2-difficulty-integration-20261016/root-verification/run.py": "19864de6f5e9eb83e0d12b1bdb836a9976abe4d53375ddd13990bfc837d9c704",
+    ".cinder/act3-o2-difficulty-integration-20261016/root-verification/INPUT_SPEC.json": "03c6175ec0db0018b34c6e44430b474c302e35a1f55a5bf92472fc6a9059b1ad",
+    ".cinder/act3-o2-difficulty-integration-20261016/root-verification/README.md": "717a37cf3bc955627ee4e0bc7ca7586dab699f4ee0324aa2813bc4a0255ff773",
+    ".cinder/act3-o2-difficulty-integration-20261016/root-verification/SELF_REVIEW.json": "506392160943f475c9aea23cd1eeff86eda63aefdcd10cdc7470e1d0d9f6771b"
+  },
+  "commands": [
+    "python3 .cinder/act3-o2-difficulty-integration-20261016/root-verification/run.py seal",
+    "python3 .cinder/act3-o2-difficulty-integration-20261016/root-verification/run.py native --seal /absolute/original/successful/run-seal-OUTPUT/seal.json"
+  ],
+  "acceptance": "Root reviews actual closed native outputs and diagnostics independently; no engine execution or gameplay acceptance is claimed by readiness."
+}

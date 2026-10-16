@@ -1,0 +1,182 @@
+extends "res://tests/acts/act3/quiet_root_circuit_optional_shell.gd"
+## Root canonical short registration; execution is recorded separately.
+## Overrides owner _run; no held-phase/court/route/GUI fixture is repeated.
+## Actual canonical metadata; TEST predecessor prefix12 only via real Story seed.
+## SHORT BOUNDARY VARIANT: completion/stamp/contact-return/Replay are NOT run.
+## Root must review final exact owner transition/Replay evidence OUTSIDE this
+## fixture before selecting it and map that evidence in the acceptance record.
+## No completed-session export, route repetition or silent skip is requested.
+## Public menu signals are API evidence; no earned route or GUI input claim.
+
+const ACCEPTED_CONTENT: String = "155df5602c82787fb18e296f5cbfa5f5597e3f9a"
+var _short_registration_complete: bool = false
+var _short_registration_report: Array[Dictionary] = []
+var _short_first_failure: Dictionary = {}
+var _short_source_before: Dictionary = {}
+var _short_initial_closed: Dictionary = {}
+var _short_report_path: String = ""
+const SHORT_SOURCE_PATHS: Array[String] = [
+	"res://tests/acts/act3/quiet_root_circuit_optional_shell.gd",
+	"res://scripts/acts/act3/quiet_root_circuit.gd",
+	"res://scenes/acts/act3/a3_o2_quiet_root_circuit.tscn",
+	"res://scripts/campaign/shell.gd",
+	"res://scripts/campaign/level.gd",
+	"res://scripts/campaign/registry.gd",
+	"res://scripts/campaign/attempts.gd",
+	"res://scripts/campaign/save_store.gd",
+	"res://scripts/campaign/exact_json.gd"
+]
+
+func _initialize() -> void:
+	isolated = "user://test-a3-o2-canonical-%d-%d/" % [OS.get_process_id(), Time.get_ticks_usec()]
+	old_audio = AudioServer.generate_bus_layout()
+	old_fps = Engine.max_fps
+	_short_report_path = OS.get_environment("CINDER_A3_O2_SHORT_REGISTRATION_REPORT")
+	if _short_report_path.is_empty():
+		_short_report_path = "user://test-a3-o2-short-registration-reports/%d-%d.json" % [OS.get_process_id(), Time.get_ticks_usec()]
+	_run.call_deferred()
+
+func _run() -> void:
+	create_timer(120.0, true).timeout.connect(func() -> void:
+		if not finished:
+			_expect(false, "bounded canonical O2 registration watchdog")
+			_finish.call_deferred())
+	root.size = Vector2i(340, 736)
+	root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	node_added.connect(_watch_node)
+	_short_source_before = _short_source_observation()
+	canonical_bytes = FileAccess.get_file_as_string(Registry.DATA_PATH)
+	if not _expect(OS.get_cmdline_user_args().is_empty(), "short canonical boundary has no completion/session/Replay or silent-skip selector"):
+		await _finish(); return
+	var canonical: CinderCampaignRegistry = Registry.new()
+	var row: Dictionary = canonical.entry("A3-O2")
+	if not _expect(ACCEPTED_CONTENT.length() == 40 and canonical.last_error.is_empty() and canonical.ids().size() == 24 and row.get("readiness") == "accepted" and row.get("accepted_commit") == ACCEPTED_CONTENT and row.get("scene_path") == O2_PATH and row.get("api_revision") == Registry.API_REVISION and canonical.scene_error("A3-O2").is_empty(), "actual canonical submitted O2 content/scene/API validates"):
+		await _finish(); return
+	if not _expect(row.get("parent_level_id") == "A3-L2" and canonical.entry("A3-L2").get("readiness") == "accepted" and not canonical.is_unlocked("A3-O2", []) and not canonical.is_unlocked("A3-O2", ["A2-L5"]) and canonical.is_unlocked("A3-O2", ["A3-L2"]), "accepted canonical A3-L2 alone unlocks O2"):
+		await _finish(); return
+	if not _expect(row.get("reward_id") == "A3-O2-completion-stamp" and row.get("reward_policy") == "once_only_completion_stamp_no_stat_growth" and canonical.next_main("A3-L2") == "A3-L3", "once-only optional stamp stays outside unchanged main route"):
+		await _finish(); return
+	# Real accepted-L2 donor supplies actual complete initial Story; prefix12 TEST.
+	if not await _seed_story(canonical): await _finish(); return
+	var closed_story: String = Exact.stringify(protected)
+	var closed_session: String = Exact.stringify(expected_session)
+	var detached: CinderCampaignAttempts = Attempts.new(canonical)
+	if not _expect(not closed_story.is_empty() and not closed_session.is_empty() and detached.state_error(expected_session).is_empty() and expected_session.side_attempt == null and expected_session.story.level_id == STORY_ID and _same(expected_session.story.snapshot, protected) and _same(expected_session.story.checkpoint, protected) and expected_session.completed_main == canonical.main_route().slice(0, 12) and expected_session.completed_optional.is_empty() and expected_session.reward_ids.is_empty(), "complete closed initial protected Story/session is coherent; only disclosed TEST predecessor prefix12 is arranged") or not _disk(expected_session):
+		await _finish(); return
+	_short_initial_closed = {"story_sha256": closed_story.sha256_text(), "story_bytes": closed_story.to_utf8_buffer().size(), "session_sha256": closed_session.sha256_text(), "session_bytes": closed_session.to_utf8_buffer().size(), "independent_initial_disk_equal": true, "exact_story": closed_story, "exact_session": closed_session}
+	if not await _new_shell(expected_session): await _finish(); return
+	production.menu.continue_story_requested.emit()
+	if not await _wait_installed(STORY_ID, "resume", protected) or not _installed(protected): await _finish(); return
+	if not _expect(_same(production.attempts.state().story, expected_session.story), "installed Story retains its complete protected snapshot and checkpoint metadata") or not _disk(production.attempts.state()) or not _quiet_selected():
+		await _finish(); return
+	var prior_refs: Array[WeakRef] = []
+	_collect_refs(_world_container(), prior_refs)
+	var before: Dictionary = _core_ids()
+	production.menu.optional_requested.emit("A3-O2")
+	if not await _wait_installed("A3-O2", "resume", {}, before): await _finish(); return
+	var entrance: Dictionary = production.capture_campaign_snapshot()
+	if not _installed(entrance) or not await _released(prior_refs, "canonical optional entry retires whole Story world"): await _finish(); return
+	var pristine: Dictionary = production.active_level.call("state")
+	if not _expect(production.active_level.get_script() == QRC and pristine.api_revision == QRC.ROUTE_API and pristine.active_court == 0 and pristine.source_states.size() == 5 and pristine.clears.is_empty() and pristine.deaths.is_empty() and not production.active_level.is_completed() and production.player.get_world_action_records().is_empty() and production.attempts.active_kind() == "optional" and _same(production.attempts.story_snapshot(), protected) and _same(production.attempts.state().side_attempt.checkpoint, entrance), "canonical pristine optional entry retains protected Story and actual entrance checkpoint"):
+		await _finish(); return
+	if not _expect(not production.active_level.request_contact_exit(QRC.EXIT_ID, production.player) and _same(production.capture_campaign_snapshot(), entrance), "premature real exit refuses without changing initial unit"):
+		await _finish(); return
+	# Only entrance Retry here; owner's actual CP1/CP2 Retry is reused.
+	prior_refs.clear(); _collect_refs(_world_container(), prior_refs)
+	before = _native_ids()
+	receiver_events.clear()
+	production.menu.retry_requested.emit()
+	if not await _wait_installed("A3-O2", "resume", entrance, before) or not _installed(entrance) or not _distinct(before) or not _quiet_selected() or not await _released(prior_refs, "canonical entrance Retry frees retired native world"):
+		await _finish(); return
+	prior_refs.clear(); _collect_refs(_world_container(), prior_refs)
+	before = _core_ids()
+	production.menu.leave_side_requested.emit()
+	if not await _wait_installed(STORY_ID, "journey", protected, before) or not _installed(protected) or not await _released(prior_refs, "canonical abandon frees optional native world"):
+		await _finish(); return
+	var returned: Dictionary = production.attempts.state()
+	if not _expect(returned.side_attempt == null and returned.completed_main == expected_session.completed_main and returned.completed_optional.is_empty() and returned.reward_ids.is_empty() and returned.unlocked_equipment == expected_session.unlocked_equipment and _same(returned.story, expected_session.story), "early return protects Story/main/equipment and grants no completion/stamp") or not _disk(returned):
+		await _finish(); return
+	# Completion/stamp/contact-return and Replay are separate owner-evidence
+	# reuse at Root acceptance. This fixture performs none of those operations.
+	_short_registration_complete = true
+	await _finish()
+
+func _new_shell(expected: Dictionary) -> bool:
+	receiver_events.clear(); watched.clear()
+	production = Shell.new()
+	if not _expect(production.configure_runtime({}, isolated + "campaign.json", isolated + "settings.json", isolated + "preferences.json"), "actual canonical Shell uses no substitute readiness registry", production.campaign_error): return false
+	root.add_child(production)
+	for _frame: int in range(FRAME_LIMIT):
+		await process_frame
+		if not _valid_shell(): return false
+		if paused and not production.is_pause_requested() and production.menu.page_name() == "title" and production.player == null and production.active_level == null and _same(production.attempts.state(), expected):
+			return _expect(true, "exact entire expected canonical startup session settles at Title")
+	return _expect(false, "bounded canonical exact Title startup session", production.campaign_error)
+
+func _finish() -> void:
+	if finished: return
+	finished = true
+	await _dispose_shell()
+	if is_instance_valid(preview):
+		var refs: Array[WeakRef] = []
+		_collect_refs(preview, refs)
+		var donor: CinderLevel = preview.get("active_level") as CinderLevel
+		if donor != null: donor.exit_level()
+		preview.queue_free(); preview = null
+		await _released(refs, "remaining real Story seed donor cleanup")
+	if node_added.is_connected(_watch_node): node_added.disconnect(_watch_node)
+	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == canonical_bytes, "canonical registry remains byte exact")
+	for name: String in ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]:
+		var path: String = isolated + name
+		if FileAccess.file_exists(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(isolated))
+	AudioServer.set_bus_layout(old_audio); Engine.max_fps = old_fps
+	paused = false
+	_write_short_report()
+	print("A3-O2 SHORT canonical registration: %d checks/%d failures, short_scope_complete=%s; actual row/parent/unlock/entry/coherent protected Story+initial disk/entrance Retry/early Leave/disk/normal cleanup. TEST prefix12 only. Completion/stamp/contact-return/Replay NOT executed here: final verified owner evidence must be reused separately by Root acceptance. No inherited held/court/route, completion/session export, GUI, portrait or broad balance credit." % [checks, failures, str(_short_registration_complete)])
+	quit(0 if failures == 0 and _short_registration_complete else 1)
+
+
+func _expect(ok: bool, label: String, detail: String = "") -> bool:
+	# Same owned helper signature/count/error/return behavior, with independent
+	# short-fixture report/first-failure fields. Do not double-count via super.
+	checks += 1
+	var row: Dictionary = {"check": checks, "ok": ok, "label": label, "detail": detail}
+	_short_registration_report.append(row)
+	if not ok:
+		failures += 1
+		if _short_first_failure.is_empty(): _short_first_failure = row.duplicate(true)
+		push_error("FAIL A3-O2 SHORT canonical registration: " + label + ("; " + detail if not detail.is_empty() else ""))
+	return ok
+
+
+func _short_source_observation() -> Dictionary:
+	# Named bytes only: not a resource/global-class/UID/import graph or census.
+	var result: Dictionary = {}
+	for path: String in SHORT_SOURCE_PATHS:
+		result[path] = {"present": FileAccess.file_exists(path), "sha256": FileAccess.get_sha256(path)}
+	var own_path: String = String(get_script().resource_path)
+	result["fixture"] = {"path": own_path, "sha256": FileAccess.get_sha256(own_path) if not own_path.is_empty() else "", "scope": "actual executing Script resource path; no inferred Git provenance"}
+	result[Registry.DATA_PATH] = {"present": FileAccess.file_exists(Registry.DATA_PATH), "sha256": FileAccess.get_sha256(Registry.DATA_PATH)}
+	return result
+
+
+func _write_short_report() -> void:
+	var directory: String = _short_report_path.get_base_dir()
+	if not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(directory)):
+		if DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory)) != OK:
+			_expect(false, "retained short-registration report directory opens")
+			return
+	var payload: Dictionary = {"schema_version": 1, "kind": "a3-o2-short-canonical-registration", "accepted_content": ACCEPTED_CONTENT, "checks": checks, "failures": failures, "short_scope_complete": _short_registration_complete, "success": failures == 0 and _short_registration_complete, "first_failure": _short_first_failure, "report": _short_registration_report, "initial_closed_packet_disk": _short_initial_closed, "source_before": _short_source_before, "source_after": _short_source_observation(), "source_scope": "listed source-byte observations only, no complete import/global/UID graph or bank census", "executed_scope": "actual canonical row/parent/unlock/entry/coherent protected Story/initial disk/entrance Retry/early Leave/disk/normal cleanup; public menu signals only; disclosed TEST predecessor prefix12", "completion_replay": {"executed_here": false, "required_before_root_selection": "final exact owner handoff completion/stamp/contact-return/Replay evidence independently reviewed and explicitly reused outside this fixture at Root acceptance", "completion_session_export_required": false}, "other_credits": "No held/court/route/completion/Replay/GUI/portrait/earned-route/full-campaign/balance credit"}
+	var wire: String = Exact.stringify(payload)
+	if wire.is_empty():
+		_expect(false, "retained short-registration report remains closed exact JSON")
+		return
+	var file := FileAccess.open(_short_report_path, FileAccess.WRITE)
+	if file == null:
+		_expect(false, "retained short-registration report file opens", _short_report_path)
+		return
+	file.store_string(JSON.stringify(payload, "\t") + "\n")
+	file.close()
+	print("Retained SHORT registration report: " + _short_report_path + " sha256=" + FileAccess.get_sha256(_short_report_path))
