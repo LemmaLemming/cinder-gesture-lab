@@ -634,7 +634,13 @@ func _p3t_installed(unit: Dictionary, legacy: bool) -> bool:
 	if not _expect(error.is_empty() and _exact(_shell.capture_campaign_snapshot(),unit),"complete native paired validation/ExactJSON/recapture remains authoritative",error): return false
 	var view: Dictionary = _level.call("camera_framing_union","",[],true,false)
 	error = String(view.get("error","Actual current native union unavailable"))
-	if error.is_empty(): error = _shell.camera_framing_error_for_context(view.points,_hero,_shell.camera,_shell.hud)
+	var actual_points: Array = view.points.duplicate() if error.is_empty() else []
+	# A source-free entrance has no source bounds. Supply the actual Hero's
+	# native corners to this shared nonempty context API; held cases retain
+	# the complete source union and cannot substitute player-only geometry.
+	if error.is_empty() and entries == 0:
+		actual_points.append_array(_shell.player_camera_framing_points_for(_hero,_shell.camera))
+	if error.is_empty(): error = _shell.camera_framing_error_for_context(actual_points,_hero,_shell.camera,_shell.hud)
 	return _expect(error.is_empty() and _shell.camera == _hero.get_viewport().get_camera_3d() and _shell.camera.get_world_3d() == _hero.get_world_3d() and _exact(_shell.capture_campaign_snapshot(),unit),"actual current Camera/HUD/native union and full recapture retain saved optics",error)
 
 func _p3t_warning_equal(saved_receipt: Dictionary) -> bool:
