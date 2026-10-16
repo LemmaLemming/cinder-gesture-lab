@@ -1,5 +1,9 @@
 # Act 1 — current progress
 
+## Separate L3 authored-difficulty amendment —16 October2026
+
+The original eight-level goal remains complete; all24 campaign levels are accepted. Integration `cb1ec097` separately authorizes only fresh Challenge Crossed inner-pair priority with literal old-save preservation. [Current L3 amendment record](../../../docs/acts/act1/A1_L3_DIFFICULTY.md) governs this separate work. Runtime Full/Route/Codec and policy data remain unpromoted private drafts pending a useful actual native selection contrast. First old-writer CP2 transport passes exactbf79, but the bounded admission attempt is preserved100/1/incomplete; one supported-Hero-only setup/diagnostic retry is active. No source heading/clock/native guard/timing/camera change, broader route gate or human action. Root remains first help contact. Current actual shared adoption is66 at7ec0ed44; original evidence retains original revisions.
+
 ## Separate O2 authored-difficulty amendment — 15 October 2026
 
 The original eight-level Act1 desktop objective remains complete and accepted. Integration RESPONSE `43ff532e-cd38-4289-9d3f-15e91add9df7` separately scopes **A1-O2 final-mixed Challenge guard-first** plus one default admission-priority hook in the common Act1 Base. Existing checkout/branch/sole ownership and Shared64 runtime are retained. L3/L5/O1 remain proposals; Agent02 stays inactive. Integration remains first help contact.
