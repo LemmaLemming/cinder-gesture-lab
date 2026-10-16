@@ -1,3 +1,11 @@
+## L5 one source-only Challenge proposal —16 October 2026
+
+All five main levels and O1/O2/O3 remain accepted. Root separately accepted the exact L4 retained-exercise handoff at `eaff120e6d123af00835fdb2a37354f1d627987a`, canonical ACCEPTED `879651d2-f692-4205-8a19-943b76b47517`; ACK `3bee8e06-7af4-4b0f-9ab0-50b78274a63d`. Original failures, TEST/canonical distinctions and Shared73/74 evidence scopes remain unchanged. No rerun or documentation-only merge.
+
+L5 scope `01f8efcf`/ACK `7a2c3710` now has ONE source-only proposal: fresh Challenge would move only the complete plain Echo definition X−0.7→−3.0, retaining its own route length/timing/+Z slash, C50, both captured-action phases and firm floor/walls. The hypothesis is a different wall-relative safe landing and ordinary return, not a demonstrated improvement. `docs/acts/act3/A3_L5_DIFFICULTY_PROPOSAL.md` records each retained exercise's positive source purpose, exact source pins, literal old-attempt and future saved-construction requirements, and minimum future qualification/falsifiers.
+
+Four live read-only canonical equipment/ability queries closed exit0/empty stderr; four named canonical/owned design inputs unchanged. No claims, reservations, allocation, new runtime/art/recipe/Codec/descriptor/schema/fixture or engine work. Actual Shared74 adoption70f/9d9 remains; later Root documentation is not claimed adopted. State: PROPOSED, UNIMPLEMENTED, UNTESTED; stop at proposal submission for Integration review. Root first help; no human/full-route/all-kit/other-act/public-upload/mobile gate. Earlier dated entries below remain historical.
+
 ## L4 additional retained choice owner qualification complete —16 October2026
 
 Original five main+O1/O2/O3 and all24 campaign content remain accepted. The exact e5eb TEST-only L4 qualification is now complete for independent Integration review: compare3047/0 (three cases/1445 actual global ticks) atfb49/Shared73; held452/0 anddead815/0 at70f/Shared74; paused saved-dead portrait182/0 at0e88/Shared74. Ordinary full-HP target choices, actual autonomous Core/helper, genuine Save/freshContinue/opposite preference/clock0TESTRetry/no-respawn and normal cleanup pass. Production/RootPRIMARY unchanged. No new harderprofile/layout, ability/equipment allocation, lateMAIN or fullroute claim.
