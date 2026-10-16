@@ -1,5 +1,9 @@
 # Cinder shared progress
 
+## Crystalman trial withdrawal received —16 October 2026
+
+[The L5 trial closeout](ACT3_L5_DIFFICULTY_TRIAL_WITHDRAWN.md) is independently received at owner8cb1e883, with exact three-original runtime restoration and no new policy credit. All four original results remain53/9,64/1,14/0 and568/57. The wrong TEST ordinary-lease Hero-ID assertion and actual consumed C50 contact/12HP loss remain distinct; changed arm never executes and no safe paired response, equivalence or production cause is established. Full original logs, source banks and hash-only Variant trace remain. Root imports223 evidence/documents verbatim and preserves its previous three note bodies beneath the exact new owner chronology. No native rerun or ledger/runtime/API change follows; all24 originals and17 policies remain. L5 policy is still unfinished. Agent02 stays inactive and untouched; Integration remains first help contact.
+
 ## Binding-tail candidate withdrawn after focused measurement —16 October 2026
 
 [The binding-tail evaluation](RUNTIME_BINDING_TAIL_WITHDRAWN.md) closes with 81/0 per correctness cell and 113/0 per unchanged cost cell. Native observations match, but the single ordered timing pair shows no convincing overall benefit: automatic total −1.14%, p50 −2.73%, p95 +4.45%, wall +1.89% and admission +70.82%. Root withdraws candidate4b; exact original9aed and all123 source slots are restored under the canonical queue. Both pairs retain their original CA-only Host2/nonclean statuses. Source-only host-v1 custody blockers, the corrected v2 and original unexecuted renderer draft remain preserved. No passed suite repeats, runtime promotion or FPS/CPU/causal gain claim follows. Both engineering requests remain open.

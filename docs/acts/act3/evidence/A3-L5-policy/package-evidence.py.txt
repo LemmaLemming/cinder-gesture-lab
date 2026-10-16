@@ -1,0 +1,400 @@
+#!/usr/bin/env python3
+"""Bounded L5 policy evidence packaging, for Root to run after all jobs close.
+
+Never launches an engine, Git, tests, validators, or a native Variant decoder.
+Reads only four named run banks and their explicitly recorded source blobs.
+--check-only validates inputs without writes. Actual packaging also requires
+--all-jobs-closed. Existing output paths are never overwritten. A failed copy
+leaves its new partial folder for inspection; an index is written only last.
+"""
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import hashlib
+import json
+import os
+from pathlib import Path, PurePosixPath
+import re
+import shutil
+import stat
+
+
+WORKTREE = Path("/Users/howardchen/.codex/worktrees/campaign-act3/video game idea")
+RUN_ROOT = ".cinder/l5-policy-runs"
+TARGET = "docs/acts/act3/evidence/A3-L5-policy/native-originals"
+NAMES = ("format-01", "format-02", "legacy-03", "compare-01")
+FILES = ("command.json", "sources.json", "result.json", "native.log")
+SHA = re.compile(r"[0-9a-f]{64}\Z")
+HEAD = re.compile(r"[0-9a-f]{40}\Z")
+EXPECTED = {
+    "format-01": {
+        "head": "8ffa70518d9f77c3c10a65c2e944b930383a398a",
+        "exit": 1, "checks": 53, "failures": 9, "scope_complete": False,
+        "log": "e72012d2b5b3dbebd3b3ee1624abd3615a7a21b71490337ddbd578e9b090fdd9",
+    },
+    "format-02": {
+        "head": "732583ab007ad7b7e30454c1234831054558638f",
+        "exit": 1, "checks": 64, "failures": 1, "scope_complete": False,
+        "log": "01faf9a290970417633319433ef026d91500f4f4ae320e1bbe01c8fac69c2cc5",
+    },
+    "legacy-03": {
+        "head": "d062f080e1c1bc472f9f86a3a5edd23e124531d1",
+        "exit": 0, "checks": 14, "failures": 0, "scope_complete": True,
+        "log": "f6b7e4c0a333b94086eab819aed5e1f821665a2037117a49d5d1aff56a53e09a",
+    },
+}
+
+
+def require(ok, message):
+    if not ok:
+        raise ValueError(message)
+
+
+def integer(value):
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def relative(value):
+    require(isinstance(value, str) and value, "nonempty relative path required")
+    path = PurePosixPath(value)
+    require(not path.is_absolute() and ".." not in path.parts and ":" not in value
+            and path.as_posix() == value and value != ".", "unsafe path: " + value)
+    return path
+
+
+def inside(root, rel):
+    path = root.joinpath(*relative(rel).parts)
+    cursor = path
+    while cursor != root:
+        require(not cursor.is_symlink(), "symlink input/output refused: " + str(cursor))
+        cursor = cursor.parent
+    require(path.resolve().is_relative_to(root), "path escaped root: " + str(path))
+    return path
+
+
+def fingerprint(path):
+    before = path.lstat()
+    require(stat.S_ISREG(before.st_mode), "regular file required: " + str(path))
+    digest = hashlib.sha256()
+    length = 0
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+            length += len(chunk)
+    after = path.lstat()
+    fields = ("st_dev", "st_ino", "st_size", "st_mode", "st_mtime_ns")
+    require(all(getattr(before, key) == getattr(after, key) for key in fields)
+            and length == before.st_size, "file changed during read: " + str(path))
+    return {"sha256": digest.hexdigest(), "bytes": length,
+            "mode": format(stat.S_IMODE(before.st_mode), "04o"),
+            "full_mode": format(before.st_mode, "07o"),
+            "mtime_ns": before.st_mtime_ns}
+
+
+def read_json(path):
+    witness = fingerprint(path)
+    value = json.loads(path.read_text(encoding="utf-8"))
+    require(fingerprint(path) == witness, "JSON changed during parse: " + str(path))
+    return value, witness
+
+
+def summaries(path, prefix):
+    rows, errors, raw_lines = [], [], []
+    with path.open(encoding="utf-8", errors="strict") as handle:
+        for line in handle:
+            if not line.startswith(prefix + " "):
+                continue
+            line = line.rstrip("\r\n")
+            raw_lines.append(line)
+            try:
+                value = json.loads(line[len(prefix) + 1:])
+                require(isinstance(value, dict), "structured footer is not an object")
+                rows.append(value)
+            except (ValueError, json.JSONDecodeError) as error:
+                errors.append({"line": line, "error": str(error)})
+    return rows, errors, raw_lines
+
+
+def prepare(root):
+    artifacts = {}
+    joins = {}
+    runs = []
+    first_three_selected, first_three_original = set(), set()
+
+    def plan(source, portable, witness=None, origin=None):
+        witness = fingerprint(source) if witness is None else witness
+        relative(portable)
+        entry = artifacts.get(portable)
+        provenance = {"path": str(source), **witness}
+        if origin is not None:
+            provenance["source_context"] = origin
+        if entry is None:
+            artifacts[portable] = {"source": source, "witness": witness,
+                                   "origins": [provenance]}
+        else:
+            require(entry["witness"]["sha256"] == witness["sha256"]
+                    and entry["witness"]["bytes"] == witness["bytes"],
+                    "deduplication content mismatch: " + portable)
+            entry["origins"].append(provenance)
+        return witness
+
+    for name in NAMES:
+        bank = inside(root, RUN_ROOT + "/" + name)
+        require(bank.is_dir(), "named bank missing: " + str(bank))
+        objects, witnesses = {}, {}
+        for filename in FILES:
+            source = inside(bank, filename)
+            if filename.endswith(".json"):
+                objects[filename], witnesses[filename] = read_json(source)
+            else:
+                witnesses[filename] = fingerprint(source)
+            plan(source, f"runs/{name}/{filename}", witnesses[filename])
+        source_info = objects["sources.json"]
+        command = objects["command.json"]
+        result = objects["result.json"]
+        require(isinstance(source_info, dict) and isinstance(command, dict)
+                and isinstance(result, dict), "run records must be objects: " + name)
+        require(result.get("status") == "CLOSED" and isinstance(result.get("closed_at"), str)
+                and integer(result.get("actual_exit_code")), "run is not terminal: " + name)
+        head = source_info.get("head")
+        require(isinstance(head, str) and HEAD.fullmatch(head)
+                and command.get("source_head") == head and result.get("head_after") == head,
+                "original start/command/end HEAD drift: " + name)
+        require(source_info.get("shared_api") == "campaign-shared-74"
+                and source_info.get("actual_adopted_publication") == "9d9aebd025098c60bb87e41a4d9453b52f60266a",
+                "unexpected original Shared74 provenance: " + name)
+        require(result.get("selected_source_changes_during_run") == [],
+                "selected source drift: " + name)
+        require(isinstance(result.get("actual_new_uid_observations"), dict),
+                "missing actual UID observation receipt: " + name)
+        require(result.get("native_log_sha256") == witnesses["native.log"]["sha256"],
+                "original result/raw-log SHA mismatch: " + name)
+        require(isinstance(result.get("diagnostics"), list)
+                and isinstance(result.get("footers"), list), "original diagnostic/footer arrays missing")
+
+        prefix = "L5_CONSTRUCTOR_RESULT" if name in EXPECTED else "L5_COMPARE_RESULT"
+        parsed, parse_errors, raw_footers = summaries(inside(bank, "native.log"), prefix)
+        require(len(parsed) <= 1, "multiple final structured summaries need explicit review: " + name)
+        summary = parsed[0] if parsed else None
+        if name in EXPECTED:
+            expected = EXPECTED[name]
+            require(not parse_errors and summary is not None, "required original footer missing: " + name)
+            require(head == expected["head"] and result["actual_exit_code"] == expected["exit"]
+                    and witnesses["native.log"]["sha256"] == expected["log"]
+                    and summary.get("checks") == expected["checks"]
+                    and summary.get("failures") == expected["failures"]
+                    and summary.get("scope_complete") is expected["scope_complete"],
+                    "known original outcome was changed: " + name)
+            require(result["diagnostics"] == [] and result["actual_new_uid_observations"] == {},
+                    "known original diagnostic/UID outcome was changed: " + name)
+        elif summary is None:
+            require(result["actual_exit_code"] != 0 or bool(result["diagnostics"]),
+                    "comparison has no structured footer or actual partial failure")
+        if summary is not None:
+            require(integer(summary.get("checks")) and integer(summary.get("failures"))
+                    and summary["checks"] >= 0 and summary["failures"] >= 0,
+                    "summary must retain actual numeric counters: " + name)
+            require(all(line in result["footers"] for line in raw_footers),
+                    "structured footer/raw/result join mismatch: " + name)
+
+        selected = source_info.get("selected_sources")
+        original_record = source_info.get("original_sources")
+        require(isinstance(selected, dict) and selected, "selected source map missing: " + name)
+        require(isinstance(original_record, dict)
+                and isinstance(original_record.get("files"), list)
+                and len(original_record["files"]) == 29, "exact original29 namespace required")
+        original = {}
+        for row in original_record["files"]:
+            require(isinstance(row, dict), "invalid original source row")
+            rel, digest, size = row.get("path"), row.get("sha256"), row.get("bytes")
+            relative(rel)
+            require(rel not in original and isinstance(digest, str) and SHA.fullmatch(digest)
+                    and integer(size) and size >= 0, "duplicate/invalid original source row")
+            original[rel] = {"sha256": digest, "bytes": size}
+        joins[name] = {"selected": {}, "original": {}}
+        selected_hashes, original_hashes = set(), set()
+        for namespace, mapping in (("selected", selected), ("original", original)):
+            for rel, receipt in sorted(mapping.items()):
+                relative(rel)
+                digest = receipt if namespace == "selected" else receipt["sha256"]
+                require(isinstance(digest, str) and SHA.fullmatch(digest), "invalid source SHA: " + rel)
+                blob = inside(bank, "source-blobs/" + digest + ".bin")
+                observed = fingerprint(blob)
+                require(observed["sha256"] == digest, "source/blob SHA join failed: " + rel)
+                if namespace == "original":
+                    require(observed["bytes"] == receipt["bytes"], "original source/blob length mismatch")
+                    original_hashes.add(digest)
+                else:
+                    selected_hashes.add(digest)
+                portable = "source-blobs/" + digest + ".bin"
+                plan(blob, portable, observed, {"run": name, "namespace": namespace, "path": rel})
+                joins[name][namespace][rel] = {"sha256": digest, "bytes": observed["bytes"],
+                                               "portable_path": portable,
+                                               "origin_blob": str(blob),
+                                               "origin_mode": observed["full_mode"]}
+        if name in EXPECTED:
+            require(len(selected) == 169 and len(selected_hashes | original_hashes) == 176,
+                    "first-three frozen source counts changed: " + name)
+            first_three_selected.update(selected_hashes)
+            first_three_original.update(original_hashes)
+
+        binary = inside(bank, "native-results.var.bin")
+        report_path = inside(bank, "comparison-report.json")
+        fixture_output = result.get("fixture_output")
+        binary_receipt, report_receipt = None, None
+        descriptor_verified = False
+        retained_report = None
+        retained_report_error = None
+        if binary.exists() or report_path.exists() or fixture_output is not None:
+            require(name == "compare-01", "comparison output outside comparison bank")
+        if binary.exists():
+            witness = plan(binary, f"runs/{name}/native-results.var.bin")
+            binary_receipt = {"portable_path": f"runs/{name}/native-results.var.bin", **witness,
+                              "interpretation": "opaque original native Variant bytes; not decoded by packager"}
+        if report_path.exists():
+            report_witness = plan(report_path, f"runs/{name}/comparison-report.json")
+            report_receipt = {"portable_path": f"runs/{name}/comparison-report.json", **report_witness}
+            try:
+                retained_report, parsed_witness = read_json(report_path)
+                require(parsed_witness == report_witness, "retained report changed while parsing")
+            except (ValueError, json.JSONDecodeError) as error:
+                retained_report_error = str(error)
+        if fixture_output is not None:
+            require(isinstance(fixture_output, dict)
+                    and set(fixture_output) == {"original_path", "retained_path", "bytes", "sha256", "report"},
+                    "closed comparison output descriptor required")
+            require(fixture_output["retained_path"] == "native-results.var.bin"
+                    and fixture_output["report"] == "comparison-report.json"
+                    and integer(fixture_output["bytes"]) and fixture_output["bytes"] > 0
+                    and isinstance(fixture_output["sha256"], str)
+                    and SHA.fullmatch(fixture_output["sha256"]), "invalid comparison output descriptor")
+            require(binary_receipt is not None and report_receipt is not None,
+                    "declared retained comparison binary/report missing")
+            require(binary_receipt["bytes"] == fixture_output["bytes"]
+                    and binary_receipt["sha256"] == fixture_output["sha256"],
+                    "comparison descriptor/binary physical join mismatch")
+            original_path = fixture_output["original_path"]
+            require(isinstance(original_path, str) and Path(original_path).is_absolute()
+                    and Path(original_path).is_relative_to(root / "captures/act3/crystalman-plain-comparison")
+                    and Path(original_path).name == "native-results.var.bin"
+                    and ".." not in Path(original_path).parts, "comparison origin pointer escaped owned capture scope")
+            require(summary is not None and retained_report_error is None
+                    and isinstance(retained_report, dict), "retained report has no original structured footer join")
+            require(json.dumps(retained_report, sort_keys=True, allow_nan=False)
+                    == json.dumps(summary, sort_keys=True, allow_nan=False),
+                    "retained report differs from original footer JSON scalars")
+            source_reference = summary.get("native_result_path")
+            require(isinstance(source_reference, str) and source_reference.startswith("res://captures/act3/crystalman-plain-comparison/")
+                    and str(root / relative(source_reference.removeprefix("res://"))) == original_path,
+                    "footer/result original native path join mismatch")
+            descriptor_verified = True
+        elif binary_receipt is not None or report_receipt is not None:
+            # A real I/O/parse failure can leave an original partial file before
+            # the wrapper commits its descriptor. Preserve it literally with
+            # explicit absent-descriptor qualification, never invent a result.
+            require(result["actual_exit_code"] != 0 or bool(result["diagnostics"]),
+                    "orphaned comparison output lacks an actual partial failure")
+        classification = (
+            "closed_original_failed_incomplete" if name in ("format-01", "format-02") else
+            "closed_legacy_only_format_preflight_pass" if name == "legacy-03" else
+            "closed_comparison_structured_original" if summary is not None else
+            "closed_comparison_actual_partial_failure_no_structured_summary")
+        runs.append({"name": name, "original_directory": str(bank), "head": head,
+                     "api_revision": source_info["shared_api"], "classification": classification,
+                     "actual_exit_code": result["actual_exit_code"],
+                     "diagnostics": result["diagnostics"],
+                     "actual_new_uid_observations": result["actual_new_uid_observations"],
+                     "closed_at": result["closed_at"], "command": command,
+                     "actual_structured_summary": summary, "structured_footer_parse_errors": parse_errors,
+                     "original_structured_footer_lines": raw_footers,
+                     "fixture_output_original": fixture_output,
+                     "fixture_output_descriptor_verified": descriptor_verified,
+                     "retained_native_binary": binary_receipt,
+                     "retained_comparison_report": report_receipt,
+                     "retained_report_parse_error": retained_report_error,
+                     "selected_source_count": len(selected), "original_source_count": len(original),
+                     "unique_combined_source_count": len(selected_hashes | original_hashes)})
+    require(len(first_three_selected) == 172 and len(first_three_original) == 29
+            and len(first_three_selected & first_three_original) == 22
+            and len(first_three_selected | first_three_original) == 179,
+            "first-three selected+original179 dedup cohort changed")
+    return artifacts, joins, runs
+
+
+def write_new(path, data, mode=0o644):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("xb") as handle:
+        handle.write(data)
+    os.chmod(path, mode)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--worktree", type=Path, default=WORKTREE)
+    parser.add_argument("--check-only", action="store_true")
+    parser.add_argument("--all-jobs-closed", action="store_true")
+    args = parser.parse_args()
+    root = args.worktree.resolve(strict=True)
+    require(root == WORKTREE.resolve(strict=True), "only the registered Act3 checkout is authorized")
+    artifacts, joins, runs = prepare(root)
+    target = inside(root, TARGET)
+    require(not target.exists(), "refuse existing target: " + str(target))
+    if args.check_only:
+        print(json.dumps({"status": "INPUTS_VALIDATED_NO_WRITES", "target": str(target),
+                          "runs": list(NAMES), "deduplicated_source_blob_count":
+                          sum(path.startswith("source-blobs/") for path in artifacts),
+                          "planned_original_artifacts": len(artifacts)}, indent=2))
+        return
+    require(args.all_jobs_closed, "Root must assert --all-jobs-closed before packaging")
+    # All input/status/join checks precede any target creation. No copyback into
+    # runtime paths and no overwrite of a pre-existing folder/file is possible.
+    target.mkdir(parents=True, exist_ok=False)
+    copied = []
+    for portable, item in sorted(artifacts.items()):
+        source, expected = item["source"], item["witness"]
+        require(fingerprint(source) == expected, "input changed before copy: " + str(source))
+        destination = inside(target, portable)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        with source.open("rb") as src, destination.open("xb") as dst:
+            shutil.copyfileobj(src, dst, length=1024 * 1024)
+        shutil.copystat(source, destination, follow_symlinks=False)
+        require(fingerprint(source) == expected and fingerprint(destination) == expected,
+                "copy custody mismatch: " + portable)
+        copied.append({"path": portable, **expected, "origins": item["origins"]})
+    ignore = b"# Frozen L5 evidence; source originals stay opaque .bin files.\n"
+    write_new(target / ".gdignore", ignore)
+    copied.append({"path": ".gdignore", **fingerprint(target / ".gdignore"),
+                   "origins": [{"kind": "generated packager metadata; no native credit"}]})
+    index = {
+        "schema_version": 1, "kind": "bounded-l5-policy-source-custody-index",
+        "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "scope": "Four named CLOSED originals; failed outcomes and comparison result remain literal. No acceptance inference.",
+        "first_three_dedup": {"selected_union": 172, "original_union": 29,
+                              "overlap": 22, "combined_union": 179},
+        "deduplicated_source_blob_count": sum(path.startswith("source-blobs/") for path in artifacts),
+        "artifact_count_excluding_index_and_hash": len(copied),
+        "artifact_bytes_excluding_index_and_hash": sum(row["bytes"] for row in copied),
+        "runs": runs, "source_joins": joins, "artifacts": copied,
+        "limitations": [
+            "format-01 and format-02 remain failed/incomplete original runs; qualified passing subscopes may be explained separately.",
+            "legacy-03 is only known Standard archive format/pure constructor preflight, with no new native legacy writer/transport credit.",
+            "Original29 includes copied historical Shared57 archive bytes; these retain their earlier provenance and limitations.",
+            "Comparison counters/outcome are only the actual structured footer, or null for an observed partial failure. No invented completion, novelty or acceptance.",
+            "No new engine run, source repair, runtime copyback, all-route claim or broad bank/UID census is performed by packaging.",
+        ],
+    }
+    index_path = target / "source-custody-index.json"
+    write_new(index_path, (json.dumps(index, indent=2, sort_keys=True) + "\n").encode())
+    receipt = fingerprint(index_path)
+    hash_path = target / "source-custody-index.sha256"
+    write_new(hash_path, (receipt["sha256"] + "  source-custody-index.json\n").encode())
+    print(json.dumps({"status": "PACKAGED", "directory": str(target),
+                      "index": str(index_path), "index_sha256": receipt["sha256"],
+                      "index_hash_file": str(hash_path),
+                      "file_count": len(copied) + 2,
+                      "readme_notes_git_engine_actions": "Root handles separately; none performed"}, indent=2))
+
+
+if __name__ == "__main__":
+    main()

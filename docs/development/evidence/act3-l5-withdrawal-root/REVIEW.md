@@ -1,0 +1,15 @@
+# Act3 L5 evidence withdrawal: bounded independent review
+
+The owner closeout at `8cb1e883d52e3d1988162c3de5f544016bac9b39` has no concrete restoration, custody or source-diagnosis blocker in the reviewed scope. This is evidence withdrawal review only; no new policy or gameplay acceptance follows.
+
+`REVIEW.json` pins canonical HANDOFF `db8e0eb3-cd48-499a-b426-9265cb8973fb`, the exact README/CLOSEOUT/index/audit, all226 final selected Git/physical/mode paths (225 at the parent plus the final audit), and all29 named originals against their physical original copies and baseline/current Git. The three candidate runtime files are restored byte-identically to `6b7dc9f712d4ed5bb796392aa3bd150c1d0a4bcc`, mode0644. Both candidate test paths and UID siblings are absent; the inert archives retain exact source-Git bytes. All three notes retain the two620/2281-byte prefix layers and their exact earlier bodies. The README's14 relative targets exist.
+
+All207 packet files verify, including205 indexed artifacts and186 deduplicated source blobs. All797 selected/original source joins and815 physical artifact-origin joins verify against exact original bytes, sizes and modes. There are816 provenance entries total: the remaining entry explicitly identifies generated `.gdignore` metadata rather than a physical native original. Selected and historical-original namespaces remain separate.
+
+The literal four CLOSED source/command/result/log joins remain53/9 exit1,64/1 exit1, legacy-only14/0 exit0 and568/57 exit1. `SOURCE_SUBSCOPES.json` independently checks actual format02 key-type and nine rejection-custody witnesses, quiet restoration rows and the legacy-only scope. These are qualified subscopes, not a summed passing result.
+
+The frozen fixture wrongly demands replay-only `response_actor_instance_id` from ordinary Scheduler leases. The ordinary constructor/commit/public-record source lacks that field; the inner discovery/tick loop continues after a failed assertion. Actual raw log counts55 identity failures, one real consumed C50 contact with12HP loss at6.6s and one incomplete-case failure, with zero SCRIPT ERROR lines. The changed arm did not execute; neither case completed. Other conjunction operands were not individually printed and are not inferred true. No paired safety, equivalence, placement benefit or production-cause result follows. The12,907,720-byte Variant binary was hashed only and was not decoded.
+
+The five currently untracked previews were observed by exact name/hash/size/mode and left untouched. The owner's historical unchanged claim remains owner-qualified until an exact earlier baseline receipt is supplied; this is no engine/runtime/policy dependency. No worker contact or writes, Agent02 access, engine/import/native job, source repair, Git mutation or new trial occurred.
+
+`HOST_SCHEMA_NOTE.json` preserves the reviewer's two preliminary schema/count stops; neither was an engine/evidence failure. Final exact counting confirms the owner's815 physical-origin claim.
