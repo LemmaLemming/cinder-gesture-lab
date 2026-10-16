@@ -1,0 +1,110 @@
+--- .cinder/l5-presentation-forecast-repair-20261016/a1_l5_forecast_publication.report-safe.gd.txt
++++ .cinder/l5-presentation-forecast-repair-20261016/a1_l5_forecast_publication.user-store-v2.gd.txt
+@@ -12,6 +12,8 @@
+ var report_rows: Array[Dictionary] = []
+ var regression_receipts: Dictionary = {}
+ var completed: bool = false
++var owned_store_created: bool = false
++var native_world_created: bool = false
+ 
+ func _run() -> void:
+ 	root.size = Vector2i(540,1170)
+@@ -19,8 +21,10 @@
+ 	if not _expect(OS.get_cmdline_user_args() == PackedStringArray(["--forecast-publication"]),"one bounded forecast-publication selector"): await _finish(); return
+ 	if not _expect(report_path.is_absolute_path() and not FileAccess.file_exists(report_path),"fresh absolute Root phase report"): await _finish(); return
+ 	if not _expect(FileAccess.get_sha256("res://scripts/acts/act1/living_moon.gd") == CandidateSha and FileAccess.get_sha256(PacketPath) == PacketSha,"exact candidate and unchanged historical119 packet"): await _finish(); return
+-	test_root = report_path.get_base_dir()+"/native-store/"
+-	if not _expect(not DirAccess.dir_exists_absolute(test_root) and DirAccess.make_dir_recursive_absolute(test_root) == OK,"fresh isolated native Store directory"): await _finish(); return
++	test_root = "user://test-act1-l5-forecast-%d-%d/" % [OS.get_process_id(),Time.get_ticks_usec()]
++	var actual_store_dir: String = ProjectSettings.globalize_path(test_root)
++	if not _expect(not DirAccess.dir_exists_absolute(actual_store_dir) and DirAccess.make_dir_recursive_absolute(actual_store_dir) == OK,"fresh isolated owned user Store directory"): await _finish(); return
++	owned_store_created = true
+ 	registry_bytes = FileAccess.get_file_as_bytes(Registry.DATA_PATH)
+ 	var registry_doc: Variant = JSON.parse_string(registry_bytes.get_string_from_utf8())
+ 	if not _expect(registry_doc is Dictionary,"actual canonical Registry metadata"): await _finish(); return
+@@ -29,6 +33,7 @@
+ 	if not _expect(registry.last_error.is_empty(),"unchanged canonical accepted Registry"): await _finish(); return
+ 	if not await _restore_original(registry): await _finish(); return
+ 	selected_moon = game.active_level
++	native_world_created = is_instance_valid(selected_moon)
+ 	var before: PackedByteArray = var_to_bytes(_native_data())
+ 	if not _expect(before.size() > 0 and selected_moon.get("blink").state().status == "running" and selected_moon.get("nose").state().cycle == 0 and selected_moon.get("_forecast").is_empty() and game.camera_framing_error(selected_moon.camera_framing_points()).is_empty(),"genuine paused live Blink and contained committed view before synthetic proposal inputs"): await _finish(); return
+ 	if not _write_witness("native-before.var",before): await _finish(); return
+@@ -52,7 +57,14 @@
+ 	payload.story = {"kind":"story","level_id":Layout.LEVEL_ID,"snapshot":decoded.value.duplicate(true),"checkpoint":checkpoint.value.duplicate(true)}
+ 	var store := Store.new(test_root+"campaign.json")
+ 	store.payload_validator = model.saved_payload_error
+-	if not _expect(model.state_error(payload).is_empty() and store.write_payload(payload),"isolated Store accepts unchanged genuine saved unit plus disclosed TEST predecessors"): return false
++	var model_error: String = model.state_error(payload)
++	var written: bool = store.write_payload(payload) if model_error.is_empty() else false
++	var store_detail: String = "model_error="+model_error+"; Store.last_error="+store.last_error
++	regression_receipts["store_setup"] = {"model_error":model_error,"store_last_error":store.last_error,"written":written,"owned_user_path":test_root}
++	if not _expect(model_error.is_empty() and written,"isolated Store accepts unchanged genuine saved unit plus disclosed TEST predecessors"):
++		report_rows.back()["detail"] = store_detail
++		first_failure["detail"] = store_detail
++		return false
+ 	game = _new_shell()
+ 	if game == null or not await _settle(): return false
+ 	if not _expect(paused and game.active_level == null and game.menu.page_name() == "title","actual fresh paused Title"): return false
+@@ -173,6 +185,37 @@
+ 		return result
+ 	return value
+ 
++func _retain_owned_store() -> bool:
++	if not owned_store_created:
++		regression_receipts["owned_store_files"] = {"created":false,"files":[]}
++		return true
++	var directory := DirAccess.open(test_root)
++	if not _expect(directory != null,"unique owned user Store directory remains available before cleanup"): return false
++	var names: PackedStringArray = directory.get_files()
++	if not _expect(names.size() <= 16 and directory.get_directories().is_empty(),"bounded unique owned Store contains only its native files"): return false
++	var captured: Array[Dictionary] = []
++	var destination: String = report_path.get_base_dir()+"/native-store/"
++	if not _expect(not DirAccess.dir_exists_absolute(destination) and DirAccess.make_dir_recursive_absolute(destination) == OK,"fresh phase native Store artifact directory"): return false
++	for name: String in names:
++		var original: String = test_root+name
++		var retained: String = destination+name
++		var bytes: PackedByteArray = FileAccess.get_file_as_bytes(original)
++		var file: FileAccess = FileAccess.open(retained,FileAccess.WRITE)
++		if not _expect(file != null,"original owned native Store artifact opens: "+name): return false
++		file.store_buffer(bytes); file.close()
++		if not _expect(FileAccess.get_file_as_bytes(retained) == bytes and FileAccess.get_sha256(original) == FileAccess.get_sha256(retained),"original owned native Store bytes/SHA retained: "+name): return false
++		captured.append({"name":name,"original_user_path":original,"original_absolute_path":ProjectSettings.globalize_path(original),"retained_path":retained,"bytes":bytes.size(),"sha256":FileAccess.get_sha256(retained)})
++	regression_receipts["owned_store_files"] = {"created":true,"owned_user_path":test_root,"files":captured}
++	return true
++
++func _cleanup_owned_store() -> bool:
++	if not owned_store_created: return true
++	var directory := DirAccess.open(test_root)
++	if not _expect(directory != null and directory.get_directories().is_empty(),"owned Store has no foreign nested cleanup scope"): return false
++	for name: String in directory.get_files():
++		if not _expect(DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root+name)) == OK,"remove only original unique owned Store file: "+name): return false
++	return _expect(DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root)) == OK and not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(test_root)),"unique owned user Store directory retired after artifact custody")
++
+ func _finish() -> void:
+ 	if finishing: return
+ 	finishing = true; paused = true
+@@ -181,7 +224,13 @@
+ 	game = null; selected_moon = null
+ 	paused = false
+ 	await process_frame
+-	_expect(_freed(refs) and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(),"normal saved native Shell/source/cue disposal releases observed descendants/groups")
++	_expect((refs.is_empty() or _freed(refs)) and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(),"normal owned Shell/source/cue disposal or pre-Shell setup refusal leaves no retained descendants/groups")
++	if completed: _expect(native_world_created and not refs.is_empty() and _freed(refs),"completed regression created and normally retired its actual native world")
++	var store_retained: bool = _retain_owned_store()
++	if not store_retained:
++		completed = false
++		regression_receipts["owned_store_cleanup"] = "Skipped after retention failure; unique original owned files preserved for diagnostic recovery"
++	elif not _cleanup_owned_store(): completed = false
+ 	if not registry_bytes.is_empty(): _expect(FileAccess.get_file_as_bytes(Registry.DATA_PATH) == registry_bytes,"canonical Registry remains unchanged")
+ 	Engine.max_fps = old_fps; AudioServer.set_bus_layout(old_audio)
+ 	if node_added.is_connected(_observe_added): node_added.disconnect(_observe_added)
+@@ -191,7 +240,7 @@
+ 	var report_file: FileAccess = null
+ 	if report_path.is_absolute_path() and not FileAccess.file_exists(report_path): report_file = FileAccess.open(report_path,FileAccess.WRITE)
+ 	if not _expect(report_file != null,"fresh closed native regression report opens"): completed = false
+-	var packet: Dictionary = {"kind":"a1-l5-forecast-publication-regression-1","checks":checks,"failures":failures,"complete":completed,"success":completed and failures == 0,"rows":report_rows,"first_failure":first_failure,"receipts":regression_receipts,"candidate_sha256":CandidateSha,"historical_packet_sha256":PacketSha,"scope":"Paused genuine119 native world with disclosed TEST prefix and explicit synthetic proposal inputs. Tests publication rollback/feasible preframe/invalid-preview cleanup only. No source start, guard override, altered clock/HP/pose/lens, new gameplay proof/route/final-response/GUI/Retry/all-kit credit. Native Store and original typed witnesses remain in this Root phase."}
++	var packet: Dictionary = {"kind":"a1-l5-forecast-publication-regression-1","checks":checks,"failures":failures,"complete":completed,"success":completed and failures == 0,"rows":report_rows,"first_failure":first_failure,"receipts":regression_receipts,"candidate_sha256":CandidateSha,"historical_packet_sha256":PacketSha,"scope":"Paused genuine119 native world with disclosed TEST prefix and explicit synthetic proposal inputs. Tests publication rollback/feasible preframe/invalid-preview cleanup only. No source start, guard override, altered clock/HP/pose/lens, new gameplay proof/route/final-response/GUI/Retry/all-kit credit. Original owned user Store bytes are captured byte-exact in this Root phase before unique owned cleanup; original typed witnesses remain here."}
+ 	if report_file != null:
+ 		report_file.store_string(JSON.stringify(_encode(packet),"",true,true)+"\n"); report_file.close()
+ 	print("CINDER_A1_L5_FORECAST_REPORT=",report_path," sha256=",FileAccess.get_sha256(report_path) if FileAccess.file_exists(report_path) else "")

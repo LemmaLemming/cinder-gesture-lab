@@ -1,0 +1,124 @@
+extends "res://tests/act1_l5_forecast_publication.gd"
+## INERT Root portrait-only leaf over corrected original119 restore helpers.
+## One declared TEST hard-preflight rejection/rollback, then one paused capture.
+## No soft/invalid matrix, new native preview/proof/source start, gameplay route,
+## attack response, Resume, cancellation-cause or graphical combat claim.
+var portrait_ui_hidden: bool = false
+var portrait_menu_visible: bool = false
+var portrait_shade_visible: bool = false
+var portrait_shade: Control
+
+func _run() -> void:
+	root.size = Vector2i(540,1170)
+	root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	report_path = OS.get_environment("CINDER_A1_L5_FORECAST_PORTRAIT_REPORT")
+	if not _expect(OS.get_cmdline_user_args() == PackedStringArray(["--forecast-rollback-portrait"]),"one bounded rollback portrait selector"): await _finish(); return
+	if not _expect(DisplayServer.get_name() != "headless" and report_path.is_absolute_path() and not FileAccess.file_exists(report_path),"actual graphical renderer and fresh absolute portrait report"): await _finish(); return
+	if not _expect(FileAccess.get_sha256("res://scripts/acts/act1/living_moon.gd") == CandidateSha and FileAccess.get_sha256(PacketPath) == PacketSha,"exact repaired host and literal unchanged historical119 saved unit"): await _finish(); return
+	test_root = "user://test-act1-l5-forecast-portrait-%d-%d/" % [OS.get_process_id(),Time.get_ticks_usec()]
+	var store_dir: String = ProjectSettings.globalize_path(test_root)
+	if not _expect(not DirAccess.dir_exists_absolute(store_dir) and DirAccess.make_dir_recursive_absolute(store_dir) == OK,"fresh unique supported owned user Store directory"): await _finish(); return
+	owned_store_created = true
+	registry_bytes = FileAccess.get_file_as_bytes(Registry.DATA_PATH)
+	var registry_doc: Variant = JSON.parse_string(registry_bytes.get_string_from_utf8())
+	if not _expect(registry_doc is Dictionary,"actual canonical Registry metadata for paused portrait"): await _finish(); return
+	raw = registry_doc.duplicate(true)
+	var registry := Registry.new(raw)
+	if not _expect(registry.last_error.is_empty(),"unchanged accepted canonical Registry"): await _finish(); return
+	if not await _restore_original(registry): await _finish(); return
+	selected_moon = game.active_level
+	native_world_created = is_instance_valid(selected_moon)
+	var before: PackedByteArray = var_to_bytes(_native_data())
+	if not _expect(paused and before.size() > 0 and selected_moon.get("blink").state().status == "running" and selected_moon.get("nose").state().cycle == 0 and selected_moon.get("_forecast").is_empty() and game.camera_framing_error(selected_moon.camera_framing_points()).is_empty(),"genuine paused live Blink and contained committed view before sole synthetic hard proposal"): await _finish(); return
+	if not _write_witness("native-before.var",before): await _finish(); return
+	operation = "portrait-only declared TEST hard rejection and real default-camera apply"
+	if not _hard_rejection(before): await _finish(); return
+	operation = "one paused actual portrait after rollback; no source start"
+	if not await _rollback_portrait(before): await _finish(); return
+	completed = true
+	await _finish()
+
+func _rollback_portrait(native_before: PackedByteArray) -> bool:
+	portrait_shade = game.hud.get("_shade") as Control
+	if not _expect(paused and is_instance_valid(portrait_shade) and game.hud.visible,"actual HUD and bench overlay exist before visibility-only portrait preparation"): return false
+	portrait_menu_visible = game.menu.visible
+	portrait_shade_visible = portrait_shade.visible
+	portrait_ui_hidden = true
+	game.menu.visible = false
+	portrait_shade.visible = false
+	var before: Dictionary = _rollback_portrait_packet()
+	var before_wire: PackedByteArray = var_to_bytes(before)
+	var native: Dictionary = before.native
+	if not _expect(paused and not native.hero.is_empty() and not native.blink.is_empty() and not native.nose.is_empty() and not native.eye_control.is_empty() and not native.nose_control.is_empty() and not before.whole.is_empty() and before.render.size() > 0 and not before.input.is_empty() and before.viewport == [540,1170] and var_to_bytes(native) == native_before,"nonempty actual whole/native/Player/input/optics/render witnesses precede paused draw; visibility-only preparation preserves original native state"): return false
+	var points: Array = selected_moon.camera_framing_points()
+	var error: String = game.camera_framing_error(points)
+	if not _expect(selected_moon.get("_forecast").is_empty() and selected_moon.get("_pending_start").is_empty() and not points.is_empty() and error.is_empty(),"rollback publishes only contained committed native points at portrait boundary: "+error): return false
+	if not _write_witness("portrait-before.var",before_wire): return false
+	await RenderingServer.frame_post_draw
+	var image: Image = root.get_texture().get_image()
+	var image_path: String = report_path.get_base_dir()+"/rollback-committed.png"
+	if not _expect(image != null and image.get_size() == Vector2i(540,1170) and not FileAccess.file_exists(image_path) and image.save_png(image_path) == OK,"one real 540x1170 paused rollback/committed-view PNG"): return false
+	var after: Dictionary = _rollback_portrait_packet()
+	var after_wire: PackedByteArray = var_to_bytes(after)
+	if not _write_witness("portrait-after.var",after_wire): return false
+	if not _expect(before_wire.size() > 0 and before_wire == after_wire and paused and selected_moon.get("_forecast").is_empty() and selected_moon.get("_pending_start").is_empty() and game.camera_framing_error(points).is_empty(),"actual draw exactly preserves typed native/whole/input/optics/render state and contained default committed view"): return false
+	regression_receipts["portrait"] = {"image_path":image_path,"image_sha256":FileAccess.get_sha256(image_path),"before":before,"after":after,"typed_before_path":report_path.get_base_dir()+"/portrait-before.var","typed_after_path":report_path.get_base_dir()+"/portrait-after.var","typed_before_sha256":FileAccess.get_sha256(report_path.get_base_dir()+"/portrait-before.var"),"typed_after_sha256":FileAccess.get_sha256(report_path.get_base_dir()+"/portrait-after.var"),"points":points,"camera_error":error,"scope":"One paused actual portrait after declared TEST hard preflight rollback; actual source/cues/Hero/HUD/floor left visible. Personal inspection pending. No graphical response, soft/invalid matrix, source start, native proof or historical cancellation-cause claim."}
+	if not _restore_portrait_ui(): return false
+	return _expect(var_to_bytes(_native_data()) == native_before,"restored menu/bench visibility preserves original native Player/input/leases/progress")
+
+func _rollback_portrait_packet() -> Dictionary:
+	var camera: Camera3D = game.camera
+	var render: Array[Dictionary] = []
+	_rollback_render_witness(selected_moon,render)
+	_rollback_render_witness(game.player,render)
+	_rollback_render_witness(game.fx,render)
+	return {"native":_native_data(),"whole":game.capture_campaign_snapshot(),"input":game.get_input_observation_state(),"anchor":game.get_aim_anchor_normalized(),"camera":{"basis":camera.global_basis,"origin":camera.global_position,"size":camera.size,"projection":camera.projection,"current":camera.current,"near":camera.near,"far":camera.far},"hud_safe_rect":game.hud.combat_safe_rect(),"viewport":[root.size.x,root.size.y],"render":render}
+
+func _rollback_render_witness(node: Node,output: Array[Dictionary]) -> void:
+	# Same passive native render witness fields as the accepted A2-L1 portrait.
+	if node is MeshInstance3D:
+		var mesh: MeshInstance3D = node as MeshInstance3D
+		output.append({"path":str(game.get_path_to(mesh)),"id_decimal":str(mesh.get_instance_id()),"basis":mesh.global_basis,"origin":mesh.global_position,"visible":mesh.visible,"visible_in_tree":mesh.is_visible_in_tree(),"mesh_id_decimal":str(mesh.mesh.get_instance_id()) if is_instance_valid(mesh.mesh) else "","material_id_decimal":str(mesh.material_override.get_instance_id()) if is_instance_valid(mesh.material_override) else ""})
+	elif node is Sprite3D:
+		var sprite: Sprite3D = node as Sprite3D
+		output.append({"path":str(game.get_path_to(sprite)),"id_decimal":str(sprite.get_instance_id()),"basis":sprite.global_basis,"origin":sprite.global_position,"visible":sprite.visible,"visible_in_tree":sprite.is_visible_in_tree(),"texture_id_decimal":str(sprite.texture.get_instance_id()) if is_instance_valid(sprite.texture) else "","pixel_size":sprite.pixel_size,"frame":sprite.frame,"offset":sprite.offset,"modulate":[sprite.modulate.r,sprite.modulate.g,sprite.modulate.b,sprite.modulate.a]})
+	for child: Node in node.get_children(): _rollback_render_witness(child,output)
+
+func _restore_portrait_ui() -> bool:
+	if not portrait_ui_hidden: return true
+	if not is_instance_valid(game) or not is_instance_valid(portrait_shade): return _expect(false,"original portrait UI remains available for restoration")
+	game.menu.visible = portrait_menu_visible
+	portrait_shade.visible = portrait_shade_visible
+	portrait_ui_hidden = false
+	regression_receipts["portrait_ui_visibility"] = {"original_menu_visible":portrait_menu_visible,"original_bench_shade_visible":portrait_shade_visible,"restored_menu_visible":game.menu.visible,"restored_bench_shade_visible":portrait_shade.visible,"actor_or_cue_visibility_changed_by_fixture":false}
+	return _expect(game.menu.visible == portrait_menu_visible and portrait_shade.visible == portrait_shade_visible,"restore exact original menu/bench-overlay visibility after portrait; no actor/cue visibility change")
+
+func _finish() -> void:
+	if finishing: return
+	_restore_portrait_ui()
+	finishing = true; paused = true
+	var refs: Array[WeakRef] = []
+	if is_instance_valid(game): refs.append_array(_refs(game)); game.free()
+	game = null; selected_moon = null; portrait_shade = null
+	paused = false
+	await process_frame
+	_expect((refs.is_empty() or _freed(refs)) and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(),"normal portrait Shell/source/cue disposal or pre-Shell refusal leaves no descendants/groups")
+	if completed: _expect(native_world_created and not refs.is_empty() and _freed(refs),"completed portrait created and normally retired its actual native world")
+	var retained: bool = _retain_owned_store()
+	if not retained:
+		completed = false
+		regression_receipts["owned_store_cleanup"] = "Skipped after retention failure; unique original owned files preserved for diagnostics"
+	elif not _cleanup_owned_store(): completed = false
+	if not registry_bytes.is_empty(): _expect(FileAccess.get_file_as_bytes(Registry.DATA_PATH) == registry_bytes,"canonical Registry remains unchanged by portrait leaf")
+	Engine.max_fps = old_fps; AudioServer.set_bus_layout(old_audio)
+	if node_added.is_connected(_observe_added): node_added.disconnect(_observe_added)
+	if process_frame.is_connected(_watchdog): process_frame.disconnect(_watchdog)
+	var file: FileAccess = null
+	if report_path.is_absolute_path() and not FileAccess.file_exists(report_path): file = FileAccess.open(report_path,FileAccess.WRITE)
+	if not _expect(file != null,"fresh actual native portrait report opens without overwrite"): completed = false
+	var packet: Dictionary = {"kind":"a1-l5-forecast-rollback-portrait-1","checks":checks,"failures":failures,"complete":completed,"success":completed and failures == 0,"rows":report_rows,"first_failure":first_failure,"receipts":regression_receipts,"candidate_sha256":CandidateSha,"historical_packet_sha256":PacketSha,"scope":"One brief actual paused540x1170 portrait after genuine119 public Continue and declared TEST hard-preflight rollback/default committed framing. No passed soft/invalid matrix replay, source start, new native proof, gameplay response/route, GUI, historical cancellation cause, balance or mobile claim. Native/input/optics/render typed witnesses and real PNG retained; original owned user Store bytes copied before scoped cleanup; menu/bench visibility and FPS/audio restored."}
+	if file != null: file.store_string(JSON.stringify(_encode(packet),"",true,true)+"\n"); file.close()
+	print("CINDER_A1_L5_FORECAST_PORTRAIT_REPORT=",report_path," sha256=",FileAccess.get_sha256(report_path) if FileAccess.file_exists(report_path) else "")
+	print("A1-L5 FORECAST PORTRAIT: %d checks, %d failures; complete=%s" % [checks,failures,str(completed)])
+	quit(0 if completed and failures == 0 else 2)
