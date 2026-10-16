@@ -331,7 +331,8 @@ func _p3_finish() -> void:
 	_p3_done = true
 	var prior_clock: float = _scheduler.get_clock() if is_instance_valid(_scheduler) else -1.0
 	var actor_clock: float = _hero.get_world_action_clock() if is_instance_valid(_hero) else -1.0
-	var actions: Array[Dictionary] = _hero.get_world_action_records() if is_instance_valid(_hero) else []
+	var actions: Array[Dictionary] = []
+	if is_instance_valid(_hero): actions.assign(_hero.get_world_action_records())
 	var resources: Dictionary = {"hp":_hero.hp,"shells":_hero.shells,"dead":_hero.dead} if is_instance_valid(_hero) else {}
 	var owners: Dictionary = _level.call("scheduler_bindings").owners if is_instance_valid(_level) else {}
 	_detach_quiet_observers() # Only fixture callbacks; native callbacks remain.
@@ -342,7 +343,9 @@ func _p3_finish() -> void:
 			var control: Dictionary = _scheduler.source_control_state(owner)
 			released = released and not control.is_empty() and control.get("outside_transaction",false) and control.get("reservations",[]).is_empty() and control.clock_s == prior_clock
 		_expect(released,"supported inside-tree producer exit releases held owners without resetting clocks/actions/resources")
-	await _dispose_host(false) # Historical helper's native WeakRefs/group checks.
+	# Transport selectors already retire whole hosts with _p3t_close; the
+	# inherited helper assumes a live Hero and is unnecessary after that.
+	if is_instance_valid(_game): await _dispose_host(false)
 	await _p3_dispose_preview()
 	if node_added.is_connected(_watch_new_node): node_added.disconnect(_watch_new_node)
 	_expect(_canonical_registry_bytes.is_empty() or FileAccess.get_file_as_string(ProductionRegistry.DATA_PATH) == _canonical_registry_bytes,"canonical Registry bytes remain exact")
@@ -654,13 +657,14 @@ func _p3t_ids() -> Dictionary:
 	var level: CinderLevel = _shell.active_level
 	var scheduler: Node = level.get("threat_scheduler") as Node
 	var bindings: Dictionary = level.call("scheduler_bindings")
-	var floor: Node = bindings.floors["firm-shore"] as Node
+	var floor: Node = (bindings.floors["firm-shore"] as Dictionary).collision as Node
 	var ids: Dictionary = {"world":_shell.world.get_instance_id(),"world3d":_shell.world.get_world_3d().get_instance_id(),"level":level.get_instance_id(),"hero":_shell.player.get_instance_id(),"scheduler":scheduler.get_instance_id(),"camera":_shell.camera.get_instance_id(),"floor":floor.get_instance_id()}
 	for id: String in (level.get("sources") as Dictionary): ids[id] = ((level.get("sources") as Dictionary)[id] as Node).get_instance_id()
 	return ids
 
 func _p3t_distinct(previous: Dictionary) -> bool:
 	var actual: Dictionary = _p3t_ids()
+	if not _expect(not previous.is_empty() and not actual.is_empty(),"real complete donor and recipient native identity maps are required"): return false
 	for key: String in previous:
 		if not _expect(actual.has(key) and actual[key] != previous[key],"fresh native recipient identity differs: "+key): return false
 	return true
@@ -690,8 +694,9 @@ func _p3t_retry(checkpoint: Dictionary, before_session: Dictionary, legacy: bool
 func _p3t_quiet(unit: Dictionary, session: Dictionary) -> bool:
 	if not _expect(_quiet_events.is_empty(),"fresh native construction/quiet restore emits no gameplay callbacks",str(_quiet_events)): return false
 	var before: Dictionary = {"input":_shell.get_input_observation_state(),"events":_events.duplicate(true),"actions":_actions.duplicate(true),"quiet":_quiet_events.duplicate(),"ids":_p3t_ids(),"camera":_camera_packet(),"signals":_quiet_signal_flags()}
+	if not _expect(not before.ids.is_empty(),"quiet witness contains real complete native identity map"): return false
 	for _frame: int in range(3): await process_frame
-	return _expect(paused and _shell.campaign_error.is_empty() and _exact(_shell.capture_campaign_snapshot(),unit) and _exact(_shell.attempts.state(),session) and _exact(_shell.get_input_observation_state(),before.input) and _exact(_events,before.events) and _exact(_actions,before.actions) and _exact(_quiet_events,before.quiet) and _exact(_p3t_ids(),before.ids) and _exact(_camera_packet(),before.camera) and _exact(_quiet_signal_flags(),before.signals) and _disk_error(session).is_empty(),"paused whole native/current input/Camera-HUD/signal flags/clocks/resources/history/session/disk remain exact across actual process boundaries")
+	return _expect(paused and _shell.campaign_error.is_empty() and _exact(_shell.capture_campaign_snapshot(),unit) and _exact(_shell.attempts.state(),session) and _exact(_shell.get_input_observation_state(),before.input) and _exact(_events,before.events) and _exact(_actions,before.actions) and _exact(_quiet_events,before.quiet) and _exact(_p3t_ids(),before.ids) and _exact(_camera_packet(),before.camera) and _exact(_quiet_signal_flags(),before.signals) and _disk_error(session).is_empty(),"paused whole native/current input/Camera fields/signal flags/clocks/resources/history/session/disk remain exact across actual process boundaries; HUD binding/containment checked separately")
 
 func _p3t_released(refs: Array[WeakRef], label: String) -> bool:
 	for _frame: int in range(120):
