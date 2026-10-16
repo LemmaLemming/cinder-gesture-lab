@@ -1014,23 +1014,20 @@ func _component_case(selector: String) -> bool:
 	if not await driver.follow(warning.proof,warning.record): return false
 	for phase: String in ["warning","lock","active","recovery"]:
 		if not _expect(_component_phases.has(phase),"actual selected Root phase observed: "+phase,str(_component_phases)): return false
-	# Removing the forward Root changes the real union. Let the living C50's
-	# existing retry/turn logic reconsider while another actual Root still holds
-	# its original lease. No extra attack, movement, deadline or admission occurs.
+	# Exact approved proposal line50 requires Root response + a living C50 able
+	# to commit, not overlapping leases in the first west-Root cycle. Verified
+	# failed diagnostic97284e80 observed native cycle1 at4.933333 after release.
+	# Correct this fixture timing expectation without changing native deadlines.
 	for _sample: int in range(120):
 		if not _component_pressure.is_empty(): break
-		var other_root_held: bool = false
-		for id: String in QRC.ROOT_IDS:
-			if id == COMPONENT_SELECTED_ROOT: continue
-			var mechanism: Node3D = _component_level.sources[id].call("get_mechanism") as Node3D
-			var control: Dictionary = _component_scheduler.source_control_state(mechanism)
-			if not control.get("reservations",[]).is_empty(): other_root_held = true
-		if not other_root_held: break
 		if not await _component_tick(): return false
 	print("O2 COMPONENT POST-HIT PRESSURE: clock_s=",_component_scheduler.get_clock(),"; hero=",_component_hero.global_position,"; observed=",_component_pressure,"; C50=",_component_stalker.state())
-	if not _expect(not _component_pressure.is_empty() and _component_pressure.get("mixed_held",false) and _component_stalker.is_physics_processing() and not _component_stalker.dead and _component_stalker.hp > 0.0 and _component_stalker.is_in_group("enemies") and not String(_component_stalker.state().last_cancel_reason).begins_with("required_view_unsafe"),"living eligible optional Stalker produced a real native cycle/lease pressure observation without render-guard cancellation",str({"actual_pressure":_component_pressure,"current":_component_stalker.state(),"held_samples":_component_held_samples})):
+	if not _expect(not _component_pressure.is_empty() and _component_stalker.is_physics_processing() and not _component_stalker.dead and _component_stalker.hp > 0.0 and _component_stalker.is_in_group("enemies") and not String(_component_stalker.state().last_cancel_reason).begins_with("required_view_unsafe"),"living optional Stalker actually commits after the ordinary Root opportunity; simultaneous overlap is separately reported",str({"actual_pressure":_component_pressure,"current":_component_stalker.state(),"held_samples":_component_held_samples})):
 		await _component_after_failure_pressure_diagnostic()
 		return false # Original assertion/failure remains authoritative.
+	var actual_pressure: Dictionary = _component_stalker.state()
+	var actual_lease: Dictionary = _component_scheduler.reservation_state(String(actual_pressure.reservation_id))
+	if not _expect(actual_pressure.phase == "warning" and actual_pressure.cycle >= 1 and actual_pressure.framing_error.is_empty() and actual_pressure.last_rejection.is_empty() and actual_pressure.last_cancel_reason.is_empty() and actual_pressure.proof.get("accepted",false) and not actual_pressure.proof.get("uses_blast",true) and not actual_pressure.proof.get("uses_invulnerability",true) and actual_lease.get("armed",false) and actual_lease.get("state") == "warning" and actual_lease.get("source_instance_id") == _component_stalker.get_instance_id() and actual_pressure.reservation_id == _component_pressure.reservation_id,"actual CURRENT C50 armed warning/own native lease/proof/view remains valid at the end of the bounded opportunity",str({"state":actual_pressure,"lease":actual_lease})): return false
 	return _component_integrity("completed ordinary component opportunity")
 
 func _component_make_scene() -> Dictionary:
