@@ -1,4 +1,12 @@
-## Shared64 adopted; O3 sealed handoff ready — 15 October 2026
+## Act 3 complete — 15 October 2026
+
+All five main levels and O1, O2 and O3 are implemented, integrated and independently accepted under `focused-desktop-level-1`. Act 3 is **8/8 accepted**; the campaign registry is **24/24 accepted**. The [Act 3 completion record](../../../docs/acts/act3/ACT3_COMPLETION.md) lists all eight levels and their retained evidence.
+
+Final O3 ACCEPTED message `14dd408e-bb92-42d8-a458-f87c7e40e3f0` publishes `2b7edaa146d542b25f4546819ea5673df83f48da`. The actual preserving merge is `c6680ac8829441fb193ba3570c54d3d899f9880e`, with parents `b92a56556c8fdce4f32be9c2b379aa73c2f8e243` and that publication. Receipt `.cinder/act3-o3-acceptance-adoption-after.json` has SHA256 `0e5542d41f19a55fc42dd28b4833a967b80fe444bf13399261ad8e7b41ae20d0`; canonical ACK is `d28266d9-b9be-4c5b-9d04-88e14791b756`. All 18,753 prior owned Git/index rows and 196 named physical pins were preserved; 444 incoming rows match the publication, including 204 identical owned rows. The five existing untracked previews remain intact.
+
+Integration's separate production registration passed **137/0**, complete and clean, on Shared64. Original O3 owner evidence retains its Shared62 sources and scopes. All owned native jobs are closed; no implementation or acceptance work remains for the original eight-level objective. Human full playthrough, all-kit balance, sustained performance and mobile/export/release remain untested. Separate shared difficulty and captured-Assisted work remains with integration and does not reopen these level acceptances. Historical milestones below retain their original results and limitations.
+
+## Historical handoff: Shared64 adopted; O3 sealed — 15 October 2026
 
 O3 content/evidence seal14f81fbe9348110b851765da46478694581a9e34 retains all184 exact physical/committed evidence files; index9312c5d0af3dc3d266fcc1d60f4f1cca081745955367792d947c82737fc01824,22runs/37blobs/20637130artifactbytes excludingindex. Final runtime/tests remain the exact successfully exercised originals. Independent acceptance remains pending; Act3 currently7/8 accepted.
 
