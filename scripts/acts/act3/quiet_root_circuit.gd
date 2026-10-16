@@ -2,6 +2,8 @@ extends CinderLevel
 ## Authored O2: three sequential familiar Root courts on stable forest floor.
 ## Four actual Root deaths clear the courts; the final Stalker is optional pressure.
 ## CP1/CP2 save coherent next-court activation; third clear completes only.
+## Versioned ground-slot metadata binds before native once-configuration.
+## Legacy API2/schema1 remains literal; only fresh Challenge changes ground slots.
 
 const ForestScenery = preload("res://scripts/acts/act3/living_forest_scenery.gd")
 const RootScript = preload("res://scripts/acts/act3/garden_root_latcher.gd")
@@ -9,9 +11,13 @@ const StalkerScript = preload("res://scripts/acts/act3/sunbound_stalker.gd")
 const SchedulerScript = preload("res://scripts/combat/threat_scheduler.gd")
 const InteractionCue = preload("res://scripts/cues/interaction_cue.gd")
 const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Arrangement = preload("res://scripts/combat/encounter_arrangement.gd")
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
 const ENCOUNTER_DATA: String = "res://data/campaign/act3/a3_o2_encounters.json"
 const ENCOUNTER_ID: String = "A3-O2/quiet-root-circuit"
-const ROUTE_API: String = "act3-quiet-root-circuit-2"
+const LEGACY_ROUTE_API: String = "act3-quiet-root-circuit-2"
+const ROUTE_API: String = "act3-quiet-root-circuit-3"
 const LOCAL_VERSION: int = 2
 const WORLD_REVISION: int = 1
 const COMPLETION_ID: String = "three-root-courts-cleared"
@@ -22,6 +28,10 @@ const ROOT_IDS: Array[String] = ["o2-first-root", "o2-second-root", "o2-final-we
 const SOURCE_KINDS: Dictionary = {"o2-first-root":"root", "o2-second-root":"root", "o2-final-west-root":"root", "o2-final-east-root":"root", "o2-final-stalker":"stalker"}
 const SOURCE_COURTS: Dictionary = {"o2-first-root":0, "o2-second-root":1, "o2-final-west-root":2, "o2-final-east-root":2, "o2-final-stalker":2}
 const SOURCE_POSITIONS: Dictionary = {"o2-first-root":Vector3(0,0,4), "o2-second-root":Vector3(1.4,0,-1), "o2-final-west-root":Vector3(-1.2,0,-6), "o2-final-east-root":Vector3(1.2,0,-6), "o2-final-stalker":Vector3(0,0.1,-4.5)}
+const LEGACY_RECIPE_IDS: Dictionary = {"assisted":"A3-O2/assisted-canonical@v1", "standard":"A3-O2/standard-canonical@v1", "challenge":"A3-O2/challenge-canonical-legacy@v1"}
+const CHALLENGE_RECIPE: String = "A3-O2/challenge-forward-knot@v2"
+const LEGACY_LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "scenery", "scheduler", "sources", "route"]
+const ARRANGEMENT_LOCAL_KEYS: Array[String] = ["api_revision", "schema_version", "scenery", "scheduler", "sources", "route", "arrangement"]
 const CHECKPOINT_IDS: Array[String] = ["first-root-court-cleared", "rearranged-root-court-cleared"]
 const FLOOR_RECT: Rect2 = Rect2(-7, -11, 14, 22)
 const BASE_POSITION: Vector3 = Vector3(-1.2, 0, 4)
@@ -57,6 +67,77 @@ var _last_sun_view: String = ""
 var _glyphs: Array[Node3D] = []
 var _glyph_materials: Array[StandardMaterial3D] = []
 var _glyph_clear_count: int = -1
+var _arrangement_descriptor: Dictionary = {}
+var _selected_positions: Dictionary = {}
+var _legacy_capture: bool = false
+var _sources_configured: bool = false
+
+
+## Immutable metadata uses the published pure helper; it grants no safety proof.
+static func arrangement_definition() -> Dictionary:
+	var recipes: Array = []
+	for profile: String in Arrangement.PROFILE_IDS:
+		recipes.append({"recipe_id":LEGACY_RECIPE_IDS[profile], "profile":profile, "order":SOURCE_IDS.duplicate()})
+	var challenge: Array = SOURCE_IDS.duplicate()
+	challenge[3] = "o2-final-stalker"
+	challenge[4] = "o2-final-east-root"
+	recipes.append({"recipe_id":CHALLENGE_RECIPE, "profile":"challenge", "order":challenge})
+	return {"schema_version":1, "unit_ids":SOURCE_IDS.duplicate(), "recipes":recipes, "current":{"assisted":LEGACY_RECIPE_IDS.assisted, "standard":LEGACY_RECIPE_IDS.standard, "challenge":CHALLENGE_RECIPE}}
+
+
+static func arrangement_layout(descriptor: Variant) -> Dictionary:
+	var selector := Arrangement.new(arrangement_definition())
+	var error: String = selector.saved_error(descriptor)
+	if not error.is_empty(): return {"error":error}
+	var starts: Dictionary = {}
+	for index: int in range(SOURCE_IDS.size()):
+		var slot: String = SOURCE_IDS[index]
+		var id: String = descriptor.order[index]
+		if SOURCE_COURTS[id] != SOURCE_COURTS[slot]: return {"error":"O2 retained recipes cannot exchange court entitlement"}
+		var at: Vector3 = SOURCE_POSITIONS[slot]
+		at.y = (SOURCE_POSITIONS[id] as Vector3).y
+		starts[id] = at
+	return {"error":"", "descriptor":selector.restore(descriptor), "starts":starts}
+
+
+## Pure closed construction receipt only. Full native pair/route checks still
+## run after quiet entitled construction and before any physical state commit.
+static func arrangement_constructor(local: Variant) -> Dictionary:
+	var error: String = Codec.value_error(local)
+	if not error.is_empty(): return {"error":error}
+	if not local is Dictionary: return {"error":"O2 local unit must be a dictionary"}
+	var legacy: bool = local.get("api_revision") == LEGACY_ROUTE_API and Codec.is_integer(local.get("schema_version"),1,1)
+	var current: bool = local.get("api_revision") == ROUTE_API and Codec.is_integer(local.get("schema_version"),2,2)
+	if not legacy and not current: return {"error":"Unsupported O2 inner API/schema"}
+	if not Codec.keys_error(local,LEGACY_LOCAL_KEYS if legacy else ARRANGEMENT_LOCAL_KEYS).is_empty() or not local.get("scenery") is Dictionary or not local.get("scheduler") is Dictionary or not local.get("sources") is Dictionary or not local.get("route") is Dictionary:
+		return {"error":"Closed complete O2 arrangement/native local unit required"}
+	var profile: Variant = local.scheduler.get("profile")
+	if not profile is Dictionary or not profile.get("id") is String: return {"error":"Saved canonical Scheduler profile required for O2 construction"}
+	var resolver := Difficulty.new()
+	var canonical: Dictionary = resolver.profile(profile.id)
+	if canonical.is_empty() or not Codec.same_values(profile,canonical): return {"error":"Saved O2 construction profile differs from the canonical profile"}
+	var descriptor: Variant = local.get("arrangement")
+	if legacy:
+		descriptor = {"schema_version":1, "profile":profile.id, "recipe_id":LEGACY_RECIPE_IDS[profile.id], "order":SOURCE_IDS.duplicate()}
+	var selected: Dictionary = arrangement_layout(descriptor)
+	if not String(selected.error).is_empty(): return selected
+	if selected.descriptor.profile != profile.id: return {"error":"O2 saved recipe and Scheduler profiles differ"}
+	if not Codec.keys_error(local.sources,SOURCE_IDS).is_empty() or not Codec.is_integer(local.route.get("active_court"),0,COURT_IDS.size()): return {"error":"All five typed O2 sources and their bounded court entitlement required"}
+	for id: String in SOURCE_IDS:
+		var typed: Variant = local.sources[id]
+		if not typed is Dictionary or not Codec.keys_error(typed,["kind","actor"]).is_empty() or typed.get("kind") != SOURCE_KINDS[id] or not typed.get("actor") is Dictionary or typed.actor.get("stable_id") != id or not Codec.is_vector3(typed.actor.get("position")):
+			return {"error":"O2 construction requires each original typed native identity/position"}
+		if not typed.actor.get("resolved_role") is Dictionary or typed.actor.resolved_role.get("difficulty_profile") != profile.id: return {"error":"O2 native construction roles must join the saved profile"}
+		# Fixed Roots always retain their selected native origin. A dormant
+		# C50 cannot have moved; entered C50 current motion remains native-owned.
+		if SOURCE_KINDS[id] == "root" or int(SOURCE_COURTS[id]) > mini(int(local.route.active_court),COURT_IDS.size()-1):
+			if Codec.read_vector3(typed.actor.position) != selected.starts[id]: return {"error":"Saved fixed/dormant O2 origin differs from its retained recipe: "+id}
+	selected["legacy"] = legacy
+	return selected
+
+
+func selected_source_positions() -> Dictionary:
+	return _selected_positions.duplicate(true)
 
 
 func _ready() -> void:
@@ -115,9 +196,22 @@ func contract_error() -> String:
 	return _configuration_error
 
 
-func _configure_sources(profile: String) -> String:
+func _configure_sources(descriptor: Dictionary, legacy: bool) -> String:
 	if not _configuration_error.is_empty(): return _configuration_error
-	if not threat_scheduler.begin_encounter(profile,ENCOUNTER_ID,WORLD_REVISION): return threat_scheduler.last_error
+	if _sources_configured: return "O2 native sources may only be configured once"
+	var selected: Dictionary = arrangement_layout(descriptor)
+	if not String(selected.error).is_empty(): return String(selected.error)
+	if legacy and selected.descriptor.recipe_id != LEGACY_RECIPE_IDS[selected.descriptor.profile]: return "Legacy O2 construction must retain canonical ground slots"
+	_arrangement_descriptor = selected.descriptor.duplicate(true)
+	_selected_positions = selected.starts.duplicate(true)
+	_legacy_capture = legacy
+	# Every actual recipient gets its native ground slot BEFORE its only
+	# configure call. No configured Root or retained history is translated.
+	for id: String in SOURCE_IDS:
+		sources[id].position = _selected_positions[id]
+		sources[id].set_physics_process(false)
+	if not threat_scheduler.begin_encounter(_arrangement_descriptor.profile,ENCOUNTER_ID,WORLD_REVISION): return threat_scheduler.last_error
+	_sources_configured = true
 	for id: String in SOURCE_IDS:
 		var source: Node3D = sources[id]
 		var configured: bool
@@ -136,7 +230,9 @@ func _on_enter_level() -> void:
 	var profile: String = "standard"
 	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
 		profile = shared_shell.call("get_difficulty_preference")
-	_configuration_error = _configure_sources(profile)
+	var selector := Arrangement.new(arrangement_definition())
+	var descriptor: Dictionary = selector.select_fresh(profile)
+	_configuration_error = selector.last_error if descriptor.is_empty() else _configure_sources(descriptor,false)
 	scenery.call("follow_landmarks", hero.global_position)
 	_update_presentation()
 
@@ -150,9 +246,9 @@ func restore_candidate_physics_registration_required() -> bool:
 
 
 func _on_enter_restore_candidate(local: Dictionary, player: Dictionary) -> String:
-	if not local.get("scheduler") is Dictionary or not local.scheduler.get("profile") is Dictionary or not local.scheduler.profile.get("id") is String:
-		return "Saved exact difficulty identity required for native Root construction"
-	_configuration_error = _configure_sources(local.scheduler.profile.id)
+	var selected: Dictionary = arrangement_constructor(local)
+	if not String(selected.error).is_empty(): return String(selected.error)
+	_configuration_error = _configure_sources(selected.descriptor,selected.legacy)
 	if not _configuration_error.is_empty(): return _configuration_error
 	_active = true
 	return _local_snapshot_error_with_player(local, player)
@@ -162,7 +258,7 @@ func _on_source_died(where: Vector3,id: String) -> void:
 	if not _active or _deaths.has(id) or not sources.has(id) or not _configuration_error.is_empty(): return
 	var source: Node3D = sources[id]
 	if not source.get("dead") or float(source.get("hp"))!=0.0 or where!=source.global_position or source.call("state").stable_id!=id: return
-	if SOURCE_KINDS[id]=="root" and (where!=SOURCE_POSITIONS[id] or not _source_entered(id)): return
+	if SOURCE_KINDS[id]=="root" and (where!=_selected_positions[id] or not _source_entered(id)): return
 	_deaths[id]={"clock_s":threat_scheduler.get_clock(),"source_position":Codec.vector3(where)}
 	# Native death is retained without progression inside its hit transaction.
 
@@ -292,7 +388,7 @@ func state() -> Dictionary:
 	for id: String in SOURCE_IDS:
 		if is_instance_valid(sources[id]): actual[id] = sources[id].state()
 	for receipt: Dictionary in _clears: cleared.append(receipt.court_id)
-	return {"api_revision": ROUTE_API, "configuration_error": _configuration_error, "active_court": _active_court, "cleared_courts": cleared, "clears": _clears.duplicate(true), "deaths": _deaths.duplicate(true), "source_states": actual, "exit_state": _exit_state, "contact": _contact.duplicate(true), "completed": is_completed(), "checkpoint": current_checkpoint(), "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else 0.0, "sun_state": sun_state, "sun_stage": sun_stage}
+	return {"api_revision": LEGACY_ROUTE_API if _legacy_capture else ROUTE_API, "configuration_error": _configuration_error, "active_court": _active_court, "cleared_courts": cleared, "clears": _clears.duplicate(true), "deaths": _deaths.duplicate(true), "source_states": actual, "exit_state": _exit_state, "contact": _contact.duplicate(true), "completed": is_completed(), "checkpoint": current_checkpoint(), "clock_s": threat_scheduler.get_clock() if is_instance_valid(threat_scheduler) else 0.0, "sun_state": sun_state, "sun_stage": sun_stage}
 
 
 func _update_presentation(quiet: bool = false) -> void:
@@ -517,7 +613,9 @@ func _capture_local_state() -> Dictionary:
 	for id: String in SOURCE_IDS:
 		var saved: Dictionary=sources[id].call("snapshot_state",bindings) if SOURCE_KINDS[id]=="root" else sources[id].call("snapshot_state")
 		actors[id]={"kind":SOURCE_KINDS[id],"actor":saved}
-	return {"api_revision":ROUTE_API,"schema_version":1,"scenery":{"sun_state":sun_state,"sun_elapsed_s":sun_elapsed_s,"beat_index":_clears.size()},"scheduler":threat_scheduler.snapshot_state(bindings),"sources":actors,"route":{"active_court":_active_court,"clears":_clears.duplicate(true),"deaths":_deaths.duplicate(true),"exit_state":_exit_state,"contact":_contact.duplicate(true)}}
+	var local: Dictionary = {"api_revision":LEGACY_ROUTE_API if _legacy_capture else ROUTE_API,"schema_version":1 if _legacy_capture else 2,"scenery":{"sun_state":sun_state,"sun_elapsed_s":sun_elapsed_s,"beat_index":_clears.size()},"scheduler":threat_scheduler.snapshot_state(bindings),"sources":actors,"route":{"active_court":_active_court,"clears":_clears.duplicate(true),"deaths":_deaths.duplicate(true),"exit_state":_exit_state,"contact":_contact.duplicate(true)}}
+	if not _legacy_capture: local["arrangement"] = _arrangement_descriptor.duplicate(true)
+	return local
 
 
 func _runtime_error() -> String:
@@ -525,10 +623,14 @@ func _runtime_error() -> String:
 	if not is_instance_valid(scenery) or scenery.is_queued_for_deletion() or not scenery.call("runtime_error").is_empty(): return "Exact live forest floor/base/scenery required"
 	if not is_instance_valid(threat_scheduler) or threat_scheduler.is_queued_for_deletion() or threat_scheduler.get_parent() != self: return "Actual retained Scheduler required"
 	if not Codec.keys_error(sources, SOURCE_IDS).is_empty(): return "Exact retained typed Root sources required"
+	var selected: Dictionary = arrangement_layout(_arrangement_descriptor)
+	if not _sources_configured or not String(selected.error).is_empty(): return "Validated immutable O2 constructor arrangement required"
+	if _selected_positions != selected.starts or threat_scheduler.encounter_profile().get("id") != _arrangement_descriptor.profile: return "O2 native starts/profile differ from the retained recipe"
+	if _legacy_capture and _arrangement_descriptor.recipe_id != LEGACY_RECIPE_IDS[_arrangement_descriptor.profile]: return "Legacy O2 capture requires canonical ground slots"
 	for id: String in SOURCE_IDS:
 		if not is_instance_valid(sources[id]) or sources[id].is_queued_for_deletion() or not sources[id].is_inside_tree() or sources[id].get_parent()!=self: return "Actual retained typed source required: "+id
 		var expected: Script=RootScript if SOURCE_KINDS[id]=="root" else StalkerScript
-		if sources[id].get_script()!=expected or (SOURCE_KINDS[id]=="root" and sources[id].position!=SOURCE_POSITIONS[id]): return "Assigned native source class/fixed Root position changed: "+id
+		if sources[id].get_script()!=expected or (SOURCE_KINDS[id]=="root" and sources[id].position!=_selected_positions[id]): return "Assigned native source class/fixed Root position changed: "+id
 	if _glyphs.size()!=COURT_IDS.size() or _glyph_materials.size()!=COURT_IDS.size(): return "Three authored route glyphs required"
 	for glyph: Node3D in _glyphs:
 		if not is_instance_valid(glyph) or glyph.is_queued_for_deletion() or glyph.get_parent()!=self: return "Retained flat route glyph required"
@@ -550,7 +652,9 @@ func _local_snapshot_error_with_player(local: Dictionary, player: Dictionary) ->
 func _paired_local_error(local: Dictionary,expected_hero: Vector3,expected_dead: bool) -> String:
 	var error: String=_runtime_error()
 	if not error.is_empty(): return error
-	if not Codec.keys_error(local,["api_revision","schema_version","scenery","scheduler","sources","route"]).is_empty() or local.get("api_revision")!=ROUTE_API or not Codec.is_integer(local.get("schema_version"),1,1) or not local.get("scenery") is Dictionary or not local.get("scheduler") is Dictionary or not local.get("sources") is Dictionary or not local.get("route") is Dictionary: return "Whole versioned typed actor/mechanism/Scheduler/Sun/history unit required"
+	var selected: Dictionary = arrangement_constructor(local)
+	if not String(selected.error).is_empty(): return String(selected.error)
+	if selected.legacy != _legacy_capture or Exact.stringify(selected.descriptor) != Exact.stringify(_arrangement_descriptor) or selected.starts != _selected_positions: return "Saved O2 arrangement differs from the constructed immutable native bindings"
 	if not Codec.keys_error(local.scenery,["sun_state","sun_elapsed_s","beat_index"]).is_empty() or not Codec.is_number(local.scheduler.get("clock_s")) or float(local.scheduler.clock_s)<0 or not Codec.is_integer(local.scenery.get("sun_state"),0,1) or not Codec.is_integer(local.scenery.get("beat_index"),0,COURT_IDS.size()) or not Codec.is_number(local.scenery.get("sun_elapsed_s")): return "Exact continuous Sun/court clock required"
 	if int(local.scenery.sun_state)!=int(floorf(float(local.scheduler.clock_s)/SUN_PERIOD_S))%2 or float(local.scenery.sun_elapsed_s)!=fposmod(float(local.scheduler.clock_s),SUN_PERIOD_S): return "Sun state/time must join actual Scheduler clock exactly"
 	if not Codec.keys_error(local.sources,SOURCE_IDS).is_empty(): return "Every retained typed actor required"
@@ -599,7 +703,7 @@ func _route_error(local: Dictionary,expected_hero: Vector3,_expected_dead: bool)
 			else:
 				# An optional ordinary hit can reach a dormant C50. Preserve it;
 				# no motion/cycle/lease may run before final court activation.
-				if int(actor.cycle)!=0 or not String(actor.reservation_id).is_empty() or Codec.read_vector3(actor.position)!=SOURCE_POSITIONS[id] or actor.phase not in ["idle","defeated"]: return "Unentered Stalker cannot move or start an attack cycle"
+				if int(actor.cycle)!=0 or not String(actor.reservation_id).is_empty() or Codec.read_vector3(actor.position)!=_selected_positions[id] or actor.phase not in ["idle","defeated"]: return "Unentered Stalker cannot move or start an attack cycle"
 				if float(actor.hp)==float(actor.max_hp) and Codec.read_vector3(actor.velocity)!=Vector3.ZERO: return "Untouched dormant Stalker cannot manufacture motion"
 	var previous_clear: float=-1
 	for index: int in range(route.clears.size()):
