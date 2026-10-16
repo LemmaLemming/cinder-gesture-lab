@@ -1,3 +1,11 @@
+## L5 closed constructor design and inert comparison submitted for review —16 October 2026
+
+Canonical RESPONSE `23935683`/ACK `5efc073b` limits this follow-up to source-only design. `docs/acts/act3/A3_L5_CONSTRUCTOR_DESIGN.md` proposes exact parent API2/schema2 seven-key construction with one closed four-key Approach policy/full canonical profile. Literal API1/schema1 six-key attempts stay canonical through stages0–4/oldChallenge/Retry. Saved selection precedes strict world validation and Approach `_ready`; Root capture API2/3 authority remains independent after disposal. Root must select the wire before production work.
+
+One inert Markdown comparison text lives under the existing proposal evidence folder. It starts both declared native C50+C52 cells identically, retains autonomous/native guards, requires complete response/hold, zero consumed contacts/damage attempts as well as HP, useful ordinary Echo damage and an actual goal-relative decision difference. Same-start west-wall clearance is identical until paths diverge; initial range alone earns no novelty. Only the known four-file Standard C50 archive is inventoried. No mandatory old-held/full-prefix/full-route/all-kill/all-kit/human gate; missing legacy phase/provenance coverage stays explicit. Original proposal/native evidence bytes remain exact.
+
+State: proposed/unimplemented/untested; no live runtime/recipe/Codec/schema/descriptor, executable fixture, producer, engine, shared/PRIMARY, allocation or other-act change. Actual Shared74 adoption70f/9d9 and all8Act3/all24 content/16 policies remain. Stop at exact design/inert text submission for Integration review; Agent02 untouched. Earlier dated entries below remain historical.
+
 ## L5 one source-only Challenge proposal —16 October 2026
 
 All five main levels and O1/O2/O3 remain accepted. Root separately accepted the exact L4 retained-exercise handoff at `eaff120e6d123af00835fdb2a37354f1d627987a`, canonical ACCEPTED `879651d2-f692-4205-8a19-943b76b47517`; ACK `3bee8e06-7af4-4b0f-9ab0-50b78274a63d`. Original failures, TEST/canonical distinctions and Shared73/74 evidence scopes remain unchanged. No rerun or documentation-only merge.
