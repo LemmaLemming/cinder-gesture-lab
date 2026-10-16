@@ -1,3 +1,11 @@
+## L5 selected constructor candidate source promoted —16 October 2026
+
+Integration selected exact design4ab97706/inerta71f0550 under RESPONSE `9c6a89f5`/ACK `67913245`. Candidate changes only crystalman_level, parent_codec and approach_unit: new parent7/policy4/full canonical profile8, frozen profile+whole rows before Approach ready, one fresh/saved Scheduler configuration from that identity, legacy6/canonical whole-attempt preservation, native Vector3 fixed-Echo metadata joins. Root capture API2/3 and future capture preference remain independent. Base JSON/world9/route8/epochs/timings/roles/floor/walls/ApproachCodec/shared/PRIMARY remain unchanged.
+
+Coupled runtime and focused fixture source review is clear. Parser/native work is UNEXECUTED. Next is the necessary changed-format/quiet-restore check, then ONE fixed declared same-start native C50+C52 comparison. Zero consumed contacts/damage attempts as well as unchanged HP, complete response/recovery and useful ordinary Echo damage are required; range/coordinate/tie-break alone earns no novelty. Stop unsafe/equivalent/inconclusive without placement search, relaxed guards or unnecessary transport/portrait. Existing known Standard archive remains its exact limited format/preflight evidence; no new producer/full-prefix/full-route/all-kit/human gate.
+
+Actual Shared74 adoption70f/9d9 and original29 named source/evidence inputs are frozen. All8Act3/all24 original content and16 policies stay accepted; this candidate is not accepted runtime or coverage. No allocations/other-act/Agent02/public-upload/mobile/export/release work. Root first help. Earlier records below retain their dates and evidence scopes.
+
 ## L5 closed constructor design and inert comparison submitted for review —16 October 2026
 
 Canonical RESPONSE `23935683`/ACK `5efc073b` limits this follow-up to source-only design. `docs/acts/act3/A3_L5_CONSTRUCTOR_DESIGN.md` proposes exact parent API2/schema2 seven-key construction with one closed four-key Approach policy/full canonical profile. Literal API1/schema1 six-key attempts stay canonical through stages0–4/oldChallenge/Retry. Saved selection precedes strict world validation and Approach `_ready`; Root capture API2/3 authority remains independent after disposal. Root must select the wire before production work.
