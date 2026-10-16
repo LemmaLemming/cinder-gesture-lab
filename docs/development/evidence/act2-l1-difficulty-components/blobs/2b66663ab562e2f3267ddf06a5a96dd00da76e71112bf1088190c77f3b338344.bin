@@ -1,0 +1,451 @@
+extends SceneTree
+## Focused declared common component; no canonical parent-save authority.
+## Test initial fork has EMPTY defeated history. It is not an earned parent,
+## checkpoint, saved attempt or route-clear proof. All seven roots stay alive.
+const MainScene = preload("res://scenes/main.tscn")
+const OldComponent = preload("res://tests/acts/act2/fixtures/a2_l1_arrangement_reference/declared_common_old.gd")
+const CurrentComponent = preload("res://tests/acts/act2/fixtures/a2_l1_arrangement_reference/declared_common_current.gd")
+const SequenceSource = preload("res://scripts/acts/act2/horsell_sequence.gd")
+const Geometry = preload("res://scripts/combat/threat_geometry.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const OLD_SHA: String = "077dc406d6eda0392661279029b9a07d190be71d21fcb0903712d678ab2be643"
+const CURRENT_SHA: String = "5f58885685d5b5727d286c57c45794bef0afc810424214636155283f60f43ad1"
+const DATA_SHA: String = "919de84be9a74aaab6668e2fec1fd55ee45a3a55af4d5090aff7f2c6ca08938e"
+const LEVEL_PATH: String = "res://scenes/acts/act2/a2_l1.tscn"
+const OLD_PATH: String = "res://tests/acts/act2/fixtures/a2_l1_arrangement_reference/horsell_common_old.gd"
+const DATA_PATH: String = "res://data/campaign/act2/a2_l1_difficulty_arrangements.json"
+const START: Vector3 = Vector3(0.0,0.1,-10.2)
+const TICK: float = 1.0/60.0
+const EPS: float = 0.00005
+const MAX_TICKS: int = 720
+const NEUTRAL: Dictionary = {"jacket":"CLOTH-J0","pants":"CLOTH-P0","shoes":"CLOTH-S0","weapon":"WEAPON-01"}
+const SHORT_SLOW: Dictionary = {"jacket":"CLOTH-J0","pants":"CLOTH-P2","shoes":"CLOTH-S2","weapon":"WEAPON-03"}
+
+class ComponentMain extends "res://scripts/game.gd":
+	var test_level_source: Script
+	var test_loadout: Dictionary = {}
+	func get_difficulty_preference() -> String: return "challenge"
+	func _create_level_instance() -> CinderLevel:
+		var level: CinderLevel = test_level_source.new() as CinderLevel
+		level.name = "TEST_HorsellCommonComponent"
+		level.level_id = "A2-L1"
+		level.local_snapshot_version = 2
+		level.set("fixture_loadout",test_loadout.duplicate(true))
+		var marker := Marker3D.new()
+		marker.name = "PlayerSpawn"
+		marker.position = Vector3(0.0,0.1,-10.2)
+		level.add_child(marker)
+		return level
+
+class NativeBarrier extends Node:
+	signal tick_finished
+	func _init() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_physics_priority = 120
+	func _physics_process(_delta: float) -> void: tick_finished.emit()
+
+var _game: Node
+var _level: CinderLevel
+var _hero: CinderPlayer
+var _driver: Node
+var _scheduler: CinderThreatScheduler
+var _actors: Dictionary = {}
+var _barrier: NativeBarrier
+var _actions: Array[Dictionary] = []
+var _phases: Dictionary = {}
+var _phase_receipts: Dictionary = {}
+var _invalidations: Array[Dictionary] = []
+var _events: Array[Dictionary] = []
+var _rows: Array[Dictionary] = []
+var _receipts: Dictionary = {}
+var _source_before: Dictionary = {}
+var _selected: String = ""
+var _report: String = ""
+var _selector: String = ""
+var _checks: int = 0
+var _failures: int = 0
+var _ticks: int = 0
+var _abort: bool = false
+var _complete: bool = false
+var _stats: Dictionary = {}
+var _loadout: Dictionary = {}
+var _current_label: String = ""
+var _case_receipt: Dictionary = {}
+
+func _initialize() -> void: _run.call_deferred()
+
+func _run() -> void:
+	root.size = Vector2i(540,1170)
+	root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	_report = OS.get_environment("CINDER_A2_L1_ARRANGEMENT_PAIR_REPORT")
+	if not _expect(args.size() == 1 and args[0] in ["--component-compare-left","--component-short-slow-right","--component-portrait"],"one explicit bounded component selector"): _finish(); return
+	_selector = args[0]
+	if not _expect(_report.is_absolute_path() and not FileAccess.file_exists(_report),"new absolute Root phase report path"): _finish(); return
+	_source_before = _sources()
+	if not _expect(FileAccess.get_sha256(OLD_PATH) == OLD_SHA and FileAccess.get_sha256("res://scripts/acts/act2/horsell_common.gd") == CURRENT_SHA and FileAccess.get_sha256(DATA_PATH) == DATA_SHA,"exact immutable old writer/current successor/data cohort before native construction"): _finish(); return
+	_barrier = NativeBarrier.new()
+	root.add_child(_barrier)
+	if _selector == "--component-compare-left":
+		var old_ok: bool = await _case("old-left",OldComponent,"left",NEUTRAL,false)
+		var old: Dictionary = _case_receipt.duplicate(true)
+		await _release()
+		if old_ok:
+			var new_ok: bool = await _case("current-left",CurrentComponent,"left",NEUTRAL,false)
+			var current: Dictionary = _case_receipt.duplicate(true)
+			_complete = new_ok and _useful_change(old,current)
+	elif _selector == "--component-short-slow-right":
+		_complete = await _case("current-short-slow-right",CurrentComponent,"right",SHORT_SLOW,false)
+	else:
+		if _expect(DisplayServer.get_name() != "headless","brief portrait uses actual graphical renderer"):
+			_complete = await _case("current-portrait-left",CurrentComponent,"left",NEUTRAL,true)
+	await _release()
+	if is_instance_valid(_barrier): _barrier.queue_free()
+	await process_frame
+	_finish()
+
+func _case(label: String, component: Script, route: String, loadout: Dictionary, portrait_only: bool) -> bool:
+	_current_label = label
+	_case_receipt = {}
+	_abort = false
+	_actions.clear(); _phases.clear(); _phase_receipts.clear(); _invalidations.clear(); _events.clear()
+	_selected = "common_" + route
+	_loadout = loadout.duplicate(true)
+	_game = MainScene.instantiate()
+	_game.set_script(ComponentMain)
+	_game.set("test_level_source",component)
+	_game.set("test_loadout",_loadout)
+	_game.set("level_scene_path",LEVEL_PATH)
+	root.add_child(_game)
+	_game.call("open_bench") # No physics yield after native construction.
+	_level = _game.get("active_level") as CinderLevel
+	_hero = _game.get("player") as CinderPlayer
+	_actors = _level.get("_actors")
+	_driver = _level.get("_exchange")
+	_scheduler = _level.get("_scheduler") as CinderThreatScheduler
+	_stats = _hero.stats.duplicate(true)
+	if not _expect(paused and _level.get("runtime_error").is_empty() and _actors.size() == 7 and is_instance_valid(_driver) and _clock() == 0.0 and _hero.get_world_action_clock() == 0.0 and _hero.global_position == START and _hero.equipment.snapshot() == _loadout and _hero.get_world_action_records().is_empty() and _hero.shells == 0,"declared prephysics initial fork/pose/kit/zeroammo before once-configured seven native roots"): return false
+	_case_receipt["constructor"] = _level.call("component_receipt")
+	_case_receipt["initial_player_hp"] = _hero.hp
+	if not _integrity(true): return false
+	_hero.world_action_executed.connect(func(record: Dictionary) -> void: _actions.append(record.duplicate(true)))
+	_scheduler.reservation_invalidated.connect(func(id: String, reason: String) -> void: _invalidations.append({"id":id,"reason":reason,"clock_s":_clock()}))
+	_level.checkpoint_requested.connect(func(_l: String,id: String,_k: String) -> void: _events.append({"kind":"checkpoint","id":id}))
+	_level.completion_requested.connect(func(_l: String,id: String) -> void: _events.append({"kind":"completion","id":id}))
+	_level.contact_exit_requested.connect(func(_l: String,id: String) -> void: _events.append({"kind":"contact","id":id}))
+	_game.call("resume_lab")
+	if not await _wait_ready(): return false
+	var fork_start: Vector3 = _hero.global_position
+	var side: float = -1.0 if route == "left" else 1.0
+	# Same diagonal on original and changed neutral source; the completed
+	# original public dash record (not this intended endpoint) selects route.
+	if not await _dash(Vector3(side*0.4,0,-sqrt(0.84))): return false
+	var dash: Dictionary = _actions.back().duplicate(true)
+	var actual_route: Dictionary = _level.call("encounter_state")
+	var length: float = Vector2(dash.landing.x-fork_start.x,dash.landing.z-fork_start.z).length()
+	if not _expect(dash.kind == "dash" and not dash.get("collision_shortened",true) and absf(length-float(_stats.dash_distance)) <= 0.002 and actual_route.route == route and actual_route.active_ids == [_selected] and (dash.landing.x < 0.0) == (route == "left"),"genuine completed full public dash selects original sign-rule route and unchanged logical actor ID"): return false
+	_case_receipt["fork_dash"] = dash
+	_case_receipt["fork_landing"] = {"hero_position":_hero.global_position,"source_position":(_actors[_selected] as Node3D).global_position,"source_planar_distance":Vector2(_hero.global_position.x-(_actors[_selected] as Node3D).global_position.x,_hero.global_position.z-(_actors[_selected] as Node3D).global_position.z).length(),"primary_range":_stats.primary_range,"input":_game.call("get_input_observation_state"),"route":actual_route.route,"active_ids":actual_route.active_ids}
+	var plan: Dictionary = await _wait_first_armed()
+	if plan.is_empty(): return false
+	_case_receipt["armed_plan"] = plan.duplicate(true)
+	if portrait_only:
+		return await _portrait(plan)
+	var hp_before: float = float(_case_receipt.initial_player_hp)
+	if not await _follow(plan): return false
+	var phase_complete: bool = _phases.has_all(["warning","lock","active","recovery"])
+	var hits: int = 0
+	var dashes: int = 0
+	for action: Dictionary in _actions:
+		if not _expect(action.kind in ["dash","primary"] and action.equipment_ids == _loadout and action.resolved_stats == _stats,"actual actions retain exact canonical kit/stats with no blast"): return false
+		if action.kind == "primary": hits += int(action.hits)
+		if action.kind == "dash": dashes += 1
+	_case_receipt["after_response"] = {"state":_level.call("encounter_state"),"actions":_actions.duplicate(true),"phase_receipts":_phase_receipts.duplicate(true),"invalidations":_invalidations.duplicate(true),"hero_hp":_hero.hp,"selected_hp":_actors[_selected].get("hp"),"hero_position":_hero.global_position,"input":_game.call("get_input_observation_state")}
+	var ok: bool = _expect(phase_complete and _hero.hp == hp_before and hits == 1 and dashes >= 2 and float(_actors[_selected].get("hp")) > 0.0 and float(_actors[_selected].get("hp")) < 30.0,"one real ordinary primary and full cadence follow actual escape/return through all four native phases without Hero harm or defeat") and _integrity(false)
+	_receipts[label] = _case_receipt.duplicate(true)
+	return ok
+
+func _integrity(initial: bool) -> bool:
+	var receipt: Dictionary = _level.call("component_receipt")
+	var expected: Dictionary = SequenceSource.ACTOR_POSITIONS.duplicate(true)
+	if not _current_label.begins_with("old-"):
+		expected.common_left = Vector3(0.9,0,-14.5)
+		expected.common_right = Vector3(-0.9,0,-14.5)
+	if not _expect(receipt.actors.size() == 7 and receipt.native_owner_ids.size() == 7 and receipt.scheduler_profile.id == "challenge","all seven original identities/native owner bindings retain Challenge profile"): return false
+	for id: String in expected:
+		var actor: Node3D = _actors[id]
+		var state: Dictionary = _driver.call("state",id)
+		if not _expect(actor.global_position == expected[id] and actor.get_world_3d() == _hero.get_world_3d() and actor.call("is_armed") and actor.get_script().resource_path == "res://scripts/acts/act2/ray_scout_actor.gd" and receipt.native_owner_ids[id] == str(actor.get_instance_id()),"unchanged exact configured home/native actor binding " + id): return false
+		if id != _selected or initial:
+			if not _expect(float(actor.get("hp")) == 30.0 and state.cycle == 0 and state.reservation_id.is_empty() and not state.proof_available and state.status == "idle" and not actor.visible,"unselected/unreached actor remains living idle without native lease " + id): return false
+	if not _expect(receipt.sequence.defeated_ids.is_empty() and receipt.pending_defeats.is_empty() and receipt.pending_checkpoints.is_empty() and not receipt.completion_pending and not receipt.departure_checkpoint and not receipt.departure_contact_seen and not receipt.exit_requested and receipt.refused_progress.is_empty() and _events.is_empty() and not _level.is_completed() and _level.current_checkpoint() == {"id":"","kind":""},"empty history/CP/progress and no earlier kills, optional rewards or completion"): return false
+	return _expect(not receipt.original_sequence_validation_error.is_empty() and _level.snapshot_state().is_empty() and not _level.snapshot_error({}).is_empty() and not _level.snapshot_error_with_player({},{}).is_empty() and not _level.restore_state({}),"original sequence rejects missing defeat prefix; declared component refuses canonical parent save/restore authority")
+
+func _wait_first_armed() -> Dictionary:
+	var first_cycle: int = 0
+	for _i: int in range(MAX_TICKS):
+		if not _live(): return {}
+		var state: Dictionary = _driver.call("state",_selected)
+		if int(state.cycle) > 0:
+			if first_cycle == 0: first_cycle = int(state.cycle)
+			if state.status in ["cancelled","complete","defeated"] or int(state.cycle) != first_cycle:
+				_case_receipt["native_refusal"] = {"state":state,"clock_s":_clock(),"invalidations":_invalidations.duplicate(true),"level":_level.call("encounter_state")}
+				_expect(false,"first native selected cycle refused/cancelled before armed proof; original reason retained")
+				return {}
+		if state.status == "running" and state.armed and state.proof_available:
+			var lease: Dictionary = _scheduler.reservation_state(state.reservation_id)
+			var geometry: Dictionary = state.geometry
+			var expected_endpoint: Vector3 = state.source_position+state.direction*3.8
+			# Native direction is re-normalized from the committed lane endpoints.
+			# Keep the live shape/lease exact; compare the independently rebuilt
+			# endpoint with the same Vector3 policy as the native saved validator.
+			var geometry_matches: bool = geometry == lease.get("geometry",{}) and geometry.kind == "lane" and geometry["from"] == state.source_position and geometry.radius == 0.31 and (geometry["to"] as Vector3).is_equal_approx(expected_endpoint)
+			var armed_matches: bool = not lease.is_empty() and lease.source_instance_id == _actors[_selected].get_instance_id() and lease.armed and lease.profile_id == "challenge" and state.proof.get("accepted",false) and not state.proof.get("uses_blast",true) and not state.proof.get("uses_invulnerability",true) and geometry_matches
+			# Preserve actual predicate operands before an assertion can return.
+			_case_receipt["first_armed_check"] = {"state":state.duplicate(true),"reservation":lease.duplicate(true),"selected_owner_id":_actors[_selected].get_instance_id(),"expected_source":state.source_position,"reported_direction":state.direction,"expected_reach":3.8,"expected_radius":0.31,"expected_endpoint":expected_endpoint,"geometry_equals_lease":geometry == lease.get("geometry",{}),"kind_is_lane":geometry.kind == "lane","from_equals_source":geometry["from"] == state.source_position,"radius_equals_original":geometry.radius == 0.31,"endpoint_equals_reconstruction":geometry["to"] == expected_endpoint,"endpoint_is_equal_approx":(geometry["to"] as Vector3).is_equal_approx(expected_endpoint),"geometry_matches":geometry_matches,"armed_matches":armed_matches}
+			if not _expect(armed_matches,"actual first native selected owner arms its unchanged 3.8/.31 lane and ordinary response proof"): return {}
+			return {"id":_selected,"cycle":state.cycle,"proof":state.proof.duplicate(true),"state":state,"reservation":lease}
+		await _step()
+	_case_receipt["native_refusal"] = {"state":_driver.call("state",_selected),"level":_level.call("encounter_state"),"clock_s":_clock(),"invalidations":_invalidations.duplicate(true)}
+	_expect(false,"bounded native common admission/lock not obtained; no forced source or proof")
+	return {}
+
+func _follow(plan: Dictionary) -> bool:
+	var actor: Node3D = _actors[_selected]
+	for segment: Dictionary in plan.proof.path:
+		if segment.kind not in ["escape_dash","positioning_dash","ordinary_primary"]: continue
+		if not await _until(float(segment.start_s)): return false
+		if not _expect(_clock() <= float(segment.start_s)+TICK+EPS and _same_plan(plan),"original source/cycle/lease owns timely " + String(segment.kind)): return false
+		var response: Dictionary = _hero.get_threat_response_state()
+		if segment.kind == "ordinary_primary":
+			if not _expect(float(segment.start_s) == float(plan.proof.primary_time_s) and float(segment.end_s) == float(plan.proof.response_complete_s) and float(plan.proof.response_complete_s) == float(plan.proof.primary_time_s)+float(_stats.primary_cooldown),"native proof retains full actual ordinary-primary cadence"): return false
+			if not _expect(response.stable and float(response.primary_cooldown_left_s) == 0.0 and float(response.commitment_remaining_s) == 0.0 and _driver.call("state",_selected).phase == "recovery" and _driver.call("damage_window_open",_selected) and _clock()+float(_stats.primary_cooldown) <= float(plan.reservation.recovery_until_s)-CinderThreatScheduler.TIME_MARGIN,"ordinary first primary and complete canonical cooldown fit actual retained recovery"): return false
+			var direction: Vector3 = actor.global_position-_hero.global_position
+			direction.y = 0.0
+			if not _expect(direction.length() <= float(_stats.primary_range)+EPS,"actual completed return is within ordinary low-housing reach"): return false
+			var hp_before: float = float(actor.get("hp"))
+			if not _expect(_routed_primary(direction.normalized()) == 1 and absf((hp_before-float(actor.get("hp")))-minf(hp_before,float(_stats.primary_damage))) <= EPS and float(actor.get("hp")) > 0.0,"real immediate first tap deals exact canonical primary HP loss to selected ordinary housing without defeat"): return false
+			if not await _wait_ready(): return false
+			if not _expect(_clock() <= float(plan.reservation.recovery_until_s) and _hero.get_threat_response_state().primary_cooldown_left_s == 0.0,"full native primary cadence completes before original recovery end"): return false
+		else:
+			if not _expect(response.stable and float(response.dash_cooldown_left_s) == 0.0 and float(response.commitment_remaining_s) == 0.0,"actual native proof dash is ready at original scheduled tick"): return false
+			var direction: Vector3 = segment.to-_hero.global_position
+			direction.y = 0.0
+			if not await _dash(direction.normalized()): return false
+	return true
+
+func _useful_change(old: Dictionary, current: Dictionary) -> bool:
+	if not old.has_all(["fork_landing","armed_plan","after_response"]) or not current.has_all(["fork_landing","armed_plan","after_response"]): return _expect(false,"both actual native response observations required for meaningful comparison")
+	var a: Dictionary = old.fork_landing
+	var b: Dictionary = current.fork_landing
+	var same_landing: bool = (a.hero_position as Vector3).distance_to(b.hero_position) <= 0.002
+	var old_in_reach: bool = float(a.source_planar_distance) <= float(a.primary_range)
+	var new_outside_reach: bool = float(b.source_planar_distance) > float(b.primary_range)+0.05
+	var decision: Dictionary = {"same_actual_completed_fork_landing":same_landing,"original_initial_housing_in_primary_reach":old_in_reach,"changed_initial_housing_outside_primary_reach":new_outside_reach,"old_fork":a,"changed_fork":b,"old_native_proof":old.armed_plan.proof,"changed_native_proof":current.armed_plan.proof,"old_actual_actions":old.after_response.actions,"changed_actual_actions":current.after_response.actions,"limits":"two executed neutral left component responses; no human difficulty/LOS obstruction/full-parent authority"}
+	_receipts["useful_change"] = decision
+	return _expect(same_landing and old_in_reach and new_outside_reach,"same real left route changes ordinary approach requirement: original low housing already in reach, opposite source requires actual useful return before primary")
+
+func _wait_ready() -> bool:
+	for _i: int in range(MAX_TICKS):
+		if not _live(): return false
+		var state: Dictionary = _hero.get_threat_response_state()
+		if state.stable and float(state.dash_cooldown_left_s) == 0.0 and float(state.primary_cooldown_left_s) == 0.0 and float(state.commitment_remaining_s) == 0.0 and not _hero.action_in_progress(): return true
+		await _step()
+	return _expect(false,"bounded actual native Player readiness")
+
+func _dash(direction: Vector3) -> bool:
+	if not await _wait_ready(): return false
+	var count: int = _actions.size()
+	if not _routed_swipe(direction): return false
+	for _i: int in range(MAX_TICKS):
+		await _step()
+		if not _live(): return false
+		if _actions.size() > count:
+			var action: Dictionary = _actions.back()
+			return _expect(action.kind == "dash" and action.landing == _hero.global_position and not _hero.action_in_progress(),"public native dash completes at its recorded deliberate stopped landing")
+	return _expect(false,"bounded actual completed dash")
+
+func _until(target: float) -> bool:
+	for _i: int in range(MAX_TICKS):
+		if not _live(): return false
+		if _clock()+EPS >= target: return true
+		await _step()
+	return _expect(false,"actual native clock reaches bounded original proof deadline")
+
+func _step() -> void:
+	await _barrier.tick_finished
+	_ticks += 1
+	if not _live(): return
+	var state: Dictionary = _driver.call("state",_selected)
+	if state.status == "running":
+		_phases[state.phase] = true
+		if not _phase_receipts.has(state.phase):
+			_phase_receipts[state.phase] = {"clock_s":_clock(),"state":state,"own_lease":_scheduler.reservation_state(state.reservation_id),"hero_position":_hero.global_position,"hero_hp":_hero.hp}
+	if paused or not String(_level.get("runtime_error")).is_empty():
+		_case_receipt["stopped"] = {"paused":paused,"clock_s":_clock(),"runtime_error":_level.get("runtime_error"),"native_state":_driver.call("state",_selected),"level":_level.call("encounter_state")}
+		_expect(false,"native component unexpectedly paused or reported runtime failure; original cause retained")
+		_abort = true
+
+func _portrait(plan: Dictionary) -> bool:
+	_game.call("open_bench")
+	_game.get("hud").call("hide_overlay")
+	var before: Dictionary = _portrait_packet()
+	var before_wire: PackedByteArray = var_to_bytes(before)
+	var native: Dictionary = before.native
+	if not _expect(paused and not before.hero.is_empty() and not native.scheduler.is_empty() and not native.exchange.is_empty() and native.actors.size() == 7 and before.render.size() > 0 and before.input.size() > 0 and _same_plan(plan),"nonempty actual Player/all-seven/native/input/optics/render witnesses precede paused draw"): return false
+	for id: String in native.actors:
+		if not _expect(not native.actors[id].is_empty(),"actual paused native actor packet " + id): return false
+	var points: Array = _game.call("player_camera_framing_points")
+	points.append_array(_level.camera_framing_points())
+	var error: String = _game.call("camera_framing_error",points)
+	if not _expect(error.is_empty(),"actual protected portrait union remains contained: " + error): return false
+	await RenderingServer.frame_post_draw
+	var image: Image = root.get_texture().get_image()
+	var image_path: String = _report.get_base_dir()+"/changed-common.png"
+	if not _expect(image != null and image.get_size() == Vector2i(540,1170) and not FileAccess.file_exists(image_path) and image.save_png(image_path) == OK,"one actual 540x1170 paused common warning/lock portrait"): return false
+	var after: Dictionary = _portrait_packet()
+	var after_wire: PackedByteArray = var_to_bytes(after)
+	if not _expect(before_wire.size() > 0 and before_wire == after_wire and paused and _same_plan(plan),"draw exactly preserves genuine native typed state/input/optics/render witnesses and original lease"): return false
+	var before_path: String = _report.get_base_dir()+"/portrait-before.var"
+	var after_path: String = _report.get_base_dir()+"/portrait-after.var"
+	if not _write_bytes(before_path,before_wire) or not _write_bytes(after_path,after_wire): return false
+	_case_receipt["portrait"] = {"image_path":image_path,"image_sha256":FileAccess.get_sha256(image_path),"before":before,"after":after,"typed_before_path":before_path,"typed_after_path":after_path,"typed_before_sha256":FileAccess.get_sha256(before_path),"typed_after_sha256":FileAccess.get_sha256(after_path),"points":points,"camera_error":error,"coverage":"paused actual pixels only; visual inspection pending; no graphical bot combat success gate"}
+	_receipts[_current_label] = _case_receipt.duplicate(true)
+	return _integrity(false)
+
+func _portrait_packet() -> Dictionary:
+	var camera: Camera3D = _game.get("camera") as Camera3D
+	var render: Array[Dictionary] = []
+	_render_witness(_level,render)
+	_render_witness(_hero,render)
+	_render_witness(_game.get("fx"),render)
+	return {"hero":_hero.snapshot_state(),"native":_level.call("component_native_packet"),"input":_game.call("get_input_observation_state"),"anchor":_game.call("get_aim_anchor_normalized"),"camera":{"basis":camera.global_basis,"origin":camera.global_position,"size":camera.size,"projection":camera.projection,"current":camera.current},"hud_safe_rect":_game.get("hud").call("combat_safe_rect"),"viewport":[root.size.x,root.size.y],"render":render,"actions":_actions.duplicate(true),"events":_events.duplicate(true)}
+
+func _render_witness(node: Node, output: Array[Dictionary]) -> void:
+	if node is MeshInstance3D:
+		var mesh: MeshInstance3D = node as MeshInstance3D
+		output.append({"path":str(_game.get_path_to(mesh)),"id_decimal":str(mesh.get_instance_id()),"basis":mesh.global_basis,"origin":mesh.global_position,"visible":mesh.visible,"visible_in_tree":mesh.is_visible_in_tree(),"mesh_id_decimal":str(mesh.mesh.get_instance_id()) if is_instance_valid(mesh.mesh) else "","material_id_decimal":str(mesh.material_override.get_instance_id()) if is_instance_valid(mesh.material_override) else ""})
+	elif node is Sprite3D:
+		var sprite: Sprite3D = node as Sprite3D
+		output.append({"path":str(_game.get_path_to(sprite)),"id_decimal":str(sprite.get_instance_id()),"basis":sprite.global_basis,"origin":sprite.global_position,"visible":sprite.visible,"visible_in_tree":sprite.is_visible_in_tree(),"texture_id_decimal":str(sprite.texture.get_instance_id()) if is_instance_valid(sprite.texture) else "","pixel_size":sprite.pixel_size,"frame":sprite.frame,"offset":sprite.offset,"modulate":[sprite.modulate.r,sprite.modulate.g,sprite.modulate.b,sprite.modulate.a]})
+	for child: Node in node.get_children(): _render_witness(child,output)
+
+func _screen_delta(direction: Vector3) -> Vector2:
+	var camera: Camera3D = _game.get("camera") as Camera3D
+	var right: Vector3 = camera.global_basis.x; right.y = 0.0
+	var down: Vector3 = camera.global_basis.z; down.y = 0.0
+	return Vector2(direction.dot(right.normalized()),direction.dot(down.normalized()))*120.0
+
+func _routed_swipe(direction: Vector3) -> bool:
+	direction = direction.normalized()
+	var before: int = int(_game.call("get_input_observation_state").sequence)
+	var start: Vector2 = Vector2(0.5,0.60)*root.get_visible_rect().size
+	var end: Vector2 = start+_screen_delta(direction)
+	if not _expect((_game.call("screen_to_direction",end-start) as Vector3).is_equal_approx(direction),"native camera maps ordinary swipe to requested direction"): return false
+	var press := InputEventScreenTouch.new(); press.index = 13; press.pressed = true; press.position = start
+	root.push_input(press,true)
+	var drag := InputEventScreenDrag.new(); drag.index = 13; drag.position = end; drag.relative = end-start
+	root.push_input(drag,true)
+	var release := InputEventScreenTouch.new(); release.index = 13; release.position = end
+	root.push_input(release,true)
+	var input: Dictionary = _game.call("get_input_observation_state")
+	var dash: Dictionary = _hero.get_committed_dash_state()
+	return _expect(input.sequence == before+1 and input.last_observation.kind == "swipe_release" and dash.active and (dash.direction as Vector3).is_equal_approx(direction) and (_game.call("get_aim_anchor_normalized") as Vector2).is_equal_approx(end/root.get_visible_rect().size),"real routed swipe commits shared dash and exact final release anchor")
+
+func _routed_primary(direction: Vector3) -> int:
+	var count: int = _actions.size()
+	var input_before: int = int(_game.call("get_input_observation_state").sequence)
+	var point: Vector2 = _game.call("get_aim_anchor")+_screen_delta(direction)
+	if not _expect((_game.call("aim_direction",point) as Vector3).is_equal_approx(direction),"ordinary first tap aims from actual last swipe release"): return 0
+	var press := InputEventScreenTouch.new(); press.index = 14; press.pressed = true; press.position = point
+	root.push_input(press,true)
+	var release := InputEventScreenTouch.new(); release.index = 14; release.position = point
+	root.push_input(release,true)
+	var input: Dictionary = _game.call("get_input_observation_state")
+	if not _expect(input.sequence == input_before+1 and input.last_observation.kind == "primary_tap" and input.last_observation.accepted and _actions.size() == count+1 and _actions.back().kind == "primary","actual immediate ordinary primary publication without blast"): return 0
+	return int(_actions.back().hits)
+
+func _same_plan(plan: Dictionary) -> bool:
+	if not is_instance_valid(_scheduler) or not is_instance_valid(_driver): return false
+	var state: Dictionary = _driver.call("state",_selected)
+	var lease: Dictionary = _scheduler.reservation_state(plan.reservation.id)
+	return not lease.is_empty() and state.cycle == plan.cycle and state.reservation_id == plan.reservation.id and lease.source_instance_id == _actors[_selected].get_instance_id() and lease.get("armed",false) and lease.lock_from_s == plan.reservation.lock_from_s and lease.active_from_s == plan.reservation.active_from_s and lease.active_until_s == plan.reservation.active_until_s and lease.recovery_until_s == plan.reservation.recovery_until_s
+
+func _live() -> bool:
+	return not _abort and is_instance_valid(_game) and is_instance_valid(_hero) and is_instance_valid(_driver) and not _hero.dead
+func _clock() -> float: return _scheduler.get_clock() if is_instance_valid(_scheduler) else 0.0
+func _expect(ok: bool, note: String) -> bool:
+	_checks += 1
+	_rows.append({"check":_checks,"label":note,"ok":ok,"note":note,"case":_current_label,"native_clock_s":_clock()})
+	if not ok: _failures += 1; push_error("A2-L1 component: "+note)
+	return ok
+
+func _refs(node: Node, result: Array[WeakRef]) -> void:
+	result.append(weakref(node))
+	for child: Node in node.get_children(): _refs(child,result)
+func _release() -> void:
+	if not is_instance_valid(_game): return
+	if is_instance_valid(_level):
+		_case_receipt["final_observation"] = {"level":_level.call("encounter_state"),"clock_s":_clock(),"phases":_phase_receipts.duplicate(true),"actions":_actions.duplicate(true),"invalidations":_invalidations.duplicate(true),"events":_events.duplicate(true)}
+	if not _case_receipt.is_empty(): _receipts[_current_label] = _case_receipt.duplicate(true)
+	var refs: Array[WeakRef] = []
+	if is_instance_valid(_game):
+		_refs(_game,refs)
+		if is_instance_valid(_level): _level.exit_level()
+		_game.queue_free()
+	_game = null; _level = null; _hero = null; _driver = null; _scheduler = null; _actors.clear()
+	paused = false
+	await process_frame
+	var retained: int = 0
+	for ref: WeakRef in refs:
+		if ref.get_ref() != null: retained += 1
+	_receipts[_current_label+"-cleanup"] = {"observed_native_nodes":refs.size(),"retained_native_nodes":retained}
+	_expect(retained == 0,"normal disposal releases every observed Main/Player/seven-actor/Scheduler/Exchange/cue/floor/render node")
+
+func _write_bytes(path: String, bytes: PackedByteArray) -> bool:
+	if not _expect(not FileAccess.file_exists(path),"new original native witness path"): return false
+	var file: FileAccess = FileAccess.open(path,FileAccess.WRITE)
+	if not _expect(file != null,"native witness file opens"): return false
+	file.store_buffer(bytes); file.close()
+	return _expect(FileAccess.get_file_as_bytes(path) == bytes,"original native typed witness retained byte-exact")
+
+func _encode(value: Variant) -> Variant:
+	if value is Vector3: return [value.x,value.y,value.z]
+	if value is Vector2: return [value.x,value.y]
+	if value is Basis: return {"x":_encode(value.x),"y":_encode(value.y),"z":_encode(value.z)}
+	if value is Rect2: return {"native_type":"Rect2","position":_encode(value.position),"size":_encode(value.size)}
+	if value is int and (value < -9007199254740991 or value > 9007199254740991): return {"native_int64_decimal":str(value)}
+	if value is Dictionary:
+		var result: Dictionary = {}
+		for key: Variant in value: result[str(key)] = _encode(value[key])
+		return result
+	if value is Array:
+		var result: Array = []
+		for item: Variant in value: result.append(_encode(item))
+		return result
+	return value
+
+func _sources() -> Dictionary:
+	var hashes: Dictionary = {}
+	for path: String in ["res://scripts/acts/act2/horsell_common.gd",OLD_PATH,DATA_PATH,"res://scripts/acts/act2/horsell_sequence.gd","res://scripts/acts/act2/ray_scout_actor.gd","res://scripts/acts/act2/ray_scout_exchange.gd","res://scripts/game.gd","res://scripts/player.gd","res://scripts/combat/threat_scheduler.gd","res://scripts/campaign/level.gd","res://scripts/combat/threat_geometry.gd","res://scripts/equipment.gd","res://data/design/player_equipment.json","res://tests/acts/act2/fixtures/a2_l1_arrangement_reference/declared_common_old.gd","res://tests/acts/act2/fixtures/a2_l1_arrangement_reference/declared_common_current.gd",get_script().resource_path]: hashes[path] = FileAccess.get_sha256(path)
+	return hashes
+
+func _finish() -> void:
+	var after: Dictionary = _sources()
+	if not _source_before.is_empty(): _expect(after == _source_before,"named selected component source bytes remain unchanged")
+	var first_failure: Dictionary = {}
+	for row: Dictionary in _rows:
+		if not bool(row.ok): first_failure = row.duplicate(true); break
+	var packet: Dictionary = {"schema_version":1,"kind":"a2-l1-declared-common-component-1","first_failure":first_failure,"selector":_selector,"checks":_checks,"failures":_failures,"rows":_rows,"complete":_complete,"success":_complete and _failures == 0,"native_ticks":_ticks,"receipts":_encode(_receipts),"partial_current":_encode(_case_receipt),"source_before":_source_before,"source_after":after,"limits":"TEST initial fork/pose/kit with empty defeat history. No parent snapshot/restore/checkpoint/progress authority, earlier road kills, whole-parent Save/Continue/Retry, full route/clear/exit, all-kit/human balance/FPS/mobile credit. Portrait selector captures paused real native state only, no graphical combat success gate."}
+	# Passive report only. Native receipts/partial observations were already
+	# encoded above; original typed .var witnesses retain exact native values.
+	var text: String = JSON.stringify(packet,"",true,true)
+	if not text.is_empty() and _report.is_absolute_path() and not FileAccess.file_exists(_report):
+		var file: FileAccess = FileAccess.open(_report,FileAccess.WRITE)
+		if file != null: file.store_string(text+"\n"); file.close()
+		else: _expect(false,"structured native report opens")
+	else: _expect(false,"nonempty exact report and fresh absolute path required")
+	print("CINDER_A2_L1_ARRANGEMENT_PAIR_REPORT=",_report," sha256=",FileAccess.get_sha256(_report) if FileAccess.file_exists(_report) else "")
+	print("A2-L1 declared common component: %d checks, %d failures; complete=%s selector=%s" % [_checks,_failures,str(_complete),_selector])
+	quit(0 if _complete and _failures == 0 else 2)

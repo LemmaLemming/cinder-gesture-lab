@@ -12,6 +12,15 @@ const InteractionCue: Script = preload("res://scripts/cues/interaction_cue.gd")
 const Geometry: Script = preload("res://scripts/combat/threat_geometry.gd")
 const Codec: Script = preload("res://scripts/campaign/snapshot_codec.gd")
 const SharedGame: Script = preload("res://scripts/game.gd")
+# Retain the authored layout independently of later menu preferences.
+const L1Arrangement: Script = preload("res://scripts/combat/encounter_arrangement.gd")
+const L1Difficulty: Script = preload("res://scripts/combat/difficulty.gd")
+const L1Exact: Script = preload("res://scripts/campaign/exact_json.gd")
+const L1_ARRANGEMENT_PATH: String = "res://data/campaign/act2/a2_l1_difficulty_arrangements.json"
+const L1_ARRANGEMENT_API: String = "act2-horsell-level-2"
+const L1_SOURCE_IDS: Array[String] = ["arrival", "road_east", "road_west", "common_left", "common_right", "departure_a", "departure_b"]
+const L1_CANONICAL_RECIPES: Dictionary = {"assisted": "A2-L1/assisted-canonical@v1", "standard": "A2-L1/standard-canonical@v1", "challenge": "A2-L1/challenge-canonical-legacy@v1"}
+const L1_CHALLENGE_RECIPE: String = "A2-L1/challenge-opposite-common@v2"
 const ENCOUNTER_ID: String = "A2-L1-horsell"
 const WORLD_REVISION: int = 1
 const FORK_REGION: Rect2 = Rect2(-2.8, -14.2, 5.6, 3.8)
@@ -81,6 +90,143 @@ var _exit_requested: bool = false
 var _last_action_sequence: int = 0
 
 
+# These fields belong only to the actual A2-L1 constructor. Inherited L2/L3/L4
+# keep their own recipes, original local shapes and native construction paths.
+var _l1_definition: Dictionary = {}
+var _l1_arrangement_descriptor: Dictionary = {}
+var _l1_selected_positions: Dictionary = {}
+var _l1_legacy_capture: bool = false
+var _l1_construction_started: bool = false
+
+
+static func _l1_arrangement_definition_error(definition: Variant) -> String:
+	var error: String = L1Arrangement.definition_error(definition)
+	if not error.is_empty(): return error
+	if definition.unit_ids != L1_SOURCE_IDS or definition.recipes.size() != 4:
+		return "Horsell requires its seven original units and four retained recipes"
+	var expected: Dictionary = {}
+	for profile: String in L1_CANONICAL_RECIPES:
+		expected[L1_CANONICAL_RECIPES[profile]] = {"recipe_id": L1_CANONICAL_RECIPES[profile], "profile": profile, "order": L1_SOURCE_IDS.duplicate()}
+	var opposite: Array = L1_SOURCE_IDS.duplicate()
+	opposite[3] = "common_right"
+	opposite[4] = "common_left"
+	expected[L1_CHALLENGE_RECIPE] = {"recipe_id": L1_CHALLENGE_RECIPE, "profile": "challenge", "order": opposite}
+	for recipe: Dictionary in definition.recipes:
+		if not expected.has(recipe.recipe_id) or not Codec.same_values(recipe, expected[recipe.recipe_id]):
+			return "Horsell retained recipe contents cannot be repurposed"
+	return ""
+
+
+static func _l1_arrangement_layout(descriptor: Variant, definition: Variant) -> Dictionary:
+	var error: String = _l1_arrangement_definition_error(definition)
+	if not error.is_empty(): return {"error": error}
+	var selector = L1Arrangement.new(definition)
+	error = selector.saved_error(descriptor)
+	if not error.is_empty(): return {"error": error}
+	var positions: Dictionary = {}
+	for index: int in range(L1_SOURCE_IDS.size()):
+		var actor_id: String = descriptor.order[index]
+		var slot: Vector3 = Sequence.ACTOR_POSITIONS[L1_SOURCE_IDS[index]]
+		# Preserve the recipient's authored height. The only retained nonidentity
+		# recipe exchanges common X slots, whose original Y/Z are identical.
+		slot.y = (Sequence.ACTOR_POSITIONS[actor_id] as Vector3).y
+		positions[actor_id] = slot
+	return {"error": "", "descriptor": selector.restore(descriptor), "positions": positions, "profile_id": descriptor.profile}
+
+
+static func _l1_local_envelope_error(local: Variant) -> String:
+	var error: String = Codec.value_error(local)
+	if not error.is_empty(): return error
+	if not local is Dictionary: return "Horsell local state must be a dictionary"
+	var current: bool = local.has("api_revision") or local.has("schema_version") or local.has("arrangement")
+	var keys: Array = LOCAL_KEYS.duplicate()
+	if current: keys.append_array(["api_revision", "schema_version", "arrangement"])
+	error = Codec.keys_error(local, keys)
+	if not error.is_empty(): return error
+	if current and (local.api_revision != L1_ARRANGEMENT_API or not Codec.is_integer(local.schema_version, 2, 2)):
+		return "Unsupported Horsell inner arrangement API/schema"
+	return ""
+
+
+# Pure construction metadata only. All original whole Player/Level, sequence,
+# source-position, Scheduler, Exchange, geometry and progress validation follows.
+static func _l1_arrangement_constructor(local: Variant, definition: Variant) -> Dictionary:
+	var error: String = _l1_local_envelope_error(local)
+	if not error.is_empty(): return {"error": error}
+	if not local.profile_id is String or not L1_CANONICAL_RECIPES.has(local.profile_id) or not local.sequence is Dictionary or not local.scheduler is Dictionary:
+		return {"error": "Horsell construction requires saved local profile and sequence/Scheduler dictionaries"}
+	var sequence = Sequence.new()
+	error = sequence.snapshot_error(local.sequence)
+	if not error.is_empty(): return {"error": error}
+	var paired: Dictionary = local.scheduler
+	if not paired.get("profile") is Dictionary or not Codec.is_integer(paired.get("world_revision"), WORLD_REVISION, WORLD_REVISION):
+		return {"error": "Horsell construction requires the saved Scheduler profile/world revision"}
+	var resolver = L1Difficulty.new()
+	var canonical: Dictionary = resolver.profile(local.profile_id)
+	if canonical.is_empty(): return {"error": "Unknown saved Horsell difficulty profile"}
+	if local.sequence.beat == "clear":
+		# Actual earned clear ends the native Scheduler epoch/profile. This is
+		# only a constructor receipt, never permission to fabricate that clear.
+		if not paired.profile.is_empty() or paired.get("encounter_id") != "" or not paired.get("reservations") is Array or not paired.reservations.is_empty():
+			return {"error": "Cleared Horsell constructor must retain its original empty Scheduler epoch"}
+	elif paired.get("encounter_id") != ENCOUNTER_ID or not Codec.same_values(paired.profile, canonical):
+		return {"error": "Horsell saved live Scheduler profile/epoch differs from its canonical local profile"}
+	var legacy: bool = not local.has("arrangement")
+	var descriptor: Variant = local.get("arrangement")
+	if legacy:
+		descriptor = {"schema_version": 1, "profile": local.profile_id, "recipe_id": L1_CANONICAL_RECIPES[local.profile_id], "order": L1_SOURCE_IDS.duplicate()}
+	var selected: Dictionary = _l1_arrangement_layout(descriptor, definition)
+	if not String(selected.error).is_empty(): return selected
+	if selected.profile_id != local.profile_id:
+		return {"error": "Horsell retained arrangement and saved local profiles differ"}
+	selected["legacy"] = legacy
+	return selected
+
+
+func _l1_load_definition() -> Variant:
+	return JSON.parse_string(FileAccess.get_file_as_string(L1_ARRANGEMENT_PATH))
+
+
+func restore_candidate_construction_required() -> bool:
+	# This query can precede _ready. Keep art-preview legacy behavior too.
+	if level_id == "A2-L1" and not _art_preview and not art_preview_only and not OS.get_cmdline_user_args().has("--a2-art-preview"):
+		return true
+	return super.restore_candidate_construction_required()
+
+
+func _on_enter_restore_candidate(local: Dictionary, saved_player: Dictionary) -> String:
+	if level_id != "A2-L1" or _art_preview:
+		return super._on_enter_restore_candidate(local, saved_player)
+	var definition: Variant = _l1_load_definition()
+	var selected: Dictionary = _l1_arrangement_constructor(local, definition)
+	if not String(selected.error).is_empty(): return selected.error
+	_l1_construct(selected, definition)
+	return runtime_error
+
+
+func _l1_binding_error(local: Dictionary) -> String:
+	if not _l1_construction_started or _l1_definition.is_empty():
+		return "Horsell native arrangement construction is absent"
+	var selected: Dictionary = _l1_arrangement_constructor(local, _l1_definition)
+	if not String(selected.error).is_empty(): return selected.error
+	if selected.legacy != _l1_legacy_capture or selected.profile_id != _profile_id or selected.positions != _l1_selected_positions or L1Exact.stringify(selected.descriptor) != L1Exact.stringify(_l1_arrangement_descriptor):
+		return "Horsell saved layout differs from the immutable constructed native bindings"
+	return ""
+
+
+func _l1_construct(selected: Dictionary, definition: Dictionary) -> void:
+	if _l1_construction_started or is_instance_valid(_scheduler) or not _actors.is_empty() or is_instance_valid(_exchange):
+		runtime_error = "Horsell native recipients can only be configured once"
+		return
+	_l1_construction_started = true
+	_l1_definition = definition.duplicate(true)
+	_l1_arrangement_descriptor = selected.descriptor.duplicate(true)
+	_l1_selected_positions = selected.positions.duplicate(true)
+	_l1_legacy_capture = selected.legacy
+	_profile_id = selected.profile_id
+	_l1_enter_native_runtime()
+
+
 func _ready() -> void:
 	_art_preview = art_preview_only or OS.get_cmdline_user_args().has("--a2-art-preview")
 	process_physics_priority = 110
@@ -106,6 +252,24 @@ func _on_enter_level() -> void:
 		return
 	if is_instance_valid(shared_shell) and shared_shell.has_method("get_difficulty_preference"):
 		_profile_id = shared_shell.call("get_difficulty_preference")
+	if level_id == "A2-L1":
+		var definition: Variant = _l1_load_definition()
+		var error: String = _l1_arrangement_definition_error(definition)
+		if not error.is_empty(): runtime_error = error; return
+		var selector = L1Arrangement.new(definition)
+		var descriptor: Dictionary = selector.select_fresh(_profile_id)
+		if descriptor.is_empty(): runtime_error = selector.last_error; return
+		var selected: Dictionary = _l1_arrangement_layout(descriptor, definition)
+		if not String(selected.error).is_empty(): runtime_error = selected.error; return
+		selected["legacy"] = false
+		_l1_construct(selected, definition)
+		return
+	# Non-L1 fallback retains original entry, used only if an inherited caller
+	# delegates here. Actual L2/L3/L4 keep their existing overriding entries.
+	_l1_enter_native_runtime()
+
+
+func _l1_enter_native_runtime() -> void:
 	_scheduler = Scheduler.new()
 	_scheduler.name = "HorsellThreatScheduler"
 	add_child(_scheduler)
@@ -115,7 +279,7 @@ func _on_enter_level() -> void:
 	for actor_id: String in Sequence.ACTOR_POSITIONS:
 		var actor: Node3D = ScoutActor.new() as Node3D
 		actor.name = "Scout_" + actor_id
-		actor.position = Sequence.ACTOR_POSITIONS[actor_id]
+		actor.position = _l1_selected_positions[actor_id] if level_id == "A2-L1" else Sequence.ACTOR_POSITIONS[actor_id]
 		add_child(actor)
 		if not actor.call("configure", hero, effects, actor_id):
 			runtime_error = "Could not bind authored Scout " + actor_id
@@ -701,11 +865,18 @@ func _capture_local_state() -> Dictionary:
 		return {"scenic_clock": _scenic_clock, "witness_state": _witness_state, "eruption_visible": _eruption_visible}
 	if not get_tree().paused or not _pending_defeats.is_empty() or _defeat_flush_queued or not runtime_error.is_empty():
 		return {"error": "Horsell capture requires its deferred paused committed barrier"}
+	if level_id == "A2-L1" and not _l1_construction_started:
+		return {"error": "Horsell capture requires complete native layout construction"}
 	var bindings: Dictionary = _scheduler_bindings()
 	var paired: Dictionary = _scheduler.call("snapshot_state", bindings)
 	var exchange: Dictionary = _exchange.call("snapshot_state", bindings)
-	return {"scenic_clock": _scenic_clock, "witness_state": _witness_state, "eruption_visible": _eruption_visible, "witness_started_s": _witness_started_s, "eruption_started_s": _eruption_started_s, "sequence": _sequence.call("snapshot_state"), "scheduler": paired, "exchange": exchange, "admitted_ids": _admitted_ids.duplicate(), "departure_checkpoint": _departure_checkpoint, "exit_requested": _exit_requested, "last_action_sequence": _last_action_sequence, "profile_id": _profile_id, "world_revision": WORLD_REVISION, "departure_contact_seen": _departure_contact_seen, "pending_checkpoints": _pending_checkpoints.duplicate(), "completion_pending": _completion_pending}
+	var result: Dictionary = {"scenic_clock": _scenic_clock, "witness_state": _witness_state, "eruption_visible": _eruption_visible, "witness_started_s": _witness_started_s, "eruption_started_s": _eruption_started_s, "sequence": _sequence.call("snapshot_state"), "scheduler": paired, "exchange": exchange, "admitted_ids": _admitted_ids.duplicate(), "departure_checkpoint": _departure_checkpoint, "exit_requested": _exit_requested, "last_action_sequence": _last_action_sequence, "profile_id": _profile_id, "world_revision": WORLD_REVISION, "departure_contact_seen": _departure_contact_seen, "pending_checkpoints": _pending_checkpoints.duplicate(), "completion_pending": _completion_pending}
 
+	if level_id == "A2-L1" and not _l1_legacy_capture:
+		result["api_revision"] = L1_ARRANGEMENT_API
+		result["schema_version"] = 2
+		result["arrangement"] = _l1_arrangement_descriptor.duplicate(true)
+	return result
 
 func _scenery_snapshot_error(state: Dictionary) -> String:
 	if not Codec.in_range(state.get("scenic_clock"), 0.0, 1000000000.0) or not state.get("witness_state") is String or state["witness_state"] not in ["arrival", "retreat", "absent"] or not state.get("eruption_visible") is bool:
@@ -756,7 +927,7 @@ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary)
 		return ""
 	if not get_tree().paused or not _pending_defeats.is_empty() or _defeat_flush_queued or not runtime_error.is_empty():
 		return "Horsell snapshots require a paused committed barrier"
-	error = Codec.keys_error(state, LOCAL_KEYS)
+	error = _l1_local_envelope_error(state) if level_id == "A2-L1" else Codec.keys_error(state, LOCAL_KEYS)
 	if not error.is_empty():
 		return error
 	if state["profile_id"] not in ["assisted", "standard", "challenge"] or not Codec.is_integer(state["world_revision"], WORLD_REVISION, WORLD_REVISION) or not Codec.is_integer(state["last_action_sequence"]) or not state["departure_checkpoint"] is bool or not state["exit_requested"] is bool or not state["departure_contact_seen"] is bool or not state["completion_pending"] is bool or not state["pending_checkpoints"] is Array:
@@ -804,6 +975,9 @@ func _local_snapshot_error_for_bindings(state: Dictionary, bindings: Dictionary)
 		return "Horsell paired scheduler epoch/profile differs"
 	if beat == "clear" and (not String(paired.get("encounter_id", "")).is_empty() or not paired.get("reservations", []).is_empty()):
 		return "Cleared Horsell must end its reservation encounter"
+	if level_id == "A2-L1":
+		error = _l1_binding_error(state)
+		if not error.is_empty(): return error
 	error = _exchange.call("snapshot_error", state["exchange"], bindings, paired)
 	if not error.is_empty():
 		return error

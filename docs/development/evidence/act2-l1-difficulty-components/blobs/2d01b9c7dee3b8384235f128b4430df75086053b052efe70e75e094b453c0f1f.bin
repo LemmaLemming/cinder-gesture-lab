@@ -1,0 +1,41 @@
+--- strict-source-b1a3
++++ report-v2
+@@ -79,7 +79,7 @@
+ 	root.content_scale_size = root.size
+ 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+ 	var args: PackedStringArray = OS.get_cmdline_user_args()
+-	_report = OS.get_environment("CINDER_A2_L1_COMPONENT_REPORT")
++	_report = OS.get_environment("CINDER_A2_L1_ARRANGEMENT_PAIR_REPORT")
+ 	if not _expect(args.size() == 1 and args[0] in ["--component-compare-left","--component-short-slow-right","--component-portrait"],"one explicit bounded component selector"): _finish(); return
+ 	_selector = args[0]
+ 	if not _expect(_report.is_absolute_path() and not FileAccess.file_exists(_report),"new absolute Root phase report path"): _finish(); return
+@@ -368,7 +368,7 @@
+ func _clock() -> float: return _scheduler.get_clock() if is_instance_valid(_scheduler) else 0.0
+ func _expect(ok: bool, note: String) -> bool:
+ 	_checks += 1
+-	_rows.append({"ok":ok,"note":note,"case":_current_label,"native_clock_s":_clock()})
++	_rows.append({"check":_checks,"label":note,"ok":ok,"note":note,"case":_current_label,"native_clock_s":_clock()})
+ 	if not ok: _failures += 1; push_error("A2-L1 component: "+note)
+ 	return ok
+ 
+@@ -425,12 +425,18 @@
+ func _finish() -> void:
+ 	var after: Dictionary = _sources()
+ 	if not _source_before.is_empty(): _expect(after == _source_before,"named selected component source bytes remain unchanged")
+-	var packet: Dictionary = {"schema_version":1,"kind":"a2-l1-declared-common-component-1","selector":_selector,"checks":_checks,"failures":_failures,"rows":_rows,"complete":_complete,"success":_complete and _failures == 0,"native_ticks":_ticks,"receipts":_encode(_receipts),"partial_current":_encode(_case_receipt),"source_before":_source_before,"source_after":after,"limits":"TEST initial fork/pose/kit with empty defeat history. No parent snapshot/restore/checkpoint/progress authority, earlier road kills, whole-parent Save/Continue/Retry, full route/clear/exit, all-kit/human balance/FPS/mobile credit. Portrait selector captures paused real native state only, no graphical combat success gate."}
+-	var text: String = Exact.stringify(packet)
++	var first_failure: Dictionary = {}
++	for row: Dictionary in _rows:
++		if not bool(row.ok): first_failure = row.duplicate(true); break
++	var packet: Dictionary = {"schema_version":1,"kind":"a2-l1-declared-common-component-1","first_failure":first_failure,"selector":_selector,"checks":_checks,"failures":_failures,"rows":_rows,"complete":_complete,"success":_complete and _failures == 0,"native_ticks":_ticks,"receipts":_encode(_receipts),"partial_current":_encode(_case_receipt),"source_before":_source_before,"source_after":after,"limits":"TEST initial fork/pose/kit with empty defeat history. No parent snapshot/restore/checkpoint/progress authority, earlier road kills, whole-parent Save/Continue/Retry, full route/clear/exit, all-kit/human balance/FPS/mobile credit. Portrait selector captures paused real native state only, no graphical combat success gate."}
++	# Passive report only. Native receipts/partial observations were already
++	# encoded above; original typed .var witnesses retain exact native values.
++	var text: String = JSON.stringify(packet,"",true,true)
+ 	if not text.is_empty() and _report.is_absolute_path() and not FileAccess.file_exists(_report):
+ 		var file: FileAccess = FileAccess.open(_report,FileAccess.WRITE)
+ 		if file != null: file.store_string(text+"\n"); file.close()
+ 		else: _expect(false,"structured native report opens")
+ 	else: _expect(false,"nonempty exact report and fresh absolute path required")
++	print("CINDER_A2_L1_ARRANGEMENT_PAIR_REPORT=",_report," sha256=",FileAccess.get_sha256(_report) if FileAccess.file_exists(_report) else "")
+ 	print("A2-L1 declared common component: %d checks, %d failures; complete=%s selector=%s" % [_checks,_failures,str(_complete),_selector])
+ 	quit(0 if _complete and _failures == 0 else 2)

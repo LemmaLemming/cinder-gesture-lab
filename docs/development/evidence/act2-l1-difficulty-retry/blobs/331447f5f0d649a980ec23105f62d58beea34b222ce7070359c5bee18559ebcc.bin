@@ -1,0 +1,195 @@
+"""Four explicitly CLOSED retry originals; private two-base incremental digest pack."""
+from pathlib import Path, PurePosixPath
+import datetime
+import hashlib
+import json
+import stat
+
+HERE = Path(__file__).resolve().parent
+BASE = HERE.parent
+ROOT = BASE.parents[1]
+PUBLIC = "docs/development/evidence/act2-l1-difficulty-retry/"
+BASE_PUBLIC = "docs/development/evidence/act2-l1-difficulty-root-base/"
+BASE_PACK = HERE / "pack-base-20261016T053723.156263Z/pack"
+BASE_MANIFEST_SHA = "8b15e8cd1900082a33ac3077e3aeeecd118ef9804dbd4969c14381dc4c47b628"
+COMPONENT_PUBLIC = "docs/development/evidence/act2-l1-difficulty-components/"
+COMPONENT_PACK = HERE / "pack-components-20261016T054835.038749Z/pack"
+COMPONENT_MANIFEST_SHA = "2bf5b5ea3445f473bf0604ffd5453ce800b2c21c6d9d43810eea8eeb561b9d9f"
+PHASES = [
+ "validation-successor-v3/run-seal-pure-20261016T054649.190939Z-2da0c04f",
+ "validation-successor-v3/run-native-pair-20261016T054655.238041Z-e960f26c",
+ "validation-successor-v4/run-seal-pure-20261016T055548.006651Z-9aeacfdd",
+ "validation-successor-v4/run-native-pair-20261016T055556.651523Z-835a4569",
+]
+EXTRAS = {
+ "validation-successor-v3": ["run.py","INPUT_SPEC.json","SOURCE_INPUTS.json","READINESS.json","README.md"],
+ "validation-successor-v4": ["run.py","INPUT_SPEC.json","SOURCE_INPUTS.json","READINESS.json","README.md"],
+ "root-verification": ["NATIVE_RETRY_REVIEW.json","NATIVE_RETRY_REVIEW.md"],
+ "root-test-selection": ["COMPONENT_SHORTSLOW_LEFT.json","COMPONENT_ONE_NATIVE_RETRY.json","component-shortslow-left-v3/original-2b66663a.gd.txt","component-shortslow-left-v3/successor.gd.txt","component-one-native-retry-v4/original-29af1ba0.gd.txt"],
+ "component-decision-review/retry-prepare": ["act2_l1_arrangement_component.gd.txt","READINESS.json","README.md","SOURCE_DIFF.patch","reload-qualified-v2/act2_l1_arrangement_component.gd.txt","reload-qualified-v2/READINESS.json","reload-qualified-v2/README.md","reload-qualified-v2/SOURCE_DIFF.patch"],
+}
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def read(path):
+    return json.loads(path.read_text(), parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)))
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def regular(path):
+    require(path.is_file() and not path.is_symlink(), "Regular original required: " + str(path))
+    return path.read_bytes()
+
+
+def encode(value):
+    return (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+
+
+def safe(name):
+    require(type(name) is str, "String path required")
+    p = PurePosixPath(name)
+    require(not p.is_absolute() and ".." not in p.parts and str(p) == name and name not in ("", "."), "Safe relative path required")
+    return name
+
+
+def meta(path):
+    data = regular(path)
+    return {"sha256": digest(data), "bytes": len(data), "mode_octal": format(stat.S_IMODE(path.stat().st_mode), "04o")}
+
+
+def main():
+    pools, base_digests, required_manifests = {}, {}, []
+    for pool, prefix, expected_sha in [(BASE_PACK, BASE_PUBLIC, BASE_MANIFEST_SHA),(COMPONENT_PACK, COMPONENT_PUBLIC, COMPONENT_MANIFEST_SHA)]:
+        manifest_path = pool / (prefix + "PUBLIC_COPY_MANIFEST.json")
+        require(digest(regular(manifest_path)) == expected_sha, "Exact immutable base manifest required")
+        manifest = read(manifest_path)
+        required_manifests.append({"repository_path":prefix+"PUBLIC_COPY_MANIFEST.json","sha256":expected_sha})
+        for name, row in manifest["files"].items():
+            require(meta(pool/name) == row, "Exact base manifest file/mode differs")
+            if name.startswith(prefix+"blobs/"):
+                base_digests.setdefault(row["sha256"],name)
+                pools[name] = (pool,row)
+    selected, aliases, phases = {}, [], []
+    def select(path, role):
+        name = path.relative_to(ROOT).as_posix()
+        data, row = regular(path), meta(path)
+        row["role"] = role
+        if name in selected:
+            require(selected[name][0] == data and selected[name][1]["mode_octal"] == row["mode_octal"], "Original changed while selecting")
+        else:
+            selected[name] = (data, row)
+        return name
+    for phase_name in PHASES:
+        phase = BASE / phase_name
+        result = read(phase / "result.json")
+        require(result.get("closed") is True and type(result.get("passed")) is bool and type(result.get("runner_return_code")) is int, "Explicit CLOSED original required")
+        index = read(phase / "evidence-index.json")
+        require(index.get("created_after_raw_close") is True, "Original after-raw-close index required")
+        physical = {p.relative_to(phase).as_posix() for p in phase.rglob("*") if p.is_file()}
+        require(physical == set(index["files"]) | {"evidence-index.json"}, "Original exact phase physical/index whitelist differs")
+        for name, row in index["files"].items():
+            data = regular(phase / safe(name))
+            require(digest(data) == row["sha256"] and len(data) == row["bytes"], "Original indexed hash/size mismatch")
+        members = {name: select(phase / name, "actual original CLOSED component artifact; source/report/failed status retained") for name in sorted(physical)}
+        for name in sorted(n for n in physical if n.endswith("-retention.json") and n != "native-report-retention.json"):
+            retention = read(phase / name)
+            observation_name = name.replace("-retention.json", ".json")
+            observed = read(phase / observation_name)
+            require(set(retention) == {k for k, v in observed.items() if v is not None}, "Original source observation/retention keyset differs")
+            for logical, value in observed.items():
+                row = {"phase": phase_name, "original_observation_relative_path": members[observation_name], "original_retention_relative_path": members[name], "original_source_relative_path": logical, "present": value is not None}
+                if value is not None:
+                    original = members[safe(retention[logical]["blob"])]
+                    data, m = selected[original]
+                    require(m["sha256"] == value == retention[logical]["sha256"] and m["bytes"] == retention[logical]["bytes"], "Exact original retained source join differs")
+                    row.update({"original_retained_blob_relative_path": original, "sha256": value, "bytes": m["bytes"]})
+                aliases.append(row)
+        report = read(phase / "native-report.json") if "native-report.json" in physical else None
+        summary = {"phase": phase_name, "original_index_relative_path": members["evidence-index.json"], "original_result_relative_path": members["result.json"], "closed": True, "recorded_passed": result["passed"], "runner_return_code": result["runner_return_code"], "canonical_return_code": result.get("canonical_return_code"), "native_report_present": report is not None, "original_file_count_including_index": len(members), "recorded_raw_diagnostics": result.get("raw_diagnostics", [])}
+        if report is not None:
+            rows = report["rows"]
+            require(report["checks"] == len(rows) and all(row["check"] == i + 1 and type(row["ok"]) is bool for i, row in enumerate(rows)), "Actual consecutive structured native rows required")
+            false = [row for row in rows if not row["ok"]]
+            require(len(false) == report["failures"] and (report["first_failure"] == false[0] if false else report["first_failure"] == {}), "Actual first failure/row counts differ")
+            require(report["source_before"] == report["source_after"], "Native selected source maps differ")
+            atlock = read(phase / "sources-at-lock.json")
+            require(all(uri.startswith("res://") and atlock.get(uri[6:]) == value for uri, value in report["source_before"].items()), "Actual native/at-lock source subset mismatch")
+            summary.update({"original_report_relative_path": members["native-report.json"], "actual_report_control_fields": {k: report.get(k) for k in ("checks", "failures", "complete", "success", "first_failure", "selector")}, "native_limits": report["limits"]})
+        if phase_name.endswith("e960f26c"):
+            require(report["checks"] == 29 and report["failures"] == 1 and not report["complete"] and not result["passed"], "Original v3 29/1 remains failed/incomplete")
+            summary["qualification"] = "Original short-slow-left29/1 real preescape presentation abort. Cause not generalized; remains FAILED/incomplete."
+        elif phase_name.endswith("835a4569"):
+            require(report["checks"] == 96 and report["failures"] == 0 and report["complete"] and report["success"] and result["canonical_return_code"] == 0 and result["runner_return_code"] == 2 and not result["passed"], "Native96/0 child0 HOST2 status must remain qualified")
+            require(len(result["raw_diagnostics"]) == 1 and "ret != noErr" in result["raw_diagnostics"][0], "Sole original CA diagnostic required")
+            summary["qualification"] = "Actual native96/0 functional complete/success, canonical child0, hostCLOSED2 sole macOS CA certificate diagnostic. NOT CLEAN; independent review retained; no acceptance inference."
+        phases.append(summary)
+    for folder, names in EXTRAS.items():
+        for name in names:
+            select(BASE / folder / name, "private preparation/source correction/independent or Root review snapshot, historical status retained; not execution repin")
+    select(Path(__file__).resolve(), "specific incremental archive helper, no engine")
+    select(ROOT / "tests/act2_l1_arrangement_component.gd", "CURRENT reference only: latest41232 retry source, never historical source repin")
+    select(ROOT / "tests/act2_l1_arrangement_component.gd.uid", "CURRENT genuine UID reference only; historical source maps remain unchanged")
+    require(meta(ROOT / "tests/act2_l1_arrangement_component.gd")["sha256"] == "41232fdd4efe39cc6f8617995a54f5c3b3d44cfc2ec2299f3a73568408bc2ea5", "Exact current component reference required")
+    output = HERE / ("pack-retry-" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ"))
+    output.mkdir(exist_ok=False)
+    pack = output / "pack"
+    files, originals, reused, new = {}, {}, {}, {}
+    def put(name, data):
+        require(safe(name).startswith(PUBLIC), "Fixed private supplement prefix required")
+        path = pack / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if path.exists():
+            require(regular(path) == data, "Prepared digest/path conflict")
+        else:
+            with path.open("xb") as f: f.write(data)
+        path.chmod(0o644)
+        files[name] = {"sha256": digest(data), "bytes": len(data), "mode_octal": "0644"}
+    def storage(data, row):
+        value = row["sha256"]
+        if value in base_digests:
+            destination = base_digests[value]
+            pool, expected = pools[destination]
+            original = pool / destination
+            require(regular(original) == data and meta(original) == expected, "Referenced immutable base digest differs")
+            reused[value] = {"repository_storage_path": destination, **expected}
+            return destination
+        destination = PUBLIC + "blobs/" + value + ".bin"
+        put(destination, data)
+        new[value] = {"repository_storage_path": destination, "bytes": row["bytes"]}
+        return destination
+    put(PUBLIC + ".gdignore", b"")
+    for name, (data, row) in selected.items():
+        originals[name] = {**row, "repository_storage_path": storage(data, row)}
+    for row in aliases:
+        if row["present"]:
+            row["repository_storage_path"] = originals[row["original_retained_blob_relative_path"]]["repository_storage_path"]
+    put(PUBLIC + "original-paths.json", encode({"schema_version": 1, "scope": "Byte-exact original paths/hash/size/modes map to supplement or verified immutable base CAS. Original indices and historical paths stay opaque unchanged; old physical paths are not claimed live here.", "files": originals}))
+    put(PUBLIC + "source-observation-aliases.json", encode({"schema_version": 1, "scope": "Derived explicit original observation/retention/source relocation joins only; no historical repin.", "aliases": aliases}))
+    put(PUBLIC + "BASE_CAS_REFERENCE.json", encode({"schema_version": 1, "required_manifests": required_manifests, "reused_blob_count": len(reused), "reused_blobs": reused, "scope": "This is an incremental supplement, not standalone storage. Every referenced base blob was verified against original bytes and reviewed immutable manifest; original files are not duplicated."}))
+    index = {"schema_version":1,"kind":"a2-l1-four-closed-retry-originals-incremental-evidence","actual_closed_phases":len(phases),"phases":phases,"original_paths":len(originals),"unique_new_CAS_blobs":len(new),"unique_reused_base_CAS_blobs":len(reused),"source_aliases":len(aliases),"required_manifests":required_manifests,"scope":"Exactly four named CLOSED v3/v4 seal/native originals. Original29/1 remains FAILED/incomplete; native96/0 child0 remains hostCLOSED2 CA-qualified NOT CLEAN. Current source/UID and private retry drafts are labeled references, no historical repin. No new native execution, acceptance/full-route/all-kit/whole-parent save/visual claim."}
+    put(PUBLIC + "index.json", encode(index))
+    put(PUBLIC + "README.md", b"# A2-L1 retry evidence addendum\n\nExactly four CLOSED original phases: v3seal2da0/nativee960 and v4seal9aea/native835a. V3 actual29/1 remains FAILED/incomplete. V4 native96/0 complete/success and canonical child0 remain hostCLOSED2 for sole macOS CA certificate diagnostic, NOT CLEAN. Root independent review is retained, no acceptance inferred.\n\nNew digest blobs plus verified immutable base and component CAS store originals byte-exact. Original paths/hash/size/mode maps and source aliases preserve source custody without rewriting original evidence. Both existing manifests are required; every cross-reference was verified. Latest41232 source and genuine UID are clearly current references, never historical repins. No engine/Git/public copy/native acceptance or full-route/all-kit claim.\n")
+    manifest_name = PUBLIC + "PUBLIC_COPY_MANIFEST.json"
+    put(manifest_name, encode({"schema_version": 1, "status": "PRIVATE_RETRY_SUPPLEMENT_READY_FOR_ROOT_REVIEW_ONLY", "file_count_excluding_this_manifest": len(files), "file_count_including_this_manifest": len(files) + 1, "bytes_excluding_this_manifest": sum(x["bytes"] for x in files.values()), "required_base_manifest_sha256": BASE_MANIFEST_SHA, "self_repository_path": manifest_name, "files": dict(files)}))
+    for name, expected in files.items():
+        require(meta(pack / name) == expected, "Prepared exact file/mode verification failed")
+    for original, (data, row) in selected.items():
+        require(regular(ROOT / original) == data and meta(ROOT / original)["mode_octal"] == row["mode_octal"], "Original changed during preparation")
+    for row in reused.values():
+        require(meta(pools[row["repository_storage_path"]][0] / row["repository_storage_path"]) == {k:row[k] for k in ("sha256", "bytes", "mode_octal")}, "Base reference changed during preparation")
+    (output / "PUBLICATION_PATHS.txt").write_text("\n".join(sorted(files)) + "\n")
+    (output / "PUBLICATION_PATHS.nul").write_bytes(b"".join(name.encode() + b"\0" for name in sorted(files)))
+    closure = {"schema_version": 1, "status": "EXACT_PRIVATE_RETRY_SUPPLEMENT_VERIFIED", "closed_phases": len(phases), "original_paths": len(originals), "source_aliases": len(aliases), "new_CAS_blobs": len(new), "reused_base_CAS_blobs": len(reused), "publication_files": len(files), "publication_bytes": sum(x["bytes"] for x in files.values()), "manifest_sha256": files[manifest_name]["sha256"], "index_sha256": files[PUBLIC + "index.json"]["sha256"], "base_manifest_sha256": BASE_MANIFEST_SHA, "component_manifest_sha256": COMPONENT_MANIFEST_SHA, "no_engine_Git_publiccopy_or_native_acceptance_claim": True}
+    (output / "PREPARATION_CLOSURE.json").write_bytes(encode(closure))
+    print(json.dumps({"private_output": str(output), **closure}, indent=2))
+
+
+if __name__ == "__main__":
+    main()

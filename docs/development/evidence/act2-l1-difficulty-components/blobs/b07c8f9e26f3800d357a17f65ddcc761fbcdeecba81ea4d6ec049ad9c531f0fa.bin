@@ -1,0 +1,1232 @@
+{
+  "kind": "a2-l1-actual-neutral-left-decision-review-1",
+  "created_utc": "2026-10-16T05:43:26.368304+00:00",
+  "recommendation": "Bounded fresh landing/approach decision is supported by actual old/current neutral left native executions, plus explicitly analytic cross-lease geometry comparison. Root may use this evidence for amendment review with stated component limits. Do not call host phase clean.",
+  "native_vs_host": {
+    "actual_native_report": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-successor-v2/run-native-pair-20261016T054019.309216Z-f2a7a08c/native-report.json",
+      "bytes": 302478,
+      "sha256": "0d511f11fac46745af3a7d76206c0ab4db640a543a7ad83a680222d7b1f7be43"
+    },
+    "native_counts": {
+      "checks": 125,
+      "failures": 0,
+      "complete": true,
+      "success": true,
+      "native_ticks": 301
+    },
+    "actual_rows": "125 consecutive named actual rows; all true. first_failure empty.",
+    "selector": "--component-compare-left",
+    "source_before_equals_after": true,
+    "host_result": {
+      "phase": "native",
+      "test": "pair",
+      "mode": "--component-compare-left",
+      "closed": true,
+      "passed": false,
+      "engine_launch_attempted": true,
+      "owned_validation_returned": true,
+      "canonical_return_code": 0,
+      "terminal_scope": "Canonical API return after its owned wait/cleanup; may be synthetic detected failure/timeout, not independent OS-terminal proof.",
+      "error": "Actual raw native diagnostics require review; not a clean pass",
+      "runner_return_code": 2,
+      "raw_diagnostics": [
+        "ERROR: Condition \"ret != noErr\" is true. Returning: \"\""
+      ],
+      "diagnostic_scope": "Raw/engine logs preserved; Root independently reviews diagnostics before acceptance. Zero return is not blanket clean-log proof."
+    },
+    "raw_diagnostic": "ERROR: Condition \"ret != noErr\" is true. Returning: \"\"; at get_system_ca_certificates (platform/macos/os_macos.mm:1035).",
+    "qualification": "Canonical child returned0 and native footer reports125/0 complete=true. Host wrapper CLOSED2 due retained CA diagnostic. No fixture error or extra environment/OS/focus/network cause inferred. No rerun is needed for that diagnostic alone."
+  },
+  "actual_old": {
+    "case": "old-left",
+    "constructor": {
+      "actors": {
+        "arrival": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "94019521314",
+          "position": [
+            0.0,
+            0.0,
+            -0.4000000059604645
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "common_left": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "107407740466",
+          "position": [
+            -0.8999999761581421,
+            0.0,
+            -14.5
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "common_right": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "111870480183",
+          "position": [
+            0.8999999761581421,
+            0.0,
+            -14.5
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "departure_a": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "116333219900",
+          "position": [
+            -0.6499999761581421,
+            0.0,
+            -23.100000381469727
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "departure_b": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "120795959617",
+          "position": [
+            0.6499999761581421,
+            0.0,
+            -25.5
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "road_east": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "98482261032",
+          "position": [
+            1.0,
+            0.0,
+            -5.400000095367432
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "road_west": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "102945000749",
+          "position": [
+            -1.0,
+            0.0,
+            -9.0
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        }
+      },
+      "admitted_ids": [],
+      "completion_pending": false,
+      "departure_checkpoint": false,
+      "departure_contact_seen": false,
+      "exit_requested": false,
+      "native_owner_ids": {
+        "arrival": "94019521314",
+        "common_left": "107407740466",
+        "common_right": "111870480183",
+        "departure_a": "116333219900",
+        "departure_b": "120795959617",
+        "road_east": "98482261032",
+        "road_west": "102945000749"
+      },
+      "original_sequence_validation_error": "Earlier encounters must form the exact Horsell prefix",
+      "pending_checkpoints": [],
+      "pending_defeats": [],
+      "refused_progress": [],
+      "runtime_error": "",
+      "scheduler_profile": {
+        "arrangement": "authored_target_priority_and_positioning",
+        "commit_stagger_s": 0.12,
+        "id": "challenge",
+        "name": "Challenge",
+        "raw_damage_multiplier": 1.0,
+        "recovery_multiplier": 1.0,
+        "reserved_threat_budget": 2.0,
+        "windup_multiplier": 1.0
+      },
+      "sequence": {
+        "alive_ids": [],
+        "beat": "fork",
+        "defeated_ids": [],
+        "level_id": "A2-L1",
+        "route": "",
+        "schema_version": 1
+      }
+    },
+    "initial_hp": 100.0,
+    "fork": {
+      "active_ids": [
+        "common_left"
+      ],
+      "hero_position": [
+        -1.0800001621246338,
+        -0.004843761678785086,
+        -12.674591064453125
+      ],
+      "input": {
+        "anchor_normalized": [
+          0.41111111640930176,
+          0.505998432636261
+        ],
+        "last_observation": {
+          "accepted": false,
+          "action_clock_s": 0.09999999999999999,
+          "anchor_normalized": [
+            0.41111111640930176,
+            0.505998432636261
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "kind": "swipe_release",
+          "schema_version": 1,
+          "screen_position_normalized": [
+            0.41111111640930176,
+            0.505998432636261
+          ],
+          "sequence": 1,
+          "world_action_sequence": 0
+        },
+        "schema_version": 1,
+        "sequence": 1
+      },
+      "primary_range": 2.0,
+      "route": "left",
+      "source_planar_distance": 1.8342622518539429,
+      "source_position": [
+        -0.8999999761581421,
+        0.0,
+        -14.5
+      ]
+    },
+    "fork_action": {
+      "kind": "dash",
+      "started_at_s": 0.09999999999999999,
+      "completed_at_s": 0.2833333333333333,
+      "direction": [
+        -0.40000003576278687,
+        0.0,
+        -0.9165151715278625
+      ],
+      "world_origin": [
+        0.0,
+        -0.004843761678785086,
+        -10.199999809265137
+      ],
+      "landing": [
+        -1.0800001621246338,
+        -0.004843761678785086,
+        -12.674591064453125
+      ],
+      "distance": 2.700000524520874,
+      "equipment_ids": {
+        "jacket": "CLOTH-J0",
+        "pants": "CLOTH-P0",
+        "shoes": "CLOTH-S0",
+        "weapon": "WEAPON-01"
+      },
+      "blocked": false,
+      "collision_shortened": false,
+      "movement_damage": false
+    },
+    "actual_native_geometry": {
+      "from": [
+        -0.8999999761581421,
+        0.0,
+        -14.5
+      ],
+      "kind": "lane",
+      "radius": 0.31,
+      "to": [
+        -1.2729023694992065,
+        0.0,
+        -10.718341827392578
+      ]
+    },
+    "actual_native_timing": {
+      "id": "threat-1",
+      "start_s": 0.2833333333333333,
+      "lock_from_s": 0.733333333333334,
+      "active_from_s": 1.833333333333334,
+      "active_until_s": 1.9933333333333338,
+      "recovery_until_s": 3.5933333333333337,
+      "cooldown_until_s": 3.433333333333334,
+      "profile_id": "challenge",
+      "source_instance_id": 107407740466
+    },
+    "proof": {
+      "accepted": true,
+      "attack_position": [
+        0.8291881084442139,
+        -0.004843761678785086,
+        -14.583779335021973
+      ],
+      "landing": [
+        0.8291881084442139,
+        -0.004843761678785086,
+        -14.583779335021973
+      ],
+      "path": [
+        {
+          "end_s": 1.0333333333333339,
+          "from": [
+            -1.0800001621246338,
+            -0.004843761678785086,
+            -12.674591064453125
+          ],
+          "kind": "recognition_and_ready",
+          "start_s": 0.733333333333334,
+          "to": [
+            -1.0800001621246338,
+            -0.004843761678785086,
+            -12.674591064453125
+          ]
+        },
+        {
+          "end_s": 1.2133333333333338,
+          "from": [
+            -1.0800001621246338,
+            -0.004843761678785086,
+            -12.674591064453125
+          ],
+          "kind": "escape_dash",
+          "start_s": 1.0333333333333339,
+          "to": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -14.583779335021973
+          ]
+        },
+        {
+          "end_s": 2.0943333333333336,
+          "from": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -14.583779335021973
+          ],
+          "kind": "recovery_wait",
+          "start_s": 1.2133333333333338,
+          "to": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -14.583779335021973
+          ]
+        },
+        {
+          "end_s": 2.3943333333333334,
+          "from": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -14.583779335021973
+          ],
+          "kind": "ordinary_primary",
+          "start_s": 2.0943333333333336,
+          "to": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -14.583779335021973
+          ]
+        }
+      ],
+      "primary_time_s": 2.0943333333333336,
+      "proof_scope": "static_box_floor_full_dash_stationary_primary",
+      "response_complete_s": 2.3943333333333334,
+      "uses_blast": false,
+      "uses_invulnerability": false
+    },
+    "actions": [
+      {
+        "kind": "dash",
+        "started_at_s": 0.09999999999999999,
+        "completed_at_s": 0.2833333333333333,
+        "direction": [
+          -0.40000003576278687,
+          0.0,
+          -0.9165151715278625
+        ],
+        "world_origin": [
+          0.0,
+          -0.004843761678785086,
+          -10.199999809265137
+        ],
+        "landing": [
+          -1.0800001621246338,
+          -0.004843761678785086,
+          -12.674591064453125
+        ],
+        "distance": 2.700000524520874,
+        "equipment_ids": {
+          "jacket": "CLOTH-J0",
+          "pants": "CLOTH-P0",
+          "shoes": "CLOTH-S0",
+          "weapon": "WEAPON-01"
+        },
+        "blocked": false,
+        "collision_shortened": false,
+        "movement_damage": false
+      },
+      {
+        "kind": "dash",
+        "started_at_s": 1.0333333333333345,
+        "completed_at_s": 1.2166666666666672,
+        "direction": [
+          0.7071066498756409,
+          0.0,
+          -0.70710688829422
+        ],
+        "world_origin": [
+          -1.0800001621246338,
+          -0.004843761678785086,
+          -12.674591064453125
+        ],
+        "landing": [
+          0.8291882276535034,
+          -0.004843761678785086,
+          -14.583781242370605
+        ],
+        "distance": 2.7000014781951904,
+        "equipment_ids": {
+          "jacket": "CLOTH-J0",
+          "pants": "CLOTH-P0",
+          "shoes": "CLOTH-S0",
+          "weapon": "WEAPON-01"
+        },
+        "blocked": false,
+        "collision_shortened": false,
+        "movement_damage": false
+      },
+      {
+        "kind": "primary",
+        "started_at_s": 2.0999999999999974,
+        "completed_at_s": 2.0999999999999974,
+        "direction": [
+          -0.9988283514976501,
+          0.0,
+          0.04839426651597023
+        ],
+        "world_origin": [
+          0.8291882276535034,
+          -0.004843761678785086,
+          -14.583781242370605
+        ],
+        "hits": 1,
+        "cooldown_s": 0.3,
+        "commitment_duration_s": 0.13,
+        "equipment_ids": {
+          "jacket": "CLOTH-J0",
+          "pants": "CLOTH-P0",
+          "shoes": "CLOTH-S0",
+          "weapon": "WEAPON-01"
+        }
+      }
+    ],
+    "all_phase_observations": [
+      {
+        "phase": "active",
+        "clock_s": 1.8499999999999983,
+        "hero_hp": 100.0,
+        "hero_position": [
+          0.8291882276535034,
+          -0.004843761678785086,
+          -14.583781242370605
+        ],
+        "armed": true,
+        "proof_available": true,
+        "last_cancel_reason": ""
+      },
+      {
+        "phase": "lock",
+        "clock_s": 0.733333333333334,
+        "hero_hp": 100.0,
+        "hero_position": [
+          -1.0800001621246338,
+          -0.004843761678785086,
+          -12.674591064453125
+        ],
+        "armed": true,
+        "proof_available": true,
+        "last_cancel_reason": ""
+      },
+      {
+        "phase": "recovery",
+        "clock_s": 1.9999999999999978,
+        "hero_hp": 100.0,
+        "hero_position": [
+          0.8291882276535034,
+          -0.004843761678785086,
+          -14.583781242370605
+        ],
+        "armed": true,
+        "proof_available": true,
+        "last_cancel_reason": ""
+      },
+      {
+        "phase": "warning",
+        "clock_s": 0.2833333333333333,
+        "hero_hp": 100.0,
+        "hero_position": [
+          -1.0800001621246338,
+          -0.004843761678785086,
+          -12.674591064453125
+        ],
+        "armed": false,
+        "proof_available": false,
+        "last_cancel_reason": ""
+      }
+    ],
+    "selected_hp_after": 10.0,
+    "hero_hp_after": 100.0,
+    "primary_planar_source_distance": 1.731216664884701,
+    "invalidations": [],
+    "first_armed_geometry_booleans": {
+      "geometry_equals_lease": true,
+      "kind_is_lane": true,
+      "from_equals_source": true,
+      "radius_equals_original": true,
+      "endpoint_equals_reconstruction": false,
+      "endpoint_is_equal_approx": true,
+      "geometry_matches": true,
+      "armed_matches": true
+    },
+    "cleanup": {
+      "observed_native_nodes": 1347,
+      "retained_native_nodes": 0
+    }
+  },
+  "actual_current": {
+    "case": "current-left",
+    "constructor": {
+      "actors": {
+        "arrival": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "201410481495",
+          "position": [
+            0.0,
+            0.0,
+            -0.4000000059604645
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "common_left": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "214798700649",
+          "position": [
+            0.8999999761581421,
+            0.0,
+            -14.5
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "common_right": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "219261440366",
+          "position": [
+            -0.8999999761581421,
+            0.0,
+            -14.5
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "departure_a": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "223724177866",
+          "position": [
+            -0.6499999761581421,
+            0.0,
+            -23.100000381469727
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "departure_b": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "228186917590",
+          "position": [
+            0.6499999761581421,
+            0.0,
+            -25.5
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "road_east": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "205873221215",
+          "position": [
+            1.0,
+            0.0,
+            -5.400000095367432
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        },
+        "road_west": {
+          "armed_binding": true,
+          "hp": 30.0,
+          "instance_id_decimal": "210335960932",
+          "position": [
+            -1.0,
+            0.0,
+            -9.0
+          ],
+          "script_path": "res://scripts/acts/act2/ray_scout_actor.gd",
+          "visible": false
+        }
+      },
+      "admitted_ids": [],
+      "completion_pending": false,
+      "departure_checkpoint": false,
+      "departure_contact_seen": false,
+      "exit_requested": false,
+      "native_owner_ids": {
+        "arrival": "201410481495",
+        "common_left": "214798700649",
+        "common_right": "219261440366",
+        "departure_a": "223724177866",
+        "departure_b": "228186917590",
+        "road_east": "205873221215",
+        "road_west": "210335960932"
+      },
+      "original_sequence_validation_error": "Earlier encounters must form the exact Horsell prefix",
+      "pending_checkpoints": [],
+      "pending_defeats": [],
+      "refused_progress": [],
+      "runtime_error": "",
+      "scheduler_profile": {
+        "arrangement": "authored_target_priority_and_positioning",
+        "commit_stagger_s": 0.12,
+        "id": "challenge",
+        "name": "Challenge",
+        "raw_damage_multiplier": 1.0,
+        "recovery_multiplier": 1.0,
+        "reserved_threat_budget": 2.0,
+        "windup_multiplier": 1.0
+      },
+      "sequence": {
+        "alive_ids": [],
+        "beat": "fork",
+        "defeated_ids": [],
+        "level_id": "A2-L1",
+        "route": "",
+        "schema_version": 1
+      }
+    },
+    "initial_hp": 100.0,
+    "fork": {
+      "active_ids": [
+        "common_left"
+      ],
+      "hero_position": [
+        -1.0800001621246338,
+        -0.004843761678785086,
+        -12.674591064453125
+      ],
+      "input": {
+        "anchor_normalized": [
+          0.41111111640930176,
+          0.505998432636261
+        ],
+        "last_observation": {
+          "accepted": false,
+          "action_clock_s": 0.09999999999999999,
+          "anchor_normalized": [
+            0.41111111640930176,
+            0.505998432636261
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "kind": "swipe_release",
+          "schema_version": 1,
+          "screen_position_normalized": [
+            0.41111111640930176,
+            0.505998432636261
+          ],
+          "sequence": 1,
+          "world_action_sequence": 0
+        },
+        "schema_version": 1,
+        "sequence": 1
+      },
+      "primary_range": 2.0,
+      "route": "left",
+      "source_planar_distance": 2.6930501461029053,
+      "source_position": [
+        0.8999999761581421,
+        0.0,
+        -14.5
+      ]
+    },
+    "fork_action": {
+      "kind": "dash",
+      "started_at_s": 0.09999999999999999,
+      "completed_at_s": 0.2833333333333333,
+      "direction": [
+        -0.40000003576278687,
+        0.0,
+        -0.9165151715278625
+      ],
+      "world_origin": [
+        0.0,
+        -0.004843761678785086,
+        -10.199999809265137
+      ],
+      "landing": [
+        -1.0800001621246338,
+        -0.004843761678785086,
+        -12.674591064453125
+      ],
+      "distance": 2.700000524520874,
+      "equipment_ids": {
+        "jacket": "CLOTH-J0",
+        "pants": "CLOTH-P0",
+        "shoes": "CLOTH-S0",
+        "weapon": "WEAPON-01"
+      },
+      "blocked": false,
+      "collision_shortened": false,
+      "movement_damage": false
+    },
+    "actual_native_geometry": {
+      "from": [
+        0.8999999761581421,
+        0.0,
+        -14.5
+      ],
+      "kind": "lane",
+      "radius": 0.31,
+      "to": [
+        -1.8938583135604858,
+        0.0,
+        -11.924276351928711
+      ]
+    },
+    "actual_native_timing": {
+      "id": "threat-1",
+      "start_s": 0.2833333333333333,
+      "lock_from_s": 0.733333333333334,
+      "active_from_s": 1.833333333333334,
+      "active_until_s": 1.9933333333333338,
+      "recovery_until_s": 3.5933333333333337,
+      "cooldown_until_s": 3.433333333333334,
+      "profile_id": "challenge",
+      "source_instance_id": 214798700649
+    },
+    "proof": {
+      "accepted": true,
+      "attack_position": [
+        0.8291881084442139,
+        -0.004843761678785086,
+        -13.465402603149414
+      ],
+      "landing": [
+        0.8291881084442139,
+        -0.004843761678785086,
+        -10.765402793884277
+      ],
+      "path": [
+        {
+          "end_s": 1.0333333333333339,
+          "from": [
+            -1.0800001621246338,
+            -0.004843761678785086,
+            -12.674591064453125
+          ],
+          "kind": "recognition_and_ready",
+          "start_s": 0.733333333333334,
+          "to": [
+            -1.0800001621246338,
+            -0.004843761678785086,
+            -12.674591064453125
+          ]
+        },
+        {
+          "end_s": 1.2133333333333338,
+          "from": [
+            -1.0800001621246338,
+            -0.004843761678785086,
+            -12.674591064453125
+          ],
+          "kind": "escape_dash",
+          "start_s": 1.0333333333333339,
+          "to": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -10.765402793884277
+          ]
+        },
+        {
+          "end_s": 1.9943333333333337,
+          "from": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -10.765402793884277
+          ],
+          "kind": "recovery_wait",
+          "start_s": 1.2133333333333338,
+          "to": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -10.765402793884277
+          ]
+        },
+        {
+          "end_s": 2.1743333333333337,
+          "from": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -10.765402793884277
+          ],
+          "kind": "positioning_dash",
+          "start_s": 1.9943333333333337,
+          "to": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -13.465402603149414
+          ]
+        },
+        {
+          "end_s": 2.2743333333333338,
+          "from": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -13.465402603149414
+          ],
+          "kind": "primary_ready",
+          "start_s": 2.1743333333333337,
+          "to": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -13.465402603149414
+          ]
+        },
+        {
+          "end_s": 2.5743333333333336,
+          "from": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -13.465402603149414
+          ],
+          "kind": "ordinary_primary",
+          "start_s": 2.2743333333333338,
+          "to": [
+            0.8291881084442139,
+            -0.004843761678785086,
+            -13.465402603149414
+          ]
+        }
+      ],
+      "primary_time_s": 2.2743333333333338,
+      "proof_scope": "static_box_floor_full_dash_stationary_primary",
+      "response_complete_s": 2.5743333333333336,
+      "uses_blast": false,
+      "uses_invulnerability": false
+    },
+    "actions": [
+      {
+        "kind": "dash",
+        "started_at_s": 0.09999999999999999,
+        "completed_at_s": 0.2833333333333333,
+        "direction": [
+          -0.40000003576278687,
+          0.0,
+          -0.9165151715278625
+        ],
+        "world_origin": [
+          0.0,
+          -0.004843761678785086,
+          -10.199999809265137
+        ],
+        "landing": [
+          -1.0800001621246338,
+          -0.004843761678785086,
+          -12.674591064453125
+        ],
+        "distance": 2.700000524520874,
+        "equipment_ids": {
+          "jacket": "CLOTH-J0",
+          "pants": "CLOTH-P0",
+          "shoes": "CLOTH-S0",
+          "weapon": "WEAPON-01"
+        },
+        "blocked": false,
+        "collision_shortened": false,
+        "movement_damage": false
+      },
+      {
+        "kind": "dash",
+        "started_at_s": 1.0333333333333345,
+        "completed_at_s": 1.2166666666666672,
+        "direction": [
+          0.7071066498756409,
+          0.0,
+          0.70710688829422
+        ],
+        "world_origin": [
+          -1.0800001621246338,
+          -0.004843761678785086,
+          -12.674591064453125
+        ],
+        "landing": [
+          0.8291882276535034,
+          -0.004843761678785086,
+          -10.765400886535645
+        ],
+        "distance": 2.7000014781951904,
+        "equipment_ids": {
+          "jacket": "CLOTH-J0",
+          "pants": "CLOTH-P0",
+          "shoes": "CLOTH-S0",
+          "weapon": "WEAPON-01"
+        },
+        "blocked": false,
+        "collision_shortened": false,
+        "movement_damage": false
+      },
+      {
+        "kind": "dash",
+        "started_at_s": 1.9999999999999978,
+        "completed_at_s": 2.1833333333333305,
+        "direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "world_origin": [
+          0.8291882276535034,
+          -0.004843761678785086,
+          -10.765400886535645
+        ],
+        "landing": [
+          0.8291882276535034,
+          -0.004843761678785086,
+          -13.465400695800781
+        ],
+        "distance": 2.6999998092651367,
+        "equipment_ids": {
+          "jacket": "CLOTH-J0",
+          "pants": "CLOTH-P0",
+          "shoes": "CLOTH-S0",
+          "weapon": "WEAPON-01"
+        },
+        "blocked": false,
+        "collision_shortened": false,
+        "movement_damage": false
+      },
+      {
+        "kind": "primary",
+        "started_at_s": 2.28333333333333,
+        "completed_at_s": 2.28333333333333,
+        "direction": [
+          0.06828384846448898,
+          0.0,
+          -0.9976660013198853
+        ],
+        "world_origin": [
+          0.8291882276535034,
+          -0.004843761678785086,
+          -13.465400695800781
+        ],
+        "hits": 1,
+        "cooldown_s": 0.3,
+        "commitment_duration_s": 0.13,
+        "equipment_ids": {
+          "jacket": "CLOTH-J0",
+          "pants": "CLOTH-P0",
+          "shoes": "CLOTH-S0",
+          "weapon": "WEAPON-01"
+        }
+      }
+    ],
+    "all_phase_observations": [
+      {
+        "phase": "active",
+        "clock_s": 1.8499999999999983,
+        "hero_hp": 100.0,
+        "hero_position": [
+          0.8291882276535034,
+          -0.004843761678785086,
+          -10.765400886535645
+        ],
+        "armed": true,
+        "proof_available": true,
+        "last_cancel_reason": ""
+      },
+      {
+        "phase": "lock",
+        "clock_s": 0.733333333333334,
+        "hero_hp": 100.0,
+        "hero_position": [
+          -1.0800001621246338,
+          -0.004843761678785086,
+          -12.674591064453125
+        ],
+        "armed": true,
+        "proof_available": true,
+        "last_cancel_reason": ""
+      },
+      {
+        "phase": "recovery",
+        "clock_s": 1.9999999999999978,
+        "hero_hp": 100.0,
+        "hero_position": [
+          0.8291882276535034,
+          -0.004843761678785086,
+          -10.765400886535645
+        ],
+        "armed": true,
+        "proof_available": true,
+        "last_cancel_reason": ""
+      },
+      {
+        "phase": "warning",
+        "clock_s": 0.2833333333333333,
+        "hero_hp": 100.0,
+        "hero_position": [
+          -1.0800001621246338,
+          -0.004843761678785086,
+          -12.674591064453125
+        ],
+        "armed": false,
+        "proof_available": false,
+        "last_cancel_reason": ""
+      }
+    ],
+    "selected_hp_after": 10.0,
+    "hero_hp_after": 100.0,
+    "primary_planar_source_distance": 1.0370197799346894,
+    "invalidations": [],
+    "first_armed_geometry_booleans": {
+      "geometry_equals_lease": true,
+      "kind_is_lane": true,
+      "from_equals_source": true,
+      "radius_equals_original": true,
+      "endpoint_equals_reconstruction": false,
+      "endpoint_is_equal_approx": true,
+      "geometry_matches": true,
+      "armed_matches": true
+    },
+    "cleanup": {
+      "observed_native_nodes": 1349,
+      "retained_native_nodes": 0
+    }
+  },
+  "meaningful_decision": {
+    "same_completed_actual_fork_landing": true,
+    "same_selected_logical_id": "common_left, selected by same completed sign-rule fork dash; native owner identities are separately bound in each fresh component.",
+    "same_lock_and_active_timing": true,
+    "actual_behavior_difference": "Old escapes forward-right toz-14.58378 and remains there for ordinary primary. Current escapes backward-right toz-10.76540, then executes a separate forward positioning dash toz-13.46540 before ordinary primary. Both are genuine unshortened full-distance native ordinary responses through all4 phases; targetHP30-to10, Hero100, no invalidation, no defeat.",
+    "new_player_decision": "Read the swapped low housing and its native locked ray, choose an escape landing away from its footprint, then approach the live ordinary opening from the safe landing. The old close held landing cannot be treated as safe under the retained current lease geometry.",
+    "initial_range_is_context_only": "Initial1.83426 vs2.69305 distance is not the acceptance reason: opening is closed at the fork. Actual escape geometry/held landing and extra recovery approach establish the useful difference.",
+    "counterfactual_analysis": {
+      "method": "Host planar double arithmetic of point-to-closed-segment distance from exact retained JSON values; not a new native Scheduler query, damaging replay, all-path proof or native row.",
+      "old_executed_landing_to_old_actual_lane": {
+        "distance": 1.731216664884701,
+        "segment_fraction": 0,
+        "point_xz": [
+          0.8291882276535034,
+          -14.583781242370605
+        ],
+        "closest_lane_xz": [
+          -0.8999999761581421,
+          -14.5
+        ]
+      },
+      "old_executed_landing_to_current_actual_lane": {
+        "distance": 0.10969776797841574,
+        "segment_fraction": 0,
+        "point_xz": [
+          0.8291882276535034,
+          -14.583781242370605
+        ],
+        "closest_lane_xz": [
+          0.8999999761581421,
+          -14.5
+        ]
+      },
+      "current_executed_landing_to_current_actual_lane": {
+        "distance": 2.697776435625238,
+        "segment_fraction": 0.6798570397354234,
+        "point_xz": [
+          0.8291882276535034,
+          -10.765400886535645
+        ],
+        "closest_lane_xz": [
+          -0.9994242501302373,
+          -12.748876145445728
+        ]
+      },
+      "shape_radius": 0.31,
+      "scheduler_actor_radius": 0.32,
+      "scheduler_skin": 0.01,
+      "geometry_epsilon": 1e-05,
+      "scheduler_padded_boundary": 0.64001,
+      "old_landing_inside_even_unpadded_current_lane": true,
+      "actual_old_hold_interval": [
+        1.2166666666666672,
+        2.0999999999999974
+      ],
+      "actual_current_active_interval": [
+        1.833333333333334,
+        1.9933333333333338
+      ],
+      "temporal_interpretation": "Old actually stays at its old landing across1.83333–1.99333, exactly the active interval in current own locked lease. That landing is inside the current lane even without actor padding. This establishes a geometric/time conflict for retaining the old hold under that lease, without inferring an actual hit or overruling any future native view cancellation."
+    },
+    "not_claimed": [
+      "uniqueness of the current native chosen response",
+      "every legal kit or all alternative routes",
+      "greater human difficulty or balance",
+      "new LOS obstruction",
+      "parent whole Save/Continue/Retry authority from this component",
+      "full route, earlier kills, optional rewards, exit or completion"
+    ]
+  },
+  "scope_integrity": {
+    "kit": "Existing neutral CLOTH-J0/CLOTH-P0/CLOTH-S0/WEAPON-01, original stats; no pickup/blast.",
+    "constructor": "Explicit TEST fork with empty defeated/pending/checkpoint history; all7 configured native actor identities, unselected actors living/dormant, original validation rejects missing prefix. Parent snapshot/checkpoint/progress remains refused.",
+    "geometry_fix_confirmation": "Both actual first_armed_check receipts now retain exact state==lease/kind/from/radius true; exact reconstructed endpoint false but is_equal_approx true. This confirms the test-only floating reconstruction distinction; original28/1 stays failed.",
+    "source_boundary": "Current horsell5f588856/data919de84b; component2b66663a. No engine/live-source edit in this review; keep these fixed for the already scoped short-slow/portrait."
+  },
+  "preserve_originals": [
+    "validation-prepare/run-native-pair-20261016T052716.604040Z-11b40f76: native parse failure, no native result",
+    "validation-successor-v1/run-native-pair-20261016T053202.305090Z-3936fff9: closed28/1, old first armed exact endpoint predicate failure, incomplete",
+    "current v2 host CLOSED2 CA diagnostic despite actual native125/0 complete"
+  ],
+  "pins": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/data/campaign/act2/a2_l1_difficulty_arrangements.json",
+      "bytes": 1456,
+      "sha256": "919de84be9a74aaab6668e2fec1fd55ee45a3a55af4d5090aff7f2c6ca08938e"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/data/design/player_equipment.json",
+      "bytes": 32678,
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/horsell_common.gd",
+      "bytes": 56491,
+      "sha256": "5f58885685d5b5727d286c57c45794bef0afc810424214636155283f60f43ad1"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/horsell_sequence.gd",
+      "bytes": 7424,
+      "sha256": "fbe1457edcf7028ed3eff8ad5d1b7a453063f8ed5541356eaa251dcf3629d5c7"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/ray_scout_actor.gd",
+      "bytes": 12646,
+      "sha256": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/acts/act2/ray_scout_exchange.gd",
+      "bytes": 63062,
+      "sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/campaign/level.gd",
+      "bytes": 23949,
+      "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/combat/threat_geometry.gd",
+      "bytes": 14303,
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/combat/threat_scheduler.gd",
+      "bytes": 266033,
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/equipment.gd",
+      "bytes": 9130,
+      "sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/game.gd",
+      "bytes": 38685,
+      "sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/scripts/player.gd",
+      "bytes": 48906,
+      "sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/tests/act2_l1_arrangement_component.gd",
+      "bytes": 35202,
+      "sha256": "2b66663ab562e2f3267ddf06a5a96dd00da76e71112bf1088190c77f3b338344"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/tests/acts/act2/fixtures/a2_l1_arrangement_reference/declared_common_current.gd",
+      "bytes": 3713,
+      "sha256": "0dd10d14183ba10844138e56150025cdc2e2a9389ed0cfe63130302fb5e64031"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/tests/acts/act2/fixtures/a2_l1_arrangement_reference/declared_common_old.gd",
+      "bytes": 3752,
+      "sha256": "8990e46dfa9207d84d1a1890461838b3f89a5200fa01748888322a8a3ffaf424"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/tests/acts/act2/fixtures/a2_l1_arrangement_reference/horsell_common_old.gd",
+      "bytes": 46662,
+      "sha256": "077dc406d6eda0392661279029b9a07d190be71d21fcb0903712d678ab2be643"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-successor-v2/run-native-pair-20261016T054019.309216Z-f2a7a08c/result.json",
+      "bytes": 722,
+      "sha256": "1f3290d6549f17ef8d8804affcc8342ab1fb1690fbab9c1fb3e1447e9e5bfc24"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-successor-v2/run-native-pair-20261016T054019.309216Z-f2a7a08c/raw.log",
+      "bytes": 757,
+      "sha256": "d271811300a63192e8b4ffd9589a6f32ae71e22c339265b72b8563eb044a0a4d"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-successor-v2/run-native-pair-20261016T054019.309216Z-f2a7a08c/engine.log",
+      "bytes": 588,
+      "sha256": "01ef696652a8d0a865eb3b2877568e004751aabef6fd8a95fee63ca5ef56d158"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-successor-v2/run-native-pair-20261016T054019.309216Z-f2a7a08c/evidence-index.json",
+      "bytes": 30398,
+      "sha256": "14a418882de017e6d22b5ce06b2eb3b7a57d2fb3bfb47887406550df1c16313d"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-successor-v2/run-native-pair-20261016T054019.309216Z-f2a7a08c/command.json",
+      "bytes": 903,
+      "sha256": "0a29b349c2c832b399b01cbd8017596af1d40c55071c385a1edabe5c5591cfd5"
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-successor-v2/run-native-pair-20261016T054019.309216Z-f2a7a08c/queue.json",
+      "bytes": 169,
+      "sha256": "3ea7d17128c313732da27d0dc42100d1c5b57f12b76e885212faef82fde23ef2"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_ONLY_READY_ONE_NATIVE_RETRY",
+  "frozen_files": {
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v4/run.py": "a8072018dc298f31ab248b0234eeeb0ba774015f1b96f3bc24f54d2c963c5096",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v4/INPUT_SPEC.json": "a9118f690d6d7341d1438b72c8a74f9e03876b88b156e18769e1f8005cc71f94",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v4/SOURCE_INPUTS.json": "2ef2ff23057edd546b2d2ff48cf149a31bd2290bee9503b2083ac880dc47114a",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v4/README.md": "4b0d8b108ea4c95357f70c78d27eb2ed916db62dd260e0ff99056c5d51092097"
+  },
+  "expected_named_inputs": 160,
+  "absent_uid_count": 0,
+  "runner_byte_identical_to": {
+    "path": ".cinder/a2-l1-difficulty-20261016/validation-successor-v3/run.py",
+    "sha256": "a8072018dc298f31ab248b0234eeeb0ba774015f1b96f3bc24f54d2c963c5096"
+  },
+  "component_sha256": "41232fdd4efe39cc6f8617995a54f5c3b3d44cfc2ec2299f3a73568408bc2ea5",
+  "receipt_sha256": "96edb1ecd6143c8f25fc7e9cb80c40b78786a2fe19fecdb649c2a9371ecbff8f",
+  "original_v3_closed_outcomes": [
+    {
+      "path": ".cinder/a2-l1-difficulty-20261016/validation-successor-v3/run-native-pair-20261016T054655.238041Z-e960f26c",
+      "result_sha256": "0b1dcdf29205ea183c9b3759b670b4effd0d334c1ad79e1b4c692e976a5c5cf2",
+      "index_sha256": "43369862e3ddf456b5b002d3c3f5908c06702e7b701041df02af083cee7395ac",
+      "closed": true,
+      "runner_return_code": 2,
+      "canonical_return_code": 2,
+      "raw_diagnostics": [
+        "ERROR: Condition \"ret != noErr\" is true. Returning: \"\"",
+        "ERROR: A2-L1 component: original source/cycle/lease owns timely escape_dash"
+      ],
+      "native_report_sha256": "af3f7dc055b60dac29059000bd7393e4f84daf5e2718b875a8aed42bc627355d",
+      "checks": 29,
+      "failures": 1,
+      "complete": false,
+      "success": false,
+      "selector": "--component-short-slow-left",
+      "first_failure": {
+        "case": "current-short-slow-left",
+        "check": 27,
+        "label": "original source/cycle/lease owns timely escape_dash",
+        "native_clock_s": 1.0833333333333344,
+        "note": "original source/cycle/lease owns timely escape_dash",
+        "ok": false
+      }
+    },
+    {
+      "path": ".cinder/a2-l1-difficulty-20261016/validation-successor-v3/run-seal-pure-20261016T054649.190939Z-2da0c04f",
+      "result_sha256": "3b89bee003faa9a84874aa822f1a9ca84012d2a97011c3727f239efaffd67a27",
+      "index_sha256": "d371f1c2e5461af6b4e8836755439cde09800c593eefa173796a6d372398fff7",
+      "closed": true,
+      "runner_return_code": 0,
+      "canonical_return_code": null,
+      "raw_diagnostics": []
+    }
+  ],
+  "prior_v2_outcomes_preserved_in": ".cinder/a2-l1-difficulty-20261016/validation-successor-v3/READINESS.json",
+  "reused_leaf_outcomes": {
+    "pure": {
+      "checks": 92,
+      "failures": 0
+    },
+    "legacy": {
+      "checks": 241,
+      "failures": 0
+    },
+    "shell": {
+      "checks": 117,
+      "failures": 0
+    },
+    "provenance": "Root supplied reviewed actual outcomes; unchanged leaf hashes verified against original capsule. No reruns or expanded claims."
+  },
+  "authorized_execution": {
+    "phases": [
+      "seal",
+      "native"
+    ],
+    "leaf": "pair",
+    "selectors": [
+      "--component-short-slow-left-retry"
+    ],
+    "forbidden": [
+      "import",
+      "parser",
+      "pure",
+      "legacy",
+      "shell",
+      "compare-left",
+      "short-slow-right",
+      "short-slow-left",
+      "portrait",
+      "default suites"
+    ],
+    "qualification": "One specific safe presentation-abort plus original cooldown and autonomous cycle2 before unchanged strict response. Second refusal terminal; no side search or assertion weakening. Original failures remain failures."
+  },
+  "self_review": "Verified every v3 expected byte unchanged except exact component retry selector promotion; seven genuine UIDs unchanged. Adds only v3 capsule5/actual closed seal+native result/index pairs/new receipt. Kind/source16/env/footer structure unchanged; explicit retry selector replaces only userargv/footer suffix. Runner byte-identical, Python AST syntax only. No engine execution or gameplay acceptance.",
+  "scope": "V4 sole explicit short-slow-left-retry after genuine v3 sample29/1 preescape abort. Reviewed selector permits one specifically qualified safe abort, original cooldown and autonomous cycle2 then original strict response; second refusal terminal. No production change. Original v3 closed seal/native result/index pinned; all prior failures and diagnostic qualifications retained. Reuse unchanged pure92/legacy241/Shell117, comparison125/0 child0 HOST2 CA-qualified, clean desktop portrait62/0 without repeats. Seven genuine UIDs unchanged; no import/parser/other selector or broad native run."
+}
