@@ -1,0 +1,17 @@
+# BACK refusal audit
+
+The bounded actual audit verified the closed failure and selected custody without an engine run or source change. Native report SHA256: `967914fa4bd8a6827a1279aba1329155faa73ad5217f0a152b73d5558c09eb9e`; tested revision: `dfb080e7fdb1a3e71b2eeeb41c15dd3f9309a989`.
+
+The result remains **86 checks / 1 failure**, `complete=false`, `success=false`, exit 1. All 86 assertion rows agree with the single footer; assertion 82 is the sole failure. Normal cleanup assertions 83–86 pass. The raw log contains only that intended failed assertion and no extra cleanup warning.
+
+The actual public BACK dash ran from 12.7166666667 to 12.9000000000, covered 2.6999998093m, and had no block, collision shortening or movement damage. At native clock 13.1333333333, the only admitted source `moon-eye` / `threat-4` was cancelled with `required_parent_presentation_unavailable`. The retained parent error is `Required union cannot fit the fixed-width HUD-safe rectangle`. All 89 observed traces retain HP 100 and shells 2; there are zero source-hit events. Only Blink warning/lock occurred. No Nose admission, completed held interval, return, primary or final Save was reached.
+
+All 24 retained passive diagnostic rows were checked: 192 exact typed wire envelopes decode structurally; all 24 pure flags and before/after SHA256 pairs agree; all 48 actual planner/containment specs are present; separate current, forecast-inclusive and mandatory Player point counts match their exact arrays. The report records 178 observations and explicitly omits 154 earlier rows under the 24-row bound. The actual retained Blink record, source state and paired framing proof join on `threat-4`.
+
+Within the retained window, current 94-point planning and current containment pass through 13.1166667. At 13.0166667, the after-parent 3000 observation first records a 142-point forecast-inclusive plan refusing the fixed-width HUD-safe rectangle. At 13.1333333, both nearby observations are already after native 100: current points have fallen to 38, their plan accepts, and current containment refuses. Forecast-inclusive points are then 86 and still refuse planning.
+
+These are ordered nearby samples, not the exact rejected guard callback. Priority 199 is after native 100/before host 200; priority 3000 is after host 200. The real forecast planner refusal does not uniquely identify the predicate behind the generic cancellation. In particular, the final 38-point current diagnostic is post-cancellation and cannot replace the rejected earlier live union.
+
+Source custody passed: both selected manifests are identical, with 115 files each; all **230 bank copies** match recorded byte size and SHA256. No selected input changed at the native banner or closure. The original legacy producer report and all three selected CP3 companions still match their hashes. The original raw Store payload, complete Attempts, current and checkpoint join exactly; actual fresh Continue retained that old API1/schema1/16-key Challenge CP3 under future Standard. Original producer checks are not re-credited as BACK checks. This is selected-source/input custody, not a global audit.
+
+The stopping rule fires. No useful old BACK baseline, new comparison, equivalence or novelty is established. The known-conflicting-hold check was never reached because both leases never existed. The dependent new-BACK case remains unauthorized; parent reports it was not executed. No additional trial, import, fixture/runtime edit or semantics change was performed by this reviewer.
