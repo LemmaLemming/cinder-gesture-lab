@@ -47,7 +47,7 @@ func _run() -> void:
 		await _producer_finish(); return
 	if not _expect(FileAccess.get_sha256(RuntimePath) == ORIGINAL_RUNTIME_SHA256 and not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(FIXTURE_ROOT)), "authentic original runtime and new archive path required; never overwrite history"):
 		await _producer_finish(); return
-	var catalogue := EquipmentScript.new()
+	var catalogue: CinderEquipment = EquipmentScript.new()
 	catalogue.reset_starter()
 	_kit = catalogue.snapshot()
 	_stats = catalogue.resolved_stats()
