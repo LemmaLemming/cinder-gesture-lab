@@ -1,0 +1,42 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/acts/act1/living_moon.gd" id="1_level"]
+[ext_resource type="Script" path="res://scripts/acts/act1/living_moon_scenery.gd" id="2_scenery"]
+
+[sub_resource type="BoxShape3D" id="MoonFloorShape"]
+size = Vector3(14, 1, 26)
+
+[sub_resource type="BoxMesh" id="MoonFloorMesh"]
+size = Vector3(14, 1, 26)
+
+[sub_resource type="StandardMaterial3D" id="MoonFloorBaseMaterial"]
+shading_mode = 0
+albedo_color = Color(0.4509804, 0.4509804, 0.4509804, 1)
+texture_filter = 0
+
+[node name="LivingMoon" type="Node3D"]
+script = ExtResource("1_level")
+level_id = "A1-L5"
+spawn_path = NodePath("SpawnPoint")
+local_snapshot_version = 1
+objective_text = "THE LIVING MOON\nOPEN THE CAPSULE HATCH AND ESCAPE"
+metadata/readiness = "Authored production scene: mechanics/contact/escape/A2-L1 transition119/0, later Save/Continue/Retry80/0, loading71/0 and sampled transport132/0, four personally inspected paused portraits204/0. Original101/1 and focus failures preserved. L5 awaits independent Integration acceptance; full-playthrough/all-kit/balance/performance/mobile untested."
+
+[node name="SpawnPoint" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 4)
+
+[node name="Floor" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.5, -2)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("MoonFloorShape")
+
+[node name="Visual" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("MoonFloorMesh")
+material_override = SubResource("MoonFloorBaseMaterial")
+cast_shadow = 0
+
+[node name="Scenery" type="Node3D" parent="."]
+script = ExtResource("2_scenery")
