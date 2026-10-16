@@ -18,3 +18,9 @@ Runtime and encounter JSON are unchanged at the beginning of the amendment. Nati
 - `data/campaign/act3/a3_o2_encounters.json`: `07eb0dd3b7eb0d65ee49734a09e5c8fd9b245a0bdb7a5dd01958dc8400a2ec22`.
 
 Current reviewed baseline: Shared65 publication `ec61231bdd4317bbe0a817d012f542c8d92a7e63`, actual preserving adoption `18b07006ea514ad9db20fd6a48a4baccfdd30970`. No import, test, portrait or gameplay pass is claimed by this planning record.
+
+## Separate O2 producer failure and focused correction — 16 October 2026
+
+The first genuine old-Challenge producer at `892d654f` closed **184 checks/1 failure**,31 native ticks,scope incomplete,native/wrapper1; raw log SHA `acc3f438ac68b3cd700c5420e7af17b5a152d5a0a8a18a884b44fb03080751cd`. Import had closed clean0 and generated genuine test UID `uid://cdced8ae01kee`. The combined held assertion wrongly required no fired events although the required ordinary approach dash emits `fired("dash")`. Its other operands were not logged and remain unproven. The fixture now permits only dash events, continues rejecting attacks/injury and logs each held-state operand. No production runtime, geometry, native guard or tolerance changes.
+
+All11 original partial entrance/context/Store files are byte-for-byte retained under `assets/acts/act3/evidence/A3-O2-arrangement-native/failed-original-producer-01/`, with per-file hashes and a failure/relocation record. The failed run and incomplete capture remain failed; no held archive or compatibility pass is inferred. The fixed producer will use a fresh fixture directory through the same canonical queue. Original runtime `ea7a70be` and encounter `07eb0dd3` remain unchanged; reader promotion is still prohibited until authentic producer closure. Original eight-level acceptance remains complete.

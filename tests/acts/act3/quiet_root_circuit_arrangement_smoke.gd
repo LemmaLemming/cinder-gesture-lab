@@ -86,7 +86,12 @@ func _run() -> void:
 	if not await _wait_pause(): await _finish(); return
 	held = production.capture_campaign_snapshot()
 	var receipt: Dictionary = _held_receipt()
-	if not _expect(not receipt.is_empty() and _o2_fired.is_empty() and _same(production.attempts.state().side_attempt.checkpoint, _legacy_entrance) and not _same(held, _legacy_entrance), "actual first Root warning is separate from entrance with no primary, death or court checkpoint"):
+	var only_dash_events: bool = true
+	for kind: String in _o2_fired:
+		if kind != "dash": only_dash_events = false
+	var operands: Dictionary = {"receipt_present":not receipt.is_empty(), "only_dash_events":only_dash_events, "checkpoint_exact":_same(production.attempts.state().side_attempt.checkpoint,_legacy_entrance), "current_differs_from_entrance":not _same(held,_legacy_entrance)}
+	print("O2 ARRANGEMENT HELD OPERANDS: ", operands, "; actual fired kinds=", _o2_fired)
+	if not _expect(not receipt.is_empty() and only_dash_events and _same(production.attempts.state().side_attempt.checkpoint, _legacy_entrance) and not _same(held, _legacy_entrance), "actual first Root warning is separate from entrance with only genuine approach dashes, no attack or court checkpoint", str({"operands":operands,"fired":_o2_fired,"receipt":receipt,"campaign_error":production.campaign_error,"level_error":production.active_level.last_snapshot_error})):
 		await _finish(); return
 	if not _installed(held) or not _archive_sample("first-root-held", held, receipt): await _finish(); return
 	if not _pins_unchanged(): await _finish(); return
