@@ -912,6 +912,7 @@ var _component_disposing: bool = false
 var _component_draw_seen: bool = false
 var _component_portrait_path: String = ""
 var _component_host_expired: bool = false
+var _component_probe_done: bool = false
 
 func _run_component(selector: String) -> bool:
 	if not _expect(selector in COMPONENT_SELECTORS,"one explicit focused TEST component selector",selector): return false
@@ -1101,6 +1102,9 @@ func _component_observe_pressure() -> void:
 	if _component_held_samples.size() < 24 and (_component_held_samples.is_empty() or _component_held_samples.back().sources != all_held):
 		_component_held_samples.append({"clock_s":_component_scheduler.get_clock(),"sources":all_held})
 	var actual: Dictionary = _component_stalker.state()
+	if not _component_probe_done and actual.last_rejection == "Finite bounded native threat/response values required":
+		_component_probe_done = true
+		_component_probe_bound_inputs(actual)
 	var control: Dictionary = _component_scheduler.source_control_state(_component_stalker)
 	for lease: Dictionary in control.get("reservations",[]):
 		if actual.cycle >= 1 and actual.phase in ["warning","lock","active","recovery"] and actual.stable_id == COMPONENT_STALKER and control.source_instance_id == _component_stalker.get_instance_id() and lease.source_instance_id == _component_stalker.get_instance_id() and lease.id == actual.reservation_id and lease.armed and lease.profile_id == "challenge" and actual.clock_s == _component_scheduler.get_clock() and control.clock_s == _component_scheduler.get_clock():
@@ -1276,3 +1280,42 @@ func _component_portrait() -> bool:
 
 func _component_on_draw() -> void:
 	_component_draw_seen = true
+
+## Diagnostic only: reconstruct the unchanged caller threat from public native
+## state/constants and inspect the public response. This local encoder grants no
+## admission, preview, clock, snapshot or safety authority and changes no input.
+func _component_probe_bound_inputs(actual: Dictionary) -> void:
+	var threat: Dictionary = {"role":actual.resolved_role,"source_stationary":false,"opening_stationary":true,"cooldown_remaining_s":0.0,"lunge":{"direction":actual.facing,"speed":CinderAct3SunboundStalker.TUNING.lunge_speed,"distance":CinderAct3SunboundStalker.TUNING.lunge_distance,"damage_radius":CinderAct3SunboundStalker.TUNING.damage_radius,"body_collision_path":"BodyCollision"}}
+	var response: Dictionary = _component_level.combat_response(COMPONENT_STALKER).duplicate()
+	for key: String in ["actor","world_root","floor_regions"]: response.erase(key)
+	for label: String in ["threat","response"]:
+		var value: Dictionary = threat if label == "threat" else response
+		var encoded: Dictionary = _component_probe_encode(value,label,0,[262144])
+		var wire: String = Exact.stringify(encoded.value) if encoded.get("accepted",false) else ""
+		print("O2 COMPONENT BOUND PROBE: public ",label,"; local_native_encoding=",encoded.get("accepted",false),"; first_error=",encoded.get("error",""),"; exact_wire_bytes=",wire.to_utf8_buffer().size(),"; encoded_codec_error=",Codec.value_error(encoded.get("value")),"; public_values=",value)
+
+func _component_probe_encode(value: Variant,path: String,depth: int,budget: Array[int]) -> Dictionary:
+	budget[0] -= 1
+	if depth > 32 or budget[0] < 0: return {"accepted":false,"error":path+": native depth/node budget"}
+	var encoded: Variant = value
+	match typeof(value):
+		TYPE_ARRAY,TYPE_DICTIONARY:
+			if value.size() > 16384: return {"accepted":false,"error":path+": native container limit"}
+			var children: Variant = [] if value is Array else {}
+			for key: Variant in (range(value.size()) if value is Array else value.keys()):
+				if value is Dictionary and not key is String: return {"accepted":false,"error":path+": nonstring key "+type_string(typeof(key))}
+				var child: Dictionary = _component_probe_encode(value[key],path+"/"+str(key),depth+1,budget)
+				if not child.get("accepted",false): return child
+				if value is Array: children.append(child.value)
+				else: children[key] = child.value
+			encoded = ["Array" if value is Array else "Dictionary",children]
+		TYPE_VECTOR3: encoded = ["Vector3",value.x,value.y,value.z]
+		TYPE_VECTOR2: encoded = ["Vector2",value.x,value.y]
+		TYPE_RECT2: encoded = ["Rect2",value.position.x,value.position.y,value.size.x,value.size.y]
+		TYPE_BASIS: encoded = ["Basis",Codec.vector3(value.x),Codec.vector3(value.y),Codec.vector3(value.z)]
+		TYPE_TRANSFORM3D: encoded = ["Transform3D",{"basis":[Codec.vector3(value.basis.x),Codec.vector3(value.basis.y),Codec.vector3(value.basis.z)],"origin":Codec.vector3(value.origin)}]
+		TYPE_NIL,TYPE_BOOL,TYPE_STRING,TYPE_INT,TYPE_FLOAT:
+			var error: String = Codec.value_error(value)
+			if not error.is_empty(): return {"accepted":false,"error":path+": "+error}
+		_: return {"accepted":false,"error":path+": unsupported native type "+type_string(typeof(value))}
+	return {"accepted":true,"value":encoded}
