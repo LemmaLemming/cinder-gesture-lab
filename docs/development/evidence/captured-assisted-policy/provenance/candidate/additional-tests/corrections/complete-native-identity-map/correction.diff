@@ -1,0 +1,39 @@
+--- 02d5
++++ complete-map
+@@ -87,7 +87,7 @@
+ 	if not await _settle("resume"):
+ 		await _finish_additional(); return
+ 	_bind_current()
+-	if not _expect(_same(_production.capture_campaign_snapshot(), saved) and _same(_production.attempts.state(), saved_session) and _disk() == saved_disk and _distinct_ids(old_ids, true) and _new_policy_matches(saved), "Actual independent fresh disk Continue retains complete parent/Player/phase/records/policy and saved Assisted profile despite current Challenge") or not await _quiet(saved, "fresh whole-parent Continue"):
++	if not _expect(_same(_production.capture_campaign_snapshot(), saved) and _same(_production.attempts.state(), saved_session) and _disk() == saved_disk and _distinct_ids(old_ids, true, true) and _new_policy_matches(saved), "Actual independent fresh disk Continue retains complete parent/Player/phase/records/policy and saved Assisted profile despite current Challenge") or not await _quiet(saved, "fresh whole-parent Continue"):
+ 		await _finish_additional(); return
+ 	_record("fresh Title whole-parent disk Continue", saved)
+ 	if _portrait and not await _capture_portrait(saved):
+@@ -251,14 +251,22 @@
+ 	if is_instance_valid(leaf): result["playback"] = str(leaf.get_instance_id())
+ 	return result
+ 
+-func _distinct_ids(old: Dictionary, fresh_shell: bool = false) -> bool:
++func _distinct_ids(old: Dictionary, fresh_shell: bool = false, require_playback: bool = false) -> bool:
+ 	var current: Dictionary = _ids()
+-	if fresh_shell and (not current.has("shell") or current.shell == old.get("shell")): return false
+-	for key: String in old:
+-		if key != "shell" and current.has(key) and current[key] == old[key]: return false
+-	return not current.is_empty()
++	var required: Array[String] = ["shell", "hero", "parent", "phase", "scheduler", "gate", "floor"]
++	if require_playback: required.append("playback")
++	for key: String in required:
++		if not old.has(key) or not current.has(key) or old[key] == "0" or current[key] == "0": return false
++	if fresh_shell:
++		if current.shell == old.shell: return false
++	elif current.shell != old.shell: return false
++	for key: String in required:
++		if key != "shell" and current[key] == old[key]: return false
++	return true
+ 
+ func _quiet(packet: Dictionary, label: String) -> bool:
++	# Observers bind after installation: this proves two subsequent paused frames,
++	# not callbacks emitted during construction or the restore operation itself.
+ 	var before: String = Exact.stringify(packet)
+ 	var session: String = Exact.stringify(_production.attempts.state())
+ 	var ids: Dictionary = _ids()

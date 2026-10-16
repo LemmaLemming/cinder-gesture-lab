@@ -1,0 +1,83 @@
+--- .cinder/captured-assisted-policy-audit-20261015/portrait-observation-v3/crystalman_captured_policy_shell.gd.txt
++++ .cinder/captured-assisted-policy-audit-20261015/brief-portrait-v5/crystalman_captured_policy_shell.gd.txt
+@@ -3,7 +3,8 @@
+ ## Existing declared-stage2 scene supplies disclosed TEST prior regular history.
+ ## Complete real parent/Player/phase/floor/input/camera writers seed initial TEST
+ ## Campaign context. Never transplant a phase-only packet or edit earned history.
+-## Thereafter public Shell Save/fresh Title Continue/Retry. No tether/route clear.
++## Headless: public Shell Save/fresh Title Continue/Retry. Graphical: brief
++## saved-warning draw before disposal. No tether/route clear.
+ const PolicyMain = preload("res://tests/fixtures/captured_policy_profile_main.gd")
+ const Policy = preload("res://scripts/combat/captured_replay_policy.gd")
+ const NativePhase = preload("res://scripts/acts/act3/crystalman_capture_phase.gd")
+@@ -52,7 +53,7 @@
+ 	if not await _actual_parent_seed() or not await _fresh_shell(_campaign_seed):
+ 		await _finish_additional(); return
+ 	_production.menu.continue_story_requested.emit()
+-	if not await _settle("resume") or not _expect(_same(_production.capture_campaign_snapshot(), _entry_packet), "Actual production Shell validates and installs the exact whole initial parent donor"):
++	if not await _settle("resume", {}, _portrait) or not _expect(_same(_production.capture_campaign_snapshot(), _entry_packet), "Actual production Shell validates and installs the exact whole initial parent donor"):
+ 		await _finish_additional(); return
+ 	_bind_current()
+ 	if not _expect(_new_policy_matches(_entry_packet), "Fresh whole parent delegates explicit phase3 policy retained before recording"):
+@@ -80,6 +81,14 @@
+ 	_production.menu.difficulty_preference_requested.emit("challenge")
+ 	if not _expect(_production.get_difficulty_preference() == "challenge" and _same(_production.capture_campaign_snapshot(), saved) and _same(_production.attempts.state(), saved_session) and _disk() == saved_disk, "Public changed preference preserves whole current Assisted unit/session/campaign raw bytes"):
+ 		await _finish_additional(); return
++	if _portrait:
++		# Brief actual saved-warning inspection only. Fresh Title disk Continue and
++		# Retry remain the separate unchanged headless persistence scope below.
++		if not await _capture_portrait(saved):
++			await _finish_additional(); return
++		_complete = true
++		await _finish_additional()
++		return
+ 	var old_ids: Dictionary = _ids()
+ 	if not await _dispose_production() or not await _fresh_shell(saved_session):
+ 		await _finish_additional(); return
+@@ -92,8 +101,6 @@
+ 	if not _expect(_same(_production.capture_campaign_snapshot(), saved) and _same(_production.attempts.state(), saved_session) and _disk() == saved_disk and _distinct_ids(old_ids, true, true) and _new_policy_matches(saved), "Actual independent fresh disk Continue retains complete parent/Player/phase/records/policy and saved Assisted profile despite current Challenge") or not await _quiet(saved, "fresh whole-parent Continue"):
+ 		await _finish_additional(); return
+ 	_record("fresh Title whole-parent disk Continue", saved)
+-	if _portrait and not await _capture_portrait(saved):
+-		await _finish_additional(); return
+ 	old_ids = _ids()
+ 	var before_retry: Dictionary = _disk()
+ 	var checkpoint: Dictionary = _production.attempts.state().story.checkpoint.duplicate(true)
+@@ -222,18 +229,23 @@
+ 	# Shell registration. Never mutate the actual operation/registration state.
+ 	return operations is Array and failed is Array and operations.is_empty() and failed.is_empty() and _production.get("_draining") == false and _production.get("_drain_queued") == false and _production.get("_registration_inflight") == false
+ 
+-func _settle(page: String, previous_native: Dictionary = {}) -> bool:
++func _settle(page: String, previous_native: Dictionary = {}, graphical_first_continue: bool = false) -> bool:
+ 	var observations: Array[Dictionary] = []
+ 	for _frame: int in range(180):
+ 		await process_frame
+ 		if _frame in [0, 1, 2, 179]: observations.append(_operation_observation(_frame))
+ 		if not _production.campaign_error.is_empty(): return _expect(false, "Public whole-parent operation", _production.campaign_error)
+-		if not paused or not _shell_operation_idle() or _production.menu.page_name() != page or not is_instance_valid(_production.active_level) or not is_instance_valid(_production.player): continue
++		var actual_page: String = _production.menu.page_name()
++		# Only the first graphical Continue may observe the actual installed idle
++		# paused page after native focus handling. Exact whole entry/policy checks
++		# still immediately follow this call. No focus or notification mutation.
++		var first_graphical_pause: bool = _portrait and graphical_first_continue and page == "resume" and previous_native.is_empty() and _receipts.is_empty() and actual_page == "pause"
++		if not paused or not _shell_operation_idle() or (actual_page != page and not first_graphical_pause) or not is_instance_valid(_production.active_level) or not is_instance_valid(_production.player): continue
+ 		if not previous_native.is_empty():
+ 			if str(_production.active_level.get_instance_id()) == previous_native.get("parent") or str(_production.player.get_instance_id()) == previous_native.get("hero"): continue
+-		_operation_observations.append({"expected_page": page, "settled": true, "samples": observations, "terminal": _operation_observation(_frame)})
++		_operation_observations.append({"expected_page": page, "actual_page": actual_page, "first_graphical_pause": first_graphical_pause, "settled": true, "samples": observations, "terminal": _operation_observation(_frame)})
+ 		return true
+-	var failed: Dictionary = {"expected_page": page, "settled": false, "samples": observations, "terminal": _operation_observation(180)}
++	var failed: Dictionary = {"expected_page": page, "graphical_first_continue": graphical_first_continue, "settled": false, "samples": observations, "terminal": _operation_observation(180)}
+ 	_operation_observations.append(failed)
+ 	return _expect(false, "Finite public whole-parent idle operation/new native recipient reaches " + page, JSON.stringify(failed))
+ 
+@@ -424,7 +436,8 @@
+ 			if FileAccess.file_exists(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+ 		DirAccess.remove_absolute(ProjectSettings.globalize_path(_isolated))
+ 	paused = false
+-	var report: Dictionary = {"schema_version": 1, "kind": "captured-policy-whole-parent-shell", "checks": _checks, "failures": _failures, "complete": _complete, "success": _complete and _failures == 0, "rows": _rows, "exact_receipts": _receipts, "operation_observations": _operation_observations, "portrait_observations": _portrait_observations, "source_before": _source_before, "source_after": _named_sources(), "portrait_requested": _portrait, "portraits": _portraits, "scope": "Actual whole parent local1 delegates fresh captured phase3; actual completed records, projected schema3 integer refusal, real public Save/fresh Title diskContinue/opposite preference/entranceRetry/cleanup; existing declared TEST prior regular history/prefix14 only. No earned regular route/tether/boss/campaign-clear/all-kit/FPS claim."}
++	var scope: String = "Actual whole parent local1 delegates fresh captured phase3; actual completed records, projected schema3 integer refusal, real public Save/opposite preference/brief saved-warning draw/cleanup only; existing declared TEST prior regular history/prefix14 only. Fresh Title diskContinue and entranceRetry are separate headless evidence, not executed in this graphical scope. No earned regular route/tether/boss/campaign-clear/all-kit/FPS claim." if _portrait else "Actual whole parent local1 delegates fresh captured phase3; actual completed records, projected schema3 integer refusal, real public Save/fresh Title diskContinue/opposite preference/entranceRetry/cleanup; existing declared TEST prior regular history/prefix14 only. No earned regular route/tether/boss/campaign-clear/all-kit/FPS claim."
++	var report: Dictionary = {"schema_version": 1, "kind": "captured-policy-whole-parent-shell", "checks": _checks, "failures": _failures, "complete": _complete, "success": _complete and _failures == 0, "rows": _rows, "exact_receipts": _receipts, "operation_observations": _operation_observations, "portrait_observations": _portrait_observations, "source_before": _source_before, "source_after": _named_sources(), "portrait_requested": _portrait, "portraits": _portraits, "execution_scope": "brief_saved_warning_graphical" if _portrait else "whole_parent_persistence_headless", "scope": scope}
+ 	var output: String = OS.get_environment("CINDER_CAPTURED_PARENT_SHELL_REPORT")
+ 	if not output.is_empty():
+ 		var file: FileAccess = FileAccess.open(output, FileAccess.WRITE)

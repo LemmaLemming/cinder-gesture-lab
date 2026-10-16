@@ -11,7 +11,9 @@ const Leaf = preload("res://scripts/combat/replay_playback.gd")
 const Scheduler = preload("res://scripts/combat/threat_scheduler.gd")
 const Difficulty = preload("res://scripts/combat/difficulty.gd")
 const FrameArt = preload("res://scripts/acts/act3/crystalman_recorded_frame_art.gd")
+const Policy = preload("res://scripts/combat/captured_replay_policy.gd")
 const API: String = "act3-crystalman-captured-phase-2"
+const POLICY_API: String = "act3-crystalman-captured-phase-3"
 const BASE_SHA: String = "915252a26089e7b4ecec92a8046d42555a702af7c1566551b80e67ce39e87a6b"
 const KEYS: Array[String] = ["api_revision", "schema_version", "configuration", "world", "gate", "scheduler", "playback", "owned"]
 const OWNED_KEYS: Array[String] = ["frame_art", "phase", "configured", "generation", "joins", "rejections", "tether_hits", "cleared", "locked", "operation", "last_rejection", "last_camera_error", "capture_context", "sequence", "projection", "proof", "held_exchange", "join_receipt", "last_rejected_capture", "forecast", "rearm_after_clock_s", "exposure_from_s", "exposure_until_s", "presentation"]
@@ -37,6 +39,11 @@ func capture(parent, player: Dictionary, optical: bool = true) -> Dictionary:
 		playback = parent.playback.snapshot_state(scheduler, bindings)
 		if playback.is_empty(): return _fail(parent.playback.last_snapshot_error)
 	var unit: Dictionary = {"api_revision": API, "schema_version": 2, "configuration": parent.captured_codec_configuration(), "world": native_world(parent), "gate": gate, "scheduler": scheduler, "playback": playback, "owned": parent.captured_codec_owned_state()}
+	var selected: Dictionary = parent.captured_codec_policy()
+	if not selected.is_empty():
+		unit.api_revision = POLICY_API
+		unit.schema_version = 3
+		unit["policy"] = selected
 	last_error = record_error(unit, parent, player)
 	return unit if last_error.is_empty() else {}
 
@@ -44,12 +51,38 @@ func _fail(reason: String) -> Dictionary:
 	last_error = reason
 	return {}
 
+## PURE saved-mode selection, safe before actual Scheduler/Gate construction.
+## Never calls parent._authored or reads the recipient's current policy mode.
+func policy_header_error(unit: Dictionary, parent) -> String:
+	var fresh: bool = unit.get("api_revision") == POLICY_API
+	var keys: Array[String] = KEYS.duplicate()
+	if fresh: keys.append("policy")
+	if not Value.keys_error(unit, keys).is_empty() or unit.get("api_revision") not in [API, POLICY_API] or not unit.get("schema_version") is int or unit.schema_version != (3 if fresh else 2): return "Closed explicit captured phase2/phase3 schema required"
+	for key: String in ["configuration", "world", "scheduler"]:
+		if not unit.get(key) is Dictionary: return "Typed pure captured selection branch required: " + key
+	if not same(unit.configuration, parent.captured_codec_configuration()) or not unit.configuration.get("capacity") is int or unit.configuration.capacity not in [1, 2]: return "Exact immutable selected captured configuration required"
+	if not unit.world.get("profile_id") is String or not unit.scheduler.get("profile") is Dictionary: return "Saved full canonical captured profile required"
+	var canonical: Dictionary = Difficulty.new().profile(unit.world.profile_id)
+	if canonical.is_empty() or not same(unit.scheduler.profile, canonical): return "Saved captured Scheduler profile must equal full canonical profile"
+	if fresh:
+		return Policy.error(unit.get("policy"), canonical, unit.configuration.capacity, parent.TETHER_POSITION)
+	return ""
+
+func selected_policy(unit: Dictionary) -> Dictionary:
+	return unit.policy.duplicate(true) if unit.get("api_revision") == POLICY_API else {}
+
+func selected_authored(unit: Dictionary) -> Dictionary:
+	# policy_header_error authenticated this exact saved descriptor first.
+	return unit.policy.authored.duplicate(true) if unit.get("api_revision") == POLICY_API else authored(unit.configuration.capacity)
+
 func header_error(unit: Dictionary, parent, player: Dictionary) -> String:
 	var error: String = parent.captured_codec_boundary_error()
 	if error.is_empty(): error = Value.value_error(unit)
 	if error.is_empty(): error = parent.hero.snapshot_error(player)
 	if not error.is_empty(): return error
-	if Exact.stringify(unit).is_empty() or not Value.keys_error(unit, KEYS).is_empty() or unit.get("api_revision") != API or not unit.get("schema_version") is int or unit.schema_version != 2: return "Closed exact captured production phase2 required"
+	if Exact.stringify(unit).is_empty(): return "Exact captured production phase transport required"
+	error = policy_header_error(unit, parent)
+	if not error.is_empty(): return error
 	for key: String in ["configuration", "world", "gate", "scheduler", "playback", "owned"]:
 		if not unit[key] is Dictionary: return "Typed whole local packet required: " + key
 	if not same(unit.configuration, parent.captured_codec_configuration()): return "Immutable original room capacity/layout/source scripts differ"
@@ -81,9 +114,12 @@ func leaf_shape_error(unit: Dictionary, parent, player: Dictionary) -> String:
 	var p: Dictionary = unit.playback
 	if p.is_empty(): return ""
 	var keys: Array = Leaf.SNAPSHOT_KEYS.duplicate()
+	if unit.api_revision == POLICY_API: keys.append("captured_policy")
 	keys.append("projection")
 	if p.has("pending_delivery"): keys.append("pending_delivery")
 	if not Value.keys_error(p, keys).is_empty(): return "Closed whole projected Playback3 packet required"
+	var expected_api: String = Leaf.CAPTURED_POLICY_API_REVISION if unit.api_revision == POLICY_API else Leaf.API_REVISION
+	if p.get("api_revision") != expected_api or (unit.api_revision == POLICY_API and not same(p.get("captured_policy"), unit.policy)): return "Captured leaf API/policy must join exact saved phase mode"
 	for key: String in ["sequence", "exchange", "cursor", "cancellation", "projection"]:
 		if not p.get(key) is Dictionary: return "Typed complete Playback child required: " + key
 	if p.has("pending_delivery") and not p.pending_delivery is Dictionary: return "Typed original pending suffix required"
@@ -100,6 +136,7 @@ func record_error(unit: Dictionary, parent, player: Dictionary) -> String:
 	var error: String = header_error(unit, parent, player)
 	if not error.is_empty(): return error
 	if parent.threat_scheduler.encounter_profile().get("id") != unit.world.profile_id: return "Fresh constructor profile must match original"
+	if not same(parent.captured_codec_policy(), selected_policy(unit)): return "Actual captured recipient cannot change its immutable saved policy mode"
 	error = parent.capture_gate.snapshot_error(unit.gate, player)
 	if not error.is_empty(): return "Sole Gate/outer Player: " + error
 	var bindings: Dictionary = parent.scheduler_bindings()
@@ -197,7 +234,7 @@ func owned_error(unit: Dictionary, parent, player: Dictionary) -> String:
 	if o.phase == "framing" or admitted:
 		var reader = Sequence.new()
 		if not reader.restore_state(o.sequence, unit.configuration.source_epoch, o.generation): return reader.last_snapshot_error
-		if o.sequence.get("sequence_id") != "crystalman-rule/sequence-" + str(o.generation) or not same(o.sequence.get("authored"), authored(unit.configuration.capacity)): return "Original immutable sequence recipe required"
+		if o.sequence.get("sequence_id") != "crystalman-rule/sequence-" + str(o.generation) or not same(o.sequence.get("authored"), selected_authored(unit)): return "Original immutable sequence recipe required"
 		if o.phase == "framing" and (not same(o.sequence.capture_snapshot.get("slots"), cap.get("slots")) or not same(o.sequence.capture_snapshot.get("generation"), cap.get("generation"))): return "Historical exact sealed slots/generation must match current Gate; capture clock may advance"
 		# Authenticate full original mesh/floor bytes before ANY membership helper.
 		var error: String = Footprint.projection_error(o.projection, parent.threat_scheduler, o.sequence, parent.actual_world_root(), parent.floor_regions(), o.capture_context)

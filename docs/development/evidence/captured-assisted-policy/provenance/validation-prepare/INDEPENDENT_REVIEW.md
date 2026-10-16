@@ -1,0 +1,11 @@
+# Independent frozen runner review
+
+PASS — source review only; no blocking runner issue found. Frozen runner SHA: `eaf3ee11a49ca612addab1be3103eb2d3824b8aeed1fd6a0e5f3e700b3763046`.
+
+The initial175-name physical comparison found every required hash exact and exactly the six declared new UID files absent. All22 actual/private promotion SHA, size and normalized-body joins match Root manifest `66e5225e1d28213519d2fa2ad7635374f605e7667c7056f679fffa8cbd4a7f06`. Root began its import after receiving this source-review PASS message. The final review reread observed the permitted sidecars present. The JSON preserves those actual observations and Root's separately reported import identity; this reviewer did not execute or independently audit that import or the reported subsequent parsers.
+
+A first report incorrectly required all six to remain absent during the final comparison and therefore flagged that timing change. This report corrects only that review condition. The JSON preserves the original report hashes, condition and correction; no runner, specification, readiness or production file changed.
+
+Closed seal ancestry, actual source retention before queue/at lock/after child/on close, canonical single finite owned child, six-only named import deltas and fixed later UID hashes are enforced. Actual raw/partial outputs remain retained and indexed after raw closes. Common/legacy accurately use printed assertions and end footer without invented native rows/completion. Authored/Shell structured row types, counts, booleans, footer and report SHA/path match their native writers. Shell additionally joins all175 native source hashes and opaque Exact receipts. Only explicit native Shell portrait selection creates a unique owned340x736 PNG; file checks do not replace Root pixel inspection.
+
+Queue wait is unbounded and child cleanup adds time. CLOSED alone does not prove an unreturned child terminated. Exceptional OS/output/filesystem failures require actual handle investigation. The named subset is not a global UID/import audit; diagnostics remain separately qualified. No runner module import, preflight, seal or engine execution was performed by this reviewer. Native behavior and actual pixel acceptance remain Root work.

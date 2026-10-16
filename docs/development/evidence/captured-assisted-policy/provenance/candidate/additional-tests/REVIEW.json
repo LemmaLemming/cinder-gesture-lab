@@ -1,0 +1,425 @@
+{
+  "schema_version": 1,
+  "kind": "independent-additional-captured-policy-source-review",
+  "created_at": "2026-10-15T10:12:16.285143+00:00",
+  "status": "PRIVATE_SOURCE_REVIEW_ONLY_BARRIER_AND_REQUIRED_ID_CORRECTIONS_REVIEWED_NO_ENGINE",
+  "reviewer": "/root/act3_o3_checkpoint_review",
+  "mutation_scope": "Only these independent REVIEW.json/md artifacts. No draft, production, engine, Git, mailbox, worker, saved profile, or user-store mutation.",
+  "inputs": [
+    {
+      "path": ".cinder/captured-assisted-policy-audit-20261015/candidate/additional-tests/PLAN.md",
+      "bytes": 9711,
+      "sha256": "9be4c88848325c4fdcd8de0688dc53b666b52f697f1acbfc55a20ad7351ed02a"
+    },
+    {
+      "path": ".cinder/captured-assisted-policy-audit-20261015/candidate/additional-tests/PREPARATION.json",
+      "bytes": 11084,
+      "sha256": "0a8844ea676d874f67326ef196e0cc0246523f216fb137688dafa4e9f4c6fec6"
+    },
+    {
+      "path": ".cinder/captured-assisted-policy-audit-20261015/candidate/additional-tests/captured_policy_authored_control.gd.txt",
+      "bytes": 9944,
+      "sha256": "56d385f23281fb147ceee086c2ae5f854c185d0b2db2492974ebb0007c093760"
+    },
+    {
+      "path": ".cinder/captured-assisted-policy-audit-20261015/candidate/additional-tests/crystalman_captured_policy_shell.gd.txt",
+      "bytes": 29383,
+      "sha256": "cdb6a1e1b7844450f876c879afc1cba1824898957fa74aacae46ca549b25397c"
+    },
+    {
+      "path": ".cinder/captured-assisted-policy-audit-20261015/candidate/additional-tests/corrections/shell-operation-barrier/PREPARATION.original.json",
+      "bytes": 9619,
+      "sha256": "af8d7340112b36719fc0c04268c2935b65a6db7d1643feab94dced145ca00aed"
+    },
+    {
+      "path": ".cinder/captured-assisted-policy-audit-20261015/candidate/additional-tests/corrections/shell-operation-barrier/original.gd.txt",
+      "bytes": 27972,
+      "sha256": "a14b7759714927abfb4a87a35e922a8b04f211f5f4d76aa9cc6802cc8596c3c5"
+    },
+    {
+      "path": ".cinder/captured-assisted-policy-audit-20261015/candidate/additional-tests/corrections/shell-operation-barrier/correction.diff",
+      "bytes": 4160,
+      "sha256": "d0ad3b96eb0ec325f529a26aedd52bf50e948eda00298e2dc5355d42cecf3837"
+    },
+    {
+      "path": ".cinder/captured-assisted-policy-audit-20261015/candidate/additional-tests/corrections/shell-operation-barrier/CORRECTION.json",
+      "bytes": 746,
+      "sha256": "3783496711e27a96004f3e42eac364418d154cd879f3fd0f0a45df062b1c2254"
+    },
+    {
+      "path": ".cinder/captured-assisted-policy-audit-20261015/candidate/additional-tests/corrections/complete-native-identity-map/original.gd.txt",
+      "bytes": 28929,
+      "sha256": "02d529e3fd1bbd4d053d912af4e7c639f0b9dca8eb0f95dc22e333ea6d6b2204"
+    },
+    {
+      "path": ".cinder/captured-assisted-policy-audit-20261015/candidate/additional-tests/corrections/complete-native-identity-map/correction.diff",
+      "bytes": 2585,
+      "sha256": "7306042fa0050708163a4cf94c80342e7dff4565dc7d4e76f6bdc7e0ae6dff26"
+    },
+    {
+      "path": ".cinder/captured-assisted-policy-audit-20261015/candidate/additional-tests/corrections/complete-native-identity-map/CORRECTION.json",
+      "bytes": 498,
+      "sha256": "02cb16919e54c9af32e438ec3c9cd92bbf7c5b5e278000a873cb854e4a9a71a7"
+    }
+  ],
+  "prepared_named_sources": {
+    "count": 37,
+    "mismatch_count": 0,
+    "observations": [
+      {
+        "path": "tests/authored_echo_playback_smoke.gd",
+        "prepared_sha256": "2ade5f07a380c2a5d64c05d1f2c90d3b067cecef128e3c03daa6fd0fbd27741a",
+        "actual_sha256": "2ade5f07a380c2a5d64c05d1f2c90d3b067cecef128e3c03daa6fd0fbd27741a",
+        "actual_bytes": 33904,
+        "matches": true
+      },
+      {
+        "path": "tests/fixtures/authored_echo_actor.gd",
+        "prepared_sha256": "bd78c8392f70b6f01e96d4a40c8adafc791a605e43487144e26aa8bb0173d542",
+        "actual_sha256": "bd78c8392f70b6f01e96d4a40c8adafc791a605e43487144e26aa8bb0173d542",
+        "actual_bytes": 10038,
+        "matches": true
+      },
+      {
+        "path": "tests/fixtures/authored_echo_native_codec.gd",
+        "prepared_sha256": "4b430b2c9f266ff37c222a2d89a7db62429e0f25b9267a891078f845138c2402",
+        "actual_sha256": "4b430b2c9f266ff37c222a2d89a7db62429e0f25b9267a891078f845138c2402",
+        "actual_bytes": 9276,
+        "matches": true
+      },
+      {
+        "path": "tests/acts/act3/crystalman_rule_room_smoke.gd",
+        "prepared_sha256": "6c3cfc228985e64f5b34f9c25b2b744b92ad6f8f031b68c3a428450a7b9c3bbc",
+        "actual_sha256": "6c3cfc228985e64f5b34f9c25b2b744b92ad6f8f031b68c3a428450a7b9c3bbc",
+        "actual_bytes": 29161,
+        "matches": true
+      },
+      {
+        "path": "tests/acts/act3/crystalman_parent_transport_smoke.gd",
+        "prepared_sha256": "3344ec10095f9d760521fa834b8ebdefee78c05950e77212e975605a86485608",
+        "actual_sha256": "3344ec10095f9d760521fa834b8ebdefee78c05950e77212e975605a86485608",
+        "actual_bytes": 17653,
+        "matches": true
+      },
+      {
+        "path": "tests/acts/act3/fixtures/crystalman_declared_parent.gd",
+        "prepared_sha256": "83f0125fe68419e2e62724f8662f568bb249657ee9438f72222e2e7b1d67f133",
+        "actual_sha256": "83f0125fe68419e2e62724f8662f568bb249657ee9438f72222e2e7b1d67f133",
+        "actual_bytes": 2064,
+        "matches": true
+      },
+      {
+        "path": "tests/acts/act3/fixtures/crystalman_declared_2.tscn",
+        "prepared_sha256": "97c00011cc2c1e6329c7d3630799bab94e53acbcd6367ab8602aad392ac22854",
+        "actual_sha256": "97c00011cc2c1e6329c7d3630799bab94e53acbcd6367ab8602aad392ac22854",
+        "actual_bytes": 339,
+        "matches": true
+      },
+      {
+        "path": "scripts/acts/act3/crystalman_level.gd",
+        "prepared_sha256": "456095c10d1fd0058c8db7ae2ef900efe6a52e40f35e8534b947067ca6fabde1",
+        "actual_sha256": "456095c10d1fd0058c8db7ae2ef900efe6a52e40f35e8534b947067ca6fabde1",
+        "actual_bytes": 24238,
+        "matches": true
+      },
+      {
+        "path": "scripts/acts/act3/crystalman_parent_codec.gd",
+        "prepared_sha256": "bf105854b232edfac48f27b714e8d4dbeea40b9db7bc7871d75a3a70ba183efd",
+        "actual_sha256": "bf105854b232edfac48f27b714e8d4dbeea40b9db7bc7871d75a3a70ba183efd",
+        "actual_bytes": 12936,
+        "matches": true
+      },
+      {
+        "path": "scripts/acts/act3/crystalman_phase_policy.gd",
+        "prepared_sha256": "e8760aec7972b5f6160d78db6a1f8d724f1ae0fa81e885b2b4599562fe644682",
+        "actual_sha256": "e8760aec7972b5f6160d78db6a1f8d724f1ae0fa81e885b2b4599562fe644682",
+        "actual_bytes": 3623,
+        "matches": true
+      },
+      {
+        "path": "scripts/acts/act3/crystalman_recorded_frame_art.gd",
+        "prepared_sha256": "94c2b560e84f4cce53ad03164a73ceb702b89aaa6641a5224fc788475daf93eb",
+        "actual_sha256": "94c2b560e84f4cce53ad03164a73ceb702b89aaa6641a5224fc788475daf93eb",
+        "actual_bytes": 16361,
+        "matches": true
+      },
+      {
+        "path": "scripts/combat/authored_enemy_sequence.gd",
+        "prepared_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3",
+        "actual_sha256": "9aed90b797bdef3388a82b63f40390e2b779f2fec671ed3914a33b1ff42950a3",
+        "actual_bytes": 37426,
+        "matches": true
+      },
+      {
+        "path": "scripts/combat/replay_footprint.gd",
+        "prepared_sha256": "23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b",
+        "actual_sha256": "23ad30c9805dcb7af69f81cbb5f0d702c4d0eb8767f51a144d7b87ed87d3964b",
+        "actual_bytes": 34512,
+        "matches": true
+      },
+      {
+        "path": "scripts/combat/replay_capture_gate.gd",
+        "prepared_sha256": "5f4d814f3b3bbb90e3274e1a76a7d082e092be553edf2862e9da480bb0042a2e",
+        "actual_sha256": "5f4d814f3b3bbb90e3274e1a76a7d082e092be553edf2862e9da480bb0042a2e",
+        "actual_bytes": 23213,
+        "matches": true
+      },
+      {
+        "path": "scripts/combat/replay_sequence.gd",
+        "prepared_sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+        "actual_sha256": "7deda2bbf0f17b011ed5a7f8191281538887f95ba0188f2e2b9cc89adad023a6",
+        "actual_bytes": 10638,
+        "matches": true
+      },
+      {
+        "path": "scripts/combat/threat_scheduler.gd",
+        "prepared_sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+        "actual_sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+        "actual_bytes": 266033,
+        "matches": true
+      },
+      {
+        "path": "scripts/combat/difficulty.gd",
+        "prepared_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+        "actual_sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+        "actual_bytes": 4882,
+        "matches": true
+      },
+      {
+        "path": "scripts/player.gd",
+        "prepared_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+        "actual_sha256": "8e4dfeb2c285f1d786ec3268bdaf5efbc70b3b0f4b2473b2870e0566a88e4743",
+        "actual_bytes": 48906,
+        "matches": true
+      },
+      {
+        "path": "scripts/game.gd",
+        "prepared_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+        "actual_sha256": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+        "actual_bytes": 38685,
+        "matches": true
+      },
+      {
+        "path": "scripts/hud.gd",
+        "prepared_sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+        "actual_sha256": "3a76c06a97da117b2fbd43824d88f3ef5150e6ad0045b5e27766b8d70542897b",
+        "actual_bytes": 16609,
+        "matches": true
+      },
+      {
+        "path": "scripts/equipment.gd",
+        "prepared_sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+        "actual_sha256": "2f721f0e7af0d1034ae9f92c37b4af3c3223171d0e5d2c120e42c00ae9155ab0",
+        "actual_bytes": 9130,
+        "matches": true
+      },
+      {
+        "path": "scripts/campaign/shell.gd",
+        "prepared_sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+        "actual_sha256": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+        "actual_bytes": 70657,
+        "matches": true
+      },
+      {
+        "path": "scripts/campaign/level.gd",
+        "prepared_sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+        "actual_sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+        "actual_bytes": 23949,
+        "matches": true
+      },
+      {
+        "path": "scripts/campaign/registry.gd",
+        "prepared_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+        "actual_sha256": "2b29babb103d121d8f4d185b0d56cb094e9693f099a10731ac6363ead9ee4fe2",
+        "actual_bytes": 6006,
+        "matches": true
+      },
+      {
+        "path": "scripts/campaign/attempts.gd",
+        "prepared_sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+        "actual_sha256": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+        "actual_bytes": 18347,
+        "matches": true
+      },
+      {
+        "path": "scripts/campaign/save_store.gd",
+        "prepared_sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+        "actual_sha256": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+        "actual_bytes": 7310,
+        "matches": true
+      },
+      {
+        "path": "scripts/campaign/exact_json.gd",
+        "prepared_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+        "actual_sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+        "actual_bytes": 9330,
+        "matches": true
+      },
+      {
+        "path": "scripts/campaign/snapshot_codec.gd",
+        "prepared_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+        "actual_sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+        "actual_bytes": 3350,
+        "matches": true
+      },
+      {
+        "path": "scripts/ui/campaign_menu.gd",
+        "prepared_sha256": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1",
+        "actual_sha256": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1",
+        "actual_bytes": 41162,
+        "matches": true
+      },
+      {
+        "path": "scripts/dev/dev.py",
+        "prepared_sha256": "585febb8214f0be367c0525295953faad80a5ab644bde757346ea41feac0571d",
+        "actual_sha256": "585febb8214f0be367c0525295953faad80a5ab644bde757346ea41feac0571d",
+        "actual_bytes": 30147,
+        "matches": true
+      },
+      {
+        "path": "project.godot",
+        "prepared_sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+        "actual_sha256": "cc0fcb840085aaf7e59ca231df3cf1b21f67dd17a5e87f9f4c46729a5f7bbb1f",
+        "actual_bytes": 841,
+        "matches": true
+      },
+      {
+        "path": "scenes/main.tscn",
+        "prepared_sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+        "actual_sha256": "c0c169890eed0afb26b1a09a017d45c90a64aa8ba874a683deb141c4190ee06b",
+        "actual_bytes": 171,
+        "matches": true
+      },
+      {
+        "path": "scenes/player.tscn",
+        "prepared_sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac",
+        "actual_sha256": "68cf79442eb217cb0e2afcc4099080ba79c3f3b2c548655195d0864f4fc8bfac",
+        "actual_bytes": 1184,
+        "matches": true
+      },
+      {
+        "path": "data/campaign/registry.json",
+        "prepared_sha256": "db8bd30ceb754a10fa434d01d415ebb428c84912f8d34d84829e03f9ebb5ff19",
+        "actual_sha256": "db8bd30ceb754a10fa434d01d415ebb428c84912f8d34d84829e03f9ebb5ff19",
+        "actual_bytes": 12319,
+        "matches": true
+      },
+      {
+        "path": "data/campaign/act3/crystalman_layout.json",
+        "prepared_sha256": "26831d7447e217a57ed173090c82d88c3a437368c6abfda930de3e99fbc0d7c6",
+        "actual_sha256": "26831d7447e217a57ed173090c82d88c3a437368c6abfda930de3e99fbc0d7c6",
+        "actual_bytes": 6679,
+        "matches": true
+      },
+      {
+        "path": "data/design/difficulty_profiles.json",
+        "prepared_sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+        "actual_sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+        "actual_bytes": 1313,
+        "matches": true
+      },
+      {
+        "path": "data/design/player_equipment.json",
+        "prepared_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+        "actual_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+        "actual_bytes": 32678,
+        "matches": true
+      }
+    ]
+  },
+  "observed_original_production": [
+    {
+      "path": "scripts/acts/act3/crystalman_capture_phase.gd",
+      "bytes": 63970,
+      "sha256": "0fed91e72b45705011ca9fda9c45405b1982816d1ffe81157ef92e95ad67dad7"
+    },
+    {
+      "path": "scripts/acts/act3/crystalman_capture_codec.gd",
+      "bytes": 35425,
+      "sha256": "26ce46e472c70b5ccfd495950060b19a6f646c160f7eaa7cf451f3cdbd7546cf"
+    },
+    {
+      "path": "scripts/combat/replay_playback.gd",
+      "bytes": 136712,
+      "sha256": "fc19603cc1797e174f2e790aaeb7e5a1eaff935ff67214923fe84ec1a437d861"
+    }
+  ],
+  "resolved_findings": [
+    {
+      "id": "shell-settle-old-resume-race",
+      "severity": "P2",
+      "status": "CORRECTED_PRIVATELY_BY_ROOT_SOURCE_REVIEWED_NOT_EXECUTED",
+      "original": "crystalman_captured_policy_shell.gd.txt a14b7759, original lines98-101/215-220",
+      "evidence": "Game.is_pause_requested (scripts/game.gd282-283) observes only _pause_request_pending. Shell Retry waits native registration at scripts/campaign/shell.gd332 before replacing the old active world at339; native registration explicitly awaits process_frame1176/1185. Original page resume and old active level could satisfy original settle before commit, then bind callbacks twice to the old recipient.",
+      "correction": "Root preserved exact original and added read-only _shell_operation_idle215-221, requiring actual operations/failed arrays empty and _draining/_drain_queued/_registration_inflight false plus inherited pause latch. Fresh Title173 and settle227 require this barrier. Retry99 passes old decimal IDs and settle228-229 requires changed actual active parent and Hero before _bind_current. Original180-frame bound remains.",
+      "review_conclusion": "Exact diff closes the identified source race without altering native/public operation state, deadlines or production. Final reviewed corrected Shell draft02d529e3."
+    },
+    {
+      "id": "required-native-id-presence",
+      "severity": "P3",
+      "status": "CORRECTED_PRIVATELY_BY_ROOT_SOURCE_REVIEWED_NOT_EXECUTED",
+      "original": "Corrected-barrier draft02d529e3, _distinct_ids254-259 silently skipped old keys missing from the current map. This was a checker/evidence precision gap; it did not establish a production bug or reachable false native acceptance.",
+      "correction": "Finalcdb6a1e1 _distinct_ids254-265 requires all seven always-present observed IDs in both maps and nonzero strings. Non-shell IDs must differ; Shell must differ for fresh Continue and be retained for Retry. Same-warning Continue90 explicitly requires eighth Playback ID; pristine Retry may legitimately have no Playback. Two-frame post-bind-only callback scope is now explicit at267-269.",
+      "review_conclusion": "The exact second diff closes the named checker gap and retains legitimate pristine checkpoint behavior. No native/production mutation or broader identity census is introduced."
+    }
+  ],
+  "authored_control_review": {
+    "source": "captured_policy_authored_control.gd.txt56d385f2",
+    "result": "No concrete additional authored-path bug found by bounded source review. Parser, actual delivery and native Store evidence remain unexecuted.",
+    "facts": [
+      "Actual inherited factory APIs and method overrides match parent signatures. Actual native Player, Scheduler, source Actor and fixed-cone definition are retained; selected Standard/Assisted profile is supplied before Scheduler/source constructors, not retuned after admission.",
+      "Public paused CLOTH-J1 equip supplies actual non1 armour and replaces the ancestor fabricated zero-ammo seed. The new caller writes no HP, action, clock, source, phase or resource history.",
+      "Existing Difficulty.resolve_role scales raw damage once upstream (difficulty.gd84). Test compares the actual immutable authored programme/record and captured policy absence, then actual ordinary cone contact HP loss record.damage/currentArmour, one opportunity and notification; a second0.70 would fail.",
+      "New Playback damage multiplier is guarded by nonempty captured policy; native Actor configure_authored leaves it empty. Repeated equal-clock calls and exact whole programme/source sequence checks cover duplicate/double delivery without entering captured mode.",
+      "Inherited _install explicitly unpauses before the actual scheduler/projection/commit path. Original600-tick due helper is retained. Whole Player/source/Scheduler/authored leaf capture uses inherited native codec and format2 Store, preserving authored API1 and no policy field.",
+      "The record vector conversion is observation-only and matches authored decoder semantics (only origin/direction decode). It is never submitted to a reader."
+    ],
+    "limits": "One real cone contact for each fresh Standard/Assisted authored source and one legal armour equip. No authored managed-cycle matrix, all kit, captured damage, Replay/Optional/Campaign route or portrait credit; common held-damage/notify tests remain separate."
+  },
+  "whole_parent_review": {
+    "source": "crystalman_captured_policy_shell.gd.txt cdb6a1e1b7844450f876c879afc1cba1824898957fa74aacae46ca549b25397c",
+    "result": "The design uses genuine complete parent donor/writers and real public Shell boundaries. Root privately corrected the operation-barrier race and required ID-map precision gap; both exact diffs and final source were reviewed. No additional concrete source-level production logic bug was found. Parser and native validation remain required.",
+    "facts": [
+      "PolicyMain real property is policy_test_preference, method get_difficulty_preference. Draft assigns Assisted and declared_2 scene before adding actual Main PackedScene to tree. Main camera/shake properties _camera_focus/_shake and observation API names exist in original sources.",
+      "Unchanged declared_2 and declared_parent fixture instantiate actual production Crystalman parent/current NativePhase, permanent floor, scenery and full native history writer. Fixture has disclosed TEST prior regular death/route history; no earlier regular encounter is earned by this test.",
+      "Before any physics it checks actual phase gen0 selected policy/no records. Existing90-frame initial optics allowance uses actual candidate_presentation_error and ordinary Camera/HUD; it writes no pose/view margin. Later initial checkpoint is whichever complete native no-input state passes actual writers, not an asserted gen0 save.",
+      "Initial TEST outer Campaign context uses complete actual same-world Player/parent snapshots and Main input/camera/shake/profile observations; it never wraps a phase-only packet. Only external Campaign prerequisite prefix14 and injected in-memory declared-scene accepted row are synthetic. Registry f*40 is TEST, not a real content acceptance hash.",
+      "Actual Attempts.state_error/saved_payload_error and format2 Store must accept the whole seed, then independently fresh Shell Title/Continue must register and recapture exact packet; no stripped local packet or patched guard fallback exists.",
+      "Actual resumed native phase plus inherited routed dash/primary input produces real completed records and one actual projected generation1 warning. Pause Save captures whole local1 parent, explicit phase API3/schema int3 and projected leaf schema int3.",
+      "Both new integer negatives clone that actual complete projected packet only after actual schema3/generation1/projection prerequisites. Native whole parent error/restore refusal is joined to unchanged whole live packet/session/raw primary+backup+generation/decimal IDs and selected callbacks.",
+      "Public preference Challenge writes separate real preference Store while complete active Assisted packet/session and raw campaign bytes stay exact. Fresh Shell independently reads current Challenge at Title, then public disk Continue restores the exact saved Assisted parent/current unit.",
+      "Retry compares original complete entrance checkpoint/session, actual new parent/Hero before binding, retained canonical Assisted policy, one real Store generation increase and exact previous-primary backup. Full raw disk and independent Store payload reread are compared; no direct checkpoint/source/history/clock mutation occurs.",
+      "Canonical policy helper exact full-profile match remains intact; native canonical reserved_threat_budget is float1.0/2.0, as preserved by the Root-authorized helper correction. These tests do not introduce int-budget coercion or reconstruct numeric native packets in host JSON.",
+      "Actual watcher-supported signal arities are0-3 in inspected sources; decimal native ID strings avoid host JSON integer precision loss. Two quiet frames occur after binding, not during creation/restoration.",
+      "Finite150s/300s host watchdogs and180frame/40native-second inherited mechanics limits are source limits only and unmeasured for new jobs. Normal exit precedes whole Shell queue-free; actual node weakrefs, enemies/cues empty and isolated-file removal are observed. No other process/lock is touched."
+    ],
+    "remaining_precision_notes": [
+      {
+        "id": "callback-window",
+        "severity": "scope_limit",
+        "path": "crystalman_captured_policy_shell.gd.txt177-194/267-276/314-321",
+        "fact": "Watchers attach in _bind_current after fresh install and recurse existing descendants. Two paused frames prove selected callback silence only after binding; they do not observe callbacks during construction/restore. Final source267-269 now states this explicitly.",
+        "minimal_recommendation": "Keep this bounded scope in later reports; no extra native run is needed merely to narrow prose."
+      },
+      {
+        "id": "portrait-output-custody",
+        "severity": "P3",
+        "path": "crystalman_captured_policy_shell.gd.txt283-309",
+        "fact": "The optional portrait requires an absolute output folder but its fixed filename can overwrite an existing file. PLAN already requires Root wrapper to create a unique directory.",
+        "minimal_recommendation": "Keep unique absent-output-directory enforcement in Root wrapper, or add file-exists refusal if this script is invoked outside that wrapper. Original pixels still require actual Root inspection."
+      }
+    ],
+    "limits": "Only capacity1 actual fresh captured warning and whole-parent public boundaries. No actual captured active/damage, fresh capacity2 matrix, old whole-parent save, earned preceding history, tether release, boss/campaign clear, full route, all kit, lateral art, human balance or FPS claim. Existing original API2 six-packet150/0 producer is separate and does not validate these new paths."
+  },
+  "validation": {
+    "host_source_review": true,
+    "godot_parser": false,
+    "godot_import": false,
+    "engine_native": false,
+    "portrait_requested_or_opened": false,
+    "queue_operation": false,
+    "production_promotion": false,
+    "git_or_mailbox_mutation": false
+  },
+  "next_step": "No remaining blocking source finding was identified in this bounded review of final cdb6a1e1/56d385f2. Root owns a narrowly sealed future parser/native cohort with candidate core/helper/ProfileMain and explicit new test/UID names, preserving originals/corrections and actual failures. Enforce unique portrait output. No native pass, clean log or visual acceptance follows from source review or exit0 alone."
+}

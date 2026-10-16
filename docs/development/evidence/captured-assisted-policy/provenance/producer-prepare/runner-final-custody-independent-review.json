@@ -1,0 +1,46 @@
+{
+  "kind": "independent-final-private-runner-custody-amendment-review",
+  "reviewer": "/root/act1_o2_registration_prepare/captured_producer_runner_review",
+  "created_at": "2026-10-15T08:52:12.132840+00:00",
+  "disposition": "SOURCE_ONLY_PASS_NO_NEW_EXECUTION_BLOCKER",
+  "runner": {
+    "sha256": "77007b1cf27e4d4329441e31af7593816aa492bf5c9ff9360df4616508223755",
+    "bytes": 15691,
+    "assert_nodes": 0
+  },
+  "exact_amendment_proof": {
+    "method": "Remove exactly the two added FILES members, ADDITIONAL_PINNED_INPUTS literal and its two-line preflight require loop from final text; hash resulting bytes.",
+    "reconstructed_prior_sha256": "1e2860495ce220a3c266a196ae397e2723eb411fd725bbb86fbf69f514af4905",
+    "equals_independently_reviewed_intermediate": true,
+    "other_logic_changed": false
+  },
+  "additional_fixed_pins": {
+    "data/design/player_equipment.json": {
+      "sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1",
+      "bytes": 32678,
+      "expected_sha256": "737cf534df88fa965ab568f750515eb17098688d268e5b6b699de5cd519b98d1"
+    },
+    "scripts/combat/threat_geometry.gd": {
+      "sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09",
+      "bytes": 14303,
+      "expected_sha256": "c82501198ea1a3b53c872caec35e52604bb7256d6e71fff2c9293b430e1d8f09"
+    }
+  },
+  "custody": {
+    "fixed_original_manifest_inputs": 43,
+    "additional_direct_inputs": 2,
+    "all_named_files_count": 51,
+    "unique_all_named_files_count": 51,
+    "all_source_and_uid_names": 89,
+    "new_gd_uid_included": "scripts/combat/threat_geometry.gd.uid",
+    "preflight_order": "Observed full source map is saved, then additional hashes explicitly required, then original43 pins and exact promotion checks. Both inputs are in FILES/NAMES and consequently before-queue, at-lock, after-child, native before/after and closing joins.",
+    "sidecar_scope": "Existing threat_geometry.gd.uid is sealed dynamically; original two private .gd UIDs alone may be absent. No UID/global-dependency census."
+  },
+  "retained_prior_repairs": "Explicit optimization-proof require joins, preflight CLOSED finalization, maps saved before comparison, lock release marker in finally, closing drift failure and limited diagnostics scope are unchanged exactly from independently reviewed intermediate.",
+  "original_evidence_preservation": "Original PREPARATION remains historical; parent will list final amended runner and this separate review in a new amended manifest. This review does not claim the original PREPARATION pins this final runner.",
+  "limits": [
+    "Source-only. No engine or runner execution, promotion, parser, queue, saved-wire, UID-generation or timeout validation.",
+    "Producer semantic review and classification of generic raw/engine ERROR/WARNING remain separate required evidence tasks.",
+    "No production/Git/mail/frozen Root-job changes."
+  ]
+}

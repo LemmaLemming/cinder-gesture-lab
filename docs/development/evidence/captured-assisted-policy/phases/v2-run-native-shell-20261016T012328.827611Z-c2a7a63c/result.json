@@ -1,0 +1,55 @@
+{
+  "phase": "native",
+  "selector": "shell",
+  "started_at": "2026-10-16T01:23:28.827983+00:00",
+  "output": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/validation-shell-observation-v2/run-native-shell-20261016T012328.827611Z-c2a7a63c",
+  "closed": true,
+  "passed": false,
+  "engine_launch_attempted": true,
+  "owned_validation_returned": true,
+  "canonical_validation_return_code": 1,
+  "scope": "Fixed named subset only; no transitive closure/global UID/native acceptance or optical claim.",
+  "engine_launch_attempted_at": "2026-10-16T01:23:28.967689+00:00",
+  "owned_validation_returned_at": "2026-10-16T01:24:12.000395+00:00",
+  "terminal_scope": "Canonical API wait returned. Nonzero can be synthetic timeout/script-error; no separate OS child exit is exposed. A launch attempt flag alone does not prove a child started. Only canonical dev manages its own direct child.",
+  "native_observation": {
+    "selector": "shell",
+    "validation_errors": [
+      "Actual failures/completion/success must positively join",
+      "Only the one explicitly selected Shell portrait may be produced"
+    ],
+    "literal_footer_matches": [
+      [
+        "36",
+        "1",
+        "false"
+      ]
+    ],
+    "report_format": "actual-plain-JSON-rows-and-complete",
+    "report": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/validation-shell-observation-v2/run-native-shell-20261016T012328.827611Z-c2a7a63c/native-report.json",
+      "sha256": "d9b7de57a9c5b0661a30f9297a13e2aa0e0f44a8ffdab064ffbea80f78d407d5",
+      "bytes": 3414968
+    },
+    "checks": 36,
+    "failures": 1,
+    "complete": false,
+    "success": false,
+    "actual_row_count": 36,
+    "actual_false_row_count": 1,
+    "observed_first_failed_row": {
+      "check": 33,
+      "detail": "",
+      "label": "Actual paused warning draw preserves whole packet/input/current Camera/HUD/callbacks and restores menu",
+      "ok": false
+    },
+    "first_failure_field_present_in_native": false
+  },
+  "error": "Native observation joins failed; see retained observation/report/raw",
+  "raw_diagnostic_lines": [
+    "ERROR: FAIL captured-policy whole parent: Actual paused warning draw preserves whole packet/input/current Camera/HUD/callbacks and restores menu; "
+  ],
+  "diagnostic_qualification": "Retained raw diagnostics are not classified as clean merely from zero exit. Review host/editor/script/audio/native messages separately.",
+  "closed_at": "2026-10-16T01:24:12.062376+00:00",
+  "runner_return_code": 2
+}

@@ -1,0 +1,177 @@
+extends "res://tests/replay_playback_smoke.gd"
+## PRIVATE / UNEXECUTED. Common captured-only policy/contact/suffix draft.
+## Real shared Player records, native Scheduler/Witness/Playback, current armour.
+## Explicit TEST stable contact placement and initial base-helper zero ammo;
+## no saved record/HP/clock/phase/prefix forgery. No whole Crystalman/Shell credit.
+const Policy = preload("res://scripts/combat/captured_replay_policy.gd")
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+var _selected_profile: String = "standard"
+
+func _run() -> void:
+	_pure_policy()
+	for profile: String in ["assisted", "standard", "challenge"]:
+		_selected_profile = profile
+		await _native_contact("")
+	_selected_profile = "assisted"
+	for boundary: String in ["cue", "hurt", "event"]:
+		await _native_contact(boundary)
+	print("Captured policy candidate: %d checks/%d failures. Native common contact/Store/suffix only; original C50 literal restore, authored-Assisted control and campaign flows remain separate." % [_checks, _failures])
+	quit(0 if _failures == 0 else 1)
+
+func _must(ok: bool, label: String) -> bool:
+	_expect(ok, label)
+	return ok
+
+func _pure_policy() -> void:
+	for profile: String in ["assisted", "standard", "challenge"]:
+		for capacity: int in [1, 2]:
+			var canonical: Dictionary = Difficulty.new().profile(profile)
+			var p: Dictionary = Policy.resolve(canonical, capacity, Vector3(-0.7, 0, -0.4))
+			_expect(not p.is_empty() and Policy.error(p, canonical, capacity, Vector3(-0.7, 0, -0.4)).is_empty(), "Canonical closed full-profile policy " + profile + "/" + str(capacity))
+			if p.is_empty(): continue
+			if profile != "assisted":
+				_expect(ExactJson.stringify(p.authored.warning_s) == ExactJson.stringify(1.3) and ExactJson.stringify(p.authored.final_recovery_s) == ExactJson.stringify(3.5) and p.raw_damage_multiplier == 1.0, "Reference warning/recovery retain exact original scalar bits")
+			else:
+				_expect(p.authored.warning_s == maxf((1.3 + 1.5) * 1.35, 1.3 + 1.5) - 1.5 and p.authored.locked_lead_s == 1.5 and p.authored.final_recovery_s == maxf(3.5 * 1.35, 3.5) and p.raw_damage_multiplier == 0.70, "Assisted scales total outer preparation/recovery/raw damage, retains locked lead")
+			for change: String in ["extra", "multiplier", "profile", "integer", "recipe"]:
+				var bad: Dictionary = p.duplicate(true)
+				match change:
+					"extra": bad["unknown"] = true
+					"multiplier": bad.raw_damage_multiplier = 0.49
+					"profile": bad.profile.reserved_threat_budget = 99
+					"integer": bad.schema_version = 1.0
+					"recipe": bad.authored.warning_s = 1.755
+				_expect(not Policy.error(bad, canonical, capacity, Vector3(-0.7, 0, -0.4)).is_empty(), "Malformed policy refuses without changing canonical input: " + change)
+
+func _response(arena: Dictionary) -> Dictionary:
+	var response: Dictionary = super._response(arena)
+	response.recognition_s = 0.25
+	return response
+
+func _record_policy(arena: Dictionary) -> Dictionary:
+	# Base helper records actual public Player dash+primary. Build a NEW valid
+	# Sequence from its untouched captured snapshot; never rewrite a record.
+	var original: Dictionary = await super._record(arena, 1)
+	var frozen: Dictionary = original.capture.snapshot_state()
+	var wire: String = ExactJson.stringify(frozen)
+	var p: Dictionary = Policy.resolve(Difficulty.new().profile(_selected_profile), 1, original.native.authored.tether_position)
+	var sequence = Sequence.new()
+	if not _must(sequence.configure("playback/actual", frozen, Policy.authored(p), EPOCH, 1), "New canonical outer policy wraps original complete actual captured records"): return {}
+	if not _must(ExactJson.stringify(original.capture.snapshot_state()) == wire and ExactJson.stringify(sequence.snapshot_state().capture_snapshot) == wire, "Original captured records/order/types/durations remain exact"): return {}
+	return {"capture": original.capture, "sequence": sequence.snapshot_state(), "native": sequence.state(), "fingerprint": original.fingerprint, "policy": p}
+
+func _install_policy(arena: Dictionary, recorded: Dictionary) -> Dictionary:
+	var owner = Playback.new()
+	owner.name = "PolicyPlayback"
+	arena.root.add_child(owner)
+	owner.set_physics_process(false)
+	owner.global_position = recorded.native.authored.tether_position
+	if not _must(arena.scheduler.begin_encounter(_selected_profile, "playback/test", 1), "Actual native Scheduler freezes selected profile"): return {}
+	if not _must(owner.configure_captured_policy("playback/test", recorded.sequence, EPOCH, 1, recorded.policy), "Explicit captured-only Playback configures canonical retained policy"): return {}
+	var answer: Dictionary = arena.scheduler.request_replay(owner, recorded.sequence, _response(arena), {"world_root": arena.root, "source_epoch": EPOCH, "generation": 1, "capture_collision_fingerprint": recorded.fingerprint})
+	if not _must(answer.get("accepted", false), "Actual whole native witness admits one explicit captured-policy lease: " + str(answer.get("reason", ""))): return {}
+	var retired: int = 0
+	while not recorded.capture.take_next().is_empty(): retired += 1
+	if not _must(retired == 1 and recorded.capture.slots().is_empty() and owner.bind(arena.scheduler, answer.reservation_id, {"hero": arena.player}), "Parent retires original captured slot once before actual bind"): return {}
+	_expect(Policy.exact_equal(owner.get_captured_policy(), recorded.policy) and Policy.exact_equal(arena.scheduler.encounter_profile(), recorded.policy.profile), "Actual native policy joins full frozen Scheduler profile")
+	var defensive: Dictionary = owner.get_captured_policy()
+	defensive.raw_damage_multiplier = 0.49
+	_expect(Policy.exact_equal(owner.get_captured_policy(), recorded.policy), "Public policy getter cannot mutate retained delivery policy")
+	return {"playback": owner, "id": answer.reservation_id, "sequence": recorded.sequence, "native": recorded.native, "source_position": owner.global_position, "lease": arena.scheduler.replay_reservation_state(answer.reservation_id), "policy": recorded.policy}
+
+func _native_contact(boundary: String) -> void:
+	var arena: Dictionary = await _arena()
+	var recorded: Dictionary = await _record_policy(arena)
+	if recorded.is_empty(): await _dispose(arena); return
+	# Public safe-boundary clothing swap creates actual non1 recipient armour;
+	# original recorded producer equipment/damage is retained unchanged.
+	paused = true; await process_frame
+	if not _must(arena.player.equip_item("CLOTH-J1") and float(arena.player.equipment.resolved_stats().armour) != 1.0, "Public paused equip gives real non1 recipient armour"): await _dispose(arena); return
+	paused = false
+	var installed: Dictionary = _install_policy(arena, recorded)
+	if installed.is_empty(): await _dispose(arena); return
+	await _lock(arena, installed)
+	var owner = installed.playback
+	var event: Dictionary = installed.native.timeline.slots[0].events[0]
+	var original_wire: String = ExactJson.stringify(installed.sequence)
+	var record_clock: float = float(installed.sequence.capture_snapshot.clock_s)
+	var original_record: String = ExactJson.stringify(installed.sequence.timeline.slots[0].events[0].record)
+	# Disclosed TEST placement into the actual unmodified native cone.
+	arena.player.global_position = event.record.world_origin + event.record.direction * 0.4
+	var hp: float = arena.player.hp
+	var armour: float = arena.player.equipment.resolved_stats().armour
+	var expected_damage: float = float(event.record.damage) * float(installed.policy.raw_damage_multiplier) / armour
+	var held: Array[bool] = [false]
+	var calls: Array[String] = []
+	var nested: Array[Dictionary] = []
+	owner.get_cues()[0].state_changed.connect(func(value: Dictionary) -> void:
+		if value.phase == "active" and boundary == "cue" and not held[0]:
+			nested.append(owner.advance()); held[0] = true; paused = true)
+	arena.player.fired.connect(func(kind: String) -> void:
+		if kind == "hurt" and boundary == "hurt" and not held[0]:
+			nested.append(owner.advance()); held[0] = true; paused = true)
+	owner.event_dispatched.connect(func(actual: Dictionary, _receipt: Dictionary) -> void:
+		calls.append(actual.event_id)
+		_expect(ExactJson.stringify(Player.encode_world_action_record(actual.record, record_clock)) == original_record, "Notification retains original captured action bytes; delivery scale is separate")
+		if boundary == "event" and not held[0]:
+			nested.append(owner.advance()); held[0] = true; paused = true)
+	await _until(arena.scheduler, float(installed.lease.adapter.timeline_origin_s) + float(event.at_s))
+	owner.advance()
+	if boundary.is_empty():
+		_expect(absf(arena.player.hp - (hp - expected_damage)) < 0.000001 and calls.size() == 1 and owner.state().opportunities[0].contact and owner.state().opportunities[0].damage_attempted, "Actual " + _selected_profile + " contact applies raw multiplier once before current armour")
+		owner.advance()
+		_expect(calls.size() == 1 and absf(arena.player.hp - (hp - expected_damage)) < 0.000001, "Equal-clock repeated advance does not repeat consumed opportunity")
+	else:
+		await process_frame
+		_expect(nested.size() == 1 and not nested[0].get("accepted", true), "Reentrant callback advance refuses without a second delivery transaction")
+		if not _must(paused and held[0], "Actual native callback pauses at " + boundary): await _dispose(arena); return
+		var bundle: Dictionary = _save_pair(arena, owner, "policy-" + boundary)
+		if not _must(not bundle.playback.is_empty() and bundle.playback.api_revision == Playback.CAPTURED_POLICY_API_REVISION and Policy.exact_equal(bundle.playback.captured_policy, installed.policy), "Store retains exact new policy and genuine held suffix"): await _dispose(arena); return
+		var attempted: bool = bundle.playback.opportunities[0].damage_attempted
+		_expect(attempted == (boundary != "cue") and absf(arena.player.hp - (hp if boundary == "cue" else hp - expected_damage)) < 0.000001, "Actual held stage reports damage attempt truthfully before native restore")
+		var fresh: Dictionary = _fresh_policy_pair(arena, installed, bundle)
+		if fresh.is_empty(): await _dispose(arena); return
+		var resumed: Array[String] = []
+		fresh.playback.event_dispatched.connect(func(e: Dictionary, _r: Dictionary) -> void: resumed.append(e.event_id))
+		paused = false
+		fresh.playback.advance()
+		fresh.playback.advance()
+		_expect(absf(fresh.player.hp - (hp - expected_damage)) < 0.000001 and resumed.size() == (0 if boundary == "event" else 1) and fresh.playback.state().get("pending_delivery", {}).is_empty(), "Fresh exact resume drains original suffix once without repeat event/HP loss")
+		# HP alone cannot count a masked duplicate take_damage call while hurt
+		# invulnerability is live. Retained stages/attempt bit/event cardinality
+		# plus source audit of the single stage-damage call establish this scope.
+		owner = fresh.playback
+	_expect(ExactJson.stringify(Player.encode_world_action_record(owner.preview_state().slots[0].events[0].record, record_clock)) == original_record and ExactJson.stringify(installed.sequence) == original_wire, "Every contacted/resumed record and original sequence remain unchanged")
+	await _dispose(arena)
+
+func _fresh_policy_pair(arena: Dictionary, installed: Dictionary, bundle: Dictionary) -> Dictionary:
+	if bundle.get("playback", {}).is_empty(): return {}
+	var hero: CinderPlayer = Player.new()
+	hero.name = "FreshPolicyHero"
+	arena.root.add_child(hero)
+	var scheduler = Scheduler.new()
+	scheduler.name = "FreshPolicyScheduler"
+	arena.root.add_child(scheduler)
+	var owner = Playback.new()
+	owner.name = "FreshPolicyPlayback"
+	arena.root.add_child(owner)
+	owner.set_physics_process(false)
+	if not _must(owner.configure_captured_policy("playback/test", installed.sequence, EPOCH, 1, installed.policy), "Fresh paused new-policy recipient configures independently"): return {}
+	owner.global_position = installed.source_position
+	var fresh: Dictionary = {"root": arena.root, "player": hero, "scheduler": scheduler, "floor": arena.floor, "playback": owner, "wall": arena.wall}
+	fresh["bindings"] = _bindings(fresh, owner)
+	var quiet: Array[String] = []
+	owner.state_changed.connect(func(_s: Dictionary) -> void: quiet.append("state"))
+	owner.event_dispatched.connect(func(_e: Dictionary, _r: Dictionary) -> void: quiet.append("event"))
+	hero.fired.connect(func(_k: String) -> void: quiet.append("actor"))
+	for cue: Node3D in owner.get_cues(): cue.state_changed.connect(func(_s: Dictionary) -> void: quiet.append("cue"))
+	if not _must(hero.snapshot_error(bundle.actor).is_empty() and owner.snapshot_error(bundle.playback, scheduler, bundle.scheduler, fresh.bindings, {"hero": hero}).is_empty(), "Fresh whole native policy unit prevalidates without mutation"): return {}
+	if not _must(hero.restore_state(bundle.actor) and scheduler.restore_state(bundle.scheduler, fresh.bindings) and owner.restore_state(bundle.playback, scheduler, bundle.scheduler, fresh.bindings, {"hero": hero}) and quiet.is_empty(), "Actual Hero-first then Scheduler/Playback quiet native policy restore"): return {}
+	_expect(ExactJson.stringify(hero.snapshot_state()) == ExactJson.stringify(bundle.actor) and ExactJson.stringify(scheduler.snapshot_state(fresh.bindings)) == ExactJson.stringify(bundle.scheduler) and ExactJson.stringify(owner.snapshot_state(bundle.scheduler, fresh.bindings)) == ExactJson.stringify(bundle.playback), "Fresh unit recaptures exact full saved player/scheduler/playback/policy")
+	var wrong: Dictionary = bundle.playback.duplicate(true)
+	wrong.erase("captured_policy")
+	var before: String = ExactJson.stringify({"actor": hero.snapshot_state(), "scheduler": scheduler.snapshot_state(fresh.bindings), "playback": owner.snapshot_state(bundle.scheduler, fresh.bindings)})
+	_expect(not owner.restore_state(wrong, scheduler, bundle.scheduler, fresh.bindings, {"hero": hero}) and not before.is_empty() and ExactJson.stringify({"actor": hero.snapshot_state(), "scheduler": scheduler.snapshot_state(fresh.bindings), "playback": owner.snapshot_state(bundle.scheduler, fresh.bindings)}) == before, "Missing-policy downgrade refuses atomically on exact whole native unit")
+	installed.playback.free()
+	arena.scheduler.end_encounter(); arena.scheduler.free(); arena.player.free()
+	return fresh

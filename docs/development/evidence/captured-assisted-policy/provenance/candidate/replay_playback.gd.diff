@@ -1,0 +1,149 @@
+--- scripts/combat/replay_playback.gd
++++ candidate/scripts/combat/replay_playback.gd.txt
+@@ -8,6 +8,7 @@
+ signal playback_failed(reason: String)
+ 
+ const Sequence = preload("res://scripts/combat/replay_sequence.gd")
++const CapturedPolicy = preload("res://scripts/combat/captured_replay_policy.gd")
+ const Program = preload("res://scripts/combat/replay_program.gd")
+ const Authored = preload("res://scripts/combat/authored_enemy_sequence.gd")
+ const AuthoredRenderer = preload("res://scripts/combat/authored_echo_renderer.gd")
+@@ -27,6 +28,7 @@
+ const AUTHORED_CYCLE_API_REVISION: String = "authored-echo-playback-2"
+ const CYCLE_READY_KEYS: Array[String] = ["api_revision", "schema_version", "playback_id", "presentation_id", "source_id", "hero_id", "source_epoch", "generation", "sequence", "status", "clock_s", "lifecycle"]
+ const API_REVISION: String = "replay-playback-1"
++const CAPTURED_POLICY_API_REVISION: String = "replay-playback-2"
+ const AUTHORED_API_REVISION: String = "authored-echo-playback-1"
+ const TIME_EPSILON_S: float = Sequence.TIME_EPSILON_S
+ const MAX_DISPATCH_DELAY_S: float = Witness.MAX_DISPATCH_DELAY_S
+@@ -37,6 +39,10 @@
+ var last_error: String = ""
+ var last_snapshot_error: String = ""
+ var _configuration: Dictionary = {}
++# Empty preserves every original captured/authored constructor and wire.
++# Nonempty is selected only by explicit configure_captured_policy, immutable.
++var _captured_policy: Dictionary = {}
++var _captured_policy_seal: String = ""
+ var _plan: Dictionary = {}
+ var _scheduler: Node3D
+ var _world_root: Node3D
+@@ -112,6 +118,39 @@
+ 	last_error = ""
+ 	return true
+ 
++
++## Explicit opt-in. Original configure remains API1/full recorded raw damage.
++## The policy never modifies original captured records/timeline/event payloads.
++func configure_captured_policy(playback_id: String, sequence_snapshot: Dictionary, source_epoch: String, generation: int, policy: Dictionary, presentation_id: String = "act3_traveller") -> bool:
++	if get_script() != CinderReplayPlayback or not _configuration.is_empty() or not _captured_policy.is_empty() or _transaction_depth > 0 or not _stable_id(playback_id) or not Sprite.PRESENTATION_IDS.has(presentation_id): return _reject("Configure one fresh exact-native explicit captured-policy playback")
++	var reader = Sequence.new()
++	if not reader.restore_state(sequence_snapshot, source_epoch, generation): return _reject("Invalid frozen captured sequence: " + reader.last_snapshot_error)
++	var plan: Dictionary = reader.state()
++	var selected: Dictionary = policy.get("profile", {}) if policy.get("profile") is Dictionary else {}
++	var error: String = CapturedPolicy.error(policy, selected, plan.capture_snapshot.slots.size(), plan.authored.tether_position)
++	if error.is_empty() and not _same_transport(reader.snapshot_state().authored, policy.authored): error = "Captured sequence outer recipe differs from explicit canonical policy"
++	if not error.is_empty(): return _reject(error)
++	_captured_policy = policy.duplicate(true)
++	_captured_policy_seal = Exact.stringify(_captured_policy)
++	_configuration = {"playback_id": playback_id, "sequence": reader.snapshot_state(), "source_epoch": source_epoch, "generation": generation, "presentation_id": presentation_id}
++	_plan = plan
++	if is_node_ready(): _build_preview()
++	last_error = ""
++	return true
++
++func get_captured_policy() -> Dictionary:
++	return _captured_policy.duplicate(true)
++
++func _captured_policy_error(profile: Dictionary) -> String:
++	if _captured_policy.is_empty(): return ""
++	if _authored() or _cycle_tracking or _plan.get("api_revision") != Sequence.API_REVISION: return "Captured policy cannot apply to enemy-authored/managed programmes"
++	# Configure independently authenticated canonical derivation once. Live
++	# guards rejoin retained bytes and the ACTUAL frozen native profile without
++	# reopening the catalogue on every cue/delivery/physics boundary.
++	if _captured_policy_seal.is_empty() or Exact.stringify(_captured_policy) != _captured_policy_seal: return "Retained captured policy identity changed after configure"
++	if not _same_transport(_captured_policy.profile, profile) or _captured_policy.capacity != _plan.capture_snapshot.slots.size() or not _same_transport(_captured_policy.authored.tether_position, Codec.vector3(_plan.authored.tether_position)): return "Captured policy differs from actual frozen profile/plan/capacity/tether"
++	if not _same_transport(_configuration.sequence.authored, _captured_policy.authored): return "Captured policy cannot replace original immutable sequence budgets"
++	return ""
+ 
+ func configure_authored(playback_id: String, sequence_snapshot: Dictionary, source_epoch: String, generation: int) -> bool:
+ 	if not _configuration.is_empty() or _transaction_depth > 0 or not _stable_id(playback_id):
+@@ -323,7 +362,9 @@
+ 			entry.stage = "notify" # Actual attempt is committed BEFORE hurt/death.
+ 			if _opportunities[index].contact:
+ 				_opportunities[index].damage_attempted = true
+-				_hero.take_damage(float(event.record.damage), Vector3.ZERO)
++				var raw_damage: float = float(event.record.damage)
++				if not _captured_policy.is_empty(): raw_damage *= float(_captured_policy.raw_damage_multiplier)
++				_hero.take_damage(raw_damage, Vector3.ZERO)
+ 			if not _delivery_guard() or get_tree().paused:
+ 				return
+ 		if entry.stage == "notify":
+@@ -365,6 +406,9 @@
+ 		_fail("replay_owner_or_scheduler_lost")
+ 		return false
+ 	var error: String = _scheduler.replay_reservation_error(_reservation_id)
++	if error.is_empty() and not _captured_policy.is_empty():
++		error = _captured_policy_error(_scheduler.encounter_profile())
++		if error.is_empty() and _scheduler.replay_reservation_state(_reservation_id).get("profile_id") != _captured_policy.profile.id: error = "Captured delivery policy differs from actual held profile"
+ 	if error.is_empty() and (not is_instance_valid(_hero) or _hero.is_queued_for_deletion() or not _hero.is_inside_tree() or _hero.get_world_3d() != get_world_3d() or _scheduler.replay_target(_reservation_id) != _hero):
+ 		error = "proved_player_binding_changed"
+ 	if error.is_empty() and (_hero.dead or _hero.hp <= 0.0):
+@@ -437,6 +481,7 @@
+ 		result["pending_delivery"] = _pending_delivery.duplicate(true)
+ 	if _cycle_tracking:
+ 		result["lifecycle"] = _scheduler.authored_cycle_state(self) if is_instance_valid(_scheduler) else {}
++	if not _captured_policy.is_empty(): result["captured_policy"] = _captured_policy.duplicate(true)
+ 	return result
+ 
+ 
+@@ -512,6 +557,7 @@
+ 	if _status == "cancelled" and _scheduler.has_method("replay_cancellation_state"):
+ 		tombstone = _scheduler.replay_cancellation_state(_reservation_id, bindings)
+ 	var candidate: Dictionary = {"api_revision": _api_revision(), "schema_version": 1, "playback_id": _configuration.playback_id, "presentation_id": _configuration.presentation_id, "sequence": _configuration.sequence.duplicate(true), "source_epoch": _configuration.source_epoch, "generation": _configuration.generation, "source_id": source_id, "hero_id": _hero_id, "reservation_id": _reservation_id, "exchange": _encode_exchange(_exchange), "status": _status, "reason": _reason, "cancelled_at_s": _cancelled_at, "cancellation": tombstone, "clock_s": _scheduler.get_clock(), "cursor": _cursor.snapshot_state(), "opportunities": _opportunities.duplicate(true)}
++	if not _captured_policy.is_empty(): candidate["captured_policy"] = _captured_policy.duplicate(true)
+ 	if not _pending_delivery.is_empty():
+ 		candidate["schema_version"] = 2
+ 		candidate["pending_delivery"] = _pending_delivery.duplicate(true)
+@@ -539,6 +585,7 @@
+ 	error = Codec.value_error(snapshot)
+ 	if error.is_empty():
+ 		var keys: Array[String] = SNAPSHOT_KEYS.duplicate()
++		if not _captured_policy.is_empty(): keys.append("captured_policy")
+ 		if snapshot.get("schema_version") == 3:
+ 			keys.append("projection")
+ 		if snapshot.get("schema_version") == 2 or (snapshot.get("schema_version") == 3 and snapshot.has("pending_delivery")):
+@@ -549,6 +596,13 @@
+ 	error = _bindings_error(scheduler, heroes)
+ 	if not error.is_empty():
+ 		return error
++	if not _captured_policy.is_empty():
++		if typeof(snapshot.get("schema_version")) != TYPE_INT or typeof(snapshot.get("generation")) != TYPE_INT: return "Exact captured-policy playback integer identity required"
++		if not _same_transport(snapshot.get("captured_policy"), _captured_policy): return "Saved captured policy cannot change/downgrade this configured recipient"
++		if not scheduler_snapshot.get("profile") is Dictionary: return "Full saved canonical captured profile required"
++		error = _captured_policy_error(scheduler_snapshot.profile)
++		if error.is_empty(): error = CapturedPolicy.error(snapshot.captured_policy, scheduler_snapshot.profile, _plan.capture_snapshot.slots.size(), _plan.authored.tether_position)
++		if not error.is_empty(): return error
+ 	if _authored():
+ 		if typeof(snapshot.schema_version) != TYPE_INT or typeof(snapshot.generation) != TYPE_INT or snapshot.source_id != _plan.source_id:
+ 			return "Exact authored playback/source integer identity required"
+@@ -860,6 +914,10 @@
+ 	var adapter: Dictionary = lease.adapter
+ 	if _authored() and (adapter.get("source_id") != _plan.source_id or lease.profile_id != _plan.profile_id or not _same_transport(lease.world_revision, _plan.world.world_revision) or not _same_transport(adapter.get("world_floor_signature"), _plan.world.floor_signature)):
+ 		return "Authored source/profile/floor/world differs from this actual enemy"
++	if not _captured_policy.is_empty():
++		var policy_error: String = _captured_policy_error(scheduler.encounter_profile())
++		if not policy_error.is_empty(): return policy_error
++		if lease.get("profile_id") != _captured_policy.profile.id: return "Actual captured lease and immutable policy profile differ"
+ 	if not _same_transport(adapter.get("sequence"), _configuration.sequence) or adapter.get("source_epoch") != _configuration.source_epoch or adapter.get("generation") != _configuration.generation or adapter.get("max_dispatch_delay_s") != MAX_DISPATCH_DELAY_S:
+ 		return "Replay lease cannot substitute frozen sequence, epoch, generation or grace"
+ 	if not is_instance_valid(hero) or scheduler.replay_target(lease.id) != hero:
+@@ -953,7 +1011,8 @@
+ 
+ func _api_revision() -> String:
+ 	if _cycle_tracking: return AUTHORED_CYCLE_API_REVISION
+-	return AUTHORED_API_REVISION if _authored() else API_REVISION
++	if _authored(): return AUTHORED_API_REVISION
++	return API_REVISION if _captured_policy.is_empty() else CAPTURED_POLICY_API_REVISION
+ 
+ 
+ func _adapter_kind() -> String:

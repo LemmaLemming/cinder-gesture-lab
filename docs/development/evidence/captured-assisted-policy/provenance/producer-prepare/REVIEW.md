@@ -1,0 +1,17 @@
+# Original captured producer review
+
+**Source-only ready after private runner hardening.** The GDScript text is unchanged from preparation. No Godot/parser/producer execution, promotion, production/owner/test-existing edit, Git/mailbox mutation or Root frozen-input mutation occurred.
+
+Actual APIs/readiness and scope are consistent by source: the genuine production capture phase runs under the existing declared-stage2 TEST parent with original permanent floor; explicit Assisted/Standard Main wrapper is installed before tree entry; actual public Pause/deferred boundary is used for complete Player+phase native validation. The first-room helper supplies genuine routed dash/primary input and normal admission. No actor/packet state is forged. Raw actual format2 Store bytes, Exact whole wire and paused native recapture must match. Normal outer disposal plus inherited own Main cleanup checks freed native recipients and groups.
+
+Preserved three original runner findings in `run_producer.before-review.py` and exact `run_producer.review-amendment.diff`: optimization-sensitive assertions; preflight outside CLOSED finalization; offending before-queue/at-lock observations saved only after comparison. Current runner replaces all assertions with explicit requirements, initializes/finalizes closure around all preflight after writable output creation, saves all maps first and records lock-context release even after failure. Child terminal and runner CLOSED remain distinct. Closing source drift rejects success. Two directly consumed named inputs—canonical equipment data and threat geometry—are additionally pinned; no recursive dependency scan.
+
+Current45 named production/helper/data observations are unchanged at review; with six private caller/manifest/text inputs the runner seals51 files and89 source/UID names. Only two new private UID sidecars may be absent. Original PREPARATION is preserved as historical; AMENDED_PREPARATION identifies the final runner and unchanged GDScript hashes.
+
+The150second native watchdog and180second canonical child timeout begin after queue acquisition. Their30second enclosing allowance is reasonable for this bounded two-profile phase-only producer; **no runtime duration has been measured**. Canonical timeout remains the outer protection if native code blocks. A queue wait is not native runtime and grants no performance credit.
+
+Limits remain explicit: required unfinished recording and unarmed warning literals for both profiles; gen0 optional only if original writer accepts it. Warning is captured `replay`, not enemy-authored managed-cycle history. No lock/contact/pending-damage/blast/second-slot/tether/boss/full-route, whole-parent optical, Shell/CampaignAttempts, fresh candidate-restore or historical-payload credit. Generic host ERROR/WARNING text still needs raw-log classification even on canonical/native0.
+
+The missing historical `tests/acts/act3/fixtures/framing_candidate_extension.gd` remains absent. This producer uses only the first-room routed-input helper; no missing source is recreated. Root reports Act3 source ACK039d2106-d9f9-4754-88b4-327a2dc82a4a, but implementation still waits for actual old-producer closure. Root's A2-L2 and A3-O3 work remains independent.
+
+Exact anchors, fixed findings, hashes and limits are in REVIEW.json. A separate independent agent reviewed both the original runner and amendment; no engine was run.

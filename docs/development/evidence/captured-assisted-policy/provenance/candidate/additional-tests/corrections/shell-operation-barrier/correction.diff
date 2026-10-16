@@ -1,0 +1,47 @@
+--- original-a14b
++++ private-corrected
+@@ -96,7 +96,7 @@
+ 	var before_retry: Dictionary = _disk()
+ 	var checkpoint: Dictionary = _production.attempts.state().story.checkpoint.duplicate(true)
+ 	_production.menu.retry_requested.emit()
+-	if not await _settle("resume"):
++	if not await _settle("resume", old_ids):
+ 		await _finish_additional(); return
+ 	_bind_current()
+ 	if not _expect(Exact.stringify(checkpoint) == entrance_checkpoint and _same(_production.capture_campaign_snapshot(), checkpoint) and _same(_production.attempts.state().story.snapshot, checkpoint) and Exact.stringify(_production.attempts.state().story.checkpoint) == entrance_checkpoint and _distinct_ids(old_ids) and _new_policy_matches(checkpoint) and int(_disk().generation) == int(before_retry.generation) + 1 and _disk()["campaign.json.bak"] == before_retry["campaign.json"], "Public Retry restores actual full pristine checkpoint with saved Assisted policy, distinct complete native recipients and exact prior-primary backup") or not _disk_equals(_production.attempts.state()) or not await _quiet(checkpoint, "whole-parent entrance Retry"):
+@@ -170,7 +170,7 @@
+ 	for _frame: int in range(180):
+ 		await process_frame
+ 		if not _production.campaign_error.is_empty(): return _expect(false, "Fresh native registration startup", _production.campaign_error)
+-		if paused and not _production.is_pause_requested() and _production.menu.page_name() == "title" and _production.active_level == null and _production.player == null and _same(_production.attempts.state(), expected):
++		if paused and _shell_operation_idle() and _production.menu.page_name() == "title" and _production.active_level == null and _production.player == null and _same(_production.attempts.state(), expected):
+ 			return _disk_equals(expected)
+ 	return _expect(false, "Finite fresh whole-session Title startup; title alone is insufficient")
+ 
+@@ -212,12 +212,23 @@
+ 		if not _expect(not error.is_empty() and not _parent.restore_state(forged.level) and not before.is_empty() and Exact.stringify(_production.capture_campaign_snapshot()) == before and Exact.stringify(_production.attempts.state()) == session and _disk() == disk and _ids() == ids and _callbacks == callbacks, "New projected leaf " + field + " float alias refuses before mutation of complete parent/player/session/disk/callbacks", error): return false
+ 	return true
+ 
+-func _settle(page: String) -> bool:
++func _shell_operation_idle() -> bool:
++	if not is_instance_valid(_production) or _production.is_pause_requested(): return false
++	var operations: Variant = _production.get("_operations")
++	var failed: Variant = _production.get("_failed_operations")
++	# TEST observation only: inherited pause-pending does not describe awaited
++	# Shell registration. Never mutate the actual operation/registration state.
++	return operations is Array and failed is Array and operations.is_empty() and failed.is_empty() and _production.get("_draining") == false and _production.get("_drain_queued") == false and _production.get("_registration_inflight") == false
++
++func _settle(page: String, previous_native: Dictionary = {}) -> bool:
+ 	for _frame: int in range(180):
+ 		await process_frame
+ 		if not _production.campaign_error.is_empty(): return _expect(false, "Public whole-parent operation", _production.campaign_error)
+-		if paused and not _production.is_pause_requested() and _production.menu.page_name() == page and is_instance_valid(_production.active_level): return true
+-	return _expect(false, "Finite public whole-parent operation reaches " + page)
++		if not paused or not _shell_operation_idle() or _production.menu.page_name() != page or not is_instance_valid(_production.active_level) or not is_instance_valid(_production.player): continue
++		if not previous_native.is_empty():
++			if str(_production.active_level.get_instance_id()) == previous_native.get("parent") or str(_production.player.get_instance_id()) == previous_native.get("hero"): continue
++		return true
++	return _expect(false, "Finite public whole-parent idle operation/new native recipient reaches " + page)
+ 
+ func _disk() -> Dictionary:
+ 	var reader = Store.new(_isolated + "campaign.json")
