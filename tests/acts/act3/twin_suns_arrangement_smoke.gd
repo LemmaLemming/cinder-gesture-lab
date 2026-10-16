@@ -832,7 +832,7 @@ func _lc_run(selector: String, portrait_writer: Callable = Callable()) -> bool:
 	if not _expect(not is_instance_valid(_game) and not is_instance_valid(_shell), "component starts without a producer or prior Main/Shell"): return false
 	_lc_running = true
 	_lc_results.clear()
-	var cases: Array[Dictionary] = [
+	var cases: Array = [
 		{"label":"canonical-baseline", "changed":false, "combined":false},
 		{"label":"challenge-baseline", "changed":true, "combined":false},
 		{"label":"challenge-short-slow", "changed":true, "combined":true}
