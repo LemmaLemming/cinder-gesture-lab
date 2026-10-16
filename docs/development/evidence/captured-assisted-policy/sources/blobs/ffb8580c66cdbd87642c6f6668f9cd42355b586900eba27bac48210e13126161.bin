@@ -1,0 +1,51 @@
+class_name CinderCapturedReplayPolicy
+extends RefCounted
+## Canonical policy. Canonical fresh captured-phase policy; never an action
+## recorder or authority for a source, contact, lease, damage prefix or restore.
+const Difficulty = preload("res://scripts/combat/difficulty.gd")
+const Value = preload("res://scripts/campaign/snapshot_codec.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const API_REVISION: String = "captured-replay-policy-1"
+const KEYS: Array[String] = ["api_revision", "schema_version", "profile", "capacity", "raw_damage_multiplier", "authored"]
+const PROFILE_KEYS: Array[String] = ["id", "name", "raw_damage_multiplier", "windup_multiplier", "recovery_multiplier", "reserved_threat_budget", "commit_stagger_s", "arrangement"]
+const AUTHORED_KEYS: Array[String] = ["recognition_s", "warning_s", "locked_lead_s", "inter_echo_gap_s", "final_recovery_s", "tether_position"]
+
+static func exact_equal(left: Variant, right: Variant) -> bool:
+	var wire: String = Exact.stringify(left)
+	return not wire.is_empty() and wire == Exact.stringify(right)
+
+static func resolve(profile: Dictionary, capacity: int, tether: Vector3) -> Dictionary:
+	if capacity not in [1, 2] or not tether.is_finite() or maxf(absf(tether.x), maxf(absf(tether.y), absf(tether.z))) > 512.0 or not profile.get("id") is String:
+		return {}
+	var canonical: Dictionary = Difficulty.new().profile(profile.id)
+	if canonical.is_empty() or not exact_equal(canonical, profile) or not Value.keys_error(canonical, PROFILE_KEYS).is_empty(): return {}
+	if canonical.id not in ["assisted", "standard", "challenge"] or not canonical.get("name") is String or not canonical.get("arrangement") is String or not canonical.get("reserved_threat_budget") is float or canonical.reserved_threat_budget not in [1.0, 2.0]: return {}
+	for key: String in ["raw_damage_multiplier", "windup_multiplier", "recovery_multiplier", "commit_stagger_s"]:
+		if not canonical.get(key) is float or not is_finite(canonical[key]) or float(canonical[key]) <= 0.0: return {}
+	var warning: float = 1.3
+	var recovery: float = 3.5
+	# Preserve exact reference scalar bits when multiplier is1. Do not derive
+	# Standard1.3 through subtracting two separately rounded binary floats.
+	if float(canonical.windup_multiplier) > 1.0:
+		var total: float = maxf((1.3 + 1.5) * float(canonical.windup_multiplier), 1.3 + 1.5)
+		warning = total - 1.5
+	if float(canonical.recovery_multiplier) > 1.0:
+		recovery = maxf(3.5 * float(canonical.recovery_multiplier), 3.5)
+	if not is_finite(warning) or not is_finite(recovery) or warning <= 0.0 or warning > 3600.0 or recovery <= 0.0 or recovery > 3600.0: return {}
+	return {"api_revision": API_REVISION, "schema_version": 1, "profile": canonical, "capacity": capacity, "raw_damage_multiplier": float(canonical.raw_damage_multiplier), "authored": {"recognition_s": 0.25, "warning_s": warning, "locked_lead_s": 1.5, "inter_echo_gap_s": 1.0 if capacity == 2 else 0.0, "final_recovery_s": recovery, "tether_position": Value.vector3(tether)}}
+
+static func error(policy: Variant, expected_profile: Dictionary, capacity: int, tether: Vector3) -> String:
+	if not policy is Dictionary or not Value.keys_error(policy, KEYS).is_empty() or Exact.stringify(policy).is_empty(): return "Closed exact captured policy required"
+	if policy.get("api_revision") != API_REVISION or not policy.get("schema_version") is int or policy.schema_version != 1 or not policy.get("capacity") is int or policy.capacity != capacity or not policy.get("profile") is Dictionary or not policy.get("authored") is Dictionary or not policy.get("raw_damage_multiplier") is float: return "Typed canonical captured policy identity required"
+	if not Value.keys_error(policy.authored, AUTHORED_KEYS).is_empty(): return "Closed captured outer budget recipe required"
+	var expected: Dictionary = resolve(expected_profile, capacity, tether)
+	if expected.is_empty() or not exact_equal(policy, expected): return "Captured policy must derive exactly from full canonical frozen profile/capacity/tether"
+	return ""
+
+static func authored(policy: Dictionary) -> Dictionary:
+	# Caller must independently validate policy against its own native profile,
+	# capacity and tether. This conversion provides no admission/restore credit.
+	if not policy.get("authored") is Dictionary or not Value.is_vector3(policy.authored.get("tether_position")): return {}
+	var answer: Dictionary = policy.authored.duplicate(true)
+	answer.tether_position = Value.read_vector3(answer.tether_position)
+	return answer

@@ -1,0 +1,56 @@
+{
+  "phase": "native",
+  "selector": "shell",
+  "started_at": "2026-10-16T01:38:24.273189+00:00",
+  "output": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/validation-title-focus-v4/run-native-shell-20261016T013824.272521Z-9adb990a",
+  "closed": true,
+  "passed": false,
+  "engine_launch_attempted": true,
+  "owned_validation_returned": true,
+  "canonical_validation_return_code": 1,
+  "scope": "Fixed named subset only; no transitive closure/global UID/native acceptance or optical claim.",
+  "engine_launch_attempted_at": "2026-10-16T01:38:24.398930+00:00",
+  "owned_validation_returned_at": "2026-10-16T01:38:27.486211+00:00",
+  "terminal_scope": "Canonical API wait returned. Nonzero can be synthetic timeout/script-error; no separate OS child exit is exposed. A launch attempt flag alone does not prove a child started. Only canonical dev manages its own direct child.",
+  "native_observation": {
+    "selector": "shell",
+    "validation_errors": [
+      "Actual failures/completion/success must positively join",
+      "Actual opaque Exact receipts must remain nonempty strings; no ordinary-JSON normalization",
+      "Only the one explicitly selected Shell portrait may be produced"
+    ],
+    "literal_footer_matches": [
+      [
+        "15",
+        "1",
+        "false"
+      ]
+    ],
+    "report_format": "actual-plain-JSON-rows-and-complete",
+    "report": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/validation-title-focus-v4/run-native-shell-20261016T013824.272521Z-9adb990a/native-report.json",
+      "sha256": "e98f52b6957f7a26c798c8b8edf4bb1f769069bc66f4749a8196f2f5077d232f",
+      "bytes": 52392
+    },
+    "checks": 15,
+    "failures": 1,
+    "complete": false,
+    "success": false,
+    "actual_row_count": 15,
+    "actual_false_row_count": 1,
+    "observed_first_failed_row": {
+      "check": 12,
+      "detail": "{\"after\":{\"active_level_null\":true,\"campaign_disk_unchanged\":true,\"campaign_error\":\"\",\"idle\":true,\"page\":\"title\",\"player_null\":true,\"session_matches_expected\":true,\"session_unchanged\":true,\"tree_paused\":true,\"window_has_focus\":false},\"before\":{\"active_level_null\":true,\"idle\":true,\"page\":\"title\",\"player_null\":true,\"session_matches_expected\":true,\"tree_paused\":true,\"window_has_focus\":false},\"paused_process_frames\":2,\"production_focus_notifications_preserved\":true,\"setup_only\":true}",
+      "label": "Owned graphical Window focus settles for two paused frames at exact idle no-active Title before public Continue",
+      "ok": false
+    },
+    "first_failure_field_present_in_native": false
+  },
+  "error": "Native observation joins failed; see retained observation/report/raw",
+  "raw_diagnostic_lines": [
+    "ERROR: FAIL captured-policy whole parent: Owned graphical Window focus settles for two paused frames at exact idle no-active Title before public Continue; {\"after\":{\"active_level_null\":true,\"campaign_disk_unchanged\":true,\"campaign_error\":\"\",\"idle\":true,\"page\":\"title\",\"player_null\":true,\"session_matches_expected\":true,\"session_unchanged\":true,\"tree_paused\":true,\"window_has_focus\":false},\"before\":{\"active_level_null\":true,\"idle\":true,\"page\":\"title\",\"player_null\":true,\"session_matches_expected\":true,\"tree_paused\":true,\"window_has_focus\":false},\"paused_process_frames\":2,\"production_focus_notifications_preserved\":true,\"setup_only\":true}"
+  ],
+  "diagnostic_qualification": "Retained raw diagnostics are not classified as clean merely from zero exit. Review host/editor/script/audio/native messages separately.",
+  "closed_at": "2026-10-16T01:38:27.534384+00:00",
+  "runner_return_code": 2
+}

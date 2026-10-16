@@ -1,0 +1,161 @@
+{
+  "kind": "original-captured-producer-source-review",
+  "created_at": "2026-10-15T08:52:56.294143+00:00",
+  "result": "SOURCE_ONLY_READY_AFTER_PRIVATE_RUNNER_HARDENING",
+  "engine_executed": false,
+  "godot_parser_executed": false,
+  "promoted_gd_files": false,
+  "production_or_owner_edits": false,
+  "frozen_root_inputs_touched": false,
+  "source_inputs": {
+    "original_audit": 29,
+    "prepared_manifest": 43,
+    "added_direct_inputs": 2,
+    "final_named_sources": 45,
+    "runtime_files_with_private_inputs": 51,
+    "runtime_source_and_uid_names": 89,
+    "current_drift": []
+  },
+  "original_preparation_sha256": "d07084df5ee07da5ad7f6290b5ec1b96738ae437973acb466be102826a0b67c5",
+  "original_runner_sha256": "4a447f194fbaee79b4ac0f4e248a799d8e47dc92ebf774de89f42f8c2e53e23d",
+  "amended_runner_sha256": "77007b1cf27e4d4329441e31af7593816aa492bf5c9ff9360df4616508223755",
+  "exact_diff_sha256": "01d007145527aa4d5e2d2a550d3e7f1bab63e6b2bc1aede062817478f6f044c8",
+  "prepared_artifact_observations": [
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/producer-prepare/producer.gd.txt",
+      "sha256": "5766fa9581453f62401039f11b06918670995fa312187cff1404f0fbba3d2bfc",
+      "bytes": 15194,
+      "unchanged_from_original_preparation": true
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/producer-prepare/profile_main.gd.txt",
+      "sha256": "c1db03d34974c664f8c92efae35ca9aabe541ae34a6bdba1c2aeb6dc4f073ff6",
+      "bytes": 286,
+      "unchanged_from_original_preparation": true
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/producer-prepare/run_producer.py",
+      "sha256": "77007b1cf27e4d4329441e31af7593816aa492bf5c9ff9360df4616508223755",
+      "bytes": 15691,
+      "unchanged_from_original_preparation": false
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/producer-prepare/source-inputs.json",
+      "sha256": "667ab8bf626211085db8bb0503c4fc40800264f8bf2fb57016071f15bb7e4e2a",
+      "bytes": 9942,
+      "unchanged_from_original_preparation": true
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/producer-prepare/FIXTURE_PLAN.md",
+      "sha256": "fbfc1861c274044dfa57cbf8d666eeeaddd142956fdf4e7edc8080bdc8f20686",
+      "bytes": 5388,
+      "unchanged_from_original_preparation": true
+    },
+    {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/producer-prepare/PRODUCTION_PATCH_PLAN.md",
+      "sha256": "497d66fe15fef98aaef12d363fa6659c1d9a63e4995cced410253c8b6d9e4192",
+      "bytes": 3976,
+      "unchanged_from_original_preparation": true
+    }
+  ],
+  "native_api_review": [
+    {
+      "result": "PASS_SOURCE",
+      "anchors": [
+        "producer.gd.txt:64-93",
+        "profile_main.gd.txt:1-6",
+        "scripts/acts/act3/crystalman_capture_phase.gd:266-276",
+        "tests/acts/act3/fixtures/crystalman_declared_parent.gd:9-28"
+      ],
+      "detail": "Actual Main PackedScene instantiated, explicit TEST profile subclass selected before entry, actual declared-stage2 wrapper constructs production CapturePhase at paused boundary with actual floor. Earlier regular receipts are declared TEST setup; no actual native/packet forging performed by this producer."
+    },
+    {
+      "result": "PASS_SOURCE",
+      "anchors": [
+        "producer.gd.txt:126-148",
+        "scripts/acts/act3/crystalman_capture_codec.gd:24-41",
+        "scripts/acts/act3/crystalman_capture_codec.gd:47-118",
+        "scripts/acts/act3/crystalman_capture_codec.gd:159-170",
+        "scripts/combat/replay_capture_gate.gd:432-451"
+      ],
+      "detail": "Public Pause plus deferred process frame satisfies original writer/Gate access barrier without native clock advance. Gen0 codec explicitly supports genuine configured empty settling. Recording is actual empty armed Gate; required warning is one actual unarmed captured replay lease with original FIFO records. False optical argument skips only an expressly nonclaimed optics gate; full native state/player validation remains."
+    },
+    {
+      "result": "PASS_SOURCE",
+      "anchors": [
+        "producer.gd.txt:48-60",
+        "tests/acts/act3/crystalman_rule_room_smoke.gd:134-155",
+        "tests/acts/act3/crystalman_rule_room_smoke.gd:388-438"
+      ],
+      "detail": "Producer reuses actual shared routed swipe/tap, waits complete native dash and normal admission. No Hero pose/HP/ammo/stats/clock/phase/lease/record assignments. Source semantics allow both profiles because original captured policy fixed budgets/damage; actual native success remains unexecuted."
+    },
+    {
+      "result": "PASS_SOURCE",
+      "anchors": [
+        "producer.gd.txt:145-166",
+        "scripts/campaign/save_store.gd:47-124"
+      ],
+      "detail": "Complete {player,phase} wire includes original full Scheduler, immutable sequence, projection and owned state. Exact parse/stringify retains int/float bits. Real format2 Store writes/rereads original pair; paused donor recapture must equal full original wire. Raw Store bytes copied verbatim, not reconstructed. No fake Level envelope or production Shell/CampaignAttempts credit."
+    },
+    {
+      "result": "PASS_SOURCE",
+      "anchors": [
+        "producer.gd.txt:95-103",
+        "producer.gd.txt:186-204",
+        "tests/acts/act3/crystalman_rule_room_smoke.gd:441-466",
+        "scripts/acts/act3/crystalman_level.gd:373-384",
+        "scripts/acts/act3/crystalman_capture_phase.gd:1053-1058"
+      ],
+      "detail": "Normal outer.exit_level disposes actual current source/Gate/Scheduler; inherited Main cleanup removes own Hero/barrier/groups and checks weakrefs. Private user Store directory only is cleaned. Watchdog finishing flag prevents resumed waits from dereferencing freed donors."
+    }
+  ],
+  "fixed_findings": [
+    {
+      "id": "optimization-sensitive-joins",
+      "original_lines": "run_producer.before-review.py:159-186",
+      "resolution": "Every native row/source/packet/Store/footer assertion is now explicit require; AST contains zero Assert nodes. Python -O cannot remove them."
+    },
+    {
+      "id": "preflight-without-closure",
+      "original_lines": "run_producer.before-review.py:104-121",
+      "resolution": "After unique writable output creation, result/queue initialized before all preflight. Preflight errors are caught; closing source observation and CLOSED/return status finalize even without engine. closed is explicitly distinct from owned_child_terminal."
+    },
+    {
+      "id": "discarded-offending-observation",
+      "original_lines": "run_producer.before-review.py:130,147",
+      "resolution": "Preflight/before-queue/at-lock/after-child/closing observed maps saved before comparisons. Lock context release recorded in finally even on an at-lock failure."
+    },
+    {
+      "id": "direct-record-and-proof-input-pins",
+      "resolution": "Added only canonical player_equipment.json and threat_geometry.gd, exact hashes fixed in runner and ADDITIONAL_NAMED_PINS.json. These are current observations, not retroactively claimed initial pins. No recursive dependency census."
+    }
+  ],
+  "timing": {
+    "native_watchdog_seconds": 150,
+    "canonical_after_acquisition_child_timeout_seconds": 180,
+    "queue_wait_included": false,
+    "source_assessment": "Reasonable bounded allowance for two short phase-only callers, with30seconds enclosing startup/cleanup allowance. Watchdog starts at native script run; canonical dev uses monotonic180seconds after spawning its one direct child following queue acquisition. Neither is a measured runtime result. Watchdog cannot preempt a blocking native call; canonical child timeout remains the outer bound.",
+    "measured_runtime": null
+  },
+  "scope_and_limits": [
+    "Four required future literals: Assisted/Standard recording and warning; optional actual gen0 only if original codec accepts. Explicit original gen0 refusal retained once per omitted profile.",
+    "Warning is actual unarmed captured replay adapter, not managed authored enemy cycle history. No later lock, contact damage, pending-damage, optional blast, second slot, tether release, boss/all-kills or full route proof.",
+    "Legacy unfinished recording/gen0 retention is represented by original literal saved phase API2, not a newly reencoded migration packet. Independent fresh restoration/executed old damage are separate later test obligations.",
+    "No known concrete GDScript parser/API blocker found by source review, but actual queued import/parse/native work is required before any execution claim.",
+    "Generic host ERROR/WARNING lines are not all rejected by canonical SCRIPT_FAILURE detector; retain/classify raw logs separately.",
+    "Existing missing historical framing_candidate_extension.gd remains absent; this producer inherits only the first-room helper and neither recreates nor executes the missing preload leaf.",
+    "Root reports formal Act3 Phase+Codec source ACK039d2106-d9f9-4754-88b4-327a2dc82a4a; source implementation must still wait until genuine old producer handle is closed."
+  ],
+  "independent_runner_review_original": {
+    "path": "runner-independent-review.json",
+    "sha256": "817cc641c1a2ca87231730fe69af09c906822c269b997980e4669008da90ab7f"
+  },
+  "independent_runner_review_intermediate": {
+    "path": "runner-amendment-independent-review.json",
+    "sha256": "aab3cb89c33880813eadb829b7b6a67065f2f0580378a4199a749cea1604ba93"
+  },
+  "independent_runner_review_final": {
+    "path": "runner-final-custody-independent-review.json",
+    "sha256": "66e403cb554a0acd9f02e25f105351d84572385e638f02f873ec5433ed092c28"
+  }
+}

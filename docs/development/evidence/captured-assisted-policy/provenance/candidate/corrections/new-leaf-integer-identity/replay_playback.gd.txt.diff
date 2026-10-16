@@ -1,0 +1,10 @@
+--- before/replay_playback.gd.txt
++++ after/replay_playback.gd.txt
+@@ -597,6 +597,7 @@
+ 	if not error.is_empty():
+ 		return error
+ 	if not _captured_policy.is_empty():
++		if typeof(snapshot.get("schema_version")) != TYPE_INT or typeof(snapshot.get("generation")) != TYPE_INT: return "Exact captured-policy playback integer identity required"
+ 		if not _same_transport(snapshot.get("captured_policy"), _captured_policy): return "Saved captured policy cannot change/downgrade this configured recipient"
+ 		if not scheduler_snapshot.get("profile") is Dictionary: return "Full saved canonical captured profile required"
+ 		error = _captured_policy_error(scheduler_snapshot.profile)

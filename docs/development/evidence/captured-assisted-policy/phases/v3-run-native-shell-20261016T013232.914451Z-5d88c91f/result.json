@@ -1,0 +1,56 @@
+{
+  "phase": "native",
+  "selector": "shell",
+  "started_at": "2026-10-16T01:32:32.914747+00:00",
+  "output": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/validation-portrait-observation-v3/run-native-shell-20261016T013232.914451Z-5d88c91f",
+  "closed": true,
+  "passed": false,
+  "engine_launch_attempted": true,
+  "owned_validation_returned": true,
+  "canonical_validation_return_code": 1,
+  "scope": "Fixed named subset only; no transitive closure/global UID/native acceptance or optical claim.",
+  "engine_launch_attempted_at": "2026-10-16T01:32:33.040914+00:00",
+  "owned_validation_returned_at": "2026-10-16T01:32:40.597144+00:00",
+  "terminal_scope": "Canonical API wait returned. Nonzero can be synthetic timeout/script-error; no separate OS child exit is exposed. A launch attempt flag alone does not prove a child started. Only canonical dev manages its own direct child.",
+  "native_observation": {
+    "selector": "shell",
+    "validation_errors": [
+      "Actual failures/completion/success must positively join",
+      "Actual opaque Exact receipts must remain nonempty strings; no ordinary-JSON normalization",
+      "Only the one explicitly selected Shell portrait may be produced"
+    ],
+    "literal_footer_matches": [
+      [
+        "15",
+        "1",
+        "false"
+      ]
+    ],
+    "report_format": "actual-plain-JSON-rows-and-complete",
+    "report": {
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/captured-assisted-policy-audit-20261015/validation-portrait-observation-v3/run-native-shell-20261016T013232.914451Z-5d88c91f/native-report.json",
+      "sha256": "0e30a6983da49a0be861068b444db56aa304fde2a4d48c1637d5dbf6720141a3",
+      "bytes": 55700
+    },
+    "checks": 15,
+    "failures": 1,
+    "complete": false,
+    "success": false,
+    "actual_row_count": 15,
+    "actual_false_row_count": 1,
+    "observed_first_failed_row": {
+      "check": 12,
+      "detail": "{\"expected_page\":\"resume\",\"samples\":[{\"campaign_error\":\"\",\"drain_queued\":false,\"draining\":true,\"failed_operations\":0,\"frame\":0,\"hero_valid\":false,\"idle\":false,\"operations\":0,\"page\":\"title\",\"parent_valid\":false,\"pause_pending\":false,\"registration_cancelled\":false,\"registration_error\":\"\",\"registration_inflight\":true,\"registration_pending\":true,\"tree_paused\":true,\"window_has_focus\":true},{\"campaign_error\":\"\",\"drain_queued\":false,\"draining\":true,\"failed_operations\":0,\"frame\":1,\"hero_valid\":true,\"idle\":false,\"operations\":0,\"page\":\"resume\",\"parent_valid\":true,\"pause_pending\":false,\"registration_cancelled\":false,\"registration_error\":\"\",\"registration_inflight\":true,\"registration_pending\":true,\"tree_paused\":true,\"window_has_focus\":false},{\"campaign_error\":\"\",\"drain_queued\":false,\"draining\":true,\"failed_operations\":0,\"frame\":2,\"hero_valid\":true,\"idle\":false,\"operations\":0,\"page\":\"resume\",\"parent_valid\":true,\"pause_pending\":false,\"registration_cancelled\":false,\"registration_error\":\"\",\"registration_inflight\":true,\"registration_pending\":true,\"tree_paused\":true,\"window_has_focus\":false},{\"campaign_error\":\"\",\"drain_queued\":false,\"draining\":false,\"failed_operations\":0,\"frame\":179,\"hero_valid\":true,\"idle\":true,\"operations\":0,\"page\":\"pause\",\"parent_valid\":true,\"pause_pending\":false,\"registration_cancelled\":false,\"registration_error\":\"\",\"registration_inflight\":false,\"registration_pending\":false,\"tree_paused\":true,\"window_has_focus\":false}],\"settled\":false,\"terminal\":{\"campaign_error\":\"\",\"drain_queued\":false,\"draining\":false,\"failed_operations\":0,\"frame\":180,\"hero_valid\":true,\"idle\":true,\"operations\":0,\"page\":\"pause\",\"parent_valid\":true,\"pause_pending\":false,\"registration_cancelled\":false,\"registration_error\":\"\",\"registration_inflight\":false,\"registration_pending\":false,\"tree_paused\":true,\"window_has_focus\":false}}",
+      "label": "Finite public whole-parent idle operation/new native recipient reaches resume",
+      "ok": false
+    },
+    "first_failure_field_present_in_native": false
+  },
+  "error": "Native observation joins failed; see retained observation/report/raw",
+  "raw_diagnostic_lines": [
+    "ERROR: FAIL captured-policy whole parent: Finite public whole-parent idle operation/new native recipient reaches resume; {\"expected_page\":\"resume\",\"samples\":[{\"campaign_error\":\"\",\"drain_queued\":false,\"draining\":true,\"failed_operations\":0,\"frame\":0,\"hero_valid\":false,\"idle\":false,\"operations\":0,\"page\":\"title\",\"parent_valid\":false,\"pause_pending\":false,\"registration_cancelled\":false,\"registration_error\":\"\",\"registration_inflight\":true,\"registration_pending\":true,\"tree_paused\":true,\"window_has_focus\":true},{\"campaign_error\":\"\",\"drain_queued\":false,\"draining\":true,\"failed_operations\":0,\"frame\":1,\"hero_valid\":true,\"idle\":false,\"operations\":0,\"page\":\"resume\",\"parent_valid\":true,\"pause_pending\":false,\"registration_cancelled\":false,\"registration_error\":\"\",\"registration_inflight\":true,\"registration_pending\":true,\"tree_paused\":true,\"window_has_focus\":false},{\"campaign_error\":\"\",\"drain_queued\":false,\"draining\":true,\"failed_operations\":0,\"frame\":2,\"hero_valid\":true,\"idle\":false,\"operations\":0,\"page\":\"resume\",\"parent_valid\":true,\"pause_pending\":false,\"registration_cancelled\":false,\"registration_error\":\"\",\"registration_inflight\":true,\"registration_pending\":true,\"tree_paused\":true,\"window_has_focus\":false},{\"campaign_error\":\"\",\"drain_queued\":false,\"draining\":false,\"failed_operations\":0,\"frame\":179,\"hero_valid\":true,\"idle\":true,\"operations\":0,\"page\":\"pause\",\"parent_valid\":true,\"pause_pending\":false,\"registration_cancelled\":false,\"registration_error\":\"\",\"registration_inflight\":false,\"registration_pending\":false,\"tree_paused\":true,\"window_has_focus\":false}],\"settled\":false,\"terminal\":{\"campaign_error\":\"\",\"drain_queued\":false,\"draining\":false,\"failed_operations\":0,\"frame\":180,\"hero_valid\":true,\"idle\":true,\"operations\":0,\"page\":\"pause\",\"parent_valid\":true,\"pause_pending\":false,\"registration_cancelled\":false,\"registration_error\":\"\",\"registration_inflight\":false,\"registration_pending\":false,\"tree_paused\":true,\"window_has_focus\":false}}"
+  ],
+  "diagnostic_qualification": "Retained raw diagnostics are not classified as clean merely from zero exit. Review host/editor/script/audio/native messages separately.",
+  "closed_at": "2026-10-16T01:32:40.641707+00:00",
+  "runner_return_code": 2
+}

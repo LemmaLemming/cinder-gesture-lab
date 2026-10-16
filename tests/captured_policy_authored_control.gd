@@ -1,0 +1,164 @@
+extends "res://tests/authored_echo_playback_smoke.gd"
+## Focused validation. Two short actual enemy-authored native contact controls.
+## Uses the existing native actor/helper and original role/geometry/timing.
+## Fresh profile selected BEFORE Scheduler/source initialization, never retuned.
+## Initial TEST Hero placement is the existing factory's actual cone interior.
+## No captured programme, action recorder, HP/clock/resource seed or phase writes.
+const ControlDifficulty = preload("res://scripts/combat/difficulty.gd")
+const ControlEnemyPlan = preload("res://scripts/combat/authored_enemy_sequence.gd")
+var _control_profile: String = "standard"
+var _control_current: Dictionary = {}
+var _control_rows: Array[Dictionary] = []
+var _control_complete: bool = false
+var _control_finishing: bool = false
+
+func _run() -> void:
+	create_timer(150.0, true, false, true).timeout.connect(func() -> void:
+		if not _control_finishing:
+			_expect(false, "Finite150s host watchdog; original600-tick helper/deadlines unchanged")
+			_control_finish.call_deferred())
+	if not _control_must(OS.get_cmdline_user_args().is_empty(), "No route, source, retune or skip selector"):
+		await _control_finish(); return
+	root.size = Vector2i(340, 736)
+	for profile: String in ["standard", "assisted"]:
+		_control_profile = profile
+		if not await _control_case(): await _control_finish(); return
+	_control_complete = true
+	await _control_finish()
+
+func _control_must(ok: bool, label: String) -> bool:
+	_expect(ok, label)
+	return ok
+
+func _control_case() -> bool:
+	_control_current = await _arena()
+	var arena: Dictionary = _control_current
+	var plan: Dictionary = arena.actor.source_program()
+	var plan_wire: String = Exact.stringify(plan)
+	var record: Dictionary = plan.timeline.slots[0].events[0].record
+	var record_wire: String = Exact.stringify(record)
+	var raw: float = float(plan.definition.raw_role.raw_damage)
+	var expected: Dictionary = ControlDifficulty.new().resolve_role(plan.definition.raw_role, _control_profile, plan.definition.timing_floors)
+	if not _control_must(not plan_wire.is_empty() and not record_wire.is_empty() and expected.damage == record.damage and record.damage == raw * (0.70 if _control_profile == "assisted" else 1.0) and plan.profile_id == _control_profile and arena.scheduler.encounter_profile().id == _control_profile and arena.actor.get_captured_policy().is_empty(), "Real enemy-authored record is resolved once upstream; captured policy absent: " + _control_profile): return false
+	var installed: Dictionary = _install(arena)
+	if installed.is_empty(): return false
+	var proof: Dictionary = await _lock(arena, installed)
+	if proof.is_empty(): return false
+	var native_record: Dictionary = ControlEnemyPlan.decode_action_record(record)
+	var hp: float = arena.player.hp
+	var armour: float = float(arena.player.equipment.resolved_stats().armour)
+	var calls: Array[String] = []
+	var notices: Array[String] = []
+	arena.actor.event_dispatched.connect(func(event: Dictionary, _receipt: Dictionary) -> void:
+		calls.append(event.event_id)
+		# Observation conversion only. Never submitted to any native reader.
+		var observed: Dictionary = event.record.duplicate(true)
+		observed.world_origin = Value.vector3(observed.world_origin)
+		observed.direction = Value.vector3(observed.direction)
+		notices.append(Exact.stringify(observed)))
+	var scheduled: float = float(installed.lease.adapter.timeline_origin_s) + float(plan.timeline.slots[0].events[0].at_s)
+	await _until(arena, scheduled)
+	arena.actor.advance()
+	if not _control_must(not paused and calls.size() == 1 and notices == [record_wire] and armour != 1.0 and absf(arena.player.hp - (hp - float(record.damage) / armour)) < 0.000001 and arena.actor.state().opportunities.size() == 1 and arena.actor.state().opportunities[0].contact and arena.actor.state().opportunities[0].damage_attempted, "Actual enemy-authored contact delivers rawD*profile/currentArmour once, no second0.70: " + _control_profile): return false
+	var after_hp: float = arena.player.hp
+	arena.actor.advance(); arena.actor.advance()
+	if not _control_must(calls.size() == 1 and arena.player.hp == after_hp and Exact.stringify(arena.actor.source_program()) == plan_wire and arena.actor.get_captured_policy().is_empty() and native_record == arena.actor.preview_state().slots[0].events[0].record, "Equal-clock calls preserve upstream record/program and one notification without captured-mode entry"): return false
+	paused = true
+	await process_frame
+	var bundle: Dictionary = _capture(arena, "authored-control-" + _control_profile)
+	if not _control_must(not bundle.is_empty() and bundle.playback.api_revision == "authored-echo-playback-1" and not bundle.playback.has("captured_policy") and Exact.stringify(bundle.source.sequence) == plan_wire, "Whole real Player/source/Scheduler/authored leaf Store retains original authored API and no policy field"): return false
+	await _dispose(arena)
+	_control_current.clear()
+	return _failures == 0
+
+func _control_finish() -> void:
+	if _control_finishing: return
+	_control_finishing = true
+	if not _control_current.is_empty():
+		await _dispose(_control_current)
+		_control_current.clear()
+	var report: Dictionary = {"schema_version": 1, "kind": "captured-policy-enemy-authored-control", "checks": _checks, "failures": _failures, "complete": _control_complete, "success": _control_complete and _failures == 0, "rows": _control_rows, "scope": "Actual existing enemy-authored fixture raw role/profile resolution and one ordinary native cone contact with public non1-armour equip, original records/program unchanged; no captured action/Crystalman/Campaign/full-route/portrait/performance credit"}
+	var path: String = OS.get_environment("CINDER_CAPTURED_AUTHORED_CONTROL_REPORT")
+	if not path.is_empty():
+		var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+		if file == null: _expect(false, "Explicit native report path opens")
+		else:
+			file.store_string(JSON.stringify(report, "\t") + "\n"); file.close()
+			print("CINDER_CAPTURED_AUTHORED_CONTROL_REPORT path=%s sha256=%s" % [path, FileAccess.get_sha256(path)])
+	print("Captured policy authored control: %d checks/%d failures; complete=%s; two actual fresh authored profiles/contact only." % [_checks, _failures, str(_control_complete)])
+	quit(0 if _failures == 0 and _control_complete else 1)
+
+func _expect(ok: bool, label: String) -> void:
+	_checks += 1
+	_control_rows.append({"check": _checks, "ok": ok, "label": label, "profile": _control_profile})
+	if not ok:
+		_failures += 1
+		push_error("FAIL captured-policy authored control: " + label)
+
+# Exact existing native factory copied as a NEW focused caller, with only fresh
+# profile parameters and a public armour equip replacing its zero-ammo seed.
+func _arena(extreme: bool = false, settle: bool = true) -> Dictionary:
+	if settle:
+		paused = false
+	var viewport := SubViewport.new()
+	viewport.name = "TestOnlyOwnEnemyWorld"
+	viewport.size = Vector2i(270, 585)
+	viewport.own_world_3d = true
+	viewport.handle_input_locally = false
+	root.add_child(viewport)
+	var world := Node3D.new()
+	world.name = "NativeWorld"
+	viewport.add_child(world)
+	var body := StaticBody3D.new()
+	body.name = "DryFloor"
+	body.collision_layer = 1
+	body.collision_mask = 0
+	var collision := CollisionShape3D.new()
+	collision.name = "Collision"
+	var box := BoxShape3D.new()
+	box.size = Vector3(16, 1, 16)
+	collision.shape = box
+	body.position = Vector3(0, -0.5, 0)
+	body.add_child(collision)
+	world.add_child(body)
+	var camera := Camera3D.new()
+	camera.name = "NativeCamera"
+	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	camera.size = 7.2
+	world.add_child(camera)
+	camera.position = Vector3(0, 18, 13)
+	camera.look_at(Vector3.ZERO)
+	camera.current = true
+	var hero = Player.new()
+	hero.name = "ActualSharedPlayer"
+	world.add_child(hero)
+	hero.position = Vector3(0.6, 0.1, 0)
+	var scheduler = Scheduler.new()
+	scheduler.name = "ActualScheduler"
+	world.add_child(scheduler)
+	_expect(scheduler.begin_encounter(_control_profile, "test-only/own-echo", 1), "actual Scheduler selects the explicit fresh profile before source configure")
+	var host = InputHost.new()
+	host.name = "ActualRecognizerHost"
+	host.player = hero
+	host.world = world
+	host.camera = camera
+	root.add_child(host)
+	if settle:
+		await _ticks(8)
+		paused = true
+		await process_frame
+		if extreme:
+			for id: String in ["CLOTH-J1", "CLOTH-P2", "CLOTH-S2", "WEAPON-04"]:
+				_expect(hero.equip_item(id), "legal paused pre-encounter gear selects " + id)
+		_expect(hero.equip_item("CLOTH-J1") and float(hero.equipment.resolved_stats().armour) != 1.0, "Public paused pre-admission equip gives real non1 recipient armour")
+	var floors: Array = [{"collision": collision, "safe_rect": Rect2(-8, -8, 16, 16)}]
+	var signature: Dictionary = ReplayProjection.floor_signature(world, floors)
+	var context: Dictionary = {"world_root": world, "source_id": SOURCE_ID, "source_epoch": EPOCH, "generation": GENERATION, "world_collision_fingerprint": scheduler.pure_collision_fingerprint(world), "world_floor_signature": signature.get("signature", [])}
+	var source = Actor.new()
+	source.name = "ActualFixedKnotC52"
+	world.add_child(source)
+	var prepared: Dictionary = {"world_revision": 1, "collision_fingerprint": context.world_collision_fingerprint, "floor_signature": context.world_floor_signature}
+	_expect(source.initialize_source(SOURCE_ID, EPOCH, GENERATION, _definition(), _control_profile, prepared) and source.attach_source_scheduler(scheduler), "genuine shared Playback subclass owns immutable native definition, HP, visible mesh and fixed endpoint")
+	_expect(source.configure_authored("test-only/physical-echo", source.source_program(), EPOCH, GENERATION), "own enemy configure_authored uses its actual source hooks: " + source.last_error)
+	return {"viewport": viewport, "world": world, "floor": collision, "floors": floors, "camera": camera, "host": host, "player": hero, "scheduler": scheduler, "actor": source, "context": context}
+

@@ -1,0 +1,3 @@
+# Owned graphical Window setup at native idle Title
+
+Exact unchanged canonical queued runner eaf3ee11. Root reviewed/copied only the graphical TEST setup: request actual ownedWindow focus and observe two paused processframes at idleTitle/noactive before each publicContinue. No production focusnotification suppression, gamepause/clock/HP assignment, timeout/window/dimension/optics/equality guard change. Headless behavior unchanged. Prior v3actualResume-to-Pause/focusdrop and originalfailedcases remain retained; originalunobservedcauses not asserted. Drawfailurestillneedsactualv3operandobservation; notfixedinadvance. Existing sixUIDs remain fixed; no newimport or othercomponentreruns. Rootchooses onlyseal/parseShell/nativeShellportrait.

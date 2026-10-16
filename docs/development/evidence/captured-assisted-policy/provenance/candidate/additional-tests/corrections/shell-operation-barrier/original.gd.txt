@@ -1,0 +1,375 @@
+extends "res://tests/acts/act3/crystalman_rule_room_smoke.gd"
+## PRIVATE / UNEXECUTED. One genuine whole-parent captured-Assisted seam.
+## Existing declared-stage2 scene supplies disclosed TEST prior regular history.
+## Complete real parent/Player/phase/floor/input/camera writers seed initial TEST
+## Campaign context. Never transplant a phase-only packet or edit earned history.
+## Thereafter public Shell Save/fresh Title Continue/Retry. No tether/route clear.
+const PolicyMain = preload("res://tests/fixtures/captured_policy_profile_main.gd")
+const Policy = preload("res://scripts/combat/captured_replay_policy.gd")
+const NativePhase = preload("res://scripts/acts/act3/crystalman_capture_phase.gd")
+const NativeLeaf = preload("res://scripts/combat/replay_playback.gd")
+const Shell = preload("res://scripts/campaign/shell.gd")
+const Registry = preload("res://scripts/campaign/registry.gd")
+const Attempts = preload("res://scripts/campaign/attempts.gd")
+const Store = preload("res://scripts/campaign/save_store.gd")
+const Value = preload("res://scripts/campaign/snapshot_codec.gd")
+const PARENT_PATH: String = "res://tests/acts/act3/fixtures/crystalman_declared_2.tscn"
+var _parent: CinderLevel
+var _production: CinderCampaignShell
+var _test_registry: Dictionary = {}
+var _isolated: String = ""
+var _campaign_seed: Dictionary = {}
+var _entry_packet: Dictionary = {}
+var _rows: Array[Dictionary] = []
+var _receipts: Array[String] = []
+var _complete: bool = false
+var _finishing: bool = false
+var _portrait: bool = false
+var _draw_seen: bool = false
+var _callbacks: int = 0
+var _watched: Dictionary = {}
+var _source_before: Dictionary = {}
+var _portraits: Array[Dictionary] = []
+
+func _run() -> void:
+	create_timer(300.0, true, false, true).timeout.connect(func() -> void:
+		if not _finishing:
+			_expect(false, "Finite300s native host watchdog; original40s/180/240/1200tick mechanics limits unchanged")
+			_finish_additional.call_deferred())
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	_portrait = args == PackedStringArray(["--portrait"])
+	if not _expect(args.is_empty() or _portrait, "One explicit focused case, optional actual portrait only"):
+		await _finish_additional(); return
+	if not _expect(_portrait == (DisplayServer.get_name() != "headless"), "Explicit graphical portrait or headless native scope"):
+		await _finish_additional(); return
+	root.size = Vector2i(340, 736)
+	root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	_isolated = "user://test-captured-policy-parent-%d-%d/" % [OS.get_process_id(), Time.get_ticks_usec()]
+	_source_before = _named_sources()
+	if not await _actual_parent_seed() or not await _fresh_shell(_campaign_seed):
+		await _finish_additional(); return
+	_production.menu.continue_story_requested.emit()
+	if not await _settle("resume") or not _expect(_same(_production.capture_campaign_snapshot(), _entry_packet), "Actual production Shell validates and installs the exact whole initial parent donor"):
+		await _finish_additional(); return
+	_bind_current()
+	if not _expect(_new_policy_matches(_entry_packet), "Fresh whole parent delegates explicit phase3 policy retained before recording"):
+		await _finish_additional(); return
+	# Retry unit is this actual pristine whole parent checkpoint. It is TEST
+	# representative entry, not evidence of earning prior regular deaths.
+	var entrance_checkpoint: String = Exact.stringify(_production.attempts.state().story.checkpoint)
+	_production.resume_campaign()
+	if not await _wait_phase("recording", 180) or not await _record_valid(Vector3.BACK) or not await _wait_phase("warning", 240):
+		await _finish_additional(); return
+	_production.request_pause()
+	if not await _settle("pause"):
+		await _finish_additional(); return
+	var saved: Dictionary = _production.capture_campaign_snapshot()
+	var saved_session: Dictionary = _production.attempts.state()
+	var saved_disk: Dictionary = _disk()
+	if not _expect(not saved.is_empty() and _new_policy_matches(saved) and saved.level.local.current_unit.state.owned.sequence.capture_snapshot.slots.size() == 1 and saved.level.local.current_unit.state.owned.generation == 1 and saved.level.local.current_unit.state.playback.schema_version is int and saved.level.local.current_unit.state.playback.schema_version == 3 and saved.level.local.current_unit.state.playback.has("projection"), "Actual public Pause Save contains whole parent local1, real completed records and native projected policy leaf schema3") or not _disk_equals(saved_session):
+		await _finish_additional(); return
+	_record("actual whole-parent warning Save", saved)
+	_watch(_parent) # Newly joined actual Playback/cues did not exist at entry.
+	if not _projected_integer_negatives(saved):
+		await _finish_additional(); return
+	# This preference is public and is written to a separate real Store. The
+	# currently held full saved profile/policy and campaign bytes must not change.
+	_production.menu.difficulty_preference_requested.emit("challenge")
+	if not _expect(_production.get_difficulty_preference() == "challenge" and _same(_production.capture_campaign_snapshot(), saved) and _same(_production.attempts.state(), saved_session) and _disk() == saved_disk, "Public changed preference preserves whole current Assisted unit/session/campaign raw bytes"):
+		await _finish_additional(); return
+	var old_ids: Dictionary = _ids()
+	if not await _dispose_production() or not await _fresh_shell(saved_session):
+		await _finish_additional(); return
+	if not _expect(_production.get_difficulty_preference() == "challenge" and _disk() == saved_disk, "Independent fresh Title reads opposite current preference with whole campaign disk unchanged"):
+		await _finish_additional(); return
+	_production.menu.continue_story_requested.emit()
+	if not await _settle("resume"):
+		await _finish_additional(); return
+	_bind_current()
+	if not _expect(_same(_production.capture_campaign_snapshot(), saved) and _same(_production.attempts.state(), saved_session) and _disk() == saved_disk and _distinct_ids(old_ids, true) and _new_policy_matches(saved), "Actual independent fresh disk Continue retains complete parent/Player/phase/records/policy and saved Assisted profile despite current Challenge") or not await _quiet(saved, "fresh whole-parent Continue"):
+		await _finish_additional(); return
+	_record("fresh Title whole-parent disk Continue", saved)
+	if _portrait and not await _capture_portrait(saved):
+		await _finish_additional(); return
+	old_ids = _ids()
+	var before_retry: Dictionary = _disk()
+	var checkpoint: Dictionary = _production.attempts.state().story.checkpoint.duplicate(true)
+	_production.menu.retry_requested.emit()
+	if not await _settle("resume"):
+		await _finish_additional(); return
+	_bind_current()
+	if not _expect(Exact.stringify(checkpoint) == entrance_checkpoint and _same(_production.capture_campaign_snapshot(), checkpoint) and _same(_production.attempts.state().story.snapshot, checkpoint) and Exact.stringify(_production.attempts.state().story.checkpoint) == entrance_checkpoint and _distinct_ids(old_ids) and _new_policy_matches(checkpoint) and int(_disk().generation) == int(before_retry.generation) + 1 and _disk()["campaign.json.bak"] == before_retry["campaign.json"], "Public Retry restores actual full pristine checkpoint with saved Assisted policy, distinct complete native recipients and exact prior-primary backup") or not _disk_equals(_production.attempts.state()) or not await _quiet(checkpoint, "whole-parent entrance Retry"):
+		await _finish_additional(); return
+	_record("public whole-parent entrance Retry", checkpoint)
+	_complete = true
+	await _finish_additional()
+
+func _actual_parent_seed() -> bool:
+	paused = false
+	_game = MainScene.instantiate()
+	_game.set_script(PolicyMain)
+	_game.set("policy_test_preference", "assisted")
+	_game.set("level_scene_path", PARENT_PATH)
+	if not _expect(not _game.is_inside_tree() and _game.scene_file_path == "res://scenes/main.tscn", "Original Main PackedScene retains identity before explicit TEST fresh-profile wrapper"): return false
+	root.add_child(_game)
+	_parent = _game.get("active_level") as CinderLevel
+	_hero = _game.get("player") as CinderPlayer
+	_room = _parent.get("current_unit") as CinderLevel if _parent != null else null
+	if not _expect(_parent != null and _hero != null and _room != null and _room.get_script() == NativePhase and _parent.scene_file_path == PARENT_PATH and _parent.call("parent_owned_state").stage == 2 and String(_parent.get("last_configuration_error")).is_empty(), "Existing declared stage2 supplies actual whole parent/floor/phase; only prior regular history is TEST"): return false
+	var initial_policy: Dictionary = _room.call("captured_codec_policy")
+	if not _expect(not initial_policy.is_empty() and initial_policy.profile.id == "assisted" and _room.call("state").generation == 0 and _hero.get_world_action_records().is_empty(), "Actual fresh phase retains selected Assisted policy at gen0 before any physics/input"): return false
+	# Same ordinary initial presentation allowance as the existing whole-parent
+	# transport test. Main reset snaps before enter_level installs current bounds;
+	# allow its real Camera/HUD process, with no input or route progression.
+	var view_error: String = "Initial current view not observed"
+	for _frame: int in range(90):
+		view_error = String(_parent.call("candidate_presentation_error", _game.get("camera"), _game.get("hud")))
+		if view_error.is_empty(): break
+		await process_frame
+	if not _expect(view_error.is_empty() and _hero.get_world_action_records().is_empty() and _same(_room.call("captured_codec_policy"), initial_policy), "Original90-frame native presentation allowance retains no-input whole parent/policy", view_error): return false
+	_game.call("open_bench")
+	await process_frame
+	var actor: Dictionary = _hero.snapshot_state()
+	var parent_snapshot: Dictionary = _parent.snapshot_state_for_presentation(_game.get("camera"), _game.get("hud"))
+	var observed: Dictionary = _game.call("get_input_observation_state")
+	if not _expect(not actor.is_empty() and not parent_snapshot.is_empty() and _parent.snapshot_error_with_player(parent_snapshot, actor).is_empty() and _hero.get_world_action_records().is_empty() and observed.sequence == 0 and observed.last_observation.is_empty(), "Complete native parent/player and actual initial input writers validate without phase-only transplant", _parent.last_snapshot_error): return false
+	# Initial TEST aggregate formatting follows existing parent_transport. Every
+	# gameplay/local/native value above comes from complete same-world writers;
+	# Shell input/camera/shake observations below come from this actual Main.
+	var anchor: Vector2 = observed.anchor_normalized
+	var focus: Vector3 = _game.get("_camera_focus")
+	var shake: float = float(_game.get("_shake"))
+	_entry_packet = {"schema_version": 1, "level_id": "A3-L5", "scene_path": PARENT_PATH, "paused": true, "equipment_ids": _hero.equipment.snapshot(), "player": actor, "level": parent_snapshot, "shell": {"api_revision": Shell.SHELL_API, "anchor_normalized": [anchor.x, anchor.y], "input_sequence": observed.sequence, "last_input_observation": {}, "camera_focus": Value.vector3(focus), "shake_left_s": shake, "difficulty_at_entry": _game.call("get_difficulty_preference")}}
+	_test_registry = JSON.parse_string(FileAccess.get_file_as_string(Registry.DATA_PATH))
+	for row: Dictionary in _test_registry.levels:
+		if row.id == "A3-L5":
+			row.scene_path = PARENT_PATH
+			row.readiness = "accepted"
+			row.accepted_commit = "f".repeat(40)
+			row.api_revision = Registry.API_REVISION
+	var model = Attempts.new(Registry.new(_test_registry))
+	_campaign_seed = model.state()
+	_campaign_seed.completed_main = model.registry.main_route().slice(0, 14) # Disclosed TEST prerequisite prefix only.
+	_campaign_seed.story = {"kind": "story", "level_id": "A3-L5", "snapshot": _entry_packet.duplicate(true), "checkpoint": _entry_packet.duplicate(true)}
+	var writer = Store.new(_isolated + "campaign.json")
+	writer.payload_validator = model.saved_payload_error
+	var preferences = Store.new(_isolated + "preferences.json")
+	if not _expect(model.state_error(_campaign_seed).is_empty() and writer.write_payload(_campaign_seed) and preferences.write_payload({"schema_version": 1, "profile_id": "assisted"}), "Native Attempts/format2 stores seed complete real parent checkpoint plus disclosed TEST prefix and initial preference", model.last_error + "; " + writer.last_error): return false
+	var old: Array[WeakRef] = []
+	_refs(_game, old)
+	_parent.exit_level()
+	_game.queue_free()
+	_game = null; _parent = null; _room = null; _hero = null
+	return await _released(old, "whole native donor disposal before Shell startup")
+
+func _fresh_shell(expected: Dictionary) -> bool:
+	_production = Shell.new()
+	if not _expect(_production.configure_runtime(_test_registry, _isolated + "campaign.json", _isolated + "settings.json", _isolated + "preferences.json"), "Actual production Shell uses disclosed representative scene row and real isolated stores"): return false
+	root.add_child(_production)
+	for _frame: int in range(180):
+		await process_frame
+		if not _production.campaign_error.is_empty(): return _expect(false, "Fresh native registration startup", _production.campaign_error)
+		if paused and not _production.is_pause_requested() and _production.menu.page_name() == "title" and _production.active_level == null and _production.player == null and _same(_production.attempts.state(), expected):
+			return _disk_equals(expected)
+	return _expect(false, "Finite fresh whole-session Title startup; title alone is insufficient")
+
+func _bind_current() -> void:
+	_game = _production
+	_parent = _production.active_level
+	_hero = _production.player
+	_room = _parent.get("current_unit") as CinderLevel
+	_scheduler = _room.get("threat_scheduler") as CinderThreatScheduler
+	_gate = _room.get("capture_gate") as CinderReplayCaptureGate
+	_hp = _hero.hp; _kit = _hero.equipment.snapshot()
+	_events.clear(); _retirements.clear(); _reentrant_rejected = false; _blast_seen = false
+	_hero.fired.connect(_on_fired)
+	_gate.sequence_retired.connect(_on_retired)
+	if not is_instance_valid(_barrier):
+		_barrier = Barrier.new(); root.add_child(_barrier)
+	var region: Dictionary = _room.call("floor_regions")[0]
+	_floor_collision = region.collision
+	_floor_transform = _floor_collision.global_transform
+	_floor_size = (_floor_collision.shape as BoxShape3D).size
+	_watch(_parent); _watch(_hero)
+
+func _new_policy_matches(packet: Dictionary) -> bool:
+	var unit: Dictionary = packet.level.local.current_unit.state
+	return packet.level.local.api_revision == "act3-crystalman-parent-local-1" and packet.level.local.schema_version is int and packet.level.local.schema_version == 1 and unit.api_revision == "act3-crystalman-captured-phase-3" and unit.schema_version is int and unit.schema_version == 3 and unit.world.profile_id == "assisted" and unit.scheduler.profile.id == "assisted" and Policy.error(unit.policy, unit.scheduler.profile, 1, NativePhase.TETHER_POSITION).is_empty() and _same(_room.call("captured_codec_policy"), unit.policy)
+
+func _projected_integer_negatives(saved: Dictionary) -> bool:
+	var before: String = Exact.stringify(_production.capture_campaign_snapshot())
+	var session: String = Exact.stringify(_production.attempts.state())
+	var disk: Dictionary = _disk()
+	var callbacks: int = _callbacks
+	var ids: Dictionary = _ids()
+	for field: String in ["schema_version", "generation"]:
+		var forged: Dictionary = saved.duplicate(true)
+		var leaf: Dictionary = forged.level.local.current_unit.state.playback
+		if not _expect(leaf.api_revision == NativeLeaf.CAPTURED_POLICY_API_REVISION and leaf.schema_version is int and leaf.schema_version == 3 and leaf.generation is int and leaf.generation == 1 and leaf.has("projection"), "Actual projected schema3/generation1 exists before float alias forgery"): return false
+		leaf[field] = float(leaf[field]) # TEST forged input only: actual3.0 or1.0.
+		var error: String = _parent.snapshot_error_with_player(forged.level, forged.player)
+		if not _expect(not error.is_empty() and not _parent.restore_state(forged.level) and not before.is_empty() and Exact.stringify(_production.capture_campaign_snapshot()) == before and Exact.stringify(_production.attempts.state()) == session and _disk() == disk and _ids() == ids and _callbacks == callbacks, "New projected leaf " + field + " float alias refuses before mutation of complete parent/player/session/disk/callbacks", error): return false
+	return true
+
+func _settle(page: String) -> bool:
+	for _frame: int in range(180):
+		await process_frame
+		if not _production.campaign_error.is_empty(): return _expect(false, "Public whole-parent operation", _production.campaign_error)
+		if paused and not _production.is_pause_requested() and _production.menu.page_name() == page and is_instance_valid(_production.active_level): return true
+	return _expect(false, "Finite public whole-parent operation reaches " + page)
+
+func _disk() -> Dictionary:
+	var reader = Store.new(_isolated + "campaign.json")
+	reader.read_payload()
+	var answer: Dictionary = {"generation": reader.generation, "reader_error": reader.last_error, "loaded_backup": reader.loaded_backup}
+	for name: String in ["campaign.json", "campaign.json.bak"]:
+		var path: String = _isolated + name
+		answer[name] = {"raw": FileAccess.get_file_as_string(path), "sha256": FileAccess.get_sha256(path), "bytes": FileAccess.get_file_as_bytes(path).size()} if FileAccess.file_exists(path) else null
+	return answer
+
+func _disk_equals(expected: Dictionary) -> bool:
+	var reader = Store.new(_isolated + "campaign.json")
+	return _expect(_same(reader.read_payload(), expected) and reader.last_error.is_empty() and not reader.loaded_backup, "Independent actual Store rereads complete current session exactly", reader.last_error)
+
+func _ids() -> Dictionary:
+	var result: Dictionary = {}
+	for pair: Array in [["shell", _production], ["hero", _hero], ["parent", _parent], ["phase", _room], ["scheduler", _scheduler], ["gate", _gate], ["floor", _floor_collision]]:
+		if is_instance_valid(pair[1]): result[pair[0]] = str(pair[1].get_instance_id())
+	var leaf: Node = _room.get("playback") as Node if is_instance_valid(_room) else null
+	if is_instance_valid(leaf): result["playback"] = str(leaf.get_instance_id())
+	return result
+
+func _distinct_ids(old: Dictionary, fresh_shell: bool = false) -> bool:
+	var current: Dictionary = _ids()
+	if fresh_shell and (not current.has("shell") or current.shell == old.get("shell")): return false
+	for key: String in old:
+		if key != "shell" and current.has(key) and current[key] == old[key]: return false
+	return not current.is_empty()
+
+func _quiet(packet: Dictionary, label: String) -> bool:
+	var before: String = Exact.stringify(packet)
+	var session: String = Exact.stringify(_production.attempts.state())
+	var ids: Dictionary = _ids()
+	var disk: Dictionary = _disk()
+	var callbacks: int = _callbacks
+	for _frame: int in range(2): await process_frame
+	return _expect(paused and not before.is_empty() and Exact.stringify(_production.capture_campaign_snapshot()) == before and Exact.stringify(_production.attempts.state()) == session and _ids() == ids and _disk() == disk and _callbacks == callbacks and _production.campaign_error.is_empty(), "Two actual paused frames retain whole native/session/disk/IDs and callback silence: " + label)
+
+func _record(stage: String, packet: Dictionary) -> void:
+	var receipt: String = Exact.stringify({"stage": stage, "whole_packet": Exact.stringify(packet), "whole_session": Exact.stringify(_production.attempts.state()), "disk_primary_backup_generation": _disk(), "native_ids_decimal": _ids(), "scope": "actual whole parent native current unit, declared TEST prior regular history/prefix14; no earned route or tether release"})
+	_expect(not receipt.is_empty(), "Whole parent receipt is native exact transport with decimal identity strings")
+	_receipts.append(receipt)
+
+func _capture_portrait(packet: Dictionary) -> bool:
+	var folder: String = OS.get_environment("CINDER_CAPTURED_PARENT_PORTRAITS")
+	if not _expect(not folder.is_empty() and folder.is_absolute_path(), "Explicit unique absolute native portrait output required"): return false
+	var wire: String = Exact.stringify(packet)
+	var input: PackedByteArray = var_to_bytes(_production.get_input_observation_state())
+	var optics: PackedByteArray = var_to_bytes([_production.camera.global_transform, _production.hud.combat_safe_rect()])
+	var callbacks: int = _callbacks
+	var visible: bool = _production.menu.visible
+	_production.menu.visible = false # TEST ONLY menu overlay exclusion, restored before every return.
+	_draw_seen = false
+	RenderingServer.frame_post_draw.connect(_on_draw)
+	for _frame: int in range(32):
+		await process_frame
+		if _finishing or not is_instance_valid(_production):
+			if is_instance_valid(_production): _production.menu.visible = visible
+			if RenderingServer.frame_post_draw.is_connected(_on_draw): RenderingServer.frame_post_draw.disconnect(_on_draw)
+			return false
+		if _draw_seen: break
+	if RenderingServer.frame_post_draw.is_connected(_on_draw): RenderingServer.frame_post_draw.disconnect(_on_draw)
+	var image: Image = root.get_texture().get_image() if _draw_seen else null
+	var error: String = String(_parent.call("candidate_presentation_error", _production.camera, _production.hud))
+	var unchanged: bool = paused and _production.campaign_error.is_empty() and wire == Exact.stringify(_production.capture_campaign_snapshot()) and input == var_to_bytes(_production.get_input_observation_state()) and optics == var_to_bytes([_production.camera.global_transform, _production.hud.combat_safe_rect()]) and _callbacks == callbacks
+	_production.menu.visible = visible
+	if not _expect(_draw_seen and image != null and image.get_size() == Vector2i(340, 736) and unchanged and error.is_empty(), "Actual paused warning draw preserves whole packet/input/current Camera/HUD/callbacks and restores menu", error): return false
+	var path: String = folder.path_join("01-actual-captured-assisted-whole-parent-warning.png")
+	if not _expect(DirAccess.make_dir_recursive_absolute(folder) == OK and image.save_png(path) == OK, "Actual native portrait bytes saved for separate human/Root inspection"): return false
+	_portraits.append({"path": path, "sha256": FileAccess.get_sha256(path), "dimensions": [image.get_size().x, image.get_size().y], "whole_packet_exact_sha256": wire.sha256_text(), "native_ids_decimal": _ids(), "paused_without_tick": true, "whole_packet_input_current_camera_hud_callbacks_unchanged": unchanged, "menu_test_overlay_excluded_and_restored": _production.menu.visible == visible, "native_optical_error": error, "scope": "One actual saved captured-Assisted warning; current preferenceChallenge; no active/lateral/full-board/human/balance/FPS credit. Pixels still require separate actual inspection."})
+	return true
+
+func _on_draw() -> void: _draw_seen = true
+
+func _watch(node: Node) -> void:
+	var id: String = str(node.get_instance_id())
+	if _watched.has(id): return
+	_watched[id] = true
+	for signal_row: Dictionary in node.get_signal_list():
+		if signal_row.name in ["fired", "world_action_executed", "event_dispatched", "state_changed", "reservation_invalidated", "sequence_retired", "gate_failed", "playback_failed", "recording_joined", "recording_rejected", "tether_severed", "completion_requested", "checkpoint_requested", "contact_exit_requested"]:
+			node.connect(signal_row.name, Callable(self, "_quiet" + str(signal_row.args.size())))
+	for child: Node in node.get_children(): _watch(child)
+
+func _quiet0() -> void: _callbacks += 1
+func _quiet1(_a: Variant) -> void: _callbacks += 1
+func _quiet2(_a: Variant, _b: Variant) -> void: _callbacks += 1
+func _quiet3(_a: Variant, _b: Variant, _c: Variant) -> void: _callbacks += 1
+
+func _refs(node: Node, result: Array[WeakRef]) -> void:
+	result.append(weakref(node))
+	for child: Node in node.get_children(): _refs(child, result)
+
+func _released(refs: Array[WeakRef], label: String) -> bool:
+	for _frame: int in range(4):
+		await process_frame
+		if refs.all(func(ref: WeakRef) -> bool: return ref.get_ref() == null): return _expect(true, label)
+	return _expect(false, "Finite normal whole native disposal: " + label)
+
+func _dispose_production() -> bool:
+	if not is_instance_valid(_production): return true
+	paused = true
+	var refs: Array[WeakRef] = []
+	_refs(_production, refs)
+	if is_instance_valid(_production.active_level): _production.active_level.exit_level()
+	_production.queue_free()
+	_production = null; _game = null; _parent = null; _room = null; _hero = null; _scheduler = null; _gate = null
+	return await _released(refs, "normal whole production Shell/parent/phase disposal")
+
+func _named_sources() -> Dictionary:
+	var names: Variant = JSON.parse_string(OS.get_environment("CINDER_CAPTURED_ADDITIONAL_SOURCES"))
+	var result: Dictionary = {}
+	if names is Array:
+		for path: String in names: result[path] = FileAccess.get_sha256(path)
+	return result
+
+func _finish_additional() -> void:
+	if _finishing: return
+	_finishing = true
+	if RenderingServer.frame_post_draw.is_connected(_on_draw): RenderingServer.frame_post_draw.disconnect(_on_draw)
+	await _dispose_production()
+	if is_instance_valid(_game):
+		if is_instance_valid(_parent): _parent.exit_level()
+		_game.queue_free(); _game = null
+	if is_instance_valid(_barrier): _barrier.queue_free()
+	for _frame: int in range(4): await process_frame
+	_expect(get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "Normal whole parent cleanup frees actual enemies/required cues")
+	_expect(not _source_before.is_empty() and _named_sources() == _source_before, "Explicit named source observations unchanged; no complete dependency/UID census")
+	if not _isolated.is_empty():
+		for name: String in ["campaign.json", "campaign.json.bak", "campaign.json.tmp", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]:
+			var path: String = _isolated + name
+			if FileAccess.file_exists(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(_isolated))
+	paused = false
+	var report: Dictionary = {"schema_version": 1, "kind": "captured-policy-whole-parent-shell", "checks": _checks, "failures": _failures, "complete": _complete, "success": _complete and _failures == 0, "rows": _rows, "exact_receipts": _receipts, "source_before": _source_before, "source_after": _named_sources(), "portrait_requested": _portrait, "portraits": _portraits, "scope": "Actual whole parent local1 delegates fresh captured phase3; actual completed records, projected schema3 integer refusal, real public Save/fresh Title diskContinue/opposite preference/entranceRetry/cleanup; existing declared TEST prior regular history/prefix14 only. No earned regular route/tether/boss/campaign-clear/all-kit/FPS claim."}
+	var output: String = OS.get_environment("CINDER_CAPTURED_PARENT_SHELL_REPORT")
+	if not output.is_empty():
+		var file: FileAccess = FileAccess.open(output, FileAccess.WRITE)
+		if file == null: _expect(false, "Explicit whole parent native report path opens")
+		else:
+			file.store_string(JSON.stringify(report, "\t") + "\n"); file.close()
+			print("CINDER_CAPTURED_PARENT_SHELL_REPORT path=%s sha256=%s" % [output, FileAccess.get_sha256(output)])
+	print("Captured policy whole parent Shell: %d checks/%d failures; complete=%s; one genuine Assisted captured warning/whole parent public boundaries only." % [_checks, _failures, str(_complete)])
+	quit(0 if _failures == 0 and _complete else 1)
+
+func _expect(ok: bool, label: String, detail: String = "") -> bool:
+	_checks += 1
+	_rows.append({"check": _checks, "ok": ok, "label": label, "detail": detail})
+	if not ok:
+		_failures += 1
+		push_error("FAIL captured-policy whole parent: " + label + "; " + detail)
+	return ok
+
+static func _same(left: Variant, right: Variant) -> bool:
+	var wire: String = Exact.stringify(left)
+	return not wire.is_empty() and wire == Exact.stringify(right)

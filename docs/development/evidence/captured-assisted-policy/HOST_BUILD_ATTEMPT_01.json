@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "kind": "host-only-archive-builder-failure",
+  "status": "RETAINED_CORRECTED_NO_ENGINE_INVOCATION",
+  "original_script_sha256": "1934ad5e91db2ab3e97fea391e99e494b203a1439803abc668a4b84c791b3681",
+  "failed_check": "Actual common/legacy footer counter absent",
+  "cause": "Archive builder regex over-escaped the literal period; actual 213/0 footer was present. Replaced with exact literal substring cardinality check. No original evidence/source changed.",
+  "failure_scope": "Partial private pack only; original per-file copies already byte/hash verified. Resume verifies existing identical copies and never overwrites different bytes.",
+  "actual_tool_exit": 1,
+  "engine_run": false
+}

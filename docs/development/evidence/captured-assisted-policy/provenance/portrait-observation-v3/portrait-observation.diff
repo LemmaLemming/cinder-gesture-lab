@@ -1,0 +1,92 @@
+--- Root-a4885557
++++ PRIVATE-portrait-observation-v3
+@@ -31,6 +31,7 @@
+ var _source_before: Dictionary = {}
+ var _portraits: Array[Dictionary] = []
+ var _operation_observations: Array[Dictionary] = []
++var _portrait_observations: Array[Dictionary] = []
+ 
+ func _run() -> void:
+ 	create_timer(300.0, true, false, true).timeout.connect(func() -> void:
+@@ -295,25 +296,68 @@
+ 	if not _expect(not folder.is_empty() and folder.is_absolute_path(), "Explicit unique absolute native portrait output required"): return false
+ 	var wire: String = Exact.stringify(packet)
+ 	var input: PackedByteArray = var_to_bytes(_production.get_input_observation_state())
+-	var optics: PackedByteArray = var_to_bytes([_production.camera.global_transform, _production.hud.combat_safe_rect()])
++	var camera_before: Transform3D = _production.camera.global_transform
++	var hud_before: Rect2 = _production.hud.combat_safe_rect()
++	var optics: PackedByteArray = var_to_bytes([camera_before, hud_before])
+ 	var callbacks: int = _callbacks
+ 	var visible: bool = _production.menu.visible
++	var observation: Dictionary = {"stage": "portrait_guard", "operands_evaluated": false, "frames_waited": 0, "draw_seen": false, "root_size_before": [root.size.x, root.size.y], "content_scale_size_before": [root.content_scale_size.x, root.content_scale_size.y], "content_scale_mode": root.content_scale_mode, "content_scale_factor": root.content_scale_factor, "root_visible_size_before": [root.get_visible_rect().size.x, root.get_visible_rect().size.y], "window_has_focus_before": root.has_focus(), "callbacks_before": callbacks, "menu_visible_before": visible, "whole_packet_before_sha256": wire.sha256_text(), "hud_before": [hud_before.position.x, hud_before.position.y, hud_before.size.x, hud_before.size.y], "diagnostic_png": null, "scope": "Read-only guard operands and optional failed-attempt pixels only; no guard/timing/geometry relaxation, focus cause or portrait acceptance inferred."}
++	_portrait_observations.append(observation)
+ 	_production.menu.visible = false # TEST ONLY menu overlay exclusion, restored before every return.
+ 	_draw_seen = false
+ 	RenderingServer.frame_post_draw.connect(_on_draw)
+ 	for _frame: int in range(32):
+ 		await process_frame
++		observation.frames_waited = _frame + 1
++		observation.draw_seen = _draw_seen
+ 		if _finishing or not is_instance_valid(_production):
+-			if is_instance_valid(_production): _production.menu.visible = visible
++			observation["early_exit"] = "finishing_or_production_invalid"
++			if is_instance_valid(_production):
++				_production.menu.visible = visible
++				observation["menu_restored"] = _production.menu.visible == visible
+ 			if RenderingServer.frame_post_draw.is_connected(_on_draw): RenderingServer.frame_post_draw.disconnect(_on_draw)
+ 			return false
+ 		if _draw_seen: break
+ 	if RenderingServer.frame_post_draw.is_connected(_on_draw): RenderingServer.frame_post_draw.disconnect(_on_draw)
+ 	var image: Image = root.get_texture().get_image() if _draw_seen else null
+ 	var error: String = String(_parent.call("candidate_presentation_error", _production.camera, _production.hud))
+-	var unchanged: bool = paused and _production.campaign_error.is_empty() and wire == Exact.stringify(_production.capture_campaign_snapshot()) and input == var_to_bytes(_production.get_input_observation_state()) and optics == var_to_bytes([_production.camera.global_transform, _production.hud.combat_safe_rect()]) and _callbacks == callbacks
++	var paused_at_guard: bool = paused
++	var campaign_error_at_guard: String = _production.campaign_error
++	var actual_packet: Dictionary = _production.capture_campaign_snapshot()
++	var actual_wire: String = Exact.stringify(actual_packet)
++	var actual_input: PackedByteArray = var_to_bytes(_production.get_input_observation_state())
++	var camera_after: Transform3D = _production.camera.global_transform
++	var hud_after: Rect2 = _production.hud.combat_safe_rect()
++	var packet_equal: bool = wire == actual_wire
++	var input_equal: bool = input == actual_input
++	var camera_equal: bool = var_to_bytes(camera_before) == var_to_bytes(camera_after)
++	var hud_equal: bool = var_to_bytes(hud_before) == var_to_bytes(hud_after)
++	var optics_equal: bool = optics == var_to_bytes([camera_after, hud_after])
++	var callbacks_equal: bool = _callbacks == callbacks
++	var unchanged: bool = paused_at_guard and campaign_error_at_guard.is_empty() and packet_equal and input_equal and optics_equal and callbacks_equal
+ 	_production.menu.visible = visible
+-	if not _expect(_draw_seen and image != null and image.get_size() == Vector2i(340, 736) and unchanged and error.is_empty(), "Actual paused warning draw preserves whole packet/input/current Camera/HUD/callbacks and restores menu", error): return false
++	var dimensions: Vector2i = image.get_size() if image != null else Vector2i.ZERO
++	var guard_passed: bool = _draw_seen and image != null and dimensions == Vector2i(340, 736) and unchanged and error.is_empty()
++	observation.merge({"operands_evaluated": true, "draw_seen": _draw_seen, "image_valid": image != null, "actual_dimensions": [dimensions.x, dimensions.y], "dimensions_exact340x736": dimensions == Vector2i(340, 736), "root_size_after": [root.size.x, root.size.y], "content_scale_size_after": [root.content_scale_size.x, root.content_scale_size.y], "root_visible_size_after": [root.get_visible_rect().size.x, root.get_visible_rect().size.y], "render_viewport_size": [_production.camera.get_viewport().get_visible_rect().size.x, _production.camera.get_viewport().get_visible_rect().size.y], "window_has_focus_after": root.has_focus(), "paused": paused_at_guard, "campaign_error_at_guard": campaign_error_at_guard, "campaign_error_after_capture": _production.campaign_error, "expected_packet_nonempty": not packet.is_empty(), "actual_packet_nonempty": not actual_packet.is_empty(), "packet_equal": packet_equal, "whole_packet_after_sha256": actual_wire.sha256_text(), "input_equal": input_equal, "input_bytes_before": input.size(), "input_bytes_after": actual_input.size(), "camera_equal": camera_equal, "hud_equal": hud_equal, "hud_after": [hud_after.position.x, hud_after.position.y, hud_after.size.x, hud_after.size.y], "optics_equal": optics_equal, "callbacks_after": _callbacks, "callbacks_equal": callbacks_equal, "unchanged": unchanged, "native_view_error": error, "native_view_error_empty": error.is_empty(), "menu_restored": _production.menu.visible == visible, "original_guard_passed": guard_passed}, true)
++	# A failed guard may retain its actual image as DIAGNOSTIC pixels. Never
++	# append it to _portraits or claim unchanged/accepted portrait evidence.
++	if not guard_passed and image != null:
++		var diagnostic_path: String = folder.path_join("diagnostic-failed-captured-assisted-whole-parent-warning.png")
++		var diagnostic: Dictionary = {"path": diagnostic_path, "overwrote_existing": false, "saved": false, "acceptance_credit": false}
++		if FileAccess.file_exists(diagnostic_path):
++			diagnostic["error"] = "existing_diagnostic_refused"
++		else:
++			var directory_error: int = DirAccess.make_dir_recursive_absolute(folder)
++			diagnostic["directory_error"] = directory_error
++			if directory_error == OK:
++				var save_error: int = image.save_png(diagnostic_path)
++				diagnostic["save_error"] = save_error
++				diagnostic.saved = save_error == OK
++				if save_error == OK:
++					diagnostic["sha256"] = FileAccess.get_sha256(diagnostic_path)
++					diagnostic["bytes"] = FileAccess.get_file_as_bytes(diagnostic_path).size()
++		observation.diagnostic_png = diagnostic
++	if not _expect(guard_passed, "Actual paused warning draw preserves whole packet/input/current Camera/HUD/callbacks and restores menu", JSON.stringify(observation)): return false
+ 	var path: String = folder.path_join("01-actual-captured-assisted-whole-parent-warning.png")
+ 	if not _expect(DirAccess.make_dir_recursive_absolute(folder) == OK and image.save_png(path) == OK, "Actual native portrait bytes saved for separate human/Root inspection"): return false
+ 	_portraits.append({"path": path, "sha256": FileAccess.get_sha256(path), "dimensions": [image.get_size().x, image.get_size().y], "whole_packet_exact_sha256": wire.sha256_text(), "native_ids_decimal": _ids(), "paused_without_tick": true, "whole_packet_input_current_camera_hud_callbacks_unchanged": unchanged, "menu_test_overlay_excluded_and_restored": _production.menu.visible == visible, "native_optical_error": error, "scope": "One actual saved captured-Assisted warning; current preferenceChallenge; no active/lateral/full-board/human/balance/FPS credit. Pixels still require separate actual inspection."})
+@@ -380,7 +424,7 @@
+ 			if FileAccess.file_exists(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+ 		DirAccess.remove_absolute(ProjectSettings.globalize_path(_isolated))
+ 	paused = false
+-	var report: Dictionary = {"schema_version": 1, "kind": "captured-policy-whole-parent-shell", "checks": _checks, "failures": _failures, "complete": _complete, "success": _complete and _failures == 0, "rows": _rows, "exact_receipts": _receipts, "operation_observations": _operation_observations, "source_before": _source_before, "source_after": _named_sources(), "portrait_requested": _portrait, "portraits": _portraits, "scope": "Actual whole parent local1 delegates fresh captured phase3; actual completed records, projected schema3 integer refusal, real public Save/fresh Title diskContinue/opposite preference/entranceRetry/cleanup; existing declared TEST prior regular history/prefix14 only. No earned regular route/tether/boss/campaign-clear/all-kit/FPS claim."}
++	var report: Dictionary = {"schema_version": 1, "kind": "captured-policy-whole-parent-shell", "checks": _checks, "failures": _failures, "complete": _complete, "success": _complete and _failures == 0, "rows": _rows, "exact_receipts": _receipts, "operation_observations": _operation_observations, "portrait_observations": _portrait_observations, "source_before": _source_before, "source_after": _named_sources(), "portrait_requested": _portrait, "portraits": _portraits, "scope": "Actual whole parent local1 delegates fresh captured phase3; actual completed records, projected schema3 integer refusal, real public Save/fresh Title diskContinue/opposite preference/entranceRetry/cleanup; existing declared TEST prior regular history/prefix14 only. No earned regular route/tether/boss/campaign-clear/all-kit/FPS claim."}
+ 	var output: String = OS.get_environment("CINDER_CAPTURED_PARENT_SHELL_REPORT")
+ 	if not output.is_empty():
+ 		var file: FileAccess = FileAccess.open(output, FileAccess.WRITE)

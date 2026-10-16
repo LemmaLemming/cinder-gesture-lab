@@ -1,6 +1,6 @@
 # Desktop difficulty coverage
 
-Current review: 15 October 2026; runtime `campaign-shared-65`. Level acceptance and difficulty coverage are separate:24/24 levels are accepted under [focused acceptance](LEVEL_ACCEPTANCE.md). This record does not reopen their unchanged acceptance or require full routes, every enemy, earned exits or all-kit playthroughs.
+Current review:16 October2026; runtime `campaign-shared-66`. Level acceptance and difficulty coverage are separate:24/24 levels are accepted under [focused acceptance](LEVEL_ACCEPTANCE.md). This record does not reopen their unchanged acceptance or require full routes, every enemy, earned exits or all-kit playthroughs.
 
 | Level | Completed authored policy and evidence |
 | --- | --- |
@@ -15,6 +15,6 @@ Five authored consumers and one bounded retention policy cover six of24 accepted
 
 Fresh policies must produce a concrete different landing, target or route decision. Profile labels, renamed sources and numerical retunes alone do not establish an authored arrangement. Specific retention exceptions require a source-backed reason for the actual existing exercises; they grant no exemption to future content or other encounters. No new equipment, abilities or rewards are allocated by this review.
 
-The shared captured-attack Assisted audit found missing raw-damage and outer timing scaling. Its versioned compatibility work remains open independently of the level counts. Enemy-authored Echoes already resolve their profile upstream; blanket Playback damage scaling would apply it twice. Existing recorded action bytes and unfinished legacy saves must retain their original policy.
+The [Shared66 captured-attack policy](CAPTURED_ASSISTED_POLICY.md) now applies fresh Assisted raw-damage and outer timing scaling, with actual focused new/legacy/contact/whole-parent persistence checks and brief visual inspection. Enemy-authored Echoes remain resolved upstream; recorded action bytes and unfinished literal legacy saves retain their original policy. This shared correction adds no authored Challenge consumer and does not change the18-level count.
 
 Use targeted changed-level and directly affected shared checks through the canonical Godot queue. Reuse unchanged evidence, retain genuine failed/canceled/unexecuted results, and record untested full-playthrough behavior. Numerical balance, measured learning, mobile validation and sustained performance remain outside these completion claims.

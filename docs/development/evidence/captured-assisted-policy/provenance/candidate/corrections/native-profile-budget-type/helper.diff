@@ -1,0 +1,11 @@
+--- reviewed-helper.gd.txt
++++ corrected-private-helper.gd.txt
+@@ -19,7 +19,7 @@
+ 		return {}
+ 	var canonical: Dictionary = Difficulty.new().profile(profile.id)
+ 	if canonical.is_empty() or not exact_equal(canonical, profile) or not Value.keys_error(canonical, PROFILE_KEYS).is_empty(): return {}
+-	if canonical.id not in ["assisted", "standard", "challenge"] or not canonical.get("name") is String or not canonical.get("arrangement") is String or not canonical.get("reserved_threat_budget") is int or canonical.reserved_threat_budget not in [1, 2]: return {}
++	if canonical.id not in ["assisted", "standard", "challenge"] or not canonical.get("name") is String or not canonical.get("arrangement") is String or not canonical.get("reserved_threat_budget") is float or canonical.reserved_threat_budget not in [1.0, 2.0]: return {}
+ 	for key: String in ["raw_damage_multiplier", "windup_multiplier", "recovery_multiplier", "commit_stagger_s"]:
+ 		if not canonical.get(key) is float or not is_finite(canonical[key]) or float(canonical[key]) <= 0.0: return {}
+ 	var warning: float = 1.3

@@ -1,0 +1,44 @@
+--- original
++++ read-only-observation
+@@ -30,6 +30,7 @@
+ var _watched: Dictionary = {}
+ var _source_before: Dictionary = {}
+ var _portraits: Array[Dictionary] = []
++var _operation_observations: Array[Dictionary] = []
+ 
+ func _run() -> void:
+ 	create_timer(300.0, true, false, true).timeout.connect(func() -> void:
+@@ -221,14 +222,23 @@
+ 	return operations is Array and failed is Array and operations.is_empty() and failed.is_empty() and _production.get("_draining") == false and _production.get("_drain_queued") == false and _production.get("_registration_inflight") == false
+ 
+ func _settle(page: String, previous_native: Dictionary = {}) -> bool:
++	var observations: Array[Dictionary] = []
+ 	for _frame: int in range(180):
+ 		await process_frame
++		if _frame in [0, 1, 2, 179]: observations.append(_operation_observation(_frame))
+ 		if not _production.campaign_error.is_empty(): return _expect(false, "Public whole-parent operation", _production.campaign_error)
+ 		if not paused or not _shell_operation_idle() or _production.menu.page_name() != page or not is_instance_valid(_production.active_level) or not is_instance_valid(_production.player): continue
+ 		if not previous_native.is_empty():
+ 			if str(_production.active_level.get_instance_id()) == previous_native.get("parent") or str(_production.player.get_instance_id()) == previous_native.get("hero"): continue
++		_operation_observations.append({"expected_page": page, "settled": true, "samples": observations, "terminal": _operation_observation(_frame)})
+ 		return true
+-	return _expect(false, "Finite public whole-parent idle operation/new native recipient reaches " + page)
++	var failed: Dictionary = {"expected_page": page, "settled": false, "samples": observations, "terminal": _operation_observation(180)}
++	_operation_observations.append(failed)
++	return _expect(false, "Finite public whole-parent idle operation/new native recipient reaches " + page, JSON.stringify(failed))
++
++func _operation_observation(frame: int) -> Dictionary:
++	# TEST diagnostic reads only: never capture, settle, resume or alter native state.
++	return {"frame": frame, "tree_paused": paused, "pause_pending": _production.is_pause_requested(), "idle": _shell_operation_idle(), "page": _production.menu.page_name(), "hero_valid": is_instance_valid(_production.player), "parent_valid": is_instance_valid(_production.active_level), "operations": _production.get("_operations").size(), "failed_operations": _production.get("_failed_operations").size(), "draining": _production.get("_draining"), "drain_queued": _production.get("_drain_queued"), "registration_inflight": _production.get("_registration_inflight"), "registration_pending": _production.get("_registration_pending"), "registration_cancelled": _production.get("_registration_cancelled"), "campaign_error": _production.campaign_error, "registration_error": _production.get("_registration_error"), "window_has_focus": root.has_focus()}
+ 
+ func _disk() -> Dictionary:
+ 	var reader = Store.new(_isolated + "campaign.json")
+@@ -370,7 +380,7 @@
+ 			if FileAccess.file_exists(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+ 		DirAccess.remove_absolute(ProjectSettings.globalize_path(_isolated))
+ 	paused = false
+-	var report: Dictionary = {"schema_version": 1, "kind": "captured-policy-whole-parent-shell", "checks": _checks, "failures": _failures, "complete": _complete, "success": _complete and _failures == 0, "rows": _rows, "exact_receipts": _receipts, "source_before": _source_before, "source_after": _named_sources(), "portrait_requested": _portrait, "portraits": _portraits, "scope": "Actual whole parent local1 delegates fresh captured phase3; actual completed records, projected schema3 integer refusal, real public Save/fresh Title diskContinue/opposite preference/entranceRetry/cleanup; existing declared TEST prior regular history/prefix14 only. No earned regular route/tether/boss/campaign-clear/all-kit/FPS claim."}
++	var report: Dictionary = {"schema_version": 1, "kind": "captured-policy-whole-parent-shell", "checks": _checks, "failures": _failures, "complete": _complete, "success": _complete and _failures == 0, "rows": _rows, "exact_receipts": _receipts, "operation_observations": _operation_observations, "source_before": _source_before, "source_after": _named_sources(), "portrait_requested": _portrait, "portraits": _portraits, "scope": "Actual whole parent local1 delegates fresh captured phase3; actual completed records, projected schema3 integer refusal, real public Save/fresh Title diskContinue/opposite preference/entranceRetry/cleanup; existing declared TEST prior regular history/prefix14 only. No earned regular route/tether/boss/campaign-clear/all-kit/FPS claim."}
+ 	var output: String = OS.get_environment("CINDER_CAPTURED_PARENT_SHELL_REPORT")
+ 	if not output.is_empty():
+ 		var file: FileAccess = FileAccess.open(output, FileAccess.WRITE)
