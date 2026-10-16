@@ -1,5 +1,9 @@
 # Act 1 — current progress
 
+## Necessary O1 producer-fixture import01 complete — 16 October 2026
+
+The new original-writer TEST fixture `tests/acts/act1/a1_o1_difficulty.gd` SHA `d03a9262c28a1eaa5e8a4f0092d7017b4de750bd62998d781f83ccadb9c7f729` imports at engine0 clean in3.219s through the shared dev.py queue. All594 prior active UID bytes/modes and selected production inputs stayed exact; only genuine fixture `uid://dovv8h0wgkpe1` was added,595 total. [Exact import and frozen source reviews](../../../docs/acts/act1/evidence/A1-O1-difficulty/import01/index.json) preserve raw diagnostics, selected before/after pins, privatev1 and the derived conditional-Pause refinement. The eight original O1 runtime/parent-fixture source pins remain exact and the new recipe remains absent. Import is resource preparation only; no gameplay/save/route or parser-wide claim. The four-branch Challenge producer is installed but unexecuted; no O1 host/Codec/reader/recipe change. All own jobs closed after import; original goal remains complete and current bounded O1 scope continues without a human gate.
+
 ## L5 retention accepted; exact O1 trial acknowledged, old writer first — 16 October 2026
 
 Integration ACCEPTED `75edb83d`, ACK `d2914a21`, accepts L5's specific retained Blink-first policy and acknowledges exactly one O1 east-impact trial. Documentation checkpoint `bfac20b4` was actually preserving-adopted at `a4bd7551` with six current owned trees/50 named physical inputs/594 UID bytes and modes/122600 nonowned publication rows exact; receipt SHA `eec093c3f638611a1e44cc078619186452b644a06b3e447b06774ebd614f3946`. Shared coverage14/24,10 remaining; original eight/all24 and L3 complete. Both L5 failed86/1 trials and recoverable unaccepted runtime history stay unchanged; Root alone owns L5 cleanup.
