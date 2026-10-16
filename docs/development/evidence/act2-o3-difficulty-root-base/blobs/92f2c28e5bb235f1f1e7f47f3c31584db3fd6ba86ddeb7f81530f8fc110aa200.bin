@@ -1,0 +1,222 @@
+extends SceneTree
+## INERT old-source producer proposal; Root must explicitly select/queue it.
+## Newly executed original Canal17-key writers, never historical recovery.
+## TEST pre-tree profile only. Entrance is paused before simulation; early
+## warning follows one real completed neutral forward dash at original spawn.
+## No relocation, injury, phase/clock/lease/stage/history or packet rewriting.
+
+const MainScene = preload("res://scenes/main.tscn")
+const Parent = preload("res://scripts/acts/act2/bleached_canal.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Store = preload("res://scripts/campaign/save_store.gd")
+const LEVEL_PATH: String = "res://scenes/acts/act2/a2_o3.tscn"
+const ORIGINAL_ROOT_SHA: String = "72beb07a1aa9f8e0de25266de783eb195ee278596fe4506ae4176abfbd0d7f4c"
+const SOURCE_ID: String = "first_scout"
+
+class ProfileMain:
+	extends "res://scripts/game.gd"
+	var producer_profile: String = "standard"
+	func get_difficulty_preference() -> String:
+		return producer_profile
+
+class EndTick extends Node:
+	signal settled
+	func _ready() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_physics_priority = 300
+	func _physics_process(_delta: float) -> void:
+		settled.emit.call_deferred()
+
+var game: Node
+var hero: CinderPlayer
+var level: CinderLevel
+var scheduler: CinderThreatScheduler
+var barrier: EndTick
+var profile: String
+var out: String
+var test_root: String
+var source_names: Array[String] = []
+var source_before: Dictionary
+var rows: Array[Dictionary] = []
+var packets: Array[Dictionary] = []
+var actions: Array[Dictionary] = []
+var progress_events: Array[String] = []
+var failures: int = 0
+var first_failure: Dictionary = {}
+var complete: bool = false
+var finishing: bool = false
+
+func _initialize() -> void:
+	out = OS.get_environment("CINDER_A2_O3_LEGACY_OUTPUT")
+	test_root = "user://test-a2-o3-new-old17-producer-%d-%d/" % [OS.get_process_id(), Time.get_ticks_usec()]
+	var supplied: Variant = JSON.parse_string(OS.get_environment("CINDER_A2_O3_LEGACY_SOURCES"))
+	if supplied is Array:
+		for path: Variant in supplied:
+			if path is String: source_names.append(path)
+	source_before = _sources()
+	_run.call_deferred()
+
+func _run() -> void:
+	create_timer(150.0, true).timeout.connect(func() -> void:
+		if not finishing: _expect(false, "bounded150-second new execution of old17 writer watchdog"); _finish.call_deferred())
+	root.size = Vector2i(540, 1170)
+	if not _expect(OS.get_cmdline_user_args().is_empty() and out.is_absolute_path() and not source_names.is_empty() and FileAccess.get_sha256("res://scripts/acts/act2/bleached_canal.gd") == ORIGINAL_ROOT_SHA, "original exact Canal17 root plus explicit owned output/named sources; no scenario mutation"):
+		await _finish(); return
+	for selected: String in ["standard", "challenge"]:
+		profile = selected
+		if not await _open() or not await _capture("entrance"): await _finish(); return
+		game.call("resume_lab")
+		if not await _wait(func() -> bool: return hero.is_on_floor() and hero.get_threat_response_state().stable, "original-spawn native floor settles before real public dash"):
+			await _finish(); return
+		var start: Vector3 = hero.global_position
+		var stats: Dictionary = hero.stats.duplicate(true)
+		if not _expect(hero.request_dash(Vector3.FORWARD), "one actual ordinary public forward dash enters first Scout range"): await _finish(); return
+		if not await _wait(func() -> bool: return actions.size() == 1 and not hero.action_in_progress() and hero.is_on_floor() and hero.get_threat_response_state().stable, "actual first dash completes natively without direct transform/history assignment"):
+			await _finish(); return
+		var action: Dictionary = actions[0]
+		if not _expect(action.kind == "dash" and not action.blocked and action.world_origin == start and action.landing == hero.global_position and (action.landing as Vector3).distance_to(start + Vector3.FORWARD * float(stats.dash_distance)) <= 0.005 and action.equipment_ids == hero.equipment.snapshot() and Codec.same_values(action.resolved_stats, stats) and hero.global_position.distance_to((level.get("_actors") as Dictionary)[SOURCE_ID].global_position) < 3.8, "genuine completed neutral dash retains exact native record/stats and naturally enters unchanged3.8admission"):
+			await _finish(); return
+		if not await _wait(func() -> bool: return hero.is_on_floor() and hero.get_threat_response_state().stable and _warning(), "actual stage0 first Scout unarmed tracking warning and owner-bound lease"):
+			await _finish(); return
+		game.call("open_bench")
+		if not await _capture("first-warning") or not await _dispose(): await _finish(); return
+	complete = true
+	await _finish()
+
+func _open() -> bool:
+	paused = false
+	game = MainScene.instantiate()
+	game.set_script(ProfileMain)
+	game.set("producer_profile", profile)
+	game.set("level_scene_path", LEVEL_PATH)
+	root.add_child(game)
+	game.call("open_bench")
+	hero = game.get("player") as CinderPlayer
+	level = game.get("active_level") as CinderLevel
+	scheduler = level.get("_scheduler") as CinderThreatScheduler if level != null else null
+	barrier = EndTick.new(); game.add_child(barrier)
+	actions.clear(); progress_events.clear()
+	if hero != null: hero.world_action_executed.connect(func(record: Dictionary) -> void: actions.append(record.duplicate(true)))
+	if level != null:
+		level.checkpoint_requested.connect(func(_id: String, _checkpoint: String, _kind: String) -> void: progress_events.append("checkpoint"))
+		level.completion_requested.connect(func(_id: String, _completion: String) -> void: progress_events.append("completion"))
+		level.contact_exit_requested.connect(func(_id: String, _exit: String) -> void: progress_events.append("exit"))
+	await process_frame; await process_frame
+	return _expect(paused and hero != null and level != null and scheduler != null and level.level_id == "A2-O3" and level.scene_file_path == LEVEL_PATH and level.get_script() == Parent and level.contract_error().is_empty() and String(level.get("runtime_error")).is_empty() and game.call("get_difficulty_preference") == profile and scheduler.encounter_profile().id == profile and hero.equipment.snapshot() == {"weapon":"WEAPON-01", "jacket":"CLOTH-J0", "pants":"CLOTH-P0", "shoes":"CLOTH-S0"}, "canonical original Canal scene/native recipients consume disclosed pre-tree profile and unchanged neutral kit", level.contract_error() if level != null else "missinglevel")
+
+func _wait(predicate: Callable, label: String) -> bool:
+	var deadline: int = Time.get_ticks_msec() + 20000
+	for _tick: int in range(2400):
+		await barrier.settled
+		if finishing: return false
+		if not is_instance_valid(hero) or hero.dead or not level.contract_error().is_empty() or not String(level.get("runtime_error")).is_empty(): return _expect(false, "healthy native boundary: " + label, String(level.get("runtime_error")))
+		if predicate.call() == true: return _expect(true, label)
+		if paused or Time.get_ticks_msec() > deadline: break
+	return _expect(false, "bounded20-second native wait: " + label)
+
+func _warning() -> bool:
+	var source: Node3D = (level.get("_actors") as Dictionary)[SOURCE_ID]
+	var state: Dictionary = level.get("_exchange").call("state", SOURCE_ID)
+	if not is_instance_valid(source) or source.get_instance_id() == 0 or state.get("status") != "running" or state.get("phase") != "warning" or state.get("armed") != false: return false
+	for lease: Dictionary in scheduler.source_control_state(source).get("reservations", []):
+		if lease.id == state.reservation_id and lease.source_instance_id == source.get_instance_id() and lease.profile_id == profile and lease.armed == false: return true
+	return false
+
+func _pair_error(pair: Dictionary) -> String:
+	if pair.size() != 2 or not pair.get("player") is Dictionary or not pair.get("level") is Dictionary: return "Producer requires complete Player+Level pair"
+	var error: String = hero.snapshot_error(pair.player)
+	return error if not error.is_empty() else level.snapshot_error_with_player(pair.level, pair.player)
+
+func _capture(stage: String) -> bool:
+	await process_frame
+	var pair: Dictionary = {"player": hero.snapshot_state(), "level": level.snapshot_state()}
+	if not _expect(paused and not pair.player.is_empty() and not pair.level.is_empty() and pair.level.local_snapshot_version == 1 and Codec.keys_error(pair.level.local, Parent.LOCAL_KEYS).is_empty() and pair.level.local.size() == 17 and not pair.level.local.has("arrangement") and pair.level.local.profile_id == profile and pair.level.local.scheduler.profile.id == profile and _pair_error(pair).is_empty(), "complete original closed17 Player+Level writers independently prevalidate: " + stage, hero.last_snapshot_error + "; " + level.last_snapshot_error): return false
+	var local: Dictionary = pair.level.local
+	if not _expect(local.stage_index == 0 and local.defeated_ids.is_empty() and local.defeat_times.is_empty() and local.pending_defeats.is_empty() and not local.checkpoint_contact_seen and not local.checkpoint_requested and not local.pending_checkpoint and not local.completion_pending and not local.exit_requested and pair.level.progress.checkpoint_id.is_empty() and not pair.level.progress.completed and progress_events.is_empty(), "actual stage0 no defeats/contact/checkpoint/completion/history fabrication"): return false
+	if stage == "entrance":
+		if not _expect(actions.is_empty() and local.scheduler.reservations.is_empty() and local.exchange.records[SOURCE_ID].status == "idle", "genuine paused constructor entrance before simulation/actions/leases; no settled-floor claim"): return false
+	else:
+		if not _expect(actions.size() == 1 and actions[0].kind == "dash" and hero.is_on_floor() and hero.get_threat_response_state().stable and _warning() and local.scheduler.reservations.size() == 1 and local.scheduler.reservations[0].adapter.locked == false, "native early partial retains actual dash plus owner-bound unarmed first Scout warning"): return false
+	var roots: Dictionary = {}
+	for id: String in Parent.ACTOR_IDS:
+		var actor: Node3D = (level.get("_actors") as Dictionary)[id]
+		if not _expect(is_instance_valid(actor) and actor.get_instance_id() != 0 and actor.global_position == Parent.ACTOR_POSITIONS[id] and local.actors[id].root_position == Codec.vector3(actor.global_position) and float(local.actors[id].hp) == 30.0, "all actual old native recipients retain original configured root/HP: " + id): return false
+		roots[id] = local.actors[id].root_position.duplicate()
+	var wire: String = Exact.stringify(pair)
+	var parsed: Dictionary = Exact.parse(wire)
+	if not _expect(not wire.is_empty() and parsed.get("accepted") == true and Exact.stringify(parsed.value) == wire, "whole original native wire retains exact scalar tags/bits"): return false
+	var name: String = profile + "-" + stage
+	var writer := Store.new(test_root + name + ".json")
+	writer.payload_validator = _pair_error
+	if not _expect(writer.write_payload(pair), "actual format2 Store accepts full native original pair", writer.last_error): return false
+	var raw: PackedByteArray = FileAccess.get_file_as_bytes(writer.path)
+	var envelope: Variant = JSON.parse_string(raw.get_string_from_utf8())
+	var reader := Store.new(writer.path)
+	reader.payload_validator = _pair_error
+	if not _expect(envelope is Dictionary and envelope.format_version == 2 and envelope.payload_json == wire and envelope.sha256 == wire.sha256_text() and reader.generation == 0 and Exact.stringify(reader.read_payload()) == wire and reader.generation == 1 and not reader.loaded_backup and _pair_error(pair).is_empty(), "independent raw format2 reread preserves original exact wire/generation/checksum/native pair", reader.last_error): return false
+	var exact_path: String = out.path_join(name + ".exact.json")
+	var store_path: String = out.path_join(name + ".store.json")
+	if not _expect(not FileAccess.file_exists(exact_path) and not FileAccess.file_exists(store_path), "never overwrite old fixture originals"): return false
+	var file := FileAccess.open(exact_path, FileAccess.WRITE)
+	if not _expect(file != null, "new opaque original wire output opens"): return false
+	file.store_string(wire); file.close()
+	file = FileAccess.open(store_path, FileAccess.WRITE)
+	if not _expect(file != null, "new raw Store output opens"): return false
+	file.store_buffer(raw); file.close()
+	if not _expect(Exact.stringify({"player":hero.snapshot_state(), "level":level.snapshot_state()}) == wire, "complete native donor stays bit/tag exact across Store writes and independent validation"): return false
+	packets.append({"profile":profile, "stage":stage, "exact_file":name + ".exact.json", "exact_sha256":FileAccess.get_sha256(exact_path), "exact_bytes":FileAccess.get_file_as_bytes(exact_path).size(), "store_file":name + ".store.json", "store_sha256":FileAccess.get_sha256(store_path), "store_bytes":raw.size(), "original_local_keys":local.keys(), "original_local_key_count":17, "outer_local_version":1, "world_revision":1, "configured_roots_exact":Exact.stringify(roots), "actual_public_dash_count":actions.size(), "scope":"New execution of exact old Canal17 writer; untouched actual entrance or one genuine native dash+first unarmedwarning. No route/defeat/earnedcheckpoint/Shell/retry/portrait credit."})
+	return true
+
+func _collect(node: Node, refs: Array[WeakRef]) -> void:
+	refs.append(weakref(node))
+	for child: Node in node.get_children(): _collect(child, refs)
+
+func _dispose() -> bool:
+	var refs: Array[WeakRef] = []
+	var leases_released: bool = true
+	if is_instance_valid(game):
+		_collect(game, refs)
+		if is_instance_valid(level): level.exit_level()
+		if is_instance_valid(scheduler): leases_released = _expect(scheduler.reservations().is_empty(), "normal public exit releases original owner leases")
+		game.get("fx").clear()
+		game.free()
+	game = null; hero = null; level = null; scheduler = null; barrier = null
+	await process_frame
+	var freed: bool = true
+	for ref: WeakRef in refs: freed = freed and ref.get_ref() == null
+	return _expect(freed and get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "normal owned Main/native source/cue cleanup") and leases_released
+
+func _sources() -> Dictionary:
+	var result: Dictionary = {}
+	for path: String in source_names: result[path] = FileAccess.get_sha256("res://" + path) if FileAccess.file_exists("res://" + path) else null
+	return result
+
+func _expect(ok: bool, label: String, detail: String = "") -> bool:
+	var row: Dictionary = {"check":rows.size()+1, "ok":ok, "label":label, "detail":detail}
+	rows.append(row)
+	if not ok:
+		failures += 1
+		if first_failure.is_empty(): first_failure = row.duplicate(true)
+		print("FAIL Canal old17 producer: ", label, "; ", detail)
+	return ok
+
+func _finish() -> void:
+	if finishing: return
+	finishing = true; paused = true
+	if is_instance_valid(game): await _dispose()
+	var directory := DirAccess.open(test_root)
+	if directory != null:
+		for name: String in directory.get_files(): DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root + name))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(test_root))
+	paused = false
+	_expect(_sources() == source_before, "fixed named original sources unchanged")
+	var report: Dictionary = {"schema_version":1, "checks":rows.size(), "failures":failures, "rows":rows, "first_failure":first_failure, "complete":complete, "success":complete and failures == 0, "packets":packets, "source_before":source_before, "source_after":_sources(), "scope":"New native execution of exact old Canal17 writer, not historical recovery. Standard/oldChallenge original entrance plus genuine one-dash first-warning partial; no relocation/HP/stage/history/clock/lease/packet rewrites, defeats/earnedcheckpoint/route/Shell/Continue/Retry/portrait/performance/acceptance credit."}
+	if not out.is_absolute_path(): print("Canal old17 producer requires an absolute owned output directory"); quit(2); return
+	var path: String = out.path_join("native-report.json")
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null: print("Canal old17 report output failed"); quit(2); return
+	file.store_string(JSON.stringify(report,"\t")+"\n"); file.close()
+	print("CINDER_A2_O3_LEGACY_REPORT path=" + path + " sha256=" + FileAccess.get_sha256(path))
+	print("A2-O3 original17-key producer: %d checks/%d failures; complete=%s; packets=%d" % [rows.size(), failures, str(complete), packets.size()])
+	quit(0 if complete and failures == 0 else 1)

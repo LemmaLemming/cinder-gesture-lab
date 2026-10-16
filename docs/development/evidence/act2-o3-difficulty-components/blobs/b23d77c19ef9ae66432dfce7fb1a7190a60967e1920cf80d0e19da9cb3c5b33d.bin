@@ -1,0 +1,177 @@
+"""Specific CLOSED A2-O3 component supplement; pinned immutable base CAS reused."""
+from pathlib import Path, PurePosixPath
+import datetime
+import hashlib
+import json
+import stat
+
+HERE = Path(__file__).resolve().parent
+BASE = HERE.parent
+ROOT = BASE.parents[1]
+PUBLIC = "docs/development/evidence/act2-o3-difficulty-components/"
+BASE_PACK = HERE / "pack-base-20261016T041626.497886Z" / "pack"
+BASE_PREFIX = "docs/development/evidence/act2-o3-difficulty-root-base/"
+BASE_MANIFEST_SHA = "8bebe5060e6ad7048512729314f0621aebbc6e19715ecb46d9b53adb701dad8f"
+PHASES = [
+    "component-prepare/absolute-v2/seal-neutral-20261016T040909.932442Z-5555b128",
+    "component-prepare/absolute-v2/native-neutral-20261016T040921.153003Z-efd4cb41",
+    "component-prepare/absolute-v3/seal-neutral-20261016T041600.397771Z-b4949ced",
+    "component-prepare/absolute-v3/native-neutral-20261016T041643.812270Z-02fc9235",
+    "component-prepare/absolute-v3/native-portrait-20261016T041737.764237Z-e7f8cb64",
+]
+
+
+def require(ok, reason):
+    if not ok: raise ValueError(reason)
+
+
+def digest(data): return hashlib.sha256(data).hexdigest()
+
+
+def regular(path):
+    require(path.is_file() and not path.is_symlink(), "Regular original file required: " + str(path))
+    return path.read_bytes()
+
+
+def load(path): return json.loads(regular(path), parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)))
+
+
+def encoded(value): return (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+
+
+def safe(name):
+    path = PurePosixPath(name)
+    require(type(name) is str and not path.is_absolute() and ".." not in path.parts and str(path) == name and name not in ("", "."), "Safe exact relative original path required")
+    return name
+
+
+def dictionary(node):
+    require(type(node) is list and len(node) == 2 and node[0] == "dictionary" and type(node[1]) is list, "Original Exact dictionary required")
+    result = {}
+    for name, value in node[1]:
+        require(type(name) is str and name not in result, "Unique original Exact dictionary key required")
+        result[name] = value
+    return result
+
+
+def scalar(node):
+    require(type(node) is list and len(node) == 2, "Original Exact scalar required")
+    kind, value = node
+    if kind == "integer":
+        require(type(value) is str and str(int(value)) == value, "Exact integer text required")
+        return int(value)
+    require(kind in ("boolean", "string") and type(value) is (bool if kind == "boolean" else str), "Strict original Exact scalar required")
+    return value
+
+
+def main():
+    base_manifest_path = BASE_PACK / (BASE_PREFIX + "PUBLIC_COPY_MANIFEST.json")
+    require(digest(regular(base_manifest_path)) == BASE_MANIFEST_SHA, "Exact immutable prior base pack required")
+    base_manifest = load(base_manifest_path)
+    base_cas = {}
+    for name, row in base_manifest["files"].items():
+        if name.startswith(BASE_PREFIX + "blobs/"):
+            data = regular(BASE_PACK / name)
+            require(digest(data) == row["sha256"] and len(data) == row["bytes"], "Actual immutable base CAS differs")
+            base_cas[row["sha256"]] = {"repository_storage_path": name, "bytes": len(data)}
+    phase_names = list(PHASES)
+    extra = HERE / "ROOT_ADDITIONAL_CLOSED_COMPONENT_PHASES.json"
+    if extra.is_file():
+        selection = load(extra)
+        require(selection.get("status") == "ROOT_EXPLICIT_CLOSED_COMPONENT_PATHS" and type(selection.get("phases")) is list, "Only explicit Root-confirmed closed additions allowed")
+        for name in selection["phases"]:
+            require(safe(name).startswith("component-prepare/absolute-v4/"), "Only exact separately confirmed v4 phase additions allowed")
+            phase_names.append(name)
+    require(len(set(phase_names)) == len(phase_names), "Unique actual phase selection required")
+    inputs, phase_rows, source_aliases = {}, [], []
+    def select(path, role):
+        name = path.relative_to(ROOT).as_posix()
+        data = regular(path)
+        meta = {"sha256": digest(data), "bytes": len(data), "mode_octal": format(stat.S_IMODE(path.stat().st_mode), "04o"), "role": role}
+        if name in inputs: require(inputs[name][0] == data, "Conflicting original selected bytes")
+        else: inputs[name] = (data, meta)
+        return name
+    def storage(data):
+        key = digest(data)
+        if key in base_cas: return base_cas[key]["repository_storage_path"]
+        return PUBLIC + "blobs/" + key + (".png" if data.startswith(b"\x89PNG\r\n\x1a\n") else ".bin")
+    for phase_name in phase_names:
+        phase = BASE / phase_name
+        result, index = load(phase / "result.json"), load(phase / "index.json")
+        require(result.get("closed") is True and type(result.get("passed")) is bool and type(result.get("runner_return_code")) is int and index.get("created_after_raw_close") is True, "Actual CLOSED result and post-raw-close index required")
+        physical = {path.relative_to(phase).as_posix() for path in phase.rglob("*") if path.is_file()}
+        require(physical == set(index["files"]) | {"index.json"}, "Closed component phase has missing/unindexed artifacts")
+        for name, row in index["files"].items():
+            data = regular(phase / safe(name))
+            require(digest(data) == row["sha256"] and len(data) == row["bytes"], "Original closed indexed component artifact differs")
+        for name in sorted(physical): select(phase / name, "actual CLOSED component artifact, original success/failure preserved")
+        for path in sorted(phase.glob("retained-*.json")):
+            for source, row in load(path).items():
+                alias = {"phase": phase_name, "original_retention_map": path.relative_to(ROOT).as_posix(), "original_source_relative_path": source, "present": row.get("present",True)}
+                if alias["present"]:
+                    blob = safe(row["blob"])
+                    require(blob in physical and blob.startswith("source-blobs/"), "Original retained component source blob required")
+                    data = regular(phase / blob)
+                    require(digest(data) == row["sha256"] and len(data) == row["bytes"], "Original source alias hash/size join differs")
+                    alias.update({"sha256": row["sha256"], "bytes": row["bytes"], "original_retained_blob_relative_path": (phase / blob).relative_to(ROOT).as_posix(), "repository_storage_path": storage(data)})
+                source_aliases.append(alias)
+        summary = {"original_phase_relative_path": phase.relative_to(ROOT).as_posix(), "recorded_closed": result["closed"], "recorded_passed": result["passed"], "recorded_runner_return_code": result["runner_return_code"], "recorded_canonical_validation_return_code": result.get("canonical_validation_return_code"), "original_index_relative_path": (phase / "index.json").relative_to(ROOT).as_posix(), "original_raw_relative_path": (phase / "raw.log").relative_to(ROOT).as_posix(), "original_file_count": len(physical), "actual_native_report_present": (phase / "native-report.exact.json").is_file()}
+        if summary["actual_native_report_present"]:
+            path = phase / "native-report.exact.json"; envelope = load(path)
+            require(envelope.get("api_revision") == "exact-json-1" and envelope.get("schema_version") == 1, "Actual original native Exact report required")
+            report = dictionary(envelope["value"])
+            summary["original_report_relative_path"] = path.relative_to(ROOT).as_posix()
+            summary["actual_report_control_fields"] = {key: scalar(report[key]) for key in ("kind", "selector", "checks", "failures", "complete", "success")}
+            rows = report["rows"];require(rows[0] == "array", "Actual native row array required")
+            summary["actual_failed_rows"] = [{"note":scalar(row["note"]),"ok":scalar(row["ok"])} for row in map(dictionary, rows[1]) if scalar(row["ok"]) is False]
+            if (phase / "changed-final-pair.png").is_file():
+                portrait = dictionary(dictionary(report["receipts"])["portrait"])
+                png = phase / "changed-final-pair.png"; data = regular(png)
+                require(scalar(portrait["image_path"]) == str(png) and scalar(portrait["image_sha256"]) == digest(data) and data[:8] == b"\x89PNG\r\n\x1a\n" and int.from_bytes(data[16:20],"big") == 540 and int.from_bytes(data[20:24],"big") == 1170, "Actual original report/PNG/hash/dimensions join differs")
+                summary["actual_portrait"] = {"original_relative_path": png.relative_to(ROOT).as_posix(), "sha256":digest(data), "bytes":len(data), "repository_storage_path":storage(data), "dimensions":[540,1170], "scope":"Original actual image, persisted encoded before-packet and source-scoped native equality assertion rows preserved. No raw typed .var wirefiles were persisted. Graphical33/2 remains failed/incomplete, no graphical combat pass."}
+        phase_rows.append(summary)
+    for path in sorted((BASE / "component-prepare").iterdir()):
+        if path.is_file(): select(path,"original source-only component preparation, status retained")
+    directories = ["absolute-v2","absolute-v3"] + (["absolute-v4"] if len(phase_names) > len(PHASES) else [])
+    for name in directories:
+        for path in sorted((BASE / "component-prepare" / name).iterdir()):
+            if path.is_file(): select(path,"exact component capsule/source/readiness/promotion snapshot; original phase maps govern executions")
+    for name, expected in selection.get("root_reviews",{}).items() if extra.is_file() else []:
+        path = ROOT / safe(name)
+        require(digest(regular(path)) == expected, "Actual Root review differs from explicit confirmed hash")
+        select(path,"exact Root independent component/visual review; not a new preparer inspection")
+    select(Path(__file__).resolve(),"specific component archive helper; no engine/native execution")
+    if extra.is_file():select(extra,"explicit Root closed phase selection")
+    output = HERE / ("pack-components-" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ"))
+    output.mkdir(exist_ok=False); pack = output / "pack"
+    files, originals, new_cas, base_reused = {}, {}, {}, {}
+    def put(name, data):
+        require(safe(name).startswith(PUBLIC),"Fixed new supplemental evidence prefix required")
+        path = pack / name;path.parent.mkdir(parents=True,exist_ok=True)
+        if path.exists():require(regular(path)==data,"Prepared supplemental collision")
+        else:
+            with path.open("xb") as stream:stream.write(data)
+        path.chmod(0o644);files[name]={"sha256":digest(data),"bytes":len(data),"mode_octal":"0644"}
+    put(PUBLIC+".gdignore",b"")
+    for name,(data,meta) in inputs.items():
+        destination=storage(data)
+        if meta["sha256"] in base_cas:base_reused[meta["sha256"]]=base_cas[meta["sha256"]]
+        else:put(destination,data);new_cas[meta["sha256"]]={"repository_storage_path":destination,"bytes":len(data)}
+        originals[name]={**meta,"repository_storage_path":destination}
+    put(PUBLIC+"original-paths.json",encoded({"schema_version":1,"original_checkout_absolute_path":str(ROOT),"scope":"Original relative paths/hash/bytes/mode map to exact CAS. Original reports/indexes/raw/source maps remain byte-identical; no source repin/schema rewrite.","files":originals}))
+    put(PUBLIC+"source-observation-aliases.json",encoded({"schema_version":1,"scope":"Derived relocation only; original source maps remain unchanged.","aliases":source_aliases}))
+    put(PUBLIC+"BASE_CAS_DEPENDENCY.json",encoded({"schema_version":1,"base_manifest_path":BASE_PREFIX+"PUBLIC_COPY_MANIFEST.json","base_manifest_sha256":BASE_MANIFEST_SHA,"scope":"Copy the immutable base pack as well. Exact already-retained identical source bytes are referenced here, never rewritten or duplicated.","referenced_blobs":base_reused}))
+    index={"schema_version":1,"kind":"a2-o3-closed-component-evidence-supplement-1","actual_closed_phases":len(phase_rows),"phases":phase_rows,"original_paths":len(originals),"new_unique_CAS_blobs":len(new_cas),"base_CAS_blobs_reused":len(base_reused),"source_observation_aliases":len(source_aliases),"base_dependency":PUBLIC+"BASE_CAS_DEPENDENCY.json","original_path_map":PUBLIC+"original-paths.json","scope":"Original v2 neutral50/2 failure, v3 neutral67/0, graphical33/2 failure and actual v4 short-slow64/0 retained with actual PNG, encoded before-packet and source-scoped native equality assertion rows, plus all actual closed host seals. V4 additions are separately Root-confirmed CLOSED originals. Graphical success rows do not make its combat scope complete; the failed deadline predicate lower/upper side and failure clock were not retained; no cause is inferred. No parent history/save/route/clear/all-kit/native-safety/acceptance credit is created by packing.","typed_equality_evidence_qualification":{"raw_typed_var_wirefiles_persisted":False,"actual_persisted_evidence":"Original native Exact report encoded before-packet, strict source-scoped var_to_bytes pre/post assertion rows, and original PNG. Godot native structures were passively encoded by inherited _encode; original native typed var_to_bytes wire was not saved.","no_binary_reconstruction":True},"root_visual_context":{"source":"Trusted Root task message to this preparer, not a new preparer image inspection","reported":"Root personally viewed the actual PNG and found a valid brief paused view with central overlap; graphical execution remains33/2 incomplete and no further green-photo gate is required.","durable_original_report_inspection_field":"Retained unchanged, even where pending; no historical metadata rewritten."}}
+    put(PUBLIC+"index.json",encoded(index))
+    put(PUBLIC+"README.md",b"# A2-O3 CLOSED component evidence supplement\n\nOriginal v2 neutral50/2, v3 neutral67/0, graphical33/2 and v4 short-slow64/0 retain exact failed/pass/incomplete status. Actual native reports, rows, original index/raw/engine/source/capsule bytes and the actual540x1170 PNG, encoded before-packet and native equality assertion rows remain unchanged. No raw typed .var wirefiles were persisted; none are reconstructed. The graphical image was written and typed pause/resume checks passed before the sampler escape-deadline failure; there is no graphical combat pass or inferred timing cause. Root's exact independent component and visual reviews are retained. Root reported inspecting the real brief view with central overlap. The failed graphical deadline predicate may fail its lower or upper clause; its failure clock and cause were not recorded, so preparatory causal wording supplies no additional evidence.\n\nAll original relative paths/hash/size/modes map through original-paths.json. Identical base CAS bytes are referenced through BASE_CAS_DEPENDENCY.json; publish the immutable base as well. Original observation/index/report schemas are not rewritten and historical execution is never repinned to current source. Additional v4 scopes, when present, are explicitly selected CLOSED originals. Packing adds no native result or acceptance.\n")
+    manifest_path=PUBLIC+"PUBLIC_COPY_MANIFEST.json"
+    put(manifest_path,encoded({"schema_version":1,"status":"PRIVATE_EXACT_COMPONENT_WHITELIST_READY_FOR_ROOT_REVIEW_ONLY","file_count_excluding_this_manifest":len(files),"file_count_including_this_manifest":len(files)+1,"self_repository_path":manifest_path,"files":dict(files)}))
+    for name,meta in files.items():require(digest(regular(pack/name))==meta["sha256"] and (pack/name).stat().st_size==meta["bytes"],"Prepared supplement differs")
+    for name,(data,meta) in inputs.items():require(regular(ROOT/name)==data,"Original component input changed during pack")
+    require(digest(regular(base_manifest_path))==BASE_MANIFEST_SHA,"Original base pack changed")
+    (output/"PUBLICATION_PATHS.txt").write_text("\n".join(sorted(files))+"\n");(output/"PUBLICATION_PATHS.nul").write_bytes(b"".join(name.encode()+b"\0" for name in sorted(files)))
+    closure={"schema_version":1,"status":"EXACT_PRIVATE_COMPONENT_SUPPLEMENT_VERIFIED","closed_phases":len(phase_rows),"original_paths":len(originals),"new_CAS_blobs":len(new_cas),"reused_base_CAS_blobs":len(base_reused),"source_aliases":len(source_aliases),"publication_files":len(files),"publication_bytes":sum(row["bytes"] for row in files.values()),"index_sha256":files[PUBLIC+"index.json"]["sha256"],"manifest_sha256":files[manifest_path]["sha256"],"base_manifest_sha256":BASE_MANIFEST_SHA,"no_engine_no_Git_no_public_copy":True}
+    (output/"PREPARATION_CLOSURE.json").write_bytes(encoded(closure));print(json.dumps({"private_output":str(output),**closure},indent=2))
+
+
+if __name__=="__main__":main()

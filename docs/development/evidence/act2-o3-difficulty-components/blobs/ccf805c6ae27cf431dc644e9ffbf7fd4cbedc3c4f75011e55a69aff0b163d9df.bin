@@ -1,0 +1,239 @@
+"""Root-only A2-O3 component seal/native wrapper; no automatic promotion/import."""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import sys
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[3]
+ENV = "CINDER_A2_O3_COMPONENT_REPORT"
+FOOTER_SCOPE = "; no canonical prefix/checkpoint/parent-save authority"
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def read(path):
+    return json.loads(path.read_text(), parse_constant=lambda item: (_ for _ in ()).throw(ValueError(item)))
+
+
+def save(path, value):
+    path.write_text(json.dumps(value, indent=2, allow_nan=False) + "\n")
+
+
+class Tee:
+    def __init__(self, screen, log):
+        self.screen, self.log = screen, log
+    def write(self, value):
+        self.log.write(value)
+        return self.screen.write(value)
+    def flush(self):
+        self.log.flush()
+        self.screen.flush()
+
+
+def observe(config, out, label):
+    names = sorted(set(config["expected"]) | set(config["self_files"]))
+    values, retained = {}, {}
+    blobs = out / "source-blobs"
+    blobs.mkdir(exist_ok=True)
+    for name in names:
+        path = ROOT / name
+        data = path.read_bytes() if path.is_file() else None
+        digest = hashlib.sha256(data).hexdigest() if data is not None else None
+        values[name] = digest
+        retained[name] = {"present": data is not None}
+        if data is not None:
+            blob = blobs / digest
+            if not blob.exists():
+                with blob.open("xb") as stream:
+                    stream.write(data)
+            require(blob.read_bytes() == data, "Retained source blob differs: " + name)
+            retained[name].update({"sha256": digest, "bytes": len(data), "blob": str(blob.relative_to(out))})
+    save(out / ("sources-" + label + ".json"), values)
+    save(out / ("retained-" + label + ".json"), retained)
+    return values
+
+
+def prepared(config, current):
+    require(config["schema_version"] == 1 and config["root"] == str(ROOT), "Exact Root/private capsule identity required")
+    for name, digest in config["expected"].items():
+        require(current.get(name) == digest, "Reviewed named byte/UID differs: " + name)
+    require(all(current.get(name) is not None or name == config["optional_missing_uid"] for name in config["self_files"]), "Private wrapper/readiness capsule incomplete")
+    for name, digest in read(HERE / "READINESS.json")["frozen_files"].items():
+        require(current.get(name) == digest, "Frozen component capsule differs: " + name)
+    require(current[config["fixture"]] == current[config["draft"]] == config["fixture_sha256"], "Root must promote exact reviewed private executable bytes first")
+    require(config["optional_missing_uid"] == config["fixture"] + ".uid", "Only explicit component UID may be absent")
+
+
+def selected_seal(path):
+    require(path.name == "seal.json" and path.parent.parent == HERE, "Use an explicit prior seal from this capsule")
+    result, index = read(path.parent / "result.json"), read(path.parent / "index.json")
+    require(result.get("closed") is True and result.get("passed") is True and type(result.get("runner_return_code")) is int and result["runner_return_code"] == 0, "Successful actual CLOSED seal phase required")
+    require(index.get("created_after_raw_close") is True and index["files"]["seal.json"]["sha256"] == sha(path) and index["files"]["result.json"]["sha256"] == sha(path.parent / "result.json"), "Seal/result must join actual closed index")
+    sealed = read(path)
+    require(sealed.get("sealed") is True and sealed.get("source_phase") == str(path.parent), "Actual seal source-phase identity required")
+    return sealed["sources"]
+
+
+def tagged_dictionary(node):
+    require(type(node) is list and len(node) == 2 and node[0] == "dictionary" and type(node[1]) is list, "Actual Exact dictionary node required")
+    result = {}
+    for entry in node[1]:
+        require(type(entry) is list and len(entry) == 2 and type(entry[0]) is str and entry[0] not in result, "Exact dictionary keys must be unique strings")
+        result[entry[0]] = entry[1]
+    return result
+
+
+def scalar(node, kind):
+    require(type(node) is list and len(node) == 2 and node[0] == kind, "Actual Exact scalar tag required: " + kind)
+    value = node[1]
+    if kind == "boolean":
+        require(type(value) is bool, "Actual strict boolean required")
+    elif kind == "integer":
+        require(type(value) is str and re.fullmatch(r"0|-?[1-9][0-9]*", value) is not None and abs(int(value)) <= 9007199254740991, "Canonical exact integer text required")
+        value = int(value)
+    else:
+        require(kind == "string" and type(value) is str, "Actual exact string required")
+    return value
+
+
+def native_observation(config, out, sources, selector, raw):
+    path = out / "native-report.exact.json"
+    require(path.is_file(), "Actual component Exact report required; raw/partial files remain retained on failure")
+    save(out / "native-report-retention.json", {"path": str(path), "sha256": sha(path), "bytes": path.stat().st_size, "interpretation": "Original raw Exact envelope retained unchanged before selective control-path inspection; not a replacement native validator."})
+    envelope = read(path)
+    require(type(envelope) is dict and set(envelope) == {"api_revision", "schema_version", "value"} and envelope["api_revision"] == "exact-json-1" and type(envelope["schema_version"]) is int and envelope["schema_version"] == 1, "Actual closed Exact envelope required")
+    report = tagged_dictionary(envelope["value"])
+    require(scalar(report["schema_version"], "integer") == 1 and scalar(report["kind"], "string") == "a2-o3-declared-final-pair-component-1" and scalar(report["selector"], "string") == selector, "Actual component report identity required")
+    checks, failures = scalar(report["checks"], "integer"), scalar(report["failures"], "integer")
+    rows_node = report["rows"]
+    require(type(rows_node) is list and len(rows_node) == 2 and rows_node[0] == "array" and type(rows_node[1]) is list, "Actual Exact row array required")
+    rows = [tagged_dictionary(row) for row in rows_node[1]]
+    require(checks == len(rows) > 0 and failures == sum(scalar(row["ok"], "boolean") is False for row in rows) == 0 and all(type(scalar(row["note"], "string")) is str for row in rows), "Actual strict row/counter/failure join required")
+    require(tagged_dictionary(report["first_failure"]) == {} and scalar(report["complete"], "boolean") is True and scalar(report["success"], "boolean") is True, "Actual complete/success/no-first-failure required")
+    expected = {"res://" + name: sources[name] for name in config["native_source_names"]}
+    for field in ("source_before", "source_after"):
+        actual = {name: scalar(value, "string") for name, value in tagged_dictionary(report[field]).items()}
+        require(actual == expected, "Actual native named source map differs from seal: " + field)
+    footer = "A2-O3 declared final-pair component: %d checks, %d failures; scope_complete=true; selector=%s%s" % (checks, failures, selector, FOOTER_SCOPE)
+    require([line for line in raw.splitlines() if line.startswith("A2-O3 declared final-pair component:")] == [footer], "Actual component footer joins native rows/counts/completion")
+    observation = {"checks": checks, "failures": failures, "complete": True, "native_report_sha256": sha(path), "native_report_bytes": path.stat().st_size, "scope": "Selective actual Exact control-path/footer/source joins. Opaque original native receipts retained; no parent checkpoint/route/save or independent visual acceptance inferred."}
+    if selector == "--component-portrait":
+        portrait = tagged_dictionary(tagged_dictionary(report["receipts"])["portrait"])
+        png = out / "changed-final-pair.png"
+        require(scalar(portrait["image_path"], "string") == str(png) and png.is_file() and scalar(portrait["image_sha256"], "string") == sha(png), "Actual one original portrait path/PNG/SHA join required")
+        data = png.read_bytes()
+        require(data[:8] == b"\x89PNG\r\n\x1a\n" and data[12:16] == b"IHDR" and int.from_bytes(data[16:20], "big") == 540 and int.from_bytes(data[20:24], "big") == 1170, "Actual PNG native dimensions must be 540x1170")
+        observation["portrait"] = {"path": str(png), "sha256": sha(png), "bytes": len(data), "dimensions": [540, 1170], "actual_visual_inspection": "pending Root image inspection"}
+    return observation
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=("seal", "native"))
+    parser.add_argument("--selector", choices=("short-slow",), default="short-slow")
+    parser.add_argument("--seal", type=Path)
+    args = parser.parse_args()
+    selector = "--component-" + args.selector
+    out = HERE / (args.phase + "-" + args.selector + "-" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ") + "-" + uuid.uuid4().hex[:8])
+    out.mkdir(exist_ok=False)
+    result = {"phase": args.phase, "selector": selector, "closed": False, "passed": False, "engine_launch_attempted": False, "owned_validation_returned": False}
+    queue = {"queued": False, "acquired": False}
+    config, sealed, code = None, None, 2
+    save(out / "result.json", result)
+    print("CINDER_A2_O3_COMPONENT_OUTPUT", out, flush=True)
+    with (out / "raw.log").open("w") as log, contextlib.redirect_stdout(Tee(sys.stdout, log)), contextlib.redirect_stderr(Tee(sys.stderr, log)):
+        try:
+            require((args.phase == "seal") == (args.seal is None), "Seal takes no prior seal; native requires explicit successful closed seal")
+            config = read(HERE / "INPUTS.json")
+            current = observe(config, out, "before-queue")
+            prepared(config, current)
+            if args.phase == "seal":
+                sealed = current
+                save(out / "seal.json", {"sealed": True, "source_phase": str(out), "sources": sealed, "scope": config["scope"]})
+            else:
+                seal_path = args.seal.resolve()
+                sealed = selected_seal(seal_path)
+                require(current == sealed, "Source/UID/capsule differs from selected seal")
+                save(out / "selected-seal.json", {"path": str(seal_path), "sha256": sha(seal_path)})
+                module_spec = importlib.util.spec_from_file_location("cinder_o3_component_dev", ROOT / "scripts/dev/dev.py")
+                require(module_spec is not None and module_spec.loader is not None, "Canonical dev module required")
+                dev = importlib.util.module_from_spec(module_spec)
+                sys.modules[module_spec.name] = dev
+                old_bytecode = sys.dont_write_bytecode
+                try:
+                    sys.dont_write_bytecode = True
+                    module_spec.loader.exec_module(dev)
+                finally:
+                    sys.dont_write_bytecode = old_bytecode
+                environ = dict(os.environ)
+                environ[ENV] = str(out / "native-report.exact.json")
+                context = dev.ProjectContext(root=ROOT, environ=environ)
+                require(context.canonical_root == ROOT, "Use exact canonical integration checkout")
+                command = [str(dev.resolve_godot(context)), "--path", str(ROOT), "--log-file", str(out / "engine.log")]
+                if args.selector != "portrait": command.append("--headless")
+                else: command += ["--resolution", "540x1170"]
+                command += ["--script", "res://" + config["fixture"], "--", selector]
+                timeout = 210 if args.selector == "portrait" else 180
+                save(out / "command.json", {"argv": command, "cwd": str(ROOT), "timeout_seconds_after_lock": timeout, "environment_override": {ENV: environ[ENV]}, "Godot_executable": {"path": command[0], "sha256": sha(Path(command[0]))}, "scope": "One canonical dev direct child; timeout starts after shared queue acquisition; no import, alias mutation, foreign process/lock removal or whole-level replay."})
+                require(observe(config, out, "before-lock") == sealed, "Named source drift before queue")
+                queue.update({"queued": True, "lock_path": str(dev.shared_lock_path(ROOT))})
+                save(out / "queue.json", queue)
+                try:
+                    with dev.godot_lock(ROOT) as lock_fd:
+                        queue["acquired"] = True
+                        save(out / "queue.json", queue)
+                        require(observe(config, out, "at-lock") == sealed, "Named source drift at lock")
+                        result["engine_launch_attempted"] = True
+                        save(out / "result.json", result)
+                        returned = dev.run_validation(command, context, lock_fd, timeout, detect_godot_errors=True)
+                        result.update({"owned_validation_returned": True, "canonical_validation_return_code": returned, "return_scope": "Canonical owned wait/cleanup returned; timeout/script failures can be synthetic API codes, not independently exposed raw child exit status."})
+                        save(out / "result.json", result)
+                        log.flush()
+                        require(observe(config, out, "after-child") == sealed, "Named source drift after owned child")
+                        result["native_observation"] = native_observation(config, out, sealed, selector, (out / "raw.log").read_text())
+                        save(out / "native-observation.json", result["native_observation"])
+                        require(returned == 0, "Canonical validation must return zero")
+                finally:
+                    if queue["acquired"]: queue["lock_context_released"] = True
+            result["passed"], code = True, 0
+        except KeyboardInterrupt:
+            result["error"], code = "Interrupted; canonical API owns direct child cleanup", 130
+        except Exception as error:
+            result["error"] = str(error)
+            print("A2-O3 component wrapper failure:", error, flush=True)
+        finally:
+            if config is not None:
+                try:
+                    current_close = observe(config, out, "at-runner-close")
+                    require(sealed is None or current_close == sealed, "Named source drift at runner close")
+                except Exception as error:
+                    result["close_custody_error"], result["passed"], code = str(error), False, 2
+            log.flush()
+            diagnostics = [line for line in (out / "raw.log").read_text().splitlines() if re.search(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName", line, re.I)]
+            if diagnostics:
+                result["passed"], code = False, 2
+            result.update({"closed": True, "runner_return_code": code, "raw_diagnostic_lines": diagnostics, "diagnostic_clean": not diagnostics, "report_file_present": (out / "native-report.exact.json").is_file(), "closure_scope": "Raw/partial report/engine log/source-retention preserved on normal failures; no missing native report is invented."})
+            save(out / "result.json", result)
+            save(out / "queue.json", queue)
+            print("A2-O3 component wrapper CLOSED code=" + str(code), flush=True)
+    save(out / "index.json", {"created_after_raw_close": True, "files": {str(path.relative_to(out)): {"sha256": sha(path), "bytes": path.stat().st_size} for path in sorted(out.rglob("*")) if path.is_file()}})
+    return code
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

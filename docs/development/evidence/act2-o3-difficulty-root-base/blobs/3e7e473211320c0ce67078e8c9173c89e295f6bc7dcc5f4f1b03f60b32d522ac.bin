@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "status": "TWO_TEST_ONLY_CORRECTION_PROMOTED_NATIVE_UNEXECUTED",
+  "at": "2026-10-16T04:02:15.045728+00:00",
+  "prior_coherent14_receipt_sha256": "1d035f1769cb24da85a1394984fcca1881e207bfd69657e9220a7e3cd819b4d4",
+  "changes": [
+    {
+      "path": "tests/act2_o3_arrangement_pure.gd",
+      "draft": ".cinder/a2-o3-difficulty-20261015/validation-successor-20261016/act2_o3_arrangement_pure.gd.txt",
+      "before_sha256": "640be7851415ee542483bb9b76339477607849708d0c28bfa15530bede5506d7",
+      "sha256": "90476736f8de0850ea70ec6ee91ce50b972b3fca033ff224f391c7f95ffcb9bc",
+      "bytes": 12063,
+      "mode": 420,
+      "uid_sha256": "31b5d1a0f2e6c68fe2ecf03bd2926b4e6bce55ef0c70de994975744701b6fdf1"
+    },
+    {
+      "path": "tests/act2_o3_arrangement_shell.gd",
+      "draft": ".cinder/a2-o3-difficulty-20261015/validation-successor-20261016/act2_o3_arrangement_shell.gd.txt",
+      "before_sha256": "de6f0fbb542ef60410b8582c56d20038aca677c0784e0c8e6c2de88fe22e8a66",
+      "sha256": "657e6090ea1536d619aa35b6c2f2650977a928c457702273572cc64d4bde6586",
+      "bytes": 44576,
+      "mode": 420,
+      "uid_sha256": "4ee2ddcba38ea28da6fd6595e01f739728e5aa4b9e7cdc5da530e97d2535de58"
+    }
+  ],
+  "cause": "pure compares original newline-containing file with canonical serializer; Shell calls unavailable canonical Main getter. Assertions now compare pre/post exact decoded state plus untouched old file SHA and derive actual donor profile from snapshot. No production or original literal changes.",
+  "previous_failures": [
+    "native-pure-20261016T035916.350409Z-3124a3ef complete67/1",
+    "native-shell-20261016T040020.647730Z-7ee190f0 scriptError175; native report absent"
+  ],
+  "legacy_reuse": "native-legacy-20261016T035955.780174Z-addb9394 complete246/0 clean",
+  "import": "Original canonical import generated all3 UIDs; unchanged sidecars reused; no new import."
+}

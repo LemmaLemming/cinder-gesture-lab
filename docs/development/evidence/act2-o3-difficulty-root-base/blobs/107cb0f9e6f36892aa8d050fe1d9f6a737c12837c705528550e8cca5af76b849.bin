@@ -1,0 +1,50 @@
+{
+  "created_at": "2026-10-16T03:53:35.925851+00:00",
+  "commands": {
+    "equipment": {
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "equipment",
+        "status",
+        "--markdown"
+      ],
+      "returncode": 0,
+      "stdout_sha256": "4c60c8577f303ae2789711e566a7bb44bce5bef0c82d73145dfbd41a8d509182",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 8021,
+      "stderr_bytes": 0
+    },
+    "ability-status": {
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "ability",
+        "status",
+        "--level",
+        "A2-O3"
+      ],
+      "returncode": 0,
+      "stdout_sha256": "3c58478016f340387cdc0cb4045edbd1aa93612abdaea222bc0ae5907dfda263",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 3584,
+      "stderr_bytes": 0
+    },
+    "ability-available": {
+      "argv": [
+        "python3",
+        "scripts/dev/dev.py",
+        "ability",
+        "available",
+        "--level",
+        "A2-O3"
+      ],
+      "returncode": 0,
+      "stdout_sha256": "462d60ea008b212f8a7ef06d24007e9e3e6699f00b52cb87c83e742b47b8c337",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 3416,
+      "stderr_bytes": 0
+    }
+  },
+  "scope": "Canonical read-only status/availability queries only; no new equipment or ability allocation."
+}

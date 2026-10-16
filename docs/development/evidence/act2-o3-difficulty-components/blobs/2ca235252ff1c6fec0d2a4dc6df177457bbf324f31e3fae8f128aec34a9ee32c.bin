@@ -1,0 +1,277 @@
+extends "res://tests/acts/act2/a2_o3_focused_smoke.gd"
+## INERT DRAFT: explicit final-pair component; no parent progress/save authority.
+## Actual profile/kit/spawn precede native construction. Only final eligibility
+## is TEST context; production configure/admission/proof/view/Player stay native.
+const CanalComponentSource = preload("res://scripts/acts/act2/bleached_canal.gd")
+const PairGeometry = preload("res://scripts/combat/threat_geometry.gd")
+const COMPONENT_RUNTIME_SHA: String = "3b768398c9f975cac7a99ebfbd61455f3b86388521433775b9e7ed3c954c6c0b"
+const COMPONENT_DATA_SHA: String = "0a7e3db98651d5d636f093935493278524a33db46bcc6bccd99ab07c9d44830c"
+const COMPONENT_LIMIT: String = "TEST final-pair component refuses canonical progress and parent save/restore"
+
+class DeclaredFinalPair extends "res://scripts/acts/act2/bleached_canal.gd":
+	const TEST_SPAWN: Vector3 = Vector3(0.0,0.1,-21.8)
+	var refused_progress: Array[String] = []
+	func contract_error() -> String:
+		var base_error: String = super.contract_error()
+		if not base_error.is_empty(): return base_error
+		var marker: Marker3D = get_node_or_null(spawn_path) as Marker3D
+		if level_id != "A2-O3" or position != Vector3.ZERO or basis != Basis.IDENTITY or marker.position != TEST_SPAWN:
+			return "Exact declared final-pair TEST spawn/root required"
+		return ""
+	func _actor_stage_allowed(id: String) -> bool:
+		return id in ["final_scout","final_handler"] # TEST initial eligibility.
+	func _actor_admission_allowed(id: String) -> bool:
+		return _actor_stage_allowed(id) # Explicit component boundary, never CP proof.
+	func snapshot_state() -> Dictionary:
+		last_snapshot_error = "TEST final-pair component refuses canonical progress and parent save/restore"
+		return {}
+	func snapshot_state_for_presentation(_camera: Camera3D,_hud: GameHUD) -> Dictionary:
+		return snapshot_state()
+	func snapshot_error(_packet: Dictionary) -> String:
+		return "TEST final-pair component refuses canonical progress and parent save/restore"
+	func snapshot_error_with_player(_packet: Dictionary,_player: Dictionary) -> String:
+		return "TEST final-pair component refuses canonical progress and parent save/restore"
+	func restore_state(_packet: Dictionary) -> bool:
+		last_snapshot_error = "TEST final-pair component refuses canonical progress and parent save/restore"
+		return false
+	func _on_enter_restore_candidate(_local: Dictionary,_player: Dictionary) -> String:
+		return "TEST final-pair component refuses canonical progress and parent save/restore"
+	func request_checkpoint(_id: String,_kind: String = "encounter") -> bool:
+		refused_progress.append("checkpoint"); return false
+	func request_completion(_id: String = "complete") -> bool:
+		refused_progress.append("completion"); return false
+	func request_contact_exit(_id: String,_body: Node3D) -> bool:
+		refused_progress.append("contact"); return false
+	func declared_receipt() -> Dictionary:
+		var bindings: Dictionary = _scheduler_bindings()
+		var owners: Dictionary = {}
+		var actors: Dictionary = {}
+		for id: String in ACTOR_IDS:
+			actors[id] = {"position":_actors[id].global_position,"instance_id":str(_actors[id].get_instance_id()),"hp":_actors[id].get("hp")}
+		for id: String in bindings.owners: owners[id] = str(bindings.owners[id].get_instance_id())
+		return {"descriptor":_arrangement_descriptor.duplicate(true),"profile":_scheduler.encounter_profile(),"selected_positions":_selected_positions.duplicate(true),"actors":actors,"owner_ids":owners,"stage_index":_stage_index,"defeated_ids":_defeated_ids.duplicate(),"defeat_times":_defeat_times.duplicate(),"pending_defeats":_pending_defeats.duplicate(true),"checkpoint_contact_seen":_checkpoint_contact_seen,"checkpoint_requested":_checkpoint_requested,"checkpoint_committed":_checkpoint_is_committed(),"refused_progress":refused_progress.duplicate()}
+	func component_native_packet() -> Dictionary:
+		var bindings: Dictionary = _scheduler_bindings()
+		var actors: Dictionary = {}
+		var tools: Dictionary = {}
+		for id: String in ACTOR_IDS: actors[id] = _actors[id].call("snapshot_state")
+		for id: String in HANDLER_IDS: tools[id] = _tools[id].call("snapshot_state",bindings)
+		return {"scheduler":_scheduler.snapshot_state(bindings),"actors":actors,"exchange":_exchange.call("snapshot_state",bindings),"tools":tools,"views":_views.duplicate(true),"receipt":declared_receipt()}
+
+var _component_scene: PackedScene
+var _component_path: String = ""
+var _component_rows: Array[Dictionary] = []
+var _component_receipts: Dictionary = {}
+var _component_armed: Dictionary = {}
+var _component_tracking: Dictionary = {}
+var _component_selector: String = ""
+var _component_report_path: String = ""
+var _component_sources_before: Dictionary = {}
+var _component_ticks: int = 0
+
+func _run() -> void:
+	root.size = Vector2i(540,1170); root.content_scale_size = root.size
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	_component_report_path = OS.get_environment("CINDER_A2_O3_COMPONENT_REPORT")
+	if not _expect(args.size() == 1 and args[0] in ["--component-short-slow"],"one explicit representative short-slow Handler component selector"): _finish(); return
+	_component_selector = args[0]
+	if not _expect(_component_report_path.is_absolute_path() and not FileAccess.file_exists(_component_report_path),"Root supplies a new absolute phase report path, never a prior result"): _finish(); return
+	_component_sources_before = _component_sources()
+	if not _expect(FileAccess.get_sha256("res://scripts/acts/act2/bleached_canal.gd") == COMPONENT_RUNTIME_SHA and FileAccess.get_sha256(CanalComponentSource.ARRANGEMENT_PATH) == COMPONENT_DATA_SHA,"exact selected runtime/data cohort before component construction"): _finish(); return
+	if _component_selector == "--component-portrait" and not _expect(DisplayServer.get_name() != "headless","one brief actual graphical portrait requires native renderer"): _finish(); return
+	_probe = NativeTickProbe.new(); root.add_child(_probe)
+	_scope_complete = await _pair_case()
+	_expect(_scope_complete,"declared final-pair focused scope completes, no canonical route/save claim")
+	await _release()
+	var scene_ref: WeakRef = weakref(_component_scene) if _component_scene != null else null
+	_component_scene = null
+	await process_frame
+	_expect((scene_ref == null or scene_ref.get_ref() == null) and (_component_path.is_empty() or not ResourceLoader.has_cached(_component_path)),"private cached component scene retires after actual native cleanup")
+	_probe.queue_free(); await process_frame
+	_finish()
+
+func _pair_case() -> bool:
+	_game = MainScene.instantiate(); _game.set_script(ProfileSeedGame)
+	_game.set("test_profile_id","challenge"); root.add_child(_game)
+	_game.call("open_bench")
+	if not _expect(paused and _game.call("is_lab_level") and get_nodes_in_group("enemies").is_empty(),"initial enemy-free paused Main selects legal kit before combat constructor"): return false
+	var lab_hero: CinderPlayer = _game.get("player") as CinderPlayer
+	_loadout = {"jacket":"CLOTH-J0","pants":"CLOTH-P0","shoes":"CLOTH-S0","weapon":"WEAPON-01"}
+	if _component_selector == "--component-short-slow": _loadout = {"jacket":"CLOTH-J1","pants":"CLOTH-P2","shoes":"CLOTH-S2","weapon":"WEAPON-03"}
+	for slot: String in ["jacket","pants","shoes","weapon"]:
+		if not _expect(lab_hero.equip_item(String(_loadout[slot])),"normal paused enemy-free public initial equip " + slot): return false
+	var declared := DeclaredFinalPair.new()
+	declared.name = "TEST_CanalFinalPair"; declared.level_id = "A2-O3"
+	var marker := Marker3D.new(); marker.name = "PlayerSpawn"; marker.position = DeclaredFinalPair.TEST_SPAWN
+	declared.add_child(marker); marker.owner = declared
+	_component_scene = PackedScene.new()
+	var packed: Error = _component_scene.pack(declared); declared.free()
+	_component_path = "res://tests/acts/act2/__TEST_o3_final_pair_%d_%d.tscn" % [OS.get_process_id(),Time.get_ticks_usec()]
+	if not _expect(packed == OK and not FileAccess.file_exists(_component_path) and not ResourceLoader.has_cached(_component_path),"unique declared in-memory component, no scene-file/source mutation"): return false
+	_component_scene.take_over_path(_component_path)
+	if not _expect(ResourceLoader.exists(_component_path,"PackedScene") and ResourceLoader.get_cached_ref(_component_path) == _component_scene and _game.call("load_level_scene",_component_path),"public Main loads exact cached declared component"): return false
+	_game.call("open_bench") # No physics yield between construction and pause.
+	_level = _game.get("active_level") as CinderLevel; _hero = _game.get("player") as CinderPlayer
+	if not _expect(_level is DeclaredFinalPair and _level.contract_error().is_empty() and _clock() == 0.0 and _hero.get_world_action_clock() == 0.0 and _hero.global_position == DeclaredFinalPair.TEST_SPAWN and _hero.get_world_action_records().is_empty() and _hero.equipment.snapshot() == _loadout and _hero.hp == _hero.max_hp,"actual shared Hero receives declared spawn/kit before exactly one native configure, zero clock/action"): return false
+	_stats = _hero.stats.duplicate(true)
+	_component_receipts["constructor"] = _level.call("declared_receipt")
+	if not _integrity(): return false
+	_hero.world_action_executed.connect(func(record: Dictionary) -> void: _actions.append(record.duplicate(true)))
+	var scheduler: Node = _level.call("get_scheduler")
+	scheduler.connect("reservation_invalidated",func(id: String,reason: String) -> void: _invalidations.append({"reservation_id":id,"reason":reason,"clock_s":_clock()}))
+	_level.checkpoint_requested.connect(func(_l: String,id: String,_k: String) -> void: _checkpoints.append(id))
+	_level.completion_requested.connect(func(_l: String,id: String) -> void: _completions.append(id))
+	_level.contact_exit_requested.connect(func(_l: String,id: String) -> void: _exits.append(id))
+	_game.call("resume_lab")
+	# First post-physics barrier sees actual source admission. No approach or pose write.
+	await _step()
+	_mixed_follow = true
+	var hp_before: float = _hero.hp
+	var plan: Dictionary = await _wait_mixed_plan()
+	if plan.is_empty(): return false
+	if not _expect(plan.source == "final_handler" and plan.target == "final_handler" and plan.reservation.get("source_instance_id") == _level.call("get_tool","final_handler").get_instance_id(),"first timely native response is the actual selected Handler own armed proof, not secondary Scout attack credit"): return false
+	_component_receipts["actual_selected_plan"] = plan.duplicate(true)
+	if _component_selector == "--component-portrait" and not await _pair_portrait(plan): return false
+	if not await _follow_pair(plan): return false
+	_component_receipts["after_response"] = {"native_state":_state(),"actual_actions":_actions.duplicate(true),"observed_phases":_phases.duplicate(true),"armed_observations":_component_armed.duplicate(true),"tracking_admission":_component_tracking.duplicate(true),"scout_coverage":"secondary disposition observed only; no required neutral abort or dual-arm outcome and no secondary attack credit","overlap_observed":_mixed_seen,"invalidations":_invalidations.duplicate(true)}
+	# This representative short/slow case follows the Handler's actual proof.
+	# The secondary Scout's real disposition is observed, not prescribed.
+	if not _expect(int(_native("final_handler").cycle) >= 1 and _component_armed.has("final_handler"),"actual Handler retains its own armed ordinary opportunity"): return false
+	_record_secondary_scout()
+	if not _expect(_all_phases(String(plan.source)) and _hero.hp == hp_before and _hero.hp > 0.0 and float(_actor(String(plan.target)).get("hp")) > 0.0,"selected ordinary escape/return/full primary cadence observes all four native phases without defeat or damage"): return false
+	for action: Dictionary in _actions:
+		if not _expect(action.kind in ["dash","primary"] and action.equipment_ids == _loadout and action.resolved_stats == _stats,"every actual action uses unchanged complete legal kit/stats and ordinary controls"): return false
+	return _integrity()
+
+func _integrity() -> bool:
+	if not _live(): return _expect(false,"actual component remains live")
+	var declared: Dictionary = _level.call("declared_receipt")
+	var positions: Dictionary = {"first_scout":Vector3(-0.65,0,-3),"second_handler":Vector3(0.65,0,-12),"final_scout":Vector3(0.65,0,-23.5),"final_handler":Vector3(-0.65,0,-21.2)}
+	var binding: Dictionary = _level.call("_scheduler_bindings")
+	if not _expect(declared.profile.id == "challenge" and declared.descriptor.recipe_id == CanalComponentSource.CHALLENGE_RECIPE and declared.selected_positions == positions and binding.owners.size() == 4 and binding.owners.first_scout == _actor("first_scout") and binding.owners.final_scout == _actor("final_scout") and binding.owners.tool_second_handler == _level.call("get_tool","second_handler") and binding.owners.tool_final_handler == _level.call("get_tool","final_handler"),"one retained Challenge recipe joins all four actual original native owner bindings"): return false
+	for id: String in positions:
+		if not _expect(_actor(id).global_position == positions[id] and _actor(id).get_world_3d() == _hero.get_world_3d() and float(_actor(id).get("hp")) > 0.0 and (float(_actor(id).get("hp")) == 30.0 if id in ["first_scout","second_handler"] else true),"unchanged configured actor home/native world " + id): return false
+	for id: String in ["second_handler","final_handler"]:
+		var tool: Dictionary = _native(id)
+		if not _expect(tool.geometry == PairGeometry.lane(positions[id],positions[id]+Vector3.BACK*3.8,0.31) and tool.opening_position == positions[id],"original Handler relative +Z3.8/halfwidth.31 and low opening follow selected own slot " + id): return false
+	return _expect(declared.stage_index == 0 and declared.defeated_ids.is_empty() and declared.defeat_times.is_empty() and declared.pending_defeats.is_empty() and not declared.checkpoint_contact_seen and not declared.checkpoint_requested and not declared.checkpoint_committed and declared.refused_progress.is_empty() and _checkpoints.is_empty() and _completions.is_empty() and _exits.is_empty() and _level.current_checkpoint() == {"id":"","kind":""} and not _level.is_completed() and _level.snapshot_state().is_empty() and _level.last_snapshot_error == COMPONENT_LIMIT and int(_native("first_scout").cycle) == 0 and int(_native("second_handler").cycle) == 0,"explicit stage0/no prefix/no checkpoint/no parent snapshot authority; unchanged earlier pockets stay idle")
+
+func _step() -> void:
+	await super._step()
+	_component_ticks += 1
+	if not _live(): return
+	for id: String in ["final_scout","final_handler"]:
+		var state: Dictionary = _native(id)
+		var lease: Dictionary = _level.call("get_scheduler").call("reservation_state",state.get("reservation_id",""))
+		if id == "final_scout" and _component_tracking.is_empty() and state.get("status") == "running" and state.get("phase") == "warning" and not state.get("armed",true):
+			var own_warning: bool = not lease.is_empty() and lease.get("id") == state.reservation_id and lease.get("source_instance_id") == _actor(id).get_instance_id() and lease.get("profile_id") == "challenge" and lease.get("state") == "warning" and not lease.get("armed",true) and lease.get("adapter",{}).get("kind") == "tracking" and not lease.get("adapter",{}).get("locked",true) and state.get("proof",{}).is_empty() and state.get("presentation_witness",{}).is_empty()
+			if not _expect(own_warning,"actual living Scout first unarmed tracking warning owns its original native lease without an accepted lock proof"): _abort = true; return
+			_component_tracking = {"clock_s":_clock(),"state":state.duplicate(true),"own_lease":lease.duplicate(true),"source_instance_id_decimal":str(_actor(id).get_instance_id())}
+		if state.get("status") == "running" and lease.get("armed",false) and state.get("proof",{}).get("accepted",false):
+			var owner: Node = _actor(id) if id == "final_scout" else _level.call("get_tool",id)
+			if not _component_armed.has(id): _expect(lease.get("source_instance_id") == owner.get_instance_id() and not state.proof.get("uses_blast",true) and not state.proof.get("uses_invulnerability",true),"sampled native armed ordinary proof belongs to actual final owner " + id)
+			_component_armed[id] = {"clock_s":_clock(),"state":state.duplicate(true),"own_lease":lease.duplicate(true)}
+
+func _record_secondary_scout() -> void:
+	var state: Dictionary = _native("final_scout")
+	var current_lease: Dictionary = _level.call("get_scheduler").call("reservation_state",state.get("reservation_id",""))
+	_component_receipts["secondary_scout_disposition"] = {"coverage":"passive actual disposition only; no Scout attack/ordinary-primary credit","actual_initial_unarmed_warning":_component_tracking.duplicate(true),"actual_armed_observation_if_any":_component_armed.get("final_scout",{}).duplicate(true),"current_state":state,"current_native_lease":current_lease,"observed_phases":_phases.get("final_scout",{}).duplicate(true),"all_actual_invalidations":_invalidations.duplicate(true),"current_scout_view":_state().views.get("final_scout",{}).duplicate(true),"actor_hp":_actor("final_scout").get("hp"),"actor_visible":_actor("final_scout").is_visible_in_tree(),"inner_rejection_cause":"not inferred; original native state/reason retained if present"}
+
+func _pair_portrait(plan: Dictionary) -> bool:
+	# Exact paused real leaf state, never a parent snapshot/campaign envelope.
+	_game.call("open_bench"); _game.get("hud").call("hide_overlay")
+	var before: Dictionary = _portrait_packet()
+	var wire: PackedByteArray = var_to_bytes(before)
+	if not _expect(paused and _same_plan(plan) and not before.hero.is_empty() and not before.native.scheduler.is_empty() and not before.native.exchange.is_empty() and not before.native.tools.final_handler.is_empty(),"actual paused complete Hero/native packet and original plan precede one graphical still"): return false
+	var points: Array = _game.call("player_camera_framing_points")
+	points.append_array(_level.camera_framing_points())
+	var framing: String = _game.call("camera_framing_error",points)
+	if not _expect(framing.is_empty(),"actual current portrait Hero/held source/footprint/landing/opening union is contained: " + framing): return false
+	await RenderingServer.frame_post_draw
+	var image: Image = root.get_texture().get_image()
+	var path: String = _component_report_path.get_base_dir()+"/changed-final-pair.png"
+	if not _expect(image != null and image.get_size() == Vector2i(540,1170) and not FileAccess.file_exists(path) and image.save_png(path) == OK,"one original actual 540x1170 changed-pair still"): return false
+	if not _expect(paused and wire == var_to_bytes(_portrait_packet()) and _same_plan(plan),"draw preserves actual complete Hero/native/input/camera/HUD barrier and original native deadlines"): return false
+	_component_receipts["portrait"] = {"image_path":path,"image_sha256":FileAccess.get_sha256(path),"packet":before,"required_points":points,"camera_error":framing,"inspection":"pending human/Root image inspection; pixels alone grant no art/balance acceptance"}
+	_game.call("resume_lab")
+	return _expect(not paused and _same_plan(plan),"normal public Resume preserves original unspent native response")
+
+func _portrait_packet() -> Dictionary:
+	var camera: Camera3D = _game.get("camera") as Camera3D
+	var hud: GameHUD = _game.get("hud") as GameHUD
+	return {"hero":_hero.snapshot_state(),"native":_level.call("component_native_packet"),"input":_game.call("get_input_observation_state"),"anchor":_game.call("get_aim_anchor_normalized"),"camera_transform":{"basis":camera.global_basis,"origin":camera.global_position},"camera_size":camera.size,"viewport":[root.size.x,root.size.y],"hud_safe_rect":hud.combat_safe_rect(),"bench_visible":_game.get("bench").visible,"events":{"actions":_actions.duplicate(true),"checkpoints":_checkpoints.duplicate(),"completions":_completions.duplicate(),"exits":_exits.duplicate(),"invalidations":_invalidations.duplicate(true)}}
+
+func _component_sources() -> Dictionary:
+	var result: Dictionary = {}
+	for path: String in ["res://scripts/acts/act2/bleached_canal.gd",CanalComponentSource.ARRANGEMENT_PATH,"res://tests/acts/act2/a2_o3_focused_smoke.gd","res://scripts/game.gd","res://scripts/player.gd","res://scripts/hud.gd","res://scripts/campaign/level.gd","res://scripts/acts/act2/weybridge_scout_actor.gd","res://scripts/acts/act2/salvage_handler_actor.gd","res://scripts/acts/act2/ray_scout_exchange.gd","res://scripts/combat/threat_scheduler.gd","res://scripts/combat/lane_mechanism.gd","res://scripts/combat/threat_geometry.gd","res://scripts/combat/encounter_arrangement.gd","res://scripts/combat/difficulty.gd","res://scripts/equipment.gd","res://data/design/player_equipment.json","res://tests/acts/act2/fixtures/a2_l1_profile_seed_game.gd",get_script().resource_path]: result[path] = FileAccess.get_sha256(path)
+	return result
+
+func _expect(ok: bool,note: String) -> bool:
+	_checks += 1; _component_rows.append({"ok":ok,"note":note})
+	if not ok: _failures += 1; push_error("FAIL A2-O3 component: " + note)
+	return ok
+
+func _finish() -> void:
+	var after: Dictionary = _component_sources()
+	if not _component_sources_before.is_empty(): _expect(after == _component_sources_before,"named component source subset is byte-identical before/after execution")
+	var first_failure: Dictionary = {}
+	for row: Dictionary in _component_rows:
+		if not row.ok: first_failure = row.duplicate(); break
+	var packet: Dictionary = {"schema_version":1,"kind":"a2-o3-declared-final-pair-component-1","selector":_component_selector,"checks":_checks,"failures":_failures,"rows":_component_rows,"first_failure":first_failure,"complete":_scope_complete,"success":_scope_complete and _failures == 0,"receipts":_encode(_component_receipts),"source_before":_component_sources_before,"source_after":after,"native_ticks":_component_ticks,"limits":"TEST initial final eligibility/spawn; stage0 and genuine checkpoint=false; no prefix, parent save/restore, Shell transport, earlier kills/full route/clear/exit, all-kit/balance/FPS/mobile credit. Representative J1/P2/S2/WEAPON03 Handler response only; actual secondary Scout disposition is observed without a required neutral cancellation/dual-arm/fullattack outcome or secondary attack credit. Actual graphical pixels require separate visual inspection."}
+	if _component_report_path.is_absolute_path() and not FileAccess.file_exists(_component_report_path):
+		var file: FileAccess = FileAccess.open(_component_report_path,FileAccess.WRITE)
+		if file != null: file.store_string(Exact.stringify(packet)+"\n"); file.close()
+		else: _expect(false,"native structured report file opens")
+	print("A2-O3 declared final-pair component: %d checks, %d failures; scope_complete=%s; selector=%s; no canonical prefix/checkpoint/parent-save authority" % [_checks,_failures,str(_scope_complete),_component_selector])
+	quit(0 if _scope_complete and _failures == 0 else 1)
+
+# Existing focused driver copied verbatim except name and removal of its
+# disclosed TEST ammo write/setup row; no native proof/deadline changes.
+func _follow_pair(plan: Dictionary) -> bool:
+	# Follow the Scout's actual armed lock/reproof or the Handler's original
+	# armed warning schedule; inspect portraits only during a later idle hold.
+	var actor: Node3D = _actor(plan.target)
+	for segment: Dictionary in plan.proof.path:
+		if segment.kind not in ["escape_dash","positioning_dash","ordinary_primary"]: continue
+		for _tick: int in range(MAX_TICKS):
+			if not _live(): return false
+			if _clock()+DERIVED_EPS >= float(segment.start_s): break
+			if not await _capture_lock_during_wait(plan,float(segment.start_s)): return false
+			if _clock()+DERIVED_EPS >= float(segment.start_s): break
+			await _step()
+		if not _expect(_clock()+DERIVED_EPS >= float(segment.start_s) and _clock() <= float(segment.start_s)+TICK_S+DERIVED_EPS,"native120 sampler reaches planned " + String(segment.kind) + " within one tick"): return false
+		var same_plan: bool = _same_plan(plan)
+		if not same_plan:
+			var lost: Dictionary = _native(plan.source)
+			var retained: Dictionary = _level.call("get_scheduler").call("reservation_state",plan.reservation.id)
+			print("O3 passive plan loss: ",Exact.stringify(_encode({"clock_s":_clock(),"segment":segment,"consumer":lost,"original":plan.reservation,"retained":retained,"hero_position":_hero.global_position,"runtime_error":_state().runtime_error,"invalidations":_invalidations})))
+		if not _expect(same_plan,"same admitted native source/cycle/deadlines still owns planned action"): return false
+		var response: Dictionary = _hero.get_threat_response_state()
+		if segment.kind == "ordinary_primary":
+			if not _expect(response.stable and float(response.primary_cooldown_left_s) == 0.0 and float(response.commitment_remaining_s) == 0.0,"native primary readiness at actual response tick"): return false
+			if not _expect(float(segment.start_s) == float(plan.proof.primary_time_s) and float(segment.end_s) == float(plan.proof.response_complete_s) and float(plan.proof.response_complete_s) == float(plan.proof.primary_time_s)+float(_hero.stats.primary_cooldown),"original proof retains exact complete canonical primary cadence"): return false
+			var state: Dictionary = _native(plan.source)
+			if not _expect(state.phase == "recovery" and _clock()+float(_hero.stats.primary_cooldown) <= float(plan.reservation.recovery_until_s)-CinderThreatScheduler.TIME_MARGIN,"real primary and full actual cooldown fit retained native recovery"): return false
+			var direction: Vector3 = actor.global_position-_hero.global_position; direction.y = 0.0
+			if not _expect(direction.length() <= float(_hero.stats.primary_range)+DERIVED_EPS,"actual completed native landing reaches low ordinary mount"): return false
+			var hp: float = float(actor.get("hp"))
+			var seq: int = _sequence()
+			var hits: int = _routed_primary(direction.normalized())
+			var expected_hits: bool = hits >= 1 if _mixed_follow else hits == 1
+			if not _expect(expected_hits and float(actor.get("hp")) < hp and _sequence() == seq+1 and _actions.back().kind == "primary","public ordinary primary hits actual low mount with unmodified resources " + String(plan.target)): return false
+			var recovered: bool = false
+			for _tick: int in range(MAX_TICKS):
+				if not _live(): return false
+				response = _hero.get_threat_response_state()
+				if response.stable and float(response.primary_cooldown_left_s) == 0.0 and float(response.commitment_remaining_s) == 0.0: recovered = true; break
+				await _step()
+			if not _expect(recovered and _clock() <= float(plan.reservation.recovery_until_s),"full native ordinary primary cadence finishes inside original recovery"): return false
+		else:
+			if not _expect(response.stable and float(response.dash_cooldown_left_s) == 0.0 and float(response.commitment_remaining_s) == 0.0,"actual proof dash ready at sampled action tick"): return false
+			var direction: Vector3 = segment.to-_hero.global_position; direction.y = 0.0
+			if not await _dash(direction): return false
+	await _wait_capture()
+	if _capture and not _expect(_lock_captured.has(String(plan.source)),"actual original lock/mixed portrait exists without delaying its admitted proof: " + String(plan.source)): return false
+	return _live()
+

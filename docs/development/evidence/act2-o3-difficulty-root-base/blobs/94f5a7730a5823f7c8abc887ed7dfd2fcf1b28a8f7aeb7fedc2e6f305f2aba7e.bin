@@ -1,0 +1,167 @@
+"""Specific private A2-O3 original/three-capsule closed evidence pack. No engine/Git."""
+from pathlib import Path, PurePosixPath
+import datetime
+import hashlib
+import json
+import stat
+
+HERE = Path(__file__).resolve().parent
+BASE = HERE.parent
+ROOT = BASE.parents[1]
+PUBLIC = "docs/development/evidence/act2-o3-difficulty-root-base/"
+PHASES = [
+    "native-20261015T100020.639449Z-8784ab69",
+    "validation-current-20261016/seal-pure-20261016T035840.425985Z-bc9cd9bd",
+    "validation-current-20261016/import-pure-20261016T035855.509368Z-9ef30d0e",
+    "validation-current-20261016/native-pure-20261016T035916.350409Z-3124a3ef",
+    "validation-current-20261016/native-legacy-20261016T035955.780174Z-addb9394",
+    "validation-current-20261016/native-shell-20261016T040020.647730Z-7ee190f0",
+    "validation-successor-20261016/seal-pure-20261016T040300.451327Z-9c9049a0",
+    "validation-successor-20261016/native-pure-20261016T040308.584618Z-bac726f0",
+    "validation-successor-20261016/native-shell-20261016T040324.523038Z-c547660e",
+    "validation-successor-v3-20261016/seal-pure-20261016T040629.638280Z-b4d7fdc2",
+    "validation-successor-v3-20261016/native-shell-20261016T040638.943662Z-0f72e9ed",
+]
+FIXTURES = ["tests/act2_o3_arrangement_" + name + ".gd" for name in ("pure", "legacy", "shell")]
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def read(path):
+    return json.loads(path.read_text(), parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)))
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def regular(path):
+    require(path.is_file() and not path.is_symlink(), "Regular original file required: " + str(path))
+    return path.read_bytes()
+
+
+def encode(value):
+    return (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+
+
+def safe(name):
+    value = PurePosixPath(name)
+    require(type(name) is str and not value.is_absolute() and ".." not in value.parts and str(value) == name and name not in ("", "."), "Safe original relative path required")
+    return name
+
+
+def main():
+    selected, phase_rows, aliases = {}, [], []
+    def select(path, role):
+        name = path.relative_to(ROOT).as_posix()
+        data = regular(path)
+        meta = {"sha256": digest(data), "bytes": len(data), "mode_octal": format(stat.S_IMODE(path.stat().st_mode), "04o"), "role": role}
+        if name in selected:
+            require(selected[name][0] == data, "Conflicting selected bytes")
+        else:
+            selected[name] = (data, meta)
+        return name
+    for phase_name in PHASES:
+        phase = BASE / phase_name
+        result = read(phase / "result.json")
+        require(result.get("closed") is True and type(result.get("passed")) is bool and type(result.get("runner_return_code")) is int, "Actual CLOSED recorded phase required: " + phase_name)
+        index = read(phase / "index.json")
+        require(index.get("created_after_raw_log_close") is True or (index.get("after_closed") is True and index.get("after_raw_log_close") is True), "Original closed/raw-close index required: " + phase_name)
+        require(type(index.get("files")) is dict, "Actual original indexed files required")
+        physical = {path.relative_to(phase).as_posix() for path in phase.rglob("*") if path.is_file()}
+        require(physical == set(index["files"]) | {"index.json"}, "Closed phase contains unindexed/missing artifacts: " + phase_name)
+        for name, expected in index["files"].items():
+            data = regular(phase / safe(name))
+            require(digest(data) == expected["sha256"] and len(data) == expected["bytes"], "Original indexed artifact differs: " + phase_name + "/" + name)
+        members = {}
+        for name in sorted(physical):
+            original = select(phase / name, "actual CLOSED phase artifact")
+            members[name] = original
+        # Original maps remain byte-identical. These aliases only join their
+        # original source path to the original retained bytes in the new CAS.
+        retention_files = sorted(phase.glob("retained-*.json"))
+        if (phase / "source-retention.json").is_file(): retention_files += [phase / "source-retention.json"]
+        for retention in retention_files:
+            packet = read(retention)
+            files = packet.get("files", packet)
+            require(type(files) is dict, "Original retention map requires dictionary")
+            for source_name, row in files.items():
+                require(type(row) is dict, "Original retention row required")
+                if row.get("present") is False:
+                    aliases.append({"phase": phase_name, "original_retention_map": retention.relative_to(ROOT).as_posix(), "original_source_relative_path": source_name, "present": False})
+                    continue
+                blob = row.get("blob")
+                require(type(blob) is str and safe(blob).startswith("source-blobs/") and blob in members, "Actual original source blob required")
+                original_blob = members[blob]
+                data, meta = selected[original_blob]
+                require(row.get("sha256") == meta["sha256"] and ("bytes" not in row or row["bytes"] == meta["bytes"]), "Original source retention hash/size join differs")
+                aliases.append({"phase": phase_name, "original_retention_map": retention.relative_to(ROOT).as_posix(), "original_source_relative_path": source_name, "original_retained_blob_relative_path": original_blob, "present": True, "sha256": meta["sha256"], "bytes": meta["bytes"], "repository_storage_path": PUBLIC + "blobs/" + meta["sha256"] + ".bin"})
+        report = read(phase / "native-report.json") if (phase / "native-report.json").is_file() else None
+        summary = {"phase": phase_name, "original_directory_relative_path": phase.relative_to(ROOT).as_posix(), "original_index_relative_path": members["index.json"], "original_result_relative_path": members["result.json"], "recorded_closed": result["closed"], "recorded_passed": result["passed"], "recorded_runner_return_code": result["runner_return_code"], "recorded_dev_return_code": result.get("dev_return_code"), "recorded_phase": result.get("phase"), "actual_native_report_present": report is not None, "actual_command_present": (phase / "command.json").is_file(), "original_file_count_including_index": len(members)}
+        if report is not None:
+            summary["actual_report_control_fields"] = {key: report.get(key) for key in ("kind", "checks", "failures", "complete", "success", "first_failure")}
+            summary["original_report_relative_path"] = members["native-report.json"]
+        phase_rows.append(summary)
+    # Fixed preparation/review/selection/query inputs; no component tree or
+    # future phase is scanned, copied, inferred closed or assigned test credit.
+    for path in sorted(BASE.iterdir()):
+        if path.is_file(): select(path, "current private producer/candidate preparation record; historical status retained")
+    for name in ("candidate", "current-queries", "current-readiness-20261016", "root-promotion"):
+        for path in sorted((BASE / name).rglob("*")):
+            if path.is_file(): select(path, "exact private source/review/promotion/query snapshot; not historical repin")
+    for name in ("validation-current-20261016", "validation-successor-20261016", "validation-successor-v3-20261016"):
+        for path in sorted((BASE / name).iterdir()):
+            if path.is_file(): select(path, "exact validation capsule/config/correction snapshot; original phase maps retain actual execution bytes")
+    for name in FIXTURES:
+        select(ROOT / name, "existing public fixture current source reference, original resource path unchanged")
+        select(ROOT / (name + ".uid"), "existing genuine public fixture UID reference")
+    for path in sorted((ROOT / "tests/acts/act2/fixtures/a2_o3_difficulty_legacy").iterdir()):
+        if path.is_file(): select(path, "existing unchanged original literal/provenance reference")
+    for name in ("docs/development/ACT2_O3_ACCEPTANCE.md", "docs/acts/act2/evidence/A2-O3/completed-review-input-20261013/completed-order-1.exact.json", "docs/acts/act2/evidence/A2-O3/portrait-native-first/images/metadata.exact.json"):
+        select(ROOT / name, "named existing acceptance/old-clear reference; original limitations retained, no historical native repin")
+    select(Path(__file__).resolve(), "specific archive preparation helper; no native execution")
+    output = HERE / ("pack-base-" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ"))
+    output.mkdir(exist_ok=False)
+    pack = output / "pack"
+    files, originals, unique = {}, {}, {}
+    def put(name, data):
+        require(safe(name).startswith(PUBLIC), "Fixed evidence prefix required")
+        path = pack / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if path.exists(): require(regular(path) == data, "CAS or prepared destination conflict")
+        else:
+            with path.open("xb") as stream: stream.write(data)
+        path.chmod(0o644)
+        files[name] = {"sha256": digest(data), "bytes": len(data), "mode_octal": "0644"}
+    put(PUBLIC + ".gdignore", b"")
+    for original, (data, meta) in selected.items():
+        destination = PUBLIC + "blobs/" + meta["sha256"] + ".bin"
+        put(destination, data)
+        unique[meta["sha256"]] = {"repository_storage_path": destination, "bytes": meta["bytes"]}
+        originals[original] = {**meta, "repository_storage_path": destination}
+    put(PUBLIC + "original-paths.json", encode({"schema_version": 1, "original_checkout_absolute_path": str(ROOT), "scope": "Every original checkout-relative path/hash/size/mode maps to byte-identical CAS storage. Original indexes/raw/native/source maps are opaque unchanged originals; their original physical layouts are not asserted to equal the new archive tree. Original source paths are never rewritten.", "files": originals}))
+    put(PUBLIC + "source-observation-aliases.json", encode({"schema_version": 1, "scope": "Derived relocation joins only, never rewriting original observation/retention maps or repinning a historical execution to today's source.", "aliases": aliases}))
+    fixture_rows = {name: originals[name] for name in FIXTURES}
+    put(PUBLIC + "CANONICAL_FIXTURE_REFERENCES.json", encode({"schema_version": 1, "scope": "Existing three public source resource paths stay unchanged. Current bytes are separately labelled references; original phase source maps govern each actual execution.", "fixtures": fixture_rows}))
+    index = {"schema_version": 1, "kind": "a2-o3-original-producer-and-three-validation-capsules-portable-base-1", "actual_closed_phases": len(phase_rows), "phases": phase_rows, "original_file_paths": len(originals), "unique_CAS_blobs": len(unique), "source_observation_aliases": len(aliases), "original_path_map": PUBLIC + "original-paths.json", "source_alias_map": PUBLIC + "source-observation-aliases.json", "three_existing_public_fixtures": FIXTURES, "component_phases_included": False, "original_failures": ["original pure67/1 complete=true; newline comparison", "original Shell script error, absent native report", "successor Shell68/1 incomplete; wrong ContinueStory route"], "retained_final_focused_counts": {"original_producer": [74, 0], "pure": [67, 0], "legacy": [246, 0], "whole_Shell": [152, 0]}, "scope": "Actual already-CLOSED original producer and all ten phases across three validation capsules only. Preserve failed/incomplete/no-report attempts and each exact source/UID scope. Host seals/import/packing are not gameplay. No component/portrait/route/clear/all-kit/performance/mobile/acceptance/publication credit."}
+    put(PUBLIC + "index.json", encode(index))
+    put(PUBLIC + "README.md", b"# A2-O3 original and focused validation evidence\n\nThis portable base retains the original74/0 old-source producer and all actual CLOSED phases from three validation capsules, including failed67/1, the script-error/no-report Shell attempt and incomplete68/1. Final focused67/0 pure,246/0 legacy and152/0 whole-Shell remain independent scopes.\n\nEvery original index/raw/log/report/partial/source/config/correction byte is preserved in one digest CAS. original-paths.json maps original checkout-relative path/hash/size/mode to exact storage. source-observation-aliases.json provides only derived relocation joins; original source maps and historical preparation statuses remain unchanged. Existing three public fixture resource paths are references, never rewritten.\n\nComponent and graphical phases are deliberately excluded from this first immutable pack. Later closed supplemental evidence must remain separate. Packing is no new native result, historical repin, acceptance or public upload. Reconstruct original layouts with the original-path map when verifying the unchanged old indexes.\n")
+    manifest_path = PUBLIC + "PUBLIC_COPY_MANIFEST.json"
+    put(manifest_path, encode({"schema_version": 1, "status": "PRIVATE_EXACT_WHITELIST_READY_FOR_ROOT_REVIEW_ONLY", "file_count_excluding_this_manifest": len(files), "file_count_including_this_manifest": len(files) + 1, "bytes_excluding_this_manifest": sum(row["bytes"] for row in files.values()), "self_repository_path": manifest_path, "files": dict(files)}))
+    for name, meta in files.items():
+        actual = regular(pack / name)
+        require(digest(actual) == meta["sha256"] and len(actual) == meta["bytes"], "Prepared public-relative copy differs")
+    for original, (data, meta) in selected.items():
+        require(regular(ROOT / original) == data, "Original input changed during packing: " + original)
+    (output / "PUBLICATION_PATHS.nul").write_bytes(b"".join(name.encode() + b"\0" for name in sorted(files)))
+    (output / "PUBLICATION_PATHS.txt").write_text("\n".join(sorted(files)) + "\n")
+    closure = {"schema_version": 1, "status": "EXACT_PRIVATE_BASE_PACK_VERIFIED", "actual_closed_phases": len(phase_rows), "original_paths": len(originals), "unique_CAS_blobs": len(unique), "source_aliases": len(aliases), "publication_files": len(files), "publication_bytes": sum(row["bytes"] for row in files.values()), "index_sha256": files[PUBLIC + "index.json"]["sha256"], "original_paths_sha256": files[PUBLIC + "original-paths.json"]["sha256"], "manifest_sha256": files[manifest_path]["sha256"], "no_engine_no_Git_no_public_copy": True, "component_phases_included": False}
+    (output / "PREPARATION_CLOSURE.json").write_bytes(encode(closure))
+    print(json.dumps({"private_output": str(output), **closure}, indent=2))
+
+
+if __name__ == "__main__":
+    main()
