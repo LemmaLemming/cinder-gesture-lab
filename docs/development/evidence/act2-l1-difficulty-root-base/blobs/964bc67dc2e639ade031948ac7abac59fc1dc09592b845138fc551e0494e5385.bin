@@ -1,0 +1,303 @@
+{
+  "schema_version": 1,
+  "status": "BOUNDED_READ_ONLY_IMPORT_PURE_REVIEW_PASS_NO_MATERIAL_FINDING",
+  "reviewed_at": "2026-10-16T05:22:28.135340+00:00",
+  "material_findings": [],
+  "closed_phases": {
+    "import": {
+      "phase": ".cinder/a2-l1-difficulty-20261016/validation-prepare/run-import-pure-20261016T051717.196630Z-77a877b5",
+      "result_sha256": "b3cb991cd6bc9de5555c3ac6f026a80a0a7e52d8f0206afcad8c2fc69f41e8c2",
+      "evidence_index_sha256": "9890282a2b833a2d3f76bd2c2c4d677d06a914d9c4dbce997c320cb03ab54187",
+      "closed_index_files_verified": 140,
+      "queue": {
+        "queued": true,
+        "acquired": true,
+        "lock_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/locks/godot.lock",
+        "lock_context_released": true
+      },
+      "command": {
+        "argv": [
+          "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+          "--path",
+          "/Users/howardchen/Documents/ChatGPT/video game idea",
+          "--log-file",
+          "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-prepare/run-import-pure-20261016T051717.196630Z-77a877b5/engine.log",
+          "--headless",
+          "--editor",
+          "--import"
+        ],
+        "timeout_after_lock_seconds": 180,
+        "environment_override": {},
+        "scope": "One canonical owned child; no parser/default suite/fallback or arbitrary user argv"
+      },
+      "selected_seal": {
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-prepare/run-seal-pure-20261016T051708.127836Z-f2a23caf/seal.json",
+        "sha256": "4637963179a5397d92446269324e0ae2589a43c78794e2d3fc235dbc62686483"
+      },
+      "raw_sha256": "fcf3777d5199f03a73208f825cd3c209a046ce4dac736d4847626978ef7284d6",
+      "engine_sha256": "436588800295d1dd7fa4f91b18fead1a40e871213805c24462edc0465af3620d",
+      "raw_and_engine_diagnostics": [],
+      "source_maps": {
+        "sources-before-queue": {
+          "sha256": "175b8ea5bd1807ed3ef2aec8627a01ebbbef97c5ab15c8ad967cc1fea444b46a",
+          "observed_names": 125,
+          "present_names": 118
+        },
+        "sources-at-lock": {
+          "sha256": "175b8ea5bd1807ed3ef2aec8627a01ebbbef97c5ab15c8ad967cc1fea444b46a",
+          "observed_names": 125,
+          "present_names": 118
+        },
+        "sources-after-child": {
+          "sha256": "295e4846600013621ce25761700050aaf3d6b8cbae863a2c6e174584476e80e6",
+          "observed_names": 125,
+          "present_names": 125
+        },
+        "sources-at-runner-close": {
+          "sha256": "295e4846600013621ce25761700050aaf3d6b8cbae863a2c6e174584476e80e6",
+          "observed_names": 125,
+          "present_names": 125
+        }
+      },
+      "terminal_scope": "Canonical API returned0 after owned child wait; no independently exposed OS terminal code is fabricated."
+    },
+    "pure": {
+      "phase": ".cinder/a2-l1-difficulty-20261016/validation-prepare/run-native-pure-20261016T051848.301939Z-07d812b7",
+      "result_sha256": "0b98328a9aa3997a445256d2f73da30f5e1e5b315a41cd0e32ce2648229dfb22",
+      "evidence_index_sha256": "76d73bd6bb1e3be1831d42e697af5f3d349e0f49f5932d1ea6ca61514ee98766",
+      "closed_index_files_verified": 142,
+      "queue": {
+        "queued": true,
+        "acquired": true,
+        "lock_path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/locks/godot.lock",
+        "lock_context_released": true
+      },
+      "command": {
+        "argv": [
+          "/Users/howardchen/Documents/ChatGPT/video game idea/.tools/Godot.app/Contents/MacOS/Godot",
+          "--path",
+          "/Users/howardchen/Documents/ChatGPT/video game idea",
+          "--log-file",
+          "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-prepare/run-native-pure-20261016T051848.301939Z-07d812b7/engine.log",
+          "--headless",
+          "--script",
+          "res://tests/act2_l1_arrangement_pure.gd"
+        ],
+        "timeout_after_lock_seconds": 180,
+        "environment_override": {
+          "CINDER_A2_L1_ARRANGEMENT_PURE_REPORT": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-prepare/run-native-pure-20261016T051848.301939Z-07d812b7/native-report.json"
+        },
+        "scope": "One canonical owned child; no parser/default suite/fallback or arbitrary user argv"
+      },
+      "selected_seal": {
+        "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/validation-prepare/run-import-pure-20261016T051717.196630Z-77a877b5/post-import-seal.json",
+        "sha256": "16b300a2a54e252ea31516fb6dbeb2eb31d977e0649d60a1616e4d169246b276"
+      },
+      "raw_sha256": "f20fc4a3cac5b21652f449530c411641b9f9071775475d5e6d65f831c1491126",
+      "engine_sha256": "090b503b944503fbc86e17cb1279e3b3998febdc64bda90622b7a0e20c3a68f4",
+      "raw_and_engine_diagnostics": [],
+      "source_maps": {
+        "sources-before-queue": {
+          "sha256": "295e4846600013621ce25761700050aaf3d6b8cbae863a2c6e174584476e80e6",
+          "observed_names": 125,
+          "present_names": 125
+        },
+        "sources-at-lock": {
+          "sha256": "295e4846600013621ce25761700050aaf3d6b8cbae863a2c6e174584476e80e6",
+          "observed_names": 125,
+          "present_names": 125
+        },
+        "sources-after-child": {
+          "sha256": "295e4846600013621ce25761700050aaf3d6b8cbae863a2c6e174584476e80e6",
+          "observed_names": 125,
+          "present_names": 125
+        },
+        "sources-at-runner-close": {
+          "sha256": "295e4846600013621ce25761700050aaf3d6b8cbae863a2c6e174584476e80e6",
+          "observed_names": 125,
+          "present_names": 125
+        }
+      },
+      "terminal_scope": "Canonical API returned0 after owned child wait; no independently exposed OS terminal code is fabricated."
+    }
+  },
+  "closed_phase_index_file_joins_total": 282,
+  "source_retention_map_rows_verified": 986,
+  "fixed_named_scope": {
+    "expected_paths": 120,
+    "capsule_self_paths_additional": 5,
+    "total_observed_names": 125,
+    "before_present": 118,
+    "before_absent": 7,
+    "after_present": 125,
+    "previously_present_names_unchanged": 118,
+    "expected_existing113_plus_capsule5": true,
+    "scope": "Original expected120paths include7explicitUIDabsences; not120previouslypresent sources. Only7allowedUIDsidecars change. No whole resource/global UID census."
+  },
+  "exact_UID_additions": [
+    {
+      "path": "tests/act2_l1_arrangement_component.gd.uid",
+      "before": null,
+      "after_sha256": "0bf846e972ffbae5f1f3065cea8f6228f39920b3330e28da5032acfa2f829f0c",
+      "actual_retained_UID_text": "uid://cn8bscorbkhw1",
+      "bytes": 20,
+      "current_physical_bytes_join": true,
+      "scope": "Newly observed in actual sole canonical import; no manual UID invented by reviewer. Unique within explicitly observed named UID subset only."
+    },
+    {
+      "path": "tests/act2_l1_arrangement_legacy.gd.uid",
+      "before": null,
+      "after_sha256": "27c79232848d5bdc436a802b504e5b6f6e9aa80a7f3d0b86ccec06ff629c3541",
+      "actual_retained_UID_text": "uid://mxk2dbgc3nck",
+      "bytes": 19,
+      "current_physical_bytes_join": true,
+      "scope": "Newly observed in actual sole canonical import; no manual UID invented by reviewer. Unique within explicitly observed named UID subset only."
+    },
+    {
+      "path": "tests/act2_l1_arrangement_pure.gd.uid",
+      "before": null,
+      "after_sha256": "d18f7c4d2c8b026d0d1eb9dcac30e795e75b8f67142335de41e5339e643c728b",
+      "actual_retained_UID_text": "uid://cyu68yp4u7kb2",
+      "bytes": 20,
+      "current_physical_bytes_join": true,
+      "scope": "Newly observed in actual sole canonical import; no manual UID invented by reviewer. Unique within explicitly observed named UID subset only."
+    },
+    {
+      "path": "tests/act2_l1_arrangement_shell.gd.uid",
+      "before": null,
+      "after_sha256": "2531055617b3e56afb710ce96aa098e13d7e145dcde2e96bab57acf6c1be1ab2",
+      "actual_retained_UID_text": "uid://jvpqjvh0poh7",
+      "bytes": 19,
+      "current_physical_bytes_join": true,
+      "scope": "Newly observed in actual sole canonical import; no manual UID invented by reviewer. Unique within explicitly observed named UID subset only."
+    },
+    {
+      "path": "tests/acts/act2/fixtures/a2_l1_arrangement_reference/declared_common_current.gd.uid",
+      "before": null,
+      "after_sha256": "89e8e6a13f47190d9c4d8b5051f89a5f0841af68141b6c26dd01763a418c6ce9",
+      "actual_retained_UID_text": "uid://dbhc2o2lw8peb",
+      "bytes": 20,
+      "current_physical_bytes_join": true,
+      "scope": "Newly observed in actual sole canonical import; no manual UID invented by reviewer. Unique within explicitly observed named UID subset only."
+    },
+    {
+      "path": "tests/acts/act2/fixtures/a2_l1_arrangement_reference/declared_common_old.gd.uid",
+      "before": null,
+      "after_sha256": "7ba80f7106c3da799bd8dc0cce7f59caf5c9cccc801d8883c43789c234ff2075",
+      "actual_retained_UID_text": "uid://b1m2fgs0bdy8l",
+      "bytes": 20,
+      "current_physical_bytes_join": true,
+      "scope": "Newly observed in actual sole canonical import; no manual UID invented by reviewer. Unique within explicitly observed named UID subset only."
+    },
+    {
+      "path": "tests/acts/act2/fixtures/a2_l1_arrangement_reference/horsell_common_old.gd.uid",
+      "before": null,
+      "after_sha256": "345bff78c296208acb538480d0f58e5a87411af3ace109fc190dce12a3149666",
+      "actual_retained_UID_text": "uid://kmsjv64lus4q",
+      "bytes": 19,
+      "current_physical_bytes_join": true,
+      "scope": "Newly observed in actual sole canonical import; no manual UID invented by reviewer. Unique within explicitly observed named UID subset only."
+    }
+  ],
+  "named_UID_texts_checked_unique_count": 40,
+  "postimport_seal_sha256": "16b300a2a54e252ea31516fb6dbeb2eb31d977e0649d60a1616e4d169246b276",
+  "actual_pure": {
+    "report_sha256": "4de9adb10b6d442884ed6b164a708934eeed4754f0b16f24986983f90ad79801",
+    "report_bytes": 15326,
+    "checks": 92,
+    "actual_boolean_rows": 92,
+    "failures": 0,
+    "first_failure": {},
+    "complete": true,
+    "success": true,
+    "native_source_subset_count": 19,
+    "actual_test_source_sha256": "25c89e15cb792c12796a157ed61812fc599a41c3106280f1831c71f20bb99180",
+    "actual_runtime_source_sha256": "5f58885685d5b5727d286c57c45794bef0afc810424214636155283f60f43ad1",
+    "key_actual_rows": [
+      {
+        "check": 7,
+        "label": "new current mapping cannot rewrite retained Challenge construction",
+        "ok": true
+      },
+      {
+        "check": 10,
+        "label": "old17 constructor preserves original Scheduler equal int2/float2.0 profile compatibility; no tag normalization",
+        "ok": true
+      },
+      {
+        "check": 11,
+        "label": "numeric compatibility copies and genuine original wire remain independently bit/tag exact",
+        "ok": true
+      },
+      {
+        "check": 25,
+        "label": "material outside-tolerance canonical saved profile tamper refuses",
+        "ok": true
+      },
+      {
+        "check": 42,
+        "label": "material outside-tolerance canonical saved profile tamper refuses",
+        "ok": true
+      },
+      {
+        "check": 59,
+        "label": "material outside-tolerance canonical saved profile tamper refuses",
+        "ok": true
+      },
+      {
+        "check": 76,
+        "label": "material outside-tolerance canonical saved profile tamper refuses",
+        "ok": true
+      },
+      {
+        "check": 86,
+        "label": "L2 retains its own closed15/18 envelope grammar, not Horsell17/20",
+        "ok": true
+      },
+      {
+        "check": 87,
+        "label": "actual L2 hook owns its refusal and never invokes L1 construction",
+        "ok": true
+      },
+      {
+        "check": 88,
+        "label": "nonL1 inherited restore delegates to actual dynamic child entry without L1 metadata: A2-L3",
+        "ok": true
+      },
+      {
+        "check": 89,
+        "label": "nonL1 inherited restore delegates to actual dynamic child entry without L1 metadata: A2-L4",
+        "ok": true
+      },
+      {
+        "check": 90,
+        "label": "nonL1 delegation does not reinterpret or mutate child sentinel",
+        "ok": true
+      },
+      {
+        "check": 91,
+        "label": "art-preview remains outside new real-L1 construction opt-in",
+        "ok": true
+      },
+      {
+        "check": 92,
+        "label": "all explicit pure sources/literal inputs remain unchanged",
+        "ok": true
+      }
+    ],
+    "positive_compatibility": "Actual row10calls both selectedconstructor receipts on distinct int2/float2.0 synthetic old17metadata, usesoriginalCodec.same_values and requires differing Exacttags; row11preserves bothcopies and originalgenuinewire. Actual material0.01profile tamper refusal passes. No normalized original input or fake native packet.",
+    "profiles": "Actual pure metadata checks cover freshAssisted/Standardcanonical and Challengecommon-Xexchange, allprofiles current20metadata, exactold17dispatch/retainedmapping, malformed/type/tamper/copy/no-inputmutation.",
+    "child_scope": "L2syntheticclosed15/18envelopegrammar/ownhookrefusal; actualL3/L4inheritance-chain probes overrideentry in out-of-tree TESTsubclasses and assertdynamicdelegation/noL1injection. These are not live childworld/completechildsave/geometry evidence.",
+    "no_synthetic_clear": "No fabricated completed state/campaignprefix or commoncomponent savedhistory tested here."
+  },
+  "original_source_draft_corrections_retained": "Earlier Exact-profile narrowing and1e-12refusalexpectation were corrected before these jobs; they are source-only unexecuted draft findings, not failed native runs. Original private drafts/readiness/patches remain separate.",
+  "limitations": [
+    "Actual Godot executes pure metadata/source-control checks, not gameplay/commonadmission/ordinaryhit/fullnativelegacyrestore.",
+    "No standaloneparser phase credited; import+purecompile are actual phases only.",
+    "Genuine fourpairfullnativelegacyrestore/Shell/common/portrait remains separate Rootpipeline; queuedlegacy process was not inspected/polled.",
+    "Native19URI report subset joins host125observations; neither is a complete dependency/globalUIDclosure.",
+    "NewUIDprovenance is bounded absence\u2192presence during sole canonicalimport with retainedgenuinebytes; uniqueness checked onlynamedUIDsubset.",
+    "Source checks use closed retainedCAS, not a blanketcurrentRootclaim or ownershipcensus.",
+    "No engine/retest/live/Git/mail/run/workeraction performed by reviewer."
+  ]
+}

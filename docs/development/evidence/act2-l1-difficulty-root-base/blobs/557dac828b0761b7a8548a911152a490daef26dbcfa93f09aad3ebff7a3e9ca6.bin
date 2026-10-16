@@ -1,0 +1,49 @@
+{
+  "candidate_path": ".cinder/a2-l1-difficulty-20261016/candidate-prepare/horsell_common.gd.txt",
+  "candidate_sha256": "64837e307390ce3735b1042d494dcfdc1cc1c1e89cba435b240eb14baa31208a",
+  "recipe_sha256": "919de84be9a74aaab6668e2fec1fd55ee45a3a55af4d5090aff7f2c6ca08938e",
+  "pure_entrypoints": [
+    "Parent._l1_arrangement_definition_error(definition)",
+    "Parent._l1_arrangement_layout(descriptor,definition)",
+    "Parent._l1_arrangement_constructor(local,definition)",
+    "Child2._l2_local_envelope_error(local)"
+  ],
+  "candidate_result_keys": [
+    "error",
+    "descriptor",
+    "positions",
+    "profile_id",
+    "legacy (constructor only)"
+  ],
+  "native_entrypoints": [
+    "CinderLevel.enter_restore_candidate(Hero,fx,Main,wholeLevel,wholePlayer)",
+    "Hero.snapshot_error/restore_state",
+    "Level.snapshot_error_with_player/restore_state/snapshot_state",
+    "Store.payload_validator/read_payload/write_payload",
+    "Main.open_bench/resume_lab",
+    "Level.exit_level"
+  ],
+  "future_test_paths": [
+    "tests/act2_l1_arrangement_pure.gd",
+    "tests/act2_l1_arrangement_legacy.gd"
+  ],
+  "future_fixture_directory": "tests/acts/act2/fixtures/a2_l1_difficulty_legacy/",
+  "report_env_and_footer": {
+    "pure": [
+      "CINDER_A2_L1_ARRANGEMENT_PURE_REPORT",
+      "Horsell arrangement pure: N checks/F failures; complete=BOOL"
+    ],
+    "legacy": [
+      "CINDER_A2_L1_ARRANGEMENT_LEGACY_REPORT",
+      "A2-L1 arrangement legacy: N checks/F failures; complete=BOOL; units=4"
+    ]
+  },
+  "scope": "Both private drafts unparsed/unexecuted. Candidate remains unchanged. Fixture files exact copies only; no old input mutated. Only2of4planned new leaves provided now; MAIN Shell/common-native/portrait separate later.",
+  "Root_selected_runtime_for_validation": {
+    "path": "scripts/acts/act2/horsell_common.gd",
+    "sha256": "5f58885685d5b5727d286c57c45794bef0afc810424214636155283f60f43ad1",
+    "status": "Root promoted successor for validation only, not accepted",
+    "change": "Original Scheduler Codec.same_values profile comparison restored; no input/tag normalization. Original private64837candidate remains preserved."
+  },
+  "positive_compatibility_control": "Synthetic pure-only old17 local copies contain budget int2 versus float2.0; both constructor receipts must accept under original nativeprofile Codec.same_values semantics while preserving distinct Exact tags. Never restore/mutate original4genuine wires."
+}

@@ -1,0 +1,235 @@
+"""Private A2-L1 fixed named seal/import/one-leaf validation; Root execution only."""
+from pathlib import Path
+import argparse
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import json
+import os
+import re
+import sys
+import uuid
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+ENV = {name: "CINDER_A2_L1_ARRANGEMENT_" + name.upper() + "_REPORT" for name in ("pure", "legacy", "shell", "pair")}
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def read(path):
+    return json.loads(path.read_text(), parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)))
+
+
+def save(path, value):
+    temporary = path.with_name(path.name + ".tmp")
+    with temporary.open("xb") as stream:
+        stream.write((json.dumps(value, indent=2, allow_nan=False) + "\n").encode())
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, path)
+
+
+class Tee:
+    def __init__(self, first, second):
+        self.first, self.second = first, second
+    def write(self, value):
+        self.second.write(value)
+        return self.first.write(value)
+    def flush(self):
+        self.first.flush()
+        self.second.flush()
+
+
+def snapshot(spec, out, label):
+    observations, retained = {}, {}
+    blobs = out / "source-blobs"
+    blobs.mkdir(exist_ok=True)
+    for name in sorted(set(spec["expected"]) | set(spec["self_files"])):
+        source = ROOT / name
+        data = source.read_bytes() if source.is_file() else None
+        digest = hashlib.sha256(data).hexdigest() if data is not None else None
+        observations[name] = digest
+        if data is not None:
+            target = blobs / (digest + ".bin")
+            if not target.exists():
+                with target.open("xb") as stream:
+                    stream.write(data)
+            require(sha(target) == digest, "Retained source differs: " + name)
+            retained[name] = {"sha256": digest, "bytes": len(data), "blob": str(target.relative_to(out))}
+    save(out / (label + ".json"), observations)
+    save(out / (label + "-retention.json"), retained)
+    return observations
+
+
+def prepared(spec, names):
+    allowed = set(spec["allowed_initially_absent_uids"])
+    require(all(name.endswith(".gd.uid") for name in allowed), "Only explicit genuine new script sidecars may be absent")
+    for name, pinned in spec["expected"].items():
+        require((pinned is None and name in allowed) or names.get(name) == pinned, "Fixed reviewed source differs: " + name)
+    require(all(value is not None or name in allowed for name, value in names.items()), "Only declared new UIDs may be absent")
+    for name, pinned in read(HERE / "READINESS.json")["frozen_files"].items():
+        require(names.get(name) == pinned, "Frozen capsule differs: " + name)
+    for receipt in [spec["promotion"], *spec["additional_receipts"]]:
+        require(sha(ROOT / receipt["path"]) == receipt["sha256"], "Exact Root promotion/selection receipt required")
+
+
+def previous_seal(path):
+    require(path.name in ("seal.json", "post-import-seal.json") and path.parent.parent == HERE, "Explicit original seal from this capsule required")
+    result, index = read(path.parent / "result.json"), read(path.parent / "evidence-index.json")
+    require(result.get("closed") is True and result.get("passed") is True and type(result.get("runner_return_code")) is int and result["runner_return_code"] == 0, "Seal phase must close successfully")
+    require(index.get("created_after_raw_close") is True and index["files"][path.name]["sha256"] == sha(path) and index["files"]["result.json"]["sha256"] == sha(path.parent / "result.json"), "Seal/result must join original closed index")
+    seal = read(path)
+    require(seal.get("sealed") is True and seal.get("source_phase") == str(path.parent), "Actual seal identity required")
+    return seal["names"]
+
+
+def observe(out, raw, leaf, contract, names):
+    native = out / "native-report.json"
+    require(native.is_file(), "Actual native report required; partial absence is not success")
+    report = read(native)
+    require(type(report.get("schema_version")) is int and report["schema_version"] == 1 and report.get("kind") == contract["kind"], "Actual report kind/schema differs")
+    rows = report.get("rows")
+    require(type(rows) is list and bool(rows) and type(report.get("checks")) is int and report["checks"] == len(rows), "Actual report row/counter join required")
+    require(all(type(row) is dict and type(row.get("check")) is int and row["check"] == number and row.get("ok") is True for number, row in enumerate(rows, 1)), "Actual consecutive passing native rows required")
+    require(type(report.get("failures")) is int and report["failures"] == 0 and report.get("first_failure") == {} and report.get("complete") is True and report.get("success") is True, "Actual complete/success/failure join differs")
+    expected = {"res://" + name: names[name] for name in contract["native_source_names"]}
+    require(report.get("source_before") == report.get("source_after") == expected, "Native named source observations differ from sealed bytes")
+    printed = re.findall(r"^" + ENV[leaf] + re.escape(contract["report_path_separator"]) + r"(.+) sha256=([0-9a-f]{64})$", raw, re.M)
+    require(printed == [(str(native), sha(native))], "Actual printed report path/SHA must join physical report")
+    footer = contract["footer_template"].format(checks=len(rows), failures=0)
+    if "selector" in contract:
+        require(report.get("selector") == contract["selector"], "Actual native selector differs")
+    require([line for line in raw.splitlines() if line.startswith(contract["footer_prefix"])] == [footer], "Actual exact footer/counter join differs")
+    require(not re.search(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName", raw, re.M | re.I), "Actual raw native diagnostics require review; not a clean pass")
+    return {"checks": len(rows), "failures": 0, "complete": True, "native_report_sha256": sha(native), "scope": "Actual native rows/footer/source/report joins only. Opaque Exact/Store/identity receipts retained in original report; no host decoder, synthetic receipts or expanded gameplay credit."}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("phase", choices=("seal", "import", "native"))
+    parser.add_argument("--test", choices=tuple(ENV), default="pure")
+    parser.add_argument("--mode")
+    parser.add_argument("--seal", type=Path)
+    args = parser.parse_args()
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+    out = HERE / ("run-" + args.phase + "-" + args.test + "-" + stamp + "-" + uuid.uuid4().hex[:8])
+    out.mkdir(exist_ok=False)
+    result = {"phase": args.phase, "test": args.test, "mode": args.mode, "closed": False, "passed": False, "engine_launch_attempted": False, "owned_validation_returned": False}
+    queue = {"queued": False, "acquired": False}
+    code, spec, sealed, after = 2, None, None, None
+    save(out / "result.json", result)
+    print("A2-L1 validation output:", out, flush=True)
+    with (out / "raw.log").open("w") as log, contextlib.redirect_stdout(Tee(sys.stdout, log)), contextlib.redirect_stderr(Tee(sys.stderr, log)):
+        try:
+            require((args.phase == "seal") == (args.seal is None), "Engine phase needs original successful seal; seal takes none")
+            require(args.mode is None or args.phase == "native" and args.test == "pair", "Only exact later pair selectors may select mode")
+            spec = read(HERE / "INPUT_SPEC.json")
+            current = snapshot(spec, out, "sources-before-queue")
+            prepared(spec, current)
+            if args.phase == "seal":
+                sealed = current
+                save(out / "seal.json", {"sealed": True, "source_phase": str(out), "names": sealed, "scope": spec["scope"]})
+            else:
+                selected = args.seal.resolve()
+                sealed = previous_seal(selected)
+                if args.phase == "import":
+                    require(selected.name == "seal.json" and {name for name, value in sealed.items() if value is None} == set(spec["allowed_initially_absent_uids"]), "One genuine initial UID import only; no post-import repeat")
+                require(current == sealed, "Current named inputs differ from selected seal")
+                save(out / "selected-seal.json", {"path": str(selected), "sha256": sha(selected)})
+                if args.phase == "native":
+                    require(all(value is not None for value in sealed.values()), "Native needs all genuine UIDs from retained post-import seal")
+                    leaf = spec["leaves"][args.test]
+                    require(leaf.get("ready") is True, "Actual leaf contract is not ready")
+                    require((args.mode is None and leaf.get("default") is not None) or args.mode in leaf.get("modes", {}), "Exact actual pair mode whitelist required")
+                    contract = leaf["default"] if args.mode is None else leaf["modes"][args.mode]
+                module = importlib.util.spec_from_file_location("cinder_a2_l1_validation_dev", ROOT / "scripts/dev/dev.py")
+                require(module is not None and module.loader is not None, "Canonical dev loader required")
+                dev = importlib.util.module_from_spec(module)
+                sys.modules[module.name] = dev
+                old_bytecode = sys.dont_write_bytecode
+                try:
+                    sys.dont_write_bytecode = True
+                    module.loader.exec_module(dev)
+                finally:
+                    sys.dont_write_bytecode = old_bytecode
+                environ = dict(os.environ)
+                for variable in ENV.values(): environ.pop(variable, None)
+                if args.phase == "native": environ[ENV[args.test]] = str(out / "native-report.json")
+                context = dev.ProjectContext(root=ROOT, environ=environ)
+                require(context.canonical_root == ROOT, "Actual canonical integration root required")
+                command = [str(dev.resolve_godot(context)), "--path", str(ROOT), "--log-file", str(out / "engine.log")]
+                if args.phase == "import":
+                    command += ["--headless", "--editor", "--import"]
+                    timeout = 180
+                else:
+                    if contract["headless"]: command += ["--headless"]
+                    command += ["--script", "res://" + leaf["script"]]
+                    if contract["user_arguments"]: command += ["--", *contract["user_arguments"]]
+                    timeout = contract["timeout_after_lock_seconds"]
+                require(type(timeout) is int and 0 < timeout <= 240, "Finite reviewed child bound required")
+                save(out / "command.json", {"argv": command, "timeout_after_lock_seconds": timeout, "environment_override": {ENV[args.test]: environ[ENV[args.test]]} if args.phase == "native" else {}, "scope": "One canonical owned child; no parser/default suite/fallback or arbitrary user argv"})
+                queue.update({"queued": True, "lock_path": str(dev.shared_lock_path(ROOT))})
+                save(out / "queue.json", queue)
+                try:
+                    with dev.godot_lock(ROOT) as fd:
+                        queue["acquired"] = True
+                        save(out / "queue.json", queue)
+                        require(snapshot(spec, out, "sources-at-lock") == sealed, "Named inputs changed at lock")
+                        result["engine_launch_attempted"] = True
+                        save(out / "result.json", result)
+                        returned = dev.run_validation(command, context, fd, timeout, detect_godot_errors=True)
+                        result.update({"owned_validation_returned": True, "canonical_return_code": returned, "terminal_scope": "Canonical API return after its owned wait/cleanup; may be synthetic detected failure/timeout, not independent OS-terminal proof."})
+                        save(out / "result.json", result)
+                        after = snapshot(spec, out, "sources-after-child")
+                        if args.phase == "import":
+                            allowed = set(spec["allowed_initially_absent_uids"])
+                            require(all(after[name] == value for name, value in sealed.items() if value is not None) and all(after[name] is not None and name in allowed for name, value in sealed.items() if value is None), "Import changed source or failed genuine UID production")
+                        else:
+                            require(after == sealed, "Sources changed after native child")
+                        require(returned == 0, "Canonical owned child must return zero")
+                        log.flush()
+                        if args.phase == "import":
+                            save(out / "post-import-seal.json", {"sealed": True, "source_phase": str(out), "names": after, "prior_seal_sha256": sha(selected), "scope": spec["scope"]})
+                        else:
+                            result["native_observation"] = observe(out, (out / "raw.log").read_text(), args.test, contract, sealed)
+                            save(out / "native-observation.json", result["native_observation"])
+                finally:
+                    if queue["acquired"]:
+                        queue["lock_context_released"] = True
+                        save(out / "queue.json", queue)
+            result["passed"], code = True, 0
+        except KeyboardInterrupt:
+            result["error"], code = "Interrupted; canonical dev owns its child cleanup", 130
+        except Exception as error:
+            result["error"] = str(error)
+            print("A2-L1 validation failure:", error, flush=True)
+        finally:
+            if spec is not None:
+                try:
+                    closing = snapshot(spec, out, "sources-at-runner-close")
+                    require(sealed is None or closing == (after or sealed), "Named source drift at close")
+                except Exception as error:
+                    result["close_custody_error"] = str(error)
+                    result["passed"], code = False, 2
+            native = out / "native-report.json"
+            if native.is_file(): save(out / "native-report-retention.json", {"path": str(native), "sha256": sha(native), "bytes": native.stat().st_size, "scope": "Original native partial/complete bytes retained even after refusal; never fabricated"})
+            log.flush()
+            result.update({"closed": True, "runner_return_code": code, "raw_diagnostics": [line for line in (out / "raw.log").read_text().splitlines() if re.search(r"^\s*(?:ERROR|WARNING|SCRIPT ERROR):|ObjectDB.*leak|Orphan.*StringName", line, re.I)], "diagnostic_scope": "Raw/engine logs preserved; Root independently reviews diagnostics before acceptance. Zero return is not blanket clean-log proof."})
+            save(out / "result.json", result)
+            save(out / "queue.json", queue)
+            print("A2-L1 validation CLOSED code=" + str(code), flush=True)
+    save(out / "evidence-index.json", {"created_after_raw_close": True, "files": {str(path.relative_to(out)): {"sha256": sha(path), "bytes": path.stat().st_size} for path in sorted(out.rglob("*")) if path.is_file()}})
+    return code
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,377 @@
+extends SceneTree
+## Focused canonical Shell transport for the retained Horsell arrangement.
+## TEST scaffolding is only predecessor prefix5, preference-only donor subclass,
+## and outer Shell metadata around untouched actual native entrance writers.
+## There is no relocation, forced stage/history, defeat or earned checkpoint.
+
+const MainScene = preload("res://scenes/main.tscn")
+const Game = preload("res://scripts/game.gd")
+const Shell = preload("res://scripts/campaign/shell.gd")
+const Registry = preload("res://scripts/campaign/registry.gd")
+const Attempts = preload("res://scripts/campaign/attempts.gd")
+const Store = preload("res://scripts/campaign/save_store.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Parent = preload("res://scripts/acts/act2/horsell_common.gd")
+const STORY_ID: String = "A2-L1"
+const STORY_PATH: String = "res://scenes/acts/act2/a2_l1.tscn"
+const PREFIX: Array[String] = ["A1-L1", "A1-L2", "A1-L3", "A1-L4", "A1-L5"]
+const FRAME_LIMIT: int = 1200
+
+class ProfileMain:
+	extends "res://scripts/game.gd"
+	func get_difficulty_preference() -> String:
+		return "challenge"
+
+class EndTick extends Node:
+	signal settled
+	func _ready() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_physics_priority = 300
+	func _physics_process(_delta: float) -> void:
+		settled.emit.call_deferred()
+
+var production: CinderCampaignShell
+var preview: Node
+var barrier: EndTick
+var isolated: String
+var report_path: String
+var rows: Array[Dictionary] = []
+var receipts: Array[Dictionary] = []
+var events: Array[Dictionary] = []
+var watched: Dictionary = {}
+var failures: int = 0
+var first_failure: Dictionary = {}
+var complete: bool = false
+var finishing: bool = false
+var entrance: Dictionary = {}
+var initial_session: Dictionary = {}
+var canonical_bytes: String
+var source_before: Dictionary
+var old_audio: AudioBusLayout
+var old_fps: int
+
+func _initialize() -> void:
+	isolated = "user://test-horsell-arrangement-shell-%d-%d/" % [OS.get_process_id(), Time.get_ticks_usec()]
+	report_path = OS.get_environment("CINDER_A2_L1_ARRANGEMENT_SHELL_REPORT")
+	old_audio = AudioServer.generate_bus_layout()
+	old_fps = Engine.max_fps
+	canonical_bytes = FileAccess.get_file_as_string(Registry.DATA_PATH)
+	source_before = _sources()
+	node_added.connect(_watch_node)
+	_run.call_deferred()
+
+func _run() -> void:
+	create_timer(150.0, true).timeout.connect(func() -> void:
+		if not finishing: _expect(false, "bounded150-second canonical Shell fixture watchdog"); _finish.call_deferred())
+	root.size = Vector2i(540, 1170)
+	var registry := Registry.new()
+	if not _expect(OS.get_cmdline_user_args().is_empty() and not report_path.is_empty() and registry.last_error.is_empty() and registry.is_playable(STORY_ID) and registry.entry(STORY_ID).scene_path == STORY_PATH, "closed report-only scope and actual canonical playable Horsell registry row", registry.last_error):
+		await _finish(); return
+	if not await _seed_story(registry) or not await _new_shell(initial_session): await _finish(); return
+	if not _expect(production.get_difficulty_preference() == "standard", "fresh canonical Shell uses default current Standard preference"): await _finish(); return
+	production.menu.continue_story_requested.emit()
+	if not await _wait_installed(entrance) or not _bindings(entrance) or not _disk(initial_session): await _finish(); return
+	var initial_ids: Dictionary = _native_ids()
+	if not _expect(_identity_set_valid(initial_ids) and _quiet_selected() and production.get_difficulty_preference() == "standard", "independent actual installed native recipients restore saved Challenge quietly under opposite current Standard"): await _finish(); return
+	_record("initial public Continue exact entrance", entrance)
+	production.menu.resume_requested.emit()
+	barrier = EndTick.new()
+	production.add_child(barrier)
+	var deadline: int = Time.get_ticks_msec() + 20000
+	var observed: bool = false
+	for _frame: int in range(2400):
+		await barrier.settled
+		if finishing: return
+		if not _healthy() or production.player.dead: break
+		if not paused and production.player.is_on_floor() and production.player.get_threat_response_state().stable and _warning():
+			production.request_pause()
+			observed = true
+			break
+		if Time.get_ticks_msec() > deadline: break
+	if not _expect(observed, "genuine native original-spawn stable Hero and first owner-bound unarmed Scout warning within unchanged20-second bound") or not await _wait_pause(): await _finish(); return
+	var warning: Dictionary = production.capture_campaign_snapshot()
+	var expected_warning_session: Dictionary = initial_session.duplicate(true)
+	expected_warning_session.story.snapshot = warning.duplicate(true)
+	if not _expect(_stage_zero(warning) and warning.level.local.scheduler.reservations.size() == 1 and warning.level.local.scheduler.reservations[0].adapter.locked == false and warning.level.local.exchange.records.arrival.status == "running" and warning.level.local.exchange.records.arrival.phase == "warning" and _warning() and not _same(warning, entrance), "actual public Pause writer retains genuine first warning and no route/death/clear history") or not _bindings(warning): await _finish(); return
+	if not _expect(_same(production.attempts.state(), expected_warning_session) and _same(production.attempts.state().story.checkpoint, entrance) and _same(production.attempts.active_snapshot(), warning), "public Pause changes only full Story.snapshot; entire checkpoint and other session fields remain exact") or not _disk(expected_warning_session): await _finish(); return
+	_record("actual public Pause first-warning Save", warning)
+	var protected_disk: Dictionary = _disk_observation()
+	var protected_ids: Dictionary = _native_ids()
+	production.menu.difficulty_preference_requested.emit("assisted")
+	var preferences := Store.new(isolated + "preferences.json")
+	var preference_payload: Dictionary = preferences.read_payload()
+	if not _expect(production.get_difficulty_preference() == "assisted" and preferences.last_error.is_empty() and not preferences.loaded_backup and _same(preference_payload, {"schema_version": 1, "profile_id": "assisted"}) and _same(production.capture_campaign_snapshot(), warning) and _same(production.attempts.state(), expected_warning_session) and _disk_observation() == protected_disk and _native_ids() == protected_ids, "public preference persistence changes only isolated preference Store; full active packet/session/checkpoint/campaign primary+backup/generation/native identities remain exact", preferences.last_error): await _finish(); return
+	_record("public newer Assisted preference preserves Challenge warning", warning)
+	if not await _dispose_shell() or not await _new_shell(expected_warning_session): await _finish(); return
+	if not _expect(production.get_difficulty_preference() == "assisted" and _disk_observation() == protected_disk, "fresh canonical Title rereads entire protected warning session and persisted Assisted preference without campaign disk rewrite"): await _finish(); return
+	production.menu.continue_story_requested.emit()
+	if not await _wait_installed(warning) or not _bindings(warning): await _finish(); return
+	if not _distinct(protected_ids) or not _expect(_quiet_selected() and _same(production.attempts.state(), expected_warning_session) and _same(production.attempts.state().story.checkpoint, entrance) and production.get_difficulty_preference() == "assisted" and _disk_observation() == protected_disk, "fresh actual disk Continue quietly restores complete original Challenge warning and entrance checkpoint under newer Assisted preference") or not _disk(expected_warning_session): await _finish(); return
+	_record("fresh independent public disk Continue exact warning", warning)
+	var before_retry: Dictionary = _native_ids()
+	var shell_id: int = production.get_instance_id()
+	var hud_id: int = production.hud.get_instance_id()
+	var refs: Array[WeakRef] = []
+	_collect(production.world.get_parent().get_parent(), refs)
+	var generation_before_retry: int = int(_disk_observation().generation)
+	events.clear()
+	production.menu.retry_requested.emit()
+	if not await _wait_installed(entrance) or not _bindings(entrance) or not _distinct(before_retry): await _finish(); return
+	var expected_retry_session: Dictionary = expected_warning_session.duplicate(true)
+	expected_retry_session.story.snapshot = entrance.duplicate(true)
+	if not _expect(production.get_instance_id() == shell_id and production.hud.get_instance_id() == hud_id and _quiet_selected() and production.get_difficulty_preference() == "assisted" and _same(production.attempts.state(), expected_retry_session) and _same(production.attempts.state().story.checkpoint, entrance) and production.active_level.current_checkpoint().id.is_empty(), "public entrance Retry keeps Shell/HUD, rebuilds each native recipient, resets only Story.snapshot and retains full genuine entrance checkpoint with empty authored checkpoint ID") or not _disk(expected_retry_session): await _finish(); return
+	if not _expect(int(_disk_observation().generation) == generation_before_retry + 1, "public Retry performs one actual campaign Store generation advance") or not await _released(refs, "public Retry retired entire prior warning World/native tree"): await _finish(); return
+	_record("actual public Retry exact entrance checkpoint", entrance)
+	if not await _dispose_shell(): await _finish(); return
+	complete = true
+	await _finish()
+
+func _seed_story(registry: CinderCampaignRegistry) -> bool:
+	paused = true
+	preview = MainScene.instantiate()
+	preview.set_script(ProfileMain)
+	preview.set("level_scene_path", STORY_PATH)
+	root.add_child(preview)
+	preview.call("open_bench")
+	await process_frame
+	await process_frame
+	var hero: CinderPlayer = preview.get("player") as CinderPlayer
+	var level: CinderLevel = preview.get("active_level") as CinderLevel
+	var camera: Camera3D = preview.get("camera") as Camera3D
+	if not _expect(paused and hero != null and level != null and camera != null and level.level_id == STORY_ID and level.scene_file_path == STORY_PATH and level.get_script() == Parent and String(preview.get("level_load_error")).is_empty() and level.contract_error().is_empty(), "actual canonical Main creates paused native Challenge entrance donor before gameplay", String(preview.get("level_load_error"))): return false
+	var player_packet: Dictionary = hero.snapshot_state()
+	var level_packet: Dictionary = level.snapshot_state()
+	var input: Dictionary = preview.call("get_input_observation_state")
+	if not _expect(not player_packet.is_empty() and not level_packet.is_empty() and hero.get_world_action_records().is_empty() and input.sequence == 0 and input.last_observation.is_empty() and hero.snapshot_error(player_packet).is_empty() and level.snapshot_error_with_player(level_packet, player_packet).is_empty(), "untouched actual native entrance Player/wholeLevel writers independently validate; no fabricated gameplay", hero.last_snapshot_error + "; " + level.last_snapshot_error): return false
+	var anchor: Vector2 = input.anchor_normalized
+	var shell_metadata: Dictionary = {"api_revision": Shell.SHELL_API, "anchor_normalized": [anchor.x, anchor.y], "input_sequence": input.sequence, "last_input_observation": {}, "camera_focus": Codec.vector3(camera.global_position - Game.CAMERA_OFFSET), "shake_left_s": 0.0, "difficulty_at_entry": "challenge"}
+	entrance = {"schema_version": 1, "level_id": STORY_ID, "scene_path": STORY_PATH, "paused": true, "equipment_ids": hero.equipment.snapshot(), "player": player_packet, "level": level_packet, "shell": shell_metadata}
+	if not _expect(_stage_zero(entrance) and entrance.level.local.scheduler.reservations.is_empty() and entrance.level.local.exchange.records.arrival.status == "idle", "genuine paused new20 constructor entrance precedes native leases; no settled-floor claim"): return false
+	var detached := Attempts.new(registry)
+	initial_session = detached.state()
+	initial_session.completed_main = registry.main_route().slice(0, 5) # Disclosed TEST predecessor progress only.
+	initial_session.story = {"kind": "story", "level_id": STORY_ID, "snapshot": entrance.duplicate(true), "checkpoint": entrance.duplicate(true)}
+	var writer := Store.new(isolated + "campaign.json")
+	writer.payload_validator = detached.saved_payload_error
+	var error: String = detached.state_error(initial_session)
+	if not _expect(initial_session.completed_main == PREFIX and error.is_empty() and writer.write_payload(initial_session), "actual detached Attempts/format2 Store accept disclosed TEST prefix5 plus genuine unchanged native entrance writers and explicit outer metadata", error + "; " + writer.last_error): return false
+	var refs: Array[WeakRef] = []
+	_collect(preview, refs)
+	level.exit_level()
+	preview.get("fx").clear()
+	preview.queue_free()
+	preview = null
+	return await _released(refs, "normal donor exit then whole actual Main/native tree retirement") and _disk(initial_session)
+
+func _new_shell(expected: Dictionary) -> bool:
+	events.clear()
+	watched.clear()
+	production = Shell.new()
+	if not _expect(production.configure_runtime({}, isolated + "campaign.json", isolated + "settings.json", isolated + "preferences.json"), "actual unmodified canonical Shell receives isolated paths and no replacement registry", production.campaign_error): return false
+	root.add_child(production)
+	for _frame: int in range(FRAME_LIMIT):
+		await process_frame
+		if finishing or not _healthy(): return false
+		if paused and _idle() and production.menu.page_name() == "title" and production.player == null and production.active_level == null and _same(production.attempts.state(), expected):
+			return _expect(true, "whole expected session settles at real canonical Title after native startup registration")
+	return _expect(false, "bounded canonical startup exact session", production.campaign_error)
+
+func _wait_installed(expected: Dictionary) -> bool:
+	for _frame: int in range(FRAME_LIMIT):
+		await process_frame
+		if finishing or not _healthy(): return false
+		if not paused or not _idle() or production.menu.page_name() != "resume" or not is_instance_valid(production.player) or not is_instance_valid(production.active_level): continue
+		if _same(production.capture_campaign_snapshot(), expected):
+			return _expect(true, "public installed canonical full aggregate equals exact saved unit")
+	return _expect(false, "bounded public full saved aggregate installation", production.campaign_error)
+
+func _wait_pause() -> bool:
+	for _frame: int in range(FRAME_LIMIT):
+		await process_frame
+		if finishing or not _healthy(): return false
+		if paused and _idle() and production.menu.page_name() == "pause":
+			var packet: Dictionary = production.capture_campaign_snapshot()
+			if not packet.is_empty() and _same(production.attempts.active_snapshot(), packet): return _expect(true, "actual public Pause drained complete exact snapshot to model")
+	return _expect(false, "bounded actual public Pause full persistence", production.campaign_error)
+
+func _stage_zero(packet: Dictionary) -> bool:
+	if packet.is_empty() or not packet.get("level") is Dictionary or not packet.level.get("local") is Dictionary: return false
+	var local: Dictionary = packet.level.local
+	return packet.level_id == STORY_ID and packet.scene_path == STORY_PATH and packet.level.local_snapshot_version == 2 and local.size() == 20 and local.api_revision == Parent.L1_ARRANGEMENT_API and local.schema_version == 2 and local.arrangement.recipe_id == Parent.L1_CHALLENGE_RECIPE and local.arrangement.profile == "challenge" and local.profile_id == "challenge" and local.scheduler.profile.id == "challenge" and local.sequence.beat == "arrival" and local.sequence.route == "" and local.sequence.alive_ids == ["arrival"] and local.sequence.defeated_ids.is_empty() and packet.level.progress.checkpoint_id.is_empty() and packet.level.progress.checkpoint_ids.is_empty() and not packet.level.progress.completed and packet.level.progress.contact_exit_id.is_empty() and not local.departure_checkpoint and not local.departure_contact_seen and local.pending_checkpoints.is_empty() and not local.completion_pending and not local.exit_requested
+
+func _bindings(packet: Dictionary) -> bool:
+	var level: CinderLevel = production.active_level
+	if not _expect(level.level_id == STORY_ID and level.scene_file_path == STORY_PATH and level.get_script() == Parent and not level.is_restore_candidate() and level.hero == production.player and level.effects == production.fx and level.shared_shell == production and level.contract_error().is_empty() and String(level.get("runtime_error")).is_empty() and _stage_zero(packet), "actual installed canonical native Level/Hero/effects/Shell bindings and closed new20 arrival receipt", level.contract_error()): return false
+	var selected: Dictionary = Parent._l1_arrangement_layout(packet.level.local.arrangement, JSON.parse_string(FileAccess.get_file_as_string(Parent.L1_ARRANGEMENT_PATH)))
+	if not _expect(selected.error.is_empty() and selected.positions == level.get("_l1_selected_positions") and (level.get("_actors") as Dictionary).size() == 7, "selected immutable native construction bindings resolve to trusted current recipe"): return false
+	for id: String in Parent.L1_SOURCE_IDS:
+		var actor: Node3D = (level.get("_actors") as Dictionary)[id]
+		var saved: Dictionary = packet.level.local.exchange.actors[id]
+		if not _expect(is_instance_valid(actor) and actor.get_instance_id() != 0 and actor.global_position == level.to_global(selected.positions[id]) and Codec.read_vector3(saved.root_position) == actor.global_position, "actual immutable native selected actor slot: " + id): return false
+	return _expect((level.get("_actors") as Dictionary).common_left.position == Parent.Sequence.ACTOR_POSITIONS.common_right and (level.get("_actors") as Dictionary).common_right.position == Parent.Sequence.ACTOR_POSITIONS.common_left and (level.get("_scheduler") as CinderThreatScheduler).encounter_profile().id == "challenge", "future common targets are actually configured at swapped selected slots before eligibility; saved Challenge remains canonical")
+
+func _warning() -> bool:
+	var level: CinderLevel = production.active_level
+	var source: Node3D = (level.get("_actors") as Dictionary).arrival
+	var state: Dictionary = level.get("_exchange").call("state", "arrival")
+	if not is_instance_valid(source) or state.get("status") != "running" or state.get("phase") != "warning" or state.get("armed") != false: return false
+	var scheduler: CinderThreatScheduler = level.get("_scheduler") as CinderThreatScheduler
+	for record: Dictionary in scheduler.source_control_state(source).get("reservations", []):
+		if record.id == state.reservation_id and record.source_instance_id == source.get_instance_id() and record.profile_id == "challenge" and record.armed == false: return true
+	return false
+
+func _idle() -> bool:
+	return not production.is_pause_requested() and not bool(production.get("_draining")) and not bool(production.get("_drain_queued")) and (production.get("_operations") as Array).is_empty() and (production.get("_failed_operations") as Array).is_empty()
+
+func _healthy() -> bool:
+	if not is_instance_valid(production): return _expect(false, "actual Shell remains valid")
+	if not production.campaign_error.is_empty(): return _expect(false, "actual Shell has no refused operation", production.campaign_error)
+	if is_instance_valid(production.active_level) and (not production.active_level.contract_error().is_empty() or not String(production.active_level.get("runtime_error")).is_empty()): return _expect(false, "actual Horsell runtime remains healthy", production.active_level.contract_error() + "; " + String(production.active_level.get("runtime_error")))
+	return true
+
+func _disk(expected: Dictionary) -> bool:
+	var reader := Store.new(isolated + "campaign.json")
+	var actual: Dictionary = reader.read_payload()
+	var envelope: Variant = JSON.parse_string(FileAccess.get_file_as_string(isolated + "campaign.json"))
+	return _expect(reader.last_error.is_empty() and not reader.loaded_backup and envelope is Dictionary and envelope.get("format_version") == 2 and envelope.get("payload_json") is String and envelope.payload_json.sha256_text() == envelope.get("sha256") and _same(actual, expected) and envelope.payload_json == Exact.stringify(expected), "independent actual format2 Store/full Exact session/checksum join", reader.last_error)
+
+func _disk_observation() -> Dictionary:
+	var reader := Store.new(isolated + "campaign.json")
+	reader.read_payload()
+	var result: Dictionary = {"generation": reader.generation, "reader_error": reader.last_error, "loaded_backup": reader.loaded_backup}
+	for name: String in ["campaign.json", "campaign.json.bak"]:
+		var path: String = isolated + name
+		result[name] = {"sha256": FileAccess.get_sha256(path), "bytes": FileAccess.get_file_as_bytes(path).size(), "raw": FileAccess.get_file_as_string(path)} if FileAccess.file_exists(path) else null
+	return result
+
+func _record(stage: String, packet: Dictionary) -> void:
+	# TEST report transport only: Exact's snapshot integer budget excludes some
+	# legitimate signed64 native IDs. Preserve their decimal strings instead.
+	# All native validity/uniqueness/distinctness assertions still use actual ints.
+	var native_ids: Dictionary = _native_ids()
+	var identity_strings: Dictionary = {}
+	var all_actual_ints: bool = true
+	for key: String in native_ids:
+		var native_id: Variant = native_ids[key]
+		all_actual_ints = all_actual_ints and native_id is int
+		identity_strings[key] = str(native_id)
+	if not _expect(all_actual_ints and not identity_strings.is_empty() and identity_strings.size() == 17, "native identity report preserves all17 actual ints as exact decimal strings"): return
+	receipts.append({"stage": stage, "exact_snapshot": Exact.stringify(packet), "exact_session": Exact.stringify(production.attempts.state()), "exact_story": Exact.stringify(production.attempts.state().story), "exact_checkpoint": Exact.stringify(production.attempts.state().story.checkpoint), "campaign_disk": _disk_observation(), "current_preference": production.get_difficulty_preference(), "actual_native_ids_decimal": identity_strings, "scope": "TEST prefix5 and initial outer metadata only; actual native arrival entrance/first unarmedwarning, no relocation or route/earned checkpoint."})
+
+func _native_ids() -> Dictionary:
+	if not is_instance_valid(production) or not is_instance_valid(production.active_level) or not is_instance_valid(production.player): return {}
+	var level: CinderLevel = production.active_level
+	var result: Dictionary = {"world": production.world.get_instance_id(), "world3d": production.world.get_world_3d().get_instance_id(), "viewport": production.world.get_parent().get_instance_id(), "container": production.world.get_parent().get_parent().get_instance_id(), "hero": production.player.get_instance_id(), "level": level.get_instance_id(), "camera": production.camera.get_instance_id(), "fx": production.fx.get_instance_id(), "scheduler": (level.get("_scheduler") as Node).get_instance_id(), "exchange": (level.get("_exchange") as Node).get_instance_id()}
+	for id: String in level.get("_actors"): result["actor/" + id] = (level.get("_actors") as Dictionary)[id].get_instance_id()
+	return result
+
+func _identity_set_valid(ids: Dictionary) -> bool:
+	var unique: Dictionary = {}
+	if ids.size() != 17: return false
+	for id: Variant in ids.values():
+		if not id is int or id == 0 or not is_instance_id_valid(id) or unique.has(id): return false
+		unique[id] = true
+	return true
+
+func _distinct(previous: Dictionary) -> bool:
+	var current: Dictionary = _native_ids()
+	if not _expect(_identity_set_valid(current) and current.keys() == previous.keys(), "all actual fresh native recipient IDs valid/nonzero/unique with same named keyset"): return false
+	for key: String in previous:
+		if not _expect(current[key] != previous[key], "actual recipient replaced independently; no positive-ID assumption: " + key): return false
+	return true
+
+func _watch_node(node: Node) -> void:
+	if not is_instance_valid(production) or not production.is_ancestor_of(node) or watched.has(node.get_instance_id()): return
+	watched[node.get_instance_id()] = true
+	for signal_row: Dictionary in node.get_signal_list():
+		if signal_row.name in ["fired", "died", "world_action_executed", "hit_resolved", "checkpoint_requested", "completion_requested", "contact_exit_requested"] and signal_row.args.size() <= 3:
+			node.connect(signal_row.name, Callable(self, "_event" + str(signal_row.args.size())).bind(node.get_instance_id(), String(signal_row.name)))
+
+func _event0(owner: int, kind: String) -> void: events.append({"owner": owner, "kind": kind})
+func _event1(_a: Variant, owner: int, kind: String) -> void: _event0(owner, kind)
+func _event2(_a: Variant, _b: Variant, owner: int, kind: String) -> void: _event0(owner, kind)
+func _event3(_a: Variant, _b: Variant, _c: Variant, owner: int, kind: String) -> void: _event0(owner, kind)
+
+func _quiet_selected() -> bool:
+	var refs: Array[WeakRef] = []
+	_collect(production.active_level, refs)
+	_collect(production.player, refs)
+	var selected: Dictionary = {}
+	for ref: WeakRef in refs: selected[(ref.get_ref() as Node).get_instance_id()] = true
+	for event: Dictionary in events:
+		if selected.has(event.owner): return false
+	return true
+
+func _collect(node: Node, refs: Array[WeakRef]) -> void:
+	refs.append(weakref(node))
+	for child: Node in node.get_children(): _collect(child, refs)
+
+func _released(refs: Array[WeakRef], label: String) -> bool:
+	for _frame: int in range(FRAME_LIMIT):
+		if not refs.is_empty() and refs.all(func(ref: WeakRef) -> bool: return ref.get_ref() == null): return _expect(true, label)
+		await process_frame
+	return _expect(false, label)
+
+func _dispose_shell() -> bool:
+	if not is_instance_valid(production): return true
+	paused = true
+	var refs: Array[WeakRef] = []
+	_collect(production, refs)
+	if is_instance_valid(production.active_level): production.active_level.exit_level()
+	production.queue_free()
+	production = null
+	barrier = null
+	if not await _released(refs, "normal public level exit then complete owned Shell/UI/World/native tree retirement"): return false
+	return _expect(get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "normal owned enemy/required-cue group cleanup")
+
+func _same(a: Variant, b: Variant) -> bool:
+	var wire: String = Exact.stringify(a)
+	return not wire.is_empty() and wire == Exact.stringify(b)
+
+func _sources() -> Dictionary:
+	var result: Dictionary = {}
+	for path: String in [get_script().resource_path, STORY_PATH, "res://scenes/main.tscn", "res://scenes/player.tscn", "res://scripts/game.gd", "res://scripts/player.gd", "res://scripts/equipment.gd", "res://scripts/campaign/shell.gd", "res://scripts/campaign/level.gd", "res://scripts/campaign/registry.gd", "res://scripts/campaign/attempts.gd", "res://scripts/campaign/save_store.gd", "res://scripts/campaign/exact_json.gd", "res://scripts/campaign/snapshot_codec.gd", "res://scripts/settings/game_settings.gd", "res://scripts/ui/campaign_menu.gd", "res://scripts/acts/act2/horsell_common.gd", "res://scripts/acts/act2/horsell_sequence.gd", "res://scripts/acts/act2/heath_kit.gd", "res://scripts/acts/act2/ray_scout_actor.gd", "res://scripts/acts/act2/ray_scout_visual.gd", "res://scripts/acts/act2/ray_scout_exchange.gd", "res://scripts/combat/encounter_arrangement.gd", "res://scripts/combat/threat_scheduler.gd", "res://data/campaign/act2/a2_l1_difficulty_arrangements.json", "res://data/campaign/registry.json"]:
+		result[path] = FileAccess.get_sha256(path)
+	return result
+
+func _expect(ok: bool, label: String, detail: String = "") -> bool:
+	var row: Dictionary = {"check": rows.size() + 1, "ok": ok, "label": label, "detail": detail}
+	rows.append(row)
+	if not ok:
+		failures += 1
+		if first_failure.is_empty(): first_failure = row.duplicate(true)
+		print("FAIL A2-L1 arrangement Shell: " + label + "; " + detail)
+	return ok
+
+func _finish() -> void:
+	if finishing: return
+	finishing = true
+	await _dispose_shell()
+	if is_instance_valid(preview):
+		var refs: Array[WeakRef] = []
+		_collect(preview, refs)
+		var level: CinderLevel = preview.get("active_level") as CinderLevel
+		if is_instance_valid(level): level.exit_level()
+		preview.queue_free(); preview = null
+		await _released(refs, "remaining native seed donor normal cleanup")
+	if node_added.is_connected(_watch_node): node_added.disconnect(_watch_node)
+	_expect(FileAccess.get_file_as_string(Registry.DATA_PATH) == canonical_bytes and _sources() == source_before, "canonical registry and explicit named source observations unchanged")
+	for name: String in ["campaign.json", "campaign.json.bak", "settings.json", "settings.json.bak", "preferences.json", "preferences.json.bak"]:
+		var path: String = isolated + name
+		if FileAccess.file_exists(path): DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	var remaining := DirAccess.open(isolated)
+	_expect(remaining == null or remaining.get_files().is_empty(), "isolated test Store directory contains no retained runtime primary/backup files")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(isolated))
+	AudioServer.set_bus_layout(old_audio)
+	Engine.max_fps = old_fps
+	paused = false
+	var report: Dictionary = {"schema_version": 1, "checks": rows.size(), "failures": failures, "rows": rows, "first_failure": first_failure, "complete": complete, "success": complete and failures == 0, "receipts": receipts, "events": events, "source_before": source_before, "source_after": _sources(), "test_context": "Disclosed TEST prefix5/pre-tree Challenge preference and initial outerShell metadata around actual native E only. Unmodified production Shell executes actual arrival first-warning PauseSave, newer Assisted preference, independent diskContinue and entranceRetry. No relocation, forced stage/history/HP/clocks/phase/lease/savedpacket edits.", "limits": "No public A1L5→A2L1 fresh transition, earned checkpoint, defeat/contact/lateCommon/clear/fullroute, allkit, GUI pointer-routing, portrait, humanbalance or performance credit. Initial genuine paused constructor E has no settled-floor claim. Initial outerShell metadata and predecessor prefix are disclosed TEST setup, not played progress."}
+	if report_path.is_empty(): print("A2-L1 Shell report destination is required"); quit(2); return
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(report_path).get_base_dir())
+	var file := FileAccess.open(report_path, FileAccess.WRITE)
+	if file == null: print("A2-L1 Shell report destination failed"); quit(2); return
+	file.store_string(JSON.stringify(report, "\t") + "\n"); file.close()
+	print("CINDER_A2_L1_ARRANGEMENT_SHELL_REPORT path=" + report_path + " sha256=" + FileAccess.get_sha256(report_path))
+	print("A2-L1 arrangement Shell: %d checks/%d failures; complete=%s" % [rows.size(), failures, str(complete)])
+	quit(0 if complete and failures == 0 else 1)

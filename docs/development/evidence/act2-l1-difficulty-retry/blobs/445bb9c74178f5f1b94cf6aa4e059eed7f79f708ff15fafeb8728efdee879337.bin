@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_ONLY_READY_ONE_SHORT_SLOW_LEFT",
+  "frozen_files": {
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v3/run.py": "a8072018dc298f31ab248b0234eeeb0ba774015f1b96f3bc24f54d2c963c5096",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v3/INPUT_SPEC.json": "196c6cd3669fb11104974fdde1a9dc387c96369a3d80002de953f0483cae2d91",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v3/SOURCE_INPUTS.json": "7a4c574ebe4743a37fcec0e7c1d065499b1511a79577938326919319ffed94e0",
+    ".cinder/a2-l1-difficulty-20261016/validation-successor-v3/README.md": "c5835df58b560f5e6fc8cfa425143ce5d09f362b4f43668902cbf91aa97d8717"
+  },
+  "expected_named_inputs": 150,
+  "absent_uid_count": 0,
+  "runner_byte_identical_to": {
+    "path": ".cinder/a2-l1-difficulty-20261016/validation-successor-v2/run.py",
+    "sha256": "a8072018dc298f31ab248b0234eeeb0ba774015f1b96f3bc24f54d2c963c5096"
+  },
+  "component_sha256": "29af1ba0c13214da3b3052e5b906f7069f91698df500185a2890ffcd559ac7c2",
+  "receipt_sha256": "ffa2ba7f19275af710e05742cc7cc87326d83da7079f03b3bc74835c41f9aef4",
+  "original_v2_closed_outcomes": [
+    {
+      "path": ".cinder/a2-l1-difficulty-20261016/validation-successor-v2/run-native-pair-20261016T054019.309216Z-f2a7a08c",
+      "result_sha256": "1f3290d6549f17ef8d8804affcc8342ab1fb1690fbab9c1fb3e1447e9e5bfc24",
+      "index_sha256": "14a418882de017e6d22b5ce06b2eb3b7a57d2fb3bfb47887406550df1c16313d",
+      "closed": true,
+      "runner_return_code": 2,
+      "canonical_return_code": 0,
+      "raw_diagnostics": [
+        "ERROR: Condition \"ret != noErr\" is true. Returning: \"\""
+      ],
+      "native_report_sha256": "0d511f11fac46745af3a7d76206c0ab4db640a543a7ad83a680222d7b1f7be43",
+      "checks": 125,
+      "failures": 0,
+      "complete": true,
+      "success": true,
+      "selector": "--component-compare-left",
+      "first_failure": {}
+    },
+    {
+      "path": ".cinder/a2-l1-difficulty-20261016/validation-successor-v2/run-native-pair-20261016T054131.693059Z-be4a7c1f",
+      "result_sha256": "221c51a49bdcc3cb1aa0d3ab01e43a6ceb40cc9d041f3bdf303766ab5e9b225f",
+      "index_sha256": "c08092dbd3f835cb58c95eedf4f90f5c42dc8d06e4cd8ff80480a9895866bc6e",
+      "closed": true,
+      "runner_return_code": 2,
+      "canonical_return_code": 2,
+      "raw_diagnostics": [
+        "ERROR: Condition \"ret != noErr\" is true. Returning: \"\"",
+        "ERROR: A2-L1 component: original source/cycle/lease owns timely escape_dash"
+      ],
+      "native_report_sha256": "90782f22d40beb2394db6b6e52fb50037662f15147e449a0350174e1fdc09095",
+      "checks": 29,
+      "failures": 1,
+      "complete": false,
+      "success": false,
+      "selector": "--component-short-slow-right",
+      "first_failure": {
+        "case": "current-short-slow-right",
+        "check": 27,
+        "label": "original source/cycle/lease owns timely escape_dash",
+        "native_clock_s": 1.0833333333333344,
+        "note": "original source/cycle/lease owns timely escape_dash",
+        "ok": false
+      }
+    },
+    {
+      "path": ".cinder/a2-l1-difficulty-20261016/validation-successor-v2/run-native-pair-20261016T054314.476251Z-061d5270",
+      "result_sha256": "f1cb90fd0139ad357c9a582bac347ee840c05168fabb61678763b726136fae24",
+      "index_sha256": "5d55754ffc95e6780b174960b56556c7bff2c44433336ded55adf9785af887cc",
+      "closed": true,
+      "runner_return_code": 2,
+      "canonical_return_code": -6,
+      "raw_diagnostics": [],
+      "native_report_present": false
+    },
+    {
+      "path": ".cinder/a2-l1-difficulty-20261016/validation-successor-v2/run-native-pair-20261016T054333.360802Z-74387c95",
+      "result_sha256": "c62f51b3c07d270de371cb9e1f9a8546dc146ff7f5d302c40fd6983dc278e1be",
+      "index_sha256": "87cf2c71e35f492b82f76aaef5412fdc3baa5e58a13e2e6e186dce9b8df539c9",
+      "closed": true,
+      "runner_return_code": 0,
+      "canonical_return_code": 0,
+      "raw_diagnostics": [],
+      "native_report_sha256": "d257a59bf7b571639058f0ce9ad1c1ab2b30c6d7fa9a8d2019a7e98e06863dfa",
+      "checks": 62,
+      "failures": 0,
+      "complete": true,
+      "success": true,
+      "selector": "--component-portrait",
+      "first_failure": {}
+    }
+  ],
+  "reused_leaf_outcomes": {
+    "pure": {
+      "checks": 92,
+      "failures": 0
+    },
+    "legacy": {
+      "checks": 241,
+      "failures": 0
+    },
+    "shell": {
+      "checks": 117,
+      "failures": 0
+    },
+    "provenance": "Root supplied reviewed actual outcomes; unchanged leaf hashes verified against original capsule. No reruns or expanded claims."
+  },
+  "authorized_execution": {
+    "phases": [
+      "seal",
+      "native"
+    ],
+    "leaf": "pair",
+    "selectors": [
+      "--component-short-slow-left"
+    ],
+    "forbidden": [
+      "import",
+      "parser",
+      "pure",
+      "legacy",
+      "shell",
+      "compare-left",
+      "short-slow-right",
+      "portrait",
+      "default suites"
+    ],
+    "qualification": "Exactly one explicit combined legal short-slow-left sample; unchanged runner capabilities restricted by Root authorization. No side search if refused."
+  },
+  "self_review": "Verified all v2 expected bytes unchanged except exact component selector addition; seven real UIDs unchanged. Additive v2 capsule5, four closed result/index pairs, and new receipt pinned. Actual native sources/kind/footer/env unchanged except exact explicit left selector suffix. Runner byte-identical, Python syntax AST checked only. No engine execution.",
+  "scope": "V3 adds only explicit short-slow-left selector with unchanged SHORT_SLOW follower/assertions against common_left. Root receipt exact source change; production/other leaves/all UIDs unchanged. Preserve actual v2 comparison125/0 native and child0 but HOST2 CA diagnostic (not clean); right29/1 presentation cancellation before escape with cause unproven; sandbox portrait launch-6 no report; actual desktop portrait clean62/0. Reuse those qualified results and pure92/legacy241/Shell117, no repeats. Only new seal and one short-slow-left native authorized; no import/parser/default or all-kit/right-success inference."
+}

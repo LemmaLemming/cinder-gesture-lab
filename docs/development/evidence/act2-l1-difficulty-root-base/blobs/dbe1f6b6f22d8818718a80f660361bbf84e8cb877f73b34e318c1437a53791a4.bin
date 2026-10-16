@@ -1,0 +1,5 @@
+Private Root-only A2-L1 validation capsule. Prepared sources only; no native execution.
+
+Run `python3 .cinder/a2-l1-difficulty-20261016/validation-prepare/run.py seal`. Use its CLOSED successful `seal.json` with `import --seal ABSOLUTE_SEAL`; exactly seven genuine UID sidecars may be created. Reuse the CLOSED import `post-import-seal.json` for each `native --test pure|legacy|shell --seal ABSOLUTE_POST_IMPORT_SEAL`, then pair with explicit `--mode --component-compare-left`, `--mode --component-short-slow-right`, or `--mode --component-portrait` (pass mode using `--mode=--component-...`). Only portrait is graphical; personal inspection remains separate. No import repeats, standalone parsers or default suites.
+
+All engine children use canonical dev.godot_lock/run_validation, finite 180 seconds after acquisition. Queue wait is shared. Before queue/at lock/after child/close snapshots retain source bytes in CAS. Root reviews original raw/engine diagnostics and actual receipts; a missing/partial/refused native report never passes. Shell native kind addition resolves independent-review F1; original 4fc draft/review stay untouched.

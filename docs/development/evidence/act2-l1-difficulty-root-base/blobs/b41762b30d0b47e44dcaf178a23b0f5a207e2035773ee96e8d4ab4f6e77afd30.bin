@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "status": "REQUEST_ADDITIVE_SUCCESSOR_FOR_ONE_P2_LEGACY_COMPATIBILITY_FINDING",
+  "original_candidate_sha256": "64837e307390ce3735b1042d494dcfdc1cc1c1e89cba435b240eb14baa31208a",
+  "recipe_sha256": "919de84be9a74aaab6668e2fec1fd55ee45a3a55af4d5090aff7f2c6ca08938e",
+  "plan_md_sha256": "eaec9c1554e85249629720783052bbe819017d2763abdaca7e04cbfbf690b950",
+  "plan_json_sha256": "d09986f01a29ef38e54a583502c224d40b51c302bd25a15eb8c1c4710185ab12",
+  "source_pins": {
+    "scripts/acts/act2/horsell_common.gd": {
+      "sha256": "077dc406d6eda0392661279029b9a07d190be71d21fcb0903712d678ab2be643",
+      "bytes": 46662
+    },
+    "scripts/acts/act2/horsell_sequence.gd": {
+      "sha256": "fbe1457edcf7028ed3eff8ad5d1b7a453063f8ed5541356eaa251dcf3629d5c7",
+      "bytes": 7424
+    },
+    "scripts/acts/act2/weybridge.gd": {
+      "sha256": "767430baacc6b6a32547e1ec87e81b9fe48ad24e53939c18876fa63317d85145",
+      "bytes": 62407
+    },
+    "scripts/acts/act2/ruined_house.gd": {
+      "sha256": "728358c5e5864066bcc5eb4821f4e55a39561f9763962478e7338a5dea69baef",
+      "bytes": 63153
+    },
+    "scripts/acts/act2/london_approaches.gd": {
+      "sha256": "f8edbdf3a34a5dc3bf424471958c8a19d803cae764e73e256ea30c55c03b1ad0",
+      "bytes": 59165
+    },
+    "scripts/acts/act2/ray_scout_actor.gd": {
+      "sha256": "dee72b851cb20b234a05552d07eae9cebd7490ee0fad12b3970da51eae132bb7",
+      "bytes": 12646
+    },
+    "scripts/acts/act2/ray_scout_exchange.gd": {
+      "sha256": "6d8e11a29254cad18947655d8e7470d7892b18e856e534859ae6211a897ae7e2",
+      "bytes": 63062
+    },
+    "scripts/campaign/level.gd": {
+      "sha256": "27fdab6686d8ba4b8282c48af84c0c3f63d8c8fa7620ae462a4642ec225100c1",
+      "bytes": 23949
+    },
+    "scripts/campaign/snapshot_codec.gd": {
+      "sha256": "36ac4a52b08020249e4282b2788f7e4bc9d1c4af7ad45fd50586e2385f6afbac",
+      "bytes": 3350
+    },
+    "scripts/campaign/exact_json.gd": {
+      "sha256": "c383cbcc2391aadb4ef4c44e772ec4130038c84a7e074ea8889b56f5f08833fc",
+      "bytes": 9330
+    },
+    "scripts/combat/encounter_arrangement.gd": {
+      "sha256": "583f95c27e39b1009d5c0bd805bda2512b789aea22764c969f1388a9f1cec4de",
+      "bytes": 7308
+    },
+    "scripts/combat/threat_scheduler.gd": {
+      "sha256": "c28ea9f4cd6c1ff9aedbc9cfc45a28826c589c095b9193b565f45d23c3df903d",
+      "bytes": 266033
+    },
+    "scripts/combat/difficulty.gd": {
+      "sha256": "e6a0aba9b39697cf59837165ebec858b0dd15c7573f66d79eadc58595ed2e7ae",
+      "bytes": 4882
+    },
+    "data/design/difficulty_profiles.json": {
+      "sha256": "891baa4d087a1f35da0581c5dc6b888274296686144b3c8f5609249245def41c",
+      "bytes": 1313
+    },
+    "scenes/acts/act2/a2_l1.tscn": {
+      "sha256": "586c9a3d44a270648aca44f2bdf0163bc37b1d0173ba2ed9303ea16827387478",
+      "bytes": 376
+    }
+  },
+  "engine_or_parser_executed": false,
+  "candidate_or_live_mutated": false,
+  "findings": [
+    {
+      "id": "F1",
+      "priority": "P2",
+      "path": "/Users/howardchen/Documents/ChatGPT/video game idea/.cinder/a2-l1-difficulty-20261016/candidate-prepare/horsell_common.gd.txt",
+      "line": 172,
+      "title": "Constructor narrows existing ordinary Scheduler profile equivalence",
+      "problem": "L1Exact.stringify(paired.profile) != L1Exact.stringify(canonical) rejects numeric type/representation differences that the unchanged old17 ordinary Scheduler deliberately accepts via Codec.same_values at threat_scheduler.gd1953. This happens in fresh candidate construction before original whole native validation and in _l1_binding_error, changing legacy acceptance semantics.",
+      "concrete_source_level_counterexample": "Take otherwise valid old17 live Standard/Challenge packet and alter only scheduler.profile.reserved_threat_budget from canonical GodotJSON float2.0 to integer2, with identical id/all other fields. Original ordinary Scheduler Codec.same_values sees equivalent numeric values; Horsell full guard checks sameprofileid, and Exchange joins profileid rather than requiring profile bit-identity. New Exact serializes them respectively [float64,IEEEbytes] versus [integer,2], so constructor refuses. This is an accepted-domain counterexample, not a claim that the authentic194producer emitted the alternative or any fabricatedpacket has old provenance.",
+      "evidence": [
+        "snapshot_codec.gd12-15 is_number/is_integer and86+ same_values numeric comparison",
+        "exact_json.gd55-65 preserves integer vsfloat64 tags",
+        "threat_scheduler.gd1953 ordinaryprofilecanonicaljoin uses Codec.same_values; authored branch separatelyuses_authored_same",
+        "ray_scout_exchange.gd947-952 independentlyresolvesrole and joins paired.profile.id; old Horsell pairedprofile guard isID-only afternativeScheduler validation"
+      ],
+      "minimal_successor_fix": "Replace only constructor profile Exactcomparison with not Codec.same_values(paired.profile, canonical). Preserve input/savedbytes; no normalization or nativevalidator/lease/geometry relaxation. Keep first candidate immutable and create additive successor. Root explicitly agreed this remedy.",
+      "check_after_fix": "Source-only verify originalhelper/body delta only. Later focused pure old17 numericrepr positive + changed canonicalprofile negative, followed by exact originalfour-pair native restore and full unchanged Scheduler/Exchange validators; no broadroute gate."
+    }
+  ],
+  "descriptor_exact_compare_assessment": {
+    "candidate_line": 212,
+    "material_issue": false,
+    "reason": "selected.descriptor is a deepcopy of saveddescriptor through shared restore; freshcandidate construction stores exact same saved schema representation. Later binding rederives from same input and matches exactself. Genuine newwriter emits ints. Saved schema1.0 can remain preserved in selected descriptor without normalizing to1; current input differentdescriptor type after construction may legitimately fail immutable binding.",
+    "qualification": "This differs from canonical profile comparison because canonicalprofile is independently reloaded and savednumeric representation was previously accepted by nativeordinary semantics. Do not broadly replace exact copied descriptor identity or copied lease scalar checks."
+  },
+  "validated_source_design": [
+    "FiniteJSON seven originalunits/fourretainedrecipes: only common pair permutation differs, sharing originalY/Z, so selectedcommon root movesX1.8metres while allotherroots remain. RecipientY retained. Sourceactor.configure and Exchange.configure still pin selected roots once before simulation; no configuredbody relocation.",
+    "Exactold17absencebranch/current20with APIact2-horsell-level-2/integralschema2+closedsharedarrangement. Partialmetadata triggers fullnewkeysandrefuses; legacywholeattempt flag fixes canonicalmap/oldomission onrecapture. Freshallprofilescurrent20, Challengeonlyfresh mappingv2; savedretainedrecipe doesnotreadcurrentmapping/preference.",
+    "_l1_construct onceguard checks started/scheduler/actors/exchange, binds savedprofile/descriptor/layout before reusedruntimeconfigure. FullPlayer/sequence/HP/deathprefix/Scheduler/Exchange/nativeanchor/geometry/progress validation stillfollows, quietrestore unchanged. Failedfreshcandidate isdiscarded; purehelpers do not mutatecaller.",
+    "Clearedsequence valid only after Sequence.snapshot_error; constructor accepts originalemptySchedulerprofile/epoch/reservations then fullnativeScheduler/Exchange/progress checks stillrun. ExistingendedScheduler cooldown/collision/HP/deathrequirements notbypassed. Original194producer didnotinclude completeclear: retain that unexecuted qualification."
+  ],
+  "inheritance_audit": {
+    "query": "ActualA2L1 nonartpreview only returns true; queryhandles pre_ready art_preview_only/CLIflag anddelegates nonL1super.",
+    "hook": "Weybridge actualL2 captures ownhook. NonL2super\u2192newHorsell exactA2L1 guard\u2192Level._on_enter_restore_candidate\u2192dynamicactualchild._on_enter_level. RuinedHouse/LondonApproaches entryoverrides do notcallsuper, so their originalconstruction remains. No recursion or L1schema/rowapply to nonL1.",
+    "capture_validation": "Newconstructor/envelope/binding/capturemetadata checks exactlevel_idA2L1 only; artpreview earlyreturns remain. Childlocalcodec overrides unchanged. NonL1fallbacknativebody retains original positions/preference semantics.",
+    "static_namespace": "Allnewconstants/fields/purehelpers L1-prefixed; originalLOCAL_KEYS/Sequence constants unchanged; statichelpers refer actualHorsell canonicalSequence. No observedmissingmethod/signature mismatch in inspected APIs.",
+    "unchanged_original_methods": [
+      "_ready",
+      "_physics_process",
+      "encounter_state",
+      "_response_context",
+      "_on_world_action",
+      "_on_scout_defeated",
+      "_flush_defeats",
+      "_flush_progress_requests",
+      "_update_actor_visibility",
+      "_hero_contacts",
+      "_presentation_guard",
+      "_hero_readability_points",
+      "_apply_readability",
+      "_lane_readability_points",
+      "_bank_blocks_point",
+      "_exchange_framed",
+      "_state_geometry",
+      "_required_source_points",
+      "_append_mesh_points",
+      "_lane_points",
+      "_landing_points",
+      "_settled_follow_delta",
+      "_points_framed",
+      "_framing_failure",
+      "_update_objective",
+      "floor_regions",
+      "floor_bindings",
+      "_scheduler_bindings",
+      "_build_ground",
+      "_build_bank",
+      "_apply_tableau",
+      "_scenery_snapshot_error",
+      "_local_snapshot_error",
+      "_local_snapshot_error_with_player",
+      "snapshot_state",
+      "snapshot_error",
+      "snapshot_error_with_player",
+      "restore_state",
+      "_progress_snapshot_error",
+      "_restore_local_state",
+      "_on_exit_level"
+    ],
+    "changed_original_methods": [
+      "_on_enter_level",
+      "_capture_local_state",
+      "_local_snapshot_error_for_bindings"
+    ],
+    "syntax_limit": "Text/source-only review; no GDScript parser or native compilation claim. Lateractual targetexecution implicitlycompiles; focusedchilddelegation only if needed, no childfullroutes."
+  },
+  "old_evidence": "Root-confirmed genuineoldwriter194/0CLOSED atoriginalsource077dc406/Sequencefbe1457e,4completeStandard/Challenge entrance/arrival-warningpairs. This review reuses Rootclosed/evidence review, no newengine result. No latecommon/earnedclear transport inferred.",
+  "remaining_qualification": "After additivefix+Rootpromotion, focused pure/closed/numeric/nativeoriginalfourpairs/newShell/changedcommonordinary+briefportrait and minimalchilddelegation. Preservenative3.8reach/framing/landing/timing/HP/controls/floor/rewards; actualcommonrefusal/no usefuldifference returnsforboundedrefinement. Original24acceptancesnotreopened.",
+  "actions": "Privateindependentreview filesonly; noengine/parser/live/candidate/public/Git/mail/run/worker02actions."
+}

@@ -1,0 +1,30 @@
+--- first-private-pure
++++ Root-selected-successor-positive-control
+@@ -6,6 +6,7 @@
+ const Child2 = preload("res://scripts/acts/act2/weybridge.gd")
+ const Arrangement = preload("res://scripts/combat/encounter_arrangement.gd")
+ const Difficulty = preload("res://scripts/combat/difficulty.gd")
++const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+ const Exact = preload("res://scripts/campaign/exact_json.gd")
+ const DATA: String = "res://data/campaign/act2/a2_l1_difficulty_arrangements.json"
+ const L2_DATA: String = "res://data/campaign/act2/a2_l2_difficulty_arrangements.json"
+@@ -79,6 +80,19 @@
+ 				_finish(); return
+ 			var original: Dictionary = parsed.value.level.local
+ 			var bits: String = Exact.stringify(original)
++			if saved_profile == "standard" and stage == "entrance":
++				# Positive compatibility-only copies: original native profile
++				# accepts equal int/float values. Do not rewrite genuine wires.
++				var int_budget: Dictionary = original.duplicate(true)
++				int_budget.scheduler.profile.reserved_threat_budget = 2
++				var float_budget: Dictionary = original.duplicate(true)
++				float_budget.scheduler.profile.reserved_threat_budget = 2.0
++				var int_bits: String = Exact.stringify(int_budget)
++				var float_bits: String = Exact.stringify(float_budget)
++				var old_int: Dictionary = Parent._l1_arrangement_constructor(int_budget, definition)
++				var old_float: Dictionary = Parent._l1_arrangement_constructor(float_budget, definition)
++				_expect(int_budget.scheduler.profile.reserved_threat_budget is int and float_budget.scheduler.profile.reserved_threat_budget is float and int_bits != float_bits and Codec.same_values(int_budget.scheduler.profile, float_budget.scheduler.profile) and old_int.error.is_empty() and old_float.error.is_empty() and old_int.legacy and old_float.legacy and old_int.positions == canonical and old_float.positions == canonical, "old17 constructor preserves original Scheduler equal int2/float2.0 profile compatibility; no tag normalization")
++				_expect(Exact.stringify(int_budget) == int_bits and Exact.stringify(float_budget) == float_bits and Exact.stringify(parsed.value) == wire, "numeric compatibility copies and genuine original wire remain independently bit/tag exact")
+ 			var old: Dictionary = Parent._l1_arrangement_constructor(original, remapped)
+ 			_expect(original.size() == 17 and old.error.is_empty() and old.legacy and old.profile_id == saved_profile and old.positions == canonical, "old17 canonical positions follow saved profile regardless current mapping")
+ 			# These isolated metadata copies intentionally retain old native

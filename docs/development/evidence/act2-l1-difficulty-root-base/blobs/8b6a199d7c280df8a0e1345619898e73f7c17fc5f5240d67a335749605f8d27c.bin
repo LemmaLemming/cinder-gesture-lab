@@ -1,0 +1,324 @@
+extends SceneTree
+## INERT PREPARATION ONLY. New execution of the exact original Horsell writer.
+## Actual canonical Main and A2-L1; only pre-tree TEST preference selection.
+## No source/Player pose, HP/resource, clock, phase, progress or packet edits.
+## Current original spawn is already within arrival's3.8m range: no gesture is
+## necessary or sent. A non-range refusal is retained, never hidden by movement.
+
+const MainScene = preload("res://scenes/main.tscn")
+const ProfileMain = preload("res://tests/fixtures/captured_policy_profile_main.gd")
+const Parent = preload("res://scripts/acts/act2/horsell_common.gd")
+const Sequence = preload("res://scripts/acts/act2/horsell_sequence.gd")
+const Codec = preload("res://scripts/campaign/snapshot_codec.gd")
+const Exact = preload("res://scripts/campaign/exact_json.gd")
+const Store = preload("res://scripts/campaign/save_store.gd")
+const LEVEL_PATH: String = "res://scenes/acts/act2/a2_l1.tscn"
+const SOURCE_ID: String = "arrival"
+const ORIGINAL_IDS: Array[String] = ["arrival", "road_east", "road_west", "common_left", "common_right", "departure_a", "departure_b"]
+
+class EndTick extends Node:
+	signal settled
+	func _ready() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_physics_priority = 300
+	func _physics_process(_delta: float) -> void:
+		settled.emit.call_deferred()
+
+var game: Node
+var hero: CinderPlayer
+var level: CinderLevel
+var scheduler: CinderThreatScheduler
+var barrier: EndTick
+var profile: String = ""
+var stage_name: String = ""
+var output: String = ""
+var store_root: String = ""
+var source_names: Array[String] = []
+var source_before: Dictionary = {}
+var rows: Array[Dictionary] = []
+var packets: Array[Dictionary] = []
+var first_failure: Dictionary = {}
+var failures: int = 0
+var complete: bool = false
+var finishing: bool = false
+var initial_hp: float = 0.0
+var fired: Array[String] = []
+var completed_actions: Array[String] = []
+var progress_events: Array[Dictionary] = []
+var warning_observations: Array[Dictionary] = []
+var current_ids: Dictionary = {}
+var prior_ids: Dictionary = {}
+
+func _initialize() -> void:
+	output = OS.get_environment("CINDER_A2_L1_ORIGINAL_OUTPUT")
+	store_root = "user://test-a2-l1-original-producer-%d-%d/" % [OS.get_process_id(), Time.get_ticks_usec()]
+	var supplied: Variant = JSON.parse_string(OS.get_environment("CINDER_A2_L1_ORIGINAL_SOURCES"))
+	if supplied is Array:
+		for value: Variant in supplied:
+			if value is String: source_names.append(value)
+	source_before = _sources()
+	_run.call_deferred()
+
+func _run() -> void:
+	create_timer(150.0, true, false, true).timeout.connect(func() -> void:
+		if not finishing:
+			_expect(false, "Finite150s native producer watchdog")
+			_finish.call_deferred())
+	root.size = Vector2i(540, 1170)
+	if not _expect(not output.is_empty() and output.is_absolute_path() and DirAccess.dir_exists_absolute(output) and not source_names.is_empty() and OS.get_cmdline_user_args().is_empty(), "Unique existing absolute output/fixed source list; no user selectors"):
+		await _finish(); return
+	for selected: String in ["standard", "challenge"]:
+		profile = selected
+		if not await _open(): await _finish(); return
+		if not await _capture("entrance"): await _finish(); return
+		game.call("resume_lab")
+		if not await _first_warning(): await _finish(); return
+		game.call("open_bench")
+		if not await _capture("arrival-warning"): await _finish(); return
+		if not await _dispose(): await _finish(); return
+	complete = true
+	await _finish()
+
+func _open() -> bool:
+	stage_name = "opening"
+	paused = false
+	game = MainScene.instantiate()
+	game.set_script(ProfileMain)
+	game.set("policy_test_preference", profile)
+	game.set("level_scene_path", LEVEL_PATH)
+	if not _expect(not game.is_inside_tree() and game.scene_file_path == "res://scenes/main.tscn", "Actual Main PackedScene identity before preference-only TEST subclass enters tree"): return false
+	root.add_child(game)
+	game.call("open_bench")
+	hero = game.get("player") as CinderPlayer
+	level = game.get("active_level") as CinderLevel
+	if not _expect(paused and hero != null and level != null, "Actual canonical fresh Main pauses before any native physics"): return false
+	scheduler = level.get("_scheduler") as CinderThreatScheduler
+	barrier = EndTick.new()
+	game.add_child(barrier)
+	fired.clear(); completed_actions.clear()
+	hero.fired.connect(func(kind: String) -> void: fired.append(kind))
+	hero.world_action_executed.connect(func(record: Dictionary) -> void: completed_actions.append(String(record.get("kind", ""))))
+	level.checkpoint_requested.connect(func(id: String, checkpoint: String, kind: String) -> void: progress_events.append({"profile": profile, "signal": "checkpoint", "level_id": id, "checkpoint_id": checkpoint, "kind": kind}))
+	level.completion_requested.connect(func(id: String, completion: String) -> void: progress_events.append({"profile": profile, "signal": "completion", "level_id": id, "completion_id": completion}))
+	await process_frame; await process_frame
+	if not _expect(level.level_id == "A2-L1" and level.scene_file_path == LEVEL_PATH and level.get_script() == Parent and level.local_snapshot_version == 2 and level.contract_error().is_empty(), "Canonical original Horsell scene/root/outer local2 identity", level.contract_error()): return false
+	if not _expect(scheduler != null and game.call("get_difficulty_preference") == profile and scheduler.encounter_profile().id == profile and String(level.get("runtime_error")).is_empty(), "Actual Scheduler consumed explicit Standard/oldChallenge before native configure"): return false
+	initial_hp = hero.hp
+	if not _expect(hero.global_position == level.spawn_position() and hero.global_position == Vector3(-1, 0.1, 2.6), "Original Main spawn retained exactly; no caller transform assignment"): return false
+	var actors: Dictionary = level.get("_actors")
+	if not _expect(actors.size() == 7 and actors.has_all(ORIGINAL_IDS), "All seven actual configured recipients exist"): return false
+	var distance: float = hero.global_position.distance_to((actors[SOURCE_ID] as Node3D).global_position)
+	if not _expect(distance <= 3.8, "Original native spawn already inside arrival3.8m admission range; no approach dash needed", str(distance)): return false
+	current_ids = _identities()
+	if not _expect(current_ids.size() == 12 and current_ids.values().all(func(value: Variant) -> bool: return value is String and not value.is_empty() and value != "0"), "Actual Main/Player/Level/Scheduler/Exchange plus seven native IDs retained as decimal strings"): return false
+	if not prior_ids.is_empty():
+		for key: String in prior_ids:
+			if not _expect(current_ids[key] != prior_ids[key], "Independent profile recipient has a different valid native identity: " + key): return false
+	return true
+
+func _warning_observation() -> Dictionary:
+	var result: Dictionary = {"profile": profile, "source_valid": false, "source_ready": false, "native_id_nonzero": false, "actor_bound_armed": false, "exchange_running": false, "phase_warning": false, "exchange_unarmed": false, "lease_found": false, "lease_owner_exact": false, "lease_profile_exact": false, "lease_unarmed": false, "outside_transaction": false, "hero_floor": false, "hero_stable": false, "within_range": false}
+	if not is_instance_valid(level) or not is_instance_valid(hero) or not is_instance_valid(scheduler): return result
+	result["hero_floor"] = hero.is_on_floor()
+	result["hero_stable"] = hero.get_threat_response_state().get("stable") == true
+	result["scheduler_clock_s"] = scheduler.get_clock()
+	result["runtime_error"] = String(level.get("runtime_error"))
+	var actors: Dictionary = level.get("_actors")
+	var source: Node3D = actors.get(SOURCE_ID) as Node3D
+	result["source_valid"] = is_instance_valid(source)
+	if not result.source_valid: return result
+	result["source_ready"] = source.is_inside_tree() and source.is_node_ready() and not source.is_queued_for_deletion()
+	result["native_id_nonzero"] = source.get_instance_id() != 0
+	result["source_id_decimal"] = str(source.get_instance_id())
+	result["actor_bound_armed"] = source.call("is_armed") == true
+	result["distance"] = hero.global_position.distance_to(source.global_position)
+	result["within_range"] = float(result.distance) <= 3.8
+	var exchange: Node = level.get("_exchange")
+	if not is_instance_valid(exchange): return result
+	var state: Dictionary = exchange.call("state", SOURCE_ID)
+	result["status"] = state.get("status", "")
+	result["phase"] = state.get("phase", "")
+	result["exchange_running"] = state.get("status") == "running"
+	result["phase_warning"] = state.get("phase") == "warning"
+	result["exchange_unarmed"] = state.get("armed") is bool and state.armed == false
+	result["reservation_id"] = String(state.get("reservation_id", ""))
+	result["last_cancel_reason"] = String(state.get("last_cancel_reason", ""))
+	result["admission_errors"] = (level.get("_admission_errors") as Dictionary).duplicate(true)
+	var control: Dictionary = scheduler.source_control_state(source)
+	result["outside_transaction"] = control.get("outside_transaction") == true
+	for lease: Dictionary in control.get("reservations", []):
+		if lease.get("id") == result.reservation_id:
+			result["lease_found"] = true
+			result["lease_owner_exact"] = lease.get("source_instance_id") is int and lease.source_instance_id == source.get_instance_id()
+			result["lease_profile_exact"] = lease.get("profile_id") == profile
+			result["lease_unarmed"] = lease.get("armed") is bool and lease.armed == false
+	return result
+
+func _warning_ready(observation: Dictionary) -> bool:
+	for key: String in ["source_valid", "source_ready", "native_id_nonzero", "actor_bound_armed", "exchange_running", "phase_warning", "exchange_unarmed", "lease_found", "lease_owner_exact", "lease_profile_exact", "lease_unarmed", "outside_transaction", "hero_floor", "hero_stable", "within_range"]:
+		if observation.get(key) != true: return false
+	return true
+
+func _assert_warning(observation: Dictionary) -> bool:
+	var good: bool = true
+	for key: String in ["source_valid", "source_ready", "native_id_nonzero", "actor_bound_armed", "exchange_running", "phase_warning", "exchange_unarmed", "lease_found", "lease_owner_exact", "lease_profile_exact", "lease_unarmed", "outside_transaction", "hero_floor", "hero_stable", "within_range"]:
+		if not _expect(observation.get(key) == true, "Actual first-warning predicate separately: " + key, JSON.stringify(observation)): good = false
+	return good
+
+func _first_warning() -> bool:
+	stage_name = "waiting-arrival-warning"
+	var deadline: int = Time.get_ticks_msec() + 20000
+	var last_signature: String = ""
+	var observation: Dictionary = {}
+	for _step: int in range(2400):
+		await barrier.settled
+		if finishing: return false
+		if not is_instance_valid(hero) or not is_instance_valid(level) or hero.dead: return _expect(false, "Healthy actual first-warning recipient")
+		observation = _warning_observation()
+		var stable_observation: Dictionary = observation.duplicate(true)
+		stable_observation.erase("scheduler_clock_s")
+		stable_observation.erase("distance")
+		var signature: String = JSON.stringify(stable_observation)
+		if signature != last_signature:
+			warning_observations.append(observation.duplicate(true)); last_signature = signature
+		if _warning_ready(observation):
+			warning_observations.append(observation.duplicate(true))
+			return _assert_warning(observation)
+		if paused or not String(level.get("runtime_error")).is_empty() or Time.get_ticks_msec() >= deadline: break
+	warning_observations.append(observation.duplicate(true))
+	_assert_warning(observation)
+	return _expect(false, "Finite20s actual native first-warning wait; no forced source/progress or framing bypass", JSON.stringify(observation))
+
+func _pair_error(value: Dictionary) -> String:
+	var error: String = Codec.keys_error(value, ["player", "level"])
+	if not error.is_empty() or not value.get("player") is Dictionary or not value.get("level") is Dictionary: return "Complete actual Player+Level caller unit required"
+	error = hero.snapshot_error(value.player)
+	return error if not error.is_empty() else level.snapshot_error_with_player(value.level, value.player)
+
+func _capture(selected_stage: String) -> bool:
+	stage_name = selected_stage
+	await process_frame
+	var actor: Dictionary = hero.snapshot_state()
+	var scene: Dictionary = level.snapshot_state()
+	if not _expect(paused and not actor.is_empty() and not scene.is_empty(), "Actual paused whole native Player+Level writer: " + stage_name, hero.last_snapshot_error + "; " + level.last_snapshot_error): return false
+	var local: Dictionary = scene.local
+	if not _expect(scene.api_revision == "campaign-level-1" and scene.schema_version is int and scene.schema_version == 1 and scene.local_snapshot_version == 2 and scene.level_id == "A2-L1" and scene.scene_path == LEVEL_PATH, "Original outer campaign-level1/local2 scene identity retained"): return false
+	if not _expect(local.size() == 17 and Codec.keys_error(local, Parent.LOCAL_KEYS).is_empty() and not local.has("arrangement") and not local.has("api_revision") and not local.has("schema_version") and local.profile_id == profile and local.world_revision == 1 and local.scheduler.profile.id == profile, "Exact original17-key local branch/profile/world1; no new arrangement or packet rewrite"): return false
+	if not _expect(local.sequence.schema_version is int and local.sequence.schema_version == 1 and local.sequence.beat == "arrival" and local.sequence.route == "" and local.sequence.alive_ids == [SOURCE_ID] and local.sequence.defeated_ids.is_empty() and scene.progress.checkpoint_ids.is_empty() and not scene.progress.completed and local.pending_checkpoints.is_empty() and not local.completion_pending and not local.exit_requested and progress_events.is_empty(), "Genuine unchanged arrival history; no earned route/defeat/contact/checkpoint/completion"): return false
+	if not _expect(fired.is_empty() and completed_actions.is_empty() and hero.get_world_action_records().is_empty() and hero.hp == initial_hp and not hero.dead, "No attack, hurt or input was executed; original spawn needed no approach dash"): return false
+	if not _expect(_identities() == current_ids, "Same valid native identity map retained through this profile's entrance/warning"): return false
+	var roots: Dictionary = {}
+	var actors: Dictionary = level.get("_actors")
+	if not _expect(actors.size() == 7 and local.exchange.actors.size() == 7 and local.exchange.records.size() == 7 and level.call("floor_regions").size() == 6, "All seven configured native actors/records and six actual floor supports captured"): return false
+	for id: String in ORIGINAL_IDS:
+		var native: Node3D = actors[id] as Node3D
+		var saved: Dictionary = local.exchange.actors[id]
+		if not _expect(is_instance_valid(native) and native.get_instance_id() != 0 and native.global_position == level.to_global(Sequence.ACTOR_POSITIONS[id]) and Codec.read_vector3(saved.root_position) == native.global_position and saved.actor_id == id and saved.hp == saved.max_hp and saved.max_hp == 30.0, "Actual original configured root/identity/full HP retained: " + id): return false
+		roots[id] = saved.root_position.duplicate()
+	if stage_name == "entrance":
+		if not _expect(local.scheduler.reservations.is_empty() and local.admitted_ids.is_empty() and local.exchange.records[SOURCE_ID].status == "idle" and hero.global_position == level.spawn_position(), "Genuine paused constructor entrance; no simulation/floor/readiness claim"): return false
+	else:
+		if not _assert_warning(_warning_observation()): return false
+		if not _expect(local.admitted_ids == [SOURCE_ID] and local.exchange.records[SOURCE_ID].status == "running" and local.exchange.records[SOURCE_ID].phase == "warning" and not local.scheduler.reservations.is_empty(), "Actual complete saved first unarmed tracking warning/owner-bound lease"): return false
+	var pair: Dictionary = {"player": actor, "level": scene}
+	var wire: String = Exact.stringify(pair)
+	var parsed: Dictionary = Exact.parse(wire)
+	var pair_error: String = _pair_error(pair)
+	if not _expect(not wire.is_empty() and parsed.get("accepted") == true and Exact.stringify(parsed.value) == wire and pair_error.is_empty(), "Independent aggregate native prevalidation and Exact scalar-bit/type round trip", pair_error): return false
+	var name: String = profile + "-" + stage_name
+	var file: FileAccess = FileAccess.open(output.path_join(name + ".exact.json"), FileAccess.WRITE)
+	if not _expect(file != null, "Original opaque native Exact output opens"): return false
+	file.store_string(wire); file.close()
+	var uri: String = store_root + name + ".json"
+	var writer: CinderSaveStore = Store.new(uri)
+	writer.payload_validator = _pair_error
+	if not _expect(writer.write_payload(pair), "Actual unique format2 Store publishes original whole native pair", writer.last_error): return false
+	var bytes: PackedByteArray = FileAccess.get_file_as_bytes(uri)
+	var envelope: Variant = JSON.parse_string(bytes.get_string_from_utf8())
+	var reader: CinderSaveStore = Store.new(uri)
+	reader.payload_validator = _pair_error
+	var disk: Dictionary = reader.read_payload()
+	if not _expect(envelope is Dictionary and envelope.get("format_version") == 2 and envelope.get("generation") == 1 and envelope.get("payload_json") == wire and envelope.get("sha256") == wire.sha256_text() and writer.generation == 1 and reader.generation == 1 and not reader.loaded_backup and reader.last_error.is_empty() and Exact.stringify(disk) == wire and Exact.stringify({"player": hero.snapshot_state(), "level": level.snapshot_state()}) == wire, "Actual format2 raw/checksum/generation1 and independent Store reread equal unchanged complete native wire", reader.last_error): return false
+	file = FileAccess.open(output.path_join(name + ".store.json"), FileAccess.WRITE)
+	if not _expect(file != null, "Exact raw native Store byte archive opens"): return false
+	file.store_buffer(bytes); file.close()
+	packets.append({"profile": profile, "stage": stage_name, "exact_file": name + ".exact.json", "exact_sha256": wire.sha256_text(), "exact_bytes": wire.to_utf8_buffer().size(), "store_file": name + ".store.json", "store_sha256": FileAccess.get_sha256(output.path_join(name + ".store.json")), "store_bytes": bytes.size(), "store_generation": reader.generation, "store_checksum": String(envelope.sha256), "original_store_uri": uri, "main_scene": game.scene_file_path, "level_scene": level.scene_file_path, "level_script": level.get_script().resource_path, "outer_api_revision": scene.api_revision, "outer_schema_version": scene.schema_version, "outer_local_snapshot_version": scene.local_snapshot_version, "original_local_keys": local.keys(), "original_local_key_count": local.size(), "sequence_schema": local.sequence.schema_version, "actual_scheduler_profile": local.scheduler.profile.id, "native_identities_decimal": current_ids.duplicate(true), "configured_native_roots_exact": Exact.stringify(roots), "fired_kinds": fired.duplicate(), "completed_action_kinds": completed_actions.duplicate(), "warning_predicates": _warning_observation() if stage_name == "arrival-warning" else {}, "scope": "New exact original Horsell17-key writer at original spawn. Pre-tree preference only; complete Player+Level/rawStore, no CampaignAttempts/whole campaign, historic payload recovery, route/completion, optics/balance/performance credit."})
+	return true
+
+func _identities() -> Dictionary:
+	var result: Dictionary = {}
+	for item: Array in [["main", game], ["player", hero], ["level", level], ["scheduler", scheduler], ["exchange", level.get("_exchange") if is_instance_valid(level) else null]]:
+		if is_instance_valid(item[1]): result[item[0]] = str((item[1] as Node).get_instance_id())
+	if is_instance_valid(level):
+		for id: String in ORIGINAL_IDS:
+			var actor: Node = (level.get("_actors") as Dictionary).get(id)
+			if is_instance_valid(actor): result[id] = str(actor.get_instance_id())
+	return result
+
+func _dispose() -> bool:
+	stage_name = "cleanup"
+	var refs: Array[WeakRef] = []
+	var good: bool = true
+	if is_instance_valid(game):
+		_collect(game, refs)
+		if is_instance_valid(level):
+			var actors: Dictionary = (level.get("_actors") as Dictionary).duplicate()
+			level.exit_level()
+			for id: String in actors:
+				var actor: Node3D = actors[id] as Node3D
+				if not _expect(scheduler.source_control_state(actor).get("reservations", []).is_empty() and actor.call("is_armed") == false, "Public original level exit releases/disarms actual owner: " + id): good = false
+		if is_instance_valid(game.get("fx")): game.get("fx").clear()
+		game.free()
+	prior_ids = current_ids.duplicate(true)
+	game = null; hero = null; level = null; scheduler = null; barrier = null
+	await process_frame
+	var released: bool = true
+	for ref: WeakRef in refs:
+		if ref.get_ref() != null: released = false
+	if not _expect(released, "Normal owned Main and all collected native descendants released", str(refs.size()) + " actual weakrefs"): good = false
+	if not _expect(get_nodes_in_group("enemies").is_empty() and get_nodes_in_group("required_cues").is_empty(), "Normal original native source/cue group cleanup"): good = false
+	return good
+
+func _collect(node: Node, refs: Array[WeakRef]) -> void:
+	refs.append(weakref(node))
+	for child: Node in node.get_children(): _collect(child, refs)
+
+func _expect(ok: bool, label: String, detail: String = "") -> bool:
+	var row: Dictionary = {"check": rows.size() + 1, "ok": ok, "profile": profile, "stage": stage_name, "label": label, "detail": detail}
+	rows.append(row)
+	if not ok:
+		failures += 1
+		if first_failure.is_empty(): first_failure = row.duplicate(true)
+		print("FAIL Horsell original producer: " + label + "; " + detail)
+	return ok
+
+func _sources() -> Dictionary:
+	var result: Dictionary = {}
+	for path: String in source_names: result[path] = FileAccess.get_sha256(path) if FileAccess.file_exists(path) else null
+	return result
+
+func _finish() -> void:
+	if finishing: return
+	finishing = true
+	paused = true
+	if is_instance_valid(game): await _dispose()
+	var directory: DirAccess = DirAccess.open(store_root)
+	if directory != null:
+		for name: String in directory.get_files():
+			_expect(DirAccess.remove_absolute(ProjectSettings.globalize_path(store_root + name)) == OK, "Owned unique Store file removed normally: " + name)
+		directory = null
+		_expect(DirAccess.remove_absolute(ProjectSettings.globalize_path(store_root)) == OK, "Owned unique Store directory removed normally")
+	_expect(not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(store_root)), "No owned native user Store directory remains")
+	_expect(not source_before.is_empty() and _sources() == source_before, "Fixed named source/UID observations unchanged")
+	paused = false
+	var report: Dictionary = {"schema_version": 1, "kind": "new-original-a2-l1-17-key-producer", "checks": rows.size(), "failures": failures, "rows": rows, "first_failure": first_failure, "complete": complete, "success": complete and failures == 0, "source_before": source_before, "source_after": _sources(), "packets": packets, "warning_observations": warning_observations, "actual_progress_signals": progress_events, "scope": "New original-source native Standard/oldChallenge entrance and actual arrival unarmed warning at original spawn. Complete unchanged Player+Level and format2 raw Store/checksum/generation/native roots/IDs/normal cleanup; preference-only TEST Main. No production modification, new arrangement/acceptance/consumer, historical fixture recovery, route/all-defeat/exit, campaign Shell, visual/balance/performance credit."}
+	if output.is_empty() or not output.is_absolute_path() or not DirAccess.dir_exists_absolute(output):
+		print("Horsell original producer refuses report outside explicit existing absolute output")
+		quit(2); return
+	var path: String = output.path_join("native-report.json")
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	if file == null: print("Horsell original producer report write failed"); quit(2); return
+	file.store_string(JSON.stringify(report, "\t") + "\n"); file.close()
+	print("CINDER_A2_L1_ORIGINAL_REPORT path=%s sha256=%s" % [path, FileAccess.get_sha256(path)])
+	print("A2-L1 original17-key producer: %d checks/%d failures; complete=%s; packets=%d" % [rows.size(), failures, str(complete), packets.size()])
+	quit(0 if complete and failures == 0 else 1)

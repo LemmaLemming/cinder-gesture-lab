@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-16T05:09:45.662743+00:00",
+  "scope": "Independent source-only Shell fixture review. No engine execution or runtime acceptance. Draft and promoted Shell bytes are unchanged.",
+  "subject_sha256": "4fc44dbb2950296378b06c0ab86a3ec00aba60268be02cf5fb0d03fd10b5f197",
+  "findings": [
+    {
+      "id": "F1",
+      "priority": "P2",
+      "category": "wrapper/report contract integration",
+      "file": ".cinder/a2-l1-difficulty-20261016/shell-prepare/act2_l1_arrangement_shell.gd.txt",
+      "location": "_finish report dictionary",
+      "finding": "Actual Shell report has schema_version and all actual rows/counters/completion/source fields, but no kind. Current preparation wrapper observe() unconditionally requires report.kind == contract.kind. As currently combined this rejects even a complete native Shell run.",
+      "resolution": "Before freezing final wrapper, use an explicit per-leaf optional kind requirement matching actual native source, or promote an additive native report kind field. Do not synthesize an actual native kind in host output. No gameplay source change is needed."
+    }
+  ],
+  "source_review": {
+    "apis": "Canonical public Continue, Resume, Pause, preference and Retry signals/methods match current Shell. Preference-only donor subclass is disclosed TEST setup; no claim that canonical Main implements that getter. Camera metadata matches actual Main camera offset representation.",
+    "transport": "Whole entrance/warning/session/checkpoint Exact comparisons and independent format2 Store checksum/payload joins cover initial restored Challenge under current Standard, preference-only Assisted change, independent fresh disk Continue, and public entrance Retry. Checkpoint is genuine untouched entrance, not an earned authored checkpoint.",
+    "native_identity": "Actual fixed 17-recipient map includes World/container/viewport/Hero/Level/camera/FX/Scheduler/Exchange plus seven Scouts; distinctness and weak-reference retirement are checked. Retry explicitly retains same Shell/HUD. Canonical Vector3 slot comparisons avoid decimal serialization equality claims.",
+    "quiet_and_cleanup": "Observed events are restricted to actual selected native descendants and explicitly named signal subset. False rows remain failures. Watchdog and early branches reach report cleanup; normal level exit, queued tree retirement, group cleanup, isolated Store removal, registry/source checks and audio/FPS restoration are present. Script errors may still prevent native report; wrapper must retain raw/partial failure evidence.",
+    "limits": "No source-level gameplay blocker found. Actual execution remains necessary. Source explicitly excludes fresh A1L5 transition, earned checkpoint, route/defeat/late Common/clear/all-kit/portrait/performance credit; arrival first-warning observation is bounded native runtime evidence only once executed."
+  },
+  "named_source_sha256": {
+    ".cinder/a2-l1-difficulty-20261016/shell-prepare/act2_l1_arrangement_shell.gd.txt": "4fc44dbb2950296378b06c0ab86a3ec00aba60268be02cf5fb0d03fd10b5f197",
+    "scripts/campaign/shell.gd": "f8df3b798544b79d66985f5e468f13ade5485bccc6050b54c9d9d242b3211a0f",
+    "scripts/game.gd": "0b16d911409350a392f741a07bc163ad73c588d885ee7e1e64b951f97aa30d26",
+    "scripts/campaign/attempts.gd": "6701abec6181beb3934490e468b00868c14e69eb229f708d562b98efe32a43a0",
+    "scripts/campaign/save_store.gd": "5b6974a1ea23f6fe0fe852f42c99310e28380caa182eea47491ef1180214aed0",
+    "scripts/ui/campaign_menu.gd": "bef10eaa96e1e94a2f7f4dc1c9502ed00f57696c3b3e3a33fa3856eae11d73c1",
+    "scripts/acts/act2/horsell_common.gd": "5f58885685d5b5727d286c57c45794bef0afc810424214636155283f60f43ad1",
+    "scripts/acts/act2/horsell_sequence.gd": "fbe1457edcf7028ed3eff8ad5d1b7a453063f8ed5541356eaa251dcf3629d5c7",
+    ".cinder/a2-l1-difficulty-20261016/validation-prepare/run.py": "bd9d38e0a330c6ac72d17537ae3abca9cff77b13710e4c18d1681bc5cd150445"
+  },
+  "runtime_claim": "UNEXECUTED: source review only; no native pass, counts or portrait claims."
+}

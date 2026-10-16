@@ -1,0 +1,127 @@
+--- tests/act2_l1_arrangement_component.gd@29af1ba0
++++ .cinder/a2-l1-difficulty-20261016/component-decision-review/retry-prepare/reload-qualified-v2/act2_l1_arrangement_component.gd.txt
+@@ -80,7 +80,7 @@
+ 	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+ 	var args: PackedStringArray = OS.get_cmdline_user_args()
+ 	_report = OS.get_environment("CINDER_A2_L1_ARRANGEMENT_PAIR_REPORT")
+-	if not _expect(args.size() == 1 and args[0] in ["--component-compare-left","--component-short-slow-right","--component-short-slow-left","--component-portrait"],"one explicit bounded component selector"): _finish(); return
++	if not _expect(args.size() == 1 and args[0] in ["--component-compare-left","--component-short-slow-right","--component-short-slow-left","--component-short-slow-left-retry","--component-portrait"],"one explicit bounded component selector"): _finish(); return
+ 	_selector = args[0]
+ 	if not _expect(_report.is_absolute_path() and not FileAccess.file_exists(_report),"new absolute Root phase report path"): _finish(); return
+ 	_source_before = _sources()
+@@ -95,6 +95,8 @@
+ 			var new_ok: bool = await _case("current-left",CurrentComponent,"left",NEUTRAL,false)
+ 			var current: Dictionary = _case_receipt.duplicate(true)
+ 			_complete = new_ok and _useful_change(old,current)
++	elif _selector == "--component-short-slow-left-retry":
++		_complete = await _case("current-short-slow-left-retry",CurrentComponent,"left",SHORT_SLOW,false,true)
+ 	elif _selector in ["--component-short-slow-right","--component-short-slow-left"]:
+ 		var route: String = "right" if _selector == "--component-short-slow-right" else "left"
+ 		_complete = await _case("current-short-slow-"+route,CurrentComponent,route,SHORT_SLOW,false)
+@@ -106,7 +108,7 @@
+ 	await process_frame
+ 	_finish()
+ 
+-func _case(label: String, component: Script, route: String, loadout: Dictionary, portrait_only: bool) -> bool:
++func _case(label: String, component: Script, route: String, loadout: Dictionary, portrait_only: bool, one_native_retry: bool = false) -> bool:
+ 	_current_label = label
+ 	_case_receipt = {}
+ 	_abort = false
+@@ -131,7 +133,7 @@
+ 	_case_receipt["initial_player_hp"] = _hero.hp
+ 	if not _integrity(true): return false
+ 	_hero.world_action_executed.connect(func(record: Dictionary) -> void: _actions.append(record.duplicate(true)))
+-	_scheduler.reservation_invalidated.connect(func(id: String, reason: String) -> void: _invalidations.append({"id":id,"reason":reason,"clock_s":_clock()}))
++	_scheduler.reservation_invalidated.connect(_on_invalidation)
+ 	_level.checkpoint_requested.connect(func(_l: String,id: String,_k: String) -> void: _events.append({"kind":"checkpoint","id":id}))
+ 	_level.completion_requested.connect(func(_l: String,id: String) -> void: _events.append({"kind":"completion","id":id}))
+ 	_level.contact_exit_requested.connect(func(_l: String,id: String) -> void: _events.append({"kind":"contact","id":id}))
+@@ -151,11 +153,26 @@
+ 	var plan: Dictionary = await _wait_first_armed()
+ 	if plan.is_empty(): return false
+ 	_case_receipt["armed_plan"] = plan.duplicate(true)
++	if one_native_retry:
++		_case_receipt["initial_armed_plan"] = plan.duplicate(true)
++		_case_receipt["initial_armed_check"] = _case_receipt.first_armed_check.duplicate(true)
++		plan = await _one_native_retry_before_response(plan)
++		if plan.is_empty(): return false
++		_case_receipt["armed_plan"] = plan.duplicate(true)
+ 	if portrait_only:
+ 		return await _portrait(plan)
+ 	var hp_before: float = float(_case_receipt.initial_player_hp)
+ 	if not await _follow(plan): return false
+ 	var phase_complete: bool = _phases.has_all(["warning","lock","active","recovery"])
++	if one_native_retry:
++		for phase: String in ["warning","lock","active","recovery"]:
++			var observed: Dictionary = _phase_receipts.get(phase,{})
++			if not _expect(not observed.is_empty() and observed.state.cycle == plan.cycle and observed.state.actor_id == _selected and observed.state.reservation_id == plan.reservation.id and observed.own_lease.id == plan.reservation.id and observed.own_lease.source_instance_id == _actors[_selected].get_instance_id(),"successful bounded response phase belongs to its own native cycle/lease " + phase): return false
++			if phase != "warning" and not _expect(observed.state.geometry == plan.state.geometry and observed.state.proof == plan.proof and observed.own_lease.geometry == plan.reservation.geometry,"armed response phase retains its original geometry/proof " + phase): return false
++		var expected_aborts: int = 1 if _case_receipt.native_retry.used else 0
++		if not _expect(_invalidations.size() == expected_aborts,"bounded native response has no second cancellation or unrelated invalidation"): return false
++		_case_receipt["successful_cycle_phases"] = _phase_receipts.duplicate(true)
++		_case_receipt["resources_after_native_response"] = {"hero_hp":_hero.hp,"hero_shells":_hero.shells,"scope":"Actual resources after response; natural reload is permitted and no blast was used."}
+ 	var hits: int = 0
+ 	var dashes: int = 0
+ 	for action: Dictionary in _actions:
+@@ -182,6 +199,61 @@
+ 			if not _expect(float(actor.get("hp")) == 30.0 and state.cycle == 0 and state.reservation_id.is_empty() and not state.proof_available and state.status == "idle" and not actor.visible,"unselected/unreached actor remains living idle without native lease " + id): return false
+ 	if not _expect(receipt.sequence.defeated_ids.is_empty() and receipt.pending_defeats.is_empty() and receipt.pending_checkpoints.is_empty() and not receipt.completion_pending and not receipt.departure_checkpoint and not receipt.departure_contact_seen and not receipt.exit_requested and receipt.refused_progress.is_empty() and _events.is_empty() and not _level.is_completed() and _level.current_checkpoint() == {"id":"","kind":""},"empty history/CP/progress and no earlier kills, optional rewards or completion"): return false
+ 	return _expect(not receipt.original_sequence_validation_error.is_empty() and _level.snapshot_state().is_empty() and not _level.snapshot_error({}).is_empty() and not _level.snapshot_error_with_player({},{}).is_empty() and not _level.restore_state({}),"original sequence rejects missing defeat prefix; declared component refuses canonical parent save/restore authority")
++
++func _on_invalidation(id: String, reason: String) -> void:
++	var row: Dictionary = {"id":id,"reason":reason,"clock_s":_clock()}
++	if _selector == "--component-short-slow-left-retry":
++		# Observe the actual cancellation transaction before a later attempted
++		# activation can overwrite the parent's diagnostic. Never invoke a guard,
++		# snapshot, lease-pruning query, activation or readability mutation here.
++		var camera: Camera3D = _game.get("camera") as Camera3D
++		var cue: CinderThreatCue = (_driver.get("_cues") as Dictionary)[_selected]
++		row["boundary"] = {"paused":paused,"driver_state":_driver.call("state",_selected),"source_control":_scheduler.source_control_state(_actors[_selected]),"admission_errors":(_level.get("_admission_errors") as Dictionary).duplicate(true),"selected_admission_error":(_level.get("_admission_errors") as Dictionary).get(_selected,{}).duplicate(true),"camera":{"basis":camera.global_basis,"origin":camera.global_position,"size":camera.size,"projection":camera.projection,"current":camera.current,"near":camera.near,"far":camera.far},"viewport":camera.get_viewport().get_visible_rect(),"hud_safe_rect":_game.get("hud").call("combat_safe_rect"),"camera_framing":_game.call("get_camera_framing_state"),"hero_position":_hero.global_position,"hero_hp":_hero.hp,"hero_shells":_hero.shells,"equipment":_hero.equipment.snapshot(),"actions":_actions.duplicate(true),"input":_game.call("get_input_observation_state"),"source_visible":(_actors[_selected] as Node3D).is_visible_in_tree(),"source_hp":_actors[_selected].get("hp"),"cue":cue.state(),"cue_visible":cue.is_visible_in_tree(),"scope":"Passive cancellation-callback observation; cancellation publication may still be in progress. No failed inner guard pointset is reconstructed."}
++	_invalidations.append(row)
++
++func _one_native_retry_before_response(initial: Dictionary) -> Dictionary:
++	var escape_start: float = -1.0
++	for segment: Dictionary in initial.proof.path:
++		if segment.kind == "escape_dash": escape_start = float(segment.start_s); break
++	if not _expect(escape_start >= _clock(),"original first native escape deadline remains in the future before bounded retry observation"): return {}
++	if not await _until(escape_start): return {}
++	_case_receipt["initial_escape_boundary"] = {"clock_s":_clock(),"initial_plan_still_owned":_same_plan(initial),"state":_driver.call("state",_selected),"invalidations":_invalidations.duplicate(true),"hero_position":_hero.global_position,"hero_hp":_hero.hp,"hero_shells":_hero.shells,"actions":_actions.duplicate(true)}
++	if _same_plan(initial):
++		_case_receipt["native_retry"] = {"used":false,"successful_plan_cycle":initial.cycle,"policy":"Original first plan still valid at its scheduled escape; follow unchanged."}
++		return initial
++	var state: Dictionary = _driver.call("state",_selected)
++	var control: Dictionary = _scheduler.source_control_state(_actors[_selected])
++	var invalidation: Dictionary = _invalidations[0] if _invalidations.size() == 1 else {}
++	var unchanged: bool = _actions.size() == 1 and _actions[0] == _case_receipt.fork_dash and _hero.get_world_action_records() == _actions and _hero.global_position == _case_receipt.fork_landing.hero_position and _hero.hp == float(_case_receipt.initial_player_hp) and _hero.shells == 0 and _hero.equipment.snapshot() == _loadout and not _hero.action_in_progress() and _events.is_empty() and float(_actors[_selected].get("hp")) == 30.0
++	_case_receipt["first_presentation_abort"] = {"original_plan":initial.duplicate(true),"observed_invalidation":invalidation.duplicate(true),"state_after_callback":state,"source_control_after_callback":control,"phases":_phase_receipts.duplicate(true),"actions":_actions.duplicate(true),"unchanged_resources_pose_actions":unchanged,"scheduled_escape_start_s":escape_start,"scope":"Only this specific naturally canceled first cycle may be retained and followed by ONE autonomous retry. No successful first response claimed."}
++	if not _expect(not invalidation.is_empty() and invalidation.id == initial.reservation.id and invalidation.reason == "required_scout_presentation_unavailable" and float(invalidation.clock_s) < escape_start and invalidation.has("boundary") and unchanged and state.status == "cancelled" and state.phase == "clear" and state.cycle == initial.cycle and state.last_cancel_reason == invalidation.reason and state.reservation_id.is_empty() and state.proof.is_empty() and not state.proof_available and state.presentation_witness.is_empty() and not state.hit_consumed and not control.is_empty() and control.reservations.is_empty() and control.cooldown is Dictionary and control.cooldown.ready_s == initial.reservation.cooldown_until_s and float(control.cooldown.ready_s) > _clock(),"only original pre-response presentation cancellation retains HP/resources/pose/actions, clears own proof/lease and preserves original future cooldown"): return {}
++	if not _integrity(false): return {}
++	# Retain first-cycle evidence before clearing passive phase aggregation. The
++	# future original cooldown above proves cycle two has not begun yet.
++	_phases.clear(); _phase_receipts.clear()
++	for _i: int in range(MAX_TICKS):
++		if not _live(): return {}
++		state = _driver.call("state",_selected)
++		# Native shell reload remains active during the original cooldown. Only
++		# its legal range is checked; no resource is assigned or refilled here.
++		if _actions.size() != 1 or _hero.hp != float(_case_receipt.initial_player_hp) or _hero.shells < 0 or _hero.shells > int(_stats.shell_capacity) or _hero.equipment.snapshot() != _loadout or _hero.global_position != _case_receipt.fork_landing.hero_position or _invalidations.size() != 1 or not _events.is_empty():
++			_expect(false,"autonomous retry waiting preserves HP/pose/kit/actions and legal natural shell reload, without second cancellation/progress")
++			return {}
++		if int(state.cycle) > int(initial.cycle):
++			_case_receipt["autonomous_retry_warning"] = {"clock_s":_clock(),"state":state.duplicate(true),"source_control":_scheduler.source_control_state(_actors[_selected]),"phases":_phase_receipts.duplicate(true),"hero_hp":_hero.hp,"hero_shells":_hero.shells,"resources_scope":"Actual native reload during unchanged cooldown; no claim of zero shells after initial abort."}
++			if not _expect(state.cycle == initial.cycle+1 and state.status == "running" and state.phase == "warning" and not state.armed and not state.proof_available and not state.reservation_id.is_empty() and state.reservation_id != initial.reservation.id and _clock() >= float(initial.reservation.cooldown_until_s) and _phase_receipts.has("warning") and _phase_receipts.warning.state.cycle == initial.cycle+1 and _phase_receipts.warning.state.reservation_id == state.reservation_id,"ONE next warning is admitted autonomously after unchanged native cooldown with a fresh cycle/lease"): return {}
++			var retry_plan: Dictionary = await _wait_first_armed()
++			if retry_plan.is_empty(): return {}
++			_case_receipt["retry_armed_plan"] = retry_plan.duplicate(true)
++			if not _expect(retry_plan.cycle == initial.cycle+1 and retry_plan.reservation.id != initial.reservation.id and _invalidations.size() == 1,"retry arms its own original native proof once; a second refusal is terminal"): return {}
++			_case_receipt["native_retry"] = {"used":true,"first_cycle":initial.cycle,"successful_plan_cycle":retry_plan.cycle,"original_cooldown_until_s":initial.reservation.cooldown_until_s,"hero_hp_at_retry_lock":_hero.hp,"hero_shells_at_retry_lock":_hero.shells,"resources_scope":"Initial shells0; native reload allowed, no blast actions and native proof uses_blast=false. No manual resource writes.","policy":"One naturally admitted retry only; next ordinary response uses its own unchanged proof/lease and original timing."}
++			return retry_plan
++		if state.cycle != initial.cycle or state.status != "cancelled":
++			_expect(false,"unexpected state while waiting for the one native cooldown retry")
++			return {}
++		await _step()
++	_expect(false,"bounded MAX_TICKS wait did not produce one autonomous next native warning")
++	return {}
+ 
+ func _wait_first_armed() -> Dictionary:
+ 	var first_cycle: int = 0

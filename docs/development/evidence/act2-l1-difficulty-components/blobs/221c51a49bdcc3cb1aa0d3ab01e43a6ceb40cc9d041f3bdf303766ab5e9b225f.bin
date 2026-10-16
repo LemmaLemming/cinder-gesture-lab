@@ -1,0 +1,18 @@
+{
+  "phase": "native",
+  "test": "pair",
+  "mode": "--component-short-slow-right",
+  "closed": true,
+  "passed": false,
+  "engine_launch_attempted": true,
+  "owned_validation_returned": true,
+  "canonical_return_code": 2,
+  "terminal_scope": "Canonical API return after its owned wait/cleanup; may be synthetic detected failure/timeout, not independent OS-terminal proof.",
+  "error": "Canonical owned child must return zero",
+  "runner_return_code": 2,
+  "raw_diagnostics": [
+    "ERROR: Condition \"ret != noErr\" is true. Returning: \"\"",
+    "ERROR: A2-L1 component: original source/cycle/lease owns timely escape_dash"
+  ],
+  "diagnostic_scope": "Raw/engine logs preserved; Root independently reviews diagnostics before acceptance. Zero return is not blanket clean-log proof."
+}

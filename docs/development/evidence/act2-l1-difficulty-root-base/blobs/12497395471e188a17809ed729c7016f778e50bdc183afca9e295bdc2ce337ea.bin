@@ -1,0 +1,190 @@
+"""Fixed nine CLOSED A2-L1 phases, private digest archive only; no engine/Git."""
+from pathlib import Path, PurePosixPath
+import datetime
+import hashlib
+import json
+import os
+import stat
+
+HERE = Path(__file__).resolve().parent
+BASE = HERE.parent
+ROOT = BASE.parents[1]
+PUBLIC = "docs/development/evidence/act2-l1-difficulty-root-base/"
+PHASES = [
+    "producer-prepare/seal-20261016T045233.199919Z-b58885af",
+    "producer-prepare/native-20261016T045240.728601Z-14fd5d30",
+    "validation-prepare/run-seal-pure-20261016T051708.127836Z-f2a23caf",
+    "validation-prepare/run-import-pure-20261016T051717.196630Z-77a877b5",
+    "validation-prepare/run-native-pure-20261016T051848.301939Z-07d812b7",
+    "validation-prepare/run-native-legacy-20261016T051911.778140Z-fb3a4b8a",
+    "validation-prepare/run-native-shell-20261016T052548.989891Z-91c398cf",
+    "validation-prepare/run-native-pair-20261016T052716.604040Z-11b40f76",
+    "validation-successor-v1/run-seal-pure-20261016T053157.613532Z-dfe123ad",
+]
+EXTRAS = {
+    "producer-prepare": ["ROOT_NATIVE_REVIEW.json", "ROOT_SCOPE_REVIEW.json", "run.py", "SOURCE_INPUTS.json", "SOURCE_CUSTODY.json", "README.md", "READINESS.json", "producer.gd.txt", "producer.gd", "PRODUCER_SOURCE_REVIEW.json"],
+    "candidate-prepare": ["horsell_common.before.gd.txt", "horsell_common.gd.txt", "README.md", "READINESS.json", "horsell_common.patch.txt", "a2_l1_difficulty_arrangements.json.txt", "IMPLEMENTATION_REVIEW.json"],
+    "candidate-successor": ["ROOT_REVIEW.json", "horsell_common.gd.txt", "successor.patch.txt", "a2_l1_difficulty_arrangements.json.txt"],
+    "candidate-independent-review": ["REVIEW.md", "REVIEW.json"],
+    "root-verification": ["IMPORT_PURE_REVIEW.json", "IMPORT_PURE_REVIEW.md", "ROOT_LEGACY_SHELL_REVIEW.json", "ROOT_LEGACY_SHELL_REVIEW.md"],
+    "root-test-selection": ["act2_l1_arrangement_shell-with-kind.gd.txt", "COMPONENT_PATH_FIX.json", "act2_l1_arrangement_legacy.gd.txt", "COMPONENT_SELECTION.json", "act2_l1_arrangement_shell.gd.txt", "act2_l1_arrangement_pure.gd.txt", "SHELL_KIND_SUPPLEMENT.json", "ROOT_TEST_SELECTION.json", "component-path-fix-v1/successor.gd.txt", "component-path-fix-v1/original-94d82eab.gd.txt"],
+    "shell-prepare": ["act2_l1_arrangement_shell.original-unexecuted.gd.txt", "READINESS.json", "act2_l1_arrangement_shell.gd.txt", "INDEPENDENT_REVIEW.json"],
+    "test-prepare": ["act2_l1_arrangement_pure-successor.gd.txt", "INTERFACES_AND_ASSUMPTIONS.json", "act2_l1_arrangement_legacy.gd.txt", "README.md", "READINESS.json", "pure-material-profile-tamper-successor.patch.txt", "act2_l1_arrangement_pure.gd.txt", "SUCCESSOR_READINESS.json", "revisions/first-READINESS.json", "revisions/pure-first-unexecuted.gd.txt", "revisions/legacy-first-unexecuted.gd.txt", "revisions/pre-numeric-compatibility-READINESS.json", "revisions/pure-positive-numeric-compatibility.patch.txt", "revisions/legacy-cleanup-refinement.patch.txt"],
+    "validation-prepare": ["INPUT_SPEC.json", "run.py", "SOURCE_INPUTS.json", "README.md", "PREPARATION_PLAN.json", "READINESS.json"],
+    "validation-successor-v1": ["INPUT_SPEC.json", "run.py", "SOURCE_INPUTS.json", "README.md", "READINESS.json", "PREPARATION_STATUS.json"],
+}
+STEMS = ["standard-entrance", "standard-arrival-warning", "challenge-entrance", "challenge-arrival-warning"]
+LITERALS = [stem + suffix for stem in STEMS for suffix in (".exact.json", ".store.json")] + ["PROVENANCE.json", "producer-native-report.json"]
+CURRENT = ["scripts/acts/act2/horsell_common.gd", "scripts/acts/act2/horsell_common.gd.uid", "data/campaign/act2/a2_l1_difficulty_arrangements.json"] + ["tests/act2_l1_arrangement_" + kind + suffix for kind in ("pure", "legacy", "shell") for suffix in (".gd", ".gd.uid")]
+
+
+def require(ok, reason):
+    if not ok:
+        raise ValueError(reason)
+
+
+def read(path):
+    return json.loads(path.read_text(), parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)))
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def regular(path):
+    require(path.is_file() and not path.is_symlink(), "Regular original required: " + str(path))
+    return path.read_bytes()
+
+
+def encode(value):
+    return (json.dumps(value, indent=2, allow_nan=False) + "\n").encode()
+
+
+def safe(name):
+    require(type(name) is str, "String relative path required")
+    p = PurePosixPath(name)
+    require(not p.is_absolute() and ".." not in p.parts and str(p) == name and name not in ("", "."), "Safe relative path required")
+    return name
+
+
+def main():
+    selected, phases, aliases = {}, [], []
+    def select(path, role):
+        name = path.relative_to(ROOT).as_posix()
+        data = regular(path)
+        mode = format(stat.S_IMODE(path.stat().st_mode), "04o")
+        if name in selected:
+            require(selected[name][0] == data and selected[name][1]["mode_octal"] == mode, "Selected original changed")
+        else:
+            selected[name] = (data, {"sha256": digest(data), "bytes": len(data), "mode_octal": mode, "role": role})
+        return name
+    for phase_name in PHASES:
+        phase = BASE / phase_name
+        result = read(phase / "result.json")
+        require(result.get("closed") is True and type(result.get("passed")) is bool and type(result.get("runner_return_code")) is int, "Explicit CLOSED phase required: " + phase_name)
+        index = read(phase / "evidence-index.json")
+        require(index.get("created_after_raw_close") is True and type(index.get("files")) is dict, "Exact original closed index required")
+        physical = {p.relative_to(phase).as_posix() for p in phase.rglob("*") if p.is_file()}
+        require(physical == set(index["files"]) | {"evidence-index.json"}, "Closed phase physical/index whitelist mismatch: " + phase_name)
+        for name, expected in index["files"].items():
+            data = regular(phase / safe(name))
+            require(digest(data) == expected["sha256"] and len(data) == expected["bytes"], "Original index mismatch: " + phase_name + "/" + name)
+        members = {name: select(phase / name, "actual original CLOSED phase artifact, original source scope unchanged") for name in sorted(physical)}
+        retention_names = sorted(name for name in physical if name.endswith("-retention.json") and name != "native-report-retention.json")
+        for name in retention_names:
+            retention = read(phase / name)
+            observation_name = name.replace("-retention.json", ".json")
+            require(observation_name in physical, "Named original observation required")
+            observed = read(phase / observation_name)
+            require(set(retention) == {k for k, v in observed.items() if v is not None}, "Original observation/retention keyset mismatch")
+            for source_name, value in observed.items():
+                alias = {"phase": phase_name, "original_observation_relative_path": members[observation_name], "original_retention_relative_path": members[name], "original_source_relative_path": source_name, "present": value is not None}
+                if value is not None:
+                    row = retention[source_name]
+                    blob = safe(row["blob"])
+                    require(blob.startswith("source-blobs/") and blob in members, "Retained original source blob required")
+                    original = members[blob]
+                    data, meta = selected[original]
+                    require(value == row["sha256"] == meta["sha256"] and row["bytes"] == meta["bytes"], "Original source-byte join mismatch")
+                    alias.update({"original_retained_blob_relative_path": original, "sha256": meta["sha256"], "bytes": meta["bytes"], "repository_storage_path": PUBLIC + "blobs/" + meta["sha256"] + ".bin"})
+                aliases.append(alias)
+        native = read(phase / "native-report.json") if "native-report.json" in physical else None
+        summary = {"phase": phase_name, "original_index_relative_path": members["evidence-index.json"], "original_result_relative_path": members["result.json"], "closed": True, "recorded_passed": result["passed"], "runner_return_code": result["runner_return_code"], "canonical_return_code": result.get("canonical_return_code", result.get("canonical_validation_return_code")), "original_file_count_including_index": len(members), "native_report_present": native is not None, "recorded_raw_diagnostics": result.get("raw_diagnostics", result.get("raw_diagnostic_lines", []))}
+        if native is not None:
+            summary.update({"original_report_relative_path": members["native-report.json"], "actual_report_control_fields": {k: native.get(k) for k in ("kind", "checks", "failures", "complete", "success", "first_failure")}})
+        if phase_name.endswith("11b40f76"):
+            require(not result["passed"] and result["runner_return_code"] == 2 and native is None, "Original component parse failure must stay failed/no-report")
+            summary["qualification"] = "Original resource_path script-constant parse failure; no native mechanics/report/visual credit. Successor included below is seal only, not active component results."
+        phases.append(summary)
+    for folder, names in EXTRAS.items():
+        for name in names:
+            select(BASE / folder / name, "current private preparation/review/selection snapshot; its historical status and recorded hashes remain unchanged, never a historical repin")
+    select(BASE / "ROOT_PROMOTION.json", "actual selected validation-only production promotion receipt, no acceptance claim")
+    # Explicit preparatory custody blob list, not a directory or dependency census.
+    custody = read(BASE / "producer-prepare/SOURCE_CUSTODY.json")
+    for row in custody["rows"]:
+        if row.get("present") is True:
+            path = BASE / "producer-prepare" / safe(row["blob"])
+            data = regular(path)
+            require(digest(data) == row["observed_sha256"] and len(data) == row["bytes"], "Frozen preparatory source custody bytes")
+            select(path, "actual earlier host-only preparation custody blob; not native at-lock attribution")
+    for name in LITERALS:
+        select(BASE / "test-prepare/fixtures" / name, "unchanged exact selected original literal/provenance preparation copy")
+        select(ROOT / "tests/acts/act2/fixtures/a2_l1_difficulty_legacy" / name, "actual promoted unchanged original literal/provenance reference; original producer attribution retained")
+    current_rows = {}
+    for name in CURRENT:
+        original = select(ROOT / name, "actual current source/UID snapshot at archive preparation only; phase maps govern executed bytes")
+        current_rows[original] = selected[original][1]
+    require(current_rows["scripts/acts/act2/horsell_common.gd"]["sha256"] == "5f58885685d5b5727d286c57c45794bef0afc810424214636155283f60f43ad1", "Root selected runtime unchanged")
+    require(current_rows["data/campaign/act2/a2_l1_difficulty_arrangements.json"]["sha256"] == "919de84be9a74aaab6668e2fec1fd55ee45a3a55af4d5090aff7f2c6ca08938e", "Root selected finite recipe unchanged")
+    select(Path(__file__).resolve(), "specific private archive preparation helper; no engine execution")
+    output = HERE / ("pack-base-" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ"))
+    output.mkdir(exist_ok=False)
+    pack = output / "pack"
+    files, originals, unique = {}, {}, {}
+    def put(name, data):
+        require(safe(name).startswith(PUBLIC), "Fixed private evidence destination required")
+        path = pack / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if path.exists():
+            require(regular(path) == data, "Prepared digest/path conflict")
+        else:
+            with path.open("xb") as stream:
+                stream.write(data)
+        path.chmod(0o644)
+        files[name] = {"sha256": digest(data), "bytes": len(data), "mode_octal": "0644"}
+    put(PUBLIC + ".gdignore", b"")
+    for original, (data, meta) in selected.items():
+        destination = PUBLIC + "blobs/" + meta["sha256"] + ".bin"
+        put(destination, data)
+        unique[meta["sha256"]] = {"repository_storage_path": destination, "bytes": meta["bytes"]}
+        originals[original] = {**meta, "repository_storage_path": destination}
+    put(PUBLIC + "original-paths.json", encode({"schema_version": 1, "original_checkout_absolute_path": str(ROOT), "scope": "Original checkout-relative path/hash/size/mode maps to byte-identical digest storage. Original indexes/logs/reports/maps stay exact and retain historical layouts; no claim their old physical paths are live in this relocated archive.", "files": originals}))
+    put(PUBLIC + "source-observation-aliases.json", encode({"schema_version": 1, "scope": "Derived relocation aliases only. Explicit absent observations remain absent; no source map rewrite or historical execution repin.", "aliases": aliases}))
+    put(PUBLIC + "CURRENT_SOURCE_REFERENCES.json", encode({"schema_version": 1, "scope": "Actual archive-time selected source/UID snapshots only, distinct from each original phase's executed source custody. No active component phase or result included.", "files": current_rows}))
+    import_phase = BASE / PHASES[3]
+    before = read(import_phase / "sources-before-queue.json")
+    after = read(import_phase / "sources-at-runner-close.json")
+    uid_additions = {k: {"before": None, "after": after[k]} for k, value in before.items() if value is None and after.get(k) is not None}
+    require(len(uid_additions) == 7 and all(k.endswith(".gd.uid") for k in uid_additions) and all(after[k] == value for k, value in before.items() if value is not None), "Exact bounded import seven UID additions and no prior source drift")
+    index = {"schema_version": 1, "kind": "act2-l1-original-producer-and-focused-validation-portable-base", "actual_closed_phases": len(phases), "phases": phases, "original_paths": len(originals), "unique_CAS_blobs": len(unique), "source_observation_aliases": len(aliases), "original_path_map": PUBLIC + "original-paths.json", "source_alias_map": PUBLIC + "source-observation-aliases.json", "selected_import_UID_additions": uid_additions, "global_UID_closure_claimed": False, "retained_focused_counts": {"original_producer": [194, 0], "pure": [92, 0], "legacy": [241, 0], "whole_Shell": [117, 0]}, "failed_phase_preserved": {"phase": PHASES[7], "runner_return_code": 2, "native_report_present": False, "reason": "Original script-constant.resource_path parse errors, not executed mechanics failure."}, "excluded_active_component_phase": "validation-successor-v1/run-native-pair-20261016T053202.305090Z-3936fff9", "scope": "Exactly nine named CLOSED originals, including host seals, actual original-writer native, necessary import, focused pure/legacy/Shell, original failed parse, and successor seal only. No successor component result, portrait, route, all-kill, all-kit, performance, acceptance or publication credit."}
+    put(PUBLIC + "index.json", encode(index))
+    put(PUBLIC + "README.md", ("# A2-L1 original and focused validation evidence\n\nNine explicitly named CLOSED phases preserve original194/0 writer, necessary import, pure92/0, legacy241/0 and Shell117/0 scopes, original failed component parse/no-report, and successor seal only. The active successor component job is excluded. Packing adds no native, visual, route, acceptance or performance credit.\n\nThe digest pool retains byte-exact original files once. original-paths.json maps each original checkout-relative path/hash/size/mode to digest storage; source-observation-aliases.json provides derived relocation joins including actual UID absences. Original indexes/source maps are unchanged; their old physical paths are not asserted live inside this archive. Current source references and historical preparation/review statuses are labelled separately. Exactly seven named necessary-import UID additions are recorded, without a global UID or dependency census.\n\nReconstruct an original layout through the relocation map to verify its unchanged old index. Later closed component/visual evidence must be a separate additive supplement.\n").encode())
+    manifest_path = PUBLIC + "PUBLIC_COPY_MANIFEST.json"
+    put(manifest_path, encode({"schema_version": 1, "status": "PRIVATE_EXACT_WHITELIST_READY_FOR_ROOT_REVIEW_ONLY", "file_count_excluding_this_manifest": len(files), "file_count_including_this_manifest": len(files) + 1, "bytes_excluding_this_manifest": sum(r["bytes"] for r in files.values()), "self_repository_path": manifest_path, "files": dict(files)}))
+    for name, meta in files.items():
+        path = pack / name
+        data = regular(path)
+        require(digest(data) == meta["sha256"] and len(data) == meta["bytes"] and format(stat.S_IMODE(path.stat().st_mode), "04o") == meta["mode_octal"], "Prepared file hash/size/mode differs")
+    for original, (data, meta) in selected.items():
+        path = ROOT / original
+        require(regular(path) == data and format(stat.S_IMODE(path.stat().st_mode), "04o") == meta["mode_octal"], "Original changed during packing: " + original)
+    (output / "PUBLICATION_PATHS.nul").write_bytes(b"".join(name.encode() + b"\0" for name in sorted(files)))
+    (output / "PUBLICATION_PATHS.txt").write_text("\n".join(sorted(files)) + "\n")
+    closure = {"schema_version": 1, "status": "EXACT_PRIVATE_BASE_PACK_VERIFIED", "actual_closed_phases": len(phases), "original_paths": len(originals), "unique_CAS_blobs": len(unique), "source_aliases": len(aliases), "publication_files": len(files), "publication_bytes": sum(r["bytes"] for r in files.values()), "index_sha256": files[PUBLIC + "index.json"]["sha256"], "original_paths_sha256": files[PUBLIC + "original-paths.json"]["sha256"], "manifest_sha256": files[manifest_path]["sha256"], "absent_source_aliases": sum(not row["present"] for row in aliases), "no_engine_no_Git_no_public_copy": True, "active_component_results_included": False}
+    (output / "PREPARATION_CLOSURE.json").write_bytes(encode(closure))
+    print(json.dumps({"private_output": str(output), **closure}, indent=2))
+
+
+if __name__ == "__main__":
+    main()
