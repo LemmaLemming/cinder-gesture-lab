@@ -27,6 +27,7 @@ var checks: int = 0
 var failures: int = 0
 var game: CinderCampaignShell
 var graphical: bool = false
+var entry_retry_only: bool = false
 var _finished: bool = false
 var _expected_commit: String = ACCEPTED_COMMIT
 var _test_root: String = ""
@@ -44,7 +45,9 @@ func _initialize() -> void:
 	_test_root = "user://test-act3-registration-%s/" % identity
 	_capture_root = "user://test-act3-registration-captures-%s/" % identity
 	for argument: String in OS.get_cmdline_user_args():
-		if argument == "--portrait":
+		if argument == "--entry-retry-only":
+			entry_retry_only = true
+		elif argument == "--portrait":
 			graphical = true
 		elif argument.begins_with("--expected-commit="):
 			_expected_commit = argument.trim_prefix("--expected-commit=")
@@ -164,7 +167,7 @@ func _run() -> void:
 	_close_shell()
 	_expect_refs_freed(retired, "living retry closure")
 	_cleanup_saves()
-	if not await _fatal_case(registry):
+	if not entry_retry_only and not await _fatal_case(registry):
 		_finish()
 		return
 	_expect(get_nodes_in_group("required_cues").is_empty() and get_nodes_in_group("enemies").is_empty(), "disposed production worlds retain no required cue or actor group member")
@@ -582,7 +585,7 @@ func _finish() -> void:
 	_close_shell()
 	paused = false
 	_cleanup_saves()
-	print("Production Act3 registration: %d checks, %d failures; expected_commit=%s; TEST ONLY ten-predecessor/initial-resource seeds; actual production GUI/format2/routed dash/fatal Continue/Retry; no route-clear or native-human claim" % [checks, failures, _expected_commit])
+	print("Production Act3 registration: %d checks, %d failures; expected_commit=%s; selected_scope=%s; TEST ONLY ten-predecessor/initial-resource seeds; no route-clear or native-human claim" % [checks, failures, _expected_commit, "entry/format2/routed dash/fresh Continue/entrance Retry/cleanup" if entry_retry_only else "full GUI/format2/routed dash/fatal Continue/Retry/cleanup"])
 	quit(0 if failures == 0 else 1)
 
 
